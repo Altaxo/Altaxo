@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,8 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,13 +38,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-
 namespace Altaxo.Gui.Common
 {
 	/// <summary>
-	/// Converts an Altaxo <see cref="Altaxo.Graph.NamedColor"/> value into a <see cref="System.Windows.Media.SolidBrush"/> value.
+	/// Converts an Altaxo <see cref="Altaxo.Graph.NamedColor"/> value into a <see cref="System.Windows.Media.SolidColorBrush"/> value.
 	/// </summary>
 	public class NamedColorToWpfBrushConverter : IValueConverter
 	{
@@ -74,12 +75,16 @@ namespace Altaxo.Gui.Common
 			{
 				case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
 					return "Builtin";
+
 				case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
 					return "App";
+
 				case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
 					return "User";
+
 				case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
 					return "Project";
+
 				default:
 					throw new NotImplementedException();
 			}
@@ -105,7 +110,6 @@ namespace Altaxo.Gui.Common
 		}
 	}
 
-
 	public class BrushXToImageSourceConverter : IValueConverter
 	{
 		private int _width = 16;
@@ -122,7 +126,6 @@ namespace Altaxo.Gui.Common
 			get { return _height; }
 			set { _height = value; }
 		}
-		
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
@@ -166,7 +169,6 @@ namespace Altaxo.Gui.Common
 				return GuiHelper.ToWpf(val, width, height);
 			}
 		}
-
 	}
 
 	/// <summary>
@@ -174,7 +176,6 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public class BrushXToBrushNameConverter : IValueConverter
 	{
-
 		/// <summary>
 		/// Converts a <see cref="BrushX"/> to the name of this brush.
 		/// </summary>
@@ -204,31 +205,36 @@ namespace Altaxo.Gui.Common
 			}
 			else
 			{
-
 				switch (brush.BrushType)
 				{
 					case BrushType.SolidBrush:
 						name = "CustSB ";
 						break;
+
 					case BrushType.SigmaBellShapeLinearGradientBrush:
 					case BrushType.TriangularShapeLinearGradientBrush:
 					case BrushType.LinearGradientBrush:
 						name = "CustLGB ";
 						break;
+
 					case BrushType.SigmaBellShapePathGradientBrush:
 					case BrushType.TriangularShapePathGradientBrush:
 					case BrushType.PathGradientBrush:
 						name = "CustPGB ";
 						break;
+
 					case BrushType.TextureBrush:
 						name = "CustTB ";
 						break;
+
 					case BrushType.SyntheticTextureBrush:
 						name = "CustSTB";
 						break;
+
 					case BrushType.HatchBrush:
 						name = "CustHB ";
 						break;
+
 					default:
 						name = "CustBrush ";
 						break;
@@ -242,13 +248,9 @@ namespace Altaxo.Gui.Common
 			return name;
 		}
 
-		
-
-
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}
 	}
-
 }

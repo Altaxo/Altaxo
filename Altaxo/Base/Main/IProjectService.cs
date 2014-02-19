@@ -143,7 +143,8 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Loads the project for an input stream
 		/// </summary>
-		/// <param name="Stream">The input stream.</param>
+		/// <param name="istream">The input stream.</param>
+		/// <returns>Null if the project was successfully loaded; or an error string otherwise.</returns>
 		string LoadProject(System.IO.Stream istream);
 
 		/// <summary>
@@ -172,7 +173,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Saves the project in the provided stream.
 		/// </summary>
-		/// <param name="fileName">Stream to save the project into</param>
+		/// <param name="stream">Stream to save the project into</param>
 		/// <returns>Null if everything was saved sucessfully, or an exception if not.</returns>
 		Exception SaveProject(System.IO.Stream stream);
 

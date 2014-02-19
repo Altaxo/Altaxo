@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
 
-using Altaxo.Main;
-using Altaxo.Gui.Common;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
-
+using Altaxo.Gui.Common;
+using Altaxo.Main;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.Graph
 {
@@ -57,7 +57,6 @@ namespace Altaxo.Gui.Graph
 		/// <param name="index">The index of the tab page to focus.</param>
 		void BringTabToFront(int index);
 
-
 		event Action<object, InstanceChangedEventArgs<object>> SelectedPage_Changed;
 
 		/// <summary>
@@ -66,78 +65,73 @@ namespace Altaxo.Gui.Graph
 		/// <param name="view"></param>
 		void SetPlotStyleView(object view);
 
-
 		void SetPlotGroupCollectionView(object view);
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
-  /// Summary description for XYColumnPlotItemController.
-  /// </summary>
-  [UserControllerForObject(typeof(G2DPlotItem))]
+	/// Summary description for XYColumnPlotItemController.
+	/// </summary>
+	[UserControllerForObject(typeof(G2DPlotItem))]
 	[ExpectedTypeOfView(typeof(IG2DPlotItemView))]
-  public class G2DPlotItemController : IMVCANController
-    
-  {
-    UseDocument _useDocument;
-    G2DPlotItem _doc;
-    G2DPlotItem _tempdoc;
-    PlotGroupStyleCollection _groupStyles;
+	public class G2DPlotItemController : IMVCANController
+	{
+		private UseDocument _useDocument;
+		private G2DPlotItem _doc;
+		private G2DPlotItem _tempdoc;
+		private PlotGroupStyleCollection _groupStyles;
 
-		IG2DPlotItemView _view;
+		private IG2DPlotItemView _view;
 
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
-		IMVCANController _plotGroupController;
+		private IMVCANController _plotGroupController;
 
+		private IG2DPlotStyle _additionalPlotStyle;
 
-    IG2DPlotStyle _additionalPlotStyle;
-    IPlotGroupCollectionViewSimple _plotGroupView;
+		private IMVCAController _dataController;
+		private IXYPlotStyleCollectionController _styleCollectionController;
+		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
+		private Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
+		private IMVCANController _additionalPlotStyleController;
 
-    IMVCAController _dataController;
-    IXYPlotStyleCollectionController _styleCollectionController;
-    List<IMVCANController> _styleControllerList = new List<IMVCANController>();
-    Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
-    IMVCANController _additionalPlotStyleController;
-    
-    
+		public G2DPlotItemController()
+		{
+		}
 
-    public G2DPlotItemController()
-    {
-    }
+		public G2DPlotItemController(G2DPlotItem doc)
+			: this(doc, null)
+		{
+		}
 
-    public G2DPlotItemController(G2DPlotItem doc)
-      : this(doc,null)
-    {
-    }
-    public G2DPlotItemController(G2DPlotItem doc, PlotGroupStyleCollection parent)
-    {
-      if (!InitializeDocument(doc, parent))
-        throw new ArgumentException();
-    }
+		public G2DPlotItemController(G2DPlotItem doc, PlotGroupStyleCollection parent)
+		{
+			if (!InitializeDocument(doc, parent))
+				throw new ArgumentException();
+		}
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0  || !(args[0] is G2DPlotItem))
-        return false;
-      
-       _doc = _tempdoc = (G2DPlotItem)args[0];
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0 || !(args[0] is G2DPlotItem))
+				return false;
 
-      if (args.Length >= 2 && args[1] != null)
-      {
-        if (!(args[1] is PlotGroupStyleCollection))
-          return false;
-        else
-          _groupStyles = (PlotGroupStyleCollection)args[1];
-      }
-      else
-      {
-        if(_doc.ParentCollection!=null)
-          _groupStyles = _doc.ParentCollection.GroupStyles;
-      }
+			_doc = _tempdoc = (G2DPlotItem)args[0];
 
-      if(_useDocument==UseDocument.Copy)
-        _tempdoc = (G2DPlotItem)_doc.Clone();
+			if (args.Length >= 2 && args[1] != null)
+			{
+				if (!(args[1] is PlotGroupStyleCollection))
+					return false;
+				else
+					_groupStyles = (PlotGroupStyleCollection)args[1];
+			}
+			else
+			{
+				if (_doc.ParentCollection != null)
+					_groupStyles = _doc.ParentCollection.GroupStyles;
+			}
+
+			if (_useDocument == UseDocument.Copy)
+				_tempdoc = (G2DPlotItem)_doc.Clone();
 
 			/*
       InitializeCollectionAndData();
@@ -146,35 +140,31 @@ namespace Altaxo.Gui.Graph
 			*/
 
 			Initialize(true);
-      return true;
-    }
+			return true;
+		}
 
-    public UseDocument UseDocumentCopy
-    {
-      set { _useDocument = value; }
-    }
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocument = value; }
+		}
 
-
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
 				_plotGroupController = new PlotGroupCollectionController();
 				_plotGroupController.InitializeDocument(_groupStyles);
 
-
 				// find the style collection controller
 				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style }, typeof(IXYPlotStyleCollectionController));
 				_styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
-
 
 				// Initialize the data controller
 				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.DataObject, _tempdoc }, typeof(IMVCAController));
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();
-
 			}
 
 			if (null != _view)
@@ -190,10 +180,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-	
-
-
-		void View_SetAllTabViews()
+		private void View_SetAllTabViews()
 		{
 			_view.ClearTabs();
 
@@ -209,39 +196,39 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-    void ApplyPlotGroupView()
-    {
+		private void ApplyPlotGroupView()
+		{
 			_plotGroupController.Apply();
 			_groupStyles.CopyFrom((PlotGroupStyleCollection)_plotGroupController.ModelObject);
 
-      // now distribute the new style to the other plot items
-      if (_doc.ParentCollection != null)
-      {
+			// now distribute the new style to the other plot items
+			if (_doc.ParentCollection != null)
+			{
 				_doc.ParentCollection.GroupStyles.CopyFrom(_groupStyles);
-        _doc.ParentCollection.DistributePlotStyleFromTemplate(_doc, _groupStyles.PlotGroupStrictness);
-        _doc.ParentCollection.DistributeChanges(_doc);
-      }
-    }
+				_doc.ParentCollection.DistributePlotStyleFromTemplate(_doc, _groupStyles.PlotGroupStrictness);
+				_doc.ParentCollection.DistributeChanges(_doc);
+			}
+		}
 
 		/// <summary>
 		/// Gets the controller for a certain style instance from either the dictionary, or if not found, by creating a new instance.
 		/// </summary>
 		/// <param name="style"></param>
 		/// <returns></returns>
-    IMVCANController GetStyleController(IG2DPlotStyle style)
-    {
-      if (_styleControllerDictionary.ContainsKey(style))
-        return _styleControllerDictionary[style];
+		private IMVCANController GetStyleController(IG2DPlotStyle style)
+		{
+			if (_styleControllerDictionary.ContainsKey(style))
+				return _styleControllerDictionary[style];
 
-      IMVCANController ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
+			IMVCANController ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
 
-      if (ct != null)
-        _styleControllerDictionary.Add(style, ct);
+			if (ct != null)
+				_styleControllerDictionary.Add(style, ct);
 
-      return ct;
-    }
+			return ct;
+		}
 
-		void InitializeStyleControllerList()
+		private void InitializeStyleControllerList()
 		{
 			// Clear the previous controller cache
 			_styleControllerList.Clear();
@@ -254,52 +241,46 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-	
+		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
+		{
+			// test if it is the view of the normal styles
+			for (int i = 0; i < _styleControllerList.Count; i++)
+			{
+				if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
+				{
+					if (!_styleControllerList[i].Apply())
+						return;
 
+					DistributeStyleChange(i);
+				}
+			}
+		}
 
-    protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
-    {
-        // test if it is the view of the normal styles
-        for (int i = 0; i < _styleControllerList.Count; i++)
-        {
-          if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
-          {
-            if (!_styleControllerList[i].Apply())
-              return;
+		/// <summary>
+		/// This distributes changes made to one of the sub plot styles to all other plot styles. Additionally, the controller
+		/// for this styles are also updated.
+		/// </summary>
+		/// <param name="pivotelement"></param>
+		private void DistributeStyleChange(int pivotelement)
+		{
+			IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+			_tempdoc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
 
-            DistributeStyleChange(i);
-          }
-        }
-    }
-
-
-   
-
-    /// <summary>
-    /// This distributes changes made to one of the sub plot styles to all other plot styles. Additionally, the controller
-    /// for this styles are also updated.
-    /// </summary>
-    /// <param name="pivotelement"></param>
-    void DistributeStyleChange(int pivotelement)
-    {
-      IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
-      _tempdoc.Style.DistributeSubStyleChange(pivotelement,layer,_doc.GetRangesAndPoints(layer));
-
-      // now all style controllers must be updated
-      for (int i = 0; i < _styleControllerList.Count; i++)
-      {
-        if(null!=_styleControllerList[i])
+			// now all style controllers must be updated
+			for (int i = 0; i < _styleControllerList.Count; i++)
+			{
+				if (null != _styleControllerList[i])
 					_styleControllerList[i].InitializeDocument(_tempdoc.Style[i]);
-      }
+			}
 
-      if (_additionalPlotStyle != null && _additionalPlotStyleController!=null)
-      {
-        _tempdoc.Style.PrepareNewSubStyle(_additionalPlotStyle, layer, _doc.GetRangesAndPoints(layer));
-        _additionalPlotStyleController.InitializeDocument(_additionalPlotStyle);
-      }
-    }
+			if (_additionalPlotStyle != null && _additionalPlotStyleController != null)
+			{
+				_tempdoc.Style.PrepareNewSubStyle(_additionalPlotStyle, layer, _doc.GetRangesAndPoints(layer));
+				_additionalPlotStyleController.InitializeDocument(_additionalPlotStyle);
+			}
+		}
 
-    #region IMVCController Members
+		#region IMVCController Members
 
 		public object ViewObject
 		{
@@ -323,96 +304,86 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    #endregion
+		#endregion IMVCController Members
 
-    #region IApplyController Members
+		#region IApplyController Members
 
-    int _applySuspend; // to avoid multiple invoking here because some of the child controls
-    // have this here as controller too     
-    public bool Apply()
-    {
-      if(_applySuspend++ > 0)
-      {
-        _applySuspend--;
-        return true;
-      }
+		private int _applySuspend; // to avoid multiple invoking here because some of the child controls
 
-      bool applyResult = false;
+		// have this here as controller too
+		public bool Apply()
+		{
+			if (_applySuspend++ > 0)
+			{
+				_applySuspend--;
+				return true;
+			}
 
+			bool applyResult = false;
 
 			if (!_dataController.Apply())
 				return false;
 
-			for(int i=0;i<_styleControllerList.Count;++i)
-
+			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
 				if (false == _styleControllerList[i].Apply())
-        {
-          _view.BringTabToFront(i);
-          applyResult = false;
-          goto end_of_function;
-        }
-      }
+				{
+					_view.BringTabToFront(i);
+					applyResult = false;
+					goto end_of_function;
+				}
+			}
 
-      if(!object.ReferenceEquals(_doc,_tempdoc))
-        _doc.CopyFrom(_tempdoc);
+			if (!object.ReferenceEquals(_doc, _tempdoc))
+				_doc.CopyFrom(_tempdoc);
 
-      ApplyPlotGroupView();
+			ApplyPlotGroupView();
 
-      applyResult = true;
+			applyResult = true;
 
-      end_of_function:
-        _applySuspend--;
-      return applyResult;
-    }
+		end_of_function:
+			_applySuspend--;
+			return applyResult;
+		}
 
-    #endregion
+		#endregion IApplyController Members
 
-   
-  
-    
+		/// <summary>
+		/// Returns the tab index of the first style that is shown.
+		/// </summary>
+		/// <returns>Tab index of the first shown style.</returns>
+		private int GetFirstStyleTabIndex()
+		{
+			int result = 0;
+			if (_dataController != null)
+				++result;
 
+			return result;
+		}
 
-   
-
-    /// <summary>
-    /// Returns the tab index of the first style that is shown.
-    /// </summary>
-    /// <returns>Tab index of the first shown style.</returns>
-    private int GetFirstStyleTabIndex()
-    {
-      int result = 0;
-      if (_dataController != null)
-        ++result;
-     
-      return result;
-    }
-
-    private void _styleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
-    {
-      if(true==_styleCollectionController.Apply())
-      {
+		private void _styleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
+		{
+			if (true == _styleCollectionController.Apply())
+			{
 				InitializeStyleControllerList();
 				View_SetAllTabViews();
-      }
-    }
+			}
+		}
 
-		void _styleCollectionController_StyleEditRequested(int styleIndex)
+		private void _styleCollectionController_StyleEditRequested(int styleIndex)
 		{
 			if (null != _view)
 			{
 				_view.BringTabToFront(styleIndex + GetFirstStyleTabIndex());
 			}
 		}
-
-	
 	}
 }

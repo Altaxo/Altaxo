@@ -247,7 +247,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		{
 			AltaxoVariant[] varVals;
 			int[] intVals;
-			int intVal;
 
 			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out varVals))
 			{

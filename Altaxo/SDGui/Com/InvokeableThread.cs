@@ -31,7 +31,7 @@ using System.Threading;
 namespace Altaxo.Com
 {
 	/// <summary>
-	/// Thread that can be invoked, i.e. code can be executed using <see cref="Invoke"/> or <see cref="BeginInvoke"/> always from this thread. This is especially important
+	/// Thread that can be invoked, i.e. code can be executed using <see cref="Invoke"/> or <see cref="InvokeAsync"/> always from this thread. This is especially important
 	/// for objects which are thread sensitive. These objects must be created and it's functions must be called always from the same thread.
 	/// </summary>
 	public class InvokeableThread

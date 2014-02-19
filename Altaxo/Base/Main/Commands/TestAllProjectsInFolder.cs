@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -170,7 +172,7 @@ namespace Altaxo.Main.Commands
 
 					System.Threading.Thread.Sleep(1000);
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 					++numberOfProjectsFailedToLoad;
 					monitor.ReportProgress(string.Format(
@@ -232,7 +234,7 @@ namespace Altaxo.Main.Commands
 
 						System.Threading.Thread.Sleep(1000);
 					}
-					catch (Exception ex)
+					catch (Exception)
 					{
 						++numberOfProjectsFailedToLoad;
 						monitor.ReportProgress(string.Format(

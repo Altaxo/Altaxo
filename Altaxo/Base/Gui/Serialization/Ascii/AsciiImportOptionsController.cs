@@ -87,10 +87,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		private Dictionary<Type, IAsciiSeparationStrategy> _separationStrategyInstances = new Dictionary<Type, IAsciiSeparationStrategy>();
 
-		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
-
-		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
-
 		private AsciiDocumentAnalysisOptions _analysisOptions;
 
 		public override bool InitializeDocument(params object[] args)

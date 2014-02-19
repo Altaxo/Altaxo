@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="shearX">Shear in x-direction.</param>
 		/// <param name="scaleX">X scale value.</param>
 		/// <param name="scaleY">Y scale value.</param>
-		/// <param name="suppressChangeEvent">If true, the <see cref="Changed"/> event will be suppressed, but the transformation matrix will be updated in any case.</param>
+		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetTranslationRotationShearxScale(double? x, double? y, double? rotation, double? shearX, double? scaleX, double? scaleY, Main.EventFiring eventFiring)
 		{
 			if (null != x)
@@ -304,7 +304,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Updates the transformation matrix and fires the Changed event, if not suppressed intentionally.
 		/// </summary>
-		/// <param name="suppressEventNotification"></param>
+		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		protected void OnChanged(Main.EventFiring eventFiring)
 		{
 			_transformation.SetTranslationRotationShearxScale(_x, _y, _rotationDeg, _shearX, _scaleX, _scaleY);

@@ -45,6 +45,7 @@ namespace Altaxo.Graph
 		/// <param name="isAutoZoomActive">If set to <c>true</c> auto zoom is active.</param>
 		/// <param name="zoomFactor">The zoom factor.</param>
 		/// <param name="graphDocument">The graph document.</param>
+		/// <param name="viewPortsUpperLeftInRootLayerCoord">Vector from the upper left corner of the graph to the upper left corner of the view port.</param>
 		public GraphViewLayout(bool isAutoZoomActive, double zoomFactor, GraphDocument graphDocument, PointD2D viewPortsUpperLeftInRootLayerCoord)
 		{
 			_isAutoZoomActive = isAutoZoomActive;
@@ -170,12 +171,12 @@ namespace Altaxo.Graph
 		public bool IsAutoZoomActive { get { return _isAutoZoomActive; } }
 
 		/// <summary>Gets the zoom factor The zoom factor is the relation between the physical size of the graph on the screen to the design size of the graph.
-		///  This value is only valid if <see cref="AutoZoom"/> is <c>false</c>.
+		///  This value is only valid if <see cref="IsAutoZoomActive"/> is <c>false</c>.
 		///  </summary>
 		public double ZoomFactor { get { return _zoomFactor; } }
 
 		/// <summary>
-		/// Gets the position of the viewport's upper left corner in root layer coordinates. This value is only valid if <see cref="AutoZoom"/> is <c>false</c>.
+		/// Gets the position of the viewport's upper left corner in root layer coordinates. This value is only valid if <see cref="IsAutoZoomActive"/> is <c>false</c>.
 		/// </summary>
 		/// <value>
 		/// The position of the viewport's upper left corner in root layer coordinates.

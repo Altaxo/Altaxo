@@ -92,11 +92,12 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Rounds a double to a provided number of significant digits.
+		/// Rounds a double number to the provided number of significant digits.
 		/// </summary>
 		/// <param name="x">The value to round.</param>
 		/// <param name="significantDigits">The number of significant digits.</param>
 		/// <returns>The number, rounded to the provided number of significant digits.</returns>
+		/// <param name="rounding">The rounding rule that should be applied.</param>
 		public static double RoundToNumberOfSignificantDigits(double x, int significantDigits, MidpointRounding rounding)
 		{
 			if (significantDigits < 0)

@@ -196,7 +196,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
-		/// <param name="areaToExport">The area of the graph that should be copied to the clipboard.</param>
 		public static void CopyToClipboardAsBitmap(this GraphDocument doc, int dpiResolution, Brush backbrush, PixelFormat pixelformat)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();

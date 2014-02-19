@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.LineCaps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,10 +37,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using sdd = System.Drawing.Drawing2D;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.LineCaps;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -47,9 +48,9 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		#region Converter
 
-		class Converter : IValueConverter
+		private class Converter : IValueConverter
 		{
-			LineCapComboBox _cb;
+			private LineCapComboBox _cb;
 
 			public Converter(LineCapComboBox c)
 			{
@@ -59,12 +60,10 @@ namespace Altaxo.Gui.Common.Drawing
 			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
 				var val = (LineCapExtension)value;
-				if (null==val || val.IsDefaultStyle)
+				if (null == val || val.IsDefaultStyle)
 					return _cb._cachedItems[LineCapExtension.Flat.Name];
 				else
 					return _cb._cachedItems[val.Name];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -73,21 +72,18 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Converter
 
+		private static Dictionary<string, ImageSource> _cachedImagesForStartCap = new Dictionary<string, ImageSource>();
+		private static Dictionary<string, ImageSource> _cachedImagesForEndCap = new Dictionary<string, ImageSource>();
 
-		static Dictionary<string, ImageSource> _cachedImagesForStartCap = new Dictionary<string, ImageSource>();
-		static Dictionary<string, ImageSource> _cachedImagesForEndCap = new Dictionary<string, ImageSource>();
+		private Dictionary<string, ImageComboBoxItem> _cachedItems = new Dictionary<string, ImageComboBoxItem>();
 
-		Dictionary<string, ImageComboBoxItem> _cachedItems = new Dictionary<string, ImageComboBoxItem>();
+		private static GdiToWpfBitmap _interopBitmap;
 
-		static GdiToWpfBitmap _interopBitmap;
+		private bool _isForEndCap;
 
-
-		bool _isForEndCap;
-
-
-		static SortedDictionary<string, int> _lineCaps;
+		private static SortedDictionary<string, int> _lineCaps;
 
 		public LineCapComboBox()
 		{
@@ -107,7 +103,7 @@ namespace Altaxo.Gui.Common.Drawing
 			set { _isForEndCap = value; }
 		}
 
-		void SetDefaultValues()
+		private void SetDefaultValues()
 		{
 			foreach (LineCapExtension cap in LineCapExtension.GetRegisteredValues())
 			{
@@ -117,10 +113,10 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
-
 		#region Dependency property
+
 		private const string _nameOfValueProp = "SelectedLineCap";
+
 		public LineCapExtension SelectedLineCap
 		{
 			get { return (LineCapExtension)GetValue(SelectedLineCapProperty); }
@@ -133,18 +129,15 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-		#endregion
 
-
+		#endregion Dependency property
 
 		public override string GetItemText(object item)
 		{
 			var value = (LineCapExtension)item;
 			return value.Name;
 		}
-
 
 		public override ImageSource GetItemImage(object item)
 		{
@@ -167,8 +160,6 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			const int bmpHeight = 24;
 			const int bmpWidth = 48;
-			const double nominalHeight = 24; // height of a combobox item
-			const double nominalWidth = (nominalHeight * bmpWidth) / bmpHeight;
 			const double lineWidth = bmpHeight * 0.4;
 
 			if (null == _interopBitmap)

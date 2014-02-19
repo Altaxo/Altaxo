@@ -168,9 +168,6 @@ namespace Altaxo.Graph.Gdi
 				*/
 			}
 
-			protected XYPlotLayer _Layer;
-			protected Main.DocumentPath _LinkedLayerPath;
-
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				XYPlotLayer s = SDeserialize(o, info, parent);

@@ -70,7 +70,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// </summary>
 		/// <param name="g">Graphics context used for drawing.</param>
 		/// <param name="layer">Plot layer.</param>
-		/// <param name="coll">Collection of plot items to draw.</param>
-		void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int indexOfChild);
+		/// <param name="collection">Collection of plot items to draw.</param>
+		/// <param name="indexOfChild">Index of the item that should be painted in the <paramref name="collection"/>.</param>
+		void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection collection, int indexOfChild);
 	}
 }

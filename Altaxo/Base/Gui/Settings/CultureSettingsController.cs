@@ -33,7 +33,7 @@ using System.Text;
 namespace Altaxo.Gui.Settings
 {
 	/// <summary>
-	/// Interface that the Gui component has to implement in order to be a view for <see cref="DocumentCultureSettingsController"/>.
+	/// Interface that the Gui component has to implement in order to be a view for <see cref="CultureSettingsController"/>.
 	/// </summary>
 	public interface ICultureSettingsView
 	{
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Settings
 		string NumberGroupSeparator { get; set; }
 	}
 
-	/// <summary>Manages the user interaction to set the members of <see cref="DocumentCultureSettings"/>.</summary>
+	/// <summary>Manages the user interaction to set the members of <see cref="CultureSettings"/>.</summary>
 	[ExpectedTypeOfView(typeof(ICultureSettingsView))]
 	[UserControllerForObject(typeof(CultureSettings))]
 	public class CultureSettingsController : MVCANControllerBase<CultureSettings, ICultureSettingsView>

@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Procedures
 {
 	/// <summary>
 	/// Given a single GraphDocument, this class retrieves all the objects that are neccessary for this particular GraphDocument (tables, functions etc.)
-	/// and builds a new <see cref="Altaxo.Document"/> that contains these objects.
+	/// and builds a new <see cref="Altaxo.AltaxoDocument"/> that contains these objects.
 	/// </summary>
 	public class MiniProjectBuilder
 	{

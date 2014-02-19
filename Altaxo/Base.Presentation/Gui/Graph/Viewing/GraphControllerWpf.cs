@@ -546,7 +546,7 @@ namespace Altaxo.Gui.Graph.Viewing
 					{
 						_cachedGraphImage = new Bitmap(viewWpfGraphSize.Width, viewWpfGraphSize.Height, g);
 					}
-					catch (Exception ex)
+					catch (Exception)
 					{
 						throw new InvalidOperationException("Failed to create _cachedGraphImage");
 					}

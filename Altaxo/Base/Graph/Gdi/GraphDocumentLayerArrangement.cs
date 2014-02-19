@@ -125,6 +125,7 @@ namespace Altaxo.Graph.Gdi
 		/// Shows the layer arrangement dialog and then arranges the layers according to the user input.
 		/// </summary>
 		/// <param name="graph">Graph that contains the layers to arrange.</param>
+		/// <param name="activeLayer">Layer that is currently active.</param>
 		public static void ShowLayerArrangementDialog(this GraphDocument graph, HostLayer activeLayer)
 		{
 			ArrangeLayersDocument arrangement = new ArrangeLayersDocument();

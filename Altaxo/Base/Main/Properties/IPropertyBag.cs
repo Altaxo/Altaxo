@@ -47,6 +47,7 @@ namespace Altaxo.Main.Properties
 		/// </summary>
 		/// <typeparam name="T">Type of the property value.</typeparam>
 		/// <param name="p">The property key.</param>
+		/// <param name="defaultValue">Default value that is returned if no property value is found in the bag.</param>
 		/// <returns>The property.</returns>
 		T GetValue<T>(PropertyKey<T> p, T defaultValue);
 

@@ -28,9 +28,6 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Serialization;
-
-using Altaxo.Serialization;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -247,7 +244,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		{
 			AltaxoVariant[] varVals;
 			int[] intVals;
-			int intVal;
 
 			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.SuppressMajorTickValues, out varVals))
 			{

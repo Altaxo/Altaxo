@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
+		/// Creates a layer at the designated <paramref name="location"/>.
 		/// </summary>
 		/// <param name="parentLayer">The parent layer of the newly created layer.</param>
 		/// <param name="location">The position and size of this layer</param>
@@ -997,7 +997,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Is called by the parent layer if the index of this layer has changed.
 		/// </summary>
-		/// <param name="newLayerNumber">The new layer number. This number is cached in <paramref name="_cachedLayerNumber"/></param>
+		/// <param name="newLayerNumber">The new layer number. This number is cached in <see cref="HostLayer._cachedLayerNumber"/>.</param>
 		protected virtual void OnLayerNumberChanged(int newLayerNumber)
 		{
 			_cachedLayerNumber = newLayerNumber;
@@ -1031,7 +1031,7 @@ namespace Altaxo.Graph.Gdi
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		/// <param name="Report">Function that reports the found <see cref="Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
 		public virtual void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
 		{
 			foreach (var hl in _childLayers)

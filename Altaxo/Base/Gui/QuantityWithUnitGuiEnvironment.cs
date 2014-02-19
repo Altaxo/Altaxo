@@ -59,9 +59,6 @@ namespace Altaxo.Gui
 
 		private IPrefixedUnit _defaultUnit;
 
-		private IUnit _lastUsedUnit;
-		private IUnit _lastUsedSIPrefix;
-
 		private int _numberOfDisplayedDigits = 5;
 
 		/// <summary>

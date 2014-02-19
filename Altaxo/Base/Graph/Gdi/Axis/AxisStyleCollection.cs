@@ -188,6 +188,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// Creates the axis style with ShowAxisLine = true and ShowMajorLabels = true
 		/// </summary>
 		/// <param name="id">The axis style identifier.</param>
+		/// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
 		/// <returns>The newly created axis style, if it was not in the collection before. Returns the unchanged axis style, if it was present already in the collection.</returns>
 		public AxisStyle CreateDefault(CSLineID id, IReadOnlyPropertyBag context)
 		{

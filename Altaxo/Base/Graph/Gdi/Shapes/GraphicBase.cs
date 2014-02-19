@@ -454,6 +454,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// Sets the position of the object's pivot point.
 		/// </summary>
 		/// <param name="value">The position to set (the object's pivot point) with reference to the parent's reference point).</param>
+		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		protected virtual void SetPosition(PointD2D value, Main.EventFiring eventFiring)
 		{
 			_location.SetAbsolutePivotPosition(value, eventFiring);
@@ -960,6 +961,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="relDrawGrip">The relative position of the draw grip (0..1, 0..1).</param>
 		/// <param name="diff">The movement vector of the grip handle.</param>
 		/// <param name="initialSize">The initial size of the object.</param>
+		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize, Main.EventFiring eventFiring)
 		{
 			var token = _eventSuppressor.Suspend();
@@ -998,6 +1000,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="absPivot">Pivot point in absolute coordinates.</param>
 		/// <param name="relDrawGrip">Grip point in relative coordinates.</param>
 		/// <param name="diff">Difference between absolute grip point and absolute pivot point, in unrotated absolute coordinates.</param>
+		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetRotationFrom(PointD2D relPivot, PointD2D absPivot, PointD2D relDrawGrip, PointD2D diff, Main.EventFiring eventFiring)
 		{
 			var token = _eventSuppressor.Suspend();

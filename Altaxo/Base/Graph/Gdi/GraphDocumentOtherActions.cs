@@ -116,6 +116,7 @@ namespace Altaxo.Graph.Gdi
 		/// Moves the layer specified by index <paramref name="sourcePosition"/> to index <paramref name="destposition"/>.
 		/// </summary>
 		/// <param name="doc">Graph document.</param>
+		/// <param name="parentLayer">The parent layer of the layer to move.</param>
 		/// <param name="sourcePosition">Original index of the layer.</param>
 		/// <param name="destposition">New index of the layer.</param>
 		public static void MoveLayerToPosition(this GraphDocument doc, HostLayer parentLayer, int sourcePosition, int destposition)

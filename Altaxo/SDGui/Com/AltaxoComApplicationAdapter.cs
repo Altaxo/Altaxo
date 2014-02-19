@@ -50,7 +50,7 @@ namespace Altaxo.Com
 		}
 
 		/// <summary>
-		/// Sets the host names. The application should show the containerApplicationName and containerFileName in the title bar. Additionally, if <paramref name="isInEmbeddedMode"/> is <c>true</c>,
+		/// Sets the host names. The application should show the containerApplicationName and containerFileName in the title bar. Additionally, if <paramref name="embeddedObject"/> is not <c>null</c>,
 		/// the application should switch the user interface.
 		/// </summary>
 		/// <param name="containerApplicationName">Name of the container application.</param>

@@ -321,7 +321,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Opens an Altaxo project from a stream.
 		/// </summary>
-		/// <param name="filename"></param>
+		/// <param name="myStream">The stream from which to load the project.</param>
 		public string LoadProject(System.IO.Stream myStream)
 		{
 			var errors = InternalLoadProjectFromStream(myStream, null);
@@ -331,6 +331,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Opens a Altaxo project from a stream.
 		/// </summary>
+		/// <param name="myStream">The stream from which to load the project.</param>
 		/// <param name="filename">Either the filename of the file which stored the document, or null (e.g. myStream is a MemoryStream).</param>
 		private string InternalLoadProjectFromStream(System.IO.Stream myStream, string filename)
 		{

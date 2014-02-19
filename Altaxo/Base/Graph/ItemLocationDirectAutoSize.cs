@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -82,10 +84,8 @@ namespace Altaxo.Graph
 
 		#region New methods/properties
 
-
-
 		/// <summary>
-		/// If the <see cref="IsAutoSize"/> property is <c>true</c> for this instance, the graphical object has to use this function to indicate its size.
+		/// If the <see cref="IsAutoSized"/> property is <c>true</c> for this instance, the graphical object has to use this function to indicate its size.
 		/// </summary>
 		/// <param name="autoSize">Size of the graphical object.</param>
 		/// <exception cref="System.InvalidOperationException">Using SetAutoSize is not supported because IsAutoSized is false</exception>
@@ -95,7 +95,7 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// If the <see cref="IsAutoSize"/> property is <c>true</c> for this instance, the graphical object has to use this function to indicate its size.
+		/// If the <see cref="IsAutoSized"/> property is <c>true</c> for this instance, the graphical object has to use this function to indicate its size.
 		/// </summary>
 		/// <param name="autoSize">Size of the graphical object.</param>
 		/// <param name="isChangeEventEnabled">If true, the Change event will be fired if the size has changed.</param>
@@ -107,12 +107,12 @@ namespace Altaxo.Graph
 				_sizeX = RADouble.NewAbs(autoSize.X);
 				_sizeY = RADouble.NewAbs(autoSize.Y);
 
-				if(isChangeEventEnabled)
+				if (isChangeEventEnabled)
 					OnChanged();
 			}
 		}
 
-		#endregion
+		#endregion New methods/properties
 
 		#region overrides
 
@@ -157,7 +157,6 @@ namespace Altaxo.Graph
 				OnChanged();
 		}
 
-		#endregion
-
+		#endregion overrides
 	}
 }

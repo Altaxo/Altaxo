@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,29 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-
-using Altaxo.Units;
-
 
 namespace Altaxo.Gui.Common
 {
 	public class NumericDoubleTextBox : TextBox
 	{
 		public event DependencyPropertyChangedEventHandler SelectedValueChanged;
-		NumericDoubleConverter _converter;
 
-			/// <summary>
+		private NumericDoubleConverter _converter;
+
+		/// <summary>
 		/// Static initialization.
 		/// </summary>
 		static NumericDoubleTextBox()
@@ -48,8 +48,7 @@ namespace Altaxo.Gui.Common
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericDoubleTextBox), new FrameworkPropertyMetadata(typeof(NumericDoubleTextBox)));
 		}
 
-
-			/// <summary>
+		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public NumericDoubleTextBox()
@@ -66,10 +65,12 @@ namespace Altaxo.Gui.Common
 		}
 
 		public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
-		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
-		public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
-		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
+		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
+
+		public bool DisallowNegativeValues { get { return _converter.DisallowNegativeValues; } set { _converter.DisallowNegativeValues = value; } }
+
+		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
 		#region Change selection behaviour
 
@@ -125,7 +126,7 @@ namespace Altaxo.Gui.Common
 		}
 
 		/// <summary>
-		/// Triggers the <see cref="SelectedQuantityChanged"/> event.
+		/// Triggers the <see cref="SelectedValueChanged"/> event.
 		/// </summary>
 		/// <param name="obj">Dependency object (here: the control).</param>
 		/// <param name="args">Property changed event arguments.</param>
@@ -135,7 +136,6 @@ namespace Altaxo.Gui.Common
 				SelectedValueChanged(obj, args);
 		}
 
-		#endregion
-
+		#endregion Dependency property
 	}
 }

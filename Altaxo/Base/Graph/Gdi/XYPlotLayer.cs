@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Gdi
 		private int _plotAssociationYBoundariesChanged_EventSuspendCount;
 
 		/// <summary>
-		/// Partial list of all <see cref="PlaceHolder"/> instances in <see cref="GraphObjects"/>.
+		/// Partial list of all <see cref="PlaceHolder"/> instances in <see cref="HostLayer.GraphObjects"/>.
 		/// </summary>
 		[NonSerialized]
 		private IObservableList<PlaceHolder> _placeHolders;
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi
 		/// Internal copy from operation. It is presumed, that the events are already suspended. Additionally,
 		/// it is not neccessary to call the OnChanged event, since this is called in the calling routine.
 		/// </summary>
-		/// <param name="from">The layer from which to copy.</param>
+		/// <param name="obj">The object (layer) from which to copy.</param>
 		/// <param name="options">Copy options.</param>
 		protected override void InternalCopyFrom(HostLayer obj, GraphCopyOptions options)
 		{
@@ -208,17 +208,17 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
+		/// Creates a layer at the designated <paramref name="location"/>
 		/// </summary>
-		/// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
-		/// <param name="size">The size of the layer in points (1/72 inch).</param>
+		/// <param name="parentLayer">The parent layer of the constructed layer.</param>
+		/// <param name="location">The location of the constructed layer.</param>
 		public XYPlotLayer(HostLayer parentLayer, IItemLocation location)
 			: this(parentLayer, location, new CS.G2DCartesicCoordinateSystem())
 		{
 		}
 
 		/// <summary>
-		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
+		/// Creates a layer at the provided <paramref name="location"/>.
 		/// </summary>
 		/// <param name="parentLayer">The parent layer of the newly created layer.</param>
 		/// <param name="location">The position of the layer on the printable area in points (1/72 inch).</param>
@@ -2310,8 +2310,6 @@ namespace Altaxo.Graph.Gdi
 
 		private class LegendText : TextGraphic
 		{
-			private Serialization.Xml.IXmlDeserializationInfo info;
-
 			#region Serialization
 
 			/// <summary>

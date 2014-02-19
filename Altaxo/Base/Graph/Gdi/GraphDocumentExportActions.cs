@@ -250,7 +250,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="doc">The graph document to export.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
-		/// <param name="areaToExport">The area of the graph to render.</param>
 		/// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
 		/// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
 		/// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
@@ -273,9 +272,6 @@ namespace Altaxo.Graph.Gdi
 				grfx.FillRectangle(backbrush, new Rectangle(0, 0, width, height));
 
 			grfx.PageUnit = GraphicsUnit.Point;
-
-			float zoom;
-			PointF startLocationOnPage;
 
 			grfx.PageScale = 1; // (float)scale;
 
@@ -300,7 +296,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="imageFormat">The format of the destination image.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
-		/// <param name="usePageBounds"></param>
 		/// <param name="sourceDpiResolution">Resolution at which the graph is rendered to a bitmap.</param>
 		/// <param name="destinationDpiResolution">Resolution of the resulting bitmap. This determines the physical size of the bitmap.</param>
 		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
@@ -318,7 +313,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="doc">The graph document to export.</param>
 		/// <param name="stream">The stream to save the metafile into.</param>
 		/// <param name="imageFormat">The format of the destination image.</param>
-		/// <param name="usePageBounds">If <c>true</c>, the page bounds where used.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
 		{
@@ -332,7 +326,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="stream">The stream to save the metafile into.</param>
 		/// <param name="imageFormat">The format of the destination image.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
-		/// <param name="usePageBounds">If <c>true</c>, the page bounds where used as bounding box.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		public static void RenderAsBitmap(this GraphDocument doc, System.IO.Stream stream, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, double dpiResolution)
 		{
@@ -356,7 +349,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="imageFormat">The format of the destination image.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
-		/// <param name="usePageBounds">If <c>true</c>, the page bounds were used for rendering.</param>
 		/// <param name="sourceDpiResolution">Resolution in dpi used to render the graph into the bitmap.</param>
 		/// <param name="destinationDpiResolution">Resolution that is set in the parameters of the bitmap. This determines the physical size of the bitmap.</param>
 		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
@@ -375,7 +367,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="doc">The graph document to export.</param>
 		/// <param name="filename">The filename of the file to save the bitmap into.</param>
 		/// <param name="imageFormat">The format of the destination image.</param>
-		/// <param name="usePageBounds">If <c>true</c>, the page bounds are used for rendering.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, double dpiResolution)
 		{
@@ -390,7 +381,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="filename">The filename of the file to save the bitmap into.</param>
 		/// <param name="imageFormat">The format of the destination image.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
-		/// <param name="usePageBounds">If <c>true</c>, page bounds are used.</param>
 		/// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
 		public static void RenderAsBitmap(this GraphDocument doc, string filename, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, double dpiResolution)
 		{
@@ -427,7 +417,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="stream">The stream to save the metafile into.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be null.</param>
 		/// <param name="pixelformat">The pixel format to use.</param>
-		/// <param name="area">Area to render.</param>
 		/// <param name="scale">Factor that is multiplied with the size of the exported area to determine the size of the bounding box of the meta file.</param>
 		/// <returns>The metafile that was created using the stream.</returns>
 		public static Metafile RenderAsMetafile(GraphDocument doc, Graphics grfx, System.IO.Stream stream, Brush backbrush, PixelFormat pixelformat, double scale)
@@ -473,7 +462,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="stream">The stream to save the metafile into.</param>
 		/// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">The pixel format to use.</param>
-		/// <param name="area">Area to export.</param>
 		/// <param name="sourceDpiResolution">Resolution whith witch the plot is sampled.</param>
 		/// <param name="destinationDpiResolution">Resolution of the bitmap in dpi. Determines the apparent size (width, height) of the bitmap.</param>
 		/// <returns>The metafile that was created using the stream.</returns>

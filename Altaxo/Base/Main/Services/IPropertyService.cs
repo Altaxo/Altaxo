@@ -83,6 +83,7 @@ namespace Altaxo.Main.Services
 		/// </summary>
 		/// <typeparam name="T">Type of the property value.</typeparam>
 		/// <param name="p">The property key.</param>
+		/// <param name="kind">Designates the kind of property to search.</param>
 		/// <returns></returns>
 		T GetValue<T>(Altaxo.Main.Properties.PropertyKey<T> p, RuntimePropertyKind kind);
 

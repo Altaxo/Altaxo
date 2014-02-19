@@ -767,6 +767,7 @@ namespace Altaxo.Graph.Commands
 		/// <summary>
 		/// Internal routine to save a project under a given name.
 		/// </summary>
+		/// <param name="projectToSave">The project to save.</param>
 		/// <param name="filename"></param>
 		private void SaveProject(Altaxo.AltaxoDocument projectToSave, string filename)
 		{

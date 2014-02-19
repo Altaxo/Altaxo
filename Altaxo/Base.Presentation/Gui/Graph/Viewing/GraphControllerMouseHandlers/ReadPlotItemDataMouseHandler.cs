@@ -328,8 +328,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// Find the plot item number of a given plot item.
 		/// </summary>
-		/// <param name="layernumber"></param>
-		/// <param name="plotitem"></param>
+		/// <param name="layer">The layer in which this plot item resides.</param>
+		/// <param name="plotitem">The plot item for which the number should be retrieved.</param>
 		/// <returns></returns>
 		private int GetPlotItemNumber(XYPlotLayer layer, XYColumnPlotItem plotitem)
 		{

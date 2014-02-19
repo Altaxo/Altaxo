@@ -223,12 +223,6 @@ namespace Altaxo.Graph.Gdi
 			/// <summary>The scaling factor of the layer, normally 1.</summary>
 			private double _layerScale = 1;  // Scale
 
-			[field: NonSerialized]
-			private event EventHandler _changed;
-
-			[NonSerialized]
-			private object _parent;
-
 			public XYPlotLayerPositionAndSize_V0()
 			{
 			}

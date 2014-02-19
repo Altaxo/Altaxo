@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,34 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Data;
 
 namespace Altaxo.Gui.Worksheet
 {
 	public interface IMasterCurveCreationMainView
 	{
 		void InitializeDataTab(object guiControl);
+
 		void InitializeEditTab(object guiControl);
 	}
 
 	[UserControllerForObject(typeof(MasterCurveCreation.Options))]
 	[ExpectedTypeOfView(typeof(IMasterCurveCreationMainView))]
-	class MasterCurveCreationMainController : IMVCANController
+	internal class MasterCurveCreationMainController : IMVCANController
 	{
-		MasterCurveCreation.Options _doc;
-		IMasterCurveCreationMainView _view;
+		private MasterCurveCreation.Options _doc;
+		private IMasterCurveCreationMainView _view;
 
-		IMVCANController _dataController;
-		IMVCANController _editController;
+		private IMVCANController _dataController;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -59,7 +60,6 @@ namespace Altaxo.Gui.Worksheet
 				_view.InitializeDataTab(_dataController.ViewObject);
 			}
 		}
-
 
 		public bool InitializeDocument(params object[] args)
 		{

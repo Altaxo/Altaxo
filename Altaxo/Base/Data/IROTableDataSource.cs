@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2013 Dr. Dirk Lellinger
@@ -18,28 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 
-using System.Data;
-
 namespace Altaxo.Data
 {
-
 	public interface IRODataCollection
 	{
 		AltaxoVariant this[int columnIndex, int rowIndex] { get; }
+
 		AltaxoVariant this[string columnName, int rowIndex] { get; }
 	}
 
-	public interface IROPropertyCollection 
+	public interface IROPropertyCollection
 	{
 		AltaxoVariant this[int columnIndex, int propertyIndex] { get; }
+
 		AltaxoVariant this[int columnIndex, string propertyName] { get; }
+
 		AltaxoVariant this[string columnName, string propertyName] { get; }
 	}
 
@@ -50,24 +53,38 @@ namespace Altaxo.Data
 	{
 		// Data itself
 		AltaxoVariant GetData(int columnIndex, int rowIndex);
+
 		AltaxoVariant GetData(string columnName, int rowIndex);
+
 		AltaxoVariant GetColumnProperty(int columnIndex, int propertyIndex);
+
 		AltaxoVariant GetColumnProperty(int columnIndex, string propertyName);
+
 		AltaxoVariant GetColumnProperty(string columnName, string propertyName);
 
 		int ColumnCount { get; }
+
 		int ColumnPropertyCount { get; }
 
 		int GetRowCount(int i);
+
 		string GetColumnName(int i);
+
 		string GetColumnPropertyName(int i);
 	}
 
 	public class DataTableRangeWrapper : IROTableDataSource
 	{
-		DataTable _wrappedTable;
-		int _rangeMin;
-		int _rangeCount;
+		private DataTable _wrappedTable;
+		private int _rangeMin;
+		private int _rangeCount;
+
+		public DataTableRangeWrapper(DataTable wrappedTable, int rangeMin, int rangeCount)
+		{
+			_wrappedTable = wrappedTable;
+			_rangeMin = rangeMin;
+			_rangeCount = rangeCount;
+		}
 
 		public AltaxoVariant GetData(int columnIndex, int rowIndex)
 		{
@@ -127,5 +144,4 @@ namespace Altaxo.Data
 			return _wrappedTable.PropertyColumns.GetColumnName(i);
 		}
 	}
-
 }

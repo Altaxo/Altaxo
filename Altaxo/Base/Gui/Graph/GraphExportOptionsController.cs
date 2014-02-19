@@ -64,7 +64,6 @@ namespace Altaxo.Gui.Graph
 		private SelectableListNodeList _pixelFormat;
 		private SelectableListNodeList _sourceDpi;
 		private SelectableListNodeList _destinationDpi;
-		private SelectableListNodeList _clipboardFormat;
 
 		private IMVCANController _clipboardFormatController;
 

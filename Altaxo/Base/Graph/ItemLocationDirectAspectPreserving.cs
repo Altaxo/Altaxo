@@ -331,7 +331,7 @@ namespace Altaxo.Graph
 		#region Helper funcctions
 
 		/// <summary>
-		/// Internal set absolute size y silent. This function is allowed to set <see cref="_sizeY"/> directly. This is the reason why it is declared as private.
+		/// Internal set absolute size y silent. This function is allowed to set <see cref="ItemLocationDirect._sizeY"/> directly. This is the reason why it is declared as private.
 		/// </summary>
 		/// <param name="value">The value.</param>
 		/// <exception cref="System.InvalidOperationException">_parentSize.Y is undefined or zero</exception>
@@ -346,7 +346,7 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Internal set absolute size y silent. This function is allowed to set <see cref="_sizeY"/> directly. This is the reason why it is declared as private.
+		/// Internal set absolute size y silent. This function is allowed to set <see cref="ItemLocationDirect._sizeY"/> directly. This is the reason why it is declared as private.
 		/// </summary>
 		/// <param name="value">The value.</param>
 		/// <exception cref="System.InvalidOperationException">_parentSize.Y is undefined or zero</exception>

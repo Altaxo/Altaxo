@@ -64,6 +64,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
 		/// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
 		/// labels, yerr, and so on.</param>
+		/// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
 		/// <returns>List of plot items created.</returns>
 		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
@@ -79,6 +80,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="processedColumns">On return, contains all columns that where used in creating the plot items. That are
 		/// not only the columns given in the first argument, but maybe also columns that are right to those columns in the table and have special kinds, like
 		/// labels, yerr, and so on.</param>
+		/// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
 		/// <returns>List of plot items created.</returns>
 		public static List<IGPlotItem> CreatePlotItems(IEnumerable<DataColumn> selectedColumns, string xColumnName, G2DPlotStyleCollection templatePlotStyle, HashSet<DataColumn> processedColumns, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{

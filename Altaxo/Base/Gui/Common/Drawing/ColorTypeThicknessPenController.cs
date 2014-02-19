@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,62 +19,62 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  #region interfaces
+	#region interfaces
 
-  public interface IColorTypeThicknessPenView
-  {
-    IColorTypeThicknessPenViewEventSink Controller { get; set; }
-    PenX DocPen  { get; set; }
+	public interface IColorTypeThicknessPenView
+	{
+		IColorTypeThicknessPenViewEventSink Controller { get; set; }
+
+		PenX DocPen { get; set; }
+
 		void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection);
-  }
+	}
 
-  public interface IColorTypeThicknessPenViewEventSink
-  {
-    void EhView_ShowFullPenDialog();
-  }
+	public interface IColorTypeThicknessPenViewEventSink
+	{
+		void EhView_ShowFullPenDialog();
+	}
 
-  public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, IMVCAController
-  {
-  }
+	public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, IMVCAController
+	{
+	}
 
-  #endregion
-  /// <summary>
-  /// Summary description for ColorTypeWidthPenController.
-  /// </summary>
-  public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
-  {
-    PenX _doc;
-    PenX _tempDoc;
-    IColorTypeThicknessPenView _view;
-		ICollection<Altaxo.Graph.NamedColor> _colorSet;
-		bool _showPlotColorsOnly;
+	#endregion interfaces
 
-	
+	/// <summary>
+	/// Summary description for ColorTypeWidthPenController.
+	/// </summary>
+	public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
+	{
+		private PenX _doc;
+		private PenX _tempDoc;
+		private IColorTypeThicknessPenView _view;
+		private bool _showPlotColorsOnly;
 
-    public ColorTypeThicknessPenController(PenX doc)
-    {
-      if(doc == null) throw new ArgumentNullException("doc");
-      _doc = doc;
-      _tempDoc = (PenX)doc.Clone();
-    }
+		public ColorTypeThicknessPenController(PenX doc)
+		{
+			if (doc == null) throw new ArgumentNullException("doc");
+			_doc = doc;
+			_tempDoc = (PenX)doc.Clone();
+		}
 
-
-    void Initialize()
-    {
-      if(_view!=null)
-      {
-        _view.DocPen = _tempDoc;
+		private void Initialize()
+		{
+			if (_view != null)
+			{
+				_view.DocPen = _tempDoc;
 				_view.SetShowPlotColorsOnly(_showPlotColorsOnly);
-      }
-    }
+			}
+		}
 
 		public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
 		{
@@ -82,63 +83,58 @@ namespace Altaxo.Gui.Common.Drawing
 				_view.SetShowPlotColorsOnly(_showPlotColorsOnly);
 		}
 
-		
-    #region IColorTypeThicknessPenViewEventSink Members
+		#region IColorTypeThicknessPenViewEventSink Members
 
-   
-
-    public void EhView_ShowFullPenDialog()
-    {
-      var ctrl = new PenAllPropertiesController(_tempDoc);
-      Current.Gui.ShowDialog(ctrl, "Pen properties");
+		public void EhView_ShowFullPenDialog()
+		{
+			var ctrl = new PenAllPropertiesController(_tempDoc);
+			Current.Gui.ShowDialog(ctrl, "Pen properties");
 			if (null != _view)
 				_view.DocPen = _tempDoc;
-    }
+		}
 
-    #endregion
+		#endregion IColorTypeThicknessPenViewEventSink Members
 
-    #region IMVCController Members
+		#region IMVCController Members
 
-    public object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
-        if(_view!=null)
-          _view.Controller = null;
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-        _view = value as IColorTypeThicknessPenView;
-        
-        Initialize();
+				_view = value as IColorTypeThicknessPenView;
 
-        if(_view!=null)
-          _view.Controller = this;
-      }
-    }
+				Initialize();
 
-    public object ModelObject
-    {
-      get
-      {
-        
-        return _doc;
-      }
-    }
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-    #endregion
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public bool Apply()
-    {
-      _doc.CopyFrom(_view.DocPen);
-      return true;
-    }
+		#region IApplyController Members
 
-    #endregion
-  }
+		public bool Apply()
+		{
+			_doc.CopyFrom(_view.DocPen);
+			return true;
+		}
+
+		#endregion IApplyController Members
+	}
 }

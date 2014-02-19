@@ -163,7 +163,7 @@ namespace Altaxo.Main
 		/// if the suppress level falls to zero. You can suppress the resume event by setting argument 'suppressResumeEvent' to true.
 		/// </summary>
 		/// <param name="token"></param>
-		/// <param name="suppressResumeEvent">If true, the resume event is suppressed.</param>
+		/// <param name="firingOfResumeEvent">Designates whether or not to fire the resume event.</param>
 		/// <returns>The event count accumulated during the suspend phase.</returns>
 		public int Resume(ref ISuppressToken token, EventFiring firingOfResumeEvent)
 		{

@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// Encapsulates a font in an immutable instance. Please use the <see cref="FontManager"/> to create an instance of this class.
+	/// Encapsulates a font in an immutable instance. Please use the <see cref="Altaxo.Graph.Gdi.GdiFontManager"/> to create an instance of this class (or any other font manager).
 	/// </summary>
 	public sealed class FontX
 	{

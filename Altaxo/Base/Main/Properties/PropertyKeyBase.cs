@@ -125,7 +125,7 @@ namespace Altaxo.Main.Properties
 		/// Function to get a Gui controller in order to edit a property value.
 		/// </summary>
 		/// <param name="originalValue">The orignal property value.</param>
-		/// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="EditingControllerCreation"/> value was not set.</returns>
+		/// <returns>The Gui controller used to edit this value, or null if such a controller could not be created, or the <see cref="PropertyKey{T}.EditingControllerCreation"/> value was not set.</returns>
 		public virtual Gui.IMVCANController CreateEditingController(object originalValue)
 		{
 			return null;
