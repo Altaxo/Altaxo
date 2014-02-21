@@ -75,13 +75,16 @@
 				 title    = "${res:MainWindow.Windows.FileScoutLabel}"
 				 icon     = "PadIcons.FileBrowser"
 				 shortcut = "Control|Alt|F"
-				 class    = "Altaxo.Gui.Pads.FileBrowser.FileBrowserControl" />
+				 defaultPosition = "Right"
+			 class    = "Altaxo.Gui.Pads.FileBrowser.FileBrowserControl" />
 
 		<Pad id       = "AltaxoProjectScout"
 				category = "Main"
 				title    = "${res:MainWindow.Windows.ProjectScoutLabel}"
 				icon     = "PadIcons.ProjectBrowser"
 				shortcut = "Control|Alt|P"
+				precreated = "true"
+				defaultPosition = "Right"
 				class    = "Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowseControl" />
 
 		<Pad id       = "AltaxoOutputWindow"
@@ -90,6 +93,7 @@
 				icon     = "PadIcons.Output"
 				shortcut = "Control|Alt|O"
 				precreated ="true"
+				defaultPosition = "Bottom"
 				class    = "Altaxo.Gui.Pads.OutputWindowController" />
 
 		<Pad id       = "AltaxoDataDisplayWindow"
@@ -98,6 +102,7 @@
 				icon     = "Icons.16x16.ReadData"
 				shortcut = "Control|Alt|D"
 				precreated ="true"
+				defaultPosition = "Bottom"
 				class    = "Altaxo.Gui.Pads.DataDisplayController" />
 
 		<Pad id       = "AltaxoNotesWindow"
@@ -106,6 +111,7 @@
 			 icon     = "Icons.16x16.Notepad"
 			 shortcut = "Control|Alt|N"
 			 precreated ="true"
+			 defaultPosition = "Bottom"
 			 class    = "Altaxo.Gui.Pads.NotesController" />
 	</Path>
 
@@ -323,7 +329,7 @@
 						description="${res:XML.MainMenu.ViewMenu.Margin50Percent.Description}" class="Altaxo.Graph.Commands.Margin50Percent" />
 				</MenuItem>
 			</Condition>
-			<MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen"
+			<MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen" type="CheckBox"
 				description="${res:XML.MainMenu.ViewMenu.FullScreen.Description}" class="ICSharpCode.SharpDevelop.Commands.ToggleFullscreenCommand" />
 		</MenuItem>
 		<!-- Plot menu -->

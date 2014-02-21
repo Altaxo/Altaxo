@@ -30,7 +30,7 @@
     <SyntaxFilters>C#</SyntaxFilters>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <RootNamespaceContainer>False</RootNamespaceContainer>
-    <PresentationStyle>VS2005</PresentationStyle>
+    <PresentationStyle>VS2010</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>HashedMemberName</NamingMethod>
     <HelpTitle>Altaxo Class Library</HelpTitle>
@@ -41,11 +41,12 @@
     <CopyrightHref>http://www.alice-dsl.net/dirklellinger/</CopyrightHref>
     <DocumentationSources>
       <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
-<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
-<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
-<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
-<DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.dll" />
-<DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.xml" /></DocumentationSources>
+      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
+      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
+      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
+      <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.dll" />
+      <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.xml" />
+    </DocumentationSources>
     <WorkingPath>C:\Temp\SandCastleTemp\</WorkingPath>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
     <BuildLogFile>..\Help\LastBuild.log</BuildLogFile>

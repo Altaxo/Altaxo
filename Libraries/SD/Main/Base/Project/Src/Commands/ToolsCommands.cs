@@ -1,10 +1,10 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
-using System;
-using System.Windows.Forms;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
+using System;
+using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
@@ -17,7 +17,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			o.Owner = WorkbenchSingleton.MainWindow;
 			return o.ShowDialog();
 		}
-		
+
 		public static bool? ShowTreeOptions(string dialogTitle, AddInTreeNode node)
 		{
 			TreeViewOptionsDialog o = new TreeViewOptionsDialog(node.BuildChildItems<IOptionPanelDescriptor>(null));
@@ -25,19 +25,43 @@ namespace ICSharpCode.SharpDevelop.Commands
 			o.Owner = WorkbenchSingleton.MainWindow;
 			return o.ShowDialog();
 		}
-		
+
 		public override void Run()
 		{
 			bool? result = ShowTreeOptions(
 				ResourceService.GetString("Dialog.Options.TreeViewOptions.DialogName"),
 				AddInTree.GetTreeNode("/SharpDevelop/Dialogs/OptionsDialog"));
-			if (result == true) {
+			if (result == true)
+			{
 				// save properties after changing options
 				PropertyService.Save();
 			}
 		}
 	}
-	
+
+#if ModifiedForAltaxo
+
+	public class ToggleFullscreenCommand : AbstractMenuCommand, ICSharpCode.Core.ICheckableMenuCommand
+	{
+		public override void Run()
+		{
+			WorkbenchSingleton.Workbench.FullScreen = !WorkbenchSingleton.Workbench.FullScreen;
+		}
+
+		public bool IsChecked
+		{
+			get
+			{
+				return WorkbenchSingleton.Workbench.FullScreen;
+			}
+			set
+			{
+				WorkbenchSingleton.Workbench.FullScreen = value;
+			}
+		}
+	}
+
+#else
 	public class ToggleFullscreenCommand : AbstractMenuCommand
 	{
 		public override void Run()
@@ -45,4 +69,5 @@ namespace ICSharpCode.SharpDevelop.Commands
 			WorkbenchSingleton.Workbench.FullScreen = !WorkbenchSingleton.Workbench.FullScreen;
 		}
 	}
+#endif
 }
