@@ -1327,8 +1327,14 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
 		public virtual string GetNameOfChildObject(object o)
 		{
+			// Note: this is a bit tricky, since this function must work even for layers that are cloned (because they are opened in the layer dialog)
+			// those cloned layers are of course not part of the collection owned by this layer here
 			if (o is HostLayer)
-				return GetDefaultNameOfLayer(((HostLayer)o).IndexOf());
+			{
+				var list = this.IndexOf(); // this should work for this layer here
+				list.Add(((HostLayer)o).LayerNumber);
+				return GetDefaultNameOfLayer(list);
+			}
 			return string.Empty;
 		}
 

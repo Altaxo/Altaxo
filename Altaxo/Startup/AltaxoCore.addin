@@ -63,12 +63,14 @@
 
 	<Path name = "/Altaxo/Workbench/Pads">
 
+		<!-- Sidebar window not used in Altaxo
 		<Pad id       = "SideBar"
 				 category = "Main"
 				 title    = "${res:MainWindow.Windows.ToolbarLabel}"
 				 icon     = "PadIcons.Toolbar"
 				 shortcut = "Control|Alt|X"
 				 class    = "ICSharpCode.SharpDevelop.Gui.ToolsPad" />
+		-->
 
 		<Pad id       = "FileScout"
 				 category = "Main"
