@@ -52,7 +52,7 @@ namespace Altaxo
 			var namedOwner = owner as Main.INameOwner;
 			var proj = Current.Project;
 			ProjectFolderPropertyDocument bag;
-			if (null != namedOwner)
+			if (null != namedOwner && !string.IsNullOrEmpty(namedOwner.Name))
 			{
 				var folder = Main.ProjectFolder.GetFolderPart(namedOwner.Name);
 				while (!string.IsNullOrEmpty(folder))
