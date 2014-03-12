@@ -172,7 +172,7 @@ namespace Altaxo.Graph.Gdi
 				return bGraphItems;
 			});
 
-			InternalCopyGraphItems(from, criterium);
+			InternalCopyGraphItems(from, options, criterium);
 		}
 
 		public override object Clone()

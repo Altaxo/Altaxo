@@ -275,19 +275,41 @@ namespace Altaxo.Graph.Gdi
 				return bGraphItems;
 			});
 
-			InternalCopyGraphItems(from, criterium);
+			InternalCopyGraphItems(from, options, criterium);
 		}
 
-		protected virtual void InternalCopyGraphItems(HostLayer from, Func<IGraphicBase, bool> selectionCriteria)
+		protected virtual void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options, Func<IGraphicBase, bool> selectionCriteria)
 		{
 			var pwThis = _graphObjects.CreatePartialView(x => selectionCriteria(x));
 			var pwFrom = from._graphObjects.CreatePartialView(x => selectionCriteria(x));
+			List<HostLayer> layersToRecycle = new List<HostLayer>(this._childLayers);
+
 			// replace existing items
 			int i, j;
 			for (i = 0, j = 0; i < pwThis.Count && j < pwFrom.Count; j++)
 			{
-				if (pwFrom[j].IsCompatibleWithParent(this))
-					pwThis[i++] = (IGraphicBase)pwFrom[j].Clone();
+				var fromObj = pwFrom[j];
+				if (!fromObj.IsCompatibleWithParent(this))
+					continue;
+
+				IGraphicBase thisObj = null;
+
+				// if fromObj is a layer, then try to "recycle" all the layers on the This side
+				if (fromObj is HostLayer)
+				{
+					var layerToRecycle = layersToRecycle.FirstOrDefault(x => x.GetType() == fromObj.GetType());
+					if (null != layerToRecycle)
+					{
+						layersToRecycle.Remove(layerToRecycle); // this layer is now recycled, thus it is no longer available for another recycling
+						thisObj = (IGraphicBase)layerToRecycle.Clone(); // we have nevertheless to clone, since true recycling is dangerous, because the layer is still in our own collection
+						((HostLayer)thisObj).CopyFrom((HostLayer)fromObj, options); // copy from the other layer
+					}
+				}
+
+				if (null == thisObj) // if not otherwise retrieved, simply clone the fromObj
+					thisObj = (IGraphicBase)pwFrom[j].Clone();
+
+				pwThis[i++] = thisObj; // include in our own collection
 			}
 			// remove superfluous items
 			for (int k = pwThis.Count - 1; k >= i; --k)
