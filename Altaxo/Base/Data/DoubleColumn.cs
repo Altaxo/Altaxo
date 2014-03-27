@@ -2332,6 +2332,102 @@ namespace Altaxo.Data
 			return c3;
 		}
 
+		public static Altaxo.Data.DoubleColumn Pow2(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow2(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow3(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow3(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow4(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow4(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow5(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow5(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow6(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow6(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow7(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow7(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow8(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow8(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow9(Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = Altaxo.Calc.RMath.Pow9(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
 		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, double c2)
 		{
 			int len = c1._count;

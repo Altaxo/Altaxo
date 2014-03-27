@@ -231,8 +231,12 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="options">Copy options.</param>
 		protected virtual void InternalCopyFrom(HostLayer from, GraphCopyOptions options)
 		{
-			this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
-			this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
+			if (null == this._parent)
+			{
+				this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
+				this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
+			}
+
 			this._grid.CopyFrom(from._grid);
 
 			// size, position, rotation and scale

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -33,86 +35,497 @@ namespace Altaxo.Calc
 	/// </remarks>
 	public class ScriptExecutionBase
 	{
-		#region Double_Mathematics
+		#region System Double_Mathematics
+
 		// ------------------- Double Mathematics --------------------------------------
 		public const double E = System.Math.E;
-		public const double PI = System.Math.PI;
-		public static double Abs(double s) { return System.Math.Abs(s); }
-		public static double Acos(double s) { return System.Math.Acos(s); }
-		public static double Asin(double s) { return System.Math.Asin(s); }
-		public static double Atan(double s) { return System.Math.Atan(s); }
-		public static double Atan2(double y, double x) { return System.Math.Atan2(y, x); }
-		public static double Ceiling(double s) { return System.Math.Ceiling(s); }
-		public static double Cos(double s) { return System.Math.Cos(s); }
-		public static double Cosh(double s) { return System.Math.Cosh(s); }
-		public static double Exp(double s) { return System.Math.Exp(s); }
-		public static double Floor(double s) { return System.Math.Floor(s); }
-		public static double IEEERemainder(double x, double y) { return System.Math.IEEERemainder(x, y); }
-		public static double Log(double s) { return System.Math.Log(s); }
-		public static double Log10(double s) { return System.Math.Log10(s); }
-		public static double Log(double s, double bas) { return System.Math.Log(s, bas); }
-		public static double Max(double x, double y) { return System.Math.Max(x, y); }
-		public static double Min(double x, double y) { return System.Math.Min(x, y); }
-		public static double Pow(double x, int y) { return RMath.Pow(x, y); }
-		public static double Pow(double x, double y) { return System.Math.Pow(x, y); }
-		public static double Round(double x) { return System.Math.Round(x); }
-		public static double Round(double x, int i) { return System.Math.Round(x, i); }
-		public static double Sign(double s) { return System.Math.Sign(s); }
-		public static double Sin(double s) { return System.Math.Sin(s); }
-		public static double Sinh(double s) { return System.Math.Sinh(s); }
-		public static double Sqrt(double s) { return System.Math.Sqrt(s); }
-		public static double Tan(double s) { return System.Math.Tan(s); }
-		public static double Tanh(double s) { return System.Math.Tanh(s); }
-		#endregion
 
+		public const double PI = System.Math.PI;
+
+		public static double Abs(double s)
+		{
+			return System.Math.Abs(s);
+		}
+
+		public static double Acos(double s)
+		{
+			return System.Math.Acos(s);
+		}
+
+		public static double Asin(double s)
+		{
+			return System.Math.Asin(s);
+		}
+
+		public static double Atan(double s)
+		{
+			return System.Math.Atan(s);
+		}
+
+		public static double Atan2(double y, double x)
+		{
+			return System.Math.Atan2(y, x);
+		}
+
+		public static double Ceiling(double s)
+		{
+			return System.Math.Ceiling(s);
+		}
+
+		public static double Cos(double s)
+		{
+			return System.Math.Cos(s);
+		}
+
+		public static double Cosh(double s)
+		{
+			return System.Math.Cosh(s);
+		}
+
+		public static double Exp(double s)
+		{
+			return System.Math.Exp(s);
+		}
+
+		public static double Floor(double s)
+		{
+			return System.Math.Floor(s);
+		}
+
+		public static double IEEERemainder(double x, double y)
+		{
+			return System.Math.IEEERemainder(x, y);
+		}
+
+		public static double Log(double s)
+		{
+			return System.Math.Log(s);
+		}
+
+		public static double Log10(double s)
+		{
+			return System.Math.Log10(s);
+		}
+
+		public static double Log(double s, double bas)
+		{
+			return System.Math.Log(s, bas);
+		}
+
+		public static double Max(double x, double y)
+		{
+			return System.Math.Max(x, y);
+		}
+
+		public static double Min(double x, double y)
+		{
+			return System.Math.Min(x, y);
+		}
+
+		public static double Pow(double x, double y)
+		{
+			return System.Math.Pow(x, y);
+		}
+
+		public static double Round(double x)
+		{
+			return System.Math.Round(x);
+		}
+
+		public static double Round(double x, int i)
+		{
+			return System.Math.Round(x, i);
+		}
+
+		public static double Sign(double s)
+		{
+			return System.Math.Sign(s);
+		}
+
+		public static double Sin(double s)
+		{
+			return System.Math.Sin(s);
+		}
+
+		public static double Sinh(double s)
+		{
+			return System.Math.Sinh(s);
+		}
+
+		public static double Sqrt(double s)
+		{
+			return System.Math.Sqrt(s);
+		}
+
+		public static double Tan(double s)
+		{
+			return System.Math.Tan(s);
+		}
+
+		public static double Tanh(double s)
+		{
+			return System.Math.Tanh(s);
+		}
+
+		#endregion System Double_Mathematics
+
+		#region Other Double Mathematics
+
+		/// <summary>Calculates the 2nd power of <paramref name="x"/> (square of <paramref name="x"/>).</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 2nd power of <paramref name="x"/>.</returns>
+		public static double Pow2(double x)
+		{
+			return RMath.Pow2(x);
+		}
+
+		/// <summary>Calculates the 3rd power of <paramref name="x"/> (cube of <paramref name="x"/>).</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 3rd power of <paramref name="x"/>.</returns>
+		public static double Pow3(double x)
+		{
+			return RMath.Pow3(x);
+		}
+
+		/// <summary>Calculates the 4th power of <paramref name="x"/>.</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 4th power of <paramref name="x"/>.</returns>
+		public static double Pow4(double x)
+		{
+			return RMath.Pow4(x);
+		}
+
+		/// <summary>Calculates the 5th power of <paramref name="x"/>.</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 5th power of <paramref name="x"/>.</returns>
+		public static double Pow5(double x)
+		{
+			return RMath.Pow5(x);
+		}
+
+		/// <summary>Calculates the 6th power of <paramref name="x"/>.</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 6th power of <paramref name="x"/>.</returns>
+		public static double Pow6(double x)
+		{
+			return RMath.Pow6(x);
+		}
+
+		/// <summary>Calculates the 7th power of <paramref name="x"/>.</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 7th power of <paramref name="x"/>.</returns>
+		public static double Pow7(double x)
+		{
+			return RMath.Pow7(x);
+		}
+
+		/// <summary>Calculates the 8th power of <paramref name="x"/>.</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 8th power of <paramref name="x"/>.</returns>
+		public static double Pow8(double x)
+		{
+			return RMath.Pow8(x);
+		}
+
+		/// <summary>Calculates the 9th power of <paramref name="x"/>.</summary>
+		/// <param name="x">A double-precision floating-point number.</param>
+		/// <returns>The 9th power of <paramref name="x"/>.</returns>
+		public static double Pow9(double x)
+		{
+			return RMath.Pow9(x);
+		}
+
+		/// <summary>Calculates the number <paramref name="x"/> raised to the specified power <paramref name="i"/>.</summary>
+		/// <param name="x">A double-precision floating-point number to be raised to the power <paramref name="i"/>.</param>
+		/// <param name="exponent">An integer number that specifies the power.</param>
+		/// <returns>The number <paramref name="x"/> raised to the power <paramref name="i"/>.</returns>
+		public static double Pow(double x, int i)
+		{
+			return RMath.Pow(x, i);
+		}
+
+		#endregion Other Double Mathematics
 
 		#region AltaxoDoubleColumn_Mathematics
+
 		// ---------------------- DoubleColumn mathematics -----------------------------
 
-		public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Abs(s); }
-		public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Acos(s); }
-		public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Asin(s); }
-		public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Atan(s); }
-		public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn y, Altaxo.Data.DoubleColumn x) { return Altaxo.Data.DoubleColumn.Atan2(y, x); }
-		public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn y, double x) { return Altaxo.Data.DoubleColumn.Atan2(y, x); }
-		public static Altaxo.Data.DoubleColumn Atan2(double y, Altaxo.Data.DoubleColumn x) { return Altaxo.Data.DoubleColumn.Atan2(y, x); }
-		public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Ceiling(s); }
-		public static Altaxo.Data.DoubleColumn Cos(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Cos(s); }
-		public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Cosh(s); }
-		public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Exp(s); }
-		public static Altaxo.Data.DoubleColumn Floor(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Floor(s); }
-		public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.IEEERemainder(x, y); }
-		public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.IEEERemainder(x, y); }
-		public static Altaxo.Data.DoubleColumn IEEERemainder(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.IEEERemainder(x, y); }
-		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Log(s); }
-		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, Altaxo.Data.DoubleColumn bas) { return Altaxo.Data.DoubleColumn.Log(s, bas); }
-		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, double bas) { return Altaxo.Data.DoubleColumn.Log(s, bas); }
-		public static Altaxo.Data.DoubleColumn Log(double s, Altaxo.Data.DoubleColumn bas) { return Altaxo.Data.DoubleColumn.Log(s, bas); }
-		public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Log10(s); }
-		public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Max(x, y); }
-		public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Max(x, y); }
-		public static Altaxo.Data.DoubleColumn Max(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Max(x, y); }
-		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Min(x, y); }
-		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Min(x, y); }
-		public static Altaxo.Data.DoubleColumn Min(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Min(x, y); }
-		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Pow(x, y); }
-		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, int y) { return Altaxo.Data.DoubleColumn.Pow(x, y); }
-		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Pow(x, y); }
-		public static Altaxo.Data.DoubleColumn Pow(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Pow(x, y); }
-		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x) { return Altaxo.Data.DoubleColumn.Round(x); }
-		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn i) { return Altaxo.Data.DoubleColumn.Round(x, i); }
-		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, int i) { return Altaxo.Data.DoubleColumn.Round(x, i); }
-		public static Altaxo.Data.DoubleColumn Round(double x, Altaxo.Data.DoubleColumn i) { return Altaxo.Data.DoubleColumn.Round(x, i); }
-		public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Sign(s); }
-		public static Altaxo.Data.DoubleColumn Sin(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Sin(s); }
-		public static Altaxo.Data.DoubleColumn Sinh(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Sinh(s); }
-		public static Altaxo.Data.DoubleColumn Sqrt(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Sqrt(s); }
-		public static Altaxo.Data.DoubleColumn Tan(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Tan(s); }
-		public static Altaxo.Data.DoubleColumn Tanh(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Tanh(s); }
-		#endregion
+		public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Abs(s);
+		}
 
+		public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Acos(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Asin(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Atan(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn y, Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Atan2(y, x);
+		}
+
+		public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn y, double x)
+		{
+			return Altaxo.Data.DoubleColumn.Atan2(y, x);
+		}
+
+		public static Altaxo.Data.DoubleColumn Atan2(double y, Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Atan2(y, x);
+		}
+
+		public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Ceiling(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Cos(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Cos(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Cosh(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Exp(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Floor(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Floor(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.IEEERemainder(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn x, double y)
+		{
+			return Altaxo.Data.DoubleColumn.IEEERemainder(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn IEEERemainder(double x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.IEEERemainder(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Log(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, Altaxo.Data.DoubleColumn bas)
+		{
+			return Altaxo.Data.DoubleColumn.Log(s, bas);
+		}
+
+		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, double bas)
+		{
+			return Altaxo.Data.DoubleColumn.Log(s, bas);
+		}
+
+		public static Altaxo.Data.DoubleColumn Log(double s, Altaxo.Data.DoubleColumn bas)
+		{
+			return Altaxo.Data.DoubleColumn.Log(s, bas);
+		}
+
+		public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Log10(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Max(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, double y)
+		{
+			return Altaxo.Data.DoubleColumn.Max(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Max(double x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Max(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Min(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, double y)
+		{
+			return Altaxo.Data.DoubleColumn.Min(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Min(double x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Min(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Pow(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, double y)
+		{
+			return Altaxo.Data.DoubleColumn.Pow(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Pow(double x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Pow(x, y);
+		}
+
+		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Round(x);
+		}
+
+		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn i)
+		{
+			return Altaxo.Data.DoubleColumn.Round(x, i);
+		}
+
+		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn x, int i)
+		{
+			return Altaxo.Data.DoubleColumn.Round(x, i);
+		}
+
+		public static Altaxo.Data.DoubleColumn Round(double x, Altaxo.Data.DoubleColumn i)
+		{
+			return Altaxo.Data.DoubleColumn.Round(x, i);
+		}
+
+		public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Sign(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Sin(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Sin(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Sinh(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Sinh(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Sqrt(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Sqrt(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Tan(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Tan(s);
+		}
+
+		public static Altaxo.Data.DoubleColumn Tanh(Altaxo.Data.DoubleColumn s)
+		{
+			return Altaxo.Data.DoubleColumn.Tanh(s);
+		}
+
+		#endregion AltaxoDoubleColumn_Mathematics
+
+		#region Altaxo DoubleColumn Mathematics (Other)
+
+		/// <summary>Calculates the 2nd power of each element of <paramref name="x"/> (square).</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 2nd power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow2(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow2(x);
+		}
+
+		/// <summary>Calculates the 3rd power of each element of <paramref name="x"/> (cube).</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 3rd power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow3(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow3(x);
+		}
+
+		/// <summary>Calculates the 4th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 4th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow4(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow4(x);
+		}
+
+		/// <summary>Calculates the 5th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 5th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow5(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow5(x);
+		}
+
+		/// <summary>Calculates the 6th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 6th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow6(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow6(x);
+		}
+
+		/// <summary>Calculates the 7th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 7th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow7(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow7(x);
+		}
+
+		/// <summary>Calculates the 8th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 8th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow8(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow8(x);
+		}
+
+		/// <summary>Calculates the 9th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <returns>A new column in which each each element is the 9th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow9(Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Pow9(x);
+		}
+
+		/// <summary>Calculates the <paramref name="i"/>th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing double-precision elements.</param>
+		/// <param name="i">An integer number that specifies the power.</param>
+		/// <returns>A new column in which each each element is the <paramref name="i"/>th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn x, int i)
+		{
+			return Altaxo.Data.DoubleColumn.Pow(x, i);
+		}
+
+		#endregion Altaxo DoubleColumn Mathematics (Other)
 
 		#region AltaxoDataColumn_Mathematics
+
 		// ------------------------- Altaxo.Data.DataColumn mathematics ----------------------------
 		public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DataColumn x)
 		{
@@ -148,6 +561,7 @@ namespace Altaxo.Calc
 				return Altaxo.Data.DoubleColumn.Atan2((Altaxo.Data.DoubleColumn)y, (Altaxo.Data.DoubleColumn)x);
 			else throw new ArgumentException("Error: Try to apply Atan2() to " + y.TypeAndName + " and " + x.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DataColumn y, double x)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -162,7 +576,6 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Atan2() to " + y.GetType() + " and " + x.TypeAndName, "x");
 		}
 
-
 		public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DataColumn x)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -176,7 +589,6 @@ namespace Altaxo.Calc
 				return Altaxo.Data.DoubleColumn.Cos((Altaxo.Data.DoubleColumn)x);
 			else throw new ArgumentException("Error: Try to apply Cos() to " + x.TypeAndName, "x");
 		}
-
 
 		public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DataColumn x)
 		{
@@ -199,27 +611,26 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Floor() to " + x.TypeAndName, "x");
 		}
 
-
 		public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
 				return Altaxo.Data.DoubleColumn.IEEERemainder((Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply IEEERemainder() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DataColumn x, double y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return Altaxo.Data.DoubleColumn.IEEERemainder((Altaxo.Data.DoubleColumn)x, y);
 			else throw new ArgumentException("Error: Try to apply IEEERemainder() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn IEEERemainder(double x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
 				return Altaxo.Data.DoubleColumn.IEEERemainder(x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply IEEERemainder() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
 		}
-
-
 
 		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DataColumn x)
 		{
@@ -234,12 +645,14 @@ namespace Altaxo.Calc
 				return Altaxo.Data.DoubleColumn.Log((Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply Log() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DataColumn x, double y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return Altaxo.Data.DoubleColumn.Log((Altaxo.Data.DoubleColumn)x, y);
 			else throw new ArgumentException("Error: Try to apply Log() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Log(double x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -260,12 +673,14 @@ namespace Altaxo.Calc
 				return Altaxo.Data.DoubleColumn.Max((Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply Max() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DataColumn x, double y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return Altaxo.Data.DoubleColumn.Max((Altaxo.Data.DoubleColumn)x, y);
 			else throw new ArgumentException("Error: Try to apply Max() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Max(double x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -273,19 +688,20 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Max() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
 		}
 
-
 		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
 				return Altaxo.Data.DoubleColumn.Min((Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply Min() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DataColumn x, double y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return Altaxo.Data.DoubleColumn.Min((Altaxo.Data.DoubleColumn)x, y);
 			else throw new ArgumentException("Error: Try to apply Min() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Min(double x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -293,19 +709,20 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Min() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
 		}
 
-
 		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
 				return Altaxo.Data.DoubleColumn.Pow((Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply Pow() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DataColumn x, double y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return Altaxo.Data.DoubleColumn.Pow((Altaxo.Data.DoubleColumn)x, y);
 			else throw new ArgumentException("Error: Try to apply Pow() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Pow(double x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
@@ -319,25 +736,27 @@ namespace Altaxo.Calc
 				return Altaxo.Data.DoubleColumn.Round((Altaxo.Data.DoubleColumn)x);
 			else throw new ArgumentException("Error: Try to apply Round() to " + x.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
 				return Altaxo.Data.DoubleColumn.Round((Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply Round() to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DataColumn x, int y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return Altaxo.Data.DoubleColumn.Round((Altaxo.Data.DoubleColumn)x, y);
 			else throw new ArgumentException("Error: Try to apply Round() to " + x.TypeAndName + " and " + y.GetType() + " " + y.ToString(), "x");
 		}
+
 		public static Altaxo.Data.DoubleColumn Round(double x, Altaxo.Data.DataColumn y)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
 				return Altaxo.Data.DoubleColumn.Round(x, (Altaxo.Data.DoubleColumn)y);
 			else throw new ArgumentException("Error: Try to apply Round() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName, "x");
 		}
-
 
 		public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DataColumn x)
 		{
@@ -381,6 +800,101 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Tanh() to " + x.TypeAndName, "x");
 		}
 
+		#region DataColumn Mathematics (other)
+
+		/// <summary>Calculates the 2nd power of each element of <paramref name="x"/> (square).</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 2nd power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow2(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow2((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow2(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 3rd power of each element of <paramref name="x"/> (cube).</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 3rd power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow3(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow3((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow3(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 4th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 4th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow4(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow4((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow4(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 5th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 5th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow5(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow5((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow5(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 6th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 6th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow6(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow6((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow6(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 7th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 7th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow7(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow7((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow7(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 8th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 8th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow8(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow8((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow8(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the 9th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 9th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow9(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow9((Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Pow9(x) to " + x.TypeAndName);
+		}
+
+		/// <summary>Calculates the <paramref name="i"/>th power of each element of <paramref name="x"/>.</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <param name="i">An integer number that specifies the power.</param>
+		/// <returns>A new column in which each each element is the <paramref name="i"/>th power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DataColumn x, int i)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Pow((Altaxo.Data.DoubleColumn)x, i);
+			else throw new ArgumentException("Error: Try to apply Pow(x,i) to " + x.TypeAndName + " and " + i.GetType() + " " + i.ToString());
+		}
+
+		#endregion DataColumn Mathematics (other)
+
 		#region Non standard functions
 
 		public static Altaxo.Data.DoubleColumn Square(Altaxo.Data.DataColumn x)
@@ -391,12 +905,11 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Square() to " + x.TypeAndName, "x");
 		}
 
-		#endregion
+		#endregion Non standard functions
 
-		#endregion
+		#endregion AltaxoDataColumn_Mathematics
 
 		#region Other helper functions
-
 
 		/// <summary>
 		/// Combines a path with a name to form a full name.
@@ -409,9 +922,7 @@ namespace Altaxo.Calc
 			return Main.ProjectFolder.Combine(directoryPart, namePart);
 		}
 
-		#endregion
-
-
+		#endregion Other helper functions
 	} // end of class ScriptExecutionBase
 
 	/// <summary>
@@ -443,12 +954,11 @@ namespace Altaxo.Calc
 		/// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
 		public virtual void Execute(Altaxo.Data.DataColumn myColumn, IProgressReporter reporter)
 		{
-#pragma warning disable	// calling the obsolete method is intended here		
+#pragma warning disable	// calling the obsolete method is intended here
 			Execute(myColumn);
 #pragma warning restore
 		}
 	}
-
 
 	/// <summary>
 	/// TableScriptExeBase is the base class of all table scripts.
@@ -469,7 +979,6 @@ namespace Altaxo.Calc
 		public virtual void Execute(Altaxo.Data.DataTable myTable)
 		{
 		}
-
 
 		/// <summary>
 		/// Version 2 of the execute method. This method which must be overriden by the table script in order to be able to execute the script.
@@ -593,7 +1102,6 @@ namespace Altaxo.Calc
 			return _dependentVariableNames[i];
 		}
 
-
 		/// <summary>
 		/// Returns the ith parameter name.
 		/// </summary>
@@ -627,14 +1135,13 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// This evaluates a function value. 
+		/// This evaluates a function value.
 		/// </summary>
 		/// <param name="independent">The independent variables.</param>
 		/// <param name="parameters">Parameters for evaluation.</param>
 		/// <param name="result">On return, this array contains the one (or more) evaluated
 		/// function values at the point (independent).</param>
 		public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
-
 
 		#region Change event
 
@@ -652,9 +1159,7 @@ namespace Altaxo.Calc
 		/// </summary>
 		public event Action Changed;
 
-		#endregion
-
-
+		#endregion Change event
 	}
 
 	/// <summary>
@@ -672,7 +1177,4 @@ namespace Altaxo.Calc
 			return double.NaN;
 		}
 	}
-
-
-
 }
