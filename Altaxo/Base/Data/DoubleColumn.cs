@@ -2573,5 +2573,57 @@ namespace Altaxo.Data
 		}
 
 		#endregion Operators
+
+		#region Apply functions
+
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double> function, Altaxo.Data.DoubleColumn c1)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = function(c1._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
+		{
+			int len = c1._count < c2._count ? c1._count : c2._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = function(c1._data[i], c2._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DoubleColumn c1, double c2)
+		{
+			int len = c1._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = function(c1._data[i], c2);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, double c1, Altaxo.Data.DoubleColumn c2)
+		{
+			int len = c2._count;
+			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+			for (int i = 0; i < len; i++)
+			{
+				c3._data[i] = function(c1, c2._data[i]);
+			}
+			c3._count = len;
+			return c3;
+		}
+
+		#endregion Apply functions
 	} // end Altaxo.Data.DoubleColumn
 }

@@ -522,6 +522,45 @@ namespace Altaxo.Calc
 			return Altaxo.Data.DoubleColumn.Pow(x, i);
 		}
 
+		/// <summary>Applies the specified unary <paramref name="function"/> to each element in column <paramref name="x"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">The column containing the elements to which the specified <paramref name="function"/> should be applied.</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the element x[i], i.e. y[i] = function(x[i]).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double> function, Altaxo.Data.DoubleColumn x)
+		{
+			return Altaxo.Data.DoubleColumn.Map(function, x);
+		}
+
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and column <param name="y"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">The column containing the elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
+		/// <param name="y">The column containing the elements to which the specified <paramref name="function"/> should be applied (as second argument of that function).</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the elements x[i] and y[i], i.e. y[i] = function(x[i], y[i]).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Map(function, x, y);
+		}
+
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and to paramenter <param name="y"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">The column containing the elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
+		/// <param name="y">A double-precision numeric value used as second argument of that function.</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the element x[i] and argument y, i.e. y[i] = function(x[i], y).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DoubleColumn x, double y)
+		{
+			return Altaxo.Data.DoubleColumn.Map(function, x, y);
+		}
+
+		/// <summary>Applies the specified binary <paramref name="function"/> to the specified number <paramref name="x"/> and to each element in column <paramref name="x"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">A double-precision numeric value used as first argument of that function.</param>
+		/// <param name="y">The column containing the elements to which the specified <paramref name="function"/> should be applied (as second argument of that function).</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the specified value <paramref name="x"/> and the element y[i], i.e. y[i] = function(x, y[i]).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, double x, Altaxo.Data.DoubleColumn y)
+		{
+			return Altaxo.Data.DoubleColumn.Map(function, x, y);
+		}
+
 		#endregion Altaxo DoubleColumn Mathematics (Other)
 
 		#region AltaxoDataColumn_Mathematics
@@ -805,6 +844,17 @@ namespace Altaxo.Calc
 		/// <summary>Calculates the 2nd power of each element of <paramref name="x"/> (square).</summary>
 		/// <param name="x">A column containing numeric elements.</param>
 		/// <returns>A new column in which each each element is the 2nd power of the corresponding element of column <paramref name="x"/>.</returns>
+		public static Altaxo.Data.DoubleColumn Square(Altaxo.Data.DataColumn x)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return ((Altaxo.Data.DoubleColumn)x) * ((Altaxo.Data.DoubleColumn)x);
+
+			else throw new ArgumentException("Error: Try to apply Square() to " + x.TypeAndName, "x");
+		}
+
+		/// <summary>Calculates the 2nd power of each element of <paramref name="x"/> (square).</summary>
+		/// <param name="x">A column containing numeric elements.</param>
+		/// <returns>A new column in which each each element is the 2nd power of the corresponding element of column <paramref name="x"/>.</returns>
 		public static Altaxo.Data.DoubleColumn Pow2(Altaxo.Data.DataColumn x)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
@@ -893,19 +943,54 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Pow(x,i) to " + x.TypeAndName + " and " + i.GetType() + " " + i.ToString());
 		}
 
-		#endregion DataColumn Mathematics (other)
-
-		#region Non standard functions
-
-		public static Altaxo.Data.DoubleColumn Square(Altaxo.Data.DataColumn x)
+		/// <summary>Applies the specified unary <paramref name="function"/> to each element in column <paramref name="x"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied.</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the element x[i], i.e. y[i] = function(x[i]).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double> function, Altaxo.Data.DataColumn x)
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
-				return ((Altaxo.Data.DoubleColumn)x) * ((Altaxo.Data.DoubleColumn)x);
-
-			else throw new ArgumentException("Error: Try to apply Square() to " + x.TypeAndName, "x");
+				return Altaxo.Data.DoubleColumn.Map(function, (Altaxo.Data.DoubleColumn)x);
+			else throw new ArgumentException("Error: Try to apply Map(Func<double,double>, x) to " + x.TypeAndName);
 		}
 
-		#endregion Non standard functions
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and column <param name="y"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
+		/// <param name="y">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as second argument of that function).</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the elements x[i] and y[i], i.e. y[i] = function(x[i], y[i]).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType() && typeof(Altaxo.Data.DoubleColumn) == y.GetType())
+				return Altaxo.Data.DoubleColumn.Map(function, (Altaxo.Data.DoubleColumn)x, (Altaxo.Data.DoubleColumn)y);
+			else throw new ArgumentException("Error: Try to apply Map(Func<double,double,double>, x, y) to " + x.TypeAndName + " and " + y.TypeAndName, "x");
+		}
+
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and to paramenter <param name="y"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
+		/// <param name="y">A double-precision numeric value used as second argument of that function.</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the element x[i] and argument y, i.e. y[i] = function(x[i], y).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, Altaxo.Data.DataColumn x, double y)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+				return Altaxo.Data.DoubleColumn.Map(function, (Altaxo.Data.DoubleColumn)x, y);
+			else throw new ArgumentException("Error: Try to apply Map(Func<double,double,double>, x, y) to " + x.TypeAndName + " and " + "double", "x");
+		}
+
+		/// <summary>Applies the specified binary <paramref name="function"/> to the specified number <paramref name="x"/> and to each element in column <paramref name="x"/>.</summary>
+		/// <param name="function">The function to apply.</param>
+		/// <param name="x">A double-precision numeric value used as first argument of that function.</param>
+		/// <param name="y">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as second argument of that function).</param>
+		/// <returns>A new column in which each element y[i] is the function applied to the specified value <paramref name="x"/> and the element y[i], i.e. y[i] = function(x, y[i]).</returns>
+		public static Altaxo.Data.DoubleColumn Map(Func<double, double, double> function, double x, Altaxo.Data.DataColumn y)
+		{
+			if (typeof(Altaxo.Data.DoubleColumn) == y.GetType())
+				return Altaxo.Data.DoubleColumn.Map(function, x, (Altaxo.Data.DoubleColumn)y);
+			else throw new ArgumentException("Error: Try to apply Map(Func<double,double,double>, x, y) to " + "double" + " and " + y.TypeAndName, "x");
+		}
+
+		#endregion DataColumn Mathematics (other)
 
 		#endregion AltaxoDataColumn_Mathematics
 
