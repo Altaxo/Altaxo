@@ -248,7 +248,7 @@ namespace Altaxo.Graph.Procedures
 			XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction), new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, ctrl.Doc.GetPropertyContext()));
 
 			var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-			if (null == xylayer)
+			if (null != xylayer)
 				xylayer.PlotItems.Add(fittedCurve);
 
 			return null;
