@@ -919,7 +919,7 @@ namespace Altaxo.Graph.Gdi
 
 		public GraphClipboardExportOptions()
 		{
-			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsNative | GraphCopyPageClipboardFormat.AsDropDownList | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
+			this.ClipboardFormat = GraphCopyPageClipboardFormat.AsDropDownList | GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile | GraphCopyPageClipboardFormat.AsEmbeddedObject | GraphCopyPageClipboardFormat.AsLinkedObject;
 		}
 
 		public GraphClipboardExportOptions(GraphExportOptions from)

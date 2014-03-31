@@ -56,11 +56,19 @@ namespace Altaxo.Com
 			_graphDocumentName = graphDocument.Name;
 			_graphDocumentSize = graphDocument.Size;
 
-			_graphExportOptions = new GraphClipboardExportOptions();
-			_graphExportOptions.CopyFrom(GraphDocumentClipboardActions.CopyPageOptions);
+			_graphExportOptions = graphDocument.GetPropertyValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, () => new GraphClipboardExportOptions());
+			_graphExportOptions = (GraphClipboardExportOptions)_graphExportOptions.Clone();
 			GraphDocumentClipboardActions.GetImageForClipboard(graphDocument, _graphExportOptions, out _graphDocumentClipboardImage, out _graphDocumentDropdownFileName);
-			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-			_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument);
+
+			if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
+			{
+				var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
+				_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument);
+			}
+			else
+			{
+				_altaxoMiniProject = null;
+			}
 		}
 
 		~GraphDocumentDataObject()
@@ -68,6 +76,12 @@ namespace Altaxo.Com
 #if COMLOGGING
 			Debug.ReportInfo("{0} destructor.", this.GetType().Name);
 #endif
+
+			if (null != _dataAdviseHolder)
+			{
+				_dataAdviseHolder.Dispose();
+				_dataAdviseHolder = null;
+			}
 		}
 
 		#region Base class overrides
@@ -78,30 +92,35 @@ namespace Altaxo.Com
 			{
 				var list = new List<Rendering>();
 
-				if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
+				if (null != _altaxoMiniProject && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
 					list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
 				}
 
-				if ((_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile) || _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
+				if ((_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile) &&
+						(_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNative) || _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
+						)
 				{
 					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
 				}
 
-				if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
+				if (_graphDocumentClipboardImage is System.Drawing.Bitmap && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
+				{
+					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+				}
+
+				if (_graphDocumentClipboardImage is System.Drawing.Bitmap && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNative))
 				{
 					list.Add(new Rendering(CF.CF_BITMAP, TYMED.TYMED_GDI, RenderBitmap));
 				}
 
-				if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName))
+				if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName) && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsDropDownList))
 				{
 					list.Add(new Rendering(CF.CF_HDROP, TYMED.TYMED_HGLOBAL, RenderBitmapAsDropFile));
 				}
 
-				if (
-					_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsLinkedObject) &&
-					!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
+				if (!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName) && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsLinkedObject))
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderLinkedObjectDescriptor));

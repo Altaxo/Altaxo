@@ -209,7 +209,12 @@ namespace Altaxo.Com
 			// Process the invoker queue one last time
 			ProcessInvokerQueue();
 
-			_triggeringEvent.Dispose();
+			var locTriggerEvent = _triggeringEvent;
+			if (null != locTriggerEvent)
+			{
+				locTriggerEvent.Dispose();
+			}
+
 			_triggeringEvent = null;
 			_thread = null;
 		}
