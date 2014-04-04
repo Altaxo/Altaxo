@@ -35,6 +35,8 @@ namespace Altaxo.Gui
 {
 	public class GuiFactoryServiceWpfWin : Altaxo.Main.Services.GUIFactoryService
 	{
+		private Stack<System.Windows.Window> _modalWindows = new Stack<System.Windows.Window>();
+
 		#region Still dependent on Windows Forms
 
 		public override IntPtr MainWindowHandle
@@ -56,6 +58,37 @@ namespace Altaxo.Gui
 			get
 			{
 				return (System.Windows.Window)Current.Workbench.ViewObject;
+			}
+		}
+
+		/// <summary>
+		/// Gets the topmost modal window. This is either the main windows of Altaxo (if no dialog is open), or the topmost modal dialog window.
+		/// </summary>
+		/// <value>
+		/// The topmost modal window.
+		/// </value>
+		public System.Windows.Window TopmostModalWindow
+		{
+			get
+			{
+				return 0 != _modalWindows.Count ? _modalWindows.Peek() : MainWindowWpf;
+			}
+		}
+
+		internal bool? InternalShowModalWindow(System.Windows.Window w)
+		{
+			if (null == w)
+				throw new ArgumentNullException("w");
+
+			w.Owner = TopmostModalWindow;
+			_modalWindows.Push(w);
+			try
+			{
+				return w.ShowDialog();
+			}
+			finally
+			{
+				_modalWindows.Pop();
 			}
 		}
 
@@ -135,21 +168,21 @@ namespace Altaxo.Gui
 				var dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
 				dlgctrl.Owner = MainWindowWpf;
 				dlgctrl.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-				var pos = System.Windows.Input.Mouse.GetPosition(MainWindowWpf);
+				var pos = System.Windows.Input.Mouse.GetPosition(TopmostModalWindow);
 				dlgctrl.Top = pos.Y;
 				dlgctrl.Left = pos.X;
-				return (true == dlgctrl.ShowDialog());
+				return (true == InternalShowModalWindow(dlgctrl));
 			}
 			else if (controller.ViewObject is System.Windows.UIElement)
 			{
 				var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject);
 				dlgview.Owner = MainWindowWpf;
 				dlgview.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-				var pos = System.Windows.Input.Mouse.GetPosition(MainWindowWpf);
+				var pos = System.Windows.Input.Mouse.GetPosition(TopmostModalWindow);
 				dlgview.Top = pos.Y;
 				dlgview.Left = pos.X;
 				var dlgctrl = new DialogShellController(dlgview, controller, title, showApplyButton);
-				return true == dlgview.ShowDialog();
+				return true == InternalShowModalWindow(dlgview);
 			}
 			else
 			{
@@ -229,7 +262,7 @@ namespace Altaxo.Gui
 				if (thread.IsAlive)
 				{
 					dlg.Owner = MainWindowWpf;
-					return true == dlg.ShowDialog();
+					return true == InternalShowModalWindow(dlg);
 				}
 			}
 			return false;
@@ -276,7 +309,7 @@ namespace Altaxo.Gui
 				dlg.InitialDirectory = options.InitialDirectory;
 			dlg.RestoreDirectory = options.RestoreDirectory;
 
-			if (true == dlg.ShowDialog(MainWindowWpf))
+			if (true == dlg.ShowDialog(TopmostModalWindow))
 			{
 				options.FileName = dlg.FileName;
 				options.FileNames = dlg.FileNames;
@@ -308,7 +341,7 @@ namespace Altaxo.Gui
 			dlg.OverwritePrompt = options.OverwritePrompt;
 			dlg.AddExtension = options.AddExtension;
 
-			if (true == dlg.ShowDialog(MainWindowWpf))
+			if (true == dlg.ShowDialog(TopmostModalWindow))
 			{
 				options.FileName = dlg.FileName;
 				options.FileNames = dlg.FileNames;
