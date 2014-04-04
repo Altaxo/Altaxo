@@ -56,18 +56,21 @@ namespace Altaxo.Main.Properties
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (PropertyBag)obj;
-				// Add graph properties
-				int numberproperties = s.Count;
-				info.CreateArray("Properties", numberproperties);
+				var keyList = new List<string>(s._properties.Count);
 				foreach (var entry in s._properties)
 				{
-					if (entry.Key.StartsWith("tmp/"))
+					if (entry.Key.StartsWith(TemporaryPropertyPrefixString))
 						continue;
 					if (!info.IsSerializable(entry.Value))
 						continue;
+					keyList.Add(entry.Key);
+				}
+				info.CreateArray("Properties", keyList.Count);
+				foreach (var key in keyList)
+				{
 					info.CreateElement("e");
-					info.AddValue("Key", entry.Key);
-					info.AddValue("Value", entry.Value);
+					info.AddValue("Key", key);
+					info.AddValue("Value", s._properties[key]);
 					info.CommitElement();
 				}
 				info.CommitArray();
@@ -75,8 +78,8 @@ namespace Altaxo.Main.Properties
 
 			public void Deserialize(PropertyBag s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				int count;
-				count = info.OpenArray("Properties");
+				int count = info.OpenArray("Properties");
+
 				for (int i = 0; i < count; i++)
 				{
 					info.OpenElement(); // "e"
