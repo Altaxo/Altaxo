@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,52 +19,52 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Gui;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 
-using Altaxo.Main;
-using Altaxo.Gui;
-using Altaxo.Data;
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Worksheet
 {
-  #region SingleColumnChoice document
+	#region SingleColumnChoice document
 
-  /// <summary>
-  /// Summary description for SingleColumnChoice.
-  /// </summary>
-  public class SingleTableChoice
-  {
+	/// <summary>
+	/// Summary description for SingleColumnChoice.
+	/// </summary>
+	public class SingleTableChoice
+	{
 		public DataTable SelectedTable { get; set; }
-  }
+	}
 
-  #endregion
+	#endregion SingleColumnChoice document
 
-  #region interfaces
+	#region interfaces
 
-  public interface ISingleTreeViewItemChoiceView
-  {
-    /// <summary>
-    /// Initializes the treeview of available data with content.
-    /// </summary>
-    /// <param name="nodes"></param>
-    void Initialize(NGTreeNodeCollection nodes);
+	public interface ISingleTreeViewItemChoiceView
+	{
+		/// <summary>
+		/// Initializes the treeview of available data with content.
+		/// </summary>
+		/// <param name="nodes"></param>
+		void Initialize(NGTreeNodeCollection nodes);
 
 		event Action<NGTreeNode> SelectionChanged;
-  }
+	}
 
-  #endregion
+	#endregion interfaces
 
-  [UserControllerForObject(typeof(SingleTableChoice))]
+	[UserControllerForObject(typeof(SingleTableChoice))]
 	[ExpectedTypeOfView(typeof(ISingleTreeViewItemChoiceView))]
-  public class SingleColumnChoiceController : IMVCANController
+	public class SingleColumnChoiceController : IMVCANController
 	{
 		#region My private nodes
 
-		class TableNode : NGTreeNode
+		private class TableNode : NGTreeNode
 		{
 			public TableNode(DataTable table)
 				: base(false)
@@ -73,7 +74,7 @@ namespace Altaxo.Gui.Worksheet
 			}
 		}
 
-		class StructureNode : NGTreeNode
+		private class StructureNode : NGTreeNode
 		{
 			public override bool IsSelected
 			{
@@ -87,32 +88,32 @@ namespace Altaxo.Gui.Worksheet
 				}
 			}
 		}
-		#endregion
 
-		ISingleTreeViewItemChoiceView _view;
-    SingleTableChoice _doc;
+		#endregion My private nodes
 
-    DataTable _selectedTable = null;
-		NGTreeNode _rootNode = new NGTreeNode();
+		private ISingleTreeViewItemChoiceView _view;
+		private SingleTableChoice _doc;
 
+		private DataTable _selectedTable = null;
+		private NGTreeNode _rootNode = new NGTreeNode();
 
-		public bool  InitializeDocument(params object[] args)
-{
- 	if(null==args || 0==args.Length || !(args[0] is SingleTableChoice))
-		return false;
+		public bool InitializeDocument(params object[] args)
+		{
+			if (null == args || 0 == args.Length || !(args[0] is SingleTableChoice))
+				return false;
 
 			_doc = (SingleTableChoice)args[0];
 			Initialize(true);
 			return true;
-}
+		}
 
-public UseDocument  UseDocumentCopy
-{
-	set {  }
-}
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
 
-    public void Initialize(bool initData)
-    {
+		public void Initialize(bool initData)
+		{
 			if (initData)
 			{
 				var tableCollectionNode = new StructureNode { Text = "Tables", Tag = Current.Project.DataTableCollection };
@@ -122,8 +123,6 @@ public UseDocument  UseDocumentCopy
 				AddAllTableNodes(tableCollectionNode);
 
 				tableCollectionNode.IsExpanded = true;
-
-			
 
 				if (null != _doc.SelectedTable)
 				{
@@ -135,12 +134,11 @@ public UseDocument  UseDocumentCopy
 				}
 			}
 
-      if(_view!=null)
-      {
-        _view.Initialize(_rootNode.Nodes);
-      }
-    }
-
+			if (_view != null)
+			{
+				_view.Initialize(_rootNode.Nodes);
+			}
+		}
 
 		public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
 		{
@@ -157,37 +155,35 @@ public UseDocument  UseDocumentCopy
 			}
 		}
 
-
-		NGTreeNode FindTableNode(NGTreeNode tableCollectionNode, DataTable table)
+		private NGTreeNode FindTableNode(NGTreeNode tableCollectionNode, DataTable table)
 		{
-			NGTreeNode result=null;
+			NGTreeNode result = null;
 
-			foreach(NGTreeNode node in tableCollectionNode.Nodes)
-				if(object.ReferenceEquals(node.Tag,table))
+			foreach (NGTreeNode node in tableCollectionNode.Nodes)
+				if (object.ReferenceEquals(node.Tag, table))
 				{
-					result=node;
+					result = node;
 					return result;
 				}
 
-			foreach(NGTreeNode node in tableCollectionNode.Nodes)
+			foreach (NGTreeNode node in tableCollectionNode.Nodes)
 			{
 				result = FindTableNode(node, table);
-				if(null!=result)
+				if (null != result)
 					return result;
 			}
 
 			return result;
 		}
 
-    private NGTreeNode FindNode(NGTreeNodeCollection nodecoll, string txt)
-    {
-      foreach(var nd in nodecoll)
-        if(nd.Text==txt)
-          return nd;
+		private NGTreeNode FindNode(NGTreeNodeCollection nodecoll, string txt)
+		{
+			foreach (var nd in nodecoll)
+				if (nd.Text == txt)
+					return nd;
 
-      return null;
-    }
-
+			return null;
+		}
 
 		public void EhSelectionChanged(NGTreeNode node)
 		{
@@ -197,25 +193,22 @@ public UseDocument  UseDocumentCopy
 				_selectedTable = null;
 		}
 
+		#region IMVCController Members
 
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
 				if (_view != null)
 				{
 					_view.SelectionChanged -= this.EhSelectionChanged;
 				}
 
 				_view = value as ISingleTreeViewItemChoiceView;
-        
 
 				if (_view != null)
 				{
@@ -223,49 +216,48 @@ public UseDocument  UseDocumentCopy
 
 					_view.SelectionChanged += this.EhSelectionChanged;
 				}
-      }
-    }
+			}
+		}
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public bool Apply()
-    {
-      if(_selectedTable != null)
-      {
-        _doc.SelectedTable = _selectedTable;
-        return true;
-      }
+		#region IApplyController Members
 
-      return false;
-    }
+		public bool Apply()
+		{
+			if (_selectedTable != null)
+			{
+				_doc.SelectedTable = _selectedTable;
+				return true;
+			}
 
-    #endregion
+			return false;
+		}
 
-    #region ISingleColumnChoiceViewEventSink Members
+		#endregion IApplyController Members
 
-    protected NGTreeNode GetRootNode(NGTreeNode node)
-    {
-      while(node.ParentNode!=null)
-        node = node.ParentNode;
+		#region ISingleColumnChoiceViewEventSink Members
 
-      return node;
-    }
+		protected NGTreeNode GetRootNode(NGTreeNode node)
+		{
+			while (node.ParentNode != null)
+				node = node.ParentNode;
 
-   
+			return node;
+		}
 
-    #endregion
-  
-
-}
-
+		#endregion ISingleColumnChoiceViewEventSink Members
+	}
 }

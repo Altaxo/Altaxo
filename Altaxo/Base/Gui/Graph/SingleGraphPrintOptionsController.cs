@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,27 +29,41 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Graph;
 	using Altaxo.Collections;
+	using Altaxo.Graph;
 
 	public interface ISingleGraphPrintOptionsView
 	{
 		void Init_PrintLocation(SelectableListNodeList list);
+
 		void Init_FitGraphToPrintIfLarger(bool val);
+
 		void Init_FitGraphToPrintIfSmaller(bool val);
+
 		void Init_PrintCopMarks(bool val);
+
 		void Init_RotatePageAutomatically(bool value);
+
 		void Init_TilePages(bool value);
+
 		void Init_UseFixedZoomFactor(bool val);
+
 		void Init_ZoomFactor(double val);
 
 		event Action PrintLocationChanged;
+
 		event Action<bool> FitGraphToPrintIfLargerChanged;
+
 		event Action<bool> FitGraphToPrintIfSmallerChanged;
+
 		event Action<bool> PrintCropMarksChanged;
+
 		event Action<bool> RotatePageAutomaticallyChanged;
+
 		event Action<bool> TilePagesChanged;
+
 		event Action<bool> UseFixedZoomFactorChanged;
+
 		event Action<double> ZoomFactorChanged;
 	}
 
@@ -55,13 +71,13 @@ namespace Altaxo.Gui.Graph
 	[UserControllerForObject(typeof(SingleGraphPrintOptions))]
 	public class SingleGraphPrintOptionsController : IMVCANController
 	{
-		SingleGraphPrintOptions _doc, _originalDoc;
-		ISingleGraphPrintOptionsView _view;
-		UseDocument _useDocumentCopy;
+		private SingleGraphPrintOptions _doc, _originalDoc;
+		private ISingleGraphPrintOptionsView _view;
+		private UseDocument _useDocumentCopy;
 
-		SelectableListNodeList _printLocationList;
+		private SelectableListNodeList _printLocationList;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -80,43 +96,48 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhPrintLocationChanged()
+		private void EhPrintLocationChanged()
 		{
 			_doc.PrintLocation = (SingleGraphPrintLocation)_printLocationList.FirstSelectedNode.Tag;
 		}
 
-		void EhFitGraphToPrintIfLargerChanged(bool val)
+		private void EhFitGraphToPrintIfLargerChanged(bool val)
 		{
 			_doc.FitGraphToPrintIfLarger = val;
 		}
-		void EhFitGraphToPrintIfSmallerChanged(bool val)
+
+		private void EhFitGraphToPrintIfSmallerChanged(bool val)
 		{
 			_doc.FitGraphToPrintIfSmaller = val;
 		}
-		void EhPrintCropMarksChanged(bool val)
+
+		private void EhPrintCropMarksChanged(bool val)
 		{
 			_doc.PrintCropMarks = val;
 		}
 
-		void EhRotatePageAutomaticallyChanged(bool val)
+		private void EhRotatePageAutomaticallyChanged(bool val)
 		{
 			_doc.RotatePageAutomatically = val;
 		}
-		void EhTilePagesChanged(bool val)
+
+		private void EhTilePagesChanged(bool val)
 		{
 			_doc.TilePages = val;
 		}
-		void EhUseFixedZoomFactorChanged(bool val)
+
+		private void EhUseFixedZoomFactorChanged(bool val)
 		{
 			_doc.UseFixedZoomFactor = val;
 		}
-		void EhZoomFactorChanged(double val)
+
+		private void EhZoomFactorChanged(double val)
 		{
 			_doc.ZoomFactor = val;
 		}
 
+		#region IMVCANController
 
-		#region  IMVCANController
 		public bool InitializeDocument(params object[] args)
 		{
 			if (null == args || args.Length == 0 || !(args[0] is SingleGraphPrintOptions))
@@ -172,7 +193,6 @@ namespace Altaxo.Gui.Graph
 					_view.TilePagesChanged += this.EhTilePagesChanged;
 					_view.UseFixedZoomFactorChanged += this.EhUseFixedZoomFactorChanged;
 					_view.ZoomFactorChanged += this.EhZoomFactorChanged;
-
 				}
 			}
 		}
@@ -180,6 +200,10 @@ namespace Altaxo.Gui.Graph
 		public object ModelObject
 		{
 			get { return _originalDoc; }
+		}
+
+		public void Dispose()
+		{
 		}
 
 		public bool Apply()
@@ -190,6 +214,6 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IMVCANController
 	}
 }

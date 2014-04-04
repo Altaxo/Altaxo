@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,120 +19,126 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Graph.Gdi.Plot.Groups;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface IWaterfallTransformView
-  {
-    string XScale { get; set; }
-    string YScale { get; set; }
-    bool UseClipping { get; set; }
-  }
+	#region Interfaces
 
-  #endregion
+	public interface IWaterfallTransformView
+	{
+		string XScale { get; set; }
 
-  [UserControllerForObject(typeof(WaterfallTransform))]
-  [ExpectedTypeOfView(typeof(IWaterfallTransformView))]
-  public class WaterfallTransformController : IMVCANController
-  {
-    IWaterfallTransformView _view;
-    WaterfallTransform _doc;
+		string YScale { get; set; }
 
-    void Initialize(bool a)
-    {
-      if (_view != null)
-      {
-        _view.XScale = Altaxo.Serialization.GUIConversion.ToString(_doc.XScale);
-        _view.YScale = Altaxo.Serialization.GUIConversion.ToString(_doc.YScale);
-        _view.UseClipping = _doc.UseClipping;
-      }
-    }
+		bool UseClipping { get; set; }
+	}
 
-    #region IMVCANController Members
+	#endregion Interfaces
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0)
-        return false;
-      WaterfallTransform doc = args[0] as WaterfallTransform;
-      if (doc == null)
-        return false;
-      _doc = doc;
-      Initialize(true);
-      return true;
-    }
+	[UserControllerForObject(typeof(WaterfallTransform))]
+	[ExpectedTypeOfView(typeof(IWaterfallTransformView))]
+	public class WaterfallTransformController : IMVCANController
+	{
+		private IWaterfallTransformView _view;
+		private WaterfallTransform _doc;
 
-    public UseDocument UseDocumentCopy
-    {
-      set { }
-    }
+		private void Initialize(bool a)
+		{
+			if (_view != null)
+			{
+				_view.XScale = Altaxo.Serialization.GUIConversion.ToString(_doc.XScale);
+				_view.YScale = Altaxo.Serialization.GUIConversion.ToString(_doc.YScale);
+				_view.UseClipping = _doc.UseClipping;
+			}
+		}
 
+		#region IMVCANController Members
 
-    #endregion
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0)
+				return false;
+			WaterfallTransform doc = args[0] as WaterfallTransform;
+			if (doc == null)
+				return false;
+			_doc = doc;
+			Initialize(true);
+			return true;
+		}
 
-    #region IMVCController Members
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as IWaterfallTransformView;
-        if (_view != null)
-        {
-          Initialize(false);
-        }
-      }
-    }
+		#endregion IMVCANController Members
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		#region IMVCController Members
 
-    #endregion
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value as IWaterfallTransformView;
+				if (_view != null)
+				{
+					Initialize(false);
+				}
+			}
+		}
 
-    #region IApplyController Members
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-    public bool Apply()
-    {
-      _doc.UseClipping = _view.UseClipping;
+		public void Dispose()
+		{
+		}
 
-      double xscale, yscale;
+		#endregion IMVCController Members
 
-      if (Altaxo.Serialization.GUIConversion.IsDouble(_view.XScale, out xscale))
-      {
-        _doc.XScale = xscale;
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("XScale must contain a valid number");
-        return false;
-      }
-      if (Altaxo.Serialization.GUIConversion.IsDouble(_view.YScale, out yscale))
-      {
-        _doc.YScale = yscale;
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("YScale must contain a valid number");
-        return false;
-      }
+		#region IApplyController Members
 
+		public bool Apply()
+		{
+			_doc.UseClipping = _view.UseClipping;
 
-      return true;
-    }
+			double xscale, yscale;
 
-    #endregion
-  }
+			if (Altaxo.Serialization.GUIConversion.IsDouble(_view.XScale, out xscale))
+			{
+				_doc.XScale = xscale;
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("XScale must contain a valid number");
+				return false;
+			}
+			if (Altaxo.Serialization.GUIConversion.IsDouble(_view.YScale, out yscale))
+			{
+				_doc.YScale = yscale;
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("YScale must contain a valid number");
+				return false;
+			}
+
+			return true;
+		}
+
+		#endregion IApplyController Members
+	}
 }

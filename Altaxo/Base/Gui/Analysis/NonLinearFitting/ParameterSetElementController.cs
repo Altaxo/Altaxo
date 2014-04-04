@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,149 +19,151 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-
+#endregion Copyright
 
 using Altaxo.Calc.Regression.Nonlinear;
-
+using System;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-  public interface IParameterSetElementView
-  {
-    void Initialize(string name, string value, bool vary, string variance);
-    IParameterSetElementViewEventSink Controller { get; set; }
-  }
+	public interface IParameterSetElementView
+	{
+		void Initialize(string name, string value, bool vary, string variance);
 
-  public interface IParameterSetElementViewEventSink
-  {
-    void EhView_ParameterValidating(string value, System.ComponentModel.CancelEventArgs e);
-    void EhView_VarianceValidating(string value, System.ComponentModel.CancelEventArgs e);
-    void EhView_VarySelectionChanged(bool value);
-  }
+		IParameterSetElementViewEventSink Controller { get; set; }
+	}
 
-  public interface IParameterSetElementController : IMVCAController, IParameterSetElementViewEventSink , Altaxo.Gui.IRefreshable
-  {
-  }
+	public interface IParameterSetElementViewEventSink
+	{
+		void EhView_ParameterValidating(string value, System.ComponentModel.CancelEventArgs e);
 
-  /// <summary>
-  /// Summary description for ParameterSetElementControl.
-  /// </summary>
-  [UserControllerForObject(typeof(ParameterSetElement),100)]
-  [ExpectedTypeOfView(typeof(IParameterSetElementView))]
-  public class ParameterSetElementController : IParameterSetElementController 
-  {
-    ParameterSetElement _doc;
-    ParameterSetElement _tempdoc;
-    IParameterSetElementView _view;
+		void EhView_VarianceValidating(string value, System.ComponentModel.CancelEventArgs e);
 
+		void EhView_VarySelectionChanged(bool value);
+	}
 
-    public ParameterSetElementController(ParameterSetElement doc)
-    {
-      _doc = doc;
-      _tempdoc = new ParameterSetElement(doc);
-    }
+	public interface IParameterSetElementController : IMVCAController, IParameterSetElementViewEventSink, Altaxo.Gui.IRefreshable
+	{
+	}
 
-    protected void Initialize()
-    {
-      if(_view!=null)
-      {
-        _view.Initialize(_tempdoc.Name,
-          Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Parameter),
-          _tempdoc.Vary,
-          Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Variance)
-          );
-      }
-    }
+	/// <summary>
+	/// Summary description for ParameterSetElementControl.
+	/// </summary>
+	[UserControllerForObject(typeof(ParameterSetElement), 100)]
+	[ExpectedTypeOfView(typeof(IParameterSetElementView))]
+	public class ParameterSetElementController : IParameterSetElementController
+	{
+		private ParameterSetElement _doc;
+		private ParameterSetElement _tempdoc;
+		private IParameterSetElementView _view;
 
-    /// <summary>
-    /// Called when the doc has changed outside the controller. All changes that have been
-    /// made manually are discarded, and the values of the changed document are shown on the view.
-    /// </summary>
-    public void Refresh()
-    {
-      // the doc has 
-      _tempdoc = new ParameterSetElement(_doc);
-      Initialize();
-    }
+		public ParameterSetElementController(ParameterSetElement doc)
+		{
+			_doc = doc;
+			_tempdoc = new ParameterSetElement(doc);
+		}
 
-    public void EhView_ParameterValidating(string value, System.ComponentModel.CancelEventArgs e)
-    {
-      if(Altaxo.Serialization.GUIConversion.IsDouble(value))
-      {
-        double t;
-        Altaxo.Serialization.GUIConversion.IsDouble(value,out t);
-        _tempdoc.Parameter = t;
-      }
-      else
-      {
-        e.Cancel = true;
-      }
-    }
+		protected void Initialize()
+		{
+			if (_view != null)
+			{
+				_view.Initialize(_tempdoc.Name,
+					Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Parameter),
+					_tempdoc.Vary,
+					Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Variance)
+					);
+			}
+		}
 
-    public void EhView_VarianceValidating(string value, System.ComponentModel.CancelEventArgs e)
-    {
-      if(Altaxo.Serialization.GUIConversion.IsDouble(value))
-      {
-        double t;
-        Altaxo.Serialization.GUIConversion.IsDouble(value,out t);
-        _tempdoc.Variance = t;
-      }
-      else
-      {
-        e.Cancel = true;
-      }
-    }
+		/// <summary>
+		/// Called when the doc has changed outside the controller. All changes that have been
+		/// made manually are discarded, and the values of the changed document are shown on the view.
+		/// </summary>
+		public void Refresh()
+		{
+			// the doc has
+			_tempdoc = new ParameterSetElement(_doc);
+			Initialize();
+		}
 
-    public void EhView_VarySelectionChanged(bool value)
-    {
-      _tempdoc.Vary = value;
-    }
+		public void EhView_ParameterValidating(string value, System.ComponentModel.CancelEventArgs e)
+		{
+			if (Altaxo.Serialization.GUIConversion.IsDouble(value))
+			{
+				double t;
+				Altaxo.Serialization.GUIConversion.IsDouble(value, out t);
+				_tempdoc.Parameter = t;
+			}
+			else
+			{
+				e.Cancel = true;
+			}
+		}
 
+		public void EhView_VarianceValidating(string value, System.ComponentModel.CancelEventArgs e)
+		{
+			if (Altaxo.Serialization.GUIConversion.IsDouble(value))
+			{
+				double t;
+				Altaxo.Serialization.GUIConversion.IsDouble(value, out t);
+				_tempdoc.Variance = t;
+			}
+			else
+			{
+				e.Cancel = true;
+			}
+		}
 
-    #region IMVCController Members
+		public void EhView_VarySelectionChanged(bool value)
+		{
+			_tempdoc.Vary = value;
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
-        if(_view!=null)
-          _view.Controller = null;
+		#region IMVCController Members
 
-        _view = value as IParameterSetElementView;
-        
-        Initialize();
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-        if(_view!=null)
-          _view.Controller = this;
-      }
-    }
+				_view = value as IParameterSetElementView;
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+				Initialize();
 
-    #endregion
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-    #region IApplyController Members
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    public bool Apply()
-    {
-      _doc.CopyFrom(_tempdoc);
-      return true;
-    }
+		public void Dispose()
+		{
+		}
 
-    #endregion
-  }
+		#endregion IMVCController Members
+
+		#region IApplyController Members
+
+		public bool Apply()
+		{
+			_doc.CopyFrom(_tempdoc);
+			return true;
+		}
+
+		#endregion IApplyController Members
+	}
 }

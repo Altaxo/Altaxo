@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Graph.Gdi;
 using Altaxo.Gui;
-using Altaxo.Collections;
+using System;
 
 namespace Altaxo.Gui.Graph
 {
@@ -35,16 +36,15 @@ namespace Altaxo.Gui.Graph
 	public interface IDensityScaleView
 	{
 		void InitializeAxisType(SelectableListNodeList names);
+
 		void SetBoundaryView(object guiobject);
+
 		void SetScaleView(object guiobject);
 
 		event Action AxisTypeChanged;
 	}
 
-	
-
-
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Lets the user choose a numerical scale.
@@ -59,7 +59,6 @@ namespace Altaxo.Gui.Graph
 		protected Scale _originalScale;
 
 		protected Scale _tempScale;
-
 
 		protected IMVCAController _boundaryController;
 
@@ -81,7 +80,6 @@ namespace Altaxo.Gui.Graph
 		{
 			set { }
 		}
-
 
 		public void Initialize(bool initData)
 		{
@@ -172,11 +170,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-	
-
-
-		#endregion
-
+		#endregion View event handlers
 
 		#region IMVCAController
 
@@ -203,6 +197,10 @@ namespace Altaxo.Gui.Graph
 			get { return this._originalScale; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			if (null != _scaleController)
@@ -211,22 +209,17 @@ namespace Altaxo.Gui.Graph
 					return false;
 			}
 
-		
-				if (null != _boundaryController)
-				{
-					if (false == _boundaryController.Apply())
-						return false;
-				}
+			if (null != _boundaryController)
+			{
+				if (false == _boundaryController.Apply())
+					return false;
+			}
 
-				_originalScale = _tempScale;
+			_originalScale = _tempScale;
 
 			return true; // all ok
 		}
 
-		#endregion
-
-	
-
-}
-
+		#endregion IMVCAController
+	}
 }

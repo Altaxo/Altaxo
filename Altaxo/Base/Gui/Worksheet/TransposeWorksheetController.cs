@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Gui;
+using System;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -29,64 +31,66 @@ namespace Altaxo.Gui.Worksheet
 
 	public interface ITransposeWorksheetView
 	{
-		
-    /// <summary>
-    /// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
-    /// </summary>
+		/// <summary>
+		/// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
+		/// </summary>
 		int DataColumnsMoveToPropertyColumns { get; set; }
 
-		 /// <summary>
-    /// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
-    /// </summary>
+		/// <summary>
+		/// Get/sets the number of property columns that are moved after transposing the data columns to the data columns collection.
+		/// </summary>
 		int PropertyColumnsMoveToDataColumns { get; set; }
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
-  /// Summary description for TransposeWorksheetController.
-  /// </summary>
+	/// Summary description for TransposeWorksheetController.
+	/// </summary>
 	[ExpectedTypeOfView(typeof(ITransposeWorksheetView))]
-  public class TransposeWorksheetController : IMVCAController
-  {
-    Altaxo.Data.DataTable _table;
-    ITransposeWorksheetView _view;
+	public class TransposeWorksheetController : IMVCAController
+	{
+		private Altaxo.Data.DataTable _table;
+		private ITransposeWorksheetView _view;
 
-    public TransposeWorksheetController(Altaxo.Data.DataTable table)
-    {
-      _table = table;
-    }
-    #region IApplyController Members
+		public TransposeWorksheetController(Altaxo.Data.DataTable table)
+		{
+			_table = table;
+		}
 
-   
+		#region IApplyController Members
 
-    public bool Apply()
-    {
-      Altaxo.Data.Transposing.Transpose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
-      return true;
-    }
+		public bool Apply()
+		{
+			Altaxo.Data.Transposing.Transpose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
+			return true;
+		}
 
-    #endregion
+		#endregion IApplyController Members
 
-    #region IMVCController Members
+		#region IMVCController Members
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as ITransposeWorksheetView;
-      }
-    }
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value as ITransposeWorksheetView;
+			}
+		}
 
-    public object ModelObject
-    {
-      get { return null; }
-    }
+		public object ModelObject
+		{
+			get { return null; }
+		}
 
-    #endregion
-  }
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
+	}
 }

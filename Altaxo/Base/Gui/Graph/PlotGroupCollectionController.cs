@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Collections;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Groups;
-using Altaxo.Main.Services;
-
 namespace Altaxo.Gui.Graph
 {
-
 	#region Interface
 
 	public interface IPlotGroupCollectionView
@@ -50,26 +50,26 @@ namespace Altaxo.Gui.Graph
 		void SetAdvancedView(object viewObject);
 
 		event Action GotoAdvanced;
-		event Action GotoSimple;
 
+		event Action GotoSimple;
 	}
 
+	#endregion Interface
 
-	#endregion
 	/// <summary>
 	/// This is the controller for a <see cref="PlotGroupStyleCollection"/> that choose between the simple and the advanced presentation mode.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IPlotGroupCollectionView))]
 	public class PlotGroupCollectionController : IMVCANController
 	{
-		IPlotGroupCollectionView _view;
-		PlotGroupStyleCollection _origdoc;
-		PlotGroupStyleCollection _doc;
+		private IPlotGroupCollectionView _view;
+		private PlotGroupStyleCollection _origdoc;
+		private PlotGroupStyleCollection _doc;
 
-		PlotGroupCollectionControllerAdvanced _controllerAdvanced;
-		PlotGroupCollectionControllerSimple _controllerSimple;
+		private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
+		private PlotGroupCollectionControllerSimple _controllerSimple;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -107,11 +107,11 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#region  IMVCANController
+		#region IMVCANController
 
 		public bool InitializeDocument(params object[] args)
 		{
-			if (args == null || args.Length==0 || !(args[0] is PlotGroupStyleCollection))
+			if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
 				return false;
 			_origdoc = (PlotGroupStyleCollection)args[0];
 			_doc = _origdoc.Clone();
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Graph
 
 		public UseDocument UseDocumentCopy
 		{
-			set {  }
+			set { }
 		}
 
 		public object ViewObject
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhView_GotoSimple()
+		private void EhView_GotoSimple()
 		{
 			_controllerAdvanced.Apply();
 			_doc = (PlotGroupStyleCollection)_controllerAdvanced.ModelObject;
@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhView_GotoAdvanced()
+		private void EhView_GotoAdvanced()
 		{
 			_controllerSimple.Apply();
 			_doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
@@ -184,6 +184,10 @@ namespace Altaxo.Gui.Graph
 		public object ModelObject
 		{
 			get { return _origdoc; }
+		}
+
+		public void Dispose()
+		{
 		}
 
 		public bool Apply()
@@ -210,6 +214,6 @@ namespace Altaxo.Gui.Graph
 			return result;
 		}
 
-		#endregion  IMVCANController
+		#endregion IMVCANController
 	}
 }

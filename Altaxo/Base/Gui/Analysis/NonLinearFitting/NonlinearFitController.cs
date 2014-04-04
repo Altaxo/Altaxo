@@ -655,6 +655,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 
 		#region IApplyController Members

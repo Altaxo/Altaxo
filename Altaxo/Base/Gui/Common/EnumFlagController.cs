@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,43 +19,43 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Common
 {
-  public interface IEnumFlagView
-  {
+	public interface IEnumFlagView
+	{
 		/// <summary>
 		/// Initializes the names. The view can set i.e. checks for each item which is selected. The view is responsible for updating
 		/// the <see cref="SelectableListNode.IsSelected"/> property when a check is set or unset.
 		/// </summary>
 		/// <param name="names"></param>
-    void Initialize(SelectableListNodeList names);
-  }
+		void Initialize(SelectableListNodeList names);
+	}
 
-  [UserControllerForObject(typeof(System.Enum))]
-  [ExpectedTypeOfView(typeof(IEnumFlagView))]
-  class EnumFlagController : IMVCANController
-  {
-    System.Enum _doc;
-    long _tempDoc;
-    IEnumFlagView _view;
+	[UserControllerForObject(typeof(System.Enum))]
+	[ExpectedTypeOfView(typeof(IEnumFlagView))]
+	internal class EnumFlagController : IMVCANController
+	{
+		private System.Enum _doc;
+		private long _tempDoc;
+		private IEnumFlagView _view;
 
-		SelectableListNodeList _list;
+		private SelectableListNodeList _list;
 
-		int _checkedChangeLock=0;
+		private int _checkedChangeLock = 0;
 
-    void Initialize(bool initData)
-    {
-      if (initData)
-      {
+		private void Initialize(bool initData)
+		{
+			if (initData)
+			{
 				_list = new SelectableListNodeList();
 				var values = System.Enum.GetValues(_doc.GetType());
 				foreach (var val in values)
@@ -63,21 +64,21 @@ namespace Altaxo.Gui.Common
 					node.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNode_PropertyChanged);
 					_list.Add(node);
 				}
-      }
+			}
 
-      if (_view != null)
-      {
-        _view.Initialize(_list);
-      }
-    }
+			if (_view != null)
+			{
+				_view.Initialize(_list);
+			}
+		}
 
-		void EhNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void EhNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (0 != _checkedChangeLock || "IsSelected" != e.PropertyName)
 				return;
 
 			var node = (SelectableListNode)sender;
-			
+
 			bool b = node.IsSelected;
 			long x = Convert.ToInt64(node.Tag); // get the selected flag
 
@@ -93,31 +94,30 @@ namespace Altaxo.Gui.Common
 					_tempDoc &= ~x;
 			}
 
-
 			++_checkedChangeLock; // avoid recursive calls when changing the checks in the view
 			CalculateChecksFromDoc();
 			--_checkedChangeLock;
 		}
 
-		static bool IsChecked(object flag, long document)
+		private static bool IsChecked(object flag, long document)
 		{
 			long x = Convert.ToInt64(flag);
 			if (x == 0)
-				return 0==document;
+				return 0 == document;
 			else
 				return (x == (x & document));
 		}
 
-    void CalculateChecksFromDoc()
-    {
+		private void CalculateChecksFromDoc()
+		{
 			foreach (var n in _list)
 			{
 				n.IsSelected = IsChecked(n.Tag, _tempDoc);
 			}
-    }
+		}
 
-    void CalculateEnumFromChecks()
-    {
+		private void CalculateEnumFromChecks()
+		{
 			// calculate enum from checks
 			long sum = 0;
 			for (int i = 0; i < _list.Count; i++)
@@ -127,67 +127,68 @@ namespace Altaxo.Gui.Common
 					sum |= x;
 			}
 			_tempDoc = sum;
-    }
+		}
 
+		#region IMVCANController Members
 
-   
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args.Length == 0 || !(args[0] is System.Enum))
+				return false;
 
-    #region IMVCANController Members
+			_doc = (System.Enum)args[0];
+			_tempDoc = ((IConvertible)_doc).ToInt64(System.Globalization.CultureInfo.InvariantCulture);
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args.Length == 0 || !(args[0] is System.Enum))
-        return false;
+			Initialize(true);
 
-      _doc = (System.Enum)args[0];
-      _tempDoc = ((IConvertible)_doc).ToInt64(System.Globalization.CultureInfo.InvariantCulture);
+			return true;
+		}
 
-      Initialize(true);
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
 
-      return true;
-    }
+		#endregion IMVCANController Members
 
-    public UseDocument UseDocumentCopy
-    {
-      set { }
-    }
+		#region IMVCController Members
 
-    #endregion
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value as IEnumFlagView;
 
-    #region IMVCController Members
+				if (null != _view)
+				{
+					Initialize(false);
+				}
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as IEnumFlagView;
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-        if (null != _view)
-        {
-          Initialize(false);
-        }
-      }
-    }
+		public void Dispose()
+		{
+		}
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		#endregion IMVCController Members
 
-    #endregion
+		#region IApplyController Members
 
-    #region IApplyController Members
+		public bool Apply()
+		{
+			_doc = (System.Enum)System.Enum.ToObject(_doc.GetType(), _tempDoc);
+			return true;
+		}
 
-    public bool Apply()
-    {
-      _doc = (System.Enum)System.Enum.ToObject(_doc.GetType(), _tempDoc);
-      return true;
-    }
-
-    #endregion
-  }
+		#endregion IApplyController Members
+	}
 }

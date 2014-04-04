@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,231 +19,246 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
+using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
+using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
-using Altaxo.Data;
-using Altaxo.Calc.Regression.Nonlinear;
-
+using System;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-  #region interfaces
+	#region interfaces
 
-  public interface IFitElementView
-  {
-    IFitElementViewEventSink Controller { get; set; }
-    void Initialize(FitElement fitElement);
-    void Refresh();
-    bool FitFunctionSelected { set; }
-  }
+	public interface IFitElementView
+	{
+		IFitElementViewEventSink Controller { get; set; }
 
-  public interface IFitElementViewEventSink
-  {
-    void EhView_ChooseIndependentColumn(int idx);
-    void EhView_ChooseDependentColumn(int idx);
-    void EhView_ChooseErrorFunction(int idx);
-    void EhView_ChooseFitFunction();
-    void EhView_ChooseExternalParameter(int idx);
-    void EhView_ChooseFitRange();
+		void Initialize(FitElement fitElement);
 
-    void EhView_DeleteDependentVariable(int idx);
-    void EhView_EditFitFunction();
-  }
+		void Refresh();
 
-  public interface IFitElementController : IMVCAController
-  {
-    event EventHandler FitFunctionSelectionChange;
-    bool FitFunctionSelected { set; }
-  }
+		bool FitFunctionSelected { set; }
+	}
 
-  #endregion
+	public interface IFitElementViewEventSink
+	{
+		void EhView_ChooseIndependentColumn(int idx);
 
-  /// <summary>
-  /// Summary description for FitElementController.
-  /// </summary>
-  [UserControllerForObject(typeof(FitElement))]
-  [ExpectedTypeOfView(typeof(IFitElementView))]
-  public class FitElementController: IFitElementViewEventSink, IFitElementController
-  {
-    IFitElementView _view;
-    FitElement _doc;
+		void EhView_ChooseDependentColumn(int idx);
 
-    public FitElementController(FitElement doc)
-    {
-      _doc = doc;
-    }
+		void EhView_ChooseErrorFunction(int idx);
 
-    public void Initialize()
-    {
-      if(_view!=null)
-      {
-        _view.Initialize(_doc);
-      }
-    }
+		void EhView_ChooseFitFunction();
 
-    public bool FitFunctionSelected
-    {
-      set
-      {
-        if(null!=_view)
-          _view.FitFunctionSelected = value;
-      }
-    }
-    #region IFitElementController
+		void EhView_ChooseExternalParameter(int idx);
 
-    public void EhView_ChooseFitRange()
-    {
-      object range = _doc.GetRowRange();
-      if (Current.Gui.ShowDialog(ref range, "Choose fit range"))
-      {
-        _doc.SetRowRange((ContiguousNonNegativeIntegerRange)range);
-        _view.Refresh();
-      }
-    }
+		void EhView_ChooseFitRange();
 
-    public void EhView_ChooseIndependentColumn(int idx)
-    {
-      SingleColumnChoice choice = new SingleColumnChoice();
-      choice.SelectedColumn = _doc.IndependentVariables(idx) as DataColumn;
-      object choiceAsObject = choice;
-      if(Current.Gui.ShowDialog(ref choiceAsObject,"Select independent column"))
-      {
-        choice = (SingleColumnChoice)choiceAsObject;
+		void EhView_DeleteDependentVariable(int idx);
 
-        if (choice.SelectedColumn is INumericColumn)
-        {
-          _doc.SetIndependentVariable(idx, (INumericColumn)choice.SelectedColumn);
-        }
-        else
-        {
-          Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
-        }
-      }
-      _view.Refresh();
-    }
-    public void EhView_ChooseDependentColumn(int idx)
-    {
-      SingleColumnChoice choice = new SingleColumnChoice();
-      choice.SelectedColumn = _doc.DependentVariables(idx) as DataColumn;
-      object choiceAsObject = choice;
-      if (Current.Gui.ShowDialog(ref choiceAsObject, "Select dependent column"))
-      {
-        choice = (SingleColumnChoice)choiceAsObject;
+		void EhView_EditFitFunction();
+	}
 
-        if (choice.SelectedColumn is INumericColumn)
-        {
-          _doc.SetDependentVariable(idx, (INumericColumn)choice.SelectedColumn);
-        }
-        else
-        {
-          Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
-        }
-      }
-      _view.Refresh();
-    }
+	public interface IFitElementController : IMVCAController
+	{
+		event EventHandler FitFunctionSelectionChange;
 
-    public void EhView_ChooseExternalParameter(int idx)
-    {
-      string choice = _doc.ParameterName(idx);
-      object choiceAsObject = choice;
-      if (Current.Gui.ShowDialog(ref choiceAsObject, "Edit parameter name"))
-      {
-        choice = (string)choiceAsObject;
+		bool FitFunctionSelected { set; }
+	}
 
-        if (choice.Length>0)
-        {
-          _doc.SetParameterName(choice,idx);
-        }
-        else
-        {
-          Current.Gui.ErrorMessageBox("Choosen parameter name was empty!");
-        }
-      }
-      _view.Refresh();
-    }
+	#endregion interfaces
 
-    public void EhView_DeleteDependentVariable(int idx)
-    {
-      _doc.SetDependentVariable(idx,null);
-      _view.Refresh();
-    }
-    public void EhView_ChooseErrorFunction(int idx)
-    {
-      SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling),_doc.GetErrorEvaluation(idx));
+	/// <summary>
+	/// Summary description for FitElementController.
+	/// </summary>
+	[UserControllerForObject(typeof(FitElement))]
+	[ExpectedTypeOfView(typeof(IFitElementView))]
+	public class FitElementController : IFitElementViewEventSink, IFitElementController
+	{
+		private IFitElementView _view;
+		private FitElement _doc;
 
-      object choiceAsObject = choice;
-      if(Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
-      {
-        choice = (SingleInstanceChoice)choiceAsObject;
-        _doc.SetErrorEvaluation(idx,(IVarianceScaling)choice.Instance);
-        _view.Refresh();
-      }
-    }
+		public FitElementController(FitElement doc)
+		{
+			_doc = doc;
+		}
 
-    public void EhView_EditFitFunction()
-    {
-      object fitFunc = _doc.FitFunction;
-      if(Current.Gui.ShowDialog(ref fitFunc, "Edit fit function"))
-        _doc.FitFunction = (IFitFunction)fitFunc;
-    }
+		public void Initialize()
+		{
+			if (_view != null)
+			{
+				_view.Initialize(_doc);
+			}
+		}
 
-    public event EventHandler FitFunctionSelectionChange;
-    public void EhView_ChooseFitFunction()
-    {
-      if(null!=FitFunctionSelectionChange)
-        FitFunctionSelectionChange(this,EventArgs.Empty);
+		public bool FitFunctionSelected
+		{
+			set
+			{
+				if (null != _view)
+					_view.FitFunctionSelected = value;
+			}
+		}
 
-      _view.Refresh();
-    }
-  
-    #endregion
+		#region IFitElementController
 
-    #region IMVCController Members
+		public void EhView_ChooseFitRange()
+		{
+			object range = _doc.GetRowRange();
+			if (Current.Gui.ShowDialog(ref range, "Choose fit range"))
+			{
+				_doc.SetRowRange((ContiguousNonNegativeIntegerRange)range);
+				_view.Refresh();
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
-        if(_view!=null)
-          _view.Controller = null;
+		public void EhView_ChooseIndependentColumn(int idx)
+		{
+			SingleColumnChoice choice = new SingleColumnChoice();
+			choice.SelectedColumn = _doc.IndependentVariables(idx) as DataColumn;
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select independent column"))
+			{
+				choice = (SingleColumnChoice)choiceAsObject;
 
-        _view = value as IFitElementView;
-        
-        Initialize();
+				if (choice.SelectedColumn is INumericColumn)
+				{
+					_doc.SetIndependentVariable(idx, (INumericColumn)choice.SelectedColumn);
+				}
+				else
+				{
+					Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
+				}
+			}
+			_view.Refresh();
+		}
 
-        if(_view!=null)
-          _view.Controller = this;
-      }
-    }
+		public void EhView_ChooseDependentColumn(int idx)
+		{
+			SingleColumnChoice choice = new SingleColumnChoice();
+			choice.SelectedColumn = _doc.DependentVariables(idx) as DataColumn;
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select dependent column"))
+			{
+				choice = (SingleColumnChoice)choiceAsObject;
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+				if (choice.SelectedColumn is INumericColumn)
+				{
+					_doc.SetDependentVariable(idx, (INumericColumn)choice.SelectedColumn);
+				}
+				else
+				{
+					Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
+				}
+			}
+			_view.Refresh();
+		}
 
-    #endregion
+		public void EhView_ChooseExternalParameter(int idx)
+		{
+			string choice = _doc.ParameterName(idx);
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Edit parameter name"))
+			{
+				choice = (string)choiceAsObject;
 
-    #region IApplyController Members
+				if (choice.Length > 0)
+				{
+					_doc.SetParameterName(choice, idx);
+				}
+				else
+				{
+					Current.Gui.ErrorMessageBox("Choosen parameter name was empty!");
+				}
+			}
+			_view.Refresh();
+		}
 
-    public bool Apply()
-    {
-    
-      return true;
-    }
+		public void EhView_DeleteDependentVariable(int idx)
+		{
+			_doc.SetDependentVariable(idx, null);
+			_view.Refresh();
+		}
 
-    #endregion
-  }
+		public void EhView_ChooseErrorFunction(int idx)
+		{
+			SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling), _doc.GetErrorEvaluation(idx));
+
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
+			{
+				choice = (SingleInstanceChoice)choiceAsObject;
+				_doc.SetErrorEvaluation(idx, (IVarianceScaling)choice.Instance);
+				_view.Refresh();
+			}
+		}
+
+		public void EhView_EditFitFunction()
+		{
+			object fitFunc = _doc.FitFunction;
+			if (Current.Gui.ShowDialog(ref fitFunc, "Edit fit function"))
+				_doc.FitFunction = (IFitFunction)fitFunc;
+		}
+
+		public event EventHandler FitFunctionSelectionChange;
+
+		public void EhView_ChooseFitFunction()
+		{
+			if (null != FitFunctionSelectionChange)
+				FitFunctionSelectionChange(this, EventArgs.Empty);
+
+			_view.Refresh();
+		}
+
+		#endregion IFitElementController
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
+
+				_view = value as IFitElementView;
+
+				Initialize();
+
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
+
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
+
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
+
+		#region IApplyController Members
+
+		public bool Apply()
+		{
+			return true;
+		}
+
+		#endregion IApplyController Members
+	}
 }

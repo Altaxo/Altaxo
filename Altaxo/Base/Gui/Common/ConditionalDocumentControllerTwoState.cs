@@ -162,6 +162,10 @@ namespace Altaxo.Gui.Common
 			get { return _isInEnabledState ? _controllerForEnabledState.ModelObject : null; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			if (null != _controllerForEnabledState)

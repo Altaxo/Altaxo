@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Main;
-using Altaxo.Data;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -38,8 +39,7 @@ namespace Altaxo.Gui.Worksheet
 		void InitializeListData(List<SelectableListNodeList> list);
 	}
 
-
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Responsible for the ordering of multiple curves that subsequently can be used to form a master curve.
@@ -48,59 +48,57 @@ namespace Altaxo.Gui.Worksheet
 	[ExpectedTypeOfView(typeof(IMasterCurveCreationDataView))]
 	public class MasterCurveCreationDataController : IMVCANController
 	{
-		IMasterCurveCreationDataView _view;
-		List<List<DoubleColumn>> _doc;
-		List<List<DoubleColumn>> _docOriginal;
+		private IMasterCurveCreationDataView _view;
+		private List<List<DoubleColumn>> _doc;
+		private List<List<DoubleColumn>> _docOriginal;
 
-		List<SelectableListNodeList> _viewList;
+		private List<SelectableListNodeList> _viewList;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
-			if(initData)
+			if (initData)
 			{
 				_viewList = new List<SelectableListNodeList>();
 
-				foreach(var srcGroup in _doc)
+				foreach (var srcGroup in _doc)
 				{
 					var destGroup = new SelectableListNodeList();
 					_viewList.Add(destGroup);
-					foreach(var srcEle in srcGroup)
+					foreach (var srcEle in srcGroup)
 					{
-						var destEle = new SelectableListNode(DocumentPath.GetAbsolutePath(srcEle).ToString(),srcEle,false);
+						var destEle = new SelectableListNode(DocumentPath.GetAbsolutePath(srcEle).ToString(), srcEle, false);
 						destGroup.Add(destEle);
 					}
 				}
 			}
-			if(null!=_view)
+			if (null != _view)
 			{
 				_view.InitializeListData(_viewList);
 			}
 		}
 
-
-		void CopyDoc(List<List<DoubleColumn>> src, List<List<DoubleColumn>> dest)
+		private void CopyDoc(List<List<DoubleColumn>> src, List<List<DoubleColumn>> dest)
 		{
 			dest.Clear();
-			foreach(var e1 in src)
+			foreach (var e1 in src)
 			{
 				var destElement = new List<DoubleColumn>();
 				dest.Add(destElement);
-				foreach(var e2 in e1)
+				foreach (var e2 in e1)
 				{
 					destElement.Add(e2);
 				}
 			}
 		}
 
-
 		public bool InitializeDocument(params object[] args)
 		{
-			if(args==null || args.Length==0 || !(args[0] is List<List<DoubleColumn>>))
+			if (args == null || args.Length == 0 || !(args[0] is List<List<DoubleColumn>>))
 				return false;
 
 			_docOriginal = args[0] as List<List<DoubleColumn>>;
 			_doc = new List<List<DoubleColumn>>();
-			CopyDoc(_docOriginal,_doc);
+			CopyDoc(_docOriginal, _doc);
 
 			Initialize(true);
 
@@ -132,6 +130,10 @@ namespace Altaxo.Gui.Worksheet
 		public object ModelObject
 		{
 			get { return _docOriginal; }
+		}
+
+		public void Dispose()
+		{
 		}
 
 		public bool Apply()

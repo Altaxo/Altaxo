@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,16 +30,17 @@ using System.Text;
 namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Graph.Gdi.Plot;
+
 	#region Interfaces
 
 	public interface IDensityImagePlotItemOptionView
 	{
 		event Action CopyImageToClipboard;
+
 		event Action SaveImageToDisc;
 	}
 
-
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Controls the option tab page in the <see cref="DensityImagePlotItem"/> dialog. This tab page allows only
@@ -46,14 +49,14 @@ namespace Altaxo.Gui.Graph
 	[ExpectedTypeOfView(typeof(IDensityImagePlotItemOptionView))]
 	public class DensityImagePlotItemOptionController : IMVCANController
 	{
-		IDensityImagePlotItemOptionView _view;
-		DensityImagePlotItem _doc;
+		private IDensityImagePlotItemOptionView _view;
+		private DensityImagePlotItem _doc;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 		}
 
-		void EhCopyImageToClipboard()
+		private void EhCopyImageToClipboard()
 		{
 			var bitmap = _doc.GetPixelwiseImage();
 			bitmap.RotateFlip(System.Drawing.RotateFlipType.Rotate90FlipNone);
@@ -62,20 +65,19 @@ namespace Altaxo.Gui.Graph
 			Current.Gui.SetClipboardDataObject(dao);
 		}
 
-		void EhSaveImageToDisc()
+		private void EhSaveImageToDisc()
 		{
 			var saveOptions = new Gui.SaveFileOptions() { Title = "Choose a file name to save the image" };
 			saveOptions.AddFilter("*.png", "Png files (*.png)");
 			saveOptions.AddFilter("*.tif", "Tiff files (*.tif)");
 			if (!Current.Gui.ShowSaveFileDialog(saveOptions))
 				return;
-			
+
 			var bitmap = _doc.GetPixelwiseImage();
 			bitmap.RotateFlip(System.Drawing.RotateFlipType.Rotate90FlipNone);
 
 			bitmap.Save(saveOptions.FileName);
 		}
-
 
 		#region IMVCController Members
 
@@ -109,7 +111,11 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IMVCANController Members
 
@@ -127,7 +133,7 @@ namespace Altaxo.Gui.Graph
 			set { }
 		}
 
-		#endregion
+		#endregion IMVCANController Members
 
 		#region IApplyController Members
 
@@ -136,6 +142,6 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

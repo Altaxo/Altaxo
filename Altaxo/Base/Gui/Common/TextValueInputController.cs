@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,184 +19,181 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.ComponentModel;
 
 namespace Altaxo.Gui.Common
 {
-  [ExpectedTypeOfView(typeof(ISingleValueView))]
-  public class TextValueInputController : IMVCAController
-  {
-    ISingleValueView m_View;
-    string _captionText;
+	[ExpectedTypeOfView(typeof(ISingleValueView))]
+	public class TextValueInputController : IMVCAController
+	{
+		private ISingleValueView m_View;
+		private string _captionText;
 
-    string m_InitialContents;
-    string m_Contents;
-		bool _isContentsValid = true;
+		private string m_InitialContents;
+		private string m_Contents;
+		private bool _isContentsValid = true;
 
-    private IStringValidator m_Validator;
+		private IStringValidator m_Validator;
 
+		public TextValueInputController(string initialcontents, string description)
+		{
+			m_InitialContents = initialcontents;
+			m_Contents = initialcontents;
+			_captionText = description;
+		}
 
-    public TextValueInputController(string initialcontents, string description)
-    {
-      m_InitialContents = initialcontents;
-      m_Contents = initialcontents;
-      _captionText = description;
-    }
+		private void Initialize()
+		{
+			if (m_View != null)
+			{
+				m_View.DescriptionText = _captionText;
+				m_View.ValueText = m_InitialContents;
+			}
+		}
 
-    void Initialize()
-    {
-      if (m_View != null)
-      {
-        m_View.DescriptionText= _captionText;
-        m_View.ValueText = m_InitialContents;
-      }
-    }
+		private ISingleValueView View
+		{
+			get { return m_View; }
+			set
+			{
+				if (m_View != null)
+					m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-    ISingleValueView View
-    {
-      get { return m_View; }
-      set
-      {
-        if (m_View != null)
-          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+				m_View = value;
+				Initialize();
 
-        m_View = value;
-        Initialize();
+				if (m_View != null)
+					m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+			}
+		}
 
-        if (m_View != null)
-          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+		public string InputText
+		{
+			get { return m_Contents; }
+		}
 
-      }
-    }
+		public IStringValidator Validator
+		{
+			set { m_Validator = value; }
+		}
 
-    public string InputText
-    {
-      get { return m_Contents; }
-    }
+		#region ISingleValueFormController Members
 
-    public IStringValidator Validator
-    {
-      set { m_Validator = value; }
-    }
-
-   
-
-
-    #region ISingleValueFormController Members
-
-    public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
-    {
+		public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
+		{
 			_isContentsValid = true;
 			m_Contents = e.ValueToValidate;
-      if (m_Validator != null)
-      {
-        string err = m_Validator.Validate(m_Contents);
-        if (null != err)
-        {
+			if (m_Validator != null)
+			{
+				string err = m_Validator.Validate(m_Contents);
+				if (null != err)
+				{
 					_isContentsValid = false;
 					e.AddError(err);
 					return;
-        }
-      }
-      else // if no validating handler, use some default validation
-      {
-        if (null == m_Contents || 0 == m_Contents.Length)
-        {
+				}
+			}
+			else // if no validating handler, use some default validation
+			{
+				if (null == m_Contents || 0 == m_Contents.Length)
+				{
 					_isContentsValid = false;
 					e.AddError("You have to enter a value!");
 					return;
-        }
-      }
-    }
+				}
+			}
+		}
 
-    #endregion
+		#endregion ISingleValueFormController Members
 
-    #region Validator classes
+		#region Validator classes
 
-    /// <summary>
-    /// Provides an interface to a validator to validates the user input
-    /// </summary>
-    public interface IStringValidator
-    {
-      /// <summary>
-      /// Validates if the user input in txt is valid user input.
-      /// </summary>
-      /// <param name="txt">The text entered by the user.</param>
-      /// <returns>Null if this input is valid, error message else.</returns>
-      string Validate(string txt);
-    }
+		/// <summary>
+		/// Provides an interface to a validator to validates the user input
+		/// </summary>
+		public interface IStringValidator
+		{
+			/// <summary>
+			/// Validates if the user input in txt is valid user input.
+			/// </summary>
+			/// <param name="txt">The text entered by the user.</param>
+			/// <returns>Null if this input is valid, error message else.</returns>
+			string Validate(string txt);
+		}
 
-    /// <summary>
-    /// Provides a validator that tests if the string entered is empty.
-    /// </summary>
-    public class NonEmptyStringValidator : IStringValidator
-    {
-      protected string m_EmptyMessage = "You have not entered text. Please enter text!";
+		/// <summary>
+		/// Provides a validator that tests if the string entered is empty.
+		/// </summary>
+		public class NonEmptyStringValidator : IStringValidator
+		{
+			protected string m_EmptyMessage = "You have not entered text. Please enter text!";
 
+			public NonEmptyStringValidator()
+			{
+			}
 
-      public NonEmptyStringValidator()
-      {
-      }
+			public NonEmptyStringValidator(string errmsg)
+			{
+				m_EmptyMessage = errmsg;
+			}
 
-      public NonEmptyStringValidator(string errmsg)
-      {
-        m_EmptyMessage = errmsg;
-      }
+			public virtual string Validate(string txt)
+			{
+				if (txt == null || txt.Trim().Length == 0)
+					return m_EmptyMessage;
+				else
+					return null;
+			}
+		}
 
-      public virtual string Validate(string txt)
-      {
-        if (txt == null || txt.Trim().Length == 0)
-          return m_EmptyMessage;
-        else
-          return null;
-      }
-    }
+		#endregion Validator classes
 
-    #endregion
+		#region IMVCController Members
 
-    #region IMVCController Members
+		public object ViewObject
+		{
+			get
+			{
+				return m_View;
+			}
+			set
+			{
+				if (m_View != null)
+					m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-    public object ViewObject
-    {
-      get
-      {
-        return m_View;
-      }
-      set
-      {
-        if (m_View != null)
-          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
-       
-        m_View = value as ISingleValueView;
-        if (m_View != null)
-        {
-          Initialize();
-          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
-        }
-      }
-    }
+				m_View = value as ISingleValueView;
+				if (m_View != null)
+				{
+					Initialize();
+					m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+				}
+			}
+		}
 
-    public object ModelObject
-    {
-      get { return m_InitialContents; }
-    }
+		public object ModelObject
+		{
+			get { return m_InitialContents; }
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public bool Apply()
-    {
-			if(_isContentsValid)
-	      m_InitialContents = m_Contents;
+		#region IApplyController Members
+
+		public bool Apply()
+		{
+			if (_isContentsValid)
+				m_InitialContents = m_Contents;
 			return _isContentsValid;
-    }
+		}
 
-    #endregion
-  } // end of class TextValueInputController
-
-  
+		#endregion IApplyController Members
+	} // end of class TextValueInputController
 }

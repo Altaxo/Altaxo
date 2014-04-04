@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
+#endregion Copyright
 
 using Altaxo.Serialization;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui.Common
 {
 	public class EquallySpacedInterval
 	{
 		public EquallySpacedIntervalSpecificationMethod Method { get; set; }
+
 		public double Start { get; set; }
+
 		public double End { get; set; }
+
 		public double Count { get; set; }
+
 		public double Interval { get; set; }
 
 		public double this[int k]
@@ -57,31 +62,37 @@ namespace Altaxo.Gui.Common
 
 	#region Interfaces
 
-
-
 	public interface IEquallySpacedIntervalView
 	{
 		event Action<EquallySpacedIntervalSpecificationMethod> MethodChanged;
+
 		event Action<string> StartChanged;
+
 		event Action<string> EndChanged;
+
 		event Action<string> CountChanged;
+
 		event Action<string> IntervalChanged;
 
 		event Action<CancelEventArgs> CountValidating;
-		event Action<CancelEventArgs> IntervalValidating;
 
+		event Action<CancelEventArgs> IntervalValidating;
 
 		void EnableEditBoxes(bool start, bool end, bool count, bool interval);
 
 		void InitializeMethod(EquallySpacedIntervalSpecificationMethod method);
+
 		void InitializeStart(string text);
+
 		void InitializeEnd(string text);
+
 		void InitializeCount(string text);
+
 		void InitializeInterval(string text);
 	}
 
+	#endregion Interfaces
 
-	#endregion
 	/// <summary>
 	/// Summary description for FitEnsembleController.
 	/// </summary>
@@ -89,15 +100,14 @@ namespace Altaxo.Gui.Common
 	[ExpectedTypeOfView(typeof(IEquallySpacedIntervalView))]
 	public class EquallySpacedIntervalController : IMVCANController
 	{
-		IEquallySpacedIntervalView _view;
-		EquallySpacedInterval _doc;
+		private IEquallySpacedIntervalView _view;
+		private EquallySpacedInterval _doc;
 
-		EquallySpacedIntervalSpecificationMethod _currentMethod;
+		private EquallySpacedIntervalSpecificationMethod _currentMethod;
 
-		double _start, _end, _count, _interval;
+		private double _start, _end, _count, _interval;
 
-
-		void Initialize(bool initDoc)
+		private void Initialize(bool initDoc)
 		{
 			if (initDoc)
 			{
@@ -131,11 +141,10 @@ namespace Altaxo.Gui.Common
 				_view.InitializeStart(sEnd);
 				_view.InitializeStart(sCount);
 				_view.InitializeStart(sInterval);
-
 			}
 		}
 
-		void EhMethodChanged(EquallySpacedIntervalSpecificationMethod method)
+		private void EhMethodChanged(EquallySpacedIntervalSpecificationMethod method)
 		{
 			_currentMethod = method;
 			switch (method)
@@ -143,41 +152,45 @@ namespace Altaxo.Gui.Common
 				case EquallySpacedIntervalSpecificationMethod.StartEndCount:
 					_view.EnableEditBoxes(true, true, true, false);
 					break;
+
 				case EquallySpacedIntervalSpecificationMethod.StartEndInterval:
 					_view.EnableEditBoxes(true, true, false, true);
 					break;
+
 				case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
 					_view.EnableEditBoxes(true, false, true, true);
 					break;
+
 				case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
 					_view.EnableEditBoxes(false, true, true, true);
 					break;
+
 				default:
 					throw new ArgumentException("method unknown");
 			}
 		}
 
-		double GetInterval()
+		private double GetInterval()
 		{
 			return (_end - _start) / (_count - 1);
 		}
 
-		double GetStart()
+		private double GetStart()
 		{
 			return _end - (_count - 1) * _interval;
 		}
 
-		double GetEnd()
+		private double GetEnd()
 		{
 			return _start + (_count - 1) * _interval;
 		}
 
-		double GetCount()
+		private double GetCount()
 		{
 			return 1 + (_end - _start) / _interval;
 		}
 
-		void ChangeDependentVariable()
+		private void ChangeDependentVariable()
 		{
 			switch (_currentMethod)
 			{
@@ -185,24 +198,28 @@ namespace Altaxo.Gui.Common
 					_interval = GetInterval();
 					_view.InitializeInterval(GUIConversion.ToString(_interval));
 					break;
+
 				case EquallySpacedIntervalSpecificationMethod.StartEndInterval:
 					_count = GetCount();
 					_view.InitializeCount(GUIConversion.ToString(_count));
 					break;
+
 				case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
 					_end = GetEnd();
 					_view.InitializeEnd(GUIConversion.ToString(_end));
 					break;
+
 				case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
 					_start = GetStart();
 					_view.InitializeStart(GUIConversion.ToString(_start));
 					break;
+
 				default:
 					throw new ArgumentException("method unknown");
 			}
 		}
 
-		void EhStartChanged(string text)
+		private void EhStartChanged(string text)
 		{
 			if (_currentMethod == EquallySpacedIntervalSpecificationMethod.EndCountInterval)
 				return;
@@ -215,7 +232,7 @@ namespace Altaxo.Gui.Common
 			ChangeDependentVariable();
 		}
 
-		void EhEndChanged(string text)
+		private void EhEndChanged(string text)
 		{
 			if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartCountInterval)
 				return;
@@ -228,7 +245,7 @@ namespace Altaxo.Gui.Common
 			ChangeDependentVariable();
 		}
 
-		void EhCountChanged(string text)
+		private void EhCountChanged(string text)
 		{
 			if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndInterval)
 				return;
@@ -241,7 +258,7 @@ namespace Altaxo.Gui.Common
 			ChangeDependentVariable();
 		}
 
-		void EhIntervalChanged(string text)
+		private void EhIntervalChanged(string text)
 		{
 			if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndCount)
 				return;
@@ -254,7 +271,7 @@ namespace Altaxo.Gui.Common
 			ChangeDependentVariable();
 		}
 
-		void RoundCountToInteger()
+		private void RoundCountToInteger()
 		{
 			_count = Math.Abs(_count);
 			_count = Math.Round(_count, MidpointRounding.AwayFromZero);
@@ -264,14 +281,14 @@ namespace Altaxo.Gui.Common
 				_count = 1;
 		}
 
-		void RoundCountToIntegerAndAdjustInterval()
+		private void RoundCountToIntegerAndAdjustInterval()
 		{
 			RoundCountToInteger();
 			// now calculate the appropriate interval
 			_interval = GetInterval();
 		}
 
-		void EhCountValidating(CancelEventArgs e)
+		private void EhCountValidating(CancelEventArgs e)
 		{
 			switch (_currentMethod)
 			{
@@ -280,15 +297,16 @@ namespace Altaxo.Gui.Common
 					RoundCountToInteger();
 					_view.InitializeCount(GUIConversion.ToString(_count));
 					break;
-				case  EquallySpacedIntervalSpecificationMethod.StartEndCount:
+
+				case EquallySpacedIntervalSpecificationMethod.StartEndCount:
 					RoundCountToIntegerAndAdjustInterval();
-				_view.InitializeInterval(GUIConversion.ToString(_interval));
-				_view.InitializeCount(GUIConversion.ToString(_count));
-				break;
+					_view.InitializeInterval(GUIConversion.ToString(_interval));
+					_view.InitializeCount(GUIConversion.ToString(_count));
+					break;
 			}
 		}
 
-		void EhIntervalValidating(CancelEventArgs e)
+		private void EhIntervalValidating(CancelEventArgs e)
 		{
 			if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndInterval)
 			{
@@ -301,9 +319,7 @@ namespace Altaxo.Gui.Common
 				_view.InitializeInterval(GUIConversion.ToString(_interval));
 				_view.InitializeCount(GUIConversion.ToString(_count));
 			}
-
 		}
-
 
 		#region IMVCANController Members
 
@@ -327,7 +343,7 @@ namespace Altaxo.Gui.Common
 			set { }
 		}
 
-		#endregion
+		#endregion IMVCANController Members
 
 		#region IMVCController Members
 
@@ -369,7 +385,11 @@ namespace Altaxo.Gui.Common
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -398,6 +418,6 @@ namespace Altaxo.Gui.Common
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

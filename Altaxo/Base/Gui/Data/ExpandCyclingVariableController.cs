@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,10 +35,15 @@ namespace Altaxo.Gui.Data
 	public interface IExpandCyclingVariableView
 	{
 		void InitializeCyclingVarColumn(SelectableListNodeList list);
+
 		void InitializeColumnsToAverage(SelectableListNodeList list);
+
 		void InitializeDestinationOutputFormat(SelectableListNodeList list);
+
 		void InitializeDestinationX(SelectableListNodeList list);
+
 		void InitializeDestinationColumnSorting(SelectableListNodeList list);
+
 		void InitializeDestinationRowSorting(SelectableListNodeList list);
 	}
 
@@ -44,18 +51,17 @@ namespace Altaxo.Gui.Data
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableView))]
 	public class ExpandCyclingVariableController : IMVCANController
 	{
-		ExpandCyclingVariableColumnOptions _doc;
-		IExpandCyclingVariableView _view;
+		private ExpandCyclingVariableColumnOptions _doc;
+		private IExpandCyclingVariableView _view;
 
-		SelectableListNodeList _choicesCyclingVar;
-		SelectableListNodeList _choicesColsToAvarage;
-		SelectableListNodeList _choicesDestinationOutputFormat;
-		SelectableListNodeList _choicesDestinationX;
-		SelectableListNodeList _choicesDestinationColSort;
-		SelectableListNodeList _choicesDestinationRowSort;
+		private SelectableListNodeList _choicesCyclingVar;
+		private SelectableListNodeList _choicesColsToAvarage;
+		private SelectableListNodeList _choicesDestinationOutputFormat;
+		private SelectableListNodeList _choicesDestinationX;
+		private SelectableListNodeList _choicesDestinationColSort;
+		private SelectableListNodeList _choicesDestinationRowSort;
 
-
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -64,13 +70,12 @@ namespace Altaxo.Gui.Data
 				var srcData = _doc.SourceTable.DataColumns;
 
 				_choicesCyclingVar = new SelectableListNodeList();
-				foreach(var nCol in _doc.ColumnsToProcess)
-					_choicesCyclingVar.Add(new SelectableListNode(srcData.GetColumnName(nCol),nCol,_doc.ColumnWithCyclingVariable==nCol));
+				foreach (var nCol in _doc.ColumnsToProcess)
+					_choicesCyclingVar.Add(new SelectableListNode(srcData.GetColumnName(nCol), nCol, _doc.ColumnWithCyclingVariable == nCol));
 
 				_choicesColsToAvarage = new SelectableListNodeList();
-				foreach(var nCol in _doc.ColumnsToProcess)
+				foreach (var nCol in _doc.ColumnsToProcess)
 					_choicesColsToAvarage.Add(new SelectableListNode(srcData.GetColumnName(nCol), nCol, _doc.ColumnsToAverageOverRepeatPeriod.Contains(nCol)));
-
 
 				_choicesDestinationOutputFormat = new SelectableListNodeList();
 				_choicesDestinationOutputFormat.FillWithEnumeration(_doc.DestinationOutput);
@@ -83,7 +88,6 @@ namespace Altaxo.Gui.Data
 
 				_choicesDestinationRowSort = new SelectableListNodeList();
 				_choicesDestinationRowSort.FillWithEnumeration(_doc.DestinationRowSorting);
-
 			}
 			if (null != _view)
 			{
@@ -95,7 +99,6 @@ namespace Altaxo.Gui.Data
 				_view.InitializeDestinationRowSorting(_choicesDestinationRowSort);
 			}
 		}
-		
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -130,10 +133,14 @@ namespace Altaxo.Gui.Data
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			_doc.ColumnWithCyclingVariable = (int)_choicesCyclingVar.FirstSelectedNode.Tag;
-			
+
 			_doc.ColumnsToAverageOverRepeatPeriod.Clear();
 			foreach (var node in _choicesColsToAvarage)
 			{

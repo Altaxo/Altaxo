@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
+#endregion Copyright
 
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Gui;
-using Altaxo.Collections;
-
+using System;
+using System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -66,17 +66,13 @@ namespace Altaxo.Gui.Graph
 		/// <returns>A bitmap that can be used for drawing.</returns>
 		System.Drawing.Bitmap GetPreviewBitmap(int width, int height);
 
-
 		/// <summary>
 		/// Fired when the selected color provider changed.
 		/// </summary>
 		event Action ColorProviderChanged;
 	}
 
-
-
-
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Summary description for AxisScaleController.
@@ -92,14 +88,12 @@ namespace Altaxo.Gui.Graph
 
 		protected IColorProvider _doc;
 
-
 		protected IMVCAController _detailController;
 		protected object _detailView;
 
 		protected SelectableListNodeList _availableClasses;
 
-		UseDocument _useDocumentCopy;
-
+		private UseDocument _useDocumentCopy;
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -120,7 +114,6 @@ namespace Altaxo.Gui.Graph
 		{
 			set { _useDocumentCopy = value; }
 		}
-
 
 		public void Initialize(bool initData)
 		{
@@ -161,7 +154,6 @@ namespace Altaxo.Gui.Graph
 
 				if (_detailController is IMVCANDController)
 					((IMVCANDController)_detailController).MadeDirty += EhDetailsChanged;
-				
 			}
 			if (null != _view)
 			{
@@ -170,7 +162,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhColorProviderSelectionChanged()
+		private void EhColorProviderSelectionChanged()
 		{
 			Type chosenType = (Type)_availableClasses.FirstSelectedNode.Tag;
 
@@ -201,16 +193,17 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhDetailsChanged(IMVCANDController ctrl)
+		private void EhDetailsChanged(IMVCANDController ctrl)
 		{
 			_detailController.Apply(); // we use the instance directly, thus no further taking of the instance is neccessary here
 			CreateAndSetPreviewBitmap();
 		}
 
-		Bitmap _previewBitmap;
-		void CreateAndSetPreviewBitmap()
+		private Bitmap _previewBitmap;
+
+		private void CreateAndSetPreviewBitmap()
 		{
-			const int previewWidth=128;
+			const int previewWidth = 128;
 			const int previewHeight = 16;
 			if (null != _view)
 			{
@@ -228,7 +221,6 @@ namespace Altaxo.Gui.Graph
 				_view.SetPreviewBitmap(_previewBitmap);
 			}
 		}
-
 
 		#region IMVCController Members
 
@@ -260,7 +252,11 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -275,6 +271,6 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

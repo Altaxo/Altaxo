@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,60 +19,80 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Drawing.Printing;
-using Altaxo.Collections;
-using System.Management;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
 {
 	public interface IPrintingView
 	{
 		void InitializeAvailablePrinters(SelectableListNodeList list);
+
 		void InitializeDocumentPrintOptionsView(object view);
+
 		void InitializeAvailablePaperSizes(Collections.SelectableListNodeList list);
+
 		void InitializeAvailablePaperSources(Collections.SelectableListNodeList list);
+
 		void InitializePaperOrientationLandscape(bool isLandScape);
+
 		void InitializePaperMarginsInHundrethInch(double left, double right, double top, double bottom);
+
 		void InitializePrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview);
+
 		void InitializeNumberOfCopies(int val);
+
 		void InitializeCollateCopies(bool val);
+
 		void ShowPrinterPropertiesDialog(PrinterSettings currentSettings);
 
 		event Action SelectedPrinterChanged;
+
 		event Action EditPrinterProperties;
+
 		event Action<bool> PaperOrientationLandscapeChanged;
+
 		event Action PaperSizeChanged;
+
 		event Action PaperSourceChanged;
+
 		event Action<double> MarginLeftChanged;
+
 		event Action<double> MarginRightChanged;
+
 		event Action<double> MarginTopChanged;
+
 		event Action<double> MarginBottomChanged;
+
 		event Action<int> NumberOfCopiesChanged;
+
 		event Action<bool> CollateCopiesChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(IPrintingView))]
 	public class PrintingController : IMVCANController
 	{
-		IPrintingView _view;
-		SelectableListNodeList _installedPrinters;
-		Altaxo.Graph.Gdi.GraphDocument _doc;
+		private IPrintingView _view;
+		private SelectableListNodeList _installedPrinters;
+		private Altaxo.Graph.Gdi.GraphDocument _doc;
 
-		SingleGraphPrintOptionsController _documentPrintOptionsController;
+		private SingleGraphPrintOptionsController _documentPrintOptionsController;
 
-		SelectableListNodeList _currentPaperSources;
-		SelectableListNodeList _currentPaperSizes;
+		private SelectableListNodeList _currentPaperSources;
+		private SelectableListNodeList _currentPaperSizes;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -109,7 +130,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhSelectedPrinterChanged()
+		private void EhSelectedPrinterChanged()
 		{
 			if (null != _installedPrinters.FirstSelectedNode)
 				Current.PrintingService.PrintDocument.PrinterSettings.PrinterName = (string)_installedPrinters.FirstSelectedNode.Tag;
@@ -121,8 +142,7 @@ namespace Altaxo.Gui.Graph
 			RequestPreview();
 		}
 
-
-		void EhEditPrinterProperties()
+		private void EhEditPrinterProperties()
 		{
 			CopyPageSettings(Current.PrintingService.PrintDocument.DefaultPageSettings, Current.PrintingService.PrintDocument.PrinterSettings.DefaultPageSettings);
 
@@ -138,7 +158,7 @@ namespace Altaxo.Gui.Graph
 			RequestPreview();
 		}
 
-		void EhPaperOrientationLandscapeChanged(bool isLandscape)
+		private void EhPaperOrientationLandscapeChanged(bool isLandscape)
 		{
 			var oldValue = Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape;
 			Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape = isLandscape;
@@ -147,14 +167,14 @@ namespace Altaxo.Gui.Graph
 				RequestPreview();
 		}
 
-		void EhPaperSourceChanged()
+		private void EhPaperSourceChanged()
 		{
 			var sel = _currentPaperSources.FirstSelectedNode;
 			if (null != sel)
 				Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource = (PaperSource)(sel.Tag);
 		}
 
-		void EhPaperSizeChanged()
+		private void EhPaperSizeChanged()
 		{
 			var sel = _currentPaperSizes.FirstSelectedNode;
 			if (null != sel)
@@ -164,38 +184,41 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhMarginLeftChanged(double val)
+		private void EhMarginLeftChanged(double val)
 		{
 			Current.PrintingService.PrintDocument.DefaultPageSettings.Margins.Left = (int)val;
 			RequestPreview();
 		}
-		void EhMarginRightChanged(double val)
+
+		private void EhMarginRightChanged(double val)
 		{
 			Current.PrintingService.PrintDocument.DefaultPageSettings.Margins.Right = (int)val;
 			RequestPreview();
 		}
-		void EhMarginTopChanged(double val)
+
+		private void EhMarginTopChanged(double val)
 		{
 			Current.PrintingService.PrintDocument.DefaultPageSettings.Margins.Top = (int)val;
 			RequestPreview();
 		}
-		void EhMarginBottomChanged(double val)
+
+		private void EhMarginBottomChanged(double val)
 		{
 			Current.PrintingService.PrintDocument.DefaultPageSettings.Margins.Bottom = (int)val;
 			RequestPreview();
 		}
 
-		void EhNumberOfCopiesChanged(int val)
+		private void EhNumberOfCopiesChanged(int val)
 		{
 			Current.PrintingService.PrintDocument.PrinterSettings.Copies = (short)val;
 		}
 
-		void EhCollateCopiesChanged(bool val)
+		private void EhCollateCopiesChanged(bool val)
 		{
 			Current.PrintingService.PrintDocument.PrinterSettings.Collate = val;
 		}
 
-		void InitAvailablePaperSources(bool initData)
+		private void InitAvailablePaperSources(bool initData)
 		{
 			if (initData)
 			{
@@ -215,8 +238,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void InitAvailablePaperSizes(bool initData)
+		private void InitAvailablePaperSizes(bool initData)
 		{
 			if (initData)
 			{
@@ -236,29 +258,25 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void InitPaperOrientation()
+		private void InitPaperOrientation()
 		{
 			if (null != _view)
 				_view.InitializePaperOrientationLandscape(Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape);
 		}
 
-		void InitPaperMargins()
+		private void InitPaperMargins()
 		{
-
-
-			if(null != _view)
+			if (null != _view)
 			{
 				var m = Current.PrintingService.PrintDocument.DefaultPageSettings.Margins;
 				_view.InitializePaperMarginsInHundrethInch(m.Left, m.Right, m.Top, m.Bottom);
-				}
+			}
 		}
-	
 
-		void CopyPageSettings(PageSettings source, PageSettings dest)
+		private void CopyPageSettings(PageSettings source, PageSettings dest)
 		{
 			try
 			{
-
 				dest.Color = source.Color;
 				dest.Landscape = source.Landscape;
 				dest.PaperSize = source.PaperSize;
@@ -269,20 +287,16 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-	
-
-		void EhDocumentPrintOptionsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void EhDocumentPrintOptionsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			RequestPreview();
 		}
 
-		void UpdatePrinterProperties()
+		private void UpdatePrinterProperties()
 		{
 		}
 
-
-		PrintDocument GetCloneOfPrintDocument(PrintDocument source)
+		private PrintDocument GetCloneOfPrintDocument(PrintDocument source)
 		{
 			var result = new PrintDocument();
 			result.PrinterSettings = (PrinterSettings)source.PrinterSettings.Clone();
@@ -291,15 +305,11 @@ namespace Altaxo.Gui.Graph
 			return result;
 		}
 
-
 		#region Preview
 
-		bool _previewRequested;
-		Task<PreviewPageInfo[]> _previewTask;
+		private bool _previewRequested;
+		private Task<PreviewPageInfo[]> _previewTask;
 
-
-
-	
 		public void RequestPreview()
 		{
 			_previewRequested = true;
@@ -310,7 +320,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void InitiatePreview()
+		private void InitiatePreview()
 		{
 			_previewRequested = false;
 			//Console.WriteLine("Begin InitiatePreview");
@@ -319,18 +329,15 @@ namespace Altaxo.Gui.Graph
 			CancellationTokenSource tokenSource = new CancellationTokenSource();
 			CancellationToken token = tokenSource.Token;
 
-
-
 			_previewTask = Task.Factory.StartNew<PreviewPageInfo[]>(CreatePreviewPageInfo);
 			_previewTask.ContinueWith(EhSetPrintPreview, token, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 			//Console.WriteLine("End InitiatePreview");
 		}
 
-		PreviewPageInfo[] CreatePreviewPageInfo()
+		private PreviewPageInfo[] CreatePreviewPageInfo()
 		{
 			//Console.WriteLine("Begin CreatePreviewPageInfo");
-
 
 			// use not the print document directly, but a clone - since we evaluate the print preview in a separate task
 			var printDocument = GetCloneOfPrintDocument(Current.PrintingService.PrintDocument);
@@ -353,8 +360,7 @@ namespace Altaxo.Gui.Graph
 			return _previewController.GetPreviewPageInfo();
 		}
 
-
-		void EhSetPrintPreview(Task<PreviewPageInfo[]> t)
+		private void EhSetPrintPreview(Task<PreviewPageInfo[]> t)
 		{
 			if (null != _view)
 				_view.InitializePrintPreview(t.Result);
@@ -373,12 +379,10 @@ namespace Altaxo.Gui.Graph
 			//Console.WriteLine("End EhSetPrintPreview");
 		}
 
-
-
-
-		#endregion
+		#endregion Preview
 
 		#region IMVCANController
+
 		public bool InitializeDocument(params object[] args)
 		{
 			if (args == null || args.Length == 0 || !(args[0] is Altaxo.Graph.Gdi.GraphDocument))
@@ -444,17 +448,20 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			var previewTask = _previewTask;
 			if (null != previewTask)
 				previewTask.Wait();
 
-
 			Current.PrintingService.PrintDocument.DocumentName = _doc.Name;
 			return true;
 		}
 
-		#endregion
+		#endregion IMVCANController
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,57 +29,60 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-  public interface IPropertyView
-  {
-    object[] SelectedObjectsToView { get; set; }
-  }
+	public interface IPropertyView
+	{
+		object[] SelectedObjectsToView { get; set; }
+	}
 
-  [ExpectedTypeOfView(typeof(IPropertyView))]
-  public class PropertyController : IMVCAController
-  {
-    IPropertyView _view;
-    object _doc;
+	[ExpectedTypeOfView(typeof(IPropertyView))]
+	public class PropertyController : IMVCAController
+	{
+		private IPropertyView _view;
+		private object _doc;
 
-    public PropertyController(object doc)
-    {
-      _doc = doc;
-      Initialize();
-    }
+		public PropertyController(object doc)
+		{
+			_doc = doc;
+			Initialize();
+		}
 
-    void Initialize()
-    {
-      if (_view != null)
-      {
-        _view.SelectedObjectsToView = new object[] { _doc };
-      }
-    }
+		private void Initialize()
+		{
+			if (_view != null)
+			{
+				_view.SelectedObjectsToView = new object[] { _doc };
+			}
+		}
 
+		#region IMVCController Members
 
-    #region IMVCController Members
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = (IPropertyView)value;
+				Initialize();
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = (IPropertyView)value;
-        Initialize();
-      }
-    }
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		public void Dispose()
+		{
+		}
 
-    public bool Apply()
-    {
-      return true;
-    }
+		public bool Apply()
+		{
+			return true;
+		}
 
-    #endregion
-  }
+		#endregion IMVCController Members
+	}
 }

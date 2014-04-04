@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,38 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
+using Altaxo.Main;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Main;
-using Altaxo.Main.Services;
-using Altaxo.Graph.Gdi;
-using Altaxo.Collections;
-using Altaxo.Gui.Common;
-
 namespace Altaxo.Gui.Graph
 {
-  [UserControllerForObject(typeof(G2DCoordinateSystem))]
-  [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-  public class CoordinateSystemController : IMVCANController
-  {
-    ITypeAndInstanceView _view;
-    G2DCoordinateSystem _originalDoc;
-    G2DCoordinateSystem _doc;
+	[UserControllerForObject(typeof(G2DCoordinateSystem))]
+	[ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
+	public class CoordinateSystemController : IMVCANController
+	{
+		private ITypeAndInstanceView _view;
+		private G2DCoordinateSystem _originalDoc;
+		private G2DCoordinateSystem _doc;
 
-    IMVCAController _instanceController;
+		private IMVCAController _instanceController;
 
-		SelectableListNodeList _choiceList;
-		UseDocument _useDocumentCopy;
+		private SelectableListNodeList _choiceList;
+		private UseDocument _useDocumentCopy;
 
 		/// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
-		Type[] _cosSubTypes;
+		private Type[] _cosSubTypes;
 
-
-      #region IMVCController Members
+		#region IMVCController Members
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -72,66 +72,66 @@ namespace Altaxo.Gui.Graph
 			set { _useDocumentCopy = value; }
 		}
 
-    void Initialize(bool initData)
-    {
+		private void Initialize(bool initData)
+		{
 			if (initData)
 			{
 				// look for coordinate system types
-				if(null==_cosSubTypes)
-				_cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
+				if (null == _cosSubTypes)
+					_cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
 
-				if(null==_choiceList)
+				if (null == _choiceList)
 					_choiceList = new SelectableListNodeList();
 				_choiceList.Clear();
 				foreach (Type t in _cosSubTypes)
 					_choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
 			}
 
-      if (_view != null)
-      {
-        // look for a controller-control
-        _view.TypeLabel="Type:";
+			if (_view != null)
+			{
+				// look for a controller-control
+				_view.TypeLabel = "Type:";
 				_view.InitializeTypeNames(_choiceList);
 
-        // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
-        _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController));
-        if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
-        {
-          Current.Gui.FindAndAttachControlTo(_instanceController);
-          if (_instanceController.ViewObject != null)
-            _view.SetInstanceControl(_instanceController.ViewObject);
-        }
-        else
-        {
-          _instanceController = null;
-          _view.SetInstanceControl(null);
-        }
-      }
-    }
+				// To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
+				_instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController));
+				if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
+				{
+					Current.Gui.FindAndAttachControlTo(_instanceController);
+					if (_instanceController.ViewObject != null)
+						_view.SetInstanceControl(_instanceController.ViewObject);
+				}
+				else
+				{
+					_instanceController = null;
+					_view.SetInstanceControl(null);
+				}
+			}
+		}
 
-    void EhTypeChoiceChanged(object sender, EventArgs e)
-    {
+		private void EhTypeChoiceChanged(object sender, EventArgs e)
+		{
 			var sel = _choiceList.FirstSelectedNode;
 
-      if (sel != null)
-      {
-        System.Type t = (System.Type)sel.Tag;
-        if (_doc.GetType() != t)
-        {
-          _doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
-          Initialize(true);
-        }
-      }
-    }
+			if (sel != null)
+			{
+				System.Type t = (System.Type)sel.Tag;
+				if (_doc.GetType() != t)
+				{
+					_doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
+					Initialize(true);
+				}
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
 				if (null != _view)
 				{
 					_view.TypeChoiceChanged -= EhTypeChoiceChanged;
@@ -144,34 +144,32 @@ namespace Altaxo.Gui.Graph
 					Initialize(false);
 					_view.TypeChoiceChanged += EhTypeChoiceChanged;
 				}
-      }
-    }
+			}
+		}
 
-    public object ModelObject
-    {
-      get { return _originalDoc; }
-    }
+		public object ModelObject
+		{
+			get { return _originalDoc; }
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public bool Apply()
-    {
-      
-      bool result = _instanceController==null || _instanceController.Apply();
-      if (true == result)
-      {
+		#region IApplyController Members
+
+		public bool Apply()
+		{
+			bool result = _instanceController == null || _instanceController.Apply();
+			if (true == result)
+			{
 				_originalDoc = _doc;
-      }
-      return result;
+			}
+			return result;
+		}
 
-    }
-
-    #endregion
-
-
-
-
+		#endregion IApplyController Members
 	}
 }

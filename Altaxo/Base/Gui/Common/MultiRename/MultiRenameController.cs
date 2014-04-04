@@ -257,6 +257,10 @@ namespace Altaxo.Gui.Common.MultiRename
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			bool success = _doc.DoRename();

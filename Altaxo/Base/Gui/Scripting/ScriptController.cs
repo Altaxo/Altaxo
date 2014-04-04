@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,226 +19,227 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Data;
 using Altaxo.Gui;
-using System.Text.RegularExpressions;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
+using System;
+using System.Text.RegularExpressions;
 
 namespace Altaxo.Gui.Scripting
 {
-  #region Interfaces
+	#region Interfaces
 
-  /// <summary>
-  /// Executes the script provided in the argument.
-  /// </summary>
-  public delegate bool ScriptExecutionHandler(IScriptText script, IProgressReporter reporter);
+	/// <summary>
+	/// Executes the script provided in the argument.
+	/// </summary>
+	public delegate bool ScriptExecutionHandler(IScriptText script, IProgressReporter reporter);
 
-  public interface IScriptView
-  {
-    IScriptViewEventSink Controller {get; set; }
-    void AddPureScriptView(object scriptView);
+	public interface IScriptView
+	{
+		IScriptViewEventSink Controller { get; set; }
 
-    void ClearCompilerErrors();
-    void AddCompilerError(string s);
-  }
+		void AddPureScriptView(object scriptView);
 
-  public interface IScriptViewEventSink
-  {
-    void EhView_GotoCompilerError(string message);
-  }
+		void ClearCompilerErrors();
 
-  public interface IScriptController : IMVCANController
-  {
-    void SetText(string text);
-    void Compile();
-    void Update();
-    void Cancel();
+		void AddCompilerError(string s);
+	}
+
+	public interface IScriptViewEventSink
+	{
+		void EhView_GotoCompilerError(string message);
+	}
+
+	public interface IScriptController : IMVCANController
+	{
+		void SetText(string text);
+
+		void Compile();
+
+		void Update();
+
+		void Cancel();
+
 		void Execute(IProgressReporter reporter);
+
 		bool HasExecutionErrors();
-   }
+	}
 
+	#endregion Interfaces
 
+	/// <summary>
+	/// Summary description for ScriptController.
+	/// </summary>
+	[UserControllerForObject(typeof(IScriptText), 200)]
+	[ExpectedTypeOfView(typeof(IScriptView))]
+	public class ScriptController : IScriptViewEventSink, IScriptController
+	{
+		private IScriptView _view;
+		private IScriptText _doc;
+		private IScriptText _tempDoc;
+		private IScriptText _compiledDoc;
+		protected ScriptExecutionHandler _scriptExecutionHandler;
 
-  #endregion
+		private IPureScriptController _pureScriptController;
+		private Regex _compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)", RegexOptions.Compiled);
 
-  /// <summary>
-  /// Summary description for ScriptController.
-  /// </summary>
-  [UserControllerForObject(typeof(IScriptText),200)]
-  [ExpectedTypeOfView(typeof(IScriptView))]
-  public class ScriptController : IScriptViewEventSink, IScriptController
-  {
-    IScriptView _view;
-    IScriptText _doc;
-    IScriptText _tempDoc;
-    IScriptText _compiledDoc;
-    protected ScriptExecutionHandler _scriptExecutionHandler;
+		public ScriptController()
+		{
+		}
 
-    IPureScriptController _pureScriptController;
-    private Regex _compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
+		public ScriptController(IScriptText doc)
+		{
+			InitializeDocument(doc);
+		}
 
+		public ScriptController(IScriptText doc, ScriptExecutionHandler exec)
+		{
+			InitializeDocument(doc, exec);
+		}
 
-    public ScriptController()
-    {
-    }
-    public ScriptController(IScriptText doc)
-    {
-      InitializeDocument(doc);
-    }
-    public ScriptController(IScriptText doc, ScriptExecutionHandler exec)
-    {
-      InitializeDocument(doc, exec);
-    }
+		#region IMVCANController Members
 
-    #region IMVCANController Members
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0)
+				return false;
+			IScriptText doc = args[0] as IScriptText;
+			if (doc == null)
+				return false;
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0)
-        return false;
-      IScriptText doc = args[0] as IScriptText;
-      if (doc == null)
-        return false;
+			_doc = doc;
+			_tempDoc = _doc.CloneForModification();
+			_compiledDoc = null;
 
-      _doc = doc;
-      _tempDoc = _doc.CloneForModification();
-      _compiledDoc = null;
+			_pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[] { _tempDoc }, typeof(IPureScriptText), typeof(IPureScriptController), UseDocument.Copy);
+			_scriptExecutionHandler = args.Length <= 1 ? null : args[1] as ScriptExecutionHandler;
 
-      _pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[] { _tempDoc }, typeof(IPureScriptText), typeof(IPureScriptController), UseDocument.Copy);
-      _scriptExecutionHandler = args.Length<=1 ?  null : args[1] as ScriptExecutionHandler;
+			return true;
+		}
 
-      return true;
-    }
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
 
-    public UseDocument UseDocumentCopy
-    {
-      set {}
-    }
+		#endregion IMVCANController Members
 
-    #endregion
+		public void SetText(string text)
+		{
+			_pureScriptController.SetText(text);
+		}
 
-    public void SetText(string text)
-    {
-      _pureScriptController.SetText(text);
-    }
+		public void Initialize()
+		{
+			if (_view != null)
+			{
+				_view.ClearCompilerErrors();
+				_view.AddPureScriptView(_pureScriptController.ViewObject);
+				_pureScriptController.SetInitialScriptCursorLocation(_tempDoc.UserAreaScriptOffset);
+			}
+		}
 
-    public void Initialize()
-    {
-      if(_view!=null)
-      {
-        _view.ClearCompilerErrors();
-        _view.AddPureScriptView(_pureScriptController.ViewObject);
-        _pureScriptController.SetInitialScriptCursorLocation( _tempDoc.UserAreaScriptOffset);
-      }
-    }
-    #region IScriptViewEventSink Members
+		#region IScriptViewEventSink Members
 
-    public void EhView_GotoCompilerError(string message)
-    {
-      try
-      {
-        Match match = _compilerErrorRegex.Match(message);
-        string sline = match.Result("${line}");
-        string scol = match.Result("${column}");
-        int line = int.Parse(sline);
-        int col  = int.Parse(scol);
+		public void EhView_GotoCompilerError(string message)
+		{
+			try
+			{
+				Match match = _compilerErrorRegex.Match(message);
+				string sline = match.Result("${line}");
+				string scol = match.Result("${column}");
+				int line = int.Parse(sline);
+				int col = int.Parse(scol);
 
-        
-        _pureScriptController.SetScriptCursorLocation(line,col); // line and col are starting with "1" here
-      }
-      catch(Exception)
-      {
-      }
-    }
+				_pureScriptController.SetScriptCursorLocation(line, col); // line and col are starting with "1" here
+			}
+			catch (Exception)
+			{
+			}
+		}
 
-    #endregion
+		#endregion IScriptViewEventSink Members
 
-    #region IScriptController Members
+		#region IScriptController Members
 
-    public void Compile()
-    {
-      _compiledDoc = null;
+		public void Compile()
+		{
+			_compiledDoc = null;
 
-      if(_pureScriptController.Apply())
-      {
-        _tempDoc.ScriptText = _pureScriptController.Model.ScriptText;
+			if (_pureScriptController.Apply())
+			{
+				_tempDoc.ScriptText = _pureScriptController.Model.ScriptText;
 
-        if(null!=_view)
-          _view.ClearCompilerErrors();
+				if (null != _view)
+					_view.ClearCompilerErrors();
 
-        IScriptText compiledDoc = _tempDoc.CloneForModification();
-        bool result = compiledDoc.Compile();
+				IScriptText compiledDoc = _tempDoc.CloneForModification();
+				bool result = compiledDoc.Compile();
 
-        string[] errors = compiledDoc.Errors;
-        if(result==false)
-        {
-          _compiledDoc = null;
+				string[] errors = compiledDoc.Errors;
+				if (result == false)
+				{
+					_compiledDoc = null;
 
-          foreach(string s in errors)
-          {
-            System.Text.RegularExpressions.Match match = _compilerErrorRegex.Match(s);
-            if(match.Success)
-            {
-              string news = match.Result("(${line},${column}) : ${msg}");
-          
-              _view.AddCompilerError(news);
-            }
-            else
-            {
-              _view.AddCompilerError(s);
-            }
-          }
-  
+					foreach (string s in errors)
+					{
+						System.Text.RegularExpressions.Match match = _compilerErrorRegex.Match(s);
+						if (match.Success)
+						{
+							string news = match.Result("(${line},${column}) : ${msg}");
 
-          Current.Gui.ErrorMessageBox("There were compilation errors");
-          return;
-        }
-        else
-        {
-          _compiledDoc = compiledDoc;
-          
-          _view.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
-        }
-      }
+							_view.AddCompilerError(news);
+						}
+						else
+						{
+							_view.AddCompilerError(s);
+						}
+					}
 
-    }
+					Current.Gui.ErrorMessageBox("There were compilation errors");
+					return;
+				}
+				else
+				{
+					_compiledDoc = compiledDoc;
 
-    public void Update()
-    {
-      if(_pureScriptController.Apply())
-      {
-        _tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
+					_view.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
+				}
+			}
+		}
 
-        if(null!=_compiledDoc && _tempDoc.ScriptText==_compiledDoc.ScriptText)
-        {
-          _doc = _compiledDoc;
-        }
-        else if (_doc.ScriptText != _pureScriptController.Model.ScriptText)
-        {
-          if (_doc.IsReadOnly)
-            _doc = _doc.CloneForModification();
-          _doc.ScriptText = _pureScriptController.Model.ScriptText;
-        }
-      }
-      _tempDoc = (IScriptText)_doc.Clone();
-    }
+		public void Update()
+		{
+			if (_pureScriptController.Apply())
+			{
+				_tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
 
-  
+				if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
+				{
+					_doc = _compiledDoc;
+				}
+				else if (_doc.ScriptText != _pureScriptController.Model.ScriptText)
+				{
+					if (_doc.IsReadOnly)
+						_doc = _doc.CloneForModification();
+					_doc.ScriptText = _pureScriptController.Model.ScriptText;
+				}
+			}
+			_tempDoc = (IScriptText)_doc.Clone();
+		}
 
-    public void Cancel()
-    {
-      
-    }
+		public void Cancel()
+		{
+		}
 
 		public void Execute(IProgressReporter progress)
 		{
-			if(null!=_scriptExecutionHandler)
+			if (null != _scriptExecutionHandler)
 				_scriptExecutionHandler(_doc, progress);
-		
 		}
 
 		public bool HasExecutionErrors()
@@ -254,69 +256,71 @@ namespace Altaxo.Gui.Scripting
 			return null != _doc.Errors && _doc.Errors.Length > 0;
 		}
 
-    #endregion
+		#endregion IScriptController Members
 
-    #region IMVCController Members
+		#region IMVCController Members
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if(_view!=null)
-          _view.Controller = null;
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-        _view = value as IScriptView;
-        
-        Initialize();
+				_view = value as IScriptView;
 
-        if(_view!=null)
-          _view.Controller = this;
-      }
-    }
+				Initialize();
 
-    #endregion
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-    #region IApplyController Members
+		public void Dispose()
+		{
+		}
 
-    public bool Apply()
-    {
-      bool applyresult = false;
+		#endregion IMVCController Members
 
-      if(_pureScriptController.Apply())
-      {
-        _tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
-        if(null!=_compiledDoc && _tempDoc.ScriptText==_compiledDoc.ScriptText)
-        {
-          _doc = _compiledDoc;
-          applyresult = true;
-        }
-        else
-        {
-          Compile();
-          if(null!=_compiledDoc)
-          {
-            _doc = _compiledDoc;
-            applyresult = true;
-          }
-        }
-      }
-      return applyresult;
-    }
+		#region IApplyController Members
 
-    #endregion
+		public bool Apply()
+		{
+			bool applyresult = false;
 
-  
-  }
+			if (_pureScriptController.Apply())
+			{
+				_tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
+				if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
+				{
+					_doc = _compiledDoc;
+					applyresult = true;
+				}
+				else
+				{
+					Compile();
+					if (null != _compiledDoc)
+					{
+						_doc = _compiledDoc;
+						applyresult = true;
+					}
+				}
+			}
+			return applyresult;
+		}
+
+		#endregion IApplyController Members
+	}
 }

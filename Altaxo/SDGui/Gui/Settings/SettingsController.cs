@@ -158,6 +158,10 @@ namespace Altaxo.Gui.Settings
 			get { return null; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			// we have to call apply for all dirty topics

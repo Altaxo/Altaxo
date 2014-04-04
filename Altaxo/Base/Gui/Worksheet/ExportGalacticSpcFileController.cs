@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,46 +19,59 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Serialization.Galactic;
+using Altaxo.Serialization.Galactic.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
-using Altaxo.Serialization.Galactic;
-using Altaxo.Serialization.Galactic.Options;
-
 namespace Altaxo.Gui.Worksheet
 {
 	#region Interfaces
+
 	public interface IExportGalacticSpcFileView
 	{
 		bool CreateSpectrumFromRow { get; set; }
+
 		bool CreateSpectrumFromColumn { get; }
+
 		bool XValuesContinuousNumber { get; set; }
+
 		bool XValuesFromColumn { get; }
+
 		bool ExtendFileName_ContinuousNumber { get; set; }
+
 		bool ExtendFileName_ByColumn { get; }
+
 		string BasicFileName { get; set; }
 
 		void FillXValuesColumnBox(SelectableListNodeList list);
+
 		bool EnableXValuesColumnBox { set; }
+
 		string XValuesColumnName { get; }
 
 		void FillExtFileNameColumnBox(SelectableListNodeList list);
+
 		bool EnableExtFileNameColumnBox { set; }
+
 		string ExtFileNameColumnName { get; }
 
 		event Action BasicFileNameAndPathChoose;
+
 		event Action Change_CreateSpectrumFrom;
+
 		event Action Change__XValuesFromOption;
+
 		event Action Change_ExtendFileNameOptions;
 	}
 
-
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// The controller class which is responsible for showing a dialog to export into the Galactic SPC file format.
@@ -69,6 +83,7 @@ namespace Altaxo.Gui.Worksheet
 		/// The dialog to control.
 		/// </summary>
 		private IExportGalacticSpcFileView _view;
+
 		/// <summary>The table where the data stems from.</summary>
 		protected Altaxo.Data.DataTable m_Table;
 
@@ -105,7 +120,6 @@ namespace Altaxo.Gui.Worksheet
 			InitializeElements();
 		}
 
-
 		/// <summary>
 		/// Initialize the elements of the dialog.
 		/// </summary>
@@ -125,7 +139,6 @@ namespace Altaxo.Gui.Worksheet
 			}
 		}
 
-
 		/// <summary>
 		/// Fills the "x values column combobox" with the appropriate column names.
 		/// </summary>
@@ -144,7 +157,7 @@ namespace Altaxo.Gui.Worksheet
 			var colnames = new SelectableListNodeList();
 			for (int i = 0; i < colcol.ColumnCount; i++)
 				if (colcol[i] is Altaxo.Data.INumericColumn)
-					colnames.Add(new SelectableListNode(colcol.GetColumnName(i),colcol[i],0==i));
+					colnames.Add(new SelectableListNode(colcol.GetColumnName(i), colcol[i], 0 == i));
 
 			// now set the contents of the combo box
 			_view.FillXValuesColumnBox(colnames);
@@ -167,13 +180,12 @@ namespace Altaxo.Gui.Worksheet
 			// Fill the Combo Box with Column names
 			var colnames = new SelectableListNodeList();
 			for (int i = 0; i < colcol.ColumnCount; i++)
-				colnames.Add(new SelectableListNode( colcol.GetColumnName(i), colcol[i], i==0));
+				colnames.Add(new SelectableListNode(colcol.GetColumnName(i), colcol[i], i == 0));
 
 			// now set the contents of the combo box
 			_view.FillExtFileNameColumnBox(colnames);
 			_view.EnableExtFileNameColumnBox = true;
 		}
-
 
 		/// <summary>
 		/// This opens the "Save as" dialog box to choose a basic file name for exporting.
@@ -184,7 +196,6 @@ namespace Altaxo.Gui.Worksheet
 			saveOptions.AddFilter("*.*", "All Files (*.*)");
 			saveOptions.FilterIndex = 0;
 			saveOptions.RestoreDirectory = true;
-
 
 			if (Current.Gui.ShowSaveFileDialog(saveOptions))
 			{
@@ -239,7 +250,6 @@ namespace Altaxo.Gui.Worksheet
 			}
 		}
 
-
 		/// <summary>
 		/// Called if a change in the options "Extend file name by" occured.
 		/// </summary>
@@ -263,7 +273,6 @@ namespace Altaxo.Gui.Worksheet
 				{
 					_view.EnableExtFileNameColumnBox = false;
 				}
-
 			}
 		}
 
@@ -296,8 +305,6 @@ namespace Altaxo.Gui.Worksheet
 				if (this.m_ExtendFileNameWith == ExtendFileNameWith.Column)
 					extFileNameCol = m_Table[_view.ExtFileNameColumnName];
 
-
-
 				int i, j;
 				bool bUseRowSel = (null != m_SelectedRows && this.m_SelectedRows.Count > 0);
 				int numOfSpectra = bUseRowSel ? m_SelectedRows.Count : m_Table.DataColumns.RowCount;
@@ -312,7 +319,6 @@ namespace Altaxo.Gui.Worksheet
 						filename += "_" + extFileNameCol[i].ToString();
 					else
 						filename += "_" + j.ToString();
-
 
 					string error = Export.FromRow(filename, this.m_Table, i, xcol, this.m_SelectedColumns);
 
@@ -348,8 +354,6 @@ namespace Altaxo.Gui.Worksheet
 				if (this.m_ExtendFileNameWith == ExtendFileNameWith.Column)
 					extFileNameCol = m_Table.PropCols[_view.ExtFileNameColumnName];
 
-
-
 				int i, j;
 				bool bUseColSel = (null != m_SelectedColumns && this.m_SelectedColumns.Count > 0);
 				int numOfSpectra = bUseColSel ? m_SelectedColumns.Count : m_Table.DataColumns.ColumnCount;
@@ -365,7 +369,6 @@ namespace Altaxo.Gui.Worksheet
 					else
 						filename += j.ToString() + ".spc";
 
-
 					string error = Export.FromColumn(filename, this.m_Table, i, xcol, this.m_SelectedRows);
 
 					if (null != error)
@@ -379,9 +382,6 @@ namespace Altaxo.Gui.Worksheet
 			}
 			return true;
 		}
-
-
-
 
 		#region IMVCController Members
 
@@ -411,7 +411,6 @@ namespace Altaxo.Gui.Worksheet
 					_view.Change_ExtendFileNameOptions += this.EhChange_ExtendFileNameOptions;
 					_view.Change_CreateSpectrumFrom += this.EhChange_CreateSpectrumFrom;
 					_view.Change__XValuesFromOption += this.EhChange_XValuesFromOptions;
-
 				}
 			}
 		}
@@ -421,8 +420,10 @@ namespace Altaxo.Gui.Worksheet
 			get { return null; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 	} // end of class ExportGalacticSpcFileDialogController
-
-
 }

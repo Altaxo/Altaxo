@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,117 +19,120 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
+
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-  #region Interfaces
+	#region Interfaces
 
-  public interface IAngularRescaleConditionsView
-  {
-    SelectableListNodeList Origin { set; }
-  }
+	public interface IAngularRescaleConditionsView
+	{
+		SelectableListNodeList Origin { set; }
+	}
 
-  #endregion
+	#endregion Interfaces
 
-  [UserControllerForObject(typeof(AngularRescaleConditions))]
-  [ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
-  public class AngularRescaleConditionsController : IMVCANController
-  {
-    IAngularRescaleConditionsView _view;
-    AngularRescaleConditions _doc;
+	[UserControllerForObject(typeof(AngularRescaleConditions))]
+	[ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
+	public class AngularRescaleConditionsController : IMVCANController
+	{
+		private IAngularRescaleConditionsView _view;
+		private AngularRescaleConditions _doc;
 
-    SelectableListNodeList _originList;
+		private SelectableListNodeList _originList;
 
-    void Initialize(bool initDoc)
-    {
-      if (initDoc)
-      {
-        BuildOriginList();
-      }
+		private void Initialize(bool initDoc)
+		{
+			if (initDoc)
+			{
+				BuildOriginList();
+			}
 
-      if (_view != null)
-      {
-        _view.Origin = _originList;
-      }
-    }
+			if (_view != null)
+			{
+				_view.Origin = _originList;
+			}
+		}
 
-    void BuildOriginList()
-    {
-      _originList = new SelectableListNodeList();
-      _originList.Add(new SelectableListNode("-90°",-1,-1==_doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin));
-      _originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
-    }
+		private void BuildOriginList()
+		{
+			_originList = new SelectableListNodeList();
+			_originList.Add(new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin));
+			_originList.Add(new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin));
+			_originList.Add(new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin));
+			_originList.Add(new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin));
+			_originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
+		}
 
-    #region IMVCANController Members
+		#region IMVCANController Members
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0)
-        return false;
-      AngularRescaleConditions doc = args[0] as AngularRescaleConditions;
-      if (doc == null)
-        return false;
-      _doc = doc;
-      Initialize(true);
-      return true;
-    }
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0)
+				return false;
+			AngularRescaleConditions doc = args[0] as AngularRescaleConditions;
+			if (doc == null)
+				return false;
+			_doc = doc;
+			Initialize(true);
+			return true;
+		}
 
-    public UseDocument UseDocumentCopy
-    {
-      set { }
-    }
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
 
-    #endregion
+		#endregion IMVCANController Members
 
-    #region IMVCController Members
+		#region IMVCController Members
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view != null)
-        {
-          
-        }
-        _view = value as IAngularRescaleConditionsView;
-        if (_view != null)
-        {
-          Initialize(false);
-          
-        }
-      }
-    }
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+				{
+				}
+				_view = value as IAngularRescaleConditionsView;
+				if (_view != null)
+				{
+					Initialize(false);
+				}
+			}
+		}
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public bool Apply()
-    {
-      _doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
-      return true;
-    }
+		#region IApplyController Members
 
-    #endregion
-  }
+		public bool Apply()
+		{
+			_doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
+			return true;
+		}
+
+		#endregion IApplyController Members
+	}
 }

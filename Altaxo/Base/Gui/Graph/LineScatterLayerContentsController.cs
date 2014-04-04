@@ -785,6 +785,10 @@ namespace Altaxo.Gui.Graph
 			get { return this._originalDoc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 	}
 }

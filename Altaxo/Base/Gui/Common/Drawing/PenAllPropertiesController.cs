@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -34,18 +36,18 @@ namespace Altaxo.Gui.Common.Drawing
 	public interface IPenAllPropertiesView
 	{
 		PenX Pen { get; set; }
+
 		bool ShowPlotColorsOnly { set; }
 	}
 
-
-	#endregion
+	#endregion Interfaces
 
 	[ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
 	public class PenAllPropertiesController : IMVCAController
 	{
-		IPenAllPropertiesView _view;
-		PenX _doc;
-		bool _showPlotColorsOnly;
+		private IPenAllPropertiesView _view;
+		private PenX _doc;
+		private bool _showPlotColorsOnly;
 
 		public PenAllPropertiesController(PenX doc)
 		{
@@ -53,13 +55,12 @@ namespace Altaxo.Gui.Common.Drawing
 			Initialize(true);
 		}
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (_view != null)
 			{
 				_view.ShowPlotColorsOnly = _showPlotColorsOnly;
 				_view.Pen = _doc;
-
 			}
 		}
 
@@ -101,7 +102,11 @@ namespace Altaxo.Gui.Common.Drawing
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -111,6 +116,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

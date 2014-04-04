@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.ColorProvider;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
-
-using Altaxo.Serialization;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui;
-
 
 namespace Altaxo.Gui.Graph
 {
@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph
 		bool ClipToLayer { get; set; }
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Controller for the density image plot style
@@ -57,14 +57,14 @@ namespace Altaxo.Gui.Graph
 	[ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
 	public class DensityImagePlotStyleController : IMVCANController
 	{
-		IDensityImagePlotStyleView _view;
-		DensityImagePlotStyle _doc;
-		UseDocument _useDocumentCopy;
+		private IDensityImagePlotStyleView _view;
+		private DensityImagePlotStyle _doc;
+		private UseDocument _useDocumentCopy;
 
-		IMVCANController _scaleController;
-		IMVCANController _colorProviderController;
+		private IMVCANController _scaleController;
+		private IMVCANController _colorProviderController;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -82,6 +82,7 @@ namespace Altaxo.Gui.Graph
 				_view.ClipToLayer = _doc.ClipToLayer;
 			}
 		}
+
 		#region IMVCANController Members
 
 		public bool InitializeDocument(params object[] args)
@@ -89,9 +90,8 @@ namespace Altaxo.Gui.Graph
 			if (args.Length == 0 || !(args[0] is DensityImagePlotStyle))
 				return false;
 			_doc = (DensityImagePlotStyle)args[0];
-			Initialize(true); 
+			Initialize(true);
 			return true;
-
 		}
 
 		public UseDocument UseDocumentCopy
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Graph
 			set { _useDocumentCopy = value; }
 		}
 
-		#endregion
+		#endregion IMVCANController Members
 
 		#region IMVCController Members
 
@@ -125,16 +125,18 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
 		public bool Apply()
 		{
-
 			if (!_scaleController.Apply())
 				return false;
-
 
 			if (!_colorProviderController.Apply())
 				return false;
@@ -146,6 +148,6 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

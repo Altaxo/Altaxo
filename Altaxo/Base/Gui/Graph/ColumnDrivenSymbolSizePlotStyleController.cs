@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,22 +29,29 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Graph.Gdi.Plot.Styles;
 	using Altaxo.Data;
+	using Altaxo.Graph.Gdi.Plot.Styles;
 
 	public interface IColumnDrivenSymbolSizePlotStyleView
 	{
 		IDensityScaleView ScaleView { get; }
+
 		event Action ChooseDataColumn;
+
 		event Action ClearDataColumn;
 
 		string DataColumnName { set; }
 
 		double SymbolSizeAt0 { get; set; }
+
 		double SymbolSizeAt1 { get; set; }
+
 		double SymbolSizeAbove { get; set; }
+
 		double SymbolSizeBelow { get; set; }
+
 		double SymbolSizeInvalid { get; set; }
+
 		int NumberOfSteps { get; set; }
 	}
 
@@ -50,12 +59,12 @@ namespace Altaxo.Gui.Graph
 	[ExpectedTypeOfView(typeof(IColumnDrivenSymbolSizePlotStyleView))]
 	public class ColumnDrivenSymbolSizePlotStyleController : IMVCANController
 	{
-		ColumnDrivenSymbolSizePlotStyle _doc;
-		IColumnDrivenSymbolSizePlotStyleView _view;
-		DensityScaleController _scaleController;
-		INumericColumn _tempDataColumn;
+		private ColumnDrivenSymbolSizePlotStyle _doc;
+		private IColumnDrivenSymbolSizePlotStyleView _view;
+		private DensityScaleController _scaleController;
+		private INumericColumn _tempDataColumn;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -76,7 +85,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhChooseDataColumn()
+		private void EhChooseDataColumn()
 		{
 			SingleColumnChoice choice = new SingleColumnChoice();
 			choice.SelectedColumn = _tempDataColumn != null ? _tempDataColumn as DataColumn : _doc.DataColumn as DataColumn;
@@ -92,10 +101,9 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhClearDataColumn()
+		private void EhClearDataColumn()
 		{
 		}
-
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -142,6 +150,10 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			if (!_scaleController.Apply())
@@ -155,7 +167,7 @@ namespace Altaxo.Gui.Graph
 
 			_doc.Scale = (Altaxo.Graph.Scales.NumericalScale)_scaleController.ModelObject;
 
-			if(null!=_tempDataColumn)
+			if (null != _tempDataColumn)
 				_doc.DataColumn = _tempDataColumn;
 
 			_doc.SymbolSizeAt0 = _view.SymbolSizeAt0;

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -44,10 +46,10 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Dummy controller to enable the use of <see cref="ColorPickerControl"/> directly from here in dialogs.
 	/// </summary>
-	class ColorController : IMVCAController
+	internal class ColorController : IMVCAController
 	{
-		Color _doc;
-		IWpfColorView _view;
+		private Color _doc;
+		private IWpfColorView _view;
 
 		public ColorController(Color c)
 		{
@@ -72,6 +74,10 @@ namespace Altaxo.Gui.Common.Drawing
 		public object ModelObject
 		{
 			get { return _doc; }
+		}
+
+		public void Dispose()
+		{
 		}
 
 		public bool Apply()

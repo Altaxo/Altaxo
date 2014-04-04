@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,156 +19,165 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
-
 using Altaxo.Gui.Common.Drawing;
-
+using System;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
+	#region Interfaces
 
-  public interface IXYGridStyleView
-  {
-    void InitializeBegin();
-    void InitializeEnd();
-    void InitializeMajorGridStyle( IColorTypeThicknessPenController controller);
-    void InitializeMinorGridStyle( IColorTypeThicknessPenController controller);
-    void InitializeShowGrid(bool value);
-    void InitializeShowMinorGrid(bool value);
-    void InitializeShowZeroOnly(bool value);
-    void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly);
+	public interface IXYGridStyleView
+	{
+		void InitializeBegin();
+
+		void InitializeEnd();
+
+		void InitializeMajorGridStyle(IColorTypeThicknessPenController controller);
+
+		void InitializeMinorGridStyle(IColorTypeThicknessPenController controller);
+
+		void InitializeShowGrid(bool value);
+
+		void InitializeShowMinorGrid(bool value);
+
+		void InitializeShowZeroOnly(bool value);
+
+		void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly);
 
 		event Action<bool> ShowGridChanged;
+
 		event Action<bool> ShowMinorGridChanged;
+
 		event Action<bool> ShowZeroOnlyChanged;
-  }
+	}
 
-  #endregion
+	#endregion Interfaces
 
-  /// <summary>
-  /// Summary description for XYGridStyleController.
-  /// </summary>
-  [UserControllerForObject(typeof(GridStyle))]
-  [ExpectedTypeOfView(typeof(IXYGridStyleView))]
-  public class XYGridStyleController : IMVCANController
-  {
-    IXYGridStyleView _view;
-    GridStyle _doc;
-    GridStyle _tempdoc;
-    IColorTypeThicknessPenController _majorController;
-    IColorTypeThicknessPenController _minorController;
+	/// <summary>
+	/// Summary description for XYGridStyleController.
+	/// </summary>
+	[UserControllerForObject(typeof(GridStyle))]
+	[ExpectedTypeOfView(typeof(IXYGridStyleView))]
+	public class XYGridStyleController : IMVCANController
+	{
+		private IXYGridStyleView _view;
+		private GridStyle _doc;
+		private GridStyle _tempdoc;
+		private IColorTypeThicknessPenController _majorController;
+		private IColorTypeThicknessPenController _minorController;
 
-    UseDocument _useDocument;
-    public UseDocument UseDocumentCopy { set { _useDocument = value; } }
+		private UseDocument _useDocument;
 
-    public XYGridStyleController() 
-    {
-    }
+		public UseDocument UseDocumentCopy { set { _useDocument = value; } }
 
-    public XYGridStyleController(GridStyle doc)
-    {
-      if (!InitializeDocument(doc))
-        throw new ApplicationException("Programming error");
-    }
+		public XYGridStyleController()
+		{
+		}
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args.Length == 0 || (args[0]!=null && !(args[0] is GridStyle)))
-        return false;
+		public XYGridStyleController(GridStyle doc)
+		{
+			if (!InitializeDocument(doc))
+				throw new ApplicationException("Programming error");
+		}
 
-      bool isVirgin = null == _doc;
-      _doc = (GridStyle)args[0];
-      _tempdoc = _doc;
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args.Length == 0 || (args[0] != null && !(args[0] is GridStyle)))
+				return false;
 
-      if(_useDocument == UseDocument.Copy && null!=_doc)
-      {
-        _tempdoc = (GridStyle)_doc.Clone();
-      }
-      if (null == _doc)
-      {
-        _doc = _tempdoc = new GridStyle();
-        _tempdoc.ShowGrid = false;
-        _useDocument = UseDocument.Directly;
-      }
+			bool isVirgin = null == _doc;
+			_doc = (GridStyle)args[0];
+			_tempdoc = _doc;
 
-      Initialize(true);
-      return true;
-    }
+			if (_useDocument == UseDocument.Copy && null != _doc)
+			{
+				_tempdoc = (GridStyle)_doc.Clone();
+			}
+			if (null == _doc)
+			{
+				_doc = _tempdoc = new GridStyle();
+				_tempdoc.ShowGrid = false;
+				_useDocument = UseDocument.Directly;
+			}
 
-    public void Initialize(bool init)
-    {
-      if (init)
-      {
-        _majorController = new ColorTypeThicknessPenController(_tempdoc.MajorPen);
-        _minorController = new ColorTypeThicknessPenController(_tempdoc.MinorPen);
-      }
+			Initialize(true);
+			return true;
+		}
 
-      if(_view!=null)
-      {
-        _view.InitializeBegin();
-        
-        _view.InitializeMajorGridStyle(_majorController);
-        _view.InitializeMinorGridStyle(_minorController);
-        _view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
-        _view.InitializeShowZeroOnly(_tempdoc.ShowZeroOnly);
-        _view.InitializeShowGrid(_tempdoc.ShowGrid);
-        InitializeElementEnabling();
-        
-        _view.InitializeEnd();
-      }
-    }
+		public void Initialize(bool init)
+		{
+			if (init)
+			{
+				_majorController = new ColorTypeThicknessPenController(_tempdoc.MajorPen);
+				_minorController = new ColorTypeThicknessPenController(_tempdoc.MinorPen);
+			}
 
-    public void InitializeElementEnabling()
-    {
-      if (_view != null)
-      {
-        bool majorstyle = _tempdoc.ShowGrid;
-        bool showzeroonly = _tempdoc.ShowGrid;
-        bool showminor = _tempdoc.ShowGrid && !_tempdoc.ShowZeroOnly;
-        bool minorstyle = _tempdoc.ShowMinor && showminor;
-        _view.InitializeElementEnabling(majorstyle, minorstyle, showminor, showzeroonly);
-      }
-    }
+			if (_view != null)
+			{
+				_view.InitializeBegin();
 
-    #region IXYGridStyleViewEventSink Members
+				_view.InitializeMajorGridStyle(_majorController);
+				_view.InitializeMinorGridStyle(_minorController);
+				_view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
+				_view.InitializeShowZeroOnly(_tempdoc.ShowZeroOnly);
+				_view.InitializeShowGrid(_tempdoc.ShowGrid);
+				InitializeElementEnabling();
 
-    public void EhView_ShowGridChanged(bool newval)
-    {
-      _tempdoc.ShowGrid = newval;
-      InitializeElementEnabling();
-    }
+				_view.InitializeEnd();
+			}
+		}
 
-    public void EhView_ShowMinorGridChanged(bool newval)
-    {
-      _tempdoc.ShowMinor = newval;
-      InitializeElementEnabling();
-    }
+		public void InitializeElementEnabling()
+		{
+			if (_view != null)
+			{
+				bool majorstyle = _tempdoc.ShowGrid;
+				bool showzeroonly = _tempdoc.ShowGrid;
+				bool showminor = _tempdoc.ShowGrid && !_tempdoc.ShowZeroOnly;
+				bool minorstyle = _tempdoc.ShowMinor && showminor;
+				_view.InitializeElementEnabling(majorstyle, minorstyle, showminor, showzeroonly);
+			}
+		}
 
-    public void EhView_ShowZeroOnlyChanged(bool newval)
-    {
-      _tempdoc.ShowZeroOnly = newval;
-      if (newval == true && _tempdoc.ShowMinor)
-      {
-        _tempdoc.ShowMinor = false;
-        _view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
-      }
-      InitializeElementEnabling();
-    }
+		#region IXYGridStyleViewEventSink Members
 
-    #endregion
+		public void EhView_ShowGridChanged(bool newval)
+		{
+			_tempdoc.ShowGrid = newval;
+			InitializeElementEnabling();
+		}
 
-    #region IMVCController Members
+		public void EhView_ShowMinorGridChanged(bool newval)
+		{
+			_tempdoc.ShowMinor = newval;
+			InitializeElementEnabling();
+		}
 
-    public object ViewObject
-    {
-      get { return _view; }
-      set
-      {
+		public void EhView_ShowZeroOnlyChanged(bool newval)
+		{
+			_tempdoc.ShowZeroOnly = newval;
+			if (newval == true && _tempdoc.ShowMinor)
+			{
+				_tempdoc.ShowMinor = false;
+				_view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
+			}
+			InitializeElementEnabling();
+		}
+
+		#endregion IXYGridStyleViewEventSink Members
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get { return _view; }
+			set
+			{
 				if (_view != null)
 				{
 					_view.ShowGridChanged -= this.EhView_ShowGridChanged;
@@ -175,7 +185,7 @@ namespace Altaxo.Gui.Graph
 					_view.ShowZeroOnlyChanged -= this.EhView_ShowZeroOnlyChanged;
 				}
 
-        _view = value as IXYGridStyleView;
+				_view = value as IXYGridStyleView;
 
 				if (_view != null)
 				{
@@ -184,41 +194,42 @@ namespace Altaxo.Gui.Graph
 					_view.ShowGridChanged += this.EhView_ShowGridChanged;
 					_view.ShowMinorGridChanged += this.EhView_ShowMinorGridChanged;
 					_view.ShowZeroOnlyChanged += this.EhView_ShowZeroOnlyChanged;
-
 				}
-      }
-    }
+			}
+		}
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public bool Apply()
-    {
-      if(!this._majorController.Apply())
-        return false;
+		#region IApplyController Members
 
-      if(!this._minorController.Apply())
-        return false;
+		public bool Apply()
+		{
+			if (!this._majorController.Apply())
+				return false;
 
-      if (_useDocument == UseDocument.Copy)
-      {
-        _doc.CopyFrom(_tempdoc);
-      }
-      
-      return true;
-    }
+			if (!this._minorController.Apply())
+				return false;
 
-    #endregion
+			if (_useDocument == UseDocument.Copy)
+			{
+				_doc.CopyFrom(_tempdoc);
+			}
 
- 
-  }
+			return true;
+		}
+
+		#endregion IApplyController Members
+	}
 }

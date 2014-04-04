@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,63 +19,64 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Gui;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 
-using Altaxo.Main;
-using Altaxo.Gui;
-using Altaxo.Data;
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Graph
 {
-  #region SingleColumnChoice document
+	#region SingleColumnChoice document
 
-  /// <summary>
-  /// Summary description for SingleColumnChoice.
-  /// </summary>
-  public class SingleColumnChoice
-  {
-    public DataColumn SelectedColumn;
-    public object Environment;
-    public bool AllowOnlyNumericColumns;
-  }
+	/// <summary>
+	/// Summary description for SingleColumnChoice.
+	/// </summary>
+	public class SingleColumnChoice
+	{
+		public DataColumn SelectedColumn;
+		public object Environment;
+		public bool AllowOnlyNumericColumns;
+	}
 
-  #endregion
+	#endregion SingleColumnChoice document
 
-  #region interfaces
+	#region interfaces
 
-  public interface ISingleColumnChoiceView
-  {
-    ISingleColumnChoiceViewEventSink Controller { get; set; }
-    /// <summary>
-    /// Initializes the treeview of available data with content.
-    /// </summary>
-    /// <param name="nodes"></param>
-    void Initialize(NGTreeNodeCollection nodes);
-  }
+	public interface ISingleColumnChoiceView
+	{
+		ISingleColumnChoiceViewEventSink Controller { get; set; }
 
-  public interface ISingleColumnChoiceViewEventSink
-  {
-    void EhView_AfterSelectNode(NGTreeNode node);
-  }
+		/// <summary>
+		/// Initializes the treeview of available data with content.
+		/// </summary>
+		/// <param name="nodes"></param>
+		void Initialize(NGTreeNodeCollection nodes);
+	}
 
-  #endregion
+	public interface ISingleColumnChoiceViewEventSink
+	{
+		void EhView_AfterSelectNode(NGTreeNode node);
+	}
 
-  [UserControllerForObject(typeof(SingleColumnChoice))]
-  [ExpectedTypeOfView(typeof(ISingleColumnChoiceView))]
-  public class SingleColumnChoiceController : IMVCAController, ISingleColumnChoiceViewEventSink
+	#endregion interfaces
+
+	[UserControllerForObject(typeof(SingleColumnChoice))]
+	[ExpectedTypeOfView(typeof(ISingleColumnChoiceView))]
+	public class SingleColumnChoiceController : IMVCAController, ISingleColumnChoiceViewEventSink
 	{
 		#region My private nodes
 
 		internal class TableNode : NGTreeNode
 		{
-			const int MaxNumberOfColumnsInOneNode = 100;
-			DataColumnCollection _collection;
-			int _firstColumn;
-			int _columnCount;
+			private const int MaxNumberOfColumnsInOneNode = 100;
+			private DataColumnCollection _collection;
+			private int _firstColumn;
+			private int _columnCount;
 
 			public TableNode(DataTable table)
 				: base(true)
@@ -117,7 +119,7 @@ namespace Altaxo.Gui.Graph
 			{
 				DataColumnCollection coll = _collection;
 				Nodes.Clear();
-				int nextColumn = Math.Min(_firstColumn+_columnCount,coll.ColumnCount);
+				int nextColumn = Math.Min(_firstColumn + _columnCount, coll.ColumnCount);
 
 				if (_columnCount <= MaxNumberOfColumnsInOneNode) // If number is low enough, expand to the data columns directly
 				{
@@ -132,9 +134,9 @@ namespace Altaxo.Gui.Graph
 					int colsInOneNode = MaxNumberOfColumnsInOneNode;
 					for (; colsInOneNode * numNodes < _columnCount; colsInOneNode *= MaxNumberOfColumnsInOneNode) ; // Multiply with a multiple of MaxNumberOfColumnsInOneNode until it fits
 
-					int first=_firstColumn;
+					int first = _firstColumn;
 					int remaining = nextColumn - _firstColumn;
-					for (int i = 0; i < numNodes && remaining>0; ++i )
+					for (int i = 0; i < numNodes && remaining > 0; ++i)
 					{
 						Nodes.Add(new TableNode(coll, first, Math.Min(remaining, colsInOneNode)));
 						remaining -= colsInOneNode;
@@ -144,22 +146,22 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion My private nodes
 
-		ISingleColumnChoiceView _view;
-    SingleColumnChoice _doc;
+		private ISingleColumnChoiceView _view;
+		private SingleColumnChoice _doc;
 
-    DataColumn _selectedColumn = null;
-		NGTreeNode _rootNode = new NGTreeNode();
+		private DataColumn _selectedColumn = null;
+		private NGTreeNode _rootNode = new NGTreeNode();
 
-    public SingleColumnChoiceController(SingleColumnChoice doc)
-    {
-      _doc = doc;
+		public SingleColumnChoiceController(SingleColumnChoice doc)
+		{
+			_doc = doc;
 			Initialize(true);
-    }
+		}
 
-    public void Initialize(bool initData)
-    {
+		public void Initialize(bool initData)
+		{
 			if (initData)
 			{
 				if (_doc.Environment is Altaxo.Gui.Graph.Viewing.IGraphController)
@@ -169,11 +171,10 @@ namespace Altaxo.Gui.Graph
 					_rootNode.Nodes.Add(node);
 				}
 
-				var tableCollectionNode = new NGTreeNode(true) { Text="Tables", Tag=Current.Project.DataTableCollection };
+				var tableCollectionNode = new NGTreeNode(true) { Text = "Tables", Tag = Current.Project.DataTableCollection };
 				_rootNode.Nodes.Add(tableCollectionNode);
 
 				AddAllTableNodes(tableCollectionNode);
-
 
 				DataTable selectedTable = null;
 				if (_doc.SelectedColumn != null)
@@ -182,24 +183,23 @@ namespace Altaxo.Gui.Graph
 				if (null != selectedTable)
 				{
 					var selTableNode = FindTableNode(tableCollectionNode, selectedTable);
-					if(selTableNode != null)
+					if (selTableNode != null)
 						selTableNode.IsExpanded = true;
 
 					if (null != selTableNode && null != _doc.SelectedColumn)
 					{
 						var selColumnNode = FindColumnNode(selTableNode, _doc.SelectedColumn);
-						if(null!=selColumnNode)
+						if (null != selColumnNode)
 							selColumnNode.IsSelected = true;
 					}
 				}
 			}
 
-      if(_view!=null)
-      {
-        _view.Initialize(_rootNode.Nodes);
-      }
-    }
-
+			if (_view != null)
+			{
+				_view.Initialize(_rootNode.Nodes);
+			}
+		}
 
 		public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
 		{
@@ -216,30 +216,28 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		NGTreeNode FindTableNode(NGTreeNode tableCollectionNode, DataTable table)
+		private NGTreeNode FindTableNode(NGTreeNode tableCollectionNode, DataTable table)
 		{
-			NGTreeNode result=null;
+			NGTreeNode result = null;
 
-			foreach(NGTreeNode node in tableCollectionNode.Nodes)
-				if(object.ReferenceEquals(node.Tag,table))
+			foreach (NGTreeNode node in tableCollectionNode.Nodes)
+				if (object.ReferenceEquals(node.Tag, table))
 				{
-					result=node;
+					result = node;
 					return result;
 				}
 
-			foreach(NGTreeNode node in tableCollectionNode.Nodes)
+			foreach (NGTreeNode node in tableCollectionNode.Nodes)
 			{
 				result = FindTableNode(node, table);
-				if(null!=result)
+				if (null != result)
 					return result;
 			}
 
 			return result;
 		}
 
-
-		NGTreeNode FindColumnNode(NGTreeNode tableNode, DataColumn column)
+		private NGTreeNode FindColumnNode(NGTreeNode tableNode, DataColumn column)
 		{
 			NGTreeNode result = null;
 			foreach (NGTreeNode node in tableNode.Nodes)
@@ -259,84 +257,84 @@ namespace Altaxo.Gui.Graph
 			return null;
 		}
 
-    private NGTreeNode FindNode(NGTreeNodeCollection nodecoll, string txt)
-    {
-      foreach(var nd in nodecoll)
-        if(nd.Text==txt)
-          return nd;
+		private NGTreeNode FindNode(NGTreeNodeCollection nodecoll, string txt)
+		{
+			foreach (var nd in nodecoll)
+				if (nd.Text == txt)
+					return nd;
 
-      return null;
-    }
+			return null;
+		}
 
+		#region IMVCController Members
 
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-    #region IMVCController Members
+				_view = value as ISingleColumnChoiceView;
 
-    public object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
-        if(_view!=null)
-          _view.Controller = null;
+				Initialize(false);
 
-        _view = value as ISingleColumnChoiceView;
-        
-        Initialize(false);
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-        if(_view!=null)
-          _view.Controller = this;
-      }
-    }
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public void Dispose()
+		{
+		}
 
-    #endregion
+		#endregion IMVCController Members
 
-    #region IApplyController Members
+		#region IApplyController Members
 
-    public bool Apply()
-    {
-      if(_selectedColumn != null)
-      {
-        _doc.SelectedColumn = _selectedColumn;
-        return true;
-      }
+		public bool Apply()
+		{
+			if (_selectedColumn != null)
+			{
+				_doc.SelectedColumn = _selectedColumn;
+				return true;
+			}
 
-      return false;
-    }
+			return false;
+		}
 
-    #endregion
+		#endregion IApplyController Members
 
-    #region ISingleColumnChoiceViewEventSink Members
+		#region ISingleColumnChoiceViewEventSink Members
 
-    protected NGTreeNode GetRootNode(NGTreeNode node)
-    {
-      while(node.ParentNode!=null)
-        node = node.ParentNode;
+		protected NGTreeNode GetRootNode(NGTreeNode node)
+		{
+			while (node.ParentNode != null)
+				node = node.ParentNode;
 
-      return node;
-    }
+			return node;
+		}
 
-    public void EhView_AfterSelectNode(NGTreeNode node)
-    {
-      if(node.Tag is DataColumn)
-        _selectedColumn = (DataColumn)node.Tag;
-      else
-        _selectedColumn = null;
-    }
+		public void EhView_AfterSelectNode(NGTreeNode node)
+		{
+			if (node.Tag is DataColumn)
+				_selectedColumn = (DataColumn)node.Tag;
+			else
+				_selectedColumn = null;
+		}
 
-    #endregion
-  }
-
+		#endregion ISingleColumnChoiceViewEventSink Members
+	}
 }

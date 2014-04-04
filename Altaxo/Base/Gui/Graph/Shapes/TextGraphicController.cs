@@ -314,6 +314,10 @@ namespace Altaxo.Gui.Graph.Shapes
 			get { return _originalDoc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 
 		#region IApplyController Members

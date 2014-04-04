@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,189 +19,191 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
+	#region Interfaces
 
-  #region Interfaces
-  
-  public interface ISingleChoiceViewEventSink
-  {
-    void EhChoiceChanged(int newchoice);
-  }
+	public interface ISingleChoiceViewEventSink
+	{
+		void EhChoiceChanged(int newchoice);
+	}
 
-  /// <summary>
-  /// This interface must be implemented by controls that allow to choose a single
-  /// selection out of multiple values.
-  /// </summary>
-  public interface ISingleChoiceView
-  {
-    /// <summary>
-    /// Sets the controller.
-    /// </summary>
-    ISingleChoiceViewEventSink Controller { set; }
+	/// <summary>
+	/// This interface must be implemented by controls that allow to choose a single
+	/// selection out of multiple values.
+	/// </summary>
+	public interface ISingleChoiceView
+	{
+		/// <summary>
+		/// Sets the controller.
+		/// </summary>
+		ISingleChoiceViewEventSink Controller { set; }
 
-    /// <summary>
-    /// Initializes a descriptive text.
-    /// </summary>
-    /// <param name="value">The descriptive text.</param>
-    void InitializeDescription(string value);
-    
-    /// <summary>
-    /// Initializes the choices and the initial selection.
-    /// </summary>
-    /// <param name="values">The choices.</param>
-    /// <param name="initialchoice">The index of the initial selected choice.</param>
-    void InitializeChoice(string[] values, int initialchoice);
-  }
- 
+		/// <summary>
+		/// Initializes a descriptive text.
+		/// </summary>
+		/// <param name="value">The descriptive text.</param>
+		void InitializeDescription(string value);
 
-  public interface ISingleChoiceObject
-  {
-    string[] Choices   { get; }
-    int      Selection { get; set; }
-  }
+		/// <summary>
+		/// Initializes the choices and the initial selection.
+		/// </summary>
+		/// <param name="values">The choices.</param>
+		/// <param name="initialchoice">The index of the initial selected choice.</param>
+		void InitializeChoice(string[] values, int initialchoice);
+	}
 
-  public class SingleChoiceObject : ISingleChoiceObject
-  {
-    protected string[] _choices;
-    protected int      _selection;
+	public interface ISingleChoiceObject
+	{
+		string[] Choices { get; }
 
-    public SingleChoiceObject(string[] choices, int selection)
-    {
-      _choices = (string[])choices.Clone();
-      _selection = selection;
-    }
+		int Selection { get; set; }
+	}
 
-    public string[] Choices
-    {
-      get 
-      {
-        return (string[])_choices.Clone();
-      }
-    }
+	public class SingleChoiceObject : ISingleChoiceObject
+	{
+		protected string[] _choices;
+		protected int _selection;
 
-    public int Selection
-    {
-      get 
-      {
-        return _selection;
-      }
-      set
-      {
-        _selection = value;
-      }
-    }
-    
+		public SingleChoiceObject(string[] choices, int selection)
+		{
+			_choices = (string[])choices.Clone();
+			_selection = selection;
+		}
 
-  }
+		public string[] Choices
+		{
+			get
+			{
+				return (string[])_choices.Clone();
+			}
+		}
 
-  #endregion
+		public int Selection
+		{
+			get
+			{
+				return _selection;
+			}
+			set
+			{
+				_selection = value;
+			}
+		}
+	}
 
-  /// <summary>
-  /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
-  /// </summary>
-  public class SingleChoiceController : IMVCAController, ISingleChoiceViewEventSink
-  {
-    protected ISingleChoiceView _view;
-    protected string[]          _values;
-    protected int               _choice;
-    protected int               _choiceTemp;
+	#endregion Interfaces
 
-    protected string _descriptionText = "Your choice:";
+	/// <summary>
+	/// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
+	/// </summary>
+	public class SingleChoiceController : IMVCAController, ISingleChoiceViewEventSink
+	{
+		protected ISingleChoiceView _view;
+		protected string[] _values;
+		protected int _choice;
+		protected int _choiceTemp;
 
-    public SingleChoiceController(string[] values, int selected)
-    {
-      Initialize(values,selected);
-    }
+		protected string _descriptionText = "Your choice:";
 
-    protected SingleChoiceController()
-    {
-    }
+		public SingleChoiceController(string[] values, int selected)
+		{
+			Initialize(values, selected);
+		}
 
-    protected void Initialize(string[] values, int selected)
-    {
-      _values = values;
-      _choice = _choiceTemp = selected;
-    }
+		protected SingleChoiceController()
+		{
+		}
 
-    protected virtual void Initialize()
-    {
-      if(null!=_view)
-      {
-        _view.InitializeDescription(_descriptionText);
-        _view.InitializeChoice(_values,_choice);
-      }
-    }
+		protected void Initialize(string[] values, int selected)
+		{
+			_values = values;
+			_choice = _choiceTemp = selected;
+		}
 
-    public string DescriptionText
-    {
-      get 
-      {
-        return _descriptionText; 
-      }
-      set
-      {
-        _descriptionText = value;
-        if(null!=_view)
-        {
-          _view.InitializeDescription(_descriptionText);
-        }
-      }
-    }
-    #region IMVCController Members
+		protected virtual void Initialize()
+		{
+			if (null != _view)
+			{
+				_view.InitializeDescription(_descriptionText);
+				_view.InitializeChoice(_values, _choice);
+			}
+		}
 
-    public virtual object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
-        if(_view!=null)
-          _view.Controller = null;
+		public string DescriptionText
+		{
+			get
+			{
+				return _descriptionText;
+			}
+			set
+			{
+				_descriptionText = value;
+				if (null != _view)
+				{
+					_view.InitializeDescription(_descriptionText);
+				}
+			}
+		}
 
-        _view = value as ISingleChoiceView;
-        
-        Initialize();
+		#region IMVCController Members
 
-        if(_view!=null)
-          _view.Controller = this;
-      }
-    }
+		public virtual object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-    public virtual object ModelObject
-    {
-      get
-      {
-        return _choice;
-      }
-    }
+				_view = value as ISingleChoiceView;
 
-    #endregion
+				Initialize();
 
-    #region IApplyController Members
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-    public virtual bool Apply()
-    {
-      _choice = _choiceTemp;
-      return true;
-    }
+		public virtual object ModelObject
+		{
+			get
+			{
+				return _choice;
+			}
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region ISingleChoiceViewEventSink Members
+		#endregion IMVCController Members
 
-    public virtual void EhChoiceChanged(int val)
-    {
-      _choiceTemp = val;
-    }
+		#region IApplyController Members
 
-    #endregion
-  }
+		public virtual bool Apply()
+		{
+			_choice = _choiceTemp;
+			return true;
+		}
+
+		#endregion IApplyController Members
+
+		#region ISingleChoiceViewEventSink Members
+
+		public virtual void EhChoiceChanged(int val)
+		{
+			_choiceTemp = val;
+		}
+
+		#endregion ISingleChoiceViewEventSink Members
+	}
 }

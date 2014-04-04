@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.CS;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Graph.Gdi.CS;
 
 namespace Altaxo.Gui.Graph
 {
@@ -32,71 +34,73 @@ namespace Altaxo.Gui.Graph
 	public interface IG2DCartesicCSView
 	{
 		bool ExchangeXY { get; set; }
+
 		bool ReverseX { get; set; }
+
 		bool ReverseY { get; set; }
 	}
 
-	#endregion
+	#endregion Interfaces
 
-	[UserControllerForObject(typeof(G2DCartesicCoordinateSystem),101)]
-  [ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
-  public class G2DCartesicCSController : IMVCAController
-  {
-    IG2DCartesicCSView _view;
-    G2DCartesicCoordinateSystem _doc;
+	[UserControllerForObject(typeof(G2DCartesicCoordinateSystem), 101)]
+	[ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
+	public class G2DCartesicCSController : IMVCAController
+	{
+		private IG2DCartesicCSView _view;
+		private G2DCartesicCoordinateSystem _doc;
 
-    public G2DCartesicCSController(G2DCartesicCoordinateSystem doc)
-    {
-      _doc = doc;
-      Initialize(true);
-    }
+		public G2DCartesicCSController(G2DCartesicCoordinateSystem doc)
+		{
+			_doc = doc;
+			Initialize(true);
+		}
 
-#region IMVCController Members
+		#region IMVCController Members
 
+		private void Initialize(bool bInit)
+		{
+			if (_view != null)
+			{
+				_view.ExchangeXY = _doc.IsXYInterchanged;
+				_view.ReverseX = _doc.IsXReverse;
+				_view.ReverseY = _doc.IsYReverse;
+			}
+		}
 
-    void Initialize(bool bInit)
-    {
-      if (_view != null)
-      {
-        _view.ExchangeXY = _doc.IsXYInterchanged;
-        _view.ReverseX = _doc.IsXReverse;
-        _view.ReverseY = _doc.IsYReverse;
-      }
-    }
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value as IG2DCartesicCSView;
+				Initialize(false);
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as IG2DCartesicCSView;
-        Initialize(false);
-      }
-    }
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		public void Dispose()
+		{
+		}
 
-    #endregion
+		#endregion IMVCController Members
 
-    #region IApplyController Members
+		#region IApplyController Members
 
-    public bool Apply()
-    {
-      _doc.IsXYInterchanged = _view.ExchangeXY;
-      _doc.IsXReverse = _view.ReverseX;
-      _doc.IsYReverse = _view.ReverseY;
-      return true;
+		public bool Apply()
+		{
+			_doc.IsXYInterchanged = _view.ExchangeXY;
+			_doc.IsXReverse = _view.ReverseX;
+			_doc.IsYReverse = _view.ReverseY;
+			return true;
+		}
 
-    }
-
-    #endregion
-
-
-  }
+		#endregion IApplyController Members
+	}
 }

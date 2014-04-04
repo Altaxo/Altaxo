@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Gui;
 using Altaxo.Main;
-using Altaxo.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.Main
 {
@@ -41,8 +42,7 @@ namespace Altaxo.Gui.Main
 		public ProjectFolder SelectedFolder { get; set; }
 	}
 
-	#endregion
-
+	#endregion SingleColumnChoice document
 
 	[UserControllerForObject(typeof(SingleFolderChoice))]
 	[ExpectedTypeOfView(typeof(ISingleTreeViewItemChoiceView))]
@@ -50,17 +50,17 @@ namespace Altaxo.Gui.Main
 	{
 		#region My private nodes
 
-		class FolderNode : NGTreeNode
+		private class FolderNode : NGTreeNode
 		{
 		}
-		#endregion
 
-		ISingleTreeViewItemChoiceView _view;
-		SingleFolderChoice _doc;
+		#endregion My private nodes
 
-		ProjectFolder _selectedFolder = null;
-		NGTreeNode _rootNode = new NGTreeNode();
+		private ISingleTreeViewItemChoiceView _view;
+		private SingleFolderChoice _doc;
 
+		private ProjectFolder _selectedFolder = null;
+		private NGTreeNode _rootNode = new NGTreeNode();
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -81,16 +81,14 @@ namespace Altaxo.Gui.Main
 		{
 			if (initData)
 			{
-			//	var tableCollectionNode = new FolderNode { Text = "Tables", Tag = Current.Project.DataTableCollection };
+				//	var tableCollectionNode = new FolderNode { Text = "Tables", Tag = Current.Project.DataTableCollection };
 
-			//	_rootNode.Nodes.Add(tableCollectionNode);
+				//	_rootNode.Nodes.Add(tableCollectionNode);
 
 				AddAllTableNodes(_rootNode);
 				_rootNode.IsExpanded = true;
 
 				//tableCollectionNode.IsExpanded = true;
-
-
 
 				if (null != _doc.SelectedFolder)
 				{
@@ -108,7 +106,6 @@ namespace Altaxo.Gui.Main
 			}
 		}
 
-
 		public static void AddAllTableNodes(NGTreeNode tableCollectionNode)
 		{
 			// Create a dictionary of folders to TreeNodes relation
@@ -121,7 +118,6 @@ namespace Altaxo.Gui.Main
 				var parentNode = Altaxo.Main.ProjectFolders.AddFolderNodeRecursively<FolderNode>(table.FolderName, folderDict);
 			}
 		}
-
 
 		public static NGTreeNode FindFolderNode(NGTreeNode tableCollectionNode, ProjectFolder table)
 		{
@@ -153,7 +149,6 @@ namespace Altaxo.Gui.Main
 			return null;
 		}
 
-
 		public void EhSelectionChanged(NGTreeNode node)
 		{
 			if (node.Tag is ProjectFolder)
@@ -164,14 +159,12 @@ namespace Altaxo.Gui.Main
 				_selectedFolder = null;
 		}
 
-
 		#region IMVCController Members
 
 		public object ViewObject
 		{
 			get
 			{
-
 				return _view;
 			}
 			set
@@ -182,7 +175,6 @@ namespace Altaxo.Gui.Main
 				}
 
 				_view = value as ISingleTreeViewItemChoiceView;
-
 
 				if (_view != null)
 				{
@@ -201,7 +193,11 @@ namespace Altaxo.Gui.Main
 			}
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -216,11 +212,6 @@ namespace Altaxo.Gui.Main
 			return false;
 		}
 
-		#endregion
-
-	
-
-
+		#endregion IApplyController Members
 	}
-
 }

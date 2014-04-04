@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,147 +19,156 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Gui;
+using System;
 
 namespace Altaxo.Gui.Graph
 {
-  /// <summary>
-  /// Interface for controlling the polynomial fit view.
-  /// </summary>
-  public interface IFitPolynomialDialogController : IMVCAController
-  {
-    /// <summary>Returns the fitting order.</summary>
-    int Order { get; }
-    /// <summary>Returns the maximum x of the fitting curve.</summary>
-    double FitCurveXmax { get; }
-    /// <summary>Returns the minimum x for the fitting curve.</summary>
-    double FitCurveXmin { get ; }
-    /// <summary>Returns the user choice, wether or not the formula should be shown in the graph.</summary>
-    bool ShowFormulaOnGraph { get ; }
+	/// <summary>
+	/// Interface for controlling the polynomial fit view.
+	/// </summary>
+	public interface IFitPolynomialDialogController : IMVCAController
+	{
+		/// <summary>Returns the fitting order.</summary>
+		int Order { get; }
 
-  }
+		/// <summary>Returns the maximum x of the fitting curve.</summary>
+		double FitCurveXmax { get; }
 
-  /// <summary>
-  /// Interface for accessing the polynomial fit view.
-  /// </summary>
-  public interface IFitPolynomialDialogControl
-  {
-    int Order { get; set; }
-    double FitCurveXmin { get; set; }
-    double FitCurveXmax { get; set; }
-    bool ShowFormulaOnGraph { get; set; }
-  }
+		/// <summary>Returns the minimum x for the fitting curve.</summary>
+		double FitCurveXmin { get; }
 
+		/// <summary>Returns the user choice, wether or not the formula should be shown in the graph.</summary>
+		bool ShowFormulaOnGraph { get; }
+	}
 
-  /// <summary>
-  /// Controls the polynomial fit view.
-  /// </summary>
-  [ExpectedTypeOfView(typeof(IFitPolynomialDialogControl))]
-  public class FitPolynomialDialogController : IFitPolynomialDialogController
-  {
-    int _Order;
-    double _FitCurveXmin;
-    double _FitCurveXmax;
-    bool _ShowFormulaOnGraph;
-    IFitPolynomialDialogControl _View;
+	/// <summary>
+	/// Interface for accessing the polynomial fit view.
+	/// </summary>
+	public interface IFitPolynomialDialogControl
+	{
+		int Order { get; set; }
 
-    /// <summary>Returns the fitting order.</summary>
-    public int Order { get { return _Order; }}
-    /// <summary>Returns the maximum x of the fitting curve.</summary>
-    public double FitCurveXmax { get { return _FitCurveXmax; }}
-    /// <summary>Returns the minimum x for the fitting curve.</summary>
-    public double FitCurveXmin { get { return _FitCurveXmin; }}
-    /// <summary>Returns the user choice, wether or not the formula should be shown in the graph.</summary>
-    public bool ShowFormulaOnGraph { get { return _ShowFormulaOnGraph; }}
+		double FitCurveXmin { get; set; }
 
+		double FitCurveXmax { get; set; }
 
-    public FitPolynomialDialogController(int order, double xmin, double xmax, bool bShowFormulaOnGraph)
-    {
-      _Order = order;
-      _FitCurveXmin = xmin;
-      _FitCurveXmax = xmax;
-      _ShowFormulaOnGraph = bShowFormulaOnGraph;
+		bool ShowFormulaOnGraph { get; set; }
+	}
 
-      SetElements(true);
-    }
+	/// <summary>
+	/// Controls the polynomial fit view.
+	/// </summary>
+	[ExpectedTypeOfView(typeof(IFitPolynomialDialogControl))]
+	public class FitPolynomialDialogController : IFitPolynomialDialogController
+	{
+		private int _Order;
+		private double _FitCurveXmin;
+		private double _FitCurveXmax;
+		private bool _ShowFormulaOnGraph;
+		private IFitPolynomialDialogControl _View;
 
+		/// <summary>Returns the fitting order.</summary>
+		public int Order { get { return _Order; } }
 
+		/// <summary>Returns the maximum x of the fitting curve.</summary>
+		public double FitCurveXmax { get { return _FitCurveXmax; } }
 
-    void SetElements(bool bInit)
-    {
-      if(bInit)
-      {
-        
-      }
+		/// <summary>Returns the minimum x for the fitting curve.</summary>
+		public double FitCurveXmin { get { return _FitCurveXmin; } }
 
-      if(null!=View)
-      {
-        View.Order = this._Order;
-        View.FitCurveXmin = this._FitCurveXmin;
-        View.FitCurveXmax = this._FitCurveXmax;
-        View.ShowFormulaOnGraph = this._ShowFormulaOnGraph;
-      }
-    }
-    #region ILinkAxisController Members
+		/// <summary>Returns the user choice, wether or not the formula should be shown in the graph.</summary>
+		public bool ShowFormulaOnGraph { get { return _ShowFormulaOnGraph; } }
 
-    public IFitPolynomialDialogControl View
-    {
-      get
-      {
-        return _View;
-      }
-      set
-      {
-        _View = value;
+		public FitPolynomialDialogController(int order, double xmin, double xmax, bool bShowFormulaOnGraph)
+		{
+			_Order = order;
+			_FitCurveXmin = xmin;
+			_FitCurveXmax = xmax;
+			_ShowFormulaOnGraph = bShowFormulaOnGraph;
 
-        if(null!=_View)
-        {
-          SetElements(false); // set only the view elements, dont't initialize the variables
-        }
-      }
-    }
+			SetElements(true);
+		}
 
-    #endregion
+		private void SetElements(bool bInit)
+		{
+			if (bInit)
+			{
+			}
 
-    #region IApplyController Members
+			if (null != View)
+			{
+				View.Order = this._Order;
+				View.FitCurveXmin = this._FitCurveXmin;
+				View.FitCurveXmax = this._FitCurveXmax;
+				View.ShowFormulaOnGraph = this._ShowFormulaOnGraph;
+			}
+		}
 
-    public bool Apply()
-    {
-      if(null!=View)
-      {
-        this._Order = View.Order;
-        this._FitCurveXmin = View.FitCurveXmin;
-        this._FitCurveXmax = View.FitCurveXmax;
-        this._ShowFormulaOnGraph = View.ShowFormulaOnGraph;
-      }
-    
-      return true;
-    }
+		#region ILinkAxisController Members
 
-    #endregion
+		public IFitPolynomialDialogControl View
+		{
+			get
+			{
+				return _View;
+			}
+			set
+			{
+				_View = value;
 
-    #region IMVCController Members
+				if (null != _View)
+				{
+					SetElements(false); // set only the view elements, dont't initialize the variables
+				}
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return View;
-      }
-      set
-      {
-        View = value as IFitPolynomialDialogControl;
-      }
-    }
+		#endregion ILinkAxisController Members
 
-    public object ModelObject
-    {
-      get { return this; }
-    }
+		#region IApplyController Members
 
-    #endregion
-  }
+		public bool Apply()
+		{
+			if (null != View)
+			{
+				this._Order = View.Order;
+				this._FitCurveXmin = View.FitCurveXmin;
+				this._FitCurveXmax = View.FitCurveXmax;
+				this._ShowFormulaOnGraph = View.ShowFormulaOnGraph;
+			}
+
+			return true;
+		}
+
+		#endregion IApplyController Members
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return View;
+			}
+			set
+			{
+				View = value as IFitPolynomialDialogControl;
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return this; }
+		}
+
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
+	}
 }

@@ -259,6 +259,10 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 
 		#region IApplyController Members

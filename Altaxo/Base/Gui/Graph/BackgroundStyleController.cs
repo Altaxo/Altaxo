@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,215 +19,211 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
+#endregion Copyright
 
 using Altaxo.Calc;
-
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface IBackgroundStyleViewEventSink
-  {
-    /// <summary>
-    /// Called if the background color is changed.
-    /// </summary>
-    /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_BackgroundBrushChanged(BrushX newValue);
+	#region Interfaces
 
-    /// <summary>
-    /// Called if the background style changed.
-    /// </summary>
-    /// <param name="newValue">The new index of the style.</param>
-    void EhView_BackgroundStyleChanged(int newValue);
-  }
+	public interface IBackgroundStyleViewEventSink
+	{
+		/// <summary>
+		/// Called if the background color is changed.
+		/// </summary>
+		/// <param name="newValue">The new selected item of the combo box.</param>
+		void EhView_BackgroundBrushChanged(BrushX newValue);
 
-  public interface IBackgroundStyleView
-  {
+		/// <summary>
+		/// Called if the background style changed.
+		/// </summary>
+		/// <param name="newValue">The new index of the style.</param>
+		void EhView_BackgroundStyleChanged(int newValue);
+	}
 
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IBackgroundStyleViewEventSink Controller { get; set; }
+	public interface IBackgroundStyleView
+	{
+		/// <summary>
+		/// Get/sets the controller of this view.
+		/// </summary>
+		IBackgroundStyleViewEventSink Controller { get; set; }
 
-    /// <summary>
-    /// Initializes the content of the background color combo box.
-    /// </summary>
-    void BackgroundBrush_Initialize(BrushX brush);
+		/// <summary>
+		/// Initializes the content of the background color combo box.
+		/// </summary>
+		void BackgroundBrush_Initialize(BrushX brush);
 
-    /// <summary>
-    /// Initializes the enable state of the background color combo box.
-    /// </summary>
-    void BackgroundBrushEnable_Initialize(bool enable);
+		/// <summary>
+		/// Initializes the enable state of the background color combo box.
+		/// </summary>
+		void BackgroundBrushEnable_Initialize(bool enable);
 
-    /// <summary>
-    /// Initializes the background styles.
-    /// </summary>
-    /// <param name="names"></param>
-    /// <param name="selection"></param>
-    void BackgroundStyle_Initialize(string[] names, int selection);
-  }
+		/// <summary>
+		/// Initializes the background styles.
+		/// </summary>
+		/// <param name="names"></param>
+		/// <param name="selection"></param>
+		void BackgroundStyle_Initialize(string[] names, int selection);
+	}
 
+	#endregion Interfaces
 
+	/// <summary>
+	/// Controls a IBackgroundStyle instance.
+	/// </summary>
+	[UserControllerForObject(typeof(IBackgroundStyle))]
+	[ExpectedTypeOfView(typeof(IBackgroundStyleView))]
+	public class BackgroundStyleController : IBackgroundStyleViewEventSink, IMVCAController
+	{
+		private IBackgroundStyleView _view;
+		private IBackgroundStyle _doc;
+		private IBackgroundStyle _tempDoc;
 
-  #endregion
+		protected System.Type[] _backgroundStyles;
 
+		public event EventHandler TemporaryModelObjectChanged;
 
-  /// <summary>
-  /// Controls a IBackgroundStyle instance.
-  /// </summary>
-  [UserControllerForObject(typeof(IBackgroundStyle))]
-  [ExpectedTypeOfView(typeof(IBackgroundStyleView))]
-  public class BackgroundStyleController : IBackgroundStyleViewEventSink, IMVCAController
-  {
-    IBackgroundStyleView _view;
-    IBackgroundStyle _doc;
-    IBackgroundStyle _tempDoc;
+		public BackgroundStyleController(IBackgroundStyle doc)
+		{
+			_doc = doc;
+			_tempDoc = _doc == null ? null : (IBackgroundStyle)doc.Clone();
+			Initialize(true);
+		}
 
-    protected System.Type[] _backgroundStyles;
+		private void Initialize(bool bInit)
+		{
+			if (bInit)
+			{
+				_backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
+			}
 
-    public event EventHandler TemporaryModelObjectChanged;
+			if (null != _view)
+			{
+				InitializeBackgroundStyle();
+			}
+		}
 
-    public BackgroundStyleController(IBackgroundStyle doc)
-    {
-      _doc = doc;
-      _tempDoc = _doc==null ? null : (IBackgroundStyle)doc.Clone();
-      Initialize(true);
-    }
+		private void InitializeBackgroundStyle()
+		{
+			int sel = Array.IndexOf(this._backgroundStyles, this._tempDoc == null ? null : this._tempDoc.GetType());
+			_view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true), sel + 1);
 
-    void Initialize(bool bInit)
-    {
-      if (bInit)
-      {
-        _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
-      }
+			if (this._tempDoc != null && this._tempDoc.SupportsBrush)
+				_view.BackgroundBrush_Initialize(this._tempDoc.Brush);
+			else
+				_view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
 
-      if (null != _view)
-      {
-        InitializeBackgroundStyle();
-      }
-    }
+			_view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
+		}
 
-    void InitializeBackgroundStyle()
-    {
-      int sel = Array.IndexOf(this._backgroundStyles, this._tempDoc == null ? null : this._tempDoc.GetType());
-      _view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true), sel + 1);
+		#region IMVCController Members
 
-      if (this._tempDoc != null && this._tempDoc.SupportsBrush)
-        _view.BackgroundBrush_Initialize(this._tempDoc.Brush);
-      else
-        _view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
+		public object ViewObject
+		{
+			get { return _view; }
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-      _view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
+				_view = value as IBackgroundStyleView;
 
-    }
+				Initialize(false);
 
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-    #region IMVCController Members
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    public object ViewObject
-    {
-      get { return _view; }
-      set
-      {
-        if (_view != null)
-          _view.Controller = null;
+		public void Dispose()
+		{
+		}
 
-        _view = value as IBackgroundStyleView;
+		public object TemporaryModelObject
+		{
+			get
+			{
+				return _tempDoc;
+			}
+		}
 
-        Initialize(false);
+		#endregion IMVCController Members
 
-        if (_view != null)
-          _view.Controller = this;
-      }
-    }
+		#region IApplyController Members
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public bool Apply()
+		{
+			_doc = _tempDoc;
+			return true;
+		}
 
-    public object TemporaryModelObject
-    {
-      get
-      {
-        return _tempDoc;
-      }
-    }
+		#endregion IApplyController Members
 
+		#region IPlotRangeViewEventSink Members
 
-    #endregion
+		public void EhView_BackgroundBrushChanged(BrushX brush)
+		{
+			if (this._tempDoc != null && this._tempDoc.SupportsBrush)
+			{
+				this._tempDoc.Brush = brush;
+				OnTemporaryModelObjectChanged();
+			}
+		}
 
-    #region IApplyController Members
+		/// <summary>
+		/// Called if the background style changed.
+		/// </summary>
+		/// <param name="newValue">The new index of the style.</param>
+		public void EhView_BackgroundStyleChanged(int newValue)
+		{
+			BrushX backgroundColor = new BrushX(NamedColors.Transparent);
 
-    public bool Apply()
-    {
-      _doc = _tempDoc;
-      return true;
-    }
+			if (newValue != 0)
+			{
+				_tempDoc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
+				backgroundColor = _tempDoc.Brush;
+			}
+			else // is null
+			{
+				_tempDoc = null;
+			}
 
-    #endregion
+			if (_tempDoc != null && _tempDoc.SupportsBrush)
+			{
+				_view.BackgroundBrush_Initialize(backgroundColor);
+				_view.BackgroundBrushEnable_Initialize(true);
+			}
+			else
+			{
+				_view.BackgroundBrushEnable_Initialize(false);
+			}
 
-    #region IPlotRangeViewEventSink Members
+			OnTemporaryModelObjectChanged();
+		}
 
-    public void EhView_BackgroundBrushChanged(BrushX brush)
-    {
-      if (this._tempDoc != null && this._tempDoc.SupportsBrush)
-      {
-        this._tempDoc.Brush = brush;
-        OnTemporaryModelObjectChanged();
-      }
-    }
+		private void OnTemporaryModelObjectChanged()
+		{
+			if (TemporaryModelObjectChanged != null)
+				TemporaryModelObjectChanged(this, EventArgs.Empty);
+		}
 
-    /// <summary>
-    /// Called if the background style changed.
-    /// </summary>
-    /// <param name="newValue">The new index of the style.</param>
-    public void EhView_BackgroundStyleChanged(int newValue)
-    {
-
-      BrushX backgroundColor = new BrushX(NamedColors.Transparent);
-
-      if (newValue != 0)
-      {
-        _tempDoc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
-        backgroundColor = _tempDoc.Brush;
-      }
-      else // is null
-      {
-        _tempDoc = null;
-      }
-
-      if (_tempDoc != null && _tempDoc.SupportsBrush)
-      {
-        _view.BackgroundBrush_Initialize(backgroundColor);
-        _view.BackgroundBrushEnable_Initialize(true);
-      }
-      else
-      {
-        _view.BackgroundBrushEnable_Initialize(false);
-      }
-
-      OnTemporaryModelObjectChanged();
-
-    }
-
-    void OnTemporaryModelObjectChanged()
-    {
-      if (TemporaryModelObjectChanged != null)
-        TemporaryModelObjectChanged(this, EventArgs.Empty);
-    }
-    #endregion
-  }
+		#endregion IPlotRangeViewEventSink Members
+	}
 }

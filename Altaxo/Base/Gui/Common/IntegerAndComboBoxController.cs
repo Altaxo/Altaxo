@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,102 +19,100 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Collections;
+using System;
 
 namespace Altaxo.Gui.Common
 {
-  #region Interfaces
+	#region Interfaces
 
-  public interface IIntegerAndComboBoxView
-  {
-    void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
-  
-    void ComboBoxLabel_Initialize(string text);
-    
-    void IntegerEdit_Initialize(int min, int max, int val);
+	public interface IIntegerAndComboBoxView
+	{
+		void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
 
-    void IntegerLabel_Initialize(string text);
+		void ComboBoxLabel_Initialize(string text);
+
+		void IntegerEdit_Initialize(int min, int max, int val);
+
+		void IntegerLabel_Initialize(string text);
 
 		event Action<SelectableListNode> ComboBoxSelectionChanged;
 
 		event Action<int> IntegerSelectionChanged;
-  
-  }
-  #endregion
+	}
 
-  /// <summary>
-  /// Summary description for IntegerAndComboBoxController.
-  /// </summary>
+	#endregion Interfaces
+
+	/// <summary>
+	/// Summary description for IntegerAndComboBoxController.
+	/// </summary>
 	[ExpectedTypeOfView(typeof(IIntegerAndComboBoxView))]
-  public class IntegerAndComboBoxController :  IMVCAController
-  {
-    protected IIntegerAndComboBoxView _view;
-    protected string _integerLabelText;
-    protected string _comboBoxLabelText;
-    protected int _integerMinimum;
-    protected int _integerMaximum;
-    protected int _integerValue;
-    protected SelectableListNodeList _comboBoxItems;
-    protected SelectableListNode _selectedItem;
+	public class IntegerAndComboBoxController : IMVCAController
+	{
+		protected IIntegerAndComboBoxView _view;
+		protected string _integerLabelText;
+		protected string _comboBoxLabelText;
+		protected int _integerMinimum;
+		protected int _integerMaximum;
+		protected int _integerValue;
+		protected SelectableListNodeList _comboBoxItems;
+		protected SelectableListNode _selectedItem;
 
-    public IntegerAndComboBoxController(string integerLabel,
-      int intMin, int intMax, 
-      int intVal,
-      string comboBoxLabel,
-      SelectableListNodeList items,
-      int defaultItem)
-    {
-      _integerLabelText = integerLabel;
-      _integerMinimum = intMin;
-      _integerMaximum = intMax;
-      _integerValue    = intVal;
-      _comboBoxLabelText = comboBoxLabel;
-      _comboBoxItems = items;
-      _selectedItem = items[defaultItem];
+		public IntegerAndComboBoxController(string integerLabel,
+			int intMin, int intMax,
+			int intVal,
+			string comboBoxLabel,
+			SelectableListNodeList items,
+			int defaultItem)
+		{
+			_integerLabelText = integerLabel;
+			_integerMinimum = intMin;
+			_integerMaximum = intMax;
+			_integerValue = intVal;
+			_comboBoxLabelText = comboBoxLabel;
+			_comboBoxItems = items;
+			_selectedItem = items[defaultItem];
 
-      Initialize(true);
-    }
+			Initialize(true);
+		}
 
+		public void Initialize(bool initData)
+		{
+			if (initData)
+			{
+			}
 
-    public void Initialize(bool initData)
-    {
-      if(initData)
-      {
-      }
-
-      if(null!=_view)
-      {
+			if (null != _view)
+			{
 				_view.ComboBoxLabel_Initialize(_comboBoxLabelText);
 				_view.ComboBox_Initialize(_comboBoxItems, _selectedItem);
 				_view.IntegerLabel_Initialize(_integerLabelText);
 				_view.IntegerEdit_Initialize(_integerMinimum, _integerMaximum, _integerValue);
-      }
-    }
-  
-    public bool Apply()
-    {
-      return true; // all is done on the fly, we don't need actions here
-    }
+			}
+		}
 
-    public SelectableListNode SelectedItem
-    {
-      get { return _selectedItem; }
-    }
+		public bool Apply()
+		{
+			return true; // all is done on the fly, we don't need actions here
+		}
 
-    public int IntegerValue
-    {
-      get { return this._integerValue; }
-    }
+		public SelectableListNode SelectedItem
+		{
+			get { return _selectedItem; }
+		}
 
-    #region IMVCController Members
+		public int IntegerValue
+		{
+			get { return this._integerValue; }
+		}
 
-		
+		#region IMVCController Members
 
-    public object ViewObject
-    {
+		public object ViewObject
+		{
 			get { return _view; }
 			set
 			{
@@ -127,38 +126,36 @@ namespace Altaxo.Gui.Common
 
 				if (null != _view)
 				{
-					
 					Initialize(false);
 					_view.IntegerSelectionChanged += EhView_IntegerChanged;
 					_view.ComboBoxSelectionChanged += EhView_ComboBoxSelectionChanged;
 				}
 			}
-    }
+		}
 
-    public object ModelObject
-    {
-      get { return this._integerValue; }
-    }
+		public object ModelObject
+		{
+			get { return this._integerValue; }
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IIntegerAndComboBoxController Members
+		#endregion IMVCController Members
 
-    public void EhView_IntegerChanged(int val)
-    {
-      _integerValue = val;
-    }
+		#region IIntegerAndComboBoxController Members
 
-    public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
-    {
-      _selectedItem = selectedItem;
-    }
+		public void EhView_IntegerChanged(int val)
+		{
+			_integerValue = val;
+		}
 
-    #endregion
+		public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
+		{
+			_selectedItem = selectedItem;
+		}
 
-	
+		#endregion IIntegerAndComboBoxController Members
 	}
-
-
-
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,73 +19,70 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Gui.Common;
-
 namespace Altaxo.Gui.Graph
 {
-  [UserControllerForObject(typeof(DensityImagePlotItem))]
+	[UserControllerForObject(typeof(DensityImagePlotItem))]
 	[ExpectedTypeOfView(typeof(ITabbedElementView))]
-  class DensityImagePlotItemController : TabbedElementController, IMVCANController
-  {
+	internal class DensityImagePlotItemController : TabbedElementController, IMVCANController
+	{
+		private bool _useDocumentCopy;
+		private DensityImagePlotItem _originalDoc;
+		private DensityImagePlotItem _doc;
 
-    bool _useDocumentCopy;
-    DensityImagePlotItem _originalDoc;
-    DensityImagePlotItem _doc;
-
-    IMVCANController _styleController;
+		private IMVCANController _styleController;
 
 		/// <summary>Controls the option view where users can copy the image to disc or save the image.</summary>
-		IMVCANController _optionsController;
+		private IMVCANController _optionsController;
 
 		/// <summary>Controls the data view, in which the user can chose which columns to use in the plot item.</summary>
-		IMVCANController _dataController;
+		private IMVCANController _dataController;
 
-    public DensityImagePlotItemController()
-    {
-    }
+		public DensityImagePlotItemController()
+		{
+		}
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0)
-        return false;
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0)
+				return false;
 
-      if (!(args[0] is DensityImagePlotItem))
-        return false;
-      else
-        _originalDoc = _doc = (DensityImagePlotItem)args[0];
+			if (!(args[0] is DensityImagePlotItem))
+				return false;
+			else
+				_originalDoc = _doc = (DensityImagePlotItem)args[0];
 
-     
+			if (_useDocumentCopy)
+				_doc = (DensityImagePlotItem)_originalDoc.Clone();
 
-      if (_useDocumentCopy)
-        _doc = (DensityImagePlotItem)_originalDoc.Clone();
-
-      InitializeStyle();
+			InitializeStyle();
 			InitializeDataView();
 			InitializeOptionView();
-      BringTabToFront(0);
+			BringTabToFront(0);
 
-      return true;
-    }
+			return true;
+		}
 
-    public UseDocument UseDocumentCopy
-    {
-      set { _useDocumentCopy = UseDocument.Copy==value; }
-    }
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocumentCopy = UseDocument.Copy == value; }
+		}
 
-    void InitializeStyle()
-    {
-      _styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IMVCANController), UseDocument.Directly);
-      this.AddTab("Style", _styleController, _styleController.ViewObject);
-    }
+		private void InitializeStyle()
+		{
+			_styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IMVCANController), UseDocument.Directly);
+			this.AddTab("Style", _styleController, _styleController.ViewObject);
+		}
 
-		void InitializeOptionView()
+		private void InitializeOptionView()
 		{
 			_optionsController = new DensityImagePlotItemOptionController();
 			_optionsController.InitializeDocument(_doc);
@@ -92,35 +90,38 @@ namespace Altaxo.Gui.Graph
 			this.AddTab("Options", _optionsController, _optionsController.ViewObject);
 		}
 
-		void InitializeDataView()
+		private void InitializeDataView()
 		{
 			_dataController = new XYZMeshedColumnPlotDataController() { UseDocumentCopy = UseDocument.Directly };
 			_dataController.InitializeDocument(_doc.Data);
 			Current.Gui.FindAndAttachControlTo(_dataController);
-			this.AddTab("Data",_dataController, _dataController.ViewObject);
+			this.AddTab("Data", _dataController, _dataController.ViewObject);
 		}
 
-    #region IMVCController Members
+		#region IMVCController Members
 
+		public override object ModelObject
+		{
+			get { return _originalDoc; }
+		}
 
-    public override object ModelObject
-    {
-      get { return _originalDoc; }
-    }
+		public void Dispose()
+		{
+		}
 
-    #endregion
+		#endregion IMVCController Members
 
-    #region IApplyController Members
+		#region IApplyController Members
 
-    public override bool Apply()
-    {
-      bool result = true;
+		public override bool Apply()
+		{
+			bool result = true;
 
-      if (_styleController != null)
-      {
-        if (!_styleController.Apply())
-          return false;
-      }
+			if (_styleController != null)
+			{
+				if (!_styleController.Apply())
+					return false;
+			}
 
 			if (_dataController != null)
 			{
@@ -128,13 +129,12 @@ namespace Altaxo.Gui.Graph
 					return false;
 			}
 
-
 			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
-      return result;
-    }
+			return result;
+		}
 
-    #endregion
-  }
+		#endregion IApplyController Members
+	}
 }

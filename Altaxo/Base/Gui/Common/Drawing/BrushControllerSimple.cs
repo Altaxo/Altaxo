@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,109 +19,110 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public interface IBrushViewSimple
-  {
-    BrushX Brush { get; set; }
-  }
+	public interface IBrushViewSimple
+	{
+		BrushX Brush { get; set; }
+	}
 
-  [UserControllerForObject(typeof(BrushX))]
-  [ExpectedTypeOfView(typeof(IBrushViewSimple))]
-  public class BrushControllerSimple : IMVCANController
-  {
-    BrushX _doc;
-    UseDocument _usage;
-    IBrushViewSimple _view;
+	[UserControllerForObject(typeof(BrushX))]
+	[ExpectedTypeOfView(typeof(IBrushViewSimple))]
+	public class BrushControllerSimple : IMVCANController
+	{
+		private BrushX _doc;
+		private UseDocument _usage;
+		private IBrushViewSimple _view;
 
-    public BrushControllerSimple()
-    {
-    }
+		public BrushControllerSimple()
+		{
+		}
 
-    public BrushControllerSimple(BrushX doc)
-    {
-      InitializeDocument(doc);
-    }
+		public BrushControllerSimple(BrushX doc)
+		{
+			InitializeDocument(doc);
+		}
 
+		#region IMVCANController Members
 
-    #region IMVCANController Members
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0)
+				return false;
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0)
-        return false;
+			if (args[0] != null && !(args[0] is BrushX))
+				return false;
 
-      if (args[0] != null && !(args[0] is BrushX))
-        return false;
+			_doc = (BrushX)args[0];
 
-      _doc =  (BrushX)args[0];
+			return true;
+		}
 
-      return true;
-    }
+		private void Initialize()
+		{
+			if (_view != null)
+			{
+				if (_doc != null)
+					_view.Brush = _usage == UseDocument.Directly ? _doc : (BrushX)_doc.Clone();
+				else
+					_view.Brush = BrushX.Empty;
+			}
+		}
 
-    void Initialize()
-    {
-      if (_view != null)
-      {
-        if (_doc != null)
-          _view.Brush = _usage == UseDocument.Directly ? _doc : (BrushX)_doc.Clone();
-        else
-          _view.Brush = BrushX.Empty;
-      }
-    }
+		public UseDocument UseDocumentCopy
+		{
+			set
+			{
+				_usage = value;
+			}
+		}
 
-    public UseDocument UseDocumentCopy
-    {
-      set
-      {
-        _usage = value;
-      }
-    }
+		#endregion IMVCANController Members
 
-    #endregion
+		#region IMVCController Members
 
-    #region IMVCController Members
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value as IBrushViewSimple;
+				Initialize();
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as IBrushViewSimple;
-        Initialize();
-      }
-    }
+		public object ModelObject
+		{
+			get { return _doc; }
+		}
 
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
+		public void Dispose()
+		{
+		}
 
-    #endregion
+		#endregion IMVCController Members
 
-    #region IApplyController Members
+		#region IApplyController Members
 
-    public bool Apply()
-    {
-      if (_doc != null || _view.Brush.IsVisible)
-        _doc = _view.Brush;
-      
-      return true;
-    }
+		public bool Apply()
+		{
+			if (_doc != null || _view.Brush.IsVisible)
+				_doc = _view.Brush;
 
-    #endregion
-  }
+			return true;
+		}
 
-
-
+		#endregion IApplyController Members
+	}
 }

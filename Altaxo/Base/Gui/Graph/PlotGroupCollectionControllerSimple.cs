@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,67 +19,64 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Collections;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Groups;
-using Altaxo.Main.Services;
-
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  /// <summary>
-  /// This view interface is for showing the options of the XYLineScatterPlotStyle
-  /// </summary>
-  public interface IPlotGroupCollectionViewSimple
-  {
+	#region Interfaces
 
-    /// <summary>
-    /// Initializes the plot group conditions.
-    /// </summary>
-    /// <param name="bColor">True if the color is changed.</param>
-    /// <param name="bLineType">True if the line type is changed.</param>
-    /// <param name="bSymbol">True if the symbol shape is changed.</param>
-    /// <param name="bConcurrently">True if all styles are changed concurrently.</param>
-    /// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
-    void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict);
- 
+	/// <summary>
+	/// This view interface is for showing the options of the XYLineScatterPlotStyle
+	/// </summary>
+	public interface IPlotGroupCollectionViewSimple
+	{
+		/// <summary>
+		/// Initializes the plot group conditions.
+		/// </summary>
+		/// <param name="bColor">True if the color is changed.</param>
+		/// <param name="bLineType">True if the line type is changed.</param>
+		/// <param name="bSymbol">True if the symbol shape is changed.</param>
+		/// <param name="bConcurrently">True if all styles are changed concurrently.</param>
+		/// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
+		void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict);
 
-    #region Getter
+		#region Getter
 
-   
+		Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict { get; }
 
-    Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict { get; }
-    bool PlotGroupColor { get; }
-    bool PlotGroupLineType { get; }
-    bool PlotGroupSymbol { get; }
-    bool PlotGroupConcurrently { get; }
-    bool PlotGroupUpdate { get; }
+		bool PlotGroupColor { get; }
 
+		bool PlotGroupLineType { get; }
 
+		bool PlotGroupSymbol { get; }
 
+		bool PlotGroupConcurrently { get; }
 
+		bool PlotGroupUpdate { get; }
 
-    #endregion // Getter
-  }
+		#endregion Getter
+	}
 
- 
-  #endregion
+	#endregion Interfaces
 
 	[ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
 	public class PlotGroupCollectionControllerSimple : IMVCANController
 	{
-		IPlotGroupCollectionViewSimple _view;
-		PlotGroupStyleCollection _origdoc;
-		PlotGroupStyleCollection _doc;
+		private IPlotGroupCollectionViewSimple _view;
+		private PlotGroupStyleCollection _origdoc;
+		private PlotGroupStyleCollection _doc;
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (null != _view)
 			{
@@ -131,7 +129,6 @@ namespace Altaxo.Gui.Graph
 				if (plotGroupStyles.CoordinateTransformingStyle != null)
 					return false;
 
-
 				isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));
 				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(LineStyleGroupStyle));
 				isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle));
@@ -151,7 +148,7 @@ namespace Altaxo.Gui.Graph
 				bool isConcurrent = true;
 				foreach (var t in list)
 				{
-					if (0 != plotGroupStyles.GetTreeLevelOf(t)  || !plotGroupStyles.GetPlotGroupStyle(t).IsStepEnabled) // Tree level has to be 0 for concurrent items, and stepping must be enabled
+					if (0 != plotGroupStyles.GetTreeLevelOf(t) || !plotGroupStyles.GetPlotGroupStyle(t).IsStepEnabled) // Tree level has to be 0 for concurrent items, and stepping must be enabled
 					{
 						isConcurrent = false;
 						break;
@@ -180,11 +177,11 @@ namespace Altaxo.Gui.Graph
 			return false;
 		}
 
-		#region  IMVCANController
+		#region IMVCANController
 
 		public bool InitializeDocument(params object[] args)
 		{
-			if (args == null || args.Length==0 || !(args[0] is PlotGroupStyleCollection))
+			if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
 				return false;
 			_origdoc = (PlotGroupStyleCollection)args[0];
 			_doc = _origdoc.Clone();
@@ -207,7 +204,6 @@ namespace Altaxo.Gui.Graph
 			{
 				if (_view != null)
 				{
-					
 				}
 
 				_view = value as IPlotGroupCollectionViewSimple;
@@ -215,7 +211,6 @@ namespace Altaxo.Gui.Graph
 				if (_view != null)
 				{
 					Initialize(false);
-					
 				}
 			}
 		}
@@ -225,10 +220,12 @@ namespace Altaxo.Gui.Graph
 			get { return _origdoc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
-
-
 			bool color = _view.PlotGroupColor;
 			bool linestyle = _view.PlotGroupLineType;
 			bool symbol = _view.PlotGroupSymbol;
@@ -240,7 +237,6 @@ namespace Altaxo.Gui.Graph
 				_doc.RemoveType(typeof(LineStyleGroupStyle));
 			if (_doc.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
 				_doc.RemoveType(typeof(SymbolShapeStyleGroupStyle));
-
 
 			if (color)
 			{
@@ -265,7 +261,6 @@ namespace Altaxo.Gui.Graph
 
 			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
 
-
 			_origdoc.CopyFrom(_doc);
 
 			return true;
@@ -273,5 +268,4 @@ namespace Altaxo.Gui.Graph
 
 		#endregion IMVCANController
 	}
-
 } // end of namespace

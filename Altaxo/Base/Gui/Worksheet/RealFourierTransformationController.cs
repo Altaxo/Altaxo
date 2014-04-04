@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,40 +19,41 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Altaxo.Collections;
-using Altaxo.Data;
-
-using Altaxo.Main;
 
 namespace Altaxo.Gui.Worksheet
 {
 	public interface IRealFourierTransformationView
 	{
 		void SetColumnToTransform(string val);
+
 		void SetXIncrement(string val, bool bMarkAsWarning);
+
 		void SetOutputQuantities(SelectableListNodeList list);
+
 		void SetCreationOptions(SelectableListNodeList list);
 	}
-
 
 	[ExpectedTypeOfView(typeof(IRealFourierTransformationView))]
 	[UserControllerForObject(typeof(AnalysisRealFourierTransformationCommands.RealFourierTransformOptions))]
 	public class RealFourierTransformationController : IMVCANController
 	{
-		IRealFourierTransformationView _view;
-		AnalysisRealFourierTransformationCommands.RealFourierTransformOptions _doc;
+		private IRealFourierTransformationView _view;
+		private AnalysisRealFourierTransformationCommands.RealFourierTransformOptions _doc;
 
-		SelectableListNodeList _outputQuantities;
-		SelectableListNodeList _creationOptions;
+		private SelectableListNodeList _outputQuantities;
+		private SelectableListNodeList _creationOptions;
 
-
-		void Initialize(bool bInitData)
+		private void Initialize(bool bInitData)
 		{
 			if (bInitData)
 			{
@@ -67,7 +69,7 @@ namespace Altaxo.Gui.Worksheet
 				string xInc = _doc.XIncrementValue.ToString();
 				if (_doc.XIncrementMessage != null)
 					xInc += string.Format(" ({0})", _doc.XIncrementMessage);
-				_view.SetXIncrement(xInc, _doc.XIncrementMessage!=null);
+				_view.SetXIncrement(xInc, _doc.XIncrementMessage != null);
 
 				_outputQuantities.FillWithFlagEnumeration(_doc.Output);
 				_view.SetOutputQuantities(_outputQuantities);
@@ -76,7 +78,6 @@ namespace Altaxo.Gui.Worksheet
 				_view.SetCreationOptions(_creationOptions);
 			}
 		}
-
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -111,6 +112,10 @@ namespace Altaxo.Gui.Worksheet
 		public object ModelObject
 		{
 			get { return _doc; }
+		}
+
+		public void Dispose()
+		{
 		}
 
 		public bool Apply()

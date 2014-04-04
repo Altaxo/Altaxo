@@ -236,6 +236,10 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			get { return _originalDoc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 
 		#region IApplyController Members

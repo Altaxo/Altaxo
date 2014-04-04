@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Data;
-	using Altaxo.Main;
 	using Altaxo.Graph.Gdi;
+	using Altaxo.Main;
 
 	/// <summary>
 	/// Holds all information that is neccessary to replace the tables used as data source for the plot items in graphs by other tables with the same structure.
 	/// </summary>
 	public class ExchangeTablesOfPlotItemsDocument
 	{
-		List<Altaxo.Graph.Gdi.Plot.IGPlotItem> _itemsToChange = new List<Altaxo.Graph.Gdi.Plot.IGPlotItem>();
+		private List<Altaxo.Graph.Gdi.Plot.IGPlotItem> _itemsToChange = new List<Altaxo.Graph.Gdi.Plot.IGPlotItem>();
 
-		Dictionary<DocumentPath, DataTable> _tablesToChange = new Dictionary<DocumentPath, DataTable>();
-
+		private Dictionary<DocumentPath, DataTable> _tablesToChange = new Dictionary<DocumentPath, DataTable>();
 
 		/// <summary>Returns a list with the plot items for which to change the underlying tables.</summary>
 		public List<Altaxo.Graph.Gdi.Plot.IGPlotItem> PlotItemsToChange
@@ -57,7 +57,6 @@ namespace Altaxo.Gui.Graph
 			set { _tablesToChange = value; }
 		}
 
-
 		/// <summary>Creates an instance of this class from a single <see cref="Altaxo.Graph.Gdi.GraphDocument"/>.</summary>
 		/// <param name="doc">The graph document.</param>
 		/// <returns>An instance of this class. The graph document is analyzed and all underlying tables of the plot items of the graph document are collected.</returns>
@@ -68,7 +67,6 @@ namespace Altaxo.Gui.Graph
 			result.CollectPlotItemsForGraph(doc);
 			return result;
 		}
-
 
 		/// <summary>Creates an instance of this class from multiple <see cref="Altaxo.Graph.Gdi.GraphDocument"/>s.</summary>
 		/// <param name="docs">The graph documents.</param>
@@ -82,13 +80,12 @@ namespace Altaxo.Gui.Graph
 				result.CollectPlotItemsForGraph(doc);
 			}
 
-
 			return result;
 		}
 
 		/// <summary>Collects all plot items for a single <see cref="Altaxo.Graph.Gdi.GraphDocument"/>.</summary>
 		/// <param name="doc">The graph document to collect the plot items from..</param>
-		void CollectPlotItemsForGraph(Altaxo.Graph.Gdi.GraphDocument doc)
+		private void CollectPlotItemsForGraph(Altaxo.Graph.Gdi.GraphDocument doc)
 		{
 			foreach (var layer in doc.RootLayer.TakeFromHereToFirstLeaves().OfType<XYPlotLayer>())
 			{
@@ -101,12 +98,11 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		/// <summary>Collects a underlying data table from a proxy.</summary>
 		/// <param name="proxy">The proxy.</param>
 		/// <param name="owner">The owner of the proxy.</param>
 		/// <param name="propertyName">Name of the property in the owner class that will return the proxy.</param>
-		void CollectDataTableFromProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
+		private void CollectDataTableFromProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
 		{
 			if (proxy.IsEmpty)
 			{
@@ -151,9 +147,7 @@ namespace Altaxo.Gui.Graph
 						_tablesToChange.Add(tablePath, null);
 				}
 			}
-
 		}
-
 
 		/// <summary>Applies the table exchanges, i.e. exchanges in all collected references to data tables and data columns the old table by the replacement table.</summary>
 		public void ApplyTableExchanges()
@@ -168,7 +162,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="proxy">The proxy which contain a reference to another project item.</param>
 		/// <param name="owner">The owner instance of the proxy.</param>
 		/// <param name="propertyName">Name of the property in the owner instance that returns the proxy.</param>
-		void ExchangeTablesProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
+		private void ExchangeTablesProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
 		{
 			Altaxo.Data.DataTable substituteTable;
 
@@ -183,9 +177,7 @@ namespace Altaxo.Gui.Graph
 					var tablePath = DocumentPath.GetAbsolutePath(table);
 					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
 					{
-
 						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable));
-
 					}
 				}
 			}
@@ -210,9 +202,7 @@ namespace Altaxo.Gui.Graph
 					}
 				}
 			}
-
 		}
-
 	}
 
 	/// <summary>
@@ -246,20 +236,28 @@ namespace Altaxo.Gui.Graph
 
 		/// <summary>Fired when the user wants to choose another table for the selected tables.</summary>
 		event Action ChooseTableForSelectedItems;
+
 		/// <summary>Fired when the user wants to change the folder of the selected tables.</summary>
 		event Action ChooseFolderForSelectedItems;
+
 		/// <summary>Fired when the selection in the table list has changed.</summary>
 		event Action TableSelectionChanged;
+
 		/// <summary>Fired when the selection in the list of common substrings has changed.</summary>
 		event Action ListOfCommonSubstringsSelectionChanged;
+
 		/// <summary>Fired when the selection in the list of substring replacement candidates has changed.</summary>
 		event Action ListOfSubstringReplacementCandidatesSelectionChanged;
+
 		/// <summary>Fired when the choice, whether to search character-wise or subfolder-wise for the longest common substring, has changed.</summary>
 		event Action SearchCommonSubstringsCharacterWiseChanged;
+
 		/// <summary>Fired when the user wants to make the replacement of the common substring by the replacement candidate permanent.</summary>
 		event Action ApplySubstringReplacement;
+
 		/// <summary>Fired when the user changed the common substring text.</summary>
 		event Action CommonSubstringTextChanged;
+
 		/// <summary>Fired when the visibility of the substring replacement panel changed.</summary>
 		event Action CommonSubstringPanelVisibilityChanged;
 	}
@@ -273,10 +271,10 @@ namespace Altaxo.Gui.Graph
 	{
 		#region Inner classes
 
-		class MyXTableListNode : SelectableListNode
+		private class MyXTableListNode : SelectableListNode
 		{
-			DataTable _newTable;
-			string _previewTableName;
+			private DataTable _newTable;
+			private string _previewTableName;
 
 			public MyXTableListNode(string text, object tag, bool isSelected)
 				: base(text, tag, isSelected)
@@ -338,7 +336,6 @@ namespace Altaxo.Gui.Graph
 							return "preview: OK";
 						else
 							return "preview: missing!";
-
 					}
 					else if (null != _newTable)
 					{
@@ -352,29 +349,27 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		#endregion Inner classes
 
-
-		#endregion
-
-		IExchangeTablesOfPlotItemsView _view;
-		ExchangeTablesOfPlotItemsDocument _doc;
+		private IExchangeTablesOfPlotItemsView _view;
+		private ExchangeTablesOfPlotItemsDocument _doc;
 
 		/// <summary>List of the tables that are referenced by the plots, the plot items etc.</summary>
-		SelectableListNodeList _tableList;
+		private SelectableListNodeList _tableList;
 
 		/// <summary>The common substring that is displayed in the text box, thus the user can modify it.</summary>
-		string _userModifiedCommonSubstring;
+		private string _userModifiedCommonSubstring;
+
 		/// <summary>List of common substrings of the currently selected items in <see cref="_tableList"/>.</summary>
-		SelectableListNodeList _commonSubstringsList;
+		private SelectableListNodeList _commonSubstringsList;
 
 		/// <summary>List of possible replacement candidates for the currently selected common substring in <see cref="_commonSubstringsList"/>.</summary>
-		SelectableListNodeList _substringReplacementCandidatesList;
+		private SelectableListNodeList _substringReplacementCandidatesList;
 
 		/// <summary>List with the names of all tables in the current project.</summary>
-		string[] _namesOfAllTables;
+		private string[] _namesOfAllTables;
 
-		List<string> _listOfSelectedTableNames = new List<string>();
-
+		private List<string> _listOfSelectedTableNames = new List<string>();
 
 		/// <summary>Initialize the controller with the document. If successfull, the function has to return true.</summary>
 		/// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
@@ -389,14 +384,14 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
 				_tableList = new SelectableListNodeList();
 				foreach (var tablePath in _doc.TablesToChange.Keys)
 				{
-					_tableList.Add(new MyXTableListNode(tablePath[tablePath.Count-1], tablePath, false));
+					_tableList.Add(new MyXTableListNode(tablePath[tablePath.Count - 1], tablePath, false));
 				}
 
 				_listOfSelectedTableNames = new List<string>();
@@ -412,7 +407,7 @@ namespace Altaxo.Gui.Graph
 		#region User action events
 
 		/// <summary>Called when the user wants to select a single table as replacement for the selected tables.</summary>
-		void EhChooseTableForSelectedItems()
+		private void EhChooseTableForSelectedItems()
 		{
 			var tableSel = new Altaxo.Gui.Worksheet.SingleTableChoice();
 
@@ -430,7 +425,7 @@ namespace Altaxo.Gui.Graph
 		}
 
 		/// <summary>Occurs when the user wants to select a new folder name that replaces the old folder name of the selected tables.</summary>
-		void EhChooseFolderForSelectedItems()
+		private void EhChooseFolderForSelectedItems()
 		{
 			var selection = new Altaxo.Gui.Main.SingleFolderChoice();
 
@@ -455,7 +450,7 @@ namespace Altaxo.Gui.Graph
 		}
 
 		/// <summary>Occurs when the user wants to make the preview to the common substring replacement permanent.</summary>
-		void EhApplySubstringReplacement()
+		private void EhApplySubstringReplacement()
 		{
 			foreach (MyXTableListNode node in _tableList)
 			{
@@ -469,12 +464,13 @@ namespace Altaxo.Gui.Graph
 			_tableList.ClearSelectionsAll();
 			_view.InitializeExchangeTableList(_tableList);
 		}
-		#endregion
+
+		#endregion User action events
 
 		#region Other events
 
 		/// <summary>Called when the visibility of the substring replacement panel changed.</summary>
-		void EhCommonSubstringPanelVisibilityChanged()
+		private void EhCommonSubstringPanelVisibilityChanged()
 		{
 			if (_view.IsCommonSubstringPanelVisible)
 			{
@@ -487,14 +483,13 @@ namespace Altaxo.Gui.Graph
 		}
 
 		/// <summary>Called when the choice, whether to search character-wise or subfolder-wise for the longest common substring, has changed.</summary>
-		void EhSearchCommonSubstringsCharacterWiseChanged()
+		private void EhSearchCommonSubstringsCharacterWiseChanged()
 		{
 			EhTableSelectionChanged();
 		}
 
-
 		/// <summary>Called when the selection in the table list has changed.</summary>
-		void EhTableSelectionChanged()
+		private void EhTableSelectionChanged()
 		{
 			if (_view.IsCommonSubstringPanelVisible)
 			{
@@ -519,13 +514,12 @@ namespace Altaxo.Gui.Graph
 
 					UpdateListOfSubstringReplacementCandidates(_userModifiedCommonSubstring);
 					_view.InitializeListOfReplacementCandidates(_substringReplacementCandidatesList);
-
 				}
 			}
 		}
 
 		/// <summary>Called when the selection in the list of common substrings has changed.</summary>
-		void EhListOfCommonSubstringsSelectionChanged()
+		private void EhListOfCommonSubstringsSelectionChanged()
 		{
 			if (null != _commonSubstringsList.FirstSelectedNode)
 			{
@@ -538,7 +532,7 @@ namespace Altaxo.Gui.Graph
 		}
 
 		/// <summary>Called when the user changed the common substring text.</summary>
-		void EhCommonSubstringTextChanged()
+		private void EhCommonSubstringTextChanged()
 		{
 			string substring = _view.CommonSubstringText;
 			bool isModified = false;
@@ -564,9 +558,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		/// <summary>If the selection in the list of substring replacement candiates changed, then show a preview of the new table names in the table list.</summary>
-		void EhListOfSubstringReplacementCandidatesSelectionChanged()
+		private void EhListOfSubstringReplacementCandidatesSelectionChanged()
 		{
 			var commonSubstringNode = _commonSubstringsList.FirstSelectedNode;
 			if (null == commonSubstringNode || string.IsNullOrEmpty(_userModifiedCommonSubstring))
@@ -601,10 +594,10 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion Other events
 
 		/// <summary>Invalidates all data concerning common substring search and replacement.</summary>
-		void InvalidateAllCommonSubstringData()
+		private void InvalidateAllCommonSubstringData()
 		{
 			_userModifiedCommonSubstring = null;
 			_listOfSelectedTableNames.Clear();
@@ -638,7 +631,6 @@ namespace Altaxo.Gui.Graph
 			lcs.Evaluate();
 			if (lcs.MaximumNumberOfWordsWithCommonSubstring == _listOfSelectedTableNames.Count)
 			{
-
 				_commonSubstringsList = new SelectableListNodeList();
 				foreach (var pos in lcs.GetSubstringPositionsCommonToTheNumberOfWords(_listOfSelectedTableNames.Count))
 				{
@@ -649,7 +641,6 @@ namespace Altaxo.Gui.Graph
 				_commonSubstringsList[0].IsSelected = true;
 			}
 		}
-
 
 		/// <summary>Splits the full name into parts (the parts are the subfolders, and if present, the short name of the item).</summary>
 		/// <param name="fullName">The full name of the item.</param>
@@ -706,9 +697,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-
-
 		/// <summary>
 		/// Updates the list of substring replacement candidates for a given substring position. For the substring that is currently selected in <see cref="_commonSubstringsList"/> it evaluates
 		/// the possible replacement candidates for this substrings and filles the list <see cref="_substringReplacementCandidatesList"/> with the result.
@@ -758,7 +746,7 @@ namespace Altaxo.Gui.Graph
 				foreach (var name in _namesOfAllTables)
 				{
 					int remainingLength = name.Length - first.Length - last.Length;
-					if (name.StartsWith(first) && name.EndsWith(last) && remainingLength>=0)
+					if (name.StartsWith(first) && name.EndsWith(last) && remainingLength >= 0)
 						allReplacementStringsForThisTable.Add(name.Substring(first.Length, remainingLength));
 				}
 				if (allReplacementStrings == null)
@@ -771,13 +759,10 @@ namespace Altaxo.Gui.Graph
 					allReplacementStrings.IntersectWith(allReplacementStringsForThisTable);
 				}
 
-				// if allReplacementStrings is empty here, we can break, since we will not found then a replacement string 
+				// if allReplacementStrings is empty here, we can break, since we will not found then a replacement string
 				if (0 == allReplacementStrings.Count)
 					break;
-
 			}
-
-
 
 			var larr = allReplacementStrings.ToArray();
 			Array.Sort(larr);
@@ -786,7 +771,6 @@ namespace Altaxo.Gui.Graph
 			if (_substringReplacementCandidatesList.Count > 0)
 				_substringReplacementCandidatesList[0].IsSelected = true;
 		}
-
 
 		#region IMVCANController
 
@@ -839,11 +823,14 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		/// <summary>Returns the model (document) that this controller manages.</summary>
 		public object ModelObject
 		{
 			get { return _doc; }
+		}
+
+		public void Dispose()
+		{
 		}
 
 		/// <summary>Called when the user input has to be applied to the document being controlled. Returns true if Apply is successfull.</summary>
@@ -862,6 +849,7 @@ namespace Altaxo.Gui.Graph
 			_doc.ApplyTableExchanges();
 			return true;
 		}
-		#endregion
+
+		#endregion IMVCANController
 	}
 }

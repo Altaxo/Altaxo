@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,258 +19,274 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
-using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
+using System;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface ILineScatterPlotDataController : IApplyController, IMVCController
-  {
-    ILineScatterPlotDataView View { get; set; }
-  
-    void SetElements(bool bInit);
+	#region Interfaces
 
-    void EhView_TableSelectionChanged(int selindex, string seltable);
+	public interface ILineScatterPlotDataController : IApplyController, IMVCController
+	{
+		ILineScatterPlotDataView View { get; set; }
 
-    void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname);
-    void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname);
-    void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname);
-    void EhView_EraseX();
-    void EhView_EraseY();
-    void EhView_EraseLabel();
+		void SetElements(bool bInit);
 
-    bool EhView_RangeFrom(int val);
-    bool EhView_RangeTo(int val);
-  }
+		void EhView_TableSelectionChanged(int selindex, string seltable);
 
-  public interface ILineScatterPlotDataView 
-  {
+		void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname);
 
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    ILineScatterPlotDataController Controller { get; set; }
+		void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname);
 
-    void Tables_Initialize(string[] tables, int selectedTable);
+		void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname);
 
-    void Columns_Initialize(string[] colnames, int selectedColumn);
+		void EhView_EraseX();
 
-    void XColumn_Initialize(string colname);
-    void YColumn_Initialize(string colname);
-    void LabelColumn_Initialize(string colname);
+		void EhView_EraseY();
 
+		void EhView_EraseLabel();
 
-    void PlotRangeFrom_Initialize(int from);
-    void PlotRangeTo_Initialize(int to);
+		bool EhView_RangeFrom(int val);
 
-  }
-  #endregion
+		bool EhView_RangeTo(int val);
+	}
 
-  /// <summary>
-  /// Summary description for LineScatterPlotDataController.
-  /// </summary>
-  public class LineScatterPlotDataController : ILineScatterPlotDataController
-  {
-    ILineScatterPlotDataView m_View=null;
-    XYColumnPlotData m_PlotAssociation;
+	public interface ILineScatterPlotDataView
+	{
+		/// <summary>
+		/// Get/sets the controller of this view.
+		/// </summary>
+		ILineScatterPlotDataController Controller { get; set; }
 
+		void Tables_Initialize(string[] tables, int selectedTable);
 
-    bool m_bDirty =false;
+		void Columns_Initialize(string[] colnames, int selectedColumn);
 
-    int m_PlotRange_From;
-    int m_PlotRange_To;
-    Altaxo.Data.IReadableColumn m_xCol;
-    Altaxo.Data.IReadableColumn m_yCol;
-    Altaxo.Data.IReadableColumn m_labelCol;
-    int m_MaxPossiblePlotRange_To;
+		void XColumn_Initialize(string colname);
 
-    public LineScatterPlotDataController(XYColumnPlotData pa)
-    {
-      m_PlotAssociation = pa;
-      SetElements(true);
-    }
+		void YColumn_Initialize(string colname);
 
-    public void SetDirty()
-    {
-      m_bDirty = true;
-    }
+		void LabelColumn_Initialize(string colname);
 
-    #region ILineScatterPlotDataController Members
+		void PlotRangeFrom_Initialize(int from);
 
-    public ILineScatterPlotDataView View
-    { 
-      get 
-      {
-        return m_View;
-      }
+		void PlotRangeTo_Initialize(int to);
+	}
 
-      set
-      {
-        if(null!=m_View)
-          m_View.Controller = null;
-        
-        m_View = value;
+	#endregion Interfaces
 
-        if(null!=m_View)
-        {
-          m_View.Controller = this;
-          SetElements(false); // set only the view elements, dont't initialize the variables
-        }
-      }
-    }
+	/// <summary>
+	/// Summary description for LineScatterPlotDataController.
+	/// </summary>
+	public class LineScatterPlotDataController : ILineScatterPlotDataController
+	{
+		private ILineScatterPlotDataView m_View = null;
+		private XYColumnPlotData m_PlotAssociation;
 
+		private bool m_bDirty = false;
 
-    public void SetElements(bool bInit)
-    {
-      if(bInit)
-      {
-        m_xCol = m_PlotAssociation.XColumn;
-        m_yCol = m_PlotAssociation.YColumn;
-        m_labelCol = m_PlotAssociation.LabelColumn;
-        m_PlotRange_From = m_PlotAssociation.PlotRangeStart;
-        m_PlotRange_To   = m_PlotAssociation.PlotRangeLength==int.MaxValue ? int.MaxValue : m_PlotAssociation.PlotRangeStart+m_PlotAssociation.PlotRangeLength-1;
-        CalcMaxPossiblePlotRangeTo();
-      }
+		private int m_PlotRange_From;
+		private int m_PlotRange_To;
+		private Altaxo.Data.IReadableColumn m_xCol;
+		private Altaxo.Data.IReadableColumn m_yCol;
+		private Altaxo.Data.IReadableColumn m_labelCol;
+		private int m_MaxPossiblePlotRange_To;
 
-      if(null!=View)
-      {
-        string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
-        View.Tables_Initialize(tables,0);
-        
-        string[] columns = Current.Project.DataTableCollection[tables[0]].DataColumns.GetColumnNames();
-        View.Columns_Initialize(columns,0);
+		public LineScatterPlotDataController(XYColumnPlotData pa)
+		{
+			m_PlotAssociation = pa;
+			SetElements(true);
+		}
 
-        View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
-        View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
-        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
-        View.PlotRangeFrom_Initialize(m_PlotRange_From);
-        CalcMaxPossiblePlotRangeTo();
-      }
-    }
+		public void SetDirty()
+		{
+			m_bDirty = true;
+		}
 
-    void CalcMaxPossiblePlotRangeTo()
-    {
-      int len = int.MaxValue;
-      if(m_xCol is Altaxo.Data.IDefinedCount)
-        len = Math.Min(len,((Altaxo.Data.IDefinedCount)m_xCol).Count);
-      if(m_yCol is Altaxo.Data.IDefinedCount)
-        len = Math.Min(len,((Altaxo.Data.IDefinedCount)m_yCol).Count);
+		#region ILineScatterPlotDataController Members
 
-      m_MaxPossiblePlotRange_To = len-1;
+		public ILineScatterPlotDataView View
+		{
+			get
+			{
+				return m_View;
+			}
 
-      if(null!=View)
-        View.PlotRangeTo_Initialize(Math.Min(this.m_PlotRange_To, m_MaxPossiblePlotRange_To));
-    }
+			set
+			{
+				if (null != m_View)
+					m_View.Controller = null;
 
-    public void EhView_TableSelectionChanged(int tableindex, string tablename)
-    {
-      if(null!=View)
-      {
-        string[] columns = Current.Project.DataTableCollection[tablename].DataColumns.GetColumnNames();
-        View.Columns_Initialize(columns,0);
-      }
-    }
+				m_View = value;
 
-    public void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname)
-    {
-      SetDirty();
-      m_xCol = Current.Project.DataTableCollection[tablename][columnname];
-      if(null!=View)
-        View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
-    }
-    public void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname)
-    {
-      SetDirty();
-      m_yCol = Current.Project.DataTableCollection[tablename][columnname];
-      if(null!=View)
-        View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
-    }
-    public void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname)
-    {
-      SetDirty();
-      m_labelCol = Current.Project.DataTableCollection[tablename][columnname];
-      if(null!=View)
-        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
-    }
-    public void EhView_EraseX()
-    {
-      SetDirty();
-      m_xCol = null;
-      if(null!=View)
-        View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
-    }
-    public void EhView_EraseY()
-    {
-      SetDirty();
-      m_yCol = null;
-      if(null!=View)
-        View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
-    }
-    public void EhView_EraseLabel()
-    {
-      SetDirty();
-      m_labelCol = null;
-      if(null!=View)
-        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
-    }
-    public bool EhView_RangeFrom(int val)
-    {
-      SetDirty();
-      this.m_PlotRange_From = val;
-      return false;
-    }
-    public bool EhView_RangeTo(int val)
-    {
-      SetDirty();
-      this.m_PlotRange_To = val;
-      return false;
-    }
+				if (null != m_View)
+				{
+					m_View.Controller = this;
+					SetElements(false); // set only the view elements, dont't initialize the variables
+				}
+			}
+		}
 
+		public void SetElements(bool bInit)
+		{
+			if (bInit)
+			{
+				m_xCol = m_PlotAssociation.XColumn;
+				m_yCol = m_PlotAssociation.YColumn;
+				m_labelCol = m_PlotAssociation.LabelColumn;
+				m_PlotRange_From = m_PlotAssociation.PlotRangeStart;
+				m_PlotRange_To = m_PlotAssociation.PlotRangeLength == int.MaxValue ? int.MaxValue : m_PlotAssociation.PlotRangeStart + m_PlotAssociation.PlotRangeLength - 1;
+				CalcMaxPossiblePlotRangeTo();
+			}
 
-    #endregion
+			if (null != View)
+			{
+				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
+				View.Tables_Initialize(tables, 0);
 
-    #region IApplyController Members
+				string[] columns = Current.Project.DataTableCollection[tables[0]].DataColumns.GetColumnNames();
+				View.Columns_Initialize(columns, 0);
 
-    public bool Apply()
-    {
-      if(m_bDirty)
-      {
-        m_PlotAssociation.XColumn = m_xCol;
-        m_PlotAssociation.YColumn = m_yCol;
-        m_PlotAssociation.PlotRangeStart = this.m_PlotRange_From;
-        m_PlotAssociation.PlotRangeLength = this.m_PlotRange_To >= this.m_MaxPossiblePlotRange_To ? int.MaxValue : this.m_PlotRange_To+1-this.m_PlotRange_From;
-      }
-      m_bDirty = false;
-      return true; // successfull
-    }
+				View.XColumn_Initialize(m_xCol == null ? String.Empty : m_xCol.FullName);
+				View.YColumn_Initialize(m_yCol == null ? String.Empty : m_yCol.FullName);
+				View.LabelColumn_Initialize(m_labelCol == null ? String.Empty : m_labelCol.FullName);
+				View.PlotRangeFrom_Initialize(m_PlotRange_From);
+				CalcMaxPossiblePlotRangeTo();
+			}
+		}
 
-    #endregion
+		private void CalcMaxPossiblePlotRangeTo()
+		{
+			int len = int.MaxValue;
+			if (m_xCol is Altaxo.Data.IDefinedCount)
+				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)m_xCol).Count);
+			if (m_yCol is Altaxo.Data.IDefinedCount)
+				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)m_yCol).Count);
 
-    #region IMVCController Members
+			m_MaxPossiblePlotRange_To = len - 1;
 
-    public object ViewObject
-    {
-      get
-      {
-        return View;
-      }
-      set
-      {
-        View = value as ILineScatterPlotDataView;
-      }
-    }
+			if (null != View)
+				View.PlotRangeTo_Initialize(Math.Min(this.m_PlotRange_To, m_MaxPossiblePlotRange_To));
+		}
 
-    public object ModelObject
-    {
-      get { return this.m_PlotAssociation; }
-    }
+		public void EhView_TableSelectionChanged(int tableindex, string tablename)
+		{
+			if (null != View)
+			{
+				string[] columns = Current.Project.DataTableCollection[tablename].DataColumns.GetColumnNames();
+				View.Columns_Initialize(columns, 0);
+			}
+		}
 
-    #endregion
-  }
+		public void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname)
+		{
+			SetDirty();
+			m_xCol = Current.Project.DataTableCollection[tablename][columnname];
+			if (null != View)
+				View.XColumn_Initialize(m_xCol == null ? String.Empty : m_xCol.FullName);
+		}
+
+		public void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname)
+		{
+			SetDirty();
+			m_yCol = Current.Project.DataTableCollection[tablename][columnname];
+			if (null != View)
+				View.YColumn_Initialize(m_yCol == null ? String.Empty : m_yCol.FullName);
+		}
+
+		public void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname)
+		{
+			SetDirty();
+			m_labelCol = Current.Project.DataTableCollection[tablename][columnname];
+			if (null != View)
+				View.LabelColumn_Initialize(m_labelCol == null ? String.Empty : m_labelCol.FullName);
+		}
+
+		public void EhView_EraseX()
+		{
+			SetDirty();
+			m_xCol = null;
+			if (null != View)
+				View.XColumn_Initialize(m_xCol == null ? String.Empty : m_xCol.FullName);
+		}
+
+		public void EhView_EraseY()
+		{
+			SetDirty();
+			m_yCol = null;
+			if (null != View)
+				View.YColumn_Initialize(m_yCol == null ? String.Empty : m_yCol.FullName);
+		}
+
+		public void EhView_EraseLabel()
+		{
+			SetDirty();
+			m_labelCol = null;
+			if (null != View)
+				View.LabelColumn_Initialize(m_labelCol == null ? String.Empty : m_labelCol.FullName);
+		}
+
+		public bool EhView_RangeFrom(int val)
+		{
+			SetDirty();
+			this.m_PlotRange_From = val;
+			return false;
+		}
+
+		public bool EhView_RangeTo(int val)
+		{
+			SetDirty();
+			this.m_PlotRange_To = val;
+			return false;
+		}
+
+		#endregion ILineScatterPlotDataController Members
+
+		#region IApplyController Members
+
+		public bool Apply()
+		{
+			if (m_bDirty)
+			{
+				m_PlotAssociation.XColumn = m_xCol;
+				m_PlotAssociation.YColumn = m_yCol;
+				m_PlotAssociation.PlotRangeStart = this.m_PlotRange_From;
+				m_PlotAssociation.PlotRangeLength = this.m_PlotRange_To >= this.m_MaxPossiblePlotRange_To ? int.MaxValue : this.m_PlotRange_To + 1 - this.m_PlotRange_From;
+			}
+			m_bDirty = false;
+			return true; // successfull
+		}
+
+		#endregion IApplyController Members
+
+		#region IMVCController Members
+
+		public object ViewObject
+		{
+			get
+			{
+				return View;
+			}
+			set
+			{
+				View = value as ILineScatterPlotDataView;
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return this.m_PlotAssociation; }
+		}
+
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
+	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,188 +19,192 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 
-using Altaxo.Gui.Common;
-using Altaxo.Calc.Regression.Nonlinear;
-
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-  public class ParameterSetViewItem
-  {
+	public class ParameterSetViewItem
+	{
 		public string Name { get; set; }
-    public string Value { get; set; }
-    public bool Vary { get; set; }
-    public string Variance { get; set; }
-  }
 
-  public interface IParameterSetView
-  {
-    void Initialize(List<ParameterSetViewItem> list);
-    List<ParameterSetViewItem> GetList();
+		public string Value { get; set; }
 
-  }
+		public bool Vary { get; set; }
 
-  /// <summary>
-  /// Summary description for ParameterSetController.
-  /// </summary>
-  [UserControllerForObject(typeof(ParameterSet))]
-  [ExpectedTypeOfView(typeof(IParameterSetView))]
-  public class ParameterSetController1 : IMVCANController
-  {
-    ParameterSet _doc;
-    IParameterSetView _view;
+		public string Variance { get; set; }
+	}
 
-    #region IMVCANController Members
+	public interface IParameterSetView
+	{
+		void Initialize(List<ParameterSetViewItem> list);
 
-    bool IMVCANController.InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length < 1)
-        throw new ArgumentException("args null or empty");
-      if (args[0] is ParameterSet)
-      {
-        _doc = args[0] as ParameterSet;
-        Initialize(true);
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
+		List<ParameterSetViewItem> GetList();
+	}
 
+	/// <summary>
+	/// Summary description for ParameterSetController.
+	/// </summary>
+	[UserControllerForObject(typeof(ParameterSet))]
+	[ExpectedTypeOfView(typeof(IParameterSetView))]
+	public class ParameterSetController1 : IMVCANController
+	{
+		private ParameterSet _doc;
+		private IParameterSetView _view;
 
-    UseDocument IMVCANController.UseDocumentCopy
-    {
-      set
-      { 
-      }
-    }
+		#region IMVCANController Members
 
-    #endregion
+		bool IMVCANController.InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length < 1)
+				throw new ArgumentException("args null or empty");
+			if (args[0] is ParameterSet)
+			{
+				_doc = args[0] as ParameterSet;
+				Initialize(true);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
-    void Initialize(bool initDoc)
-    {
-      if (_view != null)
-      {
-        List<ParameterSetViewItem> list = new List<ParameterSetViewItem>();
+		UseDocument IMVCANController.UseDocumentCopy
+		{
+			set
+			{
+			}
+		}
 
-        for (int i = 0; i < _doc.Count; i++)
-        {
-          ParameterSetViewItem item = new ParameterSetViewItem();
-          item.Name = _doc[i].Name;
-          item.Value = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Parameter);
-          item.Vary = _doc[i].Vary;
-          item.Variance = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Variance);
+		#endregion IMVCANController Members
 
-          list.Add(item);
-        }
+		private void Initialize(bool initDoc)
+		{
+			if (_view != null)
+			{
+				List<ParameterSetViewItem> list = new List<ParameterSetViewItem>();
 
-        Current.Gui.Execute(()=>_view.Initialize(list));
-      }
-    }
+				for (int i = 0; i < _doc.Count; i++)
+				{
+					ParameterSetViewItem item = new ParameterSetViewItem();
+					item.Name = _doc[i].Name;
+					item.Value = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Parameter);
+					item.Vary = _doc[i].Vary;
+					item.Variance = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Variance);
 
-    #region IMVCController Members
+					list.Add(item);
+				}
 
-    object IMVCController.ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as IParameterSetView;
-        Initialize(false);
-      }
-    }
+				Current.Gui.Execute(() => _view.Initialize(list));
+			}
+		}
 
-    object IMVCController.ModelObject
-    {
-      get { return _doc; }
-    }
+		#region IMVCController Members
 
-    #endregion
+		object IMVCController.ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value as IParameterSetView;
+				Initialize(false);
+			}
+		}
 
-    #region IApplyController Members
+		object IMVCController.ModelObject
+		{
+			get { return _doc; }
+		}
 
-    bool IApplyController.Apply()
-    {
+		public void Dispose()
+		{
+		}
 
-      List<ParameterSetViewItem> list = _view.GetList();
+		#endregion IMVCController Members
 
-      for (int i = 0; i < _doc.Count; i++)
-      {
-        double paraValue;
-        double varianceValue;
+		#region IApplyController Members
 
-        // Parameter
-        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Value, out paraValue))
-        {
-          _doc[i].Parameter = paraValue;
-        }
-        else
-        {
-          Current.Gui.ErrorMessageBox(string.Format("Parameter {0} is not numeric", list[i].Name));
-          return false;
-        }
+		bool IApplyController.Apply()
+		{
+			List<ParameterSetViewItem> list = _view.GetList();
 
-        // Vary
-        _doc[i].Vary = list[i].Vary;
+			for (int i = 0; i < _doc.Count; i++)
+			{
+				double paraValue;
+				double varianceValue;
 
-        // Variance
-        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Variance, out varianceValue))
-        {
-          _doc[i].Variance = varianceValue;
-        }
-        else if (!string.IsNullOrEmpty(list[i].Variance))
-        {
-          Current.Gui.ErrorMessageBox(string.Format("Variance of parameter {0} is not numeric", list[i].Name));
-          return false;
-        }
-      }
+				// Parameter
+				if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Value, out paraValue))
+				{
+					_doc[i].Parameter = paraValue;
+				}
+				else
+				{
+					Current.Gui.ErrorMessageBox(string.Format("Parameter {0} is not numeric", list[i].Name));
+					return false;
+				}
 
-      return true;
-    }
+				// Vary
+				_doc[i].Vary = list[i].Vary;
 
-    #endregion
-  }
+				// Variance
+				if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Variance, out varianceValue))
+				{
+					_doc[i].Variance = varianceValue;
+				}
+				else if (!string.IsNullOrEmpty(list[i].Variance))
+				{
+					Current.Gui.ErrorMessageBox(string.Format("Variance of parameter {0} is not numeric", list[i].Name));
+					return false;
+				}
+			}
 
-  /*
-  /// <summary>
-  /// Summary description for ParameterSetController.
-  /// </summary>
-  [UserControllerForObject(typeof(ParameterSet))]
-  public class ParameterSetController : Altaxo.Gui.Common.MultiChildController
-  {
-    ParameterSet _doc;
+			return true;
+		}
 
-    public ParameterSetController(ParameterSet doc)
-    {
-      _doc = doc;
-      _doc.InitializationFinished += new EventHandler(EhInitializationFinished);
+		#endregion IApplyController Members
+	}
 
-      base.DescriptionText = "ParameterName                                      Value                     Vary?       Variance\r\n" +
-                        "-------------------------------------------------------------------------------------------------------";
-      
-      EhInitializationFinished(this, EventArgs.Empty);
-    }
+	/*
+	/// <summary>
+	/// Summary description for ParameterSetController.
+	/// </summary>
+	[UserControllerForObject(typeof(ParameterSet))]
+	public class ParameterSetController : Altaxo.Gui.Common.MultiChildController
+	{
+		ParameterSet _doc;
 
-  
-    private void EhInitializationFinished(object sender, EventArgs e)
-    {
-      ControlViewElement[] childs = new ControlViewElement[_doc.Count];
-      for (int i = 0; i < childs.Length; i++)
-      {
-        IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IParameterSetElementController));
-        childs[i] = new ControlViewElement(null, ctrl, ctrl.ViewObject);
-      }
+		public ParameterSetController(ParameterSet doc)
+		{
+			_doc = doc;
+			_doc.InitializationFinished += new EventHandler(EhInitializationFinished);
 
-      base.Initialize(childs, false);
-    }
-  }
-   */
+			base.DescriptionText = "ParameterName                                      Value                     Vary?       Variance\r\n" +
+												"-------------------------------------------------------------------------------------------------------";
+
+			EhInitializationFinished(this, EventArgs.Empty);
+		}
+
+		private void EhInitializationFinished(object sender, EventArgs e)
+		{
+			ControlViewElement[] childs = new ControlViewElement[_doc.Count];
+			for (int i = 0; i < childs.Length; i++)
+			{
+				IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IParameterSetElementController));
+				childs[i] = new ControlViewElement(null, ctrl, ctrl.ViewObject);
+			}
+
+			base.Initialize(childs, false);
+		}
+	}
+	 */
 }

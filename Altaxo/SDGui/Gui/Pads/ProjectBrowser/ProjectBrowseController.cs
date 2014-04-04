@@ -808,6 +808,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 
 		#region List commands

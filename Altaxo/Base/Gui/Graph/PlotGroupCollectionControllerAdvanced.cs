@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,57 +19,70 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Collections;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Groups;
-using Altaxo.Main.Services;
-
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface IPlotGroupCollectionViewAdvanced
-  {
-    IPlotGroupCollectionViewAdvancedEventSink Controller { set; }
-    void InitializeAvailableCoordinateTransformingGroupStyles(SelectableListNodeList list);
-    void InitializeAvailableNormalGroupStyles(SelectableListNodeList list);
-    void InitializeUpdateMode(SelectableListNodeList list, bool inheritFromParent, bool distributeToChilds);
-    void InitializeCurrentNormalGroupStyles(CheckableSelectableListNodeList list);
-    void SynchronizeCurrentNormalGroupStyles();
-    void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds);
-    
-  }
+	#region Interfaces
 
-  public interface IPlotGroupCollectionViewAdvancedEventSink
-  {
-    void EhView_CoordinateTransformingGroupStyleChanged();
-    void EhView_CoordinateTransformingGroupStyleEdit();
-    void EhView_AddNormalGroupStyle();
-    void EhView_RemoveNormalGroupStyle();
+	public interface IPlotGroupCollectionViewAdvanced
+	{
+		IPlotGroupCollectionViewAdvancedEventSink Controller { set; }
 
-    void EhView_IndentGroupStyle();
-    void EhView_UnindentGroupStyle();
-    void EhView_MoveUpGroupStyle();
-    void EhView_MoveDownGroupStyle();
-  }
-  #endregion
+		void InitializeAvailableCoordinateTransformingGroupStyles(SelectableListNodeList list);
 
-  [UserControllerForObject(typeof(PlotGroupStyleCollection))]
-  [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]
-  public class PlotGroupCollectionControllerAdvanced : IMVCANController, IPlotGroupCollectionViewAdvancedEventSink
+		void InitializeAvailableNormalGroupStyles(SelectableListNodeList list);
+
+		void InitializeUpdateMode(SelectableListNodeList list, bool inheritFromParent, bool distributeToChilds);
+
+		void InitializeCurrentNormalGroupStyles(CheckableSelectableListNodeList list);
+
+		void SynchronizeCurrentNormalGroupStyles();
+
+		void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds);
+	}
+
+	public interface IPlotGroupCollectionViewAdvancedEventSink
+	{
+		void EhView_CoordinateTransformingGroupStyleChanged();
+
+		void EhView_CoordinateTransformingGroupStyleEdit();
+
+		void EhView_AddNormalGroupStyle();
+
+		void EhView_RemoveNormalGroupStyle();
+
+		void EhView_IndentGroupStyle();
+
+		void EhView_UnindentGroupStyle();
+
+		void EhView_MoveUpGroupStyle();
+
+		void EhView_MoveDownGroupStyle();
+	}
+
+	#endregion Interfaces
+
+	[UserControllerForObject(typeof(PlotGroupStyleCollection))]
+	[ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]
+	public class PlotGroupCollectionControllerAdvanced : IMVCANController, IPlotGroupCollectionViewAdvancedEventSink
 	{
 		#region Inner classes
 
-		class MyListNode : CheckableSelectableListNode
+		private class MyListNode : CheckableSelectableListNode
 		{
 			public MyListNode(string name, object item, bool isSelected, bool isChecked, bool isCheckBoxVisible)
-				: base(name, item, isSelected, isChecked) 
+				: base(name, item, isSelected, isChecked)
 			{
 				this.IsCheckBoxVisible = isCheckBoxVisible;
 			}
@@ -76,75 +90,73 @@ namespace Altaxo.Gui.Graph
 			public bool IsCheckBoxVisible { get; set; }
 		}
 
-		#endregion
+		#endregion Inner classes
 
+		private PlotGroupStyleCollection _origdoc;
+		private PlotGroupStyleCollection _doc;
+		private IGPlotItem _parent; // usually the parent is the PlotItemCollection
+		private IPlotGroupCollectionViewAdvanced _view;
+		private UseDocument _useDocument;
 
-		PlotGroupStyleCollection _origdoc;
-    PlotGroupStyleCollection _doc;
-    IGPlotItem _parent; // usually the parent is the PlotItemCollection
-    IPlotGroupCollectionViewAdvanced _view;
-    UseDocument _useDocument;
-
-    SelectableListNodeList _availableTransfoStyles;
-    SelectableListNodeList _availableNormalStyles;
-    CheckableSelectableListNodeList _currentNormalStyles;
-    SelectableListNodeList _availableUpdateModes;
-    ICoordinateTransformingGroupStyle _currentTransfoStyle;
+		private SelectableListNodeList _availableTransfoStyles;
+		private SelectableListNodeList _availableNormalStyles;
+		private CheckableSelectableListNodeList _currentNormalStyles;
+		private SelectableListNodeList _availableUpdateModes;
+		private ICoordinateTransformingGroupStyle _currentTransfoStyle;
 
 		/// <summary>
 		/// Number of items where the property <see cref="IPlotGroupStyle.CanCarryOver"/> is true. The list of items is maintained in the way, that those items appear first in the list.
 		/// </summary>
-    int _currentNoOfItemsThatCanHaveChilds;
+		private int _currentNoOfItemsThatCanHaveChilds;
 
-    void Initialize(bool initDoc)
-    {
-      if (initDoc)
-      {
-        // available Update modes
-        _availableUpdateModes = new SelectableListNodeList();
-        foreach (object obj in Enum.GetValues(typeof(PlotGroupStrictness)))
-          _availableUpdateModes.Add(new SelectableListNode(obj.ToString(), obj, ((PlotGroupStrictness)obj) == PlotGroupStrictness.Normal));
+		private void Initialize(bool initDoc)
+		{
+			if (initDoc)
+			{
+				// available Update modes
+				_availableUpdateModes = new SelectableListNodeList();
+				foreach (object obj in Enum.GetValues(typeof(PlotGroupStrictness)))
+					_availableUpdateModes.Add(new SelectableListNode(obj.ToString(), obj, ((PlotGroupStrictness)obj) == PlotGroupStrictness.Normal));
 
-        Type[] types;
-        // Transfo-Styles
-        _currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
-        _availableTransfoStyles = new SelectableListNodeList();
-        _availableTransfoStyles.Add(new SelectableListNode("None",null,null==_currentTransfoStyle));
-         types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
-        foreach (Type t in types)
-        {
-           Type currentStyleType = _currentTransfoStyle == null ? null : _currentTransfoStyle.GetType();
-           ICoordinateTransformingGroupStyle style;
-          if(t==currentStyleType)
-            style = _currentTransfoStyle;
-          else
-            style = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(t);
-            
-          _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), style, t==currentStyleType));
-        }
+				Type[] types;
+				// Transfo-Styles
+				_currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
+				_availableTransfoStyles = new SelectableListNodeList();
+				_availableTransfoStyles.Add(new SelectableListNode("None", null, null == _currentTransfoStyle));
+				types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
+				foreach (Type t in types)
+				{
+					Type currentStyleType = _currentTransfoStyle == null ? null : _currentTransfoStyle.GetType();
+					ICoordinateTransformingGroupStyle style;
+					if (t == currentStyleType)
+						style = _currentTransfoStyle;
+					else
+						style = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(t);
 
-        // Normal Styles
-        _availableNormalStyles = new SelectableListNodeList();
-        if (_parent != null) // if possible, collect only those styles that are applicable
-        {
-          PlotGroupStyleCollection avstyles = new PlotGroupStyleCollection();
-          _parent.CollectStyles(avstyles);
-          foreach(IPlotGroupStyle style in avstyles)
-          {
-            if(!_doc.ContainsType(style.GetType()))
-            _availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()),style.GetType(),false));
-          }
-        }
-        else // or else, find all available styles
-        {
-          types = ReflectionService.GetNonAbstractSubclassesOf(typeof(IPlotGroupStyle));
-          foreach (Type t in types)
-          {
-            if (!_doc.ContainsType(t))
-              _availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, false));
-          }
-        }
+					_availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), style, t == currentStyleType));
+				}
 
+				// Normal Styles
+				_availableNormalStyles = new SelectableListNodeList();
+				if (_parent != null) // if possible, collect only those styles that are applicable
+				{
+					PlotGroupStyleCollection avstyles = new PlotGroupStyleCollection();
+					_parent.CollectStyles(avstyles);
+					foreach (IPlotGroupStyle style in avstyles)
+					{
+						if (!_doc.ContainsType(style.GetType()))
+							_availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()), style.GetType(), false));
+					}
+				}
+				else // or else, find all available styles
+				{
+					types = ReflectionService.GetNonAbstractSubclassesOf(typeof(IPlotGroupStyle));
+					foreach (Type t in types)
+					{
+						if (!_doc.ContainsType(t))
+							_availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, false));
+					}
+				}
 
 				var list = _doc.GetOrderedListOfItems(ComparePlotGroupStyles);
 				_currentNormalStyles = new CheckableSelectableListNodeList();
@@ -159,17 +171,16 @@ namespace Altaxo.Gui.Graph
 					_currentNormalStyles.Add(node);
 				}
 				UpdateCurrentNormalIndentation();
-      }
+			}
 
-
-      if (_view != null)
-      {
-        _view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
-        _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
-        _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
-        _view.InitializeUpdateMode(_availableUpdateModes, _doc.InheritFromParentGroups, _doc.DistributeToChildGroups);
-      }
-    }
+			if (_view != null)
+			{
+				_view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
+				_view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
+				_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+				_view.InitializeUpdateMode(_availableUpdateModes, _doc.InheritFromParentGroups, _doc.DistributeToChildGroups);
+			}
+		}
 
 		/// <summary>
 		/// Comparison of plot group styles. Primarily they are sorted by the flag <see cref="IPlotGroupStyle.CanCarryOver"/>, so that items that can not have childs appear
@@ -178,7 +189,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		int ComparePlotGroupStyles(IPlotGroupStyle x, IPlotGroupStyle y)
+		private int ComparePlotGroupStyles(IPlotGroupStyle x, IPlotGroupStyle y)
 		{
 			if (x.CanCarryOver != y.CanCarryOver)
 				return x.CanCarryOver ? -1 : 1;
@@ -191,8 +202,8 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Prepends the names in the item list with spaces according to their tree level.
 		/// </summary>
-    void UpdateCurrentNormalIndentation()
-    {
+		private void UpdateCurrentNormalIndentation()
+		{
 			foreach (var item in _currentNormalStyles)
 			{
 				int level = _doc.GetTreeLevelOf((Type)item.Tag);
@@ -203,352 +214,342 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-    /// <summary>
-    /// This updates the list, presuming that the number of items has not changed.
-    /// </summary>
-    void UpdateCurrentNormalOrder()
-    {
-      // if possible, we try to maintain the order in the list in which the items
-      // appear
+		/// <summary>
+		/// This updates the list, presuming that the number of items has not changed.
+		/// </summary>
+		private void UpdateCurrentNormalOrder()
+		{
+			// if possible, we try to maintain the order in the list in which the items
+			// appear
 
-      if (0 == _currentNoOfItemsThatCanHaveChilds)
-        return; // then there is nothing to do now
+			if (0 == _currentNoOfItemsThatCanHaveChilds)
+				return; // then there is nothing to do now
 
-      IPlotGroupStyle previousStyle = null;
-      IPlotGroupStyle style = null;
-      for (int i = 0; i < _currentNoOfItemsThatCanHaveChilds; i++, previousStyle=style)
-      {
-        CheckableSelectableListNode node = _currentNormalStyles[i];
-        style = _doc.GetPlotGroupStyle((Type)node.Tag);
+			IPlotGroupStyle previousStyle = null;
+			IPlotGroupStyle style = null;
+			for (int i = 0; i < _currentNoOfItemsThatCanHaveChilds; i++, previousStyle = style)
+			{
+				CheckableSelectableListNode node = _currentNormalStyles[i];
+				style = _doc.GetPlotGroupStyle((Type)node.Tag);
 
-        if (previousStyle != null)
-        {
-          Type prevchildtype = _doc.GetTypeOfChild(previousStyle.GetType());
-          if (prevchildtype != null)
-          {
-            if (prevchildtype != style.GetType())
-            {
-              int pi = _currentNormalStyles.IndexOfObject(prevchildtype);
-              _currentNormalStyles.Exchange(i, pi);
-            }
-            continue;
+				if (previousStyle != null)
+				{
+					Type prevchildtype = _doc.GetTypeOfChild(previousStyle.GetType());
+					if (prevchildtype != null)
+					{
+						if (prevchildtype != style.GetType())
+						{
+							int pi = _currentNormalStyles.IndexOfObject(prevchildtype);
+							_currentNormalStyles.Exchange(i, pi);
+						}
+						continue;
+					}
+				}
 
-          }
-        }
+				Type parenttype = _doc.GetParentTypeOf(style.GetType());
+				if (parenttype != null &&
+					(previousStyle == null || previousStyle.GetType() != parenttype))
+				{
+					int pi = _currentNormalStyles.IndexOfObject(parenttype);
+					_currentNormalStyles.Exchange(i, pi);
+				}
+			}
+			UpdateCurrentNormalIndentation();
+		}
 
-        Type parenttype = _doc.GetParentTypeOf(style.GetType());
-        if (parenttype != null && 
-          (previousStyle==null || previousStyle.GetType()!=parenttype))
-          {
-            int pi = _currentNormalStyles.IndexOfObject(parenttype);
-            _currentNormalStyles.Exchange(i, pi);
-          }
+		#region IMVCANController Members
 
-         
-      }
-      UpdateCurrentNormalIndentation();
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
+				return false;
 
-      
-    }
+			_origdoc = (PlotGroupStyleCollection)args[0];
+			_doc = _useDocument == UseDocument.Directly ? _origdoc : _origdoc.Clone();
 
-    #region IMVCANController Members
+			if (args.Length >= 2 && args[1] is IGPlotItem)
+				_parent = (IGPlotItem)args[1];
 
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
-        return false;
+			Initialize(true);
+			return true;
+		}
 
-      _origdoc = (PlotGroupStyleCollection)args[0];
-      _doc = _useDocument == UseDocument.Directly ? _origdoc : _origdoc.Clone();
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocument = value; }
+		}
 
-      if (args.Length >= 2 && args[1] is IGPlotItem)
-        _parent = (IGPlotItem)args[1];
+		#endregion IMVCANController Members
 
-      Initialize(true);
-      return true;
-    }
+		#region IMVCController Members
 
-    public UseDocument UseDocumentCopy
-    {
-      set { _useDocument = value; }
-    }
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-    #endregion
+				_view = value as IPlotGroupCollectionViewAdvanced;
 
-    #region IMVCController Members
+				if (_view != null)
+				{
+					Initialize(false);
+					_view.Controller = this;
+				}
+			}
+		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view != null)
-          _view.Controller = null;
+		public object ModelObject
+		{
+			get { return _origdoc; }
+		}
 
-        _view = value as IPlotGroupCollectionViewAdvanced;
+		public void Dispose()
+		{
+		}
 
-        if (_view != null)
-        {
-          Initialize(false);
-          _view.Controller = this;
-        }
-      }
-    }
+		#endregion IMVCController Members
 
-    public object ModelObject
-    {
-      get { return _origdoc; }
-    }
+		#region IApplyController Members
 
-    #endregion
+		public bool Apply()
+		{
+			foreach (SelectableListNode node in _availableTransfoStyles)
+			{
+				if (node.IsSelected)
+				{
+					_currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
+					_doc.CoordinateTransformingStyle = _currentTransfoStyle;
+					break;
+				}
+			}
 
-    #region IApplyController Members
+			_view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
+			foreach (CheckableSelectableListNode node in _currentNormalStyles)
+			{
+				IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Tag);
+				style.IsStepEnabled = node.IsChecked;
+			}
 
-    public bool Apply()
-    {
-      foreach (SelectableListNode node in _availableTransfoStyles)
-      {
-        if (node.IsSelected)
-        {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-          _doc.CoordinateTransformingStyle = _currentTransfoStyle;
-          break;
-        }
-      }
+			bool inherit, distribute;
+			_view.QueryUpdateMode(out inherit, out distribute);
+			_doc.InheritFromParentGroups = inherit;
+			_doc.DistributeToChildGroups = distribute;
+			foreach (SelectableListNode node in _availableUpdateModes)
+			{
+				if (node.IsSelected)
+				{
+					_doc.PlotGroupStrictness = (PlotGroupStrictness)node.Tag;
+					break;
+				}
+			}
 
-      _view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
-      foreach (CheckableSelectableListNode node in _currentNormalStyles)
-      {
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Tag);
-        style.IsStepEnabled = node.IsChecked;
-      }
+			if (_useDocument == UseDocument.Copy)
+				_origdoc.CopyFrom(_doc);
+			return true;
+		}
 
-      bool inherit, distribute;
-      _view.QueryUpdateMode(out inherit, out distribute);
-      _doc.InheritFromParentGroups = inherit;
-      _doc.DistributeToChildGroups = distribute;
-      foreach (SelectableListNode node in _availableUpdateModes)
-      {
-        if (node.IsSelected)
-        {
-          _doc.PlotGroupStrictness = (PlotGroupStrictness)node.Tag;
-          break;
-        }
-      }
+		#endregion IApplyController Members
 
-      if (_useDocument == UseDocument.Copy)
-        _origdoc.CopyFrom(_doc);
-      return true;
-    }
+		#region IPlotGroupCollectionViewEventSink Members
 
-    #endregion
+		public void EhView_CoordinateTransformingGroupStyleChanged()
+		{
+			foreach (SelectableListNode node in _availableTransfoStyles)
+			{
+				if (node.IsSelected)
+				{
+					_currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
+					break;
+				}
+			}
+		}
 
-    #region IPlotGroupCollectionViewEventSink Members
+		public void EhView_CoordinateTransformingGroupStyleEdit()
+		{
+			// look wheter there is a appropriate edit dialog available for the group style
+			foreach (SelectableListNode node in _availableTransfoStyles)
+			{
+				if (node.IsSelected)
+				{
+					_currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
+					break;
+				}
+			}
 
-    public void EhView_CoordinateTransformingGroupStyleChanged()
-    {
-      foreach (SelectableListNode node in _availableTransfoStyles)
-      {
-        if (node.IsSelected)
-        {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-          break;
-        }
-      }
-    }
+			if (null != _currentTransfoStyle)
+				Current.Gui.ShowDialog(new object[] { _currentTransfoStyle }, "Edit transformation style");
+		}
 
-    public void EhView_CoordinateTransformingGroupStyleEdit()
-    {
-      // look wheter there is a appropriate edit dialog available for the group style
-      foreach (SelectableListNode node in _availableTransfoStyles)
-      {
-        if (node.IsSelected)
-        {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-          break;
-        }
-      }
+		public void EhView_AddNormalGroupStyle()
+		{
+			SelectableListNode selected = null;
+			foreach (SelectableListNode node in _availableNormalStyles)
+			{
+				if (node.IsSelected)
+				{
+					selected = node;
+					break;
+				}
+			}
+			if (null != selected)
+			{
+				_availableNormalStyles.Remove(selected);
 
-      if (null != _currentTransfoStyle)
-        Current.Gui.ShowDialog(new object[] { _currentTransfoStyle }, "Edit transformation style");
-    }
-
-
-
-    public void EhView_AddNormalGroupStyle()
-    {
-      SelectableListNode selected = null;
-      foreach (SelectableListNode node in _availableNormalStyles)
-      {
-        if (node.IsSelected)
-        {
-          selected = node;
-          break;
-        }
-      }
-      if (null != selected)
-      {
-        _availableNormalStyles.Remove(selected);
-
-        IPlotGroupStyle s = (IPlotGroupStyle)Activator.CreateInstance((Type)selected.Tag);
-        _doc.Add(s);
+				IPlotGroupStyle s = (IPlotGroupStyle)Activator.CreateInstance((Type)selected.Tag);
+				_doc.Add(s);
 				var node = new MyListNode(
 					Current.Gui.GetUserFriendlyClassName(s.GetType()),
 					s.GetType(), true, s.IsStepEnabled, s.CanStep);
-        if (s.CanCarryOver)
-        {
-          _currentNormalStyles.Insert(_currentNoOfItemsThatCanHaveChilds, node);
-          _currentNoOfItemsThatCanHaveChilds++;
-        }
-        else
-        {
-          _currentNormalStyles.Add(node);
-        }
+				if (s.CanCarryOver)
+				{
+					_currentNormalStyles.Insert(_currentNoOfItemsThatCanHaveChilds, node);
+					_currentNoOfItemsThatCanHaveChilds++;
+				}
+				else
+				{
+					_currentNormalStyles.Add(node);
+				}
 
-        _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
-        _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
-      }
-    }
+				_view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
+				_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+			}
+		}
 
-    public void EhView_RemoveNormalGroupStyle()
-    {
-      for(int i=_currentNormalStyles.Count-1;i>=0;i--)
-      {
-        CheckableSelectableListNode selected = _currentNormalStyles[i];
-        if (!selected.IsSelected)
-          continue;
+		public void EhView_RemoveNormalGroupStyle()
+		{
+			for (int i = _currentNormalStyles.Count - 1; i >= 0; i--)
+			{
+				CheckableSelectableListNode selected = _currentNormalStyles[i];
+				if (!selected.IsSelected)
+					continue;
 
-        _doc.RemoveType((Type)selected.Tag);
+				_doc.RemoveType((Type)selected.Tag);
 
-        _currentNormalStyles.RemoveAt(i);
-        if (i < _currentNoOfItemsThatCanHaveChilds)
-          _currentNoOfItemsThatCanHaveChilds--;
+				_currentNormalStyles.RemoveAt(i);
+				if (i < _currentNoOfItemsThatCanHaveChilds)
+					_currentNoOfItemsThatCanHaveChilds--;
 
-        _availableNormalStyles.Add(new SelectableListNode(
-          Current.Gui.GetUserFriendlyClassName((Type)selected.Tag),
-          selected.Tag,
-          true));
+				_availableNormalStyles.Add(new SelectableListNode(
+					Current.Gui.GetUserFriendlyClassName((Type)selected.Tag),
+					selected.Tag,
+					true));
+			}
 
-      }
+			UpdateCurrentNormalIndentation();
+			_view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
+			_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		}
 
-      UpdateCurrentNormalIndentation();
-      _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
-
-    }
-
-    public void EhView_IndentGroupStyle()
-    {
-      // for all selected items: append it as child to the item upward
+		public void EhView_IndentGroupStyle()
+		{
+			// for all selected items: append it as child to the item upward
 			int count = Math.Min(_currentNoOfItemsThatCanHaveChilds + 1, _currentNormalStyles.Count); // note: the first item that can step, but can not have childs, could also be indented, thats why 1+
-      for (int i = 1; i < count; ++i)
-      {
-        CheckableSelectableListNode selected = _currentNormalStyles[i];
-        if (!selected.IsSelected)
-          continue;
+			for (int i = 1; i < count; ++i)
+			{
+				CheckableSelectableListNode selected = _currentNormalStyles[i];
+				if (!selected.IsSelected)
+					continue;
 
-        if (null != _doc.GetParentTypeOf((Type)selected.Tag))
-          continue; // only ident those items who dont have a parent
+				if (null != _doc.GetParentTypeOf((Type)selected.Tag))
+					continue; // only ident those items who dont have a parent
 
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
-        _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-        _doc.Add(style,(Type)_currentNormalStyles[i-1].Tag); // Add the type again, but this time without parents or childs
-      }
-      // this requires the whole currentNormalStyle list to be updated
-      UpdateCurrentNormalOrder();
+				IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
+				_doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
+				_doc.Add(style, (Type)_currentNormalStyles[i - 1].Tag); // Add the type again, but this time without parents or childs
+			}
+			// this requires the whole currentNormalStyle list to be updated
+			UpdateCurrentNormalOrder();
 			UpdateCurrentNormalIndentation();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+			_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		}
 
-    }
+		public void EhView_UnindentGroupStyle()
+		{
+			// make sure that all the selected items are not child of another item
+			for (int i = _currentNormalStyles.Count - 1; i >= 0; i--)
+			{
+				CheckableSelectableListNode selected = _currentNormalStyles[i];
+				if (!selected.IsSelected)
+					continue;
 
-    public void EhView_UnindentGroupStyle()
-    {
-      // make sure that all the selected items are not child of another item
-      for (int i = _currentNormalStyles.Count - 1; i >= 0; i--)
-      {
-        CheckableSelectableListNode selected = _currentNormalStyles[i];
-        if (!selected.IsSelected)
-          continue;
+				if (null != _doc.GetParentTypeOf((Type)selected.Tag))
+				{
+					IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
+					_doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
+					_doc.Add(style); // Add the type again, but this time without parents or childs
+				}
+			}
 
-        if (null != _doc.GetParentTypeOf((Type)selected.Tag))
-        {
-          IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
-          _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-          _doc.Add(style); // Add the type again, but this time without parents or childs
-        }
-
-      }
-
-      // this requires the whole currentNormalStyle list to be updated
-      UpdateCurrentNormalOrder();
+			// this requires the whole currentNormalStyle list to be updated
+			UpdateCurrentNormalOrder();
 			UpdateCurrentNormalIndentation();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+			_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		}
 
-    }
+		public void EhView_MoveUpGroupStyle()
+		{
+			if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[0].IsSelected)
+				return; // can not move up any more
 
-    public void EhView_MoveUpGroupStyle()
-    {
-      if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[0].IsSelected)
-        return; // can not move up any more
+			for (int i = 1; i < _currentNoOfItemsThatCanHaveChilds; i++)
+			{
+				CheckableSelectableListNode selected = _currentNormalStyles[i];
+				if (!selected.IsSelected)
+					continue;
 
-      for (int i = 1; i < _currentNoOfItemsThatCanHaveChilds; i++)
-      {
-        CheckableSelectableListNode selected = _currentNormalStyles[i];
-        if (!selected.IsSelected)
-          continue;
+				IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
+				Type parenttype = _doc.GetParentTypeOf(style.GetType());
+				_doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
+				if (parenttype == null)
+				{
+					_doc.Add(style);
+				}
+				else
+				{
+					_doc.Insert(style, parenttype); // Add the type, but parent type is this time the child type
+				}
+				_currentNormalStyles.Exchange(i, i - 1);
+			}
+			// this requires the whole currentNormalStyle list to be updated
+			UpdateCurrentNormalOrder();
+			_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		}
 
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
-        Type parenttype = _doc.GetParentTypeOf(style.GetType());
-        _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-        if (parenttype == null)
-        {
-          _doc.Add(style);
-        }
-        else
-        {
-          _doc.Insert(style,parenttype); // Add the type, but parent type is this time the child type
-        }
-        _currentNormalStyles.Exchange(i, i - 1);
-      }
-      // this requires the whole currentNormalStyle list to be updated
-      UpdateCurrentNormalOrder();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		public void EhView_MoveDownGroupStyle()
+		{
+			if (0 == _currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[_currentNoOfItemsThatCanHaveChilds - 1].IsSelected)
+				return; // can not move down any more
 
-    }
+			for (int i = _currentNoOfItemsThatCanHaveChilds - 2; i >= 0; i--)
+			{
+				CheckableSelectableListNode selected = _currentNormalStyles[i];
+				if (!selected.IsSelected)
+					continue;
 
-    public void EhView_MoveDownGroupStyle()
-    {
-      if (0==_currentNoOfItemsThatCanHaveChilds || _currentNormalStyles[_currentNoOfItemsThatCanHaveChilds-1].IsSelected)
-        return; // can not move down any more
+				IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
+				Type childtype = _doc.GetTypeOfChild(style.GetType());
+				_doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
+				if (childtype == null)
+				{
+					_doc.Add(style);
+				}
+				else
+				{
+					_doc.Add(style, childtype); // Add the type, but the child type this time is the parent type
+				}
+				_currentNormalStyles.Exchange(i, i + 1);
+			}
+			// this requires the whole currentNormalStyle list to be updated
+			UpdateCurrentNormalOrder();
+			_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		}
 
-      for (int i = _currentNoOfItemsThatCanHaveChilds-2; i >=0; i--)
-      {
-        CheckableSelectableListNode selected = _currentNormalStyles[i];
-        if (!selected.IsSelected)
-          continue;
-
-        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selected.Tag);
-        Type childtype = _doc.GetTypeOfChild(style.GetType());
-        _doc.RemoveType(style.GetType()); // Removing the type so removing also the parent-child-relationship
-        if (childtype == null)
-        {
-          _doc.Add(style);
-        }
-        else
-        {
-          _doc.Add(style, childtype); // Add the type, but the child type this time is the parent type
-        }
-        _currentNormalStyles.Exchange(i, i + 1);
-      }
-      // this requires the whole currentNormalStyle list to be updated
-      UpdateCurrentNormalOrder();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
-      
-    }
-
-    #endregion
-  }
+		#endregion IPlotGroupCollectionViewEventSink Members
+	}
 }

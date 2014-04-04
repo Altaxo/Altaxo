@@ -125,6 +125,10 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
+		public void Dispose()
+		{
+		}
+
 		#endregion IMVCController Members
 
 		#region IApplyController Members

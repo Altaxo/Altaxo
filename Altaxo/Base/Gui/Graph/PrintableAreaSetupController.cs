@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
-using System.Drawing;
-
-using Altaxo.Graph;
 namespace Altaxo.Gui.Graph
 {
 	public class PrintableAreaSetupOptions : ICloneable
 	{
 		public PointD2D AreaSize { get; set; }
+
 		public bool Rescale { get; set; }
 
 		#region ICloneable Members
@@ -42,13 +44,13 @@ namespace Altaxo.Gui.Graph
 			return this.MemberwiseClone();
 		}
 
-		#endregion
+		#endregion ICloneable Members
 	}
-
 
 	public interface IPrintableAreaSetupView
 	{
 		PointD2D AreaSize { get; set; }
+
 		bool Rescale { get; set; }
 	}
 
@@ -56,13 +58,14 @@ namespace Altaxo.Gui.Graph
 	[UserControllerForObject(typeof(PrintableAreaSetupOptions))]
 	public class PrintableAreaSetupController : IMVCANController
 	{
-		PrintableAreaSetupOptions _doc;
-		IPrintableAreaSetupView _view;
+		private PrintableAreaSetupOptions _doc;
+		private IPrintableAreaSetupView _view;
+
 		#region IMVCANController Members
 
 		public bool InitializeDocument(params object[] args)
 		{
-			if (args.Length>=1 && args[0] is PrintableAreaSetupOptions)
+			if (args.Length >= 1 && args[0] is PrintableAreaSetupOptions)
 			{
 				_doc = args[0] as PrintableAreaSetupOptions;
 				Initialize(true);
@@ -77,9 +80,9 @@ namespace Altaxo.Gui.Graph
 			set { }
 		}
 
-		#endregion
+		#endregion IMVCANController Members
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (_view != null)
 			{
@@ -112,7 +115,11 @@ namespace Altaxo.Gui.Graph
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -123,6 +130,6 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

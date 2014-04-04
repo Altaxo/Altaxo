@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,237 +19,231 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
-using Altaxo.Main;
 
 namespace Altaxo.Gui.Common
 {
-  #region Interfaces
+	#region Interfaces
 
-  /// <summary>
-  /// This interface is intended to provide a "shell" as a dialog which can host a couple of user controls in tab pages.
-  /// </summary>
-  public interface ITabbedElementView
-  {
-    /// <summary>
-    /// Removes all Tab pages from the dialog.
-    /// </summary>
-    void ClearTabs();
+	/// <summary>
+	/// This interface is intended to provide a "shell" as a dialog which can host a couple of user controls in tab pages.
+	/// </summary>
+	public interface ITabbedElementView
+	{
+		/// <summary>
+		/// Removes all Tab pages from the dialog.
+		/// </summary>
+		void ClearTabs();
 
-    /// <summary>
-    /// Adds a Tab page to the dialog
-    /// </summary>
-    /// <param name="title">The title of the tab page.</param>
-    /// <param name="view">The view (must be currently of type Control.</param>
-    void AddTab(string title, object view);
+		/// <summary>
+		/// Adds a Tab page to the dialog
+		/// </summary>
+		/// <param name="title">The title of the tab page.</param>
+		/// <param name="view">The view (must be currently of type Control.</param>
+		void AddTab(string title, object view);
 
-    /// <summary>
-    /// Activates the tab page with the title <code>title</code>.
-    /// </summary>
-    /// <param name="index">The index of the tab page to focus.</param>
-    void BringTabToFront(int index);
+		/// <summary>
+		/// Activates the tab page with the title <code>title</code>.
+		/// </summary>
+		/// <param name="index">The index of the tab page to focus.</param>
+		void BringTabToFront(int index);
 
-    /// <summary>
-    /// Occurs when the input focus enters one of the child controls of the tabs. The sender
-    /// of this event is set to the child control that received the input focus.
-    /// </summary>
-    event EventHandler ChildControl_Entered;
-    /// <summary>
-    /// Occurs when the input focus leaves one of the child controls and the control is validated.
-    /// The sender
-    /// of this event is set to the child control that lost the input focus.
-    /// </summary>
-    event EventHandler ChildControl_Validated;
-  }
+		/// <summary>
+		/// Occurs when the input focus enters one of the child controls of the tabs. The sender
+		/// of this event is set to the child control that received the input focus.
+		/// </summary>
+		event EventHandler ChildControl_Entered;
 
-  
+		/// <summary>
+		/// Occurs when the input focus leaves one of the child controls and the control is validated.
+		/// The sender
+		/// of this event is set to the child control that lost the input focus.
+		/// </summary>
+		event EventHandler ChildControl_Validated;
+	}
 
-  /// <summary>
-  /// Interface to the TabbedDialogController.
-  /// </summary>
-  public interface ITabbedElementViewEventSink
-  {
-    
-  }
+	/// <summary>
+	/// Interface to the TabbedDialogController.
+	/// </summary>
+	public interface ITabbedElementViewEventSink
+	{
+	}
 
-  public interface ITabbedElementController : IMVCAController
-  {
-    void BringTabToFront(int i);
+	public interface ITabbedElementController : IMVCAController
+	{
+		void BringTabToFront(int i);
 
-    /// <summary>
-    /// Removes a number of tab elements.
-    /// </summary>
-    /// <param name="firstTab">Index of the first tab to remove.</param>
-    /// <param name="count">Number of tabs to remove.</param>
-    void RemoveTabRange(int firstTab, int count);
-  }
+		/// <summary>
+		/// Removes a number of tab elements.
+		/// </summary>
+		/// <param name="firstTab">Index of the first tab to remove.</param>
+		/// <param name="count">Number of tabs to remove.</param>
+		void RemoveTabRange(int firstTab, int count);
+	}
 
+	#endregion Interfaces
 
-  #endregion
-
-  /// <summary>
-  /// Controls the <see cref="ITabbedElementView"/>.
-  /// </summary>
+	/// <summary>
+	/// Controls the <see cref="ITabbedElementView"/>.
+	/// </summary>
 	[ExpectedTypeOfView(typeof(ITabbedElementView))]
-  public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
-  {
-  
-    protected int _frontTabIndex=0;
-    private ITabbedElementView _view;
-    private List<ControlViewElement> _tabs = new List<ControlViewElement>();
+	public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
+	{
+		protected int _frontTabIndex = 0;
+		private ITabbedElementView _view;
+		private List<ControlViewElement> _tabs = new List<ControlViewElement>();
 
+		/// <summary>
+		/// Creates the controller.
+		/// </summary>
+		public TabbedElementController()
+		{
+			SetElements(true);
+		}
 
-    /// <summary>
-    /// Creates the controller.
-    /// </summary>
-    public TabbedElementController()
-    {
-      SetElements(true);
-    }
+		protected int TabCount
+		{
+			get
+			{
+				return _tabs.Count;
+			}
+		}
 
-    protected int TabCount
-    {
-      get
-      {
-        return _tabs.Count;
-      }
-    }
-    protected ControlViewElement Tab(int i)
-    {
-      return (ControlViewElement)_tabs[i];
-    }
+		protected ControlViewElement Tab(int i)
+		{
+			return (ControlViewElement)_tabs[i];
+		}
 
-    public void BringTabToFront(int i)
-    {
-      _frontTabIndex=i;
-      if(_view!=null)
-        _view.BringTabToFront(i);
-    }
+		public void BringTabToFront(int i)
+		{
+			_frontTabIndex = i;
+			if (_view != null)
+				_view.BringTabToFront(i);
+		}
 
-    public void AddTab(string title, IApplyController controller, object view)
-    {
-      _tabs.Add(new ControlViewElement(title,controller,view));
-    }
+		public void AddTab(string title, IApplyController controller, object view)
+		{
+			_tabs.Add(new ControlViewElement(title, controller, view));
+		}
 
-    public void RemoveTabRange(int firstTab, int count)
-    {
-      _tabs.RemoveRange(firstTab, count);
-      SetElements(false);
-    }
+		public void RemoveTabRange(int firstTab, int count)
+		{
+			_tabs.RemoveRange(firstTab, count);
+			SetElements(false);
+		}
 
+		private object _lastActiveChildControl = null;
 
-    object _lastActiveChildControl = null;
-    void EhView_ChildControlEntered(object sender, EventArgs e)
-    {
-      EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(_lastActiveChildControl,sender));
-      _lastActiveChildControl = sender;
-    }
-    void EhView_ChildControlValidated(object sender, EventArgs e)
-    {
-      EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(sender, null));
-      _lastActiveChildControl = null;
-    }
+		private void EhView_ChildControlEntered(object sender, EventArgs e)
+		{
+			EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(_lastActiveChildControl, sender));
+			_lastActiveChildControl = sender;
+		}
 
-    protected virtual void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
-    {
-    }
+		private void EhView_ChildControlValidated(object sender, EventArgs e)
+		{
+			EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(sender, null));
+			_lastActiveChildControl = null;
+		}
 
-    /// <summary>
-    /// Get / sets the view of this controller.
-    /// </summary>
-    public ITabbedElementView View
-    {
-      get { return _view; }
-      set
-      {
-        if (_view != null)
-        {
-          _view.ChildControl_Entered -= EhView_ChildControlEntered;
-          _view.ChildControl_Validated -= EhView_ChildControlValidated;
-        }
+		protected virtual void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
+		{
+		}
 
-        _view = value;
-        
-        SetElements(false);
+		/// <summary>
+		/// Get / sets the view of this controller.
+		/// </summary>
+		public ITabbedElementView View
+		{
+			get { return _view; }
+			set
+			{
+				if (_view != null)
+				{
+					_view.ChildControl_Entered -= EhView_ChildControlEntered;
+					_view.ChildControl_Validated -= EhView_ChildControlValidated;
+				}
 
-        if (_view != null)
-        {
-          _view.ChildControl_Entered += EhView_ChildControlEntered;
-          _view.ChildControl_Validated += EhView_ChildControlValidated;
-        }
-      }
-    }
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        View = value as ITabbedElementView;
-      }
-    }
+				_view = value;
 
-    protected void SetElements(bool bInit)
-    {
+				SetElements(false);
 
-      if(null!=View)
-      {
-        View.ClearTabs();
-        for(int i=0;i<_tabs.Count;i++)
-        {
-          ControlViewElement tab = (ControlViewElement)_tabs[i];
-          View.AddTab(tab.Title,tab.View);
-        }
+				if (_view != null)
+				{
+					_view.ChildControl_Entered += EhView_ChildControlEntered;
+					_view.ChildControl_Validated += EhView_ChildControlValidated;
+				}
+			}
+		}
 
-        this._frontTabIndex = Math.Min(this._frontTabIndex,_tabs.Count-1);
-        View.BringTabToFront(_frontTabIndex);
-      }  
-   
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				View = value as ITabbedElementView;
+			}
+		}
 
-    }
+		protected void SetElements(bool bInit)
+		{
+			if (null != View)
+			{
+				View.ClearTabs();
+				for (int i = 0; i < _tabs.Count; i++)
+				{
+					ControlViewElement tab = (ControlViewElement)_tabs[i];
+					View.AddTab(tab.Title, tab.View);
+				}
 
-   
+				this._frontTabIndex = Math.Min(this._frontTabIndex, _tabs.Count - 1);
+				View.BringTabToFront(_frontTabIndex);
+			}
+		}
 
+		#region ITabbedDialogController Members
 
-    #region ITabbedDialogController Members
+		#endregion ITabbedDialogController Members
 
-   
+		#region IMVCController Members
 
-    #endregion
+		public virtual object ModelObject
+		{
+			get
+			{
+				throw new Exception("The method or operation must be overriden in a derived class");
+			}
+		}
 
-    #region IMVCController Members
+		public void Dispose()
+		{
+		}
 
+		#endregion IMVCController Members
 
-    public virtual object ModelObject
-    {
-      get
-      {
-        throw new Exception("The method or operation must be overriden in a derived class");
-      }
-    }
+		#region IApplyController Members
 
-    #endregion
+		public virtual bool Apply()
+		{
+			for (int i = 0; i < _tabs.Count; i++)
+			{
+				if (!_tabs[i].Controller.Apply())
+				{
+					BringTabToFront(i);
+					return false;
+				}
+			}
+			return true;
+		}
 
-    #region IApplyController Members
-
-    public virtual bool Apply()
-    {
-      for (int i = 0; i < _tabs.Count; i++)
-      {
-        if (!_tabs[i].Controller.Apply())
-        {
-          BringTabToFront(i);
-          return false;
-        }
-      }
-      return true;
-    }
-
-    #endregion
-  }
+		#endregion IApplyController Members
+	}
 }

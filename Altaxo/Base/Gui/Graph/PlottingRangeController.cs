@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,132 +19,133 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface IPlottingRangeViewEventSink
-  {
-    /// <summary>
-    /// Called if one of the value has changed.
-    /// </summary>
-    /// <param name="fromValue">The old value.</param>
-    /// <param name="toValue">The new selected item of the combo box.</param>
-    void EhView_Changed(int fromValue, int toValue);
-  }
+	#region Interfaces
 
-  public interface IPlottingRangeView
-  {
+	public interface IPlottingRangeViewEventSink
+	{
+		/// <summary>
+		/// Called if one of the value has changed.
+		/// </summary>
+		/// <param name="fromValue">The old value.</param>
+		/// <param name="toValue">The new selected item of the combo box.</param>
+		void EhView_Changed(int fromValue, int toValue);
+	}
 
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IPlottingRangeViewEventSink Controller { get; set; }
+	public interface IPlottingRangeView
+	{
+		/// <summary>
+		/// Get/sets the controller of this view.
+		/// </summary>
+		IPlottingRangeViewEventSink Controller { get; set; }
 
-    /// <summary>
-    /// Initializes the view.
-    /// </summary>
-    /// <param name="from">First value of plot range.</param>
-    /// <param name="to">Last value of plot range.</param>
-    /// <param name="isInfinity">True if the plot range is infinite large.</param>
-    void Initialize(int from, int to, bool isInfinity);
-  }
+		/// <summary>
+		/// Initializes the view.
+		/// </summary>
+		/// <param name="from">First value of plot range.</param>
+		/// <param name="to">Last value of plot range.</param>
+		/// <param name="isInfinity">True if the plot range is infinite large.</param>
+		void Initialize(int from, int to, bool isInfinity);
+	}
 
-  
+	#endregion Interfaces
 
-  #endregion
+	/// <summary>
+	/// Summary description.
+	/// </summary>
+	[UserControllerForObject(typeof(ContiguousNonNegativeIntegerRange))]
+	[ExpectedTypeOfView(typeof(IPlottingRangeView))]
+	public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
+	{
+		private IPlottingRangeView _view;
+		private ContiguousNonNegativeIntegerRange _doc;
+		private ContiguousNonNegativeIntegerRange _tempDoc;
 
-  
-  /// <summary>
-  /// Summary description.
-  /// </summary>
-  [UserControllerForObject(typeof(ContiguousNonNegativeIntegerRange))]
-  [ExpectedTypeOfView(typeof(IPlottingRangeView))]
-  public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
-  {
-    IPlottingRangeView _view;
-    ContiguousNonNegativeIntegerRange _doc;
-    ContiguousNonNegativeIntegerRange _tempDoc;
+		public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
+		{
+			_doc = doc;
+			_tempDoc = doc;
+		}
 
-    public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
-    {
-      _doc = doc;
-      _tempDoc = doc;
-    }
+		public void Initialize()
+		{
+			if (_view != null)
+			{
+				_view.Initialize(_tempDoc.Start, _tempDoc.Last, _tempDoc.IsInfinite);
+			}
+		}
 
-    public void Initialize()
-    {
-      if (_view != null)
-      {
-        _view.Initialize(_tempDoc.Start, _tempDoc.Last, _tempDoc.IsInfinite);
-      }
-    }
+		#region IMVCController Members
 
-    #region IMVCController Members
+		public object ViewObject
+		{
+			get { return _view; }
+			set
+			{
+				if (_view != null)
+					_view.Controller = null;
 
-    public object ViewObject
-    {
-      get { return _view; }
-      set
-      {
-        if (_view != null)
-          _view.Controller = null;
+				_view = value as IPlottingRangeView;
 
-        _view = value as IPlottingRangeView;
+				Initialize();
 
-        Initialize();
+				if (_view != null)
+					_view.Controller = this;
+			}
+		}
 
-        if (_view != null)
-          _view.Controller = this;
-      }
-    }
+		public object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public void Dispose()
+		{
+		}
 
-    #endregion
+		#endregion IMVCController Members
 
-    #region IApplyController Members
+		#region IApplyController Members
 
-    public bool Apply()
-    {
-      _doc =  _tempDoc;
-      return true;
-    }
+		public bool Apply()
+		{
+			_doc = _tempDoc;
+			return true;
+		}
 
-    #endregion
+		#endregion IApplyController Members
 
-    #region IPlotRangeViewEventSink Members
+		#region IPlotRangeViewEventSink Members
 
-    public void EhView_Changed(int from, int to)
-    {
-      try
-      {
-        if (to != int.MaxValue)
-          _tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(from, to);
-        else
-          _tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(from);
-      }
-      catch (Exception ex)
-      {
-        Current.Gui.ErrorMessageBox(ex.Message);
-      }
-    }
+		public void EhView_Changed(int from, int to)
+		{
+			try
+			{
+				if (to != int.MaxValue)
+					_tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(from, to);
+				else
+					_tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(from);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(ex.Message);
+			}
+		}
 
-    #endregion
-  }
+		#endregion IPlotRangeViewEventSink Members
+	}
 }

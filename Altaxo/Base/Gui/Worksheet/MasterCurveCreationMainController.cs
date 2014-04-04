@@ -98,6 +98,10 @@ namespace Altaxo.Gui.Worksheet
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			return true;

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
 	/// <summary>
@@ -41,22 +43,23 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>List of column names. The number of names must match the number of subitems in the list items.</summary>
 		public List<string> ColumnNameList { get { return _columnNames; } }
+
 		/// <summary>Set the list of column names (can be used in the initializer of this object).</summary>
-    public string[] ColumnNames 
+		public string[] ColumnNames
 		{
 			set
 			{
 				_columnNames.Clear();
-				_columnNames.AddRange(value); 
+				_columnNames.AddRange(value);
 			}
 		}
 
-		List<string> _columnNames;
+		private List<string> _columnNames;
 
 		/// <summary>
 		/// Constructs an empty list with no items and no column names.
 		/// </summary>
-		public MultiChoiceList() 
+		public MultiChoiceList()
 		{
 			List = new SelectableListNodeList();
 			_columnNames = new List<string>();
@@ -75,9 +78,9 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		/// <param name="colNames">Column names.</param>
 		void InitializeColumnNames(string[] colNames);
-		
+
 		/// <summary>
-		/// Initializes the list. 
+		/// Initializes the list.
 		/// </summary>
 		/// <param name="list">List of items shown.</param>
 		void InitializeList(SelectableListNodeList list);
@@ -90,8 +93,8 @@ namespace Altaxo.Gui.Common
 	[UserControllerForObject(typeof(MultiChoiceList))]
 	public class MultiChoiceController : IMVCANController
 	{
-		MultiChoiceList _doc;
-		IMultiChoiceView _view;
+		private MultiChoiceList _doc;
+		private IMultiChoiceView _view;
 
 		protected void Initialize(bool initData)
 		{
@@ -114,7 +117,7 @@ namespace Altaxo.Gui.Common
 		{
 			if (args.Length > 0 && args[0] is MultiChoiceList)
 			{
-        _doc = (MultiChoiceList)args[0];
+				_doc = (MultiChoiceList)args[0];
 				Initialize(true);
 				return true;
 			}
@@ -127,7 +130,7 @@ namespace Altaxo.Gui.Common
 			set { }
 		}
 
-		#endregion
+		#endregion IMVCANController Members
 
 		#region IMVCController Members
 
@@ -152,7 +155,11 @@ namespace Altaxo.Gui.Common
 			get { return _doc; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -161,6 +168,6 @@ namespace Altaxo.Gui.Common
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Gui;
+using System;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -30,88 +32,86 @@ namespace Altaxo.Gui.Worksheet
 	public interface IPLSPredictValueView
 	{
 		void InitializeCalibrationModelTables(string[] tables);
+
 		void InitializeDestinationTables(string[] tables);
+
 		int GetCalibrationTableChoice();
+
 		int GetDestinationTableChoice();
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
-  /// Summary description for PLSPredictValueController.
-  /// </summary>
+	/// Summary description for PLSPredictValueController.
+	/// </summary>
 	[ExpectedTypeOfView(typeof(IPLSPredictValueView))]
-  public class PLSPredictValueController : IMVCAController
+	public class PLSPredictValueController : IMVCAController
+	{
+		private IPLSPredictValueView _view;
+		private string[] _calibrationTables;
+		private string[] _destinationTables;
 
-  {
-    IPLSPredictValueView _view;
-    string[] _calibrationTables;
-    string[] _destinationTables;
+		public string SelectedDestinationTableName;
+		public string SelectedCalibrationTableName;
 
-    public string SelectedDestinationTableName;
-    public string SelectedCalibrationTableName;
+		private void SetElements(bool bInit)
+		{
+			_calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
+			_destinationTables = GetAvailableDestinationTables();
 
-    void SetElements(bool bInit)
-    {
-      _calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
-      _destinationTables = GetAvailableDestinationTables();
+			if (null != _view)
+			{
+				_view.InitializeCalibrationModelTables(_calibrationTables);
+				_view.InitializeDestinationTables(_destinationTables);
+			}
+		}
 
-      if(null!=_view)
-      {
-        _view.InitializeCalibrationModelTables(_calibrationTables);
-        _view.InitializeDestinationTables(_destinationTables);
-      }
-    }
+		private string[] GetAvailableDestinationTables()
+		{
+			System.Collections.ArrayList result = new System.Collections.ArrayList();
+			result.Add("New table");
+			foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
+				result.Add(table.Name);
 
+			return (string[])result.ToArray(typeof(string));
+		}
 
-    string[] GetAvailableDestinationTables()
-    {
-      System.Collections.ArrayList result = new System.Collections.ArrayList();
-      result.Add("New table");
-      foreach(Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
-        result.Add(table.Name);
+		public IPLSPredictValueView View
+		{
+			get { return _view; }
+			set
+			{
+				_view = value;
 
-      return (string[])result.ToArray(typeof(string));
-    }
-   
-    public IPLSPredictValueView View
-    {
-      get { return _view; }
-      set
-      {
-        _view = value;
+				if (null != _view)
+				{
+					SetElements(false); // set only the view elements, dont't initialize the variables
+				}
+			}
+		}
 
-        if(null!=_view)
-        {
-          SetElements(false); // set only the view elements, dont't initialize the variables
-        }
-      }
-    }
+		#region IApplyController Members
 
-    #region IApplyController Members
+		public bool Apply()
+		{
+			int sel;
+			sel = _view.GetCalibrationTableChoice();
+			if (sel < 0)
+				this.SelectedCalibrationTableName = null;
+			else
+				this.SelectedCalibrationTableName = this._calibrationTables[sel];
 
-    public bool Apply()
-    {
-      int sel;
-      sel = _view.GetCalibrationTableChoice();
-      if(sel<0)
-        this.SelectedCalibrationTableName = null;
-      else
-        this.SelectedCalibrationTableName = this._calibrationTables[sel];
+			sel = _view.GetDestinationTableChoice();
+			if (sel == 0)
+				this.SelectedDestinationTableName = null;
+			else
+				this.SelectedDestinationTableName = this._destinationTables[sel];
 
-      sel = _view.GetDestinationTableChoice();
-      if(sel==0)
-        this.SelectedDestinationTableName = null;
-      else
-        this.SelectedDestinationTableName = this._destinationTables[sel];
+			return true;
+		}
 
-
-      return true;
-    }
-
-    #endregion
-
-
+		#endregion IApplyController Members
 
 		#region IMVCController Members
 
@@ -132,6 +132,10 @@ namespace Altaxo.Gui.Worksheet
 			get { return null; }
 		}
 
-		#endregion
+		public void Dispose()
+		{
+		}
+
+		#endregion IMVCController Members
 	}
 }

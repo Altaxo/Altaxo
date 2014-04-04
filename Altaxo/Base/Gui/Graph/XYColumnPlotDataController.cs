@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,100 +19,100 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Collections;
-using Altaxo.Main;
 using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Data;
-
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Main;
+using System;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface IXYColumnPlotDataViewEventSink
-  {
-    void EhView_TableSelectionChanged();
+	#region Interfaces
 
-    void EhView_ToX();
-    void EhView_ToY();
-    void EhView_EraseX();
-    void EhView_EraseY();
- 
+	public interface IXYColumnPlotDataViewEventSink
+	{
+		void EhView_TableSelectionChanged();
 
-    bool EhView_RangeFrom(int val);
-    bool EhView_RangeTo(int val);
-  }
+		void EhView_ToX();
 
-  public interface IXYColumnPlotDataView 
-  {
+		void EhView_ToY();
 
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IXYColumnPlotDataViewEventSink Controller { set; }
+		void EhView_EraseX();
 
-    void Tables_Initialize(SelectableListNodeList items);
+		void EhView_EraseY();
 
-    void Columns_Initialize(SelectableListNodeList items);
+		bool EhView_RangeFrom(int val);
 
-    void XColumn_Initialize(string colname);
-    void YColumn_Initialize(string colname);
+		bool EhView_RangeTo(int val);
+	}
 
+	public interface IXYColumnPlotDataView
+	{
+		/// <summary>
+		/// Get/sets the controller of this view.
+		/// </summary>
+		IXYColumnPlotDataViewEventSink Controller { set; }
 
-    void PlotRangeFrom_Initialize(int from);
-    void PlotRangeTo_Initialize(int to);
+		void Tables_Initialize(SelectableListNodeList items);
 
-  }
+		void Columns_Initialize(SelectableListNodeList items);
 
- 
-  #endregion
+		void XColumn_Initialize(string colname);
 
-  /// <summary>
-  /// Summary description for LineScatterPlotDataController.
-  /// </summary>
-  [UserControllerForObject(typeof(XYColumnPlotData))]
-  [ExpectedTypeOfView(typeof(IXYColumnPlotDataView))]
-  public class XYColumnPlotDataController :  IXYColumnPlotDataViewEventSink, IMVCANController
-  {
-    IXYColumnPlotDataView _view=null;
-    XYColumnPlotData _originalDoc;
-		UseDocument _useDocumentCopy;
+		void YColumn_Initialize(string colname);
 
+		void PlotRangeFrom_Initialize(int from);
 
-    bool _isDirty =false;
+		void PlotRangeTo_Initialize(int to);
+	}
 
-    int _plotRangeFrom;
-    int _plotRangeTo;
-    Altaxo.Data.IReadableColumn _xColumn;
-    Altaxo.Data.IReadableColumn _yColumn;
-    Altaxo.Data.IReadableColumn _labelColumn;
-    int _maxPossiblePlotRangeTo;
+	#endregion Interfaces
 
+	/// <summary>
+	/// Summary description for LineScatterPlotDataController.
+	/// </summary>
+	[UserControllerForObject(typeof(XYColumnPlotData))]
+	[ExpectedTypeOfView(typeof(IXYColumnPlotDataView))]
+	public class XYColumnPlotDataController : IXYColumnPlotDataViewEventSink, IMVCANController
+	{
+		private IXYColumnPlotDataView _view = null;
+		private XYColumnPlotData _originalDoc;
+		private UseDocument _useDocumentCopy;
 
-		SelectableListNodeList _tableItems = new SelectableListNodeList();
-		SelectableListNodeList _columnItems = new SelectableListNodeList();
+		private bool _isDirty = false;
 
-    public void SetDirty()
-    {
-      _isDirty = true;
-    }
+		private int _plotRangeFrom;
+		private int _plotRangeTo;
+		private Altaxo.Data.IReadableColumn _xColumn;
+		private Altaxo.Data.IReadableColumn _yColumn;
+		private Altaxo.Data.IReadableColumn _labelColumn;
+		private int _maxPossiblePlotRangeTo;
 
-    #region ILineScatterPlotDataController Members
+		private SelectableListNodeList _tableItems = new SelectableListNodeList();
+		private SelectableListNodeList _columnItems = new SelectableListNodeList();
 
-    public void Initialize(bool initData)
-    {
-      if(initData)
-      {
-        _xColumn = _originalDoc.XColumn;
-        _yColumn = _originalDoc.YColumn;
-        _labelColumn = _originalDoc.LabelColumn;
-        _plotRangeFrom = _originalDoc.PlotRangeStart;
-        _plotRangeTo   = _originalDoc.PlotRangeLength==int.MaxValue ? int.MaxValue : _originalDoc.PlotRangeStart+_originalDoc.PlotRangeLength-1;
-        CalcMaxPossiblePlotRangeTo();
+		public void SetDirty()
+		{
+			_isDirty = true;
+		}
+
+		#region ILineScatterPlotDataController Members
+
+		public void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				_xColumn = _originalDoc.XColumn;
+				_yColumn = _originalDoc.YColumn;
+				_labelColumn = _originalDoc.LabelColumn;
+				_plotRangeFrom = _originalDoc.PlotRangeStart;
+				_plotRangeTo = _originalDoc.PlotRangeLength == int.MaxValue ? int.MaxValue : _originalDoc.PlotRangeStart + _originalDoc.PlotRangeLength - 1;
+				CalcMaxPossiblePlotRangeTo();
 
 				// Initialize tables
 				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
@@ -138,134 +139,130 @@ namespace Altaxo.Gui.Graph
 					_tableItems.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg != null && tg.Name == tableName));
 				}
 
-
 				// Initialize columns
 				_columnItems.Clear();
-				if (null!=tg)
+				if (null != tg)
 				{
-					for(int i=0;i<tg.DataColumnCount;++i)
+					for (int i = 0; i < tg.DataColumnCount; ++i)
 						_columnItems.Add(new SelectableListNode(tg.DataColumns.GetColumnName(i), tg.DataColumns[i], false));
 				}
-      }
+			}
 
-      if(null!=_view)
-      {
-       
-     
-        _view.Tables_Initialize(_tableItems);
+			if (null != _view)
+			{
+				_view.Tables_Initialize(_tableItems);
 				_view.Columns_Initialize(_columnItems);
 
-        _view.XColumn_Initialize(_xColumn==null ? String.Empty : _xColumn.FullName);
-        _view.YColumn_Initialize(_yColumn==null ? String.Empty : _yColumn.FullName);
-        _view.PlotRangeFrom_Initialize(_plotRangeFrom);
-        CalcMaxPossiblePlotRangeTo();
-      }
-    }
+				_view.XColumn_Initialize(_xColumn == null ? String.Empty : _xColumn.FullName);
+				_view.YColumn_Initialize(_yColumn == null ? String.Empty : _yColumn.FullName);
+				_view.PlotRangeFrom_Initialize(_plotRangeFrom);
+				CalcMaxPossiblePlotRangeTo();
+			}
+		}
 
-    void CalcMaxPossiblePlotRangeTo()
-    {
-      int len = int.MaxValue;
-      if(_xColumn is Altaxo.Data.IDefinedCount)
-        len = Math.Min(len,((Altaxo.Data.IDefinedCount)_xColumn).Count);
-      if(_yColumn is Altaxo.Data.IDefinedCount)
-        len = Math.Min(len,((Altaxo.Data.IDefinedCount)_yColumn).Count);
+		private void CalcMaxPossiblePlotRangeTo()
+		{
+			int len = int.MaxValue;
+			if (_xColumn is Altaxo.Data.IDefinedCount)
+				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_xColumn).Count);
+			if (_yColumn is Altaxo.Data.IDefinedCount)
+				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_yColumn).Count);
 
-      _maxPossiblePlotRangeTo = len-1;
+			_maxPossiblePlotRangeTo = len - 1;
 
-      if(null!=_view)
-        _view.PlotRangeTo_Initialize(Math.Min(this._plotRangeTo, _maxPossiblePlotRangeTo));
-    }
+			if (null != _view)
+				_view.PlotRangeTo_Initialize(Math.Min(this._plotRangeTo, _maxPossiblePlotRangeTo));
+		}
 
-    public void EhView_TableSelectionChanged()
-    {
+		public void EhView_TableSelectionChanged()
+		{
 			_columnItems.Clear();
 
 			var node = _tableItems.FirstSelectedNode;
-			DataTable tg = node==null ? null : node.Tag as DataTable;
-		
+			DataTable tg = node == null ? null : node.Tag as DataTable;
+
 			if (null != tg)
 			{
 				for (int i = 0; i < tg.DataColumnCount; ++i)
 					_columnItems.Add(new SelectableListNode(tg.DataColumns.GetColumnName(i), tg.DataColumns[i], false));
 			}
 
-      if(null!=_view)
-      {
-        _view.Columns_Initialize(_columnItems);
-      }
-    }
+			if (null != _view)
+			{
+				_view.Columns_Initialize(_columnItems);
+			}
+		}
 
-    public void EhView_ToX()
-    {
-      SetDirty();
+		public void EhView_ToX()
+		{
+			SetDirty();
 
 			var node = _columnItems.FirstSelectedNode;
 			_xColumn = node == null ? null : node.Tag as DataColumn;
-      if(null!=_view)
-        _view.XColumn_Initialize(_xColumn==null ? String.Empty : _xColumn.FullName);
-    }
+			if (null != _view)
+				_view.XColumn_Initialize(_xColumn == null ? String.Empty : _xColumn.FullName);
+		}
 
-    public void EhView_ToY()
-    {
-      SetDirty();
+		public void EhView_ToY()
+		{
+			SetDirty();
 			var node = _columnItems.FirstSelectedNode;
 			_yColumn = node == null ? null : node.Tag as DataColumn;
 
 			if (null != _view)
-        _view.YColumn_Initialize(_yColumn==null ? String.Empty : _yColumn.FullName);
-    }
+				_view.YColumn_Initialize(_yColumn == null ? String.Empty : _yColumn.FullName);
+		}
 
-    public void EhView_EraseX()
-    {
-      SetDirty();
-      _xColumn = null;
-      if(null!=_view)
-        _view.XColumn_Initialize(_xColumn==null ? String.Empty : _xColumn.FullName);
-    }
+		public void EhView_EraseX()
+		{
+			SetDirty();
+			_xColumn = null;
+			if (null != _view)
+				_view.XColumn_Initialize(_xColumn == null ? String.Empty : _xColumn.FullName);
+		}
 
-    public void EhView_EraseY()
-    {
-      SetDirty();
-      _yColumn = null;
-      if(null!=_view)
-        _view.YColumn_Initialize(_yColumn==null ? String.Empty : _yColumn.FullName);
-    }
+		public void EhView_EraseY()
+		{
+			SetDirty();
+			_yColumn = null;
+			if (null != _view)
+				_view.YColumn_Initialize(_yColumn == null ? String.Empty : _yColumn.FullName);
+		}
 
-    public bool EhView_RangeFrom(int val)
-    {
-      SetDirty();
-      this._plotRangeFrom = val;
-      return false;
-    }
+		public bool EhView_RangeFrom(int val)
+		{
+			SetDirty();
+			this._plotRangeFrom = val;
+			return false;
+		}
 
-    public bool EhView_RangeTo(int val)
-    {
-      SetDirty();
-      this._plotRangeTo = val;
-      return false;
-    }
+		public bool EhView_RangeTo(int val)
+		{
+			SetDirty();
+			this._plotRangeTo = val;
+			return false;
+		}
 
+		#endregion ILineScatterPlotDataController Members
 
-    #endregion
+		#region IApplyController Members
 
-    #region IApplyController Members
+		public bool Apply()
+		{
+			if (_isDirty)
+			{
+				_originalDoc.XColumn = _xColumn;
+				_originalDoc.YColumn = _yColumn;
+				_originalDoc.PlotRangeStart = this._plotRangeFrom;
+				_originalDoc.PlotRangeLength = this._plotRangeTo >= this._maxPossiblePlotRangeTo ? int.MaxValue : this._plotRangeTo + 1 - this._plotRangeFrom;
+			}
+			_isDirty = false;
+			return true; // successfull
+		}
 
-    public bool Apply()
-    {
-      if(_isDirty)
-      {
-        _originalDoc.XColumn = _xColumn;
-        _originalDoc.YColumn = _yColumn;
-        _originalDoc.PlotRangeStart = this._plotRangeFrom;
-        _originalDoc.PlotRangeLength = this._plotRangeTo >= this._maxPossiblePlotRangeTo ? int.MaxValue : this._plotRangeTo+1-this._plotRangeFrom;
-      }
-      _isDirty = false;
-      return true; // successfull
-    }
+		#endregion IApplyController Members
 
-    #endregion
-
-    #region IMVCController Members
+		#region IMVCController Members
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -284,14 +281,14 @@ namespace Altaxo.Gui.Graph
 			set { _useDocumentCopy = value; }
 		}
 
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
 				if (_view != null)
 				{
 					_view.Controller = null;
@@ -299,23 +296,23 @@ namespace Altaxo.Gui.Graph
 
 				_view = value as IXYColumnPlotDataView;
 
-
 				if (_view != null)
 				{
 					Initialize(false);
 					_view.Controller = this;
 				}
-       
-      }
-    }
+			}
+		}
 
-    public object ModelObject
-    {
-      get { return this._originalDoc; }
-    }
+		public object ModelObject
+		{
+			get { return this._originalDoc; }
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-	
+		#endregion IMVCController Members
 	}
 }

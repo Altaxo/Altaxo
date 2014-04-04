@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,125 +19,130 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
+	#region Interfaces
 
-  #region Interfaces
-  
- 
-  public interface ISingleValueView
-  {
-    string DescriptionText { set; }
-    string ValueText { get; set; }
+	public interface ISingleValueView
+	{
+		string DescriptionText { set; }
+
+		string ValueText { get; set; }
+
 		event Action<ValidationEventArgs<string>> ValueText_Validating;
-  }
-  public interface ISingleValueController : IMVCAController
-  {
-    string DescriptionText { get; set; }
-  }
+	}
 
-  #endregion
+	public interface ISingleValueController : IMVCAController
+	{
+		string DescriptionText { get; set; }
+	}
 
-  /// <summary>
-  /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
-  /// </summary>
-  [UserControllerForObject(typeof(string),100)]
-  [ExpectedTypeOfView(typeof(ISingleValueView))]
-  public class SingleValueController : ISingleValueController
-  {
-    protected ISingleValueView _view;
-    protected string _value1String;
-    protected string _value1StringTemporary;
+	#endregion Interfaces
 
-    protected string _descriptionText = "Enter value:";
+	/// <summary>
+	/// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
+	/// </summary>
+	[UserControllerForObject(typeof(string), 100)]
+	[ExpectedTypeOfView(typeof(ISingleValueView))]
+	public class SingleValueController : ISingleValueController
+	{
+		protected ISingleValueView _view;
+		protected string _value1String;
+		protected string _value1StringTemporary;
 
-    public SingleValueController(string val)
-    {
-      _value1String = val;
-      _value1StringTemporary = val;
-    }
+		protected string _descriptionText = "Enter value:";
 
-    protected virtual void Initialize()
-    {
-      if(null!=_view)
-      {
-        _view.DescriptionText =_descriptionText;
-        _view.ValueText = _value1StringTemporary;
-      }
-    }
+		public SingleValueController(string val)
+		{
+			_value1String = val;
+			_value1StringTemporary = val;
+		}
 
-    public string DescriptionText
-    {
-      get 
-      {
-        return _descriptionText; 
-      }
-      set
-      {
-        _descriptionText = value;
-        if(null!=_view)
-        {
-          _view.DescriptionText= _descriptionText;
-        }
-      }
-    }
-    #region IMVCController Members
+		protected virtual void Initialize()
+		{
+			if (null != _view)
+			{
+				_view.DescriptionText = _descriptionText;
+				_view.ValueText = _value1StringTemporary;
+			}
+		}
 
-    public virtual object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
-        if (_view != null)
-          _view.ValueText_Validating -= this.EhView_ValidatingValue1;
+		public string DescriptionText
+		{
+			get
+			{
+				return _descriptionText;
+			}
+			set
+			{
+				_descriptionText = value;
+				if (null != _view)
+				{
+					_view.DescriptionText = _descriptionText;
+				}
+			}
+		}
 
-        _view = value as ISingleValueView;
+		#region IMVCController Members
 
+		public virtual object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (_view != null)
+					_view.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-        if (_view != null)
-        {
-          Initialize();
-          _view.ValueText_Validating += this.EhView_ValidatingValue1;
-        }
-      }
-    }
+				_view = value as ISingleValueView;
 
-    public virtual object ModelObject
-    {
-      get
-      {
-        return _value1String;
-      }
-    }
+				if (_view != null)
+				{
+					Initialize();
+					_view.ValueText_Validating += this.EhView_ValidatingValue1;
+				}
+			}
+		}
 
-    #endregion
+		public virtual object ModelObject
+		{
+			get
+			{
+				return _value1String;
+			}
+		}
 
-    #region IApplyController Members
+		public void Dispose()
+		{
+		}
 
-    public virtual bool Apply()
-    {
-      this._value1String = this._value1StringTemporary;
-      return true;
-    }
+		#endregion IMVCController Members
 
-    #endregion
+		#region IApplyController Members
 
-    #region ISingleValueViewEventSink Members
+		public virtual bool Apply()
+		{
+			this._value1String = this._value1StringTemporary;
+			return true;
+		}
 
-    public virtual void EhView_ValidatingValue1(ValidationEventArgs<string> e)
-    {
+		#endregion IApplyController Members
+
+		#region ISingleValueViewEventSink Members
+
+		public virtual void EhView_ValidatingValue1(ValidationEventArgs<string> e)
+		{
 			_value1StringTemporary = e.ValueToValidate;
 			return;
-    }
+		}
 
-    #endregion
-  }
+		#endregion ISingleValueViewEventSink Members
+	}
 }

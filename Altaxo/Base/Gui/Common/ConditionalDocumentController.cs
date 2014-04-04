@@ -131,6 +131,10 @@ namespace Altaxo.Gui.Common
 			get { return null != _controller ? _controller.ModelObject : null; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			if (null != _controller)

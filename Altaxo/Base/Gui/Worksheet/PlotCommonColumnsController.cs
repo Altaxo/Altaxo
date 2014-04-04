@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,25 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Worksheet.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Gui.Worksheet
 {
-	
-
 	public interface IPlotCommonColumnsView
 	{
 		void InitializeXCommonColumns(SelectableListNodeList list);
+
 		void InitializeYCommonColumns(SelectableListNodeList list);
+
 		bool UseCurrentXColumn { get; set; }
 	}
 
@@ -43,12 +45,11 @@ namespace Altaxo.Gui.Worksheet
 	[UserControllerForObject(typeof(PlotCommonColumnsCommand))]
 	public class PlotCommonColumnsController : IMVCANController
 	{
-		IPlotCommonColumnsView _view;
-		PlotCommonColumnsCommand _doc;
+		private IPlotCommonColumnsView _view;
+		private PlotCommonColumnsCommand _doc;
 
-		SelectableListNodeList _xCommonColumns;
-		SelectableListNodeList _yCommonColumns;
-
+		private SelectableListNodeList _xCommonColumns;
+		private SelectableListNodeList _yCommonColumns;
 
 		public bool InitializeDocument(params object[] args)
 		{
@@ -65,8 +66,7 @@ namespace Altaxo.Gui.Worksheet
 			set { }
 		}
 
-
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
@@ -89,7 +89,6 @@ namespace Altaxo.Gui.Worksheet
 				_view.InitializeYCommonColumns(_yCommonColumns);
 				_view.UseCurrentXColumn = _doc.XCommonColumnNameForPlot == null;
 			}
-
 		}
 
 		public object ViewObject
@@ -118,6 +117,10 @@ namespace Altaxo.Gui.Worksheet
 			get { return _doc; }
 		}
 
+		public void Dispose()
+		{
+		}
+
 		public bool Apply()
 		{
 			if (_view.UseCurrentXColumn)
@@ -129,11 +132,7 @@ namespace Altaxo.Gui.Worksheet
 			foreach (var node in _yCommonColumns.Where(x => x.IsSelected))
 				_doc.YCommonColumnNamesForPlotting.Add((string)node.Tag);
 
-
 			return true;
 		}
-
-
 	}
 }
-

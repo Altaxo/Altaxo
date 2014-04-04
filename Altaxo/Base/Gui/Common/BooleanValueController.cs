@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,84 +19,85 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
+	#region Interfaces
 
-  #region Interfaces
-  
- 
-  public interface IBooleanValueView
-  {
-    void InitializeDescription(string value);
-    void InitializeBool1(bool value);
+	public interface IBooleanValueView
+	{
+		void InitializeDescription(string value);
+
+		void InitializeBool1(bool value);
+
 		event Action<bool> Bool1Changed;
-  }
- 
-  public interface IBooleanValueController : IMVCAController
-  {
-    string DescriptionText { get; set; }
-  }
+	}
 
-  #endregion
+	public interface IBooleanValueController : IMVCAController
+	{
+		string DescriptionText { get; set; }
+	}
 
-  /// <summary>
-  /// Controller for a boolean value.
-  /// </summary>
-  [UserControllerForObject(typeof(bool),100)]
-  [ExpectedTypeOfView(typeof(IBooleanValueView))]
-  public class BooleanValueController : IBooleanValueController
-  {
-    protected IBooleanValueView _view;
-    protected bool _value1Bool;
-    protected bool _value1BoolTemporary;
+	#endregion Interfaces
 
-    protected string _descriptionText = "Enter value:";
+	/// <summary>
+	/// Controller for a boolean value.
+	/// </summary>
+	[UserControllerForObject(typeof(bool), 100)]
+	[ExpectedTypeOfView(typeof(IBooleanValueView))]
+	public class BooleanValueController : IBooleanValueController
+	{
+		protected IBooleanValueView _view;
+		protected bool _value1Bool;
+		protected bool _value1BoolTemporary;
 
-    public BooleanValueController(bool val)
-    {
-      _value1Bool = val;
-      _value1BoolTemporary = val;
-    }
+		protected string _descriptionText = "Enter value:";
 
-    protected virtual void Initialize()
-    {
-      if(null!=_view)
-      {
-        _view.InitializeDescription(_descriptionText);
-        _view.InitializeBool1(_value1BoolTemporary);
-      }
-    }
+		public BooleanValueController(bool val)
+		{
+			_value1Bool = val;
+			_value1BoolTemporary = val;
+		}
 
-    public string DescriptionText
-    {
-      get 
-      {
-        return _descriptionText; 
-      }
-      set
-      {
-        _descriptionText = value;
-        if(null!=_view)
-        {
-          _view.InitializeDescription(_descriptionText);
-        }
-      }
-    }
-    #region IMVCController Members
+		protected virtual void Initialize()
+		{
+			if (null != _view)
+			{
+				_view.InitializeDescription(_descriptionText);
+				_view.InitializeBool1(_value1BoolTemporary);
+			}
+		}
 
-    public virtual object ViewObject
-    {
-      get
-      {
-        
-        return _view;
-      }
-      set
-      {
+		public string DescriptionText
+		{
+			get
+			{
+				return _descriptionText;
+			}
+			set
+			{
+				_descriptionText = value;
+				if (null != _view)
+				{
+					_view.InitializeDescription(_descriptionText);
+				}
+			}
+		}
+
+		#region IMVCController Members
+
+		public virtual object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
 				if (_view != null)
 				{
 					_view.Bool1Changed -= EhValidatingBool1;
@@ -108,36 +110,40 @@ namespace Altaxo.Gui.Common
 					_view.Bool1Changed += EhValidatingBool1;
 					Initialize();
 				}
-      }
-    }
+			}
+		}
 
-    public virtual object ModelObject
-    {
-      get
-      {
-        return _value1Bool;
-      }
-    }
+		public virtual object ModelObject
+		{
+			get
+			{
+				return _value1Bool;
+			}
+		}
 
-    #endregion
+		public void Dispose()
+		{
+		}
 
-    #region IApplyController Members
+		#endregion IMVCController Members
 
-    public virtual bool Apply()
-    {
-      this._value1Bool = this._value1BoolTemporary;
-      return true;
-    }
+		#region IApplyController Members
 
-    #endregion
+		public virtual bool Apply()
+		{
+			this._value1Bool = this._value1BoolTemporary;
+			return true;
+		}
 
-    #region ISingleValueViewEventSink Members
+		#endregion IApplyController Members
 
-    public virtual void EhValidatingBool1(bool val)
-    {
-      _value1BoolTemporary = val;
-    }
+		#region ISingleValueViewEventSink Members
 
-    #endregion
-  }
+		public virtual void EhValidatingBool1(bool val)
+		{
+			_value1BoolTemporary = val;
+		}
+
+		#endregion ISingleValueViewEventSink Members
+	}
 }
