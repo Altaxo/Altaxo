@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,158 +19,149 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
+#endregion Copyright
+
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Altaxo.Main.Services
 {
-  /// <summary>
-  /// Creates the appropriate GUI object for a given document type.
-  /// </summary>
-  public abstract class GUIFactoryService
-  {
+	/// <summary>
+	/// Creates the appropriate GUI object for a given document type.
+	/// </summary>
+	public abstract class GUIFactoryService
+	{
 		/// <summary>
 		/// Gets the window handle of the main window;
 		/// </summary>
 		public abstract IntPtr MainWindowHandle { get; }
 
 		/// <summary>
-    /// Gets an <see cref="IMVCController" />  for a given document type.
-    /// </summary>
-    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
-    /// optional, and are usually the parents of this document.</param>
-    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
-    /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
-    public IMVCController GetController(object[] args, System.Type expectedControllerType)
-    {
-      return GetController(args, null, expectedControllerType,UseDocument.Copy);
-    }
-    
-    /// <summary>
-    /// Gets an <see cref="IMVCController" />  for a given document type.
-    /// </summary>
-    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
-    /// optional, and are usually the parents of this document.</param>
-    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
-    /// <param name="copyDocument">Determines whether to work directly with the document or use a copy.</param>
-    /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
-    public IMVCController GetController(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
-    {
-      return GetController(args, null, expectedControllerType, copyDocument);
-    }
+		/// Gets an <see cref="IMVCController" />  for a given document type.
+		/// </summary>
+		/// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+		/// optional, and are usually the parents of this document.</param>
+		/// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+		/// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
+		public IMVCController GetController(object[] args, System.Type expectedControllerType)
+		{
+			return GetController(args, null, expectedControllerType, UseDocument.Copy);
+		}
 
-    /// <summary>
-    /// Gets an <see cref="IMVCController" />  for a given document type.
-    /// </summary>
-    /// <param name="creationArgs">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
-    /// optional, and are usually the parents of this document.</param>
-    /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
-    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
-    /// <param name="copyDocument">Determines wether to use the document directly or use a clone of the document.</param>
-    /// <returns>The controller for that document when found.</returns>
-    public IMVCController GetController(object[] creationArgs, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
-    {
+		/// <summary>
+		/// Gets an <see cref="IMVCController" />  for a given document type.
+		/// </summary>
+		/// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+		/// optional, and are usually the parents of this document.</param>
+		/// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+		/// <param name="copyDocument">Determines whether to work directly with the document or use a copy.</param>
+		/// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
+		public IMVCController GetController(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
+		{
+			return GetController(args, null, expectedControllerType, copyDocument);
+		}
 
-      if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
-        throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
+		/// <summary>
+		/// Gets an <see cref="IMVCController" />  for a given document type.
+		/// </summary>
+		/// <param name="creationArgs">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+		/// optional, and are usually the parents of this document.</param>
+		/// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
+		/// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+		/// <param name="copyDocument">Determines wether to use the document directly or use a clone of the document.</param>
+		/// <returns>The controller for that document when found.</returns>
+		public IMVCController GetController(object[] creationArgs, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
+		{
+			if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
+				throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      object result = null;
+			object result = null;
 
-      // 1st search for all classes that wear the UserControllerForObject attribute
-      ReflectionService.IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(typeof(UserControllerForObjectAttribute), creationArgs[0], overrideArg0Type);
+			// 1st search for all classes that wear the UserControllerForObject attribute
+			ReflectionService.IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(typeof(UserControllerForObjectAttribute), creationArgs[0], overrideArg0Type);
 
-      foreach (Type definedType in list.Types)
-      {
-        if (ReflectionService.IsSubClassOfOrImplements(definedType, typeof(IMVCANController)))
-        {
-          IMVCANController mvcan = (IMVCANController)Activator.CreateInstance(definedType);
-          mvcan.UseDocumentCopy = copyDocument;
-          if(mvcan.InitializeDocument(creationArgs))
-            result = mvcan;
-        }
-        else
-        {
-          result = ReflectionService.CreateInstanceFromList(list, new Type[] { expectedControllerType }, creationArgs);
-        }
+			foreach (Type definedType in list.Types)
+			{
+				if (ReflectionService.IsSubClassOfOrImplements(definedType, typeof(IMVCANController)))
+				{
+					IMVCANController mvcan = (IMVCANController)Activator.CreateInstance(definedType);
+					mvcan.UseDocumentCopy = copyDocument;
+					if (mvcan.InitializeDocument(creationArgs))
+						result = mvcan;
+				}
+				else
+				{
+					result = ReflectionService.CreateInstanceFromList(list, new Type[] { expectedControllerType }, creationArgs);
+				}
 
-        if (result is IMVCController)
-          break;
-      }
+				if (result is IMVCController)
+					break;
+			}
 
-      return (IMVCController)result;
-    }
+			return (IMVCController)result;
+		}
 
-    /// <summary>
-    /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
-    /// </summary>
-    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
-    /// optional, and are usually the parents of this document.</param>
-    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
-    /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType)
-    {
-      return GetControllerAndControl(args, null, expectedControllerType, UseDocument.Copy);
-    }
+		/// <summary>
+		/// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
+		/// </summary>
+		/// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+		/// optional, and are usually the parents of this document.</param>
+		/// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+		/// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
+		public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType)
+		{
+			return GetControllerAndControl(args, null, expectedControllerType, UseDocument.Copy);
+		}
 
+		/// <summary>
+		/// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
+		/// </summary>
+		/// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+		/// optional, and are usually the parents of this document.</param>
+		/// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+		/// <param name="copyDocument">Determines whether to use the document directly or a cloned copy of the document.</param>
+		/// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
+		public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
+		{
+			return GetControllerAndControl(args, null, expectedControllerType, copyDocument);
+		}
 
-    /// <summary>
-    /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
-    /// </summary>
-    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
-    /// optional, and are usually the parents of this document.</param>
-    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
-    /// <param name="copyDocument">Determines whether to use the document directly or a cloned copy of the document.</param>
-    /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
-    {
-      return GetControllerAndControl(args, null, expectedControllerType, copyDocument);
-    }
+		/// <summary>
+		/// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
+		/// </summary>
+		/// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+		/// optional, and are usually the parents of this document.</param>
+		/// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
+		/// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+		/// <param name="copyDocument">Determines whether to use the document directly or a cloned copy.</param>
+		/// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
+		public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
+		{
+			if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
+				throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
+			IMVCController controller = GetController(args, overrideArg0Type, typeof(IMVCController), copyDocument);
+			if (controller == null)
+				return null;
 
-    /// <summary>
-    /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
-    /// </summary>
-    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
-    /// optional, and are usually the parents of this document.</param>
-    /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
-    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
-    /// <param name="copyDocument">Determines whether to use the document directly or a cloned copy.</param>
-    /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
-    {
+			FindAndAttachControlTo(controller);
+			return controller;
+		}
 
-      if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
-        throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
-
-      IMVCController controller = GetController(args, overrideArg0Type, typeof(IMVCController), copyDocument);
-      if (controller == null)
-      return null;
-
-        FindAndAttachControlTo(controller);
-        return controller;
-    }
-
-
-
-
-
-
-
-    /// <summary>
-    /// Searchs for a appropriate control for a given controller with restriction to a given type.
-    /// The control is not (!) attached to the controller. You have to do this manually.
-    /// </summary>
-    /// <param name="controller">The controller a control is searched for.</param>
-    /// <param name="expectedType">The expected type of the control.</param>
-    /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
-    public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
-    {
+		/// <summary>
+		/// Searchs for a appropriate control for a given controller with restriction to a given type.
+		/// The control is not (!) attached to the controller. You have to do this manually.
+		/// </summary>
+		/// <param name="controller">The controller a control is searched for.</param>
+		/// <param name="expectedType">The expected type of the control.</param>
+		/// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
+		public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
+		{
 			object result = null;
 
 			foreach (var guiControlType in this.RegisteredGuiTechnologies)
@@ -182,12 +174,12 @@ namespace Altaxo.Main.Services
 					break;
 			}
 			return result;
-    }
+		}
 
 		/// <summary>
-    /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
-    /// </summary>
-    /// <param name="controller">The controller a control is searched for.</param>
+		/// Searchs for a appropriate control for a given controller and attaches the control to the controller.
+		/// </summary>
+		/// <param name="controller">The controller a control is searched for.</param>
 		public void FindAndAttachControlTo(IMVCController controller)
 		{
 			foreach (var guiType in RegisteredGuiTechnologies)
@@ -219,67 +211,66 @@ namespace Altaxo.Main.Services
 				FindAndAttachControlTo(controller);
 		}
 
-
-    /// <summary>
-    /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
-    /// </summary>
-    /// <param name="controller">The controller a control is searched for.</param>
+		/// <summary>
+		/// Searchs for a appropriate control for a given controller and attaches the control to the controller.
+		/// </summary>
+		/// <param name="controller">The controller a control is searched for.</param>
 		/// <param name="guiControlType">Base type of the underlying Gui system.</param>
-    private void InternalFindAndAttachControlUsingGuiType(IMVCController controller, System.Type guiControlType)
-    {
-      // if the controller has 
-      System.Type ct = controller.GetType();
-      object[] viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), false);
+		private void InternalFindAndAttachControlUsingGuiType(IMVCController controller, System.Type guiControlType)
+		{
+			// if the controller has
+			System.Type ct = controller.GetType();
+			object[] viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), false);
 
 			bool isInvokeRequired = InvokeRequired();
 
-      if (viewattributes != null && viewattributes.Length > 0)
-      {
-        if (viewattributes.Length > 1)
-        {
-          Array.Sort(viewattributes);
-        }
+			if (viewattributes != null && viewattributes.Length > 0)
+			{
+				if (viewattributes.Length > 1)
+				{
+					Array.Sort(viewattributes);
+				}
 
-        foreach (ExpectedTypeOfViewAttribute attr in viewattributes)
-        {
-          Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { guiControlType, attr.TargetType });
-          foreach (Type controltype in controltypes)
-          {
-            // test if the control has a special preference for a controller...
-            object[] controlForAttributes = controltype.GetCustomAttributes(typeof(UserControlForControllerAttribute), false);
-            if (controlForAttributes.Length > 0)
-            {
-              bool containsControllerType = false;
-              foreach (UserControlForControllerAttribute controlForAttr in controlForAttributes)
-              {
-                if (ReflectionService.IsSubClassOfOrImplements(ct,controlForAttr.TargetType))
-                {
-                  containsControllerType = true;
-                  break;
-                }
-              }
-              if (!containsControllerType)
-                continue; // then this view is not intended for our controller
-            }
+				foreach (ExpectedTypeOfViewAttribute attr in viewattributes)
+				{
+					Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { guiControlType, attr.TargetType });
+					foreach (Type controltype in controltypes)
+					{
+						// test if the control has a special preference for a controller...
+						object[] controlForAttributes = controltype.GetCustomAttributes(typeof(UserControlForControllerAttribute), false);
+						if (controlForAttributes.Length > 0)
+						{
+							bool containsControllerType = false;
+							foreach (UserControlForControllerAttribute controlForAttr in controlForAttributes)
+							{
+								if (ReflectionService.IsSubClassOfOrImplements(ct, controlForAttr.TargetType))
+								{
+									containsControllerType = true;
+									break;
+								}
+							}
+							if (!containsControllerType)
+								continue; // then this view is not intended for our controller
+						}
 
-            // all seems ok, so we can try to create the control
-							
-						if(isInvokeRequired)
+						// all seems ok, so we can try to create the control
+
+						if (isInvokeRequired)
 							Execute(CreateAndAttachControlOfType, controller, controltype);
 						else
-							CreateAndAttachControlOfType(controller,controltype);
-            return;
-          }
-        }
-      }
-      else // Controller has no ExpectedTypeOfView attribute
-      {
+							CreateAndAttachControlOfType(controller, controltype);
+						return;
+					}
+				}
+			}
+			else // Controller has no ExpectedTypeOfView attribute
+			{
 				if (isInvokeRequired)
 					Execute(CreateControlForControllerWithNoExpectedTypeOfViewAttribute, controller, guiControlType);
 				else
 					CreateControlForControllerWithNoExpectedTypeOfViewAttribute(controller, guiControlType);
-      }
-    }
+			}
+		}
 
 		private static void CreateControlForControllerWithNoExpectedTypeOfViewAttribute(IMVCController controller, System.Type guiControlType)
 		{
@@ -300,99 +291,103 @@ namespace Altaxo.Main.Services
 			controller.ViewObject = controlinstance;
 		}
 
+		/// <summary>
+		/// Shows a configuration dialog for an object (without "Apply" button).
+		/// </summary>
+		/// <param name="controller">The controller to show in the dialog</param>
+		/// <param name="title">The title of the dialog to show.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		public bool ShowDialog(IMVCAController controller, string title)
+		{
+			return ShowDialog(controller, title, false);
+		}
 
-    /// <summary>
-    /// Shows a configuration dialog for an object (without "Apply" button).
-    /// </summary>
-    /// <param name="controller">The controller to show in the dialog</param>
-    /// <param name="title">The title of the dialog to show.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    public bool ShowDialog(IMVCAController controller, string title)
-    {
-      return ShowDialog(controller, title, false);
-    }
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="controller">The controller to show in the dialog</param>
+		/// <param name="title">The title of the dialog to show.</param>
+		/// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		public abstract bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
 
-    /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="controller">The controller to show in the dialog</param>
-    /// <param name="title">The title of the dialog to show.</param>
-    /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    public abstract bool ShowDialog(IMVCAController controller, string title, bool showApplyButton);
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
+		/// args[1].. can contain the parents of this object (in most cases this is not necessary.
+		/// If the return value is true, args[0] contains the configured object. </param>
+		/// <param name="title">The title of the dialog to show.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		/// <remarks>The presumtions to get this function working are:
+		/// <list>
+		/// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
+		/// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+		/// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+		/// </list>
+		/// </remarks>
+		public bool ShowDialog(object[] args, string title)
+		{
+			return ShowDialog(args, title, false);
+		}
 
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
+		/// args[1].. can contain the parents of this object (in most cases this is not necessary.
+		/// If the return value is true, args[0] contains the configured object. </param>
+		/// <param name="title">The title of the dialog to show.</param>
+		/// <param name="showApplyButton">If true, the apply button is shown also.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		/// <remarks>The presumtions to get this function working are:
+		/// <list>
+		/// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
+		/// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+		/// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+		/// </list>
+		/// </remarks>
+		public bool ShowDialog(object[] args, string title, bool showApplyButton)
+		{
+			var controller = (IMVCAController)GetControllerAndControl(args, typeof(IMVCAController));
+			try
+			{
+				if (null == controller)
+				{
+					if (args[0] is System.Enum)
+					{
+						System.Enum arge = (System.Enum)args[0];
+						return ShowDialog(ref arge, title);
+					}
 
+					// we can try to use a property grid
+					controller = new PropertyController(args[0]);
+					FindAndAttachControlTo(controller);
+				}
 
+				if (ShowDialog(controller, title, showApplyButton))
+				{
+					args[0] = controller.ModelObject;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			finally
+			{
+				var c = System.Threading.Interlocked.Exchange(ref controller, null);
+				if (null != c)
+					c.Dispose();
+			}
+		}
 
-    /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
-    /// args[1].. can contain the parents of this object (in most cases this is not necessary.
-    /// If the return value is true, args[0] contains the configured object. </param>
-    /// <param name="title">The title of the dialog to show.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    /// <remarks>The presumtions to get this function working are:
-    /// <list>
-    /// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
-    /// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
-    /// </list>
-    /// </remarks>
-    public bool ShowDialog(object[] args, string title)
-    {
-      return ShowDialog(args, title, false);
-    }
+		public abstract bool InvokeRequired();
 
-    /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
-    /// args[1].. can contain the parents of this object (in most cases this is not necessary.
-    /// If the return value is true, args[0] contains the configured object. </param>
-    /// <param name="title">The title of the dialog to show.</param>
-    /// <param name="showApplyButton">If true, the apply button is shown also.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    /// <remarks>The presumtions to get this function working are:
-    /// <list>
-    /// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
-    /// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
-    /// </list>
-    /// </remarks>
-    public bool ShowDialog(object[] args, string title, bool showApplyButton)
-    {
-      IMVCAController controller = (IMVCAController)GetControllerAndControl(args, typeof(IMVCAController));
+		public abstract object Invoke(Delegate method, object[] args);
 
-      if (null == controller)
-      {
-        if (args[0] is System.Enum)
-        {
-          System.Enum arge = (System.Enum)args[0];
-          return ShowDialog(ref arge, title);
-        }
-
-
-        // we can try to use a property grid
-        controller = new PropertyController(args[0]);
-        FindAndAttachControlTo(controller);
-      }
-
-      if (ShowDialog(controller, title, showApplyButton))
-      {
-        args[0] = controller.ModelObject;
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    public abstract bool InvokeRequired();
-    public abstract object Invoke(Delegate method, object[] args);
 		public abstract IAsyncResult BeginInvoke(Delegate act, object[] args);
-		
 
 		/// <summary>
 		/// Evaluates a function synchronously with the Gui.
@@ -440,7 +435,6 @@ namespace Altaxo.Main.Services
 				return function(arg1, arg2, arg3);
 		}
 
-
 		public TResult Evaluate<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 		{
 			if (InvokeRequired())
@@ -473,7 +467,6 @@ namespace Altaxo.Main.Services
 				return function(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 		}
 
-
 		/// <summary>
 		/// Executes an action synchronously with the GUI.
 		/// </summary>
@@ -494,7 +487,7 @@ namespace Altaxo.Main.Services
 		public void Execute<T>(Action<T> action, T arg)
 		{
 			if (InvokeRequired())
-				Invoke((Delegate)action,new object[]{arg});
+				Invoke((Delegate)action, new object[] { arg });
 			else
 				action(arg);
 		}
@@ -560,8 +553,6 @@ namespace Altaxo.Main.Services
 			else
 				action(arg1, arg2, arg3, arg4, arg5);
 		}
-
-
 
 		/// <summary>
 		/// Executes an action synchronously with the Gui without waiting.
@@ -650,99 +641,94 @@ namespace Altaxo.Main.Services
 				action(arg1, arg2, arg3, arg4, arg5);
 		}
 
+		public bool ShowDialog(ref System.Enum arg, string title)
+		{
+			System.Type type = arg.GetType();
+			System.Array arr = System.Enum.GetValues(type);
+			int i;
+			for (i = 0; i < arr.Length; ++i)
+				if (arg.ToString() == arr.GetValue(i).ToString())
+					break;
+			if (i == arr.Length)
+				throw new ArgumentException("The enumeration is not of integer type", "arg");
 
+			object obj = new SingleChoiceObject(System.Enum.GetNames(type), i);
 
-    public bool ShowDialog(ref System.Enum arg, string title)
-    {
-      System.Type type = arg.GetType();
-      System.Array arr = System.Enum.GetValues(type);
-      int i;
-      for (i = 0; i < arr.Length; ++i)
-        if (arg.ToString() == arr.GetValue(i).ToString())
-          break;
-      if (i == arr.Length)
-        throw new ArgumentException("The enumeration is not of integer type", "arg");
+			if (ShowDialog(ref obj, title))
+			{
+				arg = (System.Enum)arr.GetValue((obj as SingleChoiceObject).Selection);
+				return true;
+			}
+			else
+				return false;
+		}
 
-      object obj = new SingleChoiceObject(System.Enum.GetNames(type), i);
+		public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
+		{
+			System.Type type = arg.GetType();
+			System.Array arr = System.Enum.GetValues(type);
 
-      if (ShowDialog(ref obj, title))
-      {
-        arg = (System.Enum)arr.GetValue((obj as SingleChoiceObject).Selection);
-        return true;
-      }
-      else
-        return false;
-    }
+			var ctrl = new Altaxo.Gui.Common.EnumFlagController();
+			ctrl.InitializeDocument(new object[] { arg });
 
-    public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
-    {
-      System.Type type = arg.GetType();
-      System.Array arr = System.Enum.GetValues(type);
+			if (ShowDialog(ctrl, title))
+			{
+				arg = (System.Enum)ctrl.ModelObject;
+				return true;
+			}
+			else
+				return false;
+		}
 
-      var ctrl = new Altaxo.Gui.Common.EnumFlagController();
-      ctrl.InitializeDocument(new object[] { arg });
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="arg">The object to configure.
+		/// If the return value is true, arg contains the configured object. </param>
+		/// <param name="title">The title of the dialog.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		/// <remarks>The presumtions to get this function working are:
+		/// <list>
+		/// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
+		/// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+		/// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+		/// </list>
+		/// </remarks>
+		public bool ShowDialog(ref object arg, string title)
+		{
+			return ShowDialog(ref arg, title, false);
+		}
 
+		/// <summary>
+		/// Shows a configuration dialog for an object.
+		/// </summary>
+		/// <param name="arg">The object to configure.
+		/// If the return value is true, arg contains the configured object. </param>
+		/// <param name="title">The title of the dialog.</param>
+		/// <param name="showApplyButton">If true, the Apply button is shown.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		/// <remarks>The presumtions to get this function working are:
+		/// <list>
+		/// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
+		/// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+		/// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+		/// </list>
+		/// </remarks>
+		public bool ShowDialog(ref object arg, string title, bool showApplyButton)
+		{
+			if (arg is System.Enum)
+			{
+				System.Enum arge = (System.Enum)arg;
+				return ShowDialog(ref arge, title);
+			}
 
-      if (ShowDialog(ctrl,title))
-      {
-        arg = (System.Enum)ctrl.ModelObject;
-        return true;
-      }
-      else
-        return false;
-    }
-
-  
-
-    /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="arg">The object to configure.
-    /// If the return value is true, arg contains the configured object. </param>
-    /// <param name="title">The title of the dialog.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    /// <remarks>The presumtions to get this function working are:
-    /// <list>
-    /// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
-    /// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
-    /// </list>
-    /// </remarks>
-    public bool ShowDialog(ref object arg, string title)
-    {
-      return ShowDialog(ref arg, title, false);
-    }
-    /// <summary>
-    /// Shows a configuration dialog for an object.
-    /// </summary>
-    /// <param name="arg">The object to configure.
-    /// If the return value is true, arg contains the configured object. </param>
-    /// <param name="title">The title of the dialog.</param>
-    /// <param name="showApplyButton">If true, the Apply button is shown.</param>
-    /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    /// <remarks>The presumtions to get this function working are:
-    /// <list>
-    /// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
-    /// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
-    /// </list>
-    /// </remarks>
-    public bool ShowDialog(ref object arg, string title, bool showApplyButton)
-    {
-      if (arg is System.Enum)
-      {
-        System.Enum arge = (System.Enum)arg;
-        return ShowDialog(ref arge, title);
-      }
-
-      object[] args = new object[1];
-      args[0] = arg;
-      bool result = ShowDialog(args, title, showApplyButton);
-      if(result)
+			object[] args = new object[1];
+			args[0] = arg;
+			bool result = ShowDialog(args, title, showApplyButton);
+			if (result)
 				arg = args[0];
-      return result;
-    }
-
+			return result;
+		}
 
 		/// <summary>
 		/// Shows a configuration dialog for any item.
@@ -764,15 +750,15 @@ namespace Altaxo.Main.Services
 			object[] args = new object[1];
 			args[0] = arg;
 			bool result = ShowDialog(args, title, showApplyButton);
-			if(result)
+			if (result)
 				arg = (T)args[0];
 			return result;
 		}
 
-    /// <summary>
-    /// Shows a message box with the error text.
-    /// </summary>
-    /// <param name="errortxt">The error text.</param>
+		/// <summary>
+		/// Shows a message box with the error text.
+		/// </summary>
+		/// <param name="errortxt">The error text.</param>
 		/// <param name="title">The title of the message box.</param>
 		public abstract void ErrorMessageBox(string errortxt, string title);
 
@@ -781,9 +767,9 @@ namespace Altaxo.Main.Services
 		/// </summary>
 		/// <param name="errortxt">The error text.</param>
 		public void ErrorMessageBox(string errortxt)
-			{
+		{
 			ErrorMessageBox(errortxt, null);
-			}
+		}
 
 		/// <summary>
 		/// Shows a message box with an informational text.
@@ -801,132 +787,129 @@ namespace Altaxo.Main.Services
 			InfoMessageBox(infotxt, null);
 		}
 
-    /// <summary>
-    /// Shows a message box with a question to be answered either yes or no.
-    /// </summary>
-    /// <param name="txt">The question text.</param>
-    /// <param name="caption">The caption of the dialog box.</param>
-    /// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
-    /// <returns>True if the user answered with Yes, otherwise false.</returns>
-    public abstract bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
+		/// <summary>
+		/// Shows a message box with a question to be answered either yes or no.
+		/// </summary>
+		/// <param name="txt">The question text.</param>
+		/// <param name="caption">The caption of the dialog box.</param>
+		/// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
+		/// <returns>True if the user answered with Yes, otherwise false.</returns>
+		public abstract bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
 
-    /// <summary>
-    /// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
-    /// </summary>
-    /// <param name="text">The question text.</param>
-    /// <param name="caption">The caption of the dialog box.</param>
-    /// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
-    /// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
-    public abstract bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer);
+		/// <summary>
+		/// Shows a message box with a questtion to be answered either by YES, NO, or CANCEL.
+		/// </summary>
+		/// <param name="text">The question text.</param>
+		/// <param name="caption">The caption of the dialog box.</param>
+		/// <param name="defaultAnswer">If true, the default answer is "yes", if false the default answer is "no", if null the default answer is "Cancel".</param>
+		/// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
+		public abstract bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer);
 
-    public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.ThreadStart threadstart)
-    {
-      System.Threading.Thread t = new System.Threading.Thread(threadstart);
-      t.Start();
-      return ShowBackgroundCancelDialog(millisecondsDelay, monitor, t);
-    }
+		public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.ThreadStart threadstart)
+		{
+			System.Threading.Thread t = new System.Threading.Thread(threadstart);
+			t.Start();
+			return ShowBackgroundCancelDialog(millisecondsDelay, monitor, t);
+		}
 
+		public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread);
 
-    public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread);
+		/// <summary>
+		/// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.
+		/// </summary>
+		/// <param name="definedtype">The type of the class for which to obtain the user friendly class name.</param>
+		/// <returns>The user friendly class name. See remarks.</returns>
+		/// <remarks>
+		/// The strategy for obtaining a user friendly class name is as follows:
+		/// <list type="">
+		/// <item>If there is a resource string "ClassNames.type" (type is replaced by the type of the class), then the resource string is returned.</item>
+		/// <item>If there is a description attribute for that class, the description string is returned.</item>
+		/// <item>The name of the class (without namespace), followed by the namespace name in paranthesis is returned.</item>
+		/// </list>
+		/// </remarks>
+		public string GetUserFriendlyClassName(System.Type definedtype)
+		{
+			string result = null;
 
+			try
+			{
+				result = Current.ResourceService.GetString("ClassNames." + definedtype.FullName);
+			}
+			catch (Exception)
+			{
+			}
+			if (result != null)
+				return result;
 
-    /// <summary>
-    /// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.
-    /// </summary>
-    /// <param name="definedtype">The type of the class for which to obtain the user friendly class name.</param>
-    /// <returns>The user friendly class name. See remarks.</returns>
-    /// <remarks>
-    /// The strategy for obtaining a user friendly class name is as follows:
-    /// <list type="">
-    /// <item>If there is a resource string "ClassNames.type" (type is replaced by the type of the class), then the resource string is returned.</item>
-    /// <item>If there is a description attribute for that class, the description string is returned.</item>
-    /// <item>The name of the class (without namespace), followed by the namespace name in paranthesis is returned.</item>
-    /// </list>
-    /// </remarks>
-    public string GetUserFriendlyClassName(System.Type definedtype)
-    {
-      string result = null;
+			Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
+			if (attributes.Length > 0)
+				return ((System.ComponentModel.DescriptionAttribute)attributes[0]).Description;
 
-      try
-      {
-        result = Current.ResourceService.GetString("ClassNames." + definedtype.FullName);
-      }
-      catch (Exception)
-      {
-      }
-      if (result != null)
-        return result;
+			return string.Format("{0} ({1})", definedtype.Name, definedtype.Namespace);
+		}
 
-      Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
-      if (attributes.Length > 0)
-        return ((System.ComponentModel.DescriptionAttribute)attributes[0]).Description;
+		/// <summary>
+		/// This retrieves user friendly class name for an array of types.
+		/// </summary>
+		/// <param name="types">Array of types for whose to return an user friendly class name.</param>
+		/// <param name="withStartingNone">If true, the first item will be a none (the returned string array then has one element more than the provided array).</param>
+		/// <returns>Array of strings with the user friendly class names.</returns>
+		public string[] GetUserFriendlyClassName(System.Type[] types, bool withStartingNone)
+		{
+			string[] result = new string[types.Length + (withStartingNone ? 1 : 0)];
 
-      return string.Format("{0} ({1})", definedtype.Name, definedtype.Namespace);
-    }
+			int offset = 0;
+			if (withStartingNone)
+			{
+				offset = 1;
+				result[0] = "None";
+			}
 
-    /// <summary>
-    /// This retrieves user friendly class name for an array of types.
-    /// </summary>
-    /// <param name="types">Array of types for whose to return an user friendly class name.</param>
-    /// <param name="withStartingNone">If true, the first item will be a none (the returned string array then has one element more than the provided array).</param>
-    /// <returns>Array of strings with the user friendly class names.</returns>
-    public string[] GetUserFriendlyClassName(System.Type[] types, bool withStartingNone)
-    {
-      string[] result = new string[types.Length + (withStartingNone ? 1 : 0)];
+			for (int i = 0; i < types.Length; ++i)
+				result[i + offset] = GetUserFriendlyClassName(types[i]);
 
-      int offset = 0;
-      if (withStartingNone)
-      {
-        offset = 1;
-        result[0] = "None";
-      }
+			return result;
+		}
 
-      for (int i = 0; i < types.Length; ++i)
-        result[i + offset] = GetUserFriendlyClassName(types[i]);
+		/// <summary>
+		/// Retrieves the description of the enumeration value <b>value</b>.
+		/// </summary>
+		/// <param name="value">The enumeration value.</param>
+		/// <returns>The description of this value. If no description is available, the ToString() method is used
+		/// to return the name of the value.</returns>
+		public string GetUserFriendlyName(Enum value)
+		{
+			string result = null;
+			try
+			{
+				Type t = value.GetType();
+				result = Current.ResourceService.GetString("ClassNames." + t.FullName + "." + Enum.GetName(t, value));
+			}
+			catch (Exception)
+			{
+			}
+			if (null != result)
+				return result;
 
-      return result;
-    }
+			FieldInfo fi = value.GetType().GetField(value.ToString());
+			System.ComponentModel.DescriptionAttribute[] attributes =
+				(System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+			return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+		}
 
-    /// <summary>
-    /// Retrieves the description of the enumeration value <b>value</b>.
-    /// </summary>
-    /// <param name="value">The enumeration value.</param>
-    /// <returns>The description of this value. If no description is available, the ToString() method is used
-    /// to return the name of the value.</returns>
-    public string GetUserFriendlyName(Enum value)
-    {
-      string result = null;
-      try
-      {
-        Type t = value.GetType();
-        result = Current.ResourceService.GetString("ClassNames." + t.FullName+"."+Enum.GetName(t,value));
-      }
-      catch (Exception)
-      {
-      }
-      if (null != result)
-        return result;
-
-      FieldInfo fi = value.GetType().GetField(value.ToString());
-      System.ComponentModel.DescriptionAttribute[] attributes =
-        (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-      return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
-    }
-
-    /// <summary>
-    /// Retrieves the description of the enumeration value <b>value</b>.
-    /// </summary>
-    /// <param name="value">The enumeration value.</param>
-    /// <returns>The description of this value. If no description is available, the ToString() method is used
-    /// to return the name of the value.</returns>
-    public static string GetDescription(Enum value)
-    {
-      FieldInfo fi = value.GetType().GetField(value.ToString());
-      System.ComponentModel.DescriptionAttribute[] attributes =
-        (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-      return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
-    }
-
+		/// <summary>
+		/// Retrieves the description of the enumeration value <b>value</b>.
+		/// </summary>
+		/// <param name="value">The enumeration value.</param>
+		/// <returns>The description of this value. If no description is available, the ToString() method is used
+		/// to return the name of the value.</returns>
+		public static string GetDescription(Enum value)
+		{
+			FieldInfo fi = value.GetType().GetField(value.ToString());
+			System.ComponentModel.DescriptionAttribute[] attributes =
+				(System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+			return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+		}
 
 		/// <summary>
 		/// Retrieves information about a screen area.
@@ -939,8 +922,8 @@ namespace Altaxo.Main.Services
 		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
 		public abstract Altaxo.Graph.PointD2D ScreenResolutionDpi { get; }
 
-
 		public abstract bool ShowOpenFileDialog(OpenFileOptions options);
+
 		public abstract bool ShowSaveFileDialog(SaveFileOptions options);
 
 		/// <summary>
@@ -971,8 +954,7 @@ namespace Altaxo.Main.Services
 		/// <param name="value">If true, the data remains on the clipboard when the application is closed. If false, the data will be removed from the clipboard when the application is closed.</param>
 		public abstract void SetClipboardDataObject(IClipboardSetDataObject dataObject, bool value);
 
-
-    #region static Windows Form methods
+		#region static Windows Form methods
 
 		/// <summary>
 		/// Dictionary of context menu providers. Key is the type of the gui root element (Winforms: Control, Wpf: UIElement).
@@ -993,7 +975,6 @@ namespace Altaxo.Main.Services
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
 		public abstract void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
 
-
 		public struct ScreenInformation
 		{
 			public double WorkAreaX;
@@ -1002,6 +983,6 @@ namespace Altaxo.Main.Services
 			public double WorkAreaHeight;
 		}
 
-    #endregion
-  }
+		#endregion static Windows Form methods
+	}
 }

@@ -346,6 +346,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
+		public Main.ISuppressToken SuspendGetToken()
+		{
+			return _eventSuppressor.Suspend();
+		}
+
 		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
 		{
 			var oldParentSize = _location.ParentSize;

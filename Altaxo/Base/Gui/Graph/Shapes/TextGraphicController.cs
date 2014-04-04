@@ -108,19 +108,36 @@ namespace Altaxo.Gui.Graph.Shapes
 		private TextGraphic _doc, _originalDoc;
 		private ITextGraphicView _view;
 
-		private XYPlotLayer m_Layer;
+		private XYPlotLayer _parentLayerOfOriginalDoc;
 
 		private IMVCANController _locationController;
 
+		/// <summary>
+		/// The suppress token that suppresses change events when we enter text in the document
+		/// </summary>
+		private Altaxo.Main.ISuppressToken _suppressToken;
+
 		public TextGraphicController()
 		{
+		}
+
+		public bool InitializeDocument(params object[] args)
+		{
+			if (args.Length == 0 || !(args[0] is TextGraphic))
+				return false;
+			_originalDoc = (TextGraphic)args[0];
+			_doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (TextGraphic)_originalDoc.Clone();
+			_suppressToken = _doc.SuspendGetToken();
+
+			Initialize(true); // initialize always because we have to update the temporary variables
+			return true;
 		}
 
 		private void Initialize(bool initDocument)
 		{
 			if (initDocument)
 			{
-				m_Layer = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
+				_parentLayerOfOriginalDoc = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
 
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
 				Current.Gui.FindAndAttachControlTo(_locationController);
@@ -213,7 +230,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			// set position and rotation to zero
 			//    m_TextObject.Position=new PointF(0,0);
 			//    m_TextObject.Rotation = 0;
-			_doc.Paint(g, m_Layer, true);
+			_doc.Paint(g, _parentLayerOfOriginalDoc, true);
 
 			// restore the original position and rotation values
 			//      m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
@@ -270,16 +287,6 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		#region IMVCANController Members
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length == 0 || !(args[0] is TextGraphic))
-				return false;
-			_originalDoc = (TextGraphic)args[0];
-			_doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (TextGraphic)_originalDoc.Clone();
-			Initialize(true); // initialize always because we have to update the temporary variables
-			return true;
-		}
-
 		public UseDocument UseDocumentCopy
 		{
 			set { _useDocumentCopy = value; }
@@ -316,6 +323,9 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		public void Dispose()
 		{
+			var token = System.Threading.Interlocked.Exchange(ref _suppressToken, null);
+			if (null != token)
+				token.Dispose();
 		}
 
 		#endregion IMVCController Members
