@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,195 +19,184 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Altaxo.Addins.OriginConnector
 {
-  public class OriginConnection
-  {
-    private Origin.IOApplication _originApp;				// the Origin object reference
+	public class OriginConnection : IDisposable
+	{
+		private Origin.IOApplication _originApp;				// the Origin object reference
 
-    string _originSaveProjectFileName;
+		private string _originSaveProjectFileName;
 
-    const int nWorksheetOriginType = 2;		// 2 internally in Origin indicates worksheet window
+		private const int nWorksheetOriginType = 2;		// 2 internally in Origin indicates worksheet window
 
+		public Origin.IOApplication Application
+		{
+			get
+			{
+				if (null == _originApp)
+					throw new InvalidOperationException("Not connected to Origin");
 
-    public Origin.IOApplication Application
-    {
-      get
-      {
-        if (null == _originApp)
-          throw new InvalidOperationException("Not connected to Origin");
+				return _originApp;
+			}
+		}
 
-        return _originApp;
-      }
-    }
+		public bool IsConnected()
+		{
+			return _originApp != null;
+		}
 
+		public bool Connect(bool bConnectExisting)
+		{
+			if (IsConnected())
+				return true;
 
-    public bool IsConnected()
-    {
-      return _originApp != null;
-    }
+			try
+			{
+				if (bConnectExisting)
+					_originApp = new Origin.ApplicationSIClass();
+				else
+					_originApp = new Origin.ApplicationClass();
+			}
+			catch (Exception e)
+			{
+				ShowErrorMessage(e.Message);
+			}
 
+			bool bConnected = IsConnected();
 
-    public bool Connect(bool bConnectExisting)
-    {
-      if (IsConnected())
-        return true;
+			if (bConnected)
+			{
+				ShowOriginWindow(true);		// show or not Origin window
 
-      try
-      {
-        if (bConnectExisting)
-          _originApp = new Origin.ApplicationSIClass();
-        else
-          _originApp = new Origin.ApplicationClass();
-      }
-      catch (Exception e)
-      {
-        ShowErrorMessage(e.Message);
-      }
+				_originSaveProjectFileName = GetSaveAsFileName();	// init file name for saving
+			}
+			else
+			{
+				_originApp = null;
+				ShowErrorMessage("Failed to access Origin instance!");
+			}
+			return bConnected;
+		}
 
-      bool bConnected = IsConnected();
+		public void Disconnect(bool saveOriginOnDisconnection, string fileName, bool exitOriginOnDisconnection)
+		{
+			if (IsConnected())
+			{
+				// Save the project if needed:
+				if (saveOriginOnDisconnection)
+				{
+					string strFileName = fileName;
+					if (!(strFileName.Length == 0))
+						_originApp.Save(strFileName);
+				}
 
-      if (bConnected)
-      {
-        ShowOriginWindow(true);		// show or not Origin window
+				// Exit Origin if needed:
+				if (exitOriginOnDisconnection)
+				{
+					ExecuteOriginCMD("exit");
+				}
 
-        _originSaveProjectFileName = GetSaveAsFileName();	// init file name for saving
-      }
-      else
-      {
-        _originApp = null;
-        ShowErrorMessage("Failed to access Origin instance!");
-      }
-      return bConnected;
-    }
+				System.Runtime.InteropServices.Marshal.ReleaseComObject(_originApp);
+				_originApp = null;
+			}
 
+			return;
+		}
 
-    public void Disconnect(bool saveOriginOnDisconnection, string fileName, bool exitOriginOnDisconnection)
-    {
-      if (IsConnected())
-      {
-        // Save the project if needed:
-        if (saveOriginOnDisconnection)
-        {
-          string strFileName = fileName;
-          if (!(strFileName.Length == 0))
-            _originApp.Save(strFileName);
-        }
+		public bool ExecuteOriginCMD(string strCmd)
+		{
+			if (!IsConnected())
+				return false;
 
-        // Exit Origin if needed:
-        if (exitOriginOnDisconnection)
-        {
-          ExecuteOriginCMD("exit");
-        }
+			bool bb = _originApp.Execute(strCmd, "");
+			return bb;
+		}
 
-        System.Runtime.InteropServices.Marshal.ReleaseComObject(_originApp);
-        _originApp = null;
-      }
+		public double GetDouble(string variableName)
+		{
+			return _originApp.get_LTVar(variableName);
+		}
 
-      return;
-    }
+		public Int32 GetInt32(string variableName)
+		{
+			return (Int32)_originApp.get_LTVar(variableName);
+		}
 
-    public bool ExecuteOriginCMD(string strCmd)
-    {
-      if (!IsConnected())
-        return false;
+		public string GetString(string variableName)
+		{
+			return _originApp.get_LTStr(variableName);
+		}
 
-      bool bb = _originApp.Execute(strCmd, "");
-      return bb;
-    }
+		private void ShowErrorMessage(string strMsg)
+		{
+			Altaxo.Current.Gui.ErrorMessageBox(strMsg);
+		}
 
-    public double GetDouble(string variableName)
-    {
-      return _originApp.get_LTVar(variableName);
-    }
+		public void ShowOriginWindow(bool bShow)
+		{
+			if (!IsConnected())
+				return;
 
-    public Int32 GetInt32(string variableName)
-    {
-      return (Int32)_originApp.get_LTVar(variableName);
-    }
+			string strCmd = "doc -mk ";
+			strCmd += bShow ? "1" : "0";
 
-    public string GetString(string variableName)
-    {
-      return _originApp.get_LTStr(variableName);
-    }
+			ExecuteOriginCMD(strCmd);
+		}
 
-    private void ShowErrorMessage(string strMsg)
-    {
-      Altaxo.Current.Gui.ErrorMessageBox(strMsg);
-    }
+		// Get appropriate file name for saving:
+		private string GetSaveAsFileName()
+		{
+			string str = "";
+			if (!IsConnected())
+				return str;
 
-    public void ShowOriginWindow(bool bShow)
-    {
-      if (!IsConnected())
-        return;
+			str = _originApp.get_LTStr("%Y");
+			str += _originApp.get_LTStr("%G");
 
+			return str;
+		}
 
-      string strCmd = "doc -mk ";
-      strCmd += bShow ? "1" : "0";
+		/// <summary>
+		/// Get a list of all worksheet names that are available in the connected origin application.
+		/// </summary>
+		/// <returns></returns>
+		public List<string> GetExistingWorksheetNames()
+		{
+			List<string> result = new List<string>();
+			int cnt = _originApp.WorksheetPages.Count;
+			for (int i = 0; i < cnt; i++)
+				result.Add(_originApp.WorksheetPages[i].Name);
 
-      ExecuteOriginCMD(strCmd);
-    }
+			return result;
+		}
 
-    // Get appropriate file name for saving:
-    private string GetSaveAsFileName()
-    {
-      string str = "";
-      if (!IsConnected())
-        return str;
+		public bool ExistsOriginObject(string objectName, int expectedOriginType)
+		{
+			// Check if specified worksheet exists:
+			string str = "d=exist(" + objectName + ")";
+			int nExists = 0;
+			if (ExecuteOriginCMD(str))
+			{
+				// Get the value of variable "d":
+				double rExist = _originApp.get_LTVar("d");
+				nExists = (int)rExist;
+			}
 
-      str = _originApp.get_LTStr("%Y");
-      str += _originApp.get_LTStr("%G");
+			return nExists == expectedOriginType;
+		}
 
-      return str;
-    }
-
-
- 
-
-
-   
-    public bool ExistsWorksheet(string wksName)
-    {
-      return ExistsOriginObject(wksName, nWorksheetOriginType);
-    }
-
-    /// <summary>
-    /// Get a list of all worksheet names that are available in the connected origin application.
-    /// </summary>
-    /// <returns></returns>
-    public List<string> GetExistingWorksheetNames()
-    {
-      List<string> result = new List<string>();
-      int cnt = _originApp.WorksheetPages.Count;
-      for (int i = 0; i < cnt; i++)
-        result.Add(_originApp.WorksheetPages[i].Name);
-
-      return result;
-    }
-
-    public bool ExistsOriginObject(string objectName, int expectedOriginType)
-    {
-      // Check if specified worksheet exists:
-      string str = "d=exist(" + objectName + ")";
-      int nExists = 0;
-      if (ExecuteOriginCMD(str))
-      {
-        // Get the value of variable "d":
-        double rExist = _originApp.get_LTVar("d");
-        nExists = (int)rExist;
-      }
-
-      return nExists == expectedOriginType;
-    }
-
-   
-  }
+		public void Dispose()
+		{
+			Disconnect(false, string.Empty, false);
+		}
+	}
 }
