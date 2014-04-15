@@ -67,6 +67,29 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
+		public string RevisionString
+		{
+			get
+			{
+				const string DATEHEADER = "DATE:";
+				string result = "";
+
+				var ass = System.Reflection.Assembly.GetEntryAssembly();
+
+				var attribs = ass.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), false);
+
+				if (attribs.Length == 1)
+				{
+					result = (attribs[0] as System.Reflection.AssemblyConfigurationAttribute).Configuration;
+					var idx = result.IndexOf(DATEHEADER);
+					if (idx > 0)
+						result = "Date:" + result.Substring(idx + DATEHEADER.Length);
+				}
+
+				return result;
+			}
+		}
+
 		private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
 		{
 			var hyperlink = (Hyperlink)sender;

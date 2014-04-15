@@ -31,7 +31,7 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("AltaxoUpdateInstaller")]
 [assembly: AssemblyDescription("Installer for Altaxo's auto update files")]
-[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$, DATE: $REVDATE$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
 [assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]

@@ -11,14 +11,17 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<Label Grid.Row="0" Content="(C) 2002-2014 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" />
-		<Label Grid.Row="0" Content="{Binding Path=VersionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-		<Label Grid.Row="0" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
-		<Label Grid.Row="1" Content="data processing / data plotting program" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
-		<RichTextBox Grid.Row="2">
+		<Label Grid.Row="0" Grid.RowSpan="3" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
+		<Label Grid.Row="0" Content="(C) 2002-2014 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
+		<Label Grid.Row="1" Content="{Binding Path=VersionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
+		<Label Grid.Row="2" Content="{Binding Path=RevisionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
+		<Label Grid.Row="3" Content="data processing / data plotting program" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
+		<RichTextBox Grid.Row="4">
 			<RichTextBox.Document>
 				<FlowDocument>
 					<Paragraph>You can obtain the latest version of Altaxo from
@@ -66,7 +69,7 @@
 				</FlowDocument>
 			</RichTextBox.Document>
 		</RichTextBox>
-		<Expander Grid.Row="4" Header="License" Margin="0,12,0,0">
+		<Expander Grid.Row="5" Header="License" Margin="0,12,0,0">
 			<RichTextBox>
 				<RichTextBox.Document>
 					<FlowDocument>

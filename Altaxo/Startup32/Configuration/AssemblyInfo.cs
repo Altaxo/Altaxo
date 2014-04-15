@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("AltaxoStartup32")]
 [assembly: AssemblyDescription("Startup executable for Altaxo (in 32 bit mode)")]
-[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$, DATE: $REVDATE$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
 [assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
@@ -15,6 +15,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 
 [assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyInformationalVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$ $REVIDSHORT$ $REVDATE$")]
 
 [assembly: AssemblyDelaySign(false)]
 

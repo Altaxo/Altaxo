@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("AltaxoStartup")]
 [assembly: AssemblyDescription("Startup executable for Altaxo")]
-[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$, DATE: $REVDATE$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
 [assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
@@ -18,19 +18,21 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 
 [assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyInformationalVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$ $REVIDSHORT$ $REVDATE$")]
 
 [assembly: AssemblyDelaySign(false)]
 
 internal static class RevisionClass
 {
-  public const string Major = "$MAJORVERSION$";
-  public const string Minor = "$MINORVERSION$";
-  public const string Build = "$REVNUM$";
-  public const string Revision = "$DIRTY$";
+	public const string Major = "$MAJORVERSION$";
+	public const string Minor = "$MINORVERSION$";
+	public const string Build = "$REVNUM$";
+	public const string Revision = "$DIRTY$";
 
-  public const string MainVersion = Major + "." + Minor;
-  public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
+	public const string MainVersion = Major + "." + Minor;
+	public const string FullVersion = Major + "." + Minor + "." + Build + "." + Revision;
 
-  public const string BranchName = "$BRANCH$";
+	public const string BranchName = "$BRANCH$";
 	public const string RevisionID = "$REVID$";
 }

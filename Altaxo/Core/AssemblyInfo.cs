@@ -30,7 +30,7 @@ using System.Runtime.CompilerServices;
 //
 [assembly: AssemblyTitle("AltaxoCore")]
 [assembly: AssemblyDescription("Core Library for Altaxo")]
-[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$")]
+[assembly: AssemblyConfiguration("REVID: $REVID$, BRANCH: $BRANCH$, DATE: $REVDATE$")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
 [assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-$YEAR$")]
@@ -49,6 +49,7 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
+[assembly: AssemblyFileVersion("$MAJORVERSION$.$MINORVERSION$.$REVNUM$.$DIRTY$")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
