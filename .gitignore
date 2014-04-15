@@ -1,8 +1,12 @@
-**/obj/
-**/bin/
-**/Debug/
 rtDir/
 TestResults/
+
+[Oo]bj*/
+[Bb]in*/
+[Dd]ebug*/
+[Rr]elease*/
+
+*.[Cc]ache
 *.suo
 *.user
 *.ruleset
