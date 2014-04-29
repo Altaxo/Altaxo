@@ -239,7 +239,77 @@ namespace Altaxo.Addins.OriginConnector
 
 		#region Send worksheet data to origin
 
-		public static void PutTable(this OriginConnection conn, Altaxo.Data.DataTable srcTable, string originWorksheetName, bool appendRows)
+		/// <summary>
+		/// Gets a folder by name in a parent folder. If this folder does not exist, it is created. To get the folder, the folder is searched at first by the short name and if unsuccessfull, by the long name.
+		/// </summary>
+		/// <param name="parentFolder">The parent folder.</param>
+		/// <param name="folderName">Name of the folder to get or create.</param>
+		/// <returns>The child folder of the provided parentFolder, which has the folderName (either as short name, or as long name).</returns>
+		public static Origin.Folder GetOrCreateSingleFolder(Origin.Folder parentFolder, string folderName)
+		{
+			// test if folder with short folderName is existent
+			var folder = parentFolder.Folders[folderName];
+			if (null != folder)
+				return folder;
+
+			// else we must iterate through all folders and look for a folder with the same long folder name
+			for (int i = 0; i < parentFolder.Folders.Count; ++i)
+			{
+				folder = parentFolder.Folders[i];
+				if (folder.LongName == folderName)
+					return folder;
+			}
+
+			// else we create this folder and return it
+			folder = parentFolder.Folders.Add(folderName);
+			folder.LongName = folderName;
+			return folder;
+		}
+
+		public static Origin.Folder GetOrCreateFullFolderPath(Origin.IOApplication originApp, string altaxoFullFolderPath)
+		{
+			var folderParts = altaxoFullFolderPath.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+			var currFolder = originApp.RootFolder;
+			for (int i = 0; i < folderParts.Length; ++i)
+			{
+				var nextFolderName = folderParts[i];
+				var nextFolder = GetOrCreateSingleFolder(currFolder, nextFolderName);
+				currFolder = nextFolder;
+			}
+			return currFolder;
+		}
+
+		/// <summary>
+		/// Gets a worksheetpage by name in a parent folder. If this worksheetpage does not exist, it is created. To get the worksheet page, the parent folder is searched at first by the short name and if unsuccessfull, by the long name of the worksheet page.
+		/// </summary>
+		/// <param name="parentFolder">The parent folder.</param>
+		/// <param name="folderName">Name of the worksheet page to get or create.</param>
+		/// <returns>The worksheet page (either previously existing or newly created) of the provided parentFolder, which has the provided name (either as short name, or as long name).</returns>
+		public static Origin.WorksheetPage GetOrCreateWorksheetPage(Origin.Folder parentFolder, string worksheetName)
+		{
+			// test if folder with short folderName is existent
+			var worksheet = parentFolder.PageBases[worksheetName] as Origin.WorksheetPage;
+			if (null != worksheet)
+				return worksheet;
+
+			// else we must iterate through all Pages and look for a worksheetpage with the same long folder name
+			for (int i = 0; i < parentFolder.Folders.Count; ++i)
+			{
+				worksheet = parentFolder.PageBases[i] as Origin.WorksheetPage;
+				if (null != worksheet && worksheet.LongName == worksheetName)
+					return worksheet;
+			}
+
+			// else we create this worksheetpage and return it
+			parentFolder.Activate(); // by making the folder active, the worksheet is later created in this folder
+			worksheet = parentFolder.Application.WorksheetPages.Add();
+			worksheet.Name = worksheetName;
+			worksheet.LongName = worksheetName;
+
+			return worksheet;
+		}
+
+		public static void PutTable(this OriginConnection conn, Altaxo.Data.DataTable srcTable, bool appendRows)
 		{
 			if (IsColumnReorderingNeccessaryForPuttingTableToOrigin(srcTable))
 			{
@@ -248,7 +318,7 @@ namespace Altaxo.Addins.OriginConnector
 			}
 
 			var stb = new System.Text.StringBuilder();
-			string strWksName = originWorksheetName;
+			string strWksName = srcTable.ShortName;
 
 			strWksName.Trim();
 			// Validate worksheet name:
@@ -268,16 +338,9 @@ namespace Altaxo.Addins.OriginConnector
 			}
 
 			var app = conn.Application;
-			//Origin.Application app = new Origin.Application();
-			//app.NewProject();
 
-			Origin.WorksheetPage wbk;
-			if (null == (wbk = app.WorksheetPages[strWksName]))
-			{
-				wbk = app.WorksheetPages.Add();
-				wbk.Name = strWksName;
-				wbk.LongName = strWksName;
-			}
+			var originFolder = GetOrCreateFullFolderPath(app, srcTable.FolderName);
+			var wbk = GetOrCreateWorksheetPage(originFolder, strWksName);
 
 			// for every group in our worksheet, make a separate origin worksheet
 
@@ -479,6 +542,8 @@ namespace Altaxo.Addins.OriginConnector
 		/// <returns>The data columns with the data from the Origin worksheet.</returns>
 		public static Altaxo.Data.DataColumnCollection GetDataColumns(this Origin.Worksheet wks)
 		{
+			var culture = Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture;
+
 			int nCols = wks.Cols;
 
 			Altaxo.Data.DataColumnCollection result = new Altaxo.Data.DataColumnCollection();
@@ -511,13 +576,64 @@ namespace Altaxo.Addins.OriginConnector
 						destCol[i] = refDate.AddDays(data[i] - refDateAsDouble);
 					}
 				}
+				else if (destCol is TextColumn && srcCol.DataFormat == COLDATAFORMAT.DF_TEXT_NUMERIC)
+				{
+					var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_VARIANT, 0, -1, 0);
+
+					var destColNum = new Altaxo.Data.DoubleColumn();
+
+					object[] oarr;
+					if (null != (oarr = data as object[]))
+					{
+						int numberOfNums = 0;
+						int numberOfObjects = 0;
+						for (int i = 0; i < oarr.Length; ++i)
+						{
+							if (oarr[i] is double)
+							{
+								destColNum[i] = (double)oarr[i];
+								++numberOfNums;
+							}
+							if (oarr[i] != null)
+							{
+								destCol[i] = string.Format(culture, "{0}", oarr[i]);
+								++numberOfObjects;
+							}
+						}
+						// if the column consist mostly of numerics, then exchange it with destcol
+						if (numberOfNums >= 0.99 * numberOfObjects || numberOfNums >= numberOfObjects - 2)
+						{
+							destCol = destColNum;
+						}
+					}
+				}
 				else if (destCol is TextColumn)
 				{
 					var data = srcCol.GetData(Origin.ARRAYDATAFORMAT.ARRAY1D_TEXT, 0, -1, 0);
-					(destCol as TextColumn).Array = (string[])data;
+					string[] sarr;
+					object[] oarr;
+
+					if (null != (sarr = data as string[]))
+					{
+						(destCol as TextColumn).Array = sarr;
+					}
+					else if (null != (oarr = data as object[]))
+					{
+						for (int i = 0; i < oarr.Length; ++i)
+						{
+							if (null != oarr[i])
+							{
+								destCol[i] = string.Format(culture, "{0}", oarr[i]);
+							}
+							else
+							{
+								destCol[i] = null;
+							}
+						}
+					}
 				}
 
-				result.Add(destCol, srcCol.LongName ?? srcCol.Name, altaxoColumnKind, Math.Max(0, groupNumber));
+				result.Add(destCol, (!string.IsNullOrEmpty(srcCol.LongName) ? srcCol.LongName : srcCol.Name), altaxoColumnKind, Math.Max(0, groupNumber));
 			}
 
 			return result;
@@ -592,6 +708,11 @@ namespace Altaxo.Addins.OriginConnector
 				return string.Format("No origin worksheet named {0} found!", originWorksheetName);
 			}
 
+			return GetTable(wbk, destTable);
+		}
+
+		public static string GetTable(Origin.WorksheetPage wbk, Altaxo.Data.DataTable destTable)
+		{
 			Origin.Worksheet wks = wbk.Layers[0] as Origin.Worksheet;
 
 			var dataTemplate = GetDataColumns(wks);
