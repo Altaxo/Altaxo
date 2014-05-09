@@ -228,6 +228,7 @@
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
+    <Compile Include="Gui\Data\DataBaseConnectionController.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph\GridPartitioningController.cs" />
     <Compile Include="Gui\Graph\ItemLocationByGridController.cs" />
