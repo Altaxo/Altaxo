@@ -226,6 +226,9 @@
     <Compile Include="Graph\NamedColors.cs" />
     <Compile Include="Graph\RectangleExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Graph\Scales\InverseScale.cs" />
+    <Compile Include="Graph\Scales\Rescaling\InverseAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />
@@ -233,7 +236,9 @@
     <Compile Include="Gui\Graph\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\InverseAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\DateTimeTickSpacingController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\InverseTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\TextTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingController.cs" />
     <Compile Include="Gui\Graph\TickSpacingController.cs" />

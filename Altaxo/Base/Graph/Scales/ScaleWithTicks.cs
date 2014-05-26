@@ -300,6 +300,8 @@ namespace Altaxo.Graph.Scales
 			RegisterDefaultTicking(typeof(Log10Scale), typeof(Log10TickSpacing), 100);
 
 			RegisterDefaultTicking(typeof(LinearScale), typeof(LinearTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(InverseScale), typeof(InverseTickSpacing), 100);
 		}
 
 		#endregion Static functions

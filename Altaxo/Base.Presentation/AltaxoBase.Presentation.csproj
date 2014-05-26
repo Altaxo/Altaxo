@@ -815,6 +815,7 @@
     <Compile Include="Gui\Common\Drawing\FontXControl.xaml.cs">
       <DependentUpon>FontXControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\NumericInt32Converter.cs" />
     <Compile Include="Gui\Common\QuantityWithUnitList.xaml.cs">
       <DependentUpon>QuantityWithUnitList.xaml</DependentUpon>
     </Compile>

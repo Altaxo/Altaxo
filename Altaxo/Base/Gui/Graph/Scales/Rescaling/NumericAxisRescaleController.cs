@@ -302,7 +302,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 		#region IApplyController Members
 
-		public bool Apply()
+		public virtual bool Apply()
 		{
 			if (!(_end > _org))
 			{
