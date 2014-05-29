@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Altaxo.Gui.DataConnection.QueryPropertiesControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<CheckBox x:Name="_chkDistinct" Content="Distinct values" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+		<Label Content="Top N:" Grid.Row="1" Grid.Column="0" />
+		<TextBox x:Name="_numTopN" Grid.Row="1" Grid.Column="1" />
+		<Label Content="Group by:" Grid.Row="2" Grid.Column="0" />
+		<ComboBox x:Name="_cmbGroupBy" Grid.Row="2" Grid.Column="1" />
+	</Grid>
+</UserControl>

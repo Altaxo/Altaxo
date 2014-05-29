@@ -361,6 +361,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\DataConnection\ConnectionMainControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\DataConnection\QueryDesignerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\DataConnection\QueryPropertiesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -996,6 +1008,15 @@
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
     <Compile Include="Gui\Common\VisibilityConverter.cs" />
+    <Compile Include="Gui\DataConnection\ConnectionMainControl.xaml.cs">
+      <DependentUpon>ConnectionMainControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\QueryDesignerControl.xaml.cs">
+      <DependentUpon>QueryDesignerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\QueryPropertiesControl.xaml.cs">
+      <DependentUpon>QueryPropertiesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
