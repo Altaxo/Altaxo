@@ -20,7 +20,8 @@
 		</StackPanel>
 		<TabControl x:Name="_tab" Grid.Row="2" SelectionChanged="_tab_SelectedIndexChanged">
 			<TabItem x:Name="_pgTables" Header="Tables">
-				<TreeView x:Name="_treeTables" SelectedItemChanged="_tab_SelectedIndexChanged" MouseDoubleClick="_treeTables_DoubleClick">
+				<!-- look here for information how to bind IsSelected: http://stackoverflow.com/questions/11065995/binding-selecteditem-in-a-hierarchicaldatatemplate-applied-wpf-treeview -->
+				<TreeView x:Name="_treeTables" SelectedItemChanged="EhTreeSelectedItemChanged" MouseDoubleClick="_treeTables_DoubleClick">
 					<TreeView.ItemTemplate>
 						<HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
 							<TextBlock Text="{Binding Text}" />
