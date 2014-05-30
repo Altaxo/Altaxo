@@ -75,7 +75,13 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Run5();
+			Run6();
+		}
+
+		public void Run6()
+		{
+			var ctrl = new Altaxo.Gui.DataConnection.ConnectionMainController();
+			Current.Gui.ShowDialog(ctrl, "Connection main view", false);
 		}
 
 		public void Run5()

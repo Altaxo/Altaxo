@@ -44,7 +44,7 @@ namespace Altaxo.Gui.DataConnection
 	/// <summary>
 	/// Interaction logic for Form1.xaml
 	/// </summary>
-	public partial class ConnectionMainControl : UserControl
+	public partial class ConnectionMainControl : UserControl, IConnectionMainView
 	{
 		// current connection string and corresponding schema
 		private string _connString;
@@ -144,7 +144,7 @@ namespace Altaxo.Gui.DataConnection
 				// table/view/sproc
 				if (_tab.SelectedItem == _pgTables)
 				{
-					var nd = _treeTables.SelectedItem as TreeViewItem;
+					var nd = _treeTables.SelectedItem as TableTreeNode;
 					return nd == null || nd.Tag == null || _schema == null
 							? string.Empty
 							: OleDbSchema.GetSelectStatement(nd.Tag as System.Data.DataTable);
@@ -324,7 +324,8 @@ namespace Altaxo.Gui.DataConnection
 
 					// show the data
 					var ctrl = new DataPreviewController(dt, new System.Drawing.Size((int)ActualWidth, (int)ActualHeight));
-					Current.Gui.ShowDialog(ctrl, "Data preview", false);
+					string title = string.Format("{0} ({1:n0} records)", dt.TableName, dt.Rows.Count);
+					Current.Gui.ShowDialog(ctrl, title, false);
 				}
 			}
 			catch (Exception x)

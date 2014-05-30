@@ -365,6 +365,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\DataConnection\DataPreviewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\FilterEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\ParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\DataConnection\QueryDesignerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1010,6 +1022,15 @@
     <Compile Include="Gui\Common\VisibilityConverter.cs" />
     <Compile Include="Gui\DataConnection\ConnectionMainControl.xaml.cs">
       <DependentUpon>ConnectionMainControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\DataPreviewControl.xaml.cs">
+      <DependentUpon>DataPreviewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\FilterEditControl.xaml.cs">
+      <DependentUpon>FilterEditControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\ParametersControl.xaml.cs">
+      <DependentUpon>ParametersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\DataConnection\QueryDesignerControl.xaml.cs">
       <DependentUpon>QueryDesignerControl.xaml</DependentUpon>

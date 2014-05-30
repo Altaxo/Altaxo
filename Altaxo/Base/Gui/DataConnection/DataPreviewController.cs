@@ -5,8 +5,15 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
+	public interface IDataPreviewView
+	{
+		void SetTableSource(System.Data.DataTable table);
+	}
+
+	[ExpectedTypeOfView(typeof(IDataPreviewView))]
 	public class DataPreviewController : IMVCAController
 	{
+		private IDataPreviewView _view;
 		private System.Data.DataTable dt;
 		private System.Drawing.Size size;
 
@@ -15,39 +22,56 @@ namespace Altaxo.Gui.DataConnection
 			// TODO: Complete member initialization
 			this.dt = dt;
 			this.size = size;
+			Initialize(true);
 		}
 
 		public DataPreviewController(System.Data.DataTable dt)
 		{
 			// TODO: Complete member initialization
 			this.dt = dt;
+			Initialize(true);
+		}
+
+		private void Initialize(bool initData)
+		{
+			if (initData)
+			{
+			}
+			if (null != _view)
+			{
+				_view.SetTableSource(dt);
+			}
 		}
 
 		public object ViewObject
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return _view;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				_view = value as IDataPreviewView;
+				if (null != _view)
+				{
+					Initialize(false);
+				}
 			}
 		}
 
 		public object ModelObject
 		{
-			get { throw new NotImplementedException(); }
+			get { return null; }
 		}
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			ViewObject = null;
 		}
 
 		public bool Apply()
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 	}
 }

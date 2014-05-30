@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
@@ -44,55 +45,38 @@ namespace Altaxo.Gui.DataConnection
 	/// </summary>
 	public partial class QueryPropertiesControl : UserControl
 	{
-		private QueryBuilder _builder;
-
 		public QueryPropertiesControl()
 		{
 			InitializeComponent();
 		}
 
-		public QueryBuilder QueryBuilder
-		{
-			get { return _builder; }
-			set
-			{
-				if (_builder != value)
-				{
-					_builder = value;
-					UpdateDialogValues();
-				}
-			}
-		}
-
-		private void _btnOK_Click(object sender, EventArgs e)
-		{
-			UpdateBuilderValues();
-		}
-
 		// copy QueryBuilder values to form
-		private void UpdateDialogValues()
+		public void UpdateDialogValues(bool isDistinct, int topN, SelectableListNodeList groupBy)
 		{
-			_numTopN.Text = _builder.Top.ToString();
-			if (_builder.GroupBy)
+			_chkDistinct.IsChecked = isDistinct;
+			_numTopN.Value = topN;
+
+			if (null != groupBy.FirstSelectedNode)
 			{
-				_cmbGroupBy.SelectedIndex = (int)_builder.GroupByExtension;
+				_cmbGroupBy.IsEnabled = true;
+				GuiHelper.Initialize(_cmbGroupBy, groupBy);
 			}
 			else
 			{
 				_cmbGroupBy.IsEnabled = false;
+				_cmbGroupBy.ItemsSource = null;
 			}
-			_chkDistinct.IsChecked = _builder.Distinct;
 		}
 
 		// copy form values to QueryBuilder
-		private void UpdateBuilderValues()
+		public int GetTopN()
 		{
-			_builder.Top = int.Parse(_numTopN.Text);
-			if (_builder.GroupBy)
-			{
-				_builder.GroupByExtension = (GroupByExtension)_cmbGroupBy.SelectedIndex;
-			}
-			_builder.Distinct = true == _chkDistinct.IsChecked;
+			return _numTopN.Value;
+		}
+
+		public bool GetDistinct()
+		{
+			return true == _chkDistinct.IsChecked;
 		}
 	}
 }

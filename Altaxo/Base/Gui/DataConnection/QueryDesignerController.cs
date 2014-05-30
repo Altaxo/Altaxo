@@ -63,6 +63,11 @@ namespace Altaxo.Gui.DataConnection
 
 		private IQueryDesignerView _view;
 
+		public QueryDesignerController()
+		{
+			Initialize(true);
+		}
+
 		/// <summary>
 		/// Gets or sets the connection string that represents the underlying database.
 		/// </summary>
@@ -182,9 +187,8 @@ namespace Altaxo.Gui.DataConnection
 
 		private void EhChooseProperties()
 		{
-			using (var dlg = new QueryPropertiesController())
+			using (var dlg = new QueryPropertiesController(_builder))
 			{
-				dlg.QueryBuilder = _builder;
 				if (Current.Gui.ShowDialog(dlg, "Properties", false))
 				{
 					_view.UpdateSqlDisplay(_builder.Sql, _builder.MissingJoins);

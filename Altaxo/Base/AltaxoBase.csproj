@@ -236,7 +236,9 @@
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
+    <Compile Include="Gui\DataConnection\ConnectionMainController.cs" />
     <Compile Include="Gui\DataConnection\DataPreviewController.cs" />
+    <Compile Include="Gui\DataConnection\FilterEditController.cs" />
     <Compile Include="Gui\DataConnection\ParametersController.cs" />
     <Compile Include="Gui\DataConnection\QueryDesignerController.cs" />
     <Compile Include="Gui\DataConnection\QueryPropertiesController.cs" />

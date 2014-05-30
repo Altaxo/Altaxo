@@ -5,41 +5,67 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
+	public interface IParametersView
+	{
+		void SetParametersSource(List<System.Data.OleDb.OleDbParameter> parms);
+
+		void ReadParameter();
+	}
+
+	[ExpectedTypeOfView(typeof(IParametersView))]
 	public class ParametersController : IMVCAController
 	{
-		private List<System.Data.OleDb.OleDbParameter> parms;
+		private IParametersView _view;
+		private List<System.Data.OleDb.OleDbParameter> _doc;
 
 		public ParametersController(List<System.Data.OleDb.OleDbParameter> parms)
 		{
 			// TODO: Complete member initialization
-			this.parms = parms;
+			this._doc = parms;
+			Initialize(true);
+		}
+
+		private void Initialize(bool initData)
+		{
+			if (initData)
+			{
+			}
+			if (null != _view)
+			{
+				_view.SetParametersSource(_doc);
+			}
 		}
 
 		public object ViewObject
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return _view;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				_view = value as IParametersView;
+				if (null != _view)
+				{
+					Initialize(false);
+				}
 			}
 		}
 
 		public object ModelObject
 		{
-			get { throw new NotImplementedException(); }
+			get { return _doc; }
 		}
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			ViewObject = null;
 		}
 
 		public bool Apply()
 		{
-			throw new NotImplementedException();
+			_view.ReadParameter();
+			return true;
 		}
 	}
 }
