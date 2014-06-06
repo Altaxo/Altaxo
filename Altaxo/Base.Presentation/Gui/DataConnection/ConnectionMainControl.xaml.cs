@@ -1,8 +1,4 @@
-﻿using Altaxo.Collections;
-using Altaxo.DataConnection;
-using System;
-
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -26,6 +22,9 @@ using System;
 
 #endregion Copyright
 
+using Altaxo.Collections;
+using Altaxo.DataConnection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,9 +53,33 @@ namespace Altaxo.Gui.DataConnection
 
 		public event Action ChooseConnection;
 
+		public event Action<string> SelectedConnectionChanged;
+
+		public event Action SqlTextChanged;
+
 		public ConnectionMainControl()
 		{
 			InitializeComponent();
+		}
+
+		private static IndexToImageConverter _treeImageConverter;
+
+		public static IValueConverter TreeImageConverter
+		{
+			get
+			{
+				if (null == _treeImageConverter)
+				{
+					_treeImageConverter = new IndexToImageConverter(
+							new string[]{
+														"Icons.16x16.DataConnection.Table",
+														"Icons.16x16.DataConnection.View",
+														"Icons.16x16.DataConnection.Procedure",
+														"Icons.16x16.DataConnection.Column",
+													});
+				}
+				return _treeImageConverter;
+			}
 		}
 
 		public string SqlText
@@ -90,6 +113,42 @@ namespace Altaxo.Gui.DataConnection
 			get
 			{
 				return _treeTables.SelectedItem as NGTreeNode;
+			}
+		}
+
+		private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var twi = sender as TreeViewItem;
+			if (null != twi)
+				twi.IsSelected = true;
+		}
+
+		public void SetConnectionListSource(SelectableListNodeList list, string currentItem)
+		{
+			GuiHelper.Initialize(_cmbConnString, list);
+			_cmbConnString.Text = currentItem;
+		}
+
+		private void EhConnectionStringSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_cmbConnString);
+			var ev = SelectedConnectionChanged;
+			if (null != ev)
+			{
+				ev(_cmbConnString.Text);
+			}
+		}
+
+		private void EhConnStringKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				var ev = SelectedConnectionChanged;
+				if (null != ev)
+				{
+					e.Handled = true;
+					ev(_cmbConnString.Text);
+				}
 			}
 		}
 
@@ -152,6 +211,22 @@ namespace Altaxo.Gui.DataConnection
 		public void SetNormalCursor()
 		{
 			this.Cursor = Cursors.Arrow;
+		}
+
+		private void _btnPreviewData_Click(object sender, RoutedEventArgs e)
+		{
+			var ev = PreviewTableData;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhSqlTextChanged(object sender, TextChangedEventArgs e)
+		{
+			var ev = SqlTextChanged;
+			if (null != ev)
+			{
+				ev();
+			}
 		}
 	}
 }

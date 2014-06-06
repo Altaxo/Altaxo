@@ -33,6 +33,8 @@ namespace Altaxo.Gui.DataConnection
 {
 	public interface IQueryDesignerView
 	{
+		/// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
+		/// <remarks>The image indices 0, 1, 2 and 3 correspond to the nodes: Table , View, Procedure and DataColumn.</remarks>
 		void SetTableTreeDataSource(NGTreeNode rootNode);
 
 		void SetDataGridDataSource(QueryFieldCollection data, bool isGrouped);
@@ -53,12 +55,23 @@ namespace Altaxo.Gui.DataConnection
 		event Action ViewResults;
 
 		event Action ClearQuery;
+
+		event Action<NGTreeNode> TreeNodeMouseDoubleClick;
+
+		event Action<NGTreeNode, List<string>> RelatedTablesRequired;
+
+		event Action<NGTreeNode> HideTableChosen;
+
+		event Action ShowTablesAllChosen;
+
+		event Action<string> RelatedTableNameChosen;
 	}
 
 	[ExpectedTypeOfView(typeof(IQueryDesignerView))]
 	public class QueryDesignerController : IMVCAController
 	{
 		private QueryBuilder _builder;
+
 		private NGTreeNode _treeTableNodes;
 
 		private IQueryDesignerView _view;
@@ -113,6 +126,8 @@ namespace Altaxo.Gui.DataConnection
 				_view.SetDataGridDataSource(_builder.QueryFields, _builder.GroupBy);
 
 				UpdateTableTree();
+
+				_view.UpdateGridColumns(_builder.GroupBy);
 			}
 		}
 
@@ -124,6 +139,13 @@ namespace Altaxo.Gui.DataConnection
 			_view.CheckSql += EhCheckSql;
 			_view.ViewResults += EhViewResults;
 			_view.ClearQuery += EhClearQuery;
+			_view.TreeNodeMouseDoubleClick += EhTreeNodeMouseDoubleClick;
+			_view.RelatedTablesRequired += EhRelatedTablesRequired;
+			_view.HideTableChosen += EhHideTableChosen;
+
+			_view.ShowTablesAllChosen += EhShowTablesAllChosen;
+
+			_view.RelatedTableNameChosen += EhRelatedTableNameChosen;
 		}
 
 		private void DetachView()
@@ -134,6 +156,72 @@ namespace Altaxo.Gui.DataConnection
 			_view.CheckSql -= EhCheckSql;
 			_view.ViewResults -= EhViewResults;
 			_view.ClearQuery -= EhClearQuery;
+			_view.TreeNodeMouseDoubleClick -= EhTreeNodeMouseDoubleClick;
+			_view.RelatedTablesRequired -= EhRelatedTablesRequired;
+			_view.HideTableChosen -= EhHideTableChosen;
+
+			_view.ShowTablesAllChosen -= EhShowTablesAllChosen;
+
+			_view.RelatedTableNameChosen -= EhRelatedTableNameChosen;
+		}
+
+		private void EhRelatedTableNameChosen(string tableName)
+		{
+			var node = FindNode(tableName);
+			if (node != null)
+			{
+				node.IsExpanded = true;
+			}
+		}
+
+		private void EhShowTablesAllChosen()
+		{
+			UpdateTableTree();
+		}
+
+		private void EhHideTableChosen(NGTreeNode node)
+		{
+			if (null != node && node.Tag is System.Data.DataTable)
+			{
+				node.Remove();
+			}
+		}
+
+		private void EhRelatedTablesRequired(NGTreeNode nd, List<string> resultingList)
+		{
+			resultingList.Clear();
+			System.Data.DataTable dt = nd == null ? null : nd.Tag as System.Data.DataTable;
+
+			if (null == dt)
+				return;
+			var list = new List<string>();
+			foreach (System.Data.DataRelation dr in _builder.Schema.Relations)
+			{
+				if (dr.ParentTable == dt && !list.Contains(dr.ChildTable.TableName))
+				{
+					list.Add(dr.ChildTable.TableName);
+				}
+				else if (dr.ChildTable == dt && !list.Contains(dr.ParentTable.TableName))
+				{
+					list.Add(dr.ParentTable.TableName);
+				}
+			}
+			list.Sort();
+			foreach (string tableName in list)
+			{
+				if (FindNode(tableName) != null)
+				{
+					resultingList.Add(tableName);
+				}
+			}
+		}
+
+		private void EhTreeNodeMouseDoubleClick(NGTreeNode node)
+		{
+			if (null != node && (node.Tag is System.Data.DataColumn))
+			{
+				AddField(node.Tag);
+			}
 		}
 
 		private void EhClearQuery()
@@ -221,9 +309,9 @@ namespace Altaxo.Gui.DataConnection
 		private void UpdateTableTree()
 		{
 			// initialize table tree
-			NGTreeNode rootNode = new NGTreeNode();
-			var ndTables = new NGTreeNode { Text = Current.ResourceService.GetString("Gui.DataConnection.Tables"), ImageIndex = 0, SelectedImageIndex = 0 };
-			var ndViews = new NGTreeNode { Text = Current.ResourceService.GetString("Gui.DataConnection.Views"), ImageIndex = 1, SelectedImageIndex = 1 };
+			NGTreeNode rootNode = new NGTreeNodeWithImageIndex();
+			var ndTables = new NGTreeNodeWithImageIndex { Text = Current.ResourceService.GetString("Gui.DataConnection.Tables"), ImageIndex = 0, SelectedImageIndex = 0 };
+			var ndViews = new NGTreeNodeWithImageIndex { Text = Current.ResourceService.GetString("Gui.DataConnection.Views"), ImageIndex = 1, SelectedImageIndex = 1 };
 
 			// populate using current schema
 			if (Schema != null)
@@ -232,7 +320,7 @@ namespace Altaxo.Gui.DataConnection
 				foreach (System.Data.DataTable dt in Schema.Tables)
 				{
 					// create new node, save table in tag property
-					var node = new NGTreeNode { Text = dt.TableName };
+					var node = new NGTreeNodeWithImageIndex { Text = dt.TableName };
 					node.Tag = dt;
 
 					// add new node to appropriate parent
@@ -275,10 +363,10 @@ namespace Altaxo.Gui.DataConnection
 		{
 			foreach (System.Data.DataColumn col in dt.Columns)
 			{
-				var field = new NGTreeNode { Text = col.ColumnName };
+				var field = new NGTreeNodeWithImageIndex { Text = col.ColumnName };
 				field.Tag = col;
-				field.ImageIndex = 2;
-				field.SelectedImageIndex = 2;
+				field.ImageIndex = 3;
+				field.SelectedImageIndex = 3;
 				node.Nodes.Add(field);
 			}
 		}
@@ -297,10 +385,24 @@ namespace Altaxo.Gui.DataConnection
 			SelectField(field);
 		}
 
+		// add tables or columns to the sql statement
+		private void AddField(object element)
+		{
+			var dt = element as System.Data.DataTable;
+			if (dt != null)
+			{
+				AddTable(dt);
+			}
+			var dc = element as System.Data.DataColumn;
+			if (dc != null)
+			{
+				AddColumn(dc);
+			}
+		}
+
 		// select a field on the grid
 		private void SelectField(QueryField field)
 		{
-			throw new NotImplementedException();
 			//var cm = BindingContext[_grid.DataSource] as CurrencyManager;
 			//cm.Position = cm.List.IndexOf(field);
 		}

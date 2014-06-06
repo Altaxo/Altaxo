@@ -3,34 +3,55 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+					  xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+					  xmlns:local="clr-namespace:Altaxo.Gui.DataConnection"
+						 xmlns:axog="clr-namespace:Altaxo.Gui">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="8" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<StackPanel Orientation="Horizontal">
-			<Label Content="Connection String:" />
-			<ComboBox x:Name="_cmbConnString" MinWidth="100" IsEditable="True" />
-			<Button x:Name="_btnConnPicker" Content="..." Click="_btnConnPicker_Click" />
-			<Button x:Name="_btnSqlBuilder" Content="\\-"  Click="_btnSqlBuilder_Click" />
-			<Button x:Name="_btnPreviewData" Content="O" />
-		</StackPanel>
-		<TabControl x:Name="_tab" Grid.Row="2" SelectionChanged="_tab_SelectedIndexChanged">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Label Content="Connection String:" Grid.Column="0" />
+		<ComboBox x:Name="_cmbConnString" Grid.Column="1" MinWidth="200" IsEditable="True" SelectionChanged="EhConnectionStringSelectionChanged" KeyDown="EhConnStringKeyDown" />
+		<Button x:Name="_btnConnPicker" Grid.Column="2" Content="{axog:GetIcon Icons.16x16.DataConnection.EditConnectionString}"  Click="_btnConnPicker_Click" ToolTip="Pick a new SQL connection" Margin="2,0,0,0" />
+		<Button x:Name="_btnSqlBuilder" Grid.Column="3" Content="{axog:GetIcon Icons.16x16.DataConnection.ShowSQLBuilder}" Click="_btnSqlBuilder_Click" ToolTip="Build an SQL query using the SQL builder dialog" Margin="8,0,0,0" />
+		<Button x:Name="_btnPreviewData" Grid.Column="4" Content="{axog:GetIcon Icons.16x16.DataConnection.ViewResults}"  Click="_btnPreviewData_Click" ToolTip="Preview data" Margin="8,0,0,0" />
+		<TabControl x:Name="_tab" Grid.Row="2" Grid.ColumnSpan="5" SelectionChanged="_tab_SelectedIndexChanged">
 			<TabItem x:Name="_pgTables" Header="Tables">
-				<!-- look here for information how to bind IsSelected: http://stackoverflow.com/questions/11065995/binding-selecteditem-in-a-hierarchicaldatatemplate-applied-wpf-treeview -->
-				<TreeView x:Name="_treeTables" SelectedItemChanged="EhTreeSelectedItemChanged" MouseDoubleClick="_treeTables_DoubleClick">
-					<TreeView.ItemTemplate>
-						<HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
-							<TextBlock Text="{Binding Text}" />
+				<TreeView x:Name="_treeTables"  MinHeight="60" SelectedItemChanged="EhTreeSelectedItemChanged" MouseDoubleClick="_treeTables_DoubleClick">
+					<TreeView.Resources>
+						<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+							<StackPanel Orientation="Horizontal">
+								<Image Width="16" Height="16" Margin="3,0" Source="{Binding ImageIndex, Converter={x:Static local:ConnectionMainControl.TreeImageConverter }}" />
+								<TextBlock Text="{Binding Text}" />
+							</StackPanel>
 						</HierarchicalDataTemplate>
-					</TreeView.ItemTemplate>
+					</TreeView.Resources>
+					<ItemsControl.ItemContainerStyle>
+						<Style TargetType="{x:Type TreeViewItem}">
+							<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+							<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+							<!-- Handling PreviewMouseRightButtonDown to make sure that the tree node is always selected before opening the context menu -->
+							<EventSetter Event="PreviewMouseRightButtonDown" Handler="EhTreeViewItem_PreviewRightButtonDown" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsSelected}" Value="True">
+									<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</ItemsControl.ItemContainerStyle>
 				</TreeView>
 			</TabItem>
 			<TabItem x:Name="_pgSql" Header="SQL-Statement">
-				<TextBox x:Name="_txtSql" AcceptsReturn="True" />
+				<TextBox x:Name="_txtSql"  MinHeight="60" AcceptsReturn="True" TextChanged="EhSqlTextChanged"  VerticalScrollBarVisibility="Auto" />
 			</TabItem>
 		</TabControl>
 	</Grid>

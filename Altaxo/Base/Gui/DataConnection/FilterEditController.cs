@@ -1,4 +1,28 @@
-﻿using Altaxo.Collections;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Altaxo.Collections;
 using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
@@ -21,8 +45,6 @@ namespace Altaxo.Gui.DataConnection
 
 		void SetOperatorChoices(SelectableListNodeList list);
 
-		string OperatorText { get; set; }
-
 		event Action SimpleUpdated;
 
 		event Action IntervalUpdated;
@@ -38,34 +60,43 @@ namespace Altaxo.Gui.DataConnection
 		private QueryField _field;
 		private IFilterEditView _view;
 
+		private string _value;
+
 		private SelectableListNodeList _operatorChoices;
+
+		public FilterEditController(QueryField field)
+		{
+			QueryField = field;
+			Initialize(true);
+		}
 
 		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
 				_operatorChoices = new SelectableListNodeList();
-				foreach (var s in new string[] { ">", ">=", "<", "<=", "<>" })
+				foreach (var s in new string[] { "", "=", ">", ">=", "<", "<=", "<>" })
 					_operatorChoices.Add(new SelectableListNode(s, s, false));
+
+				_value = _field.Filter;
 			}
 			if (null != _view)
 			{
 				_view.SetOperatorChoices(_operatorChoices);
 
 				// initialize value
-				string crit = _field.Filter;
-				_view.SetValueText(crit);
+				_view.SetValueText(_value);
 
 				// initialize fields
-				if (crit.Length > 0)
+				if (_value.Length > 0)
 				{
-					Match m = _rx1.Match(crit);
+					Match m = _rx1.Match(_value);
 					if (m.Success)
 					{
-						_view.OperatorText = m.Groups[2].Value;
+						SetOperatorText(m.Groups[2].Value);
 						_view.SingleValueText = m.Groups[3].Value;
 					}
-					m = _rx2.Match(crit);
+					m = _rx2.Match(_value);
 					if (m.Success)
 					{
 						_view.IntervalFromText = m.Groups[2].Value;
@@ -78,7 +109,7 @@ namespace Altaxo.Gui.DataConnection
 		public QueryField QueryField
 		{
 			get { return _field; }
-			set
+			private set
 			{
 				// save query field
 				_field = value;
@@ -89,7 +120,7 @@ namespace Altaxo.Gui.DataConnection
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return _view;
 			}
 			set
 			{
@@ -113,7 +144,7 @@ namespace Altaxo.Gui.DataConnection
 
 		public object ModelObject
 		{
-			get { return null; }
+			get { return _value; }
 		}
 
 		public void Dispose()
@@ -126,12 +157,37 @@ namespace Altaxo.Gui.DataConnection
 			return true;
 		}
 
+		private string GetOperatorText()
+		{
+			var node = _operatorChoices.FirstSelectedNode;
+			return null == node ? null : (string)node.Tag;
+		}
+
+		private void SetOperatorText(string op)
+		{
+			_operatorChoices.ClearSelectionsAll();
+			foreach (var node in _operatorChoices)
+			{
+				if (op == (string)node.Tag)
+				{
+					node.IsSelected = true;
+					break;
+				}
+			}
+			if (null != _view)
+			{
+				_view.SetOperatorChoices(_operatorChoices);
+			}
+		}
+
 		private void UpdateSimple()
 		{
-			if (!string.IsNullOrEmpty(_view.OperatorText) && _view.SingleValueText.Length > 0)
+			if (!string.IsNullOrEmpty(GetOperatorText()) && _view.SingleValueText.Length > 0)
 			{
 				var parm = GetParameter(_view.SingleValueText);
-				_view.SetValueText(string.Format("{0} {1}", _view.OperatorText, parm));
+				_value = string.Format("{0} {1}", GetOperatorText(), parm);
+				if (null != _view)
+					_view.SetValueText(_value);
 			}
 		}
 
@@ -141,17 +197,22 @@ namespace Altaxo.Gui.DataConnection
 			{
 				var parmFrom = GetParameter(_view.IntervalFromText);
 				var parmTo = GetParameter(_view.intervalToText);
-				_view.SetValueText(string.Format("BETWEEN {0} AND {1}", parmFrom, parmTo));
+				_value = string.Format("BETWEEN {0} AND {1}", parmFrom, parmTo);
+				if (null != _view)
+					_view.SetValueText(_value);
 			}
 		}
 
 		private void ClearAll()
 		{
-			_view.OperatorText = null;
+			_operatorChoices.ClearSelectionsAll();
+			_operatorChoices[0].IsSelected = true;
+			_view.SetOperatorChoices(_operatorChoices);
 			_view.SingleValueText = string.Empty;
 			_view.IntervalFromText = string.Empty;
 			_view.intervalToText = string.Empty;
-			_view.SetValueText(string.Empty);
+			_value = string.Empty;
+			_view.SetValueText(_value);
 		}
 
 		private string GetParameter(string p)

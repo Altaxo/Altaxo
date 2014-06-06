@@ -43,7 +43,7 @@ namespace Altaxo.Gui.DataConnection
 	/// <summary>
 	/// Interaction logic for QueryPropertiesControl.xaml
 	/// </summary>
-	public partial class QueryPropertiesControl : UserControl
+	public partial class QueryPropertiesControl : UserControl, IQueryPropertiesView
 	{
 		public QueryPropertiesControl()
 		{

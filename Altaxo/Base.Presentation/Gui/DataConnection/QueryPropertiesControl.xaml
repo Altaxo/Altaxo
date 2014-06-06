@@ -17,10 +17,10 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<CheckBox x:Name="_chkDistinct" Content="Distinct values" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
-		<Label Content="Top N:" Grid.Row="1" Grid.Column="0" />
-		<axogc:Int32UpDown x:Name="_numTopN" Grid.Row="1" Grid.Column="1" />
+		<CheckBox x:Name="_chkDistinct" Content="Distinct values" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,4" ToolTip="Check to include only distinct rows in the result." />
+		<Label Content="Top N:" Grid.Row="1" Grid.Column="0" Margin="0,4,0,4" />
+		<axogc:Int32UpDown x:Name="_numTopN" Grid.Row="1" Grid.Column="1" ToolTip="Enter a number to limit the number of returned rows. Enter 0 to return all rows." Margin="0,4,0,4" />
 		<Label Content="Group by:" Grid.Row="2" Grid.Column="0" />
-		<ComboBox x:Name="_cmbGroupBy" Grid.Row="2" Grid.Column="1" />
+		<ComboBox x:Name="_cmbGroupBy" Grid.Row="2" Grid.Column="1" ToolTip="Choose how to group the data." />
 	</Grid>
 </UserControl>

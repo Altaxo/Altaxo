@@ -80,7 +80,7 @@ namespace Altaxo.Main.Commands
 
 		public void Run6()
 		{
-			var ctrl = new Altaxo.Gui.DataConnection.ConnectionMainController();
+			var ctrl = new Altaxo.Gui.DataConnection.ConnectionMainController(string.Empty);
 			Current.Gui.ShowDialog(ctrl, "Connection main view", false);
 		}
 

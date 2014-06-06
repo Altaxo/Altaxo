@@ -1,4 +1,28 @@
-﻿using Altaxo.Collections;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Altaxo.Collections;
 using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
@@ -19,10 +43,17 @@ namespace Altaxo.Gui.DataConnection
 		string SqlText { get; set; }
 
 		/// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
+		/// <remarks>The image indices 0, 1, and 2 correspond to the nodes: Table , View, and Procedure.</remarks>
 		void SetTreeSource(NGTreeNode rootNode);
 
 		/// <summary>Gets the currently selected item of the tree view that shows the tables, views and stored procedures of a data base.</summary>
 		NGTreeNode SelectedTreeItem { get; }
+
+		/// <summary>
+		/// Sets the source for the connection combo box.
+		/// </summary>
+		/// <param name="list">The list.</param>
+		void SetConnectionListSource(SelectableListNodeList list, string currentValue);
 
 		/// <summary>Shows the tab page that contains the tree view that shows the tables, views and stored procedures of a data base.</summary>
 		void ShowTableTabItem();
@@ -47,6 +78,14 @@ namespace Altaxo.Gui.DataConnection
 
 		/// <summary>Fires when the uses wants to create a new data connection string.</summary>
 		event Action ChooseConnection;
+
+		/// <summary>Fires when the user selects another connection string in the connection string combobox. The argument is the selected or newly entered connection string.</summary>
+		event Action<string> SelectedConnectionChanged;
+
+		/// <summary>
+		/// Fired when the SQL text has changed.
+		/// </summary>
+		event Action SqlTextChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(IConnectionMainView))]
@@ -55,104 +94,111 @@ namespace Altaxo.Gui.DataConnection
 		private IConnectionMainView _view;
 
 		// current connection string and corresponding schema
-		private string _connString;
+		private string _connectionString;
 
 		private OleDbSchema _schema;
+
+		private SelectableListNodeList _connectionStringList;
 
 		// max number of records shown on the preview dialog
 		private const int MAX_PREVIEW_RECORDS = 5000;
 
 		private const int _cmbConnStringMaxDropDownItems = 10;
 
-		private SelectableListNodeList _connectionStringList;
-
 		private NGTreeNode _treeRootNode;
+
+		public ConnectionMainController(string connectionString)
+		{
+			_connectionStringList = new SelectableListNodeList();
+			_treeRootNode = new NGTreeNode();
+			AddNewConnectionString(connectionString);
+			Initialize(true);
+		}
 
 		public void Initialize(bool initData)
 		{
 			if (initData)
 			{
-				_connectionStringList = new SelectableListNodeList();
 			}
 			if (null != _view)
 			{
+				_view.SetConnectionListSource(_connectionStringList, _connectionString);
+				_view.SetTreeSource(_treeRootNode);
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the connection string.
+		/// Adds the new connection string.
 		/// </summary>
-		public string ConnectionString
+		/// <param name="value">The value.</param>
+		/// <returns>True if the current connection string has changed.</returns>
+		private bool AddNewConnectionString(string value)
 		{
-			get { return _connString; }
-			set
+			if (string.IsNullOrEmpty(value))
+				return false;
+
+			var previousConnectionString = _connectionString;
+
+			// look for item in the list
+			var index = _connectionStringList.IndexOfFirst(x => value == (string)x.Tag);
+
+			// get schema for the new connection string
+			_schema = OleDbSchema.GetSchema(value);
+
+			// handle good connection strings
+			if (_schema != null)
 			{
-				if (value != ConnectionString)
+				_connectionString = value;
+				// add good values to the list
+				if (index < 0) // was not before in the list
 				{
-					// this may take a while
-					_view.SetWaitCursor();
-
-					// look for item in the list
-					var index = _connectionStringList.IndexOfFirst(x => value == (string)x.Tag);
-
-					// get schema for the new connection string
-					_schema = OleDbSchema.GetSchema(value);
-
-					// handle good connection strings
-					if (_schema != null)
-					{
-						// add good values to the list
-						if (index < 0)
-						{
-							_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
-							index = 0;
-						}
-						else if (index > 0)
-						{
-							_connectionStringList.RemoveAt(index);
-							_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
-							index = 0;
-						}
-
-						// trim list
-						while (_connectionStringList.Count > _cmbConnStringMaxDropDownItems)
-						{
-							_connectionStringList.RemoveAt(_connectionStringList.Count - 1);
-						}
-					}
-					else // handle bad connection strings
-					{
-						// remove from list
-						if (index >= 0)
-						{
-							_connectionStringList.RemoveAt(index);
-							index = -1;
-						}
-
-						// do not store bad values
-						value = string.Empty;
-					}
-
-					// save new value
-					_connString = value;
-
-					// show new value in combo box and table tree
 					_connectionStringList.ClearSelectionsAll();
-					if (index > 0)
-						_connectionStringList[index].IsSelected = true;
+					_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
+					_connectionString = value;
+					index = 0; // inserted at index 0
+				}
+				else if (index > 0) // was in the list before
+				{
+					_connectionStringList.ClearSelectionsAll();
+					_connectionStringList.RemoveAt(index);
+					_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
+					_connectionString = value;
+					index = 0;
+				}
 
-					UpdateTableTree();
-
-					// new connection, clear SQL
-					_view.SqlText = string.Empty;
-
-					// update ui
-					UpdateUI();
-
-					// done
-					_view.SetNormalCursor();
+				// trim list
+				while (_connectionStringList.Count > _cmbConnStringMaxDropDownItems)
+				{
+					_connectionStringList.RemoveAt(_connectionStringList.Count - 1);
 				}
 			}
+			else  // _schema is null, thus handle bad connection strings
+			{
+				// remove from list
+				if (index >= 0) // was in the list before
+				{
+					_connectionStringList.RemoveAt(index);
+					_connectionString = string.Empty;
+					index = -1;
+				}
+
+				_connectionString = string.Empty;
+			}
+
+			// make sure there is a selected item
+			if (null == _connectionStringList.FirstSelectedNode && _connectionStringList.Count > 0)
+			{
+				_connectionStringList[0].IsSelected = true;
+				_connectionString = (string)_connectionStringList[0].Tag;
+			}
+
+			if (string.IsNullOrEmpty(previousConnectionString) && string.IsNullOrEmpty(_connectionString))
+				return false; // nothing has changed
+
+			if (!string.IsNullOrEmpty(previousConnectionString) && !string.IsNullOrEmpty(_connectionString) && 0 == string.Compare(_connectionString, previousConnectionString))
+				return false; // nothing has changed, the two strings are equal
+
+			return true; // in all other cases, something has changed
 		}
 
 		private void UpdateTableTree()
@@ -162,9 +208,9 @@ namespace Altaxo.Gui.DataConnection
 
 			var nodes = _treeRootNode.Nodes;
 			nodes.Clear();
-			var ndTables = new NGTreeNode() { Text = Current.ResourceService.GetString("Gui.DataConnection.Tables"), ImageIndex = 0, SelectedImageIndex = 0 };
-			var ndViews = new NGTreeNode() { Text = Current.ResourceService.GetString("Gui.DataConnection.Views"), ImageIndex = 1, SelectedImageIndex = 1 };
-			var ndProcs = new NGTreeNode() { Text = Current.ResourceService.GetString("Gui.DataConnection.StoredProcedures"), ImageIndex = 1, SelectedImageIndex = 1 };
+			var ndTables = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.Tables"), ImageIndex = 0, SelectedImageIndex = 0 };
+			var ndViews = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.Views"), ImageIndex = 1, SelectedImageIndex = 1 };
+			var ndProcs = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.StoredProcedures"), ImageIndex = 2, SelectedImageIndex = 2 };
 
 			// populate using current schema
 			if (_schema != null)
@@ -173,7 +219,7 @@ namespace Altaxo.Gui.DataConnection
 				foreach (System.Data.DataTable dt in _schema.Tables)
 				{
 					// create new node, save table in tag property
-					var node = new NGTreeNode() { Text = dt.TableName };
+					var node = new NGTreeNodeWithImageIndex() { Text = dt.TableName };
 					node.Tag = dt;
 
 					// add new node to appropriate parent
@@ -246,7 +292,7 @@ namespace Altaxo.Gui.DataConnection
 		}
 
 		// preview data for currently selected node
-		private void PreviewData()
+		private void EhPreviewData()
 		{
 			// make sure we have a select statement
 			var sql = SelectStatement;
@@ -280,7 +326,7 @@ namespace Altaxo.Gui.DataConnection
 			// get data
 			try
 			{
-				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, ConnectionString))
+				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, _connectionString))
 				{
 					// get data
 					da.Fill(0, MAX_PREVIEW_RECORDS, dt);
@@ -309,8 +355,10 @@ namespace Altaxo.Gui.DataConnection
 				{
 					_view.SelectedTabChanged -= EhSelectedTabChanged;
 					_view.ShowSqlBuilder -= EhShowSqlBuilder;
-					_view.PreviewTableData -= EhPreviewTableData;
+					_view.PreviewTableData -= EhPreviewData;
 					_view.ChooseConnection -= EhChooseConnection;
+					_view.SelectedConnectionChanged -= EhSelectedConnectionChanged;
+					_view.SqlTextChanged -= EhSqlTextChanged;
 				}
 
 				_view = value as IConnectionMainView;
@@ -320,9 +368,19 @@ namespace Altaxo.Gui.DataConnection
 					Initialize(false);
 					_view.SelectedTabChanged += EhSelectedTabChanged;
 					_view.ShowSqlBuilder += EhShowSqlBuilder;
-					_view.PreviewTableData += EhPreviewTableData;
+					_view.PreviewTableData += EhPreviewData;
 					_view.ChooseConnection += EhChooseConnection;
+					_view.SelectedConnectionChanged += EhSelectedConnectionChanged;
+					_view.SqlTextChanged += EhSqlTextChanged;
 				}
+			}
+		}
+
+		private void EhSqlTextChanged()
+		{
+			if (null != _view)
+			{
+				UpdateUI();
 			}
 		}
 
@@ -344,22 +402,13 @@ namespace Altaxo.Gui.DataConnection
 		private void EhShowSqlBuilder()
 		{
 			var ctrl = new QueryDesignerController();
-			ctrl.ConnectionString = ConnectionString;
+			ctrl.ConnectionString = _connectionString;
 
 			if (Current.Gui.ShowDialog(ctrl, "SQL Query Designer", false))
 			{
 				_view.SqlText = ctrl.SelectStatement;
 				_view.ShowSqlTextTabItem();
 				UpdateUI();
-			}
-		}
-
-		private void EhPreviewTableData()
-		{
-			var nd = _view.SelectedTreeItem;
-			if (nd != null && nd.Tag is System.Data.DataTable)
-			{
-				PreviewData();
 			}
 		}
 
@@ -379,7 +428,29 @@ namespace Altaxo.Gui.DataConnection
 			}
 
 			// let user change it
-			ConnectionString = OleDbConnString.EditConnectionString(connString);
+			var newConnString = OleDbConnString.EditConnectionString(connString);
+
+			if (string.IsNullOrEmpty(newConnString))
+				return;
+
+			EhSelectedConnectionChanged(newConnString);
+		}
+
+		private void EhSelectedConnectionChanged(string newConnection)
+		{
+			bool success = AddNewConnectionString(newConnection);
+			_view.SetConnectionListSource(_connectionStringList, _connectionString); // update always, even if no success
+
+			if (success)
+			{
+				UpdateTableTree();
+
+				// new connection, clear SQL
+				_view.SqlText = string.Empty;
+
+				// update ui
+				UpdateUI();
+			}
 		}
 
 		// issue a warning

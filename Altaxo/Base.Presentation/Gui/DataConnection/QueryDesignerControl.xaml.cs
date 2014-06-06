@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
@@ -42,23 +43,59 @@ namespace Altaxo.Gui.DataConnection
 	/// <summary>
 	/// Interaction logic for QueryDesignerControl.xaml
 	/// </summary>
-	public partial class QueryDesignerControl : UserControl
+	public partial class QueryDesignerControl : UserControl, IQueryDesignerView
 	{
-		private event Action ChooseConnectionString;
+		public event Action ChooseConnectionString;
 
-		private event Action<bool> GroupByChanged;
+		public event Action<bool> GroupByChanged;
 
-		private event Action ChooseProperties;
+		public event Action ChooseProperties;
 
-		private event Action CheckSql;
+		public event Action CheckSql;
 
-		private event Action ViewResults;
+		public event Action ViewResults;
 
-		private event Action ClearQuery;
+		public event Action ClearQuery;
+
+		public event Action<NGTreeNode> TreeNodeMouseDoubleClick;
+
+		public event Action<NGTreeNode, List<string>> RelatedTablesRequired;
+
+		public event Action<NGTreeNode> HideTableChosen;
+
+		public event Action ShowTablesAllChosen;
+
+		public event Action<string> RelatedTableNameChosen;
 
 		public QueryDesignerControl()
 		{
 			InitializeComponent();
+			_grid.LoadingRow += EhGrid_Loading_Row;
+		}
+
+		private static IndexToImageConverter _treeImageConverter;
+
+		public static IValueConverter TreeImageConverter
+		{
+			get
+			{
+				if (null == _treeImageConverter)
+				{
+					_treeImageConverter = new IndexToImageConverter(
+							new string[]{
+														"Icons.16x16.DataConnection.Table",
+														"Icons.16x16.DataConnection.View",
+														"Icons.16x16.DataConnection.Procedure",
+														"Icons.16x16.DataConnection.Column",
+													});
+				}
+				return _treeImageConverter;
+			}
+		}
+
+		private void EhGrid_Loading_Row(object sender, DataGridRowEventArgs e)
+		{
+			UpdateGridColumns(_btnGroupBy.IsChecked == true);
 		}
 
 		public void UpdateSqlDisplay(string sqlText, bool isStatusVisible)
@@ -77,19 +114,37 @@ namespace Altaxo.Gui.DataConnection
 			UpdateGridColumns(isGrouped);
 		}
 
+		private DataGridColumn GetGridColumnByName(string name)
+		{
+			foreach (var c in _grid.Columns)
+				if (name == (string)c.Header)
+					return c;
+
+			return null;
+		}
+
 		// update state of the grid columns
 		public void UpdateGridColumns(bool isGrouped)
 		{
-			throw new NotImplementedException();
+			// freeze the first column so that it is visible even when horizontally scrolling
+			var frozenCol = GetGridColumnByName("Column");
+			if (null != frozenCol && !frozenCol.IsFrozen)
+			{
+				frozenCol.DisplayIndex = _grid.FrozenColumnCount;
+				_grid.FrozenColumnCount += 1;
+			}
 
-			//_grid.Columns["Column"].Frozen = true;
-			//_grid.Columns["GroupBy"].Visible = _builder.GroupBy;
+			// make GroupBy column visible or invisible
+			var groupByCol = GetGridColumnByName("GroupBy");
+			if (null != groupByCol)
+				groupByCol.Visibility = isGrouped ? Visibility.Visible : Visibility.Collapsed;
+
+			_btnGroupBy.IsChecked = isGrouped;
 		}
 
 		// replace grid columns with ones with better editors
 		private void FixGridColumns()
 		{
-			throw new NotImplementedException();
 			/*
 
 			for (int i = 0; i < _grid.Columns.Count; i++)
@@ -183,108 +238,124 @@ namespace Altaxo.Gui.DataConnection
 			}
 		}
 
-		private void EhGrid_CellEndEdit(object sender, DataGridCellEditEndingEventArgs e)
-		{
-			_grid.CommitEdit(DataGridEditingUnit.Cell, true);
-		}
-
 		private void EhTreeMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			throw new NotImplementedException();
-			var tvi = sender as TreeViewItem;
-			if (null != tvi)
-			{
-				/*
-				if (e.Node == _treeTables.SelectedNode &&
-					e.Node.Tag is DataColumn)
-				{
-					AddField(e.Node.Tag);
-				}
-				 */
-			}
+			var node = _treeTables.SelectedItem as Collections.NGTreeNode;
+			if (null == node)
+				return;
+
+			var ev = TreeNodeMouseDoubleClick;
+			if (null != ev)
+				ev(node);
 		}
 
 		private void EhGrid_BeginEdit(object sender, DataGridBeginningEditEventArgs e)
 		{
-			throw new NotImplementedException();
-			/*
-
-			if ("Filter"==((string)e.Column.Header))
+			if ("Filter" == ((string)e.Column.Header))
 			{
-				using (var dlg = new FilterEditorForm())
+				var field = e.Row.Item as QueryField;
+				using (var dlg = new FilterEditController(field))
 				{
-					var field = _grid.Rows[e.RowIndex].DataBoundItem as QueryField;
-					dlg.Font = Font;
-					dlg.QueryField = field;
-					if (dlg.ShowDialog(this) == DialogResult.OK)
+					if (Current.Gui.ShowDialog(dlg, "Edit field"))
 					{
-						field.Filter = dlg.Value;
+						field.Filter = (string)dlg.ModelObject;
 					}
 				}
 			}
-			 */
+		}
+
+		/// <summary>
+		/// Used to avoid stack overflow in <see cref="EhGrid_CellEndEdit"/>
+		/// </summary>
+		private bool _isReentrantEditCommit;
+
+		private void EhGrid_CellEndEdit(object sender, DataGridCellEditEndingEventArgs e)
+		{
+			//see http://codefluff.blogspot.de/2010/05/commiting-bound-cell-changes.html how to commit individual cell changed and to handle reentrancy here
+			if (!_isReentrantEditCommit)
+			{
+				_isReentrantEditCommit = true;
+				_grid.CommitEdit(DataGridEditingUnit.Row, true);
+				_isReentrantEditCommit = false;
+			}
+		}
+
+		private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var twi = sender as TreeViewItem;
+			if (null != twi)
+				twi.IsSelected = true;
 		}
 
 		private void EhTreeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			throw new NotImplementedException();
-			/*
-	// get node that was clicked
-			Point pt = _treeTables.PointToClient(Control.MousePosition);
-			TreeNode nd = _treeTables.GetNodeAt(pt);
-			DataTable dt = nd == null ? null : nd.Tag as DataTable;
-
-			// select node
-			if (nd != null)
+			if (e.OriginalSource is DependencyObject)
 			{
-				_treeTables.SelectedNode = nd;
+				var twi = GuiHelper.GetLogicalParentOfType<TreeViewItem>((DependencyObject)e.OriginalSource);
+				if (null != twi)
+				{
+					twi.IsSelected = true;
+				}
 			}
+
+			// get node that was clicked
+			var nd = _treeTables.SelectedItem as Collections.NGTreeNode;
+			System.Data.DataTable dt = nd == null ? null : nd.Tag as System.Data.DataTable;
 
 			// make sure this is a table node
 			if (dt == null)
 			{
-				e.Cancel = true;
 				return;
 			}
 
 			// populate related tables menu
-			_mnuRelatedTables.DropDownItems.Clear();
-			if (nd != null && nd.Tag is DataTable)
+			_contextMenuRelatedTables.Items.Clear();
+			if (null != dt)
 			{
 				var list = new List<string>();
-				foreach (DataRelation dr in _builder.Schema.Relations)
-				{
-					if (dr.ParentTable == dt && !list.Contains(dr.ChildTable.TableName))
-					{
-						list.Add(dr.ChildTable.TableName);
-					}
-					else if (dr.ChildTable == dt && !list.Contains(dr.ParentTable.TableName))
-					{
-						list.Add(dr.ParentTable.TableName);
-					}
-				}
-				list.Sort();
+
+				var ev = RelatedTablesRequired;
+				if (null != ev)
+					ev(nd, list);
+
 				foreach (string tableName in list)
 				{
-					if (FindNode(tableName) != null)
-					{
-						_mnuRelatedTables.DropDownItems.Add(tableName);
-					}
+					MenuItem toAdd = new MenuItem() { Header = tableName, Tag = tableName };
+					toAdd.Click += EhMenuRelatedTablesClicked;
+
+					_contextMenuRelatedTables.Items.Add(toAdd);
 				}
 			}
-			  */
+			e.Handled = false;
+		}
+
+		private void EhMenuRelatedTablesClicked(object sender, RoutedEventArgs e)
+		{
+			var ev = RelatedTableNameChosen;
+			if (null != ev)
+			{
+				string tableName = ((MenuItem)sender).Tag as string;
+				ev(tableName);
+			}
 		}
 
 		private void EhTreeMenu_HideThisTable(object sender, RoutedEventArgs e)
 		{
+			var ev = HideTableChosen;
+			if (null != ev)
+				ev(_treeTables.SelectedItem as Collections.NGTreeNode);
 		}
 
 		private void EhTreeMenu_ShowAllTables(object sender, RoutedEventArgs e)
 		{
+			var ev = ShowTablesAllChosen;
+			if (null != ev)
+				ev();
 		}
 
-		private void EhTreeMenu_RelatedTables(object sender, RoutedEventArgs e)
+		public void SetTableTreeDataSource(Collections.NGTreeNode rootNode)
 		{
+			_treeTables.ItemsSource = rootNode.Nodes;
 		}
 	}
 }

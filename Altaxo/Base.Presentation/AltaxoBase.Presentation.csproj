@@ -1042,6 +1042,8 @@
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\GetIconExtension.cs" />
+    <Compile Include="Gui\GetBitmapExtension.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
     </Compile>
@@ -1196,6 +1198,8 @@
     <Compile Include="Gui\Graph\Shapes\ShapeGroupControl.xaml.cs">
       <DependentUpon>ShapeGroupControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\IndexToImageConverter.cs" />
+    <Compile Include="Gui\IWpfResourceService.cs" />
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>
     </Compile>
