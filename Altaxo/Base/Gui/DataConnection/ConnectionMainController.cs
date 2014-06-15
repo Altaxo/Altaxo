@@ -70,6 +70,11 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>Fires when the currently selected tab page changed.</summary>
 		event Action SelectedTabChanged;
 
+		/// <summary>
+		/// Occurs when the selected tree node of the schema tree changed.
+		/// </summary>
+		event Action SelectedSchemaNodeChanged;
+
 		/// <summary>Fires when the uses chooses to show the SQL builder dialog.</summary>
 		event Action ShowSqlBuilder;
 
@@ -96,6 +101,8 @@ namespace Altaxo.Gui.DataConnection
 		// current connection string and corresponding schema
 		private string _connectionString;
 
+		private string _selectionStatement;
+
 		private OleDbSchema _schema;
 
 		private SelectableListNodeList _connectionStringList;
@@ -107,12 +114,18 @@ namespace Altaxo.Gui.DataConnection
 
 		private NGTreeNode _treeRootNode;
 
-		public ConnectionMainController(string connectionString)
+		public ConnectionMainController(string sqlStatement, string connectionString)
 		{
+			_selectionStatement = sqlStatement;
 			_connectionStringList = new SelectableListNodeList();
 			_treeRootNode = new NGTreeNode();
 			AddNewConnectionString(connectionString);
 			Initialize(true);
+		}
+
+		public ConnectionMainController(OleDbDataQuery query)
+			: this(query.Statement, query.ConnectionString)
+		{
 		}
 
 		public void Initialize(bool initData)
@@ -273,21 +286,39 @@ namespace Altaxo.Gui.DataConnection
 		{
 			get
 			{
-				if (null == _view)
-					return null;
+				return _selectionStatement;
+			}
+		}
 
-				// table/view/sproc
-				if (_view.IsTableTabItemSelected)
-				{
-					var nd = _view.SelectedTreeItem;
-					return nd == null || nd.Tag == null || _schema == null
-							? string.Empty
-							: OleDbSchema.GetSelectStatement(nd.Tag as System.Data.DataTable);
-				}
-				else // explicit sql statement
-				{
-					return _view.SqlText;
-				}
+		public string ConnectionString
+		{
+			get
+			{
+				return _connectionString;
+			}
+		}
+
+		/// <summary>
+		/// Gets a SQL statement that corresponds to the element that
+		/// is currently selected (table, view, stored procedure, or
+		/// explicit sql statement).
+		/// </summary>
+		private string GetCurrentSelectStatement()
+		{
+			if (null == _view)
+				return null;
+
+			// table/view/sproc
+			if (_view.IsTableTabItemSelected)
+			{
+				var nd = _view.SelectedTreeItem;
+				return nd == null || nd.Tag == null || _schema == null
+						? string.Empty
+						: OleDbSchema.GetSelectStatement(nd.Tag as System.Data.DataTable);
+			}
+			else // explicit sql statement
+			{
+				return _view.SqlText;
 			}
 		}
 
@@ -354,6 +385,7 @@ namespace Altaxo.Gui.DataConnection
 				if (null != _view)
 				{
 					_view.SelectedTabChanged -= EhSelectedTabChanged;
+					_view.SelectedSchemaNodeChanged -= EhSelectedSchemaNodeChanged;
 					_view.ShowSqlBuilder -= EhShowSqlBuilder;
 					_view.PreviewTableData -= EhPreviewData;
 					_view.ChooseConnection -= EhChooseConnection;
@@ -367,6 +399,7 @@ namespace Altaxo.Gui.DataConnection
 				{
 					Initialize(false);
 					_view.SelectedTabChanged += EhSelectedTabChanged;
+					_view.SelectedSchemaNodeChanged += EhSelectedSchemaNodeChanged;
 					_view.ShowSqlBuilder += EhShowSqlBuilder;
 					_view.PreviewTableData += EhPreviewData;
 					_view.ChooseConnection += EhChooseConnection;
@@ -378,6 +411,7 @@ namespace Altaxo.Gui.DataConnection
 
 		private void EhSqlTextChanged()
 		{
+			_selectionStatement = GetCurrentSelectStatement();
 			if (null != _view)
 			{
 				UpdateUI();
@@ -390,12 +424,19 @@ namespace Altaxo.Gui.DataConnection
 			{
 				// enable sql builder button if we have some tables
 				// enable data preview if we a select statement
-				_view.UpdateUI(_treeRootNode.HasChilds, !string.IsNullOrEmpty(SelectStatement));
+				_view.UpdateUI(_treeRootNode.HasChilds, !string.IsNullOrEmpty(_selectionStatement));
 			}
 		}
 
 		private void EhSelectedTabChanged()
 		{
+			_selectionStatement = GetCurrentSelectStatement();
+			UpdateUI();
+		}
+
+		private void EhSelectedSchemaNodeChanged()
+		{
+			_selectionStatement = GetCurrentSelectStatement();
 			UpdateUI();
 		}
 
@@ -443,6 +484,7 @@ namespace Altaxo.Gui.DataConnection
 
 			if (success)
 			{
+				_selectionStatement = string.Empty;
 				UpdateTableTree();
 
 				// new connection, clear SQL

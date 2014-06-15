@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -79,7 +81,7 @@ namespace Altaxo.Main
 		#region Static ProjectFolder
 
 		private static ProjectFolder _rootFolder = new ProjectFolder(RootFolderName);
-		
+
 		/// <summary>
 		/// Returns the root folder instance.
 		/// </summary>
@@ -90,7 +92,7 @@ namespace Altaxo.Main
 				return _rootFolder;
 			}
 		}
-	
+
 		/// <summary>
 		/// Gets the string that is associated with the root folder (here: an empty string).
 		/// </summary>
@@ -109,14 +111,13 @@ namespace Altaxo.Main
 			return folder == string.Empty;
 		}
 
-	
-
-		#endregion
+		#endregion Static ProjectFolder
 
 		#region Static Name functions
 
 		/// <summary>Char used to separate project subfolders.</summary>
-		public const char  DirectorySeparatorChar = '\\';
+		public const char DirectorySeparatorChar = '\\';
+
 		/// <summary>Char used to separate project subfolders, here as a string for convenience..</summary>
 		public const string DirectorySeparatorString = "\\";
 
@@ -152,9 +153,6 @@ namespace Altaxo.Main
 				throw new ArgumentException(string.Format("folderPath has to end with a directory separator char! The provided folderPath is: {0}", folderPath));
 		}
 
-
-
-
 		/// <summary>
 		/// Gets the directory part of a full qualified name. Can either be the name of an item (worksheet, graph) or a full folder name.
 		/// If the name of a item is provided, the item's directory name is returned.
@@ -182,9 +180,8 @@ namespace Altaxo.Main
 			}
 		}
 
-
 		/// <summary>
-		/// Intended for scripting purposes only! 
+		/// Intended for scripting purposes only!
 		/// Gets the directory part of a full qualified name, but without the trailing DirectorySeparatorChar.
 		/// No exception is thrown if the directory part is the root folder, thus the names '\Alice' and 'Alice' both return an empty string.
 		/// The full qualified name can either be the name of an item (worksheet, graph) or a full folder name.
@@ -196,7 +193,7 @@ namespace Altaxo.Main
 		public static string GetFolderPartWithoutTrailingDirectorySeparatorChar(string fullName)
 		{
 			string result = GetFolderPart(fullName);
-			if(IsRootFolderName(result))
+			if (IsRootFolderName(result))
 				return result;
 			else
 				return result.Substring(0, result.Length - 1);
@@ -276,10 +273,10 @@ namespace Altaxo.Main
 		/// <returns>The full name of the item. (directoryPart + <see cref="DirectorySeparatorChar"/> + namePart.</returns>
 		public static string Combine(string directoryPart, string namePart)
 		{
-			if (directoryPart.Length > 0 && directoryPart[directoryPart.Length - 1] != DirectorySeparatorChar)
+			if (null != directoryPart && directoryPart.Length > 0 && directoryPart[directoryPart.Length - 1] != DirectorySeparatorChar)
 				directoryPart += DirectorySeparatorChar;
 
-				return directoryPart + namePart;
+			return (directoryPart ?? string.Empty) + namePart;
 		}
 
 		/// <summary>
@@ -318,14 +315,13 @@ namespace Altaxo.Main
 			if (dirName == RootFolderName)
 				throw new InvalidOperationException("Can not get the parent directory of the root folder");
 
-			int lastIndex = dirName.Length<2 ? -1 : dirName.LastIndexOf(DirectorySeparatorChar, dirName.Length - 2);
+			int lastIndex = dirName.Length < 2 ? -1 : dirName.LastIndexOf(DirectorySeparatorChar, dirName.Length - 2);
 
 			if (lastIndex < 0)
 				return RootFolderName;
 			else
 				return dirName.Substring(0, lastIndex + 1);
 		}
-
 
 		/// <summary>
 		/// Creates a new name starting from a oldfullNameOrDir and a newName. Retrieves the directory information
@@ -361,12 +357,11 @@ namespace Altaxo.Main
 			return CreateFullName(oldFullName, GetNamePart(oldFullName) + prependString);
 		}
 
-
 		#region Gui Helpers
 
 		/// <summary>
 		/// Converts a folder name (i.e. either an empty string or a string with a trailing <see cref="DirectorySeparatorChar"/>) to a
-		/// name which can be used to display on the display. 
+		/// name which can be used to display on the display.
 		/// </summary>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <returns>A name that can be displayed. The root folder name is converted to "\", and all other folder names are stripped off the trailing <see cref="DirectorySeparatorChar"/>.</returns>
@@ -381,7 +376,7 @@ namespace Altaxo.Main
 
 		/// <summary>
 		/// Converts a folder name (i.e. either an empty string or a string with a trailing <see cref="DirectorySeparatorChar"/>) to a
-		/// name which can be used to display. Only the last part of the folder name is returned here. 
+		/// name which can be used to display. Only the last part of the folder name is returned here.
 		/// </summary>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <returns>The last part of a full folder name name that can be displayed. The root folder name is converted an empty string, and all other folder names are stripped off the trailing <see cref="DirectorySeparatorChar"/>.</returns>
@@ -403,17 +398,12 @@ namespace Altaxo.Main
 		{
 			if (string.IsNullOrEmpty(displayFolderName))
 				return RootFolderName;
-			else		
+			else
 				return displayFolderName + DirectorySeparatorChar;
 		}
 
-	
+		#endregion Gui Helpers
 
-		#endregion
-
-
-		#endregion
-
+		#endregion Static Name functions
 	}
-
 }

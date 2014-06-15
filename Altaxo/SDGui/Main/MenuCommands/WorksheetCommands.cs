@@ -108,6 +108,14 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+	public class ImportDatabase : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Data.DatabaseCommands.ShowImportDatabaseDialog(ctrl.DataTable);
+		}
+	}
+
 	public class ImportImage : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

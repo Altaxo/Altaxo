@@ -41,17 +41,8 @@ namespace Altaxo.Gui.DataConnection
 		private System.Data.DataTable dt;
 		private System.Drawing.Size size;
 
-		public DataPreviewController(System.Data.DataTable dt, System.Drawing.Size size)
-		{
-			// TODO: Complete member initialization
-			this.dt = dt;
-			this.size = size;
-			Initialize(true);
-		}
-
 		public DataPreviewController(System.Data.DataTable dt)
 		{
-			// TODO: Complete member initialization
 			this.dt = dt;
 			Initialize(true);
 		}

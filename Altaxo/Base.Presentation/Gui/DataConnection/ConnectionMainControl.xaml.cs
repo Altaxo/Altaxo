@@ -47,6 +47,11 @@ namespace Altaxo.Gui.DataConnection
 	{
 		public event Action SelectedTabChanged;
 
+		/// <summary>
+		/// Occurs when the selected tree node of the schema tree changed.
+		/// </summary>
+		public event Action SelectedSchemaNodeChanged;
+
 		public event Action ShowSqlBuilder;
 
 		public event Action PreviewTableData;
@@ -176,7 +181,7 @@ namespace Altaxo.Gui.DataConnection
 
 		private void EhTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-			var ev = SelectedTabChanged;
+			var ev = SelectedSchemaNodeChanged;
 			if (null != ev)
 				ev();
 		}

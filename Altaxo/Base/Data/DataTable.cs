@@ -105,6 +105,11 @@ namespace Altaxo.Data
 		protected TableScript _tableScript;
 
 		/// <summary>
+		/// Designates the source of the data the table was originally filled with.
+		/// </summary>
+		protected IAltaxoTableDataSource _tableDataSource;
+
+		/// <summary>
 		/// The table properties, key is a string, value is a property you want to store here.
 		/// </summary>
 		/// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
@@ -401,6 +406,8 @@ namespace Altaxo.Data
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+				if (null != s._tableDataSource)
+					info.AddValue("TableDataSource", s._tableDataSource);
 			}
 
 			public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -415,6 +422,8 @@ namespace Altaxo.Data
 				s._notes.Text = info.GetString("Notes");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
+				if (info.CurrentElementName == "TableDataSource")
+					s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -883,6 +892,27 @@ namespace Altaxo.Data
 			get
 			{
 				return _notes;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the data source of this table. For instance, this could be the SQL query that was used to fill data into this table.
+		/// </summary>
+		/// <value>
+		/// The data source.
+		/// </value>
+		public IAltaxoTableDataSource DataSource
+		{
+			get
+			{
+				return _tableDataSource;
+			}
+			set
+			{
+				var orig = _tableDataSource;
+				_tableDataSource = value;
+				if (!object.Equals(orig, value))
+					OnChanged(EventArgs.Empty);
 			}
 		}
 

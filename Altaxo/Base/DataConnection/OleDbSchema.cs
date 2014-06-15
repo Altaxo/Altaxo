@@ -278,6 +278,27 @@ namespace Altaxo.DataConnection
 		}
 
 		/// <summary>
+		/// Checks whether a given type is of type DateTime
+		/// </summary>
+		/// <param name="type"><see cref="Type"/> to check.</param>
+		/// <returns>True if the type is of type DateTime; false otherwise.</returns>
+		public static bool IsDateTime(Type type)
+		{
+			// handle regular types
+			switch (Type.GetTypeCode(type))
+			{
+				case TypeCode.DateTime:
+					return true;
+			}
+
+			// handle nullable types
+			type = Nullable.GetUnderlyingType(type);
+			return type != null
+					? IsDateTime(type)
+					: false;
+		}
+
+		/// <summary>
 		/// Translates an <see cref="OleDbType"/> into a .NET type.
 		/// </summary>
 		/// <param name="oleDbType"><see cref="OleDbType"/> to translate.</param>

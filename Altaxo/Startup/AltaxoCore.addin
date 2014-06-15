@@ -689,6 +689,8 @@
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Disable">
 			<ToolbarItem id="ImportAscii" icon="Icons.16x16.ImportAscii" tooltip="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}"
 				class="Altaxo.Worksheet.Commands.ImportAscii" />
+			<ToolbarItem id="ImportDatabase" icon="Icons.16x16.DataConnection.EditConnectionString" tooltip="${res:XML.MainMenu.FileMenu.Import.Database.Description}"
+				class="Altaxo.Worksheet.Commands.ImportDatabase" />
 		</Condition>
 		<ToolbarItem id="Duplicate" icon="Icons.16x16.Duplicate" tooltip="${res:XML.MainMenu.EditMenu.Duplicate.Description}"
 				class="Altaxo.Main.Commands.Duplicate" />
