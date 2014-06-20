@@ -31,13 +31,6 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public enum ConnectionMainViewTabKind
-	{
-		Table,
-		Builder,
-		SQLStatement
-	}
-
 	public interface IConnectionMainView
 	{
 		/// <summary>Sets the cursor inside the control to the wait cursor.</summary>
@@ -46,70 +39,43 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>Sets the cursor inside the control to the normal (arrow) cursor.</summary>
 		void SetNormalCursor();
 
-		/// <summary>Gets/sets the text of the SQL query in the second tab.</summary>
-		string SqlText { get; set; }
-
-		/// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
-		/// <remarks>The image indices 0, 1, and 2 correspond to the nodes: Table , View, and Procedure.</remarks>
-		void SetTreeSource(NGTreeNode rootNode);
-
-		/// <summary>Gets the currently selected item of the tree view that shows the tables, views and stored procedures of a data base.</summary>
-		NGTreeNode SelectedTreeItem { get; }
-
 		/// <summary>
 		/// Sets the source for the connection combo box.
 		/// </summary>
 		/// <param name="list">The list.</param>
+		/// <param name="currentValue">Current value of the connection string.</param>
 		void SetConnectionListSource(SelectableListNodeList list, string currentValue);
 
-		/// <summary>Shows the tab page that contains the tree view that shows the tables, views and stored procedures of a data base.</summary>
-		void ShowTableTabItem();
+		void SetConnectionStatus(bool isValidConnectionSource);
 
-		/// <summary>Shows the tab page that contains the text of the SQL query.</summary>
-		void ShowSqlTextTabItem();
-
-		/// <summary>Returns <c>true</c> if the tab page with the tree view hat shows the tables, views and stored procedures of a data base is currently selected.</summary>
-		bool IsTableTabItemSelected { get; }
-
-		/// <summary>Enables/disables the SQL builder button and the Preview data button.</summary>
-		void UpdateUI(bool enableSqlBuilder, bool enablePreviewData);
-
-		/// <summary>
-		/// Sets the query designer view as child of the corresponding tab item.
-		/// </summary>
-		/// <param name="viewObject">The view object.</param>
-		void SetQueryDesignerView(object viewObject);
+		void SetTabItemsSource(SelectableListNodeList tabItems);
 
 		/// <summary>Fires when the currently selected tab page changed.</summary>
-		event Action<ConnectionMainViewTabKind> SelectedTabChanged;
-
-		/// <summary>
-		/// Occurs when the selected tree node of the schema tree changed.
-		/// </summary>
-		event Action SelectedSchemaNodeChanged;
-
-		/// <summary>Fires when the uses wants to see a preview of either the currently selected table, view or stored procedure (first tab active), or the result of the SQL query (second tab active)</summary>
-		event Action PreviewTableData;
+		event Action SelectedTabChanged;
 
 		/// <summary>Fires when the uses wants to create a new data connection string.</summary>
-		event Action ChooseConnection;
+		event Action CmdChooseConnectionStringFromDialog;
 
 		/// <summary>Fires when the user selects another connection string in the connection string combobox. The argument is the selected or newly entered connection string.</summary>
-		event Action<string> SelectedConnectionChanged;
+		event Action ConnectionStringSelectedFromList;
 
 		/// <summary>
-		/// Fired when the SQL text has changed.
+		/// Occurs when the user enters a new connection string an then presses enter.
 		/// </summary>
-		event Action SqlTextChanged;
+		event Action<string> ConnectionStringChangedByUser;
 	}
 
 	[ExpectedTypeOfView(typeof(IConnectionMainView))]
 	public class ConnectionMainController : IMVCAController
 	{
+		private static SelectableListNodeList _staticConnectionStringList = new SelectableListNodeList();
+
 		private IConnectionMainView _view;
 
 		// current connection string and corresponding schema
 		private string _connectionString;
+
+		private bool _isConnectionStringValid;
 
 		private string _selectionStatement;
 
@@ -117,194 +83,38 @@ namespace Altaxo.Gui.DataConnection
 
 		private SelectableListNodeList _connectionStringList;
 
+		/// <summary>
+		/// The list of tab items, the tag of each item is the controller used for this tab.
+		/// </summary>
+		private SelectableListNodeList _tabItemList;
+
 		// max number of records shown on the preview dialog
 		private const int MAX_PREVIEW_RECORDS = 5000;
 
 		private const int _cmbConnStringMaxDropDownItems = 10;
 
-		private NGTreeNode _treeRootNode;
-
+		private EntireTableQueryController _entireTableQueryController;
 		private QueryDesignerController _queryDesignerController;
+		private ArbitrarySqlQueryController _arbitrarySqlQueryController;
+		private IMVCAController _currentlySelectedController;
 
 		public ConnectionMainController(string sqlStatement, string connectionString)
 		{
+			_entireTableQueryController = new EntireTableQueryController();
+			_queryDesignerController = new QueryDesignerController();
+			_arbitrarySqlQueryController = new ArbitrarySqlQueryController();
+			_currentlySelectedController = _arbitrarySqlQueryController;
 			_selectionStatement = sqlStatement;
-			_connectionStringList = new SelectableListNodeList();
-			_treeRootNode = new NGTreeNode();
-			AddNewConnectionString(connectionString);
+
+			_connectionStringList = new SelectableListNodeList(_staticConnectionStringList);
+			ConnectionString = connectionString;
+
 			Initialize(true);
 		}
 
 		public ConnectionMainController(OleDbDataQuery query)
-			: this(query.Statement, query.ConnectionString)
+			: this(query.SelectionStatement, query.ConnectionString)
 		{
-		}
-
-		public void Initialize(bool initData)
-		{
-			if (initData)
-			{
-				_queryDesignerController = new QueryDesignerController();
-				_queryDesignerController.ConnectionString = ConnectionString;
-			}
-			if (null != _view)
-			{
-				_view.SetConnectionListSource(_connectionStringList, ConnectionString);
-				_view.SetTreeSource(_treeRootNode);
-				if (null == _queryDesignerController.ViewObject)
-					Current.Gui.FindAndAttachControlTo(_queryDesignerController);
-				_view.SetQueryDesignerView(_queryDesignerController.ViewObject);
-			}
-		}
-
-		/// <summary>
-		/// Adds the new connection string.
-		/// </summary>
-		/// <param name="value">The value.</param>
-		/// <returns>True if the current connection string has changed.</returns>
-		private bool AddNewConnectionString(string value)
-		{
-			if (string.IsNullOrEmpty(value))
-				return false;
-
-			var previousConnectionString = ConnectionString;
-
-			// look for item in the list
-			var index = _connectionStringList.IndexOfFirst(x => value == (string)x.Tag);
-
-			// get schema for the new connection string
-			_schema = OleDbSchema.GetSchema(value);
-
-			// handle good connection strings
-			if (_schema != null)
-			{
-				ConnectionString = value;
-				// add good values to the list
-				if (index < 0) // was not before in the list
-				{
-					_connectionStringList.ClearSelectionsAll();
-					_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
-					ConnectionString = value;
-					index = 0; // inserted at index 0
-				}
-				else if (index > 0) // was in the list before
-				{
-					_connectionStringList.ClearSelectionsAll();
-					_connectionStringList.RemoveAt(index);
-					_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
-					ConnectionString = value;
-					index = 0;
-				}
-
-				// trim list
-				while (_connectionStringList.Count > _cmbConnStringMaxDropDownItems)
-				{
-					_connectionStringList.RemoveAt(_connectionStringList.Count - 1);
-				}
-			}
-			else  // _schema is null, thus handle bad connection strings
-			{
-				// remove from list
-				if (index >= 0) // was in the list before
-				{
-					_connectionStringList.RemoveAt(index);
-					ConnectionString = string.Empty;
-					index = -1;
-				}
-
-				ConnectionString = string.Empty;
-			}
-
-			// make sure there is a selected item
-			if (null == _connectionStringList.FirstSelectedNode && _connectionStringList.Count > 0)
-			{
-				_connectionStringList[0].IsSelected = true;
-				ConnectionString = (string)_connectionStringList[0].Tag;
-			}
-
-			if (string.IsNullOrEmpty(previousConnectionString) && string.IsNullOrEmpty(ConnectionString))
-				return false; // nothing has changed
-
-			if (!string.IsNullOrEmpty(previousConnectionString) && !string.IsNullOrEmpty(ConnectionString) && 0 == string.Compare(ConnectionString, previousConnectionString))
-				return false; // nothing has changed, the two strings are equal
-
-			return true; // in all other cases, something has changed
-		}
-
-		private void UpdateTableTree()
-		{
-			// initialize table tree
-			_treeRootNode = new NGTreeNode();
-
-			var nodes = _treeRootNode.Nodes;
-			nodes.Clear();
-			var ndTables = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.Tables"), ImageIndex = 0, SelectedImageIndex = 0 };
-			var ndViews = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.Views"), ImageIndex = 1, SelectedImageIndex = 1 };
-			var ndProcs = new NGTreeNodeWithImageIndex() { Text = Current.ResourceService.GetString("Gui.DataConnection.StoredProcedures"), ImageIndex = 2, SelectedImageIndex = 2 };
-
-			// populate using current schema
-			if (_schema != null)
-			{
-				// populate the tree
-				foreach (System.Data.DataTable dt in _schema.Tables)
-				{
-					// create new node, save table in tag property
-					var node = new NGTreeNodeWithImageIndex() { Text = dt.TableName };
-					node.Tag = dt;
-
-					// add new node to appropriate parent
-					switch (OleDbSchema.GetTableType(dt))
-					{
-						case TableType.Table:
-							ndTables.Nodes.Add(node);
-							node.ImageIndex = node.SelectedImageIndex = 0;
-							break;
-
-						case TableType.View:
-							ndViews.Nodes.Add(node);
-							node.ImageIndex = node.SelectedImageIndex = 1;
-							break;
-
-						case TableType.Procedure:
-							ndProcs.Nodes.Add(node);
-							node.ImageIndex = node.SelectedImageIndex = 2;
-							break;
-					}
-				}
-
-				// add non-empty nodes to tree
-				foreach (NGTreeNode nd in new NGTreeNode[] { ndTables, ndViews, ndProcs })
-				{
-					if (nd.Nodes.Count > 0)
-					{
-						nd.Text = string.Format("{0} ({1})", nd.Text, nd.Nodes.Count);
-						nodes.Add(nd);
-					}
-				}
-
-				// expand tables node
-				ndTables.IsExpanded = true;
-
-				// done
-				if (null != _view)
-				{
-					_view.SetTreeSource(_treeRootNode);
-					_view.ShowTableTabItem();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets a SQL statement that corresponds to the element that
-		/// is currently selected (table, view, stored procedure, or
-		/// explicit sql statement).
-		/// </summary>
-		public string SelectStatement
-		{
-			get
-			{
-				return _selectionStatement;
-			}
 		}
 
 		public string ConnectionString
@@ -315,12 +125,21 @@ namespace Altaxo.Gui.DataConnection
 			}
 			protected set
 			{
+				if (string.IsNullOrEmpty(value))
+					return;
+
 				var oldValue = _connectionString;
+				var oldValueValid = _isConnectionStringValid;
+
 				_connectionString = value;
-				if (oldValue != value)
+
+				if (_connectionString != oldValue)
 				{
-					_queryDesignerController.ConnectionString = _connectionString;
+					_isConnectionStringValid = IsConnectionStringValid(_connectionString);
 				}
+
+				if (oldValue != _connectionString || oldValueValid != _isConnectionStringValid)
+					OnConnectionStringChanged();
 			}
 		}
 
@@ -329,74 +148,126 @@ namespace Altaxo.Gui.DataConnection
 		/// is currently selected (table, view, stored procedure, or
 		/// explicit sql statement).
 		/// </summary>
-		private string GetCurrentSelectStatement()
+		public string SelectionStatement
 		{
-			if (null == _view)
-				return null;
-
-			// table/view/sproc
-			if (_view.IsTableTabItemSelected)
+			get
 			{
-				var nd = _view.SelectedTreeItem;
-				return nd == null || nd.Tag == null || _schema == null
-						? string.Empty
-						: OleDbSchema.GetSelectStatement(nd.Tag as System.Data.DataTable);
-			}
-			else // explicit sql statement
-			{
-				return _view.SqlText;
+				return _selectionStatement;
 			}
 		}
 
-		// preview data for currently selected node
-		private void EhPreviewData()
+		public void Initialize(bool initData)
 		{
-			// make sure we have a select statement
-			var sql = SelectStatement;
-			if (string.IsNullOrEmpty(sql))
+			if (initData)
 			{
-				return;
+				_tabItemList = new SelectableListNodeList();
+
+				_entireTableQueryController.ConnectionString = ConnectionString;
+				_currentlySelectedController = _entireTableQueryController;
+				_tabItemList.Add(new SelectableListNode("Single table", _entireTableQueryController, object.ReferenceEquals(_entireTableQueryController, _currentlySelectedController)));
+
+				_queryDesignerController.ConnectionString = ConnectionString;
+				_tabItemList.Add(new SelectableListNode("Query builder", _queryDesignerController, object.ReferenceEquals(_queryDesignerController, _currentlySelectedController)));
+
+				_arbitrarySqlQueryController.ConnectionString = ConnectionString;
+				_arbitrarySqlQueryController.SelectionStatement = _selectionStatement;
+				_tabItemList.Add(new SelectableListNode("Arbitrary Sql statement", _arbitrarySqlQueryController, object.ReferenceEquals(_arbitrarySqlQueryController, _currentlySelectedController)));
+			}
+			if (null != _view)
+			{
+				_view.SetConnectionListSource(_connectionStringList, ConnectionString);
+				_view.SetConnectionStatus(_isConnectionStringValid);
+
+				if (null == _entireTableQueryController.ViewObject)
+					Current.Gui.FindAndAttachControlTo(_entireTableQueryController);
+
+				if (null == _queryDesignerController.ViewObject)
+					Current.Gui.FindAndAttachControlTo(_queryDesignerController);
+
+				if (null == _arbitrarySqlQueryController.ViewObject)
+					Current.Gui.FindAndAttachControlTo(_arbitrarySqlQueryController);
+
+				_view.SetTabItemsSource(_tabItemList);
+			}
+		}
+
+		private bool IsConnectionStringValid(string connString)
+		{
+			if (string.IsNullOrEmpty(connString))
+				return false;
+
+			// get schema for the new connection string
+			_schema = OleDbSchema.GetSchema(connString);
+
+			return _schema != null;
+		}
+
+		private static int InsertConnectionStringAtBeginningOfList(SelectableListNodeList list, string connString)
+		{
+			// look for item in the list
+			var index = list.IndexOfFirst(x => connString == (string)x.Tag);
+
+			// add good values to the list
+			if (index < 0) // was not before in the list
+			{
+				list.ClearSelectionsAll();
+				list.Insert(0, new SelectableListNode(connString, connString, true));
+				index = 0; // inserted at index 0
+			}
+			else if (index > 0) // was in the list before
+			{
+				list.ClearSelectionsAll();
+				list.RemoveAt(index);
+				list.Insert(0, new SelectableListNode(connString, connString, true));
+				index = 0;
 			}
 
-			// create table to load with data and display
-			var dt = new System.Data.DataTable("Query");
-
-			// if a table/view is selected, get table name and parameters
-			if (_view.IsTableTabItemSelected)
+			// trim list
+			while (list.Count > _cmbConnStringMaxDropDownItems)
 			{
-				// get table/view name
-				var table = (_view.SelectedTreeItem).Tag as System.Data.DataTable;
-				dt.TableName = table.TableName;
-
-				// get view parameters if necessary
-				var parms = OleDbSchema.GetTableParameters(table);
-				if (parms != null && parms.Count > 0)
-				{
-					var ctrl = new ParametersController(parms);
-					if (!Current.Gui.ShowDialog(ctrl, "Parameter", false))
-					{
-						return;
-					}
-				}
+				list.RemoveAt(list.Count - 1);
 			}
 
-			// get data
-			try
-			{
-				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, ConnectionString))
-				{
-					// get data
-					da.Fill(0, MAX_PREVIEW_RECORDS, dt);
+			return index;
+		}
 
-					// show the data
-					var ctrl = new DataPreviewController(dt);
-					string title = string.Format("{0} ({1:n0} records)", dt.TableName, dt.Rows.Count);
-					Current.Gui.ShowDialog(ctrl, title, false);
-				}
-			}
-			catch (Exception x)
+		private static void RemoveConnectionStringFromList(SelectableListNodeList list, string connString)
+		{
+			// look for item in the list
+			var index = list.IndexOfFirst(x => connString == (string)x.Tag);
+			if (index >= 0)
+				list.RemoveAt(index);
+		}
+
+		/// <summary>
+		/// Called whenever the connection string has changed.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// <returns>True if the current connection string has changed.</returns>
+		private void OnConnectionStringChanged()
+		{
+			int index;
+
+			// handle good connection strings
+			if (_isConnectionStringValid)
 			{
-				Current.Gui.ErrorMessageBox(string.Format("Failed to retrieve data:\r\n{0}", x.Message));
+				index = InsertConnectionStringAtBeginningOfList(_connectionStringList, ConnectionString);
+			}
+			else  // _schema is null, thus handle bad connection strings
+			{
+				index = -1;
+				RemoveConnectionStringFromList(_connectionStringList, ConnectionString);
+			}
+
+			var controllerConnectionString = _isConnectionStringValid ? _connectionString : string.Empty;
+			_entireTableQueryController.ConnectionString = controllerConnectionString;
+			_queryDesignerController.ConnectionString = controllerConnectionString;
+			_arbitrarySqlQueryController.ConnectionString = controllerConnectionString;
+
+			if (null != _view)
+			{
+				_view.SetConnectionListSource(_connectionStringList, _connectionString);
+				_view.SetConnectionStatus(_isConnectionStringValid);
 			}
 		}
 
@@ -410,12 +281,7 @@ namespace Altaxo.Gui.DataConnection
 			{
 				if (null != _view)
 				{
-					_view.SelectedTabChanged -= EhSelectedTabChanged;
-					_view.SelectedSchemaNodeChanged -= EhSelectedSchemaNodeChanged;
-					_view.PreviewTableData -= EhPreviewData;
-					_view.ChooseConnection -= EhChooseConnection;
-					_view.SelectedConnectionChanged -= EhSelectedConnectionChanged;
-					_view.SqlTextChanged -= EhSqlTextChanged;
+					DetachView();
 				}
 
 				_view = value as IConnectionMainView;
@@ -423,57 +289,42 @@ namespace Altaxo.Gui.DataConnection
 				if (null != _view)
 				{
 					Initialize(false);
-					_view.SelectedTabChanged += EhSelectedTabChanged;
-					_view.SelectedSchemaNodeChanged += EhSelectedSchemaNodeChanged;
-					_view.PreviewTableData += EhPreviewData;
-					_view.ChooseConnection += EhChooseConnection;
-					_view.SelectedConnectionChanged += EhSelectedConnectionChanged;
-					_view.SqlTextChanged += EhSqlTextChanged;
+					AttachView();
 				}
 			}
 		}
 
-		private void EhSqlTextChanged()
+		private void AttachView()
 		{
-			_selectionStatement = GetCurrentSelectStatement();
-			if (null != _view)
+			_view.SelectedTabChanged += EhSelectedTabChanged;
+			_view.CmdChooseConnectionStringFromDialog += EhChooseConnection;
+			_view.ConnectionStringSelectedFromList += EhConnectionStringSelectedFromList;
+			_view.ConnectionStringChangedByUser += EhConnectionStringChangedByUser;
+		}
+
+		private void DetachView()
+		{
+			_view.SelectedTabChanged -= EhSelectedTabChanged;
+			_view.CmdChooseConnectionStringFromDialog -= EhChooseConnection;
+			_view.ConnectionStringSelectedFromList -= EhConnectionStringSelectedFromList;
+			_view.ConnectionStringChangedByUser -= EhConnectionStringChangedByUser;
+		}
+
+		private void EhSelectedTabChanged()
+		{
+			var applyResult = false;
+			var oldController = _currentlySelectedController;
+			if (null != oldController)
+				applyResult = oldController.Apply();
+
+			_currentlySelectedController = _tabItemList.FirstSelectedNode == null ? null : _tabItemList.FirstSelectedNode.Tag as IMVCAController;
+
+			if (_currentlySelectedController is ArbitrarySqlQueryController && applyResult == true)
 			{
-				UpdateUI();
-			}
-		}
-
-		public void UpdateUI()
-		{
-			if (null != _view)
-			{
-				// enable sql builder button if we have some tables
-				// enable data preview if we a select statement
-				_view.UpdateUI(_treeRootNode.HasChilds, !string.IsNullOrEmpty(_selectionStatement));
-			}
-		}
-
-		private void EhSelectedTabChanged(ConnectionMainViewTabKind tabKind)
-		{
-			_selectionStatement = GetCurrentSelectStatement();
-			UpdateUI();
-		}
-
-		private void EhSelectedSchemaNodeChanged()
-		{
-			_selectionStatement = GetCurrentSelectStatement();
-			UpdateUI();
-		}
-
-		private void EhShowSqlBuilder()
-		{
-			var ctrl = new QueryDesignerController();
-			ctrl.ConnectionString = ConnectionString;
-
-			if (Current.Gui.ShowDialog(ctrl, "SQL Query Designer", false))
-			{
-				_view.SqlText = ctrl.SelectStatement;
-				_view.ShowSqlTextTabItem();
-				UpdateUI();
+				if (oldController is QueryDesignerController)
+					_arbitrarySqlQueryController.SelectionStatement = _queryDesignerController.SelectionStatement;
+				else if (oldController is EntireTableQueryController)
+					_arbitrarySqlQueryController.SelectionStatement = _entireTableQueryController.SelectionStatement;
 			}
 		}
 
@@ -498,25 +349,19 @@ namespace Altaxo.Gui.DataConnection
 			if (string.IsNullOrEmpty(newConnString))
 				return;
 
-			EhSelectedConnectionChanged(newConnString);
+			ConnectionString = newConnString;
 		}
 
-		private void EhSelectedConnectionChanged(string newConnection)
+		private void EhConnectionStringSelectedFromList()
 		{
-			bool success = AddNewConnectionString(newConnection);
-			_view.SetConnectionListSource(_connectionStringList, ConnectionString); // update always, even if no success
+			var node = _connectionStringList.FirstSelectedNode;
+			if (node != null)
+				ConnectionString = (string)node.Tag;
+		}
 
-			if (success)
-			{
-				_selectionStatement = string.Empty;
-				UpdateTableTree();
-
-				// new connection, clear SQL
-				_view.SqlText = string.Empty;
-
-				// update ui
-				UpdateUI();
-			}
+		private void EhConnectionStringChangedByUser(string newConnectionString)
+		{
+			ConnectionString = newConnectionString;
 		}
 
 		// issue a warning
@@ -538,7 +383,34 @@ namespace Altaxo.Gui.DataConnection
 
 		public bool Apply()
 		{
-			return true;
+			bool result = false;
+
+			var node = _tabItemList.FirstSelectedNode;
+			_currentlySelectedController = node == null ? null : node.Tag as IMVCAController;
+
+			if (null != _currentlySelectedController)
+			{
+				result = _currentlySelectedController.Apply();
+			}
+
+			if (result)
+			{
+				if (_currentlySelectedController == _entireTableQueryController)
+					_selectionStatement = _entireTableQueryController.SelectionStatement;
+				else if (_currentlySelectedController == _queryDesignerController)
+					_selectionStatement = _queryDesignerController.SelectionStatement;
+				else if (_currentlySelectedController == _arbitrarySqlQueryController)
+					_selectionStatement = _arbitrarySqlQueryController.SelectionStatement;
+			}
+			else
+			{
+				return false;
+			}
+
+			if (_isConnectionStringValid)
+				InsertConnectionStringAtBeginningOfList(_staticConnectionStringList, ConnectionString);
+
+			return !string.IsNullOrEmpty(_connectionString) && !string.IsNullOrEmpty(_selectionStatement);
 		}
 	}
 }

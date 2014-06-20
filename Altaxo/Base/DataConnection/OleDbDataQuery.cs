@@ -8,12 +8,12 @@ namespace Altaxo.DataConnection
 	public class OleDbDataQuery : Main.ICopyFrom
 	{
 		protected string _connectionString;
-		protected string _sqlStatement;
+		protected string _selectionlStatement;
 
 		public OleDbDataQuery(string connectionString, string sqlStatement)
 		{
 			_connectionString = connectionString;
-			_sqlStatement = sqlStatement;
+			_selectionlStatement = sqlStatement;
 		}
 
 		protected OleDbDataQuery()
@@ -29,7 +29,7 @@ namespace Altaxo.DataConnection
 			if (null != from)
 			{
 				this._connectionString = from._connectionString;
-				this._sqlStatement = from._sqlStatement;
+				this._selectionlStatement = from._selectionlStatement;
 				return true;
 			}
 			return false;
@@ -42,11 +42,11 @@ namespace Altaxo.DataConnection
 			return result;
 		}
 
-		public string Statement
+		public string SelectionStatement
 		{
 			get
 			{
-				return _sqlStatement;
+				return _selectionlStatement;
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace Altaxo.DataConnection
 		{
 			using (var connection = new System.Data.OleDb.OleDbConnection(_connectionString))
 			{
-				using (var command = new System.Data.OleDb.OleDbCommand(_sqlStatement, connection))
+				using (var command = new System.Data.OleDb.OleDbCommand(_selectionlStatement, connection))
 				{
 					connection.Open();
 					var reader = command.ExecuteReader();

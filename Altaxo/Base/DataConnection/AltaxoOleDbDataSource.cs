@@ -50,7 +50,7 @@ namespace Altaxo.DataConnection
 				var s = (AltaxoOleDbDataSource)obj;
 
 				info.AddValue("Connection", s._connectionString);
-				info.AddValue("Statement", s._sqlStatement);
+				info.AddValue("Statement", s._selectionlStatement);
 				info.AddEnum("ImportTriggerSource", s._importTriggerSource);
 				info.AddValue("ExecuteTableScriptAfterImport", s._executeTableScriptAfterImport);
 				info.AddValue("DoNotSaveCachedTableData", s._doNotSaveCachedTableData);
@@ -61,7 +61,7 @@ namespace Altaxo.DataConnection
 				var s = (o == null ? new AltaxoOleDbDataSource() : (AltaxoOleDbDataSource)o);
 
 				s._connectionString = info.GetString("Connection");
-				s._sqlStatement = info.GetString("Statement");
+				s._selectionlStatement = info.GetString("Statement");
 				s._importTriggerSource = (Data.ImportTriggerSource)info.GetEnum("ImportTriggerSource", s._importTriggerSource.GetType());
 				s._executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");
 				s._doNotSaveCachedTableData = info.GetBoolean("DoNotSaveCachedTableData");

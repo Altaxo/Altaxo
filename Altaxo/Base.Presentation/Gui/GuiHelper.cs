@@ -198,6 +198,33 @@ namespace Altaxo.Gui
 
 		#endregion ListView
 
+		#region TabControl
+
+		public static void Initialize(TabControl view, SelectableListNodeList data)
+		{
+			int idx = data.FirstSelectedNodeIndex; // Note: the selected index must be determined _before_ the data are bound to the box (otherwise when a binding is in place, it can happen that the selection is resetted)
+
+			if (view.ItemsSource != data)
+			{
+				//view.ItemsSource = null;
+				view.ItemsSource = data;
+			}
+
+			if (idx >= 0)
+				view.SelectedItem = data[idx];
+		}
+
+		public static void SynchronizeSelectionFromGui(TabControl view)
+		{
+			foreach (ISelectableItem it in view.ItemsSource)
+				it.IsSelected = false;
+
+			if (null != view.SelectedItem)
+				((ISelectableItem)view.SelectedItem).IsSelected = true;
+		}
+
+		#endregion TabControl
+
 		#region Mouse
 
 		public static Altaxo.Gui.AltaxoMouseButtons GetMouseState(MouseDevice mouse)

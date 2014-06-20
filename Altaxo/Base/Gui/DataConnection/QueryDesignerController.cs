@@ -100,7 +100,7 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>
 		/// Gets the SQL statement being built.
 		/// </summary>
-		public string SelectStatement
+		public string SelectionStatement
 		{
 			get { return _builder.Sql; }
 			set { }
@@ -237,7 +237,7 @@ namespace Altaxo.Gui.DataConnection
 			try
 			{
 				// get the data
-				var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, ConnectionString);
+				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString);
 				var dt = new System.Data.DataTable("Query");
 				da.Fill(dt);
 
@@ -258,7 +258,7 @@ namespace Altaxo.Gui.DataConnection
 		{
 			try
 			{
-				var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, ConnectionString);
+				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString);
 				var dt = new System.Data.DataTable();
 				da.FillSchema(dt, System.Data.SchemaType.Mapped);
 				Current.Gui.InfoMessageBox(
@@ -461,16 +461,17 @@ namespace Altaxo.Gui.DataConnection
 
 		public object ModelObject
 		{
-			get { return SelectStatement; }
+			get { return SelectionStatement; }
 		}
 
 		public void Dispose()
 		{
+			ViewObject = null;
 		}
 
 		public bool Apply()
 		{
-			return true;
+			return !string.IsNullOrEmpty(_builder.ConnectionString) && !string.IsNullOrEmpty(SelectionStatement);
 		}
 	}
 }

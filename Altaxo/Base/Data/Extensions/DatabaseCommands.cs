@@ -20,7 +20,7 @@ namespace Altaxo.Data
 			{
 				try
 				{
-					var query = new Altaxo.DataConnection.AltaxoOleDbDataSource(ctrl.SelectStatement, ctrl.ConnectionString);
+					var query = new Altaxo.DataConnection.AltaxoOleDbDataSource(ctrl.SelectionStatement, ctrl.ConnectionString);
 					query.FillData(dataTable);
 					dataTable.DataSource = query;
 				}

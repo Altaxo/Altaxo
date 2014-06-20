@@ -361,11 +361,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\DataConnection\ArbitrarySqlQueryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\DataConnection\ConnectionMainControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\DataConnection\DataPreviewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\EntireTableQueryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1020,11 +1028,17 @@
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
     <Compile Include="Gui\Common\VisibilityConverter.cs" />
+    <Compile Include="Gui\DataConnection\ArbitrarySqlQueryControl.xaml.cs">
+      <DependentUpon>ArbitrarySqlQueryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\DataConnection\ConnectionMainControl.xaml.cs">
       <DependentUpon>ConnectionMainControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\DataConnection\DataPreviewControl.xaml.cs">
       <DependentUpon>DataPreviewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\EntireTableQueryControl.xaml.cs">
+      <DependentUpon>EntireTableQueryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\DataConnection\FilterEditControl.xaml.cs">
       <DependentUpon>FilterEditControl.xaml</DependentUpon>

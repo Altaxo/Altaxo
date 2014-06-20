@@ -45,20 +45,13 @@ namespace Altaxo.Gui.DataConnection
 	/// </summary>
 	public partial class ConnectionMainControl : UserControl, IConnectionMainView
 	{
-		public event Action<ConnectionMainViewTabKind> SelectedTabChanged;
+		public event Action SelectedTabChanged;
 
-		/// <summary>
-		/// Occurs when the selected tree node of the schema tree changed.
-		/// </summary>
-		public event Action SelectedSchemaNodeChanged;
+		public event Action CmdChooseConnectionStringFromDialog;
 
-		public event Action PreviewTableData;
+		public event Action ConnectionStringSelectedFromList;
 
-		public event Action ChooseConnection;
-
-		public event Action<string> SelectedConnectionChanged;
-
-		public event Action SqlTextChanged;
+		public event Action<string> ConnectionStringChangedByUser;
 
 		public ConnectionMainControl()
 		{
@@ -85,42 +78,6 @@ namespace Altaxo.Gui.DataConnection
 			}
 		}
 
-		public string SqlText
-		{
-			get
-			{
-				return _txtSql.Text;
-			}
-			set
-			{
-				_txtSql.Text = value;
-			}
-		}
-
-		public void UpdateUI(bool enableSqlBuilder, bool enablePreviewData)
-		{
-		}
-
-		public void SetTreeSource(NGTreeNode rootNode)
-		{
-			_treeTables.ItemsSource = rootNode.Nodes;
-		}
-
-		public NGTreeNode SelectedTreeItem
-		{
-			get
-			{
-				return _treeTables.SelectedItem as NGTreeNode;
-			}
-		}
-
-		private void EhTreeViewItem_PreviewRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			var twi = sender as TreeViewItem;
-			if (null != twi)
-				twi.IsSelected = true;
-		}
-
 		public void SetConnectionListSource(SelectableListNodeList list, string currentItem)
 		{
 			GuiHelper.Initialize(_cmbConnString, list);
@@ -130,10 +87,10 @@ namespace Altaxo.Gui.DataConnection
 		private void EhConnectionStringSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_cmbConnString);
-			var ev = SelectedConnectionChanged;
+			var ev = ConnectionStringSelectedFromList;
 			if (null != ev)
 			{
-				ev(_cmbConnString.Text);
+				ev();
 			}
 		}
 
@@ -141,7 +98,7 @@ namespace Altaxo.Gui.DataConnection
 		{
 			if (e.Key == Key.Enter)
 			{
-				var ev = SelectedConnectionChanged;
+				var ev = ConnectionStringChangedByUser;
 				if (null != ev)
 				{
 					e.Handled = true;
@@ -160,44 +117,11 @@ namespace Altaxo.Gui.DataConnection
 			_tab.SelectedIndex = 1;
 		}
 
-		public bool IsTableTabItemSelected
-		{
-			get { return 0 == _tab.SelectedIndex; }
-		}
-
 		private void _tab_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ConnectionMainViewTabKind kind = ConnectionMainViewTabKind.SQLStatement;
-			switch (_tab.SelectedIndex)
-			{
-				case 0:
-					kind = ConnectionMainViewTabKind.Table;
-					break;
-
-				case 1:
-					kind = ConnectionMainViewTabKind.Builder;
-					break;
-
-				case 2:
-					kind = ConnectionMainViewTabKind.SQLStatement;
-					break;
-			}
+			GuiHelper.SynchronizeSelectionFromGui(_tab);
 
 			var ev = SelectedTabChanged;
-			if (null != ev)
-				ev(kind);
-		}
-
-		private void EhTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-		{
-			var ev = SelectedSchemaNodeChanged;
-			if (null != ev)
-				ev();
-		}
-
-		private void _treeTables_DoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			var ev = PreviewTableData;
 			if (null != ev)
 				ev();
 		}
@@ -205,7 +129,7 @@ namespace Altaxo.Gui.DataConnection
 		// pick a new connection
 		private void _btnConnPicker_Click(object sender, RoutedEventArgs e)
 		{
-			var ev = ChooseConnection;
+			var ev = CmdChooseConnectionStringFromDialog;
 			if (null != ev)
 				ev();
 		}
@@ -220,40 +144,14 @@ namespace Altaxo.Gui.DataConnection
 			this.Cursor = Cursors.Arrow;
 		}
 
-		private void _btnPreviewData_Click(object sender, RoutedEventArgs e)
+		public void SetTabItemsSource(SelectableListNodeList tabItems)
 		{
-			var ev = PreviewTableData;
-			if (null != ev)
-				ev();
+			GuiHelper.Initialize(_tab, tabItems);
 		}
 
-		private void EhSqlTextChanged(object sender, TextChangedEventArgs e)
+		public void SetConnectionStatus(bool isValidConnectionSource)
 		{
-			var ev = SqlTextChanged;
-			if (null != ev)
-			{
-				ev();
-			}
-		}
-
-		public void SetQueryDesignerView(object viewObject)
-		{
-			_pgBuilder.Content = viewObject;
-		}
-
-		private void EhCheckSql_Click(object sender, RoutedEventArgs e)
-		{
-		}
-
-		private void EhViewResults_Click(object sender, RoutedEventArgs e)
-		{
-			var ev = PreviewTableData;
-			if (null != ev)
-				ev();
-		}
-
-		private void EhClearQuery_Click(object sender, RoutedEventArgs e)
-		{
+			_guiConnectionInvalid.Visibility = isValidConnectionSource ? Visibility.Collapsed : System.Windows.Visibility.Visible;
 		}
 	}
 }
