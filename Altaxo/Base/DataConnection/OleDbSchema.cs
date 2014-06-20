@@ -89,7 +89,13 @@ namespace Altaxo.DataConnection
 			get { return _connString; }
 			set
 			{
-				if (value != _connString)
+				if (string.IsNullOrEmpty(value))
+				{
+					_connString = null;
+					Reset();
+					return;
+				}
+				else if (value != _connString)
 				{
 					_connString = value;
 					GetSchema();
@@ -382,6 +388,9 @@ namespace Altaxo.DataConnection
 
 		private void GetSchema()
 		{
+			if (string.IsNullOrEmpty(_connString))
+				throw new ArgumentOutOfRangeException("_connString is null or empty");
+
 			// translate ODBC requests into OleDb
 			string connString = OleDbConnString.TranslateConnectionString(_connString);
 

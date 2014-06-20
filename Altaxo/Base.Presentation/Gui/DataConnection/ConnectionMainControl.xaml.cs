@@ -45,14 +45,12 @@ namespace Altaxo.Gui.DataConnection
 	/// </summary>
 	public partial class ConnectionMainControl : UserControl, IConnectionMainView
 	{
-		public event Action SelectedTabChanged;
+		public event Action<ConnectionMainViewTabKind> SelectedTabChanged;
 
 		/// <summary>
 		/// Occurs when the selected tree node of the schema tree changed.
 		/// </summary>
 		public event Action SelectedSchemaNodeChanged;
-
-		public event Action ShowSqlBuilder;
 
 		public event Action PreviewTableData;
 
@@ -101,11 +99,6 @@ namespace Altaxo.Gui.DataConnection
 
 		public void UpdateUI(bool enableSqlBuilder, bool enablePreviewData)
 		{
-			// enable sql builder button if we have some tables
-			_btnSqlBuilder.IsEnabled = enableSqlBuilder;
-
-			// enable data preview if we a select statement
-			_btnPreviewData.IsEnabled = enablePreviewData;
 		}
 
 		public void SetTreeSource(NGTreeNode rootNode)
@@ -174,21 +167,30 @@ namespace Altaxo.Gui.DataConnection
 
 		private void _tab_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
 		{
+			ConnectionMainViewTabKind kind = ConnectionMainViewTabKind.SQLStatement;
+			switch (_tab.SelectedIndex)
+			{
+				case 0:
+					kind = ConnectionMainViewTabKind.Table;
+					break;
+
+				case 1:
+					kind = ConnectionMainViewTabKind.Builder;
+					break;
+
+				case 2:
+					kind = ConnectionMainViewTabKind.SQLStatement;
+					break;
+			}
+
 			var ev = SelectedTabChanged;
 			if (null != ev)
-				ev();
+				ev(kind);
 		}
 
 		private void EhTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var ev = SelectedSchemaNodeChanged;
-			if (null != ev)
-				ev();
-		}
-
-		private void _btnSqlBuilder_Click(object sender, RoutedEventArgs e)
-		{
-			var ev = ShowSqlBuilder;
 			if (null != ev)
 				ev();
 		}
@@ -232,6 +234,26 @@ namespace Altaxo.Gui.DataConnection
 			{
 				ev();
 			}
+		}
+
+		public void SetQueryDesignerView(object viewObject)
+		{
+			_pgBuilder.Content = viewObject;
+		}
+
+		private void EhCheckSql_Click(object sender, RoutedEventArgs e)
+		{
+		}
+
+		private void EhViewResults_Click(object sender, RoutedEventArgs e)
+		{
+			var ev = PreviewTableData;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhClearQuery_Click(object sender, RoutedEventArgs e)
+		{
 		}
 	}
 }

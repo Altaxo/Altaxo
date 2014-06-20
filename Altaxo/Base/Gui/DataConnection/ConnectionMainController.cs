@@ -31,6 +31,13 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
+	public enum ConnectionMainViewTabKind
+	{
+		Table,
+		Builder,
+		SQLStatement
+	}
+
 	public interface IConnectionMainView
 	{
 		/// <summary>Sets the cursor inside the control to the wait cursor.</summary>
@@ -67,16 +74,19 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>Enables/disables the SQL builder button and the Preview data button.</summary>
 		void UpdateUI(bool enableSqlBuilder, bool enablePreviewData);
 
+		/// <summary>
+		/// Sets the query designer view as child of the corresponding tab item.
+		/// </summary>
+		/// <param name="viewObject">The view object.</param>
+		void SetQueryDesignerView(object viewObject);
+
 		/// <summary>Fires when the currently selected tab page changed.</summary>
-		event Action SelectedTabChanged;
+		event Action<ConnectionMainViewTabKind> SelectedTabChanged;
 
 		/// <summary>
 		/// Occurs when the selected tree node of the schema tree changed.
 		/// </summary>
 		event Action SelectedSchemaNodeChanged;
-
-		/// <summary>Fires when the uses chooses to show the SQL builder dialog.</summary>
-		event Action ShowSqlBuilder;
 
 		/// <summary>Fires when the uses wants to see a preview of either the currently selected table, view or stored procedure (first tab active), or the result of the SQL query (second tab active)</summary>
 		event Action PreviewTableData;
@@ -114,6 +124,8 @@ namespace Altaxo.Gui.DataConnection
 
 		private NGTreeNode _treeRootNode;
 
+		private QueryDesignerController _queryDesignerController;
+
 		public ConnectionMainController(string sqlStatement, string connectionString)
 		{
 			_selectionStatement = sqlStatement;
@@ -132,11 +144,16 @@ namespace Altaxo.Gui.DataConnection
 		{
 			if (initData)
 			{
+				_queryDesignerController = new QueryDesignerController();
+				_queryDesignerController.ConnectionString = ConnectionString;
 			}
 			if (null != _view)
 			{
-				_view.SetConnectionListSource(_connectionStringList, _connectionString);
+				_view.SetConnectionListSource(_connectionStringList, ConnectionString);
 				_view.SetTreeSource(_treeRootNode);
+				if (null == _queryDesignerController.ViewObject)
+					Current.Gui.FindAndAttachControlTo(_queryDesignerController);
+				_view.SetQueryDesignerView(_queryDesignerController.ViewObject);
 			}
 		}
 
@@ -150,7 +167,7 @@ namespace Altaxo.Gui.DataConnection
 			if (string.IsNullOrEmpty(value))
 				return false;
 
-			var previousConnectionString = _connectionString;
+			var previousConnectionString = ConnectionString;
 
 			// look for item in the list
 			var index = _connectionStringList.IndexOfFirst(x => value == (string)x.Tag);
@@ -161,13 +178,13 @@ namespace Altaxo.Gui.DataConnection
 			// handle good connection strings
 			if (_schema != null)
 			{
-				_connectionString = value;
+				ConnectionString = value;
 				// add good values to the list
 				if (index < 0) // was not before in the list
 				{
 					_connectionStringList.ClearSelectionsAll();
 					_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
-					_connectionString = value;
+					ConnectionString = value;
 					index = 0; // inserted at index 0
 				}
 				else if (index > 0) // was in the list before
@@ -175,7 +192,7 @@ namespace Altaxo.Gui.DataConnection
 					_connectionStringList.ClearSelectionsAll();
 					_connectionStringList.RemoveAt(index);
 					_connectionStringList.Insert(0, new SelectableListNode(value, value, true));
-					_connectionString = value;
+					ConnectionString = value;
 					index = 0;
 				}
 
@@ -191,24 +208,24 @@ namespace Altaxo.Gui.DataConnection
 				if (index >= 0) // was in the list before
 				{
 					_connectionStringList.RemoveAt(index);
-					_connectionString = string.Empty;
+					ConnectionString = string.Empty;
 					index = -1;
 				}
 
-				_connectionString = string.Empty;
+				ConnectionString = string.Empty;
 			}
 
 			// make sure there is a selected item
 			if (null == _connectionStringList.FirstSelectedNode && _connectionStringList.Count > 0)
 			{
 				_connectionStringList[0].IsSelected = true;
-				_connectionString = (string)_connectionStringList[0].Tag;
+				ConnectionString = (string)_connectionStringList[0].Tag;
 			}
 
-			if (string.IsNullOrEmpty(previousConnectionString) && string.IsNullOrEmpty(_connectionString))
+			if (string.IsNullOrEmpty(previousConnectionString) && string.IsNullOrEmpty(ConnectionString))
 				return false; // nothing has changed
 
-			if (!string.IsNullOrEmpty(previousConnectionString) && !string.IsNullOrEmpty(_connectionString) && 0 == string.Compare(_connectionString, previousConnectionString))
+			if (!string.IsNullOrEmpty(previousConnectionString) && !string.IsNullOrEmpty(ConnectionString) && 0 == string.Compare(ConnectionString, previousConnectionString))
 				return false; // nothing has changed, the two strings are equal
 
 			return true; // in all other cases, something has changed
@@ -296,6 +313,15 @@ namespace Altaxo.Gui.DataConnection
 			{
 				return _connectionString;
 			}
+			protected set
+			{
+				var oldValue = _connectionString;
+				_connectionString = value;
+				if (oldValue != value)
+				{
+					_queryDesignerController.ConnectionString = _connectionString;
+				}
+			}
 		}
 
 		/// <summary>
@@ -357,7 +383,7 @@ namespace Altaxo.Gui.DataConnection
 			// get data
 			try
 			{
-				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, _connectionString))
+				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectStatement, ConnectionString))
 				{
 					// get data
 					da.Fill(0, MAX_PREVIEW_RECORDS, dt);
@@ -386,7 +412,6 @@ namespace Altaxo.Gui.DataConnection
 				{
 					_view.SelectedTabChanged -= EhSelectedTabChanged;
 					_view.SelectedSchemaNodeChanged -= EhSelectedSchemaNodeChanged;
-					_view.ShowSqlBuilder -= EhShowSqlBuilder;
 					_view.PreviewTableData -= EhPreviewData;
 					_view.ChooseConnection -= EhChooseConnection;
 					_view.SelectedConnectionChanged -= EhSelectedConnectionChanged;
@@ -400,7 +425,6 @@ namespace Altaxo.Gui.DataConnection
 					Initialize(false);
 					_view.SelectedTabChanged += EhSelectedTabChanged;
 					_view.SelectedSchemaNodeChanged += EhSelectedSchemaNodeChanged;
-					_view.ShowSqlBuilder += EhShowSqlBuilder;
 					_view.PreviewTableData += EhPreviewData;
 					_view.ChooseConnection += EhChooseConnection;
 					_view.SelectedConnectionChanged += EhSelectedConnectionChanged;
@@ -428,7 +452,7 @@ namespace Altaxo.Gui.DataConnection
 			}
 		}
 
-		private void EhSelectedTabChanged()
+		private void EhSelectedTabChanged(ConnectionMainViewTabKind tabKind)
 		{
 			_selectionStatement = GetCurrentSelectStatement();
 			UpdateUI();
@@ -443,7 +467,7 @@ namespace Altaxo.Gui.DataConnection
 		private void EhShowSqlBuilder()
 		{
 			var ctrl = new QueryDesignerController();
-			ctrl.ConnectionString = _connectionString;
+			ctrl.ConnectionString = ConnectionString;
 
 			if (Current.Gui.ShowDialog(ctrl, "SQL Query Designer", false))
 			{
@@ -480,7 +504,7 @@ namespace Altaxo.Gui.DataConnection
 		private void EhSelectedConnectionChanged(string newConnection)
 		{
 			bool success = AddNewConnectionString(newConnection);
-			_view.SetConnectionListSource(_connectionStringList, _connectionString); // update always, even if no success
+			_view.SetConnectionListSource(_connectionStringList, ConnectionString); // update always, even if no success
 
 			if (success)
 			{
