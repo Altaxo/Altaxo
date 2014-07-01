@@ -254,7 +254,6 @@
     <Compile Include="Gui\DataConnection\ParametersController.cs" />
     <Compile Include="Gui\DataConnection\QueryDesignerController.cs" />
     <Compile Include="Gui\DataConnection\QueryPropertiesController.cs" />
-    <Compile Include="Gui\Data\DataBaseConnectionController.cs" />
     <Compile Include="Gui\Data\DataSourceImportOptionsController.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph\GridPartitioningController.cs" />

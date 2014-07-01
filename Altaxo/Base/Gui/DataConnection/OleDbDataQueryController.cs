@@ -93,8 +93,6 @@ namespace Altaxo.Gui.DataConnection
 
 		private StringValidIndicator _connectionStringValidIndicator = new StringValidIndicator();
 
-		private OleDbSchema _schema;
-
 		private SelectableListNodeList _connectionStringList;
 
 		/// <summary>
@@ -122,22 +120,42 @@ namespace Altaxo.Gui.DataConnection
 				_entireTableQueryController = new EntireTableQueryController();
 				_queryDesignerController = new QueryDesignerController();
 				_arbitrarySqlQueryController = new ArbitrarySqlQueryController();
-				_currentlySelectedController = _arbitrarySqlQueryController;
 				_connectionStringList = new SelectableListNodeList(_staticConnectionStringList);
-				ConnectionString = _doc.ConnectionString;
-
+				var connectionString = _doc.ConnectionString;
 				_tabItemList = new SelectableListNodeList();
 
-				_entireTableQueryController.ConnectionString = ConnectionString;
-				_currentlySelectedController = _entireTableQueryController;
+				_currentlySelectedController = _arbitrarySqlQueryController;
+
+				// Decide which tab to show - if entireTableName at the end is not null, then show the entire table tab
+				string entireTableName = null;
+				if (!string.IsNullOrEmpty(SelectionStatement))
+				{
+					var tokens = SelectionStatement.Split(new char[] { '\r', '\n', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+					if (tokens.Length == 4 && tokens[0].ToUpperInvariant() == "SELECT" && tokens[1].ToUpperInvariant() == "*" && tokens[2].ToUpperInvariant() == "FROM")
+					{
+						entireTableName = tokens[3];
+						_currentlySelectedController = _entireTableQueryController;
+					}
+				}
+				else
+				{
+					_currentlySelectedController = _entireTableQueryController;
+				}
+
+				_entireTableQueryController.TableName = entireTableName;
+				_entireTableQueryController.ConnectionString = connectionString;
 				_tabItemList.Add(new SelectableListNode("Single table", _entireTableQueryController, object.ReferenceEquals(_entireTableQueryController, _currentlySelectedController)));
 
-				_queryDesignerController.ConnectionString = ConnectionString;
+				// Query designer controller
+				_queryDesignerController.ConnectionString = connectionString;
 				_tabItemList.Add(new SelectableListNode("Query builder", _queryDesignerController, object.ReferenceEquals(_queryDesignerController, _currentlySelectedController)));
 
-				_arbitrarySqlQueryController.ConnectionString = ConnectionString;
+				// Arbitrary SQL controller
+				_arbitrarySqlQueryController.ConnectionString = connectionString;
 				_arbitrarySqlQueryController.SelectionStatement = SelectionStatement;
 				_tabItemList.Add(new SelectableListNode("Arbitrary Sql statement", _arbitrarySqlQueryController, object.ReferenceEquals(_arbitrarySqlQueryController, _currentlySelectedController)));
+
+				ConnectionString = connectionString;
 			}
 			if (null != _view)
 			{
@@ -228,11 +246,10 @@ namespace Altaxo.Gui.DataConnection
 				var credentials = new LoginCredentials(string.Empty, string.Empty);
 				try
 				{
-				credentials = connString.GetCredentials();
+					credentials = connString.GetCredentials();
 				}
-				catch(Exception)
+				catch (Exception)
 				{
-
 				}
 				if (!Current.Gui.ShowDialog(ref credentials, "New credentials for database connection", false))
 					return false;

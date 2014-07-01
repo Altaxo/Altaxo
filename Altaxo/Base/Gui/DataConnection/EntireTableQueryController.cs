@@ -132,6 +132,11 @@ namespace Altaxo.Gui.DataConnection
 					// create new node, save table in tag property
 					var node = new NGTreeNodeWithImageIndex() { Text = dt.TableName };
 					node.Tag = dt;
+					if (IsTableNameIdentical(dt.TableName, TableName))
+					{
+						node.IsExpanded = true;
+						node.IsSelected = true;
+					}
 
 					// add new node to appropriate parent
 					switch (OleDbSchema.GetTableType(dt))
@@ -172,6 +177,23 @@ namespace Altaxo.Gui.DataConnection
 					_view.SetTreeSource(_treeRootNode);
 				}
 			}
+		}
+
+		private bool IsTableNameIdentical(string shortTableName, string fullTableName)
+		{
+			if (string.IsNullOrEmpty(fullTableName))
+				return false;
+			if (string.IsNullOrEmpty(shortTableName))
+				return false;
+
+			var idx = fullTableName.IndexOf(shortTableName);
+			if (idx == 0 && fullTableName.Length == shortTableName.Length)
+				return true;
+
+			if (idx > 0 && (idx + shortTableName.Length) == fullTableName.Length && fullTableName[idx - 1] == '.')
+				return true;
+
+			return false;
 		}
 
 		private void EhSelectedSchemaNodeChanged()
@@ -284,5 +306,7 @@ namespace Altaxo.Gui.DataConnection
 		{
 			return !string.IsNullOrEmpty(_selectionStatement);
 		}
+
+		public string TableName { get; set; }
 	}
 }

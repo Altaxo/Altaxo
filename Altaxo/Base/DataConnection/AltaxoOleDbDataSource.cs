@@ -200,7 +200,8 @@ namespace Altaxo.DataConnection
 				if (!(interval <= int.MaxValue / 1000.0))
 					interval = int.MaxValue / 1000;
 
-				_timer = new System.Threading.Timer(EhTimer, null, 0, (int)(interval * 1000));
+				int interval_ms = (int)(interval * 1000);
+				_timer = new System.Threading.Timer(EhTimer, null, interval_ms, interval_ms);
 			}
 		}
 
