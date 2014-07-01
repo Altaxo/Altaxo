@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,11 +34,20 @@ namespace Altaxo
 	/// </summary>
 	public static class CopyHelper
 	{
+		/// <summary>Copies an instance of an immutable class. This can be done simply by assigning <paramref name="from"/> to <paramref name="to"/>.</summary>
+		/// <typeparam name="T">The type of the instance to copy.</typeparam>
+		/// <param name="to">The variable to copy to.</param>
+		/// <param name="from">The instance that was copied.</param>
+		public static void CopyImmutable<M>(ref M to, M from) where M : Main.IImmutable
+		{
+			to = from;
+		}
+
 		/// <summary>Copies an instance.</summary>
 		/// <typeparam name="T">The type of the instance to copy.</typeparam>
 		/// <param name="to">The variable to copy to.</param>
 		/// <param name="from">The instance that was copied.</param>
-		public static void Copy<T>(ref T to, T from) where T: ICloneable
+		public static void Copy<T>(ref T to, T from) where T : ICloneable
 		{
 			Main.ICopyFrom toc;
 
@@ -51,7 +62,7 @@ namespace Altaxo
 			{
 				to = (T)from.Clone();
 			}
-			else if(null!=(toc=(to as Main.ICopyFrom)) && to.GetType()==from.GetType())
+			else if (null != (toc = (to as Main.ICopyFrom)) && to.GetType() == from.GetType())
 			{
 				toc.CopyFrom(from);
 			}
@@ -72,6 +83,5 @@ namespace Altaxo
 			Copy(ref to, from);
 			return to;
 		}
-
 	}
 }

@@ -13,16 +13,14 @@ namespace Altaxo.Data
 			var src = dataTable.DataSource as AltaxoOleDbDataSource;
 
 			if (null == src)
-				src = new AltaxoOleDbDataSource(string.Empty, string.Empty);
+				src = new AltaxoOleDbDataSource(string.Empty, AltaxoOleDbConnectionString.Empty);
 
-			var ctrl = new Altaxo.Gui.DataConnection.ConnectionMainController(src);
-			if (true == Current.Gui.ShowDialog(ctrl, "Connection main view", false))
+			if (true == Current.Gui.ShowDialog(ref src, "Edit data base source", false))
 			{
 				try
 				{
-					var query = new Altaxo.DataConnection.AltaxoOleDbDataSource(ctrl.SelectionStatement, ctrl.ConnectionString);
-					query.FillData(dataTable);
-					dataTable.DataSource = query;
+					src.FillData(dataTable);
+					dataTable.DataSource = src;
 				}
 				catch (Exception ex)
 				{

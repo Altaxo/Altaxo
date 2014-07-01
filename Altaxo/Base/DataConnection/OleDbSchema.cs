@@ -401,6 +401,7 @@ namespace Altaxo.DataConnection
 			EnforceConstraints = false;
 			using (var conn = new OleDbConnection(connString))
 			{
+			
 				conn.Open();
 				GetTables(conn);
 				GetRelations(conn);

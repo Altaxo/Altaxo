@@ -51,7 +51,7 @@ namespace Altaxo.Gui.DataConnection
 		private const int MAX_PREVIEW_RECORDS = 5000;
 
 		private IEntireTableQueryView _view;
-		private string _connectionString;
+		private AltaxoOleDbConnectionString _connectionString;
 		private string _selectionStatement;
 
 		private OleDbSchema _schema;
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>
 		/// Gets or sets the connection string that represents the underlying database.
 		/// </summary>
-		public string ConnectionString
+		public AltaxoOleDbConnectionString ConnectionString
 		{
 			get { return _connectionString; }
 			set
@@ -76,13 +76,13 @@ namespace Altaxo.Gui.DataConnection
 
 				_connectionString = value;
 
-				if (string.IsNullOrEmpty(_connectionString))
+				if (null == _connectionString || _connectionString.IsEmpty)
 				{
 					Reset();
 				}
-				else if (value != oldValue)
+				else if (!object.Equals(value, oldValue))
 				{
-					_schema.ConnectionString = value;
+					_schema.ConnectionString = value.ConnectionStringWithTemporaryCredentials;
 					UpdateTableTree();
 				}
 			}
@@ -100,8 +100,8 @@ namespace Altaxo.Gui.DataConnection
 		{
 			if (initData)
 			{
-				if (!string.IsNullOrEmpty(_connectionString))
-					_schema.ConnectionString = _connectionString;
+				if (null != _connectionString && !_connectionString.IsEmpty)
+					_schema.ConnectionString = _connectionString.ConnectionStringWithTemporaryCredentials;
 			}
 			if (null != _view)
 			{
@@ -218,7 +218,7 @@ namespace Altaxo.Gui.DataConnection
 			// get data
 			try
 			{
-				using (var da = new System.Data.OleDb.OleDbDataAdapter(_selectionStatement, ConnectionString))
+				using (var da = new System.Data.OleDb.OleDbDataAdapter(_selectionStatement, ConnectionString.ConnectionStringWithTemporaryCredentials))
 				{
 					// get data
 					da.Fill(0, MAX_PREVIEW_RECORDS, dt);
@@ -282,7 +282,7 @@ namespace Altaxo.Gui.DataConnection
 
 		public bool Apply()
 		{
-			return !string.IsNullOrEmpty(_connectionString) && !string.IsNullOrEmpty(_selectionStatement);
+			return !string.IsNullOrEmpty(_selectionStatement);
 		}
 	}
 }

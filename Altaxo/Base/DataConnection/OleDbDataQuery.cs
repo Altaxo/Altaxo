@@ -5,52 +5,70 @@ using System.Text;
 
 namespace Altaxo.DataConnection
 {
-	public class OleDbDataQuery : Main.ICopyFrom
+	/// <summary>
+	/// Immutable class that holds a connection string and an SQL selection statement.
+	/// </summary>
+	public sealed class OleDbDataQuery : Main.IImmutable
 	{
-		protected string _connectionString;
-		protected string _selectionlStatement;
+		private AltaxoOleDbConnectionString _connectionString;
+		private string _selectionStatement;
+		private static OleDbDataQuery _emptyInstance = new OleDbDataQuery(null, null);
 
-		public OleDbDataQuery(string connectionString, string sqlStatement)
+		public OleDbDataQuery(string selectionStatement, AltaxoOleDbConnectionString connectionString)
 		{
+			_selectionStatement = selectionStatement;
 			_connectionString = connectionString;
-			_selectionlStatement = sqlStatement;
+
+			if (null == _connectionString)
+				_connectionString = AltaxoOleDbConnectionString.Empty;
 		}
 
-		protected OleDbDataQuery()
-		{
-		}
+		#region Version 0
 
-		public virtual bool CopyFrom(object obj)
+		/// <summary>
+		/// 2014-06-13 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OleDbDataQuery), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var from = obj as OleDbDataQuery;
-			if (null != from)
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				this._connectionString = from._connectionString;
-				this._selectionlStatement = from._selectionlStatement;
-				return true;
+				var s = (OleDbDataQuery)obj;
+
+				info.AddValue("Connection", s._connectionString.OriginalConnectionString);
+				info.AddValue("Statement", s._selectionStatement);
 			}
-			return false;
+
+			protected virtual OleDbDataQuery SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				string connectionString = info.GetString("Connection");
+				string selectionStatement = info.GetString("Statement");
+				return new OleDbDataQuery(selectionStatement, new AltaxoOleDbConnectionString(connectionString, null));
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
 		}
 
-		public virtual object Clone()
-		{
-			var result = new OleDbDataQuery();
-			result.CopyFrom(this);
-			return result;
-		}
+		#endregion Version 0
 
 		public string SelectionStatement
 		{
 			get
 			{
-				return _selectionlStatement;
+				return _selectionStatement;
 			}
 		}
 
-		public string ConnectionString
+		public OleDbDataQuery WithSelectionStatement(string value)
+		{
+			return new OleDbDataQuery(value, this._connectionString);
+		}
+
+		public AltaxoOleDbConnectionString ConnectionString
 		{
 			get
 			{
@@ -58,11 +76,32 @@ namespace Altaxo.DataConnection
 			}
 		}
 
+		public OleDbDataQuery WithConnectionString(AltaxoOleDbConnectionString value)
+		{
+			return new OleDbDataQuery(this._selectionStatement, value);
+		}
+
+		public bool IsEmpty
+		{
+			get
+			{
+				return string.IsNullOrEmpty(SelectionStatement) || _connectionString.IsEmpty;
+			}
+		}
+
+		public static OleDbDataQuery Empty
+		{
+			get
+			{
+				return _emptyInstance;
+			}
+		}
+
 		public void ReadDataFromOleDbConnection(Action<System.Data.Common.DbDataReader> readAction)
 		{
-			using (var connection = new System.Data.OleDb.OleDbConnection(_connectionString))
+			using (var connection = new System.Data.OleDb.OleDbConnection(_connectionString.ConnectionStringWithTemporaryCredentials))
 			{
-				using (var command = new System.Data.OleDb.OleDbCommand(_selectionlStatement, connection))
+				using (var command = new System.Data.OleDb.OleDbCommand(_selectionStatement, connection))
 				{
 					connection.Open();
 					var reader = command.ExecuteReader();

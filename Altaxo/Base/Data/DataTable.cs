@@ -399,7 +399,22 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 				info.AddValue("Name", s._tableName); // name of the Table
+
+				string originalSaveAsTemplateOption = null;
+				bool saveDataAsTemplateRequired = null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
+				if (saveDataAsTemplateRequired)
+				{
+					originalSaveAsTemplateOption = info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate");
+					info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+				}
+
 				info.AddValue("DataCols", s._dataColumns);
+
+				if (saveDataAsTemplateRequired)
+				{
+					info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", originalSaveAsTemplateOption);
+				}
+
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 				info.AddValue("TableScript", s._tableScript);
 				info.AddValue("Properties", s._tableProperties);
@@ -423,7 +438,10 @@ namespace Altaxo.Data
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				if (info.CurrentElementName == "TableDataSource")
-					s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
+				{
+					s.DataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
+					if (null != s.DataSource) s.DataSource.OnAfterDeserialization();
+				}
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -594,6 +612,8 @@ namespace Altaxo.Data
 			{
 				this._tableProperties = null;
 			}
+
+			this.DataSource = null==from.DataSource ? null : (IAltaxoTableDataSource)from.DataSource.Clone();
 		}
 
 		/// <summary>
@@ -909,10 +929,53 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				var orig = _tableDataSource;
+				var oldValue = _tableDataSource;
+
+				if (null != _tableDataSource)
+				{
+					_tableDataSource.DataSourceChanged -= EhTableDataSourceChanged;
+				}
+
 				_tableDataSource = value;
-				if (!object.Equals(orig, value))
+
+				if (null != _tableDataSource)
+				{
+					_tableDataSource.DataSourceChanged += EhTableDataSourceChanged;
+				}
+
+				if (!object.Equals(oldValue, value))
+				{
 					OnChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		private void EhTableDataSourceChanged(IAltaxoTableDataSource dataSource)
+		{
+			this.Suspend();
+			try
+			{
+				dataSource.FillData(this);
+
+				try
+				{
+					if (dataSource.ImportOptions.ExecuteTableScriptAfterImport && null != _tableScript)
+						_tableScript.ExecuteWithoutExceptionCatching(this, null);
+				}
+				catch (Exception ex)
+				{
+					this.Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
+					this.Notes.WriteLine(ex.ToString());
+				}
+			}
+			catch (Exception ex)
+			{
+				this.Notes.WriteLine("Exception during execution of the data source. Details follow:");
+				this.Notes.WriteLine(ex.ToString());
+			}
+			finally
+			{
+				this.Resume();
 			}
 		}
 
@@ -1294,6 +1357,13 @@ namespace Altaxo.Data
 		{
 			if (null != TunneledEvent)
 				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
+
+			var dataSource = DataSource;
+			if (null != dataSource)
+			{
+				DataSource = null;
+				dataSource.Dispose();
+			}
 
 			_dataColumns.Dispose();
 			_propertyColumns.Dispose();

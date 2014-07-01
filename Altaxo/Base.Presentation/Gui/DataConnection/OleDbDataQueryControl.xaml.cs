@@ -43,7 +43,7 @@ namespace Altaxo.Gui.DataConnection
 	/// <summary>
 	/// Interaction logic for Form1.xaml
 	/// </summary>
-	public partial class ConnectionMainControl : UserControl, IConnectionMainView
+	public partial class OleDbDataQueryControl : UserControl, IOleDbDataQueryView
 	{
 		public event Action SelectedTabChanged;
 
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.DataConnection
 
 		public event Action<string> ConnectionStringChangedByUser;
 
-		public ConnectionMainControl()
+		public OleDbDataQueryControl()
 		{
 			InitializeComponent();
 		}

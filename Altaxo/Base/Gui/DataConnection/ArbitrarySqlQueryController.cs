@@ -58,7 +58,7 @@ namespace Altaxo.Gui.DataConnection
 
 		private IArbitrarySqlQueryView _view;
 
-		private string _connectionString;
+		private AltaxoOleDbConnectionString _connectionString;
 		private string _selectionStatement;
 		private OleDbSchema _schema;
 
@@ -70,7 +70,7 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>
 		/// Gets or sets the connection string that represents the underlying database.
 		/// </summary>
-		public string ConnectionString
+		public AltaxoOleDbConnectionString ConnectionString
 		{
 			get { return _connectionString; }
 			set
@@ -79,13 +79,13 @@ namespace Altaxo.Gui.DataConnection
 
 				_connectionString = value;
 
-				if (string.IsNullOrEmpty(_connectionString))
+				if (null == _connectionString || _connectionString.IsEmpty)
 				{
 					Reset();
 				}
-				else if (value != oldValue)
+				else if (!object.Equals(oldValue, value))
 				{
-					_schema.ConnectionString = value;
+					_schema.ConnectionString = value.ConnectionStringWithTemporaryCredentials;
 				}
 			}
 		}
@@ -144,7 +144,7 @@ namespace Altaxo.Gui.DataConnection
 			// get data
 			try
 			{
-				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString))
+				using (var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString.ConnectionStringWithTemporaryCredentials))
 				{
 					// get data
 					da.Fill(0, MAX_PREVIEW_RECORDS, dt);
@@ -165,7 +165,7 @@ namespace Altaxo.Gui.DataConnection
 		{
 			try
 			{
-				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString);
+				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString.ConnectionStringWithTemporaryCredentials);
 				var dt = new System.Data.DataTable();
 				da.FillSchema(dt, System.Data.SchemaType.Mapped);
 				Current.Gui.InfoMessageBox(
@@ -236,7 +236,7 @@ namespace Altaxo.Gui.DataConnection
 
 		public bool Apply()
 		{
-			return !string.IsNullOrEmpty(_connectionString) && !string.IsNullOrEmpty(_selectionStatement);
+			return null != _connectionString && !_connectionString.IsEmpty && !string.IsNullOrEmpty(_selectionStatement);
 		}
 	}
 }

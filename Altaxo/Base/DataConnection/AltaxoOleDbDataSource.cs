@@ -5,34 +5,34 @@ using System.Text;
 
 namespace Altaxo.DataConnection
 {
-	public class AltaxoOleDbDataSource : OleDbDataQuery, Altaxo.Data.IAltaxoTableDataSource
+	public class AltaxoOleDbDataSource : Altaxo.Data.IAltaxoTableDataSource
 	{
-		protected Data.ImportTriggerSource _importTriggerSource;
-		protected bool _doNotSaveCachedTableData;
-		protected bool _executeTableScriptAfterImport;
+		protected Data.IDataSourceImportOptions _importOptions;
+		private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
 
-		public AltaxoOleDbDataSource(string sql, string connection)
-			: base(connection, sql)
+		public AltaxoOleDbDataSource(string selectionStatement, AltaxoOleDbConnectionString connectionString)
 		{
+			_importOptions = new Data.DataSourceImportOptions();
+			_dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
 		}
 
 		protected AltaxoOleDbDataSource()
 		{
 		}
 
-		public override bool CopyFrom(object obj)
+		public virtual bool CopyFrom(object obj)
 		{
-			if (!base.CopyFrom(obj))
-				return false;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
 			var from = obj as AltaxoOleDbDataSource;
 			if (null != from)
 			{
-				_importTriggerSource = from._importTriggerSource;
-				_doNotSaveCachedTableData = from._doNotSaveCachedTableData;
-				_executeTableScriptAfterImport = from._executeTableScriptAfterImport;
+				CopyHelper.Copy(ref _importOptions, from._importOptions);
+				CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
+				return true;
 			}
-			return true;
+			return false;
 		}
 
 		#region Serialization
@@ -49,22 +49,16 @@ namespace Altaxo.DataConnection
 			{
 				var s = (AltaxoOleDbDataSource)obj;
 
-				info.AddValue("Connection", s._connectionString);
-				info.AddValue("Statement", s._selectionlStatement);
-				info.AddEnum("ImportTriggerSource", s._importTriggerSource);
-				info.AddValue("ExecuteTableScriptAfterImport", s._executeTableScriptAfterImport);
-				info.AddValue("DoNotSaveCachedTableData", s._doNotSaveCachedTableData);
+				info.AddValue("DataQuery", s._dataQuery);
+				info.AddValue("ImportOptions", s._importOptions);
 			}
 
 			protected virtual AltaxoOleDbDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (o == null ? new AltaxoOleDbDataSource() : (AltaxoOleDbDataSource)o);
 
-				s._connectionString = info.GetString("Connection");
-				s._selectionlStatement = info.GetString("Statement");
-				s._importTriggerSource = (Data.ImportTriggerSource)info.GetEnum("ImportTriggerSource", s._importTriggerSource.GetType());
-				s._executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");
-				s._doNotSaveCachedTableData = info.GetBoolean("DoNotSaveCachedTableData");
+				s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
+				s._importOptions = (Data.DataSourceImportOptions)info.GetValue("ImportOptions", s);
 				return s;
 			}
 
@@ -83,12 +77,60 @@ namespace Altaxo.DataConnection
 		/// Clones this instance.
 		/// </summary>
 		/// <returns>A clone of this instance.</returns>
-		public override object Clone()
+		public object Clone()
 		{
 			var result = new AltaxoOleDbDataSource();
 			result.CopyFrom(this);
 			return result;
 		}
+
+		#region Properties
+
+		public OleDbDataQuery DataQuery
+		{
+			get
+			{
+				return _dataQuery;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("DataQuery");
+
+				var oldValue = _dataQuery;
+				_dataQuery = value;
+
+				if (!object.Equals(oldValue, value))
+				{
+					StopDataSourceMonitoring();
+					MayStartDataSourceMonitoring();
+				}
+			}
+		}
+
+		public Data.IDataSourceImportOptions ImportOptions
+		{
+			get
+			{
+				return _importOptions;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("ImportOptions");
+
+				var oldValue = _importOptions;
+
+				_importOptions = value;
+
+				if (!object.Equals(oldValue, value))
+				{
+					MayStartDataSourceMonitoring();
+				}
+			}
+		}
+
+		#endregion Properties
 
 		/// <summary>
 		/// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
@@ -100,7 +142,7 @@ namespace Altaxo.DataConnection
 			try
 			{
 				var tableConnector = new AltaxoTableConnector(destinationTable);
-				this.ReadDataFromOleDbConnection(tableConnector.ReadAction);
+				this._dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
 			}
 			finally
 			{
@@ -108,43 +150,87 @@ namespace Altaxo.DataConnection
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the data that are cached in the Altaxo table should be saved within the Altaxo project.
-		/// </summary>
-		/// <value>
-		/// If <c>True</c>, the data of the table attached to this data source are not stored in the Altaxo project file.
-		/// </value>
-		public bool DoNotSaveCachedTableData
-		{
-			get { return _doNotSaveCachedTableData; }
-		}
-
-		/// <summary>
-		/// Gets the cause of a reread of the data source.
-		/// </summary>
-		/// <value>
-		/// The cause of a reread of the data source.
-		/// </value>
-		public Data.ImportTriggerSource ImportTriggerSource
-		{
-			get { return _importTriggerSource; }
-			set { _importTriggerSource = value; }
-		}
+		private Action<Data.IAltaxoTableDataSource> _dataSourceChanged;
 
 		/// <summary>
 		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
 		/// </summary>
-		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged;
-
-		/// <summary>
-		/// Gets a value indicating whether the table script is executed after importing data from this data source.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if [execute table script after import]; otherwise, <c>false</c>.
-		/// </value>
-		public bool ExecuteTableScriptAfterImport
+		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
 		{
-			get { return _executeTableScriptAfterImport; }
+			add
+			{
+				_dataSourceChanged += value;
+				MayStartDataSourceMonitoring();
+			}
+			remove
+			{
+				_dataSourceChanged -= value;
+				if (null == _dataSourceChanged)
+					StopDataSourceMonitoring();
+			}
+		}
+
+		public void OnAfterDeserialization()
+		{
+			if (_importOptions.ImportTriggerSource != Data.ImportTriggerSource.Manual)
+			{
+				var ev = _dataSourceChanged;
+				if (null != ev)
+					ev(this);
+			}
+
+			MayStartDataSourceMonitoring();
+		}
+
+		private System.Threading.Timer _timer;
+
+		private void MayStartDataSourceMonitoring()
+		{
+			if (_importOptions.ImportTriggerSource != Data.ImportTriggerSource.DataSourceChanged)
+			{
+				StopDataSourceMonitoring();
+				return;
+			}
+
+			if (_importOptions.ImportTriggerSource == Data.ImportTriggerSource.DataSourceChanged && null == _timer)
+			{
+				var interval = Math.Max(_importOptions.PollTimeIntervalInSeconds, _importOptions.MinimumTimeIntervalBetweenUpdatesInSeconds);
+				if (!(interval > 0))
+					interval = 60;
+				if (!(interval <= int.MaxValue / 1000.0))
+					interval = int.MaxValue / 1000;
+
+				_timer = new System.Threading.Timer(EhTimer, null, 0, (int)(interval * 1000));
+			}
+		}
+
+		private void EhTimer(object state)
+		{
+			var ev = _dataSourceChanged;
+			if (null != ev)
+				ev(this);
+			else
+				StopDataSourceMonitoring();
+		}
+
+		private void StopDataSourceMonitoring()
+		{
+			var timer = _timer;
+			if (null != timer)
+			{
+				timer.Dispose();
+				_timer = null;
+			}
+		}
+
+		public void Dispose()
+		{
+			var timer = _timer;
+			if (null != timer)
+			{
+				timer.Dispose();
+				_timer = null;
+			}
 		}
 	}
 }

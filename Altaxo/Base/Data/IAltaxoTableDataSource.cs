@@ -8,7 +8,7 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Interface that must be implemented by all data sources that can provide data for an Altaxo data table.
 	/// </summary>
-	public interface IAltaxoTableDataSource : Main.ICopyFrom
+	public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable
 	{
 		/// <summary>
 		/// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
@@ -16,34 +16,17 @@ namespace Altaxo.Data
 		/// <param name="destinationTable">The destination table.</param>
 		void FillData(Altaxo.Data.DataTable destinationTable);
 
-		/// <summary>
-		/// Gets a value indicating whether the data that are cached in the Altaxo table should be saved within the Altaxo project.
-		/// </summary>
-		/// <value>
-		/// If <c>True</c>, the data of the table attached to this data source are not stored in the Altaxo project file.
-		/// </value>
-		bool DoNotSaveCachedTableData { get; }
-
-		/// <summary>
-		/// Gets a value indicating whether the table script is executed after importing data from this data source.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if [execute table script after import]; otherwise, <c>false</c>.
-		/// </value>
-		bool ExecuteTableScriptAfterImport { get; }
-
-		/// <summary>
-		/// Gets the cause of a reread of the data source.
-		/// </summary>
-		/// <value>
-		/// The cause of a reread of the data source.
-		/// </value>
-		ImportTriggerSource ImportTriggerSource { get; }
+		IDataSourceImportOptions ImportOptions { get; set; }
 
 		/// <summary>
 		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
 		/// </summary>
 		event Action<IAltaxoTableDataSource> DataSourceChanged;
+
+		/// <summary>
+		/// Called after deserization of a data source instance, when it is already associated with a data table.
+		/// </summary>
+		void OnAfterDeserialization();
 	}
 
 	/// <summary>

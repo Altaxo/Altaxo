@@ -43,9 +43,6 @@ namespace Altaxo.Gui.DataConnection
 
 		void UpdateGridColumns(bool isGrouped);
 
-		/// <summary>Occurs when a user clicks the button to create/edit a connection string.</summary>
-		event Action ChooseConnectionString;
-
 		event Action<bool> GroupByChanged;
 
 		event Action ChooseProperties;
@@ -70,6 +67,7 @@ namespace Altaxo.Gui.DataConnection
 	[ExpectedTypeOfView(typeof(IQueryDesignerView))]
 	public class QueryDesignerController : IMVCAController
 	{
+		private AltaxoOleDbConnectionString _connectionString;
 		private QueryBuilder _builder;
 
 		private NGTreeNode _treeTableNodes;
@@ -84,14 +82,20 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>
 		/// Gets or sets the connection string that represents the underlying database.
 		/// </summary>
-		public string ConnectionString
+		public AltaxoOleDbConnectionString ConnectionString
 		{
-			get { return _builder.ConnectionString; }
+			get { return _connectionString; }
 			set
 			{
-				if (value != ConnectionString)
+				if (null == value)
+					throw new ArgumentNullException("ConnectionString");
+
+				var oldValue = _connectionString;
+				_connectionString = value;
+
+				if (!object.Equals(oldValue, value))
 				{
-					_builder.ConnectionString = value;
+					_builder.ConnectionString = _connectionString.ConnectionStringWithTemporaryCredentials;
 					UpdateTableTree();
 				}
 			}
@@ -133,7 +137,6 @@ namespace Altaxo.Gui.DataConnection
 
 		private void AttachView()
 		{
-			_view.ChooseConnectionString += EhChooseConnectionString;
 			_view.GroupByChanged += EhGroupByChanged;
 			_view.ChooseProperties += EhChooseProperties;
 			_view.CheckSql += EhCheckSql;
@@ -150,7 +153,6 @@ namespace Altaxo.Gui.DataConnection
 
 		private void DetachView()
 		{
-			_view.ChooseConnectionString -= EhChooseConnectionString;
 			_view.GroupByChanged -= EhGroupByChanged;
 			_view.ChooseProperties -= EhChooseProperties;
 			_view.CheckSql -= EhCheckSql;
@@ -237,7 +239,7 @@ namespace Altaxo.Gui.DataConnection
 			try
 			{
 				// get the data
-				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString);
+				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString.ConnectionStringWithTemporaryCredentials);
 				var dt = new System.Data.DataTable("Query");
 				da.Fill(dt);
 
@@ -258,7 +260,7 @@ namespace Altaxo.Gui.DataConnection
 		{
 			try
 			{
-				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString);
+				var da = new System.Data.OleDb.OleDbDataAdapter(SelectionStatement, ConnectionString.ConnectionStringWithTemporaryCredentials);
 				var dt = new System.Data.DataTable();
 				da.FillSchema(dt, System.Data.SchemaType.Mapped);
 				Current.Gui.InfoMessageBox(
@@ -292,11 +294,6 @@ namespace Altaxo.Gui.DataConnection
 
 			// show/hide the GroupBy column on the grid
 			_view.UpdateGridColumns(isGrouped);
-		}
-
-		private void EhChooseConnectionString()
-		{
-			ConnectionString = OleDbConnString.EditConnectionString(ConnectionString);
 		}
 
 		private void QueryFields_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)

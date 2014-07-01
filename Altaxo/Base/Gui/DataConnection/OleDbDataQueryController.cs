@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Altaxo.Gui.DataConnection
 {
-	public interface IConnectionMainView
+	public interface IOleDbDataQueryView
 	{
 		/// <summary>Sets the cursor inside the control to the wait cursor.</summary>
 		void SetWaitCursor();
@@ -65,19 +65,33 @@ namespace Altaxo.Gui.DataConnection
 		event Action<string> ConnectionStringChangedByUser;
 	}
 
-	[ExpectedTypeOfView(typeof(IConnectionMainView))]
-	public class ConnectionMainController : IMVCAController
+	[ExpectedTypeOfView(typeof(IOleDbDataQueryView))]
+	[UserControllerForObject(typeof(OleDbDataQuery))]
+	public class OleDbDataQueryController : MVCANControllerBase<OleDbDataQuery, IOleDbDataQueryView>
 	{
+		#region Inner classes
+
+		private struct StringValidIndicator
+		{
+			private AltaxoOleDbConnectionString _connectionString;
+			private bool _isConnectionStringValid;
+
+			public StringValidIndicator(AltaxoOleDbConnectionString connectionString, bool isValid)
+			{
+				_connectionString = connectionString;
+				_isConnectionStringValid = isValid;
+			}
+
+			public AltaxoOleDbConnectionString ConnectionString { get { return _connectionString; } }
+
+			public bool IsConnectionStringValid { get { return _isConnectionStringValid; } }
+		}
+
+		#endregion Inner classes
+
 		private static SelectableListNodeList _staticConnectionStringList = new SelectableListNodeList();
 
-		private IConnectionMainView _view;
-
-		// current connection string and corresponding schema
-		private string _connectionString;
-
-		private bool _isConnectionStringValid;
-
-		private string _selectionStatement;
+		private StringValidIndicator _connectionStringValidIndicator = new StringValidIndicator();
 
 		private OleDbSchema _schema;
 
@@ -98,68 +112,20 @@ namespace Altaxo.Gui.DataConnection
 		private ArbitrarySqlQueryController _arbitrarySqlQueryController;
 		private IMVCAController _currentlySelectedController;
 
-		public ConnectionMainController(string sqlStatement, string connectionString)
+		protected override void Initialize(bool initData)
 		{
-			_entireTableQueryController = new EntireTableQueryController();
-			_queryDesignerController = new QueryDesignerController();
-			_arbitrarySqlQueryController = new ArbitrarySqlQueryController();
-			_currentlySelectedController = _arbitrarySqlQueryController;
-			_selectionStatement = sqlStatement;
+			if (null == _doc)
+				throw new InvalidOperationException("Initialize called without setting the document beforehand");
 
-			_connectionStringList = new SelectableListNodeList(_staticConnectionStringList);
-			ConnectionString = connectionString;
-
-			Initialize(true);
-		}
-
-		public ConnectionMainController(OleDbDataQuery query)
-			: this(query.SelectionStatement, query.ConnectionString)
-		{
-		}
-
-		public string ConnectionString
-		{
-			get
-			{
-				return _connectionString;
-			}
-			protected set
-			{
-				if (string.IsNullOrEmpty(value))
-					return;
-
-				var oldValue = _connectionString;
-				var oldValueValid = _isConnectionStringValid;
-
-				_connectionString = value;
-
-				if (_connectionString != oldValue)
-				{
-					_isConnectionStringValid = IsConnectionStringValid(_connectionString);
-				}
-
-				if (oldValue != _connectionString || oldValueValid != _isConnectionStringValid)
-					OnConnectionStringChanged();
-			}
-		}
-
-		/// <summary>
-		/// Gets a SQL statement that corresponds to the element that
-		/// is currently selected (table, view, stored procedure, or
-		/// explicit sql statement).
-		/// </summary>
-		public string SelectionStatement
-		{
-			get
-			{
-				return _selectionStatement;
-			}
-		}
-
-		public void Initialize(bool initData)
-		{
 			if (initData)
 			{
+				_entireTableQueryController = new EntireTableQueryController();
+				_queryDesignerController = new QueryDesignerController();
+				_arbitrarySqlQueryController = new ArbitrarySqlQueryController();
+				_currentlySelectedController = _arbitrarySqlQueryController;
+				_connectionStringList = new SelectableListNodeList(_staticConnectionStringList);
+				ConnectionString = _doc.ConnectionString;
+
 				_tabItemList = new SelectableListNodeList();
 
 				_entireTableQueryController.ConnectionString = ConnectionString;
@@ -170,13 +136,13 @@ namespace Altaxo.Gui.DataConnection
 				_tabItemList.Add(new SelectableListNode("Query builder", _queryDesignerController, object.ReferenceEquals(_queryDesignerController, _currentlySelectedController)));
 
 				_arbitrarySqlQueryController.ConnectionString = ConnectionString;
-				_arbitrarySqlQueryController.SelectionStatement = _selectionStatement;
+				_arbitrarySqlQueryController.SelectionStatement = SelectionStatement;
 				_tabItemList.Add(new SelectableListNode("Arbitrary Sql statement", _arbitrarySqlQueryController, object.ReferenceEquals(_arbitrarySqlQueryController, _currentlySelectedController)));
 			}
 			if (null != _view)
 			{
-				_view.SetConnectionListSource(_connectionStringList, ConnectionString);
-				_view.SetConnectionStatus(_isConnectionStringValid);
+				_view.SetConnectionListSource(_connectionStringList, ConnectionString.OriginalConnectionString);
+				_view.SetConnectionStatus(_connectionStringValidIndicator.IsConnectionStringValid);
 
 				if (null == _entireTableQueryController.ViewObject)
 					Current.Gui.FindAndAttachControlTo(_entireTableQueryController);
@@ -191,34 +157,127 @@ namespace Altaxo.Gui.DataConnection
 			}
 		}
 
-		private bool IsConnectionStringValid(string connString)
+		public AltaxoOleDbConnectionString ConnectionString
 		{
-			if (string.IsNullOrEmpty(connString))
-				return false;
+			get
+			{
+				return _doc.ConnectionString;
+			}
+			protected set
+			{
+				if (null == value || value.IsEmpty)
+					return;
 
-			// get schema for the new connection string
-			_schema = OleDbSchema.GetSchema(connString);
+				var oldValue = _doc.ConnectionString;
+				var oldValueValid = _connectionStringValidIndicator.IsConnectionStringValid;
 
-			return _schema != null;
+				_doc = _doc.WithConnectionString(value);
+
+				if (_doc.ConnectionString != _connectionStringValidIndicator.ConnectionString)
+				{
+					var connString = _doc.ConnectionString;
+					bool isConnStringValid = IsConnectionStringValid(ref connString);
+					_doc = _doc.WithConnectionString(connString);
+					_connectionStringValidIndicator = new StringValidIndicator(connString, isConnStringValid);
+				}
+
+				if (oldValue != _doc.ConnectionString || oldValueValid != _connectionStringValidIndicator.IsConnectionStringValid)
+					OnConnectionStringChanged();
+			}
 		}
 
-		private static int InsertConnectionStringAtBeginningOfList(SelectableListNodeList list, string connString)
+		/// <summary>
+		/// Gets a SQL statement that corresponds to the element that
+		/// is currently selected (table, view, stored procedure, or
+		/// explicit sql statement).
+		/// </summary>
+		public string SelectionStatement
+		{
+			get
+			{
+				return _doc.SelectionStatement;
+			}
+			set
+			{
+				_doc = _doc.WithSelectionStatement(value);
+			}
+		}
+
+		private bool IsConnectionStringValid(ref AltaxoOleDbConnectionString connString)
+		{
+			string error;
+
+			if (null == connString || connString.IsEmpty)
+				return false;
+
+			if (null == (error = CanEstablishConnectionWithConnectionString(connString.ConnectionStringWithTemporaryCredentials)))
+				return true;
+
+			for (; ; )
+			{
+				if (!Current.Gui.YesNoMessageBox(
+					string.Format(
+					"Could not connect to data base using the following connection string:\r\n" +
+					"{0}\r\n" +
+					"Error message:\r\n" +
+					"{1}\r\n" +
+					"Do you want to try again with different credentials?", connString, error),
+					"Database connection failed", true))
+					return false;
+
+				var credentials = new LoginCredentials(string.Empty, string.Empty);
+				try
+				{
+				credentials = connString.GetCredentials();
+				}
+				catch(Exception)
+				{
+
+				}
+				if (!Current.Gui.ShowDialog(ref credentials, "New credentials for database connection", false))
+					return false;
+
+				connString = new AltaxoOleDbConnectionString(connString.OriginalConnectionString, credentials);
+
+				if (null == (error = CanEstablishConnectionWithConnectionString(connString.ConnectionStringWithTemporaryCredentials)))
+					return true;
+			}
+		}
+
+		private string CanEstablishConnectionWithConnectionString(string connString)
+		{
+			try
+			{
+				using (var conn = new System.Data.OleDb.OleDbConnection(connString))
+				{
+					conn.Open();
+					conn.Close();
+				}
+			}
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
+			return null;
+		}
+
+		private static int InsertConnectionStringAtBeginningOfList(SelectableListNodeList list, AltaxoOleDbConnectionString connString)
 		{
 			// look for item in the list
-			var index = list.IndexOfFirst(x => connString == (string)x.Tag);
+			var index = list.IndexOfFirst(x => connString.OriginalConnectionString == ((AltaxoOleDbConnectionString)x.Tag).OriginalConnectionString);
 
 			// add good values to the list
 			if (index < 0) // was not before in the list
 			{
 				list.ClearSelectionsAll();
-				list.Insert(0, new SelectableListNode(connString, connString, true));
+				list.Insert(0, new SelectableListNode(connString.OriginalConnectionString, connString, true));
 				index = 0; // inserted at index 0
 			}
 			else if (index > 0) // was in the list before
 			{
 				list.ClearSelectionsAll();
 				list.RemoveAt(index);
-				list.Insert(0, new SelectableListNode(connString, connString, true));
+				list.Insert(0, new SelectableListNode(connString.OriginalConnectionString, connString, true));
 				index = 0;
 			}
 
@@ -231,10 +290,10 @@ namespace Altaxo.Gui.DataConnection
 			return index;
 		}
 
-		private static void RemoveConnectionStringFromList(SelectableListNodeList list, string connString)
+		private static void RemoveConnectionStringFromList(SelectableListNodeList list, AltaxoOleDbConnectionString connString)
 		{
 			// look for item in the list
-			var index = list.IndexOfFirst(x => connString == (string)x.Tag);
+			var index = list.IndexOfFirst(x => connString.OriginalConnectionString == ((AltaxoOleDbConnectionString)x.Tag).OriginalConnectionString);
 			if (index >= 0)
 				list.RemoveAt(index);
 		}
@@ -249,7 +308,7 @@ namespace Altaxo.Gui.DataConnection
 			int index;
 
 			// handle good connection strings
-			if (_isConnectionStringValid)
+			if (_connectionStringValidIndicator.IsConnectionStringValid)
 			{
 				index = InsertConnectionStringAtBeginningOfList(_connectionStringList, ConnectionString);
 			}
@@ -259,42 +318,19 @@ namespace Altaxo.Gui.DataConnection
 				RemoveConnectionStringFromList(_connectionStringList, ConnectionString);
 			}
 
-			var controllerConnectionString = _isConnectionStringValid ? _connectionString : string.Empty;
+			var controllerConnectionString = _connectionStringValidIndicator.IsConnectionStringValid ? ConnectionString : AltaxoOleDbConnectionString.Empty;
 			_entireTableQueryController.ConnectionString = controllerConnectionString;
 			_queryDesignerController.ConnectionString = controllerConnectionString;
 			_arbitrarySqlQueryController.ConnectionString = controllerConnectionString;
 
 			if (null != _view)
 			{
-				_view.SetConnectionListSource(_connectionStringList, _connectionString);
-				_view.SetConnectionStatus(_isConnectionStringValid);
+				_view.SetConnectionListSource(_connectionStringList, ConnectionString.OriginalConnectionString);
+				_view.SetConnectionStatus(_connectionStringValidIndicator.IsConnectionStringValid);
 			}
 		}
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					DetachView();
-				}
-
-				_view = value as IConnectionMainView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-					AttachView();
-				}
-			}
-		}
-
-		private void AttachView()
+		protected override void AttachView()
 		{
 			_view.SelectedTabChanged += EhSelectedTabChanged;
 			_view.CmdChooseConnectionStringFromDialog += EhChooseConnection;
@@ -302,7 +338,7 @@ namespace Altaxo.Gui.DataConnection
 			_view.ConnectionStringChangedByUser += EhConnectionStringChangedByUser;
 		}
 
-		private void DetachView()
+		protected override void DetachView()
 		{
 			_view.SelectedTabChanged -= EhSelectedTabChanged;
 			_view.CmdChooseConnectionStringFromDialog -= EhChooseConnection;
@@ -337,10 +373,12 @@ namespace Altaxo.Gui.DataConnection
 			// get starting connection string
 			// (if empty or no provider, start with SQL source as default)
 			var connectionChoice = _connectionStringList.FirstSelectedNode;
-			string connString = null != connectionChoice ? (string)connectionChoice.Tag : null;
+			AltaxoOleDbConnectionString axoConnString = null != connectionChoice ? (AltaxoOleDbConnectionString)connectionChoice.Tag : AltaxoOleDbConnectionString.Empty;
+
+			var connString = axoConnString.OriginalConnectionString;
 			if (string.IsNullOrEmpty(connString) || connString.IndexOf("provider=", StringComparison.OrdinalIgnoreCase) < 0)
 			{
-				connString = "Provider=SQLOLEDB.1;";
+				connString = "Provider=SQLNCLI11.1;";
 			}
 
 			// let user change it
@@ -349,19 +387,19 @@ namespace Altaxo.Gui.DataConnection
 			if (string.IsNullOrEmpty(newConnString))
 				return;
 
-			ConnectionString = newConnString;
+			ConnectionString = new AltaxoOleDbConnectionString(newConnString, null);
 		}
 
 		private void EhConnectionStringSelectedFromList()
 		{
 			var node = _connectionStringList.FirstSelectedNode;
 			if (node != null)
-				ConnectionString = (string)node.Tag;
+				ConnectionString = (AltaxoOleDbConnectionString)node.Tag;
 		}
 
 		private void EhConnectionStringChangedByUser(string newConnectionString)
 		{
-			ConnectionString = newConnectionString;
+			ConnectionString = new AltaxoOleDbConnectionString(newConnectionString, null);
 		}
 
 		// issue a warning
@@ -371,17 +409,7 @@ namespace Altaxo.Gui.DataConnection
 			Current.Gui.ErrorMessageBox(msg);
 		}
 
-		public object ModelObject
-		{
-			get { return null; }
-		}
-
-		public void Dispose()
-		{
-			ViewObject = null;
-		}
-
-		public bool Apply()
+		public override bool Apply()
 		{
 			bool result = false;
 
@@ -396,21 +424,26 @@ namespace Altaxo.Gui.DataConnection
 			if (result)
 			{
 				if (_currentlySelectedController == _entireTableQueryController)
-					_selectionStatement = _entireTableQueryController.SelectionStatement;
+					SelectionStatement = _entireTableQueryController.SelectionStatement;
 				else if (_currentlySelectedController == _queryDesignerController)
-					_selectionStatement = _queryDesignerController.SelectionStatement;
+					SelectionStatement = _queryDesignerController.SelectionStatement;
 				else if (_currentlySelectedController == _arbitrarySqlQueryController)
-					_selectionStatement = _arbitrarySqlQueryController.SelectionStatement;
+					SelectionStatement = _arbitrarySqlQueryController.SelectionStatement;
 			}
 			else
 			{
 				return false;
 			}
 
-			if (_isConnectionStringValid)
+			if (_connectionStringValidIndicator.IsConnectionStringValid)
 				InsertConnectionStringAtBeginningOfList(_staticConnectionStringList, ConnectionString);
 
-			return !string.IsNullOrEmpty(_connectionString) && !string.IsNullOrEmpty(_selectionStatement);
+			bool isValid = null != _doc.ConnectionString && !_doc.ConnectionString.IsEmpty && !string.IsNullOrEmpty(_doc.SelectionStatement);
+
+			if (isValid && !object.ReferenceEquals(_doc, _originalDoc))
+				CopyHelper.CopyImmutable(ref _originalDoc, _doc);
+
+			return isValid;
 		}
 	}
 }

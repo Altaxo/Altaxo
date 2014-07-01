@@ -361,11 +361,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\DataConnection\AltaxoOleDbDataSourceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\DataConnection\ArbitrarySqlQueryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\DataConnection\ConnectionMainControl.xaml">
+    <Page Include="Gui\DataConnection\LoginCredentialsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\OleDbDataQueryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -392,6 +400,10 @@
     <Page Include="Gui\DataConnection\QueryPropertiesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Data\DataSourceImportOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1028,11 +1040,17 @@
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
     <Compile Include="Gui\Common\VisibilityConverter.cs" />
+    <Compile Include="Gui\DataConnection\AltaxoOleDbDataSourceControl.xaml.cs">
+      <DependentUpon>AltaxoOleDbDataSourceControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\DataConnection\ArbitrarySqlQueryControl.xaml.cs">
       <DependentUpon>ArbitrarySqlQueryControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\DataConnection\ConnectionMainControl.xaml.cs">
-      <DependentUpon>ConnectionMainControl.xaml</DependentUpon>
+    <Compile Include="Gui\DataConnection\LoginCredentialsControl.xaml.cs">
+      <DependentUpon>LoginCredentialsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\OleDbDataQueryControl.xaml.cs">
+      <DependentUpon>OleDbDataQueryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\DataConnection\DataPreviewControl.xaml.cs">
       <DependentUpon>DataPreviewControl.xaml</DependentUpon>
@@ -1051,6 +1069,9 @@
     </Compile>
     <Compile Include="Gui\DataConnection\QueryPropertiesControl.xaml.cs">
       <DependentUpon>QueryPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\DataSourceImportOptionsControl.xaml.cs">
+      <DependentUpon>DataSourceImportOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
