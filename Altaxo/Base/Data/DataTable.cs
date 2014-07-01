@@ -105,6 +105,11 @@ namespace Altaxo.Data
 		protected TableScript _tableScript;
 
 		/// <summary>
+		/// Designates the source of the data the table was originally filled with.
+		/// </summary>
+		protected IAltaxoTableDataSource _tableDataSource;
+
+		/// <summary>
 		/// The table properties, key is a string, value is a property you want to store here.
 		/// </summary>
 		/// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
@@ -394,13 +399,30 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 				info.AddValue("Name", s._tableName); // name of the Table
+
+				string originalSaveAsTemplateOption = null;
+				bool saveDataAsTemplateRequired = null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
+				if (saveDataAsTemplateRequired)
+				{
+					originalSaveAsTemplateOption = info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate");
+					info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", "true");
+				}
+
 				info.AddValue("DataCols", s._dataColumns);
+
+				if (saveDataAsTemplateRequired)
+				{
+					info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate", originalSaveAsTemplateOption);
+				}
+
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 				info.AddValue("TableScript", s._tableScript);
 				info.AddValue("Properties", s._tableProperties);
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+				if (null != s._tableDataSource)
+					info.AddValue("TableDataSource", s._tableDataSource);
 			}
 
 			public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -415,6 +437,11 @@ namespace Altaxo.Data
 				s._notes.Text = info.GetString("Notes");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
+				if (info.CurrentElementName == "TableDataSource")
+				{
+					s.DataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
+					if (null != s.DataSource) s.DataSource.OnAfterDeserialization();
+				}
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -585,6 +612,8 @@ namespace Altaxo.Data
 			{
 				this._tableProperties = null;
 			}
+
+			this.DataSource = null==from.DataSource ? null : (IAltaxoTableDataSource)from.DataSource.Clone();
 		}
 
 		/// <summary>
@@ -883,6 +912,70 @@ namespace Altaxo.Data
 			get
 			{
 				return _notes;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the data source of this table. For instance, this could be the SQL query that was used to fill data into this table.
+		/// </summary>
+		/// <value>
+		/// The data source.
+		/// </value>
+		public IAltaxoTableDataSource DataSource
+		{
+			get
+			{
+				return _tableDataSource;
+			}
+			set
+			{
+				var oldValue = _tableDataSource;
+
+				if (null != _tableDataSource)
+				{
+					_tableDataSource.DataSourceChanged -= EhTableDataSourceChanged;
+				}
+
+				_tableDataSource = value;
+
+				if (null != _tableDataSource)
+				{
+					_tableDataSource.DataSourceChanged += EhTableDataSourceChanged;
+				}
+
+				if (!object.Equals(oldValue, value))
+				{
+					OnChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		private void EhTableDataSourceChanged(IAltaxoTableDataSource dataSource)
+		{
+			this.Suspend();
+			try
+			{
+				dataSource.FillData(this);
+
+				try
+				{
+					if (dataSource.ImportOptions.ExecuteTableScriptAfterImport && null != _tableScript)
+						_tableScript.ExecuteWithoutExceptionCatching(this, null);
+				}
+				catch (Exception ex)
+				{
+					this.Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
+					this.Notes.WriteLine(ex.ToString());
+				}
+			}
+			catch (Exception ex)
+			{
+				this.Notes.WriteLine("Exception during execution of the data source. Details follow:");
+				this.Notes.WriteLine(ex.ToString());
+			}
+			finally
+			{
+				this.Resume();
 			}
 		}
 
@@ -1264,6 +1357,13 @@ namespace Altaxo.Data
 		{
 			if (null != TunneledEvent)
 				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
+
+			var dataSource = DataSource;
+			if (null != dataSource)
+			{
+				DataSource = null;
+				dataSource.Dispose();
+			}
 
 			_dataColumns.Dispose();
 			_propertyColumns.Dispose();

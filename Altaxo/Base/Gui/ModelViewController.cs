@@ -161,6 +161,7 @@ namespace Altaxo.Gui
 
 		public virtual void Dispose()
 		{
+			ViewObject = null;
 		}
 	}
 

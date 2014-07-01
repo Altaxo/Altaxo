@@ -53,6 +53,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			CultureSettings.PropertyKeyDocumentCulture.ApplyProperty(Current.PropertyService.GetValue<CultureSettings>(CultureSettings.PropertyKeyDocumentCulture, Services.RuntimePropertyKind.UserAndApplicationAndBuiltin));
 
 			Altaxo.Current.SetResourceService(new ResourceServiceWrapper());
+			Altaxo.Gui.WpfResourceService.InitializeWpfResourceService(new WpfResourceServiceWrapper());
 			Altaxo.Current.SetProjectService(new Altaxo.Main.ProjectService());
 			Altaxo.Current.SetGUIFactoryService(new Altaxo.Gui.GuiFactoryServiceWpfWin());
 
@@ -105,6 +106,19 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			public System.Drawing.Bitmap GetBitmap(string name)
 			{
 				return ICSharpCode.Core.WinForms.WinFormsResourceService.GetBitmap(name);
+			}
+		}
+
+		private class WpfResourceServiceWrapper : Altaxo.Gui.IWpfResourceService
+		{
+			public System.Windows.Controls.Image GetImage(string name)
+			{
+				return ICSharpCode.Core.Presentation.PresentationResourceService.GetImage(name);
+			}
+
+			public System.Windows.Media.Imaging.BitmapSource GetBitmapSource(string name)
+			{
+				return ICSharpCode.Core.Presentation.PresentationResourceService.GetBitmapSource(name);
 			}
 		}
 	}

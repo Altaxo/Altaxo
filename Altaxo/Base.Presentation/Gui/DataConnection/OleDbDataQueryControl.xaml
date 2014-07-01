@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Altaxo.Gui.DataConnection.OleDbDataQueryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+					  xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+					  xmlns:local="clr-namespace:Altaxo.Gui.DataConnection"
+						 xmlns:axog="clr-namespace:Altaxo.Gui">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="8" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Label Content="Connection String:" Grid.Column="0" />
+		<ComboBox x:Name="_cmbConnString" Grid.Column="1" MinWidth="200" IsEditable="True" SelectionChanged="EhConnectionStringSelectionChanged" KeyDown="EhConnStringKeyDown" />
+		<Button x:Name="_btnConnPicker" Grid.Column="2" Content="{axog:GetIcon Icons.16x16.DataConnection.EditConnectionString}"  Click="_btnConnPicker_Click" ToolTip="Pick a new SQL connection" Margin="2,0,0,0" />
+		<Label x:Name="_guiConnectionInvalid" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Content="Attention: No connection can be made using the current connection string!" Foreground="Red" />
+		<TabControl x:Name="_tab" Grid.Row="3" Grid.ColumnSpan="5" SelectionChanged="_tab_SelectedIndexChanged" TabStripPlacement="Bottom">
+			<TabControl.ContentTemplate>
+				<DataTemplate>
+					<ContentPresenter Content="{Binding Path=Tag.ViewObject}" />
+				</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
+	</Grid>
+</UserControl>

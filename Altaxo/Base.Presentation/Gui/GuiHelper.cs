@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo;
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Data;
-
-using Altaxo;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui
 {
@@ -47,7 +47,7 @@ namespace Altaxo.Gui
 
 			if (view.ItemsSource != data)
 			{
-				//view.ItemsSource = null; 
+				//view.ItemsSource = null;
 				view.ItemsSource = data;
 			}
 
@@ -63,7 +63,8 @@ namespace Altaxo.Gui
 			if (null != view.SelectedItem)
 				((ISelectableItem)view.SelectedItem).IsSelected = true;
 		}
-		#endregion
+
+		#endregion Combobox
 
 		#region ListBox
 
@@ -106,10 +107,9 @@ namespace Altaxo.Gui
 				it.IsSelected = true;
 		}
 
-		#endregion
+		#endregion ListBox
 
 		#region ListView
-
 
 		public static void Initialize(ListView view, SelectableListNodeList data)
 		{
@@ -184,7 +184,6 @@ namespace Altaxo.Gui
 
 			grid.Columns.Clear();
 
-
 			int colNo = -1;
 			foreach (var colName in columnHeaders)
 			{
@@ -197,7 +196,34 @@ namespace Altaxo.Gui
 			}
 		}
 
-		#endregion
+		#endregion ListView
+
+		#region TabControl
+
+		public static void Initialize(TabControl view, SelectableListNodeList data)
+		{
+			int idx = data.FirstSelectedNodeIndex; // Note: the selected index must be determined _before_ the data are bound to the box (otherwise when a binding is in place, it can happen that the selection is resetted)
+
+			if (view.ItemsSource != data)
+			{
+				//view.ItemsSource = null;
+				view.ItemsSource = data;
+			}
+
+			if (idx >= 0)
+				view.SelectedItem = data[idx];
+		}
+
+		public static void SynchronizeSelectionFromGui(TabControl view)
+		{
+			foreach (ISelectableItem it in view.ItemsSource)
+				it.IsSelected = false;
+
+			if (null != view.SelectedItem)
+				((ISelectableItem)view.SelectedItem).IsSelected = true;
+		}
+
+		#endregion TabControl
 
 		#region Mouse
 
@@ -225,7 +251,7 @@ namespace Altaxo.Gui
 			return result;
 		}
 
-		#endregion
+		#endregion Mouse
 
 		#region Brush and Pen
 
@@ -242,7 +268,6 @@ namespace Altaxo.Gui
 			var result = new System.Windows.Media.Pen(new System.Windows.Media.SolidColorBrush(c), penx.Width);
 			return result;
 		}
-
 
 		public static System.Windows.Media.Color ToWpf(this System.Drawing.Color c)
 		{
@@ -274,7 +299,7 @@ namespace Altaxo.Gui
 
 		public static Altaxo.Graph.AxoColor ToAxo(this System.Windows.Media.Color c)
 		{
-			return Altaxo.Graph.AxoColor.FromScRgb(c.ScA , c.ScR , c.ScG , c.ScB);
+			return Altaxo.Graph.AxoColor.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
 		}
 
 		public static System.Drawing.Color ToSysDraw(this System.Windows.Media.Color c)
@@ -282,8 +307,7 @@ namespace Altaxo.Gui
 			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
-		
-		#endregion
+		#endregion Brush and Pen
 
 		#region Graphics primitives
 
@@ -319,7 +343,7 @@ namespace Altaxo.Gui
 			return new System.Drawing.Point((int)pt.X, (int)pt.Y);
 		}
 
-		#endregion
+		#endregion Point
 
 		#region Rectangle
 
@@ -353,14 +377,13 @@ namespace Altaxo.Gui
 			return new System.Drawing.Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
 		}
 
-		#endregion
+		#endregion Rectangle
 
-		#endregion
+		#endregion Graphics primitives
 
 		#region Panel Helpers
 
-
-		public static void InitializeChoicePanel<TChoiceGuiElement>(Panel panel, SelectableListNodeList choices) where TChoiceGuiElement: ToggleButton, new()
+		public static void InitializeChoicePanel<TChoiceGuiElement>(Panel panel, SelectableListNodeList choices) where TChoiceGuiElement : ToggleButton, new()
 		{
 			panel.Tag = choices;
 			panel.Children.Clear();
@@ -369,13 +392,12 @@ namespace Altaxo.Gui
 				var rb = new TChoiceGuiElement();
 				rb.Content = choice.Text;
 				rb.Tag = choice;
-				rb.SetBinding(ToggleButton.IsCheckedProperty,new System.Windows.Data.Binding("IsSelected") { Source=choice, Mode= System.Windows.Data.BindingMode.TwoWay });
+				rb.SetBinding(ToggleButton.IsCheckedProperty, new System.Windows.Data.Binding("IsSelected") { Source = choice, Mode = System.Windows.Data.BindingMode.TwoWay });
 				panel.Children.Add(rb);
 			}
 		}
 
-
-		#endregion
+		#endregion Panel Helpers
 
 		#region Image Proxy converters
 
@@ -384,9 +406,9 @@ namespace Altaxo.Gui
 		/// <returns></returns>
 		public static ImageSource ToWpf(Altaxo.Graph.ImageProxy proxy)
 		{
-				var stream = proxy.GetContentStream();
-				var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);
-				return decoder.Frames[0];
+			var stream = proxy.GetContentStream();
+			var decoder = System.Windows.Media.Imaging.BitmapDecoder.Create(stream, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.Default);
+			return decoder.Frames[0];
 		}
 
 		/// <summary>Converts a brush to a Wpf <see cref="ImageSource"/> instance.</summary>
@@ -409,7 +431,27 @@ namespace Altaxo.Gui
 			}
 		}
 
-		#endregion
+		#endregion Image Proxy converters
 
+		#region Logical tree
+
+		/// <summary>
+		/// Gets the object itself or the first recursive parent of the object that has the type T.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to find.</typeparam>
+		/// <param name="child">The object where the search starts.</param>
+		/// <returns>The object itself or the first recursive parent of the object which is of type T. If no such parent exist, <c>null</c> is returned.</returns>
+		public static T GetLogicalParentOfType<T>(DependencyObject child) where T : DependencyObject
+		{
+			if (null == child)
+				return null;
+
+			if (child is T)
+				return (T)child;
+
+			return GetLogicalParentOfType<T>(LogicalTreeHelper.GetParent(child));
+		}
+
+		#endregion Logical tree
 	}
 }

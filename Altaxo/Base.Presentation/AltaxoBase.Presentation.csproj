@@ -361,6 +361,50 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\DataConnection\AltaxoOleDbDataSourceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\ArbitrarySqlQueryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\LoginCredentialsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\OleDbDataQueryControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\DataConnection\DataPreviewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\EntireTableQueryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\FilterEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\ParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\DataConnection\QueryDesignerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\DataConnection\QueryPropertiesControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Data\DataSourceImportOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Data\ExpandCyclingVariableControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -997,10 +1041,45 @@
     <Compile Include="Gui\Common\ValidationErrorToMessageConverter.cs" />
     <Compile Include="Gui\Common\ValidationRules.cs" />
     <Compile Include="Gui\Common\VisibilityConverter.cs" />
+    <Compile Include="Gui\DataConnection\AltaxoOleDbDataSourceControl.xaml.cs">
+      <DependentUpon>AltaxoOleDbDataSourceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\ArbitrarySqlQueryControl.xaml.cs">
+      <DependentUpon>ArbitrarySqlQueryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\LoginCredentialsControl.xaml.cs">
+      <DependentUpon>LoginCredentialsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\OleDbDataQueryControl.xaml.cs">
+      <DependentUpon>OleDbDataQueryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\DataPreviewControl.xaml.cs">
+      <DependentUpon>DataPreviewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\EntireTableQueryControl.xaml.cs">
+      <DependentUpon>EntireTableQueryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\FilterEditControl.xaml.cs">
+      <DependentUpon>FilterEditControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\ParametersControl.xaml.cs">
+      <DependentUpon>ParametersControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\QueryDesignerControl.xaml.cs">
+      <DependentUpon>QueryDesignerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DataConnection\QueryPropertiesControl.xaml.cs">
+      <DependentUpon>QueryPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\DataSourceImportOptionsControl.xaml.cs">
+      <DependentUpon>DataSourceImportOptionsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\GetIconExtension.cs" />
+    <Compile Include="Gui\GetBitmapExtension.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
     </Compile>
@@ -1155,6 +1234,8 @@
     <Compile Include="Gui\Graph\Shapes\ShapeGroupControl.xaml.cs">
       <DependentUpon>ShapeGroupControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\IndexToImageConverter.cs" />
+    <Compile Include="Gui\IWpfResourceService.cs" />
     <Compile Include="Gui\Main\InstancePropertyControlTwoColumnStyle.xaml.cs">
       <DependentUpon>InstancePropertyControlTwoColumnStyle.xaml</DependentUpon>
     </Compile>

@@ -261,7 +261,10 @@ namespace Altaxo.Collections
 		public virtual int ImageIndex
 		{
 			get { return -1; }
-			set { }
+			set
+			{
+				throw new NotImplementedException("ImageIndex is not implemented. Use NGTreeNodeWithImageIndex instead!");
+			}
 		}
 
 		/// <summary>
@@ -272,7 +275,7 @@ namespace Altaxo.Collections
 		public virtual int SelectedImageIndex
 		{
 			get { return -1; }
-			set { }
+			set { throw new NotImplementedException("SelectedImageIndex is not implemented. Use NGTreeNodeWithImageIndex instead!"); }
 		}
 
 		/// <summary>
@@ -712,5 +715,63 @@ namespace Altaxo.Collections
 		}
 
 		#endregion MyNGTreeNodeCollection
+	}
+
+	/// <summary>
+	/// Adds to <see cref="NGTreeNode"/> the ability to store ImageIndex and SelectedImageIndex.
+	/// </summary>
+	public class NGTreeNodeWithImageIndex : NGTreeNode
+	{
+		protected int _imageIndex = -1;
+		protected int _selectedImageIndex = -1;
+
+		/// <summary>
+		/// Returns an image index, or -1 if no image is set. Getting the image index, either the image index for the not selected state or for the selected state is returned.
+		/// </summary>
+		public override int ImageIndex
+		{
+			get
+			{
+				return _isSelected ? _selectedImageIndex : _imageIndex;
+			}
+			set
+			{
+				var oldValue = _imageIndex;
+				_imageIndex = value;
+				if (value != oldValue && !_isSelected)
+					OnPropertyChanged("ImageIndex");
+			}
+		}
+
+		/// <summary>
+		/// Returns an image index (for the selected node), or -1 if no image is set.
+		/// Note that when using SelectedImageIndex, you probably also need to override <see cref="OnPropertyChanged"/>, so that when the <see cref="IsSelected"/> property changed,
+		/// you must also call <see cref="OnPropertyChanged"/> with "ImageIndex" as argument.
+		/// </summary>
+		public override int SelectedImageIndex
+		{
+			get
+			{
+				return _selectedImageIndex;
+			}
+			set
+			{
+				var oldValue = _selectedImageIndex;
+				_selectedImageIndex = value;
+				if (value != oldValue)
+				{
+					OnPropertyChanged("SelectedImageIndex");
+					if (_isSelected)
+						OnPropertyChanged("ImageIndex");
+				}
+			}
+		}
+
+		protected override void OnPropertyChanged(string name)
+		{
+			base.OnPropertyChanged(name);
+			if (_imageIndex != _selectedImageIndex && name == "IsSelected")
+				base.OnPropertyChanged("ImageIndex");
+		}
 	}
 }
