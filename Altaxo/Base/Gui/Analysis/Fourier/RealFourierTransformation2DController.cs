@@ -1,0 +1,151 @@
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Main;
+using Altaxo.Worksheet.Commands.Analysis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Altaxo.Gui.Analysis.Fourier
+{
+	public interface IRealFourierTransformation2DView
+	{
+		double XIncrement { get; set; }
+
+		void SetXIncrementWarning(string warning);
+
+		double YIncrement { get; set; }
+
+		void SetYIncrementWarning(string warning);
+
+		void SetOutputQuantities(SelectableListNodeList list);
+
+		bool CenterFrequencies { get; set; }
+
+		double ResultingFractionOfRowsUsed { get; set; }
+
+		double ResultingFractionOfColumnsUsed { get; set; }
+
+		int? DataPretreatmentOrder { get; set; }
+
+		double? ReplacementValueForNaNMatrixElements { get; set; }
+
+		double? ReplacementValueForInfiniteMatrixElements { get; set; }
+
+		SelectableListNodeList FourierWindowChoice { set; }
+	}
+
+	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
+	[UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
+	public class RealFourierTransformation2DController : MVCANControllerBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
+	{
+		private SelectableListNodeList _outputQuantities;
+		private SelectableListNodeList _fourierWindowChoice;
+
+		protected override void Initialize(bool bInitData)
+		{
+			if (bInitData)
+			{
+				_outputQuantities = new SelectableListNodeList();
+				_fourierWindowChoice = GetFourierWindowChoice(_doc.FourierWindow);
+			}
+
+			if (_view != null)
+			{
+				_view.XIncrement = _doc.RowIncrementValue;
+				_view.YIncrement = _doc.ColumnIncrementValue;
+				_view.SetXIncrementWarning(_doc.RowIncrementMessage);
+
+				_view.SetYIncrementWarning(_doc.ColumnIncrementMessage);
+
+				_outputQuantities.FillWithEnumeration(_doc.OutputKind);
+				_view.SetOutputQuantities(_outputQuantities);
+
+				_view.FourierWindowChoice = _fourierWindowChoice;
+
+				_view.DataPretreatmentOrder = _doc.DataPretreatmentCorrectionOrder;
+
+				_view.CenterFrequencies = _doc.CenterResult;
+
+				_view.ReplacementValueForNaNMatrixElements = _doc.ReplacementValueForNaNMatrixElements;
+				_view.ReplacementValueForInfiniteMatrixElements = _doc.ReplacementValueForInfiniteMatrixElements;
+
+				_view.ResultingFractionOfRowsUsed = _doc.ResultingFractionOfRowsUsed;
+				_view.ResultingFractionOfColumnsUsed = _doc.ResultingFractionOfColumnsUsed;
+			}
+		}
+
+		private SelectableListNodeList GetFourierWindowChoice(Altaxo.Calc.Fourier.Windows.IWindows2D currentWindowChoice)
+		{
+			var result = new SelectableListNodeList();
+
+			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Fourier.Windows.IWindows2D));
+
+			result.Add(new SelectableListNode("None", null, currentWindowChoice == null));
+
+			var currentType = null != currentWindowChoice ? currentWindowChoice.GetType() : null;
+
+			foreach (var type in types)
+			{
+				try
+				{
+					var o = Activator.CreateInstance(type);
+					result.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(type), o, type == currentType));
+				}
+				catch (Exception)
+				{
+				}
+			}
+			return result;
+		}
+
+		public override bool Apply()
+		{
+			_doc.RowIncrementValue = _view.XIncrement;
+			_doc.ColumnIncrementValue = _view.YIncrement;
+
+			_doc.OutputKind = (Altaxo.Calc.Fourier.RealFourierTransformationOutputKind)_outputQuantities.FirstSelectedNode.Tag;
+
+			_doc.DataPretreatmentCorrectionOrder = _view.DataPretreatmentOrder;
+			_doc.CenterResult = _view.CenterFrequencies;
+
+			_doc.ReplacementValueForNaNMatrixElements = _view.ReplacementValueForNaNMatrixElements;
+			_doc.ReplacementValueForInfiniteMatrixElements = _view.ReplacementValueForInfiniteMatrixElements;
+
+			_doc.ResultingFractionOfRowsUsed = _view.ResultingFractionOfRowsUsed;
+			_doc.ResultingFractionOfColumnsUsed = _view.ResultingFractionOfColumnsUsed;
+
+			_doc.FourierWindow = _fourierWindowChoice.FirstSelectedNode.Tag as Altaxo.Calc.Fourier.Windows.IWindows2D;
+
+			if (!object.ReferenceEquals(_originalDoc, _doc))
+				CopyHelper.Copy(ref _originalDoc, _doc);
+
+			return true;
+		}
+	}
+}

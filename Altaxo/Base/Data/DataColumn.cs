@@ -1,7 +1,8 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,18 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using Altaxo.Serialization;
-
 namespace Altaxo.Data
 {
 	/// <summary>
-	/// This is the base class of all data columns in Altaxo. This base class provides readable, writeable 
+	/// This is the base class of all data columns in Altaxo. This base class provides readable, writeable
 	/// columns with a defined count.
 	/// </summary>
 	[SerializationSurrogate(0, typeof(Altaxo.Data.DataColumn.SerializationSurrogate0))]
@@ -62,7 +63,6 @@ namespace Altaxo.Data
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static int _addSpace = 32; // array space is increased by multiplying with increasefactor + addspase
 
-
 		/// <summary>Counter of how many suspends to data change event notifications are pending.</summary>
 		/// <remarks>If this counter is zero, then every change to a element of this column fires a data change event. Applications doing a lot of changes at once can
 		/// suspend this events for a better performance by calling <see cref="Suspend"/>. After finishing the application has to
@@ -87,7 +87,6 @@ namespace Altaxo.Data
 		/// </summary>
 		public event System.EventHandler Changed;
 
-
 		#region ChangeEventArgs
 
 		/// <summary>
@@ -97,14 +96,14 @@ namespace Altaxo.Data
 		{
 			/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
 			protected int m_MinRowChanged;
+
 			/// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
 			/// i.e. the value of this member is the maximum row number that changed plus one.</summary>
 			protected int m_MaxRowChanged;
+
 			/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
 			/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
-			protected bool m_RowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases 
-
-
+			protected bool m_RowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases
 
 			/// <summary>
 			/// Constructor.
@@ -156,13 +155,9 @@ namespace Altaxo.Data
 			}
 		}
 
-
-		#endregion
+		#endregion ChangeEventArgs
 
 		#region Serialization
-
-
-
 
 		/// <summary>
 		/// This class is responsible for the serialization of the DataColumn (version 0).
@@ -200,12 +195,11 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// This class is responsible for the serialization of the DataColumn (version 0).
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumn), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			/// <summary>Serializes the DataColumn given by object obj.</summary>
 			/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
@@ -232,6 +226,7 @@ namespace Altaxo.Data
 				return s;
 			}
 		}
+
 		/// <summary>
 		/// This function is called on end of deserialization.
 		/// </summary>
@@ -249,6 +244,7 @@ namespace Altaxo.Data
 		{
 			SetObjectData(this, info, context, null);
 		}
+
 		/// <summary>
 		/// Deserializes the <see cref="DataColumn"/> instance.
 		/// </summary>
@@ -273,7 +269,7 @@ namespace Altaxo.Data
 			new SerializationSurrogate0().GetObjectData(this, info, context);
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region Abstract functions
 
@@ -284,10 +280,9 @@ namespace Altaxo.Data
 		public abstract object Clone();
 
 		/// <summary>
-		/// Returns the row count, i.e. the one more than the index to the last valid data element in the column. 
+		/// Returns the row count, i.e. the one more than the index to the last valid data element in the column.
 		/// </summary>
 		public abstract int Count { get; }
-
 
 		// indexers
 		/// <summary>
@@ -298,7 +293,6 @@ namespace Altaxo.Data
 		/// <remarks>The derived class should throw an exeption when the data type in the AltaxoVariant value val
 		/// do not match the column type.</remarks>
 		public abstract void SetValueAt(int i, AltaxoVariant val);
-
 
 		/// <summary>
 		/// This returns the value at a given index i as AltaxoVariant.
@@ -328,11 +322,27 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="nFirstRow">Number of first row to delete.</param>
 		/// <param name="nCount">Number of rows to delete.</param>
-		public abstract void RemoveRows(int nFirstRow, int nCount); // removes nCount rows starting from nFirstRow 
-
+		public abstract void RemoveRows(int nFirstRow, int nCount); // removes nCount rows starting from nFirstRow
 
 		/// <summary>
-		/// Inserts <paramref name="nCount"/> empty rows before row number <paramref name="nBeforeRow"/>. 
+		/// Cuts the column to the provided length. The actual length of the column may be less than the provided parameter if the column contains empty elements.
+		/// </summary>
+		/// <param name="nCount">The maximum number of elements the column contains after this operation.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">If <paramref name="nCount"/>is negative.</exception>
+		public virtual void CutToMaximumLength(int nCount)
+		{
+			if (nCount < 0)
+				throw new ArgumentOutOfRangeException("nCount must not be less than 0");
+
+			var count = Count;
+			if (Count > nCount)
+			{
+				RemoveRows(nCount, count - nCount);
+			}
+		}
+
+		/// <summary>
+		/// Inserts <paramref name="nCount"/> empty rows before row number <paramref name="nBeforeRow"/>.
 		/// </summary>
 		/// <param name="nBeforeRow">The row number before the additional rows are inserted.</param>
 		/// <param name="nCount">Number of empty rows to insert.</param>
@@ -345,8 +355,6 @@ namespace Altaxo.Data
 		/// <param name="o">The column the data will be copied from.</param>
 		public abstract void CopyDataFrom(object o);
 
-
-
 		/// <summary>
 		/// Returns the type of the associated ColumnStyle for use in a worksheet view.</summary>
 		/// <returns>The type of the associated <see cref="Worksheet.ColumnStyle"/> class.</returns>
@@ -356,7 +364,7 @@ namespace Altaxo.Data
 		// TODO: reimplement this using attributes in the style class
 		public abstract System.Type GetColumnStyleType();
 
-		#endregion
+		#endregion Abstract functions
 
 		#region Construction/Disposal/Name/Parent
 
@@ -410,7 +418,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// copies the header information, like label and so on
 		/// from another column to this column
@@ -440,7 +447,6 @@ namespace Altaxo.Data
 						((Main.IChildChangedEventSink)oldParent).EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
 					if (_parent is Main.IChildChangedEventSink)
 						((Main.IChildChangedEventSink)_parent).EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
-
 				}
 			}
 		}
@@ -451,7 +457,7 @@ namespace Altaxo.Data
 				TunneledEvent(this, source, e);
 		}
 
-		#endregion
+		#endregion Construction/Disposal/Name/Parent
 
 		#region Suspend/Resume/Dirty
 
@@ -495,7 +501,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Accumulates the change data provided in the arguments into the m_ChangeData member. 
+		/// Accumulates the change data provided in the arguments into the m_ChangeData member.
 		/// </summary>
 		/// <param name="minRow">The min row number that changed.</param>
 		/// <param name="maxRow">The max row number that changed.</param>
@@ -529,10 +535,8 @@ namespace Altaxo.Data
 				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
 
 			if (!IsSuspended) // parent is not suspended
-				OnDataChanged(); // Fire the changed event 
+				OnDataChanged(); // Fire the changed event
 		}
-
-
 
 		/// <summary>
 		/// Fires the Changed event with the actual (accumulated) change data. After the firing of the event the change data are removed.
@@ -557,8 +561,7 @@ namespace Altaxo.Data
 			}
 		}
 
-
-		#endregion
+		#endregion Suspend/Resume/Dirty
 
 		#region Data Access/Append/Clear
 
@@ -578,7 +581,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Provides a setter property to which another data column can be assigned to. Copies all elements of the other DataColumn to this column. An exception is thrown if the data types of both columns are incompatible. 
+		/// Provides a setter property to which another data column can be assigned to. Copies all elements of the other DataColumn to this column. An exception is thrown if the data types of both columns are incompatible.
 		/// See also <see cref="CopyDataFrom"/>.</summary>
 		public object Data
 		{
@@ -607,8 +610,6 @@ namespace Altaxo.Data
 			Resume();
 		}
 
-
-
 		/// <summary>
 		/// Clears all rows.
 		/// </summary>
@@ -617,14 +618,13 @@ namespace Altaxo.Data
 			RemoveRows(0, this.Count);
 		}
 
-
-		#endregion
+		#endregion Data Access/Append/Clear
 
 		#region Very special copy operations
 
 		/// <summary>
 		/// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see cref="Altaxo.Data.DoubleColumn" /> will
-		/// be returned, consisting of the selected row indices. 
+		/// be returned, consisting of the selected row indices.
 		/// </summary>
 		/// <param name="x">The original column (can be null).</param>
 		/// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
@@ -657,7 +657,7 @@ namespace Altaxo.Data
 
 		/// <summary>
 		/// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see cref="Altaxo.Data.DoubleColumn" /> will
-		/// be returned, consisting of the selected row indices. 
+		/// be returned, consisting of the selected row indices.
 		/// </summary>
 		/// <param name="x">The original column (can be null).</param>
 		/// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
@@ -684,7 +684,7 @@ namespace Altaxo.Data
 			return CreateColumnOfSelectedRows(this, selectedRows);
 		}
 
-		#endregion
+		#endregion Very special copy operations
 
 		#region Interface implementations
 
@@ -709,7 +709,7 @@ namespace Altaxo.Data
 			RemoveRows(index, 1);
 		}
 
-		#endregion
+		#endregion IList<AltaxoVariant> Members
 
 		#region ICollection<AltaxoVariant> Members
 
@@ -749,7 +749,7 @@ namespace Altaxo.Data
 			return index >= 0;
 		}
 
-		#endregion
+		#endregion ICollection<AltaxoVariant> Members
 
 		#region IEnumerable<AltaxoVariant> Members
 
@@ -759,7 +759,7 @@ namespace Altaxo.Data
 				yield return GetVariantAt(i);
 		}
 
-		#endregion
+		#endregion IEnumerable<AltaxoVariant> Members
 
 		#region IEnumerable Members
 
@@ -769,14 +769,14 @@ namespace Altaxo.Data
 				yield return GetVariantAt(i);
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 
-		#endregion
+		#endregion Interface implementations
 
 		#region Converters
 
 		/// <summary>
-		/// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column. 
+		/// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column.
 		/// </summary>
 		public virtual Altaxo.Calc.LinearAlgebra.IROVector AssignVector
 		{
@@ -826,13 +826,12 @@ namespace Altaxo.Data
 			throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, this.GetType()));
 		}
 
-		#endregion
+		#endregion Converters
 
 		#region Operators
 
-
 		/// <summary>
-		/// Adds another data column to this data column (item by item). 
+		/// Adds another data column to this data column (item by item).
 		/// </summary>
 		/// <param name="a">The data column to add.</param>
 		/// <param name="b">The result of the addition (this+a).</param>
@@ -842,143 +841,184 @@ namespace Altaxo.Data
 
 		public virtual bool vop_Addition_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Addition(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Addition_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		/// <summary>
-		/// Subtracts another data column from this data column (item by item). 
+		/// Subtracts another data column from this data column (item by item).
 		/// </summary>
 		/// <param name="a">The data column to subtract.</param>
 		/// <param name="b">The result of the subtraction (this-a).</param>
 		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Subtraction(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Subtraction_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Subtraction(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Subtraction_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		/// <summary>
-		/// Multiplies another data column to this data column (item by item). 
+		/// Multiplies another data column to this data column (item by item).
 		/// </summary>
 		/// <param name="a">The data column to multiply.</param>
 		/// <param name="b">The result of the multiplication (this*a).</param>
 		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Multiplication(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Multiplication_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Multiplication(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Multiplication_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		/// <summary>
-		/// Divides this data column by another data column(item by item). 
+		/// Divides this data column by another data column(item by item).
 		/// </summary>
 		/// <param name="a">The data column used for division.</param>
 		/// <param name="b">The result of the division (this/a).</param>
 		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Division(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Division_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Division(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Division_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Modulo(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Modulo_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Modulo(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Modulo_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_And(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_And_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_And(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_And_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Or(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Or_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Or(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Or_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Xor(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Xor_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Xor(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Xor_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_ShiftLeft(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftLeft_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftLeft(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftLeft_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_ShiftRight(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftRight_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftRight(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftRight_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Lesser(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Lesser_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Lesser(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Lesser_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Greater(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Greater_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Greater(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Greater_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_LesserOrEqual(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_LesserOrEqual_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_LesserOrEqual(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_LesserOrEqual_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
 		public virtual bool vop_GreaterOrEqual(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_GreaterOrEqual_Rev(DataColumn a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_GreaterOrEqual(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
+
 		public virtual bool vop_GreaterOrEqual_Rev(AltaxoVariant a, out DataColumn b)
 		{ b = null; return false; }
 
@@ -1006,8 +1046,6 @@ namespace Altaxo.Data
 
 		public virtual bool vop_False(out bool b)
 		{ b = false; return false; }
-
-
 
 		public static DataColumn operator +(DataColumn c1, DataColumn c2)
 		{
@@ -1052,6 +1090,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator -(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1061,6 +1100,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator -(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1070,9 +1110,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to subtract " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
-
-
 
 		public static DataColumn operator *(DataColumn c1, DataColumn c2)
 		{
@@ -1085,6 +1122,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator *(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1094,6 +1132,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator *(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1103,9 +1142,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to multiply " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
-
-
 
 		public static DataColumn operator /(DataColumn c1, DataColumn c2)
 		{
@@ -1118,6 +1154,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator /(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1127,6 +1164,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator /(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1136,8 +1174,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to divide " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
-
 
 		public static DataColumn operator %(DataColumn c1, DataColumn c2)
 		{
@@ -1150,6 +1186,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator %(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1159,6 +1196,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator %(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1168,7 +1206,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to take modulus of " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
 
 		public static DataColumn operator &(DataColumn c1, DataColumn c2)
 		{
@@ -1181,6 +1218,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply and operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator &(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1190,6 +1228,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator AND to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator &(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1211,6 +1250,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply or operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator |(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1220,6 +1260,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator OR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator |(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1241,6 +1282,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply xor operator to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator ^(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1250,6 +1292,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator XOR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator ^(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1269,7 +1312,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator << to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
 
 		public static DataColumn operator >>(DataColumn c1, int c2)
 		{
@@ -1292,6 +1334,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator lesser to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator <(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1301,6 +1344,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator < to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator <(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1322,6 +1366,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator greater to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator >(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1331,6 +1376,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator > to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator >(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1352,6 +1398,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator LesserOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator <=(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1361,6 +1408,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator <= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator <=(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1382,6 +1430,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator GreaterOrEqual to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator >=(DataColumn c1, AltaxoVariant c2)
 		{
 			DataColumn c3;
@@ -1391,6 +1440,7 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator >= to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
+
 		public static DataColumn operator >=(AltaxoVariant c1, DataColumn c2)
 		{
 			DataColumn c3;
@@ -1481,7 +1531,6 @@ namespace Altaxo.Data
 			throw new AltaxoOperatorException("Error: Try to apply operator FALSE to " + c1.ToString() + " (" + c1.GetType() + ")");
 		}
 
-		#endregion
-
+		#endregion Operators
 	} // end of class Altaxo.Data.DataColumn
 }

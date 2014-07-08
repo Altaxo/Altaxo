@@ -1,7 +1,8 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -32,8 +34,9 @@ namespace Altaxo.Collections
 		protected System.Collections.Generic.SortedList<int, object> _list = new System.Collections.Generic.SortedList<int, object>();
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -50,8 +53,8 @@ namespace Altaxo.Collections
 					info.CommitElement();
 				}
 				info.CommitArray();
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				AscendingIntegerCollection s = null != o ? (AscendingIntegerCollection)o : new AscendingIntegerCollection();
@@ -71,7 +74,7 @@ namespace Altaxo.Collections
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Creates an empty collection.
@@ -132,8 +135,6 @@ namespace Altaxo.Collections
 		{
 			get { return _list.Keys[i]; }
 		}
-
-
 
 		/// <summary>
 		/// Get the next range (i.e. a contiguous range of integers) in ascending order.
@@ -238,7 +239,6 @@ namespace Altaxo.Collections
 			return _list.ContainsKey(nValue);
 		}
 
-
 		/// <summary>
 		/// Adds an integer value to the collection.
 		/// </summary>
@@ -269,6 +269,7 @@ namespace Altaxo.Collections
 			for (int i = 0; i < rangecount; i++)
 				Add(rangestart + i);
 		}
+
 		/// <summary>
 		/// Removes an integer value from the collection.
 		/// </summary>
@@ -287,6 +288,16 @@ namespace Altaxo.Collections
 			_list.RemoveAt(position);
 		}
 
+		public void RemoveAllAbove(int maxValue)
+		{
+			var keys = _list.Keys;
+			for (int i = keys.Count - 1; i >= 0; --i)
+			{
+				if (keys[i] > maxValue)
+					_list.RemoveAt(i);
+			}
+		}
+
 		/// <summary>
 		/// Clears the collection, i.e. removes all entries.
 		/// </summary>
@@ -294,6 +305,7 @@ namespace Altaxo.Collections
 		{
 			_list.Clear();
 		}
+
 		#region ICloneable Members
 
 		public object Clone()
@@ -301,7 +313,7 @@ namespace Altaxo.Collections
 			return new AscendingIntegerCollection(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IEnumerable<int> Members
 
@@ -310,7 +322,7 @@ namespace Altaxo.Collections
 			return _list.Keys.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<int> Members
 
 		#region IEnumerable Members
 
@@ -319,6 +331,6 @@ namespace Altaxo.Collections
 			return _list.Keys.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 	}
 }

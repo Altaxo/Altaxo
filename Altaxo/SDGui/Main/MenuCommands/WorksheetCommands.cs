@@ -750,6 +750,22 @@ namespace Altaxo.Worksheet.Commands
 
 	#region Analysis
 
+	public class EditTableDataSource : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.DataSourceCommands.ShowDataSourceEditor(ctrl);
+		}
+	}
+
+	public class RequeryTableDataSource : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.DataSourceCommands.RequeryTableDataSource(ctrl);
+		}
+	}
+
 	public class AnalysisFFT : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

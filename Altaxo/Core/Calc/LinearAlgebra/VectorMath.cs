@@ -1,7 +1,8 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -36,10 +38,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new DoubleVector(length);
 		}
 
-
 		#region private Helper functions
-		static double Square(double x) { return x * x; }
-		#endregion
+
+		private static double Square(double x)
+		{
+			return x * x;
+		}
+
+		#endregion private Helper functions
 
 		#region Inner types
 
@@ -48,8 +54,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		private class ROConstantVector : IROVector
 		{
-			int _length;
-			double _value;
+			private int _length;
+			private double _value;
 
 			public ROConstantVector(double value, int length)
 			{
@@ -64,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _length; }
 			}
 
-			#endregion
+			#endregion IROVector Members
 
 			#region INumericSequence Members
 
@@ -73,7 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _value; }
 			}
 
-			#endregion
+			#endregion INumericSequence Members
 		}
 
 		/// <summary>
@@ -81,9 +87,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		private class ROEquallySpacedVector : IROVector
 		{
-			int _length;
-			double _startValue;
-			double _incrementValue;
+			private int _length;
+			private double _startValue;
+			private double _incrementValue;
 
 			public ROEquallySpacedVector(double start, double increment, int length)
 			{
@@ -99,7 +105,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _length; }
 			}
 
-			#endregion
+			#endregion IROVector Members
 
 			#region INumericSequence Members
 
@@ -108,7 +114,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _startValue + i * _incrementValue; }
 			}
 
-			#endregion
+			#endregion INumericSequence Members
 		}
 
 		/// <summary>
@@ -117,7 +123,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		private class RODoubleArrayWrapper : IROVector
 		{
 			protected double[] _x;
-			int _length;
+			private int _length;
 
 			/// <summary>
 			/// Constructor, takes a double array for wrapping.
@@ -171,7 +177,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				set { _x[i] = value; }
 			}
 
-			#endregion
+			#endregion IVector Members
 		}
 
 		/// <summary>
@@ -229,6 +235,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				: base(x)
 			{
 			}
+
 			public RWDoubleArraySectionWrapper(double[] x, int start, int usedlength)
 				: base(x, start, usedlength)
 			{
@@ -242,7 +249,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				set { _x[i + _start] = value; }
 			}
 
-			#endregion
+			#endregion IVector Members
 		}
 
 		/// <summary>
@@ -251,8 +258,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		private class ROVectorSectionWrapper : IROVector
 		{
 			protected IROVector _x;
-			int _start;
-			int _length;
+			private int _start;
+			private int _length;
 
 			/// <summary>
 			/// Constructor, takes a double array for wrapping.
@@ -286,8 +293,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		private class RWVectorSectionWrapper : IVector
 		{
 			protected IVector _x;
-			int _start;
-			int _length;
+			private int _start;
+			private int _length;
 
 			/// <summary>
 			/// Constructor, takes a double array for wrapping.
@@ -318,7 +325,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>The number of elements of this vector.</summary>
 			public int Length { get { return _length; } }  // change this later to length property
 		}
-
 
 		/// <summary>
 		/// Serves as Wrapper for an short array to plug-in where a IROVector is neccessary.
@@ -467,11 +473,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			public int Length { get { return _length; } }  // change this later to length property
 		}
 
-
 		private class ExtensibleVector : IExtensibleVector
 		{
-			double[] _arr;
-			int _length;
+			private double[] _arr;
+			private int _length;
 
 			public ExtensibleVector(int initiallength)
 			{
@@ -479,14 +484,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				_length = initiallength;
 			}
 
-
 			#region IVector Members
 
 			public double this[int i]
 			{
 				get
 				{
-
 					return _arr[i];
 				}
 				set
@@ -495,7 +498,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -503,7 +506,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return _arr[i];
 				}
 			}
@@ -512,26 +514,25 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return _length;
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 
 			#region IExtensibleVector Members
+
 			public void Append(IROVector a)
 			{
 				if (_length + a.Length >= _arr.Length)
 					Redim((int)(32 + 1.3 * (_length + a.Length)));
 
-
 				for (int i = 0; i < a.Length; i++)
 					_arr[i + _length] = a[i];
 				_length += a.Length;
 			}
-			#endregion
 
+			#endregion IExtensibleVector Members
 
 			private void Redim(int newsize)
 			{
@@ -544,11 +545,11 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		class EquidistantSequenceVectorStartStepLength : IROVector
+		private class EquidistantSequenceVectorStartStepLength : IROVector
 		{
-			double _start;
-			double _step;
-			int _len;
+			private double _start;
+			private double _step;
+			private int _len;
 
 			public EquidistantSequenceVectorStartStepLength(double start, double step, int length)
 			{
@@ -564,13 +565,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _len; }
 			}
 
-			#endregion
+			#endregion IROVector Members
 
 			#region INumericSequence Members
 
 			public double this[int i]
 			{
-
 				get
 				{
 					if (i < 0 || i >= _len)
@@ -579,14 +579,54 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion INumericSequence Members
 		}
 
-		class EquidistantSequenceVectorStartEndLength : IROVector
+		private class EquidistantSequenceVectorStartAtOffsetStepLength : IROVector
 		{
-			double _start;
-			double _end;
-			int _len;
+			private double _start;
+			private int _startOffset;
+
+			private double _step;
+			private int _len;
+
+			public EquidistantSequenceVectorStartAtOffsetStepLength(double start, int startOffset, double step, int length)
+			{
+				_start = start;
+				_startOffset = startOffset;
+				_step = step;
+				_len = length;
+			}
+
+			#region IROVector Members
+
+			public int Length
+			{
+				get { return _len; }
+			}
+
+			#endregion IROVector Members
+
+			#region INumericSequence Members
+
+			public double this[int i]
+			{
+				get
+				{
+					if (i < 0 || i >= _len)
+						throw new ArgumentOutOfRangeException("i");
+					return _start + (i - _startOffset) * _step;
+				}
+			}
+
+			#endregion INumericSequence Members
+		}
+
+		private class EquidistantSequenceVectorStartEndLength : IROVector
+		{
+			private double _start;
+			private double _end;
+			private int _len;
 
 			public EquidistantSequenceVectorStartEndLength(double start, double end, int length)
 			{
@@ -602,13 +642,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _len; }
 			}
 
-			#endregion
+			#endregion IROVector Members
 
 			#region INumericSequence Members
 
 			public double this[int i]
 			{
-
 				get
 				{
 					if (i < 0 || i >= _len)
@@ -619,10 +658,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion INumericSequence Members
 		}
 
-		#endregion
+		#endregion Inner types
 
 		#region Type conversion
 
@@ -632,6 +671,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		#region From/To double[]
+
 		/// <summary>
 		/// Wraps a double[] array to get a IROVector.
 		/// </summary>
@@ -668,7 +708,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				return new RODoubleArraySectionWrapper(x, start, usedlength);
 		}
 
-
 		/// <summary>
 		/// Wraps an int[] array till a given length to get a IROVector.
 		/// </summary>
@@ -678,7 +717,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
 		public static IROVector ToROVector(int[] x, int start, int usedlength)
 		{
-				return new ROIntArraySectionWrapper(x, start, usedlength);
+			return new ROIntArraySectionWrapper(x, start, usedlength);
 		}
 
 		/// <summary>
@@ -705,7 +744,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROSByteArraySectionWrapper(x, start, usedlength);
 		}
 
-
 		/// <summary>
 		/// Wraps a double[] array to get a IVector.
 		/// </summary>
@@ -727,7 +765,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWDoubleArrayWrapper(x, usedlength);
 		}
 
-
 		/// <summary>
 		/// Wraps part of a double[] array to get a IVector.
 		/// </summary>
@@ -742,7 +779,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			else
 				return new RWDoubleArraySectionWrapper(x, start, count);
 		}
-		#endregion
+
+		#endregion From/To double[]
 
 		#region from/to IROVector
 
@@ -758,7 +796,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROVectorSectionWrapper(x, start, len);
 		}
 
-		#endregion
+		#endregion from/to IROVector
 
 		#region from/to IVector
 
@@ -774,8 +812,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RWVectorSectionWrapper(x, start, len);
 		}
 
-
-		#endregion
+		#endregion from/to IVector
 
 		/// <summary>
 		/// Creates a new extensible vector of length <c>length</c>
@@ -813,7 +850,21 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new EquidistantSequenceVectorStartEndLength(start, end, length);
 		}
 
-		#endregion
+		/// <summary>
+		/// Creates a read-only vector with equidistant elements from start - startOffset*step to start + (length - 1 -startOffset)*step. The created vector
+		/// consumes memory only for the three variables, independent of its length.
+		/// </summary>
+		/// <param name="start">Value of the element of the vector at index <param name="startOffset".</param>
+		/// <param name="startOffset">Index of the element of the vector which gets the value of <paramref name="start"/>.</param>
+		/// <param name="step">Difference between two successive elements.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns>Read-only vector with equidistant elements from start - startOffset*step to start + (length - 1 -startOffset)*step.</returns>
+		public static IROVector CreateEquidistantSequencyByStartAtOffsetStepLength(double start, int startOffset, double step, int length)
+		{
+			return new EquidistantSequenceVectorStartAtOffsetStepLength(start, startOffset, step, length);
+		}
+
+		#endregion Type conversion
 
 		#region Filling
 
@@ -842,7 +893,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		#endregion
+		#endregion Filling
 
 		#region copy
 
@@ -873,7 +924,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				dest[i + deststart] = src[i + srcstart];
 		}
 
-		#endregion
+		#endregion copy
 
 		#region Arithmetic
 
@@ -921,8 +972,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = v.Length - 1; i >= 0; --i)
 				v[i] *= a;
 		}
-		#endregion
 
+		#endregion Arithmetic
 
 		#region Minimum / Maximum
 
@@ -944,9 +995,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return index;
 		}
-
-
-	
 
 		/// <summary>Return the index of a the (first) element with the maximum  value in a vector</summary>
 		/// <param name="X">The input vector.</param>
@@ -1012,7 +1060,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return index;
 		}
 
-
 		/// <summary>Return the index of a the (first) element with the maximum absolute value in a vector</summary>
 		/// <param name="X">The input vector.</param>
 		/// <returns>The index of the (first) element with the maximum absolute value. Returns -1 if the vector is empty or contains only nonvalid elements (NaN).</returns>
@@ -1046,8 +1093,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return index;
 		}
 
-
-
 		/// <summary>
 		/// Returns the maximum value of all the valid elements in x (nonvalid elements, i.e. NaN values are not considered).
 		/// </summary>
@@ -1069,7 +1114,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return max;
 		}
-
 
 		/// <summary>
 		/// Returns the maximum value of all elements in x (nonvalid elements, i.e. NaN values are considered).
@@ -1151,10 +1195,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-
 		/// <summary>
 		/// Gives the parallel maximum of vector v1 and v2. The first element of the resulting vector
-		/// is the maximum of the first element of v1 and the first element of v2. The second element of the 
+		/// is the maximum of the first element of v1 and the first element of v2. The second element of the
 		/// resulting vector is the maximum of the second element of v1 and the second element of v2, and so on.
 		/// </summary>
 		/// <param name="v1">First vector.</param>
@@ -1164,7 +1207,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static IVector Max(IROVector v1, IROVector v2, IVector result)
 		{
 			int len = Math.Max(v1.Length, v2.Length);
-			
+
 			if (null == result)
 				result = _funcCreateNewVector(len);
 
@@ -1194,8 +1237,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-
-		#endregion
+		#endregion Minimum / Maximum
 
 		/// <summary>
 		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
@@ -1222,13 +1264,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			return GetUsedLength(values, values.Length);
 		}
-
-
-
-
-
-		
-
 
 		/// <summary>
 		/// Returns the sum of the elements in xarray.
@@ -1257,7 +1292,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			return sum;
 		}
-
 
 		/// <summary>
 		/// Returns the sum of squared differences of the elements of xarray and yarray.
@@ -1295,14 +1329,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			return sum;
 		}
 
-
-		static double sqr(double x)
+		private static double sqr(double x)
 		{
 			return x * x;
 		}
 
 		/// <summary>Given an n-vector x, this function calculates the
-		/// euclidean norm of x. 
+		/// euclidean norm of x.
 		/// </summary>
 		/// <param name="x">An input array. </param>
 		/// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
@@ -1312,26 +1345,26 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>Given an n-vector x, this function calculates the
-		/// euclidean norm of x. 
+		/// euclidean norm of x.
 		/// </summary>
 		/// <param name="n">A positive integer input variable of the number of elements to process.</param>
 		/// <param name="x">An input array of length n. </param>
 		/// <param name="startindex">The index of the first element in x to process.</param>
 		/// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
 		/// <remarks>
-		///     the euclidean norm is computed by accumulating the sum of 
-		///     squares in three different sums. the sums of squares for the 
-		///     small and large components are scaled so that no overflows 
-		///     occur. non-destructive underflows are permitted. underflows 
-		///     and overflows do not occur in the computation of the unscaled 
-		///     sum of squares for the intermediate components. 
-		///     the definitions of small, intermediate and large components 
-		///     depend on two constants, rdwarf and rgiant. the main 
-		///     restrictions on these constants are that rdwarf**2 not 
-		///     underflow and rgiant**2 not overflow. the constants 
-		///     given here are suitable for every known computer. 
+		///     the euclidean norm is computed by accumulating the sum of
+		///     squares in three different sums. the sums of squares for the
+		///     small and large components are scaled so that no overflows
+		///     occur. non-destructive underflows are permitted. underflows
+		///     and overflows do not occur in the computation of the unscaled
+		///     sum of squares for the intermediate components.
+		///     the definitions of small, intermediate and large components
+		///     depend on two constants, rdwarf and rgiant. the main
+		///     restrictions on these constants are that rdwarf**2 not
+		///     underflow and rgiant**2 not overflow. the constants
+		///     given here are suitable for every known computer.
 		///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
-		///      
+		///
 		/// </remarks>
 		public static double GetNorm(double[] x, int startindex, int n)
 		{
@@ -1349,7 +1382,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			for (i = 0; i < n; i++)
 			{ // LELLID!!
-
 				xabs = Math.Abs(x[i + startindex]);
 				if (xabs > rdwarf && xabs < agiant) goto L70;
 				if (xabs <= rdwarf) goto L30;
@@ -1402,18 +1434,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return ret_val;
 		}
 
-		
-
-	
-	
-
-	
-
-		
-
-
-		
-
 		/// <summary>
 		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
 		/// </summary>
@@ -1442,6 +1462,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			bool isDecreasing;
 			return IsStrictlyIncreasingOrDecreasing(x, out isDecreasing);
 		}
+
 		/// <summary>
 		/// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
 		/// </summary>
@@ -1518,7 +1539,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return false;
 		}
 
-
 		/// <summary>
 		/// Shifts the element of this vector by moving them <c>increment</c> times to the right. The elements on the rightmost side are shifted back into the left side of the vector. Thus, effectively, the elements are rotated to the right.
 		/// </summary>
@@ -1535,7 +1555,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (increment < 0)
 				increment += xLen;
 
-
 			// first cycle is to measure number of shifts per cycle
 			int shiftsPerCycle = 0;
 			int i = 0;
@@ -1549,7 +1568,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				prevVal = currVal;
 				shiftsPerCycle++;
 			} while (i != k);
-
 
 			// now do the rest of the cycles
 			System.Diagnostics.Debug.Assert(0 == xLen % shiftsPerCycle);

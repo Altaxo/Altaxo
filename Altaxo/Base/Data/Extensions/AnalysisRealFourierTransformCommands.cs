@@ -1,7 +1,8 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -50,13 +52,17 @@ namespace Altaxo.Data
 		public class RealFourierTransformOptions
 		{
 			public DataColumn ColumnToTransform { get; set; }
+
 			public string XIncrementMessage { get; set; }
+
 			public double XIncrementValue { get; set; }
+
 			public RealFourierTransformOutput Output { get; set; }
+
 			public RealFourierTransformOutputPlacement OutputPlacement { get; set; }
 		}
 
-		#endregion
+		#endregion Helper types
 
 		public static string DetermineXIncrement(DataColumn yColumnToTransform, out double xIncrement)
 		{
@@ -73,8 +79,6 @@ namespace Altaxo.Data
 			var xCol = xColD as DoubleColumn;
 			if (null == xCol)
 				return "X-column of provided data column to transform is not a numeric column";
-
-
 
 			var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(xCol.ToROVector());
 			if (!spacing.IsStrictlyMonotonicIncreasing)
@@ -111,11 +115,13 @@ namespace Altaxo.Data
 					Current.Project.DataTableCollection.Add(outputTable);
 					Current.ProjectService.OpenOrCreateWorksheetForTable(outputTable);
 					break;
+
 				case RealFourierTransformOutputPlacement.CreateInSameWorksheet:
 					outputTable = DataTable.GetParentDataTableOf(yCol);
 					if (null == outputTable)
 						throw new ArgumentException("Provided y-column does not belong to a data table.");
 					break;
+
 				default:
 					throw new ArgumentOutOfRangeException("Unkown  enum value: " + options.OutputPlacement.ToString());
 			}
@@ -162,7 +168,6 @@ namespace Altaxo.Data
 				col.Data = col * col;
 				outputTable.DataColumns.Add(col, "Power", ColumnKind.V, outputGroup);
 			}
-
 		}
 
 		public static void ShowRealFourierTransformDialog(DataColumn ycolumnToTransform)
@@ -172,7 +177,6 @@ namespace Altaxo.Data
 			double xIncrementValue;
 			options.XIncrementMessage = DetermineXIncrement(ycolumnToTransform, out xIncrementValue);
 			options.XIncrementValue = xIncrementValue;
-
 
 			if (Current.Gui.ShowDialog(ref options, "Choose fourier transform options", false))
 			{

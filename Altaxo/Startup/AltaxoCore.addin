@@ -515,8 +515,6 @@
 					class="Altaxo.Worksheet.Commands.AnalysisFFT" />
 				<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}"
 					class="Altaxo.Worksheet.Commands.Analysis2DFFT" />
-				<MenuItem id="2DCenteredFFT" label="${res:XML.MainMenu.AnalysisMenu.2DCenteredFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DCenteredFFT.Description}"
-					class="Altaxo.Worksheet.Commands.Analysis2DCenteredFFT" />
 				<MenuItem id="Convolute" label="${res:XML.MainMenu.AnalysisMenu.Convolute}" description="${res:XML.MainMenu.AnalysisMenu.Convolute.Description}"
 					class="Altaxo.Worksheet.Commands.Convolute" />
 				<MenuItem id="Correlate" label="${res:XML.MainMenu.AnalysisMenu.Correlate}" description="${res:XML.MainMenu.AnalysisMenu.Correlate.Description}"
@@ -691,6 +689,10 @@
 				class="Altaxo.Worksheet.Commands.ImportAscii" />
 			<ToolbarItem id="ImportDatabase" icon="Icons.16x16.DataConnection.EditConnectionString" tooltip="${res:XML.MainMenu.FileMenu.Import.Database.Description}"
 				class="Altaxo.Worksheet.Commands.ImportDatabase" />
+			<ToolbarItem id="TableDataSourceEditing" icon="Icons.16x16.DataSourceEditing" tooltip="${res:XML.MainMenu.EditMenu.EditTableDataSource.Description}"
+					class="Altaxo.Worksheet.Commands.EditTableDataSource" />
+			<ToolbarItem id="TableDataSourceRequerying" icon="Icons.16x16.DataSourceRequery" tooltip="${res:XML.MainMenu.EditMenu.RequeryTableDataSource.Description}"
+					class="Altaxo.Worksheet.Commands.RequeryTableDataSource" />
 		</Condition>
 		<ToolbarItem id="Duplicate" icon="Icons.16x16.Duplicate" tooltip="${res:XML.MainMenu.EditMenu.Duplicate.Description}"
 				class="Altaxo.Main.Commands.Duplicate" />

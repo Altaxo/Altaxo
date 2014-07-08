@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,181 +19,152 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
-using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Calc;
 using Altaxo.Calc.Fourier;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Gui.Worksheet.Viewing;
+using System;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
-  /// <summary>
-  /// Contains commands concerning Fourier transformation, correlation and convolution.
-  /// </summary>
-  public class FourierCommands
-  {
+	/// <summary>
+	/// Contains commands concerning Fourier transformation, correlation and convolution.
+	/// </summary>
+	public class FourierCommands
+	{
+		public static void FFT(IWorksheetController dg)
+		{
+			int len = dg.SelectedDataColumns.Count;
+			if (len == 0)
+				return; // nothing selected
 
-    public static void FFT(IWorksheetController dg)
-    {
-      int len = dg.SelectedDataColumns.Count;
-      if(len==0)
-        return; // nothing selected
+			if (!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
+				return;
 
-      if(!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
-        return;
-
-      Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
+			Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
 
 			Altaxo.Data.AnalysisRealFourierTransformationCommands.ShowRealFourierTransformDialog(col);
-    }
-
-
-    public static void TwoDimensionalFFT(IWorksheetController ctrl)
-    {
-      string err =  TwoDimFFT(Current.Project, ctrl);
-      if(null!=err)
-				Current.Gui.ErrorMessageBox(err, "An error occured");
-    }
-
-    protected static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg, out double[] rePart, out double[] imPart)
-    {
-      int rows = dg.DataTable.DataColumns.RowCount;
-      int cols = dg.DataTable.DataColumns.ColumnCount;
-
-      // reserve two arrays (one for real part, which is filled with the table contents)
-      // and the imaginary part - which is left zero here)
-
-      rePart = new double[rows*cols];
-      imPart = new double[rows*cols];
-
-      // fill the real part with the table contents
-      for(int i=0;i<cols;i++)
-      {
-        Altaxo.Data.INumericColumn col = dg.DataTable[i] as Altaxo.Data.INumericColumn;
-        if(null==col)
-        {
-          return string.Format("Can't apply fourier transform, since column number {0}, name:{1} is not numeric",i,dg.DataTable[i].FullName); 
-        }
-
-        for(int j=0;j<rows;j++)
-        {
-          rePart[i*rows+j] = col[j];
-        }
-      }
-
-      // test it can be done
-      if(!Pfa235FFT.CanFactorized(cols))
-        return string.Format("Can't apply fourier transform, since the number of cols ({0}) are not appropriate for this kind of fourier transform.",cols);
-      if(!Pfa235FFT.CanFactorized(rows))
-        return string.Format("Can't apply fourier transform, since the number of rows ({0}) are not appropriate for this kind of fourier transform.",rows);
-
-      // fourier transform
-      Pfa235FFT fft = new Pfa235FFT(cols,rows);
-      fft.FFT(rePart,imPart,FourierDirection.Forward);
-
-      // replace the real part by the amplitude
-      for(int i=0;i<rePart.Length;i++)
-      {
-        rePart[i] = Math.Sqrt(rePart[i]*rePart[i]+imPart[i]*imPart[i]);
-      }
-
-      return null;
-    }
-
-
-
-    public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
-    {
-      int rows = dg.DataTable.DataColumns.RowCount;
-      int cols = dg.DataTable.DataColumns.ColumnCount;
-
-      // reserve two arrays (one for real part, which is filled with the table contents)
-      // and the imaginary part - which is left zero here)
-
-      double[] rePart;
-      double[] imPart;
-
-      string stringresult = TwoDimFFT(mainDocument,dg,out rePart, out imPart);
-
-      if(stringresult!=null)
-        return stringresult;
-
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.DataTable.Name);
-
-      // Fill the Table
-      table.Suspend();
-      for(int i=0;i<cols;i++)
-      {
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-        for(int j=0;j<rows;j++)
-          col[j] = rePart[i*rows+j];
-        
-        table.DataColumns.Add(col);
-      }
-      table.Resume();
-      mainDocument.DataTableCollection.Add(table);
-      // create a new worksheet without any columns
-      Current.ProjectService.CreateNewWorksheet(table);
-
-      return null;
-    }
-
-
-    public static void TwoDimensionalCenteredFFT(IWorksheetController ctrl)
-    {
-      string err =  TwoDimCenteredFFT(Current.Project, ctrl);
-      if(null!=err)
-				Current.Gui.ErrorMessageBox(err, "An error occured");
-    }
-
-    public static string TwoDimCenteredFFT(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
-    {
-      int rows = dg.DataTable.DataColumns.RowCount;
-      int cols = dg.DataTable.DataColumns.ColumnCount;
-
-      // reserve two arrays (one for real part, which is filled with the table contents)
-      // and the imaginary part - which is left zero here)
-
-      double[] rePart;
-      double[] imPart;
-
-      string stringresult = TwoDimFFT(mainDocument,dg,out rePart, out imPart);
-
-      if(stringresult!=null)
-        return stringresult;
-
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.DataTable.Name);
-
-      // Fill the Table so that the zero frequency point is in the middle
-      // this means for the point order:
-      // for even number of points, i.e. 8 points, the frequencies are -3, -2, -1, 0, 1, 2, 3, 4  (the frequency 4 is the nyquist part)
-      // for odd number of points, i.e. 9 points, the frequencies are -4, -3, -2, -1, 0, 1, 2, 3, 4 (for odd number of points there is no nyquist part)
-
-      table.Suspend();
-      int colsNegative = (cols-1)/2; // number of negative frequency points
-      int colsPositive = cols - colsNegative; // number of positive (or null) frequency points
-      int rowsNegative= (rows-1)/2;
-      int rowsPositive = rows - rowsNegative;
-      for(int i=0;i<cols;i++)
-      {
-        int sc = i<colsNegative ?  i + colsPositive : i - colsNegative; // source column index centered  
-        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-        for(int j=0;j<rows;j++)
-        {
-          int sr = j<rowsNegative ? j + rowsPositive : j - rowsNegative; // source row index centered
-          col[j] = rePart[sc*rows+sr];
-        }
-        table.DataColumns.Add(col);
-      }
-      table.Resume();
-      mainDocument.DataTableCollection.Add(table);
-      // create a new worksheet without any columns
-      Current.ProjectService.CreateNewWorksheet(table);
-
-      return null;
 		}
+
+		#region Two dimensional Fourier transformation
+
+		public static RealFourierTransformation2DOptions _lastUsedOptions;
+
+		public static void TwoDimensionalFFT(IWorksheetController ctrl)
+		{
+			ShowRealFourierTransformation2DDialog(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
+		}
+
+		public static void TwoDimensionalCenteredFFT(IWorksheetController ctrl)
+		{
+			ShowRealFourierTransformation2DDialog(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
+		}
+
+		public static void ShowRealFourierTransformation2DDialog(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
+		{
+			DataTableMatrixProxy proxy = null;
+			RealFourierTransformation2DOptions options = null;
+
+			try
+			{
+				proxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns);
+
+				options = null != _lastUsedOptions ? (RealFourierTransformation2DOptions)_lastUsedOptions.Clone() : new RealFourierTransformation2DOptions();
+
+				double rowIncrementValue; string rowIncrementMessage;
+				proxy.TryGetRowHeaderIncrement(out rowIncrementValue, out rowIncrementMessage);
+				double columnIncrementValue; string columnIncrementMessage;
+				proxy.TryGetColumnHeaderIncrement(out columnIncrementValue, out columnIncrementMessage);
+
+				options.RowIncrementValue = rowIncrementValue;
+				options.RowIncrementMessage = rowIncrementMessage;
+				options.ColumnIncrementValue = columnIncrementValue;
+				options.ColumnIncrementMessage = columnIncrementMessage;
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(string.Format("{0}\r\nDetails:\r\n{1}", ex.Message, ex.ToString()), "Error in preparation of Fourier transformation");
+				return;
+			}
+
+			if (!Current.Gui.ShowDialog(ref options, "Choose fourier transform options", false))
+				return;
+
+			_lastUsedOptions = options;
+
+			try
+			{
+				var resultTable = new DataTable { Name = string.Format("{0}Fourier{1} of {2}", table.Folder, options.OutputKind, table.ShortName) };
+				ExecuteFouriertransformation2D(proxy, options, resultTable);
+
+				// Create a DataSource
+				Altaxo.Worksheet.Commands.Analysis.FourierTransformation2DDataSource dataSource = new FourierTransformation2DDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
+				resultTable.DataSource = dataSource;
+
+				Current.ProjectService.OpenOrCreateWorksheetForTable(resultTable);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(string.Format("{0}\r\nDetails:\r\n{1}", ex.Message, ex.ToString()), "Error in execution of Fourier transformation");
+				return;
+			}
+		}
+
+		public static void ExecuteFouriertransformation2D(DataTableMatrixProxy matrixProxy, RealFourierTransformation2DOptions options, DataTable destinationTable)
+		{
+			var matrix = matrixProxy.GetMatrix((r, c) => new Altaxo.Calc.LinearAlgebra.DoubleMatrixInArray1DRowMajorRepresentation(r, c));
+
+			if (options.ReplacementValueForNaNMatrixElements.HasValue)
+				Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNElementsWith(matrix, options.ReplacementValueForNaNMatrixElements.Value);
+			if (options.ReplacementValueForInfiniteMatrixElements.HasValue)
+				Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNAndInfiniteElementsWith(matrix, options.ReplacementValueForInfiniteMatrixElements.Value);
+
+			var fft = new Altaxo.Calc.Fourier.RealFourierTransformation2D(matrix, true);
+			fft.ColumnSpacing = options.RowIncrementValue;
+			fft.RowSpacing = options.ColumnIncrementValue;
+
+			if (options.DataPretreatmentCorrectionOrder.HasValue)
+			{
+				switch (options.DataPretreatmentCorrectionOrder.Value)
+				{
+					case 0:
+						fft.DataPretreatment += Altaxo.Calc.LinearAlgebra.MatrixMath.ToZeroMean;
+						break;
+
+					default:
+						throw new NotImplementedException(string.Format("Regression of order {0} is not implemented yet", options.DataPretreatmentCorrectionOrder.Value));
+				}
+			}
+
+			if (options.FourierWindow != null)
+			{
+				fft.DataPretreatment += options.FourierWindow.Apply;
+			}
+
+			fft.Execute();
+
+			IMatrix resultMatrix;
+			IROVector rowFrequencies;
+			IROVector columnFrequencies;
+
+			if (options.CenterResult)
+				fft.GetResultCentered(options.ResultingFractionOfRowsUsed, options.ResultingFractionOfColumnsUsed, options.OutputKind, out resultMatrix, out rowFrequencies, out columnFrequencies);
+			else
+				fft.GetResult(options.ResultingFractionOfRowsUsed, options.ResultingFractionOfColumnsUsed, options.OutputKind, out resultMatrix, out rowFrequencies, out columnFrequencies);
+
+			var matTableConverter = new Altaxo.Data.MatrixToDataTableConverter(resultMatrix, destinationTable); ;
+			matTableConverter.AddMatrixRowHeaderData(rowFrequencies, "RowFrequencies");
+			matTableConverter.AddMatrixColumnHeaderData(columnFrequencies, "ColumnFrequencies");
+
+			matTableConverter.Execute();
+		}
+
+		#endregion Two dimensional Fourier transformation
 
 		#region Convolution
 
@@ -205,25 +177,24 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		public static string Convolution(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
 		{
-      int len = dg.SelectedDataColumns.Count;
-      if(len==0)
-        return "No column selected!"; // nothing selected
+			int len = dg.SelectedDataColumns.Count;
+			if (len == 0)
+				return "No column selected!"; // nothing selected
 			if (len > 2)
 				return "Too many columns selected!";
 
-      if(!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
-        return "First selected column is not numeric!";
+			if (!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
+				return "First selected column is not numeric!";
 
-			if (dg.SelectedDataColumns.Count==2 && !(dg.DataTable[dg.SelectedDataColumns[1]] is Altaxo.Data.DoubleColumn))
+			if (dg.SelectedDataColumns.Count == 2 && !(dg.DataTable[dg.SelectedDataColumns[1]] is Altaxo.Data.DoubleColumn))
 				return "Second selected column is not numeric!";
-
 
 			double[] arr1 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]]).Array;
 			double[] arr2 = arr1;
-			if(dg.SelectedDataColumns.Count==2)
+			if (dg.SelectedDataColumns.Count == 2)
 				arr2 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[1]]).Array;
 
-			double[] result = new double[arr1.Length+arr2.Length-1];
+			double[] result = new double[arr1.Length + arr2.Length - 1];
 			//Pfa235Convolution co = new Pfa235Convolution(arr1.Length);
 			//co.Convolute(arr1, arr2, result, null, FourierDirection.Forward);
 
@@ -237,52 +208,50 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			return null;
 		}
 
-		#endregion
+		#endregion Convolution
 
-    #region Correlation
+		#region Correlation
 
-    public static void Correlation(IWorksheetController ctrl)
-    {
-      string err = Correlation(Current.Project, ctrl);
-      if (null != err)
-        Current.Gui.ErrorMessageBox(err);
-    }
+		public static void Correlation(IWorksheetController ctrl)
+		{
+			string err = Correlation(Current.Project, ctrl);
+			if (null != err)
+				Current.Gui.ErrorMessageBox(err);
+		}
 
-    public static string Correlation(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
-    {
-      int len = dg.SelectedDataColumns.Count;
-      if (len == 0)
-        return "No column selected!"; // nothing selected
-      if (len > 2)
-        return "Too many columns selected!";
+		public static string Correlation(Altaxo.AltaxoDocument mainDocument, IWorksheetController dg)
+		{
+			int len = dg.SelectedDataColumns.Count;
+			if (len == 0)
+				return "No column selected!"; // nothing selected
+			if (len > 2)
+				return "Too many columns selected!";
 
-      if (!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
-        return "First selected column is not numeric!";
+			if (!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
+				return "First selected column is not numeric!";
 
-      if (dg.SelectedDataColumns.Count == 2 && !(dg.DataTable[dg.SelectedDataColumns[1]] is Altaxo.Data.DoubleColumn))
-        return "Second selected column is not numeric!";
+			if (dg.SelectedDataColumns.Count == 2 && !(dg.DataTable[dg.SelectedDataColumns[1]] is Altaxo.Data.DoubleColumn))
+				return "Second selected column is not numeric!";
 
+			double[] arr1 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]]).Array;
+			double[] arr2 = arr1;
+			if (dg.SelectedDataColumns.Count == 2)
+				arr2 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[1]]).Array;
 
-      double[] arr1 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]]).Array;
-      double[] arr2 = arr1;
-      if (dg.SelectedDataColumns.Count == 2)
-        arr2 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[1]]).Array;
+			double[] result = new double[arr1.Length + arr2.Length - 1];
+			//Pfa235Convolution co = new Pfa235Convolution(arr1.Length);
+			//co.Convolute(arr1, arr2, result, null, FourierDirection.Forward);
 
-      double[] result = new double[arr1.Length + arr2.Length - 1];
-      //Pfa235Convolution co = new Pfa235Convolution(arr1.Length);
-      //co.Convolute(arr1, arr2, result, null, FourierDirection.Forward);
+			Calc.Fourier.NativeFourierMethods.CorrelationNonCyclic(arr1, arr2, result);
 
-      Calc.Fourier.NativeFourierMethods.CorrelationNonCyclic(arr1, arr2, result);
+			Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+			col.Array = result;
 
-      Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      col.Array = result;
+			dg.DataTable.DataColumns.Add(col, "Correlate");
 
-      dg.DataTable.DataColumns.Add(col, "Correlate");
+			return null;
+		}
 
-      return null;
-    }
-
-    #endregion
-
+		#endregion Correlation
 	}
 }

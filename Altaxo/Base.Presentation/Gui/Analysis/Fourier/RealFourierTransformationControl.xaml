@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="Altaxo.Gui.Analysis.Fourier.RealFourierTransformationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             MinWidth="300">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Label Grid.Column="0" Grid.Row="0">Column to transform:</Label>
+		<TextBox Grid.Column="1" Grid.Row="0" x:Name="_columnToTransform"></TextBox>
+		<Rectangle Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
+
+		<Label Grid.Column="0" Grid.Row="2">X-Increment</Label>
+		<TextBox Grid.Column="1" Grid.Row="2" x:Name="_xIncrement"></TextBox>
+		<Rectangle Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
+
+		<Label Grid.Column="0" Grid.Row="4">Output:</Label>
+		<StackPanel Grid.Column="1" Grid.Row="4" x:Name="_outputColumns" />
+		<Rectangle Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
+
+		<Label Grid.Column="0" Grid.Row="6">Create in:</Label>
+		<StackPanel Grid.Column="1" Grid.Row="6" x:Name="_creationOptions" />
+	</Grid>
+</UserControl>

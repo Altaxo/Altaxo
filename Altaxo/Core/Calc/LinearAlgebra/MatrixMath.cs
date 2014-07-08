@@ -1,7 +1,8 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,19 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// Class MatrixMath provides common static methods for matrix manipulation
 	/// and arithmetic in tow dimensions.
 	/// </summary>
-	public class MatrixMath
+	public static class MatrixMath
 	{
 		#region Helper matrix implementations
 
@@ -42,8 +42,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			/// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
 			private int m_Rows;
+
 			/// <summary>The cols of the matrix = length of each double[] array.</summary>
 			private int m_Cols;
+
 			/// <summary>The array which holds the matrix.</summary>
 			private double[][] m_Array;
 
@@ -78,9 +80,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return MatrixMath.MatrixToString(null, this);
 			}
 
-
 			#region IMatrix Members
-
 
 			/// <summary>
 			/// Set up the dimensions of the matrix. Discards the old content and reset the matrix with the new dimensions. All elements
@@ -134,7 +134,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 
 			#region IBottomExtensibleMatrix Members
 
@@ -182,9 +182,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				m_Rows = newRows;
 			}
 
-			#endregion
+			#endregion IBottomExtensibleMatrix Members
 		}
-
 
 		/// <summary>
 		/// REMatrix is a matrix implementation that is relatively easy to extend to the right, i.e. to append columns.
@@ -194,8 +193,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			/// <summary>The rows of the matrix = length of each double[] array.</summary>
 			private int m_Rows;
+
 			/// <summary>The cols of the matrix = number of double[] arrays in it.</summary>
 			private int m_Cols;
+
 			/// <summary>The array which holds the matrix.</summary>
 			private double[][] m_Array;
 
@@ -235,9 +236,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return MatrixMath.MatrixToString(null, this);
 			}
 
-
 			#region IMatrix Members
-
 
 			/// <summary>
 			/// Set up the dimensions of the matrix. Discards the old content and reset the matrix with the new dimensions. All elements
@@ -291,7 +290,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 
 			#region IRightExtensibleMatrix Members
 
@@ -339,7 +338,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				m_Cols = newCols;
 			}
 
-			#endregion
+			#endregion IRightExtensibleMatrix Members
 		}
 
 		/// <summary>
@@ -348,7 +347,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		public class HorizontalVector : IMatrix, IVector
 		{
 			/// <summary>
-			/// Holds the elements of the vector 
+			/// Holds the elements of the vector
 			/// </summary>
 			private double[] m_Array;
 
@@ -365,7 +364,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				return MatrixMath.MatrixToString(null, this);
 			}
-
 
 			#region IMatrix Members
 
@@ -406,7 +404,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 
 			#region IVector Members
 
@@ -422,7 +420,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -434,9 +432,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
-
 
 		/// <summary>
 		/// Implements a vertical vector, i.e. a matrix which has only one column, but many rows.
@@ -461,7 +458,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				return MatrixMath.MatrixToString(null, this);
 			}
-
 
 			#region IMatrix Members
 
@@ -502,7 +498,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 
 			#region IVector Members
 
@@ -518,7 +514,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -530,7 +526,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
 		/// <summary>
@@ -541,7 +537,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Holds the only element of the matrix.
 			/// </summary>
-			double m_Value;
+			private double m_Value;
 
 			/// <summary>
 			/// Creates the scalar and initializes it with the value val.
@@ -563,7 +559,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				return MatrixMath.MatrixToString(null, this);
 			}
-
 
 			/// <summary>
 			/// Converts the scalar to a double if neccessary.
@@ -624,7 +619,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 
 			#region IVector Members
 
@@ -640,7 +635,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -648,17 +643,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return 1;
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
-
-
-		#endregion
+		#endregion Helper matrix implementations
 
 		#region Type conversion classes
 
@@ -669,10 +661,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		public class MatrixRowROVector : IROVector
 		{
-			IROMatrix _m;
-			int _row;
-			int _coloffset;
-			int _length;
+			private IROMatrix _m;
+			private int _row;
+			private int _coloffset;
+			private int _length;
 
 			/// <summary>
 			/// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
@@ -683,6 +675,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				: this(m, row, 0, m.Columns)
 			{
 			}
+
 			/// <summary>
 			/// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
 			/// </summary>
@@ -703,9 +696,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_row = row;
 				_coloffset = columnoffset;
 				_length = length;
-
 			}
-
 
 			#region IROVector Members
 
@@ -728,17 +719,18 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
+
 		/// <summary>
 		/// Wrapper for a matrix row to a vector.
 		/// </summary>
 		public class MatrixRowVector : IVector
 		{
-			IMatrix _m;
-			int _row;
-			int _coloffset;
-			int _length;
+			private IMatrix _m;
+			private int _row;
+			private int _coloffset;
+			private int _length;
 
 			/// <summary>
 			/// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
@@ -749,6 +741,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				: this(m, row, 0, m.Columns)
 			{
 			}
+
 			/// <summary>
 			/// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
 			/// </summary>
@@ -769,8 +762,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				_row = row;
 				_coloffset = columnoffset;
 				_length = length;
-
 			}
+
 			#region IVector Members
 
 			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
@@ -787,7 +780,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -810,18 +803,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
-		#endregion
+
+		#endregion MatrixRowROVector
 
 		#region MatrixColumnROVector
+
 		/// <summary>
 		/// Wrapper for a matrix column to a read-only vector.
 		/// </summary>
 		public class MatrixColumnROVector : IROVector
 		{
-			IROMatrix _m;
-			int _col;
+			private IROMatrix _m;
+			private int _col;
 
 			/// <summary>
 			/// Constructor of a matrix column vector by providing the matrix and the column number of that matrix that is wrapped.
@@ -837,7 +832,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				_m = m;
 				_col = col;
-
 			}
 
 			#region IROVector Members
@@ -861,18 +855,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
-		#endregion
+
+		#endregion MatrixColumnROVector
 
 		#region MatrixColumnVector
+
 		/// <summary>
 		/// Wrapper for a matrix row to a vector.
 		/// </summary>
 		public class MatrixColumnVector : IVector
 		{
-			IMatrix _m;
-			int _col;
+			private IMatrix _m;
+			private int _col;
 
 			/// <summary>
 			/// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
@@ -888,8 +884,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				_m = m;
 				_col = col;
-
 			}
+
 			#region IVector Members
 
 			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
@@ -906,7 +902,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IVector Members
 
 			#region IROVector Members
 
@@ -929,20 +925,21 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
-		#endregion
+
+		#endregion MatrixColumnVector
 
 		#region SubMatrixWrapper
 
 		/// <summary>
 		/// Wraps part of a matrix so that it can be used as submatrix in operations.
 		/// </summary>
-		class SubMatrixROWrapper : IROMatrix
+		private class SubMatrixROWrapper : IROMatrix
 		{
-			IROMatrix _m;
-			int _rowoffset, _coloffset;
-			int _rows, _cols;
+			private IROMatrix _m;
+			private int _rowoffset, _coloffset;
+			private int _rows, _cols;
 
 			#region IROMatrix Members
 
@@ -979,18 +976,17 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
-
+			#endregion IROMatrix Members
 		}
 
 		/// <summary>
 		/// Wraps part of a matrix so that it can be used as submatrix in operations.
 		/// </summary>
-		class SubMatrixWrapper : IMatrix
+		private class SubMatrixWrapper : IMatrix
 		{
-			IMatrix _m;
-			int _rowoffset, _coloffset;
-			int _rows, _cols;
+			private IMatrix _m;
+			private int _rowoffset, _coloffset;
+			private int _rows, _cols;
 
 			#region IROMatrix Members
 
@@ -1027,7 +1023,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 
 			#region IMatrix Members
 
@@ -1043,20 +1039,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 		}
 
-		#endregion
+		#endregion SubMatrixWrapper
 
 		#region DiagonalMatrix
 
 		/// <summary>
 		/// Wraps a vector to a diagonal matrix
 		/// </summary>
-		class RODiagonalMatrixVectorWrapper : IROMatrix
+		private class RODiagonalMatrixVectorWrapper : IROMatrix
 		{
-			IROVector _m;
-			int _offset, _dim;
+			private IROVector _m;
+			private int _offset, _dim;
 
 			public RODiagonalMatrixVectorWrapper(IROVector vector, int offset, int matrixdimensions)
 			{
@@ -1094,10 +1090,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 		}
 
-		#endregion
+		#endregion DiagonalMatrix
 
 		#region Wrapper from linear array (LAPACK convention)
 
@@ -1110,6 +1106,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			protected double[] _data;
 			protected int _rows;
 			protected int _cols;
+
 			#region IROMatrix Members
 
 			public ROMatrixFromLinearArray(double[] array, int nRows)
@@ -1140,7 +1137,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				get { return _cols; }
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 		}
 
 		/// <summary>
@@ -1153,11 +1150,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				: base(array, nRows)
 			{
 			}
+
 			#region IMatrix Members
 
 			public new double this[int row, int col]
 			{
-
 				get
 				{
 					return _data[row + col * _rows];
@@ -1169,16 +1166,15 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
-
+			#endregion IMatrix Members
 		}
 
+		#endregion Wrapper from linear array (LAPACK convention)
 
-		#endregion
-
-		#endregion
+		#endregion Type conversion classes
 
 		#region Helper functions
+
 		/// <summary>
 		/// Calculates the Square of the value x.
 		/// </summary>
@@ -1251,6 +1247,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return s.ToString();
 		}
+
 		public static string MatrixToString(string name, IROFloatMatrix a)
 		{
 			if (null == name)
@@ -1275,6 +1272,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return s.ToString();
 		}
+
 		public static string MatrixToString(string name, IROComplexDoubleMatrix a)
 		{
 			if (null == name)
@@ -1299,6 +1297,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return s.ToString();
 		}
+
 		public static string MatrixToString(string name, IROComplexFloatMatrix a)
 		{
 			if (null == name)
@@ -1324,11 +1323,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			return s.ToString();
 		}
 
-		#endregion
+		#endregion Helper functions
 
 		#region Type conversion
-
-
 
 		/// <summary>
 		/// This wraps a jagged double array to the <see cref="IMatrix" /> interface. The data is not copied!
@@ -1404,7 +1401,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new MatrixRowROVector(x, row, columnoffset, length);
 		}
 
-
 		/// <summary>
 		/// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
 		/// </summary>
@@ -1427,7 +1423,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new MatrixRowVector(x, row, columnoffset, length);
 		}
 
-
 		/// <summary>
 		/// Returns a read-only vector representing a matrix column by providing the matrix and the row number of that matrix that is wrapped.
 		/// </summary>
@@ -1447,7 +1442,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			return new MatrixColumnVector(x, column);
 		}
-
 
 		/// <summary>
 		/// Wraps a submatrix part, so that this part can be used as a matrix in operations (read-only).
@@ -1489,10 +1483,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RODiagonalMatrixVectorWrapper(vector, vectoroffset, matrixdimensions);
 		}
 
-		#endregion
+		#endregion Type conversion
 
 		#region Addition, Subtraction, Multiply and combined operations
-
 
 		/// <summary>
 		/// Multiplies matrix a with matrix b and stores the result in matrix c.
@@ -1583,8 +1576,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-
-
 		/// <summary>
 		/// Multiplies matrix a_transposed with matrix b and stores the result in matrix c.
 		/// </summary>
@@ -1643,7 +1634,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
 		/// <summary>
 		/// Multiplies matrix a with matrix b_transposed and stores the result in matrix c.
 		/// </summary>
@@ -1676,7 +1666,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
 		/// <summary>
 		/// Multiplies the matrix a with a scalar value b and stores the result in c. Matrix a and c are allowed to be the same matrix.
 		/// </summary>
@@ -1698,7 +1687,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a. 
+		/// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The matrix which contains the row to multiply.</param>
@@ -1728,9 +1717,8 @@ namespace Altaxo.Calc.LinearAlgebra
 					c[i, j] = a[i, j] * b[brow, j];
 		}
 
-
 		/// <summary>
-		/// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a. 
+		/// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The vector which contains the row to multiply.</param>
@@ -1778,7 +1766,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				for (int j = 0; j < c.Columns; j++)
 					c[i, j] = a[i, j] + b[i, j];
 		}
-
 
 		/// <summary>
 		/// Calculates a-b and stores the result in matrix c.
@@ -1857,7 +1844,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Add the vector <c>b</c>  to all rows of matrix a. 
+		/// Add the vector <c>b</c>  to all rows of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The vector to add.</param>
@@ -1886,7 +1873,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Add the row <c>rowb</c> of matrix b to all rows of matrix a. 
+		/// Add the row <c>rowb</c> of matrix b to all rows of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The matrix which contains the row to add.</param>
@@ -1917,7 +1904,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Subtracts the row <c>rowb</c> of matrix b from all rows of matrix a. 
+		/// Subtracts the row <c>rowb</c> of matrix b from all rows of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The matrix which contains the row to subtract.</param>
@@ -1948,7 +1935,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Subtracts the row <c>rowb</c> of matrix b from all rows of matrix a. 
+		/// Subtracts the row <c>rowb</c> of matrix b from all rows of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The vector which contains the row to subtract.</param>
@@ -1977,7 +1964,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Subtracts the column <c>bcol</c> of matrix b from all columns of matrix a. 
+		/// Subtracts the column <c>bcol</c> of matrix b from all columns of matrix a.
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The matrix which contains the row to subtract.</param>
@@ -2008,7 +1995,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Divides all rows of matrix a by the row <c>rowb</c> of matrix b (element by element). 
+		/// Divides all rows of matrix a by the row <c>rowb</c> of matrix b (element by element).
 		/// </summary>
 		/// <param name="a">The source matrix.</param>
 		/// <param name="b">The matrix which contains the denominator row.</param>
@@ -2042,35 +2029,92 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 		}
 
-		#endregion
+		#endregion Addition, Subtraction, Multiply and combined operations
 
-		/*
-    /// <summary>
-    /// This will center the matrix so that the mean of each column is null.
-    /// </summary>
-    /// <param name="a">The matrix where the columns should be centered.</param>
-    /// <param name="mean">You can provide a matrix of dimension(1,a.Cols) where the mean row vector is stored, or null if not interested in this vector.</param>
-    /// <remarks>Calling this function will change the matrix a to a column
-    /// centered matrix. The original matrix data are lost.</remarks>
-    public static void ColumnsToZeroMean(IMatrix a, IMatrix mean)
-    {
-      if(null!=mean && (mean.Rows != 1 || mean.Columns != a.Columns))
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",mean.Rows,mean.Columns,1,a.Columns));
+		/// <summary>
+		/// Replaces all matrix elements that are NaN (not a number) with the value of <paramref name="replacementValue"/>.
+		/// </summary>
+		/// <param name="m">The matrix to modify.</param>
+		/// <param name="replacementValue">The replacement value. This value is assigned to any matrix element that has the value NaN (Not a Number).</param>
+		public static void ReplaceNaNElementsWith(this IMatrix m, double replacementValue)
+		{
+			int rows = m.Rows;
+			int cols = m.Columns;
+			for (int i = 0; i < rows; ++i)
+			{
+				for (int j = 0; j < cols; ++j)
+					if (double.IsNaN(m[i, j]))
+						m[i, j] = replacementValue;
+			}
+		}
 
-      for(int col = 0; col<a.Columns; col++)
-      {
-        double sum = 0;
-        for(int row=0;row<a.Rows;row++)
-          sum += a[row,col];
-        sum /= a.Rows; // calculate the mean
-        for(int row=0;row<a.Rows;row++)
-          a[row,col] -= sum; // subtract the mean from every element in the column
-        
-        if(null!=mean)
-          mean[0,col] = sum;
-      }
-    }
-*/
+		/// <summary>
+		/// Replaces all matrix elements that are NaN (Not a Number) or infinite with the value of <paramref name="replacementValue"/>.
+		/// </summary>
+		/// <param name="m">The matrix to modify.</param>
+		/// <param name="replacementValue">The replacement value. This value is assigned to any matrix element that has the value NaN (Not a Number) or that is infinite.</param>
+		public static void ReplaceNaNAndInfiniteElementsWith(this IMatrix m, double replacementValue)
+		{
+			int rows = m.Rows;
+			int cols = m.Columns;
+			for (int i = 0; i < rows; ++i)
+			{
+				for (int j = 0; j < cols; ++j)
+				{
+					var y = m[i, j];
+					if (!(y >= double.MinValue && y <= double.MaxValue))
+						m[i, j] = replacementValue;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Calculates the mean value of all matrix elements and then subtracts the mean value from each matrix element, so that the mean value of the resulting matrix is zero.
+		/// </summary>
+		/// <param name="a">The matrix.</param>
+		/// <param name="mean">The calculated mean value of the original matrix.</param>
+		public static void ToZeroMean(this IMatrix a, out double mean)
+		{
+			int rows = a.Rows;
+			int cols = a.Columns;
+
+			if (rows == 0)
+				throw new InvalidDimensionMatrixException("The number of rows of the matrix is zero!");
+			if (cols == 0)
+				throw new InvalidDimensionMatrixException("The number of columns of the matrix is zero!");
+
+			double sum = 0;
+			for (int i = 0; i < rows; ++i)
+			{
+				for (int j = 0; j < cols; ++j)
+					sum += a[i, j];
+			}
+
+			if (double.IsNaN(sum))
+				throw new InvalidContentMatrixException("One or more elements of this matrix are not numbers (NaN).");
+
+			sum /= cols;
+			sum /= rows;
+
+			for (int i = 0; i < rows; ++i)
+			{
+				for (int j = 0; j < cols; ++j)
+					a[i, j] -= sum;
+			}
+
+			mean = sum;
+		}
+
+		/// <summary>
+		/// Calculates the mean value of all matrix elements and then subtracts the mean value from each matrix element, so that the mean value of the resulting matrix is zero.
+		/// </summary>
+		/// <param name="a">The matrix.</param>
+		public static void ToZeroMean(this IMatrix a)
+		{
+			double mean;
+			ToZeroMean(a, out mean);
+		}
+
 		/// <summary>
 		/// This will center the matrix so that the mean of each column is null.
 		/// </summary>
@@ -2137,7 +2181,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
 		/// <summary>
 		/// Returns the sum of the squares of all elements.
 		/// </summary>
@@ -2170,7 +2213,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return sum;
 		}
 
-
 		/// <summary>
 		/// Returns the square root of the sum of the squares of the matrix a.
 		/// </summary>
@@ -2199,7 +2241,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return true;
 		}
 
-
 		/// <summary>
 		/// Set all matrix elements to the provided value <paramref name="scalar"/>.
 		/// </summary>
@@ -2212,7 +2253,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					a[i, j] = scalar;
 		}
 
-
 		/// <summary>
 		/// Set all elements in the matrix to 0 (zero)
 		/// </summary>
@@ -2221,7 +2261,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			SetMatrixElements(a, 0);
 		}
-
 
 		/// <summary>
 		/// Gets a submatrix out of the source matrix a. The dimensions of the submatrix are given by the provided matrix dest.
@@ -2265,7 +2304,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < rows; i++)
 				for (int j = 0; j < cols; j++)
 					dest[i, j] = src[i, j];
-
 		}
 
 		/// <summary>
@@ -2283,9 +2321,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < rows; i++)
 				for (int j = 0; j < cols; j++)
 					dest[i + destrow, j + destcol] = src[i, j];
-
 		}
-
 
 		/// <summary>
 		/// Sets one column in the destination matrix equal to the vertical vector provided by src matix.
@@ -2363,7 +2399,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				dest[destRow, j] = src[j];
 		}
 
-
 		/// <summary>
 		/// Normalizes each row (each horizontal vector) of the matrix. After
 		/// normalization, each row has the norm 1, i.e. the sum of squares of the elements of each row is 1 (one).
@@ -2385,7 +2420,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Normalizes each column (each vertical vector) of the matrix. After
@@ -2494,7 +2528,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			IBottomExtensibleMatrix loads,
 			IBottomExtensibleMatrix residualVarianceVector)
 		{
-
 			// first center the matrix
 			//MatrixMath.ColumnsToZeroMean(X, null);
 
@@ -2502,7 +2535,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			if (null != residualVarianceVector)
 				residualVarianceVector.AppendBottom(new MatrixMath.Scalar(originalVariance));
-
 
 			IMatrix l = new HorizontalVector(X.Columns);
 			IMatrix t_prev = null;
@@ -2521,19 +2553,16 @@ namespace Altaxo.Calc.LinearAlgebra
 					rowoffset++;
 				} while (IsZeroMatrix(l) && rowoffset < X.Rows);
 
-
-
 				for (int iter = 0; iter < 500; iter++)
 				{
-
 					// 2. Calculate the new vector t for the factor values
 					MultiplySecondTransposed(X, l, t); // t = X*l_t (t is  a vertical vector)
 
-					// Compare this with the previous one 
+					// Compare this with the previous one
 					if (t_prev != null && IsEqual(t_prev, t, 1E-9))
 						break;
 
-					// 3. Calculate the new loads 
+					// 3. Calculate the new loads
 					MultiplyFirstTransposed(t, X, l); // l = t_tr*X  (gives a horizontal vector of load (= eigenvalue spectrum)
 
 					// normalize the (one) row
@@ -2543,14 +2572,13 @@ namespace Altaxo.Calc.LinearAlgebra
 					if (t_prev == null)
 						t_prev = new VerticalVector(X.Rows);
 					Copy(t, t_prev); // stores the content of t in t_prev
-
 				}
 
 				// Store factor and loads
 				factors.AppendRight(t);
 				loads.AppendBottom(l);
 
-				// 5. Calculate the residual matrix X = X - t*l 
+				// 5. Calculate the residual matrix X = X - t*l
 				SubtractProductFromSelf(t, l, X); // X is now the residual matrix
 
 				// if the number of factors to calculate is not provided,
@@ -2568,7 +2596,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			} // for all factors
 		} // end NIPALS
-
 
 		#region SingularValueDecomposition
 
@@ -2597,9 +2624,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			MatrixMath.Copy(input, ma);
 			SingularValueDecomposition svd = new SingularValueDecomposition(ma);
 
-
 			double[][] B = GetMatrixArray(input.Columns, input.Rows);
-
 
 			/* compute the pseudoinverse in B */
 			double[] s = svd.Diagonal;
@@ -2638,7 +2663,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new SingularValueDecomposition(inout);
 		}
 
-
 		/// <summary>
 		/// Class to calculate the singular value decomposition.
 		/// </summary>
@@ -2647,28 +2671,30 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <code>Some properties of the singular value decomposition:
 		/// X - the matrix to decompose, U w V' - the decomposition.
 		///
-		///       -1               
+		///       -1
 		/// (X' X)    = V (1/w^2) V'  (usually called covariance matrix)
-		/// 
-		///                        -1    
+		///
+		///                        -1
 		/// Hat matrix H = X (X' X)  X' = U U'
-		/// 
-		/// 
+		///
+		///
 		/// </code>
 		/// </remarks>
 		public class SingularValueDecomposition : ISingularValueDecomposition
 		{
 			//private Matrix U;
-			double[][] u;
-			double[][] v;
+			private double[][] u;
+
+			private double[][] v;
+
 			//private Matrix V;
 			private double[] s; // singular values
-			double[] e;
-			double[] work;
-			double[] _HatDiagonal;
+
+			private double[] e;
+			private double[] work;
+			private double[] _HatDiagonal;
 			private int m;
 			private int n;
-
 
 			/// <summary>
 			/// Creates a singular value decomposition of matrix a, resulting in matrix a itself.
@@ -3107,9 +3133,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-
-
-
 			/// <summary>
 			/// Solves A·X = B for a vector X, where A is specified by A=U*S*V'. U, S, and V are
 			/// results of the decomposition.
@@ -3121,13 +3144,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				Backsubstitution(VectorMath.ToROVector(b), VectorMath.ToVector(x));
 			}
 
-
 			private class SolveTempStorage
 			{
 				public IMatrix A;
 				public SingularValueDecomposition SVD;
 			}
-
 
 			/// <summary>
 			/// Solves the equation A x = B and returns x.
@@ -3169,8 +3190,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <param name="x">The resulting vector that fullfilles A·x=b.</param>
 			public void Backsubstitution(IROVector b, IVector x)
 			{
-
-
 				double sum;
 				double[] tmp = new double[n];
 				int nu = Math.Min(m, n);
@@ -3195,7 +3214,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					x[j] = sum;
 				}
 			}
-
 
 			/// <summary>
 			/// Calculates the covariance matrix Cov(i,j)= (X'X)^(-1) = SUM_over_k( V[i,k]*V[j,k]/s[k]^2). If s[k] is zero, 1/s[k]^2 will be set to zero. If the singular value decomposition was used to make a linear fit,
@@ -3243,8 +3261,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					if (s[i] < thresholdLevel)
 						s[i] = 0;
 			}
-
-
 
 			public double Condition
 			{
@@ -3320,10 +3336,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
-		#endregion
-
+		#endregion SingularValueDecomposition
 	} // end class MatrixMath
-
-
 }

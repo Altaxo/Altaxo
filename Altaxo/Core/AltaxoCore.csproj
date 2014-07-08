@@ -188,6 +188,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\Fourier\FastHadamardTransformation.cs" />
+    <Compile Include="Calc\Fourier\RealFourierTransformation2D.cs" />
     <Compile Include="Calc\Fourier\NativeFourierMethods.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -199,6 +200,7 @@
     </Compile>
     <Compile Include="Calc\Fourier\RealFFTResultWrapper.cs" />
     <Compile Include="Calc\Fourier\RealFourierTransform.cs" />
+    <Compile Include="Calc\Fourier\RealFourierTransformationOutputKind.cs" />
     <Compile Include="Calc\Fourier\Windows\AbstractWindow.cs" />
     <Compile Include="Calc\Fourier\Windows\BartlettWindow.cs" />
     <Compile Include="Calc\Fourier\Windows\BlackmanHarrisWindow.cs" />
@@ -211,6 +213,7 @@
     <Compile Include="Calc\Fourier\Windows\NuttallWindow.cs" />
     <Compile Include="Calc\Fourier\Windows\VonHannWindow.cs" />
     <Compile Include="Calc\Fourier\Windows\WelchWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\Windows2D.cs" />
     <Compile Include="Calc\GammaRelated.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -290,6 +293,8 @@
     <Compile Include="Calc\LinearAlgebra\DoubleLUDecomp.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleMatrix.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleMatrixEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleMatrixInArray1DColumnMajorRepresentation.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleMatrixInArray1DRowMajorRepresentation.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleQRDecomp.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleSVDDecomp.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleSymmetricLevinson.cs" />
@@ -309,6 +314,8 @@
     <Compile Include="Calc\LinearAlgebra\FloatVectorEnumerator.cs" />
     <Compile Include="Calc\LinearAlgebra\HouseHolder.cs" />
     <Compile Include="Calc\LinearAlgebra\Hypotenuse.cs" />
+    <Compile Include="Calc\LinearAlgebra\IMatrixInArray1DColumnMajorRepresentation.cs" />
+    <Compile Include="Calc\LinearAlgebra\IMatrixInArray1DRowMajorRepresentation.cs" />
     <Compile Include="Calc\LinearAlgebra\IComplexDoubleMatrix.cs" />
     <Compile Include="Calc\LinearAlgebra\IComplexFloatMatrix.cs" />
     <Compile Include="Calc\LinearAlgebra\IComplexDoubleVector.cs" />
@@ -321,6 +328,7 @@
     <Compile Include="Calc\LinearAlgebra\IntegerVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\InvalidContentMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\IVector.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -372,6 +380,7 @@
     <Compile Include="Calc\LinearAlgebra\NotPositiveDefiniteException.cs" />
     <Compile Include="Calc\LinearAlgebra\NotSquareMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\QRDecomposition.cs" />
+    <Compile Include="Calc\LinearAlgebra\InvalidDimensionMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\SingularMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\SVDDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\VectorMath.cs">

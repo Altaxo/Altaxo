@@ -201,9 +201,13 @@
     <Compile Include="DataConnection\QueryField.cs" />
     <Compile Include="DataConnection\TableType.cs" />
     <Compile Include="Data\DataSourceImportOptions.cs" />
+    <Compile Include="Data\DataTableMatrixProxy.cs" />
     <Compile Include="Data\Extensions\DatabaseCommands.cs" />
+    <Compile Include="Data\Extensions\DataTableToMatrixConverter.cs" />
+    <Compile Include="Data\Extensions\MatrixToDataTableConverter.cs" />
     <Compile Include="Data\IAltaxoTableDataSource.cs" />
     <Compile Include="Data\IROTableDataSource.cs" />
+    <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinColorSet.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinDarkPlotColorSet.cs" />
     <Compile Include="Graph\ColorManagement\ColorNameKey.cs" />
@@ -245,6 +249,7 @@
     <Compile Include="Graph\Scales\InverseScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\InverseAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
+    <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
     <Compile Include="Gui\DataConnection\AltaxoOleDbDataSourceController.cs" />
@@ -323,6 +328,7 @@
     <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
     <Compile Include="Gui\Settings\ClipboardGraphExportOptionPanel.cs" />
     <Compile Include="Gui\Settings\CultureSettingsController.cs" />
+    <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
@@ -352,6 +358,9 @@
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
+    <Compile Include="Worksheet\Commands\Analysis\FourierTransformation2DDataSource.cs" />
+    <Compile Include="Worksheet\Commands\Analysis\RealFourierTransformation2DOptions.cs" />
+    <Compile Include="Worksheet\Commands\DataSourceCommands.cs" />
     <Compile Include="Worksheet\WorksheetViewLayout.cs" />
     <Content Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -481,7 +490,7 @@
     <Compile Include="Gui\ValidationEventArgs.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationDataController.cs" />
     <Compile Include="Gui\Worksheet\MasterCurveCreationMainController.cs" />
-    <Compile Include="Gui\Worksheet\RealFourierTransformationController.cs" />
+    <Compile Include="Gui\Analysis\Fourier\RealFourierTransformationController.cs" />
     <Compile Include="Gui\Worksheet\SingleTableChoiceController.cs" />
     <Compile Include="Main\Commands\ProjectItemCommands.cs" />
     <Compile Include="Main\Commands\MultiRenameDocuments.cs" />
