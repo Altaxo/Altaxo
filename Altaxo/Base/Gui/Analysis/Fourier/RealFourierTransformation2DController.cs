@@ -58,6 +58,18 @@ namespace Altaxo.Gui.Analysis.Fourier
 		double? ReplacementValueForInfiniteMatrixElements { get; set; }
 
 		SelectableListNodeList FourierWindowChoice { set; }
+
+		bool OutputFrequencyHeaderColumns { get; set; }
+
+		string FrequencyRowHeaderColumnName { get; set; }
+
+		string FrequencyColumnHeaderColumnName { get; set; }
+
+		bool OutputPeriodHeaderColumns { get; set; }
+
+		string PeriodRowHeaderColumnName { get; set; }
+
+		string PeriodColumnHeaderColumnName { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
@@ -97,6 +109,14 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 				_view.ResultingFractionOfRowsUsed = _doc.ResultingFractionOfRowsUsed;
 				_view.ResultingFractionOfColumnsUsed = _doc.ResultingFractionOfColumnsUsed;
+
+				_view.OutputFrequencyHeaderColumns = _doc.OutputFrequencyHeaderColumns;
+				_view.FrequencyRowHeaderColumnName = _doc.FrequencyRowHeaderColumnName;
+				_view.FrequencyColumnHeaderColumnName = _doc.FrequencyColumnHeaderColumnName;
+
+				_view.OutputPeriodHeaderColumns = _doc.OutputPeriodHeaderColumns;
+				_view.PeriodRowHeaderColumnName = _doc.PeriodRowHeaderColumnName;
+				_view.PeriodColumnHeaderColumnName = _doc.PeriodColumnHeaderColumnName;
 			}
 		}
 
@@ -141,6 +161,14 @@ namespace Altaxo.Gui.Analysis.Fourier
 			_doc.ResultingFractionOfColumnsUsed = _view.ResultingFractionOfColumnsUsed;
 
 			_doc.FourierWindow = _fourierWindowChoice.FirstSelectedNode.Tag as Altaxo.Calc.Fourier.Windows.IWindows2D;
+
+			_doc.OutputFrequencyHeaderColumns = _view.OutputFrequencyHeaderColumns;
+			_doc.FrequencyRowHeaderColumnName = _view.FrequencyRowHeaderColumnName;
+			_doc.FrequencyColumnHeaderColumnName = _view.FrequencyColumnHeaderColumnName;
+
+			_doc.OutputPeriodHeaderColumns = _view.OutputPeriodHeaderColumns;
+			_doc.PeriodRowHeaderColumnName = _view.PeriodRowHeaderColumnName;
+			_doc.PeriodColumnHeaderColumnName = _view.PeriodColumnHeaderColumnName;
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				CopyHelper.Copy(ref _originalDoc, _doc);

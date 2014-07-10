@@ -274,13 +274,14 @@
     <Compile Include="Gui\Graph\Scales\Ticks\TextTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingController.cs" />
     <Compile Include="Gui\Graph\TickSpacingController.cs" />
+    <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataController.cs" />
     <Compile Include="Gui\IOptionPanel.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumController.cs" />
     <Compile Include="Gui\Graph\GroupStylePresenceTrackers.cs" />
-    <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataController.cs" />
+    <Compile Include="Gui\Data\DataTableMatrixProxyController.cs" />
     <Compile Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseController.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF05LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\DiamondLineCaps.cs" />

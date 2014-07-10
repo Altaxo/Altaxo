@@ -103,11 +103,11 @@ namespace Altaxo.Gui.Analysis.Fourier
 		{
 			get
 			{
-				return _guiRowFrequencyFraction.SelectedValue;
+				return _guiRowFrequencyFraction.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_guiRowFrequencyFraction.SelectedValue = value;
+				_guiRowFrequencyFraction.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
@@ -115,11 +115,11 @@ namespace Altaxo.Gui.Analysis.Fourier
 		{
 			get
 			{
-				return _guiColumnFrequencyFraction.SelectedValue;
+				return _guiColumnFrequencyFraction.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-				_guiColumnFrequencyFraction.SelectedValue = value;
+				_guiColumnFrequencyFraction.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
@@ -192,6 +192,78 @@ namespace Altaxo.Gui.Analysis.Fourier
 		private void EhFourierWindowChanged(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiFourierWindow);
+		}
+
+		public bool OutputFrequencyHeaderColumns
+		{
+			get
+			{
+				return _guiOutputFrequencyHeaderColumns.IsChecked == true;
+			}
+			set
+			{
+				_guiOutputFrequencyHeaderColumns.IsChecked = value;
+			}
+		}
+
+		public string FrequencyRowHeaderColumnName
+		{
+			get
+			{
+				return _guiFrequencyRowHeaderColumnName.Text;
+			}
+			set
+			{
+				_guiFrequencyRowHeaderColumnName.Text = value;
+			}
+		}
+
+		public string FrequencyColumnHeaderColumnName
+		{
+			get
+			{
+				return _guiFrequencyColumnHeaderColumnName.Text;
+			}
+			set
+			{
+				_guiFrequencyColumnHeaderColumnName.Text = value;
+			}
+		}
+
+		public bool OutputPeriodHeaderColumns
+		{
+			get
+			{
+				return _guiOutputPeriodHeaderColumns.IsChecked == true;
+			}
+			set
+			{
+				_guiOutputPeriodHeaderColumns.IsChecked = value;
+			}
+		}
+
+		public string PeriodRowHeaderColumnName
+		{
+			get
+			{
+				return _guiPeriodRowHeaderColumnName.Text;
+			}
+			set
+			{
+				_guiPeriodRowHeaderColumnName.Text = value;
+			}
+		}
+
+		public string PeriodColumnHeaderColumnName
+		{
+			get
+			{
+				return _guiPeriodColumnHeaderColumnName.Text;
+			}
+			set
+			{
+				_guiPeriodColumnHeaderColumnName.Text = value;
+			}
 		}
 	}
 }

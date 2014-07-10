@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,71 +19,65 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Collections.Generic;
+#endregion Copyright
 
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
 using Altaxo.Serialization;
-using Altaxo.Data;
-using Altaxo.Collections;
-using Altaxo.Graph.Scales.Boundaries;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
-  /// <summary>
-  /// Summary description for XYColumnPlotData.
-  /// </summary>
-  [Serializable]
-  public class XYZMeshedColumnPlotData
-    :
-    Main.IChangedEventSource,
-    System.ICloneable,
-    Main.IDocumentNode,
-    System.Runtime.Serialization.IDeserializationCallback
-  {
-    [NonSerialized]
-    protected object _parent;
-
-    protected Altaxo.Data.ReadableColumnProxy[] _dataColumns; // the columns that are involved in the picture
-
-
-    protected Altaxo.Data.ReadableColumnProxy _xColumn;
-    protected Altaxo.Data.ReadableColumnProxy _yColumn;
-
-    // cached or temporary data
+	/// <summary>
+	/// Summary description for XYColumnPlotData.
+	/// </summary>
+	[Serializable]
+	public class XYZMeshedColumnPlotData
+		:
+		Main.IChangedEventSource,
+		Main.IChildChangedEventSink,
+		System.ICloneable,
+		Main.IDocumentNode,
+		System.Runtime.Serialization.IDeserializationCallback
+	{
 		[NonSerialized]
-    protected IPhysicalBoundaries _xBoundaries;
+		protected object _parent;
+
+		protected DataTableMatrixProxy _matrixProxy;
+
+		// cached or temporary data
+		[NonSerialized]
+		protected IPhysicalBoundaries _xBoundaries;
+
 		[NonSerialized]
 		protected IPhysicalBoundaries _yBoundaries;
+
 		[NonSerialized]
 		protected IPhysicalBoundaries _vBoundaries;
 
+		[NonSerialized]
+		protected bool _isCachedDataValid = false;
 
-    /// <summary>
-    /// Number of rows, here the maximum of the row counts of all columns.
-    /// </summary>
-    protected int _numberOfRows;
+		// events
+		[field: NonSerialized]
+		public event BoundaryChangedHandler XBoundariesChanged;
 
-    [NonSerialized]
-    protected bool _isCachedDataValid = false;
+		[field: NonSerialized]
+		public event BoundaryChangedHandler YBoundariesChanged;
 
-    // events
-    [field: NonSerialized]
-    public event BoundaryChangedHandler XBoundariesChanged;
-    [field: NonSerialized]
-    public event BoundaryChangedHandler YBoundariesChanged;
-    [field: NonSerialized]
-    public event BoundaryChangedHandler VBoundariesChanged;
+		[field: NonSerialized]
+		public event BoundaryChangedHandler VBoundariesChanged;
 
-
-    /// <summary>
-    /// Fired if either the data of this XYColumnPlotData changed or if the bounds changed
-    /// </summary>
-    [field: NonSerialized]
-    public event System.EventHandler Changed;
+		/// <summary>
+		/// Fired if either the data of this XYColumnPlotData changed or if the bounds changed
+		/// </summary>
+		[field: NonSerialized]
+		public event System.EventHandler Changed;
 
 		/// <summary>
 		/// Gets or sets the plot range start. Currently, this value is always 0.
@@ -94,563 +89,496 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		public int PlotRangeLength { get { return int.MaxValue; } set { } }
 
+		#region Serialization
 
-    #region Serialization
+		#region Clipboard
 
-    #region Clipboard
-  
-    public void OnDeserialization(object sender)
-    {
-      CreateEventChain();
-    }
-
-     #endregion
-  
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 1)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        throw new ApplicationException("Calling a deprecated serialization handler for XYZMeshedColumnPlotData");
-        /*
-        XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
-    
-        if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
-        {
-          info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_XColumn));
-        }
-        else
-        {
-          info.AddValue("XColumn",s.m_XColumn);
-        }
-
-        if(s.m_YColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_YColumn).ParentObject))
-        {
-          info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_YColumn));
-        }
-        else
-        {
-          info.AddValue("YColumn",s.m_YColumn);
-        }
-
-        info.CreateArray("DataColumns",s.m_DataColumns.Length);
-        for(int i=0;i<s.m_DataColumns.Length;i++)
-        {
-          Altaxo.Data.IReadableColumn col = s.m_DataColumns[i];
-          if(col is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)col).ParentObject))
-          {
-            info.AddValue("e",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)col));
-          }
-          else
-          {
-            info.AddValue("e",col);
-          }
-        }
-        info.CommitArray();
-
-        info.AddValue("XBoundaries",s.m_xBoundaries);
-        info.AddValue("YBoundaries",s.m_yBoundaries);
-        info.AddValue("VBoundaries",s.m_vBoundaries);
-        */
-      }
-
-      Main.DocumentPath _xColumn = null;
-      Main.DocumentPath _yColumn = null;
-      Main.DocumentPath[] _vColumns = null;
-      XYZMeshedColumnPlotData _plotAssociation = null;
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        bool bSurrogateUsed = false;
-
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
-
-        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-
-        object deserobj;
-        deserobj = info.GetValue("XColumn", s);
-        if (deserobj is Main.DocumentPath)
-        {
-          surr._xColumn = (Main.DocumentPath)deserobj;
-          bSurrogateUsed = true;
-        }
-        else
-        {
-          s._xColumn = new ReadableColumnProxy((Altaxo.Data.INumericColumn)deserobj);
-          s._xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
-        }
-
-
-        deserobj = info.GetValue("YColumn", s);
-        if (deserobj is Main.DocumentPath)
-        {
-          surr._yColumn = (Main.DocumentPath)deserobj;
-          bSurrogateUsed = true;
-        }
-        else
-        {
-          s._yColumn = new ReadableColumnProxy((Altaxo.Data.INumericColumn)deserobj);
-          s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
-        }
-
-        int count = info.OpenArray();
-        surr._vColumns = new Main.DocumentPath[count];
-        s._dataColumns = new ReadableColumnProxy[count];
-        for (int i = 0; i < count; i++)
-        {
-          deserobj = info.GetValue("e", s);
-          if (deserobj is Main.DocumentPath)
-          {
-            surr._vColumns[i] = (Main.DocumentPath)deserobj;
-            bSurrogateUsed = true;
-          }
-          else
-          {
-            s._dataColumns[i] = new ReadableColumnProxy((Altaxo.Data.IReadableColumn)deserobj);
-            s._dataColumns[i].Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
-          }
-        }
-        info.CloseArray(count);
-
-
-        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
-        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
-
-        s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
-        s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
-        s._vBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
-
-
-        if (bSurrogateUsed)
-        {
-          surr._plotAssociation = s;
-          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-        }
-
-        return s;
-      }
-
-      public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-      {
-        bool bAllResolved = true;
-
-        if (this._xColumn != null)
-        {
-          object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation, documentRoot);
-          bAllResolved &= (null != xColumn);
-          if (xColumn is Altaxo.Data.INumericColumn)
-          {
-            this._xColumn = null;
-            _plotAssociation._xColumn = new ReadableColumnProxy((Altaxo.Data.INumericColumn)xColumn);
-            _plotAssociation._xColumn.Changed += new EventHandler(_plotAssociation.EhColumnDataChangedEventHandler);
-          }
-        }
-
-        if (this._yColumn != null)
-        {
-          object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation, documentRoot);
-          bAllResolved &= (null != yColumn);
-          if (yColumn is Altaxo.Data.INumericColumn)
-          {
-            this._yColumn = null;
-            _plotAssociation._yColumn = new ReadableColumnProxy((Altaxo.Data.INumericColumn)yColumn);
-            _plotAssociation._yColumn.Changed += new EventHandler(_plotAssociation.EhColumnDataChangedEventHandler);
-          }
-        }
-
-        for (int i = 0; i < this._vColumns.Length; i++)
-        {
-          if (this._vColumns[i] != null)
-          {
-            object vColumn = Main.DocumentPath.GetObject(this._vColumns[i], this._plotAssociation, documentRoot);
-            bAllResolved &= (null != vColumn);
-            if (vColumn is Altaxo.Data.IReadableColumn)
-            {
-              this._vColumns[i] = null;
-              _plotAssociation._dataColumns[i] = new ReadableColumnProxy((Altaxo.Data.IReadableColumn)vColumn);
-              _plotAssociation._dataColumns[i].Changed += new EventHandler(_plotAssociation.EhColumnDataChangedEventHandler);
-            }
-          }
-        }
-
-        if (bAllResolved)
-          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-      }
-    }
-
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 2)]
-    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
-
-        info.AddValue("XColumn", s._xColumn);
-        info.AddValue("YColumn", s._yColumn);
-
-        info.CreateArray("DataColumns", s._dataColumns.Length);
-        for (int i = 0; i < s._dataColumns.Length; i++)
-        {
-          info.AddValue("e", s._dataColumns[i]);
-        }
-        info.CommitArray();
-
-        info.AddValue("XBoundaries", s._xBoundaries);
-        info.AddValue("YBoundaries", s._yBoundaries);
-        info.AddValue("VBoundaries", s._vBoundaries);
-      }
-
-
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
-
-        s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
-        s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
-
-        int count = info.OpenArray();
-        s._dataColumns = new ReadableColumnProxy[count];
-        for (int i = 0; i < count; i++)
-        {
-          s._dataColumns[i] = (ReadableColumnProxy)info.GetValue("e", parent);
-        }
-        info.CloseArray(count);
-
-
-        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
-        s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
-
-        s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
-        s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
-        s._vBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
-
-        s.CreateEventChain();
-
-        return s;
-      }
-    }
-
-
-
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    public void CreateEventChain()
-    {
-      // restore the event chain
-
-      _xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
-
-      _yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
-
-      for (int i = 0; i < _dataColumns.Length; i++)
-      {
-        _dataColumns[i].Changed += new EventHandler(EhColumnDataChangedEventHandler);
-      }
-
-      _xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
-      _yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
-      _vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
-
-
-      // do not calculate cached data here, since it is done the first time this data is really needed
-      this._isCachedDataValid = false;
-    }
-    #endregion
-
-    /// <summary>
-    /// Deserialization constructor.
-    /// </summary>
-    protected XYZMeshedColumnPlotData()
-    {
-    }
-
-    public XYZMeshedColumnPlotData(Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, Altaxo.Data.DataColumnCollection coll, IAscendingIntegerCollection selected)
-    {
-      _xColumn = new ReadableColumnProxy(xCol);
-      _xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
-
-      _yColumn = new ReadableColumnProxy(yCol);
-      _yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
-
-      int len = selected == null ? coll.ColumnCount : selected.Count;
-      _dataColumns = new ReadableColumnProxy[len];
-      for (int i = 0; i < len; i++)
-      {
-        int idx = null == selected ? i : selected[i];
-        _dataColumns[i] = new ReadableColumnProxy(coll[idx]);
-
-        // set the event chain
-        _dataColumns[i].Changed += new EventHandler(EhColumnDataChangedEventHandler);
-      }
-
-
-      this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
-      this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
-      this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
-
-    }
-
-
-    /// <summary>
-    /// Copy constructor.
-    /// </summary>
-    /// <param name="from">The object to copy from.</param>
-    /// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
-    public XYZMeshedColumnPlotData(XYZMeshedColumnPlotData from)
-    {
-      _xColumn = (ReadableColumnProxy)from._xColumn.Clone();
-      _xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
-
-      _yColumn = (ReadableColumnProxy)from._yColumn.Clone();
-      _yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
-
-      int len = from._dataColumns.Length;
-      _dataColumns = new ReadableColumnProxy[len];
-
-      for (int i = 0; i < len; i++)
-      {
-        _dataColumns[i] = (ReadableColumnProxy)from._dataColumns[i].Clone(); // do not clone the data columns!
-        _dataColumns[i].Changed += new EventHandler(EhColumnDataChangedEventHandler);
-      }
-
-
-      this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
-      this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
-      this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
-
-
-    }
-
-    /// <summary>
-    /// Creates a cloned copy of this object.
-    /// </summary>
-    /// <returns>The cloned copy of this object.</returns>
-    /// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
-    public object Clone()
-    {
-      return new XYZMeshedColumnPlotData(this);
-    }
-
-    public void MergeXBoundsInto(IPhysicalBoundaries pb)
-    {
-      if (!this._isCachedDataValid)
-        this.CalculateCachedData();
-      pb.Add(_xBoundaries);
-    }
-
-    public void MergeYBoundsInto(IPhysicalBoundaries pb)
-    {
-      if (!this._isCachedDataValid)
-        this.CalculateCachedData();
-      pb.Add(_yBoundaries);
-    }
-
-    public void MergeVBoundsInto(IPhysicalBoundaries pb)
-    {
-      if (!this._isCachedDataValid)
-        this.CalculateCachedData();
-      pb.Add(_vBoundaries);
-    }
-
-    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
-    {
-      if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
-      {
-        if (null != _xBoundaries)
-        {
-          _xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
-        }
-        _xBoundaries = (IPhysicalBoundaries)val.Clone();
-        _xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
-        this._isCachedDataValid = false;
-
-        OnChanged();
-      }
-    }
-
-
-    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
-    {
-      if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
-      {
-        if (null != _yBoundaries)
-        {
-          _yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
-        }
-        _yBoundaries = (IPhysicalBoundaries)val.Clone();
-        _yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
-        this._isCachedDataValid = false;
-
-        OnChanged();
-      }
-    }
-
-
-    public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
-    {
-      if (null == _vBoundaries || val.GetType() != _vBoundaries.GetType())
-      {
-        if (null != _vBoundaries)
-        {
-          _vBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
-        }
-        _vBoundaries = (IPhysicalBoundaries)val.Clone();
-        _vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
-        this._isCachedDataValid = false;
-
-        OnChanged();
-      }
-    }
-
-
-    protected virtual void OnXBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
-    {
-      if (null != this.XBoundariesChanged)
-        XBoundariesChanged(this, e);
-
-      OnChanged();
-    }
-
-    protected virtual void OnYBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
-    {
-      if (null != this.YBoundariesChanged)
-        YBoundariesChanged(this, e);
-
-      OnChanged();
-    }
-
-    protected virtual void OnVBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
-    {
-      if (null != this.VBoundariesChanged)
-        VBoundariesChanged(this, e);
-
-      OnChanged();
-    }
-
-    public int RowCount
-    {
-      get
-      {
-        if (!this._isCachedDataValid)
-          this.CalculateCachedData();
-        return _numberOfRows;
-      }
-    }
-
-    public int ColumnCount
-    {
-      get
-      {
-        return null == this._dataColumns ? 0 : _dataColumns.Length;
-      }
-    }
-
-
-
-    public ReadableColumnProxy[] DataColumns
-    {
-      get
-      {
-        return _dataColumns;
-      }
-    }
-
-		/// <summary>Clears all datacolumns present before and create new data columns.</summary>
-		/// <param name="columns">The columns.</param>
-		public void SetDataColumns(IEnumerable<IReadableColumn> columns)
+		public void OnDeserialization(object sender)
 		{
-			// firstly, detach the old columns
-			if (null != _dataColumns)
-			{
-				foreach (var colProxy in _dataColumns)
-					colProxy.Changed -= EhColumnDataChangedEventHandler;
-			}
-
-			// now add the new columns
-			var list = new List<ReadableColumnProxy>();
-			foreach (var col in columns)
-			{
-				var colProxy = new ReadableColumnProxy(col);
-				colProxy.Changed += EhColumnDataChangedEventHandler;				// set the event chain
-				list.Add(colProxy);
-			}
-			_dataColumns = list.ToArray();
+			CreateEventChain();
 		}
 
-    public Altaxo.Data.IReadableColumn GetDataColumn(int i)
-    {
-      return _dataColumns[i] == null ? null : _dataColumns[i].Document;
-    }
+		#endregion Clipboard
 
-    public Altaxo.Data.IReadableColumn XColumn
-    {
-      get
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 1)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				return _xColumn == null ? null : _xColumn.Document; 
-			}
-			set
-			{
-				IReadableColumn oldValue = null;
+				throw new ApplicationException("Calling a deprecated serialization handler for XYZMeshedColumnPlotData");
+				/*
+				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
-				if (null != _xColumn)
+				if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
 				{
-					_xColumn.Changed -= EhColumnDataChangedEventHandler;
-					oldValue = _xColumn.Document;
+					info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_XColumn));
+				}
+				else
+				{
+					info.AddValue("XColumn",s.m_XColumn);
 				}
 
-				if (null == value)
-					value = new EquallySpacedColumn(0, 1);
-
-				_xColumn = new ReadableColumnProxy(value);
-				_xColumn.Changed += EhColumnDataChangedEventHandler;
-
-				if (!object.ReferenceEquals(oldValue, value))
-					EhColumnDataChangedEventHandler(value, EventArgs.Empty);
-
-			}
-    }
-
-    public Altaxo.Data.IReadableColumn YColumn
-    {
-      get
-			{
-				return _yColumn == null ? null : _yColumn.Document; ; 
-			}
-			set
-			{
-				IReadableColumn oldValue = null;
-
-				if (null != _yColumn)
+				if(s.m_YColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_YColumn).ParentObject))
 				{
-					_yColumn.Changed -= EhColumnDataChangedEventHandler;
-					oldValue = _yColumn.Document;
+					info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_YColumn));
+				}
+				else
+				{
+					info.AddValue("YColumn",s.m_YColumn);
 				}
 
-				if (null == value)
-					value = new EquallySpacedColumn(0, 1);
+				info.CreateArray("DataColumns",s.m_DataColumns.Length);
+				for(int i=0;i<s.m_DataColumns.Length;i++)
+				{
+					Altaxo.Data.IReadableColumn col = s.m_DataColumns[i];
+					if(col is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)col).ParentObject))
+					{
+						info.AddValue("e",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)col));
+					}
+					else
+					{
+						info.AddValue("e",col);
+					}
+				}
+				info.CommitArray();
 
-				_yColumn = new ReadableColumnProxy(value);
-				_yColumn.Changed += EhColumnDataChangedEventHandler;
-
-				if (!object.ReferenceEquals(oldValue, value))
-					EhColumnDataChangedEventHandler(value, EventArgs.Empty);
+				info.AddValue("XBoundaries",s.m_xBoundaries);
+				info.AddValue("YBoundaries",s.m_yBoundaries);
+				info.AddValue("VBoundaries",s.m_vBoundaries);
+				*/
 			}
-    }
 
+			private Main.DocumentPath _xColumnPath = null;
+			private Main.DocumentPath _yColumnPath = null;
+			private Main.DocumentPath[] _vColumnPaths = null;
 
-    public override string ToString()
-    {
-      if (null != _dataColumns && _dataColumns.Length > 0)
-        return String.Format("PictureData {0}-{1}", _dataColumns[0].GetName(2), _dataColumns[_dataColumns.Length - 1].GetName(2));
-      else
-        return "Empty (no data)";
-    }
+			private ReadableColumnProxy _xColumnProxy = null;
+			private ReadableColumnProxy _yColumnProxy = null;
+			private ReadableColumnProxy[] _vColumnProxies = null;
+
+			private XYZMeshedColumnPlotData _plotAssociation = null;
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				bool bSurrogateUsed = false;
+
+				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+
+				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+
+#pragma warning disable 618
+				s._matrixProxy = DataTableMatrixProxy.CreateEmptyInstance(); // this instance is replaced later in the deserialization callback function and is intended to avoid null reference errors
+#pragma warning restore 618
+
+				object deserobj;
+				deserobj = info.GetValue("XColumn", s);
+				if (deserobj is Main.DocumentPath)
+				{
+					surr._xColumnPath = (Main.DocumentPath)deserobj;
+					bSurrogateUsed = true;
+				}
+				else
+				{
+					surr._xColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)deserobj);
+				}
+
+				deserobj = info.GetValue("YColumn", s);
+				if (deserobj is Main.DocumentPath)
+				{
+					surr._yColumnPath = (Main.DocumentPath)deserobj;
+					bSurrogateUsed = true;
+				}
+				else
+				{
+					surr._yColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)deserobj);
+				}
+
+				int count = info.OpenArray();
+				surr._vColumnPaths = new Main.DocumentPath[count];
+				surr._vColumnProxies = new ReadableColumnProxy[count];
+				for (int i = 0; i < count; i++)
+				{
+					deserobj = info.GetValue("e", s);
+					if (deserobj is Main.DocumentPath)
+					{
+						surr._vColumnPaths[i] = (Main.DocumentPath)deserobj;
+						bSurrogateUsed = true;
+					}
+					else
+					{
+						surr._vColumnProxies[i] = new ReadableColumnProxy((Altaxo.Data.IReadableColumn)deserobj);
+					}
+				}
+				info.CloseArray(count);
+
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
+
+				s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+				s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+				s._vBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
+
+				if (bSurrogateUsed)
+				{
+					surr._plotAssociation = s;
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+				}
+
+				return s;
+			}
+
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			{
+				bool bAllResolved = true;
+
+				if (this._xColumnPath != null)
+				{
+					object xColumn = Main.DocumentPath.GetObject(this._xColumnPath, this._plotAssociation, documentRoot);
+					bAllResolved &= (null != xColumn);
+					if (xColumn is Altaxo.Data.INumericColumn)
+					{
+						this._xColumnPath = null;
+						this._xColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)xColumn);
+					}
+				}
+
+				if (this._yColumnPath != null)
+				{
+					object yColumn = Main.DocumentPath.GetObject(this._yColumnPath, this._plotAssociation, documentRoot);
+					bAllResolved &= (null != yColumn);
+					if (yColumn is Altaxo.Data.INumericColumn)
+					{
+						this._yColumnPath = null;
+						this._yColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)yColumn);
+					}
+				}
+
+				for (int i = 0; i < this._vColumnPaths.Length; i++)
+				{
+					if (this._vColumnPaths[i] != null)
+					{
+						object vColumn = Main.DocumentPath.GetObject(this._vColumnPaths[i], this._plotAssociation, documentRoot);
+						bAllResolved &= (null != vColumn);
+						if (vColumn is Altaxo.Data.IReadableColumn)
+						{
+							this._vColumnPaths[i] = null;
+							this._vColumnProxies[i] = new ReadableColumnProxy((Altaxo.Data.IReadableColumn)vColumn);
+						}
+					}
+				}
+
+				if (bAllResolved || isFinallyCall)
+				{
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+#pragma warning disable 618
+					_plotAssociation._matrixProxy = new DataTableMatrixProxy(_xColumnProxy, _yColumnProxy, _vColumnProxies) { ParentObject = _plotAssociation };
+#pragma warning restore 618
+				}
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 2)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old versions not supported.");
+				/*
+
+				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
+
+				info.AddValue("XColumn", s._xColumn);
+				info.AddValue("YColumn", s._yColumn);
+
+				info.CreateArray("DataColumns", s._dataColumns.Length);
+				for (int i = 0; i < s._dataColumns.Length; i++)
+				{
+					info.AddValue("e", s._dataColumns[i]);
+				}
+				info.CommitArray();
+
+				info.AddValue("XBoundaries", s._xBoundaries);
+				info.AddValue("YBoundaries", s._yBoundaries);
+				info.AddValue("VBoundaries", s._vBoundaries);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+
+				var _xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+				var _yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+
+				int count = info.OpenArray();
+				var _dataColumns = new ReadableColumnProxy[count];
+				for (int i = 0; i < count; i++)
+				{
+					_dataColumns[i] = (ReadableColumnProxy)info.GetValue("e", parent);
+				}
+				info.CloseArray(count);
+
+#pragma warning disable 618
+				s._matrixProxy = new DataTableMatrixProxy(_xColumn, _yColumn, _dataColumns);
+#pragma warning restore 618
+
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
+
+				s._matrixProxy.ParentObject = s;
+				s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+				s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+				s._vBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
+
+				s._isCachedDataValid = false;
+
+				return s;
+			}
+		}
+
+		/// <summary>2014-07-08 using _matrixProxy instead of single proxies for columns</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
+
+				info.AddValue("MatrixProxy", s._matrixProxy);
+
+				info.AddValue("XBoundaries", s._xBoundaries);
+				info.AddValue("YBoundaries", s._yBoundaries);
+				info.AddValue("VBoundaries", s._vBoundaries);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
+
+				s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy");
+
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
+
+				s._matrixProxy.ParentObject = s;
+				s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+				s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+				s._vBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
+
+				s._isCachedDataValid = false;
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		public void CreateEventChain()
+		{
+			// restore the event chain
+
+			_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+			_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+			_vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+
+			// do not calculate cached data here, since it is done the first time this data is really needed
+			this._isCachedDataValid = false;
+		}
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		protected XYZMeshedColumnPlotData()
+		{
+		}
+
+		public XYZMeshedColumnPlotData(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
+		{
+			_matrixProxy = new DataTableMatrixProxy(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns) { ParentObject = this };
+			this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
+			this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
+			this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
+		}
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The object to copy from.</param>
+		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
+		public XYZMeshedColumnPlotData(XYZMeshedColumnPlotData from)
+		{
+			CopyHelper.Copy(ref _matrixProxy, from._matrixProxy);
+			_matrixProxy.ParentObject = this;
+
+			this.SetXBoundsFromTemplate(new FiniteNumericalBoundaries());
+			this.SetYBoundsFromTemplate(new FiniteNumericalBoundaries());
+			this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
+		}
+
+		/// <summary>
+		/// Creates a cloned copy of this object.
+		/// </summary>
+		/// <returns>The cloned copy of this object.</returns>
+		/// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
+		public object Clone()
+		{
+			return new XYZMeshedColumnPlotData(this);
+		}
+
+		public DataTableMatrixProxy DataTableMatrix
+		{
+			get
+			{
+				return this._matrixProxy;
+			}
+		}
+
+		public void MergeXBoundsInto(IPhysicalBoundaries pb)
+		{
+			if (!this._isCachedDataValid)
+				this.CalculateCachedData();
+			pb.Add(_xBoundaries);
+		}
+
+		public void MergeYBoundsInto(IPhysicalBoundaries pb)
+		{
+			if (!this._isCachedDataValid)
+				this.CalculateCachedData();
+			pb.Add(_yBoundaries);
+		}
+
+		public void MergeVBoundsInto(IPhysicalBoundaries pb)
+		{
+			if (!this._isCachedDataValid)
+				this.CalculateCachedData();
+			pb.Add(_vBoundaries);
+		}
+
+		public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
+		{
+			if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
+			{
+				if (null != _xBoundaries)
+				{
+					_xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+				}
+				_xBoundaries = (IPhysicalBoundaries)val.Clone();
+				_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+				this._isCachedDataValid = false;
+
+				OnChanged();
+			}
+		}
+
+		public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
+		{
+			if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
+			{
+				if (null != _yBoundaries)
+				{
+					_yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+				}
+				_yBoundaries = (IPhysicalBoundaries)val.Clone();
+				_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+				this._isCachedDataValid = false;
+
+				OnChanged();
+			}
+		}
+
+		public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
+		{
+			if (null == _vBoundaries || val.GetType() != _vBoundaries.GetType())
+			{
+				if (null != _vBoundaries)
+				{
+					_vBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+				}
+				_vBoundaries = (IPhysicalBoundaries)val.Clone();
+				_vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+				this._isCachedDataValid = false;
+
+				OnChanged();
+			}
+		}
+
+		protected virtual void OnXBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
+		{
+			if (null != this.XBoundariesChanged)
+				XBoundariesChanged(this, e);
+
+			OnChanged();
+		}
+
+		protected virtual void OnYBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
+		{
+			if (null != this.YBoundariesChanged)
+				YBoundariesChanged(this, e);
+
+			OnChanged();
+		}
+
+		protected virtual void OnVBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
+		{
+			if (null != this.VBoundariesChanged)
+				VBoundariesChanged(this, e);
+
+			OnChanged();
+		}
+
+		public int RowCount
+		{
+			get
+			{
+				return _matrixProxy.RowCount;
+			}
+		}
+
+		public int ColumnCount
+		{
+			get
+			{
+				return _matrixProxy.ColumnCount;
+			}
+		}
+
+		public Altaxo.Data.IReadableColumn GetDataColumn(int i)
+		{
+			return _matrixProxy.GetDataColumnProxy(i).Document;
+		}
+
+		public Altaxo.Data.IReadableColumn XColumn
+		{
+			get
+			{
+				return _matrixProxy.RowHeaderColumn;
+			}
+		}
+
+		public Altaxo.Data.IReadableColumn YColumn
+		{
+			get
+			{
+				return _matrixProxy.ColumnHeaderColumn;
+			}
+		}
+
+		public override string ToString()
+		{
+			var colCount = _matrixProxy.ColumnCount;
+
+			if (colCount > 0)
+				return String.Format("PictureData {0}-{1}", _matrixProxy.GetDataColumnProxy(0).GetName(2), _matrixProxy.GetDataColumnProxy(colCount - 1).GetName(2));
+			else
+				return "Empty (no data)";
+		}
 
 		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
 		{
@@ -663,107 +591,64 @@ namespace Altaxo.Graph.Plot.Data
 			CalculateCachedData();
 		}
 
+		public void CalculateCachedData()
+		{
+			if (0 == RowCount || 0 == ColumnCount)
+				return;
 
-    public void CalculateCachedData()
-    {
-      if (null == _dataColumns || _dataColumns.Length == 0)
-      {
-        _numberOfRows = 0;
-        return;
-      }
+			this._xBoundaries.BeginUpdate(); // disable events
+			this._yBoundaries.BeginUpdate(); // disable events
+			this._vBoundaries.BeginUpdate();
 
-      this._xBoundaries.BeginUpdate(); // disable events
-      this._yBoundaries.BeginUpdate(); // disable events
-      this._vBoundaries.BeginUpdate();
+			this._xBoundaries.Reset();
+			this._yBoundaries.Reset();
+			this._vBoundaries.Reset();
 
-      this._xBoundaries.Reset();
-      this._yBoundaries.Reset();
-      this._vBoundaries.Reset();
+			_matrixProxy.ForEachMatrixElementDo((col, idx) => this._vBoundaries.Add(col, idx));
+			_matrixProxy.ForEachRowHeaderElementDo((col, idx) => this._xBoundaries.Add(col, idx));
+			_matrixProxy.ForEachColumnHeaderElementDo((col, idx) => this._yBoundaries.Add(col, idx));
 
-      // get the length of the largest column as row count
-      _numberOfRows = 0;
-      for (int i = 0; i < _dataColumns.Length; i++)
-      {
-        IDefinedCount coli = _dataColumns[i].Document as IDefinedCount;
-        if (null != coli)
-          _numberOfRows = System.Math.Max(_numberOfRows, coli.Count);
-      }
+			// now the cached data are valid
+			_isCachedDataValid = true;
 
-      for (int i = 0; i < _dataColumns.Length; i++)
-      {
-        Altaxo.Data.IReadableColumn col = _dataColumns[i].Document;
-        int collength = (col is Altaxo.Data.IDefinedCount) ? ((Altaxo.Data.IDefinedCount)col).Count : _numberOfRows;
-        for (int j = 0; j < collength; j++)
-        {
-          if (col != null)
-            this._vBoundaries.Add(col, j);
-        }
-      }
+			// now when the cached data are valid, we can reenable the events
+			this._xBoundaries.EndUpdate(); // enable events
+			this._yBoundaries.EndUpdate(); // enable events
+			this._vBoundaries.EndUpdate(); // enable events
+		}
 
-
-      // enter the bounds for y
-			for (int i = 0; i < _dataColumns.Length; i++)
+		public void EhChildChanged(object child, EventArgs e)
+		{
+			if (object.ReferenceEquals(child, _matrixProxy))
 			{
-				var col = _dataColumns[i].Document as Altaxo.Data.DataColumn;
-				if (null != col)
-				{
-					DataColumnCollection parentcoll = DataColumnCollection.GetParentDataColumnCollectionOf(col);
-					if (parentcoll != null)
-					{
-						int nColIdx = parentcoll.GetColumnNumber(col);
-						this._yBoundaries.Add(_yColumn.Document, nColIdx);
-					}
-				}
+				_isCachedDataValid = false;
+				OnChanged();
 			}
+		}
 
-      // enter the bounds for x
-			for (int i = 0; i < _numberOfRows; i++)
-				this._xBoundaries.Add(_xColumn.Document, i);
-		
+		protected virtual void OnChanged()
+		{
+			if (_parent is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
 
-      // now the cached data are valid
-      _isCachedDataValid = true;
+			if (null != Changed)
+				Changed(this, EventArgs.Empty);
+		}
 
+		public virtual object ParentObject
+		{
+			get { return _parent; }
+			set { _parent = value; }
+		}
 
-      // now when the cached data are valid, we can reenable the events
-      this._xBoundaries.EndUpdate(); // enable events
-      this._yBoundaries.EndUpdate(); // enable events
-      this._vBoundaries.EndUpdate(); // enable events
-
-    }
-
-    void EhColumnDataChangedEventHandler(object sender, EventArgs e)
-    {
-
-      _isCachedDataValid = false;
-
-      OnChanged();
-    }
-
-    protected virtual void OnChanged()
-    {
-      if (_parent is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
-    }
-
-    public virtual object ParentObject
-    {
-      get { return _parent; }
-      set { _parent = value; }
-    }
-
-    public virtual string Name
-    {
-      get
-      {
-        Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-        return null == noc ? null : noc.GetNameOfChildObject(this);
-      }
-    }
-
+		public virtual string Name
+		{
+			get
+			{
+				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
+				return null == noc ? null : noc.GetNameOfChildObject(this);
+			}
+		}
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
@@ -772,13 +657,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			Report(_xColumn, this, "XColumn");
-			Report(_yColumn, this, "YColumn");
-			for(int i=0;i<_dataColumns.Length;++i)
-				Report(_dataColumns[i], this, string.Format("DataColumns[{0}]", i) );
+			_matrixProxy.VisitDocumentReferences(Report);
 		}
-
-  }
-
-
+	}
 } // end name space

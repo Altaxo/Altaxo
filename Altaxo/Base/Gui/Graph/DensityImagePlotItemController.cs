@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph
 
 		private void InitializeDataView()
 		{
-			_dataController = new XYZMeshedColumnPlotDataController() { UseDocumentCopy = UseDocument.Directly };
+			_dataController = new XYZMeshedColumnPlotDataController { UseDocumentCopy = UseDocument.Directly };
 			_dataController.InitializeDocument(_doc.Data);
 			Current.Gui.FindAndAttachControlTo(_dataController);
 			this.AddTab("Data", _dataController, _dataController.ViewObject);

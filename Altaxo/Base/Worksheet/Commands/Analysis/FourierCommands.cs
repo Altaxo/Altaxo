@@ -65,6 +65,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			ShowRealFourierTransformation2DDialog(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
 		}
 
+		/// <summary>
+		/// Shows the dialog in which the user can select options for the 2D Fourier transformation, and then executes the Fourier transformation
+		/// The result is stored in a newly created data table in the same folder as the source data table.
+		/// </summary>
+		/// <param name="table">The table containing the data to transform.</param>
+		/// <param name="selectedDataRows">The selected data rows of the table. (A value of <c>null</c> can be provided here).</param>
+		/// <param name="selectedDataColumns">The selected data columns of the table. (A value of <c>null</c> can be provided here).</param>
+		/// <param name="selectedPropertyColumns">The selected property columns of the table. (A value of <c>null</c> can be provided here).</param>
 		public static void ShowRealFourierTransformation2DDialog(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
 		{
 			DataTableMatrixProxy proxy = null;
@@ -115,14 +123,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Executes a two dimensional Fourier transformation.
+		/// </summary>
+		/// <param name="matrixProxy">The proxy containing the matrix data that should be transformed, as well as the row header column and column header column that can be used to determine the spacing between adjacent rows and columns.</param>
+		/// <param name="options">The options for the Fourier transformation.</param>
+		/// <param name="destinationTable">The destination table that is used to store the Fourier transformed values.</param>
+		/// <exception cref="System.NotImplementedException">Data pretreatment has an order which is not implemented yet.</exception>
 		public static void ExecuteFouriertransformation2D(DataTableMatrixProxy matrixProxy, RealFourierTransformation2DOptions options, DataTable destinationTable)
 		{
 			var matrix = matrixProxy.GetMatrix((r, c) => new Altaxo.Calc.LinearAlgebra.DoubleMatrixInArray1DRowMajorRepresentation(r, c));
-
-			if (options.ReplacementValueForNaNMatrixElements.HasValue)
-				Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNElementsWith(matrix, options.ReplacementValueForNaNMatrixElements.Value);
-			if (options.ReplacementValueForInfiniteMatrixElements.HasValue)
-				Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNAndInfiniteElementsWith(matrix, options.ReplacementValueForInfiniteMatrixElements.Value);
 
 			var fft = new Altaxo.Calc.Fourier.RealFourierTransformation2D(matrix, true);
 			fft.ColumnSpacing = options.RowIncrementValue;
@@ -133,13 +143,30 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				switch (options.DataPretreatmentCorrectionOrder.Value)
 				{
 					case 0:
-						fft.DataPretreatment += Altaxo.Calc.LinearAlgebra.MatrixMath.ToZeroMean;
+						fft.DataPretreatment += RealFourierTransformation2D.RemoveZeroOrderFromMatrixIgnoringInvalidElements;
+						break;
+
+					case 1:
+						fft.DataPretreatment += RealFourierTransformation2D.RemoveFirstOrderFromMatrixIgnoringInvalidElements;
+						break;
+
+					case 2:
+						fft.DataPretreatment += RealFourierTransformation2D.RemoveSecondOrderFromMatrixIgnoringInvalidElements;
+						break;
+
+					case 3:
+						fft.DataPretreatment += RealFourierTransformation2D.RemoveThirdOrderFromMatrixIgnoringInvalidElements;
 						break;
 
 					default:
 						throw new NotImplementedException(string.Format("Regression of order {0} is not implemented yet", options.DataPretreatmentCorrectionOrder.Value));
 				}
 			}
+
+			if (options.ReplacementValueForNaNMatrixElements.HasValue)
+				Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNElementsWith(matrix, options.ReplacementValueForNaNMatrixElements.Value);
+			if (options.ReplacementValueForInfiniteMatrixElements.HasValue)
+				Altaxo.Calc.LinearAlgebra.MatrixMath.ReplaceNaNAndInfiniteElementsWith(matrix, options.ReplacementValueForInfiniteMatrixElements.Value);
 
 			if (options.FourierWindow != null)
 			{
@@ -157,9 +184,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			else
 				fft.GetResult(options.ResultingFractionOfRowsUsed, options.ResultingFractionOfColumnsUsed, options.OutputKind, out resultMatrix, out rowFrequencies, out columnFrequencies);
 
-			var matTableConverter = new Altaxo.Data.MatrixToDataTableConverter(resultMatrix, destinationTable); ;
-			matTableConverter.AddMatrixRowHeaderData(rowFrequencies, "RowFrequencies");
-			matTableConverter.AddMatrixColumnHeaderData(columnFrequencies, "ColumnFrequencies");
+			var matTableConverter = new Altaxo.Data.MatrixToDataTableConverter(resultMatrix, destinationTable);
+
+			if (options.OutputFrequencyHeaderColumns)
+			{
+				matTableConverter.AddMatrixRowHeaderData(rowFrequencies, string.IsNullOrEmpty(options.FrequencyRowHeaderColumnName) ? "RowFrequencies" : options.FrequencyRowHeaderColumnName);
+				matTableConverter.AddMatrixColumnHeaderData(columnFrequencies, string.IsNullOrEmpty(options.FrequencyColumnHeaderColumnName) ? "ColumnFrequencies" : options.FrequencyColumnHeaderColumnName);
+			}
+
+			if (options.OutputPeriodHeaderColumns)
+			{
+				matTableConverter.AddMatrixRowHeaderData(VectorMath.Divide(1, rowFrequencies), string.IsNullOrEmpty(options.PeriodRowHeaderColumnName) ? "RowPeriods" : options.PeriodRowHeaderColumnName);
+				matTableConverter.AddMatrixColumnHeaderData(VectorMath.Divide(1, columnFrequencies), string.IsNullOrEmpty(options.PeriodColumnHeaderColumnName) ? "ColumnPeriods" : options.PeriodColumnHeaderColumnName);
+			}
 
 			matTableConverter.Execute();
 		}

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -43,133 +45,14 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class XYZMeshedColumnPlotDataControl : UserControl, IXYZMeshedColumnPlotDataView
 	{
-		public event Action SelectedTableChanged;
-		public event Action SelectedColumnKindChanged;
-		public event Action UseSelectedItemAsXColumn;
-		public event Action UseSelectedItemAsYColumn;
-		public event Action UseSelectedItemAsVColumns;
-		public event Action ClearXColumn;
-		public event Action ClearYColumn;
-		public event Action ClearVColumns;
-
 		public XYZMeshedColumnPlotDataControl()
 		{
 			InitializeComponent();
 		}
 
-		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+		public void SetDataView(object viewObject)
 		{
-				GuiHelper.SynchronizeSelectionFromGui(this._guiAvailableTables);
-				if (null != SelectedTableChanged)
-					SelectedTableChanged();
-		}
-
-		private void EhToX_Click(object sender, RoutedEventArgs e)
-		{
-				GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-				if (null != UseSelectedItemAsXColumn)
-					UseSelectedItemAsXColumn();
-		}
-
-		private void EhEraseX_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != ClearXColumn)
-				ClearXColumn();
-		}
-
-		private void EhToY_Click(object sender, RoutedEventArgs e)
-		{
-				GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-				if (null != UseSelectedItemAsYColumn)
-					UseSelectedItemAsYColumn();
-		}
-
-		private void EhEraseY_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != ClearYColumn)
-				ClearYColumn();
-		}
-
-
-		private void EhToV_Click(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-			if (null != UseSelectedItemAsVColumns)
-				UseSelectedItemAsVColumns();
-		}
-
-
-		private void EhEraseV_Click(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiVColumnNames);
-			if (null != ClearVColumns)
-				ClearVColumns();
-		}
-
-		private void EhDataColumnsSelected(object sender, RoutedEventArgs e)
-		{
-			if (null != SelectedColumnKindChanged)
-				SelectedColumnKindChanged();
-		}
-
-		private void EhPropertyColumnsSelected(object sender, RoutedEventArgs e)
-		{
-			if (null != SelectedColumnKindChanged)
-				SelectedColumnKindChanged();
-		}
-
-	
-
-
-		public void InitializeAvailableTables(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableTables, items);
-		}
-
-		public void InitializeAvailableColumns(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableColumnNames, items);
-		}
-
-		public void Initialize_XColumn(string colname)
-		{
-			this._guiXColumnName.Text = colname;
-		}
-
-		public void Initialize_YColumn(string colname)
-		{
-			this._guiYColumName.Text = colname;
-		}
-
-		public void Initialize_PlotRangeFrom(int from)
-		{
-			this._guiPlotRangeFrom.Minimum = 0;
-			this._guiPlotRangeFrom.Maximum = int.MaxValue;
-			this._guiPlotRangeFrom.Value = from;
-		}
-
-		public void Initialize_PlotRangeTo(int to)
-		{
-			this._guiPlotRangeTo.Minimum = 0;
-			this._guiPlotRangeTo.Maximum = int.MaxValue;
-			this._guiPlotRangeTo.Value = Math.Max(0, to);
-		}
-
-		public bool AreDataColumnsShown
-		{
-			get { return true == _guiDataColumnsSelection.IsChecked; }
-		}
-
-		public void Initialize_VColumns(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiVColumnNames, items);
-		}
-
-		public void EnableUseButtons(bool enableUseAsXColumn, bool enableUseAsYColumn, bool enableUseAsVColumns)
-		{
-			_guiTakeAsXColumn.IsEnabled = enableUseAsXColumn;
-			_guiTakeAsYColumn.IsEnabled = enableUseAsYColumn;
-			_guiTakeAsVColumns.IsEnabled = enableUseAsVColumns;
+			_guiDataHost.Child = viewObject as UIElement;
 		}
 	}
 }

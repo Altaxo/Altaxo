@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Main;
 
 namespace Altaxo.Worksheet
 {
@@ -35,7 +36,7 @@ namespace Altaxo.Worksheet
 	/// </summary>
 	public class WorksheetViewLayout
 	{
-		WorksheetLayout _worksheetLayout;
+		private WorksheetLayout _worksheetLayout;
 
 		#region Serialization
 
@@ -45,19 +46,19 @@ namespace Altaxo.Worksheet
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Gui.SharpDevelop.SDWorksheetViewContent", 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Gui.Worksheet.Viewing.WorksheetController", 1)] // until 2012-02-01 buid 743
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetViewLayout), 0)] // since 2012-02-01 buid 744
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			DocumentPath _PathToLayout;
-			WorksheetViewLayout _TableController;
+			private DocumentPath _PathToLayout;
+			private WorksheetViewLayout _TableController;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (WorksheetViewLayout)obj;
 				info.AddValue("Layout", DocumentPath.GetAbsolutePath(s.WorksheetLayout));
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (WorksheetViewLayout)o : new WorksheetViewLayout();
 
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
@@ -83,9 +84,8 @@ namespace Altaxo.Worksheet
 				return s;
 			}
 
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
 			{
-
 				if (null != _PathToLayout)
 				{
 					object o = DocumentPath.GetObject(_PathToLayout, documentRoot, _TableController);
@@ -103,7 +103,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public WorksheetViewLayout(WorksheetLayout worksheetLayout)
 		{

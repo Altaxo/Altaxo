@@ -27,6 +27,8 @@ namespace Altaxo.Data
 		/// Called after deserization of a data source instance, when it is already associated with a data table.
 		/// </summary>
 		void OnAfterDeserialization();
+
+		void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
 	}
 
 	/// <summary>

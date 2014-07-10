@@ -118,7 +118,7 @@ namespace Altaxo.Main.Commands
 					table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
 
 				Current.Project.DataTableCollection.Add(table);
-				info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
+				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
 
 				Current.ProjectService.CreateNewWorksheet(table);
 			}
@@ -136,7 +136,7 @@ namespace Altaxo.Main.Commands
 				if (tableAndLayout.Layout != null)
 					Current.Project.TableLayouts.Add(tableAndLayout.Layout);
 
-				info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
+				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
 
 				tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
 
@@ -151,10 +151,12 @@ namespace Altaxo.Main.Commands
 					graph.Name = Current.Project.GraphDocumentCollection.FindNewName(graph.Name);
 
 				Current.Project.GraphDocumentCollection.Add(graph);
-				info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references in the graph
+				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references in the graph
 
 				Current.ProjectService.CreateNewGraph(graph);
 			}
+
+			info.AnnounceDeserializationEnd(Current.Project, true); // final deserialization end
 		}
 
 		public override void Run()

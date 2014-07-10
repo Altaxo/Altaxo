@@ -311,7 +311,7 @@ namespace Altaxo
 
 			try
 			{
-				info.AnnounceDeserializationEnd(this);
+				info.AnnounceDeserializationEnd(this, false);
 			}
 			catch (Exception exc)
 			{

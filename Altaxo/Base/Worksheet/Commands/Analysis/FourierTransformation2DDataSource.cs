@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
+	/// <summary>
+	/// Data source for a table that was created by a two-dimensional Fourier transformation.
+	/// </summary>
 	public class FourierTransformation2DDataSource : Altaxo.Data.IAltaxoTableDataSource
 	{
 		private RealFourierTransformation2DOptions _transformationOptions;
@@ -88,6 +91,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FourierTransformation2DDataSource"/> class.
+		/// </summary>
+		/// <param name="inputData">The input data designates the original source of data (used then for the Fourier transformation).</param>
+		/// <param name="transformationOptions">The Fourier transformation options.</param>
+		/// <param name="importOptions">The data source import options.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// inputData
+		/// or
+		/// transformationOptions
+		/// or
+		/// importOptions
+		/// </exception>
 		public FourierTransformation2DDataSource(DataTableMatrixProxy inputData, RealFourierTransformation2DOptions transformationOptions, IDataSourceImportOptions importOptions)
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
@@ -107,6 +123,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FourierTransformation2DDataSource"/> class.
+		/// </summary>
+		/// <param name="from">Another instance to copy from.</param>
 		public FourierTransformation2DDataSource(FourierTransformation2DDataSource from)
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
@@ -114,6 +134,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			CopyFrom(from);
 		}
 
+		/// <summary>
+		/// Copies from another instance.
+		/// </summary>
+		/// <param name="obj">The object to copy from.</param>
+		/// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
 		public bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -142,11 +167,21 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			return false;
 		}
 
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
 		public object Clone()
 		{
 			return new FourierTransformation2DDataSource(this);
 		}
 
+		/// <summary>
+		/// Fills (or refills) the data table with the 2D-Fourier transformation of the original data.. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
+		/// </summary>
+		/// <param name="destinationTable">The destination table.</param>
 		public void FillData(DataTable destinationTable)
 		{
 			try
@@ -159,6 +194,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the input data.
+		/// </summary>
+		/// <value>
+		/// The input data. This data is the input for the 2D-Fourier transformation.
+		/// </value>
 		public DataTableMatrixProxy InputData
 		{
 			get
@@ -182,6 +223,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the data source import options.
+		/// </summary>
+		/// <value>
+		/// The import options.
+		/// </value>
+		/// <exception cref="System.ArgumentNullException">ImportOptions</exception>
 		public Data.IDataSourceImportOptions ImportOptions
 		{
 			get
@@ -199,6 +247,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the options for the 2D Fourier transformation.
+		/// </summary>
+		/// <value>
+		/// The 2D Fourier transformation options.
+		/// </value>
+		/// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
 		public RealFourierTransformation2DOptions FourierTransformation2DOptions
 		{
 			get
@@ -216,6 +271,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Called when the input data have changed. Depending on the <see cref="ImportOptions"/>, the input data may be reprocessed.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
 		private void EhInputDataChanged(object sender, EventArgs e)
 		{
 			if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
@@ -229,6 +289,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 		}
 
+		/// <summary>
+		/// Called when the event suppressor has resumed events, and any events have been fired in the time of suppression.
+		/// </summary>
 		private void EhResumeSuppressedEvents()
 		{
 			var ev = DataSourceChanged;
@@ -236,22 +299,46 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				ev(this);
 		}
 
+		/// <summary>
+		/// Called after deserization of a data source instance, when it is already associated with a data table.
+		/// </summary>
 		public void OnAfterDeserialization()
 		{
 		}
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose()
 		{
 		}
 
+		/// <summary>
+		/// Suppresses the events by getting a token. When the token is disposed, events will be resumed again.
+		/// </summary>
+		/// <returns>Suppress token.</returns>
 		public Main.ISuppressToken SuppressEventsGettingToken()
 		{
 			return _eventSuppressor.Suspend();
 		}
 
+		/// <summary>
+		/// Resumes the events.
+		/// </summary>
+		/// <param name="token">The suppress token.</param>
 		public void ResumeEvents(ref Main.ISuppressToken token)
 		{
 			_eventSuppressor.Resume(ref token);
+		}
+
+		/// <summary>
+		/// Visits all document references.
+		/// </summary>
+		/// <param name="ReportProxies">The report proxies.</param>
+		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
+		{
+			if (_inputData != null)
+				_inputData.VisitDocumentReferences(ReportProxies);
 		}
 	}
 }

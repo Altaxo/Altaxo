@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,206 +19,204 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentNode" />), then special
-  /// measures are used in the case the document node is disposed. In this case the path to the node is stored, and if a new document node with
-  /// that path exists, the reference to the object is restored.
-  /// </summary>
-  [Serializable]
-  public class DocNodeProxy 
-    :
-    System.ICloneable,
-    Main.IChangedEventSource, 
-    System.Runtime.Serialization.ISerializable,
-    System.Runtime.Serialization.IDeserializationCallback
-  {
-    [NonSerialized]
-    protected object _docNode;
+	/// <summary>
+	/// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentNode" />), then special
+	/// measures are used in the case the document node is disposed. In this case the path to the node is stored, and if a new document node with
+	/// that path exists, the reference to the object is restored.
+	/// </summary>
+	[Serializable]
+	public class DocNodeProxy
+		:
+		System.ICloneable,
+		Main.IChangedEventSource,
+		System.Runtime.Serialization.ISerializable,
+		System.Runtime.Serialization.IDeserializationCallback
+	{
+		[NonSerialized]
+		protected object _docNode;
 
-    protected Main.DocumentPath _docNodePath;
+		protected Main.DocumentPath _docNodePath;
 
-    #region Serialization
+		#region Serialization
 
-    #region ISerializable Members (Clipboard Serialization)
+		#region ISerializable Members (Clipboard Serialization)
 
-    public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-    {
-      if (_docNode is Main.IDocumentNode)
-        info.AddValue("Node", Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode));
-      else if (_docNodePath != null)
-        info.AddValue("Node", _docNodePath);
-      else
-        info.AddValue("Node", _docNode);
-    }
+		public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			if (_docNode is Main.IDocumentNode)
+				info.AddValue("Node", Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode));
+			else if (_docNodePath != null)
+				info.AddValue("Node", _docNodePath);
+			else
+				info.AddValue("Node", _docNode);
+		}
 
-    protected DocNodeProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-    {
-      object node = info.GetValue("Node", typeof(object));
-      if (node is Main.DocumentPath)
-        _docNodePath = (Main.DocumentPath)node;
-      else
-        SetDocNode(node);
-    }
+		protected DocNodeProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			object node = info.GetValue("Node", typeof(object));
+			if (node is Main.DocumentPath)
+				_docNodePath = (Main.DocumentPath)node;
+			else
+				SetDocNode(node);
+		}
 
+		public void OnDeserialization(object sender)
+		{
+		}
 
-    public void OnDeserialization(object sender)
-    {
-    }
+		#endregion ISerializable Members (Clipboard Serialization)
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DocNodeProxy s = (DocNodeProxy)obj;
 
-    #endregion
+				if (s._docNode is Main.IDocumentNode)
+					info.AddValue("Node", Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s._docNode));
+				else if (s._docNodePath != null)
+					info.AddValue("Node", s._docNodePath);
+				else
+					info.AddValue("Node", s._docNode);
+			}
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy),0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        DocNodeProxy s = (DocNodeProxy)obj;
-        
-        if(s._docNode is Main.IDocumentNode)
-          info.AddValue("Node",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s._docNode));
-        else if(s._docNodePath != null)
-          info.AddValue("Node",s._docNodePath);
-        else
-          info.AddValue("Node",s._docNode);
-      }
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DocNodeProxy s = null != o ? (DocNodeProxy)o : new DocNodeProxy();
 
-      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DocNodeProxy s = null!=o ?(DocNodeProxy)o : new DocNodeProxy();
+				object node = info.GetValue("Node", typeof(object));
 
-        object node = info.GetValue("Node",typeof(object));
+				if (node is Main.DocumentPath)
+					s._docNodePath = (Main.DocumentPath)node;
+				else
+					s.SetDocNode(node);
 
-        if(node is Main.DocumentPath)
-          s._docNodePath = (Main.DocumentPath)node;
-        else
-          s.SetDocNode(node);
+				// create a callback to resolve the instance as early as possible
+				if (s._docNodePath != null && s._docNode == null)
+				{
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+				}
 
-        // create a callback to resolve the instance as early as possible
-        if (s._docNodePath != null && s._docNode == null)
-        {
-          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
-        }
+				return s;
+			}
+		}
 
+		#endregion Serialization
 
-        return s;
-      }
-    }
-    #endregion
+		public DocNodeProxy(object docNode)
+		{
+			SetDocNode(docNode);
+		}
 
-    public DocNodeProxy(object docNode)
-    {
-      SetDocNode(docNode);
-    }
+		private DocNodeProxy(Main.DocumentPath docNodePath)
+		{
+			_docNodePath = docNodePath;
+		}
 
-    private DocNodeProxy(Main.DocumentPath docNodePath)
-    {
-      _docNodePath = docNodePath;
-    }
+		/// <summary>
+		/// Creates an empty DocNodeProxy (similar to null for objects)
+		/// </summary>
+		public DocNodeProxy()
+		{
+		}
 
-    /// <summary>
-    /// Creates an empty DocNodeProxy (similar to null for objects)
-    /// </summary>
-    public DocNodeProxy()
-    {
-    }
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="from">Object to clone from.</param>
+		public DocNodeProxy(DocNodeProxy from)
+		{
+			if (from._docNode is Main.IDocumentNode)
+				this.SetDocNode(from._docNode); // than the new Proxy refers to the same document node
+			else if (from._docNode is ICloneable)
+				this.SetDocNode(((System.ICloneable)from._docNode).Clone()); // clone the underlying object
+			else if (from._docNode != null)
+				this.SetDocNode(from._docNode); // the underlying object is not cloneable, so refer directly to it
+			else if (from._docNodePath != null)
+				this._docNodePath = from._docNodePath.Clone(); // if no current document available, clone only the path
+		}
 
-    /// <summary>
-    /// Cloning constructor.
-    /// </summary>
-    /// <param name="from">Object to clone from.</param>
-    public DocNodeProxy(DocNodeProxy from)
-    {
-      if (from._docNode is Main.IDocumentNode)
-        this.SetDocNode(from._docNode); // than the new Proxy refers to the same document node
-      else if (from._docNode is ICloneable)
-        this.SetDocNode(((System.ICloneable)from._docNode).Clone()); // clone the underlying object
-      else if (from._docNode != null)
-        this.SetDocNode(from._docNode); // the underlying object is not cloneable, so refer directly to it
-      else if(from._docNodePath != null)
-        this._docNodePath= from._docNodePath.Clone(); // if no current document available, clone only the path
-    }
+		/// <summary>
+		/// True when both the document and the stored document path are <c>null</c>.
+		/// </summary>
+		public bool IsEmpty
+		{
+			get
+			{
+				return this._docNode == null && this._docNodePath == null;
+			}
+		}
 
-    /// <summary>
-    /// True when both the document and the stored document path are <c>null</c>.
-    /// </summary>
-    public bool IsEmpty
-    {
-      get
-      {
-        return this._docNode == null && this._docNodePath == null;
-      }
-    }
+		/// <summary>
+		/// Can be overriden by derived classes to ensure that the right type of document is stored in
+		/// this proxy.
+		/// </summary>
+		/// <param name="obj">The object to test.</param>
+		/// <returns>True if the <c>obj</c> has the right type to store in this proxy, false otherwise.</returns>
+		protected virtual bool IsValidDocument(object obj)
+		{
+			return true;
+		}
 
-    /// <summary>
-    /// Can be overriden by derived classes to ensure that the right type of document is stored in
-    /// this proxy.
-    /// </summary>
-    /// <param name="obj">The object to test.</param>
-    /// <returns>True if the <c>obj</c> has the right type to store in this proxy, false otherwise.</returns>
-    protected virtual bool IsValidDocument(object obj)
-    {
-      return true;
-    }
+		/// <summary>
+		/// Is called after a document has been set, but before OnChanged() is called. Can be used to set up
+		/// additional things, like event handlers, in derived classes.
+		/// </summary>
+		protected virtual void OnAfterSetDocNode()
+		{
+		}
 
-    /// <summary>
-    /// Is called after a document has been set, but before OnChanged() is called. Can be used to set up
-    /// additional things, like event handlers, in derived classes.
-    /// </summary>
-    protected virtual void OnAfterSetDocNode()
-    {
-    }
+		/// <summary>
+		/// Is called before the doc node of this proxy is set to null. Can be used in derived classes
+		/// to remove additional event handlers.
+		/// </summary>
+		protected virtual void OnBeforeClearDocNode()
+		{
+		}
 
-    /// <summary>
-    /// Is called before the doc node of this proxy is set to null. Can be used in derived classes
-    /// to remove additional event handlers.
-    /// </summary>
-    protected virtual void OnBeforeClearDocNode()
-    {
-    }
+		/// <summary>
+		/// Sets the document node that is held by this proxy.
+		/// </summary>
+		/// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentNode" />,
+		/// the document path is stored for this object in addition to the object itself.</param>
+		public void SetDocNode(object docNode)
+		{
+			if (!IsValidDocument(docNode))
+				throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
 
-    /// <summary>
-    /// Sets the document node that is held by this proxy.
-    /// </summary>
-    /// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentNode" />,
-    /// the document path is stored for this object in addition to the object itself.</param>
-    public void SetDocNode(object docNode)
-    {
-      if(!IsValidDocument(docNode))
-        throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
+			if (_docNode != null)
+			{
+				ClearDocNode();
+				this._docNodePath = null;
+			}
 
-      if (_docNode != null)
-      {
-        ClearDocNode();
-        this._docNodePath = null;
-      }
+			_docNode = docNode;
 
-      _docNode = docNode;
+			if (_docNode is Main.IDocumentNode)
+				_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
+			else
+				_docNodePath = null;
 
-      if(_docNode is Main.IDocumentNode)
-        _docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
-      else
-        _docNodePath = null;
+			if (_docNode is Main.IEventIndicatedDisposable)
+				((Main.IEventIndicatedDisposable)_docNode).TunneledEvent += EhDocNode_TunneledEvent;
 
-      if(_docNode is Main.IEventIndicatedDisposable)
-        ((Main.IEventIndicatedDisposable)_docNode).TunneledEvent += EhDocNode_TunneledEvent;
+			if (_docNode is Main.IChangedEventSource)
+				((Main.IChangedEventSource)_docNode).Changed += new EventHandler(EhDocNode_Changed);
 
-      if (_docNode is Main.IChangedEventSource)
-        ((Main.IChangedEventSource)_docNode).Changed += new EventHandler(EhDocNode_Changed);
+			OnAfterSetDocNode();
 
-      OnAfterSetDocNode();
+			OnChanged();
+		}
 
-      OnChanged();
-    }
-
-
-			/// <summary>
+		/// <summary>
 		/// Replaces parts of the part of the document node by another part. If the replacement was successful, the original document node is cleared.
 		/// See <see cref="M:DocumentPath.ReplacePathParts"/> for details of the part replacement.
 		/// </summary>
@@ -247,24 +246,24 @@ namespace Altaxo.Main
 			return result;
 		}
 
-    /// <summary>
-    /// Sets the document node to null, but keeps the doc node path.
-    /// </summary>
-    protected void ClearDocNode()
-    {
-      if(_docNode == null)
-        return;
+		/// <summary>
+		/// Sets the document node to null, but keeps the doc node path.
+		/// </summary>
+		protected void ClearDocNode()
+		{
+			if (_docNode == null)
+				return;
 
-      OnBeforeClearDocNode();
+			OnBeforeClearDocNode();
 
-      if(_docNode is Main.IEventIndicatedDisposable)
-        ((Main.IEventIndicatedDisposable)_docNode).TunneledEvent -= EhDocNode_TunneledEvent;
+			if (_docNode is Main.IEventIndicatedDisposable)
+				((Main.IEventIndicatedDisposable)_docNode).TunneledEvent -= EhDocNode_TunneledEvent;
 
-      if (_docNode is Main.IChangedEventSource)
-        ((Main.IChangedEventSource)_docNode).Changed -= new EventHandler(EhDocNode_Changed);
+			if (_docNode is Main.IChangedEventSource)
+				((Main.IChangedEventSource)_docNode).Changed -= new EventHandler(EhDocNode_Changed);
 
-      _docNode = null;
-    }
+			_docNode = null;
+		}
 
 		/// <summary>
 		/// Event handler that is called when the document node has disposed or name changed. Because the path to the node can have changed too,
@@ -273,7 +272,7 @@ namespace Altaxo.Main
 		/// <param name="sender"></param>
 		/// <param name="source">Source of the tunneled event.</param>
 		/// <param name="e"></param>
-		void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
+		private void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
 			bool shouldFireChangedEvent = false;
 
@@ -299,34 +298,33 @@ namespace Altaxo.Main
 				OnChanged();
 		}
 
+		/// <summary>
+		/// Event handler that is called when the document node has changed. Because the path to the node can have changed too,
+		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void EhDocNode_Changed(object sender, EventArgs e)
+		{
+			if (_docNode is Main.IDocumentNode)
+				_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
+			else
+				_docNodePath = null;
 
-    /// <summary>
-    /// Event handler that is called when the document node has changed. Because the path to the node can have changed too,
-    /// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void EhDocNode_Changed(object sender, EventArgs e)
-    {
-      if (_docNode is Main.IDocumentNode)
-        _docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
-      else
-        _docNodePath = null;
+			OnChanged();
+		}
 
-      OnChanged();
-    }
-
-    /// <summary>
-    /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
-    /// If that fails too, null is returned.
-    /// </summary>
-    public object DocumentObject
-    {
-      get
-      {
-        return ResolveDocumentObject(Current.Project);
-      }
-    }
+		/// <summary>
+		/// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
+		/// If that fails too, null is returned.
+		/// </summary>
+		public object DocumentObject
+		{
+			get
+			{
+				return ResolveDocumentObject(Current.Project);
+			}
+		}
 
 		public Main.DocumentPath DocumentPath
 		{
@@ -341,45 +339,42 @@ namespace Altaxo.Main
 			}
 		}
 
-    protected virtual object ResolveDocumentObject(object startnode)
-    {
-      if (_docNode == null && _docNodePath != null)
-      {
-        object obj = Main.DocumentPath.GetObject(_docNodePath, startnode);
-        if (obj != null)
-          SetDocNode(obj);
-      }
-      return _docNode; 
-    }
+		protected virtual object ResolveDocumentObject(object startnode)
+		{
+			if (_docNode == null && _docNodePath != null)
+			{
+				object obj = Main.DocumentPath.GetObject(_docNodePath, startnode);
+				if (obj != null)
+					SetDocNode(obj);
+			}
+			return _docNode;
+		}
 
-    protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-    {
-      if (null!=this.ResolveDocumentObject(documentRoot))
-        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
-    }
+		protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+		{
+			if (null != this.ResolveDocumentObject(documentRoot))
+				info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
+		}
 
-    #region ICloneable Members
+		#region ICloneable Members
 
-    public virtual object Clone()
-    {
-      return new DocNodeProxy(this);
-    }
+		public virtual object Clone()
+		{
+			return new DocNodeProxy(this);
+		}
 
-    #endregion
+		#endregion ICloneable Members
 
-    #region IChangedEventSource Members
+		#region IChangedEventSource Members
 
-    public event EventHandler Changed;
+		public event EventHandler Changed;
 
-    protected virtual void OnChanged()
-    {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
-    }
-    #endregion
+		protected virtual void OnChanged()
+		{
+			if (null != Changed)
+				Changed(this, EventArgs.Empty);
+		}
 
-   
-   
-  }
-
+		#endregion IChangedEventSource Members
+	}
 }

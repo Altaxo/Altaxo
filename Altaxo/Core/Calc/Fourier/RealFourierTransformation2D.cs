@@ -562,5 +562,240 @@ namespace Altaxo.Calc.Fourier
 		}
 
 		#endregion Result functions
+
+		#region Static public helper functions
+
+		/// <summary>
+		/// Removes the zero-th order of a matrix by calculating the mean of all matrix element, and then sutracting the mean from each matrix element.
+		/// Here, only matrix elements that have a finite value are included in the calculation of the mean value.
+		/// </summary>
+		/// <param name="m">The matrix to change.</param>
+		public static void RemoveZeroOrderFromMatrixIgnoringInvalidElements(IMatrix m)
+		{
+			int rows = m.Rows;
+			int cols = m.Columns;
+
+			double sum = 0;
+			int n = 0;
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					double x = m[r, c];
+					if (RMath.IsFinite(x))
+					{
+						sum += x;
+						++n;
+					}
+				}
+			}
+
+			double mean = sum / n;
+
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					m[r, c] -= mean;
+				}
+			}
+		}
+
+		private class MyPriv2ndOrderIndependentMatrix : IROMatrix
+		{
+			private List<double>[] _list;
+			private int _numberOfRows;
+			private int _numberOfColumns;
+
+			internal MyPriv2ndOrderIndependentMatrix(List<double>[] lists)
+			{
+				_list = lists;
+				_numberOfColumns = lists.Length + 1;
+				_numberOfRows = lists[0].Count;
+			}
+
+			public double this[int row, int col]
+			{
+				get
+				{
+					if (0 == col)
+						return 1; // Intercept
+					else
+						return _list[col - 1][row];
+				}
+			}
+
+			public int Rows
+			{
+				get { return _numberOfRows; }
+			}
+
+			public int Columns
+			{
+				get { return _numberOfColumns; }
+			}
+		}
+
+		public static void RemoveFirstOrderFromMatrixIgnoringInvalidElements(IMatrix m)
+		{
+			int rows = m.Rows;
+			int cols = m.Columns;
+
+			int rowsBy2 = rows / 2;
+			int colsBy2 = cols / 2;
+
+			var independent = new List<double>[2];
+			for (int i = 0; i < independent.Length; ++i)
+				independent[i] = new List<double>();
+
+			var dependent = new List<double>();
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					var z = m[r, c];
+					if (RMath.IsFinite(z))
+					{
+						long x = c - colsBy2;
+						long y = r - rowsBy2;
+
+						independent[0].Add(x);
+						independent[1].Add(y);
+						dependent.Add(z);
+					}
+				}
+			}
+
+			var regress = new Altaxo.Calc.Regression.LinearFitBySvd(new MyPriv2ndOrderIndependentMatrix(independent), dependent.ToArray(), null, dependent.Count, 1 + independent.Length, 1e-6);
+			var coef = regress.Parameter;
+
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					var z = m[r, c];
+					if (RMath.IsFinite(z))
+					{
+						long x = c - colsBy2;
+						long y = r - rowsBy2;
+
+						double offs = coef[0] + coef[1] * x + coef[2] * y;
+						m[r, c] -= offs;
+					}
+				}
+			}
+		}
+
+		public static void RemoveSecondOrderFromMatrixIgnoringInvalidElements(IMatrix m)
+		{
+			int rows = m.Rows;
+			int cols = m.Columns;
+
+			int rowsBy2 = rows / 2;
+			int colsBy2 = cols / 2;
+
+			var independent = new List<double>[5];
+			for (int i = 0; i < independent.Length; ++i)
+				independent[i] = new List<double>();
+
+			var dependent = new List<double>();
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					var z = m[r, c];
+					if (RMath.IsFinite(z))
+					{
+						long x = c - colsBy2;
+						long y = r - rowsBy2;
+
+						independent[0].Add(x);
+						independent[1].Add(y);
+						independent[2].Add(x * x);
+						independent[3].Add(x * y);
+						independent[4].Add(y * y);
+						dependent.Add(z);
+					}
+				}
+			}
+
+			var regress = new Altaxo.Calc.Regression.LinearFitBySvd(new MyPriv2ndOrderIndependentMatrix(independent), dependent.ToArray(), null, dependent.Count, 1 + independent.Length, 1e-6);
+			var coef = regress.Parameter;
+
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					var z = m[r, c];
+					if (RMath.IsFinite(z))
+					{
+						long x = c - colsBy2;
+						long y = r - rowsBy2;
+
+						double offs = coef[0] + coef[1] * x + coef[2] * y + coef[3] * x * x + coef[4] * x * y + coef[5] * y * y;
+						m[r, c] -= offs;
+					}
+				}
+			}
+		}
+
+		public static void RemoveThirdOrderFromMatrixIgnoringInvalidElements(IMatrix m)
+		{
+			int rows = m.Rows;
+			int cols = m.Columns;
+
+			int rowsBy2 = rows / 2;
+			int colsBy2 = cols / 2;
+
+			var independent = new List<double>[9];
+			for (int i = 0; i < independent.Length; ++i)
+				independent[i] = new List<double>();
+
+			var dependent = new List<double>();
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					var z = m[r, c];
+					if (RMath.IsFinite(z))
+					{
+						long x = c - colsBy2;
+						long y = r - rowsBy2;
+
+						independent[0].Add(x);
+						independent[1].Add(y);
+						independent[2].Add(x * x);
+						independent[3].Add(x * y);
+						independent[4].Add(y * y);
+						independent[5].Add(x * x * x);
+						independent[6].Add(x * x * y);
+						independent[7].Add(x * y * y);
+						independent[8].Add(y * y * y);
+						dependent.Add(z);
+					}
+				}
+			}
+
+			var regress = new Altaxo.Calc.Regression.LinearFitBySvd(new MyPriv2ndOrderIndependentMatrix(independent), dependent.ToArray(), null, dependent.Count, 1 + independent.Length, 1e-6);
+			var coef = regress.Parameter;
+
+			for (int r = 0; r < rows; ++r)
+			{
+				for (int c = 0; c < cols; ++c)
+				{
+					var z = m[r, c];
+					if (RMath.IsFinite(z))
+					{
+						long x = c - colsBy2;
+						long y = r - rowsBy2;
+
+						double offs = coef[0] + coef[1] * x + coef[2] * y + coef[3] * x * x + coef[4] * x * y + coef[5] * y * y + coef[6] * x * x * x + coef[7] * x * x * y + coef[8] * x * y * y + coef[9] * y * y * y;
+						m[r, c] -= offs;
+					}
+				}
+			}
+		}
+
+		#endregion Static public helper functions
 	}
 }

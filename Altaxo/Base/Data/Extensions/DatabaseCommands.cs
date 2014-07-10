@@ -12,6 +12,16 @@ namespace Altaxo.Data
 		{
 			var src = dataTable.DataSource as AltaxoOleDbDataSource;
 
+			if (null != dataTable.DataSource && null == src)
+			{
+				if (false == Current.Gui.YesNoMessageBox(
+					string.Format("There is a table data source (of type: {0}) already present for this table. Proceeding will override this data source. Do you want to continue?", dataTable.DataSource.GetType().Name),
+					"Attention - risk of overriding table data source!",
+					false))
+
+					return;
+			}
+
 			if (null == src)
 				src = new AltaxoOleDbDataSource(string.Empty, AltaxoOleDbConnectionString.Empty);
 

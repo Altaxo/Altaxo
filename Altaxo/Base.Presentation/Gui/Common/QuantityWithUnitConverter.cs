@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-
-using Altaxo.Units;
-
 
 namespace Altaxo.Gui.Common
 {
@@ -40,43 +39,49 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public class QuantityWithUnitConverter : ValidationRule, IValueConverter
 	{
-		QuantityWithUnitGuiEnvironment _unitEnvironment;
-		BindingExpressionBase _binding;
+		private QuantityWithUnitGuiEnvironment _unitEnvironment;
+		private BindingExpressionBase _binding;
 
+		private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
-		DimensionfulQuantity? _lastConvertedQuantity;
-		string _lastConvertedString;
+		private DimensionfulQuantity? _lastConvertedQuantity;
+		private string _lastConvertedString;
 
 		/// <summary>Used for the context menu helpers only.</summary>
-		FrameworkElement _parent;
+		private FrameworkElement _parent;
+
 		/// <summary>Used for the context menu helpers only.</summary>
-		DependencyProperty _quantityGetSetProperty;
+		private DependencyProperty _quantityGetSetProperty;
 
-		WeakEventHandler _defaultUnitChangedHandler;
-		WeakEventHandler _numberOfDisplayedDigitsChangedHandler;
+		private WeakEventHandler _defaultUnitChangedHandler;
+		private WeakEventHandler _numberOfDisplayedDigitsChangedHandler;
 
-		bool _disallowNegativeValues;
+		private bool _disallowNegativeValues;
+
 		public bool DisallowNegativeValues
 		{
 			get { return _disallowNegativeValues; }
 			set { _disallowNegativeValues = value; }
 		}
 
-		bool _disallowZeroValue;
+		private bool _disallowZeroValue;
+
 		public bool DisallowZeroValues
 		{
 			get { return _disallowZeroValue; }
 			set { _disallowZeroValue = value; }
 		}
 
-		bool _allowInfinity = true;
+		private bool _allowInfinity = true;
+
 		public bool AllowInfiniteValues
 		{
 			get { return _allowInfinity; }
 			set { _allowInfinity = value; }
 		}
 
-		bool _allowNaN;
+		private bool _allowNaN;
+
 		public bool AllowNaNValues
 		{
 			get { return _allowNaN; }
@@ -104,8 +109,6 @@ namespace Altaxo.Gui.Common
 			_quantityGetSetProperty = quantityGetSetProperty;
 		}
 
-
-
 		/// <summary>
 		/// Get/sets the unit environment used for this converter. It determines, which units are allowed to be entered, which is the default unit, and how many
 		/// decimal digits are shown in the box by default.
@@ -121,7 +124,7 @@ namespace Altaxo.Gui.Common
 				if (null == value)
 					throw new ArgumentNullException();
 
-				if(null!=_unitEnvironment)
+				if (null != _unitEnvironment)
 				{
 					_defaultUnitChangedHandler.Remove();
 					_numberOfDisplayedDigitsChangedHandler.Remove();
@@ -131,7 +134,7 @@ namespace Altaxo.Gui.Common
 
 				if (null != _unitEnvironment)
 				{
-					_unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, x=> _unitEnvironment.DefaultUnitChanged -= x);
+					_unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, x => _unitEnvironment.DefaultUnitChanged -= x);
 					_unitEnvironment.NumberOfDisplayedDigitsChanged += _numberOfDisplayedDigitsChangedHandler = new WeakEventHandler(EhNumberOfDisplayedDigitsChanged, x => _unitEnvironment.NumberOfDisplayedDigitsChanged -= x);
 				}
 			}
@@ -153,23 +156,20 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
-		void EhDefaultUnitChanged(object sender, EventArgs e)
+		private void EhDefaultUnitChanged(object sender, EventArgs e)
 		{
-			if (null != _parent && null!=_quantityGetSetProperty && null!=_unitEnvironment)
+			if (null != _parent && null != _quantityGetSetProperty && null != _unitEnvironment)
 			{
 				var selectedQuantity = SelectedQuantity;
-				if(!selectedQuantity.IsEmpty)
+				if (!selectedQuantity.IsEmpty)
 					SelectedQuantity = selectedQuantity.AsQuantityIn(_unitEnvironment.DefaultUnit);
 			}
 		}
-		
 
-		void EhNumberOfDisplayedDigitsChanged(object sender, EventArgs e)
+		private void EhNumberOfDisplayedDigitsChanged(object sender, EventArgs e)
 		{
 			EhNumberOfDisplayedDigitsChanged();
 		}
-
 
 		public void ClearIntermediateConversionResults()
 		{
@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Common
 		/// <param name="parameter">Ignored.</param>
 		/// <param name="culture">The culture used to convert the quantity.</param>
 		/// <returns></returns>
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
 			var q = (DimensionfulQuantity)value;
 
@@ -198,13 +198,12 @@ namespace Altaxo.Gui.Common
 			}
 			else
 			{
-
 				string result;
 
 				if (null != _unitEnvironment)
-					result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), System.Globalization.CultureInfo.CurrentUICulture); // bug: do not use culture parameter here, it is sometimes different from CurrentUICulture
+					result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), _conversionCulture); // bug: do not use culture parameter here, it is sometimes different from CurrentUICulture
 				else
-					result = q.Value.ToString(culture);
+					result = q.Value.ToString(_conversionCulture);
 
 				string end = q.Prefix.ShortCut + q.Unit.ShortCut;
 				if (!string.IsNullOrEmpty(end))
@@ -224,11 +223,11 @@ namespace Altaxo.Gui.Common
 		/// <param name="parameter">Ignored.</param>
 		/// <param name="culture">The culture used to convert the string..</param>
 		/// <returns>The converted quantity.</returns>
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
 			DimensionfulQuantity q;
 			string s = (string)value;
-			var result = ConvertValidate(s, System.Globalization.CultureInfo.CurrentUICulture, out q); // do not use culture parameter here, it is sometimes different from UICulture
+			var result = ConvertValidate(s, out q); // do not use culture parameter here, it is sometimes different from UICulture
 			if (result.IsValid)
 			{
 				_lastConvertedString = s;
@@ -243,11 +242,11 @@ namespace Altaxo.Gui.Common
 		/// <param name="value">String value to validate.</param>
 		/// <param name="cultureInfo">The culture used to convert the string.</param>
 		/// <returns>A validation result depending on the result of the validation.</returns>
-		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
+		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
 			DimensionfulQuantity q;
 			string s = (string)value;
-			var result = ConvertValidate(s, System.Globalization.CultureInfo.CurrentUICulture, out q);
+			var result = ConvertValidate(s, out q);
 			if (result.IsValid)
 			{
 				_lastConvertedString = s;
@@ -256,7 +255,7 @@ namespace Altaxo.Gui.Common
 			return result;
 		}
 
-		private ValidationResult ConvertValidate(string s, System.Globalization.CultureInfo cultureInfo, out DimensionfulQuantity result)
+		private ValidationResult ConvertValidate(string s, out DimensionfulQuantity result)
 		{
 			if (null != _lastConvertedQuantity && s == _lastConvertedString)
 			{
@@ -271,7 +270,6 @@ namespace Altaxo.Gui.Common
 
 			if (string.IsNullOrEmpty(s))
 				return new ValidationResult(false, "The text box is empty. You have to enter a valid numeric quantity");
-
 
 			foreach (IUnit u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 			{
@@ -296,7 +294,7 @@ namespace Altaxo.Gui.Common
 					}
 				}
 
-				if (double.TryParse(s, System.Globalization.NumberStyles.Float, cultureInfo, out parsedValue))
+				if (double.TryParse(s, System.Globalization.NumberStyles.Float, _conversionCulture, out parsedValue))
 				{
 					result = new DimensionfulQuantity(parsedValue, prefix, u);
 					return ValidateSuccessfullyConvertedQuantity(result);
@@ -322,9 +320,8 @@ namespace Altaxo.Gui.Common
 			// if nothing is found in this way, we try to split the text
 			var parts = s.Split(new char[] { ' ', '\t' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
-
 			// try to parse the first part as a number
-			if (!double.TryParse(parts[0], System.Globalization.NumberStyles.Float, cultureInfo, out parsedValue))
+			if (!double.TryParse(parts[0], System.Globalization.NumberStyles.Float, _conversionCulture, out parsedValue))
 				return new ValidationResult(false, string.Format("The part \"{0}\" of your entered text was not recognized as a numeric value.", parts[0]));
 
 			string unitString = parts.Length >= 2 ? parts[1] : string.Empty;
@@ -352,8 +349,8 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
 		private Func<DimensionfulQuantity, ValidationResult> _validationAfterSuccessfulConversion;
+
 		/// <summary>Sets a function that validates the quantity after successful conversion. Such a function can be used to exclude certain values, for instance zero, by marking them as invalid.</summary>
 		/// <value>The function to validate the quantity after successful conversion. This function has to return a <see cref="ValidationResult"/>.</value>
 		public Func<DimensionfulQuantity, ValidationResult> ValidationAfterSuccessfulConversion
@@ -366,7 +363,7 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>Validates the successfully converted quantity. For instance, for some values (e.g. scale values) a value of zero is not appropriate.</summary>
 		/// <returns>The result of the validation</returns>
-		ValidationResult ValidateSuccessfullyConvertedQuantity(DimensionfulQuantity value)
+		private ValidationResult ValidateSuccessfullyConvertedQuantity(DimensionfulQuantity value)
 		{
 			if (null != _validationAfterSuccessfulConversion)
 			{
@@ -387,8 +384,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
-		string GetErrorStringForUnrecognizedUnit(string unrecognizedPart)
+		private string GetErrorStringForUnrecognizedUnit(string unrecognizedPart)
 		{
 			StringBuilder stb = new StringBuilder();
 			stb.AppendFormat("The part \"{0}\" of your entered text is not recognized as a valid unit!\n", unrecognizedPart);
@@ -402,8 +398,6 @@ namespace Altaxo.Gui.Common
 		}
 
 		#region Helper functions for supporting context menu
-
-
 
 		private DimensionfulQuantity SelectedQuantity
 		{
@@ -486,7 +480,6 @@ namespace Altaxo.Gui.Common
 					}
 					else
 					{
-
 						var main = new MenuItem() { Header = u.Name };
 						foreach (var p in u.Prefixes)
 						{
@@ -510,7 +503,6 @@ namespace Altaxo.Gui.Common
 						mi.Click += EhConvertTo_Click;
 						rootMenuItem.Items.Add(mi);
 					}
-
 				}
 			}
 		}
@@ -531,7 +523,6 @@ namespace Altaxo.Gui.Common
 					}
 					else
 					{
-
 						var main = new MenuItem() { Header = u.Name };
 						foreach (var p in u.Prefixes)
 						{
@@ -555,7 +546,6 @@ namespace Altaxo.Gui.Common
 						mi.Click += EhChangeUnitTo_Click;
 						rootMenuItem.Items.Add(mi);
 					}
-
 				}
 			}
 		}
@@ -571,8 +561,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
-		void EhConvertTo_Click(object sender, RoutedEventArgs e)
+		private void EhConvertTo_Click(object sender, RoutedEventArgs e)
 		{
 			var mnu = sender as MenuItem;
 			if (null != mnu && mnu.Tag is PrefixedUnit)
@@ -585,8 +574,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
-		void EhChangeUnitTo_Click(object sender, RoutedEventArgs e)
+		private void EhChangeUnitTo_Click(object sender, RoutedEventArgs e)
 		{
 			var mnu = sender as MenuItem;
 			if (null != mnu && mnu.Tag is PrefixedUnit)
@@ -599,7 +587,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		void EhSetDigitsTo_Click(object sender, RoutedEventArgs e)
+		private void EhSetDigitsTo_Click(object sender, RoutedEventArgs e)
 		{
 			var mnu = sender as MenuItem;
 			if (null != mnu && mnu.Tag is int)
@@ -612,7 +600,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		void EhNumberOfDisplayedDigitsChanged()
+		private void EhNumberOfDisplayedDigitsChanged()
 		{
 			if (null != _lastConvertedQuantity && null != _binding && !_binding.HasError)
 			{
@@ -623,8 +611,6 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		#endregion
-
+		#endregion Helper functions for supporting context menu
 	}
-
 }

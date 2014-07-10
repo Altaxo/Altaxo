@@ -233,5 +233,9 @@ namespace Altaxo.DataConnection
 				_timer = null;
 			}
 		}
+
+		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
+		{
+		}
 	}
 }

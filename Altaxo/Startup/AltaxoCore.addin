@@ -48,6 +48,7 @@
 		<Import assembly=":AltaxoSDGui">
 			<ConditionEvaluator name="SelectedDataColumns" class="Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator" />
 			<ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator" />
+			<ConditionEvaluator name="ContainsTableDataSource" class="Altaxo.Worksheet.Commands.TableDataSourcePresentConditionEvaluator" />
 			<ConditionEvaluator name="ContainsPLSModelData" class="Altaxo.Worksheet.Commands.PLSModelConditionEvaluator" />
 			<ConditionEvaluator name="Clipboard" class="Altaxo.Main.Commands.ClipboardContentConditionEvaluator" />
 			<ConditionEvaluator name="IsInEmbeddedObjectMode" class="Altaxo.Main.Commands.EmbeddedObjectModeEvaluator" />
@@ -689,10 +690,12 @@
 				class="Altaxo.Worksheet.Commands.ImportAscii" />
 			<ToolbarItem id="ImportDatabase" icon="Icons.16x16.DataConnection.EditConnectionString" tooltip="${res:XML.MainMenu.FileMenu.Import.Database.Description}"
 				class="Altaxo.Worksheet.Commands.ImportDatabase" />
-			<ToolbarItem id="TableDataSourceEditing" icon="Icons.16x16.DataSourceEditing" tooltip="${res:XML.MainMenu.EditMenu.EditTableDataSource.Description}"
-					class="Altaxo.Worksheet.Commands.EditTableDataSource" />
-			<ToolbarItem id="TableDataSourceRequerying" icon="Icons.16x16.DataSourceRequery" tooltip="${res:XML.MainMenu.EditMenu.RequeryTableDataSource.Description}"
-					class="Altaxo.Worksheet.Commands.RequeryTableDataSource" />
+			<Condition name="ContainsTableDataSource" action="Disable">
+				<ToolbarItem id="TableDataSourceEditing" icon="Icons.16x16.DataSourceEditing" tooltip="${res:XML.MainMenu.EditMenu.EditTableDataSource.Description}"
+						class="Altaxo.Worksheet.Commands.EditTableDataSource" />
+				<ToolbarItem id="TableDataSourceRequerying" icon="Icons.16x16.DataSourceRequery" tooltip="${res:XML.MainMenu.EditMenu.RequeryTableDataSource.Description}"
+						class="Altaxo.Worksheet.Commands.RequeryTableDataSource" />
+			</Condition>
 		</Condition>
 		<ToolbarItem id="Duplicate" icon="Icons.16x16.Duplicate" tooltip="${res:XML.MainMenu.EditMenu.Duplicate.Description}"
 				class="Altaxo.Main.Commands.Duplicate" />

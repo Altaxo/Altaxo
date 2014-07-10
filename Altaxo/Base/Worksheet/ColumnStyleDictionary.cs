@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,27 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
 
 using Altaxo.Data;
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Worksheet
 {
 	public class ColumnStyleDictionary : IDictionary<Data.DataColumn, ColumnStyle>
 	{
 		/// <summary>Column styles. Key is the column instance, value is the column style.</summary>
-		Dictionary<Data.DataColumn, ColumnStyle> _columnStyles;
+		private Dictionary<Data.DataColumn, ColumnStyle> _columnStyles;
 
 		/// <summary>Default column styles. Key is the type of the column, value is the default column style for this type of columns.</summary>
-		Dictionary<System.Type, ColumnStyle> _defaultColumnStyles;
+		private Dictionary<System.Type, ColumnStyle> _defaultColumnStyles;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnStyleDictionary), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			protected ColumnStyleDictionary _deserializedInstance;
 			protected Dictionary<Main.DocumentPath, ColumnStyle> _unresolvedColumns;
@@ -89,13 +91,12 @@ namespace Altaxo.Worksheet
 					info.OpenElement(); // "e"
 					string typeName = info.GetString("Type");
 					//Type t = Type.ReflectionOnlyGetType(typeName, false, false);
-					Type t = Type.GetType(typeName,false,false);
+					Type t = Type.GetType(typeName, false, false);
 					var style = (ColumnStyle)info.GetValue("Style", parent);
 					s._defaultColumnStyles[t] = style;
 					info.CloseElement(); // "e"
 				}
 				info.CloseArray(count);
-
 
 				// deserialize the columnstyles
 				// this must be deserialized in a new instance of this surrogate, since we can not resolve it immediately
@@ -114,7 +115,7 @@ namespace Altaxo.Worksheet
 				info.CloseArray(count);
 			}
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
 			{
 				List<Main.DocumentPath> resolvedStyles = new List<Main.DocumentPath>();
 				foreach (var entry in this._unresolvedColumns)
@@ -130,7 +131,6 @@ namespace Altaxo.Worksheet
 				foreach (var resstyle in resolvedStyles)
 					_unresolvedColumns.Remove(resstyle);
 
-
 				// if all columns have resolved, we can close the event link
 				if (_unresolvedColumns.Count == 0)
 					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
@@ -145,17 +145,17 @@ namespace Altaxo.Worksheet
 			_columnStyles = new Dictionary<Altaxo.Data.DataColumn, ColumnStyle>();
 		}
 
-		void AttachKey(DataColumn key)
+		private void AttachKey(DataColumn key)
 		{
 			key.TunneledEvent += EhKey_TunneledEvent;
 		}
 
-		void DetachKey(DataColumn key)
+		private void DetachKey(DataColumn key)
 		{
 			key.TunneledEvent -= EhKey_TunneledEvent;
 		}
 
-		void EhKey_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
+		private void EhKey_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
 			if (e is Main.DisposeEventArgs)
 			{
@@ -251,11 +251,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-
-
-
-
-		#endregion
+		#endregion IDictionary<DataColumn,ColumnStyle> Members
 
 		#region ICollection<KeyValuePair<DataColumn,ColumnStyle>> Members
 
@@ -301,7 +297,7 @@ namespace Altaxo.Worksheet
 			return result;
 		}
 
-		#endregion
+		#endregion ICollection<KeyValuePair<DataColumn,ColumnStyle>> Members
 
 		#region IEnumerable<KeyValuePair<DataColumn,ColumnStyle>> Members
 
@@ -310,7 +306,7 @@ namespace Altaxo.Worksheet
 			return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<KeyValuePair<DataColumn,ColumnStyle>> Members
 
 		#region IEnumerable Members
 
@@ -319,8 +315,6 @@ namespace Altaxo.Worksheet
 			return ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 	}
-
-	
 }

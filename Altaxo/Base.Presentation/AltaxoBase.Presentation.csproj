@@ -413,6 +413,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Data\DataTableMatrixProxyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\ArrangeLayersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1087,6 +1091,9 @@
     </Compile>
     <Compile Include="Gui\Data\ExpandCyclingVariableControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\DataTableMatrixProxyView.xaml.cs">
+      <DependentUpon>DataTableMatrixProxyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\GetIconExtension.cs" />

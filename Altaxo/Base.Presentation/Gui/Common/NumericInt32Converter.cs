@@ -33,8 +33,7 @@ namespace Altaxo.Gui.Common
 {
 	public class NumericInt32Converter : ValidationRule, IValueConverter
 	{
-		private System.Globalization.CultureInfo _conversionCulture;
-
+		private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 		private string _lastConvertedString;
 
 		private int? _lastConvertedValue;
@@ -47,10 +46,9 @@ namespace Altaxo.Gui.Common
 		{
 			MinimumValue = int.MinValue;
 			MaximumValue = int.MaxValue;
-			_conversionCulture = System.Globalization.CultureInfo.InvariantCulture;
 		}
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
 			var val = (int)value;
 
@@ -64,10 +62,10 @@ namespace Altaxo.Gui.Common
 			return _lastConvertedString;
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
 			int result;
-			var validationResult = ConvertAndValidate(value, _conversionCulture, out result);
+			var validationResult = ConvertAndValidate(value, out result);
 			if (validationResult.IsValid)
 			{
 				_lastConvertedString = (string)value;
@@ -76,10 +74,10 @@ namespace Altaxo.Gui.Common
 			return result;
 		}
 
-		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
+		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
 			int result;
-			var validationResult = ConvertAndValidate(value, _conversionCulture, out result);
+			var validationResult = ConvertAndValidate(value, out result);
 			if (validationResult.IsValid)
 			{
 				_lastConvertedString = (string)value;
@@ -88,7 +86,7 @@ namespace Altaxo.Gui.Common
 			return validationResult;
 		}
 
-		private ValidationResult ConvertAndValidate(object value, System.Globalization.CultureInfo cultureInfo, out int result)
+		private ValidationResult ConvertAndValidate(object value, out int result)
 		{
 			var s = (string)value;
 
@@ -98,7 +96,7 @@ namespace Altaxo.Gui.Common
 				return ValidateSuccessfullyConvertedValue(result);
 			}
 
-			if (int.TryParse(s, System.Globalization.NumberStyles.Integer, cultureInfo, out result))
+			if (int.TryParse(s, System.Globalization.NumberStyles.Integer, _conversionCulture, out result))
 			{
 				return ValidateSuccessfullyConvertedValue(result);
 			}

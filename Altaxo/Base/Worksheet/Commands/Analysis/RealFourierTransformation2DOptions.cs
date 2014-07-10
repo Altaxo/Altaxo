@@ -96,6 +96,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				info.AddValue("CenterResult", s._centerResult);
 				info.AddValue("ResultFractionOfRows", s._resultFractionOfRows);
 				info.AddValue("ResultFractionOfColumns", s._resultFractionOfColumns);
+
 				info.AddValue("OutputFrequencyHeaderColumns", s._outputFrequencyHeaderColumns);
 				info.AddValue("FrequencyRowHeaderColumnName", s._frequencyRowHeaderColumnName);
 				info.AddValue("FrequencyColumnHeaderColumnName", s._frequencyColumnHeaderColumnName);

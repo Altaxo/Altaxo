@@ -38,8 +38,8 @@ namespace Altaxo.Data
 		private IROMatrix _sourceMatrix;
 		private string _columnNameBase;
 
-		private List<Tuple<IROVector, string>> _xDataColumns = new List<Tuple<IROVector, string>>();
-		private List<Tuple<IROVector, string>> _xPropertyColumns = new List<Tuple<IROVector, string>>();
+		private List<Tuple<IROVector, string>> _rowHeaderColumns = new List<Tuple<IROVector, string>>();
+		private List<Tuple<IROVector, string>> _columnHeaderColumns = new List<Tuple<IROVector, string>>();
 
 		public MatrixToDataTableConverter(IROMatrix sourceMatrix, DataTable destinationTable)
 		{
@@ -99,7 +99,7 @@ namespace Altaxo.Data
 			if (vector.Length != _sourceMatrix.Rows)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of rows of the matrix.");
 
-			_xDataColumns.Add(new Tuple<IROVector, string>(vector, name));
+			_rowHeaderColumns.Add(new Tuple<IROVector, string>(vector, name));
 		}
 
 		public void AddMatrixColumnHeaderData(IROVector vector, string name)
@@ -111,10 +111,21 @@ namespace Altaxo.Data
 			if (vector.Length != _sourceMatrix.Columns)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of columns of the matrix.");
 
-			_xPropertyColumns.Add(new Tuple<IROVector, string>(vector, name));
+			_columnHeaderColumns.Add(new Tuple<IROVector, string>(vector, name));
 		}
 
 		#endregion Input properties
+
+		private ColumnKind GetIndependendVariableColumnKind(int i)
+		{
+			switch (i)
+			{
+				case 0: return ColumnKind.X;
+				case 1: return ColumnKind.Y;
+				case 2: return ColumnKind.Z;
+				default: return ColumnKind.Label;
+			}
+		}
 
 		public void Execute()
 		{
@@ -128,9 +139,9 @@ namespace Altaxo.Data
 
 				var dataCols = _destinationTable.DataColumns;
 
-				foreach (var tuple in _xDataColumns)
+				foreach (var tuple in _rowHeaderColumns)
 				{
-					var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, tuple.Item2, ColumnKind.X, 0);
+					var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, tuple.Item2, GetIndependendVariableColumnKind(columnNumber), 0);
 					col.AssignVector = tuple.Item1;
 					col.CutToMaximumLength(numRows);
 					++columnNumber;
@@ -151,12 +162,12 @@ namespace Altaxo.Data
 				}
 
 				// property columns
-				var numXDataCols = _xDataColumns.Count;
+				var numXDataCols = _rowHeaderColumns.Count;
 				int propColumnNumber = 0;
 				var propCols = _destinationTable.PropertyColumns;
-				foreach (var tuple in _xPropertyColumns)
+				foreach (var tuple in _columnHeaderColumns)
 				{
-					var col = propCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(propColumnNumber, tuple.Item2, ColumnKind.X, 0);
+					var col = propCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(propColumnNumber, tuple.Item2, GetIndependendVariableColumnKind(propColumnNumber), 0);
 					VectorMath.Copy(tuple.Item1, col.ToVector(numXDataCols, _sourceMatrix.Columns));
 					col.CutToMaximumLength(numXDataCols + _sourceMatrix.Columns);
 					++propColumnNumber;

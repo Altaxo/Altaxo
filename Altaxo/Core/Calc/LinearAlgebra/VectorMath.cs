@@ -973,6 +973,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				v[i] *= a;
 		}
 
+		/// <summary>
+		/// Divides the specified x by y and returns the resulting vector.
+		/// </summary>
+		/// <param name="x">A scalar value</param>
+		/// <param name="y">A vector.</param>
+		/// <returns>The result of x/y.</returns>
+		public static IVector Divide(double x, IROVector y)
+		{
+			var result = new DoubleVector(y.Length);
+			for (int i = 0; i < y.Length; ++i)
+				result[i] = x / y[i];
+			return result;
+		}
+
 		#endregion Arithmetic
 
 		#region Minimum / Maximum

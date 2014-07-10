@@ -10,7 +10,17 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<GroupBox x:Name="_guiImportOptionsBox" Header="Data source import options" Grid.Row="0" Padding="4" />
-		<GroupBox x:Name="_guiDataQueryBox" Header="Data query" Grid.Row="1" Padding="4" />
+		<Expander Grid.Row="0" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Data source import options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiImportOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
+			<Expander.Header>
+				<TextBlock Text="Data query" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiDataQueryHost" />
+		</Expander>
 	</Grid>
 </UserControl>

@@ -11,8 +11,23 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition  Height="Auto" />
 		</Grid.RowDefinitions>
-		<Border x:Name="_guiImportOptionsHost" Grid.Row="0" />
-		<Border x:Name="_guiFourierOptionsHost" Grid.Row="1" />
-		<Border x:Name="_guiInputDataHost" Grid.Row="2" />
+		<Expander Grid.Row="0" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Data source import options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiImportOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
+			<Expander.Header>
+				<TextBlock Text="Fourier options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiFourierOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="2" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Input data source" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiInputDataHost" />
+		</Expander>
 	</Grid>
 </UserControl>

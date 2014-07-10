@@ -26,12 +26,12 @@ namespace Altaxo.Gui.DataConnection
 
 		public void SetQueryView(object viewObject)
 		{
-			_guiDataQueryBox.Content = viewObject;
+			_guiDataQueryHost.Child = viewObject as UIElement;
 		}
 
 		public void SetImportOptionsView(object viewObject)
 		{
-			_guiImportOptionsBox.Content = viewObject;
+			_guiImportOptionsHost.Child = viewObject as UIElement;
 		}
 	}
 }

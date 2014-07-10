@@ -235,6 +235,27 @@ namespace Altaxo.Settings
 	}
 
 	/// <summary>
+	/// Static helper class to provide the current Gui culture both at runtime, but also at design time.
+	/// </summary>
+	public static class GuiCulture
+	{
+		/// <summary>
+		/// Gets the UI culture (both at design time and at runtime).
+		/// </summary>
+		/// <returns>The current UI culture.</returns>
+		public static CultureInfo Instance
+		{
+			get
+			{
+				if (Current.PropertyService == null)
+					return System.Globalization.CultureInfo.CurrentUICulture;
+				else
+					return Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyUICulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture ?? System.Globalization.CultureInfo.CurrentUICulture;
+			}
+		}
+	}
+
+	/// <summary>
 	/// Static helper class to store the culture settings at startup of Altaxo.
 	/// </summary>
 	public static class CultureSettingsAtStartup

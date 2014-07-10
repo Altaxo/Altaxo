@@ -596,35 +596,11 @@ namespace Altaxo.Worksheet.Commands
 			var context = table.GetPropertyHierarchy();
 			DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();
 
-			// if nothing is selected, assume that the whole table should be plotted
-			int len = dg.SelectedDataColumns.Count;
-
-			INumericColumn xColumn = new IndexerColumn();
-			// find out if there is a xcolumn or not
-			int group = len == 0 ? table.DataColumns.GetColumnGroup(0) : table.DataColumns.GetColumnGroup(dg.SelectedDataColumns[0]);
-			DataColumn xcol = table.DataColumns.FindXColumnOfGroup(group);
-			if (xcol is INumericColumn)
-				xColumn = (INumericColumn)xcol;
-			// remove the x-column of the collection of selected columns, since it should not be plotted
-			if (xcol != null && dg.SelectedDataColumns.Contains(table.DataColumns.GetColumnNumber(xcol)))
-				dg.SelectedDataColumns.Remove(table.DataColumns.GetColumnNumber(xcol));
-
-			// find out if there is a y property column or not
-			INumericColumn yColumn = new IndexerColumn();
-			if (dg.SelectedPropertyColumns.Count > 0)
-			{
-				// then use the first numeric column as y column that you find
-				for (int i = 0; i < dg.SelectedPropertyColumns.Count; i++)
-				{
-					if (table.PropCols[dg.SelectedPropertyColumns[i]] is INumericColumn)
-					{
-						yColumn = (INumericColumn)table.PropCols[dg.SelectedPropertyColumns[i]];
-						break;
-					}
-				}
-			}
-
-			XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(xColumn, yColumn, dg.DataTable.DataColumns, len == 0 ? null : dg.SelectedDataColumns);
+			XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
+			if (assoc.DataTableMatrix.RowHeaderColumn == null)
+				assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
+			if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
+				assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
 			// now create a new Graph with this plot associations
 

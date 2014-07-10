@@ -635,6 +635,10 @@ namespace Altaxo.Main
 					{
 						((Altaxo.Graph.Gdi.GraphDocument)clonedItem).VisitDocumentReferences(ReportProxies);
 					}
+					else if (clonedItem is Altaxo.Data.DataTable)
+					{
+						((Altaxo.Data.DataTable)clonedItem).VisitDocumentReferences(ReportProxies);
+					}
 				}
 			}
 			else

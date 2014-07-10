@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              mc:Ignorable="d"
              MinWidth="300">
@@ -33,7 +34,12 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
 		<Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
@@ -45,6 +51,7 @@
 		<Rectangle Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
 		<Rectangle Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
 		<Rectangle Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
+		<Rectangle Grid.Row="23" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
 
 		<Label Grid.Column="0" Grid.Row="0">Row-Increment:</Label>
 		<axogc:NumericDoubleTextBox Grid.Column="1" Grid.Row="0" x:Name="_guiXIncrement" />
@@ -59,20 +66,32 @@
 		<axogc:NumericDoubleTextBox x:Name="_guiReplacementValueForInfinite" Grid.Row="6" Grid.Column="1" IsEnabled="{Binding ElementName=_guiUseReplacementValueForInfinity, Path=IsChecked}" />
 
 		<CheckBox x:Name="_guiUseDataPretreatment" Grid.Row="8" Content="Subtract regression of order:"  VerticalAlignment="Center" />
-		<axogc:Int32UpDown x:Name="_guiDataPretreatmentOrder" Grid.Row="8" Grid.Column="1" IsEnabled="{Binding ElementName=_guiUseDataPretreatment, Path=IsChecked}" Minimum="0" Maximum="2" />
+		<axogc:Int32UpDown x:Name="_guiDataPretreatmentOrder" Grid.Row="8" Grid.Column="1" IsEnabled="{Binding ElementName=_guiUseDataPretreatment, Path=IsChecked}" Minimum="0" Maximum="3" />
 
 		<Label Grid.Row="10" Content="Fourier window:" />
 		<ComboBox x:Name="_guiFourierWindow" Grid.Row="10" Grid.Column="1" SelectionChanged="EhFourierWindowChanged" />
 
 		<Label Grid.Row="12" Content="Use this fraction of row frequencies:" />
-		<axogc:NumericDoubleTextBox x:Name="_guiRowFrequencyFraction" Grid.Row="12" Grid.Column="1" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiRowFrequencyFraction" Grid.Row="12" Grid.Column="1" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 
 		<Label Grid.Row="14" Content="Use this fraction of column frequencies:" />
-		<axogc:NumericDoubleTextBox x:Name="_guiColumnFrequencyFraction" Grid.Row="14" Grid.Column="1" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiColumnFrequencyFraction" Grid.Row="14" Grid.Column="1" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 
 		<CheckBox x:Name="_guiCenterFrequencies" Grid.Row="16" Content="Center output frequencies" VerticalAlignment="Center" />
 
 		<Label Grid.Row="18">Output:</Label>
 		<StackPanel x:Name="_guiOutputQuantities" Grid.Row="18" Grid.Column="1" />
+
+		<CheckBox x:Name="_guiOutputFrequencyHeaderColumns" Grid.Row="20" Content="Output frequency header columns: " />
+		<Label Grid.Row="21" Content="Freqency row header name:" />
+		<TextBox x:Name="_guiFrequencyRowHeaderColumnName" Grid.Row="21" Grid.Column="1" IsEnabled="{Binding ElementName=_guiOutputFrequencyHeaderColumns, Path=IsChecked}" />
+		<Label Grid.Row="22" Content="Frequency column header name:" />
+		<TextBox x:Name="_guiFrequencyColumnHeaderColumnName" Grid.Row="22" Grid.Column="1" IsEnabled="{Binding ElementName=_guiOutputFrequencyHeaderColumns, Path=IsChecked}" />
+
+		<CheckBox x:Name="_guiOutputPeriodHeaderColumns" Grid.Row="24" Content="Output period header columns: " />
+		<Label Grid.Row="25" Content="Period row header name:" />
+		<TextBox x:Name="_guiPeriodRowHeaderColumnName" Grid.Row="25" Grid.Column="1" IsEnabled="{Binding ElementName=_guiOutputPeriodHeaderColumns, Path=IsChecked}" />
+		<Label Grid.Row="26" Content="Period column header name:" />
+		<TextBox x:Name="_guiPeriodColumnHeaderColumnName" Grid.Row="26" Grid.Column="1" IsEnabled="{Binding ElementName=_guiOutputPeriodHeaderColumns, Path=IsChecked}" />
 	</Grid>
 </UserControl>

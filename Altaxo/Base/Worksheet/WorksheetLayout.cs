@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,7 @@ using System.Collections.Generic;
 namespace Altaxo.Worksheet
 {
 	using Altaxo.Data;
+
 	/// <summary>
 	/// Stores the layout of a table to be shown in a WorksheetView.
 	/// </summary>
@@ -34,9 +37,7 @@ namespace Altaxo.Worksheet
 		Main.IDocumentNode,
 		Main.IEventIndicatedDisposable
 	{
-
 		#region Member variables
-
 
 		/// <summary>
 		/// The parent node in the document hierarchy.
@@ -75,9 +76,7 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		protected ColumnStyleDictionary _dataColumnStyles;
 
-
 		protected ColumnStyleDictionary _propertyColumnStyles;
-
 
 		/// <summary>
 		/// The style of the row header. This is the leftmost column that shows usually the row number.
@@ -106,13 +105,12 @@ namespace Altaxo.Worksheet
 		[field: NonSerialized]
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
-
-		#endregion
+		#endregion Member variables
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			protected WorksheetLayout _worksheetLayout;
 			protected System.Collections.Hashtable _colStyles;
@@ -142,8 +140,8 @@ namespace Altaxo.Worksheet
 					info.CommitElement(); // "e"
 				}
 				info.CommitArray();
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				WorksheetLayout s = null != o ? (WorksheetLayout)o : new WorksheetLayout();
@@ -153,20 +151,16 @@ namespace Altaxo.Worksheet
 
 			protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
-
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 				surr._colStyles = new System.Collections.Hashtable();
 				surr._worksheetLayout = s;
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-
 
 				s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
 				surr._pathToTable = (Main.DocumentPath)info.GetValue("Table", s);
 				s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
 				s._columnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
 				s._propertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
-
 
 				int count;
 				count = info.OpenArray(); // DefaultColumnStyles
@@ -177,7 +171,6 @@ namespace Altaxo.Worksheet
 					s._dataColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
 				}
 				info.CloseArray(count);
-
 
 				// deserialize the columnstyles
 				// this must be deserialized in a new instance of this surrogate, since we can not resolve it immediately
@@ -196,7 +189,7 @@ namespace Altaxo.Worksheet
 				info.CloseArray(count);
 			}
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
 			{
 				if (this._pathToTable != null)
 				{
@@ -222,16 +215,14 @@ namespace Altaxo.Worksheet
 				foreach (object resstyle in resolvedStyles)
 					_colStyles.Remove(resstyle);
 
-
 				// if all columns have resolved, we can close the event link
 				if (_colStyles.Count == 0 && this._pathToTable == null)
 					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 1)]
-		class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+		private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -243,7 +234,6 @@ namespace Altaxo.Worksheet
 					info.AddValue("DefaultPropertyColumnStyle", style);
 				info.CommitArray();
 			}
-
 
 			protected override void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -261,7 +251,7 @@ namespace Altaxo.Worksheet
 
 		// TODO (Wpf) Uncomment the next serialization if this is also implemented in Altaxo3
 		/*
-		 
+
 		// New in version 2 (2010-08): the key of the default styles is now the type of the column (before it was the type of default style)
 		// both data columns and property columns have their own default styles
 		// ColumnDictionary now has its own serialization code
@@ -298,7 +288,6 @@ namespace Altaxo.Worksheet
 				surr._deserializedInstance = s;
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
-
 				s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
 				surr._unresolvedPathToTable = (Main.DocumentPath)info.GetValue("Table", s);
 				s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
@@ -328,7 +317,7 @@ namespace Altaxo.Worksheet
 		}
 		*/
 
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
@@ -350,21 +339,17 @@ namespace Altaxo.Worksheet
 			// The style of the property column header. This is the leftmost column in the left of the property columns,
 			_propertyColumnHeaderStyle = new ColumnHeaderStyle();
 
-
 			this._doShowPropertyColumns = true;
 		}
-
-
-
 
 		public WorksheetLayout(Altaxo.Data.DataTable table)
 			: this()
 		{
-			if(null!=table)
+			if (null != table)
 				DataTable = table;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Properties
 
@@ -397,11 +382,10 @@ namespace Altaxo.Worksheet
 
 				_dataTable = value;
 				_dataTable.TunneledEvent += EhDataTableTunneledEvent;
-
 			}
 		}
 
-		void EhDataTableTunneledEvent(object sender, object source, Main.TunnelingEventArgs args)
+		private void EhDataTableTunneledEvent(object sender, object source, Main.TunnelingEventArgs args)
 		{
 			if (args is Main.PreviewDisposeEventArgs)
 			{
@@ -450,10 +434,7 @@ namespace Altaxo.Worksheet
 			set { _doShowPropertyColumns = value; }
 		}
 
-
-
-
-		#endregion
+		#endregion Properties
 
 		#region IDocumentNode Members
 
@@ -477,16 +458,12 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		#endregion
-
-
-
+		#endregion IDocumentNode Members
 
 		public void Dispose()
 		{
 			if (null != TunneledEvent)
 				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
-
 
 			if (null != _dataTable)
 			{
@@ -496,7 +473,6 @@ namespace Altaxo.Worksheet
 
 			_dataColumnStyles.Clear();
 			_propertyColumnStyles.Clear();
-
 
 			if (null != TunneledEvent)
 				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Main;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using Altaxo.Main;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales.Boundaries;
-
-
 namespace Altaxo.Graph.Gdi.Plot
 {
-	using Groups;
-	using Styles;
 	using Data;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
+	using Groups;
+	using Styles;
 
 	/// <summary>
 	/// Association of data and style specialized for x-y-plots of column data.
@@ -59,9 +59,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		[field: NonSerialized]
 		public event BoundaryChangedHandler YBoundariesChanged;
 
-
-
 		#region Serialization
+
 		/// <summary>Used to serialize the DensityImagePlotItem Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -77,6 +76,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyle);
 			}
+
 			/// <summary>
 			/// Deserializes the DensityImagePlotItem Version 0.
 			/// </summary>
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotItem", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -106,10 +106,9 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyle);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
-
 				XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data", o);
 				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style", o);
 
@@ -145,9 +144,8 @@ namespace Altaxo.Graph.Gdi.Plot
 				_plotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
 			}
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps)
 		{
@@ -183,7 +181,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			return new DensityImagePlotItem(this);
 		}
 
-
 		public object Data
 		{
 			get { return _plotData; }
@@ -203,7 +200,6 @@ namespace Altaxo.Graph.Gdi.Plot
 							_plotData.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
 							_plotData.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
 							_plotData.VBoundariesChanged -= new BoundaryChangedHandler(EhVBoundariesChanged);
-
 						}
 
 						_plotData = (XYZMeshedColumnPlotData)value;
@@ -214,7 +210,6 @@ namespace Altaxo.Graph.Gdi.Plot
 							_plotData.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
 							_plotData.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
 							_plotData.VBoundariesChanged += new BoundaryChangedHandler(EhVBoundariesChanged);
-
 						}
 
 						OnDataChanged();
@@ -261,11 +256,11 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-
 		public override string GetName(int level)
 		{
 			return _plotData.ToString();
 		}
+
 		public override string GetName(string style)
 		{
 			return GetName(0);
@@ -296,7 +291,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 		}
 
-
 		/// <summary>
 		/// Intended to used by derived classes, fires the DataChanged event and the Changed event
 		/// </summary>
@@ -308,14 +302,14 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			base.OnDataChanged();
 		}
+
 		#region IXBoundsHolder Members
 
-		void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+		private void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
 		{
 			if (null != XBoundariesChanged)
 				XBoundariesChanged(this, args);
 		}
-
 
 		public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
 		{
@@ -327,16 +321,15 @@ namespace Altaxo.Graph.Gdi.Plot
 			this._plotData.MergeXBoundsInto(pb);
 		}
 
-		#endregion
+		#endregion IXBoundsHolder Members
 
 		#region IYBoundsHolder Members
 
-		void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+		private void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
 		{
 			if (null != YBoundariesChanged)
 				YBoundariesChanged(this, args);
 		}
-
 
 		public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
 		{
@@ -348,30 +341,27 @@ namespace Altaxo.Graph.Gdi.Plot
 			this._plotData.MergeYBoundsInto(pb);
 		}
 
-		#endregion
+		#endregion IYBoundsHolder Members
 
-		void EhVBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+		private void EhVBoundariesChanged(object sender, BoundariesChangedEventArgs args)
 		{
 			OnDataChanged();
 		}
 
 		#region VBoundaries
 
-		#endregion
+		#endregion VBoundaries
 
 		public override void CollectStyles(PlotGroupStyleCollection styles)
 		{
-
 		}
 
 		public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
 		{
-
 		}
 
 		public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
 		{
-
 		}
 
 		/// <summary>
@@ -386,7 +376,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			DensityImagePlotItem from = (DensityImagePlotItem)template;
 			_plotStyle.CopyFrom(from._plotStyle);
 		}
-
 
 		/// <summary>
 		/// Gets a pixelwise image of the data. Horizontal or vertical axes are not taken into accout.
@@ -410,7 +399,19 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
 		public void GetPixelwiseImage(ref Bitmap image)
 		{
-			_plotStyle.GetPixelwiseImage(_plotData, _plotData.ColumnCount, _plotData.RowCount, ref image);
+			Altaxo.Calc.LinearAlgebra.IROMatrix matrix;
+			Altaxo.Calc.LinearAlgebra.IROVector rowVec, colVec;
+			_plotData.DataTableMatrix.GetWrappers(
+				x => (double)x, // transformation function for row header values
+				Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
+				x => (double)x, // transformation function for column header values
+				Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
+				out matrix,
+				out rowVec,
+				out colVec
+				);
+
+			_plotStyle.GetPixelwiseImage(matrix, ref image);
 		}
 
 		/// <summary>

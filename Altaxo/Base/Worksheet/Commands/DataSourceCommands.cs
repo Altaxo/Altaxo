@@ -43,14 +43,36 @@ namespace Altaxo.Worksheet.Commands
 			if (null == table || null == table.DataSource)
 				return;
 
+			bool sourceIsChanged = false;
+			var originalDataSource = table.DataSource;
 			var dataSource = (Data.IAltaxoTableDataSource)table.DataSource.Clone();
 
-			if (!Current.Gui.ShowDialog(ref dataSource, "Edit data source", false))
+			var dataSourceController = (Altaxo.Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
+
+			var controllerAsSupportApplyCallback = dataSourceController as Altaxo.Gui.IMVCSupportsApplyCallback;
+
+			if (null != controllerAsSupportApplyCallback)
+			{
+				controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; RequeryTableDataSource(ctrl); };
+			}
+
+			var result = Current.Gui.ShowDialog(dataSourceController, "Edit data source " + dataSource.GetType().ToString(), true);
+
+			if (result == false) // user has cancelled the dialog
+			{
+				if (sourceIsChanged) // if source is changed, revert it
+				{
+					table.DataSource = originalDataSource;
+					RequeryTableDataSource(ctrl);
+				}
 				return;
+			}
 
-			table.DataSource = dataSource;
-
-			RequeryTableDataSource(ctrl);
+			if (!sourceIsChanged) // controller might have forgotten to implement the SuccessfullyApplied event - thus we have to apply here
+			{
+				table.DataSource = dataSource;
+				RequeryTableDataSource(ctrl);
+			}
 		}
 
 		/// <summary>

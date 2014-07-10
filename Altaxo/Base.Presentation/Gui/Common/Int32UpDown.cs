@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using System.Windows.Automation;
-using System.Globalization;
-using System.Diagnostics;
-
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Common
 {
@@ -50,16 +51,19 @@ namespace Altaxo.Gui.Common
 
 		protected class IntegerUpDownConverter : ValidationRule, IValueConverter
 		{
-			Int32UpDown _parent;
+			private Int32UpDown _parent;
+			private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
-			public IntegerUpDownConverter() { }
+			public IntegerUpDownConverter()
+			{
+			}
 
 			public IntegerUpDownConverter(Int32UpDown parent)
 			{
 				_parent = parent;
 			}
 
-			public object Convert(object obj, Type targetType, object parameter, CultureInfo culture)
+			public object Convert(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
 			{
 				int val = (int)obj;
 
@@ -71,29 +75,27 @@ namespace Altaxo.Gui.Common
 						return _parent.MaximumReplacementText;
 				}
 
-				return val.ToString();
+				return val.ToString(_conversionCulture);
 			}
 
-			public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture)
+			public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo cultureBuggyDontUse)
 			{
 				ValidationResult validationResult;
-				return ConvertBack(obj, targetType, parameter, culture, out validationResult);
+				return ConvertBack(obj, targetType, parameter, out validationResult);
 			}
 
-			public override ValidationResult Validate(object obj, CultureInfo cultureInfo)
+			public override ValidationResult Validate(object obj, CultureInfo cultureInfoBuggyDontUse)
 			{
 				ValidationResult validationResult;
-				ConvertBack(obj, null, null, cultureInfo, out validationResult);
+				ConvertBack(obj, null, null, out validationResult);
 				return validationResult;
 			}
 
-
-			public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture, out ValidationResult validationResult)
+			public object ConvertBack(object obj, Type targetType, object parameter, out ValidationResult validationResult)
 			{
 				validationResult = ValidationResult.ValidResult;
 
 				string s = (string)obj;
-
 
 				if (null != _parent)
 				{
@@ -109,7 +111,7 @@ namespace Altaxo.Gui.Common
 				}
 
 				int result;
-				if (int.TryParse(s, out result))
+				if (int.TryParse(s, NumberStyles.Integer, _conversionCulture, out result))
 				{
 					return result;
 				}
@@ -121,11 +123,12 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		#endregion
+		#endregion Converter
 
 		#region Properties
 
 		#region Value
+
 		public int Value
 		{
 			get { return (int)GetValue(ValueProperty); }
@@ -152,12 +155,14 @@ namespace Altaxo.Gui.Common
 			int newValue = (int)args.NewValue;
 
 			#region Fire Automation events
+
 			IntegerUpDownAutomationPeer peer = UIElementAutomationPeer.FromElement(control) as IntegerUpDownAutomationPeer;
 			if (peer != null)
 			{
 				peer.RaiseValueChangedEvent(oldValue, newValue);
 			}
-			#endregion
+
+			#endregion Fire Automation events
 
 			RoutedPropertyChangedEventArgs<int> e = new RoutedPropertyChangedEventArgs<int>(
 					oldValue, newValue, ValueChangedEvent);
@@ -183,9 +188,11 @@ namespace Altaxo.Gui.Common
 
 			return newValue;
 		}
-		#endregion
+
+		#endregion Value
 
 		#region ValueIfTextIsEmpty
+
 		public int? ValueIfTextIsEmpty
 		{
 			get { return (int?)GetValue(ValueIfTextIsEmptyProperty); }
@@ -200,9 +207,10 @@ namespace Altaxo.Gui.Common
 						"ValueIfTextIsEmpty", typeof(int?), typeof(Int32UpDown)
 		);
 
-		#endregion
+		#endregion ValueIfTextIsEmpty
 
 		#region ValueString
+
 		public string ValueString
 		{
 			get
@@ -218,9 +226,10 @@ namespace Altaxo.Gui.Common
 
 		private NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
 
-		#endregion
+		#endregion ValueString
 
 		#region Minimum
+
 		public int Minimum
 		{
 			get { return (int)GetValue(MinimumProperty); }
@@ -247,9 +256,11 @@ namespace Altaxo.Gui.Common
 			Int32UpDown control = (Int32UpDown)element;
 			return minimum;
 		}
-		#endregion
+
+		#endregion Minimum
 
 		#region Maximum
+
 		public int Maximum
 		{
 			get { return (int)GetValue(MaximumProperty); }
@@ -276,9 +287,11 @@ namespace Altaxo.Gui.Common
 			int newMaximum = (int)value;
 			return Math.Max(newMaximum, control.Minimum);
 		}
-		#endregion
+
+		#endregion Maximum
 
 		#region Change
+
 		public int Change
 		{
 			get { return (int)GetValue(ChangeProperty); }
@@ -300,7 +313,6 @@ namespace Altaxo.Gui.Common
 
 		private static void OnChangeChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
 
 		private static object CoerceChange(DependencyObject element, object value)
@@ -311,11 +323,12 @@ namespace Altaxo.Gui.Common
 			return newChange;
 		}
 
-		#endregion
+		#endregion Change
 
-		#endregion
+		#endregion Properties
 
 		#region Events
+
 		/// <summary>
 		/// Identifies the ValueChanged routed event.
 		/// </summary>
@@ -331,10 +344,10 @@ namespace Altaxo.Gui.Common
 			add { AddHandler(ValueChangedEvent, value); }
 			remove { RemoveHandler(ValueChangedEvent, value); }
 		}
-		#endregion
+
+		#endregion Events
 
 		#region Commands
-
 
 		protected override void OnIncrease()
 		{
@@ -345,6 +358,7 @@ namespace Altaxo.Gui.Common
 			else
 				this.Value = int.MaxValue;
 		}
+
 		protected override void OnDecrease()
 		{
 			// avoid an underflow before coerce of the value
@@ -353,17 +367,18 @@ namespace Altaxo.Gui.Common
 			else
 				this.Value = int.MinValue;
 		}
+
 		protected override void OnGotoMinimum()
 		{
 			this.Value = this.Minimum;
 		}
+
 		protected override void OnGotoMaximum()
 		{
 			this.Value = this.Maximum;
 		}
 
-
-		#endregion
+		#endregion Commands
 
 		#region Automation
 
@@ -371,7 +386,8 @@ namespace Altaxo.Gui.Common
 		{
 			return new IntegerUpDownAutomationPeer(this);
 		}
-		#endregion
+
+		#endregion Automation
 	}
 
 	public class IntegerUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
@@ -457,7 +473,7 @@ namespace Altaxo.Gui.Common
 			get { return (double)MyOwner.Value; }
 		}
 
-		#endregion
+		#endregion IRangeValueProvider Members
 
 		private Int32UpDown MyOwner
 		{
@@ -466,8 +482,5 @@ namespace Altaxo.Gui.Common
 				return (Int32UpDown)base.Owner;
 			}
 		}
-
-
 	}
-
 }

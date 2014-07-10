@@ -192,8 +192,8 @@ namespace Altaxo.Main
 				}
 			}
 
-			info.AnnounceDeserializationEnd(restoredDoc);
-			info.AnnounceDeserializationEnd(this);
+			info.AnnounceDeserializationEnd(restoredDoc, false);
+			info.AnnounceDeserializationEnd(this, false);
 
 			// now give all restored controllers a view and show them in the Main view
 
@@ -369,6 +369,7 @@ namespace Altaxo.Main
 				Current.Workbench.CloseAllViews();
 				this.SetCurrentProject(newdocument, filename);
 				RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
+				info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 				this.CurrentOpenProject.IsDirty = false;
 			}
 			catch (Exception exc)

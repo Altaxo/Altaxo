@@ -613,7 +613,7 @@ namespace Altaxo.Data
 				this._tableProperties = null;
 			}
 
-			this.DataSource = null==from.DataSource ? null : (IAltaxoTableDataSource)from.DataSource.Clone();
+			this.DataSource = null == from.DataSource ? null : (IAltaxoTableDataSource)from.DataSource.Clone();
 		}
 
 		/// <summary>
@@ -1514,5 +1514,13 @@ namespace Altaxo.Data
 		}
 
 		#endregion IPropertyBagOwner
+
+		internal void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
+		{
+			if (this._tableDataSource != null)
+			{
+				this._tableDataSource.VisitDocumentReferences(ReportProxies);
+			}
+		}
 	} // end class Altaxo.Data.DataTable
 }

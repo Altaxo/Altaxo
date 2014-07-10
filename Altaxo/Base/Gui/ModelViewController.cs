@@ -94,6 +94,18 @@ namespace Altaxo.Gui
 		object ProvisionalModelObject { get; }
 	}
 
+	/// <summary>
+	/// Interface that can be optionally implemented by controllers to support some actions when the controller's Apply function is successfully executed.
+	/// The controller has to call the event <see cref="SuccessfullyApplied"/> after each successfully apply.
+	/// </summary>
+	public interface IMVCSupportsApplyCallback
+	{
+		/// <summary>
+		/// Occurs when the controller has sucessfully executed the apply function.
+		/// </summary>
+		event Action SuccessfullyApplied;
+	}
+
 	public abstract class MVCANControllerBase<TModel, TView> : IMVCANController where TView : class
 	{
 		protected TModel _doc;

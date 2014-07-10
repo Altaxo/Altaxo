@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Main;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Main;
-using Altaxo.Serialization;
-using Altaxo.Data;
-using Altaxo.Graph.Scales.Boundaries;
-
 
 namespace Altaxo.Graph.Gdi.Plot
 {
-	using Styles;
 	using Data;
 	using Graph.Plot.Data;
+	using Styles;
 
 	/// <summary>
 	/// Association of data and style specialized for x-y-plots of column data.
@@ -46,11 +47,10 @@ namespace Altaxo.Graph.Gdi.Plot
 		IXBoundsHolder,
 		IYBoundsHolder
 	{
-
 		protected XYColumnPlotData _plotData;
 
-
 		#region Serialization
+
 		/// <summary>Used to serialize theXYDataPlot Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -66,6 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
 			}
+
 			/// <summary>
 			/// Deserializes the XYColumnPlotItem Version 0.
 			/// </summary>
@@ -86,10 +87,10 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			XYColumnPlotData _item;
-			LabelPlotStyle _label;
+			private XYColumnPlotData _item;
+			private LabelPlotStyle _label;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -97,9 +98,9 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
 				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", typeof(XYLineScatterPlotStyle));
 				if (lsps.XYPlotLineStyle != null)
@@ -114,9 +115,6 @@ namespace Altaxo.Graph.Gdi.Plot
 					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
 				}
 
-
-
-
 				if (null == o)
 				{
 					return new XYColumnPlotItem(pa, ps);
@@ -128,10 +126,9 @@ namespace Altaxo.Graph.Gdi.Plot
 					s.Style = ps;
 					return s;
 				}
-
 			}
 
-			void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
 			{
 				if (_item.LabelColumn != null)
 				{
@@ -139,13 +136,11 @@ namespace Altaxo.Graph.Gdi.Plot
 					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.info_DeserializationFinished);
 				}
 			}
-
 		}
-
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotItem", 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem), 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -153,9 +148,9 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
 				G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
 
@@ -170,7 +165,6 @@ namespace Altaxo.Graph.Gdi.Plot
 					s.Style = ps;
 					return s;
 				}
-
 			}
 		}
 
@@ -192,9 +186,8 @@ namespace Altaxo.Graph.Gdi.Plot
 				((Main.IChangedEventSource)_plotStyles).Changed += new EventHandler(OnStyleChangedEventHandler);
 			}
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps)
 		{
@@ -230,7 +223,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			return copied;
 		}
 
-
 		public override object Clone()
 		{
 			return new XYColumnPlotItem(this);
@@ -245,6 +237,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get { return _plotData; }
 		}
+
 		public XYColumnPlotData Data
 		{
 			get
@@ -282,18 +275,19 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-
-
 		public override string GetName(int level)
 		{
 			switch (level)
 			{
 				case 0:
 					return GetName(XYColumnPlotItemLabelTextStyle.YS);
+
 				case 1:
 					return GetName(XYColumnPlotItemLabelTextStyle.YM);
+
 				case 2:
 					return GetName(XYColumnPlotItemLabelTextStyle.XSYM);
+
 				default:
 					return GetName(XYColumnPlotItemLabelTextStyle.XMYM);
 			}
@@ -311,7 +305,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 			return GetName(result);
 		}
-
 
 		public virtual string GetName(XYColumnPlotItemLabelTextStyle style)
 		{
@@ -358,7 +351,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				return string.Empty;
 		}
 
-
 		public override string ToString()
 		{
 			return GetName(int.MaxValue);
@@ -368,8 +360,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			return _plotData.GetRangesAndPoints(layer);
 		}
-
-
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
@@ -394,13 +384,9 @@ namespace Altaxo.Graph.Gdi.Plot
 				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 		}
 
-
-
-
-
 		#region IXBoundsHolder Members
 
-		void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+		private void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
 		{
 			if (null != XBoundariesChanged)
 				XBoundariesChanged(this, args);
@@ -409,18 +395,16 @@ namespace Altaxo.Graph.Gdi.Plot
 		[field: NonSerialized]
 		public event BoundaryChangedHandler XBoundariesChanged;
 
-
-
 		public void MergeXBoundsInto(IPhysicalBoundaries pb)
 		{
 			this._plotData.MergeXBoundsInto(pb);
 		}
 
-		#endregion
+		#endregion IXBoundsHolder Members
 
 		#region IYBoundsHolder Members
 
-		void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+		private void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
 		{
 			if (null != YBoundariesChanged)
 				YBoundariesChanged(this, args);
@@ -429,15 +413,11 @@ namespace Altaxo.Graph.Gdi.Plot
 		[field: NonSerialized]
 		public event BoundaryChangedHandler YBoundariesChanged;
 
-
-
 		public void MergeYBoundsInto(IPhysicalBoundaries pb)
 		{
 			this._plotData.MergeYBoundsInto(pb);
 		}
 
-		#endregion
-
-
+		#endregion IYBoundsHolder Members
 	}
 }
