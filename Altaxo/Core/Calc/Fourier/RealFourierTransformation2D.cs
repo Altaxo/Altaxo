@@ -67,7 +67,8 @@ namespace Altaxo.Calc.Fourier
 			if (null == sourceMatrix)
 				throw new ArgumentNullException("SourceMatrix must not be null");
 
-			CheckDimensions(sourceMatrix);
+			if (sourceMatrix.Rows < 2 || sourceMatrix.Columns < 2)
+				throw new ArgumentException("SourceMatrix must at least have the dimensions 2x2");
 
 			if (allowOverwriting && (sourceMatrix is IMatrixInArray1DRowMajorRepresentation<double>))
 			{
@@ -90,7 +91,8 @@ namespace Altaxo.Calc.Fourier
 			if (null == sourceMatrix)
 				throw new ArgumentNullException("SourceMatrix must not be null");
 
-			CheckDimensions(sourceMatrix);
+			if (sourceMatrix.Rows < 2 || sourceMatrix.Columns < 2)
+				throw new ArgumentException("SourceMatrix must at least have the dimensions 2x2");
 
 			_realMatrix = new DoubleMatrixInArray1DRowMajorRepresentation(sourceMatrix.Rows, sourceMatrix.Columns);
 			MatrixMath.Copy(sourceMatrix, _realMatrix);
@@ -170,56 +172,8 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		public void Execute()
 		{
-			CheckDimensions(_realMatrix);
 			Pretreatment();
 			ExecuteFourierTransformation();
-		}
-
-		/// <summary>
-		/// Tests whether the number of rows or number of columns of the matrix are appropriate for the supported Fourier transformation. Up to now, only row/column numbers of 2, 4, 5 and composite numbers of these numbers are supported.
-		/// </summary>
-		/// <param name="m">The atrix to check.</param>
-		/// <exception cref="System.InvalidOperationException">The dimensions are not appropriate for this Fourier transformation.</exception>
-		public static void CheckDimensions(IROMatrix m)
-		{
-			var numColumns = m.Columns;
-			var numRows = m.Rows;
-
-			// test it can be done
-			if (numColumns < 2)
-				throw new InvalidOperationException(string.Format("Can't apply fourier transform, since the number of cols ({0}) are not appropriate for this kind of fourier transform. The number has to be 2, 3, 5 or a composite number of these numbers.", numColumns));
-			if (numRows < 2)
-				throw new InvalidOperationException(string.Format("Can't apply fourier transform, since the number of rows ({0}) are not appropriate for this kind of fourier transform. The number has to be 2, 3, 5 or a composite number of these numbers.", numRows));
-
-			if (!Pfa235FFT.CanFactorized(numColumns))
-			{
-				int nextLess = 2;
-				for (nextLess = numColumns - 1; nextLess >= 2; --nextLess)
-					if (Pfa235FFT.CanFactorized(nextLess))
-						break;
-
-				int nextGreater;
-				for (nextGreater = numColumns + 1; ; ++nextGreater)
-					if (Pfa235FFT.CanFactorized(nextGreater))
-						break;
-
-				throw new InvalidOperationException(string.Format("Can't apply fourier transform, since the number of cols ({0}) are not appropriate for this kind of fourier transform. The number has to be 2, 3, 5 or a composite number of these numbers. The next appropriate numbers are {1} or {2}.", numColumns, nextLess, nextGreater));
-			}
-
-			if (!Pfa235FFT.CanFactorized(numRows))
-			{
-				int nextLess = 2;
-				for (nextLess = numRows - 1; nextLess >= 2; --nextLess)
-					if (Pfa235FFT.CanFactorized(nextLess))
-						break;
-
-				int nextGreater;
-				for (nextGreater = numRows + 1; ; ++nextGreater)
-					if (Pfa235FFT.CanFactorized(nextGreater))
-						break;
-
-				throw new InvalidOperationException(string.Format("Can't apply fourier transform, since the number of rows ({0}) are not appropriate for this kind of fourier transform. The number has to be 2, 3, 5 or a composite number of these numbers. The next appropriate numbers are {1} or {2}.", numRows, nextLess, nextGreater));
-			}
 		}
 
 		/// <summary>
@@ -252,9 +206,18 @@ namespace Altaxo.Calc.Fourier
 			_imagMatrix = new DoubleMatrixInArray1DRowMajorRepresentation(numRows, numColumns);
 			var imPart = ((IMatrixInArray1DRowMajorRepresentation<double>)_imagMatrix).GetArray1DRowMajor();
 
-			// fourier transform
-			Pfa235FFT fft = new Pfa235FFT(numRows, numColumns);
-			fft.FFT(rePart, imPart, FourierDirection.Forward);
+			// fourier transform either with Pfa (faster) or with the Chirp-z-transform
+			if (Pfa235FFT.CanFactorized(numRows) && Pfa235FFT.CanFactorized(numColumns))
+			{
+				Pfa235FFT fft = new Pfa235FFT(numRows, numColumns);
+				fft.FFT(rePart, imPart, FourierDirection.Forward);
+			}
+			else
+			{
+				var matrixRe = new DoubleMatrixInArray1DRowMajorRepresentation(rePart, numRows, numColumns);
+				ChirpFFT.FourierTransformation2D(matrixRe, _imagMatrix, FourierDirection.Forward);
+			}
+
 			_arraysContainTransformation = true;
 		}
 
@@ -566,7 +529,7 @@ namespace Altaxo.Calc.Fourier
 		#region Static public helper functions
 
 		/// <summary>
-		/// Removes the zero-th order of a matrix by calculating the mean of all matrix element, and then sutracting the mean from each matrix element.
+		/// Removes the zero-th order of a matrix by calculating the mean of the (valid) matrix elements, and then subtracting the mean from each matrix element.
 		/// Here, only matrix elements that have a finite value are included in the calculation of the mean value.
 		/// </summary>
 		/// <param name="m">The matrix to change.</param>
@@ -601,41 +564,12 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		private class MyPriv2ndOrderIndependentMatrix : IROMatrix
-		{
-			private List<double>[] _list;
-			private int _numberOfRows;
-			private int _numberOfColumns;
-
-			internal MyPriv2ndOrderIndependentMatrix(List<double>[] lists)
-			{
-				_list = lists;
-				_numberOfColumns = lists.Length + 1;
-				_numberOfRows = lists[0].Count;
-			}
-
-			public double this[int row, int col]
-			{
-				get
-				{
-					if (0 == col)
-						return 1; // Intercept
-					else
-						return _list[col - 1][row];
-				}
-			}
-
-			public int Rows
-			{
-				get { return _numberOfRows; }
-			}
-
-			public int Columns
-			{
-				get { return _numberOfColumns; }
-			}
-		}
-
+		/// <summary>
+		/// Removes the first order of a matrix by calculating the parameters a, b, c of the regression of the matrix in the form: z = a + b*x + c*y (x and y are the rows and columns of the matrix, z the matrix elements ),
+		/// and then subtracting the regression function from each matrix element, thus effectively removing the first order.
+		/// Here, only matrix elements that have a finite value are included in the calculation of the regression.
+		/// </summary>
+		/// <param name="m">The matrix to change.</param>
 		public static void RemoveFirstOrderFromMatrixIgnoringInvalidElements(IMatrix m)
 		{
 			int rows = m.Rows;
@@ -686,6 +620,12 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
+		/// <summary>
+		/// Removes the second order of a matrix by calculating the parameters a, b, .. e, f of the regression of the matrix in the form: z = a + b*x + c*y + d*x*x + e*x*y + f*y*y (x and y are the rows and columns of the matrix, z the matrix elements ),
+		/// and then subtracting the regression function from each matrix element, thus effectively removing the second order.
+		/// Here, only matrix elements that have a finite value are included in the calculation of the regression.
+		/// </summary>
+		/// <param name="m">The matrix to change.</param>
 		public static void RemoveSecondOrderFromMatrixIgnoringInvalidElements(IMatrix m)
 		{
 			int rows = m.Rows;
@@ -739,6 +679,12 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
+		/// <summary>
+		/// Removes the third order of a matrix by calculating the parameters a, b, .. i, j of the regression of the matrix in the form: z = a + b*x + c*y + d*x*x + e*x*y + f*y*y + g*x*x*x + h*x*x*y + i*x*y*y + j*y*y*y (x and y are the rows and columns of the matrix, z the matrix elements ),
+		/// and then subtracting the regression function from each matrix element, thus effectively removing the third order.
+		/// Here, only matrix elements that have a finite value are included in the calculation of the regression.
+		/// </summary>
+		/// <param name="m">The matrix to change.</param>
 		public static void RemoveThirdOrderFromMatrixIgnoringInvalidElements(IMatrix m)
 		{
 			int rows = m.Rows;
@@ -793,6 +739,41 @@ namespace Altaxo.Calc.Fourier
 						m[r, c] -= offs;
 					}
 				}
+			}
+		}
+
+		private class MyPriv2ndOrderIndependentMatrix : IROMatrix
+		{
+			private List<double>[] _list;
+			private int _numberOfRows;
+			private int _numberOfColumns;
+
+			internal MyPriv2ndOrderIndependentMatrix(List<double>[] lists)
+			{
+				_list = lists;
+				_numberOfColumns = lists.Length + 1;
+				_numberOfRows = lists[0].Count;
+			}
+
+			public double this[int row, int col]
+			{
+				get
+				{
+					if (0 == col)
+						return 1; // Intercept
+					else
+						return _list[col - 1][row];
+				}
+			}
+
+			public int Rows
+			{
+				get { return _numberOfRows; }
+			}
+
+			public int Columns
+			{
+				get { return _numberOfColumns; }
 			}
 		}
 

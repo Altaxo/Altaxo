@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,136 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
-
-
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Calc.Fourier
 {
 	/// <summary>
-	/// Provides a method to perform a Fourier transformation of arbirtrary length.
+	/// Provides a method to perform a Fourier transformation of arbirtrary length. This algorithm is known either as
+	/// Bluestein FFT algorithm, or as Chirp-z-Transformation.
 	/// </summary>
-	/// <remarks>The following code is adopted from the FFT library, see www.jjj.de.</remarks>
+	/// <remarks>The following code is partially adopted from the FFT library, see www.jjj.de.</remarks>
 	public class ChirpFFT
 	{
+		#region Inner class
 
-		static void CopyFromComplexToSplittedArrays(double[] destreal, double[] destimag, Complex[] src, int count)
+		/// <summary>
+		/// Used to store the precomputed Chirp-sequence, the precomputed Fourier transform of the conjugate Chirp-sequence,
+		/// as well as some temporary arrays to accomodate temporary results.
+		/// </summary>
+		private class ChirpNativeFFTStorage
+		{
+			/// <summary>The direction of the Fourier transformation.</summary>
+			internal FourierDirection _direction;
+
+			/// <summary>Size of the Fourier transformation, i.e. size of the input data to transform.</summary>
+			internal int _arrSize;
+
+			/// <summary>Size of the arrays that are used for the convolution. This size is always a power of two.</summary>
+			internal int _msize;
+
+			/// <summary>Precomputed real part of the fourier-transformed sequence Bn.</summary>
+			internal double[] _fserp_real;
+
+			/// <summary>Precomputed imaginary part of the pre-fourier-transformed sequence Bn.</summary>
+			internal double[] _fserp_imag;
+
+			/// <summary>Precomputed real part of the chirp-factors Exp(-I * Pi * i^2/N).</summary>
+			internal double[] _chirpfactors_real;
+
+			/// <summary>Precomputed imaginary part of the chirp-factors Exp(-I * Pi * i^2/N).</summary>
+			internal double[] _chirpfactors_imag;
+
+			/// <summary>Used to store the result of the multiplication of the input array with the precomputed chirp factors.</summary>
+			internal double[] _xjfj_real;
+
+			/// <summary>Used to store the result of the multiplication of the input array with the precomputed chirp factors.</summary>
+			internal double[] _xjfj_imag;
+
+			/// <summary>Used to store the result of the convolution.</summary>
+			internal double[] _resarray_real;
+
+			/// <summary>Used to store the result of the convolution.</summary>
+			internal double[] _resarray_imag;
+
+			public ChirpNativeFFTStorage(int msize, int arrsize, FourierDirection direction)
+			{
+				_msize = msize;
+				_arrSize = arrsize;
+				_direction = direction;
+
+				_xjfj_real = new double[msize];
+				_xjfj_imag = new double[msize];
+				_fserp_real = new double[msize];
+				_fserp_imag = new double[msize];
+				_resarray_real = new double[msize];
+				_resarray_imag = new double[msize];
+				_chirpfactors_real = new double[arrsize];
+				_chirpfactors_imag = new double[arrsize];
+
+				PreCompute_ChirpFactors(); // Precompute the factors for An: Exp(sign * I * Pi * i^2/N)
+				Precompute_Fouriertransformed_ChirpFactorsConjugate(); // Pre-compute fserp using Pre-computed chirp-factors
+			}
+
+			/// <summary>Size of the arrays that are used for the convolution. This size is always a power of two.</summary>
+			public int MSize
+			{
+				get
+				{
+					return _msize;
+				}
+			}
+
+			/// <summary>
+			/// Precompute the factors for An. These factors are multiplied with the input data prior to the convolution.
+			/// The following formula is used: Exp(sign *I * Pi * i^2/N), where i=0..N-1. The sign is dependent on whether it is forward or backward transformation.
+			/// </summary>
+			private void PreCompute_ChirpFactors()
+			{
+				int phasesign = _direction == FourierDirection.Forward ? 1 : -1;
+				int arrsize2 = _arrSize + _arrSize;
+
+				double prefactor = phasesign * Math.PI / _arrSize;
+				int np = 0;
+				for (int i = 0; i < _arrSize; i++)
+				{
+					double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
+					_chirpfactors_real[i] = Math.Cos(phi);
+					_chirpfactors_imag[i] = Math.Sin(phi);
+
+					np += i + i + 1;  // np == (k*k)%n2
+					if (np >= arrsize2)
+						np -= arrsize2;
+				}
+			}
+
+			private void Precompute_Fouriertransformed_ChirpFactorsConjugate()
+			{
+				// use the chirp factors that were already computed
+				// these factors differ only in the sign of the Exp() function, thus the imaginary part changes sign
+				// furthermore, the array must be filled from the left and from the right (for later convolution)
+				_fserp_real[0] = 1; _fserp_imag[0] = 0;
+				for (int i = 1; i < _arrSize; i++)
+				{
+					_fserp_real[_msize - i] = _fserp_real[i] = _chirpfactors_real[i];
+					_fserp_imag[_msize - i] = _fserp_imag[i] = -_chirpfactors_imag[i]; // inverse sign
+				}
+
+				FastHartleyTransform.FFT(_fserp_real, _fserp_imag, _msize);
+			}
+		}
+
+		#endregion Inner class
+
+		private static void CopyFromComplexToSplittedArrays(double[] destreal, double[] destimag, Complex[] src, int count)
 		{
 			for (int i = 0; i < count; i++)
 			{
@@ -42,7 +157,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		static void CopyFromSplittedArraysToComplex(Complex[] dest, double[] srcreal, double[] srcimag, int count)
+		private static void CopyFromSplittedArraysToComplex(Complex[] dest, double[] srcreal, double[] srcimag, int count)
 		{
 			for (int i = 0; i < count; i++)
 			{
@@ -51,12 +166,11 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		static void MultiplySplittedComplexArrays(double[] resreal, double[] resimag,
+		private static void MultiplySplittedComplexArrays(double[] resreal, double[] resimag,
 			double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int count)
 		{
 			for (int i = 0; i < count; i++)
 			{
-
 				double real = arr1real[i] * arr2real[i] - arr1imag[i] * arr2imag[i];
 				double imag = arr1real[i] * arr2imag[i] + arr1imag[i] * arr2real[i];
 				resreal[i] = real;
@@ -64,7 +178,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		static void NormalizeArrays(double[] arr1, double[] arr2, double factor, int count)
+		private static void NormalizeArrays(double[] arr1, double[] arr2, double factor, int count)
 		{
 			for (int i = 0; i < count; i++)
 			{
@@ -73,8 +187,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
-		static void fhtconvolution(Complex[] resarray,
+		private static void fhtconvolution(Complex[] resarray,
 			Complex[] arr1, Complex[] arr2, int arrsize)
 		{
 			double[] fht1real = new double[arrsize];
@@ -94,7 +207,6 @@ namespace Altaxo.Calc.Fourier
 			CopyFromSplittedArraysToComplex(resarray, fht1real, fht1imag, arrsize);
 		}
 
-
 		/// <summary>
 		/// Performs a convolution of two comlex arrays with are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the values of the
 		/// input arrays will be destroyed!
@@ -106,10 +218,29 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="arr2real">The real part of the second input array. Destroyed at the end of function!</param>
 		/// <param name="arr2imag">The imaginary part of the second input array. Destroyed at the end of function!</param>
 		/// <param name="arrsize">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-		static void fhtconvolution(double[] resultreal, double[] resultimag, double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int arrsize)
+		private static void fhtconvolution(double[] resultreal, double[] resultimag, double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int arrsize)
 		{
 			FastHartleyTransform.FFT(arr1real, arr1imag, arrsize);
 			FastHartleyTransform.FFT(arr2real, arr2imag, arrsize);
+			MultiplySplittedComplexArrays(resultreal, resultimag, arr1real, arr1imag, arr2real, arr2imag, arrsize);
+			FastHartleyTransform.IFFT(resultreal, resultimag, arrsize);
+			NormalizeArrays(resultreal, resultimag, 1.0 / arrsize, arrsize);
+		}
+
+		/// <summary>
+		/// Performs a convolution of two comlex arrays with are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the values of the
+		/// input arrays will be destroyed!
+		/// </summary>
+		/// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+		/// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+		/// <param name="arr1real">The real part of the first input array. Destroyed at the end of function!</param>
+		/// <param name="arr1imag">The imaginary part of the first input array. Destroyed at the end of function!</param>
+		/// <param name="arr2real">The real part for the pre-fouriertransformed second sequence to convolute.</param>
+		/// <param name="arr2imag">The imaginary part for the pre-fouriertransformed second sequence to convolute.</param>
+		/// <param name="arrsize">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+		private static void fhtconvolutionWithFouriertransformed2ndArgument(double[] resultreal, double[] resultimag, double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int arrsize)
+		{
+			FastHartleyTransform.FFT(arr1real, arr1imag, arrsize);
 			MultiplySplittedComplexArrays(resultreal, resultimag, arr1real, arr1imag, arr2real, arr2imag, arrsize);
 			FastHartleyTransform.IFFT(resultreal, resultimag, arrsize);
 			NormalizeArrays(resultreal, resultimag, 1.0 / arrsize, arrsize);
@@ -147,7 +278,6 @@ namespace Altaxo.Calc.Fourier
 			Complex[] resarray = new Complex[msize];
 			//Complex[] cmparray = new Complex[arrsize];
 
-
 			// bilde xj*fj
 			double prefactor = phasesign * Math.PI / arrsize;
 			int np = 0;
@@ -160,7 +290,6 @@ namespace Altaxo.Calc.Fourier
 				np += i + i + 1;  // np == (k*k)%n2
 				if (np >= arrsize2)
 					np -= arrsize2;
-
 			}
 
 			// fill positive and negative part of fserp
@@ -197,34 +326,6 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		private class ChirpNativeFFTStorage
-		{
-			public double[] xjfj_real;
-			public double[] xjfj_imag;
-			public double[] fserp_real;
-			public double[] fserp_imag;
-			public double[] resarray_real;
-			public double[] resarray_imag;
-
-			public ChirpNativeFFTStorage(int msize)
-			{
-				xjfj_real = new double[msize];
-				xjfj_imag = new double[msize];
-				fserp_real = new double[msize];
-				fserp_imag = new double[msize];
-				resarray_real = new double[msize];
-				resarray_imag = new double[msize];
-			}
-
-			public int Length
-			{
-				get
-				{
-					return xjfj_real.Length;
-				}
-			}
-		}
-
 		private static void chirpnativefft(
 			double[] resultreal,
 			double[] resultimag,
@@ -234,86 +335,49 @@ namespace Altaxo.Calc.Fourier
 			FourierDirection direction,
 			ref ChirpNativeFFTStorage s)
 		{
-			int phasesign = direction == FourierDirection.Forward ? 1 : -1;
-			int arrsize2 = arrsize + arrsize;
-
 			if (arrsize <= 2)
 				throw new ArgumentException("This algorithm works for array sizes > 2 only.");
 
 			int msize = GetNecessaryTransformationSize(arrsize);
 
-			if (s == null || s.Length != msize)
+			if (s == null || arrsize != s._arrSize || direction != s._direction)
 			{
-				s = new ChirpNativeFFTStorage(msize);
+				s = new ChirpNativeFFTStorage(msize, arrsize, direction);
 			}
 			else // if the temp storage is not fresh, we have to clear the arrays first
 			{
-				Array.Clear(s.xjfj_real, 0, msize);
-				Array.Clear(s.xjfj_imag, 0, msize);
-				Array.Clear(s.fserp_real, 0, msize);
-				Array.Clear(s.fserp_imag, 0, msize);
+				Array.Clear(s._xjfj_real, 0, msize);
+				Array.Clear(s._xjfj_imag, 0, msize);
 			}
 
-			double[] xjfj_real = s.xjfj_real;
-			double[] xjfj_imag = s.xjfj_imag;
-			double[] fserp_real = s.fserp_real;
-			double[] fserp_imag = s.fserp_imag;
-			double[] resarray_real = s.resarray_real;
-			double[] resarray_imag = s.resarray_imag;
+			// make the arrays local variables
+			double[] xjfj_real = s._xjfj_real;
+			double[] xjfj_imag = s._xjfj_imag;
+			double[] fserp_real = s._fserp_real;
+			double[] fserp_imag = s._fserp_imag;
+			double[] resarray_real = s._resarray_real;
+			double[] resarray_imag = s._resarray_imag;
 
-			// bilde xj*fj
-			double prefactor = phasesign * Math.PI / arrsize;
-			int np = 0;
-			for (int i = 0; i < arrsize; i++)
+			var chirpfactor_real = s._chirpfactors_real;
+			var chirpfactor_imag = s._chirpfactors_imag;
+
+			// multiply the input array with the chirpfactors
+			for (int i = 0; i < arrsize; ++i)
 			{
-				double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-				double vre = Math.Cos(phi);
-				double vim = Math.Sin(phi);
-				xjfj_real[i] = inputreal[i] * vre - inputimag[i] * vim;
-				xjfj_imag[i] = inputreal[i] * vim + inputimag[i] * vre;
-
-				np += i + i + 1;  // np == (k*k)%n2
-				if (np >= arrsize2)
-					np -= arrsize2;
-
+				xjfj_real[i] = inputreal[i] * chirpfactor_real[i] - inputimag[i] * chirpfactor_imag[i];
+				xjfj_imag[i] = inputreal[i] * chirpfactor_imag[i] + inputimag[i] * chirpfactor_real[i];
 			}
 
-			// fill positive and negative part of fserp
-			fserp_real[0] = 1; fserp_imag[0] = 0;
-			prefactor = -phasesign * Math.PI / arrsize;
-			np = 1; // since we start the loop with 1
-			for (int i = 1; i < arrsize; i++)
+			// convolute xjfj with precomputed fourier-transformation of fserp
+			fhtconvolutionWithFouriertransformed2ndArgument(resarray_real, resarray_imag, xjfj_real, xjfj_imag, fserp_real, fserp_imag, msize);
+
+			// multiply the result  with the chirpfactors
+			for (int i = 0; i < arrsize; ++i)
 			{
-				double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-				fserp_real[i] = fserp_real[msize - i] = Math.Cos(phi);
-				fserp_imag[i] = fserp_imag[msize - i] = Math.Sin(phi);
-
-				np += i + i + 1;  // np == (k*k)%n2
-				if (np >= arrsize2)
-					np -= arrsize2;
-			}
-
-			// convolute xjfj with fserp
-			//NativeCyclicConvolution(resarray,xjfj,fserp,msize);
-			fhtconvolution(resarray_real, resarray_imag, xjfj_real, xjfj_imag, fserp_real, fserp_imag, msize);
-
-			// multipliziere mit fserpschlange
-			prefactor = phasesign * Math.PI / arrsize;
-			np = 0;
-			for (int i = 0; i < arrsize; i++)
-			{
-				double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-				double vre = Math.Cos(phi);
-				double vim = Math.Sin(phi);
-				resultreal[i] = resarray_real[i] * vre - resarray_imag[i] * vim;
-				resultimag[i] = resarray_real[i] * vim + resarray_imag[i] * vre;
-
-				np += i + i + 1;  // np == (i*i)%n2
-				if (np >= arrsize2)
-					np -= arrsize2;
+				resultreal[i] = resarray_real[i] * chirpfactor_real[i] - resarray_imag[i] * chirpfactor_imag[i];
+				resultimag[i] = resarray_real[i] * chirpfactor_imag[i] + resarray_imag[i] * chirpfactor_real[i];
 			}
 		}
-
 
 		/// <summary>
 		/// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
@@ -342,7 +406,6 @@ namespace Altaxo.Calc.Fourier
 		{
 			if (x.Length != y.Length)
 				throw new ArgumentException("Length of real and imaginary array do not match!");
-
 
 			ChirpNativeFFTStorage s = temporaryStorage as ChirpNativeFFTStorage;
 			chirpnativefft(x, y, x, y, x.Length, direction, ref s);
@@ -383,6 +446,73 @@ namespace Altaxo.Calc.Fourier
 		}
 
 		/// <summary>
+		/// Performs an two dimensional FFT of arbitrary length by the chirp method. Use this method only if no other
+		/// FFT is applicable.
+		/// </summary>
+		/// <param name="matrixRe">Matrix of thre real part of the values to transform.</param>
+		/// <param name="matrixRe">Matrix of thre imaginary part of the values to transform.</param>
+		/// <param name="direction">Direction of Fourier transform.</param>
+		/// <remarks>This function first performs a FFT on all columns of the matrix, and then transforms all rows of the resulting matrix.</remarks>
+		public static void
+			FourierTransformation2D(IMatrix matrixRe, IMatrix matrixIm, FourierDirection direction)
+		{
+			int numberOfRows = matrixRe.Rows;
+			int numberOfColumns = matrixRe.Columns;
+
+			// Do the FFT in the first direction
+
+			// First direction: transform all columns of the matrix
+			ChirpNativeFFTStorage tempStorage = null;
+			var resultArrayRe = new double[numberOfRows];
+			var resultArrayIm = new double[numberOfRows];
+			var inputArrayRe = new double[numberOfRows];
+			var inputArrayIm = new double[numberOfRows];
+
+			for (int c = 0; c < numberOfColumns; ++c) // for each column
+			{
+				for (int r = 0; r < numberOfRows; ++r)
+				{
+					inputArrayRe[r] = matrixRe[r, c];
+					inputArrayIm[r] = matrixIm[r, c];
+				}
+
+				chirpnativefft(resultArrayRe, resultArrayIm, inputArrayRe, inputArrayIm, numberOfRows, direction, ref tempStorage);
+
+				for (int r = 0; r < numberOfRows; ++r)
+				{
+					matrixRe[r, c] = resultArrayRe[r];
+					matrixIm[r, c] = resultArrayIm[r];
+				}
+			}
+
+			// Second direction: transform all rows of the matrix
+			if (numberOfColumns != numberOfRows)
+			{
+				resultArrayRe = new double[numberOfColumns];
+				resultArrayIm = new double[numberOfColumns];
+				inputArrayRe = new double[numberOfColumns];
+				inputArrayIm = new double[numberOfColumns];
+			}
+
+			for (int r = 0; r < numberOfRows; ++r) // for each row
+			{
+				for (int c = 0; c < numberOfColumns; ++c)
+				{
+					inputArrayRe[c] = matrixRe[r, c];
+					inputArrayIm[c] = matrixIm[r, c];
+				}
+
+				chirpnativefft(resultArrayRe, resultArrayIm, inputArrayRe, inputArrayIm, numberOfColumns, direction, ref tempStorage);
+
+				for (int c = 0; c < numberOfColumns; ++c)
+				{
+					matrixRe[r, c] = resultArrayRe[c];
+					matrixIm[r, c] = resultArrayIm[c];
+				}
+			}
+		}
+
+		/// <summary>
 		/// Returns the neccessary size for a chirp convolution of length n.
 		/// </summary>
 		/// <param name="n">The length of the convolution.</param>
@@ -396,7 +526,6 @@ namespace Altaxo.Calc.Fourier
 			int ldnn = 2 + ld((uint)(n - 1));
 			return (1 << ldnn);
 		}
-
 
 		/// <summary>
 		/// Performs a cyclic convolution of splitted complex data of arbitrary length.
@@ -422,7 +551,6 @@ namespace Altaxo.Calc.Fourier
 			double[] rspre = new double[msize];
 			double[] rspim = new double[msize];
 
-
 			Array.Copy(datare, srcre, n);
 			Array.Copy(dataim, srcim, n);
 
@@ -438,7 +566,6 @@ namespace Altaxo.Calc.Fourier
 			Array.Copy(srcim, resultim, n);
 		}
 
-
 		/// <summary>
 		/// Returns the neccessary size of the padding arrays for a cyclic correlation of length n.
 		/// </summary>
@@ -453,7 +580,6 @@ namespace Altaxo.Calc.Fourier
 			int ldnn = 2 + ld((uint)(n - 1));
 			return (1 << ldnn);
 		}
-
 
 		/// <summary>
 		/// Performs a cyclic correlation of splitted complex data of arbitrary length.
@@ -479,7 +605,6 @@ namespace Altaxo.Calc.Fourier
 			double[] rspre = new double[msize];
 			double[] rspim = new double[msize];
 
-
 			Array.Copy(datare, srcre, n);
 			Array.Copy(dataim, srcim, n);
 
@@ -494,7 +619,6 @@ namespace Altaxo.Calc.Fourier
 			Array.Copy(srcre, resultre, n);
 			Array.Copy(srcim, resultim, n);
 		}
-
 
 		/// <summary>
 		/// Performs a cyclic correlation of splitted complex data of arbitrary length.
@@ -514,7 +638,6 @@ namespace Altaxo.Calc.Fourier
 
 			double[] srcre = new double[msize];
 			double[] rspre = new double[msize];
-
 
 			Array.Copy(src1, srcre, n);
 
@@ -539,9 +662,8 @@ namespace Altaxo.Calc.Fourier
 		}
 */
 
-		static void make_fft_chirp(double[] wr, double[] wi, uint n, bool backward)
+		private static void make_fft_chirp(double[] wr, double[] wi, uint n, bool backward)
 		{
-
 			double phi = backward ? -Math.PI / n : Math.PI / n;
 
 			uint n2 = 2 * n;
@@ -560,8 +682,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
-		static void complete_fft_chirp(double[] wr, double[] wi, uint n, uint nn)
+		private static void complete_fft_chirp(double[] wr, double[] wi, uint n, uint nn)
 		{
 			if ((n & 1) != 0)  // n odd
 			{
@@ -579,7 +700,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		static void make_fft_fract_chirp(double[] wr, double[] wi, double v, uint n, uint nn)
+		private static void make_fft_fract_chirp(double[] wr, double[] wi, double v, uint n, uint nn)
 		{
 			double phi = v * Math.PI / n;
 
@@ -599,7 +720,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		static void cmult(double c, double s, ref double u, ref double v)
+		private static void cmult(double c, double s, ref double u, ref double v)
 		{
 			double t = u * s + v * c;
 			u *= c;
@@ -609,12 +730,12 @@ namespace Altaxo.Calc.Fourier
 
 		// complex multiply array g[] by f[]:
 		//  Complex(gr[],gi[]) *= Complex(fr[],fi[])
-		static void ri_multiply(double[] fr, double[] fi, double[] gr, double[] gi, uint n)
+		private static void ri_multiply(double[] fr, double[] fi, double[] gr, double[] gi, uint n)
 		{
 			while ((n--) != 0) cmult(fr[n], fi[n], ref gr[n], ref gi[n]);
 		}
 
-		static void negate(double[] f, uint n)
+		private static void negate(double[] f, uint n)
 		// negate every element of f[]
 		{
 			while ((n--) != 0) f[n] = -f[n];
@@ -625,7 +746,7 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="x">The argument.</param>
 		/// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
-		static int ld(uint x)
+		private static int ld(uint x)
 		{
 			if (0 == x) return 0;
 
@@ -644,7 +765,7 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="x">The argument.</param>
 		/// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
-		static int ld(ulong x)
+		private static int ld(ulong x)
 		{
 			if (0 == x) return 0;
 
@@ -658,7 +779,7 @@ namespace Altaxo.Calc.Fourier
 			return r;
 		}
 
-		static void
+		private static void
 			fft_complex_convolution(double[] fr, double[] fi,
 			double[] gr, double[] gi,
 			uint ldn, double v /*=0.0*/ )
@@ -691,7 +812,6 @@ namespace Altaxo.Calc.Fourier
 			FastHartleyTransform.IFFT(gr, gi, n); // FFT(gr, gi, ldn, -is);
 		}
 
-
 		/// <summary>
 		/// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
 		/// FFT is applicable.
@@ -700,7 +820,7 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="y">Array of imaginary values.</param>
 		/// <param name="n">Number of points to transform.</param>
 		/// <param name="backward">If false, a forward FFT is performed. If true, a inverse FFT is performed.</param>
-		static void
+		private static void
 			FFT_DONTUSEIT(double[] x, double[] y, uint n, bool backward)
 		//
 		// arbitrary length fft
@@ -748,9 +868,6 @@ namespace Altaxo.Calc.Fourier
 
 			Array.Copy(wr, n, x, 0, n);
 			Array.Copy(wi, n, y, 0, n);
-
 		}
-
-
 	}
 }
