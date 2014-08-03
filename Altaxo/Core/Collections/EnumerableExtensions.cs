@@ -84,6 +84,7 @@ namespace Altaxo.Collections
 
 		/// <summary>
 		/// Gets the element of a IEnumerabe that evaluates by means of a conversion function to the maximal value.
+		/// This is different from Select(x => conversion(x)).Max() insofar as it not returns the maximum value, but the original element x which converts to the maximum value.
 		/// </summary>
 		/// <typeparam name="T">Type of the elements of the enumeration.</typeparam>
 		/// <typeparam name="M">Type of the value that is used to compare the elements of the sequence.</typeparam>
@@ -111,6 +112,58 @@ namespace Altaxo.Collections
 				}
 
 				return maxEle;
+			}
+		}
+
+		/// <summary>
+		/// Evaluates the minimum of a enumeration of elements, or returns a default value if the series is empty.
+		/// </summary>
+		/// <typeparam name="T">Type of element</typeparam>
+		/// <param name="seq">The enumeration.</param>
+		/// <param name="defaultValue">The default value that is returned if the enumeration is empty.</param>
+		/// <returns>The minimum of of all elements, or the <paramref name="defaultValue"/> if the series is empty.</returns>
+		public static T MinOrDefault<T>(this IEnumerable<T> seq, T defaultValue) where T : IComparable<T>
+		{
+			using (var en = seq.GetEnumerator())
+			{
+				if (!en.MoveNext())
+					return defaultValue;
+
+				var min = en.Current;
+				while (en.MoveNext())
+				{
+					if (min.CompareTo(en.Current) > 0)
+					{
+						min = en.Current;
+					}
+				}
+				return min;
+			}
+		}
+
+		/// <summary>
+		/// Evaluates the maximum of a enumeration of elements, or returns a default value if the series is empty.
+		/// </summary>
+		/// <typeparam name="T">Type of element</typeparam>
+		/// <param name="seq">The enumeration.</param>
+		/// <param name="defaultValue">The default value that is returned if the enumeration is empty.</param>
+		/// <returns>The maximum of of all elements, or the <paramref name="defaultValue"/> if the series is empty.</returns>
+		public static T MaxOrDefault<T>(this IEnumerable<T> seq, T defaultValue) where T : IComparable<T>
+		{
+			using (var en = seq.GetEnumerator())
+			{
+				if (!en.MoveNext())
+					return defaultValue;
+
+				var max = en.Current;
+				while (en.MoveNext())
+				{
+					if (max.CompareTo(en.Current) < 0)
+					{
+						max = en.Current;
+					}
+				}
+				return max;
 			}
 		}
 	}

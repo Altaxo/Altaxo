@@ -33,6 +33,8 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class AsciiImporter
 	{
+		public const string FileUrlStart = @"file:///";
+
 		protected System.IO.Stream _stream;
 
 		/// <summary>If set, this string designates the origin of the stream. This can be e.g. the filename of the file, the clipboard etc.</summary>
@@ -433,16 +435,46 @@ namespace Altaxo.Serialization.Ascii
 		/// <param name="importOptions">The options used to import ASCII. If this parameter is <c>null</c>, an analysis of the stream is done in order to determine the import stragegy to use.</param>
 		public static void Import(System.IO.Stream myStream, string streamOriginHint, DataTable dataTable, AsciiImportOptions importOptions)
 		{
-			var importer = new AsciiImporter(myStream, streamOriginHint);
-			if (null != importOptions)
+			if (null == importOptions)
 			{
-				importer.ImportAscii(importOptions, dataTable);
+				var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
+				importOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), myStream, analysisOptions);
+			}
+
+			var importer = new AsciiImporter(myStream, streamOriginHint);
+			importer.ImportAscii(importOptions, dataTable);
+
+			// finally set or change the data source of the table
+			AddOrUpdateAsciiImportDataSource(streamOriginHint, dataTable, importOptions);
+		}
+
+		/// <summary>
+		/// Adds (if not already present) or updates (if present) the ASCII import data source for the provided table. This can also mean that the data source of the table is set to null,
+		/// for instance if the provided streamOriginHint is not a file Url.
+		/// </summary>
+		/// <param name="streamOriginHint">The stream origin hint. If this is a file, then this string starts with <see cref="FileUrlStart"/>.</param>
+		/// <param name="dataTable">The provided data table on which to set the import data source..</param>
+		/// <param name="importOptions">The Ascii import options that were used to import the file.</param>
+		private static void AddOrUpdateAsciiImportDataSource(string streamOriginHint, DataTable dataTable, AsciiImportOptions importOptions)
+		{
+			string fileName = streamOriginHint.StartsWith(FileUrlStart) ? streamOriginHint.Substring(FileUrlStart.Length) : null;
+			var dataSource = dataTable.DataSource as Altaxo.Serialization.Ascii.AsciiImportDataSource;
+
+			if (!string.IsNullOrEmpty(fileName))
+			{
+				if (null != dataSource)
+				{
+					dataSource.SourceFileName = fileName;
+					dataSource.AsciiImportOptions = importOptions;
+				}
+				else
+				{
+					dataTable.DataSource = new Altaxo.Serialization.Ascii.AsciiImportDataSource(streamOriginHint.Substring(FileUrlStart.Length), importOptions);
+				}
 			}
 			else
 			{
-				var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
-				var recognizedOptions = AsciiDocumentAnalysis.Analyze(new AsciiImportOptions(), myStream, analysisOptions);
-				importer.ImportAscii(recognizedOptions, dataTable);
+				dataTable.DataSource = null;
 			}
 		}
 
@@ -644,7 +676,7 @@ namespace Altaxo.Serialization.Ascii
 			{
 				using (var myStream = GetAsciiInputFileStream(filenames[0]))
 				{
-					Import(myStream, "file " + filenames[0], dataTable, importOptions);
+					Import(myStream, FileUrlStart + filenames[0], dataTable, importOptions);
 					myStream.Close();
 					startrest = 1;
 				}

@@ -49,6 +49,12 @@ namespace Altaxo.Worksheet.Commands
 
 			var dataSourceController = (Altaxo.Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(Altaxo.Gui.IMVCANController), Gui.UseDocument.Directly);
 
+			if (null == dataSourceController)
+			{
+				Current.Gui.ErrorMessageBox(string.Format("Sorry. There is no dialog available to edit the data source of type {0}", dataSource.GetType()), "No dialog available");
+				return;
+			}
+
 			var controllerAsSupportApplyCallback = dataSourceController as Altaxo.Gui.IMVCSupportsApplyCallback;
 
 			if (null != controllerAsSupportApplyCallback)
@@ -93,6 +99,8 @@ namespace Altaxo.Worksheet.Commands
 			{
 				table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
 			}
+
+			System.Diagnostics.Debug.Assert(null != table.DataSource, "table.DataSource.FillData should never set the data source to zero!");
 
 			if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
 			{

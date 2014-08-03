@@ -63,6 +63,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
 			Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
 
+			Altaxo.Current.SetHighResolutionClock(new Altaxo.Main.Services.HighResolutionClock());
+			Altaxo.Current.SetTimerQueue(new Altaxo.Main.Services.TimerQueue(Altaxo.Current.HighResolutionClock));
+
 			Altaxo.Graph.Gdi.GdiFontManager.Register();
 			Altaxo.Gui.WpfFontManager.Register();
 

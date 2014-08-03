@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Serialization.Ascii
 {
-
 	/// <summary>
 	/// Designates what to do with the main header lines of an ASCII file.
 	/// </summary>
@@ -63,7 +64,7 @@ namespace Altaxo.Serialization.Ascii
 		public bool RenameColumns { get; set; }
 
 		/// <summary>If true, rename the worksheet to the data file name.  This option must be set programmatically or by user interaction.</summary>
-		public bool RenameWorksheet;
+		public bool RenameWorksheet { get; set; }
 
 		/// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
 		public AsciiHeaderLinesDestination HeaderLinesDestination { get; set; }
@@ -84,7 +85,60 @@ namespace Altaxo.Serialization.Ascii
 		public System.Globalization.CultureInfo DateTimeFormatCulture { get; set; }
 
 		/// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-		public AsciiLineStructure RecognizedStructure;
+		public AsciiLineStructure RecognizedStructure { get; set; }
+
+		#region Serialization
+
+		#region Version 0
+
+		/// <summary>
+		/// 2014-08-03 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (AsciiImportOptions)obj;
+
+				info.AddValue("RenameWorksheet", s.RenameWorksheet);
+				info.AddValue("RenameColumns", s.RenameColumns);
+				info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
+				info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
+				info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
+				info.AddValue("SeparationStrategy", s.SeparationStrategy);
+				info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture.LCID);
+				info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture.LCID);
+				info.AddValue("RecognizedStructure", s.RecognizedStructure);
+			}
+
+			protected virtual AsciiImportOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new AsciiImportOptions() : (AsciiImportOptions)o);
+
+				s.RenameWorksheet = info.GetBoolean("RenameWorksheet");
+				s.RenameColumns = info.GetBoolean("RenameColumns");
+				s.IndexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+				s.NumberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+				s.HeaderLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
+				s.SeparationStrategy = (IAsciiSeparationStrategy)info.GetValue("SeparationStrategy", s);
+				s.NumberFormatCulture = System.Globalization.CultureInfo.GetCultureInfo(info.GetInt32("NumberFormatCultureLCID"));
+				s.DateTimeFormatCulture = System.Globalization.CultureInfo.GetCultureInfo(info.GetInt32("DateTimeFormatCultureLCID"));
+				s.RecognizedStructure = (AsciiLineStructure)info.GetValue("AsciiLineStructure", s);
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 0
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Gets a value indicating whether everything is fully specified now, so that the instance can be used to import Ascii data.
@@ -128,7 +182,6 @@ namespace Altaxo.Serialization.Ascii
 
 				this.RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
 
-
 				return true;
 			}
 			return false;
@@ -148,8 +201,4 @@ namespace Altaxo.Serialization.Ascii
 			return result;
 		}
 	}
-
-
-
-
 }

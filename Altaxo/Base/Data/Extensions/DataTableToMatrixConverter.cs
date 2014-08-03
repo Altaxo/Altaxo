@@ -257,11 +257,7 @@ namespace Altaxo.Data
 		{
 			GetParticipatingDataColumns();
 			GetParticipatingDataRows();
-			int maxNumberOfRows = 0;
-			for (int i = 0; i < _participatingDataColumns.Count; ++i)
-			{
-				maxNumberOfRows = Math.Max(maxNumberOfRows, _sourceTable[_participatingDataColumns[i]].Count);
-			}
+			int maxNumberOfRows = _participatingDataColumns.Select(i => _sourceTable[i].Count).MaxOrDefault(0);
 			return maxNumberOfRows == _participatingDataRows.Count;
 		}
 
@@ -672,9 +668,8 @@ namespace Altaxo.Data
 			else
 			{
 				var dc = table.DataColumns;
-				int rows = int.MaxValue;
-				foreach (int i in participatingColumns)
-					rows = Math.Min(rows, dc[i].Count);
+				int rows = participatingColumns.Select(i => dc[i].Count).MinOrDefault(0);
+
 				result.AddRange(0, rows);
 			}
 

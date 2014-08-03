@@ -105,6 +105,11 @@ namespace Altaxo.Serialization.Xml
 			return XmlConvert.ToBoolean(m_Reader.ReadElementString());
 		}
 
+		public char GetChar(string name)
+		{
+			return XmlConvert.ToChar(m_Reader.ReadElementString());
+		}
+
 		public int GetInt32()
 		{
 			return XmlConvert.ToInt32(m_Reader.ReadElementString());

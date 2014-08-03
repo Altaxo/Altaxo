@@ -809,6 +809,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Worksheet\ImportAsciiDataSourceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Worksheet\TransposeWorksheetControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1415,6 +1419,9 @@
     </Compile>
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformationControl.xaml.cs">
       <DependentUpon>RealFourierTransformationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Worksheet\ImportAsciiDataSourceControl.xaml.cs">
+      <DependentUpon>ImportAsciiDataSourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\TransposeWorksheetControl.xaml.cs">
       <DependentUpon>TransposeWorksheetControl.xaml</DependentUpon>

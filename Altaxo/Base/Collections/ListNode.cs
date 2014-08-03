@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,10 +35,9 @@ namespace Altaxo.Collections
 	public class ListNode : System.ComponentModel.INotifyPropertyChanged
 	{
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
 		protected string _text;
 		protected object _tag;
-
-
 
 		public virtual string Text
 		{
@@ -54,6 +55,7 @@ namespace Altaxo.Collections
 				}
 			}
 		}
+
 		public object Tag
 		{
 			get
@@ -76,13 +78,21 @@ namespace Altaxo.Collections
 		}
 
 		public virtual string Text1 { get { return SubItemText(1); } }
+
 		public virtual string Text2 { get { return SubItemText(2); } }
+
 		public virtual string Text3 { get { return SubItemText(3); } }
+
 		public virtual string Text4 { get { return SubItemText(4); } }
+
 		public virtual string Text5 { get { return SubItemText(5); } }
+
 		public virtual string Text6 { get { return SubItemText(6); } }
+
 		public virtual string Text7 { get { return SubItemText(7); } }
+
 		public virtual string Text8 { get { return SubItemText(8); } }
+
 		public virtual string Text9 { get { return SubItemText(9); } }
 
 		public virtual object Image { get { return null; } }
@@ -97,25 +107,38 @@ namespace Altaxo.Collections
 		}
 
 		public virtual int SubItemCount { get { return 0; } }
-		public virtual string SubItemText(int i) { return null; }
-		public virtual string Description { get { return null; } }
-		public virtual System.Drawing.Color? SubItemBackColor(int i) { return null; }
-		public virtual int ImageIndex { get { return 0; } }
 
+		public virtual string SubItemText(int i)
+		{
+			return null;
+		}
+
+		public virtual string Description { get { return null; } }
+
+		public virtual System.Drawing.Color? SubItemBackColor(int i)
+		{
+			return null;
+		}
+
+		public virtual int ImageIndex { get { return 0; } }
 
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
 			if (null != PropertyChanged)
 				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 		}
-
-
 	}
 
 	public class ListNodeList : System.Collections.ObjectModel.ObservableCollection<ListNode>
 	{
-		public ListNodeList() { }
-		public ListNodeList(IEnumerable<ListNode> from) : base(from) { }
+		public ListNodeList()
+		{
+		}
+
+		public ListNodeList(IEnumerable<ListNode> from)
+			: base(from)
+		{
+		}
 
 		public int IndexOfObject(object o)
 		{
@@ -146,7 +169,6 @@ namespace Altaxo.Collections
 			this[i] = this[j];
 			this[j] = li;
 		}
-
 	}
 
 	public interface ISelectableItem
@@ -179,8 +201,14 @@ namespace Altaxo.Collections
 
 	public class SelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNode>
 	{
-		public SelectableListNodeList() { }
-		public SelectableListNodeList(IEnumerable<SelectableListNode> from) : base(from) { }
+		public SelectableListNodeList()
+		{
+		}
+
+		public SelectableListNodeList(IEnumerable<SelectableListNode> from)
+			: base(from)
+		{
+		}
 
 		/// <summary>
 		/// Initializes the collection with a list of names. One of them is the selected item.
@@ -204,13 +232,34 @@ namespace Altaxo.Collections
 				Add(new SelectableListNode(value.ToString(), value, value.ToString() == selectedItem.ToString()));
 		}
 
-
 		/// <summary>Adds items to this collection.</summary>
 		/// <param name="items">The items to add.</param>
 		public void AddRange(IEnumerable<SelectableListNode> items)
 		{
 			foreach (var item in items)
 				Add(item);
+		}
+
+		public void RemoveRange(int start, int count)
+		{
+			if (start < 0)
+				throw new ArgumentOutOfRangeException("start < 0");
+			else if ((start + count) > Count)
+				throw new ArgumentOutOfRangeException("(start+count) > Count");
+
+			for (int i = start + count - 1; i >= start; --i)
+			{
+				base.RemoveAt(i);
+			}
+		}
+
+		public int[] GetSelectedIndices()
+		{
+			var l = new List<int>();
+			for (int i = 0; i < this.Count; ++i)
+				if (this[i].IsSelected)
+					l.Add(i);
+			return l.ToArray();
 		}
 
 		public SelectableListNode[] ToArray()
@@ -255,6 +304,7 @@ namespace Altaxo.Collections
 				return null;
 			}
 		}
+
 		/// <summary>Get the index of the first selected node. Returns -1 if no node is selected.</summary>
 		public int FirstSelectedNodeIndex
 		{
@@ -268,6 +318,7 @@ namespace Altaxo.Collections
 				return -1;
 			}
 		}
+
 		/// <summary>Sets the <see cref="P:SelectedListNode.IsSelected"/> property of each node in the list to false.</summary>
 		public void ClearSelectionsAll()
 		{
@@ -326,7 +377,6 @@ namespace Altaxo.Collections
 				if (this[i].IsSelected)
 					Exchange(i, i + 1);
 			}
-
 		}
 
 		/// <summary>
@@ -343,6 +393,7 @@ namespace Altaxo.Collections
 	public class CheckableSelectableListNode : SelectableListNode
 	{
 		protected bool _isChecked;
+
 		public bool IsChecked
 		{
 			get
@@ -367,8 +418,14 @@ namespace Altaxo.Collections
 
 	public class CheckableSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<CheckableSelectableListNode>
 	{
-		public CheckableSelectableListNodeList() { }
-		public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from) : base(from) { }
+		public CheckableSelectableListNodeList()
+		{
+		}
+
+		public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from)
+			: base(from)
+		{
+		}
 
 		public int IndexOfObject(object o)
 		{
@@ -381,6 +438,7 @@ namespace Altaxo.Collections
 			}
 			return -1;
 		}
+
 		public void Exchange(int i, int j)
 		{
 			if (i == j)
@@ -398,9 +456,7 @@ namespace Altaxo.Collections
 			this[i] = this[j];
 			this[j] = li;
 		}
-
 	}
-
 
 	public static class SelectableListNodeListHelper
 	{
@@ -439,7 +495,4 @@ namespace Altaxo.Collections
 			return result;
 		}
 	}
-
-
-
 }

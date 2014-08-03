@@ -42,9 +42,9 @@ namespace Altaxo.Main
 		/// Try to copy from another object. Should try to copy even if the object to copy from is not of
 		/// the same type, but a base type. In this case only the base properties should be copied.
 		/// </summary>
-		/// <param name="from">Object to copy from.</param>
+		/// <param name="obj">Object to copy from.</param>
 		/// <returns>True if at least parts of the object could be copied, false if the object to copy from is incompatible.</returns>
-		bool CopyFrom(object from);
+		bool CopyFrom(object obj);
 	}
 
 	/// <summary>Designates a object which supports the changed event.</summary>

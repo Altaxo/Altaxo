@@ -281,6 +281,8 @@
     <Compile Include="Calc\TestRoundings.cs" />
     <Compile Include="Collections\Operations\MinimumOnSlidingWindowTest.cs" />
     <Compile Include="Collections\TestPartitionableList.cs" />
+    <Compile Include="Collections\TestPriorityQueue_KeyValue.cs" />
+    <Compile Include="Collections\TestPriorityQueue_Key.cs" />
     <Compile Include="ResourceKeys.cs" />
   </ItemGroup>
   <ItemGroup>

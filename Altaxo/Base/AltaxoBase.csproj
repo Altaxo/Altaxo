@@ -331,8 +331,11 @@
     <Compile Include="Gui\Settings\ClipboardGraphExportOptionPanel.cs" />
     <Compile Include="Gui\Settings\CultureSettingsController.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DController.cs" />
+    <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
+    <Compile Include="Root\DisposableBase.cs" />
     <Compile Include="Main\IComManager.cs" />
+    <Compile Include="Main\Services\IHighResolutionClock.cs" />
     <Compile Include="Main\ITextBackedConsole.cs" />
     <Compile Include="Main\Properties\PropertyBagWithInformation.cs" />
     <Compile Include="Main\Properties\PropertyBagInformation.cs" />
@@ -345,6 +348,8 @@
     <Compile Include="Main\Properties\PropertyHierarchy.cs" />
     <Compile Include="Main\Properties\PropertyLevel.cs" />
     <Compile Include="Main\Properties\PropertyKeyBase.cs" />
+    <Compile Include="Main\Services\HighResolutionClock.cs" />
+    <Compile Include="Main\Services\ITimerQueue.cs" />
     <Compile Include="Main\Services\PropertyReflection\CompositeItem.cs" />
     <Compile Include="Main\Services\PropertyReflection\DisplayOrderAttribute.cs" />
     <Compile Include="Main\Services\PropertyReflection\ExpandableProperty.cs" />
@@ -353,10 +358,15 @@
     <Compile Include="Main\Services\PropertyReflection\Property.cs" />
     <Compile Include="Main\Services\PropertyReflection\PropertyCategory.cs" />
     <Compile Include="Main\Services\PropertyReflection\PropertyCollection.cs" />
+    <Compile Include="Main\Services\TimerQueue.cs" />
     <Compile Include="Main\TemporaryDisabler.cs" />
+    <Compile Include="Main\TriggerBasedUpdate.cs" />
     <Compile Include="Root\CopyHelper.cs" />
     <Compile Include="Root\PropertyExtensions.cs" />
+    <Compile Include="Root\TimeSpanExtensions.cs" />
+    <Compile Include="Serialization\Ascii\AbsoluteAndRelativeFilePath.cs" />
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
+    <Compile Include="Serialization\Ascii\AsciiImportDataSource.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />

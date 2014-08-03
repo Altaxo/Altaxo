@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -46,6 +48,24 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class SingleLineSeparationStrategy : IAsciiSeparationStrategy
 	{
+		#region Serialization
+
+		/// <summary>2014-08-03 initial version.</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SingleLineSeparationStrategy), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new SingleLineSeparationStrategy() : (SingleLineSeparationStrategy)o);
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		public SingleLineSeparationStrategy()
 		{
@@ -80,7 +100,29 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class SingleCharSeparationStrategy : IAsciiSeparationStrategy
 	{
-		char _separatorChar;
+		private char _separatorChar;
+
+		#region Serialization
+
+		/// <summary>2014-08-03 initial version.</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SingleCharSeparationStrategy), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (SingleCharSeparationStrategy)obj;
+				info.AddValue("SeparatorChar", s._separatorChar);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new SingleCharSeparationStrategy() : (SingleCharSeparationStrategy)o);
+				s._separatorChar = info.GetChar("SeparatorChar");
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Constructor for this strategy. You must provide a separator char.
@@ -103,7 +145,6 @@ namespace Altaxo.Serialization.Ascii
 
 		public IEnumerable<string> GetTokens(string line)
 		{
-
 			int len = line.Length;
 			int ix = 0;
 			for (int start = 0; start <= len; start = ix + 1)
@@ -136,14 +177,35 @@ namespace Altaxo.Serialization.Ascii
 		}
 	}
 
-
 	/// <summary>
 	/// This strategy assumes that the tokens fill the string at fixed positions in the string and have a fixed length.
 	/// The starting position of the first token is always zero. The starting positions of each subsequent token (beginning with the second token) has to be provided in the constructor.
 	/// </summary>
 	public class FixedColumnWidthWithoutTabSeparationStrategy : IAsciiSeparationStrategy
 	{
-		int[] _startPositions;
+		private int[] _startPositions;
+
+		#region Serialization
+
+		/// <summary>2014-08-03 initial version.</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithoutTabSeparationStrategy), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (FixedColumnWidthWithoutTabSeparationStrategy)obj;
+				info.AddArray("StartPositions", s._startPositions, s._startPositions.Length);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new FixedColumnWidthWithoutTabSeparationStrategy() : (FixedColumnWidthWithoutTabSeparationStrategy)o);
+				info.GetArray("StartPositions", out s._startPositions);
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FixedColumnWidthWithoutTabSeparationStrategy"/> class with an empty list of start positions.
@@ -194,7 +256,6 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-
 		public bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -214,7 +275,6 @@ namespace Altaxo.Serialization.Ascii
 		}
 	}
 
-
 	/// <summary>
 	/// This strategy assumes that the tokens fill the printout (!) at fixed positions and have a fixed length.
 	/// For the printout position, we have to assume a certain tabulator with. Each tabulator char in the string advances the printout position by a certain amount depending on the current printout
@@ -224,8 +284,32 @@ namespace Altaxo.Serialization.Ascii
 	/// <remarks>For a tab width of 1, this strategy is identical to the <see cref="FixedColumnWidthWithoutTabSeparationStrategy" />.</remarks>
 	public class FixedColumnWidthWithTabSeparationStrategy : IAsciiSeparationStrategy
 	{
-		int[] _startPositions;
-		int _tabSize;
+		private int[] _startPositions;
+		private int _tabSize;
+
+		#region Serialization
+
+		/// <summary>2014-08-03 initial version.</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithTabSeparationStrategy), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (FixedColumnWidthWithTabSeparationStrategy)obj;
+				info.AddArray("StartPositions", s._startPositions, s._startPositions.Length);
+				info.AddValue("TabSize", s._tabSize);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new FixedColumnWidthWithTabSeparationStrategy() : (FixedColumnWidthWithTabSeparationStrategy)o);
+				info.GetArray("StartPositions", out s._startPositions);
+				s._tabSize = info.GetInt32("TabSize");
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FixedColumnWidthWithTabSeparationStrategy"/> class with a TabSize of 8 and an empty list of start positions.
@@ -322,8 +406,27 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class SkipWhiteSpaceSeparationStrategy : IAsciiSeparationStrategy
 	{
-		static char[] separators = { ' ', '\t' };
+		private static char[] separators = { ' ', '\t' };
 
+		#region Serialization
+
+		/// <summary>2014-08-03 initial version.</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SkipWhiteSpaceSeparationStrategy), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (SkipWhiteSpaceSeparationStrategy)obj;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new SkipWhiteSpaceSeparationStrategy() : (SkipWhiteSpaceSeparationStrategy)o);
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SkipWhiteSpaceSeparationStrategy"/> class.
@@ -353,7 +456,5 @@ namespace Altaxo.Serialization.Ascii
 		{
 			return new SkipWhiteSpaceSeparationStrategy();
 		}
-
 	}
-
 }

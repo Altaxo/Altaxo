@@ -564,6 +564,7 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Collections\ConcurrentTokenizedPriorityQueue_KeyValue.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
     <Compile Include="Collections\EnumerationExtensions.cs" />
     <Compile Include="Collections\IAscendingIntegerCollection.cs" />
@@ -575,6 +576,7 @@
     <Compile Include="Collections\Operations\MinimumOnSlidingWindow.cs" />
     <Compile Include="Collections\PartitionableList_PartialView.cs" />
     <Compile Include="Collections\PartitionableList.cs" />
+    <Compile Include="Collections\PriorityQueue_Key.cs" />
     <Compile Include="Collections\Text\GeneralizedSuffixArray.cs" />
     <Compile Include="Collections\Text\IntegerTextData.cs" />
     <Compile Include="Collections\Text\LongestCommonGeneralizedRepeatA.cs" />

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Xml;
@@ -30,17 +32,18 @@ namespace Altaxo.Serialization.Xml
 	/// </summary>
 	public class XmlStreamSerializationInfo : IXmlSerializationInfo
 	{
-		XmlWriter m_Writer;
+		private XmlWriter m_Writer;
+
 		/// <summary>Designates, whether the XmlWriter is created in this instance or not. If it is created here, it will be closed when calling <see cref="EndWriting"/>. Otherwise, it will only be detached.</summary>
-		bool _isWriterCreatedHere;
+		private bool _isWriterCreatedHere;
 
-		XmlSurrogateSelector m_SurrogateSelector;
-		System.Text.StringBuilder m_StringBuilder = new System.Text.StringBuilder();
+		private XmlSurrogateSelector m_SurrogateSelector;
+		private System.Text.StringBuilder m_StringBuilder = new System.Text.StringBuilder();
 
-		byte[] m_Buffer;
-		int m_BufferSize;
+		private byte[] m_Buffer;
+		private int m_BufferSize;
 
-		XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
+		private XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
 
 		private System.Collections.Specialized.StringDictionary m_Properties = new System.Collections.Specialized.StringDictionary();
 
@@ -48,8 +51,6 @@ namespace Altaxo.Serialization.Xml
 		private const int _size_of_float = 4;
 		private const int _size_of_double = 8;
 		private const int _size_of_DateTime = 8;
-
-
 
 		public XmlStreamSerializationInfo()
 		{
@@ -122,6 +123,12 @@ namespace Altaxo.Serialization.Xml
 		{
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
 		}
+
+		public void AddValue(string name, char val)
+		{
+			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+		}
+
 		public void AddValue(string name, int val)
 		{
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
@@ -139,10 +146,12 @@ namespace Altaxo.Serialization.Xml
 		{
 			m_Writer.WriteElementString(name, val);
 		}
+
 		public void AddAttributeValue(string name, int val)
 		{
 			m_Writer.WriteAttributeString(name, XmlConvert.ToString(val));
 		}
+
 		public void AddAttributeValue(string name, string val)
 		{
 			m_Writer.WriteAttributeString(name, val);
@@ -152,6 +161,7 @@ namespace Altaxo.Serialization.Xml
 		{
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
 		}
+
 		public void AddValue(string name, double val)
 		{
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
@@ -202,7 +212,6 @@ namespace Altaxo.Serialization.Xml
 				m_Writer.WriteElementString(name, val.Value.ToString());
 		}
 
-
 		public void SetNodeContent(string nodeContent)
 		{
 			m_Writer.WriteString(nodeContent);
@@ -222,7 +231,6 @@ namespace Altaxo.Serialization.Xml
 			m_Writer.WriteEndElement(); // Node "name"
 		}
 
-
 		public void AddArray(string name, float[] val, int count)
 		{
 			this.CreateArray(name, count);
@@ -240,7 +248,6 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
 					}
 					m_Writer.WriteEndElement(); // node "e"
-
 				}
 				else
 				{
@@ -267,7 +274,6 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
 					}
 					m_Writer.WriteEndElement(); // node "e"
-
 				}
 				else
 				{
@@ -294,7 +300,6 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
 					}
 					m_Writer.WriteEndElement(); // node "e"
-
 				}
 				else
 				{
@@ -303,7 +308,6 @@ namespace Altaxo.Serialization.Xml
 			} // count>0
 			this.CommitArray();
 		}
-
 
 		public void AddArray(string name, DateTime[] val, int count)
 		{
@@ -322,7 +326,6 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
 					}
 					m_Writer.WriteEndElement(); // node "e"
-
 				}
 				else
 				{
@@ -342,7 +345,6 @@ namespace Altaxo.Serialization.Xml
 				{
 					m_Writer.WriteElementString("e", val[i]);
 				}
-
 			} // count>0
 			this.CommitArray();
 		}
@@ -366,6 +368,7 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteEndElement();
 					}
 					break;
+
 				case XmlArrayEncoding.BinHex:
 					{
 						m_Writer.WriteAttributeString("Encoding", "BinHex");
@@ -381,13 +384,13 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteEndElement();
 					}
 					break;
+
 				case XmlArrayEncoding.Xml:
 					throw new ArgumentException("This function must not be called with encoding=" + encoding.ToString());
 				default:
 					throw new ApplicationException("Unknown encoding value: " + encoding.ToString());
 			} // end switch
 		}
-
 
 		public void AddArray(string name, object[] val, int count)
 		{
@@ -399,11 +402,9 @@ namespace Altaxo.Serialization.Xml
 				{
 					this.AddValue("e", val[i]);
 				}
-
 			} // count>0
 			this.CommitArray();
 		}
-
 
 		public void CreateElement(string name)
 		{
@@ -459,6 +460,7 @@ namespace Altaxo.Serialization.Xml
 				ss.Serialize(o, this);
 			}
 		}
+
 		public void AddBaseValueStandalone(string name, object o, System.Type basetype)
 		{
 			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
@@ -473,8 +475,6 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
-		#endregion
-
-
+		#endregion IXmlSerializationInfo Members
 	}
 }

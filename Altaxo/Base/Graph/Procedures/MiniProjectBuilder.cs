@@ -177,8 +177,6 @@ namespace Altaxo.Graph.Procedures
 			}
 			else if (proxy.DocumentObject is Altaxo.Data.DataColumnCollection)
 			{
-				throw new NotImplementedException();
-				/*
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumnCollection)proxy.DocumentObject);
 				if (table != null)
 				{
@@ -186,12 +184,9 @@ namespace Altaxo.Graph.Procedures
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
-				 */
 			}
 			else if (proxy.DocumentObject is DataTable)
 			{
-				throw new NotImplementedException();
-				/*
 				var table = proxy.DocumentObject as DataTable;
 				if (table != null)
 				{
@@ -199,20 +194,10 @@ namespace Altaxo.Graph.Procedures
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
-				*/
 			}
 			else if ((proxy is Altaxo.Data.NumericColumnProxy) || (proxy is Altaxo.Data.ReadableColumnProxy))
 			{
-				throw new NotImplementedException();
-				/*
-				var path = proxy.DocumentPath;
-				if (path.Count >= 2 && path.StartsWith(DocumentPath.GetPath(Current.Project.DataTableCollection, int.MaxValue)))
-				{
-					var tablePath = path.SubPath(2);
-					if (!_tablesToChange.ContainsKey(tablePath))
-						_tablesToChange.Add(tablePath, null);
-				}
-				*/
+				// seems to be an indexer column or something alike. No need to do something
 			}
 		}
 	}

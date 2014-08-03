@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -34,7 +36,6 @@ namespace Altaxo.Serialization.Ascii
 		DateTime,
 		Text
 	}
-
 
 	public struct AsciiColumnInfo
 	{
@@ -50,7 +51,9 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		public AsciiColumnType ColumnType { get { return _columnType; } }
+
 		public int ScoreValue { get { return _scoreValue; } }
+
 		public char ShortCut { get { return _shortCut; } }
 
 		static AsciiColumnInfo()
@@ -65,24 +68,31 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		private static AsciiColumnInfo _instDBNull;
+
 		public static AsciiColumnInfo DBNull { get { return _instDBNull; } }
 
 		private static AsciiColumnInfo _instText;
+
 		public static AsciiColumnInfo Text { get { return _instText; } }
 
 		private static AsciiColumnInfo _instFloatWithDecimalSeparator;
+
 		public static AsciiColumnInfo FloatWithDecimalSeparator { get { return _instFloatWithDecimalSeparator; } }
 
 		private static AsciiColumnInfo _instFloatWithoutDecimalSeparator;
+
 		public static AsciiColumnInfo FloatWithoutDecimalSeparator { get { return _instFloatWithoutDecimalSeparator; } }
 
 		private static AsciiColumnInfo _instInteger;
+
 		public static AsciiColumnInfo Integer { get { return _instInteger; } }
 
 		private static AsciiColumnInfo _instGeneralNumber;
+
 		public static AsciiColumnInfo GeneralNumber { get { return _instGeneralNumber; } }
 
 		private static AsciiColumnInfo _instDateTime;
+
 		public static AsciiColumnInfo DateTime { get { return _instDateTime; } }
 	}
 
@@ -91,18 +101,16 @@ namespace Altaxo.Serialization.Ascii
 	/// </summary>
 	public class AsciiLineStructure : IList<AsciiColumnInfo>
 	{
-
 		#region Inner items
 
 		private class CollectionWrapper : ICollection<AsciiColumnType>
 		{
-			AsciiLineStructure _parent;
+			private AsciiLineStructure _parent;
 
 			public CollectionWrapper(AsciiLineStructure parent)
 			{
 				_parent = parent;
 			}
-
 
 			public void Add(AsciiColumnType item)
 			{
@@ -111,20 +119,25 @@ namespace Altaxo.Serialization.Ascii
 					case AsciiColumnType.DBNull:
 						_parent.Add(AsciiColumnInfo.DBNull);
 						break;
+
 					case AsciiColumnType.Int64:
 						_parent.Add(AsciiColumnInfo.Integer);
 						break;
+
 					case AsciiColumnType.Double:
-							_parent.Add(AsciiColumnInfo.FloatWithDecimalSeparator);
-							break;
+						_parent.Add(AsciiColumnInfo.FloatWithDecimalSeparator);
+						break;
+
 					case AsciiColumnType.DateTime:
-							_parent.Add(AsciiColumnInfo.DateTime);
-							break;
+						_parent.Add(AsciiColumnInfo.DateTime);
+						break;
+
 					case AsciiColumnType.Text:
-							_parent.Add(AsciiColumnInfo.Text);
-							break;
+						_parent.Add(AsciiColumnInfo.Text);
+						break;
+
 					default:
-							throw new ArgumentOutOfRangeException("item");
+						throw new ArgumentOutOfRangeException("item");
 				}
 			}
 
@@ -171,24 +184,56 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-
-		#endregion
-
+		#endregion Inner items
 
 		/// <summary>
 		/// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
 		/// </summary>
 		protected List<AsciiColumnInfo> _recognizedTypes = new List<AsciiColumnInfo>();
+
 		private CollectionWrapper _columnTypeCollectionWrapper;
 
-
 		/// <summary>
-		/// If true, the cached data in this class are invalid and needs to be recalculated. 
+		/// If true, the cached data in this class are invalid and needs to be recalculated.
 		/// </summary>
 		protected bool _isCachedDataInvalid = true;
+
 		protected int _priorityValue;
 		protected int _hashValue;
 
+		#region Serialization
+
+		/// <summary>2014-08-03 initial version.</summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiLineStructure), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (AsciiLineStructure)obj;
+
+				info.CreateArray("ColumnTypes", s._recognizedTypes.Count);
+				for (int i = 0; i < s._recognizedTypes.Count; ++i)
+				{
+					info.AddEnum("e", s._recognizedTypes[i].ColumnType);
+				}
+				info.CommitArray();
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new AsciiLineStructure() : (AsciiLineStructure)o);
+				var count = info.OpenArray("ColumnTypes");
+				for (int i = 0; i < count; ++i)
+				{
+					s.ColumnTypes.Add((AsciiColumnType)info.GetEnum("e", typeof(AsciiColumnType)));
+				}
+				info.CloseArray(count);
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		public ICollection<AsciiColumnType> ColumnTypes
 		{
@@ -197,10 +242,8 @@ namespace Altaxo.Serialization.Ascii
 				if (null == _columnTypeCollectionWrapper)
 					_columnTypeCollectionWrapper = new CollectionWrapper(this);
 				return _columnTypeCollectionWrapper;
-
 			}
 		}
-
 
 		/// <summary>
 		/// Number of recognized items in the line.
@@ -212,8 +255,6 @@ namespace Altaxo.Serialization.Ascii
 				return _recognizedTypes.Count;
 			}
 		}
-
-	
 
 		/// <summary>
 		/// Adds a recognized item.
@@ -271,15 +312,12 @@ namespace Altaxo.Serialization.Ascii
 			_isCachedDataInvalid = false;
 		}
 
-
-
 		public override int GetHashCode()
 		{
 			if (_isCachedDataInvalid)
 				CalculateCachedData();
 			return _hashValue;
 		}
-
 
 		/// <summary>
 		/// Determines whether this line structure is is compatible with another line structure.
@@ -329,15 +367,13 @@ namespace Altaxo.Serialization.Ascii
 			var stb = new StringBuilder();
 
 			stb.AppendFormat("C={0} H={1:X8}", Count, GetHashCode());
-			foreach(var entry in _recognizedTypes)
+			foreach (var entry in _recognizedTypes)
 			{
 				stb.Append(' ');
 				stb.Append(entry.ShortCut);
 			}
 			return stb.ToString();
 		}
-
-
 
 		public int IndexOf(AsciiColumnInfo item)
 		{
@@ -355,7 +391,6 @@ namespace Altaxo.Serialization.Ascii
 			_recognizedTypes.RemoveAt(index);
 			_isCachedDataInvalid = true;
 		}
-
 
 		public void Clear()
 		{
@@ -396,7 +431,6 @@ namespace Altaxo.Serialization.Ascii
 		}
 	} // end class AsciiLineStructure
 
-
 	/// <summary>
 	/// Helper structure to count how many lines have the same structure.
 	/// </summary>
@@ -408,5 +442,4 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>The structure that these lines have.</summary>
 		public AsciiLineStructure LineStructure;
 	} // end class
-
 }

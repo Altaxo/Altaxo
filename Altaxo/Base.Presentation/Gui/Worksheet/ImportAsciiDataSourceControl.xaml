@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Altaxo.Gui.Worksheet.ImportAsciiDataSourceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition  Height="Auto" />
+		</Grid.RowDefinitions>
+		<Expander Grid.Row="0" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Data source import options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiImportOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="1"  Background="Lavender">
+			<Expander.Header>
+				<TextBlock Text="Ascii import options" FontWeight="Bold" />
+			</Expander.Header>
+			<Border x:Name="_guiAsciiImportOptionsHost" />
+		</Expander>
+		<Expander Grid.Row="2" IsExpanded="True" Background="BlanchedAlmond">
+			<Expander.Header>
+				<TextBlock Text="Ascii file" FontWeight="Bold" />
+			</Expander.Header>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="11*" />
+					<ColumnDefinition Width="271*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<TextBox x:Name="_guiFileName" Grid.ColumnSpan="2" Margin="8,8,0,8" ToolTip="File name of the Ascii file to import" />
+				<Button Grid.Column="2" Content="..." MinWidth="16" Margin="8,8,8,8" Click="EhBrowseFileName" ToolTip="Click here to select a file" />
+			</Grid>
+		</Expander>
+	</Grid>
+</UserControl>
