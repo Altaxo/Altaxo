@@ -186,7 +186,7 @@ namespace Altaxo.Serialization.Ascii
 			{
 				using (var stream = new System.IO.FileStream(validFileNames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
 				{
-					AsciiImporter.Import(stream, AsciiImporter.FileUrlStart + validFileNames[0], destinationTable, _asciiImportOptions);
+					AsciiImporter.ImportFromAsciiStream(destinationTable, stream, AsciiImporter.FileUrlStart + validFileNames[0], _asciiImportOptions);
 				}
 			}
 			else

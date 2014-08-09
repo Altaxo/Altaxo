@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,42 +19,43 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+#endregion Copyright
 
 using Altaxo.Collections;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
 namespace Altaxo.Gui.Pads.FileBrowser
 {
 	public interface IFileListView
 	{
 		void Initialize_FileListColumnNames(ICollection<string> names);
+
 		void Initialize_FileList(SelectableListNodeList files);
 
 		/// <summary>
 		/// Occurs when the user activates the selected items (either by double-clicking on it, or by pressing Enter).
 		/// </summary>
 		event Action SelectedItemsActivated;
-
 	}
 
 	public class FileListController
 	{
-
 		#region FileItem
 
-		class FileListItem : SelectableListNode
+		private class FileListItem : SelectableListNode
 		{
-			string _text1;
-			string _text2;
+			private string _text1;
+			private string _text2;
+
 			public string FullName { get { return (string)Tag; } }
 
 			public FileListItem(string fullPath)
-				: base(Path.GetFileName(fullPath),fullPath,false)
+				: base(Path.GetFileName(fullPath), fullPath, false)
 			{
 				InternalUpdate(false);
 			}
@@ -70,7 +72,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				InternalUpdate(true);
 			}
 
-			void InternalUpdate(bool triggerEvents)
+			private void InternalUpdate(bool triggerEvents)
 			{
 				FileInfo info = new FileInfo(FullName);
 
@@ -89,8 +91,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 					OnPropertyChanged("Text2");
 				}
 			}
-
-
 
 			public override string Text1
 			{
@@ -114,37 +114,34 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				OnPropertyChanged("Text1");
 			}
 
-				public void SetText2(string value)
+			public void SetText2(string value)
 			{
 				_text2 = value;
 				OnPropertyChanged("Text2");
 			}
-
 		}
 
-		#endregion
+		#endregion FileItem
 
-		IFileListView _view;
+		private IFileListView _view;
 		private FileSystemWatcher watcher;
-		List<string> _columnNames;
+		private List<string> _columnNames;
 
-		SelectableListNodeList _fileList = new SelectableListNodeList();
+		private SelectableListNodeList _fileList = new SelectableListNodeList();
 
 		public FileListController()
 		{
 			Initialize(true);
 		}
 
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
-
 			if (initData)
 			{
 				_columnNames = new List<string>();
 				_columnNames.Add(Current.ResourceService.GetString("CompilerResultView.FileText"));
 				_columnNames.Add(Current.ResourceService.GetString("MainWindow.Windows.FileScout.Size"));
 				_columnNames.Add(Current.ResourceService.GetString("MainWindow.Windows.FileScout.LastModified"));
-
 
 				try
 				{
@@ -173,11 +170,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 		#region FileSystemWatcher handlers
 
-		void fileDeleted(object sender, FileSystemEventArgs e)
+		private void fileDeleted(object sender, FileSystemEventArgs e)
 		{
 			Action method = delegate
 			{
-				for(int i=_fileList.Count-1;i>=0;--i)
+				for (int i = _fileList.Count - 1; i >= 0; --i)
 				{
 					var fileItem = (FileListItem)_fileList[i];
 					if (fileItem.FullName.Equals(e.FullPath, StringComparison.OrdinalIgnoreCase))
@@ -191,7 +188,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			Current.Gui.Execute(method);
 		}
 
-		void fileChanged(object sender, FileSystemEventArgs e)
+		private void fileChanged(object sender, FileSystemEventArgs e)
 		{
 			Action method = delegate
 			{
@@ -199,7 +196,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				{
 					if (fileItem.FullName.Equals(e.FullPath, StringComparison.OrdinalIgnoreCase))
 					{
-
 						fileItem.Update();
 						break;
 					}
@@ -208,7 +204,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			Current.Gui.Execute(method);
 		}
 
-		void fileCreated(object sender, FileSystemEventArgs e)
+		private void fileCreated(object sender, FileSystemEventArgs e)
 		{
 			Action method = delegate
 			{
@@ -219,7 +215,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			Current.Gui.Execute(method);
 		}
 
-		void fileRenamed(object sender, RenamedEventArgs e)
+		private void fileRenamed(object sender, RenamedEventArgs e)
 		{
 			Action method = delegate
 			{
@@ -236,13 +232,13 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			Current.Gui.Execute(method);
 		}
 
-		#endregion
+		#endregion FileSystemWatcher handlers
 
 		#region User handlers
 
 		public void EhView_ActivateSelectedItems()
 		{
-			foreach (FileListItem item in _fileList.Where(x=>x.IsSelected))
+			foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
 			{
 				switch (Path.GetExtension(item.FullName).ToLower())
 				{
@@ -250,6 +246,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 					case ".axoprz":
 						Current.ProjectService.OpenProject(item.FullName, false);
 						break;
+
 					case ".spc":
 						if (Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
 						{
@@ -258,15 +255,16 @@ namespace Altaxo.Gui.Pads.FileBrowser
 							Altaxo.Serialization.Galactic.Import.ImportSpcFiles(files, ctrl.DataTable);
 						}
 						break;
+
 					case ".dat":
 					case ".txt":
 					case ".csv":
 						{
 							Altaxo.Data.FileCommands.ImportAsciiToMultipleWorksheets(
-								null,
 								new string[] { item.FullName }, null);
 						}
 						break;
+
 					default:
 						ICSharpCode.SharpDevelop.FileService.OpenFile(item.FullName);
 						break;
@@ -304,8 +302,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			}
 		}
 
-		#endregion
-
+		#endregion User handlers
 
 		public object ViewObject
 		{

@@ -1006,9 +1006,9 @@ namespace Altaxo.Worksheet.Commands
 
 
 			if (clipboardobject is System.IO.MemoryStream)
-				table = Altaxo.Serialization.Ascii.AsciiImporter.Import((System.IO.Stream)clipboardobject, "clipboard");
+				table = Altaxo.Serialization.Ascii.AsciiImporter.ImportStreamIntoNewTable((System.IO.Stream)clipboardobject, "clipboard");
 			else if (clipboardobject is string)
-				table = Altaxo.Serialization.Ascii.AsciiImporter.ImportText((string)clipboardobject);
+				table = Altaxo.Serialization.Ascii.AsciiImporter.ImportTextIntoNewTable((string)clipboardobject);
 
 
 			return table;

@@ -43,18 +43,17 @@ namespace Altaxo.Data
 		/// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
 		public static void ImportAscii(this DataTable dataTable, System.IO.Stream myStream, string streamOriginHint)
 		{
-			AsciiImporter.Import(myStream, streamOriginHint, dataTable);
+			AsciiImporter.ImportFromAsciiStream(dataTable, myStream, streamOriginHint);
 		}
 
 		/// <summary>
 		/// Imports multiple Ascii files into the provided table and additionally created tables.
 		/// </summary>
-		/// <param name="dataTable">The data table where the first ascii file is imported to. Can be null.</param>
 		/// <param name="filenames">The names of the files to import.</param>
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
-		public static void ImportAsciiToMultipleWorksheets(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
+		public static void ImportAsciiToMultipleWorksheets(string[] filenames, AsciiImportOptions importOptions)
 		{
-			AsciiImporter.ImportAsciiToMultipleWorksheets(filenames, dataTable, importOptions);
+			AsciiImporter.ImportFilesIntoSeparateNewTables(filenames, importOptions);
 		}
 
 		/// <summary>
@@ -66,7 +65,7 @@ namespace Altaxo.Data
 		public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAsciiHorizontally(filenames, dataTable, importOptions);
+			AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, importOptions);
 		}
 
 		/// <summary>
@@ -78,7 +77,7 @@ namespace Altaxo.Data
 		public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
 			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportMultipleAsciiVertically(filenames, dataTable, importOptions);
+			AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, importOptions);
 		}
 
 		/// <summary>
@@ -117,7 +116,7 @@ namespace Altaxo.Data
 			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
 			{
 				if (toMultipleWorksheets)
-					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames, null);
+					ImportAsciiToMultipleWorksheets(options.FileNames, null);
 				else
 				{
 					if (vertically)
@@ -154,7 +153,7 @@ namespace Altaxo.Data
 
 				if (toMultipleWorksheets)
 				{
-					ImportAsciiToMultipleWorksheets(dataTable, options.FileNames, importOptions);
+					ImportAsciiToMultipleWorksheets(options.FileNames, importOptions);
 				}
 				else
 				{
