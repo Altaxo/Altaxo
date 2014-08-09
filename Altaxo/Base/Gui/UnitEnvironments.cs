@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,7 +31,7 @@ namespace Altaxo.Gui
 {
 	public static class RelationEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static RelationEnvironment()
 		{
@@ -53,7 +55,7 @@ namespace Altaxo.Gui
 
 	public static class AngleEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static AngleEnvironment()
 		{
@@ -77,7 +79,7 @@ namespace Altaxo.Gui
 
 	public static class PositionEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static PositionEnvironment()
 		{
@@ -101,7 +103,7 @@ namespace Altaxo.Gui
 
 	public static class SizeEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static SizeEnvironment()
 		{
@@ -125,7 +127,7 @@ namespace Altaxo.Gui
 
 	public static class FontSizeEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static FontSizeEnvironment()
 		{
@@ -149,7 +151,7 @@ namespace Altaxo.Gui
 
 	public static class LineCapSizeEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static LineCapSizeEnvironment()
 		{
@@ -173,7 +175,7 @@ namespace Altaxo.Gui
 
 	public static class LineThicknessEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static LineThicknessEnvironment()
 		{
@@ -197,7 +199,7 @@ namespace Altaxo.Gui
 
 	public static class MiterLimitEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static MiterLimitEnvironment()
 		{
@@ -221,7 +223,7 @@ namespace Altaxo.Gui
 
 	public static class PaperMarginEnvironment
 	{
-		static QuantityWithUnitGuiEnvironment _instance;
+		private static QuantityWithUnitGuiEnvironment _instance;
 
 		static PaperMarginEnvironment()
 		{
@@ -233,6 +235,30 @@ namespace Altaxo.Gui
 
 		/// <summary>
 		/// Gets the common position environment for all position boxes.
+		/// </summary>
+		public static QuantityWithUnitGuiEnvironment Instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+	}
+
+	public static class TimeEnvironment
+	{
+		private static QuantityWithUnitGuiEnvironment _instance;
+
+		static TimeEnvironment()
+		{
+			_instance = new QuantityWithUnitGuiEnvironment(GuiTimeUnits.Collection)
+			{
+				DefaultUnit = new Units.PrefixedUnit(Units.SIPrefix.None, Units.Time.Second.Instance)
+			};
+		}
+
+		/// <summary>
+		/// Gets the common size environment for all size boxes.
 		/// </summary>
 		public static QuantityWithUnitGuiEnvironment Instance
 		{

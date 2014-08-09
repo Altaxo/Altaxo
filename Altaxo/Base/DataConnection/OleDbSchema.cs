@@ -401,13 +401,22 @@ namespace Altaxo.DataConnection
 			EnforceConstraints = false;
 			using (var conn = new OleDbConnection(connString))
 			{
-			
-				conn.Open();
-				GetTables(conn);
-				GetRelations(conn);
-				GetConstraints(conn);
-				GetStoredProcedures(conn);
-				conn.Close();
+				try
+				{
+					conn.Open();
+					GetTables(conn);
+					GetRelations(conn);
+					GetConstraints(conn);
+					GetStoredProcedures(conn);
+				}
+				catch (OleDbException ex)
+				{
+					_connString = null;
+				}
+				finally
+				{
+					conn.Close();
+				}
 			}
 		}
 

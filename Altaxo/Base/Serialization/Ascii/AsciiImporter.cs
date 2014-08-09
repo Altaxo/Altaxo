@@ -317,7 +317,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <returns>The stream. You are responsible for closing / disposing this stream.</returns>
 		public static System.IO.FileStream GetAsciiInputFileStream(string filename)
 		{
-			return new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+			return new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
 		}
 
 		/// <summary>
@@ -395,7 +395,7 @@ namespace Altaxo.Serialization.Ascii
 		{
 			using (var str = GetAsciiInputFileStream((filename)))
 			{
-				return Import(str, "file: " + filename);
+				return Import(str, FileUrlStart + filename);
 			}
 		}
 
@@ -411,7 +411,7 @@ namespace Altaxo.Serialization.Ascii
 			defaultImportOptions.SeparationStrategy = new SingleCharSeparationStrategy(separatorChar);
 			using (var str = GetAsciiInputFileStream(filename))
 			{
-				return Import(str, "file: " + filename, defaultImportOptions);
+				return Import(str, FileUrlStart + filename, defaultImportOptions);
 			}
 		}
 
@@ -527,7 +527,7 @@ namespace Altaxo.Serialization.Ascii
 				using (var stream = GetAsciiInputFileStream(filename))
 				{
 					newtable = new DataTable();
-					Import(stream, "file: " + filename, newtable, importOptions);
+					Import(stream, FileUrlStart + filename, newtable, importOptions);
 					stream.Close();
 				}
 
@@ -615,7 +615,7 @@ namespace Altaxo.Serialization.Ascii
 				using (var stream = GetAsciiInputFileStream(filename))
 				{
 					srctable = new DataTable();
-					Import(stream, "file " + filename, srctable, importOptions);
+					Import(stream, FileUrlStart + filename, srctable, importOptions);
 					stream.Close();
 				}
 
@@ -689,7 +689,7 @@ namespace Altaxo.Serialization.Ascii
 				{
 					var newTable = new DataTable(System.IO.Path.GetFileNameWithoutExtension(filenames[i]));
 					Current.ProjectService.CreateNewWorksheet(newTable);
-					Import(myStream, "file " + filenames[i], newTable, importOptions);
+					Import(myStream, FileUrlStart + filenames[i], newTable, importOptions);
 					myStream.Close();
 				}
 			} // for all files

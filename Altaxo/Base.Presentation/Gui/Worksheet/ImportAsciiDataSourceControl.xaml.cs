@@ -43,6 +43,12 @@ namespace Altaxo.Gui.Worksheet
 	/// </summary>
 	public partial class ImportAsciiDataSourceControl : UserControl, IImportAsciiDataSourceView
 	{
+		public event Action BrowseSelectedFileName;
+
+		public event Action DeleteSelectedFileName;
+
+		public event Action AddNewFileName;
+
 		public ImportAsciiDataSourceControl()
 		{
 			InitializeComponent();
@@ -58,23 +64,46 @@ namespace Altaxo.Gui.Worksheet
 			_guiImportOptionsHost.Child = p as UIElement;
 		}
 
-		public string FileName
+		public Collections.SelectableListNodeList FileNames
+		{
+			set { GuiHelper.Initialize(_guiFileNames, value); }
+		}
+
+		public bool ImportMultipleAsciiVertically
 		{
 			get
 			{
-				return _guiFileName.Text;
+				return _guiImportMultipleAsciiVertically.IsChecked == true;
 			}
 			set
 			{
-				_guiFileName.Text = value;
+				_guiImportMultipleAsciiVertically.IsChecked = value;
 			}
 		}
 
-		public event Action BrowseFileName;
-
 		private void EhBrowseFileName(object sender, RoutedEventArgs e)
 		{
-			var ev = BrowseFileName;
+			_guiFileNames.SelectedItem = ((Button)sender).DataContext;
+			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+
+			var ev = BrowseSelectedFileName;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhRemoveFileName(object sender, RoutedEventArgs e)
+		{
+			_guiFileNames.SelectedItem = ((Button)sender).DataContext;
+			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+			var ev = DeleteSelectedFileName;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhAddNewFileName(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+			var ev = AddNewFileName;
 			if (null != ev)
 				ev();
 		}

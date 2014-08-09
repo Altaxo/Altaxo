@@ -121,7 +121,11 @@ namespace Altaxo.Gui.DataConnection
 				_queryDesignerController = new QueryDesignerController();
 				_arbitrarySqlQueryController = new ArbitrarySqlQueryController();
 				_connectionStringList = new SelectableListNodeList(_staticConnectionStringList);
+
 				var connectionString = _doc.ConnectionString;
+				bool isConnectionStringValid = IsConnectionStringValid(ref connectionString);
+				_connectionStringValidIndicator = new StringValidIndicator(connectionString, isConnectionStringValid);
+
 				_tabItemList = new SelectableListNodeList();
 
 				_currentlySelectedController = _arbitrarySqlQueryController;
@@ -143,15 +147,15 @@ namespace Altaxo.Gui.DataConnection
 				}
 
 				_entireTableQueryController.TableName = entireTableName;
-				_entireTableQueryController.ConnectionString = connectionString;
+				if (isConnectionStringValid) _entireTableQueryController.ConnectionString = connectionString;
 				_tabItemList.Add(new SelectableListNode("Single table", _entireTableQueryController, object.ReferenceEquals(_entireTableQueryController, _currentlySelectedController)));
 
 				// Query designer controller
-				_queryDesignerController.ConnectionString = connectionString;
+				if (isConnectionStringValid) _queryDesignerController.ConnectionString = connectionString;
 				_tabItemList.Add(new SelectableListNode("Query builder", _queryDesignerController, object.ReferenceEquals(_queryDesignerController, _currentlySelectedController)));
 
 				// Arbitrary SQL controller
-				_arbitrarySqlQueryController.ConnectionString = connectionString;
+				if (isConnectionStringValid) _arbitrarySqlQueryController.ConnectionString = connectionString;
 				_arbitrarySqlQueryController.SelectionStatement = SelectionStatement;
 				_tabItemList.Add(new SelectableListNode("Arbitrary Sql statement", _arbitrarySqlQueryController, object.ReferenceEquals(_arbitrarySqlQueryController, _currentlySelectedController)));
 

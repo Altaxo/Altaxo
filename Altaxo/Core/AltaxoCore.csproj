@@ -610,6 +610,11 @@
     <Compile Include="Units\Length\Inch.cs" />
     <Compile Include="Units\Length\Meter.cs" />
     <Compile Include="Units\Length\Point.cs" />
+    <Compile Include="Units\Time\Week.cs" />
+    <Compile Include="Units\Time\Day.cs" />
+    <Compile Include="Units\Time\Hour.cs" />
+    <Compile Include="Units\Time\Minute.cs" />
+    <Compile Include="Units\Time\Second.cs" />
     <Compile Include="Units\UnitWithLimitedPrefixes.cs" />
     <Compile Include="Science\ValueTransformation.cs" />
     <Compile Include="Units\Dimensionless\Percent.cs" />

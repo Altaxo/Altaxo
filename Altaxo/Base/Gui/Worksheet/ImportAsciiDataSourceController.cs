@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
 using Altaxo.Worksheet.Commands.Analysis;
 using System;
@@ -37,9 +38,15 @@ namespace Altaxo.Gui.Worksheet
 
 		void SetImportOptionsControl(object p);
 
-		string FileName { get; set; }
+		SelectableListNodeList FileNames { set; }
 
-		event Action BrowseFileName;
+		event Action BrowseSelectedFileName;
+
+		event Action DeleteSelectedFileName;
+
+		event Action AddNewFileName;
+
+		bool ImportMultipleAsciiVertically { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IImportAsciiDataSourceView))]
@@ -48,7 +55,7 @@ namespace Altaxo.Gui.Worksheet
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _importAsciiOptionsController;
-		private IMVCANController _inputDataController;
+		private SelectableListNodeList _fileNames;
 
 		public event Action SuccessfullyApplied;
 
@@ -58,18 +65,19 @@ namespace Altaxo.Gui.Worksheet
 			{
 				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
 				_importAsciiOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.AsciiImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-				//		_inputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc..InputData }, typeof(IMVCANController), UseDocument.Directly);
+				_fileNames = new SelectableListNodeList();
+				foreach (var files in _doc.SourceFileNames)
+				{
+					_fileNames.Add(new SelectableListNode(files, files, false));
+				}
 			}
 
 			if (null != _view)
 			{
 				_view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
 				_view.SetAsciiImportOptionsControl(_importAsciiOptionsController.ViewObject);
-				if (null != _inputDataController)
-				{
-					//_view.SetInputDataControl(_inputDataController.ViewObject);
-				}
-				_view.FileName = _doc.SourceFileName;
+				_view.FileNames = _fileNames;
+				_view.ImportMultipleAsciiVertically = _doc.ImportMultipleAsciiFilesVertically;
 			}
 		}
 
@@ -83,13 +91,8 @@ namespace Altaxo.Gui.Worksheet
 			result = _importAsciiOptionsController.Apply();
 			if (!result) return result;
 
-			if (null != _inputDataController)
-			{
-				result = _inputDataController.Apply();
-				if (!result) return result;
-			}
-
-			_doc.SourceFileName = _view.FileName;
+			_doc.ImportMultipleAsciiFilesVertically = _view.ImportMultipleAsciiVertically;
+			_doc.SourceFileNames = _fileNames.Select(x => (string)x.Tag);
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				CopyHelper.Copy(ref _originalDoc, _doc);
@@ -106,22 +109,56 @@ namespace Altaxo.Gui.Worksheet
 		protected override void AttachView()
 		{
 			base.AttachView();
-			_view.BrowseFileName += EhBrowseFileName;
+			_view.BrowseSelectedFileName += EhBrowseFileName;
+			_view.DeleteSelectedFileName += EhDeleteFileName;
+			_view.AddNewFileName += EhAddNewFileName;
 		}
 
 		protected override void DetachView()
 		{
-			_view.BrowseFileName -= EhBrowseFileName;
+			_view.BrowseSelectedFileName -= EhBrowseFileName;
+			_view.DeleteSelectedFileName -= EhDeleteFileName;
+			_view.AddNewFileName -= EhAddNewFileName;
+
 			base.DetachView();
+		}
+
+		private void EhDeleteFileName()
+		{
+			_fileNames.RemoveSelectedItems();
 		}
 
 		private void EhBrowseFileName()
 		{
+			var node = _fileNames.FirstSelectedNode;
+			if (null == node)
+				return;
+
 			var options = new OpenFileOptions();
 			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
 			options.AddFilter("*.*", "All files (*.*)");
+			options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag);
+
 			if (Current.Gui.ShowOpenFileDialog(options))
-				_view.FileName = options.FileName;
+			{
+				node.Tag = node.Text = options.FileName;
+			}
+		}
+
+		private void EhAddNewFileName()
+		{
+			var node = _fileNames.Count > 0 ? _fileNames[_fileNames.Count - 1] : null;
+			var options = new OpenFileOptions();
+			options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
+			options.AddFilter("*.*", "All files (*.*)");
+			if (null != node)
+				options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag);
+			options.Multiselect = true;
+			if (Current.Gui.ShowOpenFileDialog(options))
+			{
+				foreach (var filename in options.FileNames)
+					_fileNames.Add(new SelectableListNode(filename, filename, false));
+			}
 		}
 	}
 }

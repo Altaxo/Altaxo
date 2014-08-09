@@ -83,5 +83,22 @@ namespace Altaxo
 			Copy(ref to, from);
 			return to;
 		}
+
+		/// <summary>
+		/// Gets the members of the input enumeration cloned as output enumeration.
+		/// </summary>
+		/// <typeparam name="T">Type of the enumeration members.</typeparam>
+		/// <param name="toClone">Input enumeration.</param>
+		/// <returns>Output enumeration with cloned members of the input enumeration.</returns>
+		public static IEnumerable<T> GetEnumerationMembersCloned<T>(IEnumerable<T> toClone) where T : ICloneable
+		{
+			foreach (var e in toClone)
+			{
+				if (null == e)
+					yield return default(T);
+				else
+					yield return (T)e.Clone();
+			}
+		}
 	}
 }

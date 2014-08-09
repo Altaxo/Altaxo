@@ -1,23 +1,62 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Altaxo.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Altaxo.DataConnection
 {
-	public class AltaxoOleDbDataSource : Altaxo.Data.IAltaxoTableDataSource
+	public class AltaxoOleDbDataSource : DisposableBase, Altaxo.Data.IAltaxoTableDataSource
 	{
 		protected Data.IDataSourceImportOptions _importOptions;
 		private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
+		private int _updateReentrancyCount;
+
+		protected Main.EventSuppressor _eventSuppressor;
+
+		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+
+		private bool _isDisposed;
+
+		private Action<Data.IAltaxoTableDataSource> _dataSourceChanged;
+
+		#region Construction
 
 		public AltaxoOleDbDataSource(string selectionStatement, AltaxoOleDbConnectionString connectionString)
 		{
+			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 			_importOptions = new Data.DataSourceImportOptions();
 			_dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
 		}
 
 		protected AltaxoOleDbDataSource()
 		{
+			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 		}
 
 		public virtual bool CopyFrom(object obj)
@@ -34,6 +73,19 @@ namespace Altaxo.DataConnection
 			}
 			return false;
 		}
+
+		/// <summary>
+		/// Clones this instance.
+		/// </summary>
+		/// <returns>A clone of this instance.</returns>
+		public object Clone()
+		{
+			var result = new AltaxoOleDbDataSource();
+			result.CopyFrom(this);
+			return result;
+		}
+
+		#endregion Construction
 
 		#region Serialization
 
@@ -73,18 +125,28 @@ namespace Altaxo.DataConnection
 
 		#endregion Serialization
 
-		/// <summary>
-		/// Clones this instance.
-		/// </summary>
-		/// <returns>A clone of this instance.</returns>
-		public object Clone()
-		{
-			var result = new AltaxoOleDbDataSource();
-			result.CopyFrom(this);
-			return result;
-		}
-
 		#region Properties
+
+		/// <summary>
+		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
+		/// </summary>
+		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
+		{
+			add
+			{
+				bool isFirst = null == _dataSourceChanged;
+				_dataSourceChanged += value;
+				if (isFirst)
+					UpdateWatching();
+			}
+			remove
+			{
+				_dataSourceChanged -= value;
+				bool isLast = null == _dataSourceChanged;
+				if (isLast)
+					UpdateWatching();
+			}
+		}
 
 		public OleDbDataQuery DataQuery
 		{
@@ -102,8 +164,7 @@ namespace Altaxo.DataConnection
 
 				if (!object.Equals(oldValue, value))
 				{
-					StopDataSourceMonitoring();
-					MayStartDataSourceMonitoring();
+					UpdateWatching();
 				}
 			}
 		}
@@ -125,7 +186,7 @@ namespace Altaxo.DataConnection
 
 				if (!object.Equals(oldValue, value))
 				{
-					MayStartDataSourceMonitoring();
+					UpdateWatching();
 				}
 			}
 		}
@@ -138,99 +199,117 @@ namespace Altaxo.DataConnection
 		/// <param name="destinationTable">The destination table.</param>
 		public void FillData(Data.DataTable destinationTable)
 		{
-			destinationTable.Suspend();
-			try
-			{
-				var tableConnector = new AltaxoTableConnector(destinationTable);
-				this._dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
-			}
-			finally
-			{
-				destinationTable.Resume();
-			}
-		}
+			if (null == destinationTable)
+				throw new ArgumentNullException("destinationTable");
 
-		private Action<Data.IAltaxoTableDataSource> _dataSourceChanged;
-
-		/// <summary>
-		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
-		/// </summary>
-		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
-		{
-			add
+			int reentrancyCount = Interlocked.Increment(ref _updateReentrancyCount);
+			if (1 == reentrancyCount)
 			{
-				_dataSourceChanged += value;
-				MayStartDataSourceMonitoring();
-			}
-			remove
-			{
-				_dataSourceChanged -= value;
-				if (null == _dataSourceChanged)
-					StopDataSourceMonitoring();
+				destinationTable.Suspend();
+				try
+				{
+					var tableConnector = new AltaxoTableConnector(destinationTable);
+					this._dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
+				}
+				finally
+				{
+					destinationTable.Resume();
+					Interlocked.Decrement(ref _updateReentrancyCount);
+				}
 			}
 		}
 
 		public void OnAfterDeserialization()
 		{
-			if (_importOptions.ImportTriggerSource != Data.ImportTriggerSource.Manual)
-			{
-				var ev = _dataSourceChanged;
-				if (null != ev)
-					ev(this);
-			}
-
-			MayStartDataSourceMonitoring();
+			UpdateWatching();
 		}
 
-		private System.Threading.Timer _timer;
-
-		private void MayStartDataSourceMonitoring()
+		/// <summary>
+		/// Suppresses the events by getting a token. When the token is disposed, events will be resumed again.
+		/// </summary>
+		/// <returns>Suppress token.</returns>
+		public Main.ISuppressToken SuppressEventsGettingToken()
 		{
-			if (_importOptions.ImportTriggerSource != Data.ImportTriggerSource.DataSourceChanged)
-			{
-				StopDataSourceMonitoring();
-				return;
-			}
-
-			if (_importOptions.ImportTriggerSource == Data.ImportTriggerSource.DataSourceChanged && null == _timer)
-			{
-				var interval = Math.Max(_importOptions.PollTimeIntervalInSeconds, _importOptions.MinimumTimeIntervalBetweenUpdatesInSeconds);
-				if (!(interval > 0))
-					interval = 60;
-				if (!(interval <= int.MaxValue / 1000.0))
-					interval = int.MaxValue / 1000;
-
-				int interval_ms = (int)(interval * 1000);
-				_timer = new System.Threading.Timer(EhTimer, null, interval_ms, interval_ms);
-			}
+			return _eventSuppressor.Suspend();
 		}
 
-		private void EhTimer(object state)
+		/// <summary>
+		/// Resumes the events.
+		/// </summary>
+		/// <param name="token">The suppress token.</param>
+		public void ResumeEvents(ref Main.ISuppressToken token)
+		{
+			_eventSuppressor.Resume(ref token);
+		}
+
+		protected virtual void OnDataSourceChanged()
+		{
+			var ev = _dataSourceChanged;
+			if (null != ev)
+				ev(this);
+		}
+
+		private void EhUpdateByTimerQueue()
 		{
 			var ev = _dataSourceChanged;
 			if (null != ev)
 				ev(this);
 			else
-				StopDataSourceMonitoring();
+				SwitchOffWatching();
 		}
 
-		private void StopDataSourceMonitoring()
+		private void EhResumeSuppressedEvents()
 		{
-			var timer = _timer;
-			if (null != timer)
-			{
-				timer.Dispose();
-				_timer = null;
-			}
+			var ev = _dataSourceChanged;
+			if (null != ev)
+				ev(this);
+
+			UpdateWatching();
 		}
 
-		public void Dispose()
+		public void UpdateWatching()
 		{
-			var timer = _timer;
-			if (null != timer)
+			SwitchOffWatching();
+
+			if (_eventSuppressor.PeekDisabled)
+				return; // in update operation - wait until finished
+
+			if (null == _dataSourceChanged)
+				return; // No listener - no need to watch
+
+			if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
+				return; // DataSource is updated manually
+
+			SwitchOnWatching();
+		}
+
+		private void SwitchOnWatching()
+		{
+			_triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue);
+			_triggerBasedUpdate.MinimumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds);
+			_triggerBasedUpdate.MaximumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds, _importOptions.MaximumWaitingTimeAfterUpdateInSeconds));
+			_triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
+		}
+
+		private void SwitchOffWatching()
+		{
+			IDisposable disp;
+
+			disp = _triggerBasedUpdate;
+			_triggerBasedUpdate = null;
+			if (null != disp)
+				disp.Dispose();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (!_isDisposed)
 			{
-				timer.Dispose();
-				_timer = null;
+				_isDisposed = true;
+
+				_dataSourceChanged = null;
+
+				SwitchOffWatching();
 			}
 		}
 

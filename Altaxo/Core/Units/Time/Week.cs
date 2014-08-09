@@ -22,48 +22,53 @@
 
 #endregion Copyright
 
-using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.DataConnection
+namespace Altaxo.Units.Time
 {
-	public interface ILoginCredentialsView
+	public class Week : IUnit
 	{
-		string Username { get; set; }
+		public const double OneWeekInSeconds = 7 * 24 * 3600;
 
-		string Password { get; set; }
-	}
+		private static readonly Week _instance = new Week();
 
-	[ExpectedTypeOfView(typeof(ILoginCredentialsView))]
-	[UserControllerForObject(typeof(LoginCredentials))]
-	public class LoginCredentialsController : MVCANControllerBase<LoginCredentials, ILoginCredentialsView>
-	{
-		protected override void Initialize(bool initData)
+		public static Week Instance { get { return _instance; } }
+
+		protected Week()
 		{
-			if (null != _view)
-			{
-				_view.Username = _doc.UserName;
-				_view.Password = _doc.Password;
-			}
 		}
 
-		public override bool Apply()
+		public string Name
 		{
-			_doc = new LoginCredentials(_view.Username, _view.Password);
+			get { return "Week"; }
+		}
 
-			if (_doc.AreEmpty)
-			{
-				Current.Gui.ErrorMessageBox("You must provide at least a user name.");
-				return false;
-			}
+		public string ShortCut
+		{
+			get { return "week"; }
+		}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
+		public double ToSIUnit(double x)
+		{
+			return x * OneWeekInSeconds;
+		}
 
-			return true;
+		public double FromSIUnit(double x)
+		{
+			return x / OneWeekInSeconds;
+		}
+
+		public ISIPrefixList Prefixes
+		{
+			get { return SIPrefix.ListWithNonePrefixOnly; }
+		}
+
+		public SIUnit SIUnit
+		{
+			get { return Second.Instance; }
 		}
 	}
 }

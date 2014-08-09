@@ -32,16 +32,60 @@ namespace Altaxo
 	/// <summary>
 	/// Fix for TimeSpan: TimeSpan.FromSeconds is rounding the resulting time span to integer milliseconds.
 	/// </summary>
-	public class TimeSpanAccurate
+	public static class TimeSpanExtensions
 	{
+		private readonly static double TimeSpanMaxInSeconds = TimeSpan.MaxValue.Ticks / (double)TimeSpan.TicksPerSecond;
+		private readonly static double TimeSpanMinInSeconds = TimeSpan.MinValue.Ticks / (double)TimeSpan.TicksPerSecond;
+
 		/// <summary>
 		/// Constructs a TimeSpan from the provided seconds exactly (without rounding to milliseconds).
 		/// </summary>
 		/// <param name="seconds">The seconds.</param>
 		/// <returns></returns>
-		public static TimeSpan FromSeconds(double seconds)
+		public static TimeSpan FromSecondsAccurate(double seconds)
 		{
-			return TimeSpan.FromTicks((long)(TimeSpan.TicksPerSecond * seconds));
+			if (double.IsNaN(seconds))
+				throw new ArgumentOutOfRangeException("Argument 'seconds' is Not a Number (NaN)");
+			else if (seconds >= TimeSpanMaxInSeconds)
+				return TimeSpan.MaxValue;
+			else if (seconds <= TimeSpanMinInSeconds)
+				return TimeSpan.MinValue;
+			else
+				return TimeSpan.FromTicks((long)(TimeSpan.TicksPerSecond * seconds));
+		}
+
+		public static TimeSpan SafeAddition(this TimeSpan x, TimeSpan y)
+		{
+			double result = x.Ticks + (double)y.Ticks;
+
+			if (result >= TimeSpan.MaxValue.Ticks)
+				return TimeSpan.MaxValue;
+			else if (result <= TimeSpan.MinValue.Ticks)
+				return TimeSpan.MinValue;
+			else
+				return x + y;
+		}
+
+		public static TimeSpan SafeAddition(this TimeSpan x, double y)
+		{
+			double result = (double)x.Ticks + y * TimeSpan.TicksPerSecond;
+
+			if (result >= TimeSpan.MaxValue.Ticks)
+				return TimeSpan.MaxValue;
+			else if (result <= TimeSpan.MinValue.Ticks)
+				return TimeSpan.MinValue;
+			else
+				return TimeSpan.FromTicks((long)result);
+		}
+
+		public static TimeSpan Max(TimeSpan x, TimeSpan y)
+		{
+			return x > y ? x : y;
+		}
+
+		public static TimeSpan Min(TimeSpan x, TimeSpan y)
+		{
+			return x < y ? x : y;
 		}
 	}
 }

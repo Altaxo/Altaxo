@@ -41,7 +41,10 @@ namespace Altaxo.Serialization
 		static GUIConversion()
 		{
 			if (null != Current.PropertyService)
+			{
 				Current.PropertyService.PropertyChanged += new Action<string>(EhPropertyService_PropertyChanged);
+				EhPropertyService_PropertyChanged(Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString);
+			}
 		}
 
 		private static void EhPropertyService_PropertyChanged(string key)

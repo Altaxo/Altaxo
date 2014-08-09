@@ -36,7 +36,15 @@ namespace Altaxo.Serialization.Ascii
 
 		private AsciiImportOptions _asciiImportOptions;
 
-		private AbsoluteAndRelativeFilePath _asciiFilePath;
+		private List<AbsoluteAndRelativeFileName> _asciiFiles = new List<AbsoluteAndRelativeFileName>();
+
+		private HashSet<string> _resolvedAsciiFileNames = new HashSet<string>();
+
+		/// <summary>
+		/// If <c>true</c> and multiple Ascii files are to import, the data will be imported vertically, i.e. the data of the next file start in a row just below the last row of the previous file.
+		/// If <c>false</c>, the data will be imported horizontally, i.e. the data of the next file start in a column just right of the last column of the previous file.
+		/// </summary>
+		private bool _importAsciiVertically;
 
 		protected Action<IAltaxoTableDataSource> _dataSourceChanged;
 
@@ -44,7 +52,7 @@ namespace Altaxo.Serialization.Ascii
 
 		protected bool _isDirty = false;
 
-		protected System.IO.FileSystemWatcher _fileSystemWatcher;
+		protected System.IO.FileSystemWatcher[] _fileSystemWatchers = new System.IO.FileSystemWatcher[0];
 
 		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
 
@@ -64,18 +72,24 @@ namespace Altaxo.Serialization.Ascii
 			{
 				var s = (AsciiImportDataSource)obj;
 
-				info.AddValue("InputData", s._asciiFilePath);
-				info.AddValue("AsciiImportOptions", s._asciiImportOptions);
 				info.AddValue("ImportOptions", s._importOptions);
+				info.AddValue("AsciiImportOptions", s._asciiImportOptions);
+				info.AddValue("ImportAsciiVertically", s._importAsciiVertically);
+
+				info.AddArray("AsciiFiles", s._asciiFiles.ToArray(), s._asciiFiles.Count);
 			}
 
 			protected virtual AsciiImportDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (o == null ? new AsciiImportDataSource() : (AsciiImportDataSource)o);
 
-				s._asciiFilePath = (AbsoluteAndRelativeFilePath)info.GetValue("InputData");
-				s._asciiImportOptions = (AsciiImportOptions)info.GetValue("TransformationOptions");
 				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions");
+				s._asciiImportOptions = (AsciiImportOptions)info.GetValue("AsciiImportOptions");
+				s._importAsciiVertically = info.GetBoolean("ImportAsciiVertically");
+				var count = info.OpenArray("AsciiFiles");
+				for (int i = 0; i < count; ++i)
+					s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e"));
+				info.CloseArray(count);
 
 				return s;
 			}
@@ -105,13 +119,13 @@ namespace Altaxo.Serialization.Ascii
 				{
 					AsciiImportOptions asciiImportOptions = null;
 					IDataSourceImportOptions importOptions = null;
-					AbsoluteAndRelativeFilePath asciiFilePath = null;
+					AbsoluteAndRelativeFileName asciiFilePath = null;
 
 					CopyHelper.Copy(ref importOptions, from._importOptions);
 					CopyHelper.Copy(ref asciiImportOptions, from._asciiImportOptions);
-					CopyHelper.Copy(ref asciiFilePath, from._asciiFilePath);
+					_importAsciiVertically = from._importAsciiVertically;
+					_asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._asciiFiles));
 
-					this.SetAbsoluteRelativeFilePath(asciiFilePath);
 					this.AsciiImportOptions = asciiImportOptions;
 					this.ImportOptions = importOptions;
 
@@ -127,12 +141,14 @@ namespace Altaxo.Serialization.Ascii
 		protected AsciiImportDataSource()
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
+			_asciiFiles = new List<AbsoluteAndRelativeFileName>();
 		}
 
 		public AsciiImportDataSource(string fileName, AsciiImportOptions options)
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
-			_asciiFilePath = new AbsoluteAndRelativeFilePath(fileName);
+			_asciiFiles = new List<AbsoluteAndRelativeFileName>();
+			_asciiFiles.Add(new AbsoluteAndRelativeFileName(fileName));
 			_asciiImportOptions = options.Clone();
 			_importOptions = new DataSourceImportOptions();
 		}
@@ -161,14 +177,24 @@ namespace Altaxo.Serialization.Ascii
 
 		public void FillData(DataTable destinationTable)
 		{
-			string fileName = _asciiFilePath.GetResolvedFileNameOrNull();
+			var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-			if (string.IsNullOrEmpty(fileName))
+			if (validFileNames.Length == 0)
 				return;
 
-			using (var stream = new System.IO.FileStream(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
+			if (_asciiFiles.Count == 1)
 			{
-				AsciiImporter.Import(stream, AsciiImporter.FileUrlStart + fileName, destinationTable, _asciiImportOptions);
+				using (var stream = new System.IO.FileStream(validFileNames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
+				{
+					AsciiImporter.Import(stream, AsciiImporter.FileUrlStart + validFileNames[0], destinationTable, _asciiImportOptions);
+				}
+			}
+			else
+			{
+				if (_importAsciiVertically)
+					FileCommands.ImportAsciiToSingleWorksheetVertically(destinationTable, validFileNames, _asciiImportOptions);
+				else
+					FileCommands.ImportAsciiToSingleWorksheetHorizontally(destinationTable, validFileNames, _asciiImportOptions);
 			}
 		}
 
@@ -192,21 +218,73 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
+		/// <summary>
+		/// If <c>true</c> and multiple Ascii files are to import, the data will be imported vertically, i.e. the data of the next file start in a row just below the last row of the previous file.
+		/// If <c>false</c>, the data will be imported horizontally, i.e. the data of the next file start in a column just right of the last column of the previous file.
+		/// </summary>
+		public bool ImportMultipleAsciiFilesVertically
+		{
+			get
+			{
+				return _importAsciiVertically;
+			}
+			set
+			{
+				var oldValue = _importAsciiVertically;
+				_importAsciiVertically = value;
+				if (oldValue != value)
+				{
+					UpdateWatching();
+				}
+			}
+		}
+
 		public string SourceFileName
 		{
 			get
 			{
-				return _asciiFilePath.GetResolvedFileNameOrNull() ?? _asciiFilePath.AbsoluteFilePath;
+				if (_asciiFiles.Count != 1)
+					throw new InvalidOperationException("In order to get the source file name, the number of files has to be one");
+
+				return _asciiFiles[0].GetResolvedFileNameOrNull() ?? _asciiFiles[0].AbsoluteFileName;
 			}
 			set
 			{
-				var oldName = SourceFileName;
-				_asciiFilePath = new AbsoluteAndRelativeFilePath(value);
+				string oldName = null;
+				if (_asciiFiles.Count == 1)
+					oldName = SourceFileName;
+
+				_asciiFiles.Clear();
+				_asciiFiles.Add(new AbsoluteAndRelativeFileName(value));
 
 				if (oldName != SourceFileName)
 				{
 					UpdateWatching();
 				}
+			}
+		}
+
+		public IEnumerable<string> SourceFileNames
+		{
+			get
+			{
+				return _asciiFiles.Select(x => x.GetResolvedFileNameOrNull() ?? x.AbsoluteFileName);
+			}
+			set
+			{
+				_asciiFiles.Clear();
+				foreach (var name in value)
+					_asciiFiles.Add(new AbsoluteAndRelativeFileName(name));
+
+				UpdateWatching();
+			}
+		}
+
+		public int SourceFileNameCount
+		{
+			get
+			{
+				return _asciiFiles.Count;
 			}
 		}
 
@@ -246,13 +324,14 @@ namespace Altaxo.Serialization.Ascii
 
 		#endregion Properties
 
-		private void SetAbsoluteRelativeFilePath(AbsoluteAndRelativeFilePath value)
+		private void SetAbsoluteRelativeFilePath(AbsoluteAndRelativeFileName value)
 		{
 			if (null == value)
-				throw new NotImplementedException();
+				throw new ArgumentNullException("value");
 
-			var oldValue = _asciiFilePath;
-			_asciiFilePath = value;
+			var oldValue = _asciiFiles.Count == 1 ? _asciiFiles[0] : null;
+			_asciiFiles.Clear();
+			_asciiFiles.Add(value);
 
 			if (!value.Equals(oldValue))
 			{
@@ -300,40 +379,59 @@ namespace Altaxo.Serialization.Ascii
 			if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
 				return; // DataSource is updated manually
 
-			var filePath = _asciiFilePath.GetResolvedFileNameOrNull();
-			if (string.IsNullOrEmpty(filePath))
-				return; // No file name set
+			var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+			if (0 == validFileNames.Length)
+				return;  // No file name set
 
-			SwitchOnWatching(filePath);
+			_resolvedAsciiFileNames = new HashSet<string>(validFileNames);
+
+			SwitchOnWatching(validFileNames);
 		}
 
-		private void SwitchOnWatching(string filePath)
+		private void SwitchOnWatching(string[] validFileNames)
 		{
 			_triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue);
-			_triggerBasedUpdate.MinimumWaitingTimeAfterUpdate = TimeSpanAccurate.FromSeconds(_importOptions.MinimumTimeIntervalBetweenUpdatesInSeconds);
-			_triggerBasedUpdate.MaximumWaitingTimeAfterUpdate = TimeSpanAccurate.FromSeconds(Math.Max(_importOptions.MinimumTimeIntervalBetweenUpdatesInSeconds, _importOptions.PollTimeIntervalInSeconds));
+			_triggerBasedUpdate.MinimumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds);
+			_triggerBasedUpdate.MaximumWaitingTimeAfterUpdate = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MinimumWaitingTimeAfterUpdateInSeconds, _importOptions.MaximumWaitingTimeAfterUpdateInSeconds));
+			_triggerBasedUpdate.MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterFirstTriggerInSeconds);
+			_triggerBasedUpdate.MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(_importOptions.MinimumWaitingTimeAfterLastTriggerInSeconds);
+			_triggerBasedUpdate.MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(Math.Max(_importOptions.MaximumWaitingTimeAfterFirstTriggerInSeconds, _importOptions.MinimumWaitingTimeAfterFirstTriggerInSeconds));
+
 			_triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
 
-			try
+			var directories = new HashSet<string>(validFileNames.Select(x => System.IO.Path.GetDirectoryName(x)));
+			var watchers = new List<System.IO.FileSystemWatcher>();
+			foreach (var directory in directories)
 			{
-				_fileSystemWatcher = new System.IO.FileSystemWatcher(System.IO.Path.GetDirectoryName(filePath));
-				_fileSystemWatcher.Changed += EhTriggerByFileSystemWatcher;
-				_fileSystemWatcher.IncludeSubdirectories = false;
-				_fileSystemWatcher.EnableRaisingEvents = true;
+				try
+				{
+					var watcher = new System.IO.FileSystemWatcher(directory);
+					watcher.NotifyFilter = System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.Size;
+					watcher.Changed += EhTriggerByFileSystemWatcher;
+					watcher.IncludeSubdirectories = false;
+					watcher.EnableRaisingEvents = true;
+					watchers.Add(watcher);
+				}
+				catch (Exception ex)
+				{
+				}
 			}
-			catch (Exception ex)
-			{
-				_fileSystemWatcher = null;
-			}
+			_fileSystemWatchers = watchers.ToArray();
 		}
 
 		private void SwitchOffWatching()
 		{
-			IDisposable disp;
-			disp = _fileSystemWatcher;
-			_fileSystemWatcher = null;
-			if (null != disp)
-				disp.Dispose();
+			IDisposable disp = null;
+
+			var watchers = _fileSystemWatchers;
+			_fileSystemWatchers = new System.IO.FileSystemWatcher[0];
+
+			for (int i = 0; i < watchers.Length; ++i)
+			{
+				disp = watchers[i];
+				if (null != disp)
+					disp.Dispose();
+			}
 
 			disp = _triggerBasedUpdate;
 			_triggerBasedUpdate = null;
@@ -346,11 +444,13 @@ namespace Altaxo.Serialization.Ascii
 			var ev = _dataSourceChanged;
 			if (null != ev)
 				ev(this);
+			else
+				SwitchOffWatching();
 		}
 
 		private void EhTriggerByFileSystemWatcher(object sender, System.IO.FileSystemEventArgs e)
 		{
-			if (e.FullPath != _asciiFilePath.AbsoluteFilePath)
+			if (!_resolvedAsciiFileNames.Contains(e.FullPath))
 				return;
 
 			if (null != _triggerBasedUpdate)

@@ -22,48 +22,37 @@
 
 #endregion Copyright
 
-using Altaxo.DataConnection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.DataConnection
+namespace Altaxo.Units.Time
 {
-	public interface ILoginCredentialsView
+	public class Second : SIUnit
 	{
-		string Username { get; set; }
+		private static readonly Second _instance = new Second();
 
-		string Password { get; set; }
-	}
+		public static Second Instance { get { return _instance; } }
 
-	[ExpectedTypeOfView(typeof(ILoginCredentialsView))]
-	[UserControllerForObject(typeof(LoginCredentials))]
-	public class LoginCredentialsController : MVCANControllerBase<LoginCredentials, ILoginCredentialsView>
-	{
-		protected override void Initialize(bool initData)
+		private Second()
+			: base(0, 0, 1, 0, 0, 0, 0)
 		{
-			if (null != _view)
-			{
-				_view.Username = _doc.UserName;
-				_view.Password = _doc.Password;
-			}
 		}
 
-		public override bool Apply()
+		public override string Name
 		{
-			_doc = new LoginCredentials(_view.Username, _view.Password);
+			get { return "Second"; }
+		}
 
-			if (_doc.AreEmpty)
-			{
-				Current.Gui.ErrorMessageBox("You must provide at least a user name.");
-				return false;
-			}
+		public override string ShortCut
+		{
+			get { return "s"; }
+		}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+		public override ISIPrefixList Prefixes
+		{
+			get { return SIPrefix.ListWithAllKnownPrefixes; }
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,48 +22,42 @@
 
 #endregion Copyright
 
-using Altaxo.DataConnection;
+using Altaxo.Units;
+using Altaxo.Units.Time;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.DataConnection
+namespace Altaxo.Gui
 {
-	public interface ILoginCredentialsView
+	public static class GuiTimeUnits
 	{
-		string Username { get; set; }
+		private static ReadOnlyCollection<IUnit> _instance;
 
-		string Password { get; set; }
-	}
-
-	[ExpectedTypeOfView(typeof(ILoginCredentialsView))]
-	[UserControllerForObject(typeof(LoginCredentials))]
-	public class LoginCredentialsController : MVCANControllerBase<LoginCredentials, ILoginCredentialsView>
-	{
-		protected override void Initialize(bool initData)
+		static GuiTimeUnits()
 		{
-			if (null != _view)
-			{
-				_view.Username = _doc.UserName;
-				_view.Password = _doc.Password;
-			}
+			var instance = new List<IUnit>();
+
+			instance.Add(new UnitWithLimitedPrefixes(Second.Instance, new SIPrefix[] { SIPrefix.Femto, SIPrefix.Pico, SIPrefix.Nano, SIPrefix.Micro, SIPrefix.Milli }));
+			instance.Add(Minute.Instance);
+			instance.Add(Hour.Instance);
+			instance.Add(Day.Instance);
+			instance.Add(Week.Instance);
+
+			_instance = instance.AsReadOnly();
 		}
 
-		public override bool Apply()
+		/// <summary>
+		/// Gets a read-only collection of the units that can be used for the Gui when a physical distance is needed.
+		/// </summary>
+		public static IList<IUnit> Collection
 		{
-			_doc = new LoginCredentials(_view.Username, _view.Password);
-
-			if (_doc.AreEmpty)
+			get
 			{
-				Current.Gui.ErrorMessageBox("You must provide at least a user name.");
-				return false;
+				return _instance;
 			}
-
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

@@ -166,21 +166,20 @@ namespace Altaxo.Gui
 			if (controller is Altaxo.Gui.Scripting.IScriptController)
 			{
 				var dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
-				dlgctrl.Owner = MainWindowWpf;
+				dlgctrl.Owner = TopmostModalWindow;
 				dlgctrl.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-				var pos = System.Windows.Input.Mouse.GetPosition(TopmostModalWindow);
-				dlgctrl.Top = pos.Y;
-				dlgctrl.Left = pos.X;
+				dlgctrl.Top = TopmostModalWindow.Top;
+				dlgctrl.Left = TopmostModalWindow.Left;
 				return (true == InternalShowModalWindow(dlgctrl));
 			}
 			else if (controller.ViewObject is System.Windows.UIElement)
 			{
 				var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject);
-				dlgview.Owner = MainWindowWpf;
+				dlgview.Owner = TopmostModalWindow;
 				dlgview.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-				var pos = System.Windows.Input.Mouse.GetPosition(TopmostModalWindow);
-				dlgview.Top = pos.Y;
-				dlgview.Left = pos.X;
+				dlgview.Top = TopmostModalWindow.Top;
+				dlgview.Left = TopmostModalWindow.Left;
+
 				var dlgctrl = new DialogShellController(dlgview, controller, title, showApplyButton);
 				return true == InternalShowModalWindow(dlgview);
 			}

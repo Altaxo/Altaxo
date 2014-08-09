@@ -276,6 +276,7 @@
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingController.cs" />
     <Compile Include="Gui\Graph\TickSpacingController.cs" />
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataController.cs" />
+    <Compile Include="Gui\GuiTimeUnits.cs" />
     <Compile Include="Gui\IOptionPanel.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
@@ -364,7 +365,7 @@
     <Compile Include="Root\CopyHelper.cs" />
     <Compile Include="Root\PropertyExtensions.cs" />
     <Compile Include="Root\TimeSpanExtensions.cs" />
-    <Compile Include="Serialization\Ascii\AbsoluteAndRelativeFilePath.cs" />
+    <Compile Include="Serialization\AbsoluteAndRelativeFileName.cs" />
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiImportDataSource.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
