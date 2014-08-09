@@ -47,7 +47,13 @@ namespace Altaxo.Gui.Worksheet
 
 		public event Action DeleteSelectedFileName;
 
+		public event Action MoveUpSelectedFileName;
+
+		public event Action MoveDownSelectedFileName;
+
 		public event Action AddNewFileName;
+
+		public event Action SortFileNamesAscending;
 
 		public ImportAsciiDataSourceControl()
 		{
@@ -81,9 +87,8 @@ namespace Altaxo.Gui.Worksheet
 			}
 		}
 
-		private void EhBrowseFileName(object sender, RoutedEventArgs e)
+		private void EhFileNamesMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			_guiFileNames.SelectedItem = ((Button)sender).DataContext;
 			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
 
 			var ev = BrowseSelectedFileName;
@@ -104,6 +109,30 @@ namespace Altaxo.Gui.Worksheet
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
 			var ev = AddNewFileName;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhMoveDownFileName(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+			var ev = MoveDownSelectedFileName;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhMoveUpFileName(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+			var ev = MoveUpSelectedFileName;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhSortFileNamesAscending(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
+			var ev = SortFileNamesAscending;
 			if (null != ev)
 				ev();
 		}

@@ -44,7 +44,13 @@ namespace Altaxo.Gui.Worksheet
 
 		event Action DeleteSelectedFileName;
 
+		event Action MoveUpSelectedFileName;
+
+		event Action MoveDownSelectedFileName;
+
 		event Action AddNewFileName;
+
+		event Action SortFileNamesAscending;
 
 		bool ImportMultipleAsciiVertically { get; set; }
 	}
@@ -111,14 +117,20 @@ namespace Altaxo.Gui.Worksheet
 			base.AttachView();
 			_view.BrowseSelectedFileName += EhBrowseFileName;
 			_view.DeleteSelectedFileName += EhDeleteFileName;
+			_view.MoveUpSelectedFileName += EhMoveUpFileName;
+			_view.MoveDownSelectedFileName += EhMoveDownFileName;
 			_view.AddNewFileName += EhAddNewFileName;
+			_view.SortFileNamesAscending += EhSortFileNamesAscending;
 		}
 
 		protected override void DetachView()
 		{
 			_view.BrowseSelectedFileName -= EhBrowseFileName;
 			_view.DeleteSelectedFileName -= EhDeleteFileName;
+			_view.MoveUpSelectedFileName -= EhMoveUpFileName;
+			_view.MoveDownSelectedFileName -= EhMoveDownFileName;
 			_view.AddNewFileName -= EhAddNewFileName;
+			_view.SortFileNamesAscending -= EhSortFileNamesAscending;
 
 			base.DetachView();
 		}
@@ -126,6 +138,18 @@ namespace Altaxo.Gui.Worksheet
 		private void EhDeleteFileName()
 		{
 			_fileNames.RemoveSelectedItems();
+		}
+
+		private void EhMoveUpFileName()
+		{
+			_fileNames.MoveSelectedItemsUp();
+			_view.FileNames = _fileNames;
+		}
+
+		private void EhMoveDownFileName()
+		{
+			_fileNames.MoveSelectedItemsDown();
+			_view.FileNames = _fileNames;
 		}
 
 		private void EhBrowseFileName()
@@ -159,6 +183,14 @@ namespace Altaxo.Gui.Worksheet
 				foreach (var filename in options.FileNames)
 					_fileNames.Add(new SelectableListNode(filename, filename, false));
 			}
+		}
+
+		private void EhSortFileNamesAscending()
+		{
+			var listOfNamesSorted = new List<string>(_fileNames.OrderBy(x => (string)x.Tag).Select(x => (string)x.Tag));
+			_fileNames.Clear();
+			foreach (var name in listOfNamesSorted)
+				_fileNames.Add(new SelectableListNode(name, name, false));
 		}
 	}
 }

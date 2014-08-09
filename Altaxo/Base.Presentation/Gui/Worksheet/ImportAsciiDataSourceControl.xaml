@@ -28,44 +28,54 @@
 				<TextBlock Text="Ascii file" FontWeight="Bold" />
 			</Expander.Header>
 			<Grid>
+				<Grid.Resources>
+					<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+				</Grid.Resources>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
 				<CheckBox x:Name="_guiImportMultipleAsciiVertically" Content="Import multiple Ascii files vertically" Grid.Row="0" />
 				<Label Grid.Row="1" Content="File(s):" />
-				<ListView x:Name="_guiFileNames" Grid.Row="2">
-					<ListView.View>
-						<GridView>
-							<GridViewColumn Header="...">
-								<GridViewColumn.CellTemplate>
-									<DataTemplate>
-										<Button Content="..." Click="EhBrowseFileName" ToolTip="Click to browse for another file name" />
-									</DataTemplate>
-								</GridViewColumn.CellTemplate>
-							</GridViewColumn>
+				<ListBox x:Name="_guiFileNames" Grid.Row="2" Grid.RowSpan="4" SelectionMode="Extended"  MouseDoubleClick="EhFileNamesMouseDoubleClick">
+					<ListBox.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Sort files ascending" Click="EhSortFileNamesAscending" />
+						</ContextMenu>
+					</ListBox.ContextMenu>
+				</ListBox>
 
-							<GridViewColumn Header="X">
-								<GridViewColumn.CellTemplate>
-									<DataTemplate>
-										<Button Content="X" Click="EhRemoveFileName" ToolTip="Click to remove this file." />
-									</DataTemplate>
-								</GridViewColumn.CellTemplate>
-							</GridViewColumn>
+				<Button Grid.Row="2" Grid.Column="2"  Click="EhMoveUpFileName" Margin="2" ToolTip="Click to move selected items up">
+					<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+						<Path Style="{StaticResource UpArrowPathStyle}" />
+					</Viewbox>
+				</Button>
 
-							<GridViewColumn Header="Filename" Width="450">
-								<GridViewColumn.CellTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding Text}" />
-									</DataTemplate>
-								</GridViewColumn.CellTemplate>
-							</GridViewColumn>
-						</GridView>
-					</ListView.View>
-				</ListView>
-				<Button Grid.Row="3" Content="Add new file ..." Click="EhAddNewFileName"  Margin="0,4,0,4" HorizontalAlignment="Right" />
+				<Button Grid.Row="3" Grid.Column="2" Click="EhMoveDownFileName" Margin="2" ToolTip="Click to move selected items down">
+					<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+						<Path Style="{StaticResource DownArrowPathStyle}" />
+					</Viewbox>
+				</Button>
+
+				<Button Grid.Row="4" Grid.Column="2"  Click="EhAddNewFileName"  Margin="2" ToolTip="Click to add new file(s)">
+					<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+						<Path Style="{StaticResource AddCrossPathStyle}" />
+					</Viewbox>
+				</Button>
+				<Button Grid.Row="5" Grid.Column="2" Click="EhRemoveFileName" Margin="2" ToolTip="Click to remove selected items">
+					<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+						<Path Style="{StaticResource RemoveCrossPathStyle}" />
+					</Viewbox>
+				</Button>
 			</Grid>
 		</Expander>
 	</Grid>
