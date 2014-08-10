@@ -53,7 +53,7 @@ namespace Altaxo.Data
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
 		public static void ImportAsciiToMultipleWorksheets(string[] filenames, AsciiImportOptions importOptions)
 		{
-			AsciiImporter.ImportFilesIntoSeparateNewTables(filenames, importOptions);
+			AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, importOptions);
 		}
 
 		/// <summary>
@@ -64,8 +64,7 @@ namespace Altaxo.Data
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
 		public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
-			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, importOptions);
+			AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions);
 		}
 
 		/// <summary>
@@ -76,8 +75,7 @@ namespace Altaxo.Data
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
 		public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
-			Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-			AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, importOptions);
+			AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions);
 		}
 
 		/// <summary>
@@ -116,13 +114,19 @@ namespace Altaxo.Data
 			if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
 			{
 				if (toMultipleWorksheets)
-					ImportAsciiToMultipleWorksheets(options.FileNames, null);
+				{
+					AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, options.FileNames, true, false);
+				}
 				else
 				{
 					if (vertically)
-						ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames, null);
+					{
+						AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, false);
+					}
 					else
-						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames, null);
+					{
+						AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, false);
+					}
 				}
 			}
 		}
@@ -153,14 +157,18 @@ namespace Altaxo.Data
 
 				if (toMultipleWorksheets)
 				{
-					ImportAsciiToMultipleWorksheets(options.FileNames, importOptions);
+					AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, options.FileNames, true, importOptions);
 				}
 				else
 				{
 					if (vertically)
-						ImportAsciiToSingleWorksheetVertically(dataTable, options.FileNames, importOptions);
+					{
+						AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, options.FileNames, true, importOptions);
+					}
 					else
-						ImportAsciiToSingleWorksheetHorizontally(dataTable, options.FileNames, importOptions);
+					{
+						AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, options.FileNames, true, importOptions);
+					}
 				}
 			}
 		}
@@ -182,7 +190,7 @@ namespace Altaxo.Data
 				object[] args = new object[] { importOptions, str };
 				var controller = (Altaxo.Gui.IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(Altaxo.Gui.IMVCAController), Gui.UseDocument.Directly);
 
-				if (!Current.Gui.ShowDialog(controller, "Choose ASCII import options"))
+				if (!Current.Gui.ShowDialog(controller, "Choose Ascii import options"))
 					return false;
 
 				importOptions = (AsciiImportOptions)controller.ModelObject;

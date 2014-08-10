@@ -116,10 +116,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void Dispose()
-		{
-		}
-
 		public override bool Apply()
 		{
 			if (false == base.Apply())

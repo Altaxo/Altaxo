@@ -114,7 +114,7 @@ namespace Altaxo.Main
 		/// <summary>Token used to identify the items in the timer queue</summary>
 		private readonly object _timerToken = new object();
 
-		/// <summary>Lock used to synchronize access to the trigger times <see cref="_isNotified"/>, <see cref="_timeOfFirstTrigger"/>, <see cref=""/>_timeOfLastTrigger</summary>
+		/// <summary>Lock used to synchronize access to the trigger times <see cref="_isNotified"/>, <see cref="_timeOfFirstTrigger"/>, <see cref="_timeOfLastTrigger"/></summary>
 		private readonly object _triggerTimeChangeLock = new object();
 
 		/// <summary>Lock used to synchronize access to the update function and to the recalculation of the next due time.</summary>

@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Data
 {
 	/// <summary>
-	/// Holds reference to a matrix-like arrangement of data from a <see cref="DataTable"/>. The matrix data consist of 2 or more <see cref="DataColumns"/> and all or selected data rows.
+	/// Holds reference to a matrix-like arrangement of data from a <see cref="DataTable"/>. The matrix data consist of 2 or more <see cref="DataColumn"/>s and all or selected data rows.
 	/// Furthermore, a row header column and a column header column can deliver corresponding physical values for each matrix row and column, respectively.
 	/// </summary>
 	public class DataTableMatrixProxy : Main.IChangedEventSource, Main.ICopyFrom

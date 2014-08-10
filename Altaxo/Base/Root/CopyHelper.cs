@@ -38,7 +38,7 @@ namespace Altaxo
 		/// <typeparam name="T">The type of the instance to copy.</typeparam>
 		/// <param name="to">The variable to copy to.</param>
 		/// <param name="from">The instance that was copied.</param>
-		public static void CopyImmutable<M>(ref M to, M from) where M : Main.IImmutable
+		public static void CopyImmutable<T>(ref T to, T from) where T : Main.IImmutable
 		{
 			to = from;
 		}
