@@ -25,7 +25,7 @@
 		</Expander>
 		<Expander Grid.Row="2" IsExpanded="True" Background="BlanchedAlmond">
 			<Expander.Header>
-				<TextBlock Text="Ascii file" FontWeight="Bold" />
+				<TextBlock Text="Ascii file(s):" FontWeight="Bold" />
 			</Expander.Header>
 			<Grid>
 				<Grid.Resources>
@@ -44,7 +44,6 @@
 					<ColumnDefinition Width="4" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<CheckBox x:Name="_guiImportMultipleAsciiVertically" Content="Import multiple Ascii files vertically" Grid.Row="0" />
 				<Label Grid.Row="1" Content="File(s):" />
 				<ListBox x:Name="_guiFileNames" Grid.Row="2" Grid.RowSpan="4" SelectionMode="Extended"  MouseDoubleClick="EhFileNamesMouseDoubleClick">
 					<ListBox.ContextMenu>

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
+using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +37,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Graph.Plot.Groups;
-
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
@@ -42,15 +44,12 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class PlotGroupCollectionControlSimple : UserControl, IPlotGroupCollectionViewSimple
 	{
-
 		public PlotGroupCollectionControlSimple()
 		{
 			InitializeComponent();
 		}
 
 		#region IXYPlotGroupView
-
-
 
 		public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
 		{
@@ -98,8 +97,6 @@ namespace Altaxo.Gui.Graph
 			get { return true; }
 		}
 
-		#endregion
-
-
+		#endregion IXYPlotGroupView
 	}
 }

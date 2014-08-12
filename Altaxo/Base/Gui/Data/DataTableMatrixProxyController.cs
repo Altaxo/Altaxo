@@ -71,9 +71,7 @@ namespace Altaxo.Gui.Data
 
 		void EnableUseButtons(bool enableUseAsXColumn, bool enableUseAsYColumn, bool enableUseAsVColumns);
 
-		void Initialize_PlotRangeFrom(int from);
-
-		void Initialize_PlotRangeTo(int to);
+		void Initialize_DataRowsControl(object obj);
 
 		int GroupNumber { get; set; }
 
@@ -95,6 +93,8 @@ namespace Altaxo.Gui.Data
 		private SelectableListNodeList _availableTables = new SelectableListNodeList();
 		private SelectableListNodeList _availableColumns = new SelectableListNodeList();
 		private bool _areDataColumnsShown = true;
+
+		private Altaxo.Gui.Common.AscendingIntegerCollectionController _rowsController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -125,6 +125,9 @@ namespace Altaxo.Gui.Data
 
 				// Initialize columns
 				FillAvailableColumnList();
+
+				_rowsController = new Common.AscendingIntegerCollectionController();
+				_rowsController.InitializeDocument(_doc.ParticipatingDataRows.Clone());
 			}
 
 			if (null != _view)
@@ -143,6 +146,10 @@ namespace Altaxo.Gui.Data
 				_view.Initialize_YColumn(_yColumn == null ? String.Empty : _yColumn.FullName);
 				_view.Initialize_VColumns(_valueColumns);
 				CalcMaxPossiblePlotRangeTo();
+
+				if (_rowsController.ViewObject == null)
+					Current.Gui.FindAndAttachControlTo(_rowsController);
+				_view.Initialize_DataRowsControl(_rowsController.ViewObject);
 			}
 		}
 
@@ -303,6 +310,13 @@ namespace Altaxo.Gui.Data
 			_doc.RowHeaderColumn = _xColumn;
 			_doc.ColumnHeaderColumn = _yColumn;
 			_doc.SetDataColumns(_valueColumns.Select(n => (ReadableColumnProxy)n.Tag));
+
+			if (!_doc.UseAllAvailableDataRows)
+			{
+				if (!_rowsController.Apply())
+					return false;
+				_doc.SetDataRows((IAscendingIntegerCollection)_rowsController.ModelObject);
+			}
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				CopyHelper.Copy(ref _originalDoc, _doc);

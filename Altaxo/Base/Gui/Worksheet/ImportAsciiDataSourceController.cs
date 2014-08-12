@@ -51,13 +51,11 @@ namespace Altaxo.Gui.Worksheet
 		event Action AddNewFileName;
 
 		event Action SortFileNamesAscending;
-
-		bool ImportMultipleAsciiVertically { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IImportAsciiDataSourceView))]
 	[UserControllerForObject(typeof(AsciiImportDataSource))]
-	public class RealFourierTransformation2DDataSourceController : MVCANControllerBase<AsciiImportDataSource, IImportAsciiDataSourceView>, IMVCSupportsApplyCallback
+	public class AsciiImportDataSourceController : MVCANControllerBase<AsciiImportDataSource, IImportAsciiDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _importAsciiOptionsController;
@@ -83,7 +81,6 @@ namespace Altaxo.Gui.Worksheet
 				_view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
 				_view.SetAsciiImportOptionsControl(_importAsciiOptionsController.ViewObject);
 				_view.FileNames = _fileNames;
-				_view.ImportMultipleAsciiVertically = _doc.ImportMultipleAsciiFilesVertically;
 			}
 		}
 
@@ -97,7 +94,6 @@ namespace Altaxo.Gui.Worksheet
 			result = _importAsciiOptionsController.Apply();
 			if (!result) return result;
 
-			_doc.ImportMultipleAsciiFilesVertically = _view.ImportMultipleAsciiVertically;
 			_doc.SourceFileNames = _fileNames.Select(x => (string)x.Tag);
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))

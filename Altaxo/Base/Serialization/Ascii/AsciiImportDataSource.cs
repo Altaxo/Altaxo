@@ -40,12 +40,6 @@ namespace Altaxo.Serialization.Ascii
 
 		private HashSet<string> _resolvedAsciiFileNames = new HashSet<string>();
 
-		/// <summary>
-		/// If <c>true</c> and multiple Ascii files are to import, the data will be imported vertically, i.e. the data of the next file start in a row just below the last row of the previous file.
-		/// If <c>false</c>, the data will be imported horizontally, i.e. the data of the next file start in a column just right of the last column of the previous file.
-		/// </summary>
-		private bool _importAsciiVertically;
-
 		protected Action<IAltaxoTableDataSource> _dataSourceChanged;
 
 		protected Main.EventSuppressor _eventSuppressor;
@@ -74,7 +68,6 @@ namespace Altaxo.Serialization.Ascii
 
 				info.AddValue("ImportOptions", s._importOptions);
 				info.AddValue("AsciiImportOptions", s._asciiImportOptions);
-				info.AddValue("ImportAsciiVertically", s._importAsciiVertically);
 
 				info.AddArray("AsciiFiles", s._asciiFiles.ToArray(), s._asciiFiles.Count);
 			}
@@ -85,7 +78,6 @@ namespace Altaxo.Serialization.Ascii
 
 				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions");
 				s._asciiImportOptions = (AsciiImportOptions)info.GetValue("AsciiImportOptions");
-				s._importAsciiVertically = info.GetBoolean("ImportAsciiVertically");
 				var count = info.OpenArray("AsciiFiles");
 				for (int i = 0; i < count; ++i)
 					s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e"));
@@ -123,7 +115,6 @@ namespace Altaxo.Serialization.Ascii
 
 					CopyHelper.Copy(ref importOptions, from._importOptions);
 					CopyHelper.Copy(ref asciiImportOptions, from._asciiImportOptions);
-					_importAsciiVertically = from._importAsciiVertically;
 					_asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._asciiFiles));
 
 					this.AsciiImportOptions = asciiImportOptions;
@@ -145,10 +136,18 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		public AsciiImportDataSource(string fileName, AsciiImportOptions options)
+			: this(new string[] { fileName }, options)
+		{
+		}
+
+		public AsciiImportDataSource(IEnumerable<string> fileNames, AsciiImportOptions options)
 		{
 			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 			_asciiFiles = new List<AbsoluteAndRelativeFileName>();
-			_asciiFiles.Add(new AbsoluteAndRelativeFileName(fileName));
+			foreach (var fileName in fileNames)
+			{
+				_asciiFiles.Add(new AbsoluteAndRelativeFileName(fileName));
+			}
 			_asciiImportOptions = options.Clone();
 			_importOptions = new DataSourceImportOptions();
 		}
@@ -191,7 +190,7 @@ namespace Altaxo.Serialization.Ascii
 			}
 			else
 			{
-				if (_importAsciiVertically)
+				if (_asciiImportOptions.ImportMultipleStreamsVertically)
 					FileCommands.ImportAsciiToSingleWorksheetVertically(destinationTable, validFileNames, _asciiImportOptions);
 				else
 					FileCommands.ImportAsciiToSingleWorksheetHorizontally(destinationTable, validFileNames, _asciiImportOptions);
@@ -215,27 +214,6 @@ namespace Altaxo.Serialization.Ascii
 				bool isLast = null == _dataSourceChanged;
 				if (isLast)
 					UpdateWatching();
-			}
-		}
-
-		/// <summary>
-		/// If <c>true</c> and multiple Ascii files are to import, the data will be imported vertically, i.e. the data of the next file start in a row just below the last row of the previous file.
-		/// If <c>false</c>, the data will be imported horizontally, i.e. the data of the next file start in a column just right of the last column of the previous file.
-		/// </summary>
-		public bool ImportMultipleAsciiFilesVertically
-		{
-			get
-			{
-				return _importAsciiVertically;
-			}
-			set
-			{
-				var oldValue = _importAsciiVertically;
-				_importAsciiVertically = value;
-				if (oldValue != value)
-				{
-					UpdateWatching();
-				}
 			}
 		}
 

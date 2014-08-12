@@ -75,18 +75,6 @@ namespace Altaxo.Gui.Worksheet
 			set { GuiHelper.Initialize(_guiFileNames, value); }
 		}
 
-		public bool ImportMultipleAsciiVertically
-		{
-			get
-			{
-				return _guiImportMultipleAsciiVertically.IsChecked == true;
-			}
-			set
-			{
-				_guiImportMultipleAsciiVertically.IsChecked = value;
-			}
-		}
-
 		private void EhFileNamesMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);

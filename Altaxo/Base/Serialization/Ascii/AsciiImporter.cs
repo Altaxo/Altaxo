@@ -46,7 +46,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>
 		/// Imports an Ascii stream into a table. The import options have to be known already.
 		/// </summary>
-		/// <param name="table">The table into which to import.</param>
+		/// <param name="dataTable">The table into which to import.</param>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref=" FileUrlStart"/> to the file name.</param>
 		/// <param name="importOptions">The Ascii import options. This parameter can be null, or the options can be not fully specified. In this case the method tries to determine the import options by analyzing the stream.</param>
@@ -61,11 +61,11 @@ namespace Altaxo.Serialization.Ascii
 		/// or
 		/// Unknown switch case:  + impopt.HeaderLinesDestination.ToString()
 		/// </exception>
-		private static void InternalImportFromAsciiStream(this DataTable table, Stream stream, string streamOriginHint, ref AsciiImportOptions importOptions)
+		private static void InternalImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint, ref AsciiImportOptions importOptions)
 		{
 			if (null == importOptions || !importOptions.IsFullySpecified)
 			{
-				var analysisOptions = GetDefaultAsciiDocumentAnalysisOptions(table);
+				var analysisOptions = GetDefaultAsciiDocumentAnalysisOptions(dataTable);
 				importOptions = AsciiDocumentAnalysis.Analyze(importOptions ?? new AsciiImportOptions(), stream, analysisOptions);
 			}
 
@@ -269,30 +269,32 @@ namespace Altaxo.Serialization.Ascii
 			} // end of for all lines
 
 			// insert the new columns or replace the old ones
-			table.Suspend();
-			bool tableWasEmptyBefore = table.DataColumns.ColumnCount == 0;
+			dataTable.Suspend();
+			bool tableWasEmptyBefore = dataTable.DataColumns.ColumnCount == 0;
 			for (int i = 0; i < newcols.ColumnCount; i++)
 			{
 				if (newcols[i] is DBNullColumn) // if the type is undefined, use a new DoubleColumn
-					table.DataColumns.CopyOrReplaceOrAdd(i, new DoubleColumn(), newcols.GetColumnName(i));
+					dataTable.DataColumns.CopyOrReplaceOrAdd(i, new DoubleColumn(), newcols.GetColumnName(i));
 				else
-					table.DataColumns.CopyOrReplaceOrAdd(i, newcols[i], newcols.GetColumnName(i));
+					dataTable.DataColumns.CopyOrReplaceOrAdd(i, newcols[i], newcols.GetColumnName(i));
 
 				// set the first column as x-column if the table was empty before, and there are more than one column
 				if (i == 0 && tableWasEmptyBefore && newcols.ColumnCount > 1)
-					table.DataColumns.SetColumnKind(0, ColumnKind.X);
+					dataTable.DataColumns.SetColumnKind(0, ColumnKind.X);
 			} // end for loop
 
 			// add the property columns
-			for (int i = 0; i < newpropcols.ColumnCount; i++)
+			for (int i = 0, j = 0; i < newpropcols.ColumnCount; i++)
 			{
-				if (newpropcols[i].Count > 0)
-					table.PropCols.CopyOrReplaceOrAdd(i, newpropcols[i], newpropcols.GetColumnName(i));
+				if (newpropcols[i].Count == 0)
+					continue;
+				dataTable.PropCols.CopyOrReplaceOrAdd(j, newpropcols[i], newpropcols.GetColumnName(i));
+				++j;
 			}
 
-			table.Notes.Write(notesHeader.ToString());
+			dataTable.Notes.Write(notesHeader.ToString());
 
-			table.Resume();
+			dataTable.Resume();
 		} // end of function ImportAscii
 
 		/// <summary>
@@ -301,7 +303,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <param name="dataTable">The table into which to import.</param>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref=" FileUrlStart"/> to the file name.</param>
-		/// <param name="importOptions">The Ascii import options. This parameter must not be <c>null</c> and must contain valid options. The import is executed using these options.</param>
+		/// <param name="importOptions">The Ascii import options. This parameter must not be <c>null</c>. If the provided options are not fully specified, it is tried to analyse the stream to get fully specified options.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// Argument importOptions is null
 		/// or
@@ -317,8 +319,6 @@ namespace Altaxo.Serialization.Ascii
 		{
 			if (importOptions == null)
 				throw new ArgumentNullException("Argument importOptions is null");
-			if (!importOptions.IsFullySpecified)
-				throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
 			if (null == dataTable)
 				throw new ArgumentNullException("Argument table is null");
 
@@ -329,28 +329,25 @@ namespace Altaxo.Serialization.Ascii
 		/// Imports Ascii data from a stream into the data table.
 		/// </summary>
 		/// <param name="dataTable">The table where to import into.</param>
-		/// <param name="myStream">The stream to import from.</param>
+		/// <param name="stream">The stream to import from.</param>
 		/// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
 		/// <param name="importOptions">On return, contains the recognized import options that were used to import from the provided stream.</param>
-		public static void ImportFromAsciiStream(this DataTable dataTable, Stream myStream, string streamOriginHint, out AsciiImportOptions importOptions)
+		public static void ImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint, out AsciiImportOptions importOptions)
 		{
 			importOptions = null;
-			InternalImportFromAsciiStream(dataTable, myStream, streamOriginHint, ref importOptions);
-
-			// finally set or change the data source of the table
-			AddOrUpdateAsciiImportDataSource(dataTable, streamOriginHint, importOptions);
+			InternalImportFromAsciiStream(dataTable, stream, streamOriginHint, ref importOptions);
 		}
 
 		/// <summary>
 		/// Imports Ascii data from a stream into the data table.
 		/// </summary>
 		/// <param name="dataTable">The table where to import into.</param>
-		/// <param name="myStream">The stream to import from.</param>
+		/// <param name="stream">The stream to import from.</param>
 		/// <param name="streamOriginHint">Designates a hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
-		public static void ImportFromAsciiStream(this DataTable dataTable, Stream myStream, string streamOriginHint)
+		public static void ImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint)
 		{
 			AsciiImportOptions dummy;
-			ImportFromAsciiStream(dataTable, myStream, streamOriginHint, out dummy);
+			ImportFromAsciiStream(dataTable, stream, streamOriginHint, out dummy);
 		}
 
 		#endregion From stream
@@ -362,7 +359,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		/// <param name="dataTable">The data table to import into.</param>
 		/// <param name="fileName">File name of the file to import.</param>
-		/// <param name="importOptions">The import options.</param>
+		/// <param name="importOptions">The import options. This parameter must not be null.</param>
 		public static void ImportFromAsciiFile(this DataTable dataTable, string fileName, AsciiImportOptions importOptions)
 		{
 			if (null == dataTable)
@@ -371,14 +368,15 @@ namespace Altaxo.Serialization.Ascii
 				throw new ArgumentNullException("Argument fileName is null or empty");
 			if (importOptions == null)
 				throw new ArgumentNullException("Argument importOptions is null");
-			if (!importOptions.IsFullySpecified)
-				throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
 
 			using (var myStream = GetAsciiInputFileStream(fileName))
 			{
 				ImportFromAsciiStream(dataTable, myStream, FileUrlStart + fileName, importOptions);
 				myStream.Close();
 			}
+
+			// finally set or change the data source of the table
+			AddOrUpdateAsciiImportDataSource(dataTable, new string[] { fileName }, importOptions);
 		}
 
 		/// <summary>
@@ -404,6 +402,9 @@ namespace Altaxo.Serialization.Ascii
 				ImportFromAsciiStream(dataTable, myStream, FileUrlStart + fileName, out importOptions);
 				myStream.Close();
 			}
+
+			// finally set or change the data source of the table
+			AddOrUpdateAsciiImportDataSource(dataTable, new string[] { fileName }, importOptions);
 		}
 
 		/// <summary>
@@ -423,8 +424,8 @@ namespace Altaxo.Serialization.Ascii
 			if (string.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException("Argument fileName is null or empty");
 
-			AsciiImportOptions dummy;
-			ImportFromAsciiFile(dataTable, fileName, out dummy);
+			AsciiImportOptions importOptions;
+			ImportFromAsciiFile(dataTable, fileName, out importOptions);
 		}
 
 		#endregion From single file
@@ -445,8 +446,6 @@ namespace Altaxo.Serialization.Ascii
 				throw new ArgumentNullException("Argument asciiText is null");
 			if (importOptions == null)
 				throw new ArgumentNullException("Argument importOptions is null");
-			if (!importOptions.IsFullySpecified)
-				throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
 
 			using (var memstream = new MemoryStream())
 			{
@@ -510,7 +509,6 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>
 		/// Imports a couple of ASCII files into one (!) table. The first column of each file is considered to be the x-column, and if they match another x-column, the newly imported columns will get the same column group.
 		/// </summary>
-		/// <param name="table">The table the data should be imported to.</param>
 		/// <param name="fileNames">An array of filenames to import.</param>
 		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
 		/// <param name="importOptions">Options used to import the Ascii files. This parameter can be <c>null</c>. In this case the value on return is the determined import options of the first file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>false</c>) or of the last file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>true</c>).</param>
@@ -518,27 +516,27 @@ namespace Altaxo.Serialization.Ascii
 		/// If <c>true</c>, the import options are determined for each file separately. In this case the provided parameter <paramref name="importOptions"/> is ignored, but on return it contains the importOptions used to import the last file.
 		/// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
 		/// </param>
-		/// <returns>Null if no error occurs, or an error description.</returns>
-		private static string InternalImportFromMultipleAsciiFilesHorizontally(this DataTable table, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
+		/// <param name="errors">Null if no error occurs, or an error description.</param>
+		/// <returns>A newly created table (not included in the project) containing the imported data.</returns>
+		private static DataTable InternalImportMultipleFilesHorizontallyIntoNewTable(IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile, out string errors)
 		{
 			DataColumn xcol = null;
 			DataColumn xvalues;
+
 			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+
+			var dataTable = new DataTable(); // destination table
 
 			int lastColumnGroup = 0;
 
-			if (table.DataColumns.ColumnCount > 0)
-			{
-				lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-				DataColumn xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
-				xcol = (DoubleColumn)xColumnOfRightMost;
-			}
-
 			// add also a property column named "FilePath" if not existing so far
-			TextColumn filePathPropCol = (TextColumn)table.PropCols.EnsureExistence("FilePath", typeof(TextColumn), ColumnKind.Label, 0);
+			TextColumn filePathPropCol = (TextColumn)dataTable.PropCols.EnsureExistence("FilePath", typeof(TextColumn), ColumnKind.Label, 0);
+			filePathPropCol.Clear();
 
 			if (sortFileNames)
 				fileNames = fileNames.OrderBy(x => x);
+
+			var clearedColumns = new HashSet<DataColumn>();
 
 			foreach (string fileName in fileNames)
 			{
@@ -563,14 +561,14 @@ namespace Altaxo.Serialization.Ascii
 				// if no match, then consider all xcolumns from right to left, maybe some fits
 				if (!bMatchsXColumn)
 				{
-					for (int ncol = table.DataColumns.ColumnCount - 1; ncol >= 0; ncol--)
+					for (int ncol = dataTable.DataColumns.ColumnCount - 1; ncol >= 0; ncol--)
 					{
-						if ((ColumnKind.X == table.DataColumns.GetColumnKind(ncol)) &&
-							(ValuesMatch(xvalues, table.DataColumns[ncol]))
+						if ((ColumnKind.X == dataTable.DataColumns.GetColumnKind(ncol)) &&
+							(ValuesMatch(xvalues, dataTable.DataColumns[ncol]))
 							)
 						{
-							xcol = table.DataColumns[ncol];
-							lastColumnGroup = table.DataColumns.GetColumnGroup(xcol);
+							xcol = dataTable.DataColumns[ncol];
+							lastColumnGroup = dataTable.DataColumns.GetColumnGroup(xcol);
 							bMatchsXColumn = true;
 							break;
 						}
@@ -581,42 +579,41 @@ namespace Altaxo.Serialization.Ascii
 				if (!bMatchsXColumn)
 				{
 					xcol = (DataColumn)xvalues.Clone();
-					lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
-					table.DataColumns.Add(xcol, srcTable.DataColumns.GetColumnName(0), ColumnKind.X, lastColumnGroup);
+					lastColumnGroup = dataTable.DataColumns.GetUnusedColumnGroupNumber();
+					dataTable.DataColumns.Add(xcol, srcTable.DataColumns.GetColumnName(0), ColumnKind.X, lastColumnGroup);
 				}
 
 				for (int i = 1; i < srcTable.DataColumns.ColumnCount; i++)
 				{
 					// now add the y-values
 					DataColumn ycol = (DataColumn)srcTable.DataColumns[i].Clone();
-					table.DataColumns.Add(ycol,
-					table.DataColumns.FindUniqueColumnName(srcTable.DataColumns.GetColumnName(i)),
+					dataTable.DataColumns.Add(ycol,
+					dataTable.DataColumns.FindUniqueColumnName(srcTable.DataColumns.GetColumnName(i)),
 						ColumnKind.V,
 						lastColumnGroup);
 
 					// now set the file name property cell
-					int destcolnumber = table.DataColumns.GetColumnNumber(ycol);
+					int destcolnumber = dataTable.DataColumns.GetColumnNumber(ycol);
 					filePathPropCol[destcolnumber] = fileName;
 
 					// now set the imported property cells
 					for (int s = 0; s < srcTable.PropCols.ColumnCount; s++)
 					{
-						DataColumn dest = table.PropCols.EnsureExistence(srcTable.PropCols.GetColumnName(s), srcTable.PropCols[s].GetType(), ColumnKind.V, 0);
+						DataColumn dest = dataTable.PropCols.EnsureExistence(srcTable.PropCols.GetColumnName(s), srcTable.PropCols[s].GetType(), ColumnKind.V, 0);
 						dest.SetValueAt(destcolnumber, srcTable.PropCols[s][i]);
 					}
 				}
 			} // foreache file
 
-			return errorList.Length == 0 ? null : errorList.ToString();
+			errors = errorList.Length == 0 ? null : errorList.ToString();
+			return dataTable;
 		}
 
 		/// <summary>
-		/// Imports a couple of ASCII files into one (!) table, vertically. If the names of the subsequently imported table columns match, the data
-		/// will be written in the matching column. Otherwise new columns with the unmatched column names were created.
-		/// Property columns will only be imported from the first table.
+		/// Imports a couple of ASCII files into one (!) table. The first column of each file is considered to be the x-column, and if they match another x-column, the newly imported columns will get the same column group.
 		/// </summary>
-		/// <param name="table">The table the data should be imported to.</param>
-		/// <param name="fileNames">An array of file names to import.</param>
+		/// <param name="dataTable">The table the data should be imported to.</param>
+		/// <param name="fileNames">An array of filenames to import.</param>
 		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
 		/// <param name="importOptions">Options used to import the Ascii files. This parameter can be <c>null</c>. In this case the value on return is the determined import options of the first file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>false</c>) or of the last file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>true</c>).</param>
 		/// <param name="determineImportOptionsSeparatelyForEachFile">
@@ -624,17 +621,55 @@ namespace Altaxo.Serialization.Ascii
 		/// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
 		/// </param>
 		/// <returns>Null if no error occurs, or an error description.</returns>
-		private static string InternalImportFromMultipleAsciiFilesVertically(this DataTable table, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
+		private static string InternalImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
+		{
+			string errors;
+
+			var temporaryTable = InternalImportMultipleFilesHorizontallyIntoNewTable(fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out errors);
+
+			if (null != temporaryTable)
+			{
+				TransferTemporaryTable(temporaryTable, dataTable);
+
+				// finally set or change the data source of the table
+				importOptions.ImportMultipleStreamsVertically = false;
+				AddOrUpdateAsciiImportDataSource(dataTable, fileNames, importOptions);
+			}
+
+			return errors;
+		}
+
+		/// <summary>
+		/// Imports a couple of ASCII files into one (!) table, vertically. If the names of the subsequently imported table columns match, the data
+		/// will be written in the matching column. Otherwise new columns with the unmatched column names were created.
+		/// Property columns will only be imported from the first table.
+		/// </summary>
+		/// <param name="fileNames">An array of file names to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
+		/// <param name="importOptions">Options used to import the Ascii files. This parameter can be <c>null</c>. In this case the value on return is the determined import options of the first file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>false</c>) or of the last file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>true</c>).</param>
+		/// <param name="determineImportOptionsSeparatelyForEachFile">
+		/// If <c>true</c>, the import options are determined for each file separately. In this case the provided parameter <paramref name="importOptions"/> is ignored, but on return it contains the importOptions used to import the last file.
+		/// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
+		/// </param>
+		/// <param name="errors">Null if no error occurs, or an error description.</param>
+		/// <returns>A newly created table (not included in the project) with the imported data.</returns>
+		private static DataTable InternalImportMultipleFilesVerticallyIntoNewTable(IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile, out string errors)
 		{
 			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
-			int lastDestinationRow = table.DataColumns.RowCount;
+			var dataTable = new DataTable();
+
+			int lastDestinationRow = 0;
 			int numberOfImportedTables = 0;
 
 			// add also a property column named "FilePath" if not existing so far
-			TextColumn filePathCol = (TextColumn)table.Col.EnsureExistence("FilePath", typeof(TextColumn), ColumnKind.Label, 0);
+			TextColumn filePathCol = (TextColumn)dataTable.Col.EnsureExistenceAtPositionStrictly(0, "FilePath", typeof(TextColumn), ColumnKind.Label, 0);
+			filePathCol.Clear();
 
 			if (sortFileNames)
 				fileNames = fileNames.OrderBy(x => x);
+
+			bool isFirstImportedFile = true;
+			var clearedColumns = new HashSet<DataColumn>();
 
 			foreach (string fileName in fileNames)
 			{
@@ -657,8 +692,25 @@ namespace Altaxo.Serialization.Ascii
 				{
 					var srcDataCol = srcTable.DataColumns[srcDataColIdx];
 
-					var destDataCol = table.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcDataColIdx), srcTable.DataColumns[srcDataColIdx].GetType(), srcTable.DataColumns.GetColumnKind(srcDataColIdx), srcTable.DataColumns.GetColumnGroup(srcDataColIdx));
-					int destDataColIdx = table.DataColumns.GetColumnNumber(destDataCol);
+					DataColumn destDataCol = null;
+					if (isFirstImportedFile)
+					{
+						// Position must be +1, because the first column is the column with the file paths
+						destDataCol = dataTable.DataColumns.EnsureExistenceAtPositionStrictly(srcDataColIdx + 1, srcTable.DataColumns.GetColumnName(srcDataColIdx), srcTable.DataColumns[srcDataColIdx].GetType(), srcTable.DataColumns.GetColumnKind(srcDataColIdx), srcTable.DataColumns.GetColumnGroup(srcDataColIdx));
+						isFirstImportedFile = false;
+					}
+					else // not the first file
+					{
+						destDataCol = dataTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcDataColIdx), srcTable.DataColumns[srcDataColIdx].GetType(), srcTable.DataColumns.GetColumnKind(srcDataColIdx), srcTable.DataColumns.GetColumnGroup(srcDataColIdx));
+					}
+
+					if (!clearedColumns.Contains(destDataCol))
+					{
+						clearedColumns.Add(destDataCol);
+						destDataCol.Clear();
+					}
+
+					int destDataColIdx = dataTable.DataColumns.GetColumnNumber(destDataCol);
 
 					// transfer the data of one data column
 					for (int j = 0; j < srcDataCol.Count; j++)
@@ -667,7 +719,7 @@ namespace Altaxo.Serialization.Ascii
 					// now also process the property columns
 					for (int srcPropColIdx = 0; srcPropColIdx < srcTable.PropCols.ColumnCount; srcPropColIdx++)
 					{
-						var destPropCol = table.PropCols.EnsureExistence(srcTable.PropCols.GetColumnName(srcPropColIdx), srcTable.PropCols[srcPropColIdx].GetType(), srcTable.PropCols.GetColumnKind(srcPropColIdx), srcTable.PropCols.GetColumnGroup(srcPropColIdx));
+						var destPropCol = dataTable.PropCols.EnsureExistence(srcTable.PropCols.GetColumnName(srcPropColIdx), srcTable.PropCols[srcPropColIdx].GetType(), srcTable.PropCols.GetColumnKind(srcPropColIdx), srcTable.PropCols.GetColumnGroup(srcPropColIdx));
 
 						if (0 == numberOfImportedTables)
 						{
@@ -684,7 +736,39 @@ namespace Altaxo.Serialization.Ascii
 				numberOfImportedTables++;
 			} // foreache file
 
-			return errorList.Length == 0 ? null : errorList.ToString();
+			errors = errorList.Length == 0 ? null : errorList.ToString();
+			return dataTable;
+		}
+
+		/// <summary>
+		/// Imports a couple of ASCII files into one (!) table, vertically. If the names of the subsequently imported table columns match, the data
+		/// will be written in the matching column. Otherwise new columns with the unmatched column names were created.
+		/// Property columns will only be imported from the first table.
+		/// </summary>
+		/// <param name="dataTable">The table the data should be imported to.</param>
+		/// <param name="fileNames">An array of file names to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
+		/// <param name="importOptions">Options used to import the Ascii files. This parameter can be <c>null</c>. In this case the value on return is the determined import options of the first file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>false</c>) or of the last file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>true</c>).</param>
+		/// <param name="determineImportOptionsSeparatelyForEachFile">
+		/// If <c>true</c>, the import options are determined for each file separately. In this case the provided parameter <paramref name="importOptions"/> is ignored, but on return it contains the importOptions used to import the last file.
+		/// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
+		/// </param>
+		/// <returns>Null if no error occurs, or an error description.</returns>
+		private static string InternalImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
+		{
+			string errors;
+			var temporaryTable = InternalImportMultipleFilesVerticallyIntoNewTable(fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out errors);
+
+			if (null != temporaryTable)
+			{
+				TransferTemporaryTable(temporaryTable, dataTable);
+
+				// finally set or change the data source of the table
+				importOptions.ImportMultipleStreamsVertically = true;
+				AddOrUpdateAsciiImportDataSource(dataTable, fileNames, importOptions);
+			}
+
+			return errors;
 		}
 
 		#endregion Internal implementations (horizontal and vertical)
@@ -829,7 +913,108 @@ namespace Altaxo.Serialization.Ascii
 
 		#endregion Importing into existing table
 
-		#region Importing into newly created table
+		#region Importing multiple files in separate new tables stored in the project file
+
+		/// <summary>
+		/// Imports multiple Ascii files into newly created new tables (each file into a separate table). The tables are named and stored in the project file in the provided project folder.
+		/// </summary>
+		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
+		/// <param name="fileNames">The names of the files to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
+		/// <param name="importOptions">Options used to import ASCII. This parameter must not be null, and the options must be fully specified.</param>
+		/// <param name="determineImportOptionsSeparatelyForEachFile">
+		/// If <c>true</c>, the import options are determined for each file separately. In this case the provided parameter <paramref name="importOptions"/> is ignored, but on return it contains the importOptions used to import the last file.
+		/// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
+		/// </param>
+		/// <returns>The list of tables created during the import.</returns>
+		private static IList<DataTable> InternalImportFilesIntoSeparateNewTables(ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
+		{
+			var listOfNewTables = new List<DataTable>();
+
+			if (sortFileNames)
+				fileNames = fileNames.OrderBy(x => x);
+
+			foreach (var fileName in fileNames)
+			{
+				var srcTable = new DataTable(projectFolder.Name + Path.GetFileNameWithoutExtension(fileName));
+				Current.ProjectService.CreateNewWorksheet(srcTable);
+
+				if (determineImportOptionsSeparatelyForEachFile)
+					ImportFromAsciiFile(srcTable, fileName);
+				else if (null != importOptions && importOptions.IsFullySpecified)
+					ImportFromAsciiFile(srcTable, fileName, importOptions);
+				else
+					ImportFromAsciiFile(srcTable, fileName, out importOptions);
+
+				listOfNewTables.Add(srcTable);
+			}
+
+			return listOfNewTables;
+		}
+
+		/// <summary>
+		/// Imports multiple Ascii files into newly created new tables (each file into a separate table). The tables are named and stored in the project file in the provided project folder.
+		/// </summary>
+		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
+		/// <param name="fileNames">The names of the files to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
+		/// <param name="importOptions">Options used to import ASCII. This parameter must not be null, and the options must be fully specified.</param>
+		/// <returns>The list of tables created during the import.</returns>
+		public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, AsciiImportOptions importOptions)
+		{
+			if (null == projectFolder)
+				throw new ArgumentNullException("projectFolder");
+			if (null == fileNames)
+				throw new ArgumentNullException("filenames");
+			if (null == importOptions)
+				throw new ArgumentNullException("importOptions");
+			if (!importOptions.IsFullySpecified)
+				throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
+
+			return InternalImportFilesIntoSeparateNewTables(projectFolder, fileNames, sortFileNames, ref importOptions, false);
+		}
+
+		/// <summary>
+		/// Imports multiple Ascii files into newly created new tables (each file into a separate table). The tables are named and stored in the project file in the provided project folder.
+		/// </summary>
+		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
+		/// <param name="fileNames">The names of the files to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
+		/// <param name="importOptions">On return, contains the options used to import the first Ascii files. These options are also used to import all other Ascii files.</param>
+		/// <returns>The list of tables created during the import.</returns>
+		public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, out AsciiImportOptions importOptions)
+		{
+			if (null == projectFolder)
+				throw new ArgumentNullException("projectFolder");
+			if (null == fileNames)
+				throw new ArgumentNullException("filenames");
+
+			importOptions = null;
+			return InternalImportFilesIntoSeparateNewTables(projectFolder, fileNames, sortFileNames, ref importOptions, false);
+		}
+
+		/// <summary>
+		/// Imports multiple Ascii files into newly created new tables (each file into a separate table). The tables are named and stored in the project file in the provided project folder.
+		/// </summary>
+		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
+		/// <param name="fileNames">The names of the files to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
+		/// <param name="determineImportOptionsSeparatelyForEachFile">If <c>true</c>, the import options are determined for each file separately. Otherwise, i.e. if <c>false</c>, the import options are determined from the first file that is imported.</param>
+		/// <returns>The list of tables created during the import.</returns>
+		public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, bool determineImportOptionsSeparatelyForEachFile)
+		{
+			if (null == projectFolder)
+				throw new ArgumentNullException("projectFolder");
+			if (null == fileNames)
+				throw new ArgumentNullException("filenames");
+
+			AsciiImportOptions importOptions = null;
+			return InternalImportFilesIntoSeparateNewTables(projectFolder, fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile);
+		}
+
+		#endregion Importing multiple files in separate new tables stored in the project file
+
+		#region Importing into newly created temporary tables (not stored in the project file)
 
 		/// <summary>
 		/// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
@@ -919,108 +1104,7 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-		#region Multiple files in separate new tables
-
-		/// <summary>
-		/// Imports multiple Ascii files into newly created new tables (each file into a separate table).
-		/// </summary>
-		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
-		/// <param name="fileNames">The names of the files to import.</param>
-		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
-		/// <param name="importOptions">Options used to import ASCII. This parameter must not be null, and the options must be fully specified.</param>
-		/// <param name="determineImportOptionsSeparatelyForEachFile">
-		/// If <c>true</c>, the import options are determined for each file separately. In this case the provided parameter <paramref name="importOptions"/> is ignored, but on return it contains the importOptions used to import the last file.
-		/// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
-		/// </param>
-		/// <returns>The list of tables created during the import.</returns>
-		private static IList<DataTable> InternalImportFilesIntoSeparateNewTables(ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile)
-		{
-			var listOfNewTables = new List<DataTable>();
-
-			if (sortFileNames)
-				fileNames = fileNames.OrderBy(x => x);
-
-			foreach (var fileName in fileNames)
-			{
-				var srcTable = new DataTable(projectFolder.Name + Path.GetFileNameWithoutExtension(fileName));
-				Current.ProjectService.CreateNewWorksheet(srcTable);
-
-				if (determineImportOptionsSeparatelyForEachFile)
-					ImportFromAsciiFile(srcTable, fileName);
-				else if (null != importOptions && importOptions.IsFullySpecified)
-					ImportFromAsciiFile(srcTable, fileName, importOptions);
-				else
-					ImportFromAsciiFile(srcTable, fileName, out importOptions);
-
-				listOfNewTables.Add(srcTable);
-			}
-
-			return listOfNewTables;
-		}
-
-		/// <summary>
-		/// Imports multiple Ascii files into newly created new tables (each file into a separate table).
-		/// </summary>
-		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
-		/// <param name="fileNames">The names of the files to import.</param>
-		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
-		/// <param name="importOptions">Options used to import ASCII. This parameter must not be null, and the options must be fully specified.</param>
-		/// <returns>The list of tables created during the import.</returns>
-		public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, AsciiImportOptions importOptions)
-		{
-			if (null == projectFolder)
-				throw new ArgumentNullException("projectFolder");
-			if (null == fileNames)
-				throw new ArgumentNullException("filenames");
-			if (null == importOptions)
-				throw new ArgumentNullException("importOptions");
-			if (!importOptions.IsFullySpecified)
-				throw new ArgumentException("Argument importOptions: importOptions must be fully specified, i.e. all elements of importOptions must be valid. Please run a document analysis in-before to get appropriate values.");
-
-			return InternalImportFilesIntoSeparateNewTables(projectFolder, fileNames, sortFileNames, ref importOptions, false);
-		}
-
-		/// <summary>
-		/// Imports multiple Ascii files into newly created new tables (each file into a separate table).
-		/// </summary>
-		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
-		/// <param name="fileNames">The names of the files to import.</param>
-		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
-		/// <param name="importOptions">On return, contains the options used to import the first Ascii files. These options are also used to import all other Ascii files.</param>
-		/// <returns>The list of tables created during the import.</returns>
-		public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, out AsciiImportOptions importOptions)
-		{
-			if (null == projectFolder)
-				throw new ArgumentNullException("projectFolder");
-			if (null == fileNames)
-				throw new ArgumentNullException("filenames");
-
-			importOptions = null;
-			return InternalImportFilesIntoSeparateNewTables(projectFolder, fileNames, sortFileNames, ref importOptions, false);
-		}
-
-		/// <summary>
-		/// Imports multiple Ascii files into newly created new tables (each file into a separate table).
-		/// </summary>
-		/// <param name="projectFolder">The project folder in which the new tables should be created.</param>
-		/// <param name="fileNames">The names of the files to import.</param>
-		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
-		/// <param name="determineImportOptionsSeparatelyForEachFile">If <c>true</c>, the import options are determined for each file separately. Otherwise, i.e. if <c>false</c>, the import options are determined from the first file that is imported.</param>
-		/// <returns>The list of tables created during the import.</returns>
-		public static IList<DataTable> ImportFilesIntoSeparateNewTables(this ProjectFolder projectFolder, IEnumerable<string> fileNames, bool sortFileNames, bool determineImportOptionsSeparatelyForEachFile)
-		{
-			if (null == projectFolder)
-				throw new ArgumentNullException("projectFolder");
-			if (null == fileNames)
-				throw new ArgumentNullException("filenames");
-
-			AsciiImportOptions importOptions = null;
-			return InternalImportFilesIntoSeparateNewTables(projectFolder, fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile);
-		}
-
-		#endregion Multiple files in separate new tables
-
-		#endregion Importing into newly created table
+		#endregion Importing into newly created temporary tables (not stored in the project file)
 
 		#region Public helper functions
 
@@ -1100,28 +1184,65 @@ namespace Altaxo.Serialization.Ascii
 		/// for instance if the provided streamOriginHint is not a file Url.
 		/// </summary>
 		/// <param name="dataTable">The provided data table on which to set the import data source..</param>
-		/// <param name="streamOriginHint">The stream origin hint. If this is a file, then this string starts with <see cref="FileUrlStart"/>.</param>
+		/// <param name="fileNames">The file names of the files that were imported.</param>
 		/// <param name="importOptions">The Ascii import options that were used to import the file.</param>
-		private static void AddOrUpdateAsciiImportDataSource(DataTable dataTable, string streamOriginHint, AsciiImportOptions importOptions)
+		private static void AddOrUpdateAsciiImportDataSource(DataTable dataTable, IEnumerable<string> fileNames, AsciiImportOptions importOptions)
 		{
-			string fileName = streamOriginHint.StartsWith(FileUrlStart) ? streamOriginHint.Substring(FileUrlStart.Length) : null;
+			if (null == fileNames)
+				return;
+			if (!object.ReferenceEquals(dataTable.ParentObject, Current.Project.DataTableCollection))
+				return;
+
 			var dataSource = dataTable.DataSource as AsciiImportDataSource;
 
-			if (!string.IsNullOrEmpty(fileName))
+			if (null != dataSource)
 			{
-				if (null != dataSource)
-				{
-					dataSource.SourceFileName = fileName;
-					dataSource.AsciiImportOptions = importOptions;
-				}
-				else
-				{
-					dataTable.DataSource = new AsciiImportDataSource(streamOriginHint.Substring(FileUrlStart.Length), importOptions);
-				}
+				dataSource.SourceFileNames = fileNames;
+				dataSource.AsciiImportOptions = importOptions;
 			}
 			else
 			{
-				dataTable.DataSource = null;
+				dataTable.DataSource = new AsciiImportDataSource(fileNames, importOptions);
+			}
+		}
+
+		/// <summary>
+		/// Transfers a temporary table to a destination table. The first data columns and property columns of the destination table are replaced by the columns of the temporary table. The source table is destoyed during the transfer process (in order to save memory).
+		/// </summary>
+		/// <param name="fromSourceTable">Source table. Is destroyed during the transfer operation.</param>
+		/// <param name="toDestinationTable">Destination table.</param>
+		private static void TransferTemporaryTable(DataTable fromSourceTable, DataTable toDestinationTable)
+		{
+			toDestinationTable.Suspend();
+			try
+			{
+				// data columns first
+				var srcCollection = fromSourceTable.DataColumns;
+				var destCollection = toDestinationTable.DataColumns;
+				for (int i = 0; i < srcCollection.ColumnCount; ++i)
+				{
+					var srcColumn = srcCollection[i];
+					var destColumn = destCollection.EnsureExistenceAtPositionStrictly(i, srcCollection.GetColumnName(srcColumn), srcColumn.GetType(), srcCollection.GetColumnKind(srcColumn), srcCollection.GetColumnGroup(srcColumn));
+					destColumn.Clear();
+					destColumn.CopyDataFrom(srcColumn);
+					srcColumn.Clear();
+				}
+
+				// then property columns
+				srcCollection = fromSourceTable.PropCols;
+				destCollection = toDestinationTable.PropCols;
+				for (int i = 0; i < srcCollection.ColumnCount; ++i)
+				{
+					var srcColumn = srcCollection[i];
+					var destColumn = destCollection.EnsureExistenceAtPositionStrictly(i, srcCollection.GetColumnName(srcColumn), srcColumn.GetType(), srcCollection.GetColumnKind(srcColumn), srcCollection.GetColumnGroup(srcColumn));
+					destColumn.Clear();
+					destColumn.CopyDataFrom(srcColumn);
+					srcColumn.Clear();
+				}
+			}
+			finally
+			{
+				toDestinationTable.Resume();
 			}
 		}
 

@@ -141,6 +141,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Common\AscendingIntegerCollectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\BackgroundCancelControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -860,6 +864,9 @@
     </Compile>
     <Compile Include="Gui\Analysis\SavitzkyGolayParameterControl.xaml.cs">
       <DependentUpon>SavitzkyGolayParameterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\AscendingIntegerCollectionControl.xaml.cs">
+      <DependentUpon>AscendingIntegerCollectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\BackgroundCancelControl.xaml.cs">
       <DependentUpon>BackgroundCancelControl.xaml</DependentUpon>

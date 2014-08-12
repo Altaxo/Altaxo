@@ -689,6 +689,22 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Sets the data columns from an enumeration of data column proxies.
+		/// </summary>
+		/// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
+		public void SetDataRows(IAscendingIntegerCollection dataRows)
+		{
+			_participatingDataRows.Clear();
+
+			int start = 0;
+			ContiguousIntegerRange range;
+			while (dataRows.GetNextRangeAscending(ref start, out range))
+				_participatingDataRows.AddRange(range.Start, range.Count);
+
+			_isDirty = true;
+		}
+
 		/// <summary>The indices of the data columns that contribute to the matrix.</summary>
 		public bool UseAllAvailableDataColumnsOfGroup
 		{

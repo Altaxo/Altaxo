@@ -228,5 +228,17 @@ namespace Altaxo.Gui.Serialization.Ascii
 		{
 			get { return _guiAnalysisControl; }
 		}
+
+		public bool ImportMultipleAsciiVertically
+		{
+			get
+			{
+				return _guiImportMultipleAsciiVertically.IsChecked == true;
+			}
+			set
+			{
+				_guiImportMultipleAsciiVertically.IsChecked = value;
+			}
+		}
 	}
 }

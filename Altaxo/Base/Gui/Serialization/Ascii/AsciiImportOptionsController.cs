@@ -68,6 +68,8 @@ namespace Altaxo.Gui.Serialization.Ascii
 		object AsciiSeparationStrategyDetailView { set; }
 
 		object AsciiDocumentAnalysisOptionsView { get; }
+
+		bool ImportMultipleAsciiVertically { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
@@ -158,6 +160,8 @@ namespace Altaxo.Gui.Serialization.Ascii
 				_view.TableStructure = _tableStructure;
 
 				_view.HeaderLinesDestination = _headerLinesDestination;
+
+				_view.ImportMultipleAsciiVertically = _doc.ImportMultipleStreamsVertically;
 			}
 		}
 
@@ -288,6 +292,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 			_doc.RenameColumns = _view.RenameColumnsWithHeaderNames;
 			_doc.RenameWorksheet = _view.RenameWorksheetWithFileName;
+			_doc.ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically;
 
 			if (_view.NumberFormatCultureIsKnowm)
 			{

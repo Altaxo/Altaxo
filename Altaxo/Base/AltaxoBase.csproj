@@ -251,6 +251,7 @@
     <Compile Include="Graph\Scales\Rescaling\InverseAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
+    <Compile Include="Gui\Common\AscendingIntegerCollectionController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
     <Compile Include="Gui\DataConnection\AltaxoOleDbDataSourceController.cs" />

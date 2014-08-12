@@ -151,20 +151,6 @@ namespace Altaxo.Gui.Data
 			this._guiYColumName.Text = colname;
 		}
 
-		public void Initialize_PlotRangeFrom(int from)
-		{
-			this._guiPlotRangeFrom.Minimum = 0;
-			this._guiPlotRangeFrom.Maximum = int.MaxValue;
-			this._guiPlotRangeFrom.Value = from;
-		}
-
-		public void Initialize_PlotRangeTo(int to)
-		{
-			this._guiPlotRangeTo.Minimum = 0;
-			this._guiPlotRangeTo.Maximum = int.MaxValue;
-			this._guiPlotRangeTo.Value = Math.Max(0, to);
-		}
-
 		public bool AreDataColumnsShown
 		{
 			get { return true == _guiDataColumnsSelection.IsChecked; }
@@ -194,6 +180,8 @@ namespace Altaxo.Gui.Data
 			var ev = UseAllAvailableDataRowsChanged;
 			if (null != ev)
 				ev();
+
+			_guiDataRowsHost.Visibility = _guiUseAllAvailableDataRows.IsChecked == true ? Visibility.Hidden : Visibility.Visible;
 		}
 
 		private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
@@ -237,6 +225,11 @@ namespace Altaxo.Gui.Data
 			{
 				_guiUseAllAvailableDataRows.IsChecked = value;
 			}
+		}
+
+		public void Initialize_DataRowsControl(object obj)
+		{
+			_guiDataRowsHost.Content = obj;
 		}
 	}
 }

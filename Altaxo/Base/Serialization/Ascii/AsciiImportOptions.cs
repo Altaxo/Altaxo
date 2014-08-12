@@ -60,6 +60,14 @@ namespace Altaxo.Serialization.Ascii
 			HeaderLinesDestination = AsciiHeaderLinesDestination.ImportToProperties;
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the import of multiple streams in one table should be horizontally oriented (in more columns) or vertically oriented (in more rows).
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if multiple streams should be imported vertically oriented, otherwise <c>false</c>.
+		/// </value>
+		public bool ImportMultipleStreamsVertically { get; set; }
+
 		/// <summary>If true, rename the columns if 1st line contain  the column names. This option must be set programmatically or by user interaction.</summary>
 		public bool RenameColumns { get; set; }
 
@@ -110,6 +118,7 @@ namespace Altaxo.Serialization.Ascii
 				info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture.LCID);
 				info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture.LCID);
 				info.AddValue("RecognizedStructure", s.RecognizedStructure);
+				info.AddValue("ImportMultipleStreamsVertically", s.ImportMultipleStreamsVertically);
 			}
 
 			protected virtual AsciiImportOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -125,7 +134,7 @@ namespace Altaxo.Serialization.Ascii
 				s.NumberFormatCulture = System.Globalization.CultureInfo.GetCultureInfo(info.GetInt32("NumberFormatCultureLCID"));
 				s.DateTimeFormatCulture = System.Globalization.CultureInfo.GetCultureInfo(info.GetInt32("DateTimeFormatCultureLCID"));
 				s.RecognizedStructure = (AsciiLineStructure)info.GetValue("AsciiLineStructure", s);
-
+				s.ImportMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
 				return s;
 			}
 
@@ -181,6 +190,8 @@ namespace Altaxo.Serialization.Ascii
 				this.DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
 
 				this.RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
+
+				this.ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
 
 				return true;
 			}
