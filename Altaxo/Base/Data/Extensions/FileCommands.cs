@@ -115,7 +115,14 @@ namespace Altaxo.Data
 			{
 				if (toMultipleWorksheets)
 				{
-					AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, options.FileNames, true, false);
+					if (options.FileNames.Length == 1 && null != dataTable)
+					{
+						AsciiImporter.ImportFromAsciiFile(dataTable, options.FileName);
+					}
+					else
+					{
+						AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, options.FileNames, true, false);
+					}
 				}
 				else
 				{
