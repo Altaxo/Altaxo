@@ -39,7 +39,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		private DataTableMatrixProxy _inputData;
 		private IDataSourceImportOptions _importOptions;
 
-		public event Action<IAltaxoTableDataSource> DataSourceChanged;
+		public Action<IAltaxoTableDataSource> _dataSourceChanged;
 
 		protected Main.EventSuppressor _eventSuppressor;
 
@@ -195,6 +195,30 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		}
 
 		/// <summary>
+		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
+		/// </summary>
+		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
+		{
+			add
+			{
+				bool isFirst = null == _dataSourceChanged;
+				_dataSourceChanged += value;
+				if (isFirst)
+				{
+					//EhInputDataChanged(this, EventArgs.Empty);
+				}
+			}
+			remove
+			{
+				_dataSourceChanged -= value;
+				bool isLast = null == _dataSourceChanged;
+				if (isLast)
+				{
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the input data.
 		/// </summary>
 		/// <value>
@@ -282,7 +306,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				if (_eventSuppressor.GetEnabledWithCounting())
 				{
-					var ev = DataSourceChanged;
+					var ev = _dataSourceChanged;
 					if (null != ev)
 						ev(this);
 				}
@@ -294,7 +318,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		/// </summary>
 		private void EhResumeSuppressedEvents()
 		{
-			var ev = DataSourceChanged;
+			var ev = _dataSourceChanged;
 			if (null != ev)
 				ev(this);
 		}

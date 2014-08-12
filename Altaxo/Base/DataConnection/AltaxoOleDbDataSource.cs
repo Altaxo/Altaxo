@@ -221,7 +221,7 @@ namespace Altaxo.DataConnection
 
 		public void OnAfterDeserialization()
 		{
-			UpdateWatching();
+			// Note: it is not neccessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
 		}
 
 		/// <summary>

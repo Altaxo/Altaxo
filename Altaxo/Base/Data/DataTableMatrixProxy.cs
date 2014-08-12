@@ -1233,7 +1233,7 @@ namespace Altaxo.Data
 
 			if (!spacing.IsStrictlyEquallySpaced)
 			{
-				errorOrWarningMessage = string.Format("Warning: The {0} header column is not strictly equally spaced, the relative deviation is " + spacing.RelativeSpaceDeviation.ToString());
+				errorOrWarningMessage = string.Format("Warning: The {0} header column is not strictly equally spaced, the relative deviation is {1}", rowOrCol, spacing.RelativeSpaceDeviation);
 				return false;
 			}
 			else

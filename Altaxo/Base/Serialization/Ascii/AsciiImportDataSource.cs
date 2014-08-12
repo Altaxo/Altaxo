@@ -319,7 +319,7 @@ namespace Altaxo.Serialization.Ascii
 
 		public void OnAfterDeserialization()
 		{
-			UpdateWatching();
+			// Note: it is not neccessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
 		}
 
 		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
