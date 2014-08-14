@@ -283,6 +283,7 @@
     <Compile Include="Collections\TestPartitionableList.cs" />
     <Compile Include="Collections\TestPriorityQueue_KeyValue.cs" />
     <Compile Include="Collections\TestPriorityQueue_Key.cs" />
+    <Compile Include="Collections\Test_AscendingIntegerRangeCollection.cs" />
     <Compile Include="ResourceKeys.cs" />
   </ItemGroup>
   <ItemGroup>

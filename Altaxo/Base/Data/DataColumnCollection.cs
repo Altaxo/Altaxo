@@ -1263,7 +1263,7 @@ namespace Altaxo.Data
 			while (selectedColumns.GetNextRangeDescending(ref currentPosition, out range))
 			{
 				// first, Dispose the columns and set the places to null
-				for (int i = range.Last; i >= range.Start; i--)
+				for (int i = range.LastInclusive; i >= range.Start; i--)
 				{
 					string columnName = GetColumnName(this[i]);
 					this._columnScripts.Remove(this[i]);

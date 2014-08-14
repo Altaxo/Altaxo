@@ -692,7 +692,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Sets the data columns from an enumeration of data column proxies.
 		/// </summary>
-		/// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
+		/// <param name="dataRows">The enumeration of data rows.</param>
 		public void SetDataRows(IAscendingIntegerCollection dataRows)
 		{
 			_participatingDataRows.Clear();

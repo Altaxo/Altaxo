@@ -564,6 +564,7 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Collections\AscendingIntegerRangeCollection.cs" />
     <Compile Include="Collections\ConcurrentTokenizedPriorityQueue_KeyValue.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
     <Compile Include="Collections\EnumerationExtensions.cs" />

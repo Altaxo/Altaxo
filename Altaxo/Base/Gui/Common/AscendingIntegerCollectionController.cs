@@ -340,7 +340,7 @@ namespace Altaxo.Gui.Common
 			_ranges.Clear();
 			while (_doc.GetNextRangeAscending(ref currPos, out range))
 			{
-				_ranges.Add(new MyRange() { From = range.Start, To = range.Last });
+				_ranges.Add(new MyRange() { From = range.Start, To = range.LastInclusive });
 			}
 
 			if (null != _view)
