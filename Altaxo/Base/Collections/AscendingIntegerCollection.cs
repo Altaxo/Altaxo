@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Collections
 {
@@ -179,7 +180,7 @@ namespace Altaxo.Collections
 					}
 				}
 
-				result = new ContiguousIntegerRange(rangestart, rangecount);
+				result = ContiguousIntegerRange.FromStartAndCount(rangestart, rangecount);
 				return true;
 			}
 		}
@@ -224,8 +225,30 @@ namespace Altaxo.Collections
 					}
 				}
 
-				result = new ContiguousIntegerRange(rangestart, rangecount);
+				result = ContiguousIntegerRange.FromStartAndCount(rangestart, rangecount);
 				return true;
+			}
+		}
+
+		public IEnumerable<ContiguousIntegerRange> RangesAscending
+		{
+			get
+			{
+				int start = 0;
+				ContiguousIntegerRange result;
+				while (GetNextRangeAscending(ref start, out result))
+					yield return result;
+			}
+		}
+
+		public IEnumerable<ContiguousIntegerRange> RangesDescending
+		{
+			get
+			{
+				int start = Count - 1;
+				ContiguousIntegerRange result;
+				while (GetNextRangeDescending(ref start, out result))
+					yield return result;
 			}
 		}
 

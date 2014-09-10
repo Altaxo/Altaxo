@@ -729,7 +729,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			Altaxo.Collections.IAscendingIntegerCollection selectedDataColumns = ctrl.SelectedDataColumns;
 			if (0 == selectedDataColumns.Count)
-				selectedDataColumns = new Altaxo.Collections.ContiguousIntegerRange(0, ctrl.DataTable.DataColumnCount);
+				selectedDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, ctrl.DataTable.DataColumnCount);
 
 			if (0 == ctrl.SelectedPropertyColumns.Count || 0 == selectedDataColumns.Count)
 				return;

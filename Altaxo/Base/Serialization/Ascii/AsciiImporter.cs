@@ -449,13 +449,14 @@ namespace Altaxo.Serialization.Ascii
 
 			using (var memstream = new MemoryStream())
 			{
-				using (var textwriter = new StreamWriter(memstream))
+				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512))
 				{
 					textwriter.Write(asciiText);
-					textwriter.Flush();
+					textwriter.Flush();  // do not close the textwriter here.  TODO NET45 we can close textwriter here if we provide true in as 4th argument in the constructor
+
+					memstream.Position = 0;
+					ImportFromAsciiStream(dataTable, memstream, "Ascii text", importOptions);
 				}
-				memstream.Position = 0;
-				ImportFromAsciiStream(dataTable, memstream, "Ascii text", importOptions);
 			}
 		}
 
@@ -474,13 +475,14 @@ namespace Altaxo.Serialization.Ascii
 
 			using (var memstream = new MemoryStream())
 			{
-				using (var textwriter = new StreamWriter(memstream))
+				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512))
 				{
 					textwriter.Write(asciiText);
-					textwriter.Flush();
+					textwriter.Flush();  // do not close the textwriter here.  TODO NET45 we can close textwriter here if we provide true in as 4th argument in the constructor
+
+					memstream.Position = 0;
+					ImportFromAsciiStream(dataTable, memstream, "Ascii text", out importOptions);
 				}
-				memstream.Position = 0;
-				ImportFromAsciiStream(dataTable, memstream, "Ascii text", out importOptions);
 			}
 		}
 
@@ -1058,14 +1060,15 @@ namespace Altaxo.Serialization.Ascii
 		{
 			using (var memstream = new MemoryStream())
 			{
-				using (var textwriter = new StreamWriter(memstream))
+				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512))
 				{
 					textwriter.Write(text);
-					textwriter.Flush();
-				}
-				memstream.Position = 0;
+					textwriter.Flush(); // do not close the textwriter here.  TODO NET45 we can close textwriter here if we provide true in as 4th argument in the constructor
 
-				return InternalImportStreamIntoNewTable(memstream, "text", null);
+					memstream.Position = 0;
+
+					return InternalImportStreamIntoNewTable(memstream, "text", null);
+				} // leave the textwriter open to leave the stream open during read
 			}
 		}
 

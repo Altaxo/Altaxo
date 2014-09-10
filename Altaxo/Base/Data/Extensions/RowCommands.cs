@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Worksheet.Viewing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Altaxo.Collections;
-using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Gui.Common;
-
 namespace Altaxo.Data
 {
 	public static class RowCommands
 	{
-
 		/// <summary>
 		/// Copies selected rows into newly created property columns and deletes the rows afterwards.
 		/// </summary>
@@ -67,9 +67,7 @@ namespace Altaxo.Data
 		{
 			Dictionary<System.Type, int> typesToCount = new Dictionary<Type, int>();
 			if (null == selectedColumns || 0 == selectedColumns.Count)
-				selectedColumns = new Altaxo.Collections.ContiguousIntegerRange(0, table.ColumnCount);
-
-
+				selectedColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, table.ColumnCount);
 
 			// count all non-empty cells according to the type
 			foreach (var colIdx in selectedColumns)
@@ -84,8 +82,6 @@ namespace Altaxo.Data
 						typesToCount.Add(colType, 1);
 				}
 			}
-
-
 
 			// return the data column type with the topmost count
 			int bestCount = 0;
@@ -112,7 +108,7 @@ namespace Altaxo.Data
 		public static void CopyRowToDataColumn(this DataColumnCollection table, int rowIdx, IAscendingIntegerCollection selectedDataColumns, DataColumn destinationColumn)
 		{
 			if (null == selectedDataColumns || 0 == selectedDataColumns.Count)
-				selectedDataColumns = new Altaxo.Collections.ContiguousIntegerRange(0, table.ColumnCount);
+				selectedDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, table.ColumnCount);
 
 			foreach (var colIdx in selectedDataColumns)
 			{

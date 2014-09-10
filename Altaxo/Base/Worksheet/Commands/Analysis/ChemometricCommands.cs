@@ -499,9 +499,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		#endregion PLS Retrieving original data
 
-		#region PLS Calculating values
 
-		#endregion PLS Calculating values
 
 		#region PLS Plot Commands
 
@@ -652,7 +650,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			string newName = string.Format("GPreprocSpectra");
 			newName = Main.ProjectFolder.CreateFullName(table.Name, newName);
 
-			Worksheet.Commands.PlotCommands.PlotLine(desttable, new ContiguousIntegerRange(1, desttable.DataColumnCount - 1), true, false, newName);
+			Worksheet.Commands.PlotCommands.PlotLine(desttable, ContiguousIntegerRange.FromStartAndCount(1, desttable.DataColumnCount - 1), true, false, newName);
 		}
 
 		/// <summary>

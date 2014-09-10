@@ -45,19 +45,7 @@ namespace Altaxo.Collections
 	public struct ContiguousIntegerRange : IContiguousIntegerRange
 	{
 		private int _start;
-		private int _count;
-
-		/// <summary>
-		/// Constructs an integer range from the first element and the number of element of the range.
-		/// </summary>
-		/// <param name="start">First element belonging to the range.</param>
-		/// <param name="count">Number of consecutive integers belonging to the range.</param>
-		public ContiguousIntegerRange(int start, int count)
-		{
-			_start = start;
-			_count = count;
-			EnsureValidity();
-		}
+		private uint _count;
 
 		/// <summary>
 		/// Constructs an integer range from another integer range.
@@ -65,18 +53,35 @@ namespace Altaxo.Collections
 		/// <param name="from">The integer range to copy from.</param>
 		public ContiguousIntegerRange(IContiguousIntegerRange from)
 		{
+			AssertValidStartAndCount(from.Start, from.Count);
 			_start = from.Start;
-			_count = from.Count;
-			EnsureValidity();
+			_count = (uint)from.Count;
 		}
 
-		/// <summary>
-		/// Ensures the validity of the integer range.
-		/// </summary>
-		private void EnsureValidity()
+		private static void AssertValidStartAndCount(int start, uint count)
 		{
-			if (_count < 0)
-				throw new ArgumentOutOfRangeException("count", "Argument 'count' has to be positive");
+			if (0 == count)
+				throw new ArgumentOutOfRangeException("count is zero");
+			if (start > int.MinValue)
+			{
+				uint maxcnt = (uint)(int.MaxValue - start);
+				if (count > maxcnt)
+					throw new ArgumentOutOfRangeException("Start + Count exceeds maximum range of integer values.");
+			}
+		}
+
+		private static void AssertValidStartAndCount(int start, int count)
+		{
+			if (0 == count)
+				throw new ArgumentOutOfRangeException("count is zero");
+			else if (count < 0)
+				throw new ArgumentOutOfRangeException("count is negative");
+			if (start > int.MinValue)
+			{
+				uint maxcnt = (uint)(int.MaxValue - start);
+				if (count > maxcnt)
+					throw new ArgumentOutOfRangeException("Start + Count exceeds maximum range of integer values.");
+			}
 		}
 
 		/// <summary>
@@ -87,20 +92,22 @@ namespace Altaxo.Collections
 		/// <returns>Newly constructed integer range.</returns>
 		public static ContiguousIntegerRange FromStartAndCount(int start, int count)
 		{
-			if (count < 0)
-				throw new ArgumentOutOfRangeException("count", "Count must be a positive integer");
-
-			return new ContiguousIntegerRange(start, count);
+			AssertValidStartAndCount(start, count);
+			return new ContiguousIntegerRange { _start = start, _count = (uint)count };
 		}
 
 		/// <summary>
-		/// Constructs an infinitely extended integer range.
+		/// Constructs an integer range from the first and the last element of the range.
 		/// </summary>
 		/// <param name="start">First element belonging to the range.</param>
+		/// <param name="last">Last element belonging to the range.</param>
 		/// <returns>Newly constructed integer range.</returns>
-		public static ContiguousIntegerRange FromStartToInfinity(int start)
+		static public ContiguousIntegerRange FromFirstAndLastInclusive(int start, int last)
 		{
-			return new ContiguousIntegerRange(start, int.MaxValue);
+			if (!(last >= start))
+				throw new ArgumentOutOfRangeException("Last has to be greater than or equal to start");
+
+			return new ContiguousIntegerRange { _start = start, _count = (uint)(1 + (last - start)) };
 		}
 
 		/// <summary>
@@ -111,7 +118,9 @@ namespace Altaxo.Collections
 		/// <returns>Newly constructed integer range.</returns>
 		static public ContiguousIntegerRange FromStartAndEndExclusive(int start, int end)
 		{
-			return new ContiguousIntegerRange(start, end - start);
+			if (!(end > start))
+				throw new ArgumentOutOfRangeException("End has to be greater than start");
+			return new ContiguousIntegerRange { _start = start, _count = (uint)(end - start) };
 		}
 
 		/// <summary>
@@ -126,14 +135,14 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Constructs an integer range from the first and the last element of the range.
+		/// Returns true if the range is empty, i.e. has no elements.
 		/// </summary>
-		/// <param name="start">First element belonging to the range.</param>
-		/// <param name="last">Last element belonging to the range.</param>
-		/// <returns>Newly constructed integer range.</returns>
-		static public ContiguousIntegerRange FromFirstAndLastInclusive(int start, int last)
+		public bool IsEmpty
 		{
-			return new ContiguousIntegerRange(start, 1 + (last - start));
+			get
+			{
+				return _count == 0 && _start == 0;
+			}
 		}
 
 		/// <summary>
@@ -145,11 +154,11 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Number of elements of the integer range.Thus the integer range contains Start, Start+1, .. Start+Count-1.
+		/// Start value of the integer range.
 		/// </summary>
-		public int Count
+		public int First
 		{
-			get { return _count; }
+			get { return _start; }
 		}
 
 		/// <summary>
@@ -159,10 +168,7 @@ namespace Altaxo.Collections
 		{
 			get
 			{
-				if ((int.MaxValue - _count) < (_start - 1))
-					return int.MaxValue;
-				else
-					return _start + _count - 1;
+				return _start - 1 + (int)_count;
 			}
 		}
 
@@ -173,185 +179,31 @@ namespace Altaxo.Collections
 		{
 			get
 			{
-				if ((int.MaxValue - _count) < (_start))
-					return int.MaxValue;
-				else
-					return _start + _count;
+				return _start + (int)_count;
 			}
 		}
 
 		/// <summary>
-		/// Returns true if the integer range is infinite.
+		/// Number of elements of the integer range.Thus the integer range contains Start, Start+1, .. Start+Count-1.
 		/// </summary>
-		public bool IsInfinite
-		{
-			get
-			{
-				return _count == int.MaxValue;
-			}
-		}
-
-		/// <summary>
-		/// Returns true if the range is empty, i.e. has no elements.
-		/// </summary>
-		public bool IsEmpty
-		{
-			get
-			{
-				return _count <= 0;
-			}
-		}
-
-		#region IEnumerable<int> Members
-
-		/// <summary>
-		/// Enumerates all elements of this range.
-		/// </summary>
-		/// <returns>Enumerator for all elements</returns>
-		public IEnumerator<int> GetEnumerator()
-		{
-			for (int i = 0; i < _count; i++)
-				yield return i + _start;
-		}
-
-		#endregion IEnumerable<int> Members
-
-		#region IEnumerable Members
-
-		/// <summary>
-		/// Enumerates all elements of this range.
-		/// </summary>
-		/// <returns>Enumerator for all elements</returns>
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			for (int i = 0; i < _count; i++)
-				yield return i + _start;
-		}
-
-		#endregion IEnumerable Members
-
-		#region IROVector<int> Members
-
-		public int this[int i]
-		{
-			get
-			{
-				if (i >= 0 && i < _count)
-					return _start + i;
-				else if (i < 0)
-					throw new ArgumentOutOfRangeException("i is negative");
-				else
-					throw new ArgumentOutOfRangeException("i is greater or equal than count");
-			}
-		}
-
-		#endregion IROVector<int> Members
-
-		#region IAscendingIntegerCollection Members
-
-		public bool Contains(int nValue)
-		{
-			nValue -= _start;
-			return nValue >= 0 && nValue < _count;
-		}
-
-		public bool GetNextRangeAscending(ref int currentposition, out ContiguousIntegerRange result)
-		{
-			if (currentposition < 0 || currentposition >= _count)
-			{
-				result = ContiguousIntegerRange.Empty;
-				return false;
-			}
-			else
-			{
-				result = new ContiguousIntegerRange(_start, 1 + currentposition);
-				currentposition = _count;
-				return true;
-			}
-		}
-
-		public bool GetNextRangeDescending(ref int currentposition, out ContiguousIntegerRange result)
-		{
-			if (currentposition < 0 || currentposition >= _count)
-			{
-				result = ContiguousIntegerRange.Empty;
-				return false;
-			}
-			else
-			{
-				result = new ContiguousIntegerRange(_start, 1 + currentposition);
-				currentposition = -1;
-				return true;
-			}
-		}
-
-		#endregion IAscendingIntegerCollection Members
-
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			return new ContiguousIntegerRange(_start, _count);
-		}
-
-		#endregion ICloneable Members
-	}
-
-	/// <summary>
-	/// Represents a range of consecutive integers.
-	/// </summary>
-	public struct Int32RangeFromTo : IList<int>
-	{
-		private int _start, _lastInclusive;
-
-		/// <summary>
-		/// First element of the range (inclusive).
-		/// </summary>
-		public int First { get { return _start; } }
-
-		/// <summary>
-		/// Last element of the range (inclusive).
-		/// </summary>
-		public int LastInclusive { get { return _lastInclusive; } }
-
-		public static Int32RangeFromTo FromFirstAndLastInclusive(int first, int lastInclusive)
-		{
-			if (!(first <= lastInclusive))
-				throw new ArgumentOutOfRangeException("Argument lastInclusive has to be greater than or equal to argument first");
-			return new Int32RangeFromTo { _start = first, _lastInclusive = lastInclusive };
-		}
-
-		public static Int32RangeFromTo FromStartAndCount(int first, int count)
-		{
-			if (count < 1)
-				throw new ArgumentOutOfRangeException("count must be at least one!");
-
-			return new Int32RangeFromTo { _start = first, _lastInclusive = first + (count - 1) };
-		}
-
 		public int Count
 		{
 			get
 			{
-				try
-				{
-					checked
-					{
-						return (_lastInclusive - _start) + 1;
-					}
-				}
-				catch (Exception)
-				{
-					throw new InvalidOperationException("Range is too large to fit in an integer. Use LongCount instead");
-				}
+				if (_count > int.MaxValue || (_count == 0 && _start != 0))
+					throw new InvalidOperationException("This range is to large, thus integer is not sufficient for Count. Use LongCount instead.");
+				return (int)_count;
 			}
 		}
 
+		/// <summary>
+		/// Number of elements of the integer range.Thus the integer range contains Start, Start+1, .. Start+Count-1.
+		/// </summary>
 		public long LongCount
 		{
 			get
 			{
-				return ((long)_lastInclusive - _start) + 1;
+				return _count;
 			}
 		}
 
@@ -359,7 +211,7 @@ namespace Altaxo.Collections
 
 		public int IndexOf(int item)
 		{
-			if (item >= _start && item <= _lastInclusive)
+			if (item >= _start && item <= LastInclusive)
 				return item - _start;
 			else
 				return -1;
@@ -379,7 +231,7 @@ namespace Altaxo.Collections
 		{
 			get
 			{
-				if (index < 0 || !(_start + index <= _lastInclusive))
+				if (index < 0 || !(_start + index <= LastInclusive))
 					throw new IndexOutOfRangeException("index");
 				return _start + index;
 			}
@@ -401,12 +253,13 @@ namespace Altaxo.Collections
 
 		public bool Contains(int item)
 		{
-			return (item >= _start && item <= _lastInclusive);
+			return (item >= _start && item <= LastInclusive);
 		}
 
 		public void CopyTo(int[] array, int arrayIndex)
 		{
-			for (int i = _start, j = arrayIndex; i <= _lastInclusive && j < array.Length; ++i, ++j)
+			var lastInclusive = LastInclusive;
+			for (int i = _start, j = arrayIndex; i <= lastInclusive && j < array.Length; ++i, ++j)
 				array[j] = i;
 		}
 
@@ -422,7 +275,9 @@ namespace Altaxo.Collections
 
 		public IEnumerator<int> GetEnumerator()
 		{
-			for (int i = _start; i < _lastInclusive; ++i)
+			var lastInclusive = LastInclusive;
+
+			for (int i = _start; i < lastInclusive; ++i)
 				yield return i;
 		}
 
@@ -432,5 +287,34 @@ namespace Altaxo.Collections
 		}
 
 		#endregion IList interface
+
+		#region IAscendingIntegerCollection
+
+		public IEnumerable<ContiguousIntegerRange> RangesAscending
+		{
+			get
+			{
+				yield return this;
+			}
+		}
+
+		public IEnumerable<ContiguousIntegerRange> RangesDescending
+		{
+			get
+			{
+				yield return this;
+			}
+		}
+
+		#endregion IAscendingIntegerCollection
+
+		#region ICloneable Members
+
+		public object Clone()
+		{
+			return new ContiguousIntegerRange { _start = this._start, _count = this._count };
+		}
+
+		#endregion ICloneable Members
 	}
 }

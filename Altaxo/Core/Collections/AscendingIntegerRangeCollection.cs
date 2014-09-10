@@ -92,7 +92,7 @@ namespace Altaxo.Collections
 		/// <value>
 		/// The ranges.
 		/// </value>
-		public IEnumerable<Int32RangeFromTo> Ranges
+		public IEnumerable<ContiguousIntegerRange> Ranges
 		{
 			get
 			{
@@ -569,7 +569,7 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Helper class that provides the range enumeration as a public interface.
 		/// </summary>
-		private class RangeCollectionProxy : IEnumerable<Int32RangeFromTo>
+		private class RangeCollectionProxy : IEnumerable<ContiguousIntegerRange>
 		{
 			private AscendingIntegerRangeCollection _parent;
 
@@ -578,12 +578,12 @@ namespace Altaxo.Collections
 				_parent = parent;
 			}
 
-			public IEnumerator<Int32RangeFromTo> GetEnumerator()
+			public IEnumerator<ContiguousIntegerRange> GetEnumerator()
 			{
 				var rangeArray = _parent._rangeArray;
 				var len = _parent._rangeArrayCount;
 				for (int i = 0; i < len; i += 2)
-					yield return Int32RangeFromTo.FromFirstAndLastInclusive(rangeArray[i], rangeArray[i + 1]);
+					yield return ContiguousIntegerRange.FromFirstAndLastInclusive(rangeArray[i], rangeArray[i + 1]);
 			}
 
 			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()

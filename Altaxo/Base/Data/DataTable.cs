@@ -1293,8 +1293,8 @@ namespace Altaxo.Data
 			Altaxo.Data.DataColumnCollection savedDataColumns = new DataColumnCollection();
 			Altaxo.Data.DataColumnCollection savedPropColumns = new DataColumnCollection();
 
-			Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = new Altaxo.Collections.ContiguousIntegerRange(0, numberOfDataColumnsChangeToPropertyColumns);
-			Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = new Altaxo.Collections.ContiguousIntegerRange(0, numberOfPropertyColumnsChangeToDataColumns);
+			Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, numberOfDataColumnsChangeToPropertyColumns);
+			Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, numberOfPropertyColumnsChangeToDataColumns);
 			// store the columns temporarily in another collection and remove them from the original collections
 			DataColumns.MoveColumnsTo(savedDataColumns, 0, savedDataColIndices);
 			this.PropertyColumns.MoveColumnsTo(savedPropColumns, 0, savedPropColIndices);
@@ -1331,7 +1331,7 @@ namespace Altaxo.Data
 		/// <param name="nDelCount">The number of columns to remove.</param>
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
-			RemoveColumns(new ContiguousIntegerRange(nFirstColumn, nDelCount));
+			RemoveColumns(ContiguousIntegerRange.FromStartAndCount(nFirstColumn, nDelCount));
 		}
 
 		/// <summary>

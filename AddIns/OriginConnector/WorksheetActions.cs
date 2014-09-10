@@ -512,7 +512,7 @@ namespace Altaxo.Addins.OriginConnector
 				if (currentKind == Altaxo.Data.ColumnKind.X && !object.ReferenceEquals(currentCol, groupBegin[currentGroup]))
 				{
 					int destIndex = table.DataColumns.GetColumnNumber(groupBegin[currentGroup]);
-					table.ChangeColumnPosition(new Collections.ContiguousIntegerRange(i, 1), destIndex);
+					table.ChangeColumnPosition(Collections.ContiguousIntegerRange.FromStartAndCount(i, 1), destIndex);
 					groupBegin[currentGroup] = currentCol;
 					continue;
 				}
@@ -522,7 +522,7 @@ namespace Altaxo.Addins.OriginConnector
 				if (i > 1 + lastIndex)
 				{
 					int destIndex = 1 + lastIndex;
-					table.ChangeColumnPosition(new Collections.ContiguousIntegerRange(i, 1), destIndex);
+					table.ChangeColumnPosition(Collections.ContiguousIntegerRange.FromStartAndCount(i, 1), destIndex);
 					groupEnd[currentGroup] = currentCol;
 					continue;
 				}

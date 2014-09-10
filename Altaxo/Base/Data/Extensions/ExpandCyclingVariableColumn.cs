@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,26 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Collections;
-
 namespace Altaxo.Data
 {
 	/// <summary>
-	/// Contains options how to split a table that contains an independent variable with cycling values into 
+	/// Contains options how to split a table that contains an independent variable with cycling values into
 	/// another table, where this independent variable is unique and sorted.
 	/// </summary>
 	public class ExpandCyclingVariableColumnOptions
 	{
-		Altaxo.Data.DataTable _sourceTable;
-		IAscendingIntegerCollection _columnsToProcess;
-		List<int> _columnsToAverageOverRepeatPeriod = new List<int>();
+		private Altaxo.Data.DataTable _sourceTable;
+		private IAscendingIntegerCollection _columnsToProcess;
+		private List<int> _columnsToAverageOverRepeatPeriod = new List<int>();
 
 		public Altaxo.Data.DataTable SourceTable
 		{
@@ -50,7 +51,6 @@ namespace Altaxo.Data
 				_sourceTable = value;
 			}
 		}
-
 
 		public enum DestinationXColumn
 		{
@@ -70,6 +70,7 @@ namespace Altaxo.Data
 			Ascending,
 			Descending
 		}
+
 		/// <summary>Indices of all columns that will be considered to be processed. If null, all columns of the source table will be considered.</summary>
 		public IAscendingIntegerCollection ColumnsToProcess
 		{
@@ -172,7 +173,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Expand the source columns according to the provided options. The source table and the settings are provided in the <paramref name="options"/> variable.
 		/// The provided destination table is cleared from all data and property values before.
@@ -222,8 +222,6 @@ namespace Altaxo.Data
 			// create a dictionary with the cycling values (unique) and the corresponding ordering index
 			var cycValueOrder = GetUniqueValues(srcCycCol, cycValueSorting == ExpandCyclingVariableColumnOptions.OutputSorting.Descending);
 
-
-
 			if (options.DestinationX == ExpandCyclingVariableColumnOptions.DestinationXColumn.CyclingVariable)
 			{
 				int[] propColsIdx = CreatePropColsForAveragedColumns(options, destTable);
@@ -263,7 +261,6 @@ namespace Altaxo.Data
 						}
 					} // repeat for each source colum to process
 				}
-
 				else if (options.DestinationOutput == ExpandCyclingVariableColumnOptions.OutputFormat.GroupAllColumns)
 				{
 					int nCreatedCol = -1; // running number of processed range for column creation (Naming)
@@ -299,7 +296,6 @@ namespace Altaxo.Data
 			}
 			else if (options.DestinationX == ExpandCyclingVariableColumnOptions.DestinationXColumn.FirstAveragedColumn)
 			{
-
 				// now the first x column contains the values of the averaged column
 				// the rest of the data columns is repeated as many times as there are members in each repeat range
 				int nSrcXCol = options.ColumnsToAverageOverRepeatPeriod[0];
@@ -457,8 +453,6 @@ namespace Altaxo.Data
 			return propColsTemp;
 		}
 
-
-
 		/// <summary>
 		/// Gets a dictionary which contains all unique values of a source column as keys. The value is the index according to the sorting.
 		/// The sorting is done using the default comparison.
@@ -513,7 +507,7 @@ namespace Altaxo.Data
 				if (alreadyIn.Contains(col[i]))
 				{
 					alreadyIn.Clear();
-					result.Add(new ContiguousIntegerRange(currentRangeStart, currentRangeCount));
+					result.Add(ContiguousIntegerRange.FromStartAndCount(currentRangeStart, currentRangeCount));
 					currentRangeStart = i;
 					currentRangeCount = 0;
 				}
@@ -524,7 +518,7 @@ namespace Altaxo.Data
 
 			if (currentRangeCount > 0)
 			{
-				result.Add(new ContiguousIntegerRange(currentRangeStart, currentRangeCount));
+				result.Add(ContiguousIntegerRange.FromStartAndCount(currentRangeStart, currentRangeCount));
 			}
 
 			return result;

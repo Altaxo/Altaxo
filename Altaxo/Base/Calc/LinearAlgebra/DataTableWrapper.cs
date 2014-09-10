@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
-using Altaxo.Data;
 using Altaxo.Collections;
+using Altaxo.Data;
+using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// Wraps <see cref="Altaxo.Data.DataColumnCollection" />s to matrices.
 	/// </summary>
 	public class DataTableWrapper
 	{
-
 		#region Inner classes
-
-
 
 		/// <summary>
 		/// Wraps a set of <see cref="DataColumn" />s into a matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
 		/// </summary>
-		class DataColumnToColumnROMatrixWrapper : IROMatrix
+		private class DataColumnToColumnROMatrixWrapper : IROMatrix
 		{
 			protected Altaxo.Data.INumericColumn[] _columns;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
-
 
 			/// <summary>
 			/// Constructor
@@ -87,7 +84,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				_rows = selectedRows;
 			}
 
-
 			#region IROMatrix Members
 
 			/// <summary>
@@ -123,18 +119,17 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 		}
 
 		/// <summary>
 		/// Wraps a set of <see cref="DataColumn" />s into a matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s. But the first column here consists of 1s (one), and the columns start with index 1.
 		/// That means that the resulting matrix has a number of columns that is one larger that the number of data columns.
 		/// </summary>
-		class InterceptPlusDataColumnToColumnROMatrixWrapper : IROMatrix
+		private class InterceptPlusDataColumnToColumnROMatrixWrapper : IROMatrix
 		{
 			protected Altaxo.Data.INumericColumn[] _columns;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
-
 
 			/// <summary>
 			/// Constructor
@@ -150,6 +145,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				_rows = selectedRows;
 			}
+
 			#region IROMatrix Members
 
 			/// <summary>
@@ -187,14 +183,13 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 		}
-
 
 		/// <summary>
 		/// Wraps a set of <see cref="DataColumn" />s into a matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
 		/// </summary>
-		class DataColumnToColumnMatrixWrapper : DataColumnToColumnROMatrixWrapper, IMatrix
+		private class DataColumnToColumnMatrixWrapper : DataColumnToColumnROMatrixWrapper, IMatrix
 		{
 			public DataColumnToColumnMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
 				: base(collection, selectedColumns, selectedRows)
@@ -214,7 +209,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// </summary>
 			double IMatrix.this[int row, int col]
 			{
-
 				get
 				{
 					return _columns[col][_rows[row]];
@@ -226,19 +220,16 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-
-			#endregion
+			#endregion IMatrix Members
 		}
-
 
 		/// <summary>
 		/// Wrapps a set of <see cref="DataColumn" />s into a matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
 		/// </summary>
-		class DataColumnToRowROMatrixWrapper : IROMatrix
+		private class DataColumnToRowROMatrixWrapper : IROMatrix
 		{
 			protected Altaxo.Data.INumericColumn[] _columns;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
-
 
 			/// <summary>
 			/// Constructor.
@@ -290,14 +281,13 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 		}
-
 
 		/// <summary>
 		/// Wrapps a set of <see cref="DataColumn" />s into a matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
 		/// </summary>
-		class DataColumnToRowMatrixWrapper : DataColumnToRowROMatrixWrapper, IMatrix
+		private class DataColumnToRowMatrixWrapper : DataColumnToRowROMatrixWrapper, IMatrix
 		{
 			/// <summary>
 			/// Constructor.
@@ -311,6 +301,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			#region IMatrix member
+
 			/// <summary>
 			/// Element accessor.
 			/// </summary>
@@ -325,10 +316,11 @@ namespace Altaxo.Calc.LinearAlgebra
 					((IWriteableColumn)_columns[row])[_rows[col]] = value;
 				}
 			}
-			#endregion
+
+			#endregion IMatrix member
 		}
 
-		#endregion
+		#endregion Inner classes
 
 		#region Readonly matrix wrapper functions
 
@@ -389,11 +381,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
 		public static IROMatrix ToROColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
 		{
-			return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0, nRows));
+			return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
 		}
-
-
-
 
 		/// <summary>
 		/// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
@@ -414,12 +403,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nRows">Number of rows of the data table that participate in the matrix (starting from index 0). Remember that this are the columns of the wrapped matrix.</param>
 		public static IROMatrix ToRORowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
 		{
-			return new DataColumnToRowROMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0, nRows));
+			return new DataColumnToRowROMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
 		}
 
-		#endregion
+		#endregion Readonly matrix wrapper functions
 
 		#region Writeable matrix wrapper functions
+
 		/// <summary>
 		/// Wraps a set of <see cref="DataColumn" />s into a writeable matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
 		/// </summary>
@@ -439,7 +429,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
 		public static IMatrix ToColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
 		{
-			return new DataColumnToColumnMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0, nRows));
+			return new DataColumnToColumnMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
 		}
 
 		/// <summary>
@@ -461,13 +451,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nRows">Number of rows of the data table that participate in the matrix (starting from index 0). Remember that this are the columns of the wrapped matrix.</param>
 		public static IMatrix ToRowMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
 		{
-			return new DataColumnToRowMatrixWrapper(collection, selectedColumns, new Altaxo.Collections.ContiguousIntegerRange(0, nRows));
+			return new DataColumnToRowMatrixWrapper(collection, selectedColumns, Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, nRows));
 		}
 
-		#endregion
+		#endregion Writeable matrix wrapper functions
 
 		#region Valid numeric columns and rows helper functions
-
 
 		/// <summary>
 		/// Verifies that all selected columns are numeric and throws an exception if this is not the case.
@@ -521,7 +510,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return true;
 		}
-
 
 		/// <summary>
 		/// Determines which of the rows of a set of columns is truly numeric, i.e. all columns in this row contains a value, which is not double.NaN.
@@ -592,7 +580,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return numberOfValidRows;
 		}
 
-
 		/// <summary>
 		/// Gets the collection of valid rows from the array that is returned by <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, int)" />.
 		/// </summary>
@@ -623,12 +610,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return GetCollectionOfValidNumericRows(GetValidNumericRows(table, selectedCols, rowCount));
 		}
 
-		#endregion
-
+		#endregion Valid numeric columns and rows helper functions
 	}
-
-
-
-
-
 }

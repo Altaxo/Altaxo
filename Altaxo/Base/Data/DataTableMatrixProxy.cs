@@ -697,9 +697,7 @@ namespace Altaxo.Data
 		{
 			_participatingDataRows.Clear();
 
-			int start = 0;
-			ContiguousIntegerRange range;
-			while (dataRows.GetNextRangeAscending(ref start, out range))
+			foreach (var range in dataRows.RangesAscending)
 				_participatingDataRows.AddRange(range.Start, range.Count);
 
 			_isDirty = true;

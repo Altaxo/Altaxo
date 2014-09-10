@@ -335,12 +335,10 @@ namespace Altaxo.Gui.Common
 
 		private void InitRanges()
 		{
-			int currPos = 0;
-			ContiguousIntegerRange range;
 			_ranges.Clear();
-			while (_doc.GetNextRangeAscending(ref currPos, out range))
+			foreach (var range in _doc.RangesAscending)
 			{
-				_ranges.Add(new MyRange() { From = range.Start, To = range.LastInclusive });
+				_ranges.Add(new MyRange { From = range.Start, To = range.LastInclusive });
 			}
 
 			if (null != _view)

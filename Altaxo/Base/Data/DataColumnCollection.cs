@@ -1085,7 +1085,7 @@ namespace Altaxo.Data
 			}
 
 			// then move the columns to the desired position
-			this.ChangeColumnPosition(new Altaxo.Collections.ContiguousIntegerRange(indexOfAddedColumns, numberToAdd), nDestinationIndex);
+			this.ChangeColumnPosition(Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(indexOfAddedColumns, numberToAdd), nDestinationIndex);
 
 			this.Resume();
 		}
@@ -1220,7 +1220,7 @@ namespace Altaxo.Data
 		/// <param name="nDelCount">The number of columns to remove.</param>
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
-			RemoveColumns(new ContiguousIntegerRange(nFirstColumn, nDelCount));
+			RemoveColumns(ContiguousIntegerRange.FromStartAndCount(nFirstColumn, nDelCount));
 		}
 
 		/// <summary>
@@ -1228,7 +1228,7 @@ namespace Altaxo.Data
 		/// </summary>
 		public virtual void RemoveColumnsAll()
 		{
-			RemoveColumns(new ContiguousIntegerRange(0, this.ColumnCount));
+			RemoveColumns(ContiguousIntegerRange.FromStartAndCount(0, this.ColumnCount));
 		}
 
 		/// <summary>
@@ -1258,9 +1258,9 @@ namespace Altaxo.Data
 		{
 			int nOriginalColumnCount = ColumnCount;
 
-			int currentPosition = selectedColumns.Count - 1;
-			ContiguousIntegerRange range;
-			while (selectedColumns.GetNextRangeDescending(ref currentPosition, out range))
+			int lastRangeStart = 0;
+
+			foreach (var range in selectedColumns.RangesDescending)
 			{
 				// first, Dispose the columns and set the places to null
 				for (int i = range.LastInclusive; i >= range.Start; i--)
@@ -1274,14 +1274,15 @@ namespace Altaxo.Data
 						this[i].Dispose();
 				}
 				this._columnsByNumber.RemoveRange(range.Start, range.Count);
+				lastRangeStart = range.Start;
 			}
 
 			// renumber the remaining columns
-			for (int i = _columnsByNumber.Count - 1; i >= range.Start; i--)
+			for (int i = _columnsByNumber.Count - 1; i >= lastRangeStart; i--)
 				((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
 
 			// raise datachange event that some columns have changed
-			this.EhChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(range.Start, nOriginalColumnCount, this._numberOfRows));
+			this.EhChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
 
 			// reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
 			this._triedOutRegularNaming = false;
@@ -1847,7 +1848,7 @@ namespace Altaxo.Data
 		/// <param name="nCount">Number of rows to remove, starting from nFirstRow.</param>
 		public void RemoveRows(int nFirstRow, int nCount)
 		{
-			RemoveRows(new ContiguousIntegerRange(nFirstRow, nCount));
+			RemoveRows(ContiguousIntegerRange.FromStartAndCount(nFirstRow, nCount));
 		}
 
 		/// <summary>
@@ -1856,7 +1857,7 @@ namespace Altaxo.Data
 		/// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
 		public void RemoveRows(IAscendingIntegerCollection selectedRows)
 		{
-			RemoveRowsInColumns(new ContiguousIntegerRange(0, ColumnCount), selectedRows);
+			RemoveRowsInColumns(ContiguousIntegerRange.FromStartAndCount(0, ColumnCount), selectedRows);
 		}
 
 		/// <summary>
@@ -1889,10 +1890,7 @@ namespace Altaxo.Data
 			{
 				int colidx = selectedColumns[selcol];
 
-				ContiguousIntegerRange range;
-				int i = selectedRows.Count - 1;
-
-				while (selectedRows.GetNextRangeDescending(ref i, out range))
+				foreach (var range in selectedRows.RangesDescending)
 				{
 					this[colidx].RemoveRows(range.Start, range.Count);
 				}
