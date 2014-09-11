@@ -28,6 +28,8 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+	// TODO NET45 derive from IReadonlyList<int>
+
 	/// <summary>
 	/// Represents a contiguous range of integers.
 	/// </summary>
@@ -40,7 +42,7 @@ namespace Altaxo.Collections
 	}
 
 	/// <summary>
-	/// Represents a range of consecutive integers. The range is designated by FROM and TO values.
+	/// Represents a range of consecutive integers. The range can be empty (in this case both <see cref="Start"/> as well as <see cref="Count"/> are zero).
 	/// </summary>
 	public struct ContiguousIntegerRange : IContiguousIntegerRange
 	{
@@ -60,8 +62,6 @@ namespace Altaxo.Collections
 
 		private static void AssertValidStartAndCount(int start, uint count)
 		{
-			if (0 == count)
-				throw new ArgumentOutOfRangeException("count is zero");
 			if (start > int.MinValue)
 			{
 				uint maxcnt = (uint)(int.MaxValue - start);
@@ -72,9 +72,7 @@ namespace Altaxo.Collections
 
 		private static void AssertValidStartAndCount(int start, int count)
 		{
-			if (0 == count)
-				throw new ArgumentOutOfRangeException("count is zero");
-			else if (count < 0)
+			if (count < 0)
 				throw new ArgumentOutOfRangeException("count is negative");
 			if (start > int.MinValue)
 			{
@@ -86,18 +84,23 @@ namespace Altaxo.Collections
 
 		/// <summary>
 		/// Constructs an integer range from the first element and the number of element of the range.
+		/// An empty range (with start=0 and count=0) is constructed if <paramref name="count"/> is zero.
 		/// </summary>
 		/// <param name="start">First element belonging to the range.</param>
 		/// <param name="count">Number of consecutive integers belonging to the range.</param>
 		/// <returns>Newly constructed integer range.</returns>
 		public static ContiguousIntegerRange FromStartAndCount(int start, int count)
 		{
+			if (0 == count)
+				return new ContiguousIntegerRange();
+
 			AssertValidStartAndCount(start, count);
 			return new ContiguousIntegerRange { _start = start, _count = (uint)count };
 		}
 
 		/// <summary>
 		/// Constructs an integer range from the first and the last element of the range.
+		/// Note that because <paramref name="last"/> has to be greater than or equal to <paramref name="start"/>, it is not possible to create an empty range with this method.
 		/// </summary>
 		/// <param name="start">First element belonging to the range.</param>
 		/// <param name="last">Last element belonging to the range.</param>
@@ -112,15 +115,19 @@ namespace Altaxo.Collections
 
 		/// <summary>
 		/// Constructs an integer range from the first element and the element following immediately after the last element.
+		/// An empty range  (with start=0 and count=0) is constructed if <paramref name="start"/> is equal to <paramref name="end"/>.
 		/// </summary>
 		/// <param name="start">First element belonging to the range.</param>
 		/// <param name="end">Element following immediately after the last element, i.e. <see cref="LastInclusive"/>+1.</param>
 		/// <returns>Newly constructed integer range.</returns>
 		static public ContiguousIntegerRange FromStartAndEndExclusive(int start, int end)
 		{
-			if (!(end > start))
+			if (end == start)
+				return new ContiguousIntegerRange(); // return an empty range
+			else if (end > start)
+				return new ContiguousIntegerRange { _start = start, _count = (uint)(end - start) };
+			else
 				throw new ArgumentOutOfRangeException("End has to be greater than start");
-			return new ContiguousIntegerRange { _start = start, _count = (uint)(end - start) };
 		}
 
 		/// <summary>
@@ -203,7 +210,10 @@ namespace Altaxo.Collections
 		{
 			get
 			{
-				return _count;
+				if (_count == 0 && _start != 0)
+					return 1L + uint.MaxValue;
+				else
+					return _count;
 			}
 		}
 
