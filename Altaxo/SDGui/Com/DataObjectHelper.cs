@@ -35,6 +35,8 @@ using System.Text;
 namespace Altaxo.Com
 {
 	using UnmanagedApi.Gdi32;
+	using UnmanagedApi.GdiPlus;
+	using UnmanagedApi.Kernel32;
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.User32;
 
@@ -282,6 +284,60 @@ namespace Altaxo.Com
 
 		#region Metafile rendering
 
+		public static int PointToHimetric(double pt)
+		{
+			int x = (int)Math.Round((pt / 72.0) * 2540);
+			return x;
+		}
+
+		public static IntPtr RenderWindowsMetafilePict(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
+		{
+			Metafile enhMF = RenderEnhMetafile(docSizeX, docSizeY, drawingRoutine);
+			return RenderWindowsMetafilePict(docSizeX, docSizeY, enhMF);
+		}
+
+		public static IntPtr RenderWindowsMetafilePict(double docSizeX, double docSizeY, Metafile enhMF)
+		{
+			var hEmf = enhMF.GetHenhmetafile();
+
+			uint size = 0;
+			byte[] buffer = null;
+
+			for (; ; )
+			{
+				// Convert the EMF records to WMF records.
+				// Determine the size of the buffer that will receive the converted records (first loop), and then fill the buffer (second loop).
+				// EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault is neccessary for LibreOffice (when using EmfToWmfBitsFlags.EmfToWmfBitsFlagsEmbedEmf, LibreOffice shows graph too small)
+				size = GdiPlusFunc.GdipEmfToWmfBits(hEmf, size, buffer, MappingMode.MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+				if (null == buffer)
+					buffer = new byte[size];
+				else
+					break;
+			}
+
+			// Get a handle to the converted metafile.
+			IntPtr hmf = Gdi32Func.SetMetaFileBitsEx(size, buffer);
+
+			// Convert the Metafile to a METAFILEPICT.
+			IntPtr hMem = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, Marshal.SizeOf(typeof(METAFILEPICT)));
+			var mfp = new METAFILEPICT()
+			{
+				mm = MappingMode.MM_ANISOTROPIC,
+				xExt = PointToHimetric(docSizeX),
+				yExt = PointToHimetric(docSizeY),
+				hMF = hmf
+			};
+
+			Marshal.StructureToPtr(mfp, Kernel32Func.GlobalLock(hMem), false);
+			Kernel32Func.GlobalUnlock(hMem);
+
+			return hMem;
+		}
+
+		#endregion Metafile rendering
+
+		#region Enhanced Metafile rendering
+
 		/// <summary>
 		/// Creates a new metafile and renders some graphics into it.
 		/// </summary>
@@ -297,7 +353,7 @@ namespace Altaxo.Com
 
 			RectangleF metaFileBounds;
 			metaFileBounds = new RectangleF(0, 0, (float)(docSizeX), (float)(docSizeY));
-			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point);
+			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point, EmfType.EmfPlusDual);
 			using (Graphics grfxMF = Graphics.FromImage(mf))
 			{
 				if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
@@ -345,13 +401,13 @@ namespace Altaxo.Com
 		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
 		/// <param name="drawingRoutine">The drawing routine. The first argument is the graphics context of the meta file.</param>
 		/// <returns>The handle to the newly created metafile.</returns>
-		public static IntPtr RenderEnhMetafileIntPtr(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
+		public static IntPtr RenderEnhancedMetafileIntPtr(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
 		{
 			Metafile mf = RenderEnhMetafile(docSizeX, docSizeY, drawingRoutine);
 			return mf.GetHenhmetafile();
 		}
 
-		#endregion Metafile rendering
+		#endregion Enhanced Metafile rendering
 
 		#region Dropfiles rendering
 

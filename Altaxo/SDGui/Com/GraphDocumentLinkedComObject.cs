@@ -240,7 +240,8 @@ namespace Altaxo.Com
 
 				// Packing a bitmap representation of the graph into a metafile in order to
 				// have the size information (a bitmap does not contain size information)
-				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhancedMetafile));
+				renderings.Add(new Rendering((short)CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
 
 				// Allow linking, where we have a moniker.
 				if (Moniker != null)
@@ -253,7 +254,7 @@ namespace Altaxo.Com
 			}
 		}
 
-		private IntPtr RenderEnhMetaFile(TYMED tymed)
+		private IntPtr RenderEnhancedMetafile(TYMED tymed)
 		{
 #if COMLOGGING
 			Debug.ReportInfo("{0}.RenderEnhMetafile", this.GetType().Name);
@@ -262,7 +263,25 @@ namespace Altaxo.Com
 			var docSize = _document.Size;
 			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 300, 300))
 			{
-				return DataObjectHelper.RenderEnhMetafileIntPtr(docSize.X, docSize.Y,
+				return DataObjectHelper.RenderEnhancedMetafileIntPtr(docSize.X, docSize.Y,
+				(grfx) =>
+				{
+					grfx.DrawImage(bmp, 0, 0);
+				}
+				);
+			}
+		}
+
+		private IntPtr RenderWindowsMetafilePict(TYMED tymed)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.RenderWindowsMetafile", this.GetType().Name);
+#endif
+
+			var docSize = _document.Size;
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 300, 300))
+			{
+				return DataObjectHelper.RenderWindowsMetafilePict(docSize.X, docSize.Y,
 				(grfx) =>
 				{
 					grfx.DrawImage(bmp, 0, 0);

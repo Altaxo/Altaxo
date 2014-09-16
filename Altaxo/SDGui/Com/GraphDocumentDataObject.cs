@@ -103,11 +103,13 @@ namespace Altaxo.Com
 						)
 				{
 					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+					list.Add(new Rendering(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
 				}
 
 				if (_graphDocumentClipboardImage is System.Drawing.Bitmap && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
 				{
 					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+					list.Add(new Rendering(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
 				}
 
 				if (_graphDocumentClipboardImage is System.Drawing.Bitmap && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNative))
@@ -206,6 +208,27 @@ namespace Altaxo.Com
 
 		#region Renderings
 
+		private IntPtr RenderWindowsMetafilePict(TYMED tymed)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("GraphDocumentDataObject.RenderMetafile");
+#endif
+
+			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
+			{
+				return DataObjectHelper.RenderWindowsMetafilePict(_graphDocumentSize.X, _graphDocumentSize.Y, (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage);
+			}
+			else
+			{
+				return DataObjectHelper.RenderWindowsMetafilePict(_graphDocumentSize.X, _graphDocumentSize.Y,
+				(grfx) =>
+				{
+					grfx.DrawImage(_graphDocumentClipboardImage, 0, 0);
+				}
+				);
+			}
+		}
+
 		private IntPtr RenderEnhMetaFile(TYMED tymed)
 		{
 #if COMLOGGING
@@ -220,7 +243,7 @@ namespace Altaxo.Com
 			}
 			else
 			{
-				return DataObjectHelper.RenderEnhMetafileIntPtr(_graphDocumentSize.X, _graphDocumentSize.Y,
+				return DataObjectHelper.RenderEnhancedMetafileIntPtr(_graphDocumentSize.X, _graphDocumentSize.Y,
 				(grfx) =>
 				{
 					grfx.DrawImage(_graphDocumentClipboardImage, 0, 0);
@@ -284,20 +307,25 @@ namespace Altaxo.Com
 			return misc;
 		}
 
-		public static IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed)
+		public IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed)
+		{
+			return RenderEmbeddedObjectDescriptor(tymed, _graphDocumentSize);
+		}
+
+		public static IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed, Altaxo.Graph.PointD2D graphDocumentSize)
 		{
 #if COMLOGGING
 			Debug.ReportInfo("GraphDocumentDataObject.RenderEmbeddedObjectDescriptor");
 #endif
 
 			// Brockschmidt, Inside Ole 2nd ed. page 991
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL || tymed == (TYMED)(-1));
 			// Fill in the basic information.
 			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
 			// According to the documentation this is used just to find an icon.
 			od.clsid = typeof(GraphDocumentEmbeddedComObject).GUID;
 			od.dwDrawAspect = DVASPECT.DVASPECT_CONTENT;
-			od.sizelcx = 0; // zero in imitation of Word/Excel, but could be box.Extent.cx;
+			od.sizelcx = 0;  //zero in imitation of Word/Excel, but could be box.Extent.cx;
 			od.sizelcy = 0; // zero in imitation of Word/Excel, but could be box.Extent.cy;
 			od.pointlx = 0;
 			od.pointly = 0;

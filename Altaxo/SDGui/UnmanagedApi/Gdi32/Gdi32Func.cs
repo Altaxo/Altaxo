@@ -89,6 +89,12 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		public static extern IntPtr CopyMetaFile(IntPtr hmfSrc, string lpszFile);
 
 		[DllImport("gdi32.dll")]
+		public static extern bool DeleteMetaFile(IntPtr hWmf);
+
+		[DllImport("gdi32.dll")]
+		public static extern bool DeleteEnhMetaFile(IntPtr hEmf);
+
+		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateCompatibleBitmap(IntPtr hdc, int nWidth,
 			 int nHeight);
 
@@ -115,5 +121,30 @@ namespace Altaxo.UnmanagedApi.Gdi32
 
 		[DllImport("gdi32.dll")]
 		public static extern bool MoveToEx(IntPtr hdc, int X, int Y, IntPtr zero);
+
+		/// <summary>
+		///    Performs a bit-block transfer of the color data corresponding to a
+		///    rectangle of pixels from the specified source device context into
+		///    a destination device context.
+		/// </summary>
+		/// <param name="hdc">Handle to the destination device context.</param>
+		/// <param name="nXDest">The leftmost x-coordinate of the destination rectangle (in pixels).</param>
+		/// <param name="nYDest">The topmost y-coordinate of the destination rectangle (in pixels).</param>
+		/// <param name="nWidth">The width of the source and destination rectangles (in pixels).</param>
+		/// <param name="nHeight">The height of the source and the destination rectangles (in pixels).</param>
+		/// <param name="hdcSrc">Handle to the source device context.</param>
+		/// <param name="nXSrc">The leftmost x-coordinate of the source rectangle (in pixels).</param>
+		/// <param name="nYSrc">The topmost y-coordinate of the source rectangle (in pixels).</param>
+		/// <param name="dwRop">A raster-operation code.</param>
+		/// <returns>
+		///    <c>true</c> if the operation succeedes, <c>false</c> otherwise. To get extended error information, call <see cref="System.Runtime.InteropServices.Marshal.GetLastWin32Error"/>.
+		/// </returns>
+		[DllImport("gdi32.dll", EntryPoint = "BitBlt", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
+
+		[DllImport("gdi32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool StretchBlt([In] IntPtr hdcDest, int nXOriginDest, int nYOriginDest, int nWidthDest, int nHeightDest, [In] IntPtr hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc, TernaryRasterOperations dwRop);
 	}
 }

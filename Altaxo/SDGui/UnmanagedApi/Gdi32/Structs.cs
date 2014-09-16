@@ -64,7 +64,7 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		public SIZE szlMicrometers;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct METAFILEPICT
 	{
 		public int mm;
@@ -72,6 +72,20 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		public int yExt;
 		public IntPtr hMF;
 	};
+
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	public struct WmfPlaceableFileHeader
+	{
+		public uint key;  // 0x9aC6CDD7
+		public ushort hmf;
+		public ushort bboxLeft;
+		public ushort bboxTop;
+		public ushort bboxRight;
+		public ushort bboxBottom;
+		public ushort inch;
+		public uint reserved;
+		public ushort checksum;
+	}
 
 	[Serializable, StructLayout(LayoutKind.Sequential)]
 	public struct RECT

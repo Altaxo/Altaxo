@@ -54,7 +54,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo, COMLOGGING</DefineConstants>
     <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.XML</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
@@ -215,6 +215,8 @@
     <Compile Include="UnmanagedApi\Gdi32\Enums.cs" />
     <Compile Include="UnmanagedApi\Gdi32\Gdi32Func.cs" />
     <Compile Include="UnmanagedApi\Gdi32\Structs.cs" />
+    <Compile Include="UnmanagedApi\GdiPlus\Enums.cs" />
+    <Compile Include="UnmanagedApi\GdiPlus\GdiPlusFunc.cs" />
     <Compile Include="UnmanagedApi\Kernel32\Enums.cs" />
     <Compile Include="UnmanagedApi\Kernel32\Kernel32Func.cs" />
     <Compile Include="UnmanagedApi\Ole32\Classes.cs" />

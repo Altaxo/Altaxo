@@ -296,35 +296,40 @@ namespace Altaxo.Com
 			Debug.ReportInfo("{0}.IDataObject.QueryGetData, tymed={1}, aspect={2}", this.GetType().Name, format.tymed, format.dwAspect);
 #endif
 
+			int ret;
+
 			// We only support CONTENT aspect
 			if ((DVASPECT.DVASPECT_CONTENT & format.dwAspect) == 0)
 			{
-				return ComReturnValue.DV_E_DVASPECT;
+				ret = ComReturnValue.DV_E_DVASPECT;
 			}
-
-			int ret = ComReturnValue.DV_E_TYMED;
-
-			// Try to locate the data
-			// TODO: The ret, if not S_OK, is only relevant to the last item
-			foreach (var rendering in Renderings)
+			else
 			{
-				if ((rendering.format.tymed & format.tymed) > 0)
+				ret = ComReturnValue.DV_E_TYMED;
+
+				// Try to locate the data
+				// TODO: The ret, if not S_OK, is only relevant to the last item
+				foreach (var rendering in Renderings)
 				{
-					if (rendering.format.cfFormat == format.cfFormat)
+					if ((rendering.format.tymed & format.tymed) > 0)
 					{
-						// Found it, return S_OK;
-						return ComReturnValue.S_OK;
+						if (rendering.format.cfFormat == format.cfFormat)
+						{
+							// Found it, return S_OK;
+							ret = ComReturnValue.S_OK;
+							break;
+						}
+						else
+						{
+							// Found the medium type, but wrong format
+							ret = ComReturnValue.DV_E_FORMATETC;
+						}
 					}
 					else
 					{
-						// Found the medium type, but wrong format
-						ret = ComReturnValue.DV_E_FORMATETC;
+						// Mismatch on medium type
+						ret = ComReturnValue.DV_E_TYMED;
 					}
-				}
-				else
-				{
-					// Mismatch on medium type
-					ret = ComReturnValue.DV_E_TYMED;
 				}
 			}
 

@@ -183,25 +183,54 @@ namespace Altaxo.Com
 				// EMBEDSOURCE and OBJECTDESCRIPTOR should be placed after private data,
 				// but before the presentations (Brockschmidt, Inside Ole 2nd ed. page 911)
 				renderings.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
-				renderings.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, GraphDocumentDataObject.RenderEmbeddedObjectDescriptor));
+				renderings.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
 
 				// Nice because it is resolution independent.
-				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhMetaFile));
+				renderings.Add(new Rendering((short)CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhancedMetafile));
+
+				// some applications - even PowerPoint 2010 - seems to require old fashioned Windows metafile
+				renderings.Add(new Rendering((short)CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
 
 				return renderings;
 			}
 		}
 
-		private IntPtr RenderEnhMetaFile(TYMED tymed)
+		private IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed)
 		{
 #if COMLOGGING
-			Debug.ReportInfo("{0}.RenderEnhMetafile", this.GetType().Name);
+			Debug.ReportInfo("{0}.RenderEmbeddedObjectDescriptor", this.GetType().Name);
+#endif
+			return GraphDocumentDataObject.RenderEmbeddedObjectDescriptor(tymed, _document.Size);
+		}
+
+		private IntPtr RenderEnhancedMetafile(TYMED tymed)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.RenderEnhancedMetafile", this.GetType().Name);
 #endif
 
 			var docSize = _document.Size;
 			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 300, 300))
 			{
-				return DataObjectHelper.RenderEnhMetafileIntPtr(docSize.X, docSize.Y,
+				return DataObjectHelper.RenderEnhancedMetafileIntPtr(docSize.X, docSize.Y,
+				(grfx) =>
+				{
+					grfx.DrawImage(bmp, 0, 0);
+				}
+				);
+			}
+		}
+
+		private IntPtr RenderWindowsMetafilePict(TYMED tymed)
+		{
+#if COMLOGGING
+			Debug.ReportInfo("{0}.RenderWindowsMetafilePict", this.GetType().Name);
+#endif
+
+			var docSize = _document.Size;
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(_document, System.Drawing.Brushes.Transparent, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 300, 300))
+			{
+				return DataObjectHelper.RenderWindowsMetafilePict(docSize.X, docSize.Y,
 				(grfx) =>
 				{
 					grfx.DrawImage(bmp, 0, 0);
