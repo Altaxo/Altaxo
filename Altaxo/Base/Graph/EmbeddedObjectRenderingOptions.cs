@@ -97,7 +97,7 @@ namespace Altaxo.Graph
 
 		public EmbeddedObjectRenderingOptions()
 		{
-			_sourceDpiResolution = 600;
+			_sourceDpiResolution = 300;
 			_renderEnhancedMetafile = false;
 			_renderEnhancedMetafileAsVectorFormat = false;
 			_renderWindowsMetafile = true;

@@ -735,7 +735,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-			var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc);
+			var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc, false);
 			SaveProjectAs(newDocument);
 		}
 

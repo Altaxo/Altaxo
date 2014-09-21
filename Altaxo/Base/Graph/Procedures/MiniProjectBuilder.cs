@@ -53,14 +53,22 @@ namespace Altaxo.Graph.Procedures
 		{
 		}
 
-		public AltaxoDocument GetMiniProject(GraphDocument graph)
+		/// <summary>
+		/// Gets a graph document as mini project. The mini project is an <see cref="AltaxoDocument"/> consisting of the provided graph document <see cref="AltaxoDocument"/> and all data that is neccessary
+		/// to plot that graph.
+		/// </summary>
+		/// <param name="graph">The existing graph (this graph is cloned before added to the mini project).</param>
+		/// <param name="ensureEmbeddedObjectRenderingOptionsStoredInGraph">If set to <c>true</c>, the current embedded rendering options are stored as property in the graph document of the mini project.
+		/// This ensures that later on the graph is rendered in the client document exactly as it was chosen to be in the current project. If the mini project is not used for COM, leave that flag to <c>false.</c></param>
+		/// <returns>The mini project containing the cloned graph and all related data.</returns>
+		public AltaxoDocument GetMiniProject(GraphDocument graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
 		{
 			Initialize();
 
 			_graph = graph;
 			CollectAllDataColumnReferences();
 			CopyReferencedColumnsToNewProject();
-			CopyGraphToNewDocument(_graph);
+			CopyGraphToNewDocument(_graph, ensureEmbeddedObjectRenderingOptionsStoredInGraph);
 			CopyFolderPropertiesOf(_graph);
 			CopyDocumentInformation(_graph);
 
@@ -74,11 +82,17 @@ namespace Altaxo.Graph.Procedures
 			_columnsToChange = new Dictionary<DataColumn, DataTable>();
 		}
 
-		protected void CopyGraphToNewDocument(GraphDocument oldGraph)
+		protected void CopyGraphToNewDocument(GraphDocument oldGraph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
 		{
 			var newGraph = (GraphDocument)oldGraph.Clone();
 			newGraph.Name = oldGraph.Name;
 			_document.GraphDocumentCollection.Add(newGraph);
+
+			if (ensureEmbeddedObjectRenderingOptionsStoredInGraph)
+			{
+				var renderingOptions = Altaxo.PropertyExtensions.GetPropertyValue(oldGraph, Altaxo.Graph.EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, () => new Altaxo.Graph.EmbeddedObjectRenderingOptions());
+				newGraph.PropertyBagNotNull.SetValue(Altaxo.Graph.EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, (Altaxo.Graph.EmbeddedObjectRenderingOptions)renderingOptions.Clone());
+			}
 		}
 
 		protected void CopyFolderPropertiesOf(GraphDocument oldGraph)

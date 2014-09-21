@@ -61,7 +61,7 @@ namespace Altaxo.Com
 			if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
 			{
 				var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-				_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument);
+				_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument, true);
 			}
 			else
 			{
