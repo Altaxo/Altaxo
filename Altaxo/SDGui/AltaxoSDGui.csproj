@@ -54,7 +54,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo, COMLOGGING</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
     <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.XML</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
@@ -200,9 +200,10 @@
     <Compile Include="Com\GraphDocumentLinkedComObject.cs" />
     <Compile Include="Com\DataObjectBase.cs" />
     <Compile Include="Com\DataObjectHelper.cs" />
-    <Compile Include="Com\Debug.cs" />
+    <Compile Include="Com\ComDebug.cs" />
     <Compile Include="Com\EnumFormatEtc.cs" />
     <Compile Include="Com\GraphDocumentDataObject.cs" />
+    <Compile Include="Com\EmbeddedGraphDocumentRenderingHelper.cs" />
     <Compile Include="Com\GuiThreadStack.cs" />
     <Compile Include="Com\OleObjectBase.cs" />
     <Compile Include="Com\RegistryHelper.cs" />

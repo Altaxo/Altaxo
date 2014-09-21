@@ -47,9 +47,7 @@ namespace Altaxo.Com
 
 		public void GCWatch()
 		{
-#if COMLOGGING
-			Debug.ReportInfo("GarbageCollection.GCWatch() is now running on another thread.");
-#endif
+			ComDebug.ReportInfo("GarbageCollection.GCWatch() is now running on another thread.");
 
 			// Pause for a moment to provide a delay to make threads more apparent.
 			while (IsThreadContinued())
@@ -58,9 +56,7 @@ namespace Altaxo.Com
 				Thread.Sleep(_interval_ms);
 			}
 
-#if COMLOGGING
-			Debug.ReportInfo("Going to call m_EventThreadEnded.Set().");
-#endif
+			ComDebug.ReportInfo("Going to call m_EventThreadEnded.Set().");
 			_eventThreadEnded.Set();
 		}
 
@@ -82,15 +78,11 @@ namespace Altaxo.Com
 
 		public void WaitForThreadToStop()
 		{
-#if COMLOGGING
-			Debug.ReportInfo("WaitForThreadToStop().");
-#endif
+			ComDebug.ReportInfo("WaitForThreadToStop().");
 			_eventThreadEnded.WaitOne();
 			_eventThreadEnded.Reset();
 
-#if COMLOGGING
-			Debug.ReportInfo("WaitForThreadToStop() exiting.");
-#endif
+			ComDebug.ReportInfo("WaitForThreadToStop() exiting.");
 		}
 	}
 }

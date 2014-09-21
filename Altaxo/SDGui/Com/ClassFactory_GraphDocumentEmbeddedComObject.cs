@@ -39,9 +39,7 @@ namespace Altaxo.Com
 
 		public override void InternalCreateInstance(IntPtr pUnkOuter, ref Guid riid, out IntPtr ppvObject)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.CreateInstance(), requesting interface {1}", this.GetType().Name, riid);
-#endif
+			ComDebug.ReportInfo("{0}.CreateInstance(), requesting interface {1}", this.GetType().Name, riid);
 
 			if (riid == Marshal.GenerateGuidForType(typeof(System.Runtime.InteropServices.ComTypes.IDataObject)) ||
 				riid == InterfaceGuid.IID_IDispatch ||

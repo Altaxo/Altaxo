@@ -255,6 +255,21 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
 		public static Bitmap RenderAsBitmap(this GraphDocument doc, Brush backbrush, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
 		{
+			return RenderAsBitmap(doc, backbrush, null, pixelformat, sourceDpiResolution, destinationDpiResolution);
+		}
+
+		/// <summary>
+		/// Saves the graph as an bitmap file and returns the bitmap.
+		/// </summary>
+		/// <param name="doc">The graph document to export.</param>
+		/// <param name="backbrush1">First brush used to fill the background of the image. Can be <c>null</c>.</param>
+		/// <param name="backbrush1">Second brush used to fill the background of the image. Can be <c>null</c>.</param>
+		/// <param name="pixelformat">Specify the pixelformat here.</param>
+		/// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>
+		/// <param name="destinationDpiResolution">Resolution which is assigned to the bitmap. This determines the physical size of the bitmap.</param>
+		/// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
+		public static Bitmap RenderAsBitmap(this GraphDocument doc, Brush backbrush1, Brush backbrush2, PixelFormat pixelformat, double sourceDpiResolution, double destinationDpiResolution)
+		{
 			double scale = sourceDpiResolution / 72.0;
 			// Code to write the stream goes here.
 			int width, height;
@@ -268,8 +283,12 @@ namespace Altaxo.Graph.Gdi
 			bitmap.SetResolution((float)sourceDpiResolution, (float)sourceDpiResolution);
 
 			Graphics grfx = Graphics.FromImage(bitmap);
-			if (null != backbrush)
-				grfx.FillRectangle(backbrush, new Rectangle(0, 0, width, height));
+
+			if (null != backbrush1)
+				grfx.FillRectangle(backbrush1, new Rectangle(0, 0, width, height));
+
+			if (null != backbrush2)
+				grfx.FillRectangle(backbrush2, new Rectangle(0, 0, width, height));
 
 			grfx.PageUnit = GraphicsUnit.Point;
 

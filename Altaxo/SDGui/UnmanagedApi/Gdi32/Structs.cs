@@ -64,7 +64,7 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		public SIZE szlMicrometers;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	[StructLayout(LayoutKind.Sequential)] // Do not use Pack = 1 here (it is definitely not working with Pack=1)!
 	public struct METAFILEPICT
 	{
 		public int mm;

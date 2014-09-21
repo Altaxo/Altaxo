@@ -40,6 +40,29 @@ namespace Altaxo.Com
 	using UnmanagedApi.Ole32;
 	using UnmanagedApi.User32;
 
+	/// <summary>
+	/// Designates which DC should be used to create a metafile.
+	/// </summary>
+	public enum UseMetafileDC
+	{
+		/// <summary>Use the screen device context to create a metafile.</summary>
+		Screen,
+
+		/// <summary>Use the printer context to create a metafile.</summary>
+		Printer
+	};
+
+	/// <summary>
+	/// Static helper class for clipboard communication.
+	/// </summary>
+	/// <remarks>
+	/// MS Word/Powerpoint 2010 accepts both enhanced metafiles created with a printer context or created with the screen context. But when using
+	/// in conjunction with an embedded object, they seem to calculate the size of the object wrong if the EnhMF was created with a screen device context.
+	///
+	/// LibreOffice works fine if the metafile is created with a screen device context. However, if the metafile is created with a printer device context,
+	/// the picture is shown too small inside of the boundaries (the boundaries itself are OK).
+	///
+	/// </remarks>
 	public static class DataObjectHelper
 	{
 		public static short CF_EMBEDDEDOBJECT = User32Func.RegisterClipboardFormat(CFSTR.CFSTR_EMBEDDEDOBJECT);
@@ -95,9 +118,7 @@ namespace Altaxo.Com
 
 		public static void SaveMonikerToStream(IMoniker moniker, IStream strm)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("SaveMonikerToStream:{0}", GetDisplayName(moniker));
-#endif
+			ComDebug.ReportInfo("SaveMonikerToStream:{0}", GetDisplayName(moniker));
 			int hr = Ole32Func.OleSaveToStream((IPersistStream)moniker, strm);
 			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
 		}
@@ -253,8 +274,8 @@ namespace Altaxo.Com
 				case CF.CF_LOCALE:
 					return "CF_LOCALE";
 
-				case CF.CF_MAX:
-					return "CF_MAX";
+				case CF.CF_DIBV5:
+					return "CF_DIBV5";
 
 				case CF.CF_OWNERDISPLAY:
 					return "CF_OWNERDISPLAY";
@@ -282,6 +303,88 @@ namespace Altaxo.Com
 			}
 		}
 
+		#region Bitmap rendering
+
+		/// <summary>
+		/// Renders the provided image in a windows Gdi bitmap (no transparency supported).
+		/// </summary>
+		/// <param name="tymed">The tymed.</param>
+		/// <param name="imgToDraw">The img to draw.</param>
+		/// <param name="pixelsX">The width of the bitmap (in pixels) to create.</param>
+		/// <param name="pixelsY">The height of the bitmap (in pixels) to create.</param>
+		/// <returns>Pointer to the bitmap. This is a Gdi object (TYMED_GDI).</returns>
+		/// <remarks>Using System.Drawing.Bitmap.GetHbitmap() claims also to produce a Gdi bitmap, but this is not working for all clipboard client programs.</remarks>
+		public static IntPtr RenderHBitmap(TYMED tymed, Image imgToDraw, int pixelsX, int pixelsY)
+		{
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
+
+			IntPtr hDC = Gdi32Func.GetDC(IntPtr.Zero);
+			IntPtr hMemDC = Gdi32Func.CreateCompatibleDC(hDC);
+			IntPtr hBmp = Gdi32Func.CreateCompatibleBitmap(hDC, pixelsX, pixelsY);
+			if (IntPtr.Zero != hBmp)
+			{
+				IntPtr hObj = Gdi32Func.SelectObject(hMemDC, hBmp);
+				using (Graphics g = Graphics.FromHdc(hMemDC))
+				{
+					g.PageUnit = GraphicsUnit.Pixel;
+					g.FillRectangle(Brushes.White, 0, 0, pixelsX, pixelsY);
+					g.DrawImage(imgToDraw, 0, 0, pixelsX, pixelsY);
+				}
+				Gdi32Func.SelectObject(hMemDC, hObj);
+			}
+			Gdi32Func.DeleteDC(hMemDC);
+			User32Func.ReleaseDC(IntPtr.Zero, hDC);
+			return hBmp;
+		}
+
+		/// <summary>
+		/// Renders a device independent bitmap to a HGLOBAL pointer
+		/// </summary>
+		/// <param name="imgToDraw">The image to draw.</param>
+		/// <param name="pixelsX">The width in pixels of the bitmap.</param>
+		/// <param name="pixelsY">The height in pixels of the bitmap.</param>
+		/// <returns>Pointer to the DIB bitmap (TYMED.TYMED_HGLOBAL).</returns>
+		public static IntPtr RenderDIBBitmapToHGLOBAL(Image imgToDraw, int pixelsX, int pixelsY)
+		{
+			Bitmap bitmap = imgToDraw as System.Drawing.Bitmap;
+			if (null != bitmap && bitmap.PixelFormat == PixelFormat.Format24bppRgb)
+			{
+				bitmap = (System.Drawing.Bitmap)imgToDraw;
+			}
+			else
+			{
+				bitmap = new Bitmap(pixelsX, pixelsY, PixelFormat.Format24bppRgb);
+				using (Graphics g = Graphics.FromImage(bitmap))
+				{
+					g.FillRectangle(Brushes.White, 0, 0, pixelsX, pixelsY);
+					g.DrawImage(imgToDraw, 0, 0, pixelsX, pixelsY);
+				}
+			}
+
+			var bmpStream = new System.IO.MemoryStream();
+			// ImageFormat.MemoryBmp work (will save to PNG!).  Therefore use
+			// BMP and strip header.
+			bitmap.Save(bmpStream, ImageFormat.Bmp);
+			byte[] bmpBytes = bmpStream.ToArray();
+
+			int offset = Marshal.SizeOf(typeof(BITMAPFILEHEADER));
+			IntPtr hdib = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, (int)(bmpStream.Length - offset));
+			System.Diagnostics.Debug.Assert(hdib != IntPtr.Zero);
+			IntPtr buf = Kernel32Func.GlobalLock(hdib);
+			Marshal.Copy(bmpBytes, offset, buf, (int)bmpStream.Length - offset);
+			Kernel32Func.GlobalUnlock(hdib);
+
+			if (!object.ReferenceEquals(bitmap, imgToDraw))
+				bitmap.Dispose();
+
+			return hdib;
+		}
+
+		// when considering creating a DIBV5 bitmap, read the following:
+		// https://groups.google.com/forum/#!msg/microsoft.public.dotnet.framework.drawing/0sSPCrzf8yE/WNEIU324YtwJ
+
+		#endregion Bitmap rendering
+
 		#region Metafile rendering
 
 		public static int PointToHimetric(double pt)
@@ -290,16 +393,39 @@ namespace Altaxo.Com
 			return x;
 		}
 
-		public static IntPtr RenderWindowsMetafilePict(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
+		/// <summary>
+		/// Creates a new windows metafile and renders some graphics into it.
+		/// </summary>
+		/// <param name="img">The image to render.</param>
+		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
+		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
+		/// <param name="useMetafileDC">Designates either to use a screen context or a printer context to create the metafile.</param>
+		/// <returns>The newly created metafile picture (type: CF_MFPICT)</returns>
+		public static IntPtr RenderWindowsMetafilePict(System.Drawing.Image img, double docSizeX, double docSizeY, UseMetafileDC useMetafileDC)
 		{
-			Metafile enhMF = RenderEnhMetafile(docSizeX, docSizeY, drawingRoutine);
-			return RenderWindowsMetafilePict(docSizeX, docSizeY, enhMF);
+			using (var enhancedMetafile = RenderEnhancedMetafile(img, docSizeX, docSizeY, useMetafileDC))
+			{
+				var hEmf = enhancedMetafile.GetHenhmetafile();
+				return ConvertEnhancedMetafileToWindowsMetafilePict(hEmf, docSizeX, docSizeY);
+			}
 		}
 
 		public static IntPtr RenderWindowsMetafilePict(double docSizeX, double docSizeY, Metafile enhMF)
 		{
 			var hEmf = enhMF.GetHenhmetafile();
 
+			return ConvertEnhancedMetafileToWindowsMetafilePict(hEmf, docSizeX, docSizeY);
+		}
+
+		/// <summary>
+		/// Converts an enhanced metafile to a windows metafile picture (CF_MFPICT).
+		/// </summary>
+		/// <param name="hEmf">The handle to the enhanced metafile.</param>
+		/// <param name="docSizeX">The document size x in points.</param>
+		/// <param name="docSizeY">The document size y in points.</param>
+		/// <returns>Handle to a windows meta file picture (CF_MFPICT).</returns>
+		public static IntPtr ConvertEnhancedMetafileToWindowsMetafilePict(IntPtr hEmf, double docSizeX, double docSizeY)
+		{
 			uint size = 0;
 			byte[] buffer = null;
 
@@ -341,70 +467,93 @@ namespace Altaxo.Com
 		/// <summary>
 		/// Creates a new metafile and renders some graphics into it.
 		/// </summary>
-		/// <param name="grfxRef">The reference graphics context used to create the meta file.</param>
+		/// <param name="img">The image to render.</param>
 		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
 		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
-		/// <param name="drawingRoutine">The drawing routine. The first argument is the graphics context of the meta file.</param>
+		/// <param name="useMetafileDC">Designates either to use a screen context or a printer context to create the metafile.</param>
 		/// <returns>The newly created metafile</returns>
-		public static Metafile RenderEnhMetafile(Graphics grfxRef, double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
+		public static Metafile RenderEnhancedMetafile(System.Drawing.Image img, double docSizeX, double docSizeY, UseMetafileDC useMetafileDC)
 		{
-			grfxRef.PageUnit = GraphicsUnit.Point;
-			IntPtr ipHdc = grfxRef.GetHdc();
+			switch (useMetafileDC)
+			{
+				case UseMetafileDC.Printer:
+					{
+						using (var pd = new System.Drawing.Printing.PrintDocument())
+						{
+							using (var grfx = pd.PrinterSettings.CreateMeasurementGraphics())
+							{
+								grfx.PageUnit = GraphicsUnit.Point;
+								return RenderEnhancedMetafile(img, docSizeX, docSizeY, grfx);
+							}
+						}
+					}
+
+				case UseMetafileDC.Screen:
+					{
+						using (var grfx = Graphics.FromImage(img))
+						{
+							return RenderEnhancedMetafile(img, docSizeX, docSizeY, grfx);
+						}
+					}
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		/// <summary>
+		/// Creates a new metafile and renders some graphics into it.
+		/// </summary>
+		/// <param name="bmp">The image to render.</param>
+		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
+		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
+		/// <param name="referenceGraphicsContext">Graphics context used to create the metafile. This can either be a screen context or a printer context.</param>
+		/// <returns>The newly created metafile</returns>
+		public static Metafile RenderEnhancedMetafile(System.Drawing.Image bmp, double docSizeX, double docSizeY, Graphics referenceGraphicsContext)
+		{
+			IntPtr ipHdc = referenceGraphicsContext.GetHdc();
+
+			MetafileFrameUnit mfUnit = MetafileFrameUnit.GdiCompatible; // HIMETRIC
+			double scale = 2540 / 72.0; // Point to HIMETRIC
 
 			RectangleF metaFileBounds;
-			metaFileBounds = new RectangleF(0, 0, (float)(docSizeX), (float)(docSizeY));
-			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, MetafileFrameUnit.Point, EmfType.EmfPlusDual);
+			metaFileBounds = new RectangleF(0, 0, (float)(docSizeX * scale), (float)(docSizeY * scale));
+			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(ipHdc, metaFileBounds, mfUnit, EmfType.EmfPlusDual);
+			var metafileHeader = mf.GetMetafileHeader();
 			using (Graphics grfxMF = Graphics.FromImage(mf))
 			{
-				if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
+				if (metafileHeader.IsDisplay())
 				{
-					grfxMF.PageUnit = GraphicsUnit.Point;
-					grfxMF.PageScale = 1; // that would not work properly (a bug?) in Windows Vista, instead we have to use the following:
+					// Display units are pixel, thus we can calculate pixels directly from the metafile resolution
+					float displX = (float)((docSizeX / 72.0) * metafileHeader.DpiX); // TODO check on a high resolution monitor, maybe it is simply docSizeX
+					float displY = (float)((docSizeY / 72.0) * metafileHeader.DpiY); // dito
+					grfxMF.DrawImage(bmp, 0, 0, displX, displY);
 				}
-				else
+				else // not display DC - thus it must be a printer DC
 				{
-					grfxMF.PageScale = (float)(Math.Min(72.0f / grfxMF.DpiX, 72.0f / grfxMF.DpiY)); // this works in Vista with display mode
-				}
+					// if (Environment.OSVersion.Version.Major < 6) // in former times it was neccessary to treat Windows XP special
 
-				if (null != drawingRoutine)
-					drawingRoutine(grfxMF);
-			}
+					if (grfxMF.PageUnit == GraphicsUnit.Display)
+					{
+						// Note: we have to compensate the scale with the dimensions of the image (for Word 2010 it is not neccessary, but it is neccessary for LibreOffice)
+						// thus to be most robust, the image dimensions must be given in page units of the metafile, which is given by the metafile resolution
 
-			grfxRef.ReleaseHdc(ipHdc);
-			return mf;
-		}
-
-		/// <summary>
-		/// Creates a new metafile and renders some graphics into it.
-		/// </summary>
-		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
-		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
-		/// <param name="drawingRoutine">The drawing routine. The first argument is the graphics context of the meta file.</param>
-		/// <returns>The newly created metafile.</returns>
-		public static System.Drawing.Imaging.Metafile RenderEnhMetafile(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
-		{
-			Metafile mf;
-			using (var pd = new System.Drawing.Printing.PrintDocument())
-			{
-				using (var grfx = pd.PrinterSettings.CreateMeasurementGraphics())
-				{
-					mf = RenderEnhMetafile(grfx, docSizeX, docSizeY, drawingRoutine);
+						double GCPageUnitsPerInch = 100; // for a printer metafile graphics context in display units, the page unit is 100 dpi (see GraphicsUnit documentation)
+						double scaleX = GCPageUnitsPerInch / metafileHeader.DpiX; // or maybe grfxMF.DpiX; ???
+						double scaleY = GCPageUnitsPerInch / metafileHeader.DpiY; // or maybe grfxMF.DpiY; ???
+						grfxMF.ScaleTransform((float)(scaleX), (float)(scaleY));
+						float displX = (float)((docSizeX / 72.0) * metafileHeader.DpiX); // calculates the dots (page unit) in x-direction
+						float displY = (float)((docSizeY / 72.0) * metafileHeader.DpiY); // calculated the dots (page unit) in y-direction
+						grfxMF.DrawImage(bmp, 0, 0, displX, displY);
+					}
+					else
+					{
+						throw new NotImplementedException("Page Unit is not Display. Please report this to the forum along with the circumstances (especially what printer is the default printer in your system");
+					}
 				}
 			}
-			return mf;
-		}
 
-		/// <summary>
-		/// Creates a new metafile and renders some graphics into it.
-		/// </summary>
-		/// <param name="docSizeX">The document size x (in points = 1/72 inch).</param>
-		/// <param name="docSizeY">The document size y  (in points = 1/72 inch).</param>
-		/// <param name="drawingRoutine">The drawing routine. The first argument is the graphics context of the meta file.</param>
-		/// <returns>The handle to the newly created metafile.</returns>
-		public static IntPtr RenderEnhancedMetafileIntPtr(double docSizeX, double docSizeY, Action<Graphics> drawingRoutine)
-		{
-			Metafile mf = RenderEnhMetafile(docSizeX, docSizeY, drawingRoutine);
-			return mf.GetHenhmetafile();
+			referenceGraphicsContext.ReleaseHdc(ipHdc);
+			return mf;
 		}
 
 		#endregion Enhanced Metafile rendering

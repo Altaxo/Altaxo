@@ -24,33 +24,29 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Text;
 
-namespace Altaxo.UnmanagedApi.GdiPlus
+namespace Altaxo.Gui.Settings
 {
-	public static class GdiPlusFunc
+	using Altaxo.Graph;
+	using Altaxo.Graph.Gdi;
+	using Altaxo.Gui.Graph;
+	using Altaxo.Main.Properties;
+
+	public class EmbeddedObjectRenderingOptionsPanel : OptionPanelBase<EmbeddedObjectRenderingOptionsController>
 	{
-		/// <summary>
-		/// Use the EmfToWmfBits function in the GDI+ specification to convert a
-		/// Enhanced Metafile to a Windows Metafile
-		/// </summary>
-		/// <param name="hEmf">
-		/// A handle to the Enhanced Metafile to be converted
-		/// </param>
-		/// <param name="uBufferSize">
-		/// The size of the buffer used to store the Windows Metafile bits returned
-		/// </param>
-		/// <param name="bBuffer">
-		/// An array of bytes used to hold the Windows Metafile bits returned
-		/// </param>
-		/// <param name="iMappingMode">
-		/// The mapping mode of the image.  This control uses MM_ANISOTROPIC.
-		/// </param>
-		/// <param name="flags">
-		/// Flags used to specify the format of the Windows Metafile returned
-		/// </param>
-		[DllImport("gdiplus.dll", SetLastError = true)]
-		public static extern uint GdipEmfToWmfBits(IntPtr hEmf, uint uBufferSize, byte[] bBuffer, int iMappingMode, EmfToWmfBitsFlags flags);
+		public override void Initialize(object optionPanelOwner)
+		{
+			_controller = new EmbeddedObjectRenderingOptionsController();
+			var doc = Current.PropertyService.GetValue(EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new EmbeddedObjectRenderingOptions());
+			_controller.InitializeDocument(doc);
+		}
+
+		protected override void ProcessControllerResult()
+		{
+			var doc = (EmbeddedObjectRenderingOptions)_controller.ModelObject;
+			Current.PropertyService.UserSettings.SetValue(EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, doc);
+		}
 	}
 }

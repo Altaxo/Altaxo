@@ -103,9 +103,7 @@ namespace Altaxo.Com
 			if (null == doc)
 				throw new ArgumentNullException();
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", this.GetType().Name, doc.Name);
-#endif
+			ComDebug.ReportInfo("{0}.GetDocumentsComObjectForGraphDocument Name={1}", this.GetType().Name, doc.Name);
 
 			if (null != doc && _linkedDocumentsComObjects.ContainsKey(doc))
 				return _linkedDocumentsComObjects[doc];
@@ -278,20 +276,16 @@ namespace Altaxo.Com
 				int iObjsInUse = ObjectsCount;
 				int iServerLocks = ServerLockCount;
 
-#if COMLOGGING
 				{
 					// Print out these info for debug purposes.
 					StringBuilder sb = new StringBuilder("");
 					sb.AppendFormat("NumberOfObjectsInUse : {0}. NumberOfServerLocks : {1}", iObjsInUse, iServerLocks);
-					Debug.ReportInfo(sb.ToString());
+					ComDebug.ReportInfo(sb.ToString());
 				}
-#endif
 
 				if ((iObjsInUse > 0) || (iServerLocks > 0))
 				{
-#if COMLOGGING
-					Debug.ReportInfo("There are still referenced objects or the server lock count is non-zero.");
-#endif
+					ComDebug.ReportInfo("There are still referenced objects or the server lock count is non-zero.");
 				}
 				else
 				{
@@ -573,16 +567,12 @@ namespace Altaxo.Com
 						break;
 
 					default:
-#if COMLOGGING
-						Debug.ReportError("Unknown argument: " + args[0] + "\nValid are : -register, -unregister and -embedding");
-#endif
+						ComDebug.ReportError("Unknown argument: " + args[0] + "\nValid are : -register, -unregister and -embedding");
 						break;
 				}
 			}
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.ProcessArguments Embedding={1} IsRunning64bit={2}", this.GetType().Name, ApplicationWasStartedWithEmbeddingArg, System.Environment.Is64BitProcess);
-#endif
+			ComDebug.ReportInfo("{0}.ProcessArguments Embedding={1} IsRunning64bit={2}", this.GetType().Name, ApplicationWasStartedWithEmbeddingArg, System.Environment.Is64BitProcess);
 
 			return bRet;
 		}
@@ -591,9 +581,7 @@ namespace Altaxo.Com
 		{
 			IsActive = true;
 
-#if COMLOGGING
-			Debug.ReportInfo("Starting local server");
-#endif
+			ComDebug.ReportInfo("Starting local server");
 
 			// if we are in 64 bit mode, make sure that the PreferredServerBitness flag is set in the registry
 
@@ -604,9 +592,7 @@ namespace Altaxo.Com
 				_classFactoryOfFileComObject.ClassId = Marshal.GenerateGuidForType(typeof(ProjectFileComObject));
 				_classFactoryOfFileComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 				_classFactoryOfFileComObject.RegisterClassObject();
-#if COMLOGGING
-				Debug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
-#endif
+				ComDebug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
 			}
 
 			if (ApplicationWasStartedWithEmbeddingArg)
@@ -617,9 +603,7 @@ namespace Altaxo.Com
 				_classFactoryOfDocumentComObject.ClassId = Marshal.GenerateGuidForType(typeof(GraphDocumentEmbeddedComObject));
 				_classFactoryOfDocumentComObject.Flags = (uint)REGCLS.REGCLS_SINGLEUSE | (uint)REGCLS.REGCLS_SUSPENDED;
 				_classFactoryOfDocumentComObject.RegisterClassObject();
-#if COMLOGGING
-				Debug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
-#endif
+				ComDebug.ReportInfo("{0}.StartLocalServer Registered: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
 			}
 
 			ClassFactoryBase.ResumeClassObjects();
@@ -666,9 +650,7 @@ namespace Altaxo.Com
 			if (null != _classFactoryOfDocumentComObject)
 			{
 				_classFactoryOfDocumentComObject.RevokeClassObject();
-#if COMLOGGING
-				Debug.ReportInfo("{0}.EnterLinkedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
-#endif
+				ComDebug.ReportInfo("{0}.EnterLinkedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
 				_classFactoryOfDocumentComObject = null;
 			}
 		}
@@ -678,9 +660,7 @@ namespace Altaxo.Com
 			if (null != _classFactoryOfFileComObject)
 			{
 				_classFactoryOfFileComObject.RevokeClassObject();
-#if COMLOGGING
-				Debug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
-#endif
+				ComDebug.ReportInfo("{0}.EnterEmbeddedObjectMode Revoked: {1}", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
 				_classFactoryOfFileComObject = null;
 			}
 		}
@@ -713,9 +693,7 @@ namespace Altaxo.Com
 
 		private void InternalStopLocalServer()
 		{
-#if COMLOGGING
-			Debug.ReportInfo("Stop local server");
-#endif
+			ComDebug.ReportInfo("Stop local server");
 
 			if (null != _embeddedComObject)
 			{
@@ -738,18 +716,14 @@ namespace Altaxo.Com
 			if (null != _classFactoryOfDocumentComObject)
 			{
 				_classFactoryOfDocumentComObject.RevokeClassObject();
-#if COMLOGGING
-				Debug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
-#endif
+				ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfDocumentComObject.GetType().Name);
 				_classFactoryOfDocumentComObject = null;
 			}
 
 			if (null != _classFactoryOfFileComObject)
 			{
 				_classFactoryOfFileComObject.RevokeClassObject();
-#if COMLOGGING
-				Debug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
-#endif
+				ComDebug.ReportInfo("{0}.StopLocalServer:{1} Revoked.", this.GetType().Name, _classFactoryOfFileComObject.GetType().Name);
 				_classFactoryOfFileComObject = null;
 			}
 
@@ -759,9 +733,7 @@ namespace Altaxo.Com
 				_garbageCollector.StopThread();
 				_garbageCollector.WaitForThreadToStop();
 				_garbageCollector = null;
-#if COMLOGGING
-				Debug.ReportInfo("StopLocalServer: GarbageCollector thread stopped.");
-#endif
+				ComDebug.ReportInfo("StopLocalServer: GarbageCollector thread stopped.");
 			}
 
 			IsActive = false;

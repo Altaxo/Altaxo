@@ -241,7 +241,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public const short CF_ENHMETAFILE = 14;
 		public const short CF_HDROP = 15;
 		public const short CF_LOCALE = 16;
-		public const short CF_MAX = 17;
+		public const short CF_DIBV5 = 17;
 		public const short CF_OWNERDISPLAY = 0x80;
 		public const short CF_DSPTEXT = 0x81;
 		public const short CF_DSPBITMAP = 0x82;

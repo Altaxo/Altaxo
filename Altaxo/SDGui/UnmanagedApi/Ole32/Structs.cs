@@ -43,4 +43,26 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public int dwSrcOfCopy;
 		/* variable sized string data may appear here */
 	}
+
+	[StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+	internal struct DVTARGETDEVICE
+	{
+		[MarshalAs(UnmanagedType.U4)]
+		public int tdSize;
+
+		[MarshalAs(UnmanagedType.U2)]
+		public short tdDriverNameOffset;
+
+		[MarshalAs(UnmanagedType.U2)]
+		public short tdDeviceNameOffset;
+
+		[MarshalAs(UnmanagedType.U2)]
+		public short tdPortNameOffset;
+
+		[MarshalAs(UnmanagedType.U2)]
+		public short tdExtDevmodeOffset;
+
+		[MarshalAs(UnmanagedType.LPArray, SizeConst = 1)]
+		public byte[] tdData;
+	}
 }

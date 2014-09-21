@@ -63,9 +63,7 @@ namespace Altaxo.Com
 			ROTUnregister(ref rot_cookie);
 
 			// Register the moniker in the running object table (ROT).
-#if COMLOGGING
-			Debug.ReportInfo("Registering {0} in ROT", DataObjectHelper.GetDisplayName(new_moniker));
-#endif
+			ComDebug.ReportInfo("Registering {0} in ROT", DataObjectHelper.GetDisplayName(new_moniker));
 			IRunningObjectTable rot = GetROT();
 
 			// This flag solved a terrible problem where Word would stop

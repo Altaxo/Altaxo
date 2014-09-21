@@ -98,9 +98,7 @@ namespace Altaxo.Com
 				if (_isStreamOwner)
 				{
 					Marshal.ReleaseComObject(_istream);
-#if COMLOGGING
-					Debug.ReportInfo("ComStreamWrapper.Close: istream released");
-#endif
+					ComDebug.ReportInfo("ComStreamWrapper.Close: istream released");
 				}
 				_istream = null;
 			}
@@ -113,9 +111,7 @@ namespace Altaxo.Com
 		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
 		protected override void Dispose(bool disposing)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("ComStreamWrapper.Dispose({0})", disposing);
-#endif
+			ComDebug.ReportInfo("ComStreamWrapper.Dispose({0})", disposing);
 
 			base.Dispose(disposing);
 
@@ -130,9 +126,7 @@ namespace Altaxo.Com
 				if (_isStreamOwner)
 				{
 					Marshal.ReleaseComObject(_istream);
-#if COMLOGGING
-					Debug.ReportInfo("ComStreamWrapper.Dispose: istream released");
-#endif
+					ComDebug.ReportInfo("ComStreamWrapper.Dispose: istream released");
 				}
 				_istream = null;
 			}

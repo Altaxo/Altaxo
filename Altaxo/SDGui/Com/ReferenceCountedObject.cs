@@ -40,18 +40,14 @@ namespace Altaxo.Com
 			_comManager = comManager;
 			_comManager.InterlockedIncrementObjectsCount();
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
-#endif
+			ComDebug.ReportInfo("{0}.Constructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
 		}
 
 		~ReferenceCountedObjectBase()
 		{
 			_comManager.InterlockedDecrementObjectsCount();
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.Destructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
-#endif
+			ComDebug.ReportInfo("{0}.Destructor, NumberOfObjectsInUse={1}", this.GetType().Name, _comManager.ObjectsCount);
 
 			_comManager.AttemptToTerminateServer();
 		}

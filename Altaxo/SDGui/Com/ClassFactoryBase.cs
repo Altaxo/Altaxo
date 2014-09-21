@@ -100,9 +100,7 @@ namespace Altaxo.Com
 				out _cookie
 				);
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.RegisterClassObject, i={1}, _cookie={2}", this.GetType().Name, i, _cookie);
-#endif
+			ComDebug.ReportInfo("{0}.RegisterClassObject, i={1}, _cookie={2}", this.GetType().Name, i, _cookie);
 
 			if (i == 0)
 			{

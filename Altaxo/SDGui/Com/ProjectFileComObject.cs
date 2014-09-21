@@ -78,9 +78,7 @@ namespace Altaxo.Com
 
 		public void Dispose()
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.Dispose", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.Dispose", this.GetType().Name);
 
 			if (null != _currentProject)
 			{
@@ -98,9 +96,7 @@ namespace Altaxo.Com
 			if (object.ReferenceEquals(Current.Project, _currentProject))
 				return;
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.EhCurrentProjectInstanceChanged", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.EhCurrentProjectInstanceChanged", this.GetType().Name);
 
 			if (null != _currentProject)
 			{
@@ -140,15 +136,11 @@ namespace Altaxo.Com
 			// make sure that if we have a valid file name, then the ComManager should be Active in order that this Com object is made public
 			if (!string.IsNullOrEmpty(fileName) && !_comManager.IsActive)
 			{
-#if COMLOGGING
-				Debug.ReportInfo("{0}.EhCurrentProjectFileNameChanged StartLocalServer because we have a valid file name. FileName: {1}", this.GetType().Name, fileName);
-#endif
+				ComDebug.ReportInfo("{0}.EhCurrentProjectFileNameChanged StartLocalServer because we have a valid file name. FileName: {1}", this.GetType().Name, fileName);
 				_comManager.StartLocalServer();
 			}
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.EhCurrentProjectFileNameChanged", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.EhCurrentProjectFileNameChanged", this.GetType().Name);
 
 			RunningObjectTableHelper.ROTUnregister(ref _fileWithWildCardItemMonikerRotCookie);
 			_fileWithWildCardItemMoniker = null;
@@ -182,9 +174,7 @@ namespace Altaxo.Com
 
 		public void GetClassID(out Guid pClassID)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.GetClassID", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.GetClassID", this.GetType().Name);
 
 			pClassID = this.GetType().GUID;
 		}
@@ -193,42 +183,32 @@ namespace Altaxo.Com
 		{
 			ppszFileName = Current.ProjectService.CurrentProjectFileName;
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.GetCurFile -> {1}", this.GetType().Name, ppszFileName);
-#endif
+			ComDebug.ReportInfo("{0}.GetCurFile -> {1}", this.GetType().Name, ppszFileName);
 		}
 
 		public int IsDirty()
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IsDirty -> FALSE", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.IsDirty -> FALSE", this.GetType().Name);
 			return ComReturnValue.S_FALSE;
 		}
 
 		public void Load(string pszFileName, int dwMode)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.Load filename: {1}", this.GetType().Name, pszFileName);
-#endif
+			ComDebug.ReportInfo("{0}.Load filename: {1}", this.GetType().Name, pszFileName);
 
 			Current.ProjectService.OpenProject(pszFileName, false);
 		}
 
 		public void Save(string pszFileName, bool fRemember)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.Save filename: {1}", this.GetType().Name, pszFileName);
-#endif
+			ComDebug.ReportInfo("{0}.Save filename: {1}", this.GetType().Name, pszFileName);
 
 			Current.ProjectService.SaveProject(pszFileName);
 		}
 
 		public void SaveCompleted(string pszFileName)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.SaveCompleted filename: {1}", this.GetType().Name, pszFileName);
-#endif
+			ComDebug.ReportInfo("{0}.SaveCompleted filename: {1}", this.GetType().Name, pszFileName);
 			throw new NotImplementedException();
 		}
 
@@ -238,25 +218,19 @@ namespace Altaxo.Com
 
 		public int ParseDisplayName(IBindCtx pbc, string pszDisplayName, out int pchEaten, out IMoniker ppmkOut)
 		{
-#if COMLOGGING
-			Debug.ReportError("{0}.ParseDisplayName -> not implemented!", this.GetType().Name);
-#endif
+			ComDebug.ReportError("{0}.ParseDisplayName -> not implemented!", this.GetType().Name);
 			throw new NotImplementedException();
 		}
 
 		public int EnumObjects(int grfFlags, out IEnumUnknown ppenum)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.EnumObjects", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.EnumObjects", this.GetType().Name);
 			throw new NotImplementedException();
 		}
 
 		public int LockContainer(bool fLock)
 		{
-#if COMLOGGING
-			Debug.ReportWarning("{0}.LockContainer({1}) -> not implemented", this.GetType().Name, fLock);
-#endif
+			ComDebug.ReportWarning("{0}.LockContainer({1}) -> not implemented", this.GetType().Name, fLock);
 
 			return ComReturnValue.NOERROR;
 		}
@@ -267,9 +241,7 @@ namespace Altaxo.Com
 
 			pszItem = DataObjectHelper.MonikerNameStringToNormalString(pszItem);
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.GetObject {1}, Requesting Interface : {2}", this.GetType().Name, pszItem, riid);
-#endif
+			ComDebug.ReportInfo("{0}.GetObject {1}, Requesting Interface : {2}", this.GetType().Name, pszItem, riid);
 
 			Altaxo.Graph.Gdi.GraphDocument doc;
 			bool isRunning = _currentProject.GraphDocumentCollection.TryGetValue(pszItem, out doc);
@@ -301,9 +273,7 @@ namespace Altaxo.Com
 
 		public object GetObjectStorage(string pszItem, IBindCtx pbc, ref Guid riid)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("{0}.GetObjectStorage -> not implemented!", this.GetType().Name);
-#endif
+			ComDebug.ReportInfo("{0}.GetObjectStorage -> not implemented!", this.GetType().Name);
 			throw new NotImplementedException();
 		}
 
@@ -312,9 +282,7 @@ namespace Altaxo.Com
 			GraphDocument doc;
 			bool isRunning = _currentProject.GraphDocumentCollection.TryGetValue(pszItem, out doc);
 
-#if COMLOGGING
-			Debug.ReportInfo("{0}.IsRunning item={1}, result={2}", this.GetType().Name, pszItem, isRunning);
-#endif
+			ComDebug.ReportInfo("{0}.IsRunning item={1}, result={2}", this.GetType().Name, pszItem, isRunning);
 
 			return isRunning ? ComReturnValue.NOERROR : ComReturnValue.S_FALSE;
 		}

@@ -55,9 +55,7 @@ namespace Altaxo.Com
 		/// less methods.</summary>
 		protected void Invoke(string actionName, Action invoker)
 		{
-#if COMLOGGING
-			Debug.ReportInfo("DataAdviseThread {0}", actionName);
-#endif
+			ComDebug.ReportInfo("DataAdviseThread {0}", actionName);
 			_dataAdviseThread.Invoke(invoker);
 		}
 
@@ -69,9 +67,7 @@ namespace Altaxo.Com
 			Invoke("Advise", () => _dataAdviseHolder.Advise(dataObject, ref etc, advf, advise, out con));
 			System.Diagnostics.Debug.Assert(-1 != con); // make sure that our Invoke-Construction is really working
 
-#if COMLOGGING
-			Debug.ReportInfo("ManagedDataAdviseHolder giving out con={0}", con);
-#endif
+			ComDebug.ReportInfo("ManagedDataAdviseHolder giving out con={0}", con);
 			pdwConnection = con;
 		}
 

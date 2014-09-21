@@ -62,9 +62,7 @@ namespace Altaxo.Com
 			// calling SetHostNames is the only sign that our object is embedded (and thus not linked)
 			// this means that we have to switch the user interface from within this function
 
-#if COMLOGGING
-			Debug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", containerApplicationName, containerFileName);
-#endif
+			ComDebug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", containerApplicationName, containerFileName);
 
 			Current.Workbench.EhProjectChanged(this, new Main.ProjectEventArgs(null)); // Set new title in title bar
 		}
@@ -84,9 +82,8 @@ namespace Altaxo.Com
 		{
 			Action hiding = () =>
 			{
-#if COMLOGGING
-				Debug.ReportInfo("Hide main window");
-#endif
+				ComDebug.ReportInfo("Hide main window");
+
 				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = false;
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Hidden;
 			};
@@ -100,14 +97,10 @@ namespace Altaxo.Com
 		{
 			InvokeGuiThread(() =>
 			{
-#if COMLOGGING
-				Debug.ReportInfo("Make main window visible");
-#endif
+				ComDebug.ReportInfo("Make main window visible");
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Visible;
 				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = true;
-#if COMLOGGING
-				Debug.ReportInfo("Make main window visible - done!");
-#endif
+				ComDebug.ReportInfo("Make main window visible - done!");
 			});
 		}
 	}

@@ -64,17 +64,13 @@ namespace Altaxo.Com
 			{
 				_previousActionName = actionName;
 				++_invokeCount;
-#if COMLOGGING
-				Debug.ReportInfo("OleAdviseThread {0}", actionName);
-#endif
+				ComDebug.ReportInfo("OleAdviseThread {0}", actionName);
 				_invokeableThread.Invoke(action);
 				--_invokeCount;
 			}
 			else // Invoke was called before and is has not finished up to now
 			{
-#if COMLOGGING
-				Debug.ReportWarning("ManagedOleAdviseHolder.Invoke: because a previous action ({0}) is still running, the action ({1}) is invoked asynchronously now.", _previousActionName, actionName);
-#endif
+				ComDebug.ReportWarning("ManagedOleAdviseHolder.Invoke: because a previous action ({0}) is still running, the action ({1}) is invoked asynchronously now.", _previousActionName, actionName);
 				_invokeableThread.InvokeAsync(action);
 			}
 		}
@@ -84,13 +80,9 @@ namespace Altaxo.Com
 			int conn = -1;
 			Invoke("Advise", () =>
 			{
-#if COMLOGGING
-				Debug.ReportInfo("ManagedOleAdviseHolder.Advise (before calling Advise)", conn);
-#endif
+				ComDebug.ReportInfo("ManagedOleAdviseHolder.Advise (before calling Advise)", conn);
 				_oleAdviseHolder.Advise(pAdvise, out conn);
-#if COMLOGGING
-				Debug.ReportInfo("ManagedOleAdviseHolder.Advise has given out cookie={0}", conn);
-#endif
+				ComDebug.ReportInfo("ManagedOleAdviseHolder.Advise has given out cookie={0}", conn);
 			}
 			);
 
@@ -102,9 +94,7 @@ namespace Altaxo.Com
 		{
 			Invoke("Unadvise", () =>
 			{
-#if COMLOGGING
-				Debug.ReportInfo("ManagedOleAdviseHolder.Unadvise, cookie={0}", dwConnection);
-#endif
+				ComDebug.ReportInfo("ManagedOleAdviseHolder.Unadvise, cookie={0}", dwConnection);
 				_oleAdviseHolder.Unadvise(dwConnection);
 			}
 			);
@@ -115,9 +105,7 @@ namespace Altaxo.Com
 			IEnumSTATDATA returnValue = null;
 			Invoke("EnumAdvise", () =>
 				{
-#if COMLOGGING
-					Debug.ReportInfo("ManagedOleAdviseHolder.EnumAdvise");
-#endif
+					ComDebug.ReportInfo("ManagedOleAdviseHolder.EnumAdvise");
 					returnValue = _oleAdviseHolder.EnumAdvise();
 				}
 				);
@@ -128,9 +116,7 @@ namespace Altaxo.Com
 		{
 			Invoke("SendOnRename()", () =>
 				{
-#if COMLOGGING
-					Debug.ReportInfo("ManagedOleAdviseHolder.SendOnRename");
-#endif
+					ComDebug.ReportInfo("ManagedOleAdviseHolder.SendOnRename");
 					_oleAdviseHolder.SendOnRename(pmk);
 				}
 				);
@@ -140,9 +126,7 @@ namespace Altaxo.Com
 		{
 			Invoke("SendOnSave", () =>
 			{
-#if COMLOGGING
-				Debug.ReportInfo("ManagedOleAdviseHolder.SendOnSave");
-#endif
+				ComDebug.ReportInfo("ManagedOleAdviseHolder.SendOnSave");
 				_oleAdviseHolder.SendOnSave();
 			}
 			);
@@ -152,9 +136,7 @@ namespace Altaxo.Com
 		{
 			Invoke("SendOnClose", () =>
 				{
-#if COMLOGGING
-					Debug.ReportInfo("ManagedOleAdviseHolder.SendOnClose");
-#endif
+					ComDebug.ReportInfo("ManagedOleAdviseHolder.SendOnClose");
 					_oleAdviseHolder.SendOnClose();
 				}
 				);
