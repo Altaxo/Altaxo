@@ -465,7 +465,15 @@ namespace Altaxo.Com
 					var versionString = System.Text.Encoding.UTF8.GetString(bytes);
 					altaxoVersion = Version.Parse(versionString);
 				}
+				ComDebug.ReportInfo("{0}.IPersistStorage.Load -> Version: {1}", this.GetType().Name, altaxoVersion);
+			}
+			catch (Exception ex)
+			{
+				ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoVersion, exception: {1}", this.GetType().Name, ex);
+			}
 
+			try
+			{
 				using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoGraphName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
 				{
 					var bytes = new byte[stream.Length];
@@ -476,7 +484,7 @@ namespace Altaxo.Com
 			}
 			catch (Exception ex)
 			{
-				ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream GraphName, exception: {1}", this.GetType().Name, ex);
+				ComDebug.ReportInfo("{0}.IPersistStorage.Load Failed to load stream AltaxoGraphName, exception: {1}", this.GetType().Name, ex);
 			}
 
 			try
@@ -528,7 +536,6 @@ namespace Altaxo.Com
 			try
 			{
 				Exception saveEx = null;
-
 				Ole32Func.WriteClassStg(pStgSave, this.GetType().GUID);
 
 				// Store the version of this assembly

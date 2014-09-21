@@ -440,6 +440,26 @@ namespace Altaxo.Com
 				Exception saveEx = null;
 				Ole32Func.WriteClassStg(pStgSave, typeof(GraphDocumentEmbeddedComObject).GUID);
 
+				// Store the version of this assembly
+				{
+					var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+					Version version = assembly.GetName().Version;
+					using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoVersion", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+					{
+						string text = version.ToString();
+						byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(text);
+						stream.Write(nameBytes, 0, nameBytes.Length);
+					}
+				}
+
+				// Store the name of the item
+				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoGraphName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
+				{
+					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(graphDocumentName);
+					stream.Write(nameBytes, 0, nameBytes.Length);
+				}
+
+				// Store the project
 				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoProjectZip", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
 				{
 					using (var zippedStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(stream))
@@ -450,13 +470,6 @@ namespace Altaxo.Com
 						zippedStream.Close();
 					}
 					stream.Close();
-				}
-
-				// Store the name of the item
-				using (var stream = new ComStreamWrapper(pStgSave.CreateStream("AltaxoGraphName", (int)(STGM.DIRECT | STGM.READWRITE | STGM.CREATE | STGM.SHARE_EXCLUSIVE), 0, 0), true))
-				{
-					byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(graphDocumentName);
-					stream.Write(nameBytes, 0, nameBytes.Length);
 				}
 
 				if (null != saveEx)
