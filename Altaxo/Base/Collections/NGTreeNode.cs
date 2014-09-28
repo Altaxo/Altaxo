@@ -745,7 +745,7 @@ namespace Altaxo.Collections
 
 		/// <summary>
 		/// Returns an image index (for the selected node), or -1 if no image is set.
-		/// Note that when using SelectedImageIndex, you probably also need to override <see cref="OnPropertyChanged"/>, so that when the <see cref="IsSelected"/> property changed,
+		/// Note that when using SelectedImageIndex, you probably also need to override <see cref="OnPropertyChanged"/>, so that when the <see cref="NGTreeNode.IsSelected"/> property changed,
 		/// you must also call <see cref="OnPropertyChanged"/> with "ImageIndex" as argument.
 		/// </summary>
 		public override int SelectedImageIndex

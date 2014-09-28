@@ -896,6 +896,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		/// <param name="dataTable">The table the data should be imported to.</param>
 		/// <param name="fileNames">An array of filenames to import.</param>
+		/// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
 		/// <param name="determineImportOptionsSeparatelyForEachFile">If <c>true</c>, the import options are determined for each file separately. Otherwise, i.e. if <c>false</c>, the import options are determined from the first file that is imported.</param>
 		/// <returns>Null if no error occurs, or an error description.</returns>
 		public static string ImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, bool determineImportOptionsSeparatelyForEachFile)

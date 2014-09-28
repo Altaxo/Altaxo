@@ -253,10 +253,10 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Adds a key/value pair associated with a token to the queue (if no such token is already present), or updates the already present key/value pair associated with the provided token.
 		/// </summary>
-		/// <param name="addValue">The key/value pair that should be enqueued if the provided <paramref name="token"/> is not present in the queue.</param>
-		/// <param name="token">The token. On return, if the token was not in the queue, contains a new token that was freshly generated.</param>
-		/// <param name="updateFactory">A function that generates a new key/value pair that should be used to update the key/value pair associated with the provided <paramref name="token"/> if it is already present in the queue.</param>
-		/// <returns>The key/value pair that was used. Either the <paramref name="addValue"/>, or the key/value pair used for update.</returns>
+		/// <param name="key">The key that should be enqueued (if token not present in the queue) or updated (if token is already present in the queue).</param>
+		/// <param name="value">The value that should be enqueued (if token not present in the queue) or updated (if token is already present in the queue).</param>
+		/// <param name="token">The token used to identify key/value pairs in the queue.</param>
+		/// <returns><c>True</c> if the key/value pair was freshly enqueued, or <c>false</c> if the token was already present in the queue, and therefore the key/value pair was updated.</returns>
 		/// <exception cref="System.InvalidOperationException">This queue is generating tokens by itself. Use Enqueue(key, value) instead!</exception>
 		public bool EnqueueOrUpdate(TKey key, TValue value, ref TToken token)
 		{

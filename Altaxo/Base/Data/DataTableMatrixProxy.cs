@@ -351,7 +351,6 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Deserialization constructor
 		/// </summary>
-		/// <param name="info">The information.</param>
 		protected DataTableMatrixProxy()
 		{
 		}
@@ -442,7 +441,7 @@ namespace Altaxo.Data
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		/// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
 		{
 			Report(_dataTable, this, "DataTable");

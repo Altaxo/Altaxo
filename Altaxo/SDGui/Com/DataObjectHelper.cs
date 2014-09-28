@@ -312,6 +312,7 @@ namespace Altaxo.Com
 		/// <param name="imgToDraw">The img to draw.</param>
 		/// <param name="pixelsX">The width of the bitmap (in pixels) to create.</param>
 		/// <param name="pixelsY">The height of the bitmap (in pixels) to create.</param>
+		/// <param name="backgroundOpaqueColor">Color that is used as fully opaque background color of the resulting bitmap. This ensures that the resulting bitmap does not contain transparent or semi transparent pixels.</param>
 		/// <returns>Pointer to the bitmap. This is a Gdi object (TYMED_GDI).</returns>
 		/// <remarks>Using System.Drawing.Bitmap.GetHbitmap() claims also to produce a Gdi bitmap, but this is not working for all clipboard client programs.</remarks>
 		public static IntPtr RenderHBitmap(TYMED tymed, Image imgToDraw, int pixelsX, int pixelsY, Color backgroundOpaqueColor)
@@ -346,6 +347,7 @@ namespace Altaxo.Com
 		/// <param name="imgToDraw">The image to draw.</param>
 		/// <param name="pixelsX">The width in pixels of the bitmap.</param>
 		/// <param name="pixelsY">The height in pixels of the bitmap.</param>
+		/// <param name="backgroundOpaqueColor">Color that is used as fully opaque background color of the resulting bitmap. This ensures that the resulting bitmap does not contain transparent or semi transparent pixels.</param>
 		/// <returns>Pointer to the DIB bitmap (TYMED.TYMED_HGLOBAL).</returns>
 		public static IntPtr RenderDIBBitmapToHGLOBAL(Image imgToDraw, int pixelsX, int pixelsY, Color backgroundOpaqueColor)
 		{

@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Gdi
 		#region Image formats
 
 		/// <summary>
-		/// Shows the copy page options dialog and stores the result as the static field <see cref="CopyPageOptions"/> here in this class
+		/// Shows the copy page options dialog and stores the result as the static field <see cref="P:ClipboardRenderingOptions.CopyPageOptions"/> here in this class
 		/// </summary>
 		/// <param name="doc">Ignored. Can be set to null.</param>
 		/// <returns>True when the dialog was successfully closed, false otherwise.</returns>

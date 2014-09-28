@@ -71,10 +71,10 @@ namespace Altaxo.Data
 		/// <summary>True if the execution is done, i.e. the input data (table, selections) is converted into a matrix and row / column header columns.</summary>
 		private bool _executionDone;
 
-		/// <summary>The indices of the data columns of the <see cref="_dataTable"/> that contribute to the resulting matrix.</summary>
+		/// <summary>The indices of the data columns of the <see cref="_sourceTable"/> that contribute to the resulting matrix.</summary>
 		private IAscendingIntegerCollection _participatingDataColumns;
 
-		/// <summary>The indices of the data rows of the <see cref="_dataTable"/> that contribute to the resulting matrix.</summary>
+		/// <summary>The indices of the data rows of the <see cref="_sourceTable"/> that contribute to the resulting matrix.</summary>
 		private IAscendingIntegerCollection _participatingDataRows;
 
 		/// <summary>The group number of the data columns that contribute to the matrix. All columns must have this group number.</summary>
@@ -344,7 +344,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Gets the resulting row header column. Attention: to correspond elements in this column to the rows of the resulting matrix, <see cref="GetParticipatingDataRows"/> must be used to get the collection of indices.
+		/// Gets the resulting row header column. Attention: to correspond elements in this column to the rows of the resulting matrix, <see cref="GetParticipatingDataRows()"/> must be used to get the collection of indices.
 		/// Alternatively, use <see cref="RowHeaderVector"/>.
 		/// The row header column is a column that correlate each row of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.
 		/// </summary>
@@ -383,7 +383,7 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Gets the resulting column header column. Attention: to correspond elements in this column to the columns of the resulting matrix, <see cref="GetParticipatingDataColumns"/> must be used to get the collection of indices.
+		/// Gets the resulting column header column. Attention: to correspond elements in this column to the columns of the resulting matrix, <see cref="GetParticipatingDataColumns()"/> must be used to get the collection of indices.
 		/// Alternatively, use <see cref="ColumnHeaderVector"/>.
 		/// The column header column is a column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.
 		/// </summary>

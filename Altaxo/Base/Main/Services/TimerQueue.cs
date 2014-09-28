@@ -76,7 +76,7 @@ namespace Altaxo.Main.Services
 		/// <summary>
 		/// Determines whether the item identified by the token is still in the queue.
 		/// </summary>
-		/// <param name="token">The token to identify the item (return value of <see cref="Enqueue"/>).</param>
+		/// <param name="token">The token to identify the item.</param>
 		/// <returns><c>True</c> if the item is still in the queue; <c>false</c> otherwise.</returns>
 		public bool Contains(object token)
 		{
@@ -112,7 +112,7 @@ namespace Altaxo.Main.Services
 		/// <summary>
 		/// Tries  to change the due time of an item already in the queue.
 		/// </summary>
-		/// <param name="token">The token that identifies the item (return value of <see cref="Enqueue"/>).</param>
+		/// <param name="token">The token that identifies the item.</param>
 		/// <param name="time">The new due time.</param>
 		/// <returns><c>True</c> if the change was sucessfull; <c>false</c> if the item was not in the queue.</returns>
 		public bool TryUpdateTime(object token, TimeSpan time)
@@ -131,7 +131,7 @@ namespace Altaxo.Main.Services
 		/// <summary>
 		/// Tries the remove an item identified by a token from the queue.
 		/// </summary>
-		/// <param name="token">The token to identify the item (return value of <see cref="Enqueue"/>).</param>
+		/// <param name="token">The token to identify the item.</param>
 		/// <param name="dueTime">On success,  contains the removed item.</param>
 		/// <returns><c>True</c> if the item could be sucessfully removed; <c>false</c> if the item was not in the queue.</returns>
 		public bool TryRemove(object token, out  TimeSpan dueTime)
@@ -142,7 +142,7 @@ namespace Altaxo.Main.Services
 		/// <summary>
 		/// Tries the remove an item identified by a token from the queue.
 		/// </summary>
-		/// <param name="token">The token to identify the item (return value of <see cref="Enqueue"/>).</param>
+		/// <param name="token">The token to identify the item.</param>
 		/// <returns><c>True</c> if the item could be sucessfully removed; <c>false</c> if the item was not in the queue.</returns>
 		public bool TryRemove(object token)
 		{

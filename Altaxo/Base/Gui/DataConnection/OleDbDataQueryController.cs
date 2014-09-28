@@ -322,8 +322,6 @@ namespace Altaxo.Gui.DataConnection
 		/// <summary>
 		/// Called whenever the connection string has changed.
 		/// </summary>
-		/// <param name="value">The value.</param>
-		/// <returns>True if the current connection string has changed.</returns>
 		private void OnConnectionStringChanged()
 		{
 			int index;

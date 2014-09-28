@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Common
 		/// <param name="value">String to convert.</param>
 		/// <param name="targetType">Ignored.</param>
 		/// <param name="parameter">Ignored.</param>
-		/// <param name="culture">The culture used to convert the string..</param>
+		/// <param name="cultureDontUseIsBuggy">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
 		/// <returns>The converted quantity.</returns>
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{
@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Common
 		/// Validates a string, whether or not it can be converted to a <see cref="DimensionfulQuantity"/>.
 		/// </summary>
 		/// <param name="value">String value to validate.</param>
-		/// <param name="cultureInfo">The culture used to convert the string.</param>
+		/// <param name="cultureDontUseIsBuggy">This parameter is not used. Instead, culture information is retrieved from Altaxo's settings.</param>
 		/// <returns>A validation result depending on the result of the validation.</returns>
 		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{

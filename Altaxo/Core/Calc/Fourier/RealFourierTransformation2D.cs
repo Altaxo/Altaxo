@@ -167,7 +167,7 @@ namespace Altaxo.Calc.Fourier
 		#endregion Output properties
 
 		/// <summary>
-		/// Executes the Fourier transformation. First, the dimensions of the matrix are checked. Then the original data is pretreated by calling all Action that are registered in <see cref="DataPretreament"/>.
+		/// Executes the Fourier transformation. First, the dimensions of the matrix are checked. Then the original data is pretreated by calling all Action that are registered in <see cref="DataPretreatment"/>.
 		/// Finally, the Fourier transformation is executed.
 		/// </summary>
 		public void Execute()

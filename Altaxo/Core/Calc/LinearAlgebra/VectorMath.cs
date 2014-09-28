@@ -854,7 +854,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// Creates a read-only vector with equidistant elements from start - startOffset*step to start + (length - 1 -startOffset)*step. The created vector
 		/// consumes memory only for the three variables, independent of its length.
 		/// </summary>
-		/// <param name="start">Value of the element of the vector at index <param name="startOffset".</param>
+		/// <param name="start">Value of the element of the vector at index <paramref name="startOffset"/>).</param>
 		/// <param name="startOffset">Index of the element of the vector which gets the value of <paramref name="start"/>.</param>
 		/// <param name="step">Difference between two successive elements.</param>
 		/// <param name="length">Length of the vector.</param>

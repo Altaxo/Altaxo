@@ -237,7 +237,7 @@ namespace Altaxo.Calc
 
 		/// <summary>Calculates the number <paramref name="x"/> raised to the specified power <paramref name="i"/>.</summary>
 		/// <param name="x">A double-precision floating-point number to be raised to the power <paramref name="i"/>.</param>
-		/// <param name="exponent">An integer number that specifies the power.</param>
+		/// <param name="i">An integer number that specifies the power.</param>
 		/// <returns>The number <paramref name="x"/> raised to the power <paramref name="i"/>.</returns>
 		public static double Pow(double x, int i)
 		{
@@ -531,7 +531,7 @@ namespace Altaxo.Calc
 			return Altaxo.Data.DoubleColumn.Map(function, x);
 		}
 
-		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and column <param name="y"/>.</summary>
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and column <paramref name="y"/>.</summary>
 		/// <param name="function">The function to apply.</param>
 		/// <param name="x">The column containing the elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
 		/// <param name="y">The column containing the elements to which the specified <paramref name="function"/> should be applied (as second argument of that function).</param>
@@ -541,7 +541,7 @@ namespace Altaxo.Calc
 			return Altaxo.Data.DoubleColumn.Map(function, x, y);
 		}
 
-		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and to paramenter <param name="y"/>.</summary>
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and to paramenter <paramref name="y"/>.</summary>
 		/// <param name="function">The function to apply.</param>
 		/// <param name="x">The column containing the elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
 		/// <param name="y">A double-precision numeric value used as second argument of that function.</param>
@@ -848,7 +848,6 @@ namespace Altaxo.Calc
 		{
 			if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
 				return ((Altaxo.Data.DoubleColumn)x) * ((Altaxo.Data.DoubleColumn)x);
-
 			else throw new ArgumentException("Error: Try to apply Square() to " + x.TypeAndName, "x");
 		}
 
@@ -954,7 +953,7 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Map(Func<double,double>, x) to " + x.TypeAndName);
 		}
 
-		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and column <param name="y"/>.</summary>
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and column <paramref name="y"/>.</summary>
 		/// <param name="function">The function to apply.</param>
 		/// <param name="x">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
 		/// <param name="y">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as second argument of that function).</param>
@@ -966,7 +965,7 @@ namespace Altaxo.Calc
 			else throw new ArgumentException("Error: Try to apply Map(Func<double,double,double>, x, y) to " + x.TypeAndName + " and " + y.TypeAndName, "x");
 		}
 
-		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and to paramenter <param name="y"/>.</summary>
+		/// <summary>Applies the specified binary <paramref name="function"/> to each element in column <paramref name="x"/> and to paramenter <paramref name="y"/>.</summary>
 		/// <param name="function">The function to apply.</param>
 		/// <param name="x">The column containing the numerical elements to which the specified <paramref name="function"/> should be applied (as first argument of that function).</param>
 		/// <param name="y">A double-precision numeric value used as second argument of that function.</param>

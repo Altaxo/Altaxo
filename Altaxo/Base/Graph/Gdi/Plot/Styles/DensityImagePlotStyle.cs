@@ -775,14 +775,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
-		/// Gets a pixelwise image of the data. Horizontal or vertical axes are not taken into accout.
-		/// The horizontal dimension of the image is associated with the columns of the data table. The
-		/// vertical dimension of the image is associated with the rows of the data table.
+		/// Gets a pixelwise image of the matrix data, i.e. each element of the matrix is converted to a pixel of the resulting bitmap.
 		/// </summary>
-		/// <param name="myPlotAssociation">The data to plot.</param>
-		/// <param name="cols">Number of columns (horizontal pixels) to plot.</param>
-		/// <param name="rows">Number of rows (vertical pixels) to plot.</param>
-		/// <param name="image">Bitmap to fill with the plot image. If null, a new image is created.</param>
+		/// <param name="matrix">The matrix data.</param>
+		/// <param name="image">Bitmap to fill with the pixelwise image. If null, a new image is created.</param>
 		/// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
 		public void GetPixelwiseImage(IROMatrix matrix, ref System.Drawing.Bitmap image)
 		{

@@ -450,7 +450,7 @@ namespace Altaxo.Calc.Fourier
 		/// FFT is applicable.
 		/// </summary>
 		/// <param name="matrixRe">Matrix of thre real part of the values to transform.</param>
-		/// <param name="matrixRe">Matrix of thre imaginary part of the values to transform.</param>
+		/// <param name="matrixIm">Matrix of thre imaginary part of the values to transform.</param>
 		/// <param name="direction">Direction of Fourier transform.</param>
 		/// <remarks>This function first performs a FFT on all columns of the matrix, and then transforms all rows of the resulting matrix.</remarks>
 		public static void
