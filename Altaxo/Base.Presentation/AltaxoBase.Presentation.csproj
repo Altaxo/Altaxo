@@ -437,6 +437,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\ClipboardRenderingOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\EmbeddedObjectRenderingOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1124,6 +1128,9 @@
     </Compile>
     <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
       <DependentUpon>AxisLinkControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ClipboardRenderingOptionsControl.xaml.cs">
+      <DependentUpon>ClipboardRenderingOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\EmbeddedObjectRenderingOptionsControl.xaml.cs">
       <DependentUpon>EmbeddedObjectRenderingOptionsControl.xaml</DependentUpon>

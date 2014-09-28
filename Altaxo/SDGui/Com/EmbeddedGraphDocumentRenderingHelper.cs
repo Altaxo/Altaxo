@@ -43,10 +43,18 @@ namespace Altaxo.Com
 		/// Gets the rendering options for the provided graph document.
 		/// </summary>
 		/// <param name="document">The graph document.</param>
-		/// <returns>The rendering options for the graph document. If the graph itself has no rendering options stored (key: <see cref="Altaxo.Graph.EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions"/>, the hierarchy (folders, document, etc.) is walked down to find the rendering options.</returns>
-		public static Altaxo.Graph.EmbeddedObjectRenderingOptions GetRenderingOptions(GraphDocument document)
+		/// <returns>The rendering options for the graph document. If the graph itself has no rendering options stored (key: <see cref="Altaxo.Graph.Gdi.EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions"/>, the hierarchy (folders, document, etc.) is walked down to find the rendering options.</returns>
+		public static EmbeddedObjectRenderingOptions GetRenderingOptions(GraphDocument document)
 		{
-			return Altaxo.PropertyExtensions.GetPropertyValue(document, Altaxo.Graph.EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, () => new Altaxo.Graph.EmbeddedObjectRenderingOptions());
+			var embe = Altaxo.PropertyExtensions.GetPropertyValue(document, EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, null);
+			if (null != embe)
+				return embe;
+
+			var clip = Altaxo.PropertyExtensions.GetPropertyValue(document, ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, null);
+			if (null != clip)
+				return clip;
+
+			return new EmbeddedObjectRenderingOptions();
 		}
 
 		/// <summary>
@@ -60,18 +68,16 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ENHMF);
 
 			var renderingOptions = GetRenderingOptions(document);
-
-			var docSize = document.Size;
-
 			if (renderingOptions.RenderEnhancedMetafileAsVectorFormat)
 			{
-				var metafile = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsMetafile(document);
+				var metafile = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsEnhancedMetafileVectorFormat(document, renderingOptions);
 				return metafile.GetHenhmetafile();
 			}
 			else
 			{
-				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format32bppArgb, renderingOptions.SourceDpiResolution, renderingOptions.SourceDpiResolution))
+				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
 				{
+					var docSize = document.Size * renderingOptions.OutputScalingFactor;
 					return DataObjectHelper.RenderEnhancedMetafile(bmp, docSize.X, docSize.Y, UseMetafileDC.Printer).GetHenhmetafile();
 				}
 			}
@@ -88,14 +94,10 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
 
 			var renderingOptions = GetRenderingOptions(document);
-
-			var docSize = document.Size;
-			using (var groundBackgroundBrush = new System.Drawing.SolidBrush(renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
 			{
-				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, groundBackgroundBrush, renderingOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format24bppRgb, renderingOptions.SourceDpiResolution, renderingOptions.SourceDpiResolution))
-				{
-					return DataObjectHelper.RenderWindowsMetafilePict(bmp, docSize.X, docSize.Y, UseMetafileDC.Printer);
-				}
+				var docSize = document.Size * renderingOptions.OutputScalingFactor;
+				return DataObjectHelper.RenderWindowsMetafilePict(bmp, docSize.X, docSize.Y, UseMetafileDC.Printer);
 			}
 		}
 
@@ -110,13 +112,9 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
 
 			var renderingOptions = GetRenderingOptions(document);
-			var docSize = document.Size;
-			using (var groundBackgroundBrush = new System.Drawing.SolidBrush(renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
 			{
-				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, groundBackgroundBrush, renderingOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format24bppRgb, renderingOptions.SourceDpiResolution, renderingOptions.SourceDpiResolution))
-				{
-					return DataObjectHelper.RenderHBitmap(tymed, bmp, bmp.Width, bmp.Height);
-				}
+				return DataObjectHelper.RenderHBitmap(tymed, bmp, bmp.Width, bmp.Height, renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel);
 			}
 		}
 
@@ -131,13 +129,9 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
 
 			var renderingOptions = GetRenderingOptions(document);
-			var docSize = document.Size;
-			using (var groundBackgroundBrush = new System.Drawing.SolidBrush(renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
 			{
-				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, groundBackgroundBrush, renderingOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format24bppRgb, renderingOptions.SourceDpiResolution, renderingOptions.SourceDpiResolution))
-				{
-					return DataObjectHelper.RenderDIBBitmapToHGLOBAL(bmp, bmp.Width, bmp.Height);
-				}
+				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(bmp, bmp.Width, bmp.Height, renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel);
 			}
 		}
 	}

@@ -41,6 +41,7 @@ namespace Altaxo.Data
 		/// <param name="dataTable">The table where to import into.</param>
 		/// <param name="myStream">The stream to import from.</param>
 		/// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
+		[Obsolete]
 		public static void ImportAscii(this DataTable dataTable, System.IO.Stream myStream, string streamOriginHint)
 		{
 			AsciiImporter.ImportFromAsciiStream(dataTable, myStream, streamOriginHint);
@@ -51,9 +52,13 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="filenames">The names of the files to import.</param>
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		[Obsolete]
 		public static void ImportAsciiToMultipleWorksheets(string[] filenames, AsciiImportOptions importOptions)
 		{
-			AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, importOptions);
+			if (null != importOptions)
+				AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, importOptions);
+			else
+				AsciiImporter.ImportFilesIntoSeparateNewTables(Main.ProjectFolder.RootFolder, filenames, true, true);
 		}
 
 		/// <summary>
@@ -62,9 +67,13 @@ namespace Altaxo.Data
 		/// <param name="dataTable">The data table where to import the data.</param>
 		/// <param name="filenames">The files names. The names will be sorted before use.</param>
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		[Obsolete]
 		public static void ImportAsciiToSingleWorksheetHorizontally(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
-			AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions);
+			if (null != importOptions)
+				AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, importOptions);
+			else
+				AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(dataTable, filenames, true, true);
 		}
 
 		/// <summary>
@@ -73,9 +82,13 @@ namespace Altaxo.Data
 		/// <param name="dataTable">The data table where to import the data.</param>
 		/// <param name="filenames">The files names. The names will be sorted before use.</param>
 		/// <param name="importOptions">Options used to import ASCII. This parameter can be <c>null</c>. In this case the options are determined by analysis of each file.</param>
+		[Obsolete]
 		public static void ImportAsciiToSingleWorksheetVertically(this DataTable dataTable, string[] filenames, AsciiImportOptions importOptions)
 		{
-			AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions);
+			if (null != importOptions)
+				AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, importOptions);
+			else
+				AsciiImporter.ImportFromMultipleAsciiFilesVertically(dataTable, filenames, true, true);
 		}
 
 		/// <summary>

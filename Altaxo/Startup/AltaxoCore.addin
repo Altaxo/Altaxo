@@ -1047,9 +1047,6 @@
 			<OptionPanel id    = "ClipboardExport"
 								 label = "${res:Dialog.Options.Graph.ClipboardExport}"
 								 class = "Altaxo.Gui.Settings.ClipboardGraphExportOptionPanel" />
-			<OptionPanel id    = "EmbeddedObjectRendering"
-								 label = "${res:Dialog.Options.Graph.EmbeddedObjectRenderingOptions}"
-								 class = "Altaxo.Gui.Settings.EmbeddedObjectRenderingOptionsPanel" />
 		</OptionPanel>
 		<OptionPanel id    = "AutoUpdates"
 									 label = "${res:Dialog.Options.AutoUpdates}"

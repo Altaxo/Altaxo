@@ -32,16 +32,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.Gdi
 {
-	using Gdi;
-
 	/// <summary>
 	/// Stores options used to display graphs embedded in other applications.
 	/// </summary>
 	public class EmbeddedObjectRenderingOptions : ICloneable
 	{
 		private double _sourceDpiResolution;
+		private double _outputScalingFactor;
 
 		private bool _renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
 		private bool _renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
@@ -55,7 +54,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Initial version (2014-09-19)
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EmbeddedObjectRenderingOptions), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.EmbeddedObjectRenderingOptions", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -87,13 +86,46 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// 2014-09-24 added OutputScalingFactor
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EmbeddedObjectRenderingOptions), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (EmbeddedObjectRenderingOptions)obj;
+
+				info.AddValue("SourceResolution", s._sourceDpiResolution);
+				info.AddValue("OutputScaling", s._outputScalingFactor);
+				info.AddValue("BackgroundForFormatsWithoutAlphaChannel", s._backgroundColorForFormatsWithoutAlphaChannel);
+				info.AddValue("BackgroundBrush", s._backgroundBrush);
+				info.AddValue("RenderEnhancedMetafile", s._renderEnhancedMetafile);
+				info.AddValue("RenderEnhancedMetafileAsVectorFormat", s._renderEnhancedMetafileAsVectorFormat);
+				info.AddValue("RenderWindowsMetafile", s._renderWindowsMetafile);
+				info.AddValue("RenderBitmap", s._renderBitmap);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (EmbeddedObjectRenderingOptions)o : new EmbeddedObjectRenderingOptions();
+
+				s._sourceDpiResolution = info.GetDouble("SourceResolution");
+				s._outputScalingFactor = info.GetDouble("OutputScaling");
+				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel");
+				s.BackgroundBrush = (BrushX)info.GetValue("Background");
+				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
+				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
+				s._renderWindowsMetafile = info.GetBoolean("RenderWindowsMetafile");
+				s._renderBitmap = info.GetBoolean("RenderBitmap");
+
+				return s;
+			}
+		}
+
 		#endregion Serialization
 
-		#region Property management
-
-		public static readonly Altaxo.Main.Properties.PropertyKey<EmbeddedObjectRenderingOptions> PropertyKeyEmbeddedObjectRenderingOptions = new Altaxo.Main.Properties.PropertyKey<EmbeddedObjectRenderingOptions>("1030D700-CB3B-445B-95D8-88E1ECFE78C0", "Graph\\EmbeddedRenderingOptions", Altaxo.Main.Properties.PropertyLevel.All, typeof(Altaxo.Graph.Gdi.GraphDocument), () => new EmbeddedObjectRenderingOptions());
-
-		#endregion Property management
+		#region Construction
 
 		public EmbeddedObjectRenderingOptions()
 		{
@@ -104,7 +136,61 @@ namespace Altaxo.Graph
 			_renderBitmap = true;
 			_backgroundColorForFormatsWithoutAlphaChannel = Altaxo.Graph.NamedColors.White;
 			_backgroundBrush = null;
+			_outputScalingFactor = 1;
 		}
+
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as EmbeddedObjectRenderingOptions;
+			if (null != from)
+			{
+				_sourceDpiResolution = from._sourceDpiResolution;
+				_outputScalingFactor = from._outputScalingFactor;
+
+				_renderEnhancedMetafile = from._renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
+				_renderEnhancedMetafileAsVectorFormat = from._renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
+				_renderWindowsMetafile = from._renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
+				_renderBitmap = from._renderBitmap; // rendered as bitmap plus DIB bitmap
+				_backgroundColorForFormatsWithoutAlphaChannel = from._backgroundColorForFormatsWithoutAlphaChannel;
+				_backgroundBrush = null == from._backgroundBrush ? null : from._backgroundBrush.Clone();
+
+				return true;
+			}
+			return false;
+		}
+
+		public EmbeddedObjectRenderingOptions(EmbeddedObjectRenderingOptions from)
+		{
+			if (null == from)
+				throw new ArgumentNullException();
+			CopyFrom(from);
+		}
+
+		public EmbeddedObjectRenderingOptions Clone()
+		{
+			return new EmbeddedObjectRenderingOptions(this);
+		}
+
+		object ICloneable.Clone()
+		{
+			return new EmbeddedObjectRenderingOptions(this);
+		}
+
+		#endregion Construction
+
+		#region Property management
+
+		public static readonly Altaxo.Main.Properties.PropertyKey<EmbeddedObjectRenderingOptions> PropertyKeyEmbeddedObjectRenderingOptions =
+			new Altaxo.Main.Properties.PropertyKey<EmbeddedObjectRenderingOptions>(
+				"1030D700-CB3B-445B-95D8-88E1ECFE78C0",
+				"Graph\\EmbeddedRenderingOptions",
+				Altaxo.Main.Properties.PropertyLevel.Project | Main.Properties.PropertyLevel.ProjectFolder | Main.Properties.PropertyLevel.Document,
+				typeof(Altaxo.Graph.Gdi.GraphDocument),
+				null);
+
+		#endregion Property management
 
 		/// <summary>
 		/// Gets or sets the dpi resolution of the bitmap or bitmap embedded in a metafile that is rendered.
@@ -125,6 +211,21 @@ namespace Altaxo.Graph
 					throw new ArgumentException("SourceDpiResolution has to be >0");
 
 				_sourceDpiResolution = value;
+			}
+		}
+
+		public double OutputScalingFactor
+		{
+			get
+			{
+				return _outputScalingFactor;
+			}
+			set
+			{
+				if (value > 0 && value <= double.MaxValue)
+					_outputScalingFactor = value;
+				else
+					throw new ArgumentOutOfRangeException(string.Format("OutputScalingFactor is {0} and therefore outside valid range.", value));
 			}
 		}
 
@@ -201,17 +302,6 @@ namespace Altaxo.Graph
 		{
 			get { return _renderBitmap; }
 			set { _renderBitmap = value; }
-		}
-
-		/// <summary>
-		/// Creates a new object that is a copy of the current instance.
-		/// </summary>
-		/// <returns>
-		/// A new object that is a copy of this instance.
-		/// </returns>
-		public object Clone()
-		{
-			return this.MemberwiseClone();
 		}
 	}
 }

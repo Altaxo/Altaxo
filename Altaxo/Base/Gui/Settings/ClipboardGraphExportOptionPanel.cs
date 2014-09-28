@@ -29,23 +29,24 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
+	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Gui.Graph;
 	using Altaxo.Main.Properties;
 
-	public class ClipboardGraphExportOptionPanel : OptionPanelBase<GraphExportOptionsController>
+	public class ClipboardGraphExportOptionPanel : OptionPanelBase<ClipboardRenderingOptionsController>
 	{
 		public override void Initialize(object optionPanelOwner)
 		{
-			_controller = new GraphExportOptionsController();
-			var doc = Current.PropertyService.GetValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new GraphClipboardExportOptions());
+			var doc = Current.PropertyService.GetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new ClipboardRenderingOptions());
+			_controller = new ClipboardRenderingOptionsController();
 			_controller.InitializeDocument(doc);
 		}
 
 		protected override void ProcessControllerResult()
 		{
-			var doc = (GraphClipboardExportOptions)_controller.ModelObject;
-			Current.PropertyService.UserSettings.SetValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, doc);
+			var doc = (ClipboardRenderingOptions)_controller.ModelObject;
+			Current.PropertyService.UserSettings.SetValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, doc);
 		}
 	}
 }

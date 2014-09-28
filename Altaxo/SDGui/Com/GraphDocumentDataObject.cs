@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
@@ -41,9 +42,10 @@ namespace Altaxo.Com
 		private AltaxoDocument _altaxoMiniProject;
 		private string _graphDocumentName;
 		private Altaxo.Graph.PointD2D _graphDocumentSize;
-		private System.Drawing.Image _graphDocumentClipboardImage;
+		private System.Drawing.Imaging.Metafile _graphDocumentMetafileImage;
+		private System.Drawing.Bitmap _graphDocumentBitmapImage;
 		private string _graphDocumentDropdownFileName;
-		private GraphClipboardExportOptions _graphExportOptions;
+		private ClipboardRenderingOptions _graphExportOptions;
 
 		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
@@ -54,11 +56,28 @@ namespace Altaxo.Com
 			_graphDocumentName = graphDocument.Name;
 			_graphDocumentSize = graphDocument.Size;
 
-			_graphExportOptions = graphDocument.GetPropertyValue(GraphDocumentClipboardActions.PropertyKeyCopyPageSettings, () => new GraphClipboardExportOptions());
-			_graphExportOptions = (GraphClipboardExportOptions)_graphExportOptions.Clone();
-			GraphDocumentClipboardActions.GetImageForClipboard(graphDocument, _graphExportOptions, out _graphDocumentClipboardImage, out _graphDocumentDropdownFileName);
+			_graphExportOptions = graphDocument.GetPropertyValue(ClipboardRenderingOptions.PropertyKeyClipboardRenderingOptions, () => new ClipboardRenderingOptions()).Clone();
+			var embeddedRenderingOptions = graphDocument.GetPropertyValue(EmbeddedObjectRenderingOptions.PropertyKeyEmbeddedObjectRenderingOptions, () => null);
+			if (null != embeddedRenderingOptions)
+				_graphExportOptions.CopyFrom(embeddedRenderingOptions); // merge embedded rendering options
 
-			if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
+			if ((_graphExportOptions.RenderEnhancedMetafile && _graphExportOptions.RenderEnhancedMetafileAsVectorFormat) ||
+				(_graphExportOptions.RenderDropFile && _graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Emf)
+				)
+			{
+				_graphDocumentMetafileImage = GraphDocumentExportActions.RenderAsEnhancedMetafileVectorFormat(graphDocument, _graphExportOptions);
+			}
+
+			if (null == _graphDocumentMetafileImage ||
+				_graphExportOptions.RenderBitmap ||
+				_graphExportOptions.RenderWindowsMetafile ||
+				(_graphExportOptions.RenderEnhancedMetafile && !_graphExportOptions.RenderEnhancedMetafileAsVectorFormat) ||
+				_graphExportOptions.RenderDropFile)
+			{
+				_graphDocumentBitmapImage = GraphDocumentExportActions.RenderAsBitmap(graphDocument, _graphExportOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _graphExportOptions.SourceDpiResolution, _graphExportOptions.SourceDpiResolution / _graphExportOptions.OutputScalingFactor);
+			}
+
+			if (_graphExportOptions.RenderEmbeddedObject)
 			{
 				var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
 				_altaxoMiniProject = miniProjectBuilder.GetMiniProject(graphDocument, true);
@@ -88,38 +107,34 @@ namespace Altaxo.Com
 			{
 				var list = new List<Rendering>();
 
-				if (null != _altaxoMiniProject && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsEmbeddedObject))
+				if (null != _altaxoMiniProject && _graphExportOptions.RenderEmbeddedObject)
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_EMBEDSOURCE, TYMED.TYMED_ISTORAGE, null));
 					list.Add(new Rendering(DataObjectHelper.CF_OBJECTDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderEmbeddedObjectDescriptor));
 				}
 
-				if ((_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile) &&
-						(_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNative) || _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
-						)
+				if (_graphExportOptions.RenderEnhancedMetafile)
 				{
 					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhancedMetaFile));
+				}
+
+				if (_graphExportOptions.RenderWindowsMetafile)
+				{
 					list.Add(new Rendering(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
 				}
 
-				if (_graphDocumentClipboardImage is System.Drawing.Bitmap && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
-				{
-					list.Add(new Rendering(CF.CF_ENHMETAFILE, TYMED.TYMED_ENHMF, RenderEnhancedMetaFile));
-					list.Add(new Rendering(CF.CF_METAFILEPICT, TYMED.TYMED_MFPICT, RenderWindowsMetafilePict));
-				}
-
-				if (_graphDocumentClipboardImage is System.Drawing.Bitmap && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNative))
+				if (_graphExportOptions.RenderBitmap)
 				{
 					list.Add(new Rendering(CF.CF_BITMAP, TYMED.TYMED_GDI, RenderBitmap));
 					list.Add(new Rendering(CF.CF_DIB, TYMED.TYMED_HGLOBAL, RenderBitmapDIB));
 				}
 
-				if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName) && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsDropDownList))
+				if (_graphExportOptions.RenderDropFile)
 				{
 					list.Add(new Rendering(CF.CF_HDROP, TYMED.TYMED_HGLOBAL, RenderBitmapAsDropFile));
 				}
 
-				if (!string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName) && _graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsLinkedObject))
+				if (_graphExportOptions.RenderLinkedObject && !string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
 				{
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSOURCE, TYMED.TYMED_ISTREAM, RenderMoniker));
 					list.Add(new Rendering(DataObjectHelper.CF_LINKSRCDESCRIPTOR, TYMED.TYMED_HGLOBAL, RenderLinkedObjectDescriptor));
@@ -133,28 +148,77 @@ namespace Altaxo.Com
 		{
 			var result = new System.Windows.Forms.DataObject();
 
-			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
+			if (null != _graphDocumentMetafileImage)
 			{
-				result.SetImage(_graphDocumentClipboardImage);
+				result.SetImage(_graphDocumentMetafileImage);
 			}
-			else if (_graphExportOptions.ClipboardFormat.HasFlag(GraphCopyPageClipboardFormat.AsNativeWrappedInEnhancedMetafile))
+			else if (null != _graphDocumentBitmapImage)
 			{
-				result.SetImage(DataObjectHelper.RenderEnhancedMetafile(_graphDocumentClipboardImage, _graphDocumentSize.X, _graphDocumentSize.Y, UseMetafileDC.Printer));
-			}
-
-			if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
-			{
-				result.SetImage(_graphDocumentClipboardImage);
+				result.SetImage(_graphDocumentBitmapImage);
 			}
 
 			if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName))
 			{
 				var coll = new System.Collections.Specialized.StringCollection();
+				EnsureDropFileCreated();
 				coll.Add(_graphDocumentDropdownFileName);
 				result.SetFileDropList(coll);
 			}
 
 			System.Windows.Forms.Clipboard.SetDataObject(result, true);
+		}
+
+		private void EnsureDropFileCreated()
+		{
+			var fileExtension = GraphExportOptions.GetDefaultFileNameExtension(_graphExportOptions.DropFileImageFormat);
+			_graphDocumentDropdownFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "AltaxoClipboardImage" + fileExtension);
+			if (System.IO.File.Exists(_graphDocumentDropdownFileName))
+			{
+				try
+				{
+					System.IO.File.Delete(_graphDocumentDropdownFileName);
+				}
+				catch (Exception)
+				{
+					_graphDocumentDropdownFileName = null;
+					return;
+				}
+			}
+
+			if (_graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Emf)
+			{
+				System.Diagnostics.Debug.Assert(null != _graphDocumentMetafileImage);
+				var clonedMF = (System.Drawing.Imaging.Metafile)_graphDocumentMetafileImage.Clone(); // have to clone metafile because after calling GetHenhmetafile() metafile would be destroyed
+				DataObjectHelper.SaveMetafileToDisk(clonedMF.GetHenhmetafile(), _graphDocumentDropdownFileName);
+			}
+			else if (_graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Wmf)
+			{
+				using (var rgbBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+				{
+					var docSize = _graphDocumentSize * _graphExportOptions.OutputScalingFactor;
+					using (var enhancedMetafile = DataObjectHelper.RenderEnhancedMetafile(rgbBitmap, docSize.X, docSize.Y, UseMetafileDC.Printer))
+					{
+						var hEmf = enhancedMetafile.GetHenhmetafile();
+						var bytes = DataObjectHelper.ConvertEnhancedMetafileToWindowsMetafileBytes(hEmf);
+						var placeableHeaderBytes = DataObjectHelper.GetWmfPlaceableHeaderBytes(docSize);
+
+						using (var stream = new System.IO.FileStream(_graphDocumentDropdownFileName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+						{
+							stream.Write(placeableHeaderBytes, 0, placeableHeaderBytes.Length);
+							stream.Write(bytes, 0, bytes.Length);
+						}
+					}
+				}
+			}
+			else // bitmap format
+			{
+				var bitmapToSave =
+					_graphExportOptions.DropFileBitmapPixelFormat == _graphDocumentBitmapImage.PixelFormat ?
+					_graphDocumentBitmapImage :
+					GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, _graphExportOptions.DropFileBitmapPixelFormat, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel);
+
+				bitmapToSave.Save(_graphDocumentDropdownFileName, _graphExportOptions.DropFileImageFormat);
+			}
 		}
 
 		protected override ManagedDataAdviseHolder DataAdviseHolder
@@ -200,37 +264,43 @@ namespace Altaxo.Com
 
 		#region Renderings
 
-		private IntPtr RenderWindowsMetafilePict(TYMED tymed)
-		{
-			ComDebug.ReportInfo("GraphDocumentDataObject.RenderWindowsMetafilePict");
-
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
-
-			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
-			{
-				return DataObjectHelper.RenderWindowsMetafilePict(_graphDocumentSize.X, _graphDocumentSize.Y, (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage);
-			}
-			else
-			{
-				return DataObjectHelper.RenderWindowsMetafilePict(_graphDocumentClipboardImage, _graphDocumentSize.X, _graphDocumentSize.Y, UseMetafileDC.Printer);
-			}
-		}
-
 		private IntPtr RenderEnhancedMetaFile(TYMED tymed)
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderEnhancedMetafile");
 
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ENHMF);
 
-			if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
+			if (null != _graphDocumentMetafileImage)
 			{
-				var mf = (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage;
-				var mfCloned = (System.Drawing.Imaging.Metafile)mf.Clone();
+				var mfCloned = (System.Drawing.Imaging.Metafile)_graphDocumentMetafileImage.Clone();
 				return mfCloned.GetHenhmetafile();
+			}
+			else if (null != _graphDocumentBitmapImage)
+			{
+				return DataObjectHelper.RenderEnhancedMetafile(_graphDocumentBitmapImage, _graphDocumentSize.X, _graphDocumentSize.Y, UseMetafileDC.Printer).GetHenhmetafile();
 			}
 			else
 			{
-				return DataObjectHelper.RenderEnhancedMetafile(_graphDocumentClipboardImage, _graphDocumentSize.X, _graphDocumentSize.Y, UseMetafileDC.Printer).GetHenhmetafile();
+				throw new InvalidProgramException("Please report this exception to the author of the program and describe the steps to reproduce the exception");
+			}
+		}
+
+		private IntPtr RenderWindowsMetafilePict(TYMED tymed)
+		{
+			ComDebug.ReportInfo("GraphDocumentDataObject.RenderWindowsMetafilePict");
+
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
+
+			if (null != _graphDocumentBitmapImage)
+			{
+				using (var rgbBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+				{
+					return DataObjectHelper.RenderWindowsMetafilePict(rgbBitmap, _graphDocumentSize.X * _graphExportOptions.OutputScalingFactor, _graphDocumentSize.Y * _graphExportOptions.OutputScalingFactor, UseMetafileDC.Printer);
+				}
+			}
+			else
+			{
+				throw new InvalidProgramException("Please report this exception to the author of the program and describe the steps to reproduce the exception");
 			}
 		}
 
@@ -240,21 +310,14 @@ namespace Altaxo.Com
 
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
 
-			if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
+			if (null != _graphDocumentBitmapImage)
 			{
-				var bmp = (System.Drawing.Bitmap)_graphDocumentClipboardImage;
-				return DataObjectHelper.RenderHBitmap(tymed, bmp, bmp.Width, bmp.Height);
-			}
-			else if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
-			{
-				var mf = (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage;
-				var dpi = _graphExportOptions.SourceDpiResolution;
-				int pixelsX = (int)(dpi * _graphDocumentSize.X / 72.0);
-				int pixelsY = (int)(dpi * _graphDocumentSize.Y / 72.0);
-				return DataObjectHelper.RenderHBitmap(tymed, _graphDocumentClipboardImage, pixelsX, pixelsY);
+				return DataObjectHelper.RenderHBitmap(tymed, _graphDocumentBitmapImage, _graphDocumentBitmapImage.Width, _graphDocumentBitmapImage.Height, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel);
 			}
 			else
-				throw new NotImplementedException();
+			{
+				throw new InvalidProgramException("Please report this exception to the author of the program and describe the steps to reproduce the exception");
+			}
 		}
 
 		private IntPtr RenderBitmapDIB(TYMED tymed)
@@ -263,21 +326,14 @@ namespace Altaxo.Com
 
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
 
-			if (_graphDocumentClipboardImage is System.Drawing.Bitmap)
+			if (null != _graphDocumentBitmapImage)
 			{
-				var bmp = (System.Drawing.Bitmap)_graphDocumentClipboardImage;
-				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(bmp, bmp.Width, bmp.Height);
-			}
-			else if (_graphDocumentClipboardImage is System.Drawing.Imaging.Metafile)
-			{
-				var mf = (System.Drawing.Imaging.Metafile)_graphDocumentClipboardImage;
-				var dpi = _graphExportOptions.SourceDpiResolution;
-				int pixelsX = (int)(dpi * _graphDocumentSize.X / 72.0);
-				int pixelsY = (int)(dpi * _graphDocumentSize.Y / 72.0);
-				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(_graphDocumentClipboardImage, pixelsX, pixelsY);
+				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(_graphDocumentBitmapImage, _graphDocumentBitmapImage.Width, _graphDocumentBitmapImage.Height, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel);
 			}
 			else
-				throw new NotImplementedException();
+			{
+				throw new InvalidProgramException("Please report this exception to the author of the program and describe the steps to reproduce the exception");
+			}
 		}
 
 		private IntPtr RenderBitmapAsDropFile(TYMED tymed)
@@ -285,6 +341,8 @@ namespace Altaxo.Com
 			ComDebug.ReportInfo("GraphDocumentDataObject.BitmapAsDropFile");
 
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+
+			EnsureDropFileCreated();
 
 			if (!string.IsNullOrEmpty(_graphDocumentDropdownFileName))
 			{

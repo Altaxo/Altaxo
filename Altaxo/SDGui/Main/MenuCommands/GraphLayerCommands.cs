@@ -89,7 +89,15 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
-			ctrl.Doc.PasteFromClipboardAsNewLayerBeforeLayerNumber(ctrl.CurrentLayerNumber);
+			var currentLayerNumber = ctrl.CurrentLayerNumber;
+			if (currentLayerNumber.Count != 0)
+			{
+				ctrl.Doc.PasteFromClipboardAsNewLayerBeforeLayerNumber(ctrl.CurrentLayerNumber);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("'Can't paste before the root layer. Please select another layer.", "Operation not possible");
+			}
 		}
 	}
 
@@ -101,7 +109,15 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
-			ctrl.Doc.PasteFromClipboardAsNewLayerAfterLayerNumber(ctrl.CurrentLayerNumber);
+			var currentLayerNumber = ctrl.CurrentLayerNumber;
+			if (currentLayerNumber.Count != 0)
+			{
+				ctrl.Doc.PasteFromClipboardAsNewLayerAfterLayerNumber(ctrl.CurrentLayerNumber);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("'Can't paste after the root layer. Please select another layer.", "Operation not possible");
+			}
 		}
 	}
 

@@ -41,99 +41,72 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for GraphExportOptionsControl.xaml
 	/// </summary>
-	public partial class EmbeddedObjectRenderingOptionsControl : UserControl, IEmbeddedObjectRenderingOptionsView
+	public partial class ClipboardRenderingOptionsControl : UserControl, IClipboardRenderingOptionsView
 	{
-		public EmbeddedObjectRenderingOptionsControl()
+		public ClipboardRenderingOptionsControl()
 		{
 			InitializeComponent();
 		}
 
-		public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_cbSourceResolution, list);
-		}
-
-		public string SourceDpiResolution
-		{
-			get { return _cbSourceResolution.Text; }
-		}
-
-		public double OutputScaling
-		{
-			get { return _guiOutputScale.SelectedQuantityInSIUnits; }
-			set { _guiOutputScale.SelectedQuantityInSIUnits = value; }
-		}
-
-		public bool RenderEnhancedMetafile
+		public bool RenderDropfile
 		{
 			get
 			{
-				return _guiRenderEnhancedMetafile.IsChecked == true;
+				return _guiRenderDropfile.IsChecked == true;
 			}
 			set
 			{
-				_guiRenderEnhancedMetafile.IsChecked = value;
+				_guiRenderDropfile.IsChecked = value;
 			}
 		}
 
-		public bool RenderEnhancedMetafileAsVectorFormat
+		public void SetDropFileImageFormat(Altaxo.Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_cbImageFormat, list);
+		}
+
+		public void SetDropFilePixelFormat(Altaxo.Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_cbPixelFormat, list);
+		}
+
+		public bool RenderEmbeddedObject
 		{
 			get
 			{
-				return _guiRenderEnhancedMetafileAsVectorFormat.IsChecked == true;
+				return _guiRenderEmbeddedObject.IsChecked == true;
 			}
 			set
 			{
-				_guiRenderEnhancedMetafileAsVectorFormat.IsChecked = value;
+				_guiRenderEmbeddedObject.IsChecked = value;
 			}
 		}
 
-		public bool RenderWindowsMetafile
+		public bool RenderLinkedObject
 		{
 			get
 			{
-				return _guiRenderWindowsMetafile.IsChecked == true;
+				return _guiRenderLinkedObject.IsChecked == true;
 			}
 			set
 			{
-				_guiRenderWindowsMetafile.IsChecked = value;
+				_guiRenderLinkedObject.IsChecked = value;
 			}
 		}
 
-		public bool RenderBitmap
+		private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
 		{
-			get
-			{
-				return _guiRenderBitmap.IsChecked == true;
-			}
-			set
-			{
-				_guiRenderBitmap.IsChecked = value;
-			}
+			GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
 		}
 
-		public Altaxo.Graph.NamedColor BackgroundColor
+		private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
 		{
-			get
-			{
-				return _cbBackgroundColor.SelectedColor;
-			}
-			set
-			{
-				_cbBackgroundColor.SelectedColor = value;
-			}
+			GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
 		}
 
-		public Altaxo.Graph.Gdi.BrushX BackgroundBrush
+		public object EmbeddedRenderingOptionsView
 		{
-			get
-			{
-				return _cbBackgroundBrush.SelectedBrush;
-			}
-			set
-			{
-				_cbBackgroundBrush.SelectedBrush = value;
-			}
+			set { _guiEmbeddedOptionsViewHost.Child = value as UIElement; }
 		}
 	}
 }

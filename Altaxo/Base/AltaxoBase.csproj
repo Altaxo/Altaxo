@@ -216,7 +216,9 @@
     <Compile Include="Graph\ColorManagement\ColorSetExtensions.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetManager.cs" />
     <Compile Include="Graph\ColorManagement\IColorSet.cs" />
-    <Compile Include="Graph\EmbeddedObjectRenderingOptions.cs" />
+    <Compile Include="Graph\Gdi\ClipboardRenderingOptions.cs" />
+    <Compile Include="Graph\Gdi\EmbeddedObjectRenderingOptions.cs" />
+    <Compile Include="Graph\Gdi\GraphExportOptions.cs" />
     <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
     <Compile Include="Graph\FontXStyle.cs" />
@@ -266,6 +268,7 @@
     <Compile Include="Gui\DataConnection\QueryDesignerController.cs" />
     <Compile Include="Gui\DataConnection\QueryPropertiesController.cs" />
     <Compile Include="Gui\Data\DataSourceImportOptionsController.cs" />
+    <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\EmbeddedObjectRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph\GridPartitioningController.cs" />
@@ -332,7 +335,6 @@
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Settings\AsciiAnalysisSettingsOptionPanel.cs" />
     <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
-    <Compile Include="Gui\Settings\EmbeddedObjectRenderingOptionsPanel.cs" />
     <Compile Include="Gui\Settings\ClipboardGraphExportOptionPanel.cs" />
     <Compile Include="Gui\Settings\CultureSettingsController.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DController.cs" />

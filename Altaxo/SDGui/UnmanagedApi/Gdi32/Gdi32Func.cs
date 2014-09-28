@@ -108,6 +108,9 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		public static extern IntPtr CloseEnhMetaFile(IntPtr hdc);
 
 		[DllImport("gdi32.dll")]
+		public static extern IntPtr CopyEnhMetaFile(IntPtr hemfSrc, string lpszFile);
+
+		[DllImport("gdi32.dll")]
 		public static extern uint GetEnhMetaFileHeader(IntPtr hemf, uint cbBuffer, IntPtr lpemh);
 
 		[DllImport("user32.dll")]

@@ -39,6 +39,8 @@ namespace Altaxo.Gui.Graph
 	{
 		void SetSourceDpi(SelectableListNodeList list);
 
+		double OutputScaling { get; set; }
+
 		string SourceDpiResolution { get; }
 
 		NamedColor BackgroundColor { get; set; }
@@ -71,6 +73,7 @@ namespace Altaxo.Gui.Graph
 			if (null != _view)
 			{
 				_view.SetSourceDpi(_sourceDpi);
+				_view.OutputScaling = _doc.OutputScalingFactor;
 				_view.BackgroundColor = _doc.BackgroundColorForFormatsWithoutAlphaChannel;
 				_view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
 
@@ -117,6 +120,7 @@ namespace Altaxo.Gui.Graph
 			}
 
 			_doc.SourceDpiResolution = sr;
+			_doc.OutputScalingFactor = _view.OutputScaling;
 			_doc.BackgroundColorForFormatsWithoutAlphaChannel = backcolor;
 			_doc.RenderEnhancedMetafile = _view.RenderEnhancedMetafile;
 			_doc.RenderEnhancedMetafileAsVectorFormat = _view.RenderEnhancedMetafileAsVectorFormat;

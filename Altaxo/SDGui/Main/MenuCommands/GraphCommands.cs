@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsImage();
+			//ctrl.Doc.CopyToClipboardAsImage();
 		}
 	}
 
@@ -137,7 +137,8 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsBitmap(150, Brushes.White, PixelFormat.Format24bppRgb);
+			using (var brush = new BrushX(NamedColors.White))
+				ctrl.Doc.CopyToClipboardAsBitmap(150, brush, PixelFormat.Format24bppRgb);
 		}
 	}
 
@@ -161,7 +162,8 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
-			ctrl.Doc.CopyToClipboardAsBitmap(300, Brushes.White, PixelFormat.Format24bppRgb);
+			using (var brush = new BrushX(NamedColors.White))
+				ctrl.Doc.CopyToClipboardAsBitmap(300, brush, PixelFormat.Format24bppRgb);
 		}
 	}
 

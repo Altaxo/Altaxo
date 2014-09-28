@@ -45,10 +45,6 @@ namespace Altaxo.Gui.Graph
 
 		void SetDestinationDpi(SelectableListNodeList list);
 
-		void SetClipboardFormatView(object viewObject);
-
-		bool EnableClipboardFormat { set; }
-
 		string SourceDpiResolution { get; }
 
 		string DestinationDpiResolution { get; }
@@ -64,8 +60,6 @@ namespace Altaxo.Gui.Graph
 		private SelectableListNodeList _pixelFormat;
 		private SelectableListNodeList _sourceDpi;
 		private SelectableListNodeList _destinationDpi;
-
-		private IMVCANController _clipboardFormatController;
 
 		private static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
 
@@ -114,10 +108,6 @@ namespace Altaxo.Gui.Graph
 			PixelFormat.PAlpha
 		};
 
-		#region IMVCANController Members
-
-		#endregion IMVCANController Members
-
 		protected override void Initialize(bool initData)
 		{
 			if (initData)
@@ -138,22 +128,12 @@ namespace Altaxo.Gui.Graph
 					hasMatched |= select;
 				}
 
-				if (_doc is GraphClipboardExportOptions)
-				{
-					_clipboardFormatController = new Altaxo.Gui.Common.EnumFlagController();
-					_clipboardFormatController.InitializeDocument(((GraphClipboardExportOptions)_doc).ClipboardFormat);
-					Current.Gui.FindAndAttachControlTo(_clipboardFormatController);
-				}
-
 				_sourceDpi = GetResolutions(_originalDoc.SourceDpiResolution);
 				_destinationDpi = GetResolutions(_originalDoc.DestinationDpiResolution);
 			}
 
 			if (null != _view)
 			{
-				_view.EnableClipboardFormat = (_doc is GraphClipboardExportOptions);
-				if (null != _clipboardFormatController)
-					_view.SetClipboardFormatView(_clipboardFormatController.ViewObject);
 				_view.SetImageFormat(_imageFormat);
 				_view.SetPixelFormat(_pixelFormat);
 				_view.SetSourceDpi(_sourceDpi);
@@ -178,9 +158,7 @@ namespace Altaxo.Gui.Graph
 			return result;
 		}
 
-		#region IMVCController Members
 
-		#endregion IMVCController Members
 
 		#region IApplyController Members
 
@@ -205,13 +183,6 @@ namespace Altaxo.Gui.Graph
 			{
 				Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
 				return false;
-			}
-
-			if (null != _clipboardFormatController)
-			{
-				if (!_clipboardFormatController.Apply())
-					return false;
-				((GraphClipboardExportOptions)_doc).ClipboardFormat = (GraphCopyPageClipboardFormat)_clipboardFormatController.ModelObject;
 			}
 
 			_doc.SourceDpiResolution = sr;

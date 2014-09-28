@@ -314,7 +314,7 @@ namespace Altaxo.Com
 		/// <param name="pixelsY">The height of the bitmap (in pixels) to create.</param>
 		/// <returns>Pointer to the bitmap. This is a Gdi object (TYMED_GDI).</returns>
 		/// <remarks>Using System.Drawing.Bitmap.GetHbitmap() claims also to produce a Gdi bitmap, but this is not working for all clipboard client programs.</remarks>
-		public static IntPtr RenderHBitmap(TYMED tymed, Image imgToDraw, int pixelsX, int pixelsY)
+		public static IntPtr RenderHBitmap(TYMED tymed, Image imgToDraw, int pixelsX, int pixelsY, Color backgroundOpaqueColor)
 		{
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
 
@@ -327,7 +327,10 @@ namespace Altaxo.Com
 				using (Graphics g = Graphics.FromHdc(hMemDC))
 				{
 					g.PageUnit = GraphicsUnit.Pixel;
-					g.FillRectangle(Brushes.White, 0, 0, pixelsX, pixelsY);
+					using (var brush = new SolidBrush(backgroundOpaqueColor))
+					{
+						g.FillRectangle(brush, 0, 0, pixelsX, pixelsY);
+					}
 					g.DrawImage(imgToDraw, 0, 0, pixelsX, pixelsY);
 				}
 				Gdi32Func.SelectObject(hMemDC, hObj);
@@ -344,7 +347,7 @@ namespace Altaxo.Com
 		/// <param name="pixelsX">The width in pixels of the bitmap.</param>
 		/// <param name="pixelsY">The height in pixels of the bitmap.</param>
 		/// <returns>Pointer to the DIB bitmap (TYMED.TYMED_HGLOBAL).</returns>
-		public static IntPtr RenderDIBBitmapToHGLOBAL(Image imgToDraw, int pixelsX, int pixelsY)
+		public static IntPtr RenderDIBBitmapToHGLOBAL(Image imgToDraw, int pixelsX, int pixelsY, Color backgroundOpaqueColor)
 		{
 			Bitmap bitmap = imgToDraw as System.Drawing.Bitmap;
 			if (null != bitmap && bitmap.PixelFormat == PixelFormat.Format24bppRgb)
@@ -356,7 +359,10 @@ namespace Altaxo.Com
 				bitmap = new Bitmap(pixelsX, pixelsY, PixelFormat.Format24bppRgb);
 				using (Graphics g = Graphics.FromImage(bitmap))
 				{
-					g.FillRectangle(Brushes.White, 0, 0, pixelsX, pixelsY);
+					using (var brush = new SolidBrush(backgroundOpaqueColor))
+					{
+						g.FillRectangle(brush, 0, 0, pixelsX, pixelsY);
+					}
 					g.DrawImage(imgToDraw, 0, 0, pixelsX, pixelsY);
 				}
 			}
@@ -418,13 +424,11 @@ namespace Altaxo.Com
 		}
 
 		/// <summary>
-		/// Converts an enhanced metafile to a windows metafile picture (CF_MFPICT).
+		/// Converts an enhanced metafile to a windows metafile picture (CF_MFPICT) and returns the byte buffer of the windows metafile.
 		/// </summary>
 		/// <param name="hEmf">The handle to the enhanced metafile.</param>
-		/// <param name="docSizeX">The document size x in points.</param>
-		/// <param name="docSizeY">The document size y in points.</param>
-		/// <returns>Handle to a windows meta file picture (CF_MFPICT).</returns>
-		public static IntPtr ConvertEnhancedMetafileToWindowsMetafilePict(IntPtr hEmf, double docSizeX, double docSizeY)
+		/// <returns>Byte buffer containing the converted windows meta file.</returns>
+		public static byte[] ConvertEnhancedMetafileToWindowsMetafileBytes(IntPtr hEmf)
 		{
 			uint size = 0;
 			byte[] buffer = null;
@@ -441,8 +445,59 @@ namespace Altaxo.Com
 					break;
 			}
 
+			return buffer;
+		}
+
+		public static byte[] StructureToByteArray(WmfPlaceableFileHeader str)
+		{
+			int size = Marshal.SizeOf(str);
+			byte[] arr = new byte[size];
+			IntPtr ptr = Marshal.AllocHGlobal(size);
+			Marshal.StructureToPtr(str, ptr, true);
+			Marshal.Copy(ptr, arr, 0, size);
+			Marshal.FreeHGlobal(ptr);
+			return arr;
+		}
+
+		public static byte[] GetWmfPlaceableHeaderBytes(Altaxo.Graph.PointD2D docSize)
+		{
+			WmfPlaceableFileHeader header = new WmfPlaceableFileHeader();
+			const ushort twips_per_inch = 1440;
+			header.key = 0x9aC6CDD7;  // magic number
+			header.hmf = 0;
+			header.bboxLeft = 0;
+			header.bboxRight = (ushort)(twips_per_inch * docSize.X / 72);
+			header.bboxTop = 0;
+			header.bboxBottom = (ushort)(twips_per_inch * docSize.Y / 72);
+			header.inch = twips_per_inch;
+			header.reserved = 0;
+
+			// Calculate checksum for first 10 WORDs.
+			ushort checksum = 0;
+			byte[] header_bytes = StructureToByteArray(header);
+			for (int i = 0; i < 10; i++)
+				checksum ^= BitConverter.ToUInt16(header_bytes, i * 2);
+			header.checksum = checksum;
+
+			// Construct the file in-memory.
+			header_bytes = StructureToByteArray(header);
+
+			return header_bytes;
+		}
+
+		/// <summary>
+		/// Converts an enhanced metafile to a windows metafile picture (CF_MFPICT).
+		/// </summary>
+		/// <param name="hEmf">The handle to the enhanced metafile.</param>
+		/// <param name="docSizeX">The document size x in points.</param>
+		/// <param name="docSizeY">The document size y in points.</param>
+		/// <returns>Handle to a windows meta file picture (CF_MFPICT).</returns>
+		public static IntPtr ConvertEnhancedMetafileToWindowsMetafilePict(IntPtr hEmf, double docSizeX, double docSizeY)
+		{
+			byte[] buffer = ConvertEnhancedMetafileToWindowsMetafileBytes(hEmf);
+
 			// Get a handle to the converted metafile.
-			IntPtr hmf = Gdi32Func.SetMetaFileBitsEx(size, buffer);
+			IntPtr hmf = Gdi32Func.SetMetaFileBitsEx((uint)buffer.Length, buffer);
 
 			// Convert the Metafile to a METAFILEPICT.
 			IntPtr hMem = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, Marshal.SizeOf(typeof(METAFILEPICT)));
@@ -592,6 +647,12 @@ namespace Altaxo.Com
 				Marshal.Copy(byteData, 0, ipNew, byteData.Length);
 			}
 			return ipGlobal;
+		}
+
+		public static void SaveMetafileToDisk(IntPtr hEnhMetafile, string filename)
+		{
+			// Export metafile to an image file
+			Gdi32Func.CopyEnhMetaFile(hEnhMetafile, filename);
 		}
 
 		#endregion Dropfiles rendering

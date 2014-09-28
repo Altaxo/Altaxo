@@ -402,7 +402,9 @@ namespace Altaxo.Com
 			if ((dwDrawAspect & (int)DVASPECT.DVASPECT_CONTENT) == 0)
 				return ComReturnValue.E_FAIL;
 
-			var docSize_pt = _document.Size;
+			var renderingOptions = EmbeddedGraphDocumentRenderingHelper.GetRenderingOptions(_document);
+
+			var docSize_pt = _document.Size * renderingOptions.OutputScalingFactor;
 
 			pSizel = new tagSIZEL((int)(docSize_pt.X * PointsToHimetric), (int)(docSize_pt.Y * PointsToHimetric));
 

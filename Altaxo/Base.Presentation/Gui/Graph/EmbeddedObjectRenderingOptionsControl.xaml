@@ -40,20 +40,24 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Content="Resolution of embedded graph (DPI):" />
+		<Label Grid.Column="0" Grid.Row="0" Content="Resolution of graph image (DPI):" />
 		<ComboBox x:Name="_cbSourceResolution" Grid.Column="1" Grid.Row="0" IsEditable="True" ToolTip="Resolution of the embedded graph object in dots-per-inch." />
-		<Label Grid.Column="0" Grid.Row="2" Content="Background color for bitmaps and WMF:" />
-		<axogcd:ColorComboBox x:Name="_cbBackgroundColor" Grid.Column="1" Grid.Row="2" ToolTip="Base color for formats that don't support transparency. After applying the base color, the background brush is applied before the graph is drawn." />
-		<Label Grid.Column="0" Grid.Row="4" Content="Background brush:" ToolTip="Background brush that is applied before the graph is drawn on top of it." />
-		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="1" Grid.Row="4" />
-		<Label Grid.Column="0" Grid.Row="6" Content="Render enhanced metafile:" />
-		<CheckBox x:Name="_guiRenderEnhancedMetafile"  Grid.Column="1" Grid.Row="6" Content="               " ToolTip="If checked, the graph is rendered as enhanced metafile. A few programs (like e.g. OpenOffice) may have problems (wrong scale) when interpreting enhanced metafiles. In this case, uncheck this option and use windows metafiles instead." />
-		<Label Grid.Column="0" Grid.Row="8" Content="Render enhanced metafile as vector graphic:" />
-		<CheckBox x:Name="_guiRenderEnhancedMetafileAsVectorFormat"  Grid.Column="1" Grid.Row="8" Content="               " IsEnabled="{Binding ElementName=_guiRenderEnhancedMetafile, Path=IsChecked}" ToolTip="If checked, the enhanced metafile is created as vector format. If unchecked, the enhanced metafile will consist only of an included bitmap. Unchecking, i.e. the bitmap option, is more safe. The vector option may have problems with plots with more than 30000 data points and with special fonts." />
-		<Label Grid.Column="0" Grid.Row="10" Content="Render windows metafile:" />
-		<CheckBox x:Name="_guiRenderWindowsMetafile"  Grid.Column="1" Grid.Row="10" Content="               " ToolTip="If checked, the graph is rendered as windows metafile. Most programs should be able to understand this format. Unfortunately, it does not support transparency." />
-		<Label Grid.Column="0" Grid.Row="12" Content="Render bitmap:" />
-		<CheckBox x:Name="_guiRenderBitmap"  Grid.Column="1" Grid.Row="12" Content="               "  ToolTip="If checked, the graph is rendered as Gdi bitmap. This format does not support transparency." />
+		<Label Grid.Column="0" Grid.Row="2" Content="Output scaling:" />
+		<axogcd:ScaleComboBox Grid.Column="1" Grid.Row="2" x:Name="_guiOutputScale" ToolTip="Set this to values above 100% if you want the graph to appear larger than originally, or to values below 100% if you want the graph to appear smaller than originally." />
+		<Label Grid.Column="0" Grid.Row="4" Content="Background color for bitmaps and WMF:" />
+		<axogcd:ColorComboBox x:Name="_cbBackgroundColor" Grid.Column="1" Grid.Row="4" ToolTip="Base color for formats that don't support transparency. After applying the base color, the background brush is applied before the graph is drawn." />
+		<Label Grid.Column="0" Grid.Row="6" Content="Background brush:" ToolTip="Background brush that is applied before the graph is drawn on top of it." />
+		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="1" Grid.Row="6" />
+		<Label Grid.Column="0" Grid.Row="8" Content="Render enhanced metafile:" />
+		<CheckBox x:Name="_guiRenderEnhancedMetafile"  Grid.Column="1" Grid.Row="8" Content="               " ToolTip="If checked, the graph is rendered as enhanced metafile. A few programs (like e.g. OpenOffice) may have problems (wrong scale) when interpreting enhanced metafiles. In this case, uncheck this option and use windows metafiles instead." />
+		<Label Grid.Column="0" Grid.Row="10" Content="Render enhanced metafile as vector graphic:" />
+		<CheckBox x:Name="_guiRenderEnhancedMetafileAsVectorFormat"  Grid.Column="1" Grid.Row="10" Content="               " IsEnabled="{Binding ElementName=_guiRenderEnhancedMetafile, Path=IsChecked}" ToolTip="If checked, the enhanced metafile is created as vector format. If unchecked, the enhanced metafile will consist only of an included bitmap. Unchecking, i.e. the bitmap option, is more safe. The vector option may have problems with plots with more than 30000 data points and with special fonts." />
+		<Label Grid.Column="0" Grid.Row="12" Content="Render windows metafile:" />
+		<CheckBox x:Name="_guiRenderWindowsMetafile"  Grid.Column="1" Grid.Row="12" Content="               " ToolTip="If checked, the graph is rendered as windows metafile. Most programs should be able to understand this format. Unfortunately, it does not support transparency." />
+		<Label Grid.Column="0" Grid.Row="14" Content="Render bitmap:" />
+		<CheckBox x:Name="_guiRenderBitmap"  Grid.Column="1" Grid.Row="14" Content="               "  ToolTip="If checked, the graph is rendered as Gdi bitmap. This format does not support transparency." />
 	</Grid>
 </UserControl>

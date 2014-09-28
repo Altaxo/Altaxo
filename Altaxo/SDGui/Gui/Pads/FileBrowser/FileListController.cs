@@ -260,8 +260,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 					case ".txt":
 					case ".csv":
 						{
-							Altaxo.Data.FileCommands.ImportAsciiToMultipleWorksheets(
-								new string[] { item.FullName }, null);
+							Altaxo.Serialization.Ascii.AsciiImporter.ImportFilesIntoSeparateNewTables(Altaxo.Main.ProjectFolder.RootFolder, new string[] { item.FullName }, true, true);
 						}
 						break;
 

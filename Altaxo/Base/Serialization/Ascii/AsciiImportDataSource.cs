@@ -191,9 +191,9 @@ namespace Altaxo.Serialization.Ascii
 			else
 			{
 				if (_asciiImportOptions.ImportMultipleStreamsVertically)
-					FileCommands.ImportAsciiToSingleWorksheetVertically(destinationTable, validFileNames, _asciiImportOptions);
+					AsciiImporter.ImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, true, _asciiImportOptions);
 				else
-					FileCommands.ImportAsciiToSingleWorksheetHorizontally(destinationTable, validFileNames, _asciiImportOptions);
+					AsciiImporter.ImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, true, _asciiImportOptions);
 			}
 		}
 
