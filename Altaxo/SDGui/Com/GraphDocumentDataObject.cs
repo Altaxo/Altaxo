@@ -195,12 +195,12 @@ namespace Altaxo.Com
 			{
 				using (var rgbBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
 				{
-					var docSize = _graphDocumentSize * _graphExportOptions.OutputScalingFactor;
-					using (var enhancedMetafile = DataObjectHelper.RenderEnhancedMetafile(rgbBitmap, docSize.X, docSize.Y, UseMetafileDC.Printer))
+					var scaledDocSize = _graphDocumentSize * _graphExportOptions.OutputScalingFactor;
+					using (var enhancedMetafile = GraphDocumentExportActions.RenderAsEnhancedMetafileBitmapFormat(rgbBitmap, scaledDocSize))
 					{
 						var hEmf = enhancedMetafile.GetHenhmetafile();
 						var bytes = DataObjectHelper.ConvertEnhancedMetafileToWindowsMetafileBytes(hEmf);
-						var placeableHeaderBytes = DataObjectHelper.GetWmfPlaceableHeaderBytes(docSize);
+						var placeableHeaderBytes = DataObjectHelper.GetWmfPlaceableHeaderBytes(scaledDocSize);
 
 						using (var stream = new System.IO.FileStream(_graphDocumentDropdownFileName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read))
 						{
@@ -277,7 +277,8 @@ namespace Altaxo.Com
 			}
 			else if (null != _graphDocumentBitmapImage)
 			{
-				return DataObjectHelper.RenderEnhancedMetafile(_graphDocumentBitmapImage, _graphDocumentSize.X, _graphDocumentSize.Y, UseMetafileDC.Printer).GetHenhmetafile();
+				var scaledDocSize = _graphDocumentSize * _graphExportOptions.OutputScalingFactor;
+				return GraphDocumentExportActions.RenderAsEnhancedMetafileBitmapFormat(_graphDocumentBitmapImage, scaledDocSize).GetHenhmetafile();
 			}
 			else
 			{
@@ -295,7 +296,13 @@ namespace Altaxo.Com
 			{
 				using (var rgbBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
 				{
-					return DataObjectHelper.RenderWindowsMetafilePict(rgbBitmap, _graphDocumentSize.X * _graphExportOptions.OutputScalingFactor, _graphDocumentSize.Y * _graphExportOptions.OutputScalingFactor, UseMetafileDC.Printer);
+					var scaledDocSize = _graphDocumentSize * _graphExportOptions.OutputScalingFactor;
+
+					using (var enhancedMetafile = GraphDocumentExportActions.RenderAsEnhancedMetafileBitmapFormat(rgbBitmap, scaledDocSize))
+					{
+						var hEmf = enhancedMetafile.GetHenhmetafile();
+						return DataObjectHelper.ConvertEnhancedMetafileToWindowsMetafilePict(hEmf, scaledDocSize.X, scaledDocSize.Y);
+					}
 				}
 			}
 			else
@@ -312,7 +319,10 @@ namespace Altaxo.Com
 
 			if (null != _graphDocumentBitmapImage)
 			{
-				return DataObjectHelper.RenderHBitmap(tymed, _graphDocumentBitmapImage, _graphDocumentBitmapImage.Width, _graphDocumentBitmapImage.Height, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel);
+				using (var convertedBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+				{
+					return DataObjectHelper.RenderGdiBitmapToTYMED_GDI(convertedBitmap);
+				}
 			}
 			else
 			{
@@ -328,7 +338,10 @@ namespace Altaxo.Com
 
 			if (null != _graphDocumentBitmapImage)
 			{
-				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(_graphDocumentBitmapImage, _graphDocumentBitmapImage.Width, _graphDocumentBitmapImage.Height, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel);
+				using (var convertedBitmap = GraphDocumentExportActions.ConvertBitmapToPixelFormat(_graphDocumentBitmapImage, System.Drawing.Imaging.PixelFormat.Format24bppRgb, _graphExportOptions.BackgroundColorForFormatsWithoutAlphaChannel))
+				{
+					return DataObjectHelper.RenderDIBBitmapToHGLOBAL(convertedBitmap);
+				}
 			}
 			else
 			{

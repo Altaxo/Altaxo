@@ -77,8 +77,8 @@ namespace Altaxo.Com
 			{
 				using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
 				{
-					var docSize = document.Size * renderingOptions.OutputScalingFactor;
-					return DataObjectHelper.RenderEnhancedMetafile(bmp, docSize.X, docSize.Y, UseMetafileDC.Printer).GetHenhmetafile();
+					var scaledDocSize = document.Size * renderingOptions.OutputScalingFactor;
+					return GraphDocumentExportActions.RenderAsEnhancedMetafileBitmapFormat(bmp, scaledDocSize).GetHenhmetafile();
 				}
 			}
 		}
@@ -94,10 +94,15 @@ namespace Altaxo.Com
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
 
 			var renderingOptions = GetRenderingOptions(document);
-			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
+			using (var rgbBitmap = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
 			{
-				var docSize = document.Size * renderingOptions.OutputScalingFactor;
-				return DataObjectHelper.RenderWindowsMetafilePict(bmp, docSize.X, docSize.Y, UseMetafileDC.Printer);
+				var scaledDocSize = document.Size * renderingOptions.OutputScalingFactor;
+
+				using (var enhancedMetafile = GraphDocumentExportActions.RenderAsEnhancedMetafileBitmapFormat(rgbBitmap, scaledDocSize))
+				{
+					var hEmf = enhancedMetafile.GetHenhmetafile();
+					return DataObjectHelper.ConvertEnhancedMetafileToWindowsMetafilePict(hEmf, scaledDocSize.X, scaledDocSize.Y);
+				}
 			}
 		}
 
@@ -114,7 +119,7 @@ namespace Altaxo.Com
 			var renderingOptions = GetRenderingOptions(document);
 			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
 			{
-				return DataObjectHelper.RenderHBitmap(tymed, bmp, bmp.Width, bmp.Height, renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel);
+				return DataObjectHelper.RenderGdiBitmapToTYMED_GDI(bmp);
 			}
 		}
 
@@ -131,7 +136,7 @@ namespace Altaxo.Com
 			var renderingOptions = GetRenderingOptions(document);
 			using (var bmp = Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
 			{
-				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(bmp, bmp.Width, bmp.Height, renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel);
+				return DataObjectHelper.RenderDIBBitmapToHGLOBAL(bmp);
 			}
 		}
 	}
