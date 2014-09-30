@@ -349,8 +349,63 @@ namespace Altaxo.Com
 			return hdib;
 		}
 
-		// when considering creating a DIBV5 bitmap, read the following:
-		// https://groups.google.com/forum/#!msg/microsoft.public.dotnet.framework.drawing/0sSPCrzf8yE/WNEIU324YtwJ
+		/// <summary>
+		/// Renders a bitmap to a DIBV5 bitmap in HGLOBAL format. It is neccessary that the provided bitmap has a pixel format of PixelFormat.Format32bppRgb.
+		/// </summary>
+		/// <param name="bitmap">The provided bitmap. Must have PixelFormat.Format24bppRgb.</param>
+		/// <returns>HGLOBAL pointer to the DIB bitmap.</returns>
+		/// <remarks>
+		/// See <see href="https://groups.google.com/forum/#!msg/microsoft.public.dotnet.framework.drawing/0sSPCrzf8yE/WNEIU324YtwJ" for the original source code and the discussion./>
+		/// </remarks>
+		public static IntPtr RenderDIBV5BitmapToHGLOBAL(Bitmap bm)
+		{
+			BitmapData bmData = bm.LockBits(new Rectangle(0, 0, bm.Width, bm.Height), ImageLockMode.ReadOnly, bm.PixelFormat);
+			int bufferLen = (Marshal.SizeOf(typeof(BITMAPV5HEADER)) + bmData.Height * bmData.Stride);
+			IntPtr hMem = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, bufferLen);
+			IntPtr packedDIBV5 = Kernel32Func.GlobalLock(hMem);
+			BITMAPV5HEADER bmi = (BITMAPV5HEADER)Marshal.PtrToStructure(packedDIBV5, typeof(BITMAPV5HEADER));
+
+			bmi.bV5Size = (uint)Marshal.SizeOf(typeof(BITMAPV5HEADER));
+			bmi.bV5Width = bmData.Width;
+			bmi.bV5Height = -bmData.Height; // Top-down bitmap requires negative height
+			bmi.bV5BitCount = 32;
+			bmi.bV5Planes = 1;
+
+			bmi.bV5Compression = (uint)BiCompression.BI_RGB;
+
+			bmi.bV5XPelsPerMeter = (int)(bm.HorizontalResolution * (10000 / 254.0));
+			bmi.bV5YPelsPerMeter = (int)(bm.VerticalResolution * (10000 / 254.0));
+			bmi.bV5ClrUsed = 0;
+			bmi.bV5ClrImportant = 0;
+			bmi.bV5BlueMask = 0x000000FF;
+			bmi.bV5GreenMask = 0x0000FF00;
+			bmi.bV5RedMask = 0x00FF0000;
+			bmi.bV5AlphaMask = 0xFF000000;
+			bmi.bV5CSType = (uint)LcsCsType.LCS_WINDOWS_COLOR_SPACE;
+			bmi.bV5GammaBlue = 0;
+			bmi.bV5GammaGreen = 0;
+			bmi.bV5GammaRed = 0;
+			bmi.bV5ProfileData = 0;
+			bmi.bV5ProfileSize = 0;
+			bmi.bV5Reserved = 0;
+			bmi.bV5Intent = (uint)LcsIntent.LCS_GM_IMAGES;
+			bmi.bV5SizeImage = (uint)(bmData.Height * bmData.Stride);
+			bmi.bV5Endpoints.ciexyzBlue.ciexyzX = bmi.bV5Endpoints.ciexyzBlue.ciexyzY = bmi.bV5Endpoints.ciexyzBlue.ciexyzZ = 0;
+			bmi.bV5Endpoints.ciexyzGreen.ciexyzX = bmi.bV5Endpoints.ciexyzGreen.ciexyzY = bmi.bV5Endpoints.ciexyzGreen.ciexyzZ = 0;
+			bmi.bV5Endpoints.ciexyzRed.ciexyzX = bmi.bV5Endpoints.ciexyzRed.ciexyzY = bmi.bV5Endpoints.ciexyzRed.ciexyzZ = 0;
+			Marshal.StructureToPtr(bmi, packedDIBV5, false);
+
+			int offsetBits = (int)bmi.bV5Size;
+			IntPtr bits = IntPtr.Add(packedDIBV5, offsetBits);
+
+			Kernel32Func.CopyMemory(bits, bmData.Scan0, (uint)(bmData.Height * bmData.Stride));
+
+			bm.UnlockBits(bmData);
+
+			Kernel32Func.GlobalUnlock(hMem);
+
+			return hMem;
+		}
 
 		#endregion Bitmap rendering
 

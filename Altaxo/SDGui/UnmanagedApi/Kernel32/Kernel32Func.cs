@@ -43,5 +43,8 @@ namespace Altaxo.UnmanagedApi.Kernel32
 
 		[DllImport("kernel32.dll")]
 		public static extern IntPtr GlobalFree(IntPtr hMem);
+
+		[DllImport("kernel32.dll")]
+		public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 	}
 }

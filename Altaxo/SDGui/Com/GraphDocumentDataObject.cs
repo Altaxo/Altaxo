@@ -127,6 +127,7 @@ namespace Altaxo.Com
 				{
 					list.Add(new Rendering(CF.CF_BITMAP, TYMED.TYMED_GDI, RenderBitmap));
 					list.Add(new Rendering(CF.CF_DIB, TYMED.TYMED_HGLOBAL, RenderBitmapDIB));
+					list.Add(new Rendering(CF.CF_DIBV5, TYMED.TYMED_HGLOBAL, RenderBitmapDIBV5));
 				}
 
 				if (_graphExportOptions.RenderDropFile)
@@ -332,7 +333,7 @@ namespace Altaxo.Com
 
 		private IntPtr RenderBitmapDIB(TYMED tymed)
 		{
-			ComDebug.ReportInfo("GraphDocumentDataObject.RenderBitmap");
+			ComDebug.ReportInfo("GraphDocumentDataObject.RenderBitmapDIB");
 
 			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
 
@@ -342,6 +343,22 @@ namespace Altaxo.Com
 				{
 					return DataObjectHelper.RenderDIBBitmapToHGLOBAL(convertedBitmap);
 				}
+			}
+			else
+			{
+				throw new InvalidProgramException("Please report this exception to the author of the program and describe the steps to reproduce the exception");
+			}
+		}
+
+		private IntPtr RenderBitmapDIBV5(TYMED tymed)
+		{
+			ComDebug.ReportInfo("GraphDocumentDataObject.RenderBitmapDIBV5");
+
+			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+
+			if (null != _graphDocumentBitmapImage)
+			{
+				return DataObjectHelper.RenderDIBV5BitmapToHGLOBAL(_graphDocumentBitmapImage);
 			}
 			else
 			{

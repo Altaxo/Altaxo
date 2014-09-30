@@ -110,4 +110,32 @@ namespace Altaxo.UnmanagedApi.Gdi32
 		/// </summary>
 		CAPTUREBLT = 0x40000000
 	}
+
+	public enum LcsCsType : uint
+	{
+		LCS_CALIBRATED_RGB = 0,
+		LCS_SRGB = 0x42475272, // Ascii for 'sRGB'
+		LCS_WINDOWS_COLOR_SPACE = 0x206E6957, // Ascii for 'Win '
+		PROFILE_LINKED = 3,
+		PROFILE_EMBEDDED = 4
+	}
+
+	public enum BiCompression
+	{
+		BI_RGB = 0,
+		BI_RLE8 = 1,
+		BI_RLE4 = 2,
+		BI_BITFIELDS = 3,
+		BI_JPEG = 4,
+		BI_PNG = 5,
+	}
+
+	[Flags]
+	public enum LcsIntent
+	{
+		LCS_GM_BUSINESS = 1,
+		LCS_GM_GRAPHICS = 2,
+		LCS_GM_IMAGES = 4,
+		LCS_GM_ABS_COLORIMETRIC = 8
+	}
 }
