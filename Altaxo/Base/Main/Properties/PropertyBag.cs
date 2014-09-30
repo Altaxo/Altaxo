@@ -34,6 +34,9 @@ namespace Altaxo.Main.Properties
 	/// </summary>
 	public class PropertyBag : IPropertyBag
 	{
+		/// <summary>The parent of this bag.</summary>
+		protected object _parent;
+
 		/// <summary>
 		/// Dictionary that hold the properties. Key is the Guid of the property key (or any other string). Value is the property value.
 		/// </summary>
@@ -44,6 +47,9 @@ namespace Altaxo.Main.Properties
 		/// the propery is not serialized when storing the project.
 		/// </summary>
 		public const string TemporaryPropertyPrefixString = "tmp/";
+
+		[field: NonSerialized]
+		public event EventHandler Changed;
 
 		#region Serialization
 
@@ -144,6 +150,7 @@ namespace Altaxo.Main.Properties
 						this._properties.Add(entry.Key, entry.Value);
 					}
 				}
+				OnChanged();
 				return true;
 			}
 			return false;
@@ -161,6 +168,21 @@ namespace Altaxo.Main.Properties
 		public PropertyBag Clone()
 		{
 			return new PropertyBag(this);
+		}
+
+		/// <summary>
+		/// Gets or sets the parent object.
+		/// </summary>
+		/// <value>
+		/// The parent object.
+		/// </value>
+		public object ParentObject
+		{
+			get { return _parent; }
+			set
+			{
+				_parent = value;
+			}
 		}
 
 		/// <summary>
@@ -263,6 +285,7 @@ namespace Altaxo.Main.Properties
 			if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(typeof(T), p.PropertyType))
 			{
 				_properties[p.GuidString] = value;
+				OnChanged();
 			}
 			else
 			{
@@ -278,7 +301,12 @@ namespace Altaxo.Main.Properties
 		/// <returns><c>True</c> if the property has been successful removed, <c>false</c> if the property has not been found in this collection.</returns>
 		public bool RemoveValue<T>(PropertyKey<T> p)
 		{
-			return _properties.Remove(p.GuidString);
+			var removed = _properties.Remove(p.GuidString);
+
+			if (removed)
+				OnChanged();
+
+			return removed;
 		}
 
 		#endregion Document property accessors
@@ -332,7 +360,13 @@ namespace Altaxo.Main.Properties
 		/// <param name="value">The value of the property.</param>
 		public void SetValue<T>(string propName, T value)
 		{
+			if (string.IsNullOrEmpty(propName))
+				throw new ArgumentNullException("propName is null or empty");
+
 			_properties[propName] = value;
+
+			if (!(propName.StartsWith(TemporaryPropertyPrefixString)))
+				OnChanged();
 		}
 
 		/// <summary>
@@ -344,7 +378,12 @@ namespace Altaxo.Main.Properties
 		/// </returns>
 		public bool RemoveValue(string propName)
 		{
-			return _properties.Remove(propName);
+			bool removed = _properties.Remove(propName);
+
+			if (removed && !(propName.StartsWith(TemporaryPropertyPrefixString)))
+				OnChanged();
+
+			return removed;
 		}
 
 		#endregion string property name accessors
@@ -388,14 +427,35 @@ namespace Altaxo.Main.Properties
 			if (null == from)
 				return;
 
+			bool anythingChanged = false;
+
 			foreach (var entry in from)
 			{
 				if (overrideExistingProperties | !_properties.ContainsKey(entry.Key))
 				{
 					var newValue = (entry.Value is ICloneable) ? ((ICloneable)entry.Value).Clone() : entry.Value;
 					this._properties[entry.Key] = newValue;
+					anythingChanged = true;
 				}
 			}
+
+			if (anythingChanged)
+				OnChanged();
 		}
+
+		#region Change handling
+
+		protected virtual void OnChanged()
+		{
+			var p = _parent as Main.IChildChangedEventSink;
+			if (null != p)
+				p.EhChildChanged(this, EventArgs.Empty);
+
+			var ev = Changed;
+			if (null != ev)
+				ev(this, EventArgs.Empty);
+		}
+
+		#endregion Change handling
 	}
 }

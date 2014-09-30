@@ -65,8 +65,16 @@ namespace Altaxo.Main.Properties
 	/// Bag with properties. The recommended method is to access the properties by a property key (<see cref="PropertyKeyBase"/>). For compatibility, properties can also
 	/// be stored and retrieved with strings.
 	/// </summary>
-	public interface IPropertyBag : IEnumerable<KeyValuePair<string, object>>, IReadOnlyPropertyBag, IDisposable, Main.ICopyFrom
+	public interface IPropertyBag : IEnumerable<KeyValuePair<string, object>>, IReadOnlyPropertyBag, IDisposable, Main.ICopyFrom, Main.IChangedEventSource
 	{
+		/// <summary>
+		/// Gets or sets the parent object.
+		/// </summary>
+		/// <value>
+		/// The parent object.
+		/// </value>
+		object ParentObject { get; set; }
+
 		/// <summary>Removes all properties in this instance.</summary>
 		void Clear();
 

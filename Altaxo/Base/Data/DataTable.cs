@@ -433,7 +433,8 @@ namespace Altaxo.Data
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
 				s._propertyColumns.ParentObject = s;
 				s._tableScript = (TableScript)info.GetValue("TableScript", s);
-				s._tableProperties = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
+
 				s._notes.Text = info.GetString("Notes");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
@@ -1501,6 +1502,12 @@ namespace Altaxo.Data
 		public Main.Properties.PropertyBag PropertyBag
 		{
 			get { return _tableProperties; }
+			protected set
+			{
+				_tableProperties = value;
+				if (null != _tableProperties)
+					_tableProperties.ParentObject = this;
+			}
 		}
 
 		public Main.Properties.PropertyBag PropertyBagNotNull
@@ -1508,7 +1515,7 @@ namespace Altaxo.Data
 			get
 			{
 				if (null == _tableProperties)
-					_tableProperties = new Main.Properties.PropertyBag();
+					PropertyBag = new Main.Properties.PropertyBag();
 				return _tableProperties;
 			}
 		}

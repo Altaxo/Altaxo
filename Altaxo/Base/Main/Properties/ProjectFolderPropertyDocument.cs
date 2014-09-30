@@ -85,7 +85,7 @@ namespace Altaxo.Main.Properties
 				s._name = info.GetString("Name");
 				s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
 				s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
-				s._propertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -106,7 +106,7 @@ namespace Altaxo.Main.Properties
 		{
 			this.Name = folderName;
 			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
-			_propertyBag = new PropertyBag();
+			PropertyBag = new PropertyBag();
 		}
 
 		/// <summary>
@@ -231,6 +231,12 @@ namespace Altaxo.Main.Properties
 		public PropertyBag PropertyBag
 		{
 			get { return _propertyBag; }
+			protected set
+			{
+				_propertyBag = value;
+				if (null != _propertyBag)
+					_propertyBag.ParentObject = this;
+			}
 		}
 
 		/// <summary>
@@ -244,7 +250,7 @@ namespace Altaxo.Main.Properties
 			get
 			{
 				if (null == _propertyBag)
-					_propertyBag = new PropertyBag();
+					PropertyBag = new PropertyBag();
 				return _propertyBag;
 			}
 		}

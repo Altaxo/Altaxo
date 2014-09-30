@@ -337,7 +337,7 @@ namespace Altaxo.Graph.Gdi
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				s._notes.Text = info.GetString("Notes");
 				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
-				s._graphProperties = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -841,15 +841,17 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion Change event handling
 
-		#region IChangedEventSource Members
-
-		#endregion IChangedEventSource Members
-
 		#region IPropertyBagOwner
 
 		public Main.Properties.PropertyBag PropertyBag
 		{
 			get { return _graphProperties; }
+			protected set
+			{
+				_graphProperties = value;
+				if (null != _graphProperties)
+					_graphProperties.ParentObject = this;
+			}
 		}
 
 		public Main.Properties.PropertyBag PropertyBagNotNull
@@ -857,7 +859,7 @@ namespace Altaxo.Graph.Gdi
 			get
 			{
 				if (null == _graphProperties)
-					_graphProperties = new Main.Properties.PropertyBag();
+					PropertyBag = new Main.Properties.PropertyBag();
 				return _graphProperties;
 			}
 		}

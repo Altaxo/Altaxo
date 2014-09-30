@@ -45,6 +45,8 @@ namespace Altaxo.Main.Services
 			protected Dictionary<string, object> _properties;
 			protected Dictionary<string, string> _guidToName;
 
+			public event EventHandler Changed;
+
 			public PropertyBagWrapper(PropertyService s)
 			{
 				_parent = s;
@@ -182,6 +184,33 @@ namespace Altaxo.Main.Services
 			{
 				return this;
 			}
+
+			public object ParentObject
+			{
+				get
+				{
+					return _parent;
+				}
+				set
+				{
+					_parent = value as PropertyService;
+				}
+			}
+
+			#region Change handling
+
+			protected virtual void OnChanged()
+			{
+				var p = _parent as Main.IChildChangedEventSink;
+				if (null != p)
+					p.EhChildChanged(this, EventArgs.Empty);
+
+				var ev = Changed;
+				if (null != ev)
+					ev(this, EventArgs.Empty);
+			}
+
+			#endregion Change handling
 		}
 
 		#endregion Inner classes
