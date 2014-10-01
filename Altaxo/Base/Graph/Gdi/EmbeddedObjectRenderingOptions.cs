@@ -39,15 +39,15 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public class EmbeddedObjectRenderingOptions : ICloneable
 	{
-		private double _sourceDpiResolution;
-		private double _outputScalingFactor;
+		protected double _sourceDpiResolution;
+		protected double _outputScalingFactor;
 
-		private bool _renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
-		private bool _renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
-		private bool _renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
-		private bool _renderBitmap; // rendered as bitmap plus DIB bitmap
-		private NamedColor _backgroundColorForFormatsWithoutAlphaChannel;
-		private BrushX _backgroundBrush;
+		protected bool _renderEnhancedMetafile; // can be rendered as true metafile or as enhanced metafile with included bitmap
+		protected bool _renderEnhancedMetafileAsVectorFormat; // if true, use a true enhanced metafile
+		protected bool _renderWindowsMetafile; // has to be rendered as Metafile with included bitmap
+		protected bool _renderBitmap; // rendered as bitmap plus DIB bitmap
+		protected NamedColor _backgroundColorForFormatsWithoutAlphaChannel;
+		protected BrushX _backgroundBrush;
 
 		#region Serialization
 
@@ -286,7 +286,7 @@ namespace Altaxo.Graph.Gdi
 		/// <value>
 		/// <c>true</c> if a windows metafile should be rendered; otherwise, <c>false</c>.
 		/// </value>
-		public bool RenderWindowsMetafile
+		public virtual bool RenderWindowsMetafile
 		{
 			get { return _renderWindowsMetafile || (!_renderBitmap && !_renderEnhancedMetafile); }
 			set { _renderWindowsMetafile = value; }

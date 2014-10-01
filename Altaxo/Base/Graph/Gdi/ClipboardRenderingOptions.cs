@@ -226,6 +226,19 @@ namespace Altaxo.Graph.Gdi
 
 		#region Properies
 
+		/// <summary>
+		/// Gets or sets a value indicating whether to render an windows metafile to display the embedded object. Since windows metafile doesn't support
+		/// all operations neccessary for vector operations, it is always rendered as windows metafile with an embedded bitmap.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if a windows metafile should be rendered; otherwise, <c>false</c>.
+		/// </value>
+		public override bool RenderWindowsMetafile
+		{
+			get { return _renderWindowsMetafile || (!_renderBitmap && !_renderEnhancedMetafile && !_renderDropFile); }
+			set { _renderWindowsMetafile = value; }
+		}
+
 		public bool RenderDropFile
 		{
 			get { return _renderDropFile; }
