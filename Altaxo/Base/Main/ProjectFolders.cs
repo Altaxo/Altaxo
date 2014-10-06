@@ -540,7 +540,13 @@ namespace Altaxo.Main
 
 			foreach (object item in list)
 			{
-				if (item is Altaxo.Data.DataTable)
+				if (item is ProjectFolder)
+				{
+					var folder = (ProjectFolder)item;
+					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetFoldersLastFolderPart(folder.Name));
+					RenameFolder(folder.Name, moveToFolder);
+				}
+				else if (item is Altaxo.Data.DataTable)
 				{
 					var table = (Altaxo.Data.DataTable)item;
 					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
@@ -563,7 +569,7 @@ namespace Altaxo.Main
 					if (Current.Project.ProjectFolderProperties.Contains(newName))
 					{
 						// Project folders are unique for the specific folder, we can not simply rename it to another name
-						// Thus I decided here to mere the moved property bag with the already existing property bag
+						// Thus I decided here to merge the moved property bag with the already existing property bag
 						var existingDoc = Current.Project.ProjectFolderProperties[newName];
 						existingDoc.PropertyBagNotNull.MergePropertiesFrom(pdoc.PropertyBagNotNull, true);
 					}
@@ -571,12 +577,6 @@ namespace Altaxo.Main
 					{
 						pdoc.Name = newName;
 					}
-				}
-				else if (item is ProjectFolder)
-				{
-					var folder = (ProjectFolder)item;
-					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(folder.Name));
-					RenameFolder(folder.Name, moveToFolder);
 				}
 			}
 		}
@@ -614,7 +614,7 @@ namespace Altaxo.Main
 			if (item is ProjectFolder)
 			{
 				var orgName = (item as ProjectFolder).Name;
-				string destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+				string destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetFoldersLastFolderPart(orgName));
 				foreach (var subitem in this.GetItemsInFolderAndSubfolders(orgName))
 				{
 					var oldItemFolder = ProjectFolder.GetFolderPart(((INameOwner)subitem).Name);
