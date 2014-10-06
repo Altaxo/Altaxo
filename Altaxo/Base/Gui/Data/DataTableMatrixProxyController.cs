@@ -267,10 +267,11 @@ namespace Altaxo.Gui.Data
 					continue;
 
 				// before adding this node, check that it is not already present
-				if (_valueColumns.Any(n => object.ReferenceEquals(n.Tag, colToAdd)))
+				var proxyToAdd = new ReadableColumnProxy(colToAdd);
+				if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((ReadableColumnProxy)n.Tag).DocumentPath)))
 					continue;
 
-				_valueColumns.Add(new SelectableListNode(colToAdd.FullName, colToAdd, false));
+				_valueColumns.Add(new SelectableListNode(colToAdd.FullName, proxyToAdd, false));
 			}
 		}
 

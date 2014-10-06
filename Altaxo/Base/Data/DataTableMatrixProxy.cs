@@ -848,6 +848,15 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Should be called only if <see cref="_useAllAvailableColumnsOfGroup"/> is <c>true</c>. Removes all data columns that are unresolved.
+		/// </summary>
+		/// <param name="table">The table to search.</param>
+		protected virtual void InternalRemoveUnresolvedDataColumnsIfAllDataColumnsShouldBeIncluded(DataTable table)
+		{
+			_dataColumns.RemoveAll(proxy => proxy.Document == null);
+		}
+
+		/// <summary>
 		/// Should be called only if <see cref="_useAllAvailableColumnsOfGroup"/> is <c>true</c>. Adds all missing data columns that have a group number of <see cref="GroupNumber"/> and ColumnKind.V.
 		/// </summary>
 		/// <param name="table">The table to search.</param>
@@ -909,7 +918,10 @@ namespace Altaxo.Data
 			for (int i = 0; i < _dataColumns.Count; ++i)
 			{
 				var col = _dataColumns[i].Document as DataColumn;
-				_participatingDataColumns.Add(table.DataColumns.GetColumnNumber(col));
+				if (null != col)
+				{
+					_participatingDataColumns.Add(table.DataColumns.GetColumnNumber(col));
+				}
 			}
 		}
 
@@ -972,6 +984,7 @@ namespace Altaxo.Data
 
 			if (_useAllAvailableColumnsOfGroup)
 			{
+				InternalRemoveUnresolvedDataColumnsIfAllDataColumnsShouldBeIncluded(table);
 				InternalAddMissingDataColumnsIfAllDataColumnsShouldBeIncluded(table);
 			}
 
