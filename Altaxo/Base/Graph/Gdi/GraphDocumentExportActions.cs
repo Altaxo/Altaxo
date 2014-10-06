@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Gdi
 		public static void RenderToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions options)
 		{
 			if (options.ImageFormat == ImageFormat.Wmf || options.ImageFormat == ImageFormat.Emf)
-				RenderAsEnhancedMetafileVectorFormat(doc, options, stream);
+				RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, options);
 			else
 				doc.RenderAsBitmapToStream(stream, options);
 		}
@@ -506,84 +506,93 @@ namespace Altaxo.Graph.Gdi
 		#region Main work
 
 		/// <summary>
-		/// Creates a graphics context that can be used for metafile rendering. Primarily, the graphics context is created from the current print document.
-		/// If that fails, the graphics context is created from a bitmap.
-		/// </summary>
-		/// <param name="pixelFormat">The pixel format (this parameter is only used if the graphics context is constructed from a bitmap).</param>
-		/// <param name="resolution_dpi">The resolution in dpi (this parameter is only used if the graphics context is constructed from a bitmap).</param>
-		/// <returns>The created graphics context. The calling program is responsible for disposing the context.</returns>
-		public static Graphics CreateGraphicsContextForMetafileRendering(PixelFormat pixelFormat, double resolution_dpi)
-		{
-			Graphics grfx;
-
-			Main.IPrintingService printService = null;
-			System.Drawing.Printing.PrintDocument printDocument = null;
-			System.Drawing.Printing.PrinterSettings printerSettings = null;
-
-			// it is preferable to use a graphics context from a printer to create the metafile, in this case
-			// the metafile will become device independent (metaFile.GetMetaFileHeader().IsDisplay() will return false)
-			// Only when no printer is installed, we use a graphics context from a bitmap, but this will lead
-			// to wrong positioning / wrong boundaries depending on the current screen
-			if (null != (printService = Current.PrintingService) &&
-					null != (printDocument = printService.PrintDocument) &&
-					null != (printerSettings = printDocument.PrinterSettings)
-				)
-			{
-				grfx = printerSettings.CreateMeasurementGraphics();
-			}
-			else
-			{
-				// Create a bitmap just to get a graphics context from it
-				System.Drawing.Bitmap helperbitmap = new System.Drawing.Bitmap(4, 4, PixelFormat.Format32bppArgb);
-				helperbitmap.SetResolution((float)resolution_dpi, (float)resolution_dpi);
-				grfx = Graphics.FromImage(helperbitmap);
-				grfx.PageUnit = GraphicsUnit.Point;
-			}
-
-			return grfx;
-		}
-
-		/// <summary>
-		/// Renders a document as enhanced metafile.
+		/// Renders a document as enhanced metafile. The metafile is rendered into a stream. You can create a metafile object afterwards from that stream.
 		/// </summary>
 		/// <param name="renderingProc">Procedure for rendering the document.
 		/// The argument is a graphics context, which is set to GraphicsUnits equal to Points.
 		/// The drawing must be inside of the boundaries of docSize.X and docSize.Y.
 		/// </param>
+		/// <param name="stream">Destination stream. The metafile is rendered into this stream. The stream has to be writeable and seekable. At return, the position of the stream is set to 0, thus the stream is ready to be used to create a metafile object from it.</param>
 		/// <param name="docSize">Size of the document in points (1/72 inch)</param>
 		/// <param name="sourceDpiResolution">The resolution in dpi of the source. This parameter is used only if creating the reference graphics context from the current printer fails. In this case, a context from a bitmap with the provided resolution is created.</param>
 		/// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
 		/// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
-		/// <param name="stream">Optional: stream. If given, the metafile is rendered into the given stream.</param>
 		/// <returns>The rendered enhanced metafile (vector format).</returns>
-		public static Metafile RenderAsEnhancedMetafile(Action<Graphics> renderingProc, PointD2D docSize, double sourceDpiResolution, double outputScalingFactor, PixelFormat pixelFormat = PixelFormat.Format32bppArgb, System.IO.Stream stream = null)
+		/// <remarks>
+		/// <para>
+		/// I found no other way to realize different dpi resolutions, independently of screen or printer device contexts, as to patch the resulting metafile stream with
+		/// informations about an 'artifical' device, which has exactly the resolution that is neccessary. By careful choice of the size of this artifical device one can
+		/// avoid rounding errors concerning resolution and size.
+		/// It happens that some programs (for instance MS Word 2010 when saving as PDF document) mess up the size of the metafile graphics, if the graphics was created with a PageUnit
+		/// (of the graphics context) other than PIXELS.
+		/// Thus I now always use PIXEL as PageUnit and scale the graphics context accordingly.
+		/// </para>
+		/// <para>
+		/// Another problem, which is actually without solution, is that e.g. MS Office will not show polylines with more than 8125 points. These polylines are included in the metafile,
+		/// but MS Office seems to ignore them. On the other hand, CorelDraw X5 can show these polylines correctly.
+		/// This problem might be related to the EmfPlus format, because MS Office will show these polylines if the EmfOnly format is used. But EmfOnly can not handle transparencies, thus
+		/// it is not really a choice.
+		/// </para>
+		/// </remarks>
+		public static void RenderAsEnhancedMetafileToStream(Action<Graphics> renderingProc, System.IO.Stream stream, PointD2D docSize, double sourceDpiResolution, double outputScalingFactor, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
 		{
-			float fDocSizeX = (float)((docSize.X)); // calculates the dots (page unit) in x-direction
-			float fDocSizeY = (float)((docSize.Y)); // calculated the dots (page unit) in y-direction
-			var exportScaling = (float)(outputScalingFactor);
-			Metafile metafile;
+			if (stream == null)
+				throw new ArgumentNullException("stream");
+			if (!stream.CanWrite)
+				throw new ArgumentException("stream is not writeable");
+			if (!stream.CanSeek)
+				throw new ArgumentException("stream is not seekable");
+			stream.SetLength(0);
 
-			using (Graphics grfxReference = CreateGraphicsContextForMetafileRendering(pixelFormat, sourceDpiResolution))
+			var scaledDocSize = docSize * outputScalingFactor;
+
+			// our artifical device has a square size, and the size is an integer multiple of 5 inch (5 inch because this is the smallest size which converts to an integer number of millimeters: 127 mm)
+			int deviceSizeInch = (int)(5 * Math.Ceiling(Math.Max(scaledDocSize.X, scaledDocSize.Y) / (72 * 5)));
+
+			// we have to design our artifical device so that it has a resolution of sourceDpiResolution/outputScalingFactor
+			// this accounts for the fact, that if
+			double deviceResolution = sourceDpiResolution / outputScalingFactor;
+
+			// then the number of pixels of the device is simple the device size in inch times the device resolution
+			int devicePixelsX = (int)Math.Round(deviceSizeInch * deviceResolution);
+			int devicePixelsY = (int)Math.Round(deviceSizeInch * deviceResolution);
+
+			// device size in millimeter. Because of the choice of the device size (see above) there should be no rounding errors here
+			int deviceSizeXMillimeter = (deviceSizeInch * 254) / 10;
+			int deviceSizeYMillimeter = (deviceSizeInch * 254) / 10;
+
+			// device size in micrometer
+			int deviceSizeXMicrometer = deviceSizeInch * 25400;
+			int deviceSizeYMicrometer = deviceSizeInch * 25400;
+
+			// bounds of the graphic in pixels. Because it is in pixels, it is calculated with the unscaled size of the document and the sourceDpiResolution
+			int graphicBoundsLeft_Pixels = 0;
+			int graphicBoundsTop_Pixels = 0;
+			int graphicBoundsWidth_Pixels = (int)Math.Ceiling(sourceDpiResolution * docSize.X / 72);
+			int graphicBoundsHeight_Pixels = (int)Math.Ceiling(sourceDpiResolution * docSize.Y / 72);
+
+			// position and size of the bounding box. Please not that the bounds are scaled with the outputScalingFactor
+			int boundingBoxLeft_HIMETRIC = 0;
+			int boundingBoxTop_HIMETRIC = 0;
+			int boundingBoxWidth_HIMETRIC = (int)Math.Ceiling(scaledDocSize.X * 2540.0 / 72);
+			int boundingBoxHeight_HIMETRIC = (int)Math.Ceiling(scaledDocSize.Y * 2540.0 / 72);
+
+			Metafile metafile;
+			using (var helperbitmap = new System.Drawing.Bitmap(4, 4, PixelFormat.Format32bppArgb))
 			{
-				IntPtr deviceContextHandle = grfxReference.GetHdc();
-				if (null != stream)
+				using (Graphics grfxReference = Graphics.FromImage(helperbitmap))
 				{
+					IntPtr deviceContextHandle = grfxReference.GetHdc();
+
 					metafile = new Metafile(
 					stream,
 					deviceContextHandle,
-					new RectangleF(0, 0, (float)(docSize.X * exportScaling), (float)(docSize.Y * exportScaling)),
-					MetafileFrameUnit.Point,
-					EmfType.EmfPlusDual);
+					new RectangleF(boundingBoxLeft_HIMETRIC, boundingBoxTop_HIMETRIC, boundingBoxWidth_HIMETRIC, boundingBoxHeight_HIMETRIC),
+					MetafileFrameUnit.GdiCompatible,
+					EmfType.EmfPlusDual); // EmfOnly is working with PolyLines with more than 8125 Points, but can not handle transparencies  // EmfPlusDual and EmfPlusOnly: there is no display of polylines with more than 8125 points, although the polyline seems embedded in the EMF. // EmfPlusOnly can not be converted to WMF
+
+					grfxReference.ReleaseHdc();
 				}
-				else
-				{
-					metafile = new Metafile(
-					deviceContextHandle,
-					new RectangleF(0, 0, (float)(docSize.X * exportScaling), (float)(docSize.Y * exportScaling)),
-					MetafileFrameUnit.Point,
-					EmfType.EmfPlusDual);
-				}
-				grfxReference.ReleaseHdc();
 			}
 
 			using (Graphics grfxMetafile = Graphics.FromImage(metafile))
@@ -593,32 +602,94 @@ namespace Altaxo.Graph.Gdi
 				grfxMetafile.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 				grfxMetafile.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 				grfxMetafile.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+				grfxMetafile.PageUnit = GraphicsUnit.Pixel; // Attention: always use pixels here. Any other choice will cause problems in some programs (see remarks above).
+				grfxMetafile.PageScale = (float)(sourceDpiResolution / 72.0); // because our choice of GraphicsUnit is pixels, at the resolution of 72 dpi one point is one pixel. At a higher resolution, one point is more than one pixel.
 
-				MetafileHeader metafileHeader = metafile.GetMetafileHeader();
-				grfxMetafile.ScaleTransform(metafileHeader.DpiX / grfxMetafile.DpiX, metafileHeader.DpiY / grfxMetafile.DpiY); // Tweak, see http://nicholas.piasecki.name/blog/2009/06/drawing-o-an-in-memory-metafile-in-c-sharp/
-
-				grfxMetafile.PageUnit = GraphicsUnit.Point;
-
-				grfxMetafile.ScaleTransform((float)exportScaling, (float)exportScaling);
-
-				grfxMetafile.SetClip(new RectangleF(0, 0, fDocSizeX, fDocSizeY));
-
+				grfxMetafile.SetClip(new RectangleF(0, 0, (float)docSize.X, (float)docSize.Y));
 				renderingProc(grfxMetafile);
 			}
-			return metafile;
+			stream.Flush();
+
+			// we have to patch the resulting metafile stream with the parameters of the graphics and the device
+
+			stream.Position = 0x04;
+			var buf4 = new byte[4];
+			stream.Read(buf4, 0, 4);
+			int headerSize = BitConverter.ToInt32(buf4, 0); // Read the header size to make sure that Metafile header extension 2 is present
+
+			// At position 0x08 there are the bounds of the graphic (not the bounding box, but the box for all the graphical elements)
+			stream.Position = 0x08;
+			stream.Write(BitConverter.GetBytes(graphicBoundsLeft_Pixels), 0, 4);
+			stream.Write(BitConverter.GetBytes(graphicBoundsTop_Pixels), 0, 4);
+			stream.Write(BitConverter.GetBytes(graphicBoundsWidth_Pixels), 0, 4);
+			stream.Write(BitConverter.GetBytes(graphicBoundsHeight_Pixels), 0, 4);
+
+			// At position 0x48 the device parameters are located: here the number of pixels of the device
+			stream.Position = 0x48;
+			stream.Write(BitConverter.GetBytes(devicePixelsX), 0, 4); //  the number of pixels of the device X
+			stream.Write(BitConverter.GetBytes(devicePixelsY), 0, 4);  // the number of pixels of the device Y
+			stream.Write(BitConverter.GetBytes(deviceSizeXMillimeter), 0, 4); // size X of the device in millimeter
+			stream.Write(BitConverter.GetBytes(deviceSizeYMillimeter), 0, 4); // size Y of the device in millimeter
+
+			if (headerSize >= (0x64 + 0x08))
+			{
+				stream.Position = 0x64;
+				stream.Write(BitConverter.GetBytes(deviceSizeXMicrometer), 0, 4); // size X of the device in micrometer
+				stream.Write(BitConverter.GetBytes(deviceSizeYMicrometer), 0, 4); // size Y of the device in micrometer
+			}
+
+			stream.Flush();
+
+			stream.Position = 0;
+
+			metafile.Dispose(); // we can safely dispose this metafile, because stream and metafile are independent of each other, and only the stream is patched
+		}
+
+		/// <summary>
+		/// Renders a document as enhanced metafile. The metafile is rendered into a stream. You can create a metafile object afterwards from that stream.
+		/// </summary>
+		/// <param name="renderingProc">Procedure for rendering the document.
+		/// The argument is a graphics context, which is set to GraphicsUnits equal to Points.
+		/// The drawing must be inside of the boundaries of docSize.X and docSize.Y.
+		/// </param>
+		/// <param name="docSize">Size of the document in points (1/72 inch)</param>
+		/// <param name="sourceDpiResolution">The resolution in dpi of the source. This parameter is used only if creating the reference graphics context from the current printer fails. In this case, a context from a bitmap with the provided resolution is created.</param>
+		/// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
+		/// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
+		/// <returns>The rendered enhanced metafile (vector format).</returns>
+		/// <remarks>
+		/// I found no other way to realize different dpi resolutions, independently of screen or printer device contexts, as to patch the resulting metafile stream with
+		/// informations about an 'artifical' device, which has exactly the resolution that is neccessary. By careful choice of the size of this artifical device one can
+		/// avoid rounding errors concerning resolution and size.
+		/// It happens that some programs (for instance MS Word 2010 when saving as PDF document) mess up the size of the metafile graphics, if the graphics was created with a PageUnit
+		/// (of the graphics context) other than PIXELS.
+		/// Thus I now always use PIXEL as PageUnit and scale the graphics context accordingly.
+		/// </remarks>
+		public static Metafile RenderAsEnhancedMetafile(Action<Graphics> renderingProc, PointD2D docSize, double sourceDpiResolution, double outputScalingFactor, PixelFormat pixelFormat = PixelFormat.Format32bppArgb, System.IO.Stream stream = null)
+		{
+			var mystream = null != stream ? stream : new MemoryStream();
+			try
+			{
+				RenderAsEnhancedMetafileToStream(renderingProc, mystream, docSize, sourceDpiResolution, outputScalingFactor, pixelFormat);
+				return new Metafile(mystream);
+			}
+			finally
+			{
+				if (null == stream) // only if stream is null, i.e. we had created a new Memorystream
+					mystream.Dispose(); // we should dispose this MemoryStream
+			}
 		}
 
 		/// <summary>
 		/// Renders the graph document as enhanced metafile in vector format.
 		/// </summary>
 		/// <param name="doc">graph document.</param>
+		/// <param name="stream">The stream the metafile is rendered to.</param>
 		/// <param name="sourceDpiResolution">The resolution in dpi of the source.</param>
 		/// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
 		/// <param name="backgroundBrush">The background brush. This argument can be null, or the brush can be transparent.</param>
 		/// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
-		/// <param name="stream">Optional: stream. If given, the metafile is rendered into the given stream.</param>
-		/// <returns>The rendered enhanced metafile (vector format).</returns>
-		public static Metafile RenderAsEnhancedMetafileVectorFormat(GraphDocument doc, double sourceDpiResolution, double outputScalingFactor, BrushX backgroundBrush = null, PixelFormat pixelFormat = PixelFormat.Format32bppArgb, System.IO.Stream stream = null)
+		public static void RenderAsEnhancedMetafileVectorFormatToStream(GraphDocument doc, System.IO.Stream stream, double sourceDpiResolution, double outputScalingFactor, BrushX backgroundBrush = null, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
 		{
 			var renderingProc = new Action<Graphics>(
 					(grfxMetafile) =>
@@ -645,7 +716,32 @@ namespace Altaxo.Graph.Gdi
 						doc.DoPaint(grfxMetafile, true);
 					});
 
-			return RenderAsEnhancedMetafile(renderingProc, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat, stream);
+			RenderAsEnhancedMetafileToStream(renderingProc, stream, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat);
+		}
+
+		/// <summary>
+		/// Renders the graph document as enhanced metafile in vector format.
+		/// </summary>
+		/// <param name="doc">graph document.</param>
+		/// <param name="sourceDpiResolution">The resolution in dpi of the source.</param>
+		/// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
+		/// <param name="backgroundBrush">The background brush. This argument can be null, or the brush can be transparent.</param>
+		/// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
+		/// <param name="stream">Optional: stream. If given, the metafile is rendered into the given stream.</param>
+		/// <returns>The rendered enhanced metafile (vector format).</returns>
+		public static Metafile RenderAsEnhancedMetafileVectorFormat(GraphDocument doc, double sourceDpiResolution, double outputScalingFactor, BrushX backgroundBrush = null, PixelFormat pixelFormat = PixelFormat.Format32bppArgb, System.IO.Stream stream = null)
+		{
+			var mystream = null != stream ? stream : new MemoryStream();
+			try
+			{
+				RenderAsEnhancedMetafileVectorFormatToStream(doc, mystream, sourceDpiResolution, outputScalingFactor, backgroundBrush, pixelFormat);
+				return new Metafile(mystream);
+			}
+			finally
+			{
+				if (null == stream) // only if stream is null, i.e. we had created a new Memorystream
+					mystream.Dispose(); // we should dispose this MemoryStream
+			}
 		}
 
 		#endregion Main work
@@ -661,7 +757,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The rendered enhanced metafile.</returns>
 		public static Metafile RenderAsEnhancedMetafileVectorFormat(GraphDocument doc, EmbeddedObjectRenderingOptions exportOptions, System.IO.Stream stream = null)
 		{
-			return RenderAsEnhancedMetafileVectorFormat(doc, exportOptions.SourceDpiResolution, exportOptions.OutputScalingFactor, exportOptions.BackgroundBrush);
+			return RenderAsEnhancedMetafileVectorFormat(doc, exportOptions.SourceDpiResolution, exportOptions.OutputScalingFactor, exportOptions.BackgroundBrush, PixelFormat.Format32bppArgb, stream);
 		}
 
 		/// <summary>
@@ -674,6 +770,17 @@ namespace Altaxo.Graph.Gdi
 		public static Metafile RenderAsEnhancedMetafileVectorFormat(this GraphDocument doc, GraphExportOptions exportOptions, System.IO.Stream stream = null)
 		{
 			return RenderAsEnhancedMetafileVectorFormat(doc, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.DestinationDpiResolution, exportOptions.BackgroundBrush, exportOptions.PixelFormat, stream);
+		}
+
+		/// <summary>
+		/// Renders the graph document as enhanced metafile image in vector format with the options given in <paramref name="exportOptions"/>
+		/// </summary>
+		/// <param name="doc">The graph document used.</param>
+		/// <param name="stream">The stream to which to render the metafile.</param>
+		/// <param name="exportOptions">The clipboard export options.</param>
+		public static void RenderAsEnhancedMetafileVectorFormatToStream(this GraphDocument doc, System.IO.Stream stream, GraphExportOptions exportOptions)
+		{
+			RenderAsEnhancedMetafileVectorFormatToStream(doc, stream, exportOptions.SourceDpiResolution, exportOptions.SourceDpiResolution / exportOptions.DestinationDpiResolution, exportOptions.BackgroundBrush, exportOptions.PixelFormat);
 		}
 
 		#endregion Convenience functions with export or embedded rendering options
