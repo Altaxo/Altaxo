@@ -480,6 +480,9 @@ namespace Altaxo
 
 				case "FitFunctionScripts":
 					return this._fitFunctionScripts;
+
+				case "FolderProperties":
+					return this._projectFolderProperties;
 			}
 			return null;
 		}
@@ -492,8 +495,12 @@ namespace Altaxo
 				return "Tables";
 			else if (object.ReferenceEquals(o, this._graphs))
 				return "Graphs";
+			else if (object.ReferenceEquals(o, this._tableLayouts))
+				return "TableLayouts";
 			else if (object.ReferenceEquals(o, this._fitFunctionScripts))
 				return "FitFunctionScripts";
+			else if (object.ReferenceEquals(o, this._projectFolderProperties))
+				return "FolderProperties";
 			else
 				return null;
 		}

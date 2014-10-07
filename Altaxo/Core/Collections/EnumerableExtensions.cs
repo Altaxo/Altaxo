@@ -166,5 +166,33 @@ namespace Altaxo.Collections
 				return max;
 			}
 		}
+
+		/// <summary>
+		/// Evaluates the maximum of a enumeration of elements, or returns a default value if the series is empty.
+		/// </summary>
+		/// <typeparam name="T">Type of element</typeparam>
+		/// <typeparam name="M">Type of comparison value that results from the element.</typeparam>
+		/// <param name="seq">The enumeration of elements.</param>
+		/// <param name="defaultValue">The default value that is returned if the enumeration is empty.</param>
+		/// <returns>The maximum of of all comparison values of the elements, or the <paramref name="defaultValue"/> if the series is empty.</returns>
+		public static M MaxOrDefault<T, M>(this IEnumerable<T> seq, Func<T, M> conversion, M defaultValue) where M : IComparable<M>
+		{
+			using (var en = seq.GetEnumerator())
+			{
+				if (!en.MoveNext())
+					return defaultValue;
+
+				var max = conversion(en.Current);
+				while (en.MoveNext())
+				{
+					var curVal = conversion(en.Current);
+					if (max.CompareTo(curVal) < 0)
+					{
+						max = curVal;
+					}
+				}
+				return max;
+			}
+		}
 	}
 }

@@ -627,7 +627,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			// Announce the local plot group styles, that we start preparing
 			_plotGroupStyles.BeginPrepare();
 
-			string thisname = Main.DocumentPath.GetPathString(this, int.MaxValue);
+			//string thisname = Main.DocumentPath.GetPathString(this, int.MaxValue);
 			//System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO", thisname));
 
 			// if TransferFromParentStyles was choosen, transfer some of the plot group settings of the parental plot group styles to the local styles

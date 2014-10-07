@@ -83,8 +83,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s.WirePlotItemProxyEvents();
 				bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
 				bool isScaleReversed = info.GetBoolean("IsScaleReversed");
-				var cachedScale = (NumericalScale)info.GetValue("Scale", parent);
+
+				var cachedScale = (NumericalScale)info.GetValue("Scale", parent); // TODO replace next 3 lines with serialization / deserialization of ScaleWithTicks
 				var scaleTickSpacing = (TickSpacing)info.GetValue("TickSpacing", parent);
+				scaleTickSpacing.FinalProcessScaleBoundaries(cachedScale.OrgAsVariant, cachedScale.EndAsVariant, cachedScale);
+
 				s._axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", parent);
 				s._axisStyles.ParentObject = s;
 				s._cachedArea = new DensityLegendArea(s.Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing);
@@ -322,6 +325,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
+		public override void PaintPreprocessing(object parentObject)
+		{
+			base.PaintPreprocessing(parentObject);
+
+			_cachedArea.Size = Size; // Update the coordinate system size to meet the size of the graph item
+
+			// after deserialisation the data bounds object of the scale is empty:
+			// then we have to rescale the axis
+			if (_cachedArea.Scales[0].Scale.DataBoundsObject.IsEmpty)
+				_cachedArea.Scales[0].Scale.Rescale();
+
+			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
+		}
+
 		public override void Paint(System.Drawing.Graphics g, object obj)
 		{
 			bool orientationIsVertical = IsOrientationVertical;
@@ -337,10 +354,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_bitmap = new Bitmap(pixelH, pixelV, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			}
-
-			// Update the coordinate system size to meet the size of the graph item
-			_cachedArea.Size = Size;
-			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 
 			Data.AltaxoVariant porg;
 			Data.AltaxoVariant pend;

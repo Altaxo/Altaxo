@@ -314,6 +314,7 @@ namespace Altaxo.Main
 			DocumentPath path = new DocumentPath();
 
 			int depth = 0;
+			object prev_root = node;
 			object root = node;
 			while (root != null && root is IDocumentNode)
 			{
@@ -322,8 +323,15 @@ namespace Altaxo.Main
 
 				string name = ((IDocumentNode)root).Name;
 				path.Insert(0, name);
+				prev_root = root;
 				root = ((IDocumentNode)root).ParentObject;
 				++depth;
+			}
+
+			if (maxDepth == int.MaxValue && node != null && !(root is AltaxoDocument))
+			{
+				string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, path);
+				throw new InvalidOperationException(msg);
 			}
 
 			return path;

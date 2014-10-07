@@ -931,7 +931,7 @@ namespace Altaxo.Data
 		/// <returns></returns>
 		private int GetMaximumRowCountNow()
 		{
-			return _dataColumns.Where(p => p.Document != null).Max(p => p.Document is IDefinedCount ? ((IDefinedCount)p.Document).Count : 0);
+			return _dataColumns.Where(p => p.Document != null).MaxOrDefault(p => p.Document is IDefinedCount ? ((IDefinedCount)p.Document).Count : 0, 0);
 		}
 
 		/// <summary>
@@ -977,7 +977,7 @@ namespace Altaxo.Data
 				TryGetDataTableProxyFromColumns(); // legacy, for instance from old XYZMeshedColumnPlotData, we have not stored the table reference
 
 			DataTable table = _dataTable.Document;
-			if (_dataTable.IsEmpty)
+			if (null == table)
 				return;
 
 			InternalRemoveDataColumnsWithDeviatingParentOrKindOrGroupNumber(table);
@@ -1085,6 +1085,14 @@ namespace Altaxo.Data
 			}
 
 			var table = _dataTable.Document;
+
+			if (null == table)
+			{
+				resultantMatrix = new Matrix(0, 0);
+				resultantTransformedColumnHeaderValues = new DoubleVector();
+				resultantTransformedRowHeaderValues = new DoubleVector();
+				return;
+			}
 
 			var transformedAndSelectedRowHeaderValues = new List<double>();
 			var participatingDataRowsSelectedNow = new AscendingIntegerCollection();

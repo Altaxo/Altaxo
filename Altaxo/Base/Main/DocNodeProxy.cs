@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -119,6 +119,7 @@ namespace Altaxo.Main
 		private DocNodeProxy(Main.DocumentPath docNodePath)
 		{
 			_docNodePath = docNodePath;
+			InternalCheckAbsolutePath();
 		}
 
 		/// <summary>
@@ -135,13 +136,22 @@ namespace Altaxo.Main
 		public DocNodeProxy(DocNodeProxy from)
 		{
 			if (from._docNode is Main.IDocumentNode)
+			{
 				this.SetDocNode(from._docNode); // than the new Proxy refers to the same document node
+			}
 			else if (from._docNode is ICloneable)
+			{
 				this.SetDocNode(((System.ICloneable)from._docNode).Clone()); // clone the underlying object
+			}
 			else if (from._docNode != null)
+			{
 				this.SetDocNode(from._docNode); // the underlying object is not cloneable, so refer directly to it
+			}
 			else if (from._docNodePath != null)
+			{
 				this._docNodePath = from._docNodePath.Clone(); // if no current document available, clone only the path
+				InternalCheckAbsolutePath();
+			}
 		}
 
 		/// <summary>
@@ -182,6 +192,22 @@ namespace Altaxo.Main
 		{
 		}
 
+		[System.Diagnostics.Conditional("Debug_CheckDocNodePath")]
+		private void InternalCheckAbsolutePath()
+		{
+			var path = _docNodePath;
+			if (!path.IsAbsolutePath)
+				throw new InvalidProgramException(string.Format("Path is expected to be an absolute path. Path = {0}", path));
+
+			if (path.Count == 0)
+				throw new InvalidProgramException(string.Format("Path is expected to be non-empty. Path = {0}", path));
+
+			var path0 = path[0];
+
+			if (path0 != "Tables" && path0 != "Graphs" && path0 != "TableLayouts" && path0 != "FitFunctionScripts" && path0 != "FolderProperties")
+				throw new InvalidProgramException(string.Format("Path is expected to start with Tables or Graphs. Path = {0}", path));
+		}
+
 		/// <summary>
 		/// Sets the document node that is held by this proxy.
 		/// </summary>
@@ -201,9 +227,14 @@ namespace Altaxo.Main
 			_docNode = docNode;
 
 			if (_docNode is Main.IDocumentNode)
+			{
 				_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
+				InternalCheckAbsolutePath();
+			}
 			else
+			{
 				_docNodePath = null;
+			}
 
 			if (_docNode is Main.IEventIndicatedDisposable)
 				((Main.IEventIndicatedDisposable)_docNode).TunneledEvent += EhDocNode_TunneledEvent;
@@ -287,9 +318,14 @@ namespace Altaxo.Main
 			else if (e is DocumentPathChangedEventArgs)
 			{
 				if (_docNode is Main.IDocumentNode)
+				{
 					_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
+					InternalCheckAbsolutePath();
+				}
 				else
+				{
 					_docNodePath = null;
+				}
 
 				shouldFireChangedEvent = true;
 			}
@@ -307,9 +343,14 @@ namespace Altaxo.Main
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
 			if (_docNode is Main.IDocumentNode)
+			{
 				_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode);
+				InternalCheckAbsolutePath();
+			}
 			else
+			{
 				_docNodePath = null;
+			}
 
 			OnChanged();
 		}
