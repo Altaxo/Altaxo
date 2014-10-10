@@ -425,10 +425,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var graphicsState = g.Save();
 			TransformGraphics(g);
 
-			g.DrawImage(_bitmap,
-				new RectangleF(0, 0, (float)Size.X, (float)Size.Y),
-				new RectangleF(0, 0, pixelH - 1, pixelV - 1), GraphicsUnit.Pixel);
+			{
+				// Three tricks are neccessary to get the color legend (which is the bitmap) drawn smooth and uniformly:
+				// Everything other than this will result in distorted image, or soft (unsharp) edges
+				var graphicsState2 = g.Save(); // Of course, save the graphics state so we can make our tricks undone afterwards
+				g.InterpolationMode = InterpolationMode.Default; // Trick1: Set the interpolation mode, whatever it was before, back to default
+				g.PixelOffsetMode = PixelOffsetMode.Default;  // Trick2: Set the PixelOffsetMode, whatever it was before, back to default
 
+				g.DrawImage(_bitmap,
+					new RectangleF(0, 0, (float)Size.X, (float)Size.Y),
+					new Rectangle(0, 0, pixelH - 1, pixelV - 1), GraphicsUnit.Pixel); // Trick3: Paint both in X and Y direction one pixel less than the source bitmap acually has, this prevents soft edges
+
+				g.Restore(graphicsState2); // make our tricks undone here
+			}
 			_axisStyles.Paint(g, _cachedArea);
 
 			g.Restore(graphicsState);

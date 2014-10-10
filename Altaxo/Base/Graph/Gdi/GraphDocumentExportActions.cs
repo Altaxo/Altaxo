@@ -271,9 +271,14 @@ namespace Altaxo.Graph.Gdi
 			{
 				// Set everything to high quality
 				grfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-				grfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-				grfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 				grfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+				// 2014-10-10 Setting InterpolationMode to HighQualityBicubic and PixelOffsetMode to HighQuality
+				// causes problems when rendering small bitmaps (at a large magnification, for instance the density image legend):
+				// the resulting image seems a litte soft, the colors somehow distorted, so I decided not to use them here any more
+
+				//		grfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+				//		grfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
 				grfx.PageUnit = GraphicsUnit.Point;
 				grfx.ScaleTransform((float)outputScaling, (float)outputScaling);
@@ -599,9 +604,15 @@ namespace Altaxo.Graph.Gdi
 			{
 				// Set everything to high quality
 				grfxMetafile.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-				grfxMetafile.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-				grfxMetafile.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 				grfxMetafile.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+				// 2014-10-10 Setting InterpolationMode to HighQualityBicubic and PixelOffsetMode to HighQuality
+				// causes problems when rendering small bitmaps (at a large magnification, for instance the density image legend):
+				// the resulting image seems a litte soft, the colors somehow distorted, so I decided not to use them here any more
+
+				//grfxMetafile.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+				//grfxMetafile.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
 				grfxMetafile.PageUnit = GraphicsUnit.Pixel; // Attention: always use pixels here. Any other choice will cause problems in some programs (see remarks above).
 				grfxMetafile.PageScale = (float)(sourceDpiResolution / 72.0); // because our choice of GraphicsUnit is pixels, at the resolution of 72 dpi one point is one pixel. At a higher resolution, one point is more than one pixel.
 

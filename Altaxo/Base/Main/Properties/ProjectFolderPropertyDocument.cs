@@ -174,7 +174,7 @@ namespace Altaxo.Main.Properties
 			}
 			set
 			{
-				Main.ProjectFolder.ThrowExceptionOnInvalidSingleFolderName(value);
+				Main.ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(value);
 
 				var oldName = _name;
 				if (oldName == value)

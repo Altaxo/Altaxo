@@ -448,38 +448,50 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 			}
 
+
+
 			// and now draw the image
-			switch (_imageType)
 			{
-				case CachedImageType.LinearEquidistant:
-					{
-						double xOrgRel = logicalRowHeaderValues[0];
-						double xEndRel = logicalRowHeaderValues[rows - 1];
-						double yOrgRel = logicalColumnHeaderValues[0];
-						double yEndRel = logicalColumnHeaderValues[cols - 1];
+				// Three tricks are neccessary to get the bitmap drawn smooth and uniformly:
+				// Everything other than this will result in distorted image, or soft (unsharp) edges
+				var graphicsState = gfrx.Save(); // Of course, save the graphics state so we can make our tricks undone afterwards
+				gfrx.InterpolationMode = InterpolationMode.Default; // Trick1: Set the interpolation mode, whatever it was before, back to default
+				gfrx.PixelOffsetMode = PixelOffsetMode.Default;  // Trick2: Set the PixelOffsetMode, whatever it was before, back to default
 
-						double x0, y0, x1, y1, x2, y2;
-						bool isConvertible = true;
-						isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yEndRel), out x0, out y0);
-						isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yOrgRel), out x1, out y1);
-						isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xEndRel, yEndRel), out x2, out y2);
-
-						if (isConvertible)
+				switch (_imageType)
+				{
+					case CachedImageType.LinearEquidistant:
 						{
-							if (this._clipToLayer)
-								gfrx.Clip = gl.CoordinateSystem.GetRegion();
+							double xOrgRel = logicalRowHeaderValues[0];
+							double xEndRel = logicalRowHeaderValues[rows - 1];
+							double yOrgRel = logicalColumnHeaderValues[0];
+							double yEndRel = logicalColumnHeaderValues[cols - 1];
 
-							var pts = new PointF[] { new PointF((float)x0, (float)y0), new PointF((float)x2, (float)y2), new PointF((float)x1, (float)y1) };
-							gfrx.DrawImage(_cachedImage, pts, new RectangleF(0, 0, _cachedImage.Width - 1, _cachedImage.Height - 1), GraphicsUnit.Pixel);
+							double x0, y0, x1, y1, x2, y2;
+							bool isConvertible = true;
+							isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yEndRel), out x0, out y0);
+							isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xOrgRel, yOrgRel), out x1, out y1);
+							isConvertible &= gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xEndRel, yEndRel), out x2, out y2);
+
+							if (isConvertible)
+							{
+								if (this._clipToLayer)
+									gfrx.Clip = gl.CoordinateSystem.GetRegion();
+
+								var pts = new PointF[] { new PointF((float)x0, (float)y0), new PointF((float)x2, (float)y2), new PointF((float)x1, (float)y1) };
+								gfrx.DrawImage(_cachedImage, pts, new RectangleF(0, 0, _cachedImage.Width - 1, _cachedImage.Height - 1), GraphicsUnit.Pixel); // Trick3: Paint both in X and Y direction one pixel less than the source bitmap acually has, this prevents soft edges
+							}
 						}
-					}
-					break;
+						break;
 
-				case CachedImageType.Other:
-					{
-						gfrx.DrawImage(_cachedImage, 0, 0, (float)gl.Size.X, (float)gl.Size.Y);
-					}
-					break;
+					case CachedImageType.Other:
+						{
+							gfrx.DrawImage(_cachedImage, 0, 0, (float)gl.Size.X, (float)gl.Size.Y);
+						}
+						break;
+				}
+
+				gfrx.Restore(graphicsState);
 			}
 		}
 
