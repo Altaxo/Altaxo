@@ -1098,7 +1098,7 @@ namespace Altaxo.Data
 			var participatingDataRowsSelectedNow = new AscendingIntegerCollection();
 
 			var numRows = _participatingDataRows.Count;
-			var rowHeaderWrapper = (IReadableColumn)GetRowHeaderWrapper();
+			var rowHeaderWrapper = GetRowHeaderWrapper();
 			for (int i = 0; i < numRows; ++i)
 			{
 				var transformed = TransformRowHeaderValues(rowHeaderWrapper[i]);
@@ -1114,7 +1114,7 @@ namespace Altaxo.Data
 			var participatingDataColumnsSelectedNow = new AscendingIntegerCollection();
 
 			int numColumns = _participatingDataColumns.Count;
-			var colHeaderWrapper = (IReadableColumn)GetColumnHeaderWrapper();
+			var colHeaderWrapper = GetColumnHeaderWrapper();
 			for (int i = 0; i < numColumns; ++i)
 			{
 				var transformed = TransformColumnHeaderValues(colHeaderWrapper[i]);
