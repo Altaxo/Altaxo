@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Scripting
 			if (!char.IsLetter(name[0]))
 				return false;
 			for (int i = 1; i < name.Length; i++)
-				if (!char.IsLetterOrDigit(name[i]))
+				if (!char.IsLetterOrDigit(name[i]) && !('_' == name[i]))
 					return false;
 
 			return true;
@@ -391,15 +391,15 @@ namespace Altaxo.Gui.Scripting
 
 		public void EhView_CommitChanges()
 		{
-			bool success = true;
+			bool successI = true, successD = true, successP = true;
 
 			string[] independentNames, dependentNames, parameterNames = null;
-			success &= ParseIndependentVariables(this._tempIndependentVariables, out independentNames);
-			success &= ParseDependentVariables(_tempDependentVariables, out dependentNames);
+			successI = ParseIndependentVariables(this._tempIndependentVariables, out independentNames);
+			successD = ParseDependentVariables(_tempDependentVariables, out dependentNames);
 			if (_tempIsUsingUserDefinedParameters)
-				success &= ParseUserDefinedParameters(_tempUserDefinedParameters, out parameterNames);
+				successP = ParseUserDefinedParameters(_tempUserDefinedParameters, out parameterNames);
 
-			if (success)
+			if (successI && successD && successP)
 			{
 				m_TempScript.IndependentVariablesNames = independentNames;
 				m_TempScript.DependentVariablesNames = dependentNames;
@@ -414,6 +414,15 @@ namespace Altaxo.Gui.Scripting
 
 				SetElements(false);
 				View.EnableScriptView(_scriptController.ViewObject, true);
+			}
+			else // something has gone wrong
+			{
+				if (!successI)
+					Current.Gui.ErrorMessageBox("Invalid independent variable name(s). Check that each independent variable has a valid name (letter followed by letters, digits or underscores).");
+				if (!successD)
+					Current.Gui.ErrorMessageBox("Invalid dependent variable name(s). Check that each dependent variable has a valid name (letter followed by letters, digits or underscores).");
+				if (!successP)
+					Current.Gui.ErrorMessageBox("Invalid parameter name(s). Check that each parameter has a valid name (letter followed by letters, digits or underscores).");
 			}
 		}
 
