@@ -73,8 +73,8 @@ namespace Altaxo.Collections
 
 		public ListNode(string text, object tag)
 		{
-			Text = text;
-			Tag = tag;
+			_text = text;
+			_tag = tag;
 		}
 
 		public virtual string Text1 { get { return SubItemText(1); } }

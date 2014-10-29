@@ -34,7 +34,7 @@ namespace Altaxo.Main
 	/// that all other folders have to end with an <see cref="DirectorySeparatorChar"/>. This rule also holds when splitting a full folder name into
 	/// parts: the parts also have to end with a <see cref="DirectorySeparatorChar"/> or have to be the empty string.
 	/// </summary>
-	public class ProjectFolder
+	public class ProjectFolder : INamedObject
 	{
 		/// <summary>
 		/// Creates a project folder with the given name.
@@ -405,5 +405,9 @@ namespace Altaxo.Main
 		#endregion Gui Helpers
 
 		#endregion Static Name functions
+
+		public event Action<INameOwner, string> NameChanged;
+
+		public event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 	}
 }

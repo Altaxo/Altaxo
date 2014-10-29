@@ -890,6 +890,7 @@
     <Compile Include="Gui\Common\ConditionalDocumentControl.xaml.cs">
       <DependentUpon>ConditionalDocumentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\Converters\ConverterStringFunctionToValidationRule.cs" />
     <Compile Include="Gui\Common\Drawing\FontXControl.xaml.cs">
       <DependentUpon>FontXControl.xaml</DependentUpon>
     </Compile>
@@ -1064,6 +1065,8 @@
     <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\TextBlockAdornerForEditing.cs" />
+    <Compile Include="Gui\Common\TextBlockForEditing.cs" />
     <Compile Include="Gui\Common\TextBlockUtilities.cs" />
     <Compile Include="Gui\Common\Tools\TestAllProjectsInFolderControl.xaml.cs">
       <DependentUpon>TestAllProjectsInFolderControl.xaml</DependentUpon>

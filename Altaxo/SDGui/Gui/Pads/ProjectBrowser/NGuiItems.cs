@@ -65,13 +65,18 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 	public class BrowserListItem : SelectableListNode
 	{
-		public BrowserListItem(string name, object item, bool sel)
-			: base(name, item, sel)
-		{
-		}
-
 		public new ProjectBrowseItemImage Image;
 		private DateTime _creationDate;
+
+		/// <summary>True when the text in the 'Text' property is the full name of the item. False if this text is only the short name (without the folder part).
+		/// </summary>
+		private bool _nameIsFullName;
+
+		public BrowserListItem(string name, bool nameIsFullName, object item, bool sel)
+			: base(name, item, sel)
+		{
+			_nameIsFullName = nameIsFullName;
+		}
 
 		public override int ImageIndex
 		{
@@ -95,6 +100,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					OnPropertyChanged("CreationDate");
 					OnPropertyChanged("Text1");
 				}
+			}
+		}
+
+		public override string Text
+		{
+			get
+			{
+				return base.Text;
+			}
+			set
+			{
+				if (TryRenaming(value))
+					base.Text = value;
 			}
 		}
 
@@ -175,6 +193,116 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			foreach (var item in sset)
 				list.Add(item);
 		}
+
+		#region Renaming
+
+		/// <summary>
+		/// Bind the validation to this property and use a <see cref="Altaxo.Gui.Common.ConverterStringFuncToValidationRule"/> converter to convert it into a validation rule.
+		/// </summary>
+		/// <value>
+		/// The renaming validation function.
+		/// </value>
+		public Func<object, System.Globalization.CultureInfo, string> RenamingValidationFunction
+		{
+			get
+			{
+				return ValidateRenaming;
+			}
+		}
+
+		private string ValidateRenaming(object obj, System.Globalization.CultureInfo info)
+		{
+			string name = (string)obj;
+
+			var item = Tag as Altaxo.Main.INamedObject;
+			if (null == item)
+				return "Item renaming not supported!";
+
+			string fullName = GetResultingName(name, _nameIsFullName, item);
+
+			if (fullName == item.Name)
+				return null;
+
+			if (item is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				if (Current.Project.GraphDocumentCollection.Contains(name))
+					return "A graph with the same name is already present in the project";
+			}
+			else if (item is Altaxo.Data.DataTable)
+			{
+				if (Current.Project.DataTableCollection.Contains(name))
+					return "A table with the same name is already present in the project";
+			}
+			else if (item is Altaxo.Main.ProjectFolder)
+			{
+				// nothing to do, any name is possible here
+			}
+			else
+			{
+				return "Item renaming not supported!";
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Try renaming the item. Returns <c>true</c> if the renaming was successful.
+		/// </summary>
+		/// <param name="name">The new name.</param>
+		/// <returns></returns>
+		private bool TryRenaming(string name)
+		{
+			// if the text has changed, test if this is because the item was renamed or has to be renamed
+			var item = Tag as Altaxo.Main.INamedObject;
+			if (null != item)
+			{
+				string fullName = GetResultingName(name, _nameIsFullName, item);
+				if (fullName == item.Name)
+					return true; // nothing to do
+
+				if (item is Altaxo.Graph.Gdi.GraphDocument)
+				{
+					if (!Current.Project.GraphDocumentCollection.Contains(name))
+					{
+						((Altaxo.Graph.Gdi.GraphDocument)item).Name = fullName;
+						return true;
+					}
+				}
+				else if (item is Altaxo.Data.DataTable)
+				{
+					if (!Current.Project.DataTableCollection.Contains(name))
+					{
+						((Altaxo.Data.DataTable)item).Name = fullName;
+						return true;
+					}
+				}
+				else if (item is Altaxo.Main.ProjectFolder)
+				{
+					Current.Project.Folders.RenameFolder(item.Name, fullName);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private static string GetResultingName(string value, bool nameIsFullName, Altaxo.Main.INamedObject item)
+		{
+			if (nameIsFullName)
+				return value;
+
+			if (item is Altaxo.Main.ProjectFolder)
+			{
+				var folder = Altaxo.Main.ProjectFolder.GetFoldersParentFolder(item.Name);
+				return folder + value + Altaxo.Main.ProjectFolder.DirectorySeparatorChar;
+			}
+			else // any other item
+			{
+				var folder = Altaxo.Main.ProjectFolder.GetFolderPart(item.Name);
+				return folder + value;
+			}
+		}
+
+		#endregion Renaming
 	}
 
 	public enum ProjectBrowseItemImage
