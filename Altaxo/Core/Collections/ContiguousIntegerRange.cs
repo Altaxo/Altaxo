@@ -287,7 +287,7 @@ namespace Altaxo.Collections
 		{
 			var lastInclusive = LastInclusive;
 
-			for (int i = _start; i < lastInclusive; ++i)
+			for (int i = _start; i <= lastInclusive; ++i)
 				yield return i;
 		}
 
