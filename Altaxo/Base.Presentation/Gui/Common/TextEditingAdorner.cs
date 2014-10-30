@@ -38,10 +38,11 @@ namespace Altaxo.Gui.Common
 {
 	/// <summary>
 	/// An adorner class that contains a TextBox to provide editing capability for an <see cref="TextBlockForEditing"/> instance. The editable TextBox resides in the AdornerLayer of the <see cref="TextBlock"/>.
-	/// This adorner is intended for temporary construction in the moment when the <see cref="TextBlockForEditing"/> instance goes to edit mode, and subsequent destruction when edit mode is left. Thats why,
-	/// it is visible from the beginning and can not be made invisible, unless you remove it from the adorner layer.
+	/// This adorner is intended for temporary construction in the moment when the <see cref="TextBlockForEditing"/> instance goes to edit mode, and subsequent destruction when edit mode is left.
+	/// Thats why, it is visible from the beginning and can not be made invisible, unless you remove it from the adorner layer.
+	/// Watch the <see cref="EditingFinished"/> to see when editing is finished.
 	/// </summary>
-	internal sealed class TextBlockAdornerForEditing : Adorner
+	public class TextEditingAdorner : Adorner
 	{
 		#region Member variables
 
@@ -53,52 +54,61 @@ namespace Altaxo.Gui.Common
 		private TextBox _textBox;
 
 		/// <summary>Extra padding for the text box at the end.</summary>
-		private const double _extraWidth = 15;
+		private const double _extraWidth = 16;
+
+		/// <summary>
+		/// Occurs when editing is finished.
+		/// </summary>
+		public event EventHandler EditingFinished;
 
 		#endregion Member variables
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TextBlockAdornerForEditing"/> class.
+		/// Initializes a new instance of the <see cref="TextEditingAdorner"/> class.
 		/// </summary>
 		/// <param name="adornedElement">The adorned text block element.</param>
 		/// <param name="textBoxStyle">The style for the text box that is used for editing.</param>
 		/// <param name="textBoxValidationRule">The validation rule for the text box that is used for editing.</param>
-		public TextBlockAdornerForEditing(TextBlock adornedElement, Style textBoxStyle, ValidationRule textBoxValidationRule)
+		public TextEditingAdorner(UIElement adornedElement, string initialText, Style textBoxStyle, ValidationRule textBoxValidationRule)
 			: base(adornedElement)
 		{
 			_visualChildren = new VisualCollection(this);
+
+			EditedText = initialText; // initialize the EditedText property with the actual text , so when our TextBox bounds to it, it is also initialized with the actual text.
 
 			// Build the text box
 			_textBox = new TextBox();
 
 			if (textBoxStyle != null)
-				_textBox.Style = textBoxStyle;
-
-			//Bind the text of the TextBlock from/to the text of the TextBox
-			Binding binding = new Binding("Text");
-			binding.Mode = BindingMode.TwoWay;
-			binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-			binding.Source = this.AdornedElement;
-			if (null != textBoxValidationRule)
 			{
-				binding.ValidationRules.Add(textBoxValidationRule);
+				_textBox.Style = textBoxStyle; // Apply a style to the TextBox, if a style was provided
+			}
+			else
+			{
+				_textBox.Padding = new Thickness(0, 0, _extraWidth, 0);
 			}
 
+			// Trick: we bind the text of our TextBox to our own property 'EditedText'. Even if we not really need this property, the binding provides us with the possibility of validation
+			// and to change the style to an ErrorTemplate if validation fails.
+			Binding binding = new Binding("EditedText");
+			binding.Mode = BindingMode.TwoWay;
+			binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+			binding.Source = this;
+			if (null != textBoxValidationRule)
+			{
+				binding.ValidationRules.Add(textBoxValidationRule); // Add a validation rule if it was provided
+			}
 			_textBox.SetBinding(TextBox.TextProperty, binding);
 
 			_visualChildren.Add(_textBox);
 
 			//Update TextBox's focus status when layout finishs.
 			_textBox.LayoutUpdated += new EventHandler(EhTextBox_LayoutUpdated);
-		}
 
-		/// <summary>
-		/// Gets the text box that is used for editing.
-		/// </summary>
-		/// <value>
-		/// The text box.
-		/// </value>
-		public TextBox TextBox { get { return _textBox; } }
+			_textBox.KeyDown += new KeyEventHandler(EhTextBoxKeyDown);
+			_textBox.LostKeyboardFocus += new KeyboardFocusChangedEventHandler(EhTextBoxLostKeyboardFocus);
+			_textBox.LostFocus += EhTextBoxLostFocus;
+		}
 
 		/// <summary>
 		/// When the layout has finished, update the focus status and the selection of the TextBox
@@ -109,6 +119,99 @@ namespace Altaxo.Gui.Common
 			_textBox.Focus();
 			_textBox.SelectAll();
 		}
+
+		#region Normal properties
+
+		/// <summary>
+		/// Gets a value indicating whether the edited text has a validation error
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the validation was not successfull; otherwise, <c>false</c>.
+		/// </value>
+		public bool ValidationHasErrors { get { return Validation.GetHasError(_textBox); } }
+
+		#endregion Normal properties
+
+		#region EditedTextProperty
+
+		/// <summary>
+		/// Dependency property used to bind the TextBox.Text property. After sucessfull editing, this property contains the edited value. If the validation fails, it contains the last valid value.
+		/// </summary>
+		public static readonly DependencyProperty EditedTextProperty =
+						DependencyProperty.Register(
+										"EditedText",
+										typeof(string),
+										typeof(TextEditingAdorner),
+										new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+		/// <summary>
+		/// Gets or sets the (editable) text value of this instance. This value property is bound to the TextBox.Text property during initialization of the TextBox, and then when the user enters text into the text box.
+		/// If no validation errors occured, the value is continuosly updated with the current text in the text box.
+		/// </summary>
+		public string EditedText
+		{
+			get { return (string)GetValue(EditedTextProperty); }
+			set { SetValue(EditedTextProperty, value); }
+		}
+
+		#endregion EditedTextProperty
+
+		#region TextBox event handling
+
+		/// <summary>
+		/// When in editing mode, pressing the ENTER or F2
+		/// keys switches to normal mode.
+		/// </summary>
+		private void EhTextBoxKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter || e.Key == Key.F2)
+			{
+				var ev = EditingFinished;
+				if (null != ev)
+					ev(this, e);
+				//IsEditing = false;
+				//_earliestTimeItemIsEligibleForEditing = DateTime.MaxValue;
+			}
+		}
+
+		/// <summary>
+		/// If the TextBox looses keyboard focus (i.e. this instance is in editing mode),	this instance switches back to normal mode.
+		/// </summary>
+		private void EhTextBoxLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			ContextMenu newFocusedElement = e.NewFocus as ContextMenu;
+
+			if (newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
+			{
+			}
+			else
+			{
+				var ev = EditingFinished;
+				if (null != ev)
+					ev(this, e);
+			}
+		}
+
+		/// <summary>
+		/// If an TextBox loses focus (i.e. this instance is in editing mode),
+		/// this instance switches to normal mode.
+		/// </summary>
+		private void EhTextBoxLostFocus(object sender, RoutedEventArgs e)
+		{
+			ContextMenu newFocusedElement = null;
+
+			if (newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
+			{
+			}
+			else
+			{
+				var ev = EditingFinished;
+				if (null != ev)
+					ev(this, e);
+			}
+		}
+
+		#endregion TextBox event handling
 
 		#region Protected Methods
 
@@ -126,7 +229,7 @@ namespace Altaxo.Gui.Common
 
 			// since the adorner has to cover the TextBlock, it should return
 			// the AdornedElement.Width, the extra 15 is to make it more clear.
-			return new Size(AdornedElement.DesiredSize.Width + _extraWidth, _textBox.DesiredSize.Height);
+			return new Size(Math.Max(_textBox.DesiredSize.Width, AdornedElement.DesiredSize.Width), Math.Max(_textBox.DesiredSize.Height, AdornedElement.DesiredSize.Height));
 		}
 
 		/// <summary>

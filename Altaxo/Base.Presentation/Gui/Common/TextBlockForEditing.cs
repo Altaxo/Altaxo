@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
 	/// editing and normal. When it is in editing mode, the content is
 	/// displayed in a TextBox that provides editing capability. When
 	/// in normal mode, its content is displayed in this TextBlock that is not editable.
-	/// Important: bind your data to the <see cref="TextRW"/> property of this instance (instead of the <see cref="Text"/> property of the TextBlock)!
+	/// Important: the binding options for the <see cref="Text"/> property are changed to two-way mode by default in this class!
 	/// </summary>
 	public class TextBlockForEditing : TextBlock
 	{
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Common
 		/// <summary>
 		/// The adorner that adornes the _textBlock. In normal mode the adorner is null, and is created when the this instance is switched to edit mode.
 		/// </summary>
-		private TextBlockAdornerForEditing _adorner;
+		private TextEditingAdorner _adorner;
 
 		/// <summary>
 		/// Specifies whether this instance can switch to editing mode with the next LeftMouseButtonMouseUp event. If the current time is equal to or greater than this value,
@@ -111,6 +111,8 @@ namespace Altaxo.Gui.Common
 
 			_itemsControlTypeToControlInfo.Add(typeof(ListBox), new ItemsControlInfo { TypeOfItem = typeof(ListBoxItem), IsItemSelected = (x => ((ListBoxItem)x).IsSelected), SelectionCount = (x => ((ListBox)x).SelectedItems.Count) });
 			_itemsControlTypeToControlInfo.Add(typeof(ListView), new ItemsControlInfo { TypeOfItem = typeof(ListViewItem), IsItemSelected = (x => ((ListViewItem)x).IsSelected), SelectionCount = (x => ((ListView)x).SelectedItems.Count) });
+
+			TextBlockForEditing.TextProperty.OverrideMetadata(typeof(TextBlockForEditing), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 		}
 
 		/// <summary>
@@ -155,12 +157,6 @@ namespace Altaxo.Gui.Common
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
-
-			// establish the binding to the TextBlock.Text property -> use the TextRW property as source
-			var binding = new Binding("TextRW");
-			binding.Source = this;
-			binding.Mode = BindingMode.OneWay;
-			this.SetBinding(TextBlock.TextProperty, binding);
 
 			bool isInDesignMode = System.ComponentModel.DesignerProperties.GetIsInDesignMode(this);
 			if (isInDesignMode)
@@ -225,12 +221,18 @@ namespace Altaxo.Gui.Common
 		private void BeginEditing()
 		{
 			AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-			_adorner = new TextBlockAdornerForEditing(this, TextBoxStyle, TextBoxValidationRule);
+			_adorner = new TextEditingAdorner(this, this.Text, TextBoxStyle, TextBoxValidationRule);
 			layer.Add(_adorner);
 
-			_adorner.TextBox.KeyDown += new KeyEventHandler(EhTextBoxKeyDown);
-			_adorner.TextBox.LostKeyboardFocus += new KeyboardFocusChangedEventHandler(EhTextBoxLostKeyboardFocus);
-			_adorner.TextBox.LostFocus += EhTextBoxLostFocus;
+			_adorner.EditingFinished += EhEditingFinished;
+		}
+
+		private void EhEditingFinished(object sender, EventArgs e)
+		{
+			if (e is KeyboardEventArgs)
+				_earliestTimeItemIsEligibleForEditing = DateTime.MaxValue;
+
+			IsEditing = false;
 		}
 
 		/// <summary>
@@ -240,19 +242,15 @@ namespace Altaxo.Gui.Common
 		{
 			if (null == _adorner)
 				return;
+			_adorner.EditingFinished -= EhEditingFinished;
 
 			// Processing order important here
-			// because setting the TextRW dependency property can cause updates of the ItemsControl, set this property at the very end
+			// because setting the Text dependency property can cause updates of the ItemsControl, set this property at the very end
 			// before this, dispose all the plumbing neccessary in edit mode
 
-			TextBox textBox = _adorner.TextBox;
-			bool validationHasErrors = Validation.GetHasError(textBox);
-			string textBoxText = textBox.Text;
+			bool validationHasErrors = _adorner.ValidationHasErrors;
+			string textBoxText = _adorner.EditedText;
 			AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-
-			_adorner.TextBox.KeyDown -= new KeyEventHandler(EhTextBoxKeyDown);
-			_adorner.TextBox.LostKeyboardFocus -= new KeyboardFocusChangedEventHandler(EhTextBoxLostKeyboardFocus);
-			_adorner.TextBox.LostFocus -= EhTextBoxLostFocus;
 
 			if (null != layer)
 				layer.Remove(_adorner);
@@ -260,52 +258,18 @@ namespace Altaxo.Gui.Common
 
 			if (!validationHasErrors)
 			{
-				// update the TextRW roperty with the new text box value
-				this.SetValue(TextRWProperty, textBoxText);
-			}
-
-			// After sucessfull renaming, the binding to the Text property gets lost, here we re-establish it
-			var be = this.GetBindingExpression(TextBlock.TextProperty);
-			if (be == null)
-			{
-				var binding = new Binding("TextRW");
-				binding.Source = this;
-				binding.Mode = BindingMode.OneWay;
-				this.SetBinding(TextBlock.TextProperty, binding);
+				// update the Text roperty with the new text box value
+				this.SetValue(TextProperty, textBoxText);
 			}
 		}
 
 		#endregion IsEditing
 
-		#region Value
-
-		/// <summary>
-		/// Dependency property used to bind a propery from a user provided model to the TextBlock's text property. After sucessfull editing, this property is replaced with the edited value.
-		/// </summary>
-		public static readonly DependencyProperty TextRWProperty =
-						DependencyProperty.Register(
-										"TextRW",
-										typeof(string),
-										typeof(TextBlockForEditing),
-										new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-		/// <summary>
-		/// Gets or sets the (editable) text value of this instance. This value property is bound to the TextBlock.Text property during initialization.
-		/// When editing is finished, and no validation errors have occured, the value is updated with the edited value.
-		/// </summary>
-		public string TextRW
-		{
-			get { return (string)GetValue(TextRWProperty); }
-			set { SetValue(TextRWProperty, value); }
-		}
-
-		#endregion Value
-
 		#region TextBoxValidationRule
 
 		/// <summary>
 		/// DependencyProperty that stores a validation rule for the edit box. This validation rule is used in editing mode only. If the validation is not successful,
-		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="TextRW"/> property when switching back to normal mode.
+		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="Text"/> property when switching back to normal mode.
 		/// </summary>
 		public static readonly DependencyProperty TextBoxValidationRuleProperty =
 						DependencyProperty.Register(
@@ -316,7 +280,7 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>
 		/// Stores a validation rule for the edit box. This validation rule is used in editing mode only. If the validation is not successful,
-		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="TextRW"/> property when switching back to normal mode.
+		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="Text"/> property when switching back to normal mode.
 		/// </summary>
 		public ValidationRule TextBoxValidationRule
 		{
@@ -330,6 +294,7 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>
 		/// DependencyProperty to store a custom style for the <see cref="TextBox"/> that is used for editing. This property is especially useful to set a custom style when the validation (set by <see cref="ValidationRule"/> fails.
+		/// Please make sure to add some padding (e.g. 16) to the right side of the TextBox, to ensure the text on the right side is not hidden.
 		/// </summary>
 		public static readonly DependencyProperty TextBoxStyleProperty =
 						DependencyProperty.Register(
@@ -340,6 +305,7 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>
 		/// Property to store a custom style for the <see cref="TextBox"/> that is used for editing. This property is especially useful to set a custom style when the validation (set by <see cref="ValidationRule"/> fails.
+		/// Please make sure to add some padding (e.g. 16) to the right side of the TextBox, to ensure the text on the right side is not hidden.
 		/// </summary>
 		public Style TextBoxStyle
 		{
@@ -484,58 +450,6 @@ namespace Altaxo.Gui.Common
 		}
 
 		#endregion Own event handling / overrides
-
-		#region TextBox event handling
-
-		/// <summary>
-		/// When in editing mode, pressing the ENTER or F2
-		/// keys switches to normal mode.
-		/// </summary>
-		private void EhTextBoxKeyDown(object sender, KeyEventArgs e)
-		{
-			if (IsEditing && (e.Key == Key.Enter || e.Key == Key.F2))
-			{
-				IsEditing = false;
-				_earliestTimeItemIsEligibleForEditing = DateTime.MaxValue;
-			}
-		}
-
-		/// <summary>
-		/// If the TextBox looses keyboard focus (i.e. this instance is in editing mode),	this instance switches back to normal mode.
-		/// </summary>
-		private void EhTextBoxLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-		{
-			ContextMenu newFocusedElement = e.NewFocus as ContextMenu;
-
-			if (IsEditing && newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
-			{
-				base.SetValue(IsEditingProperty, true);
-			}
-			else
-			{
-				IsEditing = false;
-			}
-		}
-
-		/// <summary>
-		/// If an TextBox loses focus (i.e. this instance is in editing mode),
-		/// this instance switches to normal mode.
-		/// </summary>
-		private void EhTextBoxLostFocus(object sender, RoutedEventArgs e)
-		{
-			ContextMenu newFocusedElement = null;
-
-			if (IsEditing && newFocusedElement != null && newFocusedElement.PlacementTarget == (UIElement)sender)
-			{
-				base.SetValue(IsEditingProperty, true);
-			}
-			else
-			{
-				IsEditing = false;
-			}
-		}
-
-		#endregion TextBox event handling
 
 		#region ItemsControl event hooking and handling
 

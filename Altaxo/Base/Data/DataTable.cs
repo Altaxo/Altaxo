@@ -806,8 +806,8 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				if (string.IsNullOrEmpty(value))
-					throw new ArgumentNullException("New name is null or empty");
+				if (null == value)
+					throw new ArgumentNullException("New name is null");
 
 				if (_tableName != value)
 				{

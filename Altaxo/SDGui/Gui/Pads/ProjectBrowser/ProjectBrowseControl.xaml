@@ -25,6 +25,7 @@
 			</Style.Triggers>
 			<Style.Setters>
 				<Setter Property="HorizontalContentAlignment" Value="Left" />
+				<Setter Property="Padding" Value="0,0,32,0" />
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
@@ -86,7 +87,7 @@
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 						<Image Grid.Column="0"  Source="{Binding Path=ImageSource}" />
-						<axogc:TextBlockForEditing Grid.Column="1" Margin="4,0" TextRW="{Binding Path=Text}"  TextBoxValidationRule="{Binding Path=RenamingValidationFunction, Converter={StaticResource FuncToValidationConverter}}" TextBoxStyle="{StaticResource editTextBoxStyle}" />
+						<axogc:TextBlockForEditing Grid.Column="1" Margin="4,0" Text="{Binding Path=Text}"  TextBoxValidationRule="{Binding Path=RenamingValidationFunction, Converter={StaticResource FuncToValidationConverter}}" TextBoxStyle="{StaticResource editTextBoxStyle}" />
 					</Grid>
 				</DataTemplate>
 

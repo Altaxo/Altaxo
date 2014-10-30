@@ -1065,7 +1065,7 @@
     <Compile Include="Gui\Common\TabbedElementControl.xaml.cs">
       <DependentUpon>TabbedElementControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\TextBlockAdornerForEditing.cs" />
+    <Compile Include="Gui\Common\TextEditingAdorner.cs" />
     <Compile Include="Gui\Common\TextBlockForEditing.cs" />
     <Compile Include="Gui\Common\TextBlockUtilities.cs" />
     <Compile Include="Gui\Common\Tools\TestAllProjectsInFolderControl.xaml.cs">
