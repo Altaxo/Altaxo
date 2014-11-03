@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,7 @@ using System.Windows.Shapes;
 namespace Altaxo.Gui.Data
 {
 	using Altaxo.Collections;
+
 	/// <summary>
 	/// Interaction logic for ExpandCyclingVariableControl.xaml
 	/// </summary>
@@ -47,44 +50,14 @@ namespace Altaxo.Gui.Data
 			InitializeComponent();
 		}
 
-		public void InitializeCyclingVarColumn(SelectableListNodeList list)
+		public void SetDataControl(object control)
 		{
-			GuiHelper.Initialize(_cbColWithCyclingVar, list);
+			_guiDataControlHost.Child = control as FrameworkElement;
 		}
 
-		private void EhCyclicVarChanged(object sender, SelectionChangedEventArgs e)
+		public void SetOptionsControl(object control)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_cbColWithCyclingVar);
+			_guiOptionsControlHost.Child = control as FrameworkElement;
 		}
-
-
-		public void InitializeColumnsToAverage(SelectableListNodeList list)
-		{
-			_lbColsToAverage.Initialize(list);
-		}
-
-		public void InitializeDestinationOutputFormat(SelectableListNodeList list)
-		{
-			_chDestinationOutput.Initialize(list);
-		}
-
-		public void InitializeDestinationX(SelectableListNodeList list)
-		{
-			_chDestinationX.Initialize(list);
-		}
-
-		public void InitializeDestinationColumnSorting(SelectableListNodeList list)
-		{
-			_chDestinationColSort.Initialize(list);
-		}
-
-		public void InitializeDestinationRowSorting(SelectableListNodeList list)
-		{
-			_chDestinationRowSort.Initialize(list);
-		}
-
-
-
-
 	}
 }

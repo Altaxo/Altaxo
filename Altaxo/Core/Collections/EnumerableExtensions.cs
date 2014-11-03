@@ -173,6 +173,7 @@ namespace Altaxo.Collections
 		/// <typeparam name="T">Type of element</typeparam>
 		/// <typeparam name="M">Type of comparison value that results from the element.</typeparam>
 		/// <param name="seq">The enumeration of elements.</param>
+		/// <param name="conversion">Conversion function which converts the type <typeparamref name="T"/> of the original sequence into a type <typeparamref name="M"/> which is used to determine the maximum value.</param>
 		/// <param name="defaultValue">The default value that is returned if the enumeration is empty.</param>
 		/// <returns>The maximum of of all comparison values of the elements, or the <paramref name="defaultValue"/> if the series is empty.</returns>
 		public static M MaxOrDefault<T, M>(this IEnumerable<T> seq, Func<T, M> conversion, M defaultValue) where M : IComparable<M>

@@ -34,124 +34,46 @@ namespace Altaxo.Gui.Data
 
 	public interface IExpandCyclingVariableView
 	{
-		void InitializeCyclingVarColumn(SelectableListNodeList list);
+		void SetDataControl(object control);
 
-		void InitializeColumnsToAverage(SelectableListNodeList list);
-
-		void InitializeDestinationOutputFormat(SelectableListNodeList list);
-
-		void InitializeDestinationX(SelectableListNodeList list);
-
-		void InitializeDestinationColumnSorting(SelectableListNodeList list);
-
-		void InitializeDestinationRowSorting(SelectableListNodeList list);
+		void SetOptionsControl(object control);
 	}
 
-	[UserControllerForObject(typeof(ExpandCyclingVariableColumnOptions))]
+	[UserControllerForObject(typeof(ExpandCyclingVariableColumnDataAndOptions))]
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableView))]
-	public class ExpandCyclingVariableController : IMVCANController
+	public class ExpandCyclingVariableController : MVCANControllerBase<ExpandCyclingVariableColumnDataAndOptions, IExpandCyclingVariableView>
 	{
-		private ExpandCyclingVariableColumnOptions _doc;
-		private IExpandCyclingVariableView _view;
+		private IMVCANController _dataController;
+		private IMVCANController _optionsController;
 
-		private SelectableListNodeList _choicesCyclingVar;
-		private SelectableListNodeList _choicesColsToAvarage;
-		private SelectableListNodeList _choicesDestinationOutputFormat;
-		private SelectableListNodeList _choicesDestinationX;
-		private SelectableListNodeList _choicesDestinationColSort;
-		private SelectableListNodeList _choicesDestinationRowSort;
-
-		private void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
 			if (initData)
 			{
-				_doc.EnsureCoherence(false);
+				_dataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
+				_dataController.InitializeDocument(_doc.Data);
 
-				var srcData = _doc.SourceTable.DataColumns;
-
-				_choicesCyclingVar = new SelectableListNodeList();
-				foreach (var nCol in _doc.ColumnsToProcess)
-					_choicesCyclingVar.Add(new SelectableListNode(srcData.GetColumnName(nCol), nCol, _doc.ColumnWithCyclingVariable == nCol));
-
-				_choicesColsToAvarage = new SelectableListNodeList();
-				foreach (var nCol in _doc.ColumnsToProcess)
-					_choicesColsToAvarage.Add(new SelectableListNode(srcData.GetColumnName(nCol), nCol, _doc.ColumnsToAverageOverRepeatPeriod.Contains(nCol)));
-
-				_choicesDestinationOutputFormat = new SelectableListNodeList();
-				_choicesDestinationOutputFormat.FillWithEnumeration(_doc.DestinationOutput);
-
-				_choicesDestinationX = new SelectableListNodeList();
-				_choicesDestinationX.FillWithEnumeration(_doc.DestinationX);
-
-				_choicesDestinationColSort = new SelectableListNodeList();
-				_choicesDestinationColSort.FillWithEnumeration(_doc.DestinationColumnSorting);
-
-				_choicesDestinationRowSort = new SelectableListNodeList();
-				_choicesDestinationRowSort.FillWithEnumeration(_doc.DestinationRowSorting);
+				_optionsController = new ExpandCyclingVariableOptionsController { UseDocumentCopy = UseDocument.Directly };
+				_optionsController.InitializeDocument(_doc.Options);
+				Current.Gui.FindAndAttachControlTo(_dataController);
+				Current.Gui.FindAndAttachControlTo(_optionsController);
 			}
 			if (null != _view)
 			{
-				_view.InitializeCyclingVarColumn(_choicesCyclingVar);
-				_view.InitializeColumnsToAverage(_choicesColsToAvarage);
-				_view.InitializeDestinationOutputFormat(_choicesDestinationOutputFormat);
-				_view.InitializeDestinationX(_choicesDestinationX);
-				_view.InitializeDestinationColumnSorting(_choicesDestinationColSort);
-				_view.InitializeDestinationRowSorting(_choicesDestinationRowSort);
+				_view.SetDataControl(_dataController.ViewObject);
+				_view.SetOptionsControl(_optionsController.ViewObject);
 			}
 		}
 
-		public bool InitializeDocument(params object[] args)
+		public override bool Apply()
 		{
-			if (args.Length == 0 || !(args[0] is ExpandCyclingVariableColumnOptions))
+			if (!_dataController.Apply())
 				return false;
-			_doc = (ExpandCyclingVariableColumnOptions)args[0];
+			if (!_optionsController.Apply())
+				return false;
 
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IExpandCyclingVariableView;
-				Initialize(false);
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		public bool Apply()
-		{
-			_doc.ColumnWithCyclingVariable = (int)_choicesCyclingVar.FirstSelectedNode.Tag;
-
-			_doc.ColumnsToAverageOverRepeatPeriod.Clear();
-			foreach (var node in _choicesColsToAvarage)
-			{
-				if (node.IsSelected)
-					_doc.ColumnsToAverageOverRepeatPeriod.Add((int)node.Tag);
-			}
-
-			_doc.DestinationOutput = (ExpandCyclingVariableColumnOptions.OutputFormat)_choicesDestinationOutputFormat.FirstSelectedNode.Tag;
-			_doc.DestinationX = (ExpandCyclingVariableColumnOptions.DestinationXColumn)_choicesDestinationX.FirstSelectedNode.Tag;
-			_doc.DestinationColumnSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
-			_doc.DestinationRowSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationRowSort.FirstSelectedNode.Tag;
+			if (!object.ReferenceEquals(_originalDoc, _doc))
+				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;
 		}

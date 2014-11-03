@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,23 +34,9 @@ namespace Altaxo.Data
 	/// Contains options how to split a table that contains an independent variable with cycling values into
 	/// another table, where this independent variable is unique and sorted.
 	/// </summary>
-	public class ExpandCyclingVariableColumnOptions
+	public class ExpandCyclingVariableColumnOptions : ICloneable
 	{
-		private Altaxo.Data.DataTable _sourceTable;
-		private IAscendingIntegerCollection _columnsToProcess;
-		private List<int> _columnsToAverageOverRepeatPeriod = new List<int>();
-
-		public Altaxo.Data.DataTable SourceTable
-		{
-			get
-			{
-				return _sourceTable;
-			}
-			set
-			{
-				_sourceTable = value;
-			}
-		}
+		#region Enums
 
 		public enum DestinationXColumn
 		{
@@ -71,26 +57,9 @@ namespace Altaxo.Data
 			Descending
 		}
 
-		/// <summary>Indices of all columns that will be considered to be processed. If null, all columns of the source table will be considered.</summary>
-		public IAscendingIntegerCollection ColumnsToProcess
-		{
-			get
-			{
-				return _columnsToProcess;
-			}
-			set
-			{
-				_columnsToProcess = value;
-			}
-		}
+		#endregion Enums
 
-		/// <summary>Index of the column, that contain a cycling independent variable.</summary>
-		public int ColumnWithCyclingVariable { get; set; }
-
-		/// <summary>
-		/// Indices of the columns that contain nearly constant values for each cycling period.
-		/// </summary>
-		public List<int> ColumnsToAverageOverRepeatPeriod { get { return _columnsToAverageOverRepeatPeriod; } }
+		#region Members
 
 		/// <summary>Designates whether the destination x column is derived from the cycling variable column or from the (first) averaged column.</summary>
 		public DestinationXColumn DestinationX { get; set; }
@@ -104,61 +73,212 @@ namespace Altaxo.Data
 		/// <summary>If set, the destination rows will be sorted according to the destination x column.</summary>
 		public OutputSorting DestinationRowSorting { get; set; }
 
+		#endregion Members
+
+		#region Serialization
+
+		#region Version 0
+
 		/// <summary>
-		/// Tests if the column variables are contained into ColumnsToProcess and rectifies problems.
+		/// 2014-11-02 initial version.
 		/// </summary>
-		/// <param name="throwIfNonCoherent">If true, an exception is thrown if any problems are detected.</param>
-		public void EnsureCoherence(bool throwIfNonCoherent)
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExpandCyclingVariableColumnOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			if (null == _sourceTable) // this is mandatory, thus an exception is always thrown
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ExpandCyclingVariableColumnOptions)obj;
+
+				info.AddEnum("DestinationX", s.DestinationX);
+				info.AddEnum("DestinationOutput", s.DestinationOutput);
+				info.AddEnum("DestinationColumnSorting", s.DestinationColumnSorting);
+				info.AddEnum("DestinationRowSorting", s.DestinationRowSorting);
+			}
+
+			protected virtual ExpandCyclingVariableColumnOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new ExpandCyclingVariableColumnOptions() : (ExpandCyclingVariableColumnOptions)o);
+
+				s.DestinationX = (DestinationXColumn)info.GetEnum("DestinationX", typeof(DestinationXColumn));
+				s.DestinationOutput = (OutputFormat)info.GetEnum("DestinationOutput", typeof(OutputFormat));
+				s.DestinationColumnSorting = (OutputSorting)info.GetEnum("DestinationColumnSorting", typeof(OutputSorting));
+				s.DestinationRowSorting = (OutputSorting)info.GetEnum("DestinationRowSorting", typeof(OutputSorting));
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 0
+
+		#endregion Serialization
+
+		#region Construction
+
+		public ExpandCyclingVariableColumnOptions()
+		{
+		}
+
+		public ExpandCyclingVariableColumnOptions(ExpandCyclingVariableColumnOptions from)
+		{
+			CopyFrom(from);
+		}
+
+		public object Clone()
+		{
+			return new ExpandCyclingVariableColumnOptions(this);
+		}
+
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as ExpandCyclingVariableColumnOptions;
+			if (null != from)
+			{
+				this.DestinationX = from.DestinationX;
+				this.DestinationOutput = from.DestinationOutput;
+				this.DestinationRowSorting = from.DestinationRowSorting;
+				this.DestinationColumnSorting = from.DestinationColumnSorting;
+
+				return true;
+			}
+			return false;
+		}
+
+		#endregion Construction
+	}
+
+	/// <summary>
+	/// Holds both the data (see <see cref="DataTableMultipleColumnProxy"/>) and the options (see <see cref="ExpandCyclingVariableColumnOptions"/>) to perform
+	/// the expanding of a table containing a column with a cycling variable.
+	/// </summary>
+	public class ExpandCyclingVariableColumnDataAndOptions : ICloneable
+	{
+		public ExpandCyclingVariableColumnDataAndOptions(DataTableMultipleColumnProxy data, ExpandCyclingVariableColumnOptions options)
+		{
+			Data = data;
+			Options = options;
+		}
+
+		/// <summary>
+		/// Holds the data nessessary for expanding of a table containing a column with a cycling variable.
+		/// </summary>
+		/// <value>
+		/// The data.
+		/// </value>
+		public DataTableMultipleColumnProxy Data { get; private set; }
+
+		/// <summary>
+		/// Holds the options nessessary for expanding of a table containing a column with a cycling variable.
+		/// </summary>
+		/// <value>
+		/// The options.
+		/// </value>
+		public ExpandCyclingVariableColumnOptions Options { get; private set; }
+
+		/// <summary>Identifies the column with the cycling variable in the <see cref="DataTableMultipleColumnProxy"/> instance.</summary>
+		public const string ColumnWithCyclingVariableIdentifier = "ColumnWithCyclingVariable";
+
+		/// <summary>Identifies the column(s) to average in the <see cref="DataTableMultipleColumnProxy"/> instance.</summary>
+		public const string ColumnsToAverageIdentifier = "ColumnsToAverage";
+
+		/// <summary>Identifies all columns which participate in the <see cref="DataTableMultipleColumnProxy"/> instance.</summary>
+		public const string ColumnsParticipatingIdentifier = "ColumnsParticipating";
+
+		/// <summary>
+		/// Tests if the data in <paramref name="data"/> can be used for the ExpandCyclingVariable action.
+		/// </summary>
+		/// <param name="data">The data to test.</param>
+		/// <param name="throwIfNonCoherent">If true, an exception is thrown if any problems are detected. If false, it is tried to rectify the problem by making some assumtions.</param>
+		public static void EnsureCoherence(DataTableMultipleColumnProxy data, bool throwIfNonCoherent)
+		{
+			if (null == data.DataTable) // this is mandatory, thus an exception is always thrown
 			{
 				throw new ArgumentNullException("SourceTable is null, it must be set before");
 			}
 
-			if (null == _columnsToProcess || _columnsToProcess.Count == 0)
+			data.EnsureExistenceOfIdentifier(ColumnsParticipatingIdentifier);
+			data.EnsureExistenceOfIdentifier(ColumnWithCyclingVariableIdentifier, 1);
+			data.EnsureExistenceOfIdentifier(ColumnsToAverageIdentifier);
+
+			if (data.GetDataColumns(ColumnsParticipatingIdentifier).Count == 0)
 			{
 				if (throwIfNonCoherent)
-					throw new ArgumentException(_columnsToProcess == null ? "ColumnsToProcess is null" : "ColumnsToProcess is empty");
-				else
-					_columnsToProcess = new Altaxo.Collections.ContiguousNonNegativeIntegerRange(0, _sourceTable.DataColumnCount);
+					throw new ArgumentException(!data.ContainsIdentifier(ColumnsParticipatingIdentifier) ? "ColumnsToProcess is not set" : "ColumnsToProcess is empty");
 			}
 
-			if (!_columnsToProcess.Contains(ColumnWithCyclingVariable) && _columnsToProcess.Count > 0)
+			if (data.GetDataColumnOrNull(ColumnWithCyclingVariableIdentifier) == null)
 			{
 				if (throwIfNonCoherent)
 					throw new ArgumentException("Column with cycling variable was not included in columnsToProcess");
 				else
-					ColumnWithCyclingVariable = _columnsToProcess[0];
-			}
-
-			for (int i = _columnsToAverageOverRepeatPeriod.Count - 1; i >= 0; i--)
-			{
-				if (!_columnsToProcess.Contains(_columnsToAverageOverRepeatPeriod[i]))
 				{
-					if (throwIfNonCoherent)
-						throw new ArgumentException("ColumnsToAverage contains one or more columns that are not included in columnsToProcess");
-					else
-						_columnsToAverageOverRepeatPeriod.RemoveAt(i);
+					var col = data.GetDataColumns(ColumnsParticipatingIdentifier).FirstOrDefault();
+					if (null != col)
+						data.SetDataColumn(ColumnWithCyclingVariableIdentifier, col);
 				}
 			}
+
+			if (!data.ContainsIdentifier(ColumnsToAverageIdentifier))
+			{
+				if (throwIfNonCoherent)
+					throw new ArgumentException("ColumnsToAverage collection is not included");
+			}
+		}
+
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
+		public object Clone()
+		{
+			return new ExpandCyclingVariableColumnDataAndOptions((DataTableMultipleColumnProxy)this.Data.Clone(), (ExpandCyclingVariableColumnOptions)this.Options.Clone());
 		}
 	}
 
 	public static class ExpandCyclingVariableColumnActions
 	{
-		public static void ShowExpandCyclingVariableColumnDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataColumns)
+		public static void ShowExpandCyclingVariableColumnDialog(this DataTable srcTable, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
 		{
-			var options = new ExpandCyclingVariableColumnOptions();
-			options.SourceTable = srcTable;
-			options.ColumnsToProcess = selectedDataColumns;
-			if (true == Current.Gui.ShowDialog(ref options, "Choose options", false))
+			DataTableMultipleColumnProxy proxy = null;
+			ExpandCyclingVariableColumnOptions options = null;
+
+			try
+			{
+				proxy = new DataTableMultipleColumnProxy(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier, srcTable, selectedDataRows, selectedDataColumns);
+				proxy.EnsureExistenceOfIdentifier(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier, 1);
+				proxy.EnsureExistenceOfIdentifier(ExpandCyclingVariableColumnDataAndOptions.ColumnsToAverageIdentifier);
+
+				options = new ExpandCyclingVariableColumnOptions();
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(string.Format("{0}\r\nDetails:\r\n{1}", ex.Message, ex.ToString()), "Error in preparation of 'Expand Cycling Variable'");
+				return;
+			}
+
+			var dataAndOptions = new ExpandCyclingVariableColumnDataAndOptions(proxy, options);
+
+			// in order to show the column names etc in the dialog, it is neccessary to set the source
+			if (true == Current.Gui.ShowDialog(ref dataAndOptions, "Choose options", false))
 			{
 				var destTable = new DataTable();
+				proxy = dataAndOptions.Data;
+				options = dataAndOptions.Options;
 
 				string error = null;
 				try
 				{
-					error = ExpandCyclingVariableColumn(options, destTable);
+					error = ExpandCyclingVariableColumn(dataAndOptions.Data, dataAndOptions.Options, destTable);
 				}
 				catch (Exception ex)
 				{
@@ -168,6 +288,11 @@ namespace Altaxo.Data
 					Current.Gui.ErrorMessageBox(error);
 
 				destTable.Name = srcTable.Name + "_Expanded";
+
+				// Create a DataSource
+				ExpandCyclingVariableColumnDataSource dataSource = new ExpandCyclingVariableColumnDataSource(proxy, options, new Altaxo.Data.DataSourceImportOptions());
+				destTable.DataSource = dataSource;
+
 				Current.Project.DataTableCollection.Add(destTable);
 				Current.ProjectService.ShowDocumentView(destTable);
 			}
@@ -177,34 +302,44 @@ namespace Altaxo.Data
 		/// Expand the source columns according to the provided options. The source table and the settings are provided in the <paramref name="options"/> variable.
 		/// The provided destination table is cleared from all data and property values before.
 		/// </summary>
-		/// <param name="options">The options containing the source table and the settings for expanding.</param>
+		/// <param name="inputData">The data containing the source table, the participating columns and the column with the cycling variable.</param>
+		/// <param name="options">The settings for expanding.</param>
 		/// <param name="destTable">The destination table. Any data will be removed before filling with the new data.</param>
 		/// <returns>Null if the method finishes successfully, or an error information.</returns>
-		public static string ExpandCyclingVariableColumn(ExpandCyclingVariableColumnOptions options, DataTable destTable)
+		public static string ExpandCyclingVariableColumn(DataTableMultipleColumnProxy inputData, ExpandCyclingVariableColumnOptions options, DataTable destTable)
 		{
+			var srcTable = inputData.DataTable;
+
 			try
 			{
-				options.EnsureCoherence(true);
+				ExpandCyclingVariableColumnDataAndOptions.EnsureCoherence(inputData, true);
 			}
 			catch (Exception ex)
 			{
 				return ex.Message;
 			}
 
-			DataTable srcTable = options.SourceTable;
 			destTable.DataColumns.RemoveColumnsAll();
 			destTable.PropCols.RemoveColumnsAll();
 
-			var srcCycCol = srcTable.DataColumns[options.ColumnWithCyclingVariable];
+			DataColumn srcCycCol = inputData.GetDataColumnOrNull(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier);
 			var repeatRanges = DecomposeIntoRepeatUnits(srcCycCol);
-			var srcColumnsToProcess = options.ColumnsToProcess;
 
 			// check if there is at least one averaged column
-			if (options.DestinationX == ExpandCyclingVariableColumnOptions.DestinationXColumn.FirstAveragedColumn && options.ColumnsToAverageOverRepeatPeriod.Count == 0)
+			var columnsToAverageOverRepeatPeriod = inputData.GetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsToAverageIdentifier);
+			if (options.DestinationX == ExpandCyclingVariableColumnOptions.DestinationXColumn.FirstAveragedColumn && columnsToAverageOverRepeatPeriod.Count == 0)
 				throw new ArgumentException("In order to let the first averaged column being the x-column, a column to average is needed, but the options didn't provide such column!");
 
+			// get the other columns to process
+
+			var srcColumnsToProcess = new List<DataColumn>(inputData.GetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier));
+			// subtract cyclic variable column and average columns
+			srcColumnsToProcess.Remove(srcCycCol);
+			foreach (var col in columnsToAverageOverRepeatPeriod)
+				srcColumnsToProcess.Remove(col);
+
 			// --- Create and calculate the averaged columns, for now only temporarily ---
-			var propColsTemp = AverageColumns(options, repeatRanges);
+			var propColsTemp = AverageColumns(srcTable, columnsToAverageOverRepeatPeriod, options, repeatRanges);
 
 			// --- avgValueOrder designates the ordering of the first averaged column and therefore of the sorting of the ranges and of the first averaged column
 			int[] avgValueOrder = Sorting.CreateIdentityIndices(repeatRanges.Count);
@@ -224,28 +359,25 @@ namespace Altaxo.Data
 
 			if (options.DestinationX == ExpandCyclingVariableColumnOptions.DestinationXColumn.CyclingVariable)
 			{
-				int[] propColsIdx = CreatePropColsForAveragedColumns(options, destTable);
+				int[] propColsIdx = CreatePropColsForAveragedColumns(srcTable, columnsToAverageOverRepeatPeriod, options, destTable);
 
 				// --- Fill the x column, take the row sorting into account ---
-				var destXCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(options.ColumnWithCyclingVariable), srcCycCol.GetType(), ColumnKind.X, srcTable.DataColumns.GetColumnGroup(options.ColumnWithCyclingVariable));
+				var destXCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCycCol), srcCycCol.GetType(), ColumnKind.X, srcTable.DataColumns.GetColumnGroup(srcCycCol));
 				foreach (var entry in cycValueOrder)
 					destXCol[entry.Value] = entry.Key;
 
 				if (options.DestinationOutput == ExpandCyclingVariableColumnOptions.OutputFormat.GroupOneColumn)
 				{
 					// foreach sourceColumnToProcess create as many destination columns as there are cycling ranges available
-					foreach (int nSrcCol in srcColumnsToProcess)
+					foreach (var srcCol in srcColumnsToProcess)
 					{
-						if (nSrcCol == options.ColumnWithCyclingVariable || options.ColumnsToAverageOverRepeatPeriod.Contains(nSrcCol))
-							continue;
-						var srcCol = srcTable.DataColumns[nSrcCol];
 						int nCreatedCol = -1;
 						var destColumnsToSort = new AscendingIntegerCollection();
 						foreach (int rangeIndex in avgValueOrder)
 						{
 							var range = repeatRanges[rangeIndex];
 							++nCreatedCol;
-							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(nSrcCol) + "." + nCreatedCol.ToString(), srcTable.DataColumns[nSrcCol].GetType(), srcTable.DataColumns.GetColumnKind(nSrcCol), srcTable.DataColumns.GetColumnGroup(nSrcCol));
+							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCol) + "." + nCreatedCol.ToString(), srcCol.GetType(), srcTable.DataColumns.GetColumnKind(srcCol), srcTable.DataColumns.GetColumnGroup(srcCol));
 							var nDestCol = destTable.DataColumns.GetColumnNumber(destCol);
 							destColumnsToSort.Add(nDestCol);
 							foreach (var nSrcRow in range)
@@ -268,13 +400,9 @@ namespace Altaxo.Data
 					{
 						var range = repeatRanges[rangeIndex];
 						++nCreatedCol;
-						foreach (int nSrcCol in srcColumnsToProcess)
+						foreach (var srcCol in srcColumnsToProcess)
 						{
-							if (nSrcCol == options.ColumnWithCyclingVariable || options.ColumnsToAverageOverRepeatPeriod.Contains(nSrcCol))
-								continue;
-
-							var srcCol = srcTable.DataColumns[nSrcCol];
-							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(nSrcCol) + "." + nCreatedCol.ToString(), srcTable.DataColumns[nSrcCol].GetType(), srcTable.DataColumns.GetColumnKind(nSrcCol), srcTable.DataColumns.GetColumnGroup(nSrcCol));
+							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCol) + "." + nCreatedCol.ToString(), srcCol.GetType(), srcTable.DataColumns.GetColumnKind(srcCol), srcTable.DataColumns.GetColumnGroup(srcCol));
 							var nDestCol = destTable.DataColumns.GetColumnNumber(destCol);
 							foreach (var nSrcRow in range)
 							{
@@ -298,24 +426,20 @@ namespace Altaxo.Data
 			{
 				// now the first x column contains the values of the averaged column
 				// the rest of the data columns is repeated as many times as there are members in each repeat range
-				int nSrcXCol = options.ColumnsToAverageOverRepeatPeriod[0];
-				var destXCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(nSrcXCol), srcTable[nSrcXCol].GetType(), ColumnKind.X, srcTable.DataColumns.GetColumnGroup(nSrcXCol));
+				DataColumn srcXCol = columnsToAverageOverRepeatPeriod[0];
+				var destXCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcXCol), srcXCol.GetType(), ColumnKind.X, srcTable.DataColumns.GetColumnGroup(srcXCol));
 
 				// Fill with destination X
 				for (int nDestRow = 0; nDestRow < repeatRanges.Count; nDestRow++)
 					destXCol[nDestRow] = propColsTemp[0][avgValueOrder[nDestRow]];
 
 				// the only property column that is now usefull is that with the repeated values
-				int nCycCol = options.ColumnWithCyclingVariable;
-				var destPropCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(nCycCol), srcTable[nCycCol].GetType(), srcTable.DataColumns.GetColumnKind(nCycCol), srcTable.DataColumns.GetColumnGroup(nCycCol));
+				var destPropCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCycCol), srcCycCol.GetType(), srcTable.DataColumns.GetColumnKind(srcCycCol), srcTable.DataColumns.GetColumnGroup(srcCycCol));
 
 				if (options.DestinationOutput == ExpandCyclingVariableColumnOptions.OutputFormat.GroupOneColumn)
 				{
-					foreach (int nSrcCol in srcColumnsToProcess)
+					foreach (var srcCol in srcColumnsToProcess)
 					{
-						if (nSrcCol == options.ColumnWithCyclingVariable || options.ColumnsToAverageOverRepeatPeriod.Contains(nSrcCol))
-							continue;
-						var srcCol = srcTable.DataColumns[nSrcCol];
 						int nCurrNumber = -1;
 
 						IEnumerable<AltaxoVariant> cycValues = cycValueOrder.Keys;
@@ -325,7 +449,7 @@ namespace Altaxo.Data
 						foreach (var cycValue in cycValues)
 						{
 							++nCurrNumber;
-							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(nSrcCol) + "." + nCurrNumber.ToString(), srcTable.DataColumns[nSrcCol].GetType(), srcTable.DataColumns.GetColumnKind(nSrcCol), srcTable.DataColumns.GetColumnGroup(nSrcCol));
+							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCol) + "." + nCurrNumber.ToString(), srcCol.GetType(), srcTable.DataColumns.GetColumnKind(srcCol), srcTable.DataColumns.GetColumnGroup(srcCol));
 							var nDestCol = destTable.DataColumns.GetColumnNumber(destCol);
 							int nDestRow = -1;
 
@@ -352,13 +476,9 @@ namespace Altaxo.Data
 					foreach (var xVal in positionsKeys)
 					{
 						++nCurrNumber;
-						foreach (int nSrcCol in srcColumnsToProcess)
+						foreach (var srcCol in srcColumnsToProcess)
 						{
-							if (nSrcCol == options.ColumnWithCyclingVariable || options.ColumnsToAverageOverRepeatPeriod.Contains(nSrcCol))
-								continue;
-
-							var srcCol = srcTable.DataColumns[nSrcCol];
-							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(nSrcCol) + "." + nCurrNumber.ToString(), srcTable.DataColumns[nSrcCol].GetType(), srcTable.DataColumns.GetColumnKind(nSrcCol), srcTable.DataColumns.GetColumnGroup(nSrcCol));
+							var destCol = destTable.DataColumns.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCol) + "." + nCurrNumber.ToString(), srcCol.GetType(), srcTable.DataColumns.GetColumnKind(srcCol), srcTable.DataColumns.GetColumnGroup(srcCol));
 							var nDestCol = destTable.DataColumns.GetColumnNumber(destCol);
 							int nDestRow = -1;
 							foreach (int rangeIndex in avgValueOrder)
@@ -402,19 +522,19 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Creates a property column for each averaged column of the source table.
 		/// </summary>
+		/// <param name="srcTable">Source table of the ExpandCyclingVariableColumn action</param>
+		/// <param name="columnsToAverageOverRepeatPeriod">The columns for which the data should be averaged over one repeat period.</param>
 		/// <param name="options">Options containing the column numbers of the columns to average.</param>
 		/// <param name="destTable">Destination table where to create the property columns.</param>
 		/// <returns>Indices of the newly created property columns. The indices have the same order as the columns to average.</returns>
-		private static int[] CreatePropColsForAveragedColumns(ExpandCyclingVariableColumnOptions options, DataTable destTable)
+		private static int[] CreatePropColsForAveragedColumns(DataTable srcTable, IEnumerable<DataColumn> columnsToAverageOverRepeatPeriod, ExpandCyclingVariableColumnOptions options, DataTable destTable)
 		{
-			DataTable srcTable = options.SourceTable;
-			var propColsIdx = new int[options.ColumnsToAverageOverRepeatPeriod.Count];
+			var propColsIdx = new int[columnsToAverageOverRepeatPeriod.Count()];
 			int nDestCol = -1;
-			foreach (var nSrcCol in options.ColumnsToAverageOverRepeatPeriod)
+			foreach (var srcCol in columnsToAverageOverRepeatPeriod)
 			{
 				++nDestCol;
-				var srcCol = srcTable.DataColumns[nSrcCol];
-				var destCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(nSrcCol), srcTable.DataColumns[nSrcCol].GetType(), srcTable.DataColumns.GetColumnKind(nSrcCol), srcTable.DataColumns.GetColumnGroup(nSrcCol));
+				var destCol = destTable.PropCols.EnsureExistence(srcTable.DataColumns.GetColumnName(srcCol), srcCol.GetType(), srcTable.DataColumns.GetColumnKind(srcCol), srcTable.DataColumns.GetColumnGroup(srcCol));
 				propColsIdx[nDestCol] = destTable.PropCols.GetColumnNumber(destCol);
 			}
 			return propColsIdx;
@@ -423,19 +543,19 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Average the columns to average for each repetition period.
 		/// </summary>
+		/// <param name="srcTable">Source table of the ExpandCyclingVariableColumn action</param>
+		/// <param name="columnsToAverageOverRepeatPeriod">The columns for which the data should be averaged over one repeat period.</param>
 		/// <param name="options">Options containing the column numbers of the columns to average.</param>
 		/// <param name="repeatRanges">Designates the start and the end of each repetition period.</param>
 		/// <returns>Array of data columns which contain the averaged columns. Inside a column the row index designates the index of the range.</returns>
-		private static DataColumn[] AverageColumns(ExpandCyclingVariableColumnOptions options, IList<ContiguousIntegerRange> repeatRanges)
+		private static DataColumn[] AverageColumns(DataTable srcTable, IEnumerable<DataColumn> columnsToAverageOverRepeatPeriod, ExpandCyclingVariableColumnOptions options, IList<ContiguousIntegerRange> repeatRanges)
 		{
-			DataTable srcTable = options.SourceTable;
 			// make the averaged property columns
-			var propColsTemp = new DataColumn[options.ColumnsToAverageOverRepeatPeriod.Count];
+			var propColsTemp = new DataColumn[columnsToAverageOverRepeatPeriod.Count()];
 			int nDestCol = -1;
-			foreach (var nSrcCol in options.ColumnsToAverageOverRepeatPeriod)
+			foreach (var srcCol in columnsToAverageOverRepeatPeriod)
 			{
 				nDestCol++;
-				var srcCol = srcTable.DataColumns[nSrcCol];
 				var destCol = (DataColumn)srcCol.Clone();
 				destCol.Clear();
 

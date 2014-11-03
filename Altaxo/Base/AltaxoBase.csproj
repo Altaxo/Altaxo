@@ -202,9 +202,11 @@
     <Compile Include="DataConnection\QueryField.cs" />
     <Compile Include="DataConnection\TableType.cs" />
     <Compile Include="Data\DataSourceImportOptions.cs" />
+    <Compile Include="Data\DataTableMultipleColumnProxy.cs" />
     <Compile Include="Data\DataTableMatrixProxy.cs" />
     <Compile Include="Data\Extensions\DatabaseCommands.cs" />
     <Compile Include="Data\Extensions\DataTableToMatrixConverter.cs" />
+    <Compile Include="Data\Extensions\ExpandCyclingVariableColumnDataSource.cs" />
     <Compile Include="Data\Extensions\MatrixToDataTableConverter.cs" />
     <Compile Include="Data\IAltaxoTableDataSource.cs" />
     <Compile Include="Data\IROTableDataSource.cs" />
@@ -268,6 +270,9 @@
     <Compile Include="Gui\DataConnection\QueryDesignerController.cs" />
     <Compile Include="Gui\DataConnection\QueryPropertiesController.cs" />
     <Compile Include="Gui\Data\DataSourceImportOptionsController.cs" />
+    <Compile Include="Gui\Data\ExpandCyclingVariableDataController.cs" />
+    <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
+    <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\EmbeddedObjectRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />

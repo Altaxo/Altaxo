@@ -163,6 +163,23 @@ namespace Altaxo.Main
 			return result;
 		}
 
+		/// <summary>
+		/// Gets the last part, which is often the name of the object.
+		/// </summary>
+		/// <value>
+		/// The last part.
+		/// </value>
+		public string LastPart
+		{
+			get
+			{
+				if (0 == Count)
+					throw new InvalidOperationException("DocumentPath is empty");
+
+				return this[Count - 1];
+			}
+		}
+
 		/// <summary>Replaces the last part of the <see cref="DocumentPath"/>, which is often the name of the object.</summary>
 		/// <param name="lastPart">The new last part of the <see cref="DocumentPath"/>.</param>
 		public void ReplaceLastPart(string lastPart)

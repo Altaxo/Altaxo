@@ -86,7 +86,6 @@ namespace Altaxo.Gui.Worksheet
 
 		private void EhRemoveFileName(object sender, RoutedEventArgs e)
 		{
-			_guiFileNames.SelectedItem = ((Button)sender).DataContext;
 			GuiHelper.SynchronizeSelectionFromGui(_guiFileNames);
 			var ev = DeleteSelectedFileName;
 			if (null != ev)

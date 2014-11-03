@@ -173,8 +173,10 @@ namespace Altaxo.Gui.Data
 			_view.SelectedColumnKindChanged -= EhSelectedColumnKindChanged;
 			_view.UseSelectedItemAsXColumn -= EhUseSelectedItemAsXColumn;
 			_view.UseSelectedItemAsYColumn -= EhUseSelectedItemAsYColumn;
+			_view.UseSelectedItemAsVColumns -= EhUseSelectedItemAsVColumns;
 			_view.ClearXColumn -= EhClearXColumn;
 			_view.ClearYColumn -= EhClearYColumn;
+			_view.ClearVColumns -= EhClearVColumns;
 
 			base.DetachView();
 		}

@@ -430,7 +430,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
-			ctrl.DataTable.ShowExpandCyclingVariableColumnDialog(ctrl.SelectedDataColumns);
+			ctrl.DataTable.ShowExpandCyclingVariableColumnDialog(ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
 		}
 	}
 
