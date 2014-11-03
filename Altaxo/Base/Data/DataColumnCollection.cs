@@ -751,7 +751,7 @@ namespace Altaxo.Data
 			// release all owned Data columns
 			this._columnsByName.Clear();
 
-			for (int i = 0; i < _columnsByNumber.Count; i++)
+			for (int i = _columnsByNumber.Count - 1; i >= 0; --i) // iterate downwards, because the dispose action can trigger the column to be removed from the collection
 				this[i].Dispose();
 
 			_columnsByNumber.Clear();
