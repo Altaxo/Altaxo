@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation"
 						 xmlns:loc="clr-namespace:Altaxo.Gui.Pads.ProjectBrowser"
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -28,6 +29,7 @@
 				<Setter Property="Padding" Value="0,0,32,0" />
 			</Style.Setters>
 		</Style>
+		<loc:IndexToImageConverter x:Key="IndexToImageConverter" />
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -39,6 +41,27 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<TreeView Grid.Row="0" Name="_treeView" TreeViewItem.Selected="EhTreeNodeAfterSelect">
+			<ItemsControl.ItemContainerStyle>
+				<Style TargetType="{x:Type TreeViewItem}">
+					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+					<Setter Property="ContextMenu" Value="{Binding ContextMenu}" />
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsSelected}" Value="True">
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ItemsControl.ItemContainerStyle>
+
+			<ItemsControl.Resources>
+				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+					<StackPanel Orientation="Horizontal">
+						<Image Width="16" Height="16" Margin="0,0,2,0" Source="{Binding ImageIndex, Converter={StaticResource IndexToImageConverter}}" />
+						<axogc:TextBlockForEditing Grid.Column="1" Text="{Binding Path=Text}" IsEditingEnabled="{Binding IsRenamingEnabled}" TextBoxValidationRule="{Binding Path=RenamingValidationFunction, Converter={StaticResource FuncToValidationConverter}}" TextBoxStyle="{StaticResource editTextBoxStyle}" />
+					</StackPanel>
+				</HierarchicalDataTemplate>
+			</ItemsControl.Resources>
 		</TreeView>
 		<GridSplitter Grid.Row ="1" Background="Blue" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="true" ResizeDirection="Rows" />
 		<Grid Grid.Row="2" VerticalAlignment="Top" Height="18">
@@ -86,7 +109,7 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
-						<Image Grid.Column="0"  Source="{Binding Path=ImageSource}" />
+						<Image Grid.Column="0"  Source="{Binding Path=ImageIndex, Converter={StaticResource IndexToImageConverter}}" />
 						<axogc:TextBlockForEditing Grid.Column="1" Margin="4,0" Text="{Binding Path=Text}"  TextBoxValidationRule="{Binding Path=RenamingValidationFunction, Converter={StaticResource FuncToValidationConverter}}" TextBoxStyle="{StaticResource editTextBoxStyle}" />
 					</Grid>
 				</DataTemplate>

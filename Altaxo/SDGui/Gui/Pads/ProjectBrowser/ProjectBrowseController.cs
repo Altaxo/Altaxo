@@ -229,7 +229,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			var subfolders = _doc.Folders.GetSubfoldersAsStringList(dir, false);
 			foreach (var subfolder in subfolders)
 			{
-				var subnode = new NGBrowserTreeNode(GetDisplayNameOfFolder(subfolder))
+				var subnode = new NGProjectFolderTreeNode(GetDisplayNameOfFolder(subfolder))
 				{
 					Image = ProjectBrowseItemImage.OpenFolder,
 					Tag = subfolder,
@@ -277,7 +277,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					{
 						string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 						var parNode = _directoryNodesByName[parDir];
-						var curNode = new NGBrowserTreeNode(GetDisplayNameOfFolder(dir))
+						var curNode = new NGProjectFolderTreeNode(GetDisplayNameOfFolder(dir))
 						{
 							Image = ProjectBrowseItemImage.OpenFolder,
 							Tag = dir,

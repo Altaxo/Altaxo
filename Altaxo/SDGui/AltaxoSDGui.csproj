@@ -208,6 +208,7 @@
     <Compile Include="Com\OleObjectBase.cs" />
     <Compile Include="Com\RegistryHelper.cs" />
     <Compile Include="Com\RunningObjectTableHelper.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\IndexToImageConverter.cs" />
     <Compile Include="Main\MenuCommands\EmbeddedObjectModeEvaluator.cs" />
     <Compile Include="Main\MenuCommands\TableDataSourcePresentCondition.cs" />
     <Compile Include="UnmanagedApi\Advapi32\Advapi32Func.cs" />
@@ -263,7 +264,6 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseController.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowserExtensions.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\TreeItemCommands.cs" />
-    <Compile Include="Gui\Pads\ProjectBrowser\GuiTreeNodes.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml.cs">
       <DependentUpon>ProjectBrowseControl.xaml</DependentUpon>
     </Compile>

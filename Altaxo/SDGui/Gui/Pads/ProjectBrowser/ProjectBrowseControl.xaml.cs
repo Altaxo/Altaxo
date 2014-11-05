@@ -56,14 +56,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			_controller = new ProjectBrowseController();
 
-			WpfBrowserTreeNode.Images.Clear();
-			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Desktop"));
-			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.ClosedFolderBitmap"));
-			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.OpenFolderBitmap"));
-			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"));
-			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"));
-			WpfBrowserTreeNode.Images.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"));
-
 			ContextMenu mnu1 = MenuService.CreateContextMenu(this._controller, "/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu");
 			_listView.ContextMenu = mnu1;
 
@@ -79,8 +71,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			if (null != _controller)
 			{
-				TreeViewItem src = (TreeViewItem)e.OriginalSource;
-				_controller.EhTreeNodeAfterSelect((NGBrowserTreeNode)src.Tag);
+				_controller.EhTreeNodeAfterSelect((NGBrowserTreeNode)_treeView.SelectedValue);
 			}
 		}
 
@@ -106,23 +97,18 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		public void InitializeTree(Collections.NGTreeNode root)
 		{
-			_treeView.Items.Clear();
-			WpfRootNode guiRoot = new WpfRootNode(root, _treeView.Items);
-			// expand and select the first node
-			var firstNode = (TreeViewItem)_treeView.Items[0];
+			root.Nodes[0].IsExpanded = true;
+			root.Nodes[0].IsSelected = true;
 
-			firstNode.IsExpanded = true;
-			firstNode.IsSelected = true;
+			_treeView.ItemsSource = root.Nodes;
 		}
 
 		public void SilentSelectTreeNode(Collections.NGTreeNode node)
 		{
-			TreeViewItem tnode = (TreeViewItem)node.GuiTag;
-
 			// Trick to silently select the node: disable the controller temporarily
 			var helper = _controller;
 			_controller = null;
-			tnode.IsSelected = true;
+			node.IsSelected = true;
 			_controller = helper;
 		}
 

@@ -86,7 +86,7 @@ namespace Altaxo.Collections
 		/// <param name="text">Text for the tree node.</param>
 		public NGTreeNode(string text)
 		{
-			Text = text;
+			_text = text;
 		}
 
 		/// <summary>
@@ -96,7 +96,7 @@ namespace Altaxo.Collections
 		/// <param name="nodes">Array of child nodes.</param>
 		public NGTreeNode(string text, NGTreeNode[] nodes)
 		{
-			Text = text;
+			_text = text;
 			Nodes.AddRange(nodes);
 		}
 
@@ -167,7 +167,7 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Text a Gui node can display.
 		/// </summary>
-		public string Text
+		public virtual string Text
 		{
 			get
 			{

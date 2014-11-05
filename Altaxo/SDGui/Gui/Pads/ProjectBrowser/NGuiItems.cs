@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			get { return (int)Image; }
 		}
 
-		public object ContextMenu;
+		public object ContextMenu { get; set; }
 
 		public void SetContextMenuRecursively(object contextMenu)
 		{
@@ -61,6 +61,94 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			foreach (NGBrowserTreeNode node in Nodes)
 				node.SetContextMenuRecursively(contextMenu);
 		}
+
+		public virtual bool IsRenamingEnabled { get { return false; } }
+
+		/// <summary>
+		/// Bind the validation to this property and use a <see cref="Altaxo.Gui.Common.ConverterStringFuncToValidationRule"/> converter to convert it into a validation rule.
+		/// </summary>
+		/// <value>
+		/// The renaming validation function.
+		/// </value>
+		public Func<object, System.Globalization.CultureInfo, string> RenamingValidationFunction
+		{
+			get
+			{
+				return ValidateRenaming;
+			}
+		}
+
+		protected virtual string ValidateRenaming(object obj, System.Globalization.CultureInfo info)
+		{
+			return "Item renaming not supported!";
+		}
+	}
+
+	public class NGProjectFolderTreeNode : NGBrowserTreeNode
+	{
+		public NGProjectFolderTreeNode(string txt)
+			: base(txt)
+		{
+		}
+
+		public override string Text
+		{
+			get
+			{
+				return base.Text;
+			}
+			set
+			{
+				if (TryRenaming(value))
+					base.Text = value;
+			}
+		}
+
+		#region Renaming
+
+		public virtual bool IsRenamingEnabled { get { return true; } }
+
+		protected override string ValidateRenaming(object obj, System.Globalization.CultureInfo info)
+		{
+			string newShortName = (string)obj;
+
+			var oldFolderFullName = Tag as string; // Full name with trailing directory separator char
+			if (null == oldFolderFullName)
+				return "Item renaming not supported!";
+
+			return null;
+		}
+
+		/// <summary>
+		/// Try renaming the item. Returns <c>true</c> if the renaming was successful.
+		/// </summary>
+		/// <param name="name">The new name.</param>
+		/// <returns></returns>
+		private bool TryRenaming(string name)
+		{
+			string newShortName = name;
+			var oldFolderFullName = Tag as string;
+
+			string oldParentFolder, oldLastPart;
+
+			Altaxo.Main.ProjectFolder.SplitFolderIntoParentFolderAndLastFolderPart(oldFolderFullName, out oldParentFolder, out oldLastPart);
+
+			string newFolderFullName = oldParentFolder + newShortName + Altaxo.Main.ProjectFolder.DirectorySeparatorString;
+
+			if (!Current.Project.Folders.CanRenameFolder(oldFolderFullName, newFolderFullName))
+			{
+				if (false == Current.Gui.YesNoMessageBox(
+					"Some of the new item names conflict with existing items. Those items will be renamed with " +
+					"a generated name based on the old name. Do you want to continue?", "Attention", false))
+					return false;
+			}
+
+			Current.Project.Folders.RenameFolder(oldFolderFullName, newFolderFullName);
+
+			return true;
+		}
+
+		#endregion Renaming
 	}
 
 	public class BrowserListItem : SelectableListNode
@@ -86,7 +174,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		public System.Windows.Media.ImageSource ImageSource { get { return WpfBrowserTreeNode.Images[ImageIndex]; } }
+		//public System.Windows.Media.ImageSource ImageSource { get { return WpfBrowserTreeNode.Images[ImageIndex]; } }
 
 		public DateTime CreationDate
 		{

@@ -71,6 +71,12 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		private static Dictionary<Type, ItemsControlInfo> _itemsControlTypeToControlInfo;
 
+		/// <summary>
+		/// The types of item controls that are also items, and thus are not the 'final' items control of all the items. As for now, the <see cref="TreeViewItem"/> is such a type,
+		/// but other types could be added.
+		/// </summary>
+		private static HashSet<System.Type> _itemsControlTypesToSkipOver;
+
 		#endregion Static variables
 
 		#region Member variables
@@ -111,6 +117,10 @@ namespace Altaxo.Gui.Common
 
 			_itemsControlTypeToControlInfo.Add(typeof(ListBox), new ItemsControlInfo { TypeOfItem = typeof(ListBoxItem), IsItemSelected = (x => ((ListBoxItem)x).IsSelected), SelectionCount = (x => ((ListBox)x).SelectedItems.Count) });
 			_itemsControlTypeToControlInfo.Add(typeof(ListView), new ItemsControlInfo { TypeOfItem = typeof(ListViewItem), IsItemSelected = (x => ((ListViewItem)x).IsSelected), SelectionCount = (x => ((ListView)x).SelectedItems.Count) });
+			_itemsControlTypeToControlInfo.Add(typeof(TreeView), new ItemsControlInfo { TypeOfItem = typeof(TreeViewItem), IsItemSelected = (x => ((TreeViewItem)x).IsSelected), SelectionCount = (x => 1) });
+
+			_itemsControlTypesToSkipOver = new HashSet<Type>();
+			_itemsControlTypesToSkipOver.Add(typeof(TreeViewItem));
 
 			TextBlockForEditing.TextProperty.OverrideMetadata(typeof(TextBlockForEditing), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 		}
@@ -145,6 +155,19 @@ namespace Altaxo.Gui.Common
 			_itemsControlTypeToControlInfo[itemsControlType] = new ItemsControlInfo { TypeOfItem = itemType, IsItemSelected = IsItemSelected, SelectionCount = SelectionCount };
 		}
 
+		/// <summary>
+		/// Registers a type of <see cref="ItemsControl"/> that are also items, and thus are not the 'final' items control of all the items. For example, the <see cref="TreeViewItem"/> is such a type (this type is pre-registered).
+		/// </summary>
+		/// <param name="itemsControlType">Type of the items control to skip over.</param>
+		/// <exception cref="System.ArgumentNullException">itemsControlType</exception>
+		public static void RegisterItemsControlTypeToSkipOver(Type itemsControlType)
+		{
+			if (null == itemsControlType)
+				throw new ArgumentNullException("itemsControlType");
+
+			_itemsControlTypesToSkipOver.Add(itemsControlType);
+		}
+
 		#endregion Static construction
 
 		#region Construction
@@ -162,8 +185,15 @@ namespace Altaxo.Gui.Common
 			if (isInDesignMode)
 				return;
 
-			_itemsControl = GetDependencyObjectFromVisualTree(this, typeof(ItemsControl)) as ItemsControl;
-			Debug.Assert(_itemsControl != null, "Underlying ItemsControl not found");
+			DependencyObject parent = this;
+			for (; ; )
+			{
+				_itemsControl = GetDependencyObjectFromVisualTree(parent, typeof(ItemsControl)) as ItemsControl;
+				Debug.Assert(_itemsControl != null, "Underlying ItemsControl not found");
+				if (!_itemsControlTypesToSkipOver.Contains(_itemsControl.GetType()))
+					break;
+				parent = VisualTreeHelper.GetParent(_itemsControl);
+			}
 
 			Type typeOfItemsControl = _itemsControl.GetType();
 			// make sure that the type of ItemsControl is registered
@@ -189,7 +219,7 @@ namespace Altaxo.Gui.Common
 										"IsEditing",
 										typeof(bool),
 										typeof(TextBlockForEditing),
-										new FrameworkPropertyMetadata(false));
+										new FrameworkPropertyMetadata(false, EhIsEditingChanged, EhIsEditingCoerce));
 
 		/// <summary>
 		/// Returns true if this instance is in editing mode.
@@ -197,22 +227,29 @@ namespace Altaxo.Gui.Common
 		public bool IsEditing
 		{
 			get { return (bool)GetValue(IsEditingProperty); }
-			private set
+			private set { SetValue(IsEditingProperty, value); }
+		}
+
+		private static void EhIsEditingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var thiss = (TextBlockForEditing)d;
+
+			if (false == (bool)e.OldValue && true == (bool)e.NewValue)
 			{
-				var oldValue = IsEditing;
-				SetValue(IsEditingProperty, value);
-
-				if (oldValue == false && value == true)
-				{
-					BeginEditing();
-				}
-				else if (oldValue == true && value == false)
-				{
-					EndEditing();
-				}
-
-				_itemsControl.SetValue(TextBlockForEditing.CurrentItemOpenForEditingProperty, true == value ? this : null);
+				thiss.BeginEditing();
 			}
+			else if (true == (bool)e.OldValue && false == (bool)e.NewValue)
+			{
+				thiss.EndEditing();
+			}
+
+			thiss._itemsControl.SetValue(TextBlockForEditing.CurrentItemOpenForEditingProperty, true == (bool)e.NewValue ? thiss : null);
+		}
+
+		private static object EhIsEditingCoerce(DependencyObject d, object baseValue)
+		{
+			var thiss = (TextBlockForEditing)d;
+			return (bool)baseValue && thiss.IsEditingEnabled;
 		}
 
 		/// <summary>
@@ -264,6 +301,29 @@ namespace Altaxo.Gui.Common
 		}
 
 		#endregion IsEditing
+
+		#region IsEditingEnabled
+
+		/// <summary>
+		/// IsEditing DependencyProperty, see <see cref="IsEditingEnabled"/>.
+		/// </summary>
+		public static DependencyProperty IsEditingEnabledProperty =
+						DependencyProperty.Register(
+										"IsEditingEnabled",
+										typeof(bool),
+										typeof(TextBlockForEditing),
+										new FrameworkPropertyMetadata(true));
+
+		/// <summary>
+		/// Get/sets the IsEditingEnabled property. If this property is set to true, it is allowed to enter edit mode. If this property is false, editing is not allowed.
+		/// </summary>
+		public bool IsEditingEnabled
+		{
+			get { return (bool)GetValue(IsEditingEnabledProperty); }
+			set { SetValue(IsEditingEnabledProperty, value); }
+		}
+
+		#endregion IsEditingEnabled
 
 		#region TextBoxValidationRule
 
