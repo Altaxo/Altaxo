@@ -316,6 +316,7 @@
     <Content Include="data\templates\project\VB\WebService.xpt" />
     <Content Include="data\templates\project\VB\WPFApplication.xpt" />
     <Content Include="data\templates\project\VB\WPFNavigationApplication.xpt" />
+    <Content Include="doc\Contributions\Gongsolutions.Wpf.DragDrop-License.txt" />
     <Content Include="doc\readme.rtf" />
     <Content Include="data\templates\project\Misc\BlankSolution.xpt" />
     <None Include="HelpConverter.InstallState" />
