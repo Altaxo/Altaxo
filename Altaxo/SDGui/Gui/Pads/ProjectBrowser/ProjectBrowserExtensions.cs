@@ -269,13 +269,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			var list = ctrl.GetSelectedListItems();
 
-			string originalFolderName = null;
-			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
-
+			// if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
 				folderName = null;
 
+			list = ctrl.ExpandItemListToSubfolderItems(list); // Expand the list to get rid of the ProjectFolder items
 			Altaxo.Main.Commands.ProjectItemCommands.CopyItemsToClipboard(list, folderName);
 		}
 

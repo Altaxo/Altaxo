@@ -219,9 +219,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_projectDirectoryRoot.Nodes.Clear();
 
 			CreateDirectoryNode((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
-
-			if (_view != null)
-				((IGuiBrowserTreeNode)_projectDirectoryRoot.GuiTag).OnNodeMultipleChanges();
 		}
 
 		private void CreateDirectoryNode(string dir, NGBrowserTreeNode node)
@@ -285,8 +282,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 						};
 						_directoryNodesByName.Add(dir, curNode);
 						parNode.Nodes.Add(curNode);
-						if (parNode.GuiTag is IGuiBrowserTreeNode)
-							((IGuiBrowserTreeNode)parNode.GuiTag).OnNodeAdded(curNode);
 					}
 					break;
 
@@ -297,8 +292,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 						string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 						var parNode = _directoryNodesByName[parDir];
 						parNode.Nodes.Remove(curNode);
-						if (parNode.GuiTag is IGuiBrowserTreeNode)
-							((IGuiBrowserTreeNode)parNode.GuiTag).OnNodeRemoved(curNode);
 					}
 					break;
 
