@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_allTablesNode = new NGBrowserTreeNode("Tables") { Image = ProjectBrowseItemImage.OpenFolder };
 			_allItemsNode.Nodes.Add(_allTablesNode);
 
-			_projectDirectoryRoot = new NGBrowserTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName };
+			_projectDirectoryRoot = new NGProjectFolderTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName };
 			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 			_allItemsNode.Nodes.Add(_projectDirectoryRoot);
 
@@ -847,5 +847,399 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		#endregion List commands
+
+		#region Drag-Drop support
+
+		private ListViewDragDropDataObject _listViewDataObject;
+
+		/// <summary>
+		/// Indicates that a drag operation from the items list can be started.
+		/// </summary>
+		/// <returns><c>True</c> if a drag operation from the items list can be started; otherwise <c>false</c>.</returns>
+		public bool ItemList_CanStartDrag()
+		{
+			return GetSelectedListItems().Count > 0;
+		}
+
+		/// <summary>
+		/// Indicates that a drag operation from the items list can be started.
+		/// </summary>
+		/// <returns><c>True</c> if a drag operation from the items list can be started; otherwise <c>false</c>.</returns>
+		public bool FolderTree_CanStartDrag()
+		{
+			if (_currentSelectedTreeNode == null)
+				return false;
+
+			if (_currentSelectedTreeNode.Tag is string)
+				return true;
+
+			if (object.ReferenceEquals(_currentSelectedTreeNode, _allItemsNode))
+				return true;
+
+			if (object.ReferenceEquals(_currentSelectedTreeNode, _allGraphsNode))
+				return true;
+
+			if (object.ReferenceEquals(_currentSelectedTreeNode, _allTablesNode))
+				return true;
+
+			return false;
+		}
+
+		/// <summary>
+		/// Starts a drag operation from the items list.
+		/// </summary>
+		/// <param name="dao">On return, this contains the data object used during the drag operation.</param>
+		/// <param name="canCopy">On return, this variable indicates if the drag operation allows a copy operation.</param>
+		/// <param name="canMove">On return, this variable indicates if the drag operation allows a move operation.</param>
+		public void ItemList_StartDrag(out Altaxo.Serialization.IDataObject dao, out bool canCopy, out bool canMove)
+		{
+			canCopy = canMove = false;
+			dao = null;
+
+			var list = GetSelectedListItems();
+
+			if (list.Count == 0)
+			{
+				return;
+			}
+
+			// if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
+			string folderName;
+			if (!IsProjectFolderSelected(out folderName))
+				folderName = null;
+
+			_listViewDataObject = new ListViewDragDropDataObject();
+
+			_listViewDataObject.FolderName = folderName;
+
+			list = ExpandItemListToSubfolderItems(list);
+			_listViewDataObject.ItemList = list;
+
+			dao = _listViewDataObject;
+			canCopy = canMove = true;
+		}
+
+		/// <summary>
+		/// Starts a drag operation from the items list.
+		/// </summary>
+		/// <param name="dao">On return, this contains the data object used during the drag operation.</param>
+		/// <param name="canCopy">On return, this variable indicates if the drag operation allows a copy operation.</param>
+		/// <param name="canMove">On return, this variable indicates if the drag operation allows a move operation.</param>
+		public void FolderTree_StartDrag(out Altaxo.Serialization.IDataObject dao, out bool canCopy, out bool canMove)
+		{
+			canCopy = canMove = false;
+			dao = null;
+
+			if (_currentSelectedTreeNode == null)
+				return;
+
+			_listViewDataObject = new ListViewDragDropDataObject();
+
+			if (_currentSelectedTreeNode.Tag is string)
+			{
+				var folderName = ((string)_currentSelectedTreeNode.Tag);
+				_listViewDataObject.FolderName = folderName;
+				var list = Current.Project.Folders.GetItemsInFolder(folderName);
+				list = ExpandItemListToSubfolderItems(list);
+				_listViewDataObject.ItemList = list;
+			}
+			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allGraphsNode))
+			{
+				_listViewDataObject.ItemList = new List<object>(Current.Project.GraphDocumentCollection);
+			}
+			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allTablesNode))
+			{
+				_listViewDataObject.ItemList = new List<object>(Current.Project.DataTableCollection);
+			}
+			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allItemsNode))
+			{
+				var list = new List<object>();
+				list.AddRange(Current.Project.DataTableCollection);
+				list.AddRange(Current.Project.GraphDocumentCollection);
+				list.Add(Current.Project.ProjectFolderProperties);
+				_listViewDataObject.ItemList = list;
+			}
+			else
+			{
+				return;
+			}
+
+			dao = _listViewDataObject;
+			canCopy = canMove = true;
+		}
+
+		/// <summary>
+		/// Called when the drag is cancelled (i.e. it was not successfull).
+		/// </summary>
+		public void ItemList_DragCancelled()
+		{
+			_listViewDataObject = null;
+		}
+
+		/// <summary>
+		/// Called when the drag is cancelled (i.e. it was not successfull).
+		/// </summary>
+		public void FolderTree_DragCancelled()
+		{
+			_listViewDataObject = null;
+		}
+
+		/// <summary>
+		/// Called when the drag was successfully executed.
+		/// </summary>
+		/// <param name="isCopy">If set to <c>true</c>, the drag-drop was a copy operation.</param>
+		/// <param name="isMove">If set to <c>true</c>, the drag-drop was a move operation.</param>
+		public void ItemList_DragEnded(bool isCopy, bool isMove)
+		{
+			if (isMove && !isCopy && _listViewDataObject != null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
+			{
+				var list = _listViewDataObject.ItemList;
+				ProjectBrowserExtensions.DeleteDocuments(list, false);
+			}
+
+			_listViewDataObject = null;
+		}
+
+		/// <summary>
+		/// Called when the drag was successfully executed.
+		/// </summary>
+		/// <param name="isCopy">If set to <c>true</c>, the drag-drop was a copy operation.</param>
+		/// <param name="isMove">If set to <c>true</c>, the drag-drop was a move operation.</param>
+		public void FolderTree_DragEnded(bool isCopy, bool isMove)
+		{
+			if (isMove && !isCopy && _listViewDataObject != null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
+			{
+				var list = _listViewDataObject.ItemList;
+				ProjectBrowserExtensions.DeleteDocuments(list, false);
+			}
+
+			_listViewDataObject = null;
+		}
+
+		/// <summary>
+		/// Gets the resulting drag-drop operation. It is presumed that the data object in <paramref name="dao"/> is an <see cref="T:Altaxo.Serialization.IDataObject"/>.
+		/// The access to the data object is neccessary in order to determine if the drag is from a foreign application or the own application.
+		/// </summary>
+		/// <param name="dao">The data object used during drag-drop.</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isSameApp">Result, that if it is <c>true</c> indicates that the drag operation was originated in the same application.</param>
+		/// <param name="isCopy">Return value. If true, the resulting operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting operation is a move operation.</param>
+		/// <returns>The drop effect that is used (dependend on same app/foreign app, and the states of shift and ctrl key.</returns>
+		private void GetResultingEffect(Altaxo.Serialization.IDataObject dao, bool isCtrlPressed, bool isShiftPressed, out bool isSameApp, out bool isCopy, out bool isMove)
+		{
+			isCopy = false;
+			isMove = false;
+
+			var sourceAppId = (string)dao.GetData(ListViewDragDropDataObject.Format_ApplicationInstanceGuid);
+			isSameApp = sourceAppId == Current.ApplicationInstanceGuid.ToString();
+
+			if (isCtrlPressed && !isShiftPressed)
+				isCopy = true; // with Ctrl always copy
+			else if (isShiftPressed && !isCtrlPressed)
+				isMove = true;
+			else
+			{
+				if (isSameApp)
+					isMove = true;
+				else
+					isCopy = true;
+			}
+		}
+
+		#region DropCanAcceptData
+
+		/// <summary>
+		/// Tests if the item list can accept data to be dropped here.
+		/// </summary>
+		/// <param name="data">The data used during the drag-drop operation.</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isCopy">Return value. If true, the resulting operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting operation is a move operation.</param>
+		public void ListView_DropCanAcceptData(object data, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
+		{
+			// if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
+			string targetFolder;
+			if (!IsProjectFolderSelected(out targetFolder))
+				targetFolder = null;
+
+			Both_FolderTreeAndItemList_DropCanAcceptData(data, targetFolder, isCtrlPressed, isShiftPressed, out isCopy, out isMove);
+		}
+
+		/// <summary>
+		/// Tests if the item list can accept data to be dropped here.
+		/// </summary>
+		/// <param name="data">The data used during the drag-drop operation.</param>
+		/// <param name="targetItem">The tree node that is currently selected in the folder tree (or is the target of this drop).</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isCopy">Return value. If true, the resulting operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting operation is a move operation.</param>
+		public void FolderTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
+		{
+			string targetFolder;
+			if (targetItem is NGProjectFolderTreeNode)
+			{
+				targetFolder = (string)targetItem.Tag;
+				Both_FolderTreeAndItemList_DropCanAcceptData(data, targetFolder, isCtrlPressed, isShiftPressed, out isCopy, out isMove);
+			}
+			else
+			{
+				isCopy = isMove = false; // we don't allow drops which are not specific to a certain project folder. Otherwise we could drop in the white area of the TreeView, which leads to unintended drops
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Tests if the item list can accept data to be dropped here.
+		/// </summary>
+		/// <param name="data">The data used during the drag-drop operation.</param>
+		/// <param name="targetFolder">The project folder where the drop is currently targeted.</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isCopy">Return value. If true, the resulting operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting operation is a move operation.</param>
+		protected void Both_FolderTreeAndItemList_DropCanAcceptData(object data, string targetFolder, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
+		{
+			isCopy = false;
+			isMove = false;
+
+			var dao = data as Altaxo.Serialization.IDataObject;
+
+			if (null == dao)
+				return;
+
+			if (!dao.GetDataPresent(ListViewDragDropDataObject.Format_ItemList))
+				return;
+
+			if (!dao.GetDataPresent(ListViewDragDropDataObject.Format_ApplicationInstanceGuid))
+				return;
+
+			// we can accept data when
+			// 1. We have different applications
+			// 2. We have the same app but different folders
+
+			bool isSameApp;
+			GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out isSameApp, out isCopy, out isMove);
+
+			if (isSameApp)
+			{
+				string sourceFolder = (string)dao.GetData(ListViewDragDropDataObject.Format_ProjectFolder);
+
+				// drop is not allowed if (target and sourceFolder are null or empty) or (target folder and source folder exist but are the same)
+				if ((string.IsNullOrEmpty(targetFolder) && string.IsNullOrEmpty(sourceFolder)) ||
+						(targetFolder != null && sourceFolder != null && targetFolder == sourceFolder))
+				{
+					isCopy = isMove = false;
+					return;
+				}
+			}
+		}
+
+		#endregion DropCanAcceptData
+
+		#region Drop
+
+		/// <summary>
+		/// Executes a drop operation into the item list.
+		/// </summary>
+		/// <param name="data">The data used during drag-drop.</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isCopy">Return value. If true, the resulting drop operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting drop operation is a move operation.</param>
+		public void ListView_Drop(object data, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
+		{
+			string targetFolder;
+			if (!IsProjectFolderSelected(out targetFolder))
+				targetFolder = null;
+
+			BothFolderTreeAndItemList_Drop(data, targetFolder, isCtrlPressed, isShiftPressed, out isCopy, out isMove);
+		}
+
+		/// <summary>
+		/// Executes a drop operation into the item list.
+		/// </summary>
+		/// <param name="data">The data used during drag-drop.</param>
+		/// <param name="targetItem">The tree node that is currently selected in the folder tree (or is the target of this drop).</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isCopy">Return value. If true, the resulting drop operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting drop operation is a move operation.</param>
+		public void FolderTree_Drop(object data, NGTreeNode targetItem, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
+		{
+			string targetFolder;
+			if (targetItem is NGProjectFolderTreeNode)
+				targetFolder = (string)targetItem.Tag;
+			else
+				targetFolder = ProjectFolder.RootFolderName;
+
+			BothFolderTreeAndItemList_Drop(data, targetFolder, isCtrlPressed, isShiftPressed, out isCopy, out isMove);
+		}
+
+		/// <summary>
+		/// Executes a drop operation into the item list.
+		/// </summary>
+		/// <param name="data">The data used during drag-drop.</param>
+		/// <param name="targetFolder">The Altaxo folder where the new items should be dropped to.</param>
+		/// <param name="isCtrlPressed">Indicates whether the Ctrl-key is pressed.</param>
+		/// <param name="isShiftPressed">Indicates whether the Shift-key is pressed.</param>
+		/// <param name="isCopy">Return value. If true, the resulting drop operation is a copy operation.</param>
+		/// <param name="isMove">Return value. If true, the resulting drop operation is a move operation.</param>
+		public void BothFolderTreeAndItemList_Drop(object data, string targetFolder, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
+		{
+			isCopy = isMove = false;
+			var dao = data as Altaxo.Serialization.IDataObject;
+
+			if (dao != null)
+			{
+				bool isSameApp;
+				GetResultingEffect(dao, isCtrlPressed, isShiftPressed, out isSameApp, out isCopy, out isMove);
+
+				if (isSameApp && dao.GetDataPresent(ListViewDragDropDataObject.Format_ItemReferenceList))
+				{
+					// if we copy or move inside the same application, we deserialize only references to the items
+					var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemReferenceList);
+					var items = Altaxo.Serialization.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
+					var projectItems = new List<object>(items.ProjectItems.Select(x => ((Altaxo.Main.DocNodeProxy)x).DocumentObject).Where(x => x != null));
+
+					if (isMove && !isCopy)
+					{
+						Current.Project.Folders.MoveItemsToFolder(projectItems, targetFolder);
+					}
+					else
+					{
+						DocNodePathReplacementOptions relocateOptions = null;
+						if (items.BaseFolder != null) // if items are from the same folder, the basefolder is set to a non-null value
+						{
+							var relocateData = Current.Gui.YesNoCancelMessageBox("Do you want to relocate the references in the copied plots so that they point to the destination folder?", "Question", null);
+							if (null == relocateData)
+								return;
+
+							if (true == relocateData)
+							{
+								relocateOptions = new DocNodePathReplacementOptions();
+								AltaxoDocument.AddRelocationDataForTables(relocateOptions, items.BaseFolder, targetFolder);
+							}
+						}
+
+						Current.Project.Folders.CopyItemsToFolder(projectItems, targetFolder, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null);
+					}
+				}
+				else
+				{
+					// we have to deserialize the full items
+					var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemList);
+					var items = Altaxo.Serialization.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
+					Altaxo.Main.Commands.ProjectItemCommands.PasteItems(targetFolder, items);
+				}
+			}
+		}
+
+		#endregion Drop
+
+		#endregion Drag-Drop support
 	}
 }

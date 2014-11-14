@@ -53,7 +53,7 @@ namespace Altaxo.Main.Commands
 		/// <para>
 		/// </para>
 		/// </remarks>
-		private class ProjectItemClipboardList
+		public class ProjectItemClipboardList
 		{
 			/// <summary>Folder from which the items are copied.</summary>
 			public string BaseFolder { get; set; }
@@ -143,7 +143,11 @@ namespace Altaxo.Main.Commands
 		public static void PasteItemsFromClipboard(string baseFolder)
 		{
 			var list = Altaxo.Serialization.ClipboardSerialization.GetObjectFromClipboard<ProjectItemClipboardList>(ClipboardFormat_ListOfProjectItems);
+			PasteItems(baseFolder, list);
+		}
 
+		public static void PasteItems(string baseFolder, ProjectItemClipboardList list)
+		{
 			// Dictionary wich has as key the type of project item and as value a dictionary with the old names and with the relocated names.
 			var renameDictionary = new Dictionary<System.Type, Dictionary<string, string>>();
 			renameDictionary.Add(typeof(Altaxo.Data.DataTable), new Dictionary<string, string>());

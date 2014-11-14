@@ -380,6 +380,7 @@
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiImportDataSource.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
+    <Compile Include="Serialization\IDataObject.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
     <Compile Include="Worksheet\Commands\Analysis\FourierTransformation2DDataSource.cs" />

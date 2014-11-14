@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using GongSolutions.Wpf.DragDrop;
 using ICSharpCode.Core;
 using ICSharpCode.Core.Presentation;
 using System;
@@ -359,5 +360,61 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (!_listView.IsKeyboardFocusWithin)
 				_listView.Focus();
 		}
+
+		#region ListView Drag drop support
+
+		private IDragSource _listViewDragHandler;
+
+		public IDragSource ListViewDragHandler
+		{
+			get
+			{
+				if (null == _listViewDragHandler)
+					_listViewDragHandler = new ListView_DragHandler(this);
+				return _listViewDragHandler;
+			}
+		}
+
+		private IDropTarget _listViewDropHandler;
+
+		public IDropTarget ListViewDropHandler
+		{
+			get
+			{
+				if (null == _listViewDropHandler)
+					_listViewDropHandler = new ListView_DropHandler(this);
+				return _listViewDropHandler;
+			}
+		}
+
+		#endregion ListView Drag drop support
+
+		#region TreeView Drag drop support
+
+		private IDragSource _treeViewDragHandler;
+
+		public IDragSource TreeViewDragHandler
+		{
+			get
+			{
+				if (null == _treeViewDragHandler)
+					_treeViewDragHandler = new TreeView_DragHandler(this);
+				return _treeViewDragHandler;
+			}
+		}
+
+		private IDropTarget _treeViewDropHandler;
+
+		public IDropTarget TreeViewDropHandler
+		{
+			get
+			{
+				if (null == _treeViewDropHandler)
+					_treeViewDropHandler = new TreeView_DropHandler(this);
+				return _treeViewDropHandler;
+			}
+		}
+
+		#endregion TreeView Drag drop support
 	}
 }

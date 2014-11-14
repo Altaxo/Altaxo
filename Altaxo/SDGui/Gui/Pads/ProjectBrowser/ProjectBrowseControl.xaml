@@ -6,6 +6,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation"
 						 xmlns:loc="clr-namespace:Altaxo.Gui.Pads.ProjectBrowser"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=AltaxoBase.Presentation"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -40,7 +41,9 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<TreeView Grid.Row="0" Name="_treeView" TreeViewItem.Selected="EhTreeNodeAfterSelect">
+		<TreeView Grid.Row="0" Name="_treeView" TreeViewItem.Selected="EhTreeNodeAfterSelect"
+							dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding TreeViewDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+							dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding TreeViewDropHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -94,7 +97,12 @@
 				</Path>
 			</Button>
 		</Grid>
-		<ListView Grid.Row="2" Margin="0,18,0,0" Name="_listView" SelectionChanged="EhListViewSelectionChanged" MouseDoubleClick="EhListViewItemDoubleClick" PreviewMouseDown="EhListViewPreviewMouseDown">
+		<ListView Grid.Row="2" Margin="0,18,0,0" Name="_listView"
+							SelectionChanged="EhListViewSelectionChanged"
+							MouseDoubleClick="EhListViewItemDoubleClick"
+							PreviewMouseDown="EhListViewPreviewMouseDown"
+							dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding ListViewDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+							dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ListViewDropHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ListView.CommandBindings>
 				<CommandBinding Command="Delete" CanExecute="EhListViewDeleteCommandCanExecute" Executed="EhListViewDeleteCommandExecuted" />
 				<CommandBinding Command="SelectAll" CanExecute="EhListViewSelectAllCommandCanExecute" Executed="EhListViewSelectAllCommandExecuted" />

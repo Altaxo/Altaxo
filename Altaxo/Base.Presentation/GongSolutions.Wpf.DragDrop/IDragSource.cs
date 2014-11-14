@@ -36,9 +36,10 @@ namespace GongSolutions.Wpf.DragDrop
 		/// </summary>
 		///
 		/// <param name="dropInfo">
-		///   Information about the drop.
+		///   Information about the drop. Is <c>null</c> if the drop occured in another app.
 		/// </param>
-		void Dropped(IDropInfo dropInfo);
+		/// <param name="effects">The operation (Copy, paste, etc.) with which the drop was executed.</param>
+		void Dropped(IDropInfo dropInfo, DragDropEffects effects); // ModifiedByLellid
 
 		/// <summary>
 		/// Notifies the drag handler that a drag has been aborted.

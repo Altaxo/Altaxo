@@ -56,8 +56,21 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="list">List of items to delete.</param>
 		public static void DeleteDocuments(IList<object> list)
 		{
-			if (false == Current.Gui.YesNoMessageBox(string.Format("Are you sure to delete {0} items?", list.Count), "Attention!", false))
-				return;
+			DeleteDocuments(list, true);
+		}
+
+		/// <summary>
+		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
+		/// </summary>
+		/// <param name="list">List of items to delete.</param>
+		/// <param name="showConfirmationDialog">If <c>true</c>, shows the confirmation dialog to confirm that the items should really be deleted.</param>
+		public static void DeleteDocuments(IList<object> list, bool showConfirmationDialog)
+		{
+			if (showConfirmationDialog)
+			{
+				if (false == Current.Gui.YesNoMessageBox(string.Format("Are you sure to delete {0} items?", list.Count), "Attention!", false))
+					return;
+			}
 
 			foreach (object item in list)
 			{
@@ -97,7 +110,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		private const string rootFolderDisplayName = "<<<root folder>>>";
 
 		/// <summary>
-		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
+		/// Move the items given in the list (tables and graphs) to a new location. The new location is ask for in a dialog.
 		/// </summary>
 		/// <param name="list">List of items to move.</param>
 		public static void MoveDocuments(IList<object> list)

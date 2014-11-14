@@ -874,6 +874,7 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\ItemsControlExtensions.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\TypeUtilities.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
+    <Compile Include="Gui\DataObjectAdapter.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceControl.xaml.cs">
       <DependentUpon>RealFourierTransformation2DDataSourceControl.xaml</DependentUpon>
     </Compile>

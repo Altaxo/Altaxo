@@ -209,6 +209,11 @@
     <Compile Include="Com\RegistryHelper.cs" />
     <Compile Include="Com\RunningObjectTableHelper.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\IndexToImageConverter.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListViewDragDropDataObject.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\TreeView_DragHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListView_DragHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\TreeView_DropHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListView_DropHandler.cs" />
     <Compile Include="Main\MenuCommands\EmbeddedObjectModeEvaluator.cs" />
     <Compile Include="Main\MenuCommands\TableDataSourcePresentCondition.cs" />
     <Compile Include="UnmanagedApi\Advapi32\Advapi32Func.cs" />

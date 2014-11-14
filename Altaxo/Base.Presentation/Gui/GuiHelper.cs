@@ -453,5 +453,33 @@ namespace Altaxo.Gui
 		}
 
 		#endregion Logical tree
+
+		#region Drag-Drop
+
+		public static DragDropEffects ConvertCopyMoveToDragDropEffect(bool copy, bool move)
+		{
+			var result = DragDropEffects.None;
+			if (copy) result |= DragDropEffects.Copy;
+			if (move) result |= DragDropEffects.Move;
+			return result;
+		}
+
+		public static void ConvertDragDropEffectToCopyMove(DragDropEffects effects, out bool copy, out bool move)
+		{
+			copy = effects.HasFlag(DragDropEffects.Copy);
+			move = effects.HasFlag(DragDropEffects.Move);
+		}
+
+		public static System.Windows.IDataObject ToWpf(Altaxo.Serialization.IDataObject dao)
+		{
+			return DataObjectAdapterAltaxoToWpf.FromAltaxoDataObject(dao);
+		}
+
+		public static Altaxo.Serialization.IDataObject ToAltaxo(System.Windows.IDataObject dao)
+		{
+			return DataObjectAdapterWpfToAltaxo.FromWpfDataObject(dao);
+		}
+
+		#endregion Drag-Drop
 	}
 }

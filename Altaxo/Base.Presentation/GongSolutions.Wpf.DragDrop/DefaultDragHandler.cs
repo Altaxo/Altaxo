@@ -29,7 +29,7 @@ namespace GongSolutions.Wpf.DragDrop
 			return true;
 		}
 
-		public virtual void Dropped(IDropInfo dropInfo)
+		public virtual void Dropped(IDropInfo dropInfo, DragDropEffects effects) // ModifiedByLellid
 		{
 		}
 

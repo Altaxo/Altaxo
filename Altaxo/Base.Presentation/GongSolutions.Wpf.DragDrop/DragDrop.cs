@@ -793,12 +793,15 @@ namespace GongSolutions.Wpf.DragDrop
 								var result = System.Windows.DragDrop.DoDragDrop(m_DragInfo.VisualSource, data, m_DragInfo.Effects);
 								if (result == DragDropEffects.None)
 									dragHandler.DragCancelled();
+								else /* ModifiedByLellid  because dropped should be used to clean up, it is of no interest to have a IDropInfo here. We can provide null, but at least we have a response.*/
+									dragHandler.Dropped(m_DropInfo, result); // ModifiedByLellid   m_DropInfo is null if the drop occured in a foreign app, but at least we have the result as information
 							}
 							finally
 							{
 								m_DragInProgress = false;
 							}
 
+							m_DropInfo = null; // ModifiedByLellid (added)
 							m_DragInfo = null;
 						}
 					}
@@ -948,10 +951,13 @@ namespace GongSolutions.Wpf.DragDrop
 			DropTargetAdorner = null;
 
 			dropHandler.Drop(dropInfo);
-			dragHandler.Dropped(dropInfo);
+			m_DropInfo = dropInfo; //ModifiedByLellid to delay the call to dragHandler.Dropped, but store the DropInfo
+			// dragHandler.Dropped(dropInfo); // ModifiedByLellid
 
 			Mouse.OverrideCursor = null;
 			e.Handled = !dropInfo.NotHandled;
+			if (e.Handled) // ModifiedByLellid --> this is in order that DoDragDrop returns the final drop effect
+				e.Effects = dropInfo.Effects;
 		}
 
 		private static void DropTarget_GiveFeedback(object sender, GiveFeedbackEventArgs e)
@@ -1015,6 +1021,7 @@ namespace GongSolutions.Wpf.DragDrop
 		private static DragAdorner m_DragAdorner;
 		private static DragAdorner m_EffectAdorner;
 		private static DragInfo m_DragInfo;
+		private static DropInfo m_DropInfo; // ModifiedByLellid  --> to delay the call to IDragSource.Dropped
 		private static bool m_DragInProgress;
 		private static DropTargetAdorner m_DropTargetAdorner;
 		private static object m_ClickSupressItem;

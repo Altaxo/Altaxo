@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -38,6 +40,19 @@ namespace Altaxo.Serialization
 		public static void PutObjectToClipboard(string clipBoardFormat, object toSerialize)
 		{
 			var dao = Current.Gui.GetNewClipboardDataObject();
+			var stb = SerializeToStringBuilder(toSerialize);
+			dao.SetData(clipBoardFormat, stb.ToString());
+			Current.Gui.SetClipboardDataObject(dao, true);
+		}
+
+		/// <summary>
+		/// Serializes the provided object <paramref name="toSerialize"/> into a new <see cref="T:System.Text.StringBuilder"/>.
+		/// </summary>
+		/// <param name="toSerialize">The object to serialize.</param>
+		/// <returns>A <see cref="T:System.Text.StringBuilder"/> which contains the serialized object.</returns>
+		/// <remarks>The object is serialized into a root node named 'Object'.</remarks>
+		public static StringBuilder SerializeToStringBuilder(object toSerialize)
+		{
 			var stb = new System.Text.StringBuilder();
 			var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 			info.BeginWriting(stb);
@@ -45,10 +60,8 @@ namespace Altaxo.Serialization
 			info.AddValue("Object", toSerialize);
 
 			info.EndWriting();
-			dao.SetData(clipBoardFormat, stb.ToString());
-			Current.Gui.SetClipboardDataObject(dao, true);
+			return stb;
 		}
-
 
 		/// <summary>Determines whether data in the given clipboard format is available.</summary>
 		/// <param name="clipBoardFormat">The clip board format.</param>
@@ -77,19 +90,30 @@ namespace Altaxo.Serialization
 			string s = (string)dao.GetData(clipBoardFormat);
 			if (!string.IsNullOrEmpty(s))
 			{
-				var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-				info.BeginReading(s);
-				object o = info.GetValue("Object", null);
-				info.EndReading();
+				return DeserializeObjectFromString<T>(s);
+			}
+			else
+			{
+				return default(T);
+			}
+		}
 
-				if ((null!=o) && (o is T))
-				{
-					return (T)o;
-				}
-				else
-				{
-					return default(T);
-				}
+		/// <summary>
+		/// Deserializes an object from a string containing Altaxo's XML format.
+		/// </summary>
+		/// <typeparam name="T">Type of the object that is expected to be deserialized.</typeparam>
+		/// <param name="s">The string containing Altaxo's XML format. Is is expected that the root node is named 'Object'.</param>
+		/// <returns>The deserialized object, or default(T) if either the object was null or had a type that was not the expected type.</returns>
+		public static T DeserializeObjectFromString<T>(string s)
+		{
+			var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+			info.BeginReading(s);
+			object o = info.GetValue("Object", null);
+			info.EndReading();
+
+			if ((null != o) && (o is T))
+			{
+				return (T)o;
 			}
 			else
 			{

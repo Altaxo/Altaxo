@@ -66,6 +66,8 @@ namespace Altaxo
 
 		private static bool sm_theApplicationIsClosing;
 
+		private static Guid _applicationInstanceGuid = Guid.NewGuid();
+
 		/// <summary>
 		/// Gets the main workbench.
 		/// </summary>
@@ -191,6 +193,20 @@ namespace Altaxo
 		{
 			get { return sm_theApplicationIsClosing; }
 			set { sm_theApplicationIsClosing = value; }
+		}
+
+		/// <summary>
+		/// Gets a Guid that uniquely identifies the current application instance.
+		/// </summary>
+		/// <value>
+		/// The application instance unique identifier.
+		/// </value>
+		public static Guid ApplicationInstanceGuid
+		{
+			get
+			{
+				return _applicationInstanceGuid;
+			}
 		}
 
 		/// <summary>
