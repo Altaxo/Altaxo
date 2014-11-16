@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ namespace Altaxo.Graph.Gdi
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
 	public class GraphDocument
 		:
+		IProjectItem,
 		System.ICloneable,
 		IChangedEventSource,
 		Main.IChildChangedEventSink,
@@ -151,6 +152,12 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		[field: NonSerialized]
 		public event Action<Main.INameOwner, string> NameChanged;
+
+		/// <summary>
+		/// Fired for instance if this instance is about to be disposed and is disposed.
+		/// </summary>
+		[field: NonSerialized]
+		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
 		/// <summary>
 		/// Fired before the name of this object is changed.
@@ -865,5 +872,16 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion IPropertyBagOwner
+
+		public void Dispose()
+		{
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
+
+			// Add dispose code for the child elements
+
+			if (null != TunneledEvent)
+				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
+		}
 	} // end of class GraphDocument
 } // end of namespace

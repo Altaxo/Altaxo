@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -891,7 +891,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="dao">On return, this contains the data object used during the drag operation.</param>
 		/// <param name="canCopy">On return, this variable indicates if the drag operation allows a copy operation.</param>
 		/// <param name="canMove">On return, this variable indicates if the drag operation allows a move operation.</param>
-		public void ItemList_StartDrag(out Altaxo.Serialization.IDataObject dao, out bool canCopy, out bool canMove)
+		public void ItemList_StartDrag(out Altaxo.Serialization.Clipboard.IDataObject dao, out bool canCopy, out bool canMove)
 		{
 			canCopy = canMove = false;
 			dao = null;
@@ -925,7 +925,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="dao">On return, this contains the data object used during the drag operation.</param>
 		/// <param name="canCopy">On return, this variable indicates if the drag operation allows a copy operation.</param>
 		/// <param name="canMove">On return, this variable indicates if the drag operation allows a move operation.</param>
-		public void FolderTree_StartDrag(out Altaxo.Serialization.IDataObject dao, out bool canCopy, out bool canMove)
+		public void FolderTree_StartDrag(out Altaxo.Serialization.Clipboard.IDataObject dao, out bool canCopy, out bool canMove)
 		{
 			canCopy = canMove = false;
 			dao = null;
@@ -1027,7 +1027,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="isCopy">Return value. If true, the resulting operation is a copy operation.</param>
 		/// <param name="isMove">Return value. If true, the resulting operation is a move operation.</param>
 		/// <returns>The drop effect that is used (dependend on same app/foreign app, and the states of shift and ctrl key.</returns>
-		private void GetResultingEffect(Altaxo.Serialization.IDataObject dao, bool isCtrlPressed, bool isShiftPressed, out bool isSameApp, out bool isCopy, out bool isMove)
+		private void GetResultingEffect(Altaxo.Serialization.Clipboard.IDataObject dao, bool isCtrlPressed, bool isShiftPressed, out bool isSameApp, out bool isCopy, out bool isMove)
 		{
 			isCopy = false;
 			isMove = false;
@@ -1106,7 +1106,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			isCopy = false;
 			isMove = false;
 
-			var dao = data as Altaxo.Serialization.IDataObject;
+			var dao = data as Altaxo.Serialization.Clipboard.IDataObject;
 
 			if (null == dao)
 				return;
@@ -1191,7 +1191,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public void BothFolderTreeAndItemList_Drop(object data, string targetFolder, bool isCtrlPressed, bool isShiftPressed, out bool isCopy, out bool isMove)
 		{
 			isCopy = isMove = false;
-			var dao = data as Altaxo.Serialization.IDataObject;
+			var dao = data as Altaxo.Serialization.Clipboard.IDataObject;
 
 			if (dao != null)
 			{
@@ -1202,7 +1202,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				{
 					// if we copy or move inside the same application, we deserialize only references to the items
 					var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemReferenceList);
-					var items = Altaxo.Serialization.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
+					var items = Altaxo.Serialization.Clipboard.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
 					var projectItems = new List<object>(items.ProjectItems.Select(x => ((Altaxo.Main.DocNodeProxy)x).DocumentObject).Where(x => x != null));
 
 					if (isMove && !isCopy)
@@ -1221,7 +1221,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 							if (true == relocateData)
 							{
 								relocateOptions = new DocNodePathReplacementOptions();
-								AltaxoDocument.AddRelocationDataForTables(relocateOptions, items.BaseFolder, targetFolder);
+								relocateOptions.AddPathReplacementsForAllProjectItemTypes(items.BaseFolder, targetFolder);
 							}
 						}
 
@@ -1232,7 +1232,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				{
 					// we have to deserialize the full items
 					var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemList);
-					var items = Altaxo.Serialization.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
+					var items = Altaxo.Serialization.Clipboard.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
 					Altaxo.Main.Commands.ProjectItemCommands.PasteItems(targetFolder, items);
 				}
 			}

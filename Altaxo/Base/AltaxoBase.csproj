@@ -338,6 +338,7 @@
     <Compile Include="Gui\Serialization\Ascii\SingleCharSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithoutTabSeparationStrategyController.cs" />
     <Compile Include="Gui\Serialization\Ascii\FixedColumnWidthWithTabSeparationStrategyController.cs" />
+    <Compile Include="Gui\Serialization\Clipboard\ProjectItemsPasteOptionsController.cs" />
     <Compile Include="Gui\Settings\AsciiAnalysisSettingsOptionPanel.cs" />
     <Compile Include="Graph\Procedures\MiniProjectBuilder.cs" />
     <Compile Include="Gui\Settings\ClipboardGraphExportOptionPanel.cs" />
@@ -345,6 +346,7 @@
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DController.cs" />
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
+    <Compile Include="Main\IProjectItem.cs" />
     <Compile Include="Root\DisposableBase.cs" />
     <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\Services\IHighResolutionClock.cs" />
@@ -380,7 +382,8 @@
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiImportDataSource.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
-    <Compile Include="Serialization\IDataObject.cs" />
+    <Compile Include="Serialization\Clipboard\IDataObject.cs" />
+    <Compile Include="Serialization\Clipboard\ProjectItemsPasteOptions.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
     <Compile Include="Worksheet\Commands\Analysis\FourierTransformation2DDataSource.cs" />
@@ -1147,7 +1150,7 @@
     <Compile Include="Serialization\Ascii\AsciiGlobalStructureAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiSeparationStrategy.cs" />
-    <Compile Include="Serialization\ClipboardSerialization.cs" />
+    <Compile Include="Serialization\Clipboard\ClipboardSerialization.cs" />
     <Compile Include="Serialization\Jcamp\ImportJcampFiles.cs" />
     <Compile Include="Serialization\LengthUnit.cs" />
     <Compile Include="Settings\Scripting\ReferencedAssemblies.cs" />

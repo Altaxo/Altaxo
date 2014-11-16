@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public class ListViewDragDropDataObject : Altaxo.Serialization.IDataObject
+	public class ListViewDragDropDataObject : Altaxo.Serialization.Clipboard.IDataObject
 	{
 		public const string Format_ApplicationInstanceGuid = "Altaxo.Current.ApplicationInstanceGuid";
 		public const string Format_ProjectFolder = "Altaxo.Gui.Pads.ProjectBrowser.FolderName";
@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				case Format_ItemList:
 					{
 						var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList(ItemList, FolderName);
-						var stb = Altaxo.Serialization.ClipboardSerialization.SerializeToStringBuilder(items);
+						var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
 						result = stb.ToString();
 						ItemListWasRendered = true;
 					}
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					{
 						var itemReferenceList = new List<object>(ItemList.Select(x => new Altaxo.Main.DocNodeProxy(x)));
 						var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList(itemReferenceList, FolderName);
-						var stb = Altaxo.Serialization.ClipboardSerialization.SerializeToStringBuilder(items);
+						var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
 						result = stb.ToString();
 					}
 					break;

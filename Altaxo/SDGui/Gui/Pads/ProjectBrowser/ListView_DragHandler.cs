@@ -55,14 +55,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
-				Altaxo.Serialization.IDataObject dao;
+				Altaxo.Serialization.Clipboard.IDataObject dao;
 				bool canCopy, canMove;
 				_projectBrowseControl._controller.ItemList_StartDrag(out dao, out canCopy, out canMove);
 
 				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 
 				if (null != dao)
-					dragInfo.Data = GuiHelper.ToWpf(dao);
+					dragInfo.DataObject = GuiHelper.ToWpf(dao);
 			}
 
 			public bool CanStartDrag(IDragInfo dragInfo)

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ namespace Altaxo.Data
 	public class DataTable
 		:
 		System.Runtime.Serialization.IDeserializationCallback,
+		Main.IProjectItem,
 		ICloneable,
 		Altaxo.Main.IDocumentNode,
 		Main.IEventIndicatedDisposable,
@@ -1522,11 +1523,16 @@ namespace Altaxo.Data
 
 		#endregion IPropertyBagOwner
 
-		internal void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
+		/// <summary>
+		/// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
+		/// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
+		/// </summary>
+		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
+		public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)
 		{
 			if (this._tableDataSource != null)
 			{
-				this._tableDataSource.VisitDocumentReferences(ReportProxies);
+				this._tableDataSource.VisitDocumentReferences(ProxyProcessing);
 			}
 		}
 	} // end class Altaxo.Data.DataTable

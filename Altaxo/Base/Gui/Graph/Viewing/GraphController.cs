@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Main;
-	using Altaxo.Serialization;
+	using Altaxo.Serialization.Clipboard;
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
 	public abstract class GraphController : IGraphController, IGraphViewEventSink, IDisposable

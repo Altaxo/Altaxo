@@ -22,12 +22,8 @@
 
 #endregion Copyright
 
-using GongSolutions.Wpf.DragDrop;
-using ICSharpCode.Core;
-using ICSharpCode.Core.Presentation;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -40,47 +36,39 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Pads.ProjectBrowser
+namespace Altaxo.Gui.Serialization.Clipboard
 {
-	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView, ICSharpCode.SharpDevelop.Gui.IPadContent
+	/// <summary>
+	/// Interaction logic for ProjectItemsPasteOptionsControl.xaml
+	/// </summary>
+	public partial class ProjectItemsPasteOptionsControl : UserControl, IProjectItemsPasteOptionsView
 	{
-		public class TreeView_DragHandler : IDragSource
+		public ProjectItemsPasteOptionsControl()
 		{
-			private ProjectBrowseControl _projectBrowseControl;
+			InitializeComponent();
+		}
 
-			public TreeView_DragHandler(ProjectBrowseControl ctrl)
+		public bool RelocateReferences
+		{
+			get
 			{
-				_projectBrowseControl = ctrl;
+				return _guiRelocateReferences.IsChecked == true;
 			}
-
-			public void StartDrag(IDragInfo dragInfo)
+			set
 			{
-				Altaxo.Serialization.Clipboard.IDataObject dao;
-				bool canCopy, canMove;
-				_projectBrowseControl._controller.FolderTree_StartDrag(out dao, out canCopy, out canMove);
-
-				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
-
-				if (null != dao)
-					dragInfo.DataObject = GuiHelper.ToWpf(dao);
+				_guiRelocateReferences.IsChecked = value;
 			}
+		}
 
-			public bool CanStartDrag(IDragInfo dragInfo)
+		public bool TryToKeepInternalReferences
+		{
+			get
 			{
-				return _projectBrowseControl._controller.FolderTree_CanStartDrag();
+				return _guiTryToKeepInternalReferences.IsChecked == true;
 			}
-
-			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
+			set
 			{
-				bool isCopy, isMove;
-				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
-
-				_projectBrowseControl._controller.FolderTree_DragEnded(isCopy, isMove);
-			}
-
-			public void DragCancelled()
-			{
-				_projectBrowseControl._controller.FolderTree_DragCancelled();
+				_guiTryToKeepInternalReferences.IsChecked = value;
 			}
 		}
 	}

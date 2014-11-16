@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ namespace Altaxo.Main.Properties
 	/// </summary>
 	public class ProjectFolderPropertyDocument
 		:
+		IProjectItem,
 		IPropertyBagOwner,
 		Altaxo.Main.IDocumentNode,
 		Main.IEventIndicatedDisposable,
@@ -277,6 +278,16 @@ namespace Altaxo.Main.Properties
 
 			if (null != TunneledEvent)
 				TunneledEvent(this, null, DisposeEventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
+		/// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
+		/// </summary>
+		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
+		public void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing)
+		{
+			// currently there is nothing to do here
 		}
 	}
 }

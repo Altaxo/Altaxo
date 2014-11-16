@@ -470,12 +470,12 @@ namespace Altaxo.Gui
 			move = effects.HasFlag(DragDropEffects.Move);
 		}
 
-		public static System.Windows.IDataObject ToWpf(Altaxo.Serialization.IDataObject dao)
+		public static System.Windows.IDataObject ToWpf(Altaxo.Serialization.Clipboard.IDataObject dao)
 		{
 			return DataObjectAdapterAltaxoToWpf.FromAltaxoDataObject(dao);
 		}
 
-		public static Altaxo.Serialization.IDataObject ToAltaxo(System.Windows.IDataObject dao)
+		public static Altaxo.Serialization.Clipboard.IDataObject ToAltaxo(System.Windows.IDataObject dao)
 		{
 			return DataObjectAdapterWpfToAltaxo.FromWpfDataObject(dao);
 		}

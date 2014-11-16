@@ -35,7 +35,7 @@ namespace Altaxo.Gui
 	[System.Runtime.InteropServices.ComVisible(true)]
 	public class DataObjectAdapterAltaxoToWpf : System.Windows.IDataObject
 	{
-		private Altaxo.Serialization.IDataObject o;
+		private Altaxo.Serialization.Clipboard.IDataObject o;
 
 		/// <summary>
 		/// Returns a Wpf data object from an Altaxo data object. If the Altaxo data object is just an adapter from a Wpf data object,
@@ -44,7 +44,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		/// <param name="altaxoDataObject">The Altaxo data object.</param>
 		/// <returns>A Wpf data object.</returns>
-		public static System.Windows.IDataObject FromAltaxoDataObject(Altaxo.Serialization.IDataObject altaxoDataObject)
+		public static System.Windows.IDataObject FromAltaxoDataObject(Altaxo.Serialization.Clipboard.IDataObject altaxoDataObject)
 		{
 			var adapter = altaxoDataObject as DataObjectAdapterWpfToAltaxo;
 			if (null != adapter) // is it an adapter from Altaxo to Wpf
@@ -58,7 +58,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		/// <param name="dao">The Altaxo data object.</param>
 		/// <exception cref="System.ArgumentNullException">dao</exception>
-		public DataObjectAdapterAltaxoToWpf(Altaxo.Serialization.IDataObject dao)
+		public DataObjectAdapterAltaxoToWpf(Altaxo.Serialization.Clipboard.IDataObject dao)
 		{
 			if (null == dao)
 				throw new ArgumentNullException("dao");
@@ -72,7 +72,7 @@ namespace Altaxo.Gui
 		/// <value>
 		/// The Altaxo data object.
 		/// </value>
-		public Altaxo.Serialization.IDataObject DataObjectAltaxo { get { return o; } }
+		public Altaxo.Serialization.Clipboard.IDataObject DataObjectAltaxo { get { return o; } }
 
 		/// <summary>
 		/// Retrieves a data object in a specified format, optionally converting the data to the specified format.
@@ -215,7 +215,7 @@ namespace Altaxo.Gui
 	/// <summary>
 	/// Straightforward translation from a <see cref="T:System.Windows.IDataObject"/> to an <see cref="T:Altaxo.Serialization.IDataObject"/> instance.
 	/// </summary>
-	public class DataObjectAdapterWpfToAltaxo : Altaxo.Serialization.IDataObject
+	public class DataObjectAdapterWpfToAltaxo : Altaxo.Serialization.Clipboard.IDataObject
 	{
 		/// <summary>
 		/// Returns an Altaxo data object from a Windows (Wpf) data object. If the Windows data object is just an adapter from an Altaxo data object,
@@ -224,7 +224,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		/// <param name="wpfDo">The WPF data object.</param>
 		/// <returns>An Altaxo data object.</returns>
-		public static Altaxo.Serialization.IDataObject FromWpfDataObject(System.Windows.IDataObject wpfDo)
+		public static Altaxo.Serialization.Clipboard.IDataObject FromWpfDataObject(System.Windows.IDataObject wpfDo)
 		{
 			var adapter = wpfDo as DataObjectAdapterAltaxoToWpf;
 			if (null != adapter) // is it an adapter from Altaxo to Wpf

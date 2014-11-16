@@ -438,33 +438,6 @@ namespace Altaxo
 			return layout;
 		}
 
-		/// <summary>
-		/// Adds an item, for instance a table or a graph, to the project.
-		/// </summary>
-		/// <param name="item">Item to add.</param>
-		public void AddItem(object item)
-		{
-			if (item == null)
-				throw new ArgumentNullException("Can't add a item which is null");
-
-			if (item is Altaxo.Data.DataTable)
-			{
-				_dataTables.Add(item as Altaxo.Data.DataTable);
-			}
-			else if (item is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				_graphs.Add(item as Altaxo.Graph.Gdi.GraphDocument);
-			}
-			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-			{
-				_projectFolderProperties.Add(item as Altaxo.Main.Properties.ProjectFolderPropertyDocument);
-			}
-			else
-			{
-				throw new NotImplementedException(string.Format("Adding an item of type {0} is currently not implemented", item.GetType()));
-			}
-		}
-
 		public object GetChildObjectNamed(string name)
 		{
 			switch (name)
@@ -508,18 +481,90 @@ namespace Altaxo
 		#region Static functions
 
 		/// <summary>
-		/// Adds relocation data for tables in a specific project folder.
+		/// Gets the types of project item currently supported in the document.
 		/// </summary>
-		/// <param name="options">The relocation data to fill in (this object is changed during the operation).</param>
-		/// <param name="originalFolder">The original project folder of the data.</param>
-		/// <param name="destinationFolder">The new project folder that references should point to.</param>
-		public static void AddRelocationDataForTables(DocNodePathReplacementOptions options, string originalFolder, string destinationFolder)
+		/// <value>
+		/// The project item types.
+		/// </value>
+		public static IEnumerable<System.Type> ProjectItemTypes
 		{
-			var srcPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
-			srcPath.Add(originalFolder);
-			var destPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
-			destPath.Add(destinationFolder);
-			options.AddPathReplacement(srcPath, destPath);
+			get
+			{
+				yield return typeof(Altaxo.Data.DataTable);
+				yield return typeof(Altaxo.Graph.Gdi.GraphDocument);
+				yield return typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument);
+			}
+		}
+
+		/// <summary>
+		/// Gets the root path for a given project item type.
+		/// </summary>
+		/// <param name="type">The type of project item.</param>
+		/// <returns>The root path of this type of item.</returns>
+		public static DocumentPath GetRootPathForProjectItemType(System.Type type)
+		{
+			if (type == typeof(Altaxo.Data.DataTable))
+				return DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
+			else if (type == typeof(Altaxo.Graph.Gdi.GraphDocument))
+				return DocumentPath.GetAbsolutePath(Current.Project.GraphDocumentCollection);
+			else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
+				return DocumentPath.GetAbsolutePath(Current.Project.ProjectFolderProperties);
+			else
+				throw new ArgumentOutOfRangeException(string.Format("Unknown type of project item: {0}", type));
+		}
+
+		/// <summary>
+		/// Gets the document path for project item, using its type and name. It is not neccessary that the item is part of the project yet.
+		/// </summary>
+		/// <param name="item">The item.</param>
+		/// <returns>The document part for the project item, deduces from its type and its name.</returns>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		public static DocumentPath GetDocumentPathForProjectItem(IProjectItem item)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+
+			var path = GetRootPathForProjectItemType(item.GetType());
+			path.Add(((INameOwner)item).Name);
+			return path;
+		}
+
+		/// <summary>
+		/// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. For <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>s,
+		/// if a document with the same name is already present, the properties are merged.
+		/// </summary>
+		/// <param name="item">The item to add.</param>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
+		public void AddItem(IProjectItem item)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+
+			if (item is Altaxo.Data.DataTable)
+			{
+				this.DataTableCollection.Add((Altaxo.Data.DataTable)item);
+			}
+			else if (item is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				this.GraphDocumentCollection.Add((Altaxo.Graph.Gdi.GraphDocument)item);
+			}
+			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+			{
+				var doc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
+				if (!this.ProjectFolderProperties.Contains(doc.Name))
+				{
+					Current.Project.ProjectFolderProperties.Add(doc); // if not existing, then add the new property document
+				}
+				else
+				{
+					Current.Project.ProjectFolderProperties[doc.Name].PropertyBagNotNull.MergePropertiesFrom(doc.PropertyBag, true); // if existing, then merge the properties into the existing bag
+				}
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException(string.Format("Adding an item of type {0} is currently not implemented", item.GetType()));
+			}
 		}
 
 		#endregion Static functions

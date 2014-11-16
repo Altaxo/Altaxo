@@ -677,6 +677,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Serialization\Clipboard\ProjectItemsPasteOptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Settings\AutoUpdateSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1349,6 +1353,9 @@
     </Compile>
     <Compile Include="Gui\Serialization\Ascii\SingleCharSeparationStrategyControl.xaml.cs">
       <DependentUpon>SingleCharSeparationStrategyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Serialization\Clipboard\ProjectItemsPasteOptionsControl.xaml.cs">
+      <DependentUpon>ProjectItemsPasteOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\AutoUpdateSettingsControl.xaml.cs">
       <DependentUpon>AutoUpdateSettingsControl.xaml</DependentUpon>

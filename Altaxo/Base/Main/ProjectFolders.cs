@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -627,7 +627,7 @@ namespace Altaxo.Main
 				var orgName = (item as INameOwner).Name;
 				var clonedItem = (INameOwner)(item as ICloneable).Clone();
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
-				Current.Project.AddItem(clonedItem);
+				Current.Project.AddItem((IProjectItem)clonedItem);
 
 				if (null != ReportProxies)
 				{
