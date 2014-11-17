@@ -575,7 +575,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _parent; }
 		}
 
-		string IDocumentNode.Name
+		string INamedObject.Name
 		{
 			get { return this.GetType().Name; }
 		}

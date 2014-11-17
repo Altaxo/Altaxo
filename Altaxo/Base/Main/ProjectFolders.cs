@@ -601,7 +601,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Copyies one item to another folder by cloning the item.
 		/// </summary>
-		/// <param name="item">Item to copy.</param>
+		/// <param name="item">Item to copy. Has to be either a <see cref="ProjectFolder"/>, or a project item (<see cref="IProjectItem"/>).</param>
 		/// <param name="destinationFolderName">Destination folder name.</param>
 		/// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
 		public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter ReportProxies)
@@ -622,23 +622,17 @@ namespace Altaxo.Main
 					CopyItemToFolder(subitem, newItemFolder, ReportProxies);
 				}
 			}
-			else if ((item is ICloneable) && (item is INameOwner))
+			else if (item is IProjectItem)
 			{
-				var orgName = (item as INameOwner).Name;
-				var clonedItem = (INameOwner)(item as ICloneable).Clone();
+				var projectItem = (IProjectItem)item;
+				var orgName = projectItem.Name;
+				var clonedItem = (IProjectItem)projectItem.Clone();
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
-				Current.Project.AddItem((IProjectItem)clonedItem);
+				Current.Project.AddItem(clonedItem);
 
 				if (null != ReportProxies)
 				{
-					if (clonedItem is Altaxo.Graph.Gdi.GraphDocument)
-					{
-						((Altaxo.Graph.Gdi.GraphDocument)clonedItem).VisitDocumentReferences(ReportProxies);
-					}
-					else if (clonedItem is Altaxo.Data.DataTable)
-					{
-						((Altaxo.Data.DataTable)clonedItem).VisitDocumentReferences(ReportProxies);
-					}
+					projectItem.VisitDocumentReferences(ReportProxies);
 				}
 			}
 			else

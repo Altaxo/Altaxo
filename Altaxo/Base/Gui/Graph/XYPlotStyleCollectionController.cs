@@ -153,7 +153,19 @@ namespace Altaxo.Gui.Graph
 			if (null == sel)
 				return;
 
-			IG2DPlotStyle style = (IG2DPlotStyle)Activator.CreateInstance((Type)sel.Tag);
+			var propertyContext = Altaxo.PropertyExtensions.GetPropertyContext(_doc);
+			IG2DPlotStyle style = null;
+			try
+			{
+				style = (IG2DPlotStyle)Activator.CreateInstance((Type)sel.Tag, propertyContext); // first try with a constructor which uses a property context
+			}
+			catch (System.MissingMethodException)
+			{
+			}
+
+			if (null == style) // if style was not constructed
+				style = (IG2DPlotStyle)Activator.CreateInstance((Type)sel.Tag); // try with parameterless constructor
+
 			IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
 			G2DPlotItem plotitem = DocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
 			if (layer != null && plotitem != null)

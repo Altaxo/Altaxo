@@ -151,7 +151,7 @@ namespace Altaxo.Main.Commands
 			PasteItems(baseFolder, list);
 		}
 
-		public static void PasteItems(string baseFolder, ProjectItemClipboardList list)
+		public static void PasteItems(string targetFolder, ProjectItemClipboardList list)
 		{
 			// first we have to make sure that list has values set for TryToKeepInternalReferences and RelocateReferences -- otherwise we have to show a dialog
 			if (list.TryToKeepInternalReferences == null || list.RelocateReferences == null)
@@ -172,11 +172,11 @@ namespace Altaxo.Main.Commands
 
 			foreach (IProjectItem item in list.ProjectItems)
 			{
-				var oldName = ((INameOwner)item).Name;
-				var newName = GetRelocatedName(oldName, list.BaseFolder, baseFolder);
+				var oldName = item.Name;
+				var newName = GetRelocatedName(oldName, list.BaseFolder, targetFolder);
 				var oldPath = AltaxoDocument.GetDocumentPathForProjectItem(item);
 
-				((INameOwner)item).Name = newName;
+				item.Name = newName;
 				Current.Project.AddItem(item);
 				if (list.TryToKeepInternalReferences.Value)
 				{
@@ -185,9 +185,10 @@ namespace Altaxo.Main.Commands
 				}
 			}
 
-			if (list.RelocateReferences.Value && baseFolder != null && list.BaseFolder != null)
+			if (list.RelocateReferences.Value && targetFolder != null)
 			{
-				relocationData.AddPathReplacementsForAllProjectItemTypes(list.BaseFolder, baseFolder);
+				string sourceFolder = list.BaseFolder ?? ProjectFolder.RootFolderName;
+				relocationData.AddPathReplacementsForAllProjectItemTypes(sourceFolder, targetFolder);
 			}
 
 			if (list.TryToKeepInternalReferences.Value || list.RelocateReferences.Value)

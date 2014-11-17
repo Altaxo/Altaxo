@@ -306,10 +306,6 @@ namespace Altaxo.Graph.Scales
 
 		#endregion Static functions
 
-		#region IChangedEventSource Members
-
-		#endregion IChangedEventSource Members
-
 		public object ParentObject
 		{
 			get
@@ -322,7 +318,7 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		string Main.IDocumentNode.Name
+		string Main.INamedObject.Name
 		{
 			get { throw new NotImplementedException(); }
 		}

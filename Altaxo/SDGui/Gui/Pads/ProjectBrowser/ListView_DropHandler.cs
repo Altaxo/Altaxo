@@ -53,18 +53,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				_projectBrowseControl = ctrl;
 			}
 
-			private DateTime st = DateTime.MaxValue;
-
 			public void DragOver(IDropInfo dropInfo)
 			{
-				if (st == DateTime.MaxValue)
-					st = DateTime.UtcNow;
-
-				if ((DateTime.UtcNow - st) > TimeSpan.FromSeconds(4))
-				{
-					st = DateTime.UtcNow;
-				}
-
 				DragDropEffects resultingEffect;
 				if (CanAcceptData(dropInfo, out resultingEffect))
 				{

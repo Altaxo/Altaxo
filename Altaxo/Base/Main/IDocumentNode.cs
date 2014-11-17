@@ -1,7 +1,8 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,25 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// Provides the document hierarchie by getting the parent node.
-  /// </summary>
-  public interface IDocumentNode
-  {
-    /// <summary>
-    /// Retrieves the parent object. 
-    /// </summary>
-    object ParentObject { get; }
-
-    /// <summary>
-    /// Retrieves the name of this node.
-    /// </summary>
-    string Name { get; }
-  }
+	/// <summary>
+	/// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
+	/// </summary>
+	public interface IDocumentNode : INamedObject
+	{
+		/// <summary>
+		/// Retrieves the parent object.
+		/// </summary>
+		object ParentObject { get; }
+	}
 }
