@@ -632,7 +632,7 @@ namespace Altaxo.Main
 
 				if (null != ReportProxies)
 				{
-					projectItem.VisitDocumentReferences(ReportProxies);
+					clonedItem.VisitDocumentReferences(ReportProxies);
 				}
 			}
 			else
