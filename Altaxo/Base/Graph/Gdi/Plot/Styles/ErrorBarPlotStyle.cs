@@ -162,7 +162,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public ErrorBarPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
-			this._strokePen = new PenX(NamedColors.Black, penWidth);
+			var color = GraphDocument.GetDefaultPlotColor(context);
+
+			this._strokePen = new PenX(color, penWidth);
 		}
 
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from)

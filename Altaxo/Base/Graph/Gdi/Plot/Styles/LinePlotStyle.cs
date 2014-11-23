@@ -375,11 +375,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
-			_penHolder = new PenX(NamedColors.Black, penWidth) { LineJoin = LineJoin.Bevel };
+			var color = GraphDocument.GetDefaultPlotColor(context);
+
+			_penHolder = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
 			_useLineSymbolGap = true;
 			_ignoreMissingPoints = false;
 			_fillArea = false;
-			_fillBrush = new BrushX(NamedColors.Black);
+			_fillBrush = new BrushX(color);
 			_fillDirection = null;
 			_connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
 			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);

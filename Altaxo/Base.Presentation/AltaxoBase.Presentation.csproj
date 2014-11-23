@@ -453,6 +453,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\ColorManagement\ColorSetIdentifierControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\ColorManagement\NamedColorChoiceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\DefaultLineScatterGraphDocumentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\EmbeddedObjectRenderingOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1179,6 +1191,15 @@
     </Compile>
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsControl.xaml.cs">
       <DependentUpon>ClipboardRenderingOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorManagement\ColorSetIdentifierControl.xaml.cs">
+      <DependentUpon>ColorSetIdentifierControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ColorManagement\NamedColorChoiceControl.xaml.cs">
+      <DependentUpon>NamedColorChoiceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\DefaultLineScatterGraphDocumentControl.xaml.cs">
+      <DependentUpon>DefaultLineScatterGraphDocumentControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\EmbeddedObjectRenderingOptionsControl.xaml.cs">
       <DependentUpon>EmbeddedObjectRenderingOptionsControl.xaml</DependentUpon>

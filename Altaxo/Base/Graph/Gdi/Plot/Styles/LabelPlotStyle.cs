@@ -468,8 +468,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			this._font = GraphDocument.GetDefaultFont(context);
+			var color = GraphDocument.GetDefaultPlotColor(context);
+
 			this._independentColor = false;
-			this._brush = new BrushX(NamedColors.Black);
+			this._brush = new BrushX(color);
 			this._xOffset = 0;
 			this._yOffset = 0;
 			this._rotation = 0;

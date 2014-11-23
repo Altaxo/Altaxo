@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -910,7 +910,9 @@ namespace Altaxo.Main
 
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized()
 		{
-			return CreateNewGraph_Unsynchronized(CurrentOpenProject.CreateNewGraphDocument());
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
+			return CreateNewGraph_Unsynchronized(graph);
 		}
 
 		/// <summary>
@@ -925,7 +927,10 @@ namespace Altaxo.Main
 
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder_Unsynchronized(string folderName)
 		{
-			return CreateNewGraph_Unsynchronized(this.CurrentOpenProject.CreateNewGraphDocument(ProjectFolder.Combine(folderName, "GRAPH")));
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+				PropertyExtensions.GetPropertyContextOfProjectFolder(folderName), "GRAPH", folderName, false);
+
+			return CreateNewGraph_Unsynchronized(graph);
 		}
 
 		/// <summary>
@@ -940,7 +945,10 @@ namespace Altaxo.Main
 
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(string preferredName)
 		{
-			return CreateNewGraph_Unsynchronized(this.CurrentOpenProject.CreateNewGraphDocument(preferredName));
+			var folderName = Main.ProjectFolder.GetFolderPart(preferredName);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+				PropertyExtensions.GetPropertyContextOfProjectFolder(folderName), preferredName, folderName, false);
+			return CreateNewGraph_Unsynchronized(graph);
 		}
 
 		/// <summary>
@@ -956,7 +964,8 @@ namespace Altaxo.Main
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
 			if (graph == null)
-				graph = this.CurrentOpenProject.CreateNewGraphDocument();
+				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
 
 			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDGraphViewContent(graph);
 

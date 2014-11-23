@@ -213,6 +213,7 @@
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinColorSet.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinDarkPlotColorSet.cs" />
+    <Compile Include="Graph\ColorManagement\ColorSetIdentifier.cs" />
     <Compile Include="Graph\ColorManagement\ColorNameKey.cs" />
     <Compile Include="Graph\ColorManagement\ColorSet.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetExtensions.cs" />
@@ -221,6 +222,9 @@
     <Compile Include="Graph\Gdi\ClipboardRenderingOptions.cs" />
     <Compile Include="Graph\Gdi\EmbeddedObjectRenderingOptions.cs" />
     <Compile Include="Graph\Gdi\GraphExportOptions.cs" />
+    <Compile Include="Graph\Gdi\GraphTemplates\TemplateBase.cs" />
+    <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.cs" />
+    <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
     <Compile Include="Graph\FontXStyle.cs" />
@@ -274,6 +278,10 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
+    <Compile Include="Gui\Graph\ColorManagement\NamedColorChoiceController.cs" />
+    <Compile Include="Gui\Graph\ColorManagement\ColorControllerHelper.cs" />
+    <Compile Include="Gui\Graph\ColorManagement\ColorSetIChoiceController.cs" />
+    <Compile Include="Gui\Graph\DefaultLineScatterGraphDocumentController.cs" />
     <Compile Include="Gui\Graph\EmbeddedObjectRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph\GridPartitioningController.cs" />

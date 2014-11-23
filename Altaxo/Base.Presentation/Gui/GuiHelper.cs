@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -432,6 +432,30 @@ namespace Altaxo.Gui
 		}
 
 		#endregion Image Proxy converters
+
+		#region Image from System.Drawing to WPF
+
+		public static System.Windows.Media.Imaging.BitmapSource ToWpf(this System.Drawing.Bitmap bitmap)
+		{
+			using (var stream = new System.IO.MemoryStream())
+			{
+				var imgFormat = bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb ? System.Drawing.Imaging.ImageFormat.Bmp : System.Drawing.Imaging.ImageFormat.Png;
+				bitmap.Save(stream, imgFormat);
+
+				stream.Position = 0;
+				var result = new System.Windows.Media.Imaging.BitmapImage();
+				result.BeginInit();
+				// According to MSDN, "The default OnDemand cache option retains access to the stream until the image is needed."
+				// Force the bitmap to load right now so we can dispose the stream.
+				result.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+				result.StreamSource = stream;
+				result.EndInit();
+				result.Freeze();
+				return result;
+			}
+		}
+
+		#endregion Image from System.Drawing to WPF
 
 		#region Logical tree
 

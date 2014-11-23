@@ -1,7 +1,8 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Altaxo.Gui
 {
@@ -36,8 +38,7 @@ namespace Altaxo.Gui
 		#region Native calls
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-
-		static extern IntPtr CreateFileMapping(IntPtr hFile,
+		private static extern IntPtr CreateFileMapping(IntPtr hFile,
 
 																					 IntPtr lpFileMappingAttributes,
 
@@ -49,10 +50,8 @@ namespace Altaxo.Gui
 
 																					 string lpName);
 
-
-
 		[DllImport("kernel32.dll", SetLastError = true)]
-		static extern IntPtr MapViewOfFile(IntPtr hFileMappingObject,
+		private static extern IntPtr MapViewOfFile(IntPtr hFileMappingObject,
 
 																			 uint dwDesiredAccess,
 
@@ -65,34 +64,33 @@ namespace Altaxo.Gui
 		[DllImport("kernel32", EntryPoint = "UnmapViewOfFile", SetLastError = true)]
 		private static extern bool UnmapViewOfFile(IntPtr lpBaseAddress);
 
-
 		[DllImport("kernel32", EntryPoint = "CloseHandle", SetLastError = true)]
 		private static extern bool CloseHandle(IntPtr handle);
 
-
-
 		// Windows constants
 
-		static uint FILE_MAP_ALL_ACCESS = 0xF001F;
+		private static uint FILE_MAP_ALL_ACCESS = 0xF001F;
 
-		static uint PAGE_READWRITE = 0x04;
+		private static uint PAGE_READWRITE = 0x04;
 
-		static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+		private static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
-		#endregion
+		#endregion Native calls
 
 		/// <summary>Only for debugging, designates the total number of bytes allocated in all those objects</summary>
-		static long _totalBytesAllocated;
+		private static long _totalBytesAllocated;
+
 		/// <summary>Only for debugging, designates the number of instances of this class.</summary>
-		static long _activeInstances; // only for debugging
+		private static long _activeInstances; // only for debugging
 
-		const int BytesPerPixel = 4; // it is only possible to use ARGB format, otherwise Imaging.CreateBitmapSourceFromMemorySection would copy the bitmap instead of mapping it
+		private const int BytesPerPixel = 4; // it is only possible to use ARGB format, otherwise Imaging.CreateBitmapSourceFromMemorySection would copy the bitmap instead of mapping it
 
-		IntPtr _section;
-		IntPtr _map;
-		System.Drawing.Bitmap _bmp;
-		System.Windows.Interop.InteropBitmap _interopBmp;
-		int _width, _height;
+		private IntPtr _section;
+		private IntPtr _map;
+		private System.Drawing.Bitmap _bmp;
+		private System.Windows.Interop.InteropBitmap _interopBmp;
+		private int _width, _height;
+
 		/// <summary>
 		/// Creates an instance of given width and height. Note that the GidBitmap is created during this calling thread. (the WpfBitmap is created later during the first access to WpfBitmap).
 		/// </summary>
@@ -118,7 +116,7 @@ namespace Altaxo.Gui
 			InternalAllocate(width, height);
 		}
 
-		void InternalAllocate(int width, int height)
+		private void InternalAllocate(int width, int height)
 		{
 			width = Math.Max(width, 1);
 			height = Math.Max(height, 1);
@@ -154,7 +152,6 @@ namespace Altaxo.Gui
 				throw new InvalidOperationException(exception);
 			}
 
-
 			_bmp = new System.Drawing.Bitmap(_width, _height, _width * BytesPerPixel, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _map);
 
 			GC.AddMemoryPressure(numBytesToAllocate);
@@ -164,7 +161,7 @@ namespace Altaxo.Gui
 			_interopBmp = (System.Windows.Interop.InteropBitmap)System.Windows.Interop.Imaging.CreateBitmapSourceFromMemorySection(_section, _width, _height, System.Windows.Media.PixelFormats.Bgra32, _width * BytesPerPixel, 0);
 		}
 
-		void InternalDeallocate(bool disposing)
+		private void InternalDeallocate(bool disposing)
 		{
 			if (disposing)
 			{
@@ -190,19 +187,22 @@ namespace Altaxo.Gui
 
 			if (IntPtr.Zero != _section)
 			{
-
 				CloseHandle(_section);
 				_section = IntPtr.Zero;
 			}
 
-			GC.RemoveMemoryPressure(_width * _height * BytesPerPixel);
-			_totalBytesAllocated -= (_width * _height * BytesPerPixel);
+			var bytesToFree = _width * _height * BytesPerPixel;
+			if (0 != bytesToFree)
+			{
+				GC.RemoveMemoryPressure(bytesToFree);
+				_totalBytesAllocated -= bytesToFree;
+			}
+
 			--_activeInstances;
 
 			_width = 0;
 			_height = 0;
 		}
-
 
 		public System.Drawing.Bitmap GdiBitmap
 		{
@@ -223,7 +223,6 @@ namespace Altaxo.Gui
 			OnPropertyChanged("WpfBitmapSource");
 		}
 
-
 		public System.Drawing.Rectangle GdiRectangle
 		{
 			get
@@ -232,7 +231,6 @@ namespace Altaxo.Gui
 			}
 		}
 
-		
 		public System.Windows.Interop.InteropBitmap WpfBitmap
 		{
 			get
@@ -240,16 +238,15 @@ namespace Altaxo.Gui
 				return _interopBmp;
 			}
 		}
-		
+
 		public System.Windows.Media.Imaging.BitmapSource WpfBitmapSource
 		{
 			get
 			{
 				_interopBmp.Invalidate();
-				return ( System.Windows.Media.Imaging.BitmapSource)_interopBmp.GetAsFrozen();
+				return (System.Windows.Media.Imaging.BitmapSource)_interopBmp.GetAsFrozen();
 			}
 		}
-		
 
 		#region IDisposable Members
 
@@ -267,8 +264,7 @@ namespace Altaxo.Gui
 			InternalDeallocate(false);
 		}
 
-
-		#endregion
+		#endregion IDisposable Members
 
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 

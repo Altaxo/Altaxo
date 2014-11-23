@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.CS;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
@@ -33,7 +34,11 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.Scales;
 using Altaxo.Gui.Worksheet.Viewing;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -345,63 +350,11 @@ namespace Altaxo.Worksheet.Commands
 		/// </summary>
 		/// <param name="table">The source table.</param>
 		/// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
-		/// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
-		/// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(DataTable table,
-			IAscendingIntegerCollection selectedColumns,
-			 G2DPlotStyleCollection templatePlotStyle,
-			PlotGroupStyleCollection groupStyles)
-		{
-			return Plot(table, selectedColumns, templatePlotStyle, groupStyles, null);
-		}
-
-		/// <summary>
-		/// Plots selected data columns of a table.
-		/// </summary>
-		/// <param name="table">The source table.</param>
-		/// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
-		/// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
-		/// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-		/// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
-		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(DataTable table,
-			IAscendingIntegerCollection selectedColumns,
-			 G2DPlotStyleCollection templatePlotStyle,
-			PlotGroupStyleCollection groupStyles,
-			string preferredGraphName)
-		{
-			Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
-			if (string.IsNullOrEmpty(preferredGraphName))
-			{
-				string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(table.Name, "GRAPH");
-				graph.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
-			}
-			else
-			{
-				graph.Name = preferredGraphName;
-			}
-
-			var context = PropertyExtensions.GetPropertyHierarchy(table);
-
-			// apply the default location from the property in the path
-			graph.RootLayer.Location.CopyFrom(context.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));
-
-			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
-			layer.CreateDefaultAxes(context);
-			graph.RootLayer.Layers.Add(layer);
-			Current.Project.GraphDocumentCollection.Add(graph);
-
-			return Plot(table, selectedColumns, graph, templatePlotStyle, groupStyles);
-		}
-
-		/// <summary>
-		/// Plots selected data columns of a table.
-		/// </summary>
-		/// <param name="table">The source table.</param>
-		/// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
 		/// <param name="graph">The graph document to plot into.</param>
 		/// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
 		/// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(DataTable table,
+		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(
+			DataTable table,
 			IAscendingIntegerCollection selectedColumns,
 			Graph.Gdi.GraphDocument graph,
 			G2DPlotStyleCollection templatePlotStyle,
@@ -410,7 +363,7 @@ namespace Altaxo.Worksheet.Commands
 			List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
 			// now create a new Graph with this plot associations
 			var gc = Current.ProjectService.CreateNewGraph(graph);
-			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+			var xylayer = gc.Doc.RootLayer.Layers.OfType<Altaxo.Graph.Gdi.XYPlotLayer>().First();
 
 			// Set x and y axes according to the first plot item in the list
 			if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
@@ -463,14 +416,15 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
 		public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string preferredGraphName)
 		{
-			var context = table.GetPropertyContext();
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(table.GetPropertyContext(), preferredGraphName, table.Name, true);
+			var context = graph.GetPropertyContext();
 
 			if (bLine && bScatter)
-				Plot(table, selectedColumns, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol, preferredGraphName);
+				Plot(table, selectedColumns, graph, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol);
 			else if (bLine)
-				Plot(table, selectedColumns, PlotStyle_Line(context), GroupStyle_Color_Line, preferredGraphName);
+				Plot(table, selectedColumns, graph, PlotStyle_Line(context), GroupStyle_Color_Line);
 			else
-				Plot(table, selectedColumns, PlotStyle_Symbol(context), GroupStyle_Color_Symbol, preferredGraphName);
+				Plot(table, selectedColumns, graph, PlotStyle_Symbol(context), GroupStyle_Color_Symbol);
 		}
 
 		/// <summary>
@@ -479,7 +433,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineArea(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_LineArea(dg.DataTable.GetPropertyContext()), GroupStyle_Color_Line);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_LineArea(context), GroupStyle_Color_Line);
 		}
 
 		/// <summary>
@@ -488,7 +444,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_Stack_Color_Line);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line(context), GroupStyle_Stack_Color_Line);
 		}
 
 		/// <summary>
@@ -497,7 +455,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineRelativeStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_RelativeStack_Color_Line);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line(context), GroupStyle_RelativeStack_Color_Line);
 		}
 
 		/// <summary>
@@ -506,7 +466,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLineWaterfall(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_Waterfall_Color_Line);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line(context), GroupStyle_Waterfall_Color_Line);
 		}
 
 		/// <summary>
@@ -515,13 +477,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotLinePolar(IWorksheetController dg)
 		{
-			var context = dg.DataTable.GetPropertyHierarchy();
-			Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
-			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
-			layer.CreateDefaultAxes(context);
-			graph.RootLayer.Layers.Add(layer);
-			Current.Project.GraphDocumentCollection.Add(graph);
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line(dg.DataTable.GetPropertyContext()), GroupStyle_Color_Line);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line(context), GroupStyle_Color_Line);
 		}
 
 		/// <summary>
@@ -530,9 +488,11 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotBarChartNormal(IWorksheetController dg)
 		{
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Bar);
-			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
 			((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Bar(context), GroupStyle_Bar);
 		}
 
 		/// <summary>
@@ -541,9 +501,12 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotBarChartStack(IWorksheetController dg)
 		{
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Stack_Bar);
-			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
 			((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
+			var context = graph.GetPropertyContext();
+
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Bar(context), GroupStyle_Stack_Bar);
 		}
 
 		/// <summary>
@@ -552,9 +515,12 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotBarChartRelativeStack(IWorksheetController dg)
 		{
-			var gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_RelativeStack_Bar);
-			var xylayer = (Altaxo.Graph.Gdi.XYPlotLayer)gc.Doc.RootLayer.Layers[0];
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
 			((G2DCartesicCoordinateSystem)xylayer.CoordinateSystem).IsXYInterchanged = true;
+			var context = graph.GetPropertyContext();
+
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Bar(context), GroupStyle_RelativeStack_Bar);
 		}
 
 		/// <summary>
@@ -563,7 +529,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotColumnChartNormal(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Bar);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Bar(context), GroupStyle_Bar);
 		}
 
 		/// <summary>
@@ -572,7 +540,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotColumnChartStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_Stack_Bar);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Bar(context), GroupStyle_Stack_Bar);
 		}
 
 		/// <summary>
@@ -581,7 +551,9 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="dg">The worksheet controller where the columns are selected in.</param>
 		public static void PlotColumnChartRelativeStack(IWorksheetController dg)
 		{
-			Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar(dg.DataTable.GetPropertyContext()), GroupStyle_RelativeStack_Bar);
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var context = graph.GetPropertyContext();
+			Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Bar(context), GroupStyle_RelativeStack_Bar);
 		}
 
 		/// <summary>
@@ -592,8 +564,10 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="bScatter"></param>
 		public static void PlotDensityImage(IWorksheetController dg, bool bLine, bool bScatter)
 		{
-			Altaxo.Data.DataTable table = dg.DataTable;
-			var context = table.GetPropertyHierarchy();
+			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
+			var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
+			var context = graph.GetPropertyContext();
+
 			DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();
 
 			XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
@@ -602,15 +576,8 @@ namespace Altaxo.Worksheet.Commands
 			if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
 				assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
-			// now create a new Graph with this plot associations
-
-			var gc = Current.ProjectService.CreateNewGraphInFolder(Main.ProjectFolder.GetFolderPart(table.Name));
-			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(gc.Doc.RootLayer);
-			layer.CreateDefaultAxes(context);
-			gc.Doc.RootLayer.Layers.Add(layer);
-
 			IGPlotItem pi = new DensityImagePlotItem(assoc, plotStyle);
-			layer.PlotItems.Add(pi);
+			xylayer.PlotItems.Add(pi);
 		}
 	}
 }

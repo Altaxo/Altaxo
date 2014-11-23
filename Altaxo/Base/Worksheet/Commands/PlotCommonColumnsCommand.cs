@@ -118,18 +118,26 @@ namespace Altaxo.Worksheet.Commands
 			string folderName;
 
 			Altaxo.Gui.Graph.Viewing.IGraphController graphctrl;
+			Altaxo.Graph.Gdi.GraphDocument graph;
 
 			if (AreAllTablesFromOneProjectFolder(out folderName))
-				graphctrl = Current.ProjectService.CreateNewGraphInFolder(folderName);
+				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+					PropertyExtensions.GetPropertyContextOfProjectFolder(folderName),
+					null,
+					folderName,
+					true);
 			else
-				graphctrl = Current.ProjectService.CreateNewGraph();
+				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+				PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings(),
+				null,
+				folderName,
+				true);
 
-			var context = graphctrl.Doc.GetPropertyContext();
+			var layer = graph.GetFirstXYPlotLayer();
+			graphctrl = Current.ProjectService.CreateNewGraph(graph);
+			var context = graph.GetPropertyContext();
+
 			var templateStyle = Altaxo.Worksheet.Commands.PlotCommands.PlotStyle_Line(context);
-
-			var layer = new Altaxo.Graph.Gdi.XYPlotLayer(graphctrl.Doc.RootLayer);
-			graphctrl.Doc.RootLayer.Layers.Add(layer);
-			layer.CreateDefaultAxes(context);
 
 			var processedColumns = new HashSet<Altaxo.Data.DataColumn>();
 			foreach (string colname in _yCommonColumnNamesForPlotting)

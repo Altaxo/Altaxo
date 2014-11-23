@@ -486,11 +486,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			double penWidth = GraphDocument.GetDefaultPenWidth(context);
 			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
+			var color = GraphDocument.GetDefaultPlotColor(context);
 
 			this._shape = XYPlotScatterStyles.Shape.Square;
 			this._style = XYPlotScatterStyles.Style.Solid;
 			this._dropLine = new CSPlaneIDList();
-			this._pen = new PenX(NamedColors.Black, penWidth);
+			this._pen = new PenX(color, penWidth);
 			this._independentColor = false;
 
 			this._symbolSize = symbolSize;
@@ -498,7 +499,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._relativePenWidth = 0.1f;
 			this._skipFreq = 1;
 			this._cachedFillPath = true; // since default is solid
-			this._cachedFillBrush = new BrushX(NamedColors.Black);
+			this._cachedFillBrush = new BrushX(color);
 			this._cachedPath = GetPath(_shape, _style, _symbolSize);
 			CreateEventChain();
 		}

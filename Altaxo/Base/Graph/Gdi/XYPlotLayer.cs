@@ -534,7 +534,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// This will create the default axes styles that are given by the coordinate system.
 		/// </summary>
-		public void CreateDefaultAxes(PropertyHierarchy context)
+		public void CreateDefaultAxes(IReadOnlyPropertyBag context)
 		{
 			foreach (CSAxisInformation info in CoordinateSystem.AxisStyles)
 			{

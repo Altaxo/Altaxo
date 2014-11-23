@@ -71,11 +71,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region Constructor
 
-		public FillToCurvePlotStyle()
+		/// <summary>
+		/// For deserialization only. Initializes a new instance of the <see cref="FillToCurvePlotStyle"/> class.
+		/// </summary>
+		/// <param name="info">Deserialization info.</param>
+		protected FillToCurvePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
 			FillBrush = new BrushX(NamedColors.Aqua);
+		}
+
+		public FillToCurvePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
+			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+			FillBrush = new BrushX(NamedColors.Aqua); // Exception: do not use one of the colors of the default plot color set. Instead, use a light color.
 		}
 
 		public FillToCurvePlotStyle(FillToCurvePlotStyle from)
@@ -151,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle();
+				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle(info);
 
 				s._fillBrush = (BrushX)info.GetValue("Brush", s);
 				s._framePen = (PenX)info.GetValue("Pen", s);
@@ -194,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle();
+				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle(info);
 
 				s._independentFillColor = info.GetBoolean("IndependentFillColor");
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);

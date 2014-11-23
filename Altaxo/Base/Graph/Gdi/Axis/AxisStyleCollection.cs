@@ -172,6 +172,14 @@ namespace Altaxo.Graph.Gdi.Axis
 				_axisStyles.RemoveAt(idx);
 		}
 
+		/// <summary>
+		/// Removes all axis styles.
+		/// </summary>
+		public void Clear()
+		{
+			_axisStyles.Clear();
+		}
+
 		public AxisStyle AxisStyleEnsured(CSLineID id)
 		{
 			AxisStyle prop = this[id];

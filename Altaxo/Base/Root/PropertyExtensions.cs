@@ -92,6 +92,52 @@ namespace Altaxo
 		}
 
 		/// <summary>
+		/// Gets the property bags in the hierarchy. The first bag in the enumeration is the bag that is a project folder bag belonging to the provided folder name. Then the bags in its
+		/// parent folders, and then UserSettings, ApplicationSettings, and BuiltinSettings follow.
+		/// </summary>
+		/// <param name="owner">The owner of a property bag with which to start the enumeration.</param>
+		/// <returns>Enumeration of the property bags in the project hierarchy.</returns>
+		public static IEnumerable<PropertyBagWithInformation> GetPropertyBagsStartingFromFolder(string folder)
+		{
+			var proj = Current.Project;
+			ProjectFolderPropertyDocument bag;
+			while (!string.IsNullOrEmpty(folder))
+			{
+				if (proj.ProjectFolderProperties.TryGetValue(folder, out bag) && bag.PropertyBag != null)
+				{
+					var bagInfo = new PropertyBagInformation(string.Format("Folder \"{0}\"", folder), PropertyLevel.ProjectFolder);
+					yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
+				}
+				folder = Main.ProjectFolder.GetFoldersParentFolder(folder);
+			}
+
+			// now return the project's property bag even for unnamed items
+			if (proj.ProjectFolderProperties.TryGetValue(string.Empty, out bag) && bag.PropertyBag != null)
+			{
+				var bagInfo = new PropertyBagInformation("Project (RootFolder)", PropertyLevel.Project);
+				yield return new PropertyBagWithInformation(bagInfo, bag.PropertyBag);
+			}
+
+			// and now the user's settings
+			{
+				var bagInfo = new PropertyBagInformation("UserSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.UserSettings);
+			}
+
+			// then the application settings
+			{
+				var bagInfo = new PropertyBagInformation("ApplicationSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.ApplicationSettings);
+			}
+
+			// and finally the built-in settings
+			{
+				var bagInfo = new PropertyBagInformation("BuiltinSettings", PropertyLevel.Application);
+				yield return new PropertyBagWithInformation(bagInfo, Current.PropertyService.BuiltinSettings);
+			}
+		}
+
+		/// <summary>
 		/// Gets the property bags 'UserSettings, 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.
 		/// </summary>
 		/// <returns>Property bags 'UserSettings, 'ApplicationSettings' and 'BuiltinSettings' along with the bag information.</returns>
@@ -143,6 +189,17 @@ namespace Altaxo
 		public static PropertyHierarchy GetPropertyHierarchy(this IPropertyBagOwner owner)
 		{
 			return new PropertyHierarchy(GetPropertyBags(owner));
+		}
+
+		/// <summary>
+		/// Gets the property bags in the hierarchal order. The first bag in the enumeration is the bag is in the provided project <paramref name="folder"/>. Then the bags of
+		/// its parent folders, and then UserSettings, ApplicationSettings, and BuiltinSettings follow.
+		/// </summary>
+		/// <param name="folder">The project folder with which to start the enumeration.</param>
+		/// <returns>Property bags in the project hierarchy wrapped in a  <see cref="PropertyHierarchy"/>.</returns>
+		public static PropertyHierarchy GetPropertyContextOfProjectFolder(string folder)
+		{
+			return new PropertyHierarchy(GetPropertyBagsStartingFromFolder(folder));
 		}
 
 		/// <summary>

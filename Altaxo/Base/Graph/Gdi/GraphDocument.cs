@@ -33,6 +33,9 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -92,6 +95,57 @@ namespace Altaxo.Graph.Gdi
 						return ctrl;
 					}
 				};
+
+		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultForeColor =
+			new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
+"2F138FDD-B96A-4C03-9BEF-83FC412E50B2",
+"Graph\\Colors\\Default fore color",
+Main.Properties.PropertyLevel.Document,
+typeof(GraphDocument),
+() => Altaxo.Graph.NamedColors.Black
+)
+{
+	EditingControllerCreation = (doc) =>
+	{
+		var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+		ctrl.InitializeDocument(doc);
+		return ctrl;
+	}
+};
+
+		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultBackColor =
+	new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
+"90BB0E83-D1A4-40B7-9607-55D4B9C272C3",
+"Graph\\Colors\\Default back color",
+Main.Properties.PropertyLevel.Document,
+typeof(GraphDocument),
+() => Altaxo.Graph.NamedColors.AliceBlue
+)
+	{
+		EditingControllerCreation = (doc) =>
+		{
+			var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+			ctrl.InitializeDocument(doc);
+			return ctrl;
+		}
+	};
+
+		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultPlotColor =
+new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
+"D5DB4695-2630-4B7D-83E3-71CA3873B362",
+"Graph\\Colors\\Default plot color",
+Main.Properties.PropertyLevel.Document,
+typeof(GraphDocument),
+() => Altaxo.Graph.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]
+)
+{
+	EditingControllerCreation = (doc) =>
+	{
+		var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy, ShowPlotColorsOnly = true };
+		ctrl.InitializeDocument(doc);
+		return ctrl;
+	}
+};
 
 		private SingleGraphPrintOptions _printOptions;
 
@@ -687,6 +741,14 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
+		public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (null == context)
+				context = PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings();
+
+			return context.GetValue<NamedColor>(PropertyKeyDefaultPlotColor);
+		}
+
 		/// <summary>
 		/// Gets the default plot symbol size for all graphics in this graph, using the provided property context.
 		/// </summary>
@@ -883,5 +945,28 @@ namespace Altaxo.Graph.Gdi
 			if (null != TunneledEvent)
 				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
 		}
+
+		#region Convenience functions
+
+		/// <summary>
+		/// Gets the first layer in the graph that has the provided type. If such a layer is not found, an exception is thrown.
+		/// </summary>
+		/// <typeparam name="TLayer">The type of the layer.</typeparam>
+		/// <returns>The first layer in the graph with the provided type.</returns>
+		public TLayer GetFirstLayerOfType<TLayer>() where TLayer : HostLayer
+		{
+			return RootLayer.Layers.OfType<TLayer>().First();
+		}
+
+		/// <summary>
+		/// Gets the first xy plot layer of the graph. If such a layer is not found, an exception is thrown.
+		/// </summary>
+		/// <returns>The first xy plot layer.</returns>
+		public XYPlotLayer GetFirstXYPlotLayer()
+		{
+			return GetFirstLayerOfType<XYPlotLayer>();
+		}
+
+		#endregion Convenience functions
 	} // end of class GraphDocument
 } // end of namespace
