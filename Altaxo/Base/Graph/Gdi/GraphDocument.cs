@@ -741,10 +741,26 @@ typeof(GraphDocument),
 			return result;
 		}
 
+		public static NamedColor GetDefaultForeColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
+			return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
+		}
+
+		public static NamedColor GetDefaultBackColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
+			return context.GetValue<NamedColor>(PropertyKeyDefaultBackColor);
+		}
+
 		public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (null == context)
-				context = PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings();
+				context = PropertyExtensions.GetPropertyContextOfProject();
 
 			return context.GetValue<NamedColor>(PropertyKeyDefaultPlotColor);
 		}

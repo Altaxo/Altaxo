@@ -74,9 +74,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public ClosedPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 			: base(location)
 		{
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
+			var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
 			Brush = new BrushX(NamedColors.Transparent);
-			Pen = new PenX(NamedColors.Black, penWidth);
+			Pen = new PenX(foreColor, penWidth);
 		}
 
 		public ClosedPathShapeBase(ClosedPathShapeBase from)

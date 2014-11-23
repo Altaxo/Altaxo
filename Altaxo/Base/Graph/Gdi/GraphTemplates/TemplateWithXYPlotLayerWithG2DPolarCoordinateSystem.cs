@@ -59,14 +59,22 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 		private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
 		{
 			if (null == propertyContext)
-				propertyContext = PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings();
+				propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
 			Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
 			TemplateBase.AddStandardPropertiesToGraph(graph, propertyContext);
 			graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize)); 	// apply the default location from the property in the path
 
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
+			layer.Scales[0] = new Scales.ScaleWithTicks(new Scales.AngularDegreeScale(), new Scales.Ticks.AngularDegreeTickSpacing());
+
 			layer.CreateDefaultAxes(propertyContext);
+
+			layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMajorTicks = false;
+			layer.AxisStyles[CSLineID.X1].AxisLineStyle.FirstDownMinorTicks = false;
+			layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
+			layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
+
 			graph.RootLayer.Layers.Add(layer);
 
 			return graph;
@@ -81,7 +89,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 		public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
 		{
 			if (null == propertyContext)
-				propertyContext = PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings();
+				propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
 			GraphDocument graph;
 			var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);
@@ -93,7 +101,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 			if (isBuiltinPolarPlotTemplate)
 			{
 				graphTemplateCartesic = propertyContext.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate);
-				isLineScatterTemplateBuiltin = object.ReferenceEquals(graphTemplate, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate));
+				isLineScatterTemplateBuiltin = object.ReferenceEquals(graphTemplateCartesic, Current.PropertyService.BuiltinSettings.GetValue<GraphDocument>(TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.PropertyKeyDefaultTemplate));
 			}
 
 			if (!isLineScatterTemplateBuiltin && isBuiltinPolarPlotTemplate)

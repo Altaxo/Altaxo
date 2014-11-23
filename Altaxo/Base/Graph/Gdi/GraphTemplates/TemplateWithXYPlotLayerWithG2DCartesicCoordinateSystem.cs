@@ -58,7 +58,7 @@ typeof(object),
 		private static GraphDocument CreateBuiltinGraph(IReadOnlyPropertyBag propertyContext)
 		{
 			if (null == propertyContext)
-				propertyContext = PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings();
+				propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
 			var graph = new GraphDocument();
 			TemplateBase.AddStandardPropertiesToGraph(graph, propertyContext);
@@ -67,6 +67,10 @@ typeof(object),
 			graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer);
 			layer.CreateDefaultAxes(propertyContext);
+			layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMajorTicks = false;
+			layer.AxisStyles[CSLineID.X0].AxisLineStyle.FirstUpMinorTicks = false;
+			layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMajorTicks = false;
+			layer.AxisStyles[CSLineID.Y0].AxisLineStyle.FirstUpMinorTicks = false;
 			graph.RootLayer.Layers.Add(layer);
 
 			return graph;
@@ -83,7 +87,7 @@ typeof(object),
 		public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
 		{
 			if (null == propertyContext)
-				propertyContext = PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings();
+				propertyContext = PropertyExtensions.GetPropertyContextOfProject();
 
 			GraphDocument graph;
 			var graphTemplate = propertyContext.GetValue<GraphDocument>(PropertyKeyDefaultTemplate);

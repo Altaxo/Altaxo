@@ -423,9 +423,13 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			if (null == context || !context.TryGetValue(GraphDocument.PropertyKeyDefaultFont, out _font))
-				_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
-			_brush = new BrushX(NamedColors.Black);
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
+			_font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
+			var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
+
+			_brush = new BrushX(foreColor);
 			_automaticRotationShift = true;
 			_suppressedLabels = new SuppressedTicks();
 			_labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();

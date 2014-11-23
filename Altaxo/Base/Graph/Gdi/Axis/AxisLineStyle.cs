@@ -283,10 +283,11 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			double penWidth = GraphDocument.GetDefaultPenWidth(context);
 			double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
+			var color = GraphDocument.GetDefaultForeColor(context);
 
-			_axisPen = new PenX(NamedColors.Black, penWidth);
-			_majorTickPen = new PenX(NamedColors.Black, penWidth);
-			_minorTickPen = new PenX(NamedColors.Black, penWidth);
+			_axisPen = new PenX(color, penWidth);
+			_majorTickPen = new PenX(color, penWidth);
+			_minorTickPen = new PenX(color, penWidth);
 			_majorTickLength = majorTickLength;
 			_minorTickLength = majorTickLength / 2;
 			_showFirstUpMajorTicks = true; // true if right major ticks should be visible

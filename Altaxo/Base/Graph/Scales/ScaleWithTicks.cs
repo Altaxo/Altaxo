@@ -93,12 +93,14 @@ namespace Altaxo.Graph.Scales
 		{
 			SetNewScale(scale);
 			SetNewTickSpacing(CreateDefaultTicks(scale.GetType()));
+			UpdateIfTicksChanged();
 		}
 
 		public ScaleWithTicks(Scale scale, TickSpacing ticks)
 		{
 			SetNewScale(scale);
 			SetNewTickSpacing(ticks);
+			UpdateIfTicksChanged();
 		}
 
 		public ScaleWithTicks(ScaleWithTicks from)

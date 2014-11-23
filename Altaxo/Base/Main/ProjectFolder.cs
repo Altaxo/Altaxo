@@ -404,6 +404,75 @@ namespace Altaxo.Main
 
 		#endregion Gui Helpers
 
+		#region other helpers
+
+		/// <summary>Determines whether all names in argument <paramref name="itemNames"/> are from a single project folder.</summary>
+		/// <param name="itemNames">Enumeration of names (usually of project items).</param>
+		/// <param name="folderName">On return, if all names belong to one folder, the name of this folder is returned (with trailing directory separator char). Otherwise, an empty string is returned.</param>
+		/// <returns><c>True</c> if all names belong to one project folder; otherwise <c>False</c>.</returns>
+		public static bool AreAllNamesFromOneFolder(IEnumerable<string> itemNames, out string folderName)
+		{
+			var folderHash = new HashSet<string>();
+
+			foreach (var name in itemNames)
+			{
+				folderHash.Add(GetFolderPart(name));
+			}
+
+			if (folderHash.Count == 1)
+			{
+				folderName = folderHash.First();
+				return true;
+			}
+			else
+			{
+				folderName = string.Empty;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Gets the common folder of the provided item names.
+		/// </summary>
+		/// <param name="itemNames">The item names.</param>
+		/// <returns>The common folder of the items. This it at least the root folder (see <see cref="RootFolderName"/>).</returns>
+		/// <exception cref="System.ArgumentException">itemNames enumeration was empty</exception>
+		public static string GetCommonFolderOfNames(IEnumerable<string> itemNames)
+		{
+			if (null == itemNames)
+				throw new ArgumentNullException("itemNames");
+
+			IList<string> nameList;
+
+			if (itemNames is IList<string>)
+				nameList = (IList<string>)itemNames;
+			else
+				nameList = new List<string>(itemNames);
+
+			if (nameList.Count == 0)
+				throw new ArgumentException("itemNames enumeration was empty");
+
+			var firstNamesFolder = GetFolderPart(nameList[0]);
+
+			while (firstNamesFolder.Length > 0)
+			{
+				int i;
+				for (i = nameList.Count - 1; i >= 1; --i)
+				{
+					if (!(nameList[i].StartsWith(firstNamesFolder)))
+						break;
+				}
+				if (i == 0)
+					break;
+
+				firstNamesFolder = GetFoldersParentFolder(firstNamesFolder);
+			}
+
+			return firstNamesFolder;
+		}
+
+		#endregion other helpers
+
 		#endregion Static Name functions
 
 		public event Action<INameOwner, string> NameChanged;

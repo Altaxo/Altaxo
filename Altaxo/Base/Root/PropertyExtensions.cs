@@ -203,6 +203,17 @@ namespace Altaxo
 		}
 
 		/// <summary>
+		/// Gets the property bags in  hierarchical order. The first bag in the enumeration is the bag that belongs to the project (the project's root folder bag).
+		/// Then the bags of the UserSettings, ApplicationSettings, and BuiltinSettings follow.
+		/// </summary>
+		/// <param name="folder">The project folder with which to start the enumeration.</param>
+		/// <returns>Property bags in the project hierarchy wrapped in a  <see cref="PropertyHierarchy"/>.</returns>
+		public static PropertyHierarchy GetPropertyContextOfProject()
+		{
+			return new PropertyHierarchy(GetPropertyBagsStartingFromFolder(Altaxo.Main.ProjectFolder.RootFolderName));
+		}
+
+		/// <summary>
 		/// Gets the property context of the document node. If the provided node is not implementing <see cref="IPropertyBagOwner"/>, the parent nodes of this node are searched,
 		/// until a node which implements  <see cref="IPropertyBagOwner"/> is found.
 		/// </summary>

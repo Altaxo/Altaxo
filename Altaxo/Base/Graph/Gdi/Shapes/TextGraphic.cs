@@ -205,8 +205,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 			: base(new ItemLocationDirectAutoSize())
 		{
-			if (null == context || !context.TryGetValue(GraphDocument.PropertyKeyDefaultFont, out _font))
-				_font = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular);
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
+			_font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
+			_textBrush = new BrushX(context.GetValue(GraphDocument.PropertyKeyDefaultForeColor));
 		}
 
 		public TextGraphic(PointD2D graphicPosition, string text,

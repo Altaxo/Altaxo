@@ -86,52 +86,20 @@ namespace Altaxo.Worksheet.Commands
 			return result;
 		}
 
-		/// <summary>Determines whether all all tables included in this command are located in a single project folder.</summary>
-		/// <param name="folderName">On return, if all tables are located in one project folder, the name of this folder is returned (with trailing directory separator char). Otherwise, an empty string is returned.</param>
-		/// <returns><c>True</c> if all tables are located in one project folder; otherwise <c>False</c>.</returns>
-		public bool AreAllTablesFromOneProjectFolder(out string folderName)
-		{
-			var folderHash = new HashSet<string>();
-
-			foreach (DataTable table in _tables)
-			{
-				folderHash.Add(table.Folder);
-			}
-
-			if (folderHash.Count == 1)
-			{
-				folderName = folderHash.First();
-				return true;
-			}
-			else
-			{
-				folderName = string.Empty;
-				return false;
-			}
-		}
-
 		/// <summary>
 		/// Executes the 'Plot common column' command.
 		/// </summary>
 		public void Execute()
 		{
-			string folderName;
-
 			Altaxo.Gui.Graph.Viewing.IGraphController graphctrl;
 			Altaxo.Graph.Gdi.GraphDocument graph;
 
-			if (AreAllTablesFromOneProjectFolder(out folderName))
-				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
-					PropertyExtensions.GetPropertyContextOfProjectFolder(folderName),
+			var commonFolderName = Main.ProjectFolder.GetCommonFolderOfNames(_tables.Select(table => table.Name));
+			graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
+					PropertyExtensions.GetPropertyContextOfProjectFolder(commonFolderName),
 					null,
-					folderName,
+					commonFolderName,
 					true);
-			else
-				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
-				PropertyExtensions.GetPropertyHierarchyStartingFromUserSettings(),
-				null,
-				folderName,
-				true);
 
 			var layer = graph.GetFirstXYPlotLayer();
 			graphctrl = Current.ProjectService.CreateNewGraph(graph);

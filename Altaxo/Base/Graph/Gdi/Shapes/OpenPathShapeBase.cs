@@ -76,8 +76,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected OpenPathShapeBase(ItemLocationDirect location, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 			: base(location)
 		{
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
-			Pen = new PenX(NamedColors.Black, penWidth);
+			var foreColor = context.GetValue(GraphDocument.PropertyKeyDefaultForeColor);
+			Pen = new PenX(foreColor, penWidth);
 		}
 
 		public OpenPathShapeBase(OpenPathShapeBase from)
