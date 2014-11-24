@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +37,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Collections;
-
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
@@ -45,55 +46,42 @@ namespace Altaxo.Gui.Graph
 	{
 		private ILineScatterLayerContentsViewEventSink _controller;
 
-
 		public XYPlotLayerContentsControl()
 		{
 			InitializeComponent();
 		}
 
-		
-		void EhCommand_CopyCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		private void EhCommand_CopyCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = m_Contents_lbContents.SelectedItems.Count > 0;
 			e.Handled = true;
 			object o = Keyboard.FocusedElement;
 		}
 
-		void EhCommand_CopyExecuted(object sender, ExecutedRoutedEventArgs e)
+		private void EhCommand_CopyExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Controller.EhView_CopyClipboard(SelectedNodes(this.m_Contents_lbContents));
 			e.Handled = true;
 		}
 
-		void EhCommand_PasteCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		private void EhCommand_PasteCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = Controller.EhView_CanPasteFromClipboard();
 			e.Handled = true;
 		}
 
-		void EhCommand_PasteExecuted(object sender, ExecutedRoutedEventArgs e)
+		private void EhCommand_PasteExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Controller.EhView_PasteClipboard();
 			e.Handled = true;
 		}
 
-		
-
-		NGTreeNode[] SelectedNodes(Altaxo.Gui.Common.MultiSelectTreeView tree)
+		private NGTreeNode[] SelectedNodes(Altaxo.Gui.Common.MultiSelectTreeView tree)
 		{
-			var sel = tree.SelectedItems;
-			var list = new List<NGTreeNode>();
-			foreach (var s in sel)
-			{
-				var item = s.Header as NGTreeNode;
-				if (null != item)
-					list.Add(item);
-			}
-			var result = list.ToArray();
+			var result = tree.SelectedItems.OfType<NGTreeNode>().ToArray();
 			NGTreeNode.SortByOrder(result);
 			return result;
 		}
-
 
 		private void EhPutData_Click(object sender, RoutedEventArgs e)
 		{
@@ -146,7 +134,6 @@ namespace Altaxo.Gui.Graph
 				Controller.EhView_GroupClick(SelectedNodes(this.m_Contents_lbContents));
 				this.m_Contents_lbContents.Focus();
 			}
-      
 		}
 
 		private void EhUngroup_Click(object sender, RoutedEventArgs e)
@@ -169,7 +156,6 @@ namespace Altaxo.Gui.Graph
 
 		private void EhShowRange_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-
 		}
 
 		#region ILineScatterLayerContentsView
@@ -186,13 +172,14 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Collections.NGTreeNodeCollection _dataAvailable;
+		private Collections.NGTreeNodeCollection _dataAvailable;
+
 		public void DataAvailable_Initialize(Collections.NGTreeNodeCollection nodes)
 		{
 			var oldItems = _dataAvailable;
 			_dataAvailable = nodes;
-			if (oldItems != _dataAvailable) 
-			m_Content_tvDataAvail.ItemsSource = _dataAvailable;
+			if (oldItems != _dataAvailable)
+				m_Content_tvDataAvail.ItemsSource = _dataAvailable;
 		}
 
 		public void DataAvailable_ClearSelection()
@@ -202,29 +189,28 @@ namespace Altaxo.Gui.Graph
 					n.ClearSelectionRecursively();
 		}
 
-		Collections.NGTreeNodeCollection _layerContents;
+		private Collections.NGTreeNodeCollection _layerContents;
+
 		public void Contents_SetItems(Collections.NGTreeNodeCollection items)
 		{
 			var oldItems = _layerContents;
 			_layerContents = items;
-			if(oldItems!=_layerContents)
-			m_Contents_lbContents.ItemsSource = _layerContents;
+			if (oldItems != _layerContents)
+				m_Contents_lbContents.ItemsSource = _layerContents;
 		}
 
 		public void Contents_RemoveItems(Collections.NGTreeNode[] items)
 		{
 			foreach (NGTreeNode node in items)
-				node.Remove();				
+				node.Remove();
 		}
 
 		public void Contents_SetSelected(int idx, bool bSelected)
 		{
-			
 		}
 
 		public void Contents_InvalidateItems(int idx1, int idx2)
 		{
-			
 		}
 
 		public object ControllerObject
@@ -239,7 +225,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion ILineScatterLayerContentsView
 
 		private void EhItemMouseDoubleClick(object sender, EventArgs e)
 		{
@@ -247,7 +233,7 @@ namespace Altaxo.Gui.Graph
 			{
 				if (this.m_Contents_lbContents.SelectedItems.Count == 1)
 				{
-					Controller.EhView_ContentsDoubleClick(m_Contents_lbContents.SelectedItems[0].Header as NGTreeNode);
+					Controller.EhView_ContentsDoubleClick(m_Contents_lbContents.SelectedItems.First() as NGTreeNode);
 				}
 				this.m_Contents_lbContents.Focus();
 			}

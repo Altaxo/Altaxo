@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -33,14 +36,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
 
 namespace Altaxo.Gui.Common
 {
 	public class MultiSelectTreeViewItem : TreeViewItem
 	{
-
-
 		public bool AreAllChildsSelected
 		{
 			get { return (bool)GetValue(AreAllChildsSelectedProperty); }
@@ -50,8 +50,6 @@ namespace Altaxo.Gui.Common
 		// Using a DependencyProperty as the backing store for AreAllChildsSelected.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty AreAllChildsSelectedProperty =
 				DependencyProperty.Register("AreAllChildsSelected", typeof(bool), typeof(MultiSelectTreeViewItem), new UIPropertyMetadata(false));
-
-
 
 		#region Properties
 
@@ -98,7 +96,8 @@ namespace Altaxo.Gui.Common
 				return (this.ParentItemsControl as MultiSelectTreeViewItem);
 			}
 		}
-		#endregion
+
+		#endregion Properties
 
 		#region Constructors
 
@@ -106,9 +105,11 @@ namespace Altaxo.Gui.Common
 		{
 			// DefaultStyleKeyProperty.OverrideMetadata(typeof(MultiSelectTreeViewItem), new FrameworkPropertyMetadata(typeof(MultiSelectTreeViewItem)));
 		}
-		#endregion
+
+		#endregion Constructors
 
 		#region Overrides
+
 		protected override DependencyObject GetContainerForItemOverride()
 		{
 			return new MultiSelectTreeViewItem();
@@ -119,7 +120,7 @@ namespace Altaxo.Gui.Common
 			return item is MultiSelectTreeViewItem;
 		}
 
-
+		/*
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(e);
@@ -132,10 +133,32 @@ namespace Altaxo.Gui.Common
 
 			Keyboard.Focus(this); // neccessary because the element needs the keyboard focus in order to position the selection with the keyboard
 		}
+		*/
 
+		private int _timeStampLastMouseUp;
 
+		protected override void OnMouseUp(MouseButtonEventArgs e)
+		{
+			base.OnMouseUp(e);
 
+			var diff = e.Timestamp - _timeStampLastMouseUp;
+			_timeStampLastMouseUp = e.Timestamp;
 
+			var tw = ParentMultiSelectTreeView;
+			if (null != tw)
+			{
+				if (diff < GuiHelper.DoubleClickTime)
+				{
+					tw.OnViewItemMouseDoubleClick(this, e);
+				}
+				else
+				{
+					tw.OnViewItemMouseUp(this, e);
+				}
+			}
+
+			Keyboard.Focus(this); // neccessary because the element needs the keyboard focus in order to position the selection with the keyboard
+		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
@@ -197,7 +220,6 @@ namespace Altaxo.Gui.Common
 								itemToSelect = GetNextNodeAtSameLevel(tmp);
 								tmp = tmp.ParentMultiSelectTreeViewItem;
 							}
-
 						}
 					}
 					e.Handled = true;
@@ -212,7 +234,6 @@ namespace Altaxo.Gui.Common
 			}
 			catch (Exception) { /* Silently ignore */ }
 		}
-
 
 		protected override void OnSelected(RoutedEventArgs e)
 		{
@@ -232,10 +253,10 @@ namespace Altaxo.Gui.Common
 			base.OnUnselected(e);
 		}
 
-
-		#endregion
+		#endregion Overrides
 
 		#region Methods
+
 		/// <summary>
 		/// Retrieve the last displayed child node of the given one.
 		/// </summary>
@@ -353,7 +374,7 @@ namespace Altaxo.Gui.Common
 			}
 
 			// get the parent node of item2, that is on the same level than item1
-			var item2OnLevel1 = item2; // 
+			var item2OnLevel1 = item2; //
 			for (int l = level2 - 1; l >= level1; --l)
 				item2OnLevel1 = (MultiSelectTreeViewItem)item2OnLevel1.ParentItemsControl;
 
@@ -371,7 +392,6 @@ namespace Altaxo.Gui.Common
 			// now we can determine which node is first and which last
 			// if both are identical, then item1 is the first item, since
 			// parent nodes comes first compared to child nodes
-
 
 			var commonParent = it1.ParentItemsControl;
 			int idx1 = commonParent.ItemContainerGenerator.IndexFromContainer(it1);
@@ -396,7 +416,6 @@ namespace Altaxo.Gui.Common
 				it2 = hh;
 				idx2 = hx;
 			}
-
 
 			// if item1 and item2 share the same anchestor, select from item1 to items
 			if (item1.ParentItemsControl == commonParent && item2.ParentItemsControl == commonParent)
@@ -431,9 +450,7 @@ namespace Altaxo.Gui.Common
 					parent = current.ParentItemsControl;
 				}
 				current.IsSelected = true;
-
 			}
-
 		}
 
 		/// <summary>
@@ -470,7 +487,6 @@ namespace Altaxo.Gui.Common
 				}
 			}
 
-
 			if (!this.IsSelected)
 			{
 				this.IsSelected = true;
@@ -494,7 +510,7 @@ namespace Altaxo.Gui.Common
 
 			return result;
 		}
-		#endregion
-	}
 
+		#endregion Methods
+	}
 }

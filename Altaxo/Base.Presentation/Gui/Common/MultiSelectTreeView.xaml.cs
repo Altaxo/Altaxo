@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -42,11 +44,16 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class MultiSelectTreeView : System.Windows.Controls.ItemsControl
 	{
+		public class SelectedItemsCollection : ObservableCollection<MultiSelectTreeViewItem> { }
+
+		private SelectedItemsCollection _selectedTreeViewItems = new SelectedItemsCollection();
+
+		private Collection<object> _selectedItems = new Collection<object>();
+
 		/// <summary>
 		/// Fired when a mouse double click on any item occurs.
 		/// </summary>
 		public event EventHandler ItemMouseDoubleClick;
-
 
 		public MultiSelectTreeView()
 		{
@@ -56,7 +63,6 @@ namespace Altaxo.Gui.Common
 			this.InputBindings.Add(ib);
 		}
 
-
 		public enum SelectionModalities
 		{
 			SingleSelectionOnly,
@@ -64,10 +70,8 @@ namespace Altaxo.Gui.Common
 			KeyboardModifiersMode
 		}
 
-		public class SelectedItemsCollection : ObservableCollection<MultiSelectTreeViewItem> { }
-
-
 		#region Properties
+
 		private MultiSelectTreeViewItem _lastClickedItem = null;
 
 		public SelectionModalities SelectionMode
@@ -75,25 +79,38 @@ namespace Altaxo.Gui.Common
 			get { return (SelectionModalities)GetValue(SelectionModeProperty); }
 			set { SetValue(SelectionModeProperty, value); }
 		}
+
 		public static readonly DependencyProperty SelectionModeProperty =
 				DependencyProperty.Register("SelectionMode", typeof(SelectionModalities), typeof(MultiSelectTreeView), new UIPropertyMetadata(SelectionModalities.KeyboardModifiersMode));
 
-		private SelectedItemsCollection _selectedItems = new SelectedItemsCollection();
-		public SelectedItemsCollection SelectedItems
+		public SelectedItemsCollection SelectedTreeViewItems
+		{
+			get { return _selectedTreeViewItems; }
+		}
+
+		public System.Collections.Generic.ICollection<object> SelectedItems
 		{
 			get { return _selectedItems; }
 		}
-		#endregion
+
+		#endregion Properties
 
 		#region Constructors
+
 		static MultiSelectTreeView()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MultiSelectTreeView), new FrameworkPropertyMetadata(typeof(MultiSelectTreeView)));
+
+			GongSolutions.Wpf.DragDrop.Utilities.ItemsControlExtensions.RegisterItemsControl<MultiSelectTreeView, MultiSelectTreeViewItem>(
+				itemsControl => true,
+				itemsControl => itemsControl.SelectedItems,
+				(itemsControl, obj) => itemsControl.SelectedItems.Contains(obj),
+				(itemsControl, item, isSelected) => ((MultiSelectTreeViewItem)itemsControl.ItemContainerGenerator.ContainerFromItem(item)).IsSelected = isSelected,
+				itemsControl => null // GetOrientation returns null because TreeViewItems are neither oriented horizontally nor vertically
+				);
 		}
 
-
-
-		#endregion
+		#endregion Constructors
 
 		protected override DependencyObject GetContainerForItemOverride()
 		{
@@ -107,7 +124,7 @@ namespace Altaxo.Gui.Common
 
 		protected override void OnItemsSourceChanged(System.Collections.IEnumerable oldValue, System.Collections.IEnumerable newValue)
 		{
-			_selectedItems.Clear();
+			_selectedTreeViewItems.Clear();
 
 			base.OnItemsSourceChanged(oldValue, newValue);
 		}
@@ -124,26 +141,24 @@ namespace Altaxo.Gui.Common
 		{
 			if (e.Key == Key.C && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
 			{
-
 				//e.Handled = true;
 			}
 			base.OnPreviewKeyDown(e);
 		}
 
-		internal void OnViewItemMouseDown(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
+		internal void OnViewItemMouseUp(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
 			{
 				OnItemClicked(viewItem);
 				e.Handled = true;
 			}
+		}
 
-			if (e.ChangedButton == MouseButton.Left && e.ClickCount >= 2)
-			{
-				OnItemDoubleClicked(viewItem);
-				e.Handled = true;
-			}
-
+		internal void OnViewItemMouseDoubleClick(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
+		{
+			OnItemDoubleClicked(viewItem);
+			e.Handled = true;
 		}
 
 		/// <summary>
@@ -159,9 +174,11 @@ namespace Altaxo.Gui.Common
 					case SelectionModalities.MultipleSelectionOnly:
 						ManageCtrlSelection(item);
 						break;
+
 					case SelectionModalities.SingleSelectionOnly:
 						ManageSingleSelection(item);
 						break;
+
 					case SelectionModalities.KeyboardModifiersMode:
 						if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
 						{
@@ -187,12 +204,14 @@ namespace Altaxo.Gui.Common
 		}
 
 		#region Methods
+
 		public void UnselectAll()
 		{
-			var selItemsCopy = _selectedItems.ToArray(); // use a copy of the collection since IsSelected=false causes the removal of the item from the collection
+			var selItemsCopy = _selectedTreeViewItems.ToArray(); // use a copy of the collection since IsSelected=false causes the removal of the item from the collection
 			foreach (MultiSelectTreeViewItem item in selItemsCopy)
 				item.IsSelected = false;
 
+			_selectedTreeViewItems.Clear();
 			_selectedItems.Clear();
 			_lastClickedItem = null;
 		}
@@ -202,21 +221,35 @@ namespace Altaxo.Gui.Common
 			foreach (MultiSelectTreeViewItem item in Items)
 				item.SelectAllChildren();
 		}
-		#endregion
+
+		#endregion Methods
 
 		#region Helper Methods
+
+		private void UpdateSelectedItemCollectionFromSelectedTreeViewItems()
+		{
+			_selectedItems.Clear();
+			foreach (var tvi in _selectedTreeViewItems)
+				_selectedItems.Add(tvi.DataContext);
+		}
+
 		private void AddItemToSelection(MultiSelectTreeViewItem newItem)
 		{
-			if (!_selectedItems.Contains(newItem))
-				_selectedItems.Add(newItem);
+			if (!_selectedTreeViewItems.Contains(newItem))
+			{
+				_selectedTreeViewItems.Add(newItem);
+			}
+
+			UpdateSelectedItemCollectionFromSelectedTreeViewItems();
 		}
 
 		private void RemoveItemFromSelection(MultiSelectTreeViewItem newItem)
 		{
-			if (_selectedItems.Contains(newItem))
-				_selectedItems.Remove(newItem);
-		}
+			if (_selectedTreeViewItems.Contains(newItem))
+				_selectedTreeViewItems.Remove(newItem);
 
+			UpdateSelectedItemCollectionFromSelectedTreeViewItems();
+		}
 
 		private void ManageSingleSelection(MultiSelectTreeViewItem viewItem)
 		{
@@ -241,7 +274,7 @@ namespace Altaxo.Gui.Common
 
 			MultiSelectTreeViewItem.SelectAllNodesInbetween(_lastClickedItem, viewItem, true);
 		}
-		#endregion
 
+		#endregion Helper Methods
 	}
 }

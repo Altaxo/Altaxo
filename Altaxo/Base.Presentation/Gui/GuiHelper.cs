@@ -505,5 +505,26 @@ namespace Altaxo.Gui
 		}
 
 		#endregion Drag-Drop
+
+		#region Miscellaneous
+
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		private static extern uint GetDoubleClickTime();
+
+		/// <summary>
+		/// Gets the double click time in ms.
+		/// </summary>
+		/// <value>
+		/// The double click time.
+		/// </value>
+		public static int DoubleClickTime
+		{
+			get
+			{
+				return (int)GetDoubleClickTime();
+			}
+		}
+
+		#endregion Miscellaneous
 	}
 }
