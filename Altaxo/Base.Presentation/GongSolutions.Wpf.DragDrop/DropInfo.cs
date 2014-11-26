@@ -264,8 +264,8 @@ namespace GongSolutions.Wpf.DragDrop
 	[Flags]
 	public enum RelativeInsertPosition
 	{
-		BeforeTargetItem = 0,
-		AfterTargetItem = 1,
-		TargetItemCenter = 2
+		BeforeTargetItem = 1, // ModifiedByLelliD: value should not be 0, because HasFlag can not handle zero values (it would always return true)
+		AfterTargetItem = 2,
+		TargetItemCenter = 4
 	}
 }

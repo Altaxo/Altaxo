@@ -94,12 +94,16 @@
 			<axogc:MultiSelectTreeView.ContextMenu>
 				<ContextMenu>
 					<MenuItem Command="Copy" Header="Copy items" />
+					<MenuItem Command="Cut" Header="Cut items" />
 					<MenuItem Command="Paste" Header="Paste items" />
+					<MenuItem Command="Delete" Header="Delete items" />
 				</ContextMenu>
 			</axogc:MultiSelectTreeView.ContextMenu>
 			<axogc:MultiSelectTreeView.CommandBindings>
 				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted" />
+				<CommandBinding Command="Cut" CanExecute="EhCommand_CutCanExecute" Executed="EhCommand_CutExecuted" />
 				<CommandBinding Command="Paste" CanExecute="EhCommand_PasteCanExecute" Executed="EhCommand_PasteExecuted" />
+				<CommandBinding Command="Delete" CanExecute="EhCommand_DeleteCanExecute" Executed="EhCommand_DeleteExecuted" />
 			</axogc:MultiSelectTreeView.CommandBindings>
 		</axogc:MultiSelectTreeView>
 

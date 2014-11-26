@@ -65,6 +65,19 @@ namespace Altaxo.Gui.Graph
 			e.Handled = true;
 		}
 
+		private void EhCommand_CutCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = _guiPlotItemsTree.SelectedItems.Count > 0;
+			e.Handled = true;
+			object o = Keyboard.FocusedElement;
+		}
+
+		private void EhCommand_CutExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			Controller.EhView_CutPlotItems();
+			e.Handled = true;
+		}
+
 		private void EhCommand_PasteCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = Controller.EhView_CanPasteFromClipboard();
@@ -74,6 +87,18 @@ namespace Altaxo.Gui.Graph
 		private void EhCommand_PasteExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Controller.EhView_PasteClipboard();
+			e.Handled = true;
+		}
+
+		private void EhCommand_DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = Controller.EhView_CanDeletePlotItems();
+			e.Handled = true;
+		}
+
+		private void EhCommand_DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			Controller.EhView_DeletePlotItems();
 			e.Handled = true;
 		}
 
@@ -346,6 +371,7 @@ namespace Altaxo.Gui.Graph
 				_projectBrowseControl._controller.PlotItemTree_Drop(
 					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
 					dropInfo.TargetItem as Altaxo.Collections.NGTreeNode,
+					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
 					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
 					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
 					out isCopy, out isMove);

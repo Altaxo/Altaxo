@@ -66,9 +66,15 @@ namespace Altaxo.Gui.Graph
 
 		void EhView_CopyClipboard(NGTreeNode[] selNodes);
 
+		void EhView_CutPlotItems();
+
 		void EhView_PasteClipboard();
 
 		bool EhView_CanPasteFromClipboard();
+
+		bool EhView_CanDeletePlotItems();
+
+		void EhView_DeletePlotItems();
 
 		bool PlotItemTree_CanStartDrag();
 
@@ -80,7 +86,7 @@ namespace Altaxo.Gui.Graph
 
 		void PlotItemTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
 
-		void PlotItemTree_Drop(object data, NGTreeNode nGTreeNode, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
+		void PlotItemTree_Drop(object data, NGTreeNode nGTreeNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
 
 		bool AvailableItemTree_CanStartDrag();
 
@@ -720,6 +726,19 @@ namespace Altaxo.Gui.Graph
 				EhView_ContentsDoubleClick(selNodes[0]);
 		}
 
+		public bool EhView_CanDeletePlotItems()
+		{
+			var anySelected = null != _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).FirstOrDefault();
+			return anySelected;
+		}
+
+		public void EhView_DeletePlotItems()
+		{
+			var selNodes = _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).ToArray(); // ToArray because otherwise we would delete in a living enumeration
+			foreach (var node in selNodes)
+				node.Remove();
+		}
+
 		public void EhView_CopyClipboard(NGTreeNode[] selNodes)
 		{
 			PlotItemCollection coll = new PlotItemCollection();
@@ -727,6 +746,15 @@ namespace Altaxo.Gui.Graph
 			SelNodesToTempDoc(selNodes, coll);
 
 			ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
+		}
+
+		public void EhView_CutPlotItems()
+		{
+			var selNodes = _plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected).ToArray();
+			this.EhView_CopyClipboard(selNodes);
+
+			foreach (var node in selNodes)
+				node.Remove();
 		}
 
 		public bool EhView_CanPasteFromClipboard()
@@ -830,6 +858,14 @@ namespace Altaxo.Gui.Graph
 
 		public void PlotItemTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
 		{
+			if (!(data is IEnumerable<NGTreeNode>))
+			{
+				canCopy = false;
+				canMove = false;
+				itemIsSwallowingData = false;
+				return;
+			}
+
 			if (targetItem != null && targetItem.Tag is PlotItemCollection)
 			{
 				canCopy = true;
@@ -844,7 +880,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void PlotItemTree_Drop(object data, NGTreeNode targetNode, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
+		public void PlotItemTree_Drop(object data, NGTreeNode targetNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
 		{
 			isMove = false;
 			isCopy = false;
@@ -853,6 +889,8 @@ namespace Altaxo.Gui.Graph
 
 			Action<NGTreeNode> AddNodeToTree;
 
+			int actualInsertIndex; // is updated every time the following delegate is called
+			NGTreeNodeCollection parentNodeCollectionOfTargetNode = null;
 			if (canTargetSwallowNodes)
 			{
 				AddNodeToTree = node => targetNode.Nodes.Add(node);
@@ -863,15 +901,25 @@ namespace Altaxo.Gui.Graph
 			}
 			else // Add as sibling of the target node
 			{
-				var idx = targetNode.Index;
-				if (idx >= 0)
-					AddNodeToTree = node => targetNode.ParentNode.Nodes.Insert(idx + 1, node);
-				else // No parent node,
+				int idx = targetNode.Index;
+				if (idx < 0) // No parent node,
+				{
 					AddNodeToTree = node => targetNode.Nodes.Add(node);
+				}
+				else
+				{
+					if (insertPosition.HasFlag(Gui.Common.DragDropRelativeInsertPosition.AfterTargetItem))
+						idx = targetNode.Index + 1;
+
+					actualInsertIndex = idx;
+					parentNodeCollectionOfTargetNode = targetNode.ParentNode.Nodes;
+					AddNodeToTree = node => parentNodeCollectionOfTargetNode.Insert(actualInsertIndex++, node); // the incrementation is to support dropping of multiple items, they must be dropped at increasing indices
+				}
 			}
 
 			if (data is IEnumerable<NGTreeNode>)
 			{
+				var dummyNodes = new List<NGTreeNode>();
 				foreach (var node in (IEnumerable<NGTreeNode>)data)
 				{
 					if (node.Tag is Altaxo.Data.DataColumn)
@@ -886,8 +934,17 @@ namespace Altaxo.Gui.Graph
 					{
 						isMove = true;
 						isCopy = false;
+
+						var dummyNode = new NGTreeNode();
+						dummyNodes.Add(dummyNode);
+
+						node.ReplaceBy(dummyNode); // instead of removing the old node from the tree, we replace it by a dummy. In this way we retain the position of all nodes in the tree, so that the insert index is valid during the whole drop operation
+						AddNodeToTree(node);
 					}
 				}
+				// now, after the drop is complete, we can remove the dummy nodes
+				foreach (var dummy in dummyNodes)
+					dummy.Remove();
 			}
 		}
 

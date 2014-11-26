@@ -158,11 +158,34 @@ namespace Altaxo.Gui.Common
 			base.OnPreviewKeyDown(e);
 		}
 
+		private bool _wasShiftPressedOnLastItemMouseDown = false;
+		private bool _wasCtrlPressedOnLastItemMouseDown = false;
+
+		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+		{
+			base.OnPreviewMouseDown(e);
+			_wasShiftPressedOnLastItemMouseDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+			_wasCtrlPressedOnLastItemMouseDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+		}
+
+		internal void OnViewItemMouseDown(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
+			{
+				bool isSelected = _selectedTreeViewItems.Contains(viewItem);
+				if (!isSelected)
+					OnItemClicked(viewItem);
+				e.Handled = true;
+			}
+		}
+
 		internal void OnViewItemMouseUp(MultiSelectTreeViewItem viewItem, MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Left && e.ClickCount == 1)
 			{
-				OnItemClicked(viewItem);
+				bool isSelected = _selectedTreeViewItems.Contains(viewItem);
+				if (isSelected && !(_wasShiftPressedOnLastItemMouseDown || _wasCtrlPressedOnLastItemMouseDown))
+					OnItemClicked(viewItem);
 				e.Handled = true;
 			}
 		}

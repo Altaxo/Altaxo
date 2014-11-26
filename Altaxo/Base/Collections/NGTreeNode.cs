@@ -335,6 +335,23 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Replaces this node in the tree by the new node <paramref name="newNode"/>, setting this node free (i.e. afterwards it has no parent anymore).
+		/// </summary>
+		/// <param name="newNode">The new node to replace this node.</param>
+		public void ReplaceBy(NGTreeNode newNode)
+		{
+			if (null == newNode)
+				throw new ArgumentNullException("newNode");
+
+			if (_parent != null)
+			{
+				var idx = this.Index;
+				_parent.Nodes[idx] = newNode;
+				this._parent = null;
+			}
+		}
+
+		/// <summary>
 		/// The level in the hierarchy. Nodes that have no parent return a level of 0, those with a parent return a level of 1, those with parent and
 		/// grand parent a level of 2 and so on.
 		/// </summary>

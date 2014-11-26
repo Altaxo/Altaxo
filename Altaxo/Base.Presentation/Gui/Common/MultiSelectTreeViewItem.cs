@@ -120,7 +120,6 @@ namespace Altaxo.Gui.Common
 			return item is MultiSelectTreeViewItem;
 		}
 
-		/*
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(e);
@@ -133,7 +132,6 @@ namespace Altaxo.Gui.Common
 
 			Keyboard.Focus(this); // neccessary because the element needs the keyboard focus in order to position the selection with the keyboard
 		}
-		*/
 
 		private int _timeStampLastMouseUp;
 

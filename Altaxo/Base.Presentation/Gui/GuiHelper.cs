@@ -504,6 +504,22 @@ namespace Altaxo.Gui
 			return DataObjectAdapterWpfToAltaxo.FromWpfDataObject(dao);
 		}
 
+		public static Altaxo.Gui.Common.DragDropRelativeInsertPosition ToAltaxo(GongSolutions.Wpf.DragDrop.RelativeInsertPosition pos)
+		{
+			Altaxo.Gui.Common.DragDropRelativeInsertPosition result = 0;
+
+			if (pos.HasFlag(GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem))
+				result |= Common.DragDropRelativeInsertPosition.BeforeTargetItem;
+
+			if (pos.HasFlag(GongSolutions.Wpf.DragDrop.RelativeInsertPosition.AfterTargetItem))
+				result |= Common.DragDropRelativeInsertPosition.AfterTargetItem;
+
+			if (pos.HasFlag(GongSolutions.Wpf.DragDrop.RelativeInsertPosition.TargetItemCenter))
+				result |= Common.DragDropRelativeInsertPosition.TargetItemCenter;
+
+			return result;
+		}
+
 		#endregion Drag-Drop
 
 		#region Miscellaneous
