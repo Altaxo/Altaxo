@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using GongSolutions.Wpf.DragDrop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,14 +54,14 @@ namespace Altaxo.Gui.Graph
 
 		private void EhCommand_CopyCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = m_Contents_lbContents.SelectedItems.Count > 0;
+			e.CanExecute = _guiPlotItemsTree.SelectedItems.Count > 0;
 			e.Handled = true;
 			object o = Keyboard.FocusedElement;
 		}
 
 		private void EhCommand_CopyExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			Controller.EhView_CopyClipboard(SelectedNodes(this.m_Contents_lbContents));
+			Controller.EhView_CopyClipboard(SelectedNodes(this._guiPlotItemsTree));
 			e.Handled = true;
 		}
 
@@ -87,8 +88,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_PutData(SelectedNodes(this.m_Content_tvDataAvail));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_PutData(SelectedNodes(this._guiAvailableContent));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -96,7 +97,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_PullDataClick(SelectedNodes(this.m_Contents_lbContents));
+				Controller.EhView_PullDataClick(SelectedNodes(this._guiPlotItemsTree));
 			}
 		}
 
@@ -104,8 +105,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_ListSelUpClick(SelectedNodes(this.m_Contents_lbContents));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_ListSelUpClick(SelectedNodes(this._guiPlotItemsTree));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -113,8 +114,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_SelDownClick(SelectedNodes(this.m_Contents_lbContents));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_SelDownClick(SelectedNodes(this._guiPlotItemsTree));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -122,8 +123,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_PlotAssociationsClick(SelectedNodes(this.m_Contents_lbContents));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_PlotAssociationsClick(SelectedNodes(this._guiPlotItemsTree));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -131,8 +132,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_GroupClick(SelectedNodes(this.m_Contents_lbContents));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_GroupClick(SelectedNodes(this._guiPlotItemsTree));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -140,8 +141,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_UngroupClick(SelectedNodes(this.m_Contents_lbContents));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_UngroupClick(SelectedNodes(this._guiPlotItemsTree));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -149,8 +150,8 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				Controller.EhView_EditRangeClick(SelectedNodes(this.m_Contents_lbContents));
-				this.m_Contents_lbContents.Focus();
+				Controller.EhView_EditRangeClick(SelectedNodes(this._guiPlotItemsTree));
+				this._guiPlotItemsTree.Focus();
 			}
 		}
 
@@ -179,7 +180,7 @@ namespace Altaxo.Gui.Graph
 			var oldItems = _dataAvailable;
 			_dataAvailable = nodes;
 			if (oldItems != _dataAvailable)
-				m_Content_tvDataAvail.ItemsSource = _dataAvailable;
+				_guiAvailableContent.ItemsSource = _dataAvailable;
 		}
 
 		public void DataAvailable_ClearSelection()
@@ -196,7 +197,7 @@ namespace Altaxo.Gui.Graph
 			var oldItems = _layerContents;
 			_layerContents = items;
 			if (oldItems != _layerContents)
-				m_Contents_lbContents.ItemsSource = _layerContents;
+				_guiPlotItemsTree.ItemsSource = _layerContents;
 		}
 
 		public void Contents_RemoveItems(Collections.NGTreeNode[] items)
@@ -231,12 +232,182 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != Controller)
 			{
-				if (this.m_Contents_lbContents.SelectedItems.Count == 1)
+				if (this._guiPlotItemsTree.SelectedItems.Count == 1)
 				{
-					Controller.EhView_ContentsDoubleClick(m_Contents_lbContents.SelectedItems.First() as NGTreeNode);
+					Controller.EhView_ContentsDoubleClick(_guiPlotItemsTree.SelectedItems.First() as NGTreeNode);
 				}
-				this.m_Contents_lbContents.Focus();
+				this._guiPlotItemsTree.Focus();
 			}
 		}
+
+		#region PlotItemTreeView Drag drop support
+
+		private IDragSource _plotItemTreeDragHandler;
+
+		public IDragSource PlotItemTreeDragHandler
+		{
+			get
+			{
+				if (null == _plotItemTreeDragHandler)
+					_plotItemTreeDragHandler = new PlotItemTree_DragHandler(this);
+				return _plotItemTreeDragHandler;
+			}
+		}
+
+		public class PlotItemTree_DragHandler : IDragSource
+		{
+			private XYPlotLayerContentsControl _projectBrowseControl;
+
+			public PlotItemTree_DragHandler(XYPlotLayerContentsControl ctrl)
+			{
+				_projectBrowseControl = ctrl;
+			}
+
+			public bool CanStartDrag(IDragInfo dragInfo)
+			{
+				return _projectBrowseControl._controller.PlotItemTree_CanStartDrag();
+			}
+
+			public void StartDrag(IDragInfo dragInfo)
+			{
+				object data;
+				bool canCopy, canMove;
+				_projectBrowseControl._controller.PlotItemTree_StartDrag(out data, out canCopy, out canMove);
+
+				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+				dragInfo.Data = data;
+			}
+
+			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
+			{
+				bool isCopy, isMove;
+				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+
+				_projectBrowseControl._controller.PlotItemTree_DragEnded(isCopy, isMove);
+			}
+
+			public void DragCancelled()
+			{
+				_projectBrowseControl._controller.PlotItemTree_DragCancelled();
+			}
+		}
+
+		private IDropTarget _treeViewDropHandler;
+
+		public IDropTarget PlotItemTreeDropHandler
+		{
+			get
+			{
+				if (null == _treeViewDropHandler)
+					_treeViewDropHandler = new PlotItemTree_DropHandler(this);
+				return _treeViewDropHandler;
+			}
+		}
+
+		public class PlotItemTree_DropHandler : IDropTarget
+		{
+			private XYPlotLayerContentsControl _projectBrowseControl;
+
+			public PlotItemTree_DropHandler(XYPlotLayerContentsControl ctrl)
+			{
+				_projectBrowseControl = ctrl;
+			}
+
+			public void DragOver(IDropInfo dropInfo)
+			{
+				DragDropEffects resultingEffect;
+				Type adornerType;
+				if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+				{
+					dropInfo.Effects = resultingEffect;
+					dropInfo.DropTargetAdorner = adornerType;
+				}
+			}
+
+			protected bool CanAcceptData(IDropInfo dropInfo, out System.Windows.DragDropEffects resultingEffect, out Type adornerType)
+			{
+				bool canCopy, canMove, itemIsSwallowingData;
+				_projectBrowseControl._controller.PlotItemTree_DropCanAcceptData(
+					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+					dropInfo.TargetItem as Altaxo.Collections.NGTreeNode,
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
+					out canCopy, out canMove, out itemIsSwallowingData);
+
+				resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+				adornerType = itemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+
+				return canCopy | canMove;
+			}
+
+			public void Drop(IDropInfo dropInfo)
+			{
+				bool isCopy, isMove;
+				_projectBrowseControl._controller.PlotItemTree_Drop(
+					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+					dropInfo.TargetItem as Altaxo.Collections.NGTreeNode,
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
+					out isCopy, out isMove);
+
+				dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(isCopy, isMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
+			}
+		}
+
+		#endregion PlotItemTreeView Drag drop support
+
+		#region AvailableItemTree_DragHander
+
+		private IDragSource _availableItemTreeDragHandler;
+
+		public IDragSource AvailableItemTreeDragHandler
+		{
+			get
+			{
+				if (null == _availableItemTreeDragHandler)
+					_availableItemTreeDragHandler = new AvailableItemTree_DragHandler(this);
+				return _availableItemTreeDragHandler;
+			}
+		}
+
+		public class AvailableItemTree_DragHandler : IDragSource
+		{
+			private XYPlotLayerContentsControl _projectBrowseControl;
+
+			public AvailableItemTree_DragHandler(XYPlotLayerContentsControl ctrl)
+			{
+				_projectBrowseControl = ctrl;
+			}
+
+			public bool CanStartDrag(IDragInfo dragInfo)
+			{
+				return _projectBrowseControl._controller.AvailableItemTree_CanStartDrag();
+			}
+
+			public void StartDrag(IDragInfo dragInfo)
+			{
+				object data;
+				bool canCopy, canMove;
+				_projectBrowseControl._controller.AvailableItemTree_StartDrag(out data, out canCopy, out canMove);
+
+				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+				dragInfo.Data = data;
+			}
+
+			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
+			{
+				bool isCopy, isMove;
+				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+
+				_projectBrowseControl._controller.AvailableItemTree_DragEnded(isCopy, isMove);
+			}
+
+			public void DragCancelled()
+			{
+				_projectBrowseControl._controller.AvailableItemTree_DragCancelled();
+			}
+		}
+
+		#endregion AvailableItemTree_DragHander
 	}
 }

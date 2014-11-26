@@ -1,45 +1,46 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.XYPlotLayerContentsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d" 
-             >
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<Thickness x:Key="ButtonMargin">8</Thickness>
 	</UserControl.Resources>
-    <Grid>
+	<Grid>
 		<Grid.Resources>
-			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml"/>
+			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
 		</Grid.Resources>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition MinHeight="4" Height="*"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition MinHeight="4" Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label x:Name="_label1"  Grid.Column="0" Grid.Row="0">Available data:</Label>
-		<axogc:MultiSelectTreeView x:Name="m_Content_tvDataAvail" Grid.Column="0" Grid.Row="2" Grid.RowSpan="13" Focusable="True">
+		<axogc:MultiSelectTreeView	x:Name="_guiAvailableContent" Grid.Column="0" Grid.Row="2" Grid.RowSpan="13" Focusable="True"
+																dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemTreeDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -48,7 +49,7 @@
 					<Setter Property="FontWeight" Value="Normal" />
 					<Style.Triggers>
 						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 						</DataTrigger>
 					</Style.Triggers>
 				</Style>
@@ -57,17 +58,18 @@
 			<ItemsControl.Resources>
 				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
 					<StackPanel Orientation="Horizontal">
-						<Image Width="16" Height="16" Margin="3,0"/>
+						<Image Width="16" Height="16" Margin="3,0" />
 						<TextBlock Text="{Binding Text}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>
 			</ItemsControl.Resources>
-
 		</axogc:MultiSelectTreeView>
 		<Label Grid.Column="2" Grid.Row="0">Layer contents:</Label>
-		<axogc:MultiSelectTreeView x:Name="m_Contents_lbContents" Grid.Column="2" Grid.Row="2" Grid.RowSpan="13" 
-															 ItemMouseDoubleClick="EhItemMouseDoubleClick" 
-															 Focusable="True">
+		<axogc:MultiSelectTreeView	x:Name="_guiPlotItemsTree" Grid.Column="2" Grid.Row="2" Grid.RowSpan="13"
+																ItemMouseDoubleClick="EhItemMouseDoubleClick"
+																dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding PlotItemTreeDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+																dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding PlotItemTreeDropHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+ 																Focusable="True">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -76,7 +78,7 @@
 					<Setter Property="FontWeight" Value="Normal" />
 					<Style.Triggers>
 						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 						</DataTrigger>
 					</Style.Triggers>
 				</Style>
@@ -84,52 +86,49 @@
 			<ItemsControl.Resources>
 				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
 					<StackPanel Orientation="Horizontal">
-						<Image Width="16" Height="16" Margin="3,0"/>
-						<TextBlock Text="{Binding Text}"  />
+						<Image Width="16" Height="16" Margin="3,0" />
+						<TextBlock Text="{Binding Text}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>
 			</ItemsControl.Resources>
 			<axogc:MultiSelectTreeView.ContextMenu>
 				<ContextMenu>
 					<MenuItem Command="Copy" Header="Copy items" />
-					<MenuItem Command="Paste" Header="Paste items"/>
+					<MenuItem Command="Paste" Header="Paste items" />
 				</ContextMenu>
 			</axogc:MultiSelectTreeView.ContextMenu>
 			<axogc:MultiSelectTreeView.CommandBindings>
-				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted"/>
-				<CommandBinding Command="Paste" CanExecute="EhCommand_PasteCanExecute" Executed="EhCommand_PasteExecuted"/>
+				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted" />
+				<CommandBinding Command="Paste" CanExecute="EhCommand_PasteCanExecute" Executed="EhCommand_PasteExecuted" />
 			</axogc:MultiSelectTreeView.CommandBindings>
-	
-
 		</axogc:MultiSelectTreeView>
-			
+
 		<Button Grid.Column="1" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}"  Click="EhPutData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
-				<Path Style="{StaticResource LeftArrowPathStyle}"/>
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+				<Path Style="{StaticResource LeftArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 		<Button Grid.Column="1" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}" Click="EhPullData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
-				<Path Style="{StaticResource RightArrowPathStyle}"/>
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+				<Path Style="{StaticResource RightArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click" >
-			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
-				<Path Style="{StaticResource UpArrowPathStyle}"/>
+		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+				<Path Style="{StaticResource UpArrowPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Grid.Column="3" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click" >
-			<Viewbox Style="{StaticResource ArrowViewBoxStyle}" >
-				<Path Style="{StaticResource DownArrowPathStyle}"/>
+		<Button Grid.Column="3" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+				<Path Style="{StaticResource DownArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
 		<Button Grid.Column="3" Grid.Row="6" Content="Plot associations" Margin="{StaticResource ButtonMargin}" Click="EhPlotAssociations_Click" />
 		<Button x:Name="_btGroup" Grid.Column="3" Grid.Row="8" Content="Group" Margin="{StaticResource ButtonMargin}" Click="EhGroup_Click" />
-		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click"/>
-		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click"/>
+		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click" />
+		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click" />
 		<CheckBox Grid.Column="3" Grid.Row="14" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" />
-
 	</Grid>
 </UserControl>

@@ -36,6 +36,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Altaxo.Gui.Graph
 {
@@ -68,6 +69,26 @@ namespace Altaxo.Gui.Graph
 		void EhView_PasteClipboard();
 
 		bool EhView_CanPasteFromClipboard();
+
+		bool PlotItemTree_CanStartDrag();
+
+		void PlotItemTree_StartDrag(out object data, out bool canCopy, out bool canMove);
+
+		void PlotItemTree_DragEnded(bool isCopy, bool isMove);
+
+		void PlotItemTree_DragCancelled();
+
+		void PlotItemTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
+
+		void PlotItemTree_Drop(object data, NGTreeNode nGTreeNode, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
+
+		bool AvailableItemTree_CanStartDrag();
+
+		void AvailableItemTree_StartDrag(out object data, out bool canCopy, out bool canMove);
+
+		void AvailableItemTree_DragEnded(bool isCopy, bool isMove);
+
+		void AvailableItemTree_DragCancelled();
 	}
 
 	public interface ILineScatterLayerContentsView
@@ -390,7 +411,7 @@ namespace Altaxo.Gui.Graph
 				if (null != dataCol && !columnsAlreadyProcessed.Contains(dataCol))
 				{
 					columnsAlreadyProcessed.Add(dataCol);
-					CreatePlotItemNode(dataCol);
+					CreatePlotItemNodeAndAddAtEndOfTree(dataCol);
 				}
 				else if (sn is SingleColumnChoiceController.TableNode)
 				{
@@ -405,7 +426,7 @@ namespace Altaxo.Gui.Graph
 						if (coll.GetColumnKind(i) == ColumnKind.V && !columnsAlreadyProcessed.Contains(dataCol)) // add only value columns as plot items
 						{
 							columnsAlreadyProcessed.Add(dataCol);
-							CreatePlotItemNode(dataCol);
+							CreatePlotItemNodeAndAddAtEndOfTree(dataCol);
 						}
 					}
 				}
@@ -416,7 +437,7 @@ namespace Altaxo.Gui.Graph
 			SetDirty();
 		}
 
-		private void CreatePlotItemNode(DataColumn dataCol)
+		private NGTreeNode CreatePlotItemNode(DataColumn dataCol)
 		{
 			IGPlotItem newItem = this.CreatePlotItem(dataCol);
 			if (null != newItem)
@@ -425,8 +446,19 @@ namespace Altaxo.Gui.Graph
 				NGTreeNode newNode = new NGTreeNode();
 				newNode.Text = newItem.GetName(2);
 				newNode.Tag = newItem;
-				_plotItemsTree.Add(newNode);
+				return newNode;
 			}
+			else
+			{
+				return null;
+			}
+		}
+
+		private void CreatePlotItemNodeAndAddAtEndOfTree(DataColumn dataCol)
+		{
+			var node = CreatePlotItemNode(dataCol);
+			if (null != node)
+				_plotItemsTree.Add(node);
 		}
 
 		public void EhView_PullDataClick(NGTreeNode[] selNodes)
@@ -740,8 +772,8 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply()
 		{
-			if (!this._isDirty)
-				return true; // not dirty - so no need to apply something
+			//			if (!this._isDirty)
+			//			return true; // not dirty - so no need to apply something
 
 			_originalDoc.ClearPlotItems(); // first, clear all Plot items
 			TransferTreeToDoc(_plotItemsRootNode, _originalDoc);
@@ -754,6 +786,145 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion IApplyController Members
+
+		#region Drag/drop support
+
+		#region Plot items
+
+		private bool AreAllSelectedPlotItemNodesNodesFromSameLevel()
+		{
+			var selNodes = _plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected);
+
+			int? level = null;
+			foreach (var node in selNodes)
+			{
+				if (null == level)
+					level = node.Level;
+
+				if (level != node.Level)
+					return false;
+			}
+			return null == level ? false : true;
+		}
+
+		public bool PlotItemTree_CanStartDrag()
+		{
+			// to start a drag, all selected nodes must be on the same level
+			return AreAllSelectedPlotItemNodesNodesFromSameLevel();
+		}
+
+		public void PlotItemTree_StartDrag(out object data, out bool canCopy, out bool canMove)
+		{
+			data = new List<NGTreeNode>(_plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected));
+			canCopy = true;
+			canMove = true;
+		}
+
+		public void PlotItemTree_DragEnded(bool isCopy, bool isMove)
+		{
+		}
+
+		public void PlotItemTree_DragCancelled()
+		{
+		}
+
+		public void PlotItemTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
+		{
+			if (targetItem != null && targetItem.Tag is PlotItemCollection)
+			{
+				canCopy = true;
+				canMove = true;
+				itemIsSwallowingData = true;
+			}
+			else
+			{
+				canCopy = true;
+				canMove = true;
+				itemIsSwallowingData = false;
+			}
+		}
+
+		public void PlotItemTree_Drop(object data, NGTreeNode targetNode, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
+		{
+			isMove = false;
+			isCopy = false;
+
+			bool canTargetSwallowNodes = null != targetNode && targetNode.Tag is PlotItemCollection;
+
+			Action<NGTreeNode> AddNodeToTree;
+
+			if (canTargetSwallowNodes)
+			{
+				AddNodeToTree = node => targetNode.Nodes.Add(node);
+			}
+			else if (targetNode == null)
+			{
+				AddNodeToTree = node => _plotItemsRootNode.Nodes.Add(node);
+			}
+			else // Add as sibling of the target node
+			{
+				var idx = targetNode.Index;
+				if (idx >= 0)
+					AddNodeToTree = node => targetNode.ParentNode.Nodes.Insert(idx + 1, node);
+				else // No parent node,
+					AddNodeToTree = node => targetNode.Nodes.Add(node);
+			}
+
+			if (data is IEnumerable<NGTreeNode>)
+			{
+				foreach (var node in (IEnumerable<NGTreeNode>)data)
+				{
+					if (node.Tag is Altaxo.Data.DataColumn)
+					{
+						isMove = false;
+						isCopy = true;
+
+						var newNode = CreatePlotItemNode((Altaxo.Data.DataColumn)node.Tag);
+						AddNodeToTree(newNode);
+					}
+					else if (node.Tag is IGPlotItem)
+					{
+						isMove = true;
+						isCopy = false;
+					}
+				}
+			}
+		}
+
+		#endregion Plot items
+
+		#region Available items
+
+		public bool AvailableItemTree_CanStartDrag()
+		{
+			var selNodes = _availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected);
+			var selNotAllowedNodes = selNodes.Where(node => !(node.Tag is Altaxo.Data.DataColumn));
+
+			var isAnythingSelected = selNodes.FirstOrDefault() != null;
+			var isAnythingForbiddenSelected = selNotAllowedNodes.FirstOrDefault() != null;
+
+			// to start a drag, all selected nodes must be on the same level
+			return isAnythingSelected && !isAnythingForbiddenSelected;
+		}
+
+		public void AvailableItemTree_StartDrag(out object data, out bool canCopy, out bool canMove)
+		{
+			data = new List<NGTreeNode>(_availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
+			canCopy = true;
+			canMove = false;
+		}
+
+		public void AvailableItemTree_DragEnded(bool isCopy, bool isMove)
+		{
+		}
+
+		public void AvailableItemTree_DragCancelled()
+		{
+		}
+
+		#endregion Available items
+
+		#endregion Drag/drop support
 
 		#region IMVCController Members
 

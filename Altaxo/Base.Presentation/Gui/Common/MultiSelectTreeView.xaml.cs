@@ -48,8 +48,6 @@ namespace Altaxo.Gui.Common
 
 		private SelectedItemsCollection _selectedTreeViewItems = new SelectedItemsCollection();
 
-		private Collection<object> _selectedItems = new Collection<object>();
-
 		/// <summary>
 		/// Fired when a mouse double click on any item occurs.
 		/// </summary>
@@ -90,7 +88,21 @@ namespace Altaxo.Gui.Common
 
 		public System.Collections.Generic.ICollection<object> SelectedItems
 		{
-			get { return _selectedItems; }
+			get
+			{
+				var _selectedItems = new Collection<object>();
+
+				foreach (MultiSelectTreeViewItem item in _selectedTreeViewItems)
+				{
+					object o = item.DataContext;
+					if (o.GetType().FullName == "MS.Internal.NamedObject") // TreeViewItems that were removed from the tree contain a DataContect object of type MS.Internal.NamedObject
+						continue; // such items are not part of the tree anymore, and thus its datacontext does not belong to the selected objects collection
+
+					_selectedItems.Add(o);
+				}
+
+				return _selectedItems;
+			}
 		}
 
 		#endregion Properties
@@ -212,7 +224,6 @@ namespace Altaxo.Gui.Common
 				item.IsSelected = false;
 
 			_selectedTreeViewItems.Clear();
-			_selectedItems.Clear();
 			_lastClickedItem = null;
 		}
 
@@ -226,29 +237,18 @@ namespace Altaxo.Gui.Common
 
 		#region Helper Methods
 
-		private void UpdateSelectedItemCollectionFromSelectedTreeViewItems()
-		{
-			_selectedItems.Clear();
-			foreach (var tvi in _selectedTreeViewItems)
-				_selectedItems.Add(tvi.DataContext);
-		}
-
 		private void AddItemToSelection(MultiSelectTreeViewItem newItem)
 		{
 			if (!_selectedTreeViewItems.Contains(newItem))
 			{
 				_selectedTreeViewItems.Add(newItem);
 			}
-
-			UpdateSelectedItemCollectionFromSelectedTreeViewItems();
 		}
 
 		private void RemoveItemFromSelection(MultiSelectTreeViewItem newItem)
 		{
 			if (_selectedTreeViewItems.Contains(newItem))
 				_selectedTreeViewItems.Remove(newItem);
-
-			UpdateSelectedItemCollectionFromSelectedTreeViewItems();
 		}
 
 		private void ManageSingleSelection(MultiSelectTreeViewItem viewItem)

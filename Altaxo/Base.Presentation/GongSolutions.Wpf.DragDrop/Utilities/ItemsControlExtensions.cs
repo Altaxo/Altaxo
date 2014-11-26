@@ -95,7 +95,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 				itemsControl => GetSelectedItems((TItemsControl)itemsControl),
 				(itemsControl, o) => GetIsItemSelected((TItemsControl)itemsControl, o),
 				(itemsControl, o, b) => SetIsItemSelected((TItemsControl)itemsControl, o, b),
-				itemsControl => GetOrientation((TItemsControl)itemsControl)
+				null == GetOrientation ? (Func<ItemsControl, System.Windows.Controls.Orientation?>)null : (itemsControl => GetOrientation((TItemsControl)itemsControl))
 				);
 		}
 
