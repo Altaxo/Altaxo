@@ -48,53 +48,53 @@ namespace Altaxo.Gui.Graph
 
 		void EhView_ContentsDoubleClick(NGTreeNode selNode);
 
-		void EhView_PutData(NGTreeNode[] selNodes);
+		void AvailableItems_PutDataToPlotItems();
 
-		void EhView_PullDataClick(NGTreeNode[] selNodes);
+		void PlotItems_MoveUpSelected();
 
-		void EhView_ListSelUpClick(NGTreeNode[] selNodes);
+		void PlotItems_MoveDownSelected();
 
-		void EhView_SelDownClick(NGTreeNode[] selNodes);
+		void PlotItems_GroupClick();
 
-		void EhView_GroupClick(NGTreeNode[] selNodes);
+		void PlotItems_UngroupClick();
 
-		void EhView_UngroupClick(NGTreeNode[] selNodes);
+		void PlotItems_EditRangeClick();
 
-		void EhView_EditRangeClick(NGTreeNode[] selNodes);
+		void PlotItem_Open();
 
-		void EhView_PlotAssociationsClick(NGTreeNode[] selNodes);
+		void PlotItems_Copy();
 
-		void EhView_CopyClipboard(NGTreeNode[] selNodes);
+		void PlotItems_Cut();
 
-		void EhView_CutPlotItems();
+		bool PlotItems_CanPaste();
 
-		void EhView_PasteClipboard();
+		void PlotItems_Paste();
 
-		bool EhView_CanPasteFromClipboard();
+		bool PlotItems_CanDelete();
 
-		bool EhView_CanDeletePlotItems();
+		void PlotItems_Delete();
 
-		void EhView_DeletePlotItems();
+		void PlotItems_ShowRangeChanged(bool showRange);
 
-		bool PlotItemTree_CanStartDrag();
+		bool PlotItems_CanStartDrag();
 
-		void PlotItemTree_StartDrag(out object data, out bool canCopy, out bool canMove);
+		void PlotItems_StartDrag(out object data, out bool canCopy, out bool canMove);
 
-		void PlotItemTree_DragEnded(bool isCopy, bool isMove);
+		void PlotItems_DragEnded(bool isCopy, bool isMove);
 
-		void PlotItemTree_DragCancelled();
+		void PlotItems_DragCancelled();
 
-		void PlotItemTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
+		void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
 
-		void PlotItemTree_Drop(object data, NGTreeNode nGTreeNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
+		void PlotItems_Drop(object data, NGTreeNode nGTreeNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
 
-		bool AvailableItemTree_CanStartDrag();
+		bool AvailableItems_CanStartDrag();
 
-		void AvailableItemTree_StartDrag(out object data, out bool canCopy, out bool canMove);
+		void AvailableItems_StartDrag(out object data, out bool canCopy, out bool canMove);
 
-		void AvailableItemTree_DragEnded(bool isCopy, bool isMove);
+		void AvailableItems_DragEnded(bool isCopy, bool isMove);
 
-		void AvailableItemTree_DragCancelled();
+		void AvailableItems_DragCancelled();
 	}
 
 	public interface ILineScatterLayerContentsView
@@ -104,38 +104,23 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		ILineScatterLayerContentsViewEventSink Controller { get; set; }
 
+		IEnumerable<object> PlotItemsSelected { get; }
+
+		IEnumerable<object> AvailableItemsSelected { get; }
+
 		/// <summary>
 		/// Initializes the treeview of available data with content.
 		/// </summary>
 		/// <param name="nodes"></param>
-		void DataAvailable_Initialize(NGTreeNodeCollection nodes);
-
-		/// <summary>
-		/// Clears all selection from the DataAvailable tree view.
-		/// </summary>
-		void DataAvailable_ClearSelection();
+		void InitializeAvailableItems(NGTreeNodeCollection nodes);
 
 		/// <summary>
 		/// Initializes the content list box by setting the items.
 		/// </summary>
 		/// <param name="items">Collection of items.</param>
-		void Contents_SetItems(NGTreeNodeCollection items);
+		void InitializePlotItems(NGTreeNodeCollection items);
 
-		void Contents_RemoveItems(NGTreeNode[] items);
-
-		/// <summary>
-		/// Select/deselect the item number idx in the content list box.
-		/// </summary>
-		/// <param name="idx">Index of the item to select/deselect.</param>
-		/// <param name="bSelected">True if the item should be selected, false if it should be deselected.</param>
-		void Contents_SetSelected(int idx, bool bSelected);
-
-		/// <summary>
-		/// Invalidates the items idx1 and idx2 and has to force the MeasureItem call for these two items.
-		/// </summary>
-		/// <param name="idx1">Index of the first item to invalidate.</param>
-		/// <param name="idx2">Index of the second item to invalidate.</param>
-		void Contents_InvalidateItems(int idx1, int idx2);
+		bool ShowRange { set; }
 	}
 
 	#endregion Interfaces
@@ -159,6 +144,8 @@ namespace Altaxo.Gui.Graph
 		private UseDocument _useDocument;
 
 		public UseDocument UseDocumentCopy { set { _useDocument = value; } }
+
+		private bool _showRange = false;
 
 		public LineScatterLayerContentsController()
 		{
@@ -200,7 +187,7 @@ namespace Altaxo.Gui.Graph
 			{
 				// Plot items
 				_plotItemsTree.Clear();
-				AddToNGTreeNode(_plotItemsRootNode, _doc);
+				PlotItemsToTree(_plotItemsRootNode, _doc);
 
 				// available items
 				SingleColumnChoiceController.AddAllTableNodes(_availableItemsRootNode);
@@ -211,13 +198,68 @@ namespace Altaxo.Gui.Graph
 			// Available Items
 			if (null != _view)
 			{
-				_view.Contents_SetItems(_plotItemsTree);
+				_view.InitializePlotItems(_plotItemsTree);
 
-				_view.DataAvailable_Initialize(this._availableItemsRootNode.Nodes);
+				_view.InitializeAvailableItems(this._availableItemsRootNode.Nodes);
+
+				_view.ShowRange = _showRange;
 			}
 		}
 
-		private void AddToNGTreeNode(NGTreeNode node, PlotItemCollection picoll)
+		private NGTreeNode[] PlotItemsSelected
+		{
+			get
+			{
+				if (null != _view)
+					return _view.PlotItemsSelected.OfType<NGTreeNode>().ToArray();
+				else
+					return new NGTreeNode[0];
+			}
+		}
+
+		private void AvailableItems_ClearSelection()
+		{
+			_availableItemsRootNode.ClearSelectionRecursively();
+		}
+
+		public void PlotItems_ShowRangeChanged(bool showRange)
+		{
+			var oldValue = _showRange;
+			_showRange = showRange;
+
+			if (oldValue != _showRange)
+			{
+				_plotItemsTree.Clear();
+				PlotItemsToTree(_plotItemsRootNode, _doc);
+			}
+		}
+
+		private string GetNameOfItem(IGPlotItem item)
+		{
+			if (item is PlotItemCollection)
+			{
+				return "PlotGroup";
+			}
+			else if (item != null && item is PlotItem)
+			{
+				string name = item.GetName(2);
+				if (_showRange && item is XYColumnPlotItem)
+				{
+					var pi1 = item as XYColumnPlotItem;
+					return string.Format("{0} ({1}-{2})", name, pi1.Data.PlotRangeStart, pi1.Data.PlotRangeEnd);
+				}
+				else
+				{
+					return name;
+				}
+			}
+			else
+			{
+				return string.Empty;
+			}
+		}
+
+		private void PlotItemsToTree(NGTreeNode node, PlotItemCollection picoll)
 		{
 			foreach (IGPlotItem pa in picoll)
 			{
@@ -226,17 +268,17 @@ namespace Altaxo.Gui.Graph
 					// add only one item to the list box, namely a PLCon group item with
 					// all the members of that group
 					NGTreeNode grpNode = new NGTreeNode();
-					grpNode.Text = "PlotGroup";
+					grpNode.Text = GetNameOfItem(pa);
 					grpNode.Tag = pa;
 					grpNode.IsExpanded = true;
 					node.Nodes.Add(grpNode);
 					// add all the items in the group also to the list of added items
-					AddToNGTreeNode(grpNode, (PlotItemCollection)pa);
+					PlotItemsToTree(grpNode, (PlotItemCollection)pa);
 				}
 				else // else if the item is not in a plot group
 				{
 					NGTreeNode toAdd = new NGTreeNode();
-					toAdd.Text = pa.GetName(2);
+					toAdd.Text = GetNameOfItem(pa);
 					toAdd.Tag = pa;
 					toAdd.IsExpanded = true;
 					node.Nodes.Add(toAdd);
@@ -244,27 +286,27 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		private void TransferTreeToDoc(NGTreeNode rootnode, PlotItemCollection picoll)
+		private void TreeToPlotItems(NGTreeNode rootnode, PlotItemCollection picoll)
 		{
 			picoll.ClearPlotItems(); // do not clear group styles here, otherwise group styles would not be applied
 			foreach (NGTreeNode node in rootnode.Nodes)
 			{
 				IGPlotItem item = (IGPlotItem)node.Tag;
 				if (item is PlotItemCollection) // if this is a plot item collection
-					TransferTreeToDoc(node, (PlotItemCollection)item);
+					TreeToPlotItems(node, (PlotItemCollection)item);
 
 				picoll.Add(item);
 			}
 		}
 
-		private void SelNodesToTempDoc(NGTreeNode[] selNodes, PlotItemCollection picoll)
+		private void PutSelectedPlotItemsToTemporaryDocumentForClipboard(NGTreeNode[] selNodes, PlotItemCollection picoll)
 		{
 			picoll.ClearPlotItems();
 			foreach (NGTreeNode node in selNodes)
 			{
 				IGPlotItem item = (IGPlotItem)node.Tag;
 				if (item is PlotItemCollection) // if this is a plot item collection
-					TransferTreeToDoc(node, (PlotItemCollection)item);
+					TreeToPlotItems(node, (PlotItemCollection)item);
 
 				picoll.Add(item);
 			}
@@ -403,9 +445,10 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Puts the selected data columns into the plot content.
 		/// </summary>
-		/// <param name="selNodes"></param>
-		public void EhView_PutData(NGTreeNode[] selNodes)
+		public void AvailableItems_PutDataToPlotItems()
 		{
+			var selNodes = _view.AvailableItemsSelected.OfType<NGTreeNode>();
+
 			var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();
 
 			var validNodes = NGTreeNode.NodesWithoutSelectedChilds(selNodes);
@@ -438,8 +481,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			_view.Contents_SetItems(_plotItemsTree);
-			_view.DataAvailable_ClearSelection();
+			_view.InitializePlotItems(_plotItemsTree);
+			AvailableItems_ClearSelection();
 			SetDirty();
 		}
 
@@ -467,30 +510,26 @@ namespace Altaxo.Gui.Graph
 				_plotItemsTree.Add(node);
 		}
 
-		public void EhView_PullDataClick(NGTreeNode[] selNodes)
+		public void PlotItems_MoveUpSelected()
 		{
-			_view.Contents_RemoveItems(selNodes);
-
-			foreach (NGTreeNode node in selNodes)
-				node.Remove();
-
-			TransferTreeToDoc(_plotItemsRootNode, _doc);
-			_view.Contents_SetItems(_plotItemsTree);
-			SetDirty();
+			var selNodes = PlotItemsSelected;
+			if (selNodes.Length != 0)
+			{
+				// move the selected items upwards in the list
+				ContentsListBox_MoveUpDown(-1, selNodes);
+				SetDirty();
+			}
 		}
 
-		public void EhView_ListSelUpClick(NGTreeNode[] selNodes)
+		public void PlotItems_MoveDownSelected()
 		{
-			// move the selected items upwards in the list
-			ContentsListBox_MoveUpDown(-1, selNodes);
-			SetDirty();
-		}
-
-		public void EhView_SelDownClick(NGTreeNode[] selNodes)
-		{
-			// move the selected items downwards in the list
-			ContentsListBox_MoveUpDown(1, selNodes);
-			SetDirty();
+			var selNodes = PlotItemsSelected;
+			if (selNodes.Length != 0)
+			{
+				// move the selected items downwards in the list
+				ContentsListBox_MoveUpDown(1, selNodes);
+				SetDirty();
+			}
 		}
 
 		public void ContentsListBox_MoveUpDown(int iDelta, NGTreeNode[] selNodes)
@@ -498,8 +537,8 @@ namespace Altaxo.Gui.Graph
 			if (NGTreeNode.HaveSameParent(selNodes))
 			{
 				NGTreeNode.MoveUpDown(iDelta, selNodes);
-				TransferTreeToDoc(_plotItemsRootNode, _doc);
-				_view.Contents_SetItems(this._plotItemsTree);
+				TreeToPlotItems(_plotItemsRootNode, _doc);
+				_view.InitializePlotItems(this._plotItemsTree);
 				SetDirty();
 			}
 		}
@@ -526,10 +565,6 @@ namespace Altaxo.Gui.Graph
 					helpSeg = _plotItemsTree[iSeg - 1];
 					_plotItemsTree[iSeg - 1] = _plotItemsTree[iSeg];
 					_plotItemsTree[iSeg] = helpSeg;
-
-					_view.Contents_InvalidateItems(iSeg - 1, iSeg);
-					_view.Contents_SetSelected(iSeg - 1, true); // select upper item,
-					_view.Contents_SetSelected(iSeg, false); // deselect lower item
 				}
 			} // end if iDelta==-1
 			else if (iDelta == 1) // move one position down
@@ -547,22 +582,19 @@ namespace Altaxo.Gui.Graph
 					helpSeg = _plotItemsTree[iSeg + 1];
 					_plotItemsTree[iSeg + 1] = _plotItemsTree[iSeg];
 					_plotItemsTree[iSeg] = helpSeg;
-
-					_view.Contents_InvalidateItems(iSeg + 1, iSeg);
-					_view.Contents_SetSelected(iSeg + 1, true);
-					_view.Contents_SetSelected(iSeg, false);
 				}
 			} // end if iDelta==1
 
-			TransferTreeToDoc(_plotItemsRootNode, _doc);
+			TreeToPlotItems(_plotItemsRootNode, _doc);
 		}
 
 		/// <summary>
 		/// Group the selected nodes.
 		/// </summary>
-		/// <param name="selNodes"></param>
-		public void EhView_GroupClick(NGTreeNode[] selNodes)
+		public void PlotItems_GroupClick()
 		{
+			var selNodes = PlotItemsSelected;
+
 			// retrieve the selected items
 			if (selNodes.Length < 2)
 				return; // we cannot group anything if no or only one item is selected
@@ -618,15 +650,17 @@ namespace Altaxo.Gui.Graph
 			}
 			// now all items are in the new group
 
-			TransferTreeToDoc(_plotItemsRootNode, _doc);
+			TreeToPlotItems(_plotItemsRootNode, _doc);
 			// so update the list box:
-			_view.Contents_SetItems(this._plotItemsTree);
+			_view.InitializePlotItems(this._plotItemsTree);
 
 			SetDirty();
 		}
 
-		public void EhView_UngroupClick(NGTreeNode[] selNodes)
+		public void PlotItems_UngroupClick()
 		{
+			var selNodes = PlotItemsSelected;
+
 			// retrieve the selected items
 			if (selNodes.Length < 1)
 				return; // we cannot ungroup anything if nothing selected
@@ -658,8 +692,8 @@ namespace Altaxo.Gui.Graph
 				}
 			} // end for
 
-			TransferTreeToDoc(_plotItemsRootNode, _doc);
-			_view.Contents_SetItems(_plotItemsTree);
+			TreeToPlotItems(_plotItemsRootNode, _doc);
+			_view.InitializePlotItems(_plotItemsTree);
 			SetDirty();
 		}
 
@@ -675,13 +709,21 @@ namespace Altaxo.Gui.Graph
 				}
 				else
 				{
-					Current.Gui.ShowDialog(new object[] { pi }, pi.GetName(2), true);
+					object piAsObject = pi;
+					Current.Gui.ShowDialog(ref piAsObject, pi.GetName(2), true);
+					pi = (IGPlotItem)piAsObject;
 				}
 			}
+
+			// now set a new name of this node
+			selNode.Text = GetNameOfItem(pi);
+			selNode.Tag = pi;
 		}
 
-		public void EhView_EditRangeClick(NGTreeNode[] selNodes)
+		public void PlotItems_EditRangeClick()
 		{
+			var selNodes = PlotItemsSelected;
+
 			if (selNodes.Length == 0)
 				return;
 			int minRange, maxRange;
@@ -720,51 +762,54 @@ namespace Altaxo.Gui.Graph
 			return result;
 		}
 
-		public void EhView_PlotAssociationsClick(NGTreeNode[] selNodes)
+		public void PlotItem_Open()
 		{
+			var selNodes = PlotItemsSelected;
+
 			if (selNodes.Length == 1)
 				EhView_ContentsDoubleClick(selNodes[0]);
 		}
 
-		public bool EhView_CanDeletePlotItems()
+		public bool PlotItems_CanDelete()
 		{
 			var anySelected = null != _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).FirstOrDefault();
 			return anySelected;
 		}
 
-		public void EhView_DeletePlotItems()
+		public void PlotItems_Delete()
 		{
-			var selNodes = _plotItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected).ToArray(); // ToArray because otherwise we would delete in a living enumeration
+			var selNodes = PlotItemsSelected;
 			foreach (var node in selNodes)
 				node.Remove();
 		}
 
-		public void EhView_CopyClipboard(NGTreeNode[] selNodes)
+		public void PlotItems_Copy()
 		{
+			var selNodes = PlotItemsSelected;
+
 			PlotItemCollection coll = new PlotItemCollection();
 
-			SelNodesToTempDoc(selNodes, coll);
+			PutSelectedPlotItemsToTemporaryDocumentForClipboard(selNodes, coll);
 
 			ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
 		}
 
-		public void EhView_CutPlotItems()
+		public void PlotItems_Cut()
 		{
-			var selNodes = _plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected).ToArray();
-			this.EhView_CopyClipboard(selNodes);
-
+			var selNodes = PlotItemsSelected;
+			this.PlotItems_Copy();
 			foreach (var node in selNodes)
 				node.Remove();
 		}
 
-		public bool EhView_CanPasteFromClipboard()
+		public bool PlotItems_CanPaste()
 		{
 			object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
 			PlotItemCollection coll = o as PlotItemCollection;
 			return null != coll;
 		}
 
-		public void EhView_PasteClipboard()
+		public void PlotItems_Paste()
 		{
 			object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
 			PlotItemCollection coll = o as PlotItemCollection;
@@ -787,9 +832,9 @@ namespace Altaxo.Gui.Graph
 					_doc.Add(item); // it is formally neccessary to add the plot items to the doc, since some functions only work when the parent layer of the items is available
 				}
 
-				AddToNGTreeNode(_plotItemsRootNode, coll);
+				PlotItemsToTree(_plotItemsRootNode, coll);
 
-				_view.Contents_SetItems(_plotItemsTree);
+				_view.InitializePlotItems(_plotItemsTree);
 				SetDirty();
 			}
 		}
@@ -804,7 +849,7 @@ namespace Altaxo.Gui.Graph
 			//			return true; // not dirty - so no need to apply something
 
 			_originalDoc.ClearPlotItems(); // first, clear all Plot items
-			TransferTreeToDoc(_plotItemsRootNode, _originalDoc);
+			TreeToPlotItems(_plotItemsRootNode, _originalDoc);
 
 			if (_useDocument == UseDocument.Copy)
 				_doc = _originalDoc.Clone();
@@ -835,28 +880,28 @@ namespace Altaxo.Gui.Graph
 			return null == level ? false : true;
 		}
 
-		public bool PlotItemTree_CanStartDrag()
+		public bool PlotItems_CanStartDrag()
 		{
 			// to start a drag, all selected nodes must be on the same level
 			return AreAllSelectedPlotItemNodesNodesFromSameLevel();
 		}
 
-		public void PlotItemTree_StartDrag(out object data, out bool canCopy, out bool canMove)
+		public void PlotItems_StartDrag(out object data, out bool canCopy, out bool canMove)
 		{
 			data = new List<NGTreeNode>(_plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected));
 			canCopy = true;
 			canMove = true;
 		}
 
-		public void PlotItemTree_DragEnded(bool isCopy, bool isMove)
+		public void PlotItems_DragEnded(bool isCopy, bool isMove)
 		{
 		}
 
-		public void PlotItemTree_DragCancelled()
+		public void PlotItems_DragCancelled()
 		{
 		}
 
-		public void PlotItemTree_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
+		public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
 		{
 			if (!(data is IEnumerable<NGTreeNode>))
 			{
@@ -880,7 +925,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void PlotItemTree_Drop(object data, NGTreeNode targetNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
+		public void PlotItems_Drop(object data, NGTreeNode targetNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
 		{
 			isMove = false;
 			isCopy = false;
@@ -952,7 +997,7 @@ namespace Altaxo.Gui.Graph
 
 		#region Available items
 
-		public bool AvailableItemTree_CanStartDrag()
+		public bool AvailableItems_CanStartDrag()
 		{
 			var selNodes = _availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected);
 			var selNotAllowedNodes = selNodes.Where(node => !(node.Tag is Altaxo.Data.DataColumn));
@@ -964,18 +1009,18 @@ namespace Altaxo.Gui.Graph
 			return isAnythingSelected && !isAnythingForbiddenSelected;
 		}
 
-		public void AvailableItemTree_StartDrag(out object data, out bool canCopy, out bool canMove)
+		public void AvailableItems_StartDrag(out object data, out bool canCopy, out bool canMove)
 		{
 			data = new List<NGTreeNode>(_availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
 			canCopy = true;
 			canMove = false;
 		}
 
-		public void AvailableItemTree_DragEnded(bool isCopy, bool isMove)
+		public void AvailableItems_DragEnded(bool isCopy, bool isMove)
 		{
 		}
 
-		public void AvailableItemTree_DragCancelled()
+		public void AvailableItems_DragCancelled()
 		{
 		}
 

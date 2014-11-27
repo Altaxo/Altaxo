@@ -925,5 +925,33 @@ namespace Altaxo.Collections
 			}
 			return null;
 		}
+
+		/// <summary>
+		/// Determines whether a couple of nodes share the same parent node.
+		/// </summary>
+		/// <typeparam name="T">Type of node.</typeparam>
+		/// <param name="nodes">The nodes.</param>
+		/// <returns>True if all nodes in the enumeration share the same parent. An exception is thrown if the enumeration is empty or contains empty elements.</returns>
+		public static bool HaveSameParent<T>(IEnumerable<T> nodes) where T : INodeWithParentNode<T>
+		{
+			T firstNode;
+			try
+			{
+				firstNode = nodes.First();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("The enumeration was probably empty. Check the inner exception for details", ex);
+			}
+
+			var parent = firstNode.ParentNode;
+			foreach (var node in nodes)
+			{
+				if (0 != Comparer<T>.Default.Compare(parent, node.ParentNode))
+					return false;
+			}
+
+			return true;
+		}
 	}
 }

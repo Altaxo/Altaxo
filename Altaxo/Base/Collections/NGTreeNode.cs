@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Collections
@@ -462,14 +463,15 @@ namespace Altaxo.Collections
 		/// <param name="nodes">Array of nodes.</param>
 		/// <returns>True if all nodes have the same parent. If the array is empty or contains only one element, true is returned.
 		/// If all nodes have no parent (Parent==null), true is returned as well.</returns>
-		public static bool HaveSameParent(NGTreeNode[] nodes)
+		public static bool HaveSameParent(IEnumerable<NGTreeNode> nodes)
 		{
-			if (nodes.Length <= 1)
+			var firstNode = nodes.FirstOrDefault();
+			if (firstNode == null)
 				return true;
 
-			NGTreeNode parent = nodes[0].ParentNode;
-			for (int i = 1; i < nodes.Length; i++)
-				if (nodes[i].ParentNode != parent)
+			NGTreeNode parent = firstNode.ParentNode;
+			foreach (var node in nodes)
+				if (node.ParentNode != parent)
 					return false;
 
 			return true;
@@ -500,7 +502,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <param name="nodes">The original collection of selected nodes.</param>
 		/// <returns>A collection of nodes, which are guaranteed to have no selected child nodes.</returns>
-		public static List<NGTreeNode> NodesWithoutSelectedChilds(IList<NGTreeNode> nodes)
+		public static List<NGTreeNode> NodesWithoutSelectedChilds(IEnumerable<NGTreeNode> nodes)
 		{
 			var set = new HashSet<NGTreeNode>(nodes);
 			foreach (var node in nodes)

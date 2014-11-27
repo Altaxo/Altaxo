@@ -107,32 +107,34 @@
 			</axogc:MultiSelectTreeView.CommandBindings>
 		</axogc:MultiSelectTreeView>
 
-		<Button Grid.Column="1" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}"  Click="EhPutData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+		<Button Grid.Column="1" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}"  Click="EhPutData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Add the selected data columns as plot item.">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource LeftArrowPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Grid.Column="1" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}" Click="EhPullData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-				<Path Style="{StaticResource RightArrowPathStyle}" />
-			</Viewbox>
-		</Button>
 
-		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click">
+		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click" ToolTip="Move selected items upwards">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource UpArrowPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Grid.Column="3" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click">
+
+		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}" Click="EhPlotItemsDelete_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Right" ToolTip="Remove selected items">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+				<Path Style="{StaticResource RemoveCrossPathStyle}" />
+			</Viewbox>
+		</Button>
+
+		<Button Grid.Column="3" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click" ToolTip="Move selected items downwards">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource DownArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button Grid.Column="3" Grid.Row="6" Content="Plot associations" Margin="{StaticResource ButtonMargin}" Click="EhPlotAssociations_Click" />
-		<Button x:Name="_btGroup" Grid.Column="3" Grid.Row="8" Content="Group" Margin="{StaticResource ButtonMargin}" Click="EhGroup_Click" />
-		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click" />
-		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click" />
-		<CheckBox Grid.Column="3" Grid.Row="14" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" />
+		<Button Grid.Column="3" Grid.Row="6" Content="Edit item" Margin="{StaticResource ButtonMargin}" Click="EhPlotAssociations_Click" ToolTip="Edit the selected plot item or the selected plot group." />
+		<Button x:Name="_btGroup" Grid.Column="3" Grid.Row="8" Content="Group" Margin="{StaticResource ButtonMargin}" Click="EhGroup_Click" ToolTip="Group the selected items into a new plot group or group them with the selected plot group." />
+		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click" ToolTip="Ungroup the selected items, i.e. remove them from their current plot group." />
+		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click" ToolTip="Edits the range of all of the selected plot items." />
+		<CheckBox x:Name="_guiShowRange" Grid.Column="3" Grid.Row="14" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" ToolTip="If checked, shows the current set range of the plot items." />
 	</Grid>
 </UserControl>
