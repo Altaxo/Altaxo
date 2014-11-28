@@ -291,14 +291,14 @@ namespace Altaxo.Gui.Graph
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				return _projectBrowseControl._controller.PlotItems_CanStartDrag();
+				return _projectBrowseControl._controller.PlotItems_CanStartDrag(dragInfo.SourceItems);
 			}
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
 				object data;
 				bool canCopy, canMove;
-				_projectBrowseControl._controller.PlotItems_StartDrag(out data, out canCopy, out canMove);
+				_projectBrowseControl._controller.PlotItems_StartDrag(dragInfo.SourceItems, out data, out canCopy, out canMove);
 
 				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 				dragInfo.Data = data;
@@ -408,14 +408,14 @@ namespace Altaxo.Gui.Graph
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				return _projectBrowseControl._controller.AvailableItems_CanStartDrag();
+				return _projectBrowseControl._controller.AvailableItems_CanStartDrag(dragInfo.SourceItems);
 			}
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
 				object data;
 				bool canCopy, canMove;
-				_projectBrowseControl._controller.AvailableItems_StartDrag(out data, out canCopy, out canMove);
+				_projectBrowseControl._controller.AvailableItems_StartDrag(dragInfo.SourceItems, out data, out canCopy, out canMove);
 
 				dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
 				dragInfo.Data = data;

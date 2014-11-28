@@ -478,6 +478,26 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Determines whether all nodes in the provided enumeration have the same level. This not neccessarily means that the nodes have to have the same parent; only the level must be the same.
+		/// To test for the same parent, use the <see cref="HaveSameParent"/> function.
+		/// </summary>
+		/// <param name="selNodes">The nodes to test.</param>
+		/// <returns>True if all nodes have the same level. </returns>
+		public static bool AreAllNodesFromSameLevel(IEnumerable<NGTreeNode> selNodes)
+		{
+			int? level = null;
+			foreach (var node in selNodes)
+			{
+				if (null == level)
+					level = node.Level;
+
+				if (level != node.Level)
+					return false;
+			}
+			return null == level ? false : true;
+		}
+
+		/// <summary>
 		/// The nodes in the array are sorted by order, i.e. by there hierarchy indices.
 		/// </summary>
 		/// <param name="nodes">Nodes to sort. On return, contains the same nodes, but in order.</param>

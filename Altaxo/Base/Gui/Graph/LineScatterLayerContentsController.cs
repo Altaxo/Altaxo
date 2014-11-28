@@ -76,9 +76,9 @@ namespace Altaxo.Gui.Graph
 
 		void PlotItems_ShowRangeChanged(bool showRange);
 
-		bool PlotItems_CanStartDrag();
+		bool PlotItems_CanStartDrag(IEnumerable items);
 
-		void PlotItems_StartDrag(out object data, out bool canCopy, out bool canMove);
+		void PlotItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove);
 
 		void PlotItems_DragEnded(bool isCopy, bool isMove);
 
@@ -88,9 +88,9 @@ namespace Altaxo.Gui.Graph
 
 		void PlotItems_Drop(object data, NGTreeNode nGTreeNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
 
-		bool AvailableItems_CanStartDrag();
+		bool AvailableItems_CanStartDrag(IEnumerable items);
 
-		void AvailableItems_StartDrag(out object data, out bool canCopy, out bool canMove);
+		void AvailableItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove);
 
 		void AvailableItems_DragEnded(bool isCopy, bool isMove);
 
@@ -864,10 +864,8 @@ namespace Altaxo.Gui.Graph
 
 		#region Plot items
 
-		private bool AreAllSelectedPlotItemNodesNodesFromSameLevel()
+		private static bool AreAllNodesFromSameLevel(IEnumerable<NGTreeNode> selNodes)
 		{
-			var selNodes = _plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected);
-
 			int? level = null;
 			foreach (var node in selNodes)
 			{
@@ -880,15 +878,14 @@ namespace Altaxo.Gui.Graph
 			return null == level ? false : true;
 		}
 
-		public bool PlotItems_CanStartDrag()
+		public bool PlotItems_CanStartDrag(IEnumerable items)
 		{
-			// to start a drag, all selected nodes must be on the same level
-			return AreAllSelectedPlotItemNodesNodesFromSameLevel();
+			return NGTreeNode.AreAllNodesFromSameLevel(items.OfType<NGTreeNode>());
 		}
 
-		public void PlotItems_StartDrag(out object data, out bool canCopy, out bool canMove)
+		public void PlotItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
 		{
-			data = new List<NGTreeNode>(_plotItemsRootNode.TakeFromHereToFirstLeaves().Where(node => node.IsSelected));
+			data = new List<NGTreeNode>(items.OfType<NGTreeNode>());
 			canCopy = true;
 			canMove = true;
 		}
@@ -997,9 +994,9 @@ namespace Altaxo.Gui.Graph
 
 		#region Available items
 
-		public bool AvailableItems_CanStartDrag()
+		public bool AvailableItems_CanStartDrag(IEnumerable items)
 		{
-			var selNodes = _availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => node.IsSelected);
+			var selNodes = items.OfType<NGTreeNode>();
 			var selNotAllowedNodes = selNodes.Where(node => !(node.Tag is Altaxo.Data.DataColumn));
 
 			var isAnythingSelected = selNodes.FirstOrDefault() != null;
@@ -1009,9 +1006,9 @@ namespace Altaxo.Gui.Graph
 			return isAnythingSelected && !isAnythingForbiddenSelected;
 		}
 
-		public void AvailableItems_StartDrag(out object data, out bool canCopy, out bool canMove)
+		public void AvailableItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
 		{
-			data = new List<NGTreeNode>(_availableItemsRootNode.TakeFromHereToFirstLeaves(false).Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
+			data = new List<NGTreeNode>(items.OfType<NGTreeNode>().Where(node => (node.IsSelected && node.Tag is Altaxo.Data.DataColumn)));
 			canCopy = true;
 			canMove = false;
 		}
