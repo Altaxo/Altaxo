@@ -75,4 +75,12 @@ namespace Altaxo.Data
 		/// </summary>
 		DataSourceChanged
 	}
+
+	/// <summary>
+	/// Designates the event that the table's data source has changed.
+	/// </summary>
+	public class TableDataSourceChangedEventArgs : EventArgs
+	{
+		public static readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
+	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	public class CmdViewOnSelectOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
 		public event EventHandler IsCheckedChanged;
-		ViewOnSelect _lastKnownValue;
+
+		private ViewOnSelect _lastKnownValue;
 
 		protected override void Run(ProjectBrowseController ctrl)
 		{
@@ -53,7 +56,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion ICheckableMenuCommand Members
 
 		#region IMenuCommand Members
 
@@ -74,13 +77,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion IMenuCommand Members
 	}
 
 	public class CmdViewOnSelectFolderItems : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
 		public event EventHandler IsCheckedChanged;
-		ViewOnSelect _lastKnownValue;
+
+		private ViewOnSelect _lastKnownValue;
 
 		protected override void Run(ProjectBrowseController ctrl)
 		{
@@ -103,7 +107,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion ICheckableMenuCommand Members
 
 		#region IMenuCommand Members
 
@@ -124,13 +128,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion IMenuCommand Members
 	}
 
 	public class CmdViewOnSelectFolderAndSubfolderItems : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
 	{
 		public event EventHandler IsCheckedChanged;
-		ViewOnSelect _lastKnownValue;
+
+		private ViewOnSelect _lastKnownValue;
 
 		protected override void Run(ProjectBrowseController ctrl)
 		{
@@ -154,7 +159,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		#endregion
+		#endregion ICheckableMenuCommand Members
 
 		#region IMenuCommand Members
 
@@ -172,18 +177,18 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 			set
 			{
-				
 			}
 		}
 
-		#endregion
+		#endregion IMenuCommand Members
 	}
 
 	public class CmdTreeNodeFolderDelete : ProjectBrowseControllerCommand
 	{
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			ProjectBrowserExtensions.DeleteDocuments(ctrl.ExpandItemListToSubfolderItems(ctrl.GetAllListItems()));
+			var items = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
+			Altaxo.Main.ProjectFolders.DeleteDocuments(items);
 		}
 	}
 
@@ -207,7 +212,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	{
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			ProjectBrowserExtensions.ShowDocumentsExclusively(ctrl.ExpandItemListToSubfolderItems(ctrl.GetAllListItems()));
+			ProjectBrowserExtensions.ShowDocumentsExclusively(Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems()));
 		}
 	}
 
@@ -225,12 +230,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	{
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetAllListItems();
-			list = ctrl.ExpandItemListToSubfolderItems(list);
-
+			var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetAllListItems());
 			foreach (var item in list)
 				Current.ProjectService.CloseDocumentViews(item);
 		}
 	}
-
 }

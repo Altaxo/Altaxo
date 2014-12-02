@@ -205,15 +205,16 @@ namespace Altaxo.DataConnection
 			int reentrancyCount = Interlocked.Increment(ref _updateReentrancyCount);
 			if (1 == reentrancyCount)
 			{
-				destinationTable.Suspend();
 				try
 				{
-					var tableConnector = new AltaxoTableConnector(destinationTable);
-					this._dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
+					using (var token = destinationTable.SuspendGetToken())
+					{
+						var tableConnector = new AltaxoTableConnector(destinationTable);
+						this._dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
+					}
 				}
 				finally
 				{
-					destinationTable.Resume();
 					Interlocked.Decrement(ref _updateReentrancyCount);
 				}
 			}

@@ -356,6 +356,7 @@ namespace Altaxo.Gui.Graph
 				_projectBrowseControl._controller.PlotItems_DropCanAcceptData(
 					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
 					dropInfo.TargetItem as Altaxo.Collections.NGTreeNode,
+					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
 					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
 					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
 					out canCopy, out canMove, out itemIsSwallowingData);

@@ -269,32 +269,34 @@ namespace Altaxo.Serialization.Ascii
 			} // end of for all lines
 
 			// insert the new columns or replace the old ones
-			dataTable.Suspend();
-			bool tableWasEmptyBefore = dataTable.DataColumns.ColumnCount == 0;
-			for (int i = 0; i < newcols.ColumnCount; i++)
+			using (var suspendToken = dataTable.SuspendGetToken())
 			{
-				if (newcols[i] is DBNullColumn) // if the type is undefined, use a new DoubleColumn
-					dataTable.DataColumns.CopyOrReplaceOrAdd(i, new DoubleColumn(), newcols.GetColumnName(i));
-				else
-					dataTable.DataColumns.CopyOrReplaceOrAdd(i, newcols[i], newcols.GetColumnName(i));
+				bool tableWasEmptyBefore = dataTable.DataColumns.ColumnCount == 0;
+				for (int i = 0; i < newcols.ColumnCount; i++)
+				{
+					if (newcols[i] is DBNullColumn) // if the type is undefined, use a new DoubleColumn
+						dataTable.DataColumns.CopyOrReplaceOrAdd(i, new DoubleColumn(), newcols.GetColumnName(i));
+					else
+						dataTable.DataColumns.CopyOrReplaceOrAdd(i, newcols[i], newcols.GetColumnName(i));
 
-				// set the first column as x-column if the table was empty before, and there are more than one column
-				if (i == 0 && tableWasEmptyBefore && newcols.ColumnCount > 1)
-					dataTable.DataColumns.SetColumnKind(0, ColumnKind.X);
-			} // end for loop
+					// set the first column as x-column if the table was empty before, and there are more than one column
+					if (i == 0 && tableWasEmptyBefore && newcols.ColumnCount > 1)
+						dataTable.DataColumns.SetColumnKind(0, ColumnKind.X);
+				} // end for loop
 
-			// add the property columns
-			for (int i = 0, j = 0; i < newpropcols.ColumnCount; i++)
-			{
-				if (newpropcols[i].Count == 0)
-					continue;
-				dataTable.PropCols.CopyOrReplaceOrAdd(j, newpropcols[i], newpropcols.GetColumnName(i));
-				++j;
+				// add the property columns
+				for (int i = 0, j = 0; i < newpropcols.ColumnCount; i++)
+				{
+					if (newpropcols[i].Count == 0)
+						continue;
+					dataTable.PropCols.CopyOrReplaceOrAdd(j, newpropcols[i], newpropcols.GetColumnName(i));
+					++j;
+				}
+
+				dataTable.Notes.Write(notesHeader.ToString());
+
+				suspendToken.Dispose();
 			}
-
-			dataTable.Notes.Write(notesHeader.ToString());
-
-			dataTable.Resume();
 		} // end of function ImportAscii
 
 		/// <summary>
@@ -1217,8 +1219,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <param name="toDestinationTable">Destination table.</param>
 		private static void TransferTemporaryTable(DataTable fromSourceTable, DataTable toDestinationTable)
 		{
-			toDestinationTable.Suspend();
-			try
+			using (var suspendToken = toDestinationTable.SuspendGetToken())
 			{
 				// data columns first
 				var srcCollection = fromSourceTable.DataColumns;
@@ -1243,10 +1244,8 @@ namespace Altaxo.Serialization.Ascii
 					destColumn.CopyDataFrom(srcColumn);
 					srcColumn.Clear();
 				}
-			}
-			finally
-			{
-				toDestinationTable.Resume();
+
+				suspendToken.Dispose();
 			}
 		}
 

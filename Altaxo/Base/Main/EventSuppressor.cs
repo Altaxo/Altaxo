@@ -66,8 +66,13 @@ namespace Altaxo.Main
 
 			public SuppressToken(EventSuppressor parent)
 			{
+				System.Threading.Interlocked.Increment(ref parent._suppressLevel);
 				_parent = parent;
-				System.Threading.Interlocked.Increment(ref _parent._suppressLevel);
+			}
+
+			~SuppressToken()
+			{
+				Dispose();
 			}
 
 			/// <summary>
@@ -75,10 +80,9 @@ namespace Altaxo.Main
 			/// </summary>
 			public void Disarm()
 			{
-				if (_parent != null)
+				var parent = System.Threading.Interlocked.Exchange<EventSuppressor>(ref _parent, null);
+				if (parent != null)
 				{
-					EventSuppressor parent = _parent;
-					_parent = null;
 					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suppressLevel);
 				}
 			}
@@ -87,10 +91,9 @@ namespace Altaxo.Main
 
 			public void Dispose()
 			{
-				if (_parent != null)
+				var parent = System.Threading.Interlocked.Exchange<EventSuppressor>(ref _parent, null);
+				if (parent != null)
 				{
-					EventSuppressor parent = _parent;
-					_parent = null;
 					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suppressLevel);
 					if (0 == newLevel)
 					{

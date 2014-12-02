@@ -27,6 +27,7 @@ using Altaxo.Scripting;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Data
 {
@@ -55,7 +56,7 @@ namespace Altaxo.Data
 		Main.INamedObjectCollection,
 		Main.INameOwner,
 		Main.IChildChangedEventSink,
-		Main.ISuspendable, Main.Properties.IPropertyBagOwner
+		Main.Properties.IPropertyBagOwner
 	{
 		// Types
 
@@ -125,11 +126,8 @@ namespace Altaxo.Data
 		/// </summary>
 		private bool _table_DeserializationFinished = false;
 
-		/// <summary>
-		/// The number of suspends.
-		/// </summary>
-		[NonSerialized()]
-		protected int _suspendCount = 0;
+		[NonSerialized]
+		private Main.EventSuppressor _changedEventSuppressor;
 
 		/// <summary>
 		/// Flag to signal that resume is currently in progress.
@@ -141,13 +139,13 @@ namespace Altaxo.Data
 		/// Collection of child objects that were suspended by this object.
 		/// </summary>
 		[NonSerialized()]
-		private System.Collections.ArrayList _suspendedChildCollection = new System.Collections.ArrayList();
+		private HashSet<object> _suspendedChildCollection = new HashSet<object>();
 
 		/// <summary>
 		/// If not null, the table was changed and the table has not notified the parent and the listeners about that.
 		/// </summary>
 		[NonSerialized]
-		protected System.EventArgs _changeData = null;
+		protected HashSet<System.EventArgs> _changeData = new HashSet<EventArgs>();
 
 		/// <summary>
 		/// Event to signal changes in the data.
@@ -625,6 +623,7 @@ namespace Altaxo.Data
 		/// <param name="propcoll">The property columns.</param>
 		protected DataTable(DataColumnCollection datacoll, DataColumnCollection propcoll)
 		{
+			_changedEventSuppressor = new Main.EventSuppressor(this.EhChangedEventResumes);
 			this._dataColumns = datacoll;
 			_dataColumns.ParentObject = this;
 			_dataColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
@@ -639,7 +638,7 @@ namespace Altaxo.Data
 
 		private void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			OnChanged(EventArgs.Empty);
+			EhChildChanged(sender, e);
 		}
 
 		/// <summary>
@@ -658,45 +657,56 @@ namespace Altaxo.Data
 		/// </summary>
 		public bool IsSuspended
 		{
-			get { return _suspendCount > 0; }
+			get { return _changedEventSuppressor.PeekEnabled; }
 		}
 
 		/// <summary>
 		/// Suspends the change notifications of the table.
 		/// </summary>
-		public void Suspend()
+		public IDisposable SuspendGetToken()
 		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-			++_suspendCount; // suspend one step higher
+			return _changedEventSuppressor.Suspend();
 		}
 
-		/// <summary>
-		/// Resumes the change notifications of this table.
-		/// </summary>
-		public void Resume()
+		private void EhChangedEventResumes()
 		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-			if (_suspendCount > 0 && (--_suspendCount) == 0)
+			this._resumeInProgress = true;
+			try
 			{
-				this._resumeInProgress = true;
 				foreach (Main.ISuspendable obj in _suspendedChildCollection)
 					obj.Resume();
-				_suspendedChildCollection.Clear();
-				this._resumeInProgress = false;
+			}
+			catch (Exception ex)
+			{
+			}
+			_suspendedChildCollection.Clear();
+			this._resumeInProgress = false;
 
-				// send accumulated data if available and release it thereafter
-				if (null != _changeData)
+			// send accumulated data if available and release it thereafter
+
+			bool tableDataSourceChanged = _changeData.Contains(TableDataSourceChangedEventArgs.Empty);
+
+			if (tableDataSourceChanged)
+				UpdateTableFromTableDataSource();
+
+			_changeData.Clear();
+
+			if (null != _changeData)
+			{
+				if (_parent is Main.IChildChangedEventSink)
 				{
-					if (_parent is Main.IChildChangedEventSink)
-					{
-						((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-					}
-					if (!IsSuspended)
-					{
-						OnDataChanged(); // Fire the changed event
-					}
+					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+				}
+				if (!IsSuspended)
+				{
+					OnDataChanged(EventArgs.Empty); // Fire the changed event
 				}
 			}
+		}
+
+		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
+		{
+			return false;
 		}
 
 		/// <summary>
@@ -706,8 +716,10 @@ namespace Altaxo.Data
 		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
 		private void AccumulateChildChangeData(object sender, EventArgs e)
 		{
-			if (sender != null && _changeData == null)
-				this._changeData = new EventArgs();
+			if (e is TableDataSourceChangedEventArgs)
+				_changeData.Add(e);
+			else
+				_changeData.Add(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -717,48 +729,89 @@ namespace Altaxo.Data
 		/// <param name="e">The change details.</param>
 		public void EhChildChanged(object sender, System.EventArgs e)
 		{
-			if (this.IsSuspended && sender is Main.ISuspendable)
-			{
-				_suspendedChildCollection.Add(sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend();
-				return;
-			}
-
-			AccumulateChildChangeData(sender, e);  // AccumulateNotificationData
-
-			if (_resumeInProgress || IsSuspended)
+			if (HandleImmediateChildChangeCases(sender, e))
 				return;
 
-			if (_parent is Main.IChildChangedEventSink)
+			if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
 			{
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-				if (IsSuspended) // maybe parent has suspended us now
+				if (HandleLowPriorityChildChangeCases(sender, ref e))
+					return;
+
+				// Notify parent
+				if (_parent is Main.IChildChangedEventSink)
 				{
-					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
+					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+				}
+
+				if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
+				{
+					OnChanged(e); // Fire change event
 					return;
 				}
 			}
 
-			OnDataChanged(); // Fire the changed event
+			// at this point we are suspended for sure
+			if (sender is Main.ISuspendable)
+			{
+				_suspendedChildCollection.Add(sender); // add sender to suspended child
+				((Main.ISuspendable)sender).Suspend(); // suspend child. Child is responsible then for accumulating the change data
+			}
+			else
+			{
+				AccumulateChildChangeData(sender, e);  // child is unable to accumulate change data, we have to to it by ourself
+			}
+		}
+
+		private bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (e is TableDataSourceChangedEventArgs)
+			{
+				UpdateTableFromTableDataSource();
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called if some member of this instance itself changed.
+		/// </summary>
+		protected void EhSelfChanged(EventArgs e)
+		{
+			if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
+			{
+				// Notify parent
+				if (_parent is Main.IChildChangedEventSink)
+				{
+					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+				}
+
+				if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
+				{
+					OnChanged(e); // Fire change event
+					return;
+				}
+			}
+
+			// at this point we are suspended for sure, or resume is still in progress
+			AccumulateChildChangeData(this, e);  // child is unable to accumulate change data, we have to to it by ourself
 		}
 
 		/// <summary>
 		/// Fires the change event with the EventArgs provided in the argument.
 		/// </summary>
-		/// <param name="e"></param>
 		protected virtual void OnChanged(EventArgs e)
 		{
-			if (null != Changed)
-				Changed(this, e);
+			var ev = Changed;
+			if (null != ev)
+				ev(this, e);
 		}
 
 		/// <summary>
 		/// Fires the data change event and removes the accumulated change data.
 		/// </summary>
-		protected virtual void OnDataChanged()
+		protected virtual void OnDataChanged(EventArgs e)
 		{
 			if (null != Changed)
-				Changed(this, _changeData);
+				Changed(this, e);
 
 			_changeData = null;
 		}
@@ -947,37 +1000,49 @@ namespace Altaxo.Data
 
 				if (!object.Equals(oldValue, value))
 				{
-					OnChanged(EventArgs.Empty);
+					if (_tableDataSource != null)
+						EhTableDataSourceChanged(_tableDataSource);
+					else
+						EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
 
 		private void EhTableDataSourceChanged(IAltaxoTableDataSource dataSource)
 		{
-			this.Suspend();
-			try
-			{
-				dataSource.FillData(this);
+			this.EhChildChanged(dataSource, TableDataSourceChangedEventArgs.Empty);
+		}
 
+		/// <summary>
+		/// Updates the data in the table from the table data source.
+		/// </summary>
+		public void UpdateTableFromTableDataSource()
+		{
+			if (null == _tableDataSource)
+				return;
+
+			using (var suspendToken = SuspendGetToken())
+			{
 				try
 				{
-					if (dataSource.ImportOptions.ExecuteTableScriptAfterImport && null != _tableScript)
-						_tableScript.ExecuteWithoutExceptionCatching(this, null);
+					_tableDataSource.FillData(this);
+
+					try
+					{
+						if (_tableDataSource.ImportOptions.ExecuteTableScriptAfterImport && null != _tableScript)
+							_tableScript.ExecuteWithoutExceptionCatching(this, null);
+					}
+					catch (Exception ex)
+					{
+						this.Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
+						this.Notes.WriteLine(ex.ToString());
+					}
 				}
 				catch (Exception ex)
 				{
-					this.Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
+					this.Notes.WriteLine("Exception during execution of the data source. Details follow:");
 					this.Notes.WriteLine(ex.ToString());
 				}
-			}
-			catch (Exception ex)
-			{
-				this.Notes.WriteLine("Exception during execution of the data source. Details follow:");
-				this.Notes.WriteLine(ex.ToString());
-			}
-			finally
-			{
-				this.Resume();
 			}
 		}
 
@@ -1076,10 +1141,11 @@ namespace Altaxo.Data
 		/// <param name="name">The name of the column in the case the column is added or replaced.</param>
 		public virtual void CopyOrReplaceOrAdd(int idx, Altaxo.Data.DataColumn datac, string name)
 		{
-			Suspend();
-			_dataColumns.CopyOrReplaceOrAdd(idx, datac, name); // add the column to the collection
-			// no need to insert a property row here (only when inserting)
-			Resume();
+			using (var suspendToken = SuspendGetToken())
+			{
+				_dataColumns.CopyOrReplaceOrAdd(idx, datac, name); // add the column to the collection
+				// no need to insert a property row here (only when inserting)
+			}
 		}
 
 		/// <summary>
@@ -1132,10 +1198,11 @@ namespace Altaxo.Data
 		/// <param name="src">The source table to copy the data columns from.</param>
 		public void CopyDataAndPropertyColumnsFrom(DataTable src)
 		{
-			this.Suspend();
-			this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
-			this.PropCols.CopyAllColumnsFrom(src.PropCols);
-			this.Resume();
+			using (var suspendToken = SuspendGetToken())
+			{
+				this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
+				this.PropCols.CopyAllColumnsFrom(src.PropCols);
+			}
 		}
 
 		/// <summary>
@@ -1147,19 +1214,18 @@ namespace Altaxo.Data
 		/// <param name="copyPropertyColumnData">If true, the data from the property columns of the source table is also copied.</param>
 		public void CopyDataAndPropertyColumnsFrom(DataTable src, bool copyDataColumnData, bool copyPropertyColumnData)
 		{
-			this.Suspend();
+			using (var suspendToken = SuspendGetToken())
+			{
+				if (copyDataColumnData)
+					this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
+				else
+					this.DataColumns.CopyAllColumnsWithoutDataFrom(src.DataColumns);
 
-			if (copyDataColumnData)
-				this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
-			else
-				this.DataColumns.CopyAllColumnsWithoutDataFrom(src.DataColumns);
-
-			if (copyPropertyColumnData)
-				this.PropCols.CopyAllColumnsFrom(src.PropCols);
-			else
-				this.PropCols.CopyAllColumnsWithoutDataFrom(src.PropCols);
-
-			this.Resume();
+				if (copyPropertyColumnData)
+					this.PropCols.CopyAllColumnsFrom(src.PropCols);
+				else
+					this.PropCols.CopyAllColumnsWithoutDataFrom(src.PropCols);
+			}
 		}
 
 		/// <summary>
@@ -1342,12 +1408,11 @@ namespace Altaxo.Data
 		/// <param name="selectedColumns">A collection of the indizes to the columns that have to be removed.</param>
 		public virtual void RemoveColumns(IAscendingIntegerCollection selectedColumns)
 		{
-			Suspend();
-
-			_dataColumns.RemoveColumns(selectedColumns); // remove the columns from the collection
-			_propertyColumns.RemoveRows(selectedColumns); // remove also the corresponding rows from the Properties
-
-			Resume();
+			using (var suspendToken = SuspendGetToken())
+			{
+				_dataColumns.RemoveColumns(selectedColumns); // remove the columns from the collection
+				_propertyColumns.RemoveRows(selectedColumns); // remove also the corresponding rows from the Properties
+			}
 		}
 
 		#region IDisposable Members

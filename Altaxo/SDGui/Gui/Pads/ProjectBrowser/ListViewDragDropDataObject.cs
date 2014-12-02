@@ -38,6 +38,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		private List<string> _availableFormats;
 
+		public string FolderName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the item list. This list either contains project items (for foreign applications) or DocNodeProxies (for our own application instance).
+		/// </summary>
+		/// <value>
+		/// The item list.
+		/// </value>
+		public List<Altaxo.Main.IProjectItem> ItemList { get; set; }
+
 		/// <summary>
 		/// Gets or sets a value indicating whether the item list was rendered.
 		/// </summary>
@@ -70,8 +80,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 				case Format_ItemReferenceList:
 					{
-						var itemReferenceList = new List<object>(ItemList.Select(x => new Altaxo.Main.DocNodeProxy(x)));
-						var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList(itemReferenceList, FolderName);
+						var itemReferenceList = new List<Altaxo.Main.DocNodeProxy>(ItemList.Select(x => new Altaxo.Main.DocNodeProxy(x)));
+						var items = new Altaxo.Main.Commands.ProjectItemCommands.ProjectItemReferenceClipboardList(itemReferenceList, FolderName);
 						var stb = Altaxo.Serialization.Clipboard.ClipboardSerialization.SerializeToStringBuilder(items);
 						result = stb.ToString();
 					}
@@ -128,10 +138,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_availableFormats.Add(Format_ItemList);
 			_availableFormats.Add(Format_ItemReferenceList);
 		}
-
-		public string FolderName { get; set; }
-
-		public List<object> ItemList { get; set; }
 
 		#region Not implemented interface functions
 

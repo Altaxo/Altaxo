@@ -45,5 +45,11 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy"/> instances.</param>
 		void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing);
+
+		/// <summary>
+		/// Suspends the item, i.e. prevents it to send event notifications. This is done by creating a token. When the token is disposed, the event notifications are resumed for this item.
+		/// </summary>
+		/// <returns>Suspend token. If the items event notifications should be resumed, you have to dispose that token.</returns>
+		IDisposable SuspendGetToken();
 	}
 }

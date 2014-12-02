@@ -84,9 +84,9 @@ namespace Altaxo.Gui.Graph
 
 		void PlotItems_DragCancelled();
 
-		void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
+		void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
 
-		void PlotItems_Drop(object data, NGTreeNode nGTreeNode, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
+		void PlotItems_Drop(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
 
 		bool AvailableItems_CanStartDrag(IEnumerable items);
 
@@ -898,7 +898,7 @@ namespace Altaxo.Gui.Graph
 		{
 		}
 
-		public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
+		public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
 		{
 			if (!(data is IEnumerable<NGTreeNode>))
 			{

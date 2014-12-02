@@ -135,19 +135,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 			// and store the result in a new worksheet
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.Name);
-			table.Suspend();
-
-			// first store the factors
-			for (int i = 0; i < resultMat.Columns; i++)
+			using (var suspendToken = table.SuspendGetToken())
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-				for (int j = 0; j < resultMat.Rows; j++)
-					col[j] = resultMat[j, i];
+				// first store the factors
+				for (int i = 0; i < resultMat.Columns; i++)
+				{
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+					for (int j = 0; j < resultMat.Rows; j++)
+						col[j] = resultMat[j, i];
 
-				table.DataColumns.Add(col, i.ToString());
+					table.DataColumns.Add(col, i.ToString());
+				}
+				suspendToken.Dispose();
 			}
 
-			table.Resume();
 			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			Current.ProjectService.CreateNewWorksheet(table);
@@ -297,59 +298,61 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PCA of " + srctable.Name);
 
 			// Fill the Table
-			table.Suspend();
-
-			// first of all store the meanscore
+			using (var suspendToken = table.SuspendGetToken())
 			{
-				double meanScore = MatrixMath.LengthOf(meanX);
-				MatrixMath.NormalizeRows(meanX);
+				// first of all store the meanscore
+				{
+					double meanScore = MatrixMath.LengthOf(meanX);
+					MatrixMath.NormalizeRows(meanX);
 
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-				for (int i = 0; i < factors.Rows; i++)
-					col[i] = meanScore;
-				table.DataColumns.Add(col, "MeanFactor", Altaxo.Data.ColumnKind.V, 0);
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+					for (int i = 0; i < factors.Rows; i++)
+						col[i] = meanScore;
+					table.DataColumns.Add(col, "MeanFactor", Altaxo.Data.ColumnKind.V, 0);
+				}
+
+				// first store the factors
+				for (int i = 0; i < factors.Columns; i++)
+				{
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+					for (int j = 0; j < factors.Rows; j++)
+						col[j] = factors[j, i];
+
+					table.DataColumns.Add(col, "Factor" + i.ToString(), Altaxo.Data.ColumnKind.V, 1);
+				}
+
+				// now store the mean of the matrix
+				{
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+
+					for (int j = 0; j < meanX.Columns; j++)
+						col[j] = meanX[0, j];
+					table.DataColumns.Add(col, "MeanLoad", Altaxo.Data.ColumnKind.V, 2);
+				}
+
+				// now store the loads - careful - they are horizontal in the matrix
+				for (int i = 0; i < loads.Rows; i++)
+				{
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+
+					for (int j = 0; j < loads.Columns; j++)
+						col[j] = loads[i, j];
+
+					table.DataColumns.Add(col, "Load" + i.ToString(), Altaxo.Data.ColumnKind.V, 3);
+				}
+
+				// now store the residual variances, they are vertical in the vector
+				{
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+
+					for (int i = 0; i < residualVariances.Rows; i++)
+						col[i] = residualVariances[i, 0];
+					table.DataColumns.Add(col, "ResidualVariance", Altaxo.Data.ColumnKind.V, 4);
+				}
+
+				suspendToken.Dispose();
 			}
 
-			// first store the factors
-			for (int i = 0; i < factors.Columns; i++)
-			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-				for (int j = 0; j < factors.Rows; j++)
-					col[j] = factors[j, i];
-
-				table.DataColumns.Add(col, "Factor" + i.ToString(), Altaxo.Data.ColumnKind.V, 1);
-			}
-
-			// now store the mean of the matrix
-			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-
-				for (int j = 0; j < meanX.Columns; j++)
-					col[j] = meanX[0, j];
-				table.DataColumns.Add(col, "MeanLoad", Altaxo.Data.ColumnKind.V, 2);
-			}
-
-			// now store the loads - careful - they are horizontal in the matrix
-			for (int i = 0; i < loads.Rows; i++)
-			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-
-				for (int j = 0; j < loads.Columns; j++)
-					col[j] = loads[i, j];
-
-				table.DataColumns.Add(col, "Load" + i.ToString(), Altaxo.Data.ColumnKind.V, 3);
-			}
-
-			// now store the residual variances, they are vertical in the vector
-			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-
-				for (int i = 0; i < residualVariances.Rows; i++)
-					col[i] = residualVariances[i, 0];
-				table.DataColumns.Add(col, "ResidualVariance", Altaxo.Data.ColumnKind.V, 4);
-			}
-
-			table.Resume();
 			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			Current.ProjectService.CreateNewWorksheet(table);

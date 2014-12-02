@@ -192,37 +192,39 @@ namespace Altaxo.Worksheet.Commands
 		/// </summary>
 		public static void RemoveSelected(IWorksheetController ctrl)
 		{
-			ctrl.DataTable.Suspend();
-
-			// Property columns are only deleted, if selected alone or in conjunction with data row selection
-			if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
+			using (var suspendToken = ctrl.DataTable.SuspendGetToken())
 			{
-				ctrl.DataTable.PropCols.RemoveColumns(ctrl.SelectedPropertyColumns);
-				ctrl.SelectedPropertyColumns.Clear();
-				ctrl.SelectedPropertyRows.Clear();
+				// Property columns are only deleted, if selected alone or in conjunction with data row selection
+				if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
+				{
+					ctrl.DataTable.PropCols.RemoveColumns(ctrl.SelectedPropertyColumns);
+					ctrl.SelectedPropertyColumns.Clear();
+					ctrl.SelectedPropertyRows.Clear();
+				}
+				// note here: Property rows are only removed indirect by removing data columns
+
+				// delete the selected columns if there are _only selected columns
+				if (ctrl.SelectedDataColumns.Count > 0 && ctrl.SelectedDataRows.Count == 0)
+				{
+					ctrl.DataTable.RemoveColumns(ctrl.SelectedDataColumns);
+					ctrl.SelectedDataColumns.Clear(); // now the columns are deleted, so they cannot be selected
+				}
+
+				// if rows are selected, remove them in all selected columns or in all columns (if no column selection=
+				if (ctrl.SelectedDataRows.Count > 0)
+				{
+					ctrl.DataTable.DataColumns.RemoveRowsInColumns(
+						ctrl.SelectedDataColumns.Count > 0 ? (IAscendingIntegerCollection)ctrl.SelectedDataColumns : ContiguousIntegerRange.FromStartAndCount(0, ctrl.DataTable.DataColumns.ColumnCount),
+						ctrl.SelectedDataRows);
+
+					ctrl.SelectedDataColumns.Clear();
+					ctrl.SelectedDataRows.Clear();
+				}
+
+				// end code for the selected rows
+				suspendToken.Dispose();
 			}
-			// note here: Property rows are only removed indirect by removing data columns
 
-			// delete the selected columns if there are _only selected columns
-			if (ctrl.SelectedDataColumns.Count > 0 && ctrl.SelectedDataRows.Count == 0)
-			{
-				ctrl.DataTable.RemoveColumns(ctrl.SelectedDataColumns);
-				ctrl.SelectedDataColumns.Clear(); // now the columns are deleted, so they cannot be selected
-			}
-
-			// if rows are selected, remove them in all selected columns or in all columns (if no column selection=
-			if (ctrl.SelectedDataRows.Count > 0)
-			{
-				ctrl.DataTable.DataColumns.RemoveRowsInColumns(
-					ctrl.SelectedDataColumns.Count > 0 ? (IAscendingIntegerCollection)ctrl.SelectedDataColumns : ContiguousIntegerRange.FromStartAndCount(0, ctrl.DataTable.DataColumns.ColumnCount),
-					ctrl.SelectedDataRows);
-
-				ctrl.SelectedDataColumns.Clear();
-				ctrl.SelectedDataRows.Clear();
-			}
-
-			// end code for the selected rows
-			ctrl.DataTable.Resume();
 			ctrl.TableAreaInvalidate(); // necessary because we changed the selections
 		}
 
@@ -231,48 +233,49 @@ namespace Altaxo.Worksheet.Commands
 		/// </summary>
 		public static void RemoveAllButSelected(IWorksheetController ctrl)
 		{
-			ctrl.DataTable.Suspend();
-
-			// Property columns are only deleted, if selected alone or in conjunction with data row selection
-			if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
+			using (var suspendToken = ctrl.DataTable.SuspendGetToken())
 			{
-				for (int i = ctrl.DataTable.PropertyColumnCount - 1; i >= 0; i--)
+				// Property columns are only deleted, if selected alone or in conjunction with data row selection
+				if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
 				{
-					if (!ctrl.SelectedPropertyColumns.Contains(i))
-						ctrl.DataTable.PropertyColumns.RemoveColumn(i);
+					for (int i = ctrl.DataTable.PropertyColumnCount - 1; i >= 0; i--)
+					{
+						if (!ctrl.SelectedPropertyColumns.Contains(i))
+							ctrl.DataTable.PropertyColumns.RemoveColumn(i);
+					}
+
+					ctrl.SelectedPropertyColumns.Clear();
+					ctrl.SelectedPropertyRows.Clear();
+				}
+				// note here: Property rows are only removed indirect by removing data columns
+
+				// delete the selected columns if there are _only selected columns
+				if (ctrl.SelectedDataColumns.Count > 0)
+				{
+					for (int i = ctrl.DataTable.DataColumnCount - 1; i >= 0; i--)
+					{
+						if (!ctrl.SelectedDataColumns.Contains(i))
+							ctrl.DataTable.RemoveColumns(i, 1);
+					}
+					ctrl.SelectedDataColumns.Clear(); // now the columns are deleted, so they cannot be selected
 				}
 
-				ctrl.SelectedPropertyColumns.Clear();
-				ctrl.SelectedPropertyRows.Clear();
-			}
-			// note here: Property rows are only removed indirect by removing data columns
-
-			// delete the selected columns if there are _only selected columns
-			if (ctrl.SelectedDataColumns.Count > 0)
-			{
-				for (int i = ctrl.DataTable.DataColumnCount - 1; i >= 0; i--)
+				// if rows are selected, remove them in all selected columns or in all columns (if no column selection=
+				if (ctrl.SelectedDataRows.Count > 0)
 				{
-					if (!ctrl.SelectedDataColumns.Contains(i))
-						ctrl.DataTable.RemoveColumns(i, 1);
-				}
-				ctrl.SelectedDataColumns.Clear(); // now the columns are deleted, so they cannot be selected
-			}
+					for (int i = ctrl.DataTable.DataRowCount - 1; i >= 0; i--)
+					{
+						if (!ctrl.SelectedDataRows.Contains(i))
+							ctrl.DataTable.DataColumns.RemoveRow(i);
+					}
 
-			// if rows are selected, remove them in all selected columns or in all columns (if no column selection=
-			if (ctrl.SelectedDataRows.Count > 0)
-			{
-				for (int i = ctrl.DataTable.DataRowCount - 1; i >= 0; i--)
-				{
-					if (!ctrl.SelectedDataRows.Contains(i))
-						ctrl.DataTable.DataColumns.RemoveRow(i);
+					ctrl.SelectedDataColumns.Clear();
+					ctrl.SelectedDataRows.Clear();
 				}
 
-				ctrl.SelectedDataColumns.Clear();
-				ctrl.SelectedDataRows.Clear();
+				// end code for the selected rows
+				suspendToken.Dispose();
 			}
-
-			// end code for the selected rows
-			ctrl.DataTable.Resume();
 			ctrl.TableAreaInvalidate(); // necessary because we changed the selections
 		}
 
@@ -282,66 +285,67 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="ctrl">The worksheet controller.</param>
 		public static void CleanSelected(IWorksheetController ctrl)
 		{
-			ctrl.DataTable.Suspend();
-
-			// clear whole columns when no specific
-			if (ctrl.SelectedPropertyColumns.Count > 0)
+			using (var suspendToken = ctrl.DataTable.SuspendGetToken())
 			{
-				if (ctrl.SelectedPropertyRows.Count == 0) // if only data columns but not rows selected, we can clean the data columns complete
+				// clear whole columns when no specific
+				if (ctrl.SelectedPropertyColumns.Count > 0)
 				{
-					foreach (int colidx in ctrl.SelectedPropertyColumns)
-						ctrl.DataTable.PropertyColumns[colidx].Clear();
+					if (ctrl.SelectedPropertyRows.Count == 0) // if only data columns but not rows selected, we can clean the data columns complete
+					{
+						foreach (int colidx in ctrl.SelectedPropertyColumns)
+							ctrl.DataTable.PropertyColumns[colidx].Clear();
+					}
+					else // if property columns and also rows are selected, we have to clean the cells individually
+					{
+						foreach (int colidx in ctrl.SelectedPropertyColumns)
+						{
+							DataColumn col = ctrl.DataTable.PropertyColumns[colidx];
+							foreach (int rowidx in ctrl.SelectedPropertyRows)
+								col.SetElementEmpty(rowidx);
+						}
+					}
 				}
-				else // if property columns and also rows are selected, we have to clean the cells individually
+				else if (ctrl.SelectedPropertyRows.Count > 0) // if only rows are selected, clean them complete
 				{
-					foreach (int colidx in ctrl.SelectedPropertyColumns)
+					for (int colidx = ctrl.DataTable.PropertyColumnCount - 1; colidx >= 0; colidx--)
 					{
 						DataColumn col = ctrl.DataTable.PropertyColumns[colidx];
 						foreach (int rowidx in ctrl.SelectedPropertyRows)
 							col.SetElementEmpty(rowidx);
 					}
 				}
-			}
-			else if (ctrl.SelectedPropertyRows.Count > 0) // if only rows are selected, clean them complete
-			{
-				for (int colidx = ctrl.DataTable.PropertyColumnCount - 1; colidx >= 0; colidx--)
-				{
-					DataColumn col = ctrl.DataTable.PropertyColumns[colidx];
-					foreach (int rowidx in ctrl.SelectedPropertyRows)
-						col.SetElementEmpty(rowidx);
-				}
-			}
 
-			// clear whole columns when no specific
-			if (ctrl.SelectedDataColumns.Count > 0)
-			{
-				if (ctrl.SelectedDataRows.Count == 0) // if only data columns but not rows selected, we can clean the data columns complete
+				// clear whole columns when no specific
+				if (ctrl.SelectedDataColumns.Count > 0)
 				{
-					foreach (int colidx in ctrl.SelectedDataColumns)
-						ctrl.DataTable.DataColumns[colidx].Clear();
+					if (ctrl.SelectedDataRows.Count == 0) // if only data columns but not rows selected, we can clean the data columns complete
+					{
+						foreach (int colidx in ctrl.SelectedDataColumns)
+							ctrl.DataTable.DataColumns[colidx].Clear();
+					}
+					else // if data columns and also rows are selected, we have to clean the cells individually
+					{
+						foreach (int colidx in ctrl.SelectedDataColumns)
+						{
+							DataColumn col = ctrl.DataTable.DataColumns[colidx];
+							foreach (int rowidx in ctrl.SelectedDataRows)
+								col.SetElementEmpty(rowidx);
+						}
+					}
 				}
-				else // if data columns and also rows are selected, we have to clean the cells individually
+				else if (ctrl.SelectedDataRows.Count > 0) // if only rows are selected, clean them complete
 				{
-					foreach (int colidx in ctrl.SelectedDataColumns)
+					for (int colidx = ctrl.DataTable.DataColumnCount - 1; colidx >= 0; colidx--)
 					{
 						DataColumn col = ctrl.DataTable.DataColumns[colidx];
 						foreach (int rowidx in ctrl.SelectedDataRows)
 							col.SetElementEmpty(rowidx);
 					}
 				}
-			}
-			else if (ctrl.SelectedDataRows.Count > 0) // if only rows are selected, clean them complete
-			{
-				for (int colidx = ctrl.DataTable.DataColumnCount - 1; colidx >= 0; colidx--)
-				{
-					DataColumn col = ctrl.DataTable.DataColumns[colidx];
-					foreach (int rowidx in ctrl.SelectedDataRows)
-						col.SetElementEmpty(rowidx);
-				}
-			}
 
-			// end code for the selected rows
-			ctrl.DataTable.Resume();
+				// end code for the selected rows
+				suspendToken.Dispose();
+			}
 			ctrl.TableAreaInvalidate(); // necessary because we changed the selections
 		}
 
@@ -524,7 +528,7 @@ namespace Altaxo.Worksheet.Commands
 		/// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet.
 		/// The paste operation depends on the current selection of columns, rows, or property columns.
 		/// </summary>
-		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="ctrl">The worksheet to paste into.</param>
 		/// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
 		/// <remarks>The paste operation is defined in the following way:
 		/// If nothing is currently selected, the columns are appended to the end of the worksheet and the property data
@@ -534,46 +538,47 @@ namespace Altaxo.Worksheet.Commands
 		/// the paste is done column by row.
 		///
 		/// </remarks>
-		public static void PasteFromTable(IWorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		public static void PasteFromTable(IWorksheetController ctrl, Altaxo.Data.DataTable sourcetable)
 		{
-			dg.DataTable.Suspend();
+			using (var suspendToken = ctrl.DataTable.SuspendGetToken())
+			{
+				if (!ctrl.AreColumnsOrRowsSelected)
+				{
+					PasteFromTableToUnselected(ctrl, sourcetable);
+				}
+				else if (ctrl.SelectedDataColumns.Count > 0 && ctrl.SelectedDataColumns.Count == sourcetable.DataColumns.ColumnCount)
+				{
+					PasteFromTableColumnsToSelectedColumns(ctrl, sourcetable);
+				}
+				else if (ctrl.SelectedDataColumns.Count > 0 && ctrl.SelectedDataColumns.Count == sourcetable.DataColumns.RowCount)
+				{
+					PasteFromTableRowsToSelectedColumns(ctrl, sourcetable);
+				}
+				else if (ctrl.SelectedDataRows.Count > 0 && ctrl.SelectedDataRows.Count == sourcetable.DataColumns.RowCount)
+				{
+					PasteFromTableRowsToSelectedRows(ctrl, sourcetable);
+				}
+				else if (ctrl.SelectedDataRows.Count > 0 && ctrl.SelectedDataRows.Count == sourcetable.DataColumns.ColumnCount)
+				{
+					PasteFromTableColumnsToSelectedRows(ctrl, sourcetable);
+				}
+				else if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyColumns.Count == sourcetable.DataColumns.ColumnCount)
+				{
+					PasteFromTableColumnsToSelectedPropertyColumns(ctrl, sourcetable);
+				}
 
-			if (!dg.AreColumnsOrRowsSelected)
-			{
-				PasteFromTableToUnselected(dg, sourcetable);
-			}
-			else if (dg.SelectedDataColumns.Count > 0 && dg.SelectedDataColumns.Count == sourcetable.DataColumns.ColumnCount)
-			{
-				PasteFromTableColumnsToSelectedColumns(dg, sourcetable);
-			}
-			else if (dg.SelectedDataColumns.Count > 0 && dg.SelectedDataColumns.Count == sourcetable.DataColumns.RowCount)
-			{
-				PasteFromTableRowsToSelectedColumns(dg, sourcetable);
-			}
-			else if (dg.SelectedDataRows.Count > 0 && dg.SelectedDataRows.Count == sourcetable.DataColumns.RowCount)
-			{
-				PasteFromTableRowsToSelectedRows(dg, sourcetable);
-			}
-			else if (dg.SelectedDataRows.Count > 0 && dg.SelectedDataRows.Count == sourcetable.DataColumns.ColumnCount)
-			{
-				PasteFromTableColumnsToSelectedRows(dg, sourcetable);
-			}
-			else if (dg.SelectedPropertyColumns.Count > 0 && dg.SelectedPropertyColumns.Count == sourcetable.DataColumns.ColumnCount)
-			{
-				PasteFromTableColumnsToSelectedPropertyColumns(dg, sourcetable);
-			}
+					// now the not exact matches
+				else if (ctrl.SelectedDataColumns.Count > 0)
+				{
+					PasteFromTableColumnsToSelectedColumns(ctrl, sourcetable);
+				}
+				else if (ctrl.SelectedDataRows.Count > 0)
+				{
+					PasteFromTableRowsToSelectedRows(ctrl, sourcetable);
+				}
 
-				// now the not exact matches
-			else if (dg.SelectedDataColumns.Count > 0)
-			{
-				PasteFromTableColumnsToSelectedColumns(dg, sourcetable);
+				suspendToken.Dispose();
 			}
-			else if (dg.SelectedDataRows.Count > 0)
-			{
-				PasteFromTableRowsToSelectedRows(dg, sourcetable);
-			}
-
-			dg.DataTable.Resume();
 		}
 
 		/// <summary>

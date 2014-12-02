@@ -44,43 +44,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="ctrl">Project browse controller.</param>
 		public static void DeleteSelectedListItems(this ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems();
-			ctrl.ExpandItemListToSubfolderItems(list);
-
-			DeleteDocuments(list);
-		}
-
-		/// <summary>
-		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
-		/// </summary>
-		/// <param name="list">List of items to delete.</param>
-		public static void DeleteDocuments(IList<object> list)
-		{
-			DeleteDocuments(list, true);
-		}
-
-		/// <summary>
-		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
-		/// </summary>
-		/// <param name="list">List of items to delete.</param>
-		/// <param name="showConfirmationDialog">If <c>true</c>, shows the confirmation dialog to confirm that the items should really be deleted.</param>
-		public static void DeleteDocuments(IList<object> list, bool showConfirmationDialog)
-		{
-			if (showConfirmationDialog)
-			{
-				if (false == Current.Gui.YesNoMessageBox(string.Format("Are you sure to delete {0} items?", list.Count), "Attention!", false))
-					return;
-			}
-
-			foreach (object item in list)
-			{
-				if (item is Altaxo.Data.DataTable)
-					Current.ProjectService.DeleteTable((Altaxo.Data.DataTable)item, true);
-				else if (item is Altaxo.Graph.Gdi.GraphDocument)
-					Current.ProjectService.DeleteGraphDocument((Altaxo.Graph.Gdi.GraphDocument)item, true);
-				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-					Current.Project.ProjectFolderProperties.Remove(item as Altaxo.Main.Properties.ProjectFolderPropertyDocument);
-			}
+			var projItems = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetSelectedListItems());
+			Altaxo.Main.ProjectFolders.DeleteDocuments(projItems);
 		}
 
 		/// <summary>
@@ -185,8 +150,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="ctrl">Project browse controller.</param>
 		public static void ShowSelectedListItem(this ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems();
-			ctrl.ExpandItemListToSubfolderItems(list);
+			var list = Current.Project.Folders.GetExpandedProjectItemSet(ctrl.GetSelectedListItems());
 
 			foreach (object item in list)
 			{
@@ -222,10 +186,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="ctrl">Project browse controller.</param>
 		public static void ShowSelectedListItemsExclusively(this ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems();
-			ctrl.ExpandItemListToSubfolderItems(list);
-
-			ShowDocumentsExclusively(list);
+			var selItems = ctrl.GetSelectedListItems();
+			ShowDocumentsExclusively(Current.Project.Folders.GetExpandedProjectItemSet(selItems));
 		}
 
 		/// <summary>
@@ -234,10 +196,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="ctrl"></param>
 		public static void HideSelectedListItems(this ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems();
-			ctrl.ExpandItemListToSubfolderItems(list);
-
-			foreach (object item in list)
+			var selItems = ctrl.GetSelectedListItems();
+			foreach (object item in Current.Project.Folders.GetExpandedProjectItemSet(selItems))
 			{
 				Current.ProjectService.CloseDocumentViews(item);
 			}
@@ -280,14 +240,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// <param name="ctrl">Project browse controller.</param>
 		public static void CopySelectedListItemsToClipboard(this ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems();
+			var selItems = ctrl.GetSelectedListItems();
 
 			// if the items are from the same folder, but are selected from the AllItems, AllWorksheet or AllGraphs nodes, we invalidate the folderName (because then we consider the items to be rooted)
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))
 				folderName = null;
 
-			list = ctrl.ExpandItemListToSubfolderItems(list); // Expand the list to get rid of the ProjectFolder items
+			var list = Current.Project.Folders.GetExpandedProjectItemSet(selItems); // Expand the list to get rid of the ProjectFolder items
 			Altaxo.Main.Commands.ProjectItemCommands.CopyItemsToClipboard(list, folderName);
 		}
 

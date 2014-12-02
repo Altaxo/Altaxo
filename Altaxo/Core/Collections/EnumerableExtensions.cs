@@ -195,5 +195,17 @@ namespace Altaxo.Collections
 				return max;
 			}
 		}
+
+		/// <summary>
+		/// Executes an action for each element of the sequence.
+		/// </summary>
+		/// <typeparam name="T">Type of element.</typeparam>
+		/// <param name="seq">The element sequence.</param>
+		/// <param name="action">The action to execute for each element.</param>
+		public static void ForEachDo<T>(this IEnumerable<T> seq, Action<T> action)
+		{
+			foreach (var element in seq)
+				action(element);
+		}
 	}
 }

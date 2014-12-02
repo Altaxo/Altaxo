@@ -63,6 +63,15 @@ namespace Altaxo.Main.Properties
 		/// </summary>
 		public event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 
+		/// <summary>Event fired when anything here changed.</summary>
+		[field: NonSerialized]
+		public event System.EventHandler Changed;
+
+		[NonSerialized]
+		private Main.EventSuppressor _changedEventSuppressor;
+
+		protected System.EventArgs _changeEventData = null;
+
 		#region Serialization
 
 		/// <summary>
@@ -105,6 +114,7 @@ namespace Altaxo.Main.Properties
 		/// <param name="folderName">Name of the folder.</param>
 		public ProjectFolderPropertyDocument(string folderName)
 		{
+			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			this.Name = folderName;
 			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
 			PropertyBag = new PropertyBag();
@@ -116,6 +126,7 @@ namespace Altaxo.Main.Properties
 		/// <param name="from">Another instance to copy the name of the bag and the properties from.</param>
 		public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
 		{
+			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			_creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
 			CopyFrom(from);
 		}
@@ -288,6 +299,29 @@ namespace Altaxo.Main.Properties
 		public void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing)
 		{
 			// currently there is nothing to do here
+		}
+
+		public IDisposable SuspendGetToken()
+		{
+			return _changedEventSuppressor.Suspend();
+		}
+
+		private void EhChangedEventResumes()
+		{
+			if (null != Changed)
+				Changed(this, _changeEventData);
+			_changeEventData = null;
+		}
+
+		protected virtual void OnChanged()
+		{
+			if (_changedEventSuppressor.GetEnabledWithCounting())
+			{
+				if (null != Changed)
+					Changed(this, _changeEventData);
+
+				_changeEventData = null;
+			}
 		}
 	}
 }

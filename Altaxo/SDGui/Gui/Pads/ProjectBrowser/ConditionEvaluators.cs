@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ICSharpCode.Core;
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
 	/// <summary>
@@ -78,10 +80,13 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			{
 				case '<':
 					return currItems < condNumber;
+
 				case '=':
 					return currItems == condNumber;
+
 				case '>':
 					return currItems > condNumber;
+
 				default:
 					return false;
 			}
@@ -94,9 +99,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (string.IsNullOrEmpty(expectedItemType))
 				return true; // no restriction concerning the number of items
 
-			List<object> selItems = ((ProjectBrowseController)caller).GetSelectedListItems();
-			if (expectedItemType != "Folder") // if folder, than do no expansion of selected items!
-				((ProjectBrowseController)caller).ExpandItemListToSubfolderItems(selItems);
+			IEnumerable<object> selItems = ((ProjectBrowseController)caller).GetSelectedListItems();
+			if (expectedItemType != "Folder") // if folder, then do no expansion of selected items!
+				selItems = Current.Project.Folders.GetExpandedProjectItemSet(selItems);
 
 			foreach (object item in selItems)
 				if (expectedItemType != item.GetType().ToString())
@@ -104,7 +109,5 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			return true;
 		}
-
-
 	}
 }

@@ -317,18 +317,19 @@ namespace Altaxo.Data
 					// the name of the columns should preferabbly simply
 					// the index in x direction
 
-					table.Suspend();
-					for (int i = 0; i < sizex; i++)
+					using (var suspendToken = table.SuspendGetToken())
 					{
-						Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn();
-						for (int j = sizey - 1; j >= 0; j--)
-							dblcol[j] = colorfunc(bmp.GetPixel(i, j));
+						for (int i = 0; i < sizex; i++)
+						{
+							Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn();
+							for (int j = sizey - 1; j >= 0; j--)
+								dblcol[j] = colorfunc(bmp.GetPixel(i, j));
 
-						table.DataColumns.Add(dblcol, table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzufügen
-					} // end for all x coordinaates
+							table.DataColumns.Add(dblcol, table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzufügen
+						} // end for all x coordinaates
 
-					table.Resume();
-
+						suspendToken.Dispose();
+					}
 					myStream.Close();
 				} // end using myStream
 			}

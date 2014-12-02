@@ -140,11 +140,11 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-		public List<object> GetItemsInFolder(string folderName)
+		public List<IProjectItem> GetItemsInFolder(string folderName)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
 
-			var result = new List<object>();
+			var result = new List<IProjectItem>();
 
 			AddItemsInFolder(folderName, result);
 
@@ -156,11 +156,11 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-		public List<object> GetItemsInFolderAndSubfolders(string folderName)
+		public List<IProjectItem> GetItemsInFolderAndSubfolders(string folderName)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
 
-			var result = new List<object>();
+			var result = new List<IProjectItem>();
 			AddItemsInFolderAndSubfolders(folderName, result);
 
 			return result;
@@ -171,7 +171,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <param name="list">List where to add the items to.</param>
-		public void AddItemsInFolder(string folderName, List<object> list)
+		public void AddItemsInFolder(string folderName, ICollection<IProjectItem> list)
 		{
 			HashSet<object> items;
 			if (!_directories.TryGetValue(folderName, out items))
@@ -180,10 +180,9 @@ namespace Altaxo.Main
 				throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
 			}
 
-			foreach (var v in items)
+			foreach (var v in items.OfType<IProjectItem>())
 			{
-				if (!(v is string))
-					list.Add(v);
+				list.Add(v);
 			}
 		}
 
@@ -192,7 +191,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="folderName">Folder for which to retrieve the items.</param>
 		/// <param name="list">List where to add the items to.</param>
-		public void AddItemsInFolderAndSubfolders(string folderName, List<object> list)
+		public void AddItemsInFolderAndSubfolders(string folderName, ICollection<IProjectItem> list)
 		{
 			HashSet<object> items;
 			if (!_directories.TryGetValue(folderName, out items))
@@ -203,15 +202,50 @@ namespace Altaxo.Main
 
 			foreach (var v in items)
 			{
-				if (!(v is string))
-					list.Add(v);
-				else
+				if (v is IProjectItem)
+				{
+					list.Add((IProjectItem)v);
+				}
+				else if (v is string)
 				{
 					var subfolder = (string)v;
 					if (_directories.ContainsKey(subfolder))
 						AddItemsInFolderAndSubfolders(subfolder, list);
 				}
+				else
+				{
+					throw new InvalidOperationException(string.Format("The folder {0} contains an item {1}, which is not considered here. Please report this exception to the forum.", folderName, v));
+				}
 			}
+		}
+
+		/// <summary>
+		/// Transforms an enumeration that contains both project items and project folders to another set that contains the project items of the enumeration plus all project items in the project folders and its subfolders.
+		/// It is guaranteed that each project item is contained only once.
+		/// </summary>
+		/// <param name="itemList">The enumeration that can contain both project items and project folders.</param>
+		/// <returns>A hashset that contains the project items of the provided <paramref name="itemList"/> plus all project items of the folders and its subfolders, that are also contained in the <paramref name="itemList"/>.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public HashSet<IProjectItem> GetExpandedProjectItemSet(IEnumerable<object> itemList)
+		{
+			var result = new HashSet<IProjectItem>();
+			foreach (var obj in itemList)
+			{
+				if (obj is IProjectItem)
+				{
+					result.Add((IProjectItem)obj);
+				}
+				else if (obj is ProjectFolder)
+				{
+					var folder = (ProjectFolder)obj;
+					AddItemsInFolderAndSubfolders(folder.Name, result);
+				}
+				else
+				{
+					throw new NotImplementedException(string.Format("The processing of item <<{0}>> is not implemented here. Please report this error to the forum.", obj));
+				}
+			}
+			return result;
 		}
 
 		/// <summary>
@@ -236,7 +270,7 @@ namespace Altaxo.Main
 		/// <param name="oldFolderName">Name of the existing folder.</param>
 		/// <param name="newFolderName">New name of the folder.</param>
 		/// <param name="items">List of items that should be renamed.</param>
-		public void MoveItemsToNewFolder(string oldFolderName, string newFolderName, IEnumerable<object> items)
+		public void MoveItemsToNewFolder(string oldFolderName, string newFolderName, IEnumerable<IProjectItem> items)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(oldFolderName);
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
@@ -244,61 +278,105 @@ namespace Altaxo.Main
 			// The algorithm tries to continuously rename items that could be renamed
 			// If no more items could be renamed, the rest of the items is renamed with a unique generated name using the new name as basis
 
-			var itemsToRename = new HashSet<object>(items);
-			int oldFolderNameLength = oldFolderName == null ? 0 : oldFolderName.Length;
-			var itemsRenamed = new HashSet<object>();
+			// Suspend all items
+			var suspendTokensOfProjectItems = items.Select(item => item.SuspendGetToken()).ToArray();
 
-			for (int stage = 0; stage <= 1; stage++)
+			var itemList = new List<IProjectItem>(items);
+			SortItemsByDependencies(itemList); // items that have no dependencies should now be first in the list (thus also the first to be renamed)
+
+			// first, we rename all items to unique names
+
+			var oldNameDictionary = new Dictionary<IProjectItem, string>(); // stores the old names of the items
+			foreach (var item in itemList)
 			{
-				do
-				{
-					itemsRenamed.Clear();
-					foreach (var item in itemsToRename)
-					{
-						if (item is INameOwner)
-						{
-							string oldName = ((INameOwner)item).Name;
-							string newName = (newFolderName == null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
-							if (item is Data.DataTable)
-							{
-								if (!_doc.DataTableCollection.Contains(newName))
-								{
-									((Data.DataTable)item).Name = newName;
-									itemsRenamed.Add(item);
-								}
-								else if (1 == stage)
-								{
-									((Data.DataTable)item).Name = _doc.DataTableCollection.FindNewTableName(newName);
-									itemsRenamed.Add(item);
-								}
-							}
-							else if (item is Graph.Gdi.GraphDocument)
-							{
-								if (!_doc.GraphDocumentCollection.Contains(newName))
-								{
-									((Graph.Gdi.GraphDocument)item).Name = newName;
-									itemsRenamed.Add(item);
-								}
-								if (1 == stage)
-								{
-									((Graph.Gdi.GraphDocument)item).Name = _doc.GraphDocumentCollection.FindNewName(newName);
-									itemsRenamed.Add(item);
-								}
-							}
-							else
-							{
-								throw new NotImplementedException("Unknown item type encountered: " + item.GetType().ToString());
-							}
-						}
-						else
-						{
-							throw new NotImplementedException("Unknown item type encountered: " + item.GetType().ToString());
-						}
-					} // end foreach item
+				oldNameDictionary[item] = item.Name;
+				item.Name = Guid.NewGuid().ToString() + "\\"; // this name should be new, the backslash is to allow also folder property documents to be renamed.
+			}
 
-					itemsToRename.ExceptWith(itemsRenamed);
-				} while (itemsRenamed.Count > 0 && stage == 0);
-			} // for stage
+			int oldFolderNameLength = oldFolderName == null ? 0 : oldFolderName.Length;
+			var itemsRenamed = new HashSet<IProjectItem>();
+
+			foreach (var item in itemList)
+			{
+				string oldName = oldNameDictionary[item];
+				string newName = (newFolderName == null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
+
+				if (item is Data.DataTable)
+				{
+					if (!_doc.DataTableCollection.Contains(newName))
+					{
+						((Data.DataTable)item).Name = newName;
+					}
+					else
+					{
+						((Data.DataTable)item).Name = _doc.DataTableCollection.FindNewTableName(newName);
+					}
+				}
+				else if (item is Graph.Gdi.GraphDocument)
+				{
+					if (!_doc.GraphDocumentCollection.Contains(newName))
+					{
+						((Graph.Gdi.GraphDocument)item).Name = newName;
+					}
+					else
+					{
+						((Graph.Gdi.GraphDocument)item).Name = _doc.GraphDocumentCollection.FindNewName(newName);
+					}
+				}
+				else if (item is Main.Properties.ProjectFolderPropertyDocument)
+				{
+					if (!_doc.ProjectFolderProperties.Contains(newName))
+					{
+						((Main.Properties.ProjectFolderPropertyDocument)item).Name = newName;
+					}
+					else // we integrate the properties in the other properties
+					{
+						var oldProps = _doc.ProjectFolderProperties[newName].PropertyBagNotNull;
+						var propsToMerge = ((Main.Properties.ProjectFolderPropertyDocument)item).PropertyBagNotNull;
+						oldProps.MergePropertiesFrom(propsToMerge, false);
+					}
+				}
+				else
+				{
+					throw new NotImplementedException("Unknown item type encountered: " + item.GetType().ToString());
+				}
+			} // end foreach item
+
+			// Resume all items
+			suspendTokensOfProjectItems.ForEachDo(token => token.Dispose());
+		}
+
+		/// <summary>
+		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
+		/// </summary>
+		/// <param name="list">List of items to delete.</param>
+		public static void DeleteDocuments(IEnumerable<IProjectItem> list)
+		{
+			DeleteDocuments(list, true);
+		}
+
+		/// <summary>
+		/// Delete the items given in the list (tables and graphs), with a confirmation dialog.
+		/// </summary>
+		/// <param name="list">List of items to delete.</param>
+		/// <param name="showConfirmationDialog">If <c>true</c>, shows the confirmation dialog to confirm that the items should really be deleted.</param>
+		public static void DeleteDocuments(IEnumerable<IProjectItem> list, bool showConfirmationDialog)
+		{
+			if (showConfirmationDialog)
+			{
+				if (false == Current.Gui.YesNoMessageBox(string.Format("Are you sure to delete {0} items?", list.Count()), "Attention!", false))
+					return;
+			}
+
+			foreach (object item in list)
+			{
+				if (item is Altaxo.Data.DataTable)
+					Current.ProjectService.DeleteTable((Altaxo.Data.DataTable)item, true);
+				else if (item is Altaxo.Graph.Gdi.GraphDocument)
+					Current.ProjectService.DeleteGraphDocument((Altaxo.Graph.Gdi.GraphDocument)item, true);
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+					Current.Project.ProjectFolderProperties.Remove(item as Altaxo.Main.Properties.ProjectFolderPropertyDocument);
+			}
 		}
 
 		#endregion Access to folders and items
@@ -529,8 +607,104 @@ namespace Altaxo.Main
 			RenameFolder(folderName, newFolderName);
 		}
 
+		#region Sorting of project items by dependencies
+
 		/// <summary>
-		/// Move items in a list to a other folder.
+		/// Sorts the project items by dependencies. On return, the item with which has no dependencies is located at the beginning of the list. The item with the most dependencies on other items in the list is the last item in the list.
+		/// </summary>
+		/// <param name="list">The list to sort.</param>
+		public void SortItemsByDependencies(List<IProjectItem> list)
+		{
+			var dependencies = new Dictionary<IProjectItem, HashSet<IProjectItem>>(); // key is the project item, value is the set of items this project item is dependent on
+
+			foreach (var item in list)
+			{
+				dependencies.Add(item, new HashSet<IProjectItem>());
+				DocNodeProxyReporter reporter = (proxy, owner, propertyName) => SortItemsByDependencyProxyReporter(proxy, owner, propertyName, dependencies[item]);
+				item.VisitDocumentReferences(reporter);
+			}
+
+			list.Sort((item1, item2) => SortItemsByDependencyComparison(item1, item2, dependencies));
+		}
+
+		private int SortItemsByDependencyComparison(IProjectItem item1, IProjectItem item2, Dictionary<IProjectItem, HashSet<IProjectItem>> dependencies)
+		{
+			var item1Dependencies = dependencies[item1];
+			var item2Dependencies = dependencies[item2];
+
+			if (item1Dependencies.Contains(item2))
+			{
+				return item2Dependencies.Contains(item1) ? 0 : 1;
+			}
+			else // item1Dependencies does'nt contain item2
+			{
+				return item2Dependencies.Contains(item1) ? -1 : 0;
+			}
+		}
+
+		private void SortItemsByDependencyProxyReporter(DocNodeProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
+		{
+			var proxyDoc = proxy.DocumentObject as IDocumentNode;
+
+			if (proxyDoc != null)
+			{
+				var dependentOnItem = DocumentPath.GetRootNodeImplementing<IProjectItem>(proxyDoc);
+				if (null != dependentOnItem)
+					dependenciesOfItem.Add(dependentOnItem);
+			}
+		}
+
+		#endregion Sorting of project items by dependencies
+
+		private void GetNewNamesForMoveItemsToFolderOperation(IList<object> itemList, string newFolderName, Dictionary<object, string> renameDictionary)
+		{
+			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(newFolderName);
+
+			foreach (object item in itemList)
+			{
+				if (item is ProjectFolder)
+				{
+					var folder = (ProjectFolder)item;
+					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetFoldersLastFolderPart(folder.Name));
+					RenameFolder(folder.Name, moveToFolder);
+				}
+				else if (item is Altaxo.Data.DataTable)
+				{
+					var table = (Altaxo.Data.DataTable)item;
+					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
+					if (Current.Project.DataTableCollection.Contains(newName))
+						newName = Current.Project.DataTableCollection.FindNewTableName(newName);
+					table.Name = newName;
+				}
+				else if (item is Altaxo.Graph.Gdi.GraphDocument)
+				{
+					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
+					if (Current.Project.GraphDocumentCollection.Contains(newName))
+						newName = Current.Project.GraphDocumentCollection.FindNewName(newName);
+					graph.Name = newName;
+				}
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+				{
+					var pdoc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(pdoc.Name));
+					if (Current.Project.ProjectFolderProperties.Contains(newName))
+					{
+						// Project folders are unique for the specific folder, we can not simply rename it to another name
+						// Thus I decided here to merge the moved property bag with the already existing property bag
+						var existingDoc = Current.Project.ProjectFolderProperties[newName];
+						existingDoc.PropertyBagNotNull.MergePropertiesFrom(pdoc.PropertyBagNotNull, true);
+					}
+					else
+					{
+						pdoc.Name = newName;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Move items in a list to another folder.
 		/// </summary>
 		/// <param name="list">List of items to move. Momentarily the item types <see cref="Altaxo.Data.DataTable"/>, <see cref="Altaxo.Graph.Gdi.GraphDocument"/> and <see cref="ProjectFolder"/></param> are supported.
 		/// <param name="newFolderName">Name of the folder where to move the items into.</param>

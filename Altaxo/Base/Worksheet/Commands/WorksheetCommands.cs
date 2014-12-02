@@ -115,24 +115,25 @@ namespace Altaxo.Worksheet.Commands
 			{
 				System.Type columntype = (System.Type)ct.SelectedItem.Tag;
 
-				table.Suspend();
-
-				if (bAddToPropertyColumns)
+				using (var suspendToken = table.SuspendGetToken())
 				{
-					for (int i = 0; i < ct.IntegerValue; i++)
+					if (bAddToPropertyColumns)
 					{
-						table.PropCols.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+						for (int i = 0; i < ct.IntegerValue; i++)
+						{
+							table.PropCols.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+						}
 					}
-				}
-				else
-				{
-					for (int i = 0; i < ct.IntegerValue; i++)
+					else
 					{
-						table.DataColumns.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+						for (int i = 0; i < ct.IntegerValue; i++)
+						{
+							table.DataColumns.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+						}
 					}
-				}
 
-				table.Resume();
+					suspendToken.Dispose();
+				}
 			}
 		}
 

@@ -1583,49 +1583,51 @@ namespace Altaxo.Calc.Regression.Multivariate
 			newName = Main.ProjectFolder.CreateFullName(srctable.Name, newName);
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable(newName);
 			// Fill the Table
-			table.Suspend();
-			table.SetTableProperty("Content", plsContent);
-			plsContent.OriginalDataTableName = srctable.Name;
+			using (var suspendToken = table.SuspendGetToken())
+			{
+				table.SetTableProperty("Content", plsContent);
+				plsContent.OriginalDataTableName = srctable.Name;
 
-			// Get matrices
-			GetXYMatrices(
-				srctable,
-				selectedColumns,
-				selectedRows,
-				selectedPropertyColumns,
-				bHorizontalOrientedSpectrum,
-				plsContent,
-				out matrixX, out matrixY, out xOfX);
+				// Get matrices
+				GetXYMatrices(
+					srctable,
+					selectedColumns,
+					selectedRows,
+					selectedPropertyColumns,
+					bHorizontalOrientedSpectrum,
+					plsContent,
+					out matrixX, out matrixY, out xOfX);
 
-			StoreXOfX(xOfX, table);
+				StoreXOfX(xOfX, table);
 
-			// Preprocess
-			plsContent.SpectralPreprocessing = preprocessOptions;
-			IVector meanX, scaleX, meanY, scaleY;
-			MultivariateRegression.PreprocessForAnalysis(preprocessOptions, xOfX, matrixX, matrixY,
-				out meanX, out scaleX, out meanY, out scaleY);
+				// Preprocess
+				plsContent.SpectralPreprocessing = preprocessOptions;
+				IVector meanX, scaleX, meanY, scaleY;
+				MultivariateRegression.PreprocessForAnalysis(preprocessOptions, xOfX, matrixX, matrixY,
+					out meanX, out scaleX, out meanY, out scaleY);
 
-			StorePreprocessedData(meanX, scaleX, meanY, scaleY, table);
+				StorePreprocessedData(meanX, scaleX, meanY, scaleY, table);
 
-			// Analyze and Store
-			IROVector press;
-			ExecuteAnalysis(
-				matrixX,
-				matrixY,
-				plsOptions,
-				plsContent,
-				table, out press);
+				// Analyze and Store
+				IROVector press;
+				ExecuteAnalysis(
+					matrixX,
+					matrixY,
+					plsOptions,
+					plsContent,
+					table, out press);
 
-			this.StorePRESSData(press, table);
+				this.StorePRESSData(press, table);
 
-			if (plsOptions.CrossPRESSCalculation != CrossPRESSCalculationType.None)
-				CalculateCrossPRESS(xOfX, matrixX, matrixY, plsOptions, plsContent, table);
+				if (plsOptions.CrossPRESSCalculation != CrossPRESSCalculationType.None)
+					CalculateCrossPRESS(xOfX, matrixX, matrixY, plsOptions, plsContent, table);
 
-			StoreFRatioData(table, plsContent);
+				StoreFRatioData(table, plsContent);
 
-			StoreOriginalY(table, plsContent);
+				StoreOriginalY(table, plsContent);
 
-			table.Resume();
+				suspendToken.Dispose();
+			}
 			Current.Project.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			Current.ProjectService.CreateNewWorksheet(table);

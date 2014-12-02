@@ -824,6 +824,11 @@ typeof(GraphDocument),
 			return _changedEventSuppressor.Suspend();
 		}
 
+		public IDisposable SuspendGetToken()
+		{
+			return _changedEventSuppressor.Suspend();
+		}
+
 		public void EndUpdate(ref ISuppressToken locker)
 		{
 			_changedEventSuppressor.Resume(ref locker);

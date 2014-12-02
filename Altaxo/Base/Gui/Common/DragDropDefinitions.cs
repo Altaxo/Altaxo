@@ -14,16 +14,16 @@ namespace Altaxo.Gui.Common
 		/// <summary>
 		/// The drop should be inserted before the target item.
 		/// </summary>
-		BeforeTargetItem = 0,
+		BeforeTargetItem = 1,
 
 		/// <summary>
 		/// The drop should be inserted just after the target item.
 		/// </summary>
-		AfterTargetItem = 1,
+		AfterTargetItem = 2,
 
 		/// <summary>
 		/// The drop should be inserted in the target item.
 		/// </summary>
-		TargetItemCenter = 2
+		TargetItemCenter = 4
 	}
 }

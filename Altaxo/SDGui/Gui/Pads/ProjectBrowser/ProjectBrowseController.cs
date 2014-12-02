@@ -325,7 +325,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					break;
 
 				case ViewOnSelect.ItemsInFolderAndSubfolders:
-					ProjectBrowserExtensions.ShowDocumentsExclusively(ExpandItemListToSubfolderItems(GetAllListItems()));
+					ProjectBrowserExtensions.ShowDocumentsExclusively(Current.Project.Folders.GetExpandedProjectItemSet(GetAllListItems()));
 					break;
 			}
 		}
@@ -441,32 +441,6 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				result.Add(item.Tag);
 			}
 			return result;
-		}
-
-		/// <summary>
-		/// Expands the list of items by recursively replacing project folders by the items in those project folders.
-		/// </summary>
-		/// <param name="list">List of items.</param>
-		/// <returns>The same instance of the list that was given as argument, now expanded by subfolder items.</returns>
-		public List<object> ExpandItemListToSubfolderItems(List<object> list)
-		{
-			for (int i = 0; i < list.Count; i++)
-			{
-				if (list[i] is ProjectFolder)
-				{
-					var folder = (list[i] as ProjectFolder);
-					var subfolders = _doc.Folders.GetSubfoldersAsProjectFolderList(folder.Name);
-					foreach (var item in subfolders)
-						list.Add(item);
-
-					var subitems = _doc.Folders.GetItemsInFolder(folder.Name);
-					list.AddRange(subitems);
-
-					list.RemoveAt(i);
-					i--;
-				}
-			}
-			return list;
 		}
 
 		/// <summary>
@@ -912,8 +886,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			_listViewDataObject.FolderName = folderName;
 
-			list = ExpandItemListToSubfolderItems(list);
-			_listViewDataObject.ItemList = list;
+			_listViewDataObject.ItemList = new List<IProjectItem>(Current.Project.Folders.GetExpandedProjectItemSet(list));
 
 			dao = _listViewDataObject;
 			canCopy = canMove = true;
@@ -939,24 +912,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			{
 				var folderName = ((string)_currentSelectedTreeNode.Tag);
 				_listViewDataObject.FolderName = folderName;
-				var list = Current.Project.Folders.GetItemsInFolder(folderName);
-				list = ExpandItemListToSubfolderItems(list);
+				var list = Current.Project.Folders.GetItemsInFolderAndSubfolders(folderName);
 				_listViewDataObject.ItemList = list;
 			}
 			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allGraphsNode))
 			{
-				_listViewDataObject.ItemList = new List<object>(Current.Project.GraphDocumentCollection);
+				_listViewDataObject.ItemList = new List<IProjectItem>(Current.Project.GraphDocumentCollection);
 			}
 			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allTablesNode))
 			{
-				_listViewDataObject.ItemList = new List<object>(Current.Project.DataTableCollection);
+				_listViewDataObject.ItemList = new List<IProjectItem>(Current.Project.DataTableCollection);
 			}
 			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allItemsNode))
 			{
-				var list = new List<object>();
+				var list = new List<IProjectItem>();
 				list.AddRange(Current.Project.DataTableCollection);
 				list.AddRange(Current.Project.GraphDocumentCollection);
-				list.Add(Current.Project.ProjectFolderProperties);
+				list.AddRange(Current.Project.ProjectFolderProperties);
 				_listViewDataObject.ItemList = list;
 			}
 			else
@@ -993,8 +965,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			if (isMove && !isCopy && _listViewDataObject != null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
 			{
-				var list = _listViewDataObject.ItemList;
-				ProjectBrowserExtensions.DeleteDocuments(list, false);
+				var list = _listViewDataObject.ItemList.OfType<IProjectItem>();
+				Altaxo.Main.ProjectFolders.DeleteDocuments(list, false);
 			}
 
 			_listViewDataObject = null;
@@ -1009,8 +981,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			if (isMove && !isCopy && _listViewDataObject != null && _listViewDataObject.ItemListWasRendered) // ItemListWasRendered is true if the items are dropped in a foreign application. If it was dropped in the same app, we have used another rendering format (rendering references).
 			{
-				var list = _listViewDataObject.ItemList;
-				ProjectBrowserExtensions.DeleteDocuments(list, false);
+				var list = _listViewDataObject.ItemList.OfType<IProjectItem>();
+				Altaxo.Main.ProjectFolders.DeleteDocuments(list, false);
 			}
 
 			_listViewDataObject = null;
@@ -1202,8 +1174,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				{
 					// if we copy or move inside the same application, we deserialize only references to the items
 					var str = (string)dao.GetData(ListViewDragDropDataObject.Format_ItemReferenceList);
-					var items = Altaxo.Serialization.Clipboard.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemClipboardList>(str);
-					var projectItems = new List<object>(items.ProjectItems.Select(x => ((Altaxo.Main.DocNodeProxy)x).DocumentObject).Where(x => x != null));
+					var items = Altaxo.Serialization.Clipboard.ClipboardSerialization.DeserializeObjectFromString<Altaxo.Main.Commands.ProjectItemCommands.ProjectItemReferenceClipboardList>(str);
+					var projectItems = new List<object>(items.ProjectItemReferences.Select(x => x.DocumentObject).Where(x => x != null));
 
 					if (isMove && !isCopy)
 					{

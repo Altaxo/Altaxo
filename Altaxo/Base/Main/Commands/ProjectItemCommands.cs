@@ -39,6 +39,22 @@ namespace Altaxo.Main.Commands
 	{
 		#region Clipboard commands
 
+		public class ProjectItemClipboardListBase
+		{
+			/// <summary>Folder from which the items are copied.</summary>
+			public string BaseFolder { get; set; }
+
+			/// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
+			/// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
+			public bool? RelocateReferences { get; set; }
+
+			/// <summary>
+			/// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
+			/// will be relocated to the renamed table.
+			/// </summary>
+			public bool? TryToKeepInternalReferences { get; set; }
+		}
+
 		/// <summary>
 		///
 		/// </summary>
@@ -55,32 +71,19 @@ namespace Altaxo.Main.Commands
 		/// <para>
 		/// </para>
 		/// </remarks>
-		public class ProjectItemClipboardList
+		public class ProjectItemClipboardList : ProjectItemClipboardListBase
 		{
-			/// <summary>Folder from which the items are copied.</summary>
-			public string BaseFolder { get; set; }
-
-			/// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
-			/// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
-			public bool? RelocateReferences { get; set; }
-
-			/// <summary>
-			/// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
-			/// will be relocated to the renamed table.
-			/// </summary>
-			public bool? TryToKeepInternalReferences { get; set; }
-
 			/// <summary>List of project items to serialize/deserialize</summary>
-			private IList<object> _projectItems;
+			private List<IProjectItem> _projectItems;
 
 			private ProjectItemClipboardList()
 			{
 			}
 
-			public ProjectItemClipboardList(IList<object> projectItems, string baseFolder)
+			public ProjectItemClipboardList(IEnumerable<Altaxo.Main.IProjectItem> projectItems, string baseFolder)
 			{
 				BaseFolder = baseFolder;
-				_projectItems = projectItems;
+				_projectItems = new List<IProjectItem>(projectItems);
 			}
 
 			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemClipboardList), 0)]
@@ -109,10 +112,10 @@ namespace Altaxo.Main.Commands
 					s.TryToKeepInternalReferences = info.GetNullableBoolean("TryToKeepInternalReferences");
 
 					int count = info.OpenArray("Items");
-					s._projectItems = new List<object>();
+					s._projectItems = new List<IProjectItem>();
 					for (int i = 0; i < count; ++i)
 					{
-						s._projectItems.Add(info.GetValue("e"));
+						s._projectItems.Add((IProjectItem)info.GetValue("e"));
 					}
 					info.CloseArray(count);
 
@@ -120,9 +123,83 @@ namespace Altaxo.Main.Commands
 				}
 			}
 
-			public IList<object> ProjectItems
+			public IEnumerable<IProjectItem> ProjectItems
 			{
-				get { return _projectItems; }
+				get { return _projectItems.OfType<IProjectItem>(); }
+			}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>
+		/// There are two groups of possible options:
+		/// <para>Group1: where are the items included?</para>
+		/// <para>Possibilities: (i) with absolute names, i.e. the item name remains as is. (ii) relative to the project folder where it is included and where it was copied from.</para>
+		/// <para>Group2: what should be happen with the references (for instance in plot items to the table columns)</para>
+		/// <para>Possibilities: (i) nothing, they remain as is (ii) they will be relocated taking the source folder and destination folder into account, or (iii) same as (ii) but also
+		/// taking the renaming of the copied tables into account, if there is a name conflict with an already existing worksheet for instance.</para>
+		/// <para>The first group is controlled by the <c>baseFolder</c> parameters during creation of the object (source base folder) and during pasting of the items (destination base folder).
+		/// If source base folder or destination base folder is null, the items will be included with absolute names. This is usually the case when copying or pasting from/into the AllGraph, AllWorksheet or
+		/// AllProject items view. If both source base folder and destination base folder have a value, then the items are included relative to both folders.</para>
+		/// <para>
+		/// </para>
+		/// </remarks>
+		public class ProjectItemReferenceClipboardList : ProjectItemClipboardListBase
+		{
+			/// <summary>List of project items to serialize/deserialize</summary>
+			private List<DocNodeProxy> _projectItems;
+
+			private ProjectItemReferenceClipboardList()
+			{
+			}
+
+			public ProjectItemReferenceClipboardList(IEnumerable<DocNodeProxy> projectItemReferences, string baseFolder)
+			{
+				BaseFolder = baseFolder;
+				_projectItems = new List<DocNodeProxy>(projectItemReferences);
+			}
+
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemClipboardList), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (ProjectItemReferenceClipboardList)obj;
+
+					info.AddValue("BaseFolder", s.BaseFolder);
+					info.AddValue("RelocateReferences", s.RelocateReferences);
+					info.AddValue("TryToKeepInternalReferences", s.TryToKeepInternalReferences);
+					info.CreateArray("Items", s._projectItems.Count);
+					foreach (var item in s._projectItems)
+						info.AddValue("e", item);
+					info.CommitArray();
+				}
+
+				public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = null != o ? (ProjectItemReferenceClipboardList)o : new ProjectItemReferenceClipboardList();
+
+					s.BaseFolder = info.GetString("BaseFolder");
+
+					s.RelocateReferences = info.GetNullableBoolean("RelocateReferences");
+					s.TryToKeepInternalReferences = info.GetNullableBoolean("TryToKeepInternalReferences");
+
+					int count = info.OpenArray("Items");
+					s._projectItems = new List<DocNodeProxy>();
+					for (int i = 0; i < count; ++i)
+					{
+						s._projectItems.Add((DocNodeProxy)info.GetValue("e"));
+					}
+					info.CloseArray(count);
+
+					return s;
+				}
+			}
+
+			public IEnumerable<DocNodeProxy> ProjectItemReferences
+			{
+				get { return _projectItems.OfType<DocNodeProxy>(); }
 			}
 		}
 
@@ -135,7 +212,7 @@ namespace Altaxo.Main.Commands
 		/// is only supported for main project items (DataTables, Graphs).</summary>
 		/// <param name="items">The items.</param>
 		/// <param name="baseFolder">The base folder of all provided items (if one exists). This determines in which folder the items are pasted in the subsequent paste operation.</param>
-		public static void CopyItemsToClipboard(List<object> items, string baseFolder)
+		public static void CopyItemsToClipboard(IEnumerable<IProjectItem> items, string baseFolder)
 		{
 			Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToClipboard(ClipboardFormat_ListOfProjectItems, new ProjectItemClipboardList(items, baseFolder));
 		}

@@ -129,12 +129,11 @@ namespace Altaxo.Data
 
 		public void Execute()
 		{
-			_destinationTable.Suspend();
-			var numRows = _sourceMatrix.Rows;
-			var numCols = _sourceMatrix.Columns;
-
-			try
+			using (var suspendToken = _destinationTable.SuspendGetToken())
 			{
+				var numRows = _sourceMatrix.Rows;
+				var numCols = _sourceMatrix.Columns;
+
 				int columnNumber = 0;
 
 				var dataCols = _destinationTable.DataColumns;
@@ -172,10 +171,8 @@ namespace Altaxo.Data
 					col.CutToMaximumLength(numXDataCols + _sourceMatrix.Columns);
 					++propColumnNumber;
 				}
-			}
-			finally
-			{
-				_destinationTable.Resume();
+
+				suspendToken.Dispose();
 			}
 		}
 	}

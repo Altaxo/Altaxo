@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -35,14 +37,20 @@ namespace Altaxo.Main
 	public class TemporaryDisabler
 	{
 		#region Inner class SuppressToken
+
 		private class SuppressToken : IDisposable
 		{
-			TemporaryDisabler _parent;
+			private TemporaryDisabler _parent;
 
 			public SuppressToken(TemporaryDisabler parent)
 			{
+				System.Threading.Interlocked.Increment(ref parent._disablingLevel);
 				_parent = parent;
-				System.Threading.Interlocked.Increment(ref _parent._disablingLevel);
+			}
+
+			~SuppressToken()
+			{
+				Dispose();
 			}
 
 			/// <summary>
@@ -50,10 +58,9 @@ namespace Altaxo.Main
 			/// </summary>
 			public void Disarm()
 			{
-				if (_parent != null)
+				var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
+				if (parent != null)
 				{
-					var parent = _parent;
-					_parent = null;
 					int newLevel = System.Threading.Interlocked.Decrement(ref _parent._disablingLevel);
 				}
 			}
@@ -62,11 +69,11 @@ namespace Altaxo.Main
 
 			public void Dispose()
 			{
-				if (_parent != null)
+				var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
+				if (parent != null)
 				{
-					var parent = _parent;
-					_parent = null;
 					int newLevel = System.Threading.Interlocked.Decrement(ref parent._disablingLevel);
+
 					if (0 == newLevel)
 					{
 						parent.OnReenabling();
@@ -78,29 +85,29 @@ namespace Altaxo.Main
 				}
 			}
 
-			#endregion
+			#endregion IDisposable Members
 		}
-		#endregion
+
+		#endregion Inner class SuppressToken
 
 		/// <summary>How many times was the <see cref="Disable"/> function called (without disposing the tokens got in these calls)</summary>
 		private int _disablingLevel;
 
 		/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
-		Action _reenablingEventHandler;
+		private Action _reenablingEventHandler;
 
-
-		   /// <summary>
-    /// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
-    /// </summary>
-    /// <param name="reenablingEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
-    /// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
-    /// and (ii) in that moment the _eventCount is &gt;0.
-    /// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting
-    /// during the suspend period.</remarks>
-    public TemporaryDisabler(Action reenablingEventHandler)
-    {
-      _reenablingEventHandler = reenablingEventHandler;
-    }
+		/// <summary>
+		/// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
+		/// </summary>
+		/// <param name="reenablingEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
+		/// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
+		/// and (ii) in that moment the _eventCount is &gt;0.
+		/// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting
+		/// during the suspend period.</remarks>
+		public TemporaryDisabler(Action reenablingEventHandler)
+		{
+			_reenablingEventHandler = reenablingEventHandler;
+		}
 
 		/// <summary>
 		/// Increase the SuspendLevel.
@@ -118,16 +125,15 @@ namespace Altaxo.Main
 		/// Otherwise false.
 		/// </summary>
 		public bool IsEnabled { get { return _disablingLevel == 0; } }
-		
+
 		/// <summary>
 		/// Returns true when the disabling level is greater than zero (after calling the <see cref="Disable"/> function).
 		/// Returns false if the disabling level is zero.
 		/// </summary>
 		public bool IsDisabled { get { return _disablingLevel != 0; } }
 
-
 		/// <summary>
-		/// Just fires the reenabling action that was given in the constructor, 
+		/// Just fires the reenabling action that was given in the constructor,
 		/// without changing the disabling level.
 		/// </summary>
 		public void ReenableShortly()
@@ -141,8 +147,8 @@ namespace Altaxo.Main
 		/// </summary>
 		protected virtual void OnReenabling()
 		{
-				if (_reenablingEventHandler != null)
-					_reenablingEventHandler();
+			if (_reenablingEventHandler != null)
+				_reenablingEventHandler();
 		}
 	}
 }
