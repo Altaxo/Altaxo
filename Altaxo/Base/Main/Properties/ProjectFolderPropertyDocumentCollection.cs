@@ -30,6 +30,7 @@ using System.Collections.Generic;
 namespace Altaxo.Main.Properties
 {
 	public class ProjectFolderPropertyDocumentCollection :
+		Main.SuspendableDocumentNode,
 		IEnumerable<ProjectFolderPropertyDocument>,
 		Altaxo.Main.IDocumentNode,
 		Altaxo.Main.IChangedEventSource,
@@ -140,16 +141,7 @@ namespace Altaxo.Main.Properties
 		protected bool _isDirty = false;
 
 		[NonSerialized]
-		protected object _parentObject = null;
-
-		[NonSerialized]
-		protected ChangedEventArgs _changeData = null;
-
-		[NonSerialized()]
-		protected bool _isResumeInProgress = false;
-
-		[NonSerialized()]
-		protected System.Collections.ArrayList _suspendedChildCollection = new System.Collections.ArrayList();
+		protected ChangedEventArgs _accumulatedEventData = null;
 
 		// Events
 
@@ -166,23 +158,25 @@ namespace Altaxo.Main.Properties
 
 		public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
 		{
-			this._parentObject = parent;
+			this._parent = parent;
 		}
 
-		public object Parent
+		public override object ParentObject
 		{
-			get { return this._parentObject; }
-			set { this._parentObject = value; }
+			get { return this._parent; }
+			set
+			{
+				throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
+			}
 		}
 
-		public object ParentObject
-		{
-			get { return this._parentObject; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "FolderProperties"; }
+			set
+			{
+				throw new InvalidOperationException("Name of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
+			}
 		}
 
 		public bool IsDirty
@@ -230,7 +224,7 @@ namespace Altaxo.Main.Properties
 			_itemsByName.Add(item.Name, item);
 			item.ParentObject = this;
 			item.NameChanged += EhChild_NameChanged;
-			this.OnSelfChanged(ChangedEventArgs.IfItemAdded);
+			this.EhSelfChanged(ChangedEventArgs.IfItemAdded);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, item, item.Name);
 		}
 
@@ -248,7 +242,7 @@ namespace Altaxo.Main.Properties
 					_itemsByName.Remove(item.Name);
 					item.ParentObject = null;
 					item.NameChanged -= EhChild_NameChanged;
-					this.OnSelfChanged(ChangedEventArgs.IfItemRemoved);
+					this.EhSelfChanged(ChangedEventArgs.IfItemRemoved);
 					OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, item, item.Name);
 				}
 			}
@@ -265,7 +259,7 @@ namespace Altaxo.Main.Properties
 			}
 			_itemsByName.Remove(oldName);
 			_itemsByName[item.Name] = (ProjectFolderPropertyDocument)item;
-			this.OnSelfChanged(ChangedEventArgs.IfItemRenamed);
+			this.EhSelfChanged(ChangedEventArgs.IfItemRenamed);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
 		}
 
@@ -290,74 +284,27 @@ namespace Altaxo.Main.Properties
 
 		#region Change event handling
 
-		public bool IsSuspended
+		protected override IEnumerable<EventArgs> AccumulatedEventData
 		{
 			get
 			{
-				return false; // m_SuspendCount>0;
+				if (null != _accumulatedEventData)
+					yield return _accumulatedEventData;
 			}
 		}
 
-		private void AccumulateChildChangeData(object sender, EventArgs e)
+		protected override void AccumulatedEventData_Clear()
 		{
-			if (_changeData == null)
-				this._changeData = ChangedEventArgs.Empty;
+			_accumulatedEventData = null;
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			if (_accumulatedEventData == null)
+				this._accumulatedEventData = ChangedEventArgs.Empty;
 
 			if (e is ChangedEventArgs)
-				_changeData.Merge((ChangedEventArgs)e);
-		}
-
-		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
-		{
-			return false; // not handled
-		}
-
-		protected virtual void OnSelfChanged(EventArgs e)
-		{
-			EhChildChanged(null, e);
-		}
-
-		/// <summary>
-		/// Handle the change notification from the child layers.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification.</param>
-		/// <param name="e">The change details.</param>
-		public void EhChildChanged(object sender, System.EventArgs e)
-		{
-			if (HandleImmediateChildChangeCases(sender, e))
-				return;
-
-			if (this.IsSuspended && sender is Main.ISuspendable)
-			{
-				_suspendedChildCollection.Add(sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend();
-				return;
-			}
-
-			AccumulateChildChangeData(sender, e);  // AccumulateNotificationData
-
-			if (_isResumeInProgress || IsSuspended)
-				return;
-
-			if (_parentObject is Main.IChildChangedEventSink)
-			{
-				((Main.IChildChangedEventSink)_parentObject).EhChildChanged(this, _changeData);
-				if (IsSuspended) // maybe parent has suspended us now
-				{
-					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					return;
-				}
-			}
-
-			OnChanged(); // Fire the changed event
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, _changeData);
-
-			_changeData = null;
+				_accumulatedEventData.Merge((ChangedEventArgs)e);
 		}
 
 		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)

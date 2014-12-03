@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
+using Altaxo;
+using Altaxo.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Altaxo.Serialization;
-using Altaxo;
 
 namespace Altaxo.Data
 {
@@ -51,7 +52,6 @@ namespace Altaxo.Data
 		{
 		}
 
-
 		public DateTimeColumn(int initialcapacity)
 		{
 			_count = 0;
@@ -71,8 +71,8 @@ namespace Altaxo.Data
 			return new DateTimeColumn(this);
 		}
 
-
 		#region "Serialization"
+
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -103,6 +103,7 @@ namespace Altaxo.Data
 					info.AddValue("Data", s._data);
 				}
 			}
+
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
@@ -125,9 +126,8 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DateTimeColumn), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -140,11 +140,10 @@ namespace Altaxo.Data
 				else
 					info.AddArray("Data", s._data, 0);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DateTimeColumn s = null != o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
-
-
 
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.DataColumn), parent);
@@ -158,7 +157,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		public override void OnDeserialization(object obj)
 		{
 			base.OnDeserialization(obj);
@@ -168,16 +166,18 @@ namespace Altaxo.Data
 		{
 			SetObjectData(this, info, context, null);
 		}
+
 		public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 		{
 			return new SerializationSurrogate0().SetObjectData(this, info, context, null);
 		}
+
 		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			new SerializationSurrogate0().GetObjectData(this, info, context);
 		}
-		#endregion
 
+		#endregion "Serialization"
 
 		public override int Count
 		{
@@ -186,7 +186,6 @@ namespace Altaxo.Data
 				return _count;
 			}
 		}
-
 
 		public DateTime[] Array
 		{
@@ -203,7 +202,7 @@ namespace Altaxo.Data
 				_data = (DateTime[])value.Clone();
 				this._count = _data.Length;
 				this._capacity = _data.Length;
-				this.NotifyDataChanged(0, _count, true);
+				this.EhSelfChanged(0, _count, true);
 			}
 		}
 
@@ -216,7 +215,6 @@ namespace Altaxo.Data
 		{
 			return typeof(Altaxo.Worksheet.DateTimeColumnStyle);
 		}
-
 
 		public override void CopyDataFrom(object o)
 		{
@@ -280,19 +278,14 @@ namespace Altaxo.Data
 				TrimEmptyElementsAtEnd();
 			}
 
-
 			if (oldCount > 0 || _count > 0) // message only if really was a change
-				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
+				EhSelfChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
 		}
-
 
 		private void TrimEmptyElementsAtEnd()
 		{
-
 			for (; _count > 0 && _data[_count - 1] != DateTime.MinValue; _count--) ;
 		}
-
-
 
 		protected void Realloc(int i)
 		{
@@ -328,8 +321,6 @@ namespace Altaxo.Data
 			return new AltaxoVariant(this[i]);
 		}
 
-
-
 		double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
 		{
 			get
@@ -346,11 +337,11 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		public override bool IsElementEmpty(int i)
 		{
 			return i < _count ? (DateTime.MinValue == _data[i]) : true;
 		}
+
 		public override void SetElementEmpty(int i)
 		{
 			if (i < _count)
@@ -418,10 +409,9 @@ namespace Altaxo.Data
 						_count = i + 1;
 					}
 				}
-				NotifyDataChanged(i, i + 1, bCountDecreased);
-			} // end set  
+				EhSelfChanged(i, i + 1, bCountDecreased);
+			} // end set
 		} // end indexer
-
 
 		public override void InsertRows(int nInsBeforeColumn, int nInsCount)
 		{
@@ -432,7 +422,7 @@ namespace Altaxo.Data
 			if (newlen > _capacity)
 				Realloc(newlen);
 
-			// copy values from m_Count downto nBeforeColumn 
+			// copy values from m_Count downto nBeforeColumn
 			for (int i = _count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
 				_data[j] = _data[i];
 
@@ -440,7 +430,7 @@ namespace Altaxo.Data
 				_data[i] = NullValue;
 
 			this._count = newlen;
-			this.NotifyDataChanged(nInsBeforeColumn, _count, false);
+			this.EhSelfChanged(nInsBeforeColumn, _count, false);
 		}
 
 		public override void RemoveRows(int nDelFirstRow, int nDelCount)
@@ -462,10 +452,8 @@ namespace Altaxo.Data
 			_count = i < _count ? i : _count; // m_Count can only decrease
 
 			if (_count != prevCount) // raise a event only if something really changed
-				this.NotifyDataChanged(nDelFirstRow, prevCount, true);
+				this.EhSelfChanged(nDelFirstRow, prevCount, true);
 		}
-
-
 
 		#region "Operators"
 
@@ -474,7 +462,6 @@ namespace Altaxo.Data
 		//                        Operators
 		//
 		// -----------------------------------------------------------------------------
-
 
 		// ----------------------- Addition operator -----------------------------------
 		public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
@@ -485,7 +472,6 @@ namespace Altaxo.Data
 			{
 				c3._data[i] = c1._data[i].AddSeconds(c2.GetValueDirect(i));
 			}
-
 
 			c3._count = len;
 
@@ -501,19 +487,15 @@ namespace Altaxo.Data
 				c3._data[i] = c1._data[i].AddSeconds(c2);
 			}
 
-
-
 			c3._count = len;
 
 			return c3;
 		}
 
-
 		public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DateTimeColumn c2)
 		{
 			return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
 		}
-
 
 		public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
@@ -524,13 +506,10 @@ namespace Altaxo.Data
 				c3._data[i] = c1._data[i].AddSeconds(-c2.GetValueDirect(i));
 			}
 
-
 			c3._count = len;
 
 			return c3;
 		}
-
-
 
 		public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, double c2)
 		{
@@ -540,8 +519,6 @@ namespace Altaxo.Data
 			{
 				c3._data[i] = c1._data[i].AddSeconds(-c2);
 			}
-
-
 
 			c3._count = len;
 
@@ -557,8 +534,6 @@ namespace Altaxo.Data
 		{
 			return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
 		}
-
-
 
 		public override bool vop_Subtraction(DataColumn c2, out DataColumn c3)
 		{
@@ -606,8 +581,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
-		#endregion
-
+		#endregion "Operators"
 	} // end Altaxo.Data.DateTimeColumn
 }

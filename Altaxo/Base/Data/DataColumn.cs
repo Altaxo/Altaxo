@@ -37,6 +37,7 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	[Serializable()]
 	public abstract class DataColumn :
+		Main.SuspendableLeafDocumentNode,
 		Main.IEventIndicatedDisposable,
 		System.Runtime.Serialization.ISerializable,
 		System.Runtime.Serialization.IDeserializationCallback,
@@ -46,15 +47,8 @@ namespace Altaxo.Data
 		IList<AltaxoVariant>,
 		ICloneable,
 		Altaxo.Main.IDocumentNode,
-		Altaxo.Main.IChangedEventSource,
-		Main.ISuspendable
+		Altaxo.Main.IChangedEventSource
 	{
-		/// <summary>
-		/// The parent table this column belongs to.
-		/// </summary>
-		[NonSerialized]
-		protected object _parent = null;
-
 		/// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static double _increaseFactor = 2; // array space is increased by this factor plus addSpace
@@ -63,17 +57,6 @@ namespace Altaxo.Data
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static int _addSpace = 32; // array space is increased by multiplying with increasefactor + addspase
 
-		/// <summary>Counter of how many suspends to data change event notifications are pending.</summary>
-		/// <remarks>If this counter is zero, then every change to a element of this column fires a data change event. Applications doing a lot of changes at once can
-		/// suspend this events for a better performance by calling <see cref="Suspend"/>. After finishing the application has to
-		/// call <see cref="Resume"/></remarks>
-		protected int _suspendCount = 0;
-
-		/// <summary>
-		/// Used to accumulate change data
-		/// </summary>
-		protected ChangeEventArgs _changeData;
-
 		/// <summary>This element is fired when the column is disposed, or the name of the column or of a parent element has changed.</summary>
 		/// <remarks>All instances, which have a reference
 		/// to this column, should have a wire to this event. In case the event is fired, it indicates
@@ -81,11 +64,6 @@ namespace Altaxo.Data
 		/// reference to null.
 		/// </remarks>
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
-
-		/// <summary>
-		/// This event is fired if the data of the column or anything else changed.
-		/// </summary>
-		public event System.EventHandler Changed;
 
 		#region ChangeEventArgs
 
@@ -390,7 +368,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Get the name of the column.
 		/// </summary>
-		public virtual string Name
+		public override string Name
 		{
 			get { return _parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)_parent).GetNameOfChildObject(this) : null; }
 		}
@@ -462,42 +440,20 @@ namespace Altaxo.Data
 		#region Suspend/Resume/Dirty
 
 		/// <summary>
-		/// A call to this function suspends data changed event notifications
+		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
 		/// </summary>
-		/// <remarks>If an application has
-		/// to change a lot of data in a column at once, it should call this function to avoid the firing
-		/// of the event every time it changes a single element. After processing all items, the application
-		/// has to resume the data changed event notification by calling <see cref="Resume"/>
-		/// </remarks>
-		public void Suspend()
+		/// <param name="sender">The sender of the change notification (currently unused).</param>
+		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-			_suspendCount++;
-		}
+			var ea = e as ChangeEventArgs;
+			if (null == ea)
+				throw new ArgumentException("ChangeEventArgs expected in argument e");
 
-		public bool IsSuspended
-		{
-			get { return _suspendCount > 0; }
-		}
-
-		/// <summary>
-		/// This resumes the data changed notifications if the suspend counter has reached zero.
-		/// </summary>
-		/// <remarks>The area of changed rows is updated even in the suspend period. The suspend counter is
-		/// decreased by a call to this function. If it reaches zero, the data changed event is fired,
-		/// and the arguments of the handler contain the changed area of rows during the suspend time.</remarks>
-		public void Resume()
-		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-
-			if (_suspendCount > 0 && (--_suspendCount) == 0 && _changeData != null)
-			{
-				if (_parent is Main.IChildChangedEventSink)
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-
-				if (!IsSuspended)
-					OnDataChanged(); // Fire the changed event
-			}
+			if (_accumulatedEventData == null)
+				_accumulatedEventData = ea;
+			else
+				((DataColumn.ChangeEventArgs)_accumulatedEventData).Accumulate(ea.MinRowChanged, ea.MaxRowChanged, ea.RowCountDecreased);
 		}
 
 		/// <summary>
@@ -509,10 +465,10 @@ namespace Altaxo.Data
 		/// <remarks>In case the object in which to accumulate the change data is actually null, a new change data object is created.</remarks>
 		protected void AccumulateChangeData(int minRow, int maxRow, bool rowCountDecreased)
 		{
-			if (_changeData == null)
-				_changeData = new DataColumn.ChangeEventArgs(minRow, maxRow, rowCountDecreased);
+			if (_accumulatedEventData == null)
+				_accumulatedEventData = new DataColumn.ChangeEventArgs(minRow, maxRow, rowCountDecreased);
 			else
-				_changeData.Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
+				((DataColumn.ChangeEventArgs)_accumulatedEventData).Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
 		}
 
 		/// <summary>
@@ -521,32 +477,29 @@ namespace Altaxo.Data
 		/// <param name="minRow">The minimum row number that changed.</param>
 		/// <param name="maxRow">The maximum row number that changed plus 1.</param>
 		/// <param name="rowCountDecreased">If true, the row count has decreased during the data change.</param>
-		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
+		protected void EhSelfChanged(int minRow, int maxRow, bool rowCountDecreased)
 		{
-			if (_parent == null && Changed == null)
+			if (!IsSomeoneListeningToChanges) // special optimization because DataColumns is often used without any parent
 				return; // nobody is listening
 
-			AccumulateChangeData(minRow, maxRow, rowCountDecreased);
+			if (!IsSuspended)
+			{
+				var e = new ChangeEventArgs(minRow, maxRow, rowCountDecreased);
+				// Notify parent
+				if (_parent is Main.IChildChangedEventSink)
+				{
+					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+				}
 
-			if (IsSuspended)
-				return;
+				if (!IsSuspended)
+				{
+					OnChanged(e); // Fire change event
+					return;
+				}
+			}
 
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-
-			if (!IsSuspended) // parent is not suspended
-				OnDataChanged(); // Fire the changed event
-		}
-
-		/// <summary>
-		/// Fires the Changed event with the actual (accumulated) change data. After the firing of the event the change data are removed.
-		/// </summary>
-		protected virtual void OnDataChanged()
-		{
-			if (null != Changed)
-				Changed(this, _changeData);
-
-			_changeData = null;
+			// at this point we are suspended for sure, or resume is still in progress
+			AccumulateChangeData(minRow, maxRow, rowCountDecreased);  // child is unable to accumulate change data, we have to to it by ourself
 		}
 
 		/// <summary>
@@ -557,7 +510,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return null != _changeData;
+				return null != _accumulatedEventData;
 			}
 		}
 
@@ -604,10 +557,11 @@ namespace Altaxo.Data
 		/// <param name="startingRow">Row where the first data item is copied to.</param>
 		public virtual void AppendToPosition(Altaxo.Data.DataColumn v, int startingRow)
 		{
-			Suspend();
-			for (int i = startingRow + v.Count - 1, j = v.Count - 1; j >= 0; i--, j--)
-				this[i] = v[j];
-			Resume();
+			using (var suspendToken = SuspendGetToken())
+			{
+				for (int i = startingRow + v.Count - 1, j = v.Count - 1; j >= 0; i--, j--)
+					this[i] = v[j];
+			}
 		}
 
 		/// <summary>

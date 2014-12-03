@@ -31,32 +31,24 @@ using System.Threading;
 
 namespace Altaxo.DataConnection
 {
-	public class AltaxoOleDbDataSource : DisposableBase, Altaxo.Data.IAltaxoTableDataSource
+	public class AltaxoOleDbDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
 	{
 		protected Data.IDataSourceImportOptions _importOptions;
 		private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
 		private int _updateReentrancyCount;
 
-		protected Main.EventSuppressor _eventSuppressor;
-
 		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
-
-		private bool _isDisposed;
-
-		private Action<Data.IAltaxoTableDataSource> _dataSourceChanged;
 
 		#region Construction
 
 		public AltaxoOleDbDataSource(string selectionStatement, AltaxoOleDbConnectionString connectionString)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 			_importOptions = new Data.DataSourceImportOptions();
 			_dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
 		}
 
 		protected AltaxoOleDbDataSource()
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 		}
 
 		public virtual bool CopyFrom(object obj)
@@ -127,24 +119,16 @@ namespace Altaxo.DataConnection
 
 		#region Properties
 
-		/// <summary>
-		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
-		/// </summary>
-		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
+		public override object ParentObject
 		{
-			add
+			get
 			{
-				bool isFirst = null == _dataSourceChanged;
-				_dataSourceChanged += value;
-				if (isFirst)
-					UpdateWatching();
+				return base.ParentObject;
 			}
-			remove
+			set
 			{
-				_dataSourceChanged -= value;
-				bool isLast = null == _dataSourceChanged;
-				if (isLast)
-					UpdateWatching();
+				base.ParentObject = value;
+				UpdateWatching();
 			}
 		}
 
@@ -225,57 +209,30 @@ namespace Altaxo.DataConnection
 			// Note: it is not neccessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
 		}
 
-		/// <summary>
-		/// Suppresses the events by getting a token. When the token is disposed, events will be resumed again.
-		/// </summary>
-		/// <returns>Suppress token.</returns>
-		public Main.ISuppressToken SuppressEventsGettingToken()
-		{
-			return _eventSuppressor.Suspend();
-		}
-
-		/// <summary>
-		/// Resumes the events.
-		/// </summary>
-		/// <param name="token">The suppress token.</param>
-		public void ResumeEvents(ref Main.ISuppressToken token)
-		{
-			_eventSuppressor.Resume(ref token);
-		}
-
-		protected virtual void OnDataSourceChanged()
-		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
-		}
-
 		private void EhUpdateByTimerQueue()
 		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
+			if (null != _parent)
+				EhChildChanged(_dataQuery, TableDataSourceChangedEventArgs.Empty);
 			else
 				SwitchOffWatching();
 		}
 
-		private void EhResumeSuppressedEvents()
+		protected override void OnResume(int eventCount)
 		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
+			base.OnResume(eventCount);
 
-			UpdateWatching();
+			if (!IsSuspended)
+				UpdateWatching();
 		}
 
 		public void UpdateWatching()
 		{
 			SwitchOffWatching();
 
-			if (_eventSuppressor.PeekDisabled)
+			if (IsSuspended)
 				return; // in update operation - wait until finished
 
-			if (null == _dataSourceChanged)
+			if (null == _parent)
 				return; // No listener - no need to watch
 
 			if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
@@ -304,18 +261,20 @@ namespace Altaxo.DataConnection
 
 		protected override void Dispose(bool disposing)
 		{
-			if (!_isDisposed)
+			if (!IsDisposed)
 			{
-				_isDisposed = true;
-
-				_dataSourceChanged = null;
-
 				SwitchOffWatching();
 			}
+			base.Dispose(disposing);
 		}
 
 		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
 		{
+		}
+
+		public string Name
+		{
+			get { return this.GetType().Name; }
 		}
 	}
 }

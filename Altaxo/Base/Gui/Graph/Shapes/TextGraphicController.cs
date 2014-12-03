@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		/// <summary>
 		/// The suppress token that suppresses change events when we enter text in the document
 		/// </summary>
-		private Altaxo.Main.ISuppressToken _suppressToken;
+		private Altaxo.Main.ISuspendToken _suppressToken;
 
 		public TextGraphicController()
 		{

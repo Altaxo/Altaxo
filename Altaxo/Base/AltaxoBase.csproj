@@ -211,6 +211,7 @@
     <Compile Include="Data\IAltaxoTableDataSource.cs" />
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
+    <Compile Include="Data\TableDataSourceBase.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinColorSet.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinDarkPlotColorSet.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetIdentifier.cs" />
@@ -356,6 +357,10 @@
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IProjectItem.cs" />
+    <Compile Include="Main\SuspendableLeafDocumentNode.cs" />
+    <Compile Include="Main\SuspendableDocumentNode.cs" />
+    <Compile Include="Main\SuspendableLeafObject.cs" />
+    <Compile Include="Main\SuspendableObject.cs" />
     <Compile Include="Root\DisposableBase.cs" />
     <Compile Include="Main\IComManager.cs" />
     <Compile Include="Main\Services\IHighResolutionClock.cs" />

@@ -37,7 +37,8 @@ namespace Altaxo.Main
 		IDocumentNode, // Project items are document nodes of the project tree
 		INameOwner, // Project items must have a name and could be renamed
 		IEventIndicatedDisposable, // project items must announce themselves when disposed
-		ICloneable // project items could be cloned
+		ICloneable, // project items could be cloned
+		ISuspendableByToken
 	{
 		/// <summary>
 		/// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy"/>) which are used in this project item and in all childs of this project item. The references
@@ -45,11 +46,5 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy"/> instances.</param>
 		void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing);
-
-		/// <summary>
-		/// Suspends the item, i.e. prevents it to send event notifications. This is done by creating a token. When the token is disposed, the event notifications are resumed for this item.
-		/// </summary>
-		/// <returns>Suspend token. If the items event notifications should be resumed, you have to dispose that token.</returns>
-		IDisposable SuspendGetToken();
 	}
 }

@@ -47,6 +47,7 @@ namespace Altaxo.Graph.Gdi
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
 	public class GraphDocument
 		:
+		Main.SuspendableDocumentNode,
 		IProjectItem,
 		System.ICloneable,
 		IChangedEventSource,
@@ -159,9 +160,6 @@ typeof(GraphDocument),
 
 		private string _name;
 
-		[NonSerialized]
-		private object _parent;
-
 		/// <summary>
 		/// The date/time of creation of this graph.
 		/// </summary>
@@ -189,13 +187,6 @@ typeof(GraphDocument),
 		/// If the property you want to store is only temporary, the properties name should therefore
 		/// start with "tmp/".</remarks>
 		protected Main.Properties.PropertyBag _graphProperties;
-
-		/// <summary>Event fired when anything here changed.</summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
-		[NonSerialized]
-		private Main.EventSuppressor _changedEventSuppressor;
 
 		/// <summary>Events which are fired from this thread are not distributed.</summary>
 		[NonSerialized]
@@ -227,11 +218,7 @@ typeof(GraphDocument),
 		[NonSerialized]
 		private PointD2D _cachedRootLayerSize;
 
-		protected System.EventArgs _changeEventData = null;
-
-		protected bool _isResumeInProgress = false;
-
-		protected System.Collections.ArrayList _suspendedChildCollection = new System.Collections.ArrayList();
+		protected System.EventArgs _accumulatedEventData;
 
 		#region "Serialization"
 
@@ -416,7 +403,6 @@ typeof(GraphDocument),
 		/// </summary>
 		public GraphDocument()
 		{
-			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole();
 			_notes.PropertyChanged += EhNotesChanged;
@@ -426,23 +412,19 @@ typeof(GraphDocument),
 
 		private void EhNotesChanged(object sender, PropertyChangedEventArgs e)
 		{
-			OnChanged();
+			EhChildChanged(sender, e);
 		}
 
 		public GraphDocument(GraphDocument from)
 		{
-			this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
-			var suppressToken = _changedEventSuppressor.Suspend();
-			try
+			using (var suppressToken = SuspendGetToken())
 			{
 				_creationTime = _lastChangeTime = DateTime.UtcNow;
 				this.RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(814), SizeY = RADouble.NewAbs(567) });
 
 				CopyFrom(from, GraphCopyOptions.All);
-			}
-			finally
-			{
-				_changedEventSuppressor.Resume(ref suppressToken, Main.EventFiring.Suppressed);
+
+				suppressToken.Disarm();
 			}
 		}
 
@@ -491,7 +473,7 @@ typeof(GraphDocument),
 			return new GraphDocument(this);
 		}
 
-		public string Name
+		public override string Name
 		{
 			get { return _name; }
 			set
@@ -559,15 +541,6 @@ typeof(GraphDocument),
 			get
 			{
 				return _notes;
-			}
-		}
-
-		public object ParentObject
-		{
-			get { return _parent; }
-			set
-			{
-				_parent = value;
 			}
 		}
 
@@ -819,114 +792,49 @@ typeof(GraphDocument),
 
 		#region Change event handling
 
-		public IDisposable BeginUpdate()
-		{
-			return _changedEventSuppressor.Suspend();
-		}
-
-		public IDisposable SuspendGetToken()
-		{
-			return _changedEventSuppressor.Suspend();
-		}
-
-		public void EndUpdate(ref ISuppressToken locker)
-		{
-			_changedEventSuppressor.Resume(ref locker);
-		}
-
-		public bool IsSuspended
-		{
-			get
-			{
-				return _changedEventSuppressor.GetDisabledWithCounting();
-			}
-		}
-
 		/// <summary>
 		/// Fires the Invalidate event.
 		/// </summary>
 		/// <param name="sender">The layer which needs to be repainted.</param>
 		protected internal virtual void OnInvalidate(XYPlotLayer sender)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
-		private void AccumulateChildChangeData(object sender, EventArgs e)
+		protected override IEnumerable<EventArgs> AccumulatedEventData
 		{
-			if (sender != null && _changeEventData == null)
-				this._changeEventData = new EventArgs();
+			get
+			{
+				if (null != _accumulatedEventData)
+					yield return _accumulatedEventData;
+			}
 		}
 
-		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
+		protected override void AccumulatedEventData_Clear()
+		{
+			_accumulatedEventData = null;
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			if (sender != null && _accumulatedEventData == null)
+				this._accumulatedEventData = EventArgs.Empty;
+		}
+
+		protected bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
 		{
 			return false; // not handled
 		}
 
-		protected virtual void OnSelfChanged()
+		protected override void OnChanged(EventArgs e)
 		{
-			EhChildChanged(null, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Handle the change notification from the child layers.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification.</param>
-		/// <param name="e">The change details.</param>
-		public void EhChildChanged(object sender, System.EventArgs e)
-		{
-			if (System.Threading.Thread.CurrentThread == _paintThread)
-				return;
-
-			if (HandleImmediateChildChangeCases(sender, e))
-				return;
-
-			if (this.IsSuspended && sender is Main.ISuspendable)
-			{
-				_suspendedChildCollection.Add(sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend();
-				return;
-			}
-
-			AccumulateChildChangeData(sender, e);  // AccumulateNotificationData
-
-			if (_isResumeInProgress || IsSuspended)
-				return;
-
-			if (_parent is Main.IChildChangedEventSink)
-			{
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeEventData);
-				if (IsSuspended) // maybe parent has suspended us now
-				{
-					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					return;
-				}
-			}
-
 			if (_cachedRootLayerSize != _rootLayer.Size)
 			{
 				_cachedRootLayerSize = _rootLayer.Size;
 				OnSizeChanged();
 			}
 
-			OnChanged(); // Fire the changed event
-		}
-
-		private void EhChangedEventResumes()
-		{
-			if (null != Changed)
-				Changed(this, _changeEventData);
-			_changeEventData = null;
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_changedEventSuppressor.GetEnabledWithCounting())
-			{
-				if (null != Changed)
-					Changed(this, _changeEventData);
-
-				_changeEventData = null;
-			}
+			base.OnChanged(e);
 		}
 
 		#endregion Change event handling

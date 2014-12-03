@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Data
 {
@@ -34,23 +35,16 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	public class DataTableCollection
 		:
+		Main.SuspendableDocumentNode,
 		System.Runtime.Serialization.IDeserializationCallback,
 		ICollection<DataTable>,
 		Altaxo.Main.IDocumentNode,
 		Main.INamedObjectCollection,
 		Altaxo.Main.IChangedEventSource,
-		Altaxo.Main.IChildChangedEventSink,
-		Main.ISuspendable
+		Altaxo.Main.IChildChangedEventSink
 	{
 		// Data
 		protected SortedDictionary<string, DataTable> _tablesByName = new SortedDictionary<string, DataTable>();
-		protected object _parent = null;
-
-		// helper data
-		/// <summary>
-		/// Fired when table(s) are added, removed or renamed, and when the content of one table has changed.
-		/// </summary>
-		public event System.EventHandler Changed;
 
 		/// <summary>
 		/// Fired when one or more tables are added, deleted or renamed. Not fired when content in the table has changed.
@@ -60,13 +54,8 @@ namespace Altaxo.Data
 		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
 
 		[NonSerialized()]
-		protected List<Main.ISuspendable> _suspendedChilds = new List<Main.ISuspendable>();
-		[NonSerialized()]
-		protected int _suspendCount = 0;
-		[NonSerialized()]
-		private bool _isResumeInProgress = false;
-		[NonSerialized()]
-		protected ChangedEventArgs _changeData = null;
+		protected ChangedEventArgs _accumulatedEventData = null;
+
 		[NonSerialized()]
 		private bool _isDeserializationFinished = false;
 
@@ -81,10 +70,12 @@ namespace Altaxo.Data
 			/// If true, one or more tables where added.
 			/// </summary>
 			public bool TableAdded;
+
 			/// <summary>
 			/// If true, one or more table where removed.
 			/// </summary>
 			public bool TableRemoved;
+
 			/// <summary>
 			/// If true, one or more tables where renamed.
 			/// </summary>
@@ -117,6 +108,7 @@ namespace Altaxo.Data
 					return e;
 				}
 			}
+
 			/// <summary>
 			/// Returns an instance with TableRemoved set to true.
 			/// </summary>
@@ -129,6 +121,7 @@ namespace Altaxo.Data
 					return e;
 				}
 			}
+
 			/// <summary>
 			/// Returns an  instance with TableRenamed set to true.
 			/// </summary>
@@ -141,7 +134,6 @@ namespace Altaxo.Data
 					return e;
 				}
 			}
-
 
 			/// <summary>
 			/// Merges information from another instance in this ChangedEventArg.
@@ -163,26 +155,24 @@ namespace Altaxo.Data
 			}
 		}
 
-		#endregion
+		#endregion ChangedEventArgs
 
 		public DataTableCollection(AltaxoDocument parent)
 		{
 			this._parent = parent;
 		}
 
-
-		public object ParentObject
-		{
-			get { return this._parent; }
-			set { this._parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "Tables"; }
+			set
+			{
+				throw new InvalidOperationException("The name is fixed and cannot be set");
+			}
 		}
 
 		#region Serialization
+
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -191,14 +181,13 @@ namespace Altaxo.Data
 				// info.AddValue("Parent",s._parent);
 				info.AddValue("Tables", s._tablesByName);
 			}
+
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
 				// s._parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
 				s._tablesByName = (SortedDictionary<string, DataTable>)(info.GetValue("Tables", typeof(SortedDictionary<string, DataTable>)));
 
-				// setup helper objects
-				s._suspendedChilds = new List<Main.ISuspendable>();
 				return s;
 			}
 		}
@@ -218,17 +207,16 @@ namespace Altaxo.Data
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region ICollection<DataTable> Members
-
 
 		public void Clear()
 		{
 			foreach (DataTable table in _tablesByName.Values)
 				Detach(table);
 			_tablesByName.Clear();
-			this.SelfChanged(ChangedEventArgs.IfTableRemoved);
+			this.EhSelfChanged(ChangedEventArgs.IfTableRemoved);
 		}
 
 		public bool Contains(DataTable item)
@@ -263,7 +251,7 @@ namespace Altaxo.Data
 			get { return _tablesByName.Count; }
 		}
 
-		#endregion
+		#endregion ICollection<DataTable> Members
 
 		#region IEnumerable<DataTable> Members
 
@@ -272,7 +260,7 @@ namespace Altaxo.Data
 			return _tablesByName.Values.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<DataTable> Members
 
 		#region IEnumerable Members
 
@@ -281,90 +269,31 @@ namespace Altaxo.Data
 			return _tablesByName.Values.GetEnumerator();
 		}
 
-		#endregion
-
+		#endregion IEnumerable Members
 
 		#region Suspend and resume
 
-		public bool IsSuspended
+		protected override IEnumerable<EventArgs> AccumulatedEventData
 		{
-			get { return _suspendCount > 0; }
-		}
-
-		public void Suspend()
-		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-
-			++_suspendCount; // suspend one step higher
-		}
-
-		public void Resume()
-		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-			if (_suspendCount > 0 && (--_suspendCount) == 0)
+			get
 			{
-				this._isResumeInProgress = true;
-				foreach (Main.ISuspendable obj in _suspendedChilds)
-					obj.Resume();
-				_suspendedChilds.Clear();
-				this._isResumeInProgress = false;
-
-				// send accumulated data if available and release it thereafter
-				if (null != _changeData)
-				{
-					if (_parent is Main.IChildChangedEventSink)
-					{
-						((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-					}
-					if (!IsSuspended)
-					{
-						OnDataChanged(); // Fire the changed event
-					}
-				}
+				if (null != _accumulatedEventData)
+					yield return _accumulatedEventData;
 			}
 		}
 
-
-		void AccumulateChildChangeData(object sender, System.EventArgs e)
+		protected override void AccumulatedEventData_Clear()
 		{
+			_accumulatedEventData = null;
+		}
 
-			if (_changeData == null)
-				_changeData = ChangedEventArgs.Empty;
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			if (_accumulatedEventData == null)
+				_accumulatedEventData = ChangedEventArgs.Empty;
 
 			if (e is ChangedEventArgs)
-				_changeData.Merge((ChangedEventArgs)e);
-		}
-
-		public void EhChildChanged(object sender, System.EventArgs e)
-		{
-			if (this.IsSuspended && sender is Main.ISuspendable)
-			{
-				_suspendedChilds.Add((Main.ISuspendable)sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend();
-				return;
-			}
-
-			AccumulateChildChangeData(sender, e);  // AccumulateNotificationData
-
-			if (_isResumeInProgress || IsSuspended)
-				return;
-
-			if (_parent is Main.IChildChangedEventSink)
-			{
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-				if (IsSuspended) // maybe parent has suspended us now
-				{
-					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					return;
-				}
-			}
-
-			OnDataChanged(); // Fire the changed event
-		}
-
-		private void SelfChanged(ChangedEventArgs e)
-		{
-			EhChildChanged(null, e);
+				_accumulatedEventData.Merge((ChangedEventArgs)e);
 		}
 
 		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
@@ -373,30 +302,13 @@ namespace Altaxo.Data
 				CollectionChanged(changeType, item, oldName, item.Name);
 		}
 
-
-		protected virtual void OnChanged(EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		protected virtual void OnDataChanged()
-		{
-			if (null != Changed)
-				Changed(this, _changeData);
-
-			_changeData = null;
-		}
-
-
-		#endregion
-
+		#endregion Suspend and resume
 
 		public bool IsDirty
 		{
 			get
 			{
-				return _changeData != null;
+				return _accumulatedEventData != null;
 			}
 		}
 
@@ -420,13 +332,10 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		public bool Contains(string tablename)
 		{
 			return _tablesByName.ContainsKey(tablename);
 		}
-
-
 
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
@@ -441,8 +350,7 @@ namespace Altaxo.Data
 
 			// raise data event to all listeners
 			OnCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType.ItemAdded, theTable, theTable.Name);
-			this.SelfChanged(ChangedEventArgs.IfTableAdded);
-
+			this.EhSelfChanged(ChangedEventArgs.IfTableAdded);
 		}
 
 		/// <summary>
@@ -484,13 +392,12 @@ namespace Altaxo.Data
 			theTable.Dispose();
 
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theTable, theTable.Name);
-			SelfChanged(ChangedEventArgs.IfTableRemoved);
+			EhSelfChanged(ChangedEventArgs.IfTableRemoved);
 			return true;
 		}
 
-
 		/// <summary>
-		/// Ensures the existence of a DataTable with the given name. Returns the table with the given name if it exists, 
+		/// Ensures the existence of a DataTable with the given name. Returns the table with the given name if it exists,
 		/// otherwise a table with that name will be created and returned.
 		/// </summary>
 		/// <param name="tableName">Table name.</param>
@@ -540,7 +447,7 @@ namespace Altaxo.Data
 				_tablesByName.Remove(oldName);
 				_tablesByName.Add(item.Name, (DataTable)item);
 
-				SelfChanged(ChangedEventArgs.IfTableRenamed);
+				EhSelfChanged(ChangedEventArgs.IfTableRenamed);
 				OnCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
 			}
 			else
@@ -601,7 +508,6 @@ namespace Altaxo.Data
 			return null;
 		}
 
-
 		/// <summary>
 		/// Gets the parent DataTableCollection of a child table, a child ColumnCollection, or a child column.
 		/// </summary>
@@ -611,9 +517,5 @@ namespace Altaxo.Data
 		{
 			return (DataTableCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(DataTableCollection));
 		}
-
-
-
-
 	}
 }

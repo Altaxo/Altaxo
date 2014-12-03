@@ -33,15 +33,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 	/// <summary>
 	/// Data source for a table that was created by a two-dimensional Fourier transformation.
 	/// </summary>
-	public class FourierTransformation2DDataSource : Altaxo.Data.IAltaxoTableDataSource
+	public class FourierTransformation2DDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
 	{
 		private RealFourierTransformation2DOptions _transformationOptions;
 		private DataTableMatrixProxy _inputData;
 		private IDataSourceImportOptions _importOptions;
 
 		public Action<IAltaxoTableDataSource> _dataSourceChanged;
-
-		protected Main.EventSuppressor _eventSuppressor;
 
 		#region Serialization
 
@@ -88,7 +86,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		protected FourierTransformation2DDataSource()
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 		}
 
 		/// <summary>
@@ -106,8 +103,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		/// </exception>
 		public FourierTransformation2DDataSource(DataTableMatrixProxy inputData, RealFourierTransformation2DOptions transformationOptions, IDataSourceImportOptions importOptions)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
-
 			if (null == inputData)
 				throw new ArgumentNullException("inputData");
 			if (null == transformationOptions)
@@ -115,7 +110,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			if (null == importOptions)
 				throw new ArgumentNullException("importOptions");
 
-			using (var token = SuppressEventsGettingToken())
+			using (var token = SuspendGetToken())
 			{
 				this.FourierTransformation2DOptions = transformationOptions;
 				this.ImportOptions = importOptions;
@@ -129,8 +124,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		/// <param name="from">Another instance to copy from.</param>
 		public FourierTransformation2DDataSource(FourierTransformation2DDataSource from)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
-
 			CopyFrom(from);
 		}
 
@@ -147,7 +140,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			var from = obj as FourierTransformation2DDataSource;
 			if (null != from)
 			{
-				using (var token = SuppressEventsGettingToken())
+				using (var token = SuspendGetToken())
 				{
 					RealFourierTransformation2DOptions transformationOptions = null;
 					DataTableMatrixProxy inputData = null;
@@ -304,12 +297,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		{
 			if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
 			{
-				if (_eventSuppressor.GetEnabledWithCounting())
-				{
-					var ev = _dataSourceChanged;
-					if (null != ev)
-						ev(this);
-				}
+				EhChildChanged(sender, TableDataSourceChangedEventArgs.Empty);
 			}
 		}
 
@@ -338,24 +326,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		}
 
 		/// <summary>
-		/// Suppresses the events by getting a token. When the token is disposed, events will be resumed again.
-		/// </summary>
-		/// <returns>Suppress token.</returns>
-		public Main.ISuppressToken SuppressEventsGettingToken()
-		{
-			return _eventSuppressor.Suspend();
-		}
-
-		/// <summary>
-		/// Resumes the events.
-		/// </summary>
-		/// <param name="token">The suppress token.</param>
-		public void ResumeEvents(ref Main.ISuppressToken token)
-		{
-			_eventSuppressor.Resume(ref token);
-		}
-
-		/// <summary>
 		/// Visits all document references.
 		/// </summary>
 		/// <param name="ReportProxies">The report proxies.</param>
@@ -363,6 +333,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		{
 			if (_inputData != null)
 				_inputData.VisitDocumentReferences(ReportProxies);
+		}
+
+		public string Name
+		{
+			get { return this.GetType().Name; }
 		}
 	}
 }

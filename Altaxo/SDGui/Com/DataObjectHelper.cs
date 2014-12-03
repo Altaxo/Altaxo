@@ -355,7 +355,7 @@ namespace Altaxo.Com
 		/// <param name="bitmap">The provided bitmap. Must have PixelFormat.Format24bppRgb.</param>
 		/// <returns>HGLOBAL pointer to the DIB bitmap.</returns>
 		/// <remarks>
-		/// See <see href="https://groups.google.com/forum/#!msg/microsoft.public.dotnet.framework.drawing/0sSPCrzf8yE/WNEIU324YtwJ" for the original source code and the discussion./>
+		/// See <see href="https://groups.google.com/forum/#!msg/microsoft.public.dotnet.framework.drawing/0sSPCrzf8yE/WNEIU324YtwJ"/> for the original source code and the discussion./>
 		/// </remarks>
 		public static IntPtr RenderDIBV5BitmapToHGLOBAL(Bitmap bm)
 		{

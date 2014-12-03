@@ -48,23 +48,14 @@ namespace Altaxo.Data
 	[SerializationVersion(1)]
 	public class DataTable
 		:
+		Main.SuspendableDocumentNode,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IProjectItem,
-		ICloneable,
-		Altaxo.Main.IDocumentNode,
-		Main.IEventIndicatedDisposable,
 		Main.INamedObjectCollection,
-		Main.INameOwner,
 		Main.IChildChangedEventSink,
 		Main.Properties.IPropertyBagOwner
 	{
-		// Types
-
-		// Data
-		/// <summary>
-		/// The parent data set this table is belonging to.
-		/// </summary>
-		protected object _parent = null; // the dataSet that this table is belonging to
+		#region Members
 
 		/// <summary>
 		/// The name of this table, has to be unique if there is a parent data set, since the tables in the parent data set
@@ -126,32 +117,11 @@ namespace Altaxo.Data
 		/// </summary>
 		private bool _table_DeserializationFinished = false;
 
-		[NonSerialized]
-		private Main.EventSuppressor _changedEventSuppressor;
-
-		/// <summary>
-		/// Flag to signal that resume is currently in progress.
-		/// </summary>
-		[NonSerialized()]
-		private bool _resumeInProgress = false;
-
-		/// <summary>
-		/// Collection of child objects that were suspended by this object.
-		/// </summary>
-		[NonSerialized()]
-		private HashSet<object> _suspendedChildCollection = new HashSet<object>();
-
 		/// <summary>
 		/// If not null, the table was changed and the table has not notified the parent and the listeners about that.
 		/// </summary>
 		[NonSerialized]
-		protected HashSet<System.EventArgs> _changeData = new HashSet<EventArgs>();
-
-		/// <summary>
-		/// Event to signal changes in the data.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
+		protected HashSet<System.EventArgs> _accumulatedEventData = new HashSet<EventArgs>();
 
 		/// <summary>
 		/// Event to signal that the parent of this object has changed.
@@ -177,7 +147,9 @@ namespace Altaxo.Data
 		[field: NonSerialized]
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
-		#region "Serialization"
+		#endregion Members
+
+		#region Serialization
 
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -439,8 +411,12 @@ namespace Altaxo.Data
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				if (info.CurrentElementName == "TableDataSource")
 				{
-					s.DataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
-					if (null != s.DataSource) s.DataSource.OnAfterDeserialization();
+					s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
+					if (null != s._tableDataSource)
+					{
+						s._tableDataSource.ParentObject = s;
+						s._tableDataSource.OnAfterDeserialization();
+					}
 				}
 			}
 
@@ -548,7 +524,9 @@ namespace Altaxo.Data
 			#endregion ISerializable Members
 		}
 
-		#endregion "Serialization"
+		#endregion Serialization
+
+		#region Construction
 
 		/// <summary>
 		/// Constructs an empty data table.
@@ -623,7 +601,6 @@ namespace Altaxo.Data
 		/// <param name="propcoll">The property columns.</param>
 		protected DataTable(DataColumnCollection datacoll, DataColumnCollection propcoll)
 		{
-			_changedEventSuppressor = new Main.EventSuppressor(this.EhChangedEventResumes);
 			this._dataColumns = datacoll;
 			_dataColumns.ParentObject = this;
 			_dataColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
@@ -636,11 +613,6 @@ namespace Altaxo.Data
 			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
 		}
 
-		private void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			EhChildChanged(sender, e);
-		}
-
 		/// <summary>
 		/// Clones the table.
 		/// </summary>
@@ -650,63 +622,25 @@ namespace Altaxo.Data
 			return new DataTable(this);
 		}
 
+		#endregion Construction
+
 		#region Suspend and resume
 
-		/// <summary>
-		/// Returns true if the table is currently suspended.
-		/// </summary>
-		public bool IsSuspended
+		protected override IEnumerable<EventArgs> AccumulatedEventData
 		{
-			get { return _changedEventSuppressor.PeekEnabled; }
-		}
-
-		/// <summary>
-		/// Suspends the change notifications of the table.
-		/// </summary>
-		public IDisposable SuspendGetToken()
-		{
-			return _changedEventSuppressor.Suspend();
-		}
-
-		private void EhChangedEventResumes()
-		{
-			this._resumeInProgress = true;
-			try
+			get
 			{
-				foreach (Main.ISuspendable obj in _suspendedChildCollection)
-					obj.Resume();
-			}
-			catch (Exception ex)
-			{
-			}
-			_suspendedChildCollection.Clear();
-			this._resumeInProgress = false;
-
-			// send accumulated data if available and release it thereafter
-
-			bool tableDataSourceChanged = _changeData.Contains(TableDataSourceChangedEventArgs.Empty);
-
-			if (tableDataSourceChanged)
-				UpdateTableFromTableDataSource();
-
-			_changeData.Clear();
-
-			if (null != _changeData)
-			{
-				if (_parent is Main.IChildChangedEventSink)
-				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-				}
-				if (!IsSuspended)
-				{
-					OnDataChanged(EventArgs.Empty); // Fire the changed event
-				}
+				if (null != _accumulatedEventData)
+					return _accumulatedEventData;
+				else
+					return new EventArgs[0];
 			}
 		}
 
-		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
+		protected override void AccumulatedEventData_Clear()
 		{
-			return false;
+			if (null != _accumulatedEventData)
+				_accumulatedEventData.Clear();
 		}
 
 		/// <summary>
@@ -714,56 +648,34 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="sender">The sender of the change notification (currently unused).</param>
 		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
-		private void AccumulateChildChangeData(object sender, EventArgs e)
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			if (e is TableDataSourceChangedEventArgs)
-				_changeData.Add(e);
+				_accumulatedEventData.Add(e);
 			else
-				_changeData.Add(EventArgs.Empty);
+				_accumulatedEventData.Add(EventArgs.Empty);
 		}
 
 		/// <summary>
-		/// Used by childrens of the table to inform the table of a change in their data.
+		/// Handles the case when a child changes, and a reaction is neccessary independently on the suspend state of the table.
 		/// </summary>
-		/// <param name="sender">The sender of the change notification.</param>
-		/// <param name="e">The change details.</param>
-		public void EhChildChanged(object sender, System.EventArgs e)
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
+		protected bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
 		{
-			if (HandleImmediateChildChangeCases(sender, e))
-				return;
-
-			if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
-			{
-				if (HandleLowPriorityChildChangeCases(sender, ref e))
-					return;
-
-				// Notify parent
-				if (_parent is Main.IChildChangedEventSink)
-				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
-				}
-
-				if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
-				{
-					OnChanged(e); // Fire change event
-					return;
-				}
-			}
-
-			// at this point we are suspended for sure
-			if (sender is Main.ISuspendable)
-			{
-				_suspendedChildCollection.Add(sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend(); // suspend child. Child is responsible then for accumulating the change data
-			}
-			else
-			{
-				AccumulateChildChangeData(sender, e);  // child is unable to accumulate change data, we have to to it by ourself
-			}
+			return false;
 		}
 
+		/// <summary>
+		/// Handles the cases when a child changes, but a reaction is neccessary only if the table is not suspended currently.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
 		private bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
+			// if the DataTableSource has changed, we need to update the table
 			if (e is TableDataSourceChangedEventArgs)
 			{
 				UpdateTableFromTableDataSource();
@@ -771,57 +683,26 @@ namespace Altaxo.Data
 			return false;
 		}
 
-		/// <summary>
-		/// Called if some member of this instance itself changed.
-		/// </summary>
-		protected void EhSelfChanged(EventArgs e)
+		protected override void OnAboutToBeResumed(int eventCount)
 		{
-			if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
+			if (_accumulatedEventData.Contains(TableDataSourceChangedEventArgs.Empty))
 			{
-				// Notify parent
-				if (_parent is Main.IChildChangedEventSink)
-				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
-				}
-
-				if (!_resumeInProgress && !_changedEventSuppressor.GetDisabledWithCounting())
-				{
-					OnChanged(e); // Fire change event
-					return;
-				}
+				_accumulatedEventData.Remove(TableDataSourceChangedEventArgs.Empty);
+				UpdateTableFromTableDataSource();
 			}
-
-			// at this point we are suspended for sure, or resume is still in progress
-			AccumulateChildChangeData(this, e);  // child is unable to accumulate change data, we have to to it by ourself
-		}
-
-		/// <summary>
-		/// Fires the change event with the EventArgs provided in the argument.
-		/// </summary>
-		protected virtual void OnChanged(EventArgs e)
-		{
-			var ev = Changed;
-			if (null != ev)
-				ev(this, e);
-		}
-
-		/// <summary>
-		/// Fires the data change event and removes the accumulated change data.
-		/// </summary>
-		protected virtual void OnDataChanged(EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-
-			_changeData = null;
 		}
 
 		#endregion Suspend and resume
 
+		private void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			EhChildChanged(sender, e);
+		}
+
 		/// <summary>
 		/// Get / sets the parent object of this table.
 		/// </summary>
-		public virtual object ParentObject
+		public override object ParentObject
 		{
 			get
 			{
@@ -852,12 +733,13 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Get or sets the full name of the table.
 		/// </summary>
-		public string Name
+		public override string Name
 		{
 			get
 			{
 				return _tableName;
 			}
+
 			set
 			{
 				if (null == value)
@@ -985,32 +867,17 @@ namespace Altaxo.Data
 			set
 			{
 				var oldValue = _tableDataSource;
-
-				if (null != _tableDataSource)
-				{
-					_tableDataSource.DataSourceChanged -= EhTableDataSourceChanged;
-				}
-
 				_tableDataSource = value;
-
-				if (null != _tableDataSource)
-				{
-					_tableDataSource.DataSourceChanged += EhTableDataSourceChanged;
-				}
 
 				if (!object.Equals(oldValue, value))
 				{
-					if (_tableDataSource != null)
-						EhTableDataSourceChanged(_tableDataSource);
-					else
-						EhSelfChanged(EventArgs.Empty);
+					if (null != oldValue)
+						oldValue.ParentObject = null;
+					if (null != value)
+						value.ParentObject = this;
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
-		}
-
-		private void EhTableDataSourceChanged(IAltaxoTableDataSource dataSource)
-		{
-			this.EhChildChanged(dataSource, TableDataSourceChangedEventArgs.Empty);
 		}
 
 		/// <summary>
@@ -1388,7 +1255,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return _changeData != null;
+				return _accumulatedEventData != null;
 			}
 		}
 

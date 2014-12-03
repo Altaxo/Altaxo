@@ -1152,12 +1152,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 				table.DataColumns.Add(xNumFactor, _NumberOfFactors_ColumnName, Altaxo.Data.ColumnKind.X, _NumberOfFactors_ColumnGroup);
 			}
 
-			xNumFactor.Suspend();
-			for (int i = 0; i < nNumberOfFactors; i++)
+			using (var suspendToken = xNumFactor.SuspendGetToken())
 			{
-				xNumFactor[i] = i;
+				for (int i = 0; i < nNumberOfFactors; i++)
+				{
+					xNumFactor[i] = i;
+				}
+				suspendToken.Resume();
 			}
-			xNumFactor.Resume();
 		}
 
 		public virtual void StorePRESSData(

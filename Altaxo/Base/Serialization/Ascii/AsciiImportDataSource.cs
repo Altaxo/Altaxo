@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
-	public class AsciiImportDataSource : DisposableBase, Altaxo.Data.IAltaxoTableDataSource
+	public class AsciiImportDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
 	{
 		private IDataSourceImportOptions _importOptions;
 
@@ -40,17 +40,11 @@ namespace Altaxo.Serialization.Ascii
 
 		private HashSet<string> _resolvedAsciiFileNames = new HashSet<string>();
 
-		protected Action<IAltaxoTableDataSource> _dataSourceChanged;
-
-		protected Main.EventSuppressor _eventSuppressor;
-
 		protected bool _isDirty = false;
 
 		protected System.IO.FileSystemWatcher[] _fileSystemWatchers = new System.IO.FileSystemWatcher[0];
 
 		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
-
-		private bool _isDisposed;
 
 		#region Serialization
 
@@ -107,7 +101,7 @@ namespace Altaxo.Serialization.Ascii
 			var from = obj as AsciiImportDataSource;
 			if (null != from)
 			{
-				using (var token = SuppressEventsGettingToken())
+				using (var token = SuspendGetToken())
 				{
 					AsciiImportOptions asciiImportOptions = null;
 					IDataSourceImportOptions importOptions = null;
@@ -131,7 +125,6 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		protected AsciiImportDataSource()
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 			_asciiFiles = new List<AbsoluteAndRelativeFileName>();
 		}
 
@@ -142,7 +135,6 @@ namespace Altaxo.Serialization.Ascii
 
 		public AsciiImportDataSource(IEnumerable<string> fileNames, AsciiImportOptions options)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 			_asciiFiles = new List<AbsoluteAndRelativeFileName>();
 			foreach (var fileName in fileNames)
 			{
@@ -154,7 +146,6 @@ namespace Altaxo.Serialization.Ascii
 
 		public AsciiImportDataSource(AsciiImportDataSource from)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 			CopyFrom(from);
 		}
 
@@ -165,11 +156,9 @@ namespace Altaxo.Serialization.Ascii
 
 		#endregion Construction
 
-		private void EhResumeSuppressedEvents()
+		protected override void OnResume(int eventCount)
 		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
+			base.OnResume(eventCount);
 
 			UpdateWatching();
 		}
@@ -198,24 +187,6 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		#region Properties
-
-		public event Action<IAltaxoTableDataSource> DataSourceChanged
-		{
-			add
-			{
-				bool isFirst = null == _dataSourceChanged;
-				_dataSourceChanged += value;
-				if (isFirst)
-					UpdateWatching();
-			}
-			remove
-			{
-				_dataSourceChanged -= value;
-				bool isLast = null == _dataSourceChanged;
-				if (isLast)
-					UpdateWatching();
-			}
-		}
 
 		public string SourceFileName
 		{
@@ -326,32 +297,14 @@ namespace Altaxo.Serialization.Ascii
 		{
 		}
 
-		/// <summary>
-		/// Suppresses the events by getting a token. When the token is disposed, events will be resumed again.
-		/// </summary>
-		/// <returns>Suppress token.</returns>
-		public Main.ISuppressToken SuppressEventsGettingToken()
-		{
-			return _eventSuppressor.Suspend();
-		}
-
-		/// <summary>
-		/// Resumes the events.
-		/// </summary>
-		/// <param name="token">The suppress token.</param>
-		public void ResumeEvents(ref Main.ISuppressToken token)
-		{
-			_eventSuppressor.Resume(ref token);
-		}
-
 		public void UpdateWatching()
 		{
 			SwitchOffWatching();
 
-			if (_eventSuppressor.PeekDisabled)
+			if (IsSuspended)
 				return; // in update operation - wait until finished
 
-			if (null == _dataSourceChanged)
+			if (null == _parent)
 				return; // No listener - no need to watch
 
 			if (_importOptions.ImportTriggerSource != ImportTriggerSource.DataSourceChanged)
@@ -419,9 +372,8 @@ namespace Altaxo.Serialization.Ascii
 
 		public void EhUpdateByTimerQueue()
 		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
+			if (null != _parent)
+				EhChildChanged(this, TableDataSourceChangedEventArgs.Empty);
 			else
 				SwitchOffWatching();
 		}
@@ -439,14 +391,15 @@ namespace Altaxo.Serialization.Ascii
 
 		protected override void Dispose(bool disposing)
 		{
-			if (!_isDisposed)
-			{
-				_isDisposed = true;
-
-				_dataSourceChanged = null;
-
+			if (!IsDisposed)
 				SwitchOffWatching();
-			}
+
+			base.Dispose(disposing);
+		}
+
+		public string Name
+		{
+			get { return this.GetType().Name; }
 		}
 	}
 }

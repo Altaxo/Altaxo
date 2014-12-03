@@ -346,7 +346,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
-		public Main.ISuppressToken SuspendGetToken()
+		public Main.ISuspendToken SuspendGetToken()
 		{
 			return _eventSuppressor.Suspend();
 		}

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,49 +19,47 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc;
+using Altaxo.Calc.Interpolation;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Probability;
+using Altaxo.Calc.Regression;
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Gui.Worksheet;
+using Altaxo.Gui.Worksheet.Viewing;
 using System;
 using System.Collections.Generic;
 
-using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Gui.Worksheet;
-using Altaxo.Calc;
-using Altaxo.Calc.Regression;
-using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Interpolation;
-using Altaxo.Calc.Probability;
-using Altaxo.Data;
-using Altaxo.Collections;
-
 namespace Altaxo.Worksheet.Commands.Analysis
 {
-  /// <summary>
-  /// Summary description for CalculusCommands.
-  /// </summary>
-  public class CalculusCommands
-  {
+	/// <summary>
+	/// Summary description for CalculusCommands.
+	/// </summary>
+	public class CalculusCommands
+	{
+		#region SavitzkyGolay
 
-    #region SavitzkyGolay
+		public static void SavitzkyGolayFiltering(IWorksheetController ctrl)
+		{
+			if (ctrl.SelectedDataColumns.Count == 0)
+				return;
 
-    public static void SavitzkyGolayFiltering(IWorksheetController ctrl)
-    {
-      if(ctrl.SelectedDataColumns.Count==0)
-        return;
+			object paramobject = new SavitzkyGolayParameters();
 
-      object paramobject = new SavitzkyGolayParameters();
+			if (!Current.Gui.ShowDialog(ref paramobject, "Savitzky-Golay parameters"))
+				return;
 
-      if(!Current.Gui.ShowDialog(ref paramobject,"Savitzky-Golay parameters"))
-        return;
+			SavitzkyGolayParameters parameters = (SavitzkyGolayParameters)paramobject;
 
-      SavitzkyGolayParameters parameters = (SavitzkyGolayParameters)paramobject;
-
-      Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
-      Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+			Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+			Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
 			SavitzkyGolay(parameters, yCol, xCol);
-    }
-
+		}
 
 		public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol)
 		{
@@ -80,7 +79,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				}
 				if (calcspace.RelativeSpaceDeviation > 1E-2)
 				{
-					if(!Current.Gui.YesNoMessageBox(
+					if (!Current.Gui.YesNoMessageBox(
 						string.Format("The x-column {0} is not equally spaced, the deviation is {1}, the mean spacing is {2}. Continue anyway?", xCol.Name, calcspace.RelativeSpaceDeviation, calcspace.SpaceMeanValue),
 						"Continue?", true))
 						return;
@@ -91,121 +90,122 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 			Calc.Regression.SavitzkyGolay filter = new SavitzkyGolay(parameters);
 
-			yCol.Suspend();
-			filter.Apply(DataColumnWrapper.ToROVectorCopy(yCol), DataColumnWrapper.ToVector(yCol));
-
-			if (parameters.DerivativeOrder > 0)
+			using (var suspendToken = yCol.SuspendGetToken())
 			{
-				double factor = Math.Pow(1 / spacing, parameters.DerivativeOrder) * Calc.GammaRelated.Fac(parameters.DerivativeOrder);
-				yCol.Data = yCol * factor;
-			}
+				filter.Apply(DataColumnWrapper.ToROVectorCopy(yCol), DataColumnWrapper.ToVector(yCol));
 
-			yCol.Resume();
+				if (parameters.DerivativeOrder > 0)
+				{
+					double factor = Math.Pow(1 / spacing, parameters.DerivativeOrder) * Calc.GammaRelated.Fac(parameters.DerivativeOrder);
+					yCol.Data = yCol * factor;
+				}
+				suspendToken.Dispose();
+			}
 		}
 
-    #endregion
+		#endregion SavitzkyGolay
 
-    #region Interpolation
+		#region Interpolation
 
-    public static void Interpolation(IWorksheetController ctrl)
-    {
-      if(ctrl.SelectedDataColumns.Count==0)
-        return;
+		public static void Interpolation(IWorksheetController ctrl)
+		{
+			if (ctrl.SelectedDataColumns.Count == 0)
+				return;
 
-      object paramobject = new InterpolationParameters();
+			object paramobject = new InterpolationParameters();
 
-      if(!Current.Gui.ShowDialog(ref paramobject,"Interpolation"))
-        return;
+			if (!Current.Gui.ShowDialog(ref paramobject, "Interpolation"))
+				return;
 
-      InterpolationParameters parameters = (InterpolationParameters)paramobject;
+			InterpolationParameters parameters = (InterpolationParameters)paramobject;
 
-      Interpolation(ctrl, parameters);
-    }
+			Interpolation(ctrl, parameters);
+		}
 
-    public static void Interpolation(IWorksheetController ctrl, InterpolationParameters parameters)
-    {
-      Dictionary<DataColumn, int> _columnToGroupNumber = new Dictionary<DataColumn, int>();
+		public static void Interpolation(IWorksheetController ctrl, InterpolationParameters parameters)
+		{
+			Dictionary<DataColumn, int> _columnToGroupNumber = new Dictionary<DataColumn, int>();
 
-      for (int nSel = 0; nSel < ctrl.SelectedDataColumns.Count; nSel++)
-      {
-        Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[nSel]];
-        Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+			for (int nSel = 0; nSel < ctrl.SelectedDataColumns.Count; nSel++)
+			{
+				Altaxo.Data.DataColumn yCol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[nSel]];
+				Altaxo.Data.DataColumn xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
-        if (!(yCol is INumericColumn))
-        {
-          Current.Gui.ErrorMessageBox("The selected column is not numeric!");
-          return;
-        }
-        if (!(xCol is INumericColumn))
-        {
-          Current.Gui.ErrorMessageBox("The x-column of the selected column is not numeric!");
-          return;
-        }
+				if (!(yCol is INumericColumn))
+				{
+					Current.Gui.ErrorMessageBox("The selected column is not numeric!");
+					return;
+				}
+				if (!(xCol is INumericColumn))
+				{
+					Current.Gui.ErrorMessageBox("The x-column of the selected column is not numeric!");
+					return;
+				}
 
-        DoubleColumn xRes = new DoubleColumn();
-        DoubleColumn yRes = new DoubleColumn();
-        int newgroup;
-        if (!_columnToGroupNumber.TryGetValue(xCol, out newgroup))
-        {
-          newgroup = ctrl.DataTable.DataColumns.GetUnusedColumnGroupNumber();
-          ctrl.DataTable.DataColumns.Add(xRes, xCol.Name + ".I", ColumnKind.X, newgroup);
-          _columnToGroupNumber.Add(xCol, newgroup);
-        }
-        ctrl.DataTable.DataColumns.Add(yRes, yCol.Name + ".I", ColumnKind.V, newgroup);
+				DoubleColumn xRes = new DoubleColumn();
+				DoubleColumn yRes = new DoubleColumn();
+				int newgroup;
+				if (!_columnToGroupNumber.TryGetValue(xCol, out newgroup))
+				{
+					newgroup = ctrl.DataTable.DataColumns.GetUnusedColumnGroupNumber();
+					ctrl.DataTable.DataColumns.Add(xRes, xCol.Name + ".I", ColumnKind.X, newgroup);
+					_columnToGroupNumber.Add(xCol, newgroup);
+				}
+				ctrl.DataTable.DataColumns.Add(yRes, yCol.Name + ".I", ColumnKind.V, newgroup);
 
-        Interpolation(xCol,yCol, parameters, xRes, yRes);
-      }
-    }
+				Interpolation(xCol, yCol, parameters, xRes, yRes);
+			}
+		}
 
-    public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
-    InterpolationParameters parameters,
-    Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
-    {
-      Interpolation(
-        xCol, yCol,
-        parameters.InterpolationInstance,
-        VectorMath.CreateEquidistantSequenceByStartEndLength(parameters.XOrg, parameters.XEnd, parameters.NumberOfPoints),
-        xRes, yRes);
-    }
+		public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
+		InterpolationParameters parameters,
+		Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
+		{
+			Interpolation(
+				xCol, yCol,
+				parameters.InterpolationInstance,
+				VectorMath.CreateEquidistantSequenceByStartEndLength(parameters.XOrg, parameters.XEnd, parameters.NumberOfPoints),
+				xRes, yRes);
+		}
 
-    public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
-      Calc.Interpolation.IInterpolationFunction interpolInstance, IROVector samplePoints, 
-      Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
-    {
-      int rows = Math.Min(xCol.Count, yCol.Count);
-      IROVector yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol, rows);
-      IROVector xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol, rows);
+		public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
+			Calc.Interpolation.IInterpolationFunction interpolInstance, IROVector samplePoints,
+			Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
+		{
+			int rows = Math.Min(xCol.Count, yCol.Count);
+			IROVector yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol, rows);
+			IROVector xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol, rows);
 
-     interpolInstance.Interpolate(xVec, yVec);
+			interpolInstance.Interpolate(xVec, yVec);
 
-      xRes.Suspend();
-      yRes.Suspend();
-      for (int i = 0; i < samplePoints.Length; i++)
-      {
-        //double r = i / (double)(parameters.NumberOfPoints - 1);
-        //double x = parameters.XOrg * (1 - r) + parameters.XEnd * (r);
-        double x = samplePoints[i];
-        double y = interpolInstance.GetYOfX(x);
-        xRes[i] = x;
-        yRes[i] = y;
-      }
-      xRes.Resume();
-      yRes.Resume();
-    }
+			using (var suspendToken_xRes = xRes.SuspendGetToken())
+			{
+				using (var suspendToken_yRes = yRes.SuspendGetToken())
+				{
+					for (int i = 0; i < samplePoints.Length; i++)
+					{
+						//double r = i / (double)(parameters.NumberOfPoints - 1);
+						//double x = parameters.XOrg * (1 - r) + parameters.XEnd * (r);
+						double x = samplePoints[i];
+						double y = interpolInstance.GetYOfX(x);
+						xRes[i] = x;
+						yRes[i] = y;
+					}
+					suspendToken_yRes.Resume();
+				}
+				suspendToken_xRes.Resume();
+			}
+		}
 
-    #endregion
+		#endregion Interpolation
 
-    #region Multivariate linear fit
+		#region Multivariate linear fit
 
- 
+		public static LinearFitBySvd MultivariateLinearFit(IWorksheetController ctrl)
+		{
+			return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.DataTable.DataColumns, ctrl.SelectedDataColumns);
+		}
 
-    public static LinearFitBySvd MultivariateLinearFit(IWorksheetController ctrl)
-    {
-      return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.DataTable.DataColumns,ctrl.SelectedDataColumns);
-    }
-
-
-
-    #endregion
-  }
+		#endregion Multivariate linear fit
+	}
 }

@@ -30,6 +30,7 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Gdi
 {
 	public class GraphDocumentCollection :
+		Main.SuspendableDocumentNode,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IEnumerable<GraphDocument>,
 		Altaxo.Main.IDocumentNode,
@@ -141,10 +142,7 @@ namespace Altaxo.Graph.Gdi
 		protected bool bIsDirty = false;
 
 		[NonSerialized]
-		protected object m_Parent = null;
-
-		[NonSerialized]
-		protected ChangedEventArgs m_ChangeData = null;
+		protected ChangedEventArgs _accumulatedEventData = null;
 
 		// Events
 
@@ -161,23 +159,28 @@ namespace Altaxo.Graph.Gdi
 
 		public GraphDocumentCollection(AltaxoDocument parent)
 		{
-			this.m_Parent = parent;
+			this._parent = parent;
 		}
 
-		public object Parent
+		public override object ParentObject
 		{
-			get { return this.m_Parent; }
-			set { this.m_Parent = value; }
+			get
+			{
+				return _parent;
+			}
+			set
+			{
+				throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
+			}
 		}
 
-		public object ParentObject
-		{
-			get { return this.m_Parent; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "Graphs"; }
+			set
+			{
+				throw new InvalidOperationException("Name of GraphDocumentCollection is fixed and cannot be set");
+			}
 		}
 
 		#region Serialization
@@ -254,7 +257,7 @@ namespace Altaxo.Graph.Gdi
 			m_GraphsByName.Add(theGraph.Name, theGraph);
 			theGraph.ParentObject = this;
 			theGraph.NameChanged += EhChild_NameChanged;
-			this.OnSelfChanged(ChangedEventArgs.IfItemAdded);
+			this.EhSelfChanged(ChangedEventArgs.IfItemAdded);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, theGraph, theGraph.Name);
 		}
 
@@ -272,7 +275,7 @@ namespace Altaxo.Graph.Gdi
 					m_GraphsByName.Remove(theGraph.Name);
 					theGraph.ParentObject = null;
 					theGraph.NameChanged -= EhChild_NameChanged;
-					this.OnSelfChanged(ChangedEventArgs.IfItemRemoved);
+					this.EhSelfChanged(ChangedEventArgs.IfItemRemoved);
 					OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theGraph, theGraph.Name);
 				}
 			}
@@ -289,7 +292,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			m_GraphsByName.Remove(oldName);
 			m_GraphsByName[item.Name] = (GraphDocument)item;
-			this.OnSelfChanged(ChangedEventArgs.IfItemRenamed);
+			this.EhSelfChanged(ChangedEventArgs.IfItemRenamed);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
 		}
 
@@ -386,75 +389,27 @@ namespace Altaxo.Graph.Gdi
 
 #endif
 
-		/// <summary>
-		/// Fires the Invalidate event.
-		/// </summary>
-		/// <param name="sender">The layer which needs to be repainted.</param>
-		protected internal virtual void OnInvalidate(XYPlotLayer sender)
+		protected override IEnumerable<EventArgs> AccumulatedEventData
 		{
-			OnChanged();
+			get
+			{
+				if (null != _accumulatedEventData)
+					yield return _accumulatedEventData;
+			}
 		}
 
-		private void AccumulateChildChangeData(object sender, EventArgs e)
+		protected override void AccumulatedEventData_Clear()
 		{
-			if (m_ChangeData == null)
-				this.m_ChangeData = ChangedEventArgs.Empty;
+			_accumulatedEventData = null;
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			if (_accumulatedEventData == null)
+				this._accumulatedEventData = ChangedEventArgs.Empty;
 
 			if (e is ChangedEventArgs)
-				m_ChangeData.Merge((ChangedEventArgs)e);
-		}
-
-		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
-		{
-			return false; // not handled
-		}
-
-		protected virtual void OnSelfChanged(EventArgs e)
-		{
-			EhChildChanged(null, e);
-		}
-
-		/// <summary>
-		/// Handle the change notification from the child layers.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification.</param>
-		/// <param name="e">The change details.</param>
-		public void EhChildChanged(object sender, System.EventArgs e)
-		{
-			if (HandleImmediateChildChangeCases(sender, e))
-				return;
-
-			if (this.IsSuspended && sender is Main.ISuspendable)
-			{
-				m_SuspendedChildCollection.Add(sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend();
-				return;
-			}
-
-			AccumulateChildChangeData(sender, e);  // AccumulateNotificationData
-
-			if (m_ResumeInProgress || IsSuspended)
-				return;
-
-			if (m_Parent is Main.IChildChangedEventSink)
-			{
-				((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
-				if (IsSuspended) // maybe parent has suspended us now
-				{
-					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					return;
-				}
-			}
-
-			OnChanged(); // Fire the changed event
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, m_ChangeData);
-
-			m_ChangeData = null;
+				_accumulatedEventData.Merge((ChangedEventArgs)e);
 		}
 
 		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)

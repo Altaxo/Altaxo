@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected GraphControllerWpf _grac;
 
 		/// <summary>Locker to suppress changed events during moving of objects.</summary>
-		protected Altaxo.Main.ISuppressToken _graphDocumentChangedSuppressor;
+		protected Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
 
 		/// <summary>Grips that are displayed on the screen.</summary>
 		protected IGripManipulationHandle[] DisplayedGrips;
@@ -411,7 +411,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
 				bool bRepaint = false;
 				_wereObjectsMoved = false;
-				_grac.Doc.EndUpdate(ref _graphDocumentChangedSuppressor);
+				_grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
 
 				bool chooseNextLevel = ActiveGrip.Deactivate();
 				ActiveGrip = null;

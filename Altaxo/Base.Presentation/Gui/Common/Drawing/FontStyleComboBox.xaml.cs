@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null != SelectedFontStyleChanged)
 				SelectedFontStyleChanged(obj, args);
 
-			using (var token = _eventDisabler.Disable())
+			using (var token = _eventDisabler.SuspendGetToken())
 			{
 				UpdateChecks(SelectedFontStyle);
 			}
@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (_eventDisabler.IsEnabled)
+			if (_eventDisabler.IsNotSuspended)
 			{
 				FontXStyle newStyle = FontXStyle.Regular;
 				if (true == _guiBold.IsChecked)

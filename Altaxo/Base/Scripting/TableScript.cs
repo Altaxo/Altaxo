@@ -334,7 +334,7 @@ namespace Altaxo.Scripting
 			IDisposable suspendToken = null;
 
 			if (null != myDataSet)
-				myDataSet.Suspend();
+				suspendToken = myDataSet.SuspendGetToken();
 			else if (null != myTable)
 				suspendToken = myTable.SuspendGetToken();
 
@@ -350,9 +350,6 @@ namespace Altaxo.Scripting
 			}
 			finally
 			{
-				if (null != myDataSet)
-					myDataSet.Resume();
-
 				if (null != suspendToken)
 					suspendToken.Dispose();
 			}

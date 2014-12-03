@@ -29,15 +29,13 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public class ExpandCyclingVariableColumnDataSource : Altaxo.Data.IAltaxoTableDataSource
+	public class ExpandCyclingVariableColumnDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
 	{
 		private ExpandCyclingVariableColumnOptions _processOptions;
 		private DataTableMultipleColumnProxy _processData;
 		private IDataSourceImportOptions _importOptions;
 
 		public Action<IAltaxoTableDataSource> _dataSourceChanged;
-
-		protected Main.EventSuppressor _eventSuppressor;
 
 		#region Serialization
 
@@ -84,7 +82,6 @@ namespace Altaxo.Data
 
 		protected ExpandCyclingVariableColumnDataSource()
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
 		}
 
 		/// <summary>
@@ -102,8 +99,6 @@ namespace Altaxo.Data
 		/// </exception>
 		public ExpandCyclingVariableColumnDataSource(DataTableMultipleColumnProxy inputData, ExpandCyclingVariableColumnOptions dataSourceOptions, IDataSourceImportOptions importOptions)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
-
 			if (null == inputData)
 				throw new ArgumentNullException("inputData");
 			if (null == dataSourceOptions)
@@ -111,7 +106,7 @@ namespace Altaxo.Data
 			if (null == importOptions)
 				throw new ArgumentNullException("importOptions");
 
-			using (var token = SuppressEventsGettingToken())
+			using (var token = SuspendGetToken())
 			{
 				this.ExpandCyclingVariableColumnOptions = dataSourceOptions;
 				this.ImportOptions = importOptions;
@@ -125,8 +120,6 @@ namespace Altaxo.Data
 		/// <param name="from">Another instance to copy from.</param>
 		public ExpandCyclingVariableColumnDataSource(ExpandCyclingVariableColumnDataSource from)
 		{
-			_eventSuppressor = new Main.EventSuppressor(EhResumeSuppressedEvents);
-
 			CopyFrom(from);
 		}
 
@@ -143,7 +136,7 @@ namespace Altaxo.Data
 			var from = obj as ExpandCyclingVariableColumnDataSource;
 			if (null != from)
 			{
-				using (var token = SuppressEventsGettingToken())
+				using (var token = SuspendGetToken())
 				{
 					ExpandCyclingVariableColumnOptions dataSourceOptions = null;
 					DataTableMultipleColumnProxy inputData = null;
@@ -293,6 +286,8 @@ namespace Altaxo.Data
 			}
 		}
 
+		#region Change event handling
+
 		/// <summary>
 		/// Called when the input data have changed. Depending on the <see cref="ImportOptions"/>, the input data may be reprocessed.
 		/// </summary>
@@ -302,24 +297,11 @@ namespace Altaxo.Data
 		{
 			if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
 			{
-				if (_eventSuppressor.GetEnabledWithCounting())
-				{
-					var ev = _dataSourceChanged;
-					if (null != ev)
-						ev(this);
-				}
+				EhChildChanged(sender, TableDataSourceChangedEventArgs.Empty);
 			}
 		}
 
-		/// <summary>
-		/// Called when the event suppressor has resumed events, and any events have been fired in the time of suppression.
-		/// </summary>
-		private void EhResumeSuppressedEvents()
-		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
-		}
+		#endregion Change event handling
 
 		/// <summary>
 		/// Called after deserization of a data source instance, when it is already associated with a data table.
@@ -336,24 +318,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Suppresses the events by getting a token. When the token is disposed, events will be resumed again.
-		/// </summary>
-		/// <returns>Suppress token.</returns>
-		public Main.ISuppressToken SuppressEventsGettingToken()
-		{
-			return _eventSuppressor.Suspend();
-		}
-
-		/// <summary>
-		/// Resumes the events.
-		/// </summary>
-		/// <param name="token">The suppress token.</param>
-		public void ResumeEvents(ref Main.ISuppressToken token)
-		{
-			_eventSuppressor.Resume(ref token);
-		}
-
-		/// <summary>
 		/// Visits all document references.
 		/// </summary>
 		/// <param name="ReportProxies">The report proxies.</param>
@@ -364,5 +328,10 @@ namespace Altaxo.Data
 		}
 
 		#endregion IAltaxoTableDataSource
+
+		public string Name
+		{
+			get { return this.GetType().Name; }
+		}
 	}
 }

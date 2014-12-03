@@ -68,19 +68,15 @@ namespace Altaxo.Main
 	}
 
 	/// <summary>
-	/// All objects that can be suspended and resumed should implement this interface
+	/// Interface to objects that can be suspended by receiving a suspend token. When the suspend token is disposed, the event handling of the object is resumed.
 	/// </summary>
-	public interface ISuspendable
+	public interface ISuspendableByToken
 	{
 		/// <summary>
-		/// Suspend all change notifications.
+		/// Suspends the event handling of the object by getting a suspend token. The event handling of the object is resumed when the suspend token is disposed.
 		/// </summary>
-		void Suspend();
-
-		/// <summary>
-		/// Resume all change notifications.
-		/// </summary>
-		void Resume();
+		/// <returns>The suspend token. To resume events on this object, you have to dispose the returned suspend token.</returns>
+		ISuspendToken SuspendGetToken();
 	}
 
 	/// <summary>ChangedEventArgs can be used by originators of a Changed event to preserve the originator of the Changed event, even if

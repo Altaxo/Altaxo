@@ -33,13 +33,13 @@ namespace Altaxo.Data
 	[SerializationSurrogate(0, typeof(Altaxo.Data.DataColumnCollection.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	public class DataColumnCollection :
+		Main.SuspendableDocumentNode,
 		IList<DataRow>,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Altaxo.Main.IDocumentNode,
 		IDisposable,
 		ICloneable,
 		Main.INamedObjectCollection,
-		Main.ISuspendable,
 		Main.IChildChangedEventSink
 	{
 		// Types
@@ -341,13 +341,6 @@ namespace Altaxo.Data
 
 		#region Member data
 
-		// Data
-
-		/// <summary>
-		/// The parent of this DataColumnCollection, normally a DataTable.
-		/// </summary>
-		protected object _parent = null; // the DataTable this set is belonging to
-
 		/// <summary>
 		/// The collection of the columns (accessible by number).
 		/// </summary>
@@ -397,30 +390,9 @@ namespace Altaxo.Data
 		protected bool _triedOutRegularNaming = false;
 
 		/// <summary>
-		/// Number of suspends to this object.
-		/// </summary>
-		protected int _suspendCount = 0;
-
-		/// <summary>
-		/// If true, the resume is in progress, but not finished.
-		/// </summary>
-		private bool _isResumeInProgress = false;
-
-		/// <summary>
-		/// Collection of suspended childs, i.e. of supended data columns (only of that that are suspended by this collection).
-		/// </summary>
-		protected List<Main.ISuspendable> _suspendedChilds = new List<Main.ISuspendable>(); // the collection of dirty columns
-
-		/// <summary>
 		/// Holds the accumulated change data.
 		/// </summary>
-		protected ChangeEventArgs _changeData;
-
-		/// <summary>
-		/// Event to signal a change of this collection.
-		/// </summary>
-		[field: NonSerialized]
-		public event EventHandler Changed;
+		protected ChangeEventArgs _accumulatedEventData;
 
 		/// <summary>
 		/// Signals the change of the parent of the collection.
@@ -457,7 +429,6 @@ namespace Altaxo.Data
 
 				// set up helper objects
 				s._columnsByName = new Dictionary<string, DataColumn>();
-				s._suspendedChilds = new List<Altaxo.Main.ISuspendable>();
 				s._nameOfLastColumnAdded = "";
 				s._lastColumnNameGenerated = "";
 				return s;
@@ -1070,24 +1041,25 @@ namespace Altaxo.Data
 		/// an exception is thrown if a column with the same name is already be present in the destination table.</param>
 		protected void Insert(DataColumn[] columns, DataColumnInfo[] info, int nDestinationIndex, bool renameColumnsIfNecessary)
 		{
-			this.Suspend();
-
-			int indexOfAddedColumns = this.ColumnCount;
-			int numberToAdd = columns.Length;
-
-			// first add the columns to the collection
-			for (int i = 0; i < numberToAdd; i++)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				if (renameColumnsIfNecessary && this.ContainsColumn(info[i].Name))
-					info[i].Name = this.FindUniqueColumnNameWithBase(info[i].Name);
+				int indexOfAddedColumns = this.ColumnCount;
+				int numberToAdd = columns.Length;
 
-				this.Add(columns[i], info[i]);
+				// first add the columns to the collection
+				for (int i = 0; i < numberToAdd; i++)
+				{
+					if (renameColumnsIfNecessary && this.ContainsColumn(info[i].Name))
+						info[i].Name = this.FindUniqueColumnNameWithBase(info[i].Name);
+
+					this.Add(columns[i], info[i]);
+				}
+
+				// then move the columns to the desired position
+				this.ChangeColumnPosition(Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(indexOfAddedColumns, numberToAdd), nDestinationIndex);
+
+				suspendToken.Dispose();
 			}
-
-			// then move the columns to the desired position
-			this.ChangeColumnPosition(Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(indexOfAddedColumns, numberToAdd), nDestinationIndex);
-
-			this.Resume();
 		}
 
 		/// <summary>
@@ -1096,13 +1068,15 @@ namespace Altaxo.Data
 		/// <param name="src">The source collection to copy the columns from.</param>
 		public void CopyAllColumnsFrom(DataColumnCollection src)
 		{
-			this.Suspend();
-			this.RemoveColumnsAll();
-			for (int i = 0; i < src.ColumnCount; i++)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				this.Add((DataColumn)src[i].Clone(), src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+				this.RemoveColumnsAll();
+				for (int i = 0; i < src.ColumnCount; i++)
+				{
+					this.Add((DataColumn)src[i].Clone(), src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+				}
+				suspendToken.Dispose();
 			}
-			this.Resume();
 		}
 
 		/// <summary>
@@ -1111,14 +1085,16 @@ namespace Altaxo.Data
 		/// <param name="src">The source collection to copy the columns from.</param>
 		public void CopyAllColumnsWithoutDataFrom(DataColumnCollection src)
 		{
-			this.Suspend();
-			this.RemoveColumnsAll();
-			for (int i = 0; i < src.ColumnCount; i++)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				var newCol = (DataColumn)Activator.CreateInstance(src[i].GetType());
-				this.Add(newCol, src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+				this.RemoveColumnsAll();
+				for (int i = 0; i < src.ColumnCount; i++)
+				{
+					var newCol = (DataColumn)Activator.CreateInstance(src[i].GetType());
+					this.Add(newCol, src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+				}
+				suspendToken.Dispose();
 			}
-			this.Resume();
 		}
 
 		/// <summary>
@@ -1153,33 +1129,34 @@ namespace Altaxo.Data
 		/// <param name="appendPosition">Row number of first row where the new data is copied to.</param>
 		public void AppendAllColumnsToPosition(DataColumnCollection src, bool ignoreNames, int appendPosition)
 		{
-			this.Suspend();
-
-			// test structure
-			if (!IsColumnStructureCompatible(this, src, ignoreNames))
-				throw new ArgumentException(string.Format("DataColumnCollection {0} has another structure than {1}. Append is not possible", src.Name, this.Name));
-
-			if (ignoreNames)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				for (int i = 0; i < ColumnCount; i++)
+				// test structure
+				if (!IsColumnStructureCompatible(this, src, ignoreNames))
+					throw new ArgumentException(string.Format("DataColumnCollection {0} has another structure than {1}. Append is not possible", src.Name, this.Name));
+
+				if (ignoreNames)
 				{
-					DataColumn destCol = this[i];
-					DataColumn srcCol = src[i];
-					destCol.AppendToPosition(srcCol, appendPosition);
-					_numberOfRows = Math.Max(_numberOfRows, destCol.Count);
+					for (int i = 0; i < ColumnCount; i++)
+					{
+						DataColumn destCol = this[i];
+						DataColumn srcCol = src[i];
+						destCol.AppendToPosition(srcCol, appendPosition);
+						_numberOfRows = Math.Max(_numberOfRows, destCol.Count);
+					}
 				}
-			}
-			else
-			{
-				for (int i = 0; i < ColumnCount; i++)
+				else
 				{
-					DataColumn destCol = this[i];
-					DataColumn srcCol = src[this[i].Name];
-					destCol.AppendToPosition(srcCol, appendPosition);
-					_numberOfRows = Math.Max(_numberOfRows, destCol.Count);
+					for (int i = 0; i < ColumnCount; i++)
+					{
+						DataColumn destCol = this[i];
+						DataColumn srcCol = src[this[i].Name];
+						destCol.AppendToPosition(srcCol, appendPosition);
+						_numberOfRows = Math.Max(_numberOfRows, destCol.Count);
+					}
 				}
+				suspendToken.Dispose();
 			}
-			this.Resume();
 		}
 
 		public static bool IsColumnStructureCompatible(DataColumnCollection a, DataColumnCollection b, bool ignoreColumnNames)
@@ -1833,12 +1810,13 @@ namespace Altaxo.Data
 		/// <param name="nRowsToInsert">The number of rows to insert.</param>
 		public void InsertRows(int nBeforeRow, int nRowsToInsert)
 		{
-			Suspend();
+			using (var suspendToken = this.SuspendGetToken())
+			{
+				for (int i = 0; i < ColumnCount; i++)
+					this[i].InsertRows(nBeforeRow, nRowsToInsert);
 
-			for (int i = 0; i < ColumnCount; i++)
-				this[i].InsertRows(nBeforeRow, nRowsToInsert);
-
-			Resume();
+				suspendToken.Dispose();
+			}
 		}
 
 		/// <summary>
@@ -1884,19 +1862,20 @@ namespace Altaxo.Data
 		public void RemoveRowsInColumns(IAscendingIntegerCollection selectedColumns, IAscendingIntegerCollection selectedRows)
 		{
 			// if we remove rows, we have to do that in reverse order
-			Suspend();
-
-			for (int selcol = 0; selcol < selectedColumns.Count; selcol++)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				int colidx = selectedColumns[selcol];
-
-				foreach (var range in selectedRows.RangesDescending)
+				for (int selcol = 0; selcol < selectedColumns.Count; selcol++)
 				{
-					this[colidx].RemoveRows(range.Start, range.Count);
-				}
-			}
+					int colidx = selectedColumns[selcol];
 
-			Resume();
+					foreach (var range in selectedRows.RangesDescending)
+					{
+						this[colidx].RemoveRows(range.Start, range.Count);
+					}
+				}
+
+				suspendToken.Dispose();
+			}
 		}
 
 		/// <summary>
@@ -2211,12 +2190,16 @@ namespace Altaxo.Data
 		/// <summary>
 		/// The name of this collection.
 		/// </summary>
-		public virtual string Name
+		public override string Name
 		{
 			get
 			{
 				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
 				return noc == null ? null : noc.GetNameOfChildObject(this);
+			}
+			set
+			{
+				throw new InvalidOperationException("The name is fixed and cannot be set");
 			}
 		}
 
@@ -2279,54 +2262,22 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return null != _changeData;
+				return null != _accumulatedEventData;
 			}
 		}
 
-		/// <summary>
-		/// True if the notification of changes is currently suspended.
-		/// </summary>
-		public bool IsSuspended
+		protected override IEnumerable<EventArgs> AccumulatedEventData
 		{
-			get { return _suspendCount > 0; }
-		}
-
-		/// <summary>
-		/// Suspend the notification of changes.
-		/// </summary>
-		public virtual void Suspend()
-		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-			_suspendCount++;
-		}
-
-		/// <summary>
-		/// Resume the notification of changed.
-		/// </summary>
-		public void Resume()
-		{
-			System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
-			if (_suspendCount > 0 && (--_suspendCount) == 0)
+			get
 			{
-				this._isResumeInProgress = true;
-				foreach (Main.ISuspendable obj in _suspendedChilds)
-					obj.Resume();
-				_suspendedChilds.Clear();
-				this._isResumeInProgress = false;
-
-				// send accumulated data if available and release it thereafter
-				if (null != _changeData)
-				{
-					if (_parent is Main.IChildChangedEventSink)
-					{
-						((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-					}
-					if (!IsSuspended)
-					{
-						OnDataChanged(); // Fire the changed event
-					}
-				}
+				if (null != _accumulatedEventData)
+					yield return _accumulatedEventData;
 			}
+		}
+
+		protected override void AccumulatedEventData_Clear()
+		{
+			_accumulatedEventData = null;
 		}
 
 		/// <summary>
@@ -2334,7 +2285,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="sender">One of the columns of this collection.</param>
 		/// <param name="e">The change details.</param>
-		private void AccumulateChildChangeData(object sender, EventArgs e)
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			DataColumn.ChangeEventArgs changed = e as DataColumn.ChangeEventArgs;
 			if (changed != null && sender is DataColumn)
@@ -2342,10 +2293,10 @@ namespace Altaxo.Data
 				int columnNumberOfSender = GetColumnNumber((DataColumn)sender);
 				int rowCountOfSender = ((DataColumn)sender).Count;
 
-				if (_changeData == null)
-					_changeData = new ChangeEventArgs(columnNumberOfSender, changed.MinRowChanged, changed.MaxRowChanged, changed.RowCountDecreased);
+				if (_accumulatedEventData == null)
+					_accumulatedEventData = new ChangeEventArgs(columnNumberOfSender, changed.MinRowChanged, changed.MaxRowChanged, changed.RowCountDecreased);
 				else
-					_changeData.Accumulate(columnNumberOfSender, changed.MinRowChanged, changed.MaxRowChanged, changed.RowCountDecreased);
+					_accumulatedEventData.Accumulate(columnNumberOfSender, changed.MinRowChanged, changed.MaxRowChanged, changed.RowCountDecreased);
 
 				// update the row count
 				if (this._numberOfRows < rowCountOfSender)
@@ -2355,10 +2306,10 @@ namespace Altaxo.Data
 			else if (e is DataColumnCollection.ChangeEventArgs)
 			{
 				DataColumnCollection.ChangeEventArgs changeargs = (DataColumnCollection.ChangeEventArgs)e;
-				if (null == _changeData)
-					_changeData = changeargs;
+				if (null == _accumulatedEventData)
+					_accumulatedEventData = changeargs;
 				else
-					_changeData.Accumulate(changeargs);
+					_accumulatedEventData.Accumulate(changeargs);
 
 				// update the row count
 				if (this._numberOfRows < changeargs.MaxRowChanged)
@@ -2367,7 +2318,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
+		protected override bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
 		{
 			if (e is Main.ParentChangedEventArgs)
 			{
@@ -2389,61 +2340,7 @@ namespace Altaxo.Data
 				c.EhTunnelingEvent(this, source, e);
 		}
 
-		/// <summary>
-		/// Handle the change notification from the child data columns.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification.</param>
-		/// <param name="e">The change details.</param>
-		public void EhChildChanged(object sender, System.EventArgs e)
-		{
-			if (HandleImmediateChildChangeCases(sender, e))
-				return;
-
-			if (this.IsSuspended && sender is Main.ISuspendable)
-			{
-				_suspendedChilds.Add((Main.ISuspendable)sender); // add sender to suspended child
-				((Main.ISuspendable)sender).Suspend();
-				return;
-			}
-
-			AccumulateChildChangeData(sender, e);  // AccumulateNotificationData
-
-			if (_isResumeInProgress || IsSuspended)
-				return;
-
-			if (_parent is Main.IChildChangedEventSink)
-			{
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
-				if (IsSuspended) // maybe parent has suspended us now
-				{
-					this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					return;
-				}
-			}
-
-			OnDataChanged(); // Fire the changed event
-		}
-
-		/// <summary>
-		/// Fires the change event.
-		/// </summary>
-		/// <param name="e">The change details.</param>
-		protected virtual void OnChanged(ChangeEventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		/// <summary>
-		/// Fires the change event.
-		/// </summary>
-		protected virtual void OnDataChanged()
-		{
-			if (null != Changed)
-				Changed(this, _changeData);
-
-			_changeData = null;
-		}
+		#endregion Event handling
 
 		/// <summary>
 		/// Refreshes the row count by observing all columns.
@@ -2481,8 +2378,6 @@ namespace Altaxo.Data
 			this._numberOfRows = rowCount;
 			this._hasNumberOfRowsDecreased = false; // row count is now actual
 		}
-
-		#endregion Event handling
 
 		#region Automatic column naming
 
@@ -2635,59 +2530,61 @@ namespace Altaxo.Data
 
 			// now we can start by adding additional columns of the row count is greater
 			// than the column count
-			this.Suspend();
-			int originalrowcount = this.RowCount;
-			int originalcolcount = this.ColumnCount;
-			if (this.RowCount > this.ColumnCount)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				int addcols = this.RowCount - this.ColumnCount;
-				// this is a little tricky - we have to add the same type of
-				// column like the first one
-				System.Type coltype = this[0].GetType();
-				for (int ii = 0; ii < addcols; ii++)
+				int originalrowcount = this.RowCount;
+				int originalcolcount = this.ColumnCount;
+				if (this.RowCount > this.ColumnCount)
 				{
-					Altaxo.Data.DataColumn dt = (Altaxo.Data.DataColumn)Activator.CreateInstance(coltype);
-					this.Add(dt);
-				}
-			} // if RowCount>ColumnCount
-
-			// now we can exchange the data
-
-			int tocol;
-			int i, j;
-			if (originalcolcount >= originalrowcount)
-			{
-				for (i = 0; i < originalrowcount; i++)
-				{
-					for (j = i + 1; j < originalcolcount; j++)
+					int addcols = this.RowCount - this.ColumnCount;
+					// this is a little tricky - we have to add the same type of
+					// column like the first one
+					System.Type coltype = this[0].GetType();
+					for (int ii = 0; ii < addcols; ii++)
 					{
-						Altaxo.Data.AltaxoVariant hlp = this[j][i];
-						this[j][i] = this[i][j];
-						this[i][j] = hlp;
+						Altaxo.Data.DataColumn dt = (Altaxo.Data.DataColumn)Activator.CreateInstance(coltype);
+						this.Add(dt);
+					}
+				} // if RowCount>ColumnCount
+
+				// now we can exchange the data
+
+				int tocol;
+				int i, j;
+				if (originalcolcount >= originalrowcount)
+				{
+					for (i = 0; i < originalrowcount; i++)
+					{
+						for (j = i + 1; j < originalcolcount; j++)
+						{
+							Altaxo.Data.AltaxoVariant hlp = this[j][i];
+							this[j][i] = this[i][j];
+							this[i][j] = hlp;
+						}
 					}
 				}
-			}
-			else // originalrowcount>originalcolcount
-			{
-				tocol = originalcolcount;
-				for (i = 0; i < originalcolcount; i++)
+				else // originalrowcount>originalcolcount
 				{
-					for (j = i + 1; j < originalrowcount; j++)
+					tocol = originalcolcount;
+					for (i = 0; i < originalcolcount; i++)
 					{
-						Altaxo.Data.AltaxoVariant hlp = this[i][j];
-						this[i][j] = this[j][i];
-						this[j][i] = hlp;
+						for (j = i + 1; j < originalrowcount; j++)
+						{
+							Altaxo.Data.AltaxoVariant hlp = this[i][j];
+							this[i][j] = this[j][i];
+							this[j][i] = hlp;
+						}
 					}
 				}
-			}
 
-			// now we should delete the superfluous columns when originalcolcount>originalrowcount
-			if (originalcolcount > originalrowcount)
-			{
-				this.RemoveColumns(originalrowcount, originalcolcount - originalrowcount);
-			}
+				// now we should delete the superfluous columns when originalcolcount>originalrowcount
+				if (originalcolcount > originalrowcount)
+				{
+					this.RemoveColumns(originalrowcount, originalcolcount - originalrowcount);
+				}
 
-			this.Resume();
+				suspendToken.Dispose();
+			}
 
 			return null; // no error message
 		}

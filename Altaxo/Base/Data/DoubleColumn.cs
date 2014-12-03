@@ -115,7 +115,7 @@ namespace Altaxo.Data
 			_count = i < _count ? i : _count; // m_Count can only decrease
 
 			if (_count != prevCount) // raise a event only if something really changed
-				this.NotifyDataChanged(nDelFirstRow, prevCount, true);
+				this.EhSelfChanged(nDelFirstRow, prevCount, true);
 		}
 
 		public override void InsertRows(int nInsBeforeColumn, int nInsCount)
@@ -135,7 +135,7 @@ namespace Altaxo.Data
 				_data[i] = NullValue;
 
 			this._count = newlen;
-			this.NotifyDataChanged(nInsBeforeColumn, _count, false);
+			this.EhSelfChanged(nInsBeforeColumn, _count, false);
 		}
 
 		public override void CopyDataFrom(object o)
@@ -223,7 +223,7 @@ namespace Altaxo.Data
 			}
 
 			if (oldCount > 0 || _count > 0) // message only if really was a change
-				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
+				EhSelfChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
 		}
 
 		private void TrimEmptyElementsAtEnd()
@@ -390,7 +390,7 @@ namespace Altaxo.Data
 				_data = (double[])value.Clone();
 				this._count = _data.Length;
 				this._capacity = _data.Length;
-				this.NotifyDataChanged(0, _count, true);
+				this.EhSelfChanged(0, _count, true);
 			}
 		}
 
@@ -456,7 +456,7 @@ namespace Altaxo.Data
 				_count = srcarraycount;
 			}
 			if (oldCount > 0 || _count > 0) // message only if really was a change
-				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
+				EhSelfChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
 		}
 
 		/// <summary>
@@ -537,7 +537,7 @@ namespace Altaxo.Data
 				_count = srcarraycount;
 			}
 			if (oldCount > 0 || _count > 0) // message only if really was a change
-				NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
+				EhSelfChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
 		}
 
 		protected void Realloc(int i)
@@ -621,7 +621,7 @@ namespace Altaxo.Data
 						_count = i + 1;
 					}
 				}
-				NotifyDataChanged(i, i + 1, bCountDecreased);
+				EhSelfChanged(i, i + 1, bCountDecreased);
 			} // end set
 		} // end indexer
 

@@ -30,69 +30,12 @@ using System.Text;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Helper class to temporarily disable something, e.g. some events. By calling <see cref="Disable"/> one gets a disposable token, that,
-	/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="Disable"/>. In this case all tokens
-	/// must be disposed before the <see cref="IsEnabled"/> is again <c>true</c> and the re-enabling action is fired.
+	/// Helper class to temporarily disable something, e.g. some events. By calling <see cref="SuspendGetToken"/> one gets a disposable token, that,
+	/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="SuspendGetToken"/>. In this case all tokens
+	/// must be disposed before the <see cref="IsNotSuspended"/> is again <c>true</c> and the re-enabling action is fired.
 	/// </summary>
-	public class TemporaryDisabler
+	public class TemporaryDisabler : SuspendableLeafObject
 	{
-		#region Inner class SuppressToken
-
-		private class SuppressToken : IDisposable
-		{
-			private TemporaryDisabler _parent;
-
-			public SuppressToken(TemporaryDisabler parent)
-			{
-				System.Threading.Interlocked.Increment(ref parent._disablingLevel);
-				_parent = parent;
-			}
-
-			~SuppressToken()
-			{
-				Dispose();
-			}
-
-			/// <summary>
-			/// Disarms this SuppressToken so that it can not raise the suspend event anymore.
-			/// </summary>
-			public void Disarm()
-			{
-				var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
-				if (parent != null)
-				{
-					int newLevel = System.Threading.Interlocked.Decrement(ref _parent._disablingLevel);
-				}
-			}
-
-			#region IDisposable Members
-
-			public void Dispose()
-			{
-				var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
-				if (parent != null)
-				{
-					int newLevel = System.Threading.Interlocked.Decrement(ref parent._disablingLevel);
-
-					if (0 == newLevel)
-					{
-						parent.OnReenabling();
-					}
-					else if (newLevel < 0)
-					{
-						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
-					}
-				}
-			}
-
-			#endregion IDisposable Members
-		}
-
-		#endregion Inner class SuppressToken
-
-		/// <summary>How many times was the <see cref="Disable"/> function called (without disposing the tokens got in these calls)</summary>
-		private int _disablingLevel;
-
 		/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
 		private Action _reenablingEventHandler;
 
@@ -110,42 +53,10 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Increase the SuspendLevel.
-		/// </summary>
-		/// <returns>An object, which must be disposed in order to re-enabling again.
-		/// The most convenient way is to use a using statement with this function call
-		/// </returns>
-		public IDisposable Disable()
-		{
-			return new SuppressToken(this);
-		}
-
-		/// <summary>
-		/// Returns true when the disabling level is equal to zero (initial state).
-		/// Otherwise false.
-		/// </summary>
-		public bool IsEnabled { get { return _disablingLevel == 0; } }
-
-		/// <summary>
-		/// Returns true when the disabling level is greater than zero (after calling the <see cref="Disable"/> function).
-		/// Returns false if the disabling level is zero.
-		/// </summary>
-		public bool IsDisabled { get { return _disablingLevel != 0; } }
-
-		/// <summary>
-		/// Just fires the reenabling action that was given in the constructor,
-		/// without changing the disabling level.
-		/// </summary>
-		public void ReenableShortly()
-		{
-			OnReenabling();
-		}
-
-		/// <summary>
 		/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
 		/// Per default, the resume event handler is called that you provided in the constructor.
 		/// </summary>
-		protected virtual void OnReenabling()
+		protected virtual void OnResume()
 		{
 			if (_reenablingEventHandler != null)
 				_reenablingEventHandler();

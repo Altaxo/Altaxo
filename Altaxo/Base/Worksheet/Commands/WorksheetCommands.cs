@@ -64,12 +64,14 @@ namespace Altaxo.Worksheet.Commands
 
 			Altaxo.Data.TextColumn col = (Altaxo.Data.TextColumn)table.PropertyColumns.EnsureExistence(NameColumnName, typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label, 0);
 
-			col.Suspend();
-			for (int i = table.DataColumnCount - 1; i >= 0; i--)
+			using (var suspendToken = col.SuspendGetToken())
 			{
-				col[i] = table.DataColumns.GetColumnName(i);
+				for (int i = table.DataColumnCount - 1; i >= 0; i--)
+				{
+					col[i] = table.DataColumns.GetColumnName(i);
+				}
+				suspendToken.Resume();
 			}
-			col.Resume();
 		}
 
 		public static void Transpose(IWorksheetController ctrl)
