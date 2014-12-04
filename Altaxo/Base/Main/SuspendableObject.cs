@@ -34,15 +34,15 @@ namespace Altaxo.Main
 	/// fired only if some events have happened during the suspend period.</summary>
 	public class SuspendableObject : Main.ISuspendableByToken
 	{
-		#region Inner class SuppressToken
+		#region Inner class SuspendToken
 
 		private class SuspendToken : ISuspendToken
 		{
 			private SuspendableObject _parent;
 
-			public SuspendToken(SuspendableObject parent)
+			internal SuspendToken(SuspendableObject parent)
 			{
-				System.Threading.Interlocked.Increment(ref parent._suppressLevel);
+				System.Threading.Interlocked.Increment(ref parent._suspendLevel);
 				_parent = parent;
 			}
 
@@ -54,12 +54,31 @@ namespace Altaxo.Main
 			/// <summary>
 			/// Disarms this SuppressToken so that it can not raise the resume event anymore.
 			/// </summary>
-			public void Disarm()
+			public void ResumeSilently()
 			{
-				var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
-				if (parent != null)
 				{
-					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suppressLevel);
+					var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
+					if (parent != null)
+					{
+						int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
+						if (0 == newLevel)
+						{
+							System.Threading.Interlocked.Increment(ref parent._resumeInProgress);
+							try
+							{
+								parent.EhResumeSilently();
+							}
+							finally
+							{
+								System.Threading.Interlocked.Decrement(ref parent._resumeInProgress);
+							}
+						}
+						else if (newLevel < 0)
+						{
+							throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+						}
+					}
 				}
 			}
 
@@ -76,7 +95,7 @@ namespace Altaxo.Main
 				if (parent != null)
 				{
 					Exception exceptionInAboutToBeResumed = null;
-					if (1 == parent._suppressLevel)
+					if (1 == parent._suspendLevel)
 					{
 						try
 						{
@@ -88,7 +107,7 @@ namespace Altaxo.Main
 						}
 					}
 
-					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suppressLevel);
+					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 
 					if (0 == newLevel)
 					{
@@ -115,10 +134,10 @@ namespace Altaxo.Main
 			#endregion IDisposable Members
 		}
 
-		#endregion Inner class SuppressToken
+		#endregion Inner class SuspendToken
 
 		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
-		private int _suppressLevel;
+		private int _suspendLevel;
 
 		/// <summary>Counts the number of events during the suspend phase.</summary>
 		private int _eventCount;
@@ -127,18 +146,6 @@ namespace Altaxo.Main
 		/// If the resume operation is currently in progress, this member is <c>true</c>. Otherwise, it is false.
 		/// </summary>
 		private int _resumeInProgress;
-
-		/// <summary>
-		/// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
-		/// </summary>
-		/// <param name="resumeEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
-		/// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
-		/// and (ii) in that moment the _eventCount is &gt;0.
-		/// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting
-		/// during the suspend period.</remarks>
-		public SuspendableObject()
-		{
-		}
 
 		/// <summary>
 		/// Suspend will increase the SuspendLevel.
@@ -182,7 +189,7 @@ namespace Altaxo.Main
 			{
 				if (firingOfResumeEvent == EventFiring.Suppressed)
 				{
-					token.Disarm();
+					token.ResumeSilently();
 				}
 
 				result = _eventCount;
@@ -197,7 +204,7 @@ namespace Altaxo.Main
 		/// </summary>
 		public void ResumeShortly()
 		{
-			if (_suppressLevel != 0)
+			if (_suspendLevel != 0)
 				EhResume();
 		}
 
@@ -209,28 +216,34 @@ namespace Altaxo.Main
 		/// </value>
 		public bool IsResumeInProgress { get { return _resumeInProgress > 0; } }
 
-		public bool IsSuspendedOrResumeInProgress { get { return _resumeInProgress != 0 || _suppressLevel != 0; } }
+		public bool IsSuspendedOrResumeInProgress { get { return _resumeInProgress != 0 || _suspendLevel != 0; } }
 
-		public bool IsSuspended { get { return _suppressLevel != 0; } }
+		/// <summary>
+		/// Gets a value indicating whether this instance is suspended.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is suspended; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsSuspended { get { return _suspendLevel != 0; } }
 
 		/// <summary>
 		/// Returns true when the suppress level is equal to zero (initial state). Otherwise false.
 		/// Attention - this function does not increment the event counter.
 		/// </summary>
-		public bool PeekEnabled { get { return _suppressLevel == 0; } }
+		public bool PeekEnabled { get { return _suspendLevel == 0; } }
 
 		/// <summary>
 		/// Returns true when the suppress level is greater than zero (initial state). Returns false if the suppress level is zero.
 		/// Attention - this function does not increment the event counter.
 		/// </summary>
-		public bool PeekDisabled { get { return _suppressLevel != 0; } }
+		public bool PeekDisabled { get { return _suspendLevel != 0; } }
 
 		/// <summary>
 		/// Returns true when the suppress level is equal to zero (initial state). Otherwise false.
 		/// If the suppress level not zero, this function increases the event count by one.    /// </summary>
 		public bool GetEnabledWithCounting()
 		{
-			if (_suppressLevel != 0)
+			if (_suspendLevel != 0)
 			{
 				_eventCount++;
 				return false;
@@ -241,9 +254,12 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Counts the number of events during the suspend state. Every call to this function will increment the event counter by 1 (but only in the suspended state). The event counter will be reset to zero when the object is resumed.
+		/// </summary>
 		public void CountEvent()
 		{
-			if (_suppressLevel != 0)
+			if (_suspendLevel != 0)
 			{
 				_eventCount++;
 			}
@@ -255,7 +271,7 @@ namespace Altaxo.Main
 		/// </summary>
 		public bool GetDisabledWithCounting()
 		{
-			if (_suppressLevel != 0)
+			if (_suspendLevel != 0)
 			{
 				_eventCount++;
 				return true;
@@ -266,6 +282,11 @@ namespace Altaxo.Main
 			}
 		}
 
+		private void EhAboutToBeResumed()
+		{
+			OnAboutToBeResumed(_eventCount);
+		}
+
 		private void EhResume()
 		{
 			var oldEventCount = _eventCount;
@@ -273,25 +294,35 @@ namespace Altaxo.Main
 			OnResume(oldEventCount);
 		}
 
-		private void EhAboutToBeResumed()
+		private void EhResumeSilently()
 		{
-			OnAboutToBeResumed(_eventCount);
+			var oldEventCount = _eventCount;
+			_eventCount = 0;
+			OnResumeSilently(oldEventCount);
 		}
 
 		/// <summary>
-		/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
-		/// Per default, the resume event handler is called that you provided in the constructor.
+		/// Is called when the suspend level is still 1 (one), but is about to fall to zero, i.e. shortly before the call to <see cref="OnResume"/>. This function is not called before <see cref="OnResumeSilently"/>!
 		/// </summary>
-		/// <param name="eventCount">The event count.</param>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent"/> function was called during the suspended state.</param>
+		protected virtual void OnAboutToBeResumed(int eventCount)
+		{
+		}
+
+		/// <summary>
+		/// Is called when the suspend level falls down from 1 to zero  by a call to <see cref="ISuspendToken.Resume"/> or a call to <see cref="ISuspendToken.Dispose"/>.
+		/// </summary>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent"/> function was called during the suspended state.</param>
 		protected virtual void OnResume(int eventCount)
 		{
 		}
 
 		/// <summary>
-		/// Is called when the suppress level is still 1 (one), but is about to fall to zero.
+		/// Is called when the suspend level falls down from 1 to zero by a call to <see cref="ISuspendToken.ResumeSilently"/>.
+		/// The implementation should delete any accumulated events, should also disarm the suspendTokens of the childs of this object, and should not fire any Changed events nor set the change state of the object to dirty.
 		/// </summary>
-		/// <param name="eventCount">The event count.</param>
-		protected virtual void OnAboutToBeResumed(int eventCount)
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent"/> function was called during the suspended state.</param>
+		protected virtual void OnResumeSilently(int eventCount)
 		{
 		}
 	}

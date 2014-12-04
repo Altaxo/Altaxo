@@ -41,19 +41,21 @@ namespace Altaxo.Main
 	}
 
 	/// <summary>
-	/// Interface for a token that is used to suppress events. If the token is disposed, the suppress counter of the parent is decremented by one. If the suppress count of the parent
+	/// Interface for a token that is used to suspend events. By creating such a token, the suspend level of the parent object is incremented by one.
+	/// If the token is disposed, or by a call to Resume, the suspend level of the object is decremented by one. If the suspend level
 	/// falls to zero, the events are enabled again.
 	/// </summary>
 	public interface ISuspendToken : IDisposable
 	{
 		/// <summary>
-		/// Disarms this SuppressToken and decrements the supress count of the parent. Thus, when the suppress count falls to zero during this can,
-		/// the resume event is not fired, but events are enabled again.
+		/// Disarms this SuspendToken and decrements the suspend level of the parent object. If the suspend level falls to zero during this call,
+		/// the resume function is <b>not</b> called. Instead, usually another function (e.g. ResumeSilently) is called on the parent object to indicate that the object should be resumed without notifying that the object has changed.
 		/// </summary>
-		void Disarm();
+		void ResumeSilently();
 
 		/// <summary>
-		/// Resumes the instance that this suspend token is suspending. Resume has the same effect as Dispose and is introduced here for better clarity about the purpose only.
+		/// Decrements the suspend level of the parent object. If the suspend level falls to zero during this call,
+		/// the resume function is called. The object should then resume all child objects, and then indicate that it has changed to its parent and to any other listeners of the Change event.
 		/// </summary>
 		void Resume();
 	}

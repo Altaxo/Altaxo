@@ -11,7 +11,7 @@ namespace Altaxo.Main
 		protected object _parent;
 
 		/// <summary>Stores the suspend tokens of the suspended childs of this object.</summary>
-		protected HashSet<IDisposable> _suspendTokensOfChilds;
+		protected HashSet<ISuspendToken> _suspendTokensOfChilds = new HashSet<ISuspendToken>();
 
 		/// <summary>
 		/// Gets the accumulated event data.
@@ -49,36 +49,43 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Handles the case when a child changes, and a reaction is neccessary independently on the suspend state of the table.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
+		/// <param name="sender">The sender of the event, usually a child of this object.</param>
 		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
+		/// <returns>True if the event will not change the state of the object and the handling of the event is completely done. Thus, if returning <c>true</c>, the object is considered as 'not changed'.
+		/// If in doubt, return <c>false</c>. This will allow the further processing of the event.
+		/// </returns>
 		protected virtual bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
 		{
 			return false;
 		}
 
 		/// <summary>
-		/// Handles the cases when a child changes, but a reaction is neccessary only if the table is not suspended currently.
+		/// Processes the event args <paramref name="e"/> when this object is not suspended. This function serves two purposes:
+		/// i) updating some cached data of this object by processing the event args of the child,
+		/// and ii) optional transforming the event args, for instance to a new type, which afterwards is send to the parent and is used as event args in the <see cref="Change"/> event of this object.
+		/// The transformed event args is <b>not</b> used if this object is suspended (in this case the original event args is used).
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
+		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
+		/// <returns><c>True</c> if the event will not change this object, and further processing of the event is not neccessary.
+		/// If in doubt, return <c>false</c>. This will allow the further processing of the event.
+		/// </returns>
 		protected virtual bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
 			return false;
 		}
 
 		/// <summary>
-		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
+		/// Accumulates the change data of the child (sometimes also the change data of this object itself).
 		/// </summary>
-		/// <param name="sender">The sender of the change notification (currently unused).</param>
-		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
+		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
+		/// <param name="e">The change event args, that provide details of the change.</param>
 		protected abstract void AccumulateChangeData(object sender, EventArgs e);
 
 		/// <summary>
-		/// Used by childrens of the table to inform the table of a change in their data.
+		/// Used by childs of this object to inform us about a change in their state.
 		/// </summary>
-		/// <param name="sender">The sender of the change notification.</param>
+		/// <param name="sender">The sender of this event, usually a child of this object.</param>
 		/// <param name="e">The change details.</param>
 		public void EhChildChanged(object sender, System.EventArgs e)
 		{
@@ -87,37 +94,48 @@ namespace Altaxo.Main
 
 			if (!IsSuspendedOrResumeInProgress)
 			{
-				if (HandleLowPriorityChildChangeCases(sender, ref e))
+				EventArgs eventArgsTransformed = e;
+				if (HandleLowPriorityChildChangeCases(sender, ref eventArgsTransformed))
 					return;
 
 				// Notify parent
 				if (_parent is Main.IChildChangedEventSink)
 				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, eventArgsTransformed); // inform parent with transformed event args. Attention: parent may change our suspend state
 				}
 
 				if (!IsSuspendedOrResumeInProgress)
 				{
-					OnChanged(e); // Fire change event
+					OnChanged(eventArgsTransformed); // Fire change event with transformed event args
 					return;
 				}
 			}
 
-			// at this point we are suspended for sure
-			CountEvent();
-			if (sender is Main.ISuspendableByToken)
+			// at this point we are either suspended or resume is currently in progress
+			if (IsSuspended)
 			{
-				_suspendTokensOfChilds.Add(((Main.ISuspendableByToken)sender).SuspendGetToken()); // add sender to suspended child
+				CountEvent();
+				if (sender is Main.ISuspendableByToken)
+				{
+					if (null == _suspendTokensOfChilds)
+						_suspendTokensOfChilds = new HashSet<ISuspendToken>();
+					_suspendTokensOfChilds.Add(((Main.ISuspendableByToken)sender).SuspendGetToken()); // add sender to suspended child
+				}
+				else
+				{
+					AccumulateChangeData(sender, e);  // child is unable to accumulate change data, we have to to it by ourself
+				}
 			}
-			else
+			else // Resume is in Progress
 			{
-				AccumulateChangeData(sender, e);  // child is unable to accumulate change data, we have to to it by ourself
+				AccumulateChangeData(sender, e);  // child is sending us data, we accumulate them until resume is finished
 			}
 		}
 
 		/// <summary>
-		/// Called if some member of this instance itself has changed.
+		/// Called if some (simple) member or property of this instance itself has changed.
 		/// </summary>
+		/// <param name="e">The change details.</param>
 		protected void EhSelfChanged(EventArgs e)
 		{
 			if (!IsSuspendedOrResumeInProgress)
@@ -141,15 +159,19 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
-		/// Per default, the resume event handler is called that you provided in the constructor.
+		/// Is called when the object is resumed, i.e. change notifications are allowed again. During the execution of this function, the <see cref="SuspendableObject.IsResumeInProgress"/> property will return <c>true</c> to indicate that the resume is currently in progress.
 		/// </summary>
-		/// <param name="eventCount">The event count.</param>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="SuspendableObject.CountEvent"/> function was called during the suspend state.</param>
 		protected override void OnResume(int eventCount)
 		{
-			foreach (var obj in _suspendTokensOfChilds)
-				obj.Dispose();
-			_suspendTokensOfChilds.Clear();
+			// resume the suspended childs
+			var suspendTokensOfChilds = _suspendTokensOfChilds;
+			if (null != suspendTokensOfChilds)
+			{
+				_suspendTokensOfChilds = null;
+				foreach (var obj in suspendTokensOfChilds)
+					obj.Dispose();
+			}
 
 			// send accumulated data if available and release it thereafter
 			var accumulatedEvents = AccumulatedEventData.ToArray();
@@ -169,6 +191,25 @@ namespace Altaxo.Main
 						OnChanged(eventArg); // Fire the changed event
 				}
 			}
+		}
+
+		/// <summary>
+		/// Is called when the suspend level falls down from 1 to zero by a call to <see cref="ISuspendToken.ResumeSilently" />.
+		/// This implementation disarma the suspendTokens of the childs of this object, deletes any accumulated events, and does not send any change event to the parent or the listeners of the Change event.
+		/// </summary>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent" /> function was called during the suspended state.</param>
+		protected override void OnResumeSilently(int eventCount)
+		{
+			// resume the suspended childs
+			var suspendTokensOfChilds = _suspendTokensOfChilds;
+			if (null != suspendTokensOfChilds)
+			{
+				_suspendTokensOfChilds = null;
+				foreach (var obj in suspendTokensOfChilds)
+					obj.ResumeSilently();
+			}
+
+			AccumulatedEventData_Clear();
 		}
 
 		/// <summary>

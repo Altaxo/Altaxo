@@ -2285,51 +2285,87 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="sender">One of the columns of this collection.</param>
 		/// <param name="e">The change details.</param>
-		protected override void AccumulateChangeData(object sender, EventArgs e)
+		/// <param name="accumulatedEventData">The instance were the event arg e is accumulated. If this parameter is <c>null</c>, a new instance of <see cref="ChangeEventArgs"/> is created and returned into this parameter.</param>
+		protected void AccumulateChangeData(object sender, EventArgs e, ref ChangeEventArgs accumulatedEventData)
 		{
-			DataColumn.ChangeEventArgs changed = e as DataColumn.ChangeEventArgs;
-			if (changed != null && sender is DataColumn)
-			{
-				int columnNumberOfSender = GetColumnNumber((DataColumn)sender);
-				int rowCountOfSender = ((DataColumn)sender).Count;
+			DataColumn.ChangeEventArgs dataColumnChangeEventArgs = e as DataColumn.ChangeEventArgs;
+			DataColumnCollection.ChangeEventArgs dataColumnCollectionChangeEventArgs;
+			DataColumn senderAsDataColumn;
 
-				if (_accumulatedEventData == null)
-					_accumulatedEventData = new ChangeEventArgs(columnNumberOfSender, changed.MinRowChanged, changed.MaxRowChanged, changed.RowCountDecreased);
+			if (null != (senderAsDataColumn = sender as DataColumn) && (null != (dataColumnChangeEventArgs = e as DataColumn.ChangeEventArgs))) // ChangeEventArgs from a DataColumn
+			{
+				int columnNumberOfSender = GetColumnNumber(senderAsDataColumn);
+				int rowCountOfSender = senderAsDataColumn.Count;
+
+				if (accumulatedEventData == null)
+					accumulatedEventData = new ChangeEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.RowCountDecreased);
 				else
-					_accumulatedEventData.Accumulate(columnNumberOfSender, changed.MinRowChanged, changed.MaxRowChanged, changed.RowCountDecreased);
+					accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.RowCountDecreased);
 
 				// update the row count
 				if (this._numberOfRows < rowCountOfSender)
 					_numberOfRows = rowCountOfSender;
-				this._hasNumberOfRowsDecreased |= changed.RowCountDecreased;
+				this._hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.RowCountDecreased;
 			}
-			else if (e is DataColumnCollection.ChangeEventArgs)
+			else if (null != (dataColumnCollectionChangeEventArgs = e as DataColumnCollection.ChangeEventArgs)) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
 			{
-				DataColumnCollection.ChangeEventArgs changeargs = (DataColumnCollection.ChangeEventArgs)e;
-				if (null == _accumulatedEventData)
-					_accumulatedEventData = changeargs;
+				if (null == accumulatedEventData)
+					accumulatedEventData = dataColumnCollectionChangeEventArgs;
 				else
-					_accumulatedEventData.Accumulate(changeargs);
+					accumulatedEventData.Accumulate(dataColumnCollectionChangeEventArgs);
 
 				// update the row count
-				if (this._numberOfRows < changeargs.MaxRowChanged)
-					this._numberOfRows = changeargs.MaxRowChanged;
-				this._hasNumberOfRowsDecreased |= changeargs.RowCountDecreased;
+				if (this._numberOfRows < dataColumnCollectionChangeEventArgs.MaxRowChanged)
+					this._numberOfRows = dataColumnCollectionChangeEventArgs.MaxRowChanged;
+				this._hasNumberOfRowsDecreased |= dataColumnCollectionChangeEventArgs.RowCountDecreased;
 			}
+		}
+
+		/// <summary>
+		/// Accumulates the changes reported by the DataColumns.
+		/// </summary>
+		/// <param name="sender">One of the columns of this collection.</param>
+		/// <param name="e">The change details.</param>
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			AccumulateChangeData(sender, e, ref _accumulatedEventData);
 		}
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
 		{
-			if (e is Main.ParentChangedEventArgs)
+			Main.ParentChangedEventArgs parentChangedEventArgs;
+			if (null != (parentChangedEventArgs = e as Main.ParentChangedEventArgs))
 			{
-				Main.ParentChangedEventArgs pce = (Main.ParentChangedEventArgs)e;
-				if (object.ReferenceEquals(this, pce.OldParent) && this.ContainsColumn((DataColumn)sender))
+				if (object.ReferenceEquals(this, parentChangedEventArgs.OldParent) && this.ContainsColumn((DataColumn)sender))
 					this.RemoveColumn((DataColumn)sender);
-				else if (object.ReferenceEquals(this, pce.NewParent) && !this.ContainsColumn((DataColumn)sender))
+				else if (object.ReferenceEquals(this, parentChangedEventArgs.NewParent) && !this.ContainsColumn((DataColumn)sender))
 					throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
 
 				return true;
 			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Handles the cases when a child changes, but a reaction is neccessary only if the table is not suspended currently.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+		/// <returns>
+		/// True if the event has not changed the state of the table (i.e. it requires no further action).
+		/// </returns>
+		/// <remarks>
+		/// This instance is always sending EventArgs of type <see cref="ChangeEventArgs"/>. This means, that event args of any other type should be transformed in <see cref="ChangeEventArgs"/>.
+		/// </remarks>
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (e is ChangeEventArgs) // Are the data from ourself? (we have already ChangeEventArgs)
+				return false;  // then nothing is to do
+
+			ChangeEventArgs result = null;
+			AccumulateChangeData(sender, e, ref result); // Get ChangeEventArgs in the result.
+			e = result;
 
 			return false;
 		}

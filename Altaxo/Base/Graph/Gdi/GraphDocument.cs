@@ -424,7 +424,7 @@ typeof(GraphDocument),
 
 				CopyFrom(from, GraphCopyOptions.All);
 
-				suppressToken.Disarm();
+				suppressToken.ResumeSilently();
 			}
 		}
 

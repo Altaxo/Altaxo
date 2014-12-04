@@ -112,6 +112,11 @@ namespace Altaxo.Main
 			}
 		}
 
+		protected override void OnResumeSilently()
+		{
+			_accumulatedEventData = null;
+		}
+
 		/// <summary>
 		/// Fires the change event with the EventArgs provided in the argument.
 		/// </summary>

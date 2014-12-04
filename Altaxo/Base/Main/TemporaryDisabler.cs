@@ -56,7 +56,7 @@ namespace Altaxo.Main
 		/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
 		/// Per default, the resume event handler is called that you provided in the constructor.
 		/// </summary>
-		protected virtual void OnResume()
+		protected override void OnResume()
 		{
 			if (_reenablingEventHandler != null)
 				_reenablingEventHandler();
