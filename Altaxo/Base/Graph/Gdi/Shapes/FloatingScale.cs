@@ -200,7 +200,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_scaleSegmentType = value;
 				if (oldValue != value)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_tickSpacing = (TickSpacing)value.Clone();
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -269,7 +269,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var oldValue = _backgroundPadding;
 				_backgroundPadding = value;
 				if (!value.Equals(oldValue))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var oldValue = _background;
 				_background = value;
 				if (!object.ReferenceEquals(value, oldValue))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -374,7 +374,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Floating scale properties", true);
-			((FloatingScale)hitted).OnChanged();
+			((FloatingScale)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 

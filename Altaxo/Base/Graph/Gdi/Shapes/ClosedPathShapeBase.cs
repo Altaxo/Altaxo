@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_linePen = (PenX)value.Clone();
 				_linePen.Changed += this.EhChildChanged;
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				_fillBrush = (BrushX)value.Clone();
 				_fillBrush.Changed += this.EhChildChanged;
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -164,7 +164,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Shape properties", true);
-			((ClosedPathShapeBase)hitted).OnChanged();
+			((ClosedPathShapeBase)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 	} //  End Class

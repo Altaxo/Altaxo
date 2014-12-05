@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				if (_hasMoved)
 				{
-					GraphObject.OnChanged();
+					GraphObject.EhSelfChanged(EventArgs.Empty);
 				}
 
 				return false;

@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				value = Math.Min(value, float.MaxValue);
 				_tension = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -194,10 +194,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			for (int i = 0; i < _curvePoints.Count; i++)
 				_curvePoints[i] -= bounds.Location;
 
-			using (var token = _eventSuppressor.SuspendGetToken())
+			using (var token = SuspendGetToken())
 			{
 				this.ShiftPosition(bounds.Location);
 				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size);
+
+				token.Resume();
 			}
 		}
 
@@ -271,7 +273,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Line properties", true);
-			((OpenCardinalSpline)hitted).OnChanged();
+			((OpenCardinalSpline)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 
@@ -365,7 +367,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override bool Deactivate()
 			{
 				var obj = (OpenCardinalSpline)GraphObject;
-				using (var token = obj._eventSuppressor.SuspendGetToken())
+				using (var token = obj.SuspendGetToken())
 				{
 					int otherPointIndex = _pointNumber == 0 ? 1 : 0;
 					PointD2D oldOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + _offset); // transformiere in ParentCoordinaten
@@ -375,6 +377,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 					obj.UpdateTransformationMatrix();
 					PointD2D newOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + obj.Location.AbsoluteVectorPivotToLeftUpper);
 					obj.ShiftPosition(oldOtherPointCoord - newOtherPointCoord);
+
+					token.Resume();
 				}
 				return false;
 			}

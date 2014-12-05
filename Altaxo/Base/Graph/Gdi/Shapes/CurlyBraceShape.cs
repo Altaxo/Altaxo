@@ -202,7 +202,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Graphics properties", true);
-			((CurlyBraceShape)hitted).OnChanged();
+			((CurlyBraceShape)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 

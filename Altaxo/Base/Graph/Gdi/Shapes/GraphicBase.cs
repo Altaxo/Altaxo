@@ -37,11 +37,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 	[Serializable]
 	public abstract partial class GraphicBase
 		:
-		Altaxo.Graph.Gdi.Shapes.IGraphicBase,
-		Main.IChildChangedEventSink
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
+		Altaxo.Graph.Gdi.Shapes.IGraphicBase
 	{
-		protected Main.EventSuppressor _eventSuppressor;
-
 		/// <summary>
 		/// The size of the parent object.
 		/// </summary>
@@ -56,15 +54,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		/// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
 		protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
-
-		/// <summary>
-		/// The parent collection this graphical object belongs to.
-		/// </summary>
-		[NonSerialized]
-		protected object _parent;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -310,7 +299,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null == location)
 				throw new ArgumentNullException("location");
 
-			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
 			_location = location;
 			_location.ParentObject = this;
 		}
@@ -320,7 +308,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null == from)
 				throw new ArgumentNullException("from");
 
-			_eventSuppressor = new Main.EventSuppressor(EhFireChangeEvent);
 			_location = from._location.Clone();
 			_location.ParentObject = this;
 
@@ -335,20 +322,31 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null == from)
 				return false;
 
-			this._cachedParentSize = from._cachedParentSize;
-			this._location.CopyFrom(from._location);
-			bool wasUsed = (null != this._parent);
-			this._parent = from._parent;
-			this.UpdateTransformationMatrix();
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._cachedParentSize = from._cachedParentSize;
+				this._location.CopyFrom(from._location);
+				bool wasUsed = (null != this._parent);
+				this._parent = from._parent;
+				this.UpdateTransformationMatrix();
 
-			if (wasUsed)
-				OnChanged();
+				if (wasUsed)
+				{
+					_accumulatedEventData = EventArgs.Empty;
+					suspendToken.Resume();
+				}
+				else
+				{
+					suspendToken.ResumeSilently();
+				}
+			}
+
 			return true;
 		}
 
-		public Main.ISuspendToken SuspendGetToken()
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			return _eventSuppressor.SuspendGetToken();
+			_accumulatedEventData = EventArgs.Empty;
 		}
 
 		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
@@ -361,7 +359,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				UpdateTransformationMatrix(); // update the matrix in every case
 
 				if (shouldTriggerChangeEvent)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -550,7 +548,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_location.SetAbsoluteSize(new PointD2D(width, height), eventFiring);
 
 			if (eventFiring == Main.EventFiring.Enabled && (width != oldWidth || height != oldHeight))
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -697,34 +695,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="g">Graphics context.</param>
 		/// <param name="obj">Additional information used to draw the object.</param>
 		public abstract void Paint(Graphics g, object obj);
-
-		#region IChangedEventSource Members
-
-		protected virtual void EhFireChangeEvent()
-		{
-			UpdateTransformationMatrix();
-
-			if (this._parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, new Main.ChangedEventArgs(this, null));
-
-			if (null != Changed)
-				Changed(this, new Main.ChangedEventArgs(this, null));
-		}
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_eventSuppressor.GetEnabledWithCounting())
-			{
-				EhFireChangeEvent();
-			}
-		}
-
-		#endregion IChangedEventSource Members
 
 		/// <summary>
 		/// Creates a cloned copy of this object.
@@ -969,8 +939,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.SuspendGetToken();
-			try
+			using (var suspendToken = SuspendGetToken())
 			{
 				var dx = relDrawGrip.X - fixrPosition.X;
 				var dy = relDrawGrip.Y - fixrPosition.Y;
@@ -991,10 +960,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				PointD2D currPos = GetPosition();
 				this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
 				UpdateTransformationMatrix();
-			}
-			finally
-			{
-				_eventSuppressor.Resume(ref token, eventFiring);
+
+				suspendToken.Resume(eventFiring);
 			}
 		}
 
@@ -1008,8 +975,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetRotationFrom(PointD2D relPivot, PointD2D absPivot, PointD2D relDrawGrip, PointD2D diff, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.SuspendGetToken();
-			try
+			using (var token = SuspendGetToken())
 			{
 				double dx = (relDrawGrip.X - relPivot.X) * Width * ScaleX
 									+ (relDrawGrip.Y - relPivot.Y) * Height * ScaleY * Shear;
@@ -1024,17 +990,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var currPos = this.GetPosition();
 				this.SetPosition(new PointD2D(currPos.X + absPivot.X - currFixaPos.X, currPos.Y + absPivot.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
 				UpdateTransformationMatrix();
-			}
-			finally
-			{
-				_eventSuppressor.Resume(ref token, eventFiring);
+
+				token.Resume(eventFiring);
 			}
 		}
 
 		public void SetScalesFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.SuspendGetToken();
-			try
+			using (var token = SuspendGetToken())
 			{
 				double newScaleX = this.ScaleX;
 				double newScaleY = this.ScaleY;
@@ -1057,17 +1020,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var currPos = this.GetPosition();
 				this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
 				UpdateTransformationMatrix();
-			}
-			finally
-			{
-				_eventSuppressor.Resume(ref token, eventFiring);
+
+				token.Resume(eventFiring);
 			}
 		}
 
 		public void SetShearFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialRotation, double initialShear, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.SuspendGetToken();
-			try
+			using (var token = SuspendGetToken())
 			{
 				var newShear = this.Shear;
 				var newRot = this.Rotation;
@@ -1107,17 +1067,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var currPos = this.GetPosition();
 				this.SetPosition(new PointD2D(currPos.X + fixaPosition.X - currFixaPos.X, currPos.Y + fixaPosition.Y - currFixaPos.Y), Main.EventFiring.Suppressed);
 				UpdateTransformationMatrix();
-			}
-			finally
-			{
-				_eventSuppressor.Resume(ref token, eventFiring);
+
+				token.Resume(eventFiring);
 			}
 		}
 
 		protected internal void SetCoordinatesByAppendTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.SuspendGetToken();
-			try
+			using (var token = SuspendGetToken())
 			{
 				var loctransform = _transformation.Clone(); // because the _transformation member will be overwritten when setting Position, Rotation, Scale and so on, we create a copy of it
 				loctransform.AppendTransform(transform);
@@ -1125,27 +1082,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 				this.Rotation = -loctransform.Rotation;
 				this.Scale = new PointD2D(loctransform.ScaleX, loctransform.ScaleY);
 				this.Shear = loctransform.Shear;
-			}
-			finally
-			{
-				_eventSuppressor.Resume(ref token, eventFiring);
+
+				token.Resume(eventFiring);
 			}
 		}
 
 		protected internal void SetCoordinatesByAppendInverseTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.SuspendGetToken();
-			try
+			using (var token = SuspendGetToken())
 			{
 				_transformation.AppendInverseTransform(transform);
 				this.SetPosition(new PointD2D(_transformation.X, _transformation.Y), eventFiring);
 				this.Rotation = -_transformation.Rotation;
 				this.Scale = new PointD2D(_transformation.ScaleX, _transformation.ScaleY);
 				this.Shear = _transformation.Shear;
-			}
-			finally
-			{
-				_eventSuppressor.Resume(ref token, eventFiring);
+
+				token.Resume(eventFiring);
 			}
 		}
 
@@ -1391,15 +1343,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public virtual string Name
+		public override string Name
 		{
 			get { return this.GetType().ToString(); }
+			set
+			{
+				throw new InvalidOperationException("It is not possible to set a name for an instance of this type:" + this.GetType().FullName);
+			}
 		}
 
 		#endregion IDocumentNode Members

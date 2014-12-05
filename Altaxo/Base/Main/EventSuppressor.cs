@@ -58,6 +58,12 @@ namespace Altaxo.Main
 		/// the resume function is called. The object should then resume all child objects, and then indicate that it has changed to its parent and to any other listeners of the Change event.
 		/// </summary>
 		void Resume();
+
+		/// <summary>
+		/// Either resumes the parent object of this token (using <see cref="Resume"/>), or resumes silently (using <see cref="ResumeSilently"/>), depending on the provided argument.
+		/// </summary>
+		/// <param name="eventFiring">Determines whether <see cref="Resume"/> is used, or <see cref="ResumeSilently"/>.</param>
+		void Resume(EventFiring eventFiring);
 	}
 
 	/// <summary>Helper class to suspend and resume change events (or other events). In contrast to the simpler class <see cref="TemporaryDisabler"/>,

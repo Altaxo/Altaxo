@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Line properties", true);
-			((LineShape)hitted).OnChanged();
+			((LineShape)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 

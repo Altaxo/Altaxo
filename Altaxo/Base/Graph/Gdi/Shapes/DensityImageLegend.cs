@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private void EhPlotItemStyleChanged(object sender, EventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public bool IsOrientationVertical
@@ -488,7 +488,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public new void EhChildChanged(object child, EventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		#endregion IChildChangedEventSink Members

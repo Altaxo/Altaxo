@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_vertices = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -168,7 +168,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_cornerRadius = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}

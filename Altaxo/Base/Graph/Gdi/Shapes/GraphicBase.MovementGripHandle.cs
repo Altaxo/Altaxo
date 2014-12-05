@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public bool Deactivate()
 			{
 				if (_hasMoved)
-					((GraphicBase)_parent.HittedObject).OnChanged();
+					((GraphicBase)_parent.HittedObject).EhSelfChanged(EventArgs.Empty);
 
 				var ht = _parent as GraphicBaseHitTestObject;
 				if (null != ht && !_hasMoved && !_wasActivatedUponCreation)

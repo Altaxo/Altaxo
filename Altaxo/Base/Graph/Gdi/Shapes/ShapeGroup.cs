@@ -231,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Shape group properties", true);
-			((ShapeGroup)hitted).OnChanged();
+			((ShapeGroup)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_groupedObjects.Add(obj);
 			obj.ParentObject = this;
 			AdjustPosition();
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -267,7 +267,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				obj.ParentObject = this;
 			}
 			AdjustPosition();
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>Gets access to the grouped objects. This function has to be used with care. No size/position update of the ShapeGroup is done if the position/size/rotation/share values of one of the grouped objects is changed.

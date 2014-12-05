@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public bool Deactivate()
 			{
 				if (_hasMoved)
-					GraphObject.OnChanged();
+					GraphObject.EhSelfChanged(EventArgs.Empty);
 
 				return false;
 			}

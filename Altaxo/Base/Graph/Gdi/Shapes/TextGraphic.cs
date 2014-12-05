@@ -510,7 +510,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (value != oldValue)
 				{
 					_isStructureInSync = false; // TODO: LineSpacing should not affect the structure, but only the measurement
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -695,7 +695,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					{
 						var prop = (RoutedSetterProperty<double>)property;
 						this.Font = _font.GetFontWithNewSize(prop.Value);
-						OnChanged();
+						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
 
@@ -707,7 +707,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							var newFont = _font.GetFontWithNewFamily(prop.Value);
 							_font = newFont;
 							_isStructureInSync = false;
-							OnChanged();
+							EhSelfChanged(EventArgs.Empty);
 						}
 						catch (Exception)
 						{

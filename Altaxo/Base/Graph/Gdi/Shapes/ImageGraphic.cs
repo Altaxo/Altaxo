@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			object hitted = o.HittedObject;
 			Current.Gui.ShowDialog(ref hitted, "Image properties", true);
-			((ImageGraphic)hitted).OnChanged();
+			((ImageGraphic)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
 

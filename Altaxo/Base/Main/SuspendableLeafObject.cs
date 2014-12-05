@@ -59,6 +59,23 @@ namespace Altaxo.Main
 				Dispose();
 			}
 
+			public void Resume(EventFiring eventFiring)
+			{
+				switch (eventFiring)
+				{
+					case EventFiring.Enabled:
+						Resume();
+						break;
+
+					case EventFiring.Suppressed:
+						ResumeSilently();
+						break;
+
+					default:
+						throw new NotImplementedException(string.Format("Unknown option: {0}", eventFiring));
+				}
+			}
+
 			#region IDisposable Members
 
 			public void Dispose()
