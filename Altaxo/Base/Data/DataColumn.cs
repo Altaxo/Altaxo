@@ -65,76 +65,6 @@ namespace Altaxo.Data
 		/// </remarks>
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
-		#region ChangeEventArgs
-
-		/// <summary>
-		/// Stores the accumulated change data of a column.
-		/// </summary>
-		public class ChangeEventArgs : System.EventArgs
-		{
-			/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
-			protected int m_MinRowChanged;
-
-			/// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
-			/// i.e. the value of this member is the maximum row number that changed plus one.</summary>
-			protected int m_MaxRowChanged;
-
-			/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
-			/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
-			protected bool m_RowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="minRow">Lower bound of the area of rows, which changed-</param>
-			/// <param name="maxRow">Upper bound (plus one) of the area of rows, which changed.</param>
-			/// <param name="rowCountDecreased">Indicates, if the row count decreased during the data change.</param>
-			public ChangeEventArgs(int minRow, int maxRow, bool rowCountDecreased)
-			{
-				m_MinRowChanged = minRow;
-				m_MaxRowChanged = maxRow;
-				m_RowCountDecreased = rowCountDecreased;
-			}
-
-			/// <summary>
-			/// Accumulates further data changes of a column into a already created object.
-			/// </summary>
-			/// <param name="minRow">Lower bound of the area of rows, which changed-</param>
-			/// <param name="maxRow">Upper bound (plus one) of the area of rows, which changed.</param>
-			/// <param name="rowCountDecreased">Indicates, if the row count decreased during the data change.</param>
-			public void Accumulate(int minRow, int maxRow, bool rowCountDecreased)
-			{
-				if (minRow < m_MinRowChanged)
-					m_MinRowChanged = minRow;
-				if (maxRow > m_MaxRowChanged)
-					m_MaxRowChanged = maxRow;
-
-				m_RowCountDecreased |= rowCountDecreased;
-			}
-
-			/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
-			public int MinRowChanged
-			{
-				get { return m_MinRowChanged; }
-			}
-
-			/// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
-			/// i.e. the value of this member is the maximum row number that changed plus one.</summary>
-			public int MaxRowChanged
-			{
-				get { return m_MaxRowChanged; }
-			}
-
-			/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
-			/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
-			public bool RowCountDecreased
-			{
-				get { return m_RowCountDecreased; }
-			}
-		}
-
-		#endregion ChangeEventArgs
-
 		#region Serialization
 
 		/// <summary>
@@ -446,14 +376,14 @@ namespace Altaxo.Data
 		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			var ea = e as ChangeEventArgs;
+			var ea = e as DataColumnChangedEventArgs;
 			if (null == ea)
 				throw new ArgumentException("ChangeEventArgs expected in argument e");
 
 			if (_accumulatedEventData == null)
 				_accumulatedEventData = ea;
 			else
-				((DataColumn.ChangeEventArgs)_accumulatedEventData).Accumulate(ea.MinRowChanged, ea.MaxRowChanged, ea.RowCountDecreased);
+				((DataColumnChangedEventArgs)_accumulatedEventData).Accumulate(ea.MinRowChanged, ea.MaxRowChanged, ea.HasRowCountDecreased);
 		}
 
 		/// <summary>
@@ -466,9 +396,9 @@ namespace Altaxo.Data
 		protected void AccumulateChangeData(int minRow, int maxRow, bool rowCountDecreased)
 		{
 			if (_accumulatedEventData == null)
-				_accumulatedEventData = new DataColumn.ChangeEventArgs(minRow, maxRow, rowCountDecreased);
+				_accumulatedEventData = new DataColumnChangedEventArgs(minRow, maxRow, rowCountDecreased);
 			else
-				((DataColumn.ChangeEventArgs)_accumulatedEventData).Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
+				((DataColumnChangedEventArgs)_accumulatedEventData).Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
 		}
 
 		/// <summary>
@@ -484,7 +414,7 @@ namespace Altaxo.Data
 
 			if (!IsSuspended)
 			{
-				var e = new ChangeEventArgs(minRow, maxRow, rowCountDecreased);
+				var e = new DataColumnChangedEventArgs(minRow, maxRow, rowCountDecreased);
 				// Notify parent
 				if (_parent is Main.IChildChangedEventSink)
 				{

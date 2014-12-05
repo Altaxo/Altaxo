@@ -30,118 +30,17 @@ using System.Collections.Generic;
 namespace Altaxo.Main.Properties
 {
 	public class ProjectFolderPropertyDocumentCollection :
-		Main.SuspendableDocumentNode,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<ProjectFolderPropertyDocumentCollectionChangedEventArgs>,
 		IEnumerable<ProjectFolderPropertyDocument>,
 		Altaxo.Main.IDocumentNode,
 		Altaxo.Main.IChangedEventSource,
 		Altaxo.Main.IChildChangedEventSink,
 		Altaxo.Main.INamedObjectCollection
 	{
-		#region ChangedEventArgs
-
-		/// <summary>
-		/// Holds information about what has changed in the table.
-		/// </summary>
-		protected class ChangedEventArgs : System.EventArgs
-		{
-			/// <summary>
-			/// If true, one or more tables where added.
-			/// </summary>
-			public bool ItemAdded;
-
-			/// <summary>
-			/// If true, one or more table where removed.
-			/// </summary>
-			public bool ItemRemoved;
-
-			/// <summary>
-			/// If true, one or more tables where renamed.
-			/// </summary>
-			public bool ItemRenamed;
-
-			/// <summary>
-			/// Empty constructor.
-			/// </summary>
-			public ChangedEventArgs()
-			{
-			}
-
-			/// <summary>
-			/// Returns an empty instance.
-			/// </summary>
-			public static new ChangedEventArgs Empty
-			{
-				get { return new ChangedEventArgs(); }
-			}
-
-			/// <summary>
-			/// Returns an instance with TableAdded set to true;.
-			/// </summary>
-			public static ChangedEventArgs IfItemAdded
-			{
-				get
-				{
-					ChangedEventArgs e = new ChangedEventArgs();
-					e.ItemAdded = true;
-					return e;
-				}
-			}
-
-			/// <summary>
-			/// Returns an instance with TableRemoved set to true.
-			/// </summary>
-			public static ChangedEventArgs IfItemRemoved
-			{
-				get
-				{
-					ChangedEventArgs e = new ChangedEventArgs();
-					e.ItemRemoved = true;
-					return e;
-				}
-			}
-
-			/// <summary>
-			/// Returns an  instance with TableRenamed set to true.
-			/// </summary>
-			public static ChangedEventArgs IfItemRenamed
-			{
-				get
-				{
-					ChangedEventArgs e = new ChangedEventArgs();
-					e.ItemRenamed = true;
-					return e;
-				}
-			}
-
-			/// <summary>
-			/// Merges information from another instance in this ChangedEventArg.
-			/// </summary>
-			/// <param name="from"></param>
-			public void Merge(ChangedEventArgs from)
-			{
-				this.ItemAdded |= from.ItemAdded;
-				this.ItemRemoved |= from.ItemRemoved;
-				this.ItemRenamed |= from.ItemRenamed;
-			}
-
-			/// <summary>
-			/// Returns true when the collection has changed (addition, removal or renaming of tables).
-			/// </summary>
-			public bool CollectionChanged
-			{
-				get { return ItemAdded | ItemRemoved | ItemRenamed; }
-			}
-		}
-
-		#endregion ChangedEventArgs
-
 		// Data
 		protected SortedDictionary<string, ProjectFolderPropertyDocument> _itemsByName = new SortedDictionary<string, ProjectFolderPropertyDocument>();
 
 		protected bool _isDirty = false;
-
-		[NonSerialized]
-		protected ChangedEventArgs _accumulatedEventData = null;
 
 		// Events
 
@@ -149,12 +48,6 @@ namespace Altaxo.Main.Properties
 		/// Fired when one or more graphs are added, deleted or renamed. Not fired when content in the graph has changed.
 		/// </summary>
 		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
-
-		#region IChangedEventSource Members
-
-		public event System.EventHandler Changed;
-
-		#endregion IChangedEventSource Members
 
 		public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
 		{
@@ -224,7 +117,7 @@ namespace Altaxo.Main.Properties
 			_itemsByName.Add(item.Name, item);
 			item.ParentObject = this;
 			item.NameChanged += EhChild_NameChanged;
-			this.EhSelfChanged(ChangedEventArgs.IfItemAdded);
+			this.EhSelfChanged(ProjectFolderPropertyDocumentCollectionChangedEventArgs.IfItemAdded);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, item, item.Name);
 		}
 
@@ -242,7 +135,7 @@ namespace Altaxo.Main.Properties
 					_itemsByName.Remove(item.Name);
 					item.ParentObject = null;
 					item.NameChanged -= EhChild_NameChanged;
-					this.EhSelfChanged(ChangedEventArgs.IfItemRemoved);
+					this.EhSelfChanged(ProjectFolderPropertyDocumentCollectionChangedEventArgs.IfItemRemoved);
 					OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, item, item.Name);
 				}
 			}
@@ -259,7 +152,7 @@ namespace Altaxo.Main.Properties
 			}
 			_itemsByName.Remove(oldName);
 			_itemsByName[item.Name] = (ProjectFolderPropertyDocument)item;
-			this.EhSelfChanged(ChangedEventArgs.IfItemRenamed);
+			this.EhSelfChanged(ProjectFolderPropertyDocumentCollectionChangedEventArgs.IfItemRenamed);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
 		}
 
@@ -284,27 +177,13 @@ namespace Altaxo.Main.Properties
 
 		#region Change event handling
 
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
-
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			if (_accumulatedEventData == null)
-				this._accumulatedEventData = ChangedEventArgs.Empty;
+				this._accumulatedEventData = ProjectFolderPropertyDocumentCollectionChangedEventArgs.Empty;
 
-			if (e is ChangedEventArgs)
-				_accumulatedEventData.Merge((ChangedEventArgs)e);
+			if (e is ProjectFolderPropertyDocumentCollectionChangedEventArgs)
+				_accumulatedEventData.Merge((ProjectFolderPropertyDocumentCollectionChangedEventArgs)e);
 		}
 
 		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)

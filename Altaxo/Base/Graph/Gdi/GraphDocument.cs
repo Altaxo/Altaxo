@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Gdi
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
 	public class GraphDocument
 		:
-		Main.SuspendableDocumentNode,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IProjectItem,
 		System.ICloneable,
 		IChangedEventSource,
@@ -217,8 +217,6 @@ typeof(GraphDocument),
 		/// <summary>The root layer size, cached here only for deciding whether to raise the <see cref="SizeChanged"/> event. Do not use it otherwise.</summary>
 		[NonSerialized]
 		private PointD2D _cachedRootLayerSize;
-
-		protected System.EventArgs _accumulatedEventData;
 
 		#region "Serialization"
 
@@ -799,20 +797,6 @@ typeof(GraphDocument),
 		protected internal virtual void OnInvalidate(XYPlotLayer sender)
 		{
 			EhSelfChanged(EventArgs.Empty);
-		}
-
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
 		}
 
 		protected override void AccumulateChangeData(object sender, EventArgs e)

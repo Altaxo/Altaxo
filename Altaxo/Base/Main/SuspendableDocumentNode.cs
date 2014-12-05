@@ -5,6 +5,11 @@ using System.Text;
 
 namespace Altaxo.Main
 {
+	/// <summary>
+	/// Base class for a suspendable document node.
+	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+	/// </summary>
+	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableLeafDocumentNode"/> instead.</remarks>
 	public abstract class SuspendableDocumentNode : Main.SuspendableObject, Main.IDocumentNode, Main.IChangedEventSource, Main.IChildChangedEventSink
 	{
 		/// <summary>The parent of this object.</summary>
@@ -231,5 +236,86 @@ namespace Altaxo.Main
 		/// The name of this document node.
 		/// </value>
 		public abstract string Name { get; set; }
+	}
+
+	/// <summary>
+	/// Base class for a suspendable document node. This class stores a single object to accumulate event data.
+	/// This class supports document nodes that have children,
+	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+	/// </summary>
+	/// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
+	public abstract class SuspendableDocumentNodeWithSingleAccumulatedData<T> : SuspendableDocumentNode where T : EventArgs
+	{
+		/// <summary>
+		/// Holds the accumulated change data.
+		/// </summary>
+		[NonSerialized]
+		protected T _accumulatedEventData;
+
+		/// <summary>
+		/// Gets the accumulated event data.
+		/// </summary>
+		/// <value>
+		/// The accumulated event data.
+		/// </value>
+		protected override IEnumerable<EventArgs> AccumulatedEventData
+		{
+			get
+			{
+				if (null != _accumulatedEventData)
+					yield return _accumulatedEventData;
+			}
+		}
+
+		/// <summary>
+		/// Clears the accumulated event data.
+		/// </summary>
+		protected override void AccumulatedEventData_Clear()
+		{
+			_accumulatedEventData = null;
+		}
+	}
+
+	/// <summary>
+	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="HashSet"/>.
+	/// This class supports document nodes that have children,
+	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+	/// </summary>
+	/// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
+	public abstract class SuspendableDocumentNodeWithHashSetOfAccumulatedData<T> : SuspendableDocumentNode where T : EventArgs
+	{
+		private static T[] _emptyData = new T[0];
+
+		/// <summary>
+		/// The accumulated event data.
+		/// </summary>
+		[NonSerialized]
+		protected HashSet<T> _accumulatedEventData = new HashSet<T>();
+
+		/// <summary>
+		/// Gets the accumulated event data.
+		/// </summary>
+		/// <value>
+		/// The accumulated event data.
+		/// </value>
+		protected override IEnumerable<EventArgs> AccumulatedEventData
+		{
+			get
+			{
+				if (null != _accumulatedEventData)
+					return _accumulatedEventData;
+				else
+					return _emptyData;
+			}
+		}
+
+		/// <summary>
+		/// Clears the accumulated event data.
+		/// </summary>
+		protected override void AccumulatedEventData_Clear()
+		{
+			if (null != _accumulatedEventData)
+				_accumulatedEventData.Clear();
+		}
 	}
 }

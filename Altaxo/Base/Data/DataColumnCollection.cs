@@ -33,7 +33,7 @@ namespace Altaxo.Data
 	[SerializationSurrogate(0, typeof(Altaxo.Data.DataColumnCollection.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	public class DataColumnCollection :
-		Main.SuspendableDocumentNode,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<DataColumnCollectionChangedEventArgs>,
 		IList<DataRow>,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Altaxo.Main.IDocumentNode,
@@ -45,197 +45,6 @@ namespace Altaxo.Data
 		// Types
 		//  public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
 		//  public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
-
-		#region ChangeEventArgs
-
-		/// <summary>
-		/// Used for notifying receivers about what columns in this collection have changed.
-		/// </summary>
-		public class ChangeEventArgs : System.EventArgs
-		{
-			protected int m_MinColChanged;
-			protected int m_MaxColChanged;
-			protected int m_MinRowChanged;
-			protected int m_MaxRowChanged;
-			protected bool m_RowCountDecreased;
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="columnNumber">The number of the column that has changed.</param>
-			/// <param name="minRow">The first number of row that has changed.</param>
-			/// <param name="maxRow">The last number of row (plus one) that has changed.</param>
-			/// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is neccessary.</param>
-			public ChangeEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
-			{
-				m_MinColChanged = columnNumber;
-				m_MaxColChanged = columnNumber;
-				m_MinRowChanged = minRow;
-				m_MaxRowChanged = maxRow;
-				m_RowCountDecreased = rowCountDecreased;
-			}
-
-			/// <summary>
-			/// Accumulates the change state by adding a change info from a column.
-			/// </summary>
-			/// <param name="columnNumber">The number of column that has changed.</param>
-			/// <param name="minRow">The lowest row number that has changed.</param>
-			/// <param name="maxRow">The highest row number that has changed (plus one).</param>
-			/// <param name="rowCountDecreased">True if the row count of the column has decreased.</param>
-			public void Accumulate(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
-			{
-				if (columnNumber < m_MinColChanged)
-					m_MinColChanged = columnNumber;
-				if ((columnNumber + 1) > m_MaxColChanged)
-					m_MaxColChanged = columnNumber + 1;
-				if (minRow < m_MinRowChanged)
-					m_MinRowChanged = minRow;
-				if (maxRow > m_MaxRowChanged)
-					m_MaxRowChanged = maxRow;
-				m_RowCountDecreased |= rowCountDecreased;
-			}
-
-			/// <summary>
-			/// Accumulate the change state by adding another change state.
-			/// </summary>
-			/// <param name="args">The other change state to be added.</param>
-			public void Accumulate(ChangeEventArgs args)
-			{
-				if (args.m_MinColChanged < this.m_MinColChanged)
-					this.m_MinColChanged = args.m_MinColChanged;
-
-				if (args.m_MaxColChanged > this.m_MaxColChanged)
-					this.m_MaxColChanged = args.m_MaxColChanged;
-
-				if (args.m_MinRowChanged < this.m_MinRowChanged)
-					this.m_MinRowChanged = args.m_MinRowChanged;
-
-				if (args.MaxRowChanged > this.m_MaxRowChanged)
-					this.m_MaxRowChanged = args.m_MaxRowChanged;
-
-				m_RowCountDecreased |= args.m_RowCountDecreased;
-			}
-
-			/// <summary>
-			/// Creates a change state that reflects the removal of some columns.
-			/// </summary>
-			/// <param name="firstColumnNumber">The first column number that was removed.</param>
-			/// <param name="originalNumberOfColumns">The number of columns in the collection before the removal.</param>
-			/// <param name="maxRowCountOfRemovedColumns">The maximum row count of the removed columns.</param>
-			/// <returns>The change state that reflects the removal.</returns>
-			public static ChangeEventArgs CreateColumnRemoveArgs(int firstColumnNumber, int originalNumberOfColumns, int maxRowCountOfRemovedColumns)
-			{
-				ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber, 0, maxRowCountOfRemovedColumns, true);
-				if (originalNumberOfColumns > args.m_MaxColChanged)
-					args.m_MaxColChanged = originalNumberOfColumns;
-				return args;
-			}
-
-			/// <summary>
-			/// Creates a change state that reflects the move of some columns.
-			/// </summary>
-			/// <param name="firstColumnNumber">The first column number that was removed.</param>
-			/// <param name="maxColumnNumber">One more than the last affected column.</param>
-			/// <returns>The change state that reflects the move.</returns>
-			public static ChangeEventArgs CreateColumnMoveArgs(int firstColumnNumber, int maxColumnNumber)
-			{
-				ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber, 0, 0, false);
-				args.m_MaxColChanged = maxColumnNumber;
-				return args;
-			}
-
-			/// <summary>
-			/// Creates a change state that reflects the move of some rows (in all columns).
-			/// </summary>
-			/// <param name="numberOfColumns">The number of columns in the table.</param>
-			/// <param name="firstRowNumber">The first row number that was affected.</param>
-			/// <param name="maxRowNumber">One more than the last affected row number.</param>
-			/// <returns>The change state that reflects the move.</returns>
-			public static ChangeEventArgs CreateRowMoveArgs(int numberOfColumns, int firstRowNumber, int maxRowNumber)
-			{
-				ChangeEventArgs args = new ChangeEventArgs(0, firstRowNumber, maxRowNumber, false);
-				args.m_MaxColChanged = numberOfColumns;
-				return args;
-			}
-
-			/// <summary>
-			/// Create the change state that reflects the addition of one column.
-			/// </summary>
-			/// <param name="columnIndex">The index of the added column.</param>
-			/// <param name="rowCountOfAddedColumn">The row count of the added column.</param>
-			/// <returns>The newly created ChangeEventArgs for this case.</returns>
-			public static ChangeEventArgs CreateColumnAddArgs(int columnIndex, int rowCountOfAddedColumn)
-			{
-				ChangeEventArgs args = new ChangeEventArgs(columnIndex, 0, rowCountOfAddedColumn, false);
-				return args;
-			}
-
-			/// <summary>
-			/// Create the change state that reflects the renaming of one column.
-			/// </summary>
-			/// <param name="columnIndex">The index of the renamed column.</param>
-			/// <returns>The newly created ChangeEventArgs for this case.</returns>
-			public static ChangeEventArgs CreateColumnRenameArgs(int columnIndex)
-			{
-				ChangeEventArgs args = new ChangeEventArgs(columnIndex, 0, 0, false);
-				return args;
-			}
-
-			/// <summary>
-			/// Create the change state that reflects the replace of one column by another (or copying data).
-			/// </summary>
-			/// <param name="columnIndex">The index of the column to replace.</param>
-			/// <param name="oldRowCount">The row count of the old (replaced) column.</param>
-			/// <param name="newRowCount">The row count of the new column.</param>
-			/// <returns>The newly created ChangeEventArgs for this case.</returns>
-			public static ChangeEventArgs CreateColumnCopyOrReplaceArgs(int columnIndex, int oldRowCount, int newRowCount)
-			{
-				ChangeEventArgs args = new ChangeEventArgs(columnIndex, 0, Math.Max(oldRowCount, newRowCount), newRowCount < oldRowCount);
-				return args;
-			}
-
-			/// <summary>
-			/// Returns the lowest column number that has changed.
-			/// </summary>
-			public int MinColChanged
-			{
-				get { return m_MinColChanged; }
-			}
-
-			/// <summary>
-			/// Returns the highest column number that has changed (plus one).
-			/// </summary>
-			public int MaxColChanged
-			{
-				get { return m_MaxColChanged; }
-			}
-
-			/// <summary>
-			/// Returns the lowest row number that has changed.
-			/// </summary>
-			public int MinRowChanged
-			{
-				get { return m_MinRowChanged; }
-			}
-
-			/// <summary>
-			/// Returns the highest row number that has changed (plus one).
-			/// </summary>
-			public int MaxRowChanged
-			{
-				get { return m_MaxRowChanged; }
-			}
-
-			/// <summary>
-			/// Returns whether the row count may have decreased.
-			/// </summary>
-			public bool RowCountDecreased
-			{
-				get { return m_RowCountDecreased; }
-			}
-		}
-
-		#endregion ChangeEventArgs
 
 		#region ColumnInfo
 
@@ -388,11 +197,6 @@ namespace Altaxo.Data
 		/// This flag should be resetted if a column deletion or renaming operation took place.
 		/// </summary>
 		protected bool _triedOutRegularNaming = false;
-
-		/// <summary>
-		/// Holds the accumulated change data.
-		/// </summary>
-		protected ChangeEventArgs _accumulatedEventData;
 
 		/// <summary>
 		/// Signals the change of the parent of the collection.
@@ -941,7 +745,7 @@ namespace Altaxo.Data
 			if (info.IsIndependentVariable)
 				this.EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
 
-			this.EhChildChanged(null, ChangeEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
 		}
 
 		/// <summary>
@@ -1015,7 +819,7 @@ namespace Altaxo.Data
 					_columnScripts.Add(newCol, script);
 				}
 
-				this.EhChildChanged(null, ChangeEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
+				this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
 			}
 		}
 
@@ -1259,7 +1063,7 @@ namespace Altaxo.Data
 				((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
 
 			// raise datachange event that some columns have changed
-			this.EhChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
 
 			// reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
 			this._triedOutRegularNaming = false;
@@ -1497,7 +1301,7 @@ namespace Altaxo.Data
 					_columnsByName.Remove(oldName);
 					_columnsByName.Add(newName, datac);
 
-					this.EhChildChanged(null, ChangeEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
+					this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
 
 					// Inform also the data column itself that the name has changed
 					datac.EhTunnelingEvent(this, datac, Main.DocumentPathChangedEventArgs.Empty);
@@ -1908,7 +1712,7 @@ namespace Altaxo.Data
 			((DataColumnInfo)_columnInfoByColumn[coli]).Number = j;
 			((DataColumnInfo)_columnInfoByColumn[colj]).Number = i;
 
-			this.EhChildChanged(null, ChangeEventArgs.CreateColumnMoveArgs(Math.Min(i, j), Math.Max(i, j)));
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(Math.Min(i, j), Math.Max(i, j)));
 		}
 
 		/// <summary>
@@ -1972,7 +1776,7 @@ namespace Altaxo.Data
 				_columnsByNumber[newPosition + i] = columnsMoved[i];
 
 			RefreshColumnIndices();
-			this.EhChildChanged(null, ChangeEventArgs.CreateColumnMoveArgs(firstAffectedColumn, maxAffectedColumn));
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnMoveArgs(firstAffectedColumn, maxAffectedColumn));
 		}
 
 		/// <summary>
@@ -2043,7 +1847,7 @@ namespace Altaxo.Data
 				for (int i = 0; i < numberSelected; i++)
 					thiscolumn[newPosition + i] = tempMoved[i];
 			}
-			this.EhChildChanged(null, ChangeEventArgs.CreateRowMoveArgs(ColumnCount, firstAffected, maxAffected));
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateRowMoveArgs(ColumnCount, firstAffected, maxAffected));
 		}
 
 		/// <summary>
@@ -2266,48 +2070,34 @@ namespace Altaxo.Data
 			}
 		}
 
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
-
 		/// <summary>
 		/// Accumulates the changes reported by the DataColumns.
 		/// </summary>
 		/// <param name="sender">One of the columns of this collection.</param>
 		/// <param name="e">The change details.</param>
-		/// <param name="accumulatedEventData">The instance were the event arg e is accumulated. If this parameter is <c>null</c>, a new instance of <see cref="ChangeEventArgs"/> is created and returned into this parameter.</param>
-		protected void AccumulateChangeData(object sender, EventArgs e, ref ChangeEventArgs accumulatedEventData)
+		/// <param name="accumulatedEventData">The instance were the event arg e is accumulated. If this parameter is <c>null</c>, a new instance of <see cref="DataColumnCollectionChangedEventArgs"/> is created and returned into this parameter.</param>
+		protected void AccumulateChangeData(object sender, EventArgs e, ref DataColumnCollectionChangedEventArgs accumulatedEventData)
 		{
-			DataColumn.ChangeEventArgs dataColumnChangeEventArgs = e as DataColumn.ChangeEventArgs;
-			DataColumnCollection.ChangeEventArgs dataColumnCollectionChangeEventArgs;
+			DataColumnChangedEventArgs dataColumnChangeEventArgs = e as DataColumnChangedEventArgs;
+			DataColumnCollectionChangedEventArgs dataColumnCollectionChangeEventArgs;
 			DataColumn senderAsDataColumn;
 
-			if (null != (senderAsDataColumn = sender as DataColumn) && (null != (dataColumnChangeEventArgs = e as DataColumn.ChangeEventArgs))) // ChangeEventArgs from a DataColumn
+			if (null != (senderAsDataColumn = sender as DataColumn) && (null != (dataColumnChangeEventArgs = e as DataColumnChangedEventArgs))) // ChangeEventArgs from a DataColumn
 			{
 				int columnNumberOfSender = GetColumnNumber(senderAsDataColumn);
 				int rowCountOfSender = senderAsDataColumn.Count;
 
 				if (accumulatedEventData == null)
-					accumulatedEventData = new ChangeEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.RowCountDecreased);
+					accumulatedEventData = new DataColumnCollectionChangedEventArgs(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
 				else
-					accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.RowCountDecreased);
+					accumulatedEventData.Accumulate(columnNumberOfSender, dataColumnChangeEventArgs.MinRowChanged, dataColumnChangeEventArgs.MaxRowChanged, dataColumnChangeEventArgs.HasRowCountDecreased);
 
 				// update the row count
 				if (this._numberOfRows < rowCountOfSender)
 					_numberOfRows = rowCountOfSender;
-				this._hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.RowCountDecreased;
+				this._hasNumberOfRowsDecreased |= dataColumnChangeEventArgs.HasRowCountDecreased;
 			}
-			else if (null != (dataColumnCollectionChangeEventArgs = e as DataColumnCollection.ChangeEventArgs)) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
+			else if (null != (dataColumnCollectionChangeEventArgs = e as DataColumnCollectionChangedEventArgs)) // ChangeEventArgs from a DataColumnCollection, i.e. from myself
 			{
 				if (null == accumulatedEventData)
 					accumulatedEventData = dataColumnCollectionChangeEventArgs;
@@ -2317,7 +2107,7 @@ namespace Altaxo.Data
 				// update the row count
 				if (this._numberOfRows < dataColumnCollectionChangeEventArgs.MaxRowChanged)
 					this._numberOfRows = dataColumnCollectionChangeEventArgs.MaxRowChanged;
-				this._hasNumberOfRowsDecreased |= dataColumnCollectionChangeEventArgs.RowCountDecreased;
+				this._hasNumberOfRowsDecreased |= dataColumnCollectionChangeEventArgs.HasRowCountDecreased;
 			}
 		}
 
@@ -2356,11 +2146,11 @@ namespace Altaxo.Data
 		/// True if the event has not changed the state of the table (i.e. it requires no further action).
 		/// </returns>
 		/// <remarks>
-		/// This instance is always sending EventArgs of type <see cref="ChangeEventArgs"/>. This means, that event args of any other type should be transformed in <see cref="ChangeEventArgs"/>.
+		/// This instance is always sending EventArgs of type <see cref="DataColumnCollectionChangedEventArgs"/>. This means, that event args of any other type should be transformed in <see cref="DataColumnCollectionChangedEventArgs"/>.
 		/// </remarks>
 		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			ChangeEventArgs result = null;
+			DataColumnCollectionChangedEventArgs result = null;
 			AccumulateChangeData(sender, e, ref result); // Get ChangeEventArgs in the result.
 			e = result;
 

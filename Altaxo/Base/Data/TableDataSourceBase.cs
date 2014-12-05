@@ -6,25 +6,10 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public class TableDataSourceBase : Main.SuspendableDocumentNode
+	public class TableDataSourceBase :
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
 	{
-		protected EventArgs _accumulatedEventData;
-
 		#region Change event handling
-
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
 
 		/// <summary>
 		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.

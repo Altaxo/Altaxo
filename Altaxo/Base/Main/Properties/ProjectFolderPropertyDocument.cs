@@ -34,7 +34,7 @@ namespace Altaxo.Main.Properties
 	/// </summary>
 	public class ProjectFolderPropertyDocument
 		:
-		Main.SuspendableDocumentNode,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IProjectItem,
 		IPropertyBagOwner,
 		Altaxo.Main.IDocumentNode,
@@ -62,8 +62,6 @@ namespace Altaxo.Main.Properties
 		/// If any of the listeners set Cancel to true, the name will not be changed.
 		/// </summary>
 		public event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
-
-		protected System.EventArgs _accumulatedEventData;
 
 		#region Serialization
 
@@ -293,20 +291,6 @@ namespace Altaxo.Main.Properties
 		}
 
 		#region Suspend
-
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (_accumulatedEventData != null)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
 
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{

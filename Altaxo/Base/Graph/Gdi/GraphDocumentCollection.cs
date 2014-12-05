@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Gdi
 {
 	public class GraphDocumentCollection :
-		Main.SuspendableDocumentNode,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<GraphDocumentCollectionChangedEventArgs>,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IEnumerable<GraphDocument>,
 		Altaxo.Main.IDocumentNode,
@@ -38,111 +38,10 @@ namespace Altaxo.Graph.Gdi
 		Altaxo.Main.IChildChangedEventSink,
 		Altaxo.Main.INamedObjectCollection
 	{
-		#region ChangedEventArgs
-
-		/// <summary>
-		/// Holds information about what has changed in the table.
-		/// </summary>
-		protected class ChangedEventArgs : System.EventArgs
-		{
-			/// <summary>
-			/// If true, one or more tables where added.
-			/// </summary>
-			public bool ItemAdded;
-
-			/// <summary>
-			/// If true, one or more table where removed.
-			/// </summary>
-			public bool ItemRemoved;
-
-			/// <summary>
-			/// If true, one or more tables where renamed.
-			/// </summary>
-			public bool ItemRenamed;
-
-			/// <summary>
-			/// Empty constructor.
-			/// </summary>
-			public ChangedEventArgs()
-			{
-			}
-
-			/// <summary>
-			/// Returns an empty instance.
-			/// </summary>
-			public static new ChangedEventArgs Empty
-			{
-				get { return new ChangedEventArgs(); }
-			}
-
-			/// <summary>
-			/// Returns an instance with TableAdded set to true;.
-			/// </summary>
-			public static ChangedEventArgs IfItemAdded
-			{
-				get
-				{
-					ChangedEventArgs e = new ChangedEventArgs();
-					e.ItemAdded = true;
-					return e;
-				}
-			}
-
-			/// <summary>
-			/// Returns an instance with TableRemoved set to true.
-			/// </summary>
-			public static ChangedEventArgs IfItemRemoved
-			{
-				get
-				{
-					ChangedEventArgs e = new ChangedEventArgs();
-					e.ItemRemoved = true;
-					return e;
-				}
-			}
-
-			/// <summary>
-			/// Returns an  instance with TableRenamed set to true.
-			/// </summary>
-			public static ChangedEventArgs IfItemRenamed
-			{
-				get
-				{
-					ChangedEventArgs e = new ChangedEventArgs();
-					e.ItemRenamed = true;
-					return e;
-				}
-			}
-
-			/// <summary>
-			/// Merges information from another instance in this ChangedEventArg.
-			/// </summary>
-			/// <param name="from"></param>
-			public void Merge(ChangedEventArgs from)
-			{
-				this.ItemAdded |= from.ItemAdded;
-				this.ItemRemoved |= from.ItemRemoved;
-				this.ItemRenamed |= from.ItemRenamed;
-			}
-
-			/// <summary>
-			/// Returns true when the collection has changed (addition, removal or renaming of tables).
-			/// </summary>
-			public bool CollectionChanged
-			{
-				get { return ItemAdded | ItemRemoved | ItemRenamed; }
-			}
-		}
-
-		#endregion ChangedEventArgs
-
 		// Data
-		protected SortedDictionary<string, GraphDocument> m_GraphsByName = new SortedDictionary<string, GraphDocument>();
+		protected SortedDictionary<string, GraphDocument> _graphsByName = new SortedDictionary<string, GraphDocument>();
 
-		protected bool bIsDirty = false;
-
-		[NonSerialized]
-		protected ChangedEventArgs _accumulatedEventData = null;
+		protected bool _isDirty = false;
 
 		// Events
 
@@ -191,14 +90,14 @@ namespace Altaxo.Graph.Gdi
 			{
 				GraphDocumentCollection s = (GraphDocumentCollection)obj;
 				// info.AddValue("Parent",s.parent);
-				info.AddValue("Graphs", s.m_GraphsByName);
+				info.AddValue("Graphs", s._graphsByName);
 			}
 
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				GraphDocumentCollection s = (GraphDocumentCollection)obj;
 				// s.parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s.m_GraphsByName = (SortedDictionary<string, GraphDocument>)(info.GetValue("Graphs", typeof(SortedDictionary<string, GraphDocument>)));
+				s._graphsByName = (SortedDictionary<string, GraphDocument>)(info.GetValue("Graphs", typeof(SortedDictionary<string, GraphDocument>)));
 
 				return s;
 			}
@@ -214,14 +113,14 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return bIsDirty;
+				return _isDirty;
 			}
 		}
 
 		public string[] GetSortedGraphNames()
 		{
-			string[] arr = new string[m_GraphsByName.Count];
-			this.m_GraphsByName.Keys.CopyTo(arr, 0);
+			string[] arr = new string[_graphsByName.Count];
+			this._graphsByName.Keys.CopyTo(arr, 0);
 			System.Array.Sort(arr);
 			return arr;
 		}
@@ -230,34 +129,34 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return (GraphDocument)m_GraphsByName[name];
+				return (GraphDocument)_graphsByName[name];
 			}
 		}
 
 		public bool Contains(string graphname)
 		{
-			return m_GraphsByName.ContainsKey(graphname);
+			return _graphsByName.ContainsKey(graphname);
 		}
 
 		public bool TryGetValue(string graphName, out GraphDocument doc)
 		{
-			return m_GraphsByName.TryGetValue(graphName, out doc);
+			return _graphsByName.TryGetValue(graphName, out doc);
 		}
 
 		public void Add(GraphDocument theGraph)
 		{
-			if (!string.IsNullOrEmpty(theGraph.Name) && m_GraphsByName.ContainsKey(theGraph.Name) && theGraph.Equals(m_GraphsByName[theGraph.Name]))
+			if (!string.IsNullOrEmpty(theGraph.Name) && _graphsByName.ContainsKey(theGraph.Name) && theGraph.Equals(_graphsByName[theGraph.Name]))
 				return; // do silently nothing if the graph (the same!) is already registered
 			if (string.IsNullOrEmpty(theGraph.Name)) // if no table name provided
 				theGraph.Name = FindNewName();                  // find a new one
-			else if (m_GraphsByName.ContainsKey(theGraph.Name)) // else if this table name is already in use
+			else if (_graphsByName.ContainsKey(theGraph.Name)) // else if this table name is already in use
 				theGraph.Name = FindNewName(theGraph.Name); // find a new table name based on the original name
 
 			// now the table has a unique name in any case
-			m_GraphsByName.Add(theGraph.Name, theGraph);
+			_graphsByName.Add(theGraph.Name, theGraph);
 			theGraph.ParentObject = this;
 			theGraph.NameChanged += EhChild_NameChanged;
-			this.EhSelfChanged(ChangedEventArgs.IfItemAdded);
+			this.EhSelfChanged(GraphDocumentCollectionChangedEventArgs.IfItemAdded);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, theGraph, theGraph.Name);
 		}
 
@@ -265,17 +164,17 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (theGraph != null && theGraph.Name != null)
 			{
-				GraphDocument gr = (GraphDocument)m_GraphsByName[theGraph.Name];
+				GraphDocument gr = (GraphDocument)_graphsByName[theGraph.Name];
 
 				if (null != Current.ComManager && object.ReferenceEquals(gr, Current.ComManager.EmbeddedObject)) // test if the graph is currently the embedded Com object
 					return; // it is not allowed to remove the current embedded graph object.
 
 				if (object.ReferenceEquals(gr, theGraph))
 				{
-					m_GraphsByName.Remove(theGraph.Name);
+					_graphsByName.Remove(theGraph.Name);
 					theGraph.ParentObject = null;
 					theGraph.NameChanged -= EhChild_NameChanged;
-					this.EhSelfChanged(ChangedEventArgs.IfItemRemoved);
+					this.EhSelfChanged(GraphDocumentCollectionChangedEventArgs.IfItemRemoved);
 					OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theGraph, theGraph.Name);
 				}
 			}
@@ -283,16 +182,16 @@ namespace Altaxo.Graph.Gdi
 
 		protected void EhChild_NameChanged(Main.INameOwner item, string oldName)
 		{
-			if (m_GraphsByName.ContainsKey(item.Name))
+			if (_graphsByName.ContainsKey(item.Name))
 			{
-				if (object.ReferenceEquals(m_GraphsByName[item.Name], item))
+				if (object.ReferenceEquals(_graphsByName[item.Name], item))
 					return;
 				else
 					throw new ApplicationException(string.Format("The GraphDocumentCollection contains already a Graph named {0}, renaming the old graph {1} fails.", item.Name, oldName));
 			}
-			m_GraphsByName.Remove(oldName);
-			m_GraphsByName[item.Name] = (GraphDocument)item;
-			this.EhSelfChanged(ChangedEventArgs.IfItemRenamed);
+			_graphsByName.Remove(oldName);
+			_graphsByName[item.Name] = (GraphDocument)item;
+			this.EhSelfChanged(GraphDocumentCollectionChangedEventArgs.IfItemRenamed);
 			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
 		}
 
@@ -313,7 +212,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			for (int i = 0; ; i++)
 			{
-				if (!m_GraphsByName.ContainsKey(basicname + i.ToString()))
+				if (!_graphsByName.ContainsKey(basicname + i.ToString()))
 					return basicname + i;
 			}
 		}
@@ -321,7 +220,7 @@ namespace Altaxo.Graph.Gdi
 		public object GetChildObjectNamed(string name)
 		{
 			GraphDocument result = null;
-			if (m_GraphsByName.TryGetValue(name, out result))
+			if (_graphsByName.TryGetValue(name, out result))
 				return result;
 			else return null;
 		}
@@ -331,7 +230,7 @@ namespace Altaxo.Graph.Gdi
 			if (o is GraphDocument)
 			{
 				GraphDocument gr = (GraphDocument)o;
-				if (m_GraphsByName.ContainsKey(gr.Name))
+				if (_graphsByName.ContainsKey(gr.Name))
 					return gr.Name;
 			}
 			return null;
@@ -339,77 +238,13 @@ namespace Altaxo.Graph.Gdi
 
 		#region Change event handling
 
-		[NonSerialized()]
-		protected bool m_ResumeInProgress = false;
-
-		[NonSerialized()]
-		protected System.Collections.ArrayList m_SuspendedChildCollection = new System.Collections.ArrayList();
-
-		public bool IsSuspended
-		{
-			get
-			{
-				return false; // m_SuspendCount>0;
-			}
-		}
-
-#if false
-    public void Suspend()
-    {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");
-
-      ++m_SuspendCount; // suspend one step higher
-    }
-
-    public void Resume()
-    {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");
-      if(m_SuspendCount>0 && (--m_SuspendCount)==0)
-      {
-        this.m_ResumeInProgress = true;
-        foreach(Main.ISuspendable obj in m_SuspendedChildCollection)
-          obj.Resume();
-        m_SuspendedChildCollection.Clear();
-        this.m_ResumeInProgress = false;
-
-        // send accumulated data if available and release it thereafter
-        if(null!=m_ChangeData)
-        {
-          if(m_Parent is Main.IChildChangedEventSink)
-          {
-            ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
-          }
-          if(!IsSuspended)
-          {
-            OnChanged(); // Fire the changed event
-          }
-        }
-      }
-    }
-
-#endif
-
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
-
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			if (_accumulatedEventData == null)
-				this._accumulatedEventData = ChangedEventArgs.Empty;
+				this._accumulatedEventData = GraphDocumentCollectionChangedEventArgs.Empty;
 
-			if (e is ChangedEventArgs)
-				_accumulatedEventData.Merge((ChangedEventArgs)e);
+			if (e is GraphDocumentCollectionChangedEventArgs)
+				_accumulatedEventData.Merge((GraphDocumentCollectionChangedEventArgs)e);
 		}
 
 		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
@@ -434,7 +269,7 @@ namespace Altaxo.Graph.Gdi
 
 		IEnumerator<GraphDocument> IEnumerable<GraphDocument>.GetEnumerator()
 		{
-			return m_GraphsByName.Values.GetEnumerator();
+			return _graphsByName.Values.GetEnumerator();
 		}
 
 		#endregion IEnumerable<GraphDocument> Members
@@ -443,7 +278,7 @@ namespace Altaxo.Graph.Gdi
 
 		public System.Collections.IEnumerator GetEnumerator()
 		{
-			return m_GraphsByName.Values.GetEnumerator();
+			return _graphsByName.Values.GetEnumerator();
 		}
 
 		#endregion IEnumerable Members

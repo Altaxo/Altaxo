@@ -5,6 +5,11 @@ using System.Text;
 
 namespace Altaxo.Main
 {
+	/// <summary>
+	/// Base class for a suspendable document node which has no children, i.e. is a leaf node of the document tree.
+	/// It implements most of the code neccessary to handle own change events and to accumulate data, if this object is suspended.
+	/// </summary>
+	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableLeafDocumentNode"/> instead.</remarks>
 	public abstract class SuspendableLeafDocumentNode : Main.SuspendableLeafObject, Main.IDocumentNode
 	{
 		/// <summary>

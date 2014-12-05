@@ -187,11 +187,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(5, ea.MinRowChanged);
 				Assert.AreEqual(6, ea.MaxRowChanged);
-				Assert.AreEqual(false, ea.RowCountDecreased);
+				Assert.AreEqual(false, ea.HasRowCountDecreased);
 				_CallCount++; ;
 			}
 
@@ -200,11 +200,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(5, ea.MinRowChanged);
 				Assert.AreEqual(6, ea.MaxRowChanged);
-				Assert.AreEqual(true, ea.RowCountDecreased);
+				Assert.AreEqual(true, ea.HasRowCountDecreased);
 				_CallCount++; ;
 			}
 
@@ -213,11 +213,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(7, ea.MinRowChanged);
 				Assert.AreEqual(8, ea.MaxRowChanged);
-				Assert.AreEqual(false, ea.RowCountDecreased);
+				Assert.AreEqual(false, ea.HasRowCountDecreased);
 				_CallCount++; ;
 				_suspendToken = ((Altaxo.Main.ISuspendableByToken)sender).SuspendGetToken();
 			}
@@ -227,11 +227,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(0, ea.MinRowChanged);
 				Assert.AreEqual(13, ea.MaxRowChanged);
-				Assert.AreEqual(true, ea.RowCountDecreased);
+				Assert.AreEqual(true, ea.HasRowCountDecreased);
 				_CallCount++; ;
 			}
 
@@ -240,11 +240,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(5, ea.MinRowChanged);
 				Assert.AreEqual(13, ea.MaxRowChanged);
-				Assert.AreEqual(false, ea.RowCountDecreased);
+				Assert.AreEqual(false, ea.HasRowCountDecreased);
 				_CallCount++; ;
 			}
 
@@ -253,11 +253,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(0, ea.MinRowChanged);
 				Assert.AreEqual(13, ea.MaxRowChanged);
-				Assert.AreEqual(false, ea.RowCountDecreased);
+				Assert.AreEqual(false, ea.HasRowCountDecreased);
 				_CallCount++; ;
 			}
 
@@ -266,11 +266,11 @@ namespace AltaxoTest.Data
 				Assert.IsNotNull(sender, "Sender must be the column");
 				Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
 				Assert.IsNotNull(e, "Awaiting valid data change event args");
-				Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
-				Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
+				Assert.AreEqual(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
+				Altaxo.Data.DataColumnChangedEventArgs ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
 				Assert.AreEqual(9, ea.MinRowChanged);
 				Assert.AreEqual(13, ea.MaxRowChanged);
-				Assert.AreEqual(false, ea.RowCountDecreased);
+				Assert.AreEqual(false, ea.HasRowCountDecreased);
 				_CallCount++; ;
 			}
 		}

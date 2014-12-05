@@ -48,7 +48,7 @@ namespace Altaxo.Data
 	[SerializationVersion(1)]
 	public class DataTable
 		:
-		Main.SuspendableDocumentNode,
+		Main.SuspendableDocumentNodeWithHashSetOfAccumulatedData<EventArgs>,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IProjectItem,
 		Main.INamedObjectCollection,
@@ -116,12 +116,6 @@ namespace Altaxo.Data
 		/// Used to indicate that the Deserialization process has finished.
 		/// </summary>
 		private bool _table_DeserializationFinished = false;
-
-		/// <summary>
-		/// If not null, the table was changed and the table has not notified the parent and the listeners about that.
-		/// </summary>
-		[NonSerialized]
-		protected HashSet<System.EventArgs> _accumulatedEventData = new HashSet<EventArgs>();
 
 		/// <summary>
 		/// Event to signal that the parent of this object has changed.
@@ -625,23 +619,6 @@ namespace Altaxo.Data
 		#endregion Construction
 
 		#region Suspend and resume
-
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					return _accumulatedEventData;
-				else
-					return new EventArgs[0];
-			}
-		}
-
-		protected override void AccumulatedEventData_Clear()
-		{
-			if (null != _accumulatedEventData)
-				_accumulatedEventData.Clear();
-		}
 
 		/// <summary>
 		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.

@@ -201,6 +201,9 @@
     <Compile Include="DataConnection\QueryBuilder.cs" />
     <Compile Include="DataConnection\QueryField.cs" />
     <Compile Include="DataConnection\TableType.cs" />
+    <Compile Include="Data\DataColumnChangedEventArgs.cs" />
+    <Compile Include="Data\DataTableCollectionChangedEventArgs.cs" />
+    <Compile Include="Data\DataColumnCollectionChangedEventArgs.cs" />
     <Compile Include="Data\DataSourceImportOptions.cs" />
     <Compile Include="Data\DataTableMultipleColumnProxy.cs" />
     <Compile Include="Data\DataTableMatrixProxy.cs" />
@@ -222,6 +225,7 @@
     <Compile Include="Graph\ColorManagement\IColorSet.cs" />
     <Compile Include="Graph\Gdi\ClipboardRenderingOptions.cs" />
     <Compile Include="Graph\Gdi\EmbeddedObjectRenderingOptions.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentCollectionChangedEventArgs.cs" />
     <Compile Include="Graph\Gdi\GraphExportOptions.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateBase.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.cs" />
@@ -357,6 +361,7 @@
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IProjectItem.cs" />
+    <Compile Include="Main\Properties\ProjectFolderPropertyDocumentCollectionChangedEventArgs.cs" />
     <Compile Include="Main\SuspendableLeafDocumentNode.cs" />
     <Compile Include="Main\SuspendableDocumentNode.cs" />
     <Compile Include="Main\SuspendableLeafObject.cs" />
@@ -603,7 +608,7 @@
     <Compile Include="Scripting\PropertyColumnScript.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\TableCollection.cs">
+    <Compile Include="Data\DataTableCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\TableScript.cs">
