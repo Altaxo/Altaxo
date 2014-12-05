@@ -98,11 +98,6 @@ namespace Altaxo.Main
 			_aboutToBeResumedEventHandler = aboutToBeResumedEventHandler;
 		}
 
-		public ISuspendToken Suspend()
-		{
-			return SuspendGetToken();
-		}
-
 		/// <summary>
 		/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
 		/// Per default, the resume event handler is called that you provided in the constructor.

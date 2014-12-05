@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			var locker = _changeEventSuppressor.Suspend();
+			var locker = _changeEventSuppressor.SuspendGetToken();
 			try
 			{
 				this._independentFillColor = from._independentFillColor;

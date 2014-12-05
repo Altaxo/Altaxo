@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Main
 			if (_useDocumentCopy && _originalDoc is ICloneable)
 				_doc = ((ICloneable)_originalDoc).Clone();
 
-			using (var suppressor = _suppressDirtyEvent.Suspend())
+			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
 			{
 				Initialize(true);
 			}

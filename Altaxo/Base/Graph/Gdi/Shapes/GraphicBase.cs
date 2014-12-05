@@ -348,7 +348,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public Main.ISuspendToken SuspendGetToken()
 		{
-			return _eventSuppressor.Suspend();
+			return _eventSuppressor.SuspendGetToken();
 		}
 
 		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
@@ -969,7 +969,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetBoundsFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, PointD2D initialSize, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.Suspend();
+			var token = _eventSuppressor.SuspendGetToken();
 			try
 			{
 				var dx = relDrawGrip.X - fixrPosition.X;
@@ -1008,7 +1008,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
 		public void SetRotationFrom(PointD2D relPivot, PointD2D absPivot, PointD2D relDrawGrip, PointD2D diff, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.Suspend();
+			var token = _eventSuppressor.SuspendGetToken();
 			try
 			{
 				double dx = (relDrawGrip.X - relPivot.X) * Width * ScaleX
@@ -1033,7 +1033,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public void SetScalesFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.Suspend();
+			var token = _eventSuppressor.SuspendGetToken();
 			try
 			{
 				double newScaleX = this.ScaleX;
@@ -1066,7 +1066,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public void SetShearFrom(PointD2D fixrPosition, PointD2D fixaPosition, PointD2D relDrawGrip, PointD2D diff, double initialRotation, double initialShear, double initialScaleX, double initialScaleY, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.Suspend();
+			var token = _eventSuppressor.SuspendGetToken();
 			try
 			{
 				var newShear = this.Shear;
@@ -1116,7 +1116,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		protected internal void SetCoordinatesByAppendTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.Suspend();
+			var token = _eventSuppressor.SuspendGetToken();
 			try
 			{
 				var loctransform = _transformation.Clone(); // because the _transformation member will be overwritten when setting Position, Rotation, Scale and so on, we create a copy of it
@@ -1134,7 +1134,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		protected internal void SetCoordinatesByAppendInverseTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
 		{
-			var token = _eventSuppressor.Suspend();
+			var token = _eventSuppressor.SuspendGetToken();
 			try
 			{
 				_transformation.AppendInverseTransform(transform);

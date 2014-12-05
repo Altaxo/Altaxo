@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			for (int i = 0; i < _curvePoints.Count; i++)
 				_curvePoints[i] -= bounds.Location;
 
-			using (var token = _eventSuppressor.Suspend())
+			using (var token = _eventSuppressor.SuspendGetToken())
 			{
 				this.ShiftPosition(bounds.Location);
 				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size);
@@ -370,7 +370,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override bool Deactivate()
 			{
 				var obj = (ClosedCardinalSpline)GraphObject;
-				using (var token = obj._eventSuppressor.Suspend())
+				using (var token = obj._eventSuppressor.SuspendGetToken())
 				{
 					int otherPointIndex = _pointNumber == 0 ? 1 : 0;
 					PointD2D oldOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + _offset); // transformiere in ParentCoordinaten

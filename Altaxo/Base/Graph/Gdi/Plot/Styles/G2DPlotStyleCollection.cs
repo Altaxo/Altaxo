@@ -38,23 +38,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 	public class G2DPlotStyleCollection
 		:
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IEnumerable<IG2DPlotStyle>,
 		IG2DPlotStyle,
-		IRoutedPropertyReceiver,
-		Main.IDocumentNode
+		IRoutedPropertyReceiver
 	{
 		/// <summary>
 		/// Holds the plot styles
 		/// </summary>
 		private List<IG2DPlotStyle> _innerList;
-
-		private int _eventSuspendCount;
-		private bool _changeEventPending;
-
-		/// <summary>
-		/// The parent object.
-		/// </summary>
-		protected object _parent;
 
 		#region Serialization
 
@@ -184,17 +176,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			Suspend();
+			using (var suspendToken = SuspendGetToken())
+			{
+				Clear();
 
-			Clear();
+				this._innerList = new List<IG2DPlotStyle>();
+				for (int i = 0; i < from._innerList.Count; ++i)
+					Add((IG2DPlotStyle)from[i].Clone());
 
-			this._innerList = new List<IG2DPlotStyle>();
-			for (int i = 0; i < from._innerList.Count; ++i)
-				Add((IG2DPlotStyle)from[i].Clone());
+				this._parent = from._parent;
 
-			this._parent = from._parent;
-
-			Resume();
+				suspendToken.Resume();
+			}
 		}
 
 		public bool CopyFrom(object obj)
@@ -219,21 +212,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			else if (strictness == PlotGroupStrictness.Exact)
 			{
 				// note one sub style in the 'from' collection can update only one item in the 'this' collection
-				Suspend();
-				int myidx = 0;
-				foreach (IG2DPlotStyle style in from)
+				using (var suspendToken = SuspendGetToken())
 				{
-					for (int i = myidx; i < this.Count; i++)
+					int myidx = 0;
+					foreach (IG2DPlotStyle style in from)
 					{
-						if (this[i].GetType() == style.GetType())
+						for (int i = myidx; i < this.Count; i++)
 						{
-							Replace((IG2DPlotStyle)from[i].Clone(), i, false);
-							myidx = i + 1;
-							break;
+							if (this[i].GetType() == style.GetType())
+							{
+								Replace((IG2DPlotStyle)from[i].Clone(), i, false);
+								myidx = i + 1;
+								break;
+							}
 						}
 					}
+					suspendToken.Resume();
 				}
-				Resume();
 			}
 		}
 
@@ -273,7 +268,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (withReorganizationAndEvents)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -287,7 +282,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (withReorganizationAndEvents)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -302,7 +297,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					toadd[i].ParentObject = this;
 				}
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -313,7 +308,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._innerList.Insert(whichposition, toinsert);
 				toinsert.ParentObject = this;
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -323,7 +318,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				this._innerList.Clear();
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -332,7 +327,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			IG2DPlotStyle removed = this[idx];
 			_innerList.RemoveAt(idx);
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public void ExchangeItemPositions(int pos1, int pos2)
@@ -341,32 +336,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_innerList[pos1] = _innerList[pos2];
 			_innerList[pos2] = item1;
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
-		public void BeginUpdate()
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			Suspend();
-		}
-
-		private void Suspend()
-		{
-			++_eventSuspendCount;
-		}
-
-		public void EndUpdate()
-		{
-			Resume();
-		}
-
-		private void Resume()
-		{
-			--_eventSuspendCount;
-			if (0 == _eventSuspendCount)
-			{
-				if (_changeEventPending)
-					OnChanged();
-			}
+			_accumulatedEventData = EventArgs.Empty;
 		}
 
 		object ICloneable.Clone()
@@ -451,37 +426,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			newSubStyle.ApplyGroupStyles(externGroup, localGroup);
 		}
 
-		#region IChangedEventSource Members
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
-
-		protected virtual void OnChanged()
-		{
-			if (_eventSuspendCount > 0)
-			{
-				_changeEventPending = true;
-				return;
-			}
-
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion IChildChangedEventSink Members
-
 		#region IEnumerable<IPlotStyle> Members
 
 		public IEnumerator<IG2DPlotStyle> GetEnumerator()
@@ -530,9 +474,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IDocumentNode Members
 
-		public string Name
+		public override string Name
 		{
 			get { return "PlotStyleCollection"; }
+			set
+			{
+				throw new NotImplementedException("The name of this node type can not be set. Node type is: " + this.GetType().FullName);
+			}
 		}
 
 		/// <summary>

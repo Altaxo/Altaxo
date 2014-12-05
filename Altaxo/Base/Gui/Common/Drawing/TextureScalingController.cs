@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Common.Drawing
 		void EhScalingModeChanged()
 		{
 			_doc.ScalingMode = _view.ScalingMode;
-			using (var supp = _suppressDirtyEvent.Suspend())
+			using (var supp = _suppressDirtyEvent.SuspendGetToken())
 			{
 				EhXChanged();
 				EhYChanged();

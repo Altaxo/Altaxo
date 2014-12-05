@@ -192,7 +192,7 @@ namespace Altaxo.Gui
 			if (_useDocumentCopy && _originalDoc is ICloneable)
 				_doc = (TModel)((ICloneable)_originalDoc).Clone();
 
-			using (var suppressor = _suppressDirtyEvent.Suspend())
+			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
 			{
 				Initialize(true);
 			}
@@ -216,7 +216,7 @@ namespace Altaxo.Gui
 
 				if (null != _view)
 				{
-					using (var suppressor = _suppressDirtyEvent.Suspend())
+					using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
 					{
 						Initialize(false);
 						AttachView();

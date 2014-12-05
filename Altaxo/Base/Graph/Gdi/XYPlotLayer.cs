@@ -188,7 +188,6 @@ namespace Altaxo.Graph.Gdi
 		protected XYPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 			: base(info)
 		{
-			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
 			this.AxisStyles = new AxisStyleCollection();
 			this.Scales = new ScaleCollection();
@@ -357,7 +356,7 @@ namespace Altaxo.Graph.Gdi
 
 				if (!object.ReferenceEquals(oldvalue, value))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -395,7 +394,7 @@ namespace Altaxo.Graph.Gdi
 					if (!object.ReferenceEquals(oldScale, newScale))
 						EhScaleInstanceChanged(i, oldScale, newScale);
 				}
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -425,7 +424,7 @@ namespace Altaxo.Graph.Gdi
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -466,7 +465,7 @@ namespace Altaxo.Graph.Gdi
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -495,7 +494,8 @@ namespace Altaxo.Graph.Gdi
 			if (PlotItems.Flattened.Length == 0)
 			{
 				ClearLegends();
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
+
 				return;
 			}
 
@@ -528,7 +528,7 @@ namespace Altaxo.Graph.Gdi
 			else
 				GraphObjects.Add(tgo);
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -847,7 +847,7 @@ namespace Altaxo.Graph.Gdi
 				_dataClipping = value;
 
 				if (value != oldvalue)
-					this.OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1331,7 +1331,7 @@ namespace Altaxo.Graph.Gdi
 					if (null != AxisStyles)
 						AxisStyles.UpdateCoordinateSystem(value);
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}

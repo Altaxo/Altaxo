@@ -273,11 +273,13 @@ namespace Altaxo.Gui.Graph
 
 		public virtual bool Apply()
 		{
-			_doc.BeginUpdate();
-			_doc.Clear();
-			foreach (var node in _currentItems)
-				_doc.Add((IG2DPlotStyle)(node.Tag));
-			_doc.EndUpdate();
+			using (var suspendToken = _doc.SuspendGetToken())
+			{
+				_doc.Clear();
+				foreach (var node in _currentItems)
+					_doc.Add((IG2DPlotStyle)(node.Tag));
+				suspendToken.Resume();
+			}
 			return true;
 		}
 

@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		void InitializeViewElementsWhenBrushTypeChanged()
 		{
-			using (var suppressor = _suppressDirtyEvent.Suspend())
+			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
 			{
 				_view.ForeColor = _doc.Color;
 				_view.BackColor = _doc.BackColor;

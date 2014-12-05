@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (initData)
 			{
-				_docSuspendLock = _doc.BeginUpdate();
+				_docSuspendLock = _doc.SuspendGetToken();
 
 				_listOfUniqueItem = new SelectableListNodeList();
 				_listOfUniqueItem.Add(new SelectableListNode("Common", null, true));

@@ -805,11 +805,6 @@ typeof(GraphDocument),
 				this._accumulatedEventData = EventArgs.Empty;
 		}
 
-		protected bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
-		{
-			return false; // not handled
-		}
-
 		protected override void OnChanged(EventArgs e)
 		{
 			if (_cachedRootLayerSize != _rootLayer.Size)

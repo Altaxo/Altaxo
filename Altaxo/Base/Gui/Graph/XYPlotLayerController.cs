@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (initData)
 			{
-				_docSuspendLock = _doc.BeginUpdate();
+				_docSuspendLock = _doc.SuspendGetToken();
 				SetCoordinateSystemDependentObjects(_currentAxisID);
 
 				_listOfUniqueItem = new SelectableListNodeList();

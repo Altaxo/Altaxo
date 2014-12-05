@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public IDisposable BeginUpdate()
 		{
-			return _suppressorOfChangedEvent.Suspend();
+			return _suppressorOfChangedEvent.SuspendGetToken();
 		}
 
 		public abstract object Clone();

@@ -45,11 +45,10 @@ namespace Altaxo.Graph.Gdi
 
 	public class HostLayer
 		:
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		ITreeListNodeWithParent<HostLayer>,
 		IGraphicBase,
-		Altaxo.Main.IDocumentNode,
-		Altaxo.Main.INamedObjectCollection,
-		Altaxo.Main.IChildChangedEventSink
+		Altaxo.Main.INamedObjectCollection
 	{
 		#region Constants
 
@@ -84,9 +83,6 @@ namespace Altaxo.Graph.Gdi
 		protected PointD2D _cachedLayerSize;
 
 		protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
-
-		[NonSerialized]
-		protected Main.EventSuppressor _changeEventSuppressor;
 
 		/// <summary>
 		/// The child layers of this layers (this is a partial view of the <see cref="_graphObjects"/> collection).
@@ -216,10 +212,10 @@ namespace Altaxo.Graph.Gdi
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			using (IDisposable updateLock = BeginUpdate())
+			using (var suspendToken = SuspendGetToken())
 			{
 				InternalCopyFrom(from, options);
-				OnChanged(); // make sure that the change event is called
+				_accumulatedEventData = EventArgs.Empty; // make sure that change is called after suspend
 			}
 		}
 
@@ -335,7 +331,6 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected HostLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			Grid = new GridPartitioning();
 			InternalInitializeGraphObjectsCollection();
 		}
@@ -346,18 +341,14 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="from"></param>
 		public HostLayer(HostLayer from)
 		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			Grid = new GridPartitioning();
 
-			var updateLock = _changeEventSuppressor.Suspend(); // see below, this is to suppress the change event when cloning the layer.
-			try
+			using (var suspendToken = SuspendGetToken()) // see below, this is to suppress the change event when cloning the layer.
 			{
 				InternalInitializeGraphObjectsCollection();
 				CopyFrom(from, GraphCopyOptions.All);
-			}
-			finally
-			{
-				_changeEventSuppressor.Resume(ref updateLock, Main.EventFiring.Suppressed); // when we clone from another layer, the new layer has still the parent of the old layer. Thus we don't want that the parent of the old layer receives the changed event, since nothing has changed for it.
+
+				suspendToken.ResumeSilently(); // when we clone from another layer, the new layer has still the parent of the old layer. Thus we don't want that the parent of the old layer receives the changed event, since nothing has changed for it.
 			}
 		}
 
@@ -368,7 +359,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="location">The position and size of this layer</param>
 		public HostLayer(HostLayer parentLayer, IItemLocation location)
 		{
-			this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			Grid = new GridPartitioning();
 
 			if (null != parentLayer) // this helps to get the real layer size from the beginning
@@ -453,7 +443,7 @@ namespace Altaxo.Graph.Gdi
 				// instead the event is and must be  handled in the EhChildChanged function of this layer
 
 				CalculateCachedSizeAndPosition();
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -497,7 +487,7 @@ namespace Altaxo.Graph.Gdi
 				this.CalculateCachedSizeAndPosition();
 
 				if (isTriggeringChangedEvent)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -554,7 +544,7 @@ namespace Altaxo.Graph.Gdi
 				if (value != oldValue)
 				{
 					this.CalculateMatrix();
-					this.OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -570,7 +560,7 @@ namespace Altaxo.Graph.Gdi
 				if (value != oldValue)
 				{
 					this.CalculateMatrix();
-					this.OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -586,7 +576,7 @@ namespace Altaxo.Graph.Gdi
 				if (value != oldValue)
 				{
 					this.CalculateMatrix();
-					this.OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -602,7 +592,7 @@ namespace Altaxo.Graph.Gdi
 				if (value != oldValue)
 				{
 					this.CalculateMatrix();
-					this.OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -996,7 +986,7 @@ namespace Altaxo.Graph.Gdi
 
 		private void EhGraphObjectCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -1234,7 +1224,7 @@ namespace Altaxo.Graph.Gdi
 			if (null != SizeChanged)
 				SizeChanged(this, new System.EventArgs());
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		protected void OnPositionChanged()
@@ -1242,51 +1232,19 @@ namespace Altaxo.Graph.Gdi
 			if (null != PositionChanged)
 				PositionChanged(this, new System.EventArgs());
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
-		public IDisposable BeginUpdate()
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			return _changeEventSuppressor.Suspend();
-		}
-
-		public void EndUpdate(ref Main.ISuspendToken locker)
-		{
-			_changeEventSuppressor.Resume(ref locker);
-		}
-
-		protected void EhChangeEventResumed()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)this._parent).EhChildChanged(this, EventArgs.Empty);
-		}
-
-		protected void OnChanged()
-		{
-			if (_changeEventSuppressor.GetEnabledWithCounting())
-			{
-				if (_parent is Main.IChildChangedEventSink)
-					((Main.IChildChangedEventSink)this._parent).EhChildChanged(this, EventArgs.Empty);
-			}
+			_accumulatedEventData = EventArgs.Empty;
 		}
 
 		#endregion Event firing
 
-		#region Handler of child events
-
-		public void EhChildChanged(object sender, EventArgs e)
-		{
-			if (sender is IItemLocation)
-				CalculateCachedSizeAndPosition();
-
-			OnChanged();
-		}
-
-		#endregion Handler of child events
-
 		#region IDocumentNode Members
 
-		public object ParentObject
+		public override object ParentObject
 		{
 			get
 			{
@@ -1303,7 +1261,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public string Name
+		public override string Name
 		{
 			get
 			{
@@ -1311,6 +1269,10 @@ namespace Altaxo.Graph.Gdi
 					return ((Main.INamedObjectCollection)ParentObject).GetNameOfChildObject(this);
 				else
 					return GetDefaultNameOfLayer(this.IndexOf());
+			}
+			set
+			{
+				throw new InvalidOperationException("The name of a layer cannot be set");
 			}
 		}
 
@@ -1325,9 +1287,13 @@ namespace Altaxo.Graph.Gdi
 				return "RL";
 
 			var stb = new System.Text.StringBuilder();
+
 			stb.AppendFormat("L{0}", layerIndex[0]);
+
 			for (int k = 1; k < layerIndex.Count; ++k)
+
 				stb.AppendFormat("-{0}", layerIndex[k]);
+
 			return stb.ToString();
 		}
 
