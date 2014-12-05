@@ -2360,9 +2360,6 @@ namespace Altaxo.Data
 		/// </remarks>
 		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (e is ChangeEventArgs) // Are the data from ourself? (we have already ChangeEventArgs)
-				return false;  // then nothing is to do
-
 			ChangeEventArgs result = null;
 			AccumulateChangeData(sender, e, ref result); // Get ChangeEventArgs in the result.
 			e = result;

@@ -160,7 +160,7 @@ namespace Altaxo.Main.Commands
 				_projectItems = new List<DocNodeProxy>(projectItemReferences);
 			}
 
-			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemClipboardList), 0)]
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProjectItemReferenceClipboardList), 0)]
 			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 			{
 				public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
