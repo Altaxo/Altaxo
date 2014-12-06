@@ -9,8 +9,7 @@ namespace Altaxo.Main
 	/// Base class for a suspendable document node which has no children, i.e. is a leaf node of the document tree.
 	/// It implements most of the code neccessary to handle own change events and to accumulate data, if this object is suspended.
 	/// </summary>
-	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableLeafDocumentNode"/> instead.</remarks>
-	public abstract class SuspendableLeafDocumentNode : Main.SuspendableLeafObject, Main.IDocumentNode
+	public abstract class SuspendableDocumentLeafNode<TEventArgs> : Main.SuspendableLeafObject, Main.IDocumentNode, Main.IChangedEventSource where TEventArgs : EventArgs
 	{
 		/// <summary>
 		/// The parent object this instance belongs to.
@@ -22,7 +21,7 @@ namespace Altaxo.Main
 		public event EventHandler Changed;
 
 		[NonSerialized]
-		protected EventArgs _accumulatedEventData;
+		protected TEventArgs _accumulatedEventData;
 
 		/// <summary>
 		/// Gets/sets the parent object this instance belongs to.
@@ -141,5 +140,32 @@ namespace Altaxo.Main
 		/// The name of this document node.
 		/// </value>
 		public abstract string Name { get; }
+	}
+
+	/// <summary>
+	/// Implements a <see cref="SuspendableDocumentLeafNode{EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
+	/// </summary>
+	public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNode<EventArgs>
+	{
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			if (null != e)
+				_accumulatedEventData = e;
+			else
+				_accumulatedEventData = EventArgs.Empty;
+		}
+
+		public override string Name
+		{
+			get { return this.GetType().Name; }
+		}
+
+		/// <summary>
+		/// Calls EhSelfChanged with EventArgs.Empty
+		/// </summary>
+		public virtual void EhSelfChanged()
+		{
+			EhSelfChanged(EventArgs.Empty);
+		}
 	}
 }

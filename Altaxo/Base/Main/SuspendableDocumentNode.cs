@@ -9,7 +9,7 @@ namespace Altaxo.Main
 	/// Base class for a suspendable document node.
 	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
-	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableLeafDocumentNode"/> instead.</remarks>
+	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
 	public abstract class SuspendableDocumentNode : Main.SuspendableObject, Main.IDocumentNode, Main.IChangedEventSource, Main.IChildChangedEventSink
 	{
 		/// <summary>The parent of this object.</summary>
@@ -67,7 +67,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Processes the event args <paramref name="e"/> when this object is not suspended. This function serves two purposes:
 		/// i) updating some cached data of this object by processing the event args of the child,
-		/// and ii) optional transforming the event args, for instance to a new type, which afterwards is send to the parent and is used as event args in the <see cref="Change"/> event of this object.
+		/// and ii) optional transforming the event args, for instance to a new type, which afterwards is send to the parent and is used as event args in the <see cref="Changed"/> event of this object.
 		/// The transformed event args is <b>not</b> used if this object is suspended (in this case the original event args is used).
 		/// </summary>
 		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
@@ -277,7 +277,7 @@ namespace Altaxo.Main
 	}
 
 	/// <summary>
-	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="HashSet"/>.
+	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="HashSet{T}"/>.
 	/// This class supports document nodes that have children,
 	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>

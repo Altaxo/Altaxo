@@ -26,7 +26,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 			/// <summary>The type of items control this information applies to.</summary>
 			internal Type ItemsControlType;
 
-			/// <summary>The type of items container which is used by the <see cref="ItemsControl"/>. Example: a <see cref="ListView"/> uses <see cref="ListViewItems"/>.</summary>
+			/// <summary>The type of items container which is used by the <see cref="ItemsControl"/>. Example: a <see cref="ListView"/> uses <see cref="ListViewItem"/>s.</summary>
 			internal Type ItemContainerType;
 
 			/// <summary>Function that determines if multiple items can be selected in the items control. For some items controls, that depends on the selection mode. The argument is the <see cref="ItemsControl"/>. If the return value is <c>true</c>, multiple items can be selected.</summary>
@@ -38,7 +38,7 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 			/// <summary>Function that determines whether the provided item is selected in the items control. 1st arg is the items control, 2nd arg is the item (not the item's container!). The return value is <c>true</c> if the item is selected in the items control.</summary>
 			internal Func<ItemsControl, object, bool> GetIsItemSelected;
 
-			/// <summary">Action that sets the selection status of an item. 1st arg is the items control, 2nd arg is the item, and 3rd arg is the selection status. If the selection status is <c>true</c>, the item must be selected in the items control. If the selection status is <c>false</c>, the item must be deselected in the items control. If the items control provides no means to set the selected item(s) programmatically, set this argument (the function itself) to <c>null</c>.</summary>
+			/// <summary>Action that sets the selection status of an item. 1st arg is the items control, 2nd arg is the item, and 3rd arg is the selection status. If the selection status is <c>true</c>, the item must be selected in the items control. If the selection status is <c>false</c>, the item must be deselected in the items control. If the items control provides no means to set the selected item(s) programmatically, set this argument (the function itself) to <c>null</c>.</summary>
 			internal Action<ItemsControl, object, bool> SetIsItemSelected;
 
 			/// <summary>

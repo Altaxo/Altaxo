@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
 	public class DateTimeTickSpacing : TickSpacing
 	{
 		#region Inner classes
-		
+
 		public enum TimeSpanExUnit { Span, Month, Years }
 
 		public struct TimeSpanEx : IEquatable<TimeSpanEx>, IEquatable<object>
@@ -87,7 +88,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			public static TimeSpanEx FromMicroSeconds(long microseconds)
 			{
-				return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromTicks(10*microseconds) };
+				return new TimeSpanEx() { _unit = TimeSpanExUnit.Span, _span = TimeSpan.FromTicks(10 * microseconds) };
 			}
 
 			public double Years
@@ -103,12 +104,12 @@ namespace Altaxo.Graph.Scales.Ticks
 				}
 			}
 
-			public long  Months
+			public long Months
 			{
 				get
 				{
 					if (_unit == TimeSpanExUnit.Years)
-						return _span.Ticks*12;
+						return _span.Ticks * 12;
 					else if (_unit == TimeSpanExUnit.Month)
 						return _span.Ticks;
 					else
@@ -132,9 +133,11 @@ namespace Altaxo.Graph.Scales.Ticks
 				switch (_unit)
 				{
 					case TimeSpanExUnit.Span:
-						return Calc.DateTimeMath.RoundUpSpan(d,_span);
+						return Calc.DateTimeMath.RoundUpSpan(d, _span);
+
 					case TimeSpanExUnit.Month:
 						return Calc.DateTimeMath.RoundUpMonths(d, (int)_span.Ticks);
+
 					case TimeSpanExUnit.Years:
 						return Calc.DateTimeMath.RoundUpYears(d, (int)_span.Ticks);
 				}
@@ -147,14 +150,15 @@ namespace Altaxo.Graph.Scales.Ticks
 				{
 					case TimeSpanExUnit.Span:
 						return Calc.DateTimeMath.RoundDownSpan(d, _span);
+
 					case TimeSpanExUnit.Month:
 						return Calc.DateTimeMath.RoundDownMonths(d, (int)_span.Ticks);
+
 					case TimeSpanExUnit.Years:
 						return Calc.DateTimeMath.RoundDownYears(d, (int)_span.Ticks);
 				}
 				return d;
 			}
-
 
 			public static DateTime Add(DateTime x, TimeSpanEx span)
 			{
@@ -162,10 +166,11 @@ namespace Altaxo.Graph.Scales.Ticks
 				{
 					case TimeSpanExUnit.Years:
 						return new DateTime(x.Year + (int)(span._span.Ticks), 1, 1, 0, 0, 0, x.Kind);
+
 					case TimeSpanExUnit.Month:
 						{
-							long month = span._span.Ticks + x.Month-1;
-							int addyears = (int)( month / 12);
+							long month = span._span.Ticks + x.Month - 1;
+							int addyears = (int)(month / 12);
 							month %= 12;
 							if (month < 0)
 							{
@@ -186,9 +191,10 @@ namespace Altaxo.Graph.Scales.Ticks
 				{
 					case TimeSpanExUnit.Years:
 						return new DateTime(x.Year - (int)(span._span.Ticks), 1, 1, 0, 0, 0, x.Kind);
+
 					case TimeSpanExUnit.Month:
 						{
-							long month =  x.Month - 1 - span._span.Ticks;
+							long month = x.Month - 1 - span._span.Ticks;
 							int addyears = (int)(month / 12);
 							month %= 12;
 							if (month < 0)
@@ -204,7 +210,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				}
 			}
 
-
 			public static double Divide(TimeSpanEx a, TimeSpanEx b)
 			{
 				switch (a._unit)
@@ -215,34 +220,42 @@ namespace Altaxo.Graph.Scales.Ticks
 							{
 								case TimeSpanExUnit.Years:
 									return a._span.Ticks / (double)b._span.Ticks;
+
 								case TimeSpanExUnit.Month:
 									return a._span.Ticks * 12 / (double)b._span.Ticks;
+
 								case TimeSpanExUnit.Span:
 									return TimeSpan.FromDays(365.25).Ticks * (a._span.Ticks / (double)b._span.Ticks);
 							}
 						}
 						break;
+
 					case TimeSpanExUnit.Month:
 						{
 							switch (b._unit)
 							{
 								case TimeSpanExUnit.Years:
 									return a._span.Ticks / (double)(12 * b._span.Ticks);
+
 								case TimeSpanExUnit.Month:
 									return a._span.Ticks / (double)b._span.Ticks;
+
 								case TimeSpanExUnit.Span:
 									return TimeSpan.FromDays(365.25 / 12).Ticks * (a._span.Ticks / (double)b._span.Ticks);
 							}
 						}
 						break;
+
 					case TimeSpanExUnit.Span:
 						{
 							switch (b._unit)
 							{
 								case TimeSpanExUnit.Years:
 									return a._span.Ticks / ((double)(b._span.Ticks) * TimeSpan.FromDays(365.25).Ticks);
+
 								case TimeSpanExUnit.Month:
 									return a._span.Ticks / ((double)(b._span.Ticks) * TimeSpan.FromDays(365.25 / 12).Ticks);
+
 								case TimeSpanExUnit.Span:
 									return a._span.Ticks / (double)b._span.Ticks;
 							}
@@ -263,7 +276,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		class CachedMajorMinor
+		private class CachedMajorMinor
 		{
 			public DateTime Org, End;
 			/// <summary>Physical span value between two major ticks.</summary>
@@ -283,10 +296,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		#endregion
+		#endregion Inner classes
 
 		#region static fields
-		readonly static TimeSpan[] _possibleMajorTickSpans =
+
+		private static readonly TimeSpan[] _possibleMajorTickSpans =
       {
         TimeSpan.FromTicks(1),
         TimeSpan.FromTicks(2),
@@ -365,8 +379,7 @@ namespace Altaxo.Graph.Scales.Ticks
         TimeSpan.FromDays(25),
       };
 
-
-		readonly static TimeSpanEx[] _possibleMinorTicksForYears =
+		private static readonly TimeSpanEx[] _possibleMinorTicksForYears =
       {
 				TimeSpanEx.FromYears(1),
 				TimeSpanEx.FromMonths(6),
@@ -376,8 +389,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				TimeSpanEx.FromMonths(1),
 			};
 
-
-		readonly static TimeSpanEx[] _possibleMinorTicksForDays =
+		private static readonly TimeSpanEx[] _possibleMinorTicksForDays =
       {
 				TimeSpanEx.FromDays(1),
 				TimeSpanEx.FromHours(12),
@@ -401,53 +413,42 @@ namespace Altaxo.Graph.Scales.Ticks
 				TimeSpanEx.FromMilliSeconds(500),
 			};
 
+		#endregion static fields
 
-
-
-
-
-
-
-
-
-		#endregion
-
-		List<AltaxoVariant> _majorTicks;
-		List<AltaxoVariant> _minorTicks;
+		private List<AltaxoVariant> _majorTicks;
+		private List<AltaxoVariant> _minorTicks;
 
 		/// <summary>If set, gives the number of minor ticks choosen by the user.</summary>
-		int? _userDefinedMinorTicks;
+		private int? _userDefinedMinorTicks;
 
 		/// <summary>If set, gives the physical value between two major ticks choosen by the user.</summary>
-		TimeSpanEx? _userDefinedMajorSpan;
+		private TimeSpanEx? _userDefinedMajorSpan;
 
-		double _minGrace = 0.05;
-		double _maxGrace = 0.05;
-		int _targetNumberOfMajorTicks = 6;
-		int _targetNumberOfMinorTicks = 2;
-
+		private double _minGrace = 0.05;
+		private double _maxGrace = 0.05;
+		private int _targetNumberOfMajorTicks = 6;
+		private int _targetNumberOfMinorTicks = 2;
 
 		/// <summary>If true, the boundaries will be set on a minor or major tick.</summary>
-		BoundaryTickSnapping _snapOrgToTick = BoundaryTickSnapping.SnapToMinorOrMajor;
-		BoundaryTickSnapping _snapEndToTick = BoundaryTickSnapping.SnapToMinorOrMajor;
+		private BoundaryTickSnapping _snapOrgToTick = BoundaryTickSnapping.SnapToMinorOrMajor;
 
-		SuppressedTicks _suppressedMajorTicks;
-		SuppressedTicks _suppressedMinorTicks;
-		AdditionalTicks _additionalMajorTicks;
-		AdditionalTicks _additionalMinorTicks;
+		private BoundaryTickSnapping _snapEndToTick = BoundaryTickSnapping.SnapToMinorOrMajor;
 
-		CachedMajorMinor _cachedMajorMinor;
+		private SuppressedTicks _suppressedMajorTicks;
+		private SuppressedTicks _suppressedMinorTicks;
+		private AdditionalTicks _additionalMajorTicks;
+		private AdditionalTicks _additionalMinorTicks;
+
+		private CachedMajorMinor _cachedMajorMinor;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeTickSpacing), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				DateTimeTickSpacing s = (DateTimeTickSpacing)obj;
-
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -456,7 +457,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 
-
 			protected virtual DateTimeTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				DateTimeTickSpacing s = null != o ? (DateTimeTickSpacing)o : new DateTimeTickSpacing();
@@ -464,9 +464,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public DateTimeTickSpacing()
 		{
@@ -478,11 +477,9 @@ namespace Altaxo.Graph.Scales.Ticks
 			_additionalMinorTicks = new AdditionalTicks();
 		}
 
-
 		public DateTimeTickSpacing(DateTimeTickSpacing from)
 			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
-			
 		}
 
 		public override bool CopyFrom(object obj)
@@ -507,7 +504,6 @@ namespace Altaxo.Graph.Scales.Ticks
 					_snapOrgToTick = from._snapOrgToTick;
 					_snapEndToTick = from._snapEndToTick;
 
-
 					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
 					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
 					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
@@ -525,7 +521,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new DateTimeTickSpacing(this);
 		}
 
-
 		#region Properties
 
 		public double MinGrace
@@ -539,7 +534,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _minGrace;
 				_minGrace = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -554,7 +549,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _maxGrace;
 				_maxGrace = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -569,7 +564,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _snapOrgToTick;
 				_snapOrgToTick = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -584,7 +579,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _snapEndToTick;
 				_snapEndToTick = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -599,7 +594,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _targetNumberOfMajorTicks;
 				_targetNumberOfMajorTicks = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -614,7 +609,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _targetNumberOfMinorTicks;
 				_targetNumberOfMinorTicks = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -661,7 +656,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _userDefinedMinorTicks;
 				_userDefinedMinorTicks = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -675,12 +670,12 @@ namespace Altaxo.Graph.Scales.Ticks
 			{
 				var oldValue = _userDefinedMajorSpan;
 				_userDefinedMajorSpan = value;
-				if(!oldValue.Equals(value))
-					OnChanged();
+				if (!oldValue.Equals(value))
+					EhSelfChanged();
 			}
 		}
-		#endregion Properties
 
+		#endregion Properties
 
 		public override AltaxoVariant[] GetMajorTicksAsVariant()
 		{
@@ -741,7 +736,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			System.Diagnostics.Debug.Assert(null != _cachedMajorMinor);
 
-
 			_majorTicks.Clear();
 			_minorTicks.Clear();
 			InternalCalculateMajorTicks(dorg, dend, _cachedMajorMinor.MajorTickSpan);
@@ -750,8 +744,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		#region Calculation of tick values
 
-
-		void InternalCalculateMajorTicks(DateTime org, DateTime end, TimeSpanEx majorSpan)
+		private void InternalCalculateMajorTicks(DateTime org, DateTime end, TimeSpanEx majorSpan)
 		{
 			_majorTicks.Clear();
 
@@ -780,8 +773,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-
-		void InternalCalculateMinorTicks(DateTime org, DateTime end, TimeSpanEx majorSpan, TimeSpanEx minorSpan)
+		private void InternalCalculateMinorTicks(DateTime org, DateTime end, TimeSpanEx majorSpan, TimeSpanEx minorSpan)
 		{
 			_minorTicks.Clear();
 
@@ -794,7 +786,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			while (x <= end)
 			{
-				while(nextMajor<=x)
+				while (nextMajor <= x)
 				{
 					nextMajor = TimeSpanEx.Add(nextMajor, majorSpan);
 				}
@@ -817,14 +809,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		#endregion
-
+		#endregion Calculation of tick values
 
 		#region Functions to predict change of scale by tick snapping, grace, and OneLever
 
-
-
-		bool InternalPreProcessScaleBoundaries(ref DateTime xorg, ref DateTime xend, bool isOrgExtendable, bool isEndExtendable)
+		private bool InternalPreProcessScaleBoundaries(ref DateTime xorg, ref DateTime xend, bool isOrgExtendable, bool isEndExtendable)
 		{
 			_cachedMajorMinor = null;
 			bool modified = false;
@@ -864,7 +853,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			TimeSpanEx minorTicks;
 			bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping, out decadesPerMajorTick, out minorTicks);
 
-
 			// now compare the two
 			if (xOrgWithTickSnapping <= xOrgWithGraceAndOneLever && xEndWithTickSnapping >= xEndWithGraceAndOneLever)
 			{
@@ -882,15 +870,13 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			_cachedMajorMinor = new CachedMajorMinor(xorg, xend, decadesPerMajorTick, minorTicks);
 
-
 			return modified;
 		}
 
-		static TimeSpan Multiply(double a, TimeSpan b)
+		private static TimeSpan Multiply(double a, TimeSpan b)
 		{
 			return TimeSpan.FromSeconds(a * b.TotalSeconds);
 		}
-
 
 		/// <summary>
 		/// Applies the value for <see cref="MinGrace"/> and <see cref="MaxGrace"/> to the scale and calculated proposed values for the boundaries.
@@ -910,22 +896,19 @@ namespace Altaxo.Graph.Scales.Ticks
 			propOrg = scaleOrg;
 			if (isOrgExtendable)
 			{
-				propOrg -= Multiply(Math.Abs(_minGrace),  scaleSpan);
+				propOrg -= Multiply(Math.Abs(_minGrace), scaleSpan);
 				modified |= (0 != _minGrace);
 			}
 
 			propEnd = scaleEnd;
 			if (isEndExtendable)
 			{
-				propEnd += Multiply( Math.Abs(_maxGrace),  scaleSpan);
+				propEnd += Multiply(Math.Abs(_maxGrace), scaleSpan);
 				modified |= (0 != _maxGrace);
 			}
 
-		
-
 			return modified;
 		}
-
 
 		/// <summary>Applies the tick snapping settings to the scale origin and scale end. This is done by a determination of the number of decades per major tick and the minor ticks per major tick interval.
 		/// Then, the snapping values are applied, and the org and end values of the scale are adjusted (if allowed so).</summary>
@@ -971,21 +954,23 @@ namespace Altaxo.Graph.Scales.Ticks
 									minorTicks = TimeSpanEx.FromMonths(years * 12 / mticks);
 							}
 							break;
+
 						case TimeSpanExUnit.Month:
 							{
-								long months= majorSpan._span.Ticks;
+								long months = majorSpan._span.Ticks;
 								if (months >= mticks)
 									minorTicks = TimeSpanEx.FromMonths(months / mticks);
 							}
 							break;
+
 						case TimeSpanExUnit.Span:
 							{
 								minorTicks = TimeSpanEx.FromTicks(majorSpan._span.Ticks / mticks);
 							}
 							break;
+
 						default:
 							throw new NotImplementedException();
-
 					}
 				}
 			}
@@ -1060,8 +1045,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-
-		static int RoundTo1_2_3_4_6_8_12_18(double x)
+		private static int RoundTo1_2_3_4_6_8_12_18(double x)
 		{
 			if (x < 1.5)
 				return 1;
@@ -1081,8 +1065,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				return 18;
 		}
 
-
-		static TimeSpanEx CalculateMajorSpan(TimeSpan span, int targetNumberOfMajorTicks)
+		private static TimeSpanEx CalculateMajorSpan(TimeSpan span, int targetNumberOfMajorTicks)
 		{
 			TimeSpanEx majorspan;
 
@@ -1094,37 +1077,31 @@ namespace Altaxo.Graph.Scales.Ticks
 					if (yearPerTick > 0.75)
 						return TimeSpanEx.FromYears((long)Math.Round(yearPerTick));
 				}
-				double monthPerTick = LinearTickSpacing.CalculateMajorSpan(span.TotalDays / (365.25/12), targetNumberOfMajorTicks);
-				if(monthPerTick >= 0.8)
+				double monthPerTick = LinearTickSpacing.CalculateMajorSpan(span.TotalDays / (365.25 / 12), targetNumberOfMajorTicks);
+				if (monthPerTick >= 0.8)
 					return TimeSpanEx.FromMonths(RoundTo1_2_3_4_6_8_12_18(monthPerTick));
 			}
-				int i = _possibleMajorTickSpans.Length - 1;
-				TimeSpan destMajorTickSpan = new TimeSpan(span.Ticks / targetNumberOfMajorTicks);
-				for (i = _possibleMajorTickSpans.Length - 1; i >= 0; i--)
-				{
-					if (_possibleMajorTickSpans[i] < destMajorTickSpan)
-						break;
-				}
-				majorspan = TimeSpanEx.FromTimeSpan(_possibleMajorTickSpans[Math.Max(i, 0)]);
-			
+			int i = _possibleMajorTickSpans.Length - 1;
+			TimeSpan destMajorTickSpan = new TimeSpan(span.Ticks / targetNumberOfMajorTicks);
+			for (i = _possibleMajorTickSpans.Length - 1; i >= 0; i--)
+			{
+				if (_possibleMajorTickSpans[i] < destMajorTickSpan)
+					break;
+			}
+			majorspan = TimeSpanEx.FromTimeSpan(_possibleMajorTickSpans[Math.Max(i, 0)]);
+
 			return majorspan;
 		}
 
-
-
-		static double GetMajorTickDifferencePenalty(double currentNumberOfTicks, int targetNumberOfTicks)
+		private static double GetMajorTickDifferencePenalty(double currentNumberOfTicks, int targetNumberOfTicks)
 		{
 			return Math.Abs(currentNumberOfTicks - targetNumberOfTicks);
 		}
 
-		static double GetMinorTickDifferencePenalty(double currentNumberOfMinorTicks, int targetNumberOfMinorTicks)
+		private static double GetMinorTickDifferencePenalty(double currentNumberOfMinorTicks, int targetNumberOfMinorTicks)
 		{
 			return Math.Abs(currentNumberOfMinorTicks - targetNumberOfMinorTicks);
 		}
-
-
-
-
 
 		/// <summary>
 		/// Calculates the number of minor ticks from the major span value and the target number of minor ticks.
@@ -1132,18 +1109,18 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <param name="majorSpan">Major span value.</param>
 		/// <param name="targetNumberOfMinorTicks">Target number of minor ticks.</param>
 		/// <returns></returns>
-		static TimeSpanEx CalculateNumberOfMinorTicks(TimeSpanEx majorSpan, int targetNumberOfMinorTicks)
+		private static TimeSpanEx CalculateNumberOfMinorTicks(TimeSpanEx majorSpan, int targetNumberOfMinorTicks)
 		{
 			if (targetNumberOfMinorTicks <= 0)
 				return majorSpan;
 
-			switch(majorSpan._unit)
+			switch (majorSpan._unit)
 			{
 				case TimeSpanExUnit.Years:
 					{
 						long years = majorSpan._span.Ticks;
 						int ticks = LinearTickSpacing.CalculateNumberOfMinorTicks(years, targetNumberOfMinorTicks);
-						if (ticks < years && ticks>0 && 0==years%ticks)
+						if (ticks < years && ticks > 0 && 0 == years % ticks)
 							return TimeSpanEx.FromYears(years / ticks);
 						double minDiff = double.MaxValue;
 						TimeSpanEx result = TimeSpanEx.FromYears(1);
@@ -1152,21 +1129,21 @@ namespace Altaxo.Graph.Scales.Ticks
 						{
 							double dticks = years / c;
 							var diff = GetMinorTickDifferencePenalty(dticks, targetNumberOfMinorTicks);
-							if(diff  < minDiff)
+							if (diff < minDiff)
 							{
 								minDiff = diff;
-								result = TimeSpanEx.FromYears(years/c);
+								result = TimeSpanEx.FromYears(years / c);
 							}
 						}
-						divisors = Calc.PrimeNumberMath.GetNeighbouringDivisors(years*12, targetNumberOfMinorTicks, years*12);
+						divisors = Calc.PrimeNumberMath.GetNeighbouringDivisors(years * 12, targetNumberOfMinorTicks, years * 12);
 						foreach (var c in divisors)
 						{
-							double dticks = (years*12) / c;
+							double dticks = (years * 12) / c;
 							var diff = GetMinorTickDifferencePenalty(dticks, targetNumberOfMinorTicks);
 							if (diff < minDiff)
 							{
 								minDiff = diff;
-								result = TimeSpanEx.FromMonths((years*12) / c);
+								result = TimeSpanEx.FromMonths((years * 12) / c);
 							}
 						}
 						return result;
@@ -1175,7 +1152,7 @@ namespace Altaxo.Graph.Scales.Ticks
 					{
 						long months = majorSpan._span.Ticks;
 						int ticks = LinearTickSpacing.CalculateNumberOfMinorTicks(months, targetNumberOfMinorTicks);
-						if (ticks <months && ticks>0 && 0==months%ticks)
+						if (ticks < months && ticks > 0 && 0 == months % ticks)
 							return TimeSpanEx.FromMonths(months / ticks);
 
 						double minDiff = double.MaxValue;
@@ -1188,7 +1165,7 @@ namespace Altaxo.Graph.Scales.Ticks
 							if (diff < minDiff)
 							{
 								minDiff = diff;
-								result = TimeSpanEx.FromMonths(months/c);
+								result = TimeSpanEx.FromMonths(months / c);
 							}
 						}
 						return result;
@@ -1222,6 +1199,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		#endregion
+		#endregion Functions to predict change of scale by tick snapping, grace, and OneLever
 	}
 }

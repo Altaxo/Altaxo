@@ -344,10 +344,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
+		#region Suspend/Resume
+
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			_accumulatedEventData = EventArgs.Empty;
 		}
+
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			UpdateTransformationMatrix();
+
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Suspend/Resume
 
 		public void SetParentSize(PointD2D parentSize, bool shouldTriggerChangeEvent)
 		{

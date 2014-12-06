@@ -33,31 +33,15 @@ namespace Altaxo.Graph.Scales.Ticks
 	/// <summary>
 	/// Base class responsible for the spacing of ticks (major and minor) along a scale.
 	/// </summary>
-	public abstract class TickSpacing : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentNode
+	public abstract class TickSpacing : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
 	{
-		[field: NonSerialized]
-		public event EventHandler Changed;
-
-		[NonSerialized]
-		protected Main.EventSuppressor _suppressorOfChangedEvent;
-
-		[NonSerialized]
-		protected object _parentObject;
-
 		protected TickSpacing()
 		{
-			_suppressorOfChangedEvent = new Main.EventSuppressor(OnChanged);
 		}
 
 		public TickSpacing(TickSpacing from)
 		{
-			_suppressorOfChangedEvent = new Main.EventSuppressor(OnChanged);
 			CopyFrom(from);
-		}
-
-		public IDisposable BeginUpdate()
-		{
-			return _suppressorOfChangedEvent.SuspendGetToken();
 		}
 
 		public abstract object Clone();
@@ -117,26 +101,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				result[i] = scale.PhysicalVariantToNormal(vars[i]);
 
 			return result;
-		}
-
-		protected void OnChanged()
-		{
-			if (_suppressorOfChangedEvent.GetDisabledWithCounting())
-				return;
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		public object ParentObject
-		{
-			get { return _parentObject; }
-			set { _parentObject = value; }
-		}
-
-		public string Name
-		{
-			get { throw new NotImplementedException(); }
 		}
 	}
 }

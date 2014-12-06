@@ -40,7 +40,7 @@ using System.Windows.Threading;
 namespace Altaxo.Gui.Common
 {
 	/// <summary>
-	/// Converts a function Func<object, System.Globalization.CultureInfo, string) into a ValidationRule. When the <see cref="ValidationRule"/>'s <c>Validate</c> function is called,
+	/// Converts a function Func&lt;object System.Globalization.CultureInfo, string&gt; into a ValidationRule. When the <see cref="ValidationRule"/>'s <c>Validate</c> function is called,
 	/// the call is transfered to the provided function (the two arguments of the function are the arguments from the <c>Validate</c> call. If the function returns <c>null</c>,
 	/// the ValidationResult is valid. If the function returns a valid string, the ValidationResult is not valid, and the parameter of the ValidationResult is the returned string.
 	/// </summary>

@@ -103,12 +103,6 @@ namespace Altaxo.Graph.Gdi
 		protected GraphicCollection _graphObjects;
 
 		/// <summary>
-		/// The parent layer collection which contains this layer (or null if not member of such collection).
-		/// </summary>
-		[NonSerialized]
-		protected object _parent;
-
-		/// <summary>
 		/// Defines a grid that child layers can use to arrange.
 		/// </summary>
 		private GridPartitioning _grid;
@@ -116,9 +110,6 @@ namespace Altaxo.Graph.Gdi
 		#endregion Member variables
 
 		#region Event definitions
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		/// <summary>Fired when the size of the layer changed.</summary>
 		[field: NonSerialized]
@@ -1238,6 +1229,14 @@ namespace Altaxo.Graph.Gdi
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			_accumulatedEventData = EventArgs.Empty;
+		}
+
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (sender is IItemLocation)
+				CalculateCachedSizeAndPosition();
+
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
 		}
 
 		#endregion Event firing

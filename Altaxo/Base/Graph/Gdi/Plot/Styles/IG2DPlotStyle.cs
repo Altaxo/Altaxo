@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Altaxo.Main;
 using System.Drawing;
-using Altaxo.Graph.Gdi.Plot.Data;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -53,7 +55,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="localGroups">Local plot groups. To this collection PlotGroupStyles are added if neccessary.</param>
 		void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
 
-
 		/// <summary>
 		/// Prepares the group styles by showing them to this plot style.
 		/// </summary>
@@ -62,7 +63,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="layer">Plot layer the plot item belonging to this plot style resides in.</param>
 		/// <param name="pdata">The preprocessed plot data of the plot item.</param>
 		void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata);
-
 
 		/// <summary>
 		/// Applies the group styles to this plot styles.
@@ -81,7 +81,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="nextItemData">Plot data of the next plot item.</param>
 		void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData);
 
-
 		/// <summary>
 		/// Paints a appropriate symbol in the given rectangle. The width of the rectangle is mandatory, but if the heigth is too small,
 		/// you should extend the bounding rectangle and set it as return value of this function.
@@ -92,19 +91,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// inflated in y-Direction. Do not inflate the rectangle in x-direction!</returns>
 		RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds);
 
-
-		/// <summary>
-		/// Sets the parent object
-		/// </summary>
-		new object ParentObject { set; }
-
-
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.
 		/// </summary>
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		void VisitDocumentReferences(DocNodeProxyReporter Report);
-
 	}
 }

@@ -362,7 +362,7 @@
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\IProjectItem.cs" />
     <Compile Include="Main\Properties\ProjectFolderPropertyDocumentCollectionChangedEventArgs.cs" />
-    <Compile Include="Main\SuspendableLeafDocumentNode.cs" />
+    <Compile Include="Main\SuspendableDocumentLeafNode.cs" />
     <Compile Include="Main\SuspendableDocumentNode.cs" />
     <Compile Include="Main\SuspendableLeafObject.cs" />
     <Compile Include="Main\SuspendableObject.cs" />

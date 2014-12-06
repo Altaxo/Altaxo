@@ -34,8 +34,6 @@ namespace Altaxo.Data
 	/// </summary>
 	public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable, Main.ISuspendableByToken, Main.IDocumentNode
 	{
-		object ParentObject { get; set; }
-
 		/// <summary>
 		/// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
 		/// </summary>
@@ -78,6 +76,6 @@ namespace Altaxo.Data
 	/// </summary>
 	public class TableDataSourceChangedEventArgs : EventArgs
 	{
-		public static readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
+		public new static readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
 	}
 }

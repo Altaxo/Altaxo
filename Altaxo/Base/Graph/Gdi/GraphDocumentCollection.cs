@@ -50,12 +50,6 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
 
-		#region IChangedEventSource Members
-
-		public event System.EventHandler Changed;
-
-		#endregion IChangedEventSource Members
-
 		public GraphDocumentCollection(AltaxoDocument parent)
 		{
 			this._parent = parent;

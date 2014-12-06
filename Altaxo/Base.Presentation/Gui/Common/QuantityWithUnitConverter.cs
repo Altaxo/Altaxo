@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Common
 		/// <param name="value">The value to convert. Has to be a <see cref="DimensionfulQuantity"/>.</param>
 		/// <param name="targetType">Ignored.</param>
 		/// <param name="parameter">Ignored.</param>
-		/// <param name="culture">The culture used to convert the quantity.</param>
+		/// <param name="cultureDontUseIsBuggy">This parameter is not used. Instead, the current Altaxo Gui culture is used.</param>
 		/// <returns></returns>
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo cultureDontUseIsBuggy)
 		{

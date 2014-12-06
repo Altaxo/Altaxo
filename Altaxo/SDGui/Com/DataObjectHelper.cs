@@ -352,7 +352,7 @@ namespace Altaxo.Com
 		/// <summary>
 		/// Renders a bitmap to a DIBV5 bitmap in HGLOBAL format. It is neccessary that the provided bitmap has a pixel format of PixelFormat.Format32bppRgb.
 		/// </summary>
-		/// <param name="bitmap">The provided bitmap. Must have PixelFormat.Format24bppRgb.</param>
+		/// <param name="bm">The provided bitmap. Must have PixelFormat.Format24bppRgb.</param>
 		/// <returns>HGLOBAL pointer to the DIB bitmap.</returns>
 		/// <remarks>
 		/// See <see href="https://groups.google.com/forum/#!msg/microsoft.public.dotnet.framework.drawing/0sSPCrzf8yE/WNEIU324YtwJ"/> for the original source code and the discussion./>

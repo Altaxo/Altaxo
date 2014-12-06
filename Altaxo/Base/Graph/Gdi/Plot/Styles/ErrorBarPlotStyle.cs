@@ -661,12 +661,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IDocumentNode Members
 
-		object Altaxo.Main.IDocumentNode.ParentObject
-		{
-			get { return _parent; }
-			// set { _parent = value; }
-		}
-
 		public string Name
 		{
 			get { return "ErrorPlotStyle"; }

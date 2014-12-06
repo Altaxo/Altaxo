@@ -1972,7 +1972,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// The parent of this collection.
 		/// </summary>
-		public virtual object ParentObject
+		public override object ParentObject
 		{
 			get { return _parent; }
 			set

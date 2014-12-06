@@ -472,11 +472,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return Rectangle.Empty;
 		}
 
-		object IG2DPlotStyle.ParentObject
-		{
-			set { _parentObject = (Main.IDocumentNode)value; }
-		}
-
 		#endregion IG2DPlotStyle Members
 
 		#region Work

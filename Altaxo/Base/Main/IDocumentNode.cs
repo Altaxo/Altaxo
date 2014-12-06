@@ -34,6 +34,6 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Retrieves the parent object.
 		/// </summary>
-		object ParentObject { get; }
+		object ParentObject { get; set; }
 	}
 }

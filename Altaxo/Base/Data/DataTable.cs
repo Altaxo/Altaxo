@@ -634,23 +634,12 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Handles the case when a child changes, and a reaction is neccessary independently on the suspend state of the table.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
-		protected bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
-		{
-			return false;
-		}
-
-		/// <summary>
 		/// Handles the cases when a child changes, but a reaction is neccessary only if the table is not suspended currently.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
 		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
-		private bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
 			// if the DataTableSource has changed, we need to update the table
 			if (e is TableDataSourceChangedEventArgs)
@@ -1433,10 +1422,10 @@ namespace Altaxo.Data
 		#endregion IPropertyBagOwner
 
 		/// <summary>
-		/// Has to enumerate all references to other items in the project (<see cref="DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
+		/// Has to enumerate all references to other items in the project (<see cref="T:Altaxo.Main.DocNodeProxy" />) which are used in this project item and in all childs of this project item. The references
 		/// has to be reported to the <paramref name="ProxyProcessing" /> function. This function is responsible for processing of the proxies, for instance to relocated the path.
 		/// </summary>
-		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy" /> instances.</param>
+		/// <param name="ProxyProcessing">Function that processes  the found <see cref="T:Altaxo.Main.DocNodeProxy" /> instances.</param>
 		public void VisitDocumentReferences(Main.DocNodeProxyReporter ProxyProcessing)
 		{
 			if (this._tableDataSource != null)

@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Scales.Ticks
 					_majorTicks = new List<double>(from._majorTicks);
 					_minorTicks = new List<double>(from._minorTicks);
 
-					OnChanged();
+					EhSelfChanged();
 				}
 			}
 			return isCopied;
@@ -312,7 +312,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _minGrace;
 				_minGrace = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -327,7 +327,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _maxGrace;
 				_maxGrace = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _snapOrgToTick;
 				_snapOrgToTick = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -357,7 +357,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _snapEndToTick;
 				_snapEndToTick = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -372,7 +372,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _targetNumberOfMajorTicks;
 				_targetNumberOfMajorTicks = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -387,7 +387,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _targetNumberOfMinorTicks;
 				_targetNumberOfMinorTicks = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -402,7 +402,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _transformationDivider;
 				_transformationDivider = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -417,7 +417,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _transformationOffset;
 				_transformationOffset = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -432,7 +432,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _transformationOperationIsMultiply;
 				_transformationOperationIsMultiply = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -533,7 +533,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _userDefinedMinorTicks;
 				_userDefinedMinorTicks = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -548,7 +548,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _userDefinedMajorSpan;
 				_userDefinedMajorSpan = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 

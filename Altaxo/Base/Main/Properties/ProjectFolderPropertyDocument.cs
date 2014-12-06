@@ -257,15 +257,6 @@ namespace Altaxo.Main.Properties
 		}
 
 		/// <summary>
-		/// Retrieves the parent object.
-		/// </summary>
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
 		public void Dispose()

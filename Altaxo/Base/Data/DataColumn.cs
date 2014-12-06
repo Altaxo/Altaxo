@@ -37,7 +37,7 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	[Serializable()]
 	public abstract class DataColumn :
-		Main.SuspendableLeafDocumentNode,
+		Main.SuspendableDocumentLeafNode<EventArgs>,
 		Main.IEventIndicatedDisposable,
 		System.Runtime.Serialization.ISerializable,
 		System.Runtime.Serialization.IDeserializationCallback,
@@ -341,7 +341,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <remarks>Normally the parent object is a <see cref="DataColumnCollection" />. In this case this member is set during addition of the data column
 		/// to the collection. If some other object owns the data column, it is responsible for setting the parent to himself.</remarks>
-		public virtual object ParentObject
+		public override object ParentObject
 		{
 			get { return _parent; }
 			set

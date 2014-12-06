@@ -232,12 +232,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public virtual object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
 		public IG2DPlotStyle this[int i]
 		{
 			get
@@ -517,11 +511,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IRoutedPropertyReceiver Members
-
-		object IDocumentNode.ParentObject
-		{
-			get { return _parent; }
-		}
 
 		string INamedObject.Name
 		{

@@ -60,9 +60,9 @@ namespace Altaxo.Main
 		void Resume();
 
 		/// <summary>
-		/// Either resumes the parent object of this token (using <see cref="Resume"/>), or resumes silently (using <see cref="ResumeSilently"/>), depending on the provided argument.
+		/// Either resumes the parent object of this token (using <see cref="Resume()"/>), or resumes silently (using <see cref="ResumeSilently"/>), depending on the provided argument.
 		/// </summary>
-		/// <param name="eventFiring">Determines whether <see cref="Resume"/> is used, or <see cref="ResumeSilently"/>.</param>
+		/// <param name="eventFiring">Determines whether <see cref="Resume()"/> is used, or <see cref="ResumeSilently"/>.</param>
 		void Resume(EventFiring eventFiring);
 	}
 

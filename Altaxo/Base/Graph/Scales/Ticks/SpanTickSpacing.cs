@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _transformationDivider;
 				_transformationDivider = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -169,7 +169,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var oldValue = _transformationOperationIsMultiply;
 				_transformationOperationIsMultiply = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 

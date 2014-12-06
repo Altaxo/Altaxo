@@ -327,7 +327,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Is called when the suspend level falls down from 1 to zero  by a call to <see cref="ISuspendToken.Resume"/> or a call to <see cref="ISuspendToken.Dispose"/>.
+		/// Is called when the suspend level falls down from 1 to zero  by a call to <see cref="ISuspendToken.Resume()"/> or a call to <see cref="ISuspendToken.Dispose()"/>.
 		/// </summary>
 		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent"/> function was called during the suspended state.</param>
 		protected virtual void OnResume(int eventCount)

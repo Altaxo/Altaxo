@@ -311,13 +311,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-		}
-
-		/// <summary>
 		/// Visits all document references.
 		/// </summary>
 		/// <param name="ReportProxies">The report proxies.</param>
@@ -328,10 +321,5 @@ namespace Altaxo.Data
 		}
 
 		#endregion IAltaxoTableDataSource
-
-		public string Name
-		{
-			get { return this.GetType().Name; }
-		}
 	}
 }

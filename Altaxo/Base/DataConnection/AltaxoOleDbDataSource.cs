@@ -271,10 +271,5 @@ namespace Altaxo.DataConnection
 		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
 		{
 		}
-
-		public string Name
-		{
-			get { return this.GetType().Name; }
-		}
 	}
 }

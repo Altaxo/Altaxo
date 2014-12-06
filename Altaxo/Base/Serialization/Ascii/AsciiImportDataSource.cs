@@ -396,10 +396,5 @@ namespace Altaxo.Serialization.Ascii
 
 			base.Dispose(disposing);
 		}
-
-		public string Name
-		{
-			get { return this.GetType().Name; }
-		}
 	}
 }
