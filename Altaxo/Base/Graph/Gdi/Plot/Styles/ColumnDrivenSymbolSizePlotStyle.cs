@@ -238,12 +238,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				var bounds = _scale.DataBounds;
 
-				bounds.BeginUpdate();
+				using (var suspendToken = bounds.SuspendGetToken())
+				{
+					for (int i = 0; i < len; i++)
+						bounds.Add(_cachedDataColumn, i);
 
-				for (int i = 0; i < len; i++)
-					bounds.Add(_cachedDataColumn, i);
-
-				bounds.EndUpdate();
+					suspendToken.Resume();
+				}
 				_doesScaleNeedsDataUpdate = false;
 			}
 		}

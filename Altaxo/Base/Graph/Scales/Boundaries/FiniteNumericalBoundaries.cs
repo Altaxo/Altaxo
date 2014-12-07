@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,112 +19,110 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Serialization;
+using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  /// <summary>
-  /// FinitePhysicalBoundaries is intended to use for LinearAxis
-  /// it keeps track of the most negative and most positive finite value
-  /// </summary>
-  [Serializable]
-  public class FiniteNumericalBoundaries : NumericalBoundaries
-  {
-    #region Serialization
+	/// <summary>
+	/// FinitePhysicalBoundaries is intended to use for LinearAxis
+	/// it keeps track of the most negative and most positive finite value
+	/// </summary>
+	[Serializable]
+	public class FiniteNumericalBoundaries : NumericalBoundaries
+	{
+		#region Serialization
 
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.FinitePhysicalBoundaries",0)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.FiniteNumericalBoundaries", 1)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteNumericalBoundaries), 2)]
-      class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        FiniteNumericalBoundaries s = (FiniteNumericalBoundaries)obj;
-        info.AddBaseValueEmbedded(s,typeof(FiniteNumericalBoundaries).BaseType);
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        FiniteNumericalBoundaries s = null!=o ? (FiniteNumericalBoundaries)o : new FiniteNumericalBoundaries();
-        info.GetBaseValueEmbedded(s,typeof(FiniteNumericalBoundaries).BaseType,parent);
-        return s;
-      }
-    }
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.FinitePhysicalBoundaries", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.FiniteNumericalBoundaries", 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteNumericalBoundaries), 2)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				FiniteNumericalBoundaries s = (FiniteNumericalBoundaries)obj;
+				info.AddBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType);
+			}
 
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public override void OnDeserialization(object obj)
-    {
-    }
-    #endregion
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				FiniteNumericalBoundaries s = null != o ? (FiniteNumericalBoundaries)o : new FiniteNumericalBoundaries();
+				info.GetBaseValueEmbedded(s, typeof(FiniteNumericalBoundaries).BaseType, parent);
+				return s;
+			}
+		}
 
-    public FiniteNumericalBoundaries()
-      : base()
-    {
-    }
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
 
-    public FiniteNumericalBoundaries(FiniteNumericalBoundaries c)
-      : base(c)
-    {
-    }
+		#endregion Serialization
 
-    public override object Clone()
-    {
-      return new FiniteNumericalBoundaries(this);
-    }
+		public FiniteNumericalBoundaries()
+			: base()
+		{
+		}
 
-    public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
-    {
-      // if column is not numeric, use the index instead
-      double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col)[idx] : idx;
-      return Add(d);
-    }
+		public FiniteNumericalBoundaries(FiniteNumericalBoundaries c)
+			: base(c)
+		{
+		}
 
-    public override bool Add(Altaxo.Data.AltaxoVariant item)
-    {
-      return Add(item.ToDouble());
-    }
+		public override object Clone()
+		{
+			return new FiniteNumericalBoundaries(this);
+		}
 
+		public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
+		{
+			// if column is not numeric, use the index instead
+			double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col)[idx] : idx;
+			return Add(d);
+		}
 
-    public virtual bool Add(double d)
-    {
-  
-      if(EventsEnabled)
-      {
-        if(!double.IsInfinity(d))
-        {
-          bool bLower=false, bUpper=false;
-          if(d<_minValue) { _minValue = d; bLower=true; }
-          if(d>_maxValue) { _maxValue = d; bUpper=true; }
-          _numberOfItems++;
-  
-          OnNumberOfItemsChanged();
+		public override bool Add(Altaxo.Data.AltaxoVariant item)
+		{
+			return Add(item.ToDouble());
+		}
 
-          if(bLower || bUpper) 
-            OnBoundaryChanged(bLower,bUpper);
-  
-          return true;
-        }
-      }
-      else // Events not enabled
-      {
-        if(!double.IsInfinity(d))
-        {
-          if(d<_minValue) _minValue = d;
-          if(d>_maxValue) _maxValue = d;
-          _numberOfItems++;
-          return true;
-        }
-      }
-    
-  
-      return false;
-    }
-  }
+		public virtual bool Add(double d)
+		{
+			if (!IsSuspended)
+			{
+				if (!double.IsInfinity(d))
+				{
+					bool bLower = false, bUpper = false;
+					if (d < _minValue) { _minValue = d; bLower = true; }
+					if (d > _maxValue) { _maxValue = d; bUpper = true; }
+					_numberOfItems++;
 
+					OnNumberOfItemsChanged();
+
+					if (bLower || bUpper)
+						OnBoundaryChanged(bLower, bUpper);
+
+					return true;
+				}
+			}
+			else // Events not enabled
+			{
+				if (!double.IsInfinity(d))
+				{
+					if (d < _minValue) _minValue = d;
+					if (d > _maxValue) _maxValue = d;
+					_numberOfItems++;
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
 }

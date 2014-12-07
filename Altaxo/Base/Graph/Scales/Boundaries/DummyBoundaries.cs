@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,64 +28,51 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  public class DummyBoundaries : IPhysicalBoundaries
-  {
-    #region IPhysicalBoundaries Members
+	public class DummyBoundaries : Main.SuspendableLeafObject, IPhysicalBoundaries
+	{
+		#region IPhysicalBoundaries Members
 
-    public event BoundaryChangedHandler BoundaryChanged;
+		public event BoundaryChangedHandler BoundaryChanged;
 
-    public event ItemNumberChangedHandler NumberOfItemsChanged;
+		public event ItemNumberChangedHandler NumberOfItemsChanged;
 
-    public bool EventsEnabled
-    {
-      get { return false; }
-    }
+		public bool Add(Altaxo.Data.IReadableColumn col, int idx)
+		{
+			return true;
+		}
 
-    public void BeginUpdate()
-    {
-    }
+		public bool Add(Altaxo.Data.AltaxoVariant item)
+		{
+			return true;
+		}
 
-    public void EndUpdate()
-    {
-    }
+		public void Reset()
+		{
+		}
 
-    public bool Add(Altaxo.Data.IReadableColumn col, int idx)
-    {
-      return true;
-    }
+		public int NumberOfItems
+		{
+			get { return 0; }
+		}
 
-    public bool Add(Altaxo.Data.AltaxoVariant item)
-    {
-      return true;
-    }
+		public bool IsEmpty
+		{
+			get { return true; }
+		}
 
-    public void Reset()
-    {
-    }
+		public void Add(IPhysicalBoundaries b)
+		{
+		}
 
-    public int NumberOfItems
-    {
-      get { return 0; }
-    }
+		#endregion IPhysicalBoundaries Members
 
-    public bool IsEmpty
-    {
-      get { return true; }
-    }
+		#region ICloneable Members
 
-    public void Add(IPhysicalBoundaries b)
-    {
-    }
+		public object Clone()
+		{
+			return new DummyBoundaries();
+		}
 
-    #endregion
-
-    #region ICloneable Members
-
-    public object Clone()
-    {
-      return new DummyBoundaries();
-    }
-
-    #endregion
-  }
+		#endregion ICloneable Members
+	}
 }

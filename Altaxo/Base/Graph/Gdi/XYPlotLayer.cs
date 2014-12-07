@@ -642,25 +642,27 @@ namespace Altaxo.Graph.Gdi
 				//but (alas!) not all boundaries are now of the new type!
 				_plotAssociationXBoundariesChanged_EventSuspendCount++;
 
-				scaleBounds.BeginUpdate(); // Suppress events from the y-axis now
-				scaleBounds.Reset();
-				foreach (IGPlotItem pa in this.PlotItems)
+				using (var suspendToken = scaleBounds.SuspendGetToken())
 				{
-					if (pa is IXBoundsHolder)
+					scaleBounds.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						// merge the bounds with x and yAxis
-						((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+						if (pa is IXBoundsHolder)
+						{
+							// merge the bounds with x and yAxis
+							((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+						}
 					}
-				}
 
-				// take also the axis styles with physical values into account
-				foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-				{
-					if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
-						scaleBounds.Add(id.PhysicalValueOtherFirst);
-				}
+					// take also the axis styles with physical values into account
+					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+					{
+						if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
+							scaleBounds.Add(id.PhysicalValueOtherFirst);
+					}
 
-				scaleBounds.EndUpdate();
+					suspendToken.Resume();
+				}
 				_plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0, _plotAssociationXBoundariesChanged_EventSuspendCount - 1);
 				_scales.X.Scale.Rescale();
 			}
@@ -705,26 +707,28 @@ namespace Altaxo.Graph.Gdi
 				//but (alas!) not all boundaries are now of the new type!
 				_plotAssociationYBoundariesChanged_EventSuspendCount++;
 
-				scaleBounds.BeginUpdate();
-				scaleBounds.Reset();
-				foreach (IGPlotItem pa in this.PlotItems)
+				using (var suspendToken = scaleBounds.SuspendGetToken())
 				{
-					if (pa is IYBoundsHolder)
+					scaleBounds.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						// merge the bounds with x and yAxis
-						((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+						if (pa is IYBoundsHolder)
+						{
+							// merge the bounds with x and yAxis
+							((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+						}
 					}
-				}
-				// take also the axis styles with physical values into account
-				foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-				{
-					if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
-						scaleBounds.Add(id.PhysicalValueOtherFirst);
-					else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
-						scaleBounds.Add(id.PhysicalValueOtherSecond);
-				}
+					// take also the axis styles with physical values into account
+					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+					{
+						if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
+							scaleBounds.Add(id.PhysicalValueOtherFirst);
+						else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
+							scaleBounds.Add(id.PhysicalValueOtherSecond);
+					}
 
-				scaleBounds.EndUpdate();
+					suspendToken.Resume();
+				}
 				_plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0, _plotAssociationYBoundariesChanged_EventSuspendCount - 1);
 				_scales.Y.Scale.Rescale();
 			}
@@ -1230,17 +1234,19 @@ namespace Altaxo.Graph.Gdi
 			if (0 == _plotAssociationXBoundariesChanged_EventSuspendCount)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				_scales.X.Scale.DataBoundsObject.BeginUpdate();
-				_scales.X.Scale.DataBoundsObject.Reset();
-				foreach (IGPlotItem pa in this.PlotItems)
+				using (var suspendToken = _scales.X.Scale.DataBoundsObject.SuspendGetToken())
 				{
-					if (pa is IXBoundsHolder)
+					_scales.X.Scale.DataBoundsObject.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						// merge the bounds with x and yAxis
-						((IXBoundsHolder)pa).MergeXBoundsInto(_scales.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+						if (pa is IXBoundsHolder)
+						{
+							// merge the bounds with x and yAxis
+							((IXBoundsHolder)pa).MergeXBoundsInto(_scales.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+						}
 					}
+					suspendToken.Resume();
 				}
-				_scales.X.Scale.DataBoundsObject.EndUpdate();
 			}
 		}
 
@@ -1259,17 +1265,19 @@ namespace Altaxo.Graph.Gdi
 			if (0 == _plotAssociationYBoundariesChanged_EventSuspendCount)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				_scales.Y.Scale.DataBoundsObject.BeginUpdate();
-				_scales.Y.Scale.DataBoundsObject.Reset();
-				foreach (IGPlotItem pa in this.PlotItems)
+				using (var suspendToken = _scales.Y.Scale.DataBoundsObject.SuspendGetToken())
 				{
-					if (pa is IYBoundsHolder)
+					_scales.Y.Scale.DataBoundsObject.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						// merge the bounds with x and yAxis
-						((IYBoundsHolder)pa).MergeYBoundsInto(_scales.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+						if (pa is IYBoundsHolder)
+						{
+							// merge the bounds with x and yAxis
+							((IYBoundsHolder)pa).MergeYBoundsInto(_scales.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+						}
 					}
+					suspendToken.Resume();
 				}
-				_scales.Y.Scale.DataBoundsObject.EndUpdate();
 			}
 		}
 

@@ -596,25 +596,30 @@ namespace Altaxo.Graph.Plot.Data
 			if (0 == RowCount || 0 == ColumnCount)
 				return;
 
-			this._xBoundaries.BeginUpdate(); // disable events
-			this._yBoundaries.BeginUpdate(); // disable events
-			this._vBoundaries.BeginUpdate();
+			using (var suspendTokenX = this._xBoundaries.SuspendGetToken())
+			{
+				using (var suspendTokenY = this._yBoundaries.SuspendGetToken())
+				{
+					using (var suspendTokenV = this._vBoundaries.SuspendGetToken())
+					{
+						this._xBoundaries.Reset();
+						this._yBoundaries.Reset();
+						this._vBoundaries.Reset();
 
-			this._xBoundaries.Reset();
-			this._yBoundaries.Reset();
-			this._vBoundaries.Reset();
+						_matrixProxy.ForEachMatrixElementDo((col, idx) => this._vBoundaries.Add(col, idx));
+						_matrixProxy.ForEachRowHeaderElementDo((col, idx) => this._xBoundaries.Add(col, idx));
+						_matrixProxy.ForEachColumnHeaderElementDo((col, idx) => this._yBoundaries.Add(col, idx));
 
-			_matrixProxy.ForEachMatrixElementDo((col, idx) => this._vBoundaries.Add(col, idx));
-			_matrixProxy.ForEachRowHeaderElementDo((col, idx) => this._xBoundaries.Add(col, idx));
-			_matrixProxy.ForEachColumnHeaderElementDo((col, idx) => this._yBoundaries.Add(col, idx));
+						// now the cached data are valid
+						_isCachedDataValid = true;
 
-			// now the cached data are valid
-			_isCachedDataValid = true;
-
-			// now when the cached data are valid, we can reenable the events
-			this._xBoundaries.EndUpdate(); // enable events
-			this._yBoundaries.EndUpdate(); // enable events
-			this._vBoundaries.EndUpdate(); // enable events
+						// now when the cached data are valid, we can reenable the events
+						suspendTokenV.Resume();
+					}
+					suspendTokenY.Resume();
+				}
+				suspendTokenX.Resume();
+			}
 		}
 
 		public void EhChildChanged(object child, EventArgs e)

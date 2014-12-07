@@ -783,51 +783,55 @@ namespace Altaxo.Graph.Plot.Data
 			if (null == _xBoundaries || null == _yBoundaries)
 				return;
 
-			this._xBoundaries.BeginUpdate(); // disable events
-			this._yBoundaries.BeginUpdate(); // disable events
-
-			this._xBoundaries.Reset();
-			this._yBoundaries.Reset();
-
-			System.Diagnostics.Debug.Assert(_plotRangeStart >= 0);
-			System.Diagnostics.Debug.Assert(_plotRangeLength >= 0);
-
-			_pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
-
-			IReadableColumn xColumn = this.XColumn;
-			IReadableColumn yColumn = this.YColumn;
-
-			if (xColumn == null || yColumn == null)
+			using (var suspendTokenX = this._xBoundaries.SuspendGetToken())
 			{
-				_pointCount = 0;
-			}
-			else
-			{
-				if (xColumn is IDefinedCount)
-					_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)xColumn).Count);
-				if (yColumn is IDefinedCount)
-					_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)yColumn).Count);
-
-				// if both columns are indefinite long, we set the length to zero
-				if (_pointCount == int.MaxValue || _pointCount < 0)
-					_pointCount = 0;
-
-				for (int i = _plotRangeStart; i < _pointCount; i++)
+				using (var suspendTokenY = this._yBoundaries.SuspendGetToken())
 				{
-					if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
+					this._xBoundaries.Reset();
+					this._yBoundaries.Reset();
+
+					System.Diagnostics.Debug.Assert(_plotRangeStart >= 0);
+					System.Diagnostics.Debug.Assert(_plotRangeLength >= 0);
+
+					_pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
+
+					IReadableColumn xColumn = this.XColumn;
+					IReadableColumn yColumn = this.YColumn;
+
+					if (xColumn == null || yColumn == null)
 					{
-						bool x_added = this._xBoundaries.Add(xColumn, i);
-						bool y_added = this._yBoundaries.Add(yColumn, i);
+						_pointCount = 0;
 					}
+					else
+					{
+						if (xColumn is IDefinedCount)
+							_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)xColumn).Count);
+						if (yColumn is IDefinedCount)
+							_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)yColumn).Count);
+
+						// if both columns are indefinite long, we set the length to zero
+						if (_pointCount == int.MaxValue || _pointCount < 0)
+							_pointCount = 0;
+
+						for (int i = _plotRangeStart; i < _pointCount; i++)
+						{
+							if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
+							{
+								bool x_added = this._xBoundaries.Add(xColumn, i);
+								bool y_added = this._yBoundaries.Add(yColumn, i);
+							}
+						}
+					}
+
+					// now the cached data are valid
+					_isCachedDataValid = true;
+
+					// now when the cached data are valid, we can reenable the events
+
+					suspendTokenY.Resume();
 				}
+				suspendTokenX.Resume();
 			}
-
-			// now the cached data are valid
-			_isCachedDataValid = true;
-
-			// now when the cached data are valid, we can reenable the events
-			this._xBoundaries.EndUpdate(); // enable events
-			this._yBoundaries.EndUpdate(); // enable events
 		}
 
 		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)

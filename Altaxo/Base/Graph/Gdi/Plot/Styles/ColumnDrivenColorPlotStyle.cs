@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,36 +19,33 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Serialization;
-using Altaxo.Data;
-
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Graph.Plot.Groups;
 	using Graph.Plot.Data;
+	using Graph.Plot.Groups;
 	using Graph.Scales;
-
-	using Plot.Groups;
 	using Plot.Data;
-
+	using Plot.Groups;
 
 	/// <summary>
-	/// This style provides a variable symbol size dependent on the data of a user choosen column. The data of that column at the index of the data point determine the symbol size. 
+	/// This style provides a variable symbol size dependent on the data of a user choosen column. The data of that column at the index of the data point determine the symbol size.
 	/// This plot style is non-visual, i.e. it has no visual equivalent,
 	/// since it is only intended to provide the symbol size to other plot styles.
 	/// </summary>
-	public class ColumnDrivenColorPlotStyle	:	IG2DPlotStyle
+	public class ColumnDrivenColorPlotStyle : IG2DPlotStyle
 	{
-
 		#region Members
 
 		/// <summary>
@@ -65,27 +63,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Converts the numerical values of the data colum into logical values.
 		/// </summary>
-		NumericalScale _scale;
+		private NumericalScale _scale;
 
 		/// <summary>
 		/// Converts the logical value (from the scale) to a color value.
 		/// </summary>
-		IColorProvider _colorProvider;
+		private IColorProvider _colorProvider;
 
 		/// <summary>If true, the color is applied as a fill color for symbols, bar graphs etc.</summary>
-		bool _appliesToFill = true;
-		/// <summary>If true, the color is applied as a stroke color for framing symbols, bar graphs etc.</summary>
-		bool _appliesToStroke;
-		/// <summary>If true, the color is used to color the background, for instance of labels.</summary>
-		bool _appliesToBackground;
+		private bool _appliesToFill = true;
 
-		object _parent;
+		/// <summary>If true, the color is applied as a stroke color for framing symbols, bar graphs etc.</summary>
+		private bool _appliesToStroke;
+
+		/// <summary>If true, the color is used to color the background, for instance of labels.</summary>
+		private bool _appliesToBackground;
+
+		private object _parent;
 
 		public event EventHandler Changed;
 
-
-		#endregion
-
+		#endregion Members
 
 		/// <summary>
 		/// Creates a new instance with default values.
@@ -137,7 +135,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region DataColumnProxy handling
 
-
 		/// <summary>
 		/// Sets the data column proxy and creates the necessary event links.
 		/// </summary>
@@ -154,7 +151,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
 		}
-
 
 		protected void InternalSetCachedDataColumn(INumericColumn col)
 		{
@@ -184,7 +180,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		/// <param name="sender">Originator.</param>
 		/// <param name="e">Event args.</param>
-		void EhDataColumnProxyChanged(object sender, EventArgs e)
+		private void EhDataColumnProxyChanged(object sender, EventArgs e)
 		{
 			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
 		}
@@ -194,7 +190,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void EhDataColumnDataChanged(object sender, EventArgs e)
+		private void EhDataColumnDataChanged(object sender, EventArgs e)
 		{
 			_doesScaleNeedsDataUpdate = true;
 		}
@@ -202,9 +198,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Updates the scale if the data of the data column have changed.
 		/// </summary>
-		void InternalUpdateScaleWithNewData()
+		private void InternalUpdateScaleWithNewData()
 		{
-			// in order to set the bounds of the scale, the data column must 
+			// in order to set the bounds of the scale, the data column must
 			// - be set (not null)
 			// - have a defined count.
 
@@ -214,16 +210,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				var bounds = _scale.DataBounds;
 
-				bounds.BeginUpdate();
+				using (var suspendToken = bounds.SuspendGetToken())
+				{
+					for (int i = 0; i < len; i++)
+						bounds.Add(_cachedDataColumn, i);
 
-				for (int i = 0; i < len; i++)
-					bounds.Add(_cachedDataColumn, i);
-
-				bounds.EndUpdate();
+					suspendToken.Resume();
+				}
 				_doesScaleNeedsDataUpdate = false;
 			}
 		}
-
 
 		/// <summary>
 		/// Gets/sets the data column that provides the data that is used to calculate the symbol size.
@@ -243,7 +239,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion
+		#endregion DataColumnProxy handling
 
 		#region Scale handling
 
@@ -264,7 +260,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_doesScaleNeedsDataUpdate = true;
 		}
 
-		#endregion
+		#endregion Scale handling
 
 		#region Properties
 
@@ -310,18 +306,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-
-
-
-
-		#endregion
+		#endregion Properties
 
 		/// <summary>
 		/// Gets the color for the index idx.
 		/// </summary>
 		/// <param name="idx">Index into the row of the data column.</param>
 		/// <returns>The calculated color for the provided index.</returns>
-		Color GetColor(int idx)
+		private Color GetColor(int idx)
 		{
 			double val = double.NaN;
 			if (null != _cachedDataColumn)
@@ -335,8 +327,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			val = _scale.PhysicalToNormal(val);
 			return _colorProvider.GetColor(val);
 		}
-
-
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
 		{
@@ -384,7 +374,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get { return "ColumnDrivenColor"; }
 		}
-
 
 		protected virtual void OnChanged()
 		{

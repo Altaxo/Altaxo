@@ -18,8 +18,21 @@ namespace Altaxo.Main
 
 			internal SuspendToken(SuspendableLeafObject parent)
 			{
-				System.Threading.Interlocked.Increment(ref parent._suspendLevel);
+				var suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
 				_parent = parent;
+
+				if (1 == suspendLevel)
+				{
+					try
+					{
+						_parent.OnSuspended();
+					}
+					catch (Exception)
+					{
+						System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+						_parent = null;
+					}
+				}
 			}
 
 			~SuspendToken()
@@ -208,6 +221,13 @@ namespace Altaxo.Main
 		private void EhResumeSilently()
 		{
 			OnResumeSilently();
+		}
+
+		/// <summary>
+		/// Called when the suspend level has just gone from 0 to 1, i.e. the object was suspended.
+		/// </summary>
+		protected virtual void OnSuspended()
+		{
 		}
 
 		/// <summary>
