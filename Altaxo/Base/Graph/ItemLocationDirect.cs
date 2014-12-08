@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Graph
 {
 	[Serializable]
-	public class ItemLocationDirect : IItemLocation
+	public class ItemLocationDirect : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
 	{
 		#region Members
 
@@ -62,12 +62,6 @@ namespace Altaxo.Graph
 		protected double _scaleY; // Y-Scale
 
 		// Cached and not-to-serialize members
-
-		[field: NonSerialized]
-		private event EventHandler _changed;
-
-		[NonSerialized]
-		private object _parent;
 
 		protected PointD2D _parentSize;
 
@@ -183,7 +177,7 @@ namespace Altaxo.Graph
 				this._scaleX = from._scaleX;
 				this._scaleY = from._scaleY;
 				this._shear = from._shear;
-				OnChanged();
+				EhSelfChanged();
 				return true;
 			}
 			else if (obj is IItemLocation)
@@ -193,7 +187,7 @@ namespace Altaxo.Graph
 				this._shear = from.ShearX;
 				this._scaleX = from.ScaleX;
 				this._scaleY = from.ScaleY;
-				OnChanged();
+				EhSelfChanged();
 				return true;
 			}
 
@@ -220,7 +214,7 @@ namespace Altaxo.Graph
 			_parentSize = parentSize;
 
 			if (shouldTriggerChangedEvent && oldValue != _parentSize)
-				OnChanged();
+				EhSelfChanged();
 		}
 
 		public PointD2D ParentSize
@@ -258,7 +252,7 @@ namespace Altaxo.Graph
 				InternalSetSizeXSilent(value);
 
 				if (chg)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -275,7 +269,7 @@ namespace Altaxo.Graph
 				InternalSetSizeYSilent(value);
 
 				if (chg)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -291,7 +285,7 @@ namespace Altaxo.Graph
 				_positionX = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -307,7 +301,7 @@ namespace Altaxo.Graph
 				_positionY = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -328,7 +322,7 @@ namespace Altaxo.Graph
 				_localAnchorX = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -349,7 +343,7 @@ namespace Altaxo.Graph
 				_localAnchorY = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -371,7 +365,7 @@ namespace Altaxo.Graph
 				_parentAnchorX = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -393,7 +387,7 @@ namespace Altaxo.Graph
 				_parentAnchorY = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -407,7 +401,7 @@ namespace Altaxo.Graph
 			InternalSetSizeSilent(width, height);
 
 			if (isChanged)
-				OnChanged();
+				EhSelfChanged();
 		}
 
 		protected virtual bool InternalSetScaleXSilent(double value)
@@ -443,7 +437,7 @@ namespace Altaxo.Graph
 			{
 				bool isChanged = InternalSetScaleSilent(value);
 				if (isChanged)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -454,7 +448,7 @@ namespace Altaxo.Graph
 			set
 			{
 				if (InternalSetScaleXSilent(value))
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -465,7 +459,7 @@ namespace Altaxo.Graph
 			set
 			{
 				if (InternalSetScaleYSilent(value))
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -479,7 +473,7 @@ namespace Altaxo.Graph
 				_rotation = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -492,40 +486,15 @@ namespace Altaxo.Graph
 				double oldvalue = _shear;
 				_shear = value;
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
 		#endregion Properties
 
-		#region IChangedEventSource Members
-
-		event EventHandler Altaxo.Main.IChangedEventSource.Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != _changed)
-				_changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "ItemSizeAndPosition"; }
 		}
@@ -640,7 +609,7 @@ namespace Altaxo.Graph
 				var oldValue = _sizeX;
 				InternalSetAbsoluteSizeXSilent(value);
 				if (oldValue != _sizeX)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -655,7 +624,7 @@ namespace Altaxo.Graph
 				var oldValue = _sizeY;
 				InternalSetAbsoluteSizeYSilent(value);
 				if (oldValue != _sizeY)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -680,7 +649,7 @@ namespace Altaxo.Graph
 			if (eventFiring == Main.EventFiring.Enabled)
 			{
 				if (oldSizeX != _sizeX || oldSizeY != _sizeY)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -718,7 +687,7 @@ namespace Altaxo.Graph
 				var oldValue = _positionX;
 				InternalSetAbsolutePositionXSilent(value);
 				if (oldValue != _positionX)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -734,7 +703,7 @@ namespace Altaxo.Graph
 				var oldValue = _positionY;
 				InternalSetAbsolutePositionYSilent(value);
 				if (oldValue != _positionY)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -753,7 +722,7 @@ namespace Altaxo.Graph
 				InternalSetAbsolutePositionYSilent(value.Y);
 
 				if (oldValueX != _positionX || oldValueY != _positionY)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -798,7 +767,7 @@ namespace Altaxo.Graph
 				var oldValue = _positionX;
 				InternalSetAbsolutePivotPositionXSilent(value);
 				if (oldValue != _positionX)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -821,7 +790,7 @@ namespace Altaxo.Graph
 				var oldValue = _positionY;
 				InternalSetAbsolutePositionXSilent(value);
 				if (oldValue != _positionY)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -846,7 +815,7 @@ namespace Altaxo.Graph
 			InternalSetAbsolutePivotPositionYSilent(value.Y);
 
 			if (eventFiring == Main.EventFiring.Enabled && (oldValueX != _positionX || oldValueY != _positionY))
-				OnChanged();
+				EhSelfChanged();
 		}
 
 		/// <summary>
@@ -886,7 +855,7 @@ namespace Altaxo.Graph
 			_positionY = RADouble.NewRel(absPos.Y / _parentSize.Y);
 
 			if (oldSizeX != _sizeX || oldSizeY != _sizeY || oldPosX != _positionX || oldPosY != _positionY)
-				OnChanged();
+				EhSelfChanged();
 		}
 
 		public void ChangeRelativeSizeValuesToAbsoluteSizeValues()

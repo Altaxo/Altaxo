@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public class ItemLocationByGrid : IItemLocation
+	public class ItemLocationByGrid : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
 	{
 		/// <summary>
 		/// The number of the grid column where the cell starts horizontal.
@@ -65,12 +65,6 @@ namespace Altaxo.Graph
 
 		/// <summary>The scaling factor of the layer, normally 1.</summary>
 		private double _scaleY = 1;  // Scale
-
-		[field: NonSerialized]
-		private event EventHandler _changed;
-
-		[NonSerialized]
-		private object _parent;
 
 		#region Serialization
 
@@ -148,7 +142,7 @@ namespace Altaxo.Graph
 				this._scaleX = from._scaleX;
 				this._scaleY = from._scaleY;
 				this._forceFitIntoCell = from._forceFitIntoCell;
-
+				EhSelfChanged();
 				return true;
 			}
 			else if (obj is IItemLocation)
@@ -158,6 +152,7 @@ namespace Altaxo.Graph
 				this._shear = from.ShearX;
 				this._scaleX = from.ScaleX;
 				this._scaleY = from.ScaleY;
+				EhSelfChanged();
 				return true;
 			}
 			return false;
@@ -190,7 +185,7 @@ namespace Altaxo.Graph
 				_gridColumn = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -206,7 +201,7 @@ namespace Altaxo.Graph
 				_gridRow = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -222,7 +217,7 @@ namespace Altaxo.Graph
 				_gridColumnSpan = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -238,7 +233,7 @@ namespace Altaxo.Graph
 				_gridRowSpan = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -257,7 +252,7 @@ namespace Altaxo.Graph
 				_forceFitIntoCell = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -271,7 +266,7 @@ namespace Altaxo.Graph
 				_rotation = value;
 
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -284,7 +279,7 @@ namespace Altaxo.Graph
 				double oldvalue = _shear;
 				_shear = value;
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -297,7 +292,7 @@ namespace Altaxo.Graph
 				double oldvalue = _scaleX;
 				_scaleX = value;
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -310,38 +305,13 @@ namespace Altaxo.Graph
 				double oldvalue = _scaleY;
 				_scaleY = value;
 				if (value != oldvalue)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
-		#region IChangedEventSource Members
-
-		event EventHandler Altaxo.Main.IChangedEventSource.Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != _changed)
-				_changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "Grid position/size"; }
 		}

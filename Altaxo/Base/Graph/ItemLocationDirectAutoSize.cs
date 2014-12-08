@@ -108,7 +108,7 @@ namespace Altaxo.Graph
 				_sizeY = RADouble.NewAbs(autoSize.Y);
 
 				if (isChangeEventEnabled)
-					OnChanged();
+					EhSelfChanged();
 			}
 		}
 
@@ -154,7 +154,7 @@ namespace Altaxo.Graph
 			_positionY = y;
 
 			if (isChanged)
-				OnChanged();
+				EhSelfChanged();
 		}
 
 		#endregion overrides

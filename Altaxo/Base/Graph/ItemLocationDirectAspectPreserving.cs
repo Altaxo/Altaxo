@@ -129,7 +129,7 @@ namespace Altaxo.Graph
 				this._parentAnchorY = from.ParentAnchorY;
 				this._rotation = from.Rotation;
 				this._shear = from.ShearX;
-				OnChanged();
+				EhSelfChanged();
 				return true;
 			}
 			else if (obj is IItemLocation)
@@ -139,7 +139,7 @@ namespace Altaxo.Graph
 				this._shear = from.ShearX;
 				this.InternalSetScaleSilent(new PointD2D(from.ScaleX, from.ScaleY));
 				_scaleX = _scaleY = 1;
-				OnChanged();
+				EhSelfChanged();
 				return true;
 			}
 
@@ -173,7 +173,7 @@ namespace Altaxo.Graph
 							break;
 					}
 
-					OnChanged();
+					EhSelfChanged();
 				}
 			}
 		}
@@ -204,7 +204,7 @@ namespace Altaxo.Graph
 							break;
 					}
 
-					OnChanged();
+					EhSelfChanged();
 				}
 			}
 		}
@@ -238,7 +238,7 @@ namespace Altaxo.Graph
 			}
 
 			if (shouldTriggerChangedEvent && oldValue != _parentSize)
-				OnChanged();
+				EhSelfChanged();
 		}
 
 		protected override void InternalSetSizeXSilent(RADouble value)
