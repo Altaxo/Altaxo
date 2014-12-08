@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,102 +19,123 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public interface IBrushViewAdvanced
 	{
 		BrushType BrushType { get; set; }
+
 		event Action BrushTypeChanged;
 
 		NamedColor ForeColor { get; set; }
+
 		event Action ForeColorChanged;
+
 		void ForeColorEnable(bool enable);
 
-    bool RestrictBrushColorToPlotColorsOnly { set; }
+		bool RestrictBrushColorToPlotColorsOnly { set; }
 
 		NamedColor BackColor { get; set; }
+
 		event Action BackColorChanged;
+
 		void BackColorEnable(bool enable);
 
 		bool ExchangeColors { get; set; }
+
 		event Action ExchangeColorsChanged;
+
 		void ExchangeColorsEnable(bool enable);
 
 		System.Drawing.Drawing2D.WrapMode WrapMode { get; set; }
+
 		event Action WrapModeChanged;
+
 		void WrapModeEnable(bool enable);
 
 		double GradientFocus { get; set; }
+
 		event Action GradientFocusChanged;
+
 		void GradientFocusEnable(bool enable);
 
 		double GradientColorScale { get; set; }
+
 		event Action GradientColorScaleChanged;
+
 		void GradientColorScaleEnable(bool enable);
 
 		double GradientAngle { get; set; }
+
 		event Action GradientAngleChanged;
+
 		void GradientAngleEnable(bool enable);
 
 		double TextureOffsetX { get; set; }
+
 		event Action TextureOffsetXChanged;
+
 		void TextureOffsetXEnable(bool enable);
 
 		double TextureOffsetY { get; set; }
+
 		event Action TextureOffsetYChanged;
+
 		void TextureOffsetYEnable(bool enable);
 
 		void InitTextureImage(ImageProxy proxy, BrushType imageType);
-		ImageProxy TextureImage { get;}
+
+		ImageProxy TextureImage { get; }
+
 		event Action TextureImageChanged;
+
 		void TextureImageEnable(bool enable);
 
 		Main.IInstancePropertyView AdditionalPropertiesView { get; }
 
 		ITextureScalingView TextureScalingView { get; }
+
 		void TextureScalingViewEnable(bool enable);
 
 		void UpdatePreview(BrushX brush);
+
 		event Action PreviewPanelSizeChanged;
 	}
 
-
 	[UserControllerForObject(typeof(BrushX))]
 	[ExpectedTypeOfView(typeof(IBrushViewAdvanced))]
-	public class BrushControllerAdvanced : MVCANDControllerBase<BrushX,IBrushViewAdvanced>
+	public class BrushControllerAdvanced : MVCANDControllerBase<BrushX, IBrushViewAdvanced>
 	{
-		Main.InstancePropertyController _imageProxyController;
+		private Main.InstancePropertyController _imageProxyController;
 
-		TextureScalingController _textureScalingController;
-    bool _restrictBrushColorToPlotColorsOnly;
+		private TextureScalingController _textureScalingController;
+		private bool _restrictBrushColorToPlotColorsOnly;
 
-    public bool RestrictBrushColorToPlotColorsOnly
-    {
-      get
-      {
-        return _restrictBrushColorToPlotColorsOnly;
-      }
-      set
-      {
-        var oldValue = _restrictBrushColorToPlotColorsOnly;
-        _restrictBrushColorToPlotColorsOnly = value;
-        if (value != oldValue && null != _view)
-        {
-          _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
-        }
-      }
-    }
-
-
+		public bool RestrictBrushColorToPlotColorsOnly
+		{
+			get
+			{
+				return _restrictBrushColorToPlotColorsOnly;
+			}
+			set
+			{
+				var oldValue = _restrictBrushColorToPlotColorsOnly;
+				_restrictBrushColorToPlotColorsOnly = value;
+				if (value != oldValue && null != _view)
+				{
+					_view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
+				}
+			}
+		}
 
 		protected override void Initialize(bool initData)
 		{
@@ -132,21 +154,20 @@ namespace Altaxo.Gui.Common.Drawing
 
 			if (null != _view)
 			{
-        _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
+				_view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
 
 				_view.BrushType = _doc.BrushType;
 				InitializeViewElementsWhenBrushTypeChanged();
-				
+
 				_imageProxyController.ViewObject = _view.AdditionalPropertiesView;
 				_textureScalingController.ViewObject = _view.TextureScalingView;
-				
+
 				EnableElementsInDependenceOnBrushType();
 				_view.UpdatePreview(_doc);
 			}
 		}
 
-
-		void InitializeViewElementsWhenBrushTypeChanged()
+		private void InitializeViewElementsWhenBrushTypeChanged()
 		{
 			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
 			{
@@ -162,7 +183,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_view.InitTextureImage(_doc.TextureImage, _doc.BrushType);
 			}
 		}
-
 
 		protected override void AttachView()
 		{
@@ -210,25 +230,24 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			base.OnMadeDirty();
 
-			
-			if (_suppressDirtyEvent.PeekEnabled && null != _view)
+			if (!_suppressDirtyEvent.IsSuspended && null != _view)
 				_view.UpdatePreview(_doc);
-
 		}
 
 		#region Other helper functions
 
-		void EnableElementsInDependenceOnBrushType()
+		private void EnableElementsInDependenceOnBrushType()
 		{
 			bool foreColor = false, backColor = false, exchangeColor = false, wrapMode = false,
 				gradientFocus = false, gradientColorScale = false, gradientAngle = false,
-				textureScale = false, textureImage = false, textureOffsetX=false, textureOffsetY=false, additionalProperties = false;
+				textureScale = false, textureImage = false, textureOffsetX = false, textureOffsetY = false, additionalProperties = false;
 
 			switch (_doc.BrushType)
 			{
 				case BrushType.SolidBrush:
 					foreColor = true;
 					break;
+
 				case BrushType.LinearGradientBrush:
 				case BrushType.SigmaBellShapeLinearGradientBrush:
 				case BrushType.TriangularShapeLinearGradientBrush:
@@ -243,6 +262,7 @@ namespace Altaxo.Gui.Common.Drawing
 						gradientColorScale = true;
 					}
 					break;
+
 				case BrushType.PathGradientBrush:
 				case BrushType.SigmaBellShapePathGradientBrush:
 				case BrushType.TriangularShapePathGradientBrush:
@@ -257,6 +277,7 @@ namespace Altaxo.Gui.Common.Drawing
 						gradientColorScale = true;
 					}
 					break;
+
 				case BrushType.HatchBrush:
 				case BrushType.SyntheticTextureBrush:
 					foreColor = true;
@@ -269,6 +290,7 @@ namespace Altaxo.Gui.Common.Drawing
 					textureOffsetX = true;
 					textureOffsetY = true;
 					break;
+
 				case BrushType.TextureBrush:
 					wrapMode = true;
 					gradientAngle = true;
@@ -278,10 +300,10 @@ namespace Altaxo.Gui.Common.Drawing
 					textureOffsetY = true;
 					break;
 			}
-			_view.ForeColorEnable( foreColor);
-			_view.BackColorEnable( backColor);
-			_view.ExchangeColorsEnable( exchangeColor);
-			_view.WrapModeEnable( wrapMode);
+			_view.ForeColorEnable(foreColor);
+			_view.BackColorEnable(backColor);
+			_view.ExchangeColorsEnable(exchangeColor);
+			_view.WrapModeEnable(wrapMode);
 			_view.GradientFocusEnable(gradientFocus);
 			_view.GradientColorScaleEnable(gradientColorScale);
 			_view.GradientAngleEnable(gradientAngle);
@@ -305,11 +327,11 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Other helper functions
 
 		#region Event handlers
 
-		void EhBrushTypeChanged()
+		private void EhBrushTypeChanged()
 		{
 			_doc.BrushType = _view.BrushType;
 			InitializeViewElementsWhenBrushTypeChanged();
@@ -317,101 +339,99 @@ namespace Altaxo.Gui.Common.Drawing
 			OnMadeDirty();
 		}
 
-		void EhForeColorChanged()
+		private void EhForeColorChanged()
 		{
 			_doc.Color = _view.ForeColor;
 			OnMadeDirty();
 		}
 
-		void EhBackColorChanged()
+		private void EhBackColorChanged()
 		{
 			_doc.BackColor = _view.BackColor;
 			OnMadeDirty();
 		}
 
-		void EhExchangeColorsChanged()
+		private void EhExchangeColorsChanged()
 		{
 			_doc.ExchangeColors = _view.ExchangeColors;
-      _view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly; 
+			_view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
 			OnMadeDirty();
 		}
 
-		void EhWrapModeChanged()
+		private void EhWrapModeChanged()
 		{
 			_doc.WrapMode = _view.WrapMode;
 			OnMadeDirty();
 		}
 
-		void EhGradientFocusChanged()
+		private void EhGradientFocusChanged()
 		{
 			_doc.GradientFocus = (float)_view.GradientFocus;
 			OnMadeDirty();
 		}
 
-		void EhGradientScaleChanged()
+		private void EhGradientScaleChanged()
 		{
 			_doc.GradientColorScale = (float)_view.GradientColorScale;
 			OnMadeDirty();
 		}
 
-		void EhGradientAngleChanged()
+		private void EhGradientAngleChanged()
 		{
 			_doc.GradientAngle = _view.GradientAngle;
 			OnMadeDirty();
 		}
 
-		void EhTextureOffsetXChanged()
+		private void EhTextureOffsetXChanged()
 		{
 			_doc.TextureOffsetX = _view.TextureOffsetX;
 			OnMadeDirty();
 		}
 
-		void EhTextureOffsetYChanged()
+		private void EhTextureOffsetYChanged()
 		{
 			_doc.TextureOffsetY = _view.TextureOffsetY;
 			OnMadeDirty();
 		}
 
-		void EhTextureScaleChanged()
+		private void EhTextureScaleChanged()
 		{
 			//_doc.TextureScale = (float)_view.TextureScale;
 			OnMadeDirty();
 		}
 
-		void EhTextureImageChanged()
+		private void EhTextureImageChanged()
 		{
-			
 			var oldTexture = _doc.TextureImage;
 			var newTexture = _view.TextureImage;
-			if(newTexture is Altaxo.Main.ICopyFrom)
+			if (newTexture is Altaxo.Main.ICopyFrom)
 				((Altaxo.Main.ICopyFrom)newTexture).CopyFrom(oldTexture); // Try to keep the settings from the old texture
 
 			_doc.TextureImage = newTexture;
 			_imageProxyController.InitializeDocument(_doc.TextureImage);
-			if(null!=_doc.TextureImage)
+			if (null != _doc.TextureImage)
 				_textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
 			OnMadeDirty();
 		}
 
-		void EhAdditionalPropertiesChanged(IMVCANController ctrl)
+		private void EhAdditionalPropertiesChanged(IMVCANController ctrl)
 		{
 			_doc.TextureImage = (ImageProxy)_imageProxyController.ProvisionalModelObject;
 			_doc.InvalidateCachedBrush(); // we have to manully invalidate the brush since the brush is not aware off that only some members of the imageproxy have changed
 			OnMadeDirty();
 		}
 
-		void EhTextureScalingChanged(IMVCANController ctrl)
+		private void EhTextureScalingChanged(IMVCANController ctrl)
 		{
 			_doc.TextureScale = (TextureScaling)_textureScalingController.ProvisionalModelObject;
 			OnMadeDirty();
 		}
 
-		void EhPreviewPanelSizeChanged()
+		private void EhPreviewPanelSizeChanged()
 		{
 			_view.UpdatePreview(_doc);
 		}
 
-		#endregion
-
+		#endregion Event handlers
 	}
 }

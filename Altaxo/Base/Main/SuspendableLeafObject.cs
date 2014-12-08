@@ -5,9 +5,18 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	/// <summary>Helper class to suspend and resume change events (or other events). In contrast to the simpler class <see cref="TemporaryDisabler"/>,
-	/// this class keeps also track of events that happen in the suspend period. Per default, the action on resume is
-	/// fired only if some events have happened during the suspend period.</summary>
+	/// <summary>Helper class to suspend and resume change events (or other events). This class keeps a counter variable (suspend counter), which is incremented when a call to <see cref="SuspendGetToken"/> has been made, and is
+	/// decremented when the suspend token returned by this call is disposed. Although you can use this class as it is - to keep track of the number of suspends - it is designed to be used in derived classes.
+	/// See the remarks on details of the functions you should override.
+	/// <remarks>
+	/// There are four functions which can be overridden. In this class, these functions do nothing.
+	/// <list type="List">
+	/// <item><see cref="OnSuspended"/> is called when the suspend counter has been incremented from 0 to 1, i.e. the instance is suspended now.</item>
+	/// <item><see cref="OnAboutToBeResumed"/> is called when the suspend counter is still 1, i.e. the instance is still suspended, but the suspend counter will afterwards be decremented to 0.</item>
+	/// <item><see cref="OnResume"/> is called when the suspend counter has been decremented to 0, i.e. the instance is resumed now, and should fire events again. It should also fire a change event if something has changed during the suspended state.</item>
+	/// <item><see cref="OnResumeSilently"/> is called when the suspend counter has been decremented to 0 as result of a call to <see cref="ISuspendToken.ResumeSilently()"/></item>
+	/// </list>
+	/// </remarks>
 	public class SuspendableLeafObject : Main.ISuspendableByToken
 	{
 		#region Inner class SuspendToken
@@ -31,6 +40,7 @@ namespace Altaxo.Main
 					{
 						System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
 						_parent = null;
+						throw;
 					}
 				}
 			}

@@ -68,11 +68,11 @@ namespace Altaxo.Graph.Gdi
 
 		/// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
 		[NonSerialized]
-		private int _plotAssociationXBoundariesChanged_EventSuspendCount;
+		private Main.SuspendableLeafObject _plotAssociationXBoundariesChanged_EventSuspender = new Main.SuspendableLeafObject();
 
 		/// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
 		[NonSerialized]
-		private int _plotAssociationYBoundariesChanged_EventSuspendCount;
+		private Main.SuspendableLeafObject _plotAssociationYBoundariesChanged_EventSuspender = new Main.SuspendableLeafObject();
 
 		/// <summary>
 		/// Partial list of all <see cref="PlaceHolder"/> instances in <see cref="HostLayer.GraphObjects"/>.
@@ -640,30 +640,31 @@ namespace Altaxo.Graph.Gdi
 				// we have to disable our own Handler since if we change one DataBound of a association,
 				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
 				//but (alas!) not all boundaries are now of the new type!
-				_plotAssociationXBoundariesChanged_EventSuspendCount++;
-
-				using (var suspendToken = scaleBounds.SuspendGetToken())
+				using (var xBoundariesChangedSuspendToken = _plotAssociationXBoundariesChanged_EventSuspender.SuspendGetToken())
 				{
-					scaleBounds.Reset();
-					foreach (IGPlotItem pa in this.PlotItems)
+					using (var suspendToken = scaleBounds.SuspendGetToken())
 					{
-						if (pa is IXBoundsHolder)
+						scaleBounds.Reset();
+						foreach (IGPlotItem pa in this.PlotItems)
 						{
-							// merge the bounds with x and yAxis
-							((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+							if (pa is IXBoundsHolder)
+							{
+								// merge the bounds with x and yAxis
+								((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+							}
 						}
-					}
 
-					// take also the axis styles with physical values into account
-					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-					{
-						if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
-							scaleBounds.Add(id.PhysicalValueOtherFirst);
-					}
+						// take also the axis styles with physical values into account
+						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+						{
+							if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
+								scaleBounds.Add(id.PhysicalValueOtherFirst);
+						}
 
-					suspendToken.Resume();
+						suspendToken.Resume();
+					}
+					xBoundariesChangedSuspendToken.Resume();
 				}
-				_plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0, _plotAssociationXBoundariesChanged_EventSuspendCount - 1);
 				_scales.X.Scale.Rescale();
 			}
 			// _linkedScales.X.Scale.ProcessDataBounds();
@@ -705,31 +706,32 @@ namespace Altaxo.Graph.Gdi
 				// we have to disable our own Handler since if we change one DataBound of a association,
 				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
 				//but (alas!) not all boundaries are now of the new type!
-				_plotAssociationYBoundariesChanged_EventSuspendCount++;
-
-				using (var suspendToken = scaleBounds.SuspendGetToken())
+				using (var yBoundariesChangedSuspendToken = _plotAssociationYBoundariesChanged_EventSuspender.SuspendGetToken())
 				{
-					scaleBounds.Reset();
-					foreach (IGPlotItem pa in this.PlotItems)
+					using (var suspendToken = scaleBounds.SuspendGetToken())
 					{
-						if (pa is IYBoundsHolder)
+						scaleBounds.Reset();
+						foreach (IGPlotItem pa in this.PlotItems)
 						{
-							// merge the bounds with x and yAxis
-							((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+							if (pa is IYBoundsHolder)
+							{
+								// merge the bounds with x and yAxis
+								((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+							}
 						}
-					}
-					// take also the axis styles with physical values into account
-					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-					{
-						if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
-							scaleBounds.Add(id.PhysicalValueOtherFirst);
-						else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
-							scaleBounds.Add(id.PhysicalValueOtherSecond);
-					}
+						// take also the axis styles with physical values into account
+						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+						{
+							if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
+								scaleBounds.Add(id.PhysicalValueOtherFirst);
+							else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
+								scaleBounds.Add(id.PhysicalValueOtherSecond);
+						}
 
-					suspendToken.Resume();
+						suspendToken.Resume();
+					}
+					yBoundariesChangedSuspendToken.Resume();
 				}
-				_plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0, _plotAssociationYBoundariesChanged_EventSuspendCount - 1);
 				_scales.Y.Scale.Rescale();
 			}
 			// _linkedScales.Y.Scale.ProcessDataBounds();
@@ -1231,7 +1233,7 @@ namespace Altaxo.Graph.Gdi
 		/// all PlotAssociations of this layer.</remarks>
 		public void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
 		{
-			if (0 == _plotAssociationXBoundariesChanged_EventSuspendCount)
+			if (!_plotAssociationXBoundariesChanged_EventSuspender.IsSuspended)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
 				using (var suspendToken = _scales.X.Scale.DataBoundsObject.SuspendGetToken())
@@ -1262,7 +1264,7 @@ namespace Altaxo.Graph.Gdi
 		/// all PlotAssociations of this layer.</remarks>
 		public void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
 		{
-			if (0 == _plotAssociationYBoundariesChanged_EventSuspendCount)
+			if (!_plotAssociationYBoundariesChanged_EventSuspender.IsSuspended)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
 				using (var suspendToken = _scales.Y.Scale.DataBoundsObject.SuspendGetToken())

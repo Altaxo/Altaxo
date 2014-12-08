@@ -160,7 +160,7 @@ namespace Altaxo.Main
 		private int _eventCount;
 
 		/// <summary>
-		/// If the resume operation is currently in progress, this member is <c>true</c>. Otherwise, it is false.
+		/// If the resume operation is currently in progress, this member is <c>1</c>. Otherwise, it is 0.
 		/// </summary>
 		private int _resumeInProgress;
 
@@ -242,18 +242,6 @@ namespace Altaxo.Main
 		/// <c>true</c> if this instance is suspended; otherwise, <c>false</c>.
 		/// </value>
 		public bool IsSuspended { get { return _suspendLevel != 0; } }
-
-		/// <summary>
-		/// Returns true when the suppress level is equal to zero (initial state). Otherwise false.
-		/// Attention - this function does not increment the event counter.
-		/// </summary>
-		public bool PeekEnabled { get { return _suspendLevel == 0; } }
-
-		/// <summary>
-		/// Returns true when the suppress level is greater than zero (initial state). Returns false if the suppress level is zero.
-		/// Attention - this function does not increment the event counter.
-		/// </summary>
-		public bool PeekDisabled { get { return _suspendLevel != 0; } }
 
 		/// <summary>
 		/// Returns true when the suppress level is equal to zero (initial state). Otherwise false.

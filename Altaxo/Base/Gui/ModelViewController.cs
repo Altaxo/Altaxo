@@ -179,7 +179,7 @@ namespace Altaxo.Gui
 
 	public abstract class MVCANDControllerBase<TModel, TView> : MVCANControllerBase<TModel, TView>, IMVCANDController where TView : class
 	{
-		protected Altaxo.Main.EventSuppressor _suppressDirtyEvent = new Altaxo.Main.EventSuppressor(null);
+		protected Altaxo.Main.SuspendableLeafObject _suppressDirtyEvent = new Altaxo.Main.SuspendableLeafObject();
 
 		public event Action<IMVCANDController> MadeDirty;
 
@@ -227,7 +227,7 @@ namespace Altaxo.Gui
 
 		protected virtual void OnMadeDirty()
 		{
-			if (_suppressDirtyEvent.PeekEnabled && null != MadeDirty)
+			if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
 				MadeDirty(this);
 		}
 
