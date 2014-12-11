@@ -259,13 +259,16 @@ namespace Altaxo.Main
 		public static object GetRootNode(IDocumentNode node)
 		{
 			if (null == node)
-				return null;
+				throw new ArgumentNullException("node");
 
-			object root = node.ParentObject;
-			while (root != null && root is IDocumentNode)
-				root = ((IDocumentNode)root).ParentObject;
+			var parent = node.ParentObject as IDocumentNode;
+			while (null != parent)
+			{
+				node = parent;
+				parent = node.ParentObject as IDocumentNode;
+			}
 
-			return root;
+			return node;
 		}
 
 		/// <summary>
@@ -280,11 +283,13 @@ namespace Altaxo.Main
 			if (null == node)
 				return null;
 
-			object root = node.ParentObject;
-			while (root != null && root is IDocumentNode && !type.IsInstanceOfType(root))
-				root = ((IDocumentNode)root).ParentObject;
+			node = node.ParentObject as IDocumentNode;
+			while (node != null && !type.IsInstanceOfType(node))
+			{
+				node = node.ParentObject as IDocumentNode;
+			}
 
-			return type.IsInstanceOfType(root) ? root : null;
+			return type.IsInstanceOfType(node) ? node : null;
 		}
 
 		/// <summary>
@@ -298,11 +303,13 @@ namespace Altaxo.Main
 			if (null == node)
 				return default(T);
 
-			object root = node.ParentObject;
-			while (root != null && root is IDocumentNode && !(root is T))
-				root = ((IDocumentNode)root).ParentObject;
+			node = node.ParentObject as IDocumentNode;
+			while (node != null && !(node is T))
+			{
+				node = node.ParentObject as IDocumentNode;
+			}
 
-			return (root is T) ? (T)root : default(T);
+			return (node is T) ? (T)node : default(T);
 		}
 
 		/// <summary>
@@ -333,7 +340,7 @@ namespace Altaxo.Main
 			int depth = 0;
 			object prev_root = node;
 			object root = node;
-			while (root != null && root is IDocumentNode)
+			while (root != null && root is IDocumentNode && !(root is AltaxoDocument))
 			{
 				if (depth >= maxDepth)
 					break;
@@ -392,11 +399,11 @@ namespace Altaxo.Main
 
 			// store the complete hierarchie of objects as keys in the hash, (values are the hierarchie depth)
 			int endnodedepth = 0;
-			object root = endnode;
-			while (root != null && root is IDocumentNode)
+			var root = endnode as IDocumentNode;
+			while (root != null)
 			{
 				hash.Add(root, endnodedepth);
-				root = ((IDocumentNode)root).ParentObject;
+				root = root.ParentObject as IDocumentNode;
 				++endnodedepth;
 			}
 
@@ -405,7 +412,7 @@ namespace Altaxo.Main
 
 			int startnodedepth = 0;
 			root = startnode;
-			while (root != null && root is IDocumentNode)
+			while (root != null)
 			{
 				if (hash.ContainsKey(root))
 				{
@@ -418,11 +425,11 @@ namespace Altaxo.Main
 					break;
 				}
 
-				root = ((IDocumentNode)root).ParentObject;
+				root = root.ParentObject as IDocumentNode;
 				++startnodedepth;
 			}
 
-			if (null == root || !hash.ContainsKey(root))
+			if (null == root || (root is AltaxoDocument) || !hash.ContainsKey(root))
 			{
 				return GetAbsolutePath(endnode); // no common root -> return AbsolutePath
 			}

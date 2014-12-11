@@ -637,9 +637,9 @@ namespace Altaxo.Graph.Gdi
 			var scaleBounds = _scales.X.Scale.DataBoundsObject;
 			if (null != scaleBounds)
 			{
-				// we have to disable our own Handler since if we change one DataBound of a association,
-				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
-				//but (alas!) not all boundaries are now of the new type!
+				// we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
+				// generates a OnBoundaryChanged event, and by handling this the boundaries of all other plot items are merged into the axis boundary,
+				// but (alas!) not all boundaries are now of the new type!
 				using (var xBoundariesChangedSuspendToken = _plotAssociationXBoundariesChanged_EventSuspender.SuspendGetToken())
 				{
 					using (var suspendToken = scaleBounds.SuspendGetToken())

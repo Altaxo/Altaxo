@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,32 +19,74 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Serialization;
+using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  public class BoundariesChangedEventArgs : System.EventArgs
-  {
-    protected bool _lowerBoundChanged, _upperBoundChanged;
+	[Flags]
+	public enum BoundariesChangedData
+	{
+		LowerBoundChanged = 0x01,
+		UpperBoundChanged = 0x02,
+		XBoundariesChanged = 0x10,
+		YBoundariesChanged = 0x20,
+		ZBoundariesChanged = 0x40,
+		VBoundariesChanged = 0x80,
+	}
 
-    public BoundariesChangedEventArgs(bool bLowerBound, bool bUpperBound)
-    {
-      this._lowerBoundChanged = bLowerBound;
-      this._upperBoundChanged = bUpperBound;
-    }
+	public class BoundariesChangedEventArgs : System.EventArgs
+	{
+		protected BoundariesChangedData _data;
 
-    public bool LowerBoundChanged 
-    {
-      get { return this._lowerBoundChanged; }
-    }
+		public static T FromLowerAndUpperBoundChanged<T>(bool haslowerBoundChanged, bool hasUpperBoundChanged) where T : BoundariesChangedEventArgs, new()
+		{
+			var result = new T();
 
-    public bool UpperBoundChanged 
-    {
-      get { return this._upperBoundChanged; }
-    }
-  }
+			if (haslowerBoundChanged)
+				result._data |= BoundariesChangedData.LowerBoundChanged;
+			if (hasUpperBoundChanged)
+				result._data |= BoundariesChangedData.UpperBoundChanged;
 
+			return result;
+		}
+
+		public BoundariesChangedEventArgs()
+		{
+		}
+
+		public BoundariesChangedEventArgs(bool bLowerBound, bool bUpperBound)
+		{
+			if (bLowerBound)
+				_data |= BoundariesChangedData.LowerBoundChanged;
+			if (bUpperBound)
+				_data |= BoundariesChangedData.UpperBoundChanged;
+		}
+
+		public bool LowerBoundChanged
+		{
+			get { return _data.HasFlag(BoundariesChangedData.LowerBoundChanged); }
+		}
+
+		public bool UpperBoundChanged
+		{
+			get { return _data.HasFlag(BoundariesChangedData.UpperBoundChanged); }
+		}
+
+		public void Add(BoundariesChangedEventArgs other)
+		{
+			_data |= other._data;
+		}
+	}
+
+	public class PlotItemBoundariesChangedEventArgs : BoundariesChangedEventArgs
+	{
+	}
+
+	public class ScaleBoundariesChangedEventArgs : BoundariesChangedEventArgs
+	{
+	}
 }

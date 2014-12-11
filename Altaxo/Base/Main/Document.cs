@@ -39,9 +39,9 @@ namespace Altaxo
 	[SerializationVersion(0, "Initial version of the main document only contains m_DataSet")]
 	public class AltaxoDocument
 		:
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IDeserializationCallback,
-		Main.INamedObjectCollection,
-		Main.IChildChangedEventSink
+		Main.INamedObjectCollection
 	{
 		/// <summary>Collection of all data tables in this document.</summary>
 		protected Altaxo.Data.DataTableCollection _dataTables = null; // The root of all the data
@@ -392,9 +392,39 @@ namespace Altaxo
 			}
 		}
 
-		public void EhChildChanged(object sender, EventArgs e)
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			this.IsDirty = true;
+			IsDirty = true;
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			_accumulatedEventData = e ?? EventArgs.Empty;
+		}
+
+		public override object ParentObject
+		{
+			get
+			{
+				return null;
+			}
+			set
+			{
+				throw new InvalidOperationException("The parent object of AltaxoDocument can not be set and is always null");
+			}
+		}
+
+		public override string Name
+		{
+			get
+			{
+				return string.Empty;
+			}
+			set
+			{
+				throw new InvalidOperationException("The name of AltaxoDocument can not be set and is always an empty string");
+			}
 		}
 
 		public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)

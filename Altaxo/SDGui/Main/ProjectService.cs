@@ -357,7 +357,10 @@ namespace Altaxo.Main
 
 			try
 			{
-				newdocument.RestoreFromZippedFile(zipFileWrapper, info);
+				using (var suspendToken = newdocument.SuspendGetToken())
+				{
+					newdocument.RestoreFromZippedFile(zipFileWrapper, info);
+				}
 			}
 			catch (Exception exc)
 			{

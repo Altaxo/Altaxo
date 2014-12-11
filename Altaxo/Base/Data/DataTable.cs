@@ -634,19 +634,24 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Handles the cases when a child changes, but a reaction is neccessary only if the table is not suspended currently.
+		/// Fires the change event with the EventArgs provided in the argument.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		/// <returns>True if the event has not changed the state of the table (i.e. it requires no further action).</returns>
-		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		/// <param name="e"></param>
+		protected override void OnChanged(EventArgs e)
 		{
 			// if the DataTableSource has changed, we need to update the table
 			if (e is TableDataSourceChangedEventArgs)
 			{
+				// Note: we update the data table here (and not in HandleLowPriorityChildChangeCases)
+				// the reason is that we first want to see whether the parent is suspending us
+				// if OnChange is called, the parent has not suspended us, thus we can update from the table data source
+				// Disadvantage: the parent sees to change events: (i) the event with TableDataSourceChangeEventArgs, and (ii) the change event that is caused by the updated table
 				UpdateTableFromTableDataSource();
 			}
-			return false;
+			else
+			{
+				base.OnChanged(e);
+			}
 		}
 
 		protected override void OnAboutToBeResumed(int eventCount)
