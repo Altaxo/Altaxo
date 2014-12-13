@@ -30,18 +30,12 @@ using System.Text;
 namespace Altaxo.Graph.Scales.Boundaries
 {
 	[Serializable]
-	public class TextBoundaries : Main.SuspendableLeafObject, IPhysicalBoundaries
+	public class TextBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
 	{
 		private AltaxoSet<string> _itemList;
 
 		[NonSerialized]
 		protected int _savedNumberOfItems;
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler BoundaryChanged;
-
-		[field: NonSerialized]
-		public event ItemNumberChangedHandler NumberOfItemsChanged;
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -103,21 +97,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		#region AbstractPhysicalBoundaries implementation
 
-		protected override void OnSuspended()
-		{
-			this._savedNumberOfItems = this._itemList.Count;
-		}
-
-		protected override void OnResume()
-		{
-			// if anything changed in the meantime, fire the event
-			if (this._savedNumberOfItems != this._itemList.Count)
-			{
-				OnNumberOfItemsChanged();
-				OnBoundaryChanged(false, true); // bLower, bUpper);
-			}
-		}
-
 		/// <summary>
 		/// Processes a single value from a data column.
 		/// If the data value is text, the boundaries are
@@ -144,23 +123,25 @@ namespace Altaxo.Graph.Scales.Boundaries
 		/// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
 		public bool Add(Altaxo.Data.AltaxoVariant item)
 		{
-			if (item.IsType(Altaxo.Data.AltaxoVariant.Content.VString))
+			if (!(item.IsType(Altaxo.Data.AltaxoVariant.Content.VString)))
+				return false;
+
+			string s = item.ToString();
+
+			if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
 			{
-				string s = item.ToString();
+				if (!_itemList.Contains(s))
+					_itemList.Add(s);
+			}
+			else  // not suspended: normal behaviour with change notification
+			{
 				if (!_itemList.Contains(s))
 				{
 					_itemList.Add(s);
-
-					if (!IsSuspended)
-					{
-						OnNumberOfItemsChanged();
-						OnBoundaryChanged(false, true);
-					}
-
-					return true;
+					EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
 				}
 			}
-			return false;
+			return true;
 		}
 
 		public void Add(IPhysicalBoundaries b)
@@ -212,16 +193,55 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		#endregion IPhysicalBoundaries Members
 
-		protected virtual void OnBoundaryChanged(bool bLowerBoundChanged, bool bUpperBoundChanged)
+		public override string Name
 		{
-			if (null != BoundaryChanged)
-				BoundaryChanged(this, new BoundariesChangedEventArgs(bLowerBoundChanged, bUpperBoundChanged));
+			get { return "TextBoundaries"; }
 		}
 
-		protected virtual void OnNumberOfItemsChanged()
+		#region Changed event handling
+
+		/// <summary>
+		/// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
+		/// with the current state and set our accumulated data accordingly.
+		/// </summary>
+		protected override void OnSuspended()
 		{
-			if (null != NumberOfItemsChanged)
-				NumberOfItemsChanged(this, new System.EventArgs());
+			this._savedNumberOfItems = this._itemList.Count;
+
+			base.OnSuspended();
 		}
+
+		/// <summary>
+		/// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
+		/// and and set our accumulated data accordingly.
+		/// </summary>
+		protected override void OnResume()
+		{
+			BoundariesChangedData data = 0;
+			// if anything changed in the meantime, fire the event
+			if (this._savedNumberOfItems != this._itemList.Count)
+			{
+				data |= BoundariesChangedData.NumberOfItemsChanged;
+				data |= BoundariesChangedData.UpperBoundChanged;
+			}
+
+			_accumulatedEventData = new BoundariesChangedEventArgs(data);
+
+			base.OnResume();
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			var eAsBCEA = e as BoundariesChangedEventArgs;
+			if (null == eAsBCEA)
+				throw new ArgumentOutOfRangeException(string.Format("Argument e should be of type {0}, but is {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
+
+			if (null == _accumulatedEventData)
+				_accumulatedEventData = eAsBCEA;
+			else
+				_accumulatedEventData.Add(eAsBCEA);
+		}
+
+		#endregion Changed event handling
 	}
 }

@@ -93,24 +93,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public bool Add(double d)
 		{
-			if (!IsSuspended)
-			{
-				if (d > 0 && !double.IsInfinity(d))
-				{
-					bool bLower = false, bUpper = false;
-					if (d < _minValue) { _minValue = d; bLower = true; }
-					if (d > _maxValue) { _maxValue = d; bUpper = true; }
-					_numberOfItems++;
-
-					OnNumberOfItemsChanged();
-
-					if (bLower || bUpper)
-						OnBoundaryChanged(bLower, bUpper);
-
-					return true;
-				}
-			}
-			else // events disabled
+			if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
 			{
 				if (d > 0 && !double.IsInfinity(d))
 				{
@@ -120,6 +103,21 @@ namespace Altaxo.Graph.Scales.Boundaries
 					return true;
 				}
 			}
+			else  // not suspended: normal behaviour with change notification
+			{
+				if (d > 0 && !double.IsInfinity(d))
+				{
+					BoundariesChangedData data = BoundariesChangedData.NumberOfItemsChanged;
+					if (d < _minValue) { _minValue = d; data |= BoundariesChangedData.LowerBoundChanged; }
+					if (d > _maxValue) { _maxValue = d; data |= BoundariesChangedData.UpperBoundChanged; }
+					_numberOfItems++;
+
+					EhSelfChanged(new BoundariesChangedEventArgs(data));
+
+					return true;
+				}
+			}
+
 			return false;
 		}
 	}

@@ -37,17 +37,10 @@ namespace Altaxo.Graph.Gdi.Plot
 	[Serializable]
 	public abstract class PlotItem
 	:
+		Main.SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData,
 		IGPlotItem,
-		Main.IChangedEventSource,
-		Main.IDocumentNode,
 		Main.INamedObjectCollection
 	{
-		/// <summary>
-		/// The parent object.
-		/// </summary>
-		[NonSerialized]
-		protected object _parent;
-
 		public virtual bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -66,6 +59,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// Get/sets the style object of this plot.
 		/// </summary>
 		public abstract object StyleObject { get; set; }
+
+		public abstract object DataObject { get; }
 
 		/// <summary>
 		/// The name of the plot. It can be of different length. An argument of zero or less
@@ -116,12 +111,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <remarks>The data (DataColumns which belongs to a table in the document's DataTableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
 		public abstract object Clone();
 
-		public virtual object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
 		public virtual PlotItemCollection ParentCollection
 		{
 			get
@@ -150,89 +139,59 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get
 			{
-				return null; // PlotItems don't have parent nodes.
+				return null; // PlotItems don't have parent nodes of type IGPlotItem
 			}
 		}
 
-		public virtual string Name
+		public override string Name
 		{
 			get
 			{
 				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
 				return noc == null ? null : noc.GetNameOfChildObject(this);
 			}
+			set
+			{
+				throw new InvalidOperationException("Name of PlotItem cannot be set directly.");
+			}
 		}
 
 		/// <summary>
-		/// Fired if the data object changed or something inside the data object changed
+		/// Handles the case when a child changes, and a reaction is neccessary independently on the suspend state of the table. It is used here to change the event args
+		/// coming from the StyleObject to <see cref="PlotItemStyleChangedEventArgs"/> and event args coming from the data object to <see cref="PlotItemDataChangedEventArgs"/>.
 		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler DataChanged;
-
-		/// <summary>
-		/// Fired if the style object changed or something inside the style object changed
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler StyleChanged;
-
-		/// <summary>
-		/// Fired if either data or style has changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
-		/// <summary>
-		/// Intended to used by derived classes, fires the DataChanged event and the Changed event
-		/// </summary>
-		public virtual void OnDataChanged()
+		/// <param name="sender">The sender of the event, usually a child of this object.</param>
+		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+		/// <returns>
+		/// True if the event will not change the state of the object and the handling of the event is completely done. Thus, if returning <c>true</c>, the object is considered as 'not changed'.
+		/// If in doubt, return <c>false</c>. This will allow the further processing of the event.
+		/// </returns>
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (null != DataChanged)
-				DataChanged(this, new System.EventArgs());
+			if (object.ReferenceEquals(sender, StyleObject))
+				e = PlotItemStyleChangedEventArgs.Empty;
+			else if (object.ReferenceEquals(sender, DataObject))
+				e = PlotItemDataChangedEventArgs.Empty;
 
-			OnChanged();
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
 
-		/// <summary>
-		/// Intended to used by derived classes, fires the StyleChanged event and the Changed event
-		/// </summary>
-		public virtual void OnStyleChanged()
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			if (null != StyleChanged)
-				StyleChanged(this, new System.EventArgs());
+			var eType = e.GetType();
 
-			OnChanged();
-		}
-
-		/// <summary>
-		/// Intended to used by derived classes, fires the Changed event
-		/// </summary>
-		public virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new System.EventArgs());
-		}
-
-		/// <summary>
-		/// Intended to use by derived classes, serves as event sink for the Changed event from the Data object and fires the DataChanged event.
-		/// </summary>
-		/// <param name="sender">The sender of the event (the Data object).</param>
-		/// <param name="e">EventArgs (not used).</param>
-		public virtual void OnDataChangedEventHandler(object sender, System.EventArgs e)
-		{
-			OnDataChanged();
-		}
-
-		/// <summary>
-		/// Intended to use by derived classes, serves as event sink for the Changed event from the Style object and fires the StyleChanged event.
-		/// </summary>
-		/// <param name="sender">The sender of the event (the Style object).</param>
-		/// <param name="e">EventArgs (not used).</param>
-		public virtual void OnStyleChangedEventHandler(object sender, System.EventArgs e)
-		{
-			OnStyleChanged();
+			if (eType == typeof(BoundariesChangedEventArgs))
+			{
+				EventArgs presentData;
+				if (_accumulatedEventData.TryGetValue(typeof(BoundariesChangedEventArgs), out presentData))
+					((BoundariesChangedEventArgs)presentData).Add((BoundariesChangedEventArgs)e);
+				else
+					_accumulatedEventData.Add(typeof(BoundariesChangedEventArgs), e);
+			}
+			else
+			{
+				_accumulatedEventData[eType] = e;
+			}
 		}
 
 		/// <summary>
@@ -254,7 +213,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			if (o == null)
 				return null;
-
 			else
 				return null;
 		}

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,40 +19,39 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+	using Data;
+	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Groups;
 	using Styles;
-	using Data;
-	using Graph.Plot.Data;
 
 	[Serializable]
 	public abstract class G2DPlotItem : PlotItem, IRoutedPropertyReceiver
 	{
-
 		protected G2DPlotStyleCollection _plotStyles;
 
 		[NonSerialized]
-		Processed2DPlotData _cachedPlotDataUsedForPainting;
+		private Processed2DPlotData _cachedPlotDataUsedForPainting;
 
 		[NonSerialized]
-		PlotGroupStyleCollection _localGroups;
+		private PlotGroupStyleCollection _localGroups;
 
 		public override object StyleObject
 		{
 			get { return _plotStyles; }
 			set { this.Style = (G2DPlotStyleCollection)value; }
 		}
-
 
 		public G2DPlotStyleCollection Style
 		{
@@ -63,34 +63,28 @@ namespace Altaxo.Graph.Gdi.Plot
 			{
 				if (null == value)
 					throw new System.ArgumentNullException();
-				else
+
+				if (!object.ReferenceEquals(_plotStyles, value))
 				{
-					if (!object.ReferenceEquals(_plotStyles, value))
+					// delete event wiring to old AbstractXYPlotStyle
+					if (null != _plotStyles)
 					{
-						// delete event wiring to old AbstractXYPlotStyle
-						if (null != _plotStyles)
-						{
-							((Main.IChangedEventSource)_plotStyles).Changed -= new EventHandler(OnStyleChangedEventHandler);
-							_plotStyles.ParentObject = null;
-						}
-
-						_plotStyles = (G2DPlotStyleCollection)value;
-
-						// create event wire to new Plotstyle
-						if (null != _plotStyles)
-						{
-							((Main.IChangedEventSource)_plotStyles).Changed += new EventHandler(OnStyleChangedEventHandler);
-							_plotStyles.ParentObject = this;
-						}
-
-						// indicate the style has changed
-						OnStyleChanged();
+						_plotStyles.ParentObject = null;
 					}
+
+					_plotStyles = (G2DPlotStyleCollection)value;
+
+					// create event wire to new Plotstyle
+					if (null != _plotStyles)
+					{
+						_plotStyles.ParentObject = this;
+					}
+
+					// indicate the style has changed
+					EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
 				}
 			}
 		}
-
-		public abstract object DataObject { get; }
 
 		public abstract Processed2DPlotData GetRangesAndPoints(IPlotArea layer);
 
@@ -98,6 +92,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			CopyFrom((PlotItem)from);
 		}
+
 		public override bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -124,7 +119,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			if (o == null)
 				return null;
-
 			else
 				return null;
 		}
@@ -152,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			// now prepare the groups
 			_plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
 
-			// for the group styles in the local group, PrepareStep and EndPrepare must be called, 
+			// for the group styles in the local group, PrepareStep and EndPrepare must be called,
 			_localGroups.PrepareStep();
 			_localGroups.EndPrepare();
 		}
@@ -186,8 +180,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			_plotStyles.PaintSymbol(g, location);
 		}
 
-		#endregion
-
+		#endregion IPlotItem Members
 
 		public Processed2DPlotData GetPlotData(IPlotArea layer)
 		{
@@ -205,9 +198,7 @@ namespace Altaxo.Graph.Gdi.Plot
 					(prevPlotItem is G2DPlotItem) ? ((G2DPlotItem)prevPlotItem).GetPlotData(layer) : null,
 					(nextPlotItem is G2DPlotItem) ? ((G2DPlotItem)nextPlotItem).GetPlotData(layer) : null
 					);
-
 		}
-
 
 		/// <summary>
 		/// Needed for coordinate transforming styles to plot the data.
@@ -221,28 +212,23 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			_cachedPlotDataUsedForPainting = plotdata;
 
-
 			if (null != this._plotStyles)
 			{
 				_plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
 			}
 		}
 
-
 		/// <summary>
-		/// Test wether the mouse hits a plot item. 
+		/// Test wether the mouse hits a plot item.
 		/// </summary>
 		/// <param name="layer">The layer in which this plot item is drawn into.</param>
 		/// <param name="hitpoint">The point where the mouse is pressed.</param>
 		/// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
 		public override IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
 		{
-
-
 			Processed2DPlotData pdata = _cachedPlotDataUsedForPainting;
 			if (null == pdata)
 				return null;
-
 
 			PlotRangeList rangeList = pdata.RangeList;
 			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -262,7 +248,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 			else // we have too much points for the graphics path, so make a hit test first
 			{
-
 				int hitindex = -1;
 				for (int i = 1; i < ptArray.Length; i++)
 				{
@@ -282,11 +267,8 @@ namespace Altaxo.Graph.Gdi.Plot
 				return new HitTestObject(gp, this);
 			}
 
-
-
 			return null;
 		}
-
 
 		/// <summary>
 		/// Returns the index of a scatter point that is nearest to the location <c>hitpoint</c>
@@ -296,10 +278,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
 		public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointD2D hitpoint)
 		{
-
-
-
-
 			Processed2DPlotData pdata;
 			if (null != (pdata = _cachedPlotDataUsedForPainting))
 			{
@@ -323,11 +301,8 @@ namespace Altaxo.Graph.Gdi.Plot
 				return new XYScatterPointInformation(ptArray[minindex], rowindex, minindex);
 			}
 
-
 			return null;
 		}
-
-
 
 		/// <summary>
 		/// For a given plot point of index oldplotindex, finds the index and coordinates of a plot point
@@ -339,9 +314,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
 		public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
 		{
-
-
-
 			Processed2DPlotData pdata;
 			if (null != (pdata = _cachedPlotDataUsedForPainting))
 			{
@@ -358,7 +330,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				int rowindex = rangeList.GetRowIndexForPlotIndex(minindex);
 				return new XYScatterPointInformation(ptArray[minindex], rowindex, minindex);
 			}
-
 
 			return null;
 		}
@@ -377,11 +348,12 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			_plotStyles.SetRoutedProperty(property);
 		}
+
 		public void GetRoutedProperty(IRoutedGetterProperty property)
 		{
 			_plotStyles.GetRoutedProperty(property);
 		}
 
-		#endregion
+		#endregion IRoutedPropertyReceiver Members
 	} // end of class PlotItem
 }

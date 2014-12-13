@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Scales;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-using Altaxo.Data;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Gdi;
-
 
 namespace Altaxo.Graph.Gdi.Plot
 {
-	using Styles;
 	using Data;
 	using Graph.Plot.Data;
+	using Styles;
 
 	/// <summary>
 	/// Association of data and style specialized for x-y-plots of column data.
@@ -44,8 +45,8 @@ namespace Altaxo.Graph.Gdi.Plot
 	{
 		protected XYFunctionPlotData _plotData;
 
-
 		#region Serialization
+
 		/// <summary>Used to serialize theXYDataPlot Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -61,6 +62,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
 			}
+
 			/// <summary>
 			/// Deserializes the XYColumnPlotItem Version 0.
 			/// </summary>
@@ -81,7 +83,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -89,16 +91,16 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
 				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", typeof(XYLineScatterPlotStyle));
 
 				G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
-				if(null!=lsps.ScatterStyle)
+				if (null != lsps.ScatterStyle)
 					ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
-				if(null!=lsps.XYPlotLineStyle)
+				if (null != lsps.XYPlotLineStyle)
 					ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
 
 				if (null == o)
@@ -112,13 +114,12 @@ namespace Altaxo.Graph.Gdi.Plot
 					s.Style = ps;
 					return s;
 				}
-
 			}
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotItem), 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -126,9 +127,9 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
 				G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
 
@@ -143,7 +144,6 @@ namespace Altaxo.Graph.Gdi.Plot
 					s.Style = ps;
 					return s;
 				}
-
 			}
 		}
 
@@ -157,17 +157,16 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			if (null != _plotData)
 			{
-				_plotData.Changed += new EventHandler(OnDataChangedEventHandler);
+				_plotData.ParentObject = this;
 			}
 
 			if (null != _plotStyles)
 			{
-				((Main.IChangedEventSource)_plotStyles).Changed += new EventHandler(OnStyleChangedEventHandler);
+				_plotStyles.ParentObject = this;
 			}
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public XYFunctionPlotItem(XYFunctionPlotData pa, G2DPlotStyleCollection ps)
 		{
@@ -222,7 +221,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
 					if (!object.ReferenceEquals(_plotData, value))
 					{
-						OnDataChanged();
+						EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 					}
 				}
 			}
@@ -232,10 +231,12 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			return _plotData.ToString();
 		}
+
 		public override string GetName(string style)
 		{
 			return GetName(0);
 		}
+
 		public override string ToString()
 		{
 			return GetName(int.MaxValue);
@@ -245,9 +246,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			return _plotData.GetRangesAndPoints(layer);
 		}
-
-
-
 
 		/// <summary>
 		/// This routine ensures that the plot item updates all its cached data and send the appropriate
@@ -259,6 +257,5 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			// nothing really to do here
 		}
-
 	}
 }

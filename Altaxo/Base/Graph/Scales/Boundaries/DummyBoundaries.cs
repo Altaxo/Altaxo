@@ -28,13 +28,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-	public class DummyBoundaries : Main.SuspendableLeafObject, IPhysicalBoundaries
+	public class DummyBoundaries : Main.SuspendableDocumentLeafNodeWithEventArgs, IPhysicalBoundaries
 	{
 		#region IPhysicalBoundaries Members
-
-		public event BoundaryChangedHandler BoundaryChanged;
-
-		public event ItemNumberChangedHandler NumberOfItemsChanged;
 
 		public bool Add(Altaxo.Data.IReadableColumn col, int idx)
 		{

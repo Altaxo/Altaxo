@@ -35,7 +35,7 @@ namespace Altaxo.Data
 	/// Holds reference to a matrix-like arrangement of data from a <see cref="DataTable"/>. The matrix data consist of 2 or more <see cref="DataColumn"/>s and all or selected data rows.
 	/// Furthermore, a row header column and a column header column can deliver corresponding physical values for each matrix row and column, respectively.
 	/// </summary>
-	public class DataTableMatrixProxy : Main.IChangedEventSource, Main.ICopyFrom
+	public class DataTableMatrixProxy : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
 	{
 		#region Inner classes
 
@@ -182,12 +182,6 @@ namespace Altaxo.Data
 		}
 
 		#endregion Inner classes
-
-		[NonSerialized]
-		protected object _parent;
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		/// <summary><c>True</c> if the data are inconsistent. To bring the data in a consistent state <see cref="Update"/> method must be called then.</summary>
 		protected bool _isDirty;
@@ -793,19 +787,7 @@ namespace Altaxo.Data
 		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
 		{
 			_isDirty = true;
-			OnChanged();
-		}
-
-		/// <summary>
-		/// Called when anything inside this proxy has changed.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>

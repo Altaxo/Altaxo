@@ -178,12 +178,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			if (null != _plotData)
 			{
-				_plotData.Changed += new EventHandler(OnDataChangedEventHandler);
+				_plotData.ParentObject = this;
 			}
 
 			if (null != _plotStyles)
 			{
-				((Main.IChangedEventSource)_plotStyles).Changed += new EventHandler(OnStyleChangedEventHandler);
+				_plotStyles.ParentObject = this;
 			}
 		}
 
@@ -250,26 +250,18 @@ namespace Altaxo.Graph.Gdi.Plot
 					throw new System.ArgumentNullException();
 				else
 				{
-					XYColumnPlotData oldvalue = _plotData;
+					if (null != _plotData)
+						_plotData.ParentObject = null;
+
+					var oldvalue = _plotData;
 					_plotData = value;
+
+					if (null != _plotData)
+						_plotData.ParentObject = this;
+
 					if (!object.ReferenceEquals(value, oldvalue))
 					{
-						if (null != oldvalue)
-						{
-							oldvalue.Changed -= new EventHandler(OnDataChangedEventHandler);
-							oldvalue.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
-							oldvalue.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
-							oldvalue.ParentObject = null;
-						}
-						if (null != value)
-						{
-							value.ParentObject = this;
-							value.Changed += new EventHandler(OnDataChangedEventHandler);
-							value.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
-							value.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
-						}
-
-						OnDataChanged();
+						EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 					}
 				}
 			}
@@ -386,15 +378,6 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		#region IXBoundsHolder Members
 
-		private void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			if (null != XBoundariesChanged)
-				XBoundariesChanged(this, args);
-		}
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler XBoundariesChanged;
-
 		public void MergeXBoundsInto(IPhysicalBoundaries pb)
 		{
 			this._plotData.MergeXBoundsInto(pb);
@@ -403,15 +386,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		#endregion IXBoundsHolder Members
 
 		#region IYBoundsHolder Members
-
-		private void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			if (null != YBoundariesChanged)
-				YBoundariesChanged(this, args);
-		}
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler YBoundariesChanged;
 
 		public void MergeYBoundsInto(IPhysicalBoundaries pb)
 		{

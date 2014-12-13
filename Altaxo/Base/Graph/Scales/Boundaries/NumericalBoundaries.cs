@@ -91,26 +91,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 			_maxValue = x._maxValue;
 		}
 
-		protected override void OnSuspended()
-		{
-			this._savedNumberOfItems = this._numberOfItems;
-			this._cachedMinValue = this._minValue;
-			this._cachedMaxValue = this._maxValue;
-		}
-
-		protected override void OnResume()
-		{
-			// if anything changed in the meantime, fire the event
-			if (this._savedNumberOfItems != this._numberOfItems)
-				OnNumberOfItemsChanged();
-
-			bool bLower = (this._cachedMinValue != this._minValue);
-			bool bUpper = (this._cachedMaxValue != this._maxValue);
-
-			if (bLower || bUpper)
-				OnBoundaryChanged(bLower, bUpper);
-		}
-
 		/// <summary>
 		/// Reset the internal data to the initialized state
 		/// </summary>
@@ -135,25 +115,22 @@ namespace Altaxo.Graph.Scales.Boundaries
 			{
 				if (b._numberOfItems > 0)
 				{
-					bool bLower = false, bUpper = false;
+					BoundariesChangedData data = BoundariesChangedData.NumberOfItemsChanged;
+
 					_numberOfItems += b._numberOfItems;
 					if (b._minValue < _minValue)
 					{
 						_minValue = b._minValue;
-						bLower = true;
+						data |= BoundariesChangedData.LowerBoundChanged;
 					}
 					if (b._maxValue > _maxValue)
 					{
 						_maxValue = b._maxValue;
-						bUpper = true;
+						data |= BoundariesChangedData.UpperBoundChanged;
 					}
 
-					if (!IsSuspended)
-					{
-						OnNumberOfItemsChanged(); // fire item number event
-						if (bLower || bUpper)
-							OnBoundaryChanged(bLower, bUpper);
-					}
+					if (!IsSuspended) // performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
+						EhSelfChanged(new BoundariesChangedEventArgs(data));
 				}
 			}
 			else
@@ -182,5 +159,45 @@ namespace Altaxo.Graph.Scales.Boundaries
 		}
 
 		#endregion IPhysicalBoundaries Members
+
+		#region Changed event handling
+
+		/// <summary>
+		/// For performance reasons, we save the current state of this instance here if the item is suspended. When the item is resumed, we compare the saved state
+		/// with the current state and set our accumulated data accordingly.
+		/// </summary>
+		protected override void OnSuspended()
+		{
+			this._savedNumberOfItems = this._numberOfItems;
+			this._cachedMinValue = this._minValue;
+			this._cachedMaxValue = this._maxValue;
+
+			base.OnSuspended();
+		}
+
+		/// <summary>
+		/// For performance reasons, we don't call EhSelfChanged during the suspended state. Instead, when we resume here, we compare the saved state of this instance with the current state of the instance
+		/// and and set our accumulated data accordingly.
+		/// </summary>
+		protected override void OnResume()
+		{
+			BoundariesChangedData data = 0;
+
+			// if anything changed in the meantime, fire the event
+			if (this._savedNumberOfItems != this._numberOfItems)
+				data |= BoundariesChangedData.NumberOfItemsChanged;
+
+			if (this._cachedMinValue != this._minValue)
+				data |= BoundariesChangedData.LowerBoundChanged;
+
+			if (this._cachedMaxValue != this._maxValue)
+				data |= BoundariesChangedData.UpperBoundChanged;
+
+			_accumulatedEventData = new BoundariesChangedEventArgs(data);
+
+			base.OnResume();
+		}
+
+		#endregion Changed event handling
 	}
 }

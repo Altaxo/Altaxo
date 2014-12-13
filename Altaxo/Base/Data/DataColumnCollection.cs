@@ -2121,7 +2121,7 @@ namespace Altaxo.Data
 			AccumulateChangeData(sender, e, ref _accumulatedEventData);
 		}
 
-		protected override bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
 			Main.ParentChangedEventArgs parentChangedEventArgs;
 			if (null != (parentChangedEventArgs = e as Main.ParentChangedEventArgs))

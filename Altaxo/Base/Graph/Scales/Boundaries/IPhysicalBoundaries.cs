@@ -32,12 +32,8 @@ namespace Altaxo.Graph.Scales.Boundaries
 	/// boundaries of a plot association. Every plot association has two of these objects
 	/// that help tracking the boundaries of X and Y axis
 	/// </summary>
-	public interface IPhysicalBoundaries : ICloneable, Main.ISuspendableByToken
+	public interface IPhysicalBoundaries : ICloneable, Main.ISuspendableByToken, Main.IDocumentNode, Main.IChangedEventSource
 	{
-		event BoundaryChangedHandler BoundaryChanged;
-
-		event ItemNumberChangedHandler NumberOfItemsChanged;
-
 		/// <summary>
 		/// Processes a single value from a numeric column <paramref name="col"/>[<paramref name="idx"/>].
 		/// If the data value is inside the considered definition range of the values, the boundaries are

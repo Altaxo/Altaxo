@@ -42,10 +42,9 @@ namespace Altaxo.Graph.Plot.Data
 	[SerializationVersion(0)]
 	public class XYColumnPlotData
 		:
+		Main.SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData,
 		System.Runtime.Serialization.IDeserializationCallback,
-		Main.IChangedEventSource,
-		System.ICloneable,
-		Main.IDocumentNode
+		System.ICloneable
 	{
 		protected Altaxo.Data.ReadableColumnProxy _xColumn; // the X-Column
 		protected Altaxo.Data.ReadableColumnProxy _yColumn; // the Y-Column
@@ -72,24 +71,6 @@ namespace Altaxo.Graph.Plot.Data
 		protected int _pointCount;
 
 		protected bool _isCachedDataValid = false;
-
-		/// <summary>The parent object.</summary>
-		[NonSerialized]
-		protected object _parent;
-
-		[NonSerialized]
-		protected int _SupressBoundaryChangeEvents;
-
-		// events
-		[field: NonSerialized]
-		public event BoundaryChangedHandler XBoundariesChanged;
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler YBoundariesChanged;
-
-		/// <summary>Fired if either the data of this XYColumnPlotData changed or if the bounds changed.</summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -151,10 +132,10 @@ namespace Altaxo.Graph.Plot.Data
 				_yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
 			if (null != _xBoundaries)
-				_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
+				_xBoundaries.ParentObject = this;
 
 			if (null != _yBoundaries)
-				_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
+				_yBoundaries.ParentObject = this;
 		}
 
 		#endregion Binary
@@ -219,11 +200,11 @@ namespace Altaxo.Graph.Plot.Data
 
 				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", typeof(IPhysicalBoundaries));
 				if (null != s._xBoundaries)
-					s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+					s._xBoundaries.ParentObject = s;
 
 				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", typeof(IPhysicalBoundaries));
 				if (null != s._yBoundaries)
-					s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+					s._yBoundaries.ParentObject = s;
 
 				if (bNeedsCallback)
 				{
@@ -395,10 +376,10 @@ namespace Altaxo.Graph.Plot.Data
 					s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 
 				if (null != s._xBoundaries)
-					s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+					s._xBoundaries.ParentObject = s;
 
 				if (null != s._yBoundaries)
-					s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+					s._yBoundaries.ParentObject = s;
 			}
 		}
 
@@ -455,10 +436,10 @@ namespace Altaxo.Graph.Plot.Data
 					s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 
 				if (null != s._xBoundaries)
-					s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+					s._xBoundaries.ParentObject = s;
 
 				if (null != s._yBoundaries)
-					s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+					s._yBoundaries.ParentObject = s;
 			}
 		}
 
@@ -496,12 +477,12 @@ namespace Altaxo.Graph.Plot.Data
 			if (from._xBoundaries != null)
 			{
 				this._xBoundaries = (IPhysicalBoundaries)from._xBoundaries.Clone();
-				this._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
+				this._xBoundaries.ParentObject = this;
 			}
 			if (from._yBoundaries != null)
 			{
 				this._yBoundaries = (IPhysicalBoundaries)from._yBoundaries.Clone();
-				this._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
+				this._yBoundaries.ParentObject = this;
 			}
 
 			this._pointCount = from._pointCount;
@@ -519,18 +500,16 @@ namespace Altaxo.Graph.Plot.Data
 			return new XYColumnPlotData(this);
 		}
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get
 			{
 				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
 				return noc == null ? null : noc.GetNameOfChildObject(this);
+			}
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set.");
 			}
 		}
 
@@ -591,9 +570,10 @@ namespace Altaxo.Graph.Plot.Data
 
 			if (!this._isCachedDataValid)
 			{
-				_SupressBoundaryChangeEvents++;
-				this.CalculateCachedData();
-				_SupressBoundaryChangeEvents--;
+				using (var suspendToken = SuspendGetToken())
+				{
+					this.CalculateCachedData();
+				}
 			}
 			pb.Add(_xBoundaries);
 		}
@@ -605,9 +585,10 @@ namespace Altaxo.Graph.Plot.Data
 
 			if (!this._isCachedDataValid)
 			{
-				_SupressBoundaryChangeEvents++;
-				this.CalculateCachedData();
-				_SupressBoundaryChangeEvents--;
+				using (var suspendToken = SuspendGetToken())
+				{
+					this.CalculateCachedData();
+				}
 			}
 			pb.Add(_yBoundaries);
 		}
@@ -622,14 +603,14 @@ namespace Altaxo.Graph.Plot.Data
 			if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
 			{
 				if (null != _xBoundaries)
-				{
-					_xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.EhXBoundariesChanged);
-				}
+					_xBoundaries.ParentObject = null;
+
 				_xBoundaries = (IPhysicalBoundaries)val.Clone();
-				_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
+
+				_xBoundaries.ParentObject = this;
 				_isCachedDataValid = false;
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -643,36 +624,13 @@ namespace Altaxo.Graph.Plot.Data
 			if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
 			{
 				if (null != _yBoundaries)
-				{
-					_yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.EhYBoundariesChanged);
-				}
+					_yBoundaries.ParentObject = null;
+
 				_yBoundaries = (IPhysicalBoundaries)val.Clone();
-				_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
+				_yBoundaries.ParentObject = this;
 				_isCachedDataValid = false;
 
-				OnChanged();
-			}
-		}
-
-		protected virtual void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
-		{
-			if (_SupressBoundaryChangeEvents == 0)
-			{
-				if (null != this.XBoundariesChanged)
-					XBoundariesChanged(this, e);
-
-				OnChanged();
-			}
-		}
-
-		protected virtual void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
-		{
-			if (_SupressBoundaryChangeEvents == 0)
-			{
-				if (null != this.YBoundariesChanged)
-					YBoundariesChanged(this, e);
-
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -722,7 +680,7 @@ namespace Altaxo.Graph.Plot.Data
 				}
 
 				_isCachedDataValid = false;
-				OnChanged();
+				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 			}
 		}
 
@@ -746,7 +704,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				_isCachedDataValid = false;
 
-				OnChanged();
+				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 			}
 		}
 
@@ -832,21 +790,6 @@ namespace Altaxo.Graph.Plot.Data
 				}
 				suspendTokenX.Resume();
 			}
-		}
-
-		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
-		{
-			// !!!todo!!! : special case if only data added to a column should
-			// be handeld separately to save computing time
-			this._isCachedDataValid = false;
-
-			OnChanged();
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, new System.EventArgs());
 		}
 
 		/// <summary>
@@ -1003,5 +946,56 @@ namespace Altaxo.Graph.Plot.Data
 
 			return result;
 		}
+
+		#region Change event handling
+
+		/// <summary>
+		/// Used by the data proxies to report changes
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
+		{
+			// !!!todo!!! : special case if only data added to a column should
+			// be handeld separately to save computing time
+			this._isCachedDataValid = false;
+
+			EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			// If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
+			var eAsBCEA = e as BoundariesChangedEventArgs;
+			if (null != eAsBCEA)
+			{
+				if (object.ReferenceEquals(sender, _xBoundaries))
+				{
+					eAsBCEA.SetXBoundaryChangedFlag();
+				}
+				else if (object.ReferenceEquals(sender, _yBoundaries))
+				{
+					eAsBCEA.SetYBoundaryChangedFlag();
+				}
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			var eAsBCEA = e as BoundariesChangedEventArgs;
+
+			if (null != eAsBCEA)
+			{
+				_accumulatedEventData.ModifyOrSet<BoundariesChangedEventArgs>(x => x.Add(eAsBCEA), eAsBCEA);
+			}
+			else
+			{
+				_accumulatedEventData.Set(e);
+			}
+		}
+
+		#endregion Change event handling
 	}
 }

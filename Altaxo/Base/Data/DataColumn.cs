@@ -37,7 +37,7 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	[Serializable()]
 	public abstract class DataColumn :
-		Main.SuspendableDocumentLeafNode<EventArgs>,
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		Main.IEventIndicatedDisposable,
 		System.Runtime.Serialization.ISerializable,
 		System.Runtime.Serialization.IDeserializationCallback,

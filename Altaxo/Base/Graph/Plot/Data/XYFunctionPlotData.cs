@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,38 +19,36 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
 
-
 namespace Altaxo.Graph.Plot.Data
 {
-	using Scales;
 	using Gdi.Plot.Data;
+	using Scales;
 
 	#region XYFunctionPlotData
+
 	/// <summary>
 	/// Summary description for XYFunctionPlotData.
 	/// </summary>
 	[Serializable]
-	public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource, Main.IDocumentNode
+	public class XYFunctionPlotData
+		:
+		Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
+		ICloneable,
+		Calc.IScalarFunctionDD
 	{
-		Altaxo.Calc.IScalarFunctionDD _function;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
-		[NonSerialized]
-		object _parent;
-
+		private Altaxo.Calc.IScalarFunctionDD _function;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotData", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotData), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -68,7 +67,7 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Only for deserialization purposes.
@@ -80,8 +79,6 @@ namespace Altaxo.Graph.Plot.Data
 		public XYFunctionPlotData(Altaxo.Calc.IScalarFunctionDD function)
 		{
 			this.Function = function;
-
-
 		}
 
 		public XYFunctionPlotData(XYFunctionPlotData from)
@@ -108,7 +105,6 @@ namespace Altaxo.Graph.Plot.Data
 				return base.ToString();
 		}
 
-
 		/// <summary>
 		/// Get/sets the function used for evaluation. Must be serializable in order to store the graph to disk.
 		/// </summary>
@@ -131,7 +127,7 @@ namespace Altaxo.Graph.Plot.Data
 					((Main.IChangedEventSource)_function).Changed += new EventHandler(EhFunctionChanged);
 
 				if (!object.ReferenceEquals(oldValue, value))
-					OnChanged();
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 			}
 		}
 
@@ -142,7 +138,7 @@ namespace Altaxo.Graph.Plot.Data
 			return new XYFunctionPlotData(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IScalarFunctionDD Members
 
@@ -151,37 +147,28 @@ namespace Altaxo.Graph.Plot.Data
 			return _function == null ? 0 : _function.Evaluate(x);
 		}
 
-		#endregion
+		#endregion IScalarFunctionDD Members
 
-		#region IChangedEventSource Members
+		#region Changed event handling
 
 		/// <summary>
 		/// EventHandler called if the underlying function has changed.
 		/// </summary>
 		/// <param name="sender">Sender of this event.</param>
 		/// <param name="e">EventArgs (not used here).</param>
-		void EhFunctionChanged(object sender, EventArgs e)
+		private void EhFunctionChanged(object sender, EventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 		}
 
-		/// <summary>
-		/// Fires the Changed event.
-		/// </summary>
-		protected virtual void OnChanged()
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (Changed != null)
-				Changed(this, EventArgs.Empty);
+			_accumulatedEventData = PlotItemDataChangedEventArgs.Empty;
 		}
 
+		#endregion Changed event handling
 
-		#endregion
-
-
-		class MyPlotData
+		private class MyPlotData
 		{
 			public double[] _xPhysical;
 			public double[] _yPhysical;
@@ -190,6 +177,7 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				return _xPhysical[originalRowIndex];
 			}
+
 			public Altaxo.Data.AltaxoVariant GetYPhysical(int originalRowIndex)
 			{
 				return _yPhysical[originalRowIndex];
@@ -208,7 +196,6 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			const int functionPoints = 1000;
 			const double MaxRelativeValue = 1E6;
-
 
 			// allocate an array PointF to hold the line points
 			PointF[] ptArray = new PointF[functionPoints];
@@ -240,7 +227,6 @@ namespace Altaxo.Graph.Plot.Data
 			if (xaxis == null || yaxis == null)
 				return null;
 
-
 			for (i = 0, j = 0; i < functionPoints; i++)
 			{
 				double x_rel = ((double)i) / (functionPoints - 1);
@@ -258,7 +244,6 @@ namespace Altaxo.Graph.Plot.Data
 					continue;
 				}
 
-
 				// double x_rel = layer.XAxis.PhysicalToNormal(x);
 				double y_rel = yaxis.PhysicalVariantToNormal(y);
 
@@ -269,7 +254,7 @@ namespace Altaxo.Graph.Plot.Data
 					y_rel = -MaxRelativeValue;
 
 				// after the conversion to relative coordinates it is possible
-				// that with the choosen axis the point is undefined 
+				// that with the choosen axis the point is undefined
 				// (for instance negative values on a logarithmic axis)
 				// in this case the returned value is NaN
 				double xcoord, ycoord;
@@ -303,24 +288,17 @@ namespace Altaxo.Graph.Plot.Data
 			return result;
 		}
 
-
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "FunctionPlotData"; }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 	}
-	#endregion
+
+	#endregion XYFunctionPlotData
 
 	#region PolynomialFunction
 
@@ -334,7 +312,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <summary>
 		/// Coefficient array used to evaluate the polynomial.
 		/// </summary>
-		double[] _coefficients;
+		private double[] _coefficients;
 
 		/// <summary>
 		/// Event fired when the coefficients of the polynomial changed.
@@ -346,7 +324,7 @@ namespace Altaxo.Graph.Plot.Data
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PolynomialFunction", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialFunction), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -361,12 +339,11 @@ namespace Altaxo.Graph.Plot.Data
 
 				info.GetArray("Coefficients", out s._coefficients);
 
-
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Only for deserialization purposes.
@@ -374,8 +351,6 @@ namespace Altaxo.Graph.Plot.Data
 		protected PolynomialFunction()
 		{
 		}
-
-
 
 		/// <summary>
 		/// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -441,13 +416,11 @@ namespace Altaxo.Graph.Plot.Data
 						stb.Append(";");
 					else
 						stb.Append("]");
-
 				}
 			}
 
 			return stb.ToString();
 		}
-
 
 		#region IScalarFunctionDD Members
 
@@ -470,7 +443,7 @@ namespace Altaxo.Graph.Plot.Data
 			return result;
 		}
 
-		#endregion
+		#endregion IScalarFunctionDD Members
 
 		#region ICloneable Members
 
@@ -483,7 +456,7 @@ namespace Altaxo.Graph.Plot.Data
 			return new PolynomialFunction(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IChangedEventSource Members
 
@@ -498,13 +471,10 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
-
-		#endregion
+		#endregion IChangedEventSource Members
 	}
 
-
-	#endregion
+	#endregion PolynomialFunction
 
 	#region SquareRootFunction
 
@@ -518,8 +488,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <summary>
 		/// Function from which to evaluate the square root.
 		/// </summary>
-		Altaxo.Calc.IScalarFunctionDD _baseFunction;
-
+		private Altaxo.Calc.IScalarFunctionDD _baseFunction;
 
 		/// <summary>
 		/// Event fired when the coefficients of the polynomial changed.
@@ -531,7 +500,7 @@ namespace Altaxo.Graph.Plot.Data
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.SquareRootFunction", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SquareRootFunction), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -546,12 +515,11 @@ namespace Altaxo.Graph.Plot.Data
 
 				s._baseFunction = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("BaseFunction");
 
-
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Only for deserialization purposes.
@@ -559,8 +527,6 @@ namespace Altaxo.Graph.Plot.Data
 		protected SquareRootFunction()
 		{
 		}
-
-
 
 		/// <summary>
 		/// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -613,8 +579,6 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
-
 		public override string ToString()
 		{
 			if (_baseFunction != null)
@@ -622,7 +586,6 @@ namespace Altaxo.Graph.Plot.Data
 			else
 				return "Sqrt(InvalidFunction)";
 		}
-
 
 		#region IScalarFunctionDD Members
 
@@ -633,11 +596,10 @@ namespace Altaxo.Graph.Plot.Data
 		/// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
 		public double Evaluate(double x)
 		{
-
 			return Math.Sqrt(_baseFunction.Evaluate(x));
 		}
 
-		#endregion
+		#endregion IScalarFunctionDD Members
 
 		#region ICloneable Members
 
@@ -650,7 +612,7 @@ namespace Altaxo.Graph.Plot.Data
 			return new SquareRootFunction(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IChangedEventSource Members
 
@@ -665,13 +627,10 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
-
-		#endregion
+		#endregion IChangedEventSource Members
 	}
 
-
-	#endregion
+	#endregion SquareRootFunction
 
 	#region ScaledSumFunction
 
@@ -685,8 +644,9 @@ namespace Altaxo.Graph.Plot.Data
 		/// <summary>
 		/// Coefficient array used to evaluate the polynomial.
 		/// </summary>
-		double[] _coefficients;
-		Altaxo.Calc.IScalarFunctionDD[] _functions;
+		private double[] _coefficients;
+
+		private Altaxo.Calc.IScalarFunctionDD[] _functions;
 
 		/// <summary>
 		/// Event fired when the coefficients of the polynomial changed.
@@ -698,7 +658,7 @@ namespace Altaxo.Graph.Plot.Data
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ScaledSumFunction", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaledSumFunction), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -728,7 +688,7 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Only for deserialization purposes.
@@ -736,8 +696,6 @@ namespace Altaxo.Graph.Plot.Data
 		protected ScaledSumFunction()
 		{
 		}
-
-
 
 		/// <summary>
 		/// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -760,8 +718,6 @@ namespace Altaxo.Graph.Plot.Data
 						_functions[i] = functions[i];
 				}
 			}
-
-
 		}
 
 		/// <summary>
@@ -790,7 +746,6 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				_functions = null;
 			}
-
 		}
 
 		/// <summary>
@@ -813,12 +768,10 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
 		public override string ToString()
 		{
 			return "SumOfScaledFunctions";
 		}
-
 
 		#region IScalarFunctionDD Members
 
@@ -841,7 +794,7 @@ namespace Altaxo.Graph.Plot.Data
 			return result;
 		}
 
-		#endregion
+		#endregion IScalarFunctionDD Members
 
 		#region ICloneable Members
 
@@ -854,7 +807,7 @@ namespace Altaxo.Graph.Plot.Data
 			return new ScaledSumFunction(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IChangedEventSource Members
 
@@ -869,13 +822,10 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
-
-		#endregion
+		#endregion IChangedEventSource Members
 	}
 
-
-	#endregion
+	#endregion ScaledSumFunction
 
 	#region ProductFunction
 
@@ -889,8 +839,9 @@ namespace Altaxo.Graph.Plot.Data
 		/// <summary>
 		/// Coefficient array (the power).
 		/// </summary>
-		double[] _coefficients;
-		Altaxo.Calc.IScalarFunctionDD[] _functions;
+		private double[] _coefficients;
+
+		private Altaxo.Calc.IScalarFunctionDD[] _functions;
 
 		/// <summary>
 		/// Event fired when the coefficients of the polynomial changed.
@@ -902,7 +853,7 @@ namespace Altaxo.Graph.Plot.Data
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ProductFunction", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProductFunction), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -932,7 +883,7 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Only for deserialization purposes.
@@ -940,8 +891,6 @@ namespace Altaxo.Graph.Plot.Data
 		protected ProductFunction()
 		{
 		}
-
-
 
 		/// <summary>
 		/// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -964,8 +913,6 @@ namespace Altaxo.Graph.Plot.Data
 						_functions[i] = functions[i];
 				}
 			}
-
-
 		}
 
 		/// <summary>
@@ -994,7 +941,6 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				_functions = null;
 			}
-
 		}
 
 		/// <summary>
@@ -1017,12 +963,10 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
 		public override string ToString()
 		{
 			return "ProductOfFunctions";
 		}
-
 
 		#region IScalarFunctionDD Members
 
@@ -1057,7 +1001,7 @@ namespace Altaxo.Graph.Plot.Data
 			return result;
 		}
 
-		#endregion
+		#endregion IScalarFunctionDD Members
 
 		#region ICloneable Members
 
@@ -1070,7 +1014,7 @@ namespace Altaxo.Graph.Plot.Data
 			return new ProductFunction(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		#region IChangedEventSource Members
 
@@ -1085,12 +1029,8 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-
-
-		#endregion
+		#endregion IChangedEventSource Members
 	}
 
-
-	#endregion
-
+	#endregion ProductFunction
 }

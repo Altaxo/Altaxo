@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,24 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
 using Altaxo.Graph.Gdi;
+using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  /// <summary>
-  /// Implemented by objects that hold y bounds, for instance XYPlotAssociations.
-  /// </summary>
-  public interface IYBoundsHolder
-  {
-    /// <summary>Fired if the y boundaries of the object changed.</summary>
-    event BoundaryChangedHandler YBoundariesChanged;
-
-  
-
-    /// <summary>
-    /// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
-    /// it now includes the y boundary range of the object.
-    /// </summary>
-    /// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
-    void MergeYBoundsInto(IPhysicalBoundaries pb);
-  }
-
+	/// <summary>
+	/// Implemented by objects that hold y bounds, for instance XYPlotAssociations.
+	/// </summary>
+	public interface IYBoundsHolder
+	{
+		/// <summary>
+		/// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
+		/// it now includes the y boundary range of the object.
+		/// </summary>
+		/// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
+		void MergeYBoundsInto(IPhysicalBoundaries pb);
+	}
 }

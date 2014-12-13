@@ -59,7 +59,7 @@ namespace Altaxo.Main
 		/// <returns>True if the event will not change the state of the object and the handling of the event is completely done. Thus, if returning <c>true</c>, the object is considered as 'not changed'.
 		/// If in doubt, return <c>false</c>. This will allow the further processing of the event.
 		/// </returns>
-		protected virtual bool HandleHighPriorityChildChangeCases(object sender, EventArgs e)
+		protected virtual bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
 			return false;
 		}
@@ -94,7 +94,7 @@ namespace Altaxo.Main
 		/// <param name="e">The change details.</param>
 		public void EhChildChanged(object sender, System.EventArgs e)
 		{
-			if (HandleHighPriorityChildChangeCases(sender, e))
+			if (HandleHighPriorityChildChangeCases(sender, ref e))
 				return;
 
 			if (!IsSuspendedOrResumeInProgress)
@@ -332,7 +332,7 @@ namespace Altaxo.Main
 		/// The accumulated event data.
 		/// </summary>
 		[NonSerialized]
-		protected Dictionary<System.Type, EventArgs> _accumulatedEventData = new Dictionary<Type, EventArgs>();
+		protected Altaxo.Collections.TypeInstanceDictionary<EventArgs> _accumulatedEventData = new Altaxo.Collections.TypeInstanceDictionary<EventArgs>();
 
 		/// <summary>
 		/// Gets the accumulated event data.

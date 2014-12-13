@@ -88,26 +88,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 			_maxValue = x._maxValue;
 		}
 
-		protected override void OnSuspended()
-		{
-			this._savedNumberOfItems = this._numberOfItems;
-			this._cachedMinValue = this._minValue;
-			this._cachedMaxValue = this._maxValue;
-		}
-
-		protected override void OnResume()
-		{
-			// if anything changed in the meantime, fire the event
-			if (this._savedNumberOfItems != this._numberOfItems)
-				OnNumberOfItemsChanged();
-
-			bool bLower = (this._cachedMinValue != this._minValue);
-			bool bUpper = (this._cachedMaxValue != this._maxValue);
-
-			if (bLower || bUpper)
-				OnBoundaryChanged(bLower, bUpper);
-		}
-
 		/// <summary>
 		/// Reset the internal data to the initialized state
 		/// </summary>
@@ -130,27 +110,19 @@ namespace Altaxo.Graph.Scales.Boundaries
 		{
 			if (this.GetType() == b.GetType())
 			{
+				BoundariesChangedData data = 0;
 				if (b._numberOfItems > 0)
 				{
-					bool bLower = false, bUpper = false;
 					_numberOfItems += b._numberOfItems;
-					if (b._minValue < _minValue)
-					{
-						_minValue = b._minValue;
-						bLower = true;
-					}
-					if (b._maxValue > _maxValue)
-					{
-						_maxValue = b._maxValue;
-						bUpper = true;
-					}
 
-					if (!IsSuspended)
-					{
-						OnNumberOfItemsChanged(); // fire item number event
-						if (bLower || bUpper)
-							OnBoundaryChanged(bLower, bUpper);
-					}
+					data |= BoundariesChangedData.NumberOfItemsChanged;
+					if (b._minValue < _minValue) { _minValue = b._minValue; data |= BoundariesChangedData.LowerBoundChanged; }
+					if (b._maxValue > _maxValue) { _maxValue = b._maxValue; data |= BoundariesChangedData.UpperBoundChanged; }
+				}
+
+				if (!IsSuspended && 0 != data) // performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
+				{
+					EhSelfChanged(new BoundariesChangedEventArgs(data));
 				}
 			}
 			else
@@ -183,30 +155,28 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public bool Add(DateTime d)
 		{
-			if (!IsSuspended)
-			{
-				if (DateTime.MinValue != d)
-				{
-					bool bLower = false, bUpper = false;
-					if (d < _minValue) { _minValue = d; bLower = true; }
-					if (d > _maxValue) { _maxValue = d; bUpper = true; }
-					_numberOfItems++;
-
-					OnNumberOfItemsChanged();
-
-					if (bLower || bUpper)
-						OnBoundaryChanged(bLower, bUpper);
-
-					return true;
-				}
-			}
-			else // Events not enabled
+			if (IsSuspended)  // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
 			{
 				if (DateTime.MinValue != d)
 				{
 					if (d < _minValue) _minValue = d;
 					if (d > _maxValue) _maxValue = d;
 					_numberOfItems++;
+					return true;
+				}
+			}
+			else // not suspended: normal behaviour with change notification
+			{
+				if (DateTime.MinValue != d)
+				{
+					var data = BoundariesChangedData.NumberOfItemsChanged;
+
+					if (d < _minValue) { _minValue = d; data |= BoundariesChangedData.LowerBoundChanged; }
+					if (d > _maxValue) { _maxValue = d; data |= BoundariesChangedData.UpperBoundChanged; }
+					_numberOfItems++;
+
+					EhSelfChanged(new BoundariesChangedEventArgs(data));
+
 					return true;
 				}
 			}
@@ -220,5 +190,35 @@ namespace Altaxo.Graph.Scales.Boundaries
 		}
 
 		#endregion IPhysicalBoundaries Members
+
+		#region Changed event handling
+
+		protected override void OnSuspended()
+		{
+			this._savedNumberOfItems = this._numberOfItems;
+			this._cachedMinValue = this._minValue;
+			this._cachedMaxValue = this._maxValue;
+
+			base.OnSuspended();
+		}
+
+		protected override void OnResume()
+		{
+			BoundariesChangedData data = 0;
+			// if anything changed in the meantime, fire the event
+			if (this._savedNumberOfItems != this._numberOfItems)
+				data |= BoundariesChangedData.NumberOfItemsChanged;
+
+			if (this._cachedMinValue != this._minValue)
+				data |= BoundariesChangedData.LowerBoundChanged;
+			if (this._cachedMaxValue != this._maxValue)
+				data |= BoundariesChangedData.UpperBoundChanged;
+
+			_accumulatedEventData = new BoundariesChangedEventArgs(data);
+
+			base.OnResume();
+		}
+
+		#endregion Changed event handling
 	}
 }

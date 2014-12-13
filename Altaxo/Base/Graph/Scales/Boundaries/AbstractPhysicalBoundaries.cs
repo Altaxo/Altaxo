@@ -30,7 +30,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 	/// Represents the boundaries of an axis.
 	/// </summary>
 	[Serializable]
-	public abstract class AbstractPhysicalBoundaries : Main.SuspendableLeafObject, IPhysicalBoundaries
+	public abstract class AbstractPhysicalBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
 	{
 		protected int _numberOfItems = 0;
 
@@ -52,10 +52,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 		}
 
 		#region IPhysicalBoundaries Members
-
-		public event BoundaryChangedHandler BoundaryChanged;
-
-		public event ItemNumberChangedHandler NumberOfItemsChanged;
 
 		/// <summary>
 		/// Processes a single value from a numeric column <paramref name="col"/>[<paramref name="idx"/>].
@@ -113,18 +109,27 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public abstract object Clone();
 
-		protected void OnBoundaryChanged(bool bLowerBoundChanged, bool bUpperBoundChanged)
-		{
-			if (null != BoundaryChanged)
-				BoundaryChanged(this, new BoundariesChangedEventArgs(bLowerBoundChanged, bUpperBoundChanged));
-		}
-
-		protected void OnNumberOfItemsChanged()
-		{
-			if (null != NumberOfItemsChanged)
-				NumberOfItemsChanged(this, new System.EventArgs());
-		}
-
 		#endregion ICloneable Members
+
+		public override string Name
+		{
+			get { return "Boundary"; }
+		}
+
+		#region Changed event handling
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			var eAsBCEA = e as BoundariesChangedEventArgs;
+			if (null == eAsBCEA)
+				throw new ArgumentOutOfRangeException(string.Format("Argument e should be of type {0}, but is {1}", typeof(BoundariesChangedEventArgs), e.GetType()));
+
+			if (null == _accumulatedEventData)
+				_accumulatedEventData = eAsBCEA;
+			else
+				_accumulatedEventData.Add(eAsBCEA);
+		}
+
+		#endregion Changed event handling
 	}
 }

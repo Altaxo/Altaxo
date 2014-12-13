@@ -40,11 +40,9 @@ namespace Altaxo.Graph.Gdi.Plot
 	[Serializable]
 	public class PlotItemCollection
 		:
+		Main.SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData,
 		IGPlotItem,
 		IEnumerable<IGPlotItem>,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode,
 		Main.INamedObjectCollection,
 		IXBoundsHolder,
 		IYBoundsHolder
@@ -57,13 +55,6 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		[NonSerialized]
 		private IGPlotItem[] _cachedPlotItemsFlattened;
-
-		/// <summary>The parent layer of this list.</summary>
-		[NonSerialized]
-		private object _parent;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -215,8 +206,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		public virtual void OnDeserialization(object obj)
 		{
 			// restore the event chain
-			for (int i = 0; i < Count; i++)
-				WireItem(this[i]);
+			foreach (var item in this)
+				item.ParentObject = this;
 		}
 
 		#endregion Serialization
@@ -333,12 +324,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
 		IGPlotItem INodeWithParentNode<IGPlotItem>.ParentNode
 		{
 			get
@@ -377,9 +362,13 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		public virtual string Name
+		public override string Name
 		{
 			get { return "PlotItems"; }
+			set
+			{
+				throw new InvalidOperationException("Name of PlotItemCollection cannot be set");
+			}
 		}
 
 		#endregion Other stuff
@@ -897,11 +886,11 @@ namespace Altaxo.Graph.Gdi.Plot
 			if (item == null)
 				throw new ArgumentNullException();
 
+			item.ParentObject = this;
 			_plotItems.Add(item);
 
-			WireItem(item);
 			OnCollectionChanged();
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public void AddRange(IEnumerable<IGPlotItem> items)
@@ -911,12 +900,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			foreach (var item in items)
 			{
+				item.ParentObject = this;
 				_plotItems.Add(item);
-				WireItem(item);
 			}
 
 			OnCollectionChanged();
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public void ClearPlotItems()
@@ -1033,18 +1022,22 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		#region IChangedEventSource Members
 
-		public virtual void EhChildChanged(object child, EventArgs e)
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			OnChanged();
-		}
+			var eType = e.GetType();
 
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new Main.ChangedEventArgs(this, null));
+			if (eType == typeof(BoundariesChangedEventArgs))
+			{
+				EventArgs presentData;
+				if (_accumulatedEventData.TryGetValue(typeof(BoundariesChangedEventArgs), out presentData))
+					((BoundariesChangedEventArgs)presentData).Add((BoundariesChangedEventArgs)e);
+				else
+					_accumulatedEventData.Add(typeof(BoundariesChangedEventArgs), e);
+			}
+			else
+			{
+				_accumulatedEventData[eType] = e;
+			}
 		}
 
 		#endregion IChangedEventSource Members
@@ -1058,7 +1051,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		public void Add(IPlotGroupStyle pg)
 		{
 			this._plotGroupStyles.Add(pg);
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public void ListPossiblePlotGroupStyles()
@@ -1069,39 +1062,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		#endregion PlotGroup handling
-
-		#region Plot Item bounds
-
-		/// <summary>
-		/// Restores the event chain of a item.
-		/// </summary>
-		/// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
-		public void WireItem(IGPlotItem plotitem)
-		{
-			plotitem.ParentObject = this;
-			WireBoundaryEvents(plotitem);
-			// plotitem.Changed += new EventHandler(this.EhChildChanged);
-		}
-
-		/// <summary>
-		/// This sets the type of the item boundaries to the type of the owner layer
-		/// </summary>
-		/// <param name="plotitem">The plot item for which the boundary type should be set.</param>
-		private void WireBoundaryEvents(IGPlotItem plotitem)
-		{
-			if (plotitem is IXBoundsHolder)
-			{
-				IXBoundsHolder xholder = (IXBoundsHolder)plotitem;
-				xholder.XBoundariesChanged += new BoundaryChangedHandler(this.EhXBoundaryChanged);
-			}
-			if (plotitem is IYBoundsHolder)
-			{
-				IYBoundsHolder yholder = (IYBoundsHolder)plotitem;
-				yholder.YBoundariesChanged += new BoundaryChangedHandler(this.EhYBoundaryChanged);
-			}
-		}
-
-		#endregion Plot Item bounds
 
 		#region Event Handling
 
@@ -1123,15 +1083,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		public void EhPlotGroups_Changed(object sender, EventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		#endregion Event Handling
 
 		#region IXBoundsHolder Members
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler XBoundariesChanged;
 
 		public void MergeXBoundsInto(IPhysicalBoundaries pb)
 		{
@@ -1145,9 +1102,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		#endregion IXBoundsHolder Members
 
 		#region IYBoundsHolder Members
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler YBoundariesChanged;
 
 		public void MergeYBoundsInto(IPhysicalBoundaries pb)
 		{

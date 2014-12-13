@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 	public class G2DPlotStyleCollection
 		:
-		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemStyleChangedEventArgs>,
 		IEnumerable<IG2DPlotStyle>,
 		IG2DPlotStyle,
 		IRoutedPropertyReceiver
@@ -335,7 +335,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			_accumulatedEventData = EventArgs.Empty;
+			_accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
 		}
 
 		object ICloneable.Clone()

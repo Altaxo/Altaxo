@@ -9,7 +9,7 @@ namespace Altaxo.Main
 	/// Base class for a suspendable document node which has no children, i.e. is a leaf node of the document tree.
 	/// It implements most of the code neccessary to handle own change events and to accumulate data, if this object is suspended.
 	/// </summary>
-	public abstract class SuspendableDocumentLeafNode<TEventArgs> : Main.SuspendableLeafObject, Main.IDocumentNode, Main.IChangedEventSource where TEventArgs : EventArgs
+	public abstract class SuspendableDocumentLeafNode : Main.SuspendableLeafObject, Main.IDocumentNode, Main.IChangedEventSource
 	{
 		/// <summary>
 		/// The parent object this instance belongs to.
@@ -20,8 +20,27 @@ namespace Altaxo.Main
 		[field: NonSerialized]
 		public event EventHandler Changed;
 
-		[NonSerialized]
-		protected TEventArgs _accumulatedEventData;
+		/// <summary>
+		/// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg"/>.
+		/// The return value is false if there is more than one event arg accumulated. In this case the <paramref name="singleEventArg"/> is <c>null</c> on return, and the calling function should use <see cref="AccumulatedEventData"/> to
+		/// enumerate all accumulated event args.
+		/// </summary>
+		/// <param name="singleEventArg">The <see cref="EventArgs"/> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
+		/// <returns>True if there is zero or one event arg accumulated, otherwise <c>false</c>.</returns>
+		protected abstract bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg);
+
+		/// <summary>
+		/// Gets the accumulated event data.
+		/// </summary>
+		/// <value>
+		/// The accumulated event data.
+		/// </value>
+		protected abstract IEnumerable<EventArgs> AccumulatedEventData { get; }
+
+		/// <summary>
+		/// Clears the accumulated event data.
+		/// </summary>
+		protected abstract void AccumulatedEventData_Clear();
 
 		/// <summary>
 		/// Gets/sets the parent object this instance belongs to.
@@ -98,27 +117,43 @@ namespace Altaxo.Main
 
 		protected override void OnResume()
 		{
-			// send accumulated data if available and release it thereafter
-			if (null != _accumulatedEventData)
+			EventArgs singleArg;
+			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg) && null != singleArg) // we have a single event arg accumulated
 			{
-				var accumulatedEvent = _accumulatedEventData;
-				_accumulatedEventData = null;
+				AccumulatedEventData_Clear();
 
 				var parent = _parent as Main.IChildChangedEventSink;
 				if (null != parent)
 				{
-					parent.EhChildChanged(this, accumulatedEvent);
+					parent.EhChildChanged(this, singleArg);
 				}
 				if (!IsSuspended)
 				{
-					OnChanged(accumulatedEvent); // Fire the changed event
+					OnChanged(singleArg); // Fire the changed event
+				}
+			}
+			else // there is more than one event arg accumulated
+			{
+				var accumulatedEvents = AccumulatedEventData.ToArray();
+				AccumulatedEventData_Clear();
+
+				var parent = _parent as Main.IChildChangedEventSink;
+				if (null != parent)
+				{
+					foreach (var eventArg in accumulatedEvents)
+						parent.EhChildChanged(this, eventArg);
+				}
+				if (!IsSuspended)
+				{
+					foreach (var eventArg in accumulatedEvents)
+						OnChanged(eventArg); // Fire the changed event
 				}
 			}
 		}
 
 		protected override void OnResumeSilently()
 		{
-			_accumulatedEventData = null;
+			AccumulatedEventData_Clear();
 		}
 
 		/// <summary>
@@ -143,9 +178,49 @@ namespace Altaxo.Main
 	}
 
 	/// <summary>
-	/// Implements a <see cref="SuspendableDocumentLeafNode{EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
+	/// Base class for a suspendable document node. This class stores a single object to accumulate event data.
+	/// This class supports document nodes that have children,
+	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
-	public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNode<EventArgs>
+	/// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
+	public abstract class SuspendableDocumentLeafNodeWithSingleAccumulatedData<T> : SuspendableDocumentLeafNode where T : EventArgs
+	{
+		/// <summary>
+		/// Holds the accumulated change data.
+		/// </summary>
+		[NonSerialized]
+		protected T _accumulatedEventData;
+
+		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+		{
+			singleEventArg = _accumulatedEventData;
+			return true;
+		}
+
+		/// <summary>
+		/// Gets the accumulated event data.
+		/// </summary>
+		/// <value>
+		/// The accumulated event data.
+		/// </value>
+		protected override IEnumerable<EventArgs> AccumulatedEventData
+		{
+			get { return new EventArgs[] { _accumulatedEventData }; }
+		}
+
+		/// <summary>
+		/// Clears the accumulated event data.
+		/// </summary>
+		protected override void AccumulatedEventData_Clear()
+		{
+			_accumulatedEventData = null;
+		}
+	}
+
+	/// <summary>
+	/// Implements a <see cref="SuspendableDocumentLeafNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
+	/// </summary>
+	public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNodeWithSingleAccumulatedData<EventArgs>
 	{
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
@@ -166,6 +241,67 @@ namespace Altaxo.Main
 		public virtual void EhSelfChanged()
 		{
 			EhSelfChanged(EventArgs.Empty);
+		}
+	}
+
+	/// <summary>
+	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="Dictionary{Type, EventArgs}"/>. That means, that of every type of event args only one instance is stored.
+	/// This class supports document nodes that have children,
+	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
+	/// </summary>
+	public abstract class SuspendableDocumentLeafNodeWithTypeDictionaryOfAccumulatedData : SuspendableDocumentLeafNode
+	{
+		private static EventArgs[] _emptyData = new EventArgs[0];
+
+		/// <summary>
+		/// The accumulated event data.
+		/// </summary>
+		[NonSerialized]
+		protected Altaxo.Collections.TypeInstanceDictionary<EventArgs> _accumulatedEventData = new Collections.TypeInstanceDictionary<EventArgs>();
+
+		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+		{
+			var count = _accumulatedEventData.Count;
+			switch (count)
+			{
+				case 0:
+					singleEventArg = null;
+					return true;
+
+				case 1:
+					singleEventArg = _accumulatedEventData.Values.First();
+					return true;
+
+				default:
+					singleEventArg = null;
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// Gets the accumulated event data.
+		/// </summary>
+		/// <value>
+		/// The accumulated event data.
+		/// </value>
+		protected override IEnumerable<EventArgs> AccumulatedEventData
+		{
+			get
+			{
+				if (null != _accumulatedEventData)
+					return _accumulatedEventData.Values;
+				else
+					return _emptyData;
+			}
+		}
+
+		/// <summary>
+		/// Clears the accumulated event data.
+		/// </summary>
+		protected override void AccumulatedEventData_Clear()
+		{
+			if (null != _accumulatedEventData)
+				_accumulatedEventData.Clear();
 		}
 	}
 }

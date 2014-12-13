@@ -53,12 +53,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		protected XYZMeshedColumnPlotData _plotData;
 		protected DensityImagePlotStyle _plotStyle;
 
-		[field: NonSerialized]
-		public event BoundaryChangedHandler XBoundariesChanged;
-
-		[field: NonSerialized]
-		public event BoundaryChangedHandler YBoundariesChanged;
-
 		#region Serialization
 
 		/// <summary>Used to serialize the DensityImagePlotItem Version 0.</summary>
@@ -136,12 +130,12 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			if (null != _plotData)
 			{
-				_plotData.Changed += new EventHandler(OnDataChangedEventHandler);
+				_plotData.ParentObject = this;
 			}
 
 			if (null != _plotStyle)
 			{
-				_plotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
+				_plotStyle.ParentObject = this;
 			}
 		}
 
@@ -196,23 +190,17 @@ namespace Altaxo.Graph.Gdi.Plot
 					{
 						if (null != _plotData)
 						{
-							_plotData.Changed -= new EventHandler(OnDataChangedEventHandler);
-							_plotData.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
-							_plotData.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
-							_plotData.VBoundariesChanged -= new BoundaryChangedHandler(EhVBoundariesChanged);
+							_plotData.ParentObject = null;
 						}
 
 						_plotData = (XYZMeshedColumnPlotData)value;
 
 						if (null != _plotData)
 						{
-							_plotData.Changed += new EventHandler(OnDataChangedEventHandler);
-							_plotData.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
-							_plotData.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
-							_plotData.VBoundariesChanged += new BoundaryChangedHandler(EhVBoundariesChanged);
+							_plotData.ParentObject = this;
 						}
 
-						OnDataChanged();
+						EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 					}
 				}
 			}
@@ -222,6 +210,11 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get { return _plotStyle; }
 			set { this.Style = (DensityImagePlotStyle)value; }
+		}
+
+		public override object DataObject
+		{
+			get { return _plotData; }
 		}
 
 		public DensityImagePlotStyle Style
@@ -238,7 +231,7 @@ namespace Altaxo.Graph.Gdi.Plot
 						// delete event wiring to old AbstractXYPlotStyle
 						if (null != _plotStyle)
 						{
-							_plotStyle.Changed -= new EventHandler(OnStyleChangedEventHandler);
+							_plotStyle.ParentObject = null;
 						}
 
 						_plotStyle = (DensityImagePlotStyle)value;
@@ -246,11 +239,11 @@ namespace Altaxo.Graph.Gdi.Plot
 						// create event wire to new Plotstyle
 						if (null != _plotStyle)
 						{
-							_plotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
+							_plotStyle.ParentObject = this;
 						}
 
 						// indicate the style has changed
-						OnStyleChanged();
+						EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
 					}
 				}
 			}
@@ -291,25 +284,19 @@ namespace Altaxo.Graph.Gdi.Plot
 				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
 		}
 
-		/// <summary>
-		/// Intended to used by derived classes, fires the DataChanged event and the Changed event
-		/// </summary>
-		public override void OnDataChanged()
+		protected override void OnChanged(EventArgs e)
 		{
-			// first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-			if (null != this._plotStyle)
-				_plotStyle.EhDataChanged(this);
+			if (e is PlotItemDataChangedEventArgs)
+			{
+				// first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
+				if (null != this._plotStyle)
+					_plotStyle.EhDataChanged(this);
+			}
 
-			base.OnDataChanged();
+			base.OnChanged(e);
 		}
 
 		#region IXBoundsHolder Members
-
-		private void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			if (null != XBoundariesChanged)
-				XBoundariesChanged(this, args);
-		}
 
 		public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
 		{
@@ -325,12 +312,6 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		#region IYBoundsHolder Members
 
-		private void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			if (null != YBoundariesChanged)
-				YBoundariesChanged(this, args);
-		}
-
 		public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
 		{
 			this._plotData.SetYBoundsFromTemplate(val);
@@ -342,15 +323,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		#endregion IYBoundsHolder Members
-
-		private void EhVBoundariesChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			OnDataChanged();
-		}
-
-		#region VBoundaries
-
-		#endregion VBoundaries
 
 		public override void CollectStyles(PlotGroupStyleCollection styles)
 		{

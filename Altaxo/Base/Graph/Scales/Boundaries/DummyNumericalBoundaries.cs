@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,30 +28,34 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  public class DummyNumericalBoundaries : NumericalBoundaries
-  {
-    public DummyNumericalBoundaries()
-    {
-    }
+	public class DummyNumericalBoundaries : NumericalBoundaries
+	{
+		public DummyNumericalBoundaries()
+		{
+		}
 
-    public DummyNumericalBoundaries(DummyNumericalBoundaries from)
-      : base(from)
-    {
-    }
+		public DummyNumericalBoundaries(DummyNumericalBoundaries from)
+			: base(from)
+		{
+		}
 
-    public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
-    {
-      return true;
-    }
+		public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
+		{
+			return true;
+		}
 
-    public override bool Add(Altaxo.Data.AltaxoVariant item)
-    {
-      return true;
-    }
+		public override bool Add(Altaxo.Data.AltaxoVariant item)
+		{
+			return true;
+		}
 
-    public override object Clone()
-    {
-      return new DummyNumericalBoundaries(this);
-    }
-  }
+		public override object Clone()
+		{
+			return new DummyNumericalBoundaries(this);
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+		}
+	}
 }

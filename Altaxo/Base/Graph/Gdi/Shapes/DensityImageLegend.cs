@@ -224,12 +224,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (null != oldPlotItem)
 			{
-				oldPlotItem.StyleChanged -= new EventHandler(EhPlotItemStyleChanged);
+				oldPlotItem.Changed -= new EventHandler(EhPlotItemStyleChanged);
 			}
 
 			if (null != newPlotItem)
 			{
-				newPlotItem.StyleChanged += new EventHandler(EhPlotItemStyleChanged);
+				newPlotItem.Changed += new EventHandler(EhPlotItemStyleChanged);
 			}
 		}
 
