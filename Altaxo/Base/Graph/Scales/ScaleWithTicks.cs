@@ -35,19 +35,13 @@ namespace Altaxo.Graph.Scales
 	/// <summary>
 	/// Compound of a <see cref="Scale"/> and a <see cref="TickSpacing"/>.
 	/// </summary>
-	public class ScaleWithTicks : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
+	public class ScaleWithTicks
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ICloneable
 	{
 		private Scale _scale;
 		private TickSpacing _tickSpacing;
-
-		[field: NonSerialized]
-		public event Action<Scale, Scale> ScaleInstanceChanged;
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
-
-		[NonSerialized]
-		protected object _parentObject;
 
 		#region Serialization
 
@@ -74,7 +68,7 @@ namespace Altaxo.Graph.Scales
 
 				// Note: both functions should not trigger actions on scale or tickspacing,
 				// so we use the settings function without triggering events
-				s.SetNewScale((Scale)info.GetValue("Scale", s));
+				s.InternalSetNewScaleSilently((Scale)info.GetValue("Scale", s));
 				s.SetNewTickSpacing((TickSpacing)info.GetValue("TickSpacing", s));
 
 				s._tickSpacing.FinalProcessScaleBoundaries(s._scale.OrgAsVariant, s._scale.EndAsVariant, s._scale);
@@ -91,21 +85,21 @@ namespace Altaxo.Graph.Scales
 
 		public ScaleWithTicks(Scale scale)
 		{
-			SetNewScale(scale);
+			InternalSetNewScaleSilently(scale);
 			SetNewTickSpacing(CreateDefaultTicks(scale.GetType()));
 			UpdateIfTicksChanged();
 		}
 
 		public ScaleWithTicks(Scale scale, TickSpacing ticks)
 		{
-			SetNewScale(scale);
+			InternalSetNewScaleSilently(scale);
 			SetNewTickSpacing(ticks);
 			UpdateIfTicksChanged();
 		}
 
 		public ScaleWithTicks(ScaleWithTicks from)
 		{
-			SetNewScale(null == from._scale ? null : (Scale)from._scale.Clone());
+			InternalSetNewScaleSilently(null == from._scale ? null : (Scale)from._scale.Clone());
 			SetNewTickSpacing(null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
 		}
 
@@ -125,18 +119,18 @@ namespace Altaxo.Graph.Scales
 				if (object.ReferenceEquals(_scale, value))
 					return;
 
-				Scale oldValue = SetNewScale(value);
+				Scale oldValue = InternalSetNewScaleSilently(value);
 
-				OnScaleInstanceChanged(oldValue, value);
+				EhSelfChanged(new ScaleInstanceChangedEventArgs(oldValue, value));
 				UpdateIfScaleChanged();
 			}
 		}
 
-		private Scale SetNewScale(Scale value)
+		private Scale InternalSetNewScaleSilently(Scale value)
 		{
 			if (null != _scale)
 			{
-				_scale.Changed -= EhScaleChanged;
+				_scale.ParentObject = null;
 			}
 
 			Scale oldValue = _scale;
@@ -144,7 +138,6 @@ namespace Altaxo.Graph.Scales
 
 			if (null != _scale)
 			{
-				_scale.Changed += EhScaleChanged;
 				_scale.ParentObject = this;
 			}
 
@@ -171,14 +164,13 @@ namespace Altaxo.Graph.Scales
 		{
 			if (null != _tickSpacing)
 			{
-				_tickSpacing.Changed -= EhTickSpacingChanged;
+				_tickSpacing.ParentObject = null;
 			}
 
 			_tickSpacing = value;
 
 			if (null != _tickSpacing)
 			{
-				_tickSpacing.Changed += EhTickSpacingChanged;
 				_tickSpacing.ParentObject = this;
 			}
 		}
@@ -189,7 +181,7 @@ namespace Altaxo.Graph.Scales
 			bool wasNewTickSpacing = false;
 
 			if (!object.ReferenceEquals(_scale, scale))
-				oldScale = SetNewScale(scale);
+				oldScale = InternalSetNewScaleSilently(scale);
 
 			if (!object.ReferenceEquals(_tickSpacing, tickSpacing))
 			{
@@ -199,29 +191,13 @@ namespace Altaxo.Graph.Scales
 
 			if (null != oldScale) // then a new scale was used
 			{
-				OnScaleInstanceChanged(oldScale, _scale);
+				EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, _scale));
 				UpdateIfScaleChanged();
 			}
 			else if (wasNewTickSpacing) // then new ticks were used
 			{
 				UpdateIfTicksChanged();
 			}
-		}
-
-		protected virtual void OnScaleInstanceChanged(Scale oldValue, Scale newValue)
-		{
-			if (ScaleInstanceChanged != null)
-				ScaleInstanceChanged(oldValue, newValue);
-		}
-
-		private void EhScaleChanged(object sender, EventArgs e)
-		{
-			UpdateIfScaleChanged();
-		}
-
-		private void EhTickSpacingChanged(object sender, EventArgs e)
-		{
-			UpdateIfTicksChanged();
 		}
 
 		private void UpdateIfTicksChanged()
@@ -241,28 +217,23 @@ namespace Altaxo.Graph.Scales
 				AltaxoVariant end = _scale.EndAsVariant;
 				if (_tickSpacing.PreProcessScaleBoundaries(ref org, ref end, _scale.IsOrgExtendable, _scale.IsEndExtendable))
 				{
-					_scale.Changed -= EhScaleChanged; // suppress the changed event from scale
-
-					// note: depending on the value of org and end, it might be that those values won't be accepted
-					try
+					using (var suspendToken = _scale.SuspendGetToken())
 					{
-						_scale.SetScaleOrgEnd(org, end);
-					}
-					catch (Exception)
-					{
-					}
+						try
+						{
+							// note: depending on the value of org and end, it might be that those values won't be accepted
+							_scale.SetScaleOrgEnd(org, end);
+						}
+						catch (Exception)
+						{
+						}
 
-					_scale.Changed += EhScaleChanged; // switch event from scale on again
+						suspendToken.ResumeSilently();
+					}
 				}
 				_tickSpacing.FinalProcessScaleBoundaries(_scale.OrgAsVariant, _scale.EndAsVariant, _scale);
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
-		}
-
-		protected void OnChanged()
-		{
-			if (Changed != null)
-				Changed(this, EventArgs.Empty);
 		}
 
 		#region Static functions
@@ -308,21 +279,59 @@ namespace Altaxo.Graph.Scales
 
 		#endregion Static functions
 
-		public object ParentObject
+		public override string Name
 		{
-			get
-			{
-				return _parentObject;
-			}
+			get { return "ScaleWithTicks"; }
 			set
 			{
-				_parentObject = value;
+				throw new NotImplementedException("Name cannot be set");
 			}
 		}
 
-		string Main.INamedObject.Name
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			get { throw new NotImplementedException(); }
+			if (object.ReferenceEquals(_scale, sender))
+				e = new ScaleWithTicksEventArgs() { ScaleChanged = true };
+			else if (object.ReferenceEquals(_tickSpacing, sender))
+				e = new ScaleWithTicksEventArgs() { TicksChanged = true };
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
+
+		protected override void OnChanged(EventArgs e)
+		{
+			var es = e as ScaleWithTicksEventArgs;
+			if (null != es)
+			{
+				if (es.ScaleChanged)
+					UpdateIfScaleChanged();
+				if (es.TicksChanged)
+					UpdateIfTicksChanged();
+			}
+
+			base.OnChanged(e);
+		}
+
+		internal class ScaleWithTicksEventArgs : Main.SelfAccumulateableEventArgs
+		{
+			internal bool ScaleChanged { get; set; }
+
+			internal bool TicksChanged { get; set; }
+
+			public override void Add(Main.SelfAccumulateableEventArgs e)
+			{
+				var other = e as ScaleWithTicksEventArgs;
+
+				if (null == other)
+					throw new ArgumentException("Expected event args of type: " + typeof(ScaleWithTicksEventArgs).ToString());
+
+				ScaleChanged |= other.ScaleChanged;
+				TicksChanged |= other.TicksChanged;
+			}
+		}
+
+		#endregion Changed event handling
 	}
 }

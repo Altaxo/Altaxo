@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales.Rescaling;
-using Altaxo.Graph.Scales.Boundaries;
+#endregion Copyright
+
 using Altaxo.Data;
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Serialization;
+using System;
 
 namespace Altaxo.Graph.Scales
 {
-  [Serializable]
-  public class TextScale : Scale
-  {
-    /// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
-    protected TextBoundaries _dataBounds;
+	[Serializable]
+	public class TextScale : Scale
+	{
+		/// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
+		protected TextBoundaries _dataBounds;
 
-    protected NumericAxisRescaleConditions _rescaling;
+		protected NumericAxisRescaleConditions _rescaling;
 
+		// cached values
+		/// <summary>Current axis origin (cached value).</summary>
+		protected double _cachedAxisOrg = 0;
 
-    // cached values
-    /// <summary>Current axis origin (cached value).</summary>
-    protected double _cachedAxisOrg = 0;
-    /// <summary>Current axis end (cached value).</summary>
-    protected double _cachedAxisEnd = 1;
-    /// <summary>Current axis span (i.e. end-org) (cached value).</summary>
-    protected double _cachedAxisSpan = 1;
-    /// <summary>Current inverse of axis span (cached value).</summary>
-    protected double _cachedOneByAxisSpan = 1;
+		/// <summary>Current axis end (cached value).</summary>
+		protected double _cachedAxisEnd = 1;
+
+		/// <summary>Current axis span (i.e. end-org) (cached value).</summary>
+		protected double _cachedAxisSpan = 1;
+
+		/// <summary>Current inverse of axis span (cached value).</summary>
+		protected double _cachedOneByAxisSpan = 1;
 
 		/// <summary>True if org is allowed to be extended to smaller values.</summary>
 		protected bool _isOrgExtendable;
@@ -53,18 +57,17 @@ namespace Altaxo.Graph.Scales
 		/// <summary>True if end is allowed to be extended to higher values.</summary>
 		protected bool _isEndExtendable;
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				TextScale s = (TextScale)obj;
 
 				info.AddValue("Org", s._cachedAxisOrg);
-				info.AddValue("End", s._cachedAxisEnd);  
+				info.AddValue("End", s._cachedAxisEnd);
 
 				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
@@ -92,62 +95,61 @@ namespace Altaxo.Graph.Scales
 				s._isOrgExtendable = false;
 				s._isEndExtendable = false;
 
-
 				s.InternalSetRescaling((NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
 
 				s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
-		
+
 				return s;
 			}
 		}
-		#endregion
 
-    public TextScale()
-    {
-      _dataBounds = new TextBoundaries();
-      _dataBounds.BoundaryChanged += EhBoundariesChanged;
-      
-      _rescaling = new NumericAxisRescaleConditions();
-    }
+		#endregion Serialization
 
-    public TextScale(TextScale from)
-    {
-      CopyFrom(from);
-    }
+		public TextScale()
+		{
+			_dataBounds = new TextBoundaries();
+			_dataBounds.ParentObject = this;
 
-    void CopyFrom(TextScale from)
-    {
+			_rescaling = new NumericAxisRescaleConditions();
+		}
+
+		public TextScale(TextScale from)
+		{
+			CopyFrom(from);
+		}
+
+		private void CopyFrom(TextScale from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-      _dataBounds = (TextBoundaries)from._dataBounds.Clone();
-      _dataBounds.BoundaryChanged += EhBoundariesChanged;
+			_dataBounds = (TextBoundaries)from._dataBounds.Clone();
+			_dataBounds.ParentObject = this;
 
-      _rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
+			_rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
 
-      _cachedAxisOrg = from._cachedAxisOrg;
-      _cachedAxisEnd = from._cachedAxisEnd;
-      _cachedAxisSpan = from._cachedAxisSpan;
-      _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
-    }
+			_cachedAxisOrg = from._cachedAxisOrg;
+			_cachedAxisEnd = from._cachedAxisEnd;
+			_cachedAxisSpan = from._cachedAxisSpan;
+			_cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+		}
 
-    public override object Clone()
-    {
-      TextScale result = new TextScale();
-      result.CopyFrom(this);
-      return result;
-    }
-
+		public override object Clone()
+		{
+			TextScale result = new TextScale();
+			result.CopyFrom(this);
+			return result;
+		}
 
 		protected void InternalSetDataBounds(TextBoundaries bounds)
 		{
 			if (this._dataBounds != null)
 			{
-				this._dataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.EhBoundariesChanged);
+				this._dataBounds.ParentObject = null;
 				this._dataBounds = null;
 			}
 			this._dataBounds = bounds;
-			this._dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.EhBoundariesChanged);
+			this._dataBounds.ParentObject = this;
 		}
 
 		protected void InternalSetRescaling(NumericAxisRescaleConditions rescaling)
@@ -155,61 +157,56 @@ namespace Altaxo.Graph.Scales
 			this._rescaling = rescaling;
 		}
 
-    protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
-    {
-      Rescale(); // calculate new bounds and fire AxisChanged event
-    }
+		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
+		{
+			if (x.IsType(Altaxo.Data.AltaxoVariant.Content.VString))
+			{
+				int idx = _dataBounds.IndexOf(x.ToString());
+				return idx < 0 ? double.NaN : (1 + idx - _cachedAxisOrg) * _cachedOneByAxisSpan;
+			}
+			else if (x.CanConvertedToDouble)
+			{
+				return (x.ToDouble() - _cachedAxisOrg) * _cachedOneByAxisSpan;
+			}
+			else
+			{
+				return double.NaN;
+			}
+		}
 
-    public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
-    {
-      if (x.IsType(Altaxo.Data.AltaxoVariant.Content.VString))
-      {
-        int idx = _dataBounds.IndexOf(x.ToString());
-        return idx<0? double.NaN : (1+idx - _cachedAxisOrg) * _cachedOneByAxisSpan; 
-      }
-      else if (x.CanConvertedToDouble)
-      {
-        return (x.ToDouble() - _cachedAxisOrg) * _cachedOneByAxisSpan;
-      }
-      else
-      {
-        return double.NaN;
-      }
-    }
+		public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
+		{
+			return new AltaxoVariant(_cachedAxisOrg + x * _cachedAxisSpan);
+		}
 
-    public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
-    {
-      return new AltaxoVariant(_cachedAxisOrg + x * _cachedAxisSpan);
-    }
+		public override object RescalingObject
+		{
+			get
+			{
+				return _rescaling;
+			}
+		}
 
-    public override object RescalingObject
-    {
-      get
-      {
-        return _rescaling;
-      }
-    }
+		public override IPhysicalBoundaries DataBoundsObject
+		{
+			get { return _dataBounds; }
+		}
 
-    public override IPhysicalBoundaries DataBoundsObject
-    {
-      get { return _dataBounds; }
-    }
+		public override Altaxo.Data.AltaxoVariant OrgAsVariant
+		{
+			get
+			{
+				return new AltaxoVariant(_cachedAxisOrg);
+			}
+		}
 
-    public override Altaxo.Data.AltaxoVariant OrgAsVariant
-    {
-      get 
-      {
-        return new AltaxoVariant(_cachedAxisOrg);
-      }
-    }
-
-    public override Altaxo.Data.AltaxoVariant EndAsVariant
-    {
-      get
-      {
-        return new AltaxoVariant(_cachedAxisEnd); 
-      }
-    }
+		public override Altaxo.Data.AltaxoVariant EndAsVariant
+		{
+			get
+			{
+				return new AltaxoVariant(_cachedAxisEnd);
+			}
+		}
 
 		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
 		public override bool IsOrgExtendable
@@ -252,8 +249,7 @@ namespace Altaxo.Graph.Scales
 			_isEndExtendable = isEndExtendable;
 
 			if (changed)
-				OnChanged();
-
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		public override void Rescale()
@@ -273,6 +269,18 @@ namespace Altaxo.Graph.Scales
 			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
 		}
 
-  }
+		#region Changed event handling
 
+		protected override void OnChanged(EventArgs e)
+		{
+			if (e is BoundariesChangedEventArgs)
+			{
+				Rescale();
+			}
+
+			base.OnChanged(e);
+		}
+
+		#endregion Changed event handling
+	}
 }

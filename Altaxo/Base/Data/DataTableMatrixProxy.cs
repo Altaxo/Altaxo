@@ -545,14 +545,6 @@ namespace Altaxo.Data
 		#region Properties
 
 		/// <summary>
-		/// Gets or sets the parent object.
-		/// </summary>
-		/// <value>
-		/// The parent object.
-		/// </value>
-		public object ParentObject { get { return _parent; } set { _parent = value; } }
-
-		/// <summary>
 		/// Gets or sets the underlying data table.
 		/// </summary>
 		/// <value>

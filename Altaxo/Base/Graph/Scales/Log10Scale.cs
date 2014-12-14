@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,34 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Serialization;
 using System;
 using System.Collections;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales.Rescaling;
-using Altaxo.Graph.Scales.Boundaries;
-
 
 namespace Altaxo.Graph.Scales
 {
-  /// <summary>
-  /// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
-  /// </summary>
-  [Serializable]
-  public class Log10Scale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
-  {
-    /// <summary>Decimal logarithm of axis org. Should always been set together with <see cref="_cachedOrg"/>.</summary>
-    double _log10Org=0; // Log10 of physical axis org
+	/// <summary>
+	/// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
+	/// </summary>
+	[Serializable]
+	public class Log10Scale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
+	{
+		/// <summary>Decimal logarithm of axis org. Should always been set together with <see cref="_cachedOrg"/>.</summary>
+		private double _log10Org = 0; // Log10 of physical axis org
 
 		/// <summary>Origin of the axis. This value is used to maintain numeric precision. Should always been set together with <see cref="_log10Org"/>.</summary>
-		double _cachedOrg = 1;
+		private double _cachedOrg = 1;
 
 		/// <summary>Decimal logarithm of axis end.  Should always been set together with <see cref="_cachedEnd"/>.</summary>
-    double _log10End=1; // Log10 of physical axis end
+		private double _log10End = 1; // Log10 of physical axis end
 
 		/// <summary>Value of the end of the axis. This value is used to maintain numeric precision. Should always been set together with <see cref="_log10End"/>.</summary>
-		double _cachedEnd = 10;
+		private double _cachedEnd = 10;
 
 		/// <summary>True if org is allowed to be extended to smaller values.</summary>
 		protected bool _isOrgExtendable;
@@ -53,185 +54,175 @@ namespace Altaxo.Graph.Scales
 		/// <summary>True if end is allowed to be extended to higher values.</summary>
 		protected bool _isEndExtendable;
 
-  
-    /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
-    protected NumericalBoundaries _dataBounds = null;
+		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
+		protected NumericalBoundaries _dataBounds = null;
 
-    protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
+		protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
 
-    #region Serialization
+		#region Serialization
 
- 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale),3)]
-      class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        Log10Scale s = (Log10Scale)obj;
-        info.AddValue("Log10Org",s._log10Org);  
-        info.AddValue("Log10End",s._log10End);
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Log10Scale s = (Log10Scale)obj;
+				info.AddValue("Log10Org", s._log10Org);
+				info.AddValue("Log10End", s._log10End);
 
 				info.AddValue("Rescaling", s._rescaling);
 
-        info.AddValue("Bounds",s._dataBounds);
-        
+				info.AddValue("Bounds", s._dataBounds);
+			}
 
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        Log10Scale s = null!=o ? (Log10Scale)o : new Log10Scale();
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale();
 
-        s._log10Org = (double)info.GetDouble("Log10Org");
+				s._log10Org = (double)info.GetDouble("Log10Org");
 				s._cachedOrg = Math.Pow(10, s._log10Org);
 
-        s._log10End = (double)info.GetDouble("Log10End");
+				s._log10End = (double)info.GetDouble("Log10End");
 				s._cachedEnd = Math.Pow(10, s._log10End);
 				s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling", s);
 
+				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", typeof(PositiveFiniteNumericalBoundaries));
+				s._dataBounds.ParentObject = s;
 
-        s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
-        s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
+				return s;
+			}
+		}
 
+		/// <summary>
+		/// Finale measures after deserialization of the linear axis.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			// restore the event chain
+			_dataBounds.ParentObject = this;
+		}
 
-        return s;
-      }
-    }
+		#endregion Serialization
 
-    /// <summary>
-    /// Finale measures after deserialization of the linear axis.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public virtual void OnDeserialization(object obj)
-    {
-      // restore the event chain
-      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-    }
-    #endregion
+		/// <summary>
+		/// Creates a default logarithmic axis with org=1 and end=10.
+		/// </summary>
+		public Log10Scale()
+		{
+			_dataBounds = new PositiveFiniteNumericalBoundaries();
+			_dataBounds.ParentObject = this;
+		}
 
-
-
-    /// <summary>
-    /// Creates a default logarithmic axis with org=1 and end=10.
-    /// </summary>
-    public Log10Scale()
-    {
-      _dataBounds = new PositiveFiniteNumericalBoundaries();
-      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-    }
-
-    /// <summary>
-    /// Copy constructor.
-    /// </summary>
-    /// <param name="from">The axis to copy from.</param>
-    public Log10Scale(Log10Scale from)
-    {
-      this._dataBounds   = null==from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The axis to copy from.</param>
+		public Log10Scale(Log10Scale from)
+		{
+			this._dataBounds = null == from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
+			_dataBounds.ParentObject = this;
 			this._log10Org = from._log10Org;
 			this._cachedOrg = from._cachedOrg;
 			this._log10End = from._log10End;
 			this._cachedEnd = from._cachedEnd;
 
-      this._rescaling = null==from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling = null == from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+		}
 
-    }
+		/// <summary>
+		/// Creates a clone copy of this axis.
+		/// </summary>
+		/// <returns>The cloned copy.</returns>
+		public override object Clone()
+		{
+			return new Log10Scale(this);
+		}
 
-    /// <summary>
-    /// Creates a clone copy of this axis.
-    /// </summary>
-    /// <returns>The cloned copy.</returns>
-    public override object Clone()
-    {
-      return new Log10Scale(this);
-    }
+		/// <summary>
+		/// Returns the rescaling conditions for this axis
+		/// </summary>
+		public override NumericAxisRescaleConditions Rescaling
+		{
+			get
+			{
+				return _rescaling;
+			}
+		}
 
-    /// <summary>
-    /// Returns the rescaling conditions for this axis
-    /// </summary>
-    public override NumericAxisRescaleConditions Rescaling 
-    {
-      get 
-      {
-        return _rescaling; 
+		/// <summary>
+		/// PhysicalToNormal translates physical values into a normal value linear along the axis
+		/// a physical value of the axis origin must return a value of zero
+		/// a physical value of the axis end must return a value of one
+		/// the function physicalToNormal must be provided by any derived class
+		/// </summary>
+		/// <param name="x">the physical value</param>
+		/// <returns>
+		/// the normalized value linear along the axis,
+		/// 0 for axis origin, 1 for axis end</returns>
+		public override double PhysicalToNormal(double x)
+		{
+			if (x <= 0)
+				return Double.NaN;
 
-      }
-    }
+			double log10x = Math.Log10(x);
+			return (log10x - _log10Org) / (_log10End - _log10Org);
+		}
 
-    /// <summary>
-    /// PhysicalToNormal translates physical values into a normal value linear along the axis
-    /// a physical value of the axis origin must return a value of zero
-    /// a physical value of the axis end must return a value of one
-    /// the function physicalToNormal must be provided by any derived class
-    /// </summary>
-    /// <param name="x">the physical value</param>
-    /// <returns>
-    /// the normalized value linear along the axis,
-    /// 0 for axis origin, 1 for axis end</returns>
-    public override double PhysicalToNormal(double x)
-    {
-      if(x<=0)
-        return Double.NaN;
+		/// <summary>
+		/// NormalToPhysical is the inverse function to PhysicalToNormal
+		/// It translates a normalized value (0 for the axis origin, 1 for the axis end)
+		/// into the physical value
+		/// </summary>
+		/// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
+		/// <returns>the corresponding physical value</returns>
+		public override double NormalToPhysical(double x)
+		{
+			double log10x = _log10Org + (_log10End - _log10Org) * x;
+			return Math.Pow(10, log10x);
+		}
 
-      double log10x = Math.Log10(x);
-      return (log10x-_log10Org)/(_log10End-_log10Org);
-    }
-    /// <summary>
-    /// NormalToPhysical is the inverse function to PhysicalToNormal
-    /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
-    /// into the physical value
-    /// </summary>
-    /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
-    /// <returns>the corresponding physical value</returns>
-    public override double NormalToPhysical(double x)
-    {
-      double log10x = _log10Org + (_log10End-_log10Org)*x;
-      return Math.Pow(10,log10x);
-    }
+		/// <summary>
+		/// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
+		/// a physical value of the axis origin must return a value of zero
+		/// a physical value of the axis end must return a value of one
+		/// the function physicalToNormal must be provided by any derived class
+		/// </summary>
+		/// <param name="x">the physical value</param>
+		/// <returns>
+		/// the normalized value linear along the axis,
+		/// 0 for axis origin, 1 for axis end</returns>
+		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
+		{
+			return PhysicalToNormal(x.ToDouble());
+		}
 
-    /// <summary>
-    /// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
-    /// a physical value of the axis origin must return a value of zero
-    /// a physical value of the axis end must return a value of one
-    /// the function physicalToNormal must be provided by any derived class
-    /// </summary>
-    /// <param name="x">the physical value</param>
-    /// <returns>
-    /// the normalized value linear along the axis,
-    /// 0 for axis origin, 1 for axis end</returns>
-    public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
-    {
-      return PhysicalToNormal(x.ToDouble());
-    }
+		/// <summary>
+		/// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
+		/// It translates a normalized value (0 for the axis origin, 1 for the axis end)
+		/// into the physical value
+		/// </summary>
+		/// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
+		/// <returns>the corresponding physical value</returns>
+		public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
+		{
+			return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
+		}
 
-    /// <summary>
-    /// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
-    /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
-    /// into the physical value
-    /// </summary>
-    /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
-    /// <returns>the corresponding physical value</returns>
-    public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
-    {
-      return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
-    }
+		public override NumericalBoundaries DataBounds
+		{
+			get { return this._dataBounds; }
+		} // return a PhysicalBoundarie object that is associated with that axis
 
- 
+		public override double Org
+		{
+			get { return _cachedOrg; }
+		}
 
-    public override NumericalBoundaries DataBounds
-    {
-      get { return this._dataBounds; }
-    } // return a PhysicalBoundarie object that is associated with that axis
-
-    public override double Org
-    {
-			get { return _cachedOrg; } 
-    }
-    public override double End 
-    {
-			get { return _cachedEnd; } 
-    }
-
+		public override double End
+		{
+			get { return _cachedEnd; }
+		}
 
 		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
 		public override bool IsOrgExtendable
@@ -282,11 +273,10 @@ namespace Altaxo.Graph.Scales
 			_isEndExtendable = isEndExtendable;
 
 			if (changed)
-				OnChanged();
-
+				EhSelfChanged(EventArgs.Empty);
 		}
 
-    public override void Rescale()
+		public override void Rescale()
 		{
 			double xorg = double.NaN;
 			double xend = double.NaN;
@@ -315,18 +305,25 @@ namespace Altaxo.Graph.Scales
 				return "org is not less than end";
 			if (!(o > 0))
 				return "org is not positive";
-			if (!(e>0))
+			if (!(e > 0))
 				return "end is not positive";
 
 			InternalSetOrgEnd(o, e, false, false);
 			return null;
 		}
 
-    protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)
-    {
-        Rescale(); // calculate new bounds and fire AxisChanged event
-    }
+		#region Changed event handling
 
+		protected override void OnChanged(EventArgs e)
+		{
+			if (e is BoundariesChangedEventArgs)
+			{
+				Rescale(); // calculate new bounds and fire AxisChanged event
+			}
 
-  } // end of class Log10Axis
+			base.OnChanged(e);
+		}
+
+		#endregion Changed event handling
+	} // end of class Log10Axis
 }

@@ -8,6 +8,7 @@ namespace Altaxo.Main
 	/// <summary>Helper class to suspend and resume change events (or other events). This class keeps a counter variable (suspend counter), which is incremented when a call to <see cref="SuspendGetToken"/> has been made, and is
 	/// decremented when the suspend token returned by this call is disposed. Although you can use this class as it is - to keep track of the number of suspends - it is designed to be used in derived classes.
 	/// See the remarks on details of the functions you should override.
+	/// </summary>
 	/// <remarks>
 	/// There are four functions which can be overridden. In this class, these functions do nothing.
 	/// <list type="List">
@@ -17,7 +18,7 @@ namespace Altaxo.Main
 	/// <item><see cref="OnResumeSilently"/> is called when the suspend counter has been decremented to 0 as result of a call to <see cref="ISuspendToken.ResumeSilently()"/></item>
 	/// </list>
 	/// </remarks>
-	public class SuspendableLeafObject : Main.ISuspendableByToken
+	public class SuspendableLeafObject : SuspendableObjectBase, ISuspendableByToken
 	{
 		#region Inner class SuspendToken
 

@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	[Serializable]
 	public abstract class PlotItem
 	:
-		Main.SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IGPlotItem,
 		Main.INamedObjectCollection
 	{
@@ -174,24 +174,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				e = PlotItemDataChangedEventArgs.Empty;
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
-		}
-
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			var eType = e.GetType();
-
-			if (eType == typeof(BoundariesChangedEventArgs))
-			{
-				EventArgs presentData;
-				if (_accumulatedEventData.TryGetValue(typeof(BoundariesChangedEventArgs), out presentData))
-					((BoundariesChangedEventArgs)presentData).Add((BoundariesChangedEventArgs)e);
-				else
-					_accumulatedEventData.Add(typeof(BoundariesChangedEventArgs), e);
-			}
-			else
-			{
-				_accumulatedEventData[eType] = e;
-			}
 		}
 
 		/// <summary>

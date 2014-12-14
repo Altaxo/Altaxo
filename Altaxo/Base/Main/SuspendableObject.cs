@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ namespace Altaxo.Main
 	/// <summary>Helper class to suspend and resume change events (or other events). In contrast to the simpler class <see cref="TemporaryDisabler"/>,
 	/// this class keeps also track of events that happen in the suspend period. Per default, the action on resume is
 	/// fired only if some events have happened during the suspend period.</summary>
-	public class SuspendableObject : Main.ISuspendableByToken
+	public class SuspendableObject : SuspendableObjectBase, ISuspendableByToken
 	{
 		#region Inner class SuspendToken
 

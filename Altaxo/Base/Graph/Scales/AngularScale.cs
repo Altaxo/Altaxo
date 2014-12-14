@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,113 +28,109 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
-  /// <summary>
-  /// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180° (or Pi, respectively).
-  /// </summary>
-  public abstract class AngularScale : NumericalScale
-  {
-    /// <summary>
-    /// The value where this scale starts. Default is 0. The user/programmer can set this value manually.
-    /// </summary>
-    protected double _cachedAxisOrg;
-    protected double _cachedAxisSpan;
-    protected double _cachedOneByAxisSpan;
-    protected Boundaries.NumericalBoundaries _dataBounds;
+	/// <summary>
+	/// Scales a full circle, either by degree or by radian. The origin is choosable, and the ticks default to ratios of 180° (or Pi, respectively).
+	/// </summary>
+	public abstract class AngularScale : NumericalScale
+	{
+		/// <summary>
+		/// The value where this scale starts. Default is 0. The user/programmer can set this value manually.
+		/// </summary>
+		protected double _cachedAxisOrg;
+
+		protected double _cachedAxisSpan;
+		protected double _cachedOneByAxisSpan;
+		protected Boundaries.NumericalBoundaries _dataBounds;
 		protected Rescaling.AngularRescaleConditions _rescaling;
 
-    #region Serialization
+		#region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularScale), 1)]
-    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        AngularScale s = (AngularScale)obj;
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularScale), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AngularScale s = (AngularScale)obj;
 
-        info.AddValue("Rescaling", s._rescaling);
-      }
+				info.AddValue("Rescaling", s._rescaling);
+			}
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AngularScale s = SDeserialize(o, info, parent);
-        OnAfterDeserialization(s);
-        return s;
-      }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				AngularScale s = SDeserialize(o, info, parent);
+				OnAfterDeserialization(s);
+				return s;
+			}
 
-      protected virtual void OnAfterDeserialization(AngularScale s)
-      {
-        s.SetCachedValues();
-      }
+			protected virtual void OnAfterDeserialization(AngularScale s)
+			{
+				s.SetCachedValues();
+			}
 
-      protected virtual AngularScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AngularScale s = (AngularScale)o;
+			protected virtual AngularScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				AngularScale s = (AngularScale)o;
 
 				s._rescaling = (Rescaling.AngularRescaleConditions)info.GetValue("Rescaling", s);
-        // set cached values is called by the enclosing function
-        return s;
-      }
-    }
-    #endregion
+				// set cached values is called by the enclosing function
+				return s;
+			}
+		}
 
+		#endregion Serialization
 
+		public AngularScale()
+		{
+			_cachedAxisSpan = 2 * Math.PI;
+			_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
+			_dataBounds = new Boundaries.DummyNumericalBoundaries();
+			_rescaling = new Rescaling.AngularRescaleConditions();
+			SetCachedValues();
+		}
 
-    public AngularScale()
-    {
-		
-    _cachedAxisSpan = 2 * Math.PI;
-    _cachedOneByAxisSpan = 1 / _cachedAxisSpan;
-    _dataBounds = new Boundaries.DummyNumericalBoundaries();
-		_rescaling = new Rescaling.AngularRescaleConditions();
-		SetCachedValues();
-    }
-    public AngularScale(AngularScale from)
-    {
-      this._cachedAxisOrg = from._cachedAxisOrg;
-      this._cachedAxisSpan = from._cachedAxisSpan;
-      this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+		public AngularScale(AngularScale from)
+		{
+			this._cachedAxisOrg = from._cachedAxisOrg;
+			this._cachedAxisSpan = from._cachedAxisSpan;
+			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 			this._rescaling = (Rescaling.AngularRescaleConditions)from._rescaling.Clone();
-    }
+		}
 
-
-
-    void SetCachedValues()
-    {
+		private void SetCachedValues()
+		{
 			double scaleOrigin = _rescaling.ScaleOrigin % 360;
-      if (UseDegree)
-      {
-        _cachedAxisOrg = scaleOrigin;
-        _cachedAxisSpan = 360;
-        _cachedOneByAxisSpan = 1.0 / 360;
-      }
-      else
-      {
-        _cachedAxisOrg = scaleOrigin * Math.PI / 180;
-        _cachedAxisSpan = 2 * Math.PI;
-        _cachedOneByAxisSpan = 1 / (2 * Math.PI);
-      }
-    }
+			if (UseDegree)
+			{
+				_cachedAxisOrg = scaleOrigin;
+				_cachedAxisSpan = 360;
+				_cachedOneByAxisSpan = 1.0 / 360;
+			}
+			else
+			{
+				_cachedAxisOrg = scaleOrigin * Math.PI / 180;
+				_cachedAxisSpan = 2 * Math.PI;
+				_cachedOneByAxisSpan = 1 / (2 * Math.PI);
+			}
+		}
 
-    #region Properties
-
+		#region Properties
 
 		/// <summary>If true, use degree instead of radian.</summary>
 		protected abstract bool UseDegree { get; }
 
-    #endregion
+		#endregion Properties
 
-    #region NumericalScale
+		#region NumericalScale
 
-    public override double PhysicalToNormal(double x)
-    {
-      return (x - _cachedAxisOrg) * _cachedOneByAxisSpan; 
-    }
+		public override double PhysicalToNormal(double x)
+		{
+			return (x - _cachedAxisOrg) * _cachedOneByAxisSpan;
+		}
 
-    public override double NormalToPhysical(double x)
-    {
-      return _cachedAxisOrg + x * _cachedAxisSpan;
-    }
-
+		public override double NormalToPhysical(double x)
+		{
+			return _cachedAxisOrg + x * _cachedAxisSpan;
+		}
 
 		/// <summary>
 		/// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
@@ -161,50 +159,47 @@ namespace Altaxo.Graph.Scales
 			return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
 		}
 
-    private bool IsDoubleEqual(double x, double y, double dev)
-    {
-      return Math.Abs(x - y) < dev;
-    }
+		private bool IsDoubleEqual(double x, double y, double dev)
+		{
+			return Math.Abs(x - y) < dev;
+		}
 
-    private double GetOriginInDegrees()
-    {
+		private double GetOriginInDegrees()
+		{
 			return _rescaling.ScaleOrigin % 360;
-    }
+		}
 
-   
+		public override Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions Rescaling
+		{
+			get
+			{
+				return null;
+			}
+		}
 
+		public override Altaxo.Graph.Scales.Boundaries.NumericalBoundaries DataBounds
+		{
+			get
+			{
+				return _dataBounds;
+			}
+		}
 
-    public override Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions Rescaling
-    {
-      get
-      {
-        return null;
-      }
-    }
+		public override double Org
+		{
+			get
+			{
+				return _cachedAxisOrg;
+			}
+		}
 
-    public override Altaxo.Graph.Scales.Boundaries.NumericalBoundaries DataBounds
-    {
-      get
-      {
-        return _dataBounds;
-      }
-    }
-
-    public override double Org
-    {
-      get
-      {
-        return _cachedAxisOrg;
-      }
-    }
-
-    public override double End
-    {
-      get
-      {
-        return _cachedAxisOrg + _cachedAxisSpan;
-      }
-    }
+		public override double End
+		{
+			get
+			{
+				return _cachedAxisOrg + _cachedAxisSpan;
+			}
+		}
 
 		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
 		public override bool IsOrgExtendable
@@ -217,7 +212,6 @@ namespace Altaxo.Graph.Scales
 		{
 			get { return false; }
 		}
-
 
 		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
@@ -234,7 +228,6 @@ namespace Altaxo.Graph.Scales
 			return null;
 		}
 
-
 		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
 		{
 			double angle = UseDegree ? org : org * 180 / Math.PI;
@@ -245,8 +238,6 @@ namespace Altaxo.Graph.Scales
 			org = UseDegree ? GetOriginInDegrees() : GetOriginInDegrees() * Math.PI / 180;
 			double span = Math.Abs(end - org);
 
-
-
 			bool changed = _cachedAxisOrg != org ||
 				_cachedAxisSpan != span;
 
@@ -255,16 +246,13 @@ namespace Altaxo.Graph.Scales
 			_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
 
 			if (changed)
-				OnChanged();
-
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		public override void Rescale()
 		{
 		}
 
-    #endregion
-  }
-
-
+		#endregion NumericalScale
+	}
 }

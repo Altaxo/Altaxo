@@ -130,12 +130,12 @@ namespace Altaxo.Gui.Graph
 			get { return _guiPositionY.SelectedQuantity; }
 		}
 
-		public new Units.DimensionfulQuantity XSize
+		public Units.DimensionfulQuantity XSize
 		{
 			get { return _guiSizeX.SelectedQuantity; }
 		}
 
-		public new Units.DimensionfulQuantity YSize
+		public Units.DimensionfulQuantity YSize
 		{
 			get { return _guiSizeY.SelectedQuantity; }
 		}

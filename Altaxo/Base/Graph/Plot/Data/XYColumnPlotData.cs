@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Plot.Data
 	[SerializationVersion(0)]
 	public class XYColumnPlotData
 		:
-		Main.SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
 		System.ICloneable
 	{
@@ -980,20 +980,6 @@ namespace Altaxo.Graph.Plot.Data
 			}
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
-		}
-
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			var eAsBCEA = e as BoundariesChangedEventArgs;
-
-			if (null != eAsBCEA)
-			{
-				_accumulatedEventData.ModifyOrSet<BoundariesChangedEventArgs>(x => x.Add(eAsBCEA), eAsBCEA);
-			}
-			else
-			{
-				_accumulatedEventData.Set(e);
-			}
 		}
 
 		#endregion Change event handling

@@ -37,26 +37,16 @@ namespace Altaxo.Graph.Scales
 	[Serializable]
 	public class ScaleCollection
 	:
-	IEnumerable<ScaleWithTicks>,
-	Main.IChangedEventSource,
-	Main.IDocumentNode
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+	IEnumerable<ScaleWithTicks>
 	{
 		private ScaleWithTicks[] _scales = new ScaleWithTicks[2];
-
-		/// <summary>
-		/// Fired if something in this class or in its child has changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		/// <summary>
 		/// Fired when one of the scale instances in this collection has changed.
 		/// </summary>
 		[field: NonSerialized]
-		public event Action<int, Scale, Scale> ScaleInstanceChanged;
-
-		[NonSerialized]
-		private object _parentObject;
+		public event Action<object, ScaleInstanceChangedEventArgs> ScaleInstanceChanged;
 
 		#region Serialization
 
@@ -112,13 +102,16 @@ namespace Altaxo.Graph.Scales
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			int len = Math.Min(this._scales.Length, from._scales.Length);
-			for (int i = 0; i < len; i++)
+			using (var suspendToken = this.SuspendGetToken())
 			{
-				this.InternalSetScaleWithTicks(i, (ScaleWithTicks)from._scales[i].Clone());
-			}
+				int len = Math.Min(this._scales.Length, from._scales.Length);
+				for (int i = 0; i < len; i++)
+				{
+					this.InternalSetScaleWithTicks(i, (ScaleWithTicks)from._scales[i].Clone());
+				}
 
-			OnChanged();
+				suspendToken.Resume();
+			}
 		}
 
 		public ScaleCollection Clone()
@@ -220,27 +213,13 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null != oldvalue)
 				{
-					oldvalue.ScaleInstanceChanged -= EhScaleInstanceChanged;
-					oldvalue.Changed -= EhChildChanged;
+					oldvalue.ParentObject = null;
 				}
 				if (null != newvalue)
 				{
-					newvalue.ScaleInstanceChanged += EhScaleInstanceChanged;
-					newvalue.Changed += EhChildChanged;
-					newvalue.ParentObject = this._parentObject; // we refer directly to the layer
+					newvalue.ParentObject = this;
 				}
 			}
-		}
-
-		private void EhChildChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		private void EhScaleInstanceChanged(Scale oldScale, Scale newScale)
-		{
-			if (ScaleInstanceChanged != null)
-				ScaleInstanceChanged(IndexOf(newScale), oldScale, newScale);
 		}
 
 		public void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
@@ -252,36 +231,15 @@ namespace Altaxo.Graph.Scales
 				((LinkedScale)Y.Scale).EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);
 		}
 
-		protected virtual void OnChanged()
-		{
-			if (_parentObject is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parentObject).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parentObject; }
-			set
-			{
-				var oldValue = _parentObject;
-				_parentObject = value;
-
-				if (!object.ReferenceEquals(oldValue, value))
-				{
-					foreach (var child in _scales)
-						child.ParentObject = value;
-				}
-			}
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "Scales"; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		#endregion IDocumentNode Members
@@ -297,5 +255,31 @@ namespace Altaxo.Graph.Scales
 			for (int i = 0; i < _scales.Length; ++i)
 				yield return _scales[i];
 		}
+
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			var es = e as ScaleInstanceChangedEventArgs;
+			if (null != es)
+			{
+				es.ScaleIndex = IndexOf(es.NewScale);
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected override void OnChanged(EventArgs e)
+		{
+			var es = e as ScaleInstanceChangedEventArgs;
+			if (null != es && null != ScaleInstanceChanged)
+			{
+				ScaleInstanceChanged(this, es);
+			}
+
+			base.OnChanged(e);
+		}
+
+		#endregion Changed event handling
 	}
 }

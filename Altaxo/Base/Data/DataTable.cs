@@ -48,7 +48,7 @@ namespace Altaxo.Data
 	[SerializationVersion(1)]
 	public class DataTable
 		:
-		Main.SuspendableDocumentNodeWithHashSetOfAccumulatedData<EventArgs>,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IProjectItem,
 		Main.INamedObjectCollection,

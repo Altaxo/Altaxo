@@ -245,11 +245,13 @@ namespace Altaxo.Main
 	}
 
 	/// <summary>
-	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="Dictionary{Type, EventArgs}"/>. That means, that of every type of event args only one instance is stored.
+	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a special set <see cref="ISetOfEventData"/>.
+	/// This set takes into account that <see cref="SelfAccumulateableEventArgs"/> can be accumulated. By overriding <see cref="GetHashCode"/> and <see cref="Equals"/> you can control whether only one instance or
+	/// multiple instances can be stored in the set.
 	/// This class supports document nodes that have children,
 	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
-	public abstract class SuspendableDocumentLeafNodeWithTypeDictionaryOfAccumulatedData : SuspendableDocumentLeafNode
+	public abstract class SuspendableDocumentLeafNodeWithSetOfEventArgs : SuspendableDocumentLeafNode
 	{
 		private static EventArgs[] _emptyData = new EventArgs[0];
 
@@ -257,7 +259,7 @@ namespace Altaxo.Main
 		/// The accumulated event data.
 		/// </summary>
 		[NonSerialized]
-		protected Altaxo.Collections.TypeInstanceDictionary<EventArgs> _accumulatedEventData = new Collections.TypeInstanceDictionary<EventArgs>();
+		protected ISetOfEventData _accumulatedEventData = new SetOfEventData();
 
 		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
 		{
@@ -269,7 +271,7 @@ namespace Altaxo.Main
 					return true;
 
 				case 1:
-					singleEventArg = _accumulatedEventData.Values.First();
+					singleEventArg = _accumulatedEventData.First();
 					return true;
 
 				default:
@@ -289,7 +291,7 @@ namespace Altaxo.Main
 			get
 			{
 				if (null != _accumulatedEventData)
-					return _accumulatedEventData.Values;
+					return _accumulatedEventData;
 				else
 					return _emptyData;
 			}
@@ -302,6 +304,11 @@ namespace Altaxo.Main
 		{
 			if (null != _accumulatedEventData)
 				_accumulatedEventData.Clear();
+		}
+
+		protected override void AccumulateChangeData(object sender, EventArgs e)
+		{
+			_accumulatedEventData.SetOrAccumulate(e);
 		}
 	}
 }

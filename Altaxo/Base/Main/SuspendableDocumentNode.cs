@@ -277,20 +277,21 @@ namespace Altaxo.Main
 	}
 
 	/// <summary>
-	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="HashSet{T}"/>.
+	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a special set <see cref="ISetOfEventData"/>.
+	/// This set takes into account that <see cref="SelfAccumulateableEventArgs"/> can be accumulated. By overriding <see cref="GetHashCode"/> and <see cref="Equals"/> you can control whether only one instance or
+	/// multiple instances can be stored in the set.
 	/// This class supports document nodes that have children,
 	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
-	/// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
-	public abstract class SuspendableDocumentNodeWithHashSetOfAccumulatedData<T> : SuspendableDocumentNode where T : EventArgs
+	public abstract class SuspendableDocumentNodeWithSetOfEventArgs : SuspendableDocumentNode
 	{
-		private static T[] _emptyData = new T[0];
+		private static EventArgs[] _emptyData = new EventArgs[0];
 
 		/// <summary>
 		/// The accumulated event data.
 		/// </summary>
 		[NonSerialized]
-		protected HashSet<T> _accumulatedEventData = new HashSet<T>();
+		protected ISetOfEventData _accumulatedEventData = new SetOfEventData();
 
 		/// <summary>
 		/// Gets the accumulated event data.
@@ -317,47 +318,10 @@ namespace Altaxo.Main
 			if (null != _accumulatedEventData)
 				_accumulatedEventData.Clear();
 		}
-	}
 
-	/// <summary>
-	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a <see cref="Dictionary{Type, EventArgs}"/>. That means, that of every type of event args only one instance is stored.
-	/// This class supports document nodes that have children,
-	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
-	/// </summary>
-	public abstract class SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData : SuspendableDocumentNode
-	{
-		private static EventArgs[] _emptyData = new EventArgs[0];
-
-		/// <summary>
-		/// The accumulated event data.
-		/// </summary>
-		[NonSerialized]
-		protected Altaxo.Collections.TypeInstanceDictionary<EventArgs> _accumulatedEventData = new Altaxo.Collections.TypeInstanceDictionary<EventArgs>();
-
-		/// <summary>
-		/// Gets the accumulated event data.
-		/// </summary>
-		/// <value>
-		/// The accumulated event data.
-		/// </value>
-		protected override IEnumerable<EventArgs> AccumulatedEventData
+		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					return _accumulatedEventData.Values;
-				else
-					return _emptyData;
-			}
-		}
-
-		/// <summary>
-		/// Clears the accumulated event data.
-		/// </summary>
-		protected override void AccumulatedEventData_Clear()
-		{
-			if (null != _accumulatedEventData)
-				_accumulatedEventData.Clear();
+			_accumulatedEventData.SetOrAccumulate(e);
 		}
 	}
 }

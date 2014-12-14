@@ -326,13 +326,13 @@ namespace Altaxo.Graph.Scales
 				}
 
 				OnLinkPropertiesChanged();
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
 		private void EhWrappedScaleChanged(object sender, EventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		private void EhLinkedScaleChanged(object sender, EventArgs e)

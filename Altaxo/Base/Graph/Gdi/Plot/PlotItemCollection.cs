@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	[Serializable]
 	public class PlotItemCollection
 		:
-		Main.SuspendableDocumentNodeWithTypeDictionaryOfAccumulatedData,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IGPlotItem,
 		IEnumerable<IGPlotItem>,
 		Main.INamedObjectCollection,
@@ -1020,28 +1020,6 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		#endregion NamedObjectCollection
 
-		#region IChangedEventSource Members
-
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			var eType = e.GetType();
-
-			if (eType == typeof(BoundariesChangedEventArgs))
-			{
-				EventArgs presentData;
-				if (_accumulatedEventData.TryGetValue(typeof(BoundariesChangedEventArgs), out presentData))
-					((BoundariesChangedEventArgs)presentData).Add((BoundariesChangedEventArgs)e);
-				else
-					_accumulatedEventData.Add(typeof(BoundariesChangedEventArgs), e);
-			}
-			else
-			{
-				_accumulatedEventData[eType] = e;
-			}
-		}
-
-		#endregion IChangedEventSource Members
-
 		#region PlotGroup handling
 
 		/// <summary>
@@ -1064,22 +1042,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		#endregion PlotGroup handling
 
 		#region Event Handling
-
-		public void EhXBoundaryChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			if (this._parent is XYPlotLayer)
-				((XYPlotLayer)_parent).OnPlotAssociationXBoundariesChanged(sender, args);
-			else if (this._parent is PlotItemCollection)
-				((PlotItemCollection)_parent).EhXBoundaryChanged(sender, args);
-		}
-
-		public void EhYBoundaryChanged(object sender, BoundariesChangedEventArgs args)
-		{
-			if (this._parent is XYPlotLayer)
-				((XYPlotLayer)_parent).OnPlotAssociationYBoundariesChanged(sender, args);
-			else if (this._parent is PlotItemCollection)
-				((PlotItemCollection)_parent).EhYBoundaryChanged(sender, args);
-		}
 
 		public void EhPlotGroups_Changed(object sender, EventArgs e)
 		{

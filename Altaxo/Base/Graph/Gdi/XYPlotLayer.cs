@@ -89,7 +89,7 @@ namespace Altaxo.Graph.Gdi
 
 		/// <summary>Fired when a scale instance of this layer has changed.</summary>
 		[field: NonSerialized]
-		public event Action<int, Scale, Scale> ScaleInstanceChanged;
+		public event Action<object, ScaleInstanceChangedEventArgs> ScaleInstanceChanged;
 
 		#endregion Event definitions
 
@@ -374,7 +374,6 @@ namespace Altaxo.Graph.Gdi
 
 				if (null != _scales)
 				{
-					_scales.ScaleInstanceChanged -= EhScaleInstanceChanged;
 					_scales.ParentObject = null;
 				}
 
@@ -384,7 +383,6 @@ namespace Altaxo.Graph.Gdi
 				if (null != _scales)
 				{
 					_scales.ParentObject = this;
-					_scales.ScaleInstanceChanged += EhScaleInstanceChanged;
 				}
 
 				for (int i = 0; i < _scales.Count; i++)
@@ -392,9 +390,8 @@ namespace Altaxo.Graph.Gdi
 					Scale oldScale = oldscales == null ? null : oldscales[i].Scale;
 					Scale newScale = _scales[i].Scale;
 					if (!object.ReferenceEquals(oldScale, newScale))
-						EhScaleInstanceChanged(i, oldScale, newScale);
+						EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
 				}
-				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -459,9 +456,14 @@ namespace Altaxo.Graph.Gdi
 			}
 			protected set
 			{
-				PlotItemCollection oldvalue = _plotItems;
+				if (null != _plotItems)
+					_plotItems.ParentObject = null;
+
+				var oldvalue = _plotItems;
 				_plotItems = value;
-				value.ParentObject = this;
+
+				if (null != _plotItems)
+					_plotItems.ParentObject = this;
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
@@ -553,24 +555,6 @@ namespace Altaxo.Graph.Gdi
 		#endregion XYPlotLayer properties and methods
 
 		#region Scale related
-
-		/// <summary>
-		/// Absorbs the event from the ScaleCollection and distributes it further.
-		/// </summary>
-		/// <param name="idx">Index of the scale in the linked layer.</param>
-		/// <param name="oldScale">Old scale instance.</param>
-		/// <param name="newScale">New scale instance.</param>
-		private void EhScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
-		{
-			if (null != ScaleInstanceChanged)
-				ScaleInstanceChanged(idx, oldScale, newScale);
-
-			if (object.ReferenceEquals(_scales.X.Scale, newScale))
-				RescaleXAxis();
-
-			if (object.ReferenceEquals(_scales.Y.Scale, newScale))
-				RescaleYAxis();
-		}
 
 		/// <summary>
 		/// Absorbs the event from the linked layer. Used to adjust the LinkedScale here.
@@ -1221,6 +1205,25 @@ namespace Altaxo.Graph.Gdi
 
 		#region Handler of child events
 
+		protected override void OnChanged(EventArgs e)
+		{
+			if (e is BoundariesChangedEventArgs)
+				EhBoundaryChangedEventFromPlotItem((BoundariesChangedEventArgs)e);
+			else if (e is ScaleInstanceChangedEventArgs)
+				EhScaleInstanceChanged((ScaleInstanceChangedEventArgs)e);
+
+			base.OnChanged(e);
+		}
+
+		protected void EhBoundaryChangedEventFromPlotItem(BoundariesChangedEventArgs boundaryChangedEventArgs)
+		{
+			var data = boundaryChangedEventArgs.Data;
+			if (data.HasFlag(BoundariesChangedData.XBoundariesChanged))
+				EhXBoundaryChangedEventFromPlotItem();
+			if (data.HasFlag(BoundariesChangedData.YBoundariesChanged))
+				EhYBoundaryChangedEventFromPlotItem();
+		}
+
 		/// <summary>
 		/// This handler is called if a x-boundary from any of the plotassociations of this layer
 		/// has changed. We then have to recalculate the boundaries.
@@ -1231,7 +1234,7 @@ namespace Altaxo.Graph.Gdi
 		/// if would be possible to merge only the changed boundary into the x-axis boundary.
 		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
 		/// all PlotAssociations of this layer.</remarks>
-		public void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		protected void EhXBoundaryChangedEventFromPlotItem()
 		{
 			if (!_plotAssociationXBoundariesChanged_EventSuspender.IsSuspended)
 			{
@@ -1262,7 +1265,7 @@ namespace Altaxo.Graph.Gdi
 		/// if would be possible to merge only the changed boundary into the y-axis boundary.
 		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
 		/// all PlotAssociations of this layer.</remarks>
-		public void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		protected void EhYBoundaryChangedEventFromPlotItem()
 		{
 			if (!_plotAssociationYBoundariesChanged_EventSuspender.IsSuspended)
 			{
@@ -1281,6 +1284,24 @@ namespace Altaxo.Graph.Gdi
 					suspendToken.Resume();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Absorbs the event from the ScaleCollection and distributes it further.
+		/// </summary>
+		/// <param name="idx">Index of the scale in the linked layer.</param>
+		/// <param name="oldScale">Old scale instance.</param>
+		/// <param name="newScale">New scale instance.</param>
+		private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
+		{
+			if (null != ScaleInstanceChanged)
+				ScaleInstanceChanged(this, e);
+
+			if (object.ReferenceEquals(_scales.X.Scale, e.NewScale))
+				RescaleXAxis();
+
+			if (object.ReferenceEquals(_scales.Y.Scale, e.NewScale))
+				RescaleYAxis();
 		}
 
 		#endregion Handler of child events

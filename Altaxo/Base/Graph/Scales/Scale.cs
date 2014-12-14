@@ -35,21 +35,18 @@ namespace Altaxo.Graph.Scales
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
 	/// </summary>
 	[Serializable]
-	public abstract class Scale : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
+	public abstract class Scale
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ICloneable
 	{
-		/// <summary>
-		/// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
 		private static int _instanceCounter;
 		private readonly int _instance = _instanceCounter++;
 
 		/// <summary>
-		/// The _parent object. Normally the parent layer
+		/// Static collection that holds all available axis types.
 		/// </summary>
-		protected object _parentObject;
+		protected static System.Collections.Generic.Dictionary<string, Type> sm_AvailableScales;
 
 		#region ICloneable Members
 
@@ -60,24 +57,6 @@ namespace Altaxo.Graph.Scales
 		public abstract object Clone();
 
 		#endregion ICloneable Members
-
-		#region IChangedEventSource Members
-
-		/// <summary>
-		/// Used to fire the axis changed event, can be overriden in child classes.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			OnChanged(new Main.ChangedEventArgs(this, null));
-		}
-
-		protected virtual void OnChanged(EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		#endregion IChangedEventSource Members
 
 		/// <summary>
 		/// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
@@ -138,11 +117,6 @@ namespace Altaxo.Graph.Scales
 		public abstract void Rescale();
 
 		/// <summary>
-		/// Static collection that holds all available axis types.
-		/// </summary>
-		protected static System.Collections.Generic.Dictionary<string, Type> sm_AvailableScales;
-
-		/// <summary>
 		/// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.
 		/// </summary>
 		static Scale()
@@ -165,17 +139,15 @@ namespace Altaxo.Graph.Scales
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parentObject; }
-			set { _parentObject = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get
 			{
 				return string.Empty;
+			}
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set.");
 			}
 		}
 

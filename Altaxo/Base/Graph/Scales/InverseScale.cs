@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Scales
 				s._rescaling = (InverseAxisRescaleConditions)info.GetValue("Rescaling", s);
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				// restore the event chain
-				s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
+				s._dataBounds.ParentObject = s;
 
 				return s;
 			}
@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds = new FiniteNumericalBoundaries();
 			_rescaling = new InverseAxisRescaleConditions();
 
-			_dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+			_dataBounds.ParentObject = this;
 		}
 
 		/// <summary>
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Scales
 			this._cachedAxisOrgInv = from._cachedAxisOrgInv;
 			this._cachedAxisSpanInv = from._cachedAxisSpanInv;
 			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+			_dataBounds.ParentObject = this;
 			this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
 
 			this._rescaling = null == from.Rescaling ? new InverseAxisRescaleConditions() : (InverseAxisRescaleConditions)from.Rescaling.Clone();
@@ -139,9 +139,9 @@ namespace Altaxo.Graph.Scales
 			this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
 
 			if (null != _dataBounds)
-				_dataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.OnBoundariesChanged);
+				_dataBounds.ParentObject = null;
 			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+			_dataBounds.ParentObject = this;
 
 			this._rescaling = null == from.Rescaling ? new InverseAxisRescaleConditions() : (InverseAxisRescaleConditions)from.Rescaling.Clone();
 		}
@@ -304,7 +304,7 @@ namespace Altaxo.Graph.Scales
 			_isEndExtendable = isEndExtendable;
 
 			if (changed)
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		public override void Rescale()
@@ -324,9 +324,18 @@ namespace Altaxo.Graph.Scales
 			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
 		}
 
-		protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		#region Changed event handling
+
+		protected override void OnChanged(EventArgs e)
 		{
-			Rescale(); // calculate new bounds and fire AxisChanged event
+			if (e is BoundariesChangedEventArgs)
+			{
+				Rescale();
+			}
+
+			base.OnChanged(e);
 		}
+
+		#endregion Changed event handling
 	}
 }
