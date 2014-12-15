@@ -38,9 +38,8 @@ namespace Altaxo.Graph.Gdi.Axis
 	[SerializationVersion(0)]
 	public class AxisLineStyle
 		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
-		Main.IChangedEventSource,
-		Main.IDocumentNode,
 		IRoutedPropertyReceiver,
 		ICloneable
 	{
@@ -75,13 +74,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		protected RADouble _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
 		protected CSAxisInformation _cachedAxisStyleInfo;
-
-		/// <summary>Fired if anything on this style changed</summary>
-		[field: NonSerialized]
-		private event System.EventHandler _changed;
-
-		[NonSerialized]
-		private object _parent;
 
 		#region Serialization
 
@@ -424,7 +416,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					if (null != value)
 						value.Changed += OnPenChangedEventHandler;
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -443,7 +435,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					if (null != value)
 						value.Changed += OnPenChangedEventHandler;
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -462,7 +454,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					if (null != value)
 						value.Changed += OnPenChangedEventHandler;
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -477,7 +469,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _majorTickLength)
 				{
 					_majorTickLength = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -492,7 +484,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _minorTickLength)
 				{
 					_minorTickLength = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -507,7 +499,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showFirstUpMajorTicks)
 				{
 					this._showFirstUpMajorTicks = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -522,7 +514,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showFirstDownMajorTicks)
 				{
 					this._showFirstDownMajorTicks = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -537,7 +529,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showFirstUpMinorTicks)
 				{
 					this._showFirstUpMinorTicks = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -552,7 +544,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showFirstDownMinorTicks)
 				{
 					this._showFirstDownMinorTicks = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -571,7 +563,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._axisPen.Width = value;
 				this._majorTickPen.Width = value;
 				this._minorTickPen.Width = value;
-				OnChanged(); // fire the changed event
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -589,7 +581,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._axisPen.Color = value;
 				this._majorTickPen.Color = value;
 				this._minorTickPen.Color = value;
-				OnChanged(); // fire the changed event
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -606,7 +598,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _axisPosition)
 				{
 					_axisPosition = value;
-					OnChanged(); // fire the changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -739,35 +731,18 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
 		{
-			OnChanged();
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != _changed)
-				_changed(this, new EventArgs());
-		}
-
-		public event EventHandler Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return this.GetType().Name; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		#endregion IDocumentNode Members
@@ -784,7 +759,7 @@ namespace Altaxo.Graph.Gdi.Axis
 						this._axisPen.Width = prop.Value;
 						this._majorTickPen.Width = prop.Value;
 						this._minorTickPen.Width = prop.Value;
-						OnChanged();
+						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
 			}

@@ -40,18 +40,10 @@ namespace Altaxo.Graph.Gdi.Axis
 	/// Responsible for setting position, rotation, font, color etc. of axis labels.
 	/// </summary>
 	public class AxisLabelStyle :
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IRoutedPropertyReceiver,
-		Main.IDocumentNode,
 		Main.ICopyFrom
 	{
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
-		[NonSerialized]
-		private object _parent;
-
 		protected FontX _font;
 
 		protected StringAlignment _horizontalAlignment;
@@ -161,6 +153,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._yOffset = info.GetDouble("YOffset");
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+				s._labelFormatting.ParentObject = s;
+
 				s._suppressedLabels = new SuppressedTicks();
 
 				// Modification of StringFormat is necessary to avoid
@@ -209,6 +203,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._yOffset = info.GetDouble("YOffset");
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+				s._labelFormatting.ParentObject = s;
+
 				s._suppressedLabels = new SuppressedTicks();
 
 				// Modification of StringFormat is necessary to avoid
@@ -268,6 +264,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					s._suppressedLabels = new SuppressedTicks();
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+				s._labelFormatting.ParentObject = s;
 
 				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words
@@ -332,6 +329,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					s._suppressedLabels = new SuppressedTicks();
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+				s._labelFormatting.ParentObject = s;
 
 				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 				s._labelFormatting.PrefixText = info.GetString("PrefixText");
@@ -395,6 +393,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					s._suppressedLabels = new SuppressedTicks();
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+				s._labelFormatting.ParentObject = s;
 
 				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
 
@@ -524,7 +523,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				_font = value;
 
 				if (value.Equals(oldValue))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -542,7 +541,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					FontX oldFont = _font;
 					_font = oldFont.GetFontWithNewSize(newValue);
 
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -557,7 +556,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != oldColor)
 				{
 					this._brush.SetSolidBrush(value);
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -572,7 +571,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			set
 			{
 				this._brush = (BrushX)value.Clone();
-				OnChanged(); // Fire Changed event
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -589,7 +588,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (!object.ReferenceEquals(value, oldValue))
 				{
 					this._backgroundStyle = value;
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -613,12 +612,12 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				ILabelFormatting oldValue = this._labelFormatting;
-				if (!object.ReferenceEquals(value, oldValue))
-				{
-					_labelFormatting = value;
-					OnChanged();
-				}
+				if (object.ReferenceEquals(_labelFormatting, value))
+					return;
+
+				_labelFormatting = value;
+				_labelFormatting.ParentObject = this;
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -636,7 +635,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				var oldValue = _labelSide;
 				_labelSide = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -648,10 +647,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				var oldValue = _labelFormatting.PrefixText;
 				_labelFormatting.PrefixText = value;
-				if (value != oldValue)
-					OnChanged();
 			}
 		}
 
@@ -666,7 +662,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				var oldValue = _labelFormatting.SuffixText;
 				_labelFormatting.SuffixText = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -680,7 +676,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._xOffset = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -695,7 +691,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._yOffset = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -710,7 +706,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._rotation = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -727,7 +723,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._automaticRotationShift = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -745,7 +741,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._horizontalAlignment = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -760,7 +756,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this._verticalAlignment = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -978,39 +974,15 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		#region IChangedEventSource Members
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion IChildChangedEventSink Members
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return this.GetType().Name; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		#endregion IDocumentNode Members
@@ -1025,7 +997,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					{
 						var prop = (RoutedSetterProperty<double>)property;
 						this.FontSize = prop.Value;
-						OnChanged();
+						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
 
@@ -1036,7 +1008,7 @@ namespace Altaxo.Graph.Gdi.Axis
 						{
 							var newFont = _font.GetFontWithNewFamily(prop.Value);
 							_font = newFont;
-							OnChanged();
+							EhSelfChanged(EventArgs.Empty);
 						}
 						catch (Exception)
 						{

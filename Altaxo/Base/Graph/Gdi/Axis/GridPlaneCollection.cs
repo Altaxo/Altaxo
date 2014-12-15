@@ -33,23 +33,11 @@ namespace Altaxo.Graph.Gdi.Axis
 	[Serializable]
 	public class GridPlaneCollection
 		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IEnumerable<GridPlane>,
-		ICloneable,
-
-		Main.IDocumentNode,
-		Main.IChangedEventSource
+		ICloneable
 	{
 		private List<GridPlane> _innerList = new List<GridPlane>();
-
-		[NonSerialized]
-		private object _parent;
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
-
-		#region Serialization
-
-		#endregion Serialization
 
 		private void CopyFrom(GridPlaneCollection from)
 		{
@@ -167,12 +155,11 @@ namespace Altaxo.Graph.Gdi.Axis
 		private void Attach(GridPlane plane)
 		{
 			plane.ParentObject = this;
-			plane.Changed += EhPlaneChanged;
 		}
 
 		private void Detach(GridPlane plane)
 		{
-			plane.Changed -= EhPlaneChanged;
+			plane.ParentObject = null;
 		}
 
 		public void Add(GridPlane plane)
@@ -241,21 +228,13 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get
-			{
-				return _parent;
-			}
-			set
-			{
-				_parent = value;
-			}
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "GridPlanes"; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		#endregion IDocumentNode Members
@@ -277,26 +256,5 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		#endregion IEnumerable Members
-
-		#region IChangedEventSource Members
-
-		public void EhPlaneChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (Changed != null)
-				Changed(this, EventArgs.Empty);
-		}
-
-		event EventHandler Altaxo.Main.IChangedEventSource.Changed
-		{
-			add { throw new Exception("The method or operation is not implemented."); }
-			remove { throw new Exception("The method or operation is not implemented."); }
-		}
-
-		#endregion IChangedEventSource Members
 	}
 }

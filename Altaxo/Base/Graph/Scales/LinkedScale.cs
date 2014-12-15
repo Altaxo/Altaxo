@@ -317,22 +317,17 @@ namespace Altaxo.Graph.Scales
 
 				if (null != _scaleWrapped)
 				{
-					_scaleWrapped.Changed -= new EventHandler(this.EhWrappedScaleChanged);
+					_scaleWrapped.ParentObject = null;
 				}
 				_scaleWrapped = value;
 				if (null != _scaleWrapped)
 				{
-					_scaleWrapped.Changed += new EventHandler(this.EhWrappedScaleChanged);
+					_scaleWrapped.ParentObject = this;
 				}
 
 				OnLinkPropertiesChanged();
 				EhSelfChanged(EventArgs.Empty);
 			}
-		}
-
-		private void EhWrappedScaleChanged(object sender, EventArgs e)
-		{
-			EhSelfChanged(EventArgs.Empty);
 		}
 
 		private void EhLinkedScaleChanged(object sender, EventArgs e)

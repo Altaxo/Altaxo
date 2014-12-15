@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using System;
 
 namespace Altaxo.Main
@@ -93,5 +94,122 @@ namespace Altaxo.Main
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
 		string GetNameOfChildObject(object o);
+	}
+
+	public class NamedObjectCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
+	{
+		[Flags]
+		private enum Operation
+		{
+			ItemAdded = 1,
+			ItemRemoved = 2,
+			ItemRenamed = 4
+		}
+
+		private object _item;
+		private string _oldItemName;
+		private string _newItemName;
+		private Operation _operation;
+
+		#region Properties
+
+		public object Item { get { return _item; } }
+
+		public string OldName { get { return _oldItemName; } }
+
+		public string NewName { get { return _newItemName; } }
+
+		public bool WasItemAdded { get { return _operation.HasFlag(Operation.ItemAdded); } }
+
+		public bool WasItemRemoved { get { return _operation.HasFlag(Operation.ItemRemoved); } }
+
+		public bool WasItemRenamed { get { return _operation.HasFlag(Operation.ItemRenamed); } }
+
+		#endregion Properties
+
+		/// <summary>
+		/// Returns an instance when an item was added.
+		/// </summary>
+		public static NamedObjectCollectionChangedEventArgs FromItemAdded(INamedObject item)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = Operation.ItemAdded };
+			return result;
+		}
+
+		/// <summary>
+		/// Returns an instance when an item was added.
+		/// </summary>
+		public static NamedObjectCollectionChangedEventArgs FromItemRemoved(INamedObject item)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = Operation.ItemRemoved };
+			return result;
+		}
+
+		/// <summary>
+		/// Returns an instance when an item was added.
+		/// </summary>
+		public static NamedObjectCollectionChangedEventArgs FromItemRenamed(INamedObject item, string oldName)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = oldName, _operation = Operation.ItemRenamed };
+			return result;
+		}
+
+		public override void Add(SelfAccumulateableEventArgs e)
+		{
+			var other = e as NamedObjectCollectionChangedEventArgs;
+			if (other == null)
+				throw new ArgumentOutOfRangeException("Argument e should be of type NamedObjectCollectionEventArgs");
+			if (!object.ReferenceEquals(this._item, other._item))
+				throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
+
+			this._newItemName = other._newItemName;
+			this._operation |= other._operation;
+
+			if (other._operation.HasFlag(Operation.ItemAdded))
+			{
+				this._operation = this._operation.WithClearedFlag(Operation.ItemRemoved);
+				if (_oldItemName != _newItemName)
+					this._operation = this._operation.WithSetFlag(Operation.ItemRenamed);
+			}
+			else if (other._operation.HasFlag(Operation.ItemRemoved))
+			{
+				this._operation = this._operation.WithClearedFlag(Operation.ItemAdded);
+				this._operation = this._operation.WithClearedFlag(Operation.ItemRenamed);
+			}
+		}
+
+		/// <summary>
+		/// Override so that two instances of this type, which contain exactly the same item are considered the same. This is to ensure that events are accumulated for each individual item of a collection during the suspended state.
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+		/// </returns>
+		public override int GetHashCode()
+		{
+			return 17 * this.GetType().GetHashCode() + 31 * this._item.GetHashCode();
+		}
+
+		/// <summary>
+		/// Override so that two instances of this type, which contain exactly the same item are considered the same. This is to ensure that events are accumulated for each individual item of a collection during the suspended state.
+		/// </summary>
+		/// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+		/// <returns>
+		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+		/// </returns>
+		public override bool Equals(object obj)
+		{
+			if (null == obj || this.GetType() != obj.GetType())
+				return false;
+
+			var other = (NamedObjectCollectionChangedEventArgs)obj;
+
+			return object.ReferenceEquals(this._item, other._item);
+		}
 	}
 }

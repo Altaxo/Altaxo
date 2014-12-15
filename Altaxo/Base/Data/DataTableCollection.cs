@@ -35,13 +35,10 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	public class DataTableCollection
 		:
-		Main.SuspendableDocumentNodeWithSingleAccumulatedData<DataTableCollectionChangedEventArgs>,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
 		ICollection<DataTable>,
-		Altaxo.Main.IDocumentNode,
-		Main.INamedObjectCollection,
-		Altaxo.Main.IChangedEventSource,
-		Altaxo.Main.IChildChangedEventSink
+		Main.INamedObjectCollection
 	{
 		// Data
 		protected SortedDictionary<string, DataTable> _tablesByName = new SortedDictionary<string, DataTable>();
@@ -51,7 +48,7 @@ namespace Altaxo.Data
 		/// Arguments are the type of change, the item that changed, the old name (if renamed), and the new name (if renamed).
 		/// This event can not be suspended.
 		/// </summary>
-		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
+		public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
 
 		[NonSerialized()]
 		private bool _isDeserializationFinished = false;
@@ -112,10 +109,17 @@ namespace Altaxo.Data
 
 		public void Clear()
 		{
-			foreach (DataTable table in _tablesByName.Values)
-				Detach(table);
-			_tablesByName.Clear();
-			this.EhSelfChanged(DataTableCollectionChangedEventArgs.IfTableRemoved);
+			using (var suspendToken = this.SuspendGetToken())
+			{
+				foreach (DataTable table in _tablesByName.Values)
+				{
+					Detach(table);
+					this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(table));
+				}
+				_tablesByName.Clear();
+
+				suspendToken.Resume();
+			}
 		}
 
 		public bool Contains(DataTable item)
@@ -172,19 +176,14 @@ namespace Altaxo.Data
 
 		#region Suspend and resume
 
-		protected override void AccumulateChangeData(object sender, EventArgs e)
+		protected override void OnChanged(EventArgs e)
 		{
-			if (_accumulatedEventData == null)
-				_accumulatedEventData = DataTableCollectionChangedEventArgs.Empty;
+			if (e is Main.NamedObjectCollectionChangedEventArgs && null != CollectionChanged)
+			{
+				CollectionChanged(this, (Main.NamedObjectCollectionChangedEventArgs)e);
+			}
 
-			if (e is DataTableCollectionChangedEventArgs)
-				_accumulatedEventData.Merge((DataTableCollectionChangedEventArgs)e);
-		}
-
-		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
-		{
-			if (this.CollectionChanged != null)
-				CollectionChanged(changeType, item, oldName, item.Name);
+			base.OnChanged(e);
 		}
 
 		#endregion Suspend and resume
@@ -234,8 +233,7 @@ namespace Altaxo.Data
 			Attach(theTable);
 
 			// raise data event to all listeners
-			OnCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType.ItemAdded, theTable, theTable.Name);
-			this.EhSelfChanged(DataTableCollectionChangedEventArgs.IfTableAdded);
+			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(theTable));
 		}
 
 		/// <summary>
@@ -272,12 +270,14 @@ namespace Altaxo.Data
 			if (!_tablesByName.ContainsValue(theTable))
 				return false;
 
+			var eventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(theTable);
+
 			_tablesByName.Remove(theTable.Name);
 			Detach(theTable);
 			theTable.Dispose();
 
-			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theTable, theTable.Name);
-			EhSelfChanged(DataTableCollectionChangedEventArgs.IfTableRemoved);
+			//OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theTable, theTable.Name);
+			EhSelfChanged(eventArgs);
 			return true;
 		}
 
@@ -332,8 +332,7 @@ namespace Altaxo.Data
 				_tablesByName.Remove(oldName);
 				_tablesByName.Add(item.Name, (DataTable)item);
 
-				EhSelfChanged(DataTableCollectionChangedEventArgs.IfTableRenamed);
-				OnCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
+				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
 			}
 			else
 			{

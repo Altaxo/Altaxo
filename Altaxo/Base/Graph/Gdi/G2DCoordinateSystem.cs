@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,27 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
 	[Serializable]
 	public abstract class G2DCoordinateSystem
 		:
-		ICloneable,
-		Main.IDocumentNode,
-		Main.IChangedEventSource
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ICloneable
 	{
 		protected double _layerWidth;
 		protected double _layerHeight;
 
 		protected List<CSAxisInformation> _axisStyleInformation = new List<CSAxisInformation>();
-
-		[NonSerialized]
-		object _parent;
-
-		[field: NonSerialized]
-		event EventHandler _changed;
-
 
 		/// <summary>
 		/// Copies the member variables from another coordinate system.
@@ -59,10 +53,7 @@ namespace Altaxo.Graph.Gdi
 			this._layerWidth = from._layerWidth;
 			this._layerHeight = from._layerHeight;
 			this._axisStyleInformation.Clear();
-
 		}
-
-
 
 		/// <summary>
 		/// Returns true if the plot area is orthogonal, i.e. if the x and the y axis are orthogonal to each other.
@@ -72,16 +63,14 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Returns true if the plot coordinates can be calculated as a linear transformation of the physical values. This means that all lines
 		/// will keep being lines.
-		/// Returns false if this is for instance a polar diagram. 
+		/// Returns false if this is for instance a polar diagram.
 		/// </summary>
 		public abstract bool IsAffine { get; }
-
 
 		/// <summary>
 		/// Returns true when this is a 3D coordinate system. Returns false in all other cases.
 		/// </summary>
 		public abstract bool Is3D { get; }
-
 
 		/// <summary>
 		/// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
@@ -92,7 +81,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
 		/// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
 		public abstract bool LogicalToLayerCoordinates(Logical3D r, out double xlocation, out double ylocation);
-
 
 		/// <summary>
 		/// Converts logical coordinates along an isoline to layer coordinates and the appropriate derivative.
@@ -136,7 +124,6 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected abstract void UpdateAxisInfo();
 
-
 		/// <summary>Gets the name of the axis side.</summary>
 		/// <param name="id">The axis identifier.</param>
 		/// <param name="side">The axis side.</param>
@@ -152,7 +139,7 @@ namespace Altaxo.Graph.Gdi
 
 		public abstract object Clone();
 
-		#endregion
+		#endregion ICloneable Members
 
 		/// <summary>
 		/// Get a region object, which describes the plotting area. Used to clip the plotting to
@@ -160,10 +147,6 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <returns>A region object describing the plotting area.</returns>
 		public abstract Region GetRegion();
-
-
-
-
 
 		/// <summary>
 		/// Updates the internal storage of the rectangular area size to a new value.
@@ -174,7 +157,6 @@ namespace Altaxo.Graph.Gdi
 			_layerWidth = size.X;
 			_layerHeight = size.Y;
 		}
-
 
 		/// <summary>
 		/// Draws an isoline on the plot area.
@@ -191,8 +173,6 @@ namespace Altaxo.Graph.Gdi
 				g.DrawPath(pen, path);
 			}
 		}
-
-
 
 		/// <summary>
 		/// Draws an isoline beginning from a plane to the given point.
@@ -216,9 +196,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-
-
 		/// <summary>
 		/// Draws an isoline beginning from a given point to the axis.
 		/// </summary>
@@ -240,9 +217,6 @@ namespace Altaxo.Graph.Gdi
 				GetIsoline(path, r, new Logical3D(r.RX, r.RY, id.LogicalValue));
 			}
 		}
-
-
-
 
 		/// <summary>
 		/// Draws an isoline beginning from a given point to a plane.
@@ -266,10 +240,6 @@ namespace Altaxo.Graph.Gdi
 				DrawIsoline(g, pen, r, new Logical3D(r.RX, r.RY, id.LogicalValue));
 			}
 		}
-
-
-
-
 
 		/// <summary>
 		/// Draws an isoline on a plane beginning from r0 to r1. For r0,r1 either ry0,ry1 is used (if it is an x-axis),
@@ -308,7 +278,6 @@ namespace Altaxo.Graph.Gdi
 			return new PointD2D(x, y);
 		}
 
-
 		/// <summary>
 		/// Get a line along the axis designated by the argument id from the logical values r0 to r1.
 		/// </summary>
@@ -331,6 +300,7 @@ namespace Altaxo.Graph.Gdi
 				GetIsoline(path, new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r0), new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r1));
 			}
 		}
+
 		/// <summary>
 		/// Get a line along the axis designated by the argument id from the logical values r0 to r1.
 		/// </summary>
@@ -354,7 +324,6 @@ namespace Altaxo.Graph.Gdi
 				DrawIsoline(g, pen, new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r0), new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r1));
 			}
 		}
-
 
 		/// <summary>
 		/// Converts logical coordinates along an isoline to layer coordinates and returns the direction of the isoline at this point.
@@ -380,7 +349,6 @@ namespace Altaxo.Graph.Gdi
 				t,
 				out ax, out ay, out adx, out ady);
 
-
 			if (angle != 0)
 			{
 				double phi = Math.PI * angle / 180;
@@ -388,7 +356,6 @@ namespace Altaxo.Graph.Gdi
 				ady = -adx * Math.Sin(phi) + ady * Math.Cos(phi);
 				adx = hdx;
 			}
-
 
 			// Normalize the vector
 			double rr = Calc.RMath.Hypot(adx, ady);
@@ -399,7 +366,6 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			normalizeddirection = new PointD2D(adx, ady);
-
 
 			return new PointD2D(ax, ay);
 		}
@@ -452,7 +418,6 @@ namespace Altaxo.Graph.Gdi
 
 			normalizeddirection = new PointD2D(adx, ady);
 
-
 			return new PointD2D(ax, ay);
 		}
 
@@ -469,10 +434,13 @@ namespace Altaxo.Graph.Gdi
 				default:
 				case CSAxisSide.FirstDown:
 					return 0 == parallelAxisNumber ? new Logical3D(0, -1, 0) : new Logical3D(-1, 0, 0);
+
 				case CSAxisSide.FirstUp:
 					return 0 == parallelAxisNumber ? new Logical3D(0, 1, 0) : new Logical3D(1, 0, 0);
+
 				case CSAxisSide.SecondDown:
 					return 2 == parallelAxisNumber ? new Logical3D(0, -1, 0) : new Logical3D(0, 0, -1);
+
 				case CSAxisSide.SecondUp:
 					return 2 == parallelAxisNumber ? new Logical3D(0, 1, 0) : new Logical3D(0, 0, 1);
 			}
@@ -574,7 +542,6 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-
 		public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
 		{
 			CSLineID lineID = (CSLineID)planeID;
@@ -620,8 +587,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
-
 		public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
 		{
 			Dictionary<CSPlaneID, object> dict = new Dictionary<CSPlaneID, object>();
@@ -661,39 +626,15 @@ namespace Altaxo.Graph.Gdi
 
 		#region IDocumentNode Members
 
-		/// <summary>
-		/// Get/ sets the parent of this object.
-		/// </summary>
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return this.GetType().ToString(); }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
-		#endregion
-
-		#region IChangedEventSource Members
-
-		event EventHandler Altaxo.Main.IChangedEventSource.Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		public virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != _changed)
-				_changed(this, EventArgs.Empty);
-		}
-
-		#endregion
+		#endregion IDocumentNode Members
 	}
 }

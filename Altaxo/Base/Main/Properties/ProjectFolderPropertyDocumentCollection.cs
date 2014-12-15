@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace Altaxo.Main.Properties
 {
 	public class ProjectFolderPropertyDocumentCollection :
-		Main.SuspendableDocumentNodeWithSingleAccumulatedData<ProjectFolderPropertyDocumentCollectionChangedEventArgs>,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IEnumerable<ProjectFolderPropertyDocument>,
 		Altaxo.Main.IDocumentNode,
 		Altaxo.Main.IChangedEventSource,
@@ -45,9 +45,9 @@ namespace Altaxo.Main.Properties
 		// Events
 
 		/// <summary>
-		/// Fired when one or more graphs are added, deleted or renamed. Not fired when content in the graph has changed.
+		/// Fired when one or more items are added, deleted or renamed. Not fired when the content of an item has changed.
 		/// </summary>
-		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
+		public event EventHandler<NamedObjectCollectionChangedEventArgs> CollectionChanged;
 
 		public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
 		{
@@ -117,8 +117,7 @@ namespace Altaxo.Main.Properties
 			_itemsByName.Add(item.Name, item);
 			item.ParentObject = this;
 			item.NameChanged += EhChild_NameChanged;
-			this.EhSelfChanged(ProjectFolderPropertyDocumentCollectionChangedEventArgs.IfItemAdded);
-			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, item, item.Name);
+			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
 		}
 
 		public void Remove(ProjectFolderPropertyDocument item)
@@ -127,16 +126,13 @@ namespace Altaxo.Main.Properties
 			{
 				var gr = (ProjectFolderPropertyDocument)_itemsByName[item.Name];
 
-				if (null != Current.ComManager && object.ReferenceEquals(gr, Current.ComManager.EmbeddedObject)) // test if the graph is currently the embedded Com object
-					return; // it is not allowed to remove the current embedded graph object.
-
 				if (object.ReferenceEquals(gr, item))
 				{
+					var changeEventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item);
 					_itemsByName.Remove(item.Name);
 					item.ParentObject = null;
 					item.NameChanged -= EhChild_NameChanged;
-					this.EhSelfChanged(ProjectFolderPropertyDocumentCollectionChangedEventArgs.IfItemRemoved);
-					OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, item, item.Name);
+					this.EhSelfChanged(changeEventArgs);
 				}
 			}
 		}
@@ -152,8 +148,7 @@ namespace Altaxo.Main.Properties
 			}
 			_itemsByName.Remove(oldName);
 			_itemsByName[item.Name] = (ProjectFolderPropertyDocument)item;
-			this.EhSelfChanged(ProjectFolderPropertyDocumentCollectionChangedEventArgs.IfItemRenamed);
-			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
+			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
 		}
 
 		public object GetChildObjectNamed(string name)
@@ -177,19 +172,14 @@ namespace Altaxo.Main.Properties
 
 		#region Change event handling
 
-		protected override void AccumulateChangeData(object sender, EventArgs e)
+		protected override void OnChanged(EventArgs e)
 		{
-			if (_accumulatedEventData == null)
-				this._accumulatedEventData = ProjectFolderPropertyDocumentCollectionChangedEventArgs.Empty;
+			if (e is NamedObjectCollectionChangedEventArgs && null != CollectionChanged)
+			{
+				CollectionChanged(this, (NamedObjectCollectionChangedEventArgs)e);
+			}
 
-			if (e is ProjectFolderPropertyDocumentCollectionChangedEventArgs)
-				_accumulatedEventData.Merge((ProjectFolderPropertyDocumentCollectionChangedEventArgs)e);
-		}
-
-		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
-		{
-			if (this.CollectionChanged != null)
-				CollectionChanged(changeType, item, oldName, item.Name);
+			base.OnChanged(e);
 		}
 
 		#endregion Change event handling

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.CS
 {
@@ -35,15 +37,16 @@ namespace Altaxo.Graph.Gdi.CS
 		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
 		/// </summary>
 		protected bool _isXYInterchanged;
+
 		/// <summary>
 		/// Is the direction of the x axis reverse, for instance runs from right to left.
 		/// </summary>
 		protected bool _isXreverse;
+
 		/// <summary>
 		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
 		/// </summary>
 		protected bool _isYreverse;
-
 
 		protected double _radius;
 		protected double _midX;
@@ -73,9 +76,11 @@ namespace Altaxo.Graph.Gdi.CS
 		}
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPolarCoordinateSystem), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -86,6 +91,7 @@ namespace Altaxo.Graph.Gdi.CS
 				info.AddValue("XReverse", s._isXreverse);
 				info.AddValue("YReverse", s._isYreverse);
 			}
+
 			protected virtual G2DPolarCoordinateSystem SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				G2DPolarCoordinateSystem s = (o == null ? new G2DPolarCoordinateSystem() : (G2DPolarCoordinateSystem)o);
@@ -100,13 +106,14 @@ namespace Altaxo.Graph.Gdi.CS
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				G2DPolarCoordinateSystem s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
+
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public G2DPolarCoordinateSystem()
 		{
@@ -120,8 +127,12 @@ namespace Altaxo.Graph.Gdi.CS
 			get { return _isXYInterchanged; }
 			set
 			{
-				_isXYInterchanged = value;
-				ClearCachedObjects();
+				if (_isXYInterchanged != value)
+				{
+					_isXYInterchanged = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -133,10 +144,13 @@ namespace Altaxo.Graph.Gdi.CS
 			get { return _isXreverse; }
 			set
 			{
-				_isXreverse = value;
-				ClearCachedObjects();
+				if (_isXreverse != value)
+				{
+					_isXreverse = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
-
 		}
 
 		/// <summary>
@@ -147,8 +161,12 @@ namespace Altaxo.Graph.Gdi.CS
 			get { return _isYreverse; }
 			set
 			{
-				_isYreverse = value;
-				ClearCachedObjects();
+				if (_isYreverse != value)
+				{
+					_isYreverse = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -159,7 +177,7 @@ namespace Altaxo.Graph.Gdi.CS
 
 		/// <summary>
 		/// Returns true if the plot coordinates can be calculated as a linear transformation of the physical values.
-		/// Returns false if this is for instance a polar diagram. 
+		/// Returns false if this is for instance a polar diagram.
 		/// </summary>
 		public override bool IsAffine { get { return false; } }
 
@@ -167,7 +185,6 @@ namespace Altaxo.Graph.Gdi.CS
 		/// Returns true when this is a 3D coordinate system. Returns false in all other cases.
 		/// </summary>
 		public override bool Is3D { get { return false; } }
-
 
 		protected override void UpdateAxisInfo()
 		{
@@ -251,9 +268,8 @@ namespace Altaxo.Graph.Gdi.CS
 			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 		}
 
-
-		static readonly string[,] _axisNamesNormal = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };
-		static readonly string[,] _axisNamesOuterLines = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };
+		private static readonly string[,] _axisNamesNormal = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };
+		private static readonly string[,] _axisNamesOuterLines = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };
 
 		/// <summary>Gets the name of the axis side.</summary>
 		/// <param name="id">The axis identifier.</param>
@@ -266,8 +282,6 @@ namespace Altaxo.Graph.Gdi.CS
 
 			bool isUp = side == CSAxisSide.FirstUp;
 			isUp ^= isX ? _isXreverse : _isYreverse;
-
-		
 
 			bool isOuterLine = (id.LogicalValueOtherFirst == 0 || id.LogicalValueOtherFirst == 1);
 
@@ -348,8 +362,6 @@ namespace Altaxo.Graph.Gdi.CS
 			return !double.IsNaN(ax) && !double.IsNaN(ay);
 		}
 
-
-
 		/// <summary>
 		/// Calculates from two layer coordinate values (in points usually) the relative coordinates of the point (between 0 and 1). Returns true if the conversion
 		/// is possible, otherwise false.
@@ -387,9 +399,6 @@ namespace Altaxo.Graph.Gdi.CS
 
 			return !double.IsNaN(r.RX) && !double.IsNaN(r.RY);
 		}
-
-
-
 
 		public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
 		{
@@ -439,8 +448,6 @@ namespace Altaxo.Graph.Gdi.CS
 			}
 		}
 
-
-
 		/// <summary>
 		/// Get a region object, which describes the plotting area. Used to clip the plotting to
 		/// the plotting area.
@@ -460,8 +467,6 @@ namespace Altaxo.Graph.Gdi.CS
 			_midY = _layerHeight / 2;
 			_radius = Math.Min(_midX, _midY);
 		}
-
-
 
 		public override object Clone()
 		{

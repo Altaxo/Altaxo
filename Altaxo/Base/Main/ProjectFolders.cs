@@ -427,25 +427,20 @@ namespace Altaxo.Main
 			}
 		}
 
-		private void EhItemCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhItemCollectionChanged(object sender, Main.NamedObjectCollectionChangedEventArgs e)
 		{
-			switch (changeType)
+			if (e.WasItemAdded)
 			{
-				case NamedObjectCollectionChangeType.MultipleChanges:
-					Initialize();
-					break;
+				ItemAdded(e.Item, e.NewName);
+			}
+			else if (e.WasItemRemoved)
+			{
+				ItemRemoved(e.Item, e.OldName);
+			}
 
-				case NamedObjectCollectionChangeType.ItemAdded:
-					ItemAdded(item, newName);
-					break;
-
-				case NamedObjectCollectionChangeType.ItemRemoved:
-					ItemRemoved(item, oldName);
-					break;
-
-				case NamedObjectCollectionChangeType.ItemRenamed:
-					ItemRenamed(item, oldName, newName);
-					break;
+			if (e.WasItemRenamed)
+			{
+				ItemRenamed(e.Item, e.OldName, e.NewName);
 			}
 		}
 

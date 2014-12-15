@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,31 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Drawing;
 
-using Altaxo.Data;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
 	/// <summary>
 	/// Base class that can be used to derive a label formatting class
 	/// </summary>
-	public abstract class LabelFormattingBase : ILabelFormatting
+	public abstract class LabelFormattingBase
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ILabelFormatting
 	{
 		protected string _prefix = string.Empty;
 		protected string _suffix = string.Empty;
-
-	
-
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.AbstractLabelFormatting", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelFormattingBase), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -49,6 +51,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				info.AddValue("Prefix", s._prefix);
 				info.AddValue("Suffix", s._suffix);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LabelFormattingBase s = (LabelFormattingBase)o;
@@ -58,10 +61,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region ILabelFormatting Members
-
 
 		protected LabelFormattingBase()
 		{
@@ -72,14 +74,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			CopyFrom(from);
 		}
 
-	
 		public virtual bool CopyFrom(object obj)
 		{
 			var from = obj as LabelFormattingBase;
 			if (null != from)
 			{
-				_prefix = from._prefix;
-				_suffix = from._suffix;
+				using (var suspendToken = SuspendGetToken())
+				{
+					PrefixText = from._prefix;
+					SuffixText = from._suffix;
+
+					suspendToken.Resume();
+				}
 				return true;
 			}
 			return false;
@@ -94,13 +100,27 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		public string PrefixText
 		{
 			get { return _prefix; }
-			set	{	_prefix = value ?? string.Empty; }
+			set
+			{
+				var oldValue = _prefix;
+				_prefix = value ?? string.Empty;
+
+				if (oldValue != _prefix)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		public string SuffixText
 		{
 			get { return _suffix; }
-			set { _suffix = value ?? string.Empty; }
+			set
+			{
+				var oldValue = _suffix;
+				_suffix = value ?? string.Empty;
+
+				if (oldValue != _suffix)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -109,8 +129,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		/// <param name="item">The item to format as text.</param>
 		/// <returns>The formatted text representation of this item.</returns>
 		protected abstract string FormatItem(Altaxo.Data.AltaxoVariant item);
-
-	
 
 		/// <summary>
 		/// Formats a couple of items as text. Special measured can be taken here to format all items the same way, for instance set the decimal separator to the same location.
@@ -128,7 +146,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			return result;
 		}
-
 
 		/// <summary>
 		/// Measures the item, i.e. returns the size of the item.
@@ -160,7 +177,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			g.DrawString(text, font.ToGdi(), brush, morg, strfmt);
 		}
 
-
 		/// <summary>
 		/// Measures a couple of items and prepares them for being drawn.
 		/// </summary>
@@ -189,6 +205,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 
 			return litems;
+		}
+
+		public override string Name
+		{
+			get
+			{
+				return this.GetType().Name;
+			}
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		protected class MeasuredLabelItem : IMeasuredLabelItem
@@ -221,12 +249,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				g.DrawString(_text, _font.ToGdi(), brush, point, _strfmt);
 			}
 
-			#endregion
-
+			#endregion IMeasuredLabelItem Members
 		}
 
-		#endregion
-
-
+		#endregion ILabelFormatting Members
 	}
 }

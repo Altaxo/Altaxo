@@ -112,13 +112,13 @@ namespace Altaxo.Com
 			}
 		}
 
-		private void EhGraphDocumentRenamed(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhGraphDocumentRenamed(object sender, Main.NamedObjectCollectionChangedEventArgs e)
 		{
-			if (changeType == Main.NamedObjectCollectionChangeType.ItemRenamed)
+			if (e.WasItemRenamed)
 			{
 				foreach (var comObj in _comManager.GraphDocumentLinkedComObjects)
 				{
-					if (object.ReferenceEquals(comObj.Document, item))
+					if (object.ReferenceEquals(comObj.Document, e.Item))
 						comObj.EhDocumentRenamed(_fileMoniker);
 				}
 			}

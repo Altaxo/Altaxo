@@ -40,11 +40,8 @@ namespace Altaxo.Graph.Gdi.Axis
 	/// </summary>
 	public class AxisStyle
 		:
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode,
-		Main.ICopyFrom,
-		ICloneable
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		Main.ICopyFrom
 	{
 		/// <summary>
 		/// Identifies the axis style.
@@ -73,12 +70,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		private TextGraphic _axisTitle;
 
 		private CSAxisInformation _cachedAxisInfo;
-
-		[field: NonSerialized]
-		private event EventHandler _changed;
-
-		[NonSerialized]
-		private object _parent;
 
 		#region Serialization
 
@@ -384,7 +375,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					_customTickSpacing.ParentObject = this;
 				}
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -591,7 +582,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -617,7 +608,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -641,7 +632,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -659,7 +650,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				if (!object.ReferenceEquals(_axisTitle, oldvalue))
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -680,46 +671,18 @@ namespace Altaxo.Graph.Gdi.Axis
 					{
 						if (_axisTitle == null)
 						{
-							this.Title = new TextGraphic(this.GetPropertyContext());
+							this.Title = new TextGraphic(this.GetPropertyContext()) { ParentObject = this };
 						}
 
 						_axisTitle.Text = value;
 					}
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
 
 		#endregion Properties
-
-		#region IChangedEventSource Members
-
-		public event EventHandler Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		protected void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (_changed != null)
-				_changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion IChildChangedEventSink Members
 
 		#region ICloneable Members
 
@@ -734,15 +697,13 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "AxisStyle"; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		#endregion IDocumentNode Members

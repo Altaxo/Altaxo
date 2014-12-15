@@ -32,9 +32,8 @@ namespace Altaxo.Graph.Gdi.Axis
 {
 	[Serializable]
 	public class GridPlane :
-		ICloneable,
-		Main.IChangedEventSource,
-		Main.IDocumentNode
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ICloneable
 	{
 		/// <summary>
 		/// Identifies the plane by the axis that is perpendicular to the plane.
@@ -55,12 +54,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// Background of the grid plane.
 		/// </summary>
 		private BrushX _background;
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
-
-		[NonSerialized]
-		private object _parent;
 
 		[NonSerialized]
 		private GridIndexer _cachedIndexer;
@@ -150,21 +143,18 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _grid1; }
 			set
 			{
-				GridStyle oldvalue = _grid1;
+				if (object.ReferenceEquals(_grid1, value))
+					return;
+
+				if (null != _grid1)
+					_grid1.ParentObject = null;
+
 				_grid1 = value;
 
-				if (null != value)
-					value.ParentObject = this;
+				if (null != _grid1)
+					_grid1.ParentObject = this;
 
-				if (!object.ReferenceEquals(value, oldvalue))
-				{
-					if (null != oldvalue)
-						oldvalue.Changed -= EhChildChanged;
-					if (null != value)
-						value.Changed += EhChildChanged;
-
-					OnChanged();
-				}
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -173,21 +163,18 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _grid2; }
 			set
 			{
-				GridStyle oldvalue = _grid2;
+				if (object.ReferenceEquals(_grid2, value))
+					return;
+
+				if (null != _grid2)
+					_grid2.ParentObject = null;
+
 				_grid2 = value;
 
-				if (null != value)
-					value.ParentObject = this;
+				if (null != _grid2)
+					_grid2.ParentObject = this;
 
-				if (!object.ReferenceEquals(value, oldvalue))
-				{
-					if (null != oldvalue)
-						oldvalue.Changed -= EhChildChanged;
-					if (null != value)
-						value.Changed += EhChildChanged;
-
-					OnChanged();
-				}
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -201,18 +188,18 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _background; }
 			set
 			{
-				BrushX oldvalue = _background;
+				if (object.ReferenceEquals(_background, value))
+					return;
+
+				if (_background != null)
+					_background.Changed -= EhChildChanged;
+
 				_background = value;
 
-				if (!object.ReferenceEquals(oldvalue, value))
-				{
-					if (oldvalue != null)
-						oldvalue.Changed -= EhChildChanged;
-					if (value != null)
-						value.Changed += EhChildChanged;
+				if (_background != null)
+					_background.Changed += EhChildChanged;
 
-					OnChanged();
-				}
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -257,6 +244,21 @@ namespace Altaxo.Graph.Gdi.Axis
 			PaintGrid(g, layer);
 		}
 
+		#region IDocumentNode Members
+
+		public override string Name
+		{
+			get { return "GridPlane" + this._planeID.ToString(); }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set.");
+			}
+		}
+
+		#endregion IDocumentNode Members
+
+		#region Inner class GridIndexer
+
 		private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
 		{
 			private GridPlane _parent;
@@ -291,34 +293,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			#endregion IArray<GridStyle> Members
 		}
 
-		#region IChangedEventSource Members
-
-		public void EhChildChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		private void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
-
-		#region IDocumentNode Members
-
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
-		{
-			get { return "GridPlane" + this._planeID.ToString(); }
-		}
-
-		#endregion IDocumentNode Members
+		#endregion Inner class GridIndexer
 	}
 }

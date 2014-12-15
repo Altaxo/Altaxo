@@ -32,7 +32,7 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Stores the accumulated change data of a column.
 	/// </summary>
-	public class DataColumnChangedEventArgs : System.EventArgs
+	public class DataColumnChangedEventArgs : Main.SelfAccumulateableEventArgs
 	{
 		/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
 		protected int _minRowChanged;
@@ -92,6 +92,12 @@ namespace Altaxo.Data
 		public bool HasRowCountDecreased
 		{
 			get { return _hasRowCountDecreased; }
+		}
+
+		public override void Add(Main.SelfAccumulateableEventArgs e)
+		{
+			var other = (DataColumnChangedEventArgs)e;
+			Accumulate(other._minRowChanged, other._maxRowChanged, other._hasRowCountDecreased);
 		}
 	}
 }

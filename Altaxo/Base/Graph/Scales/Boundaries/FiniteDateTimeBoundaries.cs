@@ -214,7 +214,8 @@ namespace Altaxo.Graph.Scales.Boundaries
 			if (this._cachedMaxValue != this._maxValue)
 				data |= BoundariesChangedData.UpperBoundChanged;
 
-			_accumulatedEventData = new BoundariesChangedEventArgs(data);
+			if(0!=data)
+				_accumulatedEventData = new BoundariesChangedEventArgs(data);
 
 			base.OnResume();
 		}

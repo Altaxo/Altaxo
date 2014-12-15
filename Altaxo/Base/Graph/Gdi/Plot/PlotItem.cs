@@ -168,9 +168,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </returns>
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (object.ReferenceEquals(sender, StyleObject))
+			if (object.ReferenceEquals(sender, StyleObject) && e==EventArgs.Empty)
 				e = PlotItemStyleChangedEventArgs.Empty;
-			else if (object.ReferenceEquals(sender, DataObject))
+			else if (object.ReferenceEquals(sender, DataObject) && e==EventArgs.Empty)
 				e = PlotItemDataChangedEventArgs.Empty;
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);

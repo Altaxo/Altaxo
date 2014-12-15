@@ -1351,19 +1351,18 @@ namespace Altaxo.Graph.Gdi
 				if (null == value)
 					throw new ArgumentNullException();
 
-				G2DCoordinateSystem oldValue = _coordinateSystem;
+				if (object.ReferenceEquals(_coordinateSystem, value))
+					return;
+
 				_coordinateSystem = value;
 				_coordinateSystem.ParentObject = this;
 
-				if (oldValue != value)
-				{
-					_coordinateSystem.UpdateAreaSize(this.Size);
+				_coordinateSystem.UpdateAreaSize(this.Size);
 
-					if (null != AxisStyles)
-						AxisStyles.UpdateCoordinateSystem(value);
+				if (null != AxisStyles)
+					AxisStyles.UpdateCoordinateSystem(value);
 
-					EhSelfChanged(EventArgs.Empty);
-				}
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

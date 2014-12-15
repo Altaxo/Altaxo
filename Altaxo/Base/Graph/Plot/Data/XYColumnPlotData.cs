@@ -727,12 +727,19 @@ namespace Altaxo.Graph.Plot.Data
 		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
 		{
 			if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
+			{
+				_isCachedDataValid = false;
 				this.SetXBoundsFromTemplate(xBounds);
+			}
 
 			if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
+			{
+				_isCachedDataValid = false;
 				this.SetYBoundsFromTemplate(yBounds);
+			}
 
-			CalculateCachedData();
+			if(!_isCachedDataValid)
+				CalculateCachedData();
 		}
 
 		public void CalculateCachedData()

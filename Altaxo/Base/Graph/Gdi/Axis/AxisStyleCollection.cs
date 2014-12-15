@@ -42,21 +42,13 @@ namespace Altaxo.Graph.Gdi.Axis
 	/// </summary>
 	public class AxisStyleCollection
 		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		ICloneable,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode,
 		IEnumerable<AxisStyle>
 	{
 		private List<AxisStyle> _axisStyles;
 
 		private G2DCoordinateSystem _cachedCoordinateSystem;
-
-		[field: NonSerialized]
-		private event EventHandler _changed;
-
-		[NonSerialized]
-		private object _parent;
 
 		#region Serialization
 
@@ -152,7 +144,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					value.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(value.StyleID);
 
 				_axisStyles.Add(value);
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -259,30 +251,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				_axisStyles[i].PaintPostprocessing();
 		}
 
-		#region IChangedEventSource Members
-
-		public event EventHandler Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != _changed)
-				_changed(this, EventArgs.Empty);
-		}
-
-		private void EhChildChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion IChangedEventSource Members
-
 		#region ICloneable Members
 
 		public object Clone()
@@ -296,15 +264,13 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "AxisStyles"; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set");
+			}
 		}
 
 		#endregion IDocumentNode Members
@@ -326,14 +292,5 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		#endregion IEnumerable Members
-
-		#region IChildChangedEventSink Members
-
-		void Altaxo.Main.IChildChangedEventSink.EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion IChildChangedEventSink Members
 	}
 }

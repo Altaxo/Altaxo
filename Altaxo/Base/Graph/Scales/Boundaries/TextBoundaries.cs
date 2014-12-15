@@ -225,7 +225,8 @@ namespace Altaxo.Graph.Scales.Boundaries
 				data |= BoundariesChangedData.UpperBoundChanged;
 			}
 
-			_accumulatedEventData = new BoundariesChangedEventArgs(data);
+			if(0!=data)
+				_accumulatedEventData = new BoundariesChangedEventArgs(data);
 
 			base.OnResume();
 		}

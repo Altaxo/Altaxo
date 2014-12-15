@@ -30,12 +30,9 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Gdi
 {
 	public class GraphDocumentCollection :
-		Main.SuspendableDocumentNodeWithSingleAccumulatedData<GraphDocumentCollectionChangedEventArgs>,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IEnumerable<GraphDocument>,
-		Altaxo.Main.IDocumentNode,
-		Altaxo.Main.IChangedEventSource,
-		Altaxo.Main.IChildChangedEventSink,
 		Altaxo.Main.INamedObjectCollection
 	{
 		// Data
@@ -48,7 +45,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Fired when one or more graphs are added, deleted or renamed. Not fired when content in the graph has changed.
 		/// </summary>
-		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
+		public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
 
 		public GraphDocumentCollection(AltaxoDocument parent)
 		{
@@ -150,8 +147,7 @@ namespace Altaxo.Graph.Gdi
 			_graphsByName.Add(theGraph.Name, theGraph);
 			theGraph.ParentObject = this;
 			theGraph.NameChanged += EhChild_NameChanged;
-			this.EhSelfChanged(GraphDocumentCollectionChangedEventArgs.IfItemAdded);
-			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemAdded, theGraph, theGraph.Name);
+			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(theGraph));
 		}
 
 		public void Remove(GraphDocument theGraph)
@@ -165,11 +161,11 @@ namespace Altaxo.Graph.Gdi
 
 				if (object.ReferenceEquals(gr, theGraph))
 				{
+					var changedEventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(theGraph);
 					_graphsByName.Remove(theGraph.Name);
 					theGraph.ParentObject = null;
 					theGraph.NameChanged -= EhChild_NameChanged;
-					this.EhSelfChanged(GraphDocumentCollectionChangedEventArgs.IfItemRemoved);
-					OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theGraph, theGraph.Name);
+					this.EhSelfChanged(changedEventArgs);
 				}
 			}
 		}
@@ -185,8 +181,7 @@ namespace Altaxo.Graph.Gdi
 			}
 			_graphsByName.Remove(oldName);
 			_graphsByName[item.Name] = (GraphDocument)item;
-			this.EhSelfChanged(GraphDocumentCollectionChangedEventArgs.IfItemRenamed);
-			OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRenamed, item, oldName);
+			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
 		}
 
 		/// <summary>
@@ -232,19 +227,14 @@ namespace Altaxo.Graph.Gdi
 
 		#region Change event handling
 
-		protected override void AccumulateChangeData(object sender, EventArgs e)
+		protected override void OnChanged(EventArgs e)
 		{
-			if (_accumulatedEventData == null)
-				this._accumulatedEventData = GraphDocumentCollectionChangedEventArgs.Empty;
+			if (e is NamedObjectCollectionChangedEventArgs && null != CollectionChanged)
+			{
+				CollectionChanged(this, (NamedObjectCollectionChangedEventArgs)e);
+			}
 
-			if (e is GraphDocumentCollectionChangedEventArgs)
-				_accumulatedEventData.Merge((GraphDocumentCollectionChangedEventArgs)e);
-		}
-
-		protected virtual void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, Main.INameOwner item, string oldName)
-		{
-			if (this.CollectionChanged != null)
-				CollectionChanged(changeType, item, oldName, item.Name);
+			base.OnChanged(e);
 		}
 
 		#endregion Change event handling

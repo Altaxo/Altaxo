@@ -32,7 +32,7 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Used for notifying receivers about what columns in this collection have changed.
 	/// </summary>
-	public class DataColumnCollectionChangedEventArgs : System.EventArgs
+	public class DataColumnCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
 	{
 		protected int _minColChanged;
 		protected int _maxColChanged;
@@ -213,6 +213,11 @@ namespace Altaxo.Data
 		public bool HasRowCountDecreased
 		{
 			get { return _hasRowCountDecreased; }
+		}
+
+		public override void Add(Main.SelfAccumulateableEventArgs e)
+		{
+			Accumulate((DataColumnCollectionChangedEventArgs)e);
 		}
 	}
 }

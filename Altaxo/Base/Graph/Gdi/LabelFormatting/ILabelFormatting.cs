@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,25 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Scales;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-using Altaxo.Graph.Scales;
-using Altaxo.Data;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
-
-
 	/// <summary>
 	/// Procedures to format an item of the <see cref="Altaxo.Data.AltaxoVariant" /> class.
 	/// </summary>
-	public interface ILabelFormatting : ICloneable, Main.ICopyFrom
+	public interface ILabelFormatting : Main.IDocumentNode, Main.ICopyFrom
 	{
-
 		/// <summary>
 		/// Measures the item, i.e. returns the size of the item.
 		/// </summary>

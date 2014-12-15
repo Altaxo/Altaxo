@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,45 +19,35 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-
-using System;
-using System.Text;
-
-using System.Drawing;
+#endregion Copyright
 
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
+using System;
+using System.Drawing;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
 	[Serializable]
 	public class GridStyle
 		:
-		ICloneable,
-		Main.IChangedEventSource,
-		Main.IDocumentNode
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ICloneable
 	{
-		PenX _minorPen;
-		PenX _majorPen;
-		bool _showGrid;
+		private PenX _minorPen;
+		private PenX _majorPen;
+		private bool _showGrid;
 
-
-		bool _showMinor;
-		bool _showZeroOnly;
-
-		[field: NonSerialized]
-		event EventHandler _changed;
-		[NonSerialized]
-		object _parent;
-
+		private bool _showMinor;
+		private bool _showZeroOnly;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GridStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -71,7 +62,6 @@ namespace Altaxo.Graph.Gdi.Axis
 					if (s._showMinor)
 						info.AddValue("MinorPen", s._minorPen);
 				}
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -79,7 +69,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				GridStyle s = SDeserialize(o, info, parent);
 				return s;
 			}
-
 
 			protected virtual GridStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -98,7 +87,8 @@ namespace Altaxo.Graph.Gdi.Axis
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public GridStyle()
 		{
@@ -122,7 +112,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			this._showZeroOnly = from._showZeroOnly;
 		}
 
-
 		public PenX MajorPen
 		{
 			get
@@ -130,7 +119,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (null == _majorPen)
 					_majorPen = new PenX(NamedColors.Blue);
 				return _majorPen;
-
 			}
 			set
 			{
@@ -144,11 +132,10 @@ namespace Altaxo.Graph.Gdi.Axis
 					if (null != value)
 						value.Changed += new EventHandler(this.EhChildChanged);
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
-
 
 		public PenX MinorPen
 		{
@@ -171,7 +158,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					if (null != value)
 						value.Changed += new EventHandler(this.EhChildChanged);
 
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -184,7 +171,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showGrid)
 				{
 					_showGrid = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -197,7 +184,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showMinor)
 				{
 					_showMinor = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -210,7 +197,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (value != _showZeroOnly)
 				{
 					_showZeroOnly = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -219,7 +206,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			if (!_showGrid)
 				return;
-
 
 			Scale axis = layer.Scales[axisnumber].Scale;
 			TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
@@ -260,8 +246,6 @@ namespace Altaxo.Graph.Gdi.Axis
 					}
 				}
 
-
-
 				MajorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
 				ticks = ticking.GetMajorTicksNormal(axis);
 				for (int i = 0; i < ticks.Length; ++i)
@@ -276,8 +260,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-
-
 		#region ICloneable Members
 
 		public object Clone()
@@ -285,43 +267,19 @@ namespace Altaxo.Graph.Gdi.Axis
 			return new GridStyle(this);
 		}
 
-		#endregion
-
-		#region IChangedEventSource Members
-
-		void EhChildChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (null != _changed)
-				_changed(this, EventArgs.Empty);
-		}
-
-
-		public event EventHandler Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		#endregion
+		#endregion ICloneable Members
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "GridStyle"; }
+			set
+			{
+				throw new InvalidOperationException("Name cannot be set.");
+			}
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 	}
 }
