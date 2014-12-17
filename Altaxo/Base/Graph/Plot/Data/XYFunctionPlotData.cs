@@ -307,18 +307,15 @@ namespace Altaxo.Graph.Plot.Data
 	/// <para>Special serializable version for plotting purposes.</para>
 	/// </summary>
 	[Serializable]
-	public class PolynomialFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+	public class PolynomialFunction
+		:
+		Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
+		Altaxo.Calc.IScalarFunctionDD, ICloneable
 	{
 		/// <summary>
 		/// Coefficient array used to evaluate the polynomial.
 		/// </summary>
 		private double[] _coefficients;
-
-		/// <summary>
-		/// Event fired when the coefficients of the polynomial changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -387,7 +384,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (value != null)
 				{
 					_coefficients = (double[])value.Clone();
-					OnChanged();
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
 		}
@@ -457,21 +454,6 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion ICloneable Members
-
-		#region IChangedEventSource Members
-
-		/// <summary>
-		/// Fires the Changed event.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (Changed != null)
-			{
-				Changed(this, EventArgs.Empty);
-			}
-		}
-
-		#endregion IChangedEventSource Members
 	}
 
 	#endregion PolynomialFunction
@@ -483,7 +465,10 @@ namespace Altaxo.Graph.Plot.Data
 	/// <para>Special serializable version for plotting purposes.</para>
 	/// </summary>
 	[Serializable]
-	public class SquareRootFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+	public class SquareRootFunction
+		:
+		Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
+		Altaxo.Calc.IScalarFunctionDD, ICloneable
 	{
 		/// <summary>
 		/// Function from which to evaluate the square root.
@@ -574,7 +559,7 @@ namespace Altaxo.Graph.Plot.Data
 					else
 						_baseFunction = value;
 
-					OnChanged();
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
 		}
@@ -613,21 +598,6 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion ICloneable Members
-
-		#region IChangedEventSource Members
-
-		/// <summary>
-		/// Fires the Changed event.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (Changed != null)
-			{
-				Changed(this, EventArgs.Empty);
-			}
-		}
-
-		#endregion IChangedEventSource Members
 	}
 
 	#endregion SquareRootFunction
@@ -639,7 +609,10 @@ namespace Altaxo.Graph.Plot.Data
 	/// <para>Special serializable version for plotting purposes.</para>
 	/// </summary>
 	[Serializable]
-	public class ScaledSumFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+	public class ScaledSumFunction
+		:
+		Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
+		Altaxo.Calc.IScalarFunctionDD, ICloneable
 	{
 		/// <summary>
 		/// Coefficient array used to evaluate the polynomial.
@@ -763,7 +736,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (value != null)
 				{
 					_coefficients = (double[])value.Clone();
-					OnChanged();
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
 		}
@@ -808,21 +781,6 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion ICloneable Members
-
-		#region IChangedEventSource Members
-
-		/// <summary>
-		/// Fires the Changed event.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (Changed != null)
-			{
-				Changed(this, EventArgs.Empty);
-			}
-		}
-
-		#endregion IChangedEventSource Members
 	}
 
 	#endregion ScaledSumFunction
@@ -834,7 +792,10 @@ namespace Altaxo.Graph.Plot.Data
 	/// <para>Special serializable version for plotting purposes.</para>
 	/// </summary>
 	[Serializable]
-	public class ProductFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+	public class ProductFunction
+		:
+		Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
+		Altaxo.Calc.IScalarFunctionDD, ICloneable
 	{
 		/// <summary>
 		/// Coefficient array (the power).
@@ -842,12 +803,6 @@ namespace Altaxo.Graph.Plot.Data
 		private double[] _coefficients;
 
 		private Altaxo.Calc.IScalarFunctionDD[] _functions;
-
-		/// <summary>
-		/// Event fired when the coefficients of the polynomial changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -958,7 +913,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (value != null)
 				{
 					_coefficients = (double[])value.Clone();
-					OnChanged();
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
 		}
@@ -1015,21 +970,6 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion ICloneable Members
-
-		#region IChangedEventSource Members
-
-		/// <summary>
-		/// Fires the Changed event.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (Changed != null)
-			{
-				Changed(this, EventArgs.Empty);
-			}
-		}
-
-		#endregion IChangedEventSource Members
 	}
 
 	#endregion ProductFunction

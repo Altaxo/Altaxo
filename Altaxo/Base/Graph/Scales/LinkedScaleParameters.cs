@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,24 +29,27 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales
 {
-	public class LinkedScaleParameters : ICloneable, Main.IChangedEventSource
+	public class LinkedScaleParameters
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ICloneable
 	{
 		/// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
 		private double _orgA;
+
 		/// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
 		private double _orgB;
+
 		/// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
 		private double _endA;
+
 		/// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
 		private double _endB;
-
-		public event EventHandler Changed;
-
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScaleParameters), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -62,7 +67,6 @@ namespace Altaxo.Graph.Scales
 				return s;
 			}
 
-
 			protected virtual LinkedScaleParameters SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LinkedScaleParameters s = null != o ? (LinkedScaleParameters)o : new LinkedScaleParameters();
@@ -75,9 +79,8 @@ namespace Altaxo.Graph.Scales
 				return s;
 			}
 		}
-		#endregion
 
-
+		#endregion Serialization
 
 		public LinkedScaleParameters()
 		{
@@ -133,7 +136,6 @@ namespace Altaxo.Graph.Scales
 		/// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
 		public void SetTo(double orgA, double orgB, double endA, double endB)
 		{
-
 			if (
 				(orgA != this.OrgA) ||
 				(orgB != this.OrgB) ||
@@ -145,7 +147,7 @@ namespace Altaxo.Graph.Scales
 				this._endA = endA;
 				this._endB = endB;
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -157,12 +159,10 @@ namespace Altaxo.Graph.Scales
 				if (_orgA != value)
 				{
 					_orgA = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
-
-
 
 		public double OrgB
 		{
@@ -172,12 +172,10 @@ namespace Altaxo.Graph.Scales
 				if (_orgB != value)
 				{
 					_orgB = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
-
-
 
 		public double EndA
 		{
@@ -187,12 +185,10 @@ namespace Altaxo.Graph.Scales
 				if (_endA != value)
 				{
 					_endA = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
-
-
 
 		public double EndB
 		{
@@ -202,19 +198,9 @@ namespace Altaxo.Graph.Scales
 				if (_endB != value)
 				{
 					_endB = value;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
-
-		#region IChangedEventSource Members
-
-		protected void OnChanged()
-		{
-			if (Changed != null)
-				Changed(this, EventArgs.Empty);
-		}
-
-		#endregion
 	}
 }

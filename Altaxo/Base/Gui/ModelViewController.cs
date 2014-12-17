@@ -179,7 +179,7 @@ namespace Altaxo.Gui
 
 	public abstract class MVCANDControllerBase<TModel, TView> : MVCANControllerBase<TModel, TView>, IMVCANDController where TView : class
 	{
-		protected Altaxo.Main.SuspendableLeafObject _suppressDirtyEvent = new Altaxo.Main.SuspendableLeafObject();
+		protected Altaxo.Main.SuspendableObject _suppressDirtyEvent = new Altaxo.Main.SuspendableObject();
 
 		public event Action<IMVCANDController> MadeDirty;
 

@@ -118,6 +118,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 				s._rescaling = new NumericAxisRescaleConditions();
 				s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
+				s._rescaling.ParentObject = s;
 
 				return s;
 			}
@@ -170,6 +171,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 				// new in version 1
 				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
 
 				return s;
 			}
@@ -220,6 +222,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
 			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		public virtual void CopyFrom(LinearScale from)
@@ -243,6 +246,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
 			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		public override object Clone()

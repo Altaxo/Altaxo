@@ -34,8 +34,8 @@ namespace Altaxo.Main
 	[Serializable]
 	public class DocNodeProxy
 		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		System.ICloneable,
-		Main.IChangedEventSource,
 		System.Runtime.Serialization.ISerializable,
 		System.Runtime.Serialization.IDeserializationCallback
 	{
@@ -244,7 +244,7 @@ namespace Altaxo.Main
 
 			OnAfterSetDocNode();
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -331,7 +331,7 @@ namespace Altaxo.Main
 			}
 
 			if (shouldFireChangedEvent)
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -352,7 +352,7 @@ namespace Altaxo.Main
 				_docNodePath = null;
 			}
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -405,17 +405,5 @@ namespace Altaxo.Main
 		}
 
 		#endregion ICloneable Members
-
-		#region IChangedEventSource Members
-
-		public event EventHandler Changed;
-
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		#endregion IChangedEventSource Members
 	}
 }

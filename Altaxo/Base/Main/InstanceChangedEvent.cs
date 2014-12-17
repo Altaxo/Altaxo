@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,54 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Main
 {
+	public class InstanceChangedEventArgs : System.EventArgs
+	{
+		protected object _oldObject, _newObject;
 
-  public class InstanceChangedEventArgs<T> : System.EventArgs
-  {
-    protected T _oldObject, _newObject;
+		public InstanceChangedEventArgs(object oldObject, object newObject)
+		{
+			this._oldObject = oldObject;
+			this._newObject = newObject;
+		}
 
-    public InstanceChangedEventArgs(T oldObject, T newObject)
-    {
-      this._oldObject = oldObject;
-      this._newObject = newObject;
-    }
+		public object NewInstance
+		{
+			get { return this._newObject; }
+		}
 
-    public T NewInstance
-    {
-      get { return this._newObject; }
-    }
+		public object OldInstance
+		{
+			get { return this._oldObject; }
+		}
+	}
 
-    public T OldInstance
-    {
-      get { return this._oldObject; }
-    }
-  }
+	public class InstanceChangedEventArgs<T> : System.EventArgs
+	{
+		protected T _oldObject, _newObject;
 
-  public delegate void InstanceChangedEventHandler<T>(object sender, InstanceChangedEventArgs<T> e);
+		public InstanceChangedEventArgs(T oldObject, T newObject)
+		{
+			this._oldObject = oldObject;
+			this._newObject = newObject;
+		}
 
+		public T NewInstance
+		{
+			get { return this._newObject; }
+		}
+
+		public T OldInstance
+		{
+			get { return this._oldObject; }
+		}
+	}
+
+	public delegate void InstanceChangedEventHandler<T>(object sender, InstanceChangedEventArgs<T> e);
 }

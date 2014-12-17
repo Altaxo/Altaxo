@@ -37,7 +37,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Altaxo.Graph.Gdi.Plot.Groups;
 	using Altaxo.Main;
 
-	public class ErrorBarPlotStyle : IG2DPlotStyle
+	public class ErrorBarPlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle
 	{
 		private NumericColumnProxy _positiveErrorColumn;
 		private NumericColumnProxy _negativeErrorColumn;
@@ -88,12 +91,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// and the independent value where the bar is really drawn to.
 		/// </summary>
 		private double _cachedLogicalShiftOfIndependent;
-
-		[NonSerialized]
-		private object _parent;
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
@@ -213,21 +210,39 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public bool IndependentSymbolSize
 		{
 			get { return _independentSymbolSize; }
-			set { _independentSymbolSize = value; }
+			set
+			{
+				var oldValue = _independentSymbolSize;
+				_independentSymbolSize = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		/// <summary>Controls the length of the end bar.</summary>
 		public double SymbolSize
 		{
 			get { return _symbolSize; }
-			set { _symbolSize = value; }
+			set
+			{
+				var oldValue = _symbolSize;
+				_symbolSize = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		/// <summary>Controls the length of the end bar.</summary>
 		public int SkipFrequency
 		{
 			get { return _skipFreq; }
-			set { _skipFreq = value; }
+			set
+			{
+				var oldValue = _skipFreq;
+				_skipFreq = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -236,7 +251,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public bool SymbolGap
 		{
 			get { return _symbolGap; }
-			set { _symbolGap = value; }
+			set
+			{
+				var oldValue = _symbolGap;
+				_symbolGap = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -245,7 +266,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public bool IndependentColor
 		{
 			get { return _independentColor; }
-			set { _independentColor = value; }
+			set
+			{
+				var oldValue = _independentColor;
+				_independentColor = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -259,7 +286,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
+				var oldValue = _showEndBars;
 				_showEndBars = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -274,7 +304,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
+				var oldValue = _doNotShiftHorizontalPosition;
 				_doNotShiftHorizontalPosition = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -289,7 +322,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
+				var oldValue = _isHorizontalStyle;
 				_isHorizontalStyle = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -297,7 +333,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public PenX Pen
 		{
 			get { return _strokePen; }
-			set { _strokePen = value; }
+			set
+			{
+				var oldValue = _strokePen;
+				_strokePen = value;
+				if (!object.ReferenceEquals(oldValue, value))
+				{
+					_strokePen.ParentObject = this;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
 		}
 
 		/// <summary>
@@ -308,7 +353,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _positiveErrorColumn == null ? null : _positiveErrorColumn.Document; }
 			set
 			{
+				var oldValue = _positiveErrorColumn == null ? null : _positiveErrorColumn.Document;
 				_positiveErrorColumn = new NumericColumnProxy(value);
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -320,7 +368,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _negativeErrorColumn == null ? null : _negativeErrorColumn.Document; }
 			set
 			{
+				var oldValue = _negativeErrorColumn == null ? null : _negativeErrorColumn.Document;
 				_negativeErrorColumn = new NumericColumnProxy(value);
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -633,35 +684,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return bounds;
 		}
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
 		#endregion IG2DPlotStyle Members
-
-		#region IChangedEventSource Members
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (Changed != null)
-				Changed(this, EventArgs.Empty);
-		}
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion IChangedEventSource Members
 
 		#region IDocumentNode Members
 
-		public string Name
+		public override string Name
 		{
 			get { return "ErrorPlotStyle"; }
 		}

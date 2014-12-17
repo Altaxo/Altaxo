@@ -117,10 +117,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 					throw new ArgumentNullException("The line pen must not be null");
 
 				if (_linePen != null)
-					_linePen.Changed -= this.EhChildChanged;
+					_linePen.ParentObject = null;
 
 				_linePen = (PenX)value.Clone();
-				_linePen.Changed += this.EhChildChanged;
+				_linePen.ParentObject = this;
 				EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -134,12 +134,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			set
 			{
 				if (_outlinePen != null)
-					_outlinePen.Changed -= this.EhChildChanged;
+					_outlinePen.ParentObject = null;
 
 				_outlinePen = null == value ? null : (PenX)value.Clone();
 
 				if (_outlinePen != null)
-					_outlinePen.Changed += this.EhChildChanged;
+					_outlinePen.ParentObject = this;
 
 				EhSelfChanged(EventArgs.Empty);
 			}

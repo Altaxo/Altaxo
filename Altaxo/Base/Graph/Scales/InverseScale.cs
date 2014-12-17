@@ -91,9 +91,10 @@ namespace Altaxo.Graph.Scales
 				s._isEndExtendable = false;
 
 				s._rescaling = (InverseAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
+
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
-				// restore the event chain
-				s._dataBounds.ParentObject = s;
+				s._dataBounds.ParentObject = s; // restore the event chain
 
 				return s;
 			}
@@ -126,6 +127,7 @@ namespace Altaxo.Graph.Scales
 			this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
 
 			this._rescaling = null == from.Rescaling ? new InverseAxisRescaleConditions() : (InverseAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		public virtual void CopyFrom(InverseScale from)
@@ -144,6 +146,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds.ParentObject = this;
 
 			this._rescaling = null == from.Rescaling ? new InverseAxisRescaleConditions() : (InverseAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		public override object Clone()

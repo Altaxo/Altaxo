@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
+
 namespace Altaxo.Graph.Gdi.Background
 {
 	/// <summary>
 	/// Backs the item with a color filled rectangle.
 	/// </summary>
 	[Serializable]
-	public class FilledRectangle : IBackgroundStyle
+	public class FilledRectangle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IBackgroundStyle
 	{
 		protected BrushX _brush;
 
@@ -36,25 +42,25 @@ namespace Altaxo.Graph.Gdi.Background
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BackgroundColorStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FilledRectangle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				FilledRectangle s = (FilledRectangle)obj;
 				info.AddValue("Brush", s._brush);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
 				s._brush = (BrushX)info.GetValue("Brush", parent);
+				s._brush.ParentObject = s;
 
 				return s;
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		public FilledRectangle()
 		{
@@ -63,11 +69,13 @@ namespace Altaxo.Graph.Gdi.Background
 		public FilledRectangle(NamedColor c)
 		{
 			_brush = new BrushX(c);
+			_brush.ParentObject = this;
 		}
 
 		public FilledRectangle(BrushX brush)
 		{
 			_brush = (BrushX)brush.Clone();
+			_brush.ParentObject = this;
 		}
 
 		public FilledRectangle(FilledRectangle from)
@@ -87,8 +95,6 @@ namespace Altaxo.Graph.Gdi.Background
 		{
 			return new FilledRectangle(this);
 		}
-
-
 
 		#region IBackgroundStyle Members
 
@@ -122,8 +128,10 @@ namespace Altaxo.Graph.Gdi.Background
 			set
 			{
 				_brush = value == null ? null : value.Clone();
+				_brush.ParentObject = this;
 			}
 		}
-		#endregion
+
+		#endregion IBackgroundStyle Members
 	}
 }

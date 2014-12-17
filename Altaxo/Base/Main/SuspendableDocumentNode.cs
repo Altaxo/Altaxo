@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,54 +34,165 @@ namespace Altaxo.Main
 	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
 	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
-	public abstract class SuspendableDocumentNode : Main.SuspendableObject, Main.IDocumentNode, Main.IChangedEventSource, Main.IChildChangedEventSink
+	public abstract class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IChildChangedEventSink
 	{
-		/// <summary>The parent of this object.</summary>
-		protected object _parent;
+		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
+		private int _suspendLevel;
+
+		/// <summary>Counts the number of events during the suspend phase.</summary>
+		private int _eventCount;
+
+		/// <summary>
+		/// If the resume operation is currently in progress, this member is <c>1</c>. Otherwise, it is 0.
+		/// </summary>
+		private int _resumeInProgress;
 
 		/// <summary>Stores the suspend tokens of the suspended childs of this object.</summary>
 		protected HashSet<ISuspendToken> _suspendTokensOfChilds = new HashSet<ISuspendToken>();
 
-		/// <summary>Fired when something in the object has changed, and the object is not suspended.</summary>
-		[field: NonSerialized]
-		public event EventHandler Changed;
+		#region Call back functions by the suspendToken
 
 		/// <summary>
-		/// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg"/>.
-		/// The return value is false if there is more than one event arg accumulated. In this case the <paramref name="singleEventArg"/> is <c>null</c> on return, and the calling function should use <see cref="AccumulatedEventData"/> to
-		/// enumerate all accumulated event args.
+		/// Called when the suspend level has just gone from 0 to 1, i.e. the object was suspended.
 		/// </summary>
-		/// <param name="singleEventArg">The <see cref="EventArgs"/> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
-		/// <returns>True if there is zero or one event arg accumulated, otherwise <c>false</c>.</returns>
-		protected abstract bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg);
-
-		/// <summary>
-		/// Gets the accumulated event data.
-		/// </summary>
-		/// <value>
-		/// The accumulated event data.
-		/// </value>
-		protected abstract IEnumerable<EventArgs> AccumulatedEventData { get; }
-
-		/// <summary>
-		/// Clears the accumulated event data.
-		/// </summary>
-		protected abstract void AccumulatedEventData_Clear();
-
-		/// <summary>
-		/// Gets/sets the parent object. In derived classes, setting the parent might be forbidden and will throw an <see cref="InvalidOperationException"/>.
-		/// </summary>
-		public virtual object ParentObject
+		protected virtual void OnSuspended()
 		{
-			get
+		}
+
+		/// <summary>
+		/// Is called when the suspend level is still 1 (one), but is about to fall to zero, i.e. shortly before the call to <see cref="OnResume"/>. This function is not called before <see cref="OnResumeSilently"/>!
+		/// </summary>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent"/> function was called during the suspended state.</param>
+		protected virtual void OnAboutToBeResumed(int eventCount)
+		{
+		}
+
+		/// <summary>
+		/// Is called when the object is resumed, i.e. change notifications are allowed again. During the execution of this function, the <see cref="SuspendableObject.IsResumeInProgress"/> property will return <c>true</c> to indicate that the resume is currently in progress.
+		/// </summary>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="SuspendableObject.CountEvent"/> function was called during the suspend state.</param>
+		protected virtual void OnResume(int eventCount)
+		{
+			// resume the suspended childs
+			var suspendTokensOfChilds = _suspendTokensOfChilds;
+			if (null != suspendTokensOfChilds)
 			{
-				return _parent;
+				_suspendTokensOfChilds = null;
+				foreach (var obj in suspendTokensOfChilds)
+					obj.Dispose();
 			}
-			set
+
+			// send accumulated data if available and release it thereafter
+			EventArgs singleArg;
+			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg) && null != singleArg) // we have a single event arg accumulated
 			{
-				_parent = value;
+				if (null == singleArg) // no events during suspended state
+				{
+					// nothing to do
+				}
+				else // one (1) event during suspend state
+				{
+					AccumulatedEventData_Clear();
+
+					var parent = _parent as Main.IChildChangedEventSink;
+					if (null != parent)
+					{
+						parent.EhChildChanged(this, singleArg);
+					}
+					if (!IsSuspended)
+					{
+						OnChanged(singleArg); // Fire the changed event
+					}
+				}
+			}
+			else // there is more than one event arg accumulated
+			{
+				var accumulatedEvents = AccumulatedEventData.ToArray();
+				AccumulatedEventData_Clear();
+
+				var parent = _parent as Main.IChildChangedEventSink;
+				if (null != parent)
+				{
+					foreach (var eventArg in accumulatedEvents)
+						parent.EhChildChanged(this, eventArg);
+				}
+				if (!IsSuspended)
+				{
+					foreach (var eventArg in accumulatedEvents)
+						OnChanged(eventArg); // Fire the changed event
+				}
 			}
 		}
+
+		/// <summary>
+		/// Is called when the suspend level falls down from 1 to zero by a call to <see cref="ISuspendToken.ResumeSilently" />.
+		/// This implementation disarma the suspendTokens of the childs of this object, deletes any accumulated events, and does not send any change event to the parent or the listeners of the Change event.
+		/// </summary>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent" /> function was called during the suspended state.</param>
+		protected virtual void OnResumeSilently(int eventCount)
+		{
+			// resume the suspended childs
+			var suspendTokensOfChilds = _suspendTokensOfChilds;
+			if (null != suspendTokensOfChilds)
+			{
+				_suspendTokensOfChilds = null;
+				foreach (var obj in suspendTokensOfChilds)
+					obj.ResumeSilently();
+			}
+
+			AccumulatedEventData_Clear();
+		}
+
+		#endregion Call back functions by the suspendToken
+
+		#region Suspend state questions
+
+		/// <summary>
+		/// Suspend will increase the SuspendLevel.
+		/// </summary>
+		/// <returns>An object, which must be handed to the resume function to decrease the suspend level. Alternatively,
+		/// the object can be used in an using statement. In this case, the call to the Resume function is not neccessary.</returns>
+		public override ISuspendToken SuspendGetToken()
+		{
+			return new SuspendToken(this);
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is suspended.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is suspended; otherwise, <c>false</c>.
+		/// </value>
+		public override bool IsSuspended { get { return _suspendLevel != 0; } }
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is currently resuming the events.
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if resume is in progress; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsResumeInProgress { get { return _resumeInProgress > 0; } }
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is suspended or resume is currently in progress.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is suspended or resume is currently in progress; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsSuspendedOrResumeInProgress { get { return _resumeInProgress != 0 || _suspendLevel != 0; } }
+
+		/// <summary>
+		/// Counts the number of events during the suspend state. Every call to this function will increment the event counter by 1 (but only in the suspended state). The event counter will be reset to zero when the object is resumed.
+		/// </summary>
+		public void CountEvent()
+		{
+			if (_suspendLevel != 0)
+			{
+				_eventCount++;
+			}
+		}
+
+		#endregion Suspend state questions
 
 		#region Change event handling
 
@@ -89,13 +224,6 @@ namespace Altaxo.Main
 		{
 			return false;
 		}
-
-		/// <summary>
-		/// Accumulates the change data of the child (sometimes also the change data of this object itself).
-		/// </summary>
-		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
-		/// <param name="e">The change event args, that provide details of the change.</param>
-		protected abstract void AccumulateChangeData(object sender, EventArgs e);
 
 		/// <summary>
 		/// Used by childs of this object to inform us about a change in their state.
@@ -173,101 +301,144 @@ namespace Altaxo.Main
 			AccumulateChangeData(this, e);  // child is unable to accumulate change data, we have to to it by ourself
 		}
 
-		/// <summary>
-		/// Is called when the object is resumed, i.e. change notifications are allowed again. During the execution of this function, the <see cref="SuspendableObject.IsResumeInProgress"/> property will return <c>true</c> to indicate that the resume is currently in progress.
-		/// </summary>
-		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="SuspendableObject.CountEvent"/> function was called during the suspend state.</param>
-		protected override void OnResume(int eventCount)
-		{
-			// resume the suspended childs
-			var suspendTokensOfChilds = _suspendTokensOfChilds;
-			if (null != suspendTokensOfChilds)
-			{
-				_suspendTokensOfChilds = null;
-				foreach (var obj in suspendTokensOfChilds)
-					obj.Dispose();
-			}
-
-			// send accumulated data if available and release it thereafter
-			EventArgs singleArg;
-			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg) && null != singleArg) // we have a single event arg accumulated
-			{
-				if (null == singleArg) // no events during suspended state
-				{
-					// nothing to do
-				}
-				else // one (1) event during suspend state
-				{
-					AccumulatedEventData_Clear();
-
-					var parent = _parent as Main.IChildChangedEventSink;
-					if (null != parent)
-					{
-						parent.EhChildChanged(this, singleArg);
-					}
-					if (!IsSuspended)
-					{
-						OnChanged(singleArg); // Fire the changed event
-					}
-				}
-			}
-			else // there is more than one event arg accumulated
-			{
-				var accumulatedEvents = AccumulatedEventData.ToArray();
-				AccumulatedEventData_Clear();
-
-				var parent = _parent as Main.IChildChangedEventSink;
-				if (null != parent)
-				{
-					foreach (var eventArg in accumulatedEvents)
-						parent.EhChildChanged(this, eventArg);
-				}
-				if (!IsSuspended)
-				{
-					foreach (var eventArg in accumulatedEvents)
-						OnChanged(eventArg); // Fire the changed event
-				}
-			}
-		}
-
-		/// <summary>
-		/// Is called when the suspend level falls down from 1 to zero by a call to <see cref="ISuspendToken.ResumeSilently" />.
-		/// This implementation disarma the suspendTokens of the childs of this object, deletes any accumulated events, and does not send any change event to the parent or the listeners of the Change event.
-		/// </summary>
-		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="CountEvent" /> function was called during the suspended state.</param>
-		protected override void OnResumeSilently(int eventCount)
-		{
-			// resume the suspended childs
-			var suspendTokensOfChilds = _suspendTokensOfChilds;
-			if (null != suspendTokensOfChilds)
-			{
-				_suspendTokensOfChilds = null;
-				foreach (var obj in suspendTokensOfChilds)
-					obj.ResumeSilently();
-			}
-
-			AccumulatedEventData_Clear();
-		}
-
-		/// <summary>
-		/// Fires the change event with the EventArgs provided in the argument.
-		/// </summary>
-		protected virtual void OnChanged(EventArgs e)
-		{
-			var ev = Changed;
-			if (null != ev)
-				ev(this, e);
-		}
-
 		#endregion Change event handling
 
-		/// <summary>
-		/// Gets/sets the name of this document node. Depending on the type of node, setting the name might be forbidden, and will throw an <see cref="InvalidOperationException"/>.
-		/// </summary>
-		/// <value>
-		/// The name of this document node.
-		/// </value>
-		public abstract string Name { get; set; }
+		#region Inner class SuspendToken
+
+		private class SuspendToken : ISuspendToken
+		{
+			private SuspendableDocumentNode _parent;
+
+			internal SuspendToken(SuspendableDocumentNode parent)
+			{
+				var suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
+				_parent = parent;
+
+				if (1 == suspendLevel)
+				{
+					try
+					{
+						_parent.OnSuspended();
+					}
+					catch (Exception)
+					{
+						System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+						_parent = null;
+						throw;
+					}
+				}
+			}
+
+			~SuspendToken()
+			{
+				Dispose();
+			}
+
+			/// <summary>
+			/// Disarms this SuppressToken so that it can not raise the resume event anymore.
+			/// </summary>
+			public void ResumeSilently()
+			{
+				{
+					var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode>(ref _parent, null);
+					if (parent != null)
+					{
+						int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
+						if (0 == newLevel)
+						{
+							System.Threading.Interlocked.Increment(ref parent._resumeInProgress);
+							try
+							{
+								var count = parent._eventCount;
+								parent._eventCount = 0;
+								parent.OnResumeSilently(count);
+							}
+							finally
+							{
+								System.Threading.Interlocked.Decrement(ref parent._resumeInProgress);
+							}
+						}
+						else if (newLevel < 0)
+						{
+							throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+						}
+					}
+				}
+			}
+
+			public void Resume()
+			{
+				Dispose();
+			}
+
+			public void Resume(EventFiring eventFiring)
+			{
+				switch (eventFiring)
+				{
+					case EventFiring.Enabled:
+						Resume();
+						break;
+
+					case EventFiring.Suppressed:
+						ResumeSilently();
+						break;
+
+					default:
+						throw new NotImplementedException(string.Format("Unknown option: {0}", eventFiring));
+				}
+			}
+
+			#region IDisposable Members
+
+			public void Dispose()
+			{
+				var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode>(ref _parent, null);
+				if (parent != null)
+				{
+					Exception exceptionInAboutToBeResumed = null;
+					if (1 == parent._suspendLevel)
+					{
+						try
+						{
+							parent.OnAboutToBeResumed(parent._eventCount);
+						}
+						catch (Exception ex)
+						{
+							exceptionInAboutToBeResumed = ex;
+						}
+					}
+
+					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
+					if (0 == newLevel)
+					{
+						System.Threading.Interlocked.Increment(ref parent._resumeInProgress);
+						try
+						{
+							var count = parent._eventCount;
+							parent._eventCount = 0;
+							parent.OnResume(count);
+						}
+						finally
+						{
+							System.Threading.Interlocked.Decrement(ref parent._resumeInProgress);
+						}
+					}
+					else if (newLevel < 0)
+					{
+						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+					}
+
+					if (null != exceptionInAboutToBeResumed)
+						throw exceptionInAboutToBeResumed;
+				}
+			}
+
+			#endregion IDisposable Members
+		}
+
+		#endregion Inner class SuspendToken
 	}
 
 	/// <summary>
@@ -348,6 +519,20 @@ namespace Altaxo.Main
 					aedAsSelf.Add((SelfAccumulateableEventArgs)e);
 				}
 			}
+		}
+	}
+
+	/// <summary>
+	/// Implements a <see cref="SuspendableDocumentLeafNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
+	/// </summary>
+	public class SuspendableDocumentNodeWithEventArgs : SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
+	{
+		/// <summary>
+		/// Calls EhSelfChanged with EventArgs.Empty
+		/// </summary>
+		public virtual void EhSelfChanged()
+		{
+			EhSelfChanged(EventArgs.Empty);
 		}
 	}
 

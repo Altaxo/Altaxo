@@ -192,12 +192,12 @@ namespace Altaxo.Graph.Gdi.Axis
 					return;
 
 				if (_background != null)
-					_background.Changed -= EhChildChanged;
+					_background.ParentObject = null;
 
 				_background = value;
 
 				if (_background != null)
-					_background.Changed += EhChildChanged;
+					_background.ParentObject = this;
 
 				EhSelfChanged(EventArgs.Empty);
 			}

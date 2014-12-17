@@ -37,8 +37,6 @@ namespace Altaxo.Main.Properties
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IProjectItem,
 		IPropertyBagOwner,
-		Altaxo.Main.IDocumentNode,
-		Main.IEventIndicatedDisposable,
 		Main.INameOwner,
 		Main.ICopyFrom
 	{

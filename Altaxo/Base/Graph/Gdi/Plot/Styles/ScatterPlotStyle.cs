@@ -200,7 +200,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 	[SerializationSurrogate(0, typeof(ScatterPlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class ScatterPlotStyle : IG2DPlotStyle,
+	public class ScatterPlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle,
 		System.Runtime.Serialization.IDeserializationCallback
 	{
 		protected XYPlotScatterStyles.Shape _shape;
@@ -231,12 +234,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		[NonSerialized]
 		protected BrushX _cachedFillBrush;
-
-		[NonSerialized]
-		protected object _parent;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -457,7 +454,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._parent = from._parent;
 
 			if (Main.EventFiring.Enabled == eventFiring)
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		public ScatterPlotStyle(ScatterPlotStyle from)
@@ -507,7 +504,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected void CreateEventChain()
 		{
 			if (null != _pen)
-				_pen.Changed += new EventHandler(this.EhChildChanged);
+				_pen.ParentObject = this;
 		}
 
 		public XYPlotScatterStyles.Shape Shape
@@ -525,7 +522,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 					SetCachedValues();
 
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -540,7 +537,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					this._style = value;
 					SetCachedValues();
 
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -585,8 +582,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (value != null || XYPlotScatterStyles.Shape.NoSymbol == this._shape)
 				{
 					_pen = null == value ? null : (PenX)value.Clone();
-					_pen.Changed += new EventHandler(this.EhChildChanged);
-					OnChanged(); // Fire Changed event
+					_pen.ParentObject = this;
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -601,7 +598,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				SetCachedValues();
 
 				if (value != oldValue)
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 			}
 		}
 
@@ -616,7 +613,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool oldValue = _independentColor;
 				_independentColor = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -630,7 +627,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					_symbolSize = value;
 					_cachedPath = GetPath(this._shape, this._style, this._symbolSize);
 					_pen.Width = (float)(_symbolSize * _relativePenWidth);
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -648,7 +645,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				_relativePenWidth = value;
 				_pen.Width = (float)(_symbolSize * _relativePenWidth);
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -663,7 +660,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool oldValue = _independentSymbolSize;
 				_independentSymbolSize = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -675,7 +672,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (value != _skipFreq)
 				{
 					_skipFreq = value;
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -805,29 +802,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			return gp;
 		}
-
-		#region IChangedEventSource Members
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new EventArgs());
-		}
-
-		#endregion IChangedEventSource Members
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		#endregion IChildChangedEventSink Members
 
 		#region I2DPlotItem Members
 
@@ -1071,13 +1045,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "ScatterStyle"; }
 		}

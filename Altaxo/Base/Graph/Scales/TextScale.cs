@@ -111,6 +111,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds.ParentObject = this;
 
 			_rescaling = new NumericAxisRescaleConditions();
+			_rescaling.ParentObject = this;
 		}
 
 		public TextScale(TextScale from)
@@ -127,6 +128,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds.ParentObject = this;
 
 			_rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
+			_rescaling.ParentObject = this;
 
 			_cachedAxisOrg = from._cachedAxisOrg;
 			_cachedAxisEnd = from._cachedAxisEnd;
@@ -155,6 +157,7 @@ namespace Altaxo.Graph.Scales
 		protected void InternalSetRescaling(NumericAxisRescaleConditions rescaling)
 		{
 			this._rescaling = rescaling;
+			this._rescaling.ParentObject = this;
 		}
 
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)

@@ -34,7 +34,10 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Holds reference to bundles of one or multiple data columns from the same group of a <see cref="DataTable"/>. The bundles are identified by a string identifier.
 	/// </summary>
-	public class DataTableMultipleColumnProxy : Main.IChangedEventSource, Main.ICopyFrom
+	public class DataTableMultipleColumnProxy
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		Main.ICopyFrom
 	{
 		#region Inner classes
 
@@ -70,12 +73,6 @@ namespace Altaxo.Data
 		}
 
 		#endregion Inner classes
-
-		[NonSerialized]
-		protected object _parent;
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		/// <summary><c>True</c> if the data are inconsistent. To bring the data in a consistent state <see cref="Update"/> method must be called then.</summary>
 		protected bool _isDirty;
@@ -251,7 +248,7 @@ namespace Altaxo.Data
 				throw new ArgumentNullException("table");
 
 			_dataTable = new DataTableProxy(table);
-			_dataTable.Changed += this.EhColumnDataChangedEventHandler;
+			_dataTable.ParentObject = this;
 
 			_groupNumber = groupNumber;
 		}
@@ -276,7 +273,7 @@ namespace Altaxo.Data
 			_dataColumnBundles = new Dictionary<string, ColumnBundleInfo>();
 
 			_dataTable = new DataTableProxy(table);
-			_dataTable.Changed += this.EhColumnDataChangedEventHandler;
+			_dataTable.ParentObject = this;
 
 			_groupNumber = 0;
 
@@ -339,12 +336,12 @@ namespace Altaxo.Data
 		private void InternalSetDataTable(DataTableProxy proxy)
 		{
 			if (null != _dataTable)
-				_dataTable.Changed -= EhColumnDataChangedEventHandler;
+				_dataTable.ParentObject = null;
 
 			_dataTable = proxy ?? new DataTableProxy((DataTable)null);
 
 			if (null != _dataTable)
-				_dataTable.Changed += EhColumnDataChangedEventHandler;
+				_dataTable.ParentObject = this;
 		}
 
 		/// <summary>
@@ -358,7 +355,7 @@ namespace Altaxo.Data
 			foreach (var entry in _dataColumnBundles)
 			{
 				foreach (var proxy in entry.Value.DataColumns)
-					proxy.Changed -= EhColumnDataChangedEventHandler;
+					proxy.ParentObject = null;
 			}
 
 			_dataColumnBundles.Clear();
@@ -370,7 +367,7 @@ namespace Altaxo.Data
 		private void InternalClearDataColumns(ColumnBundleInfo bundle)
 		{
 			foreach (var proxy in bundle.DataColumns)
-				proxy.Changed -= EhColumnDataChangedEventHandler;
+				proxy.ParentObject = null;
 
 			bundle.DataColumns.Clear();
 		}
@@ -385,7 +382,7 @@ namespace Altaxo.Data
 			if (null != proxy)
 			{
 				info.DataColumns.Add(proxy);
-				proxy.Changed += EhColumnDataChangedEventHandler;
+				proxy.ParentObject = this;
 			}
 		}
 
@@ -396,7 +393,7 @@ namespace Altaxo.Data
 		/// <param name="idx">The index.</param>
 		private void InternalRemoveDataColumnAt(ColumnBundleInfo bundle, int idx)
 		{
-			bundle.DataColumns[idx].Changed -= EhColumnDataChangedEventHandler;
+			bundle.DataColumns[idx].ParentObject = null;
 			bundle.DataColumns.RemoveAt(idx);
 		}
 
@@ -424,7 +421,7 @@ namespace Altaxo.Data
 				foreach (var fromMember in fromB.DataColumns)
 				{
 					var clone = (ReadableColumnProxy)fromMember.Clone();
-					clone.Changed += this.EhColumnDataChangedEventHandler;
+					clone.ParentObject = this;
 					thisB.DataColumns.Add(clone);
 				}
 
@@ -447,7 +444,7 @@ namespace Altaxo.Data
 			foreach (var fromMember in fromList)
 			{
 				var clone = (ReadableColumnProxy)fromMember.Clone();
-				clone.Changed += this.EhColumnDataChangedEventHandler;
+				clone.ParentObject = this;
 				bundle.DataColumns.Add(clone);
 			}
 		}
@@ -455,14 +452,6 @@ namespace Altaxo.Data
 		#endregion Setters for event wired members
 
 		#region Properties
-
-		/// <summary>
-		/// Gets or sets the parent object.
-		/// </summary>
-		/// <value>
-		/// The parent object.
-		/// </value>
-		public object ParentObject { get { return _parent; } set { _parent = value; } }
 
 		/// <summary>
 		/// Gets or sets the underlying data table.
@@ -770,29 +759,6 @@ namespace Altaxo.Data
 		#endregion Properties
 
 		/// <summary>
-		/// Called when any of the data column proxies or the table proxies reports a change.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
-		{
-			_isDirty = true;
-			OnChanged();
-		}
-
-		/// <summary>
-		/// Called when anything inside this proxy has changed.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		/// <summary>
 		/// Removes all data columns, whose parent is not the data table <paramref name="table"/>, or whose column kind is not ColumnKind.V, or whose group number is not equal to <see cref="GroupNumber"/>.
 		/// </summary>
 		/// <param name="table">The table to compare the parents of the columns with.</param>
@@ -898,5 +864,15 @@ namespace Altaxo.Data
 		{
 			return GetAllColumnProxies().Where(p => p.Document != null).MaxOrDefault(p => p.Document is IDefinedCount ? ((IDefinedCount)p.Document).Count : 0, 0);
 		}
+
+		#region Change event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			_isDirty = true;
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Change event handling
 	}
 }

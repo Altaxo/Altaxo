@@ -35,7 +35,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Plot.Data;
 	using Plot.Groups;
 
-	public class FillToCurvePlotStyle : IG2DPlotStyle
+	public class FillToCurvePlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle
 	{
 		/// <summary>
 		/// Indicates whether the fill color is dependent (can be set by the ColorGroupStyle) or not.
@@ -63,12 +66,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[NonSerialized]
 		private Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
 
-		[NonSerialized]
-		protected Main.IDocumentNode _parentObject;
-
-		[NonSerialized]
-		protected Main.EventSuppressor _changeEventSuppressor;
-
 		#region Constructor
 
 		/// <summary>
@@ -77,21 +74,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="info">Deserialization info.</param>
 		protected FillToCurvePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
 			FillBrush = new BrushX(NamedColors.Aqua);
 		}
 
 		public FillToCurvePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
 			FillBrush = new BrushX(NamedColors.Aqua); // Exception: do not use one of the colors of the default plot color set. Instead, use a light color.
 		}
 
 		public FillToCurvePlotStyle(FillToCurvePlotStyle from)
 		{
-			_changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
 			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
 			CopyFrom(from, Main.EventFiring.Suppressed);
 		}
@@ -101,8 +95,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			var locker = _changeEventSuppressor.SuspendGetToken();
-			try
+			using (var suspendToken = SuspendGetToken())
 			{
 				this._independentFillColor = from._independentFillColor;
 				this.FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
@@ -113,11 +106,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._fillToPrevPlotItem = from._fillToPrevPlotItem;
 				this._fillToNextPlotItem = from._fillToNextPlotItem;
 
-				this._parentObject = from._parentObject;
-			}
-			finally
-			{
-				_changeEventSuppressor.Resume(ref locker, eventFiring);
+				this._parent = from._parent;
+
+				suspendToken.Resume(eventFiring);
 			}
 		}
 
@@ -233,7 +224,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _independentFillColor;
 				_independentFillColor = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -246,16 +237,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				if (null != _fillBrush)
-					_fillBrush.Changed -= EhChildChanged;
+					_fillBrush.ParentObject = null;
 
 				var oldValue = _fillBrush;
 				_fillBrush = value;
 
 				if (null != _fillBrush)
-					_fillBrush.Changed += EhChildChanged;
+					_fillBrush.ParentObject = this;
 
 				if (!object.ReferenceEquals(oldValue, value))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -270,7 +261,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _independentFrameColor;
 				_independentFrameColor = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -280,16 +271,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				if (null != _framePen)
-					_framePen.Changed -= EhChildChanged;
+					_framePen.ParentObject = null;
 
 				var oldValue = _framePen;
 				_framePen = value;
 
 				if (null != _framePen)
-					_framePen.Changed += EhChildChanged;
+					_framePen.ParentObject = this;
 
 				if (!object.ReferenceEquals(oldValue, value))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -304,7 +295,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _fillToPrevPlotItem;
 				_fillToPrevPlotItem = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -319,32 +310,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _fillToNextPlotItem;
 				_fillToNextPlotItem = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
 		#endregion Properties
-
-		#region Change event handling
-
-		protected void EhChangeEventResumed()
-		{
-			if (_parentObject is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)this._parentObject).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		protected void OnChanged()
-		{
-			if (_changeEventSuppressor.GetEnabledWithCounting())
-			{
-				EhChangeEventResumed();
-			}
-		}
-
-		#endregion Change event handling
 
 		#region ICloneable Members
 
@@ -360,32 +330,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion ICloneable Members
 
-		#region IChangedEventSource Members
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
-
-		#endregion IChangedEventSource Members
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		#endregion IChildChangedEventSink Members
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parentObject; }
-			set { _parentObject = (Main.IDocumentNode)value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return this.GetType().Name; }
 		}

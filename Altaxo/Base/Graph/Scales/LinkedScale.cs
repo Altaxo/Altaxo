@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Scales
 			_linkedScaleIndex = scaleNumber;
 			_linkedLayerIndex = linkedLayerIndex;
 			_linkParameters = new LinkedScaleParameters();
-			_linkParameters.Changed += EhLinkParametersChanged;
+			_linkParameters.ParentObject = this;
 
 			WrappedScale = scaleToWrap;
 			ScaleLinkedTo = scaleLinkedTo;
@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Scales
 			this._linkedScaleIndex = from._linkedScaleIndex;
 			this._linkedLayerIndex = from._linkedLayerIndex;
 			_linkParameters = (LinkedScaleParameters)from._linkParameters.Clone();
-			_linkParameters.Changed += EhLinkParametersChanged;
+			_linkParameters.ParentObject = this;
 
 			this.WrappedScale = from._scaleWrapped == null ? null : (Scale)from._scaleWrapped.Clone();
 			this.ScaleLinkedTo = from._scaleLinkedTo; // not cloning, the cloned scale is linked to the same scale
@@ -330,34 +330,6 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		private void EhLinkedScaleChanged(object sender, EventArgs e)
-		{
-			OnLinkPropertiesChanged();
-		}
-
-		private void EhLinkParametersChanged(object sender, EventArgs e)
-		{
-			OnLinkPropertiesChanged();
-		}
-
-		protected virtual void OnLinkPropertiesChanged()
-		{
-			// calculate the new bounds
-			if (null != _scaleLinkedTo)
-			{
-				AltaxoVariant org = _scaleLinkedTo.OrgAsVariant;
-				AltaxoVariant end = _scaleLinkedTo.EndAsVariant;
-
-				if (!IsStraightLink)
-				{
-					org = org * LinkOrgB + LinkOrgA;
-					end = end * LinkEndB + LinkEndA;
-				}
-
-				_scaleWrapped.SetScaleOrgEnd(org, end);
-			}
-		}
-
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
 		{
 			return _scaleWrapped.PhysicalVariantToNormal(x);
@@ -432,5 +404,40 @@ namespace Altaxo.Graph.Scales
 			}
 			return null;
 		}
+
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, _linkParameters))
+				OnLinkPropertiesChanged();
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		private void EhLinkedScaleChanged(object sender, EventArgs e)
+		{
+			OnLinkPropertiesChanged();
+		}
+
+		protected virtual void OnLinkPropertiesChanged()
+		{
+			// calculate the new bounds
+			if (null != _scaleLinkedTo)
+			{
+				AltaxoVariant org = _scaleLinkedTo.OrgAsVariant;
+				AltaxoVariant end = _scaleLinkedTo.EndAsVariant;
+
+				if (!IsStraightLink)
+				{
+					org = org * LinkOrgB + LinkOrgA;
+					end = end * LinkEndB + LinkEndA;
+				}
+
+				_scaleWrapped.SetScaleOrgEnd(org, end);
+			}
+		}
+
+		#endregion Changed event handling
 	}
 }

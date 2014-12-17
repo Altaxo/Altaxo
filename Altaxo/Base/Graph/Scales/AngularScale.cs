@@ -72,6 +72,7 @@ namespace Altaxo.Graph.Scales
 				AngularScale s = (AngularScale)o;
 
 				s._rescaling = (Rescaling.AngularRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
 				// set cached values is called by the enclosing function
 				return s;
 			}
@@ -84,7 +85,7 @@ namespace Altaxo.Graph.Scales
 			_cachedAxisSpan = 2 * Math.PI;
 			_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
 			_dataBounds = new Boundaries.DummyNumericalBoundaries();
-			_rescaling = new Rescaling.AngularRescaleConditions();
+			_rescaling = new Rescaling.AngularRescaleConditions() { ParentObject = this };
 			SetCachedValues();
 		}
 
@@ -94,6 +95,7 @@ namespace Altaxo.Graph.Scales
 			this._cachedAxisSpan = from._cachedAxisSpan;
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 			this._rescaling = (Rescaling.AngularRescaleConditions)from._rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		private void SetCachedValues()

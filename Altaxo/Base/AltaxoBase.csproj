@@ -359,12 +359,12 @@
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DController.cs" />
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
+    <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />
     <Compile Include="Main\IProjectItem.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNode.cs" />
     <Compile Include="Main\SuspendableDocumentNode.cs" />
-    <Compile Include="Main\SuspendableObjectBase.cs" />
-    <Compile Include="Main\SuspendableLeafObject.cs" />
+    <Compile Include="Main\SuspendableDocumentNodeBase.cs" />
     <Compile Include="Main\SuspendableObject.cs" />
     <Compile Include="Root\DisposableBase.cs" />
     <Compile Include="Main\IComManager.cs" />
@@ -902,7 +902,6 @@
     <Compile Include="Graph\Gdi\Axis\GridStyle.cs" />
     <Compile Include="Graph\Gdi\Background\BlackLine.cs" />
     <Compile Include="Graph\Gdi\Background\BlackOut.cs" />
-    <Compile Include="Graph\Gdi\Background\Circle.cs" />
     <Compile Include="Graph\Gdi\Background\DarkMarbel.cs" />
     <Compile Include="Graph\Gdi\Background\FilledRectangle.cs" />
     <Compile Include="Graph\Gdi\Background\IBackgroundStyle.cs" />
@@ -1155,7 +1154,6 @@
     <Compile Include="Gui\Worksheet\Viewing\IWorksheetController.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetController.cs" />
     <Compile Include="Main\DocumentInformation.cs" />
-    <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
     <Compile Include="Main\ProjectFolder.cs" />
     <Compile Include="Main\ProjectFolders.cs" />

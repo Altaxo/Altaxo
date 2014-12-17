@@ -51,8 +51,6 @@ namespace Altaxo.Graph.Gdi
 		IProjectItem,
 		System.ICloneable,
 		IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode,
 		Main.INameOwner,
 		Main.Properties.IPropertyBagOwner
 	{

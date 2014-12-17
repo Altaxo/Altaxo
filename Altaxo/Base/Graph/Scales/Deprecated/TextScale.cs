@@ -111,6 +111,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			_dataBounds.ParentObject = this;
 
 			_rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
+			_rescaling.ParentObject = this;
 
 			_cachedAxisOrg = from._cachedAxisOrg;
 			_cachedAxisEnd = from._cachedAxisEnd;
@@ -138,6 +139,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		protected void InternalSetRescaling(NumericAxisRescaleConditions rescaling)
 		{
 			this._rescaling = rescaling;
+			this._rescaling.ParentObject = this;
 		}
 
 		protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)

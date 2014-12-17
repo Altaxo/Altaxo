@@ -41,7 +41,10 @@ namespace Altaxo.Graph.Gdi
 	/// the PenHolder is holding a Pen object
 	/// </summary>
 	[Serializable]
-	public class PenX : ICloneable, IDisposable, ISerializable, IDeserializationCallback, Main.IChangedEventSource
+	public class PenX
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		ICloneable, IDisposable, ISerializable, IDeserializationCallback
 	{
 		protected PenX.Configured _configuredProperties; // ORed collection of the configured properties (i.e. non-standard properties)
 		protected PenType _penType; // the type of the pen
@@ -245,6 +248,8 @@ namespace Altaxo.Graph.Gdi
 			else
 				s._brush = new BrushX(NamedColors.Black);
 
+			s._brush.ParentObject = s;
+
 			if (0 != (cp & PenX.Configured.Color))
 				s._color = (NamedColor)info.GetValue("Color", typeof(Color));
 			else
@@ -323,7 +328,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			// wire the BrushHolder
 			if (null != this._brush)
-				_brush.Changed += new EventHandler(this.OnBrushChangedEventHandler);
+				_brush.ParentObject = this;
 		}
 
 		#endregion Clipboard serialization
@@ -394,6 +399,8 @@ namespace Altaxo.Graph.Gdi
 					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
 					s._brush = new BrushX(NamedColors.Black);
+
+				s._brush.ParentObject = s;
 
 				if (0 != (cp & PenX.Configured.Color))
 					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
@@ -542,6 +549,8 @@ namespace Altaxo.Graph.Gdi
 					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
 					s._brush = new BrushX(NamedColors.Black);
+
+				s._brush.ParentObject = s;
 
 				if (0 != (cp & PenX.Configured.Color))
 					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
@@ -693,6 +702,8 @@ namespace Altaxo.Graph.Gdi
 					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
 				else
 					s._brush = new BrushX(NamedColors.Black);
+
+				s._brush.ParentObject = s;
 
 				if (0 != (cp & PenX.Configured.Color))
 					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
@@ -1122,6 +1133,7 @@ namespace Altaxo.Graph.Gdi
 				_brush.Dispose();
 
 			_brush = bh;
+			_brush.ParentObject = this;
 		}
 
 		public PenType PenType
@@ -1142,7 +1154,7 @@ namespace Altaxo.Graph.Gdi
 
 					_SetPenVariable(null);
 
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1234,7 +1246,7 @@ namespace Altaxo.Graph.Gdi
 					_SetProp(Configured.Brush, true);
 				}
 				_SetPenVariable(null);
-				OnChanged(); // Fire the Changed event
+				EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 			}
 		}
 
@@ -1254,7 +1266,7 @@ namespace Altaxo.Graph.Gdi
 
 					_SetPenVariable(null);
 
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1267,7 +1279,7 @@ namespace Altaxo.Graph.Gdi
 				_SetProp(Configured.CompoundArray, null != value && value.Length > 0);
 				_compoundArray = (float[])value.Clone();
 				_SetPenVariable(null);
-				OnChanged(); // Fire the Changed event
+				EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 			}
 		}
 
@@ -1282,7 +1294,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					_SetProp(Configured.DashCap, DashCap.Flat != value);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1298,7 +1310,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					_SetProp(Configured.DashOffset, 0 != value);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1313,7 +1325,7 @@ namespace Altaxo.Graph.Gdi
 				if (!(_dashStyle == DashStyle.Custom && null == value))
 					_dashPattern = value;
 				_SetPenVariable(null);
-				OnChanged(); // Fire the Changed event
+				EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 			}
 		}
 
@@ -1331,7 +1343,7 @@ namespace Altaxo.Graph.Gdi
 
 					_SetProp(Configured.DashStyle, DashStyle.Solid != value);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1374,7 +1386,7 @@ namespace Altaxo.Graph.Gdi
 					_SetProp(Configured.DashStyle, DashStyle.Solid != value.KnownStyle);
 					_SetProp(Configured.DashPattern, null != value.CustomStyle && value.CustomStyle.Length > 0);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1396,7 +1408,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					_SetProp(Configured.EndCap, !_endCap.IsDefaultStyle);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1412,7 +1424,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					_SetProp(Configured.LineJoin, LineJoin.Miter != value);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1428,7 +1440,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					_SetProp(Configured.MiterLimit, 10 != value);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1451,7 +1463,7 @@ namespace Altaxo.Graph.Gdi
 					_SetProp(Configured.StartCap, !_startCap.IsDefaultStyle);
 					_SetPenVariable(null);
 
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1464,7 +1476,7 @@ namespace Altaxo.Graph.Gdi
 				_SetProp(Configured.Transform, null != value && !value.IsIdentity);
 				_transformation = value.Clone();
 				_SetPenVariable(null);
-				OnChanged(); // Fire the Changed event
+				EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 			}
 		}
 
@@ -1479,7 +1491,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					_SetProp(Configured.Width, 1 != value);
 					_SetPenVariable(null);
-					OnChanged(); // Fire the Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
@@ -1511,17 +1523,9 @@ namespace Altaxo.Graph.Gdi
 
 		#region IChangedEventSource Members
 
-		public event System.EventHandler Changed;
-
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, new System.EventArgs());
-		}
-
 		protected virtual void OnBrushChangedEventHandler(object sender, EventArgs e)
 		{
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		#endregion IChangedEventSource Members

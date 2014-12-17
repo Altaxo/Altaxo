@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -31,7 +33,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// Interface to calculate a color out of a relative value that is normally
 	/// between 0 and 1. Special colors should be used for values between 0, above 1, and for NaN.
 	/// </summary>
-	public interface IColorProvider : Main.IChangedEventSource, ICloneable, Main.ICopyFrom
+	public interface IColorProvider : Main.IDocumentNode, Main.IChangedEventSource, ICloneable, Main.ICopyFrom
 	{
 		/// <summary>
 		/// Calculates a color from the provided relative value.

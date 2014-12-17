@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,34 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
 using System.Runtime.Serialization;
+
 namespace Altaxo.Graph.Gdi.Background
 {
 	/// <summary>
 	/// Backs the item with a color filled rectangle.
 	/// </summary>
 	[Serializable]
-	public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
+	public class RectangleWithShadow
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IBackgroundStyle, IDeserializationCallback
 	{
-		protected BrushX _brush = new BrushX(NamedColors.White);
+		protected BrushX _brush;
 		protected double _shadowLength = 5;
 
 		[NonSerialized]
 		protected BrushX _cachedShadowBrush;
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.RectangleWithShadow", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -52,6 +57,7 @@ namespace Altaxo.Graph.Gdi.Background
 				info.AddValue("ShadowLength", s._shadowLength);
 				*/
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
@@ -64,15 +70,15 @@ namespace Altaxo.Graph.Gdi.Background
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.RectangleWithShadow", 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleWithShadow), 2)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				RectangleWithShadow s = (RectangleWithShadow)obj;
 				info.AddValue("Brush", s._brush);
 				info.AddValue("ShadowLength", s._shadowLength);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
@@ -83,8 +89,7 @@ namespace Altaxo.Graph.Gdi.Background
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		#region IDeserializationCallback Members
 
@@ -92,11 +97,11 @@ namespace Altaxo.Graph.Gdi.Background
 		{
 		}
 
-		#endregion
-
+		#endregion IDeserializationCallback Members
 
 		public RectangleWithShadow()
 		{
+			_brush = new BrushX(NamedColors.White) { ParentObject = this };
 		}
 
 		public RectangleWithShadow(NamedColor c)
@@ -136,12 +141,15 @@ namespace Altaxo.Graph.Gdi.Background
 				case BrushType.SolidBrush:
 					cachedShadowBrush = new BrushX(NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0));
 					break;
+
 				case BrushType.HatchBrush:
 					cachedShadowBrush = new BrushX(NamedColor.FromArgb(mainBrush.Color.Color.A, 0, 0, 0));
 					break;
+
 				case BrushType.TextureBrush:
 					cachedShadowBrush = new BrushX(NamedColors.Black);
 					break;
+
 				case BrushType.LinearGradientBrush:
 				case BrushType.PathGradientBrush:
 					cachedShadowBrush = (BrushX)mainBrush.Clone();
@@ -217,13 +225,11 @@ namespace Altaxo.Graph.Gdi.Background
 			set
 			{
 				_brush = value == null ? null : value.Clone();
+				_brush.ParentObject = this;
 				ResetCachedBrushes();
 			}
 		}
-		#endregion
 
-
-
-		
+		#endregion IBackgroundStyle Members
 	}
 }

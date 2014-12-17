@@ -38,7 +38,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Plot.Data;
 	using Plot.Groups;
 
-	public class LabelPlotStyle : IG2DPlotStyle,
+	public class LabelPlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle,
 		System.Runtime.Serialization.IDeserializationCallback
 	{
 		/// <summary>The font of the label.</summary>
@@ -74,12 +77,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		// cached values:
 		[NonSerialized]
 		protected System.Drawing.StringFormat _cachedStringFormat;
-
-		[NonSerialized]
-		protected object _parent;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		/// <summary>If this function is set, the label color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
@@ -491,7 +488,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		private void EhLabelColumnProxyChanged(object sender, EventArgs e)
 		{
-			this.OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		protected Altaxo.Data.ReadableColumnProxy LabelColumnProxy
@@ -512,7 +509,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 
 				if (!object.ReferenceEquals(null == _labelColumnProxy ? null : _labelColumnProxy.Document, null == oldValue ? null : oldValue.Document))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -525,7 +522,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				_labelColumnProxy.SetDocNode(value);
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -540,7 +537,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _font;
 				_font = value;
 				if (!value.Equals(oldValue))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -556,7 +553,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (newValue != oldValue)
 				{
 					_font = _font.GetFontWithNewSize(newValue);
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -573,7 +570,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_independentColor = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -591,7 +588,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (null != _brush)
 				{
-					_brush.Changed -= EhChildChanged;
+					_brush.ParentObject = null;
 				}
 
 				var oldValue = _brush;
@@ -599,11 +596,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (null != _brush)
 				{
-					_brush.Changed += EhChildChanged;
+					_brush.ParentObject = this;
 				}
 
 				if (!object.ReferenceEquals(oldValue, value))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -620,7 +617,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (!object.ReferenceEquals(value, oldValue))
 				{
 					this._backgroundStyle = value;
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -636,7 +633,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _backgroundColorLinkage;
 				_backgroundColorLinkage = value;
 				if (oldValue != value)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -650,7 +647,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._xOffset = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -665,7 +662,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._yOffset = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -680,7 +677,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._rotation = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -698,7 +695,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._cachedStringFormat.Alignment = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -713,7 +710,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._cachedStringFormat.LineAlignment = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -728,7 +725,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._attachedPlane = value;
 				if (value != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -896,29 +893,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return new LabelPlotStyle(this);
 		}
 
-		#region IChangedEventSource Members
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new EventArgs());
-		}
-
-		#endregion IChangedEventSource Members
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		#endregion IChildChangedEventSink Members
-
 		#region I2DPlotStyle Members
 
 		public bool IsColorProvider
@@ -1039,13 +1013,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "LabelStyle"; }
 		}

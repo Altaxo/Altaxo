@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,36 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
-
 	/// <summary>
 	/// Interpolates linearly between two colors by linearly interpolate the A, the R, the G and the B value of the two colors.
 	/// </summary>
 	public class ColorProviderAHSBGradient : ColorProviderBase
 	{
-		double _alpha0 = 1;
-		double _alpha1 = 1;
-		double _hue0 = 0;
-		double _hue1 = 1;
-		double _saturation0 = 1;
-		double _saturation1 = 1;
-		double _brightness0 = 1;
-		double _brightness1 = 1;
+		private double _alpha0 = 1;
+		private double _alpha1 = 1;
+		private double _hue0 = 0;
+		private double _hue1 = 1;
+		private double _saturation0 = 1;
+		private double _saturation1 = 1;
+		private double _brightness0 = 1;
+		private double _brightness1 = 1;
 
-		const double maxColorComponent = 255.999;
+		private const double maxColorComponent = 255.999;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderAHSBGradient), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -61,12 +63,10 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				info.AddValue("Saturation1", s._saturation1);
 				info.AddValue("Brightness0", s._brightness0);
 				info.AddValue("Brightness1", s._brightness1);
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (ColorProviderAHSBGradient)o : new ColorProviderAHSBGradient();
 				info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
 				s._alpha0 = info.GetDouble("Alpha0");
@@ -81,8 +81,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		public override bool CopyFrom(object obj)
 		{
@@ -107,7 +106,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return hasCopied;
 		}
 
-
 		public double Hue0
 		{
 			get
@@ -120,7 +118,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_hue0 != newValue)
 				{
 					_hue0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -137,7 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_hue1 != newValue)
 				{
 					_hue1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -154,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_saturation0 != newValue)
 				{
 					_saturation0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -171,7 +169,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_saturation1 != newValue)
 				{
 					_saturation1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -188,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_brightness0 != newValue)
 				{
 					_brightness0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -205,7 +203,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_brightness1 != newValue)
 				{
 					_brightness1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -222,7 +220,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_alpha0 != newValue)
 				{
 					_alpha0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -239,7 +237,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_alpha1 != newValue)
 				{
 					_alpha1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -252,7 +250,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <param name="sat">Saturation value (0..1).</param>
 		/// <param name="bright">Brightness value (0..1).</param>
 		/// <returns>The color that represents the input values. Note that this windows color returns different values for hue, saturation and brightness.</returns>
-		static Color FromAHSB(double alpha, double hue, double sat, double bright)
+		private static Color FromAHSB(double alpha, double hue, double sat, double bright)
 		{
 			double r, g, b;
 			hue = Math.IEEERemainder(hue * 6, 6);
@@ -272,26 +270,31 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 					g = relI;
 					b = 0;
 					break;
+
 				case 1:
 					r = relD;
 					g = 1;
 					b = 0;
 					break;
+
 				case 2:
 					r = 0;
 					g = 1;
 					b = relI;
 					break;
+
 				case 3:
 					r = 0;
 					g = relD;
 					b = 1;
 					break;
+
 				case 4:
 					r = relI;
 					g = 0;
 					b = 1;
 					break;
+
 				case 5:
 					r = 1;
 					g = 0;
@@ -317,8 +320,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			double dark = bright * (1 - sat);
 			double diff = bright * sat;
 
-
-
 			return Color.FromArgb
 				(
 						(int)Math.Floor(alpha * maxColorComponent),
@@ -326,11 +327,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 						(int)Math.Floor((dark + g * diff) * maxColorComponent),
 						(int)Math.Floor((dark + b * diff) * maxColorComponent)
 						);
-
 		}
-
-
-
 
 		/// <summary>
 		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
@@ -339,10 +336,8 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <returns>A color associated with the relative value.</returns>
 		protected override Color GetColorFrom0To1Continuously(double relVal)
 		{
-
 			double r0 = 1 - relVal;
 			double r1 = relVal;
-
 
 			return FromAHSB(
 				(r0 * _alpha0 + r1 * _alpha1) * (1 - Transparency),
@@ -358,5 +353,4 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return result;
 		}
 	}
-
 }

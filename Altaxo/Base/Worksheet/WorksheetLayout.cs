@@ -34,15 +34,10 @@ namespace Altaxo.Worksheet
 	/// </summary>
 	public class WorksheetLayout
 		:
-		Main.IDocumentNode,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		Main.IEventIndicatedDisposable
 	{
 		#region Member variables
-
-		/// <summary>
-		/// The parent node in the document hierarchy.
-		/// </summary>
-		protected object _documentParent;
 
 		/// <summary>
 		/// The unique identifier of this object.
@@ -438,23 +433,15 @@ namespace Altaxo.Worksheet
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get
-			{
-				return _documentParent;
-			}
-			set
-			{
-				_documentParent = value;
-			}
-		}
-
-		public string Name
+		public override string Name
 		{
 			get
 			{
 				return System.Xml.XmlConvert.ToString(_guid);
+			}
+			set
+			{
+				throw new InvalidOperationException("Name of this instance is based on a Guid and can therefore not be set.");
 			}
 		}
 

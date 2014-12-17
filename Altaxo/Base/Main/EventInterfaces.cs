@@ -42,58 +42,41 @@ namespace Altaxo.Main
 		void SetOrAccumulate(EventArgs item);
 	}
 
-	public class SuspendableObjectBase
+	/// <summary>
+	/// Designates in classes and function whether events are allowed to be fired.
+	/// </summary>
+	public enum EventFiring
 	{
-		#region Implementation of a set of accumulated event data
+		/// <summary>Events are allowed to be fired.</summary>
+		Enabled,
 
-		protected class SetOfEventData : Dictionary<EventArgs, EventArgs>, ISetOfEventData
-		{
-			/// <summary>
-			/// Puts the specified item in the collection, regardless whether it is already contained or not. If it is not already contained, it is added to the collection.
-			/// If it is already contained, and is of type <see cref="SelfAccumulateableEventArgs"/>, the <see cref="SelfAccumulateableEventArgs.Add"/> function is used to add the item to the already contained item.
-			/// </summary>
-			/// <param name="item">The <see cref="EventArgs"/> instance containing the event data.</param>
-			public void SetOrAccumulate(EventArgs item)
-			{
-				EventArgs containedItem;
-				if (base.TryGetValue(item, out containedItem))
-				{
-					var containedAsSelf = containedItem as SelfAccumulateableEventArgs;
-					if (null != containedAsSelf)
-						containedAsSelf.Add((SelfAccumulateableEventArgs)item);
-				}
-				else // not in the collection already
-				{
-					base.Add(item, item);
-				}
-			}
+		/// <summary>Event(s) should be suppressed.</summary>
+		Suppressed
+	}
 
-			public void Add(EventArgs item)
-			{
-				this.Add(item, item);
-			}
+	/// <summary>
+	/// Interface for a token that is used to suspend events. By creating such a token, the suspend level of the parent object is incremented by one.
+	/// If the token is disposed, or by a call to Resume, the suspend level of the object is decremented by one. If the suspend level
+	/// falls to zero, the events are enabled again.
+	/// </summary>
+	public interface ISuspendToken : IDisposable
+	{
+		/// <summary>
+		/// Disarms this SuspendToken and decrements the suspend level of the parent object. If the suspend level falls to zero during this call,
+		/// the resume function is <b>not</b> called. Instead, usually another function (e.g. ResumeSilently) is called on the parent object to indicate that the object should be resumed without notifying that the object has changed.
+		/// </summary>
+		void ResumeSilently();
 
-			public bool Contains(EventArgs item)
-			{
-				return base.ContainsKey(item);
-			}
+		/// <summary>
+		/// Decrements the suspend level of the parent object. If the suspend level falls to zero during this call,
+		/// the resume function is called. The object should then resume all child objects, and then indicate that it has changed to its parent and to any other listeners of the Change event.
+		/// </summary>
+		void Resume();
 
-			public void CopyTo(EventArgs[] array, int arrayIndex)
-			{
-				base.Values.CopyTo(array, arrayIndex);
-			}
-
-			public bool IsReadOnly
-			{
-				get { return false; }
-			}
-
-			public new IEnumerator<EventArgs> GetEnumerator()
-			{
-				return base.Values.GetEnumerator();
-			}
-		}
-
-		#endregion Implementation of a set of accumulated event data
+		/// <summary>
+		/// Either resumes the parent object of this token (using <see cref="Resume()"/>), or resumes silently (using <see cref="ResumeSilently"/>), depending on the provided argument.
+		/// </summary>
+		/// <param name="eventFiring">Determines whether <see cref="Resume()"/> is used, or <see cref="ResumeSilently"/>.</param>
+		void Resume(EventFiring eventFiring);
 	}
 }

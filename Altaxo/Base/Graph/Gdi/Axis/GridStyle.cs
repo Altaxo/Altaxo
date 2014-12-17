@@ -128,9 +128,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
 					if (null != oldvalue)
-						oldvalue.Changed -= new EventHandler(this.EhChildChanged);
+						oldvalue.ParentObject = null;
 					if (null != value)
-						value.Changed += new EventHandler(this.EhChildChanged);
+						value.ParentObject = this;
 
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -154,9 +154,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (!object.ReferenceEquals(value, oldvalue))
 				{
 					if (null != oldvalue)
-						oldvalue.Changed -= new EventHandler(this.EhChildChanged);
+						oldvalue.ParentObject = null;
 					if (null != value)
-						value.Changed += new EventHandler(this.EhChildChanged);
+						value.ParentObject = this;
 
 					EhSelfChanged(EventArgs.Empty);
 				}

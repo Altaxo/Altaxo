@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,36 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
-
 	/// <summary>
 	/// Interpolates linearly between two colors by linearly interpolate the A, the R, the G and the B value of the two colors.
 	/// </summary>
 	public class ColorProviderARGBGradient : ColorProviderBase
 	{
-		const double maxColorComponent = 255.999;
+		private const double maxColorComponent = 255.999;
 
-		double _alpha0 = 1;
-		double _alpha1 = 1;
-		double _red0 = 0;
-		double _red1 = 1;
-		double _green0 = 0;
-		double _green1 = 1;
-		double _blue0 = 0;
-		double _blue1 = 1;
+		private double _alpha0 = 1;
+		private double _alpha1 = 1;
+		private double _red0 = 0;
+		private double _red1 = 1;
+		private double _green0 = 0;
+		private double _green1 = 1;
+		private double _blue0 = 0;
+		private double _blue1 = 1;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderARGBGradient), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -65,7 +67,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (ColorProviderARGBGradient)o : new ColorProviderARGBGradient();
 				info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
 				s._alpha0 = info.GetDouble("Alpha0");
@@ -81,8 +82,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		public override bool CopyFrom(object obj)
 		{
@@ -107,7 +107,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return hasCopied;
 		}
 
-
 		public double Red0
 		{
 			get
@@ -120,7 +119,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_red0 != newValue)
 				{
 					_red0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -137,7 +136,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_red1 != newValue)
 				{
 					_red1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -154,7 +153,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_green0 != newValue)
 				{
 					_green0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -171,7 +170,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_green1 != newValue)
 				{
 					_green1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -188,7 +187,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_blue0 != newValue)
 				{
 					_blue0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -205,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_blue1 != newValue)
 				{
 					_blue1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -222,7 +221,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_alpha0 != newValue)
 				{
 					_alpha0 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -239,11 +238,10 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_alpha1 != newValue)
 				{
 					_alpha1 = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
-
 
 		public Color ColorAtR0
 		{
@@ -264,7 +262,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				_green0 = g;
 				_blue0 = b;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -287,10 +285,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				_green1 = g;
 				_blue1 = b;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
-
 
 		/// <summary>
 		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
@@ -299,7 +296,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <returns>A color associated with the relative value.</returns>
 		protected override Color GetColorFrom0To1Continuously(double relVal)
 		{
-
 			double r0 = 1 - relVal;
 			double r1 = relVal;
 
@@ -318,5 +314,4 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return result;
 		}
 	}
-
 }

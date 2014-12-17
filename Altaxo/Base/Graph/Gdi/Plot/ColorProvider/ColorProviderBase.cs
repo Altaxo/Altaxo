@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
@@ -34,7 +36,10 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 	/// Abstract class to calculate a color out of a relative value that is normally
 	/// between 0 and 1. Special colors are used here for values between 0, above 1, and for NaN.
 	/// </summary>
-	public abstract class ColorProviderBase : IColorProvider
+	public abstract class ColorProviderBase
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IColorProvider
 	{
 		/// <summary>The color used if the values are below the lower bound.</summary>
 		protected NamedColor _colorBelow;
@@ -53,18 +58,14 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// </summary>
 		protected int _colorSteps;
 
-		/// <summary>
-		/// Fired when some of the members changed.
-		/// </summary>
-		public event EventHandler Changed;
-
 		/// <summary>Cached Gdi color for <see cref="_colorBelow"/>.</summary>
 		protected Color _cachedGdiColorBelow;
+
 		/// <summary>Cached Gdi color for <see cref="_colorAbove"/>.</summary>
 		protected Color _cachedGdiColorAbove;
+
 		/// <summary>Cached Gdi color for <see cref="_colorInvalid"/>.</summary>
 		protected Color _cachedGdiColorInvalid;
-
 
 		public ColorProviderBase()
 		{
@@ -106,8 +107,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		}
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderBase), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -122,7 +124,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				ColorProviderBase s = (ColorProviderBase)o;
 
 				s._colorBelow = (NamedColor)info.GetValue("ColorBelow", parent);
@@ -141,9 +142,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
-		#endregion
-
-
+		#endregion Serialization
 
 		public abstract object Clone();
 
@@ -161,9 +160,8 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 				if (_colorBelow != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
-
 			}
 		}
 
@@ -182,9 +180,8 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 				if (_colorAbove != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
-
 			}
 		}
 
@@ -202,7 +199,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 				if (_colorInvalid != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -223,7 +220,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 					_alphaChannel = 255;
 
 				if (_alphaChannel != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -245,17 +242,9 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				_colorSteps = value;
 
 				if (value != oldValue)
-					OnChanged();
-
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
-
-		protected void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
 
 		public virtual Color GetOutOfBoundsColor(double relVal)
 		{
@@ -266,7 +255,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			else
 				return _cachedGdiColorInvalid;
 		}
-
 
 		/// <summary>
 		/// Calculates a color from the provided relative value.
@@ -288,7 +276,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
-
 		/// <summary>
 		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
 		/// </summary>
@@ -296,6 +283,4 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <returns>A color associated with the relative value.</returns>
 		protected abstract Color GetColorFrom0To1Continuously(double relVal);
 	}
-
-
 }

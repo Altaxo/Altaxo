@@ -32,11 +32,11 @@ namespace Altaxo.Main.Properties
 	/// <summary>
 	/// Default implementation of a property bag <see cref="IPropertyBag"/>.
 	/// </summary>
-	public class PropertyBag : IPropertyBag
+	public class PropertyBag
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPropertyBag
 	{
-		/// <summary>The parent of this bag.</summary>
-		protected object _parent;
-
 		/// <summary>
 		/// Dictionary that hold the properties. Key is the Guid of the property key (or any other string). Value is the property value.
 		/// </summary>
@@ -47,9 +47,6 @@ namespace Altaxo.Main.Properties
 		/// the propery is not serialized when storing the project.
 		/// </summary>
 		public const string TemporaryPropertyPrefixString = "tmp/";
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		#region Serialization
 
@@ -150,7 +147,7 @@ namespace Altaxo.Main.Properties
 						this._properties.Add(entry.Key, entry.Value);
 					}
 				}
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 				return true;
 			}
 			return false;
@@ -170,20 +167,7 @@ namespace Altaxo.Main.Properties
 			return new PropertyBag(this);
 		}
 
-		/// <summary>
-		/// Gets or sets the parent object.
-		/// </summary>
-		/// <value>
-		/// The parent object.
-		/// </value>
-		public object ParentObject
-		{
-			get { return _parent; }
-			set
-			{
-				_parent = value;
-			}
-		}
+	
 
 		/// <summary>
 		/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
@@ -285,7 +269,7 @@ namespace Altaxo.Main.Properties
 			if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(typeof(T), p.PropertyType))
 			{
 				_properties[p.GuidString] = value;
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 			else
 			{
@@ -304,7 +288,7 @@ namespace Altaxo.Main.Properties
 			var removed = _properties.Remove(p.GuidString);
 
 			if (removed)
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 
 			return removed;
 		}
@@ -366,7 +350,7 @@ namespace Altaxo.Main.Properties
 			_properties[propName] = value;
 
 			if (!(propName.StartsWith(TemporaryPropertyPrefixString)))
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -381,7 +365,7 @@ namespace Altaxo.Main.Properties
 			bool removed = _properties.Remove(propName);
 
 			if (removed && !(propName.StartsWith(TemporaryPropertyPrefixString)))
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 
 			return removed;
 		}
@@ -440,22 +424,7 @@ namespace Altaxo.Main.Properties
 			}
 
 			if (anythingChanged)
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
-
-		#region Change handling
-
-		protected virtual void OnChanged()
-		{
-			var p = _parent as Main.IChildChangedEventSink;
-			if (null != p)
-				p.EhChildChanged(this, EventArgs.Empty);
-
-			var ev = Changed;
-			if (null != ev)
-				ev(this, EventArgs.Empty);
-		}
-
-		#endregion Change handling
 	}
 }

@@ -36,11 +36,9 @@ namespace Altaxo.Data
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<DataColumnCollectionChangedEventArgs>,
 		IList<DataRow>,
 		System.Runtime.Serialization.IDeserializationCallback,
-		Altaxo.Main.IDocumentNode,
 		IDisposable,
 		ICloneable,
-		Main.INamedObjectCollection,
-		Main.IChildChangedEventSink
+		Main.INamedObjectCollection
 	{
 		// Types
 		//  public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration

@@ -32,9 +32,6 @@ namespace Altaxo.Main.Properties
 	public class ProjectFolderPropertyDocumentCollection :
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IEnumerable<ProjectFolderPropertyDocument>,
-		Altaxo.Main.IDocumentNode,
-		Altaxo.Main.IChangedEventSource,
-		Altaxo.Main.IChildChangedEventSink,
 		Altaxo.Main.INamedObjectCollection
 	{
 		// Data

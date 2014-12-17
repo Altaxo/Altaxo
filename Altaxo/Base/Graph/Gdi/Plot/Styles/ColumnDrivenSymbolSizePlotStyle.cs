@@ -44,7 +44,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// This plot style is non-visual, i.e. it has no visual equivalent,
 	/// since it is only intended to provide the symbol size to other plot styles.
 	/// </summary>
-	public class ColumnDrivenSymbolSizePlotStyle : IG2DPlotStyle
+	public class ColumnDrivenSymbolSizePlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle
 	{
 		#region Members
 
@@ -94,10 +97,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Number of steps of the scatter size between min and max. If this value is 0, then the scatter size is provided continuously.
 		/// </summary>
 		private int _numberOfSteps;
-
-		private object _parent;
-
-		public event EventHandler Changed;
 
 		#endregion Members
 
@@ -199,7 +198,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// fake a change of the data of the column in order to calculate the boundaries
 				EhDataColumnDataChanged(_cachedDataColumn, EventArgs.Empty);
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -307,7 +306,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					throw new ArgumentNullException("Scale");
 
 				InternalSetScale(value);
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -322,7 +321,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool changed = _symbolSizeAt0 != value;
 				_symbolSizeAt0 = value;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -337,7 +336,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool changed = _symbolSizeAt1 != value;
 				_symbolSizeAt1 = value;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -352,7 +351,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool changed = _symbolSizeBelow != value;
 				_symbolSizeBelow = value;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -367,7 +366,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool changed = _symbolSizeAbove != value;
 				_symbolSizeAbove = value;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -382,7 +381,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool changed = _symbolSizeInvalid != value;
 				_symbolSizeInvalid = value;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -397,7 +396,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool changed = _numberOfSteps != value;
 				_numberOfSteps = value;
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -467,34 +466,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return RectangleF.Empty;
 		}
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
 		public object Clone()
 		{
 			return new ColumnDrivenSymbolSizePlotStyle(this);
 		}
 
-		public string Name
+		public override string Name
 		{
 			get { return "ColumnDrivenSymbolSize"; }
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new EventArgs());
-		}
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
 		}
 
 		/// <summary>

@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Gdi
 	/// Class that holds the location, rotation, shear and scale of an graphical item.
 	/// </summary>
 	[Serializable]
-	public class LocationRotationShearxScaleTransformation2D
+	public class LocationRotationShearxScaleTransformation2D : Main.SuspendableDocumentLeafNodeWithEventArgs
 	{
 		private double _x;
 		private double _y;
@@ -42,9 +42,6 @@ namespace Altaxo.Graph.Gdi
 		private double _scaleX = 1;
 		private double _scaleY = 1;
 		private TransformationMatrix2D _transformation = new TransformationMatrix2D();
-
-		[field: NonSerialized]
-		public event EventHandler Changed;
 
 		/// <summary>
 		/// Translation (or location) of this transformation.
@@ -61,7 +58,7 @@ namespace Altaxo.Graph.Gdi
 				_x = value.X;
 				_y = value.Y;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -79,7 +76,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_x == value);
 				_x = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -97,7 +94,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_y == value);
 				_y = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -115,7 +112,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_rotationDeg == value);
 				_rotationDeg = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -134,7 +131,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_rotationDeg == value);
 				_rotationDeg = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -152,7 +149,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_shearX == value);
 				_shearX = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -171,7 +168,7 @@ namespace Altaxo.Graph.Gdi
 				_scaleX = value.X;
 				_scaleY = value.Y;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -189,7 +186,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_scaleX == value);
 				_scaleX = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -207,7 +204,7 @@ namespace Altaxo.Graph.Gdi
 				var chg = !(_scaleY == value);
 				_scaleY = value;
 				if (chg)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -252,7 +249,7 @@ namespace Altaxo.Graph.Gdi
 			_scaleX = scaleX;
 			_scaleY = scaleY;
 
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -281,7 +278,10 @@ namespace Altaxo.Graph.Gdi
 			if (null != scaleY)
 				_scaleY = (double)scaleY;
 
-			OnChanged(eventFiring);
+			_transformation.SetTranslationRotationShearxScale(_x, _y, _rotationDeg, _shearX, _scaleX, _scaleY);
+
+			if (eventFiring == Main.EventFiring.Enabled)
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -293,24 +293,10 @@ namespace Altaxo.Graph.Gdi
 			SetTranslationRotationShearxScale(transformation.X, transformation.Y, transformation.Rotation, transformation.Shear, transformation.ScaleX, transformation.ScaleY);
 		}
 
-		/// <summary>
-		/// Updates the transformation matrix and fires the <see cref="Changed"/> event.
-		/// </summary>
-		protected void OnChanged()
-		{
-			OnChanged(Main.EventFiring.Enabled);
-		}
-
-		/// <summary>
-		/// Updates the transformation matrix and fires the Changed event, if not suppressed intentionally.
-		/// </summary>
-		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
-		protected void OnChanged(Main.EventFiring eventFiring)
+		public override void EhSelfChanged()
 		{
 			_transformation.SetTranslationRotationShearxScale(_x, _y, _rotationDeg, _shearX, _scaleX, _scaleY);
-
-			if (Main.EventFiring.Enabled == eventFiring && null != Changed)
-				Changed(this, EventArgs.Empty);
+			base.EhSelfChanged();
 		}
 	}
 }

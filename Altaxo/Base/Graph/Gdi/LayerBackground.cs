@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -32,29 +34,29 @@ namespace Altaxo.Graph.Gdi
 
 	public class LayerBackground
 		:
-		ICloneable,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentNode
+		Main.SuspendableDocumentNodeWithEventArgs,
+		ICloneable
 	{
-		IBackgroundStyle _background;
-		double _leftPadding;
-		double _rightPadding;
-		double _topPadding;
-		double _bottomPadding;
+		private IBackgroundStyle _background;
+		private double _leftPadding;
+		private double _rightPadding;
+		private double _topPadding;
+		private double _bottomPadding;
 
 		[field: NonSerialized]
-		event EventHandler _changed;
+		private event EventHandler _changed;
 
 		[NonSerialized]
-		object _parent;
+		private object _parent;
 
-		void CopyFrom(LayerBackground from)
+		private void CopyFrom(LayerBackground from)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
 			this._background = null == from._background ? null : (IBackgroundStyle)from._background.Clone();
+			this._background.ParentObject = this;
+
 			this._leftPadding = from._leftPadding;
 			this._rightPadding = from._rightPadding;
 			this._topPadding = from._topPadding;
@@ -62,9 +64,11 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LayerBackground), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -75,100 +79,69 @@ namespace Altaxo.Graph.Gdi
 				info.AddValue("TopPadding", s._topPadding);
 				info.AddValue("RightPadding", s._rightPadding);
 				info.AddValue("BottomPadding", s._bottomPadding);
-
 			}
+
 			protected virtual LayerBackground SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LayerBackground s = (o == null ? new LayerBackground() : (LayerBackground)o);
 
 				s._background = (Background.IBackgroundStyle)info.GetValue("Background", s);
+				s._background.ParentObject = s;
+
 				s._leftPadding = info.GetDouble("LeftPadding");
 				s._topPadding = info.GetDouble("TopPadding");
 				s._rightPadding = info.GetDouble("RightPadding");
 				s._bottomPadding = info.GetDouble("BottomPadding");
-
 
 				return s;
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				LayerBackground s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
 
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public LayerBackground()
 		{
 		}
+
 		public LayerBackground(LayerBackground from)
 		{
 			CopyFrom(from);
 		}
+
 		public LayerBackground(IBackgroundStyle style)
 		{
 			_background = style;
 		}
+
 		public LayerBackground Clone()
 		{
 			return new LayerBackground(this);
 		}
+
 		object ICloneable.Clone()
 		{
 			return new LayerBackground(this);
 		}
 
-
-
 		public void Draw(Graphics g, RectangleF rect)
 		{
 		}
 
-		#region IChangedEventSource Members
-
-		public event EventHandler Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != _changed)
-				_changed(this, EventArgs.Empty);
-		}
-
-		#endregion
-
-		#region IChildChangedEventSink Members
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
-		}
-
-		#endregion
-
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return "LayerBackground"; }
 		}
 
-		#endregion
+		#endregion IDocumentNode Members
 	}
 }

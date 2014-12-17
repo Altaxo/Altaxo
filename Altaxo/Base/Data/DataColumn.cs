@@ -45,9 +45,7 @@ namespace Altaxo.Data
 		IWriteableColumn,
 		IDefinedCount,
 		IList<AltaxoVariant>,
-		ICloneable,
-		Altaxo.Main.IDocumentNode,
-		Altaxo.Main.IChangedEventSource
+		ICloneable
 	{
 		/// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>

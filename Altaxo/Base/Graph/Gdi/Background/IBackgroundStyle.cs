@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
@@ -28,7 +30,7 @@ namespace Altaxo.Graph.Gdi.Background
 	/// <summary>
 	/// Provides a background around a rectangular spaced area.
 	/// </summary>
-	public interface IBackgroundStyle : ICloneable
+	public interface IBackgroundStyle : ICloneable, Main.IDocumentNode, Main.IChangedEventSource
 	{
 		/// <summary>
 		/// Measures the outer size of the item.
@@ -37,7 +39,6 @@ namespace Altaxo.Graph.Gdi.Background
 		/// <param name="innerArea">Inner area of the item.</param>
 		/// <returns>The rectangle that encloses the item including the background.</returns>
 		RectangleD MeasureItem(Graphics g, RectangleD innerArea);
-
 
 		/// <summary>
 		/// Draws the background.

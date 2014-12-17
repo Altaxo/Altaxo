@@ -85,6 +85,7 @@ namespace Altaxo.Graph.Scales
 				s._log10End = (double)info.GetDouble("Log10End");
 				s._cachedEnd = Math.Pow(10, s._log10End);
 				s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
 
 				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", typeof(PositiveFiniteNumericalBoundaries));
 				s._dataBounds.ParentObject = s;
@@ -128,6 +129,7 @@ namespace Altaxo.Graph.Scales
 			this._cachedEnd = from._cachedEnd;
 
 			this._rescaling = null == from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		/// <summary>

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,24 +29,24 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
-	public class AngularRescaleConditions : Main.ICopyFrom, Altaxo.Main.IChangedEventSource
+	public class AngularRescaleConditions
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.ICopyFrom
 	{
-		public event EventHandler Changed;
-
 		/// <summary>Origin of the scale in degrees.</summary>
-		protected int _scaleOrigin; 
+		protected int _scaleOrigin;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRescaleConditions), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				AngularRescaleConditions s = (AngularRescaleConditions)obj;
 
 				info.AddValue("ScaleOrigin", s._scaleOrigin);
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -52,7 +54,6 @@ namespace Altaxo.Graph.Scales.Rescaling
 				AngularRescaleConditions s = SDeserialize(o, info, parent);
 				return s;
 			}
-
 
 			protected virtual AngularRescaleConditions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -63,7 +64,8 @@ namespace Altaxo.Graph.Scales.Rescaling
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public AngularRescaleConditions()
 		{
@@ -87,13 +89,10 @@ namespace Altaxo.Graph.Scales.Rescaling
 			return true;
 		}
 
-
 		public virtual object Clone()
 		{
 			return new AngularRescaleConditions(this);
 		}
-
-	
 
 		public int ScaleOrigin
 		{
@@ -106,9 +105,5 @@ namespace Altaxo.Graph.Scales.Rescaling
 				_scaleOrigin = value;
 			}
 		}
-
-
-	
-
-}
+	}
 }

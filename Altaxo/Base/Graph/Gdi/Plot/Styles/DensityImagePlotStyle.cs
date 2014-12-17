@@ -46,10 +46,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	[Serializable]
 	public class DensityImagePlotStyle
 		:
+		Main.SuspendableDocumentNodeWithEventArgs,
 		Main.ICopyFrom,
-		System.Runtime.Serialization.IDeserializationCallback,
-		Main.IChangedEventSource,
-		Main.IDocumentNode
+		System.Runtime.Serialization.IDeserializationCallback
 	{
 		[Serializable]
 		private enum CachedImageType { None, LinearEquidistant, Other };
@@ -99,12 +98,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		[NonSerialized]
 		private object _imageConditionMemento;
-
-		[NonSerialized]
-		protected object _parent;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -318,7 +311,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					_scale.Changed += EhScaleChanged;
 
 				if (!object.ReferenceEquals(oldValue, value))
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -331,13 +324,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					throw new ArgumentNullException("value");
 
 				if (null != _colorProvider)
-					_colorProvider.Changed -= EhColorProviderChanged;
+					_colorProvider.ParentObject = null;
 
 				var oldValue = _colorProvider;
 				_colorProvider = value;
 
 				if (null != _colorProvider)
-					_colorProvider.Changed += EhColorProviderChanged;
+					_colorProvider.ParentObject = this;
 
 				if (null != oldValue && !object.ReferenceEquals(oldValue, _colorProvider))
 					EhColorProviderChanged(_colorProvider, EventArgs.Empty);
@@ -354,7 +347,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (_clipToLayer != oldValue)
 				{
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -375,7 +368,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void EhDataChanged(object sender)
 		{
 			this._imageType = CachedImageType.None;
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -447,8 +440,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						break;
 				}
 			}
-
-
 
 			// and now draw the image
 			{
@@ -822,34 +813,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		private void EhColorProviderChanged(object sender, EventArgs e)
 		{
 			this._imageType = CachedImageType.None;
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		private void EhScaleChanged(object sender, EventArgs e)
 		{
 			this._imageType = CachedImageType.None;
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
-		#region IChangedEventSource Members
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-			if (null != Changed)
-				Changed(this, new EventArgs());
-		}
-
-		#endregion IChangedEventSource Members
-
-		public virtual object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
-		public virtual string Name
+		public override string Name
 		{
 			get
 			{

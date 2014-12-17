@@ -621,19 +621,6 @@ namespace Altaxo.Data
 		#region Suspend and resume
 
 		/// <summary>
-		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification (currently unused).</param>
-		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			if (e is TableDataSourceChangedEventArgs)
-				_accumulatedEventData.Add(e);
-			else
-				_accumulatedEventData.Add(EventArgs.Empty);
-		}
-
-		/// <summary>
 		/// Fires the change event with the EventArgs provided in the argument.
 		/// </summary>
 		/// <param name="e"></param>

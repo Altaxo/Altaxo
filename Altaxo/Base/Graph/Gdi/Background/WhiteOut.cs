@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,47 +19,47 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
+
 namespace Altaxo.Graph.Gdi.Background
 {
 	/// <summary>
 	/// Backs the item with a color filled rectangle.
 	/// </summary>
 	[Serializable]
-	public class WhiteOut : IBackgroundStyle
+	public class WhiteOut
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IBackgroundStyle
 	{
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.WhiteOut", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WhiteOut), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				WhiteOut s = (WhiteOut)obj;
-
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				WhiteOut s = null != o ? (WhiteOut)o : new WhiteOut();
-
 
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public WhiteOut()
 		{
 		}
-
-
 
 		public WhiteOut(WhiteOut from)
 		{
@@ -69,15 +70,12 @@ namespace Altaxo.Graph.Gdi.Background
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
-
 		}
 
 		public object Clone()
 		{
 			return new WhiteOut(this);
 		}
-
-
 
 		#region IBackgroundStyle Members
 
@@ -106,13 +104,9 @@ namespace Altaxo.Graph.Gdi.Background
 			}
 			set
 			{
-
 			}
 		}
-		#endregion
 
-
-	
+		#endregion IBackgroundStyle Members
 	}
 }
-

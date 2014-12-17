@@ -28,7 +28,10 @@ namespace Altaxo.Graph.Scales.Rescaling
   /// Summary description for AxisRescaleConditions.
   /// </summary>
   [Serializable]
-  public class DateTimeAxisRescaleConditions : Main.ICopyFrom, Altaxo.Main.IChangedEventSource
+  public class DateTimeAxisRescaleConditions 
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.ICopyFrom
   {
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
@@ -36,9 +39,6 @@ namespace Altaxo.Graph.Scales.Rescaling
     protected DateTime _org;
     protected DateTime _end;
     protected TimeSpan _span;
-
-    [field:NonSerialized]
-    public event EventHandler Changed;
 
     #region Serialization
 
@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       this._span = from._span;
 
       if(!bEqual)
-        OnChanged();
+        EhSelfChanged(EventArgs.Empty);
 
 			return true;
     }
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       _spanRescaling = spanRescaling;
       _span = span;
       Normalize(ref _orgRescaling, ref _endRescaling, ref _spanRescaling);
-      OnChanged();
+      EhSelfChanged(EventArgs.Empty);
     }
 
     /// <summary>
@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
       _spanRescaling = BoundaryRescaling.Auto;
 
-      OnChanged();
+      EhSelfChanged(EventArgs.Empty);
     }
 
     /// <summary>
@@ -225,7 +225,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       _orgRescaling = BoundaryRescaling.Auto;
       _endRescaling = BoundaryRescaling.Auto;
 
-      OnChanged();
+      EhSelfChanged(EventArgs.Empty);
     }
 
     /// <summary>
@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Scales.Rescaling
       _endRescaling = BoundaryRescaling.Auto;
       _spanRescaling = BoundaryRescaling.Auto;
 
-      OnChanged();
+      EhSelfChanged(EventArgs.Empty);
     }
 
     /// <summary>
@@ -328,11 +328,6 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
  
-    protected virtual void OnChanged()
-    {
-      if(Changed!=null)
-        Changed(this,EventArgs.Empty);
-
-    }
+ 
   }
 }

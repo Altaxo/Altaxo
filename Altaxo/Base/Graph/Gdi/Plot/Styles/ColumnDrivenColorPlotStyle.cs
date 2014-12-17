@@ -44,7 +44,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// This plot style is non-visual, i.e. it has no visual equivalent,
 	/// since it is only intended to provide the symbol size to other plot styles.
 	/// </summary>
-	public class ColumnDrivenColorPlotStyle : IG2DPlotStyle
+	public class ColumnDrivenColorPlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle
 	{
 		#region Members
 
@@ -79,10 +82,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>If true, the color is used to color the background, for instance of labels.</summary>
 		private bool _appliesToBackground;
 
-		private object _parent;
-
-		public event EventHandler Changed;
-
 		#endregion Members
 
 		/// <summary>
@@ -92,7 +91,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			InternalSetScale(new LinearScale());
 			InternalSetDataColumnProxy(new NumericColumnProxy(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
-			_colorProvider = new ColorProvider.VisibleLightSpectrum();
+			_colorProvider = new ColorProvider.VisibleLightSpectrum() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -126,6 +125,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				InternalSetDataColumnProxy(null == from._dataColumn ? null : (NumericColumnProxy)from._dataColumn.Clone());
 
 				_colorProvider = null == from._colorProvider ? null : (IColorProvider)from._colorProvider.Clone();
+				_colorProvider.ParentObject = this;
+
 				_parent = from._parent;
 
 				copied = true;
@@ -171,7 +172,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// fake a change of the data of the column in order to calculate the boundaries
 				EhDataColumnDataChanged(_cachedDataColumn, EventArgs.Empty);
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -279,7 +280,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					throw new ArgumentNullException("Scale");
 
 				InternalSetScale(value);
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -290,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				if (null != _colorProvider)
 				{
-					_colorProvider.Changed -= EhChildChanged;
+					_colorProvider.ParentObject = null;
 				}
 
 				bool changed = !object.ReferenceEquals(_colorProvider, value);
@@ -298,11 +299,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (null != _colorProvider)
 				{
-					_colorProvider.Changed += EhChildChanged;
+					_colorProvider.ParentObject = this;
 				}
 
 				if (changed)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -359,34 +360,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return RectangleF.Empty;
 		}
 
-		public object ParentObject
-		{
-			get { return _parent; }
-			set { _parent = value; }
-		}
-
 		public object Clone()
 		{
 			return new ColumnDrivenColorPlotStyle(this);
 		}
 
-		public string Name
+		public override string Name
 		{
 			get { return "ColumnDrivenColor"; }
-		}
-
-		protected virtual void OnChanged()
-		{
-			if (_parent is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new EventArgs());
-		}
-
-		public void EhChildChanged(object child, EventArgs e)
-		{
-			OnChanged();
+			set
+			{
+				base.Name = value;
+			}
 		}
 
 		/// <summary>

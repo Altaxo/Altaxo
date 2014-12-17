@@ -248,15 +248,15 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			if (wire)
 			{
-				_axisPen.Changed += new EventHandler(OnPenChangedEventHandler);
-				_majorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
-				_minorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+				_axisPen.ParentObject = this;
+				_majorTickPen.ParentObject = this;
+				_minorTickPen.ParentObject = this;
 			}
 			else
 			{
-				_axisPen.Changed -= new EventHandler(OnPenChangedEventHandler);
-				_majorTickPen.Changed -= new EventHandler(OnPenChangedEventHandler);
-				_minorTickPen.Changed -= new EventHandler(OnPenChangedEventHandler);
+				_axisPen.ParentObject = null;
+				_majorTickPen.ParentObject = null;
+				_minorTickPen.ParentObject = null;
 			}
 		}
 
@@ -412,9 +412,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (!object.ReferenceEquals(oldvalue, value))
 				{
 					if (null != oldvalue)
-						oldvalue.Changed -= OnPenChangedEventHandler;
+						oldvalue.ParentObject = null;
 					if (null != value)
-						value.Changed += OnPenChangedEventHandler;
+						value.ParentObject = this;
 
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -431,9 +431,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (!object.ReferenceEquals(oldvalue, value))
 				{
 					if (null != oldvalue)
-						oldvalue.Changed -= OnPenChangedEventHandler;
+						oldvalue.ParentObject = null;
 					if (null != value)
-						value.Changed += OnPenChangedEventHandler;
+						value.ParentObject = this;
 
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -450,9 +450,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (!object.ReferenceEquals(oldvalue, value))
 				{
 					if (null != oldvalue)
-						oldvalue.Changed -= OnPenChangedEventHandler;
+						oldvalue.ParentObject = null;
 					if (null != value)
-						value.Changed += OnPenChangedEventHandler;
+						value.ParentObject = this;
 
 					EhSelfChanged(EventArgs.Empty);
 				}

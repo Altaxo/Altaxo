@@ -35,7 +35,7 @@ namespace Altaxo.Data
 	/// Holds reference to a matrix-like arrangement of data from a <see cref="DataTable"/>. The matrix data consist of 2 or more <see cref="DataColumn"/>s and all or selected data rows.
 	/// Furthermore, a row header column and a column header column can deliver corresponding physical values for each matrix row and column, respectively.
 	/// </summary>
-	public class DataTableMatrixProxy : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
+	public class DataTableMatrixProxy : Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
 	{
 		#region Inner classes
 
@@ -364,7 +364,7 @@ namespace Altaxo.Data
 				throw new ArgumentNullException("table");
 
 			_dataTable = new DataTableProxy(table);
-			_dataTable.Changed += this.EhColumnDataChangedEventHandler;
+			_dataTable.ParentObject = this;
 
 			var converter = new DataTableToMatrixConverter(table)
 			{
@@ -383,10 +383,10 @@ namespace Altaxo.Data
 			_useAllAvailableDataRows = converter.AreAllAvailableRowsIncluded();
 
 			_rowHeaderColumn = new ReadableColumnProxy(converter.RowHeaderColumn);
-			_rowHeaderColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+			_rowHeaderColumn.ParentObject = this;
 
 			_columnHeaderColumn = new ReadableColumnProxy(converter.ColumnHeaderColumn);
-			_columnHeaderColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+			_columnHeaderColumn.ParentObject = this;
 
 			_dataColumns = new List<ReadableColumnProxy>();
 			_participatingDataColumns = new AscendingIntegerCollection(converter.GetParticipatingDataColumns());
@@ -395,7 +395,7 @@ namespace Altaxo.Data
 				_dataColumns.Add(new ReadableColumnProxy(table.DataColumns[_participatingDataColumns[i]]));
 
 				// set the event chain
-				_dataColumns[i].Changed += new EventHandler(EhColumnDataChangedEventHandler);
+				_dataColumns[i].ParentObject = this;
 			}
 
 			_participatingDataRows = new AscendingIntegerCollection(converter.GetParticipatingDataRows());
@@ -450,34 +450,34 @@ namespace Altaxo.Data
 		private void InternalSetDataTable(DataTableProxy proxy)
 		{
 			if (null != _dataTable)
-				_dataTable.Changed -= EhColumnDataChangedEventHandler;
+				_dataTable.ParentObject = null;
 
 			_dataTable = proxy ?? new DataTableProxy((DataTable)null);
 
 			if (null != _dataTable)
-				_dataTable.Changed += EhColumnDataChangedEventHandler;
+				_dataTable.ParentObject = this;
 		}
 
 		private void InternalSetRowHeaderColumn(ReadableColumnProxy proxy)
 		{
 			if (null != _rowHeaderColumn)
-				_rowHeaderColumn.Changed -= EhColumnDataChangedEventHandler;
+				_rowHeaderColumn.ParentObject = null;
 
 			_rowHeaderColumn = proxy ?? new ReadableColumnProxy((IReadableColumn)null); // always ensure to have a proxy != null
 
 			if (null != _rowHeaderColumn)
-				_rowHeaderColumn.Changed += EhColumnDataChangedEventHandler;
+				_rowHeaderColumn.ParentObject = this;
 		}
 
 		private void InternalSetColumnHeaderColumn(ReadableColumnProxy proxy)
 		{
 			if (null != _columnHeaderColumn)
-				_columnHeaderColumn.Changed -= EhColumnDataChangedEventHandler;
+				_columnHeaderColumn.ParentObject = null;
 
 			_columnHeaderColumn = proxy ?? new ReadableColumnProxy((IReadableColumn)null);
 
 			if (null != _columnHeaderColumn)
-				_columnHeaderColumn.Changed += EhColumnDataChangedEventHandler;
+				_columnHeaderColumn.ParentObject = this;
 		}
 
 		/// <summary>
@@ -488,7 +488,7 @@ namespace Altaxo.Data
 			if (null != _dataColumns)
 			{
 				foreach (var proxy in _dataColumns)
-					proxy.Changed -= EhColumnDataChangedEventHandler;
+					proxy.ParentObject = null;
 
 				_dataColumns.Clear();
 			}
@@ -503,7 +503,7 @@ namespace Altaxo.Data
 			if (null != proxy)
 			{
 				_dataColumns.Add(proxy);
-				proxy.Changed += EhColumnDataChangedEventHandler;
+				proxy.ParentObject = this;
 			}
 		}
 
@@ -513,7 +513,7 @@ namespace Altaxo.Data
 		/// <param name="idx">The index.</param>
 		private void InternalRemoveDataColumnAt(int idx)
 		{
-			_dataColumns[idx].Changed -= EhColumnDataChangedEventHandler;
+			_dataColumns[idx].ParentObject = null;
 			_dataColumns.RemoveAt(idx);
 		}
 
@@ -535,7 +535,7 @@ namespace Altaxo.Data
 			foreach (var fromMember in fromList)
 			{
 				var clone = (ReadableColumnProxy)fromMember.Clone();
-				clone.Changed += this.EhColumnDataChangedEventHandler;
+				clone.ParentObject = this;
 				_dataColumns.Add(clone);
 			}
 		}
@@ -770,17 +770,6 @@ namespace Altaxo.Data
 		}
 
 		#endregion Properties
-
-		/// <summary>
-		/// Called when any of the data column proxies or the table proxies reports a change.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		private void EhColumnDataChangedEventHandler(object sender, EventArgs e)
-		{
-			_isDirty = true;
-			EhSelfChanged(EventArgs.Empty);
-		}
 
 		/// <summary>
 		/// Removes all data columns, whose parent is not the data table <paramref name="table"/>, or whose column kind is not ColumnKind.V, or whose group number is not equal to <see cref="GroupNumber"/>.
@@ -1175,6 +1164,16 @@ namespace Altaxo.Data
 		}
 
 		#endregion Result functions
+
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			_isDirty = true;
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Changed event handling
 
 		#region Public helper functions
 

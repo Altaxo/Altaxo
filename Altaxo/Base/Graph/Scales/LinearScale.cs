@@ -86,10 +86,9 @@ namespace Altaxo.Graph.Scales
 				s._isEndExtendable = false;
 
 				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
 
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
-
-				// restore the event chain
 				s._dataBounds.ParentObject = s;
 
 				return s;
@@ -115,7 +114,9 @@ namespace Altaxo.Graph.Scales
 		{
 			_dataBounds = new FiniteNumericalBoundaries();
 			_dataBounds.ParentObject = this;
+
 			_rescaling = new NumericAxisRescaleConditions();
+			_rescaling.ParentObject = this;
 		}
 
 		/// <summary>
@@ -132,6 +133,7 @@ namespace Altaxo.Graph.Scales
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
 			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		public virtual void CopyFrom(LinearScale from)
@@ -150,6 +152,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds.ParentObject = this;
 
 			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		public override object Clone()

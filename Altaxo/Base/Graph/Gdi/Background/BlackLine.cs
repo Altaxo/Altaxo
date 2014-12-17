@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,44 +19,47 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
+
 namespace Altaxo.Graph.Gdi.Background
 {
 	/// <summary>
 	/// Backs the item with a color filled rectangle.
 	/// </summary>
 	[Serializable]
-	public class BlackLine : IBackgroundStyle
+	public class BlackLine
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IBackgroundStyle
 	{
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BlackLine", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackLine), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				BlackLine s = (BlackLine)obj;
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				BlackLine s = null != o ? (BlackLine)o : new BlackLine();
-
 
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public BlackLine()
 		{
 		}
-
-
 
 		public BlackLine(BlackLine from)
 		{
@@ -66,15 +70,12 @@ namespace Altaxo.Graph.Gdi.Background
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
-
 		}
 
 		public object Clone()
 		{
 			return new BlackLine(this);
 		}
-
-
 
 		#region IBackgroundStyle Members
 
@@ -103,12 +104,9 @@ namespace Altaxo.Graph.Gdi.Background
 			}
 			set
 			{
-
 			}
 		}
-		#endregion
 
-
-	
+		#endregion IBackgroundStyle Members
 	}
 }

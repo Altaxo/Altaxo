@@ -217,10 +217,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		private void EhPlotItemProxyDocumentInstanceChanged(object sender, object oldValue, object newValue)
+		private void EhPlotItemProxyDocumentInstanceChanged(object sender, Main.InstanceChangedEventArgs e)
 		{
-			var oldPlotItem = oldValue as DensityImagePlotItem;
-			var newPlotItem = newValue as DensityImagePlotItem;
+			var oldPlotItem = e.OldInstance as DensityImagePlotItem;
+			var newPlotItem = e.NewInstance as DensityImagePlotItem;
 
 			if (null != oldPlotItem)
 			{

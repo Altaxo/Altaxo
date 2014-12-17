@@ -34,7 +34,7 @@ namespace Altaxo.Main
 	/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="SuspendGetToken"/>. In this case all tokens
 	/// must be disposed before the <see cref="IsNotSuspended"/> is again <c>true</c> and the re-enabling action is fired.
 	/// </summary>
-	public class TemporaryDisabler : SuspendableLeafObject
+	public class TemporaryDisabler : SuspendableObject
 	{
 		/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
 		private Action _reenablingEventHandler;

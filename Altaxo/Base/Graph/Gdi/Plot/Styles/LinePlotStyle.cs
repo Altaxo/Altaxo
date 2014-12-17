@@ -99,7 +99,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// </summary>
 	[SerializationSurrogate(0, typeof(LinePlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class LinePlotStyle : IG2DPlotStyle,
+	public class LinePlotStyle
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IRoutedPropertyReceiver
 	{
@@ -155,12 +158,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		[NonSerialized]
 		protected FillPathOneRangeTemplate _cachedFillOneRange; // subroutine to get a fill path
-
-		[NonSerialized]
-		protected Main.IDocumentNode _parentObject;
-
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 
@@ -409,22 +406,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
-			this._useLineSymbolGap = from._useLineSymbolGap;
-			this._symbolGap = from._symbolGap;
-			this._ignoreMissingPoints = from._ignoreMissingPoints;
-			this._fillArea = from._fillArea;
-			this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
-			this._fillDirection = null == from._fillDirection ? null : from._fillDirection.Clone();
-			this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
-			this._independentColor = from._independentColor;
-			this._fillColorLinkage = from._fillColorLinkage;
-			this._connectCircular = from._connectCircular;
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
+				this._useLineSymbolGap = from._useLineSymbolGap;
+				this._symbolGap = from._symbolGap;
+				this._ignoreMissingPoints = from._ignoreMissingPoints;
+				this._fillArea = from._fillArea;
+				this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
+				this._fillDirection = null == from._fillDirection ? null : from._fillDirection.Clone();
+				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
+				this._independentColor = from._independentColor;
+				this._fillColorLinkage = from._fillColorLinkage;
+				this._connectCircular = from._connectCircular;
 
-			this._parentObject = from._parentObject;
+				this._parent = from._parent;
 
-			if (Main.EventFiring.Enabled == eventFiring)
-				OnChanged();
+				suspendToken.Resume(eventFiring);
+			}
 		}
 
 		public LinePlotStyle(LinePlotStyle from)
@@ -441,10 +440,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected virtual void CreateEventChain()
 		{
 			if (null != _penHolder)
-				_penHolder.Changed += new EventHandler(this.EhChildChanged);
+				_penHolder.ParentObject = this;
 
 			if (null != _fillBrush)
-				_fillBrush.Changed += new EventHandler(this.EhChildChanged);
+				_fillBrush.ParentObject = this;
 		}
 
 		#endregion Construction and copying
@@ -511,7 +510,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						_cachedFillOneRange = StepVertCenterConnection_FillOneRange;
 						break;
 				} // end switch
-				OnChanged(); // Fire Changed event
+				EhSelfChanged(EventArgs.Empty); // Fire Changed event
 			}
 		}
 
@@ -526,7 +525,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool oldValue = _useLineSymbolGap;
 				_useLineSymbolGap = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -541,7 +540,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool oldValue = _independentColor;
 				_independentColor = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -556,7 +555,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _fillColorLinkage;
 				_fillColorLinkage = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -571,7 +570,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool oldValue = _connectCircular;
 				_connectCircular = value;
 				if (value != oldValue)
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -591,7 +590,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			int next = step + (int)template;
 			this.LinePen.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next, len - 1);
 
-			OnChanged(); // Fire Changed event
+			EhSelfChanged(EventArgs.Empty); // Fire Changed event
 		}
 
 		public PenX LinePen
@@ -609,7 +608,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (true == value && null == this._fillBrush)
 					this._fillBrush = new BrushX(NamedColors.White);
 
-				OnChanged(); // Fire Changed event
+				EhSelfChanged(EventArgs.Empty); // Fire Changed event
 			}
 		}
 
@@ -622,7 +621,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_fillDirection = value;
 				if (oldvalue != value)
 				{
-					OnChanged(); // Fire Changed event
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -636,8 +635,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null != value)
 				{
 					this._fillBrush = (BrushX)value.Clone();
-					this._fillBrush.Changed += new EventHandler(this.EhChildChanged);
-					OnChanged(); // Fire Changed event
+					this._fillBrush.ParentObject = this;
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 				else
 					throw new ArgumentNullException("FillBrush", "FillBrush must not be set to null, instead set FillArea to false");
@@ -1741,25 +1740,6 @@ out int lastIndex)
 
 		#endregion Segment3Connection
 
-		#region IChangedEventSource Members
-
-		protected virtual void OnChanged()
-		{
-			if (_parentObject is Main.IChildChangedEventSink)
-				((Main.IChildChangedEventSink)_parentObject).EhChildChanged(this, EventArgs.Empty);
-
-			if (null != Changed)
-				Changed(this, new EventArgs());
-		}
-
-		public virtual void EhChildChanged(object child, EventArgs e)
-		{
-			if (null != Changed)
-				Changed(this, e);
-		}
-
-		#endregion IChangedEventSource Members
-
 		public bool IsColorProvider
 		{
 			get { return !this._independentColor; }
@@ -1840,13 +1820,7 @@ out int lastIndex)
 
 		#region IDocumentNode Members
 
-		public object ParentObject
-		{
-			get { return _parentObject; }
-			set { _parentObject = (Main.IDocumentNode)value; }
-		}
-
-		public string Name
+		public override string Name
 		{
 			get { return this.GetType().Name; }
 		}
@@ -1872,7 +1846,7 @@ out int lastIndex)
 					{
 						var prop = (RoutedSetterProperty<double>)property;
 						this._penHolder.Width = (float)prop.Value;
-						OnChanged();
+						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
 			}

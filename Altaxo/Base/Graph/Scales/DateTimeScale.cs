@@ -145,6 +145,7 @@ namespace Altaxo.Graph.Scales
 		protected void InternalSetRescaling(DateTimeAxisRescaleConditions rescaling)
 		{
 			this._rescaling = rescaling;
+			this._rescaling.ParentObject = this;
 		}
 
 		/// <summary>

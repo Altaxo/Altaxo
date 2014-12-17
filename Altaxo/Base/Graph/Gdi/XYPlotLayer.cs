@@ -68,11 +68,11 @@ namespace Altaxo.Graph.Gdi
 
 		/// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
 		[NonSerialized]
-		private Main.SuspendableLeafObject _plotAssociationXBoundariesChanged_EventSuspender = new Main.SuspendableLeafObject();
+		private Main.SuspendableObject _plotAssociationXBoundariesChanged_EventSuspender = new Main.SuspendableObject();
 
 		/// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
 		[NonSerialized]
-		private Main.SuspendableLeafObject _plotAssociationYBoundariesChanged_EventSuspender = new Main.SuspendableLeafObject();
+		private Main.SuspendableObject _plotAssociationYBoundariesChanged_EventSuspender = new Main.SuspendableObject();
 
 		/// <summary>
 		/// Partial list of all <see cref="PlaceHolder"/> instances in <see cref="HostLayer.GraphObjects"/>.
@@ -852,20 +852,18 @@ namespace Altaxo.Graph.Gdi
 				if (null == value)
 					throw new ArgumentNullException();
 
-				GridPlaneCollection oldvalue = _gridPlanes;
+				if (object.ReferenceEquals(_gridPlanes, value))
+					return;
+
+				if (null != _gridPlanes)
+					_gridPlanes.ParentObject = null;
+
 				_gridPlanes = value;
 
-				if (null != value)
+				if (null != _gridPlanes)
 					value.ParentObject = this;
 
-				if (!object.ReferenceEquals(value, oldvalue))
-				{
-					if (null != oldvalue)
-						oldvalue.Changed -= EhChildChanged;
-
-					if (null != value)
-						value.Changed += EhChildChanged;
-				}
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1720,12 +1718,8 @@ namespace Altaxo.Graph.Gdi
 
 		#region IGraphicShape placeholder for items in XYPlotLayer
 
-		private abstract class PlaceHolder : IGraphicBase
+		private abstract class PlaceHolder : Main.SuspendableDocumentLeafNodeWithEventArgs, IGraphicBase
 		{
-			public event EventHandler Changed;
-
-			public object ParentObject { get; set; }
-
 			/// <summary>
 			/// Determines whether this graphical object is compatible with the parent specified in the argument.
 			/// </summary>
@@ -1764,11 +1758,6 @@ namespace Altaxo.Graph.Gdi
 				set
 				{
 				}
-			}
-
-			public string Name
-			{
-				get { return this.GetType().Name; }
 			}
 
 			public virtual bool CopyFrom(object obj)

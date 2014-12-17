@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
-
 	/// <summary>
 	/// This color provider provides the colors of the visible light spectrum in the wavelength
 	/// range between 350 nm and 780 nm.
@@ -37,6 +38,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 	{
 		/// <summary>Minimum wavelength of the light in nm which can be shown as color.</summary>
 		public static readonly int MinVisibleWavelength_nm = 350;
+
 		/// <summary>Maximum wavelength of the light in nm which can be shown as color.</summary>
 		public static readonly int MaxVisibleWavelength_nm = 780;
 
@@ -52,12 +54,12 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		/// <summary>Gamma value for colorization.</summary>
 		private double _gamma = 1;
 
-		const double maxColorComponent = 255.999;
-
+		private const double maxColorComponent = 255.999;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VisibleLightSpectrum), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -69,7 +71,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (VisibleLightSpectrum)o : new VisibleLightSpectrum();
 				info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
 				s._gamma = info.GetDouble("Gramma");
@@ -78,8 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		/// <summary>
 		/// Default constructor. The maximum intensity and the gamma value are set to their default values.
@@ -120,7 +120,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return result;
 		}
 
-
 		public double Gamma
 		{
 			get
@@ -133,7 +132,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_gamma != newValue)
 				{
 					_gamma = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -150,7 +149,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				if (_brightness != newValue)
 				{
 					_brightness = newValue;
-					OnChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -223,8 +222,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				Blue = 0.0;
 			}
 
-
-
 			if (Wavelength >= 350 && Wavelength < 420)
 			{
 				Factor = 0.3 + 0.7 * (Wavelength - 350d) / (420d - 350d);
@@ -260,7 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 			else
 			{
-				return (int)Math.Round(255* brightness * Math.Pow(Color * Factor, Gamma));
+				return (int)Math.Round(255 * brightness * Math.Pow(Color * Factor, Gamma));
 			}
 		}
 
@@ -272,7 +269,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		{
 			return new VisibleLightSpectrum(this);
 		}
-
 
 		/// <summary>
 		/// Gets the color in dependence of a relative value ranging from 0..1. The instance members

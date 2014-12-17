@@ -160,7 +160,10 @@ namespace Altaxo.Serialization.Ascii
 		{
 			base.OnResume(eventCount);
 
-			UpdateWatching();
+			// UpdateWatching should only be called if something concerning the watch (Times etc.) has changed during the suspend phase
+			// Otherwise it will cause endless loops because UpdateWatching triggers immediatly an EhUpdateByTimerQueue event, which triggers an UpdateDataSource event, which leads to another Suspend and then Resume, which calls OnResume(). So the loop is closed.
+			if (null == _triggerBasedUpdate)
+				UpdateWatching(); // Compromise - we update only if the watch is off
 		}
 
 		public void FillData(DataTable destinationTable)
@@ -373,7 +376,12 @@ namespace Altaxo.Serialization.Ascii
 		public void EhUpdateByTimerQueue()
 		{
 			if (null != _parent)
-				EhChildChanged(this, TableDataSourceChangedEventArgs.Empty);
+			{
+				if (!IsSuspended) // no events during the suspend phase
+				{
+					EhChildChanged(this, TableDataSourceChangedEventArgs.Empty);
+				}
+			}
 			else
 				SwitchOffWatching();
 		}
