@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Common
 		string DescriptionText { get; set; }
 
 		/// <summary>Event fired when one of the child controls is leaved and another entered.</summary>
-		event InstanceChangedEventHandler<object> ChildControlChanged;
+		event EventHandler<InstanceChangedEventArgs> ChildControlChanged;
 	}
 
 	#endregion Interfaces
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Common
 		protected bool _horizontalLayout;
 
 		/// <summary>Event fired when one of the child controls is leaved.</summary>
-		public event InstanceChangedEventHandler<object> ChildControlChanged;
+		public event EventHandler<InstanceChangedEventArgs> ChildControlChanged;
 
 		protected string _descriptionText = string.Empty;
 
@@ -171,14 +171,14 @@ namespace Altaxo.Gui.Common
 		protected virtual void EhView_ChildControlEntered(object sender, EventArgs e)
 		{
 			if (ChildControlChanged != null)
-				ChildControlChanged(sender, new InstanceChangedEventArgs<object>(_lastActiveChild, sender));
+				ChildControlChanged(sender, new InstanceChangedEventArgs(_lastActiveChild, sender));
 			_lastActiveChild = sender;
 		}
 
 		protected virtual void EhView_ChildControlValidated(object sender, EventArgs e)
 		{
 			if (ChildControlChanged != null)
-				ChildControlChanged(sender, new InstanceChangedEventArgs<object>(sender, null));
+				ChildControlChanged(sender, new InstanceChangedEventArgs(sender, null));
 			_lastActiveChild = null; // because now this was the last message from the child control
 		}
 

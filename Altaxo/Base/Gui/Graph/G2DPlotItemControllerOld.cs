@@ -399,7 +399,7 @@ namespace Altaxo.Gui.Graph
 			base.SetElements(false);
 		}
 
-		protected override void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
+		protected override void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
 		{
 			// first: test if this is the view of the additional style
 			if (_additionalPlotStyleController != null && object.ReferenceEquals(_additionalPlotStyleController.ViewObject, e.OldInstance))

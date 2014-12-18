@@ -660,7 +660,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Get / sets the parent object of this table.
 		/// </summary>
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get
 			{
@@ -1380,7 +1380,7 @@ namespace Altaxo.Data
 		/// Gets the parent data table of a child object.
 		/// </summary>
 		/// <param name="child">The child object for which the parent table should be found.</param>
-		public static Altaxo.Data.DataTable GetParentDataTableOf(Main.IDocumentNode child)
+		public static Altaxo.Data.DataTable GetParentDataTableOf(Main.IDocumentLeafNode child)
 		{
 			if (child == null)
 				return null;

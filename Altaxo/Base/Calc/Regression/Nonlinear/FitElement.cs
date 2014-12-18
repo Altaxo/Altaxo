@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
-using Altaxo.Data;
 using Altaxo.Collections;
+using Altaxo.Data;
+using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -31,44 +33,43 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// Holds the fit function together with the data sources for the independent and
 	/// dependent variables.
 	/// </summary>
-	public class FitElement : ICloneable
+	public class FitElement
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		ICloneable
 	{
 		/// <summary>Fitting function. Can be null if no fitting function was actually chosen.</summary>
-		IFitFunction _fitFunction;
+		private IFitFunction _fitFunction;
 
 		/// <summary>Holds the range of rows of the data source that are used for the fitting procedure.</summary>
-		ContiguousNonNegativeIntegerRange _rangeOfRows;
+		private ContiguousNonNegativeIntegerRange _rangeOfRows;
 
 		/// <summary>Array of columns that are used as data source for the independent variables.</summary>
-		NumericColumnProxy[] _independentVariables;
+		private NumericColumnProxy[] _independentVariables;
 
 		/// <summary>Array of columns that are used as data source for the dependent variables.</summary>
-		NumericColumnProxy[] _dependentVariables;
+		private NumericColumnProxy[] _dependentVariables;
 
 		/// <summary>Holds for each dependent variable the kind of error evaluation (i.e. the kind of weighing of the difference between current dependent values and the calculated value of the fitting function)</summary>
-		IVarianceScaling[] _errorEvaluation;
+		private IVarianceScaling[] _errorEvaluation;
 
 		/// <summary>Array of the current parameter names. The length of this array should be equal to that of <see cref="P:IFitFunction.NumberOfParameters"/>. If an element of this array is null, the parameter name
 		/// of the fit function is used. Otherwise, this value overrides the original parameter name of the fit function.</summary>
-		string[] _parameterNames = new string[0];
+		private string[] _parameterNames = new string[0];
 
 		/// <summary></summary>
-		string _parameterNameStart = string.Empty;
-
-		/// <summary>Occurs when anything of this instance has changed.</summary>
-		public event EventHandler Changed;
-
+		private string _parameterNameStart = string.Empty;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				FitElement s = (FitElement)obj;
 
-				s.InternalCheckAndCorrectArraySize(true,false); // make sure the fit function has not changed unnoticed
+				s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
 
 				info.AddValue("FitFunction", s._fitFunction);
 				info.AddValue("NumberOfRows", s._rangeOfRows.Count);
@@ -94,15 +95,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int arraycount = info.OpenArray();
 				s._independentVariables = new NumericColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
+				{
 					s._independentVariables[i] = (NumericColumnProxy)info.GetValue(s);
+					s._independentVariables[i].ParentObject = s;
+				}
 				info.CloseArray(arraycount);
 
 				arraycount = info.OpenArray();
 				s._dependentVariables = new NumericColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
+				{
 					s._dependentVariables[i] = (NumericColumnProxy)info.GetValue(s);
+					s._dependentVariables[i].ParentObject = s;
+				}
 				info.CloseArray(arraycount);
-
 
 				arraycount = info.OpenArray();
 				s._errorEvaluation = new IVarianceScaling[arraycount];
@@ -117,17 +123,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 				s._parameterNameStart = info.GetString("ParameterNameStart");
 
-
 				// now some afterwork
 				if (s.InternalCheckAndCorrectArraySize(false, false))
 					Current.Console.WriteLine("Error: Fitelement array size mismatch");
-
 
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public FitElement()
 		{
@@ -171,7 +175,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			_parameterNames = (string[])from._parameterNames.Clone();
 			_parameterNameStart = from._parameterNameStart;
-
 		}
 
 		public FitElement(INumericColumn xColumn, INumericColumn yColumn, int start, int count)
@@ -186,7 +189,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_errorEvaluation[0] = new ConstantVarianceScaling();
 
 			_rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(start, count);
-
 		}
 
 		/// <summary>
@@ -199,17 +201,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </returns>
 		public string ParameterName(int i)
 		{
-				if (null != _fitFunction)
-				{
-					if (null != _parameterNames[i])
-						return _parameterNames[i];
-					else
-						return _parameterNameStart + _fitFunction.ParameterName(i);
-				}
+			if (null != _fitFunction)
+			{
+				if (null != _parameterNames[i])
+					return _parameterNames[i];
 				else
-				{
-					return null;
-				}
+					return _parameterNameStart + _fitFunction.ParameterName(i);
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -219,7 +221,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="i">Index of the parameter.</param>
 		public void SetParameterName(string value, int i)
 		{
-
 			if (value == null)
 				throw new ArgumentNullException("value", "Parameter name must not be null");
 			if (value.Length == 0)
@@ -229,7 +230,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_parameterNames[i] = value;
 
 			if (value != oldValue)
-				this.OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -240,7 +241,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public void SetRowRange(int firstIndex, int count)
 		{
 			this._rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(firstIndex, count);
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -250,7 +251,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public void SetRowRange(ContiguousNonNegativeIntegerRange range)
 		{
 			this._rangeOfRows = range;
-			OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -263,7 +264,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 		/// <summary>
-		/// Returns the ith independent variable column. Can return <c>null</c> if the column was set properly, but was 
+		/// Returns the ith independent variable column. Can return <c>null</c> if the column was set properly, but was
 		/// disposed in the mean time.
 		/// </summary>
 		/// <param name="i">Index.</param>
@@ -282,11 +283,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
 			this._independentVariables[i] = new NumericColumnProxy(col);
 
-			this.OnChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
-		/// Returns the ith dependent variable column. Can return <c>null</c> if the column was set properly, but was 
+		/// Returns the ith dependent variable column. Can return <c>null</c> if the column was set properly, but was
 		/// disposed in the mean time.
 		/// </summary>
 		/// <param name="i">Index.</param>
@@ -377,7 +378,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				{
 					_fitFunction.Changed -= EhFitFunctionChanged;
 				}
-				
+
 				_fitFunction = value;
 
 				if (null != _fitFunction)
@@ -389,7 +390,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		void EhFitFunctionChanged()
+		private void EhFitFunctionChanged()
 		{
 			InternalCheckAndCorrectArraySize(false, true);
 		}
@@ -401,7 +402,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="throwOnMismatch">If <c>true</c>, an InvalidOperationException is thrown if the corresponding number from the fit function and the array size mismatch.</param>
 		/// <param name="forceChangedEvent">If <c>true</c>, the <see cref="Changed"/> event is fired even if no mismatch was detected.</param>
 		/// <returns><c>True</c> if any mismatch occurred, so that the array size has changed. Otherwise, <c>False</c> is returned.</returns>
-		bool InternalCheckAndCorrectArraySize(bool throwOnMismatch, bool forceChangedEvent)
+		private bool InternalCheckAndCorrectArraySize(bool throwOnMismatch, bool forceChangedEvent)
 		{
 			if (_fitFunction == null)
 				return false;
@@ -415,7 +416,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					throw new InvalidOperationException("Mismatch between number of independent variables of the fit function and of the array. Probably the fit function was changed after assigning them to the fit element, and dit not fire the Changed event");
 				else
 					InternalReallocIndependentVariables(_fitFunction.NumberOfIndependentVariables);
-
 			}
 			if (_fitFunction.NumberOfDependentVariables != _dependentVariables.Length)
 			{
@@ -435,12 +435,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 
 			if (hasMismatch | forceChangedEvent)
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 
 			return hasMismatch;
 		}
 
-		void InternalReallocIndependentVariables(int noIndep)
+		private void InternalReallocIndependentVariables(int noIndep)
 		{
 			NumericColumnProxy[] oldArr = this._independentVariables;
 			NumericColumnProxy[] newArr = new NumericColumnProxy[noIndep];
@@ -450,7 +450,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			this._independentVariables = newArr;
 		}
 
-		void InternalReallocDependentVariables(int noDep)
+		private void InternalReallocDependentVariables(int noDep)
 		{
 			{
 				NumericColumnProxy[] oldArr = this._dependentVariables;
@@ -470,12 +470,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		void InternalReallocParameters(int noPar)
+		private void InternalReallocParameters(int noPar)
 		{
 			this._parameterNames = new string[noPar];
-
 		}
-
 
 		/// <summary>
 		/// Gets the number of independent variables of this fit element.
@@ -533,16 +531,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 		/// <summary>
-		/// Called when the Changed event should be fired.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-
-		/// <summary>
 		/// Calculates the valid numeric rows of the data source, i.e. that rows that can be used for fitting. Both dependent and independent variable sources are considered. A row is considered valid, if
 		/// all (independent and dependent) variables of this row have finite numeric values.
 		/// </summary>
@@ -589,7 +577,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				arr[j] = false;
 
 			return Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetCollectionOfValidNumericRows(arr);
-
 		}
 
 		/// <summary>
@@ -632,6 +619,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return new FitElement(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 	}
 }

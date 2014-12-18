@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="index">The index of the tab page to focus.</param>
 		void BringTabToFront(int index);
 
-		event Action<object, InstanceChangedEventArgs<object>> SelectedPage_Changed;
+		event EventHandler<InstanceChangedEventArgs> SelectedPage_Changed;
 
 		/// <summary>
 		/// Sets the plot style view, i.e. the control where we can add or remove plot styles.
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
+		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
 		{
 			// test if it is the view of the normal styles
 			for (int i = 0; i < _styleControllerList.Count; i++)

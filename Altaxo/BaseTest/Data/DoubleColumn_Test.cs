@@ -111,7 +111,7 @@ namespace AltaxoTest.Data
 				Assert.AreEqual(true, d.IsElementEmpty(i));
 		}
 
-		private class MyColumnParent : Altaxo.Main.IChildChangedEventSink
+		private class MyColumnParent : Altaxo.Main.IDocumentNode
 		{
 			public EventHandler ChildChanged;
 			protected int _CallCount = 0;
@@ -272,6 +272,18 @@ namespace AltaxoTest.Data
 				Assert.AreEqual(13, ea.MaxRowChanged);
 				Assert.AreEqual(false, ea.HasRowCountDecreased);
 				_CallCount++; ;
+			}
+
+			public string Name
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public event EventHandler Changed;
+
+			public Altaxo.Main.ISuspendToken SuspendGetToken()
+			{
+				throw new NotImplementedException();
 			}
 		}
 

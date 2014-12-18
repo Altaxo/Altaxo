@@ -34,7 +34,7 @@ namespace Altaxo.Main.Properties
 	/// </summary>
 	public class PropertyBag
 		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.SuspendableDocumentNodeWithEventArgs,
 		IPropertyBag
 	{
 		/// <summary>
@@ -90,6 +90,9 @@ namespace Altaxo.Main.Properties
 					object propval = info.GetValue("Value", parent);
 					info.CloseElement(); // "e"
 					s._properties[propkey] = propval;
+					var propValAsNode = propval as IDocumentLeafNode;
+					if (null != propValAsNode)
+						propValAsNode.ParentObject = s;
 				}
 				info.CloseArray(count);
 			}
@@ -138,14 +141,19 @@ namespace Altaxo.Main.Properties
 				this._properties.Clear();
 				foreach (var entry in from)
 				{
+					object value;
 					if (entry.Value is ICloneable)
 					{
-						this._properties.Add(entry.Key, ((ICloneable)entry.Value).Clone());
+						value = ((ICloneable)entry.Value).Clone();
+						var propValAsNode = value as IDocumentLeafNode;
+						if (null != propValAsNode)
+							propValAsNode.ParentObject = this;
 					}
 					else
 					{
-						this._properties.Add(entry.Key, entry.Value);
+						value = entry.Value;
 					}
+					this._properties.Add(entry.Key, value);
 				}
 				EhSelfChanged(EventArgs.Empty);
 				return true;
@@ -166,8 +174,6 @@ namespace Altaxo.Main.Properties
 		{
 			return new PropertyBag(this);
 		}
-
-	
 
 		/// <summary>
 		/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
@@ -269,6 +275,10 @@ namespace Altaxo.Main.Properties
 			if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(typeof(T), p.PropertyType))
 			{
 				_properties[p.GuidString] = value;
+				var propValAsNode = value as IDocumentLeafNode;
+				if (null != propValAsNode)
+					propValAsNode.ParentObject = this;
+
 				EhSelfChanged(EventArgs.Empty);
 			}
 			else
@@ -348,6 +358,9 @@ namespace Altaxo.Main.Properties
 				throw new ArgumentNullException("propName is null or empty");
 
 			_properties[propName] = value;
+			var propValAsNode = value as IDocumentLeafNode;
+			if (null != propValAsNode)
+				propValAsNode.ParentObject = this;
 
 			if (!(propName.StartsWith(TemporaryPropertyPrefixString)))
 				EhSelfChanged(EventArgs.Empty);
@@ -417,8 +430,20 @@ namespace Altaxo.Main.Properties
 			{
 				if (overrideExistingProperties | !_properties.ContainsKey(entry.Key))
 				{
-					var newValue = (entry.Value is ICloneable) ? ((ICloneable)entry.Value).Clone() : entry.Value;
-					this._properties[entry.Key] = newValue;
+					object value;
+					if (entry.Value is ICloneable)
+					{
+						value = ((ICloneable)entry.Value).Clone();
+						var propValAsNode = value as IDocumentLeafNode;
+						if (null != propValAsNode)
+							propValAsNode.ParentObject = this;
+					}
+					else
+					{
+						value = entry.Value;
+					}
+					this._properties[entry.Key] = value;
+
 					anythingChanged = true;
 				}
 			}

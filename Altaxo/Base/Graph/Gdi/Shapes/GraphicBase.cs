@@ -283,6 +283,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				GraphicBase s = (GraphicBase)o;
 
 				s._location = (ItemLocationDirect)info.GetValue("Location");
+				s._location.ParentObject = s;
+
 				s.UpdateTransformationMatrix();
 
 				return s;

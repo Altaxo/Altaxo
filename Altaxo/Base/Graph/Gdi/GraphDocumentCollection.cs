@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi
 			this._parent = parent;
 		}
 
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get
 			{
@@ -244,7 +244,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="child">A graph for which the parent collection is searched.</param>
 		/// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
-		public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentNode child)
+		public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentLeafNode child)
 		{
 			return (GraphDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
 		}

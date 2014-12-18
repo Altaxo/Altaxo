@@ -29,7 +29,7 @@ namespace Altaxo.Main
 	public delegate void DocumentInstanceChangedEventHandler(object sender, object oldvalue, object newvalue);
 
 	/// <summary>
-	/// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentNode" />), then special
+	/// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentLeafNode" />), then special
 	/// measures are used in the case the document node is disposed. In this case the relative path to the node (from a parent object) is stored, and if a new document node with
 	/// that path exists, the reference to the object is restored.
 	/// </summary>
@@ -37,8 +37,8 @@ namespace Altaxo.Main
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs
 	{
-		private Main.IDocumentNode _docNode;
-		private Main.IDocumentNode _parentNode;
+		private Main.IDocumentLeafNode _docNode;
+		private Main.IDocumentLeafNode _parentNode;
 		private Main.DocumentPath _docNodePath;
 		
 		/// <summary>
@@ -58,7 +58,7 @@ namespace Altaxo.Main
 				Main.DocumentPath path;
 				if (s._docNode != null)
 				{
-					path = Main.DocumentPath.GetRelativePathFromTo(s._parentNode, (Main.IDocumentNode)s._docNode);
+					path = Main.DocumentPath.GetRelativePathFromTo(s._parentNode, (Main.IDocumentLeafNode)s._docNode);
 				}
 				else
 				{
@@ -71,10 +71,10 @@ namespace Altaxo.Main
 			{
 				RelDocNodeProxy s = null != o ? (RelDocNodeProxy)o : new RelDocNodeProxy();
 
-				if (!(parent is Main.IDocumentNode))
+				if (!(parent is Main.IDocumentLeafNode))
 					throw new ArgumentException("Parent should be a valid document node");
 
-				s._parentNode = (Main.IDocumentNode)parent;
+				s._parentNode = (Main.IDocumentLeafNode)parent;
 				s._docNodePath = (Main.DocumentPath)info.GetValue("Node", s);
 
 				// create a callback to resolve the instance as early as possible
@@ -89,7 +89,7 @@ namespace Altaxo.Main
 
 		#endregion Serialization
 
-		public RelDocNodeProxy(Main.IDocumentNode docNode, Main.IDocumentNode parentNode)
+		public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentLeafNode parentNode)
 		{
 			SetDocNode(docNode, parentNode);
 		}
@@ -111,7 +111,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="from">Object to clone from.</param>
 		/// <param name="newparent"></param>
-		public void CopyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
+		public void CopyFrom(RelDocNodeProxy from, Main.IDocumentLeafNode newparent)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -119,14 +119,14 @@ namespace Altaxo.Main
 			this.SetDocNode(from._docNode, newparent); // than the new Proxy refers to the same document node
 		}
 
-		public void CopyPathOnlyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
+		public void CopyPathOnlyFrom(RelDocNodeProxy from, Main.IDocumentLeafNode newparent)
 		{
 			this.ClearDocNode();
 			this._parentNode = newparent;
 			this._docNodePath = from._docNodePath == null ? null : (Main.DocumentPath)from._docNodePath.Clone();
 		}
 
-		public RelDocNodeProxy ClonePathOnly(Main.IDocumentNode newparent)
+		public RelDocNodeProxy ClonePathOnly(Main.IDocumentLeafNode newparent)
 		{
 			RelDocNodeProxy result = new RelDocNodeProxy();
 			result.CopyPathOnlyFrom(this, newparent);
@@ -188,10 +188,10 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Sets the document node that is held by this proxy.
 		/// </summary>
-		/// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentNode" />,
+		/// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentLeafNode" />,
 		/// the document path is stored for this object in addition to the object itself.</param>
 		/// <param name="parentNode"></param>
-		public void SetDocNode(Main.IDocumentNode docNode, Main.IDocumentNode parentNode)
+		public void SetDocNode(Main.IDocumentLeafNode docNode, Main.IDocumentLeafNode parentNode)
 		{
 			if (!IsValidDocument(docNode))
 				throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
@@ -201,7 +201,7 @@ namespace Altaxo.Main
 			bool docNodeInstanceChanged = !object.ReferenceEquals(_docNode, docNode) || !object.ReferenceEquals(_parentNode, parentNode);
 			if (!docNodeInstanceChanged)
 				return;
-			Main.IDocumentNode oldvalue = _docNode;
+			Main.IDocumentLeafNode oldvalue = _docNode;
 
 			if (_docNode != null)
 			{
@@ -242,7 +242,7 @@ namespace Altaxo.Main
 			if (_docNode is Main.IChangedEventSource)
 				((Main.IChangedEventSource)_docNode).Changed -= new EventHandler(EhDocNode_Changed);
 
-			Main.IDocumentNode oldvalue = _docNode;
+			Main.IDocumentLeafNode oldvalue = _docNode;
 			_docNode = null;
 
 			EhSelfChanged(new Main.InstanceChangedEventArgs(oldvalue, _docNode));
@@ -268,8 +268,8 @@ namespace Altaxo.Main
 			}
 			else if (e is DocumentPathChangedEventArgs)
 			{
-				if (_docNode is Main.IDocumentNode)
-					_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentNode)_docNode);
+				if (_docNode is Main.IDocumentLeafNode)
+					_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentLeafNode)_docNode);
 				else
 					_docNodePath = null;
 
@@ -286,8 +286,8 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
-			if (_docNode is Main.IDocumentNode)
-				_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentNode)_docNode);
+			if (_docNode is Main.IDocumentLeafNode)
+				_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentLeafNode)_docNode);
 			else
 				_docNodePath = null;
 
@@ -307,7 +307,7 @@ namespace Altaxo.Main
 					if (_docNodePath.IsAbsolutePath)
 						return null;
 
-					Main.IDocumentNode obj = (Main.IDocumentNode)Main.DocumentPath.GetObject(_docNodePath, _parentNode);
+					Main.IDocumentLeafNode obj = (Main.IDocumentLeafNode)Main.DocumentPath.GetObject(_docNodePath, _parentNode);
 					if (obj != null)
 						SetDocNode(obj, _parentNode);
 				}

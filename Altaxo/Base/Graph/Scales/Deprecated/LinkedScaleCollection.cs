@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,220 +19,183 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.ComponentModel;
-using System.Reflection;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
+#endregion Copyright
+
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Serialization;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Reflection;
 
 namespace Altaxo.Graph.Scales.Deprecated
 {
-  [Serializable]
-  public class LinkedScaleCollection 
-    :
-    Main.IChangedEventSource,
-    Main.IDocumentNode
-  {
-    LinkedScale[] _linkedScales = new LinkedScale[2];
+	[Serializable]
+	public class LinkedScaleCollection
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs
+	{
+		private LinkedScale[] _linkedScales = new LinkedScale[2];
 
-    /// <summary>
-    /// Fired if one of the scale has changed (or its boundaries).
-    /// </summary>
-    [field: NonSerialized]
-    public event EventHandler ScalesChanged;
+		/// <summary>
+		/// Fired if one of the scale has changed (or its boundaries).
+		/// </summary>
+		[field: NonSerialized]
+		public event EventHandler ScalesChanged;
 
-    /// <summary>
-    /// Fired if something in this class or in its child has changed.
-    /// </summary>
-    [field: NonSerialized]
-    event EventHandler _changed;
+		#region Serialization
 
-    [NonSerialized]
-    object _parent;
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisPropertiesCollection", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScaleCollection", 1)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinkedScaleCollection s = (LinkedScaleCollection)obj;
 
-    #region Serialization
+				info.CreateArray("Properties", s._linkedScales.Length);
+				for (int i = 0; i < s._linkedScales.Length; ++i)
+					info.AddValue("e", s._linkedScales[i]);
+				info.CommitArray();
+			}
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerAxisPropertiesCollection", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScaleCollection", 1)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        LinkedScaleCollection s = (LinkedScaleCollection)obj;
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScaleCollection s = SDeserialize(o, info, parent);
+				return s;
+			}
 
-        info.CreateArray("Properties", s._linkedScales.Length);
-        for (int i = 0; i < s._linkedScales.Length; ++i)
-          info.AddValue("e", s._linkedScales[i]);
-        info.CommitArray();
-      }
+			protected virtual LinkedScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScaleCollection s = null != o ? (LinkedScaleCollection)o : new LinkedScaleCollection();
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScaleCollection s = SDeserialize(o, info, parent);
-        return s;
-      }
+				int count = info.OpenArray("Properties");
+				s._linkedScales = new LinkedScale[count];
+				for (int i = 0; i < count; ++i)
+					s.SetLinkedScale((LinkedScale)info.GetValue("e", s), i);
+				info.CloseArray(count);
 
+				return s;
+			}
+		}
 
-      protected virtual LinkedScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        LinkedScaleCollection s = null != o ? (LinkedScaleCollection)o : new LinkedScaleCollection();
+		#endregion Serialization
 
-        int count = info.OpenArray("Properties");
-        s._linkedScales = new LinkedScale[count];
-        for (int i = 0; i < count; ++i)
-          s.SetLinkedScale((LinkedScale)info.GetValue("e", s), i);
-        info.CloseArray(count);
+		public LinkedScaleCollection()
+		{
+			_linkedScales = new LinkedScale[2];
+			this.SetLinkedScale(new LinkedScale(), 0);
+			this.SetLinkedScale(new LinkedScale(), 1);
+		}
 
-        return s;
-      }
-    }
-    #endregion
+		public LinkedScaleCollection(LinkedScaleCollection from)
+		{
+			CopyFrom(from);
+		}
 
-    public LinkedScaleCollection()
-    {
-      _linkedScales = new LinkedScale[2];
-      this.SetLinkedScale(new LinkedScale(), 0);
-      this.SetLinkedScale(new LinkedScale(), 1);
-    }
-
-    public LinkedScaleCollection(LinkedScaleCollection from)
-    {
-      CopyFrom(from);
-    }
-
-    public void CopyFrom(LinkedScaleCollection from)
-    {
+		public void CopyFrom(LinkedScaleCollection from)
+		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-      if (_linkedScales != null)
-      {
-        for (int i = 0; i < _linkedScales.Length; ++i)
-        {
-          if (_linkedScales[i] != null)
-            _linkedScales[i].LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-          _linkedScales[i] = null;
-        }
-      }
+			if (_linkedScales != null)
+			{
+				for (int i = 0; i < _linkedScales.Length; ++i)
+				{
+					if (_linkedScales[i] != null)
+						_linkedScales[i].LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
+					_linkedScales[i] = null;
+				}
+			}
 
-      _linkedScales = new LinkedScale[from._linkedScales.Length];
-      for (int i = 0; i < from._linkedScales.Length; i++)
-      {
-        _linkedScales[i] = from._linkedScales[i].Clone();
-        _linkedScales[i].LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
-      }
+			_linkedScales = new LinkedScale[from._linkedScales.Length];
+			for (int i = 0; i < from._linkedScales.Length; i++)
+			{
+				_linkedScales[i] = from._linkedScales[i].Clone();
+				_linkedScales[i].LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
+			}
 
-      OnChanged();
-    }
+			EhSelfChanged(EventArgs.Empty);
+		}
 
-    public LinkedScaleCollection Clone()
-    {
-      return new LinkedScaleCollection(this);
-    }
+		public LinkedScaleCollection Clone()
+		{
+			return new LinkedScaleCollection(this);
+		}
 
-    public LinkedScale X
-    {
-      get
-      {
-        return _linkedScales[0];
-      }
-    }
+		public LinkedScale X
+		{
+			get
+			{
+				return _linkedScales[0];
+			}
+		}
 
-    public LinkedScale Y
-    {
-      get
-      {
-        return _linkedScales[1];
-      }
-    }
+		public LinkedScale Y
+		{
+			get
+			{
+				return _linkedScales[1];
+			}
+		}
 
-    public Scale Scale(int i)
-    {
-      return _linkedScales[i].Scale;
-    }
-    public void SetScale(int i, Scale ax)
-    {
-      _linkedScales[i].Scale = ax;
-    }
-    public int IndexOf(Scale ax)
-    {
-      for (int i = 0; i < _linkedScales.Length; i++)
-      {
-        if (_linkedScales[i].Scale == ax)
-          return i;
-      }
+		public Scale Scale(int i)
+		{
+			return _linkedScales[i].Scale;
+		}
 
-      return -1;
-    }
+		public void SetScale(int i, Scale ax)
+		{
+			_linkedScales[i].Scale = ax;
+		}
 
-    protected void SetLinkedScale(LinkedScale newvalue, int i)
-    {
-      LinkedScale oldvalue = _linkedScales[i];
-      _linkedScales[i] = newvalue;
+		public int IndexOf(Scale ax)
+		{
+			for (int i = 0; i < _linkedScales.Length; i++)
+			{
+				if (_linkedScales[i].Scale == ax)
+					return i;
+			}
 
-      if (!object.ReferenceEquals(oldvalue, newvalue))
-      {
-        if (null != oldvalue)
-          oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
-        if (null != newvalue)
-          newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
-      }
-    }
+			return -1;
+		}
 
-    private void EhLinkPropertiesChanged(object sender, EventArgs e)
-    {
-      if (ScalesChanged != null)
-        ScalesChanged(this, EventArgs.Empty);
+		protected void SetLinkedScale(LinkedScale newvalue, int i)
+		{
+			LinkedScale oldvalue = _linkedScales[i];
+			_linkedScales[i] = newvalue;
 
-      OnChanged();
-    }
+			if (!object.ReferenceEquals(oldvalue, newvalue))
+			{
+				if (null != oldvalue)
+					oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
+				if (null != newvalue)
+					newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
+			}
+		}
 
+		private void EhLinkPropertiesChanged(object sender, EventArgs e)
+		{
+			if (ScalesChanged != null)
+				ScalesChanged(this, EventArgs.Empty);
 
-    public event EventHandler Changed
-    {
-      add { _changed += value; }
-      remove { _changed -= value; }
-    }
+			EhSelfChanged(EventArgs.Empty);
+		}
 
+		#region IDocumentNode Members
 
-    protected virtual void OnChanged()
-    {
-      if (_parent is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+		public string Name
+		{
+			get { return "LinkedScaleCollection"; }
+			set
+			{
+				throw new InvalidOperationException("The name cannot be set.");
+			}
+		}
 
-      if (null != _changed)
-        _changed(this, EventArgs.Empty);
-    }
-
-
-    #region IDocumentNode Members
-
-    public object ParentObject
-    {
-      get { return _parent; }
-      set { _parent = value; }
-    }
-
-    public string Name
-    {
-      get { return "LinkedScaleCollection"; }
-    }
-
-    #endregion
-
-   
-
-  
-   
-  }
-
-
-
-
-
+		#endregion IDocumentNode Members
+	}
 }

@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// <summary>
 	/// Interface for a plottable item.
 	/// </summary>
-	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentNode, ITreeListNodeWithParent<IGPlotItem>
+	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentLeafNode, ITreeListNodeWithParent<IGPlotItem>
 	{
 		/// <summary>
 		/// The name of the plot. It can be of different length. An argument of zero or less
@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <summary>
 		/// Set the parent of this plot item.
 		/// </summary>
-		new object ParentObject { set; }
+		//new object ParentObject { set; }
 
 		/// <summary>
 		/// Collects all possible group styles that can be applied to this plot item in

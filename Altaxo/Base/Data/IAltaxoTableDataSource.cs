@@ -32,7 +32,7 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Interface that must be implemented by all data sources that can provide data for an Altaxo data table.
 	/// </summary>
-	public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable, Main.ISuspendableByToken, Main.IDocumentNode
+	public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable, Main.ISuspendableByToken, Main.IDocumentLeafNode
 	{
 		/// <summary>
 		/// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.

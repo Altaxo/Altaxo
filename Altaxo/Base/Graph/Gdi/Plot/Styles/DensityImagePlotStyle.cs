@@ -301,16 +301,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (null != _scale)
-					_scale.Changed -= EhScaleChanged;
+				if (object.ReferenceEquals(_scale, value))
+					return;
 
-				var oldValue = _scale;
+				if (null != _scale)
+					_scale.ParentObject = null;
+
 				_scale = value;
 
 				if (null != _scale)
-					_scale.Changed += EhScaleChanged;
+					_scale.ParentObject = this;
 
-				if (!object.ReferenceEquals(oldValue, value))
+				if (null != _scale)
+					EhChildChanged(_scale, EventArgs.Empty);
+				else
 					EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -323,17 +327,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null == value)
 					throw new ArgumentNullException("value");
 
+				if (object.ReferenceEquals(_colorProvider, value))
+					return;
+
 				if (null != _colorProvider)
 					_colorProvider.ParentObject = null;
 
-				var oldValue = _colorProvider;
 				_colorProvider = value;
 
 				if (null != _colorProvider)
 					_colorProvider.ParentObject = this;
 
-				if (null != oldValue && !object.ReferenceEquals(oldValue, _colorProvider))
-					EhColorProviderChanged(_colorProvider, EventArgs.Empty);
+				EhChildChanged(_colorProvider, EventArgs.Empty);
 			}
 		}
 
@@ -810,18 +815,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			} // for all columns
 		}
 
-		private void EhColorProviderChanged(object sender, EventArgs e)
-		{
-			this._imageType = CachedImageType.None;
-			EhSelfChanged(EventArgs.Empty);
-		}
-
-		private void EhScaleChanged(object sender, EventArgs e)
-		{
-			this._imageType = CachedImageType.None;
-			EhSelfChanged(EventArgs.Empty);
-		}
-
 		public override string Name
 		{
 			get
@@ -830,5 +823,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return null == noc ? null : noc.GetNameOfChildObject(this);
 			}
 		}
+
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, _scale))
+			{
+				this._imageType = CachedImageType.None;
+			}
+			else if (object.ReferenceEquals(sender, _colorProvider))
+			{
+				this._imageType = CachedImageType.None;
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Changed event handling
 	} // end of class DensityImagePlotStyle
 }

@@ -1970,7 +1970,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// The parent of this collection.
 		/// </summary>
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get { return _parent; }
 			set

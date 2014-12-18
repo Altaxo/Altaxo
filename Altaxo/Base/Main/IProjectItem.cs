@@ -34,7 +34,7 @@ namespace Altaxo.Main
 	/// i.e. <see cref="T:Altaxo.Data.DataTable"/>s, <see cref="T:Altaxo.Graph.Gdi.GraphDocument"/>s and <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>.
 	/// </summary>
 	public interface IProjectItem :
-		IDocumentNode, // Project items are document nodes of the project tree
+		IDocumentLeafNode, // Project items are document nodes of the project tree
 		INameOwner, // Project items must have a name and could be renamed
 		IEventIndicatedDisposable, // project items must announce themselves when disposed
 		ICloneable, // project items could be cloned

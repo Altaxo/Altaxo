@@ -639,7 +639,7 @@ namespace Altaxo.Main
 
 		private void SortItemsByDependencyProxyReporter(DocNodeProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
 		{
-			var proxyDoc = proxy.DocumentObject as IDocumentNode;
+			var proxyDoc = proxy.DocumentObject as IDocumentLeafNode;
 
 			if (proxyDoc != null)
 			{

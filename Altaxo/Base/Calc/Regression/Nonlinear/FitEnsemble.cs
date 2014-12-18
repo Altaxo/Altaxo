@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections;
@@ -32,33 +34,35 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// </summary>
 	/// <remarks>The number of parameters in a FitEnsemble is less than or equal to the sum of the number of parameters of all FitElements bundeled in this instance.
 	/// (It is less than the sum of parameters if some parameters of different fit elements have equal names).</remarks>
-	public class FitEnsemble : System.Collections.CollectionBase, ICloneable
+	public class FitEnsemble
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IList<FitElement>,
+		ICloneable
 	{
 		/// <summary>
 		/// Current parameter names
 		/// </summary>
-		string[] _parameterNames = new string[0];
+		private string[] _parameterNames = new string[0];
 
 		/// <summary>
 		/// All parameters sorted by name.
 		/// </summary>
-		SortedList<string, int> _parametersSortedByName = new SortedList<string, int>();
+		private SortedList<string, int> _parametersSortedByName = new SortedList<string, int>();
 
-
-		public event EventHandler Changed;
-
+		private List<FitElement> _innerList = new List<FitElement>();
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitEnsemble), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				FitEnsemble s = (FitEnsemble)obj;
 
-				info.CreateArray("FitElements", s.Count);
-				for (int i = 0; i < s.Count; ++i)
+				info.CreateArray("FitElements", s._innerList.Count);
+				for (int i = 0; i < s._innerList.Count; ++i)
 					info.AddValue("e", s[i]);
 				info.CommitArray();
 			}
@@ -78,49 +82,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		#endregion
-
-
-
-		public FitElement this[int i]
-		{
-			get
-			{
-				return (FitElement)InnerList[i];
-			}
-			set
-			{
-				FitElement oldValue = this[i];
-				oldValue.Changed -= new EventHandler(EhChildChanged);
-
-				InnerList[i] = value;
-				value.Changed += new EventHandler(EhChildChanged);
-
-				OnChanged();
-			}
-		}
-
-		public void Add(FitElement e)
-		{
-			InnerList.Add(e);
-			e.Changed += new EventHandler(EhChildChanged);
-
-			CollectParameterNames();
-			OnChanged();
-		}
-
-
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed(this, EventArgs.Empty);
-		}
-
-		protected virtual void EhChildChanged(object obj, EventArgs e)
-		{
-			CollectParameterNames();
-			OnChanged();
-		}
+		#endregion Serialization
 
 		#region Fit parameters
 
@@ -129,7 +91,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_parametersSortedByName.Clear();
 
 			int nameposition = 0;
-			for (int i = 0; i < InnerList.Count; i++)
+			for (int i = 0; i < _innerList.Count; i++)
 			{
 				FitElement ele = this[i];
 				IFitFunction func = ele.FitFunction;
@@ -148,16 +110,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			// now sort the items in the order of the namepositions
 			var sortedbypos = new SortedList<int, string>();
-			foreach (KeyValuePair<string,int> en in _parametersSortedByName)
+			foreach (KeyValuePair<string, int> en in _parametersSortedByName)
 				sortedbypos.Add(en.Value, en.Key);
-
 
 			_parameterNames = new string[sortedbypos.Count];
 			for (int i = 0; i < _parameterNames.Length; i++)
 				_parameterNames[i] = sortedbypos[i];
-
 		}
-
 
 		public string ParameterName(int i)
 		{
@@ -172,7 +131,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		#endregion
+		#endregion Fit parameters
 
 		#region ICloneable Members
 
@@ -185,6 +144,104 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return result;
 		}
 
-		#endregion
+		#endregion ICloneable Members
+
+		#region IList members
+
+		public FitElement this[int i]
+		{
+			get
+			{
+				return _innerList[i];
+			}
+			set
+			{
+				FitElement oldValue = this[i];
+				oldValue.ParentObject = null;
+
+				_innerList[i] = value;
+				value.ParentObject = this;
+
+				EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public void Add(FitElement e)
+		{
+			_innerList.Add(e);
+			e.ParentObject = this;
+
+			CollectParameterNames();
+			EhSelfChanged(EventArgs.Empty);
+		}
+
+		public void Clear()
+		{
+			_innerList.Clear();
+		}
+
+		public bool Contains(FitElement item)
+		{
+			return _innerList.Contains(item);
+		}
+
+		public void CopyTo(FitElement[] array, int arrayIndex)
+		{
+			_innerList.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return _innerList.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(FitElement item)
+		{
+			return _innerList.Remove(item);
+		}
+
+		public IEnumerator<FitElement> GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		public int IndexOf(FitElement item)
+		{
+			return _innerList.IndexOf(item);
+		}
+
+		public void Insert(int index, FitElement item)
+		{
+			_innerList.Insert(index, item);
+			item.ParentObject = this;
+		}
+
+		public void RemoveAt(int index)
+		{
+			_innerList.RemoveAt(index);
+		}
+
+		#endregion IList members
+
+		#region Changed handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			CollectParameterNames();
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Changed handling
 	}
 }

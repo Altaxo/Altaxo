@@ -54,10 +54,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Data which are converted to scatter size.
 		/// </summary>
-		private NumericColumnProxy _dataColumn;
-
-		[NonSerialized]
-		private INumericColumn _cachedDataColumn;
+		private NumericColumnProxy _dataColumnProxy;
 
 		/// <summary>True if the data in the data column changed, but the scale was not updated up to now.</summary>
 		[NonSerialized]
@@ -142,7 +139,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != from)
 			{
 				InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
-				InternalSetDataColumnProxy(null == from._dataColumn ? null : (NumericColumnProxy)from._dataColumn.Clone());
+				InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (NumericColumnProxy)from._dataColumnProxy.Clone());
 
 				_symbolSizeAt0 = from._symbolSizeAt0;
 				_symbolSizeAt1 = from._symbolSizeAt1;
@@ -158,6 +155,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return copied;
 		}
 
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(_dataColumnProxy, sender))
+			{
+				if (e is Main.InstanceChangedEventArgs) // Data column object has changed
+				{
+					_doesScaleNeedsDataUpdate = true; // Instance that the proxy holds has changed
+				}
+				else
+				{
+					_doesScaleNeedsDataUpdate = true; // data in data column have changed
+				}
+			}
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Changed event handling
+
 		#region DataColumnProxy handling
 
 		/// <summary>
@@ -166,60 +183,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="proxy"></param>
 		protected void InternalSetDataColumnProxy(NumericColumnProxy proxy)
 		{
-			if (null != _dataColumn)
-				this._dataColumn.Changed -= EhDataColumnProxyChanged;
+			if (object.ReferenceEquals(_dataColumnProxy, proxy))
+				return;
 
-			_dataColumn = proxy;
+			if (null != _dataColumnProxy)
+				this._dataColumnProxy.ParentObject = null;
 
-			if (null != _dataColumn)
-				this._dataColumn.Changed += EhDataColumnProxyChanged;
+			_dataColumnProxy = proxy;
 
-			_cachedDataColumn = null == _dataColumn ? null : _dataColumn.Document;
+			if (null != _dataColumnProxy)
+				this._dataColumnProxy.ParentObject = this;
 
-			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
-		}
-
-		protected void InternalSetCachedDataColumn(INumericColumn col)
-		{
-			if (!object.ReferenceEquals(col, _cachedDataColumn))
-			{
-				if (_cachedDataColumn is Altaxo.Main.IChangedEventSource)
-				{
-					((Altaxo.Main.IChangedEventSource)_cachedDataColumn).Changed -= EhDataColumnDataChanged;
-				}
-
-				_cachedDataColumn = col;
-
-				if (_cachedDataColumn is Altaxo.Main.IChangedEventSource)
-				{
-					((Altaxo.Main.IChangedEventSource)_cachedDataColumn).Changed += EhDataColumnDataChanged;
-				}
-
-				// fake a change of the data of the column in order to calculate the boundaries
-				EhDataColumnDataChanged(_cachedDataColumn, EventArgs.Empty);
-
-				EhSelfChanged(EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
-		/// Function that is called if the data column proxy changed.
-		/// </summary>
-		/// <param name="sender">Originator.</param>
-		/// <param name="e">Event args.</param>
-		private void EhDataColumnProxyChanged(object sender, EventArgs e)
-		{
-			InternalSetCachedDataColumn(null == _dataColumn ? null : _dataColumn.Document);
-		}
-
-		/// <summary>
-		/// Called when the data of the data column changed.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void EhDataColumnDataChanged(object sender, EventArgs e)
-		{
-			_doesScaleNeedsDataUpdate = true;
+			EhChildChanged(_dataColumnProxy, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -231,16 +206,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// - be set (not null)
 			// - have a defined count.
 
-			if (_cachedDataColumn is IDefinedCount)
+			var dataColumn = DataColumn;
+
+			if (dataColumn is IDefinedCount)
 			{
-				int len = ((IDefinedCount)_cachedDataColumn).Count;
+				int len = ((IDefinedCount)dataColumn).Count;
 
 				var bounds = _scale.DataBounds;
 
 				using (var suspendToken = bounds.SuspendGetToken())
 				{
 					for (int i = 0; i < len; i++)
-						bounds.Add(_cachedDataColumn, i);
+						bounds.Add(dataColumn, i);
 
 					suspendToken.Resume();
 				}
@@ -255,14 +232,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				if (null != _dataColumn && null == _cachedDataColumn)
-					InternalSetCachedDataColumn(_dataColumn.Document);
-				return _cachedDataColumn;
+				return _dataColumnProxy == null ? null : _dataColumnProxy.Document;
 			}
 			set
 			{
-				_dataColumn.SetDocNode(value);
-				EhDataColumnProxyChanged(this, EventArgs.Empty);
+				_dataColumnProxy.SetDocNode(value);
 			}
 		}
 
@@ -276,13 +250,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="scale"></param>
 		protected void InternalSetScale(NumericalScale scale)
 		{
+			if (object.ReferenceEquals(_scale, scale))
+				return;
+
 			if (null != _scale)
-				_scale.Changed -= EhChildChanged;
+				_scale.ParentObject = null;
 
 			_scale = scale;
 
 			if (null != _scale)
-				_scale.Changed += EhChildChanged;
+				_scale.ParentObject = this;
 
 			_doesScaleNeedsDataUpdate = true;
 		}
@@ -410,12 +387,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		private double GetSymbolSize(int idx)
 		{
 			double val = double.NaN;
-			if (null != _cachedDataColumn)
+			var dataColumn = DataColumn;
+			if (null != dataColumn)
 			{
 				if (_doesScaleNeedsDataUpdate)
 					InternalUpdateScaleWithNewData();
 
-				val = _cachedDataColumn[idx];
+				val = dataColumn[idx];
 			}
 			val = _scale.PhysicalToNormal(val);
 
@@ -483,7 +461,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			Report(_dataColumn, this, "DataColumn");
+			Report(_dataColumnProxy, this, "DataColumn");
 		}
 	}
 }

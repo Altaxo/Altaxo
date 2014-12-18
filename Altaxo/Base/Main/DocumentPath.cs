@@ -90,7 +90,7 @@ namespace Altaxo.Main
 		/// <param name="collectionNode">The collection node (for instance the DataTableCollection in the current project).</param>
 		/// <param name="nameOfItemInTheCollection">The name of item in the collection (in the above example the name of the data table).</param>
 		/// <returns>An absolute document path designating the named item in the collection.</returns>
-		public static DocumentPath FromDocumentCollectionNodeAndName(IDocumentNode collectionNode, string nameOfItemInTheCollection)
+		public static DocumentPath FromDocumentCollectionNodeAndName(IDocumentLeafNode collectionNode, string nameOfItemInTheCollection)
 		{
 			DocumentPath result = DocumentPath.GetAbsolutePath(collectionNode);
 			result.Add(nameOfItemInTheCollection);
@@ -251,21 +251,21 @@ namespace Altaxo.Main
 
 		/// <summary>
 		/// Get the root node of the node <code>node</code>. The root node is defined as last node in the hierarchie that
-		/// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent.
+		/// either has not implemented the <see cref="IDocumentLeafNode"/> interface or has no parent.
 		/// </summary>
 		/// <param name="node">The node from where the search begins.</param>
 		/// <returns>The root node, i.e. the last node in the hierarchie that
-		/// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent</returns>
-		public static object GetRootNode(IDocumentNode node)
+		/// either has not implemented the <see cref="IDocumentLeafNode"/> interface or has no parent</returns>
+		public static object GetRootNode(IDocumentLeafNode node)
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
 
-			var parent = node.ParentObject as IDocumentNode;
+			var parent = node.ParentObject as IDocumentLeafNode;
 			while (null != parent)
 			{
 				node = parent;
-				parent = node.ParentObject as IDocumentNode;
+				parent = node.ParentObject as IDocumentLeafNode;
 			}
 
 			return node;
@@ -278,15 +278,15 @@ namespace Altaxo.Main
 		/// <param name="type">The type to search for.</param>
 		/// <returns>The first parental node that implements the type <code>type.</code>
 		/// </returns>
-		public static object GetRootNodeImplementing(IDocumentNode node, System.Type type)
+		public static object GetRootNodeImplementing(IDocumentLeafNode node, System.Type type)
 		{
 			if (null == node)
 				return null;
 
-			node = node.ParentObject as IDocumentNode;
+			node = node.ParentObject as IDocumentLeafNode;
 			while (node != null && !type.IsInstanceOfType(node))
 			{
-				node = node.ParentObject as IDocumentNode;
+				node = node.ParentObject as IDocumentLeafNode;
 			}
 
 			return type.IsInstanceOfType(node) ? node : null;
@@ -298,15 +298,15 @@ namespace Altaxo.Main
 		/// <typeparam name="T">The type to search for.</typeparam>
 		/// <param name="node">The node from where the search begins.</param>
 		/// <returns>The first parental node that implements the type <code>T</code>.</returns>
-		public static T GetRootNodeImplementing<T>(IDocumentNode node)
+		public static T GetRootNodeImplementing<T>(IDocumentLeafNode node)
 		{
 			if (null == node)
 				return default(T);
 
-			node = node.ParentObject as IDocumentNode;
+			node = node.ParentObject as IDocumentLeafNode;
 			while (node != null && !(node is T))
 			{
-				node = node.ParentObject as IDocumentNode;
+				node = node.ParentObject as IDocumentLeafNode;
 			}
 
 			return (node is T) ? (T)node : default(T);
@@ -317,7 +317,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="node">The node for which the path is retrieved.</param>
 		/// <returns>The absolute path of the node. The first element is a "/" to mark this as absolute path.</returns>
-		public static DocumentPath GetAbsolutePath(IDocumentNode node)
+		public static DocumentPath GetAbsolutePath(IDocumentLeafNode node)
 		{
 			DocumentPath path = GetPath(node, int.MaxValue);
 			path.IsAbsolutePath = true;
@@ -333,22 +333,22 @@ namespace Altaxo.Main
 		/// <returns>The path from the root or from the node in the depth <code>maxDepth</code>, whatever is reached first. The path is <b>not</b> prepended
 		/// by a "/".
 		/// </returns>
-		public static DocumentPath GetPath(IDocumentNode node, int maxDepth)
+		public static DocumentPath GetPath(IDocumentLeafNode node, int maxDepth)
 		{
 			DocumentPath path = new DocumentPath();
 
 			int depth = 0;
 			object prev_root = node;
 			object root = node;
-			while (root != null && root is IDocumentNode && !(root is AltaxoDocument))
+			while (root != null && root is IDocumentLeafNode && !(root is AltaxoDocument))
 			{
 				if (depth >= maxDepth)
 					break;
 
-				string name = ((IDocumentNode)root).Name;
+				string name = ((IDocumentLeafNode)root).Name;
 				path.Insert(0, name);
 				prev_root = root;
-				root = ((IDocumentNode)root).ParentObject;
+				root = ((IDocumentLeafNode)root).ParentObject;
 				++depth;
 			}
 
@@ -361,7 +361,7 @@ namespace Altaxo.Main
 			return path;
 		}
 
-		public static string GetPathString(IDocumentNode node, int maxDepth)
+		public static string GetPathString(IDocumentLeafNode node, int maxDepth)
 		{
 			return GetPath(node, maxDepth).ToString();
 		}
@@ -373,7 +373,7 @@ namespace Altaxo.Main
 		/// <param name="endnode">The node where the path ends.</param>
 		/// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
 		/// If the nodes have no common root, then the function returns the absolute path of the endnode.</returns>
-		public static DocumentPath GetRelativePathFromTo(IDocumentNode startnode, IDocumentNode endnode)
+		public static DocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode)
 		{
 			return GetRelativePathFromTo(startnode, endnode, null);
 		}
@@ -390,7 +390,7 @@ namespace Altaxo.Main
 		/// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
 		/// If the nodes have no common root, then the function returns the absolute path of the endnode.
 		/// <para>If either startnode or endnode is null, then null is returned.</para></returns>
-		public static DocumentPath GetRelativePathFromTo(IDocumentNode startnode, IDocumentNode endnode, object stoppernode)
+		public static DocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode, object stoppernode)
 		{
 			System.Collections.Hashtable hash = new System.Collections.Hashtable();
 
@@ -399,11 +399,11 @@ namespace Altaxo.Main
 
 			// store the complete hierarchie of objects as keys in the hash, (values are the hierarchie depth)
 			int endnodedepth = 0;
-			var root = endnode as IDocumentNode;
+			var root = endnode as IDocumentLeafNode;
 			while (root != null)
 			{
 				hash.Add(root, endnodedepth);
-				root = root.ParentObject as IDocumentNode;
+				root = root.ParentObject as IDocumentLeafNode;
 				++endnodedepth;
 			}
 
@@ -425,7 +425,7 @@ namespace Altaxo.Main
 					break;
 				}
 
-				root = root.ParentObject as IDocumentNode;
+				root = root.ParentObject as IDocumentLeafNode;
 				++startnodedepth;
 			}
 
@@ -465,15 +465,15 @@ namespace Altaxo.Main
 		{
 			object node = startnode;
 
-			if (path.IsAbsolutePath && node is IDocumentNode)
-				node = GetRootNode((IDocumentNode)node);
+			if (path.IsAbsolutePath && node is IDocumentLeafNode)
+				node = GetRootNode((IDocumentLeafNode)node);
 
 			for (int i = 0; i < path.Count; i++)
 			{
 				if (path[i] == "..")
 				{
-					if (node is Main.IDocumentNode)
-						node = ((Main.IDocumentNode)node).ParentObject;
+					if (node is Main.IDocumentLeafNode)
+						node = ((Main.IDocumentLeafNode)node).ParentObject;
 					else
 						return null;
 				}

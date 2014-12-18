@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales.Ticks
 	/// <summary>
 	/// Base class responsible for the spacing of ticks (major and minor) along a scale.
 	/// </summary>
-	public abstract class TickSpacing : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
+	public abstract class TickSpacing : Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
 	{
 		protected TickSpacing()
 		{

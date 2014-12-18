@@ -397,7 +397,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="child">Can be a DataTable, a DataColumnCollection, or a DataColumn for which the parent table collection is searched.</param>
 		/// <returns>The parent DataTableCollection, if it exists, or null otherwise.</returns>
-		public static Altaxo.Data.DataTableCollection GetParentDataTableCollectionOf(Main.IDocumentNode child)
+		public static Altaxo.Data.DataTableCollection GetParentDataTableCollectionOf(Main.IDocumentLeafNode child)
 		{
 			return (DataTableCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(DataTableCollection));
 		}

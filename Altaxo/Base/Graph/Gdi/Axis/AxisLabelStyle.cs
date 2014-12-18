@@ -380,7 +380,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
-				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._brush.ParentObject = s;
+
+				s.BackgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
 				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -391,6 +394,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
 				if (s._suppressedLabels == null)
 					s._suppressedLabels = new SuppressedTicks();
+				s._suppressedLabels.ParentObject = s;
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 				s._labelFormatting.ParentObject = s;
@@ -584,12 +588,18 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				IBackgroundStyle oldValue = this._backgroundStyle;
-				if (!object.ReferenceEquals(value, oldValue))
-				{
-					this._backgroundStyle = value;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				if (object.ReferenceEquals(_backgroundStyle, value))
+					return;
+
+				if (null != _backgroundStyle)
+					_backgroundStyle.ParentObject = null;
+
+				this._backgroundStyle = value;
+
+				if (null != _backgroundStyle)
+					_backgroundStyle.ParentObject = this;
+
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

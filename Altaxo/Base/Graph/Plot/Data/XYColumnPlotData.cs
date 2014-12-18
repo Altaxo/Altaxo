@@ -410,10 +410,16 @@ namespace Altaxo.Graph.Plot.Data
 				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
 				s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+				s._xColumn.ParentObject = s;
+
 				s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+				s._yColumn.ParentObject = s;
 
 				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+				s._xBoundaries.ParentObject = s;
+
 				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+				s._yBoundaries.ParentObject = s;
 
 				s._plotRangeStart = info.GetInt32("RangeStart");
 				s._plotRangeLength = info.GetInt32("RangeLength");
@@ -738,7 +744,7 @@ namespace Altaxo.Graph.Plot.Data
 				this.SetYBoundsFromTemplate(yBounds);
 			}
 
-			if(!_isCachedDataValid)
+			if (!_isCachedDataValid)
 				CalculateCachedData();
 		}
 

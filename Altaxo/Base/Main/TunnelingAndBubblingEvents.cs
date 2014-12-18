@@ -55,7 +55,7 @@ namespace Altaxo.Main
 		// event Action<object, TunnelingEventArgs> TunnelingEvent;
 	}
 
-	public class TunnelingEventArgs
+	public class TunnelingEventArgs : EventArgs
 	{
 	}
 

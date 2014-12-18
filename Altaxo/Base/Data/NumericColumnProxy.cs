@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Main;
+using System;
 
 namespace Altaxo.Data
 {
@@ -31,8 +33,9 @@ namespace Altaxo.Data
 	public class NumericColumnProxy : DocNodeProxy
 	{
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericColumnProxy), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -47,7 +50,8 @@ namespace Altaxo.Data
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Constructor by giving a numeric column.

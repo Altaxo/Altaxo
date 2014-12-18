@@ -223,17 +223,20 @@ namespace Altaxo.Data
 			}
 			set
 			{
+				if (object.ReferenceEquals(_processData, value))
+					return;
+
 				if (null != _processData)
 				{
-					_processData.Changed -= EhInputDataChanged;
+					_processData.ParentObject = null;
 				}
 
 				_processData = value;
 
 				if (null != _processData)
 				{
-					_processData.Changed += EhInputDataChanged;
-					EhInputDataChanged(this, EventArgs.Empty);
+					_processData.ParentObject = this;
+					EhChildChanged(_processData, EventArgs.Empty);
 				}
 			}
 		}
@@ -288,17 +291,21 @@ namespace Altaxo.Data
 
 		#region Change event handling
 
-		/// <summary>
-		/// Called when the input data have changed. Depending on the <see cref="ImportOptions"/>, the input data may be reprocessed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		private void EhInputDataChanged(object sender, EventArgs e)
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
+			if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
 			{
-				EhChildChanged(sender, TableDataSourceChangedEventArgs.Empty);
+				if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
+				{
+					e = TableDataSourceChangedEventArgs.Empty;
+				}
+				else
+				{
+					return true; // if option is not DataSourceChanged, absorb this event
+				}
 			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
 
 		#endregion Change event handling

@@ -30,10 +30,9 @@ using System.Text;
 namespace Altaxo.Graph
 {
 	public interface IItemLocation
-:
-Altaxo.Main.ICopyFrom,
-Altaxo.Main.IChangedEventSource,
-Altaxo.Main.IDocumentNode
+	:
+	Altaxo.Main.IDocumentLeafNode,
+	Altaxo.Main.ICopyFrom
 	{
 		double Rotation { get; set; }
 
@@ -42,7 +41,5 @@ Altaxo.Main.IDocumentNode
 		double ScaleX { get; set; }
 
 		double ScaleY { get; set; }
-
-		new object ParentObject { set; }
 	}
 }

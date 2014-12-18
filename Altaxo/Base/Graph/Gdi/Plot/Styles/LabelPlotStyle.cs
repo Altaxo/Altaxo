@@ -184,7 +184,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					// restore the cached values
 					s.SetCachedValues();
-					s.CreateEventChain();
 				}
 
 				return s;
@@ -209,11 +208,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LabelPlotStyle s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
 
-				s._labelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				// restore the cached values
 				s.SetCachedValues();
-				s.CreateEventChain();
 
 				return s;
 			}
@@ -267,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool attachToAxis = info.GetBoolean("AttachToAxis");
 				EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-				s._labelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				if (attachToAxis)
 					s._attachedPlane = XmlSerializationSurrogate0.GetDirection(attachedAxis);
@@ -278,7 +276,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					// restore the cached values
 					s.SetCachedValues();
-					s.CreateEventChain();
 				}
 
 				return s;
@@ -329,13 +326,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
 				s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-				s._labelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				if (nativeCall)
 				{
 					// restore the cached values
 					s.SetCachedValues();
-					s.CreateEventChain();
 				}
 
 				return s;
@@ -391,13 +387,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
 				s._backgroundColorLinkage = (ColorLinkage)info.GetEnum("BackgroundColorLinkage", typeof(ColorLinkage));
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-				s._labelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				if (nativeCall)
 				{
 					// restore the cached values
 					s.SetCachedValues();
-					s.CreateEventChain();
 				}
 
 				return s;
@@ -412,7 +407,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// restore the cached values
 			SetCachedValues();
-			CreateEventChain();
 		}
 
 		#endregion Serialization
@@ -481,11 +475,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this.LabelColumnProxy = new Altaxo.Data.ReadableColumnProxy(labelColumn);
 		}
 
-		protected void CreateEventChain()
-		{
-			this._labelColumnProxy.Changed += new EventHandler(EhLabelColumnProxyChanged);
-		}
-
 		private void EhLabelColumnProxyChanged(object sender, EventArgs e)
 		{
 			EhSelfChanged(EventArgs.Empty);
@@ -495,20 +484,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			set
 			{
-				if (null != _labelColumnProxy)
-				{
-					_labelColumnProxy.Changed -= EhLabelColumnProxyChanged;
-				}
+				if (object.ReferenceEquals(_labelColumnProxy, value))
+					return;
 
-				var oldValue = _labelColumnProxy;
+				if (null != _labelColumnProxy)
+					_labelColumnProxy.ParentObject = null;
+
 				_labelColumnProxy = value;
 
 				if (null != _labelColumnProxy)
-				{
-					_labelColumnProxy.Changed += EhLabelColumnProxyChanged;
-				}
+					_labelColumnProxy.ParentObject = this;
 
-				if (!object.ReferenceEquals(null == _labelColumnProxy ? null : _labelColumnProxy.Document, null == oldValue ? null : oldValue.Document))
+				if (null != _labelColumnProxy)
+					EhChildChanged(_labelColumnProxy, EventArgs.Empty);
+				else
 					EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -521,8 +510,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				_labelColumnProxy.SetDocNode(value);
-				EhSelfChanged(EventArgs.Empty);
+				if (object.ReferenceEquals(LabelColumn, value))
+					return;
+
+				LabelColumnProxy = new Altaxo.Data.ReadableColumnProxy(value);
 			}
 		}
 

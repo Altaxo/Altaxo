@@ -29,11 +29,18 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
 	/// </summary>
-	public interface IDocumentNode : INamedObject
+	public interface IDocumentLeafNode : INamedObject, Main.IChangedEventSource, ISuspendableByToken
 	{
 		/// <summary>
 		/// Retrieves the parent object.
 		/// </summary>
-		object ParentObject { get; set; }
+		IDocumentNode ParentObject { get; set; }
+	}
+
+	/// <summary>
+	/// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
+	/// </summary>
+	public interface IDocumentNode : INamedObject, Main.IChangedEventSource, ISuspendableByToken, IChildChangedEventSink
+	{
 	}
 }

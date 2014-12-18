@@ -29,7 +29,10 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-	public abstract class SuspendableDocumentNodeBase : Main.IDocumentNode, Main.IChangedEventSource, ISuspendableByToken
+	/// <summary>
+	///
+	/// </summary>
+	public abstract class SuspendableDocumentNodeBase : Main.IDocumentLeafNode, Altaxo.Collections.INodeWithParentNode<IDocumentNode>
 	{
 		#region Document functions
 
@@ -37,7 +40,7 @@ namespace Altaxo.Main
 		/// The parent object this instance belongs to.
 		/// </summary>
 		[NonSerialized]
-		protected object _parent;
+		protected IDocumentNode _parent;
 
 		/// <summary>Fired when something in the object has changed, and the object is not suspended.</summary>
 		[field: NonSerialized]
@@ -46,7 +49,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Gets/sets the parent object this instance belongs to.
 		/// </summary>
-		public virtual object ParentObject
+		public virtual IDocumentNode ParentObject
 		{
 			get
 			{
@@ -224,5 +227,101 @@ namespace Altaxo.Main
 		}
 
 		#endregion Implementation of a set of accumulated event data
+
+		#region Diagnostic support
+
+#if DEBUG && TRACEDOCUMENTNODES
+
+		private static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
+
+		private string _constructedBy;
+
+		public SuspendableDocumentNodeBase()
+		{
+			_allDocumentNodes.AddLast(new WeakReference(this));
+
+			var stb = new System.Text.StringBuilder();
+			var st = new System.Diagnostics.StackTrace(true);
+
+			var len = Math.Min(10, st.FrameCount);
+			for (int i = 2; i <= len; ++i)
+			{
+				var frame = st.GetFrame(i);
+				var method = frame.GetMethod();
+
+				if (i > 2) stb.Append(" in ");
+
+				stb.Append(method.DeclaringType.FullName);
+				stb.Append("|");
+				stb.Append(method.Name);
+				stb.Append("(L");
+				stb.Append(frame.GetFileLineNumber());
+				stb.Append(")");
+			}
+			_constructedBy = stb.ToString();
+		}
+
+		public static IEnumerable<SuspendableDocumentNodeBase> AllDocumentNodes
+		{
+			get
+			{
+				if (_allDocumentNodes.Count != 0)
+				{
+					var lnode = _allDocumentNodes.First;
+					while (null != lnode)
+					{
+						var nextNode = lnode.Next;
+						var target = lnode.Value.Target as SuspendableDocumentNodeBase;
+						if (null != target)
+							yield return target;
+						else
+							_allDocumentNodes.Remove(lnode);
+
+						lnode = nextNode;
+					}
+				}
+			}
+		}
+
+#endif
+
+#if DEBUG && TRACEDOCUMENTNODES
+
+		public static void ReportNotConnectedDocumentNodes()
+		{
+			int numberOfNodes = 0;
+			int numberOfNotConnectedNodes = 0;
+			foreach (var node in AllDocumentNodes)
+			{
+				if (node.ParentObject == null)
+				{
+					Current.Console.WriteLine("Found not connected document node of type {0}, constructed by {1}", node.GetType().FullName, node._constructedBy);
+					++numberOfNotConnectedNodes;
+				}
+
+				++numberOfNodes;
+			}
+			Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
+		}
+
+#else
+
+		public static void ReportNotConnectedDocumentNodes()
+		{
+			Current.Console.WriteLine("ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+		}
+
+#endif
+
+		#endregion Diagnostic support
+
+		#region Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode>
+
+		IDocumentNode Collections.INodeWithParentNode<IDocumentNode>.ParentNode
+		{
+			get { return _parent; }
+		}
+
+		#endregion Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode>
 	}
 }

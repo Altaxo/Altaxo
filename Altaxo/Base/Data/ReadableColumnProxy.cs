@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Main;
+using System;
 
 namespace Altaxo.Data
 {
-
-
-
 	/// <summary>
 	/// Summary description for DataColumnPlaceHolder.
 	/// </summary>
@@ -37,15 +36,16 @@ namespace Altaxo.Data
 		#region Serialization
 
 		#region Clipboard
+
 		protected ReadableColumnProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 			: base(info, context)
 		{
 		}
 
-		#endregion
+		#endregion Clipboard
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -60,7 +60,8 @@ namespace Altaxo.Data
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public ReadableColumnProxy(IReadableColumn column)
 			: base(column)
@@ -100,7 +101,6 @@ namespace Altaxo.Data
 		{
 			return new ReadableColumnProxy(this);
 		}
-
 
 		public string GetName(int level)
 		{

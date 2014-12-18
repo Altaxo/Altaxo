@@ -30,7 +30,7 @@ namespace Altaxo.Graph.Gdi.Background
 	/// <summary>
 	/// Provides a background around a rectangular spaced area.
 	/// </summary>
-	public interface IBackgroundStyle : ICloneable, Main.IDocumentNode, Main.IChangedEventSource
+	public interface IBackgroundStyle : ICloneable, Main.IDocumentLeafNode, Main.IChangedEventSource
 	{
 		/// <summary>
 		/// Measures the outer size of the item.

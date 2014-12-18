@@ -51,7 +51,7 @@ namespace Altaxo.Main.Properties
 			this._parent = parent;
 		}
 
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get { return this._parent; }
 			set
@@ -186,7 +186,7 @@ namespace Altaxo.Main.Properties
 		/// </summary>
 		/// <param name="child">A graph for which the parent collection is searched.</param>
 		/// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
-		public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentNode child)
+		public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
 		{
 			return (ProjectFolderPropertyDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
 		}

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,10 +37,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -62,10 +63,10 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Pen
 
-		PenX _pen;
+		private PenX _pen;
 
 		/// <summary>
-		/// Gets or sets the pen. The pen you get is a clone of the pen that is used internally. Similarly, when setting the pen, a clone is created, so that the pen 
+		/// Gets or sets the pen. The pen you get is a clone of the pen that is used internally. Similarly, when setting the pen, a clone is created, so that the pen
 		/// can be used internally, without interfering with external functions that changes the pen.
 		/// </summary>
 		/// <value>
@@ -85,7 +86,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		/// <summary>
 		/// Gets or sets the selected pen internally, <b>but without cloning it. Use this function only internally.</b>
 		/// </summary>
@@ -103,20 +103,19 @@ namespace Altaxo.Gui.Common.Drawing
 				if (null == value)
 					throw new NotImplementedException("Pen is null");
 
-				if(null!=_pen)
-				_pen.Changed -= EhPenChanged;
+				if (null != _pen && null != _weakPenChangedHandler)
+					_pen.Changed -= _weakPenChangedHandler;
 
 				_pen = value;
 
-				if(null!=_pen)
-				_pen.Changed += EhPenChanged;
+				if (null != _pen)
+					_pen.Changed += (_weakPenChangedHandler = new WeakEventHandler(EhPenChanged, handler => _pen.Changed -= handler));
 
 				InitControlProperties();
 			}
 		}
 
-
-		void InitControlProperties()
+		private void InitControlProperties()
 		{
 			if (null != CbBrush) CbBrush.SelectedBrush = _pen.BrushHolder;
 			if (null != CbLineThickness) CbLineThickness.SelectedQuantityAsValueInPoints = _pen.Width;
@@ -139,6 +138,7 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		public event EventHandler PenChanged;
+
 		protected virtual void OnPenChanged()
 		{
 			if (PenChanged != null)
@@ -147,26 +147,20 @@ namespace Altaxo.Gui.Common.Drawing
 			UpdatePreviewPanel();
 		}
 
-		void BeginPenUpdate()
-		{
-			_pen.Changed -= EhPenChanged;
-		}
-		void EndPenUpdate()
-		{
-			_pen.Changed += EhPenChanged;
-		}
+		private WeakEventHandler _weakPenChangedHandler;
 
-
-		void EhPenChanged(object sender, EventArgs e)
+		private void EhPenChanged(object sender, EventArgs e)
 		{
 			OnPenChanged();
 		}
 
-		#endregion
+		#endregion Pen
 
 		#region Brush
-		bool _showPlotColorsOnly;
-		BrushComboBox _cbBrush;
+
+		private bool _showPlotColorsOnly;
+		private BrushComboBox _cbBrush;
+
 		public BrushComboBox CbBrush
 		{
 			get { return _cbBrush; }
@@ -212,7 +206,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhBrush_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhBrush_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
@@ -221,11 +215,12 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Brush
 
 		#region Dash
 
-		DashStyleComboBox _cbDashStyle;
+		private DashStyleComboBox _cbDashStyle;
+
 		public DashStyleComboBox CbDashStyle
 		{
 			get { return _cbDashStyle; }
@@ -245,7 +240,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhDashStyle_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhDashStyle_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
@@ -254,7 +249,8 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		DashCapComboBox _cbDashCap;
+		private DashCapComboBox _cbDashCap;
+
 		public DashCapComboBox CbDashCap
 		{
 			get { return _cbDashCap; }
@@ -274,7 +270,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhDashCap_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhDashCap_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
@@ -283,11 +279,12 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Dash
 
 		#region Width
 
-		LineThicknessComboBox _cbThickness;
+		private LineThicknessComboBox _cbThickness;
+
 		public LineThicknessComboBox CbLineThickness
 		{
 			get { return _cbThickness; }
@@ -305,24 +302,25 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhThickness_ChoiceChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhThickness_ChoiceChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (_pen != null)
 			{
-				BeginPenUpdate();
-				_pen.Width = (float)_cbThickness.SelectedQuantityAsValueInPoints;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.Width = (float)_cbThickness.SelectedQuantityAsValueInPoints;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
 		}
 
-
-		#endregion
+		#endregion Width
 
 		#region StartCap
 
-		LineCapComboBox _cbStartCap;
+		private LineCapComboBox _cbStartCap;
 
 		public LineCapComboBox CbStartCap
 		{
@@ -343,7 +341,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhStartCap_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
@@ -353,9 +351,11 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_userChangedRelStartCapSize && _cbStartCapRelSize != null)
 					cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-				BeginPenUpdate();
-				_pen.StartCap = cap;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.StartCap = cap;
+					suspendToken.ResumeSilently();
+				};
 
 				if (_cbStartCapAbsSize != null && cap != null)
 				{
@@ -372,10 +372,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 				OnPenChanged();
 			}
-
 		}
 
-		LineCapSizeComboBox _cbStartCapAbsSize;
+		private LineCapSizeComboBox _cbStartCapAbsSize;
 
 		public LineCapSizeComboBox CbStartCapAbsSize
 		{
@@ -394,7 +393,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhStartCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhStartCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			_userChangedAbsStartCapSize = true;
 
@@ -403,17 +402,18 @@ namespace Altaxo.Gui.Common.Drawing
 				var cap = _pen.StartCap;
 				cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
-				BeginPenUpdate();
-				_pen.StartCap = cap;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.StartCap = cap;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
-
 		}
 
+		private QuantityWithUnitTextBox _cbStartCapRelSize;
 
-		QuantityWithUnitTextBox _cbStartCapRelSize;
 		public QuantityWithUnitTextBox CbStartCapRelSize
 		{
 			get { return _cbStartCapRelSize; }
@@ -431,7 +431,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhStartCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhStartCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			_userChangedRelStartCapSize = true;
 
@@ -440,19 +440,21 @@ namespace Altaxo.Gui.Common.Drawing
 				var cap = _pen.StartCap;
 				cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-				BeginPenUpdate();
-				_pen.StartCap = cap;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.StartCap = cap;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
 		}
 
-		#endregion
+		#endregion StartCap
 
 		#region EndCap
 
-		LineCapComboBox _cbEndCap;
+		private LineCapComboBox _cbEndCap;
 
 		public LineCapComboBox CbEndCap
 		{
@@ -460,7 +462,6 @@ namespace Altaxo.Gui.Common.Drawing
 			set
 			{
 				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
-
 
 				if (_cbEndCap != null)
 					dpd.RemoveValueChanged(_cbEndCap, EhEndCap_SelectionChangeCommitted);
@@ -474,9 +475,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
-
-		void EhEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhEndCap_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
@@ -486,9 +485,11 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_userChangedRelEndCapSize && _cbEndCapRelSize != null)
 					cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-				BeginPenUpdate();
-				_pen.EndCap = cap;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.EndCap = cap;
+					suspendToken.ResumeSilently();
+				};
 
 				if (_cbEndCapAbsSize != null)
 				{
@@ -505,11 +506,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 				OnPenChanged();
 			}
-
-
 		}
 
-		LineCapSizeComboBox _cbEndCapAbsSize;
+		private LineCapSizeComboBox _cbEndCapAbsSize;
 
 		public LineCapSizeComboBox CbEndCapAbsSize
 		{
@@ -528,7 +527,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhEndCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhEndCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			_userChangedAbsEndCapSize = true;
 
@@ -537,15 +536,18 @@ namespace Altaxo.Gui.Common.Drawing
 				var cap = _pen.EndCap;
 				cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
 
-				BeginPenUpdate();
-				_pen.EndCap = cap;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.EndCap = cap;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
 		}
 
-		QuantityWithUnitTextBox _cbEndCapRelSize;
+		private QuantityWithUnitTextBox _cbEndCapRelSize;
+
 		public QuantityWithUnitTextBox CbEndCapRelSize
 		{
 			get { return _cbEndCapRelSize; }
@@ -563,7 +565,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhEndCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhEndCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			_userChangedRelEndCapSize = true;
 
@@ -572,19 +574,21 @@ namespace Altaxo.Gui.Common.Drawing
 				var cap = _pen.EndCap;
 				cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-				BeginPenUpdate();
-				_pen.EndCap = cap;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.EndCap = cap;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
 		}
 
-		#endregion
+		#endregion EndCap
 
 		#region LineJoin
 
-		LineJoinComboBox _cbLineJoin;
+		private LineJoinComboBox _cbLineJoin;
 
 		public LineJoinComboBox CbLineJoin
 		{
@@ -596,33 +600,34 @@ namespace Altaxo.Gui.Common.Drawing
 				if (_cbLineJoin != null)
 					dpd.RemoveValueChanged(_cbLineJoin, EhLineJoin_SelectionChangeCommitted);
 
-
 				_cbLineJoin = value;
 				if (_pen != null && _cbLineJoin != null)
 					_cbLineJoin.SelectedLineJoin = _pen.LineJoin;
 
 				if (_cbLineJoin != null)
 					dpd.AddValueChanged(_cbLineJoin, EhLineJoin_SelectionChangeCommitted);
-
 			}
 		}
 
-		void EhLineJoin_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhLineJoin_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
-				BeginPenUpdate();
-				_pen.LineJoin = _cbLineJoin.SelectedLineJoin;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.LineJoin = _cbLineJoin.SelectedLineJoin;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
 		}
 
-		#endregion
+		#endregion LineJoin
 
 		#region Miter
-		MiterLimitComboBox _cbMiterLimit;
+
+		private MiterLimitComboBox _cbMiterLimit;
 
 		public MiterLimitComboBox CbMiterLimit
 		{
@@ -641,23 +646,25 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhMiterLimit_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhMiterLimit_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (_pen != null)
 			{
-				BeginPenUpdate();
-				_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityAsValueInPoints;
-				EndPenUpdate();
+				using (var suspendToken = _pen.SuspendGetToken())
+				{
+					_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityAsValueInPoints;
+					suspendToken.ResumeSilently();
+				};
 
 				OnPenChanged();
 			}
 		}
 
-		#endregion
+		#endregion Miter
 
 		#region Dialog
 
-		void EhShowCustomPenDialog(object sender, EventArgs e)
+		private void EhShowCustomPenDialog(object sender, EventArgs e)
 		{
 			PenAllPropertiesController ctrler = new PenAllPropertiesController((PenX)this.Pen.Clone());
 			ctrler.ShowPlotColorsOnly = this._showPlotColorsOnly;
@@ -668,12 +675,13 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Dialog
 
 		#region Preview
 
-		Image _previewPanel;
-		GdiToWpfBitmap _previewBitmap;
+		private Image _previewPanel;
+		private GdiToWpfBitmap _previewBitmap;
+
 		public Image PreviewPanel
 		{
 			get
@@ -697,13 +705,12 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void EhPreviewPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+		private void EhPreviewPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			UpdatePreviewPanel();
 		}
 
-
-		void UpdatePreviewPanel()
+		private void UpdatePreviewPanel()
 		{
 			if (null == _previewPanel || null == _pen)
 				return;
@@ -714,7 +721,6 @@ namespace Altaxo.Gui.Common.Drawing
 				height = 64;
 			if (width <= 0)
 				width = 64;
-
 
 			if (null == _previewBitmap)
 			{
@@ -737,10 +743,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_previewBitmap.EndGdiPainting();
 			}
-
 		}
 
-		#endregion
-
+		#endregion Preview
 	}
 }

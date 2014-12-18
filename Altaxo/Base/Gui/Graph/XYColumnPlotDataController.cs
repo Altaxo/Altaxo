@@ -117,8 +117,8 @@ namespace Altaxo.Gui.Graph
 				// Initialize tables
 				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-				DataTable t1 = DataTable.GetParentDataTableOf(_xColumn as IDocumentNode);
-				DataTable t2 = DataTable.GetParentDataTableOf(_yColumn as IDocumentNode);
+				DataTable t1 = DataTable.GetParentDataTableOf(_xColumn as IDocumentLeafNode);
+				DataTable t2 = DataTable.GetParentDataTableOf(_yColumn as IDocumentLeafNode);
 				DataTable tg = null;
 				if (t1 != null && t2 != null && t1 == t2)
 					tg = t1;

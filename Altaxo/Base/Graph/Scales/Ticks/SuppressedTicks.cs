@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Data;
-
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public class SuppressedTicks : Main.ICopyFrom
+	public class SuppressedTicks
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.ICopyFrom
 	{
-		List<AltaxoVariant> _suppressedTickValues;
-		List<int> _suppressedTicksByNumber;
+		private List<AltaxoVariant> _suppressedTickValues;
+		private List<int> _suppressedTicksByNumber;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SuppressedTicks), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -48,14 +52,10 @@ namespace Altaxo.Graph.Scales.Ticks
 					info.AddValue("e", (object)v);
 				info.CommitArray();
 
-
 				info.CreateArray("ByNumbers", s._suppressedTicksByNumber.Count);
 				foreach (int v in s._suppressedTicksByNumber)
 					info.AddValue("e", v);
 				info.CommitArray();
-
-			
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -63,7 +63,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				SuppressedTicks s = SDeserialize(o, info, parent);
 				return s;
 			}
-
 
 			protected virtual SuppressedTicks SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -81,12 +80,11 @@ namespace Altaxo.Graph.Scales.Ticks
 					s._suppressedTicksByNumber.Add(info.GetInt32("e"));
 				info.CloseArray(count);
 
-			
-
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public SuppressedTicks()
 		{
@@ -122,7 +120,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new SuppressedTicks(this);
 		}
 
-
 		public override bool Equals(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -141,14 +138,13 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
-	
-    public bool IsEmpty
-    {
-      get
-      {
-        return _suppressedTickValues.Count == 0 && _suppressedTicksByNumber.Count == 0;
-      }
-    }
+		public bool IsEmpty
+		{
+			get
+			{
+				return _suppressedTickValues.Count == 0 && _suppressedTicksByNumber.Count == 0;
+			}
+		}
 
 		public IList<AltaxoVariant> ByValues
 		{
@@ -168,7 +164,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		private class DescendingIntComparer : IComparer<int>
 		{
-			Comparer<int> _comparer = Comparer<int>.Default;
+			private Comparer<int> _comparer = Comparer<int>.Default;
+
 			public int Compare(int x, int y)
 			{
 				return _comparer.Compare(y, x);
@@ -178,15 +175,15 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <summary>Gets all suppressed tick numbers in descending order with negative numbers transformed to positive numbers.</summary>
 		/// <param name="totalNumberOfTicks">The total number of ticks. This is used to transform negative numbers to real, positive, tick numbers.</param>
 		/// <returns>A list of suppressed tick numbers (all positive) in descending order.</returns>
-		public ICollection<int> GetValidTickNumbersDecendingWithNegativeNumbersTransformed( int totalNumberOfTicks)
+		public ICollection<int> GetValidTickNumbersDecendingWithNegativeNumbersTransformed(int totalNumberOfTicks)
 		{
 			SortedSet<int> result = new SortedSet<int>(new DescendingIntComparer());
 			foreach (int idx in _suppressedTicksByNumber)
 			{
-				if (idx >= 0 && idx<totalNumberOfTicks)
+				if (idx >= 0 && idx < totalNumberOfTicks)
 					result.Add(idx);
-				else if(idx < 0 && totalNumberOfTicks+idx>=0)
-					result.Add(totalNumberOfTicks+idx);
+				else if (idx < 0 && totalNumberOfTicks + idx >= 0)
+					result.Add(totalNumberOfTicks + idx);
 			}
 			return result;
 		}
@@ -196,16 +193,16 @@ namespace Altaxo.Graph.Scales.Ticks
 		public void RemoveSuppressedTicks(IList<double> ticks)
 		{
 			// Remove suppressed ticks
-			if(_suppressedTicksByNumber.Count>0)
+			if (_suppressedTicksByNumber.Count > 0)
 			{
-			var suppressedTicksDescending = GetValidTickNumbersDecendingWithNegativeNumbersTransformed(ticks.Count);
-			foreach (var i in suppressedTicksDescending)
+				var suppressedTicksDescending = GetValidTickNumbersDecendingWithNegativeNumbersTransformed(ticks.Count);
+				foreach (var i in suppressedTicksDescending)
 				{
 					ticks.RemoveAt(i);
 				}
 			}
 
-			if(_suppressedTickValues.Count>0)
+			if (_suppressedTickValues.Count > 0)
 			{
 				for (int i = ticks.Count - 1; i >= 0; --i)
 				{
@@ -214,7 +211,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				}
 			}
 		}
-
 
 		/// <summary>Removes the suppressed ticks from the list given as argument.</summary>
 		/// <param name="ticks">The tick list. At return, the suppressed ticks are removed from that list.</param>
@@ -239,9 +235,5 @@ namespace Altaxo.Graph.Scales.Ticks
 				}
 			}
 		}
-
-
-
-
 	}
 }

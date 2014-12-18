@@ -78,7 +78,7 @@ namespace Altaxo.Worksheet
 			_items = new Dictionary<string, WorksheetLayout>();
 		}
 
-		public WorksheetLayoutCollection(object documentParent)
+		public WorksheetLayoutCollection(Main.IDocumentNode documentParent)
 		{
 			_items = new Dictionary<string, WorksheetLayout>();
 			_parent = documentParent;
@@ -105,7 +105,7 @@ namespace Altaxo.Worksheet
 
 		#region IDocumentNode Members
 
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get
 			{

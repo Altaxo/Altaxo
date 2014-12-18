@@ -403,7 +403,7 @@ namespace Altaxo
 			_accumulatedEventData = e ?? EventArgs.Empty;
 		}
 
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get
 			{

@@ -119,7 +119,7 @@ namespace Altaxo.DataConnection
 
 		#region Properties
 
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get
 			{

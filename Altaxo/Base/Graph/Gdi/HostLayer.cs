@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				HostLayer s = (o == null ? new HostLayer(info) : (HostLayer)o);
 
-				s.ParentObject = parent;
+				s.ParentObject = parent as Main.IDocumentNode;
 				// size, position, rotation and scale
 				s._cachedParentLayerSize = (PointD2D)info.GetValue("CachedParentSize");
 				s._cachedLayerSize = (PointD2D)info.GetValue("CachedSize");
@@ -1243,7 +1243,7 @@ namespace Altaxo.Graph.Gdi
 
 		#region IDocumentNode Members
 
-		public override object ParentObject
+		public override Main.IDocumentNode ParentObject
 		{
 			get
 			{

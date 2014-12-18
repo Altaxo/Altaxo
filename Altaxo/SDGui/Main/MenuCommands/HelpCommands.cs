@@ -75,7 +75,13 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Run5();
+			Run6();
+		}
+
+		public void Run6()
+		{
+			GC.Collect();
+			Altaxo.Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
 		}
 
 		public void Run5()

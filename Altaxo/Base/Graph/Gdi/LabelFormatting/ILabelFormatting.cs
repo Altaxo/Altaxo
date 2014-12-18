@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// <summary>
 	/// Procedures to format an item of the <see cref="Altaxo.Data.AltaxoVariant" /> class.
 	/// </summary>
-	public interface ILabelFormatting : Main.IDocumentNode, Main.ICopyFrom
+	public interface ILabelFormatting : Main.IDocumentLeafNode, Main.ICopyFrom
 	{
 		/// <summary>
 		/// Measures the item, i.e. returns the size of the item.

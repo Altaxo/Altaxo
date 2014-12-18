@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -27,16 +29,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// <summary>
 	/// Summary description for NonlinearFitDocument.
 	/// </summary>
-	public class NonlinearFitDocument : ICloneable
+	public class NonlinearFitDocument
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		ICloneable
 	{
-		FitEnsemble _fitEnsemble;
-		ParameterSet _currentParameters;
-		object _fitContext;
+		private FitEnsemble _fitEnsemble;
+		private ParameterSet _currentParameters;
+		private object _fitContext;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonlinearFitDocument), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -44,7 +49,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 				info.AddValue("FitEnsemble", s._fitEnsemble);
 				info.AddValue("Parameters", s._currentParameters);
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -52,27 +56,26 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				NonlinearFitDocument s = o != null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
 
 				s._fitEnsemble = (FitEnsemble)info.GetValue("FitEnsemble", s);
-				s._fitEnsemble.Changed += new EventHandler(s.EhFitEnsemble_Changed);
+				s._fitEnsemble.ParentObject = s;
 				s._currentParameters = (ParameterSet)info.GetValue("Parameters", s);
 
 				return s;
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		public NonlinearFitDocument()
 		{
-			_fitEnsemble = new FitEnsemble();
+			_fitEnsemble = new FitEnsemble() { ParentObject = this };
 			_currentParameters = new ParameterSet();
-			_fitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
 		}
 
 		public NonlinearFitDocument(NonlinearFitDocument from)
 		{
 			_fitEnsemble = null == from._fitEnsemble ? null : (FitEnsemble)from._fitEnsemble.Clone();
-			_fitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
+			_fitEnsemble.ParentObject = this;
+
 			_currentParameters = null == from._currentParameters ? null : (ParameterSet)from._currentParameters.Clone();
 			// Note that the fit context is not cloned here.
 		}
@@ -122,7 +125,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return result;
 		}
 
-
 		/// <summary>
 		/// This will set all parameters in the ensembly with the same name than that of the parameter names
 		/// of fit function at index <c>idx</c> to their default values (those are provided by the fit function).
@@ -133,7 +135,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			FitElement fitele = _fitEnsemble[idx];
 			if (fitele.FitFunction == null)
 				return;
-
 
 			System.Collections.Hashtable byName = new System.Collections.Hashtable();
 			for (int i = 0; i < _currentParameters.Count; i++)
@@ -165,17 +166,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					_currentParameters.Add((ParameterSetElement)byName[name]);
 				else
 					_currentParameters.Add(new ParameterSetElement(name));
-
 			}
 
 			_currentParameters.OnInitializationFinished();
-		}
-
-
-		private void EhFitEnsemble_Changed(object sender, EventArgs e)
-		{
-
-			RecalculateParameterSet();
 		}
 
 		#region ICloneable Members
@@ -185,6 +178,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return new NonlinearFitDocument(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
+
+		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			RecalculateParameterSet();
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Changed event handling
 	}
 }

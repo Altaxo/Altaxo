@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		Main.ICopyFrom,
 		Main.IChangedEventSource,
 		Main.IChildChangedEventSink,
-		Main.IDocumentNode
+		Main.IDocumentLeafNode
 	{
 		/// <summary>
 		/// Adds all plot group styles that are not already in the externalGroups collection, and that

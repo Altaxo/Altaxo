@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", typeof(PositiveFiniteNumericalBoundaries));
 
-				s._dataBounds.ParentObject = this;
+				s._dataBounds.ParentObject = s;
 
 				s._rescaling = new LogarithmicAxisRescaleConditions();
 				s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);

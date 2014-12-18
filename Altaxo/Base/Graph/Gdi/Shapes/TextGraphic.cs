@@ -183,7 +183,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._text = info.GetString("Text");
 				s._font = (FontX)info.GetValue("Font", typeof(FontX));
 				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
-				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+				s._textBrush.ParentObject = s;
+
+				s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				return s;
 			}
@@ -343,8 +346,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
+				if (object.ReferenceEquals(_background, value))
+					return;
+
+				if (null != _background)
+					_background.ParentObject = null;
+
 				_background = value;
+
+				if (null != _background)
+					_background.ParentObject = this;
+
 				_isMeasureInSync = false;
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -470,8 +484,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
-				_textBrush = new BrushX(value);
+				_textBrush = new BrushX(value) { ParentObject = this };
 				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -487,7 +502,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 					throw new ArgumentNullException();
 
 				_textBrush = value.Clone();
+				_textBrush.ParentObject = this;
 				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

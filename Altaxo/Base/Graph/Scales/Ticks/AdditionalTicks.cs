@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,25 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Data;
-
 namespace Altaxo.Graph.Scales.Ticks
 {
-	public class AdditionalTicks : Main.ICopyFrom
+	public class AdditionalTicks
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.ICopyFrom
 	{
-		List<AltaxoVariant> _additionalMajorTicks;
+		private List<AltaxoVariant> _additionalMajorTicks;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AdditionalTicks), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -54,7 +58,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 
-
 			protected virtual AdditionalTicks SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				AdditionalTicks s = null != o ? (AdditionalTicks)o : new AdditionalTicks();
@@ -62,17 +65,15 @@ namespace Altaxo.Graph.Scales.Ticks
 				int count;
 
 				count = info.OpenArray("ByValues");
-				for(int i=0;i<count;i++)
-					s._additionalMajorTicks.Add((AltaxoVariant)info.GetValue("e",s));
+				for (int i = 0; i < count; i++)
+					s._additionalMajorTicks.Add((AltaxoVariant)info.GetValue("e", s));
 				info.CloseArray(count);
-
-
-			
 
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public AdditionalTicks()
 		{
@@ -104,7 +105,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool Equals(object obj)
 		{
-
 			if (object.ReferenceEquals(this, obj))
 				return true;
 			else if (!(obj is AdditionalTicks))
@@ -116,15 +116,13 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-	
-
-    public bool IsEmpty
-    {
-      get
-      {
-        return _additionalMajorTicks.Count == 0;
-      }
-    }
+		public bool IsEmpty
+		{
+			get
+			{
+				return _additionalMajorTicks.Count == 0;
+			}
+		}
 
 		public IList<AltaxoVariant> ByValues
 		{

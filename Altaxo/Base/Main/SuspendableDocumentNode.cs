@@ -34,7 +34,7 @@ namespace Altaxo.Main
 	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
 	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
-	public abstract class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IChildChangedEventSink
+	public abstract class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
 	{
 		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
 		private int _suspendLevel;

@@ -29,10 +29,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 	public interface IGraphicBase
 		:
 		Main.IChangedEventSource,
-		Main.IDocumentNode,
+		Main.IDocumentLeafNode,
 		Main.ICopyFrom
 	{
-		new object ParentObject { set; }
+		//new Main.IDocumentNode ParentObject { set; }
 
 		/// <summary>
 		/// Announces the size of the parent layer in order to make own calculations for size and position.

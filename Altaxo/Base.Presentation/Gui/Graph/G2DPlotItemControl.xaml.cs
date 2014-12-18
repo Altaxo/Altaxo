@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -62,7 +64,7 @@ namespace Altaxo.Gui.Graph
 				object oldContent = null == oldItem ? null : oldItem.Content;
 
 				if (null != SelectedPage_Changed)
-					SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs<object>(oldContent, newContent));
+					SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs(oldContent, newContent));
 			}
 		}
 
@@ -87,7 +89,7 @@ namespace Altaxo.Gui.Graph
 			_tabControl.SelectedIndex = index;
 		}
 
-		public event Action<object, Altaxo.Main.InstanceChangedEventArgs<object>> SelectedPage_Changed;
+		public event EventHandler<Altaxo.Main.InstanceChangedEventArgs> SelectedPage_Changed;
 
 		public void SetPlotStyleView(object view)
 		{
@@ -99,8 +101,6 @@ namespace Altaxo.Gui.Graph
 			_plotGroupCollectionControlHost.Content = (UIElement)view;
 		}
 
-		#endregion
-
-
+		#endregion IG2DPlotItemView
 	}
 }

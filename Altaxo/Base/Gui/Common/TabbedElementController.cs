@@ -141,17 +141,17 @@ namespace Altaxo.Gui.Common
 
 		private void EhView_ChildControlEntered(object sender, EventArgs e)
 		{
-			EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(_lastActiveChildControl, sender));
+			EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs(_lastActiveChildControl, sender));
 			_lastActiveChildControl = sender;
 		}
 
 		private void EhView_ChildControlValidated(object sender, EventArgs e)
 		{
-			EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs<object>(sender, null));
+			EhView_ActiveChildControlChanged(sender, new InstanceChangedEventArgs(sender, null));
 			_lastActiveChildControl = null;
 		}
 
-		protected virtual void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs<object> e)
+		protected virtual void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
 		{
 		}
 
@@ -208,10 +208,6 @@ namespace Altaxo.Gui.Common
 				View.BringTabToFront(_frontTabIndex);
 			}
 		}
-
-		#region ITabbedDialogController Members
-
-		#endregion ITabbedDialogController Members
 
 		#region IMVCController Members
 

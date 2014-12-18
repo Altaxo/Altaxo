@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		/// <param name="plotStyle">The plot style.</param>
 		/// <param name="actionIfGroupStyleRemovedOrAdded">The action to do if the group style is removed or added to the group style collection.</param>
-		public ColorGroupStylePresenceTracker(Altaxo.Main.IDocumentNode plotStyle, Action actionIfGroupStyleRemovedOrAdded)
+		public ColorGroupStylePresenceTracker(Altaxo.Main.IDocumentLeafNode plotStyle, Action actionIfGroupStyleRemovedOrAdded)
 		{
 			_colorGroupStyle = GetColorGroupStyle(plotStyle);
 			_actionIfGroupStyleRemovedOrAdded = actionIfGroupStyleRemovedOrAdded;
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph
 		}
 
 
-		public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentNode doc)
+		public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
 		{
 			var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);
 			if (null == plotItemCollection)
