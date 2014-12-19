@@ -28,10 +28,105 @@ using System;
 namespace Altaxo.Data
 {
 	/// <summary>
+	/// Proxy that holds instances of type <see cref="IReadableColumnProxy"/>.
+	/// </summary>
+	public interface IReadableColumnProxy : IDocumentLeafNode, IProxy, ICloneable
+	{
+		/// <summary>
+		/// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
+		/// </summary>
+		IReadableColumn Document { get; }
+
+		/// <summary>
+		/// Gets the name of the column that is held by this proxy.
+		/// </summary>
+		/// <param name="level">The name level.</param>
+		/// <returns>The name of the column held by this proxy.</returns>
+		string GetName(int level);
+	}
+
+	/// <summary>
+	/// Static class to create instances of <see cref="IReadableColumnProxy"/>.
+	/// </summary>
+	public static class ReadableColumnProxyBase
+	{
+		/// <summary>
+		/// Creates an <see cref="IReadableColumnProxy"/> from a given column.
+		/// </summary>
+		/// <param name="column">The column.</param>
+		/// <returns>An instance of <see cref="IReadableColumnProxy"/>. The type of instance returned depends on the type of the provided column (e.g. whether the column is part of the document or not).</returns>
+		public static IReadableColumnProxy FromColumn(IReadableColumn column)
+		{
+			if (column is IDocumentLeafNode)
+				return ReadableColumnProxy.FromColumn(column);
+			else
+				return ReadableColumnProxyForStandaloneColumns.FromColumn(column);
+		}
+	}
+
+	internal class ReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
+	{
+		private IReadableColumn _column;
+
+		public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn column)
+		{
+			var colAsDocumentNode = column as IDocumentLeafNode;
+			if (null != colAsDocumentNode)
+				throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
+
+			return new ReadableColumnProxyForStandaloneColumns(column); ;
+		}
+
+		/// <summary>
+		/// Constructor by giving a numeric column.
+		/// </summary>
+		/// <param name="column">The numeric column to hold.</param>
+		protected ReadableColumnProxyForStandaloneColumns(IReadableColumn column)
+		{
+			_column = column;
+		}
+
+		public IReadableColumn Document
+		{
+			get { return _column; }
+		}
+
+		public object Clone()
+		{
+			return FromColumn(_column);
+		}
+
+		public bool IsEmpty
+		{
+			get { return null == _column; }
+		}
+
+		public string GetName(int level)
+		{
+			return _column == null ? string.Empty : _column.ToString();
+		}
+
+		public object DocumentObject
+		{
+			get { return _column; }
+		}
+
+		public DocumentPath DocumentPath
+		{
+			get { return new DocumentPath(); }
+		}
+
+		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		{
+			return false;
+		}
+	}
+
+	/// <summary>
 	/// Summary description for DataColumnPlaceHolder.
 	/// </summary>
 	[Serializable]
-	public class ReadableColumnProxy : DocNodeProxy
+	internal class ReadableColumnProxy : DocNodeProxy, IReadableColumnProxy
 	{
 		#region Serialization
 
@@ -63,7 +158,18 @@ namespace Altaxo.Data
 
 		#endregion Serialization
 
-		public ReadableColumnProxy(IReadableColumn column)
+		public static ReadableColumnProxy FromColumn(IReadableColumn column)
+		{
+			if (null == column)
+				throw new ArgumentNullException("column");
+			var colAsDocumentNode = column as IDocumentLeafNode;
+			if (null == colAsDocumentNode)
+				throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
+
+			return new ReadableColumnProxy(colAsDocumentNode);
+		}
+
+		protected ReadableColumnProxy(IDocumentLeafNode column)
 			: base(column)
 		{
 		}

@@ -43,7 +43,7 @@ namespace Altaxo.Data
 
 		internal class ColumnBundleInfo : ICloneable
 		{
-			private List<ReadableColumnProxy> _dataColumns = new List<ReadableColumnProxy>();
+			private List<IReadableColumnProxy> _dataColumns = new List<IReadableColumnProxy>();
 			private int? _maximumNumberOfColumns;
 
 			internal ColumnBundleInfo(int? maximumNumberOfColumns)
@@ -60,14 +60,14 @@ namespace Altaxo.Data
 
 			internal int? MaximumNumberOfColumns { get { return _maximumNumberOfColumns; } }
 
-			internal List<ReadableColumnProxy> DataColumns { get { return _dataColumns; } }
+			internal List<IReadableColumnProxy> DataColumns { get { return _dataColumns; } }
 
 			public object Clone()
 			{
 				var result = new ColumnBundleInfo();
 				result._maximumNumberOfColumns = this._maximumNumberOfColumns;
 				foreach (var p in this._dataColumns)
-					result._dataColumns.Add((ReadableColumnProxy)p.Clone());
+					result._dataColumns.Add((IReadableColumnProxy)p.Clone());
 				return result;
 			}
 		}
@@ -180,7 +180,7 @@ namespace Altaxo.Data
 					int countColumns = info.OpenArray();
 					for (int i = 0; i < countColumns; i++)
 					{
-						s.InternalAddDataColumnNoClone(columnBundleInfo, (ReadableColumnProxy)info.GetValue("e", parent));
+						s.InternalAddDataColumnNoClone(columnBundleInfo, (IReadableColumnProxy)info.GetValue("e", parent));
 					}
 					info.CloseArray(countColumns);
 
@@ -291,7 +291,7 @@ namespace Altaxo.Data
 					var col = table[selectedDataColumns[i]];
 					if (table.DataColumns.GetColumnGroup(col) == _groupNumber)
 					{
-						InternalAddDataColumnNoClone(bundle, new ReadableColumnProxy(col));
+						InternalAddDataColumnNoClone(bundle, ReadableColumnProxyBase.FromColumn(col));
 						maxRowCount = Math.Max(maxRowCount, col.Count);
 					}
 				}
@@ -303,7 +303,7 @@ namespace Altaxo.Data
 					var col = table[i];
 					if (table.DataColumns.GetColumnGroup(col) == _groupNumber)
 					{
-						InternalAddDataColumnNoClone(bundle, new ReadableColumnProxy(col));
+						InternalAddDataColumnNoClone(bundle, ReadableColumnProxyBase.FromColumn(col));
 						maxRowCount = Math.Max(maxRowCount, col.Count);
 					}
 				}
@@ -377,7 +377,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="info">The bundle to which to add the column proxy.</param>
 		/// <param name="proxy">The proxy.</param>
-		private void InternalAddDataColumnNoClone(ColumnBundleInfo info, ReadableColumnProxy proxy)
+		private void InternalAddDataColumnNoClone(ColumnBundleInfo info, IReadableColumnProxy proxy)
 		{
 			if (null != proxy)
 			{
@@ -420,7 +420,7 @@ namespace Altaxo.Data
 				var thisB = new ColumnBundleInfo(fromB.MaximumNumberOfColumns);
 				foreach (var fromMember in fromB.DataColumns)
 				{
-					var clone = (ReadableColumnProxy)fromMember.Clone();
+					var clone = (IReadableColumnProxy)fromMember.Clone();
 					clone.ParentObject = this;
 					thisB.DataColumns.Add(clone);
 				}
@@ -434,7 +434,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="bundle">Bundle in which to set the column proxies.</param>
 		/// <param name="fromList">The enumeration of data proxies to clone.</param>
-		private void InternalSetDataColumnsWithCloning(ColumnBundleInfo bundle, IEnumerable<ReadableColumnProxy> fromList)
+		private void InternalSetDataColumnsWithCloning(ColumnBundleInfo bundle, IEnumerable<IReadableColumnProxy> fromList)
 		{
 			if (null == bundle)
 				throw new ArgumentNullException("bundle");
@@ -443,7 +443,7 @@ namespace Altaxo.Data
 
 			foreach (var fromMember in fromList)
 			{
-				var clone = (ReadableColumnProxy)fromMember.Clone();
+				var clone = (IReadableColumnProxy)fromMember.Clone();
 				clone.ParentObject = this;
 				bundle.DataColumns.Add(clone);
 			}
@@ -530,7 +530,7 @@ namespace Altaxo.Data
 
 			if (null != column)
 			{
-				InternalAddDataColumnNoClone(bundle, new ReadableColumnProxy(column));
+				InternalAddDataColumnNoClone(bundle, ReadableColumnProxyBase.FromColumn(column));
 				_isDirty = true;
 			}
 		}
@@ -552,7 +552,7 @@ namespace Altaxo.Data
 			if (null == column)
 				throw new ArgumentNullException("column");
 
-			SetDataColumns(identifier, new ReadableColumnProxy[] { new ReadableColumnProxy(column) });
+			SetDataColumns(identifier, new IReadableColumnProxy[] { ReadableColumnProxyBase.FromColumn(column) });
 		}
 
 		/// <summary>
@@ -572,7 +572,7 @@ namespace Altaxo.Data
 			if (null == columns)
 				throw new ArgumentNullException("column");
 
-			SetDataColumns(identifier, columns.Select(column => new ReadableColumnProxy(column)));
+			SetDataColumns(identifier, columns.Select(column => ReadableColumnProxyBase.FromColumn(column)));
 		}
 
 		/// <summary>
@@ -580,7 +580,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="identifier">Identifier (key) to identifiy the bundle in which the data columns are set.</param>
 		/// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
-		public void SetDataColumns(string identifier, IEnumerable<ReadableColumnProxy> dataColumnProxies)
+		public void SetDataColumns(string identifier, IEnumerable<IReadableColumnProxy> dataColumnProxies)
 		{
 			if (null == identifier)
 				throw new ArgumentNullException("identifier");
@@ -618,7 +618,7 @@ namespace Altaxo.Data
 		/// <param name="identifier">Identifier (key) to identifiy the bundle to use.</param>
 		/// <param name="idx">The index.</param>
 		/// <returns>The data column proxy at index <paramref name="idx"/>.</returns>
-		public ReadableColumnProxy GetDataColumnProxy(string identifier, int idx)
+		public IReadableColumnProxy GetDataColumnProxy(string identifier, int idx)
 		{
 			if (_isDirty)
 				Update();
@@ -637,7 +637,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="identifier">Identifier (key) to identifiy the bundle with the column proxies.</param>
 		/// <returns>The data column proxies in the bundle identified by <paramref name="identifier"/>.</returns>
-		public IList<ReadableColumnProxy> GetDataColumnProxies(string identifier)
+		public IList<IReadableColumnProxy> GetDataColumnProxies(string identifier)
 		{
 			if (_isDirty)
 				Update();
@@ -849,7 +849,7 @@ namespace Altaxo.Data
 		/// Gets all column proxies from all column bundles in this instance.
 		/// </summary>
 		/// <returns>All column proxies from all column bundles in this instance.</returns>
-		private IEnumerable<ReadableColumnProxy> GetAllColumnProxies()
+		private IEnumerable<IReadableColumnProxy> GetAllColumnProxies()
 		{
 			foreach (var entry in _dataColumnBundles)
 				foreach (var proxy in entry.Value.DataColumns)

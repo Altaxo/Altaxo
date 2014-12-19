@@ -269,8 +269,8 @@ namespace Altaxo.Gui.Data
 					continue;
 
 				// before adding this node, check that it is not already present
-				var proxyToAdd = new ReadableColumnProxy(colToAdd);
-				if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((ReadableColumnProxy)n.Tag).DocumentPath)))
+				var proxyToAdd = ReadableColumnProxyBase.FromColumn(colToAdd);
+				if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((IReadableColumnProxy)n.Tag).DocumentPath)))
 					continue;
 
 				_valueColumns.Add(new SelectableListNode(colToAdd.FullName, proxyToAdd, false));
@@ -312,7 +312,7 @@ namespace Altaxo.Gui.Data
 
 			_doc.RowHeaderColumn = _xColumn;
 			_doc.ColumnHeaderColumn = _yColumn;
-			_doc.SetDataColumns(_valueColumns.Select(n => (ReadableColumnProxy)n.Tag));
+			_doc.SetDataColumns(_valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
 
 			if (!_doc.UseAllAvailableDataRows)
 			{

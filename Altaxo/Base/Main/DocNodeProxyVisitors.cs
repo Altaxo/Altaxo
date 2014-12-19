@@ -36,7 +36,7 @@ namespace Altaxo.Main
 	/// <param name="proxy">The proxy that is owned by the instance.</param>
 	/// <param name="owner">The instance that owns the proxy.</param>
 	/// <param name="propertyName">Name of the property that accesses the proxy in this instance.</param>
-	public delegate void DocNodeProxyReporter(DocNodeProxy proxy, object owner, string propertyName);
+	public delegate void DocNodeProxyReporter(IProxy proxy, object owner, string propertyName);
 
 	/// <summary>
 	/// Can be used to to relocate the <see cref="DocumentPath"/> that the <see cref="DocNodeProxy"/> is holding. The <see cref="Visit"/> function implements
@@ -59,7 +59,7 @@ namespace Altaxo.Main
 		/// <param name="proxy">The <see cref="DocNodeProxy"/> to modify.</param>
 		/// <param name="owner">The instance that owns the proxy.</param>
 		/// <param name="propertyName">Name of the property that accesses the proxy in this instance.</param>
-		public void Visit(DocNodeProxy proxy, object owner, string propertyName)
+		public void Visit(IProxy proxy, object owner, string propertyName)
 		{
 			if (null == proxy)
 				return;

@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Procedures
 		/// <param name="proxy">The proxy.</param>
 		/// <param name="owner">The owner of the proxy.</param>
 		/// <param name="propertyName">Name of the property in the owner class that will return the proxy.</param>
-		private void CollectDataColumnsFromProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
+		private void CollectDataColumnsFromProxyVisit(IProxy proxy, object owner, string propertyName)
 		{
 			if (proxy.IsEmpty)
 			{
@@ -213,7 +213,7 @@ namespace Altaxo.Graph.Procedures
 						_tablesToChange.Add(tablePath, null);
 				}
 			}
-			else if ((proxy is Altaxo.Data.NumericColumnProxy) || (proxy is Altaxo.Data.ReadableColumnProxy))
+			else if ((proxy is Altaxo.Data.INumericColumnProxy) || (proxy is Altaxo.Data.IReadableColumnProxy))
 			{
 				// seems to be an indexer column or something alike. No need to do something
 			}

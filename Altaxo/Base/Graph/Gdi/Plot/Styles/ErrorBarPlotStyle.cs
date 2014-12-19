@@ -42,8 +42,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG2DPlotStyle
 	{
-		private NumericColumnProxy _positiveErrorColumn;
-		private NumericColumnProxy _negativeErrorColumn;
+		private INumericColumnProxy _positiveErrorColumn;
+		private INumericColumnProxy _negativeErrorColumn;
 
 		/// <summary>
 		/// True if the color of the label is not dependent on the color of the parent plot style.
@@ -129,8 +129,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
-				s._positiveErrorColumn = (Altaxo.Data.NumericColumnProxy)info.GetValue("PositiveError");
-				s._negativeErrorColumn = (Altaxo.Data.NumericColumnProxy)info.GetValue("NegativeError");
+				s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError");
+				s._negativeErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("NegativeError");
 
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s.Pen = (PenX)info.GetValue("Pen", s);
@@ -184,8 +184,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._isHorizontalStyle = from._isHorizontalStyle;
 				this._doNotShiftHorizontalPosition = from._doNotShiftHorizontalPosition;
 				this._strokePen = (PenX)from._strokePen.Clone();
-				this._positiveErrorColumn = (NumericColumnProxy)from._positiveErrorColumn.Clone();
-				this._negativeErrorColumn = (NumericColumnProxy)from._negativeErrorColumn.Clone();
+				this._positiveErrorColumn = (INumericColumnProxy)from._positiveErrorColumn.Clone();
+				this._negativeErrorColumn = (INumericColumnProxy)from._negativeErrorColumn.Clone();
 				this._cachedLogicalShiftOfIndependent = from._cachedLogicalShiftOfIndependent;
 				return true;
 			}
@@ -354,7 +354,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				var oldValue = _positiveErrorColumn == null ? null : _positiveErrorColumn.Document;
-				_positiveErrorColumn = new NumericColumnProxy(value);
+				_positiveErrorColumn = NumericColumnProxyBase.FromColumn(value);
 				if (!object.ReferenceEquals(oldValue, value))
 					EhSelfChanged(EventArgs.Empty);
 			}
@@ -369,7 +369,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				var oldValue = _negativeErrorColumn == null ? null : _negativeErrorColumn.Document;
-				_negativeErrorColumn = new NumericColumnProxy(value);
+				_negativeErrorColumn = NumericColumnProxyBase.FromColumn(value);
 				if (oldValue != value)
 					EhSelfChanged(EventArgs.Empty);
 			}

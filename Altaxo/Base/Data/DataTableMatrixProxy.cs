@@ -124,7 +124,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		protected class ColumnPositionComparer : IComparer<ReadableColumnProxy>
+		protected class ColumnPositionComparer : IComparer<IReadableColumnProxy>
 		{
 			private DataColumnCollection _coll;
 
@@ -133,7 +133,7 @@ namespace Altaxo.Data
 				_coll = coll;
 			}
 
-			public int Compare(ReadableColumnProxy a, ReadableColumnProxy b)
+			public int Compare(IReadableColumnProxy a, IReadableColumnProxy b)
 			{
 				var ca = a.Document as DataColumn;
 				var cb = b.Document as DataColumn;
@@ -189,16 +189,16 @@ namespace Altaxo.Data
 		/// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
 		protected DataTableProxy _dataTable;
 
-		protected List<ReadableColumnProxy> _dataColumns; // the columns that are involved in the matrix
+		protected List<IReadableColumnProxy> _dataColumns; // the columns that are involved in the matrix
 
 		/// <summary>The group number of the data columns. All data columns must be columns of ColumnKind.V and must have this group number. Data columns having other group numbers will be removed.</summary>
 		protected int _groupNumber;
 
 		/// <summary>Column that correlate each row of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
-		protected ReadableColumnProxy _rowHeaderColumn;
+		protected IReadableColumnProxy _rowHeaderColumn;
 
 		/// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
-		protected ReadableColumnProxy _columnHeaderColumn;
+		protected IReadableColumnProxy _columnHeaderColumn;
 
 		/// <summary>If <c>true</c>, all available columns (of ColumnKind.V) with the group number of <see cref="_groupNumber"/> will be used for the data matrix. If columns with this group number are removed or added from/to the table, the number of columns of the matrix will be adjusted.</summary>
 		protected bool _useAllAvailableColumnsOfGroup;
@@ -227,8 +227,8 @@ namespace Altaxo.Data
 
 			InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
 			InternalSetDataColumnsWithCloning(from._dataColumns);
-			InternalSetRowHeaderColumn((ReadableColumnProxy)from._rowHeaderColumn.Clone());
-			InternalSetColumnHeaderColumn((ReadableColumnProxy)from._columnHeaderColumn.Clone());
+			InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
+			InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
 			this._groupNumber = from._groupNumber;
 			this._useAllAvailableColumnsOfGroup = from._useAllAvailableColumnsOfGroup;
 			this._useAllAvailableDataRows = from._useAllAvailableDataRows;
@@ -281,8 +281,8 @@ namespace Altaxo.Data
 
 				s.InternalSetDataTable((DataTableProxy)info.GetValue("Table"));
 				s._groupNumber = info.GetInt32("Group");
-				s.InternalSetRowHeaderColumn((ReadableColumnProxy)info.GetValue("RowHeaderColumn"));
-				s.InternalSetColumnHeaderColumn((ReadableColumnProxy)info.GetValue("ColumnHeaderColumn"));
+				s.InternalSetRowHeaderColumn((IReadableColumnProxy)info.GetValue("RowHeaderColumn"));
+				s.InternalSetColumnHeaderColumn((IReadableColumnProxy)info.GetValue("ColumnHeaderColumn"));
 
 				s._useAllAvailableColumnsOfGroup = info.GetBoolean("UseAllAvailableColumnsOfGroup");
 				s._useAllAvailableDataRows = info.GetBoolean("UseAllAvailableDataRows");
@@ -290,16 +290,16 @@ namespace Altaxo.Data
 				if (!s._useAllAvailableColumnsOfGroup)
 				{
 					int count = info.OpenArray();
-					s._dataColumns = new List<ReadableColumnProxy>(count);
+					s._dataColumns = new List<IReadableColumnProxy>(count);
 					for (int i = 0; i < count; i++)
 					{
-						s.InternalAddDataColumnNoClone((ReadableColumnProxy)info.GetValue("e", parent));
+						s.InternalAddDataColumnNoClone((IReadableColumnProxy)info.GetValue("e", parent));
 					}
 					info.CloseArray(count);
 				}
 				else
 				{
-					s._dataColumns = new List<ReadableColumnProxy>();
+					s._dataColumns = new List<IReadableColumnProxy>();
 				}
 
 				if (!s._useAllAvailableDataRows)
@@ -382,17 +382,17 @@ namespace Altaxo.Data
 			_useAllAvailableColumnsOfGroup = converter.AreAllAvailableColumnsOfGroupIncluded();
 			_useAllAvailableDataRows = converter.AreAllAvailableRowsIncluded();
 
-			_rowHeaderColumn = new ReadableColumnProxy(converter.RowHeaderColumn);
+			_rowHeaderColumn = ReadableColumnProxyBase.FromColumn(converter.RowHeaderColumn);
 			_rowHeaderColumn.ParentObject = this;
 
-			_columnHeaderColumn = new ReadableColumnProxy(converter.ColumnHeaderColumn);
+			_columnHeaderColumn = ReadableColumnProxyBase.FromColumn(converter.ColumnHeaderColumn);
 			_columnHeaderColumn.ParentObject = this;
 
-			_dataColumns = new List<ReadableColumnProxy>();
+			_dataColumns = new List<IReadableColumnProxy>();
 			_participatingDataColumns = new AscendingIntegerCollection(converter.GetParticipatingDataColumns());
 			for (int i = 0; i < _participatingDataColumns.Count; i++)
 			{
-				_dataColumns.Add(new ReadableColumnProxy(table.DataColumns[_participatingDataColumns[i]]));
+				_dataColumns.Add(ReadableColumnProxyBase.FromColumn(table.DataColumns[_participatingDataColumns[i]]));
 
 				// set the event chain
 				_dataColumns[i].ParentObject = this;
@@ -407,21 +407,21 @@ namespace Altaxo.Data
 			var result = new DataTableMatrixProxy();
 			result._participatingDataColumns = new AscendingIntegerCollection();
 			result._participatingDataRows = new AscendingIntegerCollection();
-			result._dataColumns = new List<ReadableColumnProxy>();
+			result._dataColumns = new List<IReadableColumnProxy>();
 
 			result.InternalSetDataTable(new DataTableProxy((DataTable)null));
-			result.InternalSetRowHeaderColumn(new ReadableColumnProxy((IReadableColumn)null));
-			result.InternalSetColumnHeaderColumn(new ReadableColumnProxy((IReadableColumn)null));
+			result.InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
+			result.InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
 
 			return result;
 		}
 
 		[Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
-		public DataTableMatrixProxy(ReadableColumnProxy xColumn, ReadableColumnProxy yColumn, ReadableColumnProxy[] dataColumns)
+		public DataTableMatrixProxy(IReadableColumnProxy xColumn, IReadableColumnProxy yColumn, IReadableColumnProxy[] dataColumns)
 		{
 			_participatingDataColumns = new AscendingIntegerCollection();
 			_participatingDataRows = new AscendingIntegerCollection();
-			_dataColumns = new List<ReadableColumnProxy>();
+			_dataColumns = new List<IReadableColumnProxy>();
 
 			InternalSetDataTable(new DataTableProxy((DataTable)null));
 			InternalSetRowHeaderColumn(xColumn);
@@ -458,23 +458,23 @@ namespace Altaxo.Data
 				_dataTable.ParentObject = this;
 		}
 
-		private void InternalSetRowHeaderColumn(ReadableColumnProxy proxy)
+		private void InternalSetRowHeaderColumn(IReadableColumnProxy proxy)
 		{
 			if (null != _rowHeaderColumn)
 				_rowHeaderColumn.ParentObject = null;
 
-			_rowHeaderColumn = proxy ?? new ReadableColumnProxy((IReadableColumn)null); // always ensure to have a proxy != null
+			_rowHeaderColumn = proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null); // always ensure to have a proxy != null
 
 			if (null != _rowHeaderColumn)
 				_rowHeaderColumn.ParentObject = this;
 		}
 
-		private void InternalSetColumnHeaderColumn(ReadableColumnProxy proxy)
+		private void InternalSetColumnHeaderColumn(IReadableColumnProxy proxy)
 		{
 			if (null != _columnHeaderColumn)
 				_columnHeaderColumn.ParentObject = null;
 
-			_columnHeaderColumn = proxy ?? new ReadableColumnProxy((IReadableColumn)null);
+			_columnHeaderColumn = proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null);
 
 			if (null != _columnHeaderColumn)
 				_columnHeaderColumn.ParentObject = this;
@@ -498,7 +498,7 @@ namespace Altaxo.Data
 		/// Adds a data column proxy to the data column collection without cloning it (i.e. the proxy is directly added).
 		/// </summary>
 		/// <param name="proxy">The proxy.</param>
-		private void InternalAddDataColumnNoClone(ReadableColumnProxy proxy)
+		private void InternalAddDataColumnNoClone(IReadableColumnProxy proxy)
 		{
 			if (null != proxy)
 			{
@@ -521,7 +521,7 @@ namespace Altaxo.Data
 		/// Clears the data column collection, then adds data column proxies, using a list of existing data column proxies. The proxies are cloned before adding them to the collection.
 		/// </summary>
 		/// <param name="fromList">The enumeration of data proxies to clone.</param>
-		private void InternalSetDataColumnsWithCloning(IEnumerable<ReadableColumnProxy> fromList)
+		private void InternalSetDataColumnsWithCloning(IEnumerable<IReadableColumnProxy> fromList)
 		{
 			if (null != _dataColumns)
 			{
@@ -529,12 +529,12 @@ namespace Altaxo.Data
 			}
 			else
 			{
-				_dataColumns = new List<ReadableColumnProxy>();
+				_dataColumns = new List<IReadableColumnProxy>();
 			}
 
 			foreach (var fromMember in fromList)
 			{
-				var clone = (ReadableColumnProxy)fromMember.Clone();
+				var clone = (IReadableColumnProxy)fromMember.Clone();
 				clone.ParentObject = this;
 				_dataColumns.Add(clone);
 			}
@@ -600,7 +600,7 @@ namespace Altaxo.Data
 				var oldValue = _rowHeaderColumn.Document;
 				if (!object.ReferenceEquals(oldValue, value))
 				{
-					InternalSetRowHeaderColumn(new ReadableColumnProxy(value));
+					InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn(value));
 					_isDirty = true;
 				}
 			}
@@ -618,7 +618,7 @@ namespace Altaxo.Data
 				var oldValue = _columnHeaderColumn.Document;
 				if (!object.ReferenceEquals(oldValue, value))
 				{
-					InternalSetColumnHeaderColumn(new ReadableColumnProxy(value));
+					InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn(value));
 					_isDirty = true;
 				}
 			}
@@ -632,7 +632,7 @@ namespace Altaxo.Data
 		{
 			if (null != column)
 			{
-				InternalAddDataColumnNoClone(new ReadableColumnProxy(column));
+				InternalAddDataColumnNoClone(ReadableColumnProxyBase.FromColumn(column));
 				_isDirty = true;
 			}
 		}
@@ -641,7 +641,7 @@ namespace Altaxo.Data
 		/// Sets the data columns from an enumeration of data column proxies.
 		/// </summary>
 		/// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
-		public void SetDataColumns(IEnumerable<ReadableColumnProxy> dataColumnProxies)
+		public void SetDataColumns(IEnumerable<IReadableColumnProxy> dataColumnProxies)
 		{
 			InternalClearDataColumns();
 			InternalSetDataColumnsWithCloning(dataColumnProxies);
@@ -653,7 +653,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="idx">The index.</param>
 		/// <returns>The data column proxy at index <paramref name="idx"/>.</returns>
-		public ReadableColumnProxy GetDataColumnProxy(int idx)
+		public IReadableColumnProxy GetDataColumnProxy(int idx)
 		{
 			if (_isDirty)
 				Update();
@@ -830,7 +830,7 @@ namespace Altaxo.Data
 			var toInsert = dataColumns.Columns.Where(c => dataColumns.GetColumnGroup(c) == _groupNumber && dataColumns.GetColumnKind(c) == ColumnKind.V && !existing.Contains(c));
 			foreach (var ins in toInsert)
 			{
-				InternalAddDataColumnNoClone(new ReadableColumnProxy(ins));
+				InternalAddDataColumnNoClone(ReadableColumnProxyBase.FromColumn(ins));
 			}
 		}
 
@@ -915,7 +915,7 @@ namespace Altaxo.Data
 				}
 			}
 
-			foreach (var colproxy in new ReadableColumnProxy[] { _rowHeaderColumn, _columnHeaderColumn })
+			foreach (var colproxy in new IReadableColumnProxy[] { _rowHeaderColumn, _columnHeaderColumn })
 			{
 				col = colproxy.Document as DataColumn;
 				if (null != col)
@@ -1186,7 +1186,7 @@ namespace Altaxo.Data
 		/// <param name="incrementValue">If the function is successfull, the value of the spacing between each element is returned.</param>
 		/// <param name="errorOrWarningMessage">If the function is not successfull, a user friendly error or warning message is returned here.</param>
 		/// <returns><c>True</c> if successfull, otherwise <c>false</c>.</returns>
-		public static bool TryGetColumnDataIncrement(ReadableColumnProxy proxy, string rowOrCol, IAscendingIntegerCollection selectedIndices, out double incrementValue, out string errorOrWarningMessage)
+		public static bool TryGetColumnDataIncrement(IReadableColumnProxy proxy, string rowOrCol, IAscendingIntegerCollection selectedIndices, out double incrementValue, out string errorOrWarningMessage)
 		{
 			incrementValue = 1;
 

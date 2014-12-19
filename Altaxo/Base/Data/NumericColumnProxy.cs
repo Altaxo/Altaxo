@@ -28,9 +28,92 @@ using System;
 namespace Altaxo.Data
 {
 	/// <summary>
+	/// Proxy that holds instances of type <see cref="INumericColumnProxy"/>.
+	/// </summary>
+	public interface INumericColumnProxy : IDocumentLeafNode, IProxy, ICloneable
+	{
+		/// <summary>
+		/// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
+		/// </summary>
+		INumericColumn Document { get; }
+	}
+
+	/// <summary>
+	/// Static class to create instances of <see cref="INumericColumnProxy"/>.
+	/// </summary>
+	public static class NumericColumnProxyBase
+	{
+		/// <summary>
+		/// Creates an <see cref="INumericColumnProxy"/> from a given column.
+		/// </summary>
+		/// <param name="column">The column.</param>
+		/// <returns>An instance of <see cref="INumericColumnProxy"/>. The type of instance returned depends on the type of the provided column (e.g. whether the column is part of the document or not).</returns>
+		public static INumericColumnProxy FromColumn(INumericColumn column)
+		{
+			if (column is IDocumentLeafNode)
+				return NumericColumnProxy.FromColumn(column);
+			else
+				return NumericColumnProxyForStandaloneColumns.FromColumn(column);
+		}
+	}
+
+	public class NumericColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, INumericColumnProxy
+	{
+		private INumericColumn _column;
+
+		public static NumericColumnProxyForStandaloneColumns FromColumn(INumericColumn column)
+		{
+			var colAsDocumentNode = column as IDocumentLeafNode;
+			if (null != colAsDocumentNode)
+				throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
+
+			return new NumericColumnProxyForStandaloneColumns(column); ;
+		}
+
+		/// <summary>
+		/// Constructor by giving a numeric column.
+		/// </summary>
+		/// <param name="column">The numeric column to hold.</param>
+		protected NumericColumnProxyForStandaloneColumns(INumericColumn column)
+		{
+			_column = column;
+		}
+
+		public INumericColumn Document
+		{
+			get { return _column; }
+		}
+
+		public bool IsEmpty
+		{
+			get { return null == _column; }
+		}
+
+		public object Clone()
+		{
+			return FromColumn(this._column);
+		}
+
+		public object DocumentObject
+		{
+			get { return _column; }
+		}
+
+		public DocumentPath DocumentPath
+		{
+			get { return new DocumentPath(); }
+		}
+
+		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		{
+			return false;
+		}
+	}
+
+	/// <summary>
 	/// Holds a "weak" reference to a numeric column, altogether with a document path to that column.
 	/// </summary>
-	public class NumericColumnProxy : DocNodeProxy
+	public class NumericColumnProxy : DocNodeProxy, INumericColumnProxy
 	{
 		#region Serialization
 
@@ -53,11 +136,22 @@ namespace Altaxo.Data
 
 		#endregion Serialization
 
+		public static NumericColumnProxy FromColumn(INumericColumn column)
+		{
+			if (null == column)
+				throw new ArgumentNullException("column");
+			var colAsDocumentNode = column as IDocumentLeafNode;
+			if (null == colAsDocumentNode)
+				throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
+
+			return new NumericColumnProxy(colAsDocumentNode);
+		}
+
 		/// <summary>
 		/// Constructor by giving a numeric column.
 		/// </summary>
 		/// <param name="column">The numeric column to hold.</param>
-		public NumericColumnProxy(INumericColumn column)
+		protected NumericColumnProxy(IDocumentLeafNode column)
 			: base(column)
 		{
 		}
@@ -86,7 +180,7 @@ namespace Altaxo.Data
 		/// <returns>True if this is a valid document object.</returns>
 		protected override bool IsValidDocument(object obj)
 		{
-			return (obj is INumericColumn) || obj == null;
+			return ((obj is INumericColumn) && obj is IDocumentLeafNode) || obj == null;
 		}
 
 		/// <summary>

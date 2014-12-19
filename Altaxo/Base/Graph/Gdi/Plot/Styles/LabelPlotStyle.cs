@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>The axis where the label is attached to (if it is attached).</summary>
 		protected CSPlaneID _attachedPlane;
 
-		protected Altaxo.Data.ReadableColumnProxy _labelColumnProxy;
+		protected Altaxo.Data.IReadableColumnProxy _labelColumnProxy;
 
 		// cached values:
 		[NonSerialized]
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LabelPlotStyle s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
 
-				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				// restore the cached values
 				s.SetCachedValues();
@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool attachToAxis = info.GetBoolean("AttachToAxis");
 				EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				if (attachToAxis)
 					s._attachedPlane = XmlSerializationSurrogate0.GetDirection(attachedAxis);
@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
 				s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				if (nativeCall)
 				{
@@ -387,7 +387,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
 				s._backgroundColorLinkage = (ColorLinkage)info.GetEnum("BackgroundColorLinkage", typeof(ColorLinkage));
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-				s.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 				if (nativeCall)
 				{
@@ -439,7 +439,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
 				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 				this._attachedPlane = null == from._attachedPlane ? null : from._attachedPlane.Clone();
-				this.LabelColumnProxy = (Altaxo.Data.ReadableColumnProxy)from._labelColumnProxy.Clone();
+				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
 				this._parent = from._parent;
 				return true;
 			}
@@ -472,7 +472,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
 			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
 			this._attachedPlane = null;
-			this.LabelColumnProxy = new Altaxo.Data.ReadableColumnProxy(labelColumn);
+			this.LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
 		}
 
 		private void EhLabelColumnProxyChanged(object sender, EventArgs e)
@@ -480,7 +480,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			EhSelfChanged(EventArgs.Empty);
 		}
 
-		protected Altaxo.Data.ReadableColumnProxy LabelColumnProxy
+		protected Altaxo.Data.IReadableColumnProxy LabelColumnProxy
 		{
 			set
 			{
@@ -513,7 +513,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (object.ReferenceEquals(LabelColumn, value))
 					return;
 
-				LabelColumnProxy = new Altaxo.Data.ReadableColumnProxy(value);
+				LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(value);
 			}
 		}
 

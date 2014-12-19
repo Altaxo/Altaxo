@@ -186,7 +186,7 @@ namespace Altaxo.Gui.Data
 			}
 		}
 
-		private DataColumn GetColumnInOtherTable(DataTable table, int groupNumber, ReadableColumnProxy proxyTemplate)
+		private DataColumn GetColumnInOtherTable(DataTable table, int groupNumber, IReadableColumnProxy proxyTemplate)
 		{
 			var oldColumn = (DataColumn)proxyTemplate.Document;
 
@@ -279,8 +279,8 @@ namespace Altaxo.Gui.Data
 					continue;
 
 				// before adding this node, check that it is not already present
-				var proxyToAdd = new ReadableColumnProxy(colToAdd);
-				if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((ReadableColumnProxy)n.Tag).DocumentPath)))
+				var proxyToAdd = ReadableColumnProxyBase.FromColumn(colToAdd);
+				if (_valueColumns.Any(n => proxyToAdd.DocumentPath.Equals(((IReadableColumnProxy)n.Tag).DocumentPath)))
 					continue;
 
 				_valueColumns.Add(new SelectableListNode(colToAdd.FullName, proxyToAdd, false));
@@ -304,7 +304,7 @@ namespace Altaxo.Gui.Data
 			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
 			_doc.GroupNumber = _view.GroupNumber;
 
-			_doc.SetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier, _valueColumns.Select(n => (ReadableColumnProxy)n.Tag));
+			_doc.SetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier, _valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
 
 			_doc.SetDataColumn(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier, (DataColumn)_choicesCyclingVar.FirstSelectedNode.Tag);
 

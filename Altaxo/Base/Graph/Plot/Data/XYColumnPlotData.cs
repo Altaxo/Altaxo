@@ -46,8 +46,8 @@ namespace Altaxo.Graph.Plot.Data
 		System.Runtime.Serialization.IDeserializationCallback,
 		System.ICloneable
 	{
-		protected Altaxo.Data.ReadableColumnProxy _xColumn; // the X-Column
-		protected Altaxo.Data.ReadableColumnProxy _yColumn; // the Y-Column
+		protected Altaxo.Data.IReadableColumnProxy _xColumn; // the X-Column
+		protected Altaxo.Data.IReadableColumnProxy _yColumn; // the Y-Column
 
 		/// <summary>This is here only for backward deserialization compatibility. Do not use it.</summary>
 		private Altaxo.Data.IReadableColumn _deprecatedLabelColumn; // the label column
@@ -108,8 +108,8 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYColumnPlotData s = (XYColumnPlotData)obj;
 
-				s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", typeof(ReadableColumnProxy));
-				s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", typeof(ReadableColumnProxy));
+				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", typeof(IReadableColumnProxy));
+				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", typeof(IReadableColumnProxy));
 
 				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", typeof(IPhysicalBoundaries));
 				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", typeof(IPhysicalBoundaries));
@@ -352,8 +352,8 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-				s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
-				s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", parent);
+				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", parent);
 
 				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
 				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
@@ -409,10 +409,10 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-				s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", parent);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
 
-				s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", parent);
 				if (null != s._yColumn) s._yColumn.ParentObject = s;
 
 				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
@@ -675,15 +675,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				if (null == _xColumn)
-				{
-					_xColumn = new ReadableColumnProxy(value);
-					_xColumn.ParentObject = this;
-				}
-				else
-				{
-					_xColumn.SetDocNode(value);
-				}
+				if (null != _xColumn && object.ReferenceEquals(_xColumn.Document, value))
+					return;
+
+				if (_xColumn != null)
+					_xColumn.ParentObject = null;
+
+				_xColumn = ReadableColumnProxyBase.FromColumn(value);
+				_xColumn.ParentObject = this;
 
 				_isCachedDataValid = false;
 				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
@@ -698,15 +697,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				if (null == _yColumn)
-				{
-					_yColumn = new ReadableColumnProxy(value);
-					_yColumn.ParentObject = this;
-				}
-				else
-				{
-					_yColumn.SetDocNode(value);
-				}
+				if (null != _yColumn && object.ReferenceEquals(_yColumn.Document, value))
+					return;
+
+				if (_yColumn != null)
+					_yColumn.ParentObject = null;
+
+				_yColumn = ReadableColumnProxyBase.FromColumn(value);
+				_yColumn.ParentObject = this;
 
 				_isCachedDataValid = false;
 

@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="proxy">The proxy.</param>
 		/// <param name="owner">The owner of the proxy.</param>
 		/// <param name="propertyName">Name of the property in the owner class that will return the proxy.</param>
-		private void CollectDataTableFromProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
+		private void CollectDataTableFromProxyVisit(IProxy proxy, object owner, string propertyName)
 		{
 			if (proxy.IsEmpty)
 			{
@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph
 						_tablesToChange.Add(tablePath, null);
 				}
 			}
-			else if ((proxy is Altaxo.Data.NumericColumnProxy) || (proxy is Altaxo.Data.ReadableColumnProxy))
+			else if ((proxy is Altaxo.Data.INumericColumnProxy) || (proxy is Altaxo.Data.IReadableColumnProxy))
 			{
 				var path = proxy.DocumentPath;
 				if (path.Count >= 2 && path.StartsWith(DocumentPath.GetPath(Current.Project.DataTableCollection, int.MaxValue)))
@@ -162,7 +162,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="proxy">The proxy which contain a reference to another project item.</param>
 		/// <param name="owner">The owner instance of the proxy.</param>
 		/// <param name="propertyName">Name of the property in the owner instance that returns the proxy.</param>
-		private void ExchangeTablesProxyVisit(DocNodeProxy proxy, object owner, string propertyName)
+		private void ExchangeTablesProxyVisit(IProxy proxy, object owner, string propertyName)
 		{
 			Altaxo.Data.DataTable substituteTable;
 
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph
 			{
 				throw new NotImplementedException();
 			}
-			else if ((proxy is Altaxo.Data.NumericColumnProxy) || (proxy is Altaxo.Data.ReadableColumnProxy))
+			else if ((proxy is Altaxo.Data.INumericColumnProxy) || (proxy is Altaxo.Data.IReadableColumnProxy))
 			{
 				var path = proxy.DocumentPath;
 				var tableCollectionPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);

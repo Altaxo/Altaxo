@@ -131,9 +131,9 @@ namespace Altaxo.Graph.Plot.Data
 			private Main.DocumentPath _yColumnPath = null;
 			private Main.DocumentPath[] _vColumnPaths = null;
 
-			private ReadableColumnProxy _xColumnProxy = null;
-			private ReadableColumnProxy _yColumnProxy = null;
-			private ReadableColumnProxy[] _vColumnProxies = null;
+			private IReadableColumnProxy _xColumnProxy = null;
+			private IReadableColumnProxy _yColumnProxy = null;
+			private IReadableColumnProxy[] _vColumnProxies = null;
 
 			private XYZMeshedColumnPlotData _plotAssociation = null;
 
@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Plot.Data
 				}
 				else
 				{
-					surr._xColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)deserobj);
+					surr._xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)deserobj);
 				}
 
 				deserobj = info.GetValue("YColumn", s);
@@ -169,12 +169,12 @@ namespace Altaxo.Graph.Plot.Data
 				}
 				else
 				{
-					surr._yColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)deserobj);
+					surr._yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)deserobj);
 				}
 
 				int count = info.OpenArray();
 				surr._vColumnPaths = new Main.DocumentPath[count];
-				surr._vColumnProxies = new ReadableColumnProxy[count];
+				surr._vColumnProxies = new IReadableColumnProxy[count];
 				for (int i = 0; i < count; i++)
 				{
 					deserobj = info.GetValue("e", s);
@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Plot.Data
 					}
 					else
 					{
-						surr._vColumnProxies[i] = new ReadableColumnProxy((Altaxo.Data.IReadableColumn)deserobj);
+						surr._vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)deserobj);
 					}
 				}
 				info.CloseArray(count);
@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Plot.Data
 					if (xColumn is Altaxo.Data.INumericColumn)
 					{
 						this._xColumnPath = null;
-						this._xColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)xColumn);
+						this._xColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)xColumn);
 					}
 				}
 
@@ -229,7 +229,7 @@ namespace Altaxo.Graph.Plot.Data
 					if (yColumn is Altaxo.Data.INumericColumn)
 					{
 						this._yColumnPath = null;
-						this._yColumnProxy = new ReadableColumnProxy((Altaxo.Data.INumericColumn)yColumn);
+						this._yColumnProxy = ReadableColumnProxyBase.FromColumn((Altaxo.Data.INumericColumn)yColumn);
 					}
 				}
 
@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Plot.Data
 						if (vColumn is Altaxo.Data.IReadableColumn)
 						{
 							this._vColumnPaths[i] = null;
-							this._vColumnProxies[i] = new ReadableColumnProxy((Altaxo.Data.IReadableColumn)vColumn);
+							this._vColumnProxies[i] = ReadableColumnProxyBase.FromColumn((Altaxo.Data.IReadableColumn)vColumn);
 						}
 					}
 				}
@@ -287,14 +287,14 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
-				var _xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
-				var _yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+				var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", parent);
+				var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", parent);
 
 				int count = info.OpenArray();
-				var _dataColumns = new ReadableColumnProxy[count];
+				var _dataColumns = new IReadableColumnProxy[count];
 				for (int i = 0; i < count; i++)
 				{
-					_dataColumns[i] = (ReadableColumnProxy)info.GetValue("e", parent);
+					_dataColumns[i] = (IReadableColumnProxy)info.GetValue("e", parent);
 				}
 				info.CloseArray(count);
 

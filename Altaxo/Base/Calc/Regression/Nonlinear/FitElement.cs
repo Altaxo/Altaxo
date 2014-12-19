@@ -45,10 +45,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		private ContiguousNonNegativeIntegerRange _rangeOfRows;
 
 		/// <summary>Array of columns that are used as data source for the independent variables.</summary>
-		private NumericColumnProxy[] _independentVariables;
+		private INumericColumnProxy[] _independentVariables;
 
 		/// <summary>Array of columns that are used as data source for the dependent variables.</summary>
-		private NumericColumnProxy[] _dependentVariables;
+		private INumericColumnProxy[] _dependentVariables;
 
 		/// <summary>Holds for each dependent variable the kind of error evaluation (i.e. the kind of weighing of the difference between current dependent values and the calculated value of the fitting function)</summary>
 		private IVarianceScaling[] _errorEvaluation;
@@ -93,19 +93,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				s._rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(firstRow, numRows);
 
 				int arraycount = info.OpenArray();
-				s._independentVariables = new NumericColumnProxy[arraycount];
+				s._independentVariables = new INumericColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._independentVariables[i] = (NumericColumnProxy)info.GetValue(s);
+					s._independentVariables[i] = (INumericColumnProxy)info.GetValue(s);
 					if (null != s._independentVariables[i]) s._independentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
 
 				arraycount = info.OpenArray();
-				s._dependentVariables = new NumericColumnProxy[arraycount];
+				s._dependentVariables = new INumericColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._dependentVariables[i] = (NumericColumnProxy)info.GetValue(s);
+					s._dependentVariables[i] = (INumericColumnProxy)info.GetValue(s);
 					if (null != s._dependentVariables[i]) s._dependentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
@@ -135,9 +135,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public FitElement()
 		{
-			_independentVariables = new NumericColumnProxy[0];
+			_independentVariables = new INumericColumnProxy[0];
 
-			_dependentVariables = new NumericColumnProxy[0];
+			_dependentVariables = new INumericColumnProxy[0];
 
 			_errorEvaluation = new IVarianceScaling[0];
 
@@ -153,18 +153,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				_fitFunction.Changed += EhFitFunctionChanged;
 
 			_rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(from._rangeOfRows.Start, from._rangeOfRows.Count);
-			_independentVariables = new NumericColumnProxy[from._independentVariables.Length];
+			_independentVariables = new INumericColumnProxy[from._independentVariables.Length];
 			for (int i = 0; i < _independentVariables.Length; ++i)
 			{
 				if (from._independentVariables[i] != null)
-					_independentVariables[i] = (NumericColumnProxy)from._independentVariables[i].Clone();
+					_independentVariables[i] = (INumericColumnProxy)from._independentVariables[i].Clone();
 			}
 
-			_dependentVariables = new NumericColumnProxy[from._dependentVariables.Length];
+			_dependentVariables = new INumericColumnProxy[from._dependentVariables.Length];
 			for (int i = 0; i < _dependentVariables.Length; ++i)
 			{
 				if (from._dependentVariables[i] != null)
-					_dependentVariables[i] = (NumericColumnProxy)from._dependentVariables[i].Clone();
+					_dependentVariables[i] = (INumericColumnProxy)from._dependentVariables[i].Clone();
 			}
 			_errorEvaluation = new IVarianceScaling[from._errorEvaluation.Length];
 			for (int i = 0; i < _errorEvaluation.Length; ++i)
@@ -179,11 +179,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public FitElement(INumericColumn xColumn, INumericColumn yColumn, int start, int count)
 		{
-			_independentVariables = new NumericColumnProxy[1];
-			_independentVariables[0] = new NumericColumnProxy(xColumn);
+			_independentVariables = new INumericColumnProxy[1];
+			_independentVariables[0] = NumericColumnProxyBase.FromColumn(xColumn);
 
-			_dependentVariables = new NumericColumnProxy[1];
-			_dependentVariables[0] = new NumericColumnProxy(yColumn);
+			_dependentVariables = new INumericColumnProxy[1];
+			_dependentVariables[0] = NumericColumnProxyBase.FromColumn(yColumn);
 
 			_errorEvaluation = new IVarianceScaling[1];
 			_errorEvaluation[0] = new ConstantVarianceScaling();
@@ -281,7 +281,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="col">Independent variable column to set.</param>
 		public void SetIndependentVariable(int i, INumericColumn col)
 		{
-			this._independentVariables[i] = new NumericColumnProxy(col);
+			this._independentVariables[i] = NumericColumnProxyBase.FromColumn(col);
 
 			EhSelfChanged(EventArgs.Empty);
 		}
@@ -304,7 +304,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="col">Dependent variable column to set.</param>
 		public void SetDependentVariable(int i, INumericColumn col)
 		{
-			this._dependentVariables[i] = new NumericColumnProxy(col);
+			this._dependentVariables[i] = NumericColumnProxyBase.FromColumn(col);
 
 			if (col != null)
 			{
@@ -442,8 +442,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		private void InternalReallocIndependentVariables(int noIndep)
 		{
-			NumericColumnProxy[] oldArr = this._independentVariables;
-			NumericColumnProxy[] newArr = new NumericColumnProxy[noIndep];
+			INumericColumnProxy[] oldArr = this._independentVariables;
+			INumericColumnProxy[] newArr = new INumericColumnProxy[noIndep];
 			for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
 				newArr[i] = oldArr[i];
 
@@ -453,8 +453,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		private void InternalReallocDependentVariables(int noDep)
 		{
 			{
-				NumericColumnProxy[] oldArr = this._dependentVariables;
-				NumericColumnProxy[] newArr = new NumericColumnProxy[noDep];
+				INumericColumnProxy[] oldArr = this._dependentVariables;
+				INumericColumnProxy[] newArr = new INumericColumnProxy[noDep];
 				for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
 					newArr[i] = oldArr[i];
 				this._dependentVariables = newArr;

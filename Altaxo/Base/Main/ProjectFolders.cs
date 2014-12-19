@@ -637,7 +637,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		private void SortItemsByDependencyProxyReporter(DocNodeProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
+		private void SortItemsByDependencyProxyReporter(IProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
 		{
 			var proxyDoc = proxy.DocumentObject as IDocumentLeafNode;
 

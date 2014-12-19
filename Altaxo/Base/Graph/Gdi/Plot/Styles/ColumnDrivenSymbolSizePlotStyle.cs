@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Data which are converted to scatter size.
 		/// </summary>
-		private NumericColumnProxy _dataColumnProxy;
+		private INumericColumnProxy _dataColumnProxy;
 
 		/// <summary>True if the data in the data column changed, but the scale was not updated up to now.</summary>
 		[NonSerialized]
@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public ColumnDrivenSymbolSizePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			InternalSetScale(new LinearScale());
-			InternalSetDataColumnProxy(new NumericColumnProxy(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
+			InternalSetDataColumnProxy(NumericColumnProxyBase.FromColumn(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
 
 			var symbolSizeBase = GraphDocument.GetDefaultSymbolSize(context);
 
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != from)
 			{
 				InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
-				InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (NumericColumnProxy)from._dataColumnProxy.Clone());
+				InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
 
 				_symbolSizeAt0 = from._symbolSizeAt0;
 				_symbolSizeAt1 = from._symbolSizeAt1;
@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Sets the data column proxy and creates the necessary event links.
 		/// </summary>
 		/// <param name="proxy"></param>
-		protected void InternalSetDataColumnProxy(NumericColumnProxy proxy)
+		protected void InternalSetDataColumnProxy(INumericColumnProxy proxy)
 		{
 			if (object.ReferenceEquals(_dataColumnProxy, proxy))
 				return;
@@ -236,7 +236,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				_dataColumnProxy.SetDocNode(value);
+				if (null != _dataColumnProxy && object.ReferenceEquals(_dataColumnProxy, value))
+					return;
+
+				if (null != _dataColumnProxy)
+					_dataColumnProxy.ParentObject = null;
+
+				_dataColumnProxy = NumericColumnProxyBase.FromColumn(value);
+				_dataColumnProxy.ParentObject = this;
 			}
 		}
 
