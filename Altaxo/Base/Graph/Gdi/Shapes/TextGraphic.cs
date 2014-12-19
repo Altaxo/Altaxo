@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._text = info.GetString("Text");
 				s._font = (FontX)info.GetValue("Font", typeof(FontX));
-				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+				s._textBrush = (BrushX)info.GetValue("Brush", s);
 				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				info.GetSingle("ShadowLength");
@@ -144,12 +144,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 
 				s._text = info.GetString("Text");
-				s._font = (FontX)info.GetValue("Font", typeof(FontX));
-				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
-				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+				s._font = (FontX)info.GetValue("Font", s);
+				s._textBrush = (BrushX)info.GetValue("Brush", s);
+				s._textBrush.ParentObject = s;
+				s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
-				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", s);
+				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", s);
 				s._location.LocalAnchorX = RADouble.NewRel(0.5 * (int)xAnchorType);
 				s._location.LocalAnchorY = RADouble.NewRel(0.5 * (int)yAnchorType);
 				return s;
@@ -182,7 +183,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._text = info.GetString("Text");
 				s._font = (FontX)info.GetValue("Font", typeof(FontX));
-				s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+				s._textBrush = (BrushX)info.GetValue("Brush", s);
 				s._textBrush.ParentObject = s;
 
 				s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
@@ -266,8 +267,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					this._text = from._text;
 					this._font = from._font;
+
 					this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
+					if (null != _textBrush) _textBrush.ParentObject = this;
+
 					this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
+					if (null != _background) _background.ParentObject = this;
+
 					this._lineSpacingFactor = from._lineSpacingFactor;
 
 					// don't clone the cached items

@@ -321,18 +321,18 @@ namespace Altaxo.Worksheet
 			_guid = System.Guid.NewGuid();
 
 			// m_ColumnStyles stores the column styles for each data column individually,
-			_dataColumnStyles = new ColumnStyleDictionary();
+			_dataColumnStyles = new ColumnStyleDictionary() { ParentObject = this };
 
-			_propertyColumnStyles = new ColumnStyleDictionary();
+			_propertyColumnStyles = new ColumnStyleDictionary() { ParentObject = this };
 
 			// The style of the row header. This is the leftmost column that shows usually the row number.
-			_rowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
+			_rowHeaderStyle = new RowHeaderStyle() { ParentObject = this }; // holds the style of the row header (leftmost column of data grid)
 
 			// The style of the column header. This is the upmost row that shows the name of the columns.
-			_columnHeaderStyle = new ColumnHeaderStyle(); // the style of the column header (uppermost row of datagrid)
+			_columnHeaderStyle = new ColumnHeaderStyle() { ParentObject = this }; // the style of the column header (uppermost row of datagrid)
 
 			// The style of the property column header. This is the leftmost column in the left of the property columns,
-			_propertyColumnHeaderStyle = new ColumnHeaderStyle();
+			_propertyColumnHeaderStyle = new ColumnHeaderStyle() { ParentObject = this };
 
 			this._doShowPropertyColumns = true;
 		}

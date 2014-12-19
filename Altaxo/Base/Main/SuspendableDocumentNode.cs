@@ -439,6 +439,51 @@ namespace Altaxo.Main
 		}
 
 		#endregion Inner class SuspendToken
+
+		#region Static instance
+
+		private class StaticInstanceClass : IDocumentNode
+		{
+			public IDocumentNode ParentObject
+			{
+				get
+				{
+					return null;
+				}
+				set
+				{
+					throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
+				}
+			}
+
+			public string Name
+			{
+				get { return "DocumentNodeStaticInstance"; }
+			}
+
+			public event EventHandler Changed;
+
+			public ISuspendToken SuspendGetToken()
+			{
+				throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
+			}
+
+			public void EhChildChanged(object child, EventArgs e)
+			{
+			}
+		}
+
+		private static IDocumentNode _staticInstance = new StaticInstanceClass();
+
+		/// <summary>
+		/// Gets a single static instance that can be used to give some document nodes a parent, for instance those nodes that are defined as static (Brushes, Pens etc.).
+		/// </summary>
+		/// <value>
+		/// A static instance of <see cref="IDocumentNode"/>.
+		/// </value>
+		public static IDocumentNode StaticInstance { get { return _staticInstance; } }
+
+		#endregion Static instance
 	}
 
 	/// <summary>
@@ -514,7 +559,7 @@ namespace Altaxo.Main
 			else // there is already an event arg present
 			{
 				var aedAsSelf = _accumulatedEventData as SelfAccumulateableEventArgs;
-				if (null != aedAsSelf && e is SelfAccumulateableEventArgs)
+				if (null != aedAsSelf && aedAsSelf.Equals(e)) // Equals is here (mis)used to ensure compatibility between the two event args
 				{
 					aedAsSelf.Add((SelfAccumulateableEventArgs)e);
 				}

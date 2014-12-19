@@ -45,15 +45,16 @@ namespace Altaxo.Worksheet
 	public abstract class ColumnStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
+		System.ICloneable,
+		System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
 	{
-		protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window));
-		protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Control));
-		protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Highlight));
-		protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
-		protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.HighlightText));
+		protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+		protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Control)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+		protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Highlight)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+		protected static BrushX _defaultNormalTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+		protected static BrushX _defaultSelectedTextBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.HighlightText)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
+		protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
 		protected static FontX _defaultTextFont = GdiFontManager.GetFont(FontFamily.GenericSansSerif, 9, FontStyle.Regular);
-		protected static PenX _defaultCellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1);
 
 		protected ColumnStyleType _columnStyleType;
 
@@ -61,15 +62,15 @@ namespace Altaxo.Worksheet
 		protected StringFormat _textFormat = new StringFormat();
 
 		protected bool _isCellPenCustom;
-		protected PenX _cellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1);
+		protected PenX _cellPen;
 
 		protected FontX _textFont = _defaultTextFont;
 
 		protected bool _isTextBrushCustom;
-		protected BrushX _textBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText));
+		protected BrushX _textBrush;
 
 		protected bool _isBackgroundBrushCustom;
-		protected BrushX _backgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window));
+		protected BrushX _backgroundBrush;
 
 		#region Serialization
 
@@ -140,6 +141,8 @@ namespace Altaxo.Worksheet
 				notneeded = info.GetValue("SelBkgBrush", s);
 				s._textFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment), info.GetString("Alignment"));
 				s._textFont = (FontX)info.GetValue("Font", s);
+
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -217,6 +220,7 @@ namespace Altaxo.Worksheet
 				else
 					s.SetDefaultTextFont();
 
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -236,6 +240,10 @@ namespace Altaxo.Worksheet
 
 		public ColumnStyle(ColumnStyleType type)
 		{
+			_cellPen = new PenX(GdiColorHelper.ToNamedColor(SystemColors.InactiveBorder), 1) { ParentObject = this };
+			_textBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.WindowText)) { ParentObject = this };
+			_backgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window)) { ParentObject = this };
+
 			_columnStyleType = type;
 
 			SetDefaultCellBorder();

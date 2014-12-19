@@ -225,16 +225,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 			set
 			{
+				if (object.ReferenceEquals(_inputData, value))
+					return;
+
 				if (null != _inputData)
 				{
-					_inputData.Changed -= EhInputDataChanged;
+					_inputData.ParentObject = null;
 				}
 
 				_inputData = value;
 
 				if (null != _inputData)
 				{
-					_inputData.Changed += EhInputDataChanged;
+					_inputData.ParentObject = this;
 					EhInputDataChanged(this, EventArgs.Empty);
 				}
 			}

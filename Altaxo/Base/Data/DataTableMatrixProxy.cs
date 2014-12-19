@@ -911,7 +911,7 @@ namespace Altaxo.Data
 				{
 					table = DataTable.GetParentDataTableOf(col);
 					if (null != table)
-						_dataTable = new DataTableProxy(table);
+						_dataTable = new DataTableProxy(table) { ParentObject = this };
 				}
 			}
 
@@ -922,7 +922,7 @@ namespace Altaxo.Data
 				{
 					table = DataTable.GetParentDataTableOf(col);
 					if (null != table)
-						_dataTable = new DataTableProxy(table);
+						_dataTable = new DataTableProxy(table) { ParentObject = this };
 				}
 			}
 		}

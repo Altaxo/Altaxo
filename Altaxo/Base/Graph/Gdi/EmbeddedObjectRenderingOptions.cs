@@ -37,7 +37,10 @@ namespace Altaxo.Graph.Gdi
 	/// <summary>
 	/// Stores options used to display graphs embedded in other applications.
 	/// </summary>
-	public class EmbeddedObjectRenderingOptions : ICloneable
+	public class EmbeddedObjectRenderingOptions
+		:
+		Main.SuspendableDocumentNodeWithEventArgs,
+		ICloneable
 	{
 		protected double _sourceDpiResolution;
 		protected double _outputScalingFactor;
@@ -76,7 +79,7 @@ namespace Altaxo.Graph.Gdi
 
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
 				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel");
-				s.BackgroundBrush = (BrushX)info.GetValue("Background");
+				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
 				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
 				s._renderWindowsMetafile = info.GetBoolean("RenderWindowsMetafile");
@@ -113,7 +116,7 @@ namespace Altaxo.Graph.Gdi
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
 				s._outputScalingFactor = info.GetDouble("OutputScaling");
 				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel");
-				s.BackgroundBrush = (BrushX)info.GetValue("Background");
+				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
 				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
 				s._renderWindowsMetafile = info.GetBoolean("RenderWindowsMetafile");
@@ -237,7 +240,16 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
+				if (object.ReferenceEquals(_backgroundBrush, value))
+					return;
+
+				if (null != _backgroundBrush)
+					_backgroundBrush.ParentObject = null;
+
 				_backgroundBrush = value;
+
+				if (null != _backgroundBrush)
+					_backgroundBrush.ParentObject = this;
 			}
 		}
 

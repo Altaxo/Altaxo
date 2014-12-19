@@ -35,7 +35,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// </summary>
 	public class FitElement
 		:
-		Main.SuspendableDocumentNodeWithEventArgs,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		ICloneable
 	{
 		/// <summary>Fitting function. Can be null if no fitting function was actually chosen.</summary>
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				for (int i = 0; i < arraycount; ++i)
 				{
 					s._independentVariables[i] = (NumericColumnProxy)info.GetValue(s);
-					s._independentVariables[i].ParentObject = s;
+					if (null != s._independentVariables[i]) s._independentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
 
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				for (int i = 0; i < arraycount; ++i)
 				{
 					s._dependentVariables[i] = (NumericColumnProxy)info.GetValue(s);
-					s._dependentVariables[i].ParentObject = s;
+					if (null != s._dependentVariables[i]) s._dependentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
 

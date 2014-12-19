@@ -226,8 +226,8 @@ namespace Altaxo.Main.Services
 			ICSharpCode.Core.PropertyService.PropertyChanged += new PropertyChangedEventHandler(PropertyService_PropertyChanged);
 
 			UserSettings = new PropertyBagWrapper(this);
-			ApplicationSettings = new PropertyBag();
-			BuiltinSettings = new PropertyBag();
+			ApplicationSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
+			BuiltinSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
 		}
 
 		private void PropertyService_PropertyChanged(object sender, PropertyChangedEventArgs e)

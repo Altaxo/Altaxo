@@ -396,11 +396,9 @@ namespace Altaxo.Graph.Gdi
 					s._alignment = PenAlignment.Center;
 
 				if (0 != (cp & PenX.Configured.Brush))
-					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+					s._brush = (BrushX)info.GetValue("Brush", s);
 				else
-					s._brush = new BrushX(NamedColors.Black);
-
-				s._brush.ParentObject = s;
+					s._brush = new BrushX(NamedColors.Black) { ParentObject = s };
 
 				if (0 != (cp & PenX.Configured.Color))
 					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
@@ -472,6 +470,7 @@ namespace Altaxo.Graph.Gdi
 				else
 					s._width = 1;
 
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -546,7 +545,7 @@ namespace Altaxo.Graph.Gdi
 					s._alignment = PenAlignment.Center;
 
 				if (0 != (cp & PenX.Configured.Brush))
-					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+					s._brush = (BrushX)info.GetValue("Brush", s);
 				else
 					s._brush = new BrushX(NamedColors.Black);
 
@@ -624,6 +623,7 @@ namespace Altaxo.Graph.Gdi
 				else
 					s._width = 1;
 
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -699,7 +699,7 @@ namespace Altaxo.Graph.Gdi
 					s._alignment = PenAlignment.Center;
 
 				if (0 != (cp & PenX.Configured.Brush))
-					s._brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
+					s._brush = (BrushX)info.GetValue("Brush", s);
 				else
 					s._brush = new BrushX(NamedColors.Black);
 
@@ -779,6 +779,7 @@ namespace Altaxo.Graph.Gdi
 				else
 					s._width = 1;
 
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -1133,7 +1134,9 @@ namespace Altaxo.Graph.Gdi
 				_brush.Dispose();
 
 			_brush = bh;
-			_brush.ParentObject = this;
+
+			if (null != _brush)
+				_brush.ParentObject = this;
 		}
 
 		public PenType PenType

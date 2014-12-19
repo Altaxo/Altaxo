@@ -266,6 +266,8 @@ namespace Altaxo.Graph.Gdi
 						s._textureScale = new TextureScaling(TextureScalingMode.Source, AspectRatioPreservingMode.PreserveXPriority, scale, scale);
 						break;
 				}
+
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -368,6 +370,8 @@ namespace Altaxo.Graph.Gdi
 						s._textureScale = new TextureScaling(TextureScalingMode.Source, AspectRatioPreservingMode.PreserveXPriority, scale, scale);
 						break;
 				}
+
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}
@@ -498,6 +502,8 @@ namespace Altaxo.Graph.Gdi
 						s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
 						break;
 				}
+
+				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
 		}

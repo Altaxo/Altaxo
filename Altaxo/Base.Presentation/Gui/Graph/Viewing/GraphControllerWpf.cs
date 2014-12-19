@@ -110,9 +110,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			_nonPageAreaColor = Color.Gray;
 
-			_pageGroundBrush = new BrushX(NamedColors.LightGray);
+			_pageGroundBrush = new BrushX(NamedColors.LightGray) { ParentObject = SuspendableDocumentNode.StaticInstance };
 
-			_graphAreaBrush = new BrushX(NamedColors.Snow);
+			_graphAreaBrush = new BrushX(NamedColors.Snow) { ParentObject = SuspendableDocumentNode.StaticInstance };
 
 			_screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
 

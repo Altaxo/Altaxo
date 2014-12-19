@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Background
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				FilledRectangle s = null != o ? (FilledRectangle)o : new FilledRectangle();
-				s._brush = (BrushX)info.GetValue("Brush", parent);
+				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._brush.ParentObject = s;
 
 				return s;

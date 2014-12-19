@@ -375,7 +375,7 @@ namespace Altaxo.Main
 			else // there is already an event arg present
 			{
 				var aedAsSelf = _accumulatedEventData as SelfAccumulateableEventArgs;
-				if (null != aedAsSelf && e is SelfAccumulateableEventArgs)
+				if (null != aedAsSelf && aedAsSelf.Equals(e)) // Equals is here (mis)used to ensure compatibility between the two event args
 				{
 					aedAsSelf.Add((SelfAccumulateableEventArgs)e);
 				}

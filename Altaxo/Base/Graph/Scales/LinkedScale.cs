@@ -84,7 +84,10 @@ namespace Altaxo.Graph.Scales
 				LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
 
 				s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
+
 				s._linkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
+				if (null != s._linkParameters) s._linkParameters.ParentObject = s;
+
 				s._linkedScaleIndex = info.GetInt32("LinkedScaleIndex");
 				return s;
 			}

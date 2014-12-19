@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Plot.Data
 	[Serializable]
 	public class XYFunctionPlotData
 		:
-		Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
+		Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
 		ICloneable,
 		Calc.IScalarFunctionDD
 	{
@@ -62,6 +62,7 @@ namespace Altaxo.Graph.Plot.Data
 				XYFunctionPlotData s = null != o ? (XYFunctionPlotData)o : new XYFunctionPlotData();
 
 				s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function", parent);
+				if (s.Function is Main.IDocumentLeafNode) ((Main.IDocumentLeafNode)s.Function).ParentObject = s;
 
 				return s;
 			}

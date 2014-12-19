@@ -28,7 +28,10 @@ using System.Collections.Generic;
 
 namespace Altaxo.Worksheet
 {
-	public class ColumnStyleDictionary : IDictionary<Data.DataColumn, ColumnStyle>
+	public class ColumnStyleDictionary
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IDictionary<Data.DataColumn, ColumnStyle>
 	{
 		/// <summary>Column styles. Key is the column instance, value is the column style.</summary>
 		private Dictionary<Data.DataColumn, ColumnStyle> _columnStyles;
@@ -92,7 +95,8 @@ namespace Altaxo.Worksheet
 					string typeName = info.GetString("Type");
 					//Type t = Type.ReflectionOnlyGetType(typeName, false, false);
 					Type t = Type.GetType(typeName, false, false);
-					var style = (ColumnStyle)info.GetValue("Style", parent);
+					var style = (ColumnStyle)info.GetValue("Style", s);
+					if (null != style) style.ParentObject = s;
 					s._defaultColumnStyles[t] = style;
 					info.CloseElement(); // "e"
 				}
@@ -181,6 +185,7 @@ namespace Altaxo.Worksheet
 				throw new ArgumentNullException("value");
 
 			_columnStyles.Add(key, value);
+			value.ParentObject = this;
 			AttachKey(key);
 		}
 
@@ -196,10 +201,18 @@ namespace Altaxo.Worksheet
 
 		public bool Remove(DataColumn key)
 		{
-			bool result = _columnStyles.Remove(key);
-			if (result)
+			ColumnStyle value;
+			if (TryGetValue(key, out value))
+			{
+				_columnStyles.Remove(key);
 				DetachKey(key);
-			return result;
+				value.ParentObject = null;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public bool TryGetValue(DataColumn key, out ColumnStyle value)
@@ -235,6 +248,7 @@ namespace Altaxo.Worksheet
 				{
 					// if not successfull yet, we will create a new defaultColumnStyle
 					colstyle = (ColumnStyle)Activator.CreateInstance(searchstyletype);
+					colstyle.ParentObject = this;
 					_defaultColumnStyles.Add(key.GetType(), colstyle);
 					return colstyle;
 				}
@@ -246,6 +260,8 @@ namespace Altaxo.Worksheet
 
 				bool hadOldValue = _columnStyles.ContainsKey(key);
 				_columnStyles[key] = value;
+				value.ParentObject = this;
+
 				if (!hadOldValue)
 					AttachKey(key);
 			}
@@ -259,13 +275,16 @@ namespace Altaxo.Worksheet
 		{
 			((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).Add(item);
 			AttachKey(item.Key);
+			item.Value.ParentObject = this;
 		}
 
 		public void Clear()
 		{
-			foreach (DataColumn c in _columnStyles.Keys)
-				DetachKey(c);
-
+			foreach (var entry in _columnStyles)
+			{
+				entry.Value.ParentObject = null;
+				DetachKey(entry.Key);
+			}
 			_columnStyles.Clear();
 		}
 
@@ -293,7 +312,10 @@ namespace Altaxo.Worksheet
 		{
 			bool result = ((ICollection<KeyValuePair<DataColumn, ColumnStyle>>)_columnStyles).Remove(item);
 			if (result)
+			{
 				DetachKey(item.Key);
+				item.Value.ParentObject = null;
+			}
 			return result;
 		}
 

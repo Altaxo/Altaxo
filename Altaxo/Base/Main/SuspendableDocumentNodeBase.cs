@@ -249,7 +249,7 @@ namespace Altaxo.Main
 				var frame = st.GetFrame(i);
 				var method = frame.GetMethod();
 
-				if (i > 2) stb.Append(" in ");
+				if (i > 2) stb.Append("\r\n\tin ");
 
 				stb.Append(method.DeclaringType.FullName);
 				stb.Append("|");
@@ -291,16 +291,33 @@ namespace Altaxo.Main
 		{
 			int numberOfNodes = 0;
 			int numberOfNotConnectedNodes = 0;
+
+			var msgDict = new SortedDictionary<string, int>(); // Key is the message, value the number of nodes
+
 			foreach (var node in AllDocumentNodes)
 			{
-				if (node.ParentObject == null)
+				if (node.ParentObject == null && !object.ReferenceEquals(node, Current.Project))
 				{
-					Current.Console.WriteLine("Found not connected document node of type {0}, constructed by {1}", node.GetType().FullName, node._constructedBy);
+					string msg = string.Format("{0}, constructed\r\n\tby {1}", node.GetType().FullName, node._constructedBy);
+
+					int count;
+					if (msgDict.TryGetValue(msg, out count))
+						msgDict[msg] = count + 1;
+					else
+						msgDict.Add(msg, 1);
+
 					++numberOfNotConnectedNodes;
 				}
 
 				++numberOfNodes;
 			}
+
+			foreach (var entry in msgDict)
+			{
+				Current.Console.WriteLine("Found {0} not connected document node(s) of type {1}", entry.Value, entry.Key);
+				Current.Console.WriteLine();
+			}
+
 			Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
 		}
 

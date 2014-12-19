@@ -182,7 +182,7 @@ namespace Altaxo.Graph.Gdi
 				XYPlotLayer s = null != o ? (XYPlotLayer)o : new XYPlotLayer(info);
 
 				bool fillLayerArea = info.GetBoolean("FillLayerArea");
-				BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", typeof(BrushX));
+				BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", s);
 
 				if (fillLayerArea)
 				{

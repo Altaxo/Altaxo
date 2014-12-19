@@ -79,9 +79,14 @@ namespace Altaxo.Graph.Gdi.Axis
 				{
 					s._showZeroOnly = info.GetBoolean("ZeroOnly");
 					s._majorPen = (PenX)info.GetValue("MajorPen", s);
+					s._majorPen.ParentObject = s;
+
 					s._showMinor = info.GetBoolean("ShowMinor");
 					if (s._showMinor)
+					{
 						s._minorPen = (PenX)info.GetValue("MinorPen", s);
+						s._minorPen.ParentObject = s;
+					}
 				}
 
 				return s;

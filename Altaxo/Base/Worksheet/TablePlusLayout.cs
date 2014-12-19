@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,75 +19,72 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Worksheet
 {
-  /// <summary>
-  /// Holds a table and its layout together of serialization/deserialization purposes.
-  /// </summary>
-  public class TablePlusLayout
-  {
-    Altaxo.Data.DataTable _table;
-    Altaxo.Worksheet.WorksheetLayout _layout;
+	/// <summary>
+	/// Holds a table and its layout together only for serialization/deserialization purposes.
+	/// </summary>
+	public class TablePlusLayout
+	{
+		private Altaxo.Data.DataTable _table;
+		private Altaxo.Worksheet.WorksheetLayout _layout;
 
-    #region Serialization
+		#region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TablePlusLayout),0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TablePlusLayout), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				TablePlusLayout s = (TablePlusLayout)obj;
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        TablePlusLayout s = (TablePlusLayout)obj;
+				info.AddValue("Table", s._table);
+				info.AddValue("Layout", s._layout);
+			}
 
-        info.AddValue("Table",s._table);
-        info.AddValue("Layout",s._layout);
-      }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				TablePlusLayout s = null != o ? (TablePlusLayout)o : new TablePlusLayout();
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        TablePlusLayout s = null!=o ? (TablePlusLayout)o : new TablePlusLayout();
+				s._table = (Altaxo.Data.DataTable)info.GetValue("Table");
+				s._layout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("Layout", parent);
+				return s;
+			}
+		}
 
+		#endregion Serialization
 
-        s._table = (Altaxo.Data.DataTable)info.GetValue("Table");
-        s._layout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("Layout", parent);
-        return s;
-      }
-    }
-    #endregion
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="table">The table.</param>
+		/// <param name="layout">The layout of the table.</param>
+		public TablePlusLayout(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
+		{
+			_table = table;
+			_layout = layout;
+		}
 
+		/// <summary>
+		/// Empty constructor only for deserialization purposes.
+		/// </summary>
+		protected TablePlusLayout()
+		{
+		}
 
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="table">The table.</param>
-    /// <param name="layout">The layout of the table.</param>
-    public TablePlusLayout(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
-    {
-      _table = table;
-      _layout = layout;
-    }
+		/// <summary>
+		/// Gets the table.
+		/// </summary>
+		public Altaxo.Data.DataTable Table { get { return _table; } }
 
-    /// <summary>
-    /// Empty constructor only for deserialization purposes.
-    /// </summary>
-    protected TablePlusLayout()
-    {
-    }
-
-
-    /// <summary>
-    /// Gets the table.
-    /// </summary>
-    public Altaxo.Data.DataTable Table { get { return _table; }}
-    
-    /// <summary>
-    /// Gets the layout.
-    /// </summary>
-    public Altaxo.Worksheet.WorksheetLayout Layout { get { return _layout; }}
-  }
+		/// <summary>
+		/// Gets the layout.
+		/// </summary>
+		public Altaxo.Worksheet.WorksheetLayout Layout { get { return _layout; } }
+	}
 }

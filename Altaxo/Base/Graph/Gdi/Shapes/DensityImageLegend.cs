@@ -89,7 +89,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				s._axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", parent);
 				s._axisStyles.ParentObject = s;
-				s._cachedArea = new DensityLegendArea(s.Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing);
+
+				s._cachedArea = new DensityLegendArea(s.Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing) { ParentObject = s };
 				s._axisStyles.UpdateCoordinateSystem(s._cachedArea.CoordinateSystem);
 
 				return s;
@@ -117,9 +118,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var cachedScale = (NumericalScale)PlotItem.Style.Scale.Clone();
 			var scaleTickSpacing = ScaleWithTicks.CreateDefaultTicks(cachedScale.GetType());
 			_cachedArea = new DensityLegendArea(Size, true, false, cachedScale, scaleTickSpacing);
+			//_cachedArea.ParentObject = this; // --> moved to the end of this function
 
 			_axisStyles = new AxisStyleCollection();
 			_axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
+			// _axisStyles.ParentObject = this; --> see below
 
 			var sx0 = new AxisStyle(CSLineID.X0, true, true, false, "Z values", context);
 			sx0.AxisLineStyle.FirstDownMajorTicks = true;
@@ -157,6 +160,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			// set the parent objects
 			_axisStyles.ParentObject = this;
+			_cachedArea.ParentObject = this;
 			this.UpdateTransformationMatrix();
 		}
 
@@ -470,7 +474,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		#region Inner classes
 
 		[Serializable]
-		private class DensityLegendArea : IPlotArea
+		private class DensityLegendArea : Main.SuspendableDocumentNodeWithSetOfEventArgs, IPlotArea
 		{
 			private PointD2D _size;
 			private ScaleCollection _scales;
@@ -479,10 +483,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public DensityLegendArea(PointD2D size, bool isXYInterchanged, bool isXReversed, Scale scale, TickSpacing tickSpacing)
 			{
 				_size = size;
-				_scales = new ScaleCollection();
+				_scales = new ScaleCollection() { ParentObject = this };
 				_scales[0] = new ScaleWithTicks(scale, tickSpacing);
 				_scales[1] = new ScaleWithTicks(new LinearScale(), new NoTickSpacing());
-				_coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem();
+				_coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem() { ParentObject = this };
 				_coordinateSystem.IsXYInterchanged = isXYInterchanged;
 				_coordinateSystem.IsXReverse = isXReversed;
 				_coordinateSystem.UpdateAreaSize(_size);
@@ -491,8 +495,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public DensityLegendArea(DensityLegendArea from)
 			{
 				this._size = from._size;
+
 				this._scales = from._scales.Clone();
+				this._scales.ParentObject = this;
+
 				this._coordinateSystem = (CS.G2DCartesicCoordinateSystem)from._coordinateSystem.Clone();
+				this._coordinateSystem.ParentObject = this;
 			}
 
 			#region IPlotArea Members

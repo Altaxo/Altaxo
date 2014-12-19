@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 				s._labelFormatting.ParentObject = s;
 
-				s._suppressedLabels = new SuppressedTicks();
+				s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
 
 				// Modification of StringFormat is necessary to avoid
 				// too big spaces between successive words

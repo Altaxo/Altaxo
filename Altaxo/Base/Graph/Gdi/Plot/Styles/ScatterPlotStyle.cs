@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
 				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
 				XYPlotScatterStyles.DropLine dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
-				s._pen = (PenX)info.GetValue("Pen", typeof(PenX));
+				s._pen = (PenX)info.GetValue("Pen", s);
 				s._symbolSize = info.GetSingle("SymbolSize");
 				s._relativePenWidth = info.GetSingle("RelativePenWidth");
 
@@ -684,11 +684,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_cachedFillPath = _style == XYPlotScatterStyles.Style.Solid || _style == XYPlotScatterStyles.Style.Open || _style == XYPlotScatterStyles.Style.DotCenter;
 
 			if (this._style != XYPlotScatterStyles.Style.Solid)
-				_cachedFillBrush = new BrushX(NamedColors.White);
+				_cachedFillBrush = new BrushX(NamedColors.White) { ParentObject = this };
 			else if (this._pen.PenType == PenType.SolidColor)
-				_cachedFillBrush = new BrushX(_pen.Color);
+				_cachedFillBrush = new BrushX(_pen.Color) { ParentObject = this };
 			else
-				_cachedFillBrush = new BrushX(_pen.BrushHolder);
+				_cachedFillBrush = new BrushX(_pen.BrushHolder) { ParentObject = this };
 		}
 
 		public object Clone()

@@ -233,12 +233,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
-				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
+				s._penHolder = (PenX)info.GetValue("Pen", s);
 				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
-				s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
+				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				XYPlotLineStyles.FillDirection fillDir = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection", typeof(XYPlotLineStyles.FillDirection));
 				if (s._fillArea)
 					s._fillDirection = GetFillDirection(fillDir);
@@ -308,12 +308,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
-				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
+				s._penHolder = (PenX)info.GetValue("Pen", s);
 				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
-				s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
+				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._fillColorLinkage = info.GetBoolean("IndependentFillColor") ? ColorLinkage.Independent : ColorLinkage.PreserveAlpha;
@@ -342,12 +342,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
-				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
+				s._penHolder = (PenX)info.GetValue("Pen", s);
 				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
-				s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
+				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
