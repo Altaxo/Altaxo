@@ -104,7 +104,10 @@ namespace Altaxo.Gui.Common.Drawing
 					throw new NotImplementedException("Pen is null");
 
 				if (null != _pen && null != _weakPenChangedHandler)
-					_pen.Changed -= _weakPenChangedHandler;
+				{
+					_weakPenChangedHandler.Remove();
+					_weakPenChangedHandler = null;
+				}
 
 				_pen = value;
 

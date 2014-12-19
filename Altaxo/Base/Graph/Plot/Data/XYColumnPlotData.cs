@@ -126,10 +126,10 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			// restore the event chain
 			if (_xColumn != null)
-				_xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+				_xColumn.ParentObject = this;
 
 			if (_yColumn != null)
-				_yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+				_yColumn.ParentObject = this;
 
 			if (null != _xBoundaries)
 				_xBoundaries.ParentObject = this;
@@ -371,9 +371,9 @@ namespace Altaxo.Graph.Plot.Data
 			public virtual void CreateEventChain(XYColumnPlotData s)
 			{
 				if (null != s._xColumn)
-					s._xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+					s._xColumn.ParentObject = s;
 				if (null != s._yColumn)
-					s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+					s._yColumn.ParentObject = s;
 
 				if (null != s._xBoundaries)
 					s._xBoundaries.ParentObject = s;
@@ -437,9 +437,9 @@ namespace Altaxo.Graph.Plot.Data
 			public virtual void CreateEventChain(XYColumnPlotData s)
 			{
 				if (null != s._xColumn)
-					s._xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+					s._xColumn.ParentObject = s;
 				if (null != s._yColumn)
-					s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+					s._yColumn.ParentObject = s;
 
 				if (null != s._xBoundaries)
 					s._xBoundaries.ParentObject = s;
@@ -678,7 +678,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (null == _xColumn)
 				{
 					_xColumn = new ReadableColumnProxy(value);
-					_xColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
+					_xColumn.ParentObject = this;
 				}
 				else
 				{
@@ -701,7 +701,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (null == _yColumn)
 				{
 					_yColumn = new ReadableColumnProxy(value);
-					_yColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
+					_yColumn.ParentObject = this;
 				}
 				else
 				{
@@ -978,6 +978,11 @@ namespace Altaxo.Graph.Plot.Data
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
+			if (object.ReferenceEquals(sender, _xColumn))
+				_isCachedDataValid = false;
+			else if (object.ReferenceEquals(sender, _yColumn))
+				_isCachedDataValid = false;
+
 			// If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
 			var eAsBCEA = e as BoundariesChangedEventArgs;
 			if (null != eAsBCEA)

@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
 			Current.Gui.FindAndAttachControlTo(_funcselController);
 
-			_doc.FitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
+			_doc.FitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, handler => _doc.FitEnsemble.Changed -= handler);
 
 			_generationInterval = new Common.EquallySpacedInterval();
 			_generationIntervalController = new Common.EquallySpacedIntervalController();

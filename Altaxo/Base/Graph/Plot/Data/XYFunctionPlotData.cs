@@ -118,17 +118,18 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				Altaxo.Calc.IScalarFunctionDD oldValue = _function;
+				if (object.ReferenceEquals(_function, value))
+					return;
+
+				if (_function is Main.IDocumentLeafNode)
+					((Main.IDocumentLeafNode)_function).ParentObject = null;
+
 				_function = value;
 
-				if (oldValue is Main.IChangedEventSource)
-					((Main.IChangedEventSource)oldValue).Changed -= new EventHandler(EhFunctionChanged);
+				if (_function != null && _function is Main.IDocumentLeafNode)
+					((Main.IDocumentLeafNode)_function).ParentObject = this;
 
-				if (_function != null && _function is Main.IChangedEventSource)
-					((Main.IChangedEventSource)_function).Changed += new EventHandler(EhFunctionChanged);
-
-				if (!object.ReferenceEquals(oldValue, value))
-					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 			}
 		}
 
@@ -151,16 +152,6 @@ namespace Altaxo.Graph.Plot.Data
 		#endregion IScalarFunctionDD Members
 
 		#region Changed event handling
-
-		/// <summary>
-		/// EventHandler called if the underlying function has changed.
-		/// </summary>
-		/// <param name="sender">Sender of this event.</param>
-		/// <param name="e">EventArgs (not used here).</param>
-		private void EhFunctionChanged(object sender, EventArgs e)
-		{
-			EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
-		}
 
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
