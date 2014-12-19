@@ -80,7 +80,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(DensityImageLegend).BaseType, parent);
 
 				s._plotItemProxy = (Main.RelDocNodeProxy)info.GetValue("PlotItem", s);
-				s.WirePlotItemProxyEvents();
 				bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
 				bool isScaleReversed = info.GetBoolean("IsScaleReversed");
 
@@ -102,11 +101,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 		}
 
-		private void WirePlotItemProxyEvents()
-		{
-			_plotItemProxy.DocumentInstanceChanged += EhPlotItemProxyDocumentInstanceChanged;
-		}
-
 		#endregion Serialization
 
 		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize, Main.Properties.IReadOnlyPropertyBag context)
@@ -115,8 +109,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
 			this.SetPosition(initialLocation, Main.EventFiring.Suppressed);
 
-			_plotItemProxy = new Main.RelDocNodeProxy();
-			WirePlotItemProxyEvents();
 			PlotItem = plotItem;
 
 			// _orientationIsVertical = true;
@@ -190,10 +182,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
 
 					if (null == _plotItemProxy)
-					{
 						_plotItemProxy = new Main.RelDocNodeProxy();
-						WirePlotItemProxyEvents();
-					}
 					this._plotItemProxy.CopyPathOnlyFrom(from._plotItemProxy, this);
 				}
 			}
@@ -207,29 +196,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private DensityImagePlotItem PlotItem
 		{
-			set
-			{
-				_plotItemProxy.SetDocNode(value, this);
-			}
 			get
 			{
 				return _plotItemProxy.DocumentObject as DensityImagePlotItem;
 			}
-		}
-
-		private void EhPlotItemProxyDocumentInstanceChanged(object sender, Main.InstanceChangedEventArgs e)
-		{
-			var oldPlotItem = e.OldInstance as DensityImagePlotItem;
-			var newPlotItem = e.NewInstance as DensityImagePlotItem;
-
-			if (null != oldPlotItem)
+			set
 			{
-				oldPlotItem.Changed -= new EventHandler(EhPlotItemStyleChanged);
-			}
-
-			if (null != newPlotItem)
-			{
-				newPlotItem.Changed += new EventHandler(EhPlotItemStyleChanged);
+				if (null == _plotItemProxy)
+					_plotItemProxy = new Main.RelDocNodeProxy(value, this);
+				else
+					_plotItemProxy.SetDocNode(value, this);
 			}
 		}
 
@@ -255,11 +231,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				return _cachedArea.Scales[0];
 			}
-		}
-
-		private void EhPlotItemStyleChanged(object sender, EventArgs e)
-		{
-			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public bool IsOrientationVertical

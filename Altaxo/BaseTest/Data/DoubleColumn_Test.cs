@@ -285,6 +285,18 @@ namespace AltaxoTest.Data
 			{
 				throw new NotImplementedException();
 			}
+
+			public Altaxo.Main.IDocumentNode ParentObject
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+				set
+				{
+					throw new NotImplementedException();
+				}
+			}
 		}
 
 		[Test]

@@ -26,8 +26,6 @@ using System;
 
 namespace Altaxo.Main
 {
-	public delegate void DocumentInstanceChangedEventHandler(object sender, object oldvalue, object newvalue);
-
 	/// <summary>
 	/// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentLeafNode" />), then special
 	/// measures are used in the case the document node is disposed. In this case the relative path to the node (from a parent object) is stored, and if a new document node with
@@ -37,10 +35,15 @@ namespace Altaxo.Main
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs
 	{
-		private Main.IDocumentLeafNode _docNode;
-		private Main.IDocumentLeafNode _parentNode;
+		private WeakReference _docNodeRef;
 		private Main.DocumentPath _docNodePath;
-		
+
+		[NonSerialized]
+		protected WeakEventHandler _weakDocNodeChangedHandler;
+
+		[NonSerialized]
+		protected WeakActionHandler<object, object, TunnelingEventArgs> _weakDocNodeTunneledEventHandler;
+
 		/// <summary>
 		/// Fired if the document instance changed, (from null to some value, from a value to null, or from a value to another value).
 		/// </summary>
@@ -54,11 +57,12 @@ namespace Altaxo.Main
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				RelDocNodeProxy s = (RelDocNodeProxy)obj;
-				System.Diagnostics.Debug.Assert(s._parentNode != null);
+				System.Diagnostics.Debug.Assert(s._parent != null);
 				Main.DocumentPath path;
-				if (s._docNode != null)
+				var docNode = s.InternalDocNode;
+				if (null != docNode)
 				{
-					path = Main.DocumentPath.GetRelativePathFromTo(s._parentNode, (Main.IDocumentLeafNode)s._docNode);
+					path = Main.DocumentPath.GetRelativePathFromTo(s._parent, (Main.IDocumentLeafNode)docNode);
 				}
 				else
 				{
@@ -71,14 +75,14 @@ namespace Altaxo.Main
 			{
 				RelDocNodeProxy s = null != o ? (RelDocNodeProxy)o : new RelDocNodeProxy();
 
-				if (!(parent is Main.IDocumentLeafNode))
+				if (!(parent is Main.IDocumentNode))
 					throw new ArgumentException("Parent should be a valid document node");
 
-				s._parentNode = (Main.IDocumentLeafNode)parent;
+				s._parent = (Main.IDocumentNode)parent;
 				s._docNodePath = (Main.DocumentPath)info.GetValue("Node", s);
 
 				// create a callback to resolve the instance as early as possible
-				if (s._docNodePath != null && s._docNode == null)
+				if (s._docNodePath != null && s.InternalDocNode == null)
 				{
 					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
 				}
@@ -89,7 +93,7 @@ namespace Altaxo.Main
 
 		#endregion Serialization
 
-		public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentLeafNode parentNode)
+		public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
 		{
 			SetDocNode(docNode, parentNode);
 		}
@@ -106,27 +110,42 @@ namespace Altaxo.Main
 		{
 		}
 
+		public override IDocumentNode ParentObject
+		{
+			get
+			{
+				return base.ParentObject;
+			}
+			set
+			{
+				if (null != _parent && null != value && !object.ReferenceEquals(_parent, value))
+					throw new InvalidOperationException("A RelDocNodeProxy's parent should never change.");
+
+				base.ParentObject = value;
+			}
+		}
+
 		/// <summary>
 		/// Copying constructor.
 		/// </summary>
 		/// <param name="from">Object to clone from.</param>
 		/// <param name="newparent"></param>
-		public void CopyFrom(RelDocNodeProxy from, Main.IDocumentLeafNode newparent)
+		public void CopyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			this.SetDocNode(from._docNode, newparent); // than the new Proxy refers to the same document node
+			this.SetDocNode(from.InternalDocNode, newparent); // than the new Proxy refers to the same document node
 		}
 
-		public void CopyPathOnlyFrom(RelDocNodeProxy from, Main.IDocumentLeafNode newparent)
+		public void CopyPathOnlyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
 		{
 			this.ClearDocNode();
-			this._parentNode = newparent;
+			this._parent = newparent;
 			this._docNodePath = from._docNodePath == null ? null : (Main.DocumentPath)from._docNodePath.Clone();
 		}
 
-		public RelDocNodeProxy ClonePathOnly(Main.IDocumentLeafNode newparent)
+		public RelDocNodeProxy ClonePathOnly(Main.IDocumentNode newparent)
 		{
 			RelDocNodeProxy result = new RelDocNodeProxy();
 			result.CopyPathOnlyFrom(this, newparent);
@@ -140,7 +159,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				return this._docNode == null && this._docNodePath == null;
+				return InternalDocNode == null && this._docNodePath == null;
 			}
 		}
 
@@ -191,39 +210,42 @@ namespace Altaxo.Main
 		/// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentLeafNode" />,
 		/// the document path is stored for this object in addition to the object itself.</param>
 		/// <param name="parentNode"></param>
-		public void SetDocNode(Main.IDocumentLeafNode docNode, Main.IDocumentLeafNode parentNode)
+		public void SetDocNode(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
 		{
 			if (!IsValidDocument(docNode))
 				throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
 			if (parentNode == null)
 				throw new ArgumentNullException("parentNode");
 
-			bool docNodeInstanceChanged = !object.ReferenceEquals(_docNode, docNode) || !object.ReferenceEquals(_parentNode, parentNode);
-			if (!docNodeInstanceChanged)
-				return;
-			Main.IDocumentLeafNode oldvalue = _docNode;
+			var oldDocNode = this.InternalDocNode;
+			if (object.ReferenceEquals(oldDocNode, docNode) && object.ReferenceEquals(_parent, parentNode))
+				return; // Nothing to do
 
-			if (_docNode != null)
+			if (_docNodeRef != null)
 			{
 				ClearDocNode();
 				this._docNodePath = null;
 			}
 
-			_docNode = docNode;
-			_parentNode = parentNode;
+			_docNodeRef = new WeakReference(docNode);
+			_parent = parentNode;
 
-			if (_docNode != null)
-				_docNodePath = Main.DocumentPath.GetRelativePathFromTo(parentNode, _docNode);
+			if (docNode != null)
+				_docNodePath = Altaxo.Main.DocumentPath.GetRelativePathFromTo(parentNode, docNode);
 
-			if (_docNode is Main.IEventIndicatedDisposable)
-				((Main.IEventIndicatedDisposable)_docNode).TunneledEvent += EhDocNode_TunneledEvent;
+			if (docNode is Main.IEventIndicatedDisposable)
+			{
+				((Main.IEventIndicatedDisposable)docNode).TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, handler => ((Main.IEventIndicatedDisposable)docNode).TunneledEvent -= handler));
+			}
 
-			if (_docNode is Main.IChangedEventSource)
-				((Main.IChangedEventSource)_docNode).Changed += new EventHandler(EhDocNode_Changed);
+			if (docNode != null)
+			{
+				((Main.IChangedEventSource)docNode).Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => ((Main.IChangedEventSource)docNode).Changed -= handler));
+			}
 
 			OnAfterSetDocNode();
 
-			EhSelfChanged(new Main.InstanceChangedEventArgs(oldvalue, _docNode));
+			EhSelfChanged(new Main.InstanceChangedEventArgs(oldDocNode, docNode));
 		}
 
 		/// <summary>
@@ -231,22 +253,71 @@ namespace Altaxo.Main
 		/// </summary>
 		protected void ClearDocNode()
 		{
-			if (_docNode == null)
+			if (_docNodeRef == null)
 				return;
 
 			OnBeforeClearDocNode();
 
-			if (_docNode is Main.IEventIndicatedDisposable)
-				((Main.IEventIndicatedDisposable)_docNode).TunneledEvent -= EhDocNode_TunneledEvent;
+			if (null != _weakDocNodeTunneledEventHandler)
+			{
+				_weakDocNodeTunneledEventHandler.Remove();
+				_weakDocNodeTunneledEventHandler = null;
+			}
 
-			if (_docNode is Main.IChangedEventSource)
-				((Main.IChangedEventSource)_docNode).Changed -= new EventHandler(EhDocNode_Changed);
+			if (null != _weakDocNodeChangedHandler)
+			{
+				_weakDocNodeChangedHandler.Remove();
+				_weakDocNodeChangedHandler = null;
+			}
 
-			Main.IDocumentLeafNode oldvalue = _docNode;
-			_docNode = null;
+			var oldvalue = InternalDocNode;
+			_docNodeRef = null;
 
-			EhSelfChanged(new Main.InstanceChangedEventArgs(oldvalue, _docNode));
+			EhSelfChanged(new Main.InstanceChangedEventArgs(oldvalue, null));
 		}
+
+		/// <summary>
+		/// Gets the internal document node instance, without changing anything and without trying to resolve the path.
+		/// </summary>
+		/// <value>
+		/// The internal document node.
+		/// </value>
+		protected IDocumentLeafNode InternalDocNode
+		{
+			get
+			{
+				return (IDocumentLeafNode)(_docNodeRef == null ? null : _docNodeRef.Target);
+			}
+		}
+
+		/// <summary>
+		/// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
+		/// If that fails too, null is returned.
+		/// </summary>
+		public IDocumentLeafNode DocumentObject
+		{
+			get
+			{
+				if (InternalDocNode == null && _docNodePath != null)
+				{
+					if (_docNodePath.IsAbsolutePath)
+						return null;
+
+					Main.IDocumentLeafNode obj = (Main.IDocumentLeafNode)Main.DocumentPath.GetObject(_docNodePath, _parent);
+					if (obj != null)
+						SetDocNode(obj, _parent);
+				}
+				return InternalDocNode;
+			}
+		}
+
+		private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+		{
+			if (this.DocumentObject != null)
+				info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
+		}
+
+		#region IChangedEventSource Members
 
 		/// <summary>
 		/// Event handler that is called when the document node has disposed or name changed. Because the path to the node can have changed too,
@@ -261,15 +332,15 @@ namespace Altaxo.Main
 			{
 				if (object.ReferenceEquals(source, sender))
 				{
-					ClearDocNode();
-					EhSelfChanged(EventArgs.Empty);
+					ClearDocNode(); // Cleardocnode fires the event
 					return;
 				}
 			}
 			else if (e is DocumentPathChangedEventArgs)
 			{
-				if (_docNode is Main.IDocumentLeafNode)
-					_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentLeafNode)_docNode);
+				var docNode = InternalDocNode;
+				if (null != docNode)
+					_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parent, docNode);
 				else
 					_docNodePath = null;
 
@@ -286,46 +357,13 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
-			if (_docNode is Main.IDocumentLeafNode)
-				_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parentNode, (Main.IDocumentLeafNode)_docNode);
+			if (null != InternalDocNode)
+				_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
 			else
 				_docNodePath = null;
 
 			EhSelfChanged(EventArgs.Empty);
 		}
-
-		/// <summary>
-		/// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
-		/// If that fails too, null is returned.
-		/// </summary>
-		public object DocumentObject
-		{
-			get
-			{
-				if (_docNode == null && _docNodePath != null)
-				{
-					if (_docNodePath.IsAbsolutePath)
-						return null;
-
-					Main.IDocumentLeafNode obj = (Main.IDocumentLeafNode)Main.DocumentPath.GetObject(_docNodePath, _parentNode);
-					if (obj != null)
-						SetDocNode(obj, _parentNode);
-				}
-				return _docNode;
-			}
-		}
-
-		private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
-		{
-			if (this.DocumentObject != null)
-				info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
-		}
-
-		
-
-	
-
-		#region IChangedEventSource Members
 
 		/// <summary>
 		/// Fired if the document node instance changed, is set to null, has changed its document path, or has changed its internal properties.
@@ -335,7 +373,7 @@ namespace Altaxo.Main
 		{
 			if (e is Main.InstanceChangedEventArgs && null != DocumentInstanceChanged)
 			{
-				DocumentInstanceChanged(this, (Main.InstanceChangedEventArgs)e);
+				DocumentInstanceChanged(this, (Main.InstanceChangedEventArgs)e); // fire this event if somebody has subscribed to it
 			}
 
 			base.OnChanged(e);
