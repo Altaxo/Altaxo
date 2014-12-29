@@ -25,11 +25,9 @@
 using Altaxo.Collections;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
@@ -991,7 +989,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>
-		public virtual object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			double number;
 			if (double.TryParse(name, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out number))
@@ -1008,7 +1006,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public virtual string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			if (o is IGPlotItem)
 			{
@@ -1016,6 +1014,16 @@ namespace Altaxo.Graph.Gdi.Plot
 				return idx >= 0 ? idx.ToString() : null;
 			}
 			return null;
+		}
+
+		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			var index = 0;
+			foreach (var item in _plotItems.ToArray())
+			{
+				yield return new Tuple<IDocumentLeafNode, string>(item, index.ToString());
+				++index;
+			}
 		}
 
 		#endregion NamedObjectCollection

@@ -44,19 +44,48 @@ namespace Altaxo.Data
 
 		#endregion Clipboard
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableProxy), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTableProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
+				throw new InvalidOperationException("Serialization of old version");
+
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DataTableProxy s = o != null ? (DataTableProxy)o : new DataTableProxy();
-				info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
+				var s = (DataTableProxy)o ?? new DataTableProxy(info);
+				var baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
 
+				if (!object.ReferenceEquals(s, baseobj))
+				{
+					return null;
+				}
+
+				System.Diagnostics.Debug.Assert(null != s.InternalDocumentPath);
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2014-12-26 From here on it is ensured that document path has always a value
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableProxy), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (DataTableProxy)o ?? new DataTableProxy(info);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);         // deserialize the base class
+
+				System.Diagnostics.Debug.Assert(null != s.InternalDocumentPath);
 				return s;
 			}
 		}
@@ -71,7 +100,8 @@ namespace Altaxo.Data
 		/// <summary>
 		/// For deserialization purposes only.
 		/// </summary>
-		protected DataTableProxy()
+		protected DataTableProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
 		{
 		}
 
@@ -109,9 +139,9 @@ namespace Altaxo.Data
 			{
 				return table.Name;
 			}
-			else if (base._docNodePath != null)
+			else
 			{
-				string path = _docNodePath.ToString();
+				string path = InternalDocumentPath.ToString();
 				int idx = 0;
 				if (level <= 0)
 				{
@@ -123,10 +153,6 @@ namespace Altaxo.Data
 				}
 
 				return path.Substring(idx);
-			}
-			else
-			{
-				return string.Empty;
 			}
 		}
 	}

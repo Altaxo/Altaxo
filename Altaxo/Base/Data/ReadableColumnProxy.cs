@@ -86,6 +86,31 @@ namespace Altaxo.Data
 			_column = column;
 		}
 
+		#region Serialization
+
+		/// <summary>
+		/// 2014-12-26 Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxyForStandaloneColumns), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ReadableColumnProxyForStandaloneColumns)obj;
+				info.AddValue("Column", s._column);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ReadableColumnProxyForStandaloneColumns)o ?? new ReadableColumnProxyForStandaloneColumns(null);
+				object node = info.GetValue("Column", s);
+				s._column = (IReadableColumn)node;
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public IReadableColumn Document
 		{
 			get { return _column; }
@@ -139,7 +164,7 @@ namespace Altaxo.Data
 
 		#endregion Clipboard
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.ReadableColumnProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -149,7 +174,32 @@ namespace Altaxo.Data
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ReadableColumnProxy s = o != null ? (ReadableColumnProxy)o : new ReadableColumnProxy();
+				var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
+
+				object baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+
+				if (!object.ReferenceEquals(s, baseobj))
+				{
+					return ReadableColumnProxyForStandaloneColumns.FromColumn((IReadableColumn)baseobj);
+				}
+				else
+				{
+					return s;
+				}
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ReadableColumnProxy)o ?? new ReadableColumnProxy(info);
 				info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
 
 				return s;
@@ -177,7 +227,8 @@ namespace Altaxo.Data
 		/// <summary>
 		/// For deserialization purposes only.
 		/// </summary>
-		protected ReadableColumnProxy()
+		protected ReadableColumnProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
 		{
 		}
 
@@ -223,9 +274,9 @@ namespace Altaxo.Data
 				else
 					return tablename + collectionname + ((DataColumn)col).Name;
 			}
-			else if (base._docNodePath != null)
+			else
 			{
-				string path = _docNodePath.ToString();
+				string path = InternalDocumentPath.ToString();
 				int idx = 0;
 				if (level <= 0)
 				{
@@ -237,14 +288,6 @@ namespace Altaxo.Data
 				}
 
 				return path.Substring(idx);
-			}
-			else if (col != null)
-			{
-				return col.ToString();
-			}
-			else
-			{
-				return string.Empty;
 			}
 		}
 	}

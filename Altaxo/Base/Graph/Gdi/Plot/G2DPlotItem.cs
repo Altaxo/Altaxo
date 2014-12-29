@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		[NonSerialized]
 		private PlotGroupStyleCollection _localGroups;
 
-		public override object StyleObject
+		public override Main.IDocumentLeafNode StyleObject
 		{
 			get { return _plotStyles; }
 			set { this.Style = (G2DPlotStyleCollection)value; }
@@ -108,19 +108,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				}
 			}
 			return copied;
-		}
-
-		/// <summary>
-		/// Retrieves the name of the provided object.
-		/// </summary>
-		/// <param name="o">The object for which the name should be found.</param>
-		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public override string GetNameOfChildObject(object o)
-		{
-			if (o == null)
-				return null;
-			else
-				return null;
 		}
 
 		#region IPlotItem Members

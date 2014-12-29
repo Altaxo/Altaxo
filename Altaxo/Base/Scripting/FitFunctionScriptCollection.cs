@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections;
@@ -27,16 +29,18 @@ using System.Text;
 
 namespace Altaxo.Scripting
 {
-
-  public class FitFunctionScriptCollection : System.Collections.ICollection
-  {
-    Hashtable _InnerList = new Hashtable();
+	public class FitFunctionScriptCollection
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		System.Collections.ICollection
+	{
+		private Hashtable _InnerList = new Hashtable();
 
 		public List<FitFunctionScript> Find(string category, string name)
 		{
 			List<FitFunctionScript> result = new List<FitFunctionScript>();
 
-			foreach(FitFunctionScript script in this)
+			foreach (FitFunctionScript script in this)
 			{
 				if (name != null && script.FitFunctionName != name)
 					continue;
@@ -45,64 +49,64 @@ namespace Altaxo.Scripting
 				result.Add(script);
 			}
 
-			result.Sort(FitFunctionScriptDateTimeComparer); 
+			result.Sort(FitFunctionScriptDateTimeComparer);
 
 			return result;
 		}
+
 		private int FitFunctionScriptDateTimeComparer(FitFunctionScript x, FitFunctionScript y)
 		{
-			return DateTime.Compare(x.CreationTime, y.CreationTime); 
+			return DateTime.Compare(x.CreationTime, y.CreationTime);
 		}
-		 
 
-    public void Add(FitFunctionScript script)
-    {
-      if (!Contains(script))
-        _InnerList.Add(script,null);
-    }
+		public void Add(FitFunctionScript script)
+		{
+			if (!Contains(script))
+				_InnerList.Add(script, null);
+		}
 
-    public bool Contains(FitFunctionScript script)
-    {
-      return _InnerList.Contains(script);
-    }
+		public bool Contains(FitFunctionScript script)
+		{
+			return _InnerList.Contains(script);
+		}
 
-    public void Remove(FitFunctionScript script)
-    {
-      if (_InnerList.Contains(script))
-        _InnerList.Remove(script);
-    }
-  
-    #region ICollection Members
+		public void Remove(FitFunctionScript script)
+		{
+			if (_InnerList.Contains(script))
+				_InnerList.Remove(script);
+		}
 
-    public void CopyTo(Array array, int index)
-    {
-      _InnerList.Keys.CopyTo(array,index);
-    }
+		#region ICollection Members
 
-    public int Count
-    {
-      get { return _InnerList.Count; }
-    }
+		public void CopyTo(Array array, int index)
+		{
+			_InnerList.Keys.CopyTo(array, index);
+		}
 
-    public bool IsSynchronized
-    {
-      get { return _InnerList.IsSynchronized; }
-    }
+		public int Count
+		{
+			get { return _InnerList.Count; }
+		}
 
-    public object SyncRoot
-    {
-      get { return _InnerList.SyncRoot; }
-    }
+		public bool IsSynchronized
+		{
+			get { return _InnerList.IsSynchronized; }
+		}
 
-    #endregion
+		public object SyncRoot
+		{
+			get { return _InnerList.SyncRoot; }
+		}
 
-    #region IEnumerable Members
+		#endregion ICollection Members
 
-    public IEnumerator GetEnumerator()
-    {
-      return _InnerList.Keys.GetEnumerator();
-    }
+		#region IEnumerable Members
 
-    #endregion
-  }
+		public IEnumerator GetEnumerator()
+		{
+			return _InnerList.Keys.GetEnumerator();
+		}
+
+		#endregion IEnumerable Members
+	}
 }

@@ -303,6 +303,52 @@ namespace Altaxo.Main
 
 		#endregion Change event handling
 
+		#region Tunneling event handling
+
+		public override void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
+		{
+			OnTunnelingEvent(originalSource, e);
+			NotifyChildrenTunnelingEventHappened(originalSource, e);
+		}
+
+		protected override void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		{
+			OnTunnelingEvent(this, e);
+			NotifyChildrenTunnelingEventHappened(this, e);
+		}
+
+		protected virtual void NotifyChildrenTunnelingEventHappened(IDocumentNode originalSource, TunnelingEventArgs e)
+		{
+			foreach (var tuple in GetDocumentNodeChildrenWithName())
+			{
+				var child = tuple.Item1;
+				child.EhParentTunnelingEventHappened(this, originalSource, e);
+			}
+		}
+
+		protected virtual IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual IDocumentLeafNode GetChildObjectNamed(string name)
+		{
+			if (null == name)
+				throw new ArgumentNullException("name");
+
+			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => tuple.Item2 == name).Item1;
+		}
+
+		public virtual string GetNameOfChildObject(IDocumentLeafNode docNode)
+		{
+			if (null == docNode)
+				throw new ArgumentNullException("docNode");
+
+			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => object.ReferenceEquals(tuple.Item1, docNode)).Item2;
+		}
+
+		#endregion Tunneling event handling
+
 		#region Inner class SuspendToken
 
 		private class SuspendToken : ISuspendToken
@@ -469,6 +515,10 @@ namespace Altaxo.Main
 			}
 
 			public void EhChildChanged(object child, EventArgs e)
+			{
+			}
+
+			public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
 			{
 			}
 		}

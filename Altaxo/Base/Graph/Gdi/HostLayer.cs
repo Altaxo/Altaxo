@@ -22,25 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
 using Altaxo.Collections;
-using Altaxo.Graph.Gdi.Background;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Reflection;
 
 namespace Altaxo.Graph.Gdi
 {
-	using Axis;
-	using Plot;
 	using Shapes;
 
 	public class HostLayer
@@ -1301,7 +1291,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>
-		public virtual object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			foreach (var childLayer in _childLayers)
 			{
@@ -1316,7 +1306,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public virtual string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			// Note: this is a bit tricky, since this function must work even for layers that are cloned (because they are opened in the layer dialog)
 			// those cloned layers are of course not part of the collection owned by this layer here
@@ -1327,6 +1317,21 @@ namespace Altaxo.Graph.Gdi
 				return GetDefaultNameOfLayer(list);
 			}
 			return string.Empty;
+		}
+
+		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			var layers = _childLayers.ToArray();
+			var list = this.IndexOf(); // this should work for this layer here
+			var index = list.Count;
+			list.Add(0); //dummy entry, will be overriden shortly
+
+			for (int i = 0; i < layers.Length; ++i)
+			{
+				list[index] = i;
+				var name = GetDefaultNameOfLayer(list);
+				yield return new Tuple<Main.IDocumentLeafNode, string>(layers[i], name);
+			}
 		}
 
 		public virtual bool FixAndTestParentChildRelationShipOfLayers()

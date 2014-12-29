@@ -372,7 +372,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		public object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			DataTable result;
 			if (_tablesByName.TryGetValue(name, out result))
@@ -381,7 +381,7 @@ namespace Altaxo.Data
 			return null;
 		}
 
-		public string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			if (o is DataTable)
 			{
@@ -390,6 +390,12 @@ namespace Altaxo.Data
 					return gr.Name;
 			}
 			return null;
+		}
+
+		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _tablesByName)
+				yield return new Tuple<Main.IDocumentLeafNode, string>(entry.Value, entry.Key);
 		}
 
 		/// <summary>

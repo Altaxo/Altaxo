@@ -225,7 +225,7 @@ namespace Altaxo.Data
 			if (null == from)
 				return false;
 
-			InternalSetDataTable((DataTableProxy)from._dataTable.Clone());
+			InternalSetDataTable(null == from._dataTable ? null : (DataTableProxy)from._dataTable.Clone());
 			InternalSetDataColumnsWithCloning(from._dataColumns);
 			InternalSetRowHeaderColumn((IReadableColumnProxy)from._rowHeaderColumn.Clone());
 			InternalSetColumnHeaderColumn((IReadableColumnProxy)from._columnHeaderColumn.Clone());
@@ -409,7 +409,7 @@ namespace Altaxo.Data
 			result._participatingDataRows = new AscendingIntegerCollection();
 			result._dataColumns = new List<IReadableColumnProxy>();
 
-			result.InternalSetDataTable(new DataTableProxy((DataTable)null));
+			result._dataTable = null;
 			result.InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
 			result.InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
 
@@ -423,7 +423,7 @@ namespace Altaxo.Data
 			_participatingDataRows = new AscendingIntegerCollection();
 			_dataColumns = new List<IReadableColumnProxy>();
 
-			InternalSetDataTable(new DataTableProxy((DataTable)null));
+			_dataTable = null;
 			InternalSetRowHeaderColumn(xColumn);
 			InternalSetColumnHeaderColumn(yColumn);
 			InternalSetDataColumnsWithCloning(dataColumns);
@@ -438,7 +438,9 @@ namespace Altaxo.Data
 		/// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
 		{
-			Report(_dataTable, this, "DataTable");
+			if (null != _dataTable)
+				Report(_dataTable, this, "DataTable");
+
 			Report(_rowHeaderColumn, this, "RowHeaderColumn");
 			Report(_columnHeaderColumn, this, "ColumnHeaderColumn");
 			for (int i = 0; i < _dataColumns.Count; ++i)
@@ -452,7 +454,7 @@ namespace Altaxo.Data
 			if (null != _dataTable)
 				_dataTable.ParentObject = null;
 
-			_dataTable = proxy ?? new DataTableProxy((DataTable)null);
+			_dataTable = proxy;
 
 			if (null != _dataTable)
 				_dataTable.ParentObject = this;
@@ -557,7 +559,7 @@ namespace Altaxo.Data
 				if (_isDirty)
 					Update();
 
-				return _dataTable.Document;
+				return null == _dataTable ? null : _dataTable.Document;
 			}
 			set
 			{
@@ -936,8 +938,11 @@ namespace Altaxo.Data
 			if (!_isDirty)
 				return;
 
-			if (_dataTable.IsEmpty)
+			if (null == _dataTable)
 				TryGetDataTableProxyFromColumns(); // legacy, for instance from old XYZMeshedColumnPlotData, we have not stored the table reference
+
+			if (null == _dataTable)
+				return;
 
 			DataTable table = _dataTable.Document;
 			if (null == table)
@@ -974,7 +979,7 @@ namespace Altaxo.Data
 				Update();
 			}
 
-			var table = _dataTable.Document;
+			var table = null == _dataTable ? null : _dataTable.Document;
 			int rowCount = RowCount;
 			int columnCount = ColumnCount;
 
@@ -1002,7 +1007,11 @@ namespace Altaxo.Data
 				Update();
 			}
 
-			var table = _dataTable.Document;
+			var table = null == _dataTable ? null : _dataTable.Document;
+
+			if (null == table)
+				throw new InvalidOperationException("DataTableProxy is null");
+
 			return new MyMatrixWrapper(table.DataColumns, _participatingDataRows, _participatingDataColumns);
 		}
 
@@ -1047,7 +1056,7 @@ namespace Altaxo.Data
 				Update();
 			}
 
-			var table = _dataTable.Document;
+			var table = null == _dataTable ? null : _dataTable.Document;
 
 			if (null == table)
 			{
@@ -1108,7 +1117,7 @@ namespace Altaxo.Data
 				Update();
 			}
 
-			var table = _dataTable.Document;
+			var table = null == _dataTable ? null : _dataTable.Document;
 			int rowCount = _participatingDataRows.Count;
 			int columnCount = _participatingDataColumns.Count;
 

@@ -22,13 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Scales;
 using Altaxo.Serialization;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
@@ -201,7 +196,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			return new XYFunctionPlotItem(this);
 		}
 
-		public override object DataObject
+		public override Main.IDocumentLeafNode DataObject
 		{
 			get { return _plotData; }
 		}

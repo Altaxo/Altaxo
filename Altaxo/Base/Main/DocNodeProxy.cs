@@ -93,7 +93,7 @@ namespace Altaxo.Main
 		[NonSerialized]
 		protected WeakReference _docNodeRef;
 
-		protected Main.DocumentPath _docNodePath;
+		private Main.DocumentPath _docNodePath;
 
 		[NonSerialized]
 		protected WeakEventHandler _weakDocNodeChangedHandler;
@@ -118,7 +118,7 @@ namespace Altaxo.Main
 		{
 			object node = info.GetValue("Node", typeof(object));
 			if (node is Main.DocumentPath)
-				_docNodePath = (Main.DocumentPath)node;
+				InternalDocumentPath = (Main.DocumentPath)node;
 			else
 				SetDocNode(node as IDocumentLeafNode);
 		}
@@ -129,35 +129,71 @@ namespace Altaxo.Main
 
 		#endregion ISerializable Members (Clipboard Serialization)
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocNodeProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version not supported");
+				/*
 				DocNodeProxy s = (DocNodeProxy)obj;
 
 				if (null != s.InternalDocNode)
 					info.AddValue("Node", Main.DocumentPath.GetAbsolutePath(s.InternalDocNode));
 				else if (s._docNodePath != null)
 					info.AddValue("Node", s._docNodePath);
+				*/
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DocNodeProxy s = null != o ? (DocNodeProxy)o : new DocNodeProxy();
+				object node = info.GetValue("Node", o);
 
-				object node = info.GetValue("Node", typeof(object));
-
-				if (node is Main.DocumentPath)
-					s._docNodePath = (Main.DocumentPath)node;
+				if (node is DocumentPath)
+				{
+					var s = (DocNodeProxy)o ?? new DocNodeProxy((DocumentPath)node);
+					s.InternalDocumentPath = (DocumentPath)node;
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+					return s;
+				}
 				else
-					s.SetDocNode(node as IDocumentLeafNode);
+				{
+					return node;
+				}
+			}
+		}
+
+		/// <summary>
+		/// 2014-12-26 Only references are supported now
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DocNodeProxy s = (DocNodeProxy)obj;
+
+				var node = s.InternalDocNode;
+
+				if (null != node)
+					s.InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(node);
+
+				System.Diagnostics.Debug.Assert(null != s._docNodePath);
+				info.AddValue("Path", s._docNodePath);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (DocNodeProxy)o ?? new DocNodeProxy(info);
+
+				var nodePath = (Main.DocumentPath)info.GetValue("Path", s);
+
+				s.InternalDocumentPath = nodePath;
+
+				System.Diagnostics.Debug.Assert(null != s._docNodePath);
 
 				// create a callback to resolve the instance as early as possible
-				if (s._docNodePath != null && s.InternalDocNode == null)
-				{
-					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
-				}
+				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
 
 				return s;
 			}
@@ -167,20 +203,27 @@ namespace Altaxo.Main
 
 		public DocNodeProxy(IDocumentLeafNode docNode)
 		{
+			if (null == docNode)
+				throw new ArgumentNullException("docNode");
+
 			SetDocNode(docNode);
 		}
 
-		private DocNodeProxy(Main.DocumentPath docNodePath)
+		/// <summary>
+		/// For deserialization purposes only.
+		/// </summary>
+		/// <param name="info"></param>
+		protected DocNodeProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			_docNodePath = docNodePath;
-			InternalCheckAbsolutePath();
 		}
 
-		/// <summary>
-		/// Creates an empty DocNodeProxy (similar to null for objects)
-		/// </summary>
-		public DocNodeProxy()
+		protected DocNodeProxy(Main.DocumentPath docNodePath)
 		{
+			if (null == docNodePath)
+				throw new ArgumentNullException("docNodePath");
+
+			InternalDocumentPath = docNodePath;
+			InternalCheckAbsolutePath();
 		}
 
 		/// <summary>
@@ -191,11 +234,11 @@ namespace Altaxo.Main
 		{
 			if (null != from.InternalDocNode)
 			{
-				this.SetDocNode((IDocumentLeafNode)from.InternalDocNode); // than the new Proxy refers to the same document node
+				this.SetDocNode(from.InternalDocNode); // than the new Proxy refers to the same document node
 			}
-			else if (from._docNodePath != null)
+			else
 			{
-				this._docNodePath = from._docNodePath.Clone(); // if no current document available, clone only the path
+				this.InternalDocumentPath = from._docNodePath.Clone(); // if no current document available, clone only the path
 				InternalCheckAbsolutePath();
 			}
 		}
@@ -207,7 +250,8 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				return this.InternalDocNode == null && this._docNodePath == null;
+				System.Diagnostics.Debug.Assert(_docNodePath != null);
+				return false;
 			}
 		}
 
@@ -219,7 +263,7 @@ namespace Altaxo.Main
 		/// <returns>True if the <c>obj</c> has the right type to store in this proxy, false otherwise.</returns>
 		protected virtual bool IsValidDocument(object obj)
 		{
-			return true;
+			return obj is IDocumentLeafNode;
 		}
 
 		/// <summary>
@@ -261,6 +305,9 @@ namespace Altaxo.Main
 		/// the document path is stored for this object in addition to the object itself.</param>
 		public void SetDocNode(IDocumentLeafNode value)
 		{
+			if (null == value)
+				throw new ArgumentNullException("value");
+
 			var oldValue = InternalDocNode;
 			if (object.ReferenceEquals(oldValue, value))
 				return;
@@ -271,20 +318,12 @@ namespace Altaxo.Main
 			if (oldValue != null)
 			{
 				ClearDocNode();
-				this._docNodePath = null;
 			}
 
+			InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(value);
 			_docNodeRef = new WeakReference(value);
 
-			if (value != null)
-			{
-				_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)value);
-				InternalCheckAbsolutePath();
-			}
-			else
-			{
-				_docNodePath = null;
-			}
+			InternalCheckAbsolutePath();
 
 			if (value is Main.IEventIndicatedDisposable)
 			{
@@ -322,8 +361,7 @@ namespace Altaxo.Main
 		/// </remarks>
 		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
 		{
-			if (null == _docNodePath)
-				return false;
+			System.Diagnostics.Debug.Assert(null != _docNodePath);
 
 			var result = _docNodePath.ReplacePathParts(partToReplace, newPart);
 			if (result)
@@ -378,12 +416,8 @@ namespace Altaxo.Main
 			{
 				if (null != InternalDocNode)
 				{
-					_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
+					InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
 					InternalCheckAbsolutePath();
-				}
-				else
-				{
-					_docNodePath = null;
 				}
 
 				shouldFireChangedEvent = true;
@@ -403,12 +437,8 @@ namespace Altaxo.Main
 		{
 			if (InternalDocNode != null)
 			{
-				_docNodePath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
+				InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
 				InternalCheckAbsolutePath();
-			}
-			else
-			{
-				_docNodePath = null;
 			}
 
 			EhSelfChanged(EventArgs.Empty);
@@ -442,6 +472,21 @@ namespace Altaxo.Main
 			}
 		}
 
+		protected DocumentPath InternalDocumentPath
+		{
+			get
+			{
+				return _docNodePath;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				_docNodePath = value;
+			}
+		}
+
 		/// <summary>
 		/// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
 		/// If that fails too, null is returned.
@@ -459,22 +504,24 @@ namespace Altaxo.Main
 			get
 			{
 				var docNode = InternalDocNode;
-				if (docNode is Main.IDocumentLeafNode)
-					return Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode);
-				else if (_docNodePath != null)
-					return _docNodePath;
-				else
-					return null;
+				if (null != docNode)
+				{
+					InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode);
+				}
+
+				return InternalDocumentPath;
 			}
 		}
 
 		protected virtual object ResolveDocumentObject(object startnode)
 		{
+			System.Diagnostics.Debug.Assert(null != _docNodePath);
+
 			var docNode = InternalDocNode;
-			if (docNode == null && _docNodePath != null)
+			if (docNode == null)
 			{
 				object obj = Main.DocumentPath.GetObject(_docNodePath, startnode);
-				if (obj is IDocumentLeafNode)
+				if (null != obj)
 					SetDocNode((IDocumentLeafNode)obj);
 				docNode = InternalDocNode;
 			}

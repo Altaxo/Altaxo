@@ -542,23 +542,25 @@ namespace Altaxo.Serialization.Xml
 		/// <param name="instance">The instance of the object to deserialize.</param>
 		/// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,Altaxo.Main.DocumentPath,0'.</param>
 		/// <param name="parent">The parent object of the current object to deserialize.</param>
-		public void GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object parent)
+		public object GetBaseValueEmbedded(object instance, string fullyQualifiedBaseTypeName, object parent)
 		{
+			object obj;
 			if ("BaseType" == CurrentElementName)
 			{
 				string basetypestring = m_Reader.ReadElementString();
 				IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetypestring);
 				if (null == ss)
 					throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
-				ss.Deserialize(instance, this, parent);
+				obj = ss.Deserialize(instance, this, parent);
 			}
 			else
 			{
 				IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(fullyQualifiedBaseTypeName);
 				if (null == ss)
 					throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", fullyQualifiedBaseTypeName));
-				ss.Deserialize(instance, this, parent);
+				obj = ss.Deserialize(instance, this, parent);
 			}
+			return obj;
 		}
 
 		public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)

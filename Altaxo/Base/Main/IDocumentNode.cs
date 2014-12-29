@@ -35,6 +35,8 @@ namespace Altaxo.Main
 		/// Retrieves the parent object.
 		/// </summary>
 		IDocumentNode ParentObject { get; set; }
+
+		void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e);
 	}
 
 	/// <summary>

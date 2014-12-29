@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Data;
+using Altaxo.Main;
 using NUnit.Framework;
 using System;
 
@@ -139,6 +140,10 @@ namespace AltaxoTest.Data
 			{
 				Assert.IsNotNull(ChildChanged, "Test redirector for OnChildChange must not be null!");
 				ChildChanged(sender, e);
+			}
+
+			public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
+			{
 			}
 
 			public void DontCareNotSuspend(object sender, EventArgs e)

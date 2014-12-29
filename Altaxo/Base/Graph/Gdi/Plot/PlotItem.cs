@@ -58,9 +58,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <summary>
 		/// Get/sets the style object of this plot.
 		/// </summary>
-		public abstract object StyleObject { get; set; }
+		public abstract IDocumentLeafNode StyleObject { get; set; }
 
-		public abstract object DataObject { get; }
+		public abstract IDocumentLeafNode DataObject { get; }
 
 		/// <summary>
 		/// The name of the plot. It can be of different length. An argument of zero or less
@@ -168,9 +168,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </returns>
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (object.ReferenceEquals(sender, StyleObject) && e==EventArgs.Empty)
+			if (object.ReferenceEquals(sender, StyleObject) && e == EventArgs.Empty)
 				e = PlotItemStyleChangedEventArgs.Empty;
-			else if (object.ReferenceEquals(sender, DataObject) && e==EventArgs.Empty)
+			else if (object.ReferenceEquals(sender, DataObject) && e == EventArgs.Empty)
 				e = PlotItemDataChangedEventArgs.Empty;
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
@@ -181,9 +181,19 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>
-		public virtual object GetChildObjectNamed(string name)
+		public override IDocumentLeafNode GetChildObjectNamed(string name)
 		{
-			return null;
+			switch (name)
+			{
+				case "Style":
+					return StyleObject;
+
+				case "Data":
+					return DataObject;
+
+				default:
+					return null;
+			}
 		}
 
 		/// <summary>
@@ -191,12 +201,24 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public virtual string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(IDocumentLeafNode o)
 		{
-			if (o == null)
+			if (null == o)
 				return null;
+			else if (object.ReferenceEquals(o, StyleObject))
+				return "Style";
+			else if (object.ReferenceEquals(o, DataObject))
+				return "Data";
 			else
 				return null;
+		}
+
+		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			if (null != StyleObject)
+				yield return new Tuple<IDocumentLeafNode, string>(StyleObject, "Style");
+			if (null != DataObject)
+				yield return new Tuple<IDocumentLeafNode, string>(DataObject, "Data");
 		}
 
 		/// <summary>

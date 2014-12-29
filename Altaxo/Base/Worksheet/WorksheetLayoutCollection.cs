@@ -133,12 +133,12 @@ namespace Altaxo.Worksheet
 
 		#region INamedObjectCollection Members
 
-		public object GetChildObjectNamed(string name)
+		public Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			return this[name];
 		}
 
-		public string GetNameOfChildObject(object o)
+		public string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			WorksheetLayout layout = o as WorksheetLayout;
 			if (layout == null)
@@ -146,6 +146,12 @@ namespace Altaxo.Worksheet
 			if (null == this[layout.Guid])
 				return null; // is not contained in this collection
 			return layout.Guid.ToString();
+		}
+
+		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _items)
+				yield return new Tuple<Main.IDocumentLeafNode, string>(entry.Value, entry.Key);
 		}
 
 		#endregion INamedObjectCollection Members

@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo;
-using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 
@@ -148,7 +146,7 @@ namespace Altaxo.Main.Properties
 			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
 		}
 
-		public object GetChildObjectNamed(string name)
+		public override IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			ProjectFolderPropertyDocument result = null;
 			if (_itemsByName.TryGetValue(name, out result))
@@ -156,7 +154,7 @@ namespace Altaxo.Main.Properties
 			else return null;
 		}
 
-		public string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(IDocumentLeafNode o)
 		{
 			if (o is ProjectFolderPropertyDocument)
 			{
@@ -165,6 +163,12 @@ namespace Altaxo.Main.Properties
 					return gr.Name;
 			}
 			return null;
+		}
+
+		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _itemsByName)
+				yield return new Tuple<IDocumentLeafNode, string>(entry.Value, entry.Key);
 		}
 
 		#region Change event handling

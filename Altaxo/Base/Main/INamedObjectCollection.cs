@@ -86,14 +86,14 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>
-		object GetChildObjectNamed(string name);
+		IDocumentLeafNode GetChildObjectNamed(string name);
 
 		/// <summary>
 		/// Retrieves the name of the provided object.
 		/// </summary>
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		string GetNameOfChildObject(object o);
+		string GetNameOfChildObject(IDocumentLeafNode o);
 	}
 
 	public class NamedObjectCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs

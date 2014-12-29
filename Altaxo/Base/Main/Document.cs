@@ -24,7 +24,6 @@
 
 using Altaxo.Graph.Gdi;
 using Altaxo.Main;
-using Altaxo.Main.Properties;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
@@ -452,7 +451,7 @@ namespace Altaxo
 			return layout;
 		}
 
-		public object GetChildObjectNamed(string name)
+		public override IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			switch (name)
 			{
@@ -474,7 +473,7 @@ namespace Altaxo
 			return null;
 		}
 
-		public string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(IDocumentLeafNode o)
 		{
 			if (null == o)
 				return null;
@@ -490,6 +489,15 @@ namespace Altaxo
 				return "FolderProperties";
 			else
 				return null;
+		}
+
+		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			yield return new Tuple<IDocumentLeafNode, string>(_dataTables, "Tables");
+			yield return new Tuple<IDocumentLeafNode, string>(_graphs, "Graphs");
+			yield return new Tuple<IDocumentLeafNode, string>(_tableLayouts, "TableLayouts");
+			yield return new Tuple<IDocumentLeafNode, string>(_fitFunctionScripts, "FitFunctionScripts");
+			yield return new Tuple<IDocumentLeafNode, string>(_projectFolderProperties, "FolderProperties");
 		}
 
 		#region Static functions

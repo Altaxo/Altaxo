@@ -27,11 +27,9 @@ using Altaxo.Main;
 using Altaxo.Serialization;
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
-	using Data;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Groups;
@@ -206,13 +204,13 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		public override object StyleObject
+		public override Main.IDocumentLeafNode StyleObject
 		{
 			get { return _plotStyle; }
 			set { this.Style = (DensityImagePlotStyle)value; }
 		}
 
-		public override object DataObject
+		public override Main.IDocumentLeafNode DataObject
 		{
 			get { return _plotData; }
 		}

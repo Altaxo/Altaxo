@@ -340,5 +340,26 @@ namespace Altaxo.Main
 		}
 
 		#endregion Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode>
+
+		#region Tunneling event handling
+
+		public virtual void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
+		{
+			OnTunnelingEvent(originalSource, e);
+		}
+
+		protected virtual void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		{
+			OnTunnelingEvent(this, e);
+		}
+
+		protected virtual void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
+		{
+			var ev = Changed;
+			if (null != ev)
+				ev(this, e);
+		}
+
+		#endregion Tunneling event handling
 	}
 }

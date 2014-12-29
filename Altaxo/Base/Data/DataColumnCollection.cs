@@ -2419,7 +2419,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="name">The name of the column to retrieve.</param>
 		/// <returns>The column with name <code>name</code>, or null if not found.</returns>
-		public object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			DataColumn col;
 			if (_columnsByName.TryGetValue(name, out col))
@@ -2433,13 +2433,24 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="o">The child column.</param>
 		/// <returns>The name of the column.</returns>
-		public string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			DataColumnInfo info;
 			if ((o is DataColumn) && this._columnInfoByColumn.TryGetValue((DataColumn)o, out info))
 				return info.Name;
 			else
 				return null;
+		}
+
+		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			for (int i = _columnsByNumber.Count - 1; i >= 0; --i)
+			{
+				var col = _columnsByNumber[i];
+				DataColumnInfo info;
+				if (_columnInfoByColumn.TryGetValue(col, out info))
+					yield return new Tuple<Main.IDocumentLeafNode, string>(col, info.Name);
+			}
 		}
 
 		#endregion INamedObjectCollection Members

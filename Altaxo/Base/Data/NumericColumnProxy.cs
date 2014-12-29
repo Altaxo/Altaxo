@@ -79,6 +79,31 @@ namespace Altaxo.Data
 			_column = column;
 		}
 
+		#region Serialization
+
+		/// <summary>
+		/// 2014-12-26 Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericColumnProxyForStandaloneColumns), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (NumericColumnProxyForStandaloneColumns)obj;
+				info.AddValue("Column", s._column);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (NumericColumnProxyForStandaloneColumns)o ?? new NumericColumnProxyForStandaloneColumns(null);
+				object node = info.GetValue("Column", s);
+				s._column = (INumericColumn)node;
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public INumericColumn Document
 		{
 			get { return _column; }
@@ -117,8 +142,34 @@ namespace Altaxo.Data
 	{
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericColumnProxy), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.NumericColumnProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version not supported");
+				//info.AddBaseValueEmbedded(obj, typeof(DocNodeProxy)); // serialize the base class
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
+
+				object baseobj = info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Main.DocNodeProxy,0", parent);         // deserialize the base class
+
+				if (!object.ReferenceEquals(s, baseobj))
+				{
+					return NumericColumnProxyForStandaloneColumns.FromColumn((INumericColumn)baseobj);
+				}
+				else
+				{
+					return s;
+				}
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericColumnProxy), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -127,7 +178,7 @@ namespace Altaxo.Data
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				NumericColumnProxy s = o != null ? (NumericColumnProxy)o : new NumericColumnProxy();
+				var s = (NumericColumnProxy)o ?? new NumericColumnProxy(info);
 				info.GetBaseValueEmbedded(s, typeof(DocNodeProxy), parent);         // deserialize the base class
 
 				return s;
@@ -159,7 +210,8 @@ namespace Altaxo.Data
 		/// <summary>
 		/// For deserialization purposes only.
 		/// </summary>
-		protected NumericColumnProxy()
+		protected NumericColumnProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
 		{
 		}
 

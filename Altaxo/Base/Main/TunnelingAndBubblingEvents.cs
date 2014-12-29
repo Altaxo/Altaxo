@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Main
 {
+	/*
 	public class BubblingEventArgs : EventArgs
 	{
 	}
@@ -54,6 +55,7 @@ namespace Altaxo.Main
 		// event Action<object, BubblingEventArgs> BubblingEvent;
 		// event Action<object, TunnelingEventArgs> TunnelingEvent;
 	}
+	*/
 
 	public class TunnelingEventArgs : EventArgs
 	{

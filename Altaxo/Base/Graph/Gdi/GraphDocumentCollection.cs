@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
@@ -206,7 +205,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			GraphDocument result = null;
 			if (_graphsByName.TryGetValue(name, out result))
@@ -214,7 +213,7 @@ namespace Altaxo.Graph.Gdi
 			else return null;
 		}
 
-		public string GetNameOfChildObject(object o)
+		public string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			if (o is GraphDocument)
 			{
@@ -223,6 +222,12 @@ namespace Altaxo.Graph.Gdi
 					return gr.Name;
 			}
 			return null;
+		}
+
+		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _graphsByName)
+				yield return new Tuple<IDocumentLeafNode, string>(entry.Value, entry.Key);
 		}
 
 		#region Change event handling

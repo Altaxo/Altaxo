@@ -1308,7 +1308,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>
-		public object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			switch (name)
 			{
@@ -1326,7 +1326,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			if (o == null)
 				return null;
@@ -1336,6 +1336,12 @@ namespace Altaxo.Data
 				return "PropCols";
 			else
 				return null;
+		}
+
+		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			yield return new Tuple<Main.IDocumentLeafNode, string>(_dataColumns, "DataCols");
+			yield return new Tuple<Main.IDocumentLeafNode, string>(_propertyColumns, "PropCols");
 		}
 
 		/// <summary>

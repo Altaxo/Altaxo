@@ -23,18 +23,13 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Reflection;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -1311,12 +1306,12 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="name">The objects name.</param>
 		/// <returns>The object with the specified name.</returns>
-		public override object GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
-			if (name == _plotItems.Name)
+			if (name == "PlotItems")
 				return _plotItems;
 
-			return null;
+			return base.GetChildObjectNamed(name);
 		}
 
 		/// <summary>
@@ -1324,12 +1319,22 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public override string GetNameOfChildObject(object o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			if (object.ReferenceEquals(_plotItems, o))
-				return _plotItems.Name;
+				return "PlotItems";
 
 			return base.GetNameOfChildObject(o);
+		}
+
+		private IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetNewDocumentNodeChildrenWithName()
+		{
+			yield return new Tuple<Main.IDocumentLeafNode, string>(_plotItems, "PlotItems");
+		}
+
+		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		{
+			return GetNewDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
 		}
 
 		#endregion IDocumentNode Members
