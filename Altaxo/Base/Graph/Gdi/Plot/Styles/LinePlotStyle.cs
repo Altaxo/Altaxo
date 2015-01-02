@@ -24,6 +24,7 @@
 
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -430,6 +431,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			CopyFrom(from, Main.EventFiring.Suppressed);
 			CreateEventChain();
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _penHolder)
+				yield return new Main.DocumentNodeAndName(_penHolder, "Pen");
+
+			if (null != _fillBrush)
+				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
 		}
 
 		public object Clone()

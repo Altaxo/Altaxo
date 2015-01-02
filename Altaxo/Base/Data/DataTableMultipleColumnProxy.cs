@@ -201,6 +201,7 @@ namespace Altaxo.Data
 
 				s._isDirty = true;
 
+				s._parent = parent as Main.IDocumentNode;
 				return s;
 			}
 
@@ -874,5 +875,29 @@ namespace Altaxo.Data
 		}
 
 		#endregion Change event handling
+
+		#region Document Node functions
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataTable)
+				yield return new Main.DocumentNodeAndName(_dataTable, "DataTable");
+
+			if (null != _dataColumnBundles)
+			{
+				foreach (var entry in _dataColumnBundles)
+				{
+					int idx = -1;
+					foreach (var proxy in entry.Value.DataColumns)
+					{
+						++idx;
+						string name = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}\\Col{1}", entry.Key, idx);
+						yield return new Main.DocumentNodeAndName(proxy, name);
+					}
+				}
+			}
+		}
+
+		#endregion Document Node functions
 	}
 }

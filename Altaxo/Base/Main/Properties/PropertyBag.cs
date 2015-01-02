@@ -161,6 +161,16 @@ namespace Altaxo.Main.Properties
 			return false;
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _properties)
+			{
+				var doc = entry.Value as Main.IDocumentLeafNode;
+				if (null != doc)
+					yield return new Main.DocumentNodeAndName(doc, entry.Key);
+			}
+		}
+
 		object ICloneable.Clone()
 		{
 			return new PropertyBag(this);
@@ -404,13 +414,18 @@ namespace Altaxo.Main.Properties
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
-		public void Dispose()
+		protected override void Dispose(bool isDisposing)
 		{
-			foreach (var pr in _properties)
-				if (pr.Value is IDisposable)
-					((IDisposable)pr.Value).Dispose();
+			if (null != _parent)
+			{
+				foreach (var pr in _properties)
+					if (pr.Value is IDisposable)
+						((IDisposable)pr.Value).Dispose();
 
-			_properties.Clear();
+				_properties.Clear();
+
+				base.Dispose(isDisposing);
+			}
 		}
 
 		/// <summary>

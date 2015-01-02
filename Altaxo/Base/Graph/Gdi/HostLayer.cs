@@ -1286,51 +1286,33 @@ namespace Altaxo.Graph.Gdi
 			return stb.ToString();
 		}
 
-		/// <summary>
-		/// retrieves the object with the name <code>name</code>.
-		/// </summary>
-		/// <param name="name">The objects name.</param>
-		/// <returns>The object with the specified name.</returns>
-		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			foreach (var childLayer in _childLayers)
+			if (null != _childLayers)
 			{
-				if (GetDefaultNameOfLayer(childLayer.IndexOf()) == name)
-					return childLayer;
-			}
-			return null;
-		}
-
-		/// <summary>
-		/// Retrieves the name of the provided object.
-		/// </summary>
-		/// <param name="o">The object for which the name should be found.</param>
-		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
-		{
-			// Note: this is a bit tricky, since this function must work even for layers that are cloned (because they are opened in the layer dialog)
-			// those cloned layers are of course not part of the collection owned by this layer here
-			if (o is HostLayer)
-			{
+				var layers = _childLayers.ToArray();
 				var list = this.IndexOf(); // this should work for this layer here
-				list.Add(((HostLayer)o).LayerNumber);
-				return GetDefaultNameOfLayer(list);
+				var index = list.Count;
+				list.Add(0); //dummy entry, will be overriden shortly
+
+				for (int i = 0; i < layers.Length; ++i)
+				{
+					list[index] = i;
+					var name = GetDefaultNameOfLayer(list);
+					yield return new Main.DocumentNodeAndName(layers[i], name);
+				}
 			}
-			return string.Empty;
-		}
 
-		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
-		{
-			var layers = _childLayers.ToArray();
-			var list = this.IndexOf(); // this should work for this layer here
-			var index = list.Count;
-			list.Add(0); //dummy entry, will be overriden shortly
+			if (null != _location)
+				yield return new Main.DocumentNodeAndName(_location, "Location");
 
-			for (int i = 0; i < layers.Length; ++i)
+			if (null != _graphObjects)
 			{
-				list[index] = i;
-				var name = GetDefaultNameOfLayer(list);
-				yield return new Tuple<Main.IDocumentLeafNode, string>(layers[i], name);
+				for (int i = 0; i < _graphObjects.Count; ++i)
+				{
+					if (null != _graphObjects[i])
+						yield return new Main.DocumentNodeAndName(_graphObjects[i], "GraphObject" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
 			}
 		}
 

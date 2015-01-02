@@ -9,6 +9,14 @@ namespace Altaxo.Data
 	public class TableDataSourceBase :
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
 	{
+		public bool IsDisposed { get; protected set; }
+
+		protected override void Dispose(bool isDisposing)
+		{
+			base.Dispose(isDisposing);
+			IsDisposed = true;
+		}
+
 		#region Change event handling
 
 		/// <summary>
@@ -25,46 +33,5 @@ namespace Altaxo.Data
 		}
 
 		#endregion Change event handling
-
-		#region DisposableBase
-
-		public bool IsDisposed { get; private set; }
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			IsDisposed = true;
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Releases unmanaged and - optionally - managed resources.
-		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-		protected virtual void Dispose(bool disposing)
-		{
-		}
-
-		/// <summary>
-		/// Finalizes an instance of the <see cref="DisposableBase"/> class.
-		/// </summary>
-		~TableDataSourceBase()
-		{
-			Dispose(false);
-		}
-
-		#endregion DisposableBase
-
-		public override string Name
-		{
-			get { return this.GetType().Name; }
-			set
-			{
-				throw new InvalidOperationException("The name is fixed and cannot be set");
-			}
-		}
 	}
 }

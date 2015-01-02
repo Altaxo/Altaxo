@@ -620,5 +620,28 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 		#endregion ICloneable Members
+
+		#region Document node functions
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _independentVariables)
+			{
+				for (int i = 0; i < _independentVariables.Length; ++i)
+				{
+					yield return new Main.DocumentNodeAndName(_independentVariables[i], "IndependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
+			}
+
+			if (null != _dependentVariables)
+			{
+				for (int i = 0; i < _dependentVariables.Length; ++i)
+				{
+					yield return new Main.DocumentNodeAndName(_dependentVariables[i], "DependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
+			}
+		}
+
+		#endregion Document node functions
 	}
 }

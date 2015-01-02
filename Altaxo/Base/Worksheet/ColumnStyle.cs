@@ -252,6 +252,16 @@ namespace Altaxo.Worksheet
 			SetDefaultTextFont();
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _cellPen)
+				yield return new Main.DocumentNodeAndName(_cellPen, "CellPen");
+			if (null != _textBrush)
+				yield return new Main.DocumentNodeAndName(_textBrush, "TextBrush");
+			if (null != _backgroundBrush)
+				yield return new Main.DocumentNodeAndName(_backgroundBrush, "BackgroundBrush");
+		}
+
 		public void ChangeTypeTo(ColumnStyleType type)
 		{
 			_columnStyleType = type;

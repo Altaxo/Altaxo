@@ -46,11 +46,6 @@ namespace Altaxo.Main.Properties
 		private DateTime _changeTimeUtc;
 
 		/// <summary>
-		/// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
-		/// </summary>
-		public event Action<object, object, TunnelingEventArgs> TunneledEvent;
-
-		/// <summary>
 		/// Fired if the name has changed. Arguments are the name owner (which has already the new name), and the old name.
 		/// </summary>
 		public event Action<INameOwner, string> NameChanged;
@@ -254,19 +249,10 @@ namespace Altaxo.Main.Properties
 			}
 		}
 
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _propertyBag)
-			{
-				_propertyBag.Dispose();
-				_propertyBag = null;
-			}
-
-			if (null != TunneledEvent)
-				TunneledEvent(this, null, DisposeEventArgs.Empty);
+				yield return new Main.DocumentNodeAndName(_propertyBag, "PropertyBag");
 		}
 
 		/// <summary>

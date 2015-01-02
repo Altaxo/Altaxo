@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// Extends the IDisposable interface in a way that an event is fired if the object is disposed.
-  /// </summary>
-  public interface IEventIndicatedDisposable : System.IDisposable
-  {
-    /// <summary>
-    /// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
-    /// </summary>
-    event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
-  }
+	/// <summary>
+	/// Extends the IDisposable interface in a way that an event is fired if the object is disposed.
+	/// </summary>
+	public interface IEventIndicatedDisposable : System.IDisposable, Main.ITunnelingEventSource
+	{
+	}
 }

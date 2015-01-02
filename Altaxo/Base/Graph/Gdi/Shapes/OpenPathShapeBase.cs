@@ -24,8 +24,10 @@
 
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -103,6 +105,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 			return isCopied;
+		}
+
+		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
+		{
+			if (null != _linePen)
+				yield return new Main.DocumentNodeAndName(_linePen, "LinePen");
+
+			if (null != _outlinePen)
+				yield return new Main.DocumentNodeAndName(_outlinePen, "OutlinePen");
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
 		}
 
 		public virtual PenX Pen

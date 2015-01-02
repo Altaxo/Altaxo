@@ -114,6 +114,15 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			for (int i = _scales.Length - 1; i >= 0; --i)
+			{
+				if (null != _scales[i])
+					yield return new Main.DocumentNodeAndName(_scales[i], "Scale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+			}
+		}
+
 		public ScaleCollection Clone()
 		{
 			return new ScaleCollection(this);

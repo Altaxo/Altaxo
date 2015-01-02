@@ -1327,14 +1327,27 @@ namespace Altaxo.Graph.Gdi
 			return base.GetNameOfChildObject(o);
 		}
 
-		private IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetNewDocumentNodeChildrenWithName()
+		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
 		{
-			yield return new Tuple<Main.IDocumentLeafNode, string>(_plotItems, "PlotItems");
+			if (null != _plotItems)
+				yield return new Main.DocumentNodeAndName(_plotItems, "PlotItems");
+
+			if (null != _axisStyles)
+				yield return new Main.DocumentNodeAndName(_axisStyles, "AxisStyles");
+
+			if (null != _gridPlanes)
+				yield return new Main.DocumentNodeAndName(_gridPlanes, "Grids");
+
+			if (null != _coordinateSystem)
+				yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
+
+			if (null != _scales)
+				yield return new Main.DocumentNodeAndName(_scales, "Scales");
 		}
 
-		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			return GetNewDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
+			return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
 		}
 
 		#endregion IDocumentNode Members

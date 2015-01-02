@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
 
@@ -122,6 +123,15 @@ namespace Altaxo.Graph.Gdi.Background
 			this.Brush = from._brush;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _brush)
+				yield return new Main.DocumentNodeAndName(_brush, "Brush");
+
+			if (null != _cachedShadowBrush)
+				yield return new Main.DocumentNodeAndName(_cachedShadowBrush, "CachedShadowBrush");
+		}
+
 		public object Clone()
 		{
 			return new RectangleWithShadow(this);
@@ -181,9 +191,11 @@ namespace Altaxo.Graph.Gdi.Background
 			if (object.ReferenceEquals(brush, _brush))
 			{
 				if (null == _cachedShadowBrush)
-					shadowBrush = _cachedShadowBrush = GetShadowBrush(brush);
-				else
-					shadowBrush = _cachedShadowBrush;
+				{
+					_cachedShadowBrush = GetShadowBrush(brush);
+					_cachedShadowBrush.ParentObject = this;
+				}
+				shadowBrush = _cachedShadowBrush;
 			}
 			else
 			{

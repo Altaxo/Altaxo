@@ -50,8 +50,9 @@ namespace Altaxo.Data
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new InvalidOperationException("Serialization of old version");
-
+				/*
 				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType); // serialize the base class
+				*/
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

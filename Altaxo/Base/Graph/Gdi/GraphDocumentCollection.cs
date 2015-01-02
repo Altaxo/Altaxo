@@ -59,7 +59,9 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
+				if (null != value)
+					throw new InvalidOperationException("ParentObject of GraphDocumentCollection is fixed and cannot be set");
+				base.ParentObject = value; // allow setting to null
 			}
 		}
 
@@ -213,7 +215,7 @@ namespace Altaxo.Graph.Gdi
 			else return null;
 		}
 
-		public string GetNameOfChildObject(Main.IDocumentLeafNode o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			if (o is GraphDocument)
 			{
@@ -224,10 +226,10 @@ namespace Altaxo.Graph.Gdi
 			return null;
 		}
 
-		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			foreach (var entry in _graphsByName)
-				yield return new Tuple<IDocumentLeafNode, string>(entry.Value, entry.Key);
+				yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
 		}
 
 		#region Change event handling

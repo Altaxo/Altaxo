@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Altaxo.Graph.Gdi.Shapes
@@ -295,6 +296,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		#endregion Copying
+
+		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
+		{
+			if (null != _textBrush)
+				yield return new Main.DocumentNodeAndName(_textBrush, "TextBrush");
+
+			if (null != _background)
+				yield return new Main.DocumentNodeAndName(_background, "Background");
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
+		}
 
 		#region Background
 

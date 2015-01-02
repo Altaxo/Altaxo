@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Plot.Data
 				return s;
 			}
 
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
 				bool bAllResolved = true;
 
@@ -313,7 +313,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			private Main.DocumentPath _labelColumn = null;
 
-			private void EhDeserializationFinished2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			private void EhDeserializationFinished2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
 				bool bAllResolved = true;
 
@@ -494,6 +494,21 @@ namespace Altaxo.Graph.Plot.Data
 			this._pointCount = from._pointCount;
 			this._isCachedDataValid = from._isCachedDataValid;
 			this._parent = from._parent;
+		}
+
+		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _xColumn)
+				yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
+
+			if (null != _yColumn)
+				yield return new Main.DocumentNodeAndName(_yColumn, "YColumn");
+
+			if (null != _xBoundaries)
+				yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
+
+			if (null != _yBoundaries)
+				yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
 		}
 
 		/// <summary>

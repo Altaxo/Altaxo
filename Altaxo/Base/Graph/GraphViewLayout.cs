@@ -97,9 +97,9 @@ namespace Altaxo.Graph
 				return s;
 			}
 
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
-				object o = DocumentPath.GetObject(_PathToGraph, documentRoot, _GraphController);
+				object o = DocumentPath.GetObject(_PathToGraph, documentRoot);
 				if (o is GraphDocument)
 				{
 					_GraphController._graphDocument = (GraphDocument)o;
@@ -148,9 +148,9 @@ namespace Altaxo.Graph
 				return s;
 			}
 
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
-				object o = DocumentPath.GetObject(_PathToGraph, documentRoot, _GraphController);
+				var o = DocumentPath.GetObject(_PathToGraph, documentRoot);
 				if (o is GraphDocument)
 				{
 					_GraphController._graphDocument = (GraphDocument)o;

@@ -102,6 +102,17 @@ namespace Altaxo.Graph.Gdi.Axis
 			CopyFrom(from);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			int i = -1;
+			foreach (var plane in _innerList)
+			{
+				++i;
+				if (null != plane)
+					yield return new Main.DocumentNodeAndName(plane, i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+			}
+		}
+
 		public GridPlaneCollection Clone()
 		{
 			return new GridPlaneCollection(this);

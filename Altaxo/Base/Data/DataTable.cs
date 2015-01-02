@@ -51,8 +51,6 @@ namespace Altaxo.Data
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IProjectItem,
-		Main.INamedObjectCollection,
-		Main.IChildChangedEventSink,
 		Main.Properties.IPropertyBagOwner
 	{
 		#region Members
@@ -134,12 +132,6 @@ namespace Altaxo.Data
 		/// </summary>
 		[field: NonSerialized]
 		public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
-
-		/// <summary>
-		/// Fired for instance if the data table is about to be disposed and is disposed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
 		#endregion Members
 
@@ -224,7 +216,7 @@ namespace Altaxo.Data
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+				var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
 
 				s._tableName = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
@@ -252,7 +244,7 @@ namespace Altaxo.Data
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+				var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
 
 				s._tableName = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
@@ -303,7 +295,7 @@ namespace Altaxo.Data
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+				var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
 				Deserialize(s, info, parent);
 				return s;
 			}
@@ -416,7 +408,7 @@ namespace Altaxo.Data
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				Altaxo.Data.DataTable s = null != o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+				var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
 				Deserialize(s, info, parent);
 				return s;
 			}
@@ -608,6 +600,16 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="DataTable"/> class for deserialization purposes only.
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected DataTable(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			_notes = new Main.TextBackedConsole();
+			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
+		}
+
+		/// <summary>
 		/// Clones the table.
 		/// </summary>
 		/// <returns>A cloned version of this table. All data inside the table are cloned too (deep copy).</returns>
@@ -770,8 +772,7 @@ namespace Altaxo.Data
 		/// <param name="oldName">The name of the table before the change.</param>
 		protected virtual void OnNameChanged(string oldName)
 		{
-			_dataColumns.EhTunnelingEvent(this, this, Main.DocumentPathChangedEventArgs.Empty);
-			_propertyColumns.EhTunnelingEvent(this, this, Main.DocumentPathChangedEventArgs.Empty);
+			EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
 
 			if (NameChanged != null)
 				NameChanged(this, oldName);
@@ -1240,32 +1241,6 @@ namespace Altaxo.Data
 			}
 		}
 
-		#region IDisposable Members
-
-		/// <summary>
-		/// Disposes the table and all child objects.
-		/// </summary>
-		public void Dispose()
-		{
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
-
-			var dataSource = DataSource;
-			if (null != dataSource)
-			{
-				DataSource = null;
-				dataSource.Dispose();
-			}
-
-			_dataColumns.Dispose();
-			_propertyColumns.Dispose();
-
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
-		}
-
-		#endregion IDisposable Members
-
 		/// <summary>
 		/// Gets an arbitrary object that was stored as table property by <see cref="SetTableProperty" />.
 		/// </summary>
@@ -1303,45 +1278,17 @@ namespace Altaxo.Data
 			return null == _tableProperties ? false : _tableProperties.RemoveValue(key);
 		}
 
-		/// <summary>
-		/// Retrieves the object with the name <paramref name="name"/>.
-		/// </summary>
-		/// <param name="name">The objects name.</param>
-		/// <returns>The object with the specified name.</returns>
-		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			switch (name)
-			{
-				case "DataCols":
-					return _dataColumns;
+			yield return new Main.DocumentNodeAndName(_dataColumns, "DataCols");
 
-				case "PropCols":
-					return this._propertyColumns;
-			}
-			return null;
-		}
+			yield return new Main.DocumentNodeAndName(_propertyColumns, "PropCols");
 
-		/// <summary>
-		/// Retrieves the name of the provided object.
-		/// </summary>
-		/// <param name="o">The object for which the name should be found.</param>
-		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
-		{
-			if (o == null)
-				return null;
-			else if (o.Equals(_dataColumns))
-				return "DataCols";
-			else if (o.Equals(_propertyColumns))
-				return "PropCols";
-			else
-				return null;
-		}
+			if (null != DataSource)
+				yield return new Main.DocumentNodeAndName(DataSource, "DataSource");
 
-		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
-		{
-			yield return new Tuple<Main.IDocumentLeafNode, string>(_dataColumns, "DataCols");
-			yield return new Tuple<Main.IDocumentLeafNode, string>(_propertyColumns, "PropCols");
+			if (null != PropertyBag)
+				yield return new Main.DocumentNodeAndName(PropertyBag, "PropertyBag");
 		}
 
 		/// <summary>

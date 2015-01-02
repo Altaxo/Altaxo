@@ -113,6 +113,18 @@ namespace Altaxo.Graph.Gdi.Axis
 			this._cachedCoordinateSystem = from._cachedCoordinateSystem;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _axisStyles)
+			{
+				for (int i = 0; i < _axisStyles.Count; ++i)
+				{
+					if (null != _axisStyles[i])
+						yield return new Main.DocumentNodeAndName(_axisStyles[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
+			}
+		}
+
 		public AxisStyle ItemAt(int idx)
 		{
 			return _axisStyles[idx];

@@ -57,13 +57,26 @@ namespace Altaxo.Main
 	}
 	*/
 
+	public delegate void TunnelingEventHandler(object sender, object source, TunnelingEventArgs e);
+
+	/// <summary>
+	/// Interface that indicates that its owner can announce tunneling events by firing the <see cref="TunneledEvent"/>.
+	/// </summary>
+	public interface ITunnelingEventSource
+	{
+		/// <summary>
+		/// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
+		/// </summary>
+		event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
+	}
+
 	public class TunnelingEventArgs : EventArgs
 	{
 	}
 
 	public class PreviewDisposeEventArgs : TunnelingEventArgs
 	{
-		public static readonly PreviewDisposeEventArgs Empty = new PreviewDisposeEventArgs();
+		public static new readonly PreviewDisposeEventArgs Empty = new PreviewDisposeEventArgs();
 
 		private PreviewDisposeEventArgs()
 		{
@@ -72,7 +85,7 @@ namespace Altaxo.Main
 
 	public class DisposeEventArgs : TunnelingEventArgs
 	{
-		public static readonly DisposeEventArgs Empty = new DisposeEventArgs();
+		public static new readonly DisposeEventArgs Empty = new DisposeEventArgs();
 
 		private DisposeEventArgs()
 		{
@@ -81,7 +94,7 @@ namespace Altaxo.Main
 
 	public class DocumentPathChangedEventArgs : TunnelingEventArgs
 	{
-		public static readonly DocumentPathChangedEventArgs Empty = new DocumentPathChangedEventArgs();
+		public static new readonly DocumentPathChangedEventArgs Empty = new DocumentPathChangedEventArgs();
 
 		private DocumentPathChangedEventArgs()
 		{

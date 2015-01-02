@@ -513,7 +513,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		protected virtual object ResolveDocumentObject(object startnode)
+		protected virtual object ResolveDocumentObject(Main.IDocumentNode startnode)
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 
@@ -528,7 +528,7 @@ namespace Altaxo.Main
 			return docNode;
 		}
 
-		protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+		protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 		{
 			if (null != this.ResolveDocumentObject(documentRoot))
 				info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);

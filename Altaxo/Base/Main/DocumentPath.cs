@@ -256,16 +256,16 @@ namespace Altaxo.Main
 		/// <param name="node">The node from where the search begins.</param>
 		/// <returns>The root node, i.e. the last node in the hierarchie that
 		/// either has not implemented the <see cref="IDocumentLeafNode"/> interface or has no parent</returns>
-		public static object GetRootNode(IDocumentLeafNode node)
+		public static IDocumentLeafNode GetRootNode(IDocumentLeafNode node)
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
 
-			var parent = node.ParentObject as IDocumentLeafNode;
+			var parent = node.ParentObject;
 			while (null != parent)
 			{
 				node = parent;
-				parent = node.ParentObject as IDocumentLeafNode;
+				parent = node.ParentObject;
 			}
 
 			return node;
@@ -278,15 +278,15 @@ namespace Altaxo.Main
 		/// <param name="type">The type to search for.</param>
 		/// <returns>The first parental node that implements the type <code>type.</code>
 		/// </returns>
-		public static object GetRootNodeImplementing(IDocumentLeafNode node, System.Type type)
+		public static IDocumentLeafNode GetRootNodeImplementing(IDocumentLeafNode node, System.Type type)
 		{
 			if (null == node)
 				return null;
 
-			node = node.ParentObject as IDocumentLeafNode;
+			node = node.ParentObject;
 			while (node != null && !type.IsInstanceOfType(node))
 			{
-				node = node.ParentObject as IDocumentLeafNode;
+				node = node.ParentObject;
 			}
 
 			return type.IsInstanceOfType(node) ? node : null;
@@ -303,10 +303,10 @@ namespace Altaxo.Main
 			if (null == node)
 				return default(T);
 
-			node = node.ParentObject as IDocumentLeafNode;
+			node = node.ParentObject;
 			while (node != null && !(node is T))
 			{
-				node = node.ParentObject as IDocumentLeafNode;
+				node = node.ParentObject;
 			}
 
 			return (node is T) ? (T)node : default(T);
@@ -338,21 +338,24 @@ namespace Altaxo.Main
 			DocumentPath path = new DocumentPath();
 
 			int depth = 0;
-			object prev_root = node;
-			object root = node;
-			while (root != null && root is IDocumentLeafNode && !(root is AltaxoDocument))
+			var parent = node.ParentObject;
+			while (parent != null)
 			{
 				if (depth >= maxDepth)
 					break;
 
-				string name = ((IDocumentLeafNode)root).Name;
+				string name = parent.GetNameOfChildObject(node);
+
+				if (string.IsNullOrEmpty(name))
+					throw new InvalidOperationException(string.Format("Parent node (type:{0}) of node (type: {1}) did not return a valid name for the child node!", parent.GetType(), node.GetType()));
+
 				path.Insert(0, name);
-				prev_root = root;
-				root = ((IDocumentLeafNode)root).ParentObject;
+				node = parent;
+				parent = node.ParentObject;
 				++depth;
 			}
 
-			if (maxDepth == int.MaxValue && node != null && !(root is AltaxoDocument))
+			if (maxDepth == int.MaxValue && node != null && !(node is AltaxoDocument))
 			{
 				string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, path);
 				throw new InvalidOperationException(msg);
@@ -399,11 +402,11 @@ namespace Altaxo.Main
 
 			// store the complete hierarchie of objects as keys in the hash, (values are the hierarchie depth)
 			int endnodedepth = 0;
-			var root = endnode as IDocumentLeafNode;
+			var root = endnode;
 			while (root != null)
 			{
 				hash.Add(root, endnodedepth);
-				root = root.ParentObject as IDocumentLeafNode;
+				root = root.ParentObject;
 				++endnodedepth;
 			}
 
@@ -425,7 +428,7 @@ namespace Altaxo.Main
 					break;
 				}
 
-				root = root.ParentObject as IDocumentLeafNode;
+				root = root.ParentObject;
 				++startnodedepth;
 			}
 
@@ -451,9 +454,9 @@ namespace Altaxo.Main
 		/// <param name="startnode">The node object which is considered as the starting point of the path.</param>
 		/// <param name="documentRoot">An alternative node which is used as starting point of the path if the first try failed.</param>
 		/// <returns>The resolved object. If the resolving process failed, the return value is null.</returns>
-		public static object GetObject(DocumentPath path, object startnode, object documentRoot)
+		public static IDocumentLeafNode GetObject(DocumentPath path, IDocumentLeafNode startnode, IDocumentNode documentRoot)
 		{
-			object retval = GetObject(path, startnode);
+			var retval = GetObject(path, startnode);
 
 			if (null == retval && null != documentRoot)
 				retval = GetObject(path, documentRoot);
@@ -461,26 +464,31 @@ namespace Altaxo.Main
 			return retval;
 		}
 
-		public static object GetObject(DocumentPath path, object startnode)
+		public static IDocumentLeafNode GetObject(DocumentPath path, IDocumentLeafNode startnode)
 		{
-			object node = startnode;
+			if (null == path)
+				throw new ArgumentNullException("path");
+			if (null == startnode)
+				throw new ArgumentNullException("startnode");
 
-			if (path.IsAbsolutePath && node is IDocumentLeafNode)
-				node = GetRootNode((IDocumentLeafNode)node);
+			var node = startnode;
+
+			if (path.IsAbsolutePath)
+				node = GetRootNode(node);
 
 			for (int i = 0; i < path.Count; i++)
 			{
 				if (path[i] == "..")
 				{
-					if (node is Main.IDocumentLeafNode)
-						node = ((Main.IDocumentLeafNode)node).ParentObject;
+					if (null != node)
+						node = node.ParentObject;
 					else
 						return null;
 				}
 				else
 				{
-					if (node is Main.INamedObjectCollection)
-						node = ((Main.INamedObjectCollection)node).GetChildObjectNamed(path[i]);
+					if (node is Main.IDocumentNode)
+						node = ((Main.IDocumentNode)node).GetChildObjectNamed(path[i]);
 					else
 						return null;
 				}

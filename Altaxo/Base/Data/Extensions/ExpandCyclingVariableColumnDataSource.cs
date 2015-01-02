@@ -60,7 +60,7 @@ namespace Altaxo.Data
 			{
 				var s = (o == null ? new ExpandCyclingVariableColumnDataSource() : (ExpandCyclingVariableColumnDataSource)o);
 
-				s._processData = (DataTableMultipleColumnProxy)info.GetValue("ProcessData");
+				s._processData = (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s);
 				s._processOptions = (ExpandCyclingVariableColumnOptions)info.GetValue("ProcessOptions");
 				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions");
 
@@ -309,6 +309,16 @@ namespace Altaxo.Data
 		}
 
 		#endregion Change event handling
+
+		#region Document Node functions
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _processData)
+				yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
+		}
+
+		#endregion Document Node functions
 
 		/// <summary>
 		/// Called after deserization of a data source instance, when it is already associated with a data table.

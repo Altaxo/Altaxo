@@ -478,6 +478,21 @@ namespace Altaxo.Graph.Gdi.Axis
 			return new AxisLabelStyle(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _brush)
+				yield return new Main.DocumentNodeAndName(_brush, "Brush");
+
+			if (null != _labelFormatting)
+				yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
+
+			if (null != _backgroundStyle)
+				yield return new Main.DocumentNodeAndName(_backgroundStyle, "BackgroundStyle");
+
+			if (null != _suppressedLabels)
+				yield return new Main.DocumentNodeAndName(_suppressedLabels, "SuppressedLabels");
+		}
+
 		private void SetStringFormat()
 		{
 			// Modification of StringFormat is necessary to avoid
@@ -983,19 +998,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				_enclosingPath.AddPath(helperPath, true);
 			}
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return this.GetType().Name; }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
-		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
 

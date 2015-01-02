@@ -32,7 +32,7 @@ namespace Altaxo.Main
 	/// <summary>
 	///
 	/// </summary>
-	public abstract class SuspendableDocumentNodeBase : Main.IDocumentLeafNode, Altaxo.Collections.INodeWithParentNode<IDocumentNode>
+	public abstract class SuspendableDocumentNodeBase : Main.IDocumentLeafNode
 	{
 		#region Document functions
 
@@ -45,6 +45,12 @@ namespace Altaxo.Main
 		/// <summary>Fired when something in the object has changed, and the object is not suspended.</summary>
 		[field: NonSerialized]
 		public event EventHandler Changed;
+
+		/// <summary>
+		/// The event that is fired when the object is disposed. First argument is the sender, second argument is the original source, and third argument is the event arg.
+		/// </summary>
+		[field: NonSerialized]
+		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
 		/// <summary>
 		/// Gets/sets the parent object this instance belongs to.
@@ -95,7 +101,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				return this.GetType().Name;
+				return _parent == null ? null : _parent.GetNameOfChildObject(this);
 			}
 			set
 			{
@@ -228,13 +234,79 @@ namespace Altaxo.Main
 
 		#endregion Implementation of a set of accumulated event data
 
+		#region Dispose interface
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~SuspendableDocumentNodeBase()
+		{
+			Dispose(false);
+		}
+
+		protected virtual void Dispose(bool isDisposing)
+		{
+			if (_parent != null)
+			{
+				EhSelfTunnelingEventHappened(Main.DisposeEventArgs.Empty);
+				Changed = null;
+				TunneledEvent = null;
+				this.ParentObject = null;
+			}
+		}
+
+		#endregion Dispose interface
+
+		#region Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode> and Altaxo.Collections.ITreeNode<IDocumentLeafNode>
+
+		IDocumentNode Collections.INodeWithParentNode<IDocumentNode>.ParentNode
+		{
+			get { return _parent; }
+		}
+
+		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes
+		{
+			get { yield break; }
+		}
+
+		IDocumentLeafNode Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
+		{
+			get { return _parent; }
+		}
+
+		#endregion Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode> and Altaxo.Collections.ITreeNode<IDocumentLeafNode>
+
+		#region Tunneling event handling
+
+		public virtual void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
+		{
+			OnTunnelingEvent(originalSource, e);
+		}
+
+		public virtual void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		{
+			OnTunnelingEvent(this, e);
+		}
+
+		protected virtual void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
+		{
+			var ev = TunneledEvent;
+			if (null != ev)
+				ev(this, originalSource, e);
+		}
+
+		#endregion Tunneling event handling
+
 		#region Diagnostic support
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-		private static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
+		protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
 
-		private string _constructedBy;
+		protected string _constructedBy;
 
 		public SuspendableDocumentNodeBase()
 		{
@@ -331,35 +403,5 @@ namespace Altaxo.Main
 #endif
 
 		#endregion Diagnostic support
-
-		#region Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode>
-
-		IDocumentNode Collections.INodeWithParentNode<IDocumentNode>.ParentNode
-		{
-			get { return _parent; }
-		}
-
-		#endregion Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode>
-
-		#region Tunneling event handling
-
-		public virtual void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
-		{
-			OnTunnelingEvent(originalSource, e);
-		}
-
-		protected virtual void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
-		{
-			OnTunnelingEvent(this, e);
-		}
-
-		protected virtual void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
-		{
-			var ev = Changed;
-			if (null != ev)
-				ev(this, e);
-		}
-
-		#endregion Tunneling event handling
 	}
 }

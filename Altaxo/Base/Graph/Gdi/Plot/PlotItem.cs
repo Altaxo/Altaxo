@@ -213,12 +213,12 @@ namespace Altaxo.Graph.Gdi.Plot
 				return null;
 		}
 
-		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != StyleObject)
-				yield return new Tuple<IDocumentLeafNode, string>(StyleObject, "Style");
+				yield return new Main.DocumentNodeAndName(StyleObject, "Style");
 			if (null != DataObject)
-				yield return new Tuple<IDocumentLeafNode, string>(DataObject, "Data");
+				yield return new Main.DocumentNodeAndName(DataObject, "Data");
 		}
 
 		/// <summary>

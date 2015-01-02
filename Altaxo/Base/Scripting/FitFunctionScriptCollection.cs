@@ -36,6 +36,11 @@ namespace Altaxo.Scripting
 	{
 		private Hashtable _InnerList = new Hashtable();
 
+		public FitFunctionScriptCollection(Main.IDocumentNode parent)
+		{
+			_parent = parent;
+		}
+
 		public List<FitFunctionScript> Find(string category, string name)
 		{
 			List<FitFunctionScript> result = new List<FitFunctionScript>();

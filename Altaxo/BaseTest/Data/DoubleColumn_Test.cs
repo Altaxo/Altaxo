@@ -302,6 +302,38 @@ namespace AltaxoTest.Data
 					throw new NotImplementedException();
 				}
 			}
+
+			public IDocumentLeafNode GetChildObjectNamed(string name)
+			{
+				throw new NotImplementedException();
+			}
+
+			public string GetNameOfChildObject(IDocumentLeafNode o)
+			{
+				throw new NotImplementedException();
+			}
+
+			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+
+			public System.Collections.Generic.IEnumerable<IDocumentLeafNode> ChildNodes
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public IDocumentLeafNode ParentNode
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			IDocumentNode Altaxo.Collections.INodeWithParentNode<IDocumentNode>.ParentNode
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public void Dispose()
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		[Test]

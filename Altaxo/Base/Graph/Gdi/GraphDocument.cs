@@ -197,12 +197,6 @@ typeof(GraphDocument),
 		public event Action<Main.INameOwner, string> NameChanged;
 
 		/// <summary>
-		/// Fired for instance if this instance is about to be disposed and is disposed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
-
-		/// <summary>
 		/// Fired before the name of this object is changed.
 		/// </summary>
 		[field: NonSerialized]
@@ -462,6 +456,15 @@ typeof(GraphDocument),
 				newRootLayer.CopyFrom(from._rootLayer, options);
 			}
 			this.RootLayer = newRootLayer;
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _rootLayer)
+				yield return new Main.DocumentNodeAndName(_rootLayer, "RootLayer");
+
+			if (null != _graphProperties)
+				yield return new Main.DocumentNodeAndName(_graphProperties, "GraphProperties");
 		}
 
 		public object Clone()
@@ -840,17 +843,6 @@ typeof(GraphDocument),
 		}
 
 		#endregion IPropertyBagOwner
-
-		public void Dispose()
-		{
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
-
-			// Add dispose code for the child elements
-
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
-		}
 
 		#region Convenience functions
 

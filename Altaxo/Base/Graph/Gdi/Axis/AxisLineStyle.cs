@@ -26,6 +26,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -327,6 +328,18 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			// Rewire the event chain
 			WireEventChain(true);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _axisPen)
+				yield return new Main.DocumentNodeAndName(_axisPen, "AxisPen");
+
+			if (null != _majorTickPen)
+				yield return new Main.DocumentNodeAndName(_majorTickPen, "MajorTickPen");
+
+			if (null != _minorTickPen)
+				yield return new Main.DocumentNodeAndName(_minorTickPen, "MinorTickPen");
 		}
 
 		/// <summary>

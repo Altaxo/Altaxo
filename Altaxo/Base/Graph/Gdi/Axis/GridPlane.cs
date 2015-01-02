@@ -120,6 +120,16 @@ namespace Altaxo.Graph.Gdi.Axis
 			CopyFrom(from);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _grid1)
+				yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
+			if (null != _grid2)
+				yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
+			if (null != _background)
+				yield return new Main.DocumentNodeAndName(_background, "Background");
+		}
+
 		public GridPlane Clone()
 		{
 			return new GridPlane(this);

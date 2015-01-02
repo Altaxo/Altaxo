@@ -24,6 +24,7 @@
 
 using Altaxo.Graph.Gdi.LineCaps;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
@@ -1515,13 +1516,15 @@ namespace Altaxo.Graph.Gdi
 			return new PenX(this);
 		}
 
-		public void Dispose()
+		protected override void Dispose(bool isDisposing)
 		{
 			_configuredProperties = 0;
 			if (null != _cachedPen) { _cachedPen.Dispose(); _cachedPen = null; }
 			if (null != _transformation) { _transformation.Dispose(); _transformation = null; }
 			if (null != _compoundArray) { _compoundArray = null; }
 			if (null != this._dashPattern) { _dashPattern = null; }
+
+			base.Dispose(isDisposing);
 		}
 
 		#region IChangedEventSource Members
@@ -1532,6 +1535,16 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion IChangedEventSource Members
+
+		#region Document node functions
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _brush)
+				yield return new Main.DocumentNodeAndName(_brush, "Brush");
+		}
+
+		#endregion Document node functions
 
 		/// <summary>
 		/// Sets the environment for the creation of the pen's brush.

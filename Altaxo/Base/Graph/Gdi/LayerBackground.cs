@@ -43,12 +43,6 @@ namespace Altaxo.Graph.Gdi
 		private double _topPadding;
 		private double _bottomPadding;
 
-		[field: NonSerialized]
-		private event EventHandler _changed;
-
-		[NonSerialized]
-		private object _parent;
-
 		private void CopyFrom(LayerBackground from)
 		{
 			if (object.ReferenceEquals(this, from))

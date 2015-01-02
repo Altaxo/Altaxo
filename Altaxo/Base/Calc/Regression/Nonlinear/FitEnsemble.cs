@@ -243,5 +243,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 		#endregion Changed handling
+
+		#region Document node functions
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _innerList)
+			{
+				for (int i = 0; i < _innerList.Count; ++i)
+				{
+					if (null != _innerList[i])
+						yield return new Main.DocumentNodeAndName(_innerList[i], "FitElement" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
+			}
+		}
+
+		#endregion Document node functions
 	}
 }

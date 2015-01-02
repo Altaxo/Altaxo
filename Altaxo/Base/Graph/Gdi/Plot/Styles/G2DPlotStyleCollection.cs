@@ -203,6 +203,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return false;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _innerList)
+			{
+				for (int i = _innerList.Count - 1; i >= 0; --i)
+				{
+					if (null != _innerList[i])
+						yield return new Main.DocumentNodeAndName(_innerList[i], "Style" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
+			}
+		}
+
 		public void SetFromTemplate(G2DPlotStyleCollection from, PlotGroupStrictness strictness)
 		{
 			if (strictness == PlotGroupStrictness.Strict)

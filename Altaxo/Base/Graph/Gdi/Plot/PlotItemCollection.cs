@@ -1016,12 +1016,12 @@ namespace Altaxo.Graph.Gdi.Plot
 			return null;
 		}
 
-		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			var index = 0;
 			foreach (var item in _plotItems.ToArray())
 			{
-				yield return new Tuple<IDocumentLeafNode, string>(item, index.ToString());
+				yield return new Main.DocumentNodeAndName(item, index.ToString());
 				++index;
 			}
 		}

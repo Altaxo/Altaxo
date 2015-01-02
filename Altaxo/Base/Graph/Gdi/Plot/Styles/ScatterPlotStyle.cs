@@ -507,6 +507,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_pen.ParentObject = this;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _pen)
+				yield return new Main.DocumentNodeAndName(_pen, "Pen");
+
+			if (null != _cachedFillBrush)
+				yield return new Main.DocumentNodeAndName(_cachedFillBrush, "CachedFillBrush");
+		}
+
 		public XYPlotScatterStyles.Shape Shape
 		{
 			get { return this._shape; }

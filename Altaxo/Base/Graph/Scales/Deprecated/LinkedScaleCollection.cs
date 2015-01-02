@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 		#region IDocumentNode Members
 
-		public string Name
+		public override string Name
 		{
 			get { return "LinkedScaleCollection"; }
 			set

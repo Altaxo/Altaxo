@@ -37,8 +37,7 @@ namespace Altaxo.Data
 		IList<DataRow>,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IDisposable,
-		ICloneable,
-		Main.INamedObjectCollection
+		ICloneable
 	{
 		// Types
 		//  public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
@@ -284,9 +283,9 @@ namespace Altaxo.Data
 					string name = info.GetString("Name");
 					ColumnKind kind = (ColumnKind)info.GetInt32("Kind");
 					int group = info.GetInt32("Group");
-					object col = info.GetValue(s);
+					var col = (DataColumn)info.GetValue("Data", s);
 					if (col != null)
-						s.Add((DataColumn)col, new DataColumnInfo(name, kind, group));
+						s.Add(col, new DataColumnInfo(name, kind, group));
 
 					info.CloseElement(); // Column
 				}
@@ -511,24 +510,29 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Disposes the collection and all columns in it.
 		/// </summary>
-		public virtual void Dispose()
+		protected override void Dispose(bool isDisposing)
 		{
-			// first relase all column scripts
-			foreach (KeyValuePair<DataColumn, IColumnScriptText> d in this._columnScripts)
+			if (null != _parent)
 			{
-				if (d.Value is IDisposable)
-					((IDisposable)d.Value).Dispose();
+				// first relase all column scripts
+				foreach (KeyValuePair<DataColumn, IColumnScriptText> d in this._columnScripts)
+				{
+					if (d.Value is IDisposable)
+						((IDisposable)d.Value).Dispose();
+				}
+				_columnScripts.Clear();
+
+				// release all owned Data columns
+				this._columnsByName.Clear();
+
+				for (int i = _columnsByNumber.Count - 1; i >= 0; --i) // iterate downwards, because the dispose action can trigger the column to be removed from the collection
+					this[i].Dispose();
+
+				_columnsByNumber.Clear();
+				this._numberOfRows = 0;
+
+				base.Dispose(isDisposing);
 			}
-			_columnScripts.Clear();
-
-			// release all owned Data columns
-			this._columnsByName.Clear();
-
-			for (int i = _columnsByNumber.Count - 1; i >= 0; --i) // iterate downwards, because the dispose action can trigger the column to be removed from the collection
-				this[i].Dispose();
-
-			_columnsByNumber.Clear();
-			this._numberOfRows = 0;
 		}
 
 		#endregion Constructors
@@ -1302,7 +1306,7 @@ namespace Altaxo.Data
 					this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
 
 					// Inform also the data column itself that the name has changed
-					datac.EhTunnelingEvent(this, datac, Main.DocumentPathChangedEventArgs.Empty);
+					datac.EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
 
 					// reset the TriedOutRegularNames flag, maybe one of the regular columns has been renamed
 					this._triedOutRegularNaming = false;
@@ -1990,22 +1994,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// The name of this collection.
-		/// </summary>
-		public override string Name
-		{
-			get
-			{
-				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-				return noc == null ? null : noc.GetNameOfChildObject(this);
-			}
-			set
-			{
-				throw new InvalidOperationException("The name is fixed and cannot be set");
-			}
-		}
-
-		/// <summary>
 		/// Returns the collection of column scripts.
 		/// </summary>
 		public Dictionary<DataColumn, IColumnScriptText> ColumnScripts
@@ -2153,12 +2141,6 @@ namespace Altaxo.Data
 			e = result;
 
 			return false;
-		}
-
-		public void EhTunnelingEvent(object sender, object source, Main.TunnelingEventArgs e)
-		{
-			foreach (DataColumn c in _columnsByNumber)
-				c.EhTunnelingEvent(this, source, e);
 		}
 
 		#endregion Event handling
@@ -2442,14 +2424,14 @@ namespace Altaxo.Data
 				return null;
 		}
 
-		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			for (int i = _columnsByNumber.Count - 1; i >= 0; --i)
 			{
 				var col = _columnsByNumber[i];
 				DataColumnInfo info;
 				if (_columnInfoByColumn.TryGetValue(col, out info))
-					yield return new Tuple<Main.IDocumentLeafNode, string>(col, info.Name);
+					yield return new Main.DocumentNodeAndName(col, info.Name);
 			}
 		}
 

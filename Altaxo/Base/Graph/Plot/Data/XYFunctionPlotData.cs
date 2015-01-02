@@ -467,12 +467,6 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		private Altaxo.Calc.IScalarFunctionDD _baseFunction;
 
-		/// <summary>
-		/// Event fired when the coefficients of the polynomial changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.SquareRootFunction", 0)]
@@ -612,12 +606,6 @@ namespace Altaxo.Graph.Plot.Data
 		private double[] _coefficients;
 
 		private Altaxo.Calc.IScalarFunctionDD[] _functions;
-
-		/// <summary>
-		/// Event fired when the coefficients of the polynomial changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event System.EventHandler Changed;
 
 		#region Serialization
 

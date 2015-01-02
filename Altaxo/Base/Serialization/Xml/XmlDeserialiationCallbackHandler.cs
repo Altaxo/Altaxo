@@ -29,5 +29,5 @@ namespace Altaxo.Serialization.Xml
 	/// <summary>
 	/// This function is used to call back Deserialization surrogates after finishing deserialization
 	/// </summary>
-	public delegate void XmlDeserializationCallbackEventHandler(IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall);
+	public delegate void XmlDeserializationCallbackEventHandler(IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall);
 }

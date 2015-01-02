@@ -94,12 +94,6 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		protected bool _doShowPropertyColumns;
 
-		/// <summary>
-		/// Fired for instance when this instance is about to dispose or is disposed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
-
 		#endregion Member variables
 
 		#region Serialization
@@ -162,7 +156,7 @@ namespace Altaxo.Worksheet
 
 				for (int i = 0; i < count; i++)
 				{
-					var defstyle = (ColumnStyle)info.GetValue("DefaultColumnStyle", s);
+					var defstyle = (ColumnStyle)info.GetValue("DefaultColumnStyle", s._dataColumnStyles);
 					s._dataColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
 				}
 				info.CloseArray(count);
@@ -184,7 +178,7 @@ namespace Altaxo.Worksheet
 				info.CloseArray(count);
 			}
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
 				if (this._pathToTable != null)
 				{
@@ -237,7 +231,7 @@ namespace Altaxo.Worksheet
 				int count = info.OpenArray(); // DefaultPropertyColumnStyles
 				for (int i = 0; i < count; i++)
 				{
-					var defstyle = (ColumnStyle)info.GetValue("DefaultPropertyColumnStyle", s);
+					var defstyle = (ColumnStyle)info.GetValue("DefaultPropertyColumnStyle", s._propertyColumnStyles);
 					s._propertyColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
 				}
 				info.CloseArray(count);
@@ -382,7 +376,7 @@ namespace Altaxo.Worksheet
 
 		private void EhDataTableTunneledEvent(object sender, object source, Main.TunnelingEventArgs args)
 		{
-			if (args is Main.PreviewDisposeEventArgs)
+			if (args is Main.PreviewDisposeEventArgs || args is Main.DisposeEventArgs)
 			{
 				Dispose();
 			}
@@ -447,22 +441,40 @@ namespace Altaxo.Worksheet
 
 		#endregion IDocumentNode Members
 
-		public void Dispose()
-		{
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.PreviewDisposeEventArgs.Empty);
+		#region Document node functions
 
-			if (null != _dataTable)
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _columnHeaderStyle)
+				yield return new Main.DocumentNodeAndName(_columnHeaderStyle, "ColumnHeaderStyle");
+
+			if (null != _rowHeaderStyle)
+				yield return new Main.DocumentNodeAndName(_rowHeaderStyle, "RowHeaderStyle");
+
+			if (null != _propertyColumnHeaderStyle)
+				yield return new Main.DocumentNodeAndName(_propertyColumnHeaderStyle, "PropertyColumnHeaderStyle");
+
+			if (null != _dataColumnStyles)
+				yield return new Main.DocumentNodeAndName(_dataColumnStyles, "DataColumnStyles");
+
+			if (null != _propertyColumnStyles)
+				yield return new Main.DocumentNodeAndName(_propertyColumnStyles, "PropertyColumnStyles");
+		}
+
+		#endregion Document node functions
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (null != _parent)
 			{
-				_dataTable.TunneledEvent -= EhDataTableTunneledEvent;
+				if (null != _dataTable)
+				{
+					_dataTable.TunneledEvent -= EhDataTableTunneledEvent;
+				}
+
+				base.Dispose(isDisposing);
 				_dataTable = null;
 			}
-
-			_dataColumnStyles.Clear();
-			_propertyColumnStyles.Clear();
-
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
 		}
 	}
 }

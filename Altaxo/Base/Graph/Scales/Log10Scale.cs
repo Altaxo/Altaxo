@@ -132,6 +132,15 @@ namespace Altaxo.Graph.Scales
 			this._rescaling.ParentObject = this;
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataBounds)
+				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+
+			if (null != _rescaling)
+				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+		}
+
 		/// <summary>
 		/// Creates a clone copy of this axis.
 		/// </summary>

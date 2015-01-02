@@ -84,11 +84,11 @@ namespace Altaxo.Worksheet
 				return s;
 			}
 
-			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
 				if (null != _PathToLayout)
 				{
-					object o = DocumentPath.GetObject(_PathToLayout, documentRoot, _TableController);
+					var o = DocumentPath.GetObject(_PathToLayout, documentRoot);
 					if (o is Altaxo.Worksheet.WorksheetLayout)
 					{
 						_TableController._worksheetLayout = (Altaxo.Worksheet.WorksheetLayout)o;

@@ -159,6 +159,15 @@ namespace Altaxo.Graph.Scales
 			this.ScaleLinkedTo = from._scaleLinkedTo; // not cloning, the cloned scale is linked to the same scale
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _scaleWrapped)
+				yield return new Main.DocumentNodeAndName(_scaleWrapped, "ScaleWrapped");
+
+			if (null != _linkParameters)
+				yield return new Main.DocumentNodeAndName(_linkParameters, "LinkParameters");
+		}
+
 		public override object Clone()
 		{
 			LinkedScale result = new LinkedScale();

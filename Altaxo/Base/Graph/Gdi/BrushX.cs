@@ -1311,11 +1311,15 @@ namespace Altaxo.Graph.Gdi
 			return new BrushX(this);
 		}
 
-		public void Dispose()
+		protected override void Dispose(bool isDisposing)
 		{
 			if (null != _cachedBrush)
+			{
 				_cachedBrush.Dispose();
-			_cachedBrush = null;
+				_cachedBrush = null;
+			}
+
+			base.Dispose(isDisposing);
 		}
 
 		#region static members

@@ -103,6 +103,14 @@ namespace Altaxo.Graph.Scales
 			SetNewTickSpacing(null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _scale)
+				yield return new Main.DocumentNodeAndName(_scale, "Scale");
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, "TickSpacing");
+		}
+
 		public object Clone()
 		{
 			return new ScaleWithTicks(this);

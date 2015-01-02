@@ -190,5 +190,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		}
 
 		#endregion Changed event handling
+
+		#region Document node functions
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _fitEnsemble)
+			{
+				yield return new Main.DocumentNodeAndName(_fitEnsemble, "FitEnsemble");
+			}
+		}
+
+		#endregion Document node functions
 	}
 }

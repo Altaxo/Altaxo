@@ -54,7 +54,10 @@ namespace Altaxo.Main.Properties
 			get { return this._parent; }
 			set
 			{
-				throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
+				if (null != value)
+					throw new InvalidOperationException("ParentObject of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
+
+				base.ParentObject = value; // allow setting Parent to null (required for dispose)
 			}
 		}
 
@@ -165,10 +168,10 @@ namespace Altaxo.Main.Properties
 			return null;
 		}
 
-		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			foreach (var entry in _itemsByName)
-				yield return new Tuple<IDocumentLeafNode, string>(entry.Value, entry.Key);
+				yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
 		}
 
 		#region Change event handling

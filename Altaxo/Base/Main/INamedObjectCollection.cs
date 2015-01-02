@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Main
 {

@@ -37,8 +37,7 @@ namespace Altaxo.Data
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
-		ICollection<DataTable>,
-		Main.INamedObjectCollection
+		ICollection<DataTable>
 	{
 		// Data
 		protected SortedDictionary<string, DataTable> _tablesByName = new SortedDictionary<string, DataTable>();
@@ -56,15 +55,6 @@ namespace Altaxo.Data
 		public DataTableCollection(AltaxoDocument parent)
 		{
 			this._parent = parent;
-		}
-
-		public override string Name
-		{
-			get { return "Tables"; }
-			set
-			{
-				throw new InvalidOperationException("The name is fixed and cannot be set");
-			}
 		}
 
 		#region Serialization
@@ -392,10 +382,10 @@ namespace Altaxo.Data
 			return null;
 		}
 
-		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			foreach (var entry in _tablesByName)
-				yield return new Tuple<Main.IDocumentLeafNode, string>(entry.Value, entry.Key);
+				yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
 		}
 
 		/// <summary>

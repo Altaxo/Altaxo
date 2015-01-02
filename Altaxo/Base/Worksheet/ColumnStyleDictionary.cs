@@ -119,7 +119,7 @@ namespace Altaxo.Worksheet
 				info.CloseArray(count);
 			}
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
 				List<Main.DocumentPath> resolvedStyles = new List<Main.DocumentPath>();
 				foreach (var entry in this._unresolvedColumns)
@@ -147,6 +147,15 @@ namespace Altaxo.Worksheet
 		{
 			_defaultColumnStyles = new Dictionary<Type, ColumnStyle>();
 			_columnStyles = new Dictionary<Altaxo.Data.DataColumn, ColumnStyle>();
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _defaultColumnStyles)
+				yield return new Main.DocumentNodeAndName(entry.Value, "DefaultColumnStyle_" + entry.Key.FullName);
+
+			foreach (var entry in _columnStyles)
+				yield return new Main.DocumentNodeAndName(entry.Value, "ColumnStyle_" + entry.Key.FullName);
 		}
 
 		private void AttachKey(DataColumn key)

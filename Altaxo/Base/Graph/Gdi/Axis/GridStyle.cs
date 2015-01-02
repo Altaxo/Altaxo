@@ -25,6 +25,7 @@
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
@@ -115,6 +116,14 @@ namespace Altaxo.Graph.Gdi.Axis
 			this._showGrid = from._showGrid;
 			this._showMinor = from._showMinor;
 			this._showZeroOnly = from._showZeroOnly;
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _majorPen)
+				yield return new Main.DocumentNodeAndName(_majorPen, "MajorPen");
+			if (null != _minorPen)
+				yield return new Main.DocumentNodeAndName(_minorPen, "MinorPen");
 		}
 
 		public PenX MajorPen

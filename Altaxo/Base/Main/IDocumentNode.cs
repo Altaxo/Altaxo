@@ -27,9 +27,17 @@ using System;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
+	/// Interface of a document node at the end of the hierarchie, i.e. a leaf node.
 	/// </summary>
-	public interface IDocumentLeafNode : INamedObject, Main.IChangedEventSource, ISuspendableByToken
+	public interface IDocumentLeafNode
+		:
+		INamedObject,
+		Main.IChangedEventSource,
+		ISuspendableByToken,
+		Main.ITunnelingEventSource,
+		IDisposable,
+		Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>,
+		Altaxo.Collections.INodeWithParentNode<IDocumentNode>
 	{
 		/// <summary>
 		/// Retrieves the parent object.
@@ -42,7 +50,7 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Provides the document hierarchy by getting the parent node. The document node is required to have a name, thus it also implements <see cref="INamedObject"/>.
 	/// </summary>
-	public interface IDocumentNode : IDocumentLeafNode, IChildChangedEventSink
+	public interface IDocumentNode : IDocumentLeafNode, IChildChangedEventSink, INamedObjectCollection
 	{
 	}
 }

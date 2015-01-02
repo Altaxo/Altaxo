@@ -34,7 +34,7 @@ namespace Altaxo.Main
 	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
 	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
-	public abstract class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
+	public abstract class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode, Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>
 	{
 		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
 		private int _suspendLevel;
@@ -311,7 +311,7 @@ namespace Altaxo.Main
 			NotifyChildrenTunnelingEventHappened(originalSource, e);
 		}
 
-		protected override void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		public override void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
 		{
 			OnTunnelingEvent(this, e);
 			NotifyChildrenTunnelingEventHappened(this, e);
@@ -321,14 +321,15 @@ namespace Altaxo.Main
 		{
 			foreach (var tuple in GetDocumentNodeChildrenWithName())
 			{
-				var child = tuple.Item1;
+				var child = tuple.DocumentNode;
 				child.EhParentTunnelingEventHappened(this, originalSource, e);
 			}
 		}
 
-		protected virtual IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected virtual IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			throw new NotImplementedException();
+			// throw new InvalidProgramException(string.Format("Type {0} should have implemented method GetDocumentNodeChildrenWithName(). Please report this error to the forum.", this.GetType().FullName));
+			yield break;
 		}
 
 		public virtual IDocumentLeafNode GetChildObjectNamed(string name)
@@ -336,7 +337,7 @@ namespace Altaxo.Main
 			if (null == name)
 				throw new ArgumentNullException("name");
 
-			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => tuple.Item2 == name).Item1;
+			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => tuple.Name == name).DocumentNode;
 		}
 
 		public virtual string GetNameOfChildObject(IDocumentLeafNode docNode)
@@ -344,10 +345,30 @@ namespace Altaxo.Main
 			if (null == docNode)
 				throw new ArgumentNullException("docNode");
 
-			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => object.ReferenceEquals(tuple.Item1, docNode)).Item2;
+			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => object.ReferenceEquals(tuple.DocumentNode, docNode)).Name;
 		}
 
 		#endregion Tunneling event handling
+
+		#region Dispose interface
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (_parent != null)
+			{
+				if (isDisposing) // Dispose all childs (but only if calling dispose, and not in the finalizer)
+				{
+					foreach (var tuple in GetDocumentNodeChildrenWithName())
+					{
+						tuple.DocumentNode.Dispose();
+					}
+				}
+
+				base.Dispose(isDisposing);
+			}
+		}
+
+		#endregion Dispose interface
 
 		#region Inner class SuspendToken
 
@@ -521,6 +542,38 @@ namespace Altaxo.Main
 			public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
 			{
 			}
+
+			public IDocumentLeafNode GetChildObjectNamed(string name)
+			{
+				throw new NotImplementedException();
+			}
+
+			public string GetNameOfChildObject(IDocumentLeafNode o)
+			{
+				throw new NotImplementedException();
+			}
+
+			public IEnumerable<IDocumentLeafNode> ChildNodes
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public IDocumentLeafNode ParentNode
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			IDocumentNode Collections.INodeWithParentNode<IDocumentNode>.ParentNode
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public void Dispose()
+			{
+				throw new NotImplementedException();
+			}
+
+			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
 		}
 
 		private static IDocumentNode _staticInstance = new StaticInstanceClass();
@@ -534,6 +587,95 @@ namespace Altaxo.Main
 		public static IDocumentNode StaticInstance { get { return _staticInstance; } }
 
 		#endregion Static instance
+
+		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes
+		{
+			get { return GetDocumentNodeChildrenWithName().Select(x => x.DocumentNode); }
+		}
+
+		IDocumentLeafNode Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
+		{
+			get { return _parent; }
+		}
+
+		#region Diagnostic support
+
+#if DEBUG && TRACEDOCUMENTNODES
+
+		public static void ReportChildListProblems()
+		{
+			var childListErrors = new SortedSet<string>();
+
+			foreach (var node in AllDocumentNodes)
+			{
+				var parent = node.ParentObject as SuspendableDocumentNode;
+				if (null == parent)
+					continue;
+
+				var tuple = parent.GetDocumentNodeChildrenWithName().FirstOrDefault(x => object.ReferenceEquals(node, x.DocumentNode));
+
+				if (tuple.DocumentNode == null)
+				{
+					childListErrors.Add(string.Format("Parent of type {0} did not list child node of type {1}", parent.GetType().FullName, node.GetType().FullName));
+				}
+				else
+				{
+					var nameOfNode1 = tuple.Name;
+					if (string.IsNullOrEmpty(nameOfNode1))
+						Current.Console.WriteLine("Parent (Type: {0} lists child node (Type: {1}, but without a name", parent.GetType().FullName, node.GetType().FullName);
+
+					var nameOfNode2 = parent.GetNameOfChildObject(node);
+					if (nameOfNode2 != nameOfNode1)
+						Current.Console.WriteLine("Parent (Type: {0} has child node (Type: {1}, Name: {2]), but GetNameOfChildObject returns a different name ({3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nameOfNode2);
+
+					var nodeAlt = parent.GetChildObjectNamed(nameOfNode1);
+
+					if (!object.ReferenceEquals(node, nodeAlt))
+						Current.Console.WriteLine("Parent of type {0} has child node of type {1}, Name: {2}, but GetChildObjectNamed returns a different object (Type: {3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nodeAlt);
+				}
+			}
+
+			foreach (var error in childListErrors)
+			{
+				Current.Console.WriteLine(error);
+			}
+		}
+
+		public static void ReportWrongChildParentRelations()
+		{
+			GC.Collect();
+
+			var hashOfAllNodes = new HashSet<IDocumentLeafNode>(_allDocumentNodes.Where(x => x.IsAlive).Select(x => (IDocumentLeafNode)x.Target));
+
+			var errors = new HashSet<string>();
+
+			foreach (var parentNode in hashOfAllNodes.OfType<SuspendableDocumentNode>())
+			{
+				foreach (var entry in parentNode.GetDocumentNodeChildrenWithName())
+				{
+					var child = entry.DocumentNode;
+
+					if (!object.ReferenceEquals(child.ParentObject, parentNode))
+						errors.Add(string.Format("Parent of type {0} has child node of type {1} whose ParentObject (type {2}) is not identical with the Parent", parentNode.GetType().FullName, child.GetType().FullName, child.ParentObject == null ? null : child.ParentObject.GetType().FullName));
+				}
+			}
+
+			foreach (var error in errors)
+			{
+				Current.Console.WriteLine(error);
+			}
+		}
+
+#else
+
+			public void ReportChildListProblems()
+		{
+					Current.Console.WriteLine("ReportChildListProblems: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+		}
+
+#endif
+
+		#endregion Diagnostic support
 	}
 
 	/// <summary>

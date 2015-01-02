@@ -82,6 +82,8 @@ namespace Altaxo.Main.Commands
 		{
 			GC.Collect();
 			Altaxo.Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
+			Altaxo.Main.SuspendableDocumentNode.ReportChildListProblems();
+			Altaxo.Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
 		}
 
 		public void Run5()

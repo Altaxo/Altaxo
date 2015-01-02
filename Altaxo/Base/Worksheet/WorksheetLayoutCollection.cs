@@ -113,7 +113,10 @@ namespace Altaxo.Worksheet
 			}
 			set
 			{
-				throw new InvalidOperationException("ParentObject of this instance is fixed and cannot be set");
+				if (null != value)
+					throw new InvalidOperationException("ParentObject of this instance is fixed and cannot be set");
+
+				base.ParentObject = value; // allow set to null because Dispose requires it
 			}
 		}
 
@@ -133,12 +136,12 @@ namespace Altaxo.Worksheet
 
 		#region INamedObjectCollection Members
 
-		public Main.IDocumentLeafNode GetChildObjectNamed(string name)
+		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			return this[name];
 		}
 
-		public string GetNameOfChildObject(Main.IDocumentLeafNode o)
+		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
 			WorksheetLayout layout = o as WorksheetLayout;
 			if (layout == null)
@@ -148,10 +151,10 @@ namespace Altaxo.Worksheet
 			return layout.Guid.ToString();
 		}
 
-		protected override IEnumerable<Tuple<Main.IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			foreach (var entry in _items)
-				yield return new Tuple<Main.IDocumentLeafNode, string>(entry.Value, entry.Key);
+				yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
 		}
 
 		#endregion INamedObjectCollection Members

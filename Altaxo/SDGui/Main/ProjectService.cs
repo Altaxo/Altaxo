@@ -193,7 +193,7 @@ namespace Altaxo.Main
 			}
 
 			info.AnnounceDeserializationEnd(restoredDoc, false);
-			info.AnnounceDeserializationEnd(this, false);
+			info.AnnounceDeserializationEnd(restoredDoc, false);
 
 			// now give all restored controllers a view and show them in the Main view
 

@@ -79,7 +79,7 @@ namespace Altaxo.Serialization.Xml
 			m_Reader = null;
 		}
 
-		public void AnnounceDeserializationEnd(object documentRoot, bool isFinallyCall)
+		public void AnnounceDeserializationEnd(Main.IDocumentNode documentRoot, bool isFinallyCall)
 		{
 			if (null != DeserializationFinished)
 				DeserializationFinished(this, documentRoot, isFinallyCall);

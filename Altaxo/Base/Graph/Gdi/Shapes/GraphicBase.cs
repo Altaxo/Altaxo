@@ -346,6 +346,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _location)
+				yield return new Main.DocumentNodeAndName(_location, "Location");
+		}
+
 		#region Suspend/Resume
 
 		protected override void AccumulateChangeData(object sender, EventArgs e)

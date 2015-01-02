@@ -55,14 +55,6 @@ namespace Altaxo.Data
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static int _addSpace = 32; // array space is increased by multiplying with increasefactor + addspase
 
-		/// <summary>This element is fired when the column is disposed, or the name of the column or of a parent element has changed.</summary>
-		/// <remarks>All instances, which have a reference
-		/// to this column, should have a wire to this event. In case the event is fired, it indicates
-		/// that the column should be disposed, so they have to unreference this column by setting the
-		/// reference to null.
-		/// </remarks>
-		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
-
 		#region Serialization
 
 		/// <summary>
@@ -282,26 +274,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Clears the content of the column and fires the <see cref="E:Main.IEventIndicatedDisposable.Disposed"/> event.
-		/// </summary>
-		public void Dispose()
-		{
-			if (null != TunneledEvent)
-				TunneledEvent(this, this, Main.DisposeEventArgs.Empty);
-
-			this.ParentObject = null;
-			this.Clear();
-		}
-
-		/// <summary>
-		/// Get the name of the column.
-		/// </summary>
-		public override string Name
-		{
-			get { return _parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)_parent).GetNameOfChildObject(this) : null; }
-		}
-
-		/// <summary>
 		/// Returns either the column name if the column has no parent table, or the parent table name, followed by
 		/// a backslash and the column name if the column has a table.
 		/// </summary>
@@ -355,12 +327,6 @@ namespace Altaxo.Data
 						((Main.IChildChangedEventSink)_parent).EhChildChanged(this, new Main.ParentChangedEventArgs(oldParent, _parent));
 				}
 			}
-		}
-
-		public void EhTunnelingEvent(object sender, object source, Main.TunnelingEventArgs e)
-		{
-			if (null != TunneledEvent)
-				TunneledEvent(this, source, e);
 		}
 
 		#endregion Construction/Disposal/Name/Parent

@@ -79,7 +79,7 @@ namespace Altaxo
 			_graphs = new GraphDocumentCollection(this);
 			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyDocumentCollection(this);
 			_tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
-			_fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
+			_fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection(this);
 			_projectFolders = new ProjectFolders(this);
 		}
 
@@ -491,13 +491,13 @@ namespace Altaxo
 				return null;
 		}
 
-		protected override IEnumerable<Tuple<IDocumentLeafNode, string>> GetDocumentNodeChildrenWithName()
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield return new Tuple<IDocumentLeafNode, string>(_dataTables, "Tables");
-			yield return new Tuple<IDocumentLeafNode, string>(_graphs, "Graphs");
-			yield return new Tuple<IDocumentLeafNode, string>(_tableLayouts, "TableLayouts");
-			yield return new Tuple<IDocumentLeafNode, string>(_fitFunctionScripts, "FitFunctionScripts");
-			yield return new Tuple<IDocumentLeafNode, string>(_projectFolderProperties, "FolderProperties");
+			yield return new Main.DocumentNodeAndName(_dataTables, "Tables");
+			yield return new Main.DocumentNodeAndName(_graphs, "Graphs");
+			yield return new Main.DocumentNodeAndName(_tableLayouts, "TableLayouts");
+			yield return new Main.DocumentNodeAndName(_fitFunctionScripts, "FitFunctionScripts");
+			yield return new Main.DocumentNodeAndName(_projectFolderProperties, "FolderProperties");
 		}
 
 		#region Static functions

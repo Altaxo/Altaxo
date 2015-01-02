@@ -28,6 +28,7 @@ using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -289,6 +290,24 @@ namespace Altaxo.Graph.Gdi.Axis
 				ShowTitle(context);
 				_axisTitle.Text = axisTitleOrNull;
 			}
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _axisLineStyle)
+				yield return new Main.DocumentNodeAndName(_axisLineStyle, "LineStyle");
+
+			if (null != _majorLabelStyle)
+				yield return new Main.DocumentNodeAndName(_majorLabelStyle, "MajorLabelStyle");
+
+			if (null != _minorLabelStyle)
+				yield return new Main.DocumentNodeAndName(_minorLabelStyle, "MinorLabelStyle");
+
+			if (null != _axisTitle)
+				yield return new Main.DocumentNodeAndName(_axisTitle, "Title");
+
+			if (null != _customTickSpacing)
+				yield return new Main.DocumentNodeAndName(_customTickSpacing, "CustomTickSpacing");
 		}
 
 		/// <summary>
