@@ -63,6 +63,31 @@ namespace Altaxo.Main
 			}
 			set
 			{
+#if DEBUG && TRACEDOCUMENTNODES
+				if (null != _parent && null == value)
+				{
+					var stb = new System.Text.StringBuilder();
+					var st = new System.Diagnostics.StackTrace(true);
+
+					var len = Math.Min(11, st.FrameCount);
+					for (int i = 1; i < len; ++i)
+					{
+						var frame = st.GetFrame(i);
+						var method = frame.GetMethod();
+
+						if (i > 2) stb.Append("\r\n\tin ");
+
+						stb.Append(method.DeclaringType.FullName);
+						stb.Append("|");
+						stb.Append(method.Name);
+						stb.Append("(L");
+						stb.Append(frame.GetFileLineNumber());
+						stb.Append(")");
+					}
+					_releasedBy = stb.ToString();
+				}
+#endif
+
 				_parent = value;
 			}
 		}
@@ -306,7 +331,12 @@ namespace Altaxo.Main
 
 		protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
 
-		protected string _constructedBy;
+		private string _constructedBy;
+		private string _releasedBy;
+
+		public string ConstructedBy { get { return _constructedBy; } }
+
+		public string ReleasedBy { get { return _releasedBy; } }
 
 		public SuspendableDocumentNodeBase()
 		{
@@ -315,8 +345,8 @@ namespace Altaxo.Main
 			var stb = new System.Text.StringBuilder();
 			var st = new System.Diagnostics.StackTrace(true);
 
-			var len = Math.Min(10, st.FrameCount);
-			for (int i = 2; i <= len; ++i)
+			var len = Math.Min(11, st.FrameCount);
+			for (int i = 2; i < len; ++i)
 			{
 				var frame = st.GetFrame(i);
 				var method = frame.GetMethod();
@@ -370,7 +400,11 @@ namespace Altaxo.Main
 			{
 				if (node.ParentObject == null && !object.ReferenceEquals(node, Current.Project))
 				{
-					string msg = string.Format("{0}, constructed\r\n\tby {1}", node.GetType().FullName, node._constructedBy);
+					string msg;
+					if (null == node._releasedBy)
+						msg = string.Format("{0}, constructed\r\n\tby {1}", node.GetType().FullName, node._constructedBy);
+					else
+						msg = string.Format("{0}, constructed\r\n\tby {1}\r\nreleased by\r\n\t{2}", node.GetType().FullName, node._constructedBy, node._releasedBy);
 
 					int count;
 					if (msgDict.TryGetValue(msg, out count))

@@ -1052,9 +1052,11 @@ namespace Altaxo.Data
 					this._columnScripts.Remove(this[i]);
 					this._columnInfoByColumn.Remove(_columnsByNumber[i]);
 					this._columnsByName.Remove(columnName);
-					this[i].ParentObject = null;
+
 					if (disposeColumns)
 						this[i].Dispose();
+					else
+						this[i].ParentObject = null;
 				}
 				this._columnsByNumber.RemoveRange(range.Start, range.Count);
 				lastRangeStart = range.Start;

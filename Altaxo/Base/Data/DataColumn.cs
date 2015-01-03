@@ -317,7 +317,7 @@ namespace Altaxo.Data
 			set
 			{
 				object oldParent = _parent;
-				_parent = value;
+				base.ParentObject = value;
 
 				if (!object.ReferenceEquals(oldParent, _parent))
 				{
