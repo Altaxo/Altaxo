@@ -193,26 +193,26 @@ namespace Altaxo.Graph.Gdi
 
 				// size, position, rotation and scale
 
-				var widthType = (XYPlotLayerSizeType)info.GetValue("WidthType", typeof(XYPlotLayerSizeType));
-				var heightType = (XYPlotLayerSizeType)info.GetValue("HeightType", typeof(XYPlotLayerSizeType));
+				var widthType = (XYPlotLayerSizeType)info.GetValue("WidthType", s);
+				var heightType = (XYPlotLayerSizeType)info.GetValue("HeightType", s);
 				var width = info.GetDouble("Width");
 				var height = info.GetDouble("Height");
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
+				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
 				s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
-				var xPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", typeof(XYPlotLayerPositionType));
-				var yPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", typeof(XYPlotLayerPositionType));
+				var xPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", s);
+				var yPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", s);
 				var xPosition = info.GetDouble("XPosition");
 				var yPosition = info.GetDouble("YPosition");
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
+				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
 				var rotation = info.GetSingle("Rotation");
 				var scale = info.GetSingle("Scale");
 				s.Location = new XYPlotLayerPositionAndSize_V0(widthType, width, heightType, height, xPositionType, xPosition, yPositionType, yPosition, rotation, scale).ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
 				// axis related
 
-				var xAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("XAxis", typeof(Altaxo.Graph.Scales.Deprecated.Scale));
-				var yAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("YAxis", typeof(Altaxo.Graph.Scales.Deprecated.Scale));
+				var xAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("XAxis", s);
+				var yAxis = (Altaxo.Graph.Scales.Deprecated.Scale)info.GetValue("YAxis", s);
 				bool xIsLinked = info.GetBoolean("LinkXAxis");
 				bool yIsLinked = info.GetBoolean("LinkYAxis");
 				double xOrgA = info.GetDouble("LinkXAxisOrgA");
@@ -232,21 +232,21 @@ namespace Altaxo.Graph.Gdi
 				bool showRight = info.GetBoolean("ShowRightAxis");
 				bool showTop = info.GetBoolean("ShowTopAxis");
 
-				s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
-				s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
-				s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
-				s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
+				s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", s);
+				s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", s);
+				s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", s);
+				s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", s);
 
-				s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyle));
-				s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyle));
-				s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", typeof(AxisLabelStyle));
-				s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", typeof(AxisLabelStyle));
+				s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("LeftLabelStyle", s);
+				s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyle)info.GetValue("BottomLabelStyle", s);
+				s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("RightLabelStyle", s);
+				s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyle)info.GetValue("TopLabelStyle", s);
 
 				// Titles and legend
-				s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-				s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-				s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-				s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+				s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", s);
+				s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", s);
+				s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", s);
+				s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", s);
 
 				if (!showLeft)
 					s._axisStyles.Remove(CSLineID.Y0);
@@ -257,15 +257,15 @@ namespace Altaxo.Graph.Gdi
 				if (!showTop)
 					s._axisStyles.Remove(CSLineID.X1);
 
-				var legend = (TextGraphic)info.GetValue("Legend", typeof(TextGraphic));
+				var legend = (TextGraphic)info.GetValue("Legend", s);
 
 				// XYPlotLayer specific
-				Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer", typeof(XYPlotLayer));
+				Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer", s);
 				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer);
 
-				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", typeof(GraphicCollection)));
+				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
-				s._plotItems = (PlotItemCollection)info.GetValue("Plots", typeof(PlotItemCollection));
+				s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
 				if (null != legend)
 				{
@@ -376,8 +376,8 @@ namespace Altaxo.Graph.Gdi
 
 				// size, position, rotation and scale
 				var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
+				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
 				s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 				s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
@@ -477,8 +477,8 @@ namespace Altaxo.Graph.Gdi
 
 				// size, position, rotation and scale
 				var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
+				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
 				s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
 				// CoordinateSystem
@@ -592,8 +592,8 @@ namespace Altaxo.Graph.Gdi
 
 				// size, position, rotation and scale
 				var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
-				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
+				s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+				s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
 				s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
 				// CoordinateSystem

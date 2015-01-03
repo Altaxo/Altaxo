@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				PGTrans[] plotGroups = new PGTrans[count];
 				for (int i = 0; i < count; i++)
 				{
-					plotGroups[i].PlotGroup = (PlotGroupMemento)info.GetValue(s);
+					plotGroups[i].PlotGroup = (PlotGroupMemento)info.GetValue("e", s);
 				}
 				info.CloseArray(count);
 
@@ -1176,7 +1176,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				public virtual PlotGroupMemento SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 				{
 					PlotGroupMemento s = null != o ? (PlotGroupMemento)o : new PlotGroupMemento();
-					s._plotGroupStyle = (Version0PlotGroupStyle)info.GetValue("Style", typeof(Version0PlotGroupStyle));
+					s._plotGroupStyle = (Version0PlotGroupStyle)info.GetValue("Style", s);
 
 					int count = info.OpenArray();
 					s._plotItemIndices = new int[count];

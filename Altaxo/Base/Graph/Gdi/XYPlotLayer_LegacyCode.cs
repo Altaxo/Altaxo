@@ -430,7 +430,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
 
-					s.GraphSize = (SizeF)info.GetValue("Size", parent);
+					s.GraphSize = (SizeF)info.GetValue("Size", s);
 
 					int count = info.OpenArray();
 					for (int i = 0; i < count; i++)

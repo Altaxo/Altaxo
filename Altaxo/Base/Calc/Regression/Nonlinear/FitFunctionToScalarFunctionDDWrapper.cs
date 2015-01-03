@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -29,16 +31,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// </summary>
 	public class FitFunctionToScalarFunctionDDWrapper : IScalarFunctionDD
 	{
-		IFitFunction _fitFunction;
+		private IFitFunction _fitFunction;
 
-		double[] _y;
-		double[] _x;
-		double[] _parameter;
-		int _independentVariable;
-		int _dependentVariable;
+		private double[] _y;
+		private double[] _x;
+		private double[] _parameter;
+		private int _independentVariable;
+		private int _dependentVariable;
 
 		#region Serialization
-
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionToScalarFunctionDDWrapper), 0)]
 		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -59,14 +60,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
-
 				int independentVariable = info.GetInt32("IndependentVariable");
 				int dependentVariable = info.GetInt32("DependentVariable");
 				double[] parameter;
 				info.GetArray("ParameterValues", out parameter);
 
-				object fo = info.GetValue("FitFunction");
+				object fo = info.GetValue("FitFunction", null);
 
 				if (fo is Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate)
 					fo = ((Altaxo.Serialization.Xml.AssemblyAndTypeSurrogate)fo).CreateInstance();
@@ -90,8 +89,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public FitFunctionToScalarFunctionDDWrapper(IFitFunction fitFunction, int dependentVariable, int independentVariable, double[] parameter)
 		{
@@ -105,7 +103,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void Initialize(IFitFunction fitFunction, int dependentVariable, int independentVariable, double[] parameter)
 		{
-
 			_fitFunction = fitFunction;
 
 			if (_fitFunction != null)
@@ -127,7 +124,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			int len = Math.Min(_parameter.Length, parameter.Length);
 			for (int i = 0; i < len; i++)
 				_parameter[i] = parameter[i];
-
 		}
 
 		public double[] Parameter
@@ -170,7 +166,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-
 		#region IScalarFunctionDD Members
 
 		public double Evaluate(double x)
@@ -187,6 +182,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		#endregion
+		#endregion IScalarFunctionDD Members
 	}
 }

@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 				bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
 				bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", typeof(PositiveFiniteNumericalBoundaries));
+				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
 
 				s._dataBounds.ParentObject = s;
 
@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 				// s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
 				// s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", typeof(PositiveFiniteNumericalBoundaries));
+				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
 
 				s._dataBounds.ParentObject = s;
 

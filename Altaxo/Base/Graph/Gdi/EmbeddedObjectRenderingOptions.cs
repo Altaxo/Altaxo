@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Gdi
 				var s = null != o ? (EmbeddedObjectRenderingOptions)o : new EmbeddedObjectRenderingOptions();
 
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
-				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel");
+				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
 				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
 				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Gdi
 
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
 				s._outputScalingFactor = info.GetDouble("OutputScaling");
-				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel");
+				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
 				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
 				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");

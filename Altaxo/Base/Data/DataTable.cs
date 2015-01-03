@@ -317,7 +317,7 @@ namespace Altaxo.Data
 				{
 					info.OpenElement(); // "e"
 					string propkey = info.GetString("Key");
-					object propval = info.GetValue("Value", parent);
+					object propval = info.GetValue("Value", s.PropertyBagNotNull);
 					info.CloseElement(); // "e"
 					s.SetTableProperty(propkey, propval);
 				}
@@ -390,14 +390,14 @@ namespace Altaxo.Data
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
 				s._propertyColumns.ParentObject = s;
 				s._tableScript = (TableScript)info.GetValue("TableScript", s);
-				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
 
 				s._notes.Text = info.GetString("Notes");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				if (info.CurrentElementName == "TableDataSource")
 				{
-					s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource");
+					s._tableDataSource = (IAltaxoTableDataSource)info.GetValue("TableDataSource", s);
 					if (null != s._tableDataSource)
 					{
 						s._tableDataSource.ParentObject = s;

@@ -98,8 +98,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
-				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", typeof(XYLineScatterPlotStyle));
+				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
+				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
 				if (lsps.XYPlotLineStyle != null)
 					lsps.XYPlotLineStyle.LineSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
 
@@ -148,8 +148,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
-				G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
+				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
+				G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
 				if (null == o)
 				{

@@ -181,7 +181,7 @@ namespace Altaxo.Main
 				{
 					System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 					info.BeginReading(zipinpstream);
-					object readedobject = info.GetValue("Table", this);
+					object readedobject = info.GetValue("Table", null);
 					if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
 						restoredControllers.Add(readedobject);
 					else if (readedobject is Altaxo.Graph.GraphViewLayout)

@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi
 
 				s._imageFormat = (ImageFormat)info.GetValue("ImageFormat", s);
 				s._pixelFormat = (PixelFormat)info.GetEnum("PixelFormat", typeof(PixelFormat));
-				s.BackgroundBrush = (BrushX)info.GetValue("Background");
+				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
 				s._destinationDpiResolution = info.GetDouble("DestinationResolution");
 

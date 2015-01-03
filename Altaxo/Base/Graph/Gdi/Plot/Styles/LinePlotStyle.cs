@@ -235,12 +235,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._penHolder = (PenX)info.GetValue("Pen", s);
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
+				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", s);
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
-				XYPlotLineStyles.FillDirection fillDir = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection", typeof(XYPlotLineStyles.FillDirection));
+				XYPlotLineStyles.FillDirection fillDir = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection", s);
 				if (s._fillArea)
 					s._fillDirection = GetFillDirection(fillDir);
 
@@ -310,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._penHolder = (PenX)info.GetValue("Pen", s);
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
+				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", s);
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
@@ -344,7 +344,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._penHolder = (PenX)info.GetValue("Pen", s);
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
+				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", s);
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");

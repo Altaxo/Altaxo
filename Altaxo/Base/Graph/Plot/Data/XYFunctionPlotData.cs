@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYFunctionPlotData s = null != o ? (XYFunctionPlotData)o : new XYFunctionPlotData();
 
-				s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function", parent);
+				s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function", s);
 				if (s.Function is Main.IDocumentLeafNode) ((Main.IDocumentLeafNode)s.Function).ParentObject = s;
 
 				return s;
@@ -484,7 +484,7 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				SquareRootFunction s = null != o ? (SquareRootFunction)o : new SquareRootFunction();
 
-				s._baseFunction = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("BaseFunction");
+				s._baseFunction = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("BaseFunction", s);
 
 				return s;
 			}
@@ -633,7 +633,7 @@ namespace Altaxo.Graph.Plot.Data
 				int cnt = info.OpenArray();
 				s._functions = new Altaxo.Calc.IScalarFunctionDD[cnt];
 				for (int i = 0; i < cnt; i++)
-					s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e", parent);
+					s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e", s);
 
 				info.CloseArray(cnt);
 
@@ -810,7 +810,7 @@ namespace Altaxo.Graph.Plot.Data
 				int cnt = info.OpenArray();
 				s._functions = new Altaxo.Calc.IScalarFunctionDD[cnt];
 				for (int i = 0; i < cnt; i++)
-					s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e", parent);
+					s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e", s);
 
 				info.CloseArray(cnt);
 

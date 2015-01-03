@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
-using Altaxo.Collections;
 using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Collections;
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -58,39 +59,37 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <summary>
 		/// Number of factors for calculation and plotting.
 		/// </summary>
-		int _PreferredNumberOfFactors;
+		private int _PreferredNumberOfFactors;
 
 		/// <summary>
 		/// Number of factors calculated.
 		/// </summary>
-		int _CalculatedNumberOfFactors;
+		private int _CalculatedNumberOfFactors;
 
 		/// <summary>
 		/// Mean number of observations included in Cross PRESS calculation (used to calculate F-Ratio).
 		/// </summary>
-		double _MeanNumberOfMeasurementsInCrossPRESSCalculation;
+		private double _MeanNumberOfMeasurementsInCrossPRESSCalculation;
 
 		/// <summary>
 		/// Denotes how the cross validation is made (the exact method how the spectra are grouped and mutually excluded).
 		/// </summary>
-		CrossPRESSCalculationType _crossPRESSCalculationType;
+		private CrossPRESSCalculationType _crossPRESSCalculationType;
 
 		/// <summary>
 		/// The name of the class used to analyse the data.
 		/// </summary>
-		string _ClassNameOfAnalysisClass;
+		private string _ClassNameOfAnalysisClass;
 
 		/// <summary>
 		/// The instance of the class used to analyse the data.
 		/// </summary>
-		WorksheetAnalysis _InstanceOfAnalysisClass;
-
+		private WorksheetAnalysis _InstanceOfAnalysisClass;
 
 		/// <summary>
 		/// What to do with the spectra before processing them.
 		/// </summary>
-		SpectralPreprocessingOptions _spectralPreprocessing = new SpectralPreprocessingOptions();
-
+		private SpectralPreprocessingOptions _spectralPreprocessing = new SpectralPreprocessingOptions();
 
 		#region Serialization
 
@@ -103,19 +102,18 @@ namespace Altaxo.Calc.Regression.Multivariate
 			{
 				info.SetNodeContent(obj.ToString());
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(CrossPRESSCalculationType), val, true);
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization for CrossPRESSCalculationType
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.PLS.PLSContentMemento", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -127,6 +125,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				info.AddValue("MeasurementIndices", s.MeasurementIndices);
 				info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				MultivariateContentMemento s = null != o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
@@ -145,10 +144,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			}
 		}
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultivariateContentMemento), 1)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.PLS.PLSContentMemento", 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -165,8 +163,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 				info.AddEnum("SpectralPreprocessingMethod", s._spectralPreprocessing.Method);
 				info.AddValue("SpectralPreprocessingDetrending", s._spectralPreprocessing.DetrendingOrder);
 				info.AddValue("SpectralPreprocessingEnsembleScale", s._spectralPreprocessing.EnsembleScale);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				MultivariateContentMemento s = null != o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
@@ -197,7 +195,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultivariateContentMemento), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -221,6 +219,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				// added fix after version 2 : forgotten to serialize crossPRESSCalculationType
 				info.AddValue("CrossPRESSCalculationType", s._crossPRESSCalculationType);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				MultivariateContentMemento s = null != o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
@@ -245,7 +244,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 				// added fix after version 2 : forgotten to serialize crossPRESSCalculationType
 				if (info.GetNodeName() == "CrossPRESSCalculationType")
-					s._crossPRESSCalculationType = (CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", parent);
+					s._crossPRESSCalculationType = (CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s);
 				else
 					s._crossPRESSCalculationType = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
 
@@ -253,7 +252,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Gets the number of measurement = number of spectra
@@ -306,7 +305,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			set { _MeanNumberOfMeasurementsInCrossPRESSCalculation = value; }
 		}
 
-
 		public CrossPRESSCalculationType CrossValidationType
 		{
 			get { return this._crossPRESSCalculationType; }
@@ -344,7 +342,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 						throw new ApplicationException("The current instance of the analysis class does not inherit from the WorksheetAnalysis class, class name: " + clstype.ToString());
 
 					_InstanceOfAnalysisClass = (WorksheetAnalysis)instance;
-
 
 					return _InstanceOfAnalysisClass;
 				}

@@ -297,7 +297,7 @@ namespace Altaxo.Data
 				{
 					info.OpenElement();
 					string name = info.GetString();
-					IColumnScriptText script = (IColumnScriptText)info.GetValue(s);
+					IColumnScriptText script = (IColumnScriptText)info.GetValue("e", s);
 					info.CloseElement();
 					s.ColumnScripts.Add(s[name], script);
 				}

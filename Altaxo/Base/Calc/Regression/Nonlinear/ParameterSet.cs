@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-
 	public class ParameterSetElement : ICloneable
 	{
 		public string Name;
@@ -32,11 +33,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public double Variance;
 		public bool Vary;
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -61,8 +61,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		/// <summary>
 		/// For deserialization purposes only.
@@ -100,7 +99,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			this.Vary = from.Vary;
 		}
 
-
 		#region ICloneable Members
 
 		public object Clone()
@@ -108,8 +106,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return new ParameterSetElement(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 	}
+
 	/// <summary>
 	/// Summary description for ParameterSet.
 	/// </summary>
@@ -124,7 +123,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSet), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -142,16 +141,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 				int arraycount = info.OpenArray();
 				for (int i = 0; i < arraycount; ++i)
-					s.Add((ParameterSetElement)info.GetValue(s));
+					s.Add((ParameterSetElement)info.GetValue("e", s));
 				info.CloseArray(arraycount);
-
-
 
 				return s;
 			}
 		}
 
-		#endregion
+		#endregion Serialization
+
 		public ParameterSet()
 		{
 		}
@@ -186,6 +184,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return result;
 		}
 
-		#endregion
+		#endregion ICloneable Members
 	}
 }

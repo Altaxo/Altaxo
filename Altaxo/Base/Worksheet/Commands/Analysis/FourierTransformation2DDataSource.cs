@@ -64,9 +64,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				var s = (o == null ? new FourierTransformation2DDataSource() : (FourierTransformation2DDataSource)o);
 
-				s._inputData = (DataTableMatrixProxy)info.GetValue("InputData");
-				s._transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions");
-				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions");
+				s._inputData = (DataTableMatrixProxy)info.GetValue("InputData", s);
+				s._transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", s);
+				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
 
 				s.InputData = s._inputData;
 

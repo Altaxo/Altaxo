@@ -96,7 +96,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				s._independentVariables = new INumericColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._independentVariables[i] = (INumericColumnProxy)info.GetValue(s);
+					s._independentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
 					if (null != s._independentVariables[i]) s._independentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
@@ -105,7 +105,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				s._dependentVariables = new INumericColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._dependentVariables[i] = (INumericColumnProxy)info.GetValue(s);
+					s._dependentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
 					if (null != s._dependentVariables[i]) s._dependentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
@@ -113,7 +113,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				arraycount = info.OpenArray();
 				s._errorEvaluation = new IVarianceScaling[arraycount];
 				for (int i = 0; i < arraycount; ++i)
-					s._errorEvaluation[i] = (IVarianceScaling)info.GetValue(s);
+					s._errorEvaluation[i] = (IVarianceScaling)info.GetValue("e", s);
 				info.CloseArray(arraycount);
 
 				info.GetArray("ParameterNames", out s._parameterNames);

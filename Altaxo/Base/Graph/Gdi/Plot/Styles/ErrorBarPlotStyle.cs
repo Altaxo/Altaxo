@@ -129,8 +129,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
-				s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError");
-				s._negativeErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("NegativeError");
+				s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError", s);
+				s._negativeErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("NegativeError", s);
 
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s.Pen = (PenX)info.GetValue("Pen", s);

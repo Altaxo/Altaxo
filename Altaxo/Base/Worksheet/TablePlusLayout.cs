@@ -51,8 +51,8 @@ namespace Altaxo.Worksheet
 			{
 				TablePlusLayout s = null != o ? (TablePlusLayout)o : new TablePlusLayout();
 
-				s._table = (Altaxo.Data.DataTable)info.GetValue("Table");
-				s._layout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("Layout", parent);
+				s._table = (Altaxo.Data.DataTable)info.GetValue("Table", s);
+				s._layout = (Altaxo.Worksheet.WorksheetLayout)info.GetValue("Layout", s);
 				return s;
 			}
 		}

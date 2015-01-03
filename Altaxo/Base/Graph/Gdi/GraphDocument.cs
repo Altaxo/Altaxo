@@ -311,7 +311,7 @@ typeof(GraphDocument),
 				{
 					info.OpenElement(); // "e"
 					string propkey = info.GetString("Key");
-					object propval = info.GetValue("Value", parent);
+					object propval = info.GetValue("Value", s.PropertyBagNotNull);
 					info.CloseElement(); // "e"
 					pb.SetValue(propkey, propval);
 				}
@@ -375,7 +375,7 @@ typeof(GraphDocument),
 				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
 				s._notes.Text = info.GetString("Notes");
 				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
-				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

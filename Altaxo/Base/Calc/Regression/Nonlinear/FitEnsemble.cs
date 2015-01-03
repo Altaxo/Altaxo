@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 				int arraycount = info.OpenArray();
 				for (int i = 0; i < arraycount; ++i)
-					s.Add((FitElement)info.GetValue(s));
+					s.Add((FitElement)info.GetValue("e", s));
 				info.CloseArray(arraycount);
 
 				s.CollectParameterNames();

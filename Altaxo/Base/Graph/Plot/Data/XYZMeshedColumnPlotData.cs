@@ -190,9 +190,9 @@ namespace Altaxo.Graph.Plot.Data
 				}
 				info.CloseArray(count);
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
-				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
 
 				s._xBoundaries.ParentObject = s;
 				s._yBoundaries.ParentObject = s;
@@ -287,14 +287,14 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
-				var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", parent);
-				var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", parent);
+				var _xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
+				var _yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
 
 				int count = info.OpenArray();
 				var _dataColumns = new IReadableColumnProxy[count];
 				for (int i = 0; i < count; i++)
 				{
-					_dataColumns[i] = (IReadableColumnProxy)info.GetValue("e", parent);
+					_dataColumns[i] = (IReadableColumnProxy)info.GetValue("e", s);
 				}
 				info.CloseArray(count);
 
@@ -302,9 +302,9 @@ namespace Altaxo.Graph.Plot.Data
 				s._matrixProxy = new DataTableMatrixProxy(_xColumn, _yColumn, _dataColumns);
 #pragma warning restore 618
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
-				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
 
 				s._matrixProxy.ParentObject = s;
 				s._xBoundaries.ParentObject = s;
@@ -336,11 +336,11 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYZMeshedColumnPlotData s = null != o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
-				s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy");
+				s._matrixProxy = (DataTableMatrixProxy)info.GetValue("MatrixProxy", s);
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
-				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", parent);
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+				s._vBoundaries = (IPhysicalBoundaries)info.GetValue("VBoundaries", s);
 
 				s._matrixProxy.ParentObject = s;
 				s._xBoundaries.ParentObject = s;

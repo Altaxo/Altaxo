@@ -87,7 +87,7 @@ namespace Altaxo.Main.Properties
 				{
 					info.OpenElement(); // "e"
 					string propkey = info.GetString("Key");
-					object propval = info.GetValue("Value", parent);
+					object propval = info.GetValue("Value", s);
 					info.CloseElement(); // "e"
 					s._properties[propkey] = propval;
 					var propValAsNode = propval as IDocumentLeafNode;

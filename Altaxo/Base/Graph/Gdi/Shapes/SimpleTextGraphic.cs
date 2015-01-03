@@ -61,8 +61,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(SimpleTextGraphic).BaseType, parent);
 
 				s._text = info.GetString("Text");
-				s._font = (FontX)info.GetValue("Font", typeof(FontX));
-				s._color = (Color)info.GetValue("Color", typeof(Color));
+				s._font = (FontX)info.GetValue("Font", s);
+				s._color = (Color)info.GetValue("Color", s);
 				return s;
 			}
 		}

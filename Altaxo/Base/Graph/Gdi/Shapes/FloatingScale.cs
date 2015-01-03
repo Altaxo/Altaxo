@@ -109,11 +109,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._scaleSpanType = (FloatingScaleSpanType)info.GetEnum("ScaleSpanType", typeof(FloatingScaleSpanType));
 				s._scaleSpanValue = info.GetDouble("ScaleSpanValue");
 				s._scaleSegmentType = (ScaleSegmentType)info.GetEnum("ScaleType", typeof(ScaleSegmentType));
-				s._tickSpacing = (TickSpacing)info.GetValue("TickSpacing");
-				s._axisStyle = (AxisStyle)info.GetValue("AxisStyle");
-				s._background = (IBackgroundStyle)info.GetValue("Background");
+				s._tickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
+				s._axisStyle = (AxisStyle)info.GetValue("AxisStyle", s);
+				s._background = (IBackgroundStyle)info.GetValue("Background", s);
 				if (null != s._background)
-					s._backgroundPadding = (Margin2D)info.GetValue("BackgroundPadding");
+					s._backgroundPadding = (Margin2D)info.GetValue("BackgroundPadding", s);
 
 				return s;
 			}

@@ -144,7 +144,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				Edge edge = (Edge)info.GetValue("Edge", s);
 				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
-				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
 				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
-				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
 				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -251,7 +251,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
-				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
 				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -316,7 +316,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._brush = (BrushX)info.GetValue("Brush", s);
-				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
 				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -382,7 +382,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._brush = (BrushX)info.GetValue("Brush", s);
 				s._brush.ParentObject = s;
 
-				s.BackgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+				s.BackgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
 
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));

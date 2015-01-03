@@ -113,8 +113,6 @@ namespace Altaxo.Serialization.Xml
 		/// <returns>The name of the current node.</returns>
 		string GetNodeName();
 
-		object GetValue(object parent);
-
 		object GetValue(string name, object parent);
 
 		void GetBaseValueEmbedded(object instance, System.Type basetype, object parent);

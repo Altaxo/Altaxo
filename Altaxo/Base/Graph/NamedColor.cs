@@ -96,7 +96,7 @@ namespace Altaxo.Graph
 				{
 					// note: the deserialization of the built-in color set is responsible for creating a temporary project level color set,
 					// if it is an older version of a color set
-					var colorSet = (ColorManagement.IColorSet)info.GetValue("Set");
+					var colorSet = (ColorManagement.IColorSet)info.GetValue("Set", null);
 					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromBuiltinSet(colorValue, colorName, colorSet);
 				}
 				else if (info.CurrentElementName == "SetName")

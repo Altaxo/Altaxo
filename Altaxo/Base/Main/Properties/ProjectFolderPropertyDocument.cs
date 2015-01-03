@@ -79,7 +79,7 @@ namespace Altaxo.Main.Properties
 				s._name = info.GetString("Name");
 				s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
 				s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
-				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties");
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

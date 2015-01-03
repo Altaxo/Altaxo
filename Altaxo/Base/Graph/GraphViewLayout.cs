@@ -142,7 +142,7 @@ namespace Altaxo.Graph
 				if (false == s._isAutoZoomActive)
 				{
 					s._zoomFactor = info.GetSingle("Zoom");
-					s._positionOfViewportsUpperLeftCornerInRootLayerCoordinates = (PointD2D)info.GetValue("ViewportOffset");
+					s._positionOfViewportsUpperLeftCornerInRootLayerCoordinates = (PointD2D)info.GetValue("ViewportOffset", s);
 				}
 
 				return s;

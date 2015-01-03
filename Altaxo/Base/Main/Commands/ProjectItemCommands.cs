@@ -115,7 +115,7 @@ namespace Altaxo.Main.Commands
 					s._projectItems = new List<IProjectItem>();
 					for (int i = 0; i < count; ++i)
 					{
-						s._projectItems.Add((IProjectItem)info.GetValue("e"));
+						s._projectItems.Add((IProjectItem)info.GetValue("e", s));
 					}
 					info.CloseArray(count);
 
@@ -189,7 +189,7 @@ namespace Altaxo.Main.Commands
 					s._projectItems = new List<DocNodeProxy>();
 					for (int i = 0; i < count; ++i)
 					{
-						s._projectItems.Add((DocNodeProxy)info.GetValue("e"));
+						s._projectItems.Add((DocNodeProxy)info.GetValue("e", s));
 					}
 					info.CloseArray(count);
 

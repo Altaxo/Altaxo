@@ -115,7 +115,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				s._replacementValueForNaNMatrixElements = info.GetNullableDouble("ReplacementValueForNaNMatrixElements");
 				s._replacementValueForInfiniteMatrixElements = info.GetNullableDouble("ReplacementValueForInfiniteMatrixElements");
 				s._dataPretreatmentCorrectionOrder = info.GetNullableInt32("DataPretreatmentCorrectionOrder");
-				s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D)info.GetValue("FourierWindow");
+				s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D)info.GetValue("FourierWindow", s);
 
 				s._kindOfOutputResult = (RealFourierTransformationOutputKind)info.GetEnum("KindOfOutputResult", typeof(RealFourierTransformationOutputKind));
 				s._centerResult = info.GetBoolean("CenterResult");

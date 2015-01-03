@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				int count = info.OpenArray("Elements");
 				var list = new GraphicBase[count];
 				for (int i = 0; i < count; i++)
-					list[i] = (GraphicBase)info.GetValue("e", parent);
+					list[i] = (GraphicBase)info.GetValue("e", s);
 				info.CloseArray(count);
 				s.AddRange(list);
 

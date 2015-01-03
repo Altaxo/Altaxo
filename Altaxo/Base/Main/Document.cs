@@ -248,7 +248,7 @@ namespace Altaxo
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("Table", this);
+						object readedobject = info.GetValue("Table", null);
 						if (readedobject is Altaxo.Data.DataTable)
 							this._dataTables.Add((Altaxo.Data.DataTable)readedobject);
 						info.EndReading();
@@ -257,7 +257,7 @@ namespace Altaxo
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("Graph", this);
+						object readedobject = info.GetValue("Graph", null);
 						if (readedobject is GraphDocument)
 							this._graphs.Add((GraphDocument)readedobject);
 						info.EndReading();
@@ -266,7 +266,7 @@ namespace Altaxo
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("WorksheetLayout", this);
+						object readedobject = info.GetValue("WorksheetLayout", null);
 						if (readedobject is Altaxo.Worksheet.WorksheetLayout)
 							this._tableLayouts.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
 						info.EndReading();
@@ -275,7 +275,7 @@ namespace Altaxo
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("FitFunctionScript", this);
+						object readedobject = info.GetValue("FitFunctionScript", null);
 						if (readedobject is Altaxo.Scripting.FitFunctionScript)
 							this._fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
 						info.EndReading();
@@ -284,7 +284,7 @@ namespace Altaxo
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("FolderProperty", this);
+						object readedobject = info.GetValue("FolderProperty", null);
 						if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 							this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyDocument)readedobject);
 						info.EndReading();
@@ -293,7 +293,7 @@ namespace Altaxo
 					{
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("DocumentInformation", this);
+						object readedobject = info.GetValue("DocumentInformation", null);
 						if (readedobject is DocumentInformation)
 							this._documentInformation = (DocumentInformation)readedobject;
 						info.EndReading();

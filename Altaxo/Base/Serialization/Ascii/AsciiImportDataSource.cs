@@ -70,11 +70,11 @@ namespace Altaxo.Serialization.Ascii
 			{
 				var s = (o == null ? new AsciiImportDataSource() : (AsciiImportDataSource)o);
 
-				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions");
-				s._asciiImportOptions = (AsciiImportOptions)info.GetValue("AsciiImportOptions");
+				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
+				s._asciiImportOptions = (AsciiImportOptions)info.GetValue("AsciiImportOptions", s);
 				var count = info.OpenArray("AsciiFiles");
 				for (int i = 0; i < count; ++i)
-					s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e"));
+					s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", s));
 				info.CloseArray(count);
 
 				return s;

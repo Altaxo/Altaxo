@@ -279,10 +279,10 @@ namespace Altaxo.Data
 			{
 				var s = (o == null ? new DataTableMatrixProxy() : (DataTableMatrixProxy)o);
 
-				s.InternalSetDataTable((DataTableProxy)info.GetValue("Table"));
+				s.InternalSetDataTable((DataTableProxy)info.GetValue("Table", s));
 				s._groupNumber = info.GetInt32("Group");
-				s.InternalSetRowHeaderColumn((IReadableColumnProxy)info.GetValue("RowHeaderColumn"));
-				s.InternalSetColumnHeaderColumn((IReadableColumnProxy)info.GetValue("ColumnHeaderColumn"));
+				s.InternalSetRowHeaderColumn((IReadableColumnProxy)info.GetValue("RowHeaderColumn", s));
+				s.InternalSetColumnHeaderColumn((IReadableColumnProxy)info.GetValue("ColumnHeaderColumn", s));
 
 				s._useAllAvailableColumnsOfGroup = info.GetBoolean("UseAllAvailableColumnsOfGroup");
 				s._useAllAvailableDataRows = info.GetBoolean("UseAllAvailableDataRows");
@@ -293,7 +293,7 @@ namespace Altaxo.Data
 					s._dataColumns = new List<IReadableColumnProxy>(count);
 					for (int i = 0; i < count; i++)
 					{
-						s.InternalAddDataColumnNoClone((IReadableColumnProxy)info.GetValue("e", parent));
+						s.InternalAddDataColumnNoClone((IReadableColumnProxy)info.GetValue("e", s));
 					}
 					info.CloseArray(count);
 				}
@@ -304,7 +304,7 @@ namespace Altaxo.Data
 
 				if (!s._useAllAvailableDataRows)
 				{
-					s._participatingDataRows = (AscendingIntegerCollection)info.GetValue("DataRows");
+					s._participatingDataRows = (AscendingIntegerCollection)info.GetValue("DataRows", s);
 				}
 				else
 				{

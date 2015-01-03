@@ -103,19 +103,19 @@ namespace Altaxo.Graph
 			{
 				var s = null != o ? (ItemLocationDirect)o : new ItemLocationDirect();
 
-				s._parentSize = (PointD2D)info.GetValue("ParentSize");
+				s._parentSize = (PointD2D)info.GetValue("ParentSize", s);
 
-				s._sizeX = (RADouble)info.GetValue("SizeX");
-				s._sizeY = (RADouble)info.GetValue("SizeY");
+				s._sizeX = (RADouble)info.GetValue("SizeX", s);
+				s._sizeY = (RADouble)info.GetValue("SizeY", s);
 
-				s._positionX = (RADouble)info.GetValue("PositionX");
-				s._positionY = (RADouble)info.GetValue("PositionY");
+				s._positionX = (RADouble)info.GetValue("PositionX", s);
+				s._positionY = (RADouble)info.GetValue("PositionY", s);
 
-				s._localAnchorX = (RADouble)info.GetValue("LocalAnchorX");
-				s._localAnchorY = (RADouble)info.GetValue("LocalAnchorY");
+				s._localAnchorX = (RADouble)info.GetValue("LocalAnchorX", s);
+				s._localAnchorY = (RADouble)info.GetValue("LocalAnchorY", s);
 
-				s._parentAnchorX = (RADouble)info.GetValue("ParentAnchorX");
-				s._parentAnchorY = (RADouble)info.GetValue("ParentAnchorY");
+				s._parentAnchorX = (RADouble)info.GetValue("ParentAnchorX", s);
+				s._parentAnchorY = (RADouble)info.GetValue("ParentAnchorY", s);
 
 				s._rotation = info.GetDouble("Rotation");
 				s._shear = info.GetDouble("ShearX");

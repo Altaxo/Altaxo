@@ -487,7 +487,7 @@ namespace Altaxo.Graph.Gdi
 						s._exchangeColors = info.GetBoolean("ExchangeColors");
 						s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
 						s._angle = info.GetDouble("Angle");
-						s._textureScale = (TextureScaling)info.GetValue("Scale");
+						s._textureScale = (TextureScaling)info.GetValue("Scale", s);
 						s._offsetX = info.GetDouble("OffsetX");
 						s._offsetY = info.GetDouble("OffsetY");
 						s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
@@ -496,7 +496,7 @@ namespace Altaxo.Graph.Gdi
 					case BrushType.TextureBrush:
 						s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
 						s._angle = info.GetDouble("Angle");
-						s._textureScale = (TextureScaling)info.GetValue("Scale");
+						s._textureScale = (TextureScaling)info.GetValue("Scale", s);
 						s._offsetX = info.GetDouble("OffsetX");
 						s._offsetY = info.GetDouble("OffsetY");
 						s.TextureImage = (ImageProxy)info.GetValue("Texture", s);

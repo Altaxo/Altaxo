@@ -59,7 +59,7 @@ namespace Altaxo.Graph
 
 				int count = info.OpenArray("Partitioning");
 				for (int i = 0; i < count; ++i)
-					s.Add((RADouble)info.GetValue("e"));
+					s.Add((RADouble)info.GetValue("e", s));
 				info.CloseArray(count);
 
 				return s;
@@ -165,8 +165,8 @@ namespace Altaxo.Graph
 			{
 				var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
 
-				s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning");
-				s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning");
+				s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning", s);
+				s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning", s);
 
 				return s;
 			}

@@ -302,7 +302,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
 				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-				XYPlotScatterStyles.DropLine dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
+				XYPlotScatterStyles.DropLine dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", s);
 				s._pen = (PenX)info.GetValue("Pen", s);
 				s._symbolSize = info.GetSingle("SymbolSize");
 				s._relativePenWidth = info.GetSingle("RelativePenWidth");

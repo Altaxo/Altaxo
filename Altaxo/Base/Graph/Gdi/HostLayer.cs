@@ -146,11 +146,11 @@ namespace Altaxo.Graph.Gdi
 
 				s.ParentObject = parent as Main.IDocumentNode;
 				// size, position, rotation and scale
-				s._cachedParentLayerSize = (PointD2D)info.GetValue("CachedParentSize");
-				s._cachedLayerSize = (PointD2D)info.GetValue("CachedSize");
-				s._cachedLayerPosition = (PointD2D)info.GetValue("CachedPosition");
+				s._cachedParentLayerSize = (PointD2D)info.GetValue("CachedParentSize", s);
+				s._cachedLayerSize = (PointD2D)info.GetValue("CachedSize", s);
+				s._cachedLayerPosition = (PointD2D)info.GetValue("CachedPosition", s);
 				s.Location = (IItemLocation)info.GetValue("LocationAndSize", s);
-				s.Grid = (GridPartitioning)info.GetValue("Grid");
+				s.Grid = (GridPartitioning)info.GetValue("Grid", s);
 
 				// Graphic objects
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));

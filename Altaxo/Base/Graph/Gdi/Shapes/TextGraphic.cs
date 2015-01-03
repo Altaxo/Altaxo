@@ -97,13 +97,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				//s._rotation = -s._rotation;
 
 				s._text = info.GetString("Text");
-				s._font = (FontX)info.GetValue("Font", typeof(FontX));
+				s._font = (FontX)info.GetValue("Font", s);
 				s._textBrush = (BrushX)info.GetValue("Brush", s);
-				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
+				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", s);
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				info.GetSingle("ShadowLength");
-				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
-				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+				var xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", s);
+				var yAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", s);
 				s._location.LocalAnchorX = RADouble.NewRel(0.5 * (int)xAnchorType);
 				s._location.LocalAnchorY = RADouble.NewRel(0.5 * (int)yAnchorType);
 
@@ -183,11 +183,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
 
 				s._text = info.GetString("Text");
-				s._font = (FontX)info.GetValue("Font", typeof(FontX));
+				s._font = (FontX)info.GetValue("Font", s);
 				s._textBrush = (BrushX)info.GetValue("Brush", s);
 				s._textBrush.ParentObject = s;
 
-				s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+				s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
 
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				return s;

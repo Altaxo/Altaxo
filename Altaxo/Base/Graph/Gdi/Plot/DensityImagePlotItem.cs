@@ -101,8 +101,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data", o);
-				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style", o);
+				XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
+				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style", null);
 
 				if (o == null)
 				{

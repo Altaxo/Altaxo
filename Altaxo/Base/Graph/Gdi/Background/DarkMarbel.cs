@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Gdi.Background
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
-				s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
+				s.Brush = new BrushX((NamedColor)info.GetValue("Color", s));
 				s._shadowLength = info.GetDouble();
 
 				return s;

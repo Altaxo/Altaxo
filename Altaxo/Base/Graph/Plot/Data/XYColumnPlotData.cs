@@ -185,8 +185,8 @@ namespace Altaxo.Graph.Plot.Data
 				bool bNeedsCallback = false;
 				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-				object xColumn = info.GetValue("XColumn", typeof(Altaxo.Data.IReadableColumn));
-				object yColumn = info.GetValue("YColumn", typeof(Altaxo.Data.IReadableColumn));
+				object xColumn = info.GetValue("XColumn", s);
+				object yColumn = info.GetValue("YColumn", s);
 
 				if (xColumn is Altaxo.Data.IReadableColumn)
 					s.XColumn = (Altaxo.Data.IReadableColumn)xColumn;
@@ -198,11 +198,11 @@ namespace Altaxo.Graph.Plot.Data
 				else if (yColumn is Main.DocumentPath)
 					bNeedsCallback = true;
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", typeof(IPhysicalBoundaries));
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
 				if (null != s._xBoundaries)
 					s._xBoundaries.ParentObject = s;
 
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", typeof(IPhysicalBoundaries));
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
 				if (null != s._yBoundaries)
 					s._yBoundaries.ParentObject = s;
 
@@ -289,7 +289,7 @@ namespace Altaxo.Graph.Plot.Data
 					if (nOptionalData == 1)
 					{
 						string keystring = info.GetNodeName();
-						labelColumn = info.GetValue(parent);
+						labelColumn = info.GetValue("LabelColumn", s);
 
 						if (labelColumn is Altaxo.Data.IReadableColumn)
 							s._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
@@ -352,11 +352,11 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", parent);
-				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", parent);
+				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
+				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
 
 				return s;
 			}
@@ -409,16 +409,16 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", parent);
+				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
 
-				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", parent);
+				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
 				if (null != s._yColumn) s._yColumn.ParentObject = s;
 
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
 				if (null != s._xBoundaries) s._xBoundaries.ParentObject = s;
 
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
 				if (null != s._yBoundaries) s._yBoundaries.ParentObject = s;
 
 				s._plotRangeStart = info.GetInt32("RangeStart");

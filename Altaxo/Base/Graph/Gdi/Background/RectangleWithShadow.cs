@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Background
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
-				s.Brush = new BrushX((NamedColor)info.GetValue("Color", parent));
+				s.Brush = new BrushX((NamedColor)info.GetValue("Color", s)) { ParentObject = s };
 				s._shadowLength = info.GetDouble();
 
 				return s;

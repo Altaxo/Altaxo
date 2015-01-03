@@ -402,7 +402,7 @@ namespace Altaxo.Graph.Gdi
 					s._brush = new BrushX(NamedColors.Black) { ParentObject = s };
 
 				if (0 != (cp & PenX.Configured.Color))
-					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
+					s._color = (NamedColor)info.GetValue("Color", s);
 				else
 					s._color = NamedColors.Black;
 
@@ -553,7 +553,7 @@ namespace Altaxo.Graph.Gdi
 				s._brush.ParentObject = s;
 
 				if (0 != (cp & PenX.Configured.Color))
-					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
+					s._color = (NamedColor)info.GetValue("Color", s);
 				else
 					s._color = NamedColors.Black;
 
@@ -707,7 +707,7 @@ namespace Altaxo.Graph.Gdi
 				s._brush.ParentObject = s;
 
 				if (0 != (cp & PenX.Configured.Color))
-					s._color = (NamedColor)info.GetValue("Color", typeof(Color));
+					s._color = (NamedColor)info.GetValue("Color", s);
 				else
 					s._color = NamedColors.Black;
 

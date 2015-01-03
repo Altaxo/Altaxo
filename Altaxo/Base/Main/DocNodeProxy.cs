@@ -147,7 +147,7 @@ namespace Altaxo.Main
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				object node = info.GetValue("Node", o);
+				object node = info.GetValue("Node", null);
 
 				if (node is DocumentPath)
 				{

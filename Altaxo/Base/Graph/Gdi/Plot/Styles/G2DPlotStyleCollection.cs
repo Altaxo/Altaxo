@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				int count = info.OpenArray();
 				IG2DPlotStyle[] array = new IG2DPlotStyle[count];
 				for (int i = 0; i < count; i++)
-					array[i] = (IG2DPlotStyle)info.GetValue("e", this);
+					array[i] = (IG2DPlotStyle)info.GetValue("e", null);
 				info.CloseArray(count);
 
 				if (o == null)
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				int count = info.OpenArray();
 				IG2DPlotStyle[] array = new IG2DPlotStyle[count];
 				for (int i = 0; i < count; i++)
-					array[i] = (IG2DPlotStyle)info.GetValue("e", this);
+					array[i] = (IG2DPlotStyle)info.GetValue("e", null);
 				info.CloseArray(count);
 
 				if (o == null)

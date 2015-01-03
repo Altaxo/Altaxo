@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet");
+				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				return s;
 			}
 		}
@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet");
+				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				s._colorIndex = info.GetInt32("ColorIndex");
 				return s;
 			}

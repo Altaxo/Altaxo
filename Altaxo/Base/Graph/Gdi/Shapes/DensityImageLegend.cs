@@ -83,11 +83,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				bool isOrientationVertical = info.GetBoolean("IsOrientationVertical");
 				bool isScaleReversed = info.GetBoolean("IsScaleReversed");
 
-				var cachedScale = (NumericalScale)info.GetValue("Scale", parent); // TODO replace next 3 lines with serialization / deserialization of ScaleWithTicks
-				var scaleTickSpacing = (TickSpacing)info.GetValue("TickSpacing", parent);
+				var cachedScale = (NumericalScale)info.GetValue("Scale", s); // TODO replace next 3 lines with serialization / deserialization of ScaleWithTicks
+				var scaleTickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
 				scaleTickSpacing.FinalProcessScaleBoundaries(cachedScale.OrgAsVariant, cachedScale.EndAsVariant, cachedScale);
 
-				s._axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", parent);
+				s._axisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
 				s._axisStyles.ParentObject = s;
 
 				s._cachedArea = new DensityLegendArea(s.Size, isOrientationVertical, isScaleReversed, cachedScale, scaleTickSpacing) { ParentObject = s };

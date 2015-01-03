@@ -126,13 +126,13 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				ColorProviderBase s = (ColorProviderBase)o;
 
-				s._colorBelow = (NamedColor)info.GetValue("ColorBelow", parent);
+				s._colorBelow = (NamedColor)info.GetValue("ColorBelow", s);
 				s._cachedGdiColorBelow = GdiColorHelper.ToGdi(s._colorBelow);
 
-				s._colorAbove = (NamedColor)info.GetValue("ColorAbove", parent);
+				s._colorAbove = (NamedColor)info.GetValue("ColorAbove", s);
 				s._cachedGdiColorAbove = GdiColorHelper.ToGdi(s._colorAbove);
 
-				s._colorInvalid = (NamedColor)info.GetValue("ColorInvalid", parent);
+				s._colorInvalid = (NamedColor)info.GetValue("ColorInvalid", s);
 				s._cachedGdiColorInvalid = GdiColorHelper.ToGdi(s._colorInvalid);
 
 				s.Transparency = info.GetDouble("Transparency");

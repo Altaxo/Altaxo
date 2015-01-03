@@ -61,8 +61,8 @@ namespace Altaxo.Data
 				var s = (o == null ? new ExpandCyclingVariableColumnDataSource() : (ExpandCyclingVariableColumnDataSource)o);
 
 				s._processData = (DataTableMultipleColumnProxy)info.GetValue("ProcessData", s);
-				s._processOptions = (ExpandCyclingVariableColumnOptions)info.GetValue("ProcessOptions");
-				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions");
+				s._processOptions = (ExpandCyclingVariableColumnOptions)info.GetValue("ProcessOptions", s);
+				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
 
 				s.InputData = s._processData;
 
