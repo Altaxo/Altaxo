@@ -77,6 +77,11 @@ namespace Altaxo.DataConnection
 			return result;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
+
 		#endregion Construction
 
 		#region Serialization

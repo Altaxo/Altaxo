@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Scripting
@@ -32,13 +33,23 @@ namespace Altaxo.Scripting
 	public class FitFunctionScriptCollection
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.Collections.ICollection
+		ICollection<FitFunctionScript>
 	{
-		private Hashtable _InnerList = new Hashtable();
+		private HashSet<FitFunctionScript> _InnerList = new HashSet<FitFunctionScript>();
 
 		public FitFunctionScriptCollection(Main.IDocumentNode parent)
 		{
 			_parent = parent;
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			foreach (var entry in _InnerList)
+			{
+				var asNode = entry as Main.IDocumentLeafNode;
+				if (null != asNode)
+					yield return new Main.DocumentNodeAndName(asNode, entry.CreationTime.ToUniversalTime().ToString(System.Globalization.CultureInfo.InvariantCulture));
+			}
 		}
 
 		public List<FitFunctionScript> Find(string category, string name)
@@ -67,7 +78,7 @@ namespace Altaxo.Scripting
 		public void Add(FitFunctionScript script)
 		{
 			if (!Contains(script))
-				_InnerList.Add(script, null);
+				_InnerList.Add(script);
 		}
 
 		public bool Contains(FitFunctionScript script)
@@ -83,9 +94,9 @@ namespace Altaxo.Scripting
 
 		#region ICollection Members
 
-		public void CopyTo(Array array, int index)
+		public void CopyTo(FitFunctionScript[] array, int index)
 		{
-			_InnerList.Keys.CopyTo(array, index);
+			_InnerList.CopyTo(array, index);
 		}
 
 		public int Count
@@ -95,12 +106,14 @@ namespace Altaxo.Scripting
 
 		public bool IsSynchronized
 		{
-			get { return _InnerList.IsSynchronized; }
+			get { return false; }
 		}
+
+		private object _syncRoot = new object();
 
 		public object SyncRoot
 		{
-			get { return _InnerList.SyncRoot; }
+			get { return _syncRoot; }
 		}
 
 		#endregion ICollection Members
@@ -109,7 +122,27 @@ namespace Altaxo.Scripting
 
 		public IEnumerator GetEnumerator()
 		{
-			return _InnerList.Keys.GetEnumerator();
+			return _InnerList.GetEnumerator();
+		}
+
+		public void Clear()
+		{
+			_InnerList.Clear();
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		bool ICollection<FitFunctionScript>.Remove(FitFunctionScript item)
+		{
+			return _InnerList.Remove(item);
+		}
+
+		IEnumerator<FitFunctionScript> IEnumerable<FitFunctionScript>.GetEnumerator()
+		{
+			return _InnerList.GetEnumerator();
 		}
 
 		#endregion IEnumerable Members

@@ -335,6 +335,11 @@ namespace Altaxo.Main
 		/// </returns>
 		public static DocumentPath GetPath(IDocumentLeafNode node, int maxDepth)
 		{
+			if (null == node)
+				throw new ArgumentNullException("node");
+			if (maxDepth <= 0)
+				throw new ArgumentOutOfRangeException("maxDepth should be > 0");
+
 			DocumentPath path = new DocumentPath();
 
 			int depth = 0;

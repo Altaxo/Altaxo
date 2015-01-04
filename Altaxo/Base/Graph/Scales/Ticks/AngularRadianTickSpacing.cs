@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,8 +32,9 @@ namespace Altaxo.Graph.Scales.Ticks
 	public class AngularRadianTickSpacing : AngularTickSpacing
 	{
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRadianTickSpacing), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -48,7 +51,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			protected virtual void OnAfterDeserialization(AngularRadianTickSpacing s)
 			{
-
 			}
 
 			protected virtual AngularRadianTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -58,8 +60,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public AngularRadianTickSpacing()
 		{
@@ -75,10 +77,14 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new AngularRadianTickSpacing(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
+
 		public override bool UseDegree
 		{
 			get { return false; }
 		}
 	}
-
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,9 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
@@ -30,20 +33,20 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// </summary>
 	public class NumericLabelFormattingScientific : NumericLabelFormattingBase
 	{
-		bool _showExponentAlways;
-
+		private bool _showExponentAlways;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingScientific", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.LabelFormatting.NumericLabelFormattingScientific", 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				NumericLabelFormattingScientific s = (NumericLabelFormattingScientific)obj;
 				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				NumericLabelFormattingScientific s = null != o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
@@ -53,7 +56,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -61,6 +64,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
 				info.AddValue("ShowExponentAlways", s._showExponentAlways);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				NumericLabelFormattingScientific s = null != o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
@@ -70,13 +74,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
-
-
+		#endregion Serialization
 
 		public NumericLabelFormattingScientific()
 		{
-
 		}
 
 		public NumericLabelFormattingScientific(NumericLabelFormattingScientific from)
@@ -103,6 +104,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			return new NumericLabelFormattingScientific(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
 
 		/// <summary>Gets or sets a value indicating whether to show the exponent for all numeric values.</summary>
 		/// <value>
@@ -124,7 +129,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		{
 			throw new ApplicationException("Programming error: this function must not be called because the item can not be formatted as a string");
 		}
-
 
 		public string FormatItem(double tick)
 		{
@@ -152,7 +156,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			if (expo != 0 || _showExponentAlways)
 			{
-
 				firstpart = mant.ToString();
 				exponent = expo.ToString();
 
@@ -172,7 +175,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				middelpart = string.Empty;
 				exponent = string.Empty;
 			}
-
 		}
 
 		public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
@@ -259,7 +261,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				firstp = NumericLabelFormattingAuto.FormatItems(mants);
 			}
 
-
 			for (int i = 0; i < items.Length; ++i)
 			{
 				string mid = string.Empty;
@@ -274,7 +275,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 
 			return litems;
-
 		}
 
 		protected new class MeasuredLabelItem : IMeasuredLabelItem
@@ -304,7 +304,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				_size2 = g.MeasureString(_exponent, _font2.ToGdi(), new PointF(_size1.Width, 0), strfmt);
 				_size3 = g.MeasureString(_lastpart, _font1.ToGdi(), new PointF(0, 0), strfmt);
 				_rightPadding = maxexposize - _size2.Width;
-
 			}
 
 			public virtual SizeF Size
@@ -328,8 +327,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				g.DrawString(_lastpart, _font1.ToGdi(), brush, point, _strfmt);
 			}
 
-			#endregion
-
+			#endregion IMeasuredLabelItem Members
 		}
 	}
 }

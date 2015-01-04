@@ -26,6 +26,7 @@ using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Scales
 {
@@ -152,6 +153,14 @@ namespace Altaxo.Graph.Scales
 		public override object Clone()
 		{
 			return new InverseScale(this);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataBounds)
+				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+			if (null != _rescaling)
+				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
 		}
 
 		/// <summary>

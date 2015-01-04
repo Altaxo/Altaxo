@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
+#endregion Copyright
 
 using Altaxo.Data;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
 	/// <summary>
@@ -31,12 +34,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// </summary>
 	public class FreeLabelFormatting : MultiLineLabelFormattingBase
 	{
-		string _formatString = "{0}";
+		private string _formatString = "{0}";
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FreeLabelFormatting), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -44,6 +47,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				info.AddBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase));
 				info.AddValue("FormatString", s._formatString);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				FreeLabelFormatting s = (FreeLabelFormatting)o ?? new FreeLabelFormatting();
@@ -53,7 +57,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public FreeLabelFormatting()
 		{
@@ -63,7 +67,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			: base(from) // everything is done here, since CopyFrom is virtual
 		{
 		}
-
 
 		public override bool CopyFrom(object obj)
 		{
@@ -79,10 +82,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			return isCopied;
 		}
 
-
 		public override object Clone()
 		{
 			return new FreeLabelFormatting(this);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
 		}
 
 		public string FormatString
@@ -97,10 +104,8 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-
 		protected override string FormatItem(AltaxoVariant item)
 		{
-
 			if (!string.IsNullOrEmpty(_formatString))
 			{
 				try
@@ -113,7 +118,5 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 			return item.ToString();
 		}
-
-
 	}
 }

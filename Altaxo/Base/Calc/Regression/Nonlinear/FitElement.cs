@@ -629,7 +629,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			{
 				for (int i = 0; i < _independentVariables.Length; ++i)
 				{
-					yield return new Main.DocumentNodeAndName(_independentVariables[i], "IndependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					if (null != _independentVariables[i])
+						yield return new Main.DocumentNodeAndName(_independentVariables[i], "IndependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				}
 			}
 
@@ -637,7 +638,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			{
 				for (int i = 0; i < _dependentVariables.Length; ++i)
 				{
-					yield return new Main.DocumentNodeAndName(_dependentVariables[i], "DependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					if (null != _dependentVariables[i])
+						yield return new Main.DocumentNodeAndName(_dependentVariables[i], "DependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				}
 			}
 		}

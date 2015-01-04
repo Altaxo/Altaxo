@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,35 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc;
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Calc;
-using Altaxo.Data;
-
 namespace Altaxo.Graph.Scales.Ticks
 {
 	public class TextTickSpacing : TickSpacing
 	{
-		List<AltaxoVariant> _majorTicks;
-		List<AltaxoVariant> _minorTicks;
-		List<AltaxoVariant> _majorTextTicks;
-
+		private List<AltaxoVariant> _majorTicks;
+		private List<AltaxoVariant> _minorTicks;
+		private List<AltaxoVariant> _majorTextTicks;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextTickSpacing), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				TextTickSpacing s = (TextTickSpacing)obj;
-
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -55,15 +53,14 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 
-
 			protected virtual TextTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				TextTickSpacing s = null != o ? (TextTickSpacing)o : new TextTickSpacing();
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public TextTickSpacing()
 		{
@@ -76,7 +73,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			: base(from)// everything is done here, since CopyFrom is virtual!
 		{
 		}
-
 
 		public override bool CopyFrom(object obj)
 		{
@@ -99,6 +95,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new TextTickSpacing(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
+
 		public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
 		{
 			return false;
@@ -113,7 +114,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			// make major ticks at integral numbers and minor ticks at halfway
 			double dorg = (double)org;
 			double dend = (double)end;
-
 
 			if (!(dorg < dend))
 				return;
@@ -131,9 +131,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			double minorSpan = majorSpan / 2;
 
-			double firstmajor = Math.Floor(dorg / majorSpan) -1; // -1 for safety and for minor
+			double firstmajor = Math.Floor(dorg / majorSpan) - 1; // -1 for safety and for minor
 			double lastmajor = Math.Ceiling(dend / majorSpan) + 1; // +1 for safety
-
 
 			for (double maj = firstmajor; maj <= lastmajor; maj += 1)
 			{
@@ -143,8 +142,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				if (majortick.IsInIntervalCC(dorg, dend))
 				{
 					_majorTicks.Add(majortick);
-					int item = (int)(majortick-1);
-					if(textBounds!=null && item>=0 && item<textBounds.NumberOfItems)
+					int item = (int)(majortick - 1);
+					if (textBounds != null && item >= 0 && item < textBounds.NumberOfItems)
 						_majorTextTicks.Add(textBounds.GetItem(item));
 					else
 						_majorTextTicks.Add(majortick);
@@ -154,7 +153,6 @@ namespace Altaxo.Graph.Scales.Ticks
 					_minorTicks.Add(minortick);
 				}
 			}
-
 		}
 
 		public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
@@ -175,9 +173,5 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			return result;
 		}
-
-		
-
-	
 	}
 }

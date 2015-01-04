@@ -155,6 +155,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return copied;
 		}
 
+		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataColumnProxy)
+				yield return new DocumentNodeAndName(_dataColumnProxy, "Data");
+			if (null != _scale)
+				yield return new DocumentNodeAndName(_scale, "Scale");
+		}
+
 		#region Changed event handling
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)

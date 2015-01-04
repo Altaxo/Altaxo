@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
+#endregion Copyright
 
 using Altaxo.Data;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
 	/// <summary>
@@ -33,19 +36,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	{
 		public enum TimeConversion { Original, ToUtc, ToLocal };
 
-		string _formatString = "{0:T}";
-		string _formatStringAlternate = "{0:T}\r\n{0:d}";
+		private string _formatString = "{0:T}";
+		private string _formatStringAlternate = "{0:T}\r\n{0:d}";
 
-		bool _showAlternateFormattingAtMidnight=true;
-		bool _showAlternateFormattingAtNoon;
+		private bool _showAlternateFormattingAtMidnight = true;
+		private bool _showAlternateFormattingAtNoon;
 
-		TimeConversion _timeConversion = TimeConversion.Original;
-
+		private TimeConversion _timeConversion = TimeConversion.Original;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeLabelFormatting), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -58,6 +60,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				info.AddValue("ShowAlternateFormattingAtNoon", s._showAlternateFormattingAtNoon);
 				info.AddValue("FormatStringAlternate", s._formatStringAlternate);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				DateTimeLabelFormatting s = (DateTimeLabelFormatting)o ?? new DateTimeLabelFormatting();
@@ -73,7 +76,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public DateTimeLabelFormatting()
 		{
@@ -83,7 +86,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			: base(from) // everything is done here, since CopyFrom is virtual
 		{
 		}
-
 
 		public override bool CopyFrom(object obj)
 		{
@@ -108,40 +110,44 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			return new DateTimeLabelFormatting(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
+
 		protected override string FormatItem(AltaxoVariant item)
 		{
-			
-				if (item.IsType(AltaxoVariant.Content.VDateTime) && !string.IsNullOrEmpty(_formatString))
+			if (item.IsType(AltaxoVariant.Content.VDateTime) && !string.IsNullOrEmpty(_formatString))
+			{
+				var dt = item.ToDateTime();
+
+				switch (_timeConversion)
 				{
-					var dt = item.ToDateTime();
+					case TimeConversion.ToLocal:
+						dt = dt.ToLocalTime();
+						break;
 
-					switch (_timeConversion)
-					{
-						case TimeConversion.ToLocal:
-							dt = dt.ToLocalTime();
-							break;
-						case TimeConversion.ToUtc:
-							dt = dt.ToUniversalTime();
-							break;
-					}
-
-					bool showAlternate = false;
-					showAlternate |= (_showAlternateFormattingAtMidnight && Math.Abs(dt.TimeOfDay.TotalSeconds) < 1);
-					showAlternate |= (_showAlternateFormattingAtNoon && Math.Abs((dt.TimeOfDay - TimeSpan.FromHours(12)).TotalSeconds) < 1);
-
-					try
-					{
-						return string.Format(showAlternate ? _formatStringAlternate : _formatString, dt);
-					}
-					catch(Exception)
-					{
-					}
+					case TimeConversion.ToUtc:
+						dt = dt.ToUniversalTime();
+						break;
 				}
-				return item.ToString();
+
+				bool showAlternate = false;
+				showAlternate |= (_showAlternateFormattingAtMidnight && Math.Abs(dt.TimeOfDay.TotalSeconds) < 1);
+				showAlternate |= (_showAlternateFormattingAtNoon && Math.Abs((dt.TimeOfDay - TimeSpan.FromHours(12)).TotalSeconds) < 1);
+
+				try
+				{
+					return string.Format(showAlternate ? _formatStringAlternate : _formatString, dt);
+				}
+				catch (Exception)
+				{
+				}
+			}
+			return item.ToString();
 		}
 
 		#region Properties
-
 
 		public string FormattingString
 		{
@@ -203,8 +209,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-
-		#endregion
-
+		#endregion Properties
 	}
 }

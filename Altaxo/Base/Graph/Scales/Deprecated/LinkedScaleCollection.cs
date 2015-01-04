@@ -26,6 +26,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -124,6 +125,18 @@ namespace Altaxo.Graph.Scales.Deprecated
 		public LinkedScaleCollection Clone()
 		{
 			return new LinkedScaleCollection(this);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _linkedScales)
+			{
+				for (int i = 0; i < _linkedScales.Length; ++i)
+				{
+					if (null != _linkedScales[i])
+						yield return new Main.DocumentNodeAndName(_linkedScales[i], "LinkedScale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
+			}
 		}
 
 		public LinkedScale X

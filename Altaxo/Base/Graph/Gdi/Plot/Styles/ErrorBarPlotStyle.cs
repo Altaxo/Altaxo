@@ -130,9 +130,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
 				s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError", s);
+				if (null != s._positiveErrorColumn) s._positiveErrorColumn.ParentObject = s;
+
 				s._negativeErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("NegativeError", s);
+				if (null != s._negativeErrorColumn) s._negativeErrorColumn.ParentObject = s;
 
 				s._independentColor = info.GetBoolean("IndependentColor");
+
 				s.Pen = (PenX)info.GetValue("Pen", s);
 
 				s._isHorizontalStyle = (0 == info.GetInt32("Axis"));
@@ -190,6 +194,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return true;
 			}
 			return false;
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _strokePen)
+				yield return new Main.DocumentNodeAndName(_strokePen, "Pen");
+
+			if (null != _positiveErrorColumn)
+				yield return new Main.DocumentNodeAndName(_positiveErrorColumn, "PositiveErrorColumn");
+
+			if (null != _negativeErrorColumn)
+				yield return new Main.DocumentNodeAndName(_negativeErrorColumn, "NegativeErrorColumn");
 		}
 
 		public ErrorBarPlotStyle Clone()

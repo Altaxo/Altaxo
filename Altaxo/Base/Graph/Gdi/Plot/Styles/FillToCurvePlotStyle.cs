@@ -125,6 +125,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return false;
 		}
 
+		protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _fillBrush)
+				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
+			if (null != _framePen)
+				yield return new Main.DocumentNodeAndName(_framePen, "Pen");
+		}
+
 		#endregion Constructor
 
 		#region Serialization

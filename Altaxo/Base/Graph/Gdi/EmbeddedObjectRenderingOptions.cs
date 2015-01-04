@@ -181,6 +181,12 @@ namespace Altaxo.Graph.Gdi
 			return new EmbeddedObjectRenderingOptions(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _backgroundBrush)
+				yield return new Main.DocumentNodeAndName(_backgroundBrush, "BackgroundBrush");
+		}
+
 		#endregion Construction
 
 		#region Property management

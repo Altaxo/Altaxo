@@ -243,6 +243,23 @@ namespace Altaxo.Main.Commands
 						Current.Console.WriteLine("Error re-opening file {0}", filename);
 					}
 
+#if DEBUG && TRACEDOCUMENTNODES
+
+					GC.Collect();
+					System.Threading.Thread.Sleep(500);
+					bool areThereAnyProblems = false;
+					areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
+					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportChildListProblems();
+					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
+
+					if (areThereAnyProblems)
+					{
+						Current.Console.WriteLine("Above listed problems were detected after saving and reopening project {0}", filename);
+						Current.Console.WriteLine();
+					}
+
+#endif
+
 					// Close the project now
 					try
 					{

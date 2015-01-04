@@ -140,6 +140,14 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 		#endregion ICloneable Members
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataBounds)
+				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+			if (null != _rescaling)
+				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+		}
+
 		protected void InternalSetDataBounds(FiniteDateTimeBoundaries bounds)
 		{
 			if (this._dataBounds != null)

@@ -170,6 +170,9 @@ namespace Altaxo
 			// third, we save all TableLayouts into the TableLayouts subdirectory
 			foreach (Altaxo.Worksheet.WorksheetLayout layout in this._tableLayouts)
 			{
+				if (layout.DataTable == null)
+					continue; // dont save orphaned layouts
+
 				try
 				{
 					zippedStream.StartFile("TableLayouts/" + layout.Name + ".xml", compressionLevel);

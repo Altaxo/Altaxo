@@ -385,6 +385,21 @@ namespace Altaxo.Graph.Plot.Data
 			this.SetVBoundsFromTemplate(new FiniteNumericalBoundaries());
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _matrixProxy)
+				yield return new Main.DocumentNodeAndName(_matrixProxy, "Matrix");
+
+			if (null != _xBoundaries)
+				yield return new Main.DocumentNodeAndName(_xBoundaries, "XBoundaries");
+
+			if (null != _yBoundaries)
+				yield return new Main.DocumentNodeAndName(_yBoundaries, "YBoundaries");
+
+			if (null != _vBoundaries)
+				yield return new Main.DocumentNodeAndName(_vBoundaries, "VBoundaries");
+		}
+
 		/// <summary>
 		/// Creates a cloned copy of this object.
 		/// </summary>

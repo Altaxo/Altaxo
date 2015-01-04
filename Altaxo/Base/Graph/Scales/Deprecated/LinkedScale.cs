@@ -34,7 +34,7 @@ using System.Reflection;
 namespace Altaxo.Graph.Scales.Deprecated
 {
 	[Serializable]
-	public class LinkedScale
+	public class LinkedScale : Main.SuspendableDocumentNodeWithSetOfEventArgs
 	{
 		/// <summary>
 		/// The axis.
@@ -134,6 +134,12 @@ namespace Altaxo.Graph.Scales.Deprecated
 			LinkedScale result = new LinkedScale();
 			result.CopyFrom(this);
 			return result;
+		}
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _scale)
+				yield return new Main.DocumentNodeAndName(_scale, "Scale");
 		}
 
 		/// <summary>The type of x axis link.</summary>

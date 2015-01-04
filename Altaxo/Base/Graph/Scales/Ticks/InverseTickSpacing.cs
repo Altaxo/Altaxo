@@ -248,6 +248,19 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new InverseTickSpacing(this);
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _suppressedMajorTicks)
+				yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
+			if (null != _suppressedMinorTicks)
+				yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
+
+			if (null != _additionalMajorTicks)
+				yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
+			if (null != _additionalMinorTicks)
+				yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))

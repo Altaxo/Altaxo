@@ -65,6 +65,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				var s = (o == null ? new FourierTransformation2DDataSource() : (FourierTransformation2DDataSource)o);
 
 				s._inputData = (DataTableMatrixProxy)info.GetValue("InputData", s);
+				if (null != s._inputData) s._inputData.ParentObject = s;
+
 				s._transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", s);
 				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
 
@@ -158,6 +160,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				}
 			}
 			return false;
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _inputData)
+				yield return new Main.DocumentNodeAndName(_inputData, "Data");
 		}
 
 		/// <summary>

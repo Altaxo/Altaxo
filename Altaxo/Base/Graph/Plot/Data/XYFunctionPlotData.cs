@@ -98,6 +98,12 @@ namespace Altaxo.Graph.Plot.Data
 				this.Function = from._function;
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _function && Function is Main.IDocumentLeafNode)
+				yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_function, "Function");
+		}
+
 		public override string ToString()
 		{
 			if (_function != null)

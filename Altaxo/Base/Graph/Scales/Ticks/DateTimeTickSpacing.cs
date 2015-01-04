@@ -471,10 +471,10 @@ namespace Altaxo.Graph.Scales.Ticks
 		{
 			_majorTicks = new List<AltaxoVariant>();
 			_minorTicks = new List<AltaxoVariant>();
-			_suppressedMajorTicks = new SuppressedTicks();
-			_suppressedMinorTicks = new SuppressedTicks();
-			_additionalMajorTicks = new AdditionalTicks();
-			_additionalMinorTicks = new AdditionalTicks();
+			_suppressedMajorTicks = new SuppressedTicks() { ParentObject = this };
+			_suppressedMinorTicks = new SuppressedTicks() { ParentObject = this };
+			_additionalMajorTicks = new AdditionalTicks() { ParentObject = this };
+			_additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
 		}
 
 		public DateTimeTickSpacing(DateTimeTickSpacing from)
@@ -505,15 +505,34 @@ namespace Altaxo.Graph.Scales.Ticks
 					_snapEndToTick = from._snapEndToTick;
 
 					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
+					_suppressedMajorTicks.ParentObject = this;
+
 					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
+					_suppressedMinorTicks.ParentObject = this;
+
 					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
+					_additionalMajorTicks.ParentObject = this;
+
 					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
+					_additionalMinorTicks.ParentObject = this;
 
 					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
 					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
 				}
 			}
 			return isCopied;
+		}
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _suppressedMajorTicks)
+				yield return new Main.DocumentNodeAndName(_suppressedMajorTicks, "SuppressedMajorTicks");
+			if (null != _suppressedMinorTicks)
+				yield return new Main.DocumentNodeAndName(_suppressedMinorTicks, "SuppressedMinorTicks");
+			if (null != _additionalMajorTicks)
+				yield return new Main.DocumentNodeAndName(_additionalMajorTicks, "AdditionalMajorTicks");
+			if (null != _additionalMinorTicks)
+				yield return new Main.DocumentNodeAndName(_additionalMinorTicks, "AdditionalMinorTicks");
 		}
 
 		public override object Clone()

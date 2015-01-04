@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,9 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -29,20 +32,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// </summary>
 	public class NumericLabelFormattingMantissa : NumericLabelFormattingBase
 	{
-
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingMantissa", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingMantissa), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				NumericLabelFormattingMantissa s = (NumericLabelFormattingMantissa)obj;
 				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				NumericLabelFormattingMantissa s = null != o ? (NumericLabelFormattingMantissa)o : new NumericLabelFormattingMantissa();
@@ -51,7 +52,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public NumericLabelFormattingMantissa()
 		{
@@ -62,10 +63,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		{
 		}
 
-
 		public override object Clone()
 		{
 			return new NumericLabelFormattingMantissa();
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
 		}
 
 		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
@@ -76,7 +81,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				return item.ToString();
 		}
 
-
 		public string FormatItem(double tick)
 		{
 			string result = string.Format("{0:E0}", tick);
@@ -85,7 +89,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				return result.Substring(0, pos);
 			else
 				return result;
-
 		}
 	}
 }

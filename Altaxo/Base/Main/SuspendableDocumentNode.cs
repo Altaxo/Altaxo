@@ -326,11 +326,14 @@ namespace Altaxo.Main
 			}
 		}
 
-		protected virtual IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		protected abstract IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName();
+
+		/*
 		{
 			// throw new InvalidProgramException(string.Format("Type {0} should have implemented method GetDocumentNodeChildrenWithName(). Please report this error to the forum.", this.GetType().FullName));
 			yield break;
 		}
+		*/
 
 		public virtual IDocumentLeafNode GetChildObjectNamed(string name)
 		{
@@ -602,8 +605,11 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-		public static void ReportChildListProblems()
+		public static bool ReportChildListProblems()
 		{
+			bool areThereAnyProblems = false;
+			GC.Collect();
+
 			var childListErrors = new SortedSet<string>();
 
 			foreach (var node in AllDocumentNodes)
@@ -617,21 +623,31 @@ namespace Altaxo.Main
 				if (tuple.DocumentNode == null)
 				{
 					childListErrors.Add(string.Format("Parent of type {0} did not list child node of type {1}", parent.GetType().FullName, node.GetType().FullName));
+					areThereAnyProblems = true;
 				}
 				else
 				{
 					var nameOfNode1 = tuple.Name;
-					if (string.IsNullOrEmpty(nameOfNode1))
+					if (null == nameOfNode1)
+					{
 						Current.Console.WriteLine("Parent (Type: {0} lists child node (Type: {1}, but without a name", parent.GetType().FullName, node.GetType().FullName);
+						areThereAnyProblems = true;
+					}
 
 					var nameOfNode2 = parent.GetNameOfChildObject(node);
 					if (nameOfNode2 != nameOfNode1)
+					{
 						Current.Console.WriteLine("Parent (Type: {0} has child node (Type: {1}, Name: {2]), but GetNameOfChildObject returns a different name ({3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nameOfNode2);
+						areThereAnyProblems = true;
+					}
 
 					var nodeAlt = parent.GetChildObjectNamed(nameOfNode1);
 
 					if (!object.ReferenceEquals(node, nodeAlt))
+					{
 						Current.Console.WriteLine("Parent of type {0} has child node of type {1}, Name: {2}, but GetChildObjectNamed returns a different object (Type: {3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nodeAlt);
+						areThereAnyProblems = true;
+					}
 				}
 			}
 
@@ -639,10 +655,13 @@ namespace Altaxo.Main
 			{
 				Current.Console.WriteLine(error);
 			}
+
+			return areThereAnyProblems;
 		}
 
-		public static void ReportWrongChildParentRelations()
+		public static bool ReportWrongChildParentRelations()
 		{
+			bool areThereAnyProblems = false;
 			GC.Collect();
 
 			var hashOfAllNodes = new HashSet<IDocumentLeafNode>(_allDocumentNodes.Where(x => x.IsAlive).Select(x => (IDocumentLeafNode)x.Target));
@@ -656,7 +675,10 @@ namespace Altaxo.Main
 					var child = entry.DocumentNode;
 
 					if (!object.ReferenceEquals(child.ParentObject, parentNode))
-						errors.Add(string.Format("Parent of type {0} has child node of type {1} whose ParentObject (type {2}) is not identical with the Parent", parentNode.GetType().FullName, child.GetType().FullName, child.ParentObject == null ? null : child.ParentObject.GetType().FullName));
+					{
+						errors.Add(string.Format("Parent of type {0} has child node of type {1} whose ParentObject (type {2}) is not identical with the Parent", parentNode.GetType().FullName, child.GetType().FullName, child.ParentObject == null ? "<<NULL>>" : child.ParentObject.GetType().FullName));
+						areThereAnyProblems = true;
+					}
 				}
 			}
 
@@ -664,189 +686,26 @@ namespace Altaxo.Main
 			{
 				Current.Console.WriteLine(error);
 			}
+
+			return areThereAnyProblems;
 		}
 
 #else
 
-			public void ReportChildListProblems()
+			public bool ReportChildListProblems()
 		{
 					Current.Console.WriteLine("ReportChildListProblems: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+					return false;
+		}
+
+			public static bool ReportWrongChildParentRelations()
+		{
+					Current.Console.WriteLine("ReportWrongChildParentRelations: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+					return false;
 		}
 
 #endif
 
 		#endregion Diagnostic support
-	}
-
-	/// <summary>
-	/// Base class for a suspendable document node. This class stores a single object to accumulate event data.
-	/// This class supports document nodes that have children,
-	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
-	/// </summary>
-	/// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
-	public abstract class SuspendableDocumentNodeWithSingleAccumulatedData<T> : SuspendableDocumentNode where T : EventArgs
-	{
-		/// <summary>
-		/// Holds the accumulated change data.
-		/// </summary>
-		[NonSerialized]
-		protected T _accumulatedEventData;
-
-		/// <summary>
-		/// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg" />.
-		/// The return value is false if there is more than one event arg accumulated. In this case the <paramref name="singleEventArg" /> is <c>null</c> on return, and the calling function should use <see cref="AccumulatedEventData" /> to
-		/// enumerate all accumulated event args.
-		/// </summary>
-		/// <param name="singleEventArg">The <see cref="EventArgs" /> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
-		/// <returns>
-		/// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
-		/// </returns>
-		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
-		{
-			singleEventArg = _accumulatedEventData;
-			return true;
-		}
-
-		/// <summary>
-		/// Gets the accumulated event data.
-		/// </summary>
-		/// <value>
-		/// The accumulated event data.
-		/// </value>
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
-			}
-		}
-
-		/// <summary>
-		/// Clears the accumulated event data.
-		/// </summary>
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
-
-		/// <summary>
-		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification (currently unused).</param>
-		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
-		/// <exception cref="System.ArgumentNullException">Argument e is null</exception>
-		/// <exception cref="System.ArgumentException"></exception>
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			if (null == e)
-				throw new ArgumentNullException("Argument e is null");
-			if (!(e is T))
-				throw new ArgumentException(string.Format("Argument e has the wrong type. Type expected: {0}, actual type of e: {1}", typeof(T), e.GetType()));
-
-			if (null == _accumulatedEventData)
-			{
-				_accumulatedEventData = (T)e;
-			}
-			else // there is already an event arg present
-			{
-				var aedAsSelf = _accumulatedEventData as SelfAccumulateableEventArgs;
-				if (null != aedAsSelf && aedAsSelf.Equals(e)) // Equals is here (mis)used to ensure compatibility between the two event args
-				{
-					aedAsSelf.Add((SelfAccumulateableEventArgs)e);
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Implements a <see cref="SuspendableDocumentLeafNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
-	/// </summary>
-	public class SuspendableDocumentNodeWithEventArgs : SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
-	{
-		/// <summary>
-		/// Calls EhSelfChanged with EventArgs.Empty
-		/// </summary>
-		public virtual void EhSelfChanged()
-		{
-			EhSelfChanged(EventArgs.Empty);
-		}
-	}
-
-	/// <summary>
-	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a special set <see cref="ISetOfEventData"/>.
-	/// This set takes into account that <see cref="SelfAccumulateableEventArgs"/> can be accumulated. By overriding <see cref="GetHashCode"/> and <see cref="Equals"/> you can control whether only one instance or
-	/// multiple instances can be stored in the set.
-	/// This class supports document nodes that have children,
-	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
-	/// </summary>
-	public abstract class SuspendableDocumentNodeWithSetOfEventArgs : SuspendableDocumentNode
-	{
-		private static EventArgs[] _emptyData = new EventArgs[0];
-
-		/// <summary>
-		/// The accumulated event data.
-		/// </summary>
-		[NonSerialized]
-		protected ISetOfEventData _accumulatedEventData = new SetOfEventData();
-
-		/// <summary>
-		/// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg" />.
-		/// The return value is false if there is more than one event arg accumulated. In this case the <paramref name="singleEventArg" /> is <c>null</c> on return, and the calling function should use <see cref="AccumulatedEventData" /> to
-		/// enumerate all accumulated event args.
-		/// </summary>
-		/// <param name="singleEventArg">The <see cref="EventArgs" /> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
-		/// <returns>
-		/// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
-		/// </returns>
-		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
-		{
-			var count = _accumulatedEventData.Count;
-			switch (count)
-			{
-				case 0:
-					singleEventArg = null;
-					return true;
-
-				case 1:
-					singleEventArg = _accumulatedEventData.First();
-					return true;
-
-				default:
-					singleEventArg = null;
-					return false;
-			}
-		}
-
-		/// <summary>
-		/// Gets the accumulated event data.
-		/// </summary>
-		/// <value>
-		/// The accumulated event data.
-		/// </value>
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					return _accumulatedEventData;
-				else
-					return _emptyData;
-			}
-		}
-
-		/// <summary>
-		/// Clears the accumulated event data.
-		/// </summary>
-		protected override void AccumulatedEventData_Clear()
-		{
-			if (null != _accumulatedEventData)
-				_accumulatedEventData.Clear();
-		}
-
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			_accumulatedEventData.SetOrAccumulate(e);
-		}
 	}
 }

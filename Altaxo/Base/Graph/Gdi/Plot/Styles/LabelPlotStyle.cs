@@ -27,6 +27,7 @@ using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -386,7 +387,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
 				s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
 				s._backgroundColorLinkage = (ColorLinkage)info.GetEnum("BackgroundColorLinkage", typeof(ColorLinkage));
+
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+				if (null != s._backgroundStyle) s._backgroundStyle.ParentObject = s;
+
 				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 
 				if (nativeCall)
@@ -473,6 +477,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
 			this._attachedPlane = null;
 			this.LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _brush)
+				yield return new Main.DocumentNodeAndName(_brush, "Brush");
+
+			if (null != _backgroundStyle)
+				yield return new Main.DocumentNodeAndName(_backgroundStyle, "Background");
+
+			if (null != _labelColumnProxy)
+				yield return new Main.DocumentNodeAndName(_labelColumnProxy, "LabelColumn");
 		}
 
 		private void EhLabelColumnProxyChanged(object sender, EventArgs e)

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public class TableDataSourceBase :
+	public abstract class TableDataSourceBase :
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
 	{
 		public bool IsDisposed { get; protected set; }

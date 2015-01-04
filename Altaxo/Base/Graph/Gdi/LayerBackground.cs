@@ -57,6 +57,12 @@ namespace Altaxo.Graph.Gdi
 			this._bottomPadding = from._bottomPadding;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _background)
+				yield return new Main.DocumentNodeAndName(_background, "Background");
+		}
+
 		#region Serialization
 
 		#region Version 0

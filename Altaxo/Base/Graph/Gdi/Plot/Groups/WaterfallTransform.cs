@@ -460,9 +460,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 		#endregion ICloneable Members
 
-		#region ICoordinateTransformingGroupStyle Members
 
-		#endregion ICoordinateTransformingGroupStyle Members
 
 		#region Inner Classes - TransformedLayerWrapper
 
@@ -590,6 +588,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				public override object Clone()
 				{
 					throw new NotImplementedException();
+				}
+
+				protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+				{
+					yield break; // we do not own the _originalScale (is this OK?)
 				}
 
 				public override object RescalingObject

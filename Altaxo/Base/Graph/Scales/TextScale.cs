@@ -136,6 +136,14 @@ namespace Altaxo.Graph.Scales
 			_cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataBounds)
+				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+			if (null != _rescaling)
+				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+		}
+
 		public override object Clone()
 		{
 			TextScale result = new TextScale();

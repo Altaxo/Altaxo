@@ -389,10 +389,11 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-		public static void ReportNotConnectedDocumentNodes()
+		public static bool ReportNotConnectedDocumentNodes()
 		{
 			int numberOfNodes = 0;
 			int numberOfNotConnectedNodes = 0;
+			GC.Collect();
 
 			var msgDict = new SortedDictionary<string, int>(); // Key is the message, value the number of nodes
 
@@ -425,13 +426,15 @@ namespace Altaxo.Main
 			}
 
 			Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
+			return 0 != numberOfNotConnectedNodes;
 		}
 
 #else
 
-		public static void ReportNotConnectedDocumentNodes()
+		public static bool ReportNotConnectedDocumentNodes()
 		{
 			Current.Console.WriteLine("ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+			return false;
 		}
 
 #endif

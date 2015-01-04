@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,9 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -34,15 +37,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingAuto", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingAuto), 1)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
 
 				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingBase));
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				NumericLabelFormattingAuto s = null != o ? (NumericLabelFormattingAuto)o : new NumericLabelFormattingAuto();
@@ -52,22 +55,25 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public NumericLabelFormattingAuto()
 		{
 		}
+
 		public NumericLabelFormattingAuto(NumericLabelFormattingAuto from)
 			: base(from) // everything is done here, since CopyFrom is virtual
 		{
 		}
 
-	
-
-
 		public override object Clone()
 		{
 			return new NumericLabelFormattingAuto(this);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
 		}
 
 		protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
@@ -79,7 +85,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		{
 			try
 			{
-
 				double[] ditems = new double[items.Length];
 				for (int i = 0; i < items.Length; i++)
 					ditems[i] = (double)items[i];
@@ -94,13 +99,10 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			for (int i = 0; i < items.Length; i++)
 				sitems[i] = items[i].ToString();
 			return sitems;
-
 		}
-
 
 		public static string[] FormatItems(double[] majorticks)
 		{
-
 			// print the major ticks
 			bool[] bExponentialForm = new Boolean[majorticks.Length];
 			// determine the number of trailing decimal digits
@@ -141,7 +143,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 						maxexponentialdigits = digits;
 				}
 			}
-
 
 			// now format the lables
 			string exponentialformat = string.Format("E{0}", maxexponentialdigits - 1);

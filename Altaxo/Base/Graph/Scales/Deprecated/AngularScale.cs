@@ -136,6 +136,12 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataBounds)
+				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+		}
+
 		private void SetCachedValues()
 		{
 			_scaleOrigin %= 4;

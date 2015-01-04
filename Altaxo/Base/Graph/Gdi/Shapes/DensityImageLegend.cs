@@ -193,6 +193,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return isCopied;
 		}
 
+		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
+		{
+			if (null != _axisStyles)
+				yield return new Main.DocumentNodeAndName(_axisStyles, "AxisStyles");
+
+			if (null != _cachedArea)
+				yield return new Main.DocumentNodeAndName(_cachedArea, "LegendArea");
+
+			if (null != _plotItemProxy)
+				yield return new Main.DocumentNodeAndName(_plotItemProxy, "PlotItem");
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
+		}
+
 		public override object Clone()
 		{
 			return new DensityImageLegend(this);
@@ -501,6 +518,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				this._coordinateSystem = (CS.G2DCartesicCoordinateSystem)from._coordinateSystem.Clone();
 				this._coordinateSystem.ParentObject = this;
+			}
+
+			protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+			{
+				if (null != _scales)
+					yield return new Main.DocumentNodeAndName(_scales, "Scales");
+
+				if (null != _coordinateSystem)
+					yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
 			}
 
 			#region IPlotArea Members

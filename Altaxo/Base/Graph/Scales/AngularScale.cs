@@ -98,6 +98,14 @@ namespace Altaxo.Graph.Scales
 			this._rescaling.ParentObject = this;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataBounds)
+				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+			if (null != _rescaling)
+				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+		}
+
 		private void SetCachedValues()
 		{
 			double scaleOrigin = _rescaling.ScaleOrigin % 360;

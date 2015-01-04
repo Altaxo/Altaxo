@@ -261,7 +261,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
 				if (s._suppressedLabels == null)
-					s._suppressedLabels = new SuppressedTicks();
+					s._suppressedLabels = new SuppressedTicks() { ParentObject = s };
 
 				s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
 				s._labelFormatting.ParentObject = s;

@@ -288,6 +288,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return hasCopied;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _colorProvider)
+				yield return new Main.DocumentNodeAndName(_colorProvider, "ColorProvider");
+
+			if (null != _scale)
+				yield return new Main.DocumentNodeAndName(_scale, "Scale");
+		}
+
 		public object Clone()
 		{
 			return new DensityImagePlotStyle(this);

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,28 +30,27 @@ using System.Text;
 namespace Altaxo.Graph.Scales.Ticks
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	public class SpanTickSpacing : Altaxo.Graph.Scales.Ticks.TickSpacing
 	{
 		/// <summary>Relative tick position (0 at org, 1 at end).</summary>
-		double _relTickPosition;
+		private double _relTickPosition;
 
 		/// <summary>If true, it shows the ratio of end to org. If false, it shows the difference of end and org.</summary>
-		bool _showRatioEndOrg;
+		private bool _showRatioEndOrg;
 
-		double _transformationDivider = 1;
-		bool _transformationOperationIsMultiply;
+		private double _transformationDivider = 1;
+		private bool _transformationOperationIsMultiply;
 
-
-		Altaxo.Data.AltaxoVariant _org;
-		Altaxo.Data.AltaxoVariant _end;
-		Data.AltaxoVariant _span;
+		private Altaxo.Data.AltaxoVariant _org;
+		private Altaxo.Data.AltaxoVariant _end;
+		private Data.AltaxoVariant _span;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpanTickSpacing), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -67,7 +68,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 
-
 			protected virtual SpanTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = null != o ? (SpanTickSpacing)o : new SpanTickSpacing();
@@ -81,14 +81,13 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public SpanTickSpacing()
 		{
 			_relTickPosition = 0.5;
 		}
-
 
 		public SpanTickSpacing(SpanTickSpacing from)
 			: base(from) // everything is done here, since CopyFrom is virtual!
@@ -112,10 +111,14 @@ namespace Altaxo.Graph.Scales.Ticks
 			return isCopied;
 		}
 
-
 		public override object Clone()
 		{
 			return new SpanTickSpacing(this);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
 		}
 
 		public double RelativeTickPosition
@@ -141,7 +144,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				_showRatioEndOrg = value;
 			}
 		}
-
 
 		public double TransformationDivider
 		{
@@ -176,17 +178,17 @@ namespace Altaxo.Graph.Scales.Ticks
 		private double TransformOriginalToModified(double x)
 		{
 			if (_transformationOperationIsMultiply)
-				return  x * _transformationDivider;
+				return x * _transformationDivider;
 			else
-				return  x / _transformationDivider;
+				return x / _transformationDivider;
 		}
 
 		private double TransformModifiedToOriginal(double y)
 		{
 			if (_transformationOperationIsMultiply)
-				return y  / _transformationDivider;
+				return y / _transformationDivider;
 			else
-				return y  * _transformationDivider;
+				return y * _transformationDivider;
 		}
 
 		public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
@@ -249,5 +251,4 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new Altaxo.Data.AltaxoVariant[] { TransformOriginalToModified(_span) };
 		}
 	}
-
 }

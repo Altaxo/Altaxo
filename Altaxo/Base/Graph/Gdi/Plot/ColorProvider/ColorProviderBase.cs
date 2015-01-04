@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 	/// </summary>
 	public abstract class ColorProviderBase
 		:
-		Main.SuspendableDocumentNodeWithEventArgs,
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		IColorProvider
 	{
 		/// <summary>The color used if the values are below the lower bound.</summary>

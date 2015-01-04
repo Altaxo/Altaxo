@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,28 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
 	public class NumericLabelFormattingRadian : LabelFormattingBase
 	{
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingRadian), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				NumericLabelFormattingRadian s = (NumericLabelFormattingRadian)obj;
 				info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				NumericLabelFormattingRadian s = null != o ? (NumericLabelFormattingRadian)o : new NumericLabelFormattingRadian();
@@ -48,8 +50,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
 
 		public NumericLabelFormattingRadian()
 		{
@@ -101,8 +107,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			return item.ToString();
 		}
 
-
-		void Shorten(ref int nominator, ref int denominator)
+		private void Shorten(ref int nominator, ref int denominator)
 		{
 			if (nominator % 2 == 0 && denominator % 2 == 0)
 			{

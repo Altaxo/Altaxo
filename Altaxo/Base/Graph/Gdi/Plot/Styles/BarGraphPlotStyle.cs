@@ -241,6 +241,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return false;
 		}
 
+		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (_framePen != null)
+				yield return new Main.DocumentNodeAndName(_framePen, "FramePen");
+			if (_fillBrush != null)
+				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
+		}
+
 		public BarGraphPlotStyle(BarGraphPlotStyle from)
 		{
 			CopyFrom(from);

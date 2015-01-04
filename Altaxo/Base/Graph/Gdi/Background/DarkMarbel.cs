@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
 
@@ -110,6 +111,12 @@ namespace Altaxo.Graph.Gdi.Background
 
 			this._shadowLength = from._shadowLength;
 			this.Brush = from._brush;
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _brush)
+				yield return new Main.DocumentNodeAndName(_brush, "Brush");
 		}
 
 		public object Clone()

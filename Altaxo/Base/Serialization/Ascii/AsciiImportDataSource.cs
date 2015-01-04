@@ -154,6 +154,11 @@ namespace Altaxo.Serialization.Ascii
 			return new AsciiImportDataSource(this);
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
+
 		#endregion Construction
 
 		protected override void OnResume(int eventCount)

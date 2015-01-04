@@ -366,6 +366,9 @@
     <Compile Include="Main\SuspendableDocumentLeafNode.cs" />
     <Compile Include="Main\SuspendableDocumentNode.cs" />
     <Compile Include="Main\SuspendableDocumentNodeBase.cs" />
+    <Compile Include="Main\SuspendableDocumentNodeWithEventArgs.cs" />
+    <Compile Include="Main\SuspendableDocumentNodeWithSetOfEventArgs.cs" />
+    <Compile Include="Main\SuspendableDocumentNodeWithSingleAccumulatedData.cs" />
     <Compile Include="Main\SuspendableObject.cs" />
     <Compile Include="Root\DisposableBase.cs" />
     <Compile Include="Main\IComManager.cs" />

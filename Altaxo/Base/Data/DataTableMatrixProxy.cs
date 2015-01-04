@@ -239,6 +239,27 @@ namespace Altaxo.Data
 			return true;
 		}
 
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _dataTable)
+				yield return new Main.DocumentNodeAndName(_dataTable, "DataTable");
+
+			if (null != _columnHeaderColumn)
+				yield return new Main.DocumentNodeAndName(_columnHeaderColumn, "ColumnHeaderColumn");
+
+			if (null != _rowHeaderColumn)
+				yield return new Main.DocumentNodeAndName(_rowHeaderColumn, "RowHeaderColumn");
+
+			if (null != _dataColumns)
+			{
+				for (int i = 0; i < _dataColumns.Count; ++i)
+				{
+					if (_dataColumns[i] != null)
+						yield return new Main.DocumentNodeAndName(_dataColumns[i], "DataColumn" + i.ToString(System.Globalization.CultureInfo.CurrentCulture));
+				}
+			}
+		}
+
 		#region Serialization
 
 		#region Version 0

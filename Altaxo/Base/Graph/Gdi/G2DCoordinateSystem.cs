@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Gdi
 	[Serializable]
 	public abstract class G2DCoordinateSystem
 		:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		Main.SuspendableDocumentLeafNodeWithSetOfEventArgs,
 		ICloneable
 	{
 		protected double _layerWidth;

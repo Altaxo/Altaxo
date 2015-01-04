@@ -28,6 +28,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -109,11 +110,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._scaleSpanType = (FloatingScaleSpanType)info.GetEnum("ScaleSpanType", typeof(FloatingScaleSpanType));
 				s._scaleSpanValue = info.GetDouble("ScaleSpanValue");
 				s._scaleSegmentType = (ScaleSegmentType)info.GetEnum("ScaleType", typeof(ScaleSegmentType));
+
 				s._tickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
+				if (null != s._tickSpacing) s._tickSpacing.ParentObject = s;
+
 				s._axisStyle = (AxisStyle)info.GetValue("AxisStyle", s);
+				if (null != s._axisStyle) s._axisStyle.ParentObject = s;
+
 				s._background = (IBackgroundStyle)info.GetValue("Background", s);
 				if (null != s._background)
+				{
+					s._background.ParentObject = s;
 					s._backgroundPadding = (Margin2D)info.GetValue("BackgroundPadding", s);
+				}
 
 				return s;
 			}
@@ -171,6 +180,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 		public override object Clone()
 		{
 			return new FloatingScale(this);
+		}
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, "TickSpacing");
+			if (null != _axisStyle)
+				yield return new Main.DocumentNodeAndName(_axisStyle, "AxisStyle");
+			if (null != _background)
+				yield return new Main.DocumentNodeAndName(_background, "Background");
 		}
 
 		#endregion Constructors
@@ -635,6 +654,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override object Clone()
 			{
 				return new ScaleSegment(_underlyingScale, _relOrg, _relEnd, _segmentScaling);
+			}
+
+			protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+			{
+				if (null != _underlyingScale)
+					yield return new Main.DocumentNodeAndName(_underlyingScale, "UnderlyingScale");
 			}
 
 			public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
