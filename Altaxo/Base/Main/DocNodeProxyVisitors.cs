@@ -75,7 +75,7 @@ namespace Altaxo.Main
 					DocumentPath replacePath;
 					if (_itemRelocationDictionary.TryGetValue(subPath, out replacePath))
 					{
-						proxy.ReplacePathParts(subPath, replacePath);
+						proxy.ReplacePathParts(subPath, replacePath, (IDocumentLeafNode)owner);
 						return;
 					}
 				}
@@ -84,7 +84,7 @@ namespace Altaxo.Main
 			// the pathReplacementDictionary has 2nd priority
 			foreach (var entry in _pathPartReplacementDictionary)
 			{
-				if (proxy.ReplacePathParts(entry.Key, entry.Value))
+				if (proxy.ReplacePathParts(entry.Key, entry.Value, (IDocumentLeafNode)owner))
 					break;
 			}
 		}

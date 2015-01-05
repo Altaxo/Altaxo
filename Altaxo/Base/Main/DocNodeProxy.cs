@@ -61,6 +61,7 @@ namespace Altaxo.Main
 		/// <param name="partToReplace">Part of the path that should be replaced. This part has to match the beginning of this part. The last item of the part
 		/// is allowed to be given only partially.</param>
 		/// <param name="newPart">The new part to replace that piece of the path, that match the <c>partToReplace</c>.</param>
+		/// <param name="rootNode">Any document node in the hierarchy that is used to find the root node of the hierarchy.</param>
 		/// <returns>True if the path could be replaced. Returns false if the path does not fulfill the presumptions given above.</returns>
 		/// <remarks>
 		/// As stated above, the last item of the partToReplace can be given only partially. As an example, the path (here separated by space)
@@ -73,7 +74,7 @@ namespace Altaxo.Main
 		/// <para>Tables Preexperiment2\</para>
 		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
 		/// </remarks>
-		bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart);
+		bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart, IDocumentLeafNode rootNode);
 	}
 
 	/// <summary>
@@ -353,6 +354,7 @@ namespace Altaxo.Main
 		/// <param name="partToReplace">Part of the path that should be replaced. This part has to match the beginning of this part. The last item of the part
 		/// is allowed to be given only partially.</param>
 		/// <param name="newPart">The new part to replace that piece of the path, that match the <c>partToReplace</c>.</param>
+		/// <param name="rootNode">Any document node in the hierarchy that is used to find the root node of the hierarchy.</param>
 		/// <returns>True if the path could be replaced. Returns false if the path does not fulfill the presumptions given above.</returns>
 		/// <remarks>
 		/// As stated above, the last item of the partToReplace can be given only partially. As an example, the path (here separated by space)
@@ -365,14 +367,17 @@ namespace Altaxo.Main
 		/// <para>Tables Preexperiment2\</para>
 		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
 		/// </remarks>
-		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart, IDocumentLeafNode rootNode)
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
+			if (null == rootNode)
+				throw new ArgumentNullException("rootNode");
 
 			var success = _docNodePath.ReplacePathParts(partToReplace, newPart);
 			if (success)
 			{
 				ClearDocNode();
+				ResolveDocumentObject(rootNode);
 			}
 
 			return success;
@@ -553,7 +558,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		protected virtual object ResolveDocumentObject(Main.IDocumentNode startnode)
+		protected virtual object ResolveDocumentObject(Main.IDocumentLeafNode startnode)
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 

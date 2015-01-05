@@ -129,7 +129,7 @@ namespace Altaxo.Data
 			get { return new DocumentPath(); }
 		}
 
-		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart, IDocumentLeafNode rootNode)
 		{
 			return false;
 		}

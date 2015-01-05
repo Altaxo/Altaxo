@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Graph
 					var tablePath = DocumentPath.GetAbsolutePath(table);
 					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
 					{
-						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable));
+						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
 					}
 				}
 			}
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph
 					var tablePath = path.SubPath(0, 2);
 					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
 					{
-						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable));
+						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
 					}
 				}
 			}
