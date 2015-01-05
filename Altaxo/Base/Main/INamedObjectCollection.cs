@@ -50,13 +50,6 @@ namespace Altaxo.Main
 	{
 		/// <summary>The name of the name owner. The set operation can throw an InvalidOperation exception if it is not allowed to set the name.</summary>
 		new string Name { get; set; }
-
-		/// <summary>Fired if the name has changed. Arguments are the name owner (which has already the new name), and the old name.</summary>
-		event Action<INameOwner, string> NameChanged;
-
-		/// <summary>Fired before the name will change. Arguments are the name owner (which has still the old name, the new name, and CancelEventArgs.
-		/// If any of the listeners set Cancel to true, the name will not be changed.</summary>
-		event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 	}
 
 	/// <summary>
@@ -95,6 +88,34 @@ namespace Altaxo.Main
 		/// <param name="o">The object for which the name should be found.</param>
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
 		string GetNameOfChildObject(IDocumentLeafNode o);
+	}
+
+	/// <summary>
+	/// Interface of a parent node that holds child nodes which can be renamed.
+	/// </summary>
+	public interface IParentOfINameOwnerChildNodes
+	{
+		/// <summary>
+		/// Determines whether the name of the child item can be changed to the provided new name. If the parent implementing this interface is not able to change the child's name, it must return <c>false</c>.
+		/// </summary>
+		/// <param name="childNode">The child node.</param>
+		/// <param name="newName">The new name.</param>
+		/// <returns><c>true</c> if the child can be renamed to the new name; otherwise <c>false</c>.</returns>
+		bool EhChild_CanBeRenamed(Main.INameOwner childNode, string newName);
+
+		/// <summary>
+		/// Called if the child has been renamed.
+		/// </summary>
+		/// <param name="childNode">The child node.</param>
+		/// <param name="newName">The old name of the child name.</param>
+		void EhChild_HasBeenRenamed(Main.INameOwner childNode, string oldName);
+
+		/// <summary>
+		/// Called if the child's parent changed.
+		/// </summary>
+		/// <param name="childNode">The child node.</param>
+		/// <param name="oldParent">The old parent of the child node.</param>
+		void EhChild_ParentChanged(Main.INameOwner childNode, IDocumentNode oldParent);
 	}
 
 	public class NamedObjectCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs

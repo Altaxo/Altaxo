@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Graph
 				var path = proxy.DocumentPath;
 				if (path.Count >= 2 && path.StartsWith(DocumentPath.GetPath(Current.Project.DataTableCollection, int.MaxValue)))
 				{
-					var tablePath = path.SubPath(2);
+					var tablePath = path.SubPath(0, 2);
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Graph
 				var tableCollectionPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
 				if (path.Count >= 2 && path[0] == tableCollectionPath[0])
 				{
-					var tablePath = path.SubPath(2);
+					var tablePath = path.SubPath(0, 2);
 					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
 					{
 						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable));

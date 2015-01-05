@@ -36,6 +36,7 @@ namespace Altaxo.Main
 		ISuspendableByToken,
 		Main.ITunnelingEventSource,
 		IDisposable,
+		// ICloneable,
 		Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>,
 		Altaxo.Collections.INodeWithParentNode<IDocumentNode>
 	{

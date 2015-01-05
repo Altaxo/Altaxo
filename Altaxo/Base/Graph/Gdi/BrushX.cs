@@ -158,6 +158,10 @@ namespace Altaxo.Graph.Gdi
 						s._textureImage = BrushX.HatchStyleToImage(hatchStyle);
 						break;
 				}
+
+				if (s.ParentObject == null)
+					s.ParentObject = parent as Main.IDocumentNode;
+
 				return s;
 			}
 		}
@@ -267,7 +271,9 @@ namespace Altaxo.Graph.Gdi
 						break;
 				}
 
-				s.ParentObject = (Main.IDocumentNode)parent;
+				if (s.ParentObject == null)
+					s.ParentObject = parent as Main.IDocumentNode;
+
 				return s;
 			}
 		}
@@ -371,7 +377,9 @@ namespace Altaxo.Graph.Gdi
 						break;
 				}
 
-				s.ParentObject = (Main.IDocumentNode)parent;
+				if (s.ParentObject == null)
+					s.ParentObject = parent as Main.IDocumentNode;
+
 				return s;
 			}
 		}
@@ -503,7 +511,9 @@ namespace Altaxo.Graph.Gdi
 						break;
 				}
 
-				s.ParentObject = (Main.IDocumentNode)parent;
+				if (s.ParentObject == null)
+					s.ParentObject = parent as Main.IDocumentNode;
+
 				return s;
 			}
 		}

@@ -155,11 +155,16 @@ namespace Altaxo.Main
 			return true;
 		}
 
-		public DocumentPath SubPath(int count)
+		public DocumentPath SubPath(int start, int count)
 		{
+			if (!(start >= 0))
+				throw new ArgumentOutOfRangeException("start should be >= 0");
+			if (!(count >= 0))
+				throw new ArgumentOutOfRangeException("count should be >= 0");
+
 			var result = new DocumentPath(this._IsAbsolutePath);
 			for (int i = 0; i < count; ++i)
-				result.Add(this[i]);
+				result.Add(this[i + start]);
 			return result;
 		}
 
@@ -178,6 +183,15 @@ namespace Altaxo.Main
 
 				return this[Count - 1];
 			}
+		}
+
+		public void Append(DocumentPath other)
+		{
+			if (null == other)
+				throw new ArgumentNullException("other");
+
+			for (int i = 0; i < other.Count; ++i)
+				this.Add(other[i]);
 		}
 
 		/// <summary>Replaces the last part of the <see cref="DocumentPath"/>, which is often the name of the object.</summary>
@@ -499,6 +513,62 @@ namespace Altaxo.Main
 				}
 			} // end for
 			return node;
+		}
+
+		/// <summary>
+		/// Gets the node that is designated by the provided <paramref name="path"/>  or the least resolveable node.
+		/// </summary>
+		/// <param name="path">The document path to resolve.</param>
+		/// <param name="startnode">The startnode.</param>
+		/// <param name="pathWasCompletelyResolved">If set to <c>true</c> on return, the path was completely resolved. Otherwise, <c>false</c>.</param>
+		/// <returns>The resolved node, or the least node on the path that could be resolved.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		/// path
+		/// or
+		/// startnode
+		/// </exception>
+		public static IDocumentLeafNode GetNodeOrLeastResolveableNode(DocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
+		{
+			if (null == path)
+				throw new ArgumentNullException("path");
+			if (null == startnode)
+				throw new ArgumentNullException("startnode");
+
+			var node = startnode;
+
+			if (path.IsAbsolutePath)
+			{
+				node = GetRootNode(node);
+				if (null == node)
+					throw new InvalidProgramException("startnote is not rooted");
+			}
+
+			var prevNode = node;
+			pathWasCompletelyResolved = true;
+
+			for (int i = 0; i < path.Count; i++)
+			{
+				prevNode = node;
+				if (path[i] == "..")
+				{
+					node = node.ParentObject;
+				}
+				else
+				{
+					if (node is Main.IDocumentNode)
+						node = ((Main.IDocumentNode)node).GetChildObjectNamed(path[i]);
+					else
+						node = null;
+				}
+
+				if (node == null)
+				{
+					pathWasCompletelyResolved = false;
+					break;
+				}
+			} // end for
+
+			return node ?? prevNode;
 		}
 
 		#endregion static navigation methods

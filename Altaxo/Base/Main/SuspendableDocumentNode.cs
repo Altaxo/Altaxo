@@ -311,10 +311,12 @@ namespace Altaxo.Main
 			NotifyChildrenTunnelingEventHappened(originalSource, e);
 		}
 
-		public override void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		public override void EhSelfTunnelingEventHappened(TunnelingEventArgs e, bool distributeThisEventToChilds)
 		{
 			OnTunnelingEvent(this, e);
-			NotifyChildrenTunnelingEventHappened(this, e);
+
+			if (distributeThisEventToChilds)
+				NotifyChildrenTunnelingEventHappened(this, e);
 		}
 
 		protected virtual void NotifyChildrenTunnelingEventHappened(IDocumentNode originalSource, TunnelingEventArgs e)
@@ -327,13 +329,6 @@ namespace Altaxo.Main
 		}
 
 		protected abstract IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName();
-
-		/*
-		{
-			// throw new InvalidProgramException(string.Format("Type {0} should have implemented method GetDocumentNodeChildrenWithName(). Please report this error to the forum.", this.GetType().FullName));
-			yield break;
-		}
-		*/
 
 		public virtual IDocumentLeafNode GetChildObjectNamed(string name)
 		{
@@ -510,6 +505,76 @@ namespace Altaxo.Main
 
 		#endregion Inner class SuspendToken
 
+		#region Helper functions
+
+		/// <summary>
+		/// Copies a document node from another source into a member of this instance.
+		/// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
+		/// The node is then copied using either Main.ICopyFrom or System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
+		/// is then set to this instance in order to maintain the parent-child relationship.
+		/// </summary>
+		/// <typeparam name="T">Type of the node to copy.</typeparam>
+		/// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
+		/// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
+		protected void CopyChildFrom<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+		{
+			if (object.ReferenceEquals(myChild, fromAnotherChild))
+				return;
+
+			if (null == fromAnotherChild)
+			{
+				if (null != myChild)
+					myChild.Dispose();
+				myChild = default(T);
+			}
+			else if ((myChild is Main.ICopyFrom) && myChild.GetType() == fromAnotherChild.GetType())
+			{
+				((Main.ICopyFrom)myChild).CopyFrom(fromAnotherChild);
+			}
+			else
+			{
+				if (null != myChild)
+					myChild.Dispose();
+				myChild = (T)(fromAnotherChild.Clone());
+			}
+
+			if (null != myChild)
+				myChild.ParentObject = this;
+		}
+
+		/// <summary>
+		/// Copies a document node from another source into a member of this instance.
+		/// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
+		/// The node is then copied using System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
+		/// is then set to this instance in order to maintain the parent-child relationship.
+		/// </summary>
+		/// <typeparam name="T">Type of the node to copy.</typeparam>
+		/// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
+		/// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
+		protected void CloneChildFrom<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+		{
+			if (object.ReferenceEquals(myChild, fromAnotherChild))
+				return;
+
+			if (null == fromAnotherChild)
+			{
+				if (null != myChild)
+					myChild.Dispose();
+				myChild = default(T);
+			}
+			else
+			{
+				if (null != myChild)
+					myChild.Dispose();
+				myChild = (T)(fromAnotherChild.Clone());
+			}
+
+			if (null != myChild)
+				myChild.ParentObject = this;
+		}
+
+		#endregion Helper functions
+
 		#region Static instance
 
 		private class StaticInstanceClass : IDocumentNode
@@ -622,7 +687,7 @@ namespace Altaxo.Main
 
 				if (tuple.DocumentNode == null)
 				{
-					childListErrors.Add(string.Format("Parent of type {0} did not list child node of type {1}", parent.GetType().FullName, node.GetType().FullName));
+					childListErrors.Add(string.Format("Parent of type {0} did not list child node of type {1}, which was constructed {2}", parent.GetType().FullName, node.GetType().FullName, node.ConstructedBy));
 					areThereAnyProblems = true;
 				}
 				else
@@ -630,14 +695,14 @@ namespace Altaxo.Main
 					var nameOfNode1 = tuple.Name;
 					if (null == nameOfNode1)
 					{
-						Current.Console.WriteLine("Parent (Type: {0} lists child node (Type: {1}, but without a name", parent.GetType().FullName, node.GetType().FullName);
+						Current.Console.WriteLine("Parent of type {0} lists child node of type {1}, but without a name", parent.GetType().FullName, node.GetType().FullName);
 						areThereAnyProblems = true;
 					}
 
 					var nameOfNode2 = parent.GetNameOfChildObject(node);
 					if (nameOfNode2 != nameOfNode1)
 					{
-						Current.Console.WriteLine("Parent (Type: {0} has child node (Type: {1}, Name: {2]), but GetNameOfChildObject returns a different name ({3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nameOfNode2);
+						Current.Console.WriteLine("Parent of type {0} has child node of type {1}, Name: {2}, but GetNameOfChildObject returns a different name ({3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nameOfNode2);
 						areThereAnyProblems = true;
 					}
 
@@ -645,7 +710,7 @@ namespace Altaxo.Main
 
 					if (!object.ReferenceEquals(node, nodeAlt))
 					{
-						Current.Console.WriteLine("Parent of type {0} has child node of type {1}, Name: {2}, but GetChildObjectNamed returns a different object (Type: {3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nodeAlt);
+						Current.Console.WriteLine("Parent of type {0} has child node of type {1}, Name: {2}, but GetChildObjectNamed returns a different object ({3})", parent.GetType().FullName, node.GetType().FullName, nameOfNode1, nodeAlt);
 						areThereAnyProblems = true;
 					}
 				}

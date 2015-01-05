@@ -266,6 +266,7 @@ namespace Altaxo.Graph.Gdi
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
 				s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
+				if (null != s._plotItems) s._plotItems.ParentObject = s;
 
 				if (null != legend)
 				{

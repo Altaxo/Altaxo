@@ -55,9 +55,9 @@ namespace Altaxo.Graph.Scales
 		protected bool _isEndExtendable;
 
 		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
-		protected NumericalBoundaries _dataBounds = null;
+		protected NumericalBoundaries _dataBounds;
 
-		protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
+		protected LogarithmicAxisRescaleConditions _rescaling;
 
 		#region Serialization
 
@@ -111,8 +111,8 @@ namespace Altaxo.Graph.Scales
 		/// </summary>
 		public Log10Scale()
 		{
-			_dataBounds = new PositiveFiniteNumericalBoundaries();
-			_dataBounds.ParentObject = this;
+			_rescaling = new LogarithmicAxisRescaleConditions() { ParentObject = this };
+			_dataBounds = new PositiveFiniteNumericalBoundaries() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Scales
 		public Log10Scale(Log10Scale from)
 		{
 			this._dataBounds = null == from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
+			this._dataBounds.ParentObject = this;
 			this._log10Org = from._log10Org;
 			this._cachedOrg = from._cachedOrg;
 			this._log10End = from._log10End;

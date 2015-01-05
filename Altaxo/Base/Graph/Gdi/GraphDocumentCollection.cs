@@ -30,6 +30,7 @@ namespace Altaxo.Graph.Gdi
 {
 	public class GraphDocumentCollection :
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		Main.IParentOfINameOwnerChildNodes,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IEnumerable<GraphDocument>,
 		Altaxo.Main.INamedObjectCollection
@@ -147,7 +148,6 @@ namespace Altaxo.Graph.Gdi
 			// now the table has a unique name in any case
 			_graphsByName.Add(theGraph.Name, theGraph);
 			theGraph.ParentObject = this;
-			theGraph.NameChanged += EhChild_NameChanged;
 			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(theGraph));
 		}
 
@@ -164,25 +164,50 @@ namespace Altaxo.Graph.Gdi
 				{
 					var changedEventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(theGraph);
 					_graphsByName.Remove(theGraph.Name);
-					theGraph.ParentObject = null;
-					theGraph.NameChanged -= EhChild_NameChanged;
+					theGraph.Dispose();
 					this.EhSelfChanged(changedEventArgs);
 				}
 			}
 		}
 
-		protected void EhChild_NameChanged(Main.INameOwner item, string oldName)
+		bool Main.IParentOfINameOwnerChildNodes.EhChild_CanBeRenamed(Main.INameOwner childNode, string newName)
+		{
+			if (_graphsByName.ContainsKey(newName) && !object.ReferenceEquals(_graphsByName[newName], childNode))
+				return false;
+			else
+				return true;
+		}
+
+		void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
 		{
 			if (_graphsByName.ContainsKey(item.Name))
 			{
 				if (object.ReferenceEquals(_graphsByName[item.Name], item))
-					return;
+					return; // Table alredy renamed
 				else
-					throw new ApplicationException(string.Format("The GraphDocumentCollection contains already a Graph named {0}, renaming the old graph {1} fails.", item.Name, oldName));
+					throw new ApplicationException("Graph with name " + item.Name + " already exists!");
 			}
-			_graphsByName.Remove(oldName);
-			_graphsByName[item.Name] = (GraphDocument)item;
-			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
+
+			if (_graphsByName.ContainsKey(oldName))
+			{
+				if (!object.ReferenceEquals(_graphsByName[oldName], item))
+					throw new ApplicationException("Names between GraphDocumentCollection and graph not in sync");
+
+				_graphsByName.Remove(oldName);
+				_graphsByName.Add(item.Name, (GraphDocument)item);
+
+				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
+			}
+			else
+			{
+				throw new ApplicationException("Error renaming graph " + oldName + " : this graph name was not found in the collection!");
+			}
+		}
+
+		void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode oldParent)
+		{
+			if (object.ReferenceEquals(this, oldParent) && _graphsByName.ContainsKey(childNode.Name))
+				throw new InvalidProgramException("Unauthorized change of the graphs's parent");
 		}
 
 		/// <summary>

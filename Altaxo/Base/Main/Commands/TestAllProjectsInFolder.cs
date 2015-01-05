@@ -181,6 +181,26 @@ namespace Altaxo.Main.Commands
 					Current.Console.WriteLine("Error opening file {0}", filename);
 				}
 
+				// Project is now opened from the original file
+
+#if DEBUG && TRACEDOCUMENTNODES
+
+				{
+					GC.Collect();
+					System.Threading.Thread.Sleep(500);
+					bool areThereAnyProblems = false;
+					areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
+					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportChildListProblems();
+					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
+
+					if (areThereAnyProblems)
+					{
+						Current.Console.WriteLine("Above listed problems were detected after opening the file {0}", filename);
+						Current.Console.WriteLine();
+					}
+				}
+#endif
+
 				if (testOptions.TestSavingAndReopening)
 				{
 					// Test saving of the project (now with the current version of Altaxo)
@@ -245,17 +265,19 @@ namespace Altaxo.Main.Commands
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-					GC.Collect();
-					System.Threading.Thread.Sleep(500);
-					bool areThereAnyProblems = false;
-					areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
-					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportChildListProblems();
-					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
-
-					if (areThereAnyProblems)
 					{
-						Current.Console.WriteLine("Above listed problems were detected after saving and reopening project {0}", filename);
-						Current.Console.WriteLine();
+						GC.Collect();
+						System.Threading.Thread.Sleep(500);
+						bool areThereAnyProblems = false;
+						areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
+						areThereAnyProblems |= Main.SuspendableDocumentNode.ReportChildListProblems();
+						areThereAnyProblems |= Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
+
+						if (areThereAnyProblems)
+						{
+							Current.Console.WriteLine("Above listed problems were detected after saving and reopening project {0}", filename);
+							Current.Console.WriteLine();
+						}
 					}
 
 #endif

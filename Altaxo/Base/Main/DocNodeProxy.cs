@@ -305,6 +305,8 @@ namespace Altaxo.Main
 		/// the document path is stored for this object in addition to the object itself.</param>
 		public void SetDocNode(IDocumentLeafNode value)
 		{
+			Current.Console.WriteLine("DocNodeProxy.SetDocNode");
+
 			if (null == value)
 				throw new ArgumentNullException("value");
 
@@ -314,6 +316,17 @@ namespace Altaxo.Main
 
 			if (!IsValidDocument(value))
 				throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
+
+			if (null != _weakDocNodeChangedHandler)
+			{
+				_weakDocNodeChangedHandler.Remove();
+				_weakDocNodeChangedHandler = null;
+			}
+			if (null != _weakDocNodeTunneledEventHandler)
+			{
+				_weakDocNodeTunneledEventHandler.Remove();
+				_weakDocNodeTunneledEventHandler = null;
+			}
 
 			if (oldValue != null)
 			{
@@ -325,15 +338,8 @@ namespace Altaxo.Main
 
 			InternalCheckAbsolutePath();
 
-			if (value is Main.IEventIndicatedDisposable)
-			{
-				((Main.IEventIndicatedDisposable)value).TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, handler => ((Main.IEventIndicatedDisposable)value).TunneledEvent -= handler));
-			}
-
-			if (value is Main.IChangedEventSource)
-			{
-				((Main.IChangedEventSource)value).Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => ((Main.IChangedEventSource)value).Changed -= handler));
-			}
+			value.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, handler => value.TunneledEvent -= handler));
+			value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => value.Changed -= handler));
 
 			OnAfterSetDocNode();
 
@@ -363,10 +369,13 @@ namespace Altaxo.Main
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 
-			var result = _docNodePath.ReplacePathParts(partToReplace, newPart);
-			if (result)
+			var success = _docNodePath.ReplacePathParts(partToReplace, newPart);
+			if (success)
+			{
 				ClearDocNode();
-			return result;
+			}
+
+			return success;
 		}
 
 		/// <summary>
@@ -394,6 +403,24 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
+		/// Removes the event handlers for the watch
+		/// </summary>
+		protected void ClearWatch()
+		{
+			if (null != _weakDocNodeTunneledEventHandler)
+			{
+				_weakDocNodeTunneledEventHandler.Remove();
+				_weakDocNodeTunneledEventHandler = null;
+			}
+
+			if (null != _weakDocNodeChangedHandler)
+			{
+				_weakDocNodeChangedHandler.Remove();
+				_weakDocNodeChangedHandler = null;
+			}
+		}
+
+		/// <summary>
 		/// Event handler that is called when the document node has disposed or name changed. Because the path to the node can have changed too,
 		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
 		/// </summary>
@@ -402,15 +429,26 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+			Current.Console.WriteLine("DocNodeProxy.EhDocNode_TunneledEvent: sender={0}, source={1} e={2}", sender, source, e);
+
 			bool shouldFireChangedEvent = false;
+
+			var sourceAsNode = source as IDocumentLeafNode;
+			System.Diagnostics.Debug.Assert(sourceAsNode != null);
 
 			if (e is DisposeEventArgs)
 			{
-				if (object.ReferenceEquals(source, sender))
+				var parentNode = sourceAsNode.ParentObject;
+				System.Diagnostics.Debug.Assert(parentNode != null || (sourceAsNode is Altaxo.AltaxoDocument));
+
+				ClearDocNode();
+
+				if (parentNode != null) // parentNode==null will occur only if the whole AltaxoDocument is disposed
 				{
-					ClearDocNode();
-					shouldFireChangedEvent = true;
+					SetWatchOnNode(parentNode);
 				}
+
+				shouldFireChangedEvent = true;
 			}
 			else if (e is DocumentPathChangedEventArgs)
 			{
@@ -435,6 +473,8 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
+			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
+
 			if (InternalDocNode != null)
 			{
 				InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
@@ -520,12 +560,133 @@ namespace Altaxo.Main
 			var docNode = InternalDocNode;
 			if (docNode == null)
 			{
-				object obj = Main.DocumentPath.GetObject(_docNodePath, startnode);
-				if (null != obj)
-					SetDocNode((IDocumentLeafNode)obj);
-				docNode = InternalDocNode;
+				bool wasCompletelyResolved;
+				var node = Main.DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out wasCompletelyResolved);
+				if (null == node)
+					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
+
+				if (wasCompletelyResolved)
+				{
+					SetDocNode(node);
+					docNode = InternalDocNode;
+				}
+				else // not completely resolved
+				{
+					SetWatchOnNode(node);
+				}
 			}
 			return docNode;
+		}
+
+		/// <summary>
+		/// Sets the watch on a node that is not our document node, but a node lower in the hierarchy. We watch both the Changed event and the TunneledEvent of this node.
+		/// </summary>
+		/// <param name="node">The node to watch.</param>
+		protected virtual void SetWatchOnNode(IDocumentLeafNode node)
+		{
+			if (null == node)
+				throw new ArgumentNullException("node");
+
+			if (null != _weakDocNodeChangedHandler)
+			{
+				_weakDocNodeChangedHandler.Remove();
+				_weakDocNodeChangedHandler = null;
+			}
+			if (null != _weakDocNodeTunneledEventHandler)
+			{
+				_weakDocNodeTunneledEventHandler.Remove();
+				_weakDocNodeTunneledEventHandler = null;
+			}
+
+			node.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhWatchedNode_TunneledEvent, handler => node.TunneledEvent -= handler));
+			node.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhWatchedNode_Changed, handler => node.Changed -= handler));
+
+			Current.Console.WriteLine("Start watching node {0} of path {1}", DocumentPath.GetAbsolutePath(node), _docNodePath);
+		}
+
+		/// <summary>
+		/// Event handler that is called when the watched node (a node that is not the document node) has changed. Maybe this watched node had now created a parent node, and our
+		/// document path can resolved now. That's why we try to resolve our document path now.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void EhWatchedNode_Changed(object sender, EventArgs e)
+		{
+			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
+
+			System.Diagnostics.Debug.Assert(_docNodeRef == null);
+			var senderAsDocNode = sender as IDocumentLeafNode;
+			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
+
+			bool wasResolvedCompletely;
+
+			var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
+			if (null == node)
+				throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
+
+			if (wasResolvedCompletely)
+			{
+				ClearWatch();
+				SetDocNode(node);
+			}
+			else // not completely resolved
+			{
+				if (!object.ReferenceEquals(sender, node))
+				{
+					ClearWatch();
+					SetWatchOnNode(node);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Event handler that is called when the watched node or a parent node below has disposed or its name changed. We then try to resolve the path again.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="source">Source of the tunneled event.</param>
+		/// <param name="e"></param>
+		private void EhWatchedNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
+		{
+			System.Diagnostics.Debug.Assert(_docNodeRef == null);
+			var senderAsDocNode = sender as IDocumentLeafNode;
+			var sourceAsDocNode = source as IDocumentLeafNode;
+			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
+			System.Diagnostics.Debug.Assert(sourceAsDocNode != null);
+
+			if (e is DocumentPathChangedEventArgs) // here, we activly change our stored path, if the watched node or a parent has changed its name
+			{
+				var watchedPath = DocumentPath.GetAbsolutePath(senderAsDocNode);
+				watchedPath.Append(_docNodePath.SubPath(watchedPath.Count, _docNodePath.Count - watchedPath.Count));
+				var oldPath = _docNodePath;
+				_docNodePath = watchedPath;
+
+				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent: Modified path, oldpath={0}, newpath={1}", oldPath, _docNodePath);
+			}
+
+			// then we try to resolve the path again
+			if ((e is DisposeEventArgs) || (e is DocumentPathChangedEventArgs))
+			{
+				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent");
+
+				bool wasResolvedCompletely;
+				var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
+				if (null == node)
+					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
+
+				if (wasResolvedCompletely)
+				{
+					ClearWatch();
+					SetDocNode(node);
+				}
+				else // not completely resolved
+				{
+					if (!object.ReferenceEquals(sender, node))
+					{
+						ClearWatch();
+						SetWatchOnNode(node);
+					}
+				}
+			}
 		}
 
 		protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)

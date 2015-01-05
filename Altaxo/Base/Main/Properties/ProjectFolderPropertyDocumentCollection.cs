@@ -29,6 +29,7 @@ namespace Altaxo.Main.Properties
 {
 	public class ProjectFolderPropertyDocumentCollection :
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		Main.IParentOfINameOwnerChildNodes,
 		IEnumerable<ProjectFolderPropertyDocument>,
 		Altaxo.Main.INamedObjectCollection
 	{
@@ -114,7 +115,6 @@ namespace Altaxo.Main.Properties
 			// now the table has a unique name in any case
 			_itemsByName.Add(item.Name, item);
 			item.ParentObject = this;
-			item.NameChanged += EhChild_NameChanged;
 			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
 		}
 
@@ -129,24 +129,49 @@ namespace Altaxo.Main.Properties
 					var changeEventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item);
 					_itemsByName.Remove(item.Name);
 					item.ParentObject = null;
-					item.NameChanged -= EhChild_NameChanged;
 					this.EhSelfChanged(changeEventArgs);
 				}
 			}
 		}
 
-		protected void EhChild_NameChanged(Main.INameOwner item, string oldName)
+		bool Main.IParentOfINameOwnerChildNodes.EhChild_CanBeRenamed(Main.INameOwner childNode, string newName)
+		{
+			if (_itemsByName.ContainsKey(newName) && !object.ReferenceEquals(_itemsByName[newName], childNode))
+				return false;
+			else
+				return true;
+		}
+
+		void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
 		{
 			if (_itemsByName.ContainsKey(item.Name))
 			{
 				if (object.ReferenceEquals(_itemsByName[item.Name], item))
-					return;
+					return; // Table alredy renamed
 				else
-					throw new ApplicationException(string.Format("The collection contains already a property bag named {0}, renaming the old property bag {1} fails therefore.", item.Name, oldName));
+					throw new ApplicationException("Table with name " + item.Name + " already exists!");
 			}
-			_itemsByName.Remove(oldName);
-			_itemsByName[item.Name] = (ProjectFolderPropertyDocument)item;
-			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
+
+			if (_itemsByName.ContainsKey(oldName))
+			{
+				if (!object.ReferenceEquals(_itemsByName[oldName], item))
+					throw new ApplicationException("Name between Collection and Item not in sync");
+
+				_itemsByName.Remove(oldName);
+				_itemsByName.Add(item.Name, (ProjectFolderPropertyDocument)item);
+
+				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
+			}
+			else
+			{
+				throw new ApplicationException("Error renaming property bag " + oldName + " : this name was not found in the collection!");
+			}
+		}
+
+		void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode oldParent)
+		{
+			if (object.ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
+				throw new InvalidProgramException("Unauthorized change of the child's parent");
 		}
 
 		public override IDocumentLeafNode GetChildObjectNamed(string name)

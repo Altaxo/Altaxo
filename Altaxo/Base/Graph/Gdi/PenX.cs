@@ -471,7 +471,9 @@ namespace Altaxo.Graph.Gdi
 				else
 					s._width = 1;
 
-				s.ParentObject = (Main.IDocumentNode)parent;
+				if (s.ParentObject == null)
+					s.ParentObject = (Main.IDocumentNode)parent;
+
 				return s;
 			}
 		}

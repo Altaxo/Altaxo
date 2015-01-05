@@ -276,7 +276,7 @@ namespace Altaxo.Main
 		{
 			if (_parent != null)
 			{
-				EhSelfTunnelingEventHappened(Main.DisposeEventArgs.Empty);
+				EhSelfTunnelingEventHappened(Main.DisposeEventArgs.Empty, isDisposing);
 				Changed = null;
 				TunneledEvent = null;
 				this.ParentObject = null;
@@ -311,9 +311,14 @@ namespace Altaxo.Main
 			OnTunnelingEvent(originalSource, e);
 		}
 
-		public virtual void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		public virtual void EhSelfTunnelingEventHappened(TunnelingEventArgs e, bool distributeThisEventToChilds)
 		{
 			OnTunnelingEvent(this, e);
+		}
+
+		public void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
+		{
+			EhSelfTunnelingEventHappened(e, true);
 		}
 
 		protected virtual void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)

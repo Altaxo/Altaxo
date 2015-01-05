@@ -196,12 +196,6 @@ namespace Altaxo.Data
 		protected bool _triedOutRegularNaming = false;
 
 		/// <summary>
-		/// Signals the change of the parent of the collection.
-		/// </summary>
-		[field: NonSerialized]
-		public event Main.ParentChangedEventHandler ParentChanged;
-
-		/// <summary>
 		/// Flag to signal if deserialization is finished.
 		/// </summary>
 		private bool _isDeserializationFinished = false;
@@ -1971,28 +1965,6 @@ namespace Altaxo.Data
 			{
 				return this._columnsByNumber.Count;
 			}
-		}
-
-		/// <summary>
-		/// The parent of this collection.
-		/// </summary>
-		public override Main.IDocumentNode ParentObject
-		{
-			get { return _parent; }
-			set
-			{
-				object oldParent = _parent;
-				_parent = value;
-
-				if (!object.ReferenceEquals(oldParent, _parent))
-					OnParentChanged(oldParent, _parent);
-			}
-		}
-
-		protected virtual void OnParentChanged(object oldParent, object newParent)
-		{
-			if (null != ParentChanged)
-				ParentChanged(this, new Altaxo.Main.ParentChangedEventArgs(oldParent, newParent));
 		}
 
 		/// <summary>

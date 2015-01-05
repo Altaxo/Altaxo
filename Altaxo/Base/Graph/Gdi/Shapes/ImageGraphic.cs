@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			:
 			base(new ItemLocationDirectAspectPreserving())
 		{
-			_location = new ItemLocationDirectAspectPreserving();
+			_location = new ItemLocationDirectAspectPreserving() { ParentObject = this };
 		}
 
 		protected ImageGraphic(ImageGraphic from)

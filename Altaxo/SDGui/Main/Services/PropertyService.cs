@@ -97,6 +97,9 @@ namespace Altaxo.Main.Services
 				if (_parent.TryGet<T>(propName, out value))
 				{
 					_properties[propName] = value;
+
+					if (value is Main.IDocumentLeafNode)
+						((Main.IDocumentLeafNode)value).ParentObject = SuspendableDocumentNode.StaticInstance;
 					return true;
 				}
 				return false;

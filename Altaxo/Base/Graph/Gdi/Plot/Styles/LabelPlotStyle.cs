@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					s._attachedPlane = null;
 
 				if (whiteOut)
-					s._backgroundStyle = new FilledRectangle(backgroundBrush.Color);
+					s._backgroundStyle = new FilledRectangle(backgroundBrush.Color) { ParentObject = s };
 
 				if (nativeCall)
 				{
@@ -266,6 +266,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bool attachToAxis = info.GetBoolean("AttachToAxis");
 				EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+				if (null != s._backgroundStyle) s._backgroundStyle.ParentObject = s;
+
 				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 
 				if (attachToAxis)
@@ -327,6 +329,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
 				s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
 				s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+				if (null != s._backgroundStyle) s._backgroundStyle.ParentObject = s;
+
 				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
 
 				if (nativeCall)
@@ -431,23 +435,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (object.ReferenceEquals(this, obj))
 				return true;
 			var from = obj as LabelPlotStyle;
-			if (null != from)
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
 				this._font = from._font;
 				this._independentColor = from._independentColor;
-				this._brush = from._brush.Clone();
+				CopyChildFrom(ref _brush, from._brush);
 				this._xOffset = from._xOffset;
 				this._yOffset = from._yOffset;
 				this._rotation = from._rotation;
-				this._backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
+				CopyChildFrom(ref _backgroundStyle, from._backgroundStyle);
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
 				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 				this._attachedPlane = null == from._attachedPlane ? null : from._attachedPlane.Clone();
 				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
-				this._parent = from._parent;
-				return true;
+
+				EhSelfChanged(EventArgs.Empty);
+				suspendToken.Resume();
 			}
-			return false;
+			return true;
 		}
 
 		public LabelPlotStyle(LabelPlotStyle from)
@@ -466,7 +474,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
 			this._independentColor = false;
-			this._brush = new BrushX(color);
+			this._brush = new BrushX(color) { ParentObject = this };
 			this._xOffset = 0;
 			this._yOffset = 0;
 			this._rotation = 0;

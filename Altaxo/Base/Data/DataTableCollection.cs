@@ -25,6 +25,7 @@
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Data
 {
@@ -37,10 +38,11 @@ namespace Altaxo.Data
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
+		Main.IParentOfINameOwnerChildNodes,
 		ICollection<DataTable>
 	{
 		// Data
-		protected SortedDictionary<string, DataTable> _tablesByName = new SortedDictionary<string, DataTable>();
+		protected SortedDictionary<string, DataTable> _itemsByName = new SortedDictionary<string, DataTable>();
 
 		/// <summary>
 		/// Fired when one or more tables are added, deleted or renamed. Not fired when content in the table has changed.
@@ -65,14 +67,14 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
 				// info.AddValue("Parent",s._parent);
-				info.AddValue("Tables", s._tablesByName);
+				info.AddValue("Tables", s._itemsByName);
 			}
 
 			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
 				// s._parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s._tablesByName = (SortedDictionary<string, DataTable>)(info.GetValue("Tables", typeof(SortedDictionary<string, DataTable>)));
+				s._itemsByName = (SortedDictionary<string, DataTable>)(info.GetValue("Tables", typeof(SortedDictionary<string, DataTable>)));
 
 				return s;
 			}
@@ -85,7 +87,7 @@ namespace Altaxo.Data
 				_isDeserializationFinished = true;
 				DeserializationFinisher finisher = new DeserializationFinisher(this);
 				// set the _parent object for the data tables
-				foreach (DataTable dt in _tablesByName.Values)
+				foreach (DataTable dt in _itemsByName.Values)
 				{
 					dt.ParentObject = this;
 					dt.OnDeserialization(finisher);
@@ -101,12 +103,16 @@ namespace Altaxo.Data
 		{
 			using (var suspendToken = this.SuspendGetToken())
 			{
-				foreach (DataTable table in _tablesByName.Values)
+				var tables = _itemsByName.Values.ToArray();
+
+				foreach (DataTable table in tables)
 				{
-					Detach(table);
+					_itemsByName.Remove(table.Name);
+					table.Dispose();
 					this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(table));
 				}
-				_tablesByName.Clear();
+
+				_itemsByName.Clear(); // only for safety, should be done in call to Remove
 
 				suspendToken.Resume();
 			}
@@ -118,7 +124,7 @@ namespace Altaxo.Data
 				throw new ArgumentNullException("item");
 
 			DataTable r;
-			if (_tablesByName.TryGetValue(item.Name, out r))
+			if (_itemsByName.TryGetValue(item.Name, out r))
 				return object.ReferenceEquals(r, item);
 			else
 				return false;
@@ -126,7 +132,7 @@ namespace Altaxo.Data
 
 		public void CopyTo(DataTable[] array, int arrayIndex)
 		{
-			_tablesByName.Values.CopyTo(array, arrayIndex);
+			_itemsByName.Values.CopyTo(array, arrayIndex);
 		}
 
 		public bool IsReadOnly
@@ -141,7 +147,7 @@ namespace Altaxo.Data
 
 		public int Count
 		{
-			get { return _tablesByName.Count; }
+			get { return _itemsByName.Count; }
 		}
 
 		#endregion ICollection<DataTable> Members
@@ -150,7 +156,7 @@ namespace Altaxo.Data
 
 		IEnumerator<DataTable> IEnumerable<DataTable>.GetEnumerator()
 		{
-			return _tablesByName.Values.GetEnumerator();
+			return _itemsByName.Values.GetEnumerator();
 		}
 
 		#endregion IEnumerable<DataTable> Members
@@ -159,7 +165,7 @@ namespace Altaxo.Data
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return _tablesByName.Values.GetEnumerator();
+			return _itemsByName.Values.GetEnumerator();
 		}
 
 		#endregion IEnumerable Members
@@ -188,8 +194,8 @@ namespace Altaxo.Data
 
 		public string[] GetSortedTableNames()
 		{
-			string[] arr = new string[_tablesByName.Count];
-			this._tablesByName.Keys.CopyTo(arr, 0);
+			string[] arr = new string[_itemsByName.Count];
+			this._itemsByName.Keys.CopyTo(arr, 0);
 			// System.Array.Sort(arr);
 			return arr;
 		}
@@ -199,7 +205,7 @@ namespace Altaxo.Data
 			get
 			{
 				DataTable result;
-				if (_tablesByName.TryGetValue(name, out result))
+				if (_itemsByName.TryGetValue(name, out result))
 					return result;
 				else
 					throw new ArgumentOutOfRangeException(string.Format("The table \"{0}\" don't exist!", name));
@@ -208,46 +214,22 @@ namespace Altaxo.Data
 
 		public bool Contains(string tablename)
 		{
-			return _tablesByName.ContainsKey(tablename);
+			return _itemsByName.ContainsKey(tablename);
 		}
 
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
 			if (null == theTable.Name || 0 == theTable.Name.Length) // if no table name provided
 				theTable.Name = FindNewTableName();                 // find a new one
-			else if (_tablesByName.ContainsKey(theTable.Name)) // else if this table name is already in use
+			else if (_itemsByName.ContainsKey(theTable.Name)) // else if this table name is already in use
 				theTable.Name = FindNewTableName(theTable.Name); // find a new table name based on the original name
 
 			// now the table has a unique name in any case
-			_tablesByName.Add(theTable.Name, theTable);
-			Attach(theTable);
+			_itemsByName.Add(theTable.Name, theTable);
+			theTable.ParentObject = this;
 
 			// raise data event to all listeners
 			this.EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(theTable));
-		}
-
-		/// <summary>
-		/// Attaches the table to this object but not adds it to the collection. You should do this as soon as possible.
-		/// </summary>
-		/// <param name="theTable"></param>
-		private void Attach(DataTable theTable)
-		{
-			theTable.ParentObject = this;
-			theTable.NameChanged += this.EhItemNameChanged;
-			theTable.PreviewNameChange += this.EhPreviewItemNameChange;
-			theTable.ParentChanged += this.EhTableParentChanged;
-		}
-
-		/// <summary>
-		/// Detaches the table but not removes it from the collection. You should remove the table as soon as possible.
-		/// </summary>
-		/// <param name="theTable"></param>
-		private void Detach(DataTable theTable)
-		{
-			theTable.ParentChanged -= this.EhTableParentChanged;
-			theTable.NameChanged -= this.EhItemNameChanged;
-			theTable.PreviewNameChange -= this.EhPreviewItemNameChange;
-			theTable.ParentObject = null;
 		}
 
 		/// <summary>
@@ -257,13 +239,12 @@ namespace Altaxo.Data
 		/// <returns>True if the table was found in the collection and thus removed successfully.</returns>
 		public bool Remove(DataTable theTable)
 		{
-			if (!_tablesByName.ContainsValue(theTable))
+			if (!_itemsByName.ContainsValue(theTable))
 				return false;
 
 			var eventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(theTable);
 
-			_tablesByName.Remove(theTable.Name);
-			Detach(theTable);
+			_itemsByName.Remove(theTable.Name);
 			theTable.Dispose();
 
 			//OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theTable, theTable.Name);
@@ -289,38 +270,31 @@ namespace Altaxo.Data
 			}
 		}
 
-		protected void EhTableParentChanged(object sender, Main.ParentChangedEventArgs pce)
+		bool Main.IParentOfINameOwnerChildNodes.EhChild_CanBeRenamed(Main.INameOwner childNode, string newName)
 		{
-			if (object.ReferenceEquals(this, pce.OldParent) && this.Contains((DataTable)sender))
-				this.Remove((DataTable)sender);
+			if (_itemsByName.ContainsKey(newName) && !object.ReferenceEquals(_itemsByName[newName], childNode))
+				return false;
 			else
-				if (!this.Contains((DataTable)sender))
-					throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
+				return true;
 		}
 
-		protected void EhPreviewItemNameChange(Main.INameOwner item, string newName, System.ComponentModel.CancelEventArgs e)
+		void Main.IParentOfINameOwnerChildNodes.EhChild_HasBeenRenamed(Main.INameOwner item, string oldName)
 		{
-			if (_tablesByName.ContainsKey(newName) && !object.ReferenceEquals(_tablesByName[newName], item))
-				e.Cancel = true;
-		}
-
-		protected void EhItemNameChanged(Main.INameOwner item, string oldName)
-		{
-			if (_tablesByName.ContainsKey(item.Name))
+			if (_itemsByName.ContainsKey(item.Name))
 			{
-				if (object.ReferenceEquals(_tablesByName[item.Name], item))
+				if (object.ReferenceEquals(_itemsByName[item.Name], item))
 					return; // Table alredy renamed
 				else
 					throw new ApplicationException("Table with name " + item.Name + " already exists!");
 			}
 
-			if (_tablesByName.ContainsKey(oldName))
+			if (_itemsByName.ContainsKey(oldName))
 			{
-				if (!object.ReferenceEquals(_tablesByName[oldName], item))
+				if (!object.ReferenceEquals(_itemsByName[oldName], item))
 					throw new ApplicationException("Names between DataTableCollection and Tables not in sync");
 
-				_tablesByName.Remove(oldName);
-				_tablesByName.Add(item.Name, (DataTable)item);
+				_itemsByName.Remove(oldName);
+				_itemsByName.Add(item.Name, (DataTable)item);
 
 				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
 			}
@@ -328,6 +302,12 @@ namespace Altaxo.Data
 			{
 				throw new ApplicationException("Error renaming table " + oldName + " : this table name was not found in the collection!");
 			}
+		}
+
+		void Main.IParentOfINameOwnerChildNodes.EhChild_ParentChanged(Main.INameOwner childNode, Main.IDocumentNode oldParent)
+		{
+			if (object.ReferenceEquals(this, oldParent) && _itemsByName.ContainsKey(childNode.Name))
+				throw new InvalidProgramException("Unauthorized change of the DataTable's parent");
 		}
 
 		/// <summary>
@@ -357,7 +337,7 @@ namespace Altaxo.Data
 		{
 			for (int i = 0; ; i++)
 			{
-				if (!_tablesByName.ContainsKey(basicname + i))
+				if (!_itemsByName.ContainsKey(basicname + i))
 					return basicname + i;
 			}
 		}
@@ -365,7 +345,7 @@ namespace Altaxo.Data
 		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			DataTable result;
-			if (_tablesByName.TryGetValue(name, out result))
+			if (_itemsByName.TryGetValue(name, out result))
 				return result;
 
 			return null;
@@ -376,7 +356,7 @@ namespace Altaxo.Data
 			if (o is DataTable)
 			{
 				DataTable gr = (DataTable)o;
-				if (_tablesByName.ContainsKey(gr.Name))
+				if (_itemsByName.ContainsKey(gr.Name))
 					return gr.Name;
 			}
 			return null;
@@ -384,7 +364,7 @@ namespace Altaxo.Data
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			foreach (var entry in _tablesByName)
+			foreach (var entry in _itemsByName)
 				yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
 		}
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.ComponentModel;
+#endregion Copyright
 
-using Altaxo.Worksheet;
 using Altaxo.Collections;
 using Altaxo.Main;
+using Altaxo.Worksheet;
+using System;
+using System.ComponentModel;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -35,13 +36,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	{
 		/// <summary>Holds the data table cached from the layout.</summary>
 		protected Altaxo.Data.DataTable _table;
+
 		protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
 		/// <summary>Fired if the title name changed.</summary>
 		public event EventHandler TitleNameChanged;
 
-		public WeakActionHandler<INameOwner, string> _weakTableNameChangedHandler;
-	
+		public WeakEventHandler _weakTableNameChangedHandler;
 
 		#region Constructors
 
@@ -56,11 +57,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <param name="layout">The worksheet layout.</param>
 		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
 		{
-			if(null==layout)
+			if (null == layout)
 				throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
 
-				this.WorksheetLayout = layout;
-
+			this.WorksheetLayout = layout;
 		}
 
 		public bool InitializeDocument(params object[] args)
@@ -82,8 +82,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			set { }
 		}
 
-
-			protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
+		protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
 		{
 			if (null != _worksheetLayout)
 				throw new ApplicationException("This controller is already controlling a layout");
@@ -96,7 +95,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			_worksheetLayout = value;
 			_table = _worksheetLayout.DataTable;
-			_table.NameChanged += (_weakTableNameChangedHandler = new WeakActionHandler<INameOwner, string>(this.EhTableNameChanged, x => _table.NameChanged -= x));
+			_table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(this.EhTableNameChanged, x => _table.Changed -= x));
 			OnTitleNameChanged();
 		}
 
@@ -115,9 +114,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_table = null;
 			_worksheetLayout = null; // removes also the event handler(s)
 		}
-	
 
-		#endregion // Constructors
+		#endregion Constructors
 
 		#region IWorksheetController Members
 
@@ -129,7 +127,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-
 		public WorksheetLayout WorksheetLayout
 		{
 			get { return _worksheetLayout; }
@@ -139,8 +136,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				InternalInitializeWorksheetLayout(value);
 			}
 		}
-
-	
 
 		public abstract IndexSelection SelectedDataColumns { get; }
 
@@ -161,38 +156,54 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public abstract void TableAreaInvalidate();
 
 		public abstract bool EnableCut { get; }
+
 		public abstract bool EnableCopy { get; }
+
 		public abstract bool EnablePaste { get; }
+
 		public abstract bool EnableDelete { get; }
+
 		public abstract bool EnableSelectAll { get; }
 
 		public abstract void Cut();
+
 		public abstract void Copy();
+
 		public abstract void Paste();
+
 		public abstract void Delete();
+
 		public abstract void SelectAll();
 
-
-		void OnTitleNameChanged()
+		private void OnTitleNameChanged()
 		{
 			if (null != TitleNameChanged)
-				TitleNameChanged(this,EventArgs.Empty);
+				TitleNameChanged(this, EventArgs.Empty);
 		}
 
-		void EhTitleNameChanged(object sender, EventArgs e)
+		private void EhTitleNameChanged(object sender, EventArgs e)
 		{
 			Current.Gui.Execute(EhTitleNameChanged_Unsynchronized, sender, e);
 		}
-		void EhTitleNameChanged_Unsynchronized(object sender, EventArgs e)
+
+		private void EhTitleNameChanged_Unsynchronized(object sender, EventArgs e)
 		{
 			if (null != TitleNameChanged)
 				TitleNameChanged(this, e);
 		}
 
-		public void EhTableNameChanged(INameOwner sender, string oldName)
+		public void EhTableNameChanged(object sender, EventArgs e)
 		{
-			Current.Gui.Execute(EhTableNameChanged_Unsynchronized, sender, oldName);
+			var eAsCCEA = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
+			if (null != eAsCCEA && object.ReferenceEquals(eAsCCEA.Item, _table))
+			{
+				if (eAsCCEA.WasItemRenamed)
+				{
+					Current.Gui.Execute(EhTableNameChanged_Unsynchronized, (INameOwner)eAsCCEA.Item, eAsCCEA.OldName);
+				}
+			}
 		}
+
 		private void EhTableNameChanged_Unsynchronized(INameOwner sender, string oldName)
 		{
 			var view = ViewObject as IWorksheetView;
@@ -201,6 +212,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			this.TitleName = _table.Name;
 		}
+
 		/// <summary>
 		/// This is the whole name of the content, e.g. the file name or
 		/// the url depending on the type of the content.
@@ -217,26 +229,21 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-		#endregion
+		#endregion IWorksheetController Members
 
 		#region IMVCController Members
 
 		public abstract object ViewObject { get; set; }
 
-
 		public object ModelObject
 		{
-			get 
+			get
 			{
 				return new WorksheetViewLayout(_worksheetLayout);
 			}
 		}
 
-		#endregion
-
-
-
-		
+		#endregion IMVCController Members
 
 		public bool Apply()
 		{

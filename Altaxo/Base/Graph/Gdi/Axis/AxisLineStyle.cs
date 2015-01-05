@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.Runtime.Serialization.IDeserializationCallback,
 		IRoutedPropertyReceiver,
-		ICloneable
+		Main.ICopyFrom
 	{
 		/// <summary>Pen used for painting of the axis.</summary>
 		protected PenX _axisPen;
@@ -184,8 +184,6 @@ namespace Altaxo.Graph.Gdi.Axis
 					s._showFirstDownMinorTicks = bOuterMinorTicks;
 				}
 
-				s.WireEventChain(true);
-
 				return s;
 			}
 		}
@@ -225,8 +223,6 @@ namespace Altaxo.Graph.Gdi.Axis
 				s._showFirstUpMinorTicks = (bool)info.GetBoolean("Minor1Up");
 				s._showFirstDownMinorTicks = (bool)info.GetBoolean("Minor1Dw");
 
-				s.WireEventChain(true);
-
 				return s;
 			}
 		}
@@ -237,29 +233,9 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
-			WireEventChain(true);
 		}
 
 		#endregion Serialization
-
-		/// <summary>
-		/// Wires the neccessary child events with event handlers in this class.
-		/// </summary>
-		protected virtual void WireEventChain(bool wire)
-		{
-			if (wire)
-			{
-				_axisPen.ParentObject = this;
-				_majorTickPen.ParentObject = this;
-				_minorTickPen.ParentObject = this;
-			}
-			else
-			{
-				_axisPen.ParentObject = null;
-				_majorTickPen.ParentObject = null;
-				_minorTickPen.ParentObject = null;
-			}
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AxisLineStyle"/> class for deserialization purposes only.
@@ -278,17 +254,15 @@ namespace Altaxo.Graph.Gdi.Axis
 			double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
 			var color = GraphDocument.GetDefaultForeColor(context);
 
-			_axisPen = new PenX(color, penWidth);
-			_majorTickPen = new PenX(color, penWidth);
-			_minorTickPen = new PenX(color, penWidth);
+			_axisPen = new PenX(color, penWidth) { ParentObject = this };
+			_majorTickPen = new PenX(color, penWidth) { ParentObject = this };
+			_minorTickPen = new PenX(color, penWidth) { ParentObject = this };
 			_majorTickLength = majorTickLength;
 			_minorTickLength = majorTickLength / 2;
 			_showFirstUpMajorTicks = true; // true if right major ticks should be visible
 			_showFirstDownMajorTicks = true; // true if left major ticks should be visible
 			_showFirstUpMinorTicks = true; // true if right minor ticks should be visible
 			_showFirstDownMinorTicks = true; // true if left minor ticks should be visible
-
-			WireEventChain(true);
 		}
 
 		/// <summary>
@@ -304,30 +278,35 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// Copy operation.
 		/// </summary>
 		/// <param name="from">The AxisStyle to copy from</param>
-		public void CopyFrom(AxisLineStyle from)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			if (_axisPen != null)
-				WireEventChain(false);
+			var from = obj as AxisLineStyle;
+			if (null == from)
+				return false;
 
-			this._axisPen = null == from._axisPen ? null : (PenX)from._axisPen.Clone();
-			this._axisPosition = from._axisPosition;
-			this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
-			this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
-			this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
-			this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
-			this._majorTickLength = from._majorTickLength;
-			this._majorTickPen = null == from._majorTickPen ? null : (PenX)from._majorTickPen;
-			this._minorTickLength = from._minorTickLength;
-			this._minorTickPen = (null == from._minorTickPen) ? null : (PenX)from._minorTickPen;
+			using (var suspendToken = SuspendGetToken())
+			{
+				CopyChildFrom(ref _axisPen, from._axisPen);
+				this._axisPosition = from._axisPosition;
+				this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
+				this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
+				this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
+				this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
+				this._majorTickLength = from._majorTickLength;
+				CopyChildFrom(ref _majorTickPen, from._majorTickPen);
+				this._minorTickLength = from._minorTickLength;
+				CopyChildFrom(ref _minorTickPen, from._minorTickPen);
 
-			this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
-			this._parent = from._parent;
+				this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
-			// Rewire the event chain
-			WireEventChain(true);
+				EhSelfChanged(EventArgs.Empty);
+
+				suspendToken.Resume();
+			}
+			return true;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

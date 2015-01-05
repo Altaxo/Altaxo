@@ -190,18 +190,6 @@ typeof(GraphDocument),
 		[NonSerialized]
 		private volatile System.Threading.Thread _paintThread;
 
-		/// <summary>
-		/// Event to signal that the name of this object has changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<Main.INameOwner, string> NameChanged;
-
-		/// <summary>
-		/// Fired before the name of this object is changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
-
 		/// <summary>Event fired if the size of this document (i.e. the size of the root layer) changed.</summary>
 		[field: NonSerialized]
 		public event EventHandler SizeChanged;
@@ -472,6 +460,29 @@ typeof(GraphDocument),
 			return new GraphDocument(this);
 		}
 
+		/// <summary>
+		/// Get / sets the parent object of this table.
+		/// </summary>
+		public override Main.IDocumentNode ParentObject
+		{
+			get
+			{
+				return _parent;
+			}
+			set
+			{
+				if (object.ReferenceEquals(_parent, value))
+					return;
+
+				var oldParent = _parent;
+				_parent = value;
+
+				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+				if (null != parentAs)
+					parentAs.EhChild_ParentChanged(this, oldParent);
+			}
+		}
+
 		public override string Name
 		{
 			get { return _name; }
@@ -479,25 +490,43 @@ typeof(GraphDocument),
 			{
 				if (null == value)
 					throw new ArgumentNullException("New name is null");
+				if (_name == value)
+					return; // nothing changed
 
-				if (_name != value)
+				var canBeRenamed = true;
+				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+				if (null != parentAs)
 				{
-					// test if an object with this name is already in the parent
-					Altaxo.Main.INamedObjectCollection parentColl = ParentObject as Altaxo.Main.INamedObjectCollection;
-					if (null != parentColl && null != parentColl.GetChildObjectNamed(value))
-						throw new ApplicationException(string.Format("The graph {0} can not be renamed to {1}, since another graph with the same name already exists", this.Name, value));
+					canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
+				}
 
-					string oldValue = _name;
+				if (canBeRenamed)
+				{
+					var oldName = _name;
 					_name = value;
-					OnNameChanged(oldValue);
+
+					if (null != parentAs)
+						parentAs.EhChild_HasBeenRenamed(this, oldName);
+
+					OnNameChanged(oldName);
+				}
+				else
+				{
+					throw new ApplicationException(string.Format("Renaming of graph {0} into {1} not possible, because name exists already", _name, value));
 				}
 			}
 		}
 
-		public virtual void OnNameChanged(string oldValue)
+		/// <summary>
+		/// Fires both a Changed and a TunnelingEvent when the name has changed.
+		/// The event arg of the Changed event is an instance of <see cref="T:Altaxo.Main.NamedObjectCollectionChangedEventArgs"/>.
+		/// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
+		/// </summary>
+		/// <param name="oldName">The name of the table before it has changed the name.</param>
+		protected virtual void OnNameChanged(string oldName)
 		{
-			if (NameChanged != null)
-				NameChanged(this, oldValue);
+			EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
+			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
 		}
 
 		/// <summary>

@@ -71,7 +71,7 @@ namespace Altaxo.Main
 			{
 				for (int i = docPath.Count; i >= 2; --i)
 				{
-					var subPath = docPath.SubPath(i);
+					var subPath = docPath.SubPath(0, i);
 					DocumentPath replacePath;
 					if (_itemRelocationDictionary.TryGetValue(subPath, out replacePath))
 					{

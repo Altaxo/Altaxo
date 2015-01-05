@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
 		protected NumericalBoundaries _dataBounds = null;
 
-		protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
+		protected LogarithmicAxisRescaleConditions _rescaling;
 
 		#region Serialization
 
@@ -155,8 +155,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// </summary>
 		public Log10Scale()
 		{
-			_dataBounds = new PositiveFiniteNumericalBoundaries();
-			_dataBounds.ParentObject = this;
+			_rescaling = new LogarithmicAxisRescaleConditions() { ParentObject = this };
+			_dataBounds = new PositiveFiniteNumericalBoundaries() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -167,13 +167,15 @@ namespace Altaxo.Graph.Scales.Deprecated
 		{
 			this.IsLinked = from.IsLinked;
 
-			this._dataBounds = null == from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
+			this._dataBounds = null == from._dataBounds ? new PositiveFiniteNumericalBoundaries() { ParentObject = this } : (NumericalBoundaries)from._dataBounds.Clone();
+			this._dataBounds.ParentObject = this;
+
 			this._decadesPerMajorTick = from._decadesPerMajorTick;
 			this._log10End = from._log10End;
 			this._log10Org = from._log10Org;
 
-			this._rescaling = null == from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling = null == from.Rescaling ? new LogarithmicAxisRescaleConditions() { ParentObject = this } : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling.ParentObject = this;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

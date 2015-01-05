@@ -99,6 +99,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				s._text = info.GetString("Text");
 				s._font = (FontX)info.GetValue("Font", s);
 				s._textBrush = (BrushX)info.GetValue("Brush", s);
+				if (null != s._textBrush) s._textBrush.ParentObject = s;
 				s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle", s);
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 				info.GetSingle("ShadowLength");
@@ -215,7 +216,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				context = PropertyExtensions.GetPropertyContextOfProject();
 
 			_font = context.GetValue(GraphDocument.PropertyKeyDefaultFont);
-			_textBrush = new BrushX(context.GetValue(GraphDocument.PropertyKeyDefaultForeColor));
+			_textBrush = new BrushX(context.GetValue(GraphDocument.PropertyKeyDefaultForeColor)) { ParentObject = this };
 		}
 
 		public TextGraphic(PointD2D graphicPosition, string text,
@@ -410,23 +411,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 				switch (value)
 				{
 					case BackgroundStyle.BlackLine:
-						_background = new BlackLine();
+						_background = new BlackLine() { ParentObject = this };
 						break;
 
 					case BackgroundStyle.BlackOut:
-						_background = new BlackOut();
+						_background = new BlackOut() { ParentObject = this };
 						break;
 
 					case BackgroundStyle.DarkMarbel:
-						_background = new DarkMarbel();
+						_background = new DarkMarbel() { ParentObject = this };
 						break;
 
 					case BackgroundStyle.WhiteOut:
-						_background = new WhiteOut();
+						_background = new WhiteOut() { ParentObject = this };
 						break;
 
 					case BackgroundStyle.Shadow:
-						_background = new RectangleWithShadow();
+						_background = new RectangleWithShadow() { ParentObject = this };
 						break;
 
 					case BackgroundStyle.None:

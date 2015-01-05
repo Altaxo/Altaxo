@@ -433,28 +433,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			this._shape = from._shape;
-			this._style = from._style;
-			if (null == this._dropLine)
-				this._dropLine = new CSPlaneIDList();
-			else
-				this._dropLine.Clear();
-			this._dropLine.AddClonedRange(from._dropLine);
-			this._pen = null == from._pen ? null : (PenX)from._pen.Clone();
-			this._independentColor = from._independentColor;
-			this._independentSymbolSize = from._independentSymbolSize;
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._shape = from._shape;
+				this._style = from._style;
+				if (null == this._dropLine)
+					this._dropLine = new CSPlaneIDList();
+				else
+					this._dropLine.Clear();
+				this._dropLine.AddClonedRange(from._dropLine);
+				CopyChildFrom(ref _pen, from._pen);
+				this._independentColor = from._independentColor;
+				this._independentSymbolSize = from._independentSymbolSize;
 
-			this._symbolSize = from._symbolSize;
-			this._relativePenWidth = from._relativePenWidth;
-			this._skipFreq = from._skipFreq;
+				this._symbolSize = from._symbolSize;
+				this._relativePenWidth = from._relativePenWidth;
+				this._skipFreq = from._skipFreq;
 
-			this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
-			this._cachedFillPath = from._cachedFillPath;
-			this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushX)from._cachedFillBrush.Clone();
-			this._parent = from._parent;
+				this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
+				this._cachedFillPath = from._cachedFillPath;
+				CopyChildFrom(ref _cachedFillBrush, from._cachedFillBrush);
 
-			if (Main.EventFiring.Enabled == eventFiring)
 				EhSelfChanged(EventArgs.Empty);
+
+				suspendToken.Resume(eventFiring);
+			}
 		}
 
 		public ScatterPlotStyle(ScatterPlotStyle from)
@@ -488,7 +491,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._shape = XYPlotScatterStyles.Shape.Square;
 			this._style = XYPlotScatterStyles.Style.Solid;
 			this._dropLine = new CSPlaneIDList();
-			this._pen = new PenX(color, penWidth);
+			this._pen = new PenX(color, penWidth) { ParentObject = this };
 			this._independentColor = false;
 
 			this._symbolSize = symbolSize;
@@ -496,7 +499,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._relativePenWidth = 0.1f;
 			this._skipFreq = 1;
 			this._cachedFillPath = true; // since default is solid
-			this._cachedFillBrush = new BrushX(color);
+			this._cachedFillBrush = new BrushX(color) { ParentObject = this };
 			this._cachedPath = GetPath(_shape, _style, _symbolSize);
 			CreateEventChain();
 		}

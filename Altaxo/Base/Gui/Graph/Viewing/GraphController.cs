@@ -509,7 +509,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			_doc.Changed += new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x);
 			_doc.RootLayer.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.RootLayer.LayerCollectionChanged -= x);
 			_doc.SizeChanged += new WeakEventHandler(this.EhGraph_SizeChanged, x => _doc.SizeChanged -= x);
-			_doc.NameChanged += new WeakActionHandler<INameOwner, string>(this.EhGraphDocumentNameChanged, x => _doc.NameChanged -= x);
 
 			// if the host layer has at least one child, we set the active layer to the first child of the host layer
 			if (_doc.RootLayer.Layers.Count >= 1)
@@ -666,6 +665,13 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="e">The EventArgs.</param>
 		protected void EhGraph_Changed(object sender, System.EventArgs e)
 		{
+			var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
+			if (null != eAsNOC && eAsNOC.WasItemRenamed)
+			{
+				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
+				return;
+			}
+
 			// if something changed on the graph, make sure that the layer and plot number reflect this changed
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
@@ -721,11 +727,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				_view.SetLayerStructure(_layerStructure, _currentLayerNumber.ToArray());
 			}
-		}
-
-		public void EhGraphDocumentNameChanged(INameOwner sender, string oldName)
-		{
-			Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, sender, oldName);
 		}
 
 		private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)

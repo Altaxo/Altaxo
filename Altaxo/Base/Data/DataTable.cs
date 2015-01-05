@@ -59,7 +59,7 @@ namespace Altaxo.Data
 		/// The name of this table, has to be unique if there is a parent data set, since the tables in the parent data set
 		/// can only be accessed by name.
 		/// </summary>
-		protected string _tableName = null; // the name of the table
+		protected string _name = null; // the name of the table
 
 		/// <summary>
 		/// Collection of property columns, i.e. "horizontal" columns.
@@ -115,24 +115,6 @@ namespace Altaxo.Data
 		/// </summary>
 		private bool _table_DeserializationFinished = false;
 
-		/// <summary>
-		/// Event to signal that the parent of this object has changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Main.ParentChangedEventHandler ParentChanged;
-
-		/// <summary>
-		/// Event to signal that the name of this object has changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<Main.INameOwner, string> NameChanged;
-
-		/// <summary>
-		/// Fired before the name of this table is changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<Main.INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
-
 		#endregion Members
 
 		#region Serialization
@@ -154,7 +136,7 @@ namespace Altaxo.Data
 					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
 				}
 
-				info.AddValue("Name", s._tableName); // name of the Table
+				info.AddValue("Name", s._name); // name of the Table
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 			}
 
@@ -173,7 +155,7 @@ namespace Altaxo.Data
 					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
 				}
 
-				s._tableName = info.GetString("Name");
+				s._name = info.GetString("Name");
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", typeof(DataColumnCollection));
 
 				return s;
@@ -186,7 +168,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 
-				info.AddValue("Name", s._tableName); // name of the Table
+				info.AddValue("Name", s._name); // name of the Table
 				info.AddValue("DataCols", s.DataColumns); // the data columns of that table
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 			}
@@ -195,7 +177,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 
-				s._tableName = info.GetString("Name");
+				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", typeof(DataColumnCollection));
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", typeof(DataColumnCollection));
 
@@ -209,7 +191,7 @@ namespace Altaxo.Data
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				info.AddValue("Name", s._tableName); // name of the Table
+				info.AddValue("Name", s._name); // name of the Table
 				info.AddValue("DataCols", s._dataColumns);
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 			}
@@ -218,7 +200,7 @@ namespace Altaxo.Data
 			{
 				var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
 
-				s._tableName = info.GetString("Name");
+				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
@@ -234,7 +216,7 @@ namespace Altaxo.Data
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				info.AddValue("Name", s._tableName); // name of the Table
+				info.AddValue("Name", s._name); // name of the Table
 				info.AddValue("DataCols", s._dataColumns);
 				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
 
@@ -246,7 +228,7 @@ namespace Altaxo.Data
 			{
 				var s = (Altaxo.Data.DataTable)o ?? new Altaxo.Data.DataTable(info);
 
-				s._tableName = info.GetString("Name");
+				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
@@ -302,7 +284,7 @@ namespace Altaxo.Data
 
 			public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				s._tableName = info.GetString("Name");
+				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
@@ -355,7 +337,7 @@ namespace Altaxo.Data
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				info.AddValue("Name", s._tableName); // name of the Table
+				info.AddValue("Name", s._name); // name of the Table
 
 				string originalSaveAsTemplateOption = null;
 				bool saveDataAsTemplateRequired = null != s._tableDataSource && s._tableDataSource.ImportOptions.DoNotSaveCachedTableData;
@@ -384,7 +366,7 @@ namespace Altaxo.Data
 
 			public virtual void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				s._tableName = info.GetString("Name");
+				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
@@ -529,7 +511,7 @@ namespace Altaxo.Data
 		public DataTable(string name)
 			: this()
 		{
-			this._tableName = name;
+			this._name = name;
 		}
 
 		/// <summary>
@@ -561,7 +543,7 @@ namespace Altaxo.Data
 			: this((DataColumnCollection)from._dataColumns.Clone(), (DataColumnCollection)from._propertyColumns.Clone())
 		{
 			this._parent = null; // do not clone the parent
-			this._tableName = from._tableName;
+			this._name = from._name;
 			this._tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
 			this._creationTime = this._lastChangeTime = DateTime.UtcNow;
 			this._notes = from._notes.Clone();
@@ -587,13 +569,12 @@ namespace Altaxo.Data
 		/// <param name="propcoll">The property columns.</param>
 		protected DataTable(DataColumnCollection datacoll, DataColumnCollection propcoll)
 		{
-			this._dataColumns = datacoll;
+			_dataColumns = datacoll;
 			_dataColumns.ParentObject = this;
-			_dataColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
 
-			this._propertyColumns = propcoll;
-			this._propertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
-			_propertyColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
+			_propertyColumns = propcoll;
+			_propertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
+
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new Main.TextBackedConsole();
 			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
@@ -670,24 +651,16 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				object oldParent = _parent;
-				_parent = value;
-				if (!object.ReferenceEquals(oldParent, _parent))
-				{
-					OnParentChanged(oldParent, _parent);
-				}
-			}
-		}
+				if (object.ReferenceEquals(_parent, value))
+					return;
 
-		/// <summary>
-		/// Fires the parent change event.
-		/// </summary>
-		/// <param name="oldParent">The parent before the change.</param>
-		/// <param name="newParent">The parent after the change.</param>
-		protected virtual void OnParentChanged(object oldParent, object newParent)
-		{
-			if (ParentChanged != null)
-				ParentChanged(this, new Main.ParentChangedEventArgs(oldParent, newParent));
+				var oldParent = _parent;
+				_parent = value;
+
+				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+				if (null != parentAs)
+					parentAs.EhChild_ParentChanged(this, oldParent);
+			}
 		}
 
 		/// <summary>
@@ -697,33 +670,49 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return _tableName;
+				return _name;
 			}
-
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException("New name is null");
+				if (_name == value)
+					return; // nothing changed
 
-				if (_tableName != value)
+				var canBeRenamed = true;
+				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+				if (null != parentAs)
 				{
-					var e = new System.ComponentModel.CancelEventArgs();
-					if (null != PreviewNameChange)
-					{
-						PreviewNameChange(this, value, e);
-					}
-					if (!e.Cancel)
-					{
-						string oldName = _tableName;
-						_tableName = value;
-						OnNameChanged(oldName);
-					}
-					else
-					{
-						throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _tableName, value));
-					}
+					canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
+				}
+
+				if (canBeRenamed)
+				{
+					var oldName = _name;
+					_name = value;
+
+					if (null != parentAs)
+						parentAs.EhChild_HasBeenRenamed(this, oldName);
+
+					OnNameChanged(oldName);
+				}
+				else
+				{
+					throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _name, value));
 				}
 			}
+		}
+
+		/// <summary>
+		/// Fires both a Changed and a TunnelingEvent when the name has changed.
+		/// The event arg of the Changed event is an instance of <see cref="T:Altaxo.Main.NamedObjectCollectionChangedEventArgs"/>.
+		/// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
+		/// </summary>
+		/// <param name="oldName">The name of the table before it has changed the name.</param>
+		protected virtual void OnNameChanged(string oldName)
+		{
+			EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
+			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
 		}
 
 		/// <summary>
@@ -764,18 +753,6 @@ namespace Altaxo.Data
 			{
 				return Main.ProjectFolder.GetNamePart(Name);
 			}
-		}
-
-		/// <summary>
-		/// Fires the name change event.
-		/// </summary>
-		/// <param name="oldName">The name of the table before the change.</param>
-		protected virtual void OnNameChanged(string oldName)
-		{
-			EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
-
-			if (NameChanged != null)
-				NameChanged(this, oldName);
 		}
 
 		/// <summary>
@@ -870,18 +847,6 @@ namespace Altaxo.Data
 					this.Notes.WriteLine(ex.ToString());
 				}
 			}
-		}
-
-		/// <summary>
-		/// EventHandler used to catch unauthorized parent changes in child objects.
-		/// </summary>
-		/// <param name="sender">The child object which signal a parent change.</param>
-		/// <param name="e">The parent change details.</param>
-		protected void EhChildParentChanged(object sender, Main.ParentChangedEventArgs e)
-		{
-			// this event should not happen, or someone try to
-			// change the parents of my collection
-			throw new ApplicationException("Unexpected change of DataColumnsCollection's parent belonging to table " + this.Name);
 		}
 
 		/// <summary>

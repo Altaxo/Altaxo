@@ -45,17 +45,6 @@ namespace Altaxo.Main.Properties
 		private DateTime _creationTimeUtc;
 		private DateTime _changeTimeUtc;
 
-		/// <summary>
-		/// Fired if the name has changed. Arguments are the name owner (which has already the new name), and the old name.
-		/// </summary>
-		public event Action<INameOwner, string> NameChanged;
-
-		/// <summary>
-		/// Fired before the name will change. Arguments are the name owner (which has still the old name, the new name, and CancelEventArgs.
-		/// If any of the listeners set Cancel to true, the name will not be changed.
-		/// </summary>
-		public event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
-
 		#region Serialization
 
 		/// <summary>
@@ -168,24 +157,47 @@ namespace Altaxo.Main.Properties
 			}
 			set
 			{
+				if (null == value)
+					throw new ArgumentNullException("New name is null");
+				if (_name == value)
+					return; // nothing changed
+
 				Main.ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(value);
 
-				var oldName = _name;
-				if (oldName == value)
-					return;
+				var canBeRenamed = true;
+				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
+				if (null != parentAs)
+				{
+					canBeRenamed = parentAs.EhChild_CanBeRenamed(this, value);
+				}
 
-				var e = new System.ComponentModel.CancelEventArgs();
-				if (null != PreviewNameChange)
-					PreviewNameChange(this, value, e);
+				if (canBeRenamed)
+				{
+					var oldName = _name;
+					_name = value;
 
-				if (e.Cancel)
-					return;
+					if (null != parentAs)
+						parentAs.EhChild_HasBeenRenamed(this, oldName);
 
-				_name = value;
-
-				if (null != NameChanged)
-					NameChanged(this, oldName);
+					OnNameChanged(oldName);
+				}
+				else
+				{
+					throw new ApplicationException(string.Format("Renaming of table {0} into {1} not possible, because name exists already", _name, value));
+				}
 			}
+		}
+
+		/// <summary>
+		/// Fires both a Changed and a TunnelingEvent when the name has changed.
+		/// The event arg of the Changed event is an instance of <see cref="T:Altaxo.Main.NamedObjectCollectionChangedEventArgs"/>.
+		/// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
+		/// </summary>
+		/// <param name="oldName">The name of the table before it has changed the name.</param>
+		protected virtual void OnNameChanged(string oldName)
+		{
+			EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty);
+			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(this, oldName));
 		}
 
 		/// <summary>
