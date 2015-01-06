@@ -55,19 +55,20 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Designates the type of change in an collection of named items.
 	/// </summary>
+	[Flags]
 	public enum NamedObjectCollectionChangeType
 	{
 		/// <summary>A new item was added to the collection.</summary>
-		ItemAdded,
+		ItemAdded = 0x01,
 
 		/// <summary>An item was removed from the collection.</summary>
-		ItemRemoved,
+		ItemRemoved = 0x02,
 
 		/// <summary>An item was renamed.</summary>
-		ItemRenamed,
+		ItemRenamed = 0x04,
 
 		/// <summary>More than one item was added, removed or renamed.</summary>
-		MultipleChanges,
+		MultipleChanges = 0x80
 	}
 
 	/// <summary>
@@ -120,18 +121,15 @@ namespace Altaxo.Main
 
 	public class NamedObjectCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs
 	{
-		[Flags]
-		private enum Operation
-		{
-			ItemAdded = 1,
-			ItemRemoved = 2,
-			ItemRenamed = 4
-		}
+		/// <summary>
+		/// Item that is used to indicate that multiple changes have occured.
+		/// </summary>
+		private static readonly object MultipleChangesItem = new object();
 
 		private object _item;
 		private string _oldItemName;
 		private string _newItemName;
-		private Operation _operation;
+		private NamedObjectCollectionChangeType _operation;
 
 		#region Properties
 
@@ -141,11 +139,15 @@ namespace Altaxo.Main
 
 		public string NewName { get { return _newItemName; } }
 
-		public bool WasItemAdded { get { return _operation.HasFlag(Operation.ItemAdded); } }
+		public NamedObjectCollectionChangeType Changes { get { return _operation; } }
 
-		public bool WasItemRemoved { get { return _operation.HasFlag(Operation.ItemRemoved); } }
+		public bool WasItemAdded { get { return _operation.HasFlag(NamedObjectCollectionChangeType.ItemAdded); } }
 
-		public bool WasItemRenamed { get { return _operation.HasFlag(Operation.ItemRenamed); } }
+		public bool WasItemRemoved { get { return _operation.HasFlag(NamedObjectCollectionChangeType.ItemRemoved); } }
+
+		public bool WasItemRenamed { get { return _operation.HasFlag(NamedObjectCollectionChangeType.ItemRenamed); } }
+
+		public bool WasMultipleItemsChanged { get { return _operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges); } }
 
 		#endregion Properties
 
@@ -156,7 +158,7 @@ namespace Altaxo.Main
 		{
 			if (null == item)
 				throw new ArgumentNullException("item");
-			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = Operation.ItemAdded };
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = NamedObjectCollectionChangeType.ItemAdded };
 			return result;
 		}
 
@@ -167,7 +169,19 @@ namespace Altaxo.Main
 		{
 			if (null == item)
 				throw new ArgumentNullException("item");
-			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = Operation.ItemRemoved };
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = item.Name, _operation = NamedObjectCollectionChangeType.ItemRemoved };
+			return result;
+		}
+
+		/// <summary>
+		/// Returns an instance when an item was added. Here the additional parameter <paramref name="itemNameOverride"/> is used as the new and old name of the item.
+		/// Use this only when absolutely sure about it.
+		/// </summary>
+		public static NamedObjectCollectionChangedEventArgs FromItemRemoved(INamedObject item, string itemNameOverride)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = itemNameOverride, _oldItemName = itemNameOverride, _operation = NamedObjectCollectionChangeType.ItemRemoved };
 			return result;
 		}
 
@@ -178,7 +192,16 @@ namespace Altaxo.Main
 		{
 			if (null == item)
 				throw new ArgumentNullException("item");
-			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = oldName, _operation = Operation.ItemRenamed };
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = item, _newItemName = item.Name, _oldItemName = oldName, _operation = NamedObjectCollectionChangeType.ItemRenamed };
+			return result;
+		}
+
+		/// <summary>
+		/// Returns an instance when an item was added.
+		/// </summary>
+		public static NamedObjectCollectionChangedEventArgs FromMultipleChanges()
+		{
+			var result = new NamedObjectCollectionChangedEventArgs() { _item = MultipleChangesItem, _operation = NamedObjectCollectionChangeType.MultipleChanges };
 			return result;
 		}
 
@@ -190,19 +213,33 @@ namespace Altaxo.Main
 			if (!object.ReferenceEquals(this._item, other._item))
 				throw new ArgumentOutOfRangeException("Argument e has an item which is not identical to this item. This should not happen since Equals and GetHashCode are overriden.");
 
+			// MultipleChanges overrrides everything
+			if (this._operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges))
+				return;
+			if (other._operation.HasFlag(NamedObjectCollectionChangeType.MultipleChanges))
+			{
+				this._operation = NamedObjectCollectionChangeType.MultipleChanges;
+				this._item = MultipleChangesItem;
+				this._newItemName = null;
+				this._oldItemName = null;
+				return;
+			}
+
+			// Normal changes
+
 			this._newItemName = other._newItemName;
 			this._operation |= other._operation;
 
-			if (other._operation.HasFlag(Operation.ItemAdded))
+			if (other._operation.HasFlag(NamedObjectCollectionChangeType.ItemAdded))
 			{
-				this._operation = this._operation.WithClearedFlag(Operation.ItemRemoved);
+				this._operation = this._operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemRemoved);
 				if (_oldItemName != _newItemName)
-					this._operation = this._operation.WithSetFlag(Operation.ItemRenamed);
+					this._operation = this._operation.WithSetFlag(NamedObjectCollectionChangeType.ItemRenamed);
 			}
-			else if (other._operation.HasFlag(Operation.ItemRemoved))
+			else if (other._operation.HasFlag(NamedObjectCollectionChangeType.ItemRemoved))
 			{
-				this._operation = this._operation.WithClearedFlag(Operation.ItemAdded);
-				this._operation = this._operation.WithClearedFlag(Operation.ItemRenamed);
+				this._operation = this._operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemAdded);
+				this._operation = this._operation.WithClearedFlag(NamedObjectCollectionChangeType.ItemRenamed);
 			}
 		}
 

@@ -41,7 +41,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IGPlotItem,
 		IEnumerable<IGPlotItem>,
-		Main.INamedObjectCollection,
 		IXBoundsHolder,
 		IYBoundsHolder
 	{
@@ -357,15 +356,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				if (value == null)
 					throw new ArgumentNullException();
 				this._plotGroupStyles = value;
-			}
-		}
-
-		public override string Name
-		{
-			get { return "PlotItems"; }
-			set
-			{
-				throw new InvalidOperationException("Name of PlotItemCollection cannot be set");
 			}
 		}
 
@@ -934,7 +924,10 @@ namespace Altaxo.Graph.Gdi.Plot
 			int idx = _plotItems.IndexOf(plotitem);
 			if (idx >= 0)
 			{
+				plotitem = _plotItems[idx];
 				_plotItems.RemoveAt(idx);
+				plotitem.Dispose();
+
 				OnCollectionChanged();
 				return true;
 			}

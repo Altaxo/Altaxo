@@ -238,12 +238,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 		}
 
-		private void EhProjectDirectoryItemChanged(NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhProjectDirectoryItemChanged(object sender, NamedObjectCollectionChangedEventArgs e)
 		{
-			Current.Gui.Execute(EhProjectDirectoryItemChanged_Unsynchronized, changeType, item, oldName, newName);
+			Current.Gui.Execute(EhProjectDirectoryItemChanged_Unsynchronized, e.Changes, e.Item);
 		}
 
-		private void EhProjectDirectoryItemChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhProjectDirectoryItemChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, object item)
 		{
 			if (changeType == NamedObjectCollectionChangeType.MultipleChanges)
 			{
@@ -251,20 +251,22 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 			else
 			{
-				if (item is string)
-					EhProjectDirectoryChanged(changeType, (string)item);
+				if (item is ProjectFolder)
+					EhProjectDirectoryChanged(changeType, (ProjectFolder)item);
 			}
 		}
 
-		private void EhProjectDirectoryChanged(NamedObjectCollectionChangeType changeType, string dir)
+		private void EhProjectDirectoryChanged(NamedObjectCollectionChangeType changeType, ProjectFolder dir)
 		{
 			Current.Gui.Execute(EhProjectDirectoryChanged_Unsynchronized, changeType, dir);
 		}
 
-		private void EhProjectDirectoryChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, string dir)
+		private void EhProjectDirectoryChanged_Unsynchronized(NamedObjectCollectionChangeType changeType, ProjectFolder folder)
 		{
-			if (ProjectFolder.IsRootFolderName(dir))
+			if (folder.IsRootFolder)
 				return; // for the root directory, we have already the node, and we can not add or remove them
+
+			string dir = folder.Name;
 
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(dir);
 

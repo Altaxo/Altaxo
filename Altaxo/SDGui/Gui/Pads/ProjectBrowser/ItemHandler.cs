@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			Current.Project.Folders.CollectionChanged += EhCollectionChanged;
 		}
 
-		private void EhCollectionChanged(Altaxo.Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		private void EhCollectionChanged(object sender, Altaxo.Main.NamedObjectCollectionChangedEventArgs e)
 		{
 			GetItemList();
 			OnListChange();

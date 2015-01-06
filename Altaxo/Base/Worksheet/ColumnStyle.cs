@@ -284,15 +284,15 @@ namespace Altaxo.Worksheet
 			_columnSize = s._columnSize;
 
 			_isCellPenCustom = s._isCellPenCustom;
-			_cellPen = (PenX)s._cellPen.Clone();
+			CopyChildFrom(ref _cellPen, s._cellPen);
 			_textFormat = (StringFormat)s._textFormat.Clone();
 			_textFont = s._textFont;
 
 			_isTextBrushCustom = s._isTextBrushCustom;
-			_textBrush = (BrushX)s._textBrush.Clone();
+			CopyChildFrom(ref _textBrush, s._textBrush);
 
 			_isBackgroundBrushCustom = s._isBackgroundBrushCustom;
-			_backgroundBrush = (BrushX)s._backgroundBrush.Clone();
+			CopyChildFrom(ref _backgroundBrush, s._backgroundBrush);
 		}
 
 		/// <summary>
@@ -386,13 +386,16 @@ namespace Altaxo.Worksheet
 				if (value == null)
 					throw new ArgumentNullException();
 
-				PenX oldValue = _cellPen;
+				if (object.ReferenceEquals(_cellPen, value))
+					return;
+
+				if (null != _cellPen)
+					_cellPen.Dispose();
+
 				_cellPen = value;
-				if (!object.ReferenceEquals(value, oldValue))
-				{
-					oldValue.ParentObject = null;
-					value.ParentObject = this;
-				}
+
+				if (null != _cellPen)
+					_cellPen.ParentObject = this;
 			}
 		}
 
@@ -406,13 +409,16 @@ namespace Altaxo.Worksheet
 			{
 				if (value == null)
 					throw new ArgumentNullException();
-				BrushX oldValue = _backgroundBrush;
+				if (object.ReferenceEquals(_backgroundBrush, value))
+					return;
+
+				if (null != _backgroundBrush)
+					_backgroundBrush.Dispose();
+
 				_backgroundBrush = value;
-				if (!object.ReferenceEquals(value, oldValue))
-				{
-					oldValue.ParentObject = null;
-					value.ParentObject = this;
-				}
+
+				if (null != _backgroundBrush)
+					_backgroundBrush.ParentObject = this;
 			}
 		}
 
@@ -447,13 +453,16 @@ namespace Altaxo.Worksheet
 			{
 				if (value == null)
 					throw new ArgumentNullException();
-				BrushX oldValue = _textBrush;
+				if (object.ReferenceEquals(_textBrush, value))
+					return;
+
+				if (null != _textBrush)
+					_textBrush.Dispose();
+
 				_textBrush = value;
-				if (!object.ReferenceEquals(value, oldValue))
-				{
-					oldValue.ParentObject = null;
-					value.ParentObject = this;
-				}
+
+				if (null != _textBrush)
+					_textBrush.ParentObject = this;
 			}
 		}
 

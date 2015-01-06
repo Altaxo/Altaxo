@@ -282,8 +282,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				GraphicBase s = (GraphicBase)o;
 
+				if (null != s._location) s._location.Dispose(); // because location probably is set already in the derived object
 				s._location = (ItemLocationDirect)info.GetValue("Location", s);
-				s._location.ParentObject = s;
+				if (null != s._location) s._location.ParentObject = s;
 
 				s.UpdateTransformationMatrix();
 

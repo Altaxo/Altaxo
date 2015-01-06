@@ -648,7 +648,7 @@
     <Compile Include="Gui\Scripting\FitFunctionScriptController.cs" />
     <Compile Include="Gui\Scripting\PureScriptController.cs" />
     <Compile Include="Gui\Scripting\ScriptController.cs" />
-    <Compile Include="Main\Document.cs">
+    <Compile Include="Main\AltaxoDocument.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\DocumentPath.cs">
@@ -1162,7 +1162,7 @@
     <Compile Include="Main\ProjectFolder.cs" />
     <Compile Include="Main\ProjectFolders.cs" />
     <Compile Include="Main\Services\IPropertyService.cs" />
-    <Compile Include="Main\TunnelingAndBubblingEvents.cs" />
+    <Compile Include="Main\TunnelingEvents.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiExportOptions.cs" />

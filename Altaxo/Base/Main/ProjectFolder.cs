@@ -474,9 +474,5 @@ namespace Altaxo.Main
 		#endregion other helpers
 
 		#endregion Static Name functions
-
-		public event Action<INameOwner, string> NameChanged;
-
-		public event Action<INameOwner, string, System.ComponentModel.CancelEventArgs> PreviewNameChange;
 	}
 }

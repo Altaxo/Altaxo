@@ -23,6 +23,10 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
@@ -245,6 +249,34 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
+		/// Disposing this instance is special - we must not dispose the reference this instance holds.
+		/// Instead, we remove all references to the holded document node and also all event handlers-
+		/// </summary>
+		/// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+		protected override void Dispose(bool isDisposing)
+		{
+			if (null != _weakDocNodeChangedHandler)
+			{
+				_weakDocNodeChangedHandler.Remove();
+				_weakDocNodeChangedHandler = null;
+			}
+			if (null != _weakDocNodeTunneledEventHandler)
+			{
+				_weakDocNodeTunneledEventHandler.Remove();
+				_weakDocNodeTunneledEventHandler = null;
+			}
+			_docNodeRef = null;
+
+#if DEBUG_DOCNODEPROXYLOGGING
+			Current.Console.WriteLine("DocNodeProxy.Dispose, path was >>>{0}<<<", _docNodePath);
+#endif
+
+			_docNodePath = null;
+
+			base.Dispose(isDisposing);
+		}
+
+		/// <summary>
 		/// True when both the document and the stored document path are <c>null</c>.
 		/// </summary>
 		public bool IsEmpty
@@ -306,8 +338,6 @@ namespace Altaxo.Main
 		/// the document path is stored for this object in addition to the object itself.</param>
 		public void SetDocNode(IDocumentLeafNode value)
 		{
-			Current.Console.WriteLine("DocNodeProxy.SetDocNode");
-
 			if (null == value)
 				throw new ArgumentNullException("value");
 
@@ -336,6 +366,10 @@ namespace Altaxo.Main
 
 			InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(value);
 			_docNodeRef = new WeakReference(value);
+
+#if DEBUG_DOCNODEPROXYLOGGING
+			Current.Console.WriteLine("DocNodeProxy.SetDocNode, path is <<{0}>>", _docNodePath);
+#endif
 
 			InternalCheckAbsolutePath();
 
@@ -434,26 +468,41 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+#if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_TunneledEvent: sender={0}, source={1} e={2}", sender, source, e);
+#endif
 
 			bool shouldFireChangedEvent = false;
 
-			var sourceAsNode = source as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(sourceAsNode != null);
+			var senderAsNode = source as IDocumentLeafNode;
+			System.Diagnostics.Debug.Assert(senderAsNode != null);
 
 			if (e is DisposeEventArgs)
 			{
-				var parentNode = sourceAsNode.ParentObject;
-				System.Diagnostics.Debug.Assert(parentNode != null || (sourceAsNode is Altaxo.AltaxoDocument));
-
+				// when our DocNode was disposed, it is probable that the parent of this node (and further parents) are disposed too
+				// thus we need to watch the first node that is not disposed
+				var docNode = InternalDocNode;
 				ClearDocNode();
 
-				if (parentNode != null) // parentNode==null will occur only if the whole AltaxoDocument is disposed
+				if (!(sender is AltaxoDocument)) // if the whole document is disposed, there is no point in trying to watch something
 				{
-					SetWatchOnNode(parentNode);
-				}
+					// note Dispose is designed to let the hierarchy from child to parent (root) valid, but not from root to child!
+					// thus trying to get an actual document path here is unsuccessfull. We have to rely on our stored path, and that it was always updated!
 
-				shouldFireChangedEvent = true;
+					bool wasResolvedCompletely;
+					var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
+					System.Diagnostics.Debug.Assert(wasResolvedCompletely == false); // otherwise something on the design of the Dispose method in one of our disposed instances is wrong. It should first remove the child from the collection, and then dispose it.
+					if (wasResolvedCompletely)
+					{
+						SetDocNode(node); // should never happen
+					}
+					else
+					{
+						SetWatchOnNode(node);
+					}
+
+					shouldFireChangedEvent = true;
+				}
 			}
 			else if (e is DocumentPathChangedEventArgs)
 			{
@@ -478,7 +527,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
+#if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
+#endif
 
 			if (InternalDocNode != null)
 			{
@@ -606,7 +657,9 @@ namespace Altaxo.Main
 			node.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhWatchedNode_TunneledEvent, handler => node.TunneledEvent -= handler));
 			node.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhWatchedNode_Changed, handler => node.Changed -= handler));
 
-			Current.Console.WriteLine("Start watching node {0} of path {1}", DocumentPath.GetAbsolutePath(node), _docNodePath);
+#if DEBUG_DOCNODEPROXYLOGGING
+			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", DocumentPath.GetAbsolutePath(node), _docNodePath);
+#endif
 		}
 
 		/// <summary>
@@ -617,7 +670,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhWatchedNode_Changed(object sender, EventArgs e)
 		{
+#if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
+#endif
 
 			System.Diagnostics.Debug.Assert(_docNodeRef == null);
 			var senderAsDocNode = sender as IDocumentLeafNode;
@@ -665,13 +720,17 @@ namespace Altaxo.Main
 				var oldPath = _docNodePath;
 				_docNodePath = watchedPath;
 
+#if DEBUG_DOCNODEPROXYLOGGING
 				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent: Modified path, oldpath={0}, newpath={1}", oldPath, _docNodePath);
+#endif
 			}
 
 			// then we try to resolve the path again
 			if ((e is DisposeEventArgs) || (e is DocumentPathChangedEventArgs))
 			{
+#if DEBUG_DOCNODEPROXYLOGGING
 				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent");
+#endif
 
 				bool wasResolvedCompletely;
 				var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);

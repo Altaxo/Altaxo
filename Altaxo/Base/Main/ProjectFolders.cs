@@ -35,9 +35,10 @@ namespace Altaxo.Main
 	/// Keeps track of all folder names in the project.
 	/// </summary>
 	public class ProjectFolders
+		: SuspendableDocumentLeafNodeWithSetOfEventArgs
 	{
 		/// <summary>The parent document for which the folder structure is kept.</summary>
-		private AltaxoDocument _doc;
+		private AltaxoDocument AltaxoDocument { get { return (AltaxoDocument)_parent; } }
 
 		/// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
 		private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
@@ -46,10 +47,7 @@ namespace Altaxo.Main
 		/// Fired if a item or a directory is added or removed. Arguments are the type of change, the item, the old name and the new name.
 		/// Note that for directories the item is of type string: it is the directory name.
 		/// </summary>
-		public event Action<Main.NamedObjectCollectionChangeType, object, string, string> CollectionChanged;
-
-		/// <summary>True if the events are temporarily suspended.</summary>
-		private bool _suspendEvents;
+		public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
 
 		/// <summary>
 		/// Creates the instance of project folders, tracking the provided Altaxo project.
@@ -57,7 +55,46 @@ namespace Altaxo.Main
 		/// <param name="doc">Altaxo project.</param>
 		public ProjectFolders(AltaxoDocument doc)
 		{
-			EhProjectOpened(this, new ProjectEventArgs(doc));
+			if (null == doc)
+				throw new ArgumentNullException();
+
+			_parent = doc;
+
+			doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
+			doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
+			doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
+			Initialize();
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			var doc = AltaxoDocument;
+			if (null != doc)
+			{
+				if (null != doc.DataTableCollection)
+					doc.DataTableCollection.CollectionChanged -= EhItemCollectionChanged;
+				if (null != doc.GraphDocumentCollection)
+					doc.GraphDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
+				if (null != doc.ProjectFolderProperties)
+					doc.ProjectFolderProperties.CollectionChanged -= EhItemCollectionChanged;
+			}
+
+			base.Dispose(isDisposing);
+		}
+
+		public override IDocumentNode ParentObject
+		{
+			get
+			{
+				return base.ParentObject;
+			}
+			set
+			{
+				if (value != null)
+					throw new InvalidOperationException("The parent is set in the constructor only, thus can not be changed here.");
+
+				base.ParentObject = value;
+			}
 		}
 
 		#region Access to folders and items
@@ -303,35 +340,35 @@ namespace Altaxo.Main
 
 				if (item is Data.DataTable)
 				{
-					if (!_doc.DataTableCollection.Contains(newName))
+					if (!AltaxoDocument.DataTableCollection.Contains(newName))
 					{
 						((Data.DataTable)item).Name = newName;
 					}
 					else
 					{
-						((Data.DataTable)item).Name = _doc.DataTableCollection.FindNewTableName(newName);
+						((Data.DataTable)item).Name = AltaxoDocument.DataTableCollection.FindNewTableName(newName);
 					}
 				}
 				else if (item is Graph.Gdi.GraphDocument)
 				{
-					if (!_doc.GraphDocumentCollection.Contains(newName))
+					if (!AltaxoDocument.GraphDocumentCollection.Contains(newName))
 					{
 						((Graph.Gdi.GraphDocument)item).Name = newName;
 					}
 					else
 					{
-						((Graph.Gdi.GraphDocument)item).Name = _doc.GraphDocumentCollection.FindNewName(newName);
+						((Graph.Gdi.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewName(newName);
 					}
 				}
 				else if (item is Main.Properties.ProjectFolderPropertyDocument)
 				{
-					if (!_doc.ProjectFolderProperties.Contains(newName))
+					if (!AltaxoDocument.ProjectFolderProperties.Contains(newName))
 					{
 						((Main.Properties.ProjectFolderPropertyDocument)item).Name = newName;
 					}
 					else // we integrate the properties in the other properties
 					{
-						var oldProps = _doc.ProjectFolderProperties[newName].PropertyBagNotNull;
+						var oldProps = AltaxoDocument.ProjectFolderProperties[newName].PropertyBagNotNull;
 						var propsToMerge = ((Main.Properties.ProjectFolderPropertyDocument)item).PropertyBagNotNull;
 						oldProps.MergePropertiesFrom(propsToMerge, false);
 					}
@@ -383,99 +420,94 @@ namespace Altaxo.Main
 
 		private void Initialize()
 		{
-			_suspendEvents = true;
-
 			_directories.Clear();
 			_directories.Add(ProjectFolder.RootFolderName, new HashSet<object>()); // Root folder
 
-			foreach (var v in _doc.DataTableCollection)
-				ItemAdded(v, v.Name);
+			foreach (var v in AltaxoDocument.DataTableCollection)
+				ItemAdded(v, v.Name, EventFiring.Suppressed);
 
-			foreach (Altaxo.Graph.Gdi.GraphDocument v in _doc.GraphDocumentCollection)
-				ItemAdded(v, v.Name);
+			foreach (Altaxo.Graph.Gdi.GraphDocument v in AltaxoDocument.GraphDocumentCollection)
+				ItemAdded(v, v.Name, EventFiring.Suppressed);
 
-			foreach (var item in _doc.ProjectFolderProperties)
-				ItemAdded(item, item.Name);
+			foreach (var item in AltaxoDocument.ProjectFolderProperties)
+				ItemAdded(item, item.Name, EventFiring.Suppressed);
 
-			_suspendEvents = false;
-			OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
-		}
-
-		private void EhProjectOpened(object sender, ProjectEventArgs e)
-		{
-			if (!object.ReferenceEquals(_doc, e.Project))
-			{
-				_doc = e.Project;
-				_doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
-				_doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
-				_doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
-				Initialize();
-			}
-		}
-
-		private void EhProjectClosed(object sender, ProjectEventArgs e)
-		{
-			if (null != _doc)
-			{
-				_doc.DataTableCollection.CollectionChanged -= EhItemCollectionChanged;
-				_doc.GraphDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
-				_doc = null;
-				_directories.Clear();
-				_directories.Add(null, new HashSet<object>());
-
-				OnCollectionChanged(NamedObjectCollectionChangeType.MultipleChanges, null, null, null);
-			}
+			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromMultipleChanges());
 		}
 
 		private void EhItemCollectionChanged(object sender, Main.NamedObjectCollectionChangedEventArgs e)
 		{
+			if (e.WasMultipleItemsChanged)
+			{
+				Initialize();
+				return;
+			}
+
+			IProjectItem item = e.Item as IProjectItem;
+			if (null == item)
+				throw new InvalidProgramException(string.Format("Item should be a project item, since we bind to the CollectionChanged events. But current item is {0}", e.Item));
+
 			if (e.WasItemAdded)
 			{
-				ItemAdded(e.Item, e.NewName);
+				ItemAdded(item, e.NewName, EventFiring.Enabled);
 			}
 			else if (e.WasItemRemoved)
 			{
-				ItemRemoved(e.Item, e.OldName);
+				ItemRemoved(item, e.OldName, EventFiring.Enabled);
 			}
 
 			if (e.WasItemRenamed)
 			{
-				ItemRenamed(e.Item, e.OldName, e.NewName);
+				ItemRenamed(item, e.OldName, e.NewName, EventFiring.Enabled);
 			}
 		}
 
-		private void ItemAdded(object item, string itemName)
+		private void ItemAdded(IProjectItem item, string itemName, EventFiring firing)
 		{
 			string itemDir = ProjectFolder.GetFolderPart(itemName);
 			DirectoryAdded(itemDir);
 			_directories[itemDir].Add(item);
-			OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, item, itemName, itemName);
+
+			if (firing == EventFiring.Enabled)
+				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(item));
 		}
 
-		private void ItemRemoved(object item, string itemName)
+		private void ItemRemoved(
+			IProjectItem item,
+			string itemName, // itemName is neccessary because we misuse ItemRemove sometimes when the item is renamed
+			EventFiring firing)
 		{
 			string itemDir = ProjectFolder.GetFolderPart(itemName);
-			var s = _directories[itemDir];
-			s.Remove(item);
-			OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, item, itemName, itemName);
 
-			if (null != itemDir && 0 == s.Count)
+			int remainingCount = int.MaxValue;
+			if (_directories.ContainsKey(itemDir)) // it can happen that the directory is already removed, thus we test first if there still is the directory
+			{
+				var s = _directories[itemDir];
+				s.Remove(item);
+				remainingCount = s.Count;
+			}
+
+			if (firing == EventFiring.Enabled)
+				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item, itemName));
+
+			if (null != itemDir && 0 == remainingCount)
 				DirectoryRemoved(itemDir);
 		}
 
-		private void ItemRenamed(object item, string oldName, string newName)
+		private void ItemRenamed(IProjectItem item, string oldName, string newName, EventFiring firing)
 		{
 			string oldDir = ProjectFolder.GetFolderPart(oldName);
 			string newDir = ProjectFolder.GetFolderPart(newName);
 
 			if (oldDir != newDir) // only then it is neccessary to do something
 			{
-				ItemAdded(item, newName);
-				ItemRemoved(item, oldName);
+				ItemAdded(item, newName, firing); // to do it in this order (first add, then remove) helps to prevent unneccessary removal of folders and then re-creation
+				ItemRemoved(item, oldName, firing);
 			}
 			else
 			{
-				OnCollectionChanged(NamedObjectCollectionChangeType.ItemRenamed, item, oldName, newName);
+				if (firing == EventFiring.Enabled)
+					EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRenamed(item, oldName));
 			}
 		}
 
@@ -493,7 +525,7 @@ namespace Altaxo.Main
 				DirectoryAdded(parDir);
 				_directories[parDir].Add(dir);
 
-				OnCollectionChanged(NamedObjectCollectionChangeType.ItemAdded, dir, dir, dir);
+				EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemAdded(new ProjectFolder(dir)));
 			}
 		}
 
@@ -506,16 +538,28 @@ namespace Altaxo.Main
 			string parDir = ProjectFolder.GetFoldersParentFolder(dir);
 			var s = _directories[parDir];
 			s.Remove(dir);
-			OnCollectionChanged(NamedObjectCollectionChangeType.ItemRemoved, dir, dir, dir);
+			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(new ProjectFolder(dir)));
 
 			if (null != parDir && 0 == s.Count)
 				DirectoryRemoved(parDir);
 		}
 
-		protected void OnCollectionChanged(Main.NamedObjectCollectionChangeType changeType, object item, string oldName, string newName)
+		protected override void OnChanged(EventArgs e)
 		{
-			if (null != CollectionChanged && !_suspendEvents)
-				CollectionChanged(changeType, item, oldName, newName);
+			var eAsNOCC = e as Main.NamedObjectCollectionChangedEventArgs;
+			if (null != eAsNOCC)
+			{
+				OnCollectionChanged(eAsNOCC);
+			}
+
+			base.OnChanged(e);
+		}
+
+		protected void OnCollectionChanged(Main.NamedObjectCollectionChangedEventArgs args)
+		{
+			var ev = CollectionChanged;
+			if (null != ev)
+				ev(this, args);
 		}
 
 		/// <summary>
@@ -541,12 +585,12 @@ namespace Altaxo.Main
 					string newName = (newFolderName == null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
 					if (item is Data.DataTable)
 					{
-						if (_doc.DataTableCollection.Contains(newName) && !itemHashSet.Contains(_doc.DataTableCollection[newName]))
+						if (AltaxoDocument.DataTableCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.DataTableCollection[newName]))
 							return false;
 					}
 					else if (item is Graph.Gdi.GraphDocument)
 					{
-						if (_doc.GraphDocumentCollection.Contains(newName) && !itemHashSet.Contains(_doc.GraphDocumentCollection[newName]))
+						if (AltaxoDocument.GraphDocumentCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.GraphDocumentCollection[newName]))
 							return false;
 					}
 					else

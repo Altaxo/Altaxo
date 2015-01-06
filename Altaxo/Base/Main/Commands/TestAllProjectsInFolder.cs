@@ -189,7 +189,7 @@ namespace Altaxo.Main.Commands
 					GC.Collect();
 					System.Threading.Thread.Sleep(500);
 					bool areThereAnyProblems = false;
-					areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
+					areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes(false);
 					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportChildListProblems();
 					areThereAnyProblems |= Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
 
@@ -269,7 +269,7 @@ namespace Altaxo.Main.Commands
 						GC.Collect();
 						System.Threading.Thread.Sleep(500);
 						bool areThereAnyProblems = false;
-						areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes();
+						areThereAnyProblems |= Main.SuspendableDocumentNodeBase.ReportNotConnectedDocumentNodes(false);
 						areThereAnyProblems |= Main.SuspendableDocumentNode.ReportChildListProblems();
 						areThereAnyProblems |= Main.SuspendableDocumentNode.ReportWrongChildParentRelations();
 

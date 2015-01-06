@@ -411,12 +411,17 @@ namespace Altaxo.Graph.Gdi
 			{
 				if (object.ReferenceEquals(_location, value))
 					return;
-
 				if (null == value)
 					throw new ArgumentNullException("value");
 
+				if (null != _location)
+					_location.Dispose();
+
 				_location = value;
-				_location.ParentObject = this;
+
+				if (null != _location)
+					_location.ParentObject = this;
+
 				if (_location is ItemLocationDirect)
 					((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
 

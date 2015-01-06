@@ -336,8 +336,10 @@ namespace Altaxo.Main
 
 		protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
 
+		private static int _nextID;
 		private string _constructedBy;
 		private string _releasedBy;
+		private int _instanceID = _nextID++;
 
 		public string ConstructedBy { get { return _constructedBy; } }
 
@@ -394,7 +396,7 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-		public static bool ReportNotConnectedDocumentNodes()
+		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
 			int numberOfNodes = 0;
 			int numberOfNotConnectedNodes = 0;
@@ -430,13 +432,14 @@ namespace Altaxo.Main
 				Current.Console.WriteLine();
 			}
 
-			Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
+			if (showStatistics)
+				Current.Console.WriteLine("Tested {0} nodes, {1} not connected", numberOfNodes, numberOfNotConnectedNodes);
 			return 0 != numberOfNotConnectedNodes;
 		}
 
 #else
 
-		public static bool ReportNotConnectedDocumentNodes()
+		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
 			Current.Console.WriteLine("ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
 			return false;

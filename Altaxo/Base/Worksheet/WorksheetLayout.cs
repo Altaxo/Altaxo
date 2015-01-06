@@ -376,7 +376,7 @@ namespace Altaxo.Worksheet
 
 		private void EhDataTableTunneledEvent(object sender, object source, Main.TunnelingEventArgs args)
 		{
-			if (args is Main.PreviewDisposeEventArgs || args is Main.DisposeEventArgs)
+			if (args is Main.DisposeEventArgs)
 			{
 				Dispose();
 			}

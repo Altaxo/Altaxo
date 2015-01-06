@@ -384,7 +384,7 @@ typeof(GraphDocument),
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole();
 			_notes.PropertyChanged += EhNotesChanged;
-			this.RootLayer = new HostLayer();
+			this.RootLayer = new HostLayer() { ParentObject = this };
 			this.RootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
 		}
 
@@ -475,7 +475,7 @@ typeof(GraphDocument),
 					return;
 
 				var oldParent = _parent;
-				_parent = value;
+				base.ParentObject = value;
 
 				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
 				if (null != parentAs)

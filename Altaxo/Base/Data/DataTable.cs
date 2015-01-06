@@ -655,7 +655,7 @@ namespace Altaxo.Data
 					return;
 
 				var oldParent = _parent;
-				_parent = value;
+				base.ParentObject = value;
 
 				var parentAs = _parent as Main.IParentOfINameOwnerChildNodes;
 				if (null != parentAs)

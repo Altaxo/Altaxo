@@ -62,17 +62,26 @@ namespace Altaxo.Main
 			Altaxo.AltaxoDocument oldProject = _currentProject;
 			string oldProjectFileName = _currentProjectFileName;
 
-			if (_currentProject != null)
-				_currentProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
+			if (null != _currentProject)
+			{
+				_currentProject.DirtyChanged -= EhProjectDirtyChanged;
+			}
 
 			_currentProject = project;
 			_currentProjectFileName = projectFileName;
 
 			if (_currentProject != null)
-				_currentProject.DirtyChanged += new EventHandler(this.EhProjectDirtyChanged);
+			{
+				_currentProject.DirtyChanged += this.EhProjectDirtyChanged;
+			}
 
 			if (!object.ReferenceEquals(oldProject, _currentProject)) // Project instance has changed
 			{
+				if (null != oldProject)
+				{
+					oldProject.Dispose();
+				}
+
 				if (string.IsNullOrEmpty(oldProjectFileName) && null != _currentProject)
 					OnProjectOpened(new ProjectEventArgs(_currentProject));
 
