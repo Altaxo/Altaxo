@@ -509,16 +509,18 @@ namespace Altaxo.Data
 			if (null != _parent)
 			{
 				// first relase all column scripts
-				foreach (KeyValuePair<DataColumn, IColumnScriptText> d in this._columnScripts)
+				var columnScripts = _columnScripts;
+				_columnScripts = null;
+				foreach (KeyValuePair<DataColumn, IColumnScriptText> d in columnScripts)
 				{
 					if (d.Value is IDisposable)
 						((IDisposable)d.Value).Dispose();
 				}
-				_columnScripts.Clear();
+				columnScripts = null;
 
 				// release all owned Data columns
 				this._columnsByName.Clear();
-
+				this._columnInfoByColumn.Clear();
 				for (int i = _columnsByNumber.Count - 1; i >= 0; --i) // iterate downwards, because the dispose action can trigger the column to be removed from the collection
 					this[i].Dispose();
 

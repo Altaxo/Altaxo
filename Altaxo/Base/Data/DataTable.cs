@@ -1245,15 +1245,17 @@ namespace Altaxo.Data
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield return new Main.DocumentNodeAndName(_dataColumns, "DataCols");
+			if (null != _dataColumns)
+				yield return new Main.DocumentNodeAndName(_dataColumns, () => _dataColumns = null, "DataCols");
 
-			yield return new Main.DocumentNodeAndName(_propertyColumns, "PropCols");
+			if (null != _propertyColumns)
+				yield return new Main.DocumentNodeAndName(_propertyColumns, () => _propertyColumns = null, "PropCols");
 
 			if (null != DataSource)
-				yield return new Main.DocumentNodeAndName(DataSource, "DataSource");
+				yield return new Main.DocumentNodeAndName(_tableDataSource, () => _tableDataSource = null, "DataSource");
 
 			if (null != PropertyBag)
-				yield return new Main.DocumentNodeAndName(PropertyBag, "PropertyBag");
+				yield return new Main.DocumentNodeAndName(_tableProperties, () => _tableProperties = null, "PropertyBag");
 		}
 
 		/// <summary>

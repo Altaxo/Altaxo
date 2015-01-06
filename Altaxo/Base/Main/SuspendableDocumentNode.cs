@@ -356,8 +356,12 @@ namespace Altaxo.Main
 			{
 				if (isDisposing) // Dispose all childs (but only if calling dispose, and not in the finalizer)
 				{
+					Action setMemberToNullAction;
 					foreach (var tuple in GetDocumentNodeChildrenWithName())
 					{
+						if (null != (setMemberToNullAction = tuple.SetMemberToNullAction))
+							setMemberToNullAction(); // set the node to null in the parent __before__ we dispose the node
+
 						tuple.DocumentNode.Dispose();
 					}
 				}

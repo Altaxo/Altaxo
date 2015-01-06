@@ -501,12 +501,12 @@ namespace Altaxo
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield return new Main.DocumentNodeAndName(_dataTables, "Tables");
-			yield return new Main.DocumentNodeAndName(_graphs, "Graphs");
-			yield return new Main.DocumentNodeAndName(_tableLayouts, "TableLayouts");
-			yield return new Main.DocumentNodeAndName(_fitFunctionScripts, "FitFunctionScripts");
-			yield return new Main.DocumentNodeAndName(_projectFolderProperties, "FolderProperties");
-			yield return new Main.DocumentNodeAndName(_projectFolders, "ProjectFolders");
+			yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null, "Tables");
+			yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null, "Graphs");
+			yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
+			yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null, "FitFunctionScripts");
+			yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null, "FolderProperties");
+			yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null, "ProjectFolders");
 		}
 
 		#region Static functions
