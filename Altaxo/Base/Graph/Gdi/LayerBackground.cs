@@ -134,14 +134,5 @@ namespace Altaxo.Graph.Gdi
 		public void Draw(Graphics g, RectangleF rect)
 		{
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "LayerBackground"; }
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

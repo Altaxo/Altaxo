@@ -146,13 +146,8 @@ namespace Altaxo.Graph.Scales
 			this._cachedAxisSpan = from._cachedAxisSpan;
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-			if (null != _dataBounds)
-				_dataBounds.ParentObject = null;
-			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
-
-			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
-			this._rescaling.ParentObject = this;
+			ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new NumericAxisRescaleConditions());
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

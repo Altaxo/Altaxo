@@ -245,22 +245,9 @@ namespace Altaxo.Graph.Gdi.Plot
 			{
 				if (null == value)
 					throw new System.ArgumentNullException();
-				else
-				{
-					if (null != _plotData)
-						_plotData.ParentObject = null;
 
-					var oldvalue = _plotData;
-					_plotData = value;
-
-					if (null != _plotData)
-						_plotData.ParentObject = this;
-
-					if (!object.ReferenceEquals(value, oldvalue))
-					{
-						EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
-					}
-				}
+				if (ChildSetMember(ref _plotData, value))
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 			}
 		}
 

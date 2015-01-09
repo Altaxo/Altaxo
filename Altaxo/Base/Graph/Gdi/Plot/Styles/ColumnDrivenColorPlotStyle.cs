@@ -153,13 +153,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="proxy"></param>
 		protected void InternalSetDataColumnProxy(INumericColumnProxy proxy)
 		{
-			if (null != _dataColumnProxy)
-				this._dataColumnProxy.ParentObject = null;
-
-			_dataColumnProxy = proxy;
-
-			if (null != _dataColumnProxy)
-				this._dataColumnProxy.ParentObject = this;
+			ChildSetMember(ref _dataColumnProxy, proxy);
 		}
 
 		#region Changed event handling
@@ -221,14 +215,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (null != _dataColumnProxy && object.ReferenceEquals(_dataColumnProxy, value))
-					return;
-
-				if (null != _dataColumnProxy)
-					_dataColumnProxy.ParentObject = null;
-
-				_dataColumnProxy = NumericColumnProxyBase.FromColumn(value);
-				_dataColumnProxy.ParentObject = this;
+				if (ChildSetMember(ref _dataColumnProxy, NumericColumnProxyBase.FromColumn(value)))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -242,15 +230,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="scale"></param>
 		protected void InternalSetScale(NumericalScale scale)
 		{
-			if (null != _scale)
-				_scale.ParentObject = null;
-
-			_scale = scale;
-
-			if (null != _scale)
-				_scale.ParentObject = this;
-
-			_doesScaleNeedsDataUpdate = true;
+			if (ChildSetMember(ref _scale, scale))
+			{
+				_doesScaleNeedsDataUpdate = true;
+			}
 		}
 
 		#endregion Scale handling
@@ -281,20 +264,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _colorProvider; }
 			set
 			{
-				if (null != _colorProvider)
-				{
-					_colorProvider.ParentObject = null;
-				}
-
-				bool changed = !object.ReferenceEquals(_colorProvider, value);
-				_colorProvider = value;
-
-				if (null != _colorProvider)
-				{
-					_colorProvider.ParentObject = this;
-				}
-
-				if (changed)
+				if (ChildSetMember(ref _colorProvider, value))
 					EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -356,15 +326,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public object Clone()
 		{
 			return new ColumnDrivenColorPlotStyle(this);
-		}
-
-		public override string Name
-		{
-			get { return "ColumnDrivenColor"; }
-			set
-			{
-				base.Name = value;
-			}
 		}
 
 		/// <summary>

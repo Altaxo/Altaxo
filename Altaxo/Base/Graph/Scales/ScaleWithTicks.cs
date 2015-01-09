@@ -68,8 +68,8 @@ namespace Altaxo.Graph.Scales
 
 				// Note: both functions should not trigger actions on scale or tickspacing,
 				// so we use the settings function without triggering events
-				s.InternalSetNewScaleSilently((Scale)info.GetValue("Scale", s));
-				s.SetNewTickSpacing((TickSpacing)info.GetValue("TickSpacing", s));
+				s.ChildSetMember(ref s._scale, (Scale)info.GetValue("Scale", s));
+				s.ChildSetMember(ref s._tickSpacing, (TickSpacing)info.GetValue("TickSpacing", s));
 
 				s._tickSpacing.FinalProcessScaleBoundaries(s._scale.OrgAsVariant, s._scale.EndAsVariant, s._scale);
 
@@ -85,30 +85,38 @@ namespace Altaxo.Graph.Scales
 
 		public ScaleWithTicks(Scale scale)
 		{
-			InternalSetNewScaleSilently(scale);
-			SetNewTickSpacing(CreateDefaultTicks(scale.GetType()));
+			if (null == scale)
+				throw new ArgumentNullException("scale");
+
+			ChildSetMember(ref _scale, scale);
+			ChildSetMember(ref _tickSpacing, CreateDefaultTicks(scale.GetType()));
 			UpdateIfTicksChanged();
 		}
 
 		public ScaleWithTicks(Scale scale, TickSpacing ticks)
 		{
-			InternalSetNewScaleSilently(scale);
-			SetNewTickSpacing(ticks);
+			if (null == scale)
+				throw new ArgumentNullException("scale");
+			if (null == ticks)
+				throw new ArgumentNullException("ticks");
+
+			ChildSetMember(ref _scale, scale);
+			ChildSetMember(ref _tickSpacing, ticks);
 			UpdateIfTicksChanged();
 		}
 
 		public ScaleWithTicks(ScaleWithTicks from)
 		{
-			InternalSetNewScaleSilently(null == from._scale ? null : (Scale)from._scale.Clone());
-			SetNewTickSpacing(null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
+			ChildCopyToMember(ref _scale, from._scale);
+			ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _scale)
-				yield return new Main.DocumentNodeAndName(_scale, "Scale");
+				yield return new Main.DocumentNodeAndName(_scale, () => _scale = null, "Scale");
 			if (null != _tickSpacing)
-				yield return new Main.DocumentNodeAndName(_tickSpacing, "TickSpacing");
+				yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
 		}
 
 		public object Clone()
@@ -124,32 +132,16 @@ namespace Altaxo.Graph.Scales
 			}
 			set
 			{
-				if (object.ReferenceEquals(_scale, value))
-					return;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-				Scale oldValue = InternalSetNewScaleSilently(value);
-
-				EhSelfChanged(new ScaleInstanceChangedEventArgs(oldValue, value));
-				UpdateIfScaleChanged();
+				var oldValue = _scale;
+				if (ChildSetMember(ref _scale, value))
+				{
+					EhSelfChanged(new ScaleInstanceChangedEventArgs(oldValue, value));
+					UpdateIfScaleChanged();
+				}
 			}
-		}
-
-		private Scale InternalSetNewScaleSilently(Scale value)
-		{
-			if (null != _scale)
-			{
-				_scale.ParentObject = null;
-			}
-
-			Scale oldValue = _scale;
-			_scale = value;
-
-			if (null != _scale)
-			{
-				_scale.ParentObject = this;
-			}
-
-			return oldValue;
 		}
 
 		public TickSpacing TickSpacing
@@ -160,49 +152,31 @@ namespace Altaxo.Graph.Scales
 			}
 			set
 			{
-				if (object.ReferenceEquals(_tickSpacing, value))
-					return;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-				SetNewTickSpacing(value);
-				UpdateIfTicksChanged();
-			}
-		}
-
-		private void SetNewTickSpacing(TickSpacing value)
-		{
-			if (null != _tickSpacing)
-			{
-				_tickSpacing.ParentObject = null;
-			}
-
-			_tickSpacing = value;
-
-			if (null != _tickSpacing)
-			{
-				_tickSpacing.ParentObject = this;
+				if (ChildSetMember(ref _tickSpacing, value))
+					UpdateIfTicksChanged();
 			}
 		}
 
 		public void SetTo(Scale scale, TickSpacing tickSpacing)
 		{
-			Scale oldScale = null;
-			bool wasNewTickSpacing = false;
+			if (null == scale)
+				throw new ArgumentNullException("scale");
+			if (null == tickSpacing)
+				throw new ArgumentNullException("tickSpacing");
 
-			if (!object.ReferenceEquals(_scale, scale))
-				oldScale = InternalSetNewScaleSilently(scale);
+			var oldScale = _scale;
+			bool isNewTicks = ChildSetMember(ref _tickSpacing, tickSpacing);
+			bool isNewScale = ChildSetMember(ref _scale, scale);
 
-			if (!object.ReferenceEquals(_tickSpacing, tickSpacing))
-			{
-				wasNewTickSpacing = null == _tickSpacing || !_tickSpacing.Equals(tickSpacing);
-				SetNewTickSpacing(tickSpacing);
-			}
-
-			if (null != oldScale) // then a new scale was used
+			if (isNewScale) // then a new scale was used
 			{
 				EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, _scale));
 				UpdateIfScaleChanged();
 			}
-			else if (wasNewTickSpacing) // then new ticks were used
+			else if (isNewTicks) // then new ticks were used
 			{
 				UpdateIfTicksChanged();
 			}
@@ -286,15 +260,6 @@ namespace Altaxo.Graph.Scales
 		}
 
 		#endregion Static functions
-
-		public override string Name
-		{
-			get { return "ScaleWithTicks"; }
-			set
-			{
-				throw new NotImplementedException("Name cannot be set");
-			}
-		}
 
 		#region Changed event handling
 

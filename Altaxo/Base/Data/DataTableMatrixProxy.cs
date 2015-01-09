@@ -472,35 +472,17 @@ namespace Altaxo.Data
 
 		private void InternalSetDataTable(DataTableProxy proxy)
 		{
-			if (null != _dataTable)
-				_dataTable.ParentObject = null;
-
-			_dataTable = proxy;
-
-			if (null != _dataTable)
-				_dataTable.ParentObject = this;
+			ChildSetMember(ref _dataTable, proxy);
 		}
 
 		private void InternalSetRowHeaderColumn(IReadableColumnProxy proxy)
 		{
-			if (null != _rowHeaderColumn)
-				_rowHeaderColumn.ParentObject = null;
-
-			_rowHeaderColumn = proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null); // always ensure to have a proxy != null
-
-			if (null != _rowHeaderColumn)
-				_rowHeaderColumn.ParentObject = this;
+			ChildSetMember(ref _rowHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null)); // always ensure to have a proxy != null
 		}
 
 		private void InternalSetColumnHeaderColumn(IReadableColumnProxy proxy)
 		{
-			if (null != _columnHeaderColumn)
-				_columnHeaderColumn.ParentObject = null;
-
-			_columnHeaderColumn = proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null);
-
-			if (null != _columnHeaderColumn)
-				_columnHeaderColumn.ParentObject = this;
+			ChildSetMember(ref _columnHeaderColumn, proxy ?? ReadableColumnProxyBase.FromColumn((IReadableColumn)null));
 		}
 
 		/// <summary>
@@ -510,10 +492,11 @@ namespace Altaxo.Data
 		{
 			if (null != _dataColumns)
 			{
-				foreach (var proxy in _dataColumns)
-					proxy.ParentObject = null;
+				var dataColumns = _dataColumns;
+				_dataColumns = new List<IReadableColumnProxy>();
 
-				_dataColumns.Clear();
+				foreach (var proxy in dataColumns)
+					proxy.Dispose();
 			}
 		}
 
@@ -536,8 +519,10 @@ namespace Altaxo.Data
 		/// <param name="idx">The index.</param>
 		private void InternalRemoveDataColumnAt(int idx)
 		{
-			_dataColumns[idx].ParentObject = null;
+			var col = _dataColumns[idx];
 			_dataColumns.RemoveAt(idx);
+			if (null != col)
+				col.Dispose();
 		}
 
 		/// <summary>

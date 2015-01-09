@@ -215,7 +215,7 @@ namespace Altaxo.Worksheet
 			{
 				_columnStyles.Remove(key);
 				DetachKey(key);
-				value.ParentObject = null;
+				value.Dispose();
 				return true;
 			}
 			else
@@ -289,12 +289,13 @@ namespace Altaxo.Worksheet
 
 		public void Clear()
 		{
-			foreach (var entry in _columnStyles)
+			var columnStyles = _columnStyles;
+			_columnStyles = new Dictionary<DataColumn, ColumnStyle>();
+			foreach (var entry in columnStyles)
 			{
-				entry.Value.ParentObject = null;
+				entry.Value.Dispose();
 				DetachKey(entry.Key);
 			}
-			_columnStyles.Clear();
 		}
 
 		public bool Contains(KeyValuePair<DataColumn, ColumnStyle> item)
@@ -323,7 +324,7 @@ namespace Altaxo.Worksheet
 			if (result)
 			{
 				DetachKey(item.Key);
-				item.Value.ParentObject = null;
+				item.Value.Dispose();
 			}
 			return result;
 		}

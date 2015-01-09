@@ -131,21 +131,13 @@ namespace Altaxo.Graph.Gdi.Axis
 			get
 			{
 				if (null == _majorPen)
-					_majorPen = new PenX(NamedColors.Blue);
+					MajorPen = new PenX(NamedColors.Blue);
 				return _majorPen;
 			}
 			set
 			{
-				PenX oldvalue = _majorPen;
-				_majorPen = value;
-
-				if (!object.ReferenceEquals(value, oldvalue))
+				if (ChildSetMember(ref _majorPen, value ?? new PenX(NamedColors.Blue)))
 				{
-					if (null != oldvalue)
-						oldvalue.ParentObject = null;
-					if (null != value)
-						value.ParentObject = this;
-
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -156,22 +148,14 @@ namespace Altaxo.Graph.Gdi.Axis
 			get
 			{
 				if (null == _minorPen)
-					_minorPen = new PenX(NamedColors.LightBlue);
+					MinorPen = new PenX(NamedColors.LightBlue);
 
 				return _minorPen;
 			}
 			set
 			{
-				PenX oldvalue = _minorPen;
-				_minorPen = value;
-
-				if (!object.ReferenceEquals(value, oldvalue))
+				if (ChildSetMember(ref _minorPen, value ?? new PenX(NamedColors.LightBlue)))
 				{
-					if (null != oldvalue)
-						oldvalue.ParentObject = null;
-					if (null != value)
-						value.ParentObject = this;
-
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -282,18 +266,5 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		#endregion ICloneable Members
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "GridStyle"; }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set.");
-			}
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

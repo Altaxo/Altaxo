@@ -443,15 +443,11 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
 			{
-				if (null != _xBoundaries)
+				if (ChildCopyToMember(ref _xBoundaries, val))
 				{
-					_xBoundaries.ParentObject = null;
+					this._isCachedDataValid = false;
+					EhSelfChanged(EventArgs.Empty);
 				}
-				_xBoundaries = (IPhysicalBoundaries)val.Clone();
-				_xBoundaries.ParentObject = this;
-				this._isCachedDataValid = false;
-
-				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -459,15 +455,12 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
 			{
-				if (null != _yBoundaries)
+				if (ChildCopyToMember(ref _yBoundaries, val))
 				{
-					_yBoundaries.ParentObject = null;
-				}
-				_yBoundaries = (IPhysicalBoundaries)val.Clone();
-				_yBoundaries.ParentObject = this;
-				this._isCachedDataValid = false;
+					this._isCachedDataValid = false;
 
-				EhSelfChanged(EventArgs.Empty);
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -475,15 +468,12 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null == _vBoundaries || val.GetType() != _vBoundaries.GetType())
 			{
-				if (null != _vBoundaries)
+				if (ChildCopyToMember(ref _vBoundaries, val))
 				{
-					_vBoundaries.ParentObject = null;
-				}
-				_vBoundaries = (IPhysicalBoundaries)val.Clone();
-				_vBoundaries.ParentObject = this;
-				this._isCachedDataValid = false;
+					this._isCachedDataValid = false;
 
-				EhSelfChanged(EventArgs.Empty);
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -607,19 +597,6 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion Changed event handling
-
-		public override string Name
-		{
-			get
-			{
-				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-				return null == noc ? null : noc.GetNameOfChildObject(this);
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

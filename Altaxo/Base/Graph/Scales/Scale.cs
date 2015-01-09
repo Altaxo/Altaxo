@@ -136,21 +136,5 @@ namespace Altaxo.Graph.Scales
 		{
 			get { return sm_AvailableScales; }
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get
-			{
-				return string.Empty;
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set.");
-			}
-		}
-
-		#endregion IDocumentNode Members
 	} // end of class Axis
 }

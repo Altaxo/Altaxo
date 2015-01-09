@@ -191,18 +191,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="proxy"></param>
 		protected void InternalSetDataColumnProxy(INumericColumnProxy proxy)
 		{
-			if (object.ReferenceEquals(_dataColumnProxy, proxy))
-				return;
-
-			if (null != _dataColumnProxy)
-				this._dataColumnProxy.ParentObject = null;
-
-			_dataColumnProxy = proxy;
-
-			if (null != _dataColumnProxy)
-				this._dataColumnProxy.ParentObject = this;
-
-			EhChildChanged(_dataColumnProxy, EventArgs.Empty);
+			if (ChildSetMember(ref _dataColumnProxy, proxy))
+				EhChildChanged(_dataColumnProxy, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -244,14 +234,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (null != _dataColumnProxy && object.ReferenceEquals(_dataColumnProxy, value))
+				if (object.ReferenceEquals(DataColumn, value))
 					return;
 
-				if (null != _dataColumnProxy)
-					_dataColumnProxy.ParentObject = null;
-
-				_dataColumnProxy = NumericColumnProxyBase.FromColumn(value);
-				_dataColumnProxy.ParentObject = this;
+				if (ChildSetMember(ref _dataColumnProxy, NumericColumnProxyBase.FromColumn(value)))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -265,18 +252,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="scale"></param>
 		protected void InternalSetScale(NumericalScale scale)
 		{
-			if (object.ReferenceEquals(_scale, scale))
-				return;
-
-			if (null != _scale)
-				_scale.ParentObject = null;
-
-			_scale = scale;
-
-			if (null != _scale)
-				_scale.ParentObject = this;
-
-			_doesScaleNeedsDataUpdate = true;
+			if (ChildSetMember(ref _scale, scale))
+			{
+				_doesScaleNeedsDataUpdate = true;
+			}
 		}
 
 		#endregion Scale handling
@@ -462,11 +441,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public object Clone()
 		{
 			return new ColumnDrivenSymbolSizePlotStyle(this);
-		}
-
-		public override string Name
-		{
-			get { return "ColumnDrivenSymbolSize"; }
 		}
 
 		/// <summary>

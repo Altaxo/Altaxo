@@ -197,18 +197,5 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 			EhSelfChanged(EventArgs.Empty);
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "LinkedScaleCollection"; }
-			set
-			{
-				throw new InvalidOperationException("The name cannot be set.");
-			}
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

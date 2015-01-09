@@ -829,17 +829,5 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 			return new SpanCompound(Unit.Month, m);
 		}
-
-		public override string Name
-		{
-			get
-			{
-				return "DateTimeScale";
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
 	} // end of class
 }

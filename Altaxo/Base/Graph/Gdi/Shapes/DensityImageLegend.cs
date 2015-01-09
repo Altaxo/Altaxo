@@ -185,9 +185,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 					this._bitmap = null != from._bitmap ? (Bitmap)from._bitmap.Clone() : null;
 
-					if (null == _plotItemProxy)
-						_plotItemProxy = new Main.RelDocNodeProxy();
-					this._plotItemProxy.CopyPathOnlyFrom(from._plotItemProxy, this);
+					_plotItemProxy = new Main.RelDocNodeProxy(from._plotItemProxy, true, this);
 				}
 			}
 			return isCopied;
@@ -219,14 +217,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _plotItemProxy.DocumentObject as DensityImagePlotItem;
+				return _plotItemProxy.Document as DensityImagePlotItem;
 			}
 			set
 			{
-				if (null == _plotItemProxy)
-					_plotItemProxy = new Main.RelDocNodeProxy(value, this);
+				if (object.ReferenceEquals(PlotItem, value))
+					return;
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				if (null != _plotItemProxy)
+				{
+					_plotItemProxy.Document = value;
+				}
 				else
-					_plotItemProxy.SetDocNode(value, this);
+				{
+					_plotItemProxy = new Main.RelDocNodeProxy(value, this);
+				}
 			}
 		}
 

@@ -382,8 +382,7 @@ typeof(GraphDocument),
 		public GraphDocument()
 		{
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
-			_notes = new TextBackedConsole();
-			_notes.PropertyChanged += EhNotesChanged;
+			_notes = new TextBackedConsole() { ParentObject = this };
 			this.RootLayer = new HostLayer() { ParentObject = this };
 			this.RootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) };
 		}
@@ -411,48 +410,54 @@ typeof(GraphDocument),
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			if (0 != (options & GraphCopyOptions.CloneNotes))
+			using (var suspendToken = SuspendGetToken())
 			{
-				if (null != _notes) _notes.PropertyChanged -= EhNotesChanged;
-				this._notes = from._notes.Clone();
-				this._notes.PropertyChanged += EhNotesChanged;
-			}
-
-			if (0 != (options & GraphCopyOptions.CloneProperties))
-			{
-				// Clone also the graph properties
-				if (from._graphProperties != null && from._graphProperties.Count > 0)
+				if (0 != (options & GraphCopyOptions.CloneNotes))
 				{
-					PropertyBagNotNull.CopyFrom(from._graphProperties);
+					ChildCopyToMember(ref _notes, from._notes);
 				}
-				else
-				{
-					this._graphProperties = null;
-				}
-			}
 
-			// the order is important here: clone the layers only before setting the printable graph bounds and other
-			// properties, otherwise some errors will happen
-			var newRootLayer = RootLayer;
-			if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
-			{
-				newRootLayer = (HostLayer)from._rootLayer.Clone();
+				if (0 != (options & GraphCopyOptions.CloneProperties))
+				{
+					// Clone also the graph properties
+					if (from._graphProperties != null && from._graphProperties.Count > 0)
+					{
+						PropertyBagNotNull.CopyFrom(from._graphProperties);
+					}
+					else
+					{
+						this._graphProperties = null;
+					}
+				}
+
+				// the order is important here: clone the layers only before setting the printable graph bounds and other
+				// properties, otherwise some errors will happen
+				var newRootLayer = RootLayer;
+				if (GraphCopyOptions.CopyLayerAll == (options & GraphCopyOptions.CopyLayerAll))
+				{
+					newRootLayer = (HostLayer)from._rootLayer.Clone();
+				}
+				else if (0 != (options & GraphCopyOptions.CopyLayerAll))
+				{
+					// don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this has to be done recursively
+					newRootLayer.CopyFrom(from._rootLayer, options);
+				}
+				this.RootLayer = newRootLayer;
+
+				suspendToken.Resume();
 			}
-			else if (0 != (options & GraphCopyOptions.CopyLayerAll))
-			{
-				// don't clone the layers, but copy the style of each each of the souce layers to the destination layers - this has to be done recursively
-				newRootLayer.CopyFrom(from._rootLayer, options);
-			}
-			this.RootLayer = newRootLayer;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _rootLayer)
-				yield return new Main.DocumentNodeAndName(_rootLayer, "RootLayer");
+				yield return new Main.DocumentNodeAndName(_rootLayer, () => _rootLayer = null, "RootLayer");
 
 			if (null != _graphProperties)
-				yield return new Main.DocumentNodeAndName(_graphProperties, "GraphProperties");
+				yield return new Main.DocumentNodeAndName(_graphProperties, () => _graphProperties = null, "GraphProperties");
+
+			if (null != _notes)
+				yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
 		}
 
 		public object Clone()

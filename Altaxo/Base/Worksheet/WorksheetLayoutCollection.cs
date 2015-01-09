@@ -120,18 +120,6 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public override string Name
-		{
-			get
-			{
-				return "TableLayouts";
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
 		#endregion IDocumentNode Members
 
 		#region INamedObjectCollection Members
@@ -192,8 +180,8 @@ namespace Altaxo.Worksheet
 			if (wasRemoved)
 			{
 				var eventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item);
-				item.ParentObject = null;
 				item.TunneledEvent -= EhChildNodeTunneledEvent;
+				item.Dispose();
 				EhSelfChanged(eventArgs);
 			}
 
@@ -202,16 +190,17 @@ namespace Altaxo.Worksheet
 
 		public void Clear()
 		{
+			var items = _items;
+			_items = new Dictionary<string, WorksheetLayout>();
+
 			using (var suspendToken = this.SuspendGetToken())
 			{
-				foreach (var item in _items.Values)
+				foreach (var item in items.Values)
 				{
 					EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item));
-					item.ParentObject = null;
 					item.TunneledEvent -= EhChildNodeTunneledEvent;
+					item.Dispose();
 				}
-				_items.Clear();
-
 				suspendToken.Resume();
 			}
 		}

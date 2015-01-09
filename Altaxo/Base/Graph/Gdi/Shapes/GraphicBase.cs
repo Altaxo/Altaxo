@@ -350,7 +350,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _location)
-				yield return new Main.DocumentNodeAndName(_location, "Location");
+				yield return new Main.DocumentNodeAndName(_location, () => _location = null, "Location");
 		}
 
 		#region Suspend/Resume
@@ -1360,18 +1360,5 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		#endregion IGrippableObject Members
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return this.GetType().ToString(); }
-			set
-			{
-				throw new InvalidOperationException("It is not possible to set a name for an instance of this type:" + this.GetType().FullName);
-			}
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

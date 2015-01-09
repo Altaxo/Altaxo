@@ -203,8 +203,11 @@ namespace Altaxo.Data
 				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
+				s._dataColumns.ColumnScripts.ParentObject = s;
+
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
 				s._propertyColumns.ParentObject = s;
+				s._propertyColumns.ColumnScripts.ParentObject = s;
 
 				return s;
 			}
@@ -231,11 +234,15 @@ namespace Altaxo.Data
 				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
+				s._dataColumns.ColumnScripts.ParentObject = s;
+
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
 				s._propertyColumns.ParentObject = s;
+				s._propertyColumns.ColumnScripts.ParentObject = s;
 
 				// new in version 1
 				s._tableScript = (TableScript)info.GetValue("TableScript", s);
+				if (null != s._tableScript) s._tableScript.ParentObject = s;
 				return s;
 			}
 		}
@@ -287,11 +294,15 @@ namespace Altaxo.Data
 				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
+				s._dataColumns.ColumnScripts.ParentObject = s;
+
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
 				s._propertyColumns.ParentObject = s;
+				s._propertyColumns.ColumnScripts.ParentObject = s;
 
 				// new in version 1
 				s._tableScript = (TableScript)info.GetValue("TableScript", s);
+				if (null != s._tableScript) s._tableScript.ParentObject = s;
 
 				// new in version 2 - Add table properties
 				int numberproperties = info.OpenArray(); // "TableProperties"
@@ -369,9 +380,15 @@ namespace Altaxo.Data
 				s._name = info.GetString("Name");
 				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", s);
 				s._dataColumns.ParentObject = s;
+				s._dataColumns.ColumnScripts.ParentObject = s;
+
 				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", s);
 				s._propertyColumns.ParentObject = s;
+				s._propertyColumns.ColumnScripts.ParentObject = s;
+
 				s._tableScript = (TableScript)info.GetValue("TableScript", s);
+				if (null != s._tableScript) s._tableScript.ParentObject = s;
+
 				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
 
 				s._notes.Text = info.GetString("Notes");
@@ -546,8 +563,7 @@ namespace Altaxo.Data
 			this._name = from._name;
 			this._tableScript = null == from._tableScript ? null : (TableScript)from._tableScript.Clone();
 			this._creationTime = this._lastChangeTime = DateTime.UtcNow;
-			this._notes = from._notes.Clone();
-			this._notes.PropertyChanged += this.EhNotesChanged;
+			ChildCopyToMember(ref _notes, from._notes);
 
 			// Clone also the table properties (deep copy)
 			if (from._tableProperties != null && from._tableProperties.Count > 0)
@@ -559,7 +575,7 @@ namespace Altaxo.Data
 				this._tableProperties = null;
 			}
 
-			this.DataSource = null == from.DataSource ? null : (IAltaxoTableDataSource)from.DataSource.Clone();
+			ChildCopyToMember(ref _tableDataSource, from._tableDataSource);
 		}
 
 		/// <summary>
@@ -571,13 +587,14 @@ namespace Altaxo.Data
 		{
 			_dataColumns = datacoll;
 			_dataColumns.ParentObject = this;
+			_dataColumns.ColumnScripts.ParentObject = this;
 
 			_propertyColumns = propcoll;
 			_propertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
+			_propertyColumns.ColumnScripts.ParentObject = this;
 
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
-			_notes = new Main.TextBackedConsole();
-			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
+			_notes = new Main.TextBackedConsole() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -586,8 +603,7 @@ namespace Altaxo.Data
 		/// <param name="info">The information.</param>
 		protected DataTable(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			_notes = new Main.TextBackedConsole();
-			_notes.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(EhNotesChanged);
+			_notes = new Main.TextBackedConsole() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -634,11 +650,6 @@ namespace Altaxo.Data
 		}
 
 		#endregion Suspend and resume
-
-		private void EhNotesChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			EhChildChanged(sender, e);
-		}
 
 		/// <summary>
 		/// Get / sets the parent object of this table.
@@ -802,17 +813,8 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				var oldValue = _tableDataSource;
-				_tableDataSource = value;
-
-				if (!object.Equals(oldValue, value))
-				{
-					if (null != oldValue)
-						oldValue.ParentObject = null;
-					if (null != value)
-						value.ParentObject = this;
+				if (ChildSetMember(ref _tableDataSource, value))
 					EhSelfChanged(EventArgs.Empty);
-				}
 			}
 		}
 
@@ -920,7 +922,8 @@ namespace Altaxo.Data
 			get { return _tableScript; }
 			set
 			{
-				_tableScript = value;
+				if (ChildSetMember(ref _tableScript, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -945,7 +948,7 @@ namespace Altaxo.Data
 		/// <param name="src">The source table to copy the data columns from.</param>
 		public void CopyDataColumnsFrom(DataTable src)
 		{
-			this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
+			_dataColumns.CopyAllColumnsFrom(src.DataColumns);
 		}
 
 		/// <summary>
@@ -956,7 +959,7 @@ namespace Altaxo.Data
 		/// the data columns in this table and in src table are compared by their name.</param>
 		public void AppendAllDataColumns(DataTable src, bool ignoreNames)
 		{
-			DataColumns.AppendAllColumns(src.DataColumns, ignoreNames);
+			_dataColumns.AppendAllColumns(src.DataColumns, ignoreNames);
 		}
 
 		/// <summary>
@@ -968,7 +971,7 @@ namespace Altaxo.Data
 		/// <param name="rowSpace">Number of rows to leave free between data in this table and newly appended data.</param>
 		public void AppendAllColumnsWithSpace(DataTable src, bool ignoreNames, int rowSpace)
 		{
-			DataColumns.AppendAllColumnsWithSpace(src.DataColumns, ignoreNames, rowSpace);
+			_dataColumns.AppendAllColumnsWithSpace(src.DataColumns, ignoreNames, rowSpace);
 		}
 
 		/// <summary>
@@ -980,7 +983,7 @@ namespace Altaxo.Data
 		/// <param name="appendPosition">Row number of first row where the new data is copied to.</param>
 		public void AppendAllDataColumnsToPosition(DataTable src, bool ignoreNames, int appendPosition)
 		{
-			DataColumns.AppendAllColumnsToPosition(src.DataColumns, ignoreNames, appendPosition);
+			_dataColumns.AppendAllColumnsToPosition(src.DataColumns, ignoreNames, appendPosition);
 		}
 
 		/// <summary>
@@ -991,8 +994,8 @@ namespace Altaxo.Data
 		{
 			using (var suspendToken = SuspendGetToken())
 			{
-				this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
-				this.PropCols.CopyAllColumnsFrom(src.PropCols);
+				_dataColumns.CopyAllColumnsFrom(src.DataColumns);
+				_propertyColumns.CopyAllColumnsFrom(src.PropCols);
 			}
 		}
 
@@ -1008,14 +1011,14 @@ namespace Altaxo.Data
 			using (var suspendToken = SuspendGetToken())
 			{
 				if (copyDataColumnData)
-					this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
+					_dataColumns.CopyAllColumnsFrom(src.DataColumns);
 				else
-					this.DataColumns.CopyAllColumnsWithoutDataFrom(src.DataColumns);
+					_dataColumns.CopyAllColumnsWithoutDataFrom(src.DataColumns);
 
 				if (copyPropertyColumnData)
-					this.PropCols.CopyAllColumnsFrom(src.PropCols);
+					_propertyColumns.CopyAllColumnsFrom(src.PropCols);
 				else
-					this.PropCols.CopyAllColumnsWithoutDataFrom(src.PropCols);
+					_propertyColumns.CopyAllColumnsWithoutDataFrom(src.PropCols);
 			}
 		}
 
@@ -1256,6 +1259,18 @@ namespace Altaxo.Data
 
 			if (null != PropertyBag)
 				yield return new Main.DocumentNodeAndName(_tableProperties, () => _tableProperties = null, "PropertyBag");
+
+			if (null != _tableScript)
+				yield return new Main.DocumentNodeAndName(_tableScript, () => _tableScript = null, "TableScript");
+
+			if (null != _notes)
+				yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
+
+			if (null != _dataColumns && null != _dataColumns.ColumnScripts)
+				yield return new Main.DocumentNodeAndName(_dataColumns.ColumnScripts, "DataColumnScripts");
+
+			if (null != _propertyColumns && null != _propertyColumns.ColumnScripts)
+				yield return new Main.DocumentNodeAndName(_propertyColumns.ColumnScripts, "PropertyColumnScripts");
 		}
 
 		/// <summary>
@@ -1315,9 +1330,7 @@ namespace Altaxo.Data
 			get { return _tableProperties; }
 			protected set
 			{
-				_tableProperties = value;
-				if (null != _tableProperties)
-					_tableProperties.ParentObject = this;
+				ChildSetMember(ref _tableProperties, value);
 			}
 		}
 

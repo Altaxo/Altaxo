@@ -325,11 +325,6 @@ namespace AltaxoTest.Data
 				get { throw new NotImplementedException(); }
 			}
 
-			IDocumentNode Altaxo.Collections.INodeWithParentNode<IDocumentNode>.ParentNode
-			{
-				get { throw new NotImplementedException(); }
-			}
-
 			public void Dispose()
 			{
 				throw new NotImplementedException();

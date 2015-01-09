@@ -480,15 +480,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IDocumentNode Members
 
-		public override string Name
-		{
-			get { return "PlotStyleCollection"; }
-			set
-			{
-				throw new NotImplementedException("The name of this node type can not be set. Node type is: " + this.GetType().FullName);
-			}
-		}
-
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.

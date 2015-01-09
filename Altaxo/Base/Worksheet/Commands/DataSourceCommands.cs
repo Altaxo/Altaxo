@@ -91,27 +91,32 @@ namespace Altaxo.Worksheet.Commands
 			if (null == table || null == table.DataSource)
 				return;
 
-			try
-			{
-				table.DataSource.FillData(table);
-			}
-			catch (Exception ex)
-			{
-				table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
-			}
-
-			System.Diagnostics.Debug.Assert(null != table.DataSource, "table.DataSource.FillData should never set the data source to zero!");
-
-			if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
+			using (var suspendToken = table.SuspendGetToken())
 			{
 				try
 				{
-					table.TableScript.Execute(table, new Altaxo.Main.Services.DummyBackgroundMonitor(), false);
+					table.DataSource.FillData(table);
 				}
 				catch (Exception ex)
 				{
-					table.Notes.WriteLine("Error during execution of the table script (after requerying the table data source: {0}", ex.Message);
+					table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
 				}
+
+				System.Diagnostics.Debug.Assert(null != table.DataSource, "table.DataSource.FillData should never set the data source to zero!");
+
+				if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
+				{
+					try
+					{
+						table.TableScript.Execute(table, new Altaxo.Main.Services.DummyBackgroundMonitor(), false);
+					}
+					catch (Exception ex)
+					{
+						table.Notes.WriteLine("Error during execution of the table script (after requerying the table data source: {0}", ex.Message);
+					}
+				}
+
+				suspendToken.Resume();
 			}
 		}
 	}

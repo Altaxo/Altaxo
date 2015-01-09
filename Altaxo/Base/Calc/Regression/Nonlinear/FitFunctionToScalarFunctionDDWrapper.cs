@@ -29,7 +29,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// <summary>
 	/// Wraps the fit function, storing its parameters, so that it can be used as a plot function.
 	/// </summary>
-	public class FitFunctionToScalarFunctionDDWrapper : IScalarFunctionDD
+	public class FitFunctionToScalarFunctionDDWrapper
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IScalarFunctionDD
 	{
 		private IFitFunction _fitFunction;
 
@@ -78,11 +81,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				else
 				{
 					s = (FitFunctionToScalarFunctionDDWrapper)o;
-					s = (FitFunctionToScalarFunctionDDWrapper)o;
 					s._independentVariable = independentVariable;
 					s._dependentVariable = dependentVariable;
 					s._parameter = parameter;
 					s._fitFunction = fo as IFitFunction;
+
+					if (s._fitFunction is Main.IDocumentLeafNode && !(s._fitFunction is Altaxo.Scripting.FitFunctionScript))
+						((Main.IDocumentLeafNode)s._fitFunction).ParentObject = s;
 				}
 
 				return s;
@@ -101,6 +106,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			Initialize(fitFunction, dependentVariable, 0, parameter);
 		}
 
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (_fitFunction is Main.IDocumentLeafNode && object.ReferenceEquals(((Main.IDocumentLeafNode)_fitFunction).ParentObject, this))
+				yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_fitFunction, () => _fitFunction = null, "WrappedFitFunction");
+		}
+
 		public void Initialize(IFitFunction fitFunction, int dependentVariable, int independentVariable, double[] parameter)
 		{
 			_fitFunction = fitFunction;
@@ -110,6 +121,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				_x = new double[_fitFunction.NumberOfIndependentVariables];
 				_y = new double[_fitFunction.NumberOfDependentVariables];
 				_parameter = new double[Math.Max(_fitFunction.NumberOfParameters, parameter.Length)];
+
+				if (_fitFunction is Main.IDocumentLeafNode && !(_fitFunction is Altaxo.Scripting.FitFunctionScript))
+					((Main.IDocumentLeafNode)fitFunction).ParentObject = this;
 			}
 			else
 			{

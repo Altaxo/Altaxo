@@ -95,9 +95,8 @@ namespace Altaxo.Graph.Scales
 				s._isOrgExtendable = false;
 				s._isEndExtendable = false;
 
-				s.InternalSetRescaling((NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
-
-				s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._rescaling, (NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
+				s.ChildSetMember(ref s._dataBounds, (TextBoundaries)info.GetValue("Bounds", s));
 
 				return s;
 			}
@@ -149,23 +148,6 @@ namespace Altaxo.Graph.Scales
 			TextScale result = new TextScale();
 			result.CopyFrom(this);
 			return result;
-		}
-
-		protected void InternalSetDataBounds(TextBoundaries bounds)
-		{
-			if (this._dataBounds != null)
-			{
-				this._dataBounds.ParentObject = null;
-				this._dataBounds = null;
-			}
-			this._dataBounds = bounds;
-			this._dataBounds.ParentObject = this;
-		}
-
-		protected void InternalSetRescaling(NumericAxisRescaleConditions rescaling)
-		{
-			this._rescaling = rescaling;
-			this._rescaling.ParentObject = this;
 		}
 
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)

@@ -34,7 +34,7 @@ namespace Altaxo.Main
 	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
 	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
-	public abstract class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode, Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>
+	public abstract partial class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
 	{
 		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
 		private int _suspendLevel;
@@ -512,6 +512,55 @@ namespace Altaxo.Main
 		#region Helper functions
 
 		/// <summary>
+		/// Set a member variable that holds a child node of this instance.  It helps to ensure the correct order: first, the child node is set to the new instance and then the  old child node is disposed.
+		/// </summary>
+		/// <typeparam name="T">Type of child node.</typeparam>
+		/// <param name="childNode">The child node member variable to set.</param>
+		/// <param name="instanceToSet">The instance to set the variable with.</param>
+		/// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
+		protected bool ChildSetMember<T>(ref T childNode, T instanceToSet) where T : class, IDocumentLeafNode
+		{
+			if (object.ReferenceEquals(childNode, instanceToSet))
+				return false;
+
+			var tmpNode = childNode;
+
+			childNode = instanceToSet;
+			if (null != childNode)
+				childNode.ParentObject = this;
+
+			if (null != tmpNode)
+				tmpNode.Dispose();
+
+			return true;
+		}
+
+		/// <summary>
+		/// Set a member variable that holds a child node of this instance. The child node may or may not implement <see cref="IDocumentLeafNode"/>.
+		/// It helps to ensure the correct order: first, the child node is set to the new instance and then the  old child node is disposed.
+		/// </summary>
+		/// <typeparam name="T">Type of child node.</typeparam>
+		/// <param name="childNode">The child node member variable to set.</param>
+		/// <param name="instanceToSet">The instance to set the variable with.</param>
+		/// <returns><c>True</c> if the child has been set. If the old child reference equals to the new child, nothing is done, and <c>false</c> is returned.</returns>
+		protected bool ChildSetMemberAlt<T>(ref T childNode, T instanceToSet) where T : class
+		{
+			if (object.ReferenceEquals(childNode, instanceToSet))
+				return false;
+
+			var tmpNode = childNode;
+
+			childNode = instanceToSet;
+			if (childNode is IDocumentLeafNode)
+				((IDocumentLeafNode)childNode).ParentObject = this;
+
+			if (tmpNode is IDisposable)
+				((IDisposable)tmpNode).Dispose();
+
+			return true;
+		}
+
+		/// <summary>
 		/// Copies a document node from another source into a member of this instance.
 		/// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
 		/// The node is then copied using either Main.ICopyFrom or System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
@@ -520,16 +569,18 @@ namespace Altaxo.Main
 		/// <typeparam name="T">Type of the node to copy.</typeparam>
 		/// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
 		/// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
-		protected void CopyChildFrom<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+		protected bool ChildCopyToMember<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
 		{
 			if (object.ReferenceEquals(myChild, fromAnotherChild))
-				return;
+				return false;
+
+			var oldChild = myChild;
 
 			if (null == fromAnotherChild)
 			{
-				if (null != myChild)
-					myChild.Dispose();
 				myChild = default(T);
+				if (null != oldChild)
+					oldChild.Dispose();
 			}
 			else if ((myChild is Main.ICopyFrom) && myChild.GetType() == fromAnotherChild.GetType())
 			{
@@ -537,25 +588,48 @@ namespace Altaxo.Main
 			}
 			else
 			{
-				if (null != myChild)
-					myChild.Dispose();
 				myChild = (T)(fromAnotherChild.Clone());
+				myChild.ParentObject = this;
+
+				if (null != oldChild)
+					oldChild.Dispose();
 			}
 
-			if (null != myChild)
-				myChild.ParentObject = this;
+			return true;
 		}
 
 		/// <summary>
 		/// Copies a document node from another source into a member of this instance.
 		/// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
-		/// The node is then copied using System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
+		/// If the node is not null, the node is then copied using either Main.ICopyFrom or System.ICloneable. If the node is <c>null</c>, a new node is created using the provided generation function.
+		/// The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/> is then set to this instance in order to maintain the parent-child relationship.
+		/// </summary>
+		/// <typeparam name="T">Type of the node to copy.</typeparam>
+		/// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
+		/// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
+		/// <param name="createNew">If the parameter <paramref name="fromAnotherChild"/> is null, the provided function is used to create a new object of type <typeparamref name="T"/>. This object is then used to set the member.</param>
+		protected bool ChildCopyToMemberOrCreateNew<T>(ref T myChild, T fromAnotherChild, Func<T> createNew) where T : class, IDocumentLeafNode, ICloneable
+		{
+			if (null != fromAnotherChild)
+			{
+				return ChildCopyToMember(ref myChild, fromAnotherChild);
+			}
+			else
+			{
+				return ChildSetMember(ref myChild, createNew());
+			}
+		}
+
+		/// <summary>
+		/// Sets a member variable that holds a child with a cloned instance of another variable.
+		/// If an old instance member (provided in <paramref name="myChild"/> exists and can not be used, it is disposed first.
+		/// The node is then cloned using System.ICloneable. The resulting node's <see cref="M:IDocumentLeafNode.ParentObject"/>
 		/// is then set to this instance in order to maintain the parent-child relationship.
 		/// </summary>
 		/// <typeparam name="T">Type of the node to copy.</typeparam>
 		/// <param name="myChild">Reference to a member variable of this instance that holds a child node.</param>
 		/// <param name="fromAnotherChild">Another child node to copy from. If null, the child node of this instance is also set to null.</param>
-		protected void CloneChildFrom<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+		protected void ChildCloneToMember<T>(ref T myChild, T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
 		{
 			if (object.ReferenceEquals(myChild, fromAnotherChild))
 				return;
@@ -578,87 +652,6 @@ namespace Altaxo.Main
 		}
 
 		#endregion Helper functions
-
-		#region Static instance
-
-		private class StaticInstanceClass : IDocumentNode
-		{
-			public IDocumentNode ParentObject
-			{
-				get
-				{
-					return null;
-				}
-				set
-				{
-					throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
-				}
-			}
-
-			public string Name
-			{
-				get { return "DocumentNodeStaticInstance"; }
-			}
-
-			public event EventHandler Changed;
-
-			public ISuspendToken SuspendGetToken()
-			{
-				throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
-			}
-
-			public void EhChildChanged(object child, EventArgs e)
-			{
-			}
-
-			public void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
-			{
-			}
-
-			public IDocumentLeafNode GetChildObjectNamed(string name)
-			{
-				throw new NotImplementedException();
-			}
-
-			public string GetNameOfChildObject(IDocumentLeafNode o)
-			{
-				throw new NotImplementedException();
-			}
-
-			public IEnumerable<IDocumentLeafNode> ChildNodes
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public IDocumentLeafNode ParentNode
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			IDocumentNode Collections.INodeWithParentNode<IDocumentNode>.ParentNode
-			{
-				get { throw new NotImplementedException(); }
-			}
-
-			public void Dispose()
-			{
-				throw new NotImplementedException();
-			}
-
-			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
-		}
-
-		private static IDocumentNode _staticInstance = new StaticInstanceClass();
-
-		/// <summary>
-		/// Gets a single static instance that can be used to give some document nodes a parent, for instance those nodes that are defined as static (Brushes, Pens etc.).
-		/// </summary>
-		/// <value>
-		/// A static instance of <see cref="IDocumentNode"/>.
-		/// </value>
-		public static IDocumentNode StaticInstance { get { return _staticInstance; } }
-
-		#endregion Static instance
 
 		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes
 		{

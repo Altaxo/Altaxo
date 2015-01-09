@@ -32,7 +32,7 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Represents a storage for text that can be used like a text console.
 	/// </summary>
-	public interface ITextBackedConsole : System.ComponentModel.INotifyPropertyChanged, ICloneable
+	public interface ITextBackedConsole : ICloneable
 	{
 		/// <summary>Writes the specified string value to the text backed console.</summary>
 		/// <param name="value">The string to write. </param>
@@ -66,17 +66,13 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Implementation of <see cref="ITextBackedConsole"/>, where the text is stored in a <see cref="System.Text.StringBuilder"/> instance.
 	/// </summary>
-	public class TextBackedConsole : ITextBackedConsole
+	public class TextBackedConsole
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ITextBackedConsole
 	{
-		private static readonly System.ComponentModel.PropertyChangedEventArgs _textChangedPropertyEventArgs = new System.ComponentModel.PropertyChangedEventArgs("Text");
-
 		private object _synchronizingObject;
 		private StringBuilder _stb;
-
-		/// <summary>
-		/// Occurs when a property value changes. Here, it is fired when the <see cref="Text"/> property changed.
-		/// </summary>
-		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextBackedConsole"/> class with empty text.
@@ -114,7 +110,7 @@ namespace Altaxo.Main
 		public void Write(string value)
 		{
 			_stb.Append(value);
-			OnTextChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -125,7 +121,7 @@ namespace Altaxo.Main
 		public void Write(string format, params object[] args)
 		{
 			_stb.AppendFormat(format, args);
-			OnTextChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -134,7 +130,7 @@ namespace Altaxo.Main
 		public void WriteLine()
 		{
 			_stb.AppendLine();
-			OnTextChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -144,7 +140,7 @@ namespace Altaxo.Main
 		public void WriteLine(string value)
 		{
 			_stb.AppendLine(value);
-			OnTextChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -156,7 +152,7 @@ namespace Altaxo.Main
 		{
 			_stb.AppendFormat(format, args);
 			_stb.AppendLine();
-			OnTextChanged();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -168,7 +164,7 @@ namespace Altaxo.Main
 			_stb.Clear();
 
 			if (count != 0)
-				OnTextChanged();
+				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -199,19 +195,9 @@ namespace Altaxo.Main
 						_stb.Clear();
 						_stb.Append(value);
 					}
-					OnTextChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Should be called internally when the text has changed.
-		/// </summary>
-		protected virtual void OnTextChanged()
-		{
-			var pc = PropertyChanged;
-			if (null != pc)
-				pc(this, _textChangedPropertyEventArgs);
 		}
 	}
 }

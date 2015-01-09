@@ -143,19 +143,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		public override string Name
-		{
-			get
-			{
-				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-				return noc == null ? null : noc.GetNameOfChildObject(this);
-			}
-			set
-			{
-				throw new InvalidOperationException("Name of PlotItem cannot be set directly.");
-			}
-		}
-
 		/// <summary>
 		/// Handles the case when a child changes, and a reaction is neccessary independently on the suspend state of the table. It is used here to change the event args
 		/// coming from the StyleObject to <see cref="PlotItemStyleChangedEventArgs"/> and event args coming from the data object to <see cref="PlotItemDataChangedEventArgs"/>.

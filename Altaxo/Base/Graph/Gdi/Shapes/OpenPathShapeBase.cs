@@ -110,10 +110,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
 		{
 			if (null != _linePen)
-				yield return new Main.DocumentNodeAndName(_linePen, "LinePen");
+				yield return new Main.DocumentNodeAndName(_linePen, () => _linePen = null, "LinePen");
 
 			if (null != _outlinePen)
-				yield return new Main.DocumentNodeAndName(_outlinePen, "OutlinePen");
+				yield return new Main.DocumentNodeAndName(_outlinePen, () => _outlinePen = null, "OutlinePen");
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -131,12 +131,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				if (value == null)
 					throw new ArgumentNullException("The line pen must not be null");
+				if (object.ReferenceEquals(_linePen, value))
+					return;
 
-				if (_linePen != null)
-					_linePen.ParentObject = null;
+				ChildCopyToMember(ref _linePen, value); // we always clone to have full control
 
-				_linePen = (PenX)value.Clone();
-				_linePen.ParentObject = this;
 				EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -149,15 +148,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
-				if (_outlinePen != null)
-					_outlinePen.ParentObject = null;
-
-				_outlinePen = null == value ? null : (PenX)value.Clone();
-
-				if (_outlinePen != null)
-					_outlinePen.ParentObject = this;
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildCopyToMember(ref _outlinePen, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

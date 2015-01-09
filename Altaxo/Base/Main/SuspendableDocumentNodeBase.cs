@@ -112,7 +112,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				return _parent != null || Changed != null;
+				return _parent != null || Changed != null || TunneledEvent != null;
 			}
 		}
 
@@ -287,11 +287,6 @@ namespace Altaxo.Main
 
 		#region Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode> and Altaxo.Collections.ITreeNode<IDocumentLeafNode>
 
-		IDocumentNode Collections.INodeWithParentNode<IDocumentNode>.ParentNode
-		{
-			get { return _parent; }
-		}
-
 		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes
 		{
 			get { yield break; }
@@ -329,6 +324,24 @@ namespace Altaxo.Main
 		}
 
 		#endregion Tunneling event handling
+
+		#region Helper functions
+
+		/// <summary>
+		/// Helper function to dispose a child node of this instance. It helps to ensure the correct order: first, the child node is set to null and only then the child node is disposed.
+		/// </summary>
+		/// <typeparam name="T">Type of child node.</typeparam>
+		/// <param name="childNode">The child node to dispose.</param>
+		protected void ChildDisposeMember<T>(ref T childNode) where T : class, IDisposable
+		{
+			var tmpNode = childNode;
+			childNode = null;
+
+			if (null != tmpNode)
+				tmpNode.Dispose();
+		}
+
+		#endregion Helper functions
 
 		#region Diagnostic support
 

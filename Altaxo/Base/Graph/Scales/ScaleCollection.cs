@@ -22,22 +22,15 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Reflection;
 
 namespace Altaxo.Graph.Scales
 {
 	[Serializable]
 	public class ScaleCollection
 	:
-		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+	Main.SuspendableDocumentNodeWithSetOfEventArgs,
 	IEnumerable<ScaleWithTicks>
 	{
 		private ScaleWithTicks[] _scales = new ScaleWithTicks[2];
@@ -116,11 +109,33 @@ namespace Altaxo.Graph.Scales
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			for (int i = _scales.Length - 1; i >= 0; --i)
+			if (null != _scales)
 			{
-				if (null != _scales[i])
-					yield return new Main.DocumentNodeAndName(_scales[i], "Scale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				for (int i = _scales.Length - 1; i >= 0; --i)
+				{
+					if (null != _scales[i])
+						yield return new Main.DocumentNodeAndName(_scales[i], "Scale" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+				}
 			}
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (isDisposing)
+			{
+				var scales = _scales;
+				_scales = null;
+				if (null != scales)
+				{
+					for (int i = 0; i < scales.Length; ++i)
+					{
+						if (null != scales[i])
+							scales[i].Dispose();
+					}
+				}
+			}
+
+			base.Dispose(isDisposing);
 		}
 
 		public ScaleCollection Clone()
@@ -215,20 +230,7 @@ namespace Altaxo.Graph.Scales
 
 		protected void InternalSetScaleWithTicks(int i, ScaleWithTicks newvalue)
 		{
-			ScaleWithTicks oldvalue = _scales[i];
-			_scales[i] = newvalue;
-
-			if (!object.ReferenceEquals(oldvalue, newvalue))
-			{
-				if (null != oldvalue)
-				{
-					oldvalue.ParentObject = null;
-				}
-				if (null != newvalue)
-				{
-					newvalue.ParentObject = this;
-				}
-			}
+			ChildSetMember(ref _scales[i], newvalue);
 		}
 
 		public void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
@@ -239,19 +241,6 @@ namespace Altaxo.Graph.Scales
 			if (Y.Scale is LinkedScale)
 				((LinkedScale)Y.Scale).EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "Scales"; }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
-		#endregion IDocumentNode Members
 
 		public IEnumerator<ScaleWithTicks> GetEnumerator()
 		{

@@ -111,11 +111,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		#endregion ICloneable Members
 
-		public override string Name
-		{
-			get { return "Boundary"; }
-		}
-
 		#region Changed event handling
 
 		protected override void AccumulateChangeData(object sender, EventArgs e)

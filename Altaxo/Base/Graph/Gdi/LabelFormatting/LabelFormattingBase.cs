@@ -207,18 +207,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			return litems;
 		}
 
-		public override string Name
-		{
-			get
-			{
-				return this.GetType().Name;
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
 		protected class MeasuredLabelItem : IMeasuredLabelItem
 		{
 			protected string _text;

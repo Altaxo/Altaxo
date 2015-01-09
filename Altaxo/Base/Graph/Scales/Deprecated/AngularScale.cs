@@ -421,17 +421,5 @@ namespace Altaxo.Graph.Scales.Deprecated
 		}
 
 		#endregion NumericalScale
-
-		public override string Name
-		{
-			get
-			{
-				return "AngularScale";
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
 	}
 }

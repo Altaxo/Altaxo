@@ -623,18 +623,5 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return this.GetType().ToString(); }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

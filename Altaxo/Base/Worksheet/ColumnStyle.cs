@@ -284,15 +284,15 @@ namespace Altaxo.Worksheet
 			_columnSize = s._columnSize;
 
 			_isCellPenCustom = s._isCellPenCustom;
-			CopyChildFrom(ref _cellPen, s._cellPen);
+			ChildCopyToMember(ref _cellPen, s._cellPen);
 			_textFormat = (StringFormat)s._textFormat.Clone();
 			_textFont = s._textFont;
 
 			_isTextBrushCustom = s._isTextBrushCustom;
-			CopyChildFrom(ref _textBrush, s._textBrush);
+			ChildCopyToMember(ref _textBrush, s._textBrush);
 
 			_isBackgroundBrushCustom = s._isBackgroundBrushCustom;
-			CopyChildFrom(ref _backgroundBrush, s._backgroundBrush);
+			ChildCopyToMember(ref _backgroundBrush, s._backgroundBrush);
 		}
 
 		/// <summary>

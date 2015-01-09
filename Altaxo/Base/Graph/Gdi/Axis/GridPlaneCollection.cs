@@ -163,38 +163,32 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		private void Attach(GridPlane plane)
-		{
-			plane.ParentObject = this;
-		}
-
-		private void Detach(GridPlane plane)
-		{
-			plane.ParentObject = null;
-		}
-
 		public void Add(GridPlane plane)
 		{
-			Attach(plane);
+			if (null == plane)
+				throw new ArgumentNullException("plane");
+
+			plane.ParentObject = this;
 			_innerList.Add(plane);
 		}
 
 		public void Clear()
 		{
-			foreach (GridPlane plane in _innerList)
-				Detach(plane);
-
-			_innerList.Clear();
+			var list = _innerList;
+			_innerList = new List<GridPlane>();
+			foreach (GridPlane plane in list)
+				plane.Dispose();
 		}
 
 		public void RemoveUnused()
 		{
 			for (int i = _innerList.Count - 1; i >= 0; i--)
 			{
-				if (!_innerList[i].IsUsed)
+				var item = _innerList[i];
+				if (!item.IsUsed)
 				{
-					Detach(_innerList[i]);
 					_innerList.RemoveAt(i);
+					item.Dispose();
 				}
 			}
 		}
@@ -236,19 +230,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].PaintGrid(g, layer);
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "GridPlanes"; }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
-		#endregion IDocumentNode Members
 
 		#region IEnumerable<GridPlane> Members
 

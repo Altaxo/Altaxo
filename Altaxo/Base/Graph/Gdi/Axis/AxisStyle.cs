@@ -713,18 +713,5 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		#endregion ICloneable Members
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "AxisStyle"; }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

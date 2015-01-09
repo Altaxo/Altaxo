@@ -193,11 +193,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		#endregion IPhysicalBoundaries Members
 
-		public override string Name
-		{
-			get { return "TextBoundaries"; }
-		}
-
 		#region Changed event handling
 
 		/// <summary>
@@ -225,7 +220,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 				data |= BoundariesChangedData.UpperBoundChanged;
 			}
 
-			if(0!=data)
+			if (0 != data)
 				_accumulatedEventData = new BoundariesChangedEventArgs(data);
 
 			base.OnResume();

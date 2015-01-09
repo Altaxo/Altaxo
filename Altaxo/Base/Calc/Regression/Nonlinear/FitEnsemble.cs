@@ -157,10 +157,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			set
 			{
 				FitElement oldValue = this[i];
-				oldValue.ParentObject = null;
+				if (object.ReferenceEquals(oldValue, value))
+					return;
 
 				_innerList[i] = value;
 				value.ParentObject = this;
+
+				if (null != oldValue)
+					oldValue.Dispose();
 
 				EhSelfChanged(EventArgs.Empty);
 			}

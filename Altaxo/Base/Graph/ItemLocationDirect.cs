@@ -492,14 +492,7 @@ namespace Altaxo.Graph
 
 		#endregion Properties
 
-		#region IDocumentNode Members
 
-		public override string Name
-		{
-			get { return "ItemSizeAndPosition"; }
-		}
-
-		#endregion IDocumentNode Members
 
 		#region Methods
 

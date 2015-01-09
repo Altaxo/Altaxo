@@ -30,7 +30,7 @@ using System.Reflection;
 
 namespace Altaxo.Scripting
 {
-	public interface IColumnScriptText : IScriptText
+	public interface IColumnScriptText : IScriptText, Main.IDocumentLeafNode
 	{
 		/// <summary>
 		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.

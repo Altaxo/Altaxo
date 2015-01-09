@@ -372,16 +372,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (object.ReferenceEquals(_background, value))
 					return;
 
-				if (null != _background)
-					_background.ParentObject = null;
-
-				_background = value;
-
-				if (null != _background)
-					_background.ParentObject = this;
-
-				_isMeasureInSync = false;
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _background, value))
+				{
+					_isMeasureInSync = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 

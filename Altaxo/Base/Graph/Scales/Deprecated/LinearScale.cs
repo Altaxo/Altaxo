@@ -237,16 +237,13 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._cachedAxisSpan = from._cachedAxisSpan;
 			this._baseEnd = from._baseEnd;
 			this._baseOrg = from._baseOrg;
-			if (null != _dataBounds)
-				_dataBounds.ParentObject = null;
-			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
+			ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+
 			this._majorSpan = from._majorSpan;
 			this._minorTicks = from._minorTicks;
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
-			this._rescaling.ParentObject = this;
+			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new NumericAxisRescaleConditions());
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -713,17 +710,5 @@ namespace Altaxo.Graph.Scales.Deprecated
 			majorspan = majornormspan * TenToThePowerOf(nSpanPotCorr);
 			minorticks = (int)(majornormspan / minornormspan);
 		} // end of function
-
-		public override string Name
-		{
-			get
-			{
-				return "LinearScale";
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
 	} // end of class LinearAxis
 }

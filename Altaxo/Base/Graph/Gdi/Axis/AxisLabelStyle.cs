@@ -470,18 +470,18 @@ namespace Altaxo.Graph.Gdi.Axis
 				_horizontalAlignment = from._horizontalAlignment;
 				_verticalAlignment = from._verticalAlignment;
 
-				CopyChildFrom(ref _brush, from._brush);
+				ChildCopyToMember(ref _brush, from._brush);
 
 				_automaticRotationShift = from._automaticRotationShift;
 				_xOffset = from._xOffset;
 				_yOffset = from._yOffset;
 				_rotation = from._rotation;
-				CopyChildFrom(ref _backgroundStyle, from._backgroundStyle);
-				CopyChildFrom(ref _labelFormatting, from._labelFormatting);
+				ChildCopyToMember(ref _backgroundStyle, from._backgroundStyle);
+				ChildCopyToMember(ref _labelFormatting, from._labelFormatting);
 				_labelSide = from._labelSide;
 				_prefixText = from._prefixText;
 				_postfixText = from._postfixText;
-				CopyChildFrom(ref _suppressedLabels, from._suppressedLabels);
+				ChildCopyToMember(ref _suppressedLabels, from._suppressedLabels);
 				EhSelfChanged(EventArgs.Empty);
 
 				suspendToken.Resume();
@@ -620,18 +620,10 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				if (object.ReferenceEquals(_backgroundStyle, value))
-					return;
-
-				if (null != _backgroundStyle)
-					_backgroundStyle.ParentObject = null;
-
-				this._backgroundStyle = value;
-
-				if (null != _backgroundStyle)
-					_backgroundStyle.ParentObject = this;
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _backgroundStyle, value))
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 

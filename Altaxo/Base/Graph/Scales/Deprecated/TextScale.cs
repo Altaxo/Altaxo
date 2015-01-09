@@ -299,17 +299,5 @@ namespace Altaxo.Graph.Scales.Deprecated
 			if (changed)
 				OnChanged();
 		}
-
-		public override string Name
-		{
-			get
-			{
-				return "TextScale";
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
 	}
 }

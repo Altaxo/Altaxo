@@ -442,11 +442,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				this._font = from._font;
 				this._independentColor = from._independentColor;
-				CopyChildFrom(ref _brush, from._brush);
+				ChildCopyToMember(ref _brush, from._brush);
 				this._xOffset = from._xOffset;
 				this._yOffset = from._yOffset;
 				this._rotation = from._rotation;
-				CopyChildFrom(ref _backgroundStyle, from._backgroundStyle);
+				ChildCopyToMember(ref _backgroundStyle, from._backgroundStyle);
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
 				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 				this._attachedPlane = null == from._attachedPlane ? null : from._attachedPlane.Clone();
@@ -508,21 +508,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			set
 			{
-				if (object.ReferenceEquals(_labelColumnProxy, value))
-					return;
-
-				if (null != _labelColumnProxy)
-					_labelColumnProxy.ParentObject = null;
-
-				_labelColumnProxy = value;
-
-				if (null != _labelColumnProxy)
-					_labelColumnProxy.ParentObject = this;
-
-				if (null != _labelColumnProxy)
-					EhChildChanged(_labelColumnProxy, EventArgs.Empty);
-				else
-					EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _labelColumnProxy, value))
+				{
+					if (null != _labelColumnProxy)
+						EhChildChanged(_labelColumnProxy, EventArgs.Empty);
+					else
+						EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -598,23 +590,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (null == value)
-					throw new ArgumentNullException("LabelBrush is null");
-
-				if (null != _brush)
-				{
-					_brush.ParentObject = null;
-				}
-
-				var oldValue = _brush;
-				_brush = value;
-
-				if (null != _brush)
-				{
-					_brush.ParentObject = this;
-				}
-
-				if (!object.ReferenceEquals(oldValue, value))
+				if (ChildSetMember(ref _brush, value))
 					EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -1027,11 +1003,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		#endregion I2DPlotStyle Members
 
 		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "LabelStyle"; }
-		}
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

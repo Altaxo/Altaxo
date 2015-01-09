@@ -174,7 +174,7 @@ namespace Altaxo.Data
 
 		protected override void OnChanged(EventArgs e)
 		{
-			if (e is Main.NamedObjectCollectionChangedEventArgs && null != CollectionChanged)
+			if (null != CollectionChanged && (e is Main.NamedObjectCollectionChangedEventArgs))
 			{
 				CollectionChanged(this, (Main.NamedObjectCollectionChangedEventArgs)e);
 			}
@@ -196,7 +196,6 @@ namespace Altaxo.Data
 		{
 			string[] arr = new string[_itemsByName.Count];
 			this._itemsByName.Keys.CopyTo(arr, 0);
-			// System.Array.Sort(arr);
 			return arr;
 		}
 
@@ -219,7 +218,10 @@ namespace Altaxo.Data
 
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
-			if (null == theTable.Name || 0 == theTable.Name.Length) // if no table name provided
+			if (null == theTable)
+				throw new ArgumentNullException("theTable");
+
+			if (null == theTable.Name) // if no table name provided (an empty string is a valid table name)
 				theTable.Name = FindNewTableName();                 // find a new one
 			else if (_itemsByName.ContainsKey(theTable.Name)) // else if this table name is already in use
 				theTable.Name = FindNewTableName(theTable.Name); // find a new table name based on the original name
@@ -239,17 +241,20 @@ namespace Altaxo.Data
 		/// <returns>True if the table was found in the collection and thus removed successfully.</returns>
 		public bool Remove(DataTable theTable)
 		{
-			if (!_itemsByName.ContainsValue(theTable))
+			if (null == theTable)
+				throw new ArgumentNullException("theTable");
+
+			if (_itemsByName.Remove(theTable.Name))
+			{
+				var eventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(theTable);
+				theTable.Dispose();
+				EhSelfChanged(eventArgs);
+				return true;
+			}
+			else
+			{
 				return false;
-
-			var eventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(theTable);
-
-			_itemsByName.Remove(theTable.Name);
-			theTable.Dispose();
-
-			//OnCollectionChanged(Main.NamedObjectCollectionChangeType.ItemRemoved, theTable, theTable.Name);
-			EhSelfChanged(eventArgs);
-			return true;
+			}
 		}
 
 		/// <summary>
@@ -261,7 +266,9 @@ namespace Altaxo.Data
 		public DataTable EnsureExistence(string tableName)
 		{
 			if (Contains(tableName))
+			{
 				return this[tableName];
+			}
 			else
 			{
 				var newTable = new DataTable(tableName);

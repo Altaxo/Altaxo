@@ -184,20 +184,8 @@ namespace Altaxo.Graph.Gdi.Plot
 					throw new System.ArgumentException("The provided data object is not of the type " + _plotData.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
 				else
 				{
-					if (!object.ReferenceEquals(_plotData, value))
+					if (ChildSetMember(ref _plotData, (XYZMeshedColumnPlotData)value))
 					{
-						if (null != _plotData)
-						{
-							_plotData.ParentObject = null;
-						}
-
-						_plotData = (XYZMeshedColumnPlotData)value;
-
-						if (null != _plotData)
-						{
-							_plotData.ParentObject = this;
-						}
-
 						EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 					}
 				}
@@ -222,27 +210,9 @@ namespace Altaxo.Graph.Gdi.Plot
 			{
 				if (null == value)
 					throw new System.ArgumentNullException();
-				else
+				if (ChildSetMember(ref _plotStyle, (DensityImagePlotStyle)value))
 				{
-					if (!object.ReferenceEquals(_plotStyle, value))
-					{
-						// delete event wiring to old AbstractXYPlotStyle
-						if (null != _plotStyle)
-						{
-							_plotStyle.ParentObject = null;
-						}
-
-						_plotStyle = (DensityImagePlotStyle)value;
-
-						// create event wire to new Plotstyle
-						if (null != _plotStyle)
-						{
-							_plotStyle.ParentObject = this;
-						}
-
-						// indicate the style has changed
-						EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
-					}
+					EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
 				}
 			}
 		}

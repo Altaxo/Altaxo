@@ -295,6 +295,9 @@ namespace Altaxo.Gui.Common
 			if (_lastClickedItem == null)
 				return;
 
+			if (_lastClickedItem.ParentMultiSelectTreeView == null)
+				return; // seems to be a disconnected item
+
 			MultiSelectTreeViewItem.SelectAllNodesInbetween(_lastClickedItem, viewItem, true);
 		}
 

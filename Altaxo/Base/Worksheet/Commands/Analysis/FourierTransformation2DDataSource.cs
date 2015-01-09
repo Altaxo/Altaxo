@@ -233,19 +233,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 			set
 			{
-				if (object.ReferenceEquals(_inputData, value))
-					return;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-				if (null != _inputData)
+				if (ChildSetMember(ref _inputData, value))
 				{
-					_inputData.ParentObject = null;
-				}
-
-				_inputData = value;
-
-				if (null != _inputData)
-				{
-					_inputData.ParentObject = this;
 					EhInputDataChanged(this, EventArgs.Empty);
 				}
 			}

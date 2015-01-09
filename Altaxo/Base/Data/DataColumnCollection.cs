@@ -177,7 +177,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// ColumnScripts, key is the corresponding column, value is of type WorksheetColumnScript
 		/// </summary>
-		protected Dictionary<DataColumn, IColumnScriptText> _columnScripts = new Dictionary<DataColumn, IColumnScriptText>();
+		protected ColumnScriptCollection _columnScripts = new ColumnScriptCollection();
 
 		/// <summary>
 		/// Name of the last column added to this collection.
@@ -220,7 +220,7 @@ namespace Altaxo.Data
 				Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
 
 				s._columnsByNumber = (List<DataColumn>)(info.GetValue("Columns", typeof(List<DataColumn>)));
-				s._columnScripts = (Dictionary<DataColumn, IColumnScriptText>)(info.GetValue("ColumnScripts", typeof(Dictionary<DataColumn, IColumnScriptText>)));
+				s._columnScripts = (ColumnScriptCollection)(info.GetValue("ColumnScripts", typeof(ColumnScriptCollection)));
 
 				// set up helper objects
 				s._columnsByName = new Dictionary<string, DataColumn>();
@@ -489,6 +489,8 @@ namespace Altaxo.Data
 
 				// add the cloned script to the own collection
 				this.ColumnScripts.Add(destcol, destscript);
+				if (destscript is Main.IDocumentLeafNode)
+					((Main.IDocumentLeafNode)destscript).ParentObject = this;
 			}
 		}
 
@@ -513,8 +515,8 @@ namespace Altaxo.Data
 				_columnScripts = null;
 				foreach (KeyValuePair<DataColumn, IColumnScriptText> d in columnScripts)
 				{
-					if (d.Value is IDisposable)
-						((IDisposable)d.Value).Dispose();
+					if (d.Value != null)
+						d.Value.Dispose();
 				}
 				columnScripts = null;
 
@@ -595,6 +597,31 @@ namespace Altaxo.Data
 				name = this.FindUniqueColumnName(name);
 
 			Add(datac, new DataColumnInfo(name, kind, groupNumber));
+		}
+
+		/// <summary>
+		/// Add a column using a DataColumnInfo object. The provided info must not be used elsewhere, since it is used directly.
+		/// </summary>
+		/// <param name="datac">The column to add.</param>
+		/// <param name="info">The DataColumnInfo object for the column to add.</param>
+		private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
+		{
+			System.Diagnostics.Debug.Assert(this.ContainsColumn(datac) == false);
+			System.Diagnostics.Debug.Assert(datac.ParentObject == null, "This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function");
+			System.Diagnostics.Debug.Assert(false == this._columnsByName.ContainsKey(info.Name), "Trying to add a column with a name that is already present (this error must be fixed in the calling function)");
+			System.Diagnostics.Debug.Assert(datac.IsSomeoneListeningToChanges == false, "Trying to add a column that was used before because either ParentObject is set or someone is listening to change events");
+
+			info.Number = this._columnsByNumber.Count;
+
+			this._columnsByNumber.Add(datac);
+			this._columnsByName[info.Name] = datac;
+			this._columnInfoByColumn[datac] = info;
+			datac.ParentObject = this;
+
+			if (info.IsIndependentVariable)
+				this.EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
+
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
 		}
 
 		/// <summary>
@@ -723,30 +750,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Add a column using a DataColumnInfo object. The provided info must not be used elsewhere, since it is used directly.
-		/// </summary>
-		/// <param name="datac">The column to add.</param>
-		/// <param name="info">The DataColumnInfo object for the column to add.</param>
-		private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
-		{
-			System.Diagnostics.Debug.Assert(this.ContainsColumn(datac) == false);
-			System.Diagnostics.Debug.Assert(datac.ParentObject == null, "This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function");
-			System.Diagnostics.Debug.Assert(false == this._columnsByName.ContainsKey(info.Name), "Trying to add a column with a name that is already present (this error must be fixed in the calling function)");
-
-			info.Number = this._columnsByNumber.Count;
-
-			this._columnsByNumber.Add(datac);
-			this._columnsByName[info.Name] = datac;
-			this._columnInfoByColumn[datac] = info;
-			datac.ParentObject = this;
-
-			if (info.IsIndependentVariable)
-				this.EnsureUniqueColumnKindsForIndependentVariables(info.Group, datac);
-
-			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnAddArgs(info.Number, datac.Count));
-		}
-
-		/// <summary>
 		/// Copies the data of the column (columns have same type, index is inside bounds), or replaces
 		/// the column (columns of different types, index inside bounds), or adds the column (index outside bounds).
 		/// </summary>
@@ -796,29 +799,35 @@ namespace Altaxo.Data
 		{
 			if (index >= ColumnCount)
 				throw new System.IndexOutOfRangeException(string.Format("Index ({0})for replace operation was outside the bounds, the actual column count is {1}", index, ColumnCount));
+			if (null == newCol)
+				throw new ArgumentNullException("newCol");
+			if (newCol.IsSomeoneListeningToChanges)
+				throw new ArgumentException("The column provided in the argument is not a fresh column, because someone is listening already to this column");
 
 			DataColumn oldCol = this[index];
-			if (!oldCol.Equals(newCol))
+			if (object.ReferenceEquals(oldCol, newCol))
+				return;
+
+			IColumnScriptText oldColumnScript;
+			_columnScripts.TryGetValue(oldCol, out oldColumnScript);
+
+			int oldRowCount = oldCol.Count;
+			DataColumnInfo info = GetColumnInfo(index);
+			_columnsByName[info.Name] = newCol;
+			_columnsByNumber[index] = newCol;
+			_columnInfoByColumn.Remove(oldCol);
+			_columnInfoByColumn.Add(newCol, info);
+
+			if (null != oldColumnScript)
 			{
-				int oldRowCount = oldCol.Count;
-				DataColumnInfo info = GetColumnInfo(index);
-				_columnsByName[info.Name] = newCol;
-				_columnsByNumber[index] = newCol;
-				_columnInfoByColumn.Remove(oldCol);
-				_columnInfoByColumn.Add(newCol, info);
-				oldCol.ParentObject = null;
-				newCol.ParentObject = this;
-
-				IColumnScriptText script;
-				_columnScripts.TryGetValue(oldCol, out script);
-				if (null != script)
-				{
-					_columnScripts.Remove(oldCol);
-					_columnScripts.Add(newCol, script);
-				}
-
-				this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
+				_columnScripts.Remove(oldCol);
+				_columnScripts.Add(newCol, oldColumnScript);
 			}
+
+			newCol.ParentObject = this;
+			oldCol.Dispose();
+
+			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnCopyOrReplaceArgs(index, oldRowCount, newCol.Count));
 		}
 
 		/// <summary>
@@ -1030,11 +1039,6 @@ namespace Altaxo.Data
 
 		public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
 		{
-			RemoveColumns(selectedColumns, true);
-		}
-
-		public void RemoveColumns(IAscendingIntegerCollection selectedColumns, bool disposeColumns)
-		{
 			int nOriginalColumnCount = ColumnCount;
 
 			int lastRangeStart = 0;
@@ -1048,11 +1052,7 @@ namespace Altaxo.Data
 					this._columnScripts.Remove(this[i]);
 					this._columnInfoByColumn.Remove(_columnsByNumber[i]);
 					this._columnsByName.Remove(columnName);
-
-					if (disposeColumns)
-						this[i].Dispose();
-					else
-						this[i].ParentObject = null;
+					this[i].Dispose();
 				}
 				this._columnsByNumber.RemoveRange(range.Start, range.Count);
 				lastRangeStart = range.Start;
@@ -1063,7 +1063,7 @@ namespace Altaxo.Data
 				((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
 
 			// raise datachange event that some columns have changed
-			this.EhChildChanged(null, DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
+			this.EhSelfChanged(DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
 
 			// reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
 			this._triedOutRegularNaming = false;
@@ -1087,12 +1087,15 @@ namespace Altaxo.Data
 
 			for (int i = 0; i < numberMoved; i++)
 			{
-				tmpColumn[i] = this[selectedColumns[i]];
+				tmpColumn[i] = (DataColumn)this[selectedColumns[i]].Clone(); // clone the column before moving it! This is essential in order to help DocNodeProxies preserve their target!
 				tmpInfo[i] = (DataColumnInfo)this._columnInfoByColumn[_columnsByNumber[i]];
-				this._columnScripts.TryGetValue(tmpColumn[i], out tmpScript[i]);
+
+				IColumnScriptText script;
+				this._columnScripts.TryGetValue(tmpColumn[i], out script);
+				tmpScript[i] = (IColumnScriptText)script.Clone(); // clone the script also
 			}
 
-			this.RemoveColumns(selectedColumns, false);
+			this.RemoveColumns(selectedColumns);
 
 			destination.Insert(tmpColumn, tmpInfo, 0, true);
 
@@ -1972,7 +1975,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Returns the collection of column scripts.
 		/// </summary>
-		public Dictionary<DataColumn, IColumnScriptText> ColumnScripts
+		public ColumnScriptCollection ColumnScripts
 		{
 			get { return this._columnScripts; }
 		}

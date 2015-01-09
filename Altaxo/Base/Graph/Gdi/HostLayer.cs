@@ -1255,21 +1255,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public override string Name
-		{
-			get
-			{
-				if (ParentObject is Main.INamedObjectCollection)
-					return ((Main.INamedObjectCollection)ParentObject).GetNameOfChildObject(this);
-				else
-					return GetDefaultNameOfLayer(this.IndexOf());
-			}
-			set
-			{
-				throw new InvalidOperationException("The name of a layer cannot be set");
-			}
-		}
-
 		/// <summary>
 		/// Returns the document name of the layer at index i. Actually, this is a name of the form L0, L1, L2 and so on.
 		/// </summary>
@@ -1293,23 +1278,15 @@ namespace Altaxo.Graph.Gdi
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
+			// despite the fact that _childLayers is only a partial view of _graphObjects, we use it here because if it is found here, it is never searched for in _graphObjects
+			// note also that Disposed is overridden, so that we not use this function for dispose purposes
 			if (null != _childLayers)
 			{
-				var layers = _childLayers.ToArray();
-				var list = this.IndexOf(); // this should work for this layer here
-				var index = list.Count;
-				list.Add(0); //dummy entry, will be overriden shortly
-
-				for (int i = 0; i < layers.Length; ++i)
+				for (int i = 0; i < _childLayers.Count; ++i)
 				{
-					list[index] = i;
-					var name = GetDefaultNameOfLayer(list);
-					yield return new Main.DocumentNodeAndName(layers[i], name);
+					yield return new Main.DocumentNodeAndName(_childLayers[i], "Layer" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				}
 			}
-
-			if (null != _location)
-				yield return new Main.DocumentNodeAndName(_location, "Location");
 
 			if (null != _graphObjects)
 			{
@@ -1319,6 +1296,29 @@ namespace Altaxo.Graph.Gdi
 						yield return new Main.DocumentNodeAndName(_graphObjects[i], "GraphObject" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				}
 			}
+
+			if (null != _location)
+			{
+				yield return new Main.DocumentNodeAndName(_location, "Location");
+			}
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (null != _graphObjects)
+			{
+				var graphObjects = _graphObjects;
+				_graphObjects = null;
+				for (int i = 0; i < graphObjects.Count; ++i)
+				{
+					if (null != graphObjects[i])
+						graphObjects[i].Dispose();
+				}
+			}
+
+			ChildDisposeMember(ref _location);
+
+			base.Dispose(isDisposing);
 		}
 
 		public virtual bool FixAndTestParentChildRelationShipOfLayers()

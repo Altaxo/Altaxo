@@ -248,8 +248,7 @@ namespace Altaxo.Data
 			if (null == table)
 				throw new ArgumentNullException("table");
 
-			_dataTable = new DataTableProxy(table);
-			_dataTable.ParentObject = this;
+			_dataTable = new DataTableProxy(table) { ParentObject = this };
 
 			_groupNumber = groupNumber;
 		}
@@ -273,8 +272,7 @@ namespace Altaxo.Data
 
 			_dataColumnBundles = new Dictionary<string, ColumnBundleInfo>();
 
-			_dataTable = new DataTableProxy(table);
-			_dataTable.ParentObject = this;
+			_dataTable = new DataTableProxy(table) { ParentObject = this };
 
 			_groupNumber = 0;
 
@@ -336,13 +334,7 @@ namespace Altaxo.Data
 
 		private void InternalSetDataTable(DataTableProxy proxy)
 		{
-			if (null != _dataTable)
-				_dataTable.ParentObject = null;
-
-			_dataTable = proxy ?? new DataTableProxy((DataTable)null);
-
-			if (null != _dataTable)
-				_dataTable.ParentObject = this;
+			ChildSetMember(ref _dataTable, proxy ?? new DataTableProxy((DataTable)null));
 		}
 
 		/// <summary>
@@ -353,13 +345,14 @@ namespace Altaxo.Data
 			if (null == _dataColumnBundles)
 				return;
 
-			foreach (var entry in _dataColumnBundles)
+			var arr = _dataColumnBundles.ToArray();
+			_dataColumnBundles.Clear();
+
+			foreach (var entry in arr)
 			{
 				foreach (var proxy in entry.Value.DataColumns)
-					proxy.ParentObject = null;
+					proxy.Dispose();
 			}
-
-			_dataColumnBundles.Clear();
 		}
 
 		/// <summary>
@@ -367,10 +360,10 @@ namespace Altaxo.Data
 		/// </summary>
 		private void InternalClearDataColumns(ColumnBundleInfo bundle)
 		{
-			foreach (var proxy in bundle.DataColumns)
-				proxy.ParentObject = null;
-
+			var arr = bundle.DataColumns.ToArray();
 			bundle.DataColumns.Clear();
+			foreach (var proxy in arr)
+				proxy.Dispose();
 		}
 
 		/// <summary>
@@ -394,8 +387,10 @@ namespace Altaxo.Data
 		/// <param name="idx">The index.</param>
 		private void InternalRemoveDataColumnAt(ColumnBundleInfo bundle, int idx)
 		{
-			bundle.DataColumns[idx].ParentObject = null;
+			var col = bundle.DataColumns[idx];
 			bundle.DataColumns.RemoveAt(idx);
+			if (null != col)
+				col.Dispose();
 		}
 
 		/// <summary>

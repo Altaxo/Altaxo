@@ -66,15 +66,6 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public override string Name
-		{
-			get { return "Graphs"; }
-			set
-			{
-				throw new InvalidOperationException("Name of GraphDocumentCollection is fixed and cannot be set");
-			}
-		}
-
 		#region Serialization
 
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate

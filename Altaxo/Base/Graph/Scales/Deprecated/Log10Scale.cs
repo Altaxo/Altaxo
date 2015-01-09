@@ -561,17 +561,5 @@ namespace Altaxo.Graph.Scales.Deprecated
 				ProcessDataBounds(); // calculate new bounds and fire AxisChanged event
 			}
 		}
-
-		public override string Name
-		{
-			get
-			{
-				return "Log10Scale";
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
 	} // end of class Log10Axis
 }

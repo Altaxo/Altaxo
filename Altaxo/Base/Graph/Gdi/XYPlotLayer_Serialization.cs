@@ -723,7 +723,7 @@ namespace Altaxo.Graph.Gdi
 
 		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer)
 		{
-			if (null != linkedLayer && !linkedLayer.IsEmpty)
+			if (null != linkedLayer)
 			{
 				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer.DocumentPath);
 			}

@@ -473,27 +473,22 @@ namespace Altaxo.Graph.Plot.Data
 		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
 		public XYColumnPlotData(XYColumnPlotData from)
 		{
-			XColumn = from.XColumn; // also wires event, do not clone the column data here!!!
-			YColumn = from.YColumn; // wires event, do not clone the column data here!!!
+			ChildCopyToMember(ref _xColumn, from._xColumn);
+			ChildCopyToMember(ref _yColumn, from._yColumn);
 
 			this._plotRangeStart = from._plotRangeStart;
 			this._plotRangeLength = from._plotRangeLength;
 
 			// cached or temporary data
-			if (from._xBoundaries != null)
-			{
-				this._xBoundaries = (IPhysicalBoundaries)from._xBoundaries.Clone();
-				this._xBoundaries.ParentObject = this;
-			}
-			if (from._yBoundaries != null)
-			{
-				this._yBoundaries = (IPhysicalBoundaries)from._yBoundaries.Clone();
-				this._yBoundaries.ParentObject = this;
-			}
+
+			if (null != from._xBoundaries)
+				ChildCopyToMember(ref _xBoundaries, from._xBoundaries);
+
+			if (null != from._yBoundaries)
+				ChildCopyToMember(ref _yBoundaries, _yBoundaries);
 
 			this._pointCount = from._pointCount;
 			this._isCachedDataValid = from._isCachedDataValid;
-			this._parent = from._parent;
 		}
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -519,19 +514,6 @@ namespace Altaxo.Graph.Plot.Data
 		public object Clone()
 		{
 			return new XYColumnPlotData(this);
-		}
-
-		public override string Name
-		{
-			get
-			{
-				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-				return noc == null ? null : noc.GetNameOfChildObject(this);
-			}
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set.");
-			}
 		}
 
 		public string GetXName(int level)
@@ -623,12 +605,8 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
 			{
-				if (null != _xBoundaries)
-					_xBoundaries.ParentObject = null;
+				ChildCopyToMember(ref _xBoundaries, val);
 
-				_xBoundaries = (IPhysicalBoundaries)val.Clone();
-
-				_xBoundaries.ParentObject = this;
 				_isCachedDataValid = false;
 
 				EhSelfChanged(EventArgs.Empty);
@@ -644,14 +622,12 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null == _yBoundaries || val.GetType() != _yBoundaries.GetType())
 			{
-				if (null != _yBoundaries)
-					_yBoundaries.ParentObject = null;
+				if (ChildCopyToMember(ref _yBoundaries, val))
+				{
+					_isCachedDataValid = false;
 
-				_yBoundaries = (IPhysicalBoundaries)val.Clone();
-				_yBoundaries.ParentObject = this;
-				_isCachedDataValid = false;
-
-				EhSelfChanged(EventArgs.Empty);
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -690,17 +666,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				if (null != _xColumn && object.ReferenceEquals(_xColumn.Document, value))
+				if (object.ReferenceEquals(XColumn, value))
 					return;
 
-				if (_xColumn != null)
-					_xColumn.ParentObject = null;
-
-				_xColumn = ReadableColumnProxyBase.FromColumn(value);
-				_xColumn.ParentObject = this;
-
-				_isCachedDataValid = false;
-				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				if (ChildSetMember(ref _xColumn, ReadableColumnProxyBase.FromColumn(value)))
+				{
+					_isCachedDataValid = false;
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				}
 			}
 		}
 
@@ -712,18 +685,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				if (null != _yColumn && object.ReferenceEquals(_yColumn.Document, value))
+				if (object.ReferenceEquals(YColumn, value))
 					return;
 
-				if (_yColumn != null)
-					_yColumn.ParentObject = null;
-
-				_yColumn = ReadableColumnProxyBase.FromColumn(value);
-				_yColumn.ParentObject = this;
-
-				_isCachedDataValid = false;
-
-				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				if (ChildSetMember(ref _yColumn, ReadableColumnProxyBase.FromColumn(value)))
+				{
+					_isCachedDataValid = false;
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				}
 			}
 		}
 

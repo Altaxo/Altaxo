@@ -141,13 +141,8 @@ namespace Altaxo.Graph.Scales
 			this._cachedAxisSpanInv = from._cachedAxisSpanInv;
 			this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
 
-			if (null != _dataBounds)
-				_dataBounds.ParentObject = null;
-			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
-
-			this._rescaling = null == from.Rescaling ? new InverseAxisRescaleConditions() : (InverseAxisRescaleConditions)from.Rescaling.Clone();
-			this._rescaling.ParentObject = this;
+			ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new InverseAxisRescaleConditions());
 		}
 
 		public override object Clone()

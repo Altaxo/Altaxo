@@ -310,21 +310,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (object.ReferenceEquals(_scale, value))
-					return;
-
-				if (null != _scale)
-					_scale.ParentObject = null;
-
-				_scale = value;
-
-				if (null != _scale)
-					_scale.ParentObject = this;
-
-				if (null != _scale)
-					EhChildChanged(_scale, EventArgs.Empty);
-				else
-					EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _scale, value))
+				{
+					if (null != _scale)
+						EhChildChanged(_scale, EventArgs.Empty);
+					else
+						EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -336,18 +328,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (object.ReferenceEquals(_colorProvider, value))
-					return;
-
-				if (null != _colorProvider)
-					_colorProvider.ParentObject = null;
-
-				_colorProvider = value;
-
-				if (null != _colorProvider)
-					_colorProvider.ParentObject = this;
-
-				EhChildChanged(_colorProvider, EventArgs.Empty);
+				if (ChildSetMember(ref _colorProvider, value))
+					EhChildChanged(_colorProvider, EventArgs.Empty);
 			}
 		}
 
@@ -822,15 +804,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					image.SetPixel(j, numberOfColumns - i - 1, GetColor(matrix[j, i]));
 				} // for all pixel of a column
 			} // for all columns
-		}
-
-		public override string Name
-		{
-			get
-			{
-				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-				return null == noc ? null : noc.GetNameOfChildObject(this);
-			}
 		}
 
 		#region Changed event handling

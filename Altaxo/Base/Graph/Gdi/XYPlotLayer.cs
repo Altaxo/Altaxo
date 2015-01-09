@@ -367,11 +367,6 @@ namespace Altaxo.Graph.Gdi
 				if (object.ReferenceEquals(value, _scales))
 					return;
 
-				if (null != _scales)
-				{
-					_scales.ParentObject = null;
-				}
-
 				ScaleCollection oldscales = _scales;
 				_scales = value;
 
@@ -380,12 +375,20 @@ namespace Altaxo.Graph.Gdi
 					_scales.ParentObject = this;
 				}
 
-				for (int i = 0; i < _scales.Count; i++)
+				using (var suspendToken = SuspendGetToken())
 				{
-					Scale oldScale = oldscales == null ? null : oldscales[i].Scale;
-					Scale newScale = _scales[i].Scale;
-					if (!object.ReferenceEquals(oldScale, newScale))
-						EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
+					for (int i = 0; i < _scales.Count; i++)
+					{
+						Scale oldScale = oldscales == null ? null : oldscales[i].Scale;
+						Scale newScale = _scales[i].Scale;
+						if (!object.ReferenceEquals(oldScale, newScale))
+							EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
+					}
+
+					if (null != oldscales)
+						oldscales.Dispose();
+
+					suspendToken.Resume();
 				}
 			}
 		}
@@ -451,19 +454,11 @@ namespace Altaxo.Graph.Gdi
 			}
 			protected set
 			{
-				if (null != _plotItems)
-					_plotItems.ParentObject = null;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-				var oldvalue = _plotItems;
-				_plotItems = value;
-
-				if (null != _plotItems)
-					_plotItems.ParentObject = this;
-
-				if (!object.ReferenceEquals(value, oldvalue))
-				{
+				if (ChildSetMember(ref _plotItems, value))
 					EhSelfChanged(EventArgs.Empty);
-				}
 			}
 		}
 
@@ -847,18 +842,8 @@ namespace Altaxo.Graph.Gdi
 				if (null == value)
 					throw new ArgumentNullException();
 
-				if (object.ReferenceEquals(_gridPlanes, value))
-					return;
-
-				if (null != _gridPlanes)
-					_gridPlanes.ParentObject = null;
-
-				_gridPlanes = value;
-
-				if (null != _gridPlanes)
-					value.ParentObject = this;
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _gridPlanes, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1329,6 +1314,9 @@ namespace Altaxo.Graph.Gdi
 
 		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
 		{
+			if (null != _scales)
+				yield return new Main.DocumentNodeAndName(_scales, "Scales");
+
 			if (null != _plotItems)
 				yield return new Main.DocumentNodeAndName(_plotItems, "PlotItems");
 
@@ -1340,14 +1328,24 @@ namespace Altaxo.Graph.Gdi
 
 			if (null != _coordinateSystem)
 				yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
-
-			if (null != _scales)
-				yield return new Main.DocumentNodeAndName(_scales, "Scales");
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			return base.GetDocumentNodeChildrenWithName().Concat(GetMyDocumentNodeChildrenWithName());
+			return GetMyDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (isDisposing)
+			{
+				ChildDisposeMember(ref _scales);
+				ChildDisposeMember(ref _plotItems);
+				ChildDisposeMember(ref _axisStyles);
+				ChildDisposeMember(ref _gridPlanes);
+				ChildDisposeMember(ref _coordinateSystem);
+			}
+			base.Dispose(isDisposing);
 		}
 
 		#endregion IDocumentNode Members

@@ -289,16 +289,16 @@ namespace Altaxo.Graph.Gdi.Axis
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				CopyChildFrom(ref _axisPen, from._axisPen);
+				ChildCopyToMember(ref _axisPen, from._axisPen);
 				this._axisPosition = from._axisPosition;
 				this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
 				this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
 				this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
 				this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
 				this._majorTickLength = from._majorTickLength;
-				CopyChildFrom(ref _majorTickPen, from._majorTickPen);
+				ChildCopyToMember(ref _majorTickPen, from._majorTickPen);
 				this._minorTickLength = from._minorTickLength;
-				CopyChildFrom(ref _minorTickPen, from._minorTickPen);
+				ChildCopyToMember(ref _minorTickPen, from._minorTickPen);
 
 				this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
@@ -399,15 +399,11 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _axisPen; }
 			set
 			{
-				PenX oldvalue = _axisPen;
-				_axisPen = value;
-				if (!object.ReferenceEquals(oldvalue, value))
-				{
-					if (null != oldvalue)
-						oldvalue.ParentObject = null;
-					if (null != value)
-						value.ParentObject = this;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
+				if (ChildSetMember(ref _axisPen, value))
+				{
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -418,15 +414,11 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _majorTickPen; }
 			set
 			{
-				PenX oldvalue = _majorTickPen;
-				_majorTickPen = value;
-				if (!object.ReferenceEquals(oldvalue, value))
-				{
-					if (null != oldvalue)
-						oldvalue.ParentObject = null;
-					if (null != value)
-						value.ParentObject = this;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
+				if (ChildSetMember(ref _majorTickPen, value))
+				{
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -437,15 +429,11 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _minorTickPen; }
 			set
 			{
-				PenX oldvalue = _minorTickPen;
-				_minorTickPen = value;
-				if (!object.ReferenceEquals(oldvalue, value))
-				{
-					if (null != oldvalue)
-						oldvalue.ParentObject = null;
-					if (null != value)
-						value.ParentObject = this;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
+				if (ChildSetMember(ref _minorTickPen, value))
+				{
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -725,19 +713,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			EhSelfChanged(EventArgs.Empty);
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return this.GetType().Name; }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set");
-			}
-		}
-
-		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
 

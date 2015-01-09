@@ -86,7 +86,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			{
 				FitElement s = o != null ? (FitElement)o : new FitElement();
 
-				s.FitFunction = (IFitFunction)info.GetValue("FitFunction", s);
+				s.ChildSetMemberAlt(ref s._fitFunction, (IFitFunction)info.GetValue("FitFunction", s));
 
 				int numRows = info.GetInt32("NumberOfRows");
 				int firstRow = info.GetInt32("FirstRow");
@@ -642,6 +642,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 						yield return new Main.DocumentNodeAndName(_dependentVariables[i], "DependentVariable" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				}
 			}
+
+			if (_fitFunction is Main.IDocumentLeafNode)
+				yield return new Main.DocumentNodeAndName((Main.IDocumentLeafNode)_fitFunction, () => _fitFunction = null, "FitFunction");
 		}
 
 		#endregion Document node functions

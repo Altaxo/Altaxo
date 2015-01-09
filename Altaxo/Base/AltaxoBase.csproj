@@ -201,6 +201,7 @@
     <Compile Include="DataConnection\QueryBuilder.cs" />
     <Compile Include="DataConnection\QueryField.cs" />
     <Compile Include="DataConnection\TableType.cs" />
+    <Compile Include="Data\ColumnScriptCollection.cs" />
     <Compile Include="Data\DataColumnChangedEventArgs.cs" />
     <Compile Include="Data\DataColumnCollectionChangedEventArgs.cs" />
     <Compile Include="Data\DataSourceImportOptions.cs" />
@@ -369,6 +370,7 @@
     <Compile Include="Main\SuspendableDocumentNodeWithEventArgs.cs" />
     <Compile Include="Main\SuspendableDocumentNodeWithSetOfEventArgs.cs" />
     <Compile Include="Main\SuspendableDocumentNodeWithSingleAccumulatedData.cs" />
+    <Compile Include="Main\SuspendableDocumentNode_StaticInstance.cs" />
     <Compile Include="Main\SuspendableObject.cs" />
     <Compile Include="Root\DisposableBase.cs" />
     <Compile Include="Main\IComManager.cs" />

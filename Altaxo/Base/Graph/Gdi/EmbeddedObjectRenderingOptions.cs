@@ -246,16 +246,8 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				if (object.ReferenceEquals(_backgroundBrush, value))
-					return;
-
-				if (null != _backgroundBrush)
-					_backgroundBrush.ParentObject = null;
-
-				_backgroundBrush = value;
-
-				if (null != _backgroundBrush)
-					_backgroundBrush.ParentObject = this;
+				if (ChildSetMember(ref _backgroundBrush, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

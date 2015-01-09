@@ -162,10 +162,10 @@ namespace Altaxo.Graph.Scales
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _scaleWrapped)
-				yield return new Main.DocumentNodeAndName(_scaleWrapped, "ScaleWrapped");
+				yield return new Main.DocumentNodeAndName(_scaleWrapped, () => _scaleWrapped = null, "ScaleWrapped");
 
 			if (null != _linkParameters)
-				yield return new Main.DocumentNodeAndName(_linkParameters, "LinkParameters");
+				yield return new Main.DocumentNodeAndName(_linkParameters, () => _linkParameters = null, "LinkParameters");
 		}
 
 		public override object Clone()
@@ -332,21 +332,14 @@ namespace Altaxo.Graph.Scales
 			}
 			set
 			{
-				if (object.ReferenceEquals(_scaleWrapped, value))
-					return;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-				if (null != _scaleWrapped)
+				if (ChildSetMember(ref _scaleWrapped, value))
 				{
-					_scaleWrapped.ParentObject = null;
+					OnLinkPropertiesChanged();
+					EhSelfChanged(EventArgs.Empty);
 				}
-				_scaleWrapped = value;
-				if (null != _scaleWrapped)
-				{
-					_scaleWrapped.ParentObject = this;
-				}
-
-				OnLinkPropertiesChanged();
-				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -369,6 +362,9 @@ namespace Altaxo.Graph.Scales
 		{
 			get
 			{
+				if (object.ReferenceEquals(this, _scaleLinkedTo))
+					throw new InvalidProgramException("_scaleLinkedTo is reference equal to this scale. Please report this error to the forum");
+
 				// it is not possible for a this scale to act back to the scale which is linked
 				// but to make the plot items influence the range of the linked scale we can give back
 				// the data bounds object of the linked scale

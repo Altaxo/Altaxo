@@ -308,14 +308,5 @@ namespace Altaxo.Graph
 					EhSelfChanged();
 			}
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "Grid position/size"; }
-		}
-
-		#endregion IDocumentNode Members
 	}
 }

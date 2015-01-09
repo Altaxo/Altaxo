@@ -58,12 +58,12 @@ namespace Altaxo.Main
 			if (null == doc)
 				throw new ArgumentNullException();
 
-			_parent = doc;
-
 			doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
 			doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
 			doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
-			Initialize();
+			Initialize(doc);
+
+			_parent = doc; // Parent last because we dont want the changes above to be monitored by the parent
 		}
 
 		protected override void Dispose(bool isDisposing)
@@ -418,18 +418,18 @@ namespace Altaxo.Main
 
 		#endregion Access to folders and items
 
-		private void Initialize()
+		private void Initialize(AltaxoDocument doc)
 		{
 			_directories.Clear();
 			_directories.Add(ProjectFolder.RootFolderName, new HashSet<object>()); // Root folder
 
-			foreach (var v in AltaxoDocument.DataTableCollection)
+			foreach (var v in doc.DataTableCollection)
 				ItemAdded(v, v.Name, EventFiring.Suppressed);
 
-			foreach (Altaxo.Graph.Gdi.GraphDocument v in AltaxoDocument.GraphDocumentCollection)
+			foreach (Altaxo.Graph.Gdi.GraphDocument v in doc.GraphDocumentCollection)
 				ItemAdded(v, v.Name, EventFiring.Suppressed);
 
-			foreach (var item in AltaxoDocument.ProjectFolderProperties)
+			foreach (var item in doc.ProjectFolderProperties)
 				ItemAdded(item, item.Name, EventFiring.Suppressed);
 
 			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromMultipleChanges());
@@ -439,7 +439,7 @@ namespace Altaxo.Main
 		{
 			if (e.WasMultipleItemsChanged)
 			{
-				Initialize();
+				Initialize(AltaxoDocument);
 				return;
 			}
 

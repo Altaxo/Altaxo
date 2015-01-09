@@ -223,19 +223,11 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				if (object.ReferenceEquals(_processData, value))
-					return;
+				if (null == value)
+					throw new ArgumentNullException("value");
 
-				if (null != _processData)
+				if (ChildSetMember(ref _processData, value))
 				{
-					_processData.ParentObject = null;
-				}
-
-				_processData = value;
-
-				if (null != _processData)
-				{
-					_processData.ParentObject = this;
 					EhChildChanged(_processData, EventArgs.Empty);
 				}
 			}

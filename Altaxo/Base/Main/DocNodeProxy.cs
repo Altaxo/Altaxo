@@ -487,14 +487,13 @@ namespace Altaxo.Main
 				if (!(sender is AltaxoDocument)) // if the whole document is disposed, there is no point in trying to watch something
 				{
 					// note Dispose is designed to let the hierarchy from child to parent (root) valid, but not from root to child!
-					// thus trying to get an actual document path here is unsuccessfull. We have to rely on our stored path, and that it was always updated!
-
+					// thus trying to get an actual document path here is in must cases unsuccessfull. We have to rely on our stored path, and that it was always updated!
+					// the only case were it is successfull if a new node immediately replaces an old document node
 					bool wasResolvedCompletely;
 					var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
-					System.Diagnostics.Debug.Assert(wasResolvedCompletely == false); // otherwise something on the design of the Dispose method in one of our disposed instances is wrong. It should first remove the child from the collection, and then dispose it.
 					if (wasResolvedCompletely)
 					{
-						SetDocNode(node); // should never happen
+						SetDocNode(node);
 					}
 					else
 					{
@@ -508,7 +507,7 @@ namespace Altaxo.Main
 			{
 				if (null != InternalDocNode)
 				{
-					InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
+					InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(InternalDocNode);
 					InternalCheckAbsolutePath();
 				}
 
@@ -609,7 +608,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		protected virtual object ResolveDocumentObject(Main.IDocumentLeafNode startnode)
+		protected virtual IDocumentLeafNode ResolveDocumentObject(Main.IDocumentLeafNode startnode)
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 

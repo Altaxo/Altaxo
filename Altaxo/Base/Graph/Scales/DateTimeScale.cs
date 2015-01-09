@@ -86,8 +86,8 @@ namespace Altaxo.Graph.Scales
 
 				s._axisOrg = info.GetDateTime("Org");
 				s._axisEnd = info.GetDateTime("End");
-				s.InternalSetRescaling((DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s));
-				s.InternalSetDataBounds((FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._rescaling, (DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s));
+				s.ChildSetMember(ref s._dataBounds, (FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
 
 				return s;
 			}
@@ -105,8 +105,8 @@ namespace Altaxo.Graph.Scales
 			this._axisOrg = from._axisOrg;
 			this._axisEnd = from._axisEnd;
 
-			this.InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
-			this.InternalSetRescaling((DateTimeAxisRescaleConditions)from._rescaling.Clone());
+			ChildCopyToMember(ref _dataBounds, from._dataBounds);
+			ChildCopyToMember(ref _rescaling, from._rescaling);
 		}
 
 		public DateTimeScale(DateTimeScale from)
@@ -116,8 +116,8 @@ namespace Altaxo.Graph.Scales
 
 		public DateTimeScale()
 		{
-			this.InternalSetDataBounds(new FiniteDateTimeBoundaries());
-			this.InternalSetRescaling(new DateTimeAxisRescaleConditions());
+			_dataBounds = new FiniteDateTimeBoundaries() { ParentObject = this };
+			_rescaling = new DateTimeAxisRescaleConditions() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -137,23 +137,6 @@ namespace Altaxo.Graph.Scales
 				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
 			if (null != _rescaling)
 				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
-		}
-
-		protected void InternalSetDataBounds(FiniteDateTimeBoundaries bounds)
-		{
-			if (this._dataBounds != null)
-			{
-				this._dataBounds.ParentObject = null;
-				this._dataBounds = null;
-			}
-			this._dataBounds = bounds;
-			this._dataBounds.ParentObject = this;
-		}
-
-		protected void InternalSetRescaling(DateTimeAxisRescaleConditions rescaling)
-		{
-			this._rescaling = rescaling;
-			this._rescaling.ParentObject = this;
 		}
 
 		/// <summary>

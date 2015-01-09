@@ -52,6 +52,19 @@ namespace Altaxo.Scripting
 			}
 		}
 
+		protected override void Dispose(bool isDisposing)
+		{
+			var list = _InnerList;
+			if (null != list && list.Count > 0)
+			{
+				_InnerList = new HashSet<FitFunctionScript>();
+				foreach (var item in list)
+					item.Dispose();
+			}
+
+			base.Dispose(isDisposing);
+		}
+
 		public List<FitFunctionScript> Find(string category, string name)
 		{
 			List<FitFunctionScript> result = new List<FitFunctionScript>();
@@ -77,8 +90,14 @@ namespace Altaxo.Scripting
 
 		public void Add(FitFunctionScript script)
 		{
+			if (null == script)
+				throw new ArgumentNullException();
+
 			if (!Contains(script))
+			{
 				_InnerList.Add(script);
+				script.ParentObject = this;
+			}
 		}
 
 		public bool Contains(FitFunctionScript script)
@@ -89,7 +108,10 @@ namespace Altaxo.Scripting
 		public void Remove(FitFunctionScript script)
 		{
 			if (_InnerList.Contains(script))
+			{
 				_InnerList.Remove(script);
+				script.Dispose();
+			}
 		}
 
 		#region ICollection Members
@@ -127,7 +149,13 @@ namespace Altaxo.Scripting
 
 		public void Clear()
 		{
-			_InnerList.Clear();
+			var list = _InnerList;
+			if (null != list && list.Count > 0)
+			{
+				_InnerList = new HashSet<FitFunctionScript>();
+				foreach (var item in list)
+					item.Dispose();
+			}
 		}
 
 		public bool IsReadOnly
@@ -137,7 +165,10 @@ namespace Altaxo.Scripting
 
 		bool ICollection<FitFunctionScript>.Remove(FitFunctionScript item)
 		{
-			return _InnerList.Remove(item);
+			var success = _InnerList.Remove(item);
+			if (success)
+				item.Dispose();
+			return success;
 		}
 
 		IEnumerator<FitFunctionScript> IEnumerable<FitFunctionScript>.GetEnumerator()

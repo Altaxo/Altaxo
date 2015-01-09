@@ -244,16 +244,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (null != _fillBrush)
-					_fillBrush.ParentObject = null;
-
-				var oldValue = _fillBrush;
-				_fillBrush = value;
-
-				if (null != _fillBrush)
-					_fillBrush.ParentObject = this;
-
-				if (!object.ReferenceEquals(oldValue, value))
+				if (ChildSetMember(ref _fillBrush, value))
 					EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -278,16 +269,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _framePen; }
 			set
 			{
-				if (null != _framePen)
-					_framePen.ParentObject = null;
-
-				var oldValue = _framePen;
-				_framePen = value;
-
-				if (null != _framePen)
-					_framePen.ParentObject = this;
-
-				if (!object.ReferenceEquals(oldValue, value))
+				if (ChildSetMember(ref _framePen, value))
 					EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -339,11 +321,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		#endregion ICloneable Members
 
 		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return this.GetType().Name; }
-		}
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

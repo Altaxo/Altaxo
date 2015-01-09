@@ -64,23 +64,8 @@ namespace Altaxo.Graph.Gdi.Plot
 				if (null == value)
 					throw new System.ArgumentNullException();
 
-				if (!object.ReferenceEquals(_plotStyles, value))
+				if (ChildSetMember(ref _plotStyles, (G2DPlotStyleCollection)value))
 				{
-					// delete event wiring to old AbstractXYPlotStyle
-					if (null != _plotStyles)
-					{
-						_plotStyles.ParentObject = null;
-					}
-
-					_plotStyles = (G2DPlotStyleCollection)value;
-
-					// create event wire to new Plotstyle
-					if (null != _plotStyles)
-					{
-						_plotStyles.ParentObject = this;
-					}
-
-					// indicate the style has changed
 					EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
 				}
 			}

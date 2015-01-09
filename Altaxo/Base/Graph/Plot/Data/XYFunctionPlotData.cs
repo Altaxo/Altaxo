@@ -127,13 +127,14 @@ namespace Altaxo.Graph.Plot.Data
 				if (object.ReferenceEquals(_function, value))
 					return;
 
-				if (_function is Main.IDocumentLeafNode)
-					((Main.IDocumentLeafNode)_function).ParentObject = null;
-
+				var oldFunction = _function;
 				_function = value;
 
 				if (_function != null && _function is Main.IDocumentLeafNode)
 					((Main.IDocumentLeafNode)_function).ParentObject = this;
+
+				if (oldFunction is Main.IDocumentLeafNode)
+					((Main.IDocumentLeafNode)_function).Dispose();
 
 				EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 			}
@@ -285,15 +286,6 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			return result;
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "FunctionPlotData"; }
-		}
-
-		#endregion IDocumentNode Members
 	}
 
 	#endregion XYFunctionPlotData

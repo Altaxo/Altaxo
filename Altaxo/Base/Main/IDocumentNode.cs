@@ -37,8 +37,8 @@ namespace Altaxo.Main
 		Main.ITunnelingEventSource,
 		IDisposable,
 		// ICloneable,
-		Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>,
-		Altaxo.Collections.INodeWithParentNode<IDocumentNode>
+		Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>
+	//Altaxo.Collections.INodeWithParentNode<IDocumentNode>
 	{
 		/// <summary>
 		/// Retrieves the parent object.

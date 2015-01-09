@@ -130,11 +130,11 @@ namespace Altaxo.Gui.Data
 			IList<DataColumn> columnsToAverageOverRepeatPeriod = _doc.GetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsToAverageIdentifier);
 
 			_choicesCyclingVar.Clear();
-			foreach (var col in columnsToProcess)
+			foreach (var col in srcData.Columns)
 				_choicesCyclingVar.Add(new SelectableListNode(srcData.GetColumnName(col), col, object.ReferenceEquals(columnWithCyclingVariable, col)));
 
 			_choicesColsToAverage.Clear();
-			foreach (var col in columnsToProcess)
+			foreach (var col in srcData.Columns)
 				_choicesColsToAverage.Add(new SelectableListNode
 					(srcData.GetColumnName(col), col, columnsToAverageOverRepeatPeriod.Contains(col)));
 

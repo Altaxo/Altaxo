@@ -442,7 +442,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				else
 					this._dropLine.Clear();
 				this._dropLine.AddClonedRange(from._dropLine);
-				CopyChildFrom(ref _pen, from._pen);
+				ChildCopyToMember(ref _pen, from._pen);
 				this._independentColor = from._independentColor;
 				this._independentSymbolSize = from._independentSymbolSize;
 
@@ -452,7 +452,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
 				this._cachedFillPath = from._cachedFillPath;
-				CopyChildFrom(ref _cachedFillBrush, from._cachedFillBrush);
+				ChildCopyToMember(ref _cachedFillBrush, from._cachedFillBrush);
 
 				EhSelfChanged(EventArgs.Empty);
 
@@ -593,9 +593,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// ensure pen can be only set to null if NoSymbol
 				if (value != null || XYPlotScatterStyles.Shape.NoSymbol == this._shape)
 				{
-					_pen = null == value ? null : (PenX)value.Clone();
-					_pen.ParentObject = this;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+					if (ChildCopyToMember(ref _pen, value))
+					{
+						SetCachedValues();
+						EhSelfChanged(EventArgs.Empty); // Fire Changed event
+					}
 				}
 			}
 		}
@@ -1056,11 +1058,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		#endregion IPlotStyle Members
 
 		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "ScatterStyle"; }
-		}
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

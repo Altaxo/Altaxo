@@ -153,18 +153,10 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _grid1; }
 			set
 			{
-				if (object.ReferenceEquals(_grid1, value))
-					return;
-
-				if (null != _grid1)
-					_grid1.ParentObject = null;
-
-				_grid1 = value;
-
-				if (null != _grid1)
-					_grid1.ParentObject = this;
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _grid1, value))
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -173,18 +165,10 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _grid2; }
 			set
 			{
-				if (object.ReferenceEquals(_grid2, value))
-					return;
-
-				if (null != _grid2)
-					_grid2.ParentObject = null;
-
-				_grid2 = value;
-
-				if (null != _grid2)
-					_grid2.ParentObject = this;
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _grid2, value))
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -198,18 +182,10 @@ namespace Altaxo.Graph.Gdi.Axis
 			get { return _background; }
 			set
 			{
-				if (object.ReferenceEquals(_background, value))
-					return;
-
-				if (_background != null)
-					_background.ParentObject = null;
-
-				_background = value;
-
-				if (_background != null)
-					_background.ParentObject = this;
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _background, value))
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -253,19 +229,6 @@ namespace Altaxo.Graph.Gdi.Axis
 			PaintBackground(g, layer);
 			PaintGrid(g, layer);
 		}
-
-		#region IDocumentNode Members
-
-		public override string Name
-		{
-			get { return "GridPlane" + this._planeID.ToString(); }
-			set
-			{
-				throw new InvalidOperationException("Name cannot be set.");
-			}
-		}
-
-		#endregion IDocumentNode Members
 
 		#region Inner class GridIndexer
 

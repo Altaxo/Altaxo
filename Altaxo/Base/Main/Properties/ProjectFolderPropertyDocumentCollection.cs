@@ -62,15 +62,6 @@ namespace Altaxo.Main.Properties
 			}
 		}
 
-		public override string Name
-		{
-			get { return "FolderProperties"; }
-			set
-			{
-				throw new InvalidOperationException("Name of ProjectFolderPropertyDocumentCollection is fixed and cannot be set");
-			}
-		}
-
 		public bool IsDirty
 		{
 			get
@@ -128,7 +119,7 @@ namespace Altaxo.Main.Properties
 				{
 					var changeEventArgs = Main.NamedObjectCollectionChangedEventArgs.FromItemRemoved(item);
 					_itemsByName.Remove(item.Name);
-					item.ParentObject = null;
+					item.Dispose();
 					this.EhSelfChanged(changeEventArgs);
 				}
 			}

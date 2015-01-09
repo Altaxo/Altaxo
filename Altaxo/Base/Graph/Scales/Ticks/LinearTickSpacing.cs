@@ -225,10 +225,10 @@ namespace Altaxo.Graph.Scales.Ticks
 						_snapOrgToTick = from._snapOrgToTick;
 						_snapEndToTick = from._snapEndToTick;
 
-						CopyChildFrom(ref _suppressedMajorTicks, from._suppressedMajorTicks);
-						CopyChildFrom(ref _suppressedMinorTicks, from._suppressedMinorTicks);
-						CopyChildFrom(ref _additionalMajorTicks, from._additionalMajorTicks);
-						CopyChildFrom(ref _additionalMinorTicks, from._additionalMinorTicks);
+						ChildCopyToMember(ref _suppressedMajorTicks, from._suppressedMajorTicks);
+						ChildCopyToMember(ref _suppressedMinorTicks, from._suppressedMinorTicks);
+						ChildCopyToMember(ref _additionalMajorTicks, from._additionalMajorTicks);
+						ChildCopyToMember(ref _additionalMinorTicks, from._additionalMinorTicks);
 
 						_transformationOffset = from._transformationOffset;
 						_transformationDivider = from._transformationDivider;
