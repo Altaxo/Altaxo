@@ -104,29 +104,16 @@ namespace Altaxo.Main
 					return null;
 
 				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(info) { ParentObject = (IDocumentNode)parent };
-				if (docNodePath is AbsoluteDocumentPath)
-				{
-					if (((AbsoluteDocumentPath)docNodePath).IsAbsolutePath)
-					{
-						var surrogate = new XmlSerializationSurrogate0() { _absolutePath = (AbsoluteDocumentPath)docNodePath, _instance = s };
-						info.DeserializationFinished += surrogate.EhXmlDeserializationFinished;
-					}
-					else // was relative path -> convert old absolute path with relative flag into relative path
-					{
-						var relPath = RelativeDocumentPath.FromOldDeprecated((AbsoluteDocumentPath)docNodePath);
-						if (relPath.IsIdentity)
-							return null;
-						s._docNodePath = relPath;
-						// create a callback to resolve the instance as early as possible
-						info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
-					}
-				}
-				else if (docNodePath is RelativeDocumentPath)
+				if (docNodePath is RelativeDocumentPath)
 				{
 					s._docNodePath = (RelativeDocumentPath)docNodePath;
 
 					// create a callback to resolve the instance as early as possible
 					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+				}
+				else
+				{
+					return null;
 				}
 
 				return s;

@@ -34,9 +34,10 @@ namespace Altaxo.Main
 	/// concept with the concept of the folder in which a project item virtually exists  (see <see cref="ProjectFolder"/>).
 	/// </summary>
 	[Serializable]
-	public class RelativeDocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
+	public sealed class RelativeDocumentPath : System.ICloneable
 	{
-		protected int _numberOfLevelsDown;
+		private int _numberOfLevelsDown;
+		private string[] _pathParts;
 
 		#region Serialization
 
@@ -49,38 +50,31 @@ namespace Altaxo.Main
 
 				info.AddValue("LevelsDown", s._numberOfLevelsDown);
 
-				info.CreateArray("Path", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("e", s[i]);
+				info.CreateArray("Path", s._pathParts.Length);
+				for (int i = 0; i < s._pathParts.Length; i++)
+					info.AddValue("e", s._pathParts[i]);
 				info.CommitArray();
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (RelativeDocumentPath)o ?? new RelativeDocumentPath();
-
-				s._numberOfLevelsDown = info.GetInt32("LevelsDown");
+				int numberOfLevelsDown = info.GetInt32("LevelsDown");
 
 				int count = info.OpenArray("Path");
+				var arr = new string[count];
 				for (int i = 0; i < count; i++)
-					s.Add(info.GetString());
+					arr[i] = info.GetString();
 				info.CloseArray(count);
 
-				return s;
+				return new RelativeDocumentPath(numberOfLevelsDown, arr);
 			}
 		}
 
 		#endregion Serialization
 
-		protected RelativeDocumentPath()
-		{
-		}
-
 		public RelativeDocumentPath(RelativeDocumentPath from)
+			: this(from._numberOfLevelsDown, from._pathParts)
 		{
-			this._numberOfLevelsDown = from._numberOfLevelsDown;
-			foreach (string s in from)
-				Add(s);
 		}
 
 		public RelativeDocumentPath(int numberOfLevelsDown, IEnumerable<string> path)
@@ -89,15 +83,38 @@ namespace Altaxo.Main
 				throw new ArgumentOutOfRangeException("numberOfLevelsDown shall be >=0");
 
 			this._numberOfLevelsDown = numberOfLevelsDown;
-			foreach (var s in path)
-				Add(s);
+			_pathParts = path.ToArray();
 		}
 
 		public bool IsIdentity
 		{
 			get
 			{
-				return 0 == _numberOfLevelsDown && 0 == this.Count;
+				return 0 == _numberOfLevelsDown && 0 == _pathParts.Length;
+			}
+		}
+
+		public int NumberOfStepsDown
+		{
+			get
+			{
+				return _numberOfLevelsDown;
+			}
+		}
+
+		public int Count
+		{
+			get
+			{
+				return _pathParts.Length;
+			}
+		}
+
+		public string this[int idx]
+		{
+			get
+			{
+				return _pathParts[idx];
 			}
 		}
 
@@ -113,13 +130,13 @@ namespace Altaxo.Main
 				stringBuilder.Append("../");
 			}
 
-			if (this.Count > 0)
-				stringBuilder.Append(this[0]);
+			if (_pathParts.Length > 0)
+				stringBuilder.Append(_pathParts[0]);
 
-			for (int i = 1; i < this.Count; i++)
+			for (int i = 1; i < _pathParts.Length; i++)
 			{
 				stringBuilder.Append("/");
-				stringBuilder.Append(this[i]);
+				stringBuilder.Append(_pathParts[i]);
 			}
 			return stringBuilder.ToString();
 		}
@@ -132,12 +149,12 @@ namespace Altaxo.Main
 			if (this._numberOfLevelsDown != o._numberOfLevelsDown)
 				return false;
 
-			if (this.Count != o.Count)
+			if (_pathParts.Length != o._pathParts.Length)
 				return false;
 
-			for (int i = this.Count - 1; i >= 0; --i)
+			for (int i = _pathParts.Length - 1; i >= 0; --i)
 			{
-				if (!(this[i] == o[i]))
+				if (!(_pathParts[i] == o._pathParts[i]))
 					return false;
 			}
 			return true;
@@ -240,10 +257,10 @@ namespace Altaxo.Main
 			if (null == node)
 				return null; // Path not resolveable
 
-			for (int i = 0; i < path.Count; i++)
+			for (int i = 0; i < path._pathParts.Length; i++)
 			{
 				if (node is Main.IDocumentNode)
-					node = ((Main.IDocumentNode)node).GetChildObjectNamed(path[i]);
+					node = ((Main.IDocumentNode)node).GetChildObjectNamed(path._pathParts[i]);
 				else
 					return null;
 			} // end for
@@ -286,12 +303,12 @@ namespace Altaxo.Main
 			}
 
 			pathWasCompletelyResolved = true;
-			for (int i = 0; i < path.Count && null != node; i++)
+			for (int i = 0; i < path._pathParts.Length && null != node; i++)
 			{
 				prevNode = node;
 
 				if (node is Main.IDocumentNode)
-					node = ((Main.IDocumentNode)node).GetChildObjectNamed(path[i]);
+					node = ((Main.IDocumentNode)node).GetChildObjectNamed(path._pathParts[i]);
 				else
 					node = null;
 			} // end for
@@ -320,23 +337,22 @@ namespace Altaxo.Main
 		{
 			if (null == absPath)
 				throw new ArgumentNullException("absPath");
-			if (absPath.IsAbsolutePath)
-				throw new ArgumentException("Have to be a relative path");
 
-			var newPath = new RelativeDocumentPath();
+			int numberOfLevelsDown = 0;
+			var pathList = new List<string>();
 
 			for (int i = 0; i < absPath.Count; ++i)
 			{
 				if (absPath[i] == "..")
 				{
-					newPath._numberOfLevelsDown++;
+					numberOfLevelsDown++;
 				}
 				else
 				{
-					newPath.Add(absPath[i]);
+					pathList.Add(absPath[i]);
 				}
 			}
-			return newPath;
+			return new RelativeDocumentPath(numberOfLevelsDown, pathList);
 		}
 	}
 }

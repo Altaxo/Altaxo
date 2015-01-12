@@ -654,7 +654,7 @@
     <Compile Include="Main\AltaxoDocument.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\DocumentPath.cs">
+    <Compile Include="Main\AbsoluteDocumentPath.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\Exceptions.cs">

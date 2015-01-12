@@ -319,8 +319,6 @@ namespace Altaxo.Main
 		private void InternalCheckAbsolutePath()
 		{
 			var path = _docNodePath;
-			if (!path.IsAbsolutePath)
-				throw new InvalidProgramException(string.Format("Path is expected to be an absolute path. Path = {0}", path));
 
 			if (path.Count == 0)
 				throw new InvalidProgramException(string.Format("Path is expected to be non-empty. Path = {0}", path));
