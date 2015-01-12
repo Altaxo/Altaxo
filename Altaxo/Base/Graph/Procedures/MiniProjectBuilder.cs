@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Procedures
 		/// </summary>
 		private AltaxoDocument _document;
 
-		private Dictionary<DocumentPath, DataTable> _tablesToChange;
+		private Dictionary<AbsoluteDocumentPath, DataTable> _tablesToChange;
 		private Dictionary<DataColumn, DataTable> _columnsToChange;
 
 		public MiniProjectBuilder()
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Procedures
 		protected void Initialize()
 		{
 			_document = new AltaxoDocument();
-			_tablesToChange = new Dictionary<DocumentPath, DataTable>();
+			_tablesToChange = new Dictionary<AbsoluteDocumentPath, DataTable>();
 			_columnsToChange = new Dictionary<DataColumn, DataTable>();
 		}
 
@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Procedures
 
 		private void CopyDocumentInformation(GraphDocument graph)
 		{
-			var sourceDocument = (AltaxoDocument)Main.DocumentPath.GetRootNodeImplementing(graph, typeof(AltaxoDocument));
+			var sourceDocument = (AltaxoDocument)Main.AbsoluteDocumentPath.GetRootNodeImplementing(graph, typeof(AltaxoDocument));
 
 			if (null != sourceDocument)
 			{
@@ -198,7 +198,7 @@ namespace Altaxo.Graph.Procedures
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumnCollection)proxy.DocumentObject);
 				if (table != null)
 				{
-					var tablePath = DocumentPath.GetAbsolutePath(table);
+					var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Procedures
 				var table = proxy.DocumentObject as DataTable;
 				if (table != null)
 				{
-					var tablePath = DocumentPath.GetAbsolutePath(table);
+					var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}

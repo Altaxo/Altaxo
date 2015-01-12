@@ -55,7 +55,7 @@ namespace Altaxo.Main
 		/// <value>
 		/// The document path.
 		/// </value>
-		Main.DocumentPath DocumentPath { get; }
+		Main.AbsoluteDocumentPath DocumentPath { get; }
 
 		/// <summary>
 		/// This functionality is provided only for document nodes. For non-document nodes, this function does nothing.
@@ -78,7 +78,7 @@ namespace Altaxo.Main
 		/// <para>Tables Preexperiment2\</para>
 		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
 		/// </remarks>
-		bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart, IDocumentLeafNode rootNode);
+		bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode);
 	}
 
 	/// <summary>
@@ -98,7 +98,7 @@ namespace Altaxo.Main
 		[NonSerialized]
 		protected WeakReference _docNodeRef;
 
-		private Main.DocumentPath _docNodePath;
+		private Main.AbsoluteDocumentPath _docNodePath;
 
 		[NonSerialized]
 		protected WeakEventHandler _weakDocNodeChangedHandler;
@@ -114,7 +114,7 @@ namespace Altaxo.Main
 		{
 			var docNode = InternalDocNode;
 			if (docNode != null)
-				info.AddValue("Node", Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode));
+				info.AddValue("Node", Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode));
 			else if (_docNodePath != null)
 				info.AddValue("Node", _docNodePath);
 		}
@@ -122,8 +122,8 @@ namespace Altaxo.Main
 		protected DocNodeProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			object node = info.GetValue("Node", typeof(object));
-			if (node is Main.DocumentPath)
-				InternalDocumentPath = (Main.DocumentPath)node;
+			if (node is Main.AbsoluteDocumentPath)
+				InternalDocumentPath = (Main.AbsoluteDocumentPath)node;
 			else
 				SetDocNode(node as IDocumentLeafNode);
 		}
@@ -154,10 +154,10 @@ namespace Altaxo.Main
 			{
 				object node = info.GetValue("Node", null);
 
-				if (node is DocumentPath)
+				if (node is AbsoluteDocumentPath)
 				{
-					var s = (DocNodeProxy)o ?? new DocNodeProxy((DocumentPath)node);
-					s.InternalDocumentPath = (DocumentPath)node;
+					var s = (DocNodeProxy)o ?? new DocNodeProxy((AbsoluteDocumentPath)node);
+					s.InternalDocumentPath = (AbsoluteDocumentPath)node;
 					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
 					return s;
 				}
@@ -181,7 +181,7 @@ namespace Altaxo.Main
 				var node = s.InternalDocNode;
 
 				if (null != node)
-					s.InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(node);
+					s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
 
 				System.Diagnostics.Debug.Assert(null != s._docNodePath);
 				info.AddValue("Path", s._docNodePath);
@@ -191,7 +191,7 @@ namespace Altaxo.Main
 			{
 				var s = (DocNodeProxy)o ?? new DocNodeProxy(info);
 
-				var nodePath = (Main.DocumentPath)info.GetValue("Path", s);
+				var nodePath = (Main.AbsoluteDocumentPath)info.GetValue("Path", s);
 
 				s.InternalDocumentPath = nodePath;
 
@@ -222,7 +222,7 @@ namespace Altaxo.Main
 		{
 		}
 
-		protected DocNodeProxy(Main.DocumentPath docNodePath)
+		protected DocNodeProxy(Main.AbsoluteDocumentPath docNodePath)
 		{
 			if (null == docNodePath)
 				throw new ArgumentNullException("docNodePath");
@@ -364,7 +364,7 @@ namespace Altaxo.Main
 				ClearDocNode();
 			}
 
-			InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(value);
+			InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(value);
 			_docNodeRef = new WeakReference(value);
 
 #if DEBUG_DOCNODEPROXYLOGGING
@@ -401,7 +401,7 @@ namespace Altaxo.Main
 		/// <para>Tables Preexperiment2\</para>
 		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
 		/// </remarks>
-		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart, IDocumentLeafNode rootNode)
+		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 			if (null == rootNode)
@@ -490,7 +490,7 @@ namespace Altaxo.Main
 					// thus trying to get an actual document path here is in must cases unsuccessfull. We have to rely on our stored path, and that it was always updated!
 					// the only case were it is successfull if a new node immediately replaces an old document node
 					bool wasResolvedCompletely;
-					var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
+					var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
 					if (wasResolvedCompletely)
 					{
 						SetDocNode(node);
@@ -507,7 +507,7 @@ namespace Altaxo.Main
 			{
 				if (null != InternalDocNode)
 				{
-					InternalDocumentPath = Main.DocumentPath.GetAbsolutePath(InternalDocNode);
+					InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(InternalDocNode);
 					InternalCheckAbsolutePath();
 				}
 
@@ -532,7 +532,7 @@ namespace Altaxo.Main
 
 			if (InternalDocNode != null)
 			{
-				InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
+				InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
 				InternalCheckAbsolutePath();
 			}
 
@@ -567,7 +567,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		protected DocumentPath InternalDocumentPath
+		protected AbsoluteDocumentPath InternalDocumentPath
 		{
 			get
 			{
@@ -594,14 +594,14 @@ namespace Altaxo.Main
 			}
 		}
 
-		public Main.DocumentPath DocumentPath
+		public Main.AbsoluteDocumentPath DocumentPath
 		{
 			get
 			{
 				var docNode = InternalDocNode;
 				if (null != docNode)
 				{
-					InternalDocumentPath = Main.DocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode);
+					InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode);
 				}
 
 				return InternalDocumentPath;
@@ -616,7 +616,7 @@ namespace Altaxo.Main
 			if (docNode == null)
 			{
 				bool wasCompletelyResolved;
-				var node = Main.DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out wasCompletelyResolved);
+				var node = Main.AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out wasCompletelyResolved);
 				if (null == node)
 					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -679,7 +679,7 @@ namespace Altaxo.Main
 
 			bool wasResolvedCompletely;
 
-			var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
+			var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
 			if (null == node)
 				throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -714,7 +714,7 @@ namespace Altaxo.Main
 
 			if (e is DocumentPathChangedEventArgs) // here, we activly change our stored path, if the watched node or a parent has changed its name
 			{
-				var watchedPath = DocumentPath.GetAbsolutePath(senderAsDocNode);
+				var watchedPath = AbsoluteDocumentPath.GetAbsolutePath(senderAsDocNode);
 				watchedPath.Append(_docNodePath.SubPath(watchedPath.Count, _docNodePath.Count - watchedPath.Count));
 				var oldPath = _docNodePath;
 				_docNodePath = watchedPath;
@@ -732,7 +732,7 @@ namespace Altaxo.Main
 #endif
 
 				bool wasResolvedCompletely;
-				var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
+				var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
 				if (null == node)
 					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 

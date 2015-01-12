@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Graph
 		public void InitializeFillDirectionChoices()
 		{
 			_areaFillDirectionChoices = new SelectableListNodeList();
-			IPlotArea layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
+			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
 			if (layer != null)
 			{
 				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.FillDirection }))

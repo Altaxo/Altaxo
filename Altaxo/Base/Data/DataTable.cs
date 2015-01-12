@@ -1295,7 +1295,7 @@ namespace Altaxo.Data
 			if (colcol.ParentObject is DataTable)
 				return (DataTable)colcol.ParentObject;
 			else
-				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(colcol, typeof(DataTable));
+				return (DataTable)Main.AbsoluteDocumentPath.GetRootNodeImplementing(colcol, typeof(DataTable));
 		}
 
 		/// <summary>
@@ -1308,7 +1308,7 @@ namespace Altaxo.Data
 			if (column.ParentObject is DataColumnCollection)
 				return GetParentDataTableOf((DataColumnCollection)column.ParentObject);
 			else
-				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(column, typeof(DataTable));
+				return (DataTable)Main.AbsoluteDocumentPath.GetRootNodeImplementing(column, typeof(DataTable));
 		}
 
 		/// <summary>
@@ -1320,7 +1320,7 @@ namespace Altaxo.Data
 			if (child == null)
 				return null;
 			else
-				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child, typeof(DataTable));
+				return (DataTable)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataTable));
 		}
 
 		#region IPropertyBagOwner

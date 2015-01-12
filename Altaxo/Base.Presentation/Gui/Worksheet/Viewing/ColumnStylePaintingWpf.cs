@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			thiss.PaintBackground(dc, cellRect, bSelected);
 
-			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)DocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
+			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
 			string columnnumber = dataColCol.GetColumnNumber(data).ToString();
 			string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
       var font = WpfFontManager.ToWpf(thiss.TextFont);

@@ -281,7 +281,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return Main.DocumentPath.GetPathString(this, 3);
+				return Main.AbsoluteDocumentPath.GetPathString(this, 3);
 			}
 		}
 

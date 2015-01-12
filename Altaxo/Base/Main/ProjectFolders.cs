@@ -687,7 +687,7 @@ namespace Altaxo.Main
 
 			if (proxyDoc != null)
 			{
-				var dependentOnItem = DocumentPath.GetRootNodeImplementing<IProjectItem>(proxyDoc);
+				var dependentOnItem = AbsoluteDocumentPath.GetRootNodeImplementing<IProjectItem>(proxyDoc);
 				if (null != dependentOnItem)
 					dependenciesOfItem.Add(dependentOnItem);
 			}

@@ -127,9 +127,9 @@ namespace Altaxo.Graph.Plot.Data
 				*/
 			}
 
-			private Main.DocumentPath _xColumnPath = null;
-			private Main.DocumentPath _yColumnPath = null;
-			private Main.DocumentPath[] _vColumnPaths = null;
+			private Main.AbsoluteDocumentPath _xColumnPath = null;
+			private Main.AbsoluteDocumentPath _yColumnPath = null;
+			private Main.AbsoluteDocumentPath[] _vColumnPaths = null;
 
 			private IReadableColumnProxy _xColumnProxy = null;
 			private IReadableColumnProxy _yColumnProxy = null;
@@ -151,9 +151,9 @@ namespace Altaxo.Graph.Plot.Data
 
 				object deserobj;
 				deserobj = info.GetValue("XColumn", s);
-				if (deserobj is Main.DocumentPath)
+				if (deserobj is Main.AbsoluteDocumentPath)
 				{
-					surr._xColumnPath = (Main.DocumentPath)deserobj;
+					surr._xColumnPath = (Main.AbsoluteDocumentPath)deserobj;
 					bSurrogateUsed = true;
 				}
 				else
@@ -162,9 +162,9 @@ namespace Altaxo.Graph.Plot.Data
 				}
 
 				deserobj = info.GetValue("YColumn", s);
-				if (deserobj is Main.DocumentPath)
+				if (deserobj is Main.AbsoluteDocumentPath)
 				{
-					surr._yColumnPath = (Main.DocumentPath)deserobj;
+					surr._yColumnPath = (Main.AbsoluteDocumentPath)deserobj;
 					bSurrogateUsed = true;
 				}
 				else
@@ -173,14 +173,14 @@ namespace Altaxo.Graph.Plot.Data
 				}
 
 				int count = info.OpenArray();
-				surr._vColumnPaths = new Main.DocumentPath[count];
+				surr._vColumnPaths = new Main.AbsoluteDocumentPath[count];
 				surr._vColumnProxies = new IReadableColumnProxy[count];
 				for (int i = 0; i < count; i++)
 				{
 					deserobj = info.GetValue("e", s);
-					if (deserobj is Main.DocumentPath)
+					if (deserobj is Main.AbsoluteDocumentPath)
 					{
-						surr._vColumnPaths[i] = (Main.DocumentPath)deserobj;
+						surr._vColumnPaths[i] = (Main.AbsoluteDocumentPath)deserobj;
 						bSurrogateUsed = true;
 					}
 					else
@@ -213,7 +213,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (this._xColumnPath != null)
 				{
-					object xColumn = Main.DocumentPath.GetObject(this._xColumnPath, this._plotAssociation, documentRoot);
+					object xColumn = Main.AbsoluteDocumentPath.GetObject(this._xColumnPath, this._plotAssociation, documentRoot);
 					bAllResolved &= (null != xColumn);
 					if (xColumn is Altaxo.Data.INumericColumn)
 					{
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (this._yColumnPath != null)
 				{
-					object yColumn = Main.DocumentPath.GetObject(this._yColumnPath, this._plotAssociation, documentRoot);
+					object yColumn = Main.AbsoluteDocumentPath.GetObject(this._yColumnPath, this._plotAssociation, documentRoot);
 					bAllResolved &= (null != yColumn);
 					if (yColumn is Altaxo.Data.INumericColumn)
 					{
@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Plot.Data
 				{
 					if (this._vColumnPaths[i] != null)
 					{
-						object vColumn = Main.DocumentPath.GetObject(this._vColumnPaths[i], this._plotAssociation, documentRoot);
+						object vColumn = Main.AbsoluteDocumentPath.GetObject(this._vColumnPaths[i], this._plotAssociation, documentRoot);
 						bAllResolved &= (null != vColumn);
 						if (vColumn is Altaxo.Data.IReadableColumn)
 						{

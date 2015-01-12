@@ -68,7 +68,7 @@ namespace Altaxo.Graph
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphViewLayout", 0)] // since 2012/02/01 build 744
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			private DocumentPath _PathToGraph;
+			private AbsoluteDocumentPath _PathToGraph;
 			private GraphViewLayout _GraphController;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -76,7 +76,7 @@ namespace Altaxo.Graph
 				var s = (GraphViewLayout)obj;
 				info.AddValue("AutoZoom", s._isAutoZoomActive);
 				info.AddValue("Zoom", s._zoomFactor);
-				info.AddValue("Graph", DocumentPath.GetAbsolutePath(s._graphDocument));
+				info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -91,7 +91,7 @@ namespace Altaxo.Graph
 
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 				surr._GraphController = s;
-				surr._PathToGraph = (DocumentPath)info.GetValue("Graph", s);
+				surr._PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				return s;
@@ -99,7 +99,7 @@ namespace Altaxo.Graph
 
 			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
-				object o = DocumentPath.GetObject(_PathToGraph, documentRoot);
+				object o = AbsoluteDocumentPath.GetObject(_PathToGraph, documentRoot);
 				if (o is GraphDocument)
 				{
 					_GraphController._graphDocument = (GraphDocument)o;
@@ -114,13 +114,13 @@ namespace Altaxo.Graph
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphViewLayout), 1)]
 		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			private DocumentPath _PathToGraph;
+			private AbsoluteDocumentPath _PathToGraph;
 			private GraphViewLayout _GraphController;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (GraphViewLayout)obj;
-				info.AddValue("Graph", DocumentPath.GetAbsolutePath(s._graphDocument));
+				info.AddValue("Graph", AbsoluteDocumentPath.GetAbsolutePath(s._graphDocument));
 				info.AddValue("AutoZoom", s._isAutoZoomActive);
 				if (false == s._isAutoZoomActive)
 				{
@@ -135,7 +135,7 @@ namespace Altaxo.Graph
 
 				XmlSerializationSurrogate1 surr = new XmlSerializationSurrogate1();
 				surr._GraphController = s;
-				surr._PathToGraph = (DocumentPath)info.GetValue("Graph", s);
+				surr._PathToGraph = (AbsoluteDocumentPath)info.GetValue("Graph", s);
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				s._isAutoZoomActive = info.GetBoolean("AutoZoom");
@@ -150,7 +150,7 @@ namespace Altaxo.Graph
 
 			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
-				var o = DocumentPath.GetObject(_PathToGraph, documentRoot);
+				var o = AbsoluteDocumentPath.GetObject(_PathToGraph, documentRoot);
 				if (o is GraphDocument)
 				{
 					_GraphController._graphDocument = (GraphDocument)o;

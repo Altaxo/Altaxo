@@ -207,5 +207,24 @@ namespace Altaxo.Collections
 			foreach (var element in seq)
 				action(element);
 		}
+
+		/// <summary>
+		/// Takes all elements of a list, starting from index <paramref name="upperIndexInclusive"/> down to the index <paramref name="lowerIndexInclusive"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of list elements</typeparam>
+		/// <param name="list">The list of elements.</param>
+		/// <param name="upperIndexInclusive">The upper index (inclusive).</param>
+		/// <param name="lowerIndexInclusive">The lower index (inclusive).</param>
+		/// <returns></returns>
+		public static IEnumerable<T> TakeFromUpperIndexDownToLowerIndex<T>(this IList<T> list, int upperIndexInclusive, int lowerIndexInclusive)
+		{
+			if (null == list)
+				throw new ArgumentNullException("list");
+			if (!(upperIndexInclusive >= lowerIndexInclusive))
+				throw new ArgumentException("upperIndexInclusive should be >= lowerIndexInclusive");
+
+			for (int i = upperIndexInclusive; i >= lowerIndexInclusive; --i)
+				yield return list[i];
+		}
 	}
 }

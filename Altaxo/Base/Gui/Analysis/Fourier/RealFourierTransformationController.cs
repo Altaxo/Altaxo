@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 			if (_view != null)
 			{
-				var yColName = DocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
+				var yColName = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
 				_view.SetColumnToTransform(yColName);
 
 				string xInc = _doc.XIncrementValue.ToString();

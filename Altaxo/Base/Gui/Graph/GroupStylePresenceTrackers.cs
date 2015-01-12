@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Graph
 
 		public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
 		{
-			var plotItemCollection = Altaxo.Main.DocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);
+			var plotItemCollection = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.Plot.PlotItemCollection>(doc);
 			if (null == plotItemCollection)
 				return null;
 

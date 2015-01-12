@@ -532,14 +532,14 @@ namespace Altaxo
 		/// </summary>
 		/// <param name="type">The type of project item.</param>
 		/// <returns>The root path of this type of item.</returns>
-		public static DocumentPath GetRootPathForProjectItemType(System.Type type)
+		public static AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type)
 		{
 			if (type == typeof(Altaxo.Data.DataTable))
-				return DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
+				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
 			else if (type == typeof(Altaxo.Graph.Gdi.GraphDocument))
-				return DocumentPath.GetAbsolutePath(Current.Project.GraphDocumentCollection);
+				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.GraphDocumentCollection);
 			else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
-				return DocumentPath.GetAbsolutePath(Current.Project.ProjectFolderProperties);
+				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.ProjectFolderProperties);
 			else
 				throw new ArgumentOutOfRangeException(string.Format("Unknown type of project item: {0}", type));
 		}
@@ -550,7 +550,7 @@ namespace Altaxo
 		/// <param name="item">The item.</param>
 		/// <returns>The document part for the project item, deduces from its type and its name.</returns>
 		/// <exception cref="System.ArgumentNullException">item</exception>
-		public static DocumentPath GetDocumentPathForProjectItem(IProjectItem item)
+		public static AbsoluteDocumentPath GetDocumentPathForProjectItem(IProjectItem item)
 		{
 			if (null == item)
 				throw new ArgumentNullException("item");

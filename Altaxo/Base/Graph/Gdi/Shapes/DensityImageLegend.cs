@@ -362,7 +362,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null == PlotItem)
 			{
 				// search for the first density plot item in the layer
-				var layer = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
+				var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
 				if (null != layer)
 				{
 					foreach (var item in layer.PlotItems)

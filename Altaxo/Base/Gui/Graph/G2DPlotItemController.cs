@@ -263,7 +263,7 @@ namespace Altaxo.Gui.Graph
 		/// <param name="pivotelement"></param>
 		private void DistributeStyleChange(int pivotelement)
 		{
-			IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
 			_tempdoc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
 
 			// now all style controllers must be updated

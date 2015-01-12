@@ -1281,7 +1281,7 @@ namespace Altaxo.Data
 			if (idx >= 0 && idx < _columnsByNumber.Count)
 				return GetColumnInfo(idx).Name;
 			else
-				throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.DocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));
+				throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.AbsoluteDocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));
 		}
 
 		/// <summary>
@@ -1880,7 +1880,7 @@ namespace Altaxo.Data
 				if (_columnsByName.TryGetValue(s, out result))
 					return result;
 				else
-					throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.DocumentPath.GetAbsolutePath(this).ToString()));
+					throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.AbsoluteDocumentPath.GetAbsolutePath(this).ToString()));
 			}
 			set
 			{
@@ -1890,7 +1890,7 @@ namespace Altaxo.Data
 				if (_columnsByName.TryGetValue(s, out c))
 					c.CopyDataFrom(value);
 				else
-					throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.DocumentPath.GetAbsolutePath(this).ToString()));
+					throw new ArgumentOutOfRangeException(string.Format("The column \"{0}\" in \"{1}\" does not exist.", s, Main.AbsoluteDocumentPath.GetAbsolutePath(this).ToString()));
 			}
 		}
 
@@ -1923,7 +1923,7 @@ namespace Altaxo.Data
 				}
 				catch (Exception)
 				{
-					throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.DocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));
+					throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.AbsoluteDocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));
 				}
 			}
 			set
@@ -1938,7 +1938,7 @@ namespace Altaxo.Data
 				}
 				else
 				{
-					throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.DocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));
+					throw new ArgumentOutOfRangeException(string.Format("The column [{0}] in table \"{1}\" does not exist. The current number of columns is {2}.", idx, Main.AbsoluteDocumentPath.GetAbsolutePath(this).ToString(), ColumnCount));
 				}
 			}
 		}
@@ -2532,7 +2532,7 @@ namespace Altaxo.Data
 			if (column.ParentObject is DataColumnCollection)
 				return (DataColumnCollection)column.ParentObject;
 			else
-				return (DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(column, typeof(DataColumnCollection));
+				return (DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(column, typeof(DataColumnCollection));
 		}
 	} // end class Altaxo.Data.DataColumnCollection
 }

@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (isLinked)
 			{
-				LinkedScale ls = new LinkedScale(transScale, null, idx, 0);
+				LinkedScale ls = new LinkedScale(transScale, idx);
 				ls.SetLinkParameter(orgA, orgB, endA, endB);
 				transScale = ls;
 			}
@@ -260,9 +260,15 @@ namespace Altaxo.Graph.Gdi
 				var legend = (TextGraphic)info.GetValue("Legend", s);
 
 				// XYPlotLayer specific
-				Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer", s);
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer);
-
+				object linkedLayer = info.GetValue("LinkedLayer", s);
+				if (linkedLayer is Main.AbsoluteDocumentPath)
+				{
+					ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.AbsoluteDocumentPath)linkedLayer, info);
+				}
+				else if (linkedLayer is Main.RelativeDocumentPath)
+				{
+					ProvideLinkedScalesWithLinkedLayerIndex(s, (Main.RelativeDocumentPath)linkedLayer, info);
+				}
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphObjects", s));
 
 				s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
@@ -408,7 +414,7 @@ namespace Altaxo.Graph.Gdi
 				count = info.OpenArray("LinkedLayers");
 				var linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
 				info.CloseArray(count);
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer);
+				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
 				s.GraphObjects.AddRange((IEnumerable<IGraphicBase>)info.GetValue("GraphicGlyphs", s));
 				if (null != legend)
@@ -494,7 +500,7 @@ namespace Altaxo.Graph.Gdi
 				// Scales
 				var linkedScales = (Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection)info.GetValue("Scales", s);
 				s.SetupOldAxes(linkedScales);
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer);
+				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
 				// Grid planes
 				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
@@ -609,7 +615,7 @@ namespace Altaxo.Graph.Gdi
 				// Scales
 				s.Scales = (ScaleCollection)info.GetValue("Scales", s);
 
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer);
+				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer, info);
 
 				// Grid planes
 				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
@@ -721,15 +727,15 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion Version 6
 
-		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer)
+		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 			if (null != linkedLayer)
 			{
-				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer.DocumentPath);
+				ProvideLinkedScalesWithLinkedLayerIndex(s, linkedLayer.DocumentPath, info);
 			}
 		}
 
-		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.DocumentPath path)
+		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.AbsoluteDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 			if (null != path && path.Count > 0)
 			{
@@ -738,7 +744,20 @@ namespace Altaxo.Graph.Gdi
 				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
 				foreach (var scaleAndTick in s.Scales)
 					if (scaleAndTick.Scale is LinkedScale)
-						((LinkedScale)scaleAndTick.Scale).LinkedLayerIndex = layerNum;
+						((LinkedScale)scaleAndTick.Scale).SetLinkedLayerIndex(layerNum, info);
+			}
+		}
+
+		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelativeDocumentPath path, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			if (null != path && path.Count > 0)
+			{
+				var pathend = path[path.Count - 1];
+				// extract layer number
+				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
+				foreach (var scaleAndTick in s.Scales)
+					if (scaleAndTick.Scale is LinkedScale)
+						((LinkedScale)scaleAndTick.Scale).SetLinkedLayerIndex(layerNum, info);
 			}
 		}
 

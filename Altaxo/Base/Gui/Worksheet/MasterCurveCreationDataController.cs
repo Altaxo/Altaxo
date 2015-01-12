@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Worksheet
 					_viewList.Add(destGroup);
 					foreach (var srcEle in srcGroup)
 					{
-						var destEle = new SelectableListNode(DocumentPath.GetAbsolutePath(srcEle).ToString(), srcEle, false);
+						var destEle = new SelectableListNode(AbsoluteDocumentPath.GetAbsolutePath(srcEle).ToString(), srcEle, false);
 						destGroup.Add(destEle);
 					}
 				}

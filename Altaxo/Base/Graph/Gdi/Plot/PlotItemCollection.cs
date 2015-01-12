@@ -309,7 +309,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get
 			{
-				return Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
+				return Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
 			}
 		}
 

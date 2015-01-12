@@ -361,6 +361,7 @@
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\DocumentNodeAndName.cs" />
+    <Compile Include="Main\RelativeDocumentPath.cs" />
     <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />
     <Compile Include="Main\IProjectItem.cs" />

@@ -382,7 +382,7 @@ namespace Altaxo.Data
 		/// <returns>The parent DataTableCollection, if it exists, or null otherwise.</returns>
 		public static Altaxo.Data.DataTableCollection GetParentDataTableCollectionOf(Main.IDocumentLeafNode child)
 		{
-			return (DataTableCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(DataTableCollection));
+			return (DataTableCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(DataTableCollection));
 		}
 	}
 }

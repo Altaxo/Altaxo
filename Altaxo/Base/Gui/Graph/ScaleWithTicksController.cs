@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Graph
 				_linkScaleChoices.Add(new SelectableListNode("None", null, false));
 
 				// find the parent layer
-				var mylayer = Altaxo.Main.DocumentPath.GetRootNodeImplementing<HostLayer>(_originalDoc);
+				var mylayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(_originalDoc);
 				if (null != mylayer)
 				{
 					var parentLayerList = mylayer.ParentLayerList;
@@ -356,12 +356,13 @@ namespace Altaxo.Gui.Graph
 			// wrap the scale if it is linked
 			if (_scaleLinkedTo != null)
 			{
-				var layerLinkedTo = (XYPlotLayer)Altaxo.Main.DocumentPath.GetRootNodeImplementing(_scaleLinkedTo, typeof(XYPlotLayer));
+				var layerLinkedTo = (XYPlotLayer)Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing(_scaleLinkedTo, typeof(XYPlotLayer));
 				int scaleNumberLinkedTo = layerLinkedTo.Scales.IndexOfFirst(scaleWithTicks => object.ReferenceEquals(scaleWithTicks.Scale, _scaleLinkedTo));
-				LinkedScale ls = new LinkedScale(_tempScale, _scaleLinkedTo, scaleNumberLinkedTo, layerLinkedTo.LayerNumber);
+				LinkedScale ls = new LinkedScale(_tempScale);
 				ls.LinkParameters.SetTo(_linkedScaleParameters);
 				//_layer.Scales.SetScaleWithTicks(this._axisNumber,ls, _tempTickSpacing);
 				_doc.SetTo(ls, _tempTickSpacing);
+				ls.ScaleLinkedTo = _scaleLinkedTo;
 			}
 			else
 			{

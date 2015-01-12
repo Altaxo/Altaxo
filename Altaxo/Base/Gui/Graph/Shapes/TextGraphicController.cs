@@ -137,7 +137,7 @@ namespace Altaxo.Gui.Graph.Shapes
 		{
 			if (initDocument)
 			{
-				_parentLayerOfOriginalDoc = DocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
+				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
 
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
 				Current.Gui.FindAndAttachControlTo(_locationController);

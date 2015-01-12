@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph
 	{
 		private List<Altaxo.Graph.Gdi.Plot.IGPlotItem> _itemsToChange = new List<Altaxo.Graph.Gdi.Plot.IGPlotItem>();
 
-		private Dictionary<DocumentPath, DataTable> _tablesToChange = new Dictionary<DocumentPath, DataTable>();
+		private Dictionary<AbsoluteDocumentPath, DataTable> _tablesToChange = new Dictionary<AbsoluteDocumentPath, DataTable>();
 
 		/// <summary>Returns a list with the plot items for which to change the underlying tables.</summary>
 		public List<Altaxo.Graph.Gdi.Plot.IGPlotItem> PlotItemsToChange
@@ -50,8 +50,8 @@ namespace Altaxo.Gui.Graph
 		}
 
 		/// <summary>Gets or sets dictionary with the tables to change and their replacement tables.</summary>
-		/// <value>The replacement dictionary. Key is the <see cref="DocumentPath"/> to the old table (thus non-existing tables can also be keys!). The values are the replacement tables.</value>
-		public Dictionary<DocumentPath, DataTable> TablesToChange
+		/// <value>The replacement dictionary. Key is the <see cref="AbsoluteDocumentPath"/> to the old table (thus non-existing tables can also be keys!). The values are the replacement tables.</value>
+		public Dictionary<AbsoluteDocumentPath, DataTable> TablesToChange
 		{
 			get { return _tablesToChange; }
 			set { _tablesToChange = value; }
@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Graph
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)proxy.DocumentObject);
 				if (table != null)
 				{
-					var tablePath = DocumentPath.GetAbsolutePath(table);
+					var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Graph
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumnCollection)proxy.DocumentObject);
 				if (table != null)
 				{
-					var tablePath = DocumentPath.GetAbsolutePath(table);
+					var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Graph
 				var table = proxy.DocumentObject as DataTable;
 				if (table != null)
 				{
-					var tablePath = DocumentPath.GetAbsolutePath(table);
+					var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
 					if (!_tablesToChange.ContainsKey(tablePath))
 						_tablesToChange.Add(tablePath, null);
 				}
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Graph
 			else if ((proxy is Altaxo.Data.INumericColumnProxy) || (proxy is Altaxo.Data.IReadableColumnProxy))
 			{
 				var path = proxy.DocumentPath;
-				if (path.Count >= 2 && path.StartsWith(DocumentPath.GetPath(Current.Project.DataTableCollection, int.MaxValue)))
+				if (path.Count >= 2 && path.StartsWith(AbsoluteDocumentPath.GetPath(Current.Project.DataTableCollection, int.MaxValue)))
 				{
 					var tablePath = path.SubPath(0, 2);
 					if (!_tablesToChange.ContainsKey(tablePath))
@@ -174,10 +174,10 @@ namespace Altaxo.Gui.Graph
 				var table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)proxy.DocumentObject);
 				if (table != null)
 				{
-					var tablePath = DocumentPath.GetAbsolutePath(table);
+					var tablePath = AbsoluteDocumentPath.GetAbsolutePath(table);
 					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
 					{
-						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
+						proxy.ReplacePathParts(tablePath, AbsoluteDocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
 					}
 				}
 			}
@@ -192,13 +192,13 @@ namespace Altaxo.Gui.Graph
 			else if ((proxy is Altaxo.Data.INumericColumnProxy) || (proxy is Altaxo.Data.IReadableColumnProxy))
 			{
 				var path = proxy.DocumentPath;
-				var tableCollectionPath = DocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
+				var tableCollectionPath = AbsoluteDocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
 				if (path.Count >= 2 && path[0] == tableCollectionPath[0])
 				{
 					var tablePath = path.SubPath(0, 2);
 					if (_tablesToChange.TryGetValue(tablePath, out substituteTable) && null != substituteTable)
 					{
-						proxy.ReplacePathParts(tablePath, DocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
+						proxy.ReplacePathParts(tablePath, AbsoluteDocumentPath.GetAbsolutePath(substituteTable), (IDocumentLeafNode)owner);
 					}
 				}
 			}
@@ -434,7 +434,7 @@ namespace Altaxo.Gui.Graph
 				var newFolder = selection.SelectedFolder;
 				foreach (var entry in _tableList.Where(x => x.IsSelected))
 				{
-					var tableToChange = (DocumentPath)entry.Tag;
+					var tableToChange = (AbsoluteDocumentPath)entry.Tag;
 					// try to find a table of the same short name in the selected folder
 					if (tableToChange.Count > 0)
 					{
@@ -616,7 +616,7 @@ namespace Altaxo.Gui.Graph
 			{
 				if (node.IsSelected)
 				{
-					var path = (DocumentPath)node.Tag;
+					var path = (AbsoluteDocumentPath)node.Tag;
 					var name = path[path.Count - 1];
 					_listOfSelectedTableNames.Add(name);
 				}
@@ -842,7 +842,7 @@ namespace Altaxo.Gui.Graph
 			{
 				if (null != entry.NewTable)
 				{
-					var tableToChange = (DocumentPath)entry.Tag;
+					var tableToChange = (AbsoluteDocumentPath)entry.Tag;
 					_doc.TablesToChange[tableToChange] = entry.NewTable;
 				}
 			}

@@ -1362,6 +1362,11 @@ namespace Altaxo.Graph.Gdi
 			get { return _childLayers; }
 		}
 
+		Main.IDocumentLeafNode INodeWithParentNode<Main.IDocumentLeafNode>.ParentNode
+		{
+			get { return _parent; }
+		}
+
 		HostLayer INodeWithParentNode<HostLayer>.ParentNode
 		{
 			get { return _parent as HostLayer; }

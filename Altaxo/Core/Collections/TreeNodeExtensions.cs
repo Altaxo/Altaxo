@@ -33,7 +33,7 @@ namespace Altaxo.Collections
 	/// Defines a simple tree node, where the child nodes are enumerable. There is no reference to the node's parent.
 	/// </summary>
 	/// <typeparam name="T">Type of the node.</typeparam>
-	public interface ITreeNode<out T> where T : ITreeNode<T>
+	public interface ITreeNode<T> where T : ITreeNode<T>
 	{
 		/// <summary>
 		/// Gets the child nodes.
@@ -63,7 +63,7 @@ namespace Altaxo.Collections
 	/// Defines an interface of a node, with has a parent node.
 	/// </summary>
 	/// <typeparam name="T">Type of the node.</typeparam>
-	public interface INodeWithParentNode<out T>
+	public interface INodeWithParentNode<T>
 	{
 		/// <summary>
 		/// Gets the parent node of this node.
@@ -78,7 +78,7 @@ namespace Altaxo.Collections
 	/// Defines a simple tree node with parent.
 	/// </summary>
 	/// <typeparam name="T">Type of the node.</typeparam>
-	public interface ITreeNodeWithParent<out T> : ITreeNode<T>, INodeWithParentNode<T> where T : ITreeNodeWithParent<T>
+	public interface ITreeNodeWithParent<T> : ITreeNode<T>, INodeWithParentNode<T> where T : ITreeNodeWithParent<T>
 	{
 	}
 

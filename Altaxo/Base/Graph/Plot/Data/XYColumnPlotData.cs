@@ -175,8 +175,8 @@ namespace Altaxo.Graph.Plot.Data
 				*/
 			}
 
-			protected Main.DocumentPath _xColumn = null;
-			protected Main.DocumentPath _yColumn = null;
+			protected Main.AbsoluteDocumentPath _xColumn = null;
+			protected Main.AbsoluteDocumentPath _yColumn = null;
 
 			protected XYColumnPlotData _plotAssociation = null;
 
@@ -190,12 +190,12 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (xColumn is Altaxo.Data.IReadableColumn)
 					s.XColumn = (Altaxo.Data.IReadableColumn)xColumn;
-				else if (xColumn is Main.DocumentPath)
+				else if (xColumn is Main.AbsoluteDocumentPath)
 					bNeedsCallback = true;
 
 				if (yColumn is Altaxo.Data.IReadableColumn)
 					s.YColumn = (Altaxo.Data.IReadableColumn)yColumn;
-				else if (yColumn is Main.DocumentPath)
+				else if (yColumn is Main.AbsoluteDocumentPath)
 					bNeedsCallback = true;
 
 				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
@@ -209,8 +209,8 @@ namespace Altaxo.Graph.Plot.Data
 				if (bNeedsCallback)
 				{
 					XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-					surr._xColumn = xColumn as Main.DocumentPath;
-					surr._yColumn = yColumn as Main.DocumentPath;
+					surr._xColumn = xColumn as Main.AbsoluteDocumentPath;
+					surr._yColumn = yColumn as Main.AbsoluteDocumentPath;
 					surr._plotAssociation = s;
 
 					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (this._xColumn != null)
 				{
-					object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation, documentRoot);
+					object xColumn = Main.AbsoluteDocumentPath.GetObject(this._xColumn, this._plotAssociation, documentRoot);
 					bAllResolved &= (null != xColumn);
 					if (xColumn is Altaxo.Data.IReadableColumn)
 						_plotAssociation.XColumn = (Altaxo.Data.IReadableColumn)xColumn;
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (this._yColumn != null)
 				{
-					object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation, documentRoot);
+					object yColumn = Main.AbsoluteDocumentPath.GetObject(this._yColumn, this._plotAssociation, documentRoot);
 					bAllResolved &= (null != yColumn);
 					if (yColumn is Altaxo.Data.IReadableColumn)
 						_plotAssociation.YColumn = (Altaxo.Data.IReadableColumn)yColumn;
@@ -293,7 +293,7 @@ namespace Altaxo.Graph.Plot.Data
 
 						if (labelColumn is Altaxo.Data.IReadableColumn)
 							s._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
-						else if (labelColumn is Main.DocumentPath)
+						else if (labelColumn is Main.AbsoluteDocumentPath)
 							bNeedsCallback = true;
 					}
 				}
@@ -302,7 +302,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (bNeedsCallback)
 				{
 					XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
-					surr._labelColumn = labelColumn as Main.DocumentPath;
+					surr._labelColumn = labelColumn as Main.AbsoluteDocumentPath;
 					surr._plotAssociation = s;
 
 					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished2);
@@ -311,7 +311,7 @@ namespace Altaxo.Graph.Plot.Data
 				return s;
 			}
 
-			private Main.DocumentPath _labelColumn = null;
+			private Main.AbsoluteDocumentPath _labelColumn = null;
 
 			private void EhDeserializationFinished2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (this._labelColumn != null)
 				{
-					object labelColumn = Main.DocumentPath.GetObject(this._labelColumn, this._plotAssociation, documentRoot);
+					object labelColumn = Main.AbsoluteDocumentPath.GetObject(this._labelColumn, this._plotAssociation, documentRoot);
 					bAllResolved &= (null != labelColumn);
 					if (labelColumn is Altaxo.Data.IReadableColumn)
 						_plotAssociation._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;

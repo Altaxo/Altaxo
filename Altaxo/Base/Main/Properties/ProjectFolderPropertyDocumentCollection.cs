@@ -211,7 +211,7 @@ namespace Altaxo.Main.Properties
 		/// <returns>The parent ProjectFolderPropertyBagCollection, if it exists, or null otherwise.</returns>
 		public static ProjectFolderPropertyDocumentCollection GetParentProjectFolderPropertyBagCollectionOf(Main.IDocumentLeafNode child)
 		{
-			return (ProjectFolderPropertyDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
+			return (ProjectFolderPropertyDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(ProjectFolderPropertyDocumentCollection));
 		}
 
 		#region IEnumerable<ProjectFolderPropertyBag> Members

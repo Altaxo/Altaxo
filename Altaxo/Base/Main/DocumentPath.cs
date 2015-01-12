@@ -23,6 +23,10 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
@@ -31,20 +35,70 @@ namespace Altaxo.Main
 	/// concept with the concept of the folder in which a project item virtually exists  (see <see cref="ProjectFolder"/>).
 	/// </summary>
 	[Serializable]
-	public class DocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
+	public class AbsoluteDocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
 	{
 		protected bool _IsAbsolutePath;
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentPath), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocumentPath", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				DocumentPath s = (DocumentPath)obj;
+				throw new InvalidOperationException("Serialization of old version not supported");
+				/*
+				AbsoluteDocumentPath s = (AbsoluteDocumentPath)obj;
 
 				info.AddValue("IsAbsolute", s._IsAbsolutePath);
+
+				info.CreateArray("Path", s.Count);
+				for (int i = 0; i < s.Count; i++)
+					info.AddValue("e", s[i]);
+				info.CommitArray();
+				 */
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var isAbsolutePath = info.GetBoolean("IsAbsolute");
+
+				if (isAbsolutePath)
+				{
+					var s = (AbsoluteDocumentPath)o ?? new AbsoluteDocumentPath();
+					int count = info.OpenArray();
+					for (int i = 0; i < count; i++)
+						s.Add(info.GetString());
+					info.CloseArray(count);
+					return s;
+				}
+				else
+				{
+					int numberBackwards = 0;
+					var list = new List<string>();
+
+					int count = info.OpenArray();
+					for (int i = 0; i < count; i++)
+					{
+						var item = info.GetString();
+						if (item == "..")
+							numberBackwards++;
+						else
+							list.Add(item);
+					}
+					info.CloseArray(count);
+
+					return new RelativeDocumentPath(numberBackwards, list);
+				}
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteDocumentPath), 0)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AbsoluteDocumentPath s = (AbsoluteDocumentPath)obj;
 
 				info.CreateArray("Path", s.Count);
 				for (int i = 0; i < s.Count; i++)
@@ -54,9 +108,7 @@ namespace Altaxo.Main
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DocumentPath s = null != o ? (DocumentPath)o : new DocumentPath();
-
-				s._IsAbsolutePath = info.GetBoolean("IsAbsolute");
+				AbsoluteDocumentPath s = null != o ? (AbsoluteDocumentPath)o : new AbsoluteDocumentPath();
 
 				int count = info.OpenArray();
 				for (int i = 0; i < count; i++)
@@ -69,30 +121,30 @@ namespace Altaxo.Main
 
 		#endregion Serialization
 
-		public DocumentPath(bool isAbsolutePath)
+		public AbsoluteDocumentPath(bool isAbsolutePath)
 		{
 			_IsAbsolutePath = isAbsolutePath;
 		}
 
-		public DocumentPath()
+		public AbsoluteDocumentPath()
 			: this(false)
 		{
 		}
 
-		public DocumentPath(DocumentPath from)
+		public AbsoluteDocumentPath(AbsoluteDocumentPath from)
 		{
 			this._IsAbsolutePath = from._IsAbsolutePath;
 			foreach (string s in from)
 				Add(s);
 		}
 
-		/// <summary>Get a absolute <see cref="DocumentPath"/> from a collection node and the name of an item in this collection.</summary>
+		/// <summary>Get a absolute <see cref="AbsoluteDocumentPath"/> from a collection node and the name of an item in this collection.</summary>
 		/// <param name="collectionNode">The collection node (for instance the DataTableCollection in the current project).</param>
 		/// <param name="nameOfItemInTheCollection">The name of item in the collection (in the above example the name of the data table).</param>
 		/// <returns>An absolute document path designating the named item in the collection.</returns>
-		public static DocumentPath FromDocumentCollectionNodeAndName(IDocumentLeafNode collectionNode, string nameOfItemInTheCollection)
+		public static AbsoluteDocumentPath FromDocumentCollectionNodeAndName(IDocumentLeafNode collectionNode, string nameOfItemInTheCollection)
 		{
-			DocumentPath result = DocumentPath.GetAbsolutePath(collectionNode);
+			AbsoluteDocumentPath result = AbsoluteDocumentPath.GetAbsolutePath(collectionNode);
 			result.Add(nameOfItemInTheCollection);
 			return result;
 		}
@@ -122,7 +174,7 @@ namespace Altaxo.Main
 
 		public override bool Equals(object obj)
 		{
-			var o = obj as DocumentPath;
+			var o = obj as AbsoluteDocumentPath;
 			if (null == o)
 				return false;
 			if (this.IsAbsolutePath != o.IsAbsolutePath)
@@ -143,7 +195,7 @@ namespace Altaxo.Main
 			return ToString().GetHashCode();
 		}
 
-		public bool StartsWith(DocumentPath another)
+		public bool StartsWith(AbsoluteDocumentPath another)
 		{
 			if (this.Count < another.Count)
 				return false;
@@ -155,14 +207,14 @@ namespace Altaxo.Main
 			return true;
 		}
 
-		public DocumentPath SubPath(int start, int count)
+		public AbsoluteDocumentPath SubPath(int start, int count)
 		{
 			if (!(start >= 0))
 				throw new ArgumentOutOfRangeException("start should be >= 0");
 			if (!(count >= 0))
 				throw new ArgumentOutOfRangeException("count should be >= 0");
 
-			var result = new DocumentPath(this._IsAbsolutePath);
+			var result = new AbsoluteDocumentPath(this._IsAbsolutePath);
 			for (int i = 0; i < count; ++i)
 				result.Add(this[i + start]);
 			return result;
@@ -185,7 +237,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		public void Append(DocumentPath other)
+		public void Append(AbsoluteDocumentPath other)
 		{
 			if (null == other)
 				throw new ArgumentNullException("other");
@@ -194,8 +246,8 @@ namespace Altaxo.Main
 				this.Add(other[i]);
 		}
 
-		/// <summary>Replaces the last part of the <see cref="DocumentPath"/>, which is often the name of the object.</summary>
-		/// <param name="lastPart">The new last part of the <see cref="DocumentPath"/>.</param>
+		/// <summary>Replaces the last part of the <see cref="AbsoluteDocumentPath"/>, which is often the name of the object.</summary>
+		/// <param name="lastPart">The new last part of the <see cref="AbsoluteDocumentPath"/>.</param>
 		public void ReplaceLastPart(string lastPart)
 		{
 			if (this.Count == 0)
@@ -224,7 +276,7 @@ namespace Altaxo.Main
 		/// <para>Tables Preexperiment2\</para>
 		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
 		/// </remarks>
-		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart)
+		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart)
 		{
 			// Test if the start of my path is identical to that of partToReplace
 			if (this.Count < partToReplace.Count)
@@ -331,9 +383,9 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="node">The node for which the path is retrieved.</param>
 		/// <returns>The absolute path of the node. The first element is a "/" to mark this as absolute path.</returns>
-		public static DocumentPath GetAbsolutePath(IDocumentLeafNode node)
+		public static AbsoluteDocumentPath GetAbsolutePath(IDocumentLeafNode node)
 		{
-			DocumentPath path = GetPath(node, int.MaxValue);
+			AbsoluteDocumentPath path = GetPath(node, int.MaxValue);
 			path.IsAbsolutePath = true;
 			return path;
 		}
@@ -347,14 +399,14 @@ namespace Altaxo.Main
 		/// <returns>The path from the root or from the node in the depth <code>maxDepth</code>, whatever is reached first. The path is <b>not</b> prepended
 		/// by a "/".
 		/// </returns>
-		public static DocumentPath GetPath(IDocumentLeafNode node, int maxDepth)
+		public static AbsoluteDocumentPath GetPath(IDocumentLeafNode node, int maxDepth)
 		{
 			if (null == node)
 				throw new ArgumentNullException("node");
 			if (maxDepth <= 0)
 				throw new ArgumentOutOfRangeException("maxDepth should be > 0");
 
-			DocumentPath path = new DocumentPath();
+			AbsoluteDocumentPath path = new AbsoluteDocumentPath();
 
 			int depth = 0;
 			var parent = node.ParentObject;
@@ -395,7 +447,7 @@ namespace Altaxo.Main
 		/// <param name="endnode">The node where the path ends.</param>
 		/// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
 		/// If the nodes have no common root, then the function returns the absolute path of the endnode.</returns>
-		public static DocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode)
+		public static AbsoluteDocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode)
 		{
 			return GetRelativePathFromTo(startnode, endnode, null);
 		}
@@ -412,7 +464,7 @@ namespace Altaxo.Main
 		/// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
 		/// If the nodes have no common root, then the function returns the absolute path of the endnode.
 		/// <para>If either startnode or endnode is null, then null is returned.</para></returns>
-		public static DocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode, object stoppernode)
+		public static AbsoluteDocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode, object stoppernode)
 		{
 			System.Collections.Hashtable hash = new System.Collections.Hashtable();
 
@@ -420,6 +472,7 @@ namespace Altaxo.Main
 				return null;
 
 			// store the complete hierarchie of objects as keys in the hash, (values are the hierarchie depth)
+			bool hasBeenResolved = false;
 			int endnodedepth = 0;
 			var root = endnode;
 			while (root != null)
@@ -439,6 +492,7 @@ namespace Altaxo.Main
 				if (hash.ContainsKey(root))
 				{
 					endnodedepth = (int)hash[root]; // the depth of the endnode to this root
+					hasBeenResolved = true;
 					break;
 				}
 
@@ -457,7 +511,7 @@ namespace Altaxo.Main
 			}
 			else
 			{
-				DocumentPath path;
+				AbsoluteDocumentPath path;
 				path = GetPath(endnode, endnodedepth); // path of endnode depth
 				for (int i = 0; i < startnodedepth; i++)
 					path.Insert(0, ".."); // insert "root dir entries"
@@ -473,7 +527,7 @@ namespace Altaxo.Main
 		/// <param name="startnode">The node object which is considered as the starting point of the path.</param>
 		/// <param name="documentRoot">An alternative node which is used as starting point of the path if the first try failed.</param>
 		/// <returns>The resolved object. If the resolving process failed, the return value is null.</returns>
-		public static IDocumentLeafNode GetObject(DocumentPath path, IDocumentLeafNode startnode, IDocumentNode documentRoot)
+		public static IDocumentLeafNode GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode, IDocumentNode documentRoot)
 		{
 			var retval = GetObject(path, startnode);
 
@@ -483,7 +537,7 @@ namespace Altaxo.Main
 			return retval;
 		}
 
-		public static IDocumentLeafNode GetObject(DocumentPath path, IDocumentLeafNode startnode)
+		public static IDocumentLeafNode GetObject(AbsoluteDocumentPath path, IDocumentLeafNode startnode)
 		{
 			if (null == path)
 				throw new ArgumentNullException("path");
@@ -527,7 +581,7 @@ namespace Altaxo.Main
 		/// or
 		/// startnode
 		/// </exception>
-		public static IDocumentLeafNode GetNodeOrLeastResolveableNode(DocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
+		public static IDocumentLeafNode GetNodeOrLeastResolveableNode(AbsoluteDocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
 		{
 			if (null == path)
 				throw new ArgumentNullException("path");
@@ -577,12 +631,12 @@ namespace Altaxo.Main
 
 		object System.ICloneable.Clone()
 		{
-			return new DocumentPath(this);
+			return new AbsoluteDocumentPath(this);
 		}
 
-		public DocumentPath Clone()
+		public AbsoluteDocumentPath Clone()
 		{
-			return new DocumentPath(this);
+			return new AbsoluteDocumentPath(this);
 		}
 
 		#endregion ICloneable Members

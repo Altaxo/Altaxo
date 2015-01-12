@@ -219,7 +219,7 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeAttachmentDirectionChoices()
 		{
-			IPlotArea layer = DocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
+			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
 
 			_attachmentDirectionChoices = new SelectableListNodeList();
 

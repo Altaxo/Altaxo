@@ -223,7 +223,7 @@ namespace Altaxo
 		{
 			var owner = node as IPropertyBagOwner;
 			if (null == owner)
-				owner = Altaxo.Main.DocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
+				owner = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPropertyBagOwner>(node);
 
 			return new PropertyHierarchy(GetPropertyBags(owner));
 		}

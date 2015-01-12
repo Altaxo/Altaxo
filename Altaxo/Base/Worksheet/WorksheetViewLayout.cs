@@ -48,13 +48,13 @@ namespace Altaxo.Worksheet
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetViewLayout), 0)] // since 2012-02-01 buid 744
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			private DocumentPath _PathToLayout;
+			private AbsoluteDocumentPath _PathToLayout;
 			private WorksheetViewLayout _TableController;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (WorksheetViewLayout)obj;
-				info.AddValue("Layout", DocumentPath.GetAbsolutePath(s.WorksheetLayout));
+				info.AddValue("Layout", AbsoluteDocumentPath.GetAbsolutePath(s.WorksheetLayout));
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -66,17 +66,17 @@ namespace Altaxo.Worksheet
 				if (info.CurrentElementName == "Controller")
 				{
 					info.OpenElement();
-					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
+					surr._PathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
 					info.CloseElement();
 				}
 				else if (info.CurrentElementName == "BaseType")
 				{
 					info.GetString("BaseType");
-					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
+					surr._PathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
 				}
 				else
 				{
-					surr._PathToLayout = (DocumentPath)info.GetValue("Layout", s);
+					surr._PathToLayout = (AbsoluteDocumentPath)info.GetValue("Layout", s);
 				}
 
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
@@ -88,7 +88,7 @@ namespace Altaxo.Worksheet
 			{
 				if (null != _PathToLayout)
 				{
-					var o = DocumentPath.GetObject(_PathToLayout, documentRoot);
+					var o = AbsoluteDocumentPath.GetObject(_PathToLayout, documentRoot);
 					if (o is Altaxo.Worksheet.WorksheetLayout)
 					{
 						_TableController._worksheetLayout = (Altaxo.Worksheet.WorksheetLayout)o;

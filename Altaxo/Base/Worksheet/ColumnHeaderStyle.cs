@@ -140,7 +140,7 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
     
-      Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
+      Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();
       string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data));
 

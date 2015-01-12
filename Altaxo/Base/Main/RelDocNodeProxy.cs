@@ -45,7 +45,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// The relative path from our parent object to the docNode being proxied.
 		/// </summary>
-		private Main.DocumentPath _docNodePath;
+		private Main.RelativeDocumentPath _docNodePath;
 
 		/// <summary>
 		/// Weak handler that is called when the docNode has changed, or if there is no resolved docNode, when the watched node changed.
@@ -67,11 +67,16 @@ namespace Altaxo.Main
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelDocNodeProxy), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.RelDocNodeProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
+			private AbsoluteDocumentPath _absolutePath;
+			private RelDocNodeProxy _instance;
+
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version not supported");
+				/*
 				RelDocNodeProxy s = (RelDocNodeProxy)obj;
 				System.Diagnostics.Debug.Assert(s._parent != null);
 				Main.DocumentPath path;
@@ -85,6 +90,7 @@ namespace Altaxo.Main
 					path = s._docNodePath;
 				}
 				info.AddValue("Node", path);
+				*/
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -92,9 +98,83 @@ namespace Altaxo.Main
 				if (!(parent is Main.IDocumentNode))
 					throw new ArgumentException("Parent should be a valid document node");
 
-				var docNodePath = (Main.DocumentPath)info.GetValue("Node", null);
+				var docNodePath = info.GetValue("Node", null);
 
 				if (null == docNodePath)
+					return null;
+
+				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(info) { ParentObject = (IDocumentNode)parent };
+				if (docNodePath is AbsoluteDocumentPath)
+				{
+					if (((AbsoluteDocumentPath)docNodePath).IsAbsolutePath)
+					{
+						var surrogate = new XmlSerializationSurrogate0() { _absolutePath = (AbsoluteDocumentPath)docNodePath, _instance = s };
+						info.DeserializationFinished += surrogate.EhXmlDeserializationFinished;
+					}
+					else // was relative path -> convert old absolute path with relative flag into relative path
+					{
+						var relPath = RelativeDocumentPath.FromOldDeprecated((AbsoluteDocumentPath)docNodePath);
+						if (relPath.IsIdentity)
+							return null;
+						s._docNodePath = relPath;
+						// create a callback to resolve the instance as early as possible
+						info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+					}
+				}
+				else if (docNodePath is RelativeDocumentPath)
+				{
+					s._docNodePath = (RelativeDocumentPath)docNodePath;
+
+					// create a callback to resolve the instance as early as possible
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+				}
+
+				return s;
+			}
+
+			private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
+			{
+				var resolvedObj = Altaxo.Main.AbsoluteDocumentPath.GetObject(_absolutePath, _instance);
+
+				if (null != resolvedObj || isFinallyCall)
+				{
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
+					_instance.Document = resolvedObj;
+				}
+			}
+		}
+
+		/// <summary>
+		/// 2014-01-09 Using new class RelativeDocumentPath instead of DocumentPath
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelDocNodeProxy), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				RelDocNodeProxy s = (RelDocNodeProxy)obj;
+				System.Diagnostics.Debug.Assert(s._parent != null);
+				Main.RelativeDocumentPath path;
+				var docNode = s.InternalDocNode;
+				if (null != docNode)
+				{
+					path = Main.RelativeDocumentPath.GetRelativePathFromTo(s._parent, (Main.IDocumentLeafNode)docNode);
+				}
+				else
+				{
+					path = s._docNodePath;
+				}
+				info.AddValue("Node", path);
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				if (!(parent is Main.IDocumentNode))
+					throw new ArgumentException("Parent should be a valid document node");
+
+				var docNodePath = (Main.RelativeDocumentPath)info.GetValue("Node", null);
+
+				if (null == docNodePath || docNodePath.IsIdentity)
 					return null;
 
 				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(info);
@@ -142,7 +222,7 @@ namespace Altaxo.Main
 		public RelDocNodeProxy(RelDocNodeProxy from, bool copyPathOnly, Main.IDocumentNode parentNode)
 		{
 			this._parent = parentNode;
-			this._docNodePath = (Main.DocumentPath)from._docNodePath.Clone();
+			this._docNodePath = from._docNodePath.Clone();
 
 			if (!copyPathOnly && null != from.Document)
 				InternalSetDocNode(from.Document, parentNode);
@@ -160,11 +240,11 @@ namespace Altaxo.Main
 		/// <value>
 		/// The document path.
 		/// </value>
-		public DocumentPath DocumentPath
+		public RelativeDocumentPath DocumentPath
 		{
 			get
 			{
-				return (DocumentPath)_docNodePath.Clone();
+				return _docNodePath.Clone();
 			}
 		}
 
@@ -295,7 +375,7 @@ namespace Altaxo.Main
 				ClearDocNode();
 			}
 
-			InternalDocumentPath = Main.DocumentPath.GetRelativePathFromTo(parentNode, value);
+			InternalDocumentPath = RelativeDocumentPath.GetRelativePathFromTo(parentNode, value);
 			_docNodeRef = new WeakReference(value);
 
 #if DEBUG_DOCNODEPROXYLOGGING
@@ -338,7 +418,7 @@ namespace Altaxo.Main
 			}
 		}
 
-		protected DocumentPath InternalDocumentPath
+		protected RelativeDocumentPath InternalDocumentPath
 		{
 			get
 			{
@@ -361,11 +441,12 @@ namespace Altaxo.Main
 			if (docNode == null)
 			{
 				bool wasCompletelyResolved;
-				var node = Main.DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, _parent, out wasCompletelyResolved);
+				var node = Main.RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, _parent, out wasCompletelyResolved);
 				if (null == node)
 				{
 					// this can happen only if we dived to deep with our relative path, in this case we should use the root node, which should be of type AltaxoDocument
-					node = DocumentPath.GetRootNode(_parent);
+					node = Altaxo.Main.AbsoluteDocumentPath.GetRootNode(_parent);
+					wasCompletelyResolved = false;
 				}
 
 				if (wasCompletelyResolved)
@@ -416,7 +497,7 @@ namespace Altaxo.Main
 					// the only case were it is successfull if a new node immediately replaces an old document node
 
 					bool wasResolvedCompletely;
-					var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
+					var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsNode, out wasResolvedCompletely);
 					if (wasResolvedCompletely)
 					{
 						InternalSetDocNode(node, _parent);
@@ -433,7 +514,7 @@ namespace Altaxo.Main
 			{
 				if (null != InternalDocNode)
 				{
-					InternalDocumentPath = Main.DocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
+					InternalDocumentPath = RelativeDocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
 				}
 
 				shouldFireChangedEvent = true;
@@ -457,7 +538,7 @@ namespace Altaxo.Main
 
 			if (null != InternalDocNode)
 			{
-				_docNodePath = Main.DocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
+				_docNodePath = RelativeDocumentPath.GetRelativePathFromTo(_parent, InternalDocNode);
 			}
 
 			EhSelfChanged(EventArgs.Empty);
@@ -509,18 +590,6 @@ namespace Altaxo.Main
 			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
 			System.Diagnostics.Debug.Assert(sourceAsDocNode != null);
 
-			if (e is DocumentPathChangedEventArgs) // here, we activly change our stored path, if the watched node or a parent has changed its name
-			{
-				var watchedPath = DocumentPath.GetAbsolutePath(senderAsDocNode);
-				watchedPath.Append(_docNodePath.SubPath(watchedPath.Count, _docNodePath.Count - watchedPath.Count));
-				var oldPath = _docNodePath;
-				_docNodePath = watchedPath;
-
-#if DEBUG_DOCNODEPROXYLOGGING
-				Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_TunneledEvent: Modified path, oldpath={0}, newpath={1}", oldPath, _docNodePath);
-#endif
-			}
-
 			// then we try to resolve the path again
 			if ((e is DisposeEventArgs) || (e is DocumentPathChangedEventArgs))
 			{
@@ -529,7 +598,7 @@ namespace Altaxo.Main
 #endif
 
 				bool wasResolvedCompletely;
-				var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
+				var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
 				if (null == node)
 					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -567,7 +636,7 @@ namespace Altaxo.Main
 
 			bool wasResolvedCompletely;
 
-			var node = DocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
+			var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, senderAsDocNode, out wasResolvedCompletely);
 			if (null == node)
 				throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
@@ -641,7 +710,7 @@ namespace Altaxo.Main
 				var node = InternalDocNode;
 				if (null != node)
 				{
-					_docNodePath = DocumentPath.GetRelativePathFromTo(_parent, node);
+					_docNodePath = RelativeDocumentPath.GetRelativePathFromTo(_parent, node);
 				}
 			}
 

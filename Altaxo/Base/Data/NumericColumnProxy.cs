@@ -124,12 +124,12 @@ namespace Altaxo.Data
 			get { return _column; }
 		}
 
-		public DocumentPath DocumentPath
+		public AbsoluteDocumentPath DocumentPath
 		{
-			get { return new DocumentPath(); }
+			get { return new AbsoluteDocumentPath(); }
 		}
 
-		public bool ReplacePathParts(DocumentPath partToReplace, DocumentPath newPart, IDocumentLeafNode rootNode)
+		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
 		{
 			return false;
 		}

@@ -39,19 +39,19 @@ namespace Altaxo.Main
 	public delegate void DocNodeProxyReporter(IProxy proxy, object owner, string propertyName);
 
 	/// <summary>
-	/// Can be used to to relocate the <see cref="DocumentPath"/> that the <see cref="DocNodeProxy"/> is holding. The <see cref="Visit"/> function implements
+	/// Can be used to to relocate the <see cref="AbsoluteDocumentPath"/> that the <see cref="DocNodeProxy"/> is holding. The <see cref="Visit"/> function implements
 	/// the <see cref="DocNodeProxyReporter"/> delegate that is used to enumerate all proxies to <see cref="Altaxo.Data.DataColumn"/>s and change there references
 	/// to the corresponding <see cref="Altaxo.Data.DataColumn"/>s of another table.
 	/// </summary>
 	public class DocNodePathReplacementOptions
 	{
 		/// <summary>
-		/// The item relocation dictionary. This dictionary contains the whole <see cref="DocumentPath"/> of items that were relocated. The key is the old <see cref="DocumentPath"/> of the item,
-		/// the value is the new <see cref="DocumentPath"/> of the item. This dictionary has a higher priority than the _replacementDictionary.
+		/// The item relocation dictionary. This dictionary contains the whole <see cref="AbsoluteDocumentPath"/> of items that were relocated. The key is the old <see cref="AbsoluteDocumentPath"/> of the item,
+		/// the value is the new <see cref="AbsoluteDocumentPath"/> of the item. This dictionary has a higher priority than the _replacementDictionary.
 		/// </summary>
-		private Dictionary<DocumentPath, DocumentPath> _itemRelocationDictionary = new Dictionary<DocumentPath, DocumentPath>();
+		private Dictionary<AbsoluteDocumentPath, AbsoluteDocumentPath> _itemRelocationDictionary = new Dictionary<AbsoluteDocumentPath, AbsoluteDocumentPath>();
 
-		private List<KeyValuePair<DocumentPath, DocumentPath>> _pathPartReplacementDictionary = new List<KeyValuePair<DocumentPath, DocumentPath>>();
+		private List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>> _pathPartReplacementDictionary = new List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>();
 
 		/// <summary>
 		/// Visits a <see cref="DocNodeProxy"/> and applies the modifications to the document path of that proxy.
@@ -72,7 +72,7 @@ namespace Altaxo.Main
 				for (int i = docPath.Count; i >= 2; --i)
 				{
 					var subPath = docPath.SubPath(0, i);
-					DocumentPath replacePath;
+					AbsoluteDocumentPath replacePath;
 					if (_itemRelocationDictionary.TryGetValue(subPath, out replacePath))
 					{
 						proxy.ReplacePathParts(subPath, replacePath, (IDocumentLeafNode)owner);
@@ -94,7 +94,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="originalPath">The original path of the project item (DataTable, Graph, ProjectFolderPropertyBag).</param>
 		/// <param name="newPath">The new path of the project item.</param>
-		public void AddProjectItemReplacement(DocumentPath originalPath, DocumentPath newPath)
+		public void AddProjectItemReplacement(AbsoluteDocumentPath originalPath, AbsoluteDocumentPath newPath)
 		{
 			_itemRelocationDictionary.Add(originalPath, newPath);
 		}
@@ -117,7 +117,7 @@ namespace Altaxo.Main
 				orgPath.Add(originalItemNamePart);
 				var newPath = AltaxoDocument.GetRootPathForProjectItemType(itemType);
 				newPath.Add(newItemNamePart);
-				_pathPartReplacementDictionary.Add(new KeyValuePair<DocumentPath, DocumentPath>(orgPath, newPath));
+				_pathPartReplacementDictionary.Add(new KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>(orgPath, newPath));
 			}
 		}
 	}

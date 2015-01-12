@@ -741,6 +741,7 @@ namespace Altaxo.Graph.Gdi
 		/// </remarks>
 		protected void UpdateScaleLink(ScaleWithTicks swt)
 		{
+			/*
 			LinkedScale ls = (LinkedScale)swt.Scale;
 			Scale scaleLinkedTo = ls.ScaleLinkedTo;
 
@@ -781,6 +782,7 @@ namespace Altaxo.Graph.Gdi
 			// both cases fail, so we must convert the linked scale to a normal scale
 			swt.Scale = ls.WrappedScale; // set the scale to the wrapped scale
 			ls.ScaleLinkedTo = null; // free the event wiring
+			*/
 		}
 
 		/*

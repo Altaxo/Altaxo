@@ -269,7 +269,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
 		public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentLeafNode child)
 		{
-			return (GraphDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
+			return (GraphDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
 		}
 
 		#region IEnumerable<GraphDocument> Members

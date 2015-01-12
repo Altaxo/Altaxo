@@ -45,7 +45,7 @@ namespace Altaxo.Worksheet
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			protected ColumnStyleDictionary _deserializedInstance;
-			protected Dictionary<Main.DocumentPath, ColumnStyle> _unresolvedColumns;
+			protected Dictionary<Main.AbsoluteDocumentPath, ColumnStyle> _unresolvedColumns;
 
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -65,7 +65,7 @@ namespace Altaxo.Worksheet
 				foreach (var dictentry in s._columnStyles)
 				{
 					info.CreateElement("e");
-					info.AddValue("Column", Main.DocumentPath.GetAbsolutePath(dictentry.Key));
+					info.AddValue("Column", Main.AbsoluteDocumentPath.GetAbsolutePath(dictentry.Key));
 					info.AddValue("Style", dictentry.Value);
 					info.CommitElement(); // "e"
 				}
@@ -82,7 +82,7 @@ namespace Altaxo.Worksheet
 			protected virtual void Deserialize(ColumnStyleDictionary s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-				surr._unresolvedColumns = new Dictionary<Main.DocumentPath, ColumnStyle>();
+				surr._unresolvedColumns = new Dictionary<Main.AbsoluteDocumentPath, ColumnStyle>();
 				surr._deserializedInstance = s;
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
@@ -110,7 +110,7 @@ namespace Altaxo.Worksheet
 					for (int i = 0; i < count; i++)
 					{
 						info.OpenElement(); // "e"
-						Main.DocumentPath key = (Main.DocumentPath)info.GetValue("Column", s);
+						Main.AbsoluteDocumentPath key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
 						var val = (ColumnStyle)info.GetValue("Style", s);
 						surr._unresolvedColumns.Add(key, val);
 						info.CloseElement();
@@ -121,10 +121,10 @@ namespace Altaxo.Worksheet
 
 			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
-				List<Main.DocumentPath> resolvedStyles = new List<Main.DocumentPath>();
+				List<Main.AbsoluteDocumentPath> resolvedStyles = new List<Main.AbsoluteDocumentPath>();
 				foreach (var entry in this._unresolvedColumns)
 				{
-					object resolvedobj = Main.DocumentPath.GetObject((Main.DocumentPath)entry.Key, _deserializedInstance, documentRoot);
+					object resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _deserializedInstance, documentRoot);
 					if (null != resolvedobj)
 					{
 						_deserializedInstance._columnStyles.Add((DataColumn)resolvedobj, (ColumnStyle)entry.Value);

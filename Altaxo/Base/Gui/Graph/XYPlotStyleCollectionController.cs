@@ -166,8 +166,8 @@ namespace Altaxo.Gui.Graph
 			if (null == style) // if style was not constructed
 				style = (IG2DPlotStyle)Activator.CreateInstance((Type)sel.Tag); // try with parameterless constructor
 
-			IPlotArea layer = DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
-			G2DPlotItem plotitem = DocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
+			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+			G2DPlotItem plotitem = AbsoluteDocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
 			if (layer != null && plotitem != null)
 				_doc.PrepareNewSubStyle(style, layer, plotitem.GetRangesAndPoints(layer));
 

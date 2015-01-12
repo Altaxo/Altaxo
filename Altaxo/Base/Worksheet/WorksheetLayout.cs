@@ -103,14 +103,14 @@ namespace Altaxo.Worksheet
 		{
 			protected WorksheetLayout _worksheetLayout;
 			protected System.Collections.Hashtable _colStyles;
-			protected Main.DocumentPath _pathToTable;
+			protected Main.AbsoluteDocumentPath _pathToTable;
 
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				WorksheetLayout s = (WorksheetLayout)obj;
 
 				info.AddValue("Guid", System.Xml.XmlConvert.ToString(s._guid));
-				info.AddValue("Table", Main.DocumentPath.GetAbsolutePath(s._dataTable));
+				info.AddValue("Table", Main.AbsoluteDocumentPath.GetAbsolutePath(s._dataTable));
 				info.AddValue("RowHeaderStyle", s._rowHeaderStyle);
 				info.AddValue("ColumnHeaderStyle", s._columnHeaderStyle);
 				info.AddValue("PropertyColumnHeaderStyle", s._propertyColumnHeaderStyle);
@@ -124,7 +124,7 @@ namespace Altaxo.Worksheet
 				foreach (KeyValuePair<DataColumn, ColumnStyle> dictentry in s._dataColumnStyles)
 				{
 					info.CreateElement("e");
-					info.AddValue("Column", Main.DocumentPath.GetAbsolutePath(dictentry.Key));
+					info.AddValue("Column", Main.AbsoluteDocumentPath.GetAbsolutePath(dictentry.Key));
 					info.AddValue("Style", dictentry.Value);
 					info.CommitElement(); // "e"
 				}
@@ -146,7 +146,7 @@ namespace Altaxo.Worksheet
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
-				surr._pathToTable = (Main.DocumentPath)info.GetValue("Table", s);
+				surr._pathToTable = (Main.AbsoluteDocumentPath)info.GetValue("Table", s);
 				s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
 				s._columnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
 				s._propertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
@@ -169,7 +169,7 @@ namespace Altaxo.Worksheet
 					for (int i = 0; i < count; i++)
 					{
 						info.OpenElement(); // "e"
-						Main.DocumentPath key = (Main.DocumentPath)info.GetValue("Column", s);
+						Main.AbsoluteDocumentPath key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
 						object val = info.GetValue("Style", s);
 						surr._colStyles[key] = val;
 						info.CloseElement();
@@ -182,7 +182,7 @@ namespace Altaxo.Worksheet
 			{
 				if (this._pathToTable != null)
 				{
-					object table = Main.DocumentPath.GetObject(this._pathToTable, this._worksheetLayout, documentRoot);
+					object table = Main.AbsoluteDocumentPath.GetObject(this._pathToTable, this._worksheetLayout, documentRoot);
 					if (table is Altaxo.Data.DataTable)
 					{
 						this._worksheetLayout.DataTable = (Altaxo.Data.DataTable)table;
@@ -193,7 +193,7 @@ namespace Altaxo.Worksheet
 				System.Collections.ArrayList resolvedStyles = new System.Collections.ArrayList();
 				foreach (System.Collections.DictionaryEntry entry in this._colStyles)
 				{
-					object resolvedobj = Main.DocumentPath.GetObject((Main.DocumentPath)entry.Key, _worksheetLayout, documentRoot);
+					object resolvedobj = Main.AbsoluteDocumentPath.GetObject((Main.AbsoluteDocumentPath)entry.Key, _worksheetLayout, documentRoot);
 					if (null != resolvedobj)
 					{
 						_worksheetLayout.DataColumnStyles.Add((DataColumn)resolvedobj, (ColumnStyle)entry.Value);
