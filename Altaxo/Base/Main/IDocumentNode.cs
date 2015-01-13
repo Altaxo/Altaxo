@@ -46,6 +46,22 @@ namespace Altaxo.Main
 		IDocumentNode ParentObject { get; set; }
 
 		void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e);
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is disposed.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+		/// </value>
+		bool IsDisposed { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is dispose in progress, or the instance is already disposed.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is dispose in progress or already disposed; otherwise, <c>false</c>.
+		/// </value>
+		bool IsDisposeInProgress { get; }
 	}
 
 	/// <summary>
@@ -53,5 +69,13 @@ namespace Altaxo.Main
 	/// </summary>
 	public interface IDocumentNode : IDocumentLeafNode, IChildChangedEventSink, INamedObjectCollection
 	{
+	}
+
+	[Flags]
+	public enum DisposeState
+	{
+		NotDisposed = 0,
+		DisposeInProgress = 1,
+		Disposed = 2
 	}
 }

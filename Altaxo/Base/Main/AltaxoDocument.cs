@@ -413,7 +413,8 @@ namespace Altaxo
 			}
 			set
 			{
-				throw new InvalidOperationException("The parent object of AltaxoDocument can not be set and is always null");
+				if (null != value)
+					throw new InvalidOperationException("The parent object of AltaxoDocument can not be set and is always null");
 			}
 		}
 
@@ -501,12 +502,23 @@ namespace Altaxo
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null, "Tables");
-			yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null, "Graphs");
-			yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
-			yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null, "FitFunctionScripts");
-			yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null, "FolderProperties");
-			yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null, "ProjectFolders");
+			if (null != _dataTables)
+				yield return new Main.DocumentNodeAndName(_dataTables, () => _dataTables = null, "Tables");
+
+			if (null != _graphs)
+				yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null, "Graphs");
+
+			if (null != _tableLayouts)
+				yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
+
+			if (null != _fitFunctionScripts)
+				yield return new Main.DocumentNodeAndName(_fitFunctionScripts, () => _fitFunctionScripts = null, "FitFunctionScripts");
+
+			if (null != _projectFolderProperties)
+				yield return new Main.DocumentNodeAndName(_projectFolderProperties, () => _projectFolderProperties = null, "FolderProperties");
+
+			if (null != _projectFolders)
+				yield return new Main.DocumentNodeAndName(_projectFolders, () => _projectFolders = null, "ProjectFolders");
 		}
 
 		#region Static functions

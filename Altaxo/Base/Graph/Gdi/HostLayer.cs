@@ -409,27 +409,20 @@ namespace Altaxo.Graph.Gdi
 			}
 			set
 			{
-				if (object.ReferenceEquals(_location, value))
-					return;
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (null != _location)
-					_location.Dispose();
+				if (ChildSetMember(ref _location, value))
+				{
+					if (_location is ItemLocationDirect)
+						((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
 
-				_location = value;
+					// Note: there is no event link here to Changed event of new location instance,
+					// instead the event is and must be  handled in the EhChildChanged function of this layer
 
-				if (null != _location)
-					_location.ParentObject = this;
-
-				if (_location is ItemLocationDirect)
-					((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
-
-				// Note: there is no event link here to Changed event of new location instance,
-				// instead the event is and must be  handled in the EhChildChanged function of this layer
-
-				CalculateCachedSizeAndPosition();
-				EhSelfChanged(EventArgs.Empty);
+					CalculateCachedSizeAndPosition();
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -688,7 +681,7 @@ namespace Altaxo.Graph.Gdi
 
 			newlocation.SetPositionAndSize(x, y, width, height);
 
-			_location = newlocation;
+			this.Location = newlocation;
 		}
 
 		/// <summary>
@@ -1010,7 +1003,10 @@ namespace Altaxo.Graph.Gdi
 			for (int i = 0; i < _childLayers.Count; ++i)
 			{
 				if (i != _childLayers[i].LayerNumber)
+				{
 					_childLayers[i].OnLayerNumberChanged(i);
+					_childLayers[i].EhSelfTunnelingEventHappened(Main.DocumentPathChangedEventArgs.Empty, true);
+				}
 			}
 
 			if (null != LayerCollectionChanged)
@@ -1026,7 +1022,12 @@ namespace Altaxo.Graph.Gdi
 		public virtual void Remove(GraphicBase go)
 		{
 			if (_graphObjects.Contains(go))
-				_graphObjects.Remove(go);
+			{
+				if (_graphObjects.Remove(go))
+				{
+					go.Dispose();
+				}
+			}
 		}
 
 		/// <summary>

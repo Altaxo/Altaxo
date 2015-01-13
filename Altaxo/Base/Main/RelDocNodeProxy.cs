@@ -362,7 +362,10 @@ namespace Altaxo.Main
 				ClearDocNode();
 			}
 
-			InternalDocumentPath = RelativeDocumentPath.GetRelativePathFromTo(parentNode, value);
+			var newPath = RelativeDocumentPath.GetRelativePathFromTo(parentNode, value);
+			if (null != newPath)
+				InternalDocumentPath = newPath; // especially in dispose situations, the new path can be null. In this case we leave the path as it was
+
 			_docNodeRef = new WeakReference(value);
 
 #if DEBUG_DOCNODEPROXYLOGGING
@@ -559,7 +562,7 @@ namespace Altaxo.Main
 			node.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhWatchedNode_Changed, handler => node.Changed -= handler));
 
 #if DEBUG_DOCNODEPROXYLOGGING
-			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", DocumentPath.GetAbsolutePath(node), _docNodePath);
+			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", AbsoluteDocumentPath.GetAbsolutePath(node), _docNodePath);
 #endif
 		}
 

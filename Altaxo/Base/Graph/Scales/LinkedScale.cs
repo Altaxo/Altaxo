@@ -316,7 +316,7 @@ namespace Altaxo.Graph.Scales
 				if (null != scaleLinkedTo && !object.ReferenceEquals(scaleLinkedTo, _cachedResolvedScaleLinkedToWeak.Target)) // seems to be a newly resolved instance
 				{
 					// then we have to test whether this instance is circular dependent
-					_cachedResolvedScaleLinkedToWeak.Target = scaleLinkedTo;
+					_cachedResolvedScaleLinkedToWeak = new WeakReference(scaleLinkedTo);
 					// Test for circular references
 					_isScaleCircularDependend = IsScaleDependentOnMe(scaleLinkedTo);
 				}

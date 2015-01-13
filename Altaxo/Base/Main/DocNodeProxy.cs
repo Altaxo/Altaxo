@@ -237,6 +237,11 @@ namespace Altaxo.Main
 		/// <param name="from">Object to clone from.</param>
 		public DocNodeProxy(DocNodeProxy from)
 		{
+			if (null == from)
+				throw new ArgumentNullException("from");
+			if (from.IsDisposeInProgress)
+				throw new ObjectDisposedException("from");
+
 			if (null != from.InternalDocNode)
 			{
 				this.SetDocNode(from.InternalDocNode); // than the new Proxy refers to the same document node
@@ -655,7 +660,7 @@ namespace Altaxo.Main
 			node.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhWatchedNode_Changed, handler => node.Changed -= handler));
 
 #if DEBUG_DOCNODEPROXYLOGGING
-			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", DocumentPath.GetAbsolutePath(node), _docNodePath);
+			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", AbsoluteDocumentPath.GetAbsolutePath(node), _docNodePath);
 #endif
 		}
 

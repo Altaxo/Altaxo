@@ -598,6 +598,10 @@ namespace Altaxo.Main
 
 					// now create a new project
 					this.SetCurrentProject(new Altaxo.AltaxoDocument(), null);
+
+					// dispose the old project
+					if (null != closedProject)
+						closedProject.Dispose();
 				}
 			}
 		}

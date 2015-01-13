@@ -320,13 +320,18 @@ namespace Altaxo.Data
 		/// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
 		{
-			Report(_dataTable, this, "DataTable");
-
-			foreach (var entry in _dataColumnBundles)
+			using (var suspendToken = SuspendGetToken()) // Suspend important here because otherwise Table reports a changed event, which will delete all column proxies not belonging to the new table
 			{
-				var bundle = entry.Value;
-				for (int i = 0; i < bundle.DataColumns.Count; ++i)
-					Report(bundle.DataColumns[i], this, string.Format("DataColumns[{0}]", i));
+				Report(_dataTable, this, "DataTable");
+
+				foreach (var entry in _dataColumnBundles)
+				{
+					var bundle = entry.Value;
+					for (int i = 0; i < bundle.DataColumns.Count; ++i)
+						Report(bundle.DataColumns[i], this, string.Format("DataColumns[{0}]", i));
+				}
+
+				suspendToken.Resume();
 			}
 		}
 

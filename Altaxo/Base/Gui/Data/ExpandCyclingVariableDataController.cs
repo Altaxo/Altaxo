@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Data
 			var columnProxies = _doc.GetDataColumnProxies(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier);
 			foreach (var colProxy in columnProxies)
 			{
-				_valueColumns.Add(new SelectableListNode(colProxy.Document != null ? colProxy.Document.FullName : "Unresolved column", colProxy, false));
+				_valueColumns.Add(new SelectableListNode(colProxy.Document != null ? colProxy.Document.FullName : "Unresolved column", colProxy.Clone(), false)); // clone of colProxy is important for apply later on
 			}
 
 			if (null != _view)

@@ -52,6 +52,12 @@ namespace Altaxo.Main
 		[field: NonSerialized]
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
+		[NonSerialized]
+		private byte _disposeState;
+
+		private const byte DisposeState_DisposeInProgress = 1;
+		private const byte DisposeState_Disposed = 2;
+
 		/// <summary>
 		/// Gets/sets the parent object this instance belongs to.
 		/// </summary>
@@ -261,9 +267,18 @@ namespace Altaxo.Main
 
 		#region Dispose interface
 
+		public bool IsDisposeInProgress { get { return _disposeState != 0; } }
+
+		public bool IsDisposed { get { return _disposeState == DisposeState_Disposed; } }
+
 		public void Dispose()
 		{
-			Dispose(true);
+			if (_disposeState == 0)
+			{
+				_disposeState = DisposeState_DisposeInProgress;
+				Dispose(true);
+			}
+
 			GC.SuppressFinalize(this);
 		}
 
@@ -274,9 +289,10 @@ namespace Altaxo.Main
 
 		protected virtual void Dispose(bool isDisposing)
 		{
-			if (_parent != null)
+			if (!IsDisposed)
 			{
 				EhSelfTunnelingEventHappened(Main.DisposeEventArgs.Empty, isDisposing);
+				_disposeState = DisposeState_Disposed;
 				Changed = null;
 				TunneledEvent = null;
 				this.ParentObject = null;

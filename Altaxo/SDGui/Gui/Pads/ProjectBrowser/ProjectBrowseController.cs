@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (object.ReferenceEquals(_doc, e.Project))
 				return;
 
-			if (null != _doc)
+			if (null != _doc && null != _doc.Folders)
 			{
 				_doc.Folders.CollectionChanged -= this.EhProjectDirectoryItemChanged;
 			}

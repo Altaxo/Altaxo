@@ -329,6 +329,16 @@ namespace AltaxoTest.Data
 			{
 				throw new NotImplementedException();
 			}
+
+			public bool IsDisposed
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public bool IsDisposeInProgress
+			{
+				get { throw new NotImplementedException(); }
+			}
 		}
 
 		[Test]

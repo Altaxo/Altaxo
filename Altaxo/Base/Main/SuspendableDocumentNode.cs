@@ -242,9 +242,9 @@ namespace Altaxo.Main
 					return;
 
 				// Notify parent
-				if (_parent is Main.IChildChangedEventSink)
+				if (null != _parent && !_parent.IsDisposeInProgress)
 				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, eventArgsTransformed); // inform parent with transformed event args. Attention: parent may change our suspend state
+					_parent.EhChildChanged(this, eventArgsTransformed); // inform parent with transformed event args. Attention: parent may change our suspend state
 				}
 
 				if (!IsSuspendedOrResumeInProgress)
@@ -284,9 +284,9 @@ namespace Altaxo.Main
 			if (!IsSuspendedOrResumeInProgress)
 			{
 				// Notify parent
-				if (_parent is Main.IChildChangedEventSink)
+				if (null != _parent && !_parent.IsDisposeInProgress)
 				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+					_parent.EhChildChanged(this, e); // parent may change our suspend state
 				}
 
 				if (!IsSuspendedOrResumeInProgress)
@@ -352,7 +352,7 @@ namespace Altaxo.Main
 
 		protected override void Dispose(bool isDisposing)
 		{
-			if (_parent != null)
+			if (!IsDisposed)
 			{
 				if (isDisposing) // Dispose all childs (but only if calling dispose, and not in the finalizer)
 				{
@@ -365,7 +365,6 @@ namespace Altaxo.Main
 						tuple.DocumentNode.Dispose();
 					}
 				}
-
 				base.Dispose(isDisposing);
 			}
 		}
@@ -754,16 +753,16 @@ namespace Altaxo.Main
 
 #else
 
-			public bool ReportChildListProblems()
+		public static bool ReportChildListProblems()
 		{
-					Current.Console.WriteLine("ReportChildListProblems: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
-					return false;
+			Current.Console.WriteLine("ReportChildListProblems: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+			return false;
 		}
 
-			public static bool ReportWrongChildParentRelations()
+		public static bool ReportWrongChildParentRelations()
 		{
-					Current.Console.WriteLine("ReportWrongChildParentRelations: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
-					return false;
+			Current.Console.WriteLine("ReportWrongChildParentRelations: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+			return false;
 		}
 
 #endif

@@ -80,7 +80,7 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("{0}.Dispose", this.GetType().Name);
 
-			if (null != _currentProject)
+			if (null != _currentProject && null!=_currentProject.GraphDocumentCollection)
 			{
 				_currentProject.GraphDocumentCollection.CollectionChanged -= EhGraphDocumentRenamed;
 				_currentProject = null;
@@ -98,7 +98,7 @@ namespace Altaxo.Com
 
 			ComDebug.ReportInfo("{0}.EhCurrentProjectInstanceChanged", this.GetType().Name);
 
-			if (null != _currentProject)
+			if (null != _currentProject && null != _currentProject.GraphDocumentCollection)
 			{
 				_currentProject.GraphDocumentCollection.CollectionChanged -= EhGraphDocumentRenamed;
 			}

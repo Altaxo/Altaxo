@@ -459,13 +459,18 @@ namespace Altaxo.Data
 		/// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
 		{
-			if (null != _dataTable)
-				Report(_dataTable, this, "DataTable");
+			using (var suspendToken = SuspendGetToken()) // Suspend important here because otherwise Table reports a changed event, which will delete all column proxies not belonging to the new table
+			{
+				if (null != _dataTable)
+					Report(_dataTable, this, "DataTable");
 
-			Report(_rowHeaderColumn, this, "RowHeaderColumn");
-			Report(_columnHeaderColumn, this, "ColumnHeaderColumn");
-			for (int i = 0; i < _dataColumns.Count; ++i)
-				Report(_dataColumns[i], this, string.Format("DataColumns[{0}]", i));
+				Report(_rowHeaderColumn, this, "RowHeaderColumn");
+				Report(_columnHeaderColumn, this, "ColumnHeaderColumn");
+				for (int i = 0; i < _dataColumns.Count; ++i)
+					Report(_dataColumns[i], this, string.Format("DataColumns[{0}]", i));
+
+				suspendToken.Resume();
+			}
 		}
 
 		#region Setters for event wired members

@@ -96,6 +96,16 @@ namespace Altaxo.Main
 			}
 
 			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+
+			public bool IsDisposed
+			{
+				get { return false; }
+			}
+
+			public bool IsDisposeInProgress
+			{
+				get { return false; }
+			}
 		}
 
 		private static IDocumentNode _staticInstance = new StaticInstanceClass();

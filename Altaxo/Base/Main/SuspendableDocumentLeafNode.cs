@@ -156,9 +156,9 @@ namespace Altaxo.Main
 			if (!IsSuspended)
 			{
 				// Notify parent
-				if (_parent is Main.IChildChangedEventSink)
+				if (null != _parent && !_parent.IsDisposeInProgress)
 				{
-					((Main.IChildChangedEventSink)_parent).EhChildChanged(this, e); // parent may change our suspend state
+					_parent.EhChildChanged(this, e); // parent may change our suspend state
 				}
 
 				if (!IsSuspended)
