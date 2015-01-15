@@ -84,7 +84,9 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 		/// Creates a new graph, which has an x-y plot layer with an polar coordinate system. The name of the graph will be prepared, so that it is ready to be included in the project. However, it is not already included in the project.
 		/// </summary>
 		/// <param name="propertyContext">The property context. Can be retrieved for instance from the table the plot is initiated from or the folder.</param>
+		/// <param name="preferredGraphName">The name that is preferred for the new graph.</param>
 		/// <param name="anyNameInSameFolder">Any name of an item in the same folder. This name is used to determine the destination folder of the graph.</param>
+		/// <param name="includeInProject">If <c>true</c>, the graph is also included into the current project.</param>
 		/// <returns>The created graph. The graph is already part of the project. (But no view is created for the graph).</returns>
 		public static GraphDocument CreateGraph(IReadOnlyPropertyBag propertyContext, string preferredGraphName, string anyNameInSameFolder, bool includeInProject)
 		{

@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		private AdditionalTicks _additionalMajorTicks;
 		private AdditionalTicks _additionalMinorTicks;
 
-		private class CachedMajorMinor
+		private class CachedMajorMinor : ICloneable
 		{
 			/// <summary>Cached scale org.</summary>
 			public double Org;
@@ -91,6 +91,11 @@ namespace Altaxo.Graph.Scales.Ticks
 				End = end;
 				DecadesPerMajorTick = majorDecadesPerTick;
 				MinorTicks = minor;
+			}
+
+			public object Clone()
+			{
+				return this.MemberwiseClone();
 			}
 		}
 
@@ -210,6 +215,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				var from = obj as Log10TickSpacing;
 				if (null != from)
 				{
+					CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
+
 					_userDefinedNumberOfDecadesPerMajorTick = from._userDefinedNumberOfDecadesPerMajorTick;
 					_userDefinedMinorTicks = from._userDefinedMinorTicks;
 

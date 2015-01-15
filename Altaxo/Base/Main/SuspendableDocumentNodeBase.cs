@@ -52,10 +52,16 @@ namespace Altaxo.Main
 		[field: NonSerialized]
 		public event Action<object, object, Main.TunnelingEventArgs> TunneledEvent;
 
+		/// <summary>
+		/// The dispose state. If 0, the instance is fully functional. If <see cref="DisposeState_DisposeInProgress"/> (1), Dispose is currently in progress. If the value is <see cref="DisposeState_Disposed"/>, this instance is disposed.
+		/// </summary>
 		[NonSerialized]
 		private byte _disposeState;
 
+		/// <summary> Indicates that dispose is in progress.</summary>
 		private const byte DisposeState_DisposeInProgress = 1;
+
+		/// <summary> Indicates that the instance is disposed.</summary>
 		private const byte DisposeState_Disposed = 2;
 
 		/// <summary>
@@ -186,6 +192,11 @@ namespace Altaxo.Main
 		/// </value>
 		public abstract bool IsSuspended { get; }
 
+		/// <summary>
+		/// Resumes changed events by calling <see cref="ISuspendToken.Resume()"/> for the provided suspend token, and setting the reference to the suspend token to null.
+		/// If Event data were accumulated during the suspended state, a changed event is triggered for each event data.
+		/// </summary>
+		/// <param name="suspendToken">The suspend token.</param>
 		public void Resume(ref ISuspendToken suspendToken)
 		{
 			if (null != suspendToken)
@@ -195,6 +206,11 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Resumes changed events by calling <see cref="ISuspendToken.Resume()"/> for the provided suspend token, and setting the reference to the suspend token to null.
+		/// All event data accumulated during the suspended state are discarded, and thus no change event is triggered even if the instance has changed during the suspended state.
+		/// </summary>
+		/// <param name="suspendToken">The suspend token.</param>
 		public void ResumeSilently(ref ISuspendToken suspendToken)
 		{
 			if (null != suspendToken)
@@ -204,6 +220,12 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Resumes changed events, either with taking the accumulated event data into account (see <see cref="M:Resume()"/>) or discarding the accumulated event data (see <see cref="ResumeSilently"/>,
+		/// depending on the provided argument <paramref name="eventFiring"/>.
+		/// </summary>
+		/// <param name="suspendToken">The suspend token.</param>
+		/// <param name="eventFiring">This argument determines if the events are resumed taking the event data into account, or the resume is silent, i.e. accumulated event data are discarded.</param>
 		public void Resume(ref ISuspendToken suspendToken, EventFiring eventFiring)
 		{
 			if (null != suspendToken)
@@ -267,10 +289,25 @@ namespace Altaxo.Main
 
 		#region Dispose interface
 
+		/// <summary>
+		/// Gets a value indicating whether for this instance dispose is in progress, or the instance is already disposed.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is dispose in progress or already disposed; otherwise, <c>false</c>.
+		/// </value>
 		public bool IsDisposeInProgress { get { return _disposeState != 0; } }
 
+		/// <summary>
+		/// Gets a value indicating whether this instance is disposed.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+		/// </value>
 		public bool IsDisposed { get { return _disposeState == DisposeState_Disposed; } }
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose()
 		{
 			if (_disposeState == 0)
@@ -282,11 +319,18 @@ namespace Altaxo.Main
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// Finalizes an instance of the <see cref="SuspendableDocumentNodeBase"/> class.
+		/// </summary>
 		~SuspendableDocumentNodeBase()
 		{
 			Dispose(false);
 		}
 
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources.
+		/// </summary>
+		/// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool isDisposing)
 		{
 			if (!IsDisposed)
@@ -303,11 +347,23 @@ namespace Altaxo.Main
 
 		#region Implementation of Altaxo.Collections.INodeWithParentNode<IDocumentNode> and Altaxo.Collections.ITreeNode<IDocumentLeafNode>
 
+		/// <summary>
+		/// Gets the child nodes.
+		/// </summary>
+		/// <value>
+		/// The child nodes.
+		/// </value>
 		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes
 		{
 			get { yield break; }
 		}
 
+		/// <summary>
+		/// Gets the parent node of this node.
+		/// </summary>
+		/// <value>
+		/// The parent node.
+		/// </value>
 		IDocumentLeafNode Collections.INodeWithParentNode<IDocumentLeafNode>.ParentNode
 		{
 			get { return _parent; }
@@ -317,21 +373,42 @@ namespace Altaxo.Main
 
 		#region Tunneling event handling
 
+		/// <summary>
+		/// Is called by the parent when a tunneling event happened into the parent.
+		/// </summary>
+		/// <param name="sender">The sender (i.e. the parent of this instance).</param>
+		/// <param name="originalSource">The original source of the tunneling event.</param>
+		/// <param name="e">The <see cref="TunnelingEventArgs"/> instance containing the event data.</param>
 		public virtual void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
 		{
 			OnTunnelingEvent(originalSource, e);
 		}
 
+		/// <summary>
+		/// Is called by this instance if a tunneling event happened into this instance.
+		/// The tunneling event triggers the <see cref="TunneledEvent"/> and is - depending on the provided parameter - also distributed to all childs of this instance.
+		/// </summary>
+		/// <param name="e">The <see cref="TunnelingEventArgs"/> instance containing the event data.</param>
+		/// <param name="distributeThisEventToChilds">if set to <c>true</c>, the tunneling event is distributed to all childs of this instance.</param>
 		public virtual void EhSelfTunnelingEventHappened(TunnelingEventArgs e, bool distributeThisEventToChilds)
 		{
 			OnTunnelingEvent(this, e);
 		}
 
+		/// <summary>
+		/// Is called by this instance if a tunneling event happened into this instance. The tunneling event triggers the <see cref="TunneledEvent"/> and is additionally distributed to all childs of this instance.
+		/// </summary>
+		/// <param name="e">The <see cref="TunnelingEventArgs"/> instance containing the event data.</param>
 		public void EhSelfTunnelingEventHappened(TunnelingEventArgs e)
 		{
 			EhSelfTunnelingEventHappened(e, true);
 		}
 
+		/// <summary>
+		/// Fires the <see cref="TunneledEvent"/> event.
+		/// </summary>
+		/// <param name="originalSource">The original source of the tunneled event.</param>
+		/// <param name="e">The <see cref="TunnelingEventArgs"/> instance containing the event data.</param>
 		protected virtual void OnTunnelingEvent(IDocumentLeafNode originalSource, TunnelingEventArgs e)
 		{
 			var ev = TunneledEvent;
@@ -468,6 +545,11 @@ namespace Altaxo.Main
 
 #else
 
+		/// <summary>
+		/// Reports not connected document nodes, i.e. child node having no parent.
+		/// </summary>
+		/// <param name="showStatistics">if set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
+		/// <returns></returns>
 		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
 			Current.Console.WriteLine("ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");

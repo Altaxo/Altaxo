@@ -628,6 +628,7 @@ namespace Altaxo
 		/// </summary>
 		/// <param name="t1">First action argument.</param>
 		/// <param name="t2">Second action argument.</param>
+		/// <param name="t3">Third action argument.</param>
 		public void EventSink(T1 t1, T2 t2, T3 t3)
 		{
 			var handlerObj = _handlerObjectWeakRef.Target;

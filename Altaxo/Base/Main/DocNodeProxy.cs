@@ -31,9 +31,11 @@ using System.Threading.Tasks;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Holds a reference to an object. If the object is part of the document, i.e. a document node (implements <see cref="IDocumentLeafNode" />), then only a weak reference is held to this node, and special
-	/// measures are used to track the node by its path. The path to the node is stored, and if a new document node with that path exists, the reference to the object is restored.
-	/// <see cref="IProxy"/> can also hold non-document objects. To those objects a strong reference is established. The property <see cref="DocumentPath"/> then returns an empty path, and <see cref="ReplaceParts"/> does nothing at all.
+	/// Holds a reference to an object. If the object is part of the document, i.e. a document node (implements <see cref="IDocumentLeafNode" />),
+	/// then only a weak reference is held to this node, and special measures are used to track the node by its path.
+	/// The path to the node is stored, and if a new document node with that path exists, the reference to the object is restored.
+	/// <see cref="IProxy"/> can also hold non-document objects. To those objects a strong reference is established.
+	/// The property <see cref="DocumentPath"/> then returns an empty path, and <see cref="M:ReplacePathParts"/> does nothing at all.
 	/// </summary>
 	public interface IProxy : ICloneable
 	{
@@ -466,7 +468,7 @@ namespace Altaxo.Main
 
 		/// <summary>
 		/// Event handler that is called when the document node has disposed or name changed. Because the path to the node can have changed too,
-		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
+		/// the path is renewed in this case.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="source">Source of the tunneled event.</param>
@@ -525,7 +527,7 @@ namespace Altaxo.Main
 
 		/// <summary>
 		/// Event handler that is called when the document node has changed. Because the path to the node can have changed too,
-		/// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
+		/// the path is renewed in this case.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>

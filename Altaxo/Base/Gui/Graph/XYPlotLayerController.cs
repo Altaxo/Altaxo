@@ -155,7 +155,12 @@ namespace Altaxo.Gui.Graph
 
 			_doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
 
-			_originalDoc.CopyFrom(_doc, GraphCopyOptions.All); // _doc remains suspended
+			if (null != _docSuspendLock)
+				_docSuspendLock.Dispose(); // revoke suspend lock to let cached things fixed
+
+			_originalDoc.CopyFrom(_doc, GraphCopyOptions.All);
+
+			_docSuspendLock = _doc.SuspendGetToken();
 
 			return true;
 		}
@@ -498,7 +503,6 @@ namespace Altaxo.Gui.Graph
 			{
 				_doc.Location = (IItemLocation)_currentController.ModelObject;
 			}
-
 			else if (_currentPageName == "GridStyle")
 			{
 				GridPlane gp = (GridPlane)_currentController.ModelObject;

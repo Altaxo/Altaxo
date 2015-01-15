@@ -62,11 +62,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		PlotItemCollection ParentCollection { get; }
 
 		/// <summary>
-		/// Set the parent of this plot item.
-		/// </summary>
-		//new object ParentObject { set; }
-
-		/// <summary>
 		/// Collects all possible group styles that can be applied to this plot item in
 		/// styles. The styles collected here should be only external styles, i.e. such styles
 		/// that are indended to be share between different plot items.

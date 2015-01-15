@@ -334,10 +334,6 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		public void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
-		{
-		}
-
 		/// <summary>
 		/// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
 		/// </summary>

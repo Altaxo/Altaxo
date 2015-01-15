@@ -400,7 +400,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// The most probably cause of this is when the fit function has changed the number of parameters (or dependent or independent) variables unnoticed by this FitElement.
 		/// </summary>
 		/// <param name="throwOnMismatch">If <c>true</c>, an InvalidOperationException is thrown if the corresponding number from the fit function and the array size mismatch.</param>
-		/// <param name="forceChangedEvent">If <c>true</c>, the <see cref="Changed"/> event is fired even if no mismatch was detected.</param>
+		/// <param name="forceChangedEvent">If <c>true</c>, the <see cref="E:Changed"/> event is fired even if no mismatch was detected.</param>
 		/// <returns><c>True</c> if any mismatch occurred, so that the array size has changed. Otherwise, <c>False</c> is returned.</returns>
 		private bool InternalCheckAndCorrectArraySize(bool throwOnMismatch, bool forceChangedEvent)
 		{

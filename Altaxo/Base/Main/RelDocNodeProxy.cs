@@ -70,9 +70,6 @@ namespace Altaxo.Main
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.RelDocNodeProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			private AbsoluteDocumentPath _absolutePath;
-			private RelDocNodeProxy _instance;
-
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new InvalidOperationException("Serialization of old version not supported");

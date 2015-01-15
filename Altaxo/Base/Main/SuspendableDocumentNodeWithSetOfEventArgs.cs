@@ -31,7 +31,7 @@ namespace Altaxo.Main
 {
 	/// <summary>
 	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a special set <see cref="ISetOfEventData"/>.
-	/// This set takes into account that <see cref="SelfAccumulateableEventArgs"/> can be accumulated. By overriding <see cref="GetHashCode"/> and <see cref="Equals"/> you can control whether only one instance or
+	/// This set takes into account that <see cref="SelfAccumulateableEventArgs"/> can be accumulated. By overriding <see cref="M:GetHashCode"/> and <see cref="M:Equals"/> you can control whether only one instance or
 	/// multiple instances can be stored in the set.
 	/// This class supports document nodes that have children,
 	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.

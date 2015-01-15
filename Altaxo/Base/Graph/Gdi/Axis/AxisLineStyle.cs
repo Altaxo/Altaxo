@@ -277,7 +277,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <summary>
 		/// Copy operation.
 		/// </summary>
-		/// <param name="from">The AxisStyle to copy from</param>
+		/// <param name="obj">The AxisStyle to copy from</param>
 		public bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))

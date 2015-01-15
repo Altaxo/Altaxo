@@ -351,7 +351,7 @@ namespace Altaxo.Serialization.Ascii
 					watcher.EnableRaisingEvents = true;
 					watchers.Add(watcher);
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 				}
 			}

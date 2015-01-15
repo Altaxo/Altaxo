@@ -667,6 +667,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="sourceDpiResolution">The resolution in dpi of the source. This parameter is used only if creating the reference graphics context from the current printer fails. In this case, a context from a bitmap with the provided resolution is created.</param>
 		/// <param name="outputScalingFactor">Output scaling factor. If less than 1, the image will appear smaller than originally, if greater than 1, the image will appear larger than originally.</param>
 		/// <param name="pixelFormat">Optional: Only used if the graphics context can not be created from a printer document. Pixel format of the bitmap that is used in this case to construct the graphics context.</param>
+		/// <param name="stream">If not null, the metafile is rendered into this stream.</param>
 		/// <returns>The rendered enhanced metafile (vector format).</returns>
 		/// <remarks>
 		/// I found no other way to realize different dpi resolutions, independently of screen or printer device contexts, as to patch the resulting metafile stream with

@@ -80,14 +80,6 @@ namespace Altaxo.Graph.Gdi
 
 		#endregion Member variables
 
-		#region Event definitions
-
-		/// <summary>Fired when a scale instance of this layer has changed.</summary>
-		[field: NonSerialized]
-		public event Action<object, ScaleInstanceChangedEventArgs> ScaleInstanceChanged;
-
-		#endregion Event definitions
-
 		#region Constructors
 
 		#region Copying
@@ -545,17 +537,6 @@ namespace Altaxo.Graph.Gdi
 		#endregion XYPlotLayer properties and methods
 
 		#region Scale related
-
-		/// <summary>
-		/// Absorbs the event from the linked layer. Used to adjust the LinkedScale here.
-		/// </summary>
-		/// <param name="idx">Index of the scale in the linked layer.</param>
-		/// <param name="oldScale">Old scale instance.</param>
-		/// <param name="newScale">New scale instance.</param>
-		private void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
-		{
-			_scales.EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);
-		}
 
 		public TickSpacing XTicks
 		{
@@ -1208,8 +1189,6 @@ namespace Altaxo.Graph.Gdi
 		/// This handler is called if a x-boundary from any of the plotassociations of this layer
 		/// has changed. We then have to recalculate the boundaries.
 		/// </summary>
-		/// <param name="sender">The plotassociation that has caused the boundary changed event.</param>
-		/// <param name="e">The boundary changed event args.</param>
 		/// <remarks>Unfortunately we do not know if the boundary is extended or shrinked, if is is extended
 		/// if would be possible to merge only the changed boundary into the x-axis boundary.
 		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
@@ -1239,8 +1218,6 @@ namespace Altaxo.Graph.Gdi
 		/// This handler is called if a y-boundary from any of the plotassociations of this layer
 		/// has changed. We then have to recalculate the boundaries.
 		/// </summary>
-		/// <param name="sender">The plotassociation that has caused the boundary changed event.</param>
-		/// <param name="e">The boundary changed event args.</param>
 		/// <remarks>Unfortunately we do not know if the boundary is extended or shrinked, if is is extended
 		/// if would be possible to merge only the changed boundary into the y-axis boundary.
 		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
@@ -1269,14 +1246,9 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Absorbs the event from the ScaleCollection and distributes it further.
 		/// </summary>
-		/// <param name="idx">Index of the scale in the linked layer.</param>
-		/// <param name="oldScale">Old scale instance.</param>
-		/// <param name="newScale">New scale instance.</param>
+		/// <param name="e">The event data of the scale.</param>
 		private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
 		{
-			if (null != ScaleInstanceChanged)
-				ScaleInstanceChanged(this, e);
-
 			if (object.ReferenceEquals(_scales.X.Scale, e.NewScale))
 				RescaleXAxis();
 

@@ -35,12 +35,6 @@ namespace Altaxo.Graph.Scales
 	{
 		private ScaleWithTicks[] _scales = new ScaleWithTicks[2];
 
-		/// <summary>
-		/// Fired when one of the scale instances in this collection has changed.
-		/// </summary>
-		[field: NonSerialized]
-		public event Action<object, ScaleInstanceChangedEventArgs> ScaleInstanceChanged;
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleCollection), 0)]
@@ -233,15 +227,6 @@ namespace Altaxo.Graph.Scales
 			ChildSetMember(ref _scales[i], newvalue);
 		}
 
-		public void EhLinkedLayerScaleInstanceChanged(int idx, Scale oldScale, Scale newScale)
-		{
-			if (X.Scale is LinkedScale)
-				((LinkedScale)X.Scale).EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);
-
-			if (Y.Scale is LinkedScale)
-				((LinkedScale)Y.Scale).EhLinkedLayerScaleInstanceChanged(idx, oldScale, newScale);
-		}
-
 		public IEnumerator<ScaleWithTicks> GetEnumerator()
 		{
 			for (int i = 0; i < _scales.Length; ++i)
@@ -253,31 +238,5 @@ namespace Altaxo.Graph.Scales
 			for (int i = 0; i < _scales.Length; ++i)
 				yield return _scales[i];
 		}
-
-		#region Changed event handling
-
-		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			var es = e as ScaleInstanceChangedEventArgs;
-			if (null != es)
-			{
-				es.ScaleIndex = IndexOf(es.NewScale);
-			}
-
-			return base.HandleHighPriorityChildChangeCases(sender, ref e);
-		}
-
-		protected override void OnChanged(EventArgs e)
-		{
-			var es = e as ScaleInstanceChangedEventArgs;
-			if (null != es && null != ScaleInstanceChanged)
-			{
-				ScaleInstanceChanged(this, es);
-			}
-
-			base.OnChanged(e);
-		}
-
-		#endregion Changed event handling
 	}
 }

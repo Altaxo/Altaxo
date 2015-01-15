@@ -409,7 +409,7 @@ namespace Altaxo.DataConnection
 					GetConstraints(conn);
 					GetStoredProcedures(conn);
 				}
-				catch (OleDbException ex)
+				catch (OleDbException)
 				{
 					_connString = null;
 				}

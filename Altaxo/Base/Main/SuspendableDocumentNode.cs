@@ -33,7 +33,7 @@ namespace Altaxo.Main
 	/// Base class for a suspendable document node.
 	/// This class supports document nodes that have children, and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
 	/// </summary>
-	/// <remarks>If you don't need support for child events, consider using <see cref="SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
+	/// <remarks>If you don't need support for child events, consider using <see cref="T:Altaxo.Main.SuspendableDocumentLeafNode{TEventArgs}"/> instead.</remarks>
 	public abstract partial class SuspendableDocumentNode : SuspendableDocumentNodeBase, Main.IDocumentNode
 	{
 		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
@@ -68,9 +68,9 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Is called when the object is resumed, i.e. change notifications are allowed again. During the execution of this function, the <see cref="SuspendableObject.IsResumeInProgress"/> property will return <c>true</c> to indicate that the resume is currently in progress.
+		/// Is called when the object is resumed, i.e. change notifications are allowed again. During the execution of this function, the <see cref="P:IsResumeInProgress"/> property will return <c>true</c> to indicate that the resume is currently in progress.
 		/// </summary>
-		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="SuspendableObject.CountEvent"/> function was called during the suspend state.</param>
+		/// <param name="eventCount">The event count. The event count is the number of times the <see cref="M:CountEvent"/> function was called during the suspend state.</param>
 		protected virtual void OnResume(int eventCount)
 		{
 			// resume the suspended childs
@@ -212,7 +212,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Processes the event args <paramref name="e"/> when this object is not suspended. This function serves two purposes:
 		/// i) updating some cached data of this object by processing the event args of the child,
-		/// and ii) optional transforming the event args, for instance to a new type, which afterwards is send to the parent and is used as event args in the <see cref="Changed"/> event of this object.
+		/// and ii) optional transforming the event args, for instance to a new type, which afterwards is send to the parent and is used as event args in the <see cref="E:Changed"/> event of this object.
 		/// The transformed event args is <b>not</b> used if this object is suspended (in this case the original event args is used).
 		/// </summary>
 		/// <param name="sender">The sender of the event args, usually a child of this object.</param>

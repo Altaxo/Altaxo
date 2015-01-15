@@ -30,9 +30,9 @@ using System.Text;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Helper class to temporarily disable something, e.g. some events. By calling <see cref="SuspendGetToken"/> one gets a disposable token, that,
-	/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="SuspendGetToken"/>. In this case all tokens
-	/// must be disposed before the <see cref="IsNotSuspended"/> is again <c>true</c> and the re-enabling action is fired.
+	/// Helper class to temporarily disable something, e.g. some events. By calling <see cref="M:SuspendGetToken"/> one gets a disposable token, that,
+	/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="M:SuspendGetToken"/>. In this case all tokens
+	/// must be disposed before the <see cref="P:IsSuspended"/> is again <c>true</c> and the re-enabling action is fired.
 	/// </summary>
 	public class TemporaryDisabler : SuspendableObject
 	{

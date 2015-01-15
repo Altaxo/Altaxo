@@ -180,6 +180,11 @@ namespace Altaxo.Graph.Scales
 			{
 				UpdateIfTicksChanged();
 			}
+			else // TODO fix suspend for IVMCAControllers, if fixed, this branch can be deleted
+			{
+				if (null != _tickSpacing && null != _scale)
+					_tickSpacing.FinalProcessScaleBoundaries(_scale.OrgAsVariant, _scale.EndAsVariant, _scale);
+			}
 		}
 
 		private void UpdateIfTicksChanged()

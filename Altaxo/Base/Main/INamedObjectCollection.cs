@@ -108,7 +108,7 @@ namespace Altaxo.Main
 		/// Called if the child has been renamed.
 		/// </summary>
 		/// <param name="childNode">The child node.</param>
-		/// <param name="newName">The old name of the child name.</param>
+		/// <param name="oldName">The old name of the child name.</param>
 		void EhChild_HasBeenRenamed(Main.INameOwner childNode, string oldName);
 
 		/// <summary>

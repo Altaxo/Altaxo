@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		private class CachedMajorMinor
+		private class CachedMajorMinor : ICloneable
 		{
 			public DateTime Org, End;
 			/// <summary>Physical span value between two major ticks.</summary>
@@ -293,6 +293,11 @@ namespace Altaxo.Graph.Scales.Ticks
 				End = end;
 				MajorTickSpan = major;
 				MinorTickSpan = minor;
+			}
+
+			public object Clone()
+			{
+				return this.MemberwiseClone();
 			}
 		}
 
@@ -490,7 +495,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				var from = obj as DateTimeTickSpacing;
 				if (null != from)
 				{
-					_cachedMajorMinor = null; // invalidate the cached setting
+					CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
 
 					_userDefinedMajorSpan = from._userDefinedMajorSpan;
 					_userDefinedMinorTicks = from._userDefinedMinorTicks;

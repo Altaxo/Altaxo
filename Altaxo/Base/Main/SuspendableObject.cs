@@ -273,7 +273,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Is called when the suspend level falls down from 1 to zero  by a call to <see cref="ISuspendToken.Resume()"/> or a call to <see cref="ISuspendToken.Dispose()"/>.
+		/// Is called when the suspend level falls down from 1 to zero  by a call to <see cref="ISuspendToken.Resume()"/> or a call to <see cref="M:ISuspendToken.Dispose"/>.
 		/// </summary>
 		protected virtual void OnResume()
 		{
