@@ -145,6 +145,25 @@ namespace Altaxo.Worksheet
 				yield return new Main.DocumentNodeAndName(entry.Value, entry.Key);
 		}
 
+		protected override void Dispose(bool isDisposing)
+		{
+			if (isDisposing)
+			{
+				var items = _items;
+				if (null != items)
+				{
+					_items = new Dictionary<string, WorksheetLayout>();
+					foreach (var entry in items)
+					{
+						if (null != entry.Value)
+							entry.Value.Dispose();
+					}
+				}
+			}
+
+			base.Dispose(isDisposing);
+		}
+
 		#endregion INamedObjectCollection Members
 
 		#region ICollection<WorksheetLayout> Members

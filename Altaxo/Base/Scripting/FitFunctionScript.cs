@@ -446,29 +446,11 @@ namespace Altaxo.Scripting
 				for (int i = 0; i < this._DependentVariablesNames.Length; ++i)
 					this._DependentVariablesNames[i] = ff.DependentVariableName(i);
 
-				OnChanged();
+				EhSelfChanged(EventArgs.Empty);
 			}
 
 			return success;
 		}
-
-		#region Change event
-
-		/// <summary>
-		/// Called when anything in this fit function has changed.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (null != Changed)
-				Changed();
-		}
-
-		/// <summary>
-		/// Fired when the fit function changed.
-		/// </summary>
-		public event Action Changed;
-
-		#endregion Change event
 
 		#region Text Definitions
 

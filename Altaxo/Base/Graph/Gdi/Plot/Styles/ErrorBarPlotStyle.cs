@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				s._isHorizontalStyle = (0 == info.GetInt32("Axis"));
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
-				s._symbolSize = info.GetInt32("SymbolSize");
+				s._symbolSize = info.GetDouble("SymbolSize");
 				s._symbolGap = info.GetBoolean("SymbolGap");
 				s._skipFreq = info.GetInt32("SkipFreq");
 				s._showEndBars = info.GetBoolean("ShowEndBars");

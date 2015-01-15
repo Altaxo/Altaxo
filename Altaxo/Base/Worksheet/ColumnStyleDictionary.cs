@@ -158,6 +158,37 @@ namespace Altaxo.Worksheet
 				yield return new Main.DocumentNodeAndName(entry.Value, "ColumnStyle_" + entry.Key.FullName);
 		}
 
+		protected override void Dispose(bool isDisposing)
+		{
+			if (isDisposing)
+			{
+				var tmpDefaultColumnStyles = _defaultColumnStyles;
+				var tmpColumnStyles = _columnStyles;
+
+				if (null != tmpDefaultColumnStyles || null != tmpColumnStyles)
+				{
+					_defaultColumnStyles = new Dictionary<Type, ColumnStyle>();
+					_columnStyles = new Dictionary<DataColumn, ColumnStyle>();
+
+					foreach (var entry in tmpDefaultColumnStyles)
+					{
+						if (entry.Value != null)
+							entry.Value.Dispose();
+					}
+
+					foreach (var entry in tmpColumnStyles)
+					{
+						if (null != entry.Key)
+							DetachKey(entry.Key);
+						if (null != entry.Value)
+							entry.Value.Dispose();
+					}
+				}
+			}
+
+			base.Dispose(isDisposing);
+		}
+
 		private void AttachKey(DataColumn key)
 		{
 			key.TunneledEvent += EhKey_TunneledEvent;

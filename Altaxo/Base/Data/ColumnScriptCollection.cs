@@ -118,6 +118,9 @@ namespace Altaxo.Data
 			}
 			set
 			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
 				IColumnScriptText oldValue;
 				_d.TryGetValue(key, out oldValue);
 
@@ -126,7 +129,9 @@ namespace Altaxo.Data
 
 				_d[key] = value;
 				value.ParentObject = this;
-				oldValue.Dispose();
+
+				if (null != oldValue)
+					oldValue.Dispose();
 			}
 		}
 
