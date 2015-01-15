@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
-
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -34,14 +35,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 	[FitFunctionClass]
 	public class KohlrauschModulusRelaxation : IFitFunction
 	{
-		bool _useFrequencyInsteadOmega;
-		bool _useFlowTerm;
-		bool _logarithmizeResults;
+		private bool _useFrequencyInsteadOmega;
+		private bool _useFlowTerm;
+		private bool _logarithmizeResults;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusRelaxation), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -62,7 +63,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusRelaxation), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -84,12 +85,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public KohlrauschModulusRelaxation()
 		{
-
 		}
 
 		public override string ToString()
@@ -131,7 +130,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return result;
 		}
 
-
 		[FitFunctionCreator("Lg10 Kohlrausch Complex (Freq)", "Relaxation/Modulus", 1, 2, 4)]
 		[Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
 		public static IFitFunction CreateLg10ModulusOfFrequency()
@@ -144,7 +142,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return result;
 		}
 
-
 		#region IFitFunction Members
 
 		#region independent variable definition
@@ -156,14 +153,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return 1;
 			}
 		}
+
 		public string IndependentVariableName(int i)
 		{
 			return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
 		}
-		#endregion
+
+		#endregion independent variable definition
 
 		#region dependent variable definition
+
 		private string[] _dependentVariableName = new string[] { "re", "im" };
+
 		public int NumberOfDependentVariables
 		{
 			get
@@ -171,14 +172,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return _dependentVariableName.Length;
 			}
 		}
+
 		public string DependentVariableName(int i)
 		{
 			return _dependentVariableName[i];
 		}
-		#endregion
+
+		#endregion dependent variable definition
 
 		#region parameter definition
-		string[] _parameterName = new string[] { "m_0", "m_inf", "tau_relax", "beta", "invviscosity" };
+
+		private string[] _parameterName = new string[] { "m_0", "m_inf", "tau_relax", "beta", "invviscosity" };
+
 		public int NumberOfParameters
 		{
 			get
@@ -186,6 +191,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return this._useFlowTerm ? _parameterName.Length : _parameterName.Length - 1;
 			}
 		}
+
 		public string ParameterName(int i)
 		{
 			return _parameterName[i];
@@ -197,10 +203,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			{
 				case 0:
 					return 1;
+
 				case 1:
 					return 2;
+
 				case 2:
 					return 1;
+
 				case 3:
 					return 1;
 			}
@@ -213,10 +222,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return null;
 		}
 
-		#endregion
+		#endregion parameter definition
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="X"></param>
 		/// <param name="P"></param>
@@ -255,22 +264,20 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-
 		/// <summary>
 		/// Called when anything in this fit function has changed.
 		/// </summary>
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-
-		#endregion
+		#endregion IFitFunction Members
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
-	/// This evaluates a function value. 
+	/// This evaluates a function value.
 	/// </summary>
 	/// <param name="independent">The independent variables.</param>
 	/// <param name="parameters">Parameters for evaluation.</param>
@@ -67,7 +69,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <returns>The name of the ith dependent variable.</returns>
 		string DependentVariableName(int i);
 
-
 		/// <summary>
 		/// Returns the ith parameter name.
 		/// </summary>
@@ -92,7 +93,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		IVarianceScaling DefaultVarianceScaling(int i);
 
 		/// <summary>
-		/// This evaluates a function value. 
+		/// This evaluates a function value.
 		/// </summary>
 		/// <param name="independent">The independent variables.</param>
 		/// <param name="parameters">Parameters for evaluation.</param>
@@ -100,17 +101,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// function values at the point (independent).</param>
 		void Evaluate(double[] independent, double[] parameters, double[] FV);
 
-
 		/// <summary>
 		/// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.
 		/// </summary>
-		event Action Changed;
+		event EventHandler Changed;
 	}
 
 	public interface IFitFunctionWithGradient : IFitFunction
 	{
 		/// <summary>
-		/// This evaluates the gradient of the function with respect to the parameters. 
+		/// This evaluates the gradient of the function with respect to the parameters.
 		/// </summary>
 		/// <param name="independent">The independent variables.</param>
 		/// <param name="parameters">Parameters for evaluation.</param>

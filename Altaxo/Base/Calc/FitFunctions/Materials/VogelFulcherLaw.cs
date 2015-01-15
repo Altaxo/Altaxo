@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.ComponentModel;
+#endregion Copyright
+
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Science;
+using System;
+using System.ComponentModel;
 
 namespace Altaxo.Calc.FitFunctions.Materials
 {
-
-
 	/// <summary>
 	/// Represents the Vogel-Fulcher law to describe the temperature dependence of rates in glass forming substances.
 	/// </summary>
@@ -37,10 +37,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
 	{
 		public enum OutputType { Direct = 0, NaturalLogarithm = 1, DecadicLogarithm = 2 };
 
-		TransformedValueRepresentation _dependentVariableTransform;
-		TemperatureRepresentation _temperatureUnitOfX;
-		TemperatureRepresentation _temperatureUnitOfT0;
-		TemperatureRepresentation _temperatureUnitOfB;
+		private TransformedValueRepresentation _dependentVariableTransform;
+		private TemperatureRepresentation _temperatureUnitOfX;
+		private TemperatureRepresentation _temperatureUnitOfT0;
+		private TemperatureRepresentation _temperatureUnitOfB;
 
 		[Category("OptionsForDependentVariables")]
 		public TransformedValueRepresentation DependentVariableRepresentation
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VogelFulcherLaw), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -97,10 +97,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			}
 		}
 
-		#endregion
+		#endregion Serialization
+
 		public VogelFulcherLaw()
 		{
-
 		}
 
 		public override string ToString()
@@ -108,13 +108,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			return "VogelFulcherLaw";
 		}
 
-
 		[FitFunctionCreator("VogelFulcherLaw", "Materials", 1, 1, 3)]
 		public static IFitFunction CreateDefault()
 		{
 			return new VogelFulcherLaw();
 		}
-
 
 		#region IFitFunction Members
 
@@ -144,7 +142,6 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
 		public string IndependentVariableName(int i)
 		{
-
 			return "T_" + _temperatureUnitOfX.ToString();
 		}
 
@@ -159,10 +156,12 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			{
 				case 0:
 					return "y0";
+
 				case 1:
 					return "B_" + _temperatureUnitOfB.ToString(); ;
 				case 2:
 					return "T0_" + _temperatureUnitOfT0.ToString();
+
 				default:
 					throw new ArgumentOutOfRangeException("i");
 			}
@@ -174,8 +173,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			{
 				case 0:
 					return 1;
+
 				case 1:
 					return 1000;
+
 				case 2:
 					return 0;
 			}
@@ -200,15 +201,8 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		/// <summary>
 		/// Not used here since this fit function never changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
-
-	
+		#endregion IFitFunction Members
 	}
-
-
-
-
-
 }

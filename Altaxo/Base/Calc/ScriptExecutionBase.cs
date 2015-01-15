@@ -1235,13 +1235,13 @@ namespace Altaxo.Calc
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
 		#endregion Change event
 	}

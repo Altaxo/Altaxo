@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +36,12 @@ namespace Altaxo.Main
 	/// concept with the concept of the folder in which a project item virtually exists  (see <see cref="ProjectFolder"/>).
 	/// </summary>
 	[Serializable]
-	public class AbsoluteDocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
+	public sealed class AbsoluteDocumentPath : System.ICloneable
 	{
+		public static readonly AbsoluteDocumentPath DocumentPathOfRootNode = new AbsoluteDocumentPath(new string[0]);
+
+		private string[] _pathParts;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocumentPath", 0)]
@@ -63,12 +68,12 @@ namespace Altaxo.Main
 
 				if (isAbsolutePath)
 				{
-					var s = (AbsoluteDocumentPath)o ?? new AbsoluteDocumentPath();
 					int count = info.OpenArray();
+					var arr = new string[count];
 					for (int i = 0; i < count; i++)
-						s.Add(info.GetString());
+						arr[i] = info.GetString();
 					info.CloseArray(count);
-					return s;
+					return new AbsoluteDocumentPath(arr);
 				}
 				else
 				{
@@ -98,52 +103,47 @@ namespace Altaxo.Main
 			{
 				AbsoluteDocumentPath s = (AbsoluteDocumentPath)obj;
 
-				info.CreateArray("Path", s.Count);
-				for (int i = 0; i < s.Count; i++)
-					info.AddValue("e", s[i]);
+				info.CreateArray("Path", s._pathParts.Length);
+				for (int i = 0; i < s._pathParts.Length; i++)
+					info.AddValue("e", s._pathParts[i]);
 				info.CommitArray();
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				AbsoluteDocumentPath s = null != o ? (AbsoluteDocumentPath)o : new AbsoluteDocumentPath();
-
 				int count = info.OpenArray();
+				var arr = new string[count];
 				for (int i = 0; i < count; i++)
-					s.Add(info.GetString());
+					arr[i] = info.GetString();
 				info.CloseArray(count);
-
-				return s;
+				return new AbsoluteDocumentPath(arr);
 			}
 		}
 
 		#endregion Serialization
 
-		public AbsoluteDocumentPath(bool isAbsolutePath)
+		/// <summary>
+		/// Private constructor that takes an array of path elements as it is. Make sure that the array is not given outwards, so that it is not possible to modify it unintentionally.
+		/// </summary>
+		/// <param name="arr">The arr.</param>
+		private AbsoluteDocumentPath(string[] arr)
 		{
+			_pathParts = arr;
 		}
 
-		public AbsoluteDocumentPath()
-			: this(false)
+		public AbsoluteDocumentPath(IEnumerable<string> path)
 		{
+			_pathParts = path.ToArray();
 		}
 
 		public AbsoluteDocumentPath(AbsoluteDocumentPath from)
 		{
-			foreach (string s in from)
-				Add(s);
+			_pathParts = (string[])from._pathParts.Clone();
 		}
 
-		/// <summary>Get a absolute <see cref="AbsoluteDocumentPath"/> from a collection node and the name of an item in this collection.</summary>
-		/// <param name="collectionNode">The collection node (for instance the DataTableCollection in the current project).</param>
-		/// <param name="nameOfItemInTheCollection">The name of item in the collection (in the above example the name of the data table).</param>
-		/// <returns>An absolute document path designating the named item in the collection.</returns>
-		public static AbsoluteDocumentPath FromDocumentCollectionNodeAndName(IDocumentLeafNode collectionNode, string nameOfItemInTheCollection)
-		{
-			AbsoluteDocumentPath result = AbsoluteDocumentPath.GetAbsolutePath(collectionNode);
-			result.Add(nameOfItemInTheCollection);
-			return result;
-		}
+		public int Count { get { return _pathParts.Length; } }
+
+		public string this[int idx] { get { return _pathParts[idx]; } }
 
 		public override string ToString()
 		{
@@ -201,10 +201,7 @@ namespace Altaxo.Main
 			if (!(count >= 0))
 				throw new ArgumentOutOfRangeException("count should be >= 0");
 
-			var result = new AbsoluteDocumentPath();
-			for (int i = 0; i < count; ++i)
-				result.Add(this[i + start]);
-			return result;
+			return new AbsoluteDocumentPath(this._pathParts.Skip(start).Take(count));
 		}
 
 		/// <summary>
@@ -224,25 +221,42 @@ namespace Altaxo.Main
 			}
 		}
 
-		public void Append(AbsoluteDocumentPath other)
+		public AbsoluteDocumentPath Append(AbsoluteDocumentPath other)
 		{
 			if (null == other)
 				throw new ArgumentNullException("other");
 
-			for (int i = 0; i < other.Count; ++i)
-				this.Add(other[i]);
+			var arr = new string[this._pathParts.Length + other._pathParts.Length];
+			Array.Copy(this._pathParts, arr, this._pathParts.Length);
+			Array.Copy(other._pathParts, 0, arr, this._pathParts.Length, other._pathParts.Length);
+
+			return new AbsoluteDocumentPath(arr);
+		}
+
+		public AbsoluteDocumentPath Append(string other)
+		{
+			if (null == other)
+				throw new ArgumentNullException("other");
+
+			var arr = new string[this._pathParts.Length + 1];
+			Array.Copy(this._pathParts, arr, this._pathParts.Length);
+			arr[this._pathParts.Length] = other;
+
+			return new AbsoluteDocumentPath(arr);
 		}
 
 		/// <summary>Replaces the last part of the <see cref="AbsoluteDocumentPath"/>, which is often the name of the object.</summary>
 		/// <param name="lastPart">The new last part of the <see cref="AbsoluteDocumentPath"/>.</param>
-		public void ReplaceLastPart(string lastPart)
+		public AbsoluteDocumentPath ReplaceLastPart(string lastPart)
 		{
 			if (this.Count == 0)
 				throw new InvalidOperationException("DocumentPath is empty, thus replacement of last part is not possible");
 			if (string.IsNullOrEmpty(lastPart))
 				throw new ArgumentOutOfRangeException("lastPart is null or empty");
 
-			this[this.Count - 1] = lastPart;
+			var arr = (string[])this._pathParts.Clone();
+			arr[arr.Length - 1] = lastPart;
+			return new AbsoluteDocumentPath(arr);
 		}
 
 		/// <summary>
@@ -251,6 +265,7 @@ namespace Altaxo.Main
 		/// <param name="partToReplace">Part of the path that should be replaced. This part has to match the beginning of this part. The last item of the part
 		/// is allowed to be given only partially.</param>
 		/// <param name="newPart">The new part to replace that piece of the path, that match the <c>partToReplace</c>.</param>
+		/// <param name="newPath">The resulting new path (if the return value is <c>true</c>), or the original path, if the return value is <c>false</c>.</param>
 		/// <returns>True if the part could be replaced. Returns false if the path does not fulfill the presumtions given above.</returns>
 		/// <remarks>
 		/// As stated above, the last item of the partToReplace can be given only partially. As an example, the path (here separated by space)
@@ -263,8 +278,9 @@ namespace Altaxo.Main
 		/// <para>Tables Preexperiment2\</para>
 		/// <para>Note that Preexperiment1\ and Preexperiment2\ are only partially defined items of the path.</para>
 		/// </remarks>
-		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart)
+		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, out AbsoluteDocumentPath newPath)
 		{
+			newPath = this;
 			// Test if the start of my path is identical to that of partToReplace
 			if (this.Count < partToReplace.Count)
 				return false;
@@ -279,24 +295,26 @@ namespace Altaxo.Main
 			// ok, the beginning of my path and partToReplace is identical,
 			// thus we replace the beginning of my path with that of newPart
 
-			string s = this[partToReplace.Count - 1].Substring(partToReplace[partToReplace.Count - 1].Length);
-			this[partToReplace.Count - 1] = newPart[newPart.Count - 1] + s;
+			var list = new List<string>(this._pathParts);
+			string s = list[partToReplace.Count - 1].Substring(partToReplace[partToReplace.Count - 1].Length);
+			list[partToReplace.Count - 1] = newPart[newPart.Count - 1] + s;
 
 			int j, k;
 			for (j = partToReplace.Count - 2, k = newPart.Count - 2; j >= 0 && k >= 0; --j, --k)
-				this[j] = newPart[k];
+				list[j] = newPart[k];
 
 			if (k > 0)
 			{
 				for (; k >= 0; --k)
-					this.Insert(0, newPart[k]);
+					list.Insert(0, newPart[k]);
 			}
 			else if (j > 0)
 			{
 				for (; j >= 0; --j)
-					this.RemoveAt(0);
+					list.RemoveAt(0);
 			}
 
+			newPath = new AbsoluteDocumentPath(list.ToArray());
 			return true;
 		}
 
@@ -392,7 +410,7 @@ namespace Altaxo.Main
 			if (maxDepth <= 0)
 				throw new ArgumentOutOfRangeException("maxDepth should be > 0");
 
-			AbsoluteDocumentPath path = new AbsoluteDocumentPath();
+			var list = new List<string>();
 
 			int depth = 0;
 			var parent = node.ParentObject;
@@ -406,7 +424,7 @@ namespace Altaxo.Main
 				if (string.IsNullOrEmpty(name))
 					throw new InvalidOperationException(string.Format("Parent node (type:{0}) of node (type: {1}) did not return a valid name for the child node!", parent.GetType(), node.GetType()));
 
-				path.Insert(0, name);
+				list.Add(name);
 				node = parent;
 				parent = node.ParentObject;
 				++depth;
@@ -414,11 +432,11 @@ namespace Altaxo.Main
 
 			if (maxDepth == int.MaxValue && node != null && !(node is AltaxoDocument))
 			{
-				string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, path);
+				string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, list);
 				throw new InvalidOperationException(msg);
 			}
 
-			return path;
+			return new AbsoluteDocumentPath(list.TakeFromUpperIndexDownToLowerIndex(list.Count - 1, 0));
 		}
 
 		public static string GetPathString(IDocumentLeafNode node, int maxDepth)

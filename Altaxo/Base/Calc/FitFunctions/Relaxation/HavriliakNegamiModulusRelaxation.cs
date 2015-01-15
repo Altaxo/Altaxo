@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -32,16 +34,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 	[FitFunctionClass]
 	public class HavriliakNegamiModulusRelaxation : IFitFunction
 	{
-		bool _useFrequencyInsteadOmega;
-		bool _useFlowTerm;
-		bool _logarithmizeResults;
+		private bool _useFrequencyInsteadOmega;
+		private bool _useFlowTerm;
+		private bool _logarithmizeResults;
 
 		#region Serialization
 
-
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRelaxation), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -62,19 +62,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public HavriliakNegamiModulusRelaxation()
 		{
-
 		}
 
 		public override string ToString()
 		{
 			return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
 		}
-
-
 
 		[FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
 		[Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
@@ -110,7 +107,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return result;
 		}
 
-
 		[FitFunctionCreator("Lg10 HavriliakNegami Complex (Freq)", "Relaxation/Modulus", 1, 2, 5)]
 		[Description("FitFunctions.Relaxation.ModulusRelaxation.Introduction;XML.MML.GenericRelaxationModulus;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Part2;XML.MML.HavriliakNegamiTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRelaxation.Part3")]
 		public static IFitFunction CreateLg10ModulusOfFrequency()
@@ -123,8 +119,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return result;
 		}
 
-
-
 		#region IFitFunction Members
 
 		#region independent variable definition
@@ -136,14 +130,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return 1;
 			}
 		}
+
 		public string IndependentVariableName(int i)
 		{
 			return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
 		}
-		#endregion
+
+		#endregion independent variable definition
 
 		#region dependent variable definition
+
 		private string[] _dependentVariableNameS = new string[] { "chi'", "chi''" };
+
 		public int NumberOfDependentVariables
 		{
 			get
@@ -151,14 +149,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return _dependentVariableNameS.Length;
 			}
 		}
+
 		public string DependentVariableName(int i)
 		{
 			return _dependentVariableNameS[i];
 		}
-		#endregion
+
+		#endregion dependent variable definition
 
 		#region parameter definition
-		string[] _parameterNameS = new string[] { "m_0", "m_inf", "tau_relax", "alpha", "gamma", "invviscosity" };
+
+		private string[] _parameterNameS = new string[] { "m_0", "m_inf", "tau_relax", "alpha", "gamma", "invviscosity" };
+
 		public int NumberOfParameters
 		{
 			get
@@ -166,6 +168,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return this._useFlowTerm ? _parameterNameS.Length : _parameterNameS.Length - 1;
 			}
 		}
+
 		public string ParameterName(int i)
 		{
 			return _parameterNameS[i];
@@ -177,12 +180,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			{
 				case 0:
 					return 1;
+
 				case 1:
 					return 1;
+
 				case 2:
 					return 1;
+
 				case 3:
 					return 1;
+
 				case 4:
 					return 1;
 			}
@@ -195,7 +202,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return null;
 		}
 
-		#endregion
+		#endregion parameter definition
 
 		#region Change event
 
@@ -205,15 +212,15 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
+		#endregion Change event
 
 		public void Evaluate(double[] X, double[] P, double[] Y)
 		{
@@ -241,8 +248,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-
-		#endregion
+		#endregion IFitFunction Members
 	}
-
 }

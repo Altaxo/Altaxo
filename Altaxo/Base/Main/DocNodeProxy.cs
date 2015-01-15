@@ -410,9 +410,11 @@ namespace Altaxo.Main
 			if (null == rootNode)
 				throw new ArgumentNullException("rootNode");
 
-			var success = _docNodePath.ReplacePathParts(partToReplace, newPart);
+			AbsoluteDocumentPath newPath;
+			var success = _docNodePath.ReplacePathParts(partToReplace, newPart, out newPath);
 			if (success)
 			{
+				_docNodePath = newPath;
 				ClearDocNode();
 				ResolveDocumentObject(rootNode);
 			}
@@ -718,7 +720,7 @@ namespace Altaxo.Main
 			if (e is DocumentPathChangedEventArgs) // here, we activly change our stored path, if the watched node or a parent has changed its name
 			{
 				var watchedPath = AbsoluteDocumentPath.GetAbsolutePath(senderAsDocNode);
-				watchedPath.Append(_docNodePath.SubPath(watchedPath.Count, _docNodePath.Count - watchedPath.Count));
+				watchedPath = watchedPath.Append(_docNodePath.SubPath(watchedPath.Count, _docNodePath.Count - watchedPath.Count));
 				var oldPath = _docNodePath;
 				_docNodePath = watchedPath;
 

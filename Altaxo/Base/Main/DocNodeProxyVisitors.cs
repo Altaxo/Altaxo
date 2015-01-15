@@ -113,10 +113,8 @@ namespace Altaxo.Main
 
 			foreach (var itemType in AltaxoDocument.ProjectItemTypes)
 			{
-				var orgPath = AltaxoDocument.GetRootPathForProjectItemType(itemType);
-				orgPath.Add(originalItemNamePart);
-				var newPath = AltaxoDocument.GetRootPathForProjectItemType(itemType);
-				newPath.Add(newItemNamePart);
+				var orgPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(originalItemNamePart);
+				var newPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(newItemNamePart);
 				_pathPartReplacementDictionary.Add(new KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>(orgPath, newPath));
 			}
 		}

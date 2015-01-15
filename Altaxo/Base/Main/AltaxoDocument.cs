@@ -567,9 +567,7 @@ namespace Altaxo
 			if (null == item)
 				throw new ArgumentNullException("item");
 
-			var path = GetRootPathForProjectItemType(item.GetType());
-			path.Add(((INameOwner)item).Name);
-			return path;
+			return GetRootPathForProjectItemType(item.GetType()).Append(((INameOwner)item).Name);
 		}
 
 		/// <summary>

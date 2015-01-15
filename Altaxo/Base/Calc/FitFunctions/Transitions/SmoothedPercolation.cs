@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
-
-
 	/// <summary>
 	/// Only for testing purposes - use a "real" linear fit instead.
 	/// </summary>
@@ -37,13 +37,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SmoothedPercolation), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				SmoothedPercolation s = (SmoothedPercolation)obj;
-
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -53,12 +51,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public SmoothedPercolation()
 		{
 		}
-
 
 		[FitFunctionCreator("SmoothedPercolation", "Transitions", 1, 1, 5)]
 		[System.ComponentModel.Description("FitFunctions.Transitions.SmoothedPercolation")]
@@ -66,7 +63,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		{
 			return new SmoothedPercolation();
 		}
-
 
 		#region IFitFunction Members
 
@@ -110,12 +106,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			{
 				case 0:
 					return "y0";
+
 				case 1:
 					return "y1";
+
 				case 2:
 					return "phi_c";
+
 				case 3:
 					return "s";
+
 				case 4:
 					return "t";
 			}
@@ -136,7 +136,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		{
 			Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
 		}
-
 
 		public static double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
 		{
@@ -171,10 +170,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			return Math.Pow(10, lgy);
 		}
 
-
-
-
-		struct P1Var
+		private struct P1Var
 		{
 			public double sigmam;
 			public double sigmat;
@@ -190,12 +186,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 				this.s = s;
 				this.t = t;
 			}
-
 		}
 
-		static System.Collections.Generic.Dictionary<P1Var, double> _sp1Hash = new System.Collections.Generic.Dictionary<P1Var, double>();
+		private static System.Collections.Generic.Dictionary<P1Var, double> _sp1Hash = new System.Collections.Generic.Dictionary<P1Var, double>();
 
-		static double CalculateP1(double sigmam, double sigmat, double pc, double s, double t)
+		private static double CalculateP1(double sigmam, double sigmat, double pc, double s, double t)
 		{
 			double co1 = s + t + Math.Log(sigmam / sigmat);
 
@@ -209,27 +204,27 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 					plower = p;
 				else
 					pupper = p;
-
 			} while ((pupper - plower) / pc > 1E-12);
 
 			return (pupper + plower) / 2;
 		}
 
-		static double CalculateP2(double p, double pc, double s, double t)
+		private static double CalculateP2(double p, double pc, double s, double t)
 		{
 			return (pc * (s + t) - p * t) / s;
 		}
 
-		static double CalculateLgSigmaLeft(double p, double sigmam, double pc, double s)
+		private static double CalculateLgSigmaLeft(double p, double sigmam, double pc, double s)
 		{
 			return Math.Log10(sigmam * Math.Pow((pc - p) / pc, -s));
 		}
-		static double CalculateLgSigmaRight(double p, double sigmat, double pc, double t)
+
+		private static double CalculateLgSigmaRight(double p, double sigmat, double pc, double t)
 		{
 			return Math.Log10(sigmat * Math.Pow((p - pc) / (1 - pc), t));
 		}
 
-		static double CalculateLgSigma(double p, double sigmam, double sigmat, double pc, double s, double t)
+		private static double CalculateLgSigma(double p, double sigmam, double sigmat, double pc, double s, double t)
 		{
 			P1Var var = new P1Var(sigmam, sigmat, pc, s, t);
 			double p1;
@@ -256,18 +251,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 		}
 
-
 		/// <summary>
 		/// Not used here since this fit function never changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-
-		#endregion
-
-
-
+		#endregion IFitFunction Members
 	}
-
-
 }

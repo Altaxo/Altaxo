@@ -390,7 +390,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		private void EhFitFunctionChanged()
+		private void EhFitFunctionChanged(object sender, EventArgs e)
 		{
 			InternalCheckAndCorrectArraySize(false, true);
 		}

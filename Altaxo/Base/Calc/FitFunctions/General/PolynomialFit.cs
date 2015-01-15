@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.General
 {
-
-
 	/// <summary>
 	/// Only for testing purposes - use a "real" linear fit instead.
 	/// </summary>
 	[FitFunctionClass]
 	public class PolynomialFit : IFitFunctionWithGradient
 	{
-		int _order;
+		private int _order;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialFit), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				PolynomialFit s = (PolynomialFit)obj;
 				info.AddValue("Order", s._order);
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -56,7 +55,7 @@ namespace Altaxo.Calc.FitFunctions.General
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public PolynomialFit()
 		{
@@ -92,7 +91,6 @@ namespace Altaxo.Calc.FitFunctions.General
 					OnChanged();
 			}
 		}
-
 
 		#region IFitFunction Members
 
@@ -164,15 +162,15 @@ namespace Altaxo.Calc.FitFunctions.General
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
+		#endregion IFitFunction Members
 
 		public void EvaluateGradient(double[] X, double[] P, double[][] DY)
 		{
@@ -183,8 +181,5 @@ namespace Altaxo.Calc.FitFunctions.General
 				sum *= (i + 1) * X[0];
 			}
 		}
-
 	}
-
-
 }

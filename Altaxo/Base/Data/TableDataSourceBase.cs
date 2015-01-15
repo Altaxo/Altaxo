@@ -9,14 +9,6 @@ namespace Altaxo.Data
 	public abstract class TableDataSourceBase :
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
 	{
-		public bool IsDisposed { get; protected set; }
-
-		protected override void Dispose(bool isDisposing)
-		{
-			base.Dispose(isDisposing);
-			IsDisposed = true;
-		}
-
 		#region Change event handling
 
 		/// <summary>

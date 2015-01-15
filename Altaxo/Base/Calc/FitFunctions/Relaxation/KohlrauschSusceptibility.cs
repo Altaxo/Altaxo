@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
+
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
 	/// <summary>
@@ -31,19 +34,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 	[FitFunctionClass]
 	public class KohlrauschSusceptibility : IFitFunction
 	{
-		bool _useFrequencyInsteadOmega;
-		bool _useFlowTerm;
-		bool _isDielectricData;
-		bool _invertViscosity = true;
-		int _numberOfRelaxations = 1;
-		bool _invertResult;
-		bool _logarithmizeResults;
-
+		private bool _useFrequencyInsteadOmega;
+		private bool _useFlowTerm;
+		private bool _isDielectricData;
+		private bool _invertViscosity = true;
+		private int _numberOfRelaxations = 1;
+		private bool _invertResult;
+		private bool _logarithmizeResults;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -64,7 +66,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -92,7 +94,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		/// 2013-02-07 extended by InvertResult und LogarithmizeResults
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -121,8 +123,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		public bool UseFrequencyInsteadOmega
 		{
@@ -231,7 +232,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 		public KohlrauschSusceptibility()
 		{
-
 		}
 
 		public override string ToString()
@@ -283,7 +283,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return result;
 		}
 
-
 		#region IFitFunction Members
 
 		#region independent variable definition
@@ -295,14 +294,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return 1;
 			}
 		}
+
 		public string IndependentVariableName(int i)
 		{
 			return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
 		}
-		#endregion
+
+		#endregion independent variable definition
 
 		#region dependent variable definition
+
 		private string[] _dependentVariableName = new string[] { "re", "im" };
+
 		public int NumberOfDependentVariables
 		{
 			get
@@ -310,15 +313,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return _dependentVariableName.Length;
 			}
 		}
+
 		public string DependentVariableName(int i)
 		{
 			return _dependentVariableName[i];
 		}
-		#endregion
+
+		#endregion dependent variable definition
 
 		#region parameter definition
-		string[] _parameterNameC = new string[] { "chi_inf", "delta_chi", "tau", "beta", "invviscosity" };
-		string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "beta", "conductivity", };
+
+		private string[] _parameterNameC = new string[] { "chi_inf", "delta_chi", "tau", "beta", "invviscosity" };
+		private string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "beta", "conductivity", };
+
 		public int NumberOfParameters
 		{
 			get
@@ -329,6 +336,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 					return 1 + 3 * _numberOfRelaxations;
 			}
 		}
+
 		public string ParameterName(int i)
 		{
 			string[] names = _isDielectricData ? _parameterNameD : _parameterNameC;
@@ -364,14 +372,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return null;
 		}
 
-		#endregion
+		#endregion parameter definition
 
 		public void Evaluate(double[] X, double[] P, double[] Y)
 		{
 			double x = X[0];
 			if (_useFrequencyInsteadOmega)
 				x *= (2 * Math.PI);
-
 
 			Complex result = P[0];
 
@@ -409,22 +416,20 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			Y[1] = result.Im;
 		}
 
-
 		/// <summary>
 		/// Called when anything in this fit function has changed.
 		/// </summary>
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
+		#endregion IFitFunction Members
 	}
-
 }

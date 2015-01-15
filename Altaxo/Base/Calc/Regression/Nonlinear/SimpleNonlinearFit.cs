@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,11 +35,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	{
 		#region Inner classes
 
-		class DummyFitFunc : IFitFunction
+		private class DummyFitFunc : IFitFunction
 		{
-
-			FitEvaluationFunction _func;
-			double[] _defaultParameter;
+			private FitEvaluationFunction _func;
+			private double[] _defaultParameter;
 
 			public DummyFitFunc(FitEvaluationFunction func, double[] defaultParameter)
 			{
@@ -95,16 +96,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			/// <summary>
 			/// Not used here since this fit function never changed.
 			/// </summary>
-			public event Action Changed;
+			public event EventHandler Changed;
 
-			#endregion
+			#endregion IFitFunction Members
 		}
 
-		#endregion
+		#endregion Inner classes
 
-		NonlinearFitDocument _fitDoc;
-		FitElement _fitEle;
-		LevMarAdapter _fitAdapter;
+		private NonlinearFitDocument _fitDoc;
+		private FitElement _fitEle;
+		private LevMarAdapter _fitAdapter;
 
 		/// <summary>
 		/// Creates an instance of this class.
@@ -210,6 +211,5 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
 			_fitEle.SetDependentVariable(0, yCol);
 		}
-
 	}
 }

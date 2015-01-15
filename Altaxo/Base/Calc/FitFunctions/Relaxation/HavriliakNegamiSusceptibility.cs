@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -32,18 +34,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 	[FitFunctionClass]
 	public class HavriliakNegamiSusceptibility : IFitFunctionWithGradient
 	{
-		bool _useFrequencyInsteadOmega;
-		bool _useFlowTerm;
-		bool _isDielectricData;
-		int _numberOfTerms = 1;
-		bool _invertViscosity = true;
-		bool _invertResult;
-		bool _logarithmizeResults;
+		private bool _useFrequencyInsteadOmega;
+		private bool _useFlowTerm;
+		private bool _isDielectricData;
+		private int _numberOfTerms = 1;
+		private bool _invertViscosity = true;
+		private bool _invertResult;
+		private bool _logarithmizeResults;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -59,7 +61,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -84,7 +86,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 2)]
-		class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -108,7 +110,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 3)]
-		class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -135,7 +137,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		/// Extended 2013-02-07 by InvertViscosity, InvertResult and LogarithmizeResults
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility), 4)]
-		class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -164,11 +166,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public HavriliakNegamiSusceptibility()
 		{
-
 		}
 
 		public bool UseFrequencyInsteadOmega
@@ -231,7 +232,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				value = Math.Max(value, 0);
 				_numberOfTerms = value;
 
-				if (oldValue!=value)
+				if (oldValue != value)
 				{
 					OnChanged();
 				}
@@ -340,15 +341,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return 1;
 			}
 		}
+
 		public string IndependentVariableName(int i)
 		{
 			return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
 		}
-		#endregion
+
+		#endregion independent variable definition
 
 		#region dependent variable definition
+
 		private string[] _dependentVariableNameS = new string[] { "chi'", "chi''" };
 		private string[] _dependentVariableNameD = new string[] { "eps'", "eps''" };
+
 		public int NumberOfDependentVariables
 		{
 			get
@@ -356,15 +361,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return _dependentVariableNameS.Length;
 			}
 		}
+
 		public string DependentVariableName(int i)
 		{
 			return _isDielectricData ? _dependentVariableNameD[i] : _dependentVariableNameS[i];
 		}
-		#endregion
+
+		#endregion dependent variable definition
 
 		#region parameter definition
-		string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
-		string[] _parameterNameS = new string[] { "j_inf", "delta_j", "tau", "alpha", "gamma", "viscosity" };
+
+		private string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
+		private string[] _parameterNameS = new string[] { "j_inf", "delta_j", "tau", "alpha", "gamma", "viscosity" };
+
 		public int NumberOfParameters
 		{
 			get
@@ -375,11 +384,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				return result;
 			}
 		}
+
 		public string ParameterName(int i)
 		{
 			var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
 
-			if (0==i)
+			if (0 == i)
 				return namearr[0]; // eps_inf
 
 			--i;
@@ -387,17 +397,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			var idx = i % 4;
 			var term = i / 4;
 			if (term < NumberOfRelaxations)
-				return namearr[idx+1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
-				else
+				return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+			else
 				return namearr[namearr.Length - 1];
-			
 		}
-		
-
 
 		public double DefaultParameterValue(int i)
 		{
-			if( i < (1 + 4*_numberOfTerms))
+			if (i < (1 + 4 * _numberOfTerms))
 				return 1;
 			else
 				return 0;
@@ -408,23 +415,21 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return null;
 		}
 
-
 		/// <summary>
 		/// Called when anything in this fit function has changed.
 		/// </summary>
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-
-		#endregion
+		#endregion parameter definition
 
 		public void Evaluate(double[] X, double[] P, double[] Y)
 		{
@@ -434,9 +439,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 			Complex result = P[0];
 			int i, j;
-			for (i = 0, j = 1; i < _numberOfTerms; ++i, j+=4)
+			for (i = 0, j = 1; i < _numberOfTerms; ++i, j += 4)
 			{
-				result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1+j], P[2+j]), P[3+j]);
+				result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1 + j], P[2 + j]), P[3 + j]);
 			}
 
 			// note: because it is a susceptiblity, the imaginary part is still negative
@@ -494,13 +499,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 			if (_useFlowTerm)
 			{
-
 				DY[0][5] = 0;
 				DY[1][5] = _isDielectricData ? 1 / (x * 8.854187817e-12) : 1 / x;
 			}
 			*/
 		}
-		#endregion
-	}
 
+		#endregion IFitFunction Members
+	}
 }

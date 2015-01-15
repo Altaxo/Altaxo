@@ -138,7 +138,7 @@ namespace Altaxo.Data
 
 		public AbsoluteDocumentPath DocumentPath
 		{
-			get { return new AbsoluteDocumentPath(); }
+			get { return AbsoluteDocumentPath.DocumentPathOfRootNode; }
 		}
 
 		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)

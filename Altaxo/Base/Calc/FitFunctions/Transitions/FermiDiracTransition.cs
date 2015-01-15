@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Calc.Regression.Nonlinear;
-
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
-
 	public abstract class FermiDiracTransitionBase : IFitFunction
 	{
 		/// <summary>
@@ -41,7 +41,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		/// <remarks>
 		/// The original formula was y(p)=1/(1+Exp(b*(p-pc)).
 		/// This formula has the disadvantage that it is not 1 for p=0 nor 0 for p=1. Thus we use
-		/// the modified formula 
+		/// the modified formula
 		/// core(p)=(y(p)-y(1))/(y(0)-y(1)) with the definition above for y(p). Additionally, instead of b, we use w=1/b, because
 		/// w is directly related to the width of the transition.
 		/// </remarks>
@@ -53,7 +53,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			double C = Math.Exp(b * (0 - pc));
 			return ((B - A) / (B - C)) * ((1 + C) / (1 + A));
 		}
-
 
 		/// <summary>
 		/// Provides a linear scaled transition y = y1+(y0-y1)*Core(...).
@@ -70,7 +69,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			return y1 + (y0 - y1) * core;
 		}
 
-
 		/// <summary>
 		/// Provides a logarithmically scaled transition lg(y) = lg(y1)+(lg(y0)-lg(y1))*Core(...).
 		/// </summary>
@@ -85,9 +83,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			double core = Core(p, pc, w);
 			return Math.Pow(y0, core) * Math.Pow(y1, 1 - core);
 		}
-
-
-
 
 		#region IFitFunction Members
 
@@ -122,12 +117,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			{
 				case 0:
 					return "y0";
+
 				case 1:
 					return "y1";
+
 				case 2:
 					return "pc";
+
 				case 3:
 					return "w";
+
 				default:
 					return "?";
 			}
@@ -139,12 +138,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			{
 				case 0:
 					return 1;
+
 				case 1:
 					return 10;
+
 				case 2:
 					return 0.5;
+
 				case 3:
 					return 0.5;
+
 				default:
 					return 0;
 			}
@@ -154,7 +157,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
 		public abstract void Evaluate(double[] independent, double[] parameters, double[] FV);
 
-
 		#region Change event
 
 		/// <summary>
@@ -163,19 +165,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
+		#endregion Change event
 
-
-
-		#endregion
+		#endregion IFitFunction Members
 	}
 
 	[FitFunctionClass]
@@ -184,13 +184,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearFermiDiracTransition), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LinearFermiDiracTransition s = (LinearFermiDiracTransition)obj;
-
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -200,12 +198,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public LinearFermiDiracTransition()
 		{
 		}
-
 
 		[FitFunctionCreator("LinearFermiDiracTransition", "Transitions", 1, 1, 4)]
 		[System.ComponentModel.Description("FitFunctions.Transitions.LinearFermiDiracTransition")]
@@ -223,10 +220,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		{
 			return new ConstantVarianceScaling();
 		}
-
 	}
-
-
 
 	[FitFunctionClass]
 	public class LogarithmicFermiDiracTransition : FermiDiracTransitionBase
@@ -234,13 +228,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicFermiDiracTransition), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LogarithmicFermiDiracTransition s = (LogarithmicFermiDiracTransition)obj;
-
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -250,12 +242,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public LogarithmicFermiDiracTransition()
 		{
 		}
-
 
 		[FitFunctionCreator("LogarithmicFermiDiracTransition", "Transitions", 1, 1, 4)]
 		[System.ComponentModel.Description("FitFunctions.Transitions.LogarithmicFermiDiracTransition")]
@@ -273,6 +264,5 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		{
 			return new RelativeVarianceScaling();
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
-
-
 	/// <summary>
 	/// Only for testing purposes - use a "real" linear fit instead.
 	/// </summary>
@@ -37,13 +37,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralEffectiveMedium), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				GeneralEffectiveMedium s = (GeneralEffectiveMedium)obj;
-
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -53,12 +51,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public GeneralEffectiveMedium()
 		{
 		}
-
 
 		[FitFunctionCreator("GeneralEffectiveMedium", "Transitions", 1, 1, 5)]
 		[System.ComponentModel.Description("FitFunctions.Transitions.GeneralEffectiveMedium")]
@@ -66,7 +63,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		{
 			return new GeneralEffectiveMedium();
 		}
-
 
 		#region IFitFunction Members
 
@@ -111,12 +107,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			{
 				case 0:
 					return "y0";
+
 				case 1:
 					return "y1";
+
 				case 2:
 					return "phi_c";
+
 				case 3:
 					return "s";
+
 				case 4:
 					return "t";
 			}
@@ -141,23 +141,20 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
-
-
+		#endregion Change event
 
 		public virtual void Evaluate(double[] X, double[] P, double[] Y)
 		{
 			Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
 		}
-
 
 		public static double EvaluateOld(double phi, double y0, double y1, double phi_c, double s, double t)
 		{
@@ -188,7 +185,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 				phi = 1 - phi;
 			}
 
-
 			// we denote with ss and tt the powers 1/s and 1/t respectively
 			double y0ss = Math.Pow(y0, 1 / s);
 			double y1tt = Math.Pow(y1, 1 / t);
@@ -205,10 +201,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 					 return (1 - phi) * (y0ss - yss) / (y0ss + A * yss) + phi * (y1tt - ytt) / (y1tt + A * ytt);
 				 }, Math.Log(y0), Math.Log(y1));
 
-
 			return Math.Exp(logy);
 		}
-
 
 		private static double Sqr(double x)
 		{
@@ -244,7 +238,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 				phi = 1 - phi;
 			}
 
-
 			// we denote with ss and tt the powers 1/s and 1/t respectively
 			double y0ss = Math.Pow(y0, 1 / s);
 			double y1tt = Math.Pow(y1, 1 / t);
@@ -269,7 +262,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 			else
 				lystart = 0.5 * (lmin + lmax);
-
 
 			double ly = lystart;
 			double threshold = 1e-8 * Math.Abs(lmax - lmin);
@@ -320,12 +312,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			return xm;
 		}
 
-
-
-		#endregion
-
-
-
+		#endregion IFitFunction Members
 	}
 
 	/// <summary>
@@ -337,13 +324,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralEffectiveMediumLog10), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				GeneralEffectiveMediumLog10 s = (GeneralEffectiveMediumLog10)obj;
-
-
 			}
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -353,12 +338,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public GeneralEffectiveMediumLog10()
 		{
 		}
-
 
 		[FitFunctionCreator("GeneralEffectiveMediumLog10", "Transitions", 1, 1, 5)]
 		[System.ComponentModel.Description("FitFunctions.Transitions.GeneralEffectiveMediumLog10")]
@@ -372,7 +356,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			Y[0] = EvaluateLog10(X[0], P[0], P[1], P[2], P[3], P[4]);
 		}
 
-
 		public static double EvaluateLog10(double phi, double lg_y0, double lg_y1, double phi_c, double s, double t)
 		{
 			return Math.Log10(GeneralEffectiveMedium.Evaluate(phi, Math.Pow(10, lg_y0), Math.Pow(10, lg_y1), phi_c, s, t));
@@ -384,18 +367,20 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			{
 				case 0:
 					return "Lg_y0";
+
 				case 1:
 					return "Lg_y1)";
+
 				case 2:
 					return "phi_c";
+
 				case 3:
 					return "s";
+
 				case 4:
 					return "t";
 			}
 			return string.Empty;
 		}
-
 	}
-
 }

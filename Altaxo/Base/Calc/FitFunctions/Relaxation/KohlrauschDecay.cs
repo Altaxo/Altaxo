@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc.Regression.Nonlinear;
+using System;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -31,13 +33,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 	[FitFunctionClass]
 	public class KohlrauschDecay : IFitFunction
 	{
-		int _numberOfRelaxations = 1;
-		bool _logarithmizeResult;
+		private int _numberOfRelaxations = 1;
+		private bool _logarithmizeResult;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -55,7 +57,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		/// 2013-02-07 extended by NumberOfRelaxations and LogarithmizeResult
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -73,11 +75,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public KohlrauschDecay()
 		{
-
 		}
 
 		public int NumberOfRelaxations
@@ -98,7 +99,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
@@ -121,12 +121,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			}
 		}
 
-
 		public override string ToString()
 		{
 			return "KohlrauschDecay";
 		}
-
 
 		[FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
 		[System.ComponentModel.Description("FitFunctions.Relaxation.Kohlrausch.Decay")]
@@ -134,7 +132,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			return new KohlrauschDecay();
 		}
-
 
 		#region IFitFunction Members
 
@@ -158,13 +155,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			get
 			{
-				return 1+3*_numberOfRelaxations;
+				return 1 + 3 * _numberOfRelaxations;
 			}
 		}
 
 		public string IndependentVariableName(int i)
 		{
-
 			return "x";
 		}
 
@@ -173,7 +169,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			return _logarithmizeResult ? "lg y" : "y";
 		}
 
-		static readonly string[] _parameterNames = new string[] { "offset", "amplitude", "tau", "beta" };
+		private static readonly string[] _parameterNames = new string[] { "offset", "amplitude", "tau", "beta" };
+
 		public string ParameterName(int i)
 		{
 			var namearr = _parameterNames;
@@ -184,7 +181,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			var idx = i % 3;
 			var term = i / 3;
 			return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
-
 		}
 
 		public double DefaultParameterValue(int i)
@@ -198,7 +194,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 			if (term == 0)
 				return 1; // 1 for all parameters in relaxation term1
 
-			if (idx == 1 || idx==2)
+			if (idx == 1 || idx == 2)
 				return 1; // 1 for all taus and betas
 
 			return 0; // 0 for all amplitudes
@@ -213,13 +209,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		{
 			double sum = P[0];
 
-			for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j+=3)
-				sum += P[j] * Math.Exp(-Math.Pow(X[0] / P[j+1], P[j+2]));
+			for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j += 3)
+				sum += P[j] * Math.Exp(-Math.Pow(X[0] / P[j + 1], P[j + 2]));
 
-
-			Y[0] =  _logarithmizeResult ? Math.Log10(sum) : sum;
+			Y[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
 		}
-
 
 		/// <summary>
 		/// Called when anything in this fit function has changed.
@@ -227,21 +221,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
-
-	
+		#endregion IFitFunction Members
 	}
-
-
-
-
-
 }

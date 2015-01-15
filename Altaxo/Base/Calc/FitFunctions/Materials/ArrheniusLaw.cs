@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,25 +19,25 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.ComponentModel;
+#endregion Copyright
+
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Science;
+using System;
+using System.ComponentModel;
 
 namespace Altaxo.Calc.FitFunctions.Materials
 {
-
 	/// <summary>
 	/// Represents the Arrhenius law (formula for the temperature dependence of the rate).
 	/// </summary>
 	[FitFunctionClass]
 	public class ArrheniusLaw : IFitFunction
 	{
-		TransformedValueRepresentation _dependentVariableTransform;
-		TemperatureRepresentation _temperatureUnitOfX;
-		EnergyRepresentation _paramEnergyUnit;
+		private TransformedValueRepresentation _dependentVariableTransform;
+		private TemperatureRepresentation _temperatureUnitOfX;
+		private EnergyRepresentation _paramEnergyUnit;
 
 		[Category("OptionsForParameters")]
 		public EnergyRepresentation ParameterEnergyRepresentation
@@ -80,7 +81,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLaw), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -102,10 +103,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			}
 		}
 
-		#endregion
+		#endregion Serialization
+
 		public ArrheniusLaw()
 		{
-
 		}
 
 		public override string ToString()
@@ -113,13 +114,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			return "ArrheniusLaw";
 		}
 
-
 		[FitFunctionCreator("ArrheniusLaw", "Materials", 1, 1, 2)]
 		public static IFitFunction CreateDefault()
 		{
 			return new ArrheniusLaw();
 		}
-
 
 		#region IFitFunction Members
 
@@ -149,7 +148,6 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
 		public string IndependentVariableName(int i)
 		{
-
 			return "T_" + _temperatureUnitOfX.ToString();
 		}
 
@@ -164,8 +162,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			{
 				case 0:
 					return "y0";
+
 				case 1:
 					return "E_" + _paramEnergyUnit.ToString();
+
 				default:
 					throw new ArgumentOutOfRangeException("i");
 			}
@@ -177,6 +177,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			{
 				case 0:
 					return 1;
+
 				case 1:
 					return 1000;
 			}
@@ -197,17 +198,15 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		protected virtual void OnChanged()
 		{
 			if (null != Changed)
-				Changed();
+				Changed(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Fired when the fit function changed.
 		/// </summary>
-		public event Action Changed;
+		public event EventHandler Changed;
 
-		#endregion
-
-
+		#endregion Change event
 
 		public void Evaluate(double[] X, double[] P, double[] Y)
 		{
@@ -215,18 +214,8 @@ namespace Altaxo.Calc.FitFunctions.Materials
 			double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
 			double ybase = P[0] * Math.Exp(energyAsTemperature / temperature);
 			Y[0] = TransformedValue.BaseValueToTransformedValue(ybase, _dependentVariableTransform);
-
 		}
 
-
-
-
-
-		#endregion
+		#endregion IFitFunction Members
 	}
-
-
-
-
-
 }

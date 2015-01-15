@@ -118,17 +118,6 @@ namespace Altaxo.Main
 
 				return s;
 			}
-
-			private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot, bool isFinallyCall)
-			{
-				var resolvedObj = Altaxo.Main.AbsoluteDocumentPath.GetObject(_absolutePath, _instance);
-
-				if (null != resolvedObj || isFinallyCall)
-				{
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
-					_instance.Document = resolvedObj;
-				}
-			}
 		}
 
 		/// <summary>
