@@ -22,15 +22,15 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<RadioButton x:Name="m_rbLinkAxisStraight" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" Checked="EhLinkStraight_CheckedChanged">Straight (1:1)</RadioButton>
-		<RadioButton x:Name="m_rbLinkAxisCustom" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" Checked="EhLinkCustom_CheckedChanged">Custom</RadioButton>
+		<RadioButton x:Name="_guiLinkAxisStraight" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" Checked="EhLinkStraight_CheckedChanged">Straight (1:1)</RadioButton>
+		<RadioButton x:Name="_guiLinkAxisCustom" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" Checked="EhLinkCustom_CheckedChanged">Custom</RadioButton>
 		<Label Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center">a</Label>
 		<Label Grid.Column="3" Grid.Row="3" HorizontalAlignment="Center">b</Label>
 		<Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center">Org</Label>
 		<Label Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center">End</Label>
-		<axogc:ValidatingTextBox x:Name="m_edLinkAxisOrgA" Grid.Column="1" Grid.Row="4" Validating="EhOrgA_Validating" />
-		<axogc:ValidatingTextBox x:Name="m_edLinkAxisOrgB" Grid.Column="3" Grid.Row="4" Validating="EhOrgB_Validating" />
-		<axogc:ValidatingTextBox x:Name="m_edLinkAxisEndA" Grid.Column="1" Grid.Row="6" Validating="EhEndA_Validating" />
-		<axogc:ValidatingTextBox x:Name="m_edLinkAxisEndB" Grid.Column="3" Grid.Row="6" Validating="EhEndB_Validating" />
+		<axogc:NumericDoubleTextBox x:Name="_guiLinkAxisOrgA" Grid.Column="1" Grid.Row="4" AllowInfiniteValues="False" AllowNaNValues="False" />
+		<axogc:NumericDoubleTextBox x:Name="_guiLinkAxisOrgB" Grid.Column="3" Grid.Row="4" AllowInfiniteValues="False" AllowNaNValues="False" />
+		<axogc:NumericDoubleTextBox x:Name="_guiLinkAxisEndA" Grid.Column="1" Grid.Row="6" AllowInfiniteValues="False" AllowNaNValues="False" />
+		<axogc:NumericDoubleTextBox x:Name="_guiLinkAxisEndB" Grid.Column="3" Grid.Row="6" AllowInfiniteValues="False" AllowNaNValues="False" />
 	</Grid>
 </UserControl>

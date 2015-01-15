@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Graph
 				if (null == _linkScaleChoices.FirstSelectedNode)
 					_linkScaleChoices[0].IsSelected = true;
 
-				_linkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _linkedScaleParameters }, typeof(IMVCAController));
+				_linkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _linkedScaleParameters }, typeof(IMVCAController), UseDocument.Directly);
 			}
 
 			if (_view != null)

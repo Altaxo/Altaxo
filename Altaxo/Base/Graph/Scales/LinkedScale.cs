@@ -392,11 +392,7 @@ namespace Altaxo.Graph.Scales
 			}
 			protected set
 			{
-				if (object.ReferenceEquals(_linkParameters, value))
-					return;
-
-				_linkParameters = value ?? new LinkedScaleParameters();
-				_linkParameters.ParentObject = this;
+				ChildSetMember(ref _linkParameters, value ?? new LinkedScaleParameters());
 			}
 		}
 

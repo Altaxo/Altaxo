@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -41,119 +43,78 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class AxisLinkControl : UserControl, IAxisLinkView
 	{
-
 		public AxisLinkControl()
 		{
 			InitializeComponent();
 		}
 
-		void EnableCustom(bool bEnab)
+		private void EnableCustom(bool bEnab)
 		{
-			this.m_edLinkAxisOrgA.IsEnabled = bEnab;
-			this.m_edLinkAxisOrgB.IsEnabled = bEnab;
-			this.m_edLinkAxisEndA.IsEnabled = bEnab;
-			this.m_edLinkAxisEndB.IsEnabled = bEnab;
+			this._guiLinkAxisOrgA.IsEnabled = bEnab;
+			this._guiLinkAxisOrgB.IsEnabled = bEnab;
+			this._guiLinkAxisEndA.IsEnabled = bEnab;
+			this._guiLinkAxisEndB.IsEnabled = bEnab;
 		}
-
 
 		private void EhLinkStraight_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != LinkType_Changed && this.m_rbLinkAxisStraight.IsChecked == true)
-				LinkType_Changed(true);
+			if (this._guiLinkAxisStraight.IsChecked == true)
+				EnableCustom(false);
 		}
 
 		private void EhLinkCustom_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != LinkType_Changed && this.m_rbLinkAxisCustom.IsChecked == true)
-				LinkType_Changed(false);
+			if (this._guiLinkAxisCustom.IsChecked == true)
+				EnableCustom(true);
 		}
 
 		#region IAxisLinkView
 
-		public void LinkType_Initialize(bool isStraight)
+		public bool IsStraightLink
 		{
-			if (isStraight)
+			get
 			{
-				this.m_rbLinkAxisStraight.IsChecked = true;
-				EnableCustom(false);
+				return _guiLinkAxisStraight.IsChecked == true;
 			}
-			else
+			set
 			{
-				this.m_rbLinkAxisCustom.IsChecked = true;
-				EnableCustom(true);
-			}
-		}
-
-		public void OrgA_Initialize(string text)
-		{
-			this.m_edLinkAxisOrgA.Text = text;
-		}
-
-		public void OrgB_Initialize(string text)
-		{
-			this.m_edLinkAxisOrgB.Text = text;
-		}
-
-		public void EndA_Initialize(string text)
-		{
-			this.m_edLinkAxisEndA.Text = text;
-		}
-
-		public void EndB_Initialize(string text)
-		{
-			this.m_edLinkAxisEndB.Text = text;
-		}
-
-		public void Enable_OrgAndEnd_Boxes(bool bEnable)
-		{
-			EnableCustom(bEnable);
-		}
-
-		public event Action<ValidationEventArgs<string>> OrgA_Validating;
-
-		public event Action<ValidationEventArgs<string>> OrgB_Validating;
-
-		public event Action<ValidationEventArgs<string>> EndA_Validating;
-
-		public event Action<ValidationEventArgs<string>> EndB_Validating;
-
-		public event Action<bool> LinkType_Changed;
-
-		#endregion
-
-		private void EhOrgA_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			if (null != OrgA_Validating)
-			{
-				OrgA_Validating(e);
+				if (value)
+				{
+					this._guiLinkAxisStraight.IsChecked = true;
+					EnableCustom(false);
+				}
+				else
+				{
+					this._guiLinkAxisCustom.IsChecked = true;
+					EnableCustom(true);
+				}
 			}
 		}
 
-		private void EhOrgB_Validating(object sender, ValidationEventArgs<string> e)
+		public double OrgA
 		{
-			if (null != OrgB_Validating)
-			{
-				OrgB_Validating(e);
-			}
+			get { return _guiLinkAxisOrgA.SelectedValue; }
+			set { _guiLinkAxisOrgA.SelectedValue = value; }
 		}
 
-		private void EhEndA_Validating(object sender, ValidationEventArgs<string> e)
+		public double OrgB
 		{
-			if (null != EndA_Validating)
-			{
-				EndA_Validating(e);
-			}
+			get { return _guiLinkAxisOrgB.SelectedValue; }
+			set { _guiLinkAxisOrgB.SelectedValue = value; }
 		}
 
-		private void EhEndB_Validating(object sender, ValidationEventArgs<string> e)
+		public double EndA
 		{
-			if (null != EndB_Validating)
-			{
-				EndB_Validating(e);
-			}
+			get { return _guiLinkAxisEndA.SelectedValue; }
+			set { _guiLinkAxisEndA.SelectedValue = value; }
 		}
 
+		public double EndB
+		{
+			get { return _guiLinkAxisEndB.SelectedValue; }
+			set { _guiLinkAxisEndB.SelectedValue = value; }
+		}
 
-
+		#endregion IAxisLinkView
 	}
 }

@@ -38,48 +38,27 @@ namespace Altaxo.Gui.Graph
 		/// Initializes the type of the link.
 		/// </summary>
 		/// <param name="isStraight">If <c>true</c>, the linke is initialized as 1:1 link and all other fields are disabled.</param>
-		void LinkType_Initialize(bool isStraight);
+		bool IsStraightLink { get; set; }
 
 		/// <summary>
 		/// Initializes the content of the OrgA edit box.
 		/// </summary>
-		void OrgA_Initialize(string text);
+		double OrgA { get; set; }
 
 		/// <summary>
 		/// Initializes the content of the OrgB edit box.
 		/// </summary>
-		void OrgB_Initialize(string text);
+		double OrgB { get; set; }
 
 		/// <summary>
 		/// Initializes the content of the EndA edit box.
 		/// </summary>
-		void EndA_Initialize(string text);
+		double EndA { get; set; }
 
 		/// <summary>
 		/// Initializes the content of the EndB edit box.
 		/// </summary>
-		void EndB_Initialize(string text);
-
-		/// <summary>
-		/// Enables / Disables the edit boxes for the org and end values
-		/// </summary>
-		/// <param name="bEnable">True if the boxes are enabled for editing.</param>
-		void Enable_OrgAndEnd_Boxes(bool bEnable);
-
-		/// <summary>Called when the contents of OrgA is changed. The argument provides the string to validate and is used to give a feedback if the validation is not successful.</summary>
-		event Action<ValidationEventArgs<string>> OrgA_Validating;
-
-		/// <summary>Called when the contents of OrgB is changed. The argument provides the string to validate and is used to give a feedback if the validation is not successful.</summary>
-		event Action<ValidationEventArgs<string>> OrgB_Validating;
-
-		/// <summary>Called when the contents of EndA is changed. The argument provides the string to validate and is used to give a feedback if the validation is not successful.</summary>
-		event Action<ValidationEventArgs<string>> EndA_Validating;
-
-		/// <summary>Called when the contents of EndB is changed. The argument provides the string to validate and is used to give a feedback if the validation is not successful.</summary>
-		event Action<ValidationEventArgs<string>> EndB_Validating;
-
-		/// <summary>Called if the type of the link is changed. The argument is true, if the type of link is "straight".</summary>
-		event Action<bool> LinkType_Changed;
+		double EndB { get; set; }
 	}
 
 	#endregion Interfaces
@@ -89,147 +68,38 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IAxisLinkView))]
 	[UserControllerForObject(typeof(LinkedScaleParameters))]
-	public class AxisLinkController : IMVCAController
+	public class AxisLinkController : MVCANControllerBase<LinkedScaleParameters, IAxisLinkView>
 	{
-		private IAxisLinkView _view;
-		private LinkedScaleParameters _doc;
-		private LinkedScaleParameters _tempDoc;
-
-		private bool m_LinkType;
-
-		public AxisLinkController(LinkedScaleParameters doc)
-		{
-			_doc = doc;
-			_tempDoc = (LinkedScaleParameters)_doc;
-			m_LinkType = _tempDoc.IsStraightLink;
-			SetElements(true);
-		}
-
-		private void SetElements(bool bInit)
+		protected override void Initialize(bool initData)
 		{
 			if (null != _view)
 			{
-				_view.LinkType_Initialize(m_LinkType);
-				_view.OrgA_Initialize(GUIConversion.ToString(_tempDoc.OrgA));
-				_view.OrgB_Initialize(GUIConversion.ToString(_tempDoc.OrgB));
-				_view.EndA_Initialize(GUIConversion.ToString(_tempDoc.EndA));
-				_view.EndB_Initialize(GUIConversion.ToString(_tempDoc.EndB));
+				_view.OrgA = _doc.OrgA;
+				_view.OrgB = _doc.OrgB;
+				_view.EndA = _doc.EndA;
+				_view.EndB = _doc.EndB;
+				_view.IsStraightLink = _doc.IsStraightLink;
 			}
 		}
 
-		#region ILinkAxisController Members
-
-		public void EhView_LinkTypeChanged(bool isStraightLink)
+		public override bool Apply()
 		{
-			m_LinkType = isStraightLink;
-
-			if (null != _view)
-				_view.Enable_OrgAndEnd_Boxes(!isStraightLink);
-		}
-
-		public void EhView_OrgAValidating(ValidationEventArgs<string> e)
-		{
-			double val;
-			if (!GUIConversion.IsDouble(e.ValueToValidate, out val))
-				e.AddError("Provided text is not recognized as a number");
-			else if (!Altaxo.Calc.RMath.IsFinite(val))
-				e.AddError("Provided value is not a finite number");
-			else
-				_tempDoc.OrgA = val;
-		}
-
-		public void EhView_OrgBValidating(ValidationEventArgs<string> e)
-		{
-			double val;
-			if (!GUIConversion.IsDouble(e.ValueToValidate, out val))
-				e.AddError("Provided text is not recognized as a number");
-			else if (!Altaxo.Calc.RMath.IsFinite(val))
-				e.AddError("Provided value is not a finite number");
-			else
-				_tempDoc.OrgB = val;
-		}
-
-		public void EhView_EndAValidating(ValidationEventArgs<string> e)
-		{
-			double val;
-			if (!GUIConversion.IsDouble(e.ValueToValidate, out val))
-				e.AddError("Provided text is not recognized as a number");
-			else if (!Altaxo.Calc.RMath.IsFinite(val))
-				e.AddError("Provided value is not a finite number");
-			else
-				_tempDoc.EndA = val;
-		}
-
-		public void EhView_EndBValidating(ValidationEventArgs<string> e)
-		{
-			double val;
-			if (!GUIConversion.IsDouble(e.ValueToValidate, out val))
-				e.AddError("Provided text is not recognized as a number");
-			else if (!Altaxo.Calc.RMath.IsFinite(val))
-				e.AddError("Provided value is not a finite number");
-			else
-				_tempDoc.EndB = val;
-		}
-
-		#endregion ILinkAxisController Members
-
-		#region IApplyController Members
-
-		public bool Apply()
-		{
-			if (m_LinkType)
+			if (_view.IsStraightLink)
+			{
 				_doc.SetToStraightLink();
+			}
 			else
-				_doc.CopyFrom(_tempDoc);
+			{
+				_doc.OrgA = _view.OrgA;
+				_doc.OrgB = _view.OrgB;
+				_doc.EndA = _view.EndA;
+				_doc.EndB = _view.EndB;
+			}
+
+			if (!object.ReferenceEquals(_originalDoc, _doc))
+				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;
 		}
-
-		#endregion IApplyController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.OrgA_Validating -= EhView_OrgAValidating;
-					_view.OrgA_Validating -= EhView_OrgBValidating;
-					_view.OrgA_Validating -= EhView_EndAValidating;
-					_view.OrgA_Validating -= EhView_EndBValidating;
-					_view.LinkType_Changed -= EhView_LinkTypeChanged;
-				}
-
-				_view = value as IAxisLinkView;
-
-				if (null != _view)
-				{
-					SetElements(false); // set only the view elements, dont't initialize the variables
-
-					_view.OrgA_Validating += EhView_OrgAValidating;
-					_view.OrgA_Validating += EhView_OrgBValidating;
-					_view.OrgA_Validating += EhView_EndAValidating;
-					_view.OrgA_Validating += EhView_EndBValidating;
-					_view.LinkType_Changed += EhView_LinkTypeChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return this._doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
 	}
 }
