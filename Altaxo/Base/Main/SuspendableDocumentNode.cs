@@ -506,6 +506,136 @@ namespace Altaxo.Main
 			#endregion IDisposable Members
 		}
 
+		/// <summary>
+		/// Class that 'absorbs' the suspend count of the parent object, so that the events of the parent are temporarily resumed. The absorbed suspend count is stored in the token, and when the token
+		/// is disposed, the suspend count of the parent is increased by that number again.
+		/// </summary>
+		private class TemporaryResumeToken : IDisposable
+		{
+			private SuspendableDocumentNode _parent;
+			private int _numberOfSuspendLevelsAbsorbed;
+
+			internal TemporaryResumeToken(SuspendableDocumentNode parent)
+			{
+				_parent = parent;
+			}
+
+			~TemporaryResumeToken()
+			{
+				Dispose(false);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			internal void ResumeTemporarily()
+			{
+				Exception ex1 = null;
+				Exception ex2 = null;
+				Exception ex3 = null;
+
+				// Try to bring the suspend level to 0
+				int suspendLevel = _parent._suspendLevel;
+				while (suspendLevel != 0)
+				{
+					if (suspendLevel > 0)
+					{
+						if (suspendLevel == 1)
+						{
+							try
+							{
+								_parent.OnAboutToBeResumed(_parent._eventCount);
+							}
+							catch (Exception ex)
+							{
+								ex1 = ex;
+							}
+						}
+
+						suspendLevel = System.Threading.Interlocked.Decrement(ref _parent._suspendLevel);
+						++_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 0)
+						{
+							System.Threading.Interlocked.Increment(ref _parent._resumeInProgress);
+							try
+							{
+								var count = _parent._eventCount;
+								_parent._eventCount = 0;
+								_parent.OnResume(count);
+							}
+							catch (Exception ex)
+							{
+								ex2 = ex;
+							}
+							finally
+							{
+								System.Threading.Interlocked.Decrement(ref _parent._resumeInProgress);
+							}
+						}
+					}
+					else if (suspendLevel < 0)
+					{
+						suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
+						--_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 1)
+						{
+							try
+							{
+								_parent.OnSuspended();
+							}
+							catch (Exception ex)
+							{
+								ex3 = ex;
+							}
+						}
+					}
+				}
+
+				if (null != ex1)
+					throw ex1;
+				if (null != ex2)
+					throw ex2;
+				if (null != ex3)
+					throw ex3;
+			}
+
+			public void Dispose(bool isDisposing)
+			{
+				Exception exception = null;
+				while (_numberOfSuspendLevelsAbsorbed > 0)
+				{
+					int suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
+					--_numberOfSuspendLevelsAbsorbed;
+
+					if (suspendLevel == 1)
+					{
+						if (1 == suspendLevel)
+						{
+							try
+							{
+								_parent.OnSuspended();
+							}
+							catch (Exception ex)
+							{
+								exception = ex;
+							}
+						}
+					}
+				}
+
+				_parent = null;
+
+				// Suspend level is now restored
+				if (exception != null)
+					throw exception;
+			}
+		}
+
 		#endregion Inner class SuspendToken
 
 		#region Helper functions

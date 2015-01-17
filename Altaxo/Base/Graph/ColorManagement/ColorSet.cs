@@ -194,7 +194,7 @@ namespace Altaxo.Graph.ColorManagement
 		protected override void InsertItem(int index, NamedColor item)
 		{
 			base.InsertItem(index, new NamedColor(item, this));
-			if (_bulkChanger.IsNotSuspended)
+			if (!_bulkChanger.IsSuspended)
 				BuildSideDictionaries();
 		}
 
@@ -206,7 +206,7 @@ namespace Altaxo.Graph.ColorManagement
 		protected override void SetItem(int index, NamedColor item)
 		{
 			base.SetItem(index, new NamedColor(item, this));
-			if (_bulkChanger.IsNotSuspended)
+			if (!_bulkChanger.IsSuspended)
 				BuildSideDictionaries();
 		}
 
@@ -217,7 +217,7 @@ namespace Altaxo.Graph.ColorManagement
 		protected override void RemoveItem(int index)
 		{
 			base.RemoveItem(index);
-			if (_bulkChanger.IsNotSuspended)
+			if (!_bulkChanger.IsSuspended)
 				BuildSideDictionaries();
 		}
 
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.ColorManagement
 		protected override void ClearItems()
 		{
 			base.ClearItems();
-			if (_bulkChanger.IsNotSuspended)
+			if (!_bulkChanger.IsSuspended)
 				BuildSideDictionaries();
 		}
 
@@ -239,7 +239,7 @@ namespace Altaxo.Graph.ColorManagement
 		protected override void MoveItem(int oldIndex, int newIndex)
 		{
 			base.MoveItem(oldIndex, newIndex);
-			if (_bulkChanger.IsNotSuspended)
+			if (!_bulkChanger.IsSuspended)
 				BuildSideDictionaries();
 		}
 

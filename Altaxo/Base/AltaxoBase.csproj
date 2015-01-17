@@ -366,6 +366,9 @@
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />
     <Compile Include="Main\IProjectItem.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNode.cs" />
+    <Compile Include="Main\SuspendableDocumentLeafNodeWithEventArgs.cs" />
+    <Compile Include="Main\SuspendableDocumentLeafNodeWithSetOfEventArgs.cs" />
+    <Compile Include="Main\SuspendableDocumentLeafNodeWithSingleAccumulatedData.cs" />
     <Compile Include="Main\SuspendableDocumentNode.cs" />
     <Compile Include="Main\SuspendableDocumentNodeBase.cs" />
     <Compile Include="Main\SuspendableDocumentNodeWithEventArgs.cs" />

@@ -44,133 +44,6 @@ namespace Altaxo.Main
 	/// </remarks>
 	public class SuspendableObject : ISuspendableByToken
 	{
-		#region Inner class SuspendToken
-
-		private class SuspendToken : ISuspendToken
-		{
-			private SuspendableObject _parent;
-
-			internal SuspendToken(SuspendableObject parent)
-			{
-				var suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
-				_parent = parent;
-
-				if (1 == suspendLevel)
-				{
-					try
-					{
-						_parent.OnSuspended();
-					}
-					catch (Exception)
-					{
-						System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
-						_parent = null;
-						throw;
-					}
-				}
-			}
-
-			~SuspendToken()
-			{
-				Dispose();
-			}
-
-			/// <summary>
-			/// Disarms this SuppressToken so that it can not raise the resume event anymore.
-			/// </summary>
-			public void ResumeSilently()
-			{
-				var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
-				if (parent != null)
-				{
-					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
-
-					if (0 == newLevel)
-					{
-						try
-						{
-							parent.EhResumeSilently();
-						}
-						finally
-						{
-						}
-					}
-					else if (newLevel < 0)
-					{
-						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
-					}
-				}
-			}
-
-			public void Resume()
-			{
-				Dispose();
-			}
-
-			public void Resume(EventFiring eventFiring)
-			{
-				switch (eventFiring)
-				{
-					case EventFiring.Enabled:
-						Resume();
-						break;
-
-					case EventFiring.Suppressed:
-						ResumeSilently();
-						break;
-
-					default:
-						throw new NotImplementedException(string.Format("Unknown option: {0}", eventFiring));
-				}
-			}
-
-			#region IDisposable Members
-
-			public void Dispose()
-			{
-				var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
-				if (parent != null)
-				{
-					Exception exceptionInAboutToBeResumed = null;
-					if (1 == parent._suspendLevel)
-					{
-						try
-						{
-							parent.EhAboutToBeResumed();
-						}
-						catch (Exception ex)
-						{
-							exceptionInAboutToBeResumed = ex;
-						}
-					}
-
-					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
-
-					if (0 == newLevel)
-					{
-						try
-						{
-							parent.EhResume();
-						}
-						finally
-						{
-						}
-					}
-					else if (newLevel < 0)
-					{
-						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
-					}
-
-					if (null != exceptionInAboutToBeResumed)
-						throw exceptionInAboutToBeResumed;
-				}
-			}
-
-			#endregion IDisposable Members
-		}
-
-		#endregion Inner class SuspendToken
-
 		/// <summary>How many times was the Suspend function called (without corresponding Resume)</summary>
 		private int _suspendLevel;
 
@@ -225,12 +98,13 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// For the moment of execution, the suspend status is interrupted, and one time the OnResume function would be called.
+		/// Resumes the events of this class as long as you hold the returned resume token. The original state (the suspenended state) is restored when you dispose the resume token.
 		/// </summary>
-		public void ResumeShortly()
+		public IDisposable ResumeShortlyGetToken()
 		{
-			if (_suspendLevel != 0)
-				EhResume();
+			var token = new TemporaryResumeToken(this);
+			token.ResumeTemporarily();
+			return token;
 		}
 
 		/// <summary>
@@ -240,23 +114,6 @@ namespace Altaxo.Main
 		/// <c>true</c> if this instance is suspended; otherwise, <c>false</c>.
 		/// </value>
 		public bool IsSuspended { get { return _suspendLevel != 0; } }
-
-		public bool IsNotSuspended { get { return _suspendLevel == 0; } }
-
-		private void EhAboutToBeResumed()
-		{
-			OnAboutToBeResumed();
-		}
-
-		private void EhResume()
-		{
-			OnResume();
-		}
-
-		private void EhResumeSilently()
-		{
-			OnResumeSilently();
-		}
 
 		/// <summary>
 		/// Called when the suspend level has just gone from 0 to 1, i.e. the object was suspended.
@@ -286,5 +143,247 @@ namespace Altaxo.Main
 		protected virtual void OnResumeSilently()
 		{
 		}
+
+		#region Inner class SuspendToken
+
+		private class SuspendToken : ISuspendToken
+		{
+			private SuspendableObject _parent;
+
+			internal SuspendToken(SuspendableObject parent)
+			{
+				var suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
+				_parent = parent;
+
+				if (1 == suspendLevel)
+				{
+					try
+					{
+						_parent.OnSuspended();
+					}
+					catch (Exception)
+					{
+						System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+						_parent = null;
+						throw;
+					}
+				}
+			}
+
+			~SuspendToken()
+			{
+				Dispose();
+			}
+
+			/// <summary>
+			/// Disarms this SuppressToken so that it can not raise the resume event anymore.
+			/// </summary>
+			public void ResumeSilently()
+			{
+				var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
+				if (parent != null)
+				{
+					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
+					if (0 == newLevel)
+					{
+						try
+						{
+							parent.OnResumeSilently();
+						}
+						finally
+						{
+						}
+					}
+					else if (newLevel < 0)
+					{
+						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+					}
+				}
+			}
+
+			public void Resume()
+			{
+				Dispose();
+			}
+
+			public void Resume(EventFiring eventFiring)
+			{
+				switch (eventFiring)
+				{
+					case EventFiring.Enabled:
+						Resume();
+						break;
+
+					case EventFiring.Suppressed:
+						ResumeSilently();
+						break;
+
+					default:
+						throw new NotImplementedException(string.Format("Unknown option: {0}", eventFiring));
+				}
+			}
+
+			#region IDisposable Members
+
+			public void Dispose()
+			{
+				var parent = System.Threading.Interlocked.Exchange<SuspendableObject>(ref _parent, null);
+				if (parent != null)
+				{
+					Exception exceptionInAboutToBeResumed = null;
+					if (1 == parent._suspendLevel)
+					{
+						try
+						{
+							parent.OnAboutToBeResumed();
+						}
+						catch (Exception ex)
+						{
+							exceptionInAboutToBeResumed = ex;
+						}
+					}
+
+					int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
+					if (0 == newLevel)
+					{
+						try
+						{
+							parent.OnResume();
+						}
+						finally
+						{
+						}
+					}
+					else if (newLevel < 0)
+					{
+						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+					}
+
+					if (null != exceptionInAboutToBeResumed)
+						throw exceptionInAboutToBeResumed;
+				}
+			}
+
+			#endregion IDisposable Members
+		}
+
+		#endregion Inner class SuspendToken
+
+		#region Inner class TemporaryResumeToken
+
+		private class TemporaryResumeToken : IDisposable
+		{
+			private SuspendableObject _parent;
+			private int _numberOfSuspendLevelsAbsorbed;
+
+			internal TemporaryResumeToken(SuspendableObject parent)
+			{
+				_parent = parent;
+			}
+
+			internal void ResumeTemporarily()
+			{
+				Exception ex1 = null;
+				Exception ex2 = null;
+				Exception ex3 = null;
+
+				// Try to bring the suspend level to 0
+				int suspendLevel = _parent._suspendLevel;
+				while (suspendLevel != 0)
+				{
+					if (suspendLevel > 0)
+					{
+						if (suspendLevel == 1)
+						{
+							try
+							{
+								_parent.OnAboutToBeResumed();
+							}
+							catch (Exception ex)
+							{
+								ex1 = ex;
+							}
+						}
+
+						suspendLevel = System.Threading.Interlocked.Decrement(ref _parent._suspendLevel);
+						++_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 0)
+						{
+							try
+							{
+								_parent.OnResume();
+							}
+							catch (Exception ex)
+							{
+								ex2 = ex;
+							}
+						}
+					}
+					else if (suspendLevel < 0)
+					{
+						suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
+						--_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 1)
+						{
+							try
+							{
+								_parent.OnSuspended();
+							}
+							catch (Exception ex)
+							{
+								ex3 = ex;
+							}
+						}
+					}
+				}
+
+				if (null != ex1)
+					throw ex1;
+				if (null != ex2)
+					throw ex2;
+				if (null != ex3)
+					throw ex3;
+			}
+
+			~TemporaryResumeToken()
+			{
+				Dispose();
+			}
+
+			public void Dispose()
+			{
+				Exception exception = null;
+				while (_numberOfSuspendLevelsAbsorbed > 0)
+				{
+					int suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
+					--_numberOfSuspendLevelsAbsorbed;
+
+					if (suspendLevel == 1)
+					{
+						if (1 == suspendLevel)
+						{
+							try
+							{
+								_parent.OnSuspended();
+							}
+							catch (Exception ex)
+							{
+								exception = ex;
+							}
+						}
+					}
+				}
+
+				// Suspend level is now restored
+				if (exception != null)
+					throw exception;
+			}
+		}
+
+		#endregion Inner class TemporaryResumeToken
 	}
 }

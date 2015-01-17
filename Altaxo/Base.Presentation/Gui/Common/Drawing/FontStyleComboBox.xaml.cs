@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if (_eventDisabler.IsNotSuspended)
+			if (!_eventDisabler.IsSuspended)
 			{
 				FontXStyle newStyle = FontXStyle.Regular;
 				if (true == _guiBold.IsChecked)

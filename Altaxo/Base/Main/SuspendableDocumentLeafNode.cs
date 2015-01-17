@@ -297,186 +297,129 @@ namespace Altaxo.Main
 			#endregion IDisposable Members
 		}
 
-		#endregion Inner class SuspendToken
-	}
-
-	/// <summary>
-	/// Base class for a suspendable document node. This class stores a single object to accumulate event data.
-	/// This class supports document nodes that have children,
-	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
-	/// </summary>
-	/// <typeparam name="T">Type of accumulated event data, of type <see cref="EventArgs"/> or any derived type.</typeparam>
-	public abstract class SuspendableDocumentLeafNodeWithSingleAccumulatedData<T> : SuspendableDocumentLeafNode where T : EventArgs
-	{
 		/// <summary>
-		/// Holds the accumulated change data.
+		/// Class that 'absorbs' the suspend count of the parent object, so that the events of the parent are temporarily resumed. The absorbed suspend count is stored in the token, and when the token
+		/// is disposed, the suspend count of the parent is increased by that number again.
 		/// </summary>
-		[NonSerialized]
-		protected T _accumulatedEventData;
-
-		/// <summary>
-		/// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg" />.
-		/// The return value is false if there is more than one event arg accumulated. In this case the <paramref name="singleEventArg" /> is <c>null</c> on return, and the calling function should use <see cref="AccumulatedEventData" /> to
-		/// enumerate all accumulated event args.
-		/// </summary>
-		/// <param name="singleEventArg">The <see cref="EventArgs" /> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
-		/// <returns>
-		/// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
-		/// </returns>
-		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+		private class TemporaryResumeToken : IDisposable
 		{
-			singleEventArg = _accumulatedEventData;
-			return true;
-		}
+			private SuspendableDocumentLeafNode _parent;
+			private int _numberOfSuspendLevelsAbsorbed;
 
-		/// <summary>
-		/// Gets the accumulated event data.
-		/// </summary>
-		/// <value>
-		/// The accumulated event data.
-		/// </value>
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
+			internal TemporaryResumeToken(SuspendableDocumentLeafNode parent)
 			{
-				if (null != _accumulatedEventData)
-					yield return _accumulatedEventData;
+				_parent = parent;
 			}
-		}
 
-		/// <summary>
-		/// Clears the accumulated event data.
-		/// </summary>
-		protected override void AccumulatedEventData_Clear()
-		{
-			_accumulatedEventData = null;
-		}
-
-		/// <summary>
-		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
-		/// </summary>
-		/// <param name="sender">The sender of the change notification (currently unused).</param>
-		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
-		/// <exception cref="System.ArgumentNullException">Argument e is null</exception>
-		/// <exception cref="System.ArgumentException"></exception>
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			if (null == e)
-				throw new ArgumentNullException("Argument e is null");
-			if (!(e is T))
-				throw new ArgumentException(string.Format("Argument e has the wrong type. Type expected: {0}, actual type of e: {1}", typeof(T), e.GetType()));
-
-			if (null == _accumulatedEventData)
+			~TemporaryResumeToken()
 			{
-				_accumulatedEventData = (T)e;
+				Dispose(false);
 			}
-			else // there is already an event arg present
+
+			public void Dispose()
 			{
-				var aedAsSelf = _accumulatedEventData as SelfAccumulateableEventArgs;
-				if (null != aedAsSelf && aedAsSelf.Equals(e)) // Equals is here (mis)used to ensure compatibility between the two event args
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			internal void ResumeTemporarily()
+			{
+				Exception ex1 = null;
+				Exception ex2 = null;
+				Exception ex3 = null;
+
+				// Try to bring the suspend level to 0
+				int suspendLevel = _parent._suspendLevel;
+				while (suspendLevel != 0)
 				{
-					aedAsSelf.Add((SelfAccumulateableEventArgs)e);
+					if (suspendLevel > 0)
+					{
+						if (suspendLevel == 1)
+						{
+							try
+							{
+								_parent.OnAboutToBeResumed();
+							}
+							catch (Exception ex)
+							{
+								ex1 = ex;
+							}
+						}
+
+						suspendLevel = System.Threading.Interlocked.Decrement(ref _parent._suspendLevel);
+						++_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 0)
+						{
+							try
+							{
+								_parent.OnResume();
+							}
+							catch (Exception ex)
+							{
+								ex2 = ex;
+							}
+						}
+					}
+					else if (suspendLevel < 0)
+					{
+						suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
+						--_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 1)
+						{
+							try
+							{
+								_parent.OnSuspended();
+							}
+							catch (Exception ex)
+							{
+								ex3 = ex;
+							}
+						}
+					}
 				}
+
+				if (null != ex1)
+					throw ex1;
+				if (null != ex2)
+					throw ex2;
+				if (null != ex3)
+					throw ex3;
 			}
-		}
-	}
 
-	/// <summary>
-	/// Implements a <see cref="T:Altaxo.Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData{System.EventArgs}"/>. The accumulated data store the event args that you provide in the call to EhSelfChanged.
-	/// </summary>
-	public class SuspendableDocumentLeafNodeWithEventArgs : SuspendableDocumentLeafNodeWithSingleAccumulatedData<EventArgs>
-	{
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			if (null != e)
-				_accumulatedEventData = e;
-			else
-				_accumulatedEventData = EventArgs.Empty;
-		}
-
-		/// <summary>
-		/// Calls EhSelfChanged with EventArgs.Empty
-		/// </summary>
-		public virtual void EhSelfChanged()
-		{
-			EhSelfChanged(EventArgs.Empty);
-		}
-	}
-
-	/// <summary>
-	/// Base class for a suspendable document node. This class stores the accumulate event data objects in a special set <see cref="ISetOfEventData"/>.
-	/// This set takes into account that <see cref="SelfAccumulateableEventArgs"/> can be accumulated. By overriding <see cref="M:GetHashCode"/> and <see cref="M:Equals"/> you can control whether only one instance or
-	/// multiple instances can be stored in the set.
-	/// This class supports document nodes that have children,
-	/// and implements most of the code neccessary to handle child events and to suspend the childs when the parent is suspended.
-	/// </summary>
-	public abstract class SuspendableDocumentLeafNodeWithSetOfEventArgs : SuspendableDocumentLeafNode
-	{
-		private static EventArgs[] _emptyData = new EventArgs[0];
-
-		/// <summary>
-		/// The accumulated event data.
-		/// </summary>
-		[NonSerialized]
-		protected ISetOfEventData _accumulatedEventData = new SetOfEventData();
-
-		/// <summary>
-		/// Determines whether there is no or only one single event arg accumulated. If this is the case, the return value is <c>true</c>. If there is one event arg accumulated, it is returned in the argument <paramref name="singleEventArg" />.
-		/// The return value is false if there is more than one event arg accumulated. In this case the <paramref name="singleEventArg" /> is <c>null</c> on return, and the calling function should use <see cref="AccumulatedEventData" /> to
-		/// enumerate all accumulated event args.
-		/// </summary>
-		/// <param name="singleEventArg">The <see cref="EventArgs" /> instance containing the event data, if there is exactly one event arg accumulated. Otherwise, it is <c>null</c>.</param>
-		/// <returns>
-		/// True if there is zero or one event arg accumulated, otherwise <c>false</c>.
-		/// </returns>
-		protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
-		{
-			var count = _accumulatedEventData.Count;
-			switch (count)
+			public void Dispose(bool isDisposing)
 			{
-				case 0:
-					singleEventArg = null;
-					return true;
+				Exception exception = null;
+				while (_numberOfSuspendLevelsAbsorbed > 0)
+				{
+					int suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
+					--_numberOfSuspendLevelsAbsorbed;
 
-				case 1:
-					singleEventArg = _accumulatedEventData.First();
-					return true;
+					if (suspendLevel == 1)
+					{
+						if (1 == suspendLevel)
+						{
+							try
+							{
+								_parent.OnSuspended();
+							}
+							catch (Exception ex)
+							{
+								exception = ex;
+							}
+						}
+					}
+				}
 
-				default:
-					singleEventArg = null;
-					return false;
+				_parent = null;
+
+				// Suspend level is now restored
+				if (exception != null)
+					throw exception;
 			}
 		}
 
-		/// <summary>
-		/// Gets the accumulated event data.
-		/// </summary>
-		/// <value>
-		/// The accumulated event data.
-		/// </value>
-		protected override IEnumerable<EventArgs> AccumulatedEventData
-		{
-			get
-			{
-				if (null != _accumulatedEventData)
-					return _accumulatedEventData;
-				else
-					return _emptyData;
-			}
-		}
-
-		/// <summary>
-		/// Clears the accumulated event data.
-		/// </summary>
-		protected override void AccumulatedEventData_Clear()
-		{
-			if (null != _accumulatedEventData)
-				_accumulatedEventData.Clear();
-		}
-
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			_accumulatedEventData.SetOrAccumulate(e);
-		}
+		#endregion Inner class SuspendToken
 	}
 }
