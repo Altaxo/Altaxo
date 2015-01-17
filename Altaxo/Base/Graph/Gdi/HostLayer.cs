@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Gdi
 
 			using (var suspendToken = SuspendGetToken()) // see below, this is to suppress the change event when cloning the layer.
 			{
-				InternalInitializeGraphObjectsCollection();
+				InternalInitializeGraphObjectsCollection(); // Preparation of graph objects collection and its partial views
 				CopyFrom(from, GraphCopyOptions.All);
 
 				suspendToken.ResumeSilently(); // when we clone from another layer, the new layer has still the parent of the old layer. Thus we don't want that the parent of the old layer receives the changed event, since nothing has changed for it.
@@ -754,7 +754,10 @@ namespace Altaxo.Graph.Gdi
 			}
 			private set
 			{
-				_grid = value;
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				ChildSetMember(ref _grid, value);
 			}
 		}
 
@@ -1302,6 +1305,11 @@ namespace Altaxo.Graph.Gdi
 			{
 				yield return new Main.DocumentNodeAndName(_location, "Location");
 			}
+
+			if (null != _grid)
+			{
+				yield return new Main.DocumentNodeAndName(_grid, "Grid");
+			}
 		}
 
 		protected override void Dispose(bool isDisposing)
@@ -1318,6 +1326,8 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			ChildDisposeMember(ref _location);
+
+			ChildDisposeMember(ref _grid);
 
 			base.Dispose(isDisposing);
 		}

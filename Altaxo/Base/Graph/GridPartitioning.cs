@@ -25,14 +25,29 @@
 using Altaxo.Calc;
 using Altaxo.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph
 {
-	public class LinearPartitioning : System.Collections.ObjectModel.ObservableCollection<RADouble>
+	public class LinearPartitioning
+		:
+		Main.SuspendableDocumentLeafNodeWithSetOfEventArgs,
+		IList<RADouble>,
+		ICollection<RADouble>,
+		IEnumerable<RADouble>,
+		IList,
+		ICollection,
+		IEnumerable,
+		INotifyCollectionChanged, INotifyPropertyChanged,
+		ICloneable
 	{
+		private System.Collections.ObjectModel.ObservableCollection<RADouble> _innerList;
+
 		#region Serialization
 
 		#region Version 0
@@ -75,6 +90,60 @@ namespace Altaxo.Graph
 		#endregion Version 0
 
 		#endregion Serialization
+
+		public LinearPartitioning()
+		{
+			_innerList = new System.Collections.ObjectModel.ObservableCollection<RADouble>();
+			_innerList.CollectionChanged += EhInnerList_CollectionChanged;
+			((INotifyPropertyChanged)_innerList).PropertyChanged += EhInnerList_PropertyChanged;
+		}
+
+		public LinearPartitioning(IEnumerable<RADouble> list)
+		{
+			_innerList = new System.Collections.ObjectModel.ObservableCollection<RADouble>(list);
+			_innerList.CollectionChanged += EhInnerList_CollectionChanged;
+			((INotifyPropertyChanged)_innerList).PropertyChanged += EhInnerList_PropertyChanged;
+		}
+
+		public object Clone()
+		{
+			return new LinearPartitioning(this._innerList);
+		}
+
+		#region event handling
+
+		private void EhInnerList_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			EhSelfChanged(e);
+		}
+
+		private void EhInnerList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			EhSelfChanged(e);
+		}
+
+		protected override void OnChanged(EventArgs e)
+		{
+			var e1 = e as NotifyCollectionChangedEventArgs;
+			if (null != e1)
+			{
+				var ev = CollectionChanged;
+				if (null != ev)
+					ev(this, e1);
+			}
+
+			var e2 = e as PropertyChangedEventArgs;
+			if (null != e2)
+			{
+				var ev = PropertyChanged;
+				if (null != ev)
+					ev(this, e2);
+			}
+
+			base.OnChanged(e);
+		}
+
+		#endregion event handling
 
 		public double[] GetPartitionPositions(double totalSize)
 		{
@@ -136,9 +205,165 @@ namespace Altaxo.Graph
 		{
 			return this.Sum(x => x.IsRelative ? x.Value : 0);
 		}
+
+		#region ICollection<RADouble>
+
+		public void Add(RADouble item)
+		{
+			_innerList.Add(item);
+		}
+
+		public void Clear()
+		{
+			_innerList.Clear();
+		}
+
+		public bool Contains(RADouble item)
+		{
+			return _innerList.Contains(item);
+		}
+
+		public void CopyTo(RADouble[] array, int arrayIndex)
+		{
+			_innerList.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return _innerList.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(RADouble item)
+		{
+			return _innerList.Remove(item);
+		}
+
+		public IEnumerator<RADouble> GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		#endregion ICollection<RADouble>
+
+		#region INotifyCollectionChanged
+
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		#endregion INotifyCollectionChanged
+
+		#region INotifyPropertyChanged
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion INotifyPropertyChanged
+
+		#region IList<RADouble>
+
+		public int IndexOf(RADouble item)
+		{
+			return _innerList.IndexOf(item);
+		}
+
+		public void Insert(int index, RADouble item)
+		{
+			_innerList.Insert(index, item);
+		}
+
+		public void RemoveAt(int index)
+		{
+			RemoveAt(index);
+		}
+
+		public RADouble this[int index]
+		{
+			get
+			{
+				return _innerList[index];
+			}
+			set
+			{
+				_innerList[index] = value;
+			}
+		}
+
+		#endregion IList<RADouble>
+
+		#region IList
+
+		public int Add(object value)
+		{
+			return ((IList)_innerList).Add(value);
+		}
+
+		public bool Contains(object value)
+		{
+			return ((IList)_innerList).Contains(value);
+		}
+
+		public int IndexOf(object value)
+		{
+			return ((IList)_innerList).IndexOf(value);
+		}
+
+		public void Insert(int index, object value)
+		{
+			((IList)_innerList).Insert(index, value);
+		}
+
+		public bool IsFixedSize
+		{
+			get { return ((IList)_innerList).IsFixedSize; }
+		}
+
+		public void Remove(object value)
+		{
+			((IList)_innerList).Remove(value);
+		}
+
+		object IList.this[int index]
+		{
+			get
+			{
+				return _innerList[index];
+			}
+			set
+			{
+				((IList)_innerList)[index] = value;
+			}
+		}
+
+		public void CopyTo(Array array, int index)
+		{
+			((IList)_innerList).CopyTo(array, index);
+		}
+
+		public bool IsSynchronized
+		{
+			get { return ((IList)_innerList).IsSynchronized; }
+		}
+
+		public object SyncRoot
+		{
+			get { return ((IList)_innerList).SyncRoot; }
+		}
+
+		#endregion IList
 	}
 
-	public class GridPartitioning : Main.ICopyFrom
+	public class GridPartitioning
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		Main.ICopyFrom
 	{
 		private LinearPartitioning _xPartitioning;
 		private LinearPartitioning _yPartitioning;
@@ -184,14 +409,14 @@ namespace Altaxo.Graph
 
 		public GridPartitioning()
 		{
-			_xPartitioning = new LinearPartitioning();
-			_yPartitioning = new LinearPartitioning();
+			_xPartitioning = new LinearPartitioning() { ParentObject = this };
+			_yPartitioning = new LinearPartitioning() { ParentObject = this };
 		}
 
 		public GridPartitioning(GridPartitioning from)
 		{
-			_xPartitioning = new LinearPartitioning();
-			_yPartitioning = new LinearPartitioning();
+			_xPartitioning = new LinearPartitioning() { ParentObject = this };
+			_yPartitioning = new LinearPartitioning() { ParentObject = this };
 			CopyFrom(from);
 		}
 
@@ -203,10 +428,13 @@ namespace Altaxo.Graph
 			var from = obj as GridPartitioning;
 			if (null != from)
 			{
-				_xPartitioning.Clear();
-				_yPartitioning.Clear();
-				_xPartitioning.AddRange(from._xPartitioning);
-				_yPartitioning.AddRange(from._yPartitioning);
+				using (var suspendToken = SuspendGetToken())
+				{
+					ChildCopyToMember(ref _xPartitioning, from._xPartitioning);
+					ChildCopyToMember(ref _yPartitioning, from._yPartitioning);
+
+					suspendToken.Resume();
+				}
 				return true;
 			}
 			return false;
@@ -215,6 +443,14 @@ namespace Altaxo.Graph
 		public object Clone()
 		{
 			return new GridPartitioning(this);
+		}
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _xPartitioning)
+				yield return new Main.DocumentNodeAndName(_xPartitioning, () => _xPartitioning = null, "XPartitioning");
+			if (null != _yPartitioning)
+				yield return new Main.DocumentNodeAndName(_yPartitioning, () => _yPartitioning = null, "YPartitioning");
 		}
 
 		public LinearPartitioning XPartitioning { get { return _xPartitioning; } }
