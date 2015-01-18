@@ -69,19 +69,19 @@ namespace Altaxo.Gui.Analysis.Fourier
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			bool result;
 
-			result = _dataSourceOptionsController.Apply();
+			result = _dataSourceOptionsController.Apply(disposeController);
 			if (!result) return result;
 
-			result = _fourierTransformationOptionsController.Apply();
+			result = _fourierTransformationOptionsController.Apply(disposeController);
 			if (!result) return result;
 
 			if (null != _inputDataController)
 			{
-				result = _inputDataController.Apply();
+				result = _inputDataController.Apply(disposeController);
 				if (!result) return result;
 			}
 

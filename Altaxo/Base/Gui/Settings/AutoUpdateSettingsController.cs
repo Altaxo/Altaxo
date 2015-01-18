@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.EnableAutoUpdates = _view.EnableAutoUpdates;
 			_doc.DownloadUnstableVersion = _view.DownloadUnstableVersion;

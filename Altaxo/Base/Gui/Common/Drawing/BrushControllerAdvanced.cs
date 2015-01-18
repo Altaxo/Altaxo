@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Common.Drawing
 			base.DetachView();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_originalDoc = (BrushX)_doc.Clone();
 			return true;

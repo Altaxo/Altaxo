@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.MoveAxis = _view.MoveAxis;
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,36 +19,37 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Globalization;
+#endregion Copyright
 
 using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
 	public interface IAsciiDocumentAnalysisOptionsView
 	{
 		int NumberOfLinesToAnalyze { get; set; }
+
 		void SetNumberFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
+
 		void SetDateTimeFormatsToAnalyze(SelectableListNodeList availableFormats, ObservableCollection<Boxed<SelectableListNode>> currentlySelectedItems);
 	}
-
 
 	[ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
 	[UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
 	public class AsciiDocumentAnalysisOptionsController : MVCANControllerBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
 	{
-		SelectableListNodeList _availableCultureList;
+		private SelectableListNodeList _availableCultureList;
 
-		System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
-		System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
+		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
+		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
 
 		protected override void Initialize(bool initData)
 		{
@@ -75,7 +77,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.NumberOfLinesToAnalyze = _view.NumberOfLinesToAnalyze;
 
@@ -97,7 +99,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			return string.Compare(x.DisplayName, y.DisplayName);
 		}
 
-		void GetAvailableCultures(ref SelectableListNodeList list)
+		private void GetAvailableCultures(ref SelectableListNodeList list)
 		{
 			list = new SelectableListNodeList();
 			var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
@@ -113,11 +115,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 				list[0].IsSelected = true;
 		}
 
-		void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
+		private void AddCulture(SelectableListNodeList cultureList, CultureInfo cult, bool isSelected)
 		{
 			cultureList.Add(new SelectableListNode(cult.DisplayName, cult, isSelected));
 		}
-
-
 	}
 }

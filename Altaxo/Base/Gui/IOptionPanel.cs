@@ -73,7 +73,7 @@ namespace Altaxo.Gui
 			if (null == _controller)
 				throw new InvalidOperationException("Option panel not initialized, controller is null!");
 
-			var result = _controller.Apply();
+			var result = _controller.Apply(false);
 			if (result)
 			{
 				ProcessControllerResult();

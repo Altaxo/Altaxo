@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Serialization.Ascii;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-
-using System.Collections.ObjectModel;
-using Altaxo.Collections;
-
-using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
 	public interface IFixedColumnWidthWithTabSeparationStrategyView
 	{
 		int TabSize { get; set; }
+
 		ObservableCollection<Boxed<int>> StartPositions { set; }
 	}
 
@@ -42,7 +43,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 	[UserControllerForObject(typeof(FixedColumnWidthWithTabSeparationStrategy))]
 	public class FixedColumnWidthWithTabSeparationStrategyController : MVCANControllerBase<FixedColumnWidthWithTabSeparationStrategy, IFixedColumnWidthWithTabSeparationStrategyView>
 	{
-		ObservableCollection<Boxed<int>> _positions;
+		private ObservableCollection<Boxed<int>> _positions;
 
 		protected override void Initialize(bool initData)
 		{
@@ -53,13 +54,12 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 			if (null != _view)
 			{
-
 				_view.TabSize = _doc.TabSize;
 				_view.StartPositions = _positions;
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.TabSize = _view.TabSize;
 
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 			_doc.StartPositions = resList.ToArray();
 
-			if(_useDocumentCopy)
+			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;

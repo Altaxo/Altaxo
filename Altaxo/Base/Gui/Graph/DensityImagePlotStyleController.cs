@@ -133,12 +133,12 @@ namespace Altaxo.Gui.Graph
 
 		#region IApplyController Members
 
-		public bool Apply()
+		public bool Apply(bool disposeController)
 		{
-			if (!_scaleController.Apply())
+			if (!_scaleController.Apply(disposeController))
 				return false;
 
-			if (!_colorProviderController.Apply())
+			if (!_colorProviderController.Apply(disposeController))
 				return false;
 
 			_doc.ClipToLayer = _view.ClipToLayer;
@@ -146,6 +146,18 @@ namespace Altaxo.Gui.Graph
 			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 
 			return true;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
 		}
 
 		#endregion IApplyController Members

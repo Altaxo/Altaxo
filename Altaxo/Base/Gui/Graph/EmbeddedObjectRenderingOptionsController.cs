@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Graph
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			double sr;
 

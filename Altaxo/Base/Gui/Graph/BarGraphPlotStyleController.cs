@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,71 +19,86 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  public interface IBarGraphPlotStyleView
-  {
+	#region Interfaces
+
+	public interface IBarGraphPlotStyleView
+	{
 		bool UseFill { get; set; }
+
 		bool ShowPlotColorsOnlyForFillBrush { set; }
-    bool IndependentFillColor { get; set; }
-    BrushX FillBrush { get; set; }
+
+		bool IndependentFillColor { get; set; }
+
+		BrushX FillBrush { get; set; }
 
 		bool UseFrame { get; set; }
+
 		bool ShowPlotColorsOnlyForFramePen { set; }
+
 		bool IndependentFrameColor { get; set; }
+
 		PenX FramePen { get; set; }
 
-    double InnerGap { get; set; }
-    double OuterGap { get; set; }
-    bool UsePhysicalBaseValue { get; set; }
-    double BaseValue { get; set; }
-    bool StartAtPreviousItem { get; set; }
-    double YGap { get; set; }
+		double InnerGap { get; set; }
+
+		double OuterGap { get; set; }
+
+		bool UsePhysicalBaseValue { get; set; }
+
+		double BaseValue { get; set; }
+
+		bool StartAtPreviousItem { get; set; }
+
+		double YGap { get; set; }
 
 		/// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
 		event Action IndependentFillColorChanged;
-	
+
 		/// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
 		event Action IndependentFrameColorChanged;
 
 		/// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
 		event Action UseFillChanged;
+
 		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
 		event Action UseFrameChanged;
 
 		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
 		event Action FillBrushChanged;
+
 		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
 		event Action FramePenChanged;
 	}
 
-  #endregion
-  
-  [UserControllerForObject(typeof(BarGraphPlotStyle))]
-  [ExpectedTypeOfView(typeof(IBarGraphPlotStyleView))]
+	#endregion Interfaces
+
+	[UserControllerForObject(typeof(BarGraphPlotStyle))]
+	[ExpectedTypeOfView(typeof(IBarGraphPlotStyleView))]
 	public class BarGraphPlotStyleController : MVCANControllerBase<BarGraphPlotStyle, IBarGraphPlotStyleView>
-  {
+	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
-		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
+		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
 		protected override void Initialize(bool initData)
-    {
+		{
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
 			}
-      if (_view != null)
-      {
+			if (_view != null)
+			{
 				_view.UseFill = _doc.FillBrush != null && _doc.FillBrush.IsVisible;
 				_view.IndependentFillColor = _doc.IndependentFillColor;
 				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
@@ -93,29 +109,29 @@ namespace Altaxo.Gui.Graph
 				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
 				_view.FramePen = null != _doc.FramePen ? _doc.FramePen : new PenX(NamedColors.Transparent);
 
-        _view.InnerGap = _doc.InnerGap;
-        _view.OuterGap = _doc.OuterGap;
-        _view.UsePhysicalBaseValue = _doc.UsePhysicalBaseValue;
-        _view.BaseValue = _doc.UsePhysicalBaseValue ? 0 : _doc.BaseValue;
-        _view.StartAtPreviousItem = _doc.StartAtPreviousItem;
-        _view.YGap = _doc.PreviousItemYGap;
-      }
-    }
+				_view.InnerGap = _doc.InnerGap;
+				_view.OuterGap = _doc.OuterGap;
+				_view.UsePhysicalBaseValue = _doc.UsePhysicalBaseValue;
+				_view.BaseValue = _doc.UsePhysicalBaseValue ? 0 : _doc.BaseValue;
+				_view.StartAtPreviousItem = _doc.StartAtPreviousItem;
+				_view.YGap = _doc.PreviousItemYGap;
+			}
+		}
 
-		void EhColorGroupStyleAddedOrRemoved()
+		private void EhColorGroupStyleAddedOrRemoved()
 		{
 			if (null != _view)
 			{
 				_doc.IndependentFillColor = _view.IndependentFillColor;
 				_doc.IndependentFrameColor = _view.IndependentFrameColor;
-				if(_view.UseFill)
-				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
-				if(_view.UseFrame)
-				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+				if (_view.UseFill)
+					_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				if (_view.UseFrame)
+					_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
 			}
 		}
 
-		void EhIndependentFillColorChanged()
+		private void EhIndependentFillColorChanged()
 		{
 			if (null != _view)
 			{
@@ -126,7 +142,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhIndependentFrameColorChanged()
+		private void EhIndependentFrameColorChanged()
 		{
 			if (null != _view)
 			{
@@ -137,7 +153,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhFillBrushChanged()
+		private void EhFillBrushChanged()
 		{
 			if (null != _view)
 			{
@@ -148,7 +164,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-		void EhFramePenChanged()
+
+		private void EhFramePenChanged()
 		{
 			if (null != _view)
 			{
@@ -160,28 +177,27 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void InternalSetFillColorToFrameColor()
+		private void InternalSetFillColorToFrameColor()
 		{
 			var newBrush = _view.FillBrush.Clone();
 			newBrush.Color = _view.FramePen.Color;
 			_view.FillBrush = newBrush;
 		}
 
-		void InternalSetFrameColorToFillColor()
+		private void InternalSetFrameColorToFillColor()
 		{
 			var newPen = _view.FramePen.Clone();
 			newPen.Color = _view.FillBrush.Color;
 			_view.FramePen = newPen;
 		}
 
-		void EhUseFillChanged()
+		private void EhUseFillChanged()
 		{
 			var newValue = _view.UseFill;
 
 			if (true == newValue)
 			{
-				if(_view.UseFrame && false == _view.IndependentFrameColor)
+				if (_view.UseFrame && false == _view.IndependentFrameColor)
 				{
 					InternalSetFillColorToFrameColor();
 				}
@@ -193,7 +209,7 @@ namespace Altaxo.Gui.Graph
 			_view.UseFill = newValue; // to enable/disable gui items in the control
 		}
 
-		void EhUseFrameChanged()
+		private void EhUseFrameChanged()
 		{
 			var newValue = _view.UseFrame;
 
@@ -211,9 +227,8 @@ namespace Altaxo.Gui.Graph
 
 			_view.UseFrame = newValue; // to enable/disable gui items in the control
 		}
-  
 
-    #region IMVCController Members
+		#region IMVCController Members
 
 		protected override void AttachView()
 		{
@@ -226,7 +241,6 @@ namespace Altaxo.Gui.Graph
 
 			_view.FillBrushChanged += EhFillBrushChanged;
 			_view.FramePenChanged += EhFramePenChanged;
-			
 		}
 
 		protected override void DetachView()
@@ -243,14 +257,12 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
+		#endregion IMVCController Members
 
-    #endregion
+		#region IApplyController Members
 
-    #region IApplyController Members
-
-    public override bool Apply()
-    {
-     
+		public override bool Apply(bool disposeController)
+		{
 			if (_view.UseFill)
 			{
 				_doc.IndependentFillColor = _view.IndependentFillColor;
@@ -273,28 +285,28 @@ namespace Altaxo.Gui.Graph
 				_doc.FramePen = null;
 			}
 
-      _doc.InnerGap = _view.InnerGap;
+			_doc.InnerGap = _view.InnerGap;
 			_doc.OuterGap = _view.OuterGap;
 
-      _doc.UsePhysicalBaseValue = _view.UsePhysicalBaseValue;
-      if (_view.UsePhysicalBaseValue)
-      {
-        // who can parse this string? Only the y-scale know how to parse it
-      }
-      else
-      {
+			_doc.UsePhysicalBaseValue = _view.UsePhysicalBaseValue;
+			if (_view.UsePhysicalBaseValue)
+			{
+				// who can parse this string? Only the y-scale know how to parse it
+			}
+			else
+			{
 				_doc.BaseValue = _view.BaseValue;
-      }
+			}
 
-      _doc.StartAtPreviousItem = _view.StartAtPreviousItem;
+			_doc.StartAtPreviousItem = _view.StartAtPreviousItem;
 			_doc.PreviousItemYGap = _view.YGap;
 
 			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
-      return true;      
-    }
+			return true;
+		}
 
-    #endregion
-  }
+		#endregion IApplyController Members
+	}
 }

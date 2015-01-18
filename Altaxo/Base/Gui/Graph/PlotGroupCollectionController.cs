@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Graph
 
 		private void EhView_GotoSimple()
 		{
-			_controllerAdvanced.Apply();
+			_controllerAdvanced.Apply(false);
 			_doc = (PlotGroupStyleCollection)_controllerAdvanced.ModelObject;
 
 			if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc))
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Graph
 
 		private void EhView_GotoAdvanced()
 		{
-			_controllerSimple.Apply();
+			_controllerSimple.Apply(false);
 			_doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
 			_controllerSimple = null;
 
@@ -190,13 +190,13 @@ namespace Altaxo.Gui.Graph
 		{
 		}
 
-		public bool Apply()
+		public bool Apply(bool disposeController)
 		{
 			bool result;
 			if (null != _controllerSimple)
-				result = _controllerSimple.Apply();
+				result = _controllerSimple.Apply(disposeController);
 			else
-				result = _controllerAdvanced.Apply();
+				result = _controllerAdvanced.Apply(disposeController);
 
 			if (true == result)
 			{
@@ -212,6 +212,18 @@ namespace Altaxo.Gui.Graph
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
 		}
 
 		#endregion IMVCANController

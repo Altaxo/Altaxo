@@ -53,11 +53,11 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			bool result;
 
-			result = _dataProxyController.Apply();
+			result = _dataProxyController.Apply(disposeController);
 			if (!result) return result;
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))

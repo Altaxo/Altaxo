@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_view.MajorTicksChanged -= EhMajorTicksChanged;
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
 			_doc.MajorTickDivider = _tempMajorDivider;

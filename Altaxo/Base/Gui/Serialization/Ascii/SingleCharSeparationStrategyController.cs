@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Serialization.Ascii;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
-
-using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
@@ -52,11 +52,11 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.SeparatorChar = _view.SeparatorChar;
 
-			if(_useDocumentCopy)
+			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;

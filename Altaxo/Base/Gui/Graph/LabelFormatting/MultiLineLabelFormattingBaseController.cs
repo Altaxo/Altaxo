@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.LabelFormatting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph.Gdi.LabelFormatting;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.LabelFormatting
 {
 	public interface IMultiLineLabelFormattingBaseView
 	{
 		double LineSpacing { get; set; }
-		SelectableListNodeList TextBlockAlignement { set; }
 
+		SelectableListNodeList TextBlockAlignement { set; }
 	}
 
 	[UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
 	[ExpectedTypeOfView(typeof(IMultiLineLabelFormattingBaseView))]
 	public class MultiLineLabelFormattingBaseController : MVCANControllerBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
 	{
-		SelectableListNodeList _textBlockAlignmentChoices;
+		private SelectableListNodeList _textBlockAlignmentChoices;
 
 		protected override void Initialize(bool initData)
 		{
@@ -53,11 +54,10 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 			{
 				_view.LineSpacing = _doc.LineSpacing;
 				_view.TextBlockAlignement = _textBlockAlignmentChoices;
-
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.LineSpacing = _view.LineSpacing;
 			_doc.TextBlockAlignment = (System.Drawing.StringAlignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;

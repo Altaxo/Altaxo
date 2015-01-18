@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,48 +19,50 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using System;
 
 namespace Altaxo.Gui.Worksheet
 {
-  /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
-  /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.CrossValidatedCubicSpline),100)]
-  public class CrossValidatedCubicSplineController : NumericDoubleValueController
-  {
-    CrossValidatedCubicSpline _spline;
-    public CrossValidatedCubicSplineController(CrossValidatedCubicSpline spline)
-      : base(spline.ErrorVariance)
-    {
-      base._minimumValue = 0;
-      base._isMinimumValueIncluded=false;
-      _descriptionText = "Error variance (if unknown, set it to -1) :";
-      _spline = spline;
-    }
+	/// <summary>
+	/// Controls the Smoothing parameter of a rational cubic spline.
+	/// </summary>
+	[UserControllerForObject(typeof(Altaxo.Calc.Interpolation.CrossValidatedCubicSpline), 100)]
+	public class CrossValidatedCubicSplineController : NumericDoubleValueController
+	{
+		private CrossValidatedCubicSpline _spline;
 
-    public override object ModelObject
-    {
-      get
-      {
-        return _spline;
-      }
-    }
+		public CrossValidatedCubicSplineController(CrossValidatedCubicSpline spline)
+			: base(spline.ErrorVariance)
+		{
+			base._minimumValue = 0;
+			base._isMinimumValueIncluded = false;
+			_descriptionText = "Error variance (if unknown, set it to -1) :";
+			_spline = spline;
+		}
 
-    public override bool Apply()
-    {
-      if(base.Apply())
-      {
-        this._spline.ErrorVariance = base._value1Double;
-        return true;
-      }
-      else
-        return false;
-    }
-  }
+		public override object ModelObject
+		{
+			get
+			{
+				return _spline;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (base.Apply(disposeController))
+			{
+				this._spline.ErrorVariance = base._value1Double;
+				return true;
+			}
+			else
+				return false;
+		}
+	}
 }

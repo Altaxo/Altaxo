@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -41,7 +43,7 @@ namespace Altaxo.Gui.Scripting
 	/// </summary>
 	public partial class ScriptExecutionDialog : Window
 	{
-		IScriptController _controller;
+		private IScriptController _controller;
 
 		public ScriptExecutionDialog()
 		{
@@ -66,7 +68,7 @@ namespace Altaxo.Gui.Scripting
 
 			if (_controller != null)
 			{
-				if (_controller.Apply())
+				if (_controller.Apply(true))
 				{
 					_backgroundCancelControl.StartExecution(_controller.Execute, 1000);
 				}
@@ -78,7 +80,6 @@ namespace Altaxo.Gui.Scripting
 			if (_backgroundCancelControl.ExecutionInProgress)
 				return;
 
-
 			if (_controller != null)
 				_controller.Compile();
 		}
@@ -87,7 +88,6 @@ namespace Altaxo.Gui.Scripting
 		{
 			if (_backgroundCancelControl.ExecutionInProgress)
 				return;
-
 
 			if (_controller != null)
 				_controller.Update();
@@ -133,6 +133,5 @@ namespace Altaxo.Gui.Scripting
 				this._backgroundCancelControl.Visibility = System.Windows.Visibility.Hidden;
 			}
 		}
-
 	}
 }

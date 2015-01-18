@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,44 +19,44 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
-  /// <summary>
-  /// Summary description for SingleChoiceObjectController.
-  /// </summary>
-  [UserControllerForObject(typeof(ISingleChoiceObject),100)]
-  public class SingleChoiceObjectController : SingleChoiceController
-  {
-    protected ISingleChoiceObject _choiceObject;
-    public SingleChoiceObjectController(ISingleChoiceObject o)
-      :
-      base(o.Choices,o.Selection)
-    {
-      _choiceObject = o;
-    }
+	/// <summary>
+	/// Summary description for SingleChoiceObjectController.
+	/// </summary>
+	[UserControllerForObject(typeof(ISingleChoiceObject), 100)]
+	public class SingleChoiceObjectController : SingleChoiceController
+	{
+		protected ISingleChoiceObject _choiceObject;
 
-    public override object ModelObject
-    {
-      get
-      {
-        return _choiceObject;
-      }
-    }
+		public SingleChoiceObjectController(ISingleChoiceObject o)
+			:
+			base(o.Choices, o.Selection)
+		{
+			_choiceObject = o;
+		}
 
+		public override object ModelObject
+		{
+			get
+			{
+				return _choiceObject;
+			}
+		}
 
-    public override bool Apply()
-    {
-      if(!base.Apply())
-        return false;
+		public override bool Apply(bool disposeController)
+		{
+			if (!base.Apply(disposeController))
+				return false;
 
-      _choiceObject.Selection = base._choice;
+			_choiceObject.Selection = base._choice;
 
-      return true;
-    }
-
-  }
+			return true;
+		}
+	}
 }

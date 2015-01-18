@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
@@ -39,11 +40,11 @@ namespace Altaxo.Gui.Graph.Shapes
 		double CornerRadiusPt { get; set; }
 	}
 
-	[UserControllerForObject(typeof(RegularPolygon),110)]
+	[UserControllerForObject(typeof(RegularPolygon), 110)]
 	[ExpectedTypeOfView(typeof(IRegularPolygonView))]
 	public class RegularPolygonController : MVCANControllerBase<RegularPolygon, IRegularPolygonView>
 	{
-		ClosedPathShapeController _shapeCtrl;
+		private ClosedPathShapeController _shapeCtrl;
 
 		protected override void Initialize(bool initData)
 		{
@@ -62,19 +63,18 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_shapeCtrl.Apply())
+			if (!_shapeCtrl.Apply(disposeController))
 				return false;
 
 			_doc.CornerRadius = _view.CornerRadiusPt;
 			_doc.NumberOfVertices = _view.Vertices;
 
-			if(_useDocumentCopy)
+			if (_useDocumentCopy)
 				_originalDoc.CopyFrom(_doc);
 
 			return true;
 		}
-
 	}
 }

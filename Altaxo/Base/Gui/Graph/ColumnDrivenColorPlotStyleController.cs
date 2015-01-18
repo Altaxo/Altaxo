@@ -144,9 +144,9 @@ namespace Altaxo.Gui.Graph
 		{
 		}
 
-		public bool Apply()
+		public bool Apply(bool disposeController)
 		{
-			if (!_scaleController.Apply())
+			if (!_scaleController.Apply(disposeController))
 				return false;
 
 			if (!(_scaleController.ModelObject is Altaxo.Graph.Scales.NumericalScale))
@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Graph
 
 			_doc.Scale = (Altaxo.Graph.Scales.NumericalScale)_scaleController.ModelObject;
 
-			if (!_colorProviderController.Apply())
+			if (!_colorProviderController.Apply(disposeController))
 				return false;
 			_doc.ColorProvider = (Altaxo.Graph.Gdi.Plot.IColorProvider)_colorProviderController.ModelObject;
 
@@ -165,6 +165,18 @@ namespace Altaxo.Gui.Graph
 				_doc.DataColumn = _tempDataColumn;
 
 			return true;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
 		}
 	}
 }

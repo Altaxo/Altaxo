@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
+
 using Altaxo.Collections;
-using Altaxo.Serialization;
-using System.Drawing;
-using Altaxo.Graph.Gdi;
-
-using Altaxo.Main;
 using Altaxo.Data;
-using Altaxo.Units;
 using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Main;
+using Altaxo.Serialization;
+using Altaxo.Units;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -74,7 +75,6 @@ namespace Altaxo.Gui.Graph
 		/// <param name="list">The list with choices.</param>
 		void InitializeBackgroundColorLinkage(SelectableListNodeList list);
 
-
 		/// <summary>
 		/// Initializes the horizontal aligment combo box.
 		/// </summary>
@@ -92,7 +92,6 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		bool AttachToAxis { get; set; }
 
-
 		/// <summary>
 		/// Initializes the AttachedAxis combo box.
 		/// </summary>
@@ -104,7 +103,6 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		double SelectedRotation { get; set; }
 
-
 		/// <summary>
 		/// Initializes the content of the XOffset edit box.
 		/// </summary>
@@ -112,12 +110,10 @@ namespace Altaxo.Gui.Graph
 
 		DimensionfulQuantity XOffset { get; }
 
-
 		/// <summary>
 		/// Initializes the content of the YOffset edit box.
 		/// </summary>
 		void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
-
 
 		DimensionfulQuantity YOffset { get; }
 
@@ -125,7 +121,6 @@ namespace Altaxo.Gui.Graph
 		/// Initializes the content of the Independent color checkbox
 		/// </summary>
 		bool IndependentColor { get; set; }
-
 
 		/// <summary>
 		/// Indicates, whether only colors of plot color sets should be shown.
@@ -150,10 +145,10 @@ namespace Altaxo.Gui.Graph
 
 		event Action UseBackgroundChanged;
 
-		#endregion
+		#endregion events
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Summary description for LinkAxisController.
@@ -163,17 +158,14 @@ namespace Altaxo.Gui.Graph
 	public class XYPlotLabelStyleController : MVCANControllerBase<LabelPlotStyle, IXYPlotLabelStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
-		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
+		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		SelectableListNodeList _horizontalAlignmentChoices;
-		SelectableListNodeList _verticalAlignmentChoices;
-		SelectableListNodeList _attachmentDirectionChoices;
-		SelectableListNodeList _backgroundColorLinkageChoices;
+		private SelectableListNodeList _horizontalAlignmentChoices;
+		private SelectableListNodeList _verticalAlignmentChoices;
+		private SelectableListNodeList _attachmentDirectionChoices;
+		private SelectableListNodeList _backgroundColorLinkageChoices;
 
-
-		ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-
-
+		private ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
 		public XYPlotLabelStyleController()
 		{
@@ -211,11 +203,9 @@ namespace Altaxo.Gui.Graph
 				_view.Background = _doc.BackgroundStyle;
 				_view.InitializeBackgroundColorLinkage(_backgroundColorLinkageChoices);
 
-
 				InitializeLabelColumnText();
 			}
 		}
-
 
 		public void InitializeAttachmentDirectionChoices()
 		{
@@ -233,8 +223,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void InitializeLabelColumnText()
+		private void InitializeLabelColumnText()
 		{
 			if (_view != null)
 			{
@@ -245,7 +234,7 @@ namespace Altaxo.Gui.Graph
 
 		#region Color management
 
-		void EhColorGroupStyleAddedOrRemoved()
+		private void EhColorGroupStyleAddedOrRemoved()
 		{
 			if (null != _view)
 			{
@@ -258,8 +247,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void EhLabelColorLinkageChanged()
+		private void EhLabelColorLinkageChanged()
 		{
 			if (null != _view)
 			{
@@ -268,7 +256,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhBackgroundColorLinkageChanged()
+		private void EhBackgroundColorLinkageChanged()
 		{
 			if (null != _view)
 			{
@@ -285,7 +273,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhBackgroundBrushChanged()
+		private void EhBackgroundBrushChanged()
 		{
 			if (null != _view)
 			{
@@ -297,7 +285,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-		void EhLabelBrushChanged()
+
+		private void EhLabelBrushChanged()
 		{
 			if (null != _view)
 			{
@@ -313,7 +302,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhUseBackgroundChanged()
+		private void EhUseBackgroundChanged()
 		{
 			_doc.BackgroundStyle = _view.Background;
 			var newValue = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush;
@@ -327,11 +316,10 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		/// <summary>
 		/// Internal sets the background color to the color of the label.
 		/// </summary>
-		void InternalSetBackgroundColorToLabelColor()
+		private void InternalSetBackgroundColorToLabelColor()
 		{
 			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
 			{
@@ -345,7 +333,7 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Internal sets the background color to the color of the label, but here only the RGB component is used from the label color. The A component of the background color remains unchanged.
 		/// </summary>
-		void InternalSetBackgroundColorRGBToLabelColor()
+		private void InternalSetBackgroundColorRGBToLabelColor()
 		{
 			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
 			{
@@ -360,7 +348,7 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Internal sets the color of the label to the color of the background brush.
 		/// </summary>
-		void InternalSetLabelColorToBackgroundColor()
+		private void InternalSetLabelColorToBackgroundColor()
 		{
 			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
 			{
@@ -370,11 +358,9 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		#endregion Color management
 
 		#region IXYPlotLabelStyleController Members
-
 
 		public void EhView_SelectLabelColumn()
 		{
@@ -385,10 +371,8 @@ namespace Altaxo.Gui.Graph
 			{
 				choice = (SingleColumnChoice)choiceAsObject;
 
-
 				_doc.LabelColumn = choice.SelectedColumn;
 				InitializeLabelColumnText();
-
 			}
 		}
 
@@ -397,11 +381,11 @@ namespace Altaxo.Gui.Graph
 			_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_view.SelectedFont.Size, Units.Length.Point.Instance);
 		}
 
-		#endregion
+		#endregion IXYPlotLabelStyleController Members
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.BackgroundStyle = _view.Background;
 			_doc.Font = _view.SelectedFont;
@@ -437,7 +421,7 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 
 		#region IMVCController Members
 
@@ -466,6 +450,6 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-		#endregion
+		#endregion IMVCController Members
 	}
 }

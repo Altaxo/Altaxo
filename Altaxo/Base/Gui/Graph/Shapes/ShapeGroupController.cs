@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
-using Altaxo.Graph.Gdi.Shapes;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
@@ -39,18 +40,15 @@ namespace Altaxo.Gui.Graph.Shapes
 		void InitializeItemList(SelectableListNodeList list);
 
 		event Action SelectedItemEditing;
-
-
 	}
 
 	[UserControllerForObject(typeof(ShapeGroup))]
 	[ExpectedTypeOfView(typeof(IShapeGroupView))]
 	public class ShapeGroupController : MVCANControllerBase<ShapeGroup, IShapeGroupView>
 	{
-		SelectableListNodeList _itemList;
+		private SelectableListNodeList _itemList;
 
 		private IMVCANController _locationController;
-
 
 		protected override void Initialize(bool initData)
 		{
@@ -66,7 +64,6 @@ namespace Altaxo.Gui.Graph.Shapes
 
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
 				Current.Gui.FindAndAttachControlTo(_locationController);
-
 			}
 
 			if (_view != null)
@@ -74,13 +71,12 @@ namespace Altaxo.Gui.Graph.Shapes
 				_view.InitializeItemList(_itemList);
 
 				_view.LocationView = _locationController.ViewObject;
-
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_locationController.Apply())
+			if (!_locationController.Apply(disposeController))
 				return false;
 
 			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
@@ -90,7 +86,6 @@ namespace Altaxo.Gui.Graph.Shapes
 
 			return true;
 		}
-
 
 		protected override void AttachView()
 		{
@@ -102,10 +97,9 @@ namespace Altaxo.Gui.Graph.Shapes
 			_view.SelectedItemEditing -= EhEditSelectedItem;
 		}
 
-
-		void EhEditSelectedItem()
+		private void EhEditSelectedItem()
 		{
-			_locationController.Apply();
+			_locationController.Apply(false);
 
 			var node = _itemList.FirstSelectedNode;
 			if (node == null)

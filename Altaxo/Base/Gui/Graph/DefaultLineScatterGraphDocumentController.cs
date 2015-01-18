@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				CopyHelper.Copy(ref _originalDoc, _doc);

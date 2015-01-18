@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,42 +19,49 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public interface ITextureScalingView
 	{
 		TextureScalingMode ScalingMode { get; set; }
+
 		event Action ScalingModeChanged;
+
 		AspectRatioPreservingMode AspectPreserving { get; set; }
+
 		event Action AspectPreservingChanged;
 
 		double XScale { get; set; }
+
 		double YScale { get; set; }
+
 		double XSize { get; set; }
+
 		double YSize { get; set; }
 
 		event Action XChanged;
+
 		event Action YChanged;
 
 		bool ShowSizeNotScale { set; }
 	}
 
-	public class TextureScalingController : MVCANDControllerBase<TextureScaling,ITextureScalingView>
+	public class TextureScalingController : MVCANDControllerBase<TextureScaling, ITextureScalingView>
 	{
 		/// <summary>
 		/// Size of the original texture.
 		/// </summary>
-		PointD2D? _sourceTextureSize;
+		private PointD2D? _sourceTextureSize;
 
 		/// <summary>Sets the size of the source texture. This is used by the view to automatically change the value of one size/scale when the value for the other size/scale is changed.</summary>
 		/// <value>The size of the source texture.</value>
@@ -110,13 +118,13 @@ namespace Altaxo.Gui.Common.Drawing
 			base.DetachView();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_originalDoc = _doc;
 			return true;
 		}
 
-		void EhScalingModeChanged()
+		private void EhScalingModeChanged()
 		{
 			_doc.ScalingMode = _view.ScalingMode;
 			using (var supp = _suppressDirtyEvent.SuspendGetToken())
@@ -128,7 +136,7 @@ namespace Altaxo.Gui.Common.Drawing
 			OnMadeDirty();
 		}
 
-		void EhAspectPreservingChanged()
+		private void EhAspectPreservingChanged()
 		{
 			_doc.SourceAspectRatioPreserving = _view.AspectPreserving;
 
@@ -147,15 +155,13 @@ namespace Altaxo.Gui.Common.Drawing
 						_view.YScale = _doc.Y = _doc.X;
 					else
 						_view.XScale = _doc.X = _doc.Y;
-
 				}
 			}
-
 
 			OnMadeDirty();
 		}
 
-		void EhXChanged()
+		private void EhXChanged()
 		{
 			if (_doc.ScalingMode == TextureScalingMode.Absolute)
 			{
@@ -178,7 +184,7 @@ namespace Altaxo.Gui.Common.Drawing
 			OnMadeDirty();
 		}
 
-		void EhYChanged()
+		private void EhYChanged()
 		{
 			if (_doc.ScalingMode == TextureScalingMode.Absolute)
 			{
@@ -200,7 +206,5 @@ namespace Altaxo.Gui.Common.Drawing
 
 			OnMadeDirty();
 		}
-
-
 	}
 }

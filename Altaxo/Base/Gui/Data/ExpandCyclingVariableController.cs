@@ -65,11 +65,11 @@ namespace Altaxo.Gui.Data
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_dataController.Apply())
+			if (!_dataController.Apply(disposeController))
 				return false;
-			if (!_optionsController.Apply())
+			if (!_optionsController.Apply(disposeController))
 				return false;
 
 			if (!object.ReferenceEquals(_originalDoc, _doc))

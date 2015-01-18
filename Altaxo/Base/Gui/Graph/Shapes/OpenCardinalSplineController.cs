@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Text;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
 	public interface IOpenCardinalSplineView
 	{
 		IOpenPathShapeView LineGraphicView { get; }
+
 		ICardinalSplinePointsView SplinePointsView { get; }
 	}
 
@@ -41,9 +43,8 @@ namespace Altaxo.Gui.Graph.Shapes
 	[ExpectedTypeOfView(typeof(IOpenCardinalSplineView))]
 	public class OpenCardinalSplineController : MVCANControllerBase<OpenCardinalSpline, IOpenCardinalSplineView>
 	{
-		OpenPathShapeController _lineCtrl;
-		CardinalSplinePointsController _splinePointsCtrl;
-	
+		private OpenPathShapeController _lineCtrl;
+		private CardinalSplinePointsController _splinePointsCtrl;
 
 		protected override void Initialize(bool initData)
 		{
@@ -61,9 +62,9 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_lineCtrl.Apply())
+			if (!_lineCtrl.Apply(disposeController))
 				return false;
 
 			List<PointD2D> list;
@@ -90,6 +91,5 @@ namespace Altaxo.Gui.Graph.Shapes
 
 			return true;
 		}
-
 	}
 }

@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Graph
 			_view.PageChanged -= EhView_PageChanged;
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			ApplyCurrentController(true);
 
@@ -204,7 +204,7 @@ namespace Altaxo.Gui.Graph
 			if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
 				return true;
 
-			if (!_currentController.Apply())
+			if (!_currentController.Apply(false))
 				return false;
 
 			if (object.ReferenceEquals(_currentController, _layerPositionController))

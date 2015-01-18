@@ -140,9 +140,9 @@ namespace Altaxo.Gui.Graph
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_embeddedController.Apply())
+			if (!_embeddedController.Apply(disposeController))
 				return false;
 
 			_doc.RenderDropFile = _view.RenderDropfile;

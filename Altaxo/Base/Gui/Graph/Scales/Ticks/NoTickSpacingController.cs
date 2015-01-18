@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			return true;
 		}

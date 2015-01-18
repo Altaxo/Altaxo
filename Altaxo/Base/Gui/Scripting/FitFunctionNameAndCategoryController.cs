@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,107 +19,101 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Gui.Common;
 using Altaxo.Scripting;
+using System;
+using System.Text;
 
 namespace Altaxo.Gui.Scripting
 {
-  public class FitFunctionNameAndCategoryController : Altaxo.Gui.Common.MultiChildController
-  {
-    FitFunctionScript _doc;
-    string _tempName;
-    string _tempCategory;
-    string _tempDescription;
-    bool _tempShouldSave=false;
+	public class FitFunctionNameAndCategoryController : Altaxo.Gui.Common.MultiChildController
+	{
+		private FitFunctionScript _doc;
+		private string _tempName;
+		private string _tempCategory;
+		private string _tempDescription;
+		private bool _tempShouldSave = false;
 
-    ISingleValueController _controllerName;
-    ISingleValueController _controllerCategory;
-    ISingleValueController _controllerDescription;
-    IBooleanValueController _controllerShouldSaveInUserData;
+		private ISingleValueController _controllerName;
+		private ISingleValueController _controllerCategory;
+		private ISingleValueController _controllerDescription;
+		private IBooleanValueController _controllerShouldSaveInUserData;
 
-    public FitFunctionNameAndCategoryController(FitFunctionScript doc)
-    {
-      _doc = doc;
-      _tempName = _doc.FitFunctionName;
-      _tempCategory = _doc.FitFunctionCategory;
-      _tempDescription = _doc.FitFunctionDescription;
+		public FitFunctionNameAndCategoryController(FitFunctionScript doc)
+		{
+			_doc = doc;
+			_tempName = _doc.FitFunctionName;
+			_tempCategory = _doc.FitFunctionCategory;
+			_tempDescription = _doc.FitFunctionDescription;
 
-      _controllerName = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempName }, typeof(ISingleValueController));
-      _controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempCategory }, typeof(ISingleValueController));
-      _controllerDescription = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempDescription }, typeof(ISingleValueController));
-      _controllerShouldSaveInUserData = (IBooleanValueController)Current.Gui.GetControllerAndControl(new object[] { _tempShouldSave }, typeof(IBooleanValueController));
+			_controllerName = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempName }, typeof(ISingleValueController));
+			_controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempCategory }, typeof(ISingleValueController));
+			_controllerDescription = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempDescription }, typeof(ISingleValueController));
+			_controllerShouldSaveInUserData = (IBooleanValueController)Current.Gui.GetControllerAndControl(new object[] { _tempShouldSave }, typeof(IBooleanValueController));
 
+			_controllerName.DescriptionText = "Enter fit function name:";
+			_controllerCategory.DescriptionText = "Enter fit function category:";
+			_controllerDescription.DescriptionText = "Enter fit function description:";
+			_controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
 
-      _controllerName.DescriptionText = "Enter fit function name:";
-      _controllerCategory.DescriptionText = "Enter fit function category:";
-      _controllerDescription.DescriptionText = "Enter fit function description:";
-      _controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
-
-      base.Initialize(new ControlViewElement[]{
+			base.Initialize(new ControlViewElement[]{
         new ControlViewElement( null, _controllerName, _controllerName.ViewObject),
         new ControlViewElement( null, _controllerCategory, _controllerCategory.ViewObject),
         new ControlViewElement( null, _controllerDescription, _controllerDescription.ViewObject),
         new ControlViewElement( null, _controllerShouldSaveInUserData, _controllerShouldSaveInUserData.ViewObject) },
-        false);
-    }
+				false);
+		}
 
-    public override object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
+		public override object ModelObject
+		{
+			get
+			{
+				return _doc;
+			}
+		}
 
-    public override bool Apply()
-    {
-      bool result1, result2, result3;
+		public override bool Apply(bool disposeController)
+		{
+			bool result1, result2, result3;
 
-      result1 = _controllerName.Apply();
-      if (result1)
-        _tempName = (string)_controllerName.ModelObject;
+			result1 = _controllerName.Apply(disposeController);
+			if (result1)
+				_tempName = (string)_controllerName.ModelObject;
 
-      
-      result2 = _controllerCategory.Apply();
-      if (result2)
-        _tempCategory = (string)_controllerCategory.ModelObject;
+			result2 = _controllerCategory.Apply(disposeController);
+			if (result2)
+				_tempCategory = (string)_controllerCategory.ModelObject;
 
-      result3 = _controllerDescription.Apply();
-      if (result3)
-        _tempDescription = (string)_controllerDescription.ModelObject;
+			result3 = _controllerDescription.Apply(disposeController);
+			if (result3)
+				_tempDescription = (string)_controllerDescription.ModelObject;
 
-      if (result1 && result2 && result3)
-      {
-        // make sure that the name is not empty
-        _tempName = _tempName.Trim();
-        if (_tempName == string.Empty)
-        {
-          Current.Gui.ErrorMessageBox("Name must not be empty!");
-          return false;
-        }
+			if (result1 && result2 && result3)
+			{
+				// make sure that the name is not empty
+				_tempName = _tempName.Trim();
+				if (_tempName == string.Empty)
+				{
+					Current.Gui.ErrorMessageBox("Name must not be empty!");
+					return false;
+				}
 
-        _doc.FitFunctionName = _tempName;
-        _doc.FitFunctionCategory = _tempCategory;
-        _doc.FitFunctionDescription = _tempDescription;
+				_doc.FitFunctionName = _tempName;
+				_doc.FitFunctionCategory = _tempCategory;
+				_doc.FitFunctionDescription = _tempDescription;
 
+				if (_controllerShouldSaveInUserData.Apply(disposeController) && true == ((bool)_controllerShouldSaveInUserData.ModelObject))
+				{
+					if (!Current.FitFunctionService.SaveUserDefinedFitFunction(_doc))
+						return false; // Cancel the end of dialog
+				}
+				return true;
+			}
 
-        if (_controllerShouldSaveInUserData.Apply() && true == ((bool)_controllerShouldSaveInUserData.ModelObject))
-        {
-          if (!Current.FitFunctionService.SaveUserDefinedFitFunction(_doc))
-            return false; // Cancel the end of dialog
-
-
-        }
-        return true;
-      }
-
-      return false;
-    }
-
-  }
+			return false;
+		}
+	}
 }

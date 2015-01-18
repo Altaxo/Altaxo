@@ -84,14 +84,14 @@ namespace Altaxo.Gui.Worksheet
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			bool result;
 
-			result = _dataSourceOptionsController.Apply();
+			result = _dataSourceOptionsController.Apply(disposeController);
 			if (!result) return result;
 
-			result = _importAsciiOptionsController.Apply();
+			result = _importAsciiOptionsController.Apply(disposeController);
 			if (!result) return result;
 
 			_doc.SourceFileNames = _fileNames.Select(x => (string)x.Tag);

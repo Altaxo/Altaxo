@@ -303,7 +303,7 @@ namespace Altaxo.Gui.Data
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
 			_doc.GroupNumber = _view.GroupNumber;
@@ -316,7 +316,7 @@ namespace Altaxo.Gui.Data
 
 			if (!_doc.UseAllAvailableDataRows)
 			{
-				if (!_rowsController.Apply())
+				if (!_rowsController.Apply(disposeController))
 					return false;
 				_doc.SetDataRows((IAscendingIntegerCollection)_rowsController.ModelObject);
 			}

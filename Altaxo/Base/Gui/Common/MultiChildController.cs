@@ -228,17 +228,29 @@ namespace Altaxo.Gui.Common
 
 		#region IApplyController Members
 
-		public virtual bool Apply()
+		public virtual bool Apply(bool disposeController)
 		{
 			for (int i = 0; i < _childController.Length; i++)
 			{
-				if (null != _childController[i].Controller && false == _childController[i].Controller.Apply())
+				if (null != _childController[i].Controller && false == _childController[i].Controller.Apply(disposeController))
 				{
 					return false;
 				}
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
 		}
 
 		#endregion IApplyController Members

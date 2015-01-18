@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Main.Services.PropertyReflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Main.Services.PropertyReflection;
 
 namespace Altaxo.Gui.Main
 {
@@ -37,11 +38,10 @@ namespace Altaxo.Gui.Main
 	}
 
 	[ExpectedTypeOfView(typeof(IInstancePropertyView))]
-	public class InstancePropertyController : MVCANDControllerBase<object,IInstancePropertyView>
+	public class InstancePropertyController : MVCANDControllerBase<object, IInstancePropertyView>
 	{
-		SortedList<long, KeyValuePair<Property, IMVCAController>> _controllerList = new SortedList<long, KeyValuePair<Property, IMVCAController>>();
-		PropertyCollection _propertyCollection;
-
+		private SortedList<long, KeyValuePair<Property, IMVCAController>> _controllerList = new SortedList<long, KeyValuePair<Property, IMVCAController>>();
+		private PropertyCollection _propertyCollection;
 
 		/// <summary>Initializes the document. In contrast to the base function here it is allowed to call this function with <c>null</c> as model.</summary>
 		/// <param name="args">The arguments.</param>
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Main
 				{
 					++defaultDisplayOrder;
 					long currentDisplayOrder = defaultDisplayOrder;
-					if(prop.IsWriteable)
+					if (prop.IsWriteable)
 					{
 						var displayOrderAttribute = prop.Attributes.OfType<Altaxo.Main.Services.PropertyReflection.DisplayOrderAttribute>().FirstOrDefault();
 						if (null != displayOrderAttribute)
@@ -94,20 +94,19 @@ namespace Altaxo.Gui.Main
 			if (null != _view)
 			{
 				var list = new Altaxo.Collections.ListNodeList();
-				foreach(var entry in _controllerList.Values)
+				foreach (var entry in _controllerList.Values)
 				{
 					var prop = entry.Key;
 					string label = prop.Description;
-							if (string.IsNullOrEmpty(label))
-								label = prop.Name;
-					list.Add(new Collections.ListNode(label+ ":",entry.Value.ViewObject));
+					if (string.IsNullOrEmpty(label))
+						label = prop.Name;
+					list.Add(new Collections.ListNode(label + ":", entry.Value.ViewObject));
 				}
 				_view.InitializeItems(list);
 			}
-
 		}
 
-		IMVCAController GetControllerFor(Property prop)
+		private IMVCAController GetControllerFor(Property prop)
 		{
 			IMVCAController ctrl = null;
 
@@ -130,15 +129,15 @@ namespace Altaxo.Gui.Main
 				}
 			}
 
-			if(null==ctrl)
+			if (null == ctrl)
 			{
 				ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { prop.Value }, typeof(IMVCAController), UseDocument.Directly);
 			}
-		
+
 			return ctrl;
 		}
 
-		Property GetPropertyForController(IMVCAController ctrl)
+		private Property GetPropertyForController(IMVCAController ctrl)
 		{
 			foreach (var entry in _controllerList.Values)
 			{
@@ -148,8 +147,7 @@ namespace Altaxo.Gui.Main
 			return null;
 		}
 
-
-		void AttachController(IMVCAController ctrl)
+		private void AttachController(IMVCAController ctrl)
 		{
 			if (ctrl is IMVCANDController)
 			{
@@ -157,7 +155,7 @@ namespace Altaxo.Gui.Main
 			}
 		}
 
-		void DetachController(IMVCAController ctrl)
+		private void DetachController(IMVCAController ctrl)
 		{
 			if (ctrl is IMVCANDController)
 			{
@@ -167,7 +165,7 @@ namespace Altaxo.Gui.Main
 			}
 		}
 
-		void ClearControllerList()
+		private void ClearControllerList()
 		{
 			foreach (var entry in _controllerList.Values)
 			{
@@ -176,25 +174,24 @@ namespace Altaxo.Gui.Main
 			_controllerList.Clear();
 		}
 
-		void AddToControllerList(long currentDisplayOrder, Property prop, IMVCAController ctrl)
+		private void AddToControllerList(long currentDisplayOrder, Property prop, IMVCAController ctrl)
 		{
 			_controllerList.Add(currentDisplayOrder, new KeyValuePair<Property, IMVCAController>(prop, ctrl));
 			AttachController(ctrl);
 		}
 
-
-		void EhMadeDirty(IMVCANDController ctrl)
+		private void EhMadeDirty(IMVCANDController ctrl)
 		{
 			var prop = GetPropertyForController(ctrl);
 			prop.Value = ctrl.ProvisionalModelObject;
 			OnMadeDirty();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			foreach (var entry in _controllerList.Values)
 			{
-				bool success = entry.Value.Apply();
+				bool success = entry.Value.Apply(disposeController);
 				if (!success)
 					return false;
 				entry.Key.Value = entry.Value.ModelObject;

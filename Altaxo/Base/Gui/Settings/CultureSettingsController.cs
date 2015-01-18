@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Settings
 			_view.NumberGroupSeparator = s.NumberGroupSeparator;
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			var doc = (CultureInfo)_doc.Culture.Clone();
 			doc.NumberFormat.NumberDecimalSeparator = _view.NumberDecimalSeparator;

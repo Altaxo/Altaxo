@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,49 +19,50 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using System;
 
 namespace Altaxo.Gui.Worksheet
 {
-  /// <summary>
-  /// Controls the Smoothing parameter of a rational cubic spline.
-  /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.ExponentialSpline),100)]
-  public class ExponentialSplineController : NumericDoubleValueController
-  {
-    ExponentialSpline _spline;
-    public ExponentialSplineController(ExponentialSpline spline)
-      : base(spline.Smoothing)
-    {
-      base._minimumValue = 0;
-      base._isMinimumValueIncluded=false;
-      _descriptionText = "Smoothing parameter p (p>0; default is 1) :";
-      _spline = spline;
-    }
+	/// <summary>
+	/// Controls the Smoothing parameter of a rational cubic spline.
+	/// </summary>
+	[UserControllerForObject(typeof(Altaxo.Calc.Interpolation.ExponentialSpline), 100)]
+	public class ExponentialSplineController : NumericDoubleValueController
+	{
+		private ExponentialSpline _spline;
 
-    public override object ModelObject
-    {
-      get
-      {
-        return _spline;
-      }
-    }
+		public ExponentialSplineController(ExponentialSpline spline)
+			: base(spline.Smoothing)
+		{
+			base._minimumValue = 0;
+			base._isMinimumValueIncluded = false;
+			_descriptionText = "Smoothing parameter p (p>0; default is 1) :";
+			_spline = spline;
+		}
 
-    public override bool Apply()
-    {
-      if(base.Apply())
-      {
-        this._spline.Smoothing = base._value1Double;
-        return true;
-      }
-      else
-        return false;
-    }
-  }
+		public override object ModelObject
+		{
+			get
+			{
+				return _spline;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (base.Apply(disposeController))
+			{
+				this._spline.Smoothing = base._value1Double;
+				return true;
+			}
+			else
+				return false;
+		}
+	}
 }

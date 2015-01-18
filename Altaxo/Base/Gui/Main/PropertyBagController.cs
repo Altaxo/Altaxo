@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Main
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			if (!object.ReferenceEquals(_doc, _originalDoc))
 				CopyHelper.Copy(ref _originalDoc, _doc);

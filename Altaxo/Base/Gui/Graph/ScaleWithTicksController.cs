@@ -327,30 +327,30 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			if (null != _scaleController)
 			{
-				if (false == _scaleController.Apply())
+				if (false == _scaleController.Apply(disposeController))
 					return false;
 			}
 
 			if (_scaleLinkedTo != null)
 			{
 				// Apply link conditions
-				if (false == _linkedScaleParameterController.Apply())
+				if (false == _linkedScaleParameterController.Apply(disposeController))
 					return false;
 			}
 			else // scale is not linked
 			{
 				if (null != _boundaryController)
 				{
-					if (false == _boundaryController.Apply())
+					if (false == _boundaryController.Apply(disposeController))
 						return false;
 				}
 			}
 
-			if (null != _tickSpacingController && false == _tickSpacingController.Apply())
+			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
 				return false;
 
 			// wrap the scale if it is linked

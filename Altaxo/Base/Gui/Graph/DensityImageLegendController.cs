@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Graph
 			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			ApplyCurrentController(true);
 
@@ -389,7 +389,7 @@ namespace Altaxo.Gui.Graph
 			if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
 				return true;
 
-			if (!_currentController.Apply())
+			if (!_currentController.Apply(false))
 				return false;
 			_lastControllerApplied = _currentController;
 

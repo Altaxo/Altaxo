@@ -68,11 +68,11 @@ namespace Altaxo.Gui.DataConnection
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_importOptionsController.Apply())
+			if (!_importOptionsController.Apply(disposeController))
 				return false;
-			if (!_connectionMainController.Apply())
+			if (!_connectionMainController.Apply(disposeController))
 				return false;
 
 			_doc.ImportOptions = (Altaxo.Data.DataSourceImportOptions)_importOptionsController.ModelObject;

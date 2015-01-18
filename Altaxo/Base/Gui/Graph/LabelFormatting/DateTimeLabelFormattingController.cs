@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.LabelFormatting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph.Gdi.LabelFormatting;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.LabelFormatting
 {
@@ -35,21 +36,22 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 		IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
 
 		void InitializeTimeConversion(SelectableListNodeList items);
+
 		string FormattingString { get; set; }
+
 		string FormattingStringAlternate { get; set; }
+
 		bool ShowAlternateFormattingOnMidnight { get; set; }
+
 		bool ShowAlternateFormattingOnNoon { get; set; }
-
-
-
 	}
 
 	[ExpectedTypeOfView(typeof(IDateTimeLabelFormattingView))]
-	[UserControllerForObject(typeof(DateTimeLabelFormatting),110)]
+	[UserControllerForObject(typeof(DateTimeLabelFormatting), 110)]
 	public class DateTimeLabelFormattingController : MVCANControllerBase<DateTimeLabelFormatting, IDateTimeLabelFormattingView>
 	{
-		SelectableListNodeList _timeConversionChoices;
-		MultiLineLabelFormattingBaseController _baseController;
+		private SelectableListNodeList _timeConversionChoices;
+		private MultiLineLabelFormattingBaseController _baseController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -71,11 +73,10 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_baseController.Apply())
+			if (!_baseController.Apply(disposeController))
 				return false;
-
 
 			_doc.LabelTimeConversion = (DateTimeLabelFormatting.TimeConversion)_timeConversionChoices.FirstSelectedNode.Tag;
 
@@ -84,7 +85,7 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 			_doc.ShowAlternateFormattingAtNoon = _view.ShowAlternateFormattingOnNoon;
 			_doc.FormattingStringAlternate = _view.FormattingStringAlternate;
 
-			if(_useDocumentCopy)
+			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;

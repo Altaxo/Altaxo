@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,7 +35,9 @@ namespace Altaxo.Gui.Common
 	public interface IDimensionfulQuantityView
 	{
 		Units.DimensionfulQuantity SelectedQuantity { get; set; }
+
 		event Action SelectedQuantityChanged;
+
 		QuantityWithUnitGuiEnvironment UnitEnvironment { set; }
 	}
 
@@ -41,6 +45,7 @@ namespace Altaxo.Gui.Common
 	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerBase<double, IDimensionfulQuantityView>
 	{
 		protected abstract Units.IUnit UnitOfValue { get; }
+
 		protected abstract QuantityWithUnitGuiEnvironment UnitEnvironment { get; }
 
 		protected override void Initialize(bool initData)
@@ -64,20 +69,20 @@ namespace Altaxo.Gui.Common
 			base.DetachView();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			GetQuantityFromView();
 			_originalDoc = _doc;
 			return true;
 		}
 
-		void GetQuantityFromView()
+		private void GetQuantityFromView()
 		{
 			var q = _view.SelectedQuantity;
 			_doc = q.AsValueIn(UnitOfValue);
 		}
 
-		void EhQuantityChanged()
+		private void EhQuantityChanged()
 		{
 			GetQuantityFromView();
 			OnMadeDirty();

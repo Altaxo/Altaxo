@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot.ColorProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.ColorProvider
 {
@@ -33,17 +34,18 @@ namespace Altaxo.Gui.Graph.ColorProvider
 	{
 		IColorProviderBaseView BaseView { get; }
 
-		double Gamma { get; set;}
+		double Gamma { get; set; }
+
 		double Brightness { get; set; }
 
 		event Action ChoiceChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
-	[UserControllerForObject(typeof(VisibleLightSpectrum),110)]
+	[UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
 	public class VisibleLightSpectrumController : MVCANDControllerBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
 	{
-		ColorProviderBaseController _baseController;
+		private ColorProviderBaseController _baseController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -75,23 +77,22 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			base.DetachView();
 		}
 
-		void EhBaseControllerChanged(IMVCANDController ctrl)
+		private void EhBaseControllerChanged(IMVCANDController ctrl)
 		{
-				OnMadeDirty();
+			OnMadeDirty();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_baseController.Apply())
+			if (!_baseController.Apply(disposeController))
 				return false;
 
 			_doc.Gamma = _view.Gamma;
 			_doc.Brightness = _view.Brightness;
 
-			
-			if(_useDocumentCopy)
+			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
-			
+
 			return true;
 		}
 	}

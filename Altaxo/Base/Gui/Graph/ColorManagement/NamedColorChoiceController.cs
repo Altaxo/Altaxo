@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc = _view.SelectedColor;
 

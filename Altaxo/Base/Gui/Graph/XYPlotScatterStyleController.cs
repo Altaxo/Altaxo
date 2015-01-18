@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Graph
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			// don't trust user input, so all into a try statement
 			try

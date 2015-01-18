@@ -84,9 +84,9 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_locationController.Apply())
+			if (!_locationController.Apply(disposeController))
 				return false;
 
 			_docLocation = (ItemLocationDirect)_locationController.ModelObject;

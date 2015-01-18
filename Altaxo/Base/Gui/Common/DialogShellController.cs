@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,152 +19,153 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
-  #region Interfaces
+	#region Interfaces
 
-  /// <summary>
-  /// This interface is intended to provide a "shell" as a dialog which can host a user control.
-  /// </summary>
-  public interface IDialogShellView
-  {
-    /// <summary>
-    /// Sets if the Apply button should be visible.
-    /// </summary>
-    bool ApplyVisible { set; }
+	/// <summary>
+	/// This interface is intended to provide a "shell" as a dialog which can host a user control.
+	/// </summary>
+	public interface IDialogShellView
+	{
+		/// <summary>
+		/// Sets if the Apply button should be visible.
+		/// </summary>
+		bool ApplyVisible { set; }
 
-    /// <summary>
-    /// Sets the title
-    /// </summary>
-    string Title { set; }
+		/// <summary>
+		/// Sets the title
+		/// </summary>
+		string Title { set; }
 
+		event Action<System.ComponentModel.CancelEventArgs> ButtonOKPressed;
 
-    event Action<System.ComponentModel.CancelEventArgs> ButtonOKPressed;
-    event Action ButtonCancelPressed;
-    event Action ButtonApplyPressed;
+		event Action ButtonCancelPressed;
 
-  }
+		event Action ButtonApplyPressed;
+	}
 
- 
-  #endregion
+	#endregion Interfaces
 
-  /// <summary>
-  /// Responsible for hosting another controller in a dialog.
-  /// </summary>
-  public class DialogShellController 
-  {
-    private IDialogShellView _view;
-    private IApplyController _hostedController;
+	/// <summary>
+	/// Responsible for hosting another controller in a dialog.
+	/// </summary>
+	public class DialogShellController
+	{
+		private IDialogShellView _view;
+		private IApplyController _hostedController;
 
-    private string _title = String.Empty;
-    private bool   _isApplyVisible = true;
+		private string _title = String.Empty;
+		private bool _isApplyVisible = true;
 
-    /// <summary>
-    /// Creates the controller.
-    /// </summary>
-    /// <param name="view">The view this controller is controlling.</param>
-    /// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
-    public DialogShellController(IDialogShellView view, IApplyController hostedController)
-    {
-      View = view;
-      _hostedController = hostedController;
-      SetElements(true);
-    }
+		/// <summary>
+		/// Creates the controller.
+		/// </summary>
+		/// <param name="view">The view this controller is controlling.</param>
+		/// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
+		public DialogShellController(IDialogShellView view, IApplyController hostedController)
+		{
+			View = view;
+			_hostedController = hostedController;
+			SetElements(true);
+		}
 
-    /// <summary>
-    /// Creates the controller.
-    /// </summary>
-    /// <param name="view">The view this controller is controlling.</param>
-    /// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
-    /// <param name="title">Title of the dialog.</param>
-    /// <param name="applyvisible">Indicates if the Apply button is visible or not.</param>
-    public DialogShellController(
-      IDialogShellView view, 
-      IApplyController hostedController,
-      string title,
-      bool   applyvisible)
-    {
-      View = view;
-      _hostedController = hostedController;
-      _title = title;
-      _isApplyVisible = applyvisible;
+		/// <summary>
+		/// Creates the controller.
+		/// </summary>
+		/// <param name="view">The view this controller is controlling.</param>
+		/// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
+		/// <param name="title">Title of the dialog.</param>
+		/// <param name="applyvisible">Indicates if the Apply button is visible or not.</param>
+		public DialogShellController(
+			IDialogShellView view,
+			IApplyController hostedController,
+			string title,
+			bool applyvisible)
+		{
+			View = view;
+			_hostedController = hostedController;
+			_title = title;
+			_isApplyVisible = applyvisible;
 
-      SetElements(true);
-    }
-    /// <summary>
-    /// Get / sets the view of this controller.
-    /// </summary>
-    IDialogShellView View
-    {
-      get { return _view; }
-      set
-      {
-        if (null != _view)
-        {
-          _view.ButtonOKPressed -= EhOK;
-          _view.ButtonCancelPressed -= EhCancel;
-          _view.ButtonApplyPressed -= EhApply;
-        }
+			SetElements(true);
+		}
 
-        _view = value;
-        
-        if(null!=_view)
-        {
-          SetElements(false);
-          _view.ButtonOKPressed += EhOK;
-          _view.ButtonCancelPressed += EhCancel;
-          _view.ButtonApplyPressed += EhApply;
-        }
-      }
-    }
+		/// <summary>
+		/// Get / sets the view of this controller.
+		/// </summary>
+		private IDialogShellView View
+		{
+			get { return _view; }
+			set
+			{
+				if (null != _view)
+				{
+					_view.ButtonOKPressed -= EhOK;
+					_view.ButtonCancelPressed -= EhCancel;
+					_view.ButtonApplyPressed -= EhApply;
+				}
 
-    void SetElements(bool bInit)
-    {
+				_view = value;
 
-      if(null!=View)
-      {
-        View.Title = _title;
-        View.ApplyVisible = _isApplyVisible;
-      }
-    }
+				if (null != _view)
+				{
+					SetElements(false);
+					_view.ButtonOKPressed += EhOK;
+					_view.ButtonCancelPressed += EhCancel;
+					_view.ButtonApplyPressed += EhApply;
+				}
+			}
+		}
 
-    #region IDialogShellController Members
+		private void SetElements(bool bInit)
+		{
+			if (null != View)
+			{
+				View.Title = _title;
+				View.ApplyVisible = _isApplyVisible;
+			}
+		}
 
-    /// <summary>
-    /// Called when the user presses the OK button. Calls the Apply method of the
-    /// hosted controller, then closes the form.
-    /// </summary>
-    public void EhOK(System.ComponentModel.CancelEventArgs e)
-    {
-      bool bSuccess = true;
-      if(null!=_hostedController)
-        bSuccess = _hostedController.Apply();
+		#region IDialogShellController Members
 
-      if (!bSuccess)
-        e.Cancel = true;
-    }
+		/// <summary>
+		/// Called when the user presses the OK button. Calls the Apply method of the
+		/// hosted controller, then closes the form.
+		/// </summary>
+		public void EhOK(System.ComponentModel.CancelEventArgs e)
+		{
+			bool bSuccess = true;
+			if (null != _hostedController)
+				bSuccess = _hostedController.Apply(true);
 
-    /// <summary>
-    /// Called when the user presses the Cancel button. Then closes the form.
-    /// </summary>
-    public void EhCancel()
-    {
-    }
+			if (!bSuccess)
+				e.Cancel = true;
+		}
 
-    /// <summary>
-    /// Called when the user presses the Apply button. Calls the Apply method of the
-    /// hosted controller.
-    /// </summary>
-    public void EhApply()
-    {
-      if(null!=_hostedController)
-        _hostedController.Apply();
-    }
+		/// <summary>
+		/// Called when the user presses the Cancel button. Then closes the form.
+		/// </summary>
+		public void EhCancel()
+		{
+			_hostedController.Revert(true);
+		}
 
-    #endregion
-  }
+		/// <summary>
+		/// Called when the user presses the Apply button. Calls the Apply method of the
+		/// hosted controller.
+		/// </summary>
+		public void EhApply()
+		{
+			if (null != _hostedController)
+				_hostedController.Apply(false);
+		}
+
+		#endregion IDialogShellController Members
+	}
 }

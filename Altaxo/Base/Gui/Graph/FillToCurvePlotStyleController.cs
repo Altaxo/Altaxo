@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,33 +19,40 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+#endregion Copyright
 
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
 	public interface IFillToCurvePlotStyleView
 	{
 		bool UseFill { get; set; }
+
 		bool ShowPlotColorsOnlyForFillBrush { set; }
+
 		bool IndependentFillColor { get; set; }
+
 		BrushX FillBrush { get; set; }
 
 		bool UseFrame { get; set; }
+
 		bool ShowPlotColorsOnlyForFramePen { set; }
+
 		bool IndependentFrameColor { get; set; }
+
 		PenX FramePen { get; set; }
 
 		bool FillToPreviousItem { get; set; }
+
 		bool FillToNextItem { get; set; }
 
 		/// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
@@ -55,11 +63,13 @@ namespace Altaxo.Gui.Graph
 
 		/// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
 		event Action UseFillChanged;
+
 		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
 		event Action UseFrameChanged;
 
 		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
 		event Action FillBrushChanged;
+
 		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
 		event Action FramePenChanged;
 	}
@@ -69,9 +79,7 @@ namespace Altaxo.Gui.Graph
 	public class FillToCurvePlotStyleController : MVCANControllerBase<FillToCurvePlotStyle, IFillToCurvePlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
-		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
-
-		
+		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
 		protected override void Initialize(bool initData)
 		{
@@ -90,29 +98,28 @@ namespace Altaxo.Gui.Graph
 				_view.IndependentFrameColor = _doc.IndependentFrameColor;
 				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
 				_view.FramePen = null != _doc.FramePen ? _doc.FramePen : new PenX(NamedColors.Transparent);
-		
-				
+
 				_view.FillToPreviousItem = _doc.FillToPreviousItem;
 				_view.FillToNextItem = _doc.FillToNextItem;
 			}
 		}
 
-#region Color management
+		#region Color management
 
-			void EhColorGroupStyleAddedOrRemoved()
+		private void EhColorGroupStyleAddedOrRemoved()
 		{
 			if (null != _view)
 			{
 				_doc.IndependentFillColor = _view.IndependentFillColor;
 				_doc.IndependentFrameColor = _view.IndependentFrameColor;
-				if(_view.UseFill)
-				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
-				if(_view.UseFrame)
-				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+				if (_view.UseFill)
+					_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+				if (_view.UseFrame)
+					_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
 			}
 		}
 
-		void EhIndependentFillColorChanged()
+		private void EhIndependentFillColorChanged()
 		{
 			if (null != _view)
 			{
@@ -123,7 +130,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhIndependentFrameColorChanged()
+		private void EhIndependentFrameColorChanged()
 		{
 			if (null != _view)
 			{
@@ -134,7 +141,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhFillBrushChanged()
+		private void EhFillBrushChanged()
 		{
 			if (null != _view)
 			{
@@ -145,7 +152,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-		void EhFramePenChanged()
+
+		private void EhFramePenChanged()
 		{
 			if (null != _view)
 			{
@@ -157,28 +165,27 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		void InternalSetFillColorToFrameColor()
+		private void InternalSetFillColorToFrameColor()
 		{
 			var newBrush = _view.FillBrush.Clone();
 			newBrush.Color = _view.FramePen.Color;
 			_view.FillBrush = newBrush;
 		}
 
-		void InternalSetFrameColorToFillColor()
+		private void InternalSetFrameColorToFillColor()
 		{
 			var newPen = _view.FramePen.Clone();
 			newPen.Color = _view.FillBrush.Color;
 			_view.FramePen = newPen;
 		}
 
-		void EhUseFillChanged()
+		private void EhUseFillChanged()
 		{
 			var newValue = _view.UseFill;
 
 			if (true == newValue)
 			{
-				if(_view.UseFrame && false == _view.IndependentFrameColor)
+				if (_view.UseFrame && false == _view.IndependentFrameColor)
 				{
 					InternalSetFillColorToFrameColor();
 				}
@@ -190,7 +197,7 @@ namespace Altaxo.Gui.Graph
 			_view.UseFill = newValue; // to enable/disable gui items in the control
 		}
 
-		void EhUseFrameChanged()
+		private void EhUseFrameChanged()
 		{
 			var newValue = _view.UseFrame;
 
@@ -209,17 +216,11 @@ namespace Altaxo.Gui.Graph
 			_view.UseFrame = newValue; // to enable/disable gui items in the control
 		}
 
-#endregion
-
-
-
-
-	
+		#endregion Color management
 
 		#region IMVCController Members
 
-
-			protected override void AttachView()
+		protected override void AttachView()
 		{
 			base.AttachView();
 			_view.UseFillChanged += EhUseFillChanged;
@@ -230,7 +231,6 @@ namespace Altaxo.Gui.Graph
 
 			_view.FillBrushChanged += EhFillBrushChanged;
 			_view.FramePenChanged += EhFramePenChanged;
-			
 		}
 
 		protected override void DetachView()
@@ -247,15 +247,13 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-	
-
-		#endregion
+		#endregion IMVCController Members
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-				if (_view.UseFill)
+			if (_view.UseFill)
 			{
 				_doc.IndependentFillColor = _view.IndependentFillColor;
 				_doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
@@ -283,6 +281,6 @@ namespace Altaxo.Gui.Graph
 			return true;
 		}
 
-		#endregion
+		#endregion IApplyController Members
 	}
 }

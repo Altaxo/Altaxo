@@ -109,19 +109,19 @@ namespace Altaxo.Gui.Graph
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			bool result = true;
 
 			if (_styleController != null)
 			{
-				if (!_styleController.Apply())
+				if (!_styleController.Apply(disposeController))
 					return false;
 			}
 
 			if (_dataController != null)
 			{
-				if (!_dataController.Apply())
+				if (!_dataController.Apply(disposeController))
 					return false;
 			}
 
@@ -129,6 +129,18 @@ namespace Altaxo.Gui.Graph
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return result;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
 		}
 
 		#endregion IApplyController Members

@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Graph
 
 		private void EhPositioningTypeChanged()
 		{
-			if (_subController.Apply())
+			if (_subController.Apply(false))
 				_instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
 			bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer == null; // if this is the root layer, then choice of grid positioning is not available
@@ -164,9 +164,9 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			var result = _subController.Apply();
+			var result = _subController.Apply(disposeController);
 			if (result == false)
 				return result;
 

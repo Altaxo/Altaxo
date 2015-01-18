@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,49 +19,50 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+#endregion Copyright
+
 using Altaxo.Collections;
-
-using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
-
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Main;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-  /// <summary>
-  /// This view interface is for showing the options of the XYXYPlotLineStyle
-  /// </summary>
-  public interface IXYPlotLineStyleView
-  {
+	#region Interfaces
+
+	/// <summary>
+	/// This view interface is for showing the options of the XYXYPlotLineStyle
+	/// </summary>
+	public interface IXYPlotLineStyleView
+	{
 		bool ShowPlotColorsOnlyForLinePen { set; }
+
 		bool IndependentLineColor { get; set; }
+
 		PenX LinePen { get; set; }
 
-
-    /// <summary>
-    /// Initializes the LineSymbolGap check box.
-    /// </summary>
+		/// <summary>
+		/// Initializes the LineSymbolGap check box.
+		/// </summary>
 		bool LineSymbolGap { get; set; }
 
 		bool ConnectCircular { get; set; }
 
-    /// <summary>
-    /// Initializes the Line connection combobox.
-    /// </summary>
-    /// <param name="list">List of possible selections.</param>
-    void InitializeLineConnect(SelectableListNodeList list);
+		/// <summary>
+		/// Initializes the Line connection combobox.
+		/// </summary>
+		/// <param name="list">List of possible selections.</param>
+		void InitializeLineConnect(SelectableListNodeList list);
 
 		/// <summary>
 		/// Enables / disables all controls associated with line properties with exception of the Connection style combo box.
@@ -70,11 +72,9 @@ namespace Altaxo.Gui.Graph
 		/// </value>
 		bool EnableLineControls { set; }
 
-   
-
-    /// <summary>
-    /// Gets/sets the fill area check box.
-    /// </summary>
+		/// <summary>
+		/// Gets/sets the fill area check box.
+		/// </summary>
 		bool UseFill { get; set; }
 
 		/// <summary>Sets a value indicating whether plot colors only should be shown for the fill brush.</summary>
@@ -83,9 +83,9 @@ namespace Altaxo.Gui.Graph
 
 		void InitializeFillColorLinkage(SelectableListNodeList list);
 
-    /// <summary>
-    /// Gets/sets the contents of the fill color combobox.
-    /// </summary>
+		/// <summary>
+		/// Gets/sets the contents of the fill color combobox.
+		/// </summary>
 		BrushX FillBrush { get; set; }
 
 		/// <summary>
@@ -93,7 +93,6 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		/// <param name="list">List of possible selections.</param>
 		void InitializeFillDirection(SelectableListNodeList list);
-  
 
 		#region events
 
@@ -105,35 +104,35 @@ namespace Altaxo.Gui.Graph
 
 		/// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
 		event Action UseFillChanged;
+
 		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
 		event Action UseLineChanged;
 
 		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
 		event Action FillBrushChanged;
+
 		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
 		event Action LinePenChanged;
 
-		#endregion
+		#endregion events
 	}
 
+	#endregion Interfaces
 
-  #endregion
-
-
-  /// <summary>
-  /// Summary description for XYPlotLineStyleController.
-  /// </summary>
-  [UserControllerForObject(typeof(LinePlotStyle))]
-  [ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
+	/// <summary>
+	/// Summary description for XYPlotLineStyleController.
+	/// </summary>
+	[UserControllerForObject(typeof(LinePlotStyle))]
+	[ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
 	public class XYPlotLineStyleController : MVCANControllerBase<LinePlotStyle, IXYPlotLineStyleView>
-  {
+	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
-		ColorGroupStylePresenceTracker _colorGroupStyleTracker;
+		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		SelectableListNodeList _lineConnectChoices;
+		private SelectableListNodeList _lineConnectChoices;
 
-		SelectableListNodeList _areaFillDirectionChoices;
-		SelectableListNodeList _fillColorLinkageChoices;
+		private SelectableListNodeList _areaFillDirectionChoices;
+		private SelectableListNodeList _fillColorLinkageChoices;
 
 		protected override void Initialize(bool initData)
 		{
@@ -147,7 +146,6 @@ namespace Altaxo.Gui.Graph
 
 			if (_view != null)
 			{
-
 				// Line properties
 				_view.InitializeLineConnect(_lineConnectChoices);
 				_view.LineSymbolGap = _doc.LineSymbolGap;
@@ -165,7 +163,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		public void InitializeFillDirectionChoices()
 		{
 			_areaFillDirectionChoices = new SelectableListNodeList();
@@ -179,8 +176,6 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-
-	
 
 		#region Color management
 
@@ -205,7 +200,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhColorGroupStyleAddedOrRemoved()
+		private void EhColorGroupStyleAddedOrRemoved()
 		{
 			if (null != _view)
 			{
@@ -218,7 +213,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhIndependentFillColorChanged()
+		private void EhIndependentFillColorChanged()
 		{
 			if (null != _view)
 			{
@@ -232,7 +227,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhIndependentLineColorChanged()
+		private void EhIndependentLineColorChanged()
 		{
 			if (null != _view)
 			{
@@ -243,7 +238,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhFillBrushChanged()
+		private void EhFillBrushChanged()
 		{
 			if (null != _view)
 			{
@@ -254,7 +249,8 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-		void EhLinePenChanged()
+
+		private void EhLinePenChanged()
 		{
 			if (null != _view)
 			{
@@ -269,15 +265,12 @@ namespace Altaxo.Gui.Graph
 						InternalSetFillColorRGBToLineColor();
 				}
 			}
-
-			
 		}
-
 
 		/// <summary>
 		/// Internal sets the fill color to the color of the line.
 		/// </summary>
-		void InternalSetFillColorToLineColor()
+		private void InternalSetFillColorToLineColor()
 		{
 			var newBrush = _view.FillBrush.Clone();
 			newBrush.Color = _view.LinePen.Color;
@@ -287,7 +280,7 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Internal sets the fill color to the color of the line, but here only the RGB component is used from the line color. The A component of the fill color remains unchanged.
 		/// </summary>
-		void InternalSetFillColorRGBToLineColor()
+		private void InternalSetFillColorRGBToLineColor()
 		{
 			var newBrush = _view.FillBrush.Clone();
 			var c = _view.LinePen.Color.NewWithAlphaValue(newBrush.Color.Color.A); ;
@@ -298,14 +291,14 @@ namespace Altaxo.Gui.Graph
 		/// <summary>
 		/// Internal sets the color of the line to the color of the fill brush.
 		/// </summary>
-		void InternalSetLineColorToFillColor()
+		private void InternalSetLineColorToFillColor()
 		{
 			var newPen = _view.LinePen.Clone();
 			newPen.Color = _view.FillBrush.Color;
 			_view.LinePen = newPen;
 		}
 
-		void EhUseFillChanged()
+		private void EhUseFillChanged()
 		{
 			var newValue = _view.UseFill;
 
@@ -330,7 +323,7 @@ namespace Altaxo.Gui.Graph
 			_view.UseFill = newValue && _areaFillDirectionChoices.Count > 0; // to enable/disable gui items in the control
 		}
 
-		void EhUseLineChanged()
+		private void EhUseLineChanged()
 		{
 			var newValue = IsLineUsed;
 
@@ -349,8 +342,7 @@ namespace Altaxo.Gui.Graph
 			IsLineUsed = newValue; // to enable/disable gui items in the control
 		}
 
-		#endregion
-
+		#endregion Color management
 
 		#region IMVCController Members
 
@@ -381,32 +373,28 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-		#endregion
+		#endregion IMVCController Members
 
+		#region IApplyController Members
 
-    #region IApplyController Members
+		public override bool Apply(bool disposeController)
+		{
+			// don't trust user input, so all into a try statement
+			try
+			{
+				// Symbol Gap
+				_doc.LineSymbolGap = _view.LineSymbolGap;
 
-    public override bool Apply()
-    {
-
-      // don't trust user input, so all into a try statement
-      try
-      {
-
-        // Symbol Gap
-        _doc.LineSymbolGap = _view.LineSymbolGap;
-
-        // Pen
-        _doc.IndependentLineColor = _view.IndependentLineColor;
+				// Pen
+				_doc.IndependentLineColor = _view.IndependentLineColor;
 				_doc.LinePen.CopyFrom(_view.LinePen);
 
-       
-        // Line Connect
+				// Line Connect
 				var selNode = _lineConnectChoices.FirstSelectedNode;
 				_doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
-        _doc.ConnectCircular = _view.ConnectCircular;
+				_doc.ConnectCircular = _view.ConnectCircular;
 
-        // Fill Area
+				// Fill Area
 				_doc.FillArea = _view.UseFill;
 
 				// Line fill direction
@@ -416,25 +404,22 @@ namespace Altaxo.Gui.Graph
 				else
 					_doc.FillDirection = null;
 
-        // Line fill color
+				// Line fill color
 				_doc.FillBrush = _view.FillBrush;
 				// _doc.FillColorLinkage = _view.FillColorLinkage; // already done during showing the view, see EhFillColorLinkageChanged()
 
 				if (_useDocumentCopy)
 					CopyHelper.Copy(ref _originalDoc, _doc);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
+				return false;
+			}
 
-      }
-      catch(Exception ex)
-      {
-        Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
-        return false;
-      }
+			return true;
+		}
 
-      return true;
-    }
-
-    #endregion
-
- 
-  } // end of class XYPlotLineStyleController
+		#endregion IApplyController Members
+	} // end of class XYPlotLineStyleController
 } // end of namespace

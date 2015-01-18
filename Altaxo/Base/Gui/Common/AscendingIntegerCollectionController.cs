@@ -245,7 +245,7 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			if (_isInAdvancedView)
 			{

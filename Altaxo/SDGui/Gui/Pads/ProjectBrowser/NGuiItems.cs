@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		#region Renaming
 
-		public virtual bool IsRenamingEnabled { get { return true; } }
+		public override bool IsRenamingEnabled { get { return true; } }
 
 		protected override string ValidateRenaming(object obj, System.Globalization.CultureInfo info)
 		{

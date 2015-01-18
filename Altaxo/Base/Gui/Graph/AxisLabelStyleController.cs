@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Serialization;
-using System.Drawing;
-using Altaxo.Graph.Gdi;
+#endregion Copyright
+
 using Altaxo.Data;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi.Background;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
-
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace Altaxo.Gui.Graph
 {
@@ -51,12 +52,10 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		BrushX LabelBrush { get; set; }
 
-
 		/// <summary>
 		/// Initializes the background.
 		/// </summary>
 		IBackgroundStyle Background { get; set; }
-
 
 		/// <summary>
 		/// Value of the font size in points (1/72 inch).
@@ -68,6 +67,7 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		/// <param name="items">The possible choices.</param>
 		void HorizontalAlignment_Initialize(Collections.SelectableListNodeList items);
+
 		/// <summary>
 		/// Initializes the vertical alignement combo box.
 		/// </summary>
@@ -83,7 +83,6 @@ namespace Altaxo.Gui.Graph
 		/// Initializes the content of the Rotation edit box.
 		/// </summary>
 		double Rotation { get; set; }
-
 
 		/// <summary>
 		/// Initializes the content of the XOffset edit box.
@@ -109,7 +108,6 @@ namespace Altaxo.Gui.Graph
 		/// <value>The label sides.</value>
 		Collections.SelectableListNodeList LabelSides { set; }
 
-
 		/// <summary>Gets or sets the prefix text that appears before the label.</summary>
 		/// <value>The prefix text.</value>
 		string PrefixText { get; set; }
@@ -123,9 +121,7 @@ namespace Altaxo.Gui.Graph
 		object LabelFormattingSpecificGuiControl { set; }
 	}
 
-
-
-	#endregion
+	#endregion Interfaces
 
 	/// <summary>
 	/// Summary description.
@@ -134,12 +130,11 @@ namespace Altaxo.Gui.Graph
 	[ExpectedTypeOfView(typeof(IAxisLabelStyleView))]
 	public class AxisLabelStyleController : MVCANControllerBase<AxisLabelStyle, IAxisLabelStyleView>
 	{
-		Collections.SelectableListNodeList _labelSides;
-		Collections.SelectableListNodeList _horizontalAlignmentChoices;
-		Collections.SelectableListNodeList _verticalAlignmentChoices;
-		Collections.SelectableListNodeList _labelStyles;
-		IMVCANController _labelFormattingSpecificController;
-
+		private Collections.SelectableListNodeList _labelSides;
+		private Collections.SelectableListNodeList _horizontalAlignmentChoices;
+		private Collections.SelectableListNodeList _verticalAlignmentChoices;
+		private Collections.SelectableListNodeList _labelStyles;
+		private IMVCANController _labelFormattingSpecificController;
 
 		protected override void AttachView()
 		{
@@ -203,8 +198,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.Font = _view.LabelFont;
 			_doc.Brush = _view.LabelBrush.Clone();
@@ -243,14 +237,13 @@ namespace Altaxo.Gui.Graph
 			if (null != labelSideNode)
 				_doc.LabelSide = (CSAxisSide?)labelSideNode.Tag;
 
-			if (null != _labelFormattingSpecificController && !_labelFormattingSpecificController.Apply())
-					return false;
+			if (null != _labelFormattingSpecificController && !_labelFormattingSpecificController.Apply(disposeController))
+				return false;
 
 			_originalDoc.CopyFrom(_doc);
 
 			return true;
 		}
-
 
 		public void EhView_LabelStyleChanged()
 		{
@@ -259,7 +252,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_doc.LabelFormat = (Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting)Activator.CreateInstance(type);
 				_labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
-				if(null!=_view)
+				if (null != _view)
 					_view.LabelFormattingSpecificGuiControl = null == _labelFormattingSpecificController ? null : _labelFormattingSpecificController.ViewObject;
 			}
 		}

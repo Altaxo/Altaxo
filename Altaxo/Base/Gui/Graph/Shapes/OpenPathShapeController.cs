@@ -64,11 +64,11 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			try
 			{
-				if (!_locationController.Apply())
+				if (!_locationController.Apply(disposeController))
 					return false;
 
 				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);

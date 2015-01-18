@@ -35,10 +35,6 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-	#region Interfaces
-
-	#endregion Interfaces
-
 	[UserControllerForObject(typeof(InverseTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(ILinearTickSpacingView))]
 	public class InverseTickSpacingController : MVCANControllerBase<InverseTickSpacing, ILinearTickSpacingView>
@@ -155,7 +151,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		#region IApplyController Members
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			AltaxoVariant[] varVals;
 			int[] intVals;

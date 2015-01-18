@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot.ColorProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.ColorProvider
 {
@@ -33,23 +34,30 @@ namespace Altaxo.Gui.Graph.ColorProvider
 	{
 		IColorProviderBaseView BaseView { get; }
 
-		double Hue0 { get; set;}
+		double Hue0 { get; set; }
+
 		double Hue1 { get; set; }
+
 		double Saturation0 { get; set; }
+
 		double Saturation1 { get; set; }
+
 		double Brightness0 { get; set; }
+
 		double Brightness1 { get; set; }
+
 		double Opaqueness0 { get; set; }
+
 		double Opaqueness1 { get; set; }
 
 		event Action ChoiceChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(IColorProviderAHSBGradientView))]
-	[UserControllerForObject(typeof(ColorProviderAHSBGradient),110)]
+	[UserControllerForObject(typeof(ColorProviderAHSBGradient), 110)]
 	public class ColorProviderAHSBGradientController : MVCANDControllerBase<ColorProviderAHSBGradient, IColorProviderAHSBGradientView>
 	{
-		ColorProviderBaseController _baseController;
+		private ColorProviderBaseController _baseController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -87,14 +95,14 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			base.DetachView();
 		}
 
-		void EhBaseControllerChanged(IMVCANDController ctrl)
+		private void EhBaseControllerChanged(IMVCANDController ctrl)
 		{
-				OnMadeDirty();
+			OnMadeDirty();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_baseController.Apply())
+			if (!_baseController.Apply(disposeController))
 				return false;
 
 			_doc.Hue0 = _view.Hue0;
@@ -106,10 +114,9 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			_doc.Opaqueness0 = _view.Opaqueness0;
 			_doc.Opaqueness1 = _view.Opaqueness1;
 
-			
-			if(_useDocumentCopy)
+			if (_useDocumentCopy)
 				CopyHelper.Copy(ref _originalDoc, _doc);
-			
+
 			return true;
 		}
 	}

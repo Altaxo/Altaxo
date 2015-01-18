@@ -50,7 +50,7 @@ namespace Altaxo.Gui.DataConnection
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc = new LoginCredentials(_view.Username, _view.Password);
 

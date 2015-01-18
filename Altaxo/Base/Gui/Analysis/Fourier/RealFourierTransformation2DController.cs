@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 			return result;
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.RowIncrementValue = _view.XIncrement;
 			_doc.ColumnIncrementValue = _view.YIncrement;

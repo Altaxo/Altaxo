@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_DoSimplex()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				//        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
@@ -159,7 +159,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_DoFit()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				//        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_DoSimulation(bool useInterval, bool generateUnusedDependentVariables)
 		{
-			if (useInterval && !_generationIntervalController.Apply())
+			if (useInterval && !_generationIntervalController.Apply(false))
 			{
 				Current.Gui.ErrorMessageBox("Your interval specification contains errors, please correct them!");
 				return;
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_EvaluateChiSqr()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 				this._chiSquare = fitAdapter.EvaluateChiSquare();
@@ -269,7 +269,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_SelectFitFunction()
 		{
-			if (_funcselController.Apply())
+			if (_funcselController.Apply(false))
 			{
 				Select((IFitFunction)_funcselController.ModelObject);
 				_view.SwitchToFitEnsemblePage();
@@ -516,7 +516,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_CopyParameterV()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				var dao = Current.Gui.GetNewClipboardDataObject();
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
@@ -540,7 +540,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_CopyParameterVAsCDef()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				var dao = Current.Gui.GetNewClipboardDataObject();
 				System.Text.StringBuilder stb = new System.Text.StringBuilder();
@@ -559,7 +559,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_CopyParameterNV()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				var dao = Current.Gui.GetNewClipboardDataObject();
 				Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
@@ -589,7 +589,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_CopyParameterNVV()
 		{
-			if (true == this._parameterController.Apply())
+			if (true == this._parameterController.Apply(false))
 			{
 				var dao = Current.Gui.GetNewClipboardDataObject();
 				Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
@@ -663,9 +663,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		#region IApplyController Members
 
-		public bool Apply()
+		public bool Apply(bool disposeController)
 		{
 			return true;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
 		}
 
 		#endregion IApplyController Members

@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Serialization.Clipboard
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.RelocateReferences = _view.RelocateReferences;
 			_doc.TryToKeepInternalReferences = _view.TryToKeepInternalReferences;

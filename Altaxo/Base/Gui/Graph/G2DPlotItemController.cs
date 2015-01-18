@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph
 
 		private void ApplyPlotGroupView()
 		{
-			_plotGroupController.Apply();
+			_plotGroupController.Apply(false);
 			_groupStyles.CopyFrom((PlotGroupStyleCollection)_plotGroupController.ModelObject);
 
 			// now distribute the new style to the other plot items
@@ -248,7 +248,7 @@ namespace Altaxo.Gui.Graph
 			{
 				if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
 				{
-					if (!_styleControllerList[i].Apply())
+					if (!_styleControllerList[i].Apply(false))
 						return;
 
 					DistributeStyleChange(i);
@@ -323,7 +323,7 @@ namespace Altaxo.Gui.Graph
 		private int _applySuspend; // to avoid multiple invoking here because some of the child controls
 
 		// have this here as controller too
-		public bool Apply()
+		public bool Apply(bool disposeController)
 		{
 			if (_applySuspend++ > 0)
 			{
@@ -333,12 +333,12 @@ namespace Altaxo.Gui.Graph
 
 			bool applyResult = false;
 
-			if (!_dataController.Apply())
+			if (!_dataController.Apply(disposeController))
 				return false;
 
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
-				if (false == _styleControllerList[i].Apply())
+				if (false == _styleControllerList[i].Apply(disposeController))
 				{
 					_view.BringTabToFront(i);
 					applyResult = false;
@@ -358,6 +358,18 @@ namespace Altaxo.Gui.Graph
 			return applyResult;
 		}
 
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
+		}
+
 		#endregion IApplyController Members
 
 		/// <summary>
@@ -375,7 +387,7 @@ namespace Altaxo.Gui.Graph
 
 		private void _styleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
 		{
-			if (true == _styleCollectionController.Apply())
+			if (true == _styleCollectionController.Apply(false))
 			{
 				InitializeStyleControllerList();
 				View_SetAllTabViews();

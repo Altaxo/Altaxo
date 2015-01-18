@@ -107,14 +107,14 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			// read axis title
 			_doc.TitleText = _view.AxisTitle;
 
 			if (null != _axisLineStyleController)
 			{
-				if (!_axisLineStyleController.Apply())
+				if (!_axisLineStyleController.Apply(disposeController))
 					return false;
 				else
 					_doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph
 			else
 				_doc.HideMinorLabels();
 
-			if (_tickSpacingController != null && !_tickSpacingController.Apply())
+			if (_tickSpacingController != null && !_tickSpacingController.Apply(disposeController))
 				return false;
 			if (_view.ShowCustomTickSpacing && null != _tickSpacingController)
 				_doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;

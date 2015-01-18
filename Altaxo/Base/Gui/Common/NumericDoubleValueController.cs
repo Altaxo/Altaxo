@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,74 +19,78 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
-  /// <summary>
-  /// Summary description for NumericDoubleValueController.
-  /// </summary>
-  [UserControllerForObject(typeof(double),100)]
+	/// <summary>
+	/// Summary description for NumericDoubleValueController.
+	/// </summary>
+	[UserControllerForObject(typeof(double), 100)]
 	[ExpectedTypeOfView(typeof(ISingleValueView))]
-  public class NumericDoubleValueController : SingleValueController
-  {
-    protected double _value1Double;
-    protected double _value1DoubleTemporary;
+	public class NumericDoubleValueController : SingleValueController
+	{
+		protected double _value1Double;
+		protected double _value1DoubleTemporary;
 
-    /// <summary>The minimum value that can be reached. If the minimum value itself is included, is determined by the flag <see cref="_isMinimumValueIncluded" />.</summary>
-    protected double _minimumValue = double.MinValue;
-    /// <summary>If true, the minimum value itself is valid for the entered number. If false, only values greater than the minimum value are valid.</summary>
-    protected bool _isMinimumValueIncluded=true;
-    /// <summary>The maximum value that can be reached. If the maximum value itself is included, is determined by the flag <see cref="_isMinimumValueIncluded" />.</summary>
-    protected double _maximumValue = double.MaxValue;
-    /// <summary>If true, the maximum value itself is valid for the entered number. If false, only values lesser than the maximum value are valid.</summary>
-    protected bool   _isMaximumValueIncluded=true;
+		/// <summary>The minimum value that can be reached. If the minimum value itself is included, is determined by the flag <see cref="_isMinimumValueIncluded" />.</summary>
+		protected double _minimumValue = double.MinValue;
 
-    public NumericDoubleValueController(double val)
-      : base(Altaxo.Serialization.GUIConversion.ToString(val))
-    {
-      _value1Double = _value1DoubleTemporary = val;
-    }
+		/// <summary>If true, the minimum value itself is valid for the entered number. If false, only values greater than the minimum value are valid.</summary>
+		protected bool _isMinimumValueIncluded = true;
 
-    public override object ModelObject
-    {
-      get
-      {
-        return _value1Double;
-      }
-    }
+		/// <summary>The maximum value that can be reached. If the maximum value itself is included, is determined by the flag <see cref="_isMinimumValueIncluded" />.</summary>
+		protected double _maximumValue = double.MaxValue;
 
-    public override bool Apply()
-    {
-      this._value1Double = this._value1DoubleTemporary;
-      return base.Apply();
-    }
+		/// <summary>If true, the maximum value itself is valid for the entered number. If false, only values lesser than the maximum value are valid.</summary>
+		protected bool _isMaximumValueIncluded = true;
 
-    public override void EhView_ValidatingValue1(ValidationEventArgs<string> e)
-    {
-      double vald;
-      if(Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate,out vald))
-      {
-        if(vald<_minimumValue || (!_isMinimumValueIncluded && vald==_minimumValue))
-        {
-          e.AddError("Value must be {0} than {1}!",(_isMinimumValueIncluded?"greater or equal":"greater"), Altaxo.Serialization.GUIConversion.ToString(_minimumValue));
-        }
-        else if(vald>_maximumValue || (!_isMaximumValueIncluded && vald==_maximumValue))
-        {
-          e.AddError("Value must be {0} than {1}!",(_isMaximumValueIncluded?"less or equal":"less"),Altaxo.Serialization.GUIConversion.ToString(_maximumValue));
-        }
-        else
-        {
-          _value1DoubleTemporary = vald;
+		public NumericDoubleValueController(double val)
+			: base(Altaxo.Serialization.GUIConversion.ToString(val))
+		{
+			_value1Double = _value1DoubleTemporary = val;
+		}
+
+		public override object ModelObject
+		{
+			get
+			{
+				return _value1Double;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			this._value1Double = this._value1DoubleTemporary;
+			return base.Apply(disposeController);
+		}
+
+		public override void EhView_ValidatingValue1(ValidationEventArgs<string> e)
+		{
+			double vald;
+			if (Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out vald))
+			{
+				if (vald < _minimumValue || (!_isMinimumValueIncluded && vald == _minimumValue))
+				{
+					e.AddError("Value must be {0} than {1}!", (_isMinimumValueIncluded ? "greater or equal" : "greater"), Altaxo.Serialization.GUIConversion.ToString(_minimumValue));
+				}
+				else if (vald > _maximumValue || (!_isMaximumValueIncluded && vald == _maximumValue))
+				{
+					e.AddError("Value must be {0} than {1}!", (_isMaximumValueIncluded ? "less or equal" : "less"), Altaxo.Serialization.GUIConversion.ToString(_maximumValue));
+				}
+				else
+				{
+					_value1DoubleTemporary = vald;
 					return;
-        }
-      }
-      else
-      {
+				}
+			}
+			else
+			{
 				e.AddError("Value must be a valid numeric string");
-      }
-    }
-  }
+			}
+		}
+	}
 }

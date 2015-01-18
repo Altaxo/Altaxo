@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Data
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.DoNotSaveCachedTableData = _view.DoNotSaveTableData;
 			_doc.ExecuteTableScriptAfterImport = _view.ExecuteScriptAfterImport;

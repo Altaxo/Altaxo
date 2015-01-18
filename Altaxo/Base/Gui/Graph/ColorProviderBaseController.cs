@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.ColorProvider;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui;
+using Altaxo.Serialization;
 using System;
 using System.Drawing;
-
-using Altaxo.Serialization;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui;
 
 namespace Altaxo.Gui.Graph
 {
@@ -67,13 +68,13 @@ namespace Altaxo.Gui.Graph
 
 		/// <summary>Is called when any of the user choices of this control changed. Intended for updating the preview when something changed.</summary>
 		event Action ChoiceChanged;
-
 	}
-	#endregion
+
+	#endregion Interfaces
 
 	[ExpectedTypeOfView(typeof(IColorProviderBaseView))]
 	[UserControllerForObject(typeof(ColorProviderBase))]
-	public class ColorProviderBaseController : MVCANDControllerBase<ColorProviderBase,IColorProviderBaseView>
+	public class ColorProviderBaseController : MVCANDControllerBase<ColorProviderBase, IColorProviderBaseView>
 	{
 		protected override void Initialize(bool initData)
 		{
@@ -99,19 +100,15 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-	
-
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_originalDoc.ColorBelow = _view.ColorBelow;
 			_originalDoc.ColorAbove = _view.ColorAbove;
 			_originalDoc.ColorInvalid = _view.ColorInvalid;
 			_originalDoc.Transparency = _view.Transparency;
 			_originalDoc.ColorSteps = _view.ColorSteps;
-	
+
 			return true;
 		}
-
-	
 	}
 }

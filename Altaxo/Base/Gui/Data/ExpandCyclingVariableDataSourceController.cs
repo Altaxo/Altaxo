@@ -73,19 +73,19 @@ namespace Altaxo.Gui.Data
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			bool result;
 
-			result = _dataSourceOptionsController.Apply();
+			result = _dataSourceOptionsController.Apply(disposeController);
 			if (!result) return result;
 
-			result = _processOptionsController.Apply();
+			result = _processOptionsController.Apply(disposeController);
 			if (!result) return result;
 
 			if (null != _processDataController)
 			{
-				result = _processDataController.Apply();
+				result = _processDataController.Apply(disposeController);
 				if (!result) return result;
 			}
 

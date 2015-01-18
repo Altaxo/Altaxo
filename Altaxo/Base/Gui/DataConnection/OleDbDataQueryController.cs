@@ -370,7 +370,7 @@ namespace Altaxo.Gui.DataConnection
 			var applyResult = false;
 			var oldController = _currentlySelectedController;
 			if (null != oldController)
-				applyResult = oldController.Apply();
+				applyResult = oldController.Apply(false);
 
 			_currentlySelectedController = _tabItemList.FirstSelectedNode == null ? null : _tabItemList.FirstSelectedNode.Tag as IMVCAController;
 
@@ -428,7 +428,7 @@ namespace Altaxo.Gui.DataConnection
 			Current.Gui.ErrorMessageBox(msg);
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			bool result = false;
 
@@ -437,7 +437,7 @@ namespace Altaxo.Gui.DataConnection
 
 			if (null != _currentlySelectedController)
 			{
-				result = _currentlySelectedController.Apply();
+				result = _currentlySelectedController.Apply(disposeController);
 			}
 
 			if (result)

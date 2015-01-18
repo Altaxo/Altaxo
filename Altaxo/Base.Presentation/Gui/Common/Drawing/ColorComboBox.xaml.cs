@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,8 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +39,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.ColorManagement;
-
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
@@ -45,11 +46,12 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class ColorComboBox : ColorComboBoxBase, INamedColorView
 	{
-		List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
-
+		private List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
 
 		public event DependencyPropertyChangedEventHandler SelectedColorChanged;
+
 		private event Action ViewEvent_SelectedColorChanged;
+
 		event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedColorChanged
 		{
 			add { ViewEvent_SelectedColorChanged += value; }
@@ -73,17 +75,20 @@ namespace Altaxo.Gui.Common.Drawing
 			UpdateTreeViewSelection();
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Implementation of abstract base class members
 
 		protected override TreeView GuiTreeView { get { return _treeView; } }
+
 		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
+
 		protected override NamedColor InternalSelectedColor { get { return SelectedColor; } set { SelectedColor = value; } }
 
 		#endregion Implementation of abstract base class members
 
 		#region Dependency property
+
 		public NamedColor SelectedColor
 		{
 			get { return (NamedColor)GetValue(SelectedColorProperty); }
@@ -128,11 +133,11 @@ namespace Altaxo.Gui.Common.Drawing
 			var oldColor = (NamedColor)args.OldValue;
 			var newColor = (NamedColor)args.NewValue;
 
-      // make sure, that the item is part of the data items of the ComboBox
-      if (newColor.ParentColorSet == null)
-      {
-        StoreAsLastUsedItem(_lastLocalUsedItems, newColor);
-      }
+			// make sure, that the item is part of the data items of the ComboBox
+			if (newColor.ParentColorSet == null)
+			{
+				StoreAsLastUsedItem(_lastLocalUsedItems, newColor);
+			}
 
 			if (!newColor.Equals(_guiComboBox.SelectedValue))
 				this.UpdateComboBoxSourceSelection(newColor);
@@ -140,15 +145,13 @@ namespace Altaxo.Gui.Common.Drawing
 			if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
 				this.UpdateTreeViewSelection();
 
-
 			if (null != SelectedColorChanged)
 				SelectedColorChanged(obj, args);
 			if (null != ViewEvent_SelectedColorChanged)
 				ViewEvent_SelectedColorChanged();
 		}
 
-		
-		#endregion
+		#endregion Dependency property
 
 		#region ComboBox
 
@@ -164,10 +167,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_guiComboBox.SelectedValue = color;
 		}
 
-
-
-
-		IColorSet GetColorSetForComboBox()
+		protected override IColorSet GetColorSetForComboBox()
 		{
 			NamedColor selColor = this.SelectedColor;
 			if (selColor.ParentColorSet != null)
@@ -176,8 +176,9 @@ namespace Altaxo.Gui.Common.Drawing
 				return NamedColors.Instance;
 		}
 
-		List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used colors" } };
-		List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
+		private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used colors" } };
+		private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
+
 		protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
 		{
 			List<object> lastUsed;
@@ -188,7 +189,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 			var colorSet = GetColorSetForComboBox();
 			var known = GetFilteredList(colorSet, filterString, false); // False as 3rd argument is acceptable here because we know that if ShowPlotColorsOnly is set, then the colorSet is for sure a plot color set
-
 
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
 			{
@@ -213,7 +213,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return false;
 		}
 
-
 		protected static List<object> GetFilteredList(IList<NamedColor> originalList, string filterString, bool showPlotColorsOnly)
 		{
 			var result = new List<object>();
@@ -228,7 +227,7 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-		#endregion ComboBox data
+		#endregion ComboBox data handling
 
 		#region ComboBox event handling
 
@@ -272,7 +271,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-	
-		#endregion
+		#endregion Context menus
 	}
 }

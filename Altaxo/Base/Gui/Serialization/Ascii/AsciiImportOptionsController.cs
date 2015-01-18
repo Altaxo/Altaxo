@@ -206,7 +206,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		private void ReadAnalysisOptionsAndAnalyze()
 		{
-			if (!_asciiDocumentAnalysisOptionsController.Apply())
+			if (!_asciiDocumentAnalysisOptionsController.Apply(false))
 				return;
 
 			_analysisOptions = (AsciiDocumentAnalysisOptions)_asciiDocumentAnalysisOptionsController.ModelObject;
@@ -232,7 +232,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 			if (_separationStrategyInstanceController != null)
 			{
-				if (_separationStrategyInstanceController.Apply())
+				if (_separationStrategyInstanceController.Apply(false))
 				{
 					var oldSep = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;
 					_separationStrategyInstances[oldSep.GetType()] = oldSep;
@@ -282,7 +282,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 		private bool ApplyWithoutClosing()
 		{
 			if (null != _separationStrategyInstanceController)
-				if (_separationStrategyInstanceController.Apply())
+				if (_separationStrategyInstanceController.Apply(false))
 					_doc.SeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;
 				else
 					return false;
@@ -338,7 +338,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			return true;
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			if (!ApplyWithoutClosing())
 				return false;

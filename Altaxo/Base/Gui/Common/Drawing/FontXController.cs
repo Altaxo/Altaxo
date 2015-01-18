@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Common.Drawing
 			this._doc = oldFont.GetFontWithNewSize(newSize);
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			ApplyFontFamily();
 			ApplyFontSize();

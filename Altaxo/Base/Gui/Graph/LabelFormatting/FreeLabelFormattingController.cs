@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.LabelFormatting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph.Gdi.LabelFormatting;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.LabelFormatting
 {
@@ -38,13 +39,12 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 	}
 
 	[ExpectedTypeOfView(typeof(IFreeLabelFormattingView))]
-	[UserControllerForObject(typeof(FreeLabelFormatting),110)]
+	[UserControllerForObject(typeof(FreeLabelFormatting), 110)]
 	public class FreeLabelFormattingController : MVCANControllerBase<FreeLabelFormatting, IFreeLabelFormattingView>
 	{
-		SelectableListNodeList _textBlockAlignmentChoices;
+		private SelectableListNodeList _textBlockAlignmentChoices;
 
-		MultiLineLabelFormattingBaseController _baseController;
-
+		private MultiLineLabelFormattingBaseController _baseController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -61,9 +61,9 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (!_baseController.Apply())
+			if (!_baseController.Apply(disposeController))
 				return false;
 
 			_doc.FormatString = _view.FormatString;

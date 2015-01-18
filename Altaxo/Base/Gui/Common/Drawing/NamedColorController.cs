@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,12 +32,13 @@ namespace Altaxo.Gui.Common.Drawing
 	public interface INamedColorView
 	{
 		Altaxo.Graph.NamedColor SelectedColor { get; set; }
+
 		event Action SelectedColorChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorView))]
 	[UserControllerForObject(typeof(Altaxo.Graph.NamedColor))]
-	public class NamedColorController : MVCANDControllerBase<Altaxo.Graph.NamedColor,INamedColorView>
+	public class NamedColorController : MVCANDControllerBase<Altaxo.Graph.NamedColor, INamedColorView>
 	{
 		protected override void Initialize(bool initData)
 		{
@@ -55,14 +58,13 @@ namespace Altaxo.Gui.Common.Drawing
 			_view.SelectedColorChanged -= EhSelectedColorChanged;
 		}
 
-		void EhSelectedColorChanged()
+		private void EhSelectedColorChanged()
 		{
 			_doc = _view.SelectedColor;
 			OnMadeDirty();
 		}
 
-
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_originalDoc = _view.SelectedColor;
 			return true;

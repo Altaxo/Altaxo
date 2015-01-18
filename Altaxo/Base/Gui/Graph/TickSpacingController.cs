@@ -115,12 +115,12 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
-			if (null != _tickSpacingController && false == _tickSpacingController.Apply())
+			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
 				return false;
 
-			if(!object.ReferenceEquals(_doc,_originalDoc))
+			if (!object.ReferenceEquals(_doc, _originalDoc))
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
 			return true;

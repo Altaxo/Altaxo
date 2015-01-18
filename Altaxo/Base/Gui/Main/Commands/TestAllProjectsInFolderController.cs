@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,48 +19,46 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Main.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Main.Commands;
-
 namespace Altaxo.Gui.Common.Tools
 {
-  
-  public interface ITestAllProjectsInFolderView
-  {
-   string FolderPaths { get; set; }
-    bool TestSavingAndReopening { get; set; }
-  }
+	public interface ITestAllProjectsInFolderView
+	{
+		string FolderPaths { get; set; }
 
-  [UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
-  [ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
-  public class TestAllProjectsInFolderController : MVCANControllerBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
-  {
+		bool TestSavingAndReopening { get; set; }
+	}
 
-    protected override void Initialize(bool initData)
-    {
-      if (null != _view)
-      { 
-        _view.FolderPaths = _doc.FolderPaths;
-        _view.TestSavingAndReopening = _doc.TestSavingAndReopening;
-      }
-    }
+	[UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
+	[ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
+	public class TestAllProjectsInFolderController : MVCANControllerBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
+	{
+		protected override void Initialize(bool initData)
+		{
+			if (null != _view)
+			{
+				_view.FolderPaths = _doc.FolderPaths;
+				_view.TestSavingAndReopening = _doc.TestSavingAndReopening;
+			}
+		}
 
-    public override bool Apply()
-    {
-      _doc.TestSavingAndReopening = _view.TestSavingAndReopening;
-      _doc.FolderPaths = _view.FolderPaths;
+		public override bool Apply(bool disposeController)
+		{
+			_doc.TestSavingAndReopening = _view.TestSavingAndReopening;
+			_doc.FolderPaths = _view.FolderPaths;
 
-      if (_useDocumentCopy)
-        CopyHelper.Copy(ref _originalDoc, _doc);
+			if (_useDocumentCopy)
+				CopyHelper.Copy(ref _originalDoc, _doc);
 
-      return !string.IsNullOrEmpty(_doc.FolderPaths);
-
-    }
-  }
+			return !string.IsNullOrEmpty(_doc.FolderPaths);
+		}
+	}
 }

@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			var selNode = _treeRootNode.AnyBetweenHereAndLeaves(node => node.IsSelected);
 

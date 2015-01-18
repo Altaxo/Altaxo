@@ -299,7 +299,7 @@ namespace Altaxo.Gui.Data
 			}
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
 			_doc.GroupNumber = _view.GroupNumber;

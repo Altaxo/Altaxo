@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 			_view.EnableValue3(enableSpan);
 		}
 
-		public override bool Apply()
+		public override bool Apply(bool disposeController)
 		{
 			if (!(1 / _end > 1 / _org))
 			{
