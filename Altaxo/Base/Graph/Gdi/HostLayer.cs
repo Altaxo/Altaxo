@@ -210,11 +210,11 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (null == this._parent)
 			{
-				this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
+				//this._parent = from._parent; // necessary in order to set Location to GridLocation, where a parent layer is required
 				this._cachedLayerNumber = from._cachedLayerNumber; // is important when the layer dialog is open: this number must be identical to that of the cloned layer
 			}
 
-			this._grid.CopyFrom(from._grid);
+			ChildCopyToMember(ref _grid, from._grid);
 
 			// size, position, rotation and scale
 			if (0 != (options & GraphCopyOptions.CopyLayerSizePosition))
@@ -222,7 +222,7 @@ namespace Altaxo.Graph.Gdi
 				this._cachedLayerSize = from._cachedLayerSize;
 				this._cachedLayerPosition = from._cachedLayerPosition;
 				this._cachedParentLayerSize = from._cachedParentLayerSize;
-				this.Location = (IItemLocation)from._location.Clone(); // Location must be last to copy
+				ChildCopyToMember(ref _location, from._location);
 			}
 
 			InternalCopyGraphItems(from, options);
@@ -871,6 +871,7 @@ namespace Altaxo.Graph.Gdi
 				_grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Top / this.Size.Y));
 				_grid.YPartitioning.Add(RADouble.NewRel(enclosingRect.Height / this.Size.Y));
 				_grid.YPartitioning.Add(RADouble.NewRel(1 - enclosingRect.Bottom / this.Size.Y));
+				_grid.ParentObject = this;
 
 				var result = new ItemLocationByGrid();
 				result.CopyFrom(itemLocation);

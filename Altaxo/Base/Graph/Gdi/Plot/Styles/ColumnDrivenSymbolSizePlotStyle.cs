@@ -148,7 +148,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_symbolSizeInvalid = from._symbolSizeInvalid;
 
 				_numberOfSteps = from._numberOfSteps;
-				_parent = from._parent;
+				//_parent = from._parent;
 
 				copied = true;
 			}

@@ -295,6 +295,32 @@ namespace Altaxo.Main
 			}
 
 			#endregion IDisposable Members
+
+			#region Resume temporarily
+
+			public IDisposable ResumeCompleteTemporarilyGetToken()
+			{
+				var parent = _parent;
+				if (null == parent)
+					throw new ObjectDisposedException("This token is already disposed");
+
+				var result = new TemporaryResumeToken(parent);
+				result.ResumeTemporarily();
+				return result;
+			}
+
+			public void ResumeCompleteTemporarily()
+			{
+				var parent = _parent;
+				if (null == parent)
+					throw new ObjectDisposedException("This token is already disposed");
+
+				var result = new TemporaryResumeToken(parent);
+				result.ResumeTemporarily();
+				result.Dispose();
+			}
+
+			#endregion Resume temporarily
 		}
 
 		/// <summary>

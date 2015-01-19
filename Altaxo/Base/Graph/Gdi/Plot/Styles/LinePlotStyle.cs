@@ -421,7 +421,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._fillColorLinkage = from._fillColorLinkage;
 				this._connectCircular = from._connectCircular;
 
-				this._parent = from._parent;
+				//this._parent = from._parent;
 
 				suspendToken.Resume(eventFiring);
 			}

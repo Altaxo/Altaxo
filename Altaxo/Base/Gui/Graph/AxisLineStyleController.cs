@@ -56,21 +56,14 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(AxisLineStyle))]
 	[ExpectedTypeOfView(typeof(IAxisLineStyleView))]
-	public class AxisLineStyleController : IMVCAController
+	public class AxisLineStyleController : MVCANControllerEditOriginalDocBase<AxisLineStyle, IAxisLineStyleView>
 	{
-		private AxisLineStyle _doc;
-		private IAxisLineStyleView _view;
-
-		public AxisLineStyleController(AxisLineStyle doc)
-		{
-			_doc = (AxisLineStyle)doc.Clone();
-			Initialize(true);
-		}
-
 		#region IMVCController Members
 
-		private void Initialize(bool bInit)
+		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (_view != null)
 			{
 				_view.ShowLine = true;
@@ -102,39 +95,17 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IAxisLineStyleView;
-				Initialize(false);
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
 		#endregion IMVCController Members
 
 		#region IApplyController Members
 
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			_doc.AxisPen = _view.LinePen;
 			_doc.MajorPen = _view.MajorPen;
 			_doc.MinorPen = _view.MinorPen;
-			_doc.MajorTickLength = (float)_view.MajorTickLength;
-			_doc.MinorTickLength = (float)_view.MinorTickLength;
+			_doc.MajorTickLength = _view.MajorTickLength;
+			_doc.MinorTickLength = _view.MinorTickLength;
 
 			SelectableListNodeList list;
 			list = _view.MajorPenTicks;
@@ -167,19 +138,22 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
+			if (disposeController)
+			{
+				Dispose();
+			}
+			else
+			{
+				if (null != _suspendToken)
+					_suspendToken.ResumeCompleteTemporarily();
+			}
+
 			return true;
 		}
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			return false;
+			yield break;
 		}
 
 		#endregion IApplyController Members

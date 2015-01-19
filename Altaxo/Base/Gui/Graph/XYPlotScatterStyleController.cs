@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(ScatterPlotStyle))]
 	[ExpectedTypeOfView(typeof(IXYPlotScatterStyleView))]
-	public class XYPlotScatterStyleController : MVCANControllerBase<ScatterPlotStyle, IXYPlotScatterStyleView>
+	public class XYPlotScatterStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyle, IXYPlotScatterStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -112,6 +112,8 @@ namespace Altaxo.Gui.Graph
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
@@ -142,7 +144,7 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeDropLineChoices()
 		{
-			XYPlotLayer layer = AbsoluteDocumentPath.GetRootNodeImplementing(_originalDoc, typeof(XYPlotLayer)) as XYPlotLayer;
+			XYPlotLayer layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYPlotLayer)) as XYPlotLayer;
 
 			_dropLineChoices = new SelectableListNodeList();
 			foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
@@ -203,18 +205,20 @@ namespace Altaxo.Gui.Graph
 
 				// Drop line left
 				_doc.DropLine.Clear();
+
 				foreach (SelectableListNode node in _dropLineChoices)
+				{
 					if (node.IsSelected)
+					{
 						_doc.DropLine.Add((CSPlaneID)node.Tag);
+					}
+				}
 
 				// Skip points
 
 				_doc.SkipFrequency = _view.SkipPoints;
 
 				_doc.RelativePenWidth = _view.RelativePenWidth;
-
-				if (_useDocumentCopy)
-					CopyHelper.Copy(ref _originalDoc, _doc);
 			}
 			catch (Exception ex)
 			{
@@ -222,7 +226,31 @@ namespace Altaxo.Gui.Graph
 				return false;
 			}
 
+			if (disposeController)
+			{
+				Dispose();
+			}
+			else
+			{
+				if (null != _suspendToken)
+					_suspendToken.ResumeCompleteTemporarily();
+			}
+
 			return true;
+		}
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break; // no subcontrollers
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_dropLineChoices = null;
+			_symbolShapeChoices = null;
+			_symbolStyleChoices = null;
+
+			base.Dispose(isDisposing);
 		}
 
 		#endregion IApplyController Members

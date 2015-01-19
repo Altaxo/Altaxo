@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					_colorProvider = null == from._colorProvider ? null : (IColorProvider)from._colorProvider.Clone();
 					_colorProvider.ParentObject = this;
 
-					_parent = from._parent;
+					//_parent = from._parent;
 
 					suspendToken.ResumeSilently();
 				}

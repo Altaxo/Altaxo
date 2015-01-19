@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,8 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.ColorManagement;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,11 +40,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.ColorManagement;
-
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
@@ -50,16 +51,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public event DependencyPropertyChangedEventHandler SelectedBrushChanged;
 
-		List<BrushX> _lastLocalUsedItems = new List<BrushX>();
-
+		private List<BrushX> _lastLocalUsedItems = new List<BrushX>();
 
 		#region Constructors
 
 		static BrushComboBox()
 		{
-			SelectedBrushProperty =	DependencyProperty.Register("SelectedBrush", typeof(BrushX), typeof(BrushComboBox),	new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce));
+			SelectedBrushProperty = DependencyProperty.Register("SelectedBrush", typeof(BrushX), typeof(BrushComboBox), new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce));
 		}
-
 
 		public BrushComboBox()
 		{
@@ -71,17 +70,19 @@ namespace Altaxo.Gui.Common.Drawing
 			UpdateTreeViewSelection();
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Implementation of abstract base class members
 
 		protected override TreeView GuiTreeView { get { return _treeView; } }
+
 		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
-		protected override NamedColor InternalSelectedColor 
+
+		protected override NamedColor InternalSelectedColor
 		{
 			get
 			{
-				return InternalSelectedBrush.Color; 
+				return InternalSelectedBrush.Color;
 			}
 			set
 			{
@@ -98,6 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
 		#endregion Implementation of abstract base class members
 
 		#region Dependency property
+
 		/// <summary>
 		/// Gets/sets the selected brush. Since <see cref="BrushX"/> is not immutable, the Brush is cloned when setting the property, as well as when getting the property.
 		/// </summary>
@@ -113,14 +115,17 @@ namespace Altaxo.Gui.Common.Drawing
 		public BrushX SelectedBrush
 		{
 			get
-      { 
-        return ((BrushX)GetValue(SelectedBrushProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
-      }
+			{
+				return ((BrushX)GetValue(SelectedBrushProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
+			}
 			set
 			{
 				if (null != value)
+				{
 					value = value.Clone(); // BrushX is not immutable, so it must be ensured that SelectedBrush stored here can not be changed externally
-				SetValue(SelectedBrushProperty, value); 
+					value.ParentObject = Altaxo.Main.SuspendableDocumentNode.StaticInstance;
+				}
+				SetValue(SelectedBrushProperty, value);
 			}
 		}
 
@@ -143,31 +148,31 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-    private static object EhSelectedBrushCoerce(DependencyObject obj, object coerceValue)
-    {
-      var thiss = (BrushComboBox)obj;
-      return thiss.InternalSelectedBrushCoerce(obj, (BrushX)coerceValue);
-    }
+		private static object EhSelectedBrushCoerce(DependencyObject obj, object coerceValue)
+		{
+			var thiss = (BrushComboBox)obj;
+			return thiss.InternalSelectedBrushCoerce(obj, (BrushX)coerceValue);
+		}
 
-    protected virtual BrushX InternalSelectedBrushCoerce(DependencyObject obj, BrushX brush)
-    {
+		protected virtual BrushX InternalSelectedBrushCoerce(DependencyObject obj, BrushX brush)
+		{
 			if (null == brush)
 				brush = new BrushX(NamedColors.Transparent);
 
-      var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
-      if (!brush.Color.Equals(coercedColor))
-      {
-        brush = brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-        brush.Color = coercedColor;
-      }
+			var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
+			if (!brush.Color.Equals(coercedColor))
+			{
+				brush = brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
+				brush.Color = coercedColor;
+			}
 
-      if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || false == brush.Color.ParentColorSet.IsPlotColorSet))
-      {
-        brush = brush.Clone();
-        brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
-      }
-      return brush;
-    }
+			if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || false == brush.Color.ParentColorSet.IsPlotColorSet))
+			{
+				brush = brush.Clone();
+				brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+			}
+			return brush;
+		}
 
 		private static void EhSelectedBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -182,10 +187,10 @@ namespace Altaxo.Gui.Common.Drawing
 			var oldColor = oldBrush.Color;
 			var newColor = newBrush.Color;
 
-      if (newBrush.BrushType != BrushType.SolidBrush || newBrush.Color.ParentColorSet == null)
-      {
-        StoreAsLastUsedItem(_lastLocalUsedItems, newBrush);
-      }
+			if (newBrush.BrushType != BrushType.SolidBrush || newBrush.Color.ParentColorSet == null)
+			{
+				StoreAsLastUsedItem(_lastLocalUsedItems, newBrush);
+			}
 
 			if (!newBrush.Equals(_guiComboBox.SelectedValue))
 				this.UpdateComboBoxSourceSelection(newBrush);
@@ -193,12 +198,11 @@ namespace Altaxo.Gui.Common.Drawing
 			if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
 				this.UpdateTreeViewSelection();
 
-
 			if (null != SelectedBrushChanged)
 				SelectedBrushChanged(obj, args);
 		}
 
-		#endregion
+		#endregion Dependency property
 
 		#region ComboBox
 
@@ -214,9 +218,9 @@ namespace Altaxo.Gui.Common.Drawing
 			_guiComboBox.SelectedValue = brush;
 		}
 
+		private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used brushes" } };
+		private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
-		List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used brushes" } };
-		List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 		protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
 		{
 			List<object> lastUsed;
@@ -224,8 +228,7 @@ namespace Altaxo.Gui.Common.Drawing
 			lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
 
 			var colorSet = GetColorSetForComboBox();
-			var known = GetFilteredList(colorSet, filterString); 
-
+			var known = GetFilteredList(colorSet, filterString);
 
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
 			{
@@ -277,17 +280,16 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-		#endregion ComboBox data
+		#endregion ComboBox data handling
 
 		#region ComboBox event handling
 
-		void EhPopupClosed(object sender, EventArgs e)
+		private void EhPopupClosed(object sender, EventArgs e)
 		{
 		}
 
 		private void EhComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
 		}
 
 		protected void EhComboBox_DropDownClosed(object sender, EventArgs e)
@@ -319,15 +321,15 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Context menus
 
-    private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
-    {
+		private void EhShowCustomBrushDialog(object sender, RoutedEventArgs e)
+		{
 			var localBrush = this.InternalSelectedBrush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-      var ctrl = new BrushControllerAdvanced();
-      ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
-      ctrl.InitializeDocument(localBrush);
-      if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
+			var ctrl = new BrushControllerAdvanced();
+			ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
+			ctrl.InitializeDocument(localBrush);
+			if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
 				this.InternalSelectedBrush = (BrushX)ctrl.ModelObject;
-    }
+		}
 
 		protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)
 		{
@@ -351,6 +353,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Context menus
 	}
 }

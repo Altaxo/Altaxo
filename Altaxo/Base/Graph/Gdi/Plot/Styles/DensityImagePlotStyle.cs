@@ -280,7 +280,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
 				this.Scale = (NumericalScale)from._scale.Clone();
 
-				this._parent = from._parent;
+				//this._parent = from._parent;
 
 				this._imageType = CachedImageType.None;
 				hasCopied = true;

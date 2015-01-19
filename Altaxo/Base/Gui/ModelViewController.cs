@@ -23,6 +23,10 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Gui
 {
@@ -257,6 +261,195 @@ namespace Altaxo.Gui
 		public object ProvisionalModelObject
 		{
 			get { return _doc; }
+		}
+	}
+
+	public struct ControllerAndSetNullMethod
+	{
+		private IMVCAController _doc;
+		private Action _setMemberToNullAction;
+
+		public ControllerAndSetNullMethod(IMVCAController doc, Action setMemberToNullAction)
+		{
+			_doc = doc;
+			_setMemberToNullAction = setMemberToNullAction;
+		}
+
+		public IMVCAController Controller { get { return _doc; } }
+
+		public Action SetMemberToNullAction { get { return _setMemberToNullAction; } }
+
+		public bool IsEmpty { get { return null == _doc; } }
+	}
+
+	public abstract class MVCANControllerEditOriginalDocBase<TModel, TView> : IMVCANController
+		where TView : class
+		where TModel : ICloneable
+	{
+		protected TModel _doc;
+		protected TModel _originalDoc;
+		protected TView _view;
+		protected bool _useDocumentCopy;
+
+		public bool IsDisposed { get; private set; }
+
+		/// <summary>
+		/// The suspend token of the document being edited. If <see cref="_useDocumentCopy"/> is false, we assume that a controller higher in hierarchy has made a copy
+		/// of the document, thus we do not use a suspendToken for the document.
+		/// </summary>
+		protected Altaxo.Main.ISuspendToken _suspendToken;
+
+		protected virtual void Initialize(bool initData)
+		{
+			if (null == _doc)
+				throw new InvalidOperationException("This controller was not initialized with a document.");
+			if (IsDisposed)
+				throw new ObjectDisposedException(this.GetType().FullName);
+
+			if (initData)
+			{
+				if (_useDocumentCopy && null == _suspendToken && (_doc is Altaxo.Main.ISuspendableByToken))
+					_suspendToken = ((Altaxo.Main.ISuspendableByToken)_doc).SuspendGetToken();
+			}
+		}
+
+		protected virtual void AttachView()
+		{
+		}
+
+		protected virtual void DetachView()
+		{
+		}
+
+		/// <summary>
+		/// Called when the user input has to be applied to the document being controlled. Returns true if Apply is successfull.
+		/// </summary>
+		/// <param name="disposeController">If the Apply operation was successfull, and this argument is <c>true</c>, the controller should release all temporary resources, because they are not needed any more.
+		/// If this argument is <c>false</c>, the controller should be reinitialized with the current model (the model that results from the Apply operation).</param>
+		/// <returns>
+		/// True if the apply operation was successfull, otherwise false. If false is returned, the <paramref name="disposeController" /> argument is ignored: thus the controller is not disposed.
+		/// </returns>
+		/// <remarks>
+		/// This function is called in two cases: Either the user pressed OK or the user pressed Apply.
+		/// </remarks>
+		public abstract bool Apply(bool disposeController);
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public virtual bool Revert(bool disposeController)
+		{
+			foreach (var subControllerItem in GetSubControllers())
+			{
+				if (null != subControllerItem.Controller)
+					subControllerItem.Controller.Revert(disposeController);
+			}
+
+			bool reverted = false;
+			if (!object.ReferenceEquals(_doc, _originalDoc))
+			{
+				CopyHelper.Copy(ref _doc, _originalDoc);
+				reverted = true;
+			}
+
+			if (disposeController)
+			{
+				Dispose();
+			}
+			else // not disposing means we have to show the reverted data
+			{
+				var viewTmp = ViewObject; // store view
+				ViewObject = null; // detach view temporarily
+				Initialize(true); // initialize data
+				ViewObject = viewTmp; // attach view again
+			}
+
+			return reverted;
+		}
+
+		public virtual bool InitializeDocument(params object[] args)
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(this.GetType().FullName);
+
+			if (null == args || 0 == args.Length || !(args[0] is TModel))
+				return false;
+
+			_doc = _originalDoc = (TModel)args[0];
+			if (_useDocumentCopy && _doc is ICloneable)
+				_originalDoc = (TModel)((ICloneable)_doc).Clone();
+
+			Initialize(true);
+			return true;
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { _useDocumentCopy = value == UseDocument.Copy; }
+		}
+
+		public virtual object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					DetachView();
+				}
+
+				_view = value as TView;
+
+				if (null != _view)
+				{
+					Initialize(false);
+					AttachView();
+				}
+			}
+		}
+
+		public virtual object ModelObject
+		{
+			get { return _doc; }
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		public abstract IEnumerable<ControllerAndSetNullMethod> GetSubControllers();
+
+		public virtual void Dispose(bool isDisposing)
+		{
+			if (!IsDisposed)
+			{
+				foreach (var subControllerItem in this.GetSubControllers())
+				{
+					if (null != subControllerItem.Controller)
+						subControllerItem.Controller.Dispose();
+					if (null != subControllerItem.SetMemberToNullAction)
+						subControllerItem.SetMemberToNullAction();
+				}
+
+				ViewObject = null;
+
+				if (null != _suspendToken)
+				{
+					_suspendToken.Dispose();
+					_suspendToken = null;
+				}
+
+				IsDisposed = true;
+			}
 		}
 	}
 

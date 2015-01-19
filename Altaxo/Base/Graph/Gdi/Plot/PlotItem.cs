@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			var from = obj as PlotItem;
 			if (null != from)
 			{
-				this._parent = from._parent;
+				//this._parent = from._parent;
 				return true;
 			}
 			return false;

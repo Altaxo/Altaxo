@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._fillToPrevPlotItem = from._fillToPrevPlotItem;
 				this._fillToNextPlotItem = from._fillToNextPlotItem;
 
-				this._parent = from._parent;
+				//this._parent = from._parent;
 
 				suspendToken.Resume(eventFiring);
 			}

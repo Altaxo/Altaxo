@@ -75,93 +75,69 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(G2DPlotItem))]
 	[ExpectedTypeOfView(typeof(IG2DPlotItemView))]
-	public class G2DPlotItemController : IMVCANController
+	public class G2DPlotItemController : MVCANControllerEditOriginalDocBase<G2DPlotItem, IG2DPlotItemView>
 	{
-		private UseDocument _useDocument;
-		private G2DPlotItem _doc;
-		private G2DPlotItem _tempdoc;
+		private int _applySuspend; // to avoid multiple invoking here because some of the child controls
+
 		private PlotGroupStyleCollection _groupStyles;
 
-		private IG2DPlotItemView _view;
+		private IG2DPlotStyle _additionalPlotStyle;
 
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
 		private IMVCANController _plotGroupController;
 
-		private IG2DPlotStyle _additionalPlotStyle;
-
 		private IMVCAController _dataController;
 		private IXYPlotStyleCollectionController _styleCollectionController;
 		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
+
 		private Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
+
 		private IMVCANController _additionalPlotStyleController;
 
-		public G2DPlotItemController()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-		}
+			yield return new ControllerAndSetNullMethod(_plotGroupController, () => _plotGroupController = null);
+			yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
+			yield return new ControllerAndSetNullMethod(_styleCollectionController, () => _styleCollectionController = null);
 
-		public G2DPlotItemController(G2DPlotItem doc)
-			: this(doc, null)
-		{
-		}
-
-		public G2DPlotItemController(G2DPlotItem doc, PlotGroupStyleCollection parent)
-		{
-			if (!InitializeDocument(doc, parent))
-				throw new ArgumentException();
-		}
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0 || !(args[0] is G2DPlotItem))
-				return false;
-
-			_doc = _tempdoc = (G2DPlotItem)args[0];
-
-			if (args.Length >= 2 && args[1] != null)
+			if (null != _styleControllerList)
 			{
-				if (!(args[1] is PlotGroupStyleCollection))
-					return false;
-				else
-					_groupStyles = (PlotGroupStyleCollection)args[1];
-			}
-			else
-			{
-				if (_doc.ParentCollection != null)
-					_groupStyles = _doc.ParentCollection.GroupStyles;
+				foreach (var ctrl in _styleControllerList)
+					yield return new ControllerAndSetNullMethod(ctrl, null);
+
+				yield return new ControllerAndSetNullMethod(null, () => _styleControllerList = null);
 			}
 
-			if (_useDocument == UseDocument.Copy)
-				_tempdoc = (G2DPlotItem)_doc.Clone();
+			if (null != _styleControllerDictionary)
+			{
+				foreach (var ctrl in _styleControllerDictionary.Values)
+					yield return new ControllerAndSetNullMethod(ctrl, null);
 
-			/*
-      InitializeCollectionAndData();
-      InitializeStyles();
-      BringTabToFront(2);
-			*/
+				yield return new ControllerAndSetNullMethod(null, () => _styleControllerDictionary = null);
+			}
 
-			Initialize(true);
-			return true;
+			yield return new ControllerAndSetNullMethod(_additionalPlotStyleController, () => _additionalPlotStyleController = null);
 		}
 
-		public UseDocument UseDocumentCopy
+		protected override void Initialize(bool initData)
 		{
-			set { _useDocument = value; }
-		}
+			base.Initialize(initData);
 
-		private void Initialize(bool initData)
-		{
 			if (initData)
 			{
+				if (null == _groupStyles && null != _doc.ParentCollection)
+					_groupStyles = _doc.ParentCollection.GroupStyles;
+
 				_plotGroupController = new PlotGroupCollectionController();
 				_plotGroupController.InitializeDocument(_groupStyles);
 
 				// find the style collection controller
-				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style }, typeof(IXYPlotStyleCollectionController));
+				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYPlotStyleCollectionController));
 				_styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 				// Initialize the data controller
-				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.DataObject, _tempdoc }, typeof(IMVCAController));
+				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IMVCAController));
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();
@@ -180,20 +156,51 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		private void View_SetAllTabViews()
+		// have this here as controller too
+		public override bool Apply(bool disposeController)
 		{
-			_view.ClearTabs();
+			if (_applySuspend++ > 0)
+			{
+				_applySuspend--;
+				return true;
+			}
 
-			// Add the data tab item
-			if (_dataController != null)
-				_view.AddTab("Data", _dataController.ViewObject);
+			bool applyResult = false;
 
-			// set the plot style tab items
+			if (!_dataController.Apply(disposeController))
+				return false;
+
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
-				string title = string.Format("#{0}:{1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_tempdoc.Style[i].GetType()));
-				_view.AddTab(title, _styleControllerList[i].ViewObject);
+				if (false == _styleControllerList[i].Apply(disposeController))
+				{
+					_view.BringTabToFront(i);
+					applyResult = false;
+					goto end_of_function;
+				}
 			}
+
+			ApplyPlotGroupView();
+
+			applyResult = true;
+
+		end_of_function:
+			_applySuspend--;
+
+			if (applyResult)
+			{
+				if (disposeController)
+				{
+					Dispose();
+				}
+				else
+				{
+					if (null != _suspendToken)
+						_suspendToken.ResumeCompleteTemporarily();
+				}
+			}
+
+			return applyResult;
 		}
 
 		private void ApplyPlotGroupView()
@@ -207,6 +214,34 @@ namespace Altaxo.Gui.Graph
 				_doc.ParentCollection.GroupStyles.CopyFrom(_groupStyles);
 				_doc.ParentCollection.DistributePlotStyleFromTemplate(_doc, _groupStyles.PlotGroupStrictness);
 				_doc.ParentCollection.DistributeChanges(_doc);
+			}
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.SelectedPage_Changed += EhView_ActiveChildControlChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.SelectedPage_Changed -= EhView_ActiveChildControlChanged;
+			base.DetachView();
+		}
+
+		private void View_SetAllTabViews()
+		{
+			_view.ClearTabs();
+
+			// Add the data tab item
+			if (_dataController != null)
+				_view.AddTab("Data", _dataController.ViewObject);
+
+			// set the plot style tab items
+			for (int i = 0; i < _styleControllerList.Count; ++i)
+			{
+				string title = string.Format("#{0}:{1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
+				_view.AddTab(title, _styleControllerList[i].ViewObject);
 			}
 		}
 
@@ -234,9 +269,9 @@ namespace Altaxo.Gui.Graph
 			_styleControllerList.Clear();
 
 			// start to create new controllers
-			for (int i = 0; i < _tempdoc.Style.Count; i++)
+			for (int i = 0; i < _doc.Style.Count; i++)
 			{
-				IMVCANController ctrl = GetStyleController(_tempdoc.Style[i]);
+				IMVCANController ctrl = GetStyleController(_doc.Style[i]);
 				_styleControllerList.Add(ctrl);
 			}
 		}
@@ -264,113 +299,21 @@ namespace Altaxo.Gui.Graph
 		private void DistributeStyleChange(int pivotelement)
 		{
 			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
-			_tempdoc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
+			_doc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
 
 			// now all style controllers must be updated
 			for (int i = 0; i < _styleControllerList.Count; i++)
 			{
 				if (null != _styleControllerList[i])
-					_styleControllerList[i].InitializeDocument(_tempdoc.Style[i]);
+					_styleControllerList[i].InitializeDocument(_doc.Style[i]);
 			}
 
 			if (_additionalPlotStyle != null && _additionalPlotStyleController != null)
 			{
-				_tempdoc.Style.PrepareNewSubStyle(_additionalPlotStyle, layer, _doc.GetRangesAndPoints(layer));
+				_doc.Style.PrepareNewSubStyle(_additionalPlotStyle, layer, _doc.GetRangesAndPoints(layer));
 				_additionalPlotStyleController.InitializeDocument(_additionalPlotStyle);
 			}
 		}
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.SelectedPage_Changed -= EhView_ActiveChildControlChanged;
-				}
-
-				_view = value as IG2DPlotItemView;
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.SelectedPage_Changed += EhView_ActiveChildControlChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		private int _applySuspend; // to avoid multiple invoking here because some of the child controls
-
-		// have this here as controller too
-		public bool Apply(bool disposeController)
-		{
-			if (_applySuspend++ > 0)
-			{
-				_applySuspend--;
-				return true;
-			}
-
-			bool applyResult = false;
-
-			if (!_dataController.Apply(disposeController))
-				return false;
-
-			for (int i = 0; i < _styleControllerList.Count; ++i)
-			{
-				if (false == _styleControllerList[i].Apply(disposeController))
-				{
-					_view.BringTabToFront(i);
-					applyResult = false;
-					goto end_of_function;
-				}
-			}
-
-			if (!object.ReferenceEquals(_doc, _tempdoc))
-				_doc.CopyFrom(_tempdoc);
-
-			ApplyPlotGroupView();
-
-			applyResult = true;
-
-		end_of_function:
-			_applySuspend--;
-			return applyResult;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 
 		/// <summary>
 		/// Returns the tab index of the first style that is shown.

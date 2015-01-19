@@ -59,10 +59,8 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(HostLayer))]
 	[ExpectedTypeOfView(typeof(IHostLayerView))]
-	public class HostLayerController : MVCANControllerBase<HostLayer, IHostLayerView>
+	public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, IHostLayerView>
 	{
-		protected IDisposable _docSuspendLock;
-
 		private string _currentPageName;
 
 		private IMVCAController _currentController;
@@ -82,12 +80,33 @@ namespace Altaxo.Gui.Graph
 
 		private HostLayerController(HostLayer layer, string currentPage)
 		{
-			_originalDoc = layer;
-			_doc = (HostLayer)layer.Clone();
-
+			_doc = layer;
+			_originalDoc = (HostLayer)_doc.Clone();
 			_currentPageName = currentPage;
 
 			Initialize(true);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
+			{
+				_listOfUniqueItem = new SelectableListNodeList();
+				_listOfUniqueItem.Add(new SelectableListNode("Common", null, true));
+			}
+
+			if (null != _view)
+			{
+				// add all necessary Tabs
+				_view.AddTab("GraphicItems", "GraphicItems");
+				_view.AddTab("Position", "Position");
+				_view.AddTab("HostGrid", "HostGrid");
+
+				// Set the controller of the current visible Tab
+				SetCurrentTabController(true);
+			}
 		}
 
 		protected override void AttachView()
@@ -104,33 +123,36 @@ namespace Altaxo.Gui.Graph
 
 		public override bool Apply(bool disposeController)
 		{
-			ApplyCurrentController(true);
+			ApplyCurrentController(true, disposeController);
 
-			_originalDoc.CopyFrom(_doc, GraphCopyOptions.All); // _doc remains suspended
+			// _originalDoc.CopyFrom(_doc, GraphCopyOptions.All); // _doc remains suspended
+			if (disposeController)
+			{
+				Dispose();
+			}
+			else
+			{
+				if (null != _suspendToken)
+					_suspendToken.ResumeCompleteTemporarily();
+			}
 
 			return true;
 		}
 
-		protected override void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (initData)
-			{
-				_docSuspendLock = _doc.SuspendGetToken();
+			yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
+			yield return new ControllerAndSetNullMethod(_layerGraphItemsController, () => _layerGraphItemsController = null);
+			yield return new ControllerAndSetNullMethod(_layerGridController, () => _layerGridController = null);
+		}
 
-				_listOfUniqueItem = new SelectableListNodeList();
-				_listOfUniqueItem.Add(new SelectableListNode("Common", null, true));
-			}
+		public override void Dispose(bool isDisposing)
+		{
+			_lastControllerApplied = null;
+			_currentController = null;
+			_listOfUniqueItem = null;
 
-			if (null != _view)
-			{
-				// add all necessary Tabs
-				_view.AddTab("GraphicItems", "GraphicItems");
-				_view.AddTab("Position", "Position");
-				_view.AddTab("HostGrid", "HostGrid");
-
-				// Set the controller of the current visible Tab
-				SetCurrentTabController(true);
-			}
+			base.Dispose(isDisposing);
 		}
 
 		private void SetCurrentTabController(bool pageChanged)
@@ -184,7 +206,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_PageChanged(string firstChoice)
 		{
-			ApplyCurrentController(false);
+			ApplyCurrentController(false, false);
 
 			_currentPageName = firstChoice;
 			SetCurrentTabController(true);
@@ -192,11 +214,11 @@ namespace Altaxo.Gui.Graph
 
 		private void EhView_TabValidating(object sender, CancelEventArgs e)
 		{
-			if (!ApplyCurrentController(true))
+			if (!ApplyCurrentController(true, false))
 				e.Cancel = true;
 		}
 
-		private bool ApplyCurrentController(bool force)
+		private bool ApplyCurrentController(bool force, bool disposeController)
 		{
 			if (_currentController == null)
 				return true;
@@ -204,7 +226,7 @@ namespace Altaxo.Gui.Graph
 			if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
 				return true;
 
-			if (!_currentController.Apply(false))
+			if (!_currentController.Apply(disposeController))
 				return false;
 
 			if (object.ReferenceEquals(_currentController, _layerPositionController))

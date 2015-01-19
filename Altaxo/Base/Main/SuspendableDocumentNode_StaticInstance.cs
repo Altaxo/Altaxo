@@ -72,17 +72,20 @@ namespace Altaxo.Main
 
 			public IDocumentLeafNode GetChildObjectNamed(string name)
 			{
-				throw new NotImplementedException();
+				return null;
 			}
 
 			public string GetNameOfChildObject(IDocumentLeafNode o)
 			{
-				throw new NotImplementedException();
+				if (null != o)
+					return "Infrastructure object of type " + o.GetType().FullName;
+				else
+					return "<<null>>";
 			}
 
 			public IEnumerable<IDocumentLeafNode> ChildNodes
 			{
-				get { throw new NotImplementedException(); }
+				get { yield break; }
 			}
 
 			public IDocumentLeafNode ParentNode

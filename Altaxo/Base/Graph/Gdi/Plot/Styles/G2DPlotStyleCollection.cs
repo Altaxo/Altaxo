@@ -184,8 +184,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				for (int i = 0; i < from._innerList.Count; ++i)
 					Add((IG2DPlotStyle)from[i].Clone());
 
-				this._parent = from._parent;
-
 				suspendToken.Resume();
 			}
 		}

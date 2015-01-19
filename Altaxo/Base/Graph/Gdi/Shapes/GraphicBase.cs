@@ -330,7 +330,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				this._cachedParentSize = from._cachedParentSize;
 				this._location.CopyFrom(from._location);
 				bool wasUsed = (null != this._parent);
-				this._parent = from._parent;
+				//this._parent = from._parent;
 				this.UpdateTransformationMatrix();
 
 				if (wasUsed)

@@ -31,9 +31,11 @@ using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Altaxo.Gui.Graph
 {
@@ -81,10 +83,8 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(XYPlotLayer))]
 	[ExpectedTypeOfView(typeof(IXYPlotLayerView))]
-	public class XYPlotLayerController : MVCANControllerBase<XYPlotLayer, IXYPlotLayerView>
+	public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYPlotLayer, IXYPlotLayerView>
 	{
-		protected IDisposable _docSuspendLock;
-
 		private string _currentPageName;
 
 		private LayerControllerTabType _primaryChoice; // which tab type is currently choosen
@@ -123,8 +123,8 @@ namespace Altaxo.Gui.Graph
 
 		private XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
 		{
-			_originalDoc = layer;
-			_doc = (XYPlotLayer)layer.Clone();
+			_doc = layer;
+			_originalDoc = (XYPlotLayer)layer.Clone();
 
 			_currentAxisID = id;
 			_currentScale = axisScaleIdx;
@@ -133,43 +133,12 @@ namespace Altaxo.Gui.Graph
 			Initialize(true);
 		}
 
-		protected override void AttachView()
-		{
-			_view.TabValidating += EhView_TabValidating;
-			_view.PageChanged += EhView_PageChanged;
-			_view.SecondChoiceChanged += EhView_SecondChoiceChanged;
-			_view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
-		}
-
-		protected override void DetachView()
-		{
-			_view.TabValidating -= EhView_TabValidating;
-			_view.PageChanged -= EhView_PageChanged;
-			_view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
-			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			ApplyCurrentController(true);
-
-			_doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
-
-			if (null != _docSuspendLock)
-				_docSuspendLock.Dispose(); // revoke suspend lock to let cached things fixed
-
-			_originalDoc.CopyFrom(_doc, GraphCopyOptions.All);
-
-			_docSuspendLock = _doc.SuspendGetToken();
-
-			return true;
-		}
-
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
-				_docSuspendLock = _doc.SuspendGetToken();
 				SetCoordinateSystemDependentObjects(_currentAxisID);
 
 				_listOfUniqueItem = new SelectableListNodeList();
@@ -192,6 +161,89 @@ namespace Altaxo.Gui.Graph
 				// Set the controller of the current visible Tab
 				SetCurrentTabController(true);
 			}
+		}
+
+		protected override void AttachView()
+		{
+			_view.TabValidating += EhView_TabValidating;
+			_view.PageChanged += EhView_PageChanged;
+			_view.SecondChoiceChanged += EhView_SecondChoiceChanged;
+			_view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
+		}
+
+		protected override void DetachView()
+		{
+			_view.TabValidating -= EhView_TabValidating;
+			_view.PageChanged -= EhView_PageChanged;
+			_view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
+			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			ApplyCurrentController(true, disposeController);
+
+			_doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
+
+			if (disposeController)
+			{
+				Dispose();
+			}
+			else
+			{
+				if (null != _suspendToken)
+					_suspendToken.ResumeCompleteTemporarily();
+			}
+			return true;
+		}
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
+			yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
+			yield return new ControllerAndSetNullMethod(_layerContentsController, () => _layerContentsController = null);
+
+			if (null != _axisScaleController)
+			{
+				for (int i = 0; i < _axisScaleController.Length; ++i)
+					yield return new ControllerAndSetNullMethod(_axisScaleController[i], () => _axisScaleController[i] = null);
+			}
+
+			yield return new ControllerAndSetNullMethod(_layerGraphItemsController, () => _layerGraphItemsController = null);
+
+			if (null != _GridStyleController)
+			{
+				foreach (var entry in _GridStyleController)
+				{
+					yield return new ControllerAndSetNullMethod(entry.Value, null);
+				}
+			}
+
+			yield return new ControllerAndSetNullMethod(null, () => _GridStyleController = null);
+
+			if (null != _axisControl)
+			{
+				foreach (var entry in _axisControl)
+				{
+					yield return new ControllerAndSetNullMethod(entry.Value.AxisStyleCondController, null);
+					yield return new ControllerAndSetNullMethod(entry.Value.MajorLabelCondController, null);
+					yield return new ControllerAndSetNullMethod(entry.Value.MinorLabelCondController, null);
+				}
+			}
+			yield return new ControllerAndSetNullMethod(null, () => _axisControl = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_lastControllerApplied = null;
+			_currentController = null;
+
+			_listOfScales = null;
+			_listOfAxes = null;
+			_listOfPlanes = null;
+			_listOfUniqueItem = null;
+
+			base.Dispose(isDisposing);
 		}
 
 		private void SetCoordinateSystemDependentObjects()
@@ -401,7 +453,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_PageChanged(string firstChoice)
 		{
-			ApplyCurrentController(false);
+			ApplyCurrentController(false, false);
 
 			_currentPageName = firstChoice;
 			SetCurrentTabController(true);
@@ -409,7 +461,7 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_SecondChoiceChanged()
 		{
-			if (!ApplyCurrentController(false))
+			if (!ApplyCurrentController(false, false))
 				return;
 
 			if (_primaryChoice == LayerControllerTabType.Scales)
@@ -430,13 +482,13 @@ namespace Altaxo.Gui.Graph
 
 		private void EhView_TabValidating(object sender, CancelEventArgs e)
 		{
-			if (!ApplyCurrentController(true))
+			if (!ApplyCurrentController(true, false))
 				e.Cancel = true;
 		}
 
 		public void EhView_CreateOrMoveAxis(bool moveAxis)
 		{
-			if (!ApplyCurrentController(false))
+			if (!ApplyCurrentController(false, false))
 				return;
 
 			var creationArgs = new AxisCreationArguments();
@@ -481,7 +533,7 @@ namespace Altaxo.Gui.Graph
 			SetCurrentTabController(false);
 		}
 
-		private bool ApplyCurrentController(bool force)
+		private bool ApplyCurrentController(bool force, bool disposeCurrentController)
 		{
 			if (_currentController == null)
 				return true;
@@ -489,7 +541,7 @@ namespace Altaxo.Gui.Graph
 			if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
 				return true;
 
-			if (!_currentController.Apply(false))
+			if (!_currentController.Apply(disposeCurrentController))
 				return false;
 			_lastControllerApplied = _currentController;
 

@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._previousItemYGap = from._previousItemYGap;
 				this._usePhysicalBaseValue = from._usePhysicalBaseValue;
 				this._baseValue = from._baseValue;
-				this._parent = from._parent;
+				//this._parent = from._parent;
 				return true;
 			}
 			return false;

@@ -78,5 +78,19 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="eventFiring">Determines whether <see cref="Resume()"/> is used, or <see cref="ResumeSilently"/>.</param>
 		void Resume(EventFiring eventFiring);
+
+		/// <summary>
+		/// Resumes the object suspended by this token completely for a short time.
+		/// </summary>
+		void ResumeCompleteTemporarily();
+
+		/// <summary>
+		/// Resumes the object suspended by this token completely for the time the returned token is referenced and not disposed.
+		/// The return value is another token that had 'absorbed' the suspend count of the object, resulting in a suspend count
+		/// of the object of 0 (zero). When these other token is finally disposed, the suspend count of the object is increased again by the 'absorbed' suspend count.
+		/// </summary>
+		/// <returns>A new token. As long as this token is not disposed, and not other process calls SuspendGetToken, the object is fre (not suspended). The object is suspended again when
+		/// the returned token is disposed.</returns>
+		IDisposable ResumeCompleteTemporarilyGetToken();
 	}
 }

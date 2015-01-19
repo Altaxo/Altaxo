@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				this.Add((AxisStyle)from._axisStyles[i].Clone());
 			}
 
-			this._parent = from._parent;
+			//this._parent = from._parent;
 			this._cachedCoordinateSystem = from._cachedCoordinateSystem;
 		}
 
