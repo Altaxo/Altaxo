@@ -42,16 +42,26 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 	[UserControllerForObject(typeof(AngularRescaleConditions))]
 	[ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
-	public class AngularRescaleConditionsController : IMVCANController
+	public class AngularRescaleConditionsController : MVCANControllerEditOriginalDocBase<AngularRescaleConditions, IAngularRescaleConditionsView>
 	{
-		private IAngularRescaleConditionsView _view;
-		private AngularRescaleConditions _doc;
-
 		private SelectableListNodeList _originList;
 
-		private void Initialize(bool initDoc)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (initDoc)
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_originList = null;
+			base.Dispose(isDisposing);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				BuildOriginList();
 			}
@@ -60,6 +70,13 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 			{
 				_view.Origin = _originList;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
+
+			return ApplyEnd(true, disposeController);
 		}
 
 		private void BuildOriginList()
@@ -71,80 +88,5 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 			_originList.Add(new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin));
 			_originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
 		}
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0)
-				return false;
-			AngularRescaleConditions doc = args[0] as AngularRescaleConditions;
-			if (doc == null)
-				return false;
-			_doc = doc;
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-				}
-				_view = value as IAngularRescaleConditionsView;
-				if (_view != null)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			_doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

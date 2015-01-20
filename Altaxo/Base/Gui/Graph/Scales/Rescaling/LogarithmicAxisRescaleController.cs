@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,77 +19,68 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using Altaxo.Serialization;
+#endregion Copyright
 
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Serialization;
+using System;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-  /// <summary>
-  /// Summary description for NumericAxisRescaleController.
-  /// </summary>
-  [UserControllerForObject(typeof(LogarithmicAxisRescaleConditions),1)]
-  public class LogarithmicAxisRescaleController 
-    :
-    NumericAxisRescaleController
-  {
-    public LogarithmicAxisRescaleController(LogarithmicAxisRescaleConditions doc, NumericalScale ax)
-      : base(doc,ax)
-    {
-    }
- 
+	/// <summary>
+	/// Summary description for NumericAxisRescaleController.
+	/// </summary>
+	[UserControllerForObject(typeof(LogarithmicAxisRescaleConditions), 1)]
+	public class LogarithmicAxisRescaleController
+		:
+		NumericAxisRescaleController
+	{
+		#region IOrgEndSpanControlEventReceiver Members
 
+		public override bool EhValue1Changed(string txt)
+		{
+			if (!GUIConversion.IsDouble(txt))
+				return true;
 
-    #region IOrgEndSpanControlEventReceiver Members
+			double val;
+			GUIConversion.IsDouble(txt, out val);
+			if (val > 0)
+			{
+				_org = val;
+				_orgChanged = true;
+			}
+			return val <= 0;
+		}
 
-    public override bool EhValue1Changed(string txt)
-    {
-      if(!GUIConversion.IsDouble(txt))
-        return true;
+		public override bool EhValue2Changed(string txt)
+		{
+			if (!GUIConversion.IsDouble(txt))
+				return true;
 
-      double val;
-      GUIConversion.IsDouble(txt,out val);
-      if(val>0) 
-      {
-        _org = val;
-        _orgChanged = true;
-      }
-      return val<=0;
-    }
+			double val;
+			GUIConversion.IsDouble(txt, out val);
+			if (val > 0)
+			{
+				_end = val;
+				_endChanged = true;
+			}
+			return val <= 0;
+		}
 
-    public override bool EhValue2Changed(string txt)
-    {
-      if(!GUIConversion.IsDouble(txt))
-        return true;
+		public override bool EhValue3Changed(string txt)
+		{
+			if (!GUIConversion.IsDouble(txt))
+				return true;
 
-      double val;
-      GUIConversion.IsDouble(txt,out val);
-      if(val>0)
-      {
-        _end = val;
-        _endChanged = true;
-      }
-      return val<=0;
-    }
+			double val;
+			GUIConversion.IsDouble(txt, out val);
+			if (val > 0)
+				_span = val;
+			return val <= 0;
+		}
 
-    public override bool EhValue3Changed(string txt)
-    {
-      if(!GUIConversion.IsDouble(txt))
-        return true;
-
-      double val;
-      GUIConversion.IsDouble(txt,out val);
-      if(val>0) 
-        _span = val;
-      return val<=0;
-    }
-
-    #endregion
-
-  
-  }
+		#endregion IOrgEndSpanControlEventReceiver Members
+	}
 }

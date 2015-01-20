@@ -37,11 +37,6 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 		:
 		NumericAxisRescaleController
 	{
-		public InverseAxisRescaleController(InverseAxisRescaleConditions doc, NumericalScale ax)
-			: base(doc, ax)
-		{
-		}
-
 		#region IOrgEndSpanControlEventReceiver Members
 
 		public override bool EhValue1Changed(string txt)
@@ -96,20 +91,20 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 			_doc.SetOrgEndSpan(_orgRescaling, _org, _endRescaling, _end, _spanRescaling, _span, _minorTicks, _majorTick);
 
-			if (null != _axis)
+			if (null != _scale)
 			{
 				// if the user changed org or end, he maybe want to set the scale temporarily to the chosen values
 				if (_orgRescaling == BoundaryRescaling.Auto && _endRescaling == BoundaryRescaling.Auto && (_orgChanged || _endChanged))
-					_axis.SetScaleOrgEnd(_org, _end);
+					_scale.SetScaleOrgEnd(_org, _end);
 				else
-					_axis.Rescale();
+					_scale.Rescale();
 			}
 
 			_orgChanged = _endChanged = false;
 
-			SetElements(true);
+			Initialize(true);
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		#endregion IOrgEndSpanControlEventReceiver Members

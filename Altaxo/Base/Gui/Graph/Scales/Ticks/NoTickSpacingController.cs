@@ -45,10 +45,17 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 	[UserControllerForObject(typeof(NoTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(INoTickSpacingView))]
-	public class NoTickSpacingController : MVCANControllerBase<NoTickSpacing, INoTickSpacingView>
+	public class NoTickSpacingController : MVCANControllerEditOriginalDocBase<NoTickSpacing, INoTickSpacingView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 			}
@@ -56,7 +63,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		public override bool Apply(bool disposeController)
 		{
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

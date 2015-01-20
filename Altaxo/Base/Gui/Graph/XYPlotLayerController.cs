@@ -123,13 +123,11 @@ namespace Altaxo.Gui.Graph
 
 		private XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
 		{
-			_doc = layer;
-			_originalDoc = (XYPlotLayer)layer.Clone();
-
 			_currentAxisID = id;
 			_currentScale = axisScaleIdx;
 			_currentPageName = currentPage;
 
+			InitializeDocument(layer);
 			Initialize(true);
 		}
 

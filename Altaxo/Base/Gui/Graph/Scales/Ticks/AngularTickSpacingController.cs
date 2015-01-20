@@ -48,15 +48,29 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 	[UserControllerForObject(typeof(AngularTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
-	public class AngularScaleController : MVCANControllerBase<AngularTickSpacing, IAngularTickSpacingView>
+	public class AngularScaleController : MVCANControllerEditOriginalDocBase<AngularTickSpacing, IAngularTickSpacingView>
 	{
 		private SelectableListNodeList _majorTickList;
 		private SelectableListNodeList _minorTickList;
 		private int _tempMajorDivider;
 
-		protected override void Initialize(bool initDoc)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (initDoc)
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_majorTickList = null;
+			_minorTickList = null;
+			base.Dispose(isDisposing);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				_tempMajorDivider = _doc.MajorTickDivider;
 				BuildMajorTickList();
@@ -69,6 +83,29 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.MajorTicks = _majorTickList;
 				_view.MinorTicks = _minorTickList;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
+			_doc.MajorTickDivider = _tempMajorDivider;
+			_doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.MajorTicksChanged += EhMajorTicksChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.MajorTicksChanged -= EhMajorTicksChanged;
+
+			base.DetachView();
 		}
 
 		private void BuildMajorTickList()
@@ -101,27 +138,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Tag;
 			BuildMinorTickList();
 			_view.MinorTicks = _minorTickList;
-		}
-
-		protected override void AttachView()
-		{
-			_view.MajorTicksChanged += EhMajorTicksChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.MajorTicksChanged -= EhMajorTicksChanged;
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			_doc.UseSignedValues = _view.UsePositiveNegativeValues;
-			_doc.MajorTickDivider = _tempMajorDivider;
-			_doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
-
-			CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

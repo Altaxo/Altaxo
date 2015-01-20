@@ -80,11 +80,8 @@ namespace Altaxo.Gui.Graph
 
 		private HostLayerController(HostLayer layer, string currentPage)
 		{
-			_doc = layer;
-			_originalDoc = (HostLayer)_doc.Clone();
 			_currentPageName = currentPage;
-
-			Initialize(true);
+			InitializeDocument(layer);
 		}
 
 		protected override void Initialize(bool initData)

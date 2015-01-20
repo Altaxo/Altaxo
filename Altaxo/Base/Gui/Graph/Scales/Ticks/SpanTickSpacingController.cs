@@ -52,10 +52,17 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 	[UserControllerForObject(typeof(SpanTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(ISpanTickSpacingView))]
-	public class SpanTickSpacingController : MVCANControllerBase<SpanTickSpacing, ISpanTickSpacingView>
+	public class SpanTickSpacingController : MVCANControllerEditOriginalDocBase<SpanTickSpacing, ISpanTickSpacingView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.RelativePositionOfTick = _doc.RelativeTickPosition;
@@ -73,8 +80,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_doc.TransformationDivider = _view.DivideBy;
 			_doc.TransformationOperationIsMultiply = _view.TransfoOperationIsMultiply;
 
-			CopyHelper.Copy(ref _originalDoc, _doc);
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

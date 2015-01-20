@@ -37,13 +37,27 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 {
 	[UserControllerForObject(typeof(InverseTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(ILinearTickSpacingView))]
-	public class InverseTickSpacingController : MVCANControllerBase<InverseTickSpacing, ILinearTickSpacingView>
+	public class InverseTickSpacingController : MVCANControllerEditOriginalDocBase<InverseTickSpacing, ILinearTickSpacingView>
 	{
 		private SelectableListNodeList _snapTicksToOrg = new SelectableListNodeList();
 		private SelectableListNodeList _snapTicksToEnd = new SelectableListNodeList();
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_snapTicksToOrg = null;
+			_snapTicksToEnd = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (_view != null)
 			{
 				_view.MajorTicks = GUIConversion.ToString(_doc.MajorTickSpan);
@@ -77,79 +91,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.ByValues);
 			}
 		}
-
-		private void EhMajorSpanValidating(string txt, CancelEventArgs e)
-		{
-			double? val;
-			if (GUIConversion.IsDoubleOrNull(txt, out val))
-				_doc.MajorTickSpan = val;
-			else
-				e.Cancel = true;
-		}
-
-		private void EhDivideByValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-			{
-				double val1 = (double)val;
-				if (val == 0 || !val1.IsFinite())
-					e.Cancel = true;
-				else
-					_doc.TransformationDivider = val1;
-			}
-			else
-			{
-				e.Cancel = true;
-			}
-		}
-
-		private void EhTransformationOffsetValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-			{
-				if (!val.IsFinite())
-					e.Cancel = true;
-				else
-					_doc.TransformationOffset = val;
-			}
-			else
-			{
-				e.Cancel = true;
-			}
-		}
-
-		private void EhTransformationOperationChanged(bool transfoOpIsMultiply)
-		{
-			_doc.TransformationOperationIsMultiply = transfoOpIsMultiply;
-		}
-
-		#region IMVCANController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-
-			_view.MajorTicksValidating += EhMajorSpanValidating;
-			_view.DivideByValidating += EhDivideByValidating;
-			_view.TransfoOffsetValidating += EhTransformationOffsetValidating;
-			_view.TransfoOperationChanged += EhTransformationOperationChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.MajorTicksValidating -= EhMajorSpanValidating;
-			_view.DivideByValidating -= EhDivideByValidating;
-			_view.TransfoOffsetValidating -= EhTransformationOffsetValidating;
-			_view.TransfoOperationChanged -= EhTransformationOperationChanged;
-
-			base.DetachView();
-		}
-
-		#endregion IMVCANController Members
-
-		#region IApplyController Members
 
 		public override bool Apply(bool disposeController)
 		{
@@ -234,12 +175,74 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
 			_doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
-		#endregion IApplyController Members
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.MajorTicksValidating += EhMajorSpanValidating;
+			_view.DivideByValidating += EhDivideByValidating;
+			_view.TransfoOffsetValidating += EhTransformationOffsetValidating;
+			_view.TransfoOperationChanged += EhTransformationOperationChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.MajorTicksValidating -= EhMajorSpanValidating;
+			_view.DivideByValidating -= EhDivideByValidating;
+			_view.TransfoOffsetValidating -= EhTransformationOffsetValidating;
+			_view.TransfoOperationChanged -= EhTransformationOperationChanged;
+
+			base.DetachView();
+		}
+
+		private void EhMajorSpanValidating(string txt, CancelEventArgs e)
+		{
+			double? val;
+			if (GUIConversion.IsDoubleOrNull(txt, out val))
+				_doc.MajorTickSpan = val;
+			else
+				e.Cancel = true;
+		}
+
+		private void EhDivideByValidating(string txt, CancelEventArgs e)
+		{
+			double val;
+			if (GUIConversion.IsDouble(txt, out val))
+			{
+				double val1 = (double)val;
+				if (val == 0 || !val1.IsFinite())
+					e.Cancel = true;
+				else
+					_doc.TransformationDivider = val1;
+			}
+			else
+			{
+				e.Cancel = true;
+			}
+		}
+
+		private void EhTransformationOffsetValidating(string txt, CancelEventArgs e)
+		{
+			double val;
+			if (GUIConversion.IsDouble(txt, out val))
+			{
+				if (!val.IsFinite())
+					e.Cancel = true;
+				else
+					_doc.TransformationOffset = val;
+			}
+			else
+			{
+				e.Cancel = true;
+			}
+		}
+
+		private void EhTransformationOperationChanged(bool transfoOpIsMultiply)
+		{
+			_doc.TransformationOperationIsMultiply = transfoOpIsMultiply;
+		}
 	}
 }

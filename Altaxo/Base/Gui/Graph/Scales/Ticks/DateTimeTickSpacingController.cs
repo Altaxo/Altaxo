@@ -37,10 +37,17 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 {
 	[UserControllerForObject(typeof(DateTimeTickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(INoTickSpacingView))]
-	public class DateTimeTickSpacingController : MVCANControllerBase<DateTimeTickSpacing, INoTickSpacingView>
+	public class DateTimeTickSpacingController : MVCANControllerEditOriginalDocBase<DateTimeTickSpacing, INoTickSpacingView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 			}
@@ -48,7 +55,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		public override bool Apply(bool disposeController)
 		{
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

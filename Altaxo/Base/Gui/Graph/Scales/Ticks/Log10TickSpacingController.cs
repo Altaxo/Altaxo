@@ -82,17 +82,27 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 	[UserControllerForObject(typeof(Log10TickSpacing), 200)]
 	[ExpectedTypeOfView(typeof(ILog10TickSpacingView))]
-	public class Log10TickSpacingController : IMVCANController
+	public class Log10TickSpacingController : MVCANControllerEditOriginalDocBase<Log10TickSpacing, ILog10TickSpacingView>
 	{
-		private ILog10TickSpacingView _view;
-		private Log10TickSpacing _originalDoc;
-		private Log10TickSpacing _doc;
-
 		private SelectableListNodeList _snapTicksToOrg = new SelectableListNodeList();
 		private SelectableListNodeList _snapTicksToEnd = new SelectableListNodeList();
 
-		private void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_snapTicksToOrg = null;
+			_snapTicksToEnd = null;
+			base.Dispose(isDisposing);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (_view != null)
 			{
 				_view.DecadesPerMajorTick = _doc.DecadesPerMajorTick;
@@ -127,124 +137,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			}
 		}
 
-		private void EhMajorSpanValidating(string txt, CancelEventArgs e)
-		{
-			int? val;
-			if (GUIConversion.IsInt32OrNull(txt, out val))
-				_doc.DecadesPerMajorTick = val;
-			else
-				e.Cancel = true;
-		}
-
-		private void EhMinorTicksValidating(string txt, CancelEventArgs e)
-		{
-			int? val;
-			if (GUIConversion.IsInt32OrNull(txt, out val))
-				_doc.MinorTicks = val;
-			else
-				e.Cancel = true;
-		}
-
-		private void EhOneLeverValidating(CancelEventArgs e)
-		{
-			_doc.OneLever = _view.OneLever;
-		}
-
-		private void EhMinGraceValidating(CancelEventArgs e)
-		{
-			_doc.MinGrace = _view.MinGrace;
-		}
-
-		private void EhMaxGraceValidating(CancelEventArgs e)
-		{
-			_doc.MaxGrace = _view.MaxGrace;
-		}
-
-		private void EhDivideByValidating(string txt, CancelEventArgs e)
-		{
-			double val;
-			if (GUIConversion.IsDouble(txt, out val))
-			{
-				double val1 = (double)val;
-				if (val == 0 || !val1.IsFinite())
-					e.Cancel = true;
-				else
-					_doc.TransformationDivider = val1;
-			}
-			else
-			{
-				e.Cancel = true;
-			}
-		}
-
-		private void EhTransformationOperationChanged(bool transfoOpIsMultiply)
-		{
-			_doc.TransformationOperationIsMultiply = transfoOpIsMultiply;
-		}
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0)
-				return false;
-			_originalDoc = args[0] as Log10TickSpacing;
-			if (null == _originalDoc)
-				return false;
-			_doc = (Log10TickSpacing)_originalDoc.Clone();
-
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.DivideByValidating -= EhDivideByValidating;
-					_view.TransfoOperationChanged -= EhTransformationOperationChanged;
-				}
-				_view = value as ILog10TickSpacingView;
-
-				if (null != _view)
-				{
-					_view.DivideByValidating += EhDivideByValidating;
-					_view.TransfoOperationChanged += EhTransformationOperationChanged;
-
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _originalDoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			AltaxoVariant[] varVals;
 			int[] intVals;
@@ -328,22 +221,78 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
 			_doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;
 
-			_originalDoc.CopyFrom(_doc);
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
+		protected override void AttachView()
 		{
-			return false;
+			base.AttachView();
+
+			_view.DivideByValidating += EhDivideByValidating;
+			_view.TransfoOperationChanged += EhTransformationOperationChanged;
 		}
 
-		#endregion IApplyController Members
+		protected override void DetachView()
+		{
+			_view.DivideByValidating -= EhDivideByValidating;
+			_view.TransfoOperationChanged -= EhTransformationOperationChanged;
+
+			base.DetachView();
+		}
+
+		private void EhMajorSpanValidating(string txt, CancelEventArgs e)
+		{
+			int? val;
+			if (GUIConversion.IsInt32OrNull(txt, out val))
+				_doc.DecadesPerMajorTick = val;
+			else
+				e.Cancel = true;
+		}
+
+		private void EhMinorTicksValidating(string txt, CancelEventArgs e)
+		{
+			int? val;
+			if (GUIConversion.IsInt32OrNull(txt, out val))
+				_doc.MinorTicks = val;
+			else
+				e.Cancel = true;
+		}
+
+		private void EhOneLeverValidating(CancelEventArgs e)
+		{
+			_doc.OneLever = _view.OneLever;
+		}
+
+		private void EhMinGraceValidating(CancelEventArgs e)
+		{
+			_doc.MinGrace = _view.MinGrace;
+		}
+
+		private void EhMaxGraceValidating(CancelEventArgs e)
+		{
+			_doc.MaxGrace = _view.MaxGrace;
+		}
+
+		private void EhDivideByValidating(string txt, CancelEventArgs e)
+		{
+			double val;
+			if (GUIConversion.IsDouble(txt, out val))
+			{
+				double val1 = (double)val;
+				if (val == 0 || !val1.IsFinite())
+					e.Cancel = true;
+				else
+					_doc.TransformationDivider = val1;
+			}
+			else
+			{
+				e.Cancel = true;
+			}
+		}
+
+		private void EhTransformationOperationChanged(bool transfoOpIsMultiply)
+		{
+			_doc.TransformationOperationIsMultiply = transfoOpIsMultiply;
+		}
 	}
 }

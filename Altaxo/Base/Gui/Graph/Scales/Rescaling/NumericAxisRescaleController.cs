@@ -94,12 +94,10 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 	[ExpectedTypeOfView(typeof(IOrgEndSpanView))]
 	public class NumericAxisRescaleController
 		:
-		IOrgEndSpanViewEventReceiver,
-		IMVCAController
+		MVCANControllerEditOriginalDocBase<NumericAxisRescaleConditions, IOrgEndSpanView>,
+		IOrgEndSpanViewEventReceiver
 	{
-		protected IOrgEndSpanView _view;
-		protected NumericAxisRescaleConditions _doc;
-		protected NumericalScale _axis;
+		protected NumericalScale _scale;
 
 		protected double _org;
 		protected double _end;
@@ -116,18 +114,33 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 		protected bool _endChanged;
 		protected bool _spanChanged;
 
-		public NumericAxisRescaleController(NumericAxisRescaleConditions doc, NumericalScale ax)
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			_doc = doc;
-			_axis = ax;
-
-			SetElements(true);
+			yield break;
 		}
 
-		protected virtual void SetElements(bool bInit)
+		public override bool InitializeDocument(params object[] args)
 		{
-			if (bInit)
+			if (!base.InitializeDocument(args))
+				return false;
+
+			if (args != null && args.Length >= 2 && args[1] is NumericalScale)
+				_scale = (NumericalScale)args[1];
+
+			return true;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
 			{
+				if (null == _scale && _doc.ParentObject is NumericalScale)
+				{
+					_scale = (NumericalScale)_doc.ParentObject;
+				}
+
 				_orgRescaling = _doc.OrgRescaling;
 				_endRescaling = _doc.EndRescaling;
 				_spanRescaling = _doc.SpanRescaling;
@@ -136,19 +149,55 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 				_end = _doc.End;
 				_span = _doc.Span;
 
-				if (_axis != null)
+				if (_scale != null)
 				{
 					if (_orgRescaling == BoundaryRescaling.Auto)
-						_org = _axis.Org;
+						_org = _scale.Org;
 					if (_endRescaling == BoundaryRescaling.Auto)
-						_end = _axis.End;
+						_end = _scale.End;
 					if (_spanRescaling == BoundaryRescaling.Auto)
-						_span = _axis.End - _axis.Org;
+						_span = _scale.End - _scale.Org;
 				}
 			}
 
 			if (null != _view)
 				InitView();
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (!(_end > _org))
+			{
+				Current.Gui.ErrorMessageBox("Please note: End must be greater than org.");
+				return false;
+			}
+
+			_doc.SetOrgEndSpan(_orgRescaling, _org, _endRescaling, _end, _spanRescaling, _span, _minorTicks, _majorTick);
+
+			if (null != _scale)
+			{
+				// if the user changed org or end, he maybe want to set the scale temporarily to the chosen values
+				if (_orgRescaling == BoundaryRescaling.Auto && _endRescaling == BoundaryRescaling.Auto && (_orgChanged || _endChanged))
+					_scale.SetScaleOrgEnd(_org, _end);
+				else
+					_scale.Rescale();
+			}
+
+			_orgChanged = _endChanged = false;
+
+			Initialize(true);
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
 		}
 
 		/// <summary>
@@ -265,81 +314,5 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 		}
 
 		#endregion IOrgEndSpanControlEventReceiver Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get { return _view; }
-			set
-			{
-				if (null != _view && _view.Controller == this)
-					_view.Controller = null;
-
-				_view = (IOrgEndSpanView)value;
-
-				if (_view != null)
-				{
-					InitView();
-					_view.Controller = this;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public virtual bool Apply(bool disposeController)
-		{
-			if (!(_end > _org))
-			{
-				Current.Gui.ErrorMessageBox("Please note: End must be greater than org.");
-				return false;
-			}
-
-			_doc.SetOrgEndSpan(_orgRescaling, _org, _endRescaling, _end, _spanRescaling, _span, _minorTicks, _majorTick);
-
-			if (null != _axis)
-			{
-				// if the user changed org or end, he maybe want to set the scale temporarily to the chosen values
-				if (_orgRescaling == BoundaryRescaling.Auto && _endRescaling == BoundaryRescaling.Auto && (_orgChanged || _endChanged))
-					_axis.SetScaleOrgEnd(_org, _end);
-				else
-					_axis.Rescale();
-			}
-
-			_orgChanged = _endChanged = false;
-
-			SetElements(true);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

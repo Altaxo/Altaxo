@@ -287,7 +287,7 @@ namespace Altaxo.Gui
 		where TModel : ICloneable
 	{
 		protected TModel _doc;
-		protected TModel _originalDoc;
+		protected TModel _clonedCopyOfDoc;
 		protected TView _view;
 		protected bool _useDocumentCopy;
 
@@ -335,6 +335,32 @@ namespace Altaxo.Gui
 		public abstract bool Apply(bool disposeController);
 
 		/// <summary>
+		/// Standard procedure at the end of the Apply phase. If the <paramref name="applyResult"/> is <c>true</c>, the controller is either disposed (if <c>disposeController</c> is <c>true</c>) or
+		/// the document is shortly resumed (if <c>disposeController</c> is <c>false</c>. Nothing is done if <c>applyResult</c> is <c>false</c>.
+		/// </summary>
+		/// <param name="applyResult">If set to <c>true</c>, the apply operation was successful.</param>
+		/// <param name="disposeController">If set to <c>true</c>, the controller is no longer needed and should be disposed.</param>
+		/// <returns>The same value as the parameter <c>applyResult</c>. (for the convenience that you can use this function in the return statement of Apply).</returns>
+		protected bool ApplyEnd(bool applyResult, bool disposeController)
+		{
+			if (applyResult == true)
+			{
+				if (disposeController)
+				{
+					Dispose();
+				}
+				else
+				{
+					if (null != _suspendToken)
+					{
+						_suspendToken.ResumeCompleteTemporarily();
+					}
+				}
+			}
+			return applyResult;
+		}
+
+		/// <summary>
 		/// Try to revert changes to the model, i.e. restores the original state of the model.
 		/// </summary>
 		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
@@ -350,9 +376,9 @@ namespace Altaxo.Gui
 			}
 
 			bool reverted = false;
-			if (!object.ReferenceEquals(_doc, _originalDoc))
+			if (null != _clonedCopyOfDoc && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
 			{
-				CopyHelper.Copy(ref _doc, _originalDoc);
+				CopyHelper.Copy(ref _doc, _clonedCopyOfDoc);
 				reverted = true;
 			}
 
@@ -379,9 +405,10 @@ namespace Altaxo.Gui
 			if (null == args || 0 == args.Length || !(args[0] is TModel))
 				return false;
 
-			_doc = _originalDoc = (TModel)args[0];
+			_doc = (TModel)args[0];
+
 			if (_useDocumentCopy && _doc is ICloneable)
-				_originalDoc = (TModel)((ICloneable)_doc).Clone();
+				_clonedCopyOfDoc = (TModel)((ICloneable)_doc).Clone();
 
 			Initialize(true);
 			return true;
@@ -447,6 +474,9 @@ namespace Altaxo.Gui
 					_suspendToken.Dispose();
 					_suspendToken = null;
 				}
+
+				if ((_clonedCopyOfDoc is IDisposable) && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
+					((IDisposable)_clonedCopyOfDoc).Dispose();
 
 				IsDisposed = true;
 			}
