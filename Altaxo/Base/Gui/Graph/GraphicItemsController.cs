@@ -67,6 +67,19 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			using (var token = _doc.GetEventDisableToken())
+			{
+				_doc.Clear();
+				foreach (var node in _itemsList)
+				{
+					_doc.Add((IGraphicBase)node.Tag);
+				}
+			}
+			return true;
+		}
+
 		protected override void AttachView()
 		{
 			base.AttachView();
@@ -83,19 +96,6 @@ namespace Altaxo.Gui.Graph
 			_view.SelectedItemsRemove -= EhSelectedItemsRemove;
 
 			base.DetachView();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			using (var token = _doc.GetEventDisableToken())
-			{
-				_doc.Clear();
-				foreach (var node in _itemsList)
-				{
-					_doc.Add((IGraphicBase)node.Tag);
-				}
-			}
-			return true;
 		}
 
 		private void EhSelectedItemsRemove()

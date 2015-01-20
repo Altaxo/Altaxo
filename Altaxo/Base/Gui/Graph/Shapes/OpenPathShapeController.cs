@@ -40,14 +40,19 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(OpenPathShapeBase), 101)]
 	[ExpectedTypeOfView(typeof(IOpenPathShapeView))]
-	public class OpenPathShapeController : MVCANControllerBase<OpenPathShapeBase, IOpenPathShapeView>
+	public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
 	{
 		private IMVCANController _locationController;
 
-		#region IMVCController Members
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
@@ -60,8 +65,6 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		#endregion IMVCController Members
-
 		#region IApplyController Members
 
 		public override bool Apply(bool disposeController)
@@ -71,7 +74,8 @@ namespace Altaxo.Gui.Graph.Shapes
 				if (!_locationController.Apply(disposeController))
 					return false;
 
-				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+				if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+					_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
 				_doc.Pen = _view.DocPen;
 			}
@@ -81,10 +85,7 @@ namespace Altaxo.Gui.Graph.Shapes
 				return false;
 			}
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		#endregion IApplyController Members

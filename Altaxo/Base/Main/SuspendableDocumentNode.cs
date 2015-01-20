@@ -84,7 +84,7 @@ namespace Altaxo.Main
 
 			// send accumulated data if available and release it thereafter
 			EventArgs singleArg;
-			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg) && null != singleArg) // we have a single event arg accumulated
+			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg)) // we have a single event arg accumulated
 			{
 				if (null == singleArg) // no events during suspended state
 				{

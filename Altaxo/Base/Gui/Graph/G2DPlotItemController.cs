@@ -98,7 +98,15 @@ namespace Altaxo.Gui.Graph
 		{
 			yield return new ControllerAndSetNullMethod(_plotGroupController, () => _plotGroupController = null);
 			yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
-			yield return new ControllerAndSetNullMethod(_styleCollectionController, () => _styleCollectionController = null);
+			yield return new ControllerAndSetNullMethod(_styleCollectionController, () =>
+			{
+				if (null != _styleCollectionController)
+				{
+					_styleCollectionController.CollectionChangeCommit -= _styleCollectionController_CollectionChangeCommit;
+					_styleCollectionController.StyleEditRequested -= _styleCollectionController_StyleEditRequested;
+					_styleCollectionController = null;
+				}
+			});
 
 			if (null != _styleControllerList)
 			{
@@ -132,12 +140,12 @@ namespace Altaxo.Gui.Graph
 				_plotGroupController.InitializeDocument(_groupStyles);
 
 				// find the style collection controller
-				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYPlotStyleCollectionController));
+				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYPlotStyleCollectionController), UseDocument.Directly);
 				_styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 				// Initialize the data controller
-				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IMVCAController));
+				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();
@@ -170,6 +178,9 @@ namespace Altaxo.Gui.Graph
 			if (!_dataController.Apply(disposeController))
 				return false;
 
+			if (!_styleCollectionController.Apply(disposeController))
+				return false;
+
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
 				if (false == _styleControllerList[i].Apply(disposeController))
@@ -187,20 +198,7 @@ namespace Altaxo.Gui.Graph
 		end_of_function:
 			_applySuspend--;
 
-			if (applyResult)
-			{
-				if (disposeController)
-				{
-					Dispose();
-				}
-				else
-				{
-					if (null != _suspendToken)
-						_suspendToken.ResumeCompleteTemporarily();
-				}
-			}
-
-			return applyResult;
+			return ApplyEnd(applyResult, disposeController);
 		}
 
 		private void ApplyPlotGroupView()

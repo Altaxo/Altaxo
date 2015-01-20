@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(AxisLabelStyle))]
 	[ExpectedTypeOfView(typeof(IAxisLabelStyleView))]
-	public class AxisLabelStyleController : MVCANControllerBase<AxisLabelStyle, IAxisLabelStyleView>
+	public class AxisLabelStyleController : MVCANControllerEditOriginalDocBase<AxisLabelStyle, IAxisLabelStyleView>
 	{
 		private Collections.SelectableListNodeList _labelSides;
 		private Collections.SelectableListNodeList _horizontalAlignmentChoices;
@@ -136,19 +136,26 @@ namespace Altaxo.Gui.Graph
 		private Collections.SelectableListNodeList _labelStyles;
 		private IMVCANController _labelFormattingSpecificController;
 
-		protected override void AttachView()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			_view.LabelStyleChanged += EhView_LabelStyleChanged;
+			yield return new ControllerAndSetNullMethod(_labelFormattingSpecificController, () => _labelFormattingSpecificController = null);
 		}
 
-		protected override void DetachView()
+		public override void Dispose(bool isDisposing)
 		{
-			_view.LabelStyleChanged -= EhView_LabelStyleChanged;
+			_labelSides = null;
+			_horizontalAlignmentChoices = null;
+			_verticalAlignmentChoices = null;
+			_labelStyles = null;
+
+			base.Dispose(isDisposing);
 		}
 
-		protected override void Initialize(bool bInit)
+		protected override void Initialize(bool initData)
 		{
-			if (bInit)
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				// Label sides
 				_labelSides = new Collections.SelectableListNodeList();
@@ -240,9 +247,17 @@ namespace Altaxo.Gui.Graph
 			if (null != _labelFormattingSpecificController && !_labelFormattingSpecificController.Apply(disposeController))
 				return false;
 
-			_originalDoc.CopyFrom(_doc);
+			return ApplyEnd(true, disposeController);
+		}
 
-			return true;
+		protected override void AttachView()
+		{
+			_view.LabelStyleChanged += EhView_LabelStyleChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.LabelStyleChanged -= EhView_LabelStyleChanged;
 		}
 
 		public void EhView_LabelStyleChanged()

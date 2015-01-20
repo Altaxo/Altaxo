@@ -31,21 +31,26 @@ namespace Altaxo.Gui.Graph
 {
 	[UserControllerForObject(typeof(G2DPolarCoordinateSystem), 101)]
 	[ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
-	public class G2DPolarCSController : IMVCAController
+	public class G2DPolarCSController : MVCANControllerEditOriginalDocBase<G2DPolarCoordinateSystem, IG2DCartesicCSView>
 	{
-		private IG2DCartesicCSView _view;
-		private G2DPolarCoordinateSystem _doc;
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public G2DPolarCSController()
+		{
+		}
 
 		public G2DPolarCSController(G2DPolarCoordinateSystem doc)
 		{
-			_doc = doc;
-			Initialize(true);
+			InitializeDocument(doc);
 		}
 
-		#region IMVCController Members
-
-		private void Initialize(bool bInit)
+		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (_view != null)
 			{
 				_view.ExchangeXY = _doc.IsXYInterchanged;
@@ -54,52 +59,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IG2DCartesicCSView;
-				Initialize(false);
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			_doc.IsXYInterchanged = _view.ExchangeXY;
 			_doc.IsXReverse = _view.ReverseX;
 			_doc.IsYReverse = _view.ReverseY;
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

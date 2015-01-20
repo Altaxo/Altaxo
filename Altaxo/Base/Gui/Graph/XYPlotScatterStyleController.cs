@@ -110,6 +110,22 @@ namespace Altaxo.Gui.Graph
 		private SelectableListNodeList _symbolShapeChoices;
 		private SelectableListNodeList _symbolStyleChoices;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break; // no subcontrollers
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_colorGroupStyleTracker = null;
+
+			_dropLineChoices = null;
+			_symbolShapeChoices = null;
+			_symbolStyleChoices = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);
@@ -141,46 +157,6 @@ namespace Altaxo.Gui.Graph
 				_view.InitializeDropLineConditions(_dropLineChoices);
 			}
 		}
-
-		public void InitializeDropLineChoices()
-		{
-			XYPlotLayer layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYPlotLayer)) as XYPlotLayer;
-
-			_dropLineChoices = new SelectableListNodeList();
-			foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
-			{
-				bool sel = _doc.DropLine.Contains(id);
-				CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-				_dropLineChoices.Add(new SelectableListNode(info.Name, id, sel));
-			}
-		}
-
-		private void EhIndependentColorChanged()
-		{
-			if (null != _view)
-			{
-				_doc.IndependentColor = _view.IndependentColor;
-				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-			}
-		}
-
-		#region IMVCController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.IndependentColorChanged += EhIndependentColorChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.IndependentColorChanged -= EhIndependentColorChanged;
-			base.DetachView();
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
 
 		public override bool Apply(bool disposeController)
 		{
@@ -226,33 +202,41 @@ namespace Altaxo.Gui.Graph
 				return false;
 			}
 
-			if (disposeController)
-			{
-				Dispose();
-			}
-			else
-			{
-				if (null != _suspendToken)
-					_suspendToken.ResumeCompleteTemporarily();
-			}
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		protected override void AttachView()
 		{
-			yield break; // no subcontrollers
+			base.AttachView();
+			_view.IndependentColorChanged += EhIndependentColorChanged;
 		}
 
-		public override void Dispose(bool isDisposing)
+		protected override void DetachView()
 		{
-			_dropLineChoices = null;
-			_symbolShapeChoices = null;
-			_symbolStyleChoices = null;
-
-			base.Dispose(isDisposing);
+			_view.IndependentColorChanged -= EhIndependentColorChanged;
+			base.DetachView();
 		}
 
-		#endregion IApplyController Members
+		public void InitializeDropLineChoices()
+		{
+			XYPlotLayer layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYPlotLayer)) as XYPlotLayer;
+
+			_dropLineChoices = new SelectableListNodeList();
+			foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
+			{
+				bool sel = _doc.DropLine.Contains(id);
+				CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+				_dropLineChoices.Add(new SelectableListNode(info.Name, id, sel));
+			}
+		}
+
+		private void EhIndependentColorChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentColor = _view.IndependentColor;
+				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+			}
+		}
 	} // end of class XYPlotScatterStyleController
 } // end of namespace

@@ -43,7 +43,10 @@ namespace Altaxo.Graph.Plot.Groups
 	/// This problem was solved 2013-02-05 by distinguishing between local use and external use of the ColorGroupStyle. For external use, the color is (as before) coerced to a valid plot color
 	/// during initialization. For local use, the rules are not so strict, and it is allowed to provide an non plot color or an invalid plot color during initialization without changing the color value.
 	/// </remarks>
-	public class ColorGroupStyle : IPlotGroupStyle
+	public class ColorGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
 	{
 		private bool _isInitialized;
 		private bool _isStepEnabled;

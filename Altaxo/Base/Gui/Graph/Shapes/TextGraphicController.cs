@@ -102,42 +102,24 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(Altaxo.Graph.Gdi.Shapes.TextGraphic))]
 	[ExpectedTypeOfView(typeof(ITextGraphicView))]
-	internal class TextGraphicController : ITextGraphicViewEventSink, IMVCANController
+	internal class TextGraphicController : MVCANControllerEditOriginalDocBase<Altaxo.Graph.Gdi.Shapes.TextGraphic, ITextGraphicView>, ITextGraphicViewEventSink
 	{
-		private UseDocument _useDocumentCopy;
-		private TextGraphic _doc, _originalDoc;
-		private ITextGraphicView _view;
-
 		private XYPlotLayer _parentLayerOfOriginalDoc;
 
 		private IMVCANController _locationController;
 
-		/// <summary>
-		/// The suppress token that suppresses change events when we enter text in the document
-		/// </summary>
-		private Altaxo.Main.ISuspendToken _suppressToken;
-
-		public TextGraphicController()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
 		}
 
-		public bool InitializeDocument(params object[] args)
+		protected override void Initialize(bool initData)
 		{
-			if (args.Length == 0 || !(args[0] is TextGraphic))
-				return false;
-			_originalDoc = (TextGraphic)args[0];
-			_doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (TextGraphic)_originalDoc.Clone();
-			_suppressToken = _doc.SuspendGetToken();
+			base.Initialize(initData);
 
-			Initialize(true); // initialize always because we have to update the temporary variables
-			return true;
-		}
-
-		private void Initialize(bool initDocument)
-		{
-			if (initDocument)
+			if (initData)
 			{
-				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(_originalDoc);
+				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(_doc);
 
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
 				Current.Gui.FindAndAttachControlTo(_locationController);
@@ -168,6 +150,31 @@ namespace Altaxo.Gui.Graph.Shapes
 
 				_view.EndUpdate();
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (!_locationController.Apply(disposeController))
+				return false;
+
+			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
+
+			base.DetachView();
 		}
 
 		#region ITextGraphicViewEventSink Members
@@ -284,79 +291,5 @@ namespace Altaxo.Gui.Graph.Shapes
 		}
 
 		#endregion ITextGraphicViewEventSink Members
-
-		#region IMVCANController Members
-
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocumentCopy = value; }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-					_view.Controller = null;
-
-				_view = value as ITextGraphicView;
-
-				Initialize(false);
-
-				if (_view != null)
-					_view.Controller = this;
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _originalDoc; }
-		}
-
-		public void Dispose()
-		{
-			var token = System.Threading.Interlocked.Exchange(ref _suppressToken, null);
-			if (null != token)
-				token.Dispose();
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			if (!_locationController.Apply(disposeController))
-				return false;
-
-			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
-
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

@@ -76,13 +76,26 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(FillToCurvePlotStyle))]
 	[ExpectedTypeOfView(typeof(IFillToCurvePlotStyleView))]
-	public class FillToCurvePlotStyleController : MVCANControllerBase<FillToCurvePlotStyle, IFillToCurvePlotStyleView>
+	public class FillToCurvePlotStyleController : MVCANControllerEditOriginalDocBase<FillToCurvePlotStyle, IFillToCurvePlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_colorGroupStyleTracker = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
@@ -102,6 +115,63 @@ namespace Altaxo.Gui.Graph
 				_view.FillToPreviousItem = _doc.FillToPreviousItem;
 				_view.FillToNextItem = _doc.FillToNextItem;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (_view.UseFill)
+			{
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
+			}
+			else
+			{
+				_doc.IndependentFillColor = true;
+				_doc.FillBrush = null;
+			}
+
+			if (_view.UseFrame)
+			{
+				_doc.IndependentFrameColor = _view.IndependentFrameColor;
+				_doc.FramePen = _view.FramePen;
+			}
+			else
+			{
+				_doc.IndependentFrameColor = true;
+				_doc.FramePen = null;
+			}
+
+			_doc.FillToPreviousItem = _view.FillToPreviousItem;
+			_doc.FillToNextItem = _view.FillToNextItem;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.UseFillChanged += EhUseFillChanged;
+			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
+
+			_view.UseFrameChanged += EhUseFrameChanged;
+			_view.IndependentFrameColorChanged += EhIndependentFrameColorChanged;
+
+			_view.FillBrushChanged += EhFillBrushChanged;
+			_view.FramePenChanged += EhFramePenChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.UseFillChanged -= EhUseFillChanged;
+			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
+
+			_view.UseFrameChanged -= EhUseFrameChanged;
+			_view.IndependentFrameColorChanged -= EhIndependentFrameColorChanged;
+
+			_view.FillBrushChanged -= EhFillBrushChanged;
+			_view.FramePenChanged -= EhFramePenChanged;
+
+			base.DetachView();
 		}
 
 		#region Color management
@@ -217,70 +287,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion Color management
-
-		#region IMVCController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.UseFillChanged += EhUseFillChanged;
-			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
-
-			_view.UseFrameChanged += EhUseFrameChanged;
-			_view.IndependentFrameColorChanged += EhIndependentFrameColorChanged;
-
-			_view.FillBrushChanged += EhFillBrushChanged;
-			_view.FramePenChanged += EhFramePenChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.UseFillChanged -= EhUseFillChanged;
-			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
-
-			_view.UseFrameChanged -= EhUseFrameChanged;
-			_view.IndependentFrameColorChanged -= EhIndependentFrameColorChanged;
-
-			_view.FillBrushChanged -= EhFillBrushChanged;
-			_view.FramePenChanged -= EhFramePenChanged;
-
-			base.DetachView();
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public override bool Apply(bool disposeController)
-		{
-			if (_view.UseFill)
-			{
-				_doc.IndependentFillColor = _view.IndependentFillColor;
-				_doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
-			}
-			else
-			{
-				_doc.IndependentFillColor = true;
-				_doc.FillBrush = null;
-			}
-
-			if (_view.UseFrame)
-			{
-				_doc.IndependentFrameColor = _view.IndependentFrameColor;
-				_doc.FramePen = _view.FramePen;
-			}
-			else
-			{
-				_doc.IndependentFrameColor = true;
-				_doc.FramePen = null;
-			}
-
-			_doc.FillToPreviousItem = _view.FillToPreviousItem;
-			_doc.FillToNextItem = _view.FillToNextItem;
-
-			return true;
-		}
-
-		#endregion IApplyController Members
 	}
 }

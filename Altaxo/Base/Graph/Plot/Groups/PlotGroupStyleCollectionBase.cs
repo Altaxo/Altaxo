@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,249 +28,310 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-  public class PlotGroupStyleCollectionBase : IPlotGroupStyleCollection
-  {
-    #region Internal Class
-    protected class GroupInfo : ICloneable
-    {
-      public bool WasApplied;
-      public System.Type ChildGroupType;
-      public System.Type ParentGroupType;
+	public class PlotGroupStyleCollectionBase
+		:
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IPlotGroupStyleCollection
+	{
+		#region Internal Class
 
-      public GroupInfo()
-      {
-      }
+		protected class GroupInfo : ICloneable
+		{
+			public bool WasApplied;
+			public System.Type ChildGroupType;
+			public System.Type ParentGroupType;
 
-      public GroupInfo(GroupInfo from)
-      {
-        this.WasApplied = false;
-        this.ChildGroupType = from.ChildGroupType;
-        this.ParentGroupType = from.ParentGroupType;
-      }
+			public GroupInfo()
+			{
+			}
 
-      #region ICloneable Members
+			public GroupInfo(GroupInfo from)
+			{
+				this.WasApplied = false;
+				this.ChildGroupType = from.ChildGroupType;
+				this.ParentGroupType = from.ParentGroupType;
+			}
 
-      object ICloneable.Clone()
-      {
-        return new GroupInfo(this);
-      }
-      public GroupInfo Clone()
-      {
-        return new GroupInfo(this);
-      }
+			#region ICloneable Members
 
-      #endregion
-    }
-    #endregion
+			object ICloneable.Clone()
+			{
+				return new GroupInfo(this);
+			}
+
+			public GroupInfo Clone()
+			{
+				return new GroupInfo(this);
+			}
+
+			#endregion ICloneable Members
+		}
+
+		#endregion Internal Class
 
 		/// <summary>Dictionary, which stores exactly one instance of a plot group style per type. Thus it is ensured, that only one instance per type is existent in this collection.</summary>
-    protected Dictionary<System.Type, IPlotGroupStyle> _typeToInstance;
+		protected Dictionary<System.Type, IPlotGroupStyle> _typeToInstance;
 
 		/// <summary>Dictionary, which stores additional information for each plot group style. Since only one instance of each style can be stored, the key here is the type of the plot group style.</summary>
 		protected Dictionary<System.Type, GroupInfo> _typeToInfo;
-  
+
 		/// <summary>Strictness of the plot group collection. This determines how the styles are distributed among the plot items.</summary>
 		protected PlotGroupStrictness _plotGroupStrictness;
 
-
 		protected bool _inheritFromParentGroups;
-    
+
 		protected bool _distributeToChildGroups;
 
-    #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
+		#region Serialization
 
-        int savedStyles = 0; // for test of consistency
-        info.CreateArray("Styles", s.Count);
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
 
-        foreach (System.Type t in s._typeToInstance.Keys)
-        {
-          if (s._typeToInfo[t].ParentGroupType != null)
-            continue;
+				int savedStyles = 0; // for test of consistency
+				info.CreateArray("Styles", s.Count);
 
-          info.AddValue("Style", s._typeToInstance[t]);
-          info.AddValue("HasChild", null != s._typeToInfo[t].ChildGroupType);
-          savedStyles++;
+				foreach (System.Type t in s._typeToInstance.Keys)
+				{
+					if (s._typeToInfo[t].ParentGroupType != null)
+						continue;
 
-          System.Type childtype = t;
-          while (null != (childtype = s._typeToInfo[childtype].ChildGroupType))
-          {
-            info.AddValue("Style", s._typeToInstance[childtype]);
-            info.AddValue("HasChild", null != s._typeToInfo[childtype].ChildGroupType);
-            savedStyles++;
-          }
-        }
+					info.AddValue("Style", s._typeToInstance[t]);
+					info.AddValue("HasChild", null != s._typeToInfo[t].ChildGroupType);
+					savedStyles++;
 
-        info.CommitArray();
+					System.Type childtype = t;
+					while (null != (childtype = s._typeToInfo[childtype].ChildGroupType))
+					{
+						info.AddValue("Style", s._typeToInstance[childtype]);
+						info.AddValue("HasChild", null != s._typeToInfo[childtype].ChildGroupType);
+						savedStyles++;
+					}
+				}
 
-        if (s.Count != savedStyles)
-          throw new ApplicationException("Inconsistency in parent-child relationship in this PlotGroupStyleCollection. Please inform the author");
+				info.CommitArray();
 
-        info.AddEnum("Strictness", s._plotGroupStrictness);
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        PlotGroupStyleCollectionBase s = null != o ? (PlotGroupStyleCollectionBase)o : new PlotGroupStyleCollectionBase();
-        SDeserialize(s, info, parent);
-        return s;
-      }
+				if (s.Count != savedStyles)
+					throw new ApplicationException("Inconsistency in parent-child relationship in this PlotGroupStyleCollection. Please inform the author");
 
-      public virtual void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        Type parentStyleType = null;
-        int count = info.OpenArray();
-        for (int i = 0; i < count; i++)
-        {
-          IPlotGroupStyle style = (IPlotGroupStyle)info.GetValue("Style", s);
-          bool hasChild = info.GetBoolean("HasChild");
-          s.Add(style, parentStyleType);
-          parentStyleType = hasChild ? style.GetType() : null;
-        }
-        info.CloseArray(count);
+				info.AddEnum("Strictness", s._plotGroupStrictness);
+			}
 
-        s._plotGroupStrictness = (PlotGroupStrictness)info.GetEnum("Strictness", typeof(PlotGroupStrictness));
-      }
-    }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				PlotGroupStyleCollectionBase s = null != o ? (PlotGroupStyleCollectionBase)o : new PlotGroupStyleCollectionBase();
+				SDeserialize(s, info, parent);
+				return s;
+			}
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 1)]
-    class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
-    {
-      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        base.Serialize(obj, info);
-        PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
-        info.AddValue("InheritFromParent", s._inheritFromParentGroups);
-        info.AddValue("DistributeToChilds", s._distributeToChildGroups);
-      }
-      public override void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        base.SDeserialize(s, info, parent);
-        s._inheritFromParentGroups = info.GetBoolean("InheritFromParent");
-        s._distributeToChildGroups = info.GetBoolean("DistributeToChilds");
-      }
+			public virtual void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				Type parentStyleType = null;
+				int count = info.OpenArray();
+				for (int i = 0; i < count; i++)
+				{
+					IPlotGroupStyle style = (IPlotGroupStyle)info.GetValue("Style", s);
+					bool hasChild = info.GetBoolean("HasChild");
+					s.Add(style, parentStyleType);
+					parentStyleType = hasChild ? style.GetType() : null;
+				}
+				info.CloseArray(count);
 
+				s._plotGroupStrictness = (PlotGroupStrictness)info.GetEnum("Strictness", typeof(PlotGroupStrictness));
+			}
+		}
 
-    }
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 1)]
+		private class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+		{
+			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				base.Serialize(obj, info);
+				PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
+				info.AddValue("InheritFromParent", s._inheritFromParentGroups);
+				info.AddValue("DistributeToChilds", s._distributeToChildGroups);
+			}
 
+			public override void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				base.SDeserialize(s, info, parent);
+				s._inheritFromParentGroups = info.GetBoolean("InheritFromParent");
+				s._distributeToChildGroups = info.GetBoolean("DistributeToChilds");
+			}
+		}
 
-    #endregion
+		#endregion Serialization
 
-    #region Constructors
-    public PlotGroupStyleCollectionBase()
-    {
-      _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
-      _typeToInfo = new Dictionary<Type, GroupInfo>();
-      _inheritFromParentGroups = true;
-    }
+		#region Constructors
 
-    public PlotGroupStyleCollectionBase(PlotGroupStyleCollectionBase from)
-    {
-      CopyFrom(from);
-    }
+		public PlotGroupStyleCollectionBase()
+		{
+			_typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
+			_typeToInfo = new Dictionary<Type, GroupInfo>();
+			_inheritFromParentGroups = true;
+		}
 
-    public virtual void CopyFrom(PlotGroupStyleCollectionBase from)
-    {
-			if (object.ReferenceEquals(this, from))
-				return;
+		public PlotGroupStyleCollectionBase(PlotGroupStyleCollectionBase from)
+		{
+			CopyFrom(from);
+		}
 
-      _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
-      _typeToInfo = new Dictionary<Type, GroupInfo>();
+		public virtual bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-      foreach (KeyValuePair<System.Type, IPlotGroupStyle> entry in from._typeToInstance)
-        this._typeToInstance.Add(entry.Key, (IPlotGroupStyle)entry.Value.Clone());
+			var from = obj as PlotGroupStyleCollectionBase;
 
-      foreach (KeyValuePair<System.Type, GroupInfo> entry in from._typeToInfo)
-        this._typeToInfo.Add(entry.Key, entry.Value.Clone());
+			if (null == from)
+				return false;
 
-      _plotGroupStrictness = from._plotGroupStrictness;
-      this._inheritFromParentGroups = from._inheritFromParentGroups;
-      this._distributeToChildGroups = from._distributeToChildGroups;
-    }
+			using (var suspendToken = SuspendGetToken())
+			{
+				_typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
+				_typeToInfo = new Dictionary<Type, GroupInfo>();
 
-    #endregion
+				foreach (KeyValuePair<System.Type, IPlotGroupStyle> entry in from._typeToInstance)
+					this._typeToInstance.Add(entry.Key, (IPlotGroupStyle)entry.Value.Clone());
 
-    #region ICloneable Members
+				foreach (KeyValuePair<System.Type, GroupInfo> entry in from._typeToInfo)
+					this._typeToInfo.Add(entry.Key, entry.Value.Clone());
 
-    public PlotGroupStyleCollectionBase Clone()
-    {
-      return new PlotGroupStyleCollectionBase(this);
-    }
+				_plotGroupStrictness = from._plotGroupStrictness;
+				this._inheritFromParentGroups = from._inheritFromParentGroups;
+				this._distributeToChildGroups = from._distributeToChildGroups;
 
-    object ICloneable.Clone()
-    {
-      return new PlotGroupStyleCollectionBase(this);
-    }
+				suspendToken.Resume();
+			}
 
-    #endregion
+			return true;
+		}
 
+		#endregion Constructors
 
- 
+		#region ICloneable Members
 
-    /// <summary>
-    /// Returns the plot group strictness of this plot group, i.e. how the plot group is updated.
-    /// </summary>
-    public PlotGroupStrictness PlotGroupStrictness
-    {
-      get { return _plotGroupStrictness; }
-      set { _plotGroupStrictness = value; }
-    }
+		public PlotGroupStyleCollectionBase Clone()
+		{
+			return new PlotGroupStyleCollectionBase(this);
+		}
 
-    public bool InheritFromParentGroups
-    {
-      get { return _inheritFromParentGroups; }
-      set { _inheritFromParentGroups = value; }
-    }
+		object ICloneable.Clone()
+		{
+			return new PlotGroupStyleCollectionBase(this);
+		}
 
-    public bool DistributeToChildGroups
-    {
-      get { return _distributeToChildGroups; }
-      set { _distributeToChildGroups = value; }
-    }
+		#endregion ICloneable Members
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _typeToInstance)
+			{
+				foreach (var instance in _typeToInstance.Values)
+					yield return new Main.DocumentNodeAndName(instance, instance.GetType().FullName); // FullName of the instance should be sufficient to identify the item
+			}
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (null != _typeToInstance)
+			{
+				var oldColl = _typeToInstance;
+				_typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
+				_typeToInfo.Clear();
+
+				foreach (var inst in oldColl.Values)
+				{
+					if (null != inst)
+						inst.Dispose();
+				}
+			}
+
+			base.Dispose(isDisposing);
+		}
+
+		/// <summary>
+		/// Returns the plot group strictness of this plot group, i.e. how the plot group is updated.
+		/// </summary>
+		public PlotGroupStrictness PlotGroupStrictness
+		{
+			get { return _plotGroupStrictness; }
+			set
+			{
+				var oldValue = _plotGroupStrictness;
+				_plotGroupStrictness = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public bool InheritFromParentGroups
+		{
+			get { return _inheritFromParentGroups; }
+			set
+			{
+				var oldValue = _inheritFromParentGroups;
+				_inheritFromParentGroups = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public bool DistributeToChildGroups
+		{
+			get { return _distributeToChildGroups; }
+			set
+			{
+				var oldValue = _distributeToChildGroups;
+				_distributeToChildGroups = value;
+
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
 
 		/// <summary>
 		/// Tests, whether or not a group style of a given type is existent in the collection.
 		/// </summary>
 		/// <param name="groupStyleType">Type of plot group style to test.</param>
 		/// <returns>True if the type is existent in this collection.</returns>
-    public bool ContainsType(System.Type groupStyleType)
-    {
-      return _typeToInstance.ContainsKey(groupStyleType);
-    }
+		public bool ContainsType(System.Type groupStyleType)
+		{
+			return _typeToInstance.ContainsKey(groupStyleType);
+		}
 
 		/// <summary>
 		/// Gets the instance of the plot group style of a given type.
 		/// </summary>
 		/// <param name="groupStyleType">The type of plot group style.</param>
 		/// <returns>The instance of the plot group style of the type given in the parameter.</returns>
-    public IPlotGroupStyle GetPlotGroupStyle(System.Type groupStyleType)
-    {
-      return _typeToInstance[groupStyleType];
-    }
+		public IPlotGroupStyle GetPlotGroupStyle(System.Type groupStyleType)
+		{
+			return _typeToInstance[groupStyleType];
+		}
 
 		/// <summary>
 		/// Retries the type of a child plot group style, if one exists.
 		/// </summary>
 		/// <param name="groupStyleType">The type of group style for which the type of child group style should be retrieved.</param>
 		/// <returns>Type of the child plot group style, or null if no child exists.</returns>
-    public System.Type GetTypeOfChild(System.Type groupStyleType)
-    {
-      return _typeToInfo[groupStyleType].ChildGroupType;
-    }
+		public System.Type GetTypeOfChild(System.Type groupStyleType)
+		{
+			return _typeToInfo[groupStyleType].ChildGroupType;
+		}
 
 		/// <summary>
 		/// Retrieves the type of the parent plot group style, if one exists.
 		/// </summary>
 		/// <param name="groupStyleType">The type of group style for which the type of parent group style should be retrieved.</param>
 		/// <returns>Type of the parent plot group style, or null if no parent exists.</returns>
-    public System.Type GetParentTypeOf(System.Type groupStyleType)
-    {
-      return _typeToInfo[groupStyleType].ParentGroupType;
-    }
+		public System.Type GetParentTypeOf(System.Type groupStyleType)
+		{
+			return _typeToInfo[groupStyleType].ParentGroupType;
+		}
 
 		/// <summary>
 		/// Determines the tree level of a group style, i.e. how many parent items it has.
@@ -288,30 +351,30 @@ namespace Altaxo.Graph.Plot.Groups
 		/// <summary>
 		/// Number of styles in this collection.
 		/// </summary>
-    public int Count
-    {
-      get
-      {
-        return _typeToInstance.Count;
-      }
-    }
+		public int Count
+		{
+			get
+			{
+				return _typeToInstance.Count;
+			}
+		}
 
 		/// <summary>
 		/// Adds a group style to this collection. An exception will be thrown if an item of the same type already exists in the collection.
 		/// </summary>
 		/// <param name="groupStyle">Group style to add.</param>
-    public void Add(IPlotGroupStyle groupStyle)
-    {
-      Add(groupStyle, null);
-    }
+		public void Add(IPlotGroupStyle groupStyle)
+		{
+			Add(groupStyle, null);
+		}
 
 		/// <summary>
 		/// Adds a group style to this collection, as a child of another group style. If the parent group style doesn't allow childs, then the group style is added normally.
 		/// </summary>
 		/// <param name="groupStyle">Group style to add to this collection.</param>
 		/// <param name="parentGroupStyleType">Type of the parent group style.</param>
-    public void Add(IPlotGroupStyle groupStyle, System.Type parentGroupStyleType)
-    {
+		public void Add(IPlotGroupStyle groupStyle, System.Type parentGroupStyleType)
+		{
 			if (parentGroupStyleType != null)
 			{
 				if (!_typeToInstance.ContainsKey(parentGroupStyleType))
@@ -320,280 +383,297 @@ namespace Altaxo.Graph.Plot.Groups
 				if (!parentInstance.CanCarryOver)
 				{
 					Add(groupStyle);
+					EhSelfChanged(EventArgs.Empty);
 					return;
 				}
 			}
-			
-			
+
 			if (groupStyle == null)
-        throw new ArgumentNullException("Try to add a null value to this group style collection");
+				throw new ArgumentNullException("Try to add a null value to this group style collection");
 
-      if (_typeToInstance.ContainsKey(groupStyle.GetType()))
-        throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
+			if (_typeToInstance.ContainsKey(groupStyle.GetType()))
+				throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
 
-      _typeToInstance.Add(groupStyle.GetType(), groupStyle);
-      GroupInfo groupInfo = new GroupInfo();
-      groupInfo.ParentGroupType = parentGroupStyleType;
-      _typeToInfo.Add(groupStyle.GetType(), groupInfo);
+			_typeToInstance.Add(groupStyle.GetType(), groupStyle);
+			GroupInfo groupInfo = new GroupInfo();
+			groupInfo.ParentGroupType = parentGroupStyleType;
+			_typeToInfo.Add(groupStyle.GetType(), groupInfo);
 
+			if (parentGroupStyleType != null)
+			{
+				System.Type oldChildType = _typeToInfo[parentGroupStyleType].ChildGroupType;
+				_typeToInfo[parentGroupStyleType].ChildGroupType = groupStyle.GetType();
+				groupInfo.ChildGroupType = oldChildType;
+				if (oldChildType != null)
+					_typeToInfo[oldChildType].ParentGroupType = groupStyle.GetType();
+			}
 
-      if (parentGroupStyleType != null)
-      {
-        System.Type oldChildType = _typeToInfo[parentGroupStyleType].ChildGroupType;
-        _typeToInfo[parentGroupStyleType].ChildGroupType = groupStyle.GetType();
-        groupInfo.ChildGroupType = oldChildType;
-        if (oldChildType != null)
-          _typeToInfo[oldChildType].ParentGroupType = groupStyle.GetType();
-      }
-    }
+			EhSelfChanged(EventArgs.Empty);
+		}
 
+		/// <summary>
+		/// Inserts a group style by adding it. The child group style type is appended as child to this group type.
+		/// In case the child type has already a parent, then this parent will be the parent of the inserted group style.
+		/// </summary>
+		/// <param name="groupStyle">Group style to add.</param>
+		/// <param name="childGroupStyleType">Type of group style, which should be the child of the added group style.</param>
+		public void Insert(IPlotGroupStyle groupStyle, System.Type childGroupStyleType)
+		{
+			if (groupStyle == null)
+				throw new ArgumentNullException("Try to add a null value to this group style collection");
 
-    /// <summary>
-    /// Inserts a group style by adding it. The child group style type is appended as child to this group type.
-    /// In case the child type has already a parent, then this parent will be the parent of the inserted group style.
-    /// </summary>
-    /// <param name="groupStyle">Group style to add.</param>
-    /// <param name="childGroupStyleType">Type of group style, which should be the child of the added group style.</param>
-    public void Insert(IPlotGroupStyle groupStyle, System.Type childGroupStyleType)
-    {
-      if (groupStyle == null)
-        throw new ArgumentNullException("Try to add a null value to this group style collection");
+			if (_typeToInstance.ContainsKey(groupStyle.GetType()))
+				throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
 
-      if (_typeToInstance.ContainsKey(groupStyle.GetType()))
-        throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
+			if (childGroupStyleType != null && !_typeToInstance.ContainsKey(childGroupStyleType))
+				throw new ArgumentException(string.Format("The child group style (of type: {0}) can not be found in this collection", childGroupStyleType));
 
-      if (childGroupStyleType != null && !_typeToInstance.ContainsKey(childGroupStyleType))
-        throw new ArgumentException(string.Format("The child group style (of type: {0}) can not be found in this collection", childGroupStyleType));
+			groupStyle.ParentObject = this;
+			_typeToInstance.Add(groupStyle.GetType(), groupStyle);
+			GroupInfo groupInfo = new GroupInfo();
+			groupInfo.ChildGroupType = childGroupStyleType;
+			_typeToInfo.Add(groupStyle.GetType(), groupInfo);
 
-      _typeToInstance.Add(groupStyle.GetType(), groupStyle);
-      GroupInfo groupInfo = new GroupInfo();
-      groupInfo.ChildGroupType = childGroupStyleType;
-      _typeToInfo.Add(groupStyle.GetType(), groupInfo);
+			if (childGroupStyleType != null)
+			{
+				System.Type oldParentType = _typeToInfo[childGroupStyleType].ParentGroupType;
+				_typeToInfo[childGroupStyleType].ParentGroupType = groupStyle.GetType();
+				groupInfo.ParentGroupType = oldParentType;
+				if (oldParentType != null)
+					_typeToInfo[oldParentType].ChildGroupType = groupStyle.GetType();
+			}
 
-
-      if (childGroupStyleType != null)
-      {
-        System.Type oldParentType = _typeToInfo[childGroupStyleType].ParentGroupType;
-        _typeToInfo[childGroupStyleType].ParentGroupType = groupStyle.GetType();
-        groupInfo.ParentGroupType = oldParentType;
-        if (oldParentType != null)
-          _typeToInfo[oldParentType].ChildGroupType = groupStyle.GetType();
-      }
-    }
+			EhSelfChanged(EventArgs.Empty);
+		}
 
 		/// <summary>
 		/// Removes a certain group style from the collection.
 		/// </summary>
 		/// <param name="groupType">Type of group style to remove from the collection.</param>
-    public void RemoveType(System.Type groupType)
-    {
-      if (!_typeToInstance.ContainsKey(groupType))
-        return;
+		public void RemoveType(System.Type groupType)
+		{
+			if (!_typeToInstance.ContainsKey(groupType))
+				return;
 
-      GroupInfo groupInfo = _typeToInfo[groupType];
-      System.Type parentGroupType = groupInfo.ParentGroupType;
-      System.Type childGroupType = groupInfo.ChildGroupType;
+			var groupInstance = _typeToInstance[groupType];
+			GroupInfo groupInfo = _typeToInfo[groupType];
+			System.Type parentGroupType = groupInfo.ParentGroupType;
+			System.Type childGroupType = groupInfo.ChildGroupType;
 
-      if (parentGroupType != null) // then append my current child directly to the parent
-      {
-        GroupInfo parentGroupInfo = _typeToInfo[parentGroupType];
-        parentGroupInfo.ChildGroupType = groupInfo.ChildGroupType;
-        if (parentGroupInfo.ChildGroupType != null)
-          _typeToInfo[parentGroupInfo.ChildGroupType].ParentGroupType = groupInfo.ParentGroupType;
-      }
-      else if (childGroupType != null) // then set the parent of the child to null
-      {
-        _typeToInfo[childGroupType].ParentGroupType = null;
-      }
+			if (parentGroupType != null) // then append my current child directly to the parent
+			{
+				GroupInfo parentGroupInfo = _typeToInfo[parentGroupType];
+				parentGroupInfo.ChildGroupType = groupInfo.ChildGroupType;
+				if (parentGroupInfo.ChildGroupType != null)
+					_typeToInfo[parentGroupInfo.ChildGroupType].ParentGroupType = groupInfo.ParentGroupType;
+			}
+			else if (childGroupType != null) // then set the parent of the child to null
+			{
+				_typeToInfo[childGroupType].ParentGroupType = null;
+			}
 
-      _typeToInstance.Remove(groupType);
-      _typeToInfo.Remove(groupType);
+			_typeToInstance.Remove(groupType);
+			_typeToInfo.Remove(groupType);
 
+			groupInstance.Dispose();
 
-    }
+			EhSelfChanged(EventArgs.Empty);
+		}
 
 		/// <summary>
 		/// Removes all group styles, thus clearing the collection.
 		/// </summary>
-    public virtual void Clear()
-    {
-      _typeToInfo.Clear();
-      _typeToInstance.Clear();
-    }
+		public virtual void Clear()
+		{
+			var oldCount = _typeToInfo.Count;
 
-    public void BeginPrepare()
-    {
-      foreach (IPlotGroupStyle pgs in this)
-        pgs.BeginPrepare();
-    }
-    public void EndPrepare()
-    {
-      foreach (IPlotGroupStyle pgs in this)
-        pgs.EndPrepare();
-    }
-    public void PrepareStep()
-    {
-      foreach (IPlotGroupStyle pgs in this)
-        pgs.PrepareStep();
-    }
+			_typeToInfo.Clear();
 
-    public void BeginApply()
-    {
-      foreach (GroupInfo info in _typeToInfo.Values)
-        info.WasApplied = false;
-    }
+			var oldColl = _typeToInstance;
+			_typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
 
-    public void EndApply()
-    {
-      foreach (GroupInfo info in _typeToInfo.Values)
-        info.WasApplied = false;
-    }
+			foreach (var inst in oldColl.Values)
+				inst.Dispose();
 
-    public void OnBeforeApplication(System.Type groupStyleType)
-    {
-      _typeToInfo[groupStyleType].WasApplied = true;
-    }
+			if (0 != oldCount)
+				EhSelfChanged(EventArgs.Empty);
+		}
 
-    public void Step(int step)
-    {
-      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
-      {
-        Type groupType = entry.Key;
-        IPlotGroupStyle groupStyle = entry.Value;
-        GroupInfo groupInfo = _typeToInfo[groupType];
+		public void BeginPrepare()
+		{
+			foreach (IPlotGroupStyle pgs in this)
+				pgs.BeginPrepare();
+		}
 
-        if (groupInfo.ParentGroupType == null
-          && groupInfo.WasApplied
-          && groupStyle.IsStepEnabled
-          )
-        {
-          int subStep = groupStyle.Step(step);
-          GroupInfo subGroupInfo = groupInfo;
-          for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
-          {
-            subGroupInfo = _typeToInfo[subGroupType];
-            IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
-            subStep = subGroupStyle.IsStepEnabled ? subGroupStyle.Step(subStep) : 0;
-          }
-        }
-        groupInfo.WasApplied = false;
-      }
-    }
+		public void EndPrepare()
+		{
+			foreach (IPlotGroupStyle pgs in this)
+				pgs.EndPrepare();
+		}
 
-    /// <summary>
-    /// Executes a prepare step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
-    /// </summary>
-    /// <param name="foreignStyles"></param>
-    public void PrepareStepIfForeignSteppingFalse(PlotGroupStyleCollectionBase foreignStyles)
-    {
-      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
-      {
-        Type groupType = entry.Key;
-        IPlotGroupStyle groupStyle = entry.Value;
-        GroupInfo groupInfo = _typeToInfo[groupType];
+		public void PrepareStep()
+		{
+			foreach (IPlotGroupStyle pgs in this)
+				pgs.PrepareStep();
+		}
 
-        if (groupInfo.ParentGroupType == null
-          && groupInfo.WasApplied
-          && groupStyle.IsStepEnabled
-          && foreignStyles.ContainsType(groupType)
-          && !(foreignStyles.GetPlotGroupStyle(groupType).IsStepEnabled)
-          )
-        {
-          groupStyle.PrepareStep();
-        }
-      }
-    }
+		public void BeginApply()
+		{
+			foreach (GroupInfo info in _typeToInfo.Values)
+				info.WasApplied = false;
+		}
 
+		public void EndApply()
+		{
+			foreach (GroupInfo info in _typeToInfo.Values)
+				info.WasApplied = false;
+		}
 
-    /// <summary>
-    /// Executes a step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
-    /// </summary>
-    /// <param name="step"></param>
-    /// <param name="foreignStyles"></param>
-    public void StepIfForeignSteppingFalse(int step, PlotGroupStyleCollectionBase foreignStyles)
-    {
-      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
-      {
-        Type groupType = entry.Key;
-        IPlotGroupStyle groupStyle = entry.Value;
-        GroupInfo groupInfo = _typeToInfo[groupType];
+		public void OnBeforeApplication(System.Type groupStyleType)
+		{
+			_typeToInfo[groupStyleType].WasApplied = true;
+		}
 
-        if (groupInfo.ParentGroupType == null
-          && groupInfo.WasApplied
-          && groupStyle.IsStepEnabled 
-          && foreignStyles.ContainsType(groupType)
-          && !(foreignStyles.GetPlotGroupStyle(groupType).IsStepEnabled)
-          )
-        {
-          int subStep = groupStyle.Step(step);
-          GroupInfo subGroupInfo = groupInfo;
-          for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
-          {
-            subGroupInfo = _typeToInfo[subGroupType];
-            IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
-            subStep = subGroupStyle.IsStepEnabled ? subGroupStyle.Step(subStep) : 0;
-          }
-        }
-        groupInfo.WasApplied = false;
-      }
-    }
+		public void Step(int step)
+		{
+			foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
+			{
+				Type groupType = entry.Key;
+				IPlotGroupStyle groupStyle = entry.Value;
+				GroupInfo groupInfo = _typeToInfo[groupType];
 
-    public static void TransferFromTo(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
-    {
-      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
-      {
-        Type groupType = entry.Key;
-        if (!tothis.ContainsType(groupType))
-          continue;
+				if (groupInfo.ParentGroupType == null
+					&& groupInfo.WasApplied
+					&& groupStyle.IsStepEnabled
+					)
+				{
+					int subStep = groupStyle.Step(step);
+					GroupInfo subGroupInfo = groupInfo;
+					for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+					{
+						subGroupInfo = _typeToInfo[subGroupType];
+						IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
+						subStep = subGroupStyle.IsStepEnabled ? subGroupStyle.Step(subStep) : 0;
+					}
+				}
+				groupInfo.WasApplied = false;
+			}
+		}
 
-        IPlotGroupStyle fromGroupStyle = entry.Value;
-        IPlotGroupStyle tothisGroupStyle = tothis.GetPlotGroupStyle(groupType);
-        tothisGroupStyle.TransferFrom(fromGroupStyle);
-      }
-    }
-    public static void TransferFromToIfBothSteppingEnabled(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
-    {
-      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
-      {
-        Type groupType = entry.Key;
-        if (!tothis.ContainsType(groupType))
-          continue;
+		/// <summary>
+		/// Executes a prepare step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
+		/// </summary>
+		/// <param name="foreignStyles"></param>
+		public void PrepareStepIfForeignSteppingFalse(PlotGroupStyleCollectionBase foreignStyles)
+		{
+			foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
+			{
+				Type groupType = entry.Key;
+				IPlotGroupStyle groupStyle = entry.Value;
+				GroupInfo groupInfo = _typeToInfo[groupType];
 
-        IPlotGroupStyle fromGroupStyle = entry.Value;
-        if (false == fromGroupStyle.IsStepEnabled)
-          continue;
+				if (groupInfo.ParentGroupType == null
+					&& groupInfo.WasApplied
+					&& groupStyle.IsStepEnabled
+					&& foreignStyles.ContainsType(groupType)
+					&& !(foreignStyles.GetPlotGroupStyle(groupType).IsStepEnabled)
+					)
+				{
+					groupStyle.PrepareStep();
+				}
+			}
+		}
 
-        IPlotGroupStyle tothisGroupStyle = tothis.GetPlotGroupStyle(groupType);
-        if (false == tothisGroupStyle.IsStepEnabled)
-          continue;
+		/// <summary>
+		/// Executes a step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="foreignStyles"></param>
+		public void StepIfForeignSteppingFalse(int step, PlotGroupStyleCollectionBase foreignStyles)
+		{
+			foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
+			{
+				Type groupType = entry.Key;
+				IPlotGroupStyle groupStyle = entry.Value;
+				GroupInfo groupInfo = _typeToInfo[groupType];
 
-        tothisGroupStyle.TransferFrom(fromGroupStyle);
-      }
-    }
-    public void SetAllToApplied()
-    {
-      foreach (KeyValuePair<Type, GroupInfo> entry in _typeToInfo)
-        entry.Value.WasApplied = true;
-    }
+				if (groupInfo.ParentGroupType == null
+					&& groupInfo.WasApplied
+					&& groupStyle.IsStepEnabled
+					&& foreignStyles.ContainsType(groupType)
+					&& !(foreignStyles.GetPlotGroupStyle(groupType).IsStepEnabled)
+					)
+				{
+					int subStep = groupStyle.Step(step);
+					GroupInfo subGroupInfo = groupInfo;
+					for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+					{
+						subGroupInfo = _typeToInfo[subGroupType];
+						IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
+						subStep = subGroupStyle.IsStepEnabled ? subGroupStyle.Step(subStep) : 0;
+					}
+				}
+				groupInfo.WasApplied = false;
+			}
+		}
 
-    #region IEnumerable<IPlotGroup> Members
+		public static void TransferFromTo(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
+		{
+			foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
+			{
+				Type groupType = entry.Key;
+				if (!tothis.ContainsType(groupType))
+					continue;
 
-    public IEnumerator<IPlotGroupStyle> GetEnumerator()
-    {
-      return _typeToInstance.Values.GetEnumerator();
-    }
+				IPlotGroupStyle fromGroupStyle = entry.Value;
+				IPlotGroupStyle tothisGroupStyle = tothis.GetPlotGroupStyle(groupType);
+				tothisGroupStyle.TransferFrom(fromGroupStyle);
+			}
+		}
 
-    #endregion
+		public static void TransferFromToIfBothSteppingEnabled(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
+		{
+			foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
+			{
+				Type groupType = entry.Key;
+				if (!tothis.ContainsType(groupType))
+					continue;
 
-    #region IEnumerable Members
+				IPlotGroupStyle fromGroupStyle = entry.Value;
+				if (false == fromGroupStyle.IsStepEnabled)
+					continue;
 
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-    {
-      return _typeToInstance.Values.GetEnumerator();
-    }
+				IPlotGroupStyle tothisGroupStyle = tothis.GetPlotGroupStyle(groupType);
+				if (false == tothisGroupStyle.IsStepEnabled)
+					continue;
 
-    #endregion
+				tothisGroupStyle.TransferFrom(fromGroupStyle);
+			}
+		}
 
+		public void SetAllToApplied()
+		{
+			foreach (KeyValuePair<Type, GroupInfo> entry in _typeToInfo)
+				entry.Value.WasApplied = true;
+		}
+
+		#region IEnumerable<IPlotGroup> Members
+
+		public IEnumerator<IPlotGroupStyle> GetEnumerator()
+		{
+			return _typeToInstance.Values.GetEnumerator();
+		}
+
+		#endregion IEnumerable<IPlotGroup> Members
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _typeToInstance.Values.GetEnumerator();
+		}
+
+		#endregion IEnumerable Members
 
 		/// <summary>
 		/// Returns a list, in which the items are ordered by (i) their name, if the items are on the same level, (ii) by their parent-child relationship.
@@ -614,13 +694,13 @@ namespace Altaxo.Graph.Plot.Groups
 
 			// now find the other items and insert them
 			// we have to use a for loop because we modify the result list
-			for(int i=result.Count-1;i>=0;--i)
+			for (int i = result.Count - 1; i >= 0; --i)
 			{
 				var info = _typeToInfo[result[i].GetType()];
 				int insertPoint = i + 1;
-				while(info.ChildGroupType != null)
+				while (info.ChildGroupType != null)
 				{
-					result.Insert(insertPoint,_typeToInstance[info.ChildGroupType]);
+					result.Insert(insertPoint, _typeToInstance[info.ChildGroupType]);
 					++insertPoint;
 					info = _typeToInfo[info.ChildGroupType];
 				}
@@ -630,7 +710,5 @@ namespace Altaxo.Graph.Plot.Groups
 
 			return result;
 		}
-
-
-  }
+	}
 }

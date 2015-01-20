@@ -37,12 +37,19 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IXYZMeshedColumnPlotDataView))]
 	[UserControllerForObject(typeof(XYZMeshedColumnPlotData))]
-	public class XYZMeshedColumnPlotDataController : MVCANControllerBase<XYZMeshedColumnPlotData, IXYZMeshedColumnPlotDataView>
+	public class XYZMeshedColumnPlotDataController : MVCANControllerEditOriginalDocBase<XYZMeshedColumnPlotData, IXYZMeshedColumnPlotDataView>
 	{
 		private IMVCANController _dataProxyController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_dataProxyController, () => _dataProxyController = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_dataProxyController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataTableMatrix }, typeof(IMVCANController), UseDocument.Directly);
@@ -60,10 +67,7 @@ namespace Altaxo.Gui.Graph
 			result = _dataProxyController.Apply(disposeController);
 			if (!result) return result;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(result, disposeController);
 		}
 	}
 }

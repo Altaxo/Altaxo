@@ -40,12 +40,25 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 
 	[UserControllerForObject(typeof(MultiLineLabelFormattingBase))]
 	[ExpectedTypeOfView(typeof(IMultiLineLabelFormattingBaseView))]
-	public class MultiLineLabelFormattingBaseController : MVCANControllerBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
+	public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, IMultiLineLabelFormattingBaseView>
 	{
 		private SelectableListNodeList _textBlockAlignmentChoices;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_textBlockAlignmentChoices = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
@@ -62,9 +75,7 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 			_doc.LineSpacing = _view.LineSpacing;
 			_doc.TextBlockAlignment = (System.Drawing.StringAlignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

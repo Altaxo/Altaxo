@@ -42,12 +42,19 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(ClosedPathShapeBase))]
 	[ExpectedTypeOfView(typeof(IClosedPathShapeView))]
-	public class ClosedPathShapeController : MVCANControllerBase<ClosedPathShapeBase, IClosedPathShapeView>
+	public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<ClosedPathShapeBase, IClosedPathShapeView>
 	{
 		private IMVCANController _locationController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
@@ -68,12 +75,11 @@ namespace Altaxo.Gui.Graph.Shapes
 
 			_doc.Pen = _view.DocPen;
 			_doc.Brush = _view.DocBrush;
-			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				_originalDoc.CopyFrom(_doc);
+			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

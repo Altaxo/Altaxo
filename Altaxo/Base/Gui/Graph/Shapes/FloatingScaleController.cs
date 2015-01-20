@@ -67,15 +67,37 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(FloatingScale), 110)]
 	[ExpectedTypeOfView(typeof(IFloatingScaleView))]
-	public class FloatingScaleController : MVCANControllerBase<FloatingScale, IFloatingScaleView>
+	public class FloatingScaleController : MVCANControllerEditOriginalDocBase<FloatingScale, IFloatingScaleView>
 	{
 		private AxisStyleControllerGlue _axisStyleControllerGlue;
 		protected TickSpacing _tempTickSpacing;
 		protected SelectableListNodeList _tickSpacingTypes;
 		protected IMVCAController _tickSpacingController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
+
+			if (null != _axisStyleControllerGlue)
+			{
+				yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.AxisStyleController, null);
+				yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.MajorLabelCondController, null);
+				yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.MinorLabelCondController, null);
+				yield return new ControllerAndSetNullMethod(null, () => _axisStyleControllerGlue = null);
+			}
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_tickSpacingTypes = null;
+			_tempTickSpacing = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_tempTickSpacing = (TickSpacing)_doc.TickSpacing.Clone();
@@ -138,10 +160,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			_doc.BackgroundPadding = _view.BackgroundPadding;
 			_doc.Background = _view.SelectedBackground;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

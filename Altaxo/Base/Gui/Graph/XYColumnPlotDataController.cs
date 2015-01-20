@@ -78,12 +78,11 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(XYColumnPlotData))]
 	[ExpectedTypeOfView(typeof(IXYColumnPlotDataView))]
-	public class XYColumnPlotDataController : IXYColumnPlotDataViewEventSink, IMVCANController
+	public class XYColumnPlotDataController
+		:
+		MVCANControllerEditOriginalDocBase<XYColumnPlotData, IXYColumnPlotDataView>,
+		IXYColumnPlotDataViewEventSink
 	{
-		private IXYColumnPlotDataView _view = null;
-		private XYColumnPlotData _originalDoc;
-		private UseDocument _useDocumentCopy;
-
 		private bool _isDirty = false;
 
 		private int _plotRangeFrom;
@@ -96,22 +95,34 @@ namespace Altaxo.Gui.Graph
 		private SelectableListNodeList _tableItems = new SelectableListNodeList();
 		private SelectableListNodeList _columnItems = new SelectableListNodeList();
 
-		public void SetDirty()
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			_isDirty = true;
+			yield break;
 		}
 
-		#region ILineScatterPlotDataController Members
-
-		public void Initialize(bool initData)
+		public override void Dispose(bool isDisposing)
 		{
+			_xColumn = null;
+			_yColumn = null;
+			_labelColumn = null;
+
+			_tableItems = null;
+			_columnItems = null;
+
+			base.Dispose(isDisposing);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
-				_xColumn = _originalDoc.XColumn;
-				_yColumn = _originalDoc.YColumn;
-				_labelColumn = _originalDoc.LabelColumn;
-				_plotRangeFrom = _originalDoc.PlotRangeStart;
-				_plotRangeTo = _originalDoc.PlotRangeLength == int.MaxValue ? int.MaxValue : _originalDoc.PlotRangeStart + _originalDoc.PlotRangeLength - 1;
+				_xColumn = _doc.XColumn;
+				_yColumn = _doc.YColumn;
+				_labelColumn = _doc.LabelColumn;
+				_plotRangeFrom = _doc.PlotRangeStart;
+				_plotRangeTo = _doc.PlotRangeLength == int.MaxValue ? int.MaxValue : _doc.PlotRangeStart + _doc.PlotRangeLength - 1;
 				CalcMaxPossiblePlotRangeTo();
 
 				// Initialize tables
@@ -159,6 +170,39 @@ namespace Altaxo.Gui.Graph
 				CalcMaxPossiblePlotRangeTo();
 			}
 		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (_isDirty)
+			{
+				_doc.XColumn = _xColumn;
+				_doc.YColumn = _yColumn;
+				_doc.PlotRangeStart = this._plotRangeFrom;
+				_doc.PlotRangeLength = this._plotRangeTo >= this._maxPossiblePlotRangeTo ? int.MaxValue : this._plotRangeTo + 1 - this._plotRangeFrom;
+			}
+			_isDirty = false;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
+			base.DetachView();
+		}
+
+		public void SetDirty()
+		{
+			_isDirty = true;
+		}
+
+		#region ILineScatterPlotDataController Members
 
 		private void CalcMaxPossiblePlotRangeTo()
 		{
@@ -244,87 +288,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion ILineScatterPlotDataController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			if (_isDirty)
-			{
-				_originalDoc.XColumn = _xColumn;
-				_originalDoc.YColumn = _yColumn;
-				_originalDoc.PlotRangeStart = this._plotRangeFrom;
-				_originalDoc.PlotRangeLength = this._plotRangeTo >= this._maxPossiblePlotRangeTo ? int.MaxValue : this._plotRangeTo + 1 - this._plotRangeFrom;
-			}
-			_isDirty = false;
-			return true; // successfull
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
-
-		#region IMVCController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || args.Length == 0 || !(args[0] is XYColumnPlotData))
-				return false;
-
-			_originalDoc = (XYColumnPlotData)args[0];
-
-			Initialize(true);
-
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocumentCopy = value; }
-		}
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					_view.Controller = null;
-				}
-
-				_view = value as IXYColumnPlotDataView;
-
-				if (_view != null)
-				{
-					Initialize(false);
-					_view.Controller = this;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return this._originalDoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
 	}
 }

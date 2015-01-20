@@ -60,33 +60,44 @@ namespace Altaxo.Gui.Graph
 	/// This is the controller for a <see cref="PlotGroupStyleCollection"/> that choose between the simple and the advanced presentation mode.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IPlotGroupCollectionView))]
-	public class PlotGroupCollectionController : IMVCANController
+	public class PlotGroupCollectionController : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionView>
 	{
-		private IPlotGroupCollectionView _view;
-		private PlotGroupStyleCollection _origdoc;
-		private PlotGroupStyleCollection _doc;
-
 		private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
 		private PlotGroupCollectionControllerSimple _controllerSimple;
 
-		private void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield return new ControllerAndSetNullMethod(_controllerAdvanced, () => _controllerAdvanced = null);
+			yield return new ControllerAndSetNullMethod(_controllerSimple, () => _controllerSimple = null);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
+				if (null != _controllerSimple)
+				{
+					_controllerSimple.Dispose();
+					_controllerSimple = null;
+				}
+				if (null != _controllerAdvanced)
+				{
+					_controllerAdvanced.Dispose();
+					_controllerAdvanced = null;
+				}
+
 				bool isSerialStepping, isColor, isLineStyle, isSymbolStyle;
 				if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc, out isSerialStepping, out isColor, out isLineStyle, out isSymbolStyle))
 				{
-					_controllerSimple = new PlotGroupCollectionControllerSimple();
-					_controllerSimple.UseDocumentCopy = UseDocument.Directly;
+					_controllerSimple = new PlotGroupCollectionControllerSimple() { UseDocumentCopy = UseDocument.Directly };
 					_controllerSimple.InitializeDocument(_doc);
-					_controllerAdvanced = null;
 				}
 				else
 				{
-					_controllerAdvanced = new PlotGroupCollectionControllerAdvanced();
-					_controllerAdvanced.UseDocumentCopy = UseDocument.Directly;
+					_controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
 					_controllerAdvanced.InitializeDocument(_doc);
-					_controllerSimple = null;
 				}
 			}
 
@@ -107,47 +118,43 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#region IMVCANController
-
-		public bool InitializeDocument(params object[] args)
+		public override bool Apply(bool disposeController)
 		{
-			if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
-				return false;
-			_origdoc = (PlotGroupStyleCollection)args[0];
-			_doc = _origdoc.Clone();
-			Initialize(true);
-			return true;
-		}
+			bool result;
+			if (null != _controllerSimple)
+				result = _controllerSimple.Apply(disposeController);
+			else
+				result = _controllerAdvanced.Apply(disposeController);
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		public object ViewObject
-		{
-			get
+			if (true == result)
 			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
+				if (null != _controllerSimple)
 				{
-					_view.GotoAdvanced -= new Action(EhView_GotoAdvanced);
-					_view.GotoSimple -= new Action(EhView_GotoSimple);
+					_doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
 				}
-
-				_view = value as IPlotGroupCollectionView;
-
-				if (_view != null)
+				else
 				{
-					Initialize(false);
-
-					_view.GotoAdvanced += new Action(EhView_GotoAdvanced);
-					_view.GotoSimple += new Action(EhView_GotoSimple);
+					_doc = (PlotGroupStyleCollection)_controllerAdvanced.ModelObject;
 				}
 			}
+
+			return ApplyEnd(result, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.GotoAdvanced += new Action(EhView_GotoAdvanced);
+			_view.GotoSimple += new Action(EhView_GotoSimple);
+		}
+
+		protected override void DetachView()
+		{
+			_view.GotoAdvanced -= new Action(EhView_GotoAdvanced);
+			_view.GotoSimple -= new Action(EhView_GotoSimple);
+
+			base.DetachView();
 		}
 
 		private void EhView_GotoSimple()
@@ -180,52 +187,5 @@ namespace Altaxo.Gui.Graph
 			_controllerAdvanced.InitializeDocument(_doc);
 			Initialize(false);
 		}
-
-		public object ModelObject
-		{
-			get { return _origdoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		public bool Apply(bool disposeController)
-		{
-			bool result;
-			if (null != _controllerSimple)
-				result = _controllerSimple.Apply(disposeController);
-			else
-				result = _controllerAdvanced.Apply(disposeController);
-
-			if (true == result)
-			{
-				if (null != _controllerSimple)
-				{
-					_doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
-				}
-				else
-				{
-					_doc = (PlotGroupStyleCollection)_controllerAdvanced.ModelObject;
-				}
-				_origdoc.CopyFrom(_doc);
-			}
-
-			return result;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IMVCANController
 	}
 }

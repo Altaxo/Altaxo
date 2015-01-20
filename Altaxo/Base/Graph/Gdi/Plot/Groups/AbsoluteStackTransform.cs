@@ -35,7 +35,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	/// <summary>
 	///
 	/// </summary>
-	public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
+	public class AbsoluteStackTransform
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ICoordinateTransformingGroupStyle
 	{
 		#region Serialization
 
@@ -419,9 +422,5 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		}
 
 		#endregion ICloneable Members
-
-		#region ICoordinateTransformingGroupStyle Members
-
-		#endregion ICoordinateTransformingGroupStyle Members
 	}
 }

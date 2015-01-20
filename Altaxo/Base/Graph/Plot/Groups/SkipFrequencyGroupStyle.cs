@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,93 +28,97 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-  using Gdi.Plot.Groups;
+	using Gdi.Plot.Groups;
 
-  /// <summary>
-  /// This group style is intended to publish the symbol size to all interested
-  /// plot styles.
-  /// </summary>
-  public class SkipFrequencyGroupStyle : IPlotGroupStyle
-  {
-    bool _isInitialized;
-    int _skipFrequency;
-    readonly static Type MyType = typeof(SkipFrequencyGroupStyle);
+	/// <summary>
+	/// This group style is intended to publish the symbol size to all interested
+	/// plot styles.
+	/// </summary>
+	public class SkipFrequencyGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
+	{
+		private bool _isInitialized;
+		private int _skipFrequency;
+		private static readonly Type MyType = typeof(SkipFrequencyGroupStyle);
 
-    #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SkipFrequencyGroupStyle), 0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        SkipFrequencyGroupStyle s = (SkipFrequencyGroupStyle)obj;
-      }
+		#region Serialization
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SkipFrequencyGroupStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				SkipFrequencyGroupStyle s = (SkipFrequencyGroupStyle)obj;
+			}
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        SkipFrequencyGroupStyle s = null != o ? (SkipFrequencyGroupStyle)o : new SkipFrequencyGroupStyle();
-        return s;
-      }
-    }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				SkipFrequencyGroupStyle s = null != o ? (SkipFrequencyGroupStyle)o : new SkipFrequencyGroupStyle();
+				return s;
+			}
+		}
 
-    #endregion
+		#endregion Serialization
 
-    #region Constructors
+		#region Constructors
 
-    public SkipFrequencyGroupStyle()
-    {
-    }
+		public SkipFrequencyGroupStyle()
+		{
+		}
 
-    public SkipFrequencyGroupStyle(SkipFrequencyGroupStyle from)
-    {
-      this._isInitialized = from._isInitialized;
-      this._skipFrequency = from._skipFrequency;
-    }
+		public SkipFrequencyGroupStyle(SkipFrequencyGroupStyle from)
+		{
+			this._isInitialized = from._isInitialized;
+			this._skipFrequency = from._skipFrequency;
+		}
 
-    #endregion
+		#endregion Constructors
 
-    #region ICloneable Members
+		#region ICloneable Members
 
-    public SkipFrequencyGroupStyle Clone()
-    {
-      return new SkipFrequencyGroupStyle(this);
-    }
+		public SkipFrequencyGroupStyle Clone()
+		{
+			return new SkipFrequencyGroupStyle(this);
+		}
 
-    object ICloneable.Clone()
-    {
-      return new SkipFrequencyGroupStyle(this);
-    }
+		object ICloneable.Clone()
+		{
+			return new SkipFrequencyGroupStyle(this);
+		}
 
+		#endregion ICloneable Members
 
-    #endregion
+		#region IGroupStyle Members
 
-    #region IGroupStyle Members
+		public void TransferFrom(IPlotGroupStyle fromb)
+		{
+			SkipFrequencyGroupStyle from = (SkipFrequencyGroupStyle)fromb;
+			this._isInitialized = from._isInitialized;
+			_skipFrequency = from._skipFrequency;
+		}
 
-    public void TransferFrom(IPlotGroupStyle fromb)
-    {
-      SkipFrequencyGroupStyle from = (SkipFrequencyGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
-      _skipFrequency = from._skipFrequency;
-    }
+		public void BeginPrepare()
+		{
+			_isInitialized = false;
+		}
 
-    public void BeginPrepare()
-    {
-      _isInitialized = false;
-    }
-    public void PrepareStep()
-    {
-    }
-    public void EndPrepare()
-    {
-    }
+		public void PrepareStep()
+		{
+		}
 
-    public bool CanCarryOver
-    {
+		public void EndPrepare()
+		{
+		}
+
+		public bool CanCarryOver
+		{
 			get
 			{
 				return false;
 			}
-    }
+		}
 
 		public bool CanStep
 		{
@@ -122,130 +128,126 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-    public int Step(int step)
-    {
-      return 0;
-    }
+		public int Step(int step)
+		{
+			return 0;
+		}
 
-    /// <summary>
-    /// Get/sets whether or not stepping is allowed.
-    /// </summary>
-    public bool IsStepEnabled
-    {
-      get
-      {
-        return false;
-      }
-      set
-      {
+		/// <summary>
+		/// Get/sets whether or not stepping is allowed.
+		/// </summary>
+		public bool IsStepEnabled
+		{
+			get
+			{
+				return false;
+			}
+			set
+			{
+			}
+		}
 
-      }
-    }
+		#endregion IGroupStyle Members
 
-    #endregion
+		#region Other members
 
-    #region Other members
+		public bool IsInitialized
+		{
+			get
+			{
+				return _isInitialized;
+			}
+		}
 
-    public bool IsInitialized
-    {
-      get
-      {
-        return _isInitialized;
-      }
-    }
-    public void Initialize(int skipFrequency)
-    {
-      _isInitialized = true;
-      _skipFrequency = skipFrequency;
-    }
-    public int SkipFrequency
-    {
-      get
-      {
-        return _skipFrequency;
-      }
-    }
-    #endregion
+		public void Initialize(int skipFrequency)
+		{
+			_isInitialized = true;
+			_skipFrequency = skipFrequency;
+		}
 
-    #region Static helpers
+		public int SkipFrequency
+		{
+			get
+			{
+				return _skipFrequency;
+			}
+		}
 
-    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
-    {
-      // this group style is local only, so no addition is made here
-    }
+		#endregion Other members
 
+		#region Static helpers
 
-    public static void AddLocalGroupStyle(
-     IPlotGroupStyleCollection externalGroups,
-     IPlotGroupStyleCollection localGroups)
-    {
-      if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SkipFrequencyGroupStyle)))
-        localGroups.Add(new SkipFrequencyGroupStyle());
-    }
+		public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+		{
+			// this group style is local only, so no addition is made here
+		}
 
-    public delegate int Int32FunctionValueGetter();
-    public static void PrepareStyle(
-      IPlotGroupStyleCollection externalGroups,
-      IPlotGroupStyleCollection localGroups,
-      Int32FunctionValueGetter getter)
-    {
-      if (!externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle))
-        && null != localGroups
-        && !localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
-      {
-        localGroups.Add(new SkipFrequencyGroupStyle());
-      }
+		public static void AddLocalGroupStyle(
+		 IPlotGroupStyleCollection externalGroups,
+		 IPlotGroupStyleCollection localGroups)
+		{
+			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SkipFrequencyGroupStyle)))
+				localGroups.Add(new SkipFrequencyGroupStyle());
+		}
 
+		public delegate int Int32FunctionValueGetter();
 
-      SkipFrequencyGroupStyle grpStyle = null;
-      if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
-        grpStyle = (SkipFrequencyGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
-      else if (localGroups != null)
-        grpStyle = (SkipFrequencyGroupStyle)localGroups.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
+		public static void PrepareStyle(
+			IPlotGroupStyleCollection externalGroups,
+			IPlotGroupStyleCollection localGroups,
+			Int32FunctionValueGetter getter)
+		{
+			if (!externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle))
+				&& null != localGroups
+				&& !localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
+			{
+				localGroups.Add(new SkipFrequencyGroupStyle());
+			}
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
-        grpStyle.Initialize(getter());
-    }
+			SkipFrequencyGroupStyle grpStyle = null;
+			if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
+				grpStyle = (SkipFrequencyGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
+			else if (localGroups != null)
+				grpStyle = (SkipFrequencyGroupStyle)localGroups.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
 
+			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+				grpStyle.Initialize(getter());
+		}
 
-    public delegate void Int32ValueSetter(int c);
-    /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
-    /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
-    /// <param name="setter"></param>
-    /// <returns></returns>
-    public static bool ApplyStyle(
-      IPlotGroupStyleCollection externalGroups,
-      IPlotGroupStyleCollection localGroups,
-      Int32ValueSetter setter)
-    {
-      SkipFrequencyGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
-      if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
-        grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
-        grpColl = localGroups;
+		public delegate void Int32ValueSetter(int c);
 
-      if (null != grpColl)
-      {
-        grpStyle = (SkipFrequencyGroupStyle)grpColl.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
-        grpColl.OnBeforeApplication(typeof(SkipFrequencyGroupStyle));
-        setter(grpStyle.SkipFrequency);
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+		/// <summary>
+		/// Try to apply the symbol size group style. Returns true if successfull applied.
+		/// </summary>
+		/// <param name="externalGroups"></param>
+		/// <param name="localGroups"></param>
+		/// <param name="setter"></param>
+		/// <returns></returns>
+		public static bool ApplyStyle(
+			IPlotGroupStyleCollection externalGroups,
+			IPlotGroupStyleCollection localGroups,
+			Int32ValueSetter setter)
+		{
+			SkipFrequencyGroupStyle grpStyle = null;
+			IPlotGroupStyleCollection grpColl = null;
+			if (externalGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
+				grpColl = externalGroups;
+			else if (localGroups != null && localGroups.ContainsType(typeof(SkipFrequencyGroupStyle)))
+				grpColl = localGroups;
 
+			if (null != grpColl)
+			{
+				grpStyle = (SkipFrequencyGroupStyle)grpColl.GetPlotGroupStyle(typeof(SkipFrequencyGroupStyle));
+				grpColl.OnBeforeApplication(typeof(SkipFrequencyGroupStyle));
+				setter(grpStyle.SkipFrequency);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
-    }
-
-
-
-
-    #endregion
-  }
+		#endregion Static helpers
+	}
 }

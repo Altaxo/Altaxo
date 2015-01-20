@@ -42,12 +42,19 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(RegularPolygon), 110)]
 	[ExpectedTypeOfView(typeof(IRegularPolygonView))]
-	public class RegularPolygonController : MVCANControllerBase<RegularPolygon, IRegularPolygonView>
+	public class RegularPolygonController : MVCANControllerEditOriginalDocBase<RegularPolygon, IRegularPolygonView>
 	{
 		private ClosedPathShapeController _shapeCtrl;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_shapeCtrl, () => _shapeCtrl = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
@@ -71,10 +78,7 @@ namespace Altaxo.Gui.Graph.Shapes
 			_doc.CornerRadius = _view.CornerRadiusPt;
 			_doc.NumberOfVertices = _view.Vertices;
 
-			if (_useDocumentCopy)
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

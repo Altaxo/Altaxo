@@ -725,10 +725,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\PrintableAreaSetupControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Gui\Graph\PrintingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1401,9 +1397,6 @@
     </Compile>
     <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.xaml.cs">
       <DependentUpon>PositionSizeRotationScaleControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph\PrintableAreaSetupControl.xaml.cs">
-      <DependentUpon>PrintableAreaSetupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PrintingControl.xaml.cs">
       <DependentUpon>PrintingControl.xaml</DependentUpon>

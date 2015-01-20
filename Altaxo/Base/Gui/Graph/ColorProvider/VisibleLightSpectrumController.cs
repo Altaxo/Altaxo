@@ -43,16 +43,22 @@ namespace Altaxo.Gui.Graph.ColorProvider
 
 	[ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
 	[UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
-	public class VisibleLightSpectrumController : MVCANDControllerBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
+	public class VisibleLightSpectrumController : MVCANDControllerEditOriginalDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
 	{
 		private ColorProviderBaseController _baseController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
-				_baseController = new ColorProviderBaseController();
-				_baseController.UseDocumentCopy = UseDocument.Directly;
+				_baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
 				_baseController.InitializeDocument(_doc);
 				_baseController.MadeDirty += EhBaseControllerChanged;
 			}
@@ -63,6 +69,17 @@ namespace Altaxo.Gui.Graph.ColorProvider
 				_view.Gamma = _doc.Gamma;
 				_view.Brightness = _doc.Brightness;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (!_baseController.Apply(disposeController))
+				return false;
+
+			_doc.Gamma = _view.Gamma;
+			_doc.Brightness = _view.Brightness;
+
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -80,20 +97,6 @@ namespace Altaxo.Gui.Graph.ColorProvider
 		private void EhBaseControllerChanged(IMVCANDController ctrl)
 		{
 			OnMadeDirty();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (!_baseController.Apply(disposeController))
-				return false;
-
-			_doc.Gamma = _view.Gamma;
-			_doc.Brightness = _view.Brightness;
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

@@ -82,26 +82,25 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(IBackgroundStyle))]
 	[ExpectedTypeOfView(typeof(IBackgroundStyleView))]
-	public class BackgroundStyleController : IBackgroundStyleViewEventSink, IMVCAController
+	public class BackgroundStyleController : MVCANDControllerEditOriginalDocBase<IBackgroundStyle, IBackgroundStyleView>, IBackgroundStyleViewEventSink
 	{
-		private IBackgroundStyleView _view;
-		private IBackgroundStyle _doc;
-		private IBackgroundStyle _tempDoc;
-
 		protected System.Type[] _backgroundStyles;
 
-		public event EventHandler TemporaryModelObjectChanged;
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		public BackgroundStyleController(IBackgroundStyle doc)
 		{
-			_doc = doc;
-			_tempDoc = _doc == null ? null : (IBackgroundStyle)doc.Clone();
-			Initialize(true);
+			InitializeDocument(doc);
 		}
 
-		private void Initialize(bool bInit)
+		protected override void Initialize(bool initData)
 		{
-			if (bInit)
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				_backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
 			}
@@ -112,39 +111,39 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
+
+			base.DetachView();
+		}
+
 		private void InitializeBackgroundStyle()
 		{
-			int sel = Array.IndexOf(this._backgroundStyles, this._tempDoc == null ? null : this._tempDoc.GetType());
+			int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
 			_view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true), sel + 1);
 
-			if (this._tempDoc != null && this._tempDoc.SupportsBrush)
-				_view.BackgroundBrush_Initialize(this._tempDoc.Brush);
+			if (this._doc != null && this._doc.SupportsBrush)
+				_view.BackgroundBrush_Initialize(this._doc.Brush);
 			else
 				_view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
 
-			_view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
+			_view.BackgroundBrushEnable_Initialize(this._doc != null && this._doc.SupportsBrush);
 		}
 
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get { return _view; }
-			set
-			{
-				if (_view != null)
-					_view.Controller = null;
-
-				_view = value as IBackgroundStyleView;
-
-				Initialize(false);
-
-				if (_view != null)
-					_view.Controller = this;
-			}
-		}
-
-		public object ModelObject
+		public object TemporaryModelObject
 		{
 			get
 			{
@@ -152,50 +151,14 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void Dispose()
-		{
-		}
-
-		public object TemporaryModelObject
-		{
-			get
-			{
-				return _tempDoc;
-			}
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			_doc = _tempDoc;
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
-
 		#region IPlotRangeViewEventSink Members
 
 		public void EhView_BackgroundBrushChanged(BrushX brush)
 		{
-			if (this._tempDoc != null && this._tempDoc.SupportsBrush)
+			if (this._doc != null && this._doc.SupportsBrush)
 			{
-				this._tempDoc.Brush = brush;
-				OnTemporaryModelObjectChanged();
+				this._doc.Brush = brush;
+				OnMadeDirty();
 			}
 		}
 
@@ -209,15 +172,15 @@ namespace Altaxo.Gui.Graph
 
 			if (newValue != 0)
 			{
-				_tempDoc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
-				backgroundColor = _tempDoc.Brush;
+				_doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
+				backgroundColor = _doc.Brush;
 			}
 			else // is null
 			{
-				_tempDoc = null;
+				_doc = null;
 			}
 
-			if (_tempDoc != null && _tempDoc.SupportsBrush)
+			if (_doc != null && _doc.SupportsBrush)
 			{
 				_view.BackgroundBrush_Initialize(backgroundColor);
 				_view.BackgroundBrushEnable_Initialize(true);
@@ -227,13 +190,7 @@ namespace Altaxo.Gui.Graph
 				_view.BackgroundBrushEnable_Initialize(false);
 			}
 
-			OnTemporaryModelObjectChanged();
-		}
-
-		private void OnTemporaryModelObjectChanged()
-		{
-			if (TemporaryModelObjectChanged != null)
-				TemporaryModelObjectChanged(this, EventArgs.Empty);
+			OnMadeDirty();
 		}
 
 		#endregion IPlotRangeViewEventSink Members

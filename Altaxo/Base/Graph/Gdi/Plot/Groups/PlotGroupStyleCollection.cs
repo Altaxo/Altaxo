@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Graph.Plot.Groups;
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
 	/// <summary>
@@ -35,11 +37,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		PlotGroupStyleCollectionBase,
 		ICloneable // is already implemented in base but is hidden because of inheritance
 	{
-		ICoordinateTransformingGroupStyle _coordinateTransformingStyle;
+		private ICoordinateTransformingGroupStyle _coordinateTransformingStyle;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollection), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -47,13 +50,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
 				info.AddValue("TransformingStyle", s._coordinateTransformingStyle);
-
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				PlotGroupStyleCollection s = null != o ? (PlotGroupStyleCollection)o : new PlotGroupStyleCollection();
 
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
@@ -64,9 +64,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
+
 		public PlotGroupStyleCollection()
 		{
 		}
@@ -76,23 +77,31 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			CopyFrom(from);
 		}
 
-		public override void CopyFrom(PlotGroupStyleCollectionBase fromb)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, fromb))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			base.CopyFrom(fromb);
+			var from = obj as PlotGroupStyleCollection;
 
-			if (fromb is PlotGroupStyleCollection)
+			if (null != from)
 			{
-				PlotGroupStyleCollection from = (PlotGroupStyleCollection)fromb;
+				using (var suspendToken = SuspendGetToken())
+				{
+					base.CopyFrom(from);
+					this.CoordinateTransformingStyle = null == from._coordinateTransformingStyle ? null : (ICoordinateTransformingGroupStyle)from._coordinateTransformingStyle.Clone();
 
-				_coordinateTransformingStyle = null == from._coordinateTransformingStyle ? null : (ICoordinateTransformingGroupStyle)from._coordinateTransformingStyle.Clone();
-
+					suspendToken.Resume();
+				}
+				return true;
+			}
+			else
+			{
+				return base.CopyFrom(obj);
 			}
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region ICloneable Members
 
@@ -106,12 +115,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return new PlotGroupStyleCollection(this);
 		}
 
-		#endregion
+		#endregion ICloneable Members
 
 		public override void Clear()
 		{
-			base.Clear();
 			_coordinateTransformingStyle = null;
+			base.Clear();
 		}
 
 		/// <summary>
@@ -125,7 +134,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 			set
 			{
-				_coordinateTransformingStyle = value;
+				if (ChildSetMember(ref _coordinateTransformingStyle, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 	}

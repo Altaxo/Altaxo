@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IGridPartitioningView))]
 	[UserControllerForObject(typeof(GridPartitioning))]
-	public class GridPartitioningController : MVCANControllerBase<GridPartitioning, IGridPartitioningView>
+	public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
 	{
 		private ObservableCollection<Units.DimensionfulQuantity> _columnCollection;
 		private ObservableCollection<Units.DimensionfulQuantity> _rowCollection;
@@ -65,6 +65,23 @@ namespace Altaxo.Gui.Graph
 		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("Relative Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
 		private PointD2D _parentLayerSize;
+
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_columnCollection = null;
+			_rowCollection = null;
+			_xSizeEnvironment = null;
+			_ySizeEnvironment = null;
+			_percentLayerXSizeUnit = null;
+			_percentLayerYSizeUnit = null;
+
+			base.Dispose(isDisposing);
+		}
 
 		public override bool InitializeDocument(params object[] args)
 		{
@@ -85,6 +102,8 @@ namespace Altaxo.Gui.Graph
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.X, Units.Length.Point.Instance);
@@ -134,7 +153,7 @@ namespace Altaxo.Gui.Graph
 					_doc.YPartitioning.Add(RADouble.NewAbs(val.AsValueIn(Units.Length.Point.Instance)));
 			}
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

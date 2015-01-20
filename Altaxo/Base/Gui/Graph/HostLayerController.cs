@@ -106,8 +106,17 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			ApplyCurrentController(true, disposeController);
+
+			return ApplyEnd(true, disposeController);
+		}
+
 		protected override void AttachView()
 		{
+			base.AttachView();
+
 			_view.TabValidating += EhView_TabValidating;
 			_view.PageChanged += EhView_PageChanged;
 		}
@@ -116,24 +125,8 @@ namespace Altaxo.Gui.Graph
 		{
 			_view.TabValidating -= EhView_TabValidating;
 			_view.PageChanged -= EhView_PageChanged;
-		}
 
-		public override bool Apply(bool disposeController)
-		{
-			ApplyCurrentController(true, disposeController);
-
-			// _originalDoc.CopyFrom(_doc, GraphCopyOptions.All); // _doc remains suspended
-			if (disposeController)
-			{
-				Dispose();
-			}
-			else
-			{
-				if (null != _suspendToken)
-					_suspendToken.ResumeCompleteTemporarily();
-			}
-
-			return true;
+			base.DetachView();
 		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()

@@ -74,10 +74,17 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IColorProviderBaseView))]
 	[UserControllerForObject(typeof(ColorProviderBase))]
-	public class ColorProviderBaseController : MVCANDControllerBase<ColorProviderBase, IColorProviderBaseView>
+	public class ColorProviderBaseController : MVCANDControllerEditOriginalDocBase<ColorProviderBase, IColorProviderBaseView>
 	{
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.ColorBelow = _doc.ColorBelow;
@@ -86,6 +93,17 @@ namespace Altaxo.Gui.Graph
 				_view.Transparency = _doc.Transparency;
 				_view.ColorSteps = _doc.ColorSteps;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.ColorBelow = _view.ColorBelow;
+			_doc.ColorAbove = _view.ColorAbove;
+			_doc.ColorInvalid = _view.ColorInvalid;
+			_doc.Transparency = _view.Transparency;
+			_doc.ColorSteps = _view.ColorSteps;
+
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -98,17 +116,6 @@ namespace Altaxo.Gui.Graph
 		{
 			_view.ChoiceChanged -= OnMadeDirty;
 			base.DetachView();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			_originalDoc.ColorBelow = _view.ColorBelow;
-			_originalDoc.ColorAbove = _view.ColorAbove;
-			_originalDoc.ColorInvalid = _view.ColorInvalid;
-			_originalDoc.Transparency = _view.Transparency;
-			_originalDoc.ColorSteps = _view.ColorSteps;
-
-			return true;
 		}
 	}
 }

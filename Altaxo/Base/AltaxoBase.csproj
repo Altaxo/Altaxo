@@ -517,7 +517,6 @@
     <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleController.cs" />
     <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleController.cs" />
     <Compile Include="Gui\Graph\ExchangeTablesOfPlotItemsController.cs" />
-    <Compile Include="Gui\Graph\G2DPlotItemControllerOld.cs" />
     <Compile Include="Gui\Graph\Shapes\OpenPathShapeController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
     <Compile Include="Gui\Settings\AutoUpdateSettingsController.cs" />
@@ -1137,9 +1136,7 @@
     <Compile Include="Gui\Graph\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\LayerPositionController.cs" />
     <Compile Include="Gui\Graph\LineScatterLayerContentsController.cs" />
-    <Compile Include="Gui\Graph\LineScatterPlotDataController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionControllerAdvanced.cs" />
-    <Compile Include="Gui\Graph\PrintableAreaSetupController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />

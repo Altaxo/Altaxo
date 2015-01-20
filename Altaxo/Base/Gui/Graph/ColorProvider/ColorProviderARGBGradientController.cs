@@ -55,16 +55,22 @@ namespace Altaxo.Gui.Graph.ColorProvider
 
 	[ExpectedTypeOfView(typeof(IColorProviderARGBGradientView))]
 	[UserControllerForObject(typeof(ColorProviderARGBGradient), 110)]
-	public class ColorProviderARGBGradientController : MVCANDControllerBase<ColorProviderARGBGradient, IColorProviderARGBGradientView>
+	public class ColorProviderARGBGradientController : MVCANDControllerEditOriginalDocBase<ColorProviderARGBGradient, IColorProviderARGBGradientView>
 	{
 		private ColorProviderBaseController _baseController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
-				_baseController = new ColorProviderBaseController();
-				_baseController.UseDocumentCopy = UseDocument.Directly;
+				_baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
 				_baseController.InitializeDocument(_doc);
 				_baseController.MadeDirty += EhBaseControllerChanged;
 			}
@@ -83,6 +89,23 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			if (!_baseController.Apply(disposeController))
+				return false;
+
+			_doc.Red0 = _view.Red0;
+			_doc.Red1 = _view.Red1;
+			_doc.Green0 = _view.Green0;
+			_doc.Green1 = _view.Green1;
+			_doc.Blue0 = _view.Blue0;
+			_doc.Blue1 = _view.Blue1;
+			_doc.Opaqueness0 = _view.Opaqueness0;
+			_doc.Opaqueness1 = _view.Opaqueness1;
+
+			return ApplyEnd(true, disposeController);
+		}
+
 		protected override void AttachView()
 		{
 			base.AttachView();
@@ -98,26 +121,6 @@ namespace Altaxo.Gui.Graph.ColorProvider
 		private void EhBaseControllerChanged(IMVCANDController ctrl)
 		{
 			OnMadeDirty();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (!_baseController.Apply(disposeController))
-				return false;
-
-			_doc.Red0 = _view.Red0;
-			_doc.Red1 = _view.Red1;
-			_doc.Green0 = _view.Green0;
-			_doc.Green1 = _view.Green1;
-			_doc.Blue0 = _view.Blue0;
-			_doc.Blue1 = _view.Blue1;
-			_doc.Opaqueness0 = _view.Opaqueness0;
-			_doc.Opaqueness1 = _view.Opaqueness1;
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

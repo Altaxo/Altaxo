@@ -48,15 +48,22 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(ImageGraphic))]
 	[ExpectedTypeOfView(typeof(IImageGraphicView))]
-	public class ImageGraphicController : MVCANControllerBase<ImageGraphic, IImageGraphicView>
+	public class ImageGraphicController : MVCANControllerEditOriginalDocBase<ImageGraphic, IImageGraphicView>
 	{
 		private PointD2D _srcSize;
 		private PointD2D _docScale;
 		private ItemLocationDirect _docLocation;
 		private ItemLocationDirectController _locationController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_srcSize = _doc.GetImageSizePt();
@@ -64,7 +71,7 @@ namespace Altaxo.Gui.Graph.Shapes
 				_docLocation = new ItemLocationDirect();
 				_docLocation.CopyFrom(_doc.Location);
 				_docLocation.Scale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
-				_locationController = new ItemLocationDirectController();
+				_locationController = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
 				_locationController.InitializeDocument(new object[] { _docLocation });
 				Current.Gui.FindAndAttachControlTo(_locationController);
 
@@ -91,14 +98,12 @@ namespace Altaxo.Gui.Graph.Shapes
 
 			_docLocation = (ItemLocationDirect)_locationController.ModelObject;
 
-			_doc.Location.CopyFrom(_docLocation);
+			if (!object.ReferenceEquals(_doc.Location, _docLocation))
+				_doc.Location.CopyFrom((ItemLocationDirect)_docLocation);
 
 			// all other properties where already set during the session
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

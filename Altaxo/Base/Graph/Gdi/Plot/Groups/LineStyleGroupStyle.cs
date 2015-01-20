@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,38 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
 	using Graph.Plot.Groups;
 
-	public class LineStyleGroupStyle : IPlotGroupStyle
+	public class LineStyleGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
 	{
-		bool _isInitialized;
-		DashStyle _value;
-		bool _isStepEnabled = true;
+		private bool _isInitialized;
+		private DashStyle _value;
+		private bool _isStepEnabled = true;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineStyleGroupStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -55,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
@@ -69,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			this._value = from._value;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region ICloneable Members
 
@@ -83,8 +88,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return new LineStyleGroupStyle(this);
 		}
 
-
-		#endregion
+		#endregion ICloneable Members
 
 		#region IGroupStyle Members
 
@@ -99,9 +103,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		{
 			_isInitialized = false;
 		}
+
 		public void PrepareStep()
 		{
 		}
+
 		public void EndPrepare()
 		{
 		}
@@ -146,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion IGroupStyle Members
 
 		#region Other members
 
@@ -157,11 +163,13 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				return _isInitialized;
 			}
 		}
+
 		public void Initialize(DashStyle c)
 		{
 			_isInitialized = true;
 			_value = c;
 		}
+
 		public DashStyle DashStyle
 		{
 			get
@@ -169,7 +177,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				return _value;
 			}
 		}
-		#endregion
+
+		#endregion Other members
 
 		#region Static helpers
 
@@ -181,8 +190,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				localGroups.Add(new LineStyleGroupStyle());
 		}
 
-
 		public delegate DashStyle Getter();
+
 		public static void PrepareStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
@@ -206,6 +215,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		}
 
 		public delegate void Setter(DashStyle c);
+
 		public static void ApplyStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
@@ -224,14 +234,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				grpColl.OnBeforeApplication(typeof(LineStyleGroupStyle));
 				setter(grpStyle.DashStyle);
 			}
-
 		}
 
-
-
-
-		#endregion
-
-
+		#endregion Static helpers
 	}
 }

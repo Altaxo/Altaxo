@@ -35,9 +35,8 @@ namespace Altaxo.Gui.Graph
 	public interface IAxisLinkView
 	{
 		/// <summary>
-		/// Initializes the type of the link.
+		/// Initializes the type of the link. If <c>true</c>, the linke is initialized as 1:1 link and all other fields are ignored.
 		/// </summary>
-		/// <param name="isStraight">If <c>true</c>, the linke is initialized as 1:1 link and all other fields are disabled.</param>
 		bool IsStraightLink { get; set; }
 
 		/// <summary>
@@ -68,10 +67,17 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IAxisLinkView))]
 	[UserControllerForObject(typeof(LinkedScaleParameters))]
-	public class AxisLinkController : MVCANControllerBase<LinkedScaleParameters, IAxisLinkView>
+	public class AxisLinkController : MVCANControllerEditOriginalDocBase<LinkedScaleParameters, IAxisLinkView>
 	{
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.OrgA = _doc.OrgA;
@@ -96,10 +102,7 @@ namespace Altaxo.Gui.Graph
 				_doc.EndB = _view.EndB;
 			}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

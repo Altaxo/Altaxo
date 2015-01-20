@@ -41,12 +41,25 @@ namespace Altaxo.Gui.Graph
 	}
 
 	[ExpectedTypeOfView(typeof(IDefaultLineScatterGraphDocumentView))]
-	public class DefaultLineScatterGraphDocumentController : MVCANControllerBase<GraphDocument, IDefaultLineScatterGraphDocumentView>
+	public class DefaultLineScatterGraphDocumentController : MVCANControllerEditOriginalDocBase<GraphDocument, IDefaultLineScatterGraphDocumentView>
 	{
 		private SelectableListNodeList _graphsInProject = new SelectableListNodeList();
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_graphsInProject = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_graphsInProject.Clear();
@@ -61,6 +74,11 @@ namespace Altaxo.Gui.Graph
 				_view.GraphsInProject = _graphsInProject;
 				RenderPreview(_doc);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -132,14 +150,6 @@ namespace Altaxo.Gui.Graph
 			{
 				_view.SetPreviewBitmap("No graph document selected", null);
 			}
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

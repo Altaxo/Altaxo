@@ -75,51 +75,60 @@ namespace Altaxo.Gui.Graph
 	#endregion Interfaces
 
 	/// <summary>
-	/// Summary description for AxisScaleController.
+	/// Summary description for ColorProviderController.
 	/// </summary>
-	[ExpectedTypeOfView(typeof(IDensityScaleView))]
-	[UserControllerForObject(typeof(NumericalScale), 101)]
-	public class ColorProviderController : IMVCANController
+	[ExpectedTypeOfView(typeof(IColorProviderView))]
+	//[UserControllerForObject(typeof(IColorProvider), 101)]
+	public class ColorProviderController : MVCANDControllerEditOriginalDocBase<IColorProvider, IColorProviderView>
 	{
-		protected IColorProviderView _view;
-
-		// Cached values
-		protected IColorProvider _originalDoc;
-
-		protected IColorProvider _doc;
-
 		protected IMVCAController _detailController;
 		protected object _detailView;
 
 		protected SelectableListNodeList _availableClasses;
 
-		private UseDocument _useDocumentCopy;
-
-		public bool InitializeDocument(params object[] args)
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (args.Length == 0 || !(args[0] is IColorProvider))
-				return false;
-
-			_originalDoc = (IColorProvider)args[0];
-			if (_useDocumentCopy == UseDocument.Copy)
-				_doc = (IColorProvider)_originalDoc.Clone();
-			else
-				_doc = _originalDoc;
-
-			Initialize(true);
-			return true;
+			yield return new ControllerAndSetNullMethod(_detailController, () => _detailController = null);
 		}
 
-		public UseDocument UseDocumentCopy
+		public override void Dispose(bool isDisposing)
 		{
-			set { _useDocumentCopy = value; }
+			_detailView = null;
+			base.Dispose(isDisposing);
 		}
 
-		public void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			InitClassTypes(initData);
 			InitDetailController(initData);
 			CreateAndSetPreviewBitmap();
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (null != _detailController)
+			{
+				if (!_detailController.Apply(disposeController))
+					return false;
+			}
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.ColorProviderChanged += EhColorProviderSelectionChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ColorProviderChanged -= EhColorProviderSelectionChanged;
+
+			base.DetachView();
 		}
 
 		public void InitClassTypes(bool bInit)
@@ -152,6 +161,12 @@ namespace Altaxo.Gui.Graph
 
 				_detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
 
+				if (null != _detailController && this.GetType() == _detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
+				{
+					_detailController.Dispose();
+					_detailController = null;
+				}
+
 				if (_detailController is IMVCANDController)
 					((IMVCANDController)_detailController).MadeDirty += EhDetailsChanged;
 			}
@@ -172,16 +187,25 @@ namespace Altaxo.Gui.Graph
 				{
 					// replace the current axis by a new axis of the type axistype
 					var oldDoc = _doc;
-					_doc = (IColorProvider)System.Activator.CreateInstance(chosenType);
+					var newDoc = (IColorProvider)System.Activator.CreateInstance(chosenType);
 
 					// Try to set the same org and end as the axis before
 					// this will fail for instance if we switch from linear to logarithmic with negative bounds
 					try
 					{
-						_doc.CopyFrom(oldDoc);
+						newDoc.CopyFrom(oldDoc);
 					}
 					catch (Exception)
 					{
+					}
+
+					_doc = newDoc;
+					OnMadeDirty(); // Change for the controller up in hierarchy to grab new document
+
+					if (null != _suspendToken)
+					{
+						_suspendToken.Dispose();
+						_suspendToken = _doc.SuspendGetToken();
 					}
 
 					InitDetailController(true);
@@ -221,68 +245,5 @@ namespace Altaxo.Gui.Graph
 				_view.SetPreviewBitmap(_previewBitmap);
 			}
 		}
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.ColorProviderChanged -= EhColorProviderSelectionChanged;
-				}
-
-				_view = value as IColorProviderView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.ColorProviderChanged += EhColorProviderSelectionChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			if (null != _detailController)
-			{
-				if (!_detailController.Apply(disposeController))
-					return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

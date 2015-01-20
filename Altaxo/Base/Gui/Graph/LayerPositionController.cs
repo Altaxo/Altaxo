@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph
 	/// Summary description for LayerPositionController.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(ILayerPositionView))]
-	public class LayerPositionController : MVCANControllerBase<IItemLocation, ILayerPositionView>
+	public class LayerPositionController : MVCANDControllerEditOriginalDocBase<IItemLocation, ILayerPositionView>
 	{
 		// the document
 		private HostLayer _layer;
@@ -61,6 +61,19 @@ namespace Altaxo.Gui.Graph
 		private Dictionary<Type, IItemLocation> _instances;
 
 		protected bool _isRootLayerPosition = false;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_subController, () => _subController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_layer = null;
+			_instances = null;
+
+			base.Dispose(isDisposing);
+		}
 
 		public override bool InitializeDocument(params object[] args)
 		{
@@ -73,14 +86,10 @@ namespace Altaxo.Gui.Graph
 			return base.InitializeDocument(args);
 		}
 
-		public LayerPositionController Initialize(IItemLocation doc, HostLayer layer)
-		{
-			InitializeDocument(doc, layer);
-			return this;
-		}
-
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_instances = new Dictionary<Type, IItemLocation>();
@@ -100,56 +109,13 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		private void CreateSubController()
+		public override bool Apply(bool disposeController)
 		{
-			if (_doc is ItemLocationDirect)
-			{
-				ItemLocationDirectController ctrl;
-				_subController = ctrl = new ItemLocationDirectController();
-				if (IsRootLayerPosition)
-				{
-					ctrl.ShowAnchorElements(false, false);
-					ctrl.ShowPositionElements(false, false);
-				}
-				_subController.InitializeDocument(_doc, _layer.ParentLayerSize);
-			}
-			else if (_doc is ItemLocationByGrid)
-			{
-				if (null == _layer.ParentLayer)
-					throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
-				_layer.ParentLayer.CreateGridIfNullOrEmpty();
-				_subController = new ItemLocationByGridController();
-				_subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
-			}
-			Current.Gui.FindAndAttachControlTo(_subController);
-		}
+			var result = _subController.Apply(disposeController);
+			if (result == false)
+				return result;
 
-		private void EhPositioningTypeChanged()
-		{
-			if (_subController.Apply(false))
-				_instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
-
-			bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer == null; // if this is the root layer, then choice of grid positioning is not available
-
-			if (useDirectPositioning)
-			{
-				if (_instances.ContainsKey(typeof(ItemLocationDirect)))
-					_doc = _instances[typeof(ItemLocationDirect)];
-				else
-					_doc = new ItemLocationDirect();
-			}
-			else
-			{
-				if (_instances.ContainsKey(typeof(ItemLocationByGrid)))
-					_doc = _instances[typeof(ItemLocationByGrid)];
-				else
-					_doc = new ItemLocationByGrid();
-			}
-
-			CreateSubController();
-
-			_view.UseDirectPositioning = useDirectPositioning;
-			_view.SubPositionView = _subController.ViewObject;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -164,18 +130,71 @@ namespace Altaxo.Gui.Graph
 			base.DetachView();
 		}
 
-		public override bool Apply(bool disposeController)
+		private void CreateSubController()
 		{
-			var result = _subController.Apply(disposeController);
-			if (result == false)
-				return result;
+			if (_doc is ItemLocationDirect)
+			{
+				ItemLocationDirectController ctrl;
+				_subController = ctrl = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
+				if (IsRootLayerPosition)
+				{
+					ctrl.ShowAnchorElements(false, false);
+					ctrl.ShowPositionElements(false, false);
+				}
+				_subController.InitializeDocument(_doc, _layer.ParentLayerSize);
+			}
+			else if (_doc is ItemLocationByGrid)
+			{
+				if (null == _layer.ParentLayer)
+					throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
+				_layer.ParentLayer.CreateGridIfNullOrEmpty();
+				_subController = new ItemLocationByGridController() { UseDocumentCopy = UseDocument.Directly };
+				_subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
+			}
+			Current.Gui.FindAndAttachControlTo(_subController);
+		}
 
-			_doc = (IItemLocation)_subController.ModelObject;
+		private void EhPositioningTypeChanged()
+		{
+			if (_subController.Apply(false))
+				_instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
+			bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer == null; // if this is the root layer, then choice of grid positioning is not available
 
-			return true;
+			IItemLocation oldDoc = _doc;
+			IItemLocation newDoc = null;
+
+			if (useDirectPositioning)
+			{
+				if (_instances.ContainsKey(typeof(ItemLocationDirect)))
+					newDoc = _instances[typeof(ItemLocationDirect)];
+				else
+					newDoc = new ItemLocationDirect();
+			}
+			else
+			{
+				if (_instances.ContainsKey(typeof(ItemLocationByGrid)))
+					newDoc = _instances[typeof(ItemLocationByGrid)];
+				else
+					newDoc = new ItemLocationByGrid();
+			}
+
+			if (!object.ReferenceEquals(oldDoc, newDoc))
+			{
+				_doc = newDoc;
+				OnMadeDirty(); // change for super-controller to pick up new instance
+
+				if (null != _suspendToken)
+				{
+					_suspendToken.Dispose();
+					_suspendToken = _doc.SuspendGetToken();
+				}
+
+				CreateSubController();
+
+				_view.UseDirectPositioning = useDirectPositioning;
+				_view.SubPositionView = _subController.ViewObject;
+			}
 		}
 
 		public bool IsRootLayerPosition

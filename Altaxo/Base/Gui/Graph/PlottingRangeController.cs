@@ -69,20 +69,20 @@ namespace Altaxo.Gui.Graph
 	public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
 	{
 		private IPlottingRangeView _view;
+		private ContiguousNonNegativeIntegerRange _originalDoc;
 		private ContiguousNonNegativeIntegerRange _doc;
-		private ContiguousNonNegativeIntegerRange _tempDoc;
 
 		public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
 		{
+			_originalDoc = doc;
 			_doc = doc;
-			_tempDoc = doc;
 		}
 
 		public void Initialize()
 		{
 			if (_view != null)
 			{
-				_view.Initialize(_tempDoc.Start, _tempDoc.Last, _tempDoc.IsInfinite);
+				_view.Initialize(_doc.Start, _doc.Last, _doc.IsInfinite);
 			}
 		}
 
@@ -109,7 +109,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return _doc;
+				return _originalDoc;
 			}
 		}
 
@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Graph
 
 		public bool Apply(bool disposeController)
 		{
-			_doc = _tempDoc;
+			_originalDoc = _doc;
 			return true;
 		}
 
@@ -148,9 +148,9 @@ namespace Altaxo.Gui.Graph
 			try
 			{
 				if (to != int.MaxValue)
-					_tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(from, to);
+					_doc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(from, to);
 				else
-					_tempDoc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(from);
+					_doc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(from);
 			}
 			catch (Exception ex)
 			{

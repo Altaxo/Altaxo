@@ -169,17 +169,7 @@ namespace Altaxo.Gui.Graph
 				_doc.SetTo(_tempScale, _tempTickSpacing);
 			}
 
-			if (disposeController)
-			{
-				Dispose();
-			}
-			else
-			{
-				if (null != _suspendToken)
-					_suspendToken.ResumeCompleteTemporarily();
-			}
-
-			return true; // all ok
+			return ApplyEnd(true, disposeController); // all ok
 		}
 
 		private void InitLinkProperties(bool initData)

@@ -86,13 +86,20 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(BarGraphPlotStyle))]
 	[ExpectedTypeOfView(typeof(IBarGraphPlotStyleView))]
-	public class BarGraphPlotStyleController : MVCANControllerBase<BarGraphPlotStyle, IBarGraphPlotStyleView>
+	public class BarGraphPlotStyleController : MVCANControllerEditOriginalDocBase<BarGraphPlotStyle, IBarGraphPlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
@@ -116,6 +123,76 @@ namespace Altaxo.Gui.Graph
 				_view.StartAtPreviousItem = _doc.StartAtPreviousItem;
 				_view.YGap = _doc.PreviousItemYGap;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (_view.UseFill)
+			{
+				_doc.IndependentFillColor = _view.IndependentFillColor;
+				_doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
+			}
+			else
+			{
+				_doc.IndependentFillColor = true;
+				_doc.FillBrush = null;
+			}
+
+			if (_view.UseFrame)
+			{
+				_doc.IndependentFrameColor = _view.IndependentFrameColor;
+				_doc.FramePen = _view.FramePen;
+			}
+			else
+			{
+				_doc.IndependentFrameColor = true;
+				_doc.FramePen = null;
+			}
+
+			_doc.InnerGap = _view.InnerGap;
+			_doc.OuterGap = _view.OuterGap;
+
+			_doc.UsePhysicalBaseValue = _view.UsePhysicalBaseValue;
+			if (_view.UsePhysicalBaseValue)
+			{
+				// who can parse this string? Only the y-scale know how to parse it
+			}
+			else
+			{
+				_doc.BaseValue = _view.BaseValue;
+			}
+
+			_doc.StartAtPreviousItem = _view.StartAtPreviousItem;
+			_doc.PreviousItemYGap = _view.YGap;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.UseFillChanged += EhUseFillChanged;
+			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
+
+			_view.UseFrameChanged += EhUseFrameChanged;
+			_view.IndependentFrameColorChanged += EhIndependentFrameColorChanged;
+
+			_view.FillBrushChanged += EhFillBrushChanged;
+			_view.FramePenChanged += EhFramePenChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.UseFillChanged -= EhUseFillChanged;
+			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
+
+			_view.UseFrameChanged -= EhUseFrameChanged;
+			_view.IndependentFrameColorChanged -= EhIndependentFrameColorChanged;
+
+			_view.FillBrushChanged -= EhFillBrushChanged;
+			_view.FramePenChanged -= EhFramePenChanged;
+
+			base.DetachView();
 		}
 
 		private void EhColorGroupStyleAddedOrRemoved()
@@ -227,86 +304,5 @@ namespace Altaxo.Gui.Graph
 
 			_view.UseFrame = newValue; // to enable/disable gui items in the control
 		}
-
-		#region IMVCController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.UseFillChanged += EhUseFillChanged;
-			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
-
-			_view.UseFrameChanged += EhUseFrameChanged;
-			_view.IndependentFrameColorChanged += EhIndependentFrameColorChanged;
-
-			_view.FillBrushChanged += EhFillBrushChanged;
-			_view.FramePenChanged += EhFramePenChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.UseFillChanged -= EhUseFillChanged;
-			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
-
-			_view.UseFrameChanged -= EhUseFrameChanged;
-			_view.IndependentFrameColorChanged -= EhIndependentFrameColorChanged;
-
-			_view.FillBrushChanged -= EhFillBrushChanged;
-			_view.FramePenChanged -= EhFramePenChanged;
-
-			base.DetachView();
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public override bool Apply(bool disposeController)
-		{
-			if (_view.UseFill)
-			{
-				_doc.IndependentFillColor = _view.IndependentFillColor;
-				_doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
-			}
-			else
-			{
-				_doc.IndependentFillColor = true;
-				_doc.FillBrush = null;
-			}
-
-			if (_view.UseFrame)
-			{
-				_doc.IndependentFrameColor = _view.IndependentFrameColor;
-				_doc.FramePen = _view.FramePen;
-			}
-			else
-			{
-				_doc.IndependentFrameColor = true;
-				_doc.FramePen = null;
-			}
-
-			_doc.InnerGap = _view.InnerGap;
-			_doc.OuterGap = _view.OuterGap;
-
-			_doc.UsePhysicalBaseValue = _view.UsePhysicalBaseValue;
-			if (_view.UsePhysicalBaseValue)
-			{
-				// who can parse this string? Only the y-scale know how to parse it
-			}
-			else
-			{
-				_doc.BaseValue = _view.BaseValue;
-			}
-
-			_doc.StartAtPreviousItem = _view.StartAtPreviousItem;
-			_doc.PreviousItemYGap = _view.YGap;
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
-		}
-
-		#endregion IApplyController Members
 	}
 }

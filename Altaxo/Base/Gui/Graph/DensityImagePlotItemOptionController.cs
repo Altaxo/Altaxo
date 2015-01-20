@@ -47,13 +47,35 @@ namespace Altaxo.Gui.Graph
 	/// to save the image to clipboard or disc, thus the document is not really controlled.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IDensityImagePlotItemOptionView))]
-	public class DensityImagePlotItemOptionController : IMVCANController
+	public class DensityImagePlotItemOptionController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, IDensityImagePlotItemOptionView>
 	{
-		private IDensityImagePlotItemOptionView _view;
-		private DensityImagePlotItem _doc;
-
-		private void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			// base.Initialize(initData); // no base initialize because we dont want to suspend the doc (this is only a helper controller)
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			return true;
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.CopyImageToClipboard += EhCopyImageToClipboard;
+			_view.SaveImageToDisc += EhSaveImageToDisc;
+		}
+
+		protected override void DetachView()
+		{
+			_view.CopyImageToClipboard -= EhCopyImageToClipboard;
+			_view.SaveImageToDisc -= EhSaveImageToDisc;
+			base.DetachView();
 		}
 
 		private void EhCopyImageToClipboard()
@@ -78,82 +100,5 @@ namespace Altaxo.Gui.Graph
 
 			bitmap.Save(saveOptions.FileName);
 		}
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.CopyImageToClipboard -= EhCopyImageToClipboard;
-					_view.SaveImageToDisc -= EhSaveImageToDisc;
-				}
-				_view = value as IDensityImagePlotItemOptionView;
-
-				if (_view != null)
-				{
-					Initialize(false);
-
-					_view.CopyImageToClipboard += EhCopyImageToClipboard;
-					_view.SaveImageToDisc += EhSaveImageToDisc;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (0 == args.Length || !(args[0] is DensityImagePlotItem))
-				return false;
-
-			_doc = (DensityImagePlotItem)args[0];
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

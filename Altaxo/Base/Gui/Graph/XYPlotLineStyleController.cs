@@ -124,18 +124,35 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(LinePlotStyle))]
 	[ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
-	public class XYPlotLineStyleController : MVCANControllerBase<LinePlotStyle, IXYPlotLineStyleView>
+	public class XYPlotLineStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, IXYPlotLineStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
 		private SelectableListNodeList _lineConnectChoices;
-
 		private SelectableListNodeList _areaFillDirectionChoices;
 		private SelectableListNodeList _fillColorLinkageChoices;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_colorGroupStyleTracker = null;
+
+			_lineConnectChoices = null;
+			_areaFillDirectionChoices = null;
+			_fillColorLinkageChoices = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
@@ -163,16 +180,83 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			// don't trust user input, so all into a try statement
+			try
+			{
+				// Symbol Gap
+				_doc.LineSymbolGap = _view.LineSymbolGap;
+
+				// Pen
+				_doc.IndependentLineColor = _view.IndependentLineColor;
+				_doc.LinePen.CopyFrom(_view.LinePen);
+
+				// Line Connect
+				var selNode = _lineConnectChoices.FirstSelectedNode;
+				_doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
+				_doc.ConnectCircular = _view.ConnectCircular;
+
+				// Fill Area
+				_doc.FillArea = _view.UseFill;
+
+				// Line fill direction
+				selNode = _areaFillDirectionChoices.FirstSelectedNode;
+				if (_doc.FillArea && null != selNode)
+					_doc.FillDirection = ((CSPlaneID)selNode.Tag);
+				else
+					_doc.FillDirection = null;
+
+				// Line fill color
+				_doc.FillBrush = _view.FillBrush;
+				// _doc.FillColorLinkage = _view.FillColorLinkage; // already done during showing the view, see EhFillColorLinkageChanged()
+
+				return ApplyEnd(true, disposeController);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
+				return false;
+			}
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.UseFillChanged += EhUseFillChanged;
+			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
+
+			_view.UseLineChanged += EhUseLineChanged;
+			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
+
+			_view.FillBrushChanged += EhFillBrushChanged;
+			_view.LinePenChanged += EhLinePenChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.UseFillChanged -= EhUseFillChanged;
+			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
+
+			_view.UseLineChanged -= EhUseLineChanged;
+			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
+
+			_view.FillBrushChanged -= EhFillBrushChanged;
+			_view.LinePenChanged -= EhLinePenChanged;
+
+			base.DetachView();
+		}
+
 		public void InitializeFillDirectionChoices()
 		{
 			_areaFillDirectionChoices = new SelectableListNodeList();
-			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
+			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 			if (layer != null)
 			{
-				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.FillDirection }))
+				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))
 				{
 					CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-					_areaFillDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _originalDoc.FillDirection));
+					_areaFillDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.FillDirection));
 				}
 			}
 		}
@@ -343,83 +427,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion Color management
-
-		#region IMVCController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.UseFillChanged += EhUseFillChanged;
-			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
-
-			_view.UseLineChanged += EhUseLineChanged;
-			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
-
-			_view.FillBrushChanged += EhFillBrushChanged;
-			_view.LinePenChanged += EhLinePenChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.UseFillChanged -= EhUseFillChanged;
-			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
-
-			_view.UseLineChanged -= EhUseLineChanged;
-			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
-
-			_view.FillBrushChanged -= EhFillBrushChanged;
-			_view.LinePenChanged -= EhLinePenChanged;
-
-			base.DetachView();
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public override bool Apply(bool disposeController)
-		{
-			// don't trust user input, so all into a try statement
-			try
-			{
-				// Symbol Gap
-				_doc.LineSymbolGap = _view.LineSymbolGap;
-
-				// Pen
-				_doc.IndependentLineColor = _view.IndependentLineColor;
-				_doc.LinePen.CopyFrom(_view.LinePen);
-
-				// Line Connect
-				var selNode = _lineConnectChoices.FirstSelectedNode;
-				_doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
-				_doc.ConnectCircular = _view.ConnectCircular;
-
-				// Fill Area
-				_doc.FillArea = _view.UseFill;
-
-				// Line fill direction
-				selNode = _areaFillDirectionChoices.FirstSelectedNode;
-				if (_doc.FillArea && null != selNode)
-					_doc.FillDirection = ((CSPlaneID)selNode.Tag);
-				else
-					_doc.FillDirection = null;
-
-				// Line fill color
-				_doc.FillBrush = _view.FillBrush;
-				// _doc.FillColorLinkage = _view.FillColorLinkage; // already done during showing the view, see EhFillColorLinkageChanged()
-
-				if (_useDocumentCopy)
-					CopyHelper.Copy(ref _originalDoc, _doc);
-			}
-			catch (Exception ex)
-			{
-				Current.Gui.ErrorMessageBox("A problem occured. " + ex.Message);
-				return false;
-			}
-
-			return true;
-		}
-
-		#endregion IApplyController Members
 	} // end of class XYPlotLineStyleController
 } // end of namespace

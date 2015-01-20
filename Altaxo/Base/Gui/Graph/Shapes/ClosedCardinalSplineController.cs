@@ -41,13 +41,21 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(ClosedCardinalSpline), 110)]
 	[ExpectedTypeOfView(typeof(IClosedCardinalSplineView))]
-	public class ClosedCardinalSplineController : MVCANControllerBase<ClosedCardinalSpline, IClosedCardinalSplineView>
+	public class ClosedCardinalSplineController : MVCANControllerEditOriginalDocBase<ClosedCardinalSpline, IClosedCardinalSplineView>
 	{
 		private ClosedPathShapeController _shapeCtrl;
 		private CardinalSplinePointsController _splinePointsCtrl;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_shapeCtrl, () => _shapeCtrl = null);
+			//yield return new ControllerAndSetNullMethod(_splinePointsCtrl, () => _splinePointsCtrl = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
@@ -86,10 +94,7 @@ namespace Altaxo.Gui.Graph.Shapes
 				return false;
 			}
 
-			if (_useDocumentCopy)
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

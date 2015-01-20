@@ -40,14 +40,27 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 
 	[ExpectedTypeOfView(typeof(IFreeLabelFormattingView))]
 	[UserControllerForObject(typeof(FreeLabelFormatting), 110)]
-	public class FreeLabelFormattingController : MVCANControllerBase<FreeLabelFormatting, IFreeLabelFormattingView>
+	public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, IFreeLabelFormattingView>
 	{
 		private SelectableListNodeList _textBlockAlignmentChoices;
 
 		private MultiLineLabelFormattingBaseController _baseController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_textBlockAlignmentChoices = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
@@ -68,9 +81,7 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 
 			_doc.FormatString = _view.FormatString;
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

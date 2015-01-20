@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,93 +28,97 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-  using Gdi.Plot.Groups;
+	using Gdi.Plot.Groups;
 
-  /// <summary>
-  /// This group style is intended to publish the symbol size to all interested
-  /// plot styles.
-  /// </summary>
-  public class SymbolSizeGroupStyle : IPlotGroupStyle
-  {
-    bool _isInitialized;
-    double _symbolSize;
-    readonly static Type MyType = typeof(SymbolSizeGroupStyle);
+	/// <summary>
+	/// This group style is intended to publish the symbol size to all interested
+	/// plot styles.
+	/// </summary>
+	public class SymbolSizeGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
+	{
+		private bool _isInitialized;
+		private double _symbolSize;
+		private static readonly Type MyType = typeof(SymbolSizeGroupStyle);
 
-    #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SymbolSizeGroupStyle), 0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        SymbolSizeGroupStyle s = (SymbolSizeGroupStyle)obj;
-      }
+		#region Serialization
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SymbolSizeGroupStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				SymbolSizeGroupStyle s = (SymbolSizeGroupStyle)obj;
+			}
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        SymbolSizeGroupStyle s = null != o ? (SymbolSizeGroupStyle)o : new SymbolSizeGroupStyle();
-        return s;
-      }
-    }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				SymbolSizeGroupStyle s = null != o ? (SymbolSizeGroupStyle)o : new SymbolSizeGroupStyle();
+				return s;
+			}
+		}
 
-    #endregion
+		#endregion Serialization
 
-    #region Constructors
+		#region Constructors
 
-    public SymbolSizeGroupStyle()
-    {
-    }
+		public SymbolSizeGroupStyle()
+		{
+		}
 
-    public SymbolSizeGroupStyle(SymbolSizeGroupStyle from)
-    {
-      this._isInitialized = from._isInitialized;
-      this._symbolSize = from._symbolSize;
-    }
+		public SymbolSizeGroupStyle(SymbolSizeGroupStyle from)
+		{
+			this._isInitialized = from._isInitialized;
+			this._symbolSize = from._symbolSize;
+		}
 
-    #endregion
+		#endregion Constructors
 
-    #region ICloneable Members
+		#region ICloneable Members
 
-    public SymbolSizeGroupStyle Clone()
-    {
-      return new SymbolSizeGroupStyle(this);
-    }
+		public SymbolSizeGroupStyle Clone()
+		{
+			return new SymbolSizeGroupStyle(this);
+		}
 
-    object ICloneable.Clone()
-    {
-      return new SymbolSizeGroupStyle(this);
-    }
+		object ICloneable.Clone()
+		{
+			return new SymbolSizeGroupStyle(this);
+		}
 
+		#endregion ICloneable Members
 
-    #endregion
+		#region IGroupStyle Members
 
-    #region IGroupStyle Members
+		public void TransferFrom(IPlotGroupStyle fromb)
+		{
+			SymbolSizeGroupStyle from = (SymbolSizeGroupStyle)fromb;
+			this._isInitialized = from._isInitialized;
+			_symbolSize = from._symbolSize;
+		}
 
-    public void TransferFrom(IPlotGroupStyle fromb)
-    {
-      SymbolSizeGroupStyle from = (SymbolSizeGroupStyle)fromb;
-      this._isInitialized = from._isInitialized;
-      _symbolSize = from._symbolSize;
-    }
+		public void BeginPrepare()
+		{
+			_isInitialized = false;
+		}
 
-    public void BeginPrepare()
-    {
-      _isInitialized = false;
-    }
-    public void PrepareStep()
-    {
-    }
-    public void EndPrepare()
-    {
-    }
+		public void PrepareStep()
+		{
+		}
 
-    public bool CanCarryOver
-    {
+		public void EndPrepare()
+		{
+		}
+
+		public bool CanCarryOver
+		{
 			get
 			{
 				return false;
 			}
-    }
+		}
 
 		public bool CanStep
 		{
@@ -122,135 +128,131 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-    public int Step(int step)
-    {
-      return 0;
-    }
+		public int Step(int step)
+		{
+			return 0;
+		}
 
-    /// <summary>
-    /// Get/sets whether or not stepping is allowed.
-    /// </summary>
-    public bool IsStepEnabled
-    {
-      get
-      {
-        return false;
-      }
-      set
-      {
-        
-      }
-    }
+		/// <summary>
+		/// Get/sets whether or not stepping is allowed.
+		/// </summary>
+		public bool IsStepEnabled
+		{
+			get
+			{
+				return false;
+			}
+			set
+			{
+			}
+		}
 
-    #endregion
+		#endregion IGroupStyle Members
 
-    #region Other members
+		#region Other members
 
-    public bool IsInitialized
-    {
-      get
-      {
-        return _isInitialized;
-      }
-    }
-    public void Initialize(double symbolSize)
-    {
-      _isInitialized = true;
-      _symbolSize = symbolSize;
-    }
-    public double SymbolSize
-    {
-      get
-      {
-        return _symbolSize;
-      }
-    }
-    #endregion
+		public bool IsInitialized
+		{
+			get
+			{
+				return _isInitialized;
+			}
+		}
 
-    #region Static helpers
+		public void Initialize(double symbolSize)
+		{
+			_isInitialized = true;
+			_symbolSize = symbolSize;
+		}
 
-    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
-    {
-      if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(SymbolSizeGroupStyle)))
-      {
-        SymbolSizeGroupStyle gstyle = new SymbolSizeGroupStyle();
-        gstyle.IsStepEnabled = true;
-        externalGroups.Add(gstyle);
-      }
-    }
+		public double SymbolSize
+		{
+			get
+			{
+				return _symbolSize;
+			}
+		}
 
+		#endregion Other members
 
-    public static void AddLocalGroupStyle(
-     IPlotGroupStyleCollection externalGroups,
-     IPlotGroupStyleCollection localGroups)
-    {
-      if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SymbolSizeGroupStyle)))
-        localGroups.Add(new SymbolSizeGroupStyle());
-    }
+		#region Static helpers
 
-    public delegate double SymbolSizeGetter();
-    public static void PrepareStyle(
-      IPlotGroupStyleCollection externalGroups,
-      IPlotGroupStyleCollection localGroups,
-      SymbolSizeGetter getter)
-    {
-      if (!externalGroups.ContainsType(typeof(SymbolSizeGroupStyle))
-        && null != localGroups
-        && !localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
-      {
-        localGroups.Add(new SymbolSizeGroupStyle());
-      }
+		public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+		{
+			if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(SymbolSizeGroupStyle)))
+			{
+				SymbolSizeGroupStyle gstyle = new SymbolSizeGroupStyle();
+				gstyle.IsStepEnabled = true;
+				externalGroups.Add(gstyle);
+			}
+		}
 
+		public static void AddLocalGroupStyle(
+		 IPlotGroupStyleCollection externalGroups,
+		 IPlotGroupStyleCollection localGroups)
+		{
+			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SymbolSizeGroupStyle)))
+				localGroups.Add(new SymbolSizeGroupStyle());
+		}
 
-      SymbolSizeGroupStyle grpStyle = null;
-      if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
-        grpStyle = (SymbolSizeGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
-      else if (localGroups != null)
-        grpStyle = (SymbolSizeGroupStyle)localGroups.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
+		public delegate double SymbolSizeGetter();
 
-      if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
-        grpStyle.Initialize(getter());
-    }
+		public static void PrepareStyle(
+			IPlotGroupStyleCollection externalGroups,
+			IPlotGroupStyleCollection localGroups,
+			SymbolSizeGetter getter)
+		{
+			if (!externalGroups.ContainsType(typeof(SymbolSizeGroupStyle))
+				&& null != localGroups
+				&& !localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
+			{
+				localGroups.Add(new SymbolSizeGroupStyle());
+			}
 
+			SymbolSizeGroupStyle grpStyle = null;
+			if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
+				grpStyle = (SymbolSizeGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
+			else if (localGroups != null)
+				grpStyle = (SymbolSizeGroupStyle)localGroups.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
 
-    public delegate void SymbolSizeSetter(double c);
-    /// <summary>
-    /// Try to apply the symbol size group style. Returns true if successfull applied.
-    /// </summary>
-    /// <param name="externalGroups"></param>
-    /// <param name="localGroups"></param>
-    /// <param name="setter"></param>
-    /// <returns></returns>
-    public static bool ApplyStyle(
-      IPlotGroupStyleCollection externalGroups,
-      IPlotGroupStyleCollection localGroups,
-      SymbolSizeSetter setter)
-    {
-      SymbolSizeGroupStyle grpStyle = null;
-      IPlotGroupStyleCollection grpColl = null;
-      if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
-        grpColl = externalGroups;
-      else if (localGroups != null && localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
-        grpColl = localGroups;
+			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
+				grpStyle.Initialize(getter());
+		}
 
-      if (null != grpColl)
-      {
-        grpStyle = (SymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
-        grpColl.OnBeforeApplication(typeof(SymbolSizeGroupStyle));
-        setter(grpStyle.SymbolSize);
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+		public delegate void SymbolSizeSetter(double c);
 
+		/// <summary>
+		/// Try to apply the symbol size group style. Returns true if successfull applied.
+		/// </summary>
+		/// <param name="externalGroups"></param>
+		/// <param name="localGroups"></param>
+		/// <param name="setter"></param>
+		/// <returns></returns>
+		public static bool ApplyStyle(
+			IPlotGroupStyleCollection externalGroups,
+			IPlotGroupStyleCollection localGroups,
+			SymbolSizeSetter setter)
+		{
+			SymbolSizeGroupStyle grpStyle = null;
+			IPlotGroupStyleCollection grpColl = null;
+			if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
+				grpColl = externalGroups;
+			else if (localGroups != null && localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
+				grpColl = localGroups;
 
-    }
+			if (null != grpColl)
+			{
+				grpStyle = (SymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
+				grpColl.OnBeforeApplication(typeof(SymbolSizeGroupStyle));
+				setter(grpStyle.SymbolSize);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
-
-
-
-    #endregion
-  }
+		#endregion Static helpers
+	}
 }

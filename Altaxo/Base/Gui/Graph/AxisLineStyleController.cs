@@ -58,7 +58,10 @@ namespace Altaxo.Gui.Graph
 	[ExpectedTypeOfView(typeof(IAxisLineStyleView))]
 	public class AxisLineStyleController : MVCANControllerEditOriginalDocBase<AxisLineStyle, IAxisLineStyleView>
 	{
-		#region IMVCController Members
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{
@@ -94,10 +97,6 @@ namespace Altaxo.Gui.Graph
 				_view.MinorPenTicks = new SelectableListNodeList(list);
 			}
 		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
 
 		public override bool Apply(bool disposeController)
 		{
@@ -138,24 +137,7 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			if (disposeController)
-			{
-				Dispose();
-			}
-			else
-			{
-				if (null != _suspendToken)
-					_suspendToken.ResumeCompleteTemporarily();
-			}
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
-
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
-
-		#endregion IApplyController Members
 	}
 }

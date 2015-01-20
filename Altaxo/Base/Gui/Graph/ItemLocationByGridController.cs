@@ -62,9 +62,14 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IItemLocationByGridView))]
 	[UserControllerForObject(typeof(ItemLocationByGrid))]
-	public class ItemLocationByGridController : MVCANControllerBase<ItemLocationByGrid, IItemLocationByGridView>
+	public class ItemLocationByGridController : MVCANControllerEditOriginalDocBase<ItemLocationByGrid, IItemLocationByGridView>
 	{
 		private GridPartitioning _parentLayerGrid;
+
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		public override bool InitializeDocument(params object[] args)
 		{
@@ -73,7 +78,50 @@ namespace Altaxo.Gui.Graph
 			if (!(args[1] is GridPartitioning))
 				return false;
 			_parentLayerGrid = (GridPartitioning)args[1];
+
 			return base.InitializeDocument(args);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
+			{
+			}
+			if (null != _view)
+			{
+				_view.GridColumn = DocToUserPosition(_doc.GridColumn);
+				_view.GridRow = DocToUserPosition(_doc.GridRow);
+				_view.GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
+				_view.GridRowSpan = DocToUserSize(_doc.GridRowSpan);
+				_view.Rotation = _doc.Rotation;
+				_view.ShearX = _doc.ShearX;
+				_view.ScaleX = _doc.ScaleX;
+				_view.ScaleY = _doc.ScaleY;
+				_view.ForceFitIntoCell = _doc.ForceFitIntoCell;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			try
+			{
+				_doc.GridColumn = UserToDocPosition(_view.GridColumn);
+				_doc.GridRow = UserToDocPosition(_view.GridRow);
+				_doc.GridColumnSpan = UserToDocSize(_view.GridColumnSpan);
+				_doc.GridRowSpan = UserToDocSize(_view.GridRowSpan);
+				_doc.Rotation = _view.Rotation;
+				_doc.ShearX = _view.ShearX;
+				_doc.ScaleX = _view.ScaleX;
+				_doc.ScaleY = _view.ScaleY;
+				_doc.ForceFitIntoCell = _view.ForceFitIntoCell;
+			}
+			catch (Exception)
+			{
+				return false; // indicate that something failed
+			}
+			return ApplyEnd(true, disposeController);
 		}
 
 		private static double DocToUserPosition(double x)
@@ -95,51 +143,5 @@ namespace Altaxo.Gui.Graph
 		{
 			return 1 + 2 * (x - 1);
 		} // 1 -> 1, 2->3, 3->5 usw.
-
-		protected override void Initialize(bool initData)
-		{
-			if (initData)
-			{
-			}
-			if (null != _view)
-			{
-				_view.GridColumn = DocToUserPosition(_doc.GridColumn);
-				_view.GridRow = DocToUserPosition(_doc.GridRow);
-				_view.GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
-				_view.GridRowSpan = DocToUserSize(_doc.GridRowSpan);
-				_view.Rotation = _doc.Rotation;
-				_view.ShearX = _doc.ShearX;
-				_view.ScaleX = _doc.ScaleX;
-				_view.ScaleY = _doc.ScaleY;
-				_view.ForceFitIntoCell = _doc.ForceFitIntoCell;
-			}
-		}
-
-		#region IApplyController Members
-
-		public override bool Apply(bool disposeController)
-		{
-			try
-			{
-				_doc.GridColumn = UserToDocPosition(_view.GridColumn);
-				_doc.GridRow = UserToDocPosition(_view.GridRow);
-				_doc.GridColumnSpan = UserToDocSize(_view.GridColumnSpan);
-				_doc.GridRowSpan = UserToDocSize(_view.GridRowSpan);
-				_doc.Rotation = _view.Rotation;
-				_doc.ShearX = _view.ShearX;
-				_doc.ScaleX = _view.ScaleX;
-				_doc.ScaleY = _view.ScaleY;
-				_doc.ForceFitIntoCell = _view.ForceFitIntoCell;
-
-				_originalDoc.CopyFrom(_doc);
-			}
-			catch (Exception)
-			{
-				return false; // indicate that something failed
-			}
-			return true;
-		}
-
-		#endregion IApplyController Members
 	}
 }

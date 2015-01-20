@@ -35,45 +35,34 @@ namespace Altaxo.Gui.Graph
 {
 	[UserControllerForObject(typeof(G2DCoordinateSystem))]
 	[ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-	public class CoordinateSystemController : IMVCANController
+	public class CoordinateSystemController : MVCANDControllerEditOriginalDocBase<G2DCoordinateSystem, ITypeAndInstanceView>
 	{
-		private ITypeAndInstanceView _view;
-		private G2DCoordinateSystem _originalDoc;
-		private G2DCoordinateSystem _doc;
-
 		private IMVCAController _instanceController;
 
 		private SelectableListNodeList _choiceList;
-		private UseDocument _useDocumentCopy;
 
 		/// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
 		private Type[] _cosSubTypes;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_instanceController, () => _instanceController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_choiceList = null;
+			_cosSubTypes = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		#region IMVCController Members
 
-		public bool InitializeDocument(params object[] args)
+		protected override void Initialize(bool initData)
 		{
-			if (null == args || args.Length == 0 || !(args[0] is G2DCoordinateSystem))
-				return false;
+			base.Initialize(initData);
 
-			_originalDoc = (G2DCoordinateSystem)args[0];
-			if (_useDocumentCopy == UseDocument.Copy)
-				_doc = (G2DCoordinateSystem)_originalDoc.Clone();
-			else
-				_doc = _originalDoc;
-
-			Initialize(true);
-
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocumentCopy = value; }
-		}
-
-		private void Initialize(bool initData)
-		{
 			if (initData)
 			{
 				// look for coordinate system types
@@ -94,7 +83,7 @@ namespace Altaxo.Gui.Graph
 				_view.InitializeTypeNames(_choiceList);
 
 				// To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
-				_instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController));
+				_instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
 				if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
 				{
 					Current.Gui.FindAndAttachControlTo(_instanceController);
@@ -109,6 +98,24 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			bool result = _instanceController == null || _instanceController.Apply(disposeController);
+			return ApplyEnd(result, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.TypeChoiceChanged += EhTypeChoiceChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.TypeChoiceChanged -= EhTypeChoiceChanged;
+			base.DetachView();
+		}
+
 		private void EhTypeChoiceChanged(object sender, EventArgs e)
 		{
 			var sel = _choiceList.FirstSelectedNode;
@@ -119,69 +126,20 @@ namespace Altaxo.Gui.Graph
 				if (_doc.GetType() != t)
 				{
 					_doc = (G2DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
+
+					OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
+
+					if (null != _suspendToken)
+					{
+						_suspendToken.Dispose();
+						_suspendToken = _doc.SuspendGetToken();
+					}
+
 					Initialize(true);
 				}
 			}
 		}
 
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.TypeChoiceChanged -= EhTypeChoiceChanged;
-				}
-
-				_view = value as ITypeAndInstanceView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.TypeChoiceChanged += EhTypeChoiceChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _originalDoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
 		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			bool result = _instanceController == null || _instanceController.Apply(disposeController);
-			if (true == result)
-			{
-				_originalDoc = _doc;
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

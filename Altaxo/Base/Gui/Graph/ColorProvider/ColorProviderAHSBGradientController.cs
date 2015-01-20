@@ -55,16 +55,22 @@ namespace Altaxo.Gui.Graph.ColorProvider
 
 	[ExpectedTypeOfView(typeof(IColorProviderAHSBGradientView))]
 	[UserControllerForObject(typeof(ColorProviderAHSBGradient), 110)]
-	public class ColorProviderAHSBGradientController : MVCANDControllerBase<ColorProviderAHSBGradient, IColorProviderAHSBGradientView>
+	public class ColorProviderAHSBGradientController : MVCANDControllerEditOriginalDocBase<ColorProviderAHSBGradient, IColorProviderAHSBGradientView>
 	{
 		private ColorProviderBaseController _baseController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
-				_baseController = new ColorProviderBaseController();
-				_baseController.UseDocumentCopy = UseDocument.Directly;
+				_baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
 				_baseController.InitializeDocument(_doc);
 				_baseController.MadeDirty += EhBaseControllerChanged;
 			}
@@ -83,6 +89,23 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			if (!_baseController.Apply(disposeController))
+				return false;
+
+			_doc.Hue0 = _view.Hue0;
+			_doc.Hue1 = _view.Hue1;
+			_doc.Saturation0 = _view.Saturation0;
+			_doc.Saturation1 = _view.Saturation1;
+			_doc.Brightness0 = _view.Brightness0;
+			_doc.Brightness1 = _view.Brightness1;
+			_doc.Opaqueness0 = _view.Opaqueness0;
+			_doc.Opaqueness1 = _view.Opaqueness1;
+
+			return ApplyEnd(true, disposeController);
+		}
+
 		protected override void AttachView()
 		{
 			base.AttachView();
@@ -98,26 +121,6 @@ namespace Altaxo.Gui.Graph.ColorProvider
 		private void EhBaseControllerChanged(IMVCANDController ctrl)
 		{
 			OnMadeDirty();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (!_baseController.Apply(disposeController))
-				return false;
-
-			_doc.Hue0 = _view.Hue0;
-			_doc.Hue1 = _view.Hue1;
-			_doc.Saturation0 = _view.Saturation0;
-			_doc.Saturation1 = _view.Saturation1;
-			_doc.Brightness0 = _view.Brightness0;
-			_doc.Brightness1 = _view.Brightness1;
-			_doc.Opaqueness0 = _view.Opaqueness0;
-			_doc.Opaqueness1 = _view.Opaqueness1;
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

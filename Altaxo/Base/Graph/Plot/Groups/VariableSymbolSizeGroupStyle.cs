@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,25 +34,29 @@ namespace Altaxo.Graph.Plot.Groups
 	/// This group style is used to distribute a symbol size function to all local plot styles.
 	/// The symbol size function maps an index i of the actual plot point to a symbol size.
 	/// </summary>
-	public class VariableSymbolSizeGroupStyle : IPlotGroupStyle
+	public class VariableSymbolSizeGroupStyle
+		:
+				Main.SuspendableDocumentLeafNodeWithEventArgs,
+			IPlotGroupStyle
 	{
 		/// <summary>True if this group style was initialized.</summary>
-		bool _isInitialized;
+		private bool _isInitialized;
+
 		/// <summary>The symbol size function which maps an index i to a symbol size. </summary>
-		Func< int, double> _symbolSizeForIndex;
+		private Func<int, double> _symbolSizeForIndex;
 
 		/// <summary>Helper.</summary>
-		readonly static Type MyType = typeof(VariableSymbolSizeGroupStyle);
+		private static readonly Type MyType = typeof(VariableSymbolSizeGroupStyle);
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VariableSymbolSizeGroupStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (VariableSymbolSizeGroupStyle)obj;
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -59,7 +65,7 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
@@ -73,7 +79,7 @@ namespace Altaxo.Graph.Plot.Groups
 			this._symbolSizeForIndex = from._symbolSizeForIndex;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region ICloneable Members
 
@@ -87,8 +93,7 @@ namespace Altaxo.Graph.Plot.Groups
 			return new VariableSymbolSizeGroupStyle(this);
 		}
 
-
-		#endregion
+		#endregion ICloneable Members
 
 		#region IGroupStyle Members
 
@@ -103,9 +108,11 @@ namespace Altaxo.Graph.Plot.Groups
 		{
 			_isInitialized = false;
 		}
+
 		public void PrepareStep()
 		{
 		}
+
 		public void EndPrepare()
 		{
 		}
@@ -142,11 +149,10 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 			set
 			{
-
 			}
 		}
 
-		#endregion
+		#endregion IGroupStyle Members
 
 		#region Other members
 
@@ -171,7 +177,8 @@ namespace Altaxo.Graph.Plot.Groups
 				return _symbolSizeForIndex;
 			}
 		}
-		#endregion
+
+		#endregion Other members
 
 		#region Static helpers
 
@@ -200,7 +207,6 @@ namespace Altaxo.Graph.Plot.Groups
 				localGroups.Add(new VariableSymbolSizeGroupStyle());
 			}
 
-
 			VariableSymbolSizeGroupStyle grpStyle = null;
 			if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
 				grpStyle = (VariableSymbolSizeGroupStyle)externalGroups.GetPlotGroupStyle(MyType);
@@ -221,7 +227,7 @@ namespace Altaxo.Graph.Plot.Groups
 		public static bool ApplyStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
-			Action<Func<int,double>> setter)
+			Action<Func<int, double>> setter)
 		{
 			VariableSymbolSizeGroupStyle grpStyle = null;
 			IPlotGroupStyleCollection grpColl = null;
@@ -243,6 +249,6 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Static helpers
 	}
 }

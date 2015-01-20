@@ -128,7 +128,6 @@ namespace Altaxo.Gui.Graph
 			_currentPageName = currentPage;
 
 			InitializeDocument(layer);
-			Initialize(true);
 		}
 
 		protected override void Initialize(bool initData)
@@ -161,6 +160,15 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			ApplyCurrentController(true, disposeController);
+
+			_doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
+
+			return ApplyEnd(true, disposeController);
+		}
+
 		protected override void AttachView()
 		{
 			_view.TabValidating += EhView_TabValidating;
@@ -175,24 +183,6 @@ namespace Altaxo.Gui.Graph
 			_view.PageChanged -= EhView_PageChanged;
 			_view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
 			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			ApplyCurrentController(true, disposeController);
-
-			_doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
-
-			if (disposeController)
-			{
-				Dispose();
-			}
-			else
-			{
-				if (null != _suspendToken)
-					_suspendToken.ResumeCompleteTemporarily();
-			}
-			return true;
 		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()

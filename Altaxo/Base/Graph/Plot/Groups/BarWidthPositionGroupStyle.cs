@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,49 +30,51 @@ namespace Altaxo.Graph.Plot.Groups
 {
 	using Gdi.Plot.Groups;
 
-	public class BarWidthPositionGroupStyle : IPlotGroupStyle
+	public class BarWidthPositionGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
 	{
-		bool _isInitialized;
-		bool _isStepEnabled;
+		private bool _isInitialized;
+		private bool _isStepEnabled;
 
 		/// <summary>Is set to true if a BarPlotStyle has touched the group style during a prepare step.
 		/// Helps to prevent the counting of more than one item per step (in case there is more than one
 		/// BarStyle in a PlotItem.</summary>
-		bool _wasTouchedInThisPrepareStep;
+		private bool _wasTouchedInThisPrepareStep;
 
-		int _numberOfItems;
+		private int _numberOfItems;
 
 		/// <summary>
 		/// Relative gap between the bars belonging to the same x-value.
 		/// A value of 0.5 means that the gap has half of the width of one bar.
 		/// </summary>
-		double _relInnerGapWidth;
+		private double _relInnerGapWidth;
 
 		/// <summary>
 		/// Relative gap between the bars between two consecutive x-values.
 		/// A value of 1 means that the gap has the same width than one bar.
 		/// </summary>
-		double _relOuterGapWidth;
+		private double _relOuterGapWidth;
 
 		/// <summary>
 		/// The width of one cluster of bars (including the gaps) in units of logical scale values.
 		/// </summary>
-		double _logicalClusterWidth;
+		private double _logicalClusterWidth;
 
-		double _width;
-		double _positionX;
-
+		private double _width;
+		private double _positionX;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarWidthPositionGroupStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				BarWidthPositionGroupStyle s = (BarWidthPositionGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -80,9 +84,9 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
-		void CopyFrom(BarWidthPositionGroupStyle from)
+		private void CopyFrom(BarWidthPositionGroupStyle from)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -115,7 +119,6 @@ namespace Altaxo.Graph.Plot.Groups
 			_isStepEnabled = true;
 		}
 
-
 		#region ICloneable Members
 
 		public BarWidthPositionGroupStyle Clone()
@@ -132,9 +135,7 @@ namespace Altaxo.Graph.Plot.Groups
 			return result;
 		}
 
-
-		#endregion
-
+		#endregion ICloneable Members
 
 		#region IPlotGroupStyle Members
 
@@ -158,7 +159,6 @@ namespace Altaxo.Graph.Plot.Groups
 			_width *= _logicalClusterWidth;
 
 			_positionX = 0.5 * (_width * _relOuterGapWidth - _logicalClusterWidth);
-
 		}
 
 		public void PrepareStep()
@@ -208,8 +208,7 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		#endregion
-
+		#endregion IPlotGroupStyle Members
 
 		public bool IsInitialized
 		{
@@ -223,7 +222,7 @@ namespace Altaxo.Graph.Plot.Groups
 		/// Call this function during a prepare step in case the plot item has a BarGraphPlotStyle.
 		/// You can safely call it more than once in each prepare step. Only one item is counted per prepare step.
 		/// </summary>
-		void IntendToApply(
+		private void IntendToApply(
 			int numberOfClusterItems,
 			double minimumLogicalXValue,
 			double maximumLogicalXValue)
@@ -259,9 +258,6 @@ namespace Altaxo.Graph.Plot.Groups
 			width = _width;
 			pos = _positionX;
 		}
-
-
-
 
 		#region Static Helpers
 
@@ -310,11 +306,6 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-
-
-
-
-
-		#endregion
+		#endregion Static Helpers
 	}
 }

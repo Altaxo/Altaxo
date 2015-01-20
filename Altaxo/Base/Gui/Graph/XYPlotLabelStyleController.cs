@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(LabelPlotStyle))]
 	[ExpectedTypeOfView(typeof(IXYPlotLabelStyleView))]
-	public class XYPlotLabelStyleController : MVCANControllerBase<LabelPlotStyle, IXYPlotLabelStyleView>
+	public class XYPlotLabelStyleController : MVCANControllerEditOriginalDocBase<LabelPlotStyle, IXYPlotLabelStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -167,12 +167,27 @@ namespace Altaxo.Gui.Graph
 
 		private ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
-		public XYPlotLabelStyleController()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_colorGroupStyleTracker = null;
+
+			_horizontalAlignmentChoices = null;
+			_verticalAlignmentChoices = null;
+			_attachmentDirectionChoices = null;
+			_backgroundColorLinkageChoices = null;
+
+			base.Dispose(isDisposing);
 		}
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
@@ -193,7 +208,7 @@ namespace Altaxo.Gui.Graph
 				_view.Init_VerticalAlignment(_verticalAlignmentChoices);
 				_view.AttachToAxis = _doc.AttachedAxis != null;
 				_view.Init_AttachedAxis(_attachmentDirectionChoices);
-				_view.SelectedRotation = _originalDoc.Rotation;
+				_view.SelectedRotation = _doc.Rotation;
 
 				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_doc.Font.Size, Units.Length.Point.Instance);
 
@@ -207,18 +222,76 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			_doc.BackgroundStyle = _view.Background;
+			_doc.Font = _view.SelectedFont;
+			_doc.IndependentColor = _view.IndependentColor;
+			_doc.LabelBrush = _view.LabelBrush;
+			_doc.HorizontalAlignment = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
+			_doc.VerticalAlignment = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
+
+			var xOffs = _view.XOffset;
+			if (xOffs.Unit is IRelativeUnit)
+				_doc.XOffset = ((IRelativeUnit)xOffs.Unit).GetRelativeValueFromValue(xOffs.Value);
+			else
+				_doc.XOffset = xOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
+
+			var yOffs = _view.YOffset;
+			if (yOffs.Unit is IRelativeUnit)
+				_doc.YOffset = ((IRelativeUnit)yOffs.Unit).GetRelativeValueFromValue(yOffs.Value);
+			else
+				_doc.YOffset = yOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
+
+			if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
+				_doc.AttachedAxis = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
+			else
+				_doc.AttachedAxis = null;
+
+			_doc.Rotation = _view.SelectedRotation;
+
+			// _doc.LabelColumn  = _labelColumn; already set after dialog
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.LabelColumnSelected += EhView_SelectLabelColumn;
+			_view.FontSizeChanged += EhView_FontSizeChanged;
+
+			_view.LabelColorLinkageChanged += EhLabelColorLinkageChanged;
+			_view.BackgroundColorLinkageChanged += this.EhBackgroundColorLinkageChanged;
+			_view.LabelBrushChanged += this.EhLabelBrushChanged;
+			_view.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
+			_view.UseBackgroundChanged += this.EhUseBackgroundChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.LabelColumnSelected -= EhView_SelectLabelColumn;
+			_view.FontSizeChanged -= EhView_FontSizeChanged;
+			_view.LabelColorLinkageChanged -= EhLabelColorLinkageChanged;
+			_view.BackgroundColorLinkageChanged -= this.EhBackgroundColorLinkageChanged;
+			_view.LabelBrushChanged -= this.EhLabelBrushChanged;
+			_view.BackgroundBrushChanged -= this.EhBackgroundBrushChanged;
+			_view.UseBackgroundChanged -= this.EhUseBackgroundChanged;
+			base.DetachView();
+		}
+
 		public void InitializeAttachmentDirectionChoices()
 		{
-			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_originalDoc, typeof(IPlotArea)) as IPlotArea;
+			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 
 			_attachmentDirectionChoices = new SelectableListNodeList();
 
 			if (layer != null)
 			{
-				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _originalDoc.AttachedAxis }))
+				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))
 				{
 					CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-					_attachmentDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _originalDoc.AttachedAxis));
+					_attachmentDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.AttachedAxis));
 				}
 			}
 		}
@@ -382,74 +455,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion IXYPlotLabelStyleController Members
-
-		#region IApplyController Members
-
-		public override bool Apply(bool disposeController)
-		{
-			_doc.BackgroundStyle = _view.Background;
-			_doc.Font = _view.SelectedFont;
-			_doc.IndependentColor = _view.IndependentColor;
-			_doc.LabelBrush = _view.LabelBrush;
-			_doc.HorizontalAlignment = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
-			_doc.VerticalAlignment = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
-
-			var xOffs = _view.XOffset;
-			if (xOffs.Unit is IRelativeUnit)
-				_doc.XOffset = ((IRelativeUnit)xOffs.Unit).GetRelativeValueFromValue(xOffs.Value);
-			else
-				_doc.XOffset = xOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
-
-			var yOffs = _view.YOffset;
-			if (yOffs.Unit is IRelativeUnit)
-				_doc.YOffset = ((IRelativeUnit)yOffs.Unit).GetRelativeValueFromValue(yOffs.Value);
-			else
-				_doc.YOffset = yOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
-
-			if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
-				_doc.AttachedAxis = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
-			else
-				_doc.AttachedAxis = null;
-
-			_doc.Rotation = _view.SelectedRotation;
-
-			// _doc.LabelColumn  = _labelColumn; already set after dialog
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
-		}
-
-		#endregion IApplyController Members
-
-		#region IMVCController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.LabelColumnSelected += EhView_SelectLabelColumn;
-			_view.FontSizeChanged += EhView_FontSizeChanged;
-
-			_view.LabelColorLinkageChanged += EhLabelColorLinkageChanged;
-			_view.BackgroundColorLinkageChanged += this.EhBackgroundColorLinkageChanged;
-			_view.LabelBrushChanged += this.EhLabelBrushChanged;
-			_view.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
-			_view.UseBackgroundChanged += this.EhUseBackgroundChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.LabelColumnSelected -= EhView_SelectLabelColumn;
-			_view.FontSizeChanged -= EhView_FontSizeChanged;
-			_view.LabelColorLinkageChanged -= EhLabelColorLinkageChanged;
-			_view.BackgroundColorLinkageChanged -= this.EhBackgroundColorLinkageChanged;
-			_view.LabelBrushChanged -= this.EhLabelBrushChanged;
-			_view.BackgroundBrushChanged -= this.EhBackgroundBrushChanged;
-			_view.UseBackgroundChanged -= this.EhUseBackgroundChanged;
-			base.DetachView();
-		}
-
-		#endregion IMVCController Members
 	}
 }

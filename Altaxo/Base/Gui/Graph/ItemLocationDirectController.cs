@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IItemLocationDirectView))]
 	[UserControllerForObject(typeof(ItemLocationDirect))]
-	public class ItemLocationDirectController : MVCANControllerBase<ItemLocationDirect, IItemLocationDirectView>
+	public class ItemLocationDirectController : MVCANControllerEditOriginalDocBase<ItemLocationDirect, IItemLocationDirectView>
 	{
 		private PointD2D _parentSize;
 		private QuantityWithUnitGuiEnvironment _xSizeEnvironment, _xPositionEnvironment;
@@ -111,8 +111,15 @@ namespace Altaxo.Gui.Graph
 		protected bool _showScaleElements_Enabled = true, _showScaleElements_IsVisible = true;
 		protected bool _showAnchorElements_Enabled = true, _showAnchorElements_IsVisible = true;
 
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_parentSize = _doc.ParentSize;
@@ -155,26 +162,6 @@ namespace Altaxo.Gui.Graph
 				_view.ShowAnchorElements(_showAnchorElements_IsVisible, _showAnchorElements_Enabled);
 			}
 		}
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-			_view.SizeXChanged += EhSizeXChanged;
-			_view.SizeYChanged += EhSizeYChanged;
-			_view.ScaleXChanged += EhScaleXChanged;
-			_view.ScaleYChanged += EhScaleYChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.SizeXChanged -= EhSizeXChanged;
-			_view.SizeYChanged -= EhSizeYChanged;
-			_view.ScaleXChanged -= EhScaleXChanged;
-			_view.ScaleYChanged -= EhScaleYChanged;
-			base.DetachView();
-		}
-
-		#region IApplyController Members
 
 		public override bool Apply(bool disposeController)
 		{
@@ -219,17 +206,34 @@ namespace Altaxo.Gui.Graph
 
 				_doc.ParentAnchorX = _view.ReferenceX;
 				_doc.ParentAnchorY = _view.ReferenceY;
-
-				_originalDoc.CopyFrom(_doc);
 			}
 			catch (Exception)
 			{
 				return false; // indicate that something failed
 			}
-			return true;
+
+			return ApplyEnd(true, disposeController);
 		}
 
-		#endregion IApplyController Members
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.SizeXChanged += EhSizeXChanged;
+			_view.SizeYChanged += EhSizeYChanged;
+			_view.ScaleXChanged += EhScaleXChanged;
+			_view.ScaleYChanged += EhScaleYChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.SizeXChanged -= EhSizeXChanged;
+			_view.SizeYChanged -= EhSizeYChanged;
+			_view.ScaleXChanged -= EhScaleXChanged;
+			_view.ScaleYChanged -= EhScaleYChanged;
+			base.DetachView();
+		}
+
+
 
 		#region Service members
 

@@ -44,13 +44,17 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(WaterfallTransform))]
 	[ExpectedTypeOfView(typeof(IWaterfallTransformView))]
-	public class WaterfallTransformController : IMVCANController
+	public class WaterfallTransformController : MVCANControllerEditOriginalDocBase<WaterfallTransform, IWaterfallTransformView>
 	{
-		private IWaterfallTransformView _view;
-		private WaterfallTransform _doc;
-
-		private void Initialize(bool a)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (_view != null)
 			{
 				_view.XScale = Altaxo.Serialization.GUIConversion.ToString(_doc.XScale);
@@ -59,59 +63,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0)
-				return false;
-			WaterfallTransform doc = args[0] as WaterfallTransform;
-			if (doc == null)
-				return false;
-			_doc = doc;
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IWaterfallTransformView;
-				if (_view != null)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			_doc.UseClipping = _view.UseClipping;
 
@@ -136,21 +88,7 @@ namespace Altaxo.Gui.Graph
 				return false;
 			}
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

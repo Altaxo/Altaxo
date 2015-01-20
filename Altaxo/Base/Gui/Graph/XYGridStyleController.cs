@@ -63,17 +63,16 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(GridStyle))]
 	[ExpectedTypeOfView(typeof(IXYGridStyleView))]
-	public class XYGridStyleController : IMVCANController
+	public class XYGridStyleController : MVCANControllerEditOriginalDocBase<GridStyle, IXYGridStyleView>
 	{
-		private IXYGridStyleView _view;
-		private GridStyle _doc;
-		private GridStyle _tempdoc;
 		private IColorTypeThicknessPenController _majorController;
 		private IColorTypeThicknessPenController _minorController;
 
-		private UseDocument _useDocument;
-
-		public UseDocument UseDocumentCopy { set { _useDocument = value; } }
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_majorController, () => _majorController = null);
+			yield return new ControllerAndSetNullMethod(_majorController, () => _minorController = null);
+		}
 
 		public XYGridStyleController()
 		{
@@ -85,36 +84,14 @@ namespace Altaxo.Gui.Graph
 				throw new ApplicationException("Programming error");
 		}
 
-		public bool InitializeDocument(params object[] args)
+		protected override void Initialize(bool initData)
 		{
-			if (args.Length == 0 || (args[0] != null && !(args[0] is GridStyle)))
-				return false;
+			base.Initialize(initData);
 
-			bool isVirgin = null == _doc;
-			_doc = (GridStyle)args[0];
-			_tempdoc = _doc;
-
-			if (_useDocument == UseDocument.Copy && null != _doc)
+			if (initData)
 			{
-				_tempdoc = (GridStyle)_doc.Clone();
-			}
-			if (null == _doc)
-			{
-				_doc = _tempdoc = new GridStyle();
-				_tempdoc.ShowGrid = false;
-				_useDocument = UseDocument.Directly;
-			}
-
-			Initialize(true);
-			return true;
-		}
-
-		public void Initialize(bool init)
-		{
-			if (init)
-			{
-				_majorController = new ColorTypeThicknessPenController(_tempdoc.MajorPen);
-				_minorController = new ColorTypeThicknessPenController(_tempdoc.MinorPen);
+				_majorController = new ColorTypeThicknessPenController(_doc.MajorPen);
+				_minorController = new ColorTypeThicknessPenController(_doc.MinorPen);
 			}
 
 			if (_view != null)
@@ -123,23 +100,50 @@ namespace Altaxo.Gui.Graph
 
 				_view.InitializeMajorGridStyle(_majorController);
 				_view.InitializeMinorGridStyle(_minorController);
-				_view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
-				_view.InitializeShowZeroOnly(_tempdoc.ShowZeroOnly);
-				_view.InitializeShowGrid(_tempdoc.ShowGrid);
+				_view.InitializeShowMinorGrid(_doc.ShowMinor);
+				_view.InitializeShowZeroOnly(_doc.ShowZeroOnly);
+				_view.InitializeShowGrid(_doc.ShowGrid);
 				InitializeElementEnabling();
 
 				_view.InitializeEnd();
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			if (!this._majorController.Apply(disposeController))
+				return false;
+
+			if (!this._minorController.Apply(disposeController))
+				return false;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.ShowGridChanged += this.EhView_ShowGridChanged;
+			_view.ShowMinorGridChanged += this.EhView_ShowMinorGridChanged;
+			_view.ShowZeroOnlyChanged += this.EhView_ShowZeroOnlyChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ShowGridChanged -= this.EhView_ShowGridChanged;
+			_view.ShowMinorGridChanged -= this.EhView_ShowMinorGridChanged;
+			_view.ShowZeroOnlyChanged -= this.EhView_ShowZeroOnlyChanged;
+			base.DetachView();
+		}
+
 		public void InitializeElementEnabling()
 		{
 			if (_view != null)
 			{
-				bool majorstyle = _tempdoc.ShowGrid;
-				bool showzeroonly = _tempdoc.ShowGrid;
-				bool showminor = _tempdoc.ShowGrid && !_tempdoc.ShowZeroOnly;
-				bool minorstyle = _tempdoc.ShowMinor && showminor;
+				bool majorstyle = _doc.ShowGrid;
+				bool showzeroonly = _doc.ShowGrid;
+				bool showminor = _doc.ShowGrid && !_doc.ShowZeroOnly;
+				bool minorstyle = _doc.ShowMinor && showminor;
 				_view.InitializeElementEnabling(majorstyle, minorstyle, showminor, showzeroonly);
 			}
 		}
@@ -148,100 +152,27 @@ namespace Altaxo.Gui.Graph
 
 		public void EhView_ShowGridChanged(bool newval)
 		{
-			_tempdoc.ShowGrid = newval;
+			_doc.ShowGrid = newval;
 			InitializeElementEnabling();
 		}
 
 		public void EhView_ShowMinorGridChanged(bool newval)
 		{
-			_tempdoc.ShowMinor = newval;
+			_doc.ShowMinor = newval;
 			InitializeElementEnabling();
 		}
 
 		public void EhView_ShowZeroOnlyChanged(bool newval)
 		{
-			_tempdoc.ShowZeroOnly = newval;
-			if (newval == true && _tempdoc.ShowMinor)
+			_doc.ShowZeroOnly = newval;
+			if (newval == true && _doc.ShowMinor)
 			{
-				_tempdoc.ShowMinor = false;
-				_view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
+				_doc.ShowMinor = false;
+				_view.InitializeShowMinorGrid(_doc.ShowMinor);
 			}
 			InitializeElementEnabling();
 		}
 
 		#endregion IXYGridStyleViewEventSink Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get { return _view; }
-			set
-			{
-				if (_view != null)
-				{
-					_view.ShowGridChanged -= this.EhView_ShowGridChanged;
-					_view.ShowMinorGridChanged -= this.EhView_ShowMinorGridChanged;
-					_view.ShowZeroOnlyChanged -= this.EhView_ShowZeroOnlyChanged;
-				}
-
-				_view = value as IXYGridStyleView;
-
-				if (_view != null)
-				{
-					Initialize(false);
-
-					_view.ShowGridChanged += this.EhView_ShowGridChanged;
-					_view.ShowMinorGridChanged += this.EhView_ShowMinorGridChanged;
-					_view.ShowZeroOnlyChanged += this.EhView_ShowZeroOnlyChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			if (!this._majorController.Apply(disposeController))
-				return false;
-
-			if (!this._minorController.Apply(disposeController))
-				return false;
-
-			if (_useDocument == UseDocument.Copy)
-			{
-				_doc.CopyFrom(_tempdoc);
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

@@ -43,15 +43,50 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(ITickSpacingView))]
 	[UserControllerForObject(typeof(TickSpacing))]
-	public class TickSpacingController : MVCANControllerBase<TickSpacing, ITickSpacingView>
+	public class TickSpacingController : MVCANDControllerEditOriginalDocBase<TickSpacing, ITickSpacingView>
 	{
 		protected SelectableListNodeList _tickSpacingTypes;
 		protected IMVCAController _tickSpacingController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_tickSpacingTypes = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			InitTickSpacingTypes(initData);
 			InitTickSpacingController(initData);
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
+				return false;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
+
+			base.DetachView();
 		}
 
 		public void InitTickSpacingTypes(bool bInit)
@@ -76,7 +111,7 @@ namespace Altaxo.Gui.Graph
 			if (bInit)
 			{
 				if (_doc != null)
-					_tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController));
+					_tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
 				else
 					_tickSpacingController = null;
 			}
@@ -98,32 +133,16 @@ namespace Altaxo.Gui.Graph
 				return;
 
 			_doc = (TickSpacing)Activator.CreateInstance(spaceType);
+
+			OnMadeDirty(); // this is the chance for the controller above in hierarchy to test for a new document instance and use it
+
+			if (_suspendToken != null)
+			{
+				_suspendToken.Dispose();
+				_suspendToken = _doc.SuspendGetToken(); // now we suspend the new document
+			}
+
 			InitTickSpacingController(true);
-		}
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-
-			_view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
-
-			base.DetachView();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
-				return false;
-
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

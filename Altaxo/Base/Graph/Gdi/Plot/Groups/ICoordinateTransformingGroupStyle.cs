@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	/// <summary>
 	/// Plot group style, which changes plot items by transforming their coordinates, i.e. by shifting them on the x- or y-axis (or both).
 	/// </summary>
-	public interface ICoordinateTransformingGroupStyle : ICloneable
+	public interface ICoordinateTransformingGroupStyle : Main.IDocumentLeafNode, ICloneable
 	{
 		/// <summary>
 		/// Merges the X bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.

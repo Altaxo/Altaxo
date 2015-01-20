@@ -130,69 +130,46 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(PlotItemCollection))]
 	[ExpectedTypeOfView(typeof(ILineScatterLayerContentsView))]
-	public class LineScatterLayerContentsController : ILineScatterLayerContentsViewEventSink, IMVCANController
+	public class LineScatterLayerContentsController
+		:
+		MVCANControllerEditOriginalDocBase<PlotItemCollection, ILineScatterLayerContentsView>,
+		ILineScatterLayerContentsViewEventSink, IMVCANController
 	{
-		protected ILineScatterLayerContentsView _view;
-		protected PlotItemCollection _doc;
-		protected PlotItemCollection _originalDoc;
-
 		private NGTreeNode _plotItemsRootNode = new NGTreeNode();
 		private NGTreeNodeCollection _plotItemsTree;
-		private NGTreeNode _availableItemsRootNode = new NGTreeNode();
-
-		private bool _isDirty = false;
-		private UseDocument _useDocument;
-
-		public UseDocument UseDocumentCopy { set { _useDocument = value; } }
+		private NGTreeNode _availableItemsRootNode;
 
 		private bool _showRange = false;
 
-		public LineScatterLayerContentsController()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
 		}
 
-		/// <summary>
-		/// Initialize the controller with the document. If successfull, the function has to return true.
-		/// </summary>
-		/// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
-		/// <returns>True if successfull, else false.</returns>
-		public bool InitializeDocument(params object[] args)
+		public override void Dispose(bool isDisposing)
 		{
-			if (args == null || args.Length == 0 || !(args[0] is PlotItemCollection))
-				return false;
-			_originalDoc = (PlotItemCollection)args[0];
+			_plotItemsRootNode = null;
+			_plotItemsTree = null;
+			_availableItemsRootNode = null;
 
-			if (_useDocument == UseDocument.Copy)
-				_doc = _originalDoc.Clone();
-			else
-				_doc = _originalDoc;
-
-			_plotItemsTree = _plotItemsRootNode.Nodes;
-			Initialize(true);
-			return true;
+			base.Dispose(isDisposing);
 		}
 
-		public void SetDirty()
+		protected override void Initialize(bool initData)
 		{
-			_isDirty = true;
-		}
-
-		public void Initialize(bool initData)
-		{
-			if (_doc == null)
-				throw new ApplicationException("Doc was not set before!");
+			base.Initialize(initData);
 
 			// now fill the tree view  with all plot associations currently inside
 			if (initData)
 			{
-				// Plot items
-				_plotItemsTree.Clear();
+				_plotItemsRootNode = new NGTreeNode();
+				_plotItemsTree = _plotItemsRootNode.Nodes;
+				_availableItemsRootNode = new NGTreeNode();
+
 				PlotItemsToTree(_plotItemsRootNode, _doc);
 
 				// available items
 				SingleColumnChoiceController.AddAllTableNodes(_availableItemsRootNode);
-
-				_isDirty = false;
 			}
 
 			// Available Items
@@ -204,6 +181,29 @@ namespace Altaxo.Gui.Graph
 
 				_view.ShowRange = _showRange;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.ClearPlotItems(); // first, clear all Plot items
+			TreeToPlotItems(_plotItemsRootNode, _doc);
+
+			if (!disposeController)
+				Initialize(true); // Reload the applied contents to make sure it is synchronized
+
+			return ApplyEnd(true, disposeController); // all ok
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
+			base.DetachView();
 		}
 
 		private NGTreeNode[] PlotItemsSelected
@@ -483,7 +483,6 @@ namespace Altaxo.Gui.Graph
 
 			_view.InitializePlotItems(_plotItemsTree);
 			AvailableItems_ClearSelection();
-			SetDirty();
 		}
 
 		private NGTreeNode CreatePlotItemNode(DataColumn dataCol)
@@ -517,7 +516,6 @@ namespace Altaxo.Gui.Graph
 			{
 				// move the selected items upwards in the list
 				ContentsListBox_MoveUpDown(-1, selNodes);
-				SetDirty();
 			}
 		}
 
@@ -528,7 +526,6 @@ namespace Altaxo.Gui.Graph
 			{
 				// move the selected items downwards in the list
 				ContentsListBox_MoveUpDown(1, selNodes);
-				SetDirty();
 			}
 		}
 
@@ -539,7 +536,6 @@ namespace Altaxo.Gui.Graph
 				NGTreeNode.MoveUpDown(iDelta, selNodes);
 				TreeToPlotItems(_plotItemsRootNode, _doc);
 				_view.InitializePlotItems(this._plotItemsTree);
-				SetDirty();
 			}
 		}
 
@@ -653,8 +649,6 @@ namespace Altaxo.Gui.Graph
 			TreeToPlotItems(_plotItemsRootNode, _doc);
 			// so update the list box:
 			_view.InitializePlotItems(this._plotItemsTree);
-
-			SetDirty();
 		}
 
 		public void PlotItems_UngroupClick()
@@ -694,7 +688,6 @@ namespace Altaxo.Gui.Graph
 
 			TreeToPlotItems(_plotItemsRootNode, _doc);
 			_view.InitializePlotItems(_plotItemsTree);
-			SetDirty();
 		}
 
 		public void EhView_ContentsDoubleClick(NGTreeNode selNode)
@@ -835,42 +828,12 @@ namespace Altaxo.Gui.Graph
 				PlotItemsToTree(_plotItemsRootNode, coll);
 
 				_view.InitializePlotItems(_plotItemsTree);
-				SetDirty();
 			}
 		}
 
 		#endregion ILineScatterLayerContentsController Members
 
-		#region IApplyController Members
 
-		public bool Apply(bool disposeController)
-		{
-			//			if (!this._isDirty)
-			//			return true; // not dirty - so no need to apply something
-
-			_originalDoc.ClearPlotItems(); // first, clear all Plot items
-			TreeToPlotItems(_plotItemsRootNode, _originalDoc);
-
-			if (_useDocument == UseDocument.Copy)
-				_doc = _originalDoc.Clone();
-			Initialize(true); // Reload the applied contents to make sure it is synchronized
-
-			return true; // all ok
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 
 		#region Drag/drop support
 
@@ -1036,41 +999,5 @@ namespace Altaxo.Gui.Graph
 		#endregion Available items
 
 		#endregion Drag/drop support
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.Controller = null;
-				}
-
-				_view = value as ILineScatterLayerContentsView;
-
-				if (null != _view)
-				{
-					Initialize(false); // set only the view elements, dont't initialize the variables
-					_view.Controller = this;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return this._originalDoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
 	}
 }

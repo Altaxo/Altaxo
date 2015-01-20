@@ -32,7 +32,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
 	using Plot.Data;
 
-	public class RelativeStackTransform : ICoordinateTransformingGroupStyle
+	public class RelativeStackTransform
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ICoordinateTransformingGroupStyle
 	{
 		#region Serialization
 
@@ -271,9 +274,5 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		}
 
 		#endregion ICloneable Members
-
-		#region ICoordinateTransformingGroupStyle Members
-
-		#endregion ICoordinateTransformingGroupStyle Members
 	}
 }

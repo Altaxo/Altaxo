@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(AxisStyle), 90)]
 	[ExpectedTypeOfView(typeof(IAxisStyleView))]
-	public class AxisStyleController : MVCANDControllerBase<AxisStyle, IAxisStyleView>
+	public class AxisStyleController : MVCANDControllerEditOriginalDocBase<AxisStyle, IAxisStyleView>
 	{
 		protected IMVCAController _axisLineStyleController;
 
@@ -72,15 +72,23 @@ namespace Altaxo.Gui.Graph
 
 		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
-		protected override void Initialize(bool bInit)
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (bInit)
+			yield return new ControllerAndSetNullMethod(_axisLineStyleController, () => _axisLineStyleController = null);
+			yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
 			{
-				_context = _originalDoc.GetPropertyContext();
+				_context = _doc.GetPropertyContext();
 
 				if (_doc.AxisLineStyle != null)
 				{
-					_axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _originalDoc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
+					_axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
 				}
 				else
 				{
@@ -97,10 +105,10 @@ namespace Altaxo.Gui.Graph
 
 			if (_view != null)
 			{
-				_view.AxisTitle = _originalDoc.TitleText;
-				_view.ShowAxisLine = _originalDoc.IsAxisLineEnabled;
-				_view.ShowMajorLabels = _originalDoc.AreMajorLabelsEnabled;
-				_view.ShowMinorLabels = _originalDoc.AreMinorLabelsEnabled;
+				_view.AxisTitle = _doc.TitleText;
+				_view.ShowAxisLine = _doc.IsAxisLineEnabled;
+				_view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
+				_view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
 				_view.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
 				_view.ShowCustomTickSpacing = _doc.TickSpacing != null;
 				_view.TickSpacingView = _tickSpacingController != null ? _tickSpacingController.ViewObject : null;
@@ -135,25 +143,13 @@ namespace Altaxo.Gui.Graph
 			if (_view.ShowCustomTickSpacing && null != _tickSpacingController)
 				_doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true; // all ok
-		}
-
-		/// <summary>Can be called by an external controller if the state of either the major or the minor label has been changed by an external controller. This will update
-		/// the state of the checkboxes for major and minor labels in the view that is controlled by this controller.</summary>
-		public void AnnounceExternalChangeOfMajorOrMinorLabelState()
-		{
-			if (null != _view)
-			{
-				_view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
-				_view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
-			}
+			return ApplyEnd(true, disposeController); // all ok
 		}
 
 		protected override void AttachView()
 		{
+			base.AttachView();
+
 			_view.ShowAxisLineChanged += EhShowAxisLineChanged;
 			_view.ShowMajorLabelsChanged += EhShowMajorLabelsChanged;
 			_view.ShowMinorLabelsChanged += EhShowMinorLabelsChanged;
@@ -166,6 +162,19 @@ namespace Altaxo.Gui.Graph
 			_view.ShowMajorLabelsChanged -= EhShowMajorLabelsChanged;
 			_view.ShowMinorLabelsChanged -= EhShowMinorLabelsChanged;
 			_view.ShowCustomTickSpacingChanged -= EhShowCustomTickSpacingChanged;
+
+			base.DetachView();
+		}
+
+		/// <summary>Can be called by an external controller if the state of either the major or the minor label has been changed by an external controller. This will update
+		/// the state of the checkboxes for major and minor labels in the view that is controlled by this controller.</summary>
+		public void AnnounceExternalChangeOfMajorOrMinorLabelState()
+		{
+			if (null != _view)
+			{
+				_view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
+				_view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
+			}
 		}
 
 		private void EhShowCustomTickSpacingChanged()
@@ -198,7 +207,7 @@ namespace Altaxo.Gui.Graph
 		private void EhShowAxisLineChanged()
 		{
 			var oldValue = _doc.IsAxisLineEnabled;
-			if (_view.ShowAxisLine && null == _originalDoc.AxisLineStyle)
+			if (_view.ShowAxisLine && null == _doc.AxisLineStyle)
 			{
 				_doc.ShowAxisLine(_context);
 				this._axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);

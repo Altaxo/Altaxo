@@ -38,7 +38,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 	/// <summary>
 	/// Transforming plot style used for waterfall plots.
 	/// </summary>
-	public class WaterfallTransform : ICoordinateTransformingGroupStyle
+	public class WaterfallTransform
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ICoordinateTransformingGroupStyle
 	{
 		/// <summary>User defined scale. The multiplication with _xinc results in the xinc that is used for the waterfall.</summary>
 		private double _scaleXInc = 1;
@@ -109,7 +112,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 			set
 			{
+				var oldValue = _scaleXInc;
 				_scaleXInc = value;
+
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -121,7 +128,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 			set
 			{
+				var oldValue = _scaleYInc;
 				_scaleYInc = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -133,7 +143,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 			set
 			{
+				var oldValue = _useClipping;
 				_useClipping = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -459,8 +472,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		}
 
 		#endregion ICloneable Members
-
-
 
 		#region Inner Classes - TransformedLayerWrapper
 

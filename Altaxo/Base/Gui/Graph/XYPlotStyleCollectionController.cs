@@ -82,11 +82,11 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(G2DPlotStyleCollection))]
 	[ExpectedTypeOfView(typeof(IXYPlotStyleCollectionView))]
-	public class XYPlotStyleCollectionController : IXYPlotStyleCollectionViewEventSink, IXYPlotStyleCollectionController
+	public class XYPlotStyleCollectionController
+		:
+		MVCANControllerEditOriginalDocBase<G2DPlotStyleCollection, IXYPlotStyleCollectionView>,
+		IXYPlotStyleCollectionViewEventSink, IXYPlotStyleCollectionController
 	{
-		protected IXYPlotStyleCollectionView _view;
-		protected G2DPlotStyleCollection _doc;
-
 		private SelectableListNodeList _predefinedStyleSetsAvailable;
 		private SelectableListNodeList _singleStylesAvailable;
 		private SelectableListNodeList _currentItems;
@@ -94,24 +94,25 @@ namespace Altaxo.Gui.Graph
 		/// <summary>Is fired when user selected a style for editing. The argument is the index of the style to edit.</summary>
 		public event Action<int> StyleEditRequested;
 
-		public bool InitializeDocument(params object[] args)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (args == null || args.Length == 0 || !(args[0] is G2DPlotStyleCollection))
-				return false;
-
-			_doc = (G2DPlotStyleCollection)args[0];
-
-			Initialize(true);
-			return true;
+			yield break;
 		}
 
-		public UseDocument UseDocumentCopy
+		public override void Dispose(bool isDisposing)
 		{
-			set { }
+			_predefinedStyleSetsAvailable = null;
+			_singleStylesAvailable = null;
+			_currentItems = null;
+			StyleEditRequested = null;
+
+			base.Dispose(isDisposing);
 		}
 
-		public void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				// predefined styles
@@ -143,6 +144,23 @@ namespace Altaxo.Gui.Graph
 				_view.InitializeAvailableStyleList(_singleStylesAvailable);
 				_view.InitializeStyleList(_currentItems);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
+			base.DetachView();
 		}
 
 		#region IXYPlotStyleCollectionViewEventSink Members
@@ -229,72 +247,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion CollectionController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					_view.Controller = null;
-				}
-
-				_view = value as IXYPlotStyleCollectionView;
-
-				if (_view != null)
-				{
-					Initialize(false);
-					_view.Controller = this;
-				}
-			}
-		}
-
-		public virtual object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public virtual bool Apply(bool disposeController)
-		{
-			using (var suspendToken = _doc.SuspendGetToken())
-			{
-				_doc.Clear();
-				foreach (var node in _currentItems)
-					_doc.Add((IG2DPlotStyle)(node.Tag));
-				suspendToken.Resume();
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

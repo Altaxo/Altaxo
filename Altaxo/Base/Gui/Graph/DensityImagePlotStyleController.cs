@@ -28,7 +28,11 @@ using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui;
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph
 {
@@ -55,17 +59,21 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(DensityImagePlotStyle))]
 	[ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
-	public class DensityImagePlotStyleController : IMVCANController
+	public class DensityImagePlotStyleController : MVCANControllerEditOriginalDocBase<DensityImagePlotStyle, IDensityImagePlotStyleView>
 	{
-		private IDensityImagePlotStyleView _view;
-		private DensityImagePlotStyle _doc;
-		private UseDocument _useDocumentCopy;
-
 		private IMVCANController _scaleController;
 		private IMVCANController _colorProviderController;
 
-		private void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
+			yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_scaleController = new DensityScaleController();
@@ -83,57 +91,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length == 0 || !(args[0] is DensityImagePlotStyle))
-				return false;
-			_doc = (DensityImagePlotStyle)args[0];
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocumentCopy = value; }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IDensityImagePlotStyleView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			if (!_scaleController.Apply(disposeController))
 				return false;
@@ -145,21 +103,7 @@ namespace Altaxo.Gui.Graph
 			_doc.Scale = (NumericalScale)_scaleController.ModelObject;
 			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

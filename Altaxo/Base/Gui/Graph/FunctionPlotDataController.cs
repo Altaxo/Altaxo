@@ -42,21 +42,20 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(XYFunctionPlotData))]
 	[ExpectedTypeOfView(typeof(IFunctionPlotDataView))]
-	internal class FunctionPlotDataController : IMVCANController
+	internal class FunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYFunctionPlotData, IFunctionPlotDataView>
 	{
-		private XYFunctionPlotData _doc, _originalDoc;
-		private UseDocument _useDocumentCopy;
-		private IFunctionPlotDataView _view;
-
 		private IMVCAController _functionController;
 
-		public FunctionPlotDataController()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield return new ControllerAndSetNullMethod(_functionController, () => _functionController = null);
 		}
 
-		private void Initialize(bool initDoc)
+		protected override void Initialize(bool initData)
 		{
-			if (initDoc)
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				// try to find a controller for the underlying function
 				_functionController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.Function }, typeof(IMVCAController), UseDocument.Directly);
@@ -74,6 +73,23 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.EditText += this.EhView_EditText;
+		}
+
+		protected override void DetachView()
+		{
+			_view.EditText -= this.EhView_EditText;
+			base.DetachView();
+		}
+
 		private void EhView_EditText(object sender, EventArgs e)
 		{
 			if (Current.Gui.ShowDialog(_functionController, "Edit script"))
@@ -82,83 +98,5 @@ namespace Altaxo.Gui.Graph
 				Initialize(false);
 			}
 		}
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length == 0 || !(args[0] is XYFunctionPlotData))
-				return false;
-			_originalDoc = (XYFunctionPlotData)args[0];
-			_doc = _useDocumentCopy == UseDocument.Directly ? _originalDoc : (XYFunctionPlotData)_originalDoc.Clone();
-			Initialize(true); // initialize always because we have to update the temporary variables
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocumentCopy = value; }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					_view.EditText -= this.EhView_EditText;
-				}
-
-				_view = value as IFunctionPlotDataView;
-				if (_view != null)
-				{
-					_view.EditText += this.EhView_EditText;
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _originalDoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

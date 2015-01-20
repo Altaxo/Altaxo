@@ -57,15 +57,26 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(ColumnDrivenSymbolSizePlotStyle))]
 	[ExpectedTypeOfView(typeof(IColumnDrivenSymbolSizePlotStyleView))]
-	public class ColumnDrivenSymbolSizePlotStyleController : IMVCANController
+	public class ColumnDrivenSymbolSizePlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenSymbolSizePlotStyle, IColumnDrivenSymbolSizePlotStyleView>
 	{
-		private ColumnDrivenSymbolSizePlotStyle _doc;
-		private IColumnDrivenSymbolSizePlotStyleView _view;
 		private DensityScaleController _scaleController;
 		private INumericColumn _tempDataColumn;
 
-		private void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_tempDataColumn = null;
+			base.Dispose(isDisposing);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_scaleController = new DensityScaleController();
@@ -85,76 +96,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		private void EhChooseDataColumn()
-		{
-			SingleColumnChoice choice = new SingleColumnChoice();
-			choice.SelectedColumn = _tempDataColumn != null ? _tempDataColumn as DataColumn : _doc.DataColumn as DataColumn;
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select data column"))
-			{
-				choice = (SingleColumnChoice)choiceAsObject;
-				if (choice.SelectedColumn is INumericColumn)
-				{
-					_tempDataColumn = (INumericColumn)choice.SelectedColumn;
-					_view.DataColumnName = _tempDataColumn.FullName;
-				}
-			}
-		}
-
-		private void EhClearDataColumn()
-		{
-		}
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length == 0 || !(args[0] is ColumnDrivenSymbolSizePlotStyle))
-				return false;
-			_doc = (ColumnDrivenSymbolSizePlotStyle)args[0];
-
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (null != _view)
-				{
-					_view.ChooseDataColumn -= EhChooseDataColumn;
-					_view.ClearDataColumn -= EhClearDataColumn;
-				}
-
-				_view = value as IColumnDrivenSymbolSizePlotStyleView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.ChooseDataColumn += EhChooseDataColumn;
-					_view.ClearDataColumn += EhClearDataColumn;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			if (!_scaleController.Apply(disposeController))
 				return false;
@@ -177,19 +119,41 @@ namespace Altaxo.Gui.Graph
 			_doc.SymbolSizeInvalid = _view.SymbolSizeInvalid;
 			_doc.NumberOfSteps = _view.NumberOfSteps;
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
+		protected override void AttachView()
 		{
-			return false;
+			base.AttachView();
+			_view.ChooseDataColumn += EhChooseDataColumn;
+			_view.ClearDataColumn += EhClearDataColumn;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ChooseDataColumn -= EhChooseDataColumn;
+			_view.ClearDataColumn -= EhClearDataColumn;
+			base.DetachView();
+		}
+
+		private void EhChooseDataColumn()
+		{
+			SingleColumnChoice choice = new SingleColumnChoice();
+			choice.SelectedColumn = _tempDataColumn != null ? _tempDataColumn as DataColumn : _doc.DataColumn as DataColumn;
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select data column"))
+			{
+				choice = (SingleColumnChoice)choiceAsObject;
+				if (choice.SelectedColumn is INumericColumn)
+				{
+					_tempDataColumn = (INumericColumn)choice.SelectedColumn;
+					_view.DataColumnName = _tempDataColumn.FullName;
+				}
+			}
+		}
+
+		private void EhClearDataColumn()
+		{
 		}
 	}
 }

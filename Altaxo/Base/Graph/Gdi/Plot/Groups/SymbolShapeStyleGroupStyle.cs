@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,22 +32,25 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 	using Plot.Styles.XYPlotScatterStyles;
 
-	public class SymbolShapeStyleGroupStyle : IPlotGroupStyle
+	public class SymbolShapeStyleGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
 	{
-		bool _isInitialized;
-		ShapeAndStyle _shapeAndStyle = new ShapeAndStyle();
-		bool _isStepEnabled = true;
+		private bool _isInitialized;
+		private ShapeAndStyle _shapeAndStyle = new ShapeAndStyle();
+		private bool _isStepEnabled = true;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SymbolShapeStyleGroupStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				SymbolShapeStyleGroupStyle s = (SymbolShapeStyleGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -55,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
@@ -69,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			this._shapeAndStyle = new ShapeAndStyle(from._shapeAndStyle.Shape, from._shapeAndStyle.Style);
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region ICloneable Members
 
@@ -83,8 +88,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return new SymbolShapeStyleGroupStyle(this);
 		}
 
-
-		#endregion
+		#endregion ICloneable Members
 
 		#region IGroupStyle Members
 
@@ -99,9 +103,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		{
 			_isInitialized = false;
 		}
+
 		public void PrepareStep()
 		{
 		}
+
 		public void EndPrepare()
 		{
 		}
@@ -144,7 +150,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion IGroupStyle Members
 
 		#region Other members
 
@@ -155,12 +161,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				return _isInitialized;
 			}
 		}
+
 		public void Initialize(ShapeAndStyle s)
 		{
 			_isInitialized = true;
 			_shapeAndStyle.Shape = s.Shape;
 			_shapeAndStyle.Style = s.Style;
 		}
+
 		public ShapeAndStyle ShapeAndStyle
 		{
 			get
@@ -168,7 +176,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				return new ShapeAndStyle(_shapeAndStyle.Shape, _shapeAndStyle.Style);
 			}
 		}
-		#endregion
+
+		#endregion Other members
 
 		#region Static helpers
 
@@ -191,6 +200,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		}
 
 		public delegate ShapeAndStyle Getter();
+
 		public static void PrepareStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
@@ -213,8 +223,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				grpStyle.Initialize(getter());
 		}
 
-
 		public delegate void Setter(ShapeAndStyle val);
+
 		public static void ApplyStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
@@ -235,10 +245,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-
-
-
-		#endregion
-
+		#endregion Static helpers
 	}
 }

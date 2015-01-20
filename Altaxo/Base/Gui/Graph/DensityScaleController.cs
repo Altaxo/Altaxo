@@ -51,41 +51,63 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IDensityScaleView))]
 	// [UserControllerForObject(typeof(NumericalScale),101)] // outcommented since this causes an infinite loop when searching for detailed scale controllers
-	public class DensityScaleController : IMVCANController
+	public class DensityScaleController : MVCANDControllerEditOriginalDocBase<Scale, IDensityScaleView>
 	{
-		protected IDensityScaleView _view;
-
-		// Cached values
-		protected Scale _originalScale;
-
-		protected Scale _tempScale;
-
 		protected IMVCAController _boundaryController;
 
-		protected SelectableListNodeList _scaleTypes;
 		protected IMVCAController _scaleController;
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length == 0 || !(args[0] is Scale))
-				return false;
+		protected SelectableListNodeList _scaleTypes;
 
-			_originalScale = (Scale)args[0];
-			_tempScale = (Scale)_originalScale.Clone();
-			Initialize(true);
-			return true;
+		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_boundaryController, () => _boundaryController = null);
+			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
 		}
 
-		public UseDocument UseDocumentCopy
+		public override void Dispose(bool isDisposing)
 		{
-			set { }
+			_scaleTypes = null;
+
+			base.Dispose(isDisposing);
 		}
 
-		public void Initialize(bool initData)
+		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			InitScaleTypes(initData);
 			InitScaleController(initData);
 			InitBoundaryController(initData);
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (null != _scaleController)
+			{
+				if (false == _scaleController.Apply(disposeController))
+					return false;
+			}
+
+			if (null != _boundaryController)
+			{
+				if (false == _boundaryController.Apply(disposeController))
+					return false;
+			}
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.AxisTypeChanged += EhView_AxisTypeChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.AxisTypeChanged -= EhView_AxisTypeChanged;
+			base.DetachView();
 		}
 
 		public void InitScaleTypes(bool bInit)
@@ -98,7 +120,7 @@ namespace Altaxo.Gui.Graph
 				{
 					if (classes[i] == typeof(LinkedScale))
 						continue;
-					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempScale.GetType() == classes[i]);
+					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
 					_scaleTypes.Add(node);
 				}
 			}
@@ -111,7 +133,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (bInit)
 			{
-				object scaleObject = _tempScale;
+				object scaleObject = _doc;
 				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
 			}
 			if (null != _view)
@@ -124,9 +146,9 @@ namespace Altaxo.Gui.Graph
 		{
 			if (bInit)
 			{
-				object rescalingObject = _tempScale.RescalingObject;
+				object rescalingObject = _doc.RescalingObject;
 				if (rescalingObject != null)
-					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _tempScale }, typeof(IMVCAController));
+					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController));
 				else
 					_boundaryController = null;
 			}
@@ -144,20 +166,30 @@ namespace Altaxo.Gui.Graph
 
 			try
 			{
-				if (axistype != _tempScale.GetType())
+				if (axistype != _doc.GetType())
 				{
 					// replace the current axis by a new axis of the type axistype
-					Scale _oldAxis = _tempScale;
-					_tempScale = (Scale)System.Activator.CreateInstance(axistype);
+					Scale oldScale = _doc;
+					var newScale = (Scale)System.Activator.CreateInstance(axistype);
 
 					// Try to set the same org and end as the axis before
 					// this will fail for instance if we switch from linear to logarithmic with negative bounds
 					try
 					{
-						_tempScale.SetScaleOrgEnd(_oldAxis.OrgAsVariant, _oldAxis.EndAsVariant);
+						newScale.SetScaleOrgEnd(oldScale.OrgAsVariant, oldScale.EndAsVariant);
 					}
 					catch (Exception)
 					{
+					}
+
+					_doc = newScale;
+
+					OnMadeDirty(); // chance for controllers up in hierarchy to catch new instance
+
+					if (null != _suspendToken)
+					{
+						_suspendToken.Dispose();
+						_suspendToken = _doc.SuspendGetToken();
 					}
 
 					InitScaleController(true);
@@ -171,67 +203,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion View event handlers
-
-		#region IMVCAController
-
-		public object ViewObject
-		{
-			get { return _view; }
-			set
-			{
-				if (null != _view)
-					_view.AxisTypeChanged -= EhView_AxisTypeChanged;
-
-				_view = value as IDensityScaleView;
-
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.AxisTypeChanged += EhView_AxisTypeChanged;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return this._originalScale; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		public bool Apply(bool disposeController)
-		{
-			if (null != _scaleController)
-			{
-				if (false == _scaleController.Apply(disposeController))
-					return false;
-			}
-
-			if (null != _boundaryController)
-			{
-				if (false == _boundaryController.Apply(disposeController))
-					return false;
-			}
-
-			_originalScale = _tempScale;
-
-			return true; // all ok
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IMVCAController
 	}
 }

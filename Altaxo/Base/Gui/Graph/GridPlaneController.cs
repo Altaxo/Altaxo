@@ -33,14 +33,24 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph
 {
+	[ExpectedTypeOfView(typeof(IMultiChildView))]
 	[UserControllerForObject(typeof(GridPlane))]
-	public class GridPlaneController : MultiChildController, IMVCANController
+	public class GridPlaneController : MVCANControllerEditOriginalDocBase<GridPlane, IMultiChildView>
 	{
-		private GridPlane _doc;
+		private MultiChildController _innerController;
 
 		private IMVCAController _grid1;
 		private IMVCAController _grid2;
 		private IMVCANController _background;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_grid1, () => _grid1 = null);
+			yield return new ControllerAndSetNullMethod(_grid2, () => _grid2 = null);
+			yield return new ControllerAndSetNullMethod(_background, () => _background = null);
+
+			yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
+		}
 
 		public GridPlaneController()
 		{
@@ -51,26 +61,11 @@ namespace Altaxo.Gui.Graph
 			InitializeDocument(doc);
 		}
 
-		private UseDocument _useDocument;
-
-		public UseDocument UseDocumentCopy { set { _useDocument = value; } }
-
-		public bool InitializeDocument(params object[] args)
+		protected override void Initialize(bool initData)
 		{
-			if (args.Length == 0 || !(args[0] is GridPlane))
-				return false;
+			base.Initialize(initData);
 
-			bool isVirgin = null == _doc;
-
-			_doc = (GridPlane)args[0];
-
-			Initialize(true);
-			return true;
-		}
-
-		private void Initialize(bool bInit)
-		{
-			if (bInit)
+			if (initData)
 			{
 				_grid1 = new XYGridStyleController(_doc.GridStyleFirst);
 				Current.Gui.FindAndAttachControlTo(_grid1);
@@ -86,8 +81,21 @@ namespace Altaxo.Gui.Graph
 				Current.Gui.FindAndAttachControlTo(_background);
 				ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
 
-				base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);
+				_innerController = new MultiChildController(new ControlViewElement[] { c1, c2, c3 }, false);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (false == _innerController.Apply(disposeController))
+				return false;
+
+			_doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
+			_doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
+			var backBrush = (BrushX)_background.ModelObject;
+			_doc.Background = backBrush.IsVisible ? backBrush : null;
+
+			return ApplyEnd(true, disposeController);
 		}
 
 		private static string GridName(int axisNumber)
@@ -106,27 +114,6 @@ namespace Altaxo.Gui.Graph
 				default:
 					return string.Format("Axis[{0}] grid", axisNumber);
 			}
-		}
-
-		public override object ModelObject
-		{
-			get
-			{
-				return _doc;
-			}
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (false == base.Apply(disposeController))
-				return false;
-
-			_doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
-			_doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
-			var backBrush = (BrushX)_background.ModelObject;
-			_doc.Background = backBrush.IsVisible ? backBrush : null;
-
-			return true;
 		}
 	}
 }

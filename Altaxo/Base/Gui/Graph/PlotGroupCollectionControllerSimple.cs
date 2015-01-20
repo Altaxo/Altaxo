@@ -70,14 +70,17 @@ namespace Altaxo.Gui.Graph
 	#endregion Interfaces
 
 	[ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
-	public class PlotGroupCollectionControllerSimple : IMVCANController
+	public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
 	{
-		private IPlotGroupCollectionViewSimple _view;
-		private PlotGroupStyleCollection _origdoc;
-		private PlotGroupStyleCollection _doc;
-
-		private void Initialize(bool initData)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				bool bSerial;
@@ -95,6 +98,46 @@ namespace Altaxo.Gui.Graph
 					PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
 					);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			bool color = _view.PlotGroupColor;
+			bool linestyle = _view.PlotGroupLineType;
+			bool symbol = _view.PlotGroupSymbol;
+			bool serial = !_view.PlotGroupConcurrently;
+
+			if (_doc.ContainsType(typeof(ColorGroupStyle)))
+				_doc.RemoveType(typeof(ColorGroupStyle));
+			if (_doc.ContainsType(typeof(LineStyleGroupStyle)))
+				_doc.RemoveType(typeof(LineStyleGroupStyle));
+			if (_doc.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
+				_doc.RemoveType(typeof(SymbolShapeStyleGroupStyle));
+
+			if (color)
+			{
+				_doc.Add(ColorGroupStyle.NewExternalGroupStyle());
+			}
+			if (linestyle)
+			{
+				if (serial && color)
+					_doc.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
+				else
+					_doc.Add(new LineStyleGroupStyle());
+			}
+			if (symbol)
+			{
+				if (serial && linestyle)
+					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
+				else if (serial && color)
+					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
+				else
+					_doc.Add(new SymbolShapeStyleGroupStyle());
+			}
+
+			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
+
+			return ApplyEnd(true, disposeController);
 		}
 
 		/// <summary>
@@ -176,108 +219,5 @@ namespace Altaxo.Gui.Graph
 
 			return false;
 		}
-
-		#region IMVCANController
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
-				return false;
-			_origdoc = (PlotGroupStyleCollection)args[0];
-			_doc = _origdoc.Clone();
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-				}
-
-				_view = value as IPlotGroupCollectionViewSimple;
-
-				if (_view != null)
-				{
-					Initialize(false);
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _origdoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		public bool Apply(bool disposeController)
-		{
-			bool color = _view.PlotGroupColor;
-			bool linestyle = _view.PlotGroupLineType;
-			bool symbol = _view.PlotGroupSymbol;
-			bool serial = !_view.PlotGroupConcurrently;
-
-			if (_doc.ContainsType(typeof(ColorGroupStyle)))
-				_doc.RemoveType(typeof(ColorGroupStyle));
-			if (_doc.ContainsType(typeof(LineStyleGroupStyle)))
-				_doc.RemoveType(typeof(LineStyleGroupStyle));
-			if (_doc.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
-				_doc.RemoveType(typeof(SymbolShapeStyleGroupStyle));
-
-			if (color)
-			{
-				_doc.Add(ColorGroupStyle.NewExternalGroupStyle());
-			}
-			if (linestyle)
-			{
-				if (serial && color)
-					_doc.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
-				else
-					_doc.Add(new LineStyleGroupStyle());
-			}
-			if (symbol)
-			{
-				if (serial && linestyle)
-					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
-				else if (serial && color)
-					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
-				else
-					_doc.Add(new SymbolShapeStyleGroupStyle());
-			}
-
-			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
-
-			_origdoc.CopyFrom(_doc);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IMVCANController
 	}
 } // end of namespace

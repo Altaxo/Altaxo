@@ -44,14 +44,27 @@ namespace Altaxo.Gui.Graph.Shapes
 
 	[UserControllerForObject(typeof(ShapeGroup))]
 	[ExpectedTypeOfView(typeof(IShapeGroupView))]
-	public class ShapeGroupController : MVCANControllerBase<ShapeGroup, IShapeGroupView>
+	public class ShapeGroupController : MVCANControllerEditOriginalDocBase<ShapeGroup, IShapeGroupView>
 	{
 		private SelectableListNodeList _itemList;
 
 		private IMVCANController _locationController;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_itemList = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_itemList = new SelectableListNodeList();
@@ -79,12 +92,10 @@ namespace Altaxo.Gui.Graph.Shapes
 			if (!_locationController.Apply(disposeController))
 				return false;
 
-			_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
+				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				_originalDoc.CopyFrom(_doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

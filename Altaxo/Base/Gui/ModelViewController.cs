@@ -483,6 +483,60 @@ namespace Altaxo.Gui
 		}
 	}
 
+	public abstract class MVCANDControllerEditOriginalDocBase<TModel, TView> : MVCANControllerEditOriginalDocBase<TModel, TView>, IMVCANDController
+		where TView : class
+		where TModel : ICloneable
+	{
+		protected Altaxo.Main.SuspendableObject _suppressDirtyEvent = new Altaxo.Main.SuspendableObject();
+
+		public event Action<IMVCANDController> MadeDirty;
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+			{
+				return base.InitializeDocument(args);
+			}
+		}
+
+		public override object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					DetachView();
+				}
+
+				_view = value as TView;
+
+				if (null != _view)
+				{
+					using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+					{
+						Initialize(false);
+						AttachView();
+					}
+				}
+			}
+		}
+
+		protected virtual void OnMadeDirty()
+		{
+			if (!_suppressDirtyEvent.IsSuspended && null != MadeDirty)
+				MadeDirty(this);
+		}
+
+		public object ProvisionalModelObject
+		{
+			get { return _doc; }
+		}
+	}
+
 	/// <summary>
 	/// Wraps an <see cref="Altaxo.Gui.IMVCANController"/> instance in a wrapper class
 	/// </summary>

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
@@ -33,25 +35,29 @@ namespace Altaxo.Graph.Plot.Groups
 	/// This group style is used to distribute a symbol size function to all local plot styles.
 	/// The symbol size function maps an index i of the actual plot point to a symbol size.
 	/// </summary>
-	public class VariableColorGroupStyle : IPlotGroupStyle
+	public class VariableColorGroupStyle
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IPlotGroupStyle
 	{
 		/// <summary>True if this group style was initialized.</summary>
-		bool _isInitialized;
+		private bool _isInitialized;
+
 		/// <summary>The function which maps an index i to a color. </summary>
-		Func<int, Color> _colorForIndex;
+		private Func<int, Color> _colorForIndex;
 
 		/// <summary>Helper.</summary>
-		readonly static Type MyType = typeof(VariableColorGroupStyle);
+		private static readonly Type MyType = typeof(VariableColorGroupStyle);
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VariableColorGroupStyle), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (VariableColorGroupStyle)obj;
 			}
-
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -60,7 +66,7 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		#region Constructors
 
@@ -74,7 +80,7 @@ namespace Altaxo.Graph.Plot.Groups
 			this._colorForIndex = from._colorForIndex;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region ICloneable Members
 
@@ -88,8 +94,7 @@ namespace Altaxo.Graph.Plot.Groups
 			return new VariableColorGroupStyle(this);
 		}
 
-
-		#endregion
+		#endregion ICloneable Members
 
 		#region IGroupStyle Members
 
@@ -104,9 +109,11 @@ namespace Altaxo.Graph.Plot.Groups
 		{
 			_isInitialized = false;
 		}
+
 		public void PrepareStep()
 		{
 		}
+
 		public void EndPrepare()
 		{
 		}
@@ -143,11 +150,10 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 			set
 			{
-
 			}
 		}
 
-		#endregion
+		#endregion IGroupStyle Members
 
 		#region Other members
 
@@ -172,7 +178,8 @@ namespace Altaxo.Graph.Plot.Groups
 				return _colorForIndex;
 			}
 		}
-		#endregion
+
+		#endregion Other members
 
 		#region Static helpers
 
@@ -200,7 +207,6 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				localGroups.Add(new VariableColorGroupStyle());
 			}
-
 
 			VariableColorGroupStyle grpStyle = null;
 			if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
@@ -244,6 +250,6 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		#endregion
+		#endregion Static helpers
 	}
 }

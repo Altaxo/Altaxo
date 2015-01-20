@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[UserControllerForObject(typeof(DensityImageLegend))]
 	[ExpectedTypeOfView(typeof(IXYPlotLayerView))]
-	public class DensityImageLegendController : MVCANControllerBase<DensityImageLegend, IXYPlotLayerView>
+	public class DensityImageLegendController : MVCANControllerEditOriginalDocBase<DensityImageLegend, IXYPlotLayerView>
 	{
 		private string _currentPageName;
 		private LayerControllerTabType _primaryChoice; // which tab type is currently choosen
@@ -67,16 +67,42 @@ namespace Altaxo.Gui.Graph
 
 		private object _lastControllerApplied;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_axisScaleController, () => _axisScaleController = null);
+			yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
+			yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
+
+			if (null != _axisControl)
+			{
+				foreach (var item in _axisControl.Values)
+				{
+					yield return new ControllerAndSetNullMethod(item.AxisStyleCondController, null);
+					yield return new ControllerAndSetNullMethod(item.MajorLabelCondController, null);
+					yield return new ControllerAndSetNullMethod(item.MinorLabelCondController, null);
+					yield return new ControllerAndSetNullMethod(null, () => _axisControl = null);
+				}
+			}
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_currentController = null;
+			_lastControllerApplied = null;
+
+			_listOfScales = null;
+			_listOfAxes = null;
+			_listOfPlanes = null;
+			_listOfUniqueItem = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		public DensityImageLegendController()
 		{
 			_currentScale = 0;
 			_currentPageName = "Scale";
 			_currentAxisID = CSLineID.X0;
-		}
-
-		public override bool InitializeDocument(params object[] args)
-		{
-			return base.InitializeDocument(args);
 		}
 
 		public DensityImageLegendController(DensityImageLegend layer)
@@ -91,43 +117,30 @@ namespace Altaxo.Gui.Graph
 
 		private DensityImageLegendController(DensityImageLegend layer, string currentPage, int axisScaleIdx, CSLineID id)
 		{
-			_originalDoc = layer;
-			_doc = (DensityImageLegend)layer.Clone();
-
-			_currentScale = axisScaleIdx;
-			_currentAxisID = id;
-			_currentPageName = currentPage;
-
-			Initialize(true);
+			InitializeDocument(layer, currentPage, axisScaleIdx, id);
 		}
 
-		protected override void AttachView()
+		public override bool InitializeDocument(params object[] args)
 		{
-			_view.TabValidating += EhView_TabValidating;
-			_view.PageChanged += EhView_PageChanged;
-			_view.SecondChoiceChanged += EhView_SecondChoiceChanged;
-			_view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
-		}
+			if (args != null)
+			{
+				if (args.Length > 1 && args[1] is string)
+					_currentPageName = (string)args[1];
 
-		protected override void DetachView()
-		{
-			_view.TabValidating -= EhView_TabValidating;
-			_view.PageChanged -= EhView_PageChanged;
-			_view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
-			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
-		}
+				if (args.Length > 2 && args[2] is int)
+					_currentScale = (int)args[2];
 
-		public override bool Apply(bool disposeController)
-		{
-			ApplyCurrentController(true);
+				if (args.Length > 3 && args[3] is CSLineID)
+					_currentAxisID = (CSLineID)args[3];
+			}
 
-			_originalDoc.CopyFrom(_doc); // _doc remains suspended
-
-			return true;
+			return base.InitializeDocument(args);
 		}
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				SetCoordinateSystemDependentObjects(_currentAxisID);
@@ -151,6 +164,29 @@ namespace Altaxo.Gui.Graph
 				// Set the controller of the current visible Tab
 				SetCurrentTabController(true);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			ApplyCurrentController(true);
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			_view.TabValidating += EhView_TabValidating;
+			_view.PageChanged += EhView_PageChanged;
+			_view.SecondChoiceChanged += EhView_SecondChoiceChanged;
+			_view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
+		}
+
+		protected override void DetachView()
+		{
+			_view.TabValidating -= EhView_TabValidating;
+			_view.PageChanged -= EhView_PageChanged;
+			_view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
+			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
 		}
 
 		private void SetCoordinateSystemDependentObjects()
@@ -194,7 +230,7 @@ namespace Altaxo.Gui.Graph
 					}
 					if (null == this._coordinateController)
 					{
-						this._coordinateController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CoordinateSystem }, typeof(IMVCAController));
+						this._coordinateController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CoordinateSystem }, typeof(IMVCAController), UseDocument.Directly);
 					}
 					_currentController = this._coordinateController;
 					_view.CurrentContent = this._coordinateController.ViewObject;
@@ -223,7 +259,7 @@ namespace Altaxo.Gui.Graph
 					}
 					if (_axisScaleController == null)
 					{
-						_axisScaleController = new ScaleWithTicksController();
+						_axisScaleController = new ScaleWithTicksController() { UseDocumentCopy = UseDocument.Directly };
 						_axisScaleController.InitializeDocument(_doc.ScaleWithTicks);
 
 						Current.Gui.FindAndAttachControlTo(_axisScaleController);

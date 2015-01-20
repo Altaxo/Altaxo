@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(ErrorBarPlotStyle))]
 	[ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
-	public class ErrorBarPlotStyleController : MVCANControllerBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
+	public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -90,8 +90,24 @@ namespace Altaxo.Gui.Graph
 		private INumericColumn _tempPosErrorColumn;
 		private INumericColumn _tempNegErrorColumn;
 
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_colorGroupStyleTracker = null;
+			_tempPosErrorColumn = null;
+			_tempNegErrorColumn = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
@@ -119,6 +135,51 @@ namespace Altaxo.Gui.Graph
 				_view.PositiveError = posError;
 				_view.NegativeError = negError;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.IndependentColor = _view.IndependentColor;
+			_doc.Pen = _view.StrokePen;
+			_doc.IndependentSymbolSize = _view.IndependentSize;
+			_doc.SymbolGap = _view.LineSymbolGap;
+			_doc.ShowEndBars = _view.ShowEndBars;
+			_doc.DoNotShiftIndependentVariable = _view.DoNotShiftIndependentVariable;
+			_doc.IsHorizontalStyle = _view.IsHorizontalStyle;
+
+			_doc.IndependentSymbolSize = _view.IndependentSize;
+			_doc.SymbolSize = _view.SymbolSize;
+			_doc.SkipFrequency = _view.SkipFrequency;
+
+			// Errors
+			_doc.PositiveErrorColumn = _tempPosErrorColumn;
+			_doc.NegativeErrorColumn = _tempNegErrorColumn;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.ChoosePositiveError += EhView_ChoosePositiveError;
+			_view.ChooseNegativeError += EhView_ChooseNegativeError;
+			_view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
+			_view.ClearPositiveError += EhView_ClearPositiveError;
+			_view.ClearNegativeError += EhView_ClearNegativeError;
+			_view.IndependentColorChanged += EhIndependentColorChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ChoosePositiveError -= EhView_ChoosePositiveError;
+			_view.ChooseNegativeError -= EhView_ChooseNegativeError;
+			_view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
+			_view.ClearPositiveError -= EhView_ClearPositiveError;
+			_view.ClearNegativeError -= EhView_ClearNegativeError;
+			_view.IndependentColorChanged -= EhIndependentColorChanged;
+
+			base.DetachView();
 		}
 
 		private void EhView_ChoosePositiveError(object sender, EventArgs e)
@@ -188,61 +249,5 @@ namespace Altaxo.Gui.Graph
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 			}
 		}
-
-		#region IMVCController Members
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-
-			_view.ChoosePositiveError += EhView_ChoosePositiveError;
-			_view.ChooseNegativeError += EhView_ChooseNegativeError;
-			_view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
-			_view.ClearPositiveError += EhView_ClearPositiveError;
-			_view.ClearNegativeError += EhView_ClearNegativeError;
-			_view.IndependentColorChanged += EhIndependentColorChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.ChoosePositiveError -= EhView_ChoosePositiveError;
-			_view.ChooseNegativeError -= EhView_ChooseNegativeError;
-			_view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
-			_view.ClearPositiveError -= EhView_ClearPositiveError;
-			_view.ClearNegativeError -= EhView_ClearNegativeError;
-			_view.IndependentColorChanged -= EhIndependentColorChanged;
-
-			base.DetachView();
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public override bool Apply(bool disposeController)
-		{
-			_doc.IndependentColor = _view.IndependentColor;
-			_doc.Pen = _view.StrokePen;
-			_doc.IndependentSymbolSize = _view.IndependentSize;
-			_doc.SymbolGap = _view.LineSymbolGap;
-			_doc.ShowEndBars = _view.ShowEndBars;
-			_doc.DoNotShiftIndependentVariable = _view.DoNotShiftIndependentVariable;
-			_doc.IsHorizontalStyle = _view.IsHorizontalStyle;
-
-			_doc.IndependentSymbolSize = _view.IndependentSize;
-			_doc.SymbolSize = _view.SymbolSize;
-			_doc.SkipFrequency = _view.SkipFrequency;
-
-			// Errors
-			_doc.PositiveErrorColumn = _tempPosErrorColumn;
-			_doc.NegativeErrorColumn = _tempNegErrorColumn;
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
-		}
-
-		#endregion IApplyController Members
 	}
 }

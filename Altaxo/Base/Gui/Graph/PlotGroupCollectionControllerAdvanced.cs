@@ -75,7 +75,10 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(PlotGroupStyleCollection))]
 	[ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]
-	public class PlotGroupCollectionControllerAdvanced : IMVCANController, IPlotGroupCollectionViewAdvancedEventSink
+	public class PlotGroupCollectionControllerAdvanced
+		:
+		MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewAdvanced>,
+		IPlotGroupCollectionViewAdvancedEventSink
 	{
 		#region Inner classes
 
@@ -92,11 +95,7 @@ namespace Altaxo.Gui.Graph
 
 		#endregion Inner classes
 
-		private PlotGroupStyleCollection _origdoc;
-		private PlotGroupStyleCollection _doc;
 		private IGPlotItem _parent; // usually the parent is the PlotItemCollection
-		private IPlotGroupCollectionViewAdvanced _view;
-		private UseDocument _useDocument;
 
 		private SelectableListNodeList _availableTransfoStyles;
 		private SelectableListNodeList _availableNormalStyles;
@@ -109,9 +108,36 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		private int _currentNoOfItemsThatCanHaveChilds;
 
-		private void Initialize(bool initDoc)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (initDoc)
+			yield break;
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_parent = null;
+			_availableTransfoStyles = null;
+			_availableNormalStyles = null;
+			_currentNormalStyles = null;
+			_availableUpdateModes = null;
+			_currentTransfoStyle = null;
+
+			base.Dispose(isDisposing);
+		}
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			if (args != null || args.Length > 1 && args[1] is IGPlotItem)
+				_parent = (IGPlotItem)args[1];
+
+			return base.InitializeDocument(args);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				// available Update modes
 				_availableUpdateModes = new SelectableListNodeList();
@@ -180,6 +206,53 @@ namespace Altaxo.Gui.Graph
 				_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
 				_view.InitializeUpdateMode(_availableUpdateModes, _doc.InheritFromParentGroups, _doc.DistributeToChildGroups);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			foreach (SelectableListNode node in _availableTransfoStyles)
+			{
+				if (node.IsSelected)
+				{
+					_currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
+					_doc.CoordinateTransformingStyle = _currentTransfoStyle;
+					break;
+				}
+			}
+
+			_view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
+			foreach (CheckableSelectableListNode node in _currentNormalStyles)
+			{
+				IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Tag);
+				style.IsStepEnabled = node.IsChecked;
+			}
+
+			bool inherit, distribute;
+			_view.QueryUpdateMode(out inherit, out distribute);
+			_doc.InheritFromParentGroups = inherit;
+			_doc.DistributeToChildGroups = distribute;
+			foreach (SelectableListNode node in _availableUpdateModes)
+			{
+				if (node.IsSelected)
+				{
+					_doc.PlotGroupStrictness = (PlotGroupStrictness)node.Tag;
+					break;
+				}
+			}
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.Controller = this;
+		}
+
+		protected override void DetachView()
+		{
+			_view.Controller = null;
+			base.DetachView();
 		}
 
 		/// <summary>
@@ -256,117 +329,6 @@ namespace Altaxo.Gui.Graph
 			}
 			UpdateCurrentNormalIndentation();
 		}
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0 || !(args[0] is PlotGroupStyleCollection))
-				return false;
-
-			_origdoc = (PlotGroupStyleCollection)args[0];
-			_doc = _useDocument == UseDocument.Directly ? _origdoc : _origdoc.Clone();
-
-			if (args.Length >= 2 && args[1] is IGPlotItem)
-				_parent = (IGPlotItem)args[1];
-
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { _useDocument = value; }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-					_view.Controller = null;
-
-				_view = value as IPlotGroupCollectionViewAdvanced;
-
-				if (_view != null)
-				{
-					Initialize(false);
-					_view.Controller = this;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _origdoc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			foreach (SelectableListNode node in _availableTransfoStyles)
-			{
-				if (node.IsSelected)
-				{
-					_currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-					_doc.CoordinateTransformingStyle = _currentTransfoStyle;
-					break;
-				}
-			}
-
-			_view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
-			foreach (CheckableSelectableListNode node in _currentNormalStyles)
-			{
-				IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Tag);
-				style.IsStepEnabled = node.IsChecked;
-			}
-
-			bool inherit, distribute;
-			_view.QueryUpdateMode(out inherit, out distribute);
-			_doc.InheritFromParentGroups = inherit;
-			_doc.DistributeToChildGroups = distribute;
-			foreach (SelectableListNode node in _availableUpdateModes)
-			{
-				if (node.IsSelected)
-				{
-					_doc.PlotGroupStrictness = (PlotGroupStrictness)node.Tag;
-					break;
-				}
-			}
-
-			if (_useDocument == UseDocument.Copy)
-				_origdoc.CopyFrom(_doc);
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 
 		#region IPlotGroupCollectionViewEventSink Members
 

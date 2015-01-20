@@ -37,10 +37,17 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 
 	[UserControllerForObject(typeof(NumericLabelFormattingScientific))]
 	[ExpectedTypeOfView(typeof(INumericLabelFormattingScientificView))]
-	public class NumericLabelFormattingScientificController : MVCANControllerBase<NumericLabelFormattingScientific, INumericLabelFormattingScientificView>
+	public class NumericLabelFormattingScientificController : MVCANControllerEditOriginalDocBase<NumericLabelFormattingScientific, INumericLabelFormattingScientificView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.ShowExponentAlways = _doc.ShowExponentAlways;
@@ -50,9 +57,8 @@ namespace Altaxo.Gui.Graph.LabelFormatting
 		public override bool Apply(bool disposeController)
 		{
 			_doc.ShowExponentAlways = _view.ShowExponentAlways;
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-			return true;
+
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }
