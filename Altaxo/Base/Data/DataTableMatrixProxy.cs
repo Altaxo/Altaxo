@@ -491,21 +491,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Clear data columns collection, removes the event handlers from the data column proxies.
-		/// </summary>
-		private void InternalClearDataColumns()
-		{
-			if (null != _dataColumns)
-			{
-				var dataColumns = _dataColumns;
-				_dataColumns = new List<IReadableColumnProxy>();
-
-				foreach (var proxy in dataColumns)
-					proxy.Dispose();
-			}
-		}
-
-		/// <summary>
 		/// Adds a data column proxy to the data column collection without cloning it (i.e. the proxy is directly added).
 		/// </summary>
 		/// <param name="proxy">The proxy.</param>
@@ -536,20 +521,22 @@ namespace Altaxo.Data
 		/// <param name="fromList">The enumeration of data proxies to clone.</param>
 		private void InternalSetDataColumnsWithCloning(IEnumerable<IReadableColumnProxy> fromList)
 		{
-			if (null != _dataColumns)
-			{
-				InternalClearDataColumns();
-			}
-			else
-			{
-				_dataColumns = new List<IReadableColumnProxy>();
-			}
+			var oldDataColumns = _dataColumns;
+			_dataColumns = new List<IReadableColumnProxy>();
 
 			foreach (var fromMember in fromList)
 			{
 				var clone = (IReadableColumnProxy)fromMember.Clone();
 				clone.ParentObject = this;
 				_dataColumns.Add(clone);
+			}
+
+			// dispose old columns __after__ (!) cloning, because it is possible that they are identical to some data column in fromList
+			if (null != oldDataColumns)
+			{
+				foreach (var col in oldDataColumns)
+					if (null != col)
+						col.Dispose();
 			}
 		}
 
@@ -656,7 +643,6 @@ namespace Altaxo.Data
 		/// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
 		public void SetDataColumns(IEnumerable<IReadableColumnProxy> dataColumnProxies)
 		{
-			InternalClearDataColumns();
 			InternalSetDataColumnsWithCloning(dataColumnProxies);
 			_isDirty = true;
 		}

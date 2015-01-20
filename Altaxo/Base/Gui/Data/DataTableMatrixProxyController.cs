@@ -324,6 +324,11 @@ namespace Altaxo.Gui.Data
 			if (!object.ReferenceEquals(_originalDoc, _doc))
 				CopyHelper.Copy(ref _originalDoc, _doc);
 
+			var tempView = ViewObject;
+			ViewObject = null;
+			Initialize(true);
+			ViewObject = tempView;
+
 			return true; // successfull
 		}
 	}
