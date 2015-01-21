@@ -59,6 +59,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
 				s._coordinateTransformingStyle = (ICoordinateTransformingGroupStyle)info.GetValue("TransformingStyle", s);
+				if (null != s._coordinateTransformingStyle) s._coordinateTransformingStyle.ParentObject = s;
 
 				return s;
 			}
@@ -89,7 +90,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				using (var suspendToken = SuspendGetToken())
 				{
 					base.CopyFrom(from);
-					this.CoordinateTransformingStyle = null == from._coordinateTransformingStyle ? null : (ICoordinateTransformingGroupStyle)from._coordinateTransformingStyle.Clone();
+
+					if (ChildCopyToMember(ref _coordinateTransformingStyle, from._coordinateTransformingStyle))
+						EhSelfChanged(EventArgs.Empty);
 
 					suspendToken.Resume();
 				}
@@ -119,8 +122,15 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 		public override void Clear()
 		{
-			_coordinateTransformingStyle = null;
-			base.Clear();
+			using (var suspendToken = SuspendGetToken())
+			{
+				if (ChildSetMember(ref _coordinateTransformingStyle, null))
+					EhSelfChanged(EventArgs.Empty);
+
+				base.Clear();
+
+				suspendToken.Resume();
+			}
 		}
 
 		/// <summary>

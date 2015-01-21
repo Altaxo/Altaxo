@@ -91,9 +91,13 @@ namespace Altaxo.Gui.Graph
 
 		public override void Dispose(bool isDisposing)
 		{
+			_tempScale = null;
+			_tempTickSpacing = null;
 			_scaleTypes = null;
 			_tickSpacingTypes = null;
 			_linkScaleChoices = null;
+			_scaleLinkedTo = null;
+			_linkedScaleParameters = null;
 
 			base.Dispose(isDisposing);
 		}

@@ -578,6 +578,7 @@ namespace Altaxo.Worksheet.Commands
 
 			IGPlotItem pi = new DensityImagePlotItem(assoc, plotStyle);
 			xylayer.PlotItems.Add(pi);
+			Current.ProjectService.CreateNewGraph(graph);
 		}
 	}
 }

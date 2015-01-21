@@ -164,51 +164,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		/// <summary>
-		/// retrieves the object with the name <code>name</code>.
-		/// </summary>
-		/// <param name="name">The objects name.</param>
-		/// <returns>The object with the specified name.</returns>
-		public override IDocumentLeafNode GetChildObjectNamed(string name)
-		{
-			switch (name)
-			{
-				case "Style":
-					return StyleObject;
-
-				case "Data":
-					return DataObject;
-
-				default:
-					return null;
-			}
-		}
-
-		/// <summary>
-		/// Retrieves the name of the provided object.
-		/// </summary>
-		/// <param name="o">The object for which the name should be found.</param>
-		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
-		public override string GetNameOfChildObject(IDocumentLeafNode o)
-		{
-			if (null == o)
-				return null;
-			else if (object.ReferenceEquals(o, StyleObject))
-				return "Style";
-			else if (object.ReferenceEquals(o, DataObject))
-				return "Data";
-			else
-				return null;
-		}
-
-		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != StyleObject)
-				yield return new Main.DocumentNodeAndName(StyleObject, "Style");
-			if (null != DataObject)
-				yield return new Main.DocumentNodeAndName(DataObject, "Data");
-		}
-
-		/// <summary>
 		/// Test wether the mouse hits a plot item. The default implementation here returns null.
 		/// If you want to have a reaction on mouse click on a curve, implement this function.
 		/// </summary>

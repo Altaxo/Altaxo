@@ -74,16 +74,6 @@ namespace Altaxo.Gui.Graph
 			yield return new ControllerAndSetNullMethod(_majorController, () => _minorController = null);
 		}
 
-		public XYGridStyleController()
-		{
-		}
-
-		public XYGridStyleController(GridStyle doc)
-		{
-			if (!InitializeDocument(doc))
-				throw new ApplicationException("Programming error");
-		}
-
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);

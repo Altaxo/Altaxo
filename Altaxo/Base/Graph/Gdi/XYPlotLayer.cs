@@ -1757,7 +1757,7 @@ namespace Altaxo.Graph.Gdi
 				var from = obj as PlaceHolder;
 				if (null != from)
 				{
-					this.ParentObject = from.ParentObject;
+					//this.ParentObject = from.ParentObject;
 					return true;
 				}
 				return false;

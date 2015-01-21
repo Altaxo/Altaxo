@@ -920,15 +920,23 @@ namespace Altaxo.Graph.Scales.Ticks
 			propOrg = scaleOrg;
 			if (isOrgExtendable)
 			{
-				propOrg -= Multiply(Math.Abs(_minGrace), scaleSpan);
-				modified |= (0 != _minGrace);
+				TimeSpan orgToTheLeft = Multiply(Math.Abs(_minGrace), scaleSpan);
+				if (orgToTheLeft > (propOrg - DateTime.MinValue))
+					orgToTheLeft = (propOrg - DateTime.MinValue);
+
+				propOrg -= orgToTheLeft;
+				modified |= (TimeSpan.Zero != orgToTheLeft);
 			}
 
 			propEnd = scaleEnd;
 			if (isEndExtendable)
 			{
-				propEnd += Multiply(Math.Abs(_maxGrace), scaleSpan);
-				modified |= (0 != _maxGrace);
+				TimeSpan endToTheRight = Multiply(Math.Abs(_maxGrace), scaleSpan);
+				if (endToTheRight > (DateTime.MaxValue - propEnd))
+					endToTheRight = (DateTime.MaxValue - propEnd);
+
+				propEnd += endToTheRight;
+				modified |= (TimeSpan.Zero != endToTheRight);
 			}
 
 			return modified;

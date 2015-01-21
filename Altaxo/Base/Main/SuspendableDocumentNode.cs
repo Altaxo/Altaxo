@@ -806,6 +806,28 @@ namespace Altaxo.Main
 				myChild.ParentObject = this;
 		}
 
+		/// <summary>
+		/// Clones a node that is intended to use as child node of this instance (e.g. in collections). Consider using <see cref="ChildCloneToMember"/> instead if the child node
+		/// is stored in a member of this instance.
+		/// </summary>
+		/// <typeparam name="T">Type of the node to clone.</typeparam>
+		/// <param name="fromAnotherChild">Node to clone.</param>
+		/// <returns>Cloned node with the node's parent already set to this instance.</returns>
+		protected T ChildCloneFrom<T>(T fromAnotherChild) where T : IDocumentLeafNode, ICloneable
+		{
+			T result;
+			if (null == fromAnotherChild)
+			{
+				result = default(T);
+			}
+			else
+			{
+				result = (T)fromAnotherChild.Clone();
+				result.ParentObject = this;
+			}
+			return result;
+		}
+
 		#endregion Helper functions
 
 		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes

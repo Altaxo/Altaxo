@@ -29,14 +29,8 @@ namespace Altaxo.Gui.Common
 {
 	#region Interfaces
 
-	public interface IMultiChildViewEventSink
-	{
-	}
-
 	public interface IMultiChildView
 	{
-		IMultiChildViewEventSink Controller { set; }
-
 		void InitializeBegin();
 
 		void InitializeEnd();
@@ -71,7 +65,7 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	[UserControllerForObject(typeof(IMVCAController[]))]
 	[ExpectedTypeOfView(typeof(IMultiChildView))]
-	public class MultiChildController : IMultiChildController, IMultiChildViewEventSink, IRefreshable
+	public class MultiChildController : IMultiChildController, IRefreshable
 	{
 		protected IMultiChildView _view;
 		protected ControlViewElement[] _childController;
@@ -194,7 +188,6 @@ namespace Altaxo.Gui.Common
 			{
 				if (_view != null)
 				{
-					_view.Controller = null;
 					_view.ChildControlEntered -= this.EhView_ChildControlEntered;
 					_view.ChildControlValidated -= this.EhView_ChildControlValidated;
 				}
@@ -205,7 +198,6 @@ namespace Altaxo.Gui.Common
 
 				if (_view != null)
 				{
-					_view.Controller = this;
 					_view.ChildControlEntered += this.EhView_ChildControlEntered;
 					_view.ChildControlValidated += this.EhView_ChildControlValidated;
 				}

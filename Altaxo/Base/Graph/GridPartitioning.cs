@@ -391,7 +391,10 @@ namespace Altaxo.Graph
 				var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
 
 				s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning", s);
+				if (null != s._xPartitioning) s._xPartitioning.ParentObject = s;
+
 				s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning", s);
+				if (null != s._yPartitioning) s._yPartitioning.ParentObject = s;
 
 				return s;
 			}

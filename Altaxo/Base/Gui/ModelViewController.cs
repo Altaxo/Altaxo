@@ -493,9 +493,11 @@ namespace Altaxo.Gui
 
 		public override bool InitializeDocument(params object[] args)
 		{
-			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+			using (var suspendToken = _suppressDirtyEvent.SuspendGetToken())
 			{
 				return base.InitializeDocument(args);
+
+				suspendToken.Resume();
 			}
 		}
 

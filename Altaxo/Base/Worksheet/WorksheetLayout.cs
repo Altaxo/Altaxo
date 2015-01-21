@@ -170,7 +170,7 @@ namespace Altaxo.Worksheet
 					{
 						info.OpenElement(); // "e"
 						Main.AbsoluteDocumentPath key = (Main.AbsoluteDocumentPath)info.GetValue("Column", s);
-						object val = info.GetValue("Style", s);
+						object val = info.GetValue("Style", null);
 						surr._colStyles[key] = val;
 						info.CloseElement();
 					}

@@ -570,7 +570,7 @@ namespace Altaxo.Graph.Commands
 			}
 
 			var plotItem = (DensityImagePlotItem)layer.PlotItems[ctrl.CurrentPlotNumber];
-			var legend = new Gdi.Shapes.DensityImageLegend(plotItem, 0.5 * layer.Size, new PointD2D(layer.Size.X / 3, layer.Size.Y / 2), ctrl.Doc.GetPropertyHierarchy());
+			var legend = new Gdi.Shapes.DensityImageLegend(plotItem, layer, 0.5 * layer.Size, new PointD2D(layer.Size.X / 3, layer.Size.Y / 2), ctrl.Doc.GetPropertyHierarchy());
 			layer.GraphObjects.Add(legend);
 		}
 	}

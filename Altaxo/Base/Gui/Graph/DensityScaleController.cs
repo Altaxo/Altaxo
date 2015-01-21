@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Graph
 			{
 				object rescalingObject = _doc.RescalingObject;
 				if (rescalingObject != null)
-					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController));
+					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
 				else
 					_boundaryController = null;
 			}

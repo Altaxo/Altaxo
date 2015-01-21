@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
@@ -46,6 +47,15 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		[NonSerialized]
 		private PlotGroupStyleCollection _localGroups;
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _plotStyles)
+				yield return new Main.DocumentNodeAndName(_plotStyles, () => _plotStyles = null, "Style");
+
+			if (null != _localGroups)
+				yield return new Main.DocumentNodeAndName(_localGroups, () => _localGroups = null, "LocalPlotGroupStyles");
+		}
 
 		public override Main.IDocumentLeafNode StyleObject
 		{
@@ -107,7 +117,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
 		{
 			Processed2DPlotData pdata = GetRangesAndPoints(layer);
-			_localGroups = new PlotGroupStyleCollection();
+			_localGroups = new PlotGroupStyleCollection() { ParentObject = this };
 
 			// first add missing local group styles
 			_plotStyles.CollectLocalGroupStyles(externalGroups, _localGroups);

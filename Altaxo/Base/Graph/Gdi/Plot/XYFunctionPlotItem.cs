@@ -24,6 +24,10 @@
 
 using Altaxo.Serialization;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
@@ -162,6 +166,17 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		#endregion Serialization
+
+		private System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
+		{
+			if (null != _plotData)
+				yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+		}
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
+		}
 
 		public XYFunctionPlotItem(XYFunctionPlotData pa, G2DPlotStyleCollection ps)
 		{

@@ -43,6 +43,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private const int _bitmapPixelsAcross = 2;
 		private const int _bitmapPixelsAlong = 1024;
 
+		/// <summary>The proxy for the plot item this legend is intended for.</summary>
+		private Altaxo.Main.RelDocNodeProxy _plotItemProxy;
+
 		/// <summary>
 		/// Axis styles for both sides of the density plot item.
 		/// </summary>
@@ -50,9 +53,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		// Cached members
 		private Bitmap _bitmap;
-
-		/// <summary>The proxy for the plot item this legend is intended for.</summary>
-		private Altaxo.Main.RelDocNodeProxy _plotItemProxy;
 
 		private DensityLegendArea _cachedArea;
 
@@ -104,13 +104,21 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#endregion Serialization
 
-		public DensityImageLegend(DensityImagePlotItem plotItem, PointD2D initialLocation, PointD2D graphicSize, Main.Properties.IReadOnlyPropertyBag context)
+		public DensityImageLegend(DensityImagePlotItem plotItem, Main.IDocumentNode futureParentObject, PointD2D initialLocation, PointD2D graphicSize, Main.Properties.IReadOnlyPropertyBag context)
 			: base(new ItemLocationDirect())
 		{
+			if (null == plotItem)
+				throw new ArgumentNullException("plotItem");
+			if (null == futureParentObject)
+				throw new ArgumentNullException("futureParentObject");
+
+			this.ParentObject = futureParentObject;
+			this.PlotItem = plotItem;
+			if (null == this._plotItemProxy.DocumentPath)
+				throw new ArgumentException("No path could be found between plotItem and futureParentObject. This is an indication that one of the objects is not rooted.");
+
 			this.SetSize(graphicSize.X, graphicSize.Y, Main.EventFiring.Suppressed);
 			this.SetPosition(initialLocation, Main.EventFiring.Suppressed);
-
-			PlotItem = plotItem;
 
 			// _orientationIsVertical = true;
 			// _scaleIsReversed = false;
@@ -177,9 +185,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var from = obj as DensityImageLegend;
 				if (null != from)
 				{
-					_cachedArea = new DensityLegendArea(from._cachedArea);
+					_cachedArea = new DensityLegendArea(from._cachedArea) { ParentObject = this };
 
-					this._axisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+					ChildCloneToMember(ref _axisStyles, from._axisStyles);
 					this._axisStyles.UpdateCoordinateSystem(_cachedArea.CoordinateSystem);
 					this._axisStyles.ParentObject = this;
 
@@ -217,7 +225,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return _plotItemProxy.Document as DensityImagePlotItem;
+				return null == _plotItemProxy ? null : _plotItemProxy.Document as DensityImagePlotItem;
 			}
 			set
 			{
@@ -232,7 +240,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 				else
 				{
-					_plotItemProxy = new Main.RelDocNodeProxy(value, this);
+					ChildSetMember(ref 	_plotItemProxy, new Main.RelDocNodeProxy(value, this));
 				}
 			}
 		}
@@ -328,6 +336,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			base.PaintPreprocessing(parentObject);
 
+			if (null == _cachedArea)
+				return;
+
 			_cachedArea.Size = Size; // Update the coordinate system size to meet the size of the graph item
 
 			// after deserialisation the data bounds object of the scale is empty:
@@ -340,6 +351,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override void Paint(System.Drawing.Graphics g, object obj)
 		{
+			if (null == _cachedArea)
+				return;
+
 			bool orientationIsVertical = IsOrientationVertical;
 			bool scaleIsReversed = IsScaleReversed;
 

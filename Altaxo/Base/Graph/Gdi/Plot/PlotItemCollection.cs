@@ -191,6 +191,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.CloseArray(count);
 
 				s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+				if (null != s._plotGroupStyles) s._plotGroupStyles.ParentObject = s;
 
 				return s;
 			}
@@ -215,13 +216,13 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			_parent = owner;
 			_plotItems = new List<IGPlotItem>();
-			_plotGroupStyles = new PlotGroupStyleCollection();
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
 		public PlotItemCollection()
 		{
 			_plotItems = new List<IGPlotItem>();
-			_plotGroupStyles = new PlotGroupStyleCollection();
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -229,7 +230,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// </summary>
 		protected PlotItemCollection(int x)
 		{
-			_plotGroupStyles = new PlotGroupStyleCollection();
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -250,7 +251,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		public PlotItemCollection(XYPlotLayer owner, PlotItemCollection from)
 		{
 			_parent = owner;
-			_plotGroupStyles = new PlotGroupStyleCollection();
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 			_plotItems = new List<IGPlotItem>();
 
 			// Clone all the items in the list.
@@ -258,7 +259,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				Add((IGPlotItem)from[i].Clone()); // clone the items
 
 			// special way neccessary to handle plot groups
-			this._plotGroupStyles = null == from._plotGroupStyles ? null : from._plotGroupStyles.Clone();
+			ChildCopyToMember(ref _plotGroupStyles, from._plotGroupStyles);
 		}
 
 		public void CopyFrom(PlotItemCollection from, GraphCopyOptions options)
@@ -355,7 +356,8 @@ namespace Altaxo.Graph.Gdi.Plot
 			{
 				if (value == null)
 					throw new ArgumentNullException();
-				this._plotGroupStyles = value;
+
+				ChildSetMember(ref _plotGroupStyles, value);
 			}
 		}
 
@@ -984,6 +986,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <returns>The object with the specified name.</returns>
 		public override Main.IDocumentLeafNode GetChildObjectNamed(string name)
 		{
+			if (name == "PlotGroupStyles")
+				return _plotGroupStyles;
+
 			double number;
 			if (double.TryParse(name, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out number))
 			{
@@ -1001,6 +1006,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
 		public override string GetNameOfChildObject(Main.IDocumentLeafNode o)
 		{
+			if (object.ReferenceEquals(o, _plotGroupStyles))
+				return "PlotGroupStyles";
+
 			if (o is IGPlotItem)
 			{
 				int idx = _plotItems.IndexOf((IGPlotItem)o);
@@ -1014,9 +1022,32 @@ namespace Altaxo.Graph.Gdi.Plot
 			var index = 0;
 			foreach (var item in _plotItems.ToArray())
 			{
-				yield return new Main.DocumentNodeAndName(item, index.ToString());
+				yield return new Main.DocumentNodeAndName(item, index.ToString(System.Globalization.CultureInfo.CurrentCulture));
 				++index;
 			}
+
+			if (null != _plotGroupStyles)
+			{
+				yield return new Main.DocumentNodeAndName(_plotGroupStyles, () => _plotGroupStyles = null, "PlotGroupStyles");
+			}
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (null != _plotItems)
+			{
+				var oldColl = _plotItems;
+				_plotItems = new List<IGPlotItem>();
+				foreach (var item in oldColl)
+					item.Dispose();
+			}
+			if (null != _plotGroupStyles)
+			{
+				_plotGroupStyles.Dispose();
+				_plotGroupStyles = null;
+			}
+
+			base.Dispose(isDisposing);
 		}
 
 		#endregion NamedObjectCollection

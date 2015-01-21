@@ -195,7 +195,9 @@ namespace Altaxo.Graph.Plot.Groups
 				_typeToInfo = new Dictionary<Type, GroupInfo>();
 
 				foreach (KeyValuePair<System.Type, IPlotGroupStyle> entry in from._typeToInstance)
-					this._typeToInstance.Add(entry.Key, (IPlotGroupStyle)entry.Value.Clone());
+				{
+					this._typeToInstance.Add(entry.Key, ChildCloneFrom(entry.Value));
+				}
 
 				foreach (KeyValuePair<System.Type, GroupInfo> entry in from._typeToInfo)
 					this._typeToInfo.Add(entry.Key, entry.Value.Clone());
@@ -394,6 +396,7 @@ namespace Altaxo.Graph.Plot.Groups
 			if (_typeToInstance.ContainsKey(groupStyle.GetType()))
 				throw new ArgumentException(string.Format("The group style type <<{0}>> is already present in this group style collection", groupStyle.GetType()));
 
+			groupStyle.ParentObject = this;
 			_typeToInstance.Add(groupStyle.GetType(), groupStyle);
 			GroupInfo groupInfo = new GroupInfo();
 			groupInfo.ParentGroupType = parentGroupStyleType;

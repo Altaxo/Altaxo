@@ -39,8 +39,8 @@ namespace Altaxo.Gui.Graph
 	{
 		private MultiChildController _innerController;
 
-		private IMVCAController _grid1;
-		private IMVCAController _grid2;
+		private IMVCANController _grid1;
+		private IMVCANController _grid2;
 		private IMVCANController _background;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -52,31 +52,23 @@ namespace Altaxo.Gui.Graph
 			yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
 		}
 
-		public GridPlaneController()
-		{
-		}
-
-		public GridPlaneController(GridPlane doc)
-		{
-			InitializeDocument(doc);
-		}
-
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);
 
 			if (initData)
 			{
-				_grid1 = new XYGridStyleController(_doc.GridStyleFirst);
+				_grid1 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
+				_grid1.InitializeDocument(_doc.GridStyleFirst ?? new GridStyle() { ShowGrid = false });
 				Current.Gui.FindAndAttachControlTo(_grid1);
-
 				ControlViewElement c1 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber1), _grid1, _grid1.ViewObject);
 
-				_grid2 = new XYGridStyleController(_doc.GridStyleSecond);
+				_grid2 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
+				_grid2.InitializeDocument(_doc.GridStyleSecond ?? new GridStyle() { ShowGrid = false });
 				Current.Gui.FindAndAttachControlTo(_grid2);
 				ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
 
-				_background = new BrushControllerAdvanced();
+				_background = new BrushControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
 				_background.InitializeDocument(_doc.Background ?? BrushX.Empty);
 				Current.Gui.FindAndAttachControlTo(_background);
 				ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
@@ -96,6 +88,24 @@ namespace Altaxo.Gui.Graph
 			_doc.Background = backBrush.IsVisible ? backBrush : null;
 
 			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			if (null != _innerController)
+			{
+				_innerController.ViewObject = _view;
+			}
+		}
+
+		protected override void DetachView()
+		{
+			if (null != _innerController)
+			{
+				_innerController.ViewObject = null;
+			}
+			base.DetachView();
 		}
 
 		private static string GridName(int axisNumber)

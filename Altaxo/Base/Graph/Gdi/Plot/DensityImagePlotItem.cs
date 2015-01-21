@@ -26,7 +26,12 @@ using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
 using Altaxo.Serialization;
 using System;
+
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
@@ -138,6 +143,14 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		#endregion Serialization
+
+		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _plotData)
+				yield return new Main.DocumentNodeAndName(_plotData, () => _plotData = null, "Data");
+			if (null != _plotStyle)
+				yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null, "Style");
+		}
 
 		public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps)
 		{

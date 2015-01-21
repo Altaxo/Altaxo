@@ -181,7 +181,16 @@ namespace Altaxo.Main
 
 		public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
 		{
+			if (null == docNode)
+				throw new ArgumentNullException("docNode");
+			if (null == parentNode)
+				throw new ArgumentNullException("parentNode");
+
 			InternalSetDocNode(docNode, parentNode);
+
+			if (null == _docNodePath)
+				throw new ArgumentException(string.Format("No relative path was found between parentNode (type: {0}) and docNode (type: {1}). This suggests that one of the items is not rooted. Please report this error!"));
+
 			_parent = parentNode;
 		}
 

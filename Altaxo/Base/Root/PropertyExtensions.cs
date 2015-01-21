@@ -43,7 +43,7 @@ namespace Altaxo
 		/// <returns>Enumeration of the property bags in the project hierarchy.</returns>
 		public static IEnumerable<PropertyBagWithInformation> GetPropertyBags(this IPropertyBagOwner owner)
 		{
-			if (!(owner is ProjectFolderPropertyDocument)) // Project folder bags are handled further down
+			if (null != owner && !(owner is ProjectFolderPropertyDocument)) // Project folder bags are handled further down
 			{
 				var bagInfo = new PropertyBagInformation(owner.GetType().Name, PropertyLevel.Document, owner.GetType());
 				yield return new PropertyBagWithInformation(bagInfo, owner.PropertyBagNotNull);

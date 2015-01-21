@@ -76,6 +76,9 @@ namespace Altaxo.Main
 			set
 			{
 #if DEBUG && TRACEDOCUMENTNODES
+				if (null != _parent && null != value && !object.ReferenceEquals(_parent, value))
+					throw new InvalidProgramException(string.Format("Try to give object of type {0} a new parent object. Old parent: {1}, New parent {2}", this.GetType(), _parent.GetType(), value.GetType()));
+
 				if (null != _parent && null == value)
 				{
 					var stb = new System.Text.StringBuilder();
@@ -552,6 +555,7 @@ namespace Altaxo.Main
 		/// <returns></returns>
 		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
+			GC.Collect();
 			Current.Console.WriteLine("ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
 			return false;
 		}

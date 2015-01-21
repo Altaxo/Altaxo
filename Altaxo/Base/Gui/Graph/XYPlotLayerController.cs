@@ -111,18 +111,19 @@ namespace Altaxo.Gui.Graph
 		private SelectableListNodeList _listOfPlanes;
 		private SelectableListNodeList _listOfUniqueItem;
 
-		public XYPlotLayerController(XYPlotLayer layer)
-			: this(layer, "Scale", 1, null)
+		public XYPlotLayerController(XYPlotLayer layer, UseDocument useDocumentCopy)
+			: this(layer, "Scale", 1, null, useDocumentCopy)
 		{
 		}
 
-		public XYPlotLayerController(XYPlotLayer layer, string currentPage, CSLineID id)
-			: this(layer, currentPage, id.ParallelAxisNumber, id)
+		public XYPlotLayerController(XYPlotLayer layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
+			: this(layer, currentPage, id.ParallelAxisNumber, id, useDocumentCopy)
 		{
 		}
 
-		private XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
+		private XYPlotLayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id, UseDocument useDocumentCopy)
 		{
+			_useDocumentCopy = useDocumentCopy == UseDocument.Copy;
 			_currentAxisID = id;
 			_currentScale = axisScaleIdx;
 			_currentPageName = currentPage;
@@ -361,8 +362,8 @@ namespace Altaxo.Gui.Graph
 					if (!_GridStyleController.ContainsKey(_currentPlaneID))
 					{
 						GridPlane p = _doc.GridPlanes.Contains(_currentPlaneID) ? _doc.GridPlanes[_currentPlaneID] : new GridPlane(_currentPlaneID);
-						GridPlaneController ctrl = new GridPlaneController(p);
-						//Current.Gui.FindAndAttachControlTo(ctrl);
+						GridPlaneController ctrl = new GridPlaneController() { UseDocumentCopy = UseDocument.Directly };
+						ctrl.InitializeDocument(p);
 						Current.Gui.FindAndAttachControlUsingGuiTemplate(ctrl, _view);
 						_GridStyleController.Add(_currentPlaneID, ctrl);
 					}
@@ -566,7 +567,7 @@ namespace Altaxo.Gui.Graph
 
 		public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
 		{
-			XYPlotLayerController ctrl = new XYPlotLayerController(layer, currentPage, currentEdge);
+			XYPlotLayerController ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);
 			return Current.Gui.ShowDialog(ctrl, layer.Name, true);
 		}
 

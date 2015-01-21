@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -39,32 +41,17 @@ namespace Altaxo.Gui.Common
 	/// <summary>
 	/// Interaction logic for MultiChildControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IMultiChildViewEventSink))]
 	public partial class MultiChildControl : UserControl, IMultiChildView
 	{
 		/// <summary>Event fired when one of the child controls is entered.</summary>
 		public event EventHandler ChildControlEntered;
+
 		/// <summary>Event fired when one of the child controls is validated.</summary>
 		public event EventHandler ChildControlValidated;
-
-		IMultiChildViewEventSink _controller;
-
 
 		public MultiChildControl()
 		{
 			InitializeComponent();
-		}
-
-		public IMultiChildViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
 		}
 
 		public void InitializeBegin()
@@ -98,8 +85,6 @@ namespace Altaxo.Gui.Common
 			{
 				UIElement uiEle;
 
-
-
 				uiEle = (UIElement)child.View;
 
 				uiEle.GotFocus += EhUIElement_GotFocus;
@@ -119,18 +104,16 @@ namespace Altaxo.Gui.Common
 			_stackPanel.Children[initialFocusedChild].Focus();
 		}
 
-		void EhUIElement_LostFocus(object sender, RoutedEventArgs e)
+		private void EhUIElement_LostFocus(object sender, RoutedEventArgs e)
 		{
 			if (null != ChildControlValidated)
 				ChildControlValidated(this, EventArgs.Empty);
 		}
 
-		void EhUIElement_GotFocus(object sender, RoutedEventArgs e)
+		private void EhUIElement_GotFocus(object sender, RoutedEventArgs e)
 		{
 			if (null != ChildControlEntered)
 				ChildControlEntered(this, EventArgs.Empty);
 		}
-
-
 	}
 }

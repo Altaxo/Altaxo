@@ -121,13 +121,10 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 		public override bool InitializeDocument(params object[] args)
 		{
-			if (!base.InitializeDocument(args))
-				return false;
-
 			if (args != null && args.Length >= 2 && args[1] is NumericalScale)
 				_scale = (NumericalScale)args[1];
 
-			return true;
+			return base.InitializeDocument(args);
 		}
 
 		protected override void Initialize(bool initData)
