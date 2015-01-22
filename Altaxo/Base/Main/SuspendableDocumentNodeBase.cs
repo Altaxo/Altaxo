@@ -188,6 +188,20 @@ namespace Altaxo.Main
 		public abstract ISuspendToken SuspendGetToken();
 
 		/// <summary>
+		/// Resumes the object  completely for the time the returned token is referenced and not disposed.
+		/// The return value is a token that had 'absorbed' the suspend count of the object, resulting in the suspend count
+		/// of the object dropped to 0 (zero). When the returned token is finally disposed, the suspend count of the object is increased again by the 'absorbed' suspend count.
+		/// </summary>
+		/// <returns>A new token. As long as this token is not disposed, and not other process calls SuspendGetToken, the object is fre (not suspended). The object is suspended again when
+		/// the returned token is disposed.</returns>
+		public abstract IDisposable ResumeCompleteTemporarilyGetToken();
+
+		/// <summary>
+		/// Resumes the object completely for only a short time. Thus, if object was suspended before, it will be suspended again when the function returns.
+		/// </summary>
+		public abstract void ResumeCompleteTemporarily();
+
+		/// <summary>
 		/// Gets a value indicating whether this instance is suspended.
 		/// </summary>
 		/// <value>

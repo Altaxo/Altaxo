@@ -95,23 +95,15 @@ namespace Altaxo.Main
 				if (!(parent is Main.IDocumentNode))
 					throw new ArgumentException("Parent should be a valid document node");
 
-				var docNodePath = info.GetValue("Node", null);
+				var docNodePath = info.GetValue("Node", null) as RelativeDocumentPath;
 
-				if (null == docNodePath)
+				if (null == docNodePath || docNodePath.IsIdentity)
 					return null;
 
-				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(info) { ParentObject = (IDocumentNode)parent };
-				if (docNodePath is RelativeDocumentPath)
-				{
-					s._docNodePath = (RelativeDocumentPath)docNodePath;
+				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(docNodePath, (IDocumentNode)parent);
 
-					// create a callback to resolve the instance as early as possible
-					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
-				}
-				else
-				{
-					return null;
-				}
+				// create a callback to resolve the instance as early as possible
+				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
 
 				return s;
 			}
@@ -150,9 +142,7 @@ namespace Altaxo.Main
 				if (null == docNodePath || docNodePath.IsIdentity)
 					return null;
 
-				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(info);
-				s._parent = (Main.IDocumentNode)parent;
-				s._docNodePath = docNodePath;
+				var s = (RelDocNodeProxy)o ?? new RelDocNodeProxy(docNodePath, (Main.IDocumentNode)parent);
 
 				// create a callback to resolve the instance as early as possible
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
@@ -175,8 +165,15 @@ namespace Altaxo.Main
 		/// For deserialization purposes only.
 		/// </summary>
 		/// <param name="info"></param>
-		protected RelDocNodeProxy(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		protected RelDocNodeProxy(Main.RelativeDocumentPath docNodePath, Main.IDocumentNode parentNode)
 		{
+			if (null == docNodePath)
+				throw new ArgumentNullException("docNodePath");
+			if (null == parentNode)
+				throw new ArgumentNullException("parentNode");
+
+			_parent = parentNode;
+			_docNodePath = docNodePath;
 		}
 
 		public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
