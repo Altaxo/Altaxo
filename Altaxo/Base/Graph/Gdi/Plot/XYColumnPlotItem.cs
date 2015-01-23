@@ -221,6 +221,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
+			if (IsDisposed)
+				throw new ObjectDisposedException(this.GetType().FullName);
 
 			var copied = base.CopyFrom(obj);
 

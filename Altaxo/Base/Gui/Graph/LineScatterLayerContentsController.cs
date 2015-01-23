@@ -1,3 +1,5 @@
+#define VERIFY_TREESYNCHRONIZATION
+
 #region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
@@ -135,7 +137,7 @@ namespace Altaxo.Gui.Graph
 		MVCANControllerEditOriginalDocBase<PlotItemCollection, ILineScatterLayerContentsView>,
 		ILineScatterLayerContentsViewEventSink, IMVCANController
 	{
-		private NGTreeNode _plotItemsRootNode = new NGTreeNode();
+		private NGTreeNode _plotItemsRootNode;
 		private NGTreeNodeCollection _plotItemsTree;
 		private NGTreeNode _availableItemsRootNode;
 
@@ -162,11 +164,16 @@ namespace Altaxo.Gui.Graph
 			// now fill the tree view  with all plot associations currently inside
 			if (initData)
 			{
-				_plotItemsRootNode = new NGTreeNode();
+				_plotItemsRootNode = new NGTreeNode() { IsExpanded = true };
 				_plotItemsTree = _plotItemsRootNode.Nodes;
 				_availableItemsRootNode = new NGTreeNode();
 
 				PlotItemsToTree(_plotItemsRootNode, _doc);
+
+#if VERIFY_TREESYNCHRONIZATION
+				if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+					throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 
 				// available items
 				SingleColumnChoiceController.AddAllTableNodes(_availableItemsRootNode);
@@ -185,8 +192,12 @@ namespace Altaxo.Gui.Graph
 
 		public override bool Apply(bool disposeController)
 		{
-			_doc.ClearPlotItems(); // first, clear all Plot items
-			TreeToPlotItems(_plotItemsRootNode, _doc);
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
+
+			TreeNodeExtensions.FixAndTestParentChildRelations<IGPlotItem>(_doc, (x, y) => x.ParentObject = (Altaxo.Main.IDocumentNode)y);
 
 			if (!disposeController)
 				Initialize(true); // Reload the applied contents to make sure it is synchronized
@@ -230,7 +241,7 @@ namespace Altaxo.Gui.Graph
 			if (oldValue != _showRange)
 			{
 				_plotItemsTree.Clear();
-				PlotItemsToTree(_plotItemsRootNode, _doc);
+				PlotItemsToTree(_plotItemsRootNode, _doc); // rebuild the tree with the changed names
 			}
 		}
 
@@ -259,57 +270,41 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		private void PlotItemsToTree(NGTreeNode node, PlotItemCollection picoll)
+		private void PlotItemsToTree(NGTreeNode node, IGPlotItem plotItem)
 		{
-			foreach (IGPlotItem pa in picoll)
+			var picoll = plotItem as PlotItemCollection;
+
+			node.Tag = plotItem;
+			node.Text = GetNameOfItem(plotItem);
+			node.IsExpanded = true;
+
+			if (null != picoll) // Plot item collection
 			{
-				if (pa is PlotItemCollection) // if this is a plot item collection
+				node.Tag = plotItem;
+				node.Text = GetNameOfItem(plotItem);
+				node.IsExpanded = true;
+
+				foreach (var childPlotItem in picoll)
 				{
-					// add only one item to the list box, namely a PLCon group item with
-					// all the members of that group
-					NGTreeNode grpNode = new NGTreeNode();
-					grpNode.Text = GetNameOfItem(pa);
-					grpNode.Tag = pa;
-					grpNode.IsExpanded = true;
-					node.Nodes.Add(grpNode);
-					// add all the items in the group also to the list of added items
-					PlotItemsToTree(grpNode, (PlotItemCollection)pa);
-				}
-				else // else if the item is not in a plot group
-				{
-					NGTreeNode toAdd = new NGTreeNode();
-					toAdd.Text = GetNameOfItem(pa);
-					toAdd.Tag = pa;
-					toAdd.IsExpanded = true;
-					node.Nodes.Add(toAdd);
+					var childNode = new NGTreeNode();
+					PlotItemsToTree(childNode, childPlotItem);
+					node.Nodes.Add(childNode);
 				}
 			}
 		}
 
-		private void TreeToPlotItems(NGTreeNode rootnode, PlotItemCollection picoll)
+		private PlotItemCollection PutSelectedPlotItemsToTemporaryDocumentForClipboard(NGTreeNode[] selNodes)
 		{
-			picoll.ClearPlotItems(); // do not clear group styles here, otherwise group styles would not be applied
-			foreach (NGTreeNode node in rootnode.Nodes)
-			{
-				IGPlotItem item = (IGPlotItem)node.Tag;
-				if (item is PlotItemCollection) // if this is a plot item collection
-					TreeToPlotItems(node, (PlotItemCollection)item);
+			var picoll = new PlotItemCollection();
 
-				picoll.Add(item);
-			}
-		}
-
-		private void PutSelectedPlotItemsToTemporaryDocumentForClipboard(NGTreeNode[] selNodes, PlotItemCollection picoll)
-		{
-			picoll.ClearPlotItems();
 			foreach (NGTreeNode node in selNodes)
 			{
 				IGPlotItem item = (IGPlotItem)node.Tag;
-				if (item is PlotItemCollection) // if this is a plot item collection
-					TreeToPlotItems(node, (PlotItemCollection)item);
-
-				picoll.Add(item);
+				var clonedItem = (IGPlotItem)item.Clone(); // clone necessary to maintain parent-child relationship and to prevent disposing of original items
+				picoll.Add(clonedItem);
 			}
+
+			return picoll;
 		}
 
 		private static XYColumnPlotItem FindFirstXYColumnPlotItem(PlotItemCollection coll)
@@ -447,10 +442,9 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		public void AvailableItems_PutDataToPlotItems()
 		{
-			var selNodes = _view.AvailableItemsSelected.OfType<NGTreeNode>();
-
 			var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();
 
+			var selNodes = _view.AvailableItemsSelected.OfType<NGTreeNode>();
 			var validNodes = NGTreeNode.NodesWithoutSelectedChilds(selNodes);
 
 			// first, put the selected node into the list, even if it is not checked
@@ -481,8 +475,23 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			_view.InitializePlotItems(_plotItemsTree);
 			AvailableItems_ClearSelection();
+
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
+		}
+
+		private NGTreeNode CreatePlotItemNode(IGPlotItem plotItem)
+		{
+			if (null == plotItem)
+				throw new ArgumentNullException();
+
+			NGTreeNode newNode = new NGTreeNode();
+			newNode.Text = plotItem.GetName(2);
+			newNode.Tag = plotItem;
+			return newNode;
 		}
 
 		private NGTreeNode CreatePlotItemNode(DataColumn dataCol)
@@ -490,11 +499,7 @@ namespace Altaxo.Gui.Graph
 			IGPlotItem newItem = this.CreatePlotItem(dataCol);
 			if (null != newItem)
 			{
-				_doc.Add(newItem);
-				NGTreeNode newNode = new NGTreeNode();
-				newNode.Text = newItem.GetName(2);
-				newNode.Tag = newItem;
-				return newNode;
+				return CreatePlotItemNode(newItem);
 			}
 			else
 			{
@@ -506,7 +511,10 @@ namespace Altaxo.Gui.Graph
 		{
 			var node = CreatePlotItemNode(dataCol);
 			if (null != node)
+			{
 				_plotItemsTree.Add(node);
+				_doc.Add((IGPlotItem)node.Tag);
+			}
 		}
 
 		public void PlotItems_MoveUpSelected()
@@ -534,54 +542,15 @@ namespace Altaxo.Gui.Graph
 			if (NGTreeNode.HaveSameParent(selNodes))
 			{
 				NGTreeNode.MoveUpDown(iDelta, selNodes);
-				TreeToPlotItems(_plotItemsRootNode, _doc);
-				_view.InitializePlotItems(this._plotItemsTree);
+				HashSet<IGPlotItem> plotItems = new HashSet<IGPlotItem>(selNodes.Select(x => (IGPlotItem)x.Tag));
+				TreeNodeExtensions.MoveNodesUpDown(iDelta, plotItems);
+				// _view.InitializePlotItems(this._plotItemsTree);
 			}
-		}
 
-		public void ContentsListBox_MoveUpDown(int iDelta, int[] selidxs)
-		{
-			int i;
-
-			if (iDelta != 1 && iDelta != -1)
-				return;
-
-			if (iDelta == -1) // move one position upwards
-			{
-				if (selidxs[0] == 0) // if the first item is selected, we can't move upwards
-				{
-					return;
-				}
-
-				for (i = 0; i < selidxs.Length; i++)
-				{
-					NGTreeNode helpSeg;
-					int iSeg = selidxs[i];
-
-					helpSeg = _plotItemsTree[iSeg - 1];
-					_plotItemsTree[iSeg - 1] = _plotItemsTree[iSeg];
-					_plotItemsTree[iSeg] = helpSeg;
-				}
-			} // end if iDelta==-1
-			else if (iDelta == 1) // move one position down
-			{
-				if (selidxs[selidxs.Length - 1] == _plotItemsTree.Count - 1)    // if last item is selected, we can't move downwards
-				{
-					return;
-				}
-
-				for (i = selidxs.Length - 1; i >= 0; i--)
-				{
-					NGTreeNode helpSeg;
-					int iSeg = selidxs[i];
-
-					helpSeg = _plotItemsTree[iSeg + 1];
-					_plotItemsTree[iSeg + 1] = _plotItemsTree[iSeg];
-					_plotItemsTree[iSeg] = helpSeg;
-				}
-			} // end if iDelta==1
-
-			TreeToPlotItems(_plotItemsRootNode, _doc);
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		/// <summary>
@@ -613,42 +582,62 @@ namespace Altaxo.Gui.Graph
 				for (int i = 0; i < selNodes.Length; i++)
 					if (i != foundindex)
 					{
-						selNodes[i].Remove();
-						selNodes[foundindex].Nodes.Add(selNodes[i]);
+						var selNode = selNodes[i];
+						var selPlotItem = (IGPlotItem)selNodes[i].Tag;
+						selNode.Remove();
+						selPlotItem.Remove();
+
+						var newParentNode = selNodes[foundindex];
+						var newParentPlotColl = (PlotItemCollection)newParentNode.Tag;
+						newParentNode.Nodes.Add(selNode);
+						newParentPlotColl.Add(selPlotItem);
 					}
 			}
 			else // if we found no group to add to, we have to create a new group
 			{
-				NGTreeNode newNode = new NGTreeNode();
-				newNode.Tag = new PlotItemCollection();
-				newNode.Text = "PlotGroup";
+				var newParentNode = new NGTreeNode();
+				var newParentPlotColl = new PlotItemCollection();
+				newParentNode.Tag = newParentPlotColl;
+				newParentNode.Text = "PlotGroup";
+				newParentNode.IsExpanded = true;
 
 				// now add the remaining selected items to the found group
 				for (int i = 0; i < selNodes.Length; i++)
 				{
-					NGTreeNode node = selNodes[i];
-					if (node.Nodes.Count > 0) // if it is a group, add the members of the group to avoid more than one recursion
+					var selNode = selNodes[i];
+					var selPlotItem = (IGPlotItem)selNode.Tag;
+
+					if (selNode.Nodes.Count > 0) // if it is a group, add the members of the group to avoid more than one recursion
 					{
-						while (node.Nodes.Count > 0)
+						while (selNode.Nodes.Count > 0)
 						{
-							NGTreeNode addnode = node.Nodes[0];
+							var addnode = selNode.Nodes[0];
+							var addPlotItem = (IGPlotItem)addnode.Tag;
+
 							addnode.Remove();
-							newNode.Nodes.Add(addnode);
+							addPlotItem.Remove();
+
+							newParentNode.Nodes.Add(addnode);
+							newParentPlotColl.Add(addPlotItem);
 						}
 					}
 					else // item to add is not a group
 					{
-						node.Remove();
-						newNode.Nodes.Add(node);
+						selNode.Remove();
+						selPlotItem.Remove();
+						newParentNode.Nodes.Add(selNode);
+						newParentPlotColl.Add(selPlotItem);
 					}
 				} // end for
-				_plotItemsRootNode.Nodes.Add(newNode);
+				_plotItemsRootNode.Nodes.Add(newParentNode);
+				_doc.Add(newParentPlotColl);
 			}
 			// now all items are in the new group
 
-			TreeToPlotItems(_plotItemsRootNode, _doc);
-			// so update the list box:
-			_view.InitializePlotItems(this._plotItemsTree);
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		public void PlotItems_UngroupClick()
@@ -663,31 +652,45 @@ namespace Altaxo.Gui.Graph
 
 			for (int i = 0; i < selNodes.Length; i++)
 			{
-				if (selNodes[i].Nodes.Count == 0 && selNodes[i].ParentNode != null && selNodes[i].ParentNode.ParentNode != null)
+				var selNode = selNodes[i];
+
+				if (selNode.Nodes.Count == 0 && selNode.ParentNode != null && selNode.ParentNode.ParentNode != null)
 				{
-					NGTreeNode parent = selNodes[i].ParentNode;
+					NGTreeNode parent = selNode.ParentNode;
 					NGTreeNode grandParent = parent.ParentNode;
-					selNodes[i].Remove();
-					grandParent.Nodes.Add(selNodes[i]);
+
+					selNode.Remove();
+					((IGPlotItem)selNode.Tag).Remove();
+					grandParent.Nodes.Add(selNode);
+					((PlotItemCollection)grandParent.Tag).Add((IGPlotItem)selNode.Tag);
 
 					if (parent.Nodes.Count == 0)
-						parent.Remove();
-				}
-				else if (selNodes[i].Nodes.Count > 0 && selNodes[i].ParentNode != null)
-				{
-					NGTreeNode parent = selNodes[i].ParentNode;
-					while (selNodes[i].Nodes.Count > 0)
 					{
-						NGTreeNode no = selNodes[i].Nodes[0];
-						no.Remove();
-						parent.Nodes.Add(no);
+						parent.Remove();
+						((IGPlotItem)parent.Tag).Remove();
 					}
-					selNodes[i].Remove();
+				}
+				else if (selNode.Nodes.Count > 0 && selNode.ParentNode != null)
+				{
+					NGTreeNode parent = selNode.ParentNode;
+					while (selNode.Nodes.Count > 0)
+					{
+						NGTreeNode firstNode = selNode.Nodes[0];
+
+						firstNode.Remove();
+						((IGPlotItem)firstNode.Tag).Remove();
+						parent.Nodes.Add(firstNode);
+						((PlotItemCollection)parent.Tag).Add((IGPlotItem)firstNode.Tag);
+					}
+					selNode.Remove();
+					((IGPlotItem)selNode.Tag).Remove();
 				}
 			} // end for
 
-			TreeToPlotItems(_plotItemsRootNode, _doc);
-			_view.InitializePlotItems(_plotItemsTree);
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		public void EhView_ContentsDoubleClick(NGTreeNode selNode)
@@ -773,16 +776,22 @@ namespace Altaxo.Gui.Graph
 		{
 			var selNodes = PlotItemsSelected;
 			foreach (var node in selNodes)
+			{
+				TreeNodeExtensions.Remove((IGPlotItem)node.Tag);
 				node.Remove();
+			}
+
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		public void PlotItems_Copy()
 		{
-			var selNodes = PlotItemsSelected;
+			var selNodes = NGTreeNode.FilterIndependentNodes(PlotItemsSelected);
 
-			PlotItemCollection coll = new PlotItemCollection();
-
-			PutSelectedPlotItemsToTemporaryDocumentForClipboard(selNodes, coll);
+			PlotItemCollection coll = PutSelectedPlotItemsToTemporaryDocumentForClipboard(selNodes);
 
 			ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
 		}
@@ -792,7 +801,15 @@ namespace Altaxo.Gui.Graph
 			var selNodes = PlotItemsSelected;
 			this.PlotItems_Copy();
 			foreach (var node in selNodes)
+			{
+				((IGPlotItem)node.Tag).Remove();
 				node.Remove();
+			}
+
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		public bool PlotItems_CanPaste()
@@ -809,49 +826,27 @@ namespace Altaxo.Gui.Graph
 			// if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
 			if (null != coll)
 			{
-				/*
-				foreach (IGPlotItem item in coll)
-          {
-              _doc.Add(item);
-              NGTreeNode newNode = new NGTreeNode();
-              newNode.Text = item.GetName(2);
-              newNode.Tag = item;
-              _plotItemsTree.Add(newNode);
-          }
-				*/
-
-				foreach (IGPlotItem item in coll)
+				foreach (IGPlotItem item in coll) // it is neccessary to add the items to the doc first, because otherwise they don't have names
 				{
-					_doc.Add(item); // it is formally neccessary to add the plot items to the doc, since some functions only work when the parent layer of the items is available
+					var clonedItem = (IGPlotItem)item.Clone();
+					_doc.Add(clonedItem); // cloning neccessary because coll will be disposed afterwards, which would destroy all items
+					var newNode = new NGTreeNode();
+					PlotItemsToTree(newNode, clonedItem);
+					_plotItemsTree.Add(newNode);
 				}
-
-				PlotItemsToTree(_plotItemsRootNode, coll);
-
-				_view.InitializePlotItems(_plotItemsTree);
 			}
+
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		#endregion ILineScatterLayerContentsController Members
 
-
-
 		#region Drag/drop support
 
 		#region Plot items
-
-		private static bool AreAllNodesFromSameLevel(IEnumerable<NGTreeNode> selNodes)
-		{
-			int? level = null;
-			foreach (var node in selNodes)
-			{
-				if (null == level)
-					level = node.Level;
-
-				if (level != node.Level)
-					return false;
-			}
-			return null == level ? false : true;
-		}
 
 		public bool PlotItems_CanStartDrag(IEnumerable items)
 		{
@@ -875,7 +870,8 @@ namespace Altaxo.Gui.Graph
 
 		public void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
 		{
-			if (!(data is IEnumerable<NGTreeNode>))
+			var nodes = data as IEnumerable<NGTreeNode>;
+			if (null == nodes)
 			{
 				canCopy = false;
 				canMove = false;
@@ -885,6 +881,17 @@ namespace Altaxo.Gui.Graph
 
 			if (targetItem != null && targetItem.Tag is PlotItemCollection)
 			{
+				foreach (var node in nodes)
+				{
+					if (object.ReferenceEquals(targetItem, node)) // target item and node should not be identical
+					{
+						canCopy = false;
+						canMove = false;
+						itemIsSwallowingData = true;
+						return;
+					}
+				}
+
 				canCopy = true;
 				canMove = true;
 				itemIsSwallowingData = true;
@@ -908,20 +915,22 @@ namespace Altaxo.Gui.Graph
 
 			int actualInsertIndex; // is updated every time the following delegate is called
 			NGTreeNodeCollection parentNodeCollectionOfTargetNode = null;
-			if (canTargetSwallowNodes)
+
+			if (canTargetSwallowNodes) // Target is plot item collectio node -> we can simply add the data to it
 			{
-				AddNodeToTree = node => targetNode.Nodes.Add(node);
+				AddNodeToTree = node => { targetNode.Nodes.Add(node); ((PlotItemCollection)targetNode.Tag).Add((IGPlotItem)node.Tag); };
 			}
-			else if (targetNode == null)
+			else if (targetNode == null) // no target node -> add data to the end of the colleciton
 			{
-				AddNodeToTree = node => _plotItemsRootNode.Nodes.Add(node);
+				AddNodeToTree = node => { _plotItemsRootNode.Nodes.Add(node); ((PlotItemCollection)_plotItemsRootNode.Tag).Add((IGPlotItem)node.Tag); };
 			}
-			else // Add as sibling of the target node
+			else // target node is plot item only --> Add as sibling of the target node
 			{
 				int idx = targetNode.Index;
-				if (idx < 0) // No parent node,
+				if (idx < 0) // target node has no parent node -> should not happen
 				{
-					AddNodeToTree = node => targetNode.Nodes.Add(node);
+					throw new InvalidProgramException("Please report this exception to the forum");
+					// AddNodeToTree = node => { targetNode.Nodes.Add(node); ((PlotItemCollection)targetNode.Tag).Add((IGPlotItem)node.Tag); };
 				}
 				else
 				{
@@ -930,7 +939,14 @@ namespace Altaxo.Gui.Graph
 
 					actualInsertIndex = idx;
 					parentNodeCollectionOfTargetNode = targetNode.ParentNode.Nodes;
-					AddNodeToTree = node => parentNodeCollectionOfTargetNode.Insert(actualInsertIndex++, node); // the incrementation is to support dropping of multiple items, they must be dropped at increasing indices
+					AddNodeToTree = node =>
+					{
+						parentNodeCollectionOfTargetNode.Insert(actualInsertIndex, node); // the incrementation is to support dropping of multiple items, they must be dropped at increasing indices
+						((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
+						((IGPlotItem)node.Tag).ParentObject = (Altaxo.Main.IDocumentNode)(targetNode.ParentNode.Tag); // fix parent child relation
+
+						++actualInsertIndex;
+					};
 				}
 			}
 
@@ -952,17 +968,32 @@ namespace Altaxo.Gui.Graph
 						isMove = true;
 						isCopy = false;
 
-						var dummyNode = new NGTreeNode();
-						dummyNodes.Add(dummyNode);
+						var index = node.Index;
+						var parentNode = node.ParentNode;
 
-						node.ReplaceBy(dummyNode); // instead of removing the old node from the tree, we replace it by a dummy. In this way we retain the position of all nodes in the tree, so that the insert index is valid during the whole drop operation
+						var dummyItem = new DummyPlotItem() { ParentObject = (PlotItemCollection)parentNode.Tag };
+						var dummyNode = new NGTreeNode() { Tag = dummyItem };
+
+						parentNode.Nodes[index] = dummyNode; // instead of removing the old node from the tree, we replace it by a dummy. In this way we retain the position of all nodes in the tree, so that the insert index is valid during the whole drop operation
+						((ITreeListNode<IGPlotItem>)parentNode.Tag).ChildNodes[index] = dummyItem;
+
 						AddNodeToTree(node);
+
+						dummyNodes.Add(dummyNode); // for deletion of dummy nodes afterwards
 					}
 				}
 				// now, after the drop is complete, we can remove the dummy nodes
 				foreach (var dummy in dummyNodes)
+				{
+					((IGPlotItem)dummy.Tag).Remove();
 					dummy.Remove();
+				}
 			}
+
+#if VERIFY_TREESYNCHRONIZATION
+			if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
+				throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
+#endif
 		}
 
 		#endregion Plot items
@@ -999,5 +1030,132 @@ namespace Altaxo.Gui.Graph
 		#endregion Available items
 
 		#endregion Drag/drop support
+
+		#region Inner classes
+
+		private class DummyPlotItem : Altaxo.Main.SuspendableDocumentLeafNode, IGPlotItem
+		{
+			public string GetName(int level)
+			{
+				throw new NotImplementedException();
+			}
+
+			public string GetName(string style)
+			{
+				throw new NotImplementedException();
+			}
+
+			public PlotItemCollection ParentCollection
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public void CollectStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles, IPlotArea layer)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void ApplyGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void SetPlotStyleFromTemplate(IGPlotItem template, Altaxo.Graph.Plot.Groups.PlotGroupStrictness strictness)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void PrepareScales(IPlotArea layer)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void PaintPostprocessing()
+			{
+				throw new NotImplementedException();
+			}
+
+			public void PaintSymbol(Graphics g, RectangleF location)
+			{
+				throw new NotImplementedException();
+			}
+
+			public IHitTestObject HitTest(IPlotArea layer, Altaxo.Graph.PointD2D hitpoint)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool CopyFrom(object obj)
+			{
+				throw new NotImplementedException();
+			}
+
+			public object Clone()
+			{
+				throw new NotImplementedException();
+			}
+
+			public IEnumerable<Altaxo.Main.IDocumentLeafNode> ChildNodes
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public Altaxo.Main.IDocumentLeafNode ParentNode
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			IList<IGPlotItem> ITreeListNode<IGPlotItem>.ChildNodes
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			IEnumerable<IGPlotItem> ITreeNode<IGPlotItem>.ChildNodes
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			IGPlotItem INodeWithParentNode<IGPlotItem>.ParentNode
+			{
+				get { return _parent as IGPlotItem; }
+			}
+
+			protected override bool AccumulatedEventData_HasZeroOrOneEventArg(out EventArgs singleEventArg)
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override IEnumerable<EventArgs> AccumulatedEventData
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			protected override void AccumulatedEventData_Clear()
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override void AccumulateChangeData(object sender, EventArgs e)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion Inner classes
 	}
 }

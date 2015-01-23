@@ -354,13 +354,26 @@ namespace Altaxo.Collections
 		/// </summary>
 		public void MoveSelectedItemsUp()
 		{
+			MoveSelectedItemsUp(null);
+		}
+
+		/// <summary>
+		/// Move the selected items one place up (i.e. to lower index).
+		/// </summary>
+		/// <param name="docExchangeAction">You can provide an action here which will simultanously change also the corresponding document nodes. 1st arg is the first index of the doc to exchange, 2nd arg the second index.</param>
+		public void MoveSelectedItemsUp(Action<int, int> docExchangeAction)
+		{
 			if (Count == 0 || this[0].IsSelected)
 				return;
 
 			for (int i = 1; i < Count; i++)
 			{
 				if (this[i].IsSelected)
+				{
 					Exchange(i, i - 1);
+					if (null != docExchangeAction)
+						docExchangeAction(i, i - 1);
+				}
 			}
 		}
 
@@ -369,13 +382,26 @@ namespace Altaxo.Collections
 		/// </summary>
 		public void MoveSelectedItemsDown()
 		{
+			MoveSelectedItemsDown(null);
+		}
+
+		/// <summary>
+		/// Move the selected items one place down (i.e. to higher index).
+		/// </summary>
+		/// <param name="docExchangeAction">You can provide an action here which will simultanously change the corresponding document nodes. 1st arg is the first index of the doc to exchange, 2nd arg the second index.</param>
+		public void MoveSelectedItemsDown(Action<int, int> docExchangeAction)
+		{
 			if (Count == 0 || this[Count - 1].IsSelected)
 				return;
 
 			for (int i = Count - 2; i >= 0; i--)
 			{
 				if (this[i].IsSelected)
+				{
 					Exchange(i, i + 1);
+					if (null != docExchangeAction)
+						docExchangeAction(i, i + 1);
+				}
 			}
 		}
 
@@ -387,6 +413,50 @@ namespace Altaxo.Collections
 			for (int i = Count - 1; i >= 0; i--)
 				if (this[i].IsSelected)
 					this.RemoveAt(i);
+		}
+
+		/// <summary>
+		/// Remove the selected items from the collection.
+		/// </summary>
+		/// <param name="docRemoveAction">You can provide an action here which simultaneously will remove the corresponding document nodes.
+		/// 1st argument is the index of the ListNode (!) which is removed.
+		/// 2nd argument is the content of the <see cref="Tag"/> member of the list node which is removed.
+		/// When multiple nodes are selected, the nodes with the higher index are removed first.
+		/// </param>
+		public void RemoveSelectedItems(Action<int, object> docRemoveAction)
+		{
+			for (int i = Count - 1; i >= 0; i--)
+				if (this[i].IsSelected)
+				{
+					var node = this[i];
+					this.RemoveAt(i);
+					if (null != docRemoveAction)
+						docRemoveAction(i, node.Tag);
+				}
+		}
+
+		/// <summary>
+		/// Clears this collection, and clears the corresponding document too.
+		/// </summary>
+		/// <param name="docClearAction">You can provide an action here which simultaneously clears the corresponding document collection.</param>
+		public void Clear(Action docClearAction)
+		{
+			base.Clear();
+			if (null != docClearAction)
+				docClearAction();
+		}
+
+		/// <summary>
+		/// Adds the specified node to the collection, and is also able to add the correspondig document node too.
+		/// </summary>
+		/// <typeparam name="T">Type of document node.</typeparam>
+		/// <param name="node">The list node to add. The <see cref="Tag"/> property should contain the corresponding document node.</param>
+		/// <param name="docAddAction">The action to add a document node to the document collection. The document node will be retrieved from the <see cref="Tag"/> property of the list node.</param>
+		public void Add<T>(SelectableListNode node, Action<T> docAddAction)
+		{
+			base.Add(node);
+			if (null != docAddAction)
+				docAddAction((T)node.Tag);
 		}
 	}
 

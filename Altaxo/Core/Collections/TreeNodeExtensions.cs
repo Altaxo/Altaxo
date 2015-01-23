@@ -30,6 +30,14 @@ using System.Text;
 namespace Altaxo.Collections
 {
 	/// <summary>
+	/// Extends the IList interface by a function that allows to swap two items by index.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public interface ISwappableList<T> : IList<T>
+	{
+	}
+
+	/// <summary>
 	/// Defines a simple tree node, where the child nodes are enumerable. There is no reference to the node's parent.
 	/// </summary>
 	/// <typeparam name="T">Type of the node.</typeparam>
@@ -57,6 +65,21 @@ namespace Altaxo.Collections
 		/// The child nodes.
 		/// </value>
 		new IList<T> ChildNodes { get; }
+	}
+
+	/// <summary>
+	/// Defines a tree node, where the childs can be accessed by index. There is no reference to the node's parent.
+	/// </summary>
+	/// <typeparam name="T">Type of the node.</typeparam>
+	public interface ITreeSwappableListNode<T> : ITreeListNode<T> where T : ITreeSwappableListNode<T>
+	{
+		/// <summary>
+		/// Gets the child nodes.
+		/// </summary>
+		/// <value>
+		/// The child nodes.
+		/// </value>
+		new ISwappableList<T> ChildNodes { get; }
 	}
 
 	/// <summary>
@@ -904,6 +927,27 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Determines whether all nodes in the provided enumeration have the same level (see <see cref="Level"/> for an explanation of level).
+		/// </summary>
+		/// <typeparam name="T">Type of tree node.</typeparam>
+		/// <param name="selNodes">Enumeration of nodes</param>
+		/// <returns><c>True</c> if all nodes have the same level; otherwise <c>false</c>. <c>False</c> is also returned if the provided enumeration was empty.</returns>
+		public static bool AreAllNodesFromSameLevel<T>(this IEnumerable<T> selNodes) where T : INodeWithParentNode<T>
+		{
+			int? resultingLevel = null;
+			foreach (var node in selNodes)
+			{
+				int nodeLevel = node.Level();
+
+				if (null == resultingLevel)
+					resultingLevel = nodeLevel;
+				else if (resultingLevel.Value != nodeLevel)
+					return false;
+			}
+			return null == resultingLevel ? false : true;
+		}
+
+		/// <summary>
 		/// Returns the firstsanchestor of this node that has the type M.
 		/// </summary>
 		/// <typeparam name="M">The type to search for.</typeparam>
@@ -953,5 +997,194 @@ namespace Altaxo.Collections
 
 			return true;
 		}
+
+		#region Move TreeNodes up/down
+
+		/// <summary>
+		/// Frees this node, i.e. removes the node from it's parent collection.
+		/// </summary>
+		public static bool Remove<T>(this T node) where T : ITreeListNodeWithParent<T>
+		{
+			var parent = node.ParentNode;
+			if (parent != null)
+				return parent.ChildNodes.Remove(node);
+			else
+				return false;
+		}
+
+		/// <summary>
+		/// Returns only the nodes with the highest hierarchy level among all the provided nodes (i.e. the nodes most close to the leaf nodes of the true).
+		/// First, the <paramref name="nodes"/> collection is iterated through to determine the highest node level. Then only those nodes with the hightest node level are returned.
+		/// </summary>
+		/// <param name="nodes">Nodes to filter.</param>
+		/// <returns>Only those nodes wich have the same highest level number among all the provided nodes.</returns>
+		public static HashSet<T> NodesOfSameHighestLevel<T>(IEnumerable<T> nodes) where T : ITreeListNodeWithParent<T>
+		{
+			int level = int.MaxValue;
+			foreach (var node in nodes)
+				level = Math.Min(node.Level(), level);
+
+			HashSet<T> hashSet = new HashSet<T>();
+			foreach (var node in nodes)
+				if (level == node.Level())
+					hashSet.Add(node);
+
+			return hashSet;
+		}
+
+		private static bool MoveNodesOneIndexDownwards<T>(IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
+		{
+			var hashOfSelectedNodes = (nodesToMove is HashSet<T>) ? (HashSet<T>)nodesToMove : new HashSet<T>(nodesToMove);
+			if (0 == hashOfSelectedNodes.Count)
+				return false; // nothing to move
+
+			T parent = hashOfSelectedNodes.First().ParentNode;
+			var childs = parent.ChildNodes;
+
+			// we iterate through the list of child nodes
+
+			int childsCount = childs.Count;
+			for (int i = 0; i < childsCount; ++i)
+			{
+				if (hashOfSelectedNodes.Contains(childs[i]))
+				{
+					if (i != 0)
+					{
+						// swap index i and i-1
+						var h = childs[i];
+						childs[i] = childs[i - 1];
+						childs[i - 1] = h;
+					}
+					else
+					{
+						return false; // if the first item is selected, we can't move downwards
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private static bool MoveNodesOneIndexUpwards<T>(IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
+		{
+			var hashOfSelectedNodes = (nodesToMove is HashSet<T>) ? (HashSet<T>)nodesToMove : new HashSet<T>(nodesToMove);
+			if (0 == hashOfSelectedNodes.Count)
+				return false; // nothing to move
+
+			T parent = hashOfSelectedNodes.First().ParentNode;
+			var childs = parent.ChildNodes;
+
+			int childsCountM1 = childs.Count - 1;
+			for (int i = childsCountM1; i >= 0; --i)
+			{
+				if (hashOfSelectedNodes.Contains(childs[i]))
+				{
+					if (i != childsCountM1)
+					{
+						// swap index i and i+1
+						var h = childs[i];
+						childs[i] = childs[i + 1];
+						childs[i + 1] = h;
+					}
+					else
+					{
+						return false; // if the last item is selected, we can't move down
+					}
+				}
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// This procedure will move nodes some indices up or down. All nodes to move should have the same parent.
+		/// </summary>
+		/// <param name="indexDelta">Number of movement steps. Value less than zero will move up the nodes in the tree, values greater null will move down the nodes in the tree.</param>
+		/// <param name="nodesToMove">Nodes to move.</param>
+		/// <returns>The number of indices the nodes were moved (either a positive number if the nodes where moved to higher indices, or negative if the nodes were moved to lower indices).</returns>
+		/// <remarks>The following assumptions must be fullfilled:
+		/// <para>The nodes have to have the same parent, otherwise an exception is thrown.</para>
+		/// </remarks>
+		static public int MoveNodesUpDown<T>(int indexDelta, IEnumerable<T> nodesToMove) where T : ITreeListNodeWithParent<T>
+		{
+			if (indexDelta == 0)
+				return 0; // nothing moved
+			if (null == nodesToMove)
+				throw new ArgumentNullException("nodesToMove");
+
+			var hashOfSelectedNodes = (nodesToMove is HashSet<T>) ? (HashSet<T>)nodesToMove : new HashSet<T>(nodesToMove);
+			if (0 == hashOfSelectedNodes.Count)
+				return 0; // nothing to move
+
+			if (!HaveSameParent(hashOfSelectedNodes))
+				throw new ArgumentException("The provided nodes do not have the same parent. This presumtion is neccessary for moving operations");
+
+			int numberOfMoveSteps = 0;
+			if (indexDelta < 0)
+			{
+				for (int i = 0; i < (-indexDelta); i++)
+				{
+					if (MoveNodesOneIndexDownwards(hashOfSelectedNodes))
+						--numberOfMoveSteps;
+					else
+						break;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < indexDelta; i++)
+				{
+					if (MoveNodesOneIndexUpwards(hashOfSelectedNodes))
+						++numberOfMoveSteps;
+					else
+						break;
+				}
+			}
+
+			return numberOfMoveSteps;
+		}
+
+		#endregion Move TreeNodes up/down
+
+		#region Comparison of trees
+
+		private static IEnumerable<T> GetEmptyEnumerable<T>()
+		{
+			yield break;
+		}
+
+		public static bool IsStructuralEquivalentTo<T, M>(this T tree1, M tree2, Func<T, M, bool> AreNodesEquivalent)
+			where T : ITreeNode<T>
+			where M : ITreeNode<M>
+		{
+			if (null == tree1)
+				throw new ArgumentNullException("tree1");
+			if (null == tree2)
+				throw new ArgumentNullException("tree2");
+
+			if (!AreNodesEquivalent(tree1, tree2))
+				return false; // this nodes not equivalent
+
+			if (null == tree1.ChildNodes && null == tree2.ChildNodes)
+				return true; // both child node collections are null
+
+			var enum1 = null != tree1.ChildNodes ? tree1.ChildNodes.GetEnumerator() : GetEmptyEnumerable<T>().GetEnumerator();
+			var enum2 = null != tree2.ChildNodes ? tree2.ChildNodes.GetEnumerator() : GetEmptyEnumerable<M>().GetEnumerator();
+
+			for (; ; )
+			{
+				var moved1 = enum1.MoveNext();
+				var moved2 = enum2.MoveNext();
+
+				if (!moved1 && !moved2)
+					return true; // End of both enumerations
+				if (moved1 ^ moved2)
+					return false; // End of one enumeration
+
+				if (!IsStructuralEquivalentTo(enum1.Current, enum2.Current, AreNodesEquivalent))
+					return false; // substructures not equivalent
+			}
+		}
+
+		#endregion Comparison of trees
 	}
 }

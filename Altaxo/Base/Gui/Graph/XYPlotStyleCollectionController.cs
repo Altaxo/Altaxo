@@ -30,6 +30,7 @@ using Altaxo.Main;
 using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Gui.Graph
 {
@@ -132,10 +133,7 @@ namespace Altaxo.Gui.Graph
 					}
 				}
 
-				// current styles
-				_currentItems = new SelectableListNodeList();
-				for (int i = 0; i < _doc.Count; ++i)
-					_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(_doc[i].GetType()), _doc[i], false));
+				BuildCurrentStyleListNodeList();
 			}
 
 			if (null != _view)
@@ -165,6 +163,14 @@ namespace Altaxo.Gui.Graph
 
 		#region IXYPlotStyleCollectionViewEventSink Members
 
+		private void BuildCurrentStyleListNodeList()
+		{
+			// current styles
+			_currentItems = new SelectableListNodeList();
+			for (int i = 0; i < _doc.Count; ++i)
+				_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(_doc[i].GetType()), _doc[i], false));
+		}
+
 		public virtual void EhView_AddStyle()
 		{
 			var sel = _singleStylesAvailable.FirstSelectedNode;
@@ -189,21 +195,20 @@ namespace Altaxo.Gui.Graph
 			if (layer != null && plotitem != null)
 				_doc.PrepareNewSubStyle(style, layer, plotitem.GetRangesAndPoints(layer));
 
-			_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()), style, true));
+			_currentItems.Add<IG2DPlotStyle>(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()), style, true), (docNodeToAdd) => _doc.Add(docNodeToAdd));
 
 			OnCollectionChangeCommit();
 		}
 
 		public virtual void EhView_StyleUp()
 		{
-			_currentItems.MoveSelectedItemsUp();
-
+			_currentItems.MoveSelectedItemsUp((i, j) => _doc.ExchangeItemPositions(i, j));
 			OnCollectionChangeCommit();
 		}
 
 		public virtual void EhView_StyleDown()
 		{
-			_currentItems.MoveSelectedItemsDown();
+			_currentItems.MoveSelectedItemsDown((i, j) => _doc.ExchangeItemPositions(i, j));
 			OnCollectionChangeCommit();
 		}
 
@@ -216,7 +221,7 @@ namespace Altaxo.Gui.Graph
 
 		public virtual void EhView_StyleRemove()
 		{
-			_currentItems.RemoveSelectedItems();
+			_currentItems.RemoveSelectedItems((i, tag) => _doc.RemoveAt(i));
 			OnCollectionChangeCommit();
 		}
 
@@ -227,9 +232,12 @@ namespace Altaxo.Gui.Graph
 				return;
 
 			G2DPlotStyleCollection template = G2DPlotStyleCollectionTemplates.GetTemplate((int)sel.Tag, _doc.GetPropertyContext());
-			_currentItems.Clear();
+			_currentItems.Clear(() => _doc.Clear());
 			for (int i = 0; i < template.Count; i++)
-				_currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(template[i].GetType()), template[i], false));
+			{
+				var listNode = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(template[i].GetType()), template[i], false);
+				_currentItems.Add<IG2DPlotStyle>(listNode, (docNode) => _doc.Add(docNode));
+			}
 
 			OnCollectionChangeCommit();
 		}
