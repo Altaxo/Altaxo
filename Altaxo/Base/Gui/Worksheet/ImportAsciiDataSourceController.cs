@@ -89,10 +89,16 @@ namespace Altaxo.Gui.Worksheet
 			bool result;
 
 			result = _dataSourceOptionsController.Apply(disposeController);
-			if (!result) return result;
+			if (!result)
+				return result;
+			else
+				_doc.ImportOptions = (Altaxo.Data.IDataSourceImportOptions)_dataSourceOptionsController.ModelObject;
 
 			result = _importAsciiOptionsController.Apply(disposeController);
-			if (!result) return result;
+			if (!result)
+				return result;
+			else
+				_doc.AsciiImportOptions = (AsciiImportOptions)_importAsciiOptionsController.ModelObject; // AsciiImportOptions is cloned in property set
 
 			_doc.SourceFileNames = _fileNames.Select(x => (string)x.Tag);
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -43,7 +45,7 @@ namespace Altaxo.Serialization.Ascii
 		public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Table\\AsciiAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable), GetDefaultSystemOptions);
 
 		/// <summary>Default number of Ascii lines to analyze.</summary>
-		public const int DefaultNumberOfLinesToAnalyze = 30;
+		public const int DefaultNumberOfLinesToAnalyze = 100;
 
 		/// <summary>Number of lines of the Ascii document to analyze.</summary>
 		private int _numberOfLinesToAnalyze;
