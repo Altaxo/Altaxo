@@ -299,6 +299,19 @@ namespace Altaxo.Gui
 		/// </summary>
 		protected Altaxo.Main.ISuspendToken _suspendToken;
 
+		/// <summary>
+		/// Gets the suspend token for the controller document. This default implementation calls SuspendGetToken() on the document.
+		/// By overriding this function you can suspend parent nodes in case it is neccessary to modify nodes at lower levels of the hierarchy.
+		/// </summary>
+		/// <returns>The suspend token, provided by the document.</returns>
+		protected virtual Altaxo.Main.ISuspendToken GetSuspendTokenForControllerDocument()
+		{
+			if (_doc is Altaxo.Main.ISuspendableByToken)
+				return ((Altaxo.Main.ISuspendableByToken)_doc).SuspendGetToken();
+			else
+				return null;
+		}
+
 		protected virtual void Initialize(bool initData)
 		{
 			if (null == _doc)
@@ -308,8 +321,8 @@ namespace Altaxo.Gui
 
 			if (initData)
 			{
-				if (_useDocumentCopy && null == _suspendToken && (_doc is Altaxo.Main.ISuspendableByToken))
-					_suspendToken = ((Altaxo.Main.ISuspendableByToken)_doc).SuspendGetToken();
+				if (_useDocumentCopy && null == _suspendToken)
+					_suspendToken = GetSuspendTokenForControllerDocument();
 			}
 		}
 

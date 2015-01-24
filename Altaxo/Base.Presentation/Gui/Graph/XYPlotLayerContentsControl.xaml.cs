@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYPlotLayerContentsControl.xaml
 	/// </summary>
-	public partial class XYPlotLayerContentsControl : UserControl, ILineScatterLayerContentsView
+	public partial class XYPlotLayerContentsControl : UserControl, IXYPlotLayerContentsView
 	{
-		private ILineScatterLayerContentsViewEventSink _controller;
+		private IXYPlotLayerContentsViewEventSink _controller;
 
 		public XYPlotLayerContentsControl()
 		{
@@ -208,7 +208,7 @@ namespace Altaxo.Gui.Graph
 
 		#region ILineScatterLayerContentsView
 
-		public ILineScatterLayerContentsViewEventSink Controller
+		public IXYPlotLayerContentsViewEventSink Controller
 		{
 			get
 			{
@@ -248,7 +248,7 @@ namespace Altaxo.Gui.Graph
 			}
 			set
 			{
-				_controller = value as ILineScatterLayerContentsViewEventSink;
+				_controller = value as IXYPlotLayerContentsViewEventSink;
 			}
 		}
 
@@ -437,5 +437,15 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion AvailableItemTree_DragHander
+
+		public void InitializeDataClipping(SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiClip, list);
+		}
+
+		private void EhClipSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiClip);
+		}
 	}
 }

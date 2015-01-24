@@ -1135,7 +1135,7 @@
     <Compile Include="Gui\Graph\GridPlaneController.cs" />
     <Compile Include="Gui\Graph\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\LayerPositionController.cs" />
-    <Compile Include="Gui\Graph\LineScatterLayerContentsController.cs" />
+    <Compile Include="Gui\Graph\XYPlotLayerContentsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionControllerAdvanced.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />

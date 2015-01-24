@@ -9,6 +9,7 @@
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Thickness x:Key="ButtonMargin">8</Thickness>
+		<Thickness x:Key="ComboboxMargin">8,0,8,0</Thickness>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.Resources>
@@ -37,9 +38,12 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label x:Name="_label1"  Grid.Column="0" Grid.Row="0">Available data:</Label>
-		<axogc:MultiSelectTreeView	x:Name="_guiAvailableContent" Grid.Column="0" Grid.Row="2" Grid.RowSpan="13" Focusable="True"
+		<axogc:MultiSelectTreeView	x:Name="_guiAvailableContent" Grid.Column="0" Grid.Row="2" Grid.RowSpan="16" Focusable="True"
 																dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemTreeDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
@@ -65,7 +69,7 @@
 			</ItemsControl.Resources>
 		</axogc:MultiSelectTreeView>
 		<Label Grid.Column="2" Grid.Row="0">Layer contents:</Label>
-		<axogc:MultiSelectTreeView	x:Name="_guiPlotItemsTree" Grid.Column="2" Grid.Row="2" Grid.RowSpan="13"
+		<axogc:MultiSelectTreeView	x:Name="_guiPlotItemsTree" Grid.Column="2" Grid.Row="2" Grid.RowSpan="16"
 																ItemMouseDoubleClick="EhItemMouseDoubleClick"
 																dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding PlotItemTreeDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
 																dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding PlotItemTreeDropHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
@@ -136,5 +140,8 @@
 		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click" ToolTip="Ungroup the selected items, i.e. remove them from their current plot group." />
 		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click" ToolTip="Edits the range of all of the selected plot items." />
 		<CheckBox x:Name="_guiShowRange" Grid.Column="3" Grid.Row="14" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" ToolTip="If checked, shows the current set range of the plot items." />
+
+		<Label Grid.Column="3" Grid.Row="16" Content="Data clipping:" Margin="4,0,0,0" />
+		<ComboBox Grid.Column="3" Grid.Row="17" x:Name="_guiClip" Margin="{StaticResource ComboboxMargin}" SelectionChanged="EhClipSelectionChanged" />
 	</Grid>
 </UserControl>

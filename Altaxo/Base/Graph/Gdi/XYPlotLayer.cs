@@ -2305,6 +2305,15 @@ namespace Altaxo.Graph.Gdi
 				if (null == layer)
 					return null;
 
+				var xylayer = layer as XYPlotLayer;
+				if (null != xylayer && xylayer.ClipDataToFrame != LayerDataClipping.None) // if data are clipped, we search only if clicked inside the layer
+				{
+					var region = layer.CoordinateSystem.GetRegion();
+					var pt = hitData.GetHittedPointInWorldCoord();
+					if (!region.IsVisible((float)pt.X, (float)pt.Y))
+						return null;
+				}
+
 				var result = PlotItemParent[PlotItemIndex].HitTest(layer, hitData.GetHittedPointInWorldCoord());
 				if (null != result)
 				{
@@ -2313,6 +2322,7 @@ namespace Altaxo.Graph.Gdi
 					if (null == result.Remove)
 						result.Remove = PlotItemParent.EhHitTestObject_Remove;
 				}
+
 				return result;
 			}
 		}
