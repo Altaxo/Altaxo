@@ -91,7 +91,12 @@ namespace Altaxo.Graph.Gdi
 		{
 			HostLayer layer;
 			if (doc.RootLayer.IsValidIndex(layerNumber, out layer))
-				Altaxo.Gui.Graph.HostLayerController.ShowDialog(layer);
+			{
+				if (layer is XYPlotLayer)
+					Altaxo.Gui.Graph.XYPlotLayerController.ShowDialog((XYPlotLayer)layer);
+				else
+					Altaxo.Gui.Graph.HostLayerController.ShowDialog(layer);
+			}
 		}
 
 		/// <summary>
