@@ -494,6 +494,19 @@ namespace Altaxo.Gui
 				IsDisposed = true;
 			}
 		}
+
+		#region Helper functions
+
+		protected static void DisposeAndSetToNull<T>(ref T objectToDispose) where T : class, IDisposable
+		{
+			if (null != objectToDispose)
+			{
+				objectToDispose.Dispose();
+				objectToDispose = null;
+			}
+		}
+
+		#endregion Helper functions
 	}
 
 	public abstract class MVCANDControllerEditOriginalDocBase<TModel, TView> : MVCANControllerEditOriginalDocBase<TModel, TView>, IMVCANDController

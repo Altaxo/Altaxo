@@ -41,6 +41,8 @@ namespace Altaxo.Gui.Graph
 
 		void InitializeLinkTargets(SelectableListNodeList names);
 
+		void SetLinkedScalePropertiesView(object guiobject);
+
 		void SetBoundaryView(object guiobject);
 
 		void SetScaleView(object guiobject);
@@ -62,24 +64,19 @@ namespace Altaxo.Gui.Graph
 	[ExpectedTypeOfView(typeof(IScaleWithTicksView))]
 	public class ScaleWithTicksController : MVCANControllerEditOriginalDocBase<ScaleWithTicks, IScaleWithTicksView>
 	{
-		// Cached values
-		protected Scale _tempScale;
+		protected IMVCAController _scaleController;
 
-		protected TickSpacing _tempTickSpacing;
+		protected IMVCAController _linkedScaleParameterController;
 
 		protected IMVCAController _boundaryController;
 
-		protected SelectableListNodeList _scaleTypes;
-		protected IMVCAController _scaleController;
-
-		protected SelectableListNodeList _tickSpacingTypes;
 		protected IMVCAController _tickSpacingController;
 
-		protected SelectableListNodeList _linkScaleChoices;
-		protected Scale _scaleLinkedTo;
+		protected SelectableListNodeList _scaleTypes;
 
-		protected LinkedScaleParameters _linkedScaleParameters;
-		protected IMVCAController _linkedScaleParameterController;
+		protected SelectableListNodeList _tickSpacingTypes;
+
+		protected SelectableListNodeList _linkScaleChoices;
 
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -91,13 +88,9 @@ namespace Altaxo.Gui.Graph
 
 		public override void Dispose(bool isDisposing)
 		{
-			_tempScale = null;
-			_tempTickSpacing = null;
 			_scaleTypes = null;
 			_tickSpacingTypes = null;
 			_linkScaleChoices = null;
-			_scaleLinkedTo = null;
-			_linkedScaleParameters = null;
 
 			base.Dispose(isDisposing);
 		}
@@ -106,24 +99,8 @@ namespace Altaxo.Gui.Graph
 		{
 			base.Initialize(initData);
 
-			if (initData)
-			{
-				if (_doc.Scale is LinkedScale)
-				{
-					_scaleLinkedTo = ((LinkedScale)_doc.Scale).ScaleLinkedTo;
-					_tempScale = ((LinkedScale)_doc.Scale).WrappedScale;
-					_linkedScaleParameters = ((LinkedScale)_doc.Scale).LinkParameters;
-				}
-				else
-				{
-					_scaleLinkedTo = null;
-					_tempScale = _doc.Scale;
-					_linkedScaleParameters = new LinkedScaleParameters();
-				}
-
-				_tempTickSpacing = _doc.TickSpacing;
-			}
-
+			FixScaleIfIsLinkedScaleWithInvalidTarget(initData);
+			InitLinkTargetScales(initData);
 			InitLinkProperties(initData);
 			InitScaleTypes(initData);
 			InitScaleController(initData);
@@ -134,49 +111,92 @@ namespace Altaxo.Gui.Graph
 
 		public override bool Apply(bool disposeController)
 		{
-			if (null != _scaleController)
-			{
-				if (false == _scaleController.Apply(disposeController))
-					return false;
-			}
+			if (null != _scaleController && false == _scaleController.Apply(disposeController))
+				return false;
 
-			if (_scaleLinkedTo != null)
-			{
-				// Apply link conditions
-				if (false == _linkedScaleParameterController.Apply(disposeController))
-					return false;
-			}
-			else // scale is not linked
-			{
-				if (null != _boundaryController)
-				{
-					if (false == _boundaryController.Apply(disposeController))
-						return false;
-				}
-			}
+			if (null != _linkedScaleParameterController && false == _linkedScaleParameterController.Apply(disposeController))
+				return false;
+
+			if (null != _boundaryController && false == _boundaryController.Apply(disposeController))
+				return false;
 
 			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
 				return false;
 
-			// wrap the scale if it is linked
-			if (_scaleLinkedTo != null)
-			{
-				var layerLinkedTo = (XYPlotLayer)Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing(_scaleLinkedTo, typeof(XYPlotLayer));
-				int scaleNumberLinkedTo = layerLinkedTo.Scales.IndexOfFirst(scaleWithTicks => object.ReferenceEquals(scaleWithTicks.Scale, _scaleLinkedTo));
-				LinkedScale ls = new LinkedScale(_tempScale);
-				ls.LinkParameters.SetTo(_linkedScaleParameters);
-				_doc.SetTo(ls, _tempTickSpacing);
-				ls.ScaleLinkedTo = _scaleLinkedTo;
-			}
-			else
-			{
-				_doc.SetTo(_tempScale, _tempTickSpacing);
-			}
-
 			return ApplyEnd(true, disposeController); // all ok
 		}
 
-		private void InitLinkProperties(bool initData)
+		/// <summary>
+		/// Gets or sets the scale to edit. This is the scale that is shown in the dialog. If _doc.Scale is a LinkedScale, the ScaleToEdit is the scale wrapped by the LinkedScale.
+		/// Otherwise it is _doc.Scale.
+		/// </summary>
+		/// <value>
+		/// The scale to edit.
+		/// </value>
+		/// <exception cref="System.ArgumentNullException">ScaleToEdit</exception>
+		protected Scale ScaleToEdit
+		{
+			get
+			{
+				if (_doc.Scale is LinkedScale)
+					return ((LinkedScale)_doc.Scale).WrappedScale;
+				else
+					return _doc.Scale;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("ScaleToEdit");
+
+				if (_doc.Scale is LinkedScale)
+					((LinkedScale)_doc.Scale).WrappedScale = value;
+				else
+					_doc.Scale = value;
+			}
+		}
+
+		protected Scale ScaleLinkedTo
+		{
+			get
+			{
+				if (_doc.Scale is LinkedScale)
+					return ((LinkedScale)_doc.Scale).ScaleLinkedTo;
+				else
+					return null;
+			}
+			set
+			{
+				var oldValue = ScaleLinkedTo;
+				if (object.ReferenceEquals(oldValue, value))
+					return;
+
+				if (null != value)
+				{
+					if (!(_doc.Scale is LinkedScale))
+						_doc.Scale = new LinkedScale((Scale)_doc.Scale.Clone()); // Clone necessary to avoid ObjectDisposedProblems
+
+					((LinkedScale)_doc.Scale).ScaleLinkedTo = value;
+				}
+				else // value is null
+				{
+					if (_doc.Scale is LinkedScale)
+						_doc.Scale = (Scale)((LinkedScale)_doc.Scale).WrappedScale.Clone(); // Clone to avoid ObjectDisposedProblems
+				}
+			}
+		}
+
+		private void FixScaleIfIsLinkedScaleWithInvalidTarget(bool initData)
+		{
+			if (initData)
+			{
+				if (_doc.Scale is LinkedScale && ((LinkedScale)_doc.Scale).ScaleLinkedTo == null)
+				{
+					_doc.Scale = (Scale)((LinkedScale)_doc.Scale).WrappedScale.Clone(); // this will replace the invalid linked scale with a clone of the wrapped scale
+				}
+			}
+		}
+
+		private void InitLinkTargetScales(bool initData)
 		{
 			if (initData)
 			{
@@ -187,25 +207,25 @@ namespace Altaxo.Gui.Graph
 				var mylayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(_doc);
 				if (null != mylayer)
 				{
-					var parentLayerList = mylayer.ParentLayerList;
-					if (null != parentLayerList)
+					var siblingLayers = mylayer.SiblingLayers;
+					if (null != siblingLayers)
 					{
 						var scaleLinkedTo = _doc.Scale is LinkedScale ? ((LinkedScale)_doc.Scale).ScaleLinkedTo : null;
 
-						for (int i = 0; i < parentLayerList.Count; ++i)
+						for (int i = 0; i < siblingLayers.Count; ++i)
 						{
-							var l = parentLayerList[i];
-							if (l.LayerNumber == mylayer.LayerNumber)
-								continue;
-							var lxy = l as XYPlotLayer; // must have scales
+							var lxy = siblingLayers[i] as XYPlotLayer;
 							if (null == lxy)
-								return;
+								continue;
 
 							for (int j = 0; j < lxy.Scales.Count; ++j)
 							{
 								var scale = lxy.Scales[j].Scale;
-								var scaleName = j == 0 ? "x" : (j == 1 ? "y" : (j == 2 ? "z" : string.Format("{0}.", j)));
 
+								if (LinkedScale.WouldScaleBeDependentOnMe(_doc.Scale, scale))
+									continue; // Scale would be dependent on _doc.Scale, thus we can not link to it
+
+								var scaleName = j == 0 ? "x" : (j == 1 ? "y" : (j == 2 ? "z" : string.Format("{0}.", j)));
 								string name = string.Format("Layer[{0}] - {1} scale", i, scaleName);
 								_linkScaleChoices.Add(new SelectableListNode(name, scale, object.ReferenceEquals(scale, scaleLinkedTo)));
 							}
@@ -215,13 +235,35 @@ namespace Altaxo.Gui.Graph
 
 				if (null == _linkScaleChoices.FirstSelectedNode)
 					_linkScaleChoices[0].IsSelected = true;
-
-				_linkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _linkedScaleParameters }, typeof(IMVCAController), UseDocument.Directly);
 			}
 
 			if (_view != null)
 			{
 				_view.InitializeLinkTargets(_linkScaleChoices);
+			}
+		}
+
+		public void InitLinkProperties(bool initData)
+		{
+			if (initData)
+			{
+				if (_doc.Scale is LinkedScale)
+				{
+					var linkedScaleParameters = ((LinkedScale)_doc.Scale).LinkParameters;
+					_linkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { linkedScaleParameters }, typeof(IMVCAController), UseDocument.Directly);
+				}
+				else
+				{
+					DisposeAndSetToNull(ref _linkedScaleParameterController);
+				}
+			}
+
+			if (null != _view)
+			{
+				if (null != _linkedScaleParameterController)
+					_view.SetLinkedScalePropertiesView(_linkedScaleParameterController.ViewObject);
+				else
+					_view.SetLinkedScalePropertiesView(null);
 			}
 		}
 
@@ -235,7 +277,7 @@ namespace Altaxo.Gui.Graph
 				{
 					if (classes[i] == typeof(LinkedScale))
 						continue;
-					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempScale.GetType() == classes[i]);
+					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], ScaleToEdit.GetType() == classes[i]);
 					_scaleTypes.Add(node);
 				}
 			}
@@ -252,7 +294,7 @@ namespace Altaxo.Gui.Graph
 				Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
 				for (int i = 0; i < classes.Length; i++)
 				{
-					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempTickSpacing.GetType() == classes[i]);
+					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.TickSpacing.GetType() == classes[i]);
 					_tickSpacingTypes.Add(node);
 				}
 			}
@@ -265,7 +307,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (initData)
 			{
-				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempScale }, typeof(IMVCAController), UseDocument.Directly);
+				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
 			}
 			if (null != _view)
 			{
@@ -277,17 +319,15 @@ namespace Altaxo.Gui.Graph
 		{
 			if (bInit)
 			{
-				if (null != _tempScale.RescalingObject)
-					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempScale.RescalingObject, _tempScale }, typeof(IMVCAController), UseDocument.Directly);
+				if (null != ScaleToEdit.RescalingObject && null == ScaleLinkedTo)
+					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit.RescalingObject, ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
 				else
-					_boundaryController = null;
+					DisposeAndSetToNull(ref _boundaryController);
 			}
+
 			if (null != _view)
 			{
-				if (null != _scaleLinkedTo)
-					_view.SetBoundaryView(_linkedScaleParameterController.ViewObject);
-				else
-					_view.SetBoundaryView(null != _boundaryController ? _boundaryController.ViewObject : null);
+				_view.SetBoundaryView(null != _boundaryController ? _boundaryController.ViewObject : null);
 			}
 		}
 
@@ -295,10 +335,10 @@ namespace Altaxo.Gui.Graph
 		{
 			if (bInit)
 			{
-				if (_tempTickSpacing != null)
-					_tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempTickSpacing }, typeof(IMVCAController), UseDocument.Directly);
+				if (_doc.TickSpacing != null)
+					_tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.TickSpacing }, typeof(IMVCAController), UseDocument.Directly);
 				else
-					_tickSpacingController = null;
+					DisposeAndSetToNull(ref _tickSpacingController);
 			}
 			if (null != _view)
 			{
@@ -314,17 +354,17 @@ namespace Altaxo.Gui.Graph
 
 			try
 			{
-				if (axistype != _tempScale.GetType())
+				if (axistype != ScaleToEdit.GetType())
 				{
 					// replace the current axis by a new axis of the type axistype
-					Scale _oldAxis = _tempScale;
-					_tempScale = (Scale)System.Activator.CreateInstance(axistype);
+					Scale _oldAxis = ScaleToEdit;
+					ScaleToEdit = (Scale)System.Activator.CreateInstance(axistype);
 
 					// Try to set the same org and end as the axis before
 					// this will fail for instance if we switch from linear to logarithmic with negative bounds
 					try
 					{
-						_tempScale.SetScaleOrgEnd(_oldAxis.OrgAsVariant, _oldAxis.EndAsVariant);
+						ScaleToEdit.SetScaleOrgEnd(_oldAxis.OrgAsVariant, _oldAxis.EndAsVariant);
 					}
 					catch (Exception)
 					{
@@ -334,7 +374,7 @@ namespace Altaxo.Gui.Graph
 					// now we have also to replace the controller and the control for the axis boundaries
 					InitBoundaryController(true);
 
-					_tempTickSpacing = ScaleWithTicks.CreateDefaultTicks(axistype);
+					_doc.TickSpacing = ScaleWithTicks.CreateDefaultTicks(axistype);
 					InitTickSpacingTypes(true);
 					InitTickSpacingController(true);
 				}
@@ -352,18 +392,19 @@ namespace Altaxo.Gui.Graph
 
 			Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
 
-			if (spaceType == _tempTickSpacing.GetType())
+			if (spaceType == _doc.TickSpacing.GetType())
 				return;
 
-			_tempTickSpacing = (TickSpacing)Activator.CreateInstance(spaceType);
+			_doc.TickSpacing = (TickSpacing)Activator.CreateInstance(spaceType);
 			InitTickSpacingController(true);
 		}
 
 		public void EhView_LinkTargetChanged()
 		{
-			_scaleLinkedTo = (Scale)_linkScaleChoices.FirstSelectedNode.Tag;
+			ScaleLinkedTo = (Scale)_linkScaleChoices.FirstSelectedNode.Tag;
 
-			InitBoundaryController(false);
+			InitLinkProperties(true);
+			InitBoundaryController(true);
 		}
 
 		public void EhView_LinkChanged(bool linked)

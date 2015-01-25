@@ -97,61 +97,27 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(this._cbLinkTarget, names);
 		}
 
-		private UIElement _boundaryControl = null;
-
 		public void SetBoundaryView(object guiobject)
 		{
-			if (null != _boundaryControl)
-				_tlp_Main.Children.Remove(_boundaryControl);
+			_guiBoundaryHost.Child = guiobject as UIElement;
+		}
 
-			_boundaryControl = guiobject as UIElement;
-
-			if (_boundaryControl != null)
-			{
-				_boundaryControl.SetValue(Grid.ColumnProperty, 0);
-				_boundaryControl.SetValue(Grid.ColumnSpanProperty, 2);
-				_boundaryControl.SetValue(Grid.RowProperty, 4);
-				_tlp_Main.Children.Add(_boundaryControl);
-			}
+		public void SetLinkedScalePropertiesView(object guiobject)
+		{
+			_guiLinkedScalePropertiesHost.Child = guiobject as UIElement;
 		}
 
 		private UIElement _scaleControl = null;
 
 		public void SetScaleView(object guiobject)
 		{
-			if (null != _boundaryControl)
-				_tlp_Main.Children.Remove(_scaleControl);
-
-			_scaleControl = guiobject as UIElement;
-
-			if (_scaleControl != null)
-			{
-				_scaleControl.SetValue(Grid.ColumnProperty, 0);
-				_scaleControl.SetValue(Grid.ColumnSpanProperty, 2);
-				_scaleControl.SetValue(Grid.RowProperty, 4);
-				_tlp_Main.Children.Add(_scaleControl);
-			}
+			_guiBoundaryHost.Child = null;
+			_guiScaleDetailsHost.Child = guiobject as UIElement;
 		}
-
-		private UIElement _tickSpacingControl = null;
 
 		public void SetTickSpacingView(object guiobject)
 		{
-			if (null != _tickSpacingControl)
-				_tickSpacingGroupBox.Content = null;
-
-			_tickSpacingControl = guiobject as UIElement;
-
-			if (_tickSpacingControl != null)
-			{
-				_tickSpacingGroupBox.Content = _tickSpacingControl;
-				/*
-				_tickSpacingControl.SetValue(Grid.ColumnProperty, 0);
-				_tickSpacingControl.SetValue(Grid.ColumnSpanProperty, 2);
-				_tickSpacingControl.SetValue(Grid.RowProperty, 8);
-				_tlp_Main.Children.Add(_tickSpacingControl);
-				 */
-			}
+			_tickSpacingGroupBox.Content = guiobject as UIElement;
 		}
 
 		public event Action AxisTypeChanged;

@@ -685,8 +685,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 					return result;
 
 				XYPlotLayer layer = mylayer as XYPlotLayer;
-				if (_layerNumber >= 0 && mylayer.ParentLayerList != null && _layerNumber < mylayer.ParentLayerList.Count)
-					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+				if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
+					layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
 				if (null == layer)
 					return result;
 				IGPlotItem pa = null;
@@ -765,8 +765,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (null == mylayer)
 					return;
 				XYPlotLayer layer = mylayer as XYPlotLayer;
-				if (_layerNumber >= 0 && null != mylayer.ParentLayerList && _layerNumber < mylayer.ParentLayerList.Count)
-					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+				if (_layerNumber >= 0 && null != mylayer.SiblingLayers && _layerNumber < mylayer.SiblingLayers.Count)
+					layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
 
 				if (null == layer)
 					return;
@@ -786,8 +786,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				XYPlotLayer layer = mylayer as XYPlotLayer;
 
-				if (_layerNumber >= 0 && mylayer.ParentLayerList != null && _layerNumber < mylayer.ParentLayerList.Count)
-					layer = mylayer.ParentLayerList[_layerNumber] as XYPlotLayer;
+				if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
+					layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
 
 				if (null == layer)
 					return;

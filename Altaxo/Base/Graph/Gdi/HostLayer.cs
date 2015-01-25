@@ -924,7 +924,13 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public IList<HostLayer> ParentLayerList
+		/// <summary>
+		/// Gets the sibling layers of this layer including this layer itself.
+		/// </summary>
+		/// <value>
+		/// The sibling layers (including this layer). <c>Null</c> is returned if this layer has no parent layer (thus no siblings exist).
+		/// </value>
+		public IObservableList<HostLayer> SiblingLayers
 		{
 			get
 			{

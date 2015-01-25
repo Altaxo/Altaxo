@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Gdi
 			if (withGui && false == Current.Gui.YesNoMessageBox("This will delete the active layer. Are you sure?", "Attention", false))
 				return;
 
-			layer.ParentLayerList.Remove(layer);
+			layer.SiblingLayers.Remove(layer);
 		}
 
 		/// <summary>

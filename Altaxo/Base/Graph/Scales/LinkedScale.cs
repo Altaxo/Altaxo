@@ -337,18 +337,33 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
 		/// </summary>
-		/// <param name="scale">The scale to check.</param>
+		/// <param name="scaleToTest">The scale to check.</param>
 		/// <returns>True if the provided scale or one of its linked scales is dependend on this scale.</returns>
-		public bool IsScaleDependentOnMe(Scale scale)
+		public bool IsScaleDependentOnMe(Scale scaleToTest)
 		{
-			var linkedScale = scale as LinkedScale;
+			return WouldScaleBeDependentOnMe(this, scaleToTest);
+		}
+
+		/// <summary>
+		/// Checks if the scale in the argument is dependend on this Scale. This would mean a circular dependency, which should be avoided.
+		/// </summary>
+		/// <param name="scaleThatWouldBecomeALinkedScale">Scale that is a linked scale or that would become a linked scale.</param>
+		/// <param name="scaleToTest">The scale to check.</param>
+		/// <returns>True if the provided scale or one of its linked scales is dependend on this scale.</returns>
+		public static bool WouldScaleBeDependentOnMe(Scale scaleThatWouldBecomeALinkedScale, Scale scaleToTest)
+		{
+			if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, scaleToTest))
+				return true; // Scale are identical, thus they are really dependent on each other
+
+			var linkedScale = scaleToTest as LinkedScale;
 			while (null != linkedScale)
 			{
-				if (object.ReferenceEquals(this, linkedScale))
-				{
-					// this means a circular dependency, so return true
-					return true;
-				}
+				if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, linkedScale))
+					return true;	// this means a direct circular dependency (we are at the original scale), so return true
+
+				if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, linkedScale.ScaleLinkedTo))
+					return true; // That would mean a circular dependency also, thus also return true;
+
 				linkedScale = linkedScale.ScaleLinkedTo as LinkedScale;
 			}
 			return false; // no dependency detected
@@ -379,20 +394,16 @@ namespace Altaxo.Graph.Scales
 			_linkParameters.SetToStraightLink();
 		}
 
-		public void SetLinkParameter(LinkedScaleParameters parameters)
-		{
-			_linkParameters.SetTo(parameters.OrgA, parameters.OrgB, parameters.EndA, parameters.EndB);
-		}
-
 		public LinkedScaleParameters LinkParameters
 		{
 			get
 			{
 				return _linkParameters;
 			}
-			protected set
+			set
 			{
-				ChildSetMember(ref _linkParameters, value ?? new LinkedScaleParameters());
+				if (ChildSetMember(ref _linkParameters, value ?? new LinkedScaleParameters()))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

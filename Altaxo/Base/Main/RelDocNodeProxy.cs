@@ -365,7 +365,11 @@ namespace Altaxo.Main
 #endif
 
 			value.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, handler => value.TunneledEvent -= handler));
-			value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => value.Changed -= handler));
+
+			if (!_docNodePath.IsIdentity) // it does not make sense to watch the changed event of our target node is our parent because the parent can handle the Changed event itself
+			{
+				value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => value.Changed -= handler));
+			}
 
 			OnAfterSetDocNode();
 

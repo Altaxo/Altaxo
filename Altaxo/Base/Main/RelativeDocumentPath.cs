@@ -34,10 +34,15 @@ namespace Altaxo.Main
 	/// concept with the concept of the folder in which a project item virtually exists  (see <see cref="ProjectFolder"/>).
 	/// </summary>
 	[Serializable]
-	public sealed class RelativeDocumentPath : System.ICloneable
+	public sealed class RelativeDocumentPath : System.ICloneable, Main.IImmutable
 	{
 		private int _numberOfLevelsDown;
 		private string[] _pathParts;
+
+		/// <summary>
+		/// The path that designates identity, i.e. the start node is identical to the destination node.
+		/// </summary>
+		public static readonly RelativeDocumentPath IdentityPath = new RelativeDocumentPath(0, new string[0]);
 
 		#region Serialization
 
@@ -197,8 +202,9 @@ namespace Altaxo.Main
 				throw new ArgumentNullException("startnode");
 			if (endnode == null)
 				throw new ArgumentNullException("endnode");
+
 			if (object.ReferenceEquals(startnode, endnode))
-				throw new ArgumentException("startnode and endnode are identical");
+				return IdentityPath; // Start node and end node are identical
 
 			var currStart = startnode;
 			var currEnd = endnode;

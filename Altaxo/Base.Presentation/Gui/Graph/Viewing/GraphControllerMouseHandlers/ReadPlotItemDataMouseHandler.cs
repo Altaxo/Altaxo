@@ -216,7 +216,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			if (!TestMovementPresumtions())
 				return;
 
-			var layerList = _layer.ParentLayerList;
+			var layerList = _layer.SiblingLayers;
 			int numlayers = layerList.Count;
 			var nextlayer = _layer as XYPlotLayer;
 			int indexOfNextLayer = layerList.IndexOf(_layer);
