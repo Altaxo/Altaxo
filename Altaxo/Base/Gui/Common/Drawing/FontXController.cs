@@ -40,8 +40,13 @@ namespace Altaxo.Gui.Common.Drawing
 	}
 
 	[ExpectedTypeOfView(typeof(IFontXView))]
-	public class FontXController : MVCANControllerBase<FontX, IFontXView>
+	public class FontXController : MVCANControllerEditCopyOfDocBase<FontX, IFontXView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (initData)

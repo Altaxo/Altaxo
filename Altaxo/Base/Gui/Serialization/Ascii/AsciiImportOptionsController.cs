@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
 	[UserControllerForObject(typeof(AsciiImportOptions))]
-	public class AsciiImportOptionsController : MVCANControllerBase<AsciiImportOptions, IAsciiImportOptionsView>
+	public class AsciiImportOptionsController : MVCANControllerEditCopyOfDocBase<AsciiImportOptions, IAsciiImportOptionsView>
 	{
 		private System.IO.Stream _asciiStreamData;
 
@@ -90,6 +90,12 @@ namespace Altaxo.Gui.Serialization.Ascii
 		private Dictionary<Type, IAsciiSeparationStrategy> _separationStrategyInstances = new Dictionary<Type, IAsciiSeparationStrategy>();
 
 		private AsciiDocumentAnalysisOptions _analysisOptions;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_separationStrategyInstanceController, () => _separationStrategyInstanceController = null);
+			yield return new ControllerAndSetNullMethod(_asciiDocumentAnalysisOptionsController, () => _asciiDocumentAnalysisOptionsController = null);
+		}
 
 		public override bool InitializeDocument(params object[] args)
 		{

@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common
 
 	[ExpectedTypeOfView(typeof(IAscendingIntegerCollectionView))]
 	[UserControllerForObject(typeof(AscendingIntegerCollection))]
-	public class AscendingIntegerCollectionController : MVCANControllerBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
+	public class AscendingIntegerCollectionController : MVCANControllerEditCopyOfDocBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
 	{
 		#region Internal class
 
@@ -219,6 +219,11 @@ namespace Altaxo.Gui.Common
 
 		private RangeCollection _ranges = new RangeCollection();
 		private bool _isInAdvancedView;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

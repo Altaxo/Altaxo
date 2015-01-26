@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
 	/// editing and normal. When it is in editing mode, the content is
 	/// displayed in a TextBox that provides editing capability. When
 	/// in normal mode, its content is displayed in this TextBlock that is not editable.
-	/// Important: the binding options for the <see cref="Text"/> property are changed to two-way mode by default in this class!
+	/// Important: the binding options for the <see cref="P:TextBlock.Text"/> property are changed to two-way mode by default in this class!
 	/// </summary>
 	public class TextBlockForEditing : TextBlock
 	{
@@ -329,7 +329,7 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>
 		/// DependencyProperty that stores a validation rule for the edit box. This validation rule is used in editing mode only. If the validation is not successful,
-		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="Text"/> property when switching back to normal mode.
+		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="P:TextBlock.Text"/> property when switching back to normal mode.
 		/// </summary>
 		public static readonly DependencyProperty TextBoxValidationRuleProperty =
 						DependencyProperty.Register(
@@ -340,7 +340,7 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>
 		/// Stores a validation rule for the edit box. This validation rule is used in editing mode only. If the validation is not successful,
-		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="Text"/> property when switching back to normal mode.
+		/// the error is indicated by a red border around the TextBox. Additionally, if validation is not successful, the edited value is not used to update the <see cref="P:TextBlock.Text"/> property when switching back to normal mode.
 		/// </summary>
 		public ValidationRule TextBoxValidationRule
 		{

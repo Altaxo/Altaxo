@@ -40,9 +40,14 @@ namespace Altaxo.Gui.Graph.ColorManagement
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorChoiceView))]
-	public class NamedColorChoiceController : MVCANControllerBase<Altaxo.Graph.NamedColor, INamedColorChoiceView>
+	public class NamedColorChoiceController : MVCANControllerEditCopyOfDocBase<Altaxo.Graph.NamedColor, INamedColorChoiceView>
 	{
 		public bool ShowPlotColorsOnly { get; set; }
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

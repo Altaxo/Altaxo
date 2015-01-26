@@ -45,12 +45,13 @@ namespace Altaxo.Gui.Common
 	/// the ValidationResult is valid. If the function returns a valid string, the ValidationResult is not valid, and the parameter of the ValidationResult is the returned string.
 	/// </summary>
 	/// <remarks>
-	/// The converter is useful when the validation should remain in the model, and the usage of <see cref="System.ComponentModel.IErrorInfo"/> is not appropriate (e.g. when your model should not be spoiled with invalid data).
+	/// The converter is useful when the validation should remain in the model, and the usage of <see cref="System.ComponentModel.IDataErrorInfo"/> is not appropriate (e.g. when your model should not be spoiled with invalid data).
 	/// In your model, you have to implement a property, which later can be used to bound, and the validation function itself.
 	/// </remarks>
 	/// <example>
 	/// In your model class implement a property, for instance 'RenamingValidationFunction' which returns the validation function, and of course implement the validation function itself:
 	/// <code>
+	/// //<![CDATA[
 	///
 	/// 	public Func<object, System.Globalization.CultureInfo, string> RenamingValidationFunction
 	/// 	{
@@ -68,6 +69,7 @@ namespace Altaxo.Gui.Common
 	/// 			else
 	/// 				return null;
 	/// 		}
+	/// //]]>
 	/// </code>
 	///
 	/// In your XAML, define this converter as a static resource, and if a validation rule is required, bind it to the 'RenamingValidationFunction' property, and for the converter use the static resource for the converter.
@@ -96,9 +98,9 @@ namespace Altaxo.Gui.Common
 		}
 
 		/// <summary>
-		/// Converts a function: Func<object, System.Globalization.CultureInfo, string> to a <see cref="ValidationRule"/>.
+		/// Converts a function: Func&lt;object, System.Globalization.CultureInfo, string&gt; to a <see cref="ValidationRule"/>.
 		/// </summary>
-		/// <param name="value">The value that should be converted. Has to be a Func<object, System.Globalization.CultureInfo, string> instance.</param>
+		/// <param name="value">The value that should be converted. Has to be a Func&lt;object, System.Globalization.CultureInfo, string&gt; instance.</param>
 		/// <param name="targetType">Ignored.</param>
 		/// <param name="parameter">Ignored.</param>
 		/// <param name="culture">Ignored.</param>

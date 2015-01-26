@@ -67,7 +67,7 @@ namespace Altaxo.Gui.DataConnection
 
 	[ExpectedTypeOfView(typeof(IOleDbDataQueryView))]
 	[UserControllerForObject(typeof(OleDbDataQuery))]
-	public class OleDbDataQueryController : MVCANControllerBase<OleDbDataQuery, IOleDbDataQueryView>
+	public class OleDbDataQueryController : MVCANControllerEditCopyOfDocBase<OleDbDataQuery, IOleDbDataQueryView>
 	{
 		#region Inner classes
 
@@ -109,6 +109,14 @@ namespace Altaxo.Gui.DataConnection
 		private QueryDesignerController _queryDesignerController;
 		private ArbitrarySqlQueryController _arbitrarySqlQueryController;
 		private IMVCAController _currentlySelectedController;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_entireTableQueryController, () => _entireTableQueryController = null);
+			yield return new ControllerAndSetNullMethod(_queryDesignerController, () => _queryDesignerController = null);
+			yield return new ControllerAndSetNullMethod(_arbitrarySqlQueryController, () => _arbitrarySqlQueryController = null);
+			yield return new ControllerAndSetNullMethod(null, () => _currentlySelectedController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

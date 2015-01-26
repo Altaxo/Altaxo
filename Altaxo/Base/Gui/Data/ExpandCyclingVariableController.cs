@@ -41,10 +41,16 @@ namespace Altaxo.Gui.Data
 
 	[UserControllerForObject(typeof(ExpandCyclingVariableColumnDataAndOptions))]
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableView))]
-	public class ExpandCyclingVariableController : MVCANControllerBase<ExpandCyclingVariableColumnDataAndOptions, IExpandCyclingVariableView>
+	public class ExpandCyclingVariableController : MVCANControllerEditCopyOfDocBase<ExpandCyclingVariableColumnDataAndOptions, IExpandCyclingVariableView>
 	{
 		private IMVCANController _dataController;
 		private IMVCANController _optionsController;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
+			yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

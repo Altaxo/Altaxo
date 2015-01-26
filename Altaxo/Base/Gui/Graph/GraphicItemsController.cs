@@ -45,9 +45,14 @@ namespace Altaxo.Gui.Graph
 
 	[UserControllerForObject(typeof(GraphicCollection))]
 	[ExpectedTypeOfView(typeof(IGraphicItemsView))]
-	public class GraphicItemsController : MVCANControllerBase<GraphicCollection, IGraphicItemsView>
+	public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
 	{
 		private SelectableListNodeList _itemsList;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

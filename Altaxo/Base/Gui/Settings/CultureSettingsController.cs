@@ -56,10 +56,15 @@ namespace Altaxo.Gui.Settings
 	/// <summary>Manages the user interaction to set the members of <see cref="CultureSettings"/>.</summary>
 	[ExpectedTypeOfView(typeof(ICultureSettingsView))]
 	[UserControllerForObject(typeof(CultureSettings))]
-	public class CultureSettingsController : MVCANControllerBase<CultureSettings, ICultureSettingsView>
+	public class CultureSettingsController : MVCANControllerEditCopyOfDocBase<CultureSettings, ICultureSettingsView>
 	{
 		/// <summary>List of available cultures.</summary>
 		private SelectableListNodeList _availableCulturesList;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

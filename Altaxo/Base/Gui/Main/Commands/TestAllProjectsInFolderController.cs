@@ -39,8 +39,13 @@ namespace Altaxo.Gui.Common.Tools
 
 	[UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
 	[ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
-	public class TestAllProjectsInFolderController : MVCANControllerBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
+	public class TestAllProjectsInFolderController : MVCANControllerEditCopyOfDocBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (null != _view)

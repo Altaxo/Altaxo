@@ -55,13 +55,19 @@ namespace Altaxo.Gui.Worksheet
 
 	[ExpectedTypeOfView(typeof(IImportAsciiDataSourceView))]
 	[UserControllerForObject(typeof(AsciiImportDataSource))]
-	public class AsciiImportDataSourceController : MVCANControllerBase<AsciiImportDataSource, IImportAsciiDataSourceView>, IMVCSupportsApplyCallback
+	public class AsciiImportDataSourceController : MVCANControllerEditCopyOfDocBase<AsciiImportDataSource, IImportAsciiDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _importAsciiOptionsController;
 		private SelectableListNodeList _fileNames;
 
 		public event Action SuccessfullyApplied;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => _dataSourceOptionsController = null);
+			yield return new ControllerAndSetNullMethod(_importAsciiOptionsController, () => _importAsciiOptionsController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

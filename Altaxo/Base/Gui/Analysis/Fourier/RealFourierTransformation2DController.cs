@@ -74,10 +74,15 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
 	[UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
-	public class RealFourierTransformation2DController : MVCANControllerBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
+	public class RealFourierTransformation2DController : MVCANControllerEditCopyOfDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
 	{
 		private SelectableListNodeList _outputQuantities;
 		private SelectableListNodeList _fourierWindowChoice;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool bInitData)
 		{

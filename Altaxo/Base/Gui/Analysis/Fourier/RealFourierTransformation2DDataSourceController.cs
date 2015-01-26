@@ -41,13 +41,20 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DDataSourceView))]
 	[UserControllerForObject(typeof(FourierTransformation2DDataSource))]
-	public class RealFourierTransformation2DDataSourceController : MVCANControllerBase<FourierTransformation2DDataSource, IRealFourierTransformation2DDataSourceView>, IMVCSupportsApplyCallback
+	public class RealFourierTransformation2DDataSourceController : MVCANControllerEditCopyOfDocBase<FourierTransformation2DDataSource, IRealFourierTransformation2DDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _fourierTransformationOptionsController;
 		private IMVCANController _inputDataController;
 
 		public event Action SuccessfullyApplied;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => _dataSourceOptionsController = null);
+			yield return new ControllerAndSetNullMethod(_fourierTransformationOptionsController, () => _fourierTransformationOptionsController = null);
+			yield return new ControllerAndSetNullMethod(_inputDataController, () => _inputDataController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

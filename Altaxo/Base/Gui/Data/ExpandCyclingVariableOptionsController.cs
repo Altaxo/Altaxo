@@ -45,12 +45,17 @@ namespace Altaxo.Gui.Data
 
 	[UserControllerForObject(typeof(ExpandCyclingVariableColumnOptions))]
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableOptionsView))]
-	public class ExpandCyclingVariableOptionsController : MVCANControllerBase<ExpandCyclingVariableColumnOptions, IExpandCyclingVariableOptionsView>
+	public class ExpandCyclingVariableOptionsController : MVCANControllerEditCopyOfDocBase<ExpandCyclingVariableColumnOptions, IExpandCyclingVariableOptionsView>
 	{
 		private SelectableListNodeList _choicesDestinationOutputFormat;
 		private SelectableListNodeList _choicesDestinationX;
 		private SelectableListNodeList _choicesDestinationColSort;
 		private SelectableListNodeList _choicesDestinationRowSort;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

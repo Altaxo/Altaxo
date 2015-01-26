@@ -67,6 +67,7 @@ namespace Altaxo.Gui.Common
 		/// Initializes a new instance of the <see cref="TextEditingAdorner"/> class.
 		/// </summary>
 		/// <param name="adornedElement">The adorned text block element.</param>
+		/// <param name="initialText">The text that should initially be showed.</param>
 		/// <param name="textBoxStyle">The style for the text box that is used for editing.</param>
 		/// <param name="textBoxValidationRule">The validation rule for the text box that is used for editing.</param>
 		public TextEditingAdorner(UIElement adornedElement, string initialText, Style textBoxStyle, ValidationRule textBoxValidationRule)

@@ -41,9 +41,14 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(IFixedColumnWidthWithTabSeparationStrategyView))]
 	[UserControllerForObject(typeof(FixedColumnWidthWithTabSeparationStrategy))]
-	public class FixedColumnWidthWithTabSeparationStrategyController : MVCANControllerBase<FixedColumnWidthWithTabSeparationStrategy, IFixedColumnWidthWithTabSeparationStrategyView>
+	public class FixedColumnWidthWithTabSeparationStrategyController : MVCANControllerEditCopyOfDocBase<FixedColumnWidthWithTabSeparationStrategy, IFixedColumnWidthWithTabSeparationStrategyView>
 	{
 		private ObservableCollection<Boxed<int>> _positions;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

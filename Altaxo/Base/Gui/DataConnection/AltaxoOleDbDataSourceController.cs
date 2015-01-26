@@ -39,10 +39,16 @@ namespace Altaxo.Gui.DataConnection
 
 	[ExpectedTypeOfView(typeof(IAltaxoOleDbDataSourceView))]
 	[UserControllerForObject(typeof(AltaxoOleDbDataSource))]
-	public class AltaxoOleDbDataSourceController : MVCANControllerBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
+	public class AltaxoOleDbDataSourceController : MVCANControllerEditCopyOfDocBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
 	{
 		private OleDbDataQueryController _connectionMainController;
 		private Altaxo.Gui.Data.DataSourceImportOptionsController _importOptionsController;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_connectionMainController, () => _connectionMainController = null);
+			yield return new ControllerAndSetNullMethod(_importOptionsController, () => _importOptionsController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

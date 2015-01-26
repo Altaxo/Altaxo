@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
 	[UserControllerForObject(typeof(GraphExportOptions))]
-	public class GraphExportOptionsController : MVCANControllerBase<GraphExportOptions, IGraphExportOptionsView>
+	public class GraphExportOptionsController : MVCANControllerEditCopyOfDocBase<GraphExportOptions, IGraphExportOptionsView>
 	{
 		private SelectableListNodeList _imageFormat;
 		private SelectableListNodeList _pixelFormat;
@@ -107,6 +107,11 @@ namespace Altaxo.Gui.Graph
 			PixelFormat.Alpha,
 			PixelFormat.PAlpha
 		};
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

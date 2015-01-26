@@ -39,8 +39,13 @@ namespace Altaxo.Gui.DataConnection
 
 	[ExpectedTypeOfView(typeof(ILoginCredentialsView))]
 	[UserControllerForObject(typeof(LoginCredentials))]
-	public class LoginCredentialsController : MVCANControllerBase<LoginCredentials, ILoginCredentialsView>
+	public class LoginCredentialsController : MVCANControllerEditCopyOfDocBase<LoginCredentials, ILoginCredentialsView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (null != _view)

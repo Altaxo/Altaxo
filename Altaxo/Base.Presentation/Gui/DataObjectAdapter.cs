@@ -236,9 +236,9 @@ namespace Altaxo.Gui
 		private System.Windows.IDataObject o;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DataObjectAdapter"/> class, using an Altaxo data object.
+		/// Initializes a new instance of the <see cref="DataObjectAdapterWpfToAltaxo"/> class, using an System.Windows data object.
 		/// </summary>
-		/// <param name="dao">The Altaxo data object.</param>
+		/// <param name="dao">The System.Windows data object to wrap.</param>
 		/// <exception cref="System.ArgumentNullException">dao</exception>
 		public DataObjectAdapterWpfToAltaxo(System.Windows.IDataObject dao)
 		{

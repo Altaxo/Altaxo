@@ -38,11 +38,16 @@ namespace Altaxo.Gui.Graph.ColorManagement
 	}
 
 	[ExpectedTypeOfView(typeof(IColorSetsView))]
-	public class ColorSetChoiceController : MVCANControllerBase<ColorSetIdentifier, IColorSetsView>
+	public class ColorSetChoiceController : MVCANControllerEditCopyOfDocBase<ColorSetIdentifier, IColorSetsView>
 	{
 		private NGTreeNode _treeRootNode = new NGTreeNode();
 
 		public bool ShowPlotColorsOnly { get; set; }
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

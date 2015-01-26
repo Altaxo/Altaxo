@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IClipboardRenderingOptionsView))]
 	[UserControllerForObject(typeof(ClipboardRenderingOptions), 101)]
-	public class ClipboardRenderingOptionsController : MVCANControllerBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
+	public class ClipboardRenderingOptionsController : MVCANControllerEditCopyOfDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
 	{
 		private EmbeddedObjectRenderingOptionsController _embeddedController;
 		private SelectableListNodeList _imageFormat;
@@ -102,6 +102,11 @@ namespace Altaxo.Gui.Graph
 			PixelFormat.Alpha,
 			PixelFormat.PAlpha
 		};
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_embeddedController, () => _embeddedController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

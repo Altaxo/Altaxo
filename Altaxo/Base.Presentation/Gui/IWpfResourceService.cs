@@ -44,9 +44,6 @@ namespace Altaxo.Gui
 		/// <param name="name">
 		/// The name of the requested bitmap.
 		/// </param>
-		/// <exception cref="ResourceNotFoundException">
-		/// Is thrown when the GlobalResource manager can't find a requested resource.
-		/// </exception>
 		System.Windows.Controls.Image GetImage(string name);
 
 		/// <summary>
@@ -56,9 +53,6 @@ namespace Altaxo.Gui
 		/// <param name="name">
 		/// The name of the requested bitmap.
 		/// </param>
-		/// <exception cref="ResourceNotFoundException">
-		/// Is thrown when the GlobalResource manager can't find a requested resource.
-		/// </exception>
 		BitmapSource GetBitmapSource(string name);
 	}
 

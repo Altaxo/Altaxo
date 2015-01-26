@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Main
 
 	[ExpectedTypeOfView(typeof(IPropertyHierarchyView))]
 	[UserControllerForObject(typeof(PropertyHierarchy))]
-	public class PropertyHierarchyController : MVCANControllerBase<PropertyHierarchy, IPropertyHierarchyView>
+	public class PropertyHierarchyController : MVCANControllerEditCopyOfDocBase<PropertyHierarchy, IPropertyHierarchyView>
 	{
 		#region Inner types
 
@@ -110,6 +110,11 @@ namespace Altaxo.Gui.Main
 
 		/// <summary>If <c>true</c>, all properties (also the inherited properties) are shown. If <c>false</c>, only the inherited properties are shown.</summary>
 		protected bool _showAllProperties = true;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		public override bool InitializeDocument(params object[] args)
 		{

@@ -347,6 +347,10 @@
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
     <Compile Include="Gui\Main\PropertyHierarchyController.cs" />
     <Compile Include="Gui\Main\PropertyBagController.cs" />
+    <Compile Include="Gui\MVCANControllerEditCopyOfDocBase.cs" />
+    <Compile Include="Gui\MVCANControllerEditOriginalDocBase.cs" />
+    <Compile Include="Gui\MVCANDControllerEditCopyOfDocBase.cs" />
+    <Compile Include="Gui\MVCANDControllerEditOriginalDocBase.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiDocumentAnalysisOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiImportOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\SingleCharSeparationStrategyController.cs" />

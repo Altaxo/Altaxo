@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Data
 
 	[ExpectedTypeOfView(typeof(IDataTableMatrixProxyView))]
 	[UserControllerForObject(typeof(DataTableMatrixProxy))]
-	public class DataTableMatrixProxyController : MVCANControllerBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
+	public class DataTableMatrixProxyController : MVCANControllerEditCopyOfDocBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
 	{
 		private Altaxo.Data.IReadableColumn _xColumn;
 		private Altaxo.Data.IReadableColumn _yColumn;
@@ -95,6 +95,11 @@ namespace Altaxo.Gui.Data
 		private bool _areDataColumnsShown = true;
 
 		private Altaxo.Gui.Common.AscendingIntegerCollectionController _rowsController;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_rowsController, () => _rowsController = null);
+		}
 
 		protected override void Initialize(bool initData)
 		{

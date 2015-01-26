@@ -42,11 +42,16 @@ namespace Altaxo.Gui.Common
 	}
 
 	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
-	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerBase<double, IDimensionfulQuantityView>
+	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditCopyOfDocBase<double, IDimensionfulQuantityView>
 	{
 		protected abstract Units.IUnit UnitOfValue { get; }
 
 		protected abstract QuantityWithUnitGuiEnvironment UnitEnvironment { get; }
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

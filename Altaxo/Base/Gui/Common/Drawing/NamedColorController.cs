@@ -38,8 +38,13 @@ namespace Altaxo.Gui.Common.Drawing
 
 	[ExpectedTypeOfView(typeof(INamedColorView))]
 	[UserControllerForObject(typeof(Altaxo.Graph.NamedColor))]
-	public class NamedColorController : MVCANDControllerBase<Altaxo.Graph.NamedColor, INamedColorView>
+	public class NamedColorController : MVCANDControllerEditCopyOfDocBase<Altaxo.Graph.NamedColor, INamedColorView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (null != _view)

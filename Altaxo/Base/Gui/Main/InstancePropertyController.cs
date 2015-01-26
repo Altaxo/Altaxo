@@ -38,10 +38,21 @@ namespace Altaxo.Gui.Main
 	}
 
 	[ExpectedTypeOfView(typeof(IInstancePropertyView))]
-	public class InstancePropertyController : MVCANDControllerBase<object, IInstancePropertyView>
+	public class InstancePropertyController : MVCANDControllerEditCopyOfDocBase<object, IInstancePropertyView>
 	{
 		private SortedList<long, KeyValuePair<Property, IMVCAController>> _controllerList = new SortedList<long, KeyValuePair<Property, IMVCAController>>();
 		private PropertyCollection _propertyCollection;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			if (null != _controllerList)
+			{
+				foreach (var kvp in _controllerList.Values)
+					yield return new ControllerAndSetNullMethod(kvp.Value, null);
+
+				yield return new ControllerAndSetNullMethod(null, () => _controllerList = null);
+			}
+		}
 
 		/// <summary>Initializes the document. In contrast to the base function here it is allowed to call this function with <c>null</c> as model.</summary>
 		/// <param name="args">The arguments.</param>

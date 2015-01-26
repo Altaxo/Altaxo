@@ -58,10 +58,15 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IEmbeddedObjectRenderingOptionsView))]
 	[UserControllerForObject(typeof(EmbeddedObjectRenderingOptions))]
-	public class EmbeddedObjectRenderingOptionsController : MVCANControllerBase<EmbeddedObjectRenderingOptions, IEmbeddedObjectRenderingOptionsView>
+	public class EmbeddedObjectRenderingOptionsController : MVCANControllerEditCopyOfDocBase<EmbeddedObjectRenderingOptions, IEmbeddedObjectRenderingOptionsView>
 	{
 		private static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
 		private SelectableListNodeList _sourceDpi;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

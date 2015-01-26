@@ -56,13 +56,18 @@ namespace Altaxo.Gui.Data
 	}
 
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableDataView))]
-	public class ExpandCyclingVariableDataController : MVCANControllerBase<DataTableMultipleColumnProxy, IExpandCyclingVariableDataView>
+	public class ExpandCyclingVariableDataController : MVCANControllerEditCopyOfDocBase<DataTableMultipleColumnProxy, IExpandCyclingVariableDataView>
 	{
 		private SelectableListNodeList _choicesCyclingVar = new SelectableListNodeList();
 		private SelectableListNodeList _choicesColsToAverage = new SelectableListNodeList();
 		private SelectableListNodeList _valueColumns = new SelectableListNodeList();
 		private SelectableListNodeList _availableTables = new SelectableListNodeList();
 		private SelectableListNodeList _availableColumns = new SelectableListNodeList();
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

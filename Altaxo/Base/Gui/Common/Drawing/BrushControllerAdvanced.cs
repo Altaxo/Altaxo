@@ -113,12 +113,18 @@ namespace Altaxo.Gui.Common.Drawing
 
 	[UserControllerForObject(typeof(BrushX))]
 	[ExpectedTypeOfView(typeof(IBrushViewAdvanced))]
-	public class BrushControllerAdvanced : MVCANDControllerBase<BrushX, IBrushViewAdvanced>
+	public class BrushControllerAdvanced : MVCANDControllerEditCopyOfDocBase<BrushX, IBrushViewAdvanced>
 	{
 		private Main.InstancePropertyController _imageProxyController;
 
 		private TextureScalingController _textureScalingController;
 		private bool _restrictBrushColorToPlotColorsOnly;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_imageProxyController, () => _imageProxyController = null);
+			yield return new ControllerAndSetNullMethod(_textureScalingController, () => _textureScalingController = null);
+		}
 
 		public bool RestrictBrushColorToPlotColorsOnly
 		{

@@ -51,9 +51,14 @@ namespace Altaxo.Gui.Data
 
 	[ExpectedTypeOfView(typeof(IDataSourceImportOptionsView))]
 	[UserControllerForObject(typeof(IDataSourceImportOptions))]
-	public class DataSourceImportOptionsController : MVCANControllerBase<DataSourceImportOptions, IDataSourceImportOptionsView>
+	public class DataSourceImportOptionsController : MVCANControllerEditCopyOfDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
 	{
 		private Altaxo.Collections.SelectableListNodeList _triggerChoices;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

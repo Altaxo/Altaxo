@@ -44,12 +44,17 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
 	[UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
-	public class AsciiDocumentAnalysisOptionsController : MVCANControllerBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
+	public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditCopyOfDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
 	{
 		private SelectableListNodeList _availableCultureList;
 
 		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _numberFormatsToAnalyze;
 		private System.Collections.ObjectModel.ObservableCollection<Boxed<SelectableListNode>> _dateTimeFormatsToAnalyze;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

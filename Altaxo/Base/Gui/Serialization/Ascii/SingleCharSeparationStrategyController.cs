@@ -38,8 +38,13 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(ISingleCharSeparationStrategyView))]
 	[UserControllerForObject(typeof(SingleCharSeparationStrategy))]
-	public class SingleCharSeparationStrategyController : MVCANControllerBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
+	public class SingleCharSeparationStrategyController : MVCANControllerEditCopyOfDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (initData)

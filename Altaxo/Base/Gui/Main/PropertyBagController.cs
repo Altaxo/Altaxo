@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Main
 
 	[ExpectedTypeOfView(typeof(IPropertyBagView))]
 	[UserControllerForObject(typeof(PropertyBag))]
-	public class PropertyBagController : MVCANControllerBase<PropertyBag, IPropertyBagView>
+	public class PropertyBagController : MVCANControllerEditCopyOfDocBase<PropertyBag, IPropertyBagView>
 	{
 		#region Inner types
 
@@ -75,6 +75,11 @@ namespace Altaxo.Gui.Main
 		#endregion Inner types
 
 		private SelectableListNodeList _propertyList;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{

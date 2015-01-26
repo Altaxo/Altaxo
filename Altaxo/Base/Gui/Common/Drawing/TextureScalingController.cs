@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Common.Drawing
 		bool ShowSizeNotScale { set; }
 	}
 
-	public class TextureScalingController : MVCANDControllerBase<TextureScaling, ITextureScalingView>
+	public class TextureScalingController : MVCANDControllerEditCopyOfDocBase<TextureScaling, ITextureScalingView>
 	{
 		/// <summary>
 		/// Size of the original texture.
@@ -71,6 +71,11 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				_sourceTextureSize = value;
 			}
+		}
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
 		}
 
 		protected override void Initialize(bool initData)

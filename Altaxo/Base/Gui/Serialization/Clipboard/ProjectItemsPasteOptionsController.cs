@@ -46,8 +46,13 @@ namespace Altaxo.Gui.Serialization.Clipboard
 
 	[ExpectedTypeOfView(typeof(IProjectItemsPasteOptionsView))]
 	[UserControllerForObject(typeof(ProjectItemsPasteOptions))]
-	public class ProjectItemsPasteOptionsController : MVCANControllerBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
+	public class ProjectItemsPasteOptionsController : MVCANControllerEditCopyOfDocBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (null != _view)

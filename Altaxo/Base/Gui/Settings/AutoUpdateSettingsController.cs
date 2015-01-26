@@ -59,8 +59,13 @@ namespace Altaxo.Gui.Settings
 	/// <summary>Manages the <see cref="IAutoUpdateSettingsView">Gui interface</see> for the <see cref="AutoUpdateSettings">auto update settings</see>.</summary>
 	[ExpectedTypeOfView(typeof(IAutoUpdateSettingsView))]
 	[UserControllerForObject(typeof(AutoUpdateSettings))]
-	public class AutoUpdateSettingsController : MVCANControllerBase<AutoUpdateSettings, IAutoUpdateSettingsView>
+	public class AutoUpdateSettingsController : MVCANControllerEditCopyOfDocBase<AutoUpdateSettings, IAutoUpdateSettingsView>
 	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			if (null != _view)

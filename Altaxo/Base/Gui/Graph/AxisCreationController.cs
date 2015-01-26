@@ -124,9 +124,14 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IAxisCreationView))]
 	[UserControllerForObject(typeof(AxisCreationArguments))]
-	public class AxisCreationController : MVCANControllerBase<AxisCreationArguments, IAxisCreationView>
+	public class AxisCreationController : MVCANControllerEditCopyOfDocBase<AxisCreationArguments, IAxisCreationView>
 	{
 		private SelectableListNodeList _axisTemplates;
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
 		protected override void Initialize(bool initData)
 		{
