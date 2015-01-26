@@ -23,16 +23,35 @@ namespace Altaxo.Graph
 		}
 	}
 
+	/// <summary>
+	/// Designates what has changed in the boundaries of a plot item.
+	/// </summary>
 	[Flags]
 	public enum BoundariesChangedData
 	{
+		/// <summary>The number of data points changed.</summary>
 		NumberOfItemsChanged = 0x01,
+
+		/// <summary>The lower boundary has changed.</summary>
 		LowerBoundChanged = 0x02,
+
+		/// <summary>The upper boundary has changed.</summary>
 		UpperBoundChanged = 0x04,
+
+		/// <summary>The boundaries related to the x-scale (1st independent (!) variable)have changed.</summary>
 		XBoundariesChanged = 0x10,
+
+		/// <summary>The boundaries related to the y-scale (2nd independent (!) variable) have changed.</summary>
 		YBoundariesChanged = 0x20,
+
+		/// <summary>The boundaries related to the y-scale (3rd independent (!) variable) have changed.</summary>
 		ZBoundariesChanged = 0x40,
+
+		/// <summary>The boundaries related to the v-scale (depended variable) have changed.</summary>
 		VBoundariesChanged = 0x80,
+
+		/// <summary>A complex change, including all possible kind of changes (for instance, if a new plot item was added to the layer).</summary>
+		ComplexChange = 0xFF
 	}
 
 	public class BoundariesChangedEventArgs : Main.SelfAccumulateableEventArgs

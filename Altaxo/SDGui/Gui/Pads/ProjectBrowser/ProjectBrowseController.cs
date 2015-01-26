@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_allTablesNode = new NGBrowserTreeNode("Tables") { Image = ProjectBrowseItemImage.OpenFolder };
 			_allItemsNode.Nodes.Add(_allTablesNode);
 
-			_projectDirectoryRoot = new NGProjectFolderTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName };
+			_projectDirectoryRoot = new NGProjectFolderTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName, IsExpanded = true, IsSelected = true };
 			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 			_allItemsNode.Nodes.Add(_projectDirectoryRoot);
 
@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 
 			RecreateDirectoryNodes();
-			SetItemListHandler(new ProjectAllItemHandler());
+			SetItemListHandler(new SpecificProjectFolderHandler(Altaxo.Main.ProjectFolder.RootFolderName));
 		}
 
 		private void EhProjectClosed(object sender, ProjectEventArgs e)

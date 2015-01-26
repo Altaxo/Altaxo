@@ -880,7 +880,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			_plotItems.Add(item);
 
 			OnCollectionChanged();
-			EhSelfChanged(EventArgs.Empty);
+			EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange));
 		}
 
 		public void AddRange(IEnumerable<IGPlotItem> items)
