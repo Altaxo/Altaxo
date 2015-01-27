@@ -36,105 +36,29 @@ namespace Altaxo.Gui.Common.Drawing
 
 	[UserControllerForObject(typeof(BrushX))]
 	[ExpectedTypeOfView(typeof(IBrushViewSimple))]
-	public class BrushControllerSimple : IMVCANController
+	public class BrushControllerSimple : MVCANControllerEditOriginalDocBase<BrushX, IBrushViewSimple>
 	{
-		private BrushX _doc;
-		private UseDocument _usage;
-		private IBrushViewSimple _view;
-
-		public BrushControllerSimple()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
 		}
 
-		public BrushControllerSimple(BrushX doc)
+		protected override void Initialize(bool initData)
 		{
-			InitializeDocument(doc);
-		}
+			base.Initialize(initData);
 
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args == null || args.Length == 0)
-				return false;
-
-			if (args[0] != null && !(args[0] is BrushX))
-				return false;
-
-			_doc = (BrushX)args[0];
-
-			return true;
-		}
-
-		private void Initialize()
-		{
 			if (_view != null)
 			{
-				if (_doc != null)
-					_view.Brush = _usage == UseDocument.Directly ? _doc : (BrushX)_doc.Clone();
-				else
-					_view.Brush = BrushX.Empty;
+				_view.Brush = _doc;
 			}
 		}
 
-		public UseDocument UseDocumentCopy
-		{
-			set
-			{
-				_usage = value;
-			}
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IBrushViewSimple;
-				Initialize();
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			if (_doc != null || _view.Brush.IsVisible)
 				_doc = _view.Brush;
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

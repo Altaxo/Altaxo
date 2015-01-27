@@ -59,6 +59,9 @@ namespace Altaxo.Gui.Main
 		/// <returns>True if the initialization was successfull, <c>False</c> otherwise.</returns>
 		public override bool InitializeDocument(params object[] args)
 		{
+			if (IsDisposed)
+				throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
+
 			if (null == args || 0 == args.Length)
 				return false;
 
@@ -75,7 +78,10 @@ namespace Altaxo.Gui.Main
 
 		protected override void Initialize(bool initData)
 		{
-			base.Initialize(initData);
+			// dont call base initialize here, because the _doc (document) may be null. For this controller, this is by design.
+
+			if (IsDisposed)
+				throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
 
 			if (initData)
 			{
@@ -117,6 +123,38 @@ namespace Altaxo.Gui.Main
 				}
 				_view.InitializeItems(list);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			foreach (var entry in _controllerList.Values)
+			{
+				bool success = entry.Value.Apply(disposeController);
+				if (!success)
+					return false;
+				entry.Key.Value = entry.Value.ModelObject;
+			}
+
+			if (_useDocumentCopy)
+			{
+				if (_originalDoc is Altaxo.Main.ICopyFrom)
+				{
+					((Altaxo.Main.ICopyFrom)_originalDoc).CopyFrom(_doc);
+				}
+				else if (_doc is ICloneable)
+				{
+					_originalDoc = ((ICloneable)_doc).Clone();
+				}
+			}
+			else
+			{
+				_originalDoc = _doc; // make sure that originalDoc and doc are the same, even if the type of doc is a value type
+			}
+
+			if (disposeController)
+				Dispose();
+
+			return true;
 		}
 
 		private IMVCAController GetControllerFor(Property prop)
@@ -198,34 +236,6 @@ namespace Altaxo.Gui.Main
 			var prop = GetPropertyForController(ctrl);
 			prop.Value = ctrl.ProvisionalModelObject;
 			OnMadeDirty();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			foreach (var entry in _controllerList.Values)
-			{
-				bool success = entry.Value.Apply(disposeController);
-				if (!success)
-					return false;
-				entry.Key.Value = entry.Value.ModelObject;
-			}
-
-			if (_useDocumentCopy)
-			{
-				if (_originalDoc is Altaxo.Main.ICopyFrom)
-				{
-					((Altaxo.Main.ICopyFrom)_originalDoc).CopyFrom(_doc);
-				}
-				else if (_doc is ICloneable)
-				{
-					_originalDoc = ((ICloneable)_doc).Clone();
-				}
-			}
-			else
-			{
-				_originalDoc = _doc; // make sure that originalDoc and doc are the same, even if the type of doc is a value type
-			}
-			return true;
 		}
 	}
 }

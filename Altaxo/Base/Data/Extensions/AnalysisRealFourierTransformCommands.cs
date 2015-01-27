@@ -49,7 +49,7 @@ namespace Altaxo.Data
 			CreateInNewWorksheet
 		}
 
-		public class RealFourierTransformOptions
+		public class RealFourierTransformOptions : ICloneable
 		{
 			public DataColumn ColumnToTransform { get; set; }
 
@@ -60,6 +60,11 @@ namespace Altaxo.Data
 			public RealFourierTransformOutput Output { get; set; }
 
 			public RealFourierTransformOutputPlacement OutputPlacement { get; set; }
+
+			public object Clone()
+			{
+				return this.MemberwiseClone();
+			}
 		}
 
 		#endregion Helper types
