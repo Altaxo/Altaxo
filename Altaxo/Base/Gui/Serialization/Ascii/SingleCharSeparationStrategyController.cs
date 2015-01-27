@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(ISingleCharSeparationStrategyView))]
 	[UserControllerForObject(typeof(SingleCharSeparationStrategy))]
-	public class SingleCharSeparationStrategyController : MVCANControllerEditCopyOfDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
+	public class SingleCharSeparationStrategyController : MVCANControllerEditOriginalDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -47,6 +47,8 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 			}
@@ -61,10 +63,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 		{
 			_doc.SeparatorChar = _view.SeparatorChar;
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

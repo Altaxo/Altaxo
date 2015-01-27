@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
 	[UserControllerForObject(typeof(GraphExportOptions))]
-	public class GraphExportOptionsController : MVCANControllerEditCopyOfDocBase<GraphExportOptions, IGraphExportOptionsView>
+	public class GraphExportOptionsController : MVCANControllerEditOriginalDocBase<GraphExportOptions, IGraphExportOptionsView>
 	{
 		private SelectableListNodeList _imageFormat;
 		private SelectableListNodeList _pixelFormat;
@@ -115,6 +115,8 @@ namespace Altaxo.Gui.Graph
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				bool hasMatched;
@@ -122,19 +124,19 @@ namespace Altaxo.Gui.Graph
 
 				_imageFormat = new SelectableListNodeList();
 				foreach (ImageFormat item in ImageFormats)
-					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _originalDoc.ImageFormat == item));
+					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ImageFormat == item));
 
 				_pixelFormat = new SelectableListNodeList();
 				hasMatched = false; // special prog to account for doubling of items in PixelFormats
 				foreach (PixelFormat item in PixelFormats)
 				{
-					select = _originalDoc.PixelFormat == item;
+					select = _doc.PixelFormat == item;
 					_pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
 					hasMatched |= select;
 				}
 
-				_sourceDpi = GetResolutions(_originalDoc.SourceDpiResolution);
-				_destinationDpi = GetResolutions(_originalDoc.DestinationDpiResolution);
+				_sourceDpi = GetResolutions(_doc.SourceDpiResolution);
+				_destinationDpi = GetResolutions(_doc.DestinationDpiResolution);
 			}
 
 			if (null != _view)
@@ -143,7 +145,7 @@ namespace Altaxo.Gui.Graph
 				_view.SetPixelFormat(_pixelFormat);
 				_view.SetSourceDpi(_sourceDpi);
 				_view.SetDestinationDpi(_destinationDpi);
-				_view.BackgroundBrush = null == _originalDoc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _originalDoc.BackgroundBrush;
+				_view.BackgroundBrush = null == _doc.BackgroundBrush ? new BrushX(NamedColors.Transparent) : _doc.BackgroundBrush;
 			}
 		}
 
@@ -196,10 +198,7 @@ namespace Altaxo.Gui.Graph
 			else
 				_doc.BackgroundBrush = null;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		#endregion IApplyController Members

@@ -33,7 +33,7 @@ namespace Altaxo.Graph.ColorManagement
 	/// Structure that stores <see cref="ColorSetLevel"/> and name of a color set. This is used as key value in the internal dictionaries.
 	/// </summary>
 	[System.ComponentModel.ImmutableObject(true)]
-	public class ColorSetIdentifier : IEquatable<ColorSetIdentifier>, IComparable<ColorSetIdentifier>
+	public class ColorSetIdentifier : IEquatable<ColorSetIdentifier>, IComparable<ColorSetIdentifier>, Main.IImmutable
 	{
 		private ColorSetLevel _level;
 		private string _name;

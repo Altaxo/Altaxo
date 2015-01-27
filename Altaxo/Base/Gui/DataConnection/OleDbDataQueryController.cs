@@ -67,7 +67,7 @@ namespace Altaxo.Gui.DataConnection
 
 	[ExpectedTypeOfView(typeof(IOleDbDataQueryView))]
 	[UserControllerForObject(typeof(OleDbDataQuery))]
-	public class OleDbDataQueryController : MVCANControllerEditCopyOfDocBase<OleDbDataQuery, IOleDbDataQueryView>
+	public class OleDbDataQueryController : MVCANControllerEditImmutableDocBase<OleDbDataQuery, IOleDbDataQueryView>
 	{
 		#region Inner classes
 
@@ -120,8 +120,7 @@ namespace Altaxo.Gui.DataConnection
 
 		protected override void Initialize(bool initData)
 		{
-			if (null == _doc)
-				throw new InvalidOperationException("Initialize called without setting the document beforehand");
+			base.Initialize(initData);
 
 			if (initData)
 			{
@@ -467,10 +466,7 @@ namespace Altaxo.Gui.DataConnection
 
 			bool isValid = null != _doc.ConnectionString && !_doc.ConnectionString.IsEmpty && !string.IsNullOrEmpty(_doc.SelectionStatement);
 
-			if (isValid && !object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.CopyImmutable(ref _originalDoc, _doc);
-
-			return isValid;
+			return ApplyEnd(isValid, disposeController);
 		}
 	}
 }

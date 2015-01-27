@@ -50,7 +50,10 @@ namespace Altaxo.Serialization.Ascii
 	/// <summary>
 	/// Denotes options about how to import data from an ascii text file.
 	/// </summary>
-	public class AsciiImportOptions : Main.ICopyFrom
+	public class AsciiImportOptions
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.ICopyFrom
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AsciiImportOptions"/> class with default properties.
@@ -66,34 +69,34 @@ namespace Altaxo.Serialization.Ascii
 		/// <value>
 		/// <c>true</c> if multiple streams should be imported vertically oriented, otherwise <c>false</c>.
 		/// </value>
-		public bool ImportMultipleStreamsVertically { get; set; }
+		protected bool _importMultipleStreamsVertically;
 
 		/// <summary>If true, rename the columns if 1st line contain  the column names. This option must be set programmatically or by user interaction.</summary>
-		public bool RenameColumns { get; set; }
+		protected bool _renameColumns;
 
 		/// <summary>If true, rename the worksheet to the data file name.  This option must be set programmatically or by user interaction.</summary>
-		public bool RenameWorksheet { get; set; }
+		protected bool _renameWorksheet;
 
 		/// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
-		public AsciiHeaderLinesDestination HeaderLinesDestination { get; set; }
+		protected AsciiHeaderLinesDestination _headerLinesDestination;
 
 		/// <summary>Number of lines to skip (the main header).</summary>
-		public int? NumberOfMainHeaderLines { get; set; }
+		protected int? _numberOfMainHeaderLines;
 
 		/// <summary>Index of the line, where we can extract the column names from.</summary>
-		public int? IndexOfCaptionLine { get; set; }
+		protected int? _indexOfCaptionLine;
 
 		/// <summary>Method to separate the tokens in each line of ascii text.</summary>
-		public IAsciiSeparationStrategy SeparationStrategy { get; set; }
+		protected IAsciiSeparationStrategy _separationStrategy;
 
 		/// <summary>Gets or sets the culture that formats numbers.</summary>
-		public System.Globalization.CultureInfo NumberFormatCulture { get; set; }
+		protected System.Globalization.CultureInfo _numberFormatCulture;
 
 		/// <summary>Gets or sets the culture that formats date/time values.</summary>
-		public System.Globalization.CultureInfo DateTimeFormatCulture { get; set; }
+		protected System.Globalization.CultureInfo _dateTimeFormatCulture;
 
 		/// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-		public AsciiLineStructure RecognizedStructure { get; set; }
+		protected AsciiLineStructure _recognizedStructure;
 
 		#region Serialization
 
@@ -149,6 +152,45 @@ namespace Altaxo.Serialization.Ascii
 
 		#endregion Serialization
 
+		#region Properties
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the import of multiple streams in one table should be horizontally oriented (in more columns) or vertically oriented (in more rows).
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if multiple streams should be imported vertically oriented, otherwise <c>false</c>.
+		/// </value>
+		public bool ImportMultipleStreamsVertically { get { return _importMultipleStreamsVertically; } set { SetMemberAndRaiseSelfChanged(ref _importMultipleStreamsVertically, value); } }
+
+		/// <summary>If true, rename the columns if 1st line contain  the column names. This option must be set programmatically or by user interaction.</summary>
+		public bool RenameColumns { get { return _renameColumns; } set { SetMemberAndRaiseSelfChanged(ref _renameColumns, value); } }
+
+		/// <summary>If true, rename the worksheet to the data file name.  This option must be set programmatically or by user interaction.</summary>
+		public bool RenameWorksheet { get { return _renameWorksheet; } set { SetMemberAndRaiseSelfChanged(ref _renameWorksheet, value); } }
+
+		/// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
+		public AsciiHeaderLinesDestination HeaderLinesDestination { get { return _headerLinesDestination; } set { SetMemberEnumAndRaiseSelfChanged(ref _headerLinesDestination, value); } }
+
+		/// <summary>Number of lines to skip (the main header).</summary>
+		public int? NumberOfMainHeaderLines { get { return _numberOfMainHeaderLines; } set { SetMemberAndRaiseSelfChanged(ref _numberOfMainHeaderLines, value); } }
+
+		/// <summary>Index of the line, where we can extract the column names from.</summary>
+		public int? IndexOfCaptionLine { get { return _indexOfCaptionLine; } set { SetMemberAndRaiseSelfChanged(ref _indexOfCaptionLine, value); } }
+
+		/// <summary>Method to separate the tokens in each line of ascii text.</summary>
+		public IAsciiSeparationStrategy SeparationStrategy { get { return _separationStrategy; } set { if (!object.ReferenceEquals(_separationStrategy, value)) { _separationStrategy = value; EhSelfChanged(); } } }
+
+		/// <summary>Gets or sets the culture that formats numbers.</summary>
+		public System.Globalization.CultureInfo NumberFormatCulture { get { return _numberFormatCulture; } set { if (!object.ReferenceEquals(_numberFormatCulture, value)) { _numberFormatCulture = value; EhSelfChanged(); } } }
+
+		/// <summary>Gets or sets the culture that formats date/time values.</summary>
+		public System.Globalization.CultureInfo DateTimeFormatCulture { get { return _dateTimeFormatCulture; } set { if (!object.ReferenceEquals(_dateTimeFormatCulture, value)) { _dateTimeFormatCulture = value; EhSelfChanged(); } } }
+
+		/// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
+		public AsciiLineStructure RecognizedStructure { get { return _recognizedStructure; } set { if (!object.ReferenceEquals(_recognizedStructure, value)) { _recognizedStructure = value; EhSelfChanged(); } } }
+
+		#endregion Properties
+
 		/// <summary>
 		/// Gets a value indicating whether everything is fully specified now, so that the instance can be used to import Ascii data.
 		/// If this value is false, the Ascii data have to be analyzed in order to find the missing values.
@@ -158,12 +200,12 @@ namespace Altaxo.Serialization.Ascii
 			get
 			{
 				return
-					null != NumberOfMainHeaderLines &&
-					null != IndexOfCaptionLine &&
-					null != SeparationStrategy &&
-					null != RecognizedStructure &&
-					null != NumberFormatCulture &&
-					null != DateTimeFormatCulture;
+					null != _numberOfMainHeaderLines &&
+					null != _indexOfCaptionLine &&
+					null != _separationStrategy &&
+					null != _recognizedStructure &&
+					null != _numberFormatCulture &&
+					null != _dateTimeFormatCulture;
 			}
 		}
 
@@ -175,23 +217,28 @@ namespace Altaxo.Serialization.Ascii
 			var from = obj as AsciiImportOptions;
 			if (null != from)
 			{
-				this.RenameColumns = from.RenameColumns;
-				this.RenameWorksheet = from.RenameWorksheet;
-				this.HeaderLinesDestination = from.HeaderLinesDestination;
+				using (var suspendToken = SuspendGetToken())
+				{
+					this.RenameColumns = from.RenameColumns;
+					this.RenameWorksheet = from.RenameWorksheet;
+					this.HeaderLinesDestination = from.HeaderLinesDestination;
 
-				this.NumberOfMainHeaderLines = from.NumberOfMainHeaderLines;
+					this.NumberOfMainHeaderLines = from.NumberOfMainHeaderLines;
 
-				this.IndexOfCaptionLine = from.IndexOfCaptionLine;
+					this.IndexOfCaptionLine = from.IndexOfCaptionLine;
 
-				this.SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
+					this.SeparationStrategy = null == from.SeparationStrategy ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
 
-				this.NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
+					this.NumberFormatCulture = null == from.NumberFormatCulture ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
 
-				this.DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
+					this.DateTimeFormatCulture = null == from.DateTimeFormatCulture ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
 
-				this.RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
+					this.RecognizedStructure = from.RecognizedStructure == null ? null : from.RecognizedStructure;
 
-				this.ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
+					this.ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
+
+					suspendToken.Resume();
+				}
 
 				return true;
 			}

@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Supports the creation of a new axis by the axis creation dialog.
 	/// </summary>
-	public class AxisCreationArguments
+	public class AxisCreationArguments : ICloneable
 	{
 		// Input arguments
 		public List<CSAxisInformation> AxisStyles { get; set; }
@@ -105,6 +105,11 @@ namespace Altaxo.Gui.Graph
 			}
 			collection.Add(axstyle);
 		}
+
+		public object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 	public interface IAxisCreationView
@@ -124,7 +129,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IAxisCreationView))]
 	[UserControllerForObject(typeof(AxisCreationArguments))]
-	public class AxisCreationController : MVCANControllerEditCopyOfDocBase<AxisCreationArguments, IAxisCreationView>
+	public class AxisCreationController : MVCANControllerEditOriginalDocBase<AxisCreationArguments, IAxisCreationView>
 	{
 		private SelectableListNodeList _axisTemplates;
 
@@ -135,6 +140,8 @@ namespace Altaxo.Gui.Graph
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_axisTemplates = new SelectableListNodeList();
@@ -175,7 +182,7 @@ namespace Altaxo.Gui.Graph
 				_doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionLogicalValue);
 			}
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Data
 	}
 
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableDataView))]
-	public class ExpandCyclingVariableDataController : MVCANControllerEditCopyOfDocBase<DataTableMultipleColumnProxy, IExpandCyclingVariableDataView>
+	public class ExpandCyclingVariableDataController : MVCANControllerEditOriginalDocBase<DataTableMultipleColumnProxy, IExpandCyclingVariableDataView>
 	{
 		private SelectableListNodeList _choicesCyclingVar = new SelectableListNodeList();
 		private SelectableListNodeList _choicesColsToAverage = new SelectableListNodeList();
@@ -69,8 +69,21 @@ namespace Altaxo.Gui.Data
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_choicesCyclingVar = null;
+			_choicesColsToAverage = null;
+			_valueColumns = null;
+			_availableTables = null;
+			_availableColumns = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				ExpandCyclingVariableColumnDataAndOptions.EnsureCoherence(_doc, false);
@@ -103,6 +116,46 @@ namespace Altaxo.Gui.Data
 				_view.GroupNumber = _doc.GroupNumber;
 				_view.InitializeParticipatingColumns(_valueColumns);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
+			_doc.GroupNumber = _view.GroupNumber;
+
+			_doc.SetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier, _valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
+
+			_doc.SetDataColumn(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier, (DataColumn)_choicesCyclingVar.FirstSelectedNode.Tag);
+
+			var columnsToAvg = new List<DataColumn>();
+			foreach (var node in _choicesColsToAverage)
+			{
+				if (node.IsSelected)
+					columnsToAvg.Add((DataColumn)node.Tag);
+			}
+			_doc.SetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsToAverageIdentifier, columnsToAvg);
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.SelectedTableChanged += EhSelectedTableChanged;
+			_view.SelectedGroupNumberChanged += EhSelectedGroupNumberChanged;
+			_view.UseSelectedAvailableColumnsAsParticipatingColumns += EhUseSelectedItemAsVColumns;
+			_view.DeleteSelectedParticipatingColumn += EhClearVColumns;
+		}
+
+		protected override void DetachView()
+		{
+			_view.SelectedTableChanged -= EhSelectedTableChanged;
+			_view.SelectedGroupNumberChanged -= EhSelectedGroupNumberChanged;
+			_view.UseSelectedAvailableColumnsAsParticipatingColumns -= EhUseSelectedItemAsVColumns;
+			_view.DeleteSelectedParticipatingColumn -= EhClearVColumns;
+
+			base.DetachView();
 		}
 
 		private void InitParticipatingColumns()
@@ -148,26 +201,6 @@ namespace Altaxo.Gui.Data
 				_view.InitializeCyclingVariableColumn(_choicesCyclingVar);
 				_view.InitializeColumnsToAverage(_choicesColsToAverage);
 			}
-		}
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-
-			_view.SelectedTableChanged += EhSelectedTableChanged;
-			_view.SelectedGroupNumberChanged += EhSelectedGroupNumberChanged;
-			_view.UseSelectedAvailableColumnsAsParticipatingColumns += EhUseSelectedItemAsVColumns;
-			_view.DeleteSelectedParticipatingColumn += EhClearVColumns;
-		}
-
-		protected override void DetachView()
-		{
-			_view.SelectedTableChanged -= EhSelectedTableChanged;
-			_view.SelectedGroupNumberChanged -= EhSelectedGroupNumberChanged;
-			_view.UseSelectedAvailableColumnsAsParticipatingColumns -= EhUseSelectedItemAsVColumns;
-			_view.DeleteSelectedParticipatingColumn -= EhClearVColumns;
-
-			base.DetachView();
 		}
 
 		private void FillAvailableColumnList()
@@ -302,29 +335,6 @@ namespace Altaxo.Gui.Data
 			{
 				_valueColumns.Clear();
 			}
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
-			_doc.GroupNumber = _view.GroupNumber;
-
-			_doc.SetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsParticipatingIdentifier, _valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
-
-			_doc.SetDataColumn(ExpandCyclingVariableColumnDataAndOptions.ColumnWithCyclingVariableIdentifier, (DataColumn)_choicesCyclingVar.FirstSelectedNode.Tag);
-
-			var columnsToAvg = new List<DataColumn>();
-			foreach (var node in _choicesColsToAverage)
-			{
-				if (node.IsSelected)
-					columnsToAvg.Add((DataColumn)node.Tag);
-			}
-			_doc.SetDataColumns(ExpandCyclingVariableColumnDataAndOptions.ColumnsToAverageIdentifier, columnsToAvg);
-
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

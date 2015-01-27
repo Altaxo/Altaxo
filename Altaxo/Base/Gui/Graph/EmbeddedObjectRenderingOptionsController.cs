@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IEmbeddedObjectRenderingOptionsView))]
 	[UserControllerForObject(typeof(EmbeddedObjectRenderingOptions))]
-	public class EmbeddedObjectRenderingOptionsController : MVCANControllerEditCopyOfDocBase<EmbeddedObjectRenderingOptions, IEmbeddedObjectRenderingOptionsView>
+	public class EmbeddedObjectRenderingOptionsController : MVCANControllerEditOriginalDocBase<EmbeddedObjectRenderingOptions, IEmbeddedObjectRenderingOptionsView>
 	{
 		private static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
 		private SelectableListNodeList _sourceDpi;
@@ -70,9 +70,11 @@ namespace Altaxo.Gui.Graph
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
-				_sourceDpi = GetResolutions(_originalDoc.SourceDpiResolution);
+				_sourceDpi = GetResolutions(_doc.SourceDpiResolution);
 			}
 
 			if (null != _view)
@@ -137,10 +139,7 @@ namespace Altaxo.Gui.Graph
 			else
 				_doc.BackgroundBrush = null;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		#endregion IApplyController Members

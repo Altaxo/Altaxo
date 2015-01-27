@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Data
 
 	[UserControllerForObject(typeof(ExpandCyclingVariableColumnDataAndOptions))]
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableView))]
-	public class ExpandCyclingVariableController : MVCANControllerEditCopyOfDocBase<ExpandCyclingVariableColumnDataAndOptions, IExpandCyclingVariableView>
+	public class ExpandCyclingVariableController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnDataAndOptions, IExpandCyclingVariableView>
 	{
 		private IMVCANController _dataController;
 		private IMVCANController _optionsController;
@@ -54,6 +54,8 @@ namespace Altaxo.Gui.Data
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_dataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
@@ -78,10 +80,7 @@ namespace Altaxo.Gui.Data
 			if (!_optionsController.Apply(disposeController))
 				return false;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

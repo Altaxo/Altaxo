@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Common.Drawing
 	}
 
 	[ExpectedTypeOfView(typeof(IFontXView))]
-	public class FontXController : MVCANControllerEditCopyOfDocBase<FontX, IFontXView>
+	public class FontXController : MVCANControllerEditImmutableDocBase<FontX, IFontXView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -49,6 +49,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 			}
@@ -84,9 +86,9 @@ namespace Altaxo.Gui.Common.Drawing
 			ApplyFontFamily();
 			ApplyFontSize();
 
-			_originalDoc = _doc; // this is safe because FontX is a immutable class
+			_originalDoc = _doc; // this is safe because FontX is an immutable class
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

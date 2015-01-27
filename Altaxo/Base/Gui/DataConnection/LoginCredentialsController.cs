@@ -39,7 +39,7 @@ namespace Altaxo.Gui.DataConnection
 
 	[ExpectedTypeOfView(typeof(ILoginCredentialsView))]
 	[UserControllerForObject(typeof(LoginCredentials))]
-	public class LoginCredentialsController : MVCANControllerEditCopyOfDocBase<LoginCredentials, ILoginCredentialsView>
+	public class LoginCredentialsController : MVCANControllerEditOriginalDocBase<LoginCredentials, ILoginCredentialsView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -48,6 +48,8 @@ namespace Altaxo.Gui.DataConnection
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.Username = _doc.UserName;
@@ -65,10 +67,7 @@ namespace Altaxo.Gui.DataConnection
 				return false;
 			}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

@@ -75,6 +75,8 @@ namespace Altaxo.Gui.Main
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_propertyCollection = new PropertyCollection(_doc, true, false, string.Empty);

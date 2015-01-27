@@ -31,13 +31,11 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui
 {
 	/// <summary>
-	/// Base class of controllers that edit a copy of the document. This means that the document is not connected to the document tree when edited.
-	/// If you need the document connected to the document tree during editing, consider using <see cref="MVCANControllerEditOriginalDocBase{TModel, TView>"/> instead.
+	/// Base class of controllers that edit an immutable document or a document that is a struct. This means that the document can be copied from one member to another without cloning it.
 	/// </summary>
 	/// <typeparam name="TModel">The type of the document to edit.</typeparam>
 	/// <typeparam name="TView">The type of the view.</typeparam>
-	public abstract class MVCANControllerEditCopyOfDocBase<TModel, TView> : IMVCANController
-		where TModel : class // for structs please use MVCANControllerEditImmutableDocBase
+	public abstract class MVCANControllerEditImmutableDocBase<TModel, TView> : IMVCANController
 		where TView : class
 	{
 		/// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
@@ -78,8 +76,6 @@ namespace Altaxo.Gui
 				return false;
 
 			_doc = _originalDoc = (TModel)args[0];
-			if (_useDocumentCopy && _originalDoc is ICloneable)
-				_doc = (TModel)((ICloneable)_originalDoc).Clone();
 
 			Initialize(true);
 			return true;
@@ -93,10 +89,10 @@ namespace Altaxo.Gui
 		/// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
 		protected virtual void Initialize(bool initData)
 		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
 			if (null == _doc)
 				throw new InvalidOperationException("This controller was not initialized with a document.");
+			if (IsDisposed)
+				throw new ObjectDisposedException("The controller was already disposed. Type: " + this.GetType().FullName);
 		}
 
 		/// <summary>
@@ -116,16 +112,6 @@ namespace Altaxo.Gui
 		{
 			if (applyResult == true)
 			{
-				if (!object.ReferenceEquals(_doc, _originalDoc))
-				{
-					if (_doc is ICloneable)
-					{
-						ICloneable orgDoc = (ICloneable)_originalDoc;
-						CopyHelper.Copy(ref orgDoc, (ICloneable)_doc);
-						_originalDoc = (TModel)orgDoc;
-					}
-				}
-
 				if (disposeController)
 				{
 					Dispose();
@@ -133,23 +119,6 @@ namespace Altaxo.Gui
 			}
 
 			return applyResult;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public virtual bool Revert(bool disposeController)
-		{
-			if (disposeController)
-			{
-				Dispose();
-			}
-
-			return false;
 		}
 
 		/// <summary>
@@ -164,6 +133,32 @@ namespace Altaxo.Gui
 		/// </summary>
 		protected virtual void DetachView()
 		{
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public virtual bool Revert(bool disposeController)
+		{
+			_doc = _originalDoc;
+
+			if (disposeController)
+			{
+				Dispose();
+			}
+			else
+			{
+				var view = ViewObject;
+				ViewObject = null;
+				Initialize(true);
+				ViewObject = view;
+			}
+
+			return false;
 		}
 
 		/// <summary>Get a value indication whether  this controller is already disposed.</summary>
@@ -210,7 +205,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		public virtual object ModelObject
 		{
-			get { return _originalDoc; }
+			get { return _doc; }
 		}
 
 		/// <summary>

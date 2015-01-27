@@ -144,17 +144,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				using (var token = SuspendGetToken())
 				{
-					RealFourierTransformation2DOptions transformationOptions = null;
-					DataTableMatrixProxy inputData = null;
-					IDataSourceImportOptions importOptions = null;
-
-					CopyHelper.Copy(ref importOptions, from._importOptions);
-					CopyHelper.Copy(ref transformationOptions, from._transformationOptions);
-					CopyHelper.Copy(ref inputData, from._inputData);
-
-					this.FourierTransformation2DOptions = transformationOptions;
-					this.ImportOptions = importOptions;
-					this.InputData = inputData;
+					ChildCopyToMember(ref _importOptions, from._importOptions);
+					ChildCopyToMember(ref _transformationOptions, from._transformationOptions);
+					ChildCopyToMember(ref _inputData, from._inputData);
 
 					return true;
 				}
@@ -165,7 +157,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _inputData)
-				yield return new Main.DocumentNodeAndName(_inputData, "Data");
+				yield return new Main.DocumentNodeAndName(_inputData, () => _inputData = null, "Data");
+
+			if (null != _transformationOptions)
+				yield return new Main.DocumentNodeAndName(_transformationOptions, () => _transformationOptions = null, "TransformationOptions");
+
+			if (null != _importOptions)
+				yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
 		}
 
 		/// <summary>
@@ -261,9 +259,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				if (null == value)
 					throw new ArgumentNullException("ImportOptions");
 
-				var oldValue = _importOptions;
-
-				_importOptions = value;
+				if (ChildSetMember(ref _importOptions, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -285,9 +282,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				if (null == value)
 					throw new ArgumentNullException("FourierTransformation2DOptions");
 
-				var oldValue = _transformationOptions;
-
-				_transformationOptions = value;
+				if (ChildSetMember(ref _transformationOptions, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -302,16 +298,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				EhChildChanged(sender, TableDataSourceChangedEventArgs.Empty);
 			}
-		}
-
-		/// <summary>
-		/// Called when the event suppressor has resumed events, and any events have been fired in the time of suppression.
-		/// </summary>
-		private void EhResumeSuppressedEvents()
-		{
-			var ev = _dataSourceChanged;
-			if (null != ev)
-				ev(this);
 		}
 
 		/// <summary>

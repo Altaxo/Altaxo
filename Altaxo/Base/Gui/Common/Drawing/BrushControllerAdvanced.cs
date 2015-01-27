@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 	[UserControllerForObject(typeof(BrushX))]
 	[ExpectedTypeOfView(typeof(IBrushViewAdvanced))]
-	public class BrushControllerAdvanced : MVCANDControllerEditCopyOfDocBase<BrushX, IBrushViewAdvanced>
+	public class BrushControllerAdvanced : MVCANDControllerEditOriginalDocBase<BrushX, IBrushViewAdvanced>
 	{
 		private Main.InstancePropertyController _imageProxyController;
 
@@ -126,25 +126,10 @@ namespace Altaxo.Gui.Common.Drawing
 			yield return new ControllerAndSetNullMethod(_textureScalingController, () => _textureScalingController = null);
 		}
 
-		public bool RestrictBrushColorToPlotColorsOnly
-		{
-			get
-			{
-				return _restrictBrushColorToPlotColorsOnly;
-			}
-			set
-			{
-				var oldValue = _restrictBrushColorToPlotColorsOnly;
-				_restrictBrushColorToPlotColorsOnly = value;
-				if (value != oldValue && null != _view)
-				{
-					_view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
-				}
-			}
-		}
-
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_imageProxyController = new Main.InstancePropertyController() { UseDocumentCopy = UseDocument.Directly };
@@ -173,21 +158,9 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		private void InitializeViewElementsWhenBrushTypeChanged()
+		public override bool Apply(bool disposeController)
 		{
-			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
-			{
-				_view.ForeColor = _doc.Color;
-				_view.BackColor = _doc.BackColor;
-				_view.ExchangeColors = _doc.ExchangeColors;
-				_view.WrapMode = _doc.WrapMode;
-				_view.GradientFocus = _doc.GradientFocus;
-				_view.GradientColorScale = _doc.GradientColorScale;
-				_view.GradientAngle = _doc.GradientAngle;
-				_view.TextureOffsetX = _doc.TextureOffsetX;
-				_view.TextureOffsetY = _doc.TextureOffsetY;
-				_view.InitTextureImage(_doc.TextureImage, _doc.BrushType);
-			}
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -226,10 +199,38 @@ namespace Altaxo.Gui.Common.Drawing
 			base.DetachView();
 		}
 
-		public override bool Apply(bool disposeController)
+		public bool RestrictBrushColorToPlotColorsOnly
 		{
-			_originalDoc = (BrushX)_doc.Clone();
-			return true;
+			get
+			{
+				return _restrictBrushColorToPlotColorsOnly;
+			}
+			set
+			{
+				var oldValue = _restrictBrushColorToPlotColorsOnly;
+				_restrictBrushColorToPlotColorsOnly = value;
+				if (value != oldValue && null != _view)
+				{
+					_view.RestrictBrushColorToPlotColorsOnly = _restrictBrushColorToPlotColorsOnly;
+				}
+			}
+		}
+
+		private void InitializeViewElementsWhenBrushTypeChanged()
+		{
+			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+			{
+				_view.ForeColor = _doc.Color;
+				_view.BackColor = _doc.BackColor;
+				_view.ExchangeColors = _doc.ExchangeColors;
+				_view.WrapMode = _doc.WrapMode;
+				_view.GradientFocus = _doc.GradientFocus;
+				_view.GradientColorScale = _doc.GradientColorScale;
+				_view.GradientAngle = _doc.GradientAngle;
+				_view.TextureOffsetX = _doc.TextureOffsetX;
+				_view.TextureOffsetY = _doc.TextureOffsetY;
+				_view.InitTextureImage(_doc.TextureImage, _doc.BrushType);
+			}
 		}
 
 		protected override void OnMadeDirty()

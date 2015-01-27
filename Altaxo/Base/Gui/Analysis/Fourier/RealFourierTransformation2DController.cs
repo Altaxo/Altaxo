@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DView))]
 	[UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
-	public class RealFourierTransformation2DController : MVCANControllerEditCopyOfDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
+	public class RealFourierTransformation2DController : MVCANControllerEditOriginalDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
 	{
 		private SelectableListNodeList _outputQuantities;
 		private SelectableListNodeList _fourierWindowChoice;
@@ -84,9 +84,19 @@ namespace Altaxo.Gui.Analysis.Fourier
 			yield break;
 		}
 
-		protected override void Initialize(bool bInitData)
+		public override void Dispose(bool isDisposing)
 		{
-			if (bInitData)
+			_outputQuantities = null;
+			_fourierWindowChoice = null;
+
+			base.Dispose(isDisposing);
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
 			{
 				_outputQuantities = new SelectableListNodeList();
 				_fourierWindowChoice = GetFourierWindowChoice(_doc.FourierWindow);
@@ -175,10 +185,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 			_doc.PeriodRowHeaderColumnName = _view.PeriodRowHeaderColumnName;
 			_doc.PeriodColumnHeaderColumnName = _view.PeriodColumnHeaderColumnName;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return base.ApplyEnd(true, disposeController);
 		}
 	}
 }

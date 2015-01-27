@@ -34,7 +34,7 @@ namespace Altaxo.Main.Properties
 	/// The topmost bag is usually used to edit items, the items underneath are used to show the effective property values.
 	/// When you add bags, please note that bags are added to the bottom of the hierarchy. Thus you have to add the topmost bag as the first item.
 	/// </summary>
-	public class PropertyHierarchy : IReadOnlyPropertyBag
+	public class PropertyHierarchy : IReadOnlyPropertyBag, ICloneable
 	{
 		private List<PropertyBagWithInformation> _propertyBags;
 
@@ -53,6 +53,11 @@ namespace Altaxo.Main.Properties
 		public PropertyHierarchy(IEnumerable<PropertyBagWithInformation> tuplesBagnameWithBag)
 		{
 			_propertyBags = new List<PropertyBagWithInformation>(tuplesBagnameWithBag);
+		}
+
+		public object Clone()
+		{
+			return new PropertyHierarchy(this._propertyBags);
 		}
 
 		/// <summary>

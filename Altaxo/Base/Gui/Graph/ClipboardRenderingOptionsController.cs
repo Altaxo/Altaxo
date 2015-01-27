@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IClipboardRenderingOptionsView))]
 	[UserControllerForObject(typeof(ClipboardRenderingOptions), 101)]
-	public class ClipboardRenderingOptionsController : MVCANControllerEditCopyOfDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
+	public class ClipboardRenderingOptionsController : MVCANControllerEditOriginalDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
 	{
 		private EmbeddedObjectRenderingOptionsController _embeddedController;
 		private SelectableListNodeList _imageFormat;
@@ -108,8 +108,17 @@ namespace Altaxo.Gui.Graph
 			yield return new ControllerAndSetNullMethod(_embeddedController, () => _embeddedController = null);
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_imageFormat = null;
+			_pixelFormat = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_embeddedController = new EmbeddedObjectRenderingOptionsController() { UseDocumentCopy = UseDocument.Directly };
@@ -118,13 +127,13 @@ namespace Altaxo.Gui.Graph
 
 				_imageFormat = new SelectableListNodeList();
 				foreach (ImageFormat item in ImageFormats)
-					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _originalDoc.DropFileImageFormat == item));
+					_imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.DropFileImageFormat == item));
 
 				_pixelFormat = new SelectableListNodeList();
 				var hasMatched = false; // special prog to account for doubling of items in PixelFormats
 				foreach (PixelFormat item in PixelFormats)
 				{
-					var select = _originalDoc.DropFileBitmapPixelFormat == item;
+					var select = _doc.DropFileBitmapPixelFormat == item;
 					_pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
 					hasMatched |= select;
 				}
@@ -162,10 +171,7 @@ namespace Altaxo.Gui.Graph
 			_doc.RenderEmbeddedObject = _view.RenderEmbeddedObject;
 			_doc.RenderLinkedObject = _view.RenderLinkedObject;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		#endregion IApplyController Members

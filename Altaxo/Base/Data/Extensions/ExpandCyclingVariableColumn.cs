@@ -34,7 +34,10 @@ namespace Altaxo.Data
 	/// Contains options how to split a table that contains an independent variable with cycling values into
 	/// another table, where this independent variable is unique and sorted.
 	/// </summary>
-	public class ExpandCyclingVariableColumnOptions : ICloneable
+	public class ExpandCyclingVariableColumnOptions
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ICloneable
 	{
 		#region Enums
 
@@ -62,16 +65,16 @@ namespace Altaxo.Data
 		#region Members
 
 		/// <summary>Designates whether the destination x column is derived from the cycling variable column or from the (first) averaged column.</summary>
-		public DestinationXColumn DestinationX { get; set; }
+		protected DestinationXColumn _destinationX;
 
 		/// <summary>Designates the order of the newly created columns of the dependent variables.</summary>
-		public OutputFormat DestinationOutput { get; set; }
+		protected OutputFormat _destinationOutput;
 
 		/// <summary>If set, the destination columns will be sorted according to the first averaged column (if there is any).</summary>
-		public OutputSorting DestinationColumnSorting { get; set; }
+		protected OutputSorting _destinationColumnSorting;
 
 		/// <summary>If set, the destination rows will be sorted according to the destination x column.</summary>
-		public OutputSorting DestinationRowSorting { get; set; }
+		protected OutputSorting _destinationRowSorting;
 
 		#endregion Members
 
@@ -89,20 +92,20 @@ namespace Altaxo.Data
 			{
 				var s = (ExpandCyclingVariableColumnOptions)obj;
 
-				info.AddEnum("DestinationX", s.DestinationX);
-				info.AddEnum("DestinationOutput", s.DestinationOutput);
-				info.AddEnum("DestinationColumnSorting", s.DestinationColumnSorting);
-				info.AddEnum("DestinationRowSorting", s.DestinationRowSorting);
+				info.AddEnum("DestinationX", s._destinationX);
+				info.AddEnum("DestinationOutput", s._destinationOutput);
+				info.AddEnum("DestinationColumnSorting", s._destinationColumnSorting);
+				info.AddEnum("DestinationRowSorting", s._destinationRowSorting);
 			}
 
 			protected virtual ExpandCyclingVariableColumnOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (o == null ? new ExpandCyclingVariableColumnOptions() : (ExpandCyclingVariableColumnOptions)o);
 
-				s.DestinationX = (DestinationXColumn)info.GetEnum("DestinationX", typeof(DestinationXColumn));
-				s.DestinationOutput = (OutputFormat)info.GetEnum("DestinationOutput", typeof(OutputFormat));
-				s.DestinationColumnSorting = (OutputSorting)info.GetEnum("DestinationColumnSorting", typeof(OutputSorting));
-				s.DestinationRowSorting = (OutputSorting)info.GetEnum("DestinationRowSorting", typeof(OutputSorting));
+				s._destinationX = (DestinationXColumn)info.GetEnum("DestinationX", typeof(DestinationXColumn));
+				s._destinationOutput = (OutputFormat)info.GetEnum("DestinationOutput", typeof(OutputFormat));
+				s._destinationColumnSorting = (OutputSorting)info.GetEnum("DestinationColumnSorting", typeof(OutputSorting));
+				s._destinationRowSorting = (OutputSorting)info.GetEnum("DestinationRowSorting", typeof(OutputSorting));
 
 				return s;
 			}
@@ -142,10 +145,12 @@ namespace Altaxo.Data
 			var from = obj as ExpandCyclingVariableColumnOptions;
 			if (null != from)
 			{
-				this.DestinationX = from.DestinationX;
-				this.DestinationOutput = from.DestinationOutput;
-				this.DestinationRowSorting = from.DestinationRowSorting;
-				this.DestinationColumnSorting = from.DestinationColumnSorting;
+				this._destinationX = from._destinationX;
+				this._destinationOutput = from._destinationOutput;
+				this._destinationRowSorting = from._destinationRowSorting;
+				this._destinationColumnSorting = from._destinationColumnSorting;
+
+				EhSelfChanged();
 
 				return true;
 			}
@@ -153,6 +158,22 @@ namespace Altaxo.Data
 		}
 
 		#endregion Construction
+
+		#region Properties
+
+		/// <summary>Designates whether the destination x column is derived from the cycling variable column or from the (first) averaged column.</summary>
+		public DestinationXColumn DestinationX { get { return _destinationX; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationX, value); } }
+
+		/// <summary>Designates the order of the newly created columns of the dependent variables.</summary>
+		public OutputFormat DestinationOutput { get { return _destinationOutput; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationOutput, value); } }
+
+		/// <summary>If set, the destination columns will be sorted according to the first averaged column (if there is any).</summary>
+		public OutputSorting DestinationColumnSorting { get { return _destinationColumnSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationColumnSorting, value); } }
+
+		/// <summary>If set, the destination rows will be sorted according to the destination x column.</summary>
+		public OutputSorting DestinationRowSorting { get { return _destinationRowSorting; } set { SetMemberEnumAndRaiseSelfChanged(ref _destinationRowSorting, value); } }
+
+		#endregion Properties
 	}
 
 	/// <summary>

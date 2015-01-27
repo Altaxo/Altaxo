@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 	}
 
 	[ExpectedTypeOfView(typeof(IColorSetsView))]
-	public class ColorSetChoiceController : MVCANControllerEditCopyOfDocBase<ColorSetIdentifier, IColorSetsView>
+	public class ColorSetChoiceController : MVCANControllerEditImmutableDocBase<ColorSetIdentifier, IColorSetsView>
 	{
 		private NGTreeNode _treeRootNode = new NGTreeNode();
 
@@ -51,6 +51,8 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				IColorSet colorSetCurrentlySelected;
@@ -81,9 +83,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 			_doc = new ColorSetIdentifier(tag.Level, tag.Name);
 
-			_originalDoc = _doc; // ColorSetIdentifier is immutable
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

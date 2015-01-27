@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common
 
 	[ExpectedTypeOfView(typeof(IAscendingIntegerCollectionView))]
 	[UserControllerForObject(typeof(AscendingIntegerCollection))]
-	public class AscendingIntegerCollectionController : MVCANControllerEditCopyOfDocBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
+	public class AscendingIntegerCollectionController : MVCANControllerEditOriginalDocBase<AscendingIntegerCollection, IAscendingIntegerCollectionView>
 	{
 		#region Internal class
 
@@ -227,6 +227,8 @@ namespace Altaxo.Gui.Common
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				InitRanges();
@@ -273,10 +275,7 @@ namespace Altaxo.Gui.Common
 				_doc.AddRange(from, to - from + 1);
 			}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

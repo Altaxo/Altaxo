@@ -35,7 +35,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 	/// <summary>
 	/// User options for 2D Fourier transformations.
 	/// </summary>
-	public class RealFourierTransformation2DOptions : ICloneable
+	public class RealFourierTransformation2DOptions
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		ICloneable
 	{
 		// Input options
 		protected double _rowIncrementValue;
@@ -144,21 +147,32 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		#endregion Serialization
 
-		public double RowIncrementValue { get { return _rowIncrementValue; } set { _rowIncrementValue = value; } }
+		public double RowIncrementValue { get { return _rowIncrementValue; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementValue, value); } }
 
-		public double ColumnIncrementValue { get { return _columnIncrementValue; } set { _columnIncrementValue = value; } }
+		public double ColumnIncrementValue { get { return _columnIncrementValue; } set { SetMemberAndRaiseSelfChanged(ref _columnIncrementValue, value); } }
 
-		public double? ReplacementValueForNaNMatrixElements { get { return _replacementValueForNaNMatrixElements; } set { _replacementValueForNaNMatrixElements = value; } }
+		public double? ReplacementValueForNaNMatrixElements { get { return _replacementValueForNaNMatrixElements; } set { SetMemberAndRaiseSelfChanged(ref _replacementValueForNaNMatrixElements, value); } }
 
-		public double? ReplacementValueForInfiniteMatrixElements { get { return _replacementValueForInfiniteMatrixElements; } set { _replacementValueForInfiniteMatrixElements = value; } }
+		public double? ReplacementValueForInfiniteMatrixElements { get { return _replacementValueForInfiniteMatrixElements; } set { SetMemberAndRaiseSelfChanged(ref _replacementValueForInfiniteMatrixElements, value); } }
 
-		public int? DataPretreatmentCorrectionOrder { get { return _dataPretreatmentCorrectionOrder; } set { _dataPretreatmentCorrectionOrder = value; } }
+		public int? DataPretreatmentCorrectionOrder { get { return _dataPretreatmentCorrectionOrder; } set { SetMemberAndRaiseSelfChanged(ref  _dataPretreatmentCorrectionOrder, value); } }
 
-		public Altaxo.Calc.Fourier.Windows.IWindows2D FourierWindow { get { return _fourierWindow; } set { _fourierWindow = value; } }
+		public Altaxo.Calc.Fourier.Windows.IWindows2D FourierWindow
+		{
+			get { return _fourierWindow; }
+			set
+			{
+				if (!object.ReferenceEquals(_fourierWindow, value))
+				{
+					_fourierWindow = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
 
-		public Altaxo.Calc.Fourier.RealFourierTransformationOutputKind OutputKind { get { return _kindOfOutputResult; } set { _kindOfOutputResult = value; } }
+		public Altaxo.Calc.Fourier.RealFourierTransformationOutputKind OutputKind { get { return _kindOfOutputResult; } set { SetMemberEnumAndRaiseSelfChanged(ref _kindOfOutputResult, value); } }
 
-		public bool CenterResult { get { return _centerResult; } set { _centerResult = value; } }
+		public bool CenterResult { get { return _centerResult; } set { SetMemberAndRaiseSelfChanged(ref _centerResult, value); } }
 
 		public double ResultingFractionOfRowsUsed
 		{
@@ -167,7 +181,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				if (!(value >= 0 && (value <= 1)))
 					throw new ArgumentOutOfRangeException("Value has to be in the range between 0 and 1");
-				_resultFractionOfRows = value;
+
+				SetMemberAndRaiseSelfChanged(ref _resultFractionOfRows, value);
 			}
 		}
 
@@ -178,24 +193,25 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				if (!(value >= 0 && (value <= 1)))
 					throw new ArgumentOutOfRangeException("Value has to be in the range between 0 and 1");
-				_resultFractionOfColumns = value;
+
+				SetMemberAndRaiseSelfChanged(ref _resultFractionOfColumns, value);
 			}
 		}
 
-		public bool OutputFrequencyHeaderColumns { get { return _outputFrequencyHeaderColumns; } set { _outputFrequencyHeaderColumns = value; } }
+		public bool OutputFrequencyHeaderColumns { get { return _outputFrequencyHeaderColumns; } set { SetMemberAndRaiseSelfChanged(ref _outputFrequencyHeaderColumns, value); } }
 
-		public string FrequencyRowHeaderColumnName { get { return _frequencyRowHeaderColumnName; } set { _frequencyRowHeaderColumnName = value; } }
+		public string FrequencyRowHeaderColumnName { get { return _frequencyRowHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _frequencyRowHeaderColumnName, value); } }
 
-		public string FrequencyColumnHeaderColumnName { get { return _frequencyColumnHeaderColumnName; } set { _frequencyColumnHeaderColumnName = value; } }
+		public string FrequencyColumnHeaderColumnName { get { return _frequencyColumnHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _frequencyColumnHeaderColumnName, value); } }
 
-		public bool OutputPeriodHeaderColumns { get { return _outputPeriodHeaderColumns; } set { _outputPeriodHeaderColumns = value; } }
+		public bool OutputPeriodHeaderColumns { get { return _outputPeriodHeaderColumns; } set { SetMemberAndRaiseSelfChanged(ref _outputPeriodHeaderColumns, value); } }
 
-		public string PeriodRowHeaderColumnName { get { return _periodRowHeaderColumnName; } set { _periodRowHeaderColumnName = value; } }
+		public string PeriodRowHeaderColumnName { get { return _periodRowHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _periodRowHeaderColumnName, value); } }
 
-		public string PeriodColumnHeaderColumnName { get { return _periodColumnHeaderColumnName; } set { _periodColumnHeaderColumnName = value; } }
+		public string PeriodColumnHeaderColumnName { get { return _periodColumnHeaderColumnName; } set { SetMemberAndRaiseSelfChanged(ref _periodColumnHeaderColumnName, value); } }
 
-		public string RowIncrementMessage { get { return _rowIncrementMessage; } set { _rowIncrementMessage = value; } }
+		public string RowIncrementMessage { get { return _rowIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementMessage, value); } }
 
-		public string ColumnIncrementMessage { get { return _columnIncrementMessage; } set { _columnIncrementMessage = value; } }
+		public string ColumnIncrementMessage { get { return _columnIncrementMessage; } set { SetMemberAndRaiseSelfChanged(ref _columnIncrementMessage, value); } }
 	}
 }

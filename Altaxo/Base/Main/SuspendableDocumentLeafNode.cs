@@ -173,7 +173,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Called if some member of this instance itself has changed.
 		/// </summary>
-		protected void EhSelfChanged(EventArgs e)
+		protected override void EhSelfChanged(EventArgs e)
 		{
 			if (!IsSuspended)
 			{

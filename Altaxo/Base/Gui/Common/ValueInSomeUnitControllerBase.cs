@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Common
 	}
 
 	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
-	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditCopyOfDocBase<double, IDimensionfulQuantityView>
+	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditImmutableDocBase<double, IDimensionfulQuantityView>
 	{
 		protected abstract Units.IUnit UnitOfValue { get; }
 
@@ -55,11 +55,19 @@ namespace Altaxo.Gui.Common
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.UnitEnvironment = this.UnitEnvironment;
 				_view.SelectedQuantity = new Units.DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(this.UnitEnvironment.DefaultUnit);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			GetQuantityFromView();
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -72,13 +80,6 @@ namespace Altaxo.Gui.Common
 		{
 			_view.SelectedQuantityChanged -= EhQuantityChanged;
 			base.DetachView();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			GetQuantityFromView();
-			_originalDoc = _doc;
-			return true;
 		}
 
 		private void GetQuantityFromView()

@@ -303,7 +303,7 @@ namespace Altaxo.Main
 		/// Called if some (simple) member or property of this instance itself has changed.
 		/// </summary>
 		/// <param name="e">The change details.</param>
-		protected void EhSelfChanged(EventArgs e)
+		protected override void EhSelfChanged(EventArgs e)
 		{
 			if (!IsSuspendedOrResumeInProgress)
 			{

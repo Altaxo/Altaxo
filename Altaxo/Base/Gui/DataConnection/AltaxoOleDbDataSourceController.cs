@@ -39,7 +39,7 @@ namespace Altaxo.Gui.DataConnection
 
 	[ExpectedTypeOfView(typeof(IAltaxoOleDbDataSourceView))]
 	[UserControllerForObject(typeof(AltaxoOleDbDataSource))]
-	public class AltaxoOleDbDataSourceController : MVCANControllerEditCopyOfDocBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
+	public class AltaxoOleDbDataSourceController : MVCANControllerEditOriginalDocBase<AltaxoOleDbDataSource, IAltaxoOleDbDataSourceView>
 	{
 		private OleDbDataQueryController _connectionMainController;
 		private Altaxo.Gui.Data.DataSourceImportOptionsController _importOptionsController;
@@ -52,6 +52,8 @@ namespace Altaxo.Gui.DataConnection
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_importOptionsController = new Data.DataSourceImportOptionsController() { UseDocumentCopy = UseDocument.Directly };
@@ -84,10 +86,7 @@ namespace Altaxo.Gui.DataConnection
 			_doc.ImportOptions = (Altaxo.Data.DataSourceImportOptions)_importOptionsController.ModelObject;
 			_doc.DataQuery = (OleDbDataQuery)_connectionMainController.ModelObject;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Settings
 	/// <summary>Manages the <see cref="IAutoUpdateSettingsView">Gui interface</see> for the <see cref="AutoUpdateSettings">auto update settings</see>.</summary>
 	[ExpectedTypeOfView(typeof(IAutoUpdateSettingsView))]
 	[UserControllerForObject(typeof(AutoUpdateSettings))]
-	public class AutoUpdateSettingsController : MVCANControllerEditCopyOfDocBase<AutoUpdateSettings, IAutoUpdateSettingsView>
+	public class AutoUpdateSettingsController : MVCANControllerEditOriginalDocBase<AutoUpdateSettings, IAutoUpdateSettingsView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -68,6 +68,8 @@ namespace Altaxo.Gui.Settings
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.EnableAutoUpdates = _doc.EnableAutoUpdates;
@@ -94,10 +96,7 @@ namespace Altaxo.Gui.Settings
 			_doc.ShowInstallationWindow = _view.ShowInstallationWindow;
 			_doc.InstallationWindowClosingTime = _view.InstallationWindowClosingTime;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 

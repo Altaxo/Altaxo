@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
 	[UserControllerForObject(typeof(AsciiImportOptions))]
-	public class AsciiImportOptionsController : MVCANControllerEditCopyOfDocBase<AsciiImportOptions, IAsciiImportOptionsView>
+	public class AsciiImportOptionsController : MVCANControllerEditOriginalDocBase<AsciiImportOptions, IAsciiImportOptionsView>
 	{
 		private System.IO.Stream _asciiStreamData;
 
@@ -112,6 +112,8 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_asciiDocumentAnalysisOptionsController = (IMVCANController)Current.Gui.GetController(new object[] { _analysisOptions }, typeof(IMVCANController), UseDocument.Directly);
@@ -169,6 +171,100 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 				_view.ImportMultipleAsciiVertically = _doc.ImportMultipleStreamsVertically;
 			}
+		}
+
+		private bool ApplyWithoutClosing()
+		{
+			if (null != _separationStrategyInstanceController)
+				if (_separationStrategyInstanceController.Apply(false))
+					_doc.SeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;
+				else
+					return false;
+
+			_doc.NumberOfMainHeaderLines = _view.NumberOfMainHeaderLines;
+			_doc.IndexOfCaptionLine = _view.IndexOfCaptionLine;
+
+			_doc.RenameColumns = _view.RenameColumnsWithHeaderNames;
+			_doc.RenameWorksheet = _view.RenameWorksheetWithFileName;
+			_doc.ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically;
+
+			if (_view.NumberFormatCultureIsKnowm)
+			{
+				_doc.NumberFormatCulture = (CultureInfo)_numberFormatList.FirstSelectedNode.Tag;
+			}
+			else
+			{
+				_doc.NumberFormatCulture = null;
+			}
+
+			if (_view.DateTimeFormatCultureIsKnown)
+			{
+				_doc.DateTimeFormatCulture = (CultureInfo)_dateTimeFormatList.FirstSelectedNode.Tag;
+			}
+			else
+			{
+				_doc.DateTimeFormatCulture = null;
+			}
+
+			if (_view.GuiSeparationStrategyIsKnown)
+			{
+				// this case was already handled above
+			}
+			else
+			{
+				_doc.SeparationStrategy = null;
+			}
+
+			if (_view.TableStructureIsKnown)
+			{
+				_doc.RecognizedStructure.Clear();
+				Boxed<AsciiColumnType>.AddRange(_doc.RecognizedStructure.ColumnTypes, _tableStructure);
+				if (_doc.RecognizedStructure.Count == 0)
+					_doc.RecognizedStructure = null;
+			}
+			else
+			{
+				_doc.RecognizedStructure = null;
+			}
+
+			_doc.HeaderLinesDestination = (AsciiHeaderLinesDestination)_headerLinesDestination.FirstSelectedNode.Tag;
+
+			return true;
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (!ApplyWithoutClosing())
+				return false;
+
+			if (!_doc.IsFullySpecified)
+			{
+				ReadAnalysisOptionsAndAnalyze();
+			}
+
+			if (!_doc.IsFullySpecified)
+			{
+				Current.Gui.InfoMessageBox("The analysis of the document was unable to determine some of the import options. You have to specify them manually.", "Attention");
+				return false;
+			}
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.DoAnalyze += EhDoAsciiAnalysis;
+			_view.SeparationStrategyChanged += EhSeparationStrategyChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.DoAnalyze -= EhDoAsciiAnalysis;
+			_view.SeparationStrategyChanged -= EhSeparationStrategyChanged;
+
+			base.DetachView();
 		}
 
 		private int CompareCultures(CultureInfo x, CultureInfo y)
@@ -267,103 +363,6 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 			if (null != _view)
 				_view.AsciiSeparationStrategyDetailView = view;
-		}
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-
-			_view.DoAnalyze += EhDoAsciiAnalysis;
-			_view.SeparationStrategyChanged += EhSeparationStrategyChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.DoAnalyze -= EhDoAsciiAnalysis;
-			_view.SeparationStrategyChanged -= EhSeparationStrategyChanged;
-
-			base.DetachView();
-		}
-
-		private bool ApplyWithoutClosing()
-		{
-			if (null != _separationStrategyInstanceController)
-				if (_separationStrategyInstanceController.Apply(false))
-					_doc.SeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;
-				else
-					return false;
-
-			_doc.NumberOfMainHeaderLines = _view.NumberOfMainHeaderLines;
-			_doc.IndexOfCaptionLine = _view.IndexOfCaptionLine;
-
-			_doc.RenameColumns = _view.RenameColumnsWithHeaderNames;
-			_doc.RenameWorksheet = _view.RenameWorksheetWithFileName;
-			_doc.ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically;
-
-			if (_view.NumberFormatCultureIsKnowm)
-			{
-				_doc.NumberFormatCulture = (CultureInfo)_numberFormatList.FirstSelectedNode.Tag;
-			}
-			else
-			{
-				_doc.NumberFormatCulture = null;
-			}
-
-			if (_view.DateTimeFormatCultureIsKnown)
-			{
-				_doc.DateTimeFormatCulture = (CultureInfo)_dateTimeFormatList.FirstSelectedNode.Tag;
-			}
-			else
-			{
-				_doc.DateTimeFormatCulture = null;
-			}
-
-			if (_view.GuiSeparationStrategyIsKnown)
-			{
-				// this case was already handled above
-			}
-			else
-			{
-				_doc.SeparationStrategy = null;
-			}
-
-			if (_view.TableStructureIsKnown)
-			{
-				_doc.RecognizedStructure.Clear();
-				Boxed<AsciiColumnType>.AddRange(_doc.RecognizedStructure.ColumnTypes, _tableStructure);
-				if (_doc.RecognizedStructure.Count == 0)
-					_doc.RecognizedStructure = null;
-			}
-			else
-			{
-				_doc.RecognizedStructure = null;
-			}
-
-			_doc.HeaderLinesDestination = (AsciiHeaderLinesDestination)_headerLinesDestination.FirstSelectedNode.Tag;
-
-			return true;
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (!ApplyWithoutClosing())
-				return false;
-
-			if (!_doc.IsFullySpecified)
-			{
-				ReadAnalysisOptionsAndAnalyze();
-			}
-
-			if (!_doc.IsFullySpecified)
-			{
-				Current.Gui.InfoMessageBox("The analysis of the document was unable to determine some of the import options. You have to specify them manually.", "Attention");
-				return false;
-			}
-
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
 		}
 	}
 }

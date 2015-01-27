@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Data
 
 	[ExpectedTypeOfView(typeof(IDataTableMatrixProxyView))]
 	[UserControllerForObject(typeof(DataTableMatrixProxy))]
-	public class DataTableMatrixProxyController : MVCANControllerEditCopyOfDocBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
+	public class DataTableMatrixProxyController : MVCANControllerEditOriginalDocBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
 	{
 		private Altaxo.Data.IReadableColumn _xColumn;
 		private Altaxo.Data.IReadableColumn _yColumn;
@@ -101,8 +101,21 @@ namespace Altaxo.Gui.Data
 			yield return new ControllerAndSetNullMethod(_rowsController, () => _rowsController = null);
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_xColumn = null;
+			_yColumn = null;
+			_valueColumns = null;
+			_availableTables = null;
+			_availableColumns = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_xColumn = _doc.RowHeaderColumn;
@@ -156,6 +169,32 @@ namespace Altaxo.Gui.Data
 					Current.Gui.FindAndAttachControlTo(_rowsController);
 				_view.Initialize_DataRowsControl(_rowsController.ViewObject);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
+			_doc.GroupNumber = _view.GroupNumber;
+			_doc.UseAllAvailableDataColumnsOfGroup = _view.UseAllAvailableDataColumns;
+			_doc.UseAllAvailableDataRows = _view.UseAllAvailableDataRows;
+
+			_doc.RowHeaderColumn = _xColumn;
+			_doc.ColumnHeaderColumn = _yColumn;
+			_doc.SetDataColumns(_valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
+
+			if (!_doc.UseAllAvailableDataRows)
+			{
+				if (!_rowsController.Apply(disposeController))
+					return false;
+				_doc.SetDataRows((IAscendingIntegerCollection)_rowsController.ModelObject);
+			}
+
+			var tempView = ViewObject;
+			ViewObject = null;
+			Initialize(true);
+			ViewObject = tempView;
+
+			return ApplyEnd(true, disposeController); // successfull
 		}
 
 		protected override void AttachView()
@@ -306,35 +345,6 @@ namespace Altaxo.Gui.Data
 			{
 				_valueColumns.Clear();
 			}
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			_doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
-			_doc.GroupNumber = _view.GroupNumber;
-			_doc.UseAllAvailableDataColumnsOfGroup = _view.UseAllAvailableDataColumns;
-			_doc.UseAllAvailableDataRows = _view.UseAllAvailableDataRows;
-
-			_doc.RowHeaderColumn = _xColumn;
-			_doc.ColumnHeaderColumn = _yColumn;
-			_doc.SetDataColumns(_valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
-
-			if (!_doc.UseAllAvailableDataRows)
-			{
-				if (!_rowsController.Apply(disposeController))
-					return false;
-				_doc.SetDataRows((IAscendingIntegerCollection)_rowsController.ModelObject);
-			}
-
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			var tempView = ViewObject;
-			ViewObject = null;
-			Initialize(true);
-			ViewObject = tempView;
-
-			return true; // successfull
 		}
 	}
 }

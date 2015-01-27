@@ -108,6 +108,12 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
+		/// Is called by this instance if anything inside this member changed.
+		/// </summary>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		protected abstract void EhSelfChanged(EventArgs e);
+
+		/// <summary>
 		/// Fires the change event with the EventArgs provided in the argument.
 		/// </summary>
 		protected virtual void OnChanged(EventArgs e)
@@ -449,6 +455,54 @@ namespace Altaxo.Main
 
 			if (null != tmpNode)
 				tmpNode.Dispose();
+		}
+
+		protected void SetMemberAndRaiseSelfChanged<T>(ref T memberVariable, T value) where T : IEquatable<T>
+		{
+			var oldValue = memberVariable;
+			memberVariable = value;
+
+			if (oldValue != null && value != null)
+			{
+				if (!oldValue.Equals(value))
+					EhSelfChanged(EventArgs.Empty);
+			}
+			else if (oldValue != null || value != null)
+			{
+				EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		protected void SetMemberAndRaiseSelfChanged<T>(ref T? memberVariable, T? value) where T : struct, IEquatable<T>
+		{
+			var oldValue = memberVariable;
+			memberVariable = value;
+
+			if (oldValue != null && value != null)
+			{
+				if (!oldValue.Value.Equals(value.Value))
+					EhSelfChanged(EventArgs.Empty);
+			}
+			else if (oldValue != null || value != null)
+			{
+				EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		protected void SetMemberEnumAndRaiseSelfChanged<T>(ref T memberVariable, T value)
+		{
+			var oldValue = memberVariable;
+			memberVariable = value;
+
+			if (oldValue != null && value != null)
+			{
+				if (!oldValue.Equals(value))
+					EhSelfChanged(EventArgs.Empty);
+			}
+			else if (oldValue != null || value != null)
+			{
+				EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		#endregion Helper functions

@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
 	[UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
-	public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditCopyOfDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
+	public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditOriginalDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
 	{
 		private SelectableListNodeList _availableCultureList;
 
@@ -56,8 +56,18 @@ namespace Altaxo.Gui.Serialization.Ascii
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_numberFormatsToAnalyze = null;
+			_dateTimeFormatsToAnalyze = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				GetAvailableCultures(ref _availableCultureList);
@@ -93,10 +103,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			foreach (var item in _dateTimeFormatsToAnalyze)
 				_doc.DateTimeFormatsToTest.Add((CultureInfo)item.Value.Tag);
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		private int CompareCultures(CultureInfo x, CultureInfo y)

@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorChoiceView))]
-	public class NamedColorChoiceController : MVCANControllerEditCopyOfDocBase<Altaxo.Graph.NamedColor, INamedColorChoiceView>
+	public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<Altaxo.Graph.NamedColor, INamedColorChoiceView>
 	{
 		public bool ShowPlotColorsOnly { get; set; }
 
@@ -51,6 +51,8 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 			}
@@ -80,9 +82,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 					return false;
 			}
 
-			_originalDoc = _doc; // NamedColor is immutable
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Data
 
 	[ExpectedTypeOfView(typeof(IDataSourceImportOptionsView))]
 	[UserControllerForObject(typeof(IDataSourceImportOptions))]
-	public class DataSourceImportOptionsController : MVCANControllerEditCopyOfDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
+	public class DataSourceImportOptionsController : MVCANControllerEditOriginalDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
 	{
 		private Altaxo.Collections.SelectableListNodeList _triggerChoices;
 
@@ -62,6 +62,8 @@ namespace Altaxo.Gui.Data
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_triggerChoices = new Collections.SelectableListNodeList(_doc.ImportTriggerSource);
@@ -137,10 +139,7 @@ namespace Altaxo.Gui.Data
 			_doc.MinimumWaitingTimeAfterLastTriggerInSeconds = minLastTrig;
 			_doc.MaximumWaitingTimeAfterFirstTriggerInSeconds = maxFirstTrig;
 
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

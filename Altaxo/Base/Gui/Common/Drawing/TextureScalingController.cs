@@ -56,22 +56,12 @@ namespace Altaxo.Gui.Common.Drawing
 		bool ShowSizeNotScale { set; }
 	}
 
-	public class TextureScalingController : MVCANDControllerEditCopyOfDocBase<TextureScaling, ITextureScalingView>
+	public class TextureScalingController : MVCANDControllerEditImmutableDocBase<TextureScaling, ITextureScalingView>
 	{
 		/// <summary>
 		/// Size of the original texture.
 		/// </summary>
 		private PointD2D? _sourceTextureSize;
-
-		/// <summary>Sets the size of the source texture. This is used by the view to automatically change the value of one size/scale when the value for the other size/scale is changed.</summary>
-		/// <value>The size of the source texture.</value>
-		public PointD2D SourceTextureSize
-		{
-			set
-			{
-				_sourceTextureSize = value;
-			}
-		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -80,6 +70,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.ScalingMode = _doc.ScalingMode;
@@ -103,6 +95,11 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
+		public override bool Apply(bool disposeController)
+		{
+			return ApplyEnd(true, disposeController);
+		}
+
 		protected override void AttachView()
 		{
 			_view.ScalingModeChanged += EhScalingModeChanged;
@@ -123,10 +120,14 @@ namespace Altaxo.Gui.Common.Drawing
 			base.DetachView();
 		}
 
-		public override bool Apply(bool disposeController)
+		/// <summary>Sets the size of the source texture. This is used by the view to automatically change the value of one size/scale when the value for the other size/scale is changed.</summary>
+		/// <value>The size of the source texture.</value>
+		public PointD2D SourceTextureSize
 		{
-			_originalDoc = _doc;
-			return true;
+			set
+			{
+				_sourceTextureSize = value;
+			}
 		}
 
 		private void EhScalingModeChanged()

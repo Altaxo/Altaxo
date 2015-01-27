@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Main
 
 	[ExpectedTypeOfView(typeof(IPropertyBagView))]
 	[UserControllerForObject(typeof(PropertyBag))]
-	public class PropertyBagController : MVCANControllerEditCopyOfDocBase<PropertyBag, IPropertyBagView>
+	public class PropertyBagController : MVCANControllerEditOriginalDocBase<PropertyBag, IPropertyBagView>
 	{
 		#region Inner types
 
@@ -81,8 +81,16 @@ namespace Altaxo.Gui.Main
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_propertyList = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_propertyList = new SelectableListNodeList();
@@ -108,10 +116,7 @@ namespace Altaxo.Gui.Main
 
 		public override bool Apply(bool disposeController)
 		{
-			if (!object.ReferenceEquals(_doc, _originalDoc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

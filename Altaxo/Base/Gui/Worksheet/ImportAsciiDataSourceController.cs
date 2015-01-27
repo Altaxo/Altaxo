@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Worksheet
 
 	[ExpectedTypeOfView(typeof(IImportAsciiDataSourceView))]
 	[UserControllerForObject(typeof(AsciiImportDataSource))]
-	public class AsciiImportDataSourceController : MVCANControllerEditCopyOfDocBase<AsciiImportDataSource, IImportAsciiDataSourceView>, IMVCSupportsApplyCallback
+	public class AsciiImportDataSourceController : MVCANControllerEditOriginalDocBase<AsciiImportDataSource, IImportAsciiDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _importAsciiOptionsController;
@@ -71,6 +71,8 @@ namespace Altaxo.Gui.Worksheet
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
@@ -108,16 +110,13 @@ namespace Altaxo.Gui.Worksheet
 
 			_doc.SourceFileNames = _fileNames.Select(x => (string)x.Tag);
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
 			var ev = SuccessfullyApplied;
 			if (null != ev)
 			{
 				ev();
 			}
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Serialization.Clipboard
 
 	[ExpectedTypeOfView(typeof(IProjectItemsPasteOptionsView))]
 	[UserControllerForObject(typeof(ProjectItemsPasteOptions))]
-	public class ProjectItemsPasteOptionsController : MVCANControllerEditCopyOfDocBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
+	public class ProjectItemsPasteOptionsController : MVCANControllerEditOriginalDocBase<ProjectItemsPasteOptions, IProjectItemsPasteOptionsView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -55,6 +55,8 @@ namespace Altaxo.Gui.Serialization.Clipboard
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.RelocateReferences = _doc.RelocateReferences.HasValue ? _doc.RelocateReferences.Value : true;
@@ -67,10 +69,7 @@ namespace Altaxo.Gui.Serialization.Clipboard
 			_doc.RelocateReferences = _view.RelocateReferences;
 			_doc.TryToKeepInternalReferences = _view.TryToKeepInternalReferences;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

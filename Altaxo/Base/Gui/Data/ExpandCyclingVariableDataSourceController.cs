@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Data
 
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableDataSourceView))]
 	[UserControllerForObject(typeof(ExpandCyclingVariableColumnDataSource))]
-	public class ExpandCyclingVariableDataSourceController : MVCANControllerEditCopyOfDocBase<ExpandCyclingVariableColumnDataSource, IExpandCyclingVariableDataSourceView>, IMVCSupportsApplyCallback
+	public class ExpandCyclingVariableDataSourceController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnDataSource, IExpandCyclingVariableDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _processOptionsController;
@@ -59,6 +59,8 @@ namespace Altaxo.Gui.Data
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
@@ -96,16 +98,13 @@ namespace Altaxo.Gui.Data
 				if (!result) return result;
 			}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
 			var ev = SuccessfullyApplied;
 			if (null != ev)
 			{
 				ev();
 			}
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

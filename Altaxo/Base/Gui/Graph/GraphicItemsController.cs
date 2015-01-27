@@ -54,8 +54,16 @@ namespace Altaxo.Gui.Graph
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_itemsList = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_itemsList = new SelectableListNodeList();
@@ -82,7 +90,7 @@ namespace Altaxo.Gui.Graph
 					_doc.Add((IGraphicBase)node.Tag);
 				}
 			}
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()

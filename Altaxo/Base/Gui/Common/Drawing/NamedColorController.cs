@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 	[ExpectedTypeOfView(typeof(INamedColorView))]
 	[UserControllerForObject(typeof(Altaxo.Graph.NamedColor))]
-	public class NamedColorController : MVCANDControllerEditCopyOfDocBase<Altaxo.Graph.NamedColor, INamedColorView>
+	public class NamedColorController : MVCANDControllerEditImmutableDocBase<Altaxo.Graph.NamedColor, INamedColorView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -47,10 +47,18 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.SelectedColor = _doc;
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc = _view.SelectedColor;
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -67,12 +75,6 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			_doc = _view.SelectedColor;
 			OnMadeDirty();
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			_originalDoc = _view.SelectedColor;
-			return true;
 		}
 	}
 }

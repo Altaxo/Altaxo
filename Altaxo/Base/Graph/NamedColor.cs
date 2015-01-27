@@ -34,7 +34,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[Serializable]
 	[System.ComponentModel.ImmutableObject(true)]
-	public struct NamedColor : IEquatable<NamedColor>, IEquatable<AxoColor>
+	public struct NamedColor : IEquatable<NamedColor>, IEquatable<AxoColor>, Altaxo.Main.IImmutable
 	{
 		private AxoColor _color;
 		private string _name;

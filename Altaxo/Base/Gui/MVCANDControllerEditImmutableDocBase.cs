@@ -36,8 +36,7 @@ namespace Altaxo.Gui
 	/// </summary>
 	/// <typeparam name="TModel">The type of the document to edit.</typeparam>
 	/// <typeparam name="TView">The type of the view.</typeparam>
-	public abstract class MVCANDControllerEditCopyOfDocBase<TModel, TView> : MVCANControllerEditCopyOfDocBase<TModel, TView>, IMVCANDController
-		where TModel : class // for structs or immutables use the MVCANDControllerEditImmutableDocBase
+	public abstract class MVCANDControllerEditImmutableDocBase<TModel, TView> : MVCANControllerEditImmutableDocBase<TModel, TView>, IMVCANDController
 		where TView : class
 	{
 		/// <summary>
@@ -63,8 +62,6 @@ namespace Altaxo.Gui
 				return false;
 
 			_doc = _originalDoc = (TModel)args[0];
-			if (_useDocumentCopy && _originalDoc is ICloneable)
-				_doc = (TModel)((ICloneable)_originalDoc).Clone();
 
 			using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
 			{

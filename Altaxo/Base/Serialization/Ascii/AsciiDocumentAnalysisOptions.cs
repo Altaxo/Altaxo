@@ -35,7 +35,10 @@ namespace Altaxo.Serialization.Ascii
 	/// <summary>
 	/// Stores information about how to analyze an ASCII data file.
 	/// </summary>
-	public class AsciiDocumentAnalysisOptions : Main.ICopyFrom
+	public class AsciiDocumentAnalysisOptions
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		Main.ICopyFrom
 	{
 		/// <summary>
 		/// Storage path for storing this instance in the application properties.
@@ -168,6 +171,9 @@ namespace Altaxo.Serialization.Ascii
 				this._numberOfLinesToAnalyze = from._numberOfLinesToAnalyze;
 				this._numberFormatsToTest = new HashSet<CultureInfo>(from._numberFormatsToTest);
 				this._dateTimeFormatsToTest = new HashSet<CultureInfo>(from._dateTimeFormatsToTest);
+
+				EhSelfChanged(EventArgs.Empty);
+
 				return true;
 			}
 			return false;
@@ -247,7 +253,10 @@ namespace Altaxo.Serialization.Ascii
 		public int NumberOfLinesToAnalyze
 		{
 			get { return _numberOfLinesToAnalyze; }
-			set { _numberOfLinesToAnalyze = value; }
+			set
+			{
+				SetMemberAndRaiseSelfChanged(ref _numberOfLinesToAnalyze, value);
+			}
 		}
 
 		/// <summary>

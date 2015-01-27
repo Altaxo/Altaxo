@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Data
 
 	[UserControllerForObject(typeof(ExpandCyclingVariableColumnOptions))]
 	[ExpectedTypeOfView(typeof(IExpandCyclingVariableOptionsView))]
-	public class ExpandCyclingVariableOptionsController : MVCANControllerEditCopyOfDocBase<ExpandCyclingVariableColumnOptions, IExpandCyclingVariableOptionsView>
+	public class ExpandCyclingVariableOptionsController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnOptions, IExpandCyclingVariableOptionsView>
 	{
 		private SelectableListNodeList _choicesDestinationOutputFormat;
 		private SelectableListNodeList _choicesDestinationX;
@@ -57,8 +57,20 @@ namespace Altaxo.Gui.Data
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_choicesDestinationOutputFormat = null;
+			_choicesDestinationX = null;
+			_choicesDestinationColSort = null;
+			_choicesDestinationRowSort = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_choicesDestinationOutputFormat = new SelectableListNodeList();
@@ -89,10 +101,7 @@ namespace Altaxo.Gui.Data
 			_doc.DestinationColumnSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationColSort.FirstSelectedNode.Tag;
 			_doc.DestinationRowSorting = (ExpandCyclingVariableColumnOptions.OutputSorting)_choicesDestinationRowSort.FirstSelectedNode.Tag;
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Common.Tools
 
 	[UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
 	[ExpectedTypeOfView(typeof(ITestAllProjectsInFolderView))]
-	public class TestAllProjectsInFolderController : MVCANControllerEditCopyOfDocBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
+	public class TestAllProjectsInFolderController : MVCANControllerEditOriginalDocBase<TestAllProjectsInFolderOptions, ITestAllProjectsInFolderView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -48,6 +48,8 @@ namespace Altaxo.Gui.Common.Tools
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (null != _view)
 			{
 				_view.FolderPaths = _doc.FolderPaths;
@@ -60,10 +62,9 @@ namespace Altaxo.Gui.Common.Tools
 			_doc.TestSavingAndReopening = _view.TestSavingAndReopening;
 			_doc.FolderPaths = _view.FolderPaths;
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
+			var applyResult = !string.IsNullOrEmpty(_doc.FolderPaths);
 
-			return !string.IsNullOrEmpty(_doc.FolderPaths);
+			return ApplyEnd(applyResult, disposeController);
 		}
 	}
 }

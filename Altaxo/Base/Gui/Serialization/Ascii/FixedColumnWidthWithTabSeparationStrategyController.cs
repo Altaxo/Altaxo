@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
 	[ExpectedTypeOfView(typeof(IFixedColumnWidthWithTabSeparationStrategyView))]
 	[UserControllerForObject(typeof(FixedColumnWidthWithTabSeparationStrategy))]
-	public class FixedColumnWidthWithTabSeparationStrategyController : MVCANControllerEditCopyOfDocBase<FixedColumnWidthWithTabSeparationStrategy, IFixedColumnWidthWithTabSeparationStrategyView>
+	public class FixedColumnWidthWithTabSeparationStrategyController : MVCANControllerEditOriginalDocBase<FixedColumnWidthWithTabSeparationStrategy, IFixedColumnWidthWithTabSeparationStrategyView>
 	{
 		private ObservableCollection<Boxed<int>> _positions;
 
@@ -50,8 +50,16 @@ namespace Altaxo.Gui.Serialization.Ascii
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_positions = null;
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_positions = new ObservableCollection<Boxed<int>>(Boxed<int>.ToBoxedItems(_doc.StartPositions));
@@ -78,10 +86,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 			}
 			_doc.StartPositions = resList.ToArray();
 
-			if (_useDocumentCopy)
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

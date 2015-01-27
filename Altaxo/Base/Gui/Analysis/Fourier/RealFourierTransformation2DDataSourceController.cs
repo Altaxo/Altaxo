@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 	[ExpectedTypeOfView(typeof(IRealFourierTransformation2DDataSourceView))]
 	[UserControllerForObject(typeof(FourierTransformation2DDataSource))]
-	public class RealFourierTransformation2DDataSourceController : MVCANControllerEditCopyOfDocBase<FourierTransformation2DDataSource, IRealFourierTransformation2DDataSourceView>, IMVCSupportsApplyCallback
+	public class RealFourierTransformation2DDataSourceController : MVCANControllerEditOriginalDocBase<FourierTransformation2DDataSource, IRealFourierTransformation2DDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _fourierTransformationOptionsController;
@@ -58,6 +58,8 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
@@ -92,16 +94,13 @@ namespace Altaxo.Gui.Analysis.Fourier
 				if (!result) return result;
 			}
 
-			if (!object.ReferenceEquals(_originalDoc, _doc))
-				CopyHelper.Copy(ref _originalDoc, _doc);
-
 			var ev = SuccessfullyApplied;
 			if (null != ev)
 			{
 				ev();
 			}
 
-			return true;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

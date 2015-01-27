@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-	public interface IDataSourceImportOptions : ICloneable
+	public interface IDataSourceImportOptions : ICloneable, Altaxo.Main.IDocumentLeafNode
 	{
 		/// <summary>
 		/// Gets a value indicating whether the data that are cached in the Altaxo table should be saved within the Altaxo project.
@@ -90,7 +90,11 @@ namespace Altaxo.Data
 		double MinimumWaitingTimeAfterLastTriggerInSeconds { get; }
 	}
 
-	public class DataSourceImportOptions : IDataSourceImportOptions, Main.ICopyFrom
+	public class DataSourceImportOptions
+		:
+		Main.SuspendableDocumentLeafNodeWithEventArgs,
+		IDataSourceImportOptions,
+		Main.ICopyFrom
 	{
 		protected ImportTriggerSource _importTriggerSource;
 		protected bool _doNotSaveCachedTableData;
@@ -118,6 +122,9 @@ namespace Altaxo.Data
 				_minimumWaitingTimeAfterFirstTrigger = from._minimumWaitingTimeAfterFirstTrigger;
 				_maximumWaitingTimeAfterFirstTrigger = from._maximumWaitingTimeAfterFirstTrigger;
 				_minimumWaitingTimeAfterLastTrigger = from._minimumWaitingTimeAfterLastTrigger;
+
+				EhSelfChanged(EventArgs.Empty);
+
 				return true;
 			}
 
@@ -234,7 +241,7 @@ namespace Altaxo.Data
 		public bool DoNotSaveCachedTableData
 		{
 			get { return _doNotSaveCachedTableData; }
-			set { _doNotSaveCachedTableData = value; }
+			set { SetMemberAndRaiseSelfChanged(ref _doNotSaveCachedTableData, value); }
 		}
 
 		/// <summary>
@@ -246,7 +253,7 @@ namespace Altaxo.Data
 		public Data.ImportTriggerSource ImportTriggerSource
 		{
 			get { return _importTriggerSource; }
-			set { _importTriggerSource = value; }
+			set { SetMemberEnumAndRaiseSelfChanged(ref _importTriggerSource, value); }
 		}
 
 		/// <summary>
@@ -263,7 +270,7 @@ namespace Altaxo.Data
 		public bool ExecuteTableScriptAfterImport
 		{
 			get { return _executeTableScriptAfterImport; }
-			set { _executeTableScriptAfterImport = value; }
+			set { SetMemberAndRaiseSelfChanged(ref _executeTableScriptAfterImport, value); }
 		}
 
 		/// <summary>
@@ -282,7 +289,7 @@ namespace Altaxo.Data
 				if (!(value >= 0))
 					throw new ArgumentOutOfRangeException("MinimumTimeIntervalBetweenUpdatesInSeconds must be a value >= 0");
 
-				_minimumWaitingTimeAfterUpdate = value;
+				SetMemberAndRaiseSelfChanged(ref _minimumWaitingTimeAfterUpdate, value);
 			}
 		}
 
@@ -305,7 +312,7 @@ namespace Altaxo.Data
 				if (!(value >= 0))
 					throw new ArgumentOutOfRangeException("MaximumWaitingTimeAfterUpdateInSeconds must be a value >= 0");
 
-				_maximumWaitingTimeAfterUpdate = value;
+				SetMemberAndRaiseSelfChanged(ref _maximumWaitingTimeAfterUpdate, value);
 			}
 		}
 
@@ -324,8 +331,7 @@ namespace Altaxo.Data
 				if (!(value >= 0))
 					throw new ArgumentOutOfRangeException("MinimumWaitingTimeAfterFirstTrigger must not be negative!");
 
-				var oldValue = _minimumWaitingTimeAfterFirstTrigger;
-				_minimumWaitingTimeAfterFirstTrigger = value;
+				SetMemberAndRaiseSelfChanged(ref _minimumWaitingTimeAfterFirstTrigger, value);
 			}
 		}
 
@@ -344,8 +350,7 @@ namespace Altaxo.Data
 				if (!(value >= 0))
 					throw new ArgumentOutOfRangeException("MaximumWaitingTimeAfterFirstTrigger must not be negative!");
 
-				var oldValue = _maximumWaitingTimeAfterFirstTrigger;
-				_maximumWaitingTimeAfterFirstTrigger = value;
+				SetMemberAndRaiseSelfChanged(ref _maximumWaitingTimeAfterFirstTrigger, value);
 			}
 		}
 
@@ -364,8 +369,7 @@ namespace Altaxo.Data
 				if (!(value >= 0))
 					throw new ArgumentOutOfRangeException("MinimumWaitingTimeAfterLastTrigger must not be negative!");
 
-				var oldValue = _minimumWaitingTimeAfterLastTrigger;
-				_minimumWaitingTimeAfterLastTrigger = value;
+				SetMemberAndRaiseSelfChanged(ref _minimumWaitingTimeAfterLastTrigger, value);
 			}
 		}
 	}

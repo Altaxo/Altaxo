@@ -116,6 +116,14 @@ namespace Altaxo.Gui.Main
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_propertyList = null;
+			_availablePropertyKeys = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (null == args || 0 == args.Length || !(args[0] is PropertyHierarchy))
@@ -131,6 +139,8 @@ namespace Altaxo.Gui.Main
 
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				Altaxo.Main.Services.ReflectionService.ForceRegisteringOfAllPropertyKeys();
@@ -209,9 +219,11 @@ namespace Altaxo.Gui.Main
 		public override bool Apply(bool disposeController)
 		{
 			if (!object.ReferenceEquals(_doc, _originalDoc))
-			{
 				_originalDoc.TopmostBag.CopyFrom(_doc.TopmostBag);
-			}
+
+			if (disposeController)
+				Dispose();
+
 			return true;
 		}
 

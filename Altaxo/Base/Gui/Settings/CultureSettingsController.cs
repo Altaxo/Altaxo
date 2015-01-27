@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Settings
 	/// <summary>Manages the user interaction to set the members of <see cref="CultureSettings"/>.</summary>
 	[ExpectedTypeOfView(typeof(ICultureSettingsView))]
 	[UserControllerForObject(typeof(CultureSettings))]
-	public class CultureSettingsController : MVCANControllerEditCopyOfDocBase<CultureSettings, ICultureSettingsView>
+	public class CultureSettingsController : MVCANControllerEditOriginalDocBase<CultureSettings, ICultureSettingsView>
 	{
 		/// <summary>List of available cultures.</summary>
 		private SelectableListNodeList _availableCulturesList;
@@ -66,8 +66,17 @@ namespace Altaxo.Gui.Settings
 			yield break;
 		}
 
+		public override void Dispose(bool isDisposing)
+		{
+			_availableCulturesList = null;
+
+			base.Dispose(isDisposing);
+		}
+
 		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
 			if (initData)
 			{
 				_availableCulturesList = new SelectableListNodeList();
@@ -89,14 +98,14 @@ namespace Altaxo.Gui.Settings
 			}
 		}
 
-		private void AddToCultureList(CultureInfo cult, bool isSelected)
+		public override bool Apply(bool disposeController)
 		{
-			_availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, cult.LCID == _doc.CultureID));
-		}
+			var docCulture = (CultureInfo)_doc.Culture.Clone();
+			docCulture.NumberFormat.NumberDecimalSeparator = _view.NumberDecimalSeparator;
+			docCulture.NumberFormat.NumberGroupSeparator = _view.NumberGroupSeparator;
+			_doc = new CultureSettings(docCulture);
 
-		private int CompareCultures(CultureInfo x, CultureInfo y)
-		{
-			return string.Compare(x.DisplayName, y.DisplayName);
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
@@ -109,6 +118,16 @@ namespace Altaxo.Gui.Settings
 		{
 			_view.CultureChanged -= EhCultureChanged;
 			base.DetachView();
+		}
+
+		private void AddToCultureList(CultureInfo cult, bool isSelected)
+		{
+			_availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, cult.LCID == _doc.CultureID));
+		}
+
+		private int CompareCultures(CultureInfo x, CultureInfo y)
+		{
+			return string.Compare(x.DisplayName, y.DisplayName);
 		}
 
 		private void EhCultureChanged()
@@ -126,17 +145,6 @@ namespace Altaxo.Gui.Settings
 		{
 			_view.NumberDecimalSeparator = s.NumberDecimalSeparator;
 			_view.NumberGroupSeparator = s.NumberGroupSeparator;
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			var doc = (CultureInfo)_doc.Culture.Clone();
-			doc.NumberFormat.NumberDecimalSeparator = _view.NumberDecimalSeparator;
-			doc.NumberFormat.NumberGroupSeparator = _view.NumberGroupSeparator;
-			_doc = new CultureSettings(doc);
-			_originalDoc = (CultureSettings)_doc.Clone();
-
-			return true;
 		}
 	}
 }
