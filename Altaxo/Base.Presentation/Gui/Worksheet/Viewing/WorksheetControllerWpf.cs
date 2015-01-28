@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
+using Altaxo.Graph.Gdi;
+using Altaxo.Serialization;
+using Altaxo.Serialization.Ascii;
+using Altaxo.Worksheet;
+using Altaxo.Worksheet.Commands;
 using System;
+
 //using System.Drawing;
 //using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls;
-
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
-
-using Altaxo.Graph.Gdi;
-using Altaxo.Data;
-using Altaxo.Serialization;
-using Altaxo.Serialization.Ascii;
-using Altaxo.Collections;
-using Altaxo.Worksheet;
-using Altaxo.Worksheet.Commands;
-
-
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -60,27 +57,25 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
 
-
 		#region Member variables
-
 
 		/// <summary>Holds the view (the window where the graph is visualized).</summary>
 		protected WorksheetViewWpf _view;
 
-
 		/// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
 		protected SelectionType _lastSelectionType;
-
 
 		/// <summary>
 		/// Horizontal scroll position; number of first column that is shown.
 		/// </summary>
 		private int _scrollHorzPos;
+
 		/// <summary>
 		/// Vertical scroll position; Positive values: number of first data column
 		/// that is shown. Negative Values scroll more up in case of property columns.
 		/// </summary>
 		private int _scrollVertPos;
+
 		private int _scrollHorzMax;
 		private int _scrollVertMax;
 
@@ -99,17 +94,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// </summary>
 		protected IndexSelection _selectedPropertyColumns; // holds the selected property columns
 
-
 		/// <summary>
 		/// Holds the indizes to the selected property rows (but only in case property cells are selected alone).
 		/// </summary>
 		protected IndexSelection _selectedPropertyRows; // holds the selected property rows
 
-
 		/// <summary>
 		/// Cached number of table rows.
 		/// </summary>
 		protected int _numberOfTableRows; // cached number of rows of the table
+
 		/// <summary>
 		/// Cached number of table columns.
 		/// </summary>
@@ -122,6 +116,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		/// <summary>List of x positions where the horizontal resizing cursor should be shown in order to resize the columns.</summary>
 		protected List<double> _columnWidthResizingPositions = new List<double>();
+
 		/// <summary>Index of the first data column that was shown when the list of resizing positions was created.</summary>
 		protected int _columnWidthResizingPositionsFirstColumnIndex;
 
@@ -133,11 +128,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		private double _dragColumnWidth_OriginalWidth;
 		private bool _dragColumnWidth_InCapture;
 
-
 		protected bool _cellEdit_IsArmed;
 		protected bool _cellEdit_IsModified;
 		private AreaInfo _cellEdit_EditedCell;
-
 
 		protected TextBox _cellEditControl;
 		protected VisualHost _visualHost;
@@ -184,18 +177,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			// Cached number of property columns.
 			_numberOfPropertyCols = 0; // cached number of property  columnsof the table
 
-
-
 			_mouseDownPosition = new Point(0, 0); // holds the position of a double click
 			_dragColumnWidth_ColumnNumber = int.MinValue; // stores the column number if mouse hovers over separator
 			_dragColumnWidth_OriginalPos = 0;
 			_dragColumnWidth_OriginalWidth = 0;
 			_dragColumnWidth_InCapture = false;
 
-
 			_cellEdit_IsArmed = false;
 			_cellEdit_EditedCell = new AreaInfo();
-
 
 			_cellEditControl = new TextBox();
 			_cellEditControl.AcceptsTab = true;
@@ -214,9 +203,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			_visualHost = new VisualHost(EhView_TableAreaPaint);
 		}
 
-	
-
-		#endregion
+		#endregion Member variables
 
 		#region Constructors
 
@@ -246,13 +233,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			base.Dispose();
 		}
 
-		#endregion // Constructors
+		#endregion Constructors
 
 		#region public properties
-
-	
-
-	
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public double TableAreaWidth
@@ -266,7 +249,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			get { return _view.TableAreaSize.Height; }
 		}
 
-		#endregion
+		#endregion public properties
 
 		#region Selection of rows and columns
 
@@ -298,14 +281,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// Returns the currently selected property rows if property cells are selected alone. If not selected alone, the SelectedColumn property is returned.
 		/// </summary>
 		/// <remarks>Normally, if you select one or more data column, the corresponding property rows are selected by this. So it would be not possible to selected property rows without selecting the
-		/// data column also. In order to fix this, you can first select property columns and then columns. In this case the selection is not stored into 
+		/// data column also. In order to fix this, you can first select property columns and then columns. In this case the selection is not stored into
 		/// SelectedColumns, but in SelectedPropertyRows, and SelectedColumns.Count returns 0.</remarks>
 		public override IndexSelection SelectedPropertyRows
 		{
 			get { return _selectedPropertyRows.Count > 0 ? _selectedPropertyRows : _selectedDataColumns; }
 		}
-
-
 
 		/// <summary>
 		/// Returns true if one or more property columns or rows are selected.
@@ -318,7 +299,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-
 		/// <summary>
 		/// Returns true if one or more data columns or rows are selected.
 		/// </summary>
@@ -326,7 +306,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			get { return this.DataTable.DataColumns.ColumnCount > 0 && SelectedDataColumns.Count > 0 || SelectedDataRows.Count > 0; }
 		}
-
 
 		/// <summary>
 		/// Returns true if one or more columns, rows or property columns or rows are selected.
@@ -349,9 +328,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			TableAreaInvalidate();
 		}
 
-
-
-		#endregion
+		#endregion Selection of rows and columns
 
 		#region Shortcuts for column style retrieving
 
@@ -375,15 +352,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			return _worksheetLayout.PropertyColumnStyles[_table.PropertyColumns[i]];
 		}
 
-		#endregion
+		#endregion Shortcuts for column style retrieving
 
 		#region Data event handlers
-
 
 		public void EhTableDataChanged(object sender, EventArgs e)
 		{
 			Current.Gui.BeginExecute(EhTableDataChanged_Unsynchronized);
 		}
+
 		private void EhTableDataChanged_Unsynchronized()
 		{
 			if (this._numberOfTableRows != DataTable.DataColumns.RowCount)
@@ -408,7 +385,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		public void AdjustXScrollBarMaximum()
 		{
-
 			this.HorzScrollMaximum = _numberOfTableCols > 0 ? _numberOfTableCols - 1 : 0;
 
 			if (HorzScrollPos + 1 > _numberOfTableCols)
@@ -419,11 +395,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				AdjustXScrollBarViewPortSize();
 				_view.TableAreaInvalidate();
 			}
-			
 		}
 
 		/// <summary>Adjusts the X scroll bar view port size (=size of the thumb). Should be called after the XScrollbarMaximum is adusted or when the width of the columns changed considerably.
-		/// Here, we want to avoid that the thumb size changed when we scroll through the worksheet. Thus, we calculate a average value for the thumb size that is relation of the table area width and 
+		/// Here, we want to avoid that the thumb size changed when we scroll through the worksheet. Thus, we calculate a average value for the thumb size that is relation of the table area width and
 		/// the total width of all data columns.</summary>
 		public void AdjustXScrollBarViewPortSize()
 		{
@@ -454,7 +429,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-
 		protected virtual void SetCachedNumberOfDataRows()
 		{
 			// ask for table dimensions, compare with cached dimensions
@@ -466,7 +440,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			{
 				AdjustYScrollBarMaximum();
 			}
-
 		}
 
 		protected virtual void SetCachedNumberOfPropertyColumns()
@@ -489,6 +462,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				{
 					this.VertScrollPos = -this.TotalEnabledPropertyColumns;
 				}
+				else
+				{
+					// we first bring the VertScrollPosition to an allowed value
+					this.VertScrollPos = Math.Max(this.VertScrollPos, -this.TotalEnabledPropertyColumns);
+				}
 			}
 		}
 
@@ -496,27 +474,27 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			Current.Gui.Execute(EhPropertyDataChanged_Unsynchronized, sender, e);
 		}
+
 		private void EhPropertyDataChanged_Unsynchronized(object sender, EventArgs e)
 		{
 			if (this._numberOfPropertyCols != DataTable.PropCols.ColumnCount)
 				SetCachedNumberOfPropertyColumns();
 
-
 			TableAreaInvalidate();
 		}
 
-		#endregion
+		#endregion Data event handlers
 
 		#region CellEditControl logic
 
 		#region CellEditControl event handlers
 
-		void EhCellEditControl_LostFocus(object sender, RoutedEventArgs e)
+		private void EhCellEditControl_LostFocus(object sender, RoutedEventArgs e)
 		{
 			ReadCellEditContentAndHide();
 		}
 
-		void EhCellEditControl_PreviewKeyDown(object sender, KeyEventArgs e)
+		private void EhCellEditControl_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Left)
 			{
@@ -579,10 +557,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					NavigateCellEdit(1, 0);
 				}
 			}
-
 		}
 
-		void EhCellEditControl_TextChanged(object sender, TextChangedEventArgs e)
+		private void EhCellEditControl_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			_cellEdit_IsModified = true;
 		}
@@ -591,15 +568,15 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#region CellEditControl Show and Hide
 
-		void HideCellEditControl()
+		private void HideCellEditControl()
 		{
 			_cellEditControl.Visibility = Visibility.Hidden;
 			_cellEdit_IsArmed = false;
-			if(null!=_view) // view can already be closed
+			if (null != _view) // view can already be closed
 				_view.Canvas.Focus();
 		}
 
-		void ShowCellEditControl()
+		private void ShowCellEditControl()
 		{
 			if (!_view.Canvas.Children.Contains(_cellEditControl))
 				_view.Canvas.Children.Add(_cellEditControl);
@@ -644,8 +621,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			ShowCellEditControl();
 		}
 
-		#endregion
-
+		#endregion CellEditControl Show and Hide
 
 		#region CellEditControl Navigation
 
@@ -678,7 +654,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			bool bScrolled = false;
 
-			// Calculate the position of the new cell   
+			// Calculate the position of the new cell
 			int newCellCol = this._cellEdit_EditedCell.ColumnNumber + dx;
 			if (newCellCol >= DataTable.DataColumns.ColumnCount)
 			{
@@ -702,7 +678,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			if (newCellRow < 0)
 				newCellRow = 0;
 			// note: we do not catch the condition newCellRow>rowCount here since we want to add new rows
-
 
 			// look if the cell position has changed
 			if (newCellRow == _cellEdit_EditedCell.RowNumber && newCellCol == _cellEdit_EditedCell.ColumnNumber)
@@ -751,7 +726,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			return true;
 		}
 
-
 		/// <summary>
 		/// NavigatePropertyCellEdit moves the cell edit control to the next cell
 		/// </summary>
@@ -761,7 +735,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		protected bool NavigatePropertyCellEdit(int dx, int dy)
 		{
 			bool bScrolled = false;
-
 
 			// 2. look whether the new cell coordinates lie inside the client area, if
 			// not scroll the worksheet appropriate
@@ -832,11 +805,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			// 1. Read content of the cell edit, if neccessary write data back
 			ReadCellEditContentAndHide();
 
-
-
 			int navigateToCol;
 			int navigateToRow;
-
 
 			if (newCellCol < FirstVisiblePropertyColumn)
 				navigateToCol = newCellCol - _numberOfPropertyCols;
@@ -844,7 +814,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				navigateToCol = newCellCol - this.FullyVisiblePropertyColumns + 1 - _numberOfPropertyCols;
 			else
 				navigateToCol = this.VertScrollPos;
-
 
 			if (newCellRow < FirstVisibleColumn)
 				navigateToRow = newCellRow;
@@ -877,7 +846,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#endregion CellEditControl Navigation
 
-		#endregion CellEditControl
+		#endregion CellEditControl logic
 
 		#region Shortcuts for number and position of rows and columns
 
@@ -939,7 +908,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-		#endregion
+		#endregion Data rows
 
 		#region Property columns
 
@@ -962,8 +931,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				return AM.GetTotalEnabledPropertyColumns(_worksheetLayout);
 			}
 		}
-
-
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int FirstVisiblePropertyColumn
@@ -1001,7 +968,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-		#endregion property columns
+		#endregion Property columns
 
 		#region Data columns
 
@@ -1023,7 +990,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			get
 			{
-
 				return AM.GetVisibleColumns(_worksheetLayout, HorzScrollPos, TableAreaWidth);
 			}
 		}
@@ -1037,8 +1003,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-
-
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int LastFullyVisibleColumn
 		{
@@ -1050,10 +1014,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		#endregion Data columns
 
-		#endregion Number and position of rows and columns
+		#endregion Shortcuts for number and position of rows and columns
 
 		#region Scrolling logic
-
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int HorzScrollPos
@@ -1066,7 +1029,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 				if (value != oldValue)
 				{
-
 					if (_cellEdit_IsArmed)
 					{
 						ReadCellEditContentAndHide();
@@ -1112,7 +1074,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					{
 						newValue += this.TotalEnabledPropertyColumns;
 						this._view.TableViewVertScrollValue = newValue;
-						this._view.TableViewVertViewPortSize = AM.GetVisibleTableRows(0, this.TableAreaHeight, _worksheetLayout, newValue) + AM.GetVisiblePropertyColumns(0,this.TableAreaHeight,_worksheetLayout,newValue);
+						this._view.TableViewVertViewPortSize = AM.GetVisibleTableRows(0, this.TableAreaHeight, _worksheetLayout, newValue) + AM.GetVisiblePropertyColumns(0, this.TableAreaHeight, _worksheetLayout, newValue);
 						TableAreaInvalidate();
 					}
 				}
@@ -1143,7 +1105,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 
 		/// <summary>
-		/// SetScrollPositions only sets the scroll positions, and not Invalidates the 
+		/// SetScrollPositions only sets the scroll positions, and not Invalidates the
 		/// Area!
 		/// </summary>
 		/// <param name="nCol">first visible column (i.e. column at the left)</param>
@@ -1160,13 +1122,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			this.VertScrollPos = nRow;
 		}
 
-
 		#endregion Scrolling logic
 
 		#region IWorksheetController Members
-
-		
-
 
 		public override object ViewObject
 		{
@@ -1199,9 +1157,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					this.VertScrollPos = this._scrollVertPos;
 					this.HorzScrollPos = this._scrollHorzPos;
 
-
-
-					// Simulate a SizeChanged event 
+					// Simulate a SizeChanged event
 					this.EhView_TableAreaSizeChanged(new EventArgs());
 				}
 			}
@@ -1215,7 +1171,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public void EhView_HorzScrollBarScroll(System.Windows.Controls.Primitives.ScrollEventArgs e)
 		{
 			//if (e.ScrollEventType != System.Windows.Controls.Primitives.ScrollEventType.ThumbTrack)
-				HorzScrollPos = (int)e.NewValue;
+			HorzScrollPos = (int)e.NewValue;
 		}
 
 		public void EhView_TableAreaMouseUp(Point position, MouseButtonEventArgs e)
@@ -1248,7 +1204,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				this._view.TableAreaCapture = false;
 				this._view.TableAreaCursor = Cursors.Arrow;
 				this._view.TableAreaInvalidate();
-
 			}
 		}
 
@@ -1273,7 +1228,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// <param name="e">MouseEventArgs.</param>
 		public void EhView_TableAreaMouseWheel(Point position, MouseWheelEventArgs e)
 		{
-
 			int oldScrollPos = VertScrollPos;
 			VertScrollPos = VertScrollPos - e.Delta / 120;
 		}
@@ -1338,6 +1292,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		}
 
 		#region MouseClick functions
+
 		protected virtual void OnLeftClickDataCell(AreaInfo clickedCell)
 		{
 			_cellEdit_EditedCell = clickedCell;
@@ -1453,8 +1408,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				_selectedPropertyRows.Clear();
 			}
 
-
-
 			if (this.SelectedPropertyColumns.Count != 0 || !bWasSelectedBefore)
 				_selectedPropertyColumns.Select(clickedCell.ColumnNumber, bShiftKey, bControlKey);
 
@@ -1464,6 +1417,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> TableHeaderLeftClicked;
+
 		protected virtual void OnLeftClickTableHeader(AreaInfo clickedCell)
 		{
 			if (null != TableHeaderLeftClicked)
@@ -1472,6 +1426,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> OutsideAllLeftClicked;
+
 		protected virtual void OnLeftClickOutsideAll(AreaInfo clickedCell)
 		{
 			if (null != OutsideAllLeftClicked)
@@ -1480,6 +1435,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> DataCellRightClicked;
+
 		protected virtual void OnRightClickDataCell(AreaInfo clickedCell)
 		{
 			if (null != DataCellRightClicked)
@@ -1488,6 +1444,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> PropertyCellRightClicked;
+
 		protected virtual void OnRightClickPropertyCell(AreaInfo clickedCell)
 		{
 			if (null != PropertyCellRightClicked)
@@ -1496,6 +1453,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> DataColumnHeaderRightClicked;
+
 		protected virtual void OnRightClickDataColumnHeader(AreaInfo clickedCell)
 		{
 			if (null != DataColumnHeaderRightClicked)
@@ -1513,6 +1471,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> DataRowHeaderRightClicked;
+
 		protected virtual void OnRightClickDataRowHeader(AreaInfo clickedCell)
 		{
 			if (null != DataRowHeaderRightClicked)
@@ -1529,6 +1488,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> PropertyColumnHeaderRightClicked;
+
 		protected virtual void OnRightClickPropertyColumnHeader(AreaInfo clickedCell)
 		{
 			if (null != PropertyColumnHeaderRightClicked)
@@ -1545,6 +1505,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> TableHeaderRightClicked;
+
 		protected virtual void OnRightClickTableHeader(AreaInfo clickedCell)
 		{
 			if (null != TableHeaderRightClicked)
@@ -1555,6 +1516,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		[field: NonSerialized]
 		public event Action<object, AreaInfo> OutsideAllRightClicked;
+
 		protected virtual void OnRightClickOutsideAll(AreaInfo clickedCell)
 		{
 			if (null != OutsideAllRightClicked)
@@ -1562,7 +1524,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			Current.Gui.ShowContextMenu(_view, _view, "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu", clickedCell.AreaRectangle.X, clickedCell.AreaRectangle.Y);
 		}
-		#endregion
+
+		#endregion MouseClick functions
 
 		public void EhView_TableAreaMouseClick(Point position, MouseButtonEventArgs e)
 		{
@@ -1577,21 +1540,27 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					case AreaType.DataCell:
 						OnLeftClickDataCell(_mouseInfo);
 						break;
+
 					case AreaType.PropertyCell:
 						OnLeftClickPropertyCell(_mouseInfo);
 						break;
+
 					case AreaType.PropertyColumnHeader:
 						OnLeftClickPropertyColumnHeader(_mouseInfo);
 						break;
+
 					case AreaType.DataColumnHeader:
 						OnLeftClickDataColumnHeader(_mouseInfo);
 						break;
+
 					case AreaType.DataRowHeader:
 						OnLeftClickDataRowHeader(_mouseInfo);
 						break;
+
 					case AreaType.TableHeader:
 						OnLeftClickTableHeader(_mouseInfo);
 						break;
+
 					case AreaType.OutsideAll:
 						OnLeftClickOutsideAll(_mouseInfo);
 						break;
@@ -1604,21 +1573,27 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					case AreaType.DataCell:
 						OnRightClickDataCell(_mouseInfo);
 						break;
+
 					case AreaType.PropertyCell:
 						OnRightClickPropertyCell(_mouseInfo);
 						break;
+
 					case AreaType.PropertyColumnHeader:
 						OnRightClickPropertyColumnHeader(_mouseInfo);
 						break;
+
 					case AreaType.DataColumnHeader:
 						OnRightClickDataColumnHeader(_mouseInfo);
 						break;
+
 					case AreaType.DataRowHeader:
 						OnRightClickDataRowHeader(_mouseInfo);
 						break;
+
 					case AreaType.TableHeader:
 						OnRightClickTableHeader(_mouseInfo);
 						break;
+
 					case AreaType.OutsideAll:
 						OnRightClickOutsideAll(_mouseInfo);
 						break;
@@ -1665,7 +1640,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			TableAreaInvalidate();
 		}
 
-		#endregion
+		#endregion IWorksheetController Members
 
 		#region ClipboardHandler Members
 
@@ -1718,7 +1693,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				// Copy the selected Columns to the clipboard
 				EditCommands.CopyToClipboard(this);
 			}
-
 		}
 
 		public override void Paste()
@@ -1749,6 +1723,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				Current.ProjectService.DeleteTable(this.DataTable, false);
 			}
 		}
+
 		public override void SelectAll()
 		{
 			if (this.DataTable.DataColumns.ColumnCount > 0)
@@ -1760,8 +1735,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			}
 		}
 
-		#endregion
-
+		#endregion ClipboardHandler Members
 
 		internal void EhView_KeyDown(KeyEventArgs e)
 		{
@@ -1770,17 +1744,19 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				case Key.PageDown: // Page-Down-Key
 					VertScrollPos = VertScrollPos + VisibleTableRows;
 					break;
+
 				case Key.PageUp: // Page-Up-Key
 					VertScrollPos = VertScrollPos - VisibleTableRows;
 					break;
+
 				case Key.Home:
 					HorzScrollPos = 0;
 					break;
+
 				case Key.End:
 					HorzScrollPos = HorzScrollMaximum;
 					break;
 			}
-			
 		}
 	}
 }
