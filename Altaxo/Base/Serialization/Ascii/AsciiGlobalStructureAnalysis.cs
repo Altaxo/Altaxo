@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,29 +35,28 @@ namespace Altaxo.Serialization.Ascii
 	public class AsciiGlobalStructureAnalysis
 	{
 		/// <summary>True if any of the lines contains a tabulator char.</summary>
-		bool _containsTabs;
+		private bool _containsTabs;
 
 		/// <summary>True if any of the lines contains a comma char.</summary>
-		bool _containsCommas;
+		private bool _containsCommas;
 
 		/// <summary>True if any of the lines contains a semicolon char.</summary>
-		bool _containsSemicolons;
+		private bool _containsSemicolons;
 
 		/// <summary>True if any of the lines contains a space char.</summary>
-		bool _containsSpaces;
+		private bool _containsSpaces;
 
 		/// <summary>True if any of the lines contains more than one whitespace successively.</summary>
-		bool _containsRepeatingWhiteSpaces;
+		private bool _containsRepeatingWhiteSpaces;
 
 		/// <summary>
 		/// If a fixed column width structure was recognized, this element contains the tabbed start positions of
 		/// the columns, assuming a tab size of <see cref="_recognizedTabSize"/>.
 		/// </summary>
-		List<int> _fixedBoundaries;
+		private List<int> _fixedBoundaries;
 
 		/// If a fixed column width structure was recognized, this element contains the recognized tab size.
-		int _recognizedTabSize=1;
-
+		private int _recognizedTabSize = 1;
 
 		/// <summary>True if any of the lines contains a tabulator char.</summary>
 		public bool ContainsTabs
@@ -104,8 +105,6 @@ namespace Altaxo.Serialization.Ascii
 				return _recognizedTabSize;
 			}
 		}
-
-
 
 		/// <summary>
 		/// Constructor for the analysis. You must provide the first few lines of a ascii file (say 30) in order to have a good analysis.
@@ -223,23 +222,20 @@ namespace Altaxo.Serialization.Ascii
 			return false;
 		}
 
-
-	 
-
 		/// <summary>
 		/// Finds common word boundaries. You have to provide the word bounds for a few lines of text.
 		/// </summary>
 		/// <param name="listOfTabbedWordBounds">Tabbed word bounds for some lines of text.</param>
 		/// <returns>List of tabbed (!) positions that are most common to the majority of lines. Note that the first token
 		/// always start at 0, the first element in the list is the position of the second token.</returns>
-		List<int> FindCommonWordBoundaries(List<List<int>> listOfTabbedWordBounds)
+		private List<int> FindCommonWordBoundaries(List<List<int>> listOfTabbedWordBounds)
 		{
 			double relThreshold = 0.5;
 			int maxlen = MaxTabbedLineLength(listOfTabbedWordBounds);
 			// we allocate one element more to make it easier to handle the end of line
-			int[] inWords = new int[maxlen+1];
-			int[] startOfWords = new int[maxlen+1];
-			int[] endOfWords = new int[maxlen+1];
+			int[] inWords = new int[maxlen + 1];
+			int[] startOfWords = new int[maxlen + 1];
+			int[] endOfWords = new int[maxlen + 1];
 
 			ReportInsideOfWords(listOfTabbedWordBounds, inWords);
 			ReportStartOfWords(listOfTabbedWordBounds, startOfWords);
@@ -271,7 +267,7 @@ namespace Altaxo.Serialization.Ascii
 					{
 						if (true == lastLeftJustified && bounds.Count > 0)
 						{
-							// we have to find the boundary between the last left-justified field and 
+							// we have to find the boundary between the last left-justified field and
 							// the right justified field now, best in my opinion is the minimum of the word count
 							int min = int.MaxValue;
 							int minPos = nPos;
@@ -314,7 +310,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		/// <param name="listOfTabbedWordBounds"></param>
 		/// <returns></returns>
-		int MaxTabbedLineLength(List<List<int>> listOfTabbedWordBounds)
+		private int MaxTabbedLineLength(List<List<int>> listOfTabbedWordBounds)
 		{
 			int maxlength = 0;
 			foreach (List<int> list in listOfTabbedWordBounds)
@@ -331,7 +327,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		/// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
 		/// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
-		void ReportStartOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
+		private void ReportStartOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
 		{
 			foreach (List<int> list in listOfTabbedWordBounds)
 			{
@@ -349,7 +345,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		/// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
 		/// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
-		void ReportEndOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
+		private void ReportEndOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
 		{
 			foreach (List<int> list in listOfTabbedWordBounds)
 			{
@@ -360,7 +356,6 @@ namespace Altaxo.Serialization.Ascii
 			}
 		}
 
-
 		/// <summary>
 		/// When our position is just inside of a word, the counterArray is incremented at this tabbed position by one.
 		/// This is done for every position in all lines, meaning that if a word is present in all N lines at the same position,
@@ -368,7 +363,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		/// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
 		/// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
-		void ReportInsideOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
+		private void ReportInsideOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
 		{
 			foreach (List<int> list in listOfTabbedWordBounds)
 			{
@@ -382,8 +377,6 @@ namespace Altaxo.Serialization.Ascii
 				}
 			}
 		}
-
-
 
 		/// <summary>
 		/// Gets the tabbed position for the start and end of all words in a line, assuming a certain tab width.
@@ -399,7 +392,7 @@ namespace Altaxo.Serialization.Ascii
 
 			int tabPos = 0;
 			int listPos = 0;
-			for (int i = 0; i < sLine.Length && listPos<stringPositions.Count; )
+			for (int i = 0; i < sLine.Length && listPos < stringPositions.Count; )
 			{
 				if (i == stringPositions[listPos]) // we have hitted a word
 				{
@@ -412,7 +405,12 @@ namespace Altaxo.Serialization.Ascii
 				}
 				else // it is not a word
 				{
-					tabPos += tabSize-(tabPos%tabSize);
+					char s = sLine[i];
+					if (' ' == s) // Space increments tab position by 1
+						tabPos++;
+					else if ('\t' == s)
+						tabPos += tabSize - (tabPos % tabSize); // Tab increments tab position depending on the tab size, but also depending on the current tab position
+
 					i++;
 				}
 			}
@@ -441,7 +439,7 @@ namespace Altaxo.Serialization.Ascii
 				char cc = sLine[i];
 				bool wasInWordBefore = bInWord;
 
-				if (cc == '\t' || cc==' ')
+				if (cc == '\t' || cc == ' ')
 				{
 					bInWord &= bInString;
 				}
@@ -467,7 +465,5 @@ namespace Altaxo.Serialization.Ascii
 
 			return wordBounds;
 		}
-
-
 	}
 }

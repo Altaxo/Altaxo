@@ -50,12 +50,16 @@
 				<ComboBox x:Name="_guiSeparationStrategy" Grid.Row="4" Grid.Column="1" SelectionChanged="EhSeparationStrategyChanged" />
 				<GroupBox x:Name="_guiSeparationStrategyDetailsHost" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Header="Separation strategy details:" Padding="0,4,0,4" />
 
-				<CheckBox x:Name="_guiKnownTableColumns" Grid.Row="6" Grid.Column="0" Content="Known column types:" />
-				<DataGrid x:Name="_guiColumnTypes" Grid.Row="7" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" MinWidth="100" MinHeight="50" Margin="0,10,0,0">
-					<DataGrid.Columns>
-						<DataGridComboBoxColumn Header="Column type" SelectedItemBinding="{Binding Path=Value}"  ItemsSource="{Binding Source={StaticResource columnTypeEnum}}"  MinWidth="100"></DataGridComboBoxColumn>
-					</DataGrid.Columns>
-				</DataGrid>
+				<Expander Grid.Row="7">
+					<Expander.Header>
+						<CheckBox x:Name="_guiKnownTableColumns" Grid.Row="6" Grid.Column="0" Content="Known column types:" />
+					</Expander.Header>
+					<DataGrid x:Name="_guiColumnTypes" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" MinWidth="100" MinHeight="50" Margin="0,10,0,0">
+						<DataGrid.Columns>
+							<DataGridComboBoxColumn Header="Column type" SelectedItemBinding="{Binding Path=Value}"  ItemsSource="{Binding Source={StaticResource columnTypeEnum}}"  MinWidth="100"></DataGridComboBoxColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+				</Expander>
 			</Grid>
 		</GroupBox>
 		<GroupBox Header="User options">
