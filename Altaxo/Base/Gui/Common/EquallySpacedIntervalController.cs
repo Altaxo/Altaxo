@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-	public class EquallySpacedInterval
+	public class EquallySpacedInterval : ICloneable
 	{
 		public EquallySpacedIntervalSpecificationMethod Method { get; set; }
 
@@ -49,6 +49,11 @@ namespace Altaxo.Gui.Common
 			{
 				return Start + k * Interval;
 			}
+		}
+
+		public object Clone()
+		{
+			return this.MemberwiseClone();
 		}
 	}
 
@@ -98,18 +103,21 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	[UserControllerForObject(typeof(EquallySpacedInterval))]
 	[ExpectedTypeOfView(typeof(IEquallySpacedIntervalView))]
-	public class EquallySpacedIntervalController : IMVCANController
+	public class EquallySpacedIntervalController : MVCANControllerEditOriginalDocBase<EquallySpacedInterval, IEquallySpacedIntervalView>
 	{
-		private IEquallySpacedIntervalView _view;
-		private EquallySpacedInterval _doc;
-
 		private EquallySpacedIntervalSpecificationMethod _currentMethod;
 
 		private double _start, _end, _count, _interval;
 
-		private void Initialize(bool initDoc)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (initDoc)
+			yield break;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+			if (initData)
 			{
 				_currentMethod = _doc.Method;
 				_start = _doc.Start;
@@ -142,6 +150,56 @@ namespace Altaxo.Gui.Common
 				_view.InitializeStart(sCount);
 				_view.InitializeStart(sInterval);
 			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (double.IsNaN(_start))
+				return false;
+			if (double.IsNaN(_end))
+				return false;
+			if (double.IsNaN(_count))
+				return false;
+			if (double.IsNaN(_interval))
+				return false;
+
+			if (!(_count > 0))
+				return false;
+			if (Math.Round(_count, MidpointRounding.AwayFromZero) != _count)
+				return false;
+
+			_doc.Method = _currentMethod;
+			_doc.Start = _start;
+			_doc.End = _end;
+			_doc.Count = _count;
+			_doc.Interval = _interval;
+
+			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.MethodChanged += EhMethodChanged;
+			_view.StartChanged += EhStartChanged;
+			_view.EndChanged += EhEndChanged;
+			_view.CountChanged += EhCountChanged;
+			_view.IntervalChanged += EhIntervalChanged;
+			_view.CountValidating += EhCountValidating;
+			_view.IntervalValidating += EhIntervalValidating;
+		}
+
+		protected override void DetachView()
+		{
+			_view.MethodChanged -= EhMethodChanged;
+			_view.StartChanged -= EhStartChanged;
+			_view.EndChanged -= EhEndChanged;
+			_view.CountChanged -= EhCountChanged;
+			_view.IntervalChanged -= EhIntervalChanged;
+			_view.CountValidating -= EhCountValidating;
+			_view.IntervalValidating -= EhIntervalValidating;
+
+			base.DetachView();
 		}
 
 		private void EhMethodChanged(EquallySpacedIntervalSpecificationMethod method)
@@ -320,116 +378,5 @@ namespace Altaxo.Gui.Common
 				_view.InitializeCount(GUIConversion.ToString(_count));
 			}
 		}
-
-		#region IMVCANController Members
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (args.Length < 1)
-				return false;
-
-			EquallySpacedInterval doc = args[0] as EquallySpacedInterval;
-			if (null != _doc)
-				return false;
-
-			_doc = doc;
-
-			Initialize(true);
-			return true;
-		}
-
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
-
-		#endregion IMVCANController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				if (_view != null)
-				{
-					_view.MethodChanged -= EhMethodChanged;
-					_view.StartChanged -= EhStartChanged;
-					_view.EndChanged -= EhEndChanged;
-					_view.CountChanged -= EhCountChanged;
-					_view.IntervalChanged -= EhIntervalChanged;
-					_view.CountValidating -= EhCountValidating;
-					_view.IntervalValidating -= EhIntervalValidating;
-				}
-				_view = value as IEquallySpacedIntervalView;
-				if (null != _view)
-				{
-					Initialize(false);
-					_view.MethodChanged += EhMethodChanged;
-					_view.StartChanged += EhStartChanged;
-					_view.EndChanged += EhEndChanged;
-					_view.CountChanged += EhCountChanged;
-					_view.IntervalChanged += EhIntervalChanged;
-					_view.CountValidating += EhCountValidating;
-					_view.IntervalValidating += EhIntervalValidating;
-				}
-			}
-		}
-
-		public object ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			if (double.IsNaN(_start))
-				return false;
-			if (double.IsNaN(_end))
-				return false;
-			if (double.IsNaN(_count))
-				return false;
-			if (double.IsNaN(_interval))
-				return false;
-
-			if (!(_count > 0))
-				return false;
-			if (Math.Round(_count, MidpointRounding.AwayFromZero) != _count)
-				return false;
-
-			_doc.Method = _currentMethod;
-			_doc.Start = _start;
-			_doc.End = _end;
-			_doc.Count = _count;
-			_doc.Interval = _interval;
-
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
 	}
 }

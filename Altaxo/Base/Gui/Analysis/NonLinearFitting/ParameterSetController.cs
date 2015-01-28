@@ -52,40 +52,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// </summary>
 	[UserControllerForObject(typeof(ParameterSet))]
 	[ExpectedTypeOfView(typeof(IParameterSetView))]
-	public class ParameterSetController1 : IMVCANController
+	public class ParameterSetController1 : MVCANControllerEditOriginalDocBase<ParameterSet, IParameterSetView>
 	{
-		private ParameterSet _doc;
-		private IParameterSetView _view;
-
-		#region IMVCANController Members
-
-		bool IMVCANController.InitializeDocument(params object[] args)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (args == null || args.Length < 1)
-				throw new ArgumentException("args null or empty");
-			if (args[0] is ParameterSet)
-			{
-				_doc = args[0] as ParameterSet;
-				Initialize(true);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			yield break;
 		}
 
-		UseDocument IMVCANController.UseDocumentCopy
+		protected override void Initialize(bool initData)
 		{
-			set
-			{
-			}
-		}
+			base.Initialize(initData);
 
-		#endregion IMVCANController Members
-
-		private void Initialize(bool initDoc)
-		{
 			if (_view != null)
 			{
 				List<ParameterSetViewItem> list = new List<ParameterSetViewItem>();
@@ -105,35 +82,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		#region IMVCController Members
-
-		object IMVCController.ViewObject
-		{
-			get
-			{
-				return _view;
-			}
-			set
-			{
-				_view = value as IParameterSetView;
-				Initialize(false);
-			}
-		}
-
-		object IMVCController.ModelObject
-		{
-			get { return _doc; }
-		}
-
-		public void Dispose()
-		{
-		}
-
-		#endregion IMVCController Members
-
-		#region IApplyController Members
-
-		bool IApplyController.Apply(bool disposeController)
+		public override bool Apply(bool disposeController)
 		{
 			List<ParameterSetViewItem> list = _view.GetList();
 
@@ -168,55 +117,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				}
 			}
 
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
-	}
-
-	/*
-	/// <summary>
-	/// Summary description for ParameterSetController.
-	/// </summary>
-	[UserControllerForObject(typeof(ParameterSet))]
-	public class ParameterSetController : Altaxo.Gui.Common.MultiChildController
-	{
-		ParameterSet _doc;
-
-		public ParameterSetController(ParameterSet doc)
-		{
-			_doc = doc;
-			_doc.InitializationFinished += new EventHandler(EhInitializationFinished);
-
-			base.DescriptionText = "ParameterName                                      Value                     Vary?       Variance\r\n" +
-												"-------------------------------------------------------------------------------------------------------";
-
-			EhInitializationFinished(this, EventArgs.Empty);
-		}
-
-		private void EhInitializationFinished(object sender, EventArgs e)
-		{
-			ControlViewElement[] childs = new ControlViewElement[_doc.Count];
-			for (int i = 0; i < childs.Length; i++)
-			{
-				IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IParameterSetElementController));
-				childs[i] = new ControlViewElement(null, ctrl, ctrl.ViewObject);
-			}
-
-			base.Initialize(childs, false);
+			return ApplyEnd(true, disposeController);
 		}
 	}
-	 */
 }
