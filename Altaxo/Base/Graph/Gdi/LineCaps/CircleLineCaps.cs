@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -33,7 +35,9 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class CircleOLineCap : LineCapExtension
 	{
-		public CircleOLineCap() { }
+		public CircleOLineCap()
+		{
+		}
 
 		public CircleOLineCap(double minimumAbsoluteSizePt, double minimumRelativeSize)
 			: base(minimumAbsoluteSizePt, minimumRelativeSize)
@@ -46,21 +50,21 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		}
 
 		public override string Name { get { return "CircleO"; } }
+
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+
 		public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-
-		CustomLineCap GetClone(Pen pen, float size)
+		private CustomLineCap GetClone(Pen pen, float size)
 		{
 			float endPoint;
 			endPoint = pen.Width == 0 ? 1 : size / (pen.Width * 2) - 0.5f;
 			if (endPoint <= 0)
 				endPoint = 1e-3f;
 
-
 			GraphicsPath hPath = new GraphicsPath();
 			// Create the outline for our custom end cap.
-			hPath.AddEllipse(-endPoint, -endPoint, 2*endPoint, 2*endPoint);
+			hPath.AddEllipse(-endPoint, -endPoint, 2 * endPoint, 2 * endPoint);
 			CustomLineCap clone = new CustomLineCap(null, hPath, LineCap.Flat, endPoint); // we set the stroke path only
 			clone.SetStrokeCaps(LineCap.Flat, LineCap.Flat);
 			return clone;
@@ -99,11 +103,15 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		}
 
 		public override string Name { get { return "CircleF"; } }
+
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
-		public override double DefaultMinimumRelativeSize	{	get { return 4; }
+
+		public override double DefaultMinimumRelativeSize
+		{
+			get { return 4; }
 		}
 
-		CustomLineCap GetClone(Pen pen, float size)
+		private CustomLineCap GetClone(Pen pen, float size)
 		{
 			float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
 			if (scale <= 0)

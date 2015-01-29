@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,7 @@ namespace Altaxo.Collections.Text
 		{
 			/// <summary>First index in the suffix array.</summary>
 			public int Begin;
+
 			/// <summary>Last index in the suffix array (this index is included in the region).</summary>
 			public int End;
 
@@ -50,7 +53,6 @@ namespace Altaxo.Collections.Text
 				End = end;
 			}
 		}
-
 
 		/// <summary>
 		/// Given a sequence of numeric values that will be added to this instance, the algorithm keeps track of the minimum value of the last <c>numberOfItems</c> added values.
@@ -72,20 +74,19 @@ namespace Altaxo.Collections.Text
 				public int ExpireGeneration;
 			}
 
-			#endregion
+			#endregion Item
 
 			/// <summary>Counter that is incremented each time an element is added</summary>
-			int _generation;
-			
+			private int _generation;
+
 			/// <summary>Array of Bucket structs storing the value and the generation when this value will become invalid.</summary>
-			Bucket[] _items;
-			
+			private Bucket[] _items;
+
 			/// <summary>Index of the bucket with the lowest value in the bucket array.</summary>
-			int _minItemIdx;
+			private int _minItemIdx;
 
 			/// <summary>Index of the bucket that was the last added value in the array.</summary>
-			int _lastItemIdx;
-
+			private int _lastItemIdx;
 
 			/// <summary>Initializes a new instance of the <see cref="MinimumOnSlidingWindow"/> class.</summary>
 			/// <param name="numberOfItems">The number of items N. The algorithm evaluates the minimum of the last N items that where added to this instance.</param>
@@ -155,7 +156,6 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
-
 		#endregion internal types
 
 		// copy-paste from the generalized suffix array
@@ -163,15 +163,16 @@ namespace Altaxo.Collections.Text
 		/// <summary>Number of words the text was separated into.</summary>
 		protected int _numberOfWords;
 
-
 		/// <summary>Maps the lexicographical order position i of a suffix to the starting position of the suffix in the text, which is the value of the i-th element of this array.</summary>
 		protected int[] _suffixArray;
+
 		/// <summary>
 		/// Maps the lexicographical order position i of a suffix to the index of the word, in which this suffix starts. This means, that for instance the value of the i-th
 		/// element contains the index of the word, in which the lexicographically i-th suffix that starts at position <see cref="_suffixArray"/>[i] begins.
 		/// The contents of this array is only meaningful, if you provided text that was separated into words, for instance for the longest common substring problem.
 		/// </summary>
 		protected int[] _wordIndices;
+
 		/// <summary>
 		/// Start positions of the words in which the original text was separated in the concenated text array.
 		/// </summary>
@@ -192,7 +193,6 @@ namespace Altaxo.Collections.Text
 		/// </summary>
 		protected int _maximumLcp;
 
-
 		// resulting data
 
 		/// <summary>
@@ -209,26 +209,21 @@ namespace Altaxo.Collections.Text
 		protected SuffixArrayRegion[] _singleResultOfNumberOfWords;
 
 		/// <summary>
-		/// If <see cref="_verboseResultsOfNumberOfWords"/> is true, this array stores, for a given number of words that have one or more substrings in common, a list with all positions where such common substrings occur. 
+		/// If <see cref="_verboseResultsOfNumberOfWords"/> is true, this array stores, for a given number of words that have one or more substrings in common, a list with all positions where such common substrings occur.
 		/// The content of one element of each list is the beginning and the end index in the suffix array that indicate all suffixes that have a substring in common. The length of this substring is stored in <see cref="_lcsOfNumberOfWords"/>
 		/// If <see cref="_verboseResultsOfNumberOfWords"/> is false, this array is not used and is set to <c>null</c>.
 		/// </summary>
 		protected List<SuffixArrayRegion>[] _verboseResultsOfNumberOfWords;
-
-		
 
 		/// <summary>
 		/// Determines the amount of information to store during evaluation.
 		/// </summary>
 		protected bool _useVerboseResults = false;
 
-
 		/// <summary>
 		/// Contains the maximum number of words that have a common substring.
 		/// </summary>
 		protected int _maximumNumberOfWordsWithCommonSubstring;
-
-
 
 		/// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -271,7 +266,6 @@ namespace Altaxo.Collections.Text
 			get { return _maximumNumberOfWordsWithCommonSubstring; }
 		}
 
-
 		/// <summary>Returns the positions for common substrings for the maximum number of words that have at least one common substring. The result
 		/// is identical to a call of <see cref="GetSubstringPositionsCommonToTheNumberOfWords"/> with the argument <see cref="MaximumNumberOfWordsWithCommonSubstring"/>
 		/// </summary>
@@ -282,8 +276,6 @@ namespace Altaxo.Collections.Text
 				return GetSubstringPositionsCommonToTheNumberOfWords(_maximumNumberOfWordsWithCommonSubstring);
 			}
 		}
-
-
 
 		/// <summary>Returns the positions for common substrings for the given number of words</summary>
 		/// <param name="numberOfWordsWithCommonSubstring">Number of words</param>
@@ -311,7 +303,6 @@ namespace Altaxo.Collections.Text
 				}
 			}
 		}
-
 
 		/// <summary>Stores a common substring occurence.</summary>
 		/// <param name="list_pos">Number of words that have this common substring.</param>

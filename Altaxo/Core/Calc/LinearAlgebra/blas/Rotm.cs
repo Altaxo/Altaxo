@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Rotm.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -40,7 +41,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Rotm
 	{
-		private Rotm() { }
+		private Rotm()
+		{
+		}
+
 		///<summary>Compute the function of this class</summary>
 		internal static void Compute(int n, float[] X, int incx, float[] Y, int incy, float[] P)
 		{
@@ -155,7 +159,6 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 			{
 				throw new ArgumentException("P must be an array of length 5.", "P");
 			}
-
 
 #if MANAGED
 			if (P[0] == 0.0)

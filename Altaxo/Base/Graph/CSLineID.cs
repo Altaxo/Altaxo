@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Data;
+
 namespace Altaxo.Graph
 {
 	/// <summary>
@@ -35,49 +38,48 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
 		/// </summary>
-		int _parallelAxisNumber;
+		private int _parallelAxisNumber;
 
 		/// <summary>
 		/// The logical value of the isoline.
 		/// </summary>
-		double _logicalValueFirstOther;
+		private double _logicalValueFirstOther;
 
 		/// <summary>
 		/// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale
 		/// </summary>
-		bool _usePhysicalValueFirstOther;
+		private bool _usePhysicalValueFirstOther;
 
 		/// <summary>
 		/// The physical value of this axis.
 		/// </summary>
-		AltaxoVariant _physicalValueFirstOther;
-
+		private AltaxoVariant _physicalValueFirstOther;
 
 		/// <summary>
 		/// The second logical value of the isoline. Only used in 3D mode.
 		/// </summary>
-		double _logicalValueSecondOther;
+		private double _logicalValueSecondOther;
 
 		/// <summary>
 		/// True when the isoline of this axis is determined by the second physical value together with the corresponding axis scale
 		/// </summary>
-		bool _usePhysicalValueSecondOther;
+		private bool _usePhysicalValueSecondOther;
 
 		/// <summary>
 		/// The second physical value of this axis.
 		/// </summary>
-		AltaxoVariant _physicalValueSecondOther;
-
+		private AltaxoVariant _physicalValueSecondOther;
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSLineID), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				CSLineID s = (CSLineID)obj;
-
 
 				info.AddValue("Axis", s._parallelAxisNumber);
 
@@ -97,6 +99,7 @@ namespace Altaxo.Graph
 						info.AddValue("Physical2", (object)(s._physicalValueSecondOther));
 				}
 			}
+
 			protected virtual CSLineID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				CSLineID s = (o == null ? new CSLineID() : (CSLineID)o);
@@ -122,13 +125,14 @@ namespace Altaxo.Graph
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				CSLineID s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
+
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public CSLineID(CSLineID from)
 		{
@@ -146,11 +150,11 @@ namespace Altaxo.Graph
 		{
 			return new CSLineID(this);
 		}
+
 		public CSLineID Clone()
 		{
 			return new CSLineID(this);
 		}
-
 
 		/// <summary>
 		/// Only for deserialization purposes.
@@ -207,14 +211,17 @@ namespace Altaxo.Graph
 					_logicalValueFirstOther = logicalValuesOther[1];
 					_logicalValueSecondOther = logicalValuesOther[2];
 					break;
+
 				case 1:
 					_logicalValueFirstOther = logicalValuesOther[0];
 					_logicalValueSecondOther = logicalValuesOther[2];
 					break;
+
 				case 2:
 					_logicalValueFirstOther = logicalValuesOther[0];
 					_logicalValueSecondOther = logicalValuesOther[1];
 					break;
+
 				default:
 					throw new ArgumentOutOfRangeException("AxisNumber must be either 0, 1, or 2, but you provide: " + parallelAxisNumber.ToString());
 			}
@@ -272,7 +279,6 @@ namespace Altaxo.Graph
 			if (!physicalValueOther.Equals(physicalValueOther))
 				throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValueOther.ToString());
 
-
 			CSLineID id = new CSLineID();
 			id._parallelAxisNumber = parallelAxisNumber;
 			id._physicalValueFirstOther = physicalValueOther;
@@ -305,7 +311,6 @@ namespace Altaxo.Graph
 			}
 		}
 
-
 		/// <summary>
 		/// Number of axis: 0==X-Axis, 1==Y-Axis, 2=Z-Axis of the coordinate system.
 		/// </summary>
@@ -332,7 +337,6 @@ namespace Altaxo.Graph
 				return _parallelAxisNumber == 2 ? 1 : 2;
 			}
 		}
-
 
 		/// <summary>
 		/// The logical value of the isoline. It can be set only in the constructor, or if the UsePhysicalValue property is true.
@@ -365,7 +369,7 @@ namespace Altaxo.Graph
 			}
 			set // setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
 			{
-				if (_usePhysicalValueSecondOther) 
+				if (_usePhysicalValueSecondOther)
 					_logicalValueSecondOther = value;
 				else
 					throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
@@ -382,6 +386,7 @@ namespace Altaxo.Graph
 				return _usePhysicalValueFirstOther;
 			}
 		}
+
 		/// <summary>
 		/// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale
 		/// </summary>
@@ -416,6 +421,7 @@ namespace Altaxo.Graph
 				{
 					case 0:
 						return new Logical3D(logicalCoordOnLine, _logicalValueFirstOther);
+
 					case 1:
 					default:
 						return new Logical3D(_logicalValueFirstOther, logicalCoordOnLine);
@@ -427,8 +433,10 @@ namespace Altaxo.Graph
 				{
 					case 0:
 						return new Logical3D(logicalCoordOnLine, _logicalValueFirstOther, _logicalValueSecondOther);
+
 					case 1:
 						return new Logical3D(_logicalValueFirstOther, logicalCoordOnLine, _logicalValueSecondOther);
+
 					case 2:
 					default:
 						return new Logical3D(_logicalValueFirstOther, _logicalValueSecondOther, logicalCoordOnLine);
@@ -437,8 +445,8 @@ namespace Altaxo.Graph
 		}
 
 		public Logical3D Begin { get { return GetLogicalPoint(0); } }
-		public Logical3D End { get { return GetLogicalPoint(1); } }
 
+		public Logical3D End { get { return GetLogicalPoint(1); } }
 
 		public override bool Equals(object obj)
 		{
@@ -523,19 +531,20 @@ namespace Altaxo.Graph
 		{
 			get { return new CSLineID(0, 0); }
 		}
+
 		public static CSLineID X1
 		{
 			get { return new CSLineID(0, 1); }
 		}
+
 		public static CSLineID Y0
 		{
 			get { return new CSLineID(1, 0); }
 		}
+
 		public static CSLineID Y1
 		{
 			get { return new CSLineID(1, 1); }
 		}
-
 	}
-
 }

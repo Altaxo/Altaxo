@@ -25,7 +25,6 @@
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Worksheet;
 
 namespace Altaxo.Worksheet.Commands
 {

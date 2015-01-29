@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -41,9 +43,10 @@ namespace Altaxo.Calc.Integration
 	public class QagiIntegration : IntegrationBase
 	{
 		#region offical C# interface
-		bool _debug;
-		gsl_integration_workspace _workSpace;
-		gsl_integration_rule _integrationRule;
+
+		private bool _debug;
+		private gsl_integration_workspace _workSpace;
+		private gsl_integration_rule _integrationRule;
 
 		/// <summary>
 		/// Returns the default integration rule used for this class.
@@ -207,7 +210,6 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr, ref tempStorage);
 		}
 
-
 		/// <summary>
 		/// Adaptive integration on infinite interval (-Infinity,+Infinity)  using default settings for integration rule and debugging.
 		/// </summary>
@@ -228,10 +230,7 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
 		}
 
-
-		#endregion
-
-
+		#endregion offical C# interface
 
 		/* QAGI: evaluate an integral over an infinite range using the
       transformation
@@ -242,7 +241,7 @@ namespace Altaxo.Calc.Integration
 
 		//static double i_transform (double t, void *params);
 
-		static GSL_ERROR
+		private static GSL_ERROR
 		gsl_integration_qagi(Func<double, double> f,
 													double epsabs, double epsrel, int limit,
 													gsl_integration_workspace workspace,
@@ -267,12 +266,11 @@ namespace Altaxo.Calc.Integration
 			return status;
 		}
 
-		static double i_transform(double t, Func<double, double> func)
+		private static double i_transform(double t, Func<double, double> func)
 		{
 			double x = (1 - t) / t;
 			double y = func(x) + func(-x);
 			return (y / t) / t;
 		}
-
 	}
 }

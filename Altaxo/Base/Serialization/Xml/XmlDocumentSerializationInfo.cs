@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Xml;
 
 #if false
 
@@ -40,13 +41,12 @@ namespace Altaxo.Serialization.Xml
     System.Collections.Stack m_NodeStack;
     XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
 
-
     public XmlDocument Doc
     {
       get { return m_Doc; }
     }
 
-    public XmlDocumentSerializationInfo() 
+    public XmlDocumentSerializationInfo()
       :
       this(new XmlDocument())
     {
@@ -62,7 +62,7 @@ namespace Altaxo.Serialization.Xml
       if(m_Doc.ChildNodes.Count>0)
         m_CurrentNode = (XmlElement)m_Doc.FirstChild;
     }
-  
+
     public XmlArrayEncoding DefaultArrayEncoding
     {
       get { return m_DefaultArrayEncoding;}
@@ -73,7 +73,6 @@ namespace Altaxo.Serialization.Xml
     {
       m_NodeStack.Push(m_PreviousNode);
       m_PreviousNode = m_CurrentNode;
-      
     }
 
     public void PopNodeStack()
@@ -94,7 +93,7 @@ namespace Altaxo.Serialization.Xml
 
     /// <summary>Returns the name of the current xml element.</summary>
     public string CurrentElementName
-    { 
+    {
       get { return m_Doc.LocalName; }
     }
 
@@ -137,7 +136,7 @@ namespace Altaxo.Serialization.Xml
       m_CurrentNode = (XmlElement)m_CurrentNode.NextSibling;
       return result;
     }
-    public int GetInt32(string name) 
+    public int GetInt32(string name)
     {
       return GetInt32();
     }
@@ -179,7 +178,6 @@ namespace Altaxo.Serialization.Xml
     {
       PushNodeStack();
       m_CurrentNode =  m_Doc.CreateElement(name);
-      
     }
 
     public void OpenInnerContent()
@@ -221,7 +219,6 @@ namespace Altaxo.Serialization.Xml
       return null!=m_SurrogateSelector.GetSurrogate(o.GetType());
     }
 
-
     public void AddValue(string name, object o)
     {
       IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType());
@@ -250,7 +247,6 @@ namespace Altaxo.Serialization.Xml
         ss.Serialize(o,this);
       }
     }
-
 
     public object GetValue(string name, object parentobject)
     {
@@ -282,8 +278,6 @@ namespace Altaxo.Serialization.Xml
     }
 
     public event XmlDeserializationCallbackEventHandler DeserializationFinished;
-    
-
 
 #region not implemented yet
 
@@ -324,11 +318,10 @@ namespace Altaxo.Serialization.Xml
 
     public object DeserializationInstance { get { return null; } }
 
-
     public void AddBaseValueStandalone(string name, object o, System.Type basetype)
     {
     }
-  
+
     public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent)
     {
     }
@@ -346,7 +339,7 @@ namespace Altaxo.Serialization.Xml
     public void GetArray(out float[] val) { val=null; }
     public void GetArray(string name, out double[] val) { val=null; }
     public void GetArray(string name, out int[] val) { val=null; }
-    
+
     public void AddValue(string name, bool val) {}
     public bool GetBoolean() { return false; }
     public bool GetBoolean(string name) { return false; }
@@ -355,13 +348,11 @@ namespace Altaxo.Serialization.Xml
     public float GetSingle() { return 0; }
     public void AddValue(string name, float val) {}
 
-
     public void AddValue(string name, DateTime val) {}
     public DateTime GetDateTime(string name) { return DateTime.MinValue; }
 
     public void SetProperty(string propertyname, string propertyvalue)
     {
-      
     }
 
     public string GetProperty(string propertyname)
@@ -369,7 +360,7 @@ namespace Altaxo.Serialization.Xml
       return null;
     }
 
-#endregion
+#endregion not implemented yet
   }
 }
 

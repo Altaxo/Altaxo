@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,9 +34,9 @@ namespace Altaxo.Units
 	/// </summary>
 	public struct DimensionfulQuantity : IComparable<DimensionfulQuantity>
 	{
-		double _value;
-		SIPrefix _prefix;
-		IUnit _unit;
+		private double _value;
+		private SIPrefix _prefix;
+		private IUnit _unit;
 
 		/// <summary>Creates a dimensionless quantity with the provided value.</summary>
 		/// <param name="value">Value.</param>
@@ -80,7 +82,7 @@ namespace Altaxo.Units
 		/// <returns>Returns <c>true</c> if <paramref name="a"/> is equal in all three components(value, prefix, unit) to this quantity; otherwise, <c>false</c>.</returns>
 		public bool IsEqualInValuePrefixUnit(DimensionfulQuantity a)
 		{
-			return this._value == a._value && this.Prefix == a.Prefix && this._unit == a._unit; 
+			return this._value == a._value && this.Prefix == a.Prefix && this._unit == a._unit;
 		}
 
 		/// <summary>
@@ -197,7 +199,6 @@ namespace Altaxo.Units
 			return AsValueIn(prefixedUnit.Prefix, prefixedUnit.Unit);
 		}
 
-
 		/// <summary>Gets this quantity in SI units (without prefix).</summary>
 		public DimensionfulQuantity AsQuantityInSIUnits
 		{
@@ -232,15 +233,13 @@ namespace Altaxo.Units
 			return AsQuantityIn(prefixedUnit.Prefix, prefixedUnit.Unit);
 		}
 
-
-
 		/// <summary>Compares this quanitity to another quantity.</summary>
 		/// <param name="other">The other quantity to compare with.</param>
 		/// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
 		public int CompareTo(DimensionfulQuantity other)
 		{
-			if(null == this._unit || null== other._unit || this._unit.SIUnit != other._unit.SIUnit)
-				throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}",this._unit.Name, other._unit.Name));
+			if (null == this._unit || null == other._unit || this._unit.SIUnit != other._unit.SIUnit)
+				throw new ArgumentException(string.Format("Incompatible units in comparison of a quantity in {0} with a quantity in {1}", this._unit.Name, other._unit.Name));
 
 			double thisval = this.AsValueIn(_unit.SIUnit);
 			double otherval = other.AsValueIn(_unit.SIUnit);

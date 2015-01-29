@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Data;
-
 namespace Altaxo.Graph.Scales.Ticks
 {
 	public abstract class NumericTickSpacing : TickSpacing
 	{
-
 		public NumericTickSpacing()
 		{
 		}
@@ -40,7 +40,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
 		}
-
 
 		/// <summary>
 		/// Returns the physical values
@@ -62,7 +61,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new double[] { }; // return a empty array per default
 		}
 
-
 		public override double[] GetMajorTicksNormal(Scale scale)
 		{
 			double[] ticks = GetMajorTicks();
@@ -72,6 +70,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			return ticks;
 		}
+
 		public override double[] GetMinorTicksNormal(Scale scale)
 		{
 			double[] ticks = GetMinorTicks();
@@ -81,6 +80,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			return ticks;
 		}
+
 		public override AltaxoVariant[] GetMajorTicksAsVariant()
 		{
 			double[] ticks = GetMajorTicks();
@@ -89,6 +89,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				vticks[i] = ticks[i];
 			return vticks;
 		}
+
 		public override AltaxoVariant[] GetMinorTicksAsVariant()
 		{
 			double[] ticks = GetMinorTicks();
@@ -97,7 +98,5 @@ namespace Altaxo.Graph.Scales.Ticks
 				vticks[i] = ticks[i];
 			return vticks;
 		}
-
-
 	}
 }

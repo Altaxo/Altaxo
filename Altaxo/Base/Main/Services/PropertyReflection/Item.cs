@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>
 	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -47,7 +49,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		#endregion
+		#endregion Notify Property Changed Members
 
 		#region IDisposable Members
 
@@ -72,8 +74,11 @@ namespace Altaxo.Main.Services.PropertyReflection
 			GC.SuppressFinalize(this);
 		}
 
-		~Item() { Dispose(false); }
+		~Item()
+		{
+			Dispose(false);
+		}
 
-		#endregion
+		#endregion IDisposable Members
 	}
 }

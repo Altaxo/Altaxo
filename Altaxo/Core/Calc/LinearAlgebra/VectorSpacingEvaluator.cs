@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// Statistics of the spacing between adjacent vector elements. The spaces are defined in the forward direction, i.e. as vec[i+1]-vec[i].
 	/// </summary>
 	public class VectorSpacingEvaluator
 	{
-		int _numvalidsteps = 0;
-		int _numtotalsteps = 0;
-		double _stepmin = double.PositiveInfinity;
-		double _stepmax = double.NegativeInfinity;
-		double _sumsteps = 0;
+		private int _numvalidsteps = 0;
+		private int _numtotalsteps = 0;
+		private double _stepmin = double.PositiveInfinity;
+		private double _stepmax = double.NegativeInfinity;
+		private double _sumsteps = 0;
 
 		/// <summary>
 		/// Constructor. Takes an read only vector and evaluates the spaces between
@@ -67,7 +68,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				_sumsteps = vec[_numtotalsteps] - vec[0];
 		}
 
-
 		/// <summary>
 		/// True if all elements are mononton increasing and there are no invalid spaces.
 		/// </summary>
@@ -89,7 +89,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				return _numvalidsteps == _numtotalsteps && _stepmin < 0 && _stepmax <= 0;
 			}
 		}
-
 
 		/// <summary>
 		/// True if all elements are strongly mononton increasing and there are no invalid spaces.
@@ -115,7 +114,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>
 		/// True if all elements are strictly equally spaced. Due to the limited accuracy of floating
-		/// point arithmetic, this is in generally only fulfilled when having integer vector elements. 
+		/// point arithmetic, this is in generally only fulfilled when having integer vector elements.
 		/// Otherwise, please use <see cref="RelativeSpaceDeviation" /> to calculate the space deviation.
 		/// </summary>
 		public bool IsStrictlyEquallySpaced
@@ -178,8 +177,5 @@ namespace Altaxo.Calc.LinearAlgebra
 				return _sumsteps / _numvalidsteps;
 			}
 		}
-
-
-
 	}
 }

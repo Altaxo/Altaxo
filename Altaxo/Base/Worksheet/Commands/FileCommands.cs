@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.IO;
-using Altaxo.Serialization.Ascii;
-using Altaxo.Gui.Worksheet.Viewing;
 
 namespace Altaxo.Worksheet
 {
@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet
 			}
 			info.BeginWriting(myStream);
 
-			// TODO there is an issue with TableLayout that prevents a nice deserialization 
+			// TODO there is an issue with TableLayout that prevents a nice deserialization
 			// this is because TableLayout stores the name of its table during serialization
 			// onto deserialization this works well if the entire document is restored, but
 			// doesn't work if only a table and its layout is to be restored. In this case, the layout

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public partial class ColorCombControl : UserControl
 	{
-		Color _selectedColor;
+		private Color _selectedColor;
 
 		//
 		// Initialization
@@ -58,11 +59,11 @@ namespace Altaxo.Gui.Common.Drawing
 		//
 		// Implementation
 
-		const int MaxGenerations = 6; // 127 tiles
+		private const int MaxGenerations = 6; // 127 tiles
 
-		HexagonButton _rootCell;
+		private HexagonButton _rootCell;
 
-		void InitializeChildren()
+		private void InitializeChildren()
 		{
 			// Define honeycomb of 127 hexagons, starting in the center of the canvas.
 			_rootCell = new HexagonButton(FindResource("HexagonButtonStyle") as Style);
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Common.Drawing
 			CascadeChildColors();
 		}
 
-		void InitializeChildrenR(HexagonButton parent, int generation)
+		private void InitializeChildrenR(HexagonButton parent, int generation)
 		{
 			if (generation > MaxGenerations) return;
 
@@ -125,7 +126,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void CascadeChildColors()
+		private void CascadeChildColors()
 		{
 			_rootCell.NominalColor = Color.FromScRgb(1f, 1f, 1f, 1f);
 			CascadeChildColorsR(_rootCell);
@@ -134,7 +135,7 @@ namespace Altaxo.Gui.Common.Drawing
 				h.Visited = false;
 		}
 
-		void CascadeChildColorsR(HexagonButton parent)
+		private void CascadeChildColorsR(HexagonButton parent)
 		{
 			float delta = 1f / MaxGenerations;
 			float ceiling = 0.99f;
@@ -161,6 +162,7 @@ namespace Altaxo.Gui.Common.Drawing
 								c.ScR = Math.Min(Math.Max(0f, c.ScR - delta), 1f);
 							}
 							break;
+
 						case 1: // increase blue; else reduce yellow
 							if (c.ScB < ceiling)
 							{
@@ -172,6 +174,7 @@ namespace Altaxo.Gui.Common.Drawing
 								c.ScG = Math.Min(Math.Max(0f, c.ScG - delta), 1f);
 							}
 							break;
+
 						case 2: // increase magenta; else reduce green
 							if (c.ScR < ceiling && c.ScB < ceiling)
 							{
@@ -183,6 +186,7 @@ namespace Altaxo.Gui.Common.Drawing
 								c.ScG = Math.Min(Math.Max(0f, c.ScG - delta), 1f);
 							}
 							break;
+
 						case 3: // increase red; else reduce cyan
 							if (c.ScR < ceiling)
 							{
@@ -194,6 +198,7 @@ namespace Altaxo.Gui.Common.Drawing
 								c.ScB = Math.Min(Math.Max(0f, c.ScB - delta), 1f);
 							}
 							break;
+
 						case 4: // increase yellow; else reduce blue
 							if (c.ScR < ceiling && c.ScG < ceiling)
 							{
@@ -205,6 +210,7 @@ namespace Altaxo.Gui.Common.Drawing
 								c.ScB = Math.Min(Math.Max(0f, c.ScB - delta), 1f);
 							}
 							break;
+
 						case 5: // increase green; else reduce magenta
 							if (c.ScG < ceiling)
 							{
@@ -230,7 +236,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		void cell_Clicked(object sender, RoutedEventArgs e)
+		private void cell_Clicked(object sender, RoutedEventArgs e)
 		{
 			HexagonButton cell = sender as HexagonButton;
 
@@ -238,7 +244,7 @@ namespace Altaxo.Gui.Common.Drawing
 			FireColorSelected();
 		}
 
-		void FireColorSelected()
+		private void FireColorSelected()
 		{
 			if (ColorSelected != null)
 				ColorSelected(this, new ColorEventArgs(_selectedColor));
@@ -285,10 +291,10 @@ namespace Altaxo.Gui.Common.Drawing
 		//
 		// Implementation
 
-		HexagonButton[] _neighbors;
-		Color _nominalColor;
+		private HexagonButton[] _neighbors;
+		private Color _nominalColor;
 
-		Brush ConstructBackgroundGradient(float inflection)
+		private Brush ConstructBackgroundGradient(float inflection)
 		{
 			Color a = NominalColor, z = Colors.Black;
 			Color m = Color.FromScRgb(a.ScA / 2, a.ScR / 2, a.ScG / 2, a.ScB / 2);
@@ -331,7 +337,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 	public class ColorEventArgs : EventArgs
 	{
-		Color _color;
+		private Color _color;
 
 		public ColorEventArgs()
 		{ }

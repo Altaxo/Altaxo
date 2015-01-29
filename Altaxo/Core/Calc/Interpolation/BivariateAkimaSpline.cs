@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Interpolation
 {
-
 	/// <summary>
 	/// Class to spline bivariate function data (in gridded form).
 	/// </summary>
@@ -39,16 +40,16 @@ namespace Altaxo.Calc.Interpolation
 	public class BivariateAkimaSpline
 	{
 		/// <summary>
-		/// This empty constructor is only be used to construct the instance by the internal static 
+		/// This empty constructor is only be used to construct the instance by the internal static
 		/// interpolation functions.
 		/// </summary>
 		private BivariateAkimaSpline()
 		{
 		}
 
-		IROVector _myX;
-		IROVector _myY;
-		IROMatrix _myZ;
+		private IROVector _myX;
+		private IROVector _myY;
+		private IROMatrix _myZ;
 
 		/// <summary>
 		/// Constructs an Akima bivariate spline.
@@ -87,13 +88,13 @@ namespace Altaxo.Calc.Interpolation
 		}
 
 		/// <summary>
-		/// THIS SUBROUTINE INTERPOLATES, FROM VALUES OF THE FUNCTION 
-		/// GIVEN AT INPUT GRID POINTS IN AN X-Y PLANE AND FOR A GIVEN 
-		/// SET OF POINTS IN THE PLANE, THE VALUES OF A SINGLE-VALUED 
+		/// THIS SUBROUTINE INTERPOLATES, FROM VALUES OF THE FUNCTION
+		/// GIVEN AT INPUT GRID POINTS IN AN X-Y PLANE AND FOR A GIVEN
+		/// SET OF POINTS IN THE PLANE, THE VALUES OF A SINGLE-VALUED
 		/// BIVARIATE FUNCTION Z = Z(X,Y).
 		/// THE METHOD IS BASED ON A PIECE-WISE FUNCTION COMPOSED OF
-		/// A SET OF BICUBIC POLYNOMIALS IN X AND Y.  EACH POLYNOMIAL 
-		/// IS APPLICABLE TO A RECTANGLE OF THE INPUT GRID IN THE X-Y 
+		/// A SET OF BICUBIC POLYNOMIALS IN X AND Y.  EACH POLYNOMIAL
+		/// IS APPLICABLE TO A RECTANGLE OF THE INPUT GRID IN THE X-Y
 		/// PLANE.  EACH POLYNOMIAL IS DETERMINED LOCALLY.
 		/// </summary>
 		/// <param name="x">VECTOR OF DIMENSION LX STORING THE X COORDINATES OF INPUT GRID POINTS (IN ASCENDING ORDER)</param>
@@ -126,160 +127,288 @@ namespace Altaxo.Calc.Interpolation
 
 		#region Created from the FORTRAN sources
 
-		double a { get { return zx[1]; } set { zx[1] = value; } }
-		double b { get { return zx[4]; } set { zx[4] = value; } }
-		double c__ { get { return zx[7]; } set { zx[7] = value; } }
-		double d__ { get { return zy[1]; } set { zy[1] = value; } }
-		double e { get { return zy[13]; } set { zy[13] = value; } }
-		int k;
-		double a1 { get { return zx[1]; } set { zx[1] = value; } }
-		double b1 { get { return zx[1]; } set { zx[1] = value; } }
-		double a2 { get { return zx[4]; } set { zx[4] = value; } }
-		double a4 { get { return zx[7]; } set { zx[7] = value; } }
-		double a5 { get { return zx[1]; } set { zx[1] = value; } }
-		double b5 { get { return zx[1]; } set { zx[1] = value; } }
-		double b2 { get { return zy[1]; } set { zy[1] = value; } }
-		double b4 { get { return zy[13]; } set { zy[13] = value; } }
-		double a3, b3;
-		int n0;
-		double q0 { get { return zx[1]; } set { zx[1] = value; } }
-		double q1 { get { return zx[4]; } set { zx[4] = value; } }
-		double q2 { get { return zx[7]; } set { zx[7] = value; } }
-		double q3 { get { return zy[1]; } set { zy[1] = value; } }
-		double[] equiv_86 = new double[1];
-		double w1 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
-		double[] equiv_85 = new double[1];
-		double w2 { get { return equiv_85[0]; } set { equiv_85[0] = value; } }
-		double x2 { get { return zx[2]; } set { zx[2] = value; } }
-		double y2 { get { return zx[13]; } set { zx[13] = value; } }
-		double x4 { get { return zx[8]; } set { zx[8] = value; } }
-		double x5 { get { return zx[11]; } set { zx[11] = value; } }
-		double y4 { get { return zy[2]; } set { zy[2] = value; } }
-		double y5 { get { return zx[14]; } set { zx[14] = value; } }
-		double w4 { get { return equiv_85[0]; } set { equiv_85[0] = value; } }
-		double w3 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
-		double w5 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
-		double x3, y3;
-		double[] equiv_41 = new double[1];
-		double p00 { get { return equiv_41[0]; } set { equiv_41[0] = value; } }
-		double p01 { get { return zy[5]; } set { zy[5] = value; } }
-		double p10 { get { return zx[5]; } set { zx[5] = value; } }
-		double p11 { get { return zxy[5]; } set { zxy[5] = value; } }
-		double p02 { get { return zx[14]; } set { zx[14] = value; } }
-		double p03 { get { return zy[4]; } set { zy[4] = value; } }
-		double p12 { get { return zy[7]; } set { zy[7] = value; } }
-		double p13 { get { return zy[8]; } set { zy[8] = value; } }
-		double p20 { get { return zy[11]; } set { zy[11] = value; } }
-		double p21 { get { return zy[14]; } set { zy[14] = value; } }
-		double p22 { get { return zxy[1]; } set { zxy[1] = value; } }
-		double[] za = new double[10]; // equiv_9
-		double[] zb = new double[10]; // equiv_19
-		double[] equiv_61 = new double[1];
-		double dx { get { return equiv_61[0]; } set { equiv_61[0] = value; } }
-		double[] equiv_62 = new double[1];
-		double dy { get { return equiv_62[0]; } set { equiv_62[0] = value; } }
-		double z33 { get { return equiv_41[0]; } set { equiv_41[0] = value; } }
-		int ix;
-		int iy;
-		int[] equiv_57 = new int[1];
-		int jx { get { return equiv_57[0]; } set { equiv_57[0] = value; } }
-		int[] equiv_58 = new int[1];
-		int jy { get { return equiv_58[0]; } set { equiv_58[0] = value; } }
-		double uk { get { return equiv_61[0]; } set { equiv_61[0] = value; } }
-		double vk { get { return equiv_62[0]; } set { equiv_62[0] = value; } }
-		double z23 { get { return zy[4]; } set { zy[4] = value; } }
-		double z24 { get { return zy[7]; } set { zy[7] = value; } }
-		double z32 { get { return zy[8]; } set { zy[8] = value; } }
-		double z34 { get { return zy[11]; } set { zy[11] = value; } }
-		double z35 { get { return zy[14]; } set { zy[14] = value; } }
-		double z42 { get { return zxy[1]; } set { zxy[1] = value; } }
-		double z43 { get { return zxy[4]; } set { zxy[4] = value; } }
-		double p23 { get { return zxy[4]; } set { zxy[4] = value; } }
-		double z44 { get { return zxy[2]; } set { zxy[2] = value; } }
-		double[] zx = new double[16];
-		double[] zy = new double[16];
-		double p30 { get { return zxy[2]; } set { zxy[2] = value; } }
-		double z45 { get { return zxy[7]; } set { zxy[7] = value; } }
-		double p31 { get { return zxy[7]; } set { zxy[7] = value; } }
-		double z53 { get { return zxy[8]; } set { zxy[8] = value; } }
-		double p32 { get { return zxy[8]; } set { zxy[8] = value; } }
-		double z54 { get { return zxy[11]; } set { zxy[11] = value; } }
-		double p33 { get { return zxy[11]; } set { zxy[11] = value; } }
-		double sw;
+		private double a { get { return zx[1]; } set { zx[1] = value; } }
+
+		private double b { get { return zx[4]; } set { zx[4] = value; } }
+
+		private double c__ { get { return zx[7]; } set { zx[7] = value; } }
+
+		private double d__ { get { return zy[1]; } set { zy[1] = value; } }
+
+		private double e { get { return zy[13]; } set { zy[13] = value; } }
+
+		private int k;
+
+		private double a1 { get { return zx[1]; } set { zx[1] = value; } }
+
+		private double b1 { get { return zx[1]; } set { zx[1] = value; } }
+
+		private double a2 { get { return zx[4]; } set { zx[4] = value; } }
+
+		private double a4 { get { return zx[7]; } set { zx[7] = value; } }
+
+		private double a5 { get { return zx[1]; } set { zx[1] = value; } }
+
+		private double b5 { get { return zx[1]; } set { zx[1] = value; } }
+
+		private double b2 { get { return zy[1]; } set { zy[1] = value; } }
+
+		private double b4 { get { return zy[13]; } set { zy[13] = value; } }
+
+		private double a3, b3;
+		private int n0;
+
+		private double q0 { get { return zx[1]; } set { zx[1] = value; } }
+
+		private double q1 { get { return zx[4]; } set { zx[4] = value; } }
+
+		private double q2 { get { return zx[7]; } set { zx[7] = value; } }
+
+		private double q3 { get { return zy[1]; } set { zy[1] = value; } }
+
+		private double[] equiv_86 = new double[1];
+
+		private double w1 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
+
+		private double[] equiv_85 = new double[1];
+
+		private double w2 { get { return equiv_85[0]; } set { equiv_85[0] = value; } }
+
+		private double x2 { get { return zx[2]; } set { zx[2] = value; } }
+
+		private double y2 { get { return zx[13]; } set { zx[13] = value; } }
+
+		private double x4 { get { return zx[8]; } set { zx[8] = value; } }
+
+		private double x5 { get { return zx[11]; } set { zx[11] = value; } }
+
+		private double y4 { get { return zy[2]; } set { zy[2] = value; } }
+
+		private double y5 { get { return zx[14]; } set { zx[14] = value; } }
+
+		private double w4 { get { return equiv_85[0]; } set { equiv_85[0] = value; } }
+
+		private double w3 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
+
+		private double w5 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
+
+		private double x3, y3;
+		private double[] equiv_41 = new double[1];
+
+		private double p00 { get { return equiv_41[0]; } set { equiv_41[0] = value; } }
+
+		private double p01 { get { return zy[5]; } set { zy[5] = value; } }
+
+		private double p10 { get { return zx[5]; } set { zx[5] = value; } }
+
+		private double p11 { get { return zxy[5]; } set { zxy[5] = value; } }
+
+		private double p02 { get { return zx[14]; } set { zx[14] = value; } }
+
+		private double p03 { get { return zy[4]; } set { zy[4] = value; } }
+
+		private double p12 { get { return zy[7]; } set { zy[7] = value; } }
+
+		private double p13 { get { return zy[8]; } set { zy[8] = value; } }
+
+		private double p20 { get { return zy[11]; } set { zy[11] = value; } }
+
+		private double p21 { get { return zy[14]; } set { zy[14] = value; } }
+
+		private double p22 { get { return zxy[1]; } set { zxy[1] = value; } }
+
+		private double[] za = new double[10]; // equiv_9
+		private double[] zb = new double[10]; // equiv_19
+		private double[] equiv_61 = new double[1];
+
+		private double dx { get { return equiv_61[0]; } set { equiv_61[0] = value; } }
+
+		private double[] equiv_62 = new double[1];
+
+		private double dy { get { return equiv_62[0]; } set { equiv_62[0] = value; } }
+
+		private double z33 { get { return equiv_41[0]; } set { equiv_41[0] = value; } }
+
+		private int ix;
+		private int iy;
+		private int[] equiv_57 = new int[1];
+
+		private int jx { get { return equiv_57[0]; } set { equiv_57[0] = value; } }
+
+		private int[] equiv_58 = new int[1];
+
+		private int jy { get { return equiv_58[0]; } set { equiv_58[0] = value; } }
+
+		private double uk { get { return equiv_61[0]; } set { equiv_61[0] = value; } }
+
+		private double vk { get { return equiv_62[0]; } set { equiv_62[0] = value; } }
+
+		private double z23 { get { return zy[4]; } set { zy[4] = value; } }
+
+		private double z24 { get { return zy[7]; } set { zy[7] = value; } }
+
+		private double z32 { get { return zy[8]; } set { zy[8] = value; } }
+
+		private double z34 { get { return zy[11]; } set { zy[11] = value; } }
+
+		private double z35 { get { return zy[14]; } set { zy[14] = value; } }
+
+		private double z42 { get { return zxy[1]; } set { zxy[1] = value; } }
+
+		private double z43 { get { return zxy[4]; } set { zxy[4] = value; } }
+
+		private double p23 { get { return zxy[4]; } set { zxy[4] = value; } }
+
+		private double z44 { get { return zxy[2]; } set { zxy[2] = value; } }
+
+		private double[] zx = new double[16];
+		private double[] zy = new double[16];
+
+		private double p30 { get { return zxy[2]; } set { zxy[2] = value; } }
+
+		private double z45 { get { return zxy[7]; } set { zxy[7] = value; } }
+
+		private double p31 { get { return zxy[7]; } set { zxy[7] = value; } }
+
+		private double z53 { get { return zxy[8]; } set { zxy[8] = value; } }
+
+		private double p32 { get { return zxy[8]; } set { zxy[8] = value; } }
+
+		private double z54 { get { return zxy[11]; } set { zxy[11] = value; } }
+
+		private double p33 { get { return zxy[11]; } set { zxy[11] = value; } }
+
+		private double sw;
+
 		//double iu0;
-		int[] equiv_59 = new int[1];
-		int jx1 { get { return equiv_59[0]; } set { equiv_59[0] = value; } }
-		int lx0;
-		int ly0;
-		int[] equiv_60 = new int[1];
-		int jy1 { get { return equiv_60[0]; } set { equiv_60[0] = value; } }
-		double wx2 { get { return zxy[13]; } set { zxy[13] = value; } }
-		double wy2 { get { return equiv_85[0]; } set { equiv_85[0] = value; } }
-		double wy3 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
-		double wx3 { get { return zxy[14]; } set { zxy[14] = value; } }
-		double[] zab = new double[9];
-		double z3a1 { get { return za[0]; } set { za[0] = value; } }
-		double z3a2 { get { return za[1]; } set { za[1] = value; } }
-		double z3a3 { get { return za[2]; } set { za[2] = value; } }
-		double z3a4 { get { return za[3]; } set { za[3] = value; } }
-		double z3a5 { get { return za[4]; } set { za[4] = value; } }
-		double z4a1 { get { return za[5]; } set { za[5] = value; } }
-		double z4a2 { get { return za[6]; } set { za[6] = value; } }
-		double z4a3 { get { return za[7]; } set { za[7] = value; } }
-		double z4a4 { get { return za[8]; } set { za[8] = value; } }
-		double z4a5 { get { return za[9]; } set { za[9] = value; } }
-		double z3b1 { get { return zb[0]; } set { zb[0] = value; } }
-		double z3b2 { get { return zb[2]; } set { zb[2] = value; } }
-		double z3b3 { get { return zb[4]; } set { zb[4] = value; } }
-		double z3b4 { get { return zb[6]; } set { zb[6] = value; } }
-		double z3b5 { get { return zb[8]; } set { zb[8] = value; } }
-		double z4b1 { get { return zb[1]; } set { zb[1] = value; } }
-		double z4b2 { get { return zb[3]; } set { zb[3] = value; } }
-		double z4b3 { get { return zb[5]; } set { zb[5] = value; } }
-		double z4b4 { get { return zb[7]; } set { zb[7] = value; } }
-		double z4b5 { get { return zb[9]; } set { zb[9] = value; } }
-		int imn { get { return equiv_57[0]; } set { equiv_57[0] = value; } }
-		int imx { get { return equiv_58[0]; } set { equiv_58[0] = value; } }
-		double zx33 { get { return zx[5]; } set { zx[5] = value; } }
-		double zx43 { get { return zx[6]; } set { zx[6] = value; } }
-		double zx34 { get { return zx[9]; } set { zx[9] = value; } }
-		double zx44 { get { return zx[10]; } set { zx[10] = value; } }
-		double zy33 { get { return zy[5]; } set { zy[5] = value; } }
-		double zy43 { get { return zy[6]; } set { zy[6] = value; } }
-		double zy34 { get { return zy[9]; } set { zy[9] = value; } }
-		double zy44 { get { return zy[10]; } set { zy[10] = value; } }
-		double[] zxy = new double[16];
-		double a3sq { get { return zx[2]; } set { zx[2] = value; } }
-		double b3sq { get { return zy[2]; } set { zy[2] = value; } }
-		int jxm2 { get { return equiv_59[0]; } set { equiv_59[0] = value; } }
-		int lxm1;
-		int lxm2;
-		int lym1;
-		int lxp1;
-		int lym2;
-		int lyp1;
-		int jym2 { get { return equiv_60[0]; } set { equiv_60[0] = value; } }
-		double za2b2 { get { return zab[0]; } set { zab[0] = value; } }
-		double za3b2 { get { return zab[1]; } set { zab[1] = value; } }
-		double za4b2 { get { return zab[2]; } set { zab[2] = value; } }
-		double za2b3 { get { return zab[3]; } set { zab[3] = value; } }
-		double za3b3 { get { return zab[4]; } set { zab[4] = value; } }
-		double za4b3 { get { return zab[5]; } set { zab[5] = value; } }
-		double za2b4 { get { return zab[6]; } set { zab[6] = value; } }
-		double za3b4 { get { return zab[7]; } set { zab[7] = value; } }
-		double za4b4 { get { return zab[8]; } set { zab[8] = value; } }
-		double zx3b3;
-		int jxml, jyml;
-		double zx4b3, zy3a3, zy4a3;
-		double ixpv;
-		double iypv;
-		double zxy33 { get { return zxy[5]; } set { zxy[5] = value; } }
-		double zxy43 { get { return zxy[6]; } set { zxy[6] = value; } }
-		double zxy34 { get { return zxy[9]; } set { zxy[9] = value; } }
-		double zxy44 { get { return zxy[10]; } set { zxy[10] = value; } }
+		private int[] equiv_59 = new int[1];
 
+		private int jx1 { get { return equiv_59[0]; } set { equiv_59[0] = value; } }
 
+		private int lx0;
+		private int ly0;
+		private int[] equiv_60 = new int[1];
 
+		private int jy1 { get { return equiv_60[0]; } set { equiv_60[0] = value; } }
+
+		private double wx2 { get { return zxy[13]; } set { zxy[13] = value; } }
+
+		private double wy2 { get { return equiv_85[0]; } set { equiv_85[0] = value; } }
+
+		private double wy3 { get { return equiv_86[0]; } set { equiv_86[0] = value; } }
+
+		private double wx3 { get { return zxy[14]; } set { zxy[14] = value; } }
+
+		private double[] zab = new double[9];
+
+		private double z3a1 { get { return za[0]; } set { za[0] = value; } }
+
+		private double z3a2 { get { return za[1]; } set { za[1] = value; } }
+
+		private double z3a3 { get { return za[2]; } set { za[2] = value; } }
+
+		private double z3a4 { get { return za[3]; } set { za[3] = value; } }
+
+		private double z3a5 { get { return za[4]; } set { za[4] = value; } }
+
+		private double z4a1 { get { return za[5]; } set { za[5] = value; } }
+
+		private double z4a2 { get { return za[6]; } set { za[6] = value; } }
+
+		private double z4a3 { get { return za[7]; } set { za[7] = value; } }
+
+		private double z4a4 { get { return za[8]; } set { za[8] = value; } }
+
+		private double z4a5 { get { return za[9]; } set { za[9] = value; } }
+
+		private double z3b1 { get { return zb[0]; } set { zb[0] = value; } }
+
+		private double z3b2 { get { return zb[2]; } set { zb[2] = value; } }
+
+		private double z3b3 { get { return zb[4]; } set { zb[4] = value; } }
+
+		private double z3b4 { get { return zb[6]; } set { zb[6] = value; } }
+
+		private double z3b5 { get { return zb[8]; } set { zb[8] = value; } }
+
+		private double z4b1 { get { return zb[1]; } set { zb[1] = value; } }
+
+		private double z4b2 { get { return zb[3]; } set { zb[3] = value; } }
+
+		private double z4b3 { get { return zb[5]; } set { zb[5] = value; } }
+
+		private double z4b4 { get { return zb[7]; } set { zb[7] = value; } }
+
+		private double z4b5 { get { return zb[9]; } set { zb[9] = value; } }
+
+		private int imn { get { return equiv_57[0]; } set { equiv_57[0] = value; } }
+
+		private int imx { get { return equiv_58[0]; } set { equiv_58[0] = value; } }
+
+		private double zx33 { get { return zx[5]; } set { zx[5] = value; } }
+
+		private double zx43 { get { return zx[6]; } set { zx[6] = value; } }
+
+		private double zx34 { get { return zx[9]; } set { zx[9] = value; } }
+
+		private double zx44 { get { return zx[10]; } set { zx[10] = value; } }
+
+		private double zy33 { get { return zy[5]; } set { zy[5] = value; } }
+
+		private double zy43 { get { return zy[6]; } set { zy[6] = value; } }
+
+		private double zy34 { get { return zy[9]; } set { zy[9] = value; } }
+
+		private double zy44 { get { return zy[10]; } set { zy[10] = value; } }
+
+		private double[] zxy = new double[16];
+
+		private double a3sq { get { return zx[2]; } set { zx[2] = value; } }
+
+		private double b3sq { get { return zy[2]; } set { zy[2] = value; } }
+
+		private int jxm2 { get { return equiv_59[0]; } set { equiv_59[0] = value; } }
+
+		private int lxm1;
+		private int lxm2;
+		private int lym1;
+		private int lxp1;
+		private int lym2;
+		private int lyp1;
+
+		private int jym2 { get { return equiv_60[0]; } set { equiv_60[0] = value; } }
+
+		private double za2b2 { get { return zab[0]; } set { zab[0] = value; } }
+
+		private double za3b2 { get { return zab[1]; } set { zab[1] = value; } }
+
+		private double za4b2 { get { return zab[2]; } set { zab[2] = value; } }
+
+		private double za2b3 { get { return zab[3]; } set { zab[3] = value; } }
+
+		private double za3b3 { get { return zab[4]; } set { zab[4] = value; } }
+
+		private double za4b3 { get { return zab[5]; } set { zab[5] = value; } }
+
+		private double za2b4 { get { return zab[6]; } set { zab[6] = value; } }
+
+		private double za3b4 { get { return zab[7]; } set { zab[7] = value; } }
+
+		private double za4b4 { get { return zab[8]; } set { zab[8] = value; } }
+
+		private double zx3b3;
+		private int jxml, jyml;
+		private double zx4b3, zy3a3, zy4a3;
+		private double ixpv;
+		private double iypv;
+
+		private double zxy33 { get { return zxy[5]; } set { zxy[5] = value; } }
+
+		private double zxy43 { get { return zxy[6]; } set { zxy[6] = value; } }
+
+		private double zxy34 { get { return zxy[9]; } set { zxy[9] = value; } }
+
+		private double zxy44 { get { return zxy[10]; } set { zxy[10] = value; } }
 
 		/// <summary>
 		/// THIS SUBROUTINE INTERPOLATES, FROM VALUES OF THE FUNCTION */
@@ -305,22 +434,21 @@ namespace Altaxo.Calc.Interpolation
 		/// <remarks>
 		///      SOME VARIABLES INTERNALLY USED ARE
 		/// ZA  = DIVIDED DIFFERENCE OF Z WITH RESPECT TO X
-		/// ZB  = DIVIDED DIFFERENCE OF Z WITH RESPECT TO Y 
-		/// ZAB = SECOND ORDER DIVIDED DIFFERENCE OF Z WITH 
+		/// ZB  = DIVIDED DIFFERENCE OF Z WITH RESPECT TO Y
+		/// ZAB = SECOND ORDER DIVIDED DIFFERENCE OF Z WITH
 		///       RESPECT TO X AND Y */
-		/// ZX  = PARTIAL DERIVATIVE OF Z WITH RESPECT TO X 
+		/// ZX  = PARTIAL DERIVATIVE OF Z WITH RESPECT TO X
 		/// ZY  = PARTIAL DERIVATIVE OF Z WITH RESPECT TO Y
-		/// ZXY = SECOND ORDER PARTIAL DERIVATIVE OF Z WITH 
-		///       RESPECT TO X AND Y 
+		/// ZXY = SECOND ORDER PARTIAL DERIVATIVE OF Z WITH
+		///       RESPECT TO X AND Y
 		/// DECLARATION STATEMENTS
-		/// PRELIMINARY PROCESSING 
-		/// SETTING OF SOME INPUT PARAMETERS TO LOCAL VARIABLES 
-		/// Parameter adjustments 
+		/// PRELIMINARY PROCESSING
+		/// SETTING OF SOME INPUT PARAMETERS TO LOCAL VARIABLES
+		/// Parameter adjustments
 		///</remarks>
 		private int itplbv_(int lx, int ly, IROVector x,
 			IROVector y, IROMatrix z__, int n, IROVector u, IROVector v, IVector w)
 		{
-
 			/* System generated locals */
 			int z_dim1, i__1;
 			double r__1;
@@ -337,10 +465,6 @@ namespace Altaxo.Calc.Interpolation
 			lym2 = lym1 - 1;
 			lyp1 = ly0 + 1;
 			n0 = n;
-
-
-
-
 
 			/* ERROR CHECK */
 			if (lxm2 < 0)
@@ -546,7 +670,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L170;
 				}
-				x2 = x[jx - 3]; // LelliD 
+				x2 = x[jx - 3]; // LelliD
 				a2 = 1.0 / (x3 - x2);
 				z23 = z__[jx - 3, (jy - 2)]; // LelliD
 				z24 = z__[jx - 3, (jy - 1)]; // LelliD
@@ -1019,11 +1143,11 @@ namespace Altaxo.Calc.Interpolation
 		//goto L760;
 		L750:
 			throw new ArgumentException("X VALUES OUT OF SEQUENCE");
-			/*
-		L760:
-			throw new ArgumentException(string.Format("ix ={0} x[ix]={1})", ix, x[ix]));
-			goto L800;
-		 */
+		/*
+	L760:
+		throw new ArgumentException(string.Format("ix ={0} x[ix]={1})", ix, x[ix]));
+		goto L800;
+	 */
 		L770:
 			throw new ArgumentException("IDENTICAL Y VALUES");
 		//goto L790;
@@ -1035,13 +1159,11 @@ namespace Altaxo.Calc.Interpolation
 			L800:
 				throw new ArgumentException(string.Format("LX ={0} LY ={1} N ={2} ERROR DETECTED IN ROUTINE ITPLBV)", ix, iy, n));
 				//return 0;
-			// FORMAT STATEMENTS 
+			// FORMAT STATEMENTS
 			return 0;
 			*/
 		} /* itplbv_ */
 
-		#endregion
-
+		#endregion Created from the FORTRAN sources
 	}
-
 }

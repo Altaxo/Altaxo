@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,29 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
-
+using System.ComponentModel;
+using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>
 	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
 	/// </remarks>
-	class ExpandableProperty : Property
+	internal class ExpandableProperty : Property
 	{
 		private PropertyCollection _propertyCollection;
 		private bool _automaticlyExpandObjects;
 		private string _filter;
+
 		public ExpandableProperty(object instance, PropertyDescriptor property, bool automaticlyExpandObjects, string filter)
 			: base(instance, property)
 		{
@@ -52,7 +53,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 		{
 			get
 			{
-
 				if (_propertyCollection == null)
 				{
 					//Lazy initialisation prevent from deep search and looping
@@ -62,6 +62,5 @@ namespace Altaxo.Main.Services.PropertyReflection
 				return _propertyCollection.Items;
 			}
 		}
-
 	}
 }

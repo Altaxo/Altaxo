@@ -22,15 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;

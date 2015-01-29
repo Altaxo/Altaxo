@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,66 +31,83 @@ namespace Altaxo.Units
 {
 	public class SIPrefix : IUnit, IEquatable<SIPrefix>, IComparable<SIPrefix>
 	{
-		string _name;
-		string _shortCut;
-		int _exponent;
-		double _factor;
-		double _divider;
+		private string _name;
+		private string _shortCut;
+		private int _exponent;
+		private double _factor;
+		private double _divider;
 
-		static List<SIPrefix> _instances;
+		private static List<SIPrefix> _instances;
 
 		/// <summary>List with all prefixes, including the prefix <see cref="None"/>.</summary>
-		static SIPrefixList _allPrefixe;
+		private static SIPrefixList _allPrefixe;
 
 		/// <summary>List with only the prefix <see cref="None"/>.</summary>
-		static SIPrefixList _nonePrefixList;
+		private static SIPrefixList _nonePrefixList;
 
-
-		static SIPrefix _prefix_yocto;
-		static SIPrefix _prefix_zepto;
-		static SIPrefix _prefix_atto;
-		static SIPrefix _prefix_femto;
-		static SIPrefix _prefix_pico;
-		static SIPrefix _prefix_nano;
-		static SIPrefix _prefix_micro; 
-		static SIPrefix _prefix_milli; 
-		static SIPrefix _prefix_centi;
-		static SIPrefix _prefix_deci;
-		static SIPrefix _prefix_none;
-		static SIPrefix _prefix_deca;
-		static SIPrefix _prefix_hecto;
-		static SIPrefix _prefix_kilo;
-		static SIPrefix _prefix_mega;
-		static SIPrefix _prefix_giga;
-		static SIPrefix _prefix_tera;
-		static SIPrefix _prefix_peta;
-		static SIPrefix _prefix_exa;
-		static SIPrefix _prefix_zetta;
-		static SIPrefix _prefix_yotta;
-
+		private static SIPrefix _prefix_yocto;
+		private static SIPrefix _prefix_zepto;
+		private static SIPrefix _prefix_atto;
+		private static SIPrefix _prefix_femto;
+		private static SIPrefix _prefix_pico;
+		private static SIPrefix _prefix_nano;
+		private static SIPrefix _prefix_micro;
+		private static SIPrefix _prefix_milli;
+		private static SIPrefix _prefix_centi;
+		private static SIPrefix _prefix_deci;
+		private static SIPrefix _prefix_none;
+		private static SIPrefix _prefix_deca;
+		private static SIPrefix _prefix_hecto;
+		private static SIPrefix _prefix_kilo;
+		private static SIPrefix _prefix_mega;
+		private static SIPrefix _prefix_giga;
+		private static SIPrefix _prefix_tera;
+		private static SIPrefix _prefix_peta;
+		private static SIPrefix _prefix_exa;
+		private static SIPrefix _prefix_zetta;
+		private static SIPrefix _prefix_yotta;
 
 		public static SIPrefix Yocto { get { return _prefix_yocto; } }
-		public static SIPrefix Zepto { get { return _prefix_zepto; } }
-		public static SIPrefix Atto { get { return _prefix_atto; } }
-		public static SIPrefix Femto { get { return _prefix_femto; } }
-		public static SIPrefix Pico { get { return _prefix_pico; } }
-		public static SIPrefix Nano { get { return _prefix_nano; } }
-		public static SIPrefix Micro { get { return _prefix_micro; } }
-		public static SIPrefix Milli { get { return _prefix_milli; } }
-		public static SIPrefix Centi { get { return _prefix_centi; } }
-		public static SIPrefix Deci { get { return _prefix_deci; } }
-		public static SIPrefix None	{	get	{	return _prefix_none; } }
-		public static SIPrefix Deca { get { return _prefix_deca; } }
-		public static SIPrefix Hecto { get { return _prefix_hecto; } }
-		public static SIPrefix Kilo { get { return _prefix_kilo; } }
-		public static SIPrefix Mega { get { return _prefix_mega; } }
-		public static SIPrefix Giga { get { return _prefix_giga; } }
-		public static SIPrefix Tera { get { return _prefix_tera; } }
-		public static SIPrefix Peta { get { return _prefix_peta; } }
-		public static SIPrefix Exa { get { return _prefix_exa; } }
-		public static SIPrefix Zetta { get { return _prefix_zetta; } }
-		public static SIPrefix Yotta { get { return _prefix_yotta; } }
 
+		public static SIPrefix Zepto { get { return _prefix_zepto; } }
+
+		public static SIPrefix Atto { get { return _prefix_atto; } }
+
+		public static SIPrefix Femto { get { return _prefix_femto; } }
+
+		public static SIPrefix Pico { get { return _prefix_pico; } }
+
+		public static SIPrefix Nano { get { return _prefix_nano; } }
+
+		public static SIPrefix Micro { get { return _prefix_micro; } }
+
+		public static SIPrefix Milli { get { return _prefix_milli; } }
+
+		public static SIPrefix Centi { get { return _prefix_centi; } }
+
+		public static SIPrefix Deci { get { return _prefix_deci; } }
+
+		public static SIPrefix None { get { return _prefix_none; } }
+
+		public static SIPrefix Deca { get { return _prefix_deca; } }
+
+		public static SIPrefix Hecto { get { return _prefix_hecto; } }
+
+		public static SIPrefix Kilo { get { return _prefix_kilo; } }
+
+		public static SIPrefix Mega { get { return _prefix_mega; } }
+
+		public static SIPrefix Giga { get { return _prefix_giga; } }
+
+		public static SIPrefix Tera { get { return _prefix_tera; } }
+
+		public static SIPrefix Peta { get { return _prefix_peta; } }
+
+		public static SIPrefix Exa { get { return _prefix_exa; } }
+
+		public static SIPrefix Zetta { get { return _prefix_zetta; } }
+
+		public static SIPrefix Yotta { get { return _prefix_yotta; } }
 
 		public static int MaxShortCutLength { get { return 2; } }
 
@@ -97,7 +116,7 @@ namespace Altaxo.Units
 		static SIPrefix()
 		{
 			_instances = new List<SIPrefix>();
-			_instances.Add(_prefix_yocto=new SIPrefix("yocto", "y", -24));
+			_instances.Add(_prefix_yocto = new SIPrefix("yocto", "y", -24));
 			_instances.Add(_prefix_zepto = new SIPrefix("zepto", "z", -21));
 			_instances.Add(_prefix_atto = new SIPrefix("atto", "a", -18));
 			_instances.Add(_prefix_femto = new SIPrefix("femto", "f", -15));
@@ -119,7 +138,7 @@ namespace Altaxo.Units
 			_instances.Add(_prefix_zetta = new SIPrefix("zetta", "Z", 21));
 			_instances.Add(_prefix_yotta = new SIPrefix("yotta", "Y", 24));
 
-			_nonePrefixList = new SIPrefixList(new SIPrefix[]{_prefix_none});
+			_nonePrefixList = new SIPrefixList(new SIPrefix[] { _prefix_none });
 			_allPrefixe = new SIPrefixList(_instances);
 		}
 
@@ -162,7 +181,6 @@ namespace Altaxo.Units
 			_exponent = exponent;
 			_factor = Altaxo.Calc.RMath.Pow(10, exponent);
 			_divider = Altaxo.Calc.RMath.Pow(10, -exponent);
-
 		}
 
 		public string Name
@@ -220,5 +238,4 @@ namespace Altaxo.Units
 				return this._exponent < other._exponent ? -1 : 1;
 		}
 	}
-
 }

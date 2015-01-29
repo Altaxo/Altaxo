@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Conjugate Gradient.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * TODO: Add preconditioning and selection of either Fletcher-Reeves or Polak-Ribiere
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -41,7 +43,7 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public class ConjugateGradient : FunctionMinimizeMethod
 	{
-		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the 
+		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
 		/// costfunction and optionally user specified ending criteria and line search methods.</summary>
 		///<param name="costfunction">Nonlinear cost function to minimize.</param>
 		///<remarks>This class began as a port of CG+ by Guanghui Lui, Jorge Nocedal and Richard Waltz
@@ -50,14 +52,14 @@ namespace Altaxo.Calc.Optimization
 		public ConjugateGradient(CostFunction costfunction)
 			: this(costfunction, new EndCriteria()) { }
 
-		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the 
+		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
 		/// costfunction and optionally user specified ending criteria and line search methods.</summary>
 		///<param name="costfunction">Nonlinear cost function to minimize.</param>
 		///<param name="endcriteria">User specified ending criteria.</param>
 		public ConjugateGradient(CostFunction costfunction, EndCriteria endcriteria)
 			: this(costfunction, endcriteria, new SecantLineSearch(costfunction, endcriteria)) { }
 
-		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the 
+		///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
 		/// costfunction and optionally user specified ending criteria and line search methods.</summary>
 		///<param name="costfunction">Nonlinear cost function to minimize.</param>
 		///<param name="endcriteria">User specified ending criteria.</param>
@@ -69,7 +71,7 @@ namespace Altaxo.Calc.Optimization
 			this.lineSearchMethod_ = lsm;
 		}
 
-		///<summary>Number of iterations between restarts.  Must be a non-negative number.  If 0 is 
+		///<summary>Number of iterations between restarts.  Must be a non-negative number.  If 0 is
 		/// specified then the number of iterations between restart is the number of variables </summary>
 		public int RestartCount
 		{
@@ -83,7 +85,7 @@ namespace Altaxo.Calc.Optimization
 			}
 		}
 
-		DoubleVector g;
+		private DoubleVector g;
 		//DoubleVector gold;
 
 		private int restartCount = 0;
@@ -148,7 +150,6 @@ namespace Altaxo.Calc.Optimization
 		///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
 		public override void IterateMethod()
 		{
-
 			DoubleVector d = this.iterationDirections_[endCriteria_.iterationCounter - 1];
 			DoubleVector x = this.iterationVectors_[endCriteria_.iterationCounter - 1];
 			DoubleVector g = this.iterationGradients_[endCriteria_.iterationCounter - 1];

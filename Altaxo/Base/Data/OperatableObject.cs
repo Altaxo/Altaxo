@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -29,7 +31,6 @@ namespace Altaxo.Data
 	/// </summary>
 	public abstract class OperatableObject
 	{
-
 		public override bool Equals(object o)
 		{
 			return base.Equals(o);
@@ -47,80 +48,97 @@ namespace Altaxo.Data
 
 		public virtual bool vop_Addition(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Addition_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Subtraction(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Subtraction_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Multiplication(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Multiplication_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Division(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Division_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Modulo(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Modulo_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_And(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_And_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Or(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Or_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Xor(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Xor_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_ShiftLeft(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftLeft_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_ShiftRight(object a, out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_ShiftRight_Rev(object a, out OperatableObject b)
 		{ b = null; return false; }
 
 		public virtual bool vop_Equal(object a, out bool b)
 		{ b = this.Equals(a); return true; }
+
 		public virtual bool vop_Equal_Rev(object a, out bool b)
 		{ b = a.Equals(this); return true; }
 
 		public virtual bool vop_NotEqual(object a, out bool b)
 		{ b = !this.Equals(a); return true; }
+
 		public virtual bool vop_NotEqual_Rev(object a, out bool b)
 		{ b = !a.Equals(this); return true; }
 
 		public virtual bool vop_Lesser(object a, out bool b)
 		{ b = false; return false; }
+
 		public virtual bool vop_Lesser_Rev(object a, out bool b)
 		{ b = false; return false; }
 
 		public virtual bool vop_Greater(object a, out bool b)
 		{ b = false; return false; }
+
 		public virtual bool vop_Greater_Rev(object a, out bool b)
 		{ b = false; return false; }
 
 		public virtual bool vop_LesserOrEqual(object a, out bool b)
 		{ b = false; return false; }
+
 		public virtual bool vop_LesserOrEqual_Rev(object a, out bool b)
 		{ b = false; return false; }
 
 		public virtual bool vop_GreaterOrEqual(object a, out bool b)
 		{ b = false; return false; }
+
 		public virtual bool vop_GreaterOrEqual_Rev(object a, out bool b)
 		{ b = false; return false; }
 
@@ -128,22 +146,27 @@ namespace Altaxo.Data
 
 		public virtual bool vop_Plus(out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Minus(out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Not(out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Complement(out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Increment(out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_Decrement(out OperatableObject b)
 		{ b = null; return false; }
+
 		public virtual bool vop_True(out bool b)
 		{ b = false; return false; }
+
 		public virtual bool vop_False(out bool b)
 		{ b = false; return false; }
-
-
 
 		public static OperatableObject operator +(OperatableObject c1, object c2)
 		{
@@ -168,8 +191,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to add " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
-
 
 		public static OperatableObject operator -(OperatableObject c1, object c2)
 		{
@@ -273,7 +294,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to shift right " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-
 
 		public static bool operator ==(OperatableObject c1, object c2)
 		{
@@ -429,6 +449,5 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator FALSE to " + c1.ToString() + " (" + c1.GetType() + ")");
 		}
-
 	}
 }

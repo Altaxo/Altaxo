@@ -23,11 +23,7 @@
 #endregion Copyright
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
 using System;
-using System.Collections;
-using System.Xml;
 
 namespace Altaxo.Main.Commands
 {

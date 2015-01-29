@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Data;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -34,7 +35,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <summary>
 		/// Denotes the possible dividers of 360° to form ticks.
 		/// </summary>
-		protected static readonly int[] _possibleDividers = 
+		protected static readonly int[] _possibleDividers =
       {
         1,   // 360°
         2,   // 180°
@@ -52,25 +53,24 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		/// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers"/></summary>
 		protected int _majorTickDivider;
+
 		/// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers"/></summary>
 		protected int _minorTickDivider;
+
 		/// <summary>If true, the scale uses positive and negative values (-180..180°) instead of only positive values (0..360°).</summary>
 		protected bool _usePositiveNegativeAngles;
 
-
-		List<AltaxoVariant> _majorTicks;
-		List<AltaxoVariant> _minorTicks;
+		private List<AltaxoVariant> _majorTicks;
+		private List<AltaxoVariant> _minorTicks;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularTickSpacing), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				AngularTickSpacing s = (AngularTickSpacing)obj;
-
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -79,7 +79,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 
-
 			protected virtual AngularTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				AngularTickSpacing s = (AngularTickSpacing)o;
@@ -87,8 +86,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public AngularTickSpacing()
 		{
@@ -183,7 +182,6 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <summary>If true, use degree instead of radian.</summary>
 		public abstract bool UseDegree { get; }
 
-
 		public bool UseSignedValues
 		{
 			get
@@ -196,8 +194,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-
-
 		public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)
 		{
 			return false; // no change of the proposed boundaries
@@ -209,7 +205,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			InternalGetMinorTicks(org, end);
 		}
 
-		double GetAngleInDegrees(double org)
+		private double GetAngleInDegrees(double org)
 		{
 			if (UseDegree)
 				return org;
@@ -217,7 +213,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				return org * 180 / Math.PI;
 		}
 
-		void InternalGetMajorTicks(double org, double end)
+		private void InternalGetMajorTicks(double org, double end)
 		{
 			_majorTicks.Clear();
 			double start = GetAngleInDegrees(org);
@@ -240,8 +236,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-
-		void InternalGetMinorTicks(double org, double end)
+		private void InternalGetMinorTicks(double org, double end)
 		{
 			_minorTicks.Clear();
 
@@ -287,7 +282,5 @@ namespace Altaxo.Graph.Scales.Ticks
 				_minorTicks.Add(UseDegree ? angle : angle * Math.PI / 180);
 			}
 		}
-
-
 	}
 }

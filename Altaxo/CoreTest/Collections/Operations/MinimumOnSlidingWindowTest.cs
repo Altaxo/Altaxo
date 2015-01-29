@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,31 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using Altaxo.Calc;
+#endregion Copyright
+
 using NUnit.Framework;
-
+using System;
 
 namespace AltaxoTest.Collections.Operations
 {
 	[TestFixture]
 	public class TestMinimumOnSlidingWindow
 	{
-		System.Random _rnd = new System.Random(8542221);
-		double[] vals;
+		private System.Random _rnd = new System.Random(8542221);
+		private double[] vals;
 
-		void Initialize()
+		private void Initialize()
 		{
 			vals = new double[10000];
 			for (int i = 0; i < vals.Length; ++i)
 			{
-				vals[i] = Math.Floor(short.MaxValue*_rnd.NextDouble());
+				vals[i] = Math.Floor(short.MaxValue * _rnd.NextDouble());
 			}
 		}
 
-		double GetMinimumOnSlidingWindowNaiveVersion(int start, int length, double[] vals)
+		private double GetMinimumOnSlidingWindowNaiveVersion(int start, int length, double[] vals)
 		{
 			int end = start + length;
 			start = Math.Max(0, start);
@@ -77,6 +77,5 @@ namespace AltaxoTest.Collections.Operations
 			TestSingleAddsWithWindowWidth(5);
 			TestSingleAddsWithWindowWidth(73);
 		}
-
 	}
 }

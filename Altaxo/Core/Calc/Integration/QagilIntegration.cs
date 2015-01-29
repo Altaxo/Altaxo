@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -41,9 +43,10 @@ namespace Altaxo.Calc.Integration
 	public class QagilIntegration : IntegrationBase
 	{
 		#region offical C# interface
-		bool _debug;
-		gsl_integration_workspace _workSpace;
-		gsl_integration_rule _integrationRule;
+
+		private bool _debug;
+		private gsl_integration_workspace _workSpace;
+		private gsl_integration_rule _integrationRule;
 
 		/// <summary>
 		/// Returns the default integration rule used for this class.
@@ -87,7 +90,6 @@ namespace Altaxo.Calc.Integration
 			_integrationRule = integrationRule;
 			_debug = debug;
 		}
-
 
 		/// <summary>
 		/// Adaptive integration on semi-infinite interval (-Infinity,b).
@@ -221,7 +223,6 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, b, epsabs, epsrel, limit, q, debug, out result, out abserr, ref tempStorage);
 		}
 
-
 		/// <summary>
 		/// Adaptive integration on semi-infinite interval (-Infinity,b) using default settings for integration rule and debugging.
 		/// </summary>
@@ -245,21 +246,20 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, b, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
 		}
 
-
-		#endregion
+		#endregion offical C# interface
 
 		/* QAGIL: Evaluate an integral over an infinite range using the
       transformation,
-   
+
       integrate(f(x),-Inf,b) = integrate(f(b-(1-t)/t)/t^2,0,1)
 
       */
 
-		struct il_params { public double b; public Func<double, double> f; } ;
+		private struct il_params { public double b; public Func<double, double> f; } ;
 
 		//static double il_transform (double t, void *params);
 
-		static GSL_ERROR
+		private static GSL_ERROR
 		gsl_integration_qagil(Func<double, double> f,
 													 double b,
 													 double epsabs, double epsrel, int limit,
@@ -287,7 +287,7 @@ namespace Altaxo.Calc.Integration
 			return status;
 		}
 
-		static double
+		private static double
 		il_transform(double t, il_params p)
 		{
 			//struct il_params *p = (struct il_params *) params;

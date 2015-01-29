@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.ComponentModel;
+using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>
 	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -41,8 +42,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 		protected object _instance;
 		protected PropertyDescriptor _property;
 
-
-		#endregion
+		#endregion Fields
 
 		#region Initialization
 
@@ -64,7 +64,7 @@ namespace Altaxo.Main.Services.PropertyReflection
 			NotifyPropertyChanged("PropertyType");
 		}
 
-		#endregion
+		#endregion Initialization
 
 		#region Properties
 
@@ -141,16 +141,16 @@ namespace Altaxo.Main.Services.PropertyReflection
 			get { return _property.Attributes; }
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Event Handlers
 
-		void instance_PropertyChanged(object sender, EventArgs e)
+		private void instance_PropertyChanged(object sender, EventArgs e)
 		{
 			NotifyPropertyChanged("Value");
 		}
 
-		#endregion
+		#endregion Event Handlers
 
 		#region IDisposable Members
 
@@ -167,13 +167,12 @@ namespace Altaxo.Main.Services.PropertyReflection
 			base.Dispose(disposing);
 		}
 
-		#endregion
+		#endregion IDisposable Members
 
 		#region Comparer for Sorting
 
 		private class ByCategoryThenByNameComparer : IComparer<Property>
 		{
-
 			public int Compare(Property x, Property y)
 			{
 				if (ReferenceEquals(x, null) || ReferenceEquals(y, null)) return 0;
@@ -186,7 +185,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 
 		private class ByNameComparer : IComparer<Property>
 		{
-
 			public int Compare(Property x, Property y)
 			{
 				if (ReferenceEquals(x, null) || ReferenceEquals(y, null)) return 0;
@@ -198,6 +196,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 		public readonly static IComparer<Property> CompareByCategoryThenByName = new ByCategoryThenByNameComparer();
 		public readonly static IComparer<Property> CompareByName = new ByNameComparer();
 
-		#endregion
+		#endregion Comparer for Sorting
 	}
 }

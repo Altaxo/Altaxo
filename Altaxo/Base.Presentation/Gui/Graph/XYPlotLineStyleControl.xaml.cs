@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,19 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Graph;
-	using Altaxo.Gui.Common;
-	using Altaxo.Gui.Common.Drawing;
 	using Altaxo.Collections;
 
 	/// <summary>
@@ -46,13 +38,18 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class XYPlotLineStyleControl : UserControl, IXYPlotLineStyleView
 	{
-		Altaxo.Gui.Common.Drawing.PenControlsGlue _linePenGlue;
+		private Altaxo.Gui.Common.Drawing.PenControlsGlue _linePenGlue;
 
 		public event Action IndependentFillColorChanged;
+
 		public event Action IndependentLineColorChanged;
+
 		public event Action UseFillChanged;
+
 		public event Action UseLineChanged;
+
 		public event Action FillBrushChanged;
+
 		public event Action LinePenChanged;
 
 		public XYPlotLineStyleControl()
@@ -86,11 +83,10 @@ namespace Altaxo.Gui.Graph
 				FillBrushChanged();
 		}
 
-
 		private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
-			if (null!=_guiLineConnect.SelectedItem && null != UseLineChanged) // null for SelectedItem can happen when the DataSource is chaning
+			if (null != _guiLineConnect.SelectedItem && null != UseLineChanged) // null for SelectedItem can happen when the DataSource is chaning
 				UseLineChanged();
 		}
 
@@ -100,21 +96,13 @@ namespace Altaxo.Gui.Graph
 				IndependentLineColorChanged();
 		}
 
-		void EhLinePenChanged(object sender, EventArgs e)
+		private void EhLinePenChanged(object sender, EventArgs e)
 		{
 			if (null != LinePenChanged)
 				LinePenChanged();
 		}
 
-		#endregion
-
-
-	
-
-		
-
-		
-
+		#endregion Event handlers
 
 		public bool EnableLineControls
 		{
@@ -130,11 +118,9 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#region  IXYPlotLineStyleView
+		#region IXYPlotLineStyleView
 
 		#region Line pen
-
-	
 
 		public bool IndependentLineColor
 		{
@@ -153,7 +139,6 @@ namespace Altaxo.Gui.Graph
 			set { _linePenGlue.ShowPlotColorsOnly = value; }
 		}
 
-
 		public Altaxo.Graph.Gdi.PenX LinePen
 		{
 			get
@@ -168,8 +153,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
-
+		#endregion Line pen
 
 		#region Area fill
 
@@ -188,7 +172,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		public void InitializeFillColorLinkage(SelectableListNodeList list)
 		{
 			_guiFillColorLinkage.Initialize(list);
@@ -198,7 +181,6 @@ namespace Altaxo.Gui.Graph
 		{
 			set { _guiFillBrush.ShowPlotColorsOnly = value; }
 		}
-
 
 		public Altaxo.Graph.Gdi.BrushX FillBrush
 		{
@@ -213,8 +195,8 @@ namespace Altaxo.Gui.Graph
 				_guiFillBrush.SelectedBrush = value;
 			}
 		}
-		#endregion
 
+		#endregion Area fill
 
 		public bool LineSymbolGap
 		{
@@ -233,8 +215,6 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_guiLineConnect, list);
 		}
 
-	
-
 		public void InitializeFillDirection(SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_guiFillDirection, list);
@@ -244,30 +224,13 @@ namespace Altaxo.Gui.Graph
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiFillDirection);
 		}
-	
-
-		
-		
-
-		
 
 		public bool ConnectCircular
 		{
-			get { return true==_guiConnectCircular.IsChecked; }
+			get { return true == _guiConnectCircular.IsChecked; }
 			set { _guiConnectCircular.IsChecked = value; }
 		}
 
-	
-
-	
-	
-
-		
-
-		#endregion
-
-	
-
-		
+		#endregion IXYPlotLineStyleView
 	}
 }

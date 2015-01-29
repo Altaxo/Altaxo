@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * MoreThuenteLineSearch.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -40,10 +42,10 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public class MoreThuenteLineSearch : LineSearchMethod
 	{
-
 		///<summary>Constructor for More-Thuente Line Search.</summary>
 		public MoreThuenteLineSearch(CostFunction costfunction)
 			: this(costfunction, new EndCriteria()) { }
+
 		public MoreThuenteLineSearch(CostFunction costfunction, EndCriteria endcriteria)
 		{
 			this.costFunction_ = costfunction;
@@ -67,7 +69,6 @@ namespace Altaxo.Calc.Optimization
 		///<summary> Minimize the given cost function </summary>
 		public override DoubleVector Search(DoubleVector x, DoubleVector s, double stp)
 		{
-
 			DoubleVector grad = GradientEvaluation(x);
 			double dginit = grad.GetDotProduct(s);
 
@@ -212,7 +213,6 @@ namespace Altaxo.Calc.Optimization
 				// OBTAINED BUT THE DECREASE IS NOT SUFFICIENT.
 				if (stage1 && f <= fx && f > ftest1)
 				{
-
 					// DEFINE THE MODIFIED FUNCTION AND DERIVATIVE VALUES.
 					fm = f - stp * dgtest;
 					fxm = fx - stx * dgtest;
@@ -234,7 +234,6 @@ namespace Altaxo.Calc.Optimization
 				}
 				else
 				{
-
 					// CALL CSTEPM TO UPDATE THE INTERVAL OF UNCERTAINTY
 					// AND TO COMPUTE THE NEW STEP.
 					Cstepm(ref stx, ref fx, ref dgx, ref sty, ref fy, ref dgy, ref stp, ref f, ref dg, ref brackt,
@@ -295,7 +294,7 @@ namespace Altaxo.Calc.Optimization
 
 				// SECOND CASE. A LOWER FUNCTION VALUE AND DERIVATIES OF
 				// OPPOSITE SIGN. THE MINIMUM IS BRACKETED.  IF THE CUBIC
-				// STEP IS CLOSER TO STX THAN THE QUADRATIC (SECANT) STEP, 
+				// STEP IS CLOSER TO STX THAN THE QUADRATIC (SECANT) STEP,
 				// THE CUBIC STEP IS TAKEN, ELSE THE QUADRATIC STEP IS TAKEN.
 			}
 			else if (sgnd < 0.0)
@@ -325,7 +324,7 @@ namespace Altaxo.Calc.Optimization
 				// IN THE DIRECTION OF THE STEP OR IF THE MINIMUM OF THE CUBIC
 				// IS BEYOND STP.  OTHERWISE THE CUBIC STEP IS DEFINED TO BE
 				// EITHER STPMIN OR STPMAX.  THE QUARDRATIC (SECANT) STEP IS ALSO
-				// COMPUTED AND IF THE MINIMUM IS BRACKETED THEN THE STEP 
+				// COMPUTED AND IF THE MINIMUM IS BRACKETED THEN THE STEP
 				// CLOSEST TO STX IS TAKEN, ELSE THE STEP FARTHEST AWAY IS TAKEN.
 			}
 			else if (System.Math.Abs(dp) < System.Math.Abs(dx))
@@ -391,7 +390,7 @@ namespace Altaxo.Calc.Optimization
 					stpf = stpmin;
 			}
 
-			//  UPDATE THE INTERVAL OF UNCERTAINTY.  THIS UPDATE DOES NOT 
+			//  UPDATE THE INTERVAL OF UNCERTAINTY.  THIS UPDATE DOES NOT
 			// DEPEND ON THE NEW STEP OR THE CASE ANALYSIS ABOVE.
 			if (fp > fx)
 			{
@@ -424,6 +423,6 @@ namespace Altaxo.Calc.Optimization
 			return;
 		}
 
-		int info;
+		private int info;
 	}
 }

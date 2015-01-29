@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
-using System;
 
-using ICSharpCode.Core;
+#endregion Copyright
 
 using ICSharpCode.SharpDevelop.Gui;
-
+using System;
 
 namespace Altaxo.Gui.Pads
 {
@@ -34,12 +33,12 @@ namespace Altaxo.Gui.Pads
 	public class NotesController :
 		ICSharpCode.SharpDevelop.Gui.IPadContent
 	{
-		System.Windows.Controls.TextBox _view;
+		private System.Windows.Controls.TextBox _view;
 
 		/// <summary>The currently active view content to which the text belongs.</summary>
-		WeakReference _currentActiveViewContent = new WeakReference(null);
+		private WeakReference _currentActiveViewContent = new WeakReference(null);
 
-		System.Windows.Data.BindingExpressionBase _textBinding;
+		private System.Windows.Data.BindingExpressionBase _textBinding;
 
 		public NotesController()
 		{
@@ -59,31 +58,30 @@ namespace Altaxo.Gui.Pads
 			_view.IsEnabled = false;
 		}
 
-		void _view_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+		private void _view_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
 		{
 			var tb = _textBinding;
 			if (null != tb)
 				tb.UpdateSource();
 		}
 
-		void _view_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+		private void _view_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
 		{
 			SaveTextBoxTextToNotes();
 		}
 
-		void _view_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+		private void _view_LostFocus(object sender, System.Windows.RoutedEventArgs e)
 		{
 			SaveTextBoxTextToNotes();
 		}
 
-		void EhActiveWorkbenchWindowChanged(object sender, EventArgs e)
+		private void EhActiveWorkbenchWindowChanged(object sender, EventArgs e)
 		{
 			SaveTextBoxTextToNotes(); // Saves the old text
 
 			// Clears the old binding
 			_textBinding = null; // to avoid updates when the text changed in the next line, and then the TextChanged event of the TextBox is triggered
 			System.Windows.Data.BindingOperations.ClearBinding(_view, System.Windows.Controls.TextBox.TextProperty);
-
 
 			_currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
 
@@ -130,12 +128,10 @@ namespace Altaxo.Gui.Pads
 			_textBinding = _view.SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
 		}
 
-
-
 		/// <summary>
 		/// Stores the text in the text control back to the graph document or worksheet.
 		/// </summary>
-		void SaveTextBoxTextToNotes()
+		private void SaveTextBoxTextToNotes()
 		{
 			if (null != _view)
 			{
@@ -166,7 +162,7 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-		#endregion
+		#endregion IPadContent Members
 
 		#region IDisposable Members
 
@@ -178,7 +174,6 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-		#endregion
-
+		#endregion IDisposable Members
 	}
 }

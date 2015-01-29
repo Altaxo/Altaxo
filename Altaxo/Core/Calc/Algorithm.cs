@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -21,13 +22,12 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#endregion
+#endregion Copyright
+
 using System;
-using System.Threading;
 
 namespace Altaxo.Calc
 {
-
 	/// <summary>Define an algorithm.</summary>
 	///<remarks>
 	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.</para>
@@ -35,7 +35,6 @@ namespace Altaxo.Calc
 	///</remarks>
 	public interface IAlgorithm
 	{
-
 		/// <summary>Computes the algorithm.</summary>
 		void Compute();
 

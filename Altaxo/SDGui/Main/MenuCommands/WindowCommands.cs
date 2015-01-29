@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Commands;
 
 namespace Altaxo.Main.Commands
 {
@@ -56,8 +55,9 @@ namespace Altaxo.Main.Commands
 				return dx.CompareTo(dy);
 			}
 
-			#endregion
+			#endregion IComparer Members
 		}
+
 		public class GraphTableNameComparer : IComparer
 		{
 			#region IComparer Members
@@ -81,8 +81,9 @@ namespace Altaxo.Main.Commands
 				return dx.CompareTo(dy);
 			}
 
-			#endregion
+			#endregion IComparer Members
 		}
+
 		public class GraphTableTypeComparer : IComparer
 		{
 			#region IComparer Members
@@ -106,11 +107,13 @@ namespace Altaxo.Main.Commands
 				return dx.CompareTo(dy);
 			}
 
-			#endregion
+			#endregion IComparer Members
 		}
+
 		public class GraphTableMultiComparer : IComparer
 		{
-			IComparer _c1, _c2;
+			private IComparer _c1, _c2;
+
 			public GraphTableMultiComparer(IComparer c1, IComparer c2)
 			{
 				_c1 = c1;
@@ -127,9 +130,8 @@ namespace Altaxo.Main.Commands
 				return result;
 			}
 
-			#endregion
+			#endregion IComparer Members
 		}
-
 
 		public static void GetAllTables(ArrayList arr)
 		{
@@ -179,7 +181,6 @@ namespace Altaxo.Main.Commands
 		{
 			Current.Workbench.CloseAllViews();
 		}
-
 	}
 
 	public class OpenAllWorksheets : AbstractCommand
@@ -193,7 +194,6 @@ namespace Altaxo.Main.Commands
 
 	public class OpenAllGraphs : AbstractCommand
 	{
-
 		public override void Run()
 		{
 			WindowCommands.OpenNonOpenGraphsAndTables(true, false,
@@ -236,7 +236,6 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-
 	public class SortGraphTablesByCreationTime : AbstractCommand
 	{
 		public override void Run()
@@ -256,7 +255,4 @@ namespace Altaxo.Main.Commands
 				new WindowCommands.GraphTableNameComparer());
 		}
 	}
-
-
-
 }

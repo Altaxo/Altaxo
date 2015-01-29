@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -35,22 +36,22 @@ namespace Altaxo.Calc.Regression
 	public class BurgAlgorithm
 	{
 		/// <summary>Forward prediction errors.</summary>
-		double[] _f;
+		private double[] _f;
 
-		/// <summary>Backward prediction errors.</summary> 
-		double[] _b;
+		/// <summary>Backward prediction errors.</summary>
+		private double[] _b;
 
 		/// <summary>Prediction coefficients. Note that for technical reasons _Ak[0] is always 1 and the calculated coefficients start with _Ak[1].</summary>
-		double[] _Ak;
+		private double[] _Ak;
 
 		/// <summary>Wrapper for the coefficients that can be returned by <see cref="Coefficients"/>.</summary>
-		IVector _AkWrapper;
+		private IVector _AkWrapper;
 
 		/// <summary>Number of coefficients that were calculated.</summary>
-		int _numberOfCoefficients;
+		private int _numberOfCoefficients;
 
 		/// <summary>Mean square error calculated during the last run.</summary>
-		double _meanSquareError;
+		private double _meanSquareError;
 
 		/// <summary>
 		/// Returns the number of coefficients that were used for the last run of the algorithm.
@@ -83,7 +84,6 @@ namespace Altaxo.Calc.Regression
 			}
 		}
 
-
 		/// <summary>
 		/// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
 		/// </summary>
@@ -95,7 +95,6 @@ namespace Altaxo.Calc.Regression
 			_meanSquareError = Execution(x, _AkWrapper, null, null, this);
 		}
 
-
 		/// <summary>
 		/// Uses th signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
 		/// </summary>
@@ -105,7 +104,6 @@ namespace Altaxo.Calc.Regression
 		{
 			_meanSquareError = Execution(x, coefficients, null, null, this);
 		}
-
 
 		/// <summary>
 		/// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
@@ -129,7 +127,6 @@ namespace Altaxo.Calc.Regression
 		{
 			_meanSquareError = Execution(x, coefficients, errors, reflectionCoefficients, this);
 		}
-
 
 		/// <summary>
 		/// Predict values towards the end of the vector. The predicted values are then used to predict more values. See remarks for details.
@@ -198,7 +195,6 @@ namespace Altaxo.Calc.Regression
 			return Math.Sqrt(sumsqr / (last - first));
 		}
 
-
 		/// <summary>
 		/// Predict values towards the start of the vector. The predicted values are then used to predict more values. See remarks for details.
 		/// </summary>
@@ -265,8 +261,6 @@ namespace Altaxo.Calc.Regression
 			return Math.Sqrt(sumsqr / (last));
 		}
 
-
-
 		/// <summary>
 		/// Ensures that temporary arrays are allocated in order to execute the Burg algorithm.
 		/// </summary>
@@ -291,7 +285,6 @@ namespace Altaxo.Calc.Regression
 			if (null == _f || _f.Length < xLength)
 				_f = new double[xLength];
 		}
-
 
 		/// <summary>
 		/// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
@@ -437,7 +430,7 @@ namespace Altaxo.Calc.Regression
 		/// <summary>Square of x.</summary>
 		/// <param name="x">x</param>
 		/// <returns>Square of x.</returns>
-		static double Square(double x)
+		private static double Square(double x)
 		{
 			return x * x;
 		}

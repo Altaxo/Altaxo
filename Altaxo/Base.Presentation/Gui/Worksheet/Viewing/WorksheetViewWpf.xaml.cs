@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
@@ -41,14 +37,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	/// </summary>
 	public partial class WorksheetViewWpf : UserControl, Altaxo.Gui.Worksheet.Viewing.IWorksheetView
 	{
-		WorksheetControllerWpf _guiController;
+		private WorksheetControllerWpf _guiController;
 
 		public WorksheetViewWpf()
 		{
 			InitializeComponent();
 		}
 
-			public WorksheetViewWpf(Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetViewWpf, WorksheetControllerWpf> createController)
+		public WorksheetViewWpf(Func<Altaxo.Gui.Worksheet.Viewing.IWorksheetController, WorksheetViewWpf, WorksheetControllerWpf> createController)
 		{
 			if (null == createController)
 				throw new ArgumentNullException("createController");
@@ -62,24 +58,20 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			set
 			{
-					_guiController = value as WorksheetControllerWpf;
+				_guiController = value as WorksheetControllerWpf;
 			}
 		}
-
-	
 
 		public void TableAreaInvalidate()
 		{
 			if (null != _guiController)
 				_guiController.TableAreaInvalidate();
-
 		}
 
 		public string TableViewTitle
 		{
 			set
 			{
-			
 			}
 		}
 
@@ -91,7 +83,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			get { return _worksheetPanel; }
 		}
 
-		#endregion
+		#endregion Altaxo.Gui.Worksheet.Viewing.IWorksheetView
 
 		#region Functions called from GuiController
 
@@ -204,7 +196,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			set { this._worksheetPanel.Cursor = value; }
 		}
 
-		#endregion
+		#endregion Functions called from GuiController
 
 		#region Helpers
 
@@ -213,16 +205,14 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			return e.GetPosition(_worksheetPanel);
 		}
 
-		#endregion
-
+		#endregion Helpers
 
 		#region Event handlers
 
 		private void EhWP_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			if(!_worksheetPanel.IsFocused)
+			if (!_worksheetPanel.IsFocused)
 				_worksheetPanel.Focus();
-
 
 			if (_guiController != null)
 			{
@@ -239,7 +229,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				_guiController.EhView_TableAreaMouseDoubleClick(GetPosition(e), e);
 			else if (e.ClickCount == 1)
 				_guiController.EhView_TableAreaMouseClick(GetPosition(e), e);
-
 		}
 
 		private void EhWP_MouseMove(object sender, MouseEventArgs e)
@@ -260,7 +249,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				_guiController.EhView_KeyDown(e);
 		}
 
-
 		private void EhWP_HorzScroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
 		{
 			if (null != _guiController)
@@ -273,7 +261,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				_guiController.EhView_VertScrollBarScroll(e);
 		}
 
-		#endregion
+		#endregion Event handlers
 
 		private void EhWP_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
@@ -355,6 +343,5 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				e.Handled = true;
 			}
 		}
-
 	}
 }

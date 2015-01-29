@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Calc.Fourier;
-using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;

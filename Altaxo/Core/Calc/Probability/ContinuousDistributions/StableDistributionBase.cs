@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +28,6 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
-
 	/// <summary>
 	/// Represents the base of all StableDistributions classes in different parametrizations.
 	/// </summary>
@@ -34,15 +35,15 @@ namespace Altaxo.Calc.Probability
 	/// </remarks>
 	public class StableDistributionBase : ContinuousDistribution
 	{
-		ExponentialDistribution _expDist = new ExponentialDistribution();
-		ContinuousUniformDistribution _contDist = new ContinuousUniformDistribution();
+		private ExponentialDistribution _expDist = new ExponentialDistribution();
+		private ContinuousUniformDistribution _contDist = new ContinuousUniformDistribution();
 
 		/// <summary>Helper variables used for generating the random values.</summary>
 		protected double _gen_t, _gen_B, _gen_S, _gen_Scale;
 
-
 		/// <summary>The highest number x that, when taken Exp(-x), gives a result greater than zero.</summary>
 		protected static readonly double MinusLogTiny = -Math.Log(double.Epsilon);
+
 		/// <summary>Default precision used for the integrations.</summary>
 		protected static readonly double DefaultPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
 
@@ -99,7 +100,8 @@ namespace Altaxo.Calc.Probability
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
-		#endregion
+
+		#endregion Abstract Implementation of ContinuousDistribution
 
 		#region Subdivisions
 
@@ -112,13 +114,13 @@ namespace Altaxo.Calc.Probability
 		/// <param name="smallestDivision">The smallest division.</param>
 		/// <param name="scale">Value &gt; 1 which is the ratio of the value of the next subdivision to the current subdivision.</param>
 		/// <returns></returns>
-		static double GetNumberOfLogarithmicDivisions(double span, double smallestDivision, double scale)
+		private static double GetNumberOfLogarithmicDivisions(double span, double smallestDivision, double scale)
 		{
 			double ges = span / smallestDivision;
 			return Math.Log(ges * (scale - 1) + scale) / Math.Log(scale) - 1;
 		}
 
-		static double GetScaleOfLogarithmicSubdivision(double span, double smallestDivision, double n)
+		private static double GetScaleOfLogarithmicSubdivision(double span, double smallestDivision, double n)
 		{
 			double scale = double.MaxValue;
 			double OneByN = 1.0 / n;
@@ -140,7 +142,7 @@ namespace Altaxo.Calc.Probability
 			return scale;
 		}
 
-		#endregion
+		#endregion Subdivisions
 
 		#region Function value finding
 
@@ -178,10 +180,6 @@ namespace Altaxo.Calc.Probability
 			return (x0 == 0 && xm <= ConsideredAsZero) ? 0 : xm;
 		}
 
-
-
-
-
 		/// <summary>
 		/// Finds the x where func(x)==1±-1E-5 between  x0 &lt; x &lt; x1 for a monoton decreasing function func.
 		/// </summary>
@@ -213,9 +211,6 @@ namespace Altaxo.Calc.Probability
 			}
 			return xm;
 		}
-
-
-
 
 		/// <summary>
 		/// Finds the x where func(x)==<paramref name="ysearch"/>±<paramref name="tol"/> between  x0 &lt; x &lt; x1 for a monotonic increasing function func.
@@ -324,7 +319,6 @@ namespace Altaxo.Calc.Probability
 
 			for (; ; )
 			{
-
 				if (y0 < y1) // increasing
 				{
 					if (y0 <= ysearch && ysearch <= y1)
@@ -401,9 +395,7 @@ namespace Altaxo.Calc.Probability
 			}
 		}
 
-
-
-		#endregion
+		#endregion Function value finding
 
 		#region Parameter conversion between different parametrizations
 
@@ -430,7 +422,6 @@ namespace Altaxo.Calc.Probability
 				double arg = -beta * tan_pi_alpha_2;
 				gamma = (2 / Math.PI) * Math.Atan(arg);
 				aga = StableDistributionFeller.GetAgaFromAlphaGamma(alpha, gamma);
-
 			}
 			else
 			{
@@ -447,7 +438,6 @@ namespace Altaxo.Calc.Probability
 					gamma = StableDistributionFeller.GetGammaFromAlphaAga(alpha, aga, beta < 0);
 				}
 			}
-
 
 			return gamma;
 		}
@@ -508,10 +498,13 @@ namespace Altaxo.Calc.Probability
 			{
 				case -1:
 					return -Math.Cos(PiBy2 * rem);
+
 				case 0:
 					return Math.Sin(PiBy2 * rem);
+
 				case 1:
 					return Math.Cos(PiBy2 * rem);
+
 				default:
 					return -Math.Sin(PiBy2 * rem);
 			}
@@ -531,10 +524,13 @@ namespace Altaxo.Calc.Probability
 			{
 				case -1:
 					return Math.Sin(PiBy2 * rem);
+
 				case 0:
 					return Math.Cos(PiBy2 * rem);
+
 				case 1:
 					return -Math.Sin(PiBy2 * rem);
+
 				default:
 					return -Math.Cos(PiBy2 * rem);
 			}
@@ -554,6 +550,7 @@ namespace Altaxo.Calc.Probability
 			{
 				case 0:
 					return Math.Tan(PiBy2 * rem);
+
 				default:
 					return -1 / Math.Tan(PiBy2 * rem);
 			}
@@ -637,7 +634,7 @@ namespace Altaxo.Calc.Probability
 		/// <summary>
 		/// Upper bound for x, at which the relative error of the series expansion of (1-Exp(x)) with 9 terms exceeds the accuracy of double values.
 		/// </summary>
-		static readonly double OneMinusExp_SmallBound = Math.Pow(DoubleConstants.DBL_EPSILON * 3628800, 1 / 9.0);
+		private static readonly double OneMinusExp_SmallBound = Math.Pow(DoubleConstants.DBL_EPSILON * 3628800, 1 / 9.0);
 
 		/// <summary>
 		/// Calculates 1-Exp(x) with more accuracy around x=0.
@@ -651,14 +648,14 @@ namespace Altaxo.Calc.Probability
 		public static double OneMinusExp(double x)
 		{
 			const double A1 = 1;
-			const double A2 = 1/2.0;
-			const double A3 = 1/6.0;
-			const double A4 = 1/24.0;
-			const double A5 = 1/120.0;
-			const double A6 = 1/720.0;
-			const double A7 = 1/5040.0;
-			const double A8 = 1/40320.0;
-			const double A9 = 1/362880.0;
+			const double A2 = 1 / 2.0;
+			const double A3 = 1 / 6.0;
+			const double A4 = 1 / 24.0;
+			const double A5 = 1 / 120.0;
+			const double A6 = 1 / 720.0;
+			const double A7 = 1 / 5040.0;
+			const double A8 = 1 / 40320.0;
+			const double A9 = 1 / 362880.0;
 
 			double ax = Math.Abs(x);
 			if (ax < OneMinusExp_SmallBound)
@@ -666,7 +663,7 @@ namespace Altaxo.Calc.Probability
 				if (ax < DoubleConstants.DBL_EPSILON)
 					return -x;
 				else
-				 return -(((((((((A9*x)+A8)*x+A7)*x+A6)*x+A5)*x+A4)*x+A3)*x+A2)*x+A1)*x; 
+					return -(((((((((A9 * x) + A8) * x + A7) * x + A6) * x + A5) * x + A4) * x + A3) * x + A2) * x + A1) * x;
 			}
 			else
 			{
@@ -675,7 +672,7 @@ namespace Altaxo.Calc.Probability
 		}
 
 		/// <summary>Calculates the 'alternative beta' value abe from the skewness parameter beta. The value abe helps to specifiy beta with enhanced accuracy especially when |beta| is close to 1.
-		/// Of course, this helper function is only intended to give a correct abe value for a given beta. But in order to specify beta with enhanced accuracy around |beta|=1, you should 
+		/// Of course, this helper function is only intended to give a correct abe value for a given beta. But in order to specify beta with enhanced accuracy around |beta|=1, you should
 		/// specify abe first, and then calculate beta from abe, which can be done with <see cref="GetBetaFromAbe"/>.</summary>
 		/// <param name="beta">The beta value.</param>
 		/// <returns>If beta is &gt;= 0, the return value is (1-beta). Else, if beta is &lt;0, the return value is (1+beta).</returns>
@@ -699,7 +696,7 @@ namespace Altaxo.Calc.Probability
 			{
 				double tan_pi_alpha_2 = TanXPiBy2(alpha);
 				gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
-				sigmaf = sigma0*PowerOfOnePlusXSquared(beta * tan_pi_alpha_2, 0.5 / alpha);
+				sigmaf = sigma0 * PowerOfOnePlusXSquared(beta * tan_pi_alpha_2, 0.5 / alpha);
 				muf = mu0 - sigma0 * beta * tan_pi_alpha_2;
 			}
 			else
@@ -742,9 +739,6 @@ namespace Altaxo.Calc.Probability
 				}
 			}
 		}
-
-
-
 
 		public static void ParameterConversionFellerToS0(double alpha, double gamma, double aga, double sigmaf, double muf, out double beta, out double abe, out double sigma0, out double mu0)
 		{
@@ -820,14 +814,12 @@ namespace Altaxo.Calc.Probability
 			}
 		}
 
-
-		#endregion
+		#endregion Parameter conversion between different parametrizations
 
 		#region Generation
 
 		protected double GenerateSymmetricCase(double alpha)
 		{
-
 			double u, v, t, s;
 
 			u = Math.PI * (_contDist.NextDouble() - 0.5);
@@ -871,7 +863,6 @@ namespace Altaxo.Calc.Probability
 			const double M_PI = Math.PI;
 			const double M_PI_2 = Math.PI / 2;
 
-
 			V = M_PI * (_contDist.NextDouble() - 0.5);
 
 			do
@@ -905,7 +896,6 @@ namespace Altaxo.Calc.Probability
 			const double M_PI = Math.PI;
 			const double M_PI_2 = Math.PI / 2;
 
-
 			V = M_PI * (_contDist.NextDouble() - 0.5);
 
 			do
@@ -914,10 +904,9 @@ namespace Altaxo.Calc.Probability
 			}
 			while (W == 0);
 
-		
-				X = ((M_PI_2 + beta * V) * Math.Tan(V) - beta * Math.Log(M_PI_2 * W * Math.Cos(V) / (M_PI_2 + beta * V))) / M_PI_2;
-				// org return c * (X + beta * Math.Log(c) / M_PI_2);
-				return X;
+			X = ((M_PI_2 + beta * V) * Math.Tan(V) - beta * Math.Log(M_PI_2 * W * Math.Cos(V) / (M_PI_2 + beta * V))) / M_PI_2;
+			// org return c * (X + beta * Math.Log(c) / M_PI_2);
+			return X;
 		}
 
 		protected double GenerateAsymmetricCaseS1_ANe1(double alpha, double t, double B, double S, double c)
@@ -941,8 +930,7 @@ namespace Altaxo.Calc.Probability
 			return c * X;
 		}
 
-
-		#endregion
+		#endregion Generation
 
 		#region Classes for integration (alpha<1)
 
@@ -1025,8 +1013,6 @@ namespace Altaxo.Calc.Probability
 				return r1 * r2s + r1s * r2;
 			}
 
-
-
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -1046,7 +1032,6 @@ namespace Altaxo.Calc.Probability
 				return r;
 			}
 
-
 			public double PDFFuncLogIntToLeft(double z)
 			{
 				double x = _x0 - Math.Exp(z);
@@ -1059,6 +1044,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -1069,7 +1055,6 @@ namespace Altaxo.Calc.Probability
 				return r;
 			}
 
-
 			public double PDFIntegrate(ref object tempStorage, double precision)
 			{
 				double integrand;
@@ -1078,14 +1063,12 @@ namespace Altaxo.Calc.Probability
 					//integrand = IntegrateFuncExpMFuncIncAdvanced(pdfCore, pdfFunc, 0, 0, Math.PI - dev, ref tempStorage, precision);
 					integrand = PDFIntegrateZeroDev(ref tempStorage, precision);
 				}
-
 				else if (dev < 1e-2)
 				{
 					//double xm = FindIncreasingYEqualToOne(pdfCore, 0, Math.PI - dev);
 					//integrand = IntegrateFuncExpMFuncIncAdvanced(pdfCore, pdfFunc, 0, xm, Math.PI - dev, ref tempStorage, precision);
 					integrand = PDFIntegrateSmallDev(ref tempStorage, precision);
 				}
-
 				else
 				{
 					integrand = PDFIntegrateNormalDev(ref tempStorage, precision);
@@ -1149,7 +1132,6 @@ namespace Altaxo.Calc.Probability
 											 PDFFuncLogIntToLeft,
 											 new double[] { Math.Log(xm * fac * DoubleConstants.DBL_EPSILON), Math.Log(_x0) }, 2,
 											 0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
-
 					}
 					else
 					{
@@ -1182,8 +1164,6 @@ namespace Altaxo.Calc.Probability
 						pdfFunc,
 						new double[] { 0, xm }, 2,
 						0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-
 
 						double result2 = 0, abserr2 = 0;
 						double xincrement = xm / 10;
@@ -1218,9 +1198,8 @@ namespace Altaxo.Calc.Probability
 				}
 			}
 
-			double PDFIntegrateUnknownRightSideInc(double x0, double x1a, ref object tempStorage, double precision)
+			private double PDFIntegrateUnknownRightSideInc(double x0, double x1a, ref object tempStorage, double precision)
 			{
-
 				const double diffOneDecade = 7;
 				double y1;
 				GSL_ERROR error1 = null;
@@ -1245,12 +1224,10 @@ namespace Altaxo.Calc.Probability
 					// now take the overall derivative
 					double s01 = (y1 - y0) / (x1 - x0); // overall derivative
 
-
 					// Take the values in the vicinity of x0 and x1, respectively, but make sure
 					// not to use too big differences
 
 					double s0, s1;
-					
 
 					s0 = PDFCoreDerivative(x0);
 					s1 = PDFCoreDerivative(x1);
@@ -1272,7 +1249,6 @@ namespace Altaxo.Calc.Probability
 							pdfFunc, intgrenzen, count, 0, precision, 100, out result1, out abserr1, ref tempStorage);
 						}
 						*/
-
 					}
 					else if (s0 < s01 && s1 > s01) // shallow at the beginning, but steep at the right side
 					{
@@ -1381,7 +1357,6 @@ namespace Altaxo.Calc.Probability
 							pdfFunc,
 							new double[] { x0, x1 }, 2,
 							0, precision, 100, out result1, out abserr1, ref tempStorage);
-
 					}
 				}
 
@@ -1390,7 +1365,6 @@ namespace Altaxo.Calc.Probability
 				else
 					return double.NaN;
 			}
-
 
 			public bool IsMaximumLeftHandSide()
 			{
@@ -1454,7 +1428,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -1462,7 +1435,6 @@ namespace Altaxo.Calc.Probability
 											CDFFunc,
 											new double[] { 0, UpperIntegrationLimit }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 
 				if (null != error1)
@@ -1471,29 +1443,28 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
+			#endregion CDF
 		}
 
 		public class Alt1GnIA1 : Alt1GnI
 		{
 			/// <summary>X-value where the core function is equal to 1.</summary>
-			double _xm;
+			private double _xm;
 
 			/// <summary>Equal to alpha/(1-alpha).</summary>
-			double _n;
+			private double _n;
 
 			/// <summary>Prefactor, equal to the derivative of the r1 part of the core function by the r1 value at xm..</summary>
-			double _a;
+			private double _a;
 
 			/// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
-			double _xmax;
+			private double _xmax;
 
 			public Alt1GnIA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
 				: base(factorp, facdiv, logPdfPrefactor, alpha, dev)
 			{
-
 			}
-		 
+
 			public double PDFCoreMod(double dx)
 			{
 				if (Math.Abs(dx) < _xmax)
@@ -1531,9 +1502,8 @@ namespace Altaxo.Calc.Probability
 					// but in connection with the high power small changes can have a dramatic effect on the result
 					// original: r1 = Math.Pow(Math.Sin(alpha * thetas) / (factorp * Math.Sin(thetas)), alpha / (1 - alpha));
 
-
 					// here we calculate the value y as follows: Sin(alpha x)/Sin(x) == alpha*(1+y)
-					double y = Math.Sin(alpha * thetas) / n - 2 * Math.Cos((1-0.5*ala)*thetas) * Math.Sin(0.5 * ala * thetas);
+					double y = Math.Sin(alpha * thetas) / n - 2 * Math.Cos((1 - 0.5 * ala) * thetas) * Math.Sin(0.5 * ala * thetas);
 					y /= Math.Sin(thetas);
 
 					r1 = Math.Pow(alpha / factorp, n) * Math.Exp(n * RMath.Log1p(y));
@@ -1559,7 +1529,7 @@ namespace Altaxo.Calc.Probability
 
 				double r1;
 				double r2;
-				if (dev==0 && thetas == 0)
+				if (dev == 0 && thetas == 0)
 				{
 					r1 = Math.Pow(alpha / factorp, n);
 					r2 = ala / facdiv;
@@ -1577,10 +1547,10 @@ namespace Altaxo.Calc.Probability
 						// here we calculate the value y as follows: Sin(alpha x)/Sin(x+dev) == alpha*(1+y)
 						double dev2 = dev / 2;
 						double y = Math.Sin(alpha * thetas) / n - 2 * Math.Cos((1 - 0.5 * ala) * thetas + dev2) * Math.Sin(0.5 * ala * thetas + dev2);
-						y /= Math.Sin(thetas+dev);
+						y /= Math.Sin(thetas + dev);
 						r1 = Math.Pow(alpha / factorp, n) * Math.Exp(n * RMath.Log1p(y));
 					}
-					r2 = Math.Sin(dev + ala*thetas) / (facdiv * Math.Sin(dev + thetas));
+					r2 = Math.Sin(dev + ala * thetas) / (facdiv * Math.Sin(dev + thetas));
 				}
 				double result = r1 * r2;
 				if (!(result >= 0))
@@ -1598,6 +1568,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntZeroDev(double z)
 			{
 				double x = Math.Exp(z);
@@ -1608,7 +1579,6 @@ namespace Altaxo.Calc.Probability
 				return r;
 			}
 
-
 			public new double PDFFuncLogIntToLeft(double z)
 			{
 				double x = Math.Max(-_xm, _x0 - Math.Exp(z));
@@ -1618,6 +1588,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public new double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -1677,7 +1648,6 @@ namespace Altaxo.Calc.Probability
 										new double[] { Math.Log(-_x0), Math.Log(Math.PI - dev - _xm - _x0) }, 2,
 										0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
 
-
 				return (resultLeft + resultRight);
 			}
 
@@ -1718,7 +1688,7 @@ namespace Altaxo.Calc.Probability
 											PDFFuncLogIntZeroDev,
 											new double[] { Math.Log(xm), Math.Log(Math.PI) }, 2,
 											0, precision, 100, out result, out abserr, ref tempStorage);
-					
+
 					result += resultLeft;
 				}
 				else // linear integration
@@ -1729,27 +1699,26 @@ namespace Altaxo.Calc.Probability
 											0, precision, 100, out result, out abserr, ref tempStorage);
 				}
 
-				if (null != error1 && error1.Number!= GSL_ERR.GSL_EROUND) // ignore rounding errors here because rounding errors are possible due to the high power alpha/(1-alpha)
+				if (null != error1 && error1.Number != GSL_ERR.GSL_EROUND) // ignore rounding errors here because rounding errors are possible due to the high power alpha/(1-alpha)
 					result = double.NaN;
 
 				logPdfPrefactor = orgPrefactor;
 
-				return prefactorApplied ? OneByPrefactorOffset * result :  result;
+				return prefactorApplied ? OneByPrefactorOffset * result : result;
 			}
-
 
 			private double PDF_R1Core(double thetas)
 			{
 				return Math.Sin(alpha * thetas) / (factorp * Math.Sin(dev + thetas));
 			}
+
 			private double PDF_R1CoreDerivativeByR1Core(double thetas)
 			{
 				return alpha / Math.Tan(alpha * thetas) - 1 / Math.Tan(dev + thetas);
 			}
-
 		}
 
-		#endregion
+		#endregion Function increasing
 
 		#region Function decreasing
 
@@ -1765,7 +1734,7 @@ namespace Altaxo.Calc.Probability
 			protected double logPdfPrefactor;
 			protected double _x0;
 			protected Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private Func<double, double> pdfFunc;
 
 			public Alt1GnD()
 			{
@@ -1789,7 +1758,6 @@ namespace Altaxo.Calc.Probability
 				pdfFunc = new Func<double, double>(PDFFunc);
 			}
 
-		
 			public double PDFCore(double thetas)
 			{
 				double r1;
@@ -1803,6 +1771,7 @@ namespace Altaxo.Calc.Probability
 				//System.Diagnostics.Debug.WriteLine(string.Format("Cor1e theta={0}, result={1}", thetas, result));
 				return result;
 			}
+
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -1811,6 +1780,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogInt(double z)
 			{
 				double x = Math.Exp(z);
@@ -1873,12 +1843,10 @@ namespace Altaxo.Calc.Probability
 				}
 			}
 
-
 			#region CDF
 
 			public double CDFFunc(double x)
 			{
-
 				double f = PDFCore(x);
 				double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
@@ -1890,7 +1858,7 @@ namespace Altaxo.Calc.Probability
 			{
 				double x = Math.Exp(z) + _x0;
 				double f = PDFCore(x);
-				double r = double.IsInfinity(f) ? 0 : Math.Exp(z)*OneMinusExp(- f);
+				double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
@@ -1914,7 +1882,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -1930,29 +1897,27 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
+			#endregion CDF
 		}
 
 		public class Alt1GnDA1 : Alt1GnD
 		{
 			/// <summary>X-value where the core function is equal to 1.</summary>
-			double _xm;
+			private double _xm;
 
 			/// <summary>Equal to alpha/(1-alpha).</summary>
-			double _n;
+			private double _n;
 
 			/// <summary>Prefactor, equal to the derivative of the r1 part of the core function by the r1 value at xm..</summary>
-			double _a;
+			private double _a;
 
 			/// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
-			double _xmax;
+			private double _xmax;
 
 			public Alt1GnDA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
 				: base(factorp, facdiv, logPdfPrefactor, alpha, dev)
 			{
-
 			}
-		 
 
 			public double PDFCoreMod(double dx)
 			{
@@ -1977,6 +1942,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -2029,7 +1995,6 @@ namespace Altaxo.Calc.Probability
 										new double[] { Math.Log(-_x0), Math.Log(Math.PI - dev - _xm - _x0) }, 2,
 										0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
 
-
 				return (resultLeft + resultRight);
 			}
 
@@ -2037,15 +2002,16 @@ namespace Altaxo.Calc.Probability
 			{
 				return Math.Sin(alpha * (Math.PI - dev - thetas)) / (factorp * Math.Sin(thetas));
 			}
+
 			private double PDF_R1CoreDerivativeByR1Core(double thetas)
 			{
 				return alpha / Math.Tan(alpha * (-Math.PI + dev + thetas)) - 1 / Math.Tan(thetas);
 			}
 		}
 
-		#endregion
+		#endregion Function decreasing
 
-		#endregion
+		#endregion Gamma negative
 
 		#region Gamma positive
 
@@ -2060,7 +2026,7 @@ namespace Altaxo.Calc.Probability
 			protected double logPdfPrefactor;
 			protected double _x0;
 			protected Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private Func<double, double> pdfFunc;
 
 			public Alt1GpI(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
 			{
@@ -2080,9 +2046,6 @@ namespace Altaxo.Calc.Probability
 				pdfFunc = new Func<double, double>(PDFFunc);
 			}
 
-		
-
-
 			// Note that in the moment we dont have a directional change here, but one can easily change
 			// the integration direction by replacing thetas with d-thetas (since the integration goes from 0 to dev).
 			public double PDFCore(double thetas)
@@ -2100,6 +2063,7 @@ namespace Altaxo.Calc.Probability
 				//System.Diagnostics.Debug.WriteLine(string.Format("Cor1f theta={0}, result={1}", thetas, result));
 				return result;
 			}
+
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -2217,7 +2181,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -2225,7 +2188,6 @@ namespace Altaxo.Calc.Probability
 											CDFFunc,
 											new double[] { 0, UpperIntegrationLimit }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 
 				if (null != error1)
@@ -2234,29 +2196,28 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
+			#endregion CDF
 		}
 
 		public class Alt1GpIA1 : Alt1GpI
 		{
 			/// <summary>X-value where the core function is equal to 1.</summary>
-			double _xm;
+			private double _xm;
 
 			/// <summary>Equal to alpha/(1-alpha).</summary>
-			double _n;
+			private double _n;
 
 			/// <summary>Prefactor, equal to the derivative of the r1 part of the core function by the r1 value at xm..</summary>
-			double _a;
+			private double _a;
 
 			/// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
-			double _xmax;
+			private double _xmax;
 
 			public Alt1GpIA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
 				: base(factorp, facdiv, logPdfPrefactor, alpha, dev)
 			{
-
 			}
-		 
+
 			public double PDFCoreMod(double dx)
 			{
 				if (Math.Abs(dx) < _xmax)
@@ -2280,6 +2241,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -2329,7 +2291,6 @@ namespace Altaxo.Calc.Probability
 										new double[] { Math.Log(-_x0), Math.Log(dev - _xm - _x0) }, 2,
 										0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
 
-
 				return (resultLeft + resultRight);
 			}
 
@@ -2337,13 +2298,14 @@ namespace Altaxo.Calc.Probability
 			{
 				return Math.Sin(alpha * thetas) / (factorp * Math.Sin(dev - thetas));
 			}
+
 			private double PDF_R1CoreDerivativeByR1Core(double thetas)
 			{
 				return 1 / Math.Tan(dev - thetas) + alpha / Math.Tan(alpha * thetas);
 			}
 		}
 
-		#endregion
+		#endregion Function increasing
 
 		#region Function decreasing
 
@@ -2356,7 +2318,7 @@ namespace Altaxo.Calc.Probability
 			protected double logPdfPrefactor;
 			protected double _x0;
 			protected Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private Func<double, double> pdfFunc;
 
 			public Alt1GpD(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
 			{
@@ -2376,8 +2338,6 @@ namespace Altaxo.Calc.Probability
 				pdfFunc = new Func<double, double>(PDFFunc);
 			}
 
-		
-
 			public double PDFCore(double thetas)
 			{
 				double r1;
@@ -2393,6 +2353,7 @@ namespace Altaxo.Calc.Probability
 				//System.Diagnostics.Debug.WriteLine(string.Format("Cor1f theta={0}, result={1}", thetas, result));
 				return result;
 			}
+
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -2468,9 +2429,8 @@ namespace Altaxo.Calc.Probability
 
 			public double CDFFunc(double x)
 			{
-
 				double f = PDFCore(x);
-				double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f );
+				double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
@@ -2480,7 +2440,7 @@ namespace Altaxo.Calc.Probability
 			{
 				double x = Math.Exp(z) + _x0;
 				double f = PDFCore(x);
-				double r = double.IsInfinity(f) ? 0 : Math.Exp(z)*OneMinusExp(- f);
+				double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
@@ -2504,7 +2464,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -2520,29 +2479,27 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
+			#endregion CDF
 		}
 
 		public class Alt1GpDA1 : Alt1GpD
 		{
 			/// <summary>X-value where the core function is equal to 1.</summary>
-			double _xm;
+			private double _xm;
 
 			/// <summary>Equal to alpha/(1-alpha).</summary>
-			double _n;
+			private double _n;
 
 			/// <summary>Prefactor, equal to the derivative of the r1 part of the core function by the r1 value at xm..</summary>
-			double _a;
+			private double _a;
 
 			/// <summary>Distance from _xm, for which points we use the derivative approximation.</summary>
-			double _xmax;
+			private double _xmax;
 
 			public Alt1GpDA1(double factorp, double facdiv, double logPdfPrefactor, double alpha, double dev)
 				: base(factorp, facdiv, logPdfPrefactor, alpha, dev)
 			{
-
 			}
-			
 
 			public double PDFCoreMod(double dx)
 			{
@@ -2567,6 +2524,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -2616,7 +2574,6 @@ namespace Altaxo.Calc.Probability
 										new double[] { Math.Log(-_x0), Math.Log(dev - _xm - _x0) }, 2,
 										0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
 
-
 				return (resultLeft + resultRight);
 			}
 
@@ -2624,28 +2581,28 @@ namespace Altaxo.Calc.Probability
 			{
 				return Math.Sin(alpha * (dev - thetas)) / (factorp * Math.Sin(thetas));
 			}
+
 			private double PDF_R1CoreDerivativeByR1Core(double thetas)
 			{
 				return -(alpha / Math.Tan(alpha * (dev - thetas))) - 1 / Math.Tan(thetas);
 			}
 		}
 
-		#endregion
+		#endregion Function decreasing
 
-		#endregion
+		#endregion Gamma positive
 
-		#endregion
+		#endregion Classes for integration (alpha<1)
 
 		#region Classes for integration (alpha==1)
 
-
 		public class Aeq1I
 		{
-			double beta;
-			double abe;
-			double logFactorp;
-			double logPdfPrefactor;
-			double _x0;
+			private double beta;
+			private double abe;
+			private double logFactorp;
+			private double logPdfPrefactor;
+			private double _x0;
 
 			public Aeq1I(double x, double beta, double abe)
 			{
@@ -2679,7 +2636,6 @@ namespace Altaxo.Calc.Probability
 				return result;
 			}
 
-
 			public double PDFCoreDerivativeByCore(double thetas)
 			{
 				double abeta = Math.Abs(beta);
@@ -2691,7 +2647,6 @@ namespace Altaxo.Calc.Probability
 
 				return s1 + s2 + s3;
 			}
-
 
 			public double PDFFunc(double x)
 			{
@@ -2724,6 +2679,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -2810,7 +2766,6 @@ namespace Altaxo.Calc.Probability
 					return double.NaN;
 				}
 			}
-
 
 			public double IntegrateAbeEqZero(ref object tempStorage, double precision)
 			{
@@ -2902,14 +2857,12 @@ namespace Altaxo.Calc.Probability
 					error1 = Calc.Integration.QagpIntegration.Integration(
 	 CDFFuncLogInt,
 	 new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
 					error1 = Calc.Integration.QagpIntegration.Integration(
 	 CDFFunc,
 	 new double[] { 0, UpperIntegrationLimit }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 
 				if (null != error1)
@@ -2918,16 +2871,16 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
+			#endregion CDF
 		}
 
 		public class Aeq1D
 		{
-			double beta;
-			double abe;
-			double logFactorp;
-			double logPdfPrefactor;
-			double _x0;
+			private double beta;
+			private double abe;
+			private double logFactorp;
+			private double logPdfPrefactor;
+			private double _x0;
 
 			public Aeq1D(double x, double beta, double abe)
 			{
@@ -2996,7 +2949,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
-		
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -3123,14 +3076,12 @@ namespace Altaxo.Calc.Probability
 					error1 = Calc.Integration.QagpIntegration.Integration(
 	 CDFFuncLogInt,
 	 new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
 					error1 = Calc.Integration.QagpIntegration.Integration(
 	 CDFFunc,
 	 new double[] { 0, UpperIntegrationLimit }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 
 				if (null != error1)
@@ -3139,11 +3090,10 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
-
+			#endregion CDF
 		}
-	
-		#endregion
+
+		#endregion Classes for integration (alpha==1)
 
 		#region Classes for integration (alpha>1)
 
@@ -3152,14 +3102,14 @@ namespace Altaxo.Calc.Probability
 		/// </summary>
 		public class Agt1GnI
 		{
-			double factorp;
-			double factorw;
-			double alpha;
-			double dev;
-			double logPdfPrefactor;
-			double _x0;
-			Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private double factorp;
+			private double factorw;
+			private double alpha;
+			private double dev;
+			private double logPdfPrefactor;
+			private double _x0;
+			private Func<double, double> pdfCore;
+			private Func<double, double> pdfFunc;
 
 			public Agt1GnI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
 			{
@@ -3234,8 +3184,6 @@ namespace Altaxo.Calc.Probability
 						new double[] { 0, xm }, 2,
 						0, precision, 200, out result1, out abserr1, ref tempStorage);
 
-
-
 						double result2 = 0, abserr2 = 0;
 						double xincrement = xm / 10;
 						_x0 = xm - xincrement;
@@ -3273,10 +3221,10 @@ namespace Altaxo.Calc.Probability
 			{
 				get
 				{
-					return (Math.PI - dev)/alpha;
+					return (Math.PI - dev) / alpha;
 				}
 			}
-		 
+
 			public bool IsMaximumLeftHandSide()
 			{
 				return PDFCore(0.5 * UpperIntegrationLimit) > 1;
@@ -3323,7 +3271,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -3339,8 +3286,7 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
-
+			#endregion CDF
 		}
 
 		/// <summary>
@@ -3348,15 +3294,15 @@ namespace Altaxo.Calc.Probability
 		/// </summary>
 		public class Agt1GnD
 		{
-			double factorp;
-			double factorw;
-			double alpha;
-			double dev;
-			double logPdfPrefactor;
-			double _x0;
+			private double factorp;
+			private double factorw;
+			private double alpha;
+			private double dev;
+			private double logPdfPrefactor;
+			private double _x0;
 
-			Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private Func<double, double> pdfCore;
+			private Func<double, double> pdfFunc;
 
 			public Agt1GnD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
 			{
@@ -3376,8 +3322,6 @@ namespace Altaxo.Calc.Probability
 				pdfFunc = new Func<double, double>(PDFFunc);
 			}
 
-		 
-
 			public double PDFCore(double thetas)
 			{
 				double r1;
@@ -3396,6 +3340,7 @@ namespace Altaxo.Calc.Probability
 				//System.Diagnostics.Debug.WriteLine(string.Format("Cor1d theta={0}, result={1}", thetas, result));
 				return result;
 			}
+
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -3404,6 +3349,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -3413,6 +3359,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double Integrate(ref object tempStorage, double precision)
 			{
 				double xm = FindDecreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3425,8 +3372,6 @@ namespace Altaxo.Calc.Probability
 						pdfFunc,
 						new double[] { 0, xm }, 2,
 						0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-
 
 						double result2 = 0, abserr2 = 0;
 						double xincrement = xm / 10;
@@ -3465,7 +3410,7 @@ namespace Altaxo.Calc.Probability
 			{
 				get
 				{
-					return (Math.PI - dev)/alpha;
+					return (Math.PI - dev) / alpha;
 				}
 			}
 
@@ -3473,7 +3418,6 @@ namespace Altaxo.Calc.Probability
 
 			public double CDFFunc(double x)
 			{
-				
 				double f = PDFCore(x);
 				double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
@@ -3485,7 +3429,7 @@ namespace Altaxo.Calc.Probability
 			{
 				double x = Math.Exp(z) + _x0;
 				double f = PDFCore(x);
-				double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(- f);
+				double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
@@ -3497,7 +3441,7 @@ namespace Altaxo.Calc.Probability
 				double resultRight, abserrRight;
 
 				double xm;
-		 
+
 				xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
 				if ((xm * 10) < UpperIntegrationLimit)
@@ -3509,7 +3453,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -3525,8 +3468,7 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
-
+			#endregion CDF
 		}
 
 		/// <summary>
@@ -3534,15 +3476,15 @@ namespace Altaxo.Calc.Probability
 		/// </summary>
 		public class Agt1GpI
 		{
-			double factorp;
-			double factorw;
-			double alpha;
-			double dev;
-			double logPdfPrefactor;
-			double _x0;
+			private double factorp;
+			private double factorw;
+			private double alpha;
+			private double dev;
+			private double logPdfPrefactor;
+			private double _x0;
 
-			Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private Func<double, double> pdfCore;
+			private Func<double, double> pdfFunc;
 
 			public Agt1GpI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
 			{
@@ -3562,13 +3504,11 @@ namespace Altaxo.Calc.Probability
 				pdfFunc = new Func<double, double>(PDFFunc);
 			}
 
-
-
 			public double PDFCore(double thetas)
 			{
 				double r1;
 				double r2;
-				double sin_al_devMthetas = Math.Sin(alpha * (dev-thetas));
+				double sin_al_devMthetas = Math.Sin(alpha * (dev - thetas));
 				{
 					r1 = Math.Pow(factorp * Math.Sin(thetas) / sin_al_devMthetas, 1 / (alpha - 1));
 					r2 = (factorw * Math.Sin(alpha * dev - (alpha - 1) * thetas)) / sin_al_devMthetas;
@@ -3580,6 +3520,7 @@ namespace Altaxo.Calc.Probability
 				//System.Diagnostics.Debug.WriteLine(string.Format("Cor1d theta={0}, result={1}", thetas, result));
 				return result;
 			}
+
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -3588,6 +3529,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -3597,6 +3539,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double Integrate(ref object tempStorage, double precision)
 			{
 				double xm = FindIncreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3609,8 +3552,6 @@ namespace Altaxo.Calc.Probability
 						pdfFunc,
 						new double[] { 0, xm }, 2,
 						0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-
 
 						double result2 = 0, abserr2 = 0;
 						double xincrement = xm / 10;
@@ -3657,7 +3598,6 @@ namespace Altaxo.Calc.Probability
 
 			public double CDFFunc(double x)
 			{
-
 				double f = PDFCore(x);
 				double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
@@ -3693,7 +3633,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -3709,8 +3648,7 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
-
+			#endregion CDF
 		}
 
 		/// <summary>
@@ -3718,15 +3656,15 @@ namespace Altaxo.Calc.Probability
 		/// </summary>
 		public class Agt1GpD
 		{
-			double factorp;
-			double factorw;
-			double alpha;
-			double dev;
-			double logPdfPrefactor;
-			double _x0;
+			private double factorp;
+			private double factorw;
+			private double alpha;
+			private double dev;
+			private double logPdfPrefactor;
+			private double _x0;
 
-			Func<double, double> pdfCore;
-			Func<double, double> pdfFunc;
+			private Func<double, double> pdfCore;
+			private Func<double, double> pdfFunc;
 
 			public Agt1GpD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
 			{
@@ -3746,15 +3684,13 @@ namespace Altaxo.Calc.Probability
 				pdfFunc = new Func<double, double>(PDFFunc);
 			}
 
-
-
 			public double PDFCore(double thetas)
 			{
 				double r1;
 				double r2;
 				double sin_al_thetas = Math.Sin(alpha * thetas);
 				{
-					r1 = Math.Pow(factorp * Math.Sin(dev-thetas) / sin_al_thetas, 1 / (alpha - 1));
+					r1 = Math.Pow(factorp * Math.Sin(dev - thetas) / sin_al_thetas, 1 / (alpha - 1));
 					r2 = (factorw * Math.Sin(dev + (alpha - 1) * thetas)) / sin_al_thetas;
 				}
 				double result = r1 * r2;
@@ -3764,6 +3700,7 @@ namespace Altaxo.Calc.Probability
 				//System.Diagnostics.Debug.WriteLine(string.Format("Cor1d theta={0}, result={1}", thetas, result));
 				return result;
 			}
+
 			public double PDFFunc(double x)
 			{
 				double f = PDFCore(x);
@@ -3772,6 +3709,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double PDFFuncLogIntToRight(double z)
 			{
 				double x = _x0 + Math.Exp(z);
@@ -3781,6 +3719,7 @@ namespace Altaxo.Calc.Probability
 				//Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
 				return r;
 			}
+
 			public double Integrate(ref object tempStorage, double precision)
 			{
 				double xm = FindDecreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
@@ -3793,8 +3732,6 @@ namespace Altaxo.Calc.Probability
 						pdfFunc,
 						new double[] { 0, xm }, 2,
 						0, precision, 200, out result1, out abserr1, ref tempStorage);
-
-
 
 						double result2 = 0, abserr2 = 0;
 						double xincrement = xm / 10;
@@ -3841,7 +3778,6 @@ namespace Altaxo.Calc.Probability
 
 			public double CDFFunc(double x)
 			{
-
 				double f = PDFCore(x);
 				double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
 				//System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
@@ -3877,7 +3813,6 @@ namespace Altaxo.Calc.Probability
 											CDFFuncLogInt,
 											new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
 											0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
 				}
 				else // linear integration
 				{
@@ -3893,19 +3828,9 @@ namespace Altaxo.Calc.Probability
 					return resultRight;
 			}
 
-			#endregion
-
+			#endregion CDF
 		}
 
-		#endregion
-
-		#region PDF distributor
-
-
-	 
-
-
-
-		#endregion
+		#endregion Classes for integration (alpha>1)
 	}
 }

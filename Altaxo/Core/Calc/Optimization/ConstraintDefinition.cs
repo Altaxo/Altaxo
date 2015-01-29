@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * ConstraintDefinition.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -55,7 +57,6 @@ namespace Altaxo.Calc.Optimization
 		double Update(DoubleVector solution, DoubleVector direction, double beta);
 	}
 
-
 	///<summary>Base class for constraint definitions</summary>
 	/// <remarks>
 	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
@@ -67,7 +68,6 @@ namespace Altaxo.Calc.Optimization
 
 		public double Update(DoubleVector solution, DoubleVector direction, double beta)
 		{
-
 			DoubleVector newSolution;
 			double newbeta = beta;
 			for (int i = 0; i < 200; i++)
@@ -90,11 +90,9 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public class NoConstraint : ConstraintDefinition
 	{
-
 		public override bool Check(DoubleVector solution)
 		{
 			return true;
 		}
 	}
-
 }

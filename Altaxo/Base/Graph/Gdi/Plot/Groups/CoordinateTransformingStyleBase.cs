@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Plot;
-
-
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-	using Plot.Data;
-
 	public class CoordinateTransformingStyleBase
 	{
 		public static void MergeXBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
@@ -66,7 +62,5 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i + 1], i == 0 ? null : coll[i - 1]);
 			}
 		}
-
-
 	}
 }

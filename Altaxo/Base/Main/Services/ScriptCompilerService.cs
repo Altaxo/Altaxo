@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,312 +19,311 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Reflection;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-
 
 namespace Altaxo.Main.Services
 {
-  public interface IScriptCompilerResult
-  {
-    System.Reflection.Assembly ScriptAssembly { get; }
-    int ScriptTextCount { get; }
-    string ScriptText(int i);
-    string ScriptTextHash { get; }
-  }
- 
+	public interface IScriptCompilerResult
+	{
+		System.Reflection.Assembly ScriptAssembly { get; }
 
-  /// <summary>
-  /// Summary description for ScriptCompilerService.
-  /// </summary>
-  public class ScriptCompilerService
-  {
-    #region internal classes
-    #region FileHash
-    public struct FileHash : IComparable
-    {
-      public ulong Lo;
-      public ulong Hi;
+		int ScriptTextCount { get; }
 
-      public FileHash(byte[] hash)
-        : this(hash,hash.Length)
-      {
-      }
-      public FileHash(byte[] hash, int len)
-      {
-        if(hash==null)
-        {
-          Lo=0;
-          Hi=0;
-        }
-        else if(len==16)
-        {
-          Lo = System.BitConverter.ToUInt64(hash,0);
-          Hi = System.BitConverter.ToUInt64(hash,8);
-        }
-        else
-        {
-          throw new ArgumentException("Unexpected hash length of " + hash.Length);
-        }
-      
-      }
+		string ScriptText(int i);
 
+		string ScriptTextHash { get; }
+	}
 
-      public static FileHash FromBinHexRepresentation(string binhex)
-      {
-        if(binhex.Length!=32)
-          throw new ArgumentException("BinHexRepresentation must have a length of 32");
+	/// <summary>
+	/// Summary description for ScriptCompilerService.
+	/// </summary>
+	public class ScriptCompilerService
+	{
+		#region internal classes
 
-        FileHash hash;
-        hash.Hi = ulong.Parse(binhex.Substring( 0,16),System.Globalization.NumberStyles.AllowHexSpecifier);
-        hash.Lo = ulong.Parse(binhex.Substring(16,16),System.Globalization.NumberStyles.AllowHexSpecifier);
-        return hash;
-      }
+		#region FileHash
 
+		public struct FileHash : IComparable
+		{
+			public ulong Lo;
+			public ulong Hi;
 
-      public bool Valid 
-      {
-        get 
-        { 
-          return Lo!=0 || Hi!=0;
-        }
-      }
+			public FileHash(byte[] hash)
+				: this(hash, hash.Length)
+			{
+			}
 
-      public override bool Equals(object obj)
-      {
-        return (obj is FileHash) && (this==(FileHash)obj);
-      }
+			public FileHash(byte[] hash, int len)
+			{
+				if (hash == null)
+				{
+					Lo = 0;
+					Hi = 0;
+				}
+				else if (len == 16)
+				{
+					Lo = System.BitConverter.ToUInt64(hash, 0);
+					Hi = System.BitConverter.ToUInt64(hash, 8);
+				}
+				else
+				{
+					throw new ArgumentException("Unexpected hash length of " + hash.Length);
+				}
+			}
 
-      public override int GetHashCode()
-      {
-        return Lo.GetHashCode() + Hi.GetHashCode();
-      }
+			public static FileHash FromBinHexRepresentation(string binhex)
+			{
+				if (binhex.Length != 32)
+					throw new ArgumentException("BinHexRepresentation must have a length of 32");
 
+				FileHash hash;
+				hash.Hi = ulong.Parse(binhex.Substring(0, 16), System.Globalization.NumberStyles.AllowHexSpecifier);
+				hash.Lo = ulong.Parse(binhex.Substring(16, 16), System.Globalization.NumberStyles.AllowHexSpecifier);
+				return hash;
+			}
 
-      public string BinHexRepresentation
-      {
-        get
-        {
-          return Hi.ToString("X16")+Lo.ToString("X16");
-        }
-      }
-      public string MediumFileName
-      {
-        get
-        {
-          return string.Format("X{0}.XXX", BinHexRepresentation);
-        }
-      }
-      public static bool operator ==(FileHash a, FileHash b)
-      {
-        return  a.Hi==b.Hi && a.Lo==b.Lo ;
-      }
+			public bool Valid
+			{
+				get
+				{
+					return Lo != 0 || Hi != 0;
+				}
+			}
 
-      public static bool operator !=(FileHash a, FileHash b)
-      {
-        return a.Hi!=b.Hi || a.Lo!=b.Lo;
-      }
+			public override bool Equals(object obj)
+			{
+				return (obj is FileHash) && (this == (FileHash)obj);
+			}
 
-      public static bool operator <(FileHash a, FileHash b)
-      {
-        return a.Hi<b.Hi || a.Lo<b.Lo;
-      }
+			public override int GetHashCode()
+			{
+				return Lo.GetHashCode() + Hi.GetHashCode();
+			}
 
-      public static bool operator >(FileHash a, FileHash b)
-      {
-        return a.Hi>b.Hi || a.Lo>b.Lo;
-      }
-      #region IComparable Members
+			public string BinHexRepresentation
+			{
+				get
+				{
+					return Hi.ToString("X16") + Lo.ToString("X16");
+				}
+			}
 
-      public int CompareTo(object obj)
-      {
-        if(obj is FileHash)
-        {
-          return this==(FileHash)obj ? 0 : (this>(FileHash)obj ? 1 : -1);
-        }
-        else if(obj==null)
-        {
-          return 0;
-        }
-        else
-          throw new ArgumentException("Argument is not of expected type, but of type " + obj.GetType().ToString());
-      }
+			public string MediumFileName
+			{
+				get
+				{
+					return string.Format("X{0}.XXX", BinHexRepresentation);
+				}
+			}
 
-      #endregion
-    }
-    #endregion
+			public static bool operator ==(FileHash a, FileHash b)
+			{
+				return a.Hi == b.Hi && a.Lo == b.Lo;
+			}
 
-    #region ScriptCompilerResult
-    private class ScriptCompilerResult : IScriptCompilerResult
-    {
-      Assembly _scriptAssembly;
-      string[] _scriptText;
-      string _scriptTextHash;
+			public static bool operator !=(FileHash a, FileHash b)
+			{
+				return a.Hi != b.Hi || a.Lo != b.Lo;
+			}
 
-      public ScriptCompilerResult(string[] scriptText, string scriptTextHash, Assembly scriptAssembly)
-      {
-        _scriptText = (string[])scriptText.Clone();
-        _scriptAssembly = scriptAssembly;
-        _scriptTextHash = scriptTextHash;
-      }
+			public static bool operator <(FileHash a, FileHash b)
+			{
+				return a.Hi < b.Hi || a.Lo < b.Lo;
+			}
 
-     
+			public static bool operator >(FileHash a, FileHash b)
+			{
+				return a.Hi > b.Hi || a.Lo > b.Lo;
+			}
 
+			#region IComparable Members
 
-      public static string ComputeScriptTextHash(string[] scripts)
-      {
-        Array.Sort(scripts);
-        int len = 0;
-        for(int i=0;i<scripts.Length;i++)
-          len += scripts[i].Length;
+			public int CompareTo(object obj)
+			{
+				if (obj is FileHash)
+				{
+					return this == (FileHash)obj ? 0 : (this > (FileHash)obj ? 1 : -1);
+				}
+				else if (obj == null)
+				{
+					return 0;
+				}
+				else
+					throw new ArgumentException("Argument is not of expected type, but of type " + obj.GetType().ToString());
+			}
 
-        byte[] hash=null;
+			#endregion IComparable Members
+		}
 
-        using(System.IO.MemoryStream stream = new System.IO.MemoryStream(len))
-        {
-          using(System.IO.StreamWriter sw = new System.IO.StreamWriter(stream,System.Text.Encoding.Unicode))
-          {
-            for(int i=0;i<scripts.Length;i++)
-            {
-              sw.Write(scripts[i]);
-            }
-            sw.Flush();
+		#endregion FileHash
 
-            sw.BaseStream.Seek(0,System.IO.SeekOrigin.Begin);
-            System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-            hash = md5.ComputeHash(sw.BaseStream);
-            sw.Close();
-          }
-        }
-        return new FileHash(hash).BinHexRepresentation;
-      }
+		#region ScriptCompilerResult
 
-      #region IScriptCompilerResult Members
+		private class ScriptCompilerResult : IScriptCompilerResult
+		{
+			private Assembly _scriptAssembly;
+			private string[] _scriptText;
+			private string _scriptTextHash;
 
-      public string ScriptTextHash 
-      {
-        get 
-        {
-          return _scriptTextHash;
-        }
-      }
+			public ScriptCompilerResult(string[] scriptText, string scriptTextHash, Assembly scriptAssembly)
+			{
+				_scriptText = (string[])scriptText.Clone();
+				_scriptAssembly = scriptAssembly;
+				_scriptTextHash = scriptTextHash;
+			}
 
-      public Assembly ScriptAssembly
-      {
-        get
-        {
-          return _scriptAssembly;
-        }
-      }
+			public static string ComputeScriptTextHash(string[] scripts)
+			{
+				Array.Sort(scripts);
+				int len = 0;
+				for (int i = 0; i < scripts.Length; i++)
+					len += scripts[i].Length;
 
-      public int ScriptTextCount
-      {
-        get
-        {
-          return _scriptText.Length;
-        }
-      }
+				byte[] hash = null;
 
-      public string ScriptText(int i)
-      {
-        return _scriptText[i];
-      }
+				using (System.IO.MemoryStream stream = new System.IO.MemoryStream(len))
+				{
+					using (System.IO.StreamWriter sw = new System.IO.StreamWriter(stream, System.Text.Encoding.Unicode))
+					{
+						for (int i = 0; i < scripts.Length; i++)
+						{
+							sw.Write(scripts[i]);
+						}
+						sw.Flush();
 
-      #endregion
-    }
-  
-    #endregion
-    #endregion
+						sw.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+						System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+						hash = md5.ComputeHash(sw.BaseStream);
+						sw.Close();
+					}
+				}
+				return new FileHash(hash).BinHexRepresentation;
+			}
 
-    static System.Collections.Hashtable _compilerResultsByTextHash = new System.Collections.Hashtable();
-    static System.Collections.Hashtable _compilerResultsByAssembly = new System.Collections.Hashtable();
+			#region IScriptCompilerResult Members
 
+			public string ScriptTextHash
+			{
+				get
+				{
+					return _scriptTextHash;
+				}
+			}
 
-    public IScriptCompilerResult GetCompilerResult(Assembly ass)
-    {
-      if(_compilerResultsByAssembly.ContainsKey(ass))
-        return (IScriptCompilerResult)_compilerResultsByAssembly[ass];
-      else
-        return null;
-    }
+			public Assembly ScriptAssembly
+			{
+				get
+				{
+					return _scriptAssembly;
+				}
+			}
 
-    /// <summary>
-    /// Computes the Script text hash of a single script text.
-    /// </summary>
-    /// <param name="scriptText">The script text.</param>
-    /// <returns>A hash string which unique identifies the script text.</returns>
-    public static string ComputeScriptTextHash(string scriptText)
-    {
-      return ScriptCompilerResult.ComputeScriptTextHash(new string[]{scriptText});
-    }
+			public int ScriptTextCount
+			{
+				get
+				{
+					return _scriptText.Length;
+				}
+			}
 
-    /// <summary>
-    /// Does the compilation of the script into an assembly. The assembly is stored together with
-    /// the read-only source code and returned as result. As list of compiled source codes is maintained by this class.
-    /// If you provide a text that was already compiled before, the already compiled assembly is returned instead
-    /// of a freshly compiled assembly.
-    /// </summary>
-    /// <returns>True if successfully compiles, otherwise false.</returns>
-    public static IScriptCompilerResult Compile(string[] scriptText, out string[] errors)
-    {
-     
-      string scriptTextHash = ScriptCompilerResult.ComputeScriptTextHash(scriptText);
-      if(_compilerResultsByTextHash.Contains(scriptTextHash))
-      {
-        errors = null;
-        return (ScriptCompilerResult)_compilerResultsByTextHash[scriptTextHash];
-      }
+			public string ScriptText(int i)
+			{
+				return _scriptText[i];
+			}
+
+			#endregion IScriptCompilerResult Members
+		}
+
+		#endregion ScriptCompilerResult
+
+		#endregion internal classes
+
+		private static System.Collections.Hashtable _compilerResultsByTextHash = new System.Collections.Hashtable();
+		private static System.Collections.Hashtable _compilerResultsByAssembly = new System.Collections.Hashtable();
+
+		public IScriptCompilerResult GetCompilerResult(Assembly ass)
+		{
+			if (_compilerResultsByAssembly.ContainsKey(ass))
+				return (IScriptCompilerResult)_compilerResultsByAssembly[ass];
+			else
+				return null;
+		}
+
+		/// <summary>
+		/// Computes the Script text hash of a single script text.
+		/// </summary>
+		/// <param name="scriptText">The script text.</param>
+		/// <returns>A hash string which unique identifies the script text.</returns>
+		public static string ComputeScriptTextHash(string scriptText)
+		{
+			return ScriptCompilerResult.ComputeScriptTextHash(new string[] { scriptText });
+		}
+
+		/// <summary>
+		/// Does the compilation of the script into an assembly. The assembly is stored together with
+		/// the read-only source code and returned as result. As list of compiled source codes is maintained by this class.
+		/// If you provide a text that was already compiled before, the already compiled assembly is returned instead
+		/// of a freshly compiled assembly.
+		/// </summary>
+		/// <returns>True if successfully compiles, otherwise false.</returns>
+		public static IScriptCompilerResult Compile(string[] scriptText, out string[] errors)
+		{
+			string scriptTextHash = ScriptCompilerResult.ComputeScriptTextHash(scriptText);
+			if (_compilerResultsByTextHash.Contains(scriptTextHash))
+			{
+				errors = null;
+				return (ScriptCompilerResult)_compilerResultsByTextHash[scriptTextHash];
+			}
 
 			Dictionary<string, string> providerOptions = new Dictionary<string, string>();
-			providerOptions.Add("CompilerVersion", "v4.0"); 
+			providerOptions.Add("CompilerVersion", "v4.0");
 			Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider(providerOptions);
 
-      // For Visual Basic Compiler try this :
-      //Microsoft.VisualBasic.VBCodeProvider
+			// For Visual Basic Compiler try this :
+			//Microsoft.VisualBasic.VBCodeProvider
 
-      System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
+			System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
 
-      parameters.GenerateInMemory = true;
-      parameters.IncludeDebugInformation = true;
-      // parameters.OutputAssembly = this.ScriptName;
+			parameters.GenerateInMemory = true;
+			parameters.IncludeDebugInformation = true;
+			// parameters.OutputAssembly = this.ScriptName;
 
-      // Add available assemblies including the application itself 
-      foreach (string loc in Settings.Scripting.ReferencedAssemblies.AllLocations)
-        parameters.ReferencedAssemblies.Add(loc);
+			// Add available assemblies including the application itself
+			foreach (string loc in Settings.Scripting.ReferencedAssemblies.AllLocations)
+				parameters.ReferencedAssemblies.Add(loc);
 
-     
+			CompilerResults results;
+			if (scriptText.Length == 1)
+				results = codeProvider.CompileAssemblyFromSource(parameters, scriptText[0]);
+			else
+				results = codeProvider.CompileAssemblyFromSource(parameters, scriptText);
 
-      CompilerResults results;
-      if(scriptText.Length==1)
-        results = codeProvider.CompileAssemblyFromSource(parameters, scriptText[0]);
-      else
-        results = codeProvider.CompileAssemblyFromSource(parameters, scriptText);
+			if (results.Errors.Count > 0)
+			{
+				errors = new string[results.Errors.Count];
+				int i = 0;
+				foreach (CompilerError err in results.Errors)
+				{
+					errors[i++] = err.ToString();
+				}
 
-      if (results.Errors.Count > 0) 
-      {
-        errors = new string[results.Errors.Count];
-        int i=0;
-        foreach (CompilerError err in results.Errors) 
-        {
-          errors[i++] = err.ToString();
-        }
+				return null;
+			}
+			else
+			{
+				ScriptCompilerResult result = new ScriptCompilerResult(scriptText, scriptTextHash, results.CompiledAssembly);
 
-        return null;
-      }
-      else  
-      {
-        ScriptCompilerResult result = new ScriptCompilerResult(scriptText, scriptTextHash, results.CompiledAssembly);
-
-        _compilerResultsByTextHash.Add(scriptTextHash,result);
-        _compilerResultsByAssembly.Add(result.ScriptAssembly,result);
-        errors=null;
-        return result;
-      }
-    }
-  }
+				_compilerResultsByTextHash.Add(scriptTextHash, result);
+				_compilerResultsByAssembly.Add(result.ScriptAssembly, result);
+				errors = null;
+				return result;
+			}
+		}
+	}
 }

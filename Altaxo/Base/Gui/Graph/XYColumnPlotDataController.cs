@@ -24,8 +24,6 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Main;
 using System;

@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.Serialization;
 
 namespace Altaxo.Graph.Gdi.Background
 {

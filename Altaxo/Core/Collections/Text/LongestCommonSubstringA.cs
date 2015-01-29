@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // #define LinkedListDebug
 
@@ -30,7 +32,7 @@ using System.Text;
 namespace Altaxo.Collections.Text
 {
 	/// <summary>
-	/// Problem solver for the longest common substring problem, operating in O(N) time (N being the text length), and using an array of linked structures stored in a linear array instead of linked class instances. 
+	/// Problem solver for the longest common substring problem, operating in O(N) time (N being the text length), and using an array of linked structures stored in a linear array instead of linked class instances.
 	/// This code runs slightly faster than <see cref="LongestCommonSubstringL"/>, and avoids creating a lot of nodes for the linked list, in order to make it easier for the garbage collector.
 	/// </summary>
 	/// <remarks>
@@ -39,7 +41,6 @@ namespace Altaxo.Collections.Text
 	/// </remarks>
 	public class LongestCommonSubstringA : LongestCommonSubstringBaseA
 	{
-
 		// intermediate data neccessary for the algorithm
 		protected int[] _items;
 
@@ -128,8 +129,6 @@ namespace Altaxo.Collections.Text
 			_lastLcp = null;
 		}
 
-
-
 		/// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
 		protected void EvaluateMaximumNumberOfWordsWithCommonSubstring()
 		{
@@ -144,16 +143,10 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
-	
-
-		
-
-
-
 		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonSubstringA"/>).</summary>
 		/// <param name="lcp_i">The lcp_i.</param>
 		/// <param name="index">The index.</param>
-		void lcp_update(int lcp_i, int index)
+		private void lcp_update(int lcp_i, int index)
 		{
 			var L = _ddlList.L;
 			var current = _ddlList.Last;
@@ -214,7 +207,7 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonSubstringA"/>).</summary>
 		/// <param name="i">The i.</param>
-		void list_update(int i)
+		private void list_update(int i)
 		{
 			var L = _ddlList.L;
 			var sa_i = _suffixArray[i];
@@ -224,10 +217,8 @@ namespace Altaxo.Collections.Text
 
 			if (_lastLcp[textlcp] != currentIdx || L[currentIdx].IntervalBegin != currentIdx)
 			{
-
 				// decrease interval size
 				--L[_lastLcp[textlcp]].IntervalSize;
-
 
 				// if text_item is the end of an interval
 				if (currentIdx == _lastLcp[textlcp])
@@ -236,13 +227,11 @@ namespace Altaxo.Collections.Text
 					_lastLcp[L[currentIdx].Lcp] = L[currentIdx].Next;
 				}
 
-
 			// if text_item is the beginning of an interval
 				else if (currentIdx == L[_lastLcp[textlcp]].IntervalBegin)
 				{
 					create_interval(L[currentIdx].IntervalEnd, L[currentIdx].Previous, L[L[currentIdx].IntervalEnd].Lcp, L[L[currentIdx].IntervalEnd].IntervalSize);
 				}
-
 
 				// reset interval pointers
 				L[currentIdx].IntervalEnd = currentIdx;
@@ -252,7 +241,6 @@ namespace Altaxo.Collections.Text
 
 			if (_ddlList.Last != currentIdx)
 			{
-
 				// remove nodeToRemove from the list, and add it to the end
 				_ddlList.MoveToLast(currentIdx);
 				L[L[currentIdx].Previous].Lcp = _LCP[i];
@@ -260,8 +248,6 @@ namespace Altaxo.Collections.Text
 
 			L[currentIdx].Idx = i;
 		}
-
-
 
 #if LinkedListDebug
 
@@ -284,8 +270,6 @@ namespace Altaxo.Collections.Text
 				var last_interval_node = eIdx;
 				var first_interval_node = e.IntervalEnd;
 				int currIntervalLen = 1;
-
-
 
 				// test the intermediate nodes
 				while (eIdx != first_interval_node)
@@ -313,13 +297,12 @@ namespace Altaxo.Collections.Text
 					throw new ArgumentOutOfRangeException();
 
 				totIntervalLen += currIntervalLen;
-				eIdx = e.Previous; 
+				eIdx = e.Previous;
 			}
 
 			if (totIntervalLen != L.Length)
 				throw new ArgumentOutOfRangeException();
 		}
-
 
 		void print_debug()
 		{
@@ -336,8 +319,5 @@ namespace Altaxo.Collections.Text
 		}
 
 #endif
-
 	}
-
 }
-

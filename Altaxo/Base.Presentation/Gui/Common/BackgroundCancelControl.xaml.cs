@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
@@ -43,15 +37,16 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class BackgroundCancelControl : UserControl
 	{
-		const int TimerTick_ms = 100;
-		System.Exception _threadException;
-		System.Threading.Thread _thread;
-		IExternalDrivenBackgroundMonitor _monitor;
+		private const int TimerTick_ms = 100;
+		private System.Exception _threadException;
+		private System.Threading.Thread _thread;
+		private IExternalDrivenBackgroundMonitor _monitor;
 		private bool _wasCancelledByUser;
-		System.Windows.Threading.DispatcherTimer _timer;
-		int _showUpDownConter;
+		private System.Windows.Threading.DispatcherTimer _timer;
+		private int _showUpDownConter;
 
 		public event Action<bool> ExecutionFinished;
+
 		public event Action StartDelayExpired;
 
 		public bool ExecutionInProgress
@@ -103,7 +98,6 @@ namespace Altaxo.Gui.Common
 				return _threadException;
 			}
 		}
-	
 
 		private void EhTimer(object sender, EventArgs e)
 		{
@@ -150,7 +144,6 @@ namespace Altaxo.Gui.Common
 			}
 			_btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
 			_btAbort.Visibility = System.Windows.Visibility.Visible;
-
 		}
 
 		private void EhCancelClicked(object sender, RoutedEventArgs e)

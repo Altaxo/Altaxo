@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,10 +31,14 @@ namespace Altaxo.Units.Dimensionless
 {
 	public class Unity : SIUnit
 	{
-		static readonly Unity _instance = new Unity();
+		private static readonly Unity _instance = new Unity();
+
 		public static Unity Instance { get { return _instance; } }
 
-		private Unity() : base(0, 0, 0, 0, 0, 0, 0) { }
+		private Unity()
+			: base(0, 0, 0, 0, 0, 0, 0)
+		{
+		}
 
 		public override string Name
 		{

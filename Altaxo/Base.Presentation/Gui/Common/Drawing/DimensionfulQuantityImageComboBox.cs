@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,25 +30,18 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	/// <summary>
 	/// Base class for a combobox in that the user can input a dimensionful quantity. This class will accept dimensionless quantities, since the default value
-	/// for <see cref="SelectedQuantity"/> is registered with a dimensionless quantity. To make the box accept quantities in other units (for instance length), 
+	/// for <see cref="SelectedQuantity"/> is registered with a dimensionless quantity. To make the box accept quantities in other units (for instance length),
 	/// derive from this class and override the metadata of the <see cref="SelectedQuantityProperty"/> to use a default value in the destination unit.
 	/// </summary>
 	public class DimensionfulQuantityImageComboBox : EditableImageComboBox
 	{
 		protected QuantityWithUnitConverter _converter;
+
 		public event DependencyPropertyChangedEventHandler SelectedQuantityChanged;
 
 		static DimensionfulQuantityImageComboBox()
@@ -76,7 +72,7 @@ namespace Altaxo.Gui.Common.Drawing
 			var childs = this.LogicalChildren;
 		}
 
-		void QuantityWithUnitTextBox_TextChanged(object sender, EventArgs e)
+		private void QuantityWithUnitTextBox_TextChanged(object sender, EventArgs e)
 		{
 			_converter.BindingExpression.ValidateWithoutUpdate();
 		}
@@ -85,7 +81,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			base.OnIsKeyboardFocusWithinChanged(e);
 
-			if (true==(bool)e.OldValue && false==(bool)e.NewValue)
+			if (true == (bool)e.OldValue && false == (bool)e.NewValue)
 			{
 				if (!_converter.BindingExpression.HasError) // if text was successfully interpreted
 				{
@@ -93,9 +89,7 @@ namespace Altaxo.Gui.Common.Drawing
 					_converter.BindingExpression.UpdateTarget(); // update the text with the full quanity including the unit
 				}
 			}
-
 		}
-
 
 		protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
 		{
@@ -112,7 +106,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 			base.OnKeyDown(e);
 		}
-		
 
 		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
 		{
@@ -151,8 +144,7 @@ namespace Altaxo.Gui.Common.Drawing
 				SelectedQuantityChanged(obj, args);
 		}
 
-		#endregion
-
+		#endregion Dependency property
 
 		public double SelectedQuantityInSIUnits
 		{
@@ -182,6 +174,5 @@ namespace Altaxo.Gui.Common.Drawing
 				_converter.UnitEnvironment = value;
 			}
 		}
-
 	}
 }

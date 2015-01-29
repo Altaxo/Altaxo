@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -33,7 +35,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class LeftBarLineCap : RightBarLineCap
 	{
-
 		public LeftBarLineCap()
 		{
 		}
@@ -48,13 +49,14 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			return new LeftBarLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
 		}
 
-
 		public override string Name { get { return "BarLeft"; } }
+
 		public override void SetStartCap(Pen pen, float size)
 		{
 			pen.StartCap = LineCap.Custom;
 			pen.CustomStartCap = GetClone(pen, size, true);
 		}
+
 		public override void SetEndCap(Pen pen, float size)
 		{
 			pen.EndCap = LineCap.Custom;

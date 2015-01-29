@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * DoubleVector.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -470,7 +472,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			Blas.Scal.Compute(data.Length, alpha, data, 1);
 		}
 
-
 		///<summary>Negate operator for <c>DoubleVector</c></summary>
 		///<returns><c>DoubleVector</c> with values to negate.</returns>
 		public static DoubleVector operator -(DoubleVector rhs)
@@ -748,6 +749,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.Length; }
 		}
+
 		int ICollection.Count
 		{
 			get { return this.Count; }
@@ -758,6 +760,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.data.IsSynchronized; }
 		}
+
 		bool ICollection.IsSynchronized
 		{
 			get { return this.IsSynchronized; }
@@ -774,6 +777,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			this.data.CopyTo(array, index);
 		}
+
 		void ICollection.CopyTo(Array array, int index)
 		{
 			this.CopyTo(array, index);
@@ -975,9 +979,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		#endregion
+		#endregion Additions due to adoption to Altaxo
 	}
 }
-
-
-

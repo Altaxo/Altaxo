@@ -3,13 +3,8 @@
 // from C++ code that was translated by Laurent Bartholdi for Real coefficients from the original Netlib site in FORTRAN
 // and from C code written by Henrik Vestermark for complex coefficients translated from the original Netlib site in FORTRAN
 
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using Altaxo.Calc;
 
 namespace Altaxo.Calc.RootFinding
 {
@@ -19,15 +14,16 @@ namespace Altaxo.Calc.RootFinding
 	public class RealPolynomialRootFinder_JenkinsTraub
 	{
 		//Global variables that assist the computation, taken from the Visual Studio C++ compiler class float
-		// smallest such that 1.0+DBL_EPSILON != 1.0 
-		const double DBL_EPSILON = 2.22044604925031E-16;
-		// max value 
-		const double DBL_MAX = 1.79769313486232E+307;
-		// min positive value 
-		const double DBL_MIN = 2.2250738585072E-308;
+		// smallest such that 1.0+DBL_EPSILON != 1.0
+		private const double DBL_EPSILON = 2.22044604925031E-16;
 
+		// max value
+		private const double DBL_MAX = 1.79769313486232E+307;
 
-				/// <summary>
+		// min positive value
+		private const double DBL_MIN = 2.2250738585072E-308;
+
+		/// <summary>
 		/// The Jenkins–Traub algorithm for finding the roots of a polynomial.
 		/// </summary>
 		/// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
@@ -53,7 +49,6 @@ namespace Altaxo.Calc.RootFinding
 
 			if (Degree <= 0)
 				throw new ArgumentException("Provided polynomial has a degree of zero. Root finding is therefore not possible");
-
 
 			List<Complex> result = new List<Complex>();
 
@@ -100,7 +95,7 @@ namespace Altaxo.Calc.RootFinding
 			double sc = 0;
 
 			const double RADFAC = 0.017453292519943295769; 	// Degrees-to-radians conversion factor = pi/180
-			const double lb2 = 0.69314718055994530942; // Math.Log(2.0);	
+			const double lb2 = 0.69314718055994530942; // Math.Log(2.0);
 			const double lo = DBL_MIN / DBL_EPSILON;	//Double.MinValue / Double.Epsilon
 			double cosr = Math.Cos(94.0 * RADFAC);	// = -0.069756474
 			double sinr = Math.Sin(94.0 * RADFAC);	// = 0.99756405
@@ -314,7 +309,6 @@ namespace Altaxo.Calc.RootFinding
 					temp[i] = K[i];
 				}
 
-
 				for (int jj = 1; jj <= 20; jj++)
 				{
 					// Quadratic corresponds to a double shift to a non-real point and its
@@ -330,7 +324,6 @@ namespace Altaxo.Calc.RootFinding
 					// Second stage calculation, fixed quadratic
 					Fxshfr_ak1(20 * jj, ref NZ, sr, bnd, K, N, p, NN, qp, u,
 					ref lzi, ref lzr, ref szi, ref szr);
-
 
 					if ((NZ != 0))
 					{
@@ -370,7 +363,6 @@ namespace Altaxo.Calc.RootFinding
 					}
 				}
 			}
-
 
 			for (int i = 0; i <= Degree - 1; i++)
 			{
@@ -442,7 +434,6 @@ namespace Altaxo.Calc.RootFinding
 			tFlag = calcSC_ak1(N, a, b, ref a1, ref a3, ref a7, ref c, ref d, ref e, ref f,
 			ref g, ref h, K, u, v, qk);
 
-
 			for (j = 0; j <= L2 - 1; j++)
 			{
 				//fflag = 1;
@@ -468,7 +459,6 @@ namespace Altaxo.Calc.RootFinding
 				ts = 1;
 				tv = 1.0;
 
-
 				if (((j != 0) & (tFlag != 3)))
 				{
 					// Compute relative measures of convergence of s and v sequences
@@ -482,7 +472,6 @@ namespace Altaxo.Calc.RootFinding
 						ts = Math.Abs((ss - oss) / ss);
 					}
 
-
 					// If decreasing, multiply the two most recent convergence measures
 
 					if (tv < otv)
@@ -493,7 +482,6 @@ namespace Altaxo.Calc.RootFinding
 					{
 						tvv = 1;
 					}
-
 
 					if (ts < ots)
 					{
@@ -524,8 +512,6 @@ namespace Altaxo.Calc.RootFinding
 						spass = 0;
 					}
 
-
-
 					if (((spass == 1) | (vpass == 1)))
 					{
 						// At least one sequence has passed the convergence test.
@@ -541,7 +527,6 @@ namespace Altaxo.Calc.RootFinding
 						// Choose iteration according to the fastest converging sequence
 						stry = 0;
 						vtry = 0;
-
 
 						do
 						{
@@ -577,7 +562,6 @@ namespace Altaxo.Calc.RootFinding
 										K[i] = svk[i];
 									}
 								}
-
 							}
 
 							if ((iFlag != 0))
@@ -593,7 +577,6 @@ namespace Altaxo.Calc.RootFinding
 								stry = 1;
 								betas *= 0.25;
 
-
 								if ((iFlag != 0))
 								{
 									// If linear iteration signals an almost double real zero, attempt quadratic iteration
@@ -608,22 +591,18 @@ namespace Altaxo.Calc.RootFinding
 								K[i] = svk[i];
 							}
 
-
 							// Try quadratic iteration if it has not been tried and the v sequence is converging
 							if ((!(vpass == 1) | vtry == 1))
 							{
 								// Break out of infinite for loop
 								break; // TODO: might not be correct. Was : Exit Do
 							}
-
-
 						} while (true);
 
 						// Re-compute qp and scalar values to continue the second stage
 						QuadSD_ak1(NN, u, v, p, qp, ref a, ref b);
 						tFlag = calcSC_ak1(N, a, b, ref a1, ref a3, ref a7, ref c, ref d, ref e, ref f,
 						ref g, ref h, K, u, v, qk);
-
 					}
 				}
 
@@ -632,9 +611,7 @@ namespace Altaxo.Calc.RootFinding
 				otv = tv;
 				ots = ts;
 			}
-
 		}
-
 
 		private static void QuadSD_ak1(int NN, double u, double v, double[] p, double[] q, ref double a, ref double b)
 		{
@@ -654,13 +631,11 @@ namespace Altaxo.Calc.RootFinding
 				b = (a);
 				a = q[i];
 			}
-
 		}
 
 		private static int calcSC_ak1(int N, double a, double b, ref double a1, ref double a3, ref double a7, ref double c, ref double d, ref double e, ref double f,
 		ref double g, ref double h, double[] K, double u, double v, double[] qk)
 		{
-
 			// This routine calculates scalar quantities used to compute the next K polynomial and
 			// new estimates of the quadratic coefficients.
 
@@ -708,7 +683,6 @@ namespace Altaxo.Calc.RootFinding
 			return dumFlag;
 		}
 
-
 		private static void nextK_ak1(int N, int tFlag, double a, double b, double a1, ref double a3, ref double a7, double[] K, double[] qk, double[] qp)
 		{
 			// Computes the next K polynomials using the scalars computed in calcSC_ak1
@@ -738,7 +712,6 @@ namespace Altaxo.Calc.RootFinding
 			{
 				temp = a;
 			}
-
 
 			if ((Math.Abs(a1) > (10.0 * DBL_EPSILON * Math.Abs(temp))))
 			{
@@ -788,14 +761,12 @@ namespace Altaxo.Calc.RootFinding
 			uu = 0.0;
 			//The quadratic is zeroed
 
-
 			if ((tFlag != 3))
 			{
 				if ((tFlag != 2))
 				{
 					a4 = a + u * b + h * f;
 					a5 = c + (u + v * f) * d;
-
 				}
 				else
 				{
@@ -816,7 +787,6 @@ namespace Altaxo.Calc.RootFinding
 					uu = -((u * (c3 + c2) + v * (b1 * a1 + b2 * a7)) / temp) + u;
 					vv = v * (1.0 + c4 / temp);
 				}
-
 			}
 		}
 
@@ -923,9 +893,7 @@ namespace Altaxo.Calc.RootFinding
 
 						triedFlag = 1;
 						j = 0;
-
 					}
-
 				}
 
 				omp = mp;
@@ -1023,7 +991,6 @@ namespace Altaxo.Calc.RootFinding
 						sss = s;
 						break; // TODO: might not be correct. Was : Exit Do
 					}
-
 				}
 
 				// Return if the polynomial value has increased significantly
@@ -1073,7 +1040,6 @@ namespace Altaxo.Calc.RootFinding
 				}
 
 				s += t;
-
 			} while (true);
 		}
 
@@ -1129,8 +1095,6 @@ namespace Altaxo.Calc.RootFinding
 				d = Math.Sqrt(Math.Abs(e)) * (Math.Abs(b));
 			}
 
-
-
 			if ((e >= 0))
 			{
 				// Real zero
@@ -1153,9 +1117,6 @@ namespace Altaxo.Calc.RootFinding
 				si = Math.Abs(d / a);
 				li = -(si);
 			}
-
 		}
-
-
 	}
 }

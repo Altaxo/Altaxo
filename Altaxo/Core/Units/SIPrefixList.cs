@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,14 +32,15 @@ namespace Altaxo.Units
 	public interface ISIPrefixList : IEnumerable<SIPrefix>
 	{
 		int Count { get; }
+
 		SIPrefix TryGetPrefixFromShortCut(string shortCut);
+
 		bool ContainsNonePrefixOnly { get; }
 	}
 
-
 	public class SIPrefixList : ISIPrefixList
 	{
-		Dictionary<string, SIPrefix> _shortCutDictionary;
+		private Dictionary<string, SIPrefix> _shortCutDictionary;
 
 		public SIPrefixList(IEnumerable<SIPrefix> from)
 		{

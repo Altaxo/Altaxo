@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Orghr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,15 +34,13 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Orghr{
     private Orghr() {}
-    
+
     private static void ArgumentCheck(int n, int ilo, int ihi, object A, int lda, object tau){
-      if (n<0){ 
+      if (n<0){
         throw new ArgumentException("n must be at least zero.");
       }
       if (n>0) {
@@ -68,7 +68,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         throw new ArgumentException("lda must be at least max(1,n)", "lda");
       }
     }
-    
+
     internal static int Compute( int n, int ilo, int ihi, float[] A, int lda, float[] tau ){
       ArgumentCheck(n, ilo, ihi, A, lda, tau);
       return dna_lapack_sorghr(Configuration.BlockSize, n, ilo, ihi, A, lda, tau);
@@ -84,7 +84,6 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dorghr(int block_size, int n, int ilo, int ihi, double[] A, int lda, double[] tau);
-
   }
 }
 #endif

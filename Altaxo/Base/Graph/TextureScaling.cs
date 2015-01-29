@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -34,8 +36,10 @@ namespace Altaxo.Graph
 	{
 		/// <summary>Size of the texture scales with the original size of the texture. X and Y in <see cref="TextureScaling"/> are scaling factors.</summary>
 		Source = 0,
+
 		/// <summary>Size of the texture scales with the destination size of the texture (e.g. the bounding rectangle of a shape to fill). X and Y in <see cref="TextureScaling"/> are scaling factors.</summary>
 		Destination = 1,
+
 		/// <summary>Size of the texture is given absolutely in Points (1/72 inch). X and Y in <see cref="TextureScaling"/> are the horizontal and vertical size in Points (1/72 inch).</summary>
 		Absolute = 2
 	}
@@ -60,14 +64,15 @@ namespace Altaxo.Graph
 	/// </summary>
 	public struct TextureScaling : System.IEquatable<TextureScaling>
 	{
-		TextureScalingMode _scalingMode;
-		AspectRatioPreservingMode _aspectPreserving;
-		double _x;
-		double _y;
+		private TextureScalingMode _scalingMode;
+		private AspectRatioPreservingMode _aspectPreserving;
+		private double _x;
+		private double _y;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextureScaling), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -77,11 +82,11 @@ namespace Altaxo.Graph
 				info.AddValue("X", s._x);
 				info.AddValue("Y", s._y);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (TextureScaling)o : new TextureScaling();
-				s._scalingMode = (TextureScalingMode)info.GetEnum("Mode",typeof(TextureScalingMode));
+				s._scalingMode = (TextureScalingMode)info.GetEnum("Mode", typeof(TextureScalingMode));
 				s._aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
 				s._x = info.GetDouble("X");
 				s._y = info.GetDouble("Y");
@@ -89,8 +94,8 @@ namespace Altaxo.Graph
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public TextureScaling(TextureScalingMode mode, AspectRatioPreservingMode aspectPreserving, double x, double y)
 		{
@@ -116,7 +121,7 @@ namespace Altaxo.Graph
 			set { _aspectPreserving = value; }
 		}
 
-		/// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the horizontal size of the texture (repeat length) in Points (1/72 inch). 
+		/// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the horizontal size of the texture (repeat length) in Points (1/72 inch).
 		/// Otherwise, it is the horizontal scaling factor related either to the source image width or the destination image width.</summary>
 		/// <value>The X value.</value>
 		public double X
@@ -125,7 +130,7 @@ namespace Altaxo.Graph
 			set { _x = value; }
 		}
 
-		/// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the vertical size of the texture (repeat length) in Points (1/72 inch). 
+		/// <summary>If <see cref="ScalingMode"/> is Absolute, this value is the vertical size of the texture (repeat length) in Points (1/72 inch).
 		/// Otherwise, it is the vertical scaling factor related either to the source image width or the destination image height.</summary>
 		/// <value>The X value.</value>
 		public double Y
@@ -158,8 +163,10 @@ namespace Altaxo.Graph
 						default:
 						case AspectRatioPreservingMode.None:
 							return new PointD2D(_x * sourceSize.X, _y * sourceSize.Y);
+
 						case AspectRatioPreservingMode.PreserveXPriority:
 							return new PointD2D(_x * sourceSize.X, _x * sourceSize.Y);
+
 						case AspectRatioPreservingMode.PreserveYPriority:
 							return new PointD2D(_y * sourceSize.X, _y * sourceSize.Y);
 					}
@@ -169,8 +176,10 @@ namespace Altaxo.Graph
 						default:
 						case AspectRatioPreservingMode.None:
 							return new PointD2D(destinationSize.X * _x, destinationSize.Y * _y);
+
 						case AspectRatioPreservingMode.PreserveXPriority: // we use _x as scaling factor, and we adjust y so that the source aspect ratio is preserved
 							return new PointD2D(_x * destinationSize.X, _x * destinationSize.X * (sourceSize.Y / sourceSize.X));
+
 						case AspectRatioPreservingMode.PreserveYPriority:
 							return new PointD2D(_y * destinationSize.Y * (sourceSize.X / sourceSize.Y), _y * destinationSize.Y);
 					}
@@ -180,8 +189,10 @@ namespace Altaxo.Graph
 						default:
 						case AspectRatioPreservingMode.None:
 							return new PointD2D(_x, _y);
+
 						case AspectRatioPreservingMode.PreserveXPriority: // we use _x as scaling factor, and we adjust y so that the source aspect ratio is preserved
 							return new PointD2D(_x, _x * (sourceSize.Y / sourceSize.X));
+
 						case AspectRatioPreservingMode.PreserveYPriority:
 							return new PointD2D(_y * (sourceSize.X / sourceSize.Y), _y);
 					}

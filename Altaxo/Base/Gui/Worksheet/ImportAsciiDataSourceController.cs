@@ -24,7 +24,6 @@
 
 using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
-using Altaxo.Worksheet.Commands.Analysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;

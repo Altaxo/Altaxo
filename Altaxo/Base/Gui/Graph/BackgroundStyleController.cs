@@ -22,13 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 
 namespace Altaxo.Gui.Graph

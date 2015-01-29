@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -75,7 +77,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 		/// this value tends to <c>pSample/pInsideAggregate</c>.</returns>
 		/// <remarks>
 		/// The kinetic equation for this problem (see <see cref="CoreSolution"/> is formulated with the number
-		/// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y. 
+		/// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y.
 		/// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
 		/// </remarks>
 		public static double AgglomerateConcentrationFromP0AndPInsideAggregate(double t, double p0, double k, double order, double pSample, double pInsideAggregate)
@@ -98,7 +100,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 		/// if you want to compare aggregation processes for sample with different content of aggregating species. If such a comparism is not neccessary,
 		/// you can set <c>pSample</c> to 1.
 		/// The kinetic equation for this problem (see <see cref="CoreSolution"/> is formulated with the number
-		/// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y. 
+		/// of free aggregating particles as variable x and the number of aggregating particels inside aggregates as the variable y.
 		/// The solution was reformulated with volume fractions, using a new kinetic constant scaled by the volume of one aggregating particel.
 		/// </remarks>
 		public static double AgglomarateConcentrationFromPA0AndPAInf(double t, double pA0, double pAInf, double k, double order, double pSample)

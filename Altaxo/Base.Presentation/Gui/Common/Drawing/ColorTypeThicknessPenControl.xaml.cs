@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -41,7 +35,7 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
 	{
-		PenControlsGlue _glue;
+		private PenControlsGlue _glue;
 
 		public ColorTypeThicknessPenControl()
 		{
@@ -51,18 +45,17 @@ namespace Altaxo.Gui.Common.Drawing
 			_glue.CbBrush = _cbColor;
 			_glue.CbDashStyle = _cbLineType;
 			_glue.CbLineThickness = _cbThickness;
-
 		}
 
 		#region IColorTypeThicknessPenView
 
-		IColorTypeThicknessPenViewEventSink _controller;
+		private IColorTypeThicknessPenViewEventSink _controller;
+
 		public IColorTypeThicknessPenViewEventSink Controller
 		{
 			get { return _controller; }
 			set { _controller = value; }
 		}
-
 
 		public Altaxo.Graph.Gdi.PenX DocPen
 		{
@@ -76,13 +69,11 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
 		{
 			_glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
 		}
 
-
-		#endregion
+		#endregion IColorTypeThicknessPenView
 	}
 }

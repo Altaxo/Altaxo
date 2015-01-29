@@ -1,22 +1,22 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Pads.FileBrowser.FileBrowserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Pads.FileBrowser"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-	
+
 	<UserControl.Resources>
-		<local:IndexToImageConverter x:Key="IndexToImageConverter"/>
-		<local:FileFullNameToImageConverter x:Key="ExtensionToImageConverter"/>
+		<local:IndexToImageConverter x:Key="IndexToImageConverter" />
+		<local:FileFullNameToImageConverter x:Key="ExtensionToImageConverter" />
 	</UserControl.Resources>
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition Height="6"/>
-			<RowDefinition/>
+			<RowDefinition />
+			<RowDefinition Height="6" />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 
 		<TreeView x:Name="_treeView" Grid.Row="0" SelectedItemChanged="EhTreeView_SelectedItemChanged">
@@ -26,7 +26,7 @@
 					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
 					<Style.Triggers>
 						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
 						</DataTrigger>
 					</Style.Triggers>
 				</Style>
@@ -35,23 +35,23 @@
 			<ItemsControl.Resources>
 				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
 					<StackPanel Orientation="Horizontal">
-						<Image Width="16" Height="16" Margin="3,0" Source="{Binding ImageIndex, Converter={StaticResource IndexToImageConverter}}"/>
+						<Image Width="16" Height="16" Margin="3,0" Source="{Binding ImageIndex, Converter={StaticResource IndexToImageConverter}}" />
 						<TextBlock Text="{Binding Text}" />
 					</StackPanel>
 				</HierarchicalDataTemplate>
 			</ItemsControl.Resources>
 		</TreeView>
-		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
-		<ListView x:Name="_listView" Grid.Row="2" SelectionMode="Extended" >
+		<GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+		<ListView x:Name="_listView" Grid.Row="2" SelectionMode="Extended">
 			<ListView.Resources>
 				<DataTemplate x:Key="ColumnWithIconTemplate">
 					<Grid>
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
-						<Image Grid.Column="0" SnapsToDevicePixels="True" Source="{Binding Path=Tag, Converter={StaticResource ExtensionToImageConverter}}"/>
-						<TextBlock Grid.Column="1" Margin="4,0" Text="{Binding Path=Text}"/>
+						<Image Grid.Column="0" SnapsToDevicePixels="True" Source="{Binding Path=Tag, Converter={StaticResource ExtensionToImageConverter}}" />
+						<TextBlock Grid.Column="1" Margin="4,0" Text="{Binding Path=Text}" />
 					</Grid>
 				</DataTemplate>
 			</ListView.Resources>
@@ -59,19 +59,18 @@
 			<ItemsControl.ItemContainerStyle>
 				<Style TargetType="{x:Type ListViewItem}">
 					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<EventSetter Event="MouseDoubleClick" Handler="EhListViewItem_MouseDoubleClick"/>
+					<EventSetter Event="MouseDoubleClick" Handler="EhListViewItem_MouseDoubleClick" />
 					<EventSetter Event="KeyDown" Handler="EhListViewItem_KeyDown" />
 				</Style>
 			</ItemsControl.ItemContainerStyle>
 
 			<ListView.View>
 				<GridView>
-					<GridViewColumn x:Name="_fileListColumnFileName" CellTemplate="{StaticResource ColumnWithIconTemplate}" Header="Filename"/>
+					<GridViewColumn x:Name="_fileListColumnFileName" CellTemplate="{StaticResource ColumnWithIconTemplate}" Header="Filename" />
 					<GridViewColumn x:Name="_fileListColumnFileSize" DisplayMemberBinding="{Binding Text1}" Header="Size" />
-					<GridViewColumn x:Name="_fileListColumnFileDate" DisplayMemberBinding="{Binding Text2}" Header="Date"/>
+					<GridViewColumn x:Name="_fileListColumnFileDate" DisplayMemberBinding="{Binding Text2}" Header="Date" />
 				</GridView>
 			</ListView.View>
-		
 		</ListView>
 	</Grid>
 </UserControl>

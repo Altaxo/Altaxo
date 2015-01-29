@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -48,10 +50,12 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		}
 
 		public override string Name { get { return "SquareO"; } }
+
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+
 		public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-		CustomLineCap GetClone(Pen pen, float size)
+		private CustomLineCap GetClone(Pen pen, float size)
 		{
 			float endPoint;
 
@@ -59,7 +63,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 
 			if (endPoint < 0)
 				endPoint = 1e-3f;
-
 
 			GraphicsPath hPath = new GraphicsPath();
 			// Create the outline for our custom end cap.
@@ -107,17 +110,17 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		}
 
 		public override string Name { get { return "SquareF"; } }
+
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+
 		public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-
-		CustomLineCap GetClone(Pen pen, float size)
+		private CustomLineCap GetClone(Pen pen, float size)
 		{
 			float scale = pen.Width == 0 ? 1 : size / (pen.Width * 2);
 
 			if (scale <= 0)
 				scale = 1e-3f;
-
 
 			GraphicsPath hPath = new GraphicsPath();
 			// Create the outline for our custom end cap.
@@ -126,8 +129,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
         new PointF(1,1),
 				new PointF(-1, 1),
         new PointF(-1,-1),
-				
-       
       });
 			CustomLineCap clone = new CustomLineCap(hPath, null, LineCap.Flat, 0); // we set the stroke path only
 			clone.WidthScale = scale;

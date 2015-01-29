@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -43,9 +39,9 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class WrapModeComboBox : ImageComboBox
 	{
-		class CC : IValueConverter
+		private class CC : IValueConverter
 		{
-			WrapModeComboBox _cb;
+			private WrapModeComboBox _cb;
 
 			public CC(WrapModeComboBox c)
 			{
@@ -56,8 +52,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (WrapMode)value;
 				return _cb._cachedItems[val];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -66,11 +60,11 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		static Dictionary<WrapMode, ImageSource> _cachedImages = new Dictionary<WrapMode, ImageSource>();
+		private static Dictionary<WrapMode, ImageSource> _cachedImages = new Dictionary<WrapMode, ImageSource>();
 
-		Dictionary<WrapMode, ImageComboBoxItem> _cachedItems = new Dictionary<WrapMode, ImageComboBoxItem>();
+		private Dictionary<WrapMode, ImageComboBoxItem> _cachedItems = new Dictionary<WrapMode, ImageComboBoxItem>();
 
-		static GeometryDrawing triangleDrawing;
+		private static GeometryDrawing triangleDrawing;
 
 		static WrapModeComboBox()
 		{
@@ -91,8 +85,6 @@ namespace Altaxo.Gui.Common.Drawing
 			triangleDrawing.Pen = trianglePen;
 			trianglePen.MiterLimit = 0;
 			triangleDrawing.Freeze();
-
-
 		}
 
 		public WrapModeComboBox()
@@ -113,7 +105,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
+
 		private const string _nameOfValueProp = "WrapMode";
+
 		public WrapMode WrapMode
 		{
 			get { return (WrapMode)GetValue(WrapModeProperty); }
@@ -128,14 +122,12 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			((WrapModeComboBox)obj).EhWrapModeChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		protected virtual void EhWrapModeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-
-
 
 		public override string GetItemText(object item)
 		{
@@ -151,7 +143,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public static DrawingImage GetImage(WrapMode val)
 		{
@@ -169,24 +160,28 @@ namespace Altaxo.Gui.Common.Drawing
 			DrawingBrush brush = new DrawingBrush();
 			brush.Drawing = triangleDrawing;
 
-
 			switch (val)
 			{
 				case WrapMode.Tile:
 					brush.TileMode = TileMode.Tile;
 					break;
+
 				case WrapMode.TileFlipX:
 					brush.TileMode = TileMode.FlipX;
 					break;
+
 				case WrapMode.TileFlipY:
 					brush.TileMode = TileMode.FlipY;
 					break;
+
 				case WrapMode.TileFlipXY:
 					brush.TileMode = TileMode.FlipXY;
 					break;
+
 				case WrapMode.Clamp:
 					brush.TileMode = TileMode.None;
 					break;
+
 				default:
 					break;
 			}

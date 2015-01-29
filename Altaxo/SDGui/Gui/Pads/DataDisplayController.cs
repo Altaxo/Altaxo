@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
-using System;
 
-using ICSharpCode.Core;
+#endregion Copyright
+
 using ICSharpCode.SharpDevelop.Gui;
-
+using System;
 
 namespace Altaxo.Gui.Pads
 {
@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Pads
 		ICSharpCode.SharpDevelop.Gui.IPadContent,
 		Altaxo.Main.Services.IDataDisplayService
 	{
-		System.Windows.Controls.TextBox _view;
+		private System.Windows.Controls.TextBox _view;
 
 		public DataDisplayController()
 		{
@@ -49,9 +49,7 @@ namespace Altaxo.Gui.Pads
 			Current.SetDataDisplayService(this);
 		}
 
-
 		#region IPadContent Members
-
 
 		public object Control
 		{
@@ -69,8 +67,7 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-		#endregion
-
+		#endregion IPadContent Members
 
 		#region IDisposable Members
 
@@ -82,7 +79,7 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-		#endregion
+		#endregion IDisposable Members
 
 		private void InternalWrite(string text)
 		{
@@ -111,7 +108,7 @@ namespace Altaxo.Gui.Pads
 		/// <param name="line2">Second line.</param>
 		public void WriteTwoLines(string line1, string line2)
 		{
-			InternalWrite( line1 + System.Environment.NewLine + line2 );
+			InternalWrite(line1 + System.Environment.NewLine + line2);
 		}
 
 		/// <summary>
@@ -122,10 +119,9 @@ namespace Altaxo.Gui.Pads
 		/// <param name="line3">Three line.</param>
 		public void WriteThreeLines(string line1, string line2, string line3)
 		{
-			InternalWrite( line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3 );
+			InternalWrite(line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3);
 		}
 
-		#endregion
-
+		#endregion IDataDisplayService Members
 	}
 }

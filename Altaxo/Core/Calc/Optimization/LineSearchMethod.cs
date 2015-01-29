@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * LineSearchMethod.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Problem class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {

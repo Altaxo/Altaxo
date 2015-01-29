@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,19 +31,18 @@ namespace Altaxo.Graph.ColorManagement
 {
 	public class BuiltinDarkPlotColorSet : BuiltinColorSet
 	{
-
 		private static BuiltinDarkPlotColorSet _instance = new BuiltinDarkPlotColorSet();
-
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BuiltinPlotColorSet", 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				throw new InvalidOperationException("Serialization of old versions not supported");
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				info.GetString("Name");
@@ -54,19 +55,19 @@ namespace Altaxo.Graph.ColorManagement
 		/// <para>This is the initial version of serialization of this instance. It is labelled with version 1, because this class is the predecessor of the original Altaxo.Graph.BuiltinPlotColorSet.</para>
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BuiltinDarkPlotColorSet), 1)]
-		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				return BuiltinDarkPlotColorSet.Instance;
 			}
 		}
 
-		#endregion
-
+		#endregion Serialization
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BuiltinDarkPlotColorSet"/> class.
@@ -80,7 +81,6 @@ namespace Altaxo.Graph.ColorManagement
 		/// Gets the instance of this color set.
 		/// </summary>
 		public static BuiltinDarkPlotColorSet Instance { get { return _instance; } }
-
 
 		private static NamedColor[] ColorsVersion0() // Version 2012-09-10
 		{
@@ -105,5 +105,4 @@ namespace Altaxo.Graph.ColorManagement
 			get { return true; }
 		}
 	}
-
 }

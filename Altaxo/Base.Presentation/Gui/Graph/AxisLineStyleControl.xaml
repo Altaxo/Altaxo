@@ -1,115 +1,111 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.AxisLineStyleControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
-             mc:Ignorable="d" 
-             >
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,0,2"/>
-				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="Margin" Value="8,0,0,2" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
 		<Style x:Key="CheckBoxWithLeftMargin" TargetType="CheckBox">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,0,2"/>
+				<Setter Property="Margin" Value="8,0,0,2" />
 			</Style.Setters>
 		</Style>
 		<DataTemplate x:Key="TickItemsTemplate" DataType="{x:Type axocoll:SelectableListNode}">
 			<StackPanel Orientation="Horizontal" Margin="0,4,8,0">
-				<CheckBox Width="16" Height="16" Margin="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+				<CheckBox Width="16" Height="16" Margin="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
 				<TextBlock Text="{Binding Text}" />
 			</StackPanel>
 		</DataTemplate>
 		<Style x:Key="TickItemsControlStyle" TargetType="ItemsControl">
 			<Setter Property="ItemsPanel">
 				<Setter.Value>
-						<ItemsPanelTemplate>
-							<WrapPanel/>
-						</ItemsPanelTemplate>
+					<ItemsPanelTemplate>
+						<WrapPanel />
+					</ItemsPanelTemplate>
 				</Setter.Value>
 			</Setter>
 		</Style>
-
 	</UserControl.Resources>
-	
-    <Grid Grid.IsSharedSizeScope="True">
+
+	<Grid Grid.IsSharedSizeScope="True">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<GroupBox Grid.Row="0" Header="Line">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-					<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1"/>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<CheckBox x:Name="_chkEnableLine" Grid.Column="0" Grid.ColumnSpan="4">Enable</CheckBox>
 				<Label Grid.Column="0" Grid.Row="2">Pen brush:</Label>
-				<axogcd:BrushComboBox x:Name="_lineBrushColor" Grid.Column="1" Grid.Row="2"/>
+				<axogcd:BrushComboBox x:Name="_lineBrushColor" Grid.Column="1" Grid.Row="2" />
 				<Label Grid.Column="2" Grid.Row="2">Thickness:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineLineThickness" Grid.Column="3" Grid.Row="2"/>
+				<axogcd:LineThicknessComboBox x:Name="_lineLineThickness" Grid.Column="3" Grid.Row="2" />
 			</Grid>
 		</GroupBox>
-			
+
 		<GroupBox Grid.Row="2" Header="Major Ticks">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-					<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1"/>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkCustomMajorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Checked="EhIndividualMajorColor_CheckChanged" Unchecked="EhIndividualMajorColor_CheckChanged">Color: </CheckBox>
-				<axogcd:BrushComboBox x:Name="_majorLineColor" Grid.Column="1" Grid.Row="0"/>
-				<CheckBox x:Name="_chkCustomMajorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" Checked="EhIndividualMajorThickness_CheckChanged" Unchecked="EhIndividualMajorThickness_CheckChanged">Thickness: </CheckBox>
-				<axogcd:LineThicknessComboBox x:Name="_lineMajorThickness" Grid.Column="3" Grid.Row="0"/>
+				<CheckBox x:Name="_chkCustomMajorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Checked="EhIndividualMajorColor_CheckChanged" Unchecked="EhIndividualMajorColor_CheckChanged">Color:</CheckBox>
+				<axogcd:BrushComboBox x:Name="_majorLineColor" Grid.Column="1" Grid.Row="0" />
+				<CheckBox x:Name="_chkCustomMajorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" Checked="EhIndividualMajorThickness_CheckChanged" Unchecked="EhIndividualMajorThickness_CheckChanged">Thickness:</CheckBox>
+				<axogcd:LineThicknessComboBox x:Name="_lineMajorThickness" Grid.Column="3" Grid.Row="0" />
 				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineMajorLength"  Grid.Column="1" Grid.Row="2"/>
-				<ItemsControl x:Name="_majorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}"/>
-
+				<axogcd:LineThicknessComboBox x:Name="_lineMajorLength"  Grid.Column="1" Grid.Row="2" />
+				<ItemsControl x:Name="_majorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
 			</Grid>
-			
 		</GroupBox>
 		<GroupBox Grid.Row="4" Header="Minor Ticks">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-					<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1"/>
-					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkCustomMinorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Checked="EhIndividualMinorColor_CheckChanged" Unchecked="EhIndividualMinorColor_CheckChanged">Color: </CheckBox>
-				<axogcd:BrushComboBox x:Name="_minorLineColor" Grid.Column="1" Grid.Row="0"/>
+				<CheckBox x:Name="_chkCustomMinorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Checked="EhIndividualMinorColor_CheckChanged" Unchecked="EhIndividualMinorColor_CheckChanged">Color:</CheckBox>
+				<axogcd:BrushComboBox x:Name="_minorLineColor" Grid.Column="1" Grid.Row="0" />
 				<CheckBox x:Name="_chkCustomMinorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" Checked="EhIndividualMinorThickness_CheckChanged" Unchecked="EhIndividualMinorThickness_CheckChanged">Thickness:</CheckBox>
-				<axogcd:LineThicknessComboBox x:Name="_lineMinorThickness" Grid.Column="3" Grid.Row="0"/>
+				<axogcd:LineThicknessComboBox x:Name="_lineMinorThickness" Grid.Column="3" Grid.Row="0" />
 				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineMinorLength"  Grid.Column="1" Grid.Row="2"/>
-				<ItemsControl x:Name="_minorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}"/>
+				<axogcd:LineThicknessComboBox x:Name="_lineMinorLength"  Grid.Column="1" Grid.Row="2" />
+				<ItemsControl x:Name="_minorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
 			</Grid>
 		</GroupBox>
 	</Grid>

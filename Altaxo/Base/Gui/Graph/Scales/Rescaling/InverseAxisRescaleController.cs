@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Serialization;
 using System;

@@ -25,7 +25,6 @@
 using Altaxo.Data;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {

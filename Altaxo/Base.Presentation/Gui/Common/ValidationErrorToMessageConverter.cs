@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.ObjectModel;
@@ -37,7 +39,6 @@ namespace Altaxo.Gui.Common
 	public class ValidationErrorToMessageConverter : MarkupExtension, IValueConverter
 	{
 		private ValidationErrorToMessageConverter _converter;
-
 
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{
@@ -72,7 +73,5 @@ namespace Altaxo.Gui.Common
 		{
 			throw new NotImplementedException();
 		}
-
-
 	}
 }

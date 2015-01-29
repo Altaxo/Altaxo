@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;

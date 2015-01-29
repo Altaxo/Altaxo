@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,45 +19,43 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Serialization
 {
-  /// <summary>
-  /// Summary description for NumberParsing.
-  /// </summary>
-  public class NumberConversion
-  {
-    public static bool IsDouble(string txt, out double parsedNumber)
-    {
-      return double.TryParse(txt,System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out parsedNumber);
-    }
+	/// <summary>
+	/// Summary description for NumberParsing.
+	/// </summary>
+	public class NumberConversion
+	{
+		public static bool IsDouble(string txt, out double parsedNumber)
+		{
+			return double.TryParse(txt, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out parsedNumber);
+		}
 
-    public static bool IsDouble(string txt)
-    {
-      double d;
-      return IsDouble(txt, out d);
-    }
+		public static bool IsDouble(string txt)
+		{
+			double d;
+			return IsDouble(txt, out d);
+		}
 
-    /// <summary>
-    /// Tests if the provided string represents a number.
-    /// </summary>
-    /// <param name="txt">The string to test.</param>
-    /// <returns>True if the string represents a number.</returns>
-    public static bool IsNumeric(string txt)
-    {
-      double parsedNumber;
-      return double.TryParse(txt,System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out parsedNumber);
-    }
+		/// <summary>
+		/// Tests if the provided string represents a number.
+		/// </summary>
+		/// <param name="txt">The string to test.</param>
+		/// <returns>True if the string represents a number.</returns>
+		public static bool IsNumeric(string txt)
+		{
+			double parsedNumber;
+			return double.TryParse(txt, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out parsedNumber);
+		}
 
-    public static string ToString(double d)
-    {
-      return d.ToString();
-    }
-
-  }
-
-
+		public static string ToString(double d)
+		{
+			return d.ToString();
+		}
+	}
 }

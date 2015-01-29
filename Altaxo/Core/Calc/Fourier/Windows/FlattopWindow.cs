@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier.Windows
 {
@@ -56,6 +58,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		{
 			return new FlattopWindow(count, periodic).AsDoubleArray();
 		}
+
 		/// <summary>
 		/// Returns the window as an read only vector.
 		/// </summary>
@@ -66,6 +69,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		{
 			return new FlattopWindow(count, periodic).AsROVector();
 		}
+
 		/// <summary>
 		/// Returns the window as writeable vector.
 		/// </summary>
@@ -76,6 +80,5 @@ namespace Altaxo.Calc.Fourier.Windows
 		{
 			return new FlattopWindow(count, periodic).AsVector();
 		}
-
 	}
 }

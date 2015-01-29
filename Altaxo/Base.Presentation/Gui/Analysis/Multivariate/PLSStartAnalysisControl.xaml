@@ -1,39 +1,39 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Worksheet.PLSStartAnalysisControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d" >
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="RadioButton">
 			<Style.Setters>
-				<Setter Property="Margin" Value="4,2,4,2"/>
+				<Setter Property="Margin" Value="4,2,4,2" />
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<Label Grid.Row="0" Content="Method:"/>
-		<ComboBox x:Name="cbAnalysisMethod" Grid.Row="1" SelectionChanged="cbAnalysisMethod_SelectionChangeCommitted"/>
-		<Label Grid.Row="3" Content="Maximum number of factors to calculate:"/>
-		<axogc:Int32UpDown x:Name="edMaxNumFactors" Grid.Row="4" Minimum="0" ValueChanged="edMaxNumFactors_ValueChanged"/>
+		<Label Grid.Row="0" Content="Method:" />
+		<ComboBox x:Name="cbAnalysisMethod" Grid.Row="1" SelectionChanged="cbAnalysisMethod_SelectionChangeCommitted" />
+		<Label Grid.Row="3" Content="Maximum number of factors to calculate:" />
+		<axogc:Int32UpDown x:Name="edMaxNumFactors" Grid.Row="4" Minimum="0" ValueChanged="edMaxNumFactors_ValueChanged" />
 
 		<GroupBox Grid.Row="6" Header="Cross validation calculation">
 			<StackPanel Orientation="Vertical">
-				<RadioButton x:Name="rbCrossValidationNone" Content="None" Checked="rbCrossValidationNone_CheckedChanged"/>
-				<RadioButton x:Name="rbCrossValidationEvery" Content="Exclude every measurement" Checked="rbCrossValidationEvery_CheckedChanged"/>
-				<RadioButton x:Name="rbCrossValidationGroups" Content="Exclude groups of similar measurements" Checked="rbCrossValidationGroups_CheckedChanged"/>
-				<RadioButton x:Name="rbCrossValidationHalfEnsemble" Content="Exclude half ensemble of measurements" Checked="rbCrossValidationHalfEnsemble_CheckedChanged"/>
+				<RadioButton x:Name="rbCrossValidationNone" Content="None" Checked="rbCrossValidationNone_CheckedChanged" />
+				<RadioButton x:Name="rbCrossValidationEvery" Content="Exclude every measurement" Checked="rbCrossValidationEvery_CheckedChanged" />
+				<RadioButton x:Name="rbCrossValidationGroups" Content="Exclude groups of similar measurements" Checked="rbCrossValidationGroups_CheckedChanged" />
+				<RadioButton x:Name="rbCrossValidationHalfEnsemble" Content="Exclude half ensemble of measurements" Checked="rbCrossValidationHalfEnsemble_CheckedChanged" />
 			</StackPanel>
 		</GroupBox>
 	</Grid>

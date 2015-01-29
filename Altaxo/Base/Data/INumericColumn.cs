@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Data
 {
-
-
 	/// <summary>
 	/// This is a column with elements, which can be treated as numeric values. This is truly the case
 	/// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
@@ -40,5 +40,4 @@ namespace Altaxo.Data
 		/// <returns>The value of the column element as double value.</returns>
 		new double this[int i] { get; }
 	}
-
 }

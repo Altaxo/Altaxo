@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 /*
  * BSD Licence:
  * Copyright (c) 2001, 2002 Ben Houston [ ben@exocortex.org ]
  * Exocortex Technologies [ www.exocortex.org ]
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, 
+ * 1. Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  * 3. Neither the name of the <ORGANIZATION> nor the names of its contributors
  * may be used to endorse or promote products derived from this software
@@ -44,7 +47,7 @@
  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
@@ -82,6 +85,7 @@ namespace Altaxo.Calc
 			Debug.Assert(data != null);
 			return SumRecursion(data, 0, data.Length);
 		}
+
 		static private ComplexFloat SumRecursion(ComplexFloat[] data, int start, int end)
 		{
 			Debug.Assert(0 <= start, "start = " + start);
@@ -93,7 +97,6 @@ namespace Altaxo.Calc
 				for (int i = start; i < end; i++)
 				{
 					sum += data[i];
-
 				}
 				return sum;
 			}
@@ -114,6 +117,7 @@ namespace Altaxo.Calc
 			Debug.Assert(data != null);
 			return SumRecursion(data, 0, data.Length);
 		}
+
 		static private Complex SumRecursion(Complex[] data, int start, int end)
 		{
 			Debug.Assert(0 <= start, "start = " + start);
@@ -125,7 +129,6 @@ namespace Altaxo.Calc
 				for (int i = start; i < end; i++)
 				{
 					sum += data[i];
-
 				}
 				return sum;
 			}
@@ -149,6 +152,7 @@ namespace Altaxo.Calc
 			Debug.Assert(data != null);
 			return SumOfSquaresRecursion(data, 0, data.Length);
 		}
+
 		static private ComplexFloat SumOfSquaresRecursion(ComplexFloat[] data, int start, int end)
 		{
 			Debug.Assert(0 <= start, "start = " + start);
@@ -160,7 +164,6 @@ namespace Altaxo.Calc
 				for (int i = start; i < end; i++)
 				{
 					sumOfSquares += data[i] * data[i];
-
 				}
 				return sumOfSquares;
 			}
@@ -181,6 +184,7 @@ namespace Altaxo.Calc
 			Debug.Assert(data != null);
 			return SumOfSquaresRecursion(data, 0, data.Length);
 		}
+
 		static private Complex SumOfSquaresRecursion(Complex[] data, int start, int end)
 		{
 			Debug.Assert(0 <= start, "start = " + start);
@@ -192,7 +196,6 @@ namespace Altaxo.Calc
 				for (int i = start; i < end; i++)
 				{
 					sumOfSquares += data[i] * data[i];
-
 				}
 				return sumOfSquares;
 			}
@@ -240,8 +243,9 @@ namespace Altaxo.Calc
 			}
 			return ComplexStats.SumOfSquares(data) / data.Length - ComplexStats.Sum(data);
 		}
+
 		/// <summary>
-		/// Calculate the variance 
+		/// Calculate the variance
 		/// </summary>
 		/// <param name="data"></param>
 		/// <returns></returns>
@@ -269,8 +273,9 @@ namespace Altaxo.Calc
 			}
 			return ComplexMath.Sqrt(ComplexStats.Variance(data));
 		}
+
 		/// <summary>
-		/// Calculate the standard deviation 
+		/// Calculate the standard deviation
 		/// </summary>
 		/// <param name="data"></param>
 		/// <returns></returns>
@@ -301,6 +306,7 @@ namespace Altaxo.Calc
 
 			return (float)Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
 		}
+
 		static private float SumOfSquaredErrorRecursion(ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end)
 		{
 			Debug.Assert(0 <= start, "start = " + start);
@@ -314,7 +320,6 @@ namespace Altaxo.Calc
 				{
 					ComplexFloat delta = beta[i] - alpha[i];
 					sumOfSquaredError += (delta.Re * delta.Re) + (delta.Im * delta.Im);
-
 				}
 				return sumOfSquaredError;
 			}
@@ -339,6 +344,7 @@ namespace Altaxo.Calc
 
 			return Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
 		}
+
 		static private double SumOfSquaredErrorRecursion(Complex[] alpha, Complex[] beta, int start, int end)
 		{
 			Debug.Assert(0 <= start, "start = " + start);
@@ -352,7 +358,6 @@ namespace Altaxo.Calc
 				{
 					Complex delta = beta[i] - alpha[i];
 					sumOfSquaredError += (delta.Re * delta.Re) + (delta.Im * delta.Im);
-
 				}
 				return sumOfSquaredError;
 			}
@@ -362,7 +367,5 @@ namespace Altaxo.Calc
 				return SumOfSquaredErrorRecursion(alpha, beta, start, middle) + SumOfSquaredErrorRecursion(alpha, beta, middle, end);
 			}
 		}
-
-
 	}
 }

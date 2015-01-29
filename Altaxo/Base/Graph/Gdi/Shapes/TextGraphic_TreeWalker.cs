@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 /* the Grammar used here is the following PEG grammar
 
@@ -53,7 +54,7 @@ using System.Drawing.Drawing2D;
 
 [10]Word:           [#x20-#x28#x2A-#x2B#x2D-#x5B#x5D-#xFFFF]+;
 
-[11]^^Space:        '\t' / '\r\n' / '\n'; 
+[11]^^Space:        '\t' / '\r\n' / '\n';
 
 [12]^PositiveInteger: 	[0-9]+;
 
@@ -62,48 +63,47 @@ using System.Drawing.Drawing2D;
 
 [14]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
                     ( '\\' ( 'L'\i                       ) '(' PositiveInteger ',' PositiveInteger ')' ) /
-                    ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' ) 
+                    ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' )
                     ;
 
 [15]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';
 
 [16]QuotedString:  '"' StringContent '"';
 
-[17]^^StringContent: ( '\\' 
+[17]^^StringContent: ( '\\'
                            ( 'u'([0-9A-Fa-f]{4}/FATAL<"4 hex digits expected">)
-                           / ["\\/bfnrt]/FATAL<"illegal escape"> 
-                           ) 
+                           / ["\\/bfnrt]/FATAL<"illegal escape">
+                           )
                         / [#x20-#x21#x23-#xFFFF]
                         )*	;
 
 <</Grammar>>
 
-
-
 */
+
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	using Plot;
-	using Plot.Data;
-	using Graph.Plot.Data;
-	using Background;
 	using Altaxo.Main.PegParser;
 
 	public partial class TextGraphic : GraphicBase
 	{
 		#region Regex expressions
-		static Regex _regexIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*\)");
-		static Regex _regexIntIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*\)");
-		static Regex _regexIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*\""(?<argtwo>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
-		static Regex _regexIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\w+)\n*\)");
-		static Regex _regexIntIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*(?<argthree>\w+)\n*\)");
-		// Be aware that double quote characters is in truth only one quote character, this is the syntax of a verbatim literal string
-		static Regex _regexIntIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*\""(?<argthree>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
-		#endregion
 
-		class TreeWalker
+		private static Regex _regexIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*\)");
+		private static Regex _regexIntIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*\)");
+		private static Regex _regexIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*\""(?<argtwo>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
+		private static Regex _regexIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\w+)\n*\)");
+		private static Regex _regexIntIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*(?<argthree>\w+)\n*\)");
+
+		// Be aware that double quote characters is in truth only one quote character, this is the syntax of a verbatim literal string
+		private static Regex _regexIntIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*\""(?<argthree>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
+
+		#endregion Regex expressions
+
+		private class TreeWalker
 		{
-			string _sourceText;
+			private string _sourceText;
+
 			public TreeWalker(string sourceText)
 			{
 				_sourceText = sourceText;
@@ -138,19 +138,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 					case EAltaxo_LabelV1.WordSpanNC:
 						HandleWordSpan(node, context, parent);
 						break;
+
 					case EAltaxo_LabelV1.Sentence:
 					case EAltaxo_LabelV1.SentenceNC:
 						HandleSentence(node, context, parent);
 						break;
+
 					case EAltaxo_LabelV1.Space:
 						nextparent = HandleSpace(node, context, parent);
 						break;
+
 					case EAltaxo_LabelV1.EscSeq1:
 						HandleEscSeq1(node, context, parent);
 						break;
+
 					case EAltaxo_LabelV1.EscSeq2:
 						HandleEscSeq2(node, context, parent);
 						break;
+
 					case EAltaxo_LabelV1.EscSeq3:
 						HandleEscSeq3(node, context, parent);
 						break;
@@ -162,7 +167,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return nextparent;
 			}
 
-			void HandleWordSpan(PegNode node, StyleContext context, StructuralGlyph parent)
+			private void HandleWordSpan(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				int posBeg = node.match_.posBeg_;
 				int posEnd = node.match_.posEnd_;
@@ -190,7 +195,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				parent.Add(new TextGlyph(str, context));
 			}
 
-			StructuralGlyph HandleSpace(PegNode node, StyleContext context, StructuralGlyph parent)
+			private StructuralGlyph HandleSpace(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				if (_sourceText[node.match_.posBeg_] == '\t')
 				{
@@ -203,12 +208,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			void HandleTab(StructuralGlyph parent)
+			private void HandleTab(StructuralGlyph parent)
 			{
 				parent.Add(new TabGlpyh());
 			}
 
-			StructuralGlyph HandleNewline(StructuralGlyph parent, StyleContext context)
+			private StructuralGlyph HandleNewline(StructuralGlyph parent, StyleContext context)
 			{
 				StructuralGlyph newcontext;
 
@@ -237,7 +242,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return newcontext;
 			}
 
-			void HandleSentence(PegNode node, StyleContext context, StructuralGlyph parent)
+			private void HandleSentence(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				var line = new GlyphLine();
 				parent.Add(line);
@@ -245,7 +250,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					VisitNode(node.child_, context, line);
 			}
 
-			void HandleEscSeq1(PegNode node, StyleContext context, StructuralGlyph parent)
+			private void HandleEscSeq1(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				int posBeg = node.match_.posBeg_;
 				var childNode = node.child_;
@@ -264,13 +269,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 								parent.Add(new DocumentIdentifier(context));
 						}
 						break;
+
 					case @"\g(":
 						{
 							var newContext = context.Clone();
-              newContext.SetFont(context.FontId.GetFontWithNewFamily("Symbol"));
+							newContext.SetFont(context.FontId.GetFontWithNewFamily("Symbol"));
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
+
 					case @"\i(":
 						{
 							var newContext = context.Clone();
@@ -278,6 +285,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
+
 					case @"\b(":
 						{
 							var newContext = context.Clone();
@@ -285,6 +293,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
+
 					case @"\u(":
 						{
 							var newContext = context.Clone();
@@ -292,6 +301,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
+
 					case @"\s(":
 						{
 							var newContext = context.Clone();
@@ -299,6 +309,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
+
 					case @"\n(":
 						{
 							var newContext = context.Clone();
@@ -306,6 +317,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
+
 					case @"\+(":
 						{
 							var newParent = new Superscript();
@@ -317,6 +329,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, newParent);
 						}
 						break;
+
 					case @"\-(":
 						{
 							var newParent = new Subscript();
@@ -328,6 +341,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, newParent);
 						}
 						break;
+
 					case @"\l(":
 						{
 							string s = GetText(childNode);
@@ -338,6 +352,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							}
 						}
 						break;
+
 					case @"\%(":
 						{
 							string s = GetText(childNode);
@@ -348,6 +363,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							}
 						}
 						break;
+
 					case @"\ad(":
 						{
 							var newParent = new DotOverGlyph();
@@ -356,6 +372,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, context, newParent);
 						}
 						break;
+
 					case @"\ab(":
 						{
 							var newParent = new BarOverGlyph();
@@ -367,7 +384,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			void HandleEscSeq2(PegNode node, StyleContext context, StructuralGlyph parent)
+			private void HandleEscSeq2(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				int posBeg = node.match_.posBeg_;
 				var childNode = node.child_;
@@ -390,6 +407,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							VisitNode(childNode, newContext, newParent);
 						}
 						break;
+
 					case @"\p(":
 						{
 							double val;
@@ -412,19 +430,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 								)
 							{
 								double newSize = val * (double)(lengthUnit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
-                newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize( newSize);
-                newContext.FontId = context.FontId.GetFontWithNewSize(newSize);
+								newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize(newSize);
+								newContext.FontId = context.FontId.GetFontWithNewSize(newSize);
 							}
 							else if (double.TryParse(s1, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out val)
 								)
 							{
 								double newSize = val;
-                newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize(newSize);
-                newContext.FontId = context.FontId.GetFontWithNewSize(newSize);
+								newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize(newSize);
+								newContext.FontId = context.FontId.GetFontWithNewSize(newSize);
 							}
 							VisitNode(childNode.next_, newContext, parent);
 						}
 						break;
+
 					case @"\c(":
 						{
 							string s1 = GetText(childNode).Trim();
@@ -440,11 +459,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 							{
 							}
 
-
-
 							VisitNode(childNode.next_, newContext, parent);
 						}
 						break;
+
 					case @"\l(":
 						{
 							string s1 = GetText(childNode);
@@ -456,6 +474,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 							}
 						}
 						break;
+
 					case @"\%(":
 						{
 							string s1 = GetText(childNode);
@@ -471,13 +490,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 								label.SetPropertyColumnName(s2);
 								parent.Add(label);
 							}
-
 						}
 						break;
 				}
 			}
 
-			void HandleEscSeq3(PegNode node, StyleContext context, StructuralGlyph parent)
+			private void HandleEscSeq3(PegNode node, StyleContext context, StructuralGlyph parent)
 			{
 				int posBeg = node.match_.posBeg_;
 				var childNode = node.child_;
@@ -511,6 +529,5 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return _sourceText.Substring(node.match_.posBeg_, node.match_.Length);
 			}
 		} // end class TreeWalker
-
 	}
 }

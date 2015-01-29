@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,23 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public partial class ShearComboBox : DimensionfulQuantityImageComboBox
 	{
-		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { -2.0, -1.0, 0.0, 1.0, 2.0 };
+		private static readonly double[] _initialValues = new double[] { -2.0, -1.0, 0.0, 1.0, 2.0 };
 
 		static ShearComboBox()
 		{
@@ -85,7 +79,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		public override ImageSource GetItemImage(object item)
 		{
 			double val = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
@@ -94,7 +87,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public override string GetItemText(object item)
 		{
@@ -113,8 +105,6 @@ namespace Altaxo.Gui.Common.Drawing
 			outlineDrawing.Geometry = new RectangleGeometry(new Rect(-lineWidth, -lineWidth, width + lineWidth, height + lineWidth));
 			outlineDrawing.Pen = new Pen(Brushes.Transparent, 0);
 			//	outlineDrawing.Brush = new SolidColorBrush(Colors.LightBlue);
-
-
 
 			//
 			// Create the Geometry to draw.

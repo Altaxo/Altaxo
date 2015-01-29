@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 /*
  * BSD Licence:
  * Copyright (c) 2001, 2002 Ben Houston [ ben@exocortex.org ]
  * Exocortex Technologies [ www.exocortex.org ]
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, 
+ * 1. Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  * 3. Neither the name of the <ORGANIZATION> nor the names of its contributors
  * may be used to endorse or promote products derived from this software
@@ -44,20 +47,17 @@
  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-
 
 namespace Altaxo.Calc
 {
-
 	// Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
 	// Version: May 4, 2002
 
@@ -67,7 +67,6 @@ namespace Altaxo.Calc
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Complex : IComparable, ICloneable
 	{
-
 		//-----------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------
 
@@ -83,8 +82,6 @@ namespace Altaxo.Calc
 
 		//-----------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------
-
-
 
 		/// <summary>
 		/// The real component of the complex number
@@ -118,7 +115,6 @@ namespace Altaxo.Calc
 
 		//-----------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------
-
 
 		/// <summary>
 		/// Create a complex number from a real and an imaginary component
@@ -187,6 +183,7 @@ namespace Altaxo.Calc
 		{
 			return new Complex(this);
 		}
+
 		/// <summary>
 		/// Clone the complex number
 		/// </summary>
@@ -241,8 +238,6 @@ namespace Altaxo.Calc
 		{
 			return FromRealImaginary(this.Re, -this.Im);
 		}
-
-
 
 		//-----------------------------------------------------------------------------------
 
@@ -376,7 +371,6 @@ namespace Altaxo.Calc
 				return false;
 			}
 		}
-
 
 		//-----------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------
@@ -546,7 +540,7 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		public static Complex operator *(Complex a, Complex b)
 		{
-			// (x + yi)(u + vi) = (xu – yv) + (xv + yu)i. 
+			// (x + yi)(u + vi) = (xu – yv) + (xv + yu)i.
 			double x = a.Re, y = a.Im;
 			double u = b.Re, v = b.Im;
 
@@ -591,7 +585,6 @@ namespace Altaxo.Calc
 			{
 				return new Complex(x / denom, y / denom);
 			}
-
 			else
 			{
 				a.Re = (double)((x * u + y * v) / denom);
@@ -725,7 +718,6 @@ namespace Altaxo.Calc
 			return (Double.IsInfinity(this.Re) || Double.IsInfinity(this.Im));
 		}
 
-
 		///<summary>A string representation of this <c>Complex</c>.</summary>
 		///<returns>The string representation of the value of <c>this</c> instance.</returns>
 		public override string ToString()
@@ -754,7 +746,7 @@ namespace Altaxo.Calc
 		///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
 		///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
 		///<exception cref="FormatException">if the n, is not a number.</exception>
-		///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>    
+		///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>
 		public string ToString(string format, IFormatProvider formatProvider)
 		{
 			if (IsNaN())
@@ -797,7 +789,6 @@ namespace Altaxo.Calc
 			return
 				(Math.Abs(a.Re - b.Re) < tolerance) &&
 				(Math.Abs(a.Im - b.Im) < tolerance);
-
 		}
 
 		//----------------------------------------------------------------------------------
@@ -843,10 +834,8 @@ namespace Altaxo.Calc
 			get { return new Complex(double.MinValue, double.MinValue); }
 		}
 
-
 		//----------------------------------------------------------------------------------
 		//----------------------------------------------------------------------------------
-
 
 		#region AltaxoModified
 
@@ -860,8 +849,6 @@ namespace Altaxo.Calc
 			get { return new Complex(double.NaN, double.NaN); }
 		}
 
-		#endregion
-
+		#endregion AltaxoModified
 	}
-
 }

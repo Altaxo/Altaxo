@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,25 +19,26 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
 
 namespace Altaxo.Main.Services
 {
-  /// <summary>
-  /// This interface must be implemented by the resource service.
-  /// </summary>
-  public interface IResourceService
-  {
-    /// <summary>
-    /// Returns a resource string indentified by name.
-    /// </summary>
-    /// <param name="resourceName">The name of the resource string.</param>
-    /// <returns>The resource string.</returns>
-    string GetString(string resourceName);
+	/// <summary>
+	/// This interface must be implemented by the resource service.
+	/// </summary>
+	public interface IResourceService
+	{
+		/// <summary>
+		/// Returns a resource string indentified by name.
+		/// </summary>
+		/// <param name="resourceName">The name of the resource string.</param>
+		/// <returns>The resource string.</returns>
+		string GetString(string resourceName);
 
-
-    /// <summary>
+		/// <summary>
 		/// Returns a bitmap from the resource database, it handles localization
 		/// transparent for the user.
 		/// </summary>
@@ -46,6 +48,6 @@ namespace Altaxo.Main.Services
 		/// <param name="name">
 		/// The name of the requested bitmap.
 		/// </param>
-    System.Drawing.Bitmap GetBitmap(string name);
-  }
+		System.Drawing.Bitmap GetBitmap(string name);
+	}
 }

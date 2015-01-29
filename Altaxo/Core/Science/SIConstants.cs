@@ -1,26 +1,28 @@
 ﻿#region Copyright
+
 /* const/gsl_const_mks.h
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
  * 2006 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-	// Adopted to Altaxo from GSL 1.10 by D.Lellinger 2008
-#endregion
+// Adopted to Altaxo from GSL 1.10 by D.Lellinger 2008
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -135,6 +137,6 @@ namespace Altaxo.Science
 		public const double VACUUM_PERMITTIVITY = (8.854187817e-12); /* A^2 s^4 / kg m^3 */
 		public const double VACUUM_PERMEABILITY = (1.25663706144e-6); /* kg m / A^2 s^2 */
 		public const double DEBYE = (3.33564095198e-30); /* A s^2 / m^2 */
-    public const double AVOGADROS_CONSTANT = (6.0221417930e23); /* no unit */
+		public const double AVOGADROS_CONSTANT = (6.0221417930e23); /* no unit */
 	}
 }

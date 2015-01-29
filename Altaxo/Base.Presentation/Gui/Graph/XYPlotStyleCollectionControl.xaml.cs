@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-using Altaxo.Collections;
 namespace Altaxo.Gui.Graph
 {
 	/// <summary>
@@ -47,7 +43,6 @@ namespace Altaxo.Gui.Graph
 		{
 			InitializeComponent();
 		}
-
 
 		private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
@@ -75,7 +70,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		private void EhStyleUp_Click(object sender, RoutedEventArgs e)
 		{
 			if (_controller != null)
@@ -100,9 +94,10 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#region  IXYPlotStyleCollectionView
+		#region IXYPlotStyleCollectionView
 
-		IXYPlotStyleCollectionViewEventSink _controller;
+		private IXYPlotStyleCollectionViewEventSink _controller;
+
 		public IXYPlotStyleCollectionViewEventSink Controller
 		{
 			get
@@ -130,11 +125,6 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_singleStylesAvailable, list);
 		}
 
-		#endregion
-
-	
-	
-
-		
+		#endregion IXYPlotStyleCollectionView
 	}
 }

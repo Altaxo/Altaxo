@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-
-using Altaxo.Collections;
-using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Gui.Common;
 
 namespace Altaxo.Data
 {
@@ -60,17 +59,15 @@ namespace Altaxo.Data
 			{
 				return false;
 			}
-
 		}
-
 
 		/// <summary>
 		/// Helper class to make sure that user choosen data column name does not already exists.
 		/// </summary>
 		private class ColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
 		{
-			Altaxo.Data.DataColumn _col;
-			Altaxo.Data.DataColumnCollection _parent;
+			private Altaxo.Data.DataColumn _col;
+			private Altaxo.Data.DataColumnCollection _parent;
 
 			public ColumnRenameValidator(Altaxo.Data.DataColumn col, Altaxo.Data.DataColumnCollection parent)
 				: base("The column name must not be empty! Please enter a valid name.")
@@ -91,12 +88,10 @@ namespace Altaxo.Data
 					return "This column name already exists, please choose another name!";
 				else
 					return null;
-
 			}
 		}
 
-		#endregion
-
+		#endregion Rename column
 
 		#region Set group number
 
@@ -123,7 +118,6 @@ namespace Altaxo.Data
 			SetColumnGroupNumber(dataTable.DataColumns, selectedDataColumns, nGroup);
 			SetColumnGroupNumber(dataTable.PropCols, selectedPropColumns, nGroup);
 		}
-
 
 		/// <summary>
 		/// Sets the group number of the selected column
@@ -154,10 +148,6 @@ namespace Altaxo.Data
 			return false;
 		}
 
-
-
-		#endregion
-
-
+		#endregion Set group number
 	}
 }

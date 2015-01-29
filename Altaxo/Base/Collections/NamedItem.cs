@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,8 +30,8 @@ namespace Altaxo.Collections
 {
 	public class NamedItem<T>
 	{
-		T _item;
-		string _name;
+		private T _item;
+		private string _name;
 
 		public NamedItem(T item, string name)
 		{
@@ -38,6 +40,7 @@ namespace Altaxo.Collections
 		}
 
 		public string Name { get { return _name; } }
+
 		public T Item { get { return _item; } }
 
 		public override bool Equals(object obj)
@@ -49,10 +52,12 @@ namespace Altaxo.Collections
 			NamedItem<T> from = (NamedItem<T>)obj;
 			return object.Equals(this._item, from._item);
 		}
+
 		public override int GetHashCode()
 		{
 			return _item.GetHashCode();
 		}
+
 		public override string ToString()
 		{
 			return _name;

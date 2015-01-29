@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 

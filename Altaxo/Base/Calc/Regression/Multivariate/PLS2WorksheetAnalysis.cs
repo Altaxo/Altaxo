@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
-using System;
+
+#endregion Copyright
+
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
-using Altaxo.Collections;
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
 	/// <summary>
-	/// PLS2WorksheetAnalysis performs a PLS2 analysis and 
+	/// PLS2WorksheetAnalysis performs a PLS2 analysis and
 	/// stores the results in a given table
 	/// </summary>
 	[System.ComponentModel.Description("PLS2")]
@@ -46,34 +48,32 @@ namespace Altaxo.Calc.Regression.Multivariate
 			return new PLS2Regression();
 		}
 
-
 		public override IMultivariateCalibrationModel GetCalibrationModel(
 			DataTable calibTable)
 		{
 			PLS2CalibrationModel model;
 			Export(calibTable, out model);
 
-
 			return model;
 		}
 
 		#region Calculation after analysis
 
-		static int GetNumberOfX(Altaxo.Data.DataTable table)
+		private static int GetNumberOfX(Altaxo.Data.DataTable table)
 		{
 			var col = table.DataColumns.TryGetColumn(GetXLoad_ColumnName(0));
 			if (col == null) NotFound(GetXLoad_ColumnName(0));
 			return col.Count;
 		}
 
-		static int GetNumberOfY(Altaxo.Data.DataTable table)
+		private static int GetNumberOfY(Altaxo.Data.DataTable table)
 		{
 			var col = table.DataColumns.TryGetColumn(GetYLoad_ColumnName(0));
 			if (col == null) NotFound(GetYLoad_ColumnName(0));
 			return col.Count;
 		}
 
-		static int GetNumberOfFactors(Altaxo.Data.DataTable table)
+		private static int GetNumberOfFactors(Altaxo.Data.DataTable table)
 		{
 			var col = table.DataColumns.TryGetColumn(GetCrossProduct_ColumnName());
 			if (col == null) NotFound(GetCrossProduct_ColumnName());
@@ -95,7 +95,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 			return true;
 		}
-
 
 		public override void Import(
 			IMultivariateCalibrationModel calibrationSet,
@@ -144,7 +143,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 					col[j] = calib.CrossProduct[0, j];
 				table.DataColumns.Add(col, GetCrossProduct_ColumnName(), Altaxo.Data.ColumnKind.V, 3);
 			}
-
 		}
 
 		/// <summary>
@@ -178,7 +176,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			if (col == null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
 			preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col, numberOfX);
 
-
 			col = table.DataColumns.TryGetColumn(GetXMean_ColumnName());
 			if (col == null) NotFound(GetXMean_ColumnName());
 			preprocessSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col, numberOfX);
@@ -186,8 +183,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			col = table.DataColumns.TryGetColumn(GetXScale_ColumnName());
 			if (col == null) NotFound(GetXScale_ColumnName());
 			preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col, numberOfX);
-
-
 
 			sel.Clear();
 			col = table.DataColumns.TryGetColumn(GetYMean_ColumnName());
@@ -201,7 +196,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			sel.Add(table.DataColumns.GetColumnNumber(col));
 			preprocessSet.YScale = DataColumnWrapper.ToROVector(col, numberOfY);
 
-
 			sel.Clear();
 			for (int i = 0; i < numberOfFactors; i++)
 			{
@@ -211,7 +205,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 				sel.Add(table.DataColumns.GetColumnNumber(col));
 			}
 			calibrationSet.XWeights = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfX);
-
 
 			sel.Clear();
 			for (int i = 0; i < numberOfFactors; i++)
@@ -223,7 +216,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			}
 			calibrationSet.XLoads = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfX);
 
-
 			sel.Clear();
 			for (int i = 0; i < numberOfFactors; i++)
 			{
@@ -234,30 +226,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 			}
 			calibrationSet.YLoads = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfY);
 
-
 			sel.Clear();
 			col = table.DataColumns.TryGetColumn(GetCrossProduct_ColumnName());
 			if (col == null) NotFound(GetCrossProduct_ColumnName());
 			sel.Add(table.DataColumns.GetColumnNumber(col));
 			calibrationSet.CrossProduct = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfFactors);
-
-
-
-
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-		#endregion
+		#endregion Calculation after analysis
 	}
 }

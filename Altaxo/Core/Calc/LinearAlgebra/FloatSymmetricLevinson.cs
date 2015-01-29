@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
 ** FloatSymmetricLevinson.cs
@@ -35,12 +37,10 @@
 
 using System;
 
-
 #endregion Using directives
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// A Levinson solver for symmetric square Toeplitz systems of <c>float</c> type.
 	/// </summary>
@@ -179,7 +179,6 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </example>
 	sealed public class FloatSymmetricLevinson : Algorithm
 	{
-
 		#region Constants
 
 		/// <summary>
@@ -410,7 +409,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// can be used to identify such situations.
 		/// <para>
 		/// The estimate is based on the Cybenko error-bound for the inverse
-		/// and is a relative error. When calculating this error it is assumed that 
+		/// and is a relative error. When calculating this error it is assumed that
 		/// the <see cref="float"/> type utilises a 23-bit mantissa.
 		/// </para>
 		/// <para>
@@ -607,7 +606,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			float K;        // reflection coefficient
 			float[] B;        // reference to previous order coefficients
 			float[] A;        // reference to current order coefficients
-
 
 			// check if principal diagonal is zero
 			if (m_LeftColumn[0] == 0.0f)
@@ -868,7 +866,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					X[j] += G * A[j];
 				}
-
 			}
 
 			return X;
@@ -902,7 +899,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public FloatVector Solve(params float[] Y)
 		{
-
 			FloatVector X;
 
 			// check parameters
@@ -951,7 +947,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					X[j] += G * A[j];
 				}
-
 			}
 
 			return X;
@@ -1185,7 +1180,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return Solve((IROFloatVector)T, (IROFloatVector)Y);
 		}
 
-
 		/// <overloads>
 		/// Solve a symmetric square Toeplitz system.
 		/// </overloads>
@@ -1216,7 +1210,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static FloatVector Solve(IROFloatVector T, IROFloatVector Y)
 		{
-
 			FloatVector X;
 
 			// check parameters
@@ -1234,7 +1227,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				// allocate memory
 				int N = T.Length;
 				X = new FloatVector(N);                    // solution vector
@@ -1260,7 +1252,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					// calculate solution for successive orders
 					for (i = 1; i < N; i++)
 					{
-
 						// calculate first inner product
 						inner = T[i];
 						for (j = 0, l = i - 1; j < i - 1; j++, l--)
@@ -1303,15 +1294,11 @@ namespace Altaxo.Calc.LinearAlgebra
 							X[j] = X[j] + k * a[l];
 						}
 						X[j] = k;
-
 					}
-
 				}
-
 			}
 
 			return X;
-
 		}
 
 		public static FloatMatrix Solve(AbstractROFloatVector T, IROFloatMatrix Y)
@@ -1346,7 +1333,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static FloatMatrix Solve(IROFloatVector T, IROFloatMatrix Y)
 		{
-
 			FloatMatrix X;
 
 			// check parameters
@@ -1364,7 +1350,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				// allocate memory
 				int N = T.Length;
 				int M = Y.Rows;
@@ -1386,7 +1371,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				if (N > 1)
 				{
-
 					FloatVector a = new FloatVector(N - 1);   // prediction coefficients
 					float p;                                   // reflection coefficient
 					float inner;                               // inner product
@@ -1395,7 +1379,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					// calculate solution for successive orders
 					for (i = 1; i < N; i++)
 					{
-
 						// calculate first inner product
 						inner = T[i];
 						for (j = 0, l = i - 1; j < i - 1; j++, l--)
@@ -1427,7 +1410,6 @@ namespace Altaxo.Calc.LinearAlgebra
 						// update the solution matrix
 						for (m = 0; m < M; m++)
 						{
-
 							// retrieve a copy of solution column
 							for (j = 0; j < i; j++)
 							{
@@ -1454,13 +1436,9 @@ namespace Altaxo.Calc.LinearAlgebra
 							{
 								X[j, m] = Z[j];
 							}
-
 						}
-
 					}
-
 				}
-
 			}
 
 			return X;
@@ -1499,7 +1477,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static FloatVector YuleWalker(IROFloatVector R)
 		{
-
 			FloatVector a;
 
 			// check parameters
@@ -1513,7 +1490,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				int N = R.Length - 1;
 				a = new FloatVector(N);                    // prediction coefficients
 				FloatVector Z = new FloatVector(N);   // temporary storage vector
@@ -1534,7 +1510,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				// calculate solution for successive orders
 				for (i = 1; i < N; i++)
 				{
-
 					e *= (1.0f - g * g);
 					if (e == 0.0f)
 					{
@@ -1562,7 +1537,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					}
 
 					a[i] = g;
-
 				}
 			}
 
@@ -1594,7 +1568,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static FloatMatrix Inverse(IROFloatVector T)
 		{
-
 			FloatMatrix X;
 
 			// check parameters
@@ -1613,7 +1586,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				int N = T.Length;
 				float f, g;
 				int i, j, l, k, m, n;
@@ -1663,14 +1635,11 @@ namespace Altaxo.Calc.LinearAlgebra
 						X[l, j] = X[i, k];
 					}
 				}
-
 			}
 
 			return X;
 		}
 
 		#endregion Public Static Methods
-
 	}
-
 }

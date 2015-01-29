@@ -1,36 +1,34 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Worksheet.InterpolationControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d" 
-						 DataContext="{Binding RelativeSource={RelativeSource Self}}"
-            >
+             mc:Ignorable="d"
+						 DataContext="{Binding RelativeSource={RelativeSource Self}}">
 	<UserControl.Resources>
-				<ResourceDictionary Source="../Common/Resources/styledictionary.xaml" />
+		<ResourceDictionary Source="../Common/Resources/styledictionary.xaml" />
 	</UserControl.Resources>
-    <Grid Name="_mainGrid">
+	<Grid Name="_mainGrid">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*" MinWidth="100"/>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" MinWidth="100" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0">Using:</Label>
 		<Label Grid.Row="1">From:</Label>
 		<Label Grid.Row="2">To:</Label>
 		<Label Grid.Row="3">Number of points:</Label>
-		<ComboBox Grid.Row="0" Grid.Column="1" Margin="4" Name="_cbInterpolationClass" SelectionChanged="EhInterpolationClassChanged"/>
-		<local:ValidatingTextBox Grid.Row="1" Grid.Column="1" Margin="4" x:Name="_edFrom" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueFrom_Validating"/>
-		<local:ValidatingTextBox Grid.Row="2" Grid.Column="1" Margin="4" x:Name="_edTo" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueTo_Validating"/>
-		<local:ValidatingTextBox Grid.Row="3" Grid.Column="1" Margin="4" x:Name="_edNumberOfPoints" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueNumberOfPoints_Validating"/>
-
+		<ComboBox Grid.Row="0" Grid.Column="1" Margin="4" Name="_cbInterpolationClass" SelectionChanged="EhInterpolationClassChanged" />
+		<local:ValidatingTextBox Grid.Row="1" Grid.Column="1" Margin="4" x:Name="_edFrom" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueFrom_Validating" />
+		<local:ValidatingTextBox Grid.Row="2" Grid.Column="1" Margin="4" x:Name="_edTo" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueTo_Validating" />
+		<local:ValidatingTextBox Grid.Row="3" Grid.Column="1" Margin="4" x:Name="_edNumberOfPoints" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueNumberOfPoints_Validating" />
 	</Grid>
 </UserControl>

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -41,9 +43,10 @@ namespace Altaxo.Calc.Integration
 	public class QagsIntegration : IntegrationBase
 	{
 		#region offical C# interface
-		bool _debug;
-		gsl_integration_workspace _workSpace;
-		gsl_integration_rule _integrationRule;
+
+		private bool _debug;
+		private gsl_integration_workspace _workSpace;
+		private gsl_integration_rule _integrationRule;
 
 		/// <summary>
 		/// Returns the default integration rule used for this class.
@@ -87,8 +90,6 @@ namespace Altaxo.Calc.Integration
 			_integrationRule = integrationRule;
 			_debug = debug;
 		}
-
-
 
 		/// <summary>
 		/// Adaptive integration with (unknown) singularities.
@@ -227,7 +228,6 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, a, b, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr, ref tempStorage);
 		}
 
-
 		/// <summary>
 		/// Adaptive integration with (unknown) singularities.
 		/// </summary>
@@ -252,8 +252,6 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, a, b, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
 		}
 
-
-		#endregion
-
+		#endregion offical C# interface
 	}
 }

@@ -3,13 +3,8 @@
 // from C++ code that was translated by Laurent Bartholdi for Real coefficients from the original Netlib site in FORTRAN
 // and from C code written by Henrik Vestermark for complex coefficients translated from the original Netlib site in FORTRAN
 
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using Altaxo.Calc;
 
 namespace Altaxo.Calc.RootFinding
 {
@@ -18,42 +13,44 @@ namespace Altaxo.Calc.RootFinding
 	/// </summary>
 	public class ComplexPolynomialRootFinder_JenkinsTraub
 	{
-		double sr;
-		double si;
-		double tr;
-		double ti;
-		double pvr;
-		double pvi;
-		double are;
-		double mre;
-		double eta;
-		double infin;
+		private double sr;
+		private double si;
+		private double tr;
+		private double ti;
+		private double pvr;
+		private double pvi;
+		private double are;
+		private double mre;
+		private double eta;
+		private double infin;
 
-		int nn;
+		private int nn;
 
 		//Global variables that assist the computation, taken from the Visual Studio C++ compiler class float
-		// smallest such that 1.0+DBL_EPSILON != 1.0 
-		const double DBL_EPSILON = 2.22044604925031E-16;
-		// max value 
-		const double DBL_MAX = 1.79769313486232E+307;
-		// min positive value 
-		const double DBL_MIN = 2.2250738585072E-308;
-		// exponent radix 
-		const double DBL_RADIX = 2;
+		// smallest such that 1.0+DBL_EPSILON != 1.0
+		private const double DBL_EPSILON = 2.22044604925031E-16;
 
+		// max value
+		private const double DBL_MAX = 1.79769313486232E+307;
+
+		// min positive value
+		private const double DBL_MIN = 2.2250738585072E-308;
+
+		// exponent radix
+		private const double DBL_RADIX = 2;
 
 		// Allocate arrays
-		double[] pr;
-		double[] pi;
-		double[] hr;
-		double[] hi;
-		double[] qpr;
-		double[] qpi;
-		double[] qhr;
-		double[] qhi;
-		double[] shr;
-		double[] shi;
+		private double[] pr;
 
+		private double[] pi;
+		private double[] hr;
+		private double[] hi;
+		private double[] qpr;
+		private double[] qpi;
+		private double[] qhr;
+		private double[] qhi;
+		private double[] shr;
+		private double[] shi;
 
 		/// <summary>
 		/// The Jenkins–Traub algorithm for finding the roots of a polynomial.
@@ -65,7 +62,6 @@ namespace Altaxo.Calc.RootFinding
 			var r = new ComplexPolynomialRootFinder_JenkinsTraub();
 			return r.Execute(Input);
 		}
-
 
 		/// <summary>
 		/// The Jenkins–Traub algorithm for finding the roots of a polynomial.
@@ -84,8 +80,6 @@ namespace Altaxo.Calc.RootFinding
 			if (Degree <= 0)
 				throw new ArgumentException("Provided polynomial has a degree of zero. Root finding is therefore not possible");
 
-
-
 			List<Complex> result = new List<Complex>();
 
 			const double cosr = -0.06975647374412530077596; // Math.Cos(-94 * Math.PI / 180);
@@ -95,7 +89,7 @@ namespace Altaxo.Calc.RootFinding
 			int conv = 0;
 			double xx = 0;
 			double yy = 0;
-		
+
 			double smalno = 0;
 			double @base = 0;
 			double xxx = 0;
@@ -177,7 +171,6 @@ namespace Altaxo.Calc.RootFinding
 					result.Add(new Complex(zeror[i], zeroi[i]));
 				}
 				return result;
-
 			}
 
 			// Calculate bnd, alower bound on the modulus of the zeros
@@ -187,7 +180,6 @@ namespace Altaxo.Calc.RootFinding
 			}
 
 			cauchy(nn, shr, shi, ref bnd);
-
 
 			// Outer loop to control 2 Major passes with different sequences of shifts
 			for (int cnt1 = 1; cnt1 <= 2; cnt1++)
@@ -232,7 +224,6 @@ namespace Altaxo.Calc.RootFinding
 			// return empty handed with the number of roots found (less than the original degree)
 			Degree -= nn;
 
-
 			for (int i = 0; i <= Degree - 1; i++)
 			{
 				result.Add(new Complex(zeror[i], zeroi[i]));
@@ -240,9 +231,7 @@ namespace Altaxo.Calc.RootFinding
 
 			return result;
 			throw new Exception("The program could not converge to find all the zeroes, but a prelimenary result with the ones that are found is returned.");
-
 		}
-
 
 		// COMPUTES  THE DERIVATIVE  POLYNOMIAL AS THE INITIAL H
 		// POLYNOMIAL AND COMPUTES L1 NO-SHIFT H POLYNOMIALS.
@@ -279,7 +268,6 @@ namespace Altaxo.Calc.RootFinding
 					}
 					hr[0] = pr[0];
 					hi[0] = pi[0];
-
 				}
 				else
 				{
@@ -340,7 +328,6 @@ namespace Altaxo.Calc.RootFinding
 				{
 					if ((cmod(tr - otr, ti - oti) < 0.5 * cmod(zr, zi)))
 					{
-
 						if ((pasd == 1))
 						{
 							// The weak convergence test has been passwed twice, start the third stage
@@ -426,10 +413,9 @@ namespace Altaxo.Calc.RootFinding
 				}
 				if ((i != 1))
 				{
-
 					if ((!(b == 1 | mp < omp | relstp >= 0.05)))
 					{
-						// Iteration has stalled. Probably a cluster of zeros. Do 5 fixed 
+						// Iteration has stalled. Probably a cluster of zeros. Do 5 fixed
 						// shift steps into the cluster to force one zero to dominate
 						tp = relstp;
 						b = 1;
@@ -542,7 +528,7 @@ namespace Altaxo.Calc.RootFinding
 
 		// EVALUATES A POLYNOMIAL  P  AT  S  BY THE HORNER RECURRENCE
 		// PLACING THE PARTIAL SUMS IN Q AND THE COMPUTED VALUE IN PV.
-		//  
+		//
 		private static void polyev(int nn, double sr, double si, double[] pr, double[] pi, double[] qr, double[] qi, ref double pvr, ref double pvi)
 		{
 			//{
@@ -747,7 +733,6 @@ namespace Altaxo.Calc.RootFinding
 			if ((ar < ai))
 			{
 				return ai * Math.Sqrt(1.0 + Math.Pow((ar / ai), 2.0));
-
 			}
 			else if ((ar > ai))
 			{
@@ -758,6 +743,7 @@ namespace Altaxo.Calc.RootFinding
 				return ar * Math.Sqrt(2.0);
 			}
 		}
+
 		// MCON PROVIDES MACHINE CONSTANTS USED IN VARIOUS PARTS OF THE PROGRAM.
 		// THE USER MAY EITHER SET THEM DIRECTLY OR USE THE STATEMENTS BELOW TO
 		// COMPUTE THEM. THE MEANING OF THE FOUR CONSTANTS ARE -

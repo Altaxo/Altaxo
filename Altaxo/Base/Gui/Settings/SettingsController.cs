@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Settings
 {
@@ -39,11 +40,11 @@ namespace Altaxo.Gui.Settings
 
 		/// <summary>Occurs when the current topic view was entered.</summary>
 		event Action CurrentTopicViewMadeDirty;
-		
+
 		/// <summary>Initializes the topic tree.</summary>
 		/// <param name="topics">The topics tree structure.</param>
 		void InitializeTopics(NGTreeNodeCollection topics);
-		
+
 		/// <summary>Sets the currently selected topic view.</summary>
 		/// <param name="title">Titel (shown above the topic view).</param>
 		/// <param name="guiTopicObject">The Gui topic view object.</param>
@@ -52,7 +53,6 @@ namespace Altaxo.Gui.Settings
 		/// <summary>Initializes an indicator whether the topic view is dirty or not.</summary>
 		/// <param name="dirtyIndicator">The dirty indicator. Zero means: is not dirty, 1: is dirty, and 2 means: the topic view contains errors.</param>
 		void InitializeTopicViewDirtyIndicator(int dirtyIndicator);
-
 
 		/// <summary>Sets the selected node in the topic view.</summary>
 		/// <param name="node">The node to select.</param>

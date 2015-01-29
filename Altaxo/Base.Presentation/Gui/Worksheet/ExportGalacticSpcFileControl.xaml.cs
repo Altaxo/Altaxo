@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -50,7 +45,7 @@ namespace Altaxo.Gui.Worksheet
 		{
 			get
 			{
-				return true==this.m_rbCreateSpectrum_FromRow.IsChecked;
+				return true == this.m_rbCreateSpectrum_FromRow.IsChecked;
 			}
 			set
 			{
@@ -60,14 +55,14 @@ namespace Altaxo.Gui.Worksheet
 
 		public bool CreateSpectrumFromColumn
 		{
-			get { return true==this.m_rbCreateSpectrum_FromColumn.IsChecked; }
+			get { return true == this.m_rbCreateSpectrum_FromColumn.IsChecked; }
 		}
 
 		public bool XValuesContinuousNumber
 		{
 			get
 			{
-				return true==this.m_rbXValues_ContinuousNumber.IsChecked;
+				return true == this.m_rbXValues_ContinuousNumber.IsChecked;
 			}
 			set
 			{
@@ -77,14 +72,14 @@ namespace Altaxo.Gui.Worksheet
 
 		public bool XValuesFromColumn
 		{
-			get { return true==this.m_rbXValues_FromColumn.IsChecked; }
+			get { return true == this.m_rbXValues_FromColumn.IsChecked; }
 		}
 
 		public bool ExtendFileName_ContinuousNumber
 		{
 			get
 			{
-				return true==this.m_rbExtFileName_ContinuousNumber.IsChecked;
+				return true == this.m_rbExtFileName_ContinuousNumber.IsChecked;
 			}
 			set
 			{
@@ -94,7 +89,7 @@ namespace Altaxo.Gui.Worksheet
 
 		public bool ExtendFileName_ByColumn
 		{
-			get { return true==this.m_rbFileName_FromColumn.IsChecked; }
+			get { return true == this.m_rbFileName_FromColumn.IsChecked; }
 		}
 
 		public string BasicFileName

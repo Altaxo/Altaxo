@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * FloatSVDDecomp.cs
@@ -29,8 +31,6 @@
 */
 
 using System;
-
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -77,6 +77,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return v;
 			}
 		}
+
 		///<summary>Returns the singular values as a diagonal matrix.</summary>
 		///<returns>the singular values as a diagonal matrix.</returns>
 		public FloatMatrix W
@@ -677,6 +678,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 #if MANAGED
+
 		private static float dsign(float z1, float z2)
 		{
 			float ret = System.Math.Abs(z1) * (z2 / System.Math.Abs(z2));
@@ -797,6 +799,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				A[i, Col1] = z;
 			}
 		}
+
 #endif
 	}
 }

@@ -26,7 +26,6 @@ using Altaxo.Collections;
 using Altaxo.Main;
 using Altaxo.Worksheet;
 using System;
-using System.ComponentModel;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {

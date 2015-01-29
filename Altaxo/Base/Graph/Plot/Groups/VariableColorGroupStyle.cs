@@ -29,8 +29,6 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	using Gdi.Plot.Groups;
-
 	/// <summary>
 	/// This group style is used to distribute a symbol size function to all local plot styles.
 	/// The symbol size function maps an index i of the actual plot point to a symbol size.

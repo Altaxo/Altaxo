@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,9 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
-using System.Diagnostics;
 
 namespace Altaxo.Calc
 {
@@ -30,10 +32,11 @@ namespace Altaxo.Calc
 	public static class ComplexMath
 	{
 		#region private helper constants and functions
-		const double M_PI = Math.PI;
-		const double M_PI_2 = Math.PI / 2;
-		const double GSL_DBL_EPSILON = 2.2204460492503131e-16;
-		const double M_LOG10E = 0.43429448190325182765112891891661;
+
+		private const double M_PI = Math.PI;
+		private const double M_PI_2 = Math.PI / 2;
+		private const double GSL_DBL_EPSILON = 2.2204460492503131e-16;
+		private const double M_LOG10E = 0.43429448190325182765112891891661;
 
 		private static double square(double x)
 		{
@@ -68,7 +71,7 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion private helper constants and functions
 
 		#region public helper elementary operations
 
@@ -122,12 +125,9 @@ namespace Altaxo.Calc
 			b = temp;
 		}
 
-		#endregion
+		#endregion public helper elementary operations
 
 		#region Functions
-
-
-
 
 		/// <summary>
 		/// The absolute value (modulus) of complex number.
@@ -157,14 +157,13 @@ namespace Altaxo.Calc
 		{
 			return c.GetModulus();
 		}
+
 		///<summary>Return the absolute value of a complex type calculated as the euclidean norm</summary>
 		///<remarks>Same as <see cref="Abs" /> and provided here for compatibility with some libraries.</remarks>
 		public static float Absolute(ComplexFloat c)
 		{
 			return c.GetModulus();
 		}
-
-
 
 		/// <summary>
 		/// This function returns the complex arccosine of the complex number a,
@@ -251,7 +250,7 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// This function returns the complex arccosine of the real number a, arccos(a). 
+		/// This function returns the complex arccosine of the real number a, arccos(a).
 		/// </summary>
 		/// <param name="a">The function argument.</param>
 		/// <returns>The complex arccosine of the real number a.</returns>
@@ -343,7 +342,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// This function returns the complex arccotangent of the complex number a,
-		/// arccot(a) = arctan(1/a). 
+		/// arccot(a) = arctan(1/a).
 		/// </summary>
 		/// <param name="a">Function argument.</param>
 		/// <returns>The complex arccotangent of the complex number a.</returns>
@@ -378,7 +377,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// This function returns the complex arccosecant of the complex number a,
-		/// arccsc(a) = arcsin(1/a). 
+		/// arccsc(a) = arcsin(1/a).
 		/// </summary>
 		/// <param name="a">Function argument.</param>
 		/// <returns>The complex arccosecant of the complex number a.</returns>
@@ -401,7 +400,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// This function returns the complex arccosecant of the real number a,
-		/// arccsc(a) = arcsin(1/a). 
+		/// arccsc(a) = arcsin(1/a).
 		/// </summary>
 		/// <param name="a">Function argument.</param>
 		/// <returns>The complex arccosecant of the real number a.</returns>
@@ -455,6 +454,7 @@ namespace Altaxo.Calc
 		{
 			return System.Math.Atan(value.Imag / value.Real);
 		}
+
 		///<summary>Calculate the complex argument of a complex type.  Also commonly refered to as the phase.</summary>
 		public static float Argument(ComplexFloat value)
 		{
@@ -475,7 +475,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// This function returns the complex arcsecant of the complex number a,
-		/// arcsec(a) = arccos(1/a). 
+		/// arcsec(a) = arccos(1/a).
 		/// </summary>
 		/// <param name="a">Function argument.</param>
 		/// <returns>The complex arcsecant of the complex number a.</returns>
@@ -486,7 +486,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// This function returns the complex arcsecant of the real number a,
-		/// arcsec(a) = arccos(1/a). 
+		/// arcsec(a) = arccos(1/a).
 		/// </summary>
 		/// <param name="a">Function argument.</param>
 		/// <returns>The complex arcsecant of the real number a.</returns>
@@ -612,7 +612,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// This function returns the complex arcsine of the real number a,
-		/// arcsin(a). 
+		/// arcsin(a).
 		/// </summary>
 		/// <param name="a">The function argument.</param>
 		/// <returns>The complex arcsine of the real number a.</returns>
@@ -645,8 +645,6 @@ namespace Altaxo.Calc
 
 			return z;
 		}
-
-
 
 		/// <summary>
 		/// This function returns the complex hyperbolic arcsine of the
@@ -684,7 +682,6 @@ namespace Altaxo.Calc
 		/// <returns>The complex arctangent of the complex number a.</returns>
 		public static Complex Atan(Complex a)
 		{
-
 			double R = a.Re, I = a.Im;
 			Complex z;
 
@@ -753,7 +750,6 @@ namespace Altaxo.Calc
 		{
 			return (ComplexFloat)Atan((Complex)a);
 		}
-
 
 		/// <summary>
 		/// This function returns the complex hyperbolic arctangent of the complex
@@ -874,7 +870,6 @@ namespace Altaxo.Calc
 			return new ComplexFloat((float)(Math.Cosh(R) * Math.Cos(I)), (float)(Math.Sinh(R) * Math.Sin(I)));
 		}
 
-
 		/// <summary>
 		/// Returns the complex cotangent of the complex number z, i.e. 1/Sin(z).
 		/// </summary>
@@ -968,8 +963,6 @@ namespace Altaxo.Calc
 			return new ComplexFloat((float)LogAbs(z), (float)Arg(z));
 		}
 
-
-
 		/// <summary>
 		/// Return log |z|.
 		/// </summary>
@@ -992,7 +985,7 @@ namespace Altaxo.Calc
 				u = xabs / yabs;
 			}
 
-			// Handle underflow when u is close to 0 
+			// Handle underflow when u is close to 0
 			return Math.Log(max) + 0.5 * RMath.Log1p(u * u);
 		}
 
@@ -1029,13 +1022,12 @@ namespace Altaxo.Calc
 		{
 			return ComplexMath.Absolute(value);
 		}
+
 		///<summary>Return the euclidean norm of a complex type</summary>
 		public static float Norm(ComplexFloat value)
 		{
 			return ComplexMath.Absolute(value);
 		}
-
-
 
 		/// <summary>
 		/// Create a complex number from a modulus (length) and an argument (radian)
@@ -1053,12 +1045,12 @@ namespace Altaxo.Calc
 		{
 			return new Complex(ComplexMath.Absolute(value), System.Math.Atan2(value.Imag, value.Real));
 		}
+
 		///<summary>Return the polar representation of a complex type</summary>
 		public static ComplexFloat Polar(ComplexFloat value)
 		{
 			return new ComplexFloat(ComplexMath.Absolute(value), (float)(System.Math.Atan2(value.Imag, value.Real)));
 		}
-
 
 		/// <summary>
 		/// Returns a specified (real valued) number raised to the specified (complex valued) power.
@@ -1103,7 +1095,6 @@ namespace Altaxo.Calc
 			}
 		}
 
-
 		/// <summary>
 		/// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
 		/// This algorithm can also be used with negative n.
@@ -1121,7 +1112,7 @@ namespace Altaxo.Calc
 				n = -n;
 			}
 
-			/* repeated squaring method 
+			/* repeated squaring method
 			 * returns 0.0^0 = 1.0, so continuous in x
 			 */
 			do
@@ -1135,7 +1126,6 @@ namespace Altaxo.Calc
 
 			return inverse ? 1.0 / value : value;
 		}
-
 
 		/// <summary>
 		/// Calculate the power of a complex number.
@@ -1203,14 +1193,35 @@ namespace Altaxo.Calc
 			return c * c * c;
 		}
 
-		public static Complex Pow4(this Complex x) { Complex x2 = x * x; return x2 * x2; }
-		public static Complex Pow5(this Complex x) { Complex x2 = x * x; return x2 * x2 * x; }
-		public static Complex Pow6(this Complex x) { Complex x2 = x * x; return x2 * x2 * x2; }
-		public static Complex Pow7(this Complex x) { Complex x3 = x * x * x; return x3 * x3 * x; }
-		public static Complex Pow8(this Complex x) { Complex x2 = x * x; Complex x4 = x2 * x2; return x4 * x4; }
-		public static Complex Pow9(this Complex x) { Complex x3 = x * x * x; return x3 * x3 * x3; }
+		public static Complex Pow4(this Complex x)
+		{
+			Complex x2 = x * x; return x2 * x2;
+		}
 
+		public static Complex Pow5(this Complex x)
+		{
+			Complex x2 = x * x; return x2 * x2 * x;
+		}
 
+		public static Complex Pow6(this Complex x)
+		{
+			Complex x2 = x * x; return x2 * x2 * x2;
+		}
+
+		public static Complex Pow7(this Complex x)
+		{
+			Complex x3 = x * x * x; return x3 * x3 * x;
+		}
+
+		public static Complex Pow8(this Complex x)
+		{
+			Complex x2 = x * x; Complex x4 = x2 * x2; return x4 * x4;
+		}
+
+		public static Complex Pow9(this Complex x)
+		{
+			Complex x3 = x * x * x; return x3 * x3 * x3;
+		}
 
 		/// <summary>
 		/// Returns the complex secant of the argument z, i.e. 1/Cos(z)
@@ -1388,7 +1399,6 @@ namespace Altaxo.Calc
 			}
 		}
 
-
 		/// <summary>
 		/// Returns the tangent of the specified complex function argument z.
 		/// </summary>
@@ -1421,8 +1431,6 @@ namespace Altaxo.Calc
 			return ComplexFloat.FromRealImaginary((float)(4 * sinzr * coszr), (float)(-ediff * esum)) / (float)(square(coszr * esum) + square(sinzr * ediff));
 		}
 
-
-
 		/// <summary>
 		/// This function returns the complex hyperbolic tangent of the complex number
 		/// a, tanh(a) = sinh(a)/cosh(a).
@@ -1451,7 +1459,6 @@ namespace Altaxo.Calc
 
 			return z;
 		}
-
 
 		/// <summary>
 		/// This function returns the complex hyperbolic tangent of the complex number
@@ -1482,7 +1489,6 @@ namespace Altaxo.Calc
 			return z;
 		}
 
-
-		#endregion
+		#endregion Functions
 	}
 }

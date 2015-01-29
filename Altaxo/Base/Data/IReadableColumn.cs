@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Data
 {
-
-
 	/// <summary>
 	/// This designates a vector structure, which holds elements. A single element at a given index can be read out
 	/// by returning a AltaxoVariant.
 	/// </summary>
 	public interface IReadableColumn : ICloneable
 	{
-
 		/// <summary>
 		/// The indexer property returns the element at index i as an AltaxoVariant.
 		/// </summary>
@@ -71,5 +70,4 @@ namespace Altaxo.Data
 		string GetName(int level);
 		*/
 	}
-
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,15 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using System.ComponentModel;
 
 namespace Altaxo.Gui.Graph
 {
@@ -43,9 +36,9 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class ErrorBarPlotStyleControl : UserControl, IErrorBarPlotStyleView
 	{
-		Altaxo.Gui.Common.Drawing.PenControlsGlue _strokePenGlue;
-		public event Action IndependentColorChanged;
+		private Altaxo.Gui.Common.Drawing.PenControlsGlue _strokePenGlue;
 
+		public event Action IndependentColorChanged;
 
 		public ErrorBarPlotStyleControl()
 		{
@@ -138,7 +131,6 @@ namespace Altaxo.Gui.Graph
 				_chkLineSymbolGap.IsChecked = value;
 			}
 		}
-
 
 		public bool ShowEndBars
 		{
@@ -251,9 +243,7 @@ namespace Altaxo.Gui.Graph
 
 		public event EventHandler ClearNegativeError;
 
-		#endregion
-
-
+		#endregion IErrorBarPlotStyleView Members
 
 		public bool ShowPlotColorsOnly
 		{
@@ -265,6 +255,5 @@ namespace Altaxo.Gui.Graph
 			if (null != IndependentColorChanged)
 				IndependentColorChanged();
 		}
-
 	}
 }

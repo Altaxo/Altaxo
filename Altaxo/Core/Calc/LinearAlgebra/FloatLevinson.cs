@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
 ** FloatLevinson.cs
@@ -35,12 +37,10 @@
 
 using System;
 
-
 #endregion Using directives
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// A Levinson solver for square Toeplitz systems of <c>float</c> type.
 	/// </summary>
@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// calculating the determinant of the matrix (see <see cref="GetDeterminant"/> property) and solving
 	/// linear systems associated with the matrix (see <see cref="FloatLevinson.Solve(IROFloatVector)"/> members).
 	/// <para>
-	/// The class implements a <B>UDL</B> decomposition of the inverse of the 
+	/// The class implements a <B>UDL</B> decomposition of the inverse of the
 	/// square Toeplitz matrix. The decomposition is based upon Levinson's algorithm. As
 	/// a consequence, all operations require approximately <B>N</B> squared FLOPS, where
 	/// <B>N</B> is the matrix order. This is significantly faster than <B>LU</B> factorization,
@@ -164,7 +164,6 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </example>
 	sealed public class FloatLevinson : Algorithm
 	{
-
 		#region Fields
 
 		/// <summary>
@@ -983,7 +982,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			for (l = 0; l < Y.Rows; l++)
 			{
-
 				// get right-side column
 				y = FloatVector.GetColumnAsArray(Y, l);
 
@@ -1142,7 +1140,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				// update diagonal
 				e = e / (1.0f - Ke * Kr);
-
 			}
 
 			// calculate the inverse
@@ -1204,7 +1201,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			return I;
-
 		}
 
 		/// <summary>
@@ -1368,7 +1364,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					X[j] += Inner * B[j];
 				}
-
 			}
 
 			return X;
@@ -1543,13 +1538,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
 					X.SetColumn(l, W);
 				}
-
 			}
 
 			return X;
 		}
 
 		#endregion Static Public Members
-
 	}
 }

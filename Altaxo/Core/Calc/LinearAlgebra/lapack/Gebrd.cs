@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Gebrd.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Gebrd {
-    private  Gebrd() {}                           
+    private  Gebrd() {}
     private static void ArgumentCheck(int m, int n, Object A, int lda) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -58,7 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       e = new float[System.Math.Max(1, System.Math.Min(m,n))];
       tauq = new float[System.Math.Max(1, System.Math.Min(m,n))];
       taup = new float[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_sgebrd(Configuration.BlockSize, m, n, A, lda, d, e, tauq, taup);
     }
 
@@ -68,7 +68,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       e = new double[System.Math.Max(1, System.Math.Min(m,n))];
       tauq = new double[System.Math.Max(1, System.Math.Min(m,n))];
       taup = new double[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_dgebrd(Configuration.BlockSize, m, n, A, lda, d, e, tauq, taup);
     }
 
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       e = new float[System.Math.Max(1, System.Math.Min(m,n))];
       tauq = new ComplexFloat[System.Math.Max(1, System.Math.Min(m,n))];
       taup = new ComplexFloat[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_cgebrd(Configuration.BlockSize, m, n, A, lda, d, e, tauq, taup);
     }
 
@@ -88,13 +88,13 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       e = new double[System.Math.Max(1, System.Math.Min(m,n))];
       tauq = new Complex[System.Math.Max(1, System.Math.Min(m,n))];
       taup = new Complex[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_zgebrd(Configuration.BlockSize, m, n, A, lda, d, e, tauq, taup);
     }
-                                                     
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_sgebrd( int block_size, int m, int n, [In,Out]float[] A, int lda, [In,Out]float[] d, [In,Out]float[] e, [In,Out]float[] tauq, [In,Out]float[] taup );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dgebrd( int block_size, int m, int n, [In,Out]double[] A, int lda, [In,Out]double[] d, [In,Out]double[] e, [In,Out]double[] tauq, [In,Out]double[] taup );
 

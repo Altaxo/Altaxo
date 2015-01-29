@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Collections.ObjectModel;
-using System.Windows.Shapes;
 using System.ComponentModel;
-using System.Windows.Media;
+using System.Windows;
 using System.Windows.Documents;
- 
+using System.Windows.Media;
 
 namespace Altaxo.Gui.Common
 {
@@ -65,7 +63,7 @@ namespace Altaxo.Gui.Common
 
 			if (IsSecondaryAdorner)
 			{
-				drawingContext.DrawGeometry(null, new Pen(Brushes.Black,0.5),
+				drawingContext.DrawGeometry(null, new Pen(Brushes.Black, 0.5),
 						Direction == ListSortDirection.Ascending ?
 							_AscGeometry : _DescGeometry);
 			}

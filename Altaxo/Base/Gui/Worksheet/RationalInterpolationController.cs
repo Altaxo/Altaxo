@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Calc.Interpolation;
-using Altaxo.Gui;
 using Altaxo.Gui.Common;
 using System;
 

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -29,9 +31,12 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </summary>
 	public class JaggedArrayMath
 	{
-		private JaggedArrayMath() { }
+		private JaggedArrayMath()
+		{
+		}
 
 		#region Creation
+
 		/// <summary>
 		/// Allocates an array of n x m values.
 		/// </summary>
@@ -67,11 +72,11 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		#endregion
+		#endregion Creation
 
 		#region Inner types
 
-		class TransposedROMatrix : IROMatrix
+		private class TransposedROMatrix : IROMatrix
 		{
 			protected double[][] _arr;
 			protected int _rows;
@@ -91,6 +96,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_rows = rows;
 				_cols = cols;
 			}
+
 			#region IROMatrix Members
 
 			public double this[int row, int col]
@@ -117,15 +123,16 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 		}
 
-		class TransposedMatrix : TransposedROMatrix, IMatrix
+		private class TransposedMatrix : TransposedROMatrix, IMatrix
 		{
 			public TransposedMatrix(double[][] arr, int rows, int cols)
 				: base(arr, rows, cols)
 			{
 			}
+
 			#region IMatrix Members
 
 			public new double this[int row, int col]
@@ -139,11 +146,11 @@ namespace Altaxo.Calc.LinearAlgebra
 					_arr[col][row] = value;
 				}
 			}
-			#endregion
+
+			#endregion IMatrix Members
 		}
 
-
-		#endregion
+		#endregion Inner types
 
 		#region Type conversion
 
@@ -183,10 +190,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new TransposedMatrix(x, rows, cols);
 		}
 
-
-		#endregion
+		#endregion Type conversion
 
 		#region Addition
+
 		/// <summary>
 		/// Calculates a+b and stores the result in matrix c.
 		/// </summary>
@@ -217,7 +224,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Add the row <c>browToAdd</c> of matrix b to all rows of matrix a. 
+		/// Add the row <c>browToAdd</c> of matrix b to all rows of matrix a.
 		/// </summary>
 		/// <param name="a">First operand.</param>
 		/// <param name="arows">Number of rows of a.</param>
@@ -248,8 +255,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					c[i][j] = a[i][j] + b[browToAdd][j];
 		}
 
-
-		#endregion
+		#endregion Addition
 
 		#region Multiplication
 
@@ -363,8 +369,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
-
 		/// <summary>
 		/// Multiplies matrix a with matrix b_transposed and stores the result in matrix c.
 		/// </summary>
@@ -376,7 +380,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="bcols">Number of columns of b.</param>
 		/// <param name="c">The matrix where to store the result. Has to be of dimension (arows, brows).</param>
 		/// <param name="crows">Number of rows of c.</param>
-		/// <param name="ccols">Number of columns of c.</param> 
+		/// <param name="ccols">Number of columns of c.</param>
 		public static void MultiplySecondTransposed(
 			double[][] a, int arows, int acols,
 			double[][] b, int brows, int bcols,
@@ -404,7 +408,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
 		/// <summary>
 		/// Multiplies the matrix a with a scalar value b and stores the result in c. Matrix a and c are allowed to be the same matrix.
 		/// </summary>
@@ -414,7 +417,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="b">The second multiplicant.</param>
 		/// <param name="c">The resulting matrix. Has to be of same dimensions than a.</param>
 		/// <param name="crows">Number of rows of c.</param>
-		/// <param name="ccols">Number of columns of c.</param> 
+		/// <param name="ccols">Number of columns of c.</param>
 		public static void MultiplyScalar(
 			double[][] a, int arows, int acols,
 			double b,
@@ -433,7 +436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a. 
+		/// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a.
 		/// </summary>
 		/// <param name="a">First multiplicant.</param>
 		/// <param name="arows">Number of rows of a.</param>
@@ -444,7 +447,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="browToMultiply">The row number of matrix b to multiply.</param>
 		/// <param name="c">The matrix where to store the result. Has to be of same dimension than a.</param>
 		/// <param name="crows">Number of rows of c.</param>
-		/// <param name="ccols">Number of columns of c.</param> 
+		/// <param name="ccols">Number of columns of c.</param>
 		public static void MultiplyRow(
 
 			double[][] a, int arows, int acols,
@@ -465,10 +468,9 @@ namespace Altaxo.Calc.LinearAlgebra
 					c[i][j] = a[i][j] * b[browToMultiply][j];
 		}
 
-		#endregion // Multiplication
+		#endregion Multiplication
 
 		#region Subtraction
-
 
 		/// <summary>
 		/// Calculates a-b and stores the result in matrix c.
@@ -571,9 +573,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
 		/// <summary>
-		/// Subtract the row <c>browToSubtract</c> of matrix b from all rows of matrix a. 
+		/// Subtract the row <c>browToSubtract</c> of matrix b from all rows of matrix a.
 		/// </summary>
 		/// <param name="a">First operand (minuend).</param>
 		/// <param name="arows">Number of rows of a.</param>
@@ -605,7 +606,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Subtract the column <c>bcolToSubtract</c> of matrix b from all columns of matrix a. 
+		/// Subtract the column <c>bcolToSubtract</c> of matrix b from all columns of matrix a.
 		/// </summary>
 		/// <param name="a">First operand (minuend).</param>
 		/// <param name="arows">Number of rows of a.</param>
@@ -636,13 +637,12 @@ namespace Altaxo.Calc.LinearAlgebra
 					c[i][j] = a[i][j] - b[i][bcolToSubtract];
 		}
 
-
-		#endregion
+		#endregion Subtraction
 
 		#region Division
 
 		/// <summary>
-		/// Divides all rows of matrix a by the row <c>rowb</c> of matrix b (element by element). 
+		/// Divides all rows of matrix a by the row <c>rowb</c> of matrix b (element by element).
 		/// </summary>
 		/// <param name="a">First operand (minuend).</param>
 		/// <param name="arows">Number of rows of a.</param>
@@ -678,7 +678,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 		}
 
-		#endregion
-
+		#endregion Division
 	}
 }

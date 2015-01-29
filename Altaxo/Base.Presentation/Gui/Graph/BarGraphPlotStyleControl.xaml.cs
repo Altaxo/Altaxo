@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,18 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Graph;
-	using Altaxo.Gui.Common;
 	using Altaxo.Gui.Common.Drawing;
 
 	/// <summary>
@@ -45,13 +38,18 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class BarGraphPlotStyleControl : UserControl, IBarGraphPlotStyleView
 	{
-		PenControlsGlue _framePenGlue;
+		private PenControlsGlue _framePenGlue;
 
 		public event Action IndependentFillColorChanged;
+
 		public event Action IndependentFrameColorChanged;
+
 		public event Action UseFillChanged;
+
 		public event Action UseFrameChanged;
+
 		public event Action FillBrushChanged;
+
 		public event Action FramePenChanged;
 
 		public BarGraphPlotStyleControl()
@@ -63,8 +61,6 @@ namespace Altaxo.Gui.Graph
 			_framePenGlue.CbLineThickness = _guiFramePenWidth;
 			_framePenGlue.CbDashStyle = _guiFrameDashStyle;
 		}
-
-	
 
 		private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)
 		{
@@ -94,7 +90,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		public bool IndependentFillColor
 		{
 			get
@@ -120,7 +115,6 @@ namespace Altaxo.Gui.Graph
 				_guiFillBrush.SelectedBrush = value;
 			}
 		}
-
 
 		public bool UseFrame
 		{
@@ -154,7 +148,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-					return _framePenGlue.Pen;
+				return _framePenGlue.Pen;
 			}
 			set
 			{
@@ -236,7 +230,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion IBarGraphPlotStyleView
 
 		public bool ShowPlotColorsOnlyForFillBrush
 		{
@@ -247,8 +241,6 @@ namespace Altaxo.Gui.Graph
 		{
 			set { _framePenGlue.ShowPlotColorsOnly = value; }
 		}
-
-	
 
 		private void EhIndependentFillColorChanged(object sender, RoutedEventArgs e)
 		{
@@ -274,13 +266,10 @@ namespace Altaxo.Gui.Graph
 				FillBrushChanged();
 		}
 
-		void EhFramePenChanged(object sender, EventArgs e)
+		private void EhFramePenChanged(object sender, EventArgs e)
 		{
 			if (null != FramePenChanged)
 				FramePenChanged();
 		}
-	
-
-		
 	}
 }

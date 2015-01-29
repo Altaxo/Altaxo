@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
@@ -44,7 +39,7 @@ namespace Altaxo.Gui.Graph
 	[UserControlForController(typeof(IXYColumnPlotDataViewEventSink))]
 	public partial class XYPlotDataControl : UserControl, IXYColumnPlotDataView
 	{
-		IXYColumnPlotDataViewEventSink _controller;
+		private IXYColumnPlotDataViewEventSink _controller;
 
 		public XYPlotDataControl()
 		{
@@ -58,7 +53,6 @@ namespace Altaxo.Gui.Graph
 				GuiHelper.SynchronizeSelectionFromGui(this._cbTables);
 				_controller.EhView_TableSelectionChanged();
 			}
-
 		}
 
 		private void EhToX_Click(object sender, RoutedEventArgs e)
@@ -68,7 +62,6 @@ namespace Altaxo.Gui.Graph
 				GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
 				_controller.EhView_ToX();
 			}
-
 		}
 
 		private void EhEraseX_Click(object sender, RoutedEventArgs e)
@@ -90,21 +83,18 @@ namespace Altaxo.Gui.Graph
 		{
 			if (null != _controller)
 				_controller.EhView_EraseY();
-
 		}
 
 		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
 			if (null != _controller)
 				_controller.EhView_RangeFrom(this._nudPlotRangeFrom.Value);
-
 		}
 
 		private void EhPlotRangeTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
 			if (null != _controller)
 				_controller.EhView_RangeTo(this.m_nudPlotRangeTo.Value);
-
 		}
 
 		#region IXYColumnPlotDataView

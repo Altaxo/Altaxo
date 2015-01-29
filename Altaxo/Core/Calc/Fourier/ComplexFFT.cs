@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 /*
  * BSD Licence:
  * Copyright (c) 2001, 2002 Ben Houston [ ben@exocortex.org ]
  * Exocortex Technologies [ www.exocortex.org ]
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, 
+ * 1. Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  * 3. Neither the name of the <ORGANIZATION> nor the names of its contributors
  * may be used to endorse or promote products derived from this software
@@ -44,7 +47,7 @@
  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
@@ -52,13 +55,10 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
-
 
 namespace Altaxo.Calc.Fourier
 {
-
 	// Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
 	// Version: May 4, 2002
 
@@ -67,7 +67,6 @@ namespace Altaxo.Calc.Fourier
 	/// </summary>
 	public class ComplexFFT
 	{
-
 		//======================================================================================
 
 		private ComplexFFT()
@@ -82,18 +81,21 @@ namespace Altaxo.Calc.Fourier
 			a = b;
 			b = temp;
 		}
+
 		static private void Swap(ref double a, ref double b)
 		{
 			double temp = a;
 			a = b;
 			b = temp;
 		}
+
 		static private void Swap(ref ComplexFloat a, ref ComplexFloat b)
 		{
 			ComplexFloat temp = a;
 			a = b;
 			b = temp;
 		}
+
 		static private void Swap(ref Complex a, ref Complex b)
 		{
 			Complex temp = a;
@@ -109,12 +111,12 @@ namespace Altaxo.Calc.Fourier
 		private const int cMaxBits = 12;
 		private const int cMinBits = 0;
 
-
 		static private bool IsPowerOf2(int x)
 		{
 			return (x & (x - 1)) == 0;
 			//return  ( x == Pow2( Log2( x ) ) );
 		}
+
 		static private int Pow2(int exponent)
 		{
 			if (exponent >= 0 && exponent < 31)
@@ -123,6 +125,7 @@ namespace Altaxo.Calc.Fourier
 			}
 			return 0;
 		}
+
 		static private int Log2(int x)
 		{
 			if (x <= 65536)
@@ -223,8 +226,8 @@ namespace Altaxo.Calc.Fourier
 			}
 			//  since int is unsigned it can never be higher than 2,147,483,647
 			//  if( x <= 2147483648 )
-			//    return  31; 
-			//  return  32; 
+			//    return  31;
+			//  return  32;
 			return 31;
 		}
 
@@ -248,6 +251,7 @@ namespace Altaxo.Calc.Fourier
 		//-------------------------------------------------------------------------------------
 
 		static private int[][] _reversedBits = new int[cMaxBits][];
+
 		static private int[] GetReversedBits(int numberOfBits)
 		{
 			Debug.Assert(numberOfBits >= cMinBits);
@@ -471,8 +475,6 @@ namespace Altaxo.Calc.Fourier
 					}
 				}
 				{
-
-
 					// negative sign ( i.e. [M,1] )
 					double uR = 1;
 					double uI = 0;
@@ -494,7 +496,6 @@ namespace Altaxo.Calc.Fourier
 						uI = uwI;
 					}
 				}
-
 			}
 		}
 
@@ -514,6 +515,7 @@ namespace Altaxo.Calc.Fourier
 			}
 			buffer = _bufferF;
 		}
+
 		static private void UnlockBufferF(ref float[] buffer)
 		{
 			Debug.Assert(_bufferF == buffer);
@@ -600,6 +602,7 @@ namespace Altaxo.Calc.Fourier
 			}
 			buffer = _bufferCF;
 		}
+
 		static private void UnlockBufferCF(ref ComplexFloat[] buffer)
 		{
 			Debug.Assert(_bufferCF == buffer);
@@ -687,6 +690,7 @@ namespace Altaxo.Calc.Fourier
 			}
 			buffer = _bufferC;
 		}
+
 		static private void UnlockBufferC(ref Complex[] buffer)
 		{
 			Debug.Assert(_bufferC == buffer);
@@ -943,7 +947,6 @@ namespace Altaxo.Calc.Fourier
 					}
 				}
 			}
-
 		}
 
 		/// <summary>
@@ -1009,7 +1012,6 @@ namespace Altaxo.Calc.Fourier
 					}
 				}
 			}
-
 		}
 
 		/// <summary>
@@ -1092,7 +1094,6 @@ namespace Altaxo.Calc.Fourier
 					}
 				}
 			}
-
 		}
 
 		/// <summary>
@@ -1158,7 +1159,6 @@ namespace Altaxo.Calc.Fourier
 					}
 				}
 			}
-
 		}
 
 		/// <summary>
@@ -1547,6 +1547,5 @@ namespace Altaxo.Calc.Fourier
 				}
 			}
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,27 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Gui.Common;
-
 	/// <summary>
 	/// Interaction logic for LayerControl.xaml
 	/// </summary>
@@ -47,18 +39,17 @@ namespace Altaxo.Gui.Graph
 		private int _suppressEventCounter = 0;
 
 		public event Action<bool> CreateOrMoveAxis;
-		public event Action SecondChoiceChanged;
-		public event Action<string> PageChanged;
 
+		public event Action SecondChoiceChanged;
+
+		public event Action<string> PageChanged;
 
 		public XYPlotLayerControl()
 		{
 			InitializeComponent();
 		}
 
-
 		#region ILayerView Members
-
 
 		public void AddTab(string name, string text)
 		{
@@ -87,8 +78,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-
 		public void SelectTab(string name)
 		{
 			foreach (TabItem page in this._tabCtrl.Items)
@@ -101,8 +90,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-
 		public void InitializeSecondaryChoice(Altaxo.Collections.SelectableListNodeList items, LayerControllerTabType primaryChoice)
 		{
 			++_suppressEventCounter;
@@ -113,14 +100,11 @@ namespace Altaxo.Gui.Graph
 			_guiMoveAxis.Visibility = primaryChoice == LayerControllerTabType.Axes ? Visibility.Visible : Visibility.Collapsed;
 
 			--_suppressEventCounter;
-
 		}
-
 
 		public event System.ComponentModel.CancelEventHandler TabValidating;
 
-		#endregion
-
+		#endregion ILayerView Members
 
 		private void EhSecondChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -132,8 +116,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		private int _tabControl_SelectionChanged_Calls;
 
-		int _tabControl_SelectionChanged_Calls;
 		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (!object.ReferenceEquals(e.OriginalSource, _tabCtrl))

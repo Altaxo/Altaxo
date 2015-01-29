@@ -23,11 +23,9 @@
 #endregion Copyright
 
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Altaxo.Gui.Graph.Shapes

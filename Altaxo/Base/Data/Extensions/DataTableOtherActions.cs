@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -48,7 +50,7 @@ namespace Altaxo.Data
 
 		private class WorksheetRenameValidator : TextValueInputController.NonEmptyStringValidator
 		{
-			Altaxo.Data.DataTable _table;
+			private Altaxo.Data.DataTable _table;
 
 			public WorksheetRenameValidator(DataTable table)
 				: base("The worksheet name must not be empty! Please enter a valid name.")
@@ -72,9 +74,5 @@ namespace Altaxo.Data
 					return null;
 			}
 		}
-
-
-
-
 	}
 }

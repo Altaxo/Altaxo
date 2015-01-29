@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Unmbr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Unmbr {
-    private  Unmbr() {}                           
+    private  Unmbr() {}
     private static void ArgumentCheck(Vector vect, Side side, int m, int n, int k, Object A, int lda, Object tau, Object C, int ldc) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -62,11 +62,11 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         if( side == Side.Left){
           if ( lda < System.Math.Max(1,m) ) {
             throw new ArgumentException("lda must be at least max(1,m)", "lda");
-          }       
+          }
         }else{
           if ( lda < System.Math.Max(1,n) ) {
             throw new ArgumentException("lda must be at least max(1,n)", "lda");
-          }       
+          }
         }
       }else{
         if( side == Side.Left){
@@ -79,12 +79,12 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
           }
         }
       }
-    
+
       if ( ldc < System.Math.Max(1,m)) {
         throw new ArgumentException("ldc must be at least max(1,m)", "ldc");
-      } 
+      }
     }
-    
+
     internal static int Compute( Vector vect, Side side, Transpose trans, int m, int n, int k, ComplexFloat[] A, int lda, ComplexFloat[] tau, ComplexFloat[] C, int ldc ){
       ArgumentCheck(vect,side, m, n, k, A, lda, tau, C, ldc);
       if( side == Side.Left){
@@ -96,7 +96,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
           throw new ArgumentException("tau must be at least max(1,k).");
         }
       }
-      
+
       return dna_lapack_cunmbr(Configuration.BlockSize, vect, side, trans, m, n, k, A, lda, tau, C, ldc);
     }
 
@@ -117,7 +117,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_cunmbr( int block_size, Vector vect, Side side, Transpose trans, int m, int n, int k, [In,Out]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] tau, [In,Out]ComplexFloat[] C, int ldc  );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_zunmbr( int block_size, Vector vect, Side side, Transpose trans, int m, int n, int k, [In,Out]Complex[] A, int lda, [In,Out]Complex[] tau, [In,Out]Complex[] C, int ldc   );
   }

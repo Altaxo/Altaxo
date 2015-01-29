@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
-
-	class TransposableMatrix : IExtensibleMatrix
+	internal class TransposableMatrix : IExtensibleMatrix
 	{
-		double[][] m_Array;
-		int m_NumVectors;
-		int m_VectorLen;
-		bool m_bVerticalVectors = false; // normally the matrix consists of several rows containing column vectors
+		private double[][] m_Array;
+		private int m_NumVectors;
+		private int m_VectorLen;
+		private bool m_bVerticalVectors = false; // normally the matrix consists of several rows containing column vectors
 
 		public TransposableMatrix()
 		{
@@ -47,7 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public TransposableMatrix(double[][] arr)
 		{
-			// get the max number of columns in the matrix  
+			// get the max number of columns in the matrix
 			int cols = 0;
 			for (int i = 0; i < arr.Length; i++)
 				cols = Math.Max(cols, arr[i].Length);
@@ -61,7 +61,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		#region IMatrix Members
-
 
 		public void SetDimension(int rows, int cols)
 		{
@@ -104,7 +103,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		#endregion
+		#endregion IMatrix Members
 
 		public void AppendBottom(IROMatrix a)
 		{
@@ -187,7 +186,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			m_bVerticalVectors = !m_bVerticalVectors;
 		}
 
-
 		public static TransposableMatrix operator *(TransposableMatrix a, TransposableMatrix b)
 		{
 			// Presumtion:
@@ -260,6 +258,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			return c;
 		}
+
 		public TransposableMatrix Submatrix(int rows, int cols)
 		{
 			return Submatrix(rows, cols, 0, 0);
@@ -290,8 +289,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int j = 0; j < this.Columns; j++)
 				this[row, j] = b[0, row];
 		}
-
-
 
 		public void NormalizeRows()
 		{
@@ -337,7 +334,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			double original_variance = Math.Sqrt(X.SumOfSquares());
 
-
 			TransposableMatrix l = null;
 			TransposableMatrix t_prev = null;
 			TransposableMatrix t = null;
@@ -352,7 +348,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				for (int iter = 0; iter < 500; iter++)
 				{
-
 					// 2. Calculate the new vector t for the factor values
 					l.Transpose(); // l is now a vertical vector
 					t = X * l; // t is also a vertical vector
@@ -360,21 +355,20 @@ namespace Altaxo.Calc.LinearAlgebra
 
 					t.Transpose(); // t is now horizontal
 
-					// Compare this with the previous one 
+					// Compare this with the previous one
 					if (t_prev != null && t_prev.IsEqualTo(t, 1E-6))
 						break;
 
-					// 3. Calculate the new loads 
+					// 3. Calculate the new loads
 					l = t * X; // gives a horizontal vector of load (= eigenvalue spectrum)
 					// normalize the (one) row
 					l.NormalizeRows(); // normalize the eigenvector spectrum
 
 					// 4. Goto step 2 or break after a number of iterations
 					t_prev = t;
-
 				}
 
-				// 5. Calculate the residual matrix 
+				// 5. Calculate the residual matrix
 				t.Transpose(); // t is now vertical again
 				factors.SetColumn(nFactor, t);
 				loads.SetRow(nFactor, l);
@@ -383,6 +377,4 @@ namespace Altaxo.Calc.LinearAlgebra
 			} // for all factors
 		}
 	}
-
-
 }

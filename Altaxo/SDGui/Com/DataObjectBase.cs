@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +31,6 @@ using System.Text;
 
 namespace Altaxo.Com
 {
-	using UnmanagedApi.Kernel32;
 	using UnmanagedApi.Ole32;
 
 	/// <summary>

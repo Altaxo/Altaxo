@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
 using Altaxo.Calc.Fourier;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;

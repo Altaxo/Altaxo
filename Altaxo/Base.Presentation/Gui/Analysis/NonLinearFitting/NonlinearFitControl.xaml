@@ -1,50 +1,49 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Analysis.NonLinearFitting.NonlinearFitControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              MinHeight="100" MinWidth="100">
 	<TabControl x:Name="_tabControl">
 		<TabItem x:Name="_tpSelectFunction" Header="Select fit function">
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<Border x:Name="_funcSelControlHost" Grid.Row="0" />
 				<StackPanel Orientation="Horizontal" Grid.Row="1">
-					<Button x:Name="_btSelectFitFunc" Content="Select" Margin="4,4,4,4" Click="_btSelectFitFunc_Click"/>
-					<Button x:Name="_btNew" Content="New.." Margin="4,4,4,4" Click="_btNew_Click"/>
+					<Button x:Name="_btSelectFitFunc" Content="Select" Margin="4,4,4,4" Click="_btSelectFitFunc_Click" />
+					<Button x:Name="_btNew" Content="New.." Margin="4,4,4,4" Click="_btNew_Click" />
 				</StackPanel>
 			</Grid>
 		</TabItem>
 
 		<TabItem x:Name="_tpFitEnsemble" Header="Details">
-			
 		</TabItem>
 
 		<TabItem x:Name="_tpMakeFit" Header="Fit">
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<Menu Grid.Row="0">
-					<MenuItem Header="Copy NV" Click="_tsbCopyParameter_Click"/>
-					<MenuItem Header="Copy NVV" Click="_tsbCopyParameterAll_Click"/>
-					<MenuItem Header="Copy V as C#" Click="_tsbCopyParameterValueAsCDef_Click"/>
-					<MenuItem Header="Copy V" Click="_tsbCopyParameterValue_Click"/>
-					<MenuItem Header="Paste V" Click="_tsbPasteParameterValue_Click"/>
+					<MenuItem Header="Copy NV" Click="_tsbCopyParameter_Click" />
+					<MenuItem Header="Copy NVV" Click="_tsbCopyParameterAll_Click" />
+					<MenuItem Header="Copy V as C#" Click="_tsbCopyParameterValueAsCDef_Click" />
+					<MenuItem Header="Copy V" Click="_tsbCopyParameterValue_Click" />
+					<MenuItem Header="Paste V" Click="_tsbPasteParameterValue_Click" />
 				</Menu>
-				<Border x:Name="_parameterControlHost" Grid.Row="1"/>
+				<Border x:Name="_parameterControlHost" Grid.Row="1" />
 				<DockPanel Grid.Row="2">
-					<Button x:Name="_btChiSqr" DockPanel.Dock="Left" Content="ChiSqr" Margin="4" Click="_btChiSqr_Click"/>
-					<Button x:Name="_btDoFit" DockPanel.Dock="Left" Content="Fit!"  Margin="4" Click="_btDoFit_Click"/>
-					<Button x:Name="_btDoSimplex" DockPanel.Dock="Left" Content="Simplex!"  Margin="4" Click="_btDoSimplex_Click"/>
-					<Label DockPanel.Dock="Left" Content="Chi²="/>
+					<Button x:Name="_btChiSqr" DockPanel.Dock="Left" Content="ChiSqr" Margin="4" Click="_btChiSqr_Click" />
+					<Button x:Name="_btDoFit" DockPanel.Dock="Left" Content="Fit!"  Margin="4" Click="_btDoFit_Click" />
+					<Button x:Name="_btDoSimplex" DockPanel.Dock="Left" Content="Simplex!"  Margin="4" Click="_btDoSimplex_Click" />
+					<Label DockPanel.Dock="Left" Content="Chi²=" />
 					<TextBox x:Name="_edChiSqr" />
 				</DockPanel>
 			</Grid>
@@ -53,23 +52,21 @@
 		<TabItem x:Name="_tpSimulate" Header="Simulate">
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<GroupBox Grid.Row="0" Header="Generation method">
 					<StackPanel Orientation="Horizontal">
-						<RadioButton x:Name="_rbGenerateFromIndependentVars" Content="From indep. variables" Margin="4" Checked="EhSimulate_GenerationMethodChanged"/>
-						<RadioButton x:Name="_rbFromEquallySpacedInterval" Content="From equally spaced interval" Margin="4" Checked="EhSimulate_GenerationMethodChanged"/>
+						<RadioButton x:Name="_rbGenerateFromIndependentVars" Content="From indep. variables" Margin="4" Checked="EhSimulate_GenerationMethodChanged" />
+						<RadioButton x:Name="_rbFromEquallySpacedInterval" Content="From equally spaced interval" Margin="4" Checked="EhSimulate_GenerationMethodChanged" />
 					</StackPanel>
 				</GroupBox>
-				<axogc:EquallySpacedIntervalControl x:Name="_ctrlEquallySpacedInterval" Grid.Row="1"/>
-				<CheckBox x:Name="_chkUseUnusedDependentVarsAlso" Grid.Row="2" Content="Generate unused dependent variables too" Margin="4"/>
-				<Button Grid.Row="3" Content="Simulate!" Margin="4,16,4,4" Click="_btSimulate_Click"/>
-				
+				<axogc:EquallySpacedIntervalControl x:Name="_ctrlEquallySpacedInterval" Grid.Row="1" />
+				<CheckBox x:Name="_chkUseUnusedDependentVarsAlso" Grid.Row="2" Content="Generate unused dependent variables too" Margin="4" />
+				<Button Grid.Row="3" Content="Simulate!" Margin="4,16,4,4" Click="_btSimulate_Click" />
 			</Grid>
-			
 		</TabItem>
 	</TabControl>
 </UserControl>

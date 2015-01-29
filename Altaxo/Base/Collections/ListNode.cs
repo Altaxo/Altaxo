@@ -420,7 +420,7 @@ namespace Altaxo.Collections
 		/// </summary>
 		/// <param name="docRemoveAction">You can provide an action here which simultaneously will remove the corresponding document nodes.
 		/// 1st argument is the index of the ListNode (!) which is removed.
-		/// 2nd argument is the content of the <see cref="Tag"/> member of the list node which is removed.
+		/// 2nd argument is the content of the <see cref="P:ListNode.Tag"/> member of the list node which is removed.
 		/// When multiple nodes are selected, the nodes with the higher index are removed first.
 		/// </param>
 		public void RemoveSelectedItems(Action<int, object> docRemoveAction)
@@ -450,8 +450,8 @@ namespace Altaxo.Collections
 		/// Adds the specified node to the collection, and is also able to add the correspondig document node too.
 		/// </summary>
 		/// <typeparam name="T">Type of document node.</typeparam>
-		/// <param name="node">The list node to add. The <see cref="Tag"/> property should contain the corresponding document node.</param>
-		/// <param name="docAddAction">The action to add a document node to the document collection. The document node will be retrieved from the <see cref="Tag"/> property of the list node.</param>
+		/// <param name="node">The list node to add. The <see cref="P:ListNode.Tag"/> property should contain the corresponding document node.</param>
+		/// <param name="docAddAction">The action to add a document node to the document collection. The document node will be retrieved from the <see cref="P:ListNode.Tag"/> property of the list node.</param>
 		public void Add<T>(SelectableListNode node, Action<T> docAddAction)
 		{
 			base.Add(node);

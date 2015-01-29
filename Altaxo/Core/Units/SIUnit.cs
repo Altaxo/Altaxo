@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,20 +32,20 @@ namespace Altaxo.Units
 	/// <summary>
 	/// Represents a SI unit.
 	/// </summary>
-	public abstract class SIUnit : IUnit,  IEquatable<SIUnit>, IEquatable<IUnit>
+	public abstract class SIUnit : IUnit, IEquatable<SIUnit>, IEquatable<IUnit>
 	{
-		sbyte _metre;
-		sbyte _kilogram;
-		sbyte _second;
-		sbyte _ampere;
-		sbyte _kelvin;
-		sbyte _mole;
-		sbyte _candela;
+		private sbyte _metre;
+		private sbyte _kilogram;
+		private sbyte _second;
+		private sbyte _ampere;
+		private sbyte _kelvin;
+		private sbyte _mole;
+		private sbyte _candela;
 
 		/// <summary>
 		/// Cache for unit names. Here the units, as specified by their individual powers of basic units, act as keys, whereas the commonly used name of this units are the values.
 		/// </summary>
-		static Dictionary<SIUnit, string> _specialNames = new Dictionary<SIUnit, string>();
+		private static Dictionary<SIUnit, string> _specialNames = new Dictionary<SIUnit, string>();
 
 		/// <summary>
 		/// Constructor of the SI unit.
@@ -70,7 +72,7 @@ namespace Altaxo.Units
 		/// Multiplies this unit by another unit <paramref name="b"/>.
 		/// </summary>
 		/// <param name="b">Other unit.</param>
-		void Multiply(SIUnit b)
+		private void Multiply(SIUnit b)
 		{
 			this._metre += b._metre;
 			this._kilogram += b._kilogram;
@@ -83,7 +85,7 @@ namespace Altaxo.Units
 
 		/// <summary>Divides this unit by another unit <paramref name="b"/>.</summary>
 		/// <param name="b">Other unit.</param>
-		void DivideBy(SIUnit b)
+		private void DivideBy(SIUnit b)
 		{
 			this._metre -= b._metre;
 			this._kilogram -= b._kilogram;
@@ -97,7 +99,7 @@ namespace Altaxo.Units
 		/// <summary>
 		/// Takes the inverse of this unit.
 		/// </summary>
-		void Invert()
+		private void Invert()
 		{
 			this._metre = (sbyte)-this._metre;
 			this._kilogram = (sbyte)-this._kilogram;
@@ -141,7 +143,6 @@ namespace Altaxo.Units
 			return null == b ? false : Equals(b);
 		}
 
-
 		/// <summary>Returns a hash code for this instance.</summary>
 		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
 		public override int GetHashCode()
@@ -156,17 +157,16 @@ namespace Altaxo.Units
 				_candela;
 		}
 
-
 		/// <summary>Full name of the unit.</summary>
 		public abstract string Name
 		{
-			get; 
+			get;
 		}
 
 		/// <summary>Usual shortcut of the unit.</summary>
 		public abstract string ShortCut
 		{
-			get; 
+			get;
 		}
 
 		/// <summary>Converts <paramref name="x"/> to the corresponding SI unit.</summary>

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,12 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using sdd = System.Drawing.Drawing2D;
 
@@ -43,11 +40,11 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class LineJoinComboBox : ImageComboBox
 	{
-		class CC : IValueConverter
+		private class CC : IValueConverter
 		{
-			LineJoinComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
+			private LineJoinComboBox _cb;
+			private object _originalToolTip;
+			private bool _hasValidationError;
 
 			public CC(LineJoinComboBox c)
 			{
@@ -58,8 +55,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (sdd.LineJoin)value;
 				return _cb._cachedItems[val];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -68,9 +63,9 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		static Dictionary<sdd.LineJoin, ImageSource> _cachedImages = new Dictionary<sdd.LineJoin, ImageSource>();
+		private static Dictionary<sdd.LineJoin, ImageSource> _cachedImages = new Dictionary<sdd.LineJoin, ImageSource>();
 
-		Dictionary<sdd.LineJoin, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.LineJoin, ImageComboBoxItem>();
+		private Dictionary<sdd.LineJoin, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.LineJoin, ImageComboBoxItem>();
 
 		public LineJoinComboBox()
 		{
@@ -81,11 +76,9 @@ namespace Altaxo.Gui.Common.Drawing
 			_cachedItems.Add(sdd.LineJoin.MiterClipped, new ImageComboBoxItem(this, sdd.LineJoin.Miter)); // trick: MiterClipped is projected to Miter item here
 			_cachedItems.Add(sdd.LineJoin.Round, new ImageComboBoxItem(this, sdd.LineJoin.Round));
 
-
 			Items.Add(_cachedItems[sdd.LineJoin.Bevel]);
 			Items.Add(_cachedItems[sdd.LineJoin.Miter]);
 			Items.Add(_cachedItems[sdd.LineJoin.Round]);
-
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
@@ -95,7 +88,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
+
 		private const string _nameOfValueProp = "SelectedLineJoin";
+
 		public sdd.LineJoin SelectedLineJoin
 		{
 			get { var result = (sdd.LineJoin)GetValue(SelectedLineJoinProperty); return result; }
@@ -110,14 +105,12 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			((LineJoinComboBox)obj).EhSelectedLineJoinChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		protected virtual void EhSelectedLineJoinChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-
-
 
 		public override string GetItemText(object item)
 		{
@@ -134,7 +127,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-
 		public static DrawingImage GetImage(System.Drawing.Drawing2D.LineJoin join)
 		{
 			const double height = 1;
@@ -147,19 +139,20 @@ namespace Altaxo.Gui.Common.Drawing
 				case sdd.LineJoin.Bevel:
 					plj = PenLineJoin.Bevel;
 					break;
+
 				case sdd.LineJoin.Miter:
 				case sdd.LineJoin.MiterClipped:
 					plj = PenLineJoin.Miter;
 					break;
+
 				case sdd.LineJoin.Round:
 					plj = PenLineJoin.Round;
 					break;
+
 				default:
 					plj = PenLineJoin.Bevel;
 					break;
 			}
-
-
 
 			var drawingGroup = new DrawingGroup();
 			GeometryDrawing geometryDrawing;
@@ -172,7 +165,7 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryDrawing = new GeometryDrawing();
 			var figure = new PathFigure();
 			figure.StartPoint = new Point(width, height * 0.875);
-			figure.Segments.Add(new PolyLineSegment(new Point[] 
+			figure.Segments.Add(new PolyLineSegment(new Point[]
       {
         new Point(width / 2, height / 2),
         new Point(width, height * 0.175) }, true));

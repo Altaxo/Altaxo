@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,10 +31,14 @@ namespace Altaxo.Units.Length
 {
 	public class Meter : SIUnit
 	{
-		static readonly Meter _instance = new Meter();
+		private static readonly Meter _instance = new Meter();
+
 		public static Meter Instance { get { return _instance; } }
 
-		private Meter() : base(1, 0, 0, 0, 0, 0, 0) { }
+		private Meter()
+			: base(1, 0, 0, 0, 0, 0, 0)
+		{
+		}
 
 		public override string Name
 		{

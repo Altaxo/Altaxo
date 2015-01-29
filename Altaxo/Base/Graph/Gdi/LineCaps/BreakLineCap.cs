@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -33,7 +35,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	/// </summary>
 	public class BreakLineCap : LineCapExtension
 	{
-		const double _designAngle = 45;
+		private const double _designAngle = 45;
 
 		public BreakLineCap()
 		{
@@ -49,14 +51,13 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			return new BreakLineCap(minimumAbsoluteSizePt, minimumRelativeSize);
 		}
 
-
 		public override string Name { get { return "Break"; } }
+
 		public override double DefaultMinimumAbsoluteSizePt { get { return 8; } }
+
 		public override double DefaultMinimumRelativeSize { get { return 4; } }
 
-
-
-		CustomLineCap GetClone(Pen pen, float size)
+		private CustomLineCap GetClone(Pen pen, float size)
 		{
 			float endPoint;
 			endPoint = pen.Width == 0 ? 1 : size / pen.Width;
@@ -77,7 +78,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 				(float)(2 * r), (float)(2 * r),
 				(float)(-90 - _designAngle), (float)(2 * _designAngle));
 
-
 			hPath.AddArc(
 				(float)(h - r), (float)(b - 1.999999 * r),
 				(float)(2 * r), (float)(2 * r),
@@ -93,6 +93,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			pen.StartCap = LineCap.Custom;
 			pen.CustomStartCap = GetClone(pen, size);
 		}
+
 		public override void SetEndCap(Pen pen, float size)
 		{
 			pen.EndCap = LineCap.Custom;

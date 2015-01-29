@@ -20,7 +20,7 @@
 // making a combined work based on this library.  Thus, the terms and
 // conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give you
 // permission to link this library with independent modules to produce an
 // executable, regardless of the license terms of these independent
@@ -36,7 +36,9 @@
 using System;
 
 #if !NETCF_1_0 && !NETCF_2_0
+
 using System.Runtime.Serialization;
+
 #endif
 
 namespace ICSharpCode.SharpZipLib
@@ -48,29 +50,32 @@ namespace ICSharpCode.SharpZipLib
 	/// <remarks>NOTE: Not all exceptions thrown will be derived from this class.
 	/// A variety of other exceptions are possible for example <see cref="ArgumentNullException"></see></remarks>
 #if !NETCF_1_0 && !NETCF_2_0
+
 	[Serializable]
 #endif
 	public class SharpZipBaseException : ApplicationException
 	{
 #if !NETCF_1_0 && !NETCF_2_0
+
 		/// <summary>
-		/// Deserialization constructor 
+		/// Deserialization constructor
 		/// </summary>
 		/// <param name="info"><see cref="System.Runtime.Serialization.SerializationInfo"/> for this constructor</param>
 		/// <param name="context"><see cref="StreamingContext"/> for this constructor</param>
-		protected SharpZipBaseException(SerializationInfo info, StreamingContext context )
-			: base( info, context )
+		protected SharpZipBaseException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
 		{
 		}
+
 #endif
-		
+
 		/// <summary>
 		/// Initializes a new instance of the SharpZipBaseException class.
 		/// </summary>
 		public SharpZipBaseException()
 		{
 		}
-		
+
 		/// <summary>
 		/// Initializes a new instance of the SharpZipBaseException class with a specified error message.
 		/// </summary>

@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
 using Altaxo.Data;
 using System;

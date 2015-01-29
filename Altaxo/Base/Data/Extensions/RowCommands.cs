@@ -23,13 +23,10 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Worksheet.Viewing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Altaxo.Data
 {

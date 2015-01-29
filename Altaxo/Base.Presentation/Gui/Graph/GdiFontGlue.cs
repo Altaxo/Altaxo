@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,37 +19,26 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-
-using Altaxo.Gui.Common.Drawing;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-
 using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
 	public class GdiFontGlue
 	{
-		double _fontSize = 12;
-		sd.FontFamily _fontFamily = sd.FontFamily.GenericSansSerif;
-		FontXStyle _fontStyle = FontXStyle.Regular;
+		private double _fontSize = 12;
+		private sd.FontFamily _fontFamily = sd.FontFamily.GenericSansSerif;
+		private FontXStyle _fontStyle = FontXStyle.Regular;
 
 		public double FontSize
 		{
@@ -62,7 +52,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		public sd.FontFamily FontFamily
 		{
 			get { return _fontFamily; }
@@ -75,7 +64,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		public FontXStyle FontStyle
 		{
 			get { return _fontStyle; }
@@ -87,7 +75,6 @@ namespace Altaxo.Gui.Graph
 					_guiFontStyle.SelectedFontStyle = value;
 			}
 		}
-
 
 		public event EventHandler SelectedFontChanged;
 
@@ -105,8 +92,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		private FontSizeComboBox _guiFontSize;
 
-		FontSizeComboBox _guiFontSize;
 		public FontSizeComboBox GuiFontSize
 		{
 			get { return _guiFontSize; }
@@ -123,8 +110,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		private FontFamilyComboBox _guiFontFamily;
 
-		FontFamilyComboBox _guiFontFamily;
 		public FontFamilyComboBox GuiFontFamily
 		{
 			get { return _guiFontFamily; }
@@ -136,14 +123,13 @@ namespace Altaxo.Gui.Graph
 				_guiFontFamily = value;
 				_guiFontFamily.SelectedFontFamily = _fontFamily;
 
-
 				if (null != _guiFontFamily)
 					_guiFontFamily.SelectedFontFamilyChanged += _guiFontStyle_SelectedFontFamilyChanged;
 			}
 		}
 
+		private FontStyleComboBox _guiFontStyle;
 
-		FontStyleComboBox _guiFontStyle;
 		public FontStyleComboBox GuiFontStyle
 		{
 			get { return _guiFontStyle; }
@@ -160,7 +146,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void _guiFontStyle_SelectedFontSizeChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void _guiFontStyle_SelectedFontSizeChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var oldFontSize = _fontSize;
 			_fontSize = _guiFontSize.SelectedQuantityAsValueInPoints;
@@ -169,7 +155,7 @@ namespace Altaxo.Gui.Graph
 				OnFontChanged();
 		}
 
-		void _guiFontStyle_SelectedFontStyleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void _guiFontStyle_SelectedFontStyleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var oldFontStyle = _fontStyle;
 			_fontStyle = _guiFontStyle.SelectedFontStyle;
@@ -177,7 +163,7 @@ namespace Altaxo.Gui.Graph
 				OnFontChanged();
 		}
 
-		void _guiFontStyle_SelectedFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void _guiFontStyle_SelectedFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var oldFontFamily = _fontFamily;
 			_fontFamily = _guiFontFamily.SelectedFontFamily;
@@ -190,6 +176,5 @@ namespace Altaxo.Gui.Graph
 			if (null != SelectedFontChanged)
 				SelectedFontChanged(this, EventArgs.Empty);
 		}
-
 	}
 }

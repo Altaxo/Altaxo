@@ -35,9 +35,7 @@ using System.Windows;
 
 namespace Altaxo.Com
 {
-	using UnmanagedApi.Advapi32;
 	using UnmanagedApi.Ole32;
-	using UnmanagedApi.User32;
 
 	public class ComManager : Altaxo.Main.IComManager
 	{

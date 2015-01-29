@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Reflection;
-using System.Security;
-using System.Security.Principal;
+using System.Linq;
 using System.Security.AccessControl;
+using System.Security.Principal;
+using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -37,13 +37,13 @@ namespace Altaxo.Serialization.AutoUpdates
 	/// </summary>
 	public class Downloader
 	{
-		string _storagePath;
-		string _downloadURL;
-		Version _currentVersion;
-		bool _isDownloadOfPackageCompleted;
+		private string _storagePath;
+		private string _downloadURL;
+		private Version _currentVersion;
+		private bool _isDownloadOfPackageCompleted;
 
 		/// <summary>Initializes a new instance of the <see cref="Downloader"/> class.</summary>
-		/// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it 
+		/// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it
 		/// looks for the latest stable version.</param>
 		/// <param name="currentProgramVersion">The version of the currently installed Altaxo program.</param>
 		public Downloader(bool loadUnstable, Version currentProgramVersion)
@@ -58,18 +58,16 @@ namespace Altaxo.Serialization.AutoUpdates
 				_downloadURL = "http://downloads.sourceforge.net/project/altaxo/Altaxo/Altaxo-Latest-Stable/";
 		}
 
-
-
 		/// <summary>Runs the <see cref="Downloader"/>.</summary>
 		/// <remarks>
 		/// The download is done in steps:
-		/// <para>Firstly, the appropriate version file in the application data directory is locked, 
+		/// <para>Firstly, the appropriate version file in the application data directory is locked,
 		/// so that no other program can use it, until this program ends.</para>
 		/// <para>Then, the version file is downloaded from the remote location.</para>
-		/// <para>If there is already a valid version file in the download directory, 
+		/// <para>If there is already a valid version file in the download directory,
 		/// and the version obtained from the remote version file is equal to the version obtained from the version file in the download directory,
 		/// then the package was already downloaded before. Then we only check that the package file is also present and that it has the appropriate hash sum.</para>
-		/// <para>Else, if the version obtained from the remote version file is higher than the program's current version, 
+		/// <para>Else, if the version obtained from the remote version file is higher than the program's current version,
 		/// we download the package file from the remote location.</para>
 		/// </remarks>
 		public void Run()
@@ -113,7 +111,7 @@ namespace Altaxo.Serialization.AutoUpdates
 						webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
 						_isDownloadOfPackageCompleted = false;
 						webClient.DownloadFileAsync(new Uri(packageUrl), packageFileName);// download the package asynchronously to get progress messages
-						for(;!_isDownloadOfPackageCompleted;)
+						for (; !_isDownloadOfPackageCompleted; )
 						{
 							System.Threading.Thread.Sleep(250);
 						}
@@ -141,7 +139,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>It is neccessary to modify the download directory access rights, because as default only creator/owner has the right to change the newly created directory.
 		/// But of course we want to allow all authenticated users to download auto updates. Thus we modify the access to the download directory, so that authenticated users have the right to modify files/folders. </summary>
 		/// <param name="downloadDirectory">The download directory.</param>
-		void SetDownloadDirectoryAccessRights(string downloadDirectory)
+		private void SetDownloadDirectoryAccessRights(string downloadDirectory)
 		{
 			try
 			{
@@ -161,7 +159,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>Called when the download of the package file is completed.</summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.ComponentModel.AsyncCompletedEventArgs"/> instance containing the event data.</param>
-		void EhDownloadOfPackageFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+		private void EhDownloadOfPackageFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
 		{
 			_isDownloadOfPackageCompleted = true;
 		}
@@ -169,15 +167,14 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>Outputs the download progress to the console.</summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.Net.DownloadProgressChangedEventArgs"/> instance containing the event data.</param>
-		void EhDownloadOfPackageFileProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+		private void EhDownloadOfPackageFileProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
 		{
-			Console.Write("{0}%\r",e.ProgressPercentage);
+			Console.Write("{0}%\r", e.ProgressPercentage);
 		}
-
 
 		/// <summary>Cleans the download directory from all package files.</summary>
 		/// <param name="withExceptionOfThisFile">A file name, which should not be removed.</param>
-		void CleanDirectory(string withExceptionOfThisFile)
+		private void CleanDirectory(string withExceptionOfThisFile)
 		{
 			try
 			{
@@ -193,6 +190,5 @@ namespace Altaxo.Serialization.AutoUpdates
 			{
 			}
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,31 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-
+#endregion Copyright
 
 #region Original Copyright
+
 // The original file is from GSL1.9/Integration/qags.c
 /* integration/qags.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-#endregion
+
+#endregion Original Copyright
 
 using System;
 using System.Collections.Generic;
@@ -109,28 +111,24 @@ namespace Altaxo.Calc.Integration
 		public const double GSL_LOG_SFLT_EPSILON = (-7.6246189861593985e+00);
 	}
 
-
 	public class gsl_integration_workspace
 	{
 		public int limit;
-		int size;
+		private int size;
 		public int nrmax;
 		public int i;
 		public int maximum_level;
 		public double[] alist;
 		public double[] blist;
-		double[] rlist;
+		private double[] rlist;
 		public double[] elist;
-		int[] order;
+		private int[] order;
 		public int[] level;
-
 
 		public gsl_integration_workspace(int n)
 		{
-
 			if (n == 0)
 				throw new ArgumentOutOfRangeException("workspace length n must be positive integer");
-
 
 			alist = new double[n];
 			blist = new double[n];
@@ -194,19 +192,19 @@ retrieve(out double a, out double b, out double r, out double e)
 		}
 
 		/* integration/append.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -226,13 +224,11 @@ retrieve(out double a, out double b, out double r, out double e)
 			this.size++;
 		}
 
-
 		public bool increase_nrmax()
 		{
 			int k;
 			int id = this.nrmax;
 			int jupbnd;
-
 
 			int last = this.size - 1;
 
@@ -257,7 +253,6 @@ retrieve(out double a, out double b, out double r, out double e)
 				}
 
 				this.nrmax++;
-
 			}
 			return false;
 		}
@@ -276,7 +271,6 @@ retrieve(out double a, out double b, out double r, out double e)
 
 			return result_sum;
 		}
-
 
 		public void update(double a1, double b1, double area1, double error1,
 						 double a2, double b2, double area2, double error2)
@@ -325,11 +319,10 @@ retrieve(out double a, out double b, out double r, out double e)
 			qpsrt();
 		}
 
-		void qpsrt()
+		private void qpsrt()
 		{
 			int last = this.size - 1;
 			int limit = this.limit;
-
 
 			double errmax;
 			double errmin;
@@ -412,27 +405,24 @@ retrieve(out double a, out double b, out double r, out double e)
 			this.nrmax = i_nrmax;
 		}
 
-
 		/* integration/ptsort.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
-
 
 		public void sort_results()
 		{
@@ -471,10 +461,7 @@ retrieve(out double a, out double b, out double r, out double e)
 
 			this.i = order[0];
 		}
-
-
 	}
-
 
 	public class extrapolation_table
 	{
@@ -665,13 +652,7 @@ qelg(out double result, out double abserr)
 
 			return;
 		}
-
-
-
 	};
-
-
-
 
 	public class GSL_UTILS
 	{
@@ -681,6 +662,7 @@ qelg(out double result, out double abserr)
 		Func<double, double> f, double a, double b,
 		out double result, out double abserr,
 																	out double defabs, out double resabs);
+
 	public class IntegrationBase
 	{
 		/// <summary>
@@ -695,12 +677,12 @@ qelg(out double result, out double abserr)
 			}
 		}
 
-
 		protected static bool test_positivity(double result, double resabs)
 		{
 			bool status = (Math.Abs(result) >= (1 - 50 * GSL_CONST.GSL_DBL_EPSILON) * resabs);
 			return status;
 		}
+
 		protected static bool subinterval_too_small(double a1, double a2, double b2)
 		{
 			const double e = GSL_CONST.GSL_DBL_EPSILON;
@@ -712,8 +694,6 @@ qelg(out double result, out double abserr)
 
 			return status;
 		}
-
-
 
 		/* Define a rounding function which moves extended precision values
 		out of registers and rounds them to double-precision. This should
@@ -729,15 +709,10 @@ qelg(out double result, out double abserr)
 		precision mode unless you compile a separate version of the
 		library with HAVE_EXTENDED_PRECISION_REGISTERS turned off. */
 
-
 		protected static double GSL_COERCE_DBL(double x)
 		{
 			return (x);
 		}
-
-
-
-
 
 		/* Main integration function */
 
@@ -1019,7 +994,6 @@ qelg(out double result, out double abserr)
 				workspace.reset_nrmax();
 				extrapolate = false;
 				error_over_large_intervals = errsum;
-
 			}
 			while (iteration < limit);
 
@@ -1082,8 +1056,6 @@ qelg(out double result, out double abserr)
 			if (error_type > 2)
 				error_type--;
 
-
-
 			if (error_type == 0)
 			{
 				return null; // GSL_SUCCESS;
@@ -1116,11 +1088,6 @@ qelg(out double result, out double abserr)
 			{
 				return new GSL_ERROR("could not integrate function", GSL_ERR.GSL_EFAILED, bDebug);
 			}
-
 		}
-
-
 	}
-
-
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -65,6 +60,7 @@ namespace Altaxo.Gui.Worksheet
 		{
 			GuiHelper.Initialize(_guiCommonXColumn, list);
 		}
+
 		public void InitializeYCommonColumns(SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_guiCommonYColumns, list);

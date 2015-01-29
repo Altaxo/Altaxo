@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -31,9 +30,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
 	using Graph.Plot.Data;
-	using Graph.Plot.Groups;
 	using Plot.Data;
-	using Plot.Groups;
 
 	public class FillToCurvePlotStyle
 		:

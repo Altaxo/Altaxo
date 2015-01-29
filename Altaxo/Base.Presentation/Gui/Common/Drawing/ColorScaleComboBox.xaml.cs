@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,23 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public partial class ColorScaleComboBox : DimensionfulQuantityImageComboBox
 	{
-		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { 0.0, 0.125, 0.25, 0.5, 0.625, 0.75, 0.875, 1.0 };
+		private static readonly double[] _initialValues = new double[] { 0.0, 0.125, 0.25, 0.5, 0.625, 0.75, 0.875, 1.0 };
 
 		static ColorScaleComboBox()
 		{
@@ -87,7 +81,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return error == null ? ValidationResult.ValidResult : new ValidationResult(false, error);
 		}
 
-
 		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			base.OnSelectedQuantityChanged(obj, args);
@@ -107,7 +100,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public override string GetItemText(object item)
 		{

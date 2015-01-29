@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,20 +21,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * EndCriteria.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: EndCriteria class inspired by the optimization framework in the QuantLib library
 */
 
 using System;
-using Altaxo.Calc.LinearAlgebra;
+
 namespace Altaxo.Calc.Optimization
 {
-
 	///<summary>Class to define criteria to end optimization</summary>
 	/// <remarks>
 	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
@@ -42,7 +43,11 @@ namespace Altaxo.Calc.Optimization
 	public class EndCriteria : IFormattable
 	{
 		///<summary> Default constructor </summary>
-		public EndCriteria() : this(1000, 1e-8, 10000, 100) { }
+		public EndCriteria()
+			: this(1000, 1e-8, 10000, 100)
+		{
+		}
+
 		public EndCriteria(int maxiteration, double epsilon, int maxfunctionevaluation, int maxstationarypointiterations)
 		{
 			this.maxIteration = maxiteration;
@@ -59,7 +64,7 @@ namespace Altaxo.Calc.Optimization
 		}
 
 		///<summary>Possible criteria to end optimization</summary>
-		///<remarks>Optimization can end because the maximum number of iterations has been reached, 
+		///<remarks>Optimization can end because the maximum number of iterations has been reached,
 		///a stationary point has been reached, or a stationary gradient has been reached</remarks>
 		public enum CriteriaType
 		{
@@ -71,45 +76,61 @@ namespace Altaxo.Calc.Optimization
 
 		///<summary> Maximum number of iterations </summary>
 		public int maxIteration;
+
 		///<summary> Current number of iterations </summary>
 		public int iterationCounter;
+
 		///<summary> Maximum number of function evaluations </summary>
 		public int maxFunctionEvaluation;
+
 		///<summary> Current number of function evaluations </summary>
 		public int functionEvaluationCounter;
+
 		///<summary> Maximum number of gradient evaluations </summary>
 		public int maxGradientEvaluation;
+
 		///<summary> Current number of gradient evaluations </summary>
 		public int gradientEvaluationCounter;
+
 		///<summary> Maximum number of hessian evaluations </summary>
 		public int maxHessianEvaluation;
+
 		///<summary> Current number of hessian evaluations </summary>
 		public int hessianEvaluationCounter;
 
 		///<summary> Minimum Function Epsilon</summary>
 		public double minFunctionEpsilon;
+
 		///<summary> Minimum Gradient Epsilon</summary>
 		public double minGradientEpsilon;
+
 		///<summary> Gradient Epsilon </summary>
 		public double minHessianEpsilon;
 
 		///<summary> Maximun number of iterations at a stationary point</summary>
 		public int maxStationaryPointIterations;
+
 		///<summary> Current number of iterations at a stationary point</summary>
 		public int stationaryPointIterationsCounter;
+
 		///<summary> Maximun number of iterations at a stationary gradient</summary>
 		public int maxStationaryGradientIterations;
+
 		///<summary> Current number of iterations at a stationary gradient</summary>
 		public int stationaryGradientIterationsCounter;
+
 		///<summary> Maximun number of iterations at a stationary hessian</summary>
 		public int maxStationaryHessianIterations;
+
 		///<summary> Current number of iterations at a stationary hessian</summary>
 		public int stationaryHessianIterationsCounter;
+
 		///<summary> </summary>
 		protected bool stationaryCriteria = false;
 
 		///<summary> The criteria that ended optimization</summary>
 		protected CriteriaType endCriteria = CriteriaType.None;
+
 		///<summary>Return the criteria that was satisfied and thus ended optimization</summary>
 		public CriteriaType Criteria
 		{
@@ -134,7 +155,7 @@ namespace Altaxo.Calc.Optimization
 
 		///<summary>Check if the number of function evaluations is less than the maximum </summary>
 		///<remarks>
-		///If the number of function evaluations is equal to or greater than the maximum number of 
+		///If the number of function evaluations is equal to or greater than the maximum number of
 		///function evaluations then the ending criteria is set to <c>CriteriaType.MaximumFunctionEvaluation</c>
 		/// and the function returns true.
 		///</remarks>
@@ -148,7 +169,7 @@ namespace Altaxo.Calc.Optimization
 
 		///<summary>Check if the number of gradient evaluations is less than the maximum </summary>
 		///<remarks>
-		///If the number of gradient evaluations is equal to or greater than the maximum number of 
+		///If the number of gradient evaluations is equal to or greater than the maximum number of
 		///gradient evaluations then the ending criteria is set to <c>CriteriaType.MaximumGradientEvaluation</c>
 		/// and the function returns true.
 		///</remarks>
@@ -162,7 +183,7 @@ namespace Altaxo.Calc.Optimization
 
 		///<summary>Check if the number of hessian evaluations is less than the maximum </summary>
 		///<remarks>
-		///If the number of hessian evaluations is equal to or greater than the maximum number of 
+		///If the number of hessian evaluations is equal to or greater than the maximum number of
 		///hessian evaluations then the ending criteria is set to <c>CriteriaType.MaximumHessianEvaluation</c>
 		/// and the function returns true.
 		///</remarks>
@@ -234,11 +255,10 @@ namespace Altaxo.Calc.Optimization
 			return (test && (stationaryHessianIterationsCounter > maxStationaryHessianIterations));
 		}
 
-
 		///<summary>Check if objective function value is less than the function epsilon</summary>
 		///<remarks>
 		/// If the objective function value is less than the function epsilon and only positive optimization
-		/// is allowed then the ending criteria is set to <c>CriteriaType.FunctionEpsilon</c> and the 
+		/// is allowed then the ending criteria is set to <c>CriteriaType.FunctionEpsilon</c> and the
 		/// function returns true;
 		///</remarks>
 		public bool CheckFunctionEpsilon(double f)
@@ -356,6 +376,5 @@ namespace Altaxo.Calc.Optimization
 			else
 				return "None";
 		}
-
 	}
 }

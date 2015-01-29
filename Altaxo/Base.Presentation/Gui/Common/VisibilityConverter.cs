@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,14 +28,7 @@ using System.Linq;
 using System.Text;
 
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Data;
-
-using Altaxo;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
@@ -71,7 +66,6 @@ namespace Altaxo.Gui.Common
 		}
 	}
 
-
 	/// <summary>
 	/// Converts a boolean value of false to <see cref="Visibility.Collapsed"/> and a value of true to <see cref="Visibility.Visible"/>
 	/// </summary>
@@ -88,7 +82,6 @@ namespace Altaxo.Gui.Common
 			return ((Visibility)value) == Visibility.Visible;
 		}
 	}
-
 
 	/// <summary>
 	/// Converts true to Visibility.Visible and false to Visibility.Hidden.
@@ -108,8 +101,4 @@ namespace Altaxo.Gui.Common
 			return val == Visibility.Visible ? true : false;
 		}
 	}
-
-
-
-
 }

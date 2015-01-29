@@ -22,10 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using Altaxo.Scripting;
 using System;
-using System.Text.RegularExpressions;
 
 namespace Altaxo.Gui.Scripting
 {

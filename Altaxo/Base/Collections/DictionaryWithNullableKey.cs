@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -35,11 +37,13 @@ namespace Altaxo.Collections
 	public class DictionaryWithNullableKey<TKey, TValue> : IDictionary<TKey, TValue>
 	{
 		/// <summary>Underlying dictionary for the normal keys (without the null key).</summary>
-		Dictionary<TKey, TValue> _dict = new Dictionary<TKey, TValue>();
+		private Dictionary<TKey, TValue> _dict = new Dictionary<TKey, TValue>();
+
 		/// <summary>True if the value for the null key is set.</summary>
-		bool _nullValueSet;
+		private bool _nullValueSet;
+
 		/// <summary>Value corresponding to the null key. Only valid if <see cref="_nullValueSet"/> is True.</summary>
-		TValue _nullValue;
+		private TValue _nullValue;
 
 		#region IDictionary<TKey,TValue> Members
 
@@ -130,7 +134,7 @@ namespace Altaxo.Collections
 			}
 		}
 
-		#endregion
+		#endregion IDictionary<TKey,TValue> Members
 
 		#region ICollection<KeyValuePair<TKey,TValue>> Members
 
@@ -179,7 +183,7 @@ namespace Altaxo.Collections
 			return Remove(item.Key);
 		}
 
-		#endregion
+		#endregion ICollection<KeyValuePair<TKey,TValue>> Members
 
 		#region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
@@ -188,7 +192,7 @@ namespace Altaxo.Collections
 			throw new NotImplementedException();
 		}
 
-		#endregion
+		#endregion IEnumerable<KeyValuePair<TKey,TValue>> Members
 
 		#region IEnumerable Members
 
@@ -197,6 +201,6 @@ namespace Altaxo.Collections
 			throw new NotImplementedException();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 	}
 }

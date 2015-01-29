@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,6 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
-
 	/// <summary>
 	/// Implements a list that can be used to navigate forward or backward using stored navigation points.
 	/// </summary>
@@ -36,9 +37,9 @@ namespace Altaxo.Collections
 	/// a list is used, so that removing of navigation points is relatively time consuming.</remarks>
 	public class NavigationList<T> where T : IEquatable<T>
 	{
-		List<T> _list = new List<T>();
-		int _currentNavigationPoint = -1;
-		int _maxNumberOfNavigationPoints = int.MaxValue;
+		private List<T> _list = new List<T>();
+		private int _currentNavigationPoint = -1;
+		private int _maxNumberOfNavigationPoints = int.MaxValue;
 
 		/// <summary>Initializes a new instance of the <see cref="NavigationList&lt;T&gt;"/> class.</summary>
 		public NavigationList()
@@ -88,7 +89,6 @@ namespace Altaxo.Collections
 			return TryNavigateBackward(out point, null, false);
 		}
 
-
 		/// <summary>Tries to go backward in the navigation list to the next valid navigation point.</summary>
 		/// <param name="point">On success, returns a previous navigation point, which is valid.</param>
 		/// <param name="IsStillValidEvaluation">Evaluation function, which tests the navigation points in the list for validity.</param>
@@ -128,7 +128,6 @@ namespace Altaxo.Collections
 		{
 			return TryNavigateForward(out point, null, false);
 		}
-
 
 		/// <summary>Tries to go forward in the navigation list to the next valid navigation point.</summary>
 		/// <param name="point">On success, returns the next navigation point, which is valid.</param>
@@ -182,6 +181,5 @@ namespace Altaxo.Collections
 			_list.Clear();
 			_currentNavigationPoint = 0;
 		}
-
 	}
 }

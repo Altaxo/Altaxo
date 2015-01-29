@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -29,7 +31,6 @@ namespace Altaxo.Calc
 	/// </summary>
 	public class BinaryMath
 	{
-
 		#region Ld
 
 		/// <summary>
@@ -60,7 +61,6 @@ namespace Altaxo.Calc
 			if ((x & 0x00000002) != 0) { r += 1; }
 			return r;
 		}
-
 
 		/// <summary>
 		/// Returns k so that 2^k &lt;= x &lt; 2^(k+1).
@@ -95,7 +95,7 @@ namespace Altaxo.Calc
 			return r;
 		}
 
-		#endregion
+		#endregion Ld
 
 		#region PowerOfTwoOrZero
 
@@ -119,7 +119,6 @@ namespace Altaxo.Calc
 			return IsPowerOfTwoOrZero((int)x);
 		}
 
-
 		/// <summary>
 		/// Return true if number is 0 (!) or a power of two
 		/// </summary>
@@ -140,7 +139,7 @@ namespace Altaxo.Calc
 			return IsPowerOfTwoOrZero((long)x);
 		}
 
-		#endregion
+		#endregion PowerOfTwoOrZero
 
 		#region NonzeroPowerOfTwo
 
@@ -164,9 +163,6 @@ namespace Altaxo.Calc
 			return IsNonzeroPowerOfTwo((int)x);
 		}
 
-	
-
-
 		/// <summary>
 		/// Return true if x &gt; 0 and x is a power of two.
 		/// </summary>
@@ -187,9 +183,7 @@ namespace Altaxo.Calc
 			return IsNonzeroPowerOfTwo((long)x);
 		}
 
-
-
-		#endregion
+		#endregion NonzeroPowerOfTwo
 
 		#region NextPowerOfTwoGreaterOrEqualThan
 
@@ -221,7 +215,6 @@ namespace Altaxo.Calc
 			return i;
 		}
 
-
 		/// <summary>
 		/// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
 		/// </summary>
@@ -250,10 +243,9 @@ namespace Altaxo.Calc
 			return i;
 		}
 
-		#endregion
+		#endregion NextPowerOfTwoGreaterOrEqualThan
 
 		#region Parity calculations
-
 
 		/// <summary>
 		/// Determines, if x contains an odd number of '1' bits.
@@ -266,7 +258,7 @@ namespace Altaxo.Calc
 			xx ^= xx >> 4;
 			xx ^= xx >> 2;
 			xx ^= xx >> 1;
-			return 0 != (xx&1u);
+			return 0 != (xx & 1u);
 		}
 
 		/// <summary>
@@ -291,7 +283,7 @@ namespace Altaxo.Calc
 			xx ^= xx >> 4;
 			xx ^= xx >> 2;
 			xx ^= xx >> 1;
-			return 0 != (xx&1u);
+			return 0 != (xx & 1u);
 		}
 
 		/// <summary>
@@ -316,7 +308,7 @@ namespace Altaxo.Calc
 			x ^= x >> 4;
 			x ^= x >> 2;
 			x ^= x >> 1;
-			return 0 != (x&1u);
+			return 0 != (x & 1u);
 		}
 
 		/// <summary>
@@ -342,7 +334,7 @@ namespace Altaxo.Calc
 			xx ^= xx >> 4;
 			xx ^= xx >> 2;
 			xx ^= xx >> 1;
-			return 0 != (xx&1u);
+			return 0 != (xx & 1u);
 		}
 
 		/// <summary>
@@ -355,6 +347,6 @@ namespace Altaxo.Calc
 			return IsParityOdd((UInt64)x);
 		}
 
-		#endregion
+		#endregion Parity calculations
 	}
 }

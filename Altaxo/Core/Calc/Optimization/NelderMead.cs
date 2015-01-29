@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * NelderMead.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -118,7 +120,7 @@ namespace Altaxo.Calc.Optimization
 			get { return this.x; }
 		}
 
-		///<summary> Create an initial simplex </summary>   
+		///<summary> Create an initial simplex </summary>
 		private DoubleVector[] CreateSimplex(DoubleVector x)
 		{
 			int n = x.Length;
@@ -318,7 +320,5 @@ namespace Altaxo.Calc.Optimization
 			this.iterationGradientNorms_[endCriteria_.iterationCounter] = 2.0 * System.Math.Abs(fx[x.Length - 1] - fx[0]) /
 				(System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + System.Double.Epsilon);
 		}
-
 	}
-
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
-
 
 namespace Altaxo.Calc
 {
 	using LinearAlgebra;
+
 	/// <summary>
 	/// The Kohlrausch function in the frequency domain.
 	/// </summary>
 	public class Kohlrausch
 	{
-
 		#region Real part series
-
 
 		/// <summary>
 		/// Real part of the Fourier transformed derivative of the Kohlrausch function for high frequencies.
@@ -51,7 +50,6 @@ namespace Altaxo.Calc
 			double kfac = 1;
 			double z_pow_minusBetaK = z_pow_minusBeta;
 
-
 			double term1a = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK / kfac;
 			double term1 = term1a * Math.Cos(Math.PI * beta * k * 0.5);
 
@@ -59,7 +57,6 @@ namespace Altaxo.Calc
 
 			for (; ; )
 			{
-
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
 				kfac *= -k;
@@ -93,7 +90,6 @@ namespace Altaxo.Calc
 			double z_pow_minusBeta = Math.Pow(z, -beta);
 			double kfac = 1;
 			double z_pow_minusBetaK = z_pow_minusBeta;
-
 
 			double term1 = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK * Math.Cos(Math.PI * beta * k * 0.5) / kfac;
 
@@ -155,7 +151,6 @@ namespace Altaxo.Calc
 			if (beta < 0.0625)
 				return Re2SmallBeta(beta, z);
 
-
 			int k = 1;
 			double z_pow_2k = z * z;
 			double z_square = z * z;
@@ -207,7 +202,6 @@ namespace Altaxo.Calc
 			}
 			return sum / beta;
 		}
-
 
 		/// <summary>
 		/// Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta&lt;=1/20..
@@ -270,7 +264,7 @@ namespace Altaxo.Calc
 			return (sum / beta) * Math.Exp(ln_scaling);
 		}
 
-		#endregion
+		#endregion Real part series
 
 		#region Imaginary series
 
@@ -288,7 +282,6 @@ namespace Altaxo.Calc
 			double z_pow_minusBeta = Math.Pow(z, -beta);
 			double kfac = 1;
 			double z_pow_minusBetaK = z_pow_minusBeta;
-
 
 			double term1 = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK * Math.Sin(Math.PI * beta * k * 0.5) / kfac;
 
@@ -352,7 +345,6 @@ namespace Altaxo.Calc
 			double kfac = 1;
 			double z_pow_minusBetaK = z_pow_minusBeta;
 
-
 			double term1a = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK / kfac;
 			double term1 = term1a * Math.Sin(Math.PI * beta * k * 0.5);
 
@@ -360,7 +352,6 @@ namespace Altaxo.Calc
 
 			for (; ; )
 			{
-
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
 				kfac *= -k;
@@ -459,8 +450,6 @@ namespace Altaxo.Calc
 		/// the return value here is positive!.</remarks>
 		public static double Im2SmallBeta(double beta, double z)
 		{
-
-
 			int k = 1;
 			double ln_z_pow_2km1 = k * Math.Log(z);
 			double ln_z_square = 2 * Math.Log(z);
@@ -502,7 +491,7 @@ namespace Altaxo.Calc
 			return (sum / beta) * Math.Exp(ln_scaling);
 		}
 
-		#endregion
+		#endregion Imaginary series
 
 		#region Scheduler for real and imaginary part
 
@@ -541,7 +530,6 @@ namespace Altaxo.Calc
 
 				double log_OneMinusRe = _respline.Interpolate(beta, y);
 
-
 				return 1 - Math.Exp(log_OneMinusRe);
 			}
 		}
@@ -573,7 +561,6 @@ namespace Altaxo.Calc
 
 				double log_ar = _imspline.Interpolate(beta, y);
 
-
 				return -beta * Math.Exp(log_ar);
 			}
 		}
@@ -595,7 +582,7 @@ namespace Altaxo.Calc
 			return Complex.FromRealImaginary(Re(beta, w), Im(beta, w));
 		}
 
-		#endregion
+		#endregion Scheduler for real and imaginary part
 
 		#region Miscellaneous
 
@@ -608,6 +595,7 @@ namespace Altaxo.Calc
 		{
 			return 0.60607 * (beta * beta - beta);
 		}
+
 		/// <summary>
 		/// Returns (approximately) the location of the maximum of the imaginary part of the Fourier transformed Kohlrausch function.
 		/// </summary>
@@ -617,6 +605,7 @@ namespace Altaxo.Calc
 		{
 			return GetBetaLnWOfMaximum(beta) / beta;
 		}
+
 		/// <summary>
 		/// Returns (approximately) the location of the maximum of the imaginary part of the Fourier transformed Kohlrausch function.
 		/// </summary>
@@ -640,21 +629,22 @@ namespace Altaxo.Calc
 			return 0.5 * beta * armax;
 		}
 
-
-		#endregion
+		#endregion Miscellaneous
 
 		#region Interpolation
 
-		static Interpolation.BivariateAkimaSpline _imspline;
-		static Interpolation.BivariateAkimaSpline _respline;
-		static void CreateImaginaryPartSpline()
+		private static Interpolation.BivariateAkimaSpline _imspline;
+		private static Interpolation.BivariateAkimaSpline _respline;
+
+		private static void CreateImaginaryPartSpline()
 		{
 			IROVector x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
 			IROVector y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
 			IROMatrix z = MatrixMath.ToROMatrix(_imdata);
 			_imspline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
 		}
-		static void CreateRealPartSpline()
+
+		private static void CreateRealPartSpline()
 		{
 			IROVector x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
 			IROVector y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
@@ -662,7 +652,7 @@ namespace Altaxo.Calc
 			_respline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
 		}
 
-		#endregion
+		#endregion Interpolation
 
 		#region DataField
 
@@ -674,7 +664,7 @@ namespace Altaxo.Calc
 		/// re is the real part of the fourier transformed negative first derivative of the Kohlrausch function.
 		/// (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]].
 		/// </summary>
-		static double[][] _redata = new double[][]{
+		private static double[][] _redata = new double[][]{
 new double[]{
 -148.4131591025766,-146.11222634120347,-143.84696623584259,-141.61682573322432,-139.42126035437516,-137.25973406168575,-135.13171912803952,-133.03669600797051,-130.9741532108186,-128.94358717585138,-126.94450214932196,-124.97641006343288,
 -123.03883041717654,-121.13129015902297,-119.25332357142641,-117.40447215712239,-115.58428452718766,-113.7923162908356,-112.02812994692015,-110.29129477712178,-108.5813867407896,-106.89798837141365,-105.24068867470233,
@@ -1797,12 +1787,12 @@ new double[]{
 -0.69592620217441536,-0.68025112110087371,-0.66481284286798614,-0.649611639826136,-0.63464766921699911,-0.61992097269691315,-0.6054314760842282,-0.59117898933220869,-0.57716320672812882,-0.56338370731826581,-0.54983995555755583,
 -0.53653130218174749,-0.52345698529896556,-0.51061613169669939,-0.49800775835935129,-0.48563077419064038,-0.47348398193434732,-0.46156608028612278,-0.44987566618836511,-0.43841123729950993,-0.42717119462846437,-0.41615384532437161,
 -0.40535740561140454,-0.39478000385786666,-0.38441968376852237,-0.37427440768879244,-0.36434206000922942,-0.35462045065853603,-0.34510731867330413,-0.33580033583263136,-0.3266971103458165,-0.31779519058143996,-0.30909206882629792}
-
     };
 
-		#endregion
+		#endregion RealPart
 
 		#region ImaginaryPart
+
 		/// <summary>
 		/// This field is the logarithm of (im/beta) for beta=0 to 1+1/32 (steps=1/32)
 		/// and for y =-5 to 0.5 in steps of 1/64 with w=Exp(y/beta) -&gt; y = beta*ln(w).
@@ -1810,7 +1800,7 @@ new double[]{
 		/// (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]].
 		/// </summary>
 
-		static double[][] _imdata = new double[][]{
+		private static double[][] _imdata = new double[][]{
 new double[]{
 -142.96157639728716,-140.676268635914,-138.42663353055315,-136.21211802793485,-134.03217764908573,-131.88627635639631,-129.77388642275008,-127.69448830268105,-125.64757050552915,-123.63262947056194,-121.64916944403251,-119.69670235814343,
 -117.77474771188709,-115.88283245373351,-114.02049086613695,-112.18726445183293,-110.38270182189821,-108.60635858554615,-106.85779724163069,-105.13658707183232,-103.44230403550014,-101.77453066612419,-100.13285596941287,
@@ -2933,11 +2923,10 @@ new double[]{
 -0.70010939145646922,-0.69994564552328742,-0.70002413625650328,-0.70034512138884619,-0.7009087402088322,-0.70171501308560469,-0.70276384122468072,-0.70405500665620158,-0.7055881724563281,-0.7073628832014528,-0.70937856565393487,
 -0.71163452967710117,-0.71412996937630757,-0.71686396446192513,-0.71983548182921442,-0.723043377349178,-0.72648639786365043,-0.73016318337709685,-0.734072269436852,-0.73821208969284668,-0.74258097862724071,-0.7471771744438187,
 -0.75199882210649982,-0.75704397651588229,-0.7623106058123762,-0.76779659479418194,-0.77349974843814573,-0.7794177955113688,-0.78554839226135653,-0.79188912617247809,-0.79843751977654986,-0.80519103450546792,-0.81214707457398361}
-
     };
 
-		#endregion
+		#endregion ImaginaryPart
 
-		#endregion
+		#endregion DataField
 	}
 }

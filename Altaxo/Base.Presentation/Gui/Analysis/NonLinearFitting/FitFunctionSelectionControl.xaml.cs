@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,25 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Collections;
-using Altaxo.Main.Services;
-using Altaxo.Graph;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -46,23 +41,27 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	[UserControlForController(typeof(IFitFunctionSelectionViewEventSink))]
 	public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
 	{
-		IFitFunctionSelectionViewEventSink _controller;
-
+		private IFitFunctionSelectionViewEventSink _controller;
 
 		#region Node classes
 
-		enum RootNodeType { RootNodeBuiltin, RootNodeDocument, RootNodeUser };
+		private enum RootNodeType { RootNodeBuiltin, RootNodeDocument, RootNodeUser };
 
-		class MyNGTreeNode : NGTreeNode
+		private class MyNGTreeNode : NGTreeNode
 		{
-			public MyNGTreeNode(string text) : base(text) { }
+			public MyNGTreeNode(string text)
+				: base(text)
+			{
+			}
 
 			public virtual bool IsMenuRemoveEnabled { get { return false; } }
+
 			public virtual bool IsMenuEditEnabled { get { return false; } }
+
 			public object MySelf { get { return this; } }
 		}
 
-		class RootNode : MyNGTreeNode
+		private class RootNode : MyNGTreeNode
 		{
 			public RootNodeType RootNodeType;
 
@@ -77,22 +76,30 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		class CategoryNode : MyNGTreeNode
+		private class CategoryNode : MyNGTreeNode
 		{
-			public CategoryNode(string text) : base(text) { }
+			public CategoryNode(string text)
+				: base(text)
+			{
+			}
 
 			public string NodeType { get { return "CategoryNode"; } }
 		}
 
-		class LeafNode : MyNGTreeNode
+		private class LeafNode : MyNGTreeNode
 		{
-			public LeafNode(string text) : base(text) { }
+			public LeafNode(string text)
+				: base(text)
+			{
+			}
+
 			public virtual string NodeType { get { return "LeafNode"; } }
 
-			bool _canBeRemoved;
-			bool _canBeEdited;
+			private bool _canBeRemoved;
+			private bool _canBeEdited;
 
 			public override bool IsMenuEditEnabled { get { return _canBeEdited; } }
+
 			public override bool IsMenuRemoveEnabled { get { return _canBeRemoved; } }
 
 			public void SetMenuEnabled(bool canBeEdited, bool canBeRemoved)
@@ -100,11 +107,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_canBeEdited = canBeEdited;
 				_canBeRemoved = canBeRemoved;
 			}
-
 		}
-		class BuiltinLeafNode : LeafNode
+
+		private class BuiltinLeafNode : LeafNode
 		{
 			public object FunctionType;
+
 			public override string NodeType { get { return "BuiltinLeafNode"; } }
 
 			public BuiltinLeafNode(string text, object functionType)
@@ -115,11 +123,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		class DocumentLeafNode : LeafNode
+		private class DocumentLeafNode : LeafNode
 		{
 			public Altaxo.Main.Services.IFitFunctionInformation FunctionInstance;
-			public override string NodeType { get { return "DocumentLeafNode"; } }
 
+			public override string NodeType { get { return "DocumentLeafNode"; } }
 
 			public DocumentLeafNode(string text, Altaxo.Main.Services.IFitFunctionInformation func)
 				: base(text)
@@ -129,11 +137,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		class UserFileLeafNode : LeafNode
+		private class UserFileLeafNode : LeafNode
 		{
 			public Altaxo.Main.Services.FileBasedFitFunctionInformation FunctionInfo;
-			public override string NodeType { get { return "UserFileLeafNode"; } }
 
+			public override string NodeType { get { return "UserFileLeafNode"; } }
 
 			public UserFileLeafNode(string text, Altaxo.Main.Services.FileBasedFitFunctionInformation func)
 				: base(text)
@@ -143,8 +151,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		#endregion
-
+		#endregion Node classes
 
 		public FitFunctionSelectionControl()
 		{
@@ -152,6 +159,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		}
 
 		private System.Drawing.Graphics _rtfGraphics;
+
 		private void _twFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var node = e.NewValue as NGTreeNode;
@@ -161,7 +169,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 			if (_controller != null)
 				_controller.EhView_SelectionChanged(fitInfo);
-
 
 			if (fitInfo != null)
 			{
@@ -175,7 +182,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				this._rtfDescription.SelectAll();
 				this._rtfDescription.Selection.Load(stream, DataFormats.Rtf);
 			}
-
 		}
 
 		#region IFitFunctionSelectionView
@@ -197,7 +203,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			this._twFitFunctions.ItemsSource = null;
 		}
 
-
 		public void AddFitFunctionList(string rootname, Altaxo.Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle)
 		{
 			if (_twFitFunctions.ItemsSource == null)
@@ -206,8 +211,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 			var mainRoot = (NGTreeNodeCollection)_twFitFunctions.ItemsSource;
 
-
-
 			// The key of the entries is the FitFunctionAttribute, the value is the type of the fitting function
 			RootNode rnode = new RootNode(rootname, RootNodeType.RootNodeBuiltin);
 			mainRoot.Add(rnode);
@@ -215,7 +218,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 			foreach (Altaxo.Main.Services.IFitFunctionInformation entry in info)
 			{
-
 				string[] path = entry.Category.Split(new char[] { '\\', '/' });
 
 				var where = root;
@@ -237,10 +239,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					case FitFunctionContextMenuStyle.None:
 						leaf.SetMenuEnabled(false, false);
 						break;
+
 					case FitFunctionContextMenuStyle.EditAndDelete:
 						//	leaf.ContextMenu = _userFileLeafNodeContextMenu;
 						leaf.SetMenuEnabled(true, true);
 						break;
+
 					case FitFunctionContextMenuStyle.Edit:
 						//	leaf.ContextMenu = _appFileLeafNodeContextMenu;
 						leaf.SetMenuEnabled(true, false);
@@ -248,12 +252,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				}
 				where.Add(leaf);
 			}
-
-
-
 		}
 
-		NGTreeNode GetPathNode(NGTreeNodeCollection coll, string path)
+		private NGTreeNode GetPathNode(NGTreeNodeCollection coll, string path)
 		{
 			foreach (NGTreeNode node in coll)
 			{
@@ -277,7 +278,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				return NamedColors.Transparent;
 		}
 
-		#endregion
+		#endregion IFitFunctionSelectionView
 
 		private void EhRemoveItem(object sender, RoutedEventArgs e)
 		{

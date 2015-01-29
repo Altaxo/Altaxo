@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -42,8 +44,9 @@ namespace Altaxo.Calc.Integration
 	public class QawcIntegration : IntegrationBase
 	{
 		#region offical C# interface
-		bool _debug;
-		gsl_integration_workspace _workSpace;
+
+		private bool _debug;
+		private gsl_integration_workspace _workSpace;
 
 		/// <summary>
 		/// Creates an instance of this integration class with a default integration rule and default debug flag setting.
@@ -52,7 +55,6 @@ namespace Altaxo.Calc.Integration
 			: this(DefaultDebugFlag)
 		{
 		}
-
 
 		/// <summary>
 		/// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
@@ -87,8 +89,6 @@ namespace Altaxo.Calc.Integration
 			return Integrate(f, a, b, c, epsabs, epsrel, limit, _debug, out result, out abserr);
 		}
 
-
-
 		public static GSL_ERROR
 		Integration(Func<double, double> f,
 				 double a, double b, double c,
@@ -119,7 +119,6 @@ namespace Altaxo.Calc.Integration
 			return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, out result, out abserr);
 		}
 
-
 		public static GSL_ERROR
 	 Integration(Func<double, double> f,
 				double a, double b, double c,
@@ -142,33 +141,31 @@ namespace Altaxo.Calc.Integration
 			object tempStorage = null;
 			return Integration(f, a, b, c, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
 		}
-		#endregion
 
-
+		#endregion offical C# interface
 
 		#region qawc.c
+
 		/* integration/qawc.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-
-		static GSL_ERROR
+		private static GSL_ERROR
 		gsl_integration_qawc(Func<double, double> f,
 													double a, double b, double c,
 													double epsabs, double epsrel,
@@ -325,7 +322,6 @@ namespace Altaxo.Calc.Integration
 				workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
 
 				iteration++;
-
 			}
 			while (iteration < limit && 0 == error_type && errsum > tolerance);
 
@@ -352,39 +348,38 @@ namespace Altaxo.Calc.Integration
 			{
 				return new GSL_ERROR("could not integrate function", GSL_ERR.GSL_EFAILED, bDebug);
 			}
-
 		}
-		#endregion
+
+		#endregion qawc.c
+
 		#region qc25c.c
+
 		/* integration/qc25c.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-		struct fn_cauchy_params
+		private struct fn_cauchy_params
 		{
 			public Func<double, double> function;
 			public double singularity;
 		}
 
-
-
-
-		static void
+		private static void
 		qc25c(Func<double, double> f, double a, double b, double c,
 					 out double result, out double abserr, out bool err_reliable)
 		{
@@ -399,7 +394,6 @@ namespace Altaxo.Calc.Integration
 				fn_params.singularity = c;
 
 				Func<double, double> weighted_function = delegate(double t) { return fn_cauchy(t, fn_params); };
-
 
 				QK15.Integration(weighted_function, a, b, out result, out abserr,
 															out resabs, out resasc);
@@ -443,7 +437,7 @@ namespace Altaxo.Calc.Integration
 			}
 		}
 
-		static double
+		private static double
 		fn_cauchy(double x, fn_cauchy_params p)
 		{
 			Func<double, double> f = p.function;
@@ -451,7 +445,7 @@ namespace Altaxo.Calc.Integration
 			return f(x) / (x - c);
 		}
 
-		static void
+		private static void
 		compute_moments(double cc, double[] moment)
 		{
 			int k;
@@ -483,7 +477,6 @@ namespace Altaxo.Calc.Integration
 			}
 		}
 
-		#endregion
-
+		#endregion qc25c.c
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-
-using System.IO;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -35,21 +36,20 @@ namespace Altaxo.Gui.Pads.FileBrowser
 	public interface IFileTreeView
 	{
 		void Initialize_FolderTree(NGTreeNodeCollection nodes);
+
 		event Action<NGTreeNode> FolderTreeNodeSelected;
 	}
 
-	#endregion
+	#endregion Interfaces
 
 	public class FileSystemTreeController
 	{
 		#region TreeNode
 
-		class TreeNode : NGTreeNode
+		private class TreeNode : NGTreeNode
 		{
-			int _imageIndex;
-			int _selectedImageIndex;
-
-
+			private int _imageIndex;
+			private int _selectedImageIndex;
 
 			public TreeNode(string text, bool lazyLoad)
 				: base(lazyLoad)
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 			public override int ImageIndex
 			{
-				get { return _isSelected ? _selectedImageIndex :  _imageIndex; }
+				get { return _isSelected ? _selectedImageIndex : _imageIndex; }
 				set { _imageIndex = value; }
 			}
 
@@ -110,7 +110,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				}
 			}
 
-
 			#region Population functions
 
 			private void PopulateSubDirectory(string fullPath)
@@ -130,7 +129,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 					return;
 				}
 
-
 				foreach (string fulldir in directories)
 				{
 					FileAttributes attr = FileAttributes.Normal;
@@ -144,7 +142,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 					if ((attr & FileAttributes.Hidden) == 0)
 					{
 						string dir = System.IO.Path.GetFileName(fulldir);
-						TreeNode node = new TreeNode(dir,true)
+						TreeNode node = new TreeNode(dir, true)
 						{
 							Tag = fulldir,
 							ImageIndex = 0,
@@ -153,23 +151,19 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 						Nodes.Add(node);
 					}
-
 				}
 			}
 
-			#endregion
-
+			#endregion Population functions
 		}
 
+		#endregion TreeNode
 
-		#endregion
-
-		IFileTreeView _view;
-		NGTreeNode _rootNode;
-		NGTreeNodeCollection Nodes;
+		private IFileTreeView _view;
+		private NGTreeNode _rootNode;
+		private NGTreeNodeCollection Nodes;
 
 		public event Action<string> SelectedPathChanged;
-
 
 		public FileSystemTreeController()
 		{
@@ -180,17 +174,13 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			Initialize(true);
 		}
 
-	
-
-	
-
-		void Initialize(bool initData)
+		private void Initialize(bool initData)
 		{
 			if (initData)
 			{
 				Nodes.Clear();
 
-				TreeNode rootNode = new TreeNode(Path.GetFileName(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)),false)
+				TreeNode rootNode = new TreeNode(Path.GetFileName(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)), false)
 				{
 					ImageIndex = 6,
 					SelectedImageIndex = 6,
@@ -198,7 +188,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				};
 				Nodes.Add(rootNode);
 
-				TreeNode myFilesNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyDocuments"),true)
+				TreeNode myFilesNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyDocuments"), true)
 				{
 					ImageIndex = 7,
 					SelectedImageIndex = 7
@@ -215,7 +205,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 				rootNode.Nodes.Add(myFilesNode);
 
-				TreeNode computerNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyComputer"),false)
+				TreeNode computerNode = new TreeNode(Current.ResourceService.GetString("MainWindow.Windows.FileScout.MyComputer"), false)
 				{
 					ImageIndex = 8,
 					SelectedImageIndex = 8
@@ -231,7 +221,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 				rootNode.Nodes.Add(computerNode);
 
-
 				foreach (DriveInfo info in DriveInfo.GetDrives())
 				{
 					string text = info.Name.Substring(0, 2);
@@ -241,35 +230,41 @@ namespace Altaxo.Gui.Pads.FileBrowser
 						case DriveType.Removable:
 							text += " (${res:MainWindow.Windows.FileScout.DriveType.Removeable})";
 							break;
+
 						case DriveType.Fixed:
 							text += " (${res:MainWindow.Windows.FileScout.DriveType.Fixed})";
 							break;
+
 						case DriveType.CDRom:
 							text += " (${res:MainWindow.Windows.FileScout.DriveType.CD})";
 							break;
+
 						case DriveType.Network:
 							text += " (${res:MainWindow.Windows.FileScout.DriveType.Remote})";
 							break;
 					}
 					text = ICSharpCode.Core.StringParser.Parse(text);
 
-
-					TreeNode node = new TreeNode(text,true);
+					TreeNode node = new TreeNode(text, true);
 					node.Tag = info;
 					switch (info.DriveType)
 					{
 						case DriveType.Removable:
 							node.ImageIndex = node.SelectedImageIndex = 2;
 							break;
+
 						case DriveType.Fixed:
 							node.ImageIndex = node.SelectedImageIndex = 3;
 							break;
+
 						case DriveType.CDRom:
 							node.ImageIndex = node.SelectedImageIndex = 4;
 							break;
+
 						case DriveType.Network:
 							node.ImageIndex = node.SelectedImageIndex = 5;
 							break;
+
 						default:
 							node.ImageIndex = node.SelectedImageIndex = 3;
 							break;
@@ -280,7 +275,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 				foreach (string directory in Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)))
 				{
-					TreeNode node = new TreeNode(Path.GetFileName(directory),true)
+					TreeNode node = new TreeNode(Path.GetFileName(directory), true)
 					{
 						Tag = directory,
 						ImageIndex = 0,
@@ -293,16 +288,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
 				computerNode.IsExpanded = true;
 			}
 
-
 			if (null != _view)
 			{
 				_view.Initialize_FolderTree(Nodes);
 			}
 		}
-
-
-
-
 
 		public object ViewObject
 		{
@@ -327,17 +317,13 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			}
 		}
 
-		void EhView_FolderTreeNodeSelected(NGTreeNode obj)
+		private void EhView_FolderTreeNodeSelected(NGTreeNode obj)
 		{
 			var node = obj as TreeNode;
 			string path = node == null ? null : node.FullPath;
 
-			if (null != this.SelectedPathChanged && path!=null)
+			if (null != this.SelectedPathChanged && path != null)
 				SelectedPathChanged(path);
-
-
 		}
-
-
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,135 +19,121 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using NUnit.Framework;
+#endregion Copyright
+
 using Altaxo.Calc.Fourier;
+using NUnit.Framework;
+using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
+	[TestFixture]
+	public class TestNativeFFT
+	{
+		private const int nLowerLimit = 5;
+		private const int nUpperLimit = 100;
+		private const double maxTolerableEpsPerN = 1E-15;
 
+		private SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
 
-  [TestFixture]
-  public class TestNativeFFT
-  {
-    const int nLowerLimit=5;
-    const int nUpperLimit=100;
-    const double maxTolerableEpsPerN=1E-15;
+		[Test]
+		public void TestZero()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestZero(i);
+		}
 
-    SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
- 
+		[Test]
+		public void TestReOne_ZeroPos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_ZeroPos(i);
+		}
 
-  
+		[Test]
+		public void TestImOne_ZeroPos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestImOne_ZeroPos(i);
+		}
 
-    [Test]
-    public void TestZero()
-    {
-      
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestZero(i);
-    }
+		[Test]
+		public void TestReOne_OnePos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_OnePos(i);
+		}
 
-    [Test]
-    public void TestReOne_ZeroPos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_ZeroPos(i);
-    }
+		[Test]
+		public void TestImOne_OnePos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestImOne_OnePos(i);
+		}
 
-    [Test]
-    public void TestImOne_ZeroPos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestImOne_ZeroPos(i);
-    }
+		[Test]
+		public void TestReImOne_RandomPos()
+		{
+			double oldTolerance = _test.SetTolerance(1E-14);
 
-    [Test]
-    public void TestReOne_OnePos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_OnePos(i);
-    }
-    
-    [Test]
-    public void TestImOne_OnePos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestImOne_OnePos(i);
-    }
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReImOne_RandomPos(i, 5);
 
-    [Test]
-    public void TestReImOne_RandomPos()
-    {
-      double oldTolerance = _test.SetTolerance(1E-14);
+			_test.SetTolerance(oldTolerance);
+		}
+	}
 
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReImOne_RandomPos(i,5);
+	[TestFixture]
+	public class TestNativeRealFFT
+	{
+		private const int nLowerLimit = 5;
+		private const int nUpperLimit = 100;
+		private const double maxTolerableEpsPerN = 1E-15;
 
-      _test.SetTolerance(oldTolerance);
-    }
+		private RealFFTTests _test = new RealFFTTests(new RealFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
 
-  }
+		[Test]
+		public void Test01Zero()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestZero(i);
+		}
 
+		[Test]
+		public void Test02ReOne_ZeroPos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_ZeroPos(i);
+		}
 
-  [TestFixture]
-  public class TestNativeRealFFT
-  {
-    const int nLowerLimit=5;
-    const int nUpperLimit=100;
-    const double maxTolerableEpsPerN=1E-15;
+		[Test]
+		public void Test03ReOne_OnePos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_OnePos(i);
+		}
 
-    RealFFTTests _test = new RealFFTTests(new RealFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
- 
+		[Test]
+		public void Test04ReOne_RandomPos()
+		{
+			double oldTolerance = _test.SetTolerance(1E-14);
 
-    [Test]
-    public void Test01Zero()
-    {
-      
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestZero(i);
-    }
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_RandomPos(i, 5);
 
-    [Test]
-    public void Test02ReOne_ZeroPos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_ZeroPos(i);
-    }
+			_test.SetTolerance(oldTolerance);
+		}
 
-  
+		[Test]
+		public void Test05ReRandomValues()
+		{
+			double oldTolerance = _test.SetTolerance(1E-14);
 
-    [Test]
-    public void Test03ReOne_OnePos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_OnePos(i);
-    }
-    
-  
-    [Test]
-    public void Test04ReOne_RandomPos()
-    {
-      double oldTolerance = _test.SetTolerance(1E-14);
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReRandomValues(i);
 
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_RandomPos(i,5);
-
-      _test.SetTolerance(oldTolerance);
-    }
-
-    [Test]
-    public void Test05ReRandomValues()
-    {
-      double oldTolerance = _test.SetTolerance(1E-14);
-
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReRandomValues(i);
-
-      _test.SetTolerance(oldTolerance);
-    }
-
-  }
-
+			_test.SetTolerance(oldTolerance);
+		}
+	}
 }

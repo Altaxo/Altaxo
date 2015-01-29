@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 /*
  * BSD Licence:
  * Copyright (c) 2001, 2002 Ben Houston [ ben@exocortex.org ]
  * Exocortex Technologies [ www.exocortex.org ]
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, 
+ * 1. Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  * 3. Neither the name of the <ORGANIZATION> nor the names of its contributors
  * may be used to endorse or promote products derived from this software
@@ -44,19 +47,17 @@
  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-
 
 using System;
 using System.Diagnostics;
 
 namespace Altaxo.Calc
 {
-
 	// Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
 	// Version: May 4, 2002
 
@@ -65,7 +66,6 @@ namespace Altaxo.Calc
 	/// </summary>
 	public class ComplexArray
 	{
-
 		//---------------------------------------------------------------------------------------------
 
 		private ComplexArray()
@@ -131,6 +131,7 @@ namespace Altaxo.Calc
 			}
 			workspace = _workspaceF;
 		}
+
 		static private void UnlockWorkspaceF(ref ComplexFloat[] workspace)
 		{
 			Debug.Assert(_workspaceF == workspace);
@@ -221,6 +222,7 @@ namespace Altaxo.Calc
 				maximum = Math.Max(temp, maximum);
 			}
 		}
+
 		/// <summary>
 		/// Get the range of element lengths
 		/// </summary>
@@ -253,16 +255,19 @@ namespace Altaxo.Calc
 					newArray[i] = (double) array[i].GetModulus();
 				}
 				break;
+
 			case ConversionStyle.Real:
 				for( int i = 0; i < array.Length; i ++ ) {
 					newArray[i] = (double) array[i].Re;
 				}
 				break;
+
 			case ConversionStyle.Imaginary:
 				for( int i = 0; i < array.Length; i ++ ) {
 					newArray[i] = (double) array[i].Im;
 				}
 				break;
+
 			default:
 				Debug.Assert( false );
 				break;
@@ -393,6 +398,7 @@ namespace Altaxo.Calc
 				array[i] *= scale;
 			}
 		}
+
 		/// <summary>
 		///  Multiply each element in the array by a specific value
 		/// </summary>
@@ -428,8 +434,9 @@ namespace Altaxo.Calc
 				array[i] *= scale;
 			}
 		}
+
 		/// <summary>
-		/// Multiply each element in the array by a specific value 
+		/// Multiply each element in the array by a specific value
 		/// </summary>
 		/// <param name="array"></param>
 		/// <param name="scale"></param>
@@ -463,8 +470,9 @@ namespace Altaxo.Calc
 				array[i] *= scale;
 			}
 		}
+
 		/// <summary>
-		/// Multiply each element in the array by a specific value 
+		/// Multiply each element in the array by a specific value
 		/// </summary>
 		/// <param name="array"></param>
 		/// <param name="scale"></param>
@@ -498,8 +506,9 @@ namespace Altaxo.Calc
 				array[i] *= scale;
 			}
 		}
+
 		/// <summary>
-		/// Multiply each element in the array by a specific value 
+		/// Multiply each element in the array by a specific value
 		/// </summary>
 		/// <param name="array"></param>
 		/// <param name="scale"></param>
@@ -529,6 +538,7 @@ namespace Altaxo.Calc
 		{
 			ComplexArray.Multiply(target, rhs, target);
 		}
+
 		/// <summary>
 		/// Multiply each element in lhs array with corresponding element in rhs array and
 		/// put product in result array
@@ -560,6 +570,7 @@ namespace Altaxo.Calc
 		{
 			ComplexArray.Multiply(target, rhs, target);
 		}
+
 		/// <summary>
 		/// Multiply each element in lhs array with corresponding element in rhs array and
 		/// put product in result array
@@ -593,6 +604,7 @@ namespace Altaxo.Calc
 		{
 			ComplexArray.Divide(target, rhs, target);
 		}
+
 		/// <summary>
 		/// Divide each element in lhs array with corresponding element in rhs array and
 		/// put product in result array
@@ -624,6 +636,7 @@ namespace Altaxo.Calc
 		{
 			ComplexArray.Divide(target, rhs, target);
 		}
+
 		/// <summary>
 		/// Divide each element in lhs array with corresponding element in rhs array and
 		/// put product in result array
@@ -661,7 +674,7 @@ namespace Altaxo.Calc
 
 			ComplexFloat[]  workspace = null;
 			ComplexArray.LockWorkspaceF( size.GetTotalLength(), ref workspace );
-      
+
 			for( int z = 0; z < size.Depth; z ++ ) {
 				for( int y = 0; y < size.Height; y ++ ) {
 					int xyzOffset = 0 + y * size.Width + z * size.Width * size.Height;
@@ -678,7 +691,6 @@ namespace Altaxo.Calc
 
 			ComplexArray.UnlockWorkspaceF( ref workspace );
 		}  */
-
 
 		/// <summary>
 		/// Copy an array
@@ -779,6 +791,5 @@ namespace Altaxo.Calc
 		}
 
 		//----------------------------------------------------------------------------------------
-
 	}
 }

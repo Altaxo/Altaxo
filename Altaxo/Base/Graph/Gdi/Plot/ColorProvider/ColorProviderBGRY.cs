@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,32 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
 	public class ColorProviderBGRY : ColorProviderBase
 	{
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorProviderBGRY), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				ColorProviderBGRY s = (ColorProviderBGRY)obj;
 				info.AddBaseValueEmbedded(s, typeof(ColorProviderBase));
-
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				ColorProviderBGRY s = null != o ? (ColorProviderBGRY)o : new ColorProviderBGRY();
 				info.GetBaseValueEmbedded(s, typeof(ColorProviderBase), parent);
 
@@ -51,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
@@ -63,7 +64,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			const int ramp = 255 * 5;
 
 			int val = 0;
-
 
 			relVal = 0.1 + relVal * 0.8; // squeeze relVal a little not to have black at one end and white at the other
 			if (relVal <= 0.4)
@@ -106,5 +106,4 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			return result;
 		}
 	}
-
 }

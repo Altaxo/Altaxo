@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -35,8 +35,8 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 	public class FileBrowserController
 	{
-		FileSystemTreeController _treeController;
-		FileListController _listController;
+		private FileSystemTreeController _treeController;
+		private FileListController _listController;
 
 		public FileBrowserController(IFileTreeView treeView, IFileListView listView)
 		{
@@ -49,10 +49,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			_treeController.SelectedPathChanged += EhTreeController_SelectedPathChanged;
 		}
 
-		void EhTreeController_SelectedPathChanged(string path)
+		private void EhTreeController_SelectedPathChanged(string path)
 		{
 			_listController.ShowFilesInPath(path);
 		}
-
 	}
 }

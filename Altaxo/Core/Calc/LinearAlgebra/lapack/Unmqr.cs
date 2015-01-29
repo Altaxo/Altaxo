@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Unmqr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Unmqr {
-    private  Unmqr() {}                           
+    private  Unmqr() {}
     private static void ArgumentCheck(Side side, int m, int n, int k, Object A, int lda, Object tau, Object C, int ldc) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -74,7 +74,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       }
       if ( ldc < System.Math.Max(1,m) ) {
         throw new ArgumentException("ldc must be at least max(1,m)", "ldc");
-      }     
+      }
     }
 
     internal static int Compute( Side side, Transpose trans, int m, int n, int k, ComplexFloat[] A, int lda, ComplexFloat[] tau, ComplexFloat[] C, int ldc  ){

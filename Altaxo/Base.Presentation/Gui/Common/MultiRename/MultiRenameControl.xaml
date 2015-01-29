@@ -1,39 +1,38 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Common.MultiRename.MultiRenameControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             >
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*" MinHeight="40"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
+			<RowDefinition Height="*" MinHeight="40" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ListView x:Name="_guiItemList" Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+		<ListView x:Name="_guiItemList" Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Auto" />
 		<GroupBox Header="Pattern" Grid.Row="2">
-		<TextBox x:Name="_guiRenameText"  TextChanged="EhRenameTextChanged"/>
+			<TextBox x:Name="_guiRenameText"  TextChanged="EhRenameTextChanged" />
 		</GroupBox>
 		<Expander Header="Available shortcuts" Grid.Row="4">
 			<ListView x:Name="_guiAvailableShortcuts">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Text}"/>
-						<GridViewColumn Header="Shortcut" DisplayMemberBinding="{Binding Text1}"/>
-						<GridViewColumn Header="Description" DisplayMemberBinding="{Binding Text2}"/>
+						<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Text}" />
+						<GridViewColumn Header="Shortcut" DisplayMemberBinding="{Binding Text1}" />
+						<GridViewColumn Header="Description" DisplayMemberBinding="{Binding Text2}" />
 					</GridView>
 				</ListView.View>
 			</ListView>
 		</Expander>
 		<ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto">
-		<Expander Header="Syntax">
-			<StackPanel Orientation="Vertical" Margin="20,0,0,0">
-				<Expander Header="Numbers">
+			<Expander Header="Syntax">
+				<StackPanel Orientation="Vertical" Margin="20,0,0,0">
+					<Expander Header="Numbers">
 						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>
 								In most cases a shortcut [C] is provided, which represents the position of the item in the list. Assuming that the number shortcut used here is [C] for example, and that the shortcut's value is 42, the syntax for number shortcuts is:
@@ -56,9 +55,9 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-				</Expander>
+					</Expander>
 
-				<Expander Header="Strings">
+					<Expander Header="Strings">
 						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>
 								In most cases a shortcut [N] is provided, which represents the full name of the item (a string). Assuming that the string shortcut used here is [N] for example, and that the shortcut's value is "Hello", the syntax for string shortcuts is:
@@ -86,10 +85,10 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-				</Expander>
-				<Expander Header="DateTime">
+					</Expander>
+					<Expander Header="DateTime">
 						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
-							<Paragraph>In most cases a shortcut [CD] is provided, which represents the creation date of the item. Assuming that the string shortcut used here is [CD] for example, 
+							<Paragraph>In most cases a shortcut [CD] is provided, which represents the creation date of the item. Assuming that the string shortcut used here is [CD] for example,
 								that the shortcut's date value is "2011-09-17 21:50:30" of UTC time, and the timezone is +1h UTC, the syntax for string shortcuts is:</Paragraph>
 							<List>
 								<ListItem>
@@ -103,7 +102,8 @@
 									</Paragraph>
 									<List>
 										<ListItem>
-											<Paragraph>yyyy → year (4 digits); yy → year (2 digits)</Paragraph></ListItem>
+											<Paragraph>yyyy → year (4 digits); yy → year (2 digits)</Paragraph>
+										</ListItem>
 										<ListItem>
 											<Paragraph>MM → month</Paragraph>
 										</ListItem>
@@ -133,8 +133,8 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-				</Expander>
-				<Expander Header="Array">
+					</Expander>
+					<Expander Header="Array">
 						<FlowDocument Language="en-US" IsHyphenationEnabled="True">
 							<Paragraph>
 								Arrays of string are used for instance, when a full path name is split into the separate folder names. In most cases, for items that can have a full name (e.g. tables or graphs), a shortcut [PA] is provided,
@@ -151,7 +151,7 @@
 									<Paragraph>[PA"quoted_string"] includes all of the individual pieces, separated by the provided string argument. To include a backslash in the string argument, use
 									a double backslash ("\\", to include a quote use an escaped quote ("\"").</Paragraph>
 									<Paragraph>Examples:</Paragraph>
-									<Paragraph>[PA"\\"] → "foo\bar\tro" </Paragraph>
+									<Paragraph>[PA"\\"] → "foo\bar\tro"</Paragraph>
 									<Paragraph>[PA"\""] → "foo"bar"tro"</Paragraph>
 									<Paragraph>[PA"_,_"] → "foo_,_bar_,_tro"</Paragraph>
 									<Paragraph>[PA""] → "foobartro"</Paragraph>
@@ -177,9 +177,9 @@
 								</ListItem>
 							</List>
 						</FlowDocument>
-				</Expander>
-			</StackPanel>
-		</Expander>
+					</Expander>
+				</StackPanel>
+			</Expander>
 		</ScrollViewer>
 	</Grid>
 </UserControl>

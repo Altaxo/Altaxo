@@ -23,7 +23,7 @@
 // making a combined work based on this library.  Thus, the terms and
 // conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give you
 // permission to link this library with independent modules to produce an
 // executable, regardless of the license terms of these independent
@@ -38,14 +38,14 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Checksums 
+namespace ICSharpCode.SharpZipLib.Checksums
 {
 	/// <summary>
 	/// Bzip2 checksum algorithm
 	/// </summary>
 	public class StrangeCRC : IChecksum
 	{
-		readonly static uint[] crc32Table = {
+		private static readonly uint[] crc32Table = {
 			0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9,
 			0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
 			0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
@@ -111,13 +111,13 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,
 			0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 		};
-		
-		int globalCrc;
+
+		private int globalCrc;
 
 		/// <summary>
 		/// Initialise a default instance of <see cref="StrangeCRC"></see>
-		/// </summary>	
-		public StrangeCRC() 
+		/// </summary>
+		public StrangeCRC()
 		{
 			Reset();
 		}
@@ -133,12 +133,14 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// Get the current Crc value.
 		/// </summary>
-		public long Value {
-			get {
+		public long Value
+		{
+			get
+			{
 				return ~globalCrc;
 			}
 		}
-		
+
 		/// <summary>
 		/// Update the Crc value.
 		/// </summary>
@@ -146,7 +148,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		public void Update(int value)
 		{
 			int temp = (globalCrc >> 24) ^ value;
-			if (temp < 0) {
+			if (temp < 0)
+			{
 				temp = 256 + temp;
 			}
 			globalCrc = unchecked((int)((globalCrc << 8) ^ crc32Table[temp]));
@@ -158,13 +161,14 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <param name="buffer">The buffer containing data to update the crc with.</param>
 		public void Update(byte[] buffer)
 		{
-			if (buffer == null) {
+			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
 			}
-			
+
 			Update(buffer, 0, buffer.Length);
 		}
-		
+
 		/// <summary>
 		/// Update Crc based on a portion of a block of data
 		/// </summary>
@@ -173,20 +177,21 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <param name="count">number of bytes to use</param>
 		public void Update(byte[] buffer, int offset, int count)
 		{
-			if (buffer == null) {
+			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
 			}
-			
-			if ( offset < 0 )
+
+			if (offset < 0)
 			{
 #if NETCF_1_0
 				throw new ArgumentOutOfRangeException("offset");
 #else
 				throw new ArgumentOutOfRangeException("offset", "cannot be less than zero");
-#endif				
+#endif
 			}
 
-			if ( count < 0 )
+			if (count < 0)
 			{
 #if NETCF_1_0
 				throw new ArgumentOutOfRangeException("count");
@@ -195,12 +200,13 @@ namespace ICSharpCode.SharpZipLib.Checksums
 #endif
 			}
 
-			if ( offset + count > buffer.Length )
+			if (offset + count > buffer.Length)
 			{
 				throw new ArgumentOutOfRangeException("count");
 			}
-			
-			for (int i = 0; i < count; ++i) {
+
+			for (int i = 0; i < count; ++i)
+			{
 				Update(buffer[offset++]);
 			}
 		}

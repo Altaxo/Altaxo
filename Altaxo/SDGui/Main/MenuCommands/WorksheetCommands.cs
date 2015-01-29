@@ -22,15 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo;
 using Altaxo.Data;
 using Altaxo.Gui.Scripting;
-using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Main;
 using Altaxo.Scripting;
-using Altaxo.Worksheet;
 using ICSharpCode.Core;
-using ICSharpCode.SharpZipLib.Zip;
 using System;
 
 namespace Altaxo.Worksheet.Commands

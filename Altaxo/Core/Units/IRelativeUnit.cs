@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -39,10 +41,9 @@ namespace Altaxo.Units
 		/// </summary>
 		DimensionfulQuantity ReferenceQuantity { get; }
 
-
 		/// <summary>
 		/// Calculated the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
-		/// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used 
+		/// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used
 		/// to calculate the absolute quantity by multiplying the result of 0.05 with the 'page with'.
 		/// </summary>
 		/// <param name="x">Numerical value to convert.</param>
@@ -50,17 +51,16 @@ namespace Altaxo.Units
 		double GetRelativeValueFromValue(double x);
 	}
 
-
 	/// <summary>
 	/// This unit refers to a reference quantity. Since the reference quantity can be changed, instances of this class are <b>not</b> immutable.
 	/// Example: 'percent of page width': here the page width can change depending on the user defined settings.
 	/// </summary>
 	public class ChangeableRelativeUnit : IRelativeUnit
 	{
-		string _name;
-		string _shortCut;
+		private string _name;
+		private string _shortCut;
 		protected double _divider;
-		DimensionfulQuantity _referenceQuantity;
+		private DimensionfulQuantity _referenceQuantity;
 
 		/// <summary>Initializes a new instance of the <see cref="ChangeableRelativeUnit"/> class.</summary>
 		/// <param name="name">The full name of the unit (e.g. 'percent of page with').</param>
@@ -116,8 +116,6 @@ namespace Altaxo.Units
 			return _divider * x / _referenceQuantity.AsValueInSIUnits;
 		}
 
-
-
 		/// <summary>
 		/// Calculated the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
 		/// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used
@@ -129,7 +127,6 @@ namespace Altaxo.Units
 		{
 			return x / _divider;
 		}
-
 
 		/// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
 		public ISIPrefixList Prefixes

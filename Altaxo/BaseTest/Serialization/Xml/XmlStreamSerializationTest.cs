@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Xml;
-using System.Xml.Serialization;
-using System.IO;
-using ICSharpCode.SharpZipLib.Zip;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
-using Altaxo.Serialization.Xml;
 
 #if false
 
 namespace Altaxo.Test.Serialization.Xml
 {
 #region Serialization test classes
+
   [System.Xml.Serialization.XmlRoot]
   public class Foo
   {
@@ -68,10 +64,8 @@ namespace Altaxo.Test.Serialization.Xml
         info.AddValue("Part2",32);
         info.AddArray("DoubleArray",obj.m_Array,obj.m_Array.Length);
         info.AddValue("String",obj.m_String);
-
       }
     }
-
 
     public Foo()
     {
@@ -88,7 +82,6 @@ namespace Altaxo.Test.Serialization.Xml
       m_String = testString;
     }
 
-      
     public bool EnsureEquality(int len)
     {
       bool bEnabled=true;
@@ -108,13 +101,11 @@ namespace Altaxo.Test.Serialization.Xml
           }
         }
       }
-      
 
       if(m_String!=testString)
       {
         Console.WriteLine("String different: actual: {0} but should be: {1}",m_String,testString);
         bEnabled=false;
-
       }
 
       if(bEnabled)
@@ -126,12 +117,11 @@ namespace Altaxo.Test.Serialization.Xml
         return false;
     }
   }
-#endregion
 
-
-
+#endregion Serialization test classes
 
 #region Tests
+
   [NUnit.Framework.TestFixture]
   public class TestXmlSerialization
   {
@@ -140,10 +130,9 @@ namespace Altaxo.Test.Serialization.Xml
       DateTime t1, t2;
       TimeSpan dt;
 
-
       Foo o = new Foo();
       o.Fill(100000);
-      
+
       t1 = DateTime.Now;
       XmlDocumentSerializationInfo info = new XmlDocumentSerializationInfo();
       info.AddValue("FooNode",o);
@@ -161,7 +150,6 @@ namespace Altaxo.Test.Serialization.Xml
       dt = t2-t1;
       Console.WriteLine("Document restored, duration {0}.",dt);
     }
-
 
     [NUnit.Framework.Test]
     public  void TestUnzippedStreamZeroXml()
@@ -211,17 +199,14 @@ namespace Altaxo.Test.Serialization.Xml
       TestUnzippedStream(100000,XmlArrayEncoding.BinHex);
     }
 
-
     public static void TestUnzippedStream(int len, XmlArrayEncoding encoding)
     {
       DateTime t1, t2;
       TimeSpan dt;
 
-
       Foo o = new Foo();
       o.Fill(len);
-      
-      
+
       System.IO.FileStream outfile = System.IO.File.Create(@"C:\temp\xmlteststream01.xml");
       XmlStreamSerializationInfo info = new XmlStreamSerializationInfo();
       info.DefaultArrayEncoding = encoding;
@@ -235,7 +220,6 @@ namespace Altaxo.Test.Serialization.Xml
       dt = t2-t1;
       Console.WriteLine("Document saved, duration {0}.",dt);
 
-      
       t1 = DateTime.Now;
       System.IO.FileStream inpstream = System.IO.File.Open(@"C:\temp\xmlteststream01.xml",System.IO.FileMode.Open);
       XmlStreamDeserializationInfo info3 = new XmlStreamDeserializationInfo();
@@ -246,7 +230,6 @@ namespace Altaxo.Test.Serialization.Xml
       dt = t2-t1;
       Console.WriteLine("Document restored, duration {0}.",dt);
       NUnit.Framework.Assertion.Assert(o3.EnsureEquality(len));
-      
     }
 
     public static void TestZippedStream(int len, int ziplevel)
@@ -254,11 +237,9 @@ namespace Altaxo.Test.Serialization.Xml
       DateTime t1, t2;
       TimeSpan dt;
 
-
       Foo o = new Foo();
       o.Fill(len);
-      
-      
+
       System.IO.FileStream zipoutfile = System.IO.File.Create(@"C:\temp\xmlteststream01.xml.zip");
       ZipOutputStream ZipStream = new ZipOutputStream(zipoutfile);
       ZipEntry ZipEntry = new ZipEntry("Table/Table1.xml");
@@ -278,7 +259,6 @@ namespace Altaxo.Test.Serialization.Xml
       dt = t2-t1;
       Console.WriteLine("Document saved, duration {0}.",dt);
 
-      
       t1 = DateTime.Now;
       ZipFile zipfile = new ZipFile(@"C:\temp\xmlteststream01.xml.zip");
       System.IO.Stream zipinpstream = zipfile.GetInputStream(new ZipEntry("Table/Table1.xml"));
@@ -292,24 +272,20 @@ namespace Altaxo.Test.Serialization.Xml
       dt = t2-t1;
       Console.WriteLine("Document restored, duration {0}.",dt);
       o3.EnsureEquality(len);
-      
     }
-
 
     public static void TestZipped()
     {
       DateTime t1, t2;
       TimeSpan dt;
 
-
       Foo o = new Foo();
       o.Fill(100000);
 
-      
       t1 = DateTime.Now;
       XmlDocumentSerializationInfo info = new XmlDocumentSerializationInfo();
       info.AddValue("FooNode",o);
-      
+
       System.IO.FileStream zipoutfile = System.IO.File.Create(@"C:\temp\xmltest03.xml.zip");
       ZipOutputStream ZipStream = new ZipOutputStream(zipoutfile);
       ZipEntry ZipEntry = new ZipEntry("Table/Table1.xml");
@@ -320,11 +296,9 @@ namespace Altaxo.Test.Serialization.Xml
       ZipStream.Close();
       zipoutfile.Close();
 
-
       t2 = DateTime.Now;
       dt = t2-t1;
       Console.WriteLine("Document saved, duration {0}.",dt);
-
 
       t1 = DateTime.Now;
       ZipFile zipfile = new ZipFile(@"C:\temp\xmltest03.xml.zip");
@@ -339,7 +313,6 @@ namespace Altaxo.Test.Serialization.Xml
       dt = t2-t1;
 
       Console.WriteLine("Document restored, duration {0}.",dt);
-      
     }
 
     public static void TestConvert()
@@ -359,13 +332,9 @@ namespace Altaxo.Test.Serialization.Xml
       t1 = DateTime.Now;
       for(int i=0;i<m_Array.Length;i++)
       {
-        
         sb.Append("<t>");
         sb.Append(System.Xml.XmlConvert.ToString(m_Array[i]));
         sb.Append("/t");
-        
-        
-        
       }
 
       t2 = DateTime.Now;
@@ -373,7 +342,6 @@ namespace Altaxo.Test.Serialization.Xml
 
       Console.WriteLine("Duration: {0}, SB-Length:{1}.",dt,sb.Length);
     }
-
 
     public static void TestBinarySerializationUnzipped(int len)
     {
@@ -391,26 +359,23 @@ namespace Altaxo.Test.Serialization.Xml
       System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
       t1 = DateTime.Now;
-      try 
+      try
       {
         formatter.Serialize(fs, arr);
       }
-      catch (SerializationException e) 
+      catch (SerializationException e)
       {
         Console.WriteLine("Failed to serialize. Reason: " + e.Message);
         throw;
       }
-      finally 
+      finally
       {
         fs.Flush();
         fs.Close();
       }
       dt = DateTime.Now - t1;
       Console.WriteLine("Duration: {0}",dt);
-
-
     }
-
 
     public static void TestBinarySerializationZipped(int len)
     {
@@ -429,29 +394,26 @@ namespace Altaxo.Test.Serialization.Xml
       fs.PutNextEntry(ZipEntry);
       fs.SetLevel(0);
 
-
       // Construct a BinaryFormatter and use it to serialize the data to the stream.
       System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new BinaryFormatter();
 
       t1 = DateTime.Now;
-      try 
+      try
       {
         formatter.Serialize(fs, arr);
       }
-      catch (SerializationException e) 
+      catch (SerializationException e)
       {
         Console.WriteLine("Failed to serialize. Reason: " + e.Message);
         throw;
       }
-      finally 
+      finally
       {
         fs.Flush();
         fs.Close();
       }
       dt = DateTime.Now - t1;
       Console.WriteLine("Duration: {0}",dt);
-
-
     }
 
     public static void TestConv()
@@ -461,13 +423,10 @@ namespace Altaxo.Test.Serialization.Xml
       arr.CopyTo(bytes,0);
 
       Console.WriteLine("Thats it");
-
     }
-
   }
-#endregion
 
-
+#endregion Tests
 }
 
 #endif

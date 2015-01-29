@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using ICSharpCode.SharpZipLib.Zip;
+using System;
 
 namespace Altaxo.Main
 {
-
 	/// <summary>
 	/// Summary description for ICompressedFileContainerStream.
 	/// </summary>
 	public class ZipOutputStreamWrapper : ICompressedFileContainerStream
 	{
-		ICSharpCode.SharpZipLib.Zip.ZipOutputStream _stream;
+		private ICSharpCode.SharpZipLib.Zip.ZipOutputStream _stream;
 
 		public ZipOutputStreamWrapper(ICSharpCode.SharpZipLib.Zip.ZipOutputStream stream)
 		{
@@ -48,28 +49,29 @@ namespace Altaxo.Main
 		public System.IO.Stream Stream { get { return _stream; } }
 	}
 
-
-
-
 	public class ZipEntryWrapper : IFileContainerItem
 	{
-		ZipEntry _zipEntry;
+		private ZipEntry _zipEntry;
+
 		public ZipEntryWrapper(ZipEntry zipEntry)
 		{
 			_zipEntry = zipEntry;
 		}
+
 		public bool IsDirectory { get { return _zipEntry.IsDirectory; } }
+
 		public string Name { get { return _zipEntry.Name; } }
+
 		public static implicit operator ZipEntry(ZipEntryWrapper wrap)
 		{
 			return wrap._zipEntry;
 		}
 	}
 
-
 	public class ZipEntryWrapperEnumerator : System.Collections.IEnumerator
 	{
-		System.Collections.IEnumerator enumerator;
+		private System.Collections.IEnumerator enumerator;
+
 		public ZipEntryWrapperEnumerator(ZipFile file)
 		{
 			enumerator = file.GetEnumerator();
@@ -79,10 +81,12 @@ namespace Altaxo.Main
 		{
 			get { return new ZipEntryWrapper((ZipEntry)enumerator.Current); }
 		}
+
 		public bool MoveNext()
 		{
 			return enumerator.MoveNext();
 		}
+
 		public void Reset()
 		{
 			enumerator.Reset();
@@ -91,7 +95,7 @@ namespace Altaxo.Main
 
 	public class ZipFileWrapper : ICompressedFileContainer
 	{
-		ZipFile _zip;
+		private ZipFile _zip;
 
 		public ZipFileWrapper(ZipFile zipFile)
 		{

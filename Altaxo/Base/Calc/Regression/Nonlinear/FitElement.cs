@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Data;
 using System;

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,15 +34,15 @@ namespace Altaxo.Calc.Fourier
 	/// </summary>
 	/// <remarks>
 	/// The  response function of a device under test (DUT) can be determined with the help of maximum length sequences as followed. The maximum length sequence is used to generate a input signal for the DUT.
-	/// The DUT will respond to this input signal. As a result, it will generate a output signal. To get the response function of the DUT, the output signal of the DUT should be correlated with its input signal. 
+	/// The DUT will respond to this input signal. As a result, it will generate a output signal. To get the response function of the DUT, the output signal of the DUT should be correlated with its input signal.
 	/// As a simplification, here the output signal of the DUT is correlated with the maximum length sequence itself. This means that the DUT here includes the generation of the output signal.
 	/// </remarks>
 	public class FastHadamardTransformation
 	{
-		int[] _responsePermutation;
-		int[] _signalPermutation;
-		double[] _permutedSignal;
-		int _numberOfBits;
+		private int[] _responsePermutation;
+		private int[] _signalPermutation;
+		private double[] _permutedSignal;
+		private int _numberOfBits;
 
 		/// <summary>Initializes a new instance of the <see cref="FastHadamardTransformation"/> class.</summary>
 		/// <param name="mls">The maximum length sequence that is used to generate the input signal for the device under test (DUT).</param>
@@ -48,11 +50,11 @@ namespace Altaxo.Calc.Fourier
 		{
 			_responsePermutation = new int[mls.Length];
 			_signalPermutation = new int[mls.Length];
-			_permutedSignal = new double[mls.Length+1];
+			_permutedSignal = new double[mls.Length + 1];
 			_numberOfBits = 1 + BinaryMath.Ld(mls.Length);
 
 			bool[] seq = new bool[mls.Length];
-			int i=0;
+			int i = 0;
 			foreach (var e in mls.GetSequence(false, true))
 				seq[i++] = e;
 
@@ -71,14 +73,11 @@ namespace Altaxo.Calc.Fourier
 			PermuteResponse(_permutedSignal, response, _responsePermutation);
 		}
 
-
-
-
 		/// <summary>Generates the table for the signal permutation.</summary>
 		/// <param name="mls">The maximum length sequence.</param>
 		/// <param name="signalPermutationTable">As the result of this function, this array contains the computed permutation table for the measured signal.</param>
 		/// <param name="N">The number of bits (stages) of the maximum length sequence.</param>
-		static void GenerateSignalPermutationTable(bool[] mls, int[] signalPermutationTable, int N)
+		private static void GenerateSignalPermutationTable(bool[] mls, int[] signalPermutationTable, int N)
 		{
 			var P = mls.Length;
 			for (int i = 0; i < P; ++i) // For each column in the S matrix
@@ -92,12 +91,11 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
 		/// <summary>Generates the table for the response permutation.</summary>
 		/// <param name="mls">The maximum length sequence.</param>
 		/// <param name="responsePermutationTable">As the result of this function, this array contains the computed permutation table that maps the result of the hadamard transformation to the response.</param>
 		/// <param name="N">The number of bits (stages) of the maximum length sequence.</param>
-		static void GenerateResponsePermutationTable(bool[] mls, int[] responsePermutationTable, int N)
+		private static void GenerateResponsePermutationTable(bool[] mls, int[] responsePermutationTable, int N)
 		{
 			int P = mls.Length;
 
@@ -133,7 +131,7 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="permutedSignal">Contains the permuted signal as the result of this function.</param>
 		/// <param name="signalPermuationTable">The permutation table for the signal.</param>
 		/// <param name="isDCCoupled">If set to <c>true</c>, the signal is considered to be DC coupled. The DC offset is subtracted from the signal.</param>
-		static void PermuteSignal(double[] signal, double[] permutedSignal, int[] signalPermuationTable, bool isDCCoupled)
+		private static void PermuteSignal(double[] signal, double[] permutedSignal, int[] signalPermuationTable, bool isDCCoupled)
 		{
 			int P = signalPermuationTable.Length;
 
@@ -145,16 +143,15 @@ namespace Altaxo.Calc.Fourier
 			}
 			permutedSignal[0] = -dc;
 
-			for (int i = 0; i < P; i++) 
+			for (int i = 0; i < P; i++)
 				permutedSignal[signalPermuationTable[i]] = signal[i];
 		}
-
 
 		/// <summary>Permutes the response.</summary>
 		/// <param name="permutedSignal">The permuted result of the hadamard transformation.</param>
 		/// <param name="response">Contains the response function as the result of this function.</param>
 		/// <param name="responsePermutationTable">The response permuatation table..</param>
-		static void PermuteResponse(double[] permutedSignal, double[] response, int[] responsePermutationTable)
+		private static void PermuteResponse(double[] permutedSignal, double[] response, int[] responsePermutationTable)
 		{
 			int P = responsePermutationTable.Length;
 			double fact = 1 / (double)(P + 1);
@@ -162,15 +159,13 @@ namespace Altaxo.Calc.Fourier
 			{
 				response[i] = permutedSignal[responsePermutationTable[i]] * fact;
 			}
-			
 		}
-
 
 		/// <summary>Executes a fast hadamard transformation in-place.</summary>
 		/// <param name="x">The array to transform.</param>
 		/// <param name="P1">The length of the transformation array (1 + Length of the maximum length sequence).</param>
 		/// <param name="N">The number of bits of the maximum length sequence.</param>
-		static void TransformFastHadamard(double[] x, uint P1, int N)
+		private static void TransformFastHadamard(double[] x, uint P1, int N)
 		{
 			double temp;
 			uint k1 = P1;

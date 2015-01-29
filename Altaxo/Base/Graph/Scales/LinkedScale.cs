@@ -23,15 +23,9 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Reflection;
 
 namespace Altaxo.Graph.Scales
 {

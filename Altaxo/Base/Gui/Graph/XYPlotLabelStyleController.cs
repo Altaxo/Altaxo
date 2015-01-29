@@ -30,7 +30,6 @@ using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Main;
-using Altaxo.Serialization;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;

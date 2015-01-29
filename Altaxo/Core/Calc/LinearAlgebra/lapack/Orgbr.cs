@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Orgbr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Orgbr {
-    private  Orgbr() {}                           
+    private  Orgbr() {}
     private static void ArgumentCheck( Vector vect, int m, int n, int k, Object A, int lda, Object tau ) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -87,15 +87,13 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         throw new ArgumentException("lda must be at least max(1,m)");
       }
     }
-    
-    
-    
+
     internal static int Compute( Vector vect, int m, int n, int k, float[] A, int lda, float[] tau ){
       ArgumentCheck(vect, m, n, k, A, lda, tau);
       if (tau.Length < System.Math.Max(1, System.Math.Min(m, k))){
         throw new ArgumentException("tau must be at least max(1,min(m,k)).");
       }
-      
+
       return dna_lapack_sorgbr(Configuration.BlockSize, vect, m, n, k, A, lda, tau);
     }
 
@@ -104,13 +102,13 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if (tau.Length < System.Math.Max(1, System.Math.Min(m, k))){
         throw new ArgumentException("tau must be at least max(1,min(m,k)).");
       }
-      
+
       return dna_lapack_dorgbr(Configuration.BlockSize, vect, m, n, k, A, lda, tau);
     }
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_sorgbr( int block_size, Vector vect, int m, int n, int k, [In,Out]float[] A, int lda, [In,Out]float[] tau  );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dorgbr( int block_size, Vector vect, int m, int n, int k, [In,Out]double[] A, int lda, [In,Out]double[] tau   );
   }

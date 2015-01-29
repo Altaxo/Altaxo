@@ -1,32 +1,32 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Worksheet.Viewing.WorksheetViewWpf"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" Focusable="True" FocusManager.FocusedElement="{Binding ElementName=_worksheetPanel}">
-    <Grid>
+	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<Grid Grid.Column="0">
 			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<Canvas Grid.Row="0" Name="_lowerPanel" Focusable ="False" Background="Gray" SizeChanged="EhWP_SizeChanged"/>
+			<Canvas Grid.Row="0" Name="_lowerPanel" Focusable ="False" Background="Gray" SizeChanged="EhWP_SizeChanged" />
 			<Canvas Grid.Row="0" Name="_worksheetPanel" Focusable="True" Background="Transparent" MouseDown="EhWP_MouseDown" MouseUp="EhWP_MouseUp" MouseMove="EhWP_MouseMove" MouseWheel="EhWP_MouseWheel" KeyDown="EhWP_KeyDown">
 				<Canvas.CommandBindings>
-					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy"/>
-					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut"/>
-					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete"/>
-					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste"/>
-					<CommandBinding Command="SelectAll" CanExecute="EhEnableCmdSelectAll" Executed="EhCmdSelectAll"/>
+					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
+					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />
+					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete" />
+					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
+					<CommandBinding Command="SelectAll" CanExecute="EhEnableCmdSelectAll" Executed="EhCmdSelectAll" />
 				</Canvas.CommandBindings>
 			</Canvas>
-			<ScrollBar Grid.Row="1" Name="_horzScrollBar" Orientation="Horizontal" Scroll="EhWP_HorzScroll" SmallChange="1" LargeChange="10" Minimum="0" Maximum="100" ViewportSize="10"/>
+			<ScrollBar Grid.Row="1" Name="_horzScrollBar" Orientation="Horizontal" Scroll="EhWP_HorzScroll" SmallChange="1" LargeChange="10" Minimum="0" Maximum="100" ViewportSize="10" />
 		</Grid>
-		<ScrollBar Grid.Column="1" Name="_vertScrollBar" Scroll="EhWP_VertScroll" SmallChange="1" LargeChange="10" Minimum="0" Maximum="100" ViewportSize="10"/>
+		<ScrollBar Grid.Column="1" Name="_vertScrollBar" Scroll="EhWP_VertScroll" SmallChange="1" LargeChange="10" Minimum="0" Maximum="100" ViewportSize="10" />
 	</Grid>
 </UserControl>

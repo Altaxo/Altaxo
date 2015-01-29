@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
 ** DoubleSymmetricLevinson.cs
@@ -35,12 +37,10 @@
 
 using System;
 
-
 #endregion Using directives
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// A Levinson solver for symmetric square Toeplitz systems of <c>double</c> type.
 	/// </summary>
@@ -179,7 +179,6 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </example>
 	sealed public class DoubleSymmetricLevinson : Algorithm
 	{
-
 		#region Constants
 
 		/// <summary>
@@ -410,7 +409,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// can be used to identify such situations.
 		/// <para>
 		/// The estimate is based on the Cybenko error-bound for the inverse
-		/// and is a relative error. When calculating this error it is assumed that 
+		/// and is a relative error. When calculating this error it is assumed that
 		/// the <see cref="double"/> type utilises a 52-bit mantissa.
 		/// </para>
 		/// <para>
@@ -607,7 +606,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			double K;       // reflection coefficient
 			double[] B;       // reference to previous order coefficients
 			double[] A;       // reference to current order coefficients
-
 
 			// check if principal diagonal is zero
 			if (m_LeftColumn[0] == 0.0)
@@ -868,7 +866,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					X[j] += G * A[j];
 				}
-
 			}
 
 			return X;
@@ -902,7 +899,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public DoubleVector Solve(params double[] Y)
 		{
-
 			DoubleVector X;
 
 			// check parameters
@@ -951,7 +947,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					X[j] += G * A[j];
 				}
-
 			}
 
 			return X;
@@ -1185,12 +1180,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			return Solve((IROVector)T, (IROVector)Y);
 		}
 
-
 		public static DoubleMatrix Solve(AbstractRODoubleVector T, IROMatrix Y)
 		{
 			return Solve((IROVector)T, Y);
 		}
-
 
 		/// <overloads>
 		/// Solve a symmetric square Toeplitz system.
@@ -1222,7 +1215,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static DoubleVector Solve(IROVector T, IROVector Y)
 		{
-
 			DoubleVector X;
 
 			// check parameters
@@ -1240,7 +1232,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				// allocate memory
 				int N = T.Length;
 				X = new DoubleVector(N);                    // solution vector
@@ -1266,7 +1257,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					// calculate solution for successive orders
 					for (i = 1; i < N; i++)
 					{
-
 						// calculate first inner product
 						inner = T[i];
 						for (j = 0, l = i - 1; j < i - 1; j++, l--)
@@ -1309,15 +1299,11 @@ namespace Altaxo.Calc.LinearAlgebra
 							X[j] = X[j] + k * a[l];
 						}
 						X[j] = k;
-
 					}
-
 				}
-
 			}
 
 			return X;
-
 		}
 
 		/// <summary>
@@ -1347,7 +1333,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static DoubleMatrix Solve(IROVector T, IROMatrix Y)
 		{
-
 			DoubleMatrix X;
 
 			// check parameters
@@ -1365,7 +1350,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				// allocate memory
 				int N = T.Length;
 				int M = Y.Rows;
@@ -1387,7 +1371,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				if (N > 1)
 				{
-
 					DoubleVector a = new DoubleVector(N - 1);   // prediction coefficients
 					double p;                                   // reflection coefficient
 					double inner;                               // inner product
@@ -1396,7 +1379,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					// calculate solution for successive orders
 					for (i = 1; i < N; i++)
 					{
-
 						// calculate first inner product
 						inner = T[i];
 						for (j = 0, l = i - 1; j < i - 1; j++, l--)
@@ -1428,7 +1410,6 @@ namespace Altaxo.Calc.LinearAlgebra
 						// update the solution matrix
 						for (m = 0; m < M; m++)
 						{
-
 							// retrieve a copy of solution column
 							for (j = 0; j < i; j++)
 							{
@@ -1455,13 +1436,9 @@ namespace Altaxo.Calc.LinearAlgebra
 							{
 								X[j, m] = Z[j];
 							}
-
 						}
-
 					}
-
 				}
-
 			}
 
 			return X;
@@ -1500,7 +1477,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static DoubleVector YuleWalker(IROVector R)
 		{
-
 			DoubleVector a;
 
 			// check parameters
@@ -1514,7 +1490,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				int N = R.Length - 1;
 				a = new DoubleVector(N);                    // prediction coefficients
 				DoubleVector Z = new DoubleVector(N);   // temporary storage vector
@@ -1535,7 +1510,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				// calculate solution for successive orders
 				for (i = 1; i < N; i++)
 				{
-
 					e *= (1.0 - g * g);
 					if (e == 0.0)
 					{
@@ -1563,7 +1537,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					}
 
 					a[i] = g;
-
 				}
 			}
 
@@ -1595,7 +1568,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static DoubleMatrix Inverse(IROVector T)
 		{
-
 			DoubleMatrix X;
 
 			// check parameters
@@ -1614,7 +1586,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				int N = T.Length;
 				double f, g;
 				int i, j, l, k, m, n;
@@ -1664,14 +1635,11 @@ namespace Altaxo.Calc.LinearAlgebra
 						X[l, j] = X[i, k];
 					}
 				}
-
 			}
 
 			return X;
 		}
 
 		#endregion Public Static Methods
-
 	}
-
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Altaxo.Data;
+using System.Text;
+
 namespace Altaxo.Graph.Gdi.Plot.Data
 {
 	using Graph.Plot.Data;
+
 	/// <summary>
 	/// Allows access not only to the original physical plot data,
 	/// but also to the plot ranges and to the plot points in absolute layer coordiates.
@@ -37,17 +41,15 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 		/// <summary>List of plot ranges of the plot points. This is used to identify contiguous ranges of plot points, so that for instance it can be decided to connect them by a line or not.</summary>
 		public PlotRangeList RangeList;
 
-
 		/// <summary>Holds the final coordinates of the plot points in absolute layer coordinates.</summary>
 		public PointF[] PlotPointsInAbsoluteLayerCoordinates;
 
-
-		IndexedPhysicalValueAccessor _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
-		IndexedPhysicalValueAccessor _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
-		IndexedPhysicalValueAccessor _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
+		private IndexedPhysicalValueAccessor _getXPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
+		private IndexedPhysicalValueAccessor _getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
+		private IndexedPhysicalValueAccessor _getZPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
 
 		/// <summary>Data of the previous plot item for temporary purposes.</summary>
-		Processed2DPlotData _previousItemData;
+		private Processed2DPlotData _previousItemData;
 
 		/// <summary>Gets the physical x value at a given original row index.</summary>
 		/// <param name="originalRowIndex">Index of the original data row.</param>
@@ -90,7 +92,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 			}
 		}
 
-
 		/// <summary>Gets or sets the Y physical accessor.</summary>
 		/// <value>The Y physical accessor. It is awaiting the original row index of the data as argument and will return the physical y data value at that row.</value>
 		public IndexedPhysicalValueAccessor YPhysicalAccessor
@@ -107,7 +108,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 					_getYPhysical = new IndexedPhysicalValueAccessor(GetZeroValue);
 			}
 		}
-
 
 		/// <summary>Gets or sets the Z physical accessor.</summary>
 		/// <value>The Z physical accessor. It is awaiting the original row index of the data as argument and will return the z data value at that row.</value>
@@ -126,7 +126,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Gets/sets the processed plot data of a previous plot item for temporary usage.
 		/// </summary>
@@ -142,9 +141,8 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 			}
 		}
 
-
 		/// <summary>
-		/// Returns always a AltaxoVariant with the content of 0.0 (a double value). This function can 
+		/// Returns always a AltaxoVariant with the content of 0.0 (a double value). This function can
 		/// serve as an instance for the <see cref="IndexedPhysicalValueAccessor" /> returning 0.
 		/// </summary>
 		/// <param name="i">Index. This parameter is ignored here.</param>
@@ -158,10 +156,10 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 		/// Returns true if the z coordinate is used. Return false if the z coordinate is always 0 (zero), so we can
 		/// </summary>
 		public virtual bool IsZUsed { get { return false; } }
+
 		/// <summary>
 		/// Returns true if the z-value is constant. In this case some optimizations can be made.
 		/// </summary>
 		public virtual bool IsZConstant { get { return true; } }
-
 	}
 }

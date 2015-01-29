@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,12 +29,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common
 {
@@ -41,7 +37,7 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class FreeTextComboBoxControl : UserControl, IFreeTextChoiceView
 	{
-		BindingExpressionBase _bindingExpression;
+		private BindingExpressionBase _bindingExpression;
 
 		public FreeTextComboBoxControl()
 		{
@@ -64,6 +60,7 @@ namespace Altaxo.Gui.Common
 		}
 
 		#region Dependency property
+
 		public string ValidatedText
 		{
 			get { return (string)GetValue(ValidatedTextProperty); }
@@ -76,13 +73,14 @@ namespace Altaxo.Gui.Common
 
 		private static void EhValidatedTextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		private class MyValidationRule : ValidationRule, IValueConverter
 		{
-			FreeTextComboBoxControl _parent;
+			private FreeTextComboBoxControl _parent;
+
 			public MyValidationRule(FreeTextComboBoxControl parent)
 			{
 				_parent = parent;
@@ -111,7 +109,6 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
 		#region IFreeTextChoiceView
 
 		public event Action<int> SelectionChangeCommitted;
@@ -132,8 +129,6 @@ namespace Altaxo.Gui.Common
 				_cbChoice.SelectedIndex = initialselection;
 		}
 
-		#endregion
-
-
+		#endregion IFreeTextChoiceView
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Data;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -46,8 +46,7 @@ namespace Altaxo.Graph.Procedures
 				return;
 			}
 
-			Current.Gui.ShowDialog(ref opt, "Create master curve",false);
-
+			Current.Gui.ShowDialog(ref opt, "Create master curve", false);
 		}
 
 		/// <summary>
@@ -56,23 +55,22 @@ namespace Altaxo.Graph.Procedures
 		/// <param name="doc"></param>
 		/// <param name="groupList"></param>
 		/// <returns></returns>
-		static string FillDataListFromGraphDocument(GraphDocument doc, List<List<DoubleColumn>> groupList)
+		private static string FillDataListFromGraphDocument(GraphDocument doc, List<List<DoubleColumn>> groupList)
 		{
 			if (doc.RootLayer.Layers.Count == 0)
 				return "Plot contains no layers and therefore no plot items";
 
-
-			for(int i=0;i<doc.RootLayer.Layers.Count;i++)
+			for (int i = 0; i < doc.RootLayer.Layers.Count; i++)
 			{
 				var xylayer = doc.RootLayer.Layers[i] as XYPlotLayer;
-				if(null!=xylayer)
+				if (null != xylayer)
 					FillDataListFromLayer(xylayer, groupList);
 			}
 
 			return null;
 		}
 
-		static void FillDataListFromLayer(XYPlotLayer layer, List<List<DoubleColumn>> groupList)
+		private static void FillDataListFromLayer(XYPlotLayer layer, List<List<DoubleColumn>> groupList)
 		{
 			var plotItems = layer.PlotItems;
 			if (plotItems.Count == 0)
@@ -102,7 +100,7 @@ namespace Altaxo.Graph.Procedures
 			}
 		}
 
-		static List<DoubleColumn> GetColumnListFromPlotItemCollection(Altaxo.Graph.Gdi.Plot.PlotItemCollection plotItemCollection)
+		private static List<DoubleColumn> GetColumnListFromPlotItemCollection(Altaxo.Graph.Gdi.Plot.PlotItemCollection plotItemCollection)
 		{
 			var flattenedContent = plotItemCollection.Flattened;
 			List<DoubleColumn> columnList = new List<DoubleColumn>();
@@ -117,7 +115,5 @@ namespace Altaxo.Graph.Procedures
 			}
 			return columnList;
 		}
-
-
 	}
 }

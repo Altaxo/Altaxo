@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -33,8 +35,10 @@ namespace Altaxo.Calc.LinearAlgebra
 	{
 		/// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
 		private int m_Rows;
+
 		/// <summary>The cols of the matrix = length of each double[] array.</summary>
 		private int m_Cols;
+
 		/// <summary>The array which holds the matrix.</summary>
 		private double[][] m_Array;
 
@@ -70,7 +74,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			this.m_Cols = cols;
 		}
 
-
 		/// <summary>
 		/// Provides direct access to the underlying jagged array. JaggedArrayMath can then be used to speed up computations.
 		/// </summary>
@@ -96,9 +99,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return MatrixMath.MatrixToString(null, this);
 		}
 
-
 		#region IMatrix Members
-
 
 		/// <summary>
 		/// Set up the dimensions of the matrix. Discards the old content and reset the matrix with the new dimensions. All elements
@@ -152,7 +153,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		#endregion
+		#endregion IMatrix Members
 
 		#region IBottomExtensibleMatrix Members
 
@@ -200,8 +201,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			m_Rows = newRows;
 		}
 
-		#endregion
+		#endregion IBottomExtensibleMatrix Members
 	}
-
-
 }

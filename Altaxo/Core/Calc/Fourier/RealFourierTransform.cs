@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,9 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
 
 namespace Altaxo.Calc.Fourier
@@ -31,12 +34,13 @@ namespace Altaxo.Calc.Fourier
 	/// </summary>
 	public class RealFourierTransform
 	{
-		enum Method { Trivial, Hartley, Pfa235, Chirp };
-		Method _method;
-		int _numberOfData;
-		Pfa235FFT _pfa235;
-		double[] _tempArr1N;
-		object _fftTempStorage;
+		private enum Method { Trivial, Hartley, Pfa235, Chirp };
+
+		private Method _method;
+		private int _numberOfData;
+		private Pfa235FFT _pfa235;
+		private double[] _tempArr1N;
+		private object _fftTempStorage;
 
 		public RealFourierTransform(int length)
 		{
@@ -65,7 +69,6 @@ namespace Altaxo.Calc.Fourier
 				_method = Method.Chirp;
 			}
 		}
-
 
 		/// <summary>
 		/// Performs a out-of-place fourier transformation. The original values are kept.
@@ -103,15 +106,16 @@ namespace Altaxo.Calc.Fourier
 							double a0 = arr[0], a1 = arr[1];
 							arr[0] = a0 + a1;
 							arr[1] = a0 - a1;
-
 						}
 					}
 					break;
+
 				case Method.Hartley:
 					{
 						FastHartleyTransform.RealFFT(arr, direction);
 					}
 					break;
+
 				case Method.Pfa235:
 					{
 						NullifyTempArrN1();
@@ -119,6 +123,7 @@ namespace Altaxo.Calc.Fourier
 						_pfa235.RealFFT(arr, _tempArr1N, direction);
 					}
 					break;
+
 				case Method.Chirp:
 					{
 						if (direction == FourierDirection.Forward)
@@ -163,7 +168,7 @@ namespace Altaxo.Calc.Fourier
 
 		#region Helper
 
-		void NullifyTempArrN1()
+		private void NullifyTempArrN1()
 		{
 			if (null == _tempArr1N)
 			{
@@ -174,6 +179,7 @@ namespace Altaxo.Calc.Fourier
 				Array.Clear(_tempArr1N, 0, _tempArr1N.Length);
 			}
 		}
-		#endregion
+
+		#endregion Helper
 	}
 }

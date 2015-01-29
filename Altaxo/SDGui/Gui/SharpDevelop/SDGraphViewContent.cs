@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,28 +19,24 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
+using ICSharpCode.SharpDevelop.Gui;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
-using ICSharpCode.SharpDevelop.Gui;
-
 
 namespace Altaxo.Gui.SharpDevelop
 {
 	public class SDGraphViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
 	{
-		Altaxo.Gui.Graph.Viewing.GraphController _controller;
+		private Altaxo.Gui.Graph.Viewing.GraphController _controller;
 
 		/*
+
 				#region Serialization
+
 				[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui","Altaxo.Graph.GUI.SDGraphController",0)]
 					class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 				{
@@ -51,12 +48,11 @@ namespace Altaxo.Gui.SharpDevelop
 					public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 					{
 						throw new NotImplementedException();
-      
+
 					 var s = new Altaxo.Gui.Graph.Viewing.GraphController(null,true);
 						info.GetBaseValueEmbedded(s,typeof(WinFormsGraphController),parent);
-        
+
 						return new SDGraphViewContent(s);
-      
 					}
 				}
 
@@ -77,12 +73,15 @@ namespace Altaxo.Gui.SharpDevelop
 						return s;
 					}
 				}
-				#endregion
+
+				#endregion Serialization
+
 				*/
 
 		#region Constructors
+
 		/// <summary>
-		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
+		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		public SDGraphViewContent(GraphDocument graphdoc)
@@ -110,26 +109,26 @@ namespace Altaxo.Gui.SharpDevelop
 		public override void Dispose()
 		{
 			base.Dispose();
-			
-			if(null!=_controller)
+
+			if (null != _controller)
 			{
 				_controller.Dispose();
-			_controller = null;
+				_controller = null;
 			}
 		}
 
-		void EhTitleNameChanged(object sender, EventArgs e)
+		private void EhTitleNameChanged(object sender, EventArgs e)
 		{
 			SetTitle();
 		}
 
-		void SetTitle()
+		private void SetTitle()
 		{
 			if (_controller != null && _controller.Doc != null)
 				this.TitleName = _controller.Doc.Name;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		public static implicit operator Altaxo.Gui.Graph.Viewing.GraphController(SDGraphViewContent ctrl)
 		{
@@ -149,6 +148,7 @@ namespace Altaxo.Gui.SharpDevelop
 		#region Abstract View Content overrides
 
 		#region Required
+
 		public override object Control
 		{
 			get { return _controller.ViewObject; }
@@ -161,9 +161,10 @@ namespace Altaxo.Gui.SharpDevelop
 				return (_controller.ViewObject as Altaxo.Gui.Graph.Viewing.IGraphView).GuiInitiallyFocusedElement;
 			}
 		}
-		#endregion
 
-		#endregion
+		#endregion Required
+
+		#endregion Abstract View Content overrides
 
 		#region IEditable Members
 
@@ -178,7 +179,7 @@ namespace Altaxo.Gui.SharpDevelop
 			}
 		}
 
-		#endregion
+		#endregion IEditable Members
 
 		#region IClipboardHandler Members
 
@@ -239,7 +240,6 @@ namespace Altaxo.Gui.SharpDevelop
 		{
 		}
 
-		#endregion
+		#endregion IClipboardHandler Members
 	}
-
 }

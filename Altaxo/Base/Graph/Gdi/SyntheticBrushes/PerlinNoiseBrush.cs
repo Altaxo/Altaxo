@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 //#define IncludePerlinNoise
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
 
 namespace Altaxo.Graph.Gdi.SyntheticBrushes
 {
@@ -46,9 +44,7 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 		/// </summary>
 		double _persistenceFactor = 0.5;
 
-
 		Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderARGBGradient _colorProvider = new Altaxo.Graph.Gdi.Plot.ColorProvider.ColorProviderARGBGradient();
-
 
 		public override System.Drawing.Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
 		{
@@ -86,7 +82,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 						bmp.SetPixel(i, j, _colorProvider.GetColor(t));
 					}
 				}
-
 			}
 
 			return bmp;
@@ -99,12 +94,11 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 			return result;
 		}
 
-
 		double Noise(int x, int y)
 		{
     int n = x + y * 57;
     n = (n<<13) ^ n;
-    return ( 1.0 - ( (n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);    
+    return ( 1.0 - ( (n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
 		}
 
 		double SmoothedNoise(int x, int y)
@@ -114,7 +108,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
     var center  =  Noise(x, y) / 4;
 		return corners + sides + center;
 		}
-  
 
 		double Interpolate(double a, double b, double x)
 		{
@@ -126,7 +119,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 
    double InterpolatedNoise(double x, double y)
 	 {
-
       var integer_X    = (int)Math.Floor(x);
       var fractional_X = x - integer_X;
 
@@ -143,13 +135,13 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 
 			return Interpolate(i1, i2, fractional_Y);
 	 }
-  
+
 		double PerlinNoise_2D(double x, double y)
 		{
       double total = 0;
       var p = _persistenceFactor;
       var n = _numberOfOctaves -1;
-			
+
 			double amplitude=1;
 			if (_persistenceFactor <= 1)
 			{
@@ -180,7 +172,7 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 				}
 				else
 				{
-					for (int i = _numberOfOctaves - 1; i >= 0; --i, amplitude /= _persistenceFactor) 
+					for (int i = _numberOfOctaves - 1; i >= 0; --i, amplitude /= _persistenceFactor)
 						total += amplitude;
 				}
 				return total;

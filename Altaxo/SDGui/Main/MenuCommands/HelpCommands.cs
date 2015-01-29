@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using Altaxo;
-using Altaxo.Main;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.IO;
 using System.Windows.Forms;

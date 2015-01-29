@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Data;
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -33,20 +31,17 @@ namespace Altaxo.Calc.Regression.Multivariate
 	/// Utility class to retrieve the calibration model stored in an worksheet and export it
 	/// either to a <see cref="PLS2CalibrationModel" /> or to a XML file.
 	/// </summary>
-	class PredictionModelExporter
+	internal class PredictionModelExporter
 	{
+		private Altaxo.Data.DataTable _table;
+		private MultivariateContentMemento _memento;
 
-		Altaxo.Data.DataTable _table;
-		MultivariateContentMemento _memento;
 		// IMultivariateCalibrationModel _calibrationModel;
-		System.Xml.XmlWriter _writer;
+		private System.Xml.XmlWriter _writer;
 
-		int _numberOfFactors;
-		int _numberOfX;
-		int _numberOfY;
-
-
-
+		private int _numberOfFactors;
+		private int _numberOfX;
+		private int _numberOfY;
 
 		public PredictionModelExporter(Altaxo.Data.DataTable table, int numberOfFactors)
 		{
@@ -54,8 +49,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_memento = table.GetTableProperty("Content") as MultivariateContentMemento;
 			_numberOfFactors = numberOfFactors;
 		}
-
-
 
 		public void Export(string filename)
 		{
@@ -73,10 +66,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_writer.Close();
 		}
 
-		void WriteProperties()
+		private void WriteProperties()
 		{
 			_writer.WriteStartElement("Properties");
-
 
 			_numberOfX = GetNumberOfX(_table);
 			_numberOfY = GetNumberOfY(_table);
@@ -89,32 +81,26 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_writer.WriteEndElement(); // Properties
 		}
 
-
-		int GetNumberOfX(Altaxo.Data.DataTable table)
+		private int GetNumberOfX(Altaxo.Data.DataTable table)
 		{
-
 			return _memento.NumberOfSpectralData;
 		}
 
-		int GetNumberOfY(Altaxo.Data.DataTable table)
+		private int GetNumberOfY(Altaxo.Data.DataTable table)
 		{
 			return _memento.NumberOfConcentrationData;
 		}
 
-
-		void WriteSpectralPreprocessing()
+		private void WriteSpectralPreprocessing()
 		{
 			_writer.WriteStartElement("SpectralPreprocessing");
 
-
 			_memento.SpectralPreprocessing.Export(_writer);
-
 
 			_writer.WriteEndElement();
 		}
 
-
-		void WriteLinearPredictionData()
+		private void WriteLinearPredictionData()
 		{
 			_writer.WriteStartElement("Data");
 
@@ -125,7 +111,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_writer.WriteEndElement(); // Data
 		}
 
-		void WriteBasicXData(bool bWriteEndElement)
+		private void WriteBasicXData(bool bWriteEndElement)
 		{
 			Altaxo.Data.DoubleColumn col = null;
 			string colname;
@@ -151,9 +137,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				_writer.WriteEndElement(); // XData
 		}
 
-
-
-		void WriteBasicYData(bool bWriteEndElement)
+		private void WriteBasicYData(bool bWriteEndElement)
 		{
 			Altaxo.Data.DoubleColumn col = null;
 			string colname;
@@ -174,19 +158,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 				_writer.WriteEndElement(); // YData
 		}
 
-
-
-
-		void WritePredictionScores()
+		private void WritePredictionScores()
 		{
-
 			_writer.WriteStartElement("PredictionScores");
 
 			IROMatrix predictionScores = _memento.Analysis.CalculatePredictionScores(
 				_table,
 				this._numberOfFactors);
-
-
 
 			for (int i = 0; i < _numberOfY; i++)
 			{
@@ -195,8 +173,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_writer.WriteEndElement();
 		}
 
-
-		void WriteVector(string name, Altaxo.Data.DoubleColumn col, int numberOfData)
+		private void WriteVector(string name, Altaxo.Data.DoubleColumn col, int numberOfData)
 		{
 			_writer.WriteStartElement(name);
 
@@ -205,11 +182,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 				_writer.WriteElementString("e", System.Xml.XmlConvert.ToString(col[i]));
 			}
 
-
 			_writer.WriteEndElement(); // name
 		}
 
-		void WriteVector(string name, IROVector col, int numberOfData)
+		private void WriteVector(string name, IROVector col, int numberOfData)
 		{
 			_writer.WriteStartElement(name);
 
@@ -218,15 +194,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 				_writer.WriteElementString("e", System.Xml.XmlConvert.ToString(col[i]));
 			}
 
-
 			_writer.WriteEndElement(); // name
 		}
 
-		static void NotFound(string name)
+		private static void NotFound(string name)
 		{
 			throw new ArgumentException("Column " + name + " not found in the table.");
 		}
-
 	}
-
 }

@@ -23,11 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Graph.Scales;
-using Altaxo.Serialization;
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {

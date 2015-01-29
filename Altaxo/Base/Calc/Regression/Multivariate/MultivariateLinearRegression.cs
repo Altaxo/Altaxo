@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
-using System;
-using Altaxo.Data;
-using Altaxo.Collections;
+
+#endregion Copyright
+
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Probability;
+using Altaxo.Collections;
+using Altaxo.Data;
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -37,7 +40,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 		protected bool _GenerateResidualValues;
 		protected IAscendingIntegerCollection _selectedDataRows;
 
-
 		public MultivariateLinearFitParameters(DataColumnCollection table, IAscendingIntegerCollection selectedDataColumns)
 		{
 			_table = table;
@@ -50,8 +52,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 			{
 				return _table;
 			}
-
 		}
+
 		public IAscendingIntegerCollection SelectedDataColumns
 		{
 			get
@@ -126,8 +128,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 	/// </summary>
 	public class MultivariateLinearRegression
 	{
-
-
 		public static LinearFitBySvd ShowDialogAndRegress(DataColumnCollection table, IAscendingIntegerCollection selectedColumns)
 		{
 			if (selectedColumns.Count < 2)
@@ -151,7 +151,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 			IAscendingIntegerCollection selectedCols = parameters.SelectedDataColumns;
 			AscendingIntegerCollection selectedColsWODependent = new AscendingIntegerCollection(selectedCols);
 			selectedColsWODependent.RemoveAt(parameters.DependentColumnIndexIntoSelection);
-
 
 			IAscendingIntegerCollection validRows = DataTableWrapper.GetCollectionOfValidNumericRows(parameters.Table, selectedCols);
 			parameters.SelectedDataRows = validRows;
@@ -180,13 +179,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 					paramNames[i] = table[selectedColsWODependent[i]].Name;
 			}
 
-
 			// Fill the y and the error array
 			double[] yarr = new double[validRows.Count];
 			double[] earr = new double[validRows.Count];
 
 			Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)table[selectedCols[parameters.DependentColumnIndexIntoSelection]];
-
 
 			for (int i = 0; i < validRows.Count; i++)
 			{
@@ -199,7 +196,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 				xbase, yarr, earr, xbase.Rows, xbase.Columns, 1E-5);
 
 			return fit;
-
 		}
 
 		public static LinearFitBySvd Regress(MultivariateLinearFitParameters parameters, bool outputResults)
@@ -236,16 +232,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 				VectorMath.Copy(VectorMath.ToROVector(fit.ResidualValues), DataColumnWrapper.ToVector(col, parameters.SelectedDataRows));
 				parameters.Table.Add(col, dependentColumn.Name + "(residual)", ColumnKind.V, parameters.Table.GetColumnGroup(dependentColumn));
 			}
-
-
-
-
 		}
 
 		public static string OutputFitResults(LinearFitBySvd fit, string[] paramNames)
 		{
-
-
 			// Output of results
 
 			Current.Console.WriteLine("");
@@ -289,7 +279,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 				residualmeansquare
 				);
 
-
 			Current.Console.WriteLine("Total      {0,10} {1,20}",
 				fit.NumberOfData - 1,
 				fit.TotalCorrectedSumOfSquares
@@ -297,7 +286,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 				);
 
 			Current.Console.WriteLine("------------------------------------------------------------");
-
 
 			return null;
 		}

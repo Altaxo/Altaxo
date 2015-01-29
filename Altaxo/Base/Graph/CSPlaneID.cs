@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
@@ -43,28 +44,29 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
 		/// </summary>
-		int _perpendicularAxisNumber;
+		private int _perpendicularAxisNumber;
 
 		/// <summary>
 		/// The logical value of the isoline.
 		/// </summary>
-		double _logicalValue;
+		private double _logicalValue;
 
 		/// <summary>
 		/// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale
 		/// </summary>
-		bool _usePhysicalValue;
+		private bool _usePhysicalValue;
 
 		/// <summary>
 		/// The physical value of this axis.
 		/// </summary>
-		AltaxoVariant _physicalValue;
-
+		private AltaxoVariant _physicalValue;
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneID), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -75,6 +77,7 @@ namespace Altaxo.Graph
 				if (s._usePhysicalValue)
 					info.AddValue("Physical", (object)s._physicalValue);
 			}
+
 			protected virtual CSPlaneID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				CSPlaneID s = (o == null ? new CSPlaneID() : (CSPlaneID)o);
@@ -90,13 +93,14 @@ namespace Altaxo.Graph
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				CSPlaneID s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
+
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public CSPlaneID(int perpendicularAxisNumber, int logicalValue)
 			: this(perpendicularAxisNumber, (double)logicalValue)
@@ -121,15 +125,16 @@ namespace Altaxo.Graph
 			this._usePhysicalValue = from._usePhysicalValue;
 			this._physicalValue = from._physicalValue;
 		}
+
 		object ICloneable.Clone()
 		{
 			return new CSPlaneID(this);
 		}
+
 		public CSPlaneID Clone()
 		{
 			return new CSPlaneID(this);
 		}
-
 
 		public static CSPlaneID FromPhysicalValue(int perpendicularAxisNumber, double physicalValue)
 		{
@@ -149,7 +154,6 @@ namespace Altaxo.Graph
 			if (!(physicalValue == physicalValue))
 				throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
 
-
 			CSPlaneID id = new CSPlaneID();
 			id._perpendicularAxisNumber = perpendicularAxisNumber;
 			id._physicalValue = physicalValue;
@@ -157,7 +161,6 @@ namespace Altaxo.Graph
 			id._usePhysicalValue = true;
 			return id;
 		}
-
 
 		/// <summary>
 		/// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
@@ -262,22 +265,27 @@ namespace Altaxo.Graph
 		{
 			get { return new CSPlaneID(0, 0); }
 		}
+
 		public static CSPlaneID Right
 		{
 			get { return new CSPlaneID(0, 1); }
 		}
+
 		public static CSPlaneID Bottom
 		{
 			get { return new CSPlaneID(1, 0); }
 		}
+
 		public static CSPlaneID Top
 		{
 			get { return new CSPlaneID(1, 1); }
 		}
+
 		public static CSPlaneID Front
 		{
 			get { return new CSPlaneID(2, 0); }
 		}
+
 		public static CSPlaneID Back
 		{
 			get { return new CSPlaneID(2, 1); }
@@ -303,7 +311,5 @@ namespace Altaxo.Graph
 			else
 				return new CSPlaneID(line.ParallelAxisNumber == 0 ? 1 : 0, line.LogicalValueOtherFirst);
 		}
-
-
 	}
 }

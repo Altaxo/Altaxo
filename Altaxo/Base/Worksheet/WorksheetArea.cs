@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-
 
 namespace Altaxo.Worksheet
 {
@@ -31,29 +32,36 @@ namespace Altaxo.Worksheet
 	{
 		/// <summary>Outside of all relevant areas.</summary>
 		OutsideAll,
+
 		/// <summary>On the table header (top left corner of the data grid).</summary>
 		TableHeader,
+
 		/// <summary>Inside a data cell.</summary>
 		DataCell,
+
 		/// <summary>Inside a property cell.</summary>
 		PropertyCell,
+
 		/// <summary>On the column header.</summary>
 		DataColumnHeader,
+
 		/// <summary>On the row header.</summary>
 		DataRowHeader,
+
 		/// <summary>On the property column header.</summary>
 		PropertyColumnHeader
 	}
 
-
 	public struct AreaInfo
 	{
 		public Altaxo.Graph.RectangleD AreaRectangle { get; set; }
+
 		public AreaType AreaType { get; set; }
+
 		public int RowNumber { get; set; }
+
 		public int ColumnNumber { get; set; }
 	}
-
 
 	public static class AreaRetrieval
 	{
@@ -75,8 +83,6 @@ namespace Altaxo.Worksheet
 		{
 			return Math.Max(0, VertScrollPos);
 		}
-
-
 
 		/// <summary>
 		/// Gets the first table row that is visible under the coordinate top.
@@ -142,8 +148,7 @@ namespace Altaxo.Worksheet
 			return GetVerticalPositionOfFirstVisibleDataRow(layout, VertScrollPos) + (nRow - (VertScrollPos < 0 ? 0 : VertScrollPos)) * layout.RowHeaderStyle.Height;
 		}
 
-
-		#endregion
+		#endregion Data Row
 
 		#region Property column
 
@@ -178,7 +183,6 @@ namespace Altaxo.Worksheet
 		{
 			return GetFirstVisiblePropertyColumn(layout, VertScrollPos) + GetFullyVisiblePropertyColumns(layout, VertScrollPos, TableAreaHeight) - 1;
 		}
-
 
 		public static int GetTopCoordinateOfPropertyColumn(int nCol, WorksheetLayout layout, int VertScrollPos)
 		{
@@ -229,13 +233,12 @@ namespace Altaxo.Worksheet
 			return layout.ShowPropertyColumns ? Math.Max(0, -VertScrollPos) : 0;
 		}
 
-		#endregion
+		#endregion Property column
 
 		#region Data column
 
 		public static int GetFirstAndNumberOfVisibleColumn(double left, double right, WorksheetLayout layout, int HorzScrollPos, out int numVisibleColumns)
 		{
-
 			var data = layout.DataTable.DataColumns;
 			var nCols = data.ColumnCount;
 			var colStyles = layout.DataColumnStyles;
@@ -383,8 +386,7 @@ namespace Altaxo.Worksheet
 			return HorzScrollPos;
 		}
 
-
-		#endregion
+		#endregion Data column
 
 		#region Cell
 
@@ -408,9 +410,8 @@ namespace Altaxo.Worksheet
 			return new Altaxo.Graph.RectangleD(x, y, w, h);
 		}
 
-
 		/// <summary>
-		/// Retrieves the column number clicked onto 
+		/// Retrieves the column number clicked onto
 		/// </summary>
 		/// <param name="positionX">Clicked position.</param>
 		/// <param name="layout">Worksheet layout referring to.</param>
@@ -494,8 +495,6 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-
-
 		/// <summary>
 		/// Creates the ClickedCellInfo from the data grid and the mouse coordinates of the click.
 		/// </summary>
@@ -551,8 +550,6 @@ namespace Altaxo.Worksheet
 			return result;
 		}
 
-
-
-		#endregion
+		#endregion Cell
 	}
 }

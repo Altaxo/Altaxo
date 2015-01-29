@@ -26,7 +26,6 @@ using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
 using NUnit.Framework;
 using System;
-using System.Collections;
 
 namespace AltaxoTest.Calc.Optimization
 {

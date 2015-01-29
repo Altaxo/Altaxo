@@ -1,88 +1,85 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Common.Drawing.BrushAllPropertiesControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogm="clr-namespace:Altaxo.Gui.Main"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-             mc:Ignorable="d" 
-						 Grid.IsSharedSizeScope="True"
-             >
+             mc:Ignorable="d"
+						 Grid.IsSharedSizeScope="True">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
-				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
 		<Style TargetType="FrameworkElement">
 			<Style.Setters>
-				<Setter Property="Margin" Value="4"/>
+				<Setter Property="Margin" Value="4" />
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
 	<DockPanel>
-	<Grid DockPanel.Dock="Top">
+		<Grid DockPanel.Dock="Top">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1"/>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn2"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn2" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-	
 
-		<Label Grid.Column="0" Grid.Row="0" x:Name="_lblBrushType">Brush type:</Label>
-		<axogcd:BrushTypeComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrushType" Margin="4" SelectedBrushTypeChanged="EhBrushTypeChanged"/>
+			<Label Grid.Column="0" Grid.Row="0" x:Name="_lblBrushType">Brush type:</Label>
+			<axogcd:BrushTypeComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrushType" Margin="4" SelectedBrushTypeChanged="EhBrushTypeChanged" />
 
-		<Label Grid.Column="2" Grid.Row="0" x:Name="_lblForeColor">Color:</Label>
-		<axogcd:ColorComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbColor" Margin="4" SelectedColorChanged="EhForeColorChanged"/>
+			<Label Grid.Column="2" Grid.Row="0" x:Name="_lblForeColor">Color:</Label>
+			<axogcd:ColorComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbColor" Margin="4" SelectedColorChanged="EhForeColorChanged" />
 
-		<Label Grid.Column="0" Grid.Row="1" x:Name="_lblExchangeColors">Exchange colors:</Label>
+			<Label Grid.Column="0" Grid.Row="1" x:Name="_lblExchangeColors">Exchange colors:</Label>
 			<CheckBox Grid.Column="1" Grid.Row="1" x:Name="_chkExchangeColors" VerticalAlignment="Center" Margin="4" Checked="EhExchangeColorsChanged" Unchecked="EhExchangeColorsChanged" />
 
-		<Label Grid.Column="2" Grid.Row="1" x:Name="_lblBackColor">BackColor:</Label>
-			<axogcd:ColorComboBox Grid.Column="3" Grid.Row="1" x:Name="_cbBackColor" Margin="4" SelectedColorChanged="EhBackColorChanged"/>
+			<Label Grid.Column="2" Grid.Row="1" x:Name="_lblBackColor">BackColor:</Label>
+			<axogcd:ColorComboBox Grid.Column="3" Grid.Row="1" x:Name="_cbBackColor" Margin="4" SelectedColorChanged="EhBackColorChanged" />
 
-		<Label Grid.Column="0" Grid.Row="2" x:Name="_lblWrapMode">Wrap mode:</Label>
-			<axogcd:WrapModeComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbWrapMode" Margin="4" SelectionChanged="EhWrapModeChanged"/>
+			<Label Grid.Column="0" Grid.Row="2" x:Name="_lblWrapMode">Wrap mode:</Label>
+			<axogcd:WrapModeComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbWrapMode" Margin="4" SelectionChanged="EhWrapModeChanged" />
 
-		<Label Grid.Column="2" Grid.Row="2" x:Name="_lblGradientAngle">Angle:</Label>
-			<axogcd:RotationComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbGradientAngle" Margin="4" SelectedQuantityChanged="EhGradientAngleChanged"/>
+			<Label Grid.Column="2" Grid.Row="2" x:Name="_lblGradientAngle">Angle:</Label>
+			<axogcd:RotationComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbGradientAngle" Margin="4" SelectedQuantityChanged="EhGradientAngleChanged" />
 
-		<Label Grid.Column="0" Grid.Row="3" x:Name="_lblGradientFocus">GradientFocus:</Label>
-			<axogcd:GradientFocusComboBox Grid.Column="1" Grid.Row="3" x:Name="_cbGradientFocus" Margin="4" SelectedQuantityChanged="EhGradientFocusChanged"  />
+			<Label Grid.Column="0" Grid.Row="3" x:Name="_lblGradientFocus">GradientFocus:</Label>
+			<axogcd:GradientFocusComboBox Grid.Column="1" Grid.Row="3" x:Name="_cbGradientFocus" Margin="4" SelectedQuantityChanged="EhGradientFocusChanged" />
 
-		<Label Grid.Column="2" Grid.Row="3" x:Name="_lblColorScale">Gradient color scale:</Label>
-			<axogcd:ColorScaleComboBox Grid.Column="3" Grid.Row="3" x:Name="_cbColorScale" Margin="4" SelectedQuantityChanged="EhColorScaleChanged"/>
+			<Label Grid.Column="2" Grid.Row="3" x:Name="_lblColorScale">Gradient color scale:</Label>
+			<axogcd:ColorScaleComboBox Grid.Column="3" Grid.Row="3" x:Name="_cbColorScale" Margin="4" SelectedQuantityChanged="EhColorScaleChanged" />
 
-		<Label Grid.Column="0" Grid.Row="4" x:Name="_lblTextureImage">Texture:</Label>
-			<axogcd:TextureImageComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbTextureImage" Margin="4" SelectionChanged="EhTextureImageChanged"/>
+			<Label Grid.Column="0" Grid.Row="4" x:Name="_lblTextureImage">Texture:</Label>
+			<axogcd:TextureImageComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbTextureImage" Margin="4" SelectionChanged="EhTextureImageChanged" />
 
 			<Label Grid.Column="0" Grid.Row="5" x:Name="_lblTextureOffsetX">X offset:</Label>
-			<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="5" x:Name="_guiTextureOffsetX" Margin="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhTextureOffsetXChanged"/>
+			<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="5" x:Name="_guiTextureOffsetX" Margin="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhTextureOffsetXChanged" />
 
 			<Label Grid.Column="2" Grid.Row="5" x:Name="_lblTextureOffsetY">Y offset:</Label>
 			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="5" x:Name="_guiTextureOffsetY" Margin="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhTextureOffsetYChanged" />
 		</Grid>
 
-		<axogcd:TextureScalingControl x:Name="_guiTextureScaling" DockPanel.Dock="Top" Margin="0,4,0,4"/>
+		<axogcd:TextureScalingControl x:Name="_guiTextureScaling" DockPanel.Dock="Top" Margin="0,4,0,4" />
 
+		<axogm:InstancePropertyControlTwoColumnStyle x:Name="_guiAdditionalProperties" Margin="0,4,0,4" DockPanel.Dock="Top" />
 
-		<axogm:InstancePropertyControlTwoColumnStyle x:Name="_guiAdditionalProperties" Margin="0,4,0,4" DockPanel.Dock="Top"/>
-		
 		<GroupBox Header="Preview:" Margin="0,4,0,4">
 			<Grid>
-				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure"/>
-				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" SizeChanged="EhPreviewPanelSizeChanged"/>
+				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure" />
+				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" SizeChanged="EhPreviewPanelSizeChanged" />
 			</Grid>
 		</GroupBox>
 	</DockPanel>

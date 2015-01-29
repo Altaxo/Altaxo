@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,18 +21,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Getrs.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 #if !MANAGED
 using System;
 using System.Runtime.InteropServices;
-
-
 
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
@@ -60,13 +60,13 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         throw new ArgumentException("The length of ipiv must be at least max(1,n)", "ipiv");
       }
     }
-  
+
     internal static int Compute( Transpose trans, int n, int nrhs, float[] A, int lda, int[] ipiv, float[] B, int ldb ){
       ArgumentCheck(n, nrhs, A, lda,  B, ldb, ipiv);
       if ( trans == Transpose.ConjTrans ) {
         trans = Transpose.Trans;
       }
-      
+
       return dna_lapack_sgetrs(trans,n,nrhs,A,lda,ipiv,B,ldb);
     }
 
@@ -75,25 +75,25 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if ( trans == Transpose.ConjTrans ) {
         trans = Transpose.Trans;
       }
-      
+
       return dna_lapack_dgetrs(trans,n,nrhs,A,lda,ipiv,B,ldb);
     }
 
     internal static int Compute( Transpose trans, int n, int nrhs, ComplexFloat[] A, int lda, int[] ipiv, ComplexFloat[] B, int ldb ){
       ArgumentCheck(n, nrhs, A, lda,  B, ldb, ipiv);
-      
+
       return dna_lapack_cgetrs(trans,n,nrhs,A,lda,ipiv,B,ldb);
     }
 
     internal static int Compute( Transpose trans, int n, int nrhs, Complex[] A, int lda, int[] ipiv, Complex[] B, int ldb ){
       ArgumentCheck(n, nrhs, A, lda,  B, ldb, ipiv);
-      
+
       return dna_lapack_zgetrs(trans,n,nrhs,A,lda,ipiv,B,ldb);
     }
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_sgetrs( Transpose trans, int n, int nrhs, [In,Out]float[] A, int lda, [In]int[] ipiv, [In,Out]float[] B, int ldb );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dgetrs( Transpose trans, int n, int nrhs, [In,Out]double[] A, int lda, [In]int[] ipiv, [In,Out]double[] B, int ldb );
 

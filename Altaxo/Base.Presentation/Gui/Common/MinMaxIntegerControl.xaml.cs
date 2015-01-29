@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common
 {
@@ -41,17 +36,15 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class MinMaxIntegerControl : UserControl
 	{
-		int _Minimum;
-		int _Maximum;
-		int _Value;
-		int _StartValue;
-
+		private int _Minimum;
+		private int _Maximum;
+		private int _Value;
+		private int _StartValue;
 
 		public MinMaxIntegerControl()
 			: this(0, int.MaxValue, 0)
 		{
 		}
-
 
 		/// <summary>
 		/// Constructor.
@@ -79,7 +72,6 @@ namespace Altaxo.Gui.Common
 			else
 				_rbEnterNumber.IsChecked = true;
 		}
-
 
 		/// <summary>
 		/// Get/sets the value that the user entered.

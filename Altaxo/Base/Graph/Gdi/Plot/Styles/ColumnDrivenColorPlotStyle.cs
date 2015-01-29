@@ -23,17 +23,13 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
-	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Graph.Scales;
 	using Plot.Data;

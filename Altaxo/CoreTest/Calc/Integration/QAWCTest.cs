@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
 using Altaxo.Calc.Integration;
-
 using NUnit.Framework;
+using System;
 
 namespace AltaxoTest.Calc.Integration
 {
@@ -37,7 +38,7 @@ namespace AltaxoTest.Calc.Integration
 			const double expected = 1.0656799507071;
 			double result, abserr;
 			GSL_ERROR error;
-			error = QawcIntegration.Integration(z=>Math.Sqrt(z), 0, 2, 1, 0, 1E-6, 100, out result, out abserr);
+			error = QawcIntegration.Integration(z => Math.Sqrt(z), 0, 2, 1, 0, 1E-6, 100, out result, out abserr);
 
 			NUnit.Framework.Assert.AreEqual(expected, result, expected * 1E-6);
 		}

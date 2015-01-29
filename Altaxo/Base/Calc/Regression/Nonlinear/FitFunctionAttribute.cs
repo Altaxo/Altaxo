@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -38,13 +40,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	[AttributeUsage(AttributeTargets.Method)]
 	public class FitFunctionCreatorAttribute : System.Attribute, IComparable
 	{
-		string _name;
-		string _category;
-		string _descriptionResource;
-		int _numberOfIndependentVariables;
-		int _numberOfDependentVariables;
-		int _numberOfParameters;
-
+		private string _name;
+		private string _category;
+		private string _descriptionResource;
+		private int _numberOfIndependentVariables;
+		private int _numberOfDependentVariables;
+		private int _numberOfParameters;
 
 		public FitFunctionCreatorAttribute(
 		string name,
@@ -79,6 +80,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				return _name;
 			}
 		}
+
 		public string Category
 		{
 			get
@@ -94,6 +96,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				return _descriptionResource;
 			}
 		}
+
 		public int NumberOfIndependentVariables
 		{
 			get
@@ -101,6 +104,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				return _numberOfIndependentVariables;
 			}
 		}
+
 		public int NumberOfDependentVariables
 		{
 			get
@@ -108,6 +112,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				return _numberOfDependentVariables;
 			}
 		}
+
 		public int NumberOfParameters
 		{
 			get

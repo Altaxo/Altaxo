@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Project;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Dom;
-
 
 namespace Altaxo.Main.Services
 {
@@ -37,7 +37,7 @@ namespace Altaxo.Main.Services
 	/// </summary>
 	public static class ParserServiceConnector
 	{
-		static int _sOpenedProjectCounter = 0;
+		private static int _sOpenedProjectCounter = 0;
 
 		static ParserServiceConnector()
 		{
@@ -54,19 +54,19 @@ namespace Altaxo.Main.Services
 			// do nothing here, the work will be done in the static constructor
 		}
 
-		static void EhProjectService_ProjectOpened(object sender, ProjectEventArgs e)
+		private static void EhProjectService_ProjectOpened(object sender, ProjectEventArgs e)
 		{
 			_sOpenedProjectCounter++;
 			//string solutionName = "Solution" + _sOpenedProjectCounter.ToString();
 			//ICSharpCode.SharpDevelop.Project.ProjectService.LoadSolution(solutionName);
 		}
 
-		static void EhProjectService_ProjectClosed(object sender, ProjectEventArgs e)
+		private static void EhProjectService_ProjectClosed(object sender, ProjectEventArgs e)
 		{
 			//ICSharpCode.SharpDevelop.Project.ProjectService.CloseSolution();
 		}
 
-		static void EhAssemblyAdded(System.Reflection.Assembly asm)
+		private static void EhAssemblyAdded(System.Reflection.Assembly asm)
 		{
 			List<IProjectContent> todelete = new List<IProjectContent>();
 			foreach (IProjectContent c in ParserService.DefaultProjectContent.ReferencedContents)
@@ -88,13 +88,11 @@ namespace Altaxo.Main.Services
 		}
 
 		/// <summary>
-		/// Registers a script file. 
+		/// Registers a script file.
 		/// </summary>
 		/// <param name="scriptFileName"></param>
 		public static void RegisterScriptFileName(string scriptFileName)
 		{
-
-
 		}
 	}
 }

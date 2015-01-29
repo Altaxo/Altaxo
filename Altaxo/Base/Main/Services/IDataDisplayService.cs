@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,37 +19,35 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Main.Services
 {
-  /// <summary>
-  /// Provides methods for displaying the information obtained from the data reader (number of item, x data, y data).
-  /// </summary>
-  public interface IDataDisplayService
-  {
-    /// <summary>Writes a string to the output.</summary>
-    /// <param name="text">The text to write to the output.</param>
-    void WriteOneLine(string text);
+	/// <summary>
+	/// Provides methods for displaying the information obtained from the data reader (number of item, x data, y data).
+	/// </summary>
+	public interface IDataDisplayService
+	{
+		/// <summary>Writes a string to the output.</summary>
+		/// <param name="text">The text to write to the output.</param>
+		void WriteOneLine(string text);
 
-    /// <summary>
-    /// Writes two lines to the window.
-    /// </summary>
-    /// <param name="line1">First line.</param>
-    /// <param name="line2">Second line.</param>
-    void WriteTwoLines(string line1, string line2);
+		/// <summary>
+		/// Writes two lines to the window.
+		/// </summary>
+		/// <param name="line1">First line.</param>
+		/// <param name="line2">Second line.</param>
+		void WriteTwoLines(string line1, string line2);
 
-    /// <summary>
-    /// Writes three lines to the output.
-    /// </summary>
-    /// <param name="line1">First line.</param>
-    /// <param name="line2">Second line.</param>
-    /// <param name="line3">Three line.</param>
-    void WriteThreeLines(string line1, string line2, string line3);
-
-  
-
-  }
+		/// <summary>
+		/// Writes three lines to the output.
+		/// </summary>
+		/// <param name="line1">First line.</param>
+		/// <param name="line2">Second line.</param>
+		/// <param name="line3">Three line.</param>
+		void WriteThreeLines(string line1, string line2, string line3);
+	}
 }

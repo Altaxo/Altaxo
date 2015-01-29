@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Gemm.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -55,7 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       if ( n < 0) {
         throw new ArgumentException( "n must be zero or greater", "n");
       }
-      
+
       if ( (order == Order.ColumnMajor && transA == Transpose.NoTrans) || (order == Order.RowMajor && transA != Transpose.NoTrans) ) {
         if ( lda < System.Math.Max(1, m) ) {
           throw new ArgumentException("lda must be at least max(1,m).", "lda");
@@ -110,12 +112,12 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       }
       if ( transB == Transpose.ConjTrans ) {
         transB = Transpose.Trans;
-      }   
+      }
       ArgumentCheck(order, transA, transB, m, n, k, A, A.Length, lda, B, B.Length, ldb, C, C.Length, ldc);
       if ( alpha == 0.0 && beta == 1.0 ) {
         return;
       }
-      
+
       dna_blas_sgemm(order, transA, transB, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
     }
 
@@ -125,12 +127,12 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       }
       if ( transB == Transpose.ConjTrans ) {
         transB = Transpose.Trans;
-      }   
+      }
       ArgumentCheck(order, transA, transB, m, n, k, A, A.Length, lda, B, B.Length, ldb, C, C.Length, ldc);
       if ( alpha == 0.0 && beta == 1.0 ) {
         return;
       }
-      
+
       dna_blas_dgemm(order, transA, transB, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
     }
 
@@ -139,7 +141,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       if ( alpha == ComplexFloat.Zero && beta == ComplexFloat.One ) {
         return;
       }
-      
+
       dna_blas_cgemm(order, transA, transB, m, n, k, ref alpha, A, lda, B, ldb, ref beta, C, ldc);
     }
 
@@ -148,7 +150,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       if ( alpha == Complex.Zero && beta == Complex.One ) {
         return;
       }
-      
+
       dna_blas_zgemm(order, transA, transB, m, n, k, ref alpha, A, lda, B, ldb, ref beta, C, ldc);
     }
 

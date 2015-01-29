@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
@@ -47,11 +46,10 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 		/// </summary>
 		protected double _structureFactor = 0.2;
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HatchBrushBase), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -71,14 +69,13 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
 		public override Altaxo.Graph.PointD2D Size
 		{
-			get	{ return new Altaxo.Graph.PointD2D(_repeatLengthPt, _repeatLengthPt);	}
+			get { return new Altaxo.Graph.PointD2D(_repeatLengthPt, _repeatLengthPt); }
 		}
 
 		[System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
@@ -96,7 +93,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			get { return _structureFactor; }
 			set { _structureFactor = value; }
 		}
-	
+
 		protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
 		{
 			// use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing
@@ -149,7 +146,5 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 		{
 			get { return true; }
 		}
-
 	}
-
 }

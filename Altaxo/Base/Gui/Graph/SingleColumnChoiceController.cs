@@ -24,7 +24,6 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Gui;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;

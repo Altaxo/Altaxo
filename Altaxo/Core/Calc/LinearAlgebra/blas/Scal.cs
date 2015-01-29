@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Scal.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -37,7 +38,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Scal
 	{
-		private Scal() { }
+		private Scal()
+		{
+		}
+
 		///<summary>Check arguments so that errors don't occur in native code</summary>
 		private static void ArgumentCheck(int n, object X, int lenX, ref int incx)
 		{

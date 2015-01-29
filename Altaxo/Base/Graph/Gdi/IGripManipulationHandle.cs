@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
@@ -45,7 +47,7 @@ namespace Altaxo.Graph.Gdi
 		bool Deactivate();
 
 		/// <summary>
-		/// Moves the grip to the new position. 
+		/// Moves the grip to the new position.
 		/// </summary>
 		/// <param name="newPosition"></param>
 		void MoveGrip(PointD2D newPosition);

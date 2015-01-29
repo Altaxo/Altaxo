@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CheckerHatchBrush), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -51,8 +51,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
 		{
@@ -69,8 +68,8 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
 				using (var brush = new SolidBrush(foreColor))
 				{
-					float s = (float)(pixelDim * _structureFactor );
-					float o = (float)(pixelDim * (0.25 - 0.5 * _structureFactor ));
+					float s = (float)(pixelDim * _structureFactor);
+					float o = (float)(pixelDim * (0.25 - 0.5 * _structureFactor));
 					g.FillRectangle(brush, o, o, s, s);
 					g.FillRectangle(brush, o + 0.5f * pixelDim, o + 0.5f * pixelDim, s, s);
 				}
@@ -86,5 +85,4 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			return result;
 		}
 	}
-
 }

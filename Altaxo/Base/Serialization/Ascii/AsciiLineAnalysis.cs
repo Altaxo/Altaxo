@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -35,8 +36,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>
 		/// The dictionary containing entries for separation strategies and the corresponding resulting line structure.
 		/// </summary>
-		Dictionary<AsciiLineAnalysisOption, AsciiLineStructure> _structureForSeparation;
-
+		private Dictionary<AsciiLineAnalysisOption, AsciiLineStructure> _structureForSeparation;
 
 		public AsciiLineStructure this[AsciiLineAnalysisOption separationStrategy]
 		{
@@ -83,7 +83,7 @@ namespace Altaxo.Serialization.Ascii
 		{
 			AsciiLineStructure tabStruc = new AsciiLineStructure();
 
-			foreach(string substring in tokens)
+			foreach (string substring in tokens)
 			{
 				if (string.IsNullOrEmpty(substring)) // just this char is a tab, so nothing is between the last and this
 				{
@@ -167,7 +167,5 @@ namespace Altaxo.Serialization.Ascii
 			double result;
 			return double.TryParse(s, System.Globalization.NumberStyles.Float, numberFormat.NumberFormat, out result);
 		}
-
 	} // end class
-
 }

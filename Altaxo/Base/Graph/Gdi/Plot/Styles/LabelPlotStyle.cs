@@ -23,13 +23,9 @@
 #endregion Copyright
 
 using Altaxo.Graph.Gdi.Background;
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {

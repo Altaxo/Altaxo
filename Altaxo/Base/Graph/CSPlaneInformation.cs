@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,19 +30,19 @@ namespace Altaxo.Graph
 {
 	public class CSPlaneInformation : ICloneable
 	{
-		CSPlaneID _identifier;
-		string _name;
-
-
+		private CSPlaneID _identifier;
+		private string _name;
 
 		public CSPlaneInformation(CSPlaneID identifier)
 		{
 			_identifier = identifier;
 		}
+
 		public CSPlaneInformation(CSPlaneInformation from)
 		{
 			CopyFrom(from);
 		}
+
 		public void CopyFrom(CSPlaneInformation from)
 		{
 			if (object.ReferenceEquals(this, from))
@@ -49,10 +51,10 @@ namespace Altaxo.Graph
 			this._identifier = from._identifier;
 			CopyWithoutIdentifierFrom(from);
 		}
+
 		public void CopyWithoutIdentifierFrom(CSPlaneInformation from)
 		{
 			this._name = from._name;
-
 		}
 
 		public void SetDefaultValues()
@@ -62,12 +64,15 @@ namespace Altaxo.Graph
 				case 0:
 					_name = "YZ-Plane";
 					break;
+
 				case 1:
 					_name = "XZ-Plane";
 					break;
+
 				case 2:
 					_name = "XY-Plane";
 					break;
+
 				default:
 					_name = "Plane" + _identifier.PerpendicularAxisNumber.ToString();
 					break;
@@ -80,6 +85,7 @@ namespace Altaxo.Graph
 		{
 			return new CSPlaneInformation(this);
 		}
+
 		object ICloneable.Clone()
 		{
 			return new CSPlaneInformation(this);
@@ -98,7 +104,5 @@ namespace Altaxo.Graph
 			get { return _name; }
 			set { _name = value; }
 		}
-
-
 	}
 }

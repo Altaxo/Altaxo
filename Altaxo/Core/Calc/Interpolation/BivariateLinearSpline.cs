@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,29 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
 	public class BivariateLinearSpline
 	{
 		#region Member variables
-		IROVector _x;
-		IROVector _y;
-		IROMatrix _vmatrix;
 
-		bool _isXDecreasing;
-		bool _isYDecreasing;
+		private IROVector _x;
+		private IROVector _y;
+		private IROMatrix _vmatrix;
 
-		int _lastIX;
-		int _lastIY;
+		private bool _isXDecreasing;
+		private bool _isYDecreasing;
 
-		#endregion
+		private int _lastIX;
+		private int _lastIY;
+
+		#endregion Member variables
+
 		/// <summary>
 		/// Constructor of a bivariate linear spline. The vectors and the data matrix are not cloned, so make sure that they don't change during usage of this instance.
 		/// </summary>
@@ -73,7 +77,7 @@ namespace Altaxo.Calc.Interpolation
 			_lastIY = 0;
 		}
 
-		static int FindIndex(IROVector v, bool isDecreasing, int lastIdx, double x)
+		private static int FindIndex(IROVector v, bool isDecreasing, int lastIdx, double x)
 		{
 			if (isDecreasing) // strictly decreasing
 			{
@@ -130,7 +134,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="isDecreasing"></param>
 		/// <param name="x"></param>
 		/// <returns></returns>
-		static int BinarySearchForIndex(IROVector v, bool isDecreasing, double x)
+		private static int BinarySearchForIndex(IROVector v, bool isDecreasing, double x)
 		{
 			int lenM1 = v.Length - 1;
 			if (isDecreasing)
@@ -189,7 +193,6 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-
 		/// <summary>
 		/// Interpolates the values with given x and y coordinates. Returns double.NaN if x or y are outside the bounds.
 		/// </summary>
@@ -219,7 +222,5 @@ namespace Altaxo.Calc.Interpolation
 
 			return v00 + a * rx + b * ry + c * rx * ry;
 		}
-
-
 	}
 }

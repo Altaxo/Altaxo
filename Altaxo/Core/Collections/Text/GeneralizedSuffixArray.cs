@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -50,66 +52,64 @@ namespace Altaxo.Collections.Text
 	{
 		// Data from the original text
 
-		/// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements. 
+		/// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
 		/// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
 		/// </summary>
-		int[] _text;
+		private int[] _text;
 
 		/// <summary>
-		/// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the 
+		/// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
 		/// array <see cref="_text"/> is needed to be longer than <see cref="_textLength"/>, since some additional elements are neccessary for most algorithms.
 		/// </summary>
-		int _textLength;
+		private int _textLength;
 
 		/// <summary>
 		/// Number of words, if the text was separated into individual words. Otherwise, this field is equal to one.
 		/// </summary>
-		int _numberOfWords;
+		private int _numberOfWords;
 
 		/// <summary>
 		/// Start positions of the words in which the original text was separated in the array <see cref="_text"/>.
 		/// </summary>
-		int[] _wordStartPositions;
+		private int[] _wordStartPositions;
 
 		/// <summary>
 		/// Size of the alphabet, i.e. the number of unique elements that occur in the original text (or, number of unique list elements). If the text was separated into individual words, the number of words (= number of separator elements) also
 		/// contribute to the alphabet size.
 		/// </summary>
-		int _alphabetSize;
-
+		private int _alphabetSize;
 
 		// Data from the suffix-processed text
 
 		/// <summary>Maps the lexicographical order position i of a suffix to the starting position of the suffix in the text, which is the value of the i-th element of this array.</summary>
-		int[] _suffixArray;
+		private int[] _suffixArray;
 
 		/// <summary>
 		/// Maps the suffix that starts at position i in the text to the lexicographical order position of this suffix, which is the value of the i-th element of this array.
 		/// </summary>
-		int[] _inverseSuffixArray;
+		private int[] _inverseSuffixArray;
 
 		/// <summary>
 		/// Stores the length of the Longest Common Prefix of the lexicographically i-th suffix and its lexicographical  predecessor (the lexicographically (i-1)-th suffix).
 		/// The element at index 0 is always 0.
 		/// </summary>
-		int[] _LCP;
+		private int[] _LCP;
 
 		/// <summary>Stores the length of the Longest Common Prefix <see cref="_LCP"/>, but here only if two adjacent suffixes belong to the same word.
 		/// In the other case, i.e. the suffix <c>_suffixArray[i-1]</c> belongs to another word than the suffix <c>_suffixArray[i]</c>, then <c>_LCPS[i]</c> is zero. </summary>
-		int[] _LCPS;
+		private int[] _LCPS;
 
 		/// <summary>
 		/// Maps the lexicographical order position i of a suffix to the index of the word, in which this suffix starts. This means, that for instance the value of the i-th
 		/// element contains the index of the word, in which the lexicographically i-th suffix that starts at position <see cref="_suffixArray"/>[i] begins.
 		/// The contents of this array is only meaningful, if you provided text that was separated into words, for instance for the longest common substring problem.
 		/// </summary>
-		int[] _wordIndices;
+		private int[] _wordIndices;
 
 		/// <summary>
 		/// Maximum of all values in the <see cref="_LCP"/> array.
 		/// </summary>
-		int _maximumLcp = -1;
-
+		private int _maximumLcp = -1;
 
 		#region Constructors
 
@@ -183,8 +183,6 @@ namespace Altaxo.Collections.Text
 			return result;
 		}
 
-
-
 		/// <summary>Constructs the generalized suffix array from separate 'words'. Each list in the parameter <paramref name="words"/> is treated as 'word'. The elements are treated as characters. The elements are converted
 		/// to an integer alphabet by means of the <see cref="IntegerText"/> class.</summary>
 		/// <typeparam name="T">The type of characters of the text. It must implement IComparable.</typeparam>
@@ -211,10 +209,9 @@ namespace Altaxo.Collections.Text
 			return result;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Access to the fields
-
 
 		/// <summary>Gets the required text padding, i.e. the number of additional elements at the end of the text array that must be left empty (zero).</summary>
 		public const int RequiredTextPadding = 3;
@@ -226,7 +223,6 @@ namespace Altaxo.Collections.Text
 		{
 			get { return _numberOfWords; }
 		}
-
 
 		/// <summary>
 		/// Start positions of the words in which the original text was separated in the array <see cref="_text"/>.
@@ -278,8 +274,6 @@ namespace Altaxo.Collections.Text
 			get { return _LCPS; }
 		}
 
-
-
 		/// <summary>
 		/// Maximum of all values in the <see cref="_LCP"/> array.
 		/// </summary>
@@ -293,13 +287,12 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
-		#endregion
-
+		#endregion Access to the fields
 
 		/// <summary>Gets the maximum of all elements of <paramref name="arrayOfInt"/>.</summary>
 		/// <param name="arrayOfInt">The array of integers.</param>
 		/// <returns>The maximum value of all elements of the array.</returns>
-		static int GetMaximum(int[] arrayOfInt)
+		private static int GetMaximum(int[] arrayOfInt)
 		{
 			int max = arrayOfInt[0];
 			for (int i = 1; i < arrayOfInt.Length; i++)
@@ -318,10 +311,9 @@ namespace Altaxo.Collections.Text
 		/// <param name="wordStartPositions">The word start positions.</param>
 		/// <param name="numberOfWords">The number of words.</param>
 		/// <returns>Array of word indices.</returns>
-		static int[] CalculateWordIndices(int[] suffixArray, int[] inverseSuffixArray, int[] wordStartPositions, int numberOfWords)
+		private static int[] CalculateWordIndices(int[] suffixArray, int[] inverseSuffixArray, int[] wordStartPositions, int numberOfWords)
 		{
 			var wordIndices = new int[suffixArray.Length + 1];
-
 
 			int index = 0;
 			int j = 0;
@@ -338,12 +330,10 @@ namespace Altaxo.Collections.Text
 			return wordIndices;
 		}
 
-
-
 		/// <summary>Calculates the inverse suffix array (<see cref="P:InverseSuffixArray"/>) from the <see cref="P:SuffixArray"/>.</summary>
 		/// <param name="suffixArray">The suffix array.</param>
 		/// <returns>The inverse suffix array.</returns>
-		static int[] CalculateInverseSuffixArray(int[] suffixArray)
+		private static int[] CalculateInverseSuffixArray(int[] suffixArray)
 		{
 			var inverseSuffixArray = new int[suffixArray.Length];
 
@@ -359,7 +349,7 @@ namespace Altaxo.Collections.Text
 		/// <param name="text">The integer text. Each element of the original text (or object array) is represented by an integer, so that equal elements of the original text map to equal integers.</param>
 		/// <param name="textLength">Text length, i.e. the number of text elements. Can be smaller than the size of the <paramref name="text"/> array, since for some algorithms, the text array need to be longer than the text.</param>
 		/// <returns>The LCP array, which stores at index <c>i</c> the longest common prefix of the suffix at index <c>i</c> and the suffix at index <c>i-1</c>.</returns>
-		static int[] CalculateLcpArray(int[] suffixArray, int[] inverseSuffixArray, int[] text, int textLength)
+		private static int[] CalculateLcpArray(int[] suffixArray, int[] inverseSuffixArray, int[] text, int textLength)
 		{
 			var lcpArray = new int[textLength];
 			lcpArray[0] = 0;
@@ -381,7 +371,6 @@ namespace Altaxo.Collections.Text
 			return lcpArray;
 		}
 
-
 		/// <summary>Calculate lcp tabs for each text using the generalized suffix array</summary>
 		/// <param name="suffixArray">The suffix array, i.e. the array of indices that designate the lexicographical order of the suffixes.</param>
 		/// <param name="inverseSuffixArray">Inverse suffix array.</param>
@@ -389,10 +378,9 @@ namespace Altaxo.Collections.Text
 		/// <param name="numberOfWords">The num_words.</param>
 		/// <param name="textLength">Number of text elements. Can be smaller than the size of the <paramref name="text"/> array, since for some algorithms, the text array have to be longer than the text.</param>
 		/// <param name="wordIndices">The wordindex array.</param>
-		static int[] calc_lcptabs(int[] suffixArray, int[] inverseSuffixArray, int[] text, int textLength, int numberOfWords, int[] wordIndices)
+		private static int[] calc_lcptabs(int[] suffixArray, int[] inverseSuffixArray, int[] text, int textLength, int numberOfWords, int[] wordIndices)
 		{
 			var lcptabs = new int[textLength];
-
 
 			int[] last_occ = new int[textLength];
 			int[] last_wordocc = new int[numberOfWords];
@@ -430,7 +418,6 @@ namespace Altaxo.Collections.Text
 			return lcptabs;
 		}
 
-
 		/// <summary>
 		/// Algorithm to calculate the suffix array in O(N) time.
 		/// This algorithm is implemented according to
@@ -438,13 +425,14 @@ namespace Altaxo.Collections.Text
 		/// In Proc. 30th International Colloquium on Automata, Languages and Programming, volume 2719
 		/// of Lecture Notes in Computer Science, pages 943-955, Berlin, 2003, Springer-Verlag."
 		/// </summary>
-		class Skew
+		private class Skew
 		{
-			static bool leq(int a1, int a2, int b1, int b2)
+			private static bool leq(int a1, int a2, int b1, int b2)
 			{
 				return (a1 < b1 || a1 == b1 && a2 <= b2);
 			}
-			static bool leq(int a1, int a2, int a3, int b1, int b2, int b3)
+
+			private static bool leq(int a1, int a2, int a3, int b1, int b2, int b3)
 			{
 				return (a1 < b1 || a1 == b1 && leq(a2, a3, b2, b3));
 			}
@@ -457,7 +445,7 @@ namespace Altaxo.Collections.Text
 			/// <param name="n">Number of elements of the text.</param>
 			/// <param name="K">Size of the alphabet (i.e. number of different elements in the text).</param>
 			/// <param name="c">Temporary array. Must have length of (<c>K+1</c>. Will be changed during operation.</param>
-			static void radixPass(int[] a, int[] b, int[] r, int offs, int n, int K, int[] c)
+			private static void radixPass(int[] a, int[] b, int[] r, int offs, int n, int K, int[] c)
 			{
 				Array.Clear(c, 0, c.Length); // fill c with zeros
 				for (int i = 0; i < n; i++) c[r[offs + a[i]]]++;
@@ -468,11 +456,8 @@ namespace Altaxo.Collections.Text
 				for (int i = 0; i < n; i++) b[c[r[offs + a[i]]]++] = a[i];
 			}
 
-
 			// find the suffix array SA of s[0..n-1] in {1..K}^n
 			// require s[n]=s[n+1]=s[n+2]=0, n>=2
-
-
 
 			/// <summary>Find the suffix array SA of s[0..n-1] in {1..K}^n</summary>
 			/// <param name="s">The text. Each element of the original text (or object array) is represented by an integer, so that equal elements of the original text map to equal integers.
@@ -489,8 +474,6 @@ namespace Altaxo.Collections.Text
 				int[] s0 = new int[n0];
 				int[] SA0 = new int[n0];
 				int[] tempC = new int[K + 1];
-
-
 
 				for (int i = 0, j = 0; i < n + (n0 - n1); i++) if (i % 3 != 0) s12[j++] = i;
 
@@ -515,7 +498,7 @@ namespace Altaxo.Collections.Text
 				if (name < n02)
 				{
 					GetSuffixArray(s12, n02, name, SA12);
-					// store unique names in s12 using the suffix array 
+					// store unique names in s12 using the suffix array
 					for (int i = 0; i < n02; i++) s12[SA12[i]] = i + 1;
 				}
 				else // generate the suffix array of s12 directly
@@ -554,7 +537,5 @@ namespace Altaxo.Collections.Text
 				return SA;
 			}
 		}
-
-
 	}
 }

@@ -29,10 +29,8 @@ using System.Text;
 
 namespace Altaxo.Gui.Settings
 {
-	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Gui.Graph;
-	using Altaxo.Main.Properties;
 
 	public class ClipboardGraphExportOptionPanel : OptionPanelBase<ClipboardRenderingOptionsController>
 	{

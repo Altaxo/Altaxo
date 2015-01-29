@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Units;
+using Altaxo.Units.Length;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Units;
-using Altaxo.Units.Length;
-
-
 namespace Altaxo.Gui
 {
 	public static class GuiLengthUnits
 	{
-		static ReadOnlyCollection<IUnit> _instance;
+		private static ReadOnlyCollection<IUnit> _instance;
 
 		static GuiLengthUnits()
 		{
 			var instance = new List<IUnit>();
 
 			instance.Add(Point.Instance);
-			instance.Add(new UnitWithLimitedPrefixes(Meter.Instance , new SIPrefix[]{SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci}));
+			instance.Add(new UnitWithLimitedPrefixes(Meter.Instance, new SIPrefix[] { SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci }));
 			instance.Add(Inch.Instance);
 			_instance = instance.AsReadOnly();
 		}

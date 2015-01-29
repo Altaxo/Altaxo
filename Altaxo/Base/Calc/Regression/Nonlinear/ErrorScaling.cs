@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -50,7 +52,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// </summary>
 	public class ConstantVarianceScaling : IVarianceScaling
 	{
-		double _scaling = 1;
+		private double _scaling = 1;
 
 		#region Serialization
 
@@ -74,7 +76,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		/// <summary>
 		/// Returns true when the scaling factor is 1 (one).
@@ -111,12 +113,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// </summary>
 	public class RelativeVarianceScaling : IVarianceScaling
 	{
-		double _scaling = 1;
+		private double _scaling = 1;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeVarianceScaling), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -135,7 +137,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		public double GetWeight(double yr, int i)
 		{
@@ -156,8 +158,5 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			result._scaling = this._scaling;
 			return result;
 		}
-
 	}
-
-
 }

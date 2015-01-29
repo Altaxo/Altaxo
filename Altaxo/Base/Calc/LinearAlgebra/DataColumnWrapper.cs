@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,30 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using Altaxo.Calc;
-using Altaxo.Data;
+#endregion Copyright
+
 using Altaxo.Collections;
+using Altaxo.Data;
+using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	public static class DataColumnWrapper
 	{
 		#region Inner classes
 
 		#region ROVector
+
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a read-only vector.
 		/// </summary>
-		class NumericColumnToROVectorWrapper : IROVector
+		private class NumericColumnToROVectorWrapper : IROVector
 		{
-			Altaxo.Data.INumericColumn _column;
-			int _start;
-			int _rows;
-
+			private Altaxo.Data.INumericColumn _column;
+			private int _start;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -55,6 +55,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_start = start;
 				_rows = nRows;
 			}
+
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
@@ -71,17 +72,16 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a read-only vector for selected rows.
 		/// </summary>
-		class NumericColumnSelectedRowsToROVectorWrapper : IROVector
+		private class NumericColumnSelectedRowsToROVectorWrapper : IROVector
 		{
 			protected Altaxo.Data.INumericColumn _column;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
-
 
 			/// <summary>
 			/// Constructor
@@ -93,6 +93,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_column = column;
 				_rows = selectedRows;
 			}
+
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
@@ -109,22 +110,21 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
-
-		#endregion
+		#endregion ROVector
 
 		#region Vector
+
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a writable vector.
 		/// </summary>
-		class DoubleColumnToVectorWrapper : IVector
+		private class DoubleColumnToVectorWrapper : IVector
 		{
-			DoubleColumn _column;
-			int _start;
-			int _rows;
-
+			private DoubleColumn _column;
+			private int _start;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -138,6 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_start = start;
 				_rows = nRows;
 			}
+
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
@@ -158,13 +159,13 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a writeable vector for selected rows.
 		/// </summary>
-		class DoubleColumnSelectedRowsToVectorWrapper : IVector
+		private class DoubleColumnSelectedRowsToVectorWrapper : IVector
 		{
 			protected Altaxo.Data.DoubleColumn _column;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
@@ -179,6 +180,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_column = column;
 				_rows = selectedRows;
 			}
+
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
@@ -199,20 +201,18 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
-
 
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a writable vector.
 		/// </summary>
-		class DoubleColumnToComplexDoubleVectorWrapper : IComplexDoubleVector
+		private class DoubleColumnToComplexDoubleVectorWrapper : IComplexDoubleVector
 		{
-			DoubleColumn _columnRe;
-			DoubleColumn _columnIm;
-			int _start;
-			int _rows;
-
+			private DoubleColumn _columnRe;
+			private DoubleColumn _columnIm;
+			private int _start;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -228,6 +228,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				_start = start;
 				_rows = nRows;
 			}
+
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
@@ -249,16 +250,17 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IROVector Members
 		}
 
-		#endregion
+		#endregion Vector
 
 		#region Matrices
-		class NumericColumnToROHorzMatrixWrapper : IROMatrix
+
+		private class NumericColumnToROHorzMatrixWrapper : IROMatrix
 		{
-			Altaxo.Data.INumericColumn _column;
-			int _rows;
+			private Altaxo.Data.INumericColumn _column;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -277,7 +279,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return 1;
 				}
 			}
@@ -294,19 +295,17 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return _rows;
 				}
 			}
 
-			#endregion
-
+			#endregion IROMatrix Members
 		}
 
-		class NumericColumnToROVertMatrixWrapper : IROMatrix
+		private class NumericColumnToROVertMatrixWrapper : IROMatrix
 		{
-			Altaxo.Data.INumericColumn _column;
-			int _rows;
+			private Altaxo.Data.INumericColumn _column;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -325,7 +324,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return _rows;
 				}
 			}
@@ -342,19 +340,17 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return 1;
 				}
 			}
 
-			#endregion
-
+			#endregion IROMatrix Members
 		}
 
-		class DoubleColumnToHorzMatrixWrapper : IMatrix
+		private class DoubleColumnToHorzMatrixWrapper : IMatrix
 		{
-			Altaxo.Data.DoubleColumn _column;
-			int _rows;
+			private Altaxo.Data.DoubleColumn _column;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -373,7 +369,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return 1;
 				}
 			}
@@ -390,12 +385,11 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return _rows;
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 
 			#region IMatrix Members
 
@@ -411,13 +405,13 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 		}
 
-		class DoubleColumnToVertMatrixWrapper : IMatrix
+		private class DoubleColumnToVertMatrixWrapper : IMatrix
 		{
-			Altaxo.Data.DoubleColumn _column;
-			int _rows;
+			private Altaxo.Data.DoubleColumn _column;
+			private int _rows;
 
 			/// <summary>
 			/// Constructor
@@ -436,7 +430,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return _rows;
 				}
 			}
@@ -453,12 +446,11 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-
 					return 1;
 				}
 			}
 
-			#endregion
+			#endregion IROMatrix Members
 
 			#region IMatrix Members
 
@@ -474,12 +466,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			#endregion
+			#endregion IMatrix Members
 		}
 
-		#endregion
+		#endregion Matrices
 
-		#endregion
+		#endregion Inner classes
 
 		#region Wrapper for INumericColumn
 
@@ -493,6 +485,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			return new NumericColumnToROVectorWrapper(col, 0, nRows);
 		}
+
 		/// <summary>
 		/// This returns a read-only vector of a <see cref="INumericColumn" />
 		/// </summary>
@@ -506,7 +499,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		#region ToMatrices
-
 
 		/// <summary>
 		/// This returns a horizontal oriented, readonly matrix of a <see cref="DoubleColumn" />
@@ -530,10 +522,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new NumericColumnToROVertMatrixWrapper((INumericColumn)col, nRows);
 		}
 
+		#endregion ToMatrices
 
-		#endregion
-
-		#endregion
+		#endregion Wrapper for INumericColumn
 
 		#region Wrapper for DataColumn
 
@@ -553,7 +544,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			return new NumericColumnToROVectorWrapper((INumericColumn)col, nStart, nRows);
 		}
-
 
 		/// <summary>
 		/// This returns a read-only vector of a <see cref="INumericColumn" />
@@ -593,7 +583,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new NumericColumnSelectedRowsToROVectorWrapper(col, (IAscendingIntegerCollection)selectedRows.Clone());
 		}
 
-
 		/// <summary>
 		/// This returns a read-only vector of a <see cref="INumericColumn" />, but the data are copyied before. Thus, if you change the data
 		/// into the numeric column, the data of the returned vector is not influenced.
@@ -613,9 +602,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			return VectorMath.ToROVector(vec);
 		}
-		#endregion
+
+		#endregion ToRoVector
 
 		#region ToVector
+
 		/// <summary>
 		/// This returns a read and writeable vector of a <see cref="DoubleColumn" />
 		/// </summary>
@@ -630,7 +621,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			return new DoubleColumnToVectorWrapper((DoubleColumn)col, nStart, nRows);
 		}
-
 
 		/// <summary>
 		/// This returns a read and writeable vector of a <see cref="DoubleColumn" />
@@ -659,7 +649,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new DoubleColumnToVectorWrapper((DoubleColumn)col, 0, col.Count);
 		}
 
-		#endregion
+		#endregion ToVector
 
 		#region ToMatrices
 
@@ -691,13 +681,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new DoubleColumnToVertMatrixWrapper((DoubleColumn)col, nRows);
 		}
 
-		#endregion
+		#endregion ToMatrices
 
-		#endregion
+		#endregion Wrapper for DataColumn
 
 		#region Wrapper for DoubleColumn
 
 		#region ToVector
+
 		/// <summary>
 		/// This returns a read and writeable vector of a <see cref="DoubleColumn" />
 		/// </summary>
@@ -742,7 +733,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new DoubleColumnSelectedRowsToVectorWrapper(col, (IAscendingIntegerCollection)selectedRows.Clone());
 		}
 
-
 		/// <summary>
 		/// This returns a read and writeable complex vector that wraps two <see cref="DoubleColumn" />s.
 		/// </summary>
@@ -782,12 +772,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new DoubleColumnToComplexDoubleVectorWrapper(columnRe, columnIm, nStart, nRows);
 		}
 
-		#endregion
-		#endregion
+		#endregion ToVector
 
-
-
-
+		#endregion Wrapper for DoubleColumn
 	}
-
 }

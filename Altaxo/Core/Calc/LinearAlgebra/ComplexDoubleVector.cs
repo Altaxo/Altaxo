@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections;
@@ -85,7 +87,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				data[i] = values[i];
 			}
 		}
-
 
 		///<summary>Constructor for <c>ComplexDoubleVector</c> from <c>IList</c></summary>
 		///<param name="values"><c>IList</c> to convert into <c>ComplexDoubleVector</c>.</param>
@@ -251,7 +252,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return ret;
 		}
-
 
 		///<summary>Implicit cast conversion to <c>ComplexDoubleVector</c> from <c>float</c> array</summary>
 		static public implicit operator ComplexDoubleVector(float[] src)
@@ -877,6 +877,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.Length; }
 		}
+
 		int ICollection.Count
 		{
 			get { return this.Count; }
@@ -887,6 +888,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.data.IsSynchronized; }
 		}
+
 		bool ICollection.IsSynchronized
 		{
 			get { return this.IsSynchronized; }
@@ -903,6 +905,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			this.data.CopyTo(array, index);
 		}
+
 		void ICollection.CopyTo(Array array, int index)
 		{
 			this.CopyTo((Complex[])array, index);
@@ -937,6 +940,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				data[index] = value;
 			}
 		}
+
 		object IList.this[int index]
 		{
 			get { return (object)this[index]; }
@@ -1069,6 +1073,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		#endregion
+		#endregion Additions due to adoption
 	}
 }

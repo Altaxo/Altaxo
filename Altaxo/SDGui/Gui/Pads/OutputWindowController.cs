@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
-using System;
 
-using ICSharpCode.Core;
+#endregion Copyright
 
 using ICSharpCode.SharpDevelop.Gui;
-
+using System;
 
 namespace Altaxo.Gui.Pads
 {
@@ -35,7 +34,7 @@ namespace Altaxo.Gui.Pads
 		ICSharpCode.SharpDevelop.Gui.IPadContent,
 		Altaxo.Main.Services.IOutputService
 	{
-		System.Windows.Controls.TextBox _view;
+		private System.Windows.Controls.TextBox _view;
 
 		public OutputWindowController()
 		{
@@ -50,7 +49,6 @@ namespace Altaxo.Gui.Pads
 
 			Current.SetOutputService(this);
 		}
-
 
 		#region IPadContent Members
 
@@ -69,7 +67,8 @@ namespace Altaxo.Gui.Pads
 				return null;
 			}
 		}
-		#endregion
+
+		#endregion IPadContent Members
 
 		#region IDisposable Members
 
@@ -81,14 +80,13 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
-		#endregion
+		#endregion IDisposable Members
 
 		#region IOutputService Members
 
-		void Write_Unsynchronized(string text)
+		private void Write_Unsynchronized(string text)
 		{
 			_view.AppendText(text);
-
 
 			if (!_view.IsVisible || _view.Parent == null)
 			{
@@ -96,16 +94,14 @@ namespace Altaxo.Gui.Pads
 
 				WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
 
-				
-				if(null!=ww)
+				if (null != ww)
 					ww.SelectWindow();
-
 			}
 		}
 
 		public void Write(string text)
 		{
-			Current.Gui.Execute(Write_Unsynchronized,text);
+			Current.Gui.Execute(Write_Unsynchronized, text);
 		}
 
 		public void WriteLine()
@@ -138,7 +134,6 @@ namespace Altaxo.Gui.Pads
 			Write(string.Format(provider, format, args));
 		}
 
-		#endregion
-
+		#endregion IOutputService Members
 	}
 }

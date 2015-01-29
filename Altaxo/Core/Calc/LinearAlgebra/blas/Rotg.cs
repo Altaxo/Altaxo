@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Rotg.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -89,7 +90,6 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 			c = 1;
 			s = 0;
 
-
 #if MANAGED
 			double roe = b;
 			double absA = System.Math.Abs(a);
@@ -130,7 +130,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       dna_blas_drotg(ref a, ref b, out c, out s);
 #endif
 		}
-		private Rotg() { }
+
+		private Rotg()
+		{
+		}
 
 #if !MANAGED
     ///<summary>P/Invoke to wrapper with native code</summary>

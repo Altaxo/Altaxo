@@ -28,8 +28,6 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	using Gdi.Plot.Groups;
-
 	/// <summary>
 	/// This group style is intended to publish the symbol size to all interested
 	/// plot styles.

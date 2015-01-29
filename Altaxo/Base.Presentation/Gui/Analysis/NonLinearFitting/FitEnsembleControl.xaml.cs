@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -47,9 +42,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			InitializeComponent();
 		}
 
-		#region  IFitEnsembleView
+		#region IFitEnsembleView
 
-		IFitEnsembleViewEventSink _controller;
+		private IFitEnsembleViewEventSink _controller;
+
 		public IFitEnsembleViewEventSink Controller
 		{
 			get
@@ -70,6 +66,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_itemsHost.Children.Add(ele);
 		}
 
-		#endregion
+		#endregion IFitEnsembleView
 	}
 }

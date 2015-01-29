@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,33 +31,34 @@ namespace Altaxo.Graph
 	[Serializable]
 	public class CSAxisInformation : ICloneable
 	{
-		CSLineID _identifier;
+		private CSLineID _identifier;
 
-		string _nameOfAxisStyle;
-		string _nameOfFirstDownSide;
-		string _nameOfFirstUpSide;
-		string _nameOfSecondDownSide;
-		string _nameOfSecondUpSide;
-		CSAxisSide _preferedLabelSide;
-		bool _isShownByDefault;
+		private string _nameOfAxisStyle;
+		private string _nameOfFirstDownSide;
+		private string _nameOfFirstUpSide;
+		private string _nameOfSecondDownSide;
+		private string _nameOfSecondUpSide;
+		private CSAxisSide _preferedLabelSide;
+		private bool _isShownByDefault;
 
-
-		bool _hasTitleByDefault;
+		private bool _hasTitleByDefault;
 
 		/// <summary>This is the logical value where the axis starts. Normally, this is 0 (zero). For a segment of an axis, this might be any value.</summary>
-		double _logicalValueAxisOrg;
+		private double _logicalValueAxisOrg;
 
 		/// <summary>This is the logical value where the axis ends. Normally, this is 1 (one). For a segment of an axis, this might be any value.</summary>
-		double _logicalValueAxisEnd = 1;
+		private double _logicalValueAxisEnd = 1;
 
 		public CSAxisInformation(CSLineID identifier)
 		{
 			_identifier = identifier.Clone();
 		}
+
 		public CSAxisInformation(CSAxisInformation from)
 		{
 			CopyFrom(from);
 		}
+
 		public void CopyFrom(CSAxisInformation from)
 		{
 			if (object.ReferenceEquals(this, from))
@@ -64,6 +67,7 @@ namespace Altaxo.Graph
 			this._identifier = from._identifier.Clone();
 			CopyWithoutIdentifierFrom(from);
 		}
+
 		public void CopyWithoutIdentifierFrom(CSAxisInformation from)
 		{
 			this._nameOfAxisStyle = from._nameOfAxisStyle;
@@ -85,17 +89,19 @@ namespace Altaxo.Graph
 				case 0:
 					_nameOfAxisStyle = "X-Axis";
 					break;
+
 				case 1:
 					_nameOfAxisStyle = "Y-Axis";
 					break;
+
 				case 2:
 					_nameOfAxisStyle = "Z-Axis";
 					break;
+
 				default:
 					_nameOfAxisStyle = "Axis" + _identifier.ParallelAxisNumber.ToString();
 					break;
 			}
-
 
 			// Axis name
 			if (_identifier.Is3DIdentifier)
@@ -114,34 +120,29 @@ namespace Altaxo.Graph
 					_nameOfAxisStyle += string.Format(" (at L={0})", _identifier.LogicalValueOtherFirst.ToString());
 			}
 
-
 			// Axis sides
 			_nameOfFirstDownSide = "FirstDown";
 			_nameOfFirstUpSide = "FirstUp";
-			if(_identifier.Is3DIdentifier)
+			if (_identifier.Is3DIdentifier)
 			{
 				_nameOfSecondDownSide = "SecondDown";
 				_nameOfSecondUpSide = "SecondUp";
 			}
 			else
 			{
-			_nameOfSecondDownSide = null;
-			_nameOfSecondUpSide = null;
+				_nameOfSecondDownSide = null;
+				_nameOfSecondUpSide = null;
 			}
-
 
 			// preferred label side
 			_preferedLabelSide = CSAxisSide.FirstDown;
-
-		
-
-
 		}
 
 		public CSAxisInformation Clone()
 		{
 			return new CSAxisInformation(this);
 		}
+
 		object ICloneable.Clone()
 		{
 			return new CSAxisInformation(this);
@@ -196,7 +197,6 @@ namespace Altaxo.Graph
 			get { return _nameOfFirstUpSide; }
 			set { _nameOfFirstUpSide = value; }
 		}
-
 
 		/// <summary>
 		/// Side of an axis style where the label is probably shown. For the bottom axis, this is for instance the right side, i.e. the outer side.

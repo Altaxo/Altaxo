@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,8 +35,8 @@ namespace Altaxo.Science
 		AsInverseKelvin,
 		DegreeCelsius,
 		DegreeFahrenheit,
-    AsEnergyJoule,
-    AsEnergyJoulePerMole
+		AsEnergyJoule,
+		AsEnergyJoulePerMole
 	};
 
 	/// <summary>
@@ -42,14 +44,13 @@ namespace Altaxo.Science
 	/// </summary>
 	public struct Temperature
 	{
-		TemperatureRepresentation _unit;
-		double _value;
+		private TemperatureRepresentation _unit;
+		private double _value;
 
 		public const double ZeroDegreeCelsiusAsKelvin = 273.15;
 		public const double ZeroDegreeFahrenheitAsKelvin = 459.67 * 5 / 9.0;
 		public const double DegreeFahrenheitPerKelvin = 9.0 / 5.0;
 		public const double KelvinPerDegreeFahrenheit = 5.0 / 9.0;
-
 
 		public Temperature(double value, TemperatureRepresentation unit)
 		{
@@ -73,23 +74,23 @@ namespace Altaxo.Science
 			}
 		}
 
-    public double InSIUnits
-    {
-      get
-      {
-        return ToKelvin(_value, _unit);
-      }
-    }
+		public double InSIUnits
+		{
+			get
+			{
+				return ToKelvin(_value, _unit);
+			}
+		}
 
-    public double InUnitsOf(TemperatureRepresentation destUnit)
-    {
-      return FromTo(_value, _unit, destUnit);
-    }
+		public double InUnitsOf(TemperatureRepresentation destUnit)
+		{
+			return FromTo(_value, _unit, destUnit);
+		}
 
-    public Temperature ConvertTo(TemperatureRepresentation destUnit)
-    {
-      return new Temperature(FromTo(_value, _unit, destUnit), destUnit);
-    }
+		public Temperature ConvertTo(TemperatureRepresentation destUnit)
+		{
+			return new Temperature(FromTo(_value, _unit, destUnit), destUnit);
+		}
 
 		public double InKelvin
 		{
@@ -98,6 +99,7 @@ namespace Altaxo.Science
 				return ToKelvin(_value, _unit);
 			}
 		}
+
 		public double InInverseKelvin
 		{
 			get
@@ -122,24 +124,28 @@ namespace Altaxo.Science
 			}
 		}
 
-
 		public static double ToKelvin(double srcValue, TemperatureRepresentation srcUnit)
 		{
-
 			switch (srcUnit)
 			{
 				case TemperatureRepresentation.DegreeCelsius:
 					return 273.15 + srcValue;
+
 				case TemperatureRepresentation.DegreeFahrenheit:
 					return ZeroDegreeFahrenheitAsKelvin + srcValue * KelvinPerDegreeFahrenheit;
+
 				case TemperatureRepresentation.AsInverseKelvin:
 					return 1 / srcValue;
+
 				case TemperatureRepresentation.Kelvin:
 					return srcValue;
-        case TemperatureRepresentation.AsEnergyJoule:
-          return srcValue / SIConstants.BOLTZMANN;
-        case TemperatureRepresentation.AsEnergyJoulePerMole:
-          return srcValue / SIConstants.MOLAR_GAS;
+
+				case TemperatureRepresentation.AsEnergyJoule:
+					return srcValue / SIConstants.BOLTZMANN;
+
+				case TemperatureRepresentation.AsEnergyJoulePerMole:
+					return srcValue / SIConstants.MOLAR_GAS;
+
 				default:
 					throw new ArgumentOutOfRangeException("TemperatureUnit is unknown: " + srcUnit.ToString());
 			}
@@ -151,21 +157,26 @@ namespace Altaxo.Science
 			{
 				case TemperatureRepresentation.DegreeCelsius:
 					return srcValueInKelvin - ZeroDegreeCelsiusAsKelvin;
+
 				case TemperatureRepresentation.DegreeFahrenheit:
 					return (srcValueInKelvin - ZeroDegreeFahrenheitAsKelvin) * DegreeFahrenheitPerKelvin;
+
 				case TemperatureRepresentation.AsInverseKelvin:
 					return 1 / srcValueInKelvin;
+
 				case TemperatureRepresentation.Kelvin:
 					return srcValueInKelvin;
-        case TemperatureRepresentation.AsEnergyJoule:
-          return srcValueInKelvin * SIConstants.BOLTZMANN;
-        case TemperatureRepresentation.AsEnergyJoulePerMole:
-          return srcValueInKelvin * SIConstants.MOLAR_GAS;
+
+				case TemperatureRepresentation.AsEnergyJoule:
+					return srcValueInKelvin * SIConstants.BOLTZMANN;
+
+				case TemperatureRepresentation.AsEnergyJoulePerMole:
+					return srcValueInKelvin * SIConstants.MOLAR_GAS;
+
 				default:
 					throw new ArgumentOutOfRangeException("TemperatureUnit is unknown: " + destinationUnit.ToString());
 			}
 		}
-
 
 		public static double FromTo(double srcValue, TemperatureRepresentation srcUnit, TemperatureRepresentation destUnit)
 		{
@@ -185,6 +196,5 @@ namespace Altaxo.Science
 		{
 			return ToKelvin(srcValue, srcUnit) * SIConstants.BOLTZMANN;
 		}
-
 	}
 }

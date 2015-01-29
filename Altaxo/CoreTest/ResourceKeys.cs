@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using Altaxo.Calc;
-using NUnit.Framework;
+#endregion Copyright
 
 using Altaxo;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace AltaxoTest
 {
 	[TestFixture]
-	class ResourceKeys
+	internal class ResourceKeys
 	{
 		[Test]
 		public void TestAllKeysPresent()
@@ -44,7 +44,7 @@ namespace AltaxoTest
 
 				foreach (var memberInfo in members)
 				{
-					if(memberInfo.FieldType== typeof(StringResourceKey))
+					if (memberInfo.FieldType == typeof(StringResourceKey))
 					{
 						if (!memberInfo.IsStatic)
 						{
@@ -59,12 +59,11 @@ namespace AltaxoTest
 							null,
 							new object[] { });
 
-						string resourceString = StringResources.AltaxoCore.GetString(resourceKey,false);
+						string resourceString = StringResources.AltaxoCore.GetString(resourceKey, false);
 
 						Assert.That(!string.IsNullOrEmpty(resourceString), string.Format("The resource string for the resource key '{0}' is null or empty", resourceKey));
 					}
 				}
-
 			}
 		}
 	}

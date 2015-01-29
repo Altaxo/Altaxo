@@ -28,8 +28,6 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	using Gdi.Plot.Groups;
-
 	/// <summary>
 	/// Style used to group plot items by color, and to step between the colors in a plot color set.
 	/// </summary>

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Windows.Forms;
+#endregion Copyright
+
 using ICSharpCode.Core;
-using Altaxo;
-using Altaxo.Main;
-using Altaxo.Worksheet;
-using Altaxo.Gui.Worksheet.Viewing;
-using ICSharpCode.SharpZipLib.Zip;
+using System;
 
 namespace Altaxo.Worksheet.Commands
 {
-
-
-
-
 	/// <summary>
 	/// This condition is true if the active view content is a worksheet which contains PLS model data.
 	/// </summary>
@@ -42,7 +34,6 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public bool IsValid(object caller, Condition condition)
 		{
-
 			string selectedData = condition.Properties["ContainsPLSModelData"];
 
 			if (Current.Workbench.ActiveViewContent == null)
@@ -64,7 +55,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.QuestPreferredNumberOfFactors(ctrl.DataTable);
 		}
 	}
-
 
 	public class PLSPlotPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
 	{
@@ -145,7 +135,6 @@ namespace Altaxo.Worksheet.Commands
 			Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPreprocessedSpectra(ctrl.DataTable);
 		}
 	}
-
 
 	public class PLSPlotPredictionScores : AbstractWorksheetControllerCommand
 	{

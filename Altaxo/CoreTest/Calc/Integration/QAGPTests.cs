@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,37 +19,34 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using Altaxo.Calc;
+#endregion Copyright
+
 using Altaxo.Calc.Integration;
-
 using NUnit.Framework;
+using System;
 
 namespace AltaxoTest.Calc.Integration
 {
-  [TestFixture]
-  public class QAGPTests
-  {
+	[TestFixture]
+	public class QAGPTests
+	{
+		[Test]
+		public void TestSin()
+		{
+			double result, abserr;
+			QagpIntegration.Integration(Math.Sin, new double[] { 0, Math.PI }, 2, 0, 1E-6, 100, out result, out abserr);
 
+			NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
+		}
 
-    [Test]
-    public void TestSin()
-    {
-      double result, abserr;
-      QagpIntegration.Integration(Math.Sin, new double[] { 0, Math.PI }, 2, 0, 1E-6, 100, out result, out abserr);
+		[Test]
+		public void TestOneBySqrtX()
+		{
+			double result, abserr;
+			QagpIntegration.Integration(delegate(double x) { return 1 / Math.Sqrt(Math.Abs(x)); }, new double[] { -1, 0, 1 }, 3, 0, 1E-6, 100, out result, out abserr);
 
-      NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
-    }
-
-    [Test]
-    public void TestOneBySqrtX()
-    {
-      double result, abserr;
-      QagpIntegration.Integration(delegate(double x) { return 1 / Math.Sqrt(Math.Abs(x)); }, new double[] { -1, 0, 1 }, 3, 0, 1E-6, 100, out result, out abserr);
-
-      NUnit.Framework.Assert.AreEqual(4.0, result, 4.0 * 1E-6);
-    }
-  }
+			NUnit.Framework.Assert.AreEqual(4.0, result, 4.0 * 1E-6);
+		}
+	}
 }

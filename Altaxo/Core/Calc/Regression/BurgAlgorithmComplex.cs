@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -35,22 +36,22 @@ namespace Altaxo.Calc.Regression
 	public class BurgAlgorithmComplex
 	{
 		/// <summary>Forward prediction errors.</summary>
-		Complex[] _f;
+		private Complex[] _f;
 
 		/// <summary>Backward prediction errors.</summary>
-		Complex[] _b;
+		private Complex[] _b;
 
 		/// <summary>Prediction coefficients. Note that for technical reasons _Ak[0] is always 1 and the calculated coefficients start with _Ak[1].</summary>
-		Complex[] _Ak;
+		private Complex[] _Ak;
 
 		/// <summary>Wrapper for the coefficients that can be returned by <see cref="Coefficients"/>.</summary>
-		ComplexVectorWrapper _AkWrapper;
+		private ComplexVectorWrapper _AkWrapper;
 
 		/// <summary>Number of coefficients that were calculated.</summary>
-		int _numberOfCoefficients;
+		private int _numberOfCoefficients;
 
 		/// <summary>Mean square error calculated during the last run.</summary>
-		double _meanSquareError;
+		private double _meanSquareError;
 
 		/// <summary>
 		/// Returns the number of coefficients that were used for the last run of the algorithm.
@@ -176,7 +177,6 @@ namespace Altaxo.Calc.Regression
 			}
 		}
 
-
 		/// <summary>
 		/// This algorithm determines the mean forward prediction error using the model stored in this instance. See remarks for details.
 		/// </summary>
@@ -206,7 +206,6 @@ namespace Altaxo.Calc.Regression
 			return Math.Sqrt(sumsqr / (last - first));
 		}
 
-
 		/// <summary>
 		/// Predict values towards the start of the vector. The predicted values are then used to predict more values. See remarks for details.
 		/// </summary>
@@ -220,7 +219,6 @@ namespace Altaxo.Calc.Regression
 		{
 			PredictRecursivelyBackward(x, lastPoint, lastPoint + 1);
 		}
-
 
 		/// <summary>
 		/// Predict values towards the start of the vector. The predicted values are then used to predict more values. See remarks for details.
@@ -245,7 +243,6 @@ namespace Altaxo.Calc.Regression
 				x[i] = sum;
 			}
 		}
-
 
 		/// <summary>
 		/// This algorithm determines the mean backward prediction error using the model stored in this instance. See remarks for details.
@@ -275,7 +272,6 @@ namespace Altaxo.Calc.Regression
 			return Math.Sqrt(sumsqr / (last));
 		}
 
-
 		/// <summary>
 		/// Ensures that temporary arrays are allocated in order to execute the Burg algorithm.
 		/// </summary>
@@ -294,14 +290,12 @@ namespace Altaxo.Calc.Regression
 			if (_numberOfCoefficients != _AkWrapper.Length)
 				_AkWrapper = new ComplexVectorWrapper(_Ak, 1, _numberOfCoefficients);
 
-
 			if (null == _b || _b.Length < xLength)
 				_b = new Complex[xLength];
 
 			if (null == _f || _f.Length < xLength)
 				_f = new Complex[xLength];
 		}
-
 
 		/// <summary>
 		/// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
@@ -325,7 +319,6 @@ namespace Altaxo.Calc.Regression
 		{
 			return Execution(x, coefficients, null, reflectionCoefficients, null);
 		}
-
 
 		/// <summary>
 		/// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
@@ -457,7 +450,6 @@ namespace Altaxo.Calc.Regression
 			return sumE / (2 * (N - k));
 		}
 
-
 		/*
 		public void ExecuteAlt(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector errors, IComplexDoubleVector reflectionCoefficients)
 		{
@@ -468,7 +460,7 @@ namespace Altaxo.Calc.Regression
 		}
 
 		/// <summary>
-		/// This is source code adapted from arburg.m of the Octave project. Is is not quite as accurate as the algorithm above. 
+		/// This is source code adapted from arburg.m of the Octave project. Is is not quite as accurate as the algorithm above.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="coefficients"></param>
@@ -478,17 +470,13 @@ namespace Altaxo.Calc.Regression
 			int N = x.Length;
 			int m = coefficients.Length;
 
-
 			var b = new Complex[N - 1];
 			var f = new Complex[N - 1];
-
-
 
 			var k = new List<Complex>(); // Reflection coefficients
 			var a = new List<Complex>(); // Prediction coefficients
 			double v;                    // Error
 			var prev_a = new List<Complex>();
-
 
 			for (int i = 0; i < N - 1; i++)
 			{
@@ -566,8 +554,8 @@ namespace Altaxo.Calc.Regression
 
 		private class ComplexVectorWrapper : IComplexDoubleVector
 		{
-			Complex[] _arr;
-			int _start, _count;
+			private Complex[] _arr;
+			private int _start, _count;
 
 			public ComplexVectorWrapper(Complex[] arr, int start, int count)
 			{
@@ -575,6 +563,7 @@ namespace Altaxo.Calc.Regression
 				_start = start;
 				_count = count;
 			}
+
 			public Complex this[int i]
 			{
 				get
@@ -593,8 +582,6 @@ namespace Altaxo.Calc.Regression
 			}
 		}
 
-
-		#endregion
-
+		#endregion ComplexVectorWrapper
 	}
 }

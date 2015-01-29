@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
 	/// <summary>
 	/// Contains the main entry point of the installer application.
 	/// </summary>
-	class UpdateInstallerMain
+	internal class UpdateInstallerMain
 	{
-		static System.Windows.Application app;
-		static InstallerMainWindow mainWindow;
+		private static System.Windows.Application app;
+		private static InstallerMainWindow mainWindow;
 
 		/// <summary>
 		/// A text that should occur prior to the error message.
@@ -44,7 +45,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>Main entry point of the application.</summary>
 		/// <param name="args">Application arguments.</param>
 		[STAThread]
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			// System.Diagnostics.Debugger.Launch();
 
@@ -60,14 +61,14 @@ namespace Altaxo.Serialization.AutoUpdates
 
 				if (args.Length < 6)
 				{
-					StartVisualAppWithErrorMessage(null, 
-						"Programm called with less than 4 arguments, but at least 4 arguments are required:\r\n\r\n"+
-						"args[0]: name of the event the installer is signalling when it is ready to install\r\n"+
-						"args[1]: full path to the auto update package file\r\n"+
+					StartVisualAppWithErrorMessage(null,
+						"Programm called with less than 4 arguments, but at least 4 arguments are required:\r\n\r\n" +
+						"args[0]: name of the event the installer is signalling when it is ready to install\r\n" +
+						"args[1]: full path to the auto update package file\r\n" +
 						"args[2]: either 0 or 1. If 0, the installer window will be hidden. If 1, the installer window is visible." +
 						"args[3]: integer, designates the number of seconds before the installer window is closed after a sucessfull installation" +
-						"args[4]: either 0,1, or 2. If 1, Altaxo is restarted after the installation is finished. A value of 2 is an indication that this program was started with elevated privileges\r\n"+
-						"args[5]: full path to the old Altaxo executable\r\n"+
+						"args[4]: either 0,1, or 2. If 1, Altaxo is restarted after the installation is finished. A value of 2 is an indication that this program was started with elevated privileges\r\n" +
+						"args[5]: full path to the old Altaxo executable\r\n" +
 						"args[6..n]: arguments that will be used to restart Altaxo (if args[4] is 1)\r\n"
 						);
 					return;
@@ -77,7 +78,6 @@ namespace Altaxo.Serialization.AutoUpdates
 				try { System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location); }
 				catch (Exception) { }
 
-
 				string eventName = args[0];
 				string packageFullFileName = args[1];
 				bool showInstallationWindow = 0 != int.Parse(args[2], System.Globalization.CultureInfo.InvariantCulture);
@@ -86,8 +86,6 @@ namespace Altaxo.Serialization.AutoUpdates
 				string fullPathOfTheAltaxoExecutable = args[5];
 				bool wasStartedWithElevatedPrivileges = 0 != (options & 2);
 				bool restartAltaxo = (0 != (options & 1)) && !wasStartedWithElevatedPrivileges;
-
-
 
 				var installer = new UpdateInstaller(eventName, packageFullFileName, fullPathOfTheAltaxoExecutable);
 				if (installer.PackListFileExists())
@@ -106,7 +104,7 @@ namespace Altaxo.Serialization.AutoUpdates
 						}
 						else
 						{
-							// Start a new process with elevated privileges and wait for exit 
+							// Start a new process with elevated privileges and wait for exit
 							var proc = new System.Diagnostics.ProcessStartInfo();
 							proc.FileName = System.Reflection.Assembly.GetEntryAssembly().Location;
 							args[4] = "2";
@@ -144,7 +142,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
 		/// <summary>Starts the window of the application, and then runs the provided installer program.</summary>
 		/// <param name="installer">The installer program to run..</param>
-		static void StartVisualApp(UpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
+		private static void StartVisualApp(UpdateInstaller installer, bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
 		{
 			if (null == app)
 			{
@@ -161,7 +159,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>Starts the window of the application, and then presents the provided error message message.</summary>
 		/// <param name="eventName">Name of the event that is used to signal to Altaxo that Altaxo should be stopped.</param>
 		/// <param name="message">The error message to present.</param>
-		static void StartVisualAppWithErrorMessage(string eventName, string message)
+		private static void StartVisualAppWithErrorMessage(string eventName, string message)
 		{
 			if (null != eventName)
 				UpdateInstaller.SetEvent(eventName); // Altaxo is waiting for this event to finish itself
@@ -181,7 +179,5 @@ namespace Altaxo.Serialization.AutoUpdates
 				mainWindow.SetErrorMessage(message);
 			}
 		}
-
-
 	}
 }

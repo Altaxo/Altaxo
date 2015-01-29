@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,23 +21,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Gesv.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 #if !MANAGED
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Gesv {
-    private  Gesv() {}                           
+    private  Gesv() {}
     private static void ArgumentCheck(int n, int nrhs, Object A, int lda, Object B, int ldb) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -57,11 +57,11 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         throw new ArgumentException("ldb must be at least max(1,n)", "ldb");
       }
     }
-  
+
     internal static int Compute( int n, int nrhs, float[] A, int lda, out int[] ipiv, float[] B, int ldb ){
       ArgumentCheck(n, nrhs, A, lda,  B, ldb);
-      ipiv = new int[System.Math.Max(1, System.Math.Min(1,n))];     
-      
+      ipiv = new int[System.Math.Max(1, System.Math.Min(1,n))];
+
       return dna_lapack_sgesv(n,nrhs,A,lda,ipiv,B,ldb);
     }
 
@@ -75,20 +75,20 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
     internal static int Compute( int n, int nrhs, ComplexFloat[] A, int lda, out int[] ipiv, ComplexFloat[] B, int ldb ){
       ArgumentCheck(n, nrhs, A, lda,  B, ldb);
       ipiv = new int[System.Math.Max(1, System.Math.Min(1,n))];
-      
+
       return dna_lapack_cgesv(n,nrhs,A,lda,ipiv,B,ldb);
     }
 
     internal static int Compute( int n, int nrhs, Complex[] A, int lda, out int[] ipiv, Complex[] B, int ldb ){
       ArgumentCheck(n, nrhs, A, lda,  B, ldb);
       ipiv = new int[System.Math.Max(1, System.Math.Min(1,n))];
-      
+
       return dna_lapack_zgesv(n,nrhs,A,lda,ipiv,B,ldb);
     }
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_sgesv( int n, int nrhs, [In,Out]float[] A, int lda, [In,Out]int[] ipiv, [In,Out]float[] B, int ldb );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dgesv( int n, int nrhs, [In,Out]double[] A, int lda, [In,Out]int[] ipiv, [In,Out]double[] B, int ldb );
 

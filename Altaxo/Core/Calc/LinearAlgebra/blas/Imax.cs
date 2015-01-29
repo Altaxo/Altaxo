@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Imax.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -37,7 +38,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Imax
 	{
-		private Imax() { }
+		private Imax()
+		{
+		}
+
 		///<summary>Compute the function of this class</summary>
 		internal static int Compute(int n, float[] X, int incx)
 		{

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Gui.Common.Drawing;
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common.Drawing;
-using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph
 {
@@ -46,14 +39,21 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class XYPlotLabelStyleControl : UserControl, IXYPlotLabelStyleView
 	{
-		FontControlsGlue _fontControlsGlue;
-		BackgroundControlsGlue _backgroundGlue;
+		private FontControlsGlue _fontControlsGlue;
+		private BackgroundControlsGlue _backgroundGlue;
+
 		public event Action LabelColumnSelected;
+
 		public event Action FontSizeChanged;
+
 		public event Action LabelColorLinkageChanged;
+
 		public event Action BackgroundColorLinkageChanged;
+
 		public event Action LabelBrushChanged;
+
 		public event Action BackgroundBrushChanged;
+
 		public event Action UseBackgroundChanged;
 
 		public XYPlotLabelStyleControl()
@@ -63,12 +63,9 @@ namespace Altaxo.Gui.Graph
 			_fontControlsGlue = new FontControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
 			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
-      _backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
-      _backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
-
+			_backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
+			_backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
 		}
-
-    
 
 		private void EhSelectLabelColumn_Click(object sender, RoutedEventArgs e)
 		{
@@ -90,9 +87,8 @@ namespace Altaxo.Gui.Graph
 
 		private void EhAttachToAxis_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			this._guiAttachedAxis.IsEnabled = true==_guiAttachToAxis.IsChecked;
+			this._guiAttachedAxis.IsEnabled = true == _guiAttachToAxis.IsChecked;
 		}
-		
 
 		#region IXYPlotLabelStyleView
 
@@ -100,7 +96,6 @@ namespace Altaxo.Gui.Graph
 		{
 			this._guiLabelColumn.Text = labelColumnAsText;
 		}
-
 
 		public new Altaxo.Graph.Gdi.Background.IBackgroundStyle Background
 		{
@@ -113,7 +108,6 @@ namespace Altaxo.Gui.Graph
 				_backgroundGlue.BackgroundStyle = value;
 			}
 		}
-
 
 		public double SelectedRotation
 		{
@@ -143,6 +137,7 @@ namespace Altaxo.Gui.Graph
 		{
 			get { return _guiXOffset.SelectedQuantity; }
 		}
+
 		public DimensionfulQuantity YOffset
 		{
 			get { return _guiYOffset.SelectedQuantity; }
@@ -177,14 +172,10 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_guiHorizontalAlignment, list);
 		}
 
-	
-
 		public void Init_VerticalAlignment(Collections.SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_guiVerticalAlignment, list);
 		}
-
-	
 
 		public bool AttachToAxis
 		{
@@ -204,8 +195,6 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_guiAttachedAxis, names);
 		}
 
-		
-
 		public bool IndependentColor
 		{
 			get
@@ -218,34 +207,30 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-		public  bool ShowPlotColorsOnly
+		public bool ShowPlotColorsOnly
 		{
-      set
-      {
-        _guiLabelBrush.ShowPlotColorsOnly = value;
-      }
+			set
+			{
+				_guiLabelBrush.ShowPlotColorsOnly = value;
+			}
 		}
 
-	
+		#endregion IXYPlotLabelStyleView
 
-		#endregion
+		private void EhHorizontalAlignementChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiHorizontalAlignment);
+		}
 
-    private void EhHorizontalAlignementChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiHorizontalAlignment);
-    }
+		private void EhVerticalAlignementChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiVerticalAlignment);
+		}
 
-    private void EhVerticalAlignementChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiVerticalAlignment);
-    }
-
-    private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiAttachedAxis);
-
-    }
+		private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiAttachedAxis);
+		}
 
 		private void EhLabelBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -265,7 +250,6 @@ namespace Altaxo.Gui.Graph
 				BackgroundColorLinkageChanged();
 		}
 
-
 		public void InitializeBackgroundColorLinkage(Collections.SelectableListNodeList list)
 		{
 			_guiBackgroundColorLinkage.Initialize(list);
@@ -273,14 +257,13 @@ namespace Altaxo.Gui.Graph
 
 		public bool ShowPlotColorsOnlyForBackgroundBrush
 		{
-      set { _backgroundGlue.ShowPlotColorsOnly = value; }
+			set { _backgroundGlue.ShowPlotColorsOnly = value; }
 		}
 
-
-    void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
-    {
-      if (null != UseBackgroundChanged)
-        UseBackgroundChanged();
-    }
+		private void EhBackgroundStyleInstanceChanged(object sender, EventArgs e)
+		{
+			if (null != UseBackgroundChanged)
+				UseBackgroundChanged();
+		}
 	}
 }

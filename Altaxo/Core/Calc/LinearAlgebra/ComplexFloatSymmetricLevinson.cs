@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
 ** ComplexFloatSymmetricLevinson.cs
@@ -35,12 +37,10 @@
 
 using System;
 
-
 #endregion Using directives
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// A Levinson solver for symmetric square Toeplitz systems of <c>ComplexFloat</c> type.
 	/// </summary>
@@ -170,7 +170,6 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </example>
 	sealed public class ComplexFloatSymmetricLevinson : Algorithm
 	{
-
 		#region Fields
 
 		/// <summary>
@@ -389,7 +388,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// allocate memory for diagonal
 			m_Diagonal = new ComplexFloat[m_Order];
-
 		}
 
 		#endregion Constructors
@@ -418,7 +416,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			ComplexFloat K;       // reflection coefficient
 			ComplexFloat[] B;       // reference to previous order coefficients
 			ComplexFloat[] A;       // reference to current order coefficients
-
 
 			// check if principal diagonal is zero
 			if (m_LeftColumn[0] == ComplexFloat.Zero)
@@ -465,7 +462,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				// update diagonal
 				m_Diagonal[i] = m_Diagonal[i - 1] / (ComplexFloat.One - K * K);
-
 			}
 
 			// solution completed
@@ -663,7 +659,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					X[j] += G * A[j];
 				}
-
 			}
 
 			return X;
@@ -922,7 +917,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static ComplexFloatVector Solve(IROComplexFloatVector T, IROComplexFloatVector Y)
 		{
-
 			ComplexFloatVector X;
 
 			// check parameters
@@ -940,7 +934,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				// allocate memory
 				int N = T.Length;
 				X = new ComplexFloatVector(N);                    // solution vector
@@ -966,7 +959,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					// calculate solution for successive orders
 					for (i = 1; i < N; i++)
 					{
-
 						// calculate first inner product
 						inner = T[i];
 						for (j = 0, l = i - 1; j < i - 1; j++, l--)
@@ -1009,15 +1001,11 @@ namespace Altaxo.Calc.LinearAlgebra
 							X[j] = X[j] + k * a[l];
 						}
 						X[j] = k;
-
 					}
-
 				}
-
 			}
 
 			return X;
-
 		}
 
 		/// <summary>
@@ -1047,7 +1035,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static ComplexFloatMatrix Solve(IROComplexFloatVector T, IROComplexFloatMatrix Y)
 		{
-
 			ComplexFloatMatrix X;
 
 			// check parameters
@@ -1065,7 +1052,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				// allocate memory
 				int N = T.Length;
 				int M = Y.Rows;
@@ -1087,7 +1073,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				if (N > 1)
 				{
-
 					ComplexFloatVector a = new ComplexFloatVector(N - 1);   // prediction coefficients
 					ComplexFloat p;                                   // reflection coefficient
 					ComplexFloat inner;                               // inner product
@@ -1096,7 +1081,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					// calculate solution for successive orders
 					for (i = 1; i < N; i++)
 					{
-
 						// calculate first inner product
 						inner = T[i];
 						for (j = 0, l = i - 1; j < i - 1; j++, l--)
@@ -1128,7 +1112,6 @@ namespace Altaxo.Calc.LinearAlgebra
 						// update the solution matrix
 						for (m = 0; m < M; m++)
 						{
-
 							// retrieve a copy of solution column
 							for (j = 0; j < i; j++)
 							{
@@ -1155,13 +1138,9 @@ namespace Altaxo.Calc.LinearAlgebra
 							{
 								X[j, m] = Z[j];
 							}
-
 						}
-
 					}
-
 				}
-
 			}
 
 			return X;
@@ -1195,7 +1174,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static ComplexFloatVector YuleWalker(IROComplexFloatVector R)
 		{
-
 			ComplexFloatVector a;
 
 			// check parameters
@@ -1209,7 +1187,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				int N = R.Length - 1;
 				a = new ComplexFloatVector(N);              // prediction coefficients
 				ComplexFloatVector Z = new ComplexFloatVector(N);   // temporary storage vector
@@ -1230,7 +1207,6 @@ namespace Altaxo.Calc.LinearAlgebra
 				// calculate solution for successive orders
 				for (i = 1; i < N; i++)
 				{
-
 					e *= (ComplexFloat.One - g * g);
 					if (e == ComplexFloat.Zero)
 					{
@@ -1258,7 +1234,6 @@ namespace Altaxo.Calc.LinearAlgebra
 					}
 
 					a[i] = g;
-
 				}
 			}
 
@@ -1290,7 +1265,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </remarks>
 		public static ComplexFloatMatrix Inverse(IROComplexFloatVector T)
 		{
-
 			ComplexFloatMatrix X;
 
 			// check parameters
@@ -1309,7 +1283,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-
 				int N = T.Length;
 				ComplexFloat f, g;
 				int i, j, l, k, m, n;
@@ -1359,14 +1332,11 @@ namespace Altaxo.Calc.LinearAlgebra
 						X[l, j] = X[i, k];
 					}
 				}
-
 			}
 
 			return X;
 		}
 
 		#endregion Public Static Methods
-
 	}
-
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.IO;
+#endregion Copyright
 
-using Altaxo;
-using Altaxo.Main;
-using Altaxo.Worksheet;
-using Altaxo.Gui.Worksheet.Viewing;
-
-using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.Core;
-
+using System;
+using System.IO;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -41,17 +35,19 @@ namespace Altaxo.Worksheet.Commands
 	/// </summary>
 	public class AltaxoProvokeException : AbstractMenuCommand
 	{
-		bool _disable;
+		private bool _disable;
+
 		internal bool Disable { set { _disable = value; } }
+
 		public override void Run()
 		{
 			if (!_disable)
 				throw new ApplicationException("This is a menu point to provoke an exception");
 			System.Diagnostics.Debug.WriteLine("Exception thrown");
 		}
-
 	}
 }
+
 namespace Altaxo.Main.Commands.ScriptEditorCommands
 {
 	public class Cut : AbstractMenuCommand
@@ -154,6 +150,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 				return false;
 			}
 		}
+
 		public override void Run()
 		{
 			if (IsEnabled)
@@ -193,6 +190,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 				return false;
 			}
 		}
+
 		public override void Run()
 		{
 			// TODO
@@ -214,14 +212,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 		}
 	}
 
-
-
 	public class CloseFile : AbstractMenuCommand
 	{
 		public override void Run()
 		{
 			//if (System.Windows.Forms.Form.ActiveForm.Modal)
-				//return;
+			//return;
 
 			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null)
 			{
@@ -234,8 +230,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 	{
 		public override void Run()
 		{
-
-		//	if (System.Windows.Forms.Form.ActiveForm.Modal)
+			//	if (System.Windows.Forms.Form.ActiveForm.Modal)
 			//	return;
 
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
@@ -272,15 +267,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 		}
 	}
 
-
-
 	public class SaveFileAs : AbstractMenuCommand
 	{
 		public override void Run()
 		{
 			//if (System.Windows.Forms.Form.ActiveForm.Modal)
 			//	return;
-
 
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
@@ -298,36 +290,34 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 					}
 				}
 				var fdiag = new Microsoft.Win32.SaveFileDialog();
-				
-					fdiag.OverwritePrompt = true;
-					fdiag.AddExtension = true;
 
-					string[] fileFilters = AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems<string>(this).ToArray();
-					//string[] fileFilters = (string[])(AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
-					fdiag.Filter = String.Join("|", fileFilters);
-					for (int i = 0; i < fileFilters.Length; ++i)
+				fdiag.OverwritePrompt = true;
+				fdiag.AddExtension = true;
+
+				string[] fileFilters = AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems<string>(this).ToArray();
+				//string[] fileFilters = (string[])(AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
+				fdiag.Filter = String.Join("|", fileFilters);
+				for (int i = 0; i < fileFilters.Length; ++i)
+				{
+					if (fileFilters[i].IndexOf(Path.GetExtension(window.ActiveViewContent.PrimaryFileName == null ? "Untitled.cs" : window.ActiveViewContent.PrimaryFileName)) >= 0)
 					{
-						if (fileFilters[i].IndexOf(Path.GetExtension(window.ActiveViewContent.PrimaryFileName == null ? "Untitled.cs" : window.ActiveViewContent.PrimaryFileName)) >= 0)
-						{
-							fdiag.FilterIndex = i + 1;
-							break;
-						}
+						fdiag.FilterIndex = i + 1;
+						break;
+					}
+				}
+
+				if (true == fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWindow))
+				{
+					string fileName = fdiag.FileName;
+
+					if (!FileService.CheckFileName(fileName))
+					{
+						return;
 					}
 
-					if (true==fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainWindow))
-					{
-						string fileName = fdiag.FileName;
-
-						if (!FileService.CheckFileName(fileName))
-						{
-							return;
-						}
-
-						throw new NotImplementedException();
-					}
-				
+					throw new NotImplementedException();
+				}
 			}
 		}
 	}
-
 }

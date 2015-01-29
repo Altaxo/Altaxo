@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Configuration.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -33,21 +35,20 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
-  
   ///<summary>Contains configuration information for dnA library</summary>
   ///<remarks>
   /// This class contains members that are used to configure the operation
   /// of the dnA library.  The members define the default use of native
   /// or managed code, and how exceptions from unmanaged code are handled.
   /// </remarks>
-  public sealed class Configuration 
+  public sealed class Configuration
   {
     private static int blockSize = 16;
-    
+
     internal const string BLASLibrary = "dnA.Wrapper.dll";
-    
+
     /// <summary>
-    /// Defines the block size for blocked LAPACK algorithms. The value is 
+    /// Defines the block size for blocked LAPACK algorithms. The value is
     /// machine dependent (typically, 16 to 64).
     /// </summary>
     /// <remarks>Defaults to 16. The value must be greater than 0.</remarks>
@@ -66,7 +67,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         blockSize = value;
       }
     }
-    
+
     private Configuration() {}
   }
 }

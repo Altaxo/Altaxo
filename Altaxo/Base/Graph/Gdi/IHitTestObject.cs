@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph.Gdi
 {
-	using Shapes;
-
 	/// <summary>
 	/// Handler type to process double click events
 	/// </summary>
@@ -42,7 +39,7 @@ namespace Altaxo.Graph.Gdi
 	{
 		/// <summary>
 		/// Returns the object outline path in page coordinates used for arrangement of multiple objects together.
-		/// Thus it should describes the object as accurate as possible. 
+		/// Thus it should describes the object as accurate as possible.
 		/// In case of lines shapes, it is the line path without widening.
 		/// In case of closed shapes, it is the outline path of the shape.
 		/// </summary>
@@ -75,7 +72,6 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dy">Shift value in y direction in page coordinates.</param>
 		void ShiftPosition(double dx, double dy);
 
-
 		/// <summary>
 		/// Delegate to handle double click events. Should return true if the object was removed during the processing. Otherwise returns false.
 		/// </summary>
@@ -92,7 +88,6 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
 		bool OnDoubleClick();
 
-
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
 		/// </summary>
@@ -107,10 +102,5 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="currentGripLevel">Current grip level.</param>
 		/// <returns>The next grip level to be used.</returns>
 		int GetNextGripLevel(int currentGripLevel);
-
 	}
-
-
-
-
 }

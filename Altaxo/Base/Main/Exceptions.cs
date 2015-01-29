@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-
+#endregion Copyright
 
 using System;
 
 namespace Altaxo
 {
-  /// <summary>
-  /// Summary description for AltaxoExeptions.
-  /// </summary>
-  public class AltaxoOperatorException : System.ApplicationException
-  {
-    public AltaxoOperatorException(string s)
-      : base(s)
-    {
-    }
-  }
+	/// <summary>
+	/// Summary description for AltaxoExeptions.
+	/// </summary>
+	public class AltaxoOperatorException : System.ApplicationException
+	{
+		public AltaxoOperatorException(string s)
+			: base(s)
+		{
+		}
+	}
 }

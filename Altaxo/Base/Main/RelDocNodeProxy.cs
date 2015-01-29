@@ -164,7 +164,13 @@ namespace Altaxo.Main
 		/// <summary>
 		/// For deserialization purposes only.
 		/// </summary>
-		/// <param name="info"></param>
+		/// <param name="docNodePath">The document node path.</param>
+		/// <param name="parentNode">The parent node of this proxy. This is also the start node for resolution of the path.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// docNodePath
+		/// or
+		/// parentNode
+		/// </exception>
 		protected RelDocNodeProxy(Main.RelativeDocumentPath docNodePath, Main.IDocumentNode parentNode)
 		{
 			if (null == docNodePath)

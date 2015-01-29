@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,11 +35,14 @@ namespace Altaxo.Gui
 	public interface IClipboardSetDataObject
 	{
 		void SetImage(System.Drawing.Image image);
-		void SetFileDropList(System.Collections.Specialized.StringCollection filePaths);
-		void SetData(string format, object data);
-		void SetData(Type format, object data);
-		void SetCommaSeparatedValues(string text);
 
+		void SetFileDropList(System.Collections.Specialized.StringCollection filePaths);
+
+		void SetData(string format, object data);
+
+		void SetData(Type format, object data);
+
+		void SetCommaSeparatedValues(string text);
 	}
 
 	/// <summary>
@@ -46,13 +51,21 @@ namespace Altaxo.Gui
 	public interface IClipboardGetDataObject
 	{
 		string[] GetFormats();
+
 		bool GetDataPresent(string format);
+
 		bool GetDataPresent(System.Type type);
+
 		object GetData(string format);
+
 		object GetData(System.Type type);
+
 		bool ContainsFileDropList();
+
 		System.Collections.Specialized.StringCollection GetFileDropList();
+
 		bool ContainsImage();
+
 		System.Drawing.Image GetImage();
 	}
 }

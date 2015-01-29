@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections;
-using System.Xml;
-
+#endregion Copyright
 
 using ICSharpCode.Core;
-
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
+using System;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -58,16 +53,22 @@ namespace Altaxo.Worksheet.Commands
 			{
 				case "none":
 					return val == 0;
+
 				case "one":
 					return val == 1;
+
 				case "two":
 					return val == 2;
+
 				case "all":
 					return val == ctrl.Controller.DataTable.DataColumnCount;
+
 				case "any":
 					return val > 0;
+
 				case "*":
 					return val > 0;
+
 				default:
 					{
 						try
@@ -83,7 +84,6 @@ namespace Altaxo.Worksheet.Commands
 			}
 		}
 	}
-
 
 	/// <summary>
 	/// This helps in conditions where the number of selected property columns cares.
@@ -111,16 +111,22 @@ namespace Altaxo.Worksheet.Commands
 			{
 				case "none":
 					return val == 0;
+
 				case "one":
 					return val == 1;
+
 				case "two":
 					return val == 2;
+
 				case "all":
 					return val == ctrl.Controller.DataTable.PropertyColumnCount;
+
 				case "any":
 					return val > 0;
+
 				case "*":
 					return val > 0;
+
 				default:
 					{
 						try
@@ -136,5 +142,4 @@ namespace Altaxo.Worksheet.Commands
 			}
 		}
 	}
-
 }

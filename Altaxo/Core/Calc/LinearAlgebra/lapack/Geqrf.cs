@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,23 +21,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Geqrf.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 #if !MANAGED
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Geqrf {
-    private  Geqrf() {}                           
+    private  Geqrf() {}
     private static void ArgumentCheck(int m, int n, Object A, int lda) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -51,32 +51,32 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         throw new ArgumentException("lda must be at least max(1,m)", "lda");
       }
     }
-  
+
     internal static int Compute( int m, int n, float[] A, int lda, out float[] tau ){
       ArgumentCheck(m, n, A, lda);
       tau = new float[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_sgeqrf(Configuration.BlockSize, m, n, A, lda, tau);
     }
 
     internal static int Compute( int m, int n, double[] A, int lda, out double[] tau  ){
       ArgumentCheck(m, n, A, lda);
       tau = new double[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_dgeqrf(Configuration.BlockSize, m, n, A, lda, tau);
     }
 
     internal static int Compute( int m, int n, ComplexFloat[] A, int lda, out ComplexFloat[] tau  ){
       ArgumentCheck(m, n, A, lda);
       tau = new ComplexFloat[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_cgeqrf(Configuration.BlockSize, m, n, A, lda, tau);
     }
 
     internal static int Compute( int m, int n, Complex[] A, int lda, out Complex[] tau  ){
       ArgumentCheck(m, n, A, lda);
       tau = new Complex[System.Math.Max(1, System.Math.Min(m,n))];
-      
+
       return dna_lapack_zgeqrf(Configuration.BlockSize, m, n, A, lda, tau);
     }
 

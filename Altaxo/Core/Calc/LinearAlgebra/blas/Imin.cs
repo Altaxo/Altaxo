@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Imin.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -35,7 +37,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	///<summary>Returns the index of the minimum component in a vector</summary>
 	internal sealed class Imin
 	{
-		private Imin() { }
+		private Imin()
+		{
+		}
+
 		///<summary>Compute the function of this class</summary>
 		internal static int Compute(int n, float[] X, int incx)
 		{

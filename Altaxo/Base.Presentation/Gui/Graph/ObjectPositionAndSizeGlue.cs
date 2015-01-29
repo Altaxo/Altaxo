@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,55 +19,51 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Gui.Common;
-using Altaxo.Serialization;
-using Altaxo.Graph;
 
 namespace Altaxo.Gui.Graph
 {
 	public class ObjectPositionAndSizeGlue : FrameworkElement
 	{
 		#region Input/Output
-		static void SetPositionText(TextBox t, double value)
+
+		private static void SetPositionText(TextBox t, double value)
 		{
 			if (t != null)
 				t.Text = GUIConversion.GetLengthMeasureText(value);
 		}
 
-		static bool GetPositionValue(TextBox t, ref double value)
+		private static bool GetPositionValue(TextBox t, ref double value)
 		{
 			return GUIConversion.GetLengthMeasureValue(t.Text, ref value);
 		}
 
-		static void SetSizeText(TextBox t, double value)
+		private static void SetSizeText(TextBox t, double value)
 		{
 			SetPositionText(t, value);
 		}
-		static bool GetSizeValue(TextBox t, ref double value)
+
+		private static bool GetSizeValue(TextBox t, ref double value)
 		{
 			return GetPositionValue(t, ref value);
 		}
 
-		#endregion
+		#endregion Input/Output
 
 		#region Position
-		double _positionX;
+
+		private double _positionX;
+
 		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public double PositionX
 		{
@@ -85,8 +82,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		private double _positionY;
 
-		double _positionY;
 		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public double PositionY
 		{
@@ -119,7 +116,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionX;
+		private Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionX;
+
 		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdPositionX
 		{
 			get { return _edPositionX; }
@@ -135,7 +133,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionY;
+		private Altaxo.Gui.Common.QuantityWithUnitTextBox _edPositionY;
+
 		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdPositionY
 		{
 			get { return _edPositionY; }
@@ -150,12 +149,13 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-		#endregion
+
+		#endregion Position
 
 		#region Size
 
 		/// <summary>Size in point units.</summary>
-		double _sizeX;
+		private double _sizeX;
 
 		/// <summary>Gets/sets the size in point units.</summary>
 		public double SizeX
@@ -175,7 +175,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		double _sizeY;
+		private double _sizeY;
+
 		public double SizeY
 		{
 			get
@@ -206,8 +207,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeX;
-		Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeY;
+		private Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeX;
+		private Altaxo.Gui.Common.QuantityWithUnitTextBox _edSizeY;
 
 		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdSizeX
 		{
@@ -223,6 +224,7 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
+
 		public Altaxo.Gui.Common.QuantityWithUnitTextBox EdSizeY
 		{
 			get { return _edSizeY; }
@@ -238,12 +240,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
-
+		#endregion Size
 
 		#region Rotation
 
-		double _rotation;
+		private double _rotation;
+
 		public double Rotation
 		{
 			get
@@ -261,7 +263,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.RotationComboBox _cbRotation;
+		private Altaxo.Gui.Common.Drawing.RotationComboBox _cbRotation;
+
 		public Altaxo.Gui.Common.Drawing.RotationComboBox CbRotation
 		{
 			get { return _cbRotation; }
@@ -275,11 +278,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion Rotation
 
 		#region Shear
 
-		double _shear;
+		private double _shear;
+
 		public double Shear
 		{
 			get
@@ -297,7 +301,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.ShearComboBox _edShear;
+		private Altaxo.Gui.Common.Drawing.ShearComboBox _edShear;
+
 		public Altaxo.Gui.Common.Drawing.ShearComboBox GuiShear
 		{
 			get { return _edShear; }
@@ -312,10 +317,9 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion Shear
 
 		#region Scale
-
 
 		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PointD2D Scale
@@ -331,11 +335,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion Scale
 
 		#region ScaleX
 
-		double _scaleX = 1;
+		private double _scaleX = 1;
+
 		public double ScaleX
 		{
 			get
@@ -353,7 +358,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.ScaleComboBox _edScaleX;
+		private Altaxo.Gui.Common.Drawing.ScaleComboBox _edScaleX;
+
 		public Altaxo.Gui.Common.Drawing.ScaleComboBox GuiScaleX
 		{
 			get { return _edScaleX; }
@@ -368,11 +374,12 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion ScaleX
 
 		#region ScaleY
 
-		double _scaleY = 1;
+		private double _scaleY = 1;
+
 		public double ScaleY
 		{
 			get
@@ -390,7 +397,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Altaxo.Gui.Common.Drawing.ScaleComboBox _edScaleY;
+		private Altaxo.Gui.Common.Drawing.ScaleComboBox _edScaleY;
+
 		public Altaxo.Gui.Common.Drawing.ScaleComboBox GuiScaleY
 		{
 			get { return _edScaleY; }
@@ -403,6 +411,7 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 		}
-		#endregion
+
+		#endregion ScaleY
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph
 {
@@ -37,10 +39,13 @@ namespace Altaxo.Graph
 	{
 		/// <summary>Graph will be printed starting at the upper left corner of the printable area.</summary>
 		PrintableAreaLeftUpper,
+
 		/// <summary>Graph will be printed starting at the upper left corner of the page (ignoring the page borders).</summary>
 		PageLeftUpper,
+
 		/// <summary>Graph will be printed in the center of the printable area.</summary>
 		PrintableAreaCenter,
+
 		/// <summary>Graph will be printed in the center of the page.</summary>
 		PageCenter
 	}
@@ -56,28 +61,28 @@ namespace Altaxo.Graph
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>If graph is smaller than the printable area, the graph will be zoomed to fill the printable area.</summary>
-		bool _fitGraphToPrintIfSmaller;
+		private bool _fitGraphToPrintIfSmaller;
 
 		/// <summary>If graph is larger than the printable area, the graph will be shrinked to fill the printable area.</summary>
-		bool _fitGraphToPrintIfLarger;
+		private bool _fitGraphToPrintIfLarger;
 
 		/// <summary>If true, the graph will be zoomed by a fixed zoom factor.</summary>
-		bool _useFixedZoomFactor;
+		private bool _useFixedZoomFactor;
 
 		/// <summary>Zoom factor used to zoom the graph.</summary>
-		double _zoomFactor;
+		private double _zoomFactor;
 
 		/// <summary>If graph is larger than the printable area, the graph will be tiled onto multiple pages.</summary>
-		bool _tilePages;
+		private bool _tilePages;
 
 		/// <summary>If neccessary, the printer page will be rotated to better fit the graph.</summary>
-		bool _rotatePageAutomatically;
+		private bool _rotatePageAutomatically;
 
 		/// <summary>Crop marks will be printed at the corners of the printable area.</summary>
-		bool _printCropMarks;
+		private bool _printCropMarks;
 
 		/// <summary>Designates where the graph will be printed.</summary>
-		SingleGraphPrintLocation _printLocation;
+		private SingleGraphPrintLocation _printLocation;
 
 		public SingleGraphPrintOptions()
 		{
@@ -106,7 +111,6 @@ namespace Altaxo.Graph
 			return r;
 		}
 
-
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
 			if (null != PropertyChanged)
@@ -127,7 +131,6 @@ namespace Altaxo.Graph
 					OnPropertyChanged("FitGraphToPrintIfSmaller");
 			}
 		}
-
 
 		/// <summary>If graph is larger than the printable area, the graph will be shrinked to fill the printable area.</summary>
 		[System.ComponentModel.Category("Document size")]
@@ -184,7 +187,6 @@ namespace Altaxo.Graph
 			}
 		}
 
-
 		/// <summary>If neccessary, the printer page will be rotated to better fit the graph.</summary>
 		[System.ComponentModel.Category("Document location")]
 		public bool RotatePageAutomatically
@@ -199,7 +201,6 @@ namespace Altaxo.Graph
 			}
 		}
 
-
 		/// <summary>Crop marks will be printed at the corners of the printable area.</summary>
 		public bool PrintCropMarks
 		{
@@ -212,7 +213,6 @@ namespace Altaxo.Graph
 					OnPropertyChanged("PrintCropMarks");
 			}
 		}
-
 
 		/// <summary>Designates where the graph will be printed.</summary>
 		[System.ComponentModel.Category("Document location")]
@@ -252,7 +252,6 @@ namespace Altaxo.Graph
 			if (this.UseFixedZoomFactor)
 			{
 				zoom = (float)this.ZoomFactor;
-
 			}
 			else if (this.FitGraphToPrintIfSmaller || this.FitGraphToPrintIfLarger)
 			{
@@ -277,12 +276,15 @@ namespace Altaxo.Graph
 				case SingleGraphPrintLocation.PrintableAreaLeftUpper:
 					startLocationOnPage = MarginBounds.Location;
 					break;
+
 				case SingleGraphPrintLocation.PageLeftUpper:
 					startLocationOnPage = new PointF(0, 0);
 					break;
+
 				case SingleGraphPrintLocation.PrintableAreaCenter:
 					startLocationOnPage = MarginBounds.Center() - graphSize.Half();
 					break;
+
 				case SingleGraphPrintLocation.PageCenter:
 					startLocationOnPage = PageBounds.Center() - graphSize.Half();
 					break;

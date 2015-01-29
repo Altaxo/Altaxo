@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,46 +19,40 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Data;
+using Altaxo.Gui.Worksheet.Viewing;
+using System;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
-  /// <summary>
-  /// Contain statistic commands.
-  /// </summary>
-  public class StatisticCommands
-  {
-    #region Statistical commands
+	/// <summary>
+	/// Contain statistic commands.
+	/// </summary>
+	public class StatisticCommands
+	{
+		#region Statistical commands
 
-    public static void StatisticsOnColumns(IWorksheetController ctrl)
-    {
-			var table = ctrl.DataTable.DoStatisticsOnColumns(ctrl.SelectedDataColumns,ctrl.SelectedDataRows);
-
-			Current.Project.DataTableCollection.Add(table);
-			// create a new worksheet without any columns
-			Current.ProjectService.CreateNewWorksheet(table);
-    }
-
-
-    public static void StatisticsOnRows(IWorksheetController ctrl)
-    {
-      var table = ctrl.DataTable.DoStatisticsOnRows(ctrl.SelectedDataColumns,ctrl.SelectedDataRows);
+		public static void StatisticsOnColumns(IWorksheetController ctrl)
+		{
+			var table = ctrl.DataTable.DoStatisticsOnColumns(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
 
 			Current.Project.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			Current.ProjectService.CreateNewWorksheet(table);
+		}
 
-    }
+		public static void StatisticsOnRows(IWorksheetController ctrl)
+		{
+			var table = ctrl.DataTable.DoStatisticsOnRows(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
 
-   
+			Current.Project.DataTableCollection.Add(table);
+			// create a new worksheet without any columns
+			Current.ProjectService.CreateNewWorksheet(table);
+		}
 
-    #endregion
-
-  }
+		#endregion Statistical commands
+	}
 }

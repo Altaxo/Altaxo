@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Ungbr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Ungbr {
-    private  Ungbr() {}                           
+    private  Ungbr() {}
     private static void ArgumentCheck( Vector vect, int m, int n, int k, Object A, int lda, Object tau ) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -87,13 +87,13 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
         throw new ArgumentException("lda must be at least max(1,m)", "lda");
       }
     }
-    
+
     internal static int Compute( Vector vect, int m, int n, int k, ComplexFloat[] A, int lda, ComplexFloat[] tau ){
       ArgumentCheck(vect, m, n, k, A, lda, tau);
       if (tau.Length < System.Math.Max(1, System.Math.Min(m, k))){
         throw new ArgumentException("tau must be at least max(1,min(m,k)).");
       }
-      
+
       return dna_lapack_cungbr(Configuration.BlockSize, vect, m, n, k, A, lda, tau);
     }
 
@@ -102,13 +102,13 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if (tau.Length < System.Math.Max(1, System.Math.Min(m, k))){
         throw new ArgumentException("tau must be at least max(1,min(m,k)).");
       }
-      
+
       return dna_lapack_zungbr(Configuration.BlockSize, vect, m, n, k, A, lda, tau);
     }
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_cungbr( int block_size, Vector vect, int m, int n, int k, [In,Out]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] tau );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_zungbr( int block_size, Vector vect, int m, int n, int k, [In,Out]Complex[] A, int lda, [In,Out]Complex[] tau );
   }

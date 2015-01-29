@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Calc.LinearAlgebra;
-
 namespace Altaxo.Calc.Interpolation
 {
-
 	/// <summary>
 	/// Interpolation method for scattered data in any dimension based on radial basis functions.
 	/// In 2D this is the so called Thin Plate Spline, which is an interpolation method that finds a "minimally bended"
@@ -40,7 +40,7 @@ namespace Altaxo.Calc.Interpolation
 	/// <remarks>
 	/// Literature:
 	/// http://en.wikipedia.org/wiki/Polyharmonic_spline
-	/// 
+	///
 	/// Extension to any number of dimensions:
 	/// TIM GUTZMER AND JENS MARKUS MELENK, MATHEMATICS OF COMPUTATION, Volume 70, Number 234, Pages 699{703, S 0025-5718(00)01299-0, Article electronically published on October 18, 2000
 	///</remarks>
@@ -52,48 +52,46 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>Default value of the <see cref="DerivativeOrder"/>.</summary>
 		public const int DefaultDerivativeOrder = 2;
 
-		DoubleVector _mtx_v;
-
-
+		private DoubleVector _mtx_v;
 
 		/// <summary>
 		/// This matrix is only neccessary for calculating the bending energy.
 		/// </summary>
-		DoubleMatrix _mtx_orig_k;
+		private DoubleMatrix _mtx_orig_k;
 
-		int _derivativeOrder;
+		private int _derivativeOrder;
 
 		/// <summary>
 		/// The dimension of the coordinates. If for instance splining height values of an area, this value is 2.
 		/// </summary>
-		int _coordDim;
+		private int _coordDim;
 
 		/// <summary>
 		/// Number of control points. Can be different from the length of the arrays.
 		/// </summary>
-		int _numberOfControlPoints;
+		private int _numberOfControlPoints;
 
 		/// <summary>
 		/// The cached Tps function.
 		/// </summary>
-		Func<double, double> _cachedTpsFunc;
+		private Func<double, double> _cachedTpsFunc;
 
 		/// <summary>
 		/// The coordinate points. The first index is the index to the coordinate component (i.e. 0==x, 1,==y ..). The second index is the index of the control point.
 		/// </summary>
-		double[][] _coordinates;
+		private double[][] _coordinates;
 
 		/// <summary>
 		/// Values associated with the control points. If for instance splining height values of an area, this is the height value.
 		/// But it can be any other value, like temperature, and so on.
 		/// </summary>
-		double[] _values;
+		private double[] _values;
 
 		/// <summary>
 		/// Regularization parameter (&gt;=0).
-		/// If the regularization parameter is zero, interpolation is exact. As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0). 
+		/// If the regularization parameter is zero, interpolation is exact. As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0).
 		/// </summary>
-		double _regularizationParameter;
+		private double _regularizationParameter;
 
 		/// <summary>
 		/// Initializes the spline with a regularization parameter of zero and an derivative order of 2.
@@ -105,15 +103,15 @@ namespace Altaxo.Calc.Interpolation
 		}
 
 		/// <summary>Invalidating interpolation by clearing the result.</summary>
-		void Clear()
+		private void Clear()
 		{
 			_mtx_v = null;
 		}
 
 		/// <summary>
 		/// Regularization parameter (&gt;=0).
-		/// If the regularization parameter is zero, interpolation is exact. 
-		/// As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0). 
+		/// If the regularization parameter is zero, interpolation is exact.
+		/// As it approaches infinity, the resulting spline is reduced to a least squares linear fit (in 2D this is a plane, the bending energy is 0).
 		/// </summary>
 		public double RegularizationParameter
 		{
@@ -184,7 +182,6 @@ namespace Altaxo.Calc.Interpolation
 			Construct(new IROVector[] { x }, h);
 		}
 
-
 		/// <summary>
 		/// Constructs the interpolation (2 dimensional). The values and the corresponding coordinates of the values are given in separate vectors.
 		/// </summary>
@@ -195,7 +192,6 @@ namespace Altaxo.Calc.Interpolation
 		{
 			Construct(new IROVector[] { x, y }, h);
 		}
-
 
 		/// <summary>
 		/// Constructs the interpolation (3 dimensional). The values and the corresponding coordinates of the values are given in separate vectors.
@@ -208,7 +204,6 @@ namespace Altaxo.Calc.Interpolation
 		{
 			Construct(new IROVector[] { x, y, z }, h);
 		}
-
 
 		/// <summary>
 		/// Constructs the interpolation (any dimension). The values and the corresponding coordinates of the values are given in separate vectors.
@@ -245,33 +240,32 @@ namespace Altaxo.Calc.Interpolation
 			InternalCompute();
 		}
 
-		double tps_base_even_pos(double r)
+		private double tps_base_even_pos(double r)
 		{
 			return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
 		}
 
-		double tps_base_even_neg(double r)
+		private double tps_base_even_neg(double r)
 		{
 			return r == 0 ? 0 : -RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
 		}
 
-		double tps_base_odd_pos(double r)
+		private double tps_base_odd_pos(double r)
 		{
 			return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim);
 		}
 
-		double tps_base_odd_neg(double r)
+		private double tps_base_odd_neg(double r)
 		{
 			return r == 0 ? 0 : -RMath.Pow(r, 2 * _derivativeOrder - _coordDim);
 		}
 
-		bool IsEven(int i)
+		private bool IsEven(int i)
 		{
 			return 0 == (i % 2);
 		}
 
-
-		void SetCachedTpsFunction()
+		private void SetCachedTpsFunction()
 		{
 			if (IsEven(_coordDim) && ((2 * _derivativeOrder) >= _coordDim)) // even dimension and 2*m>=n
 			{
@@ -289,9 +283,7 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-
-
-		double Pow2(double x)
+		private double Pow2(double x)
 		{
 			return x * x;
 		}
@@ -302,7 +294,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="i">Index of one control point.</param>
 		/// <param name="j">Index of another control point.</param>
 		/// <returns>The distance of coordinates between control points i and j.</returns>
-		double DistanceBetweenControlPoints(int i, int j)
+		private double DistanceBetweenControlPoints(int i, int j)
 		{
 			double sumsqr = 0;
 			for (int d = 0; d < _coordDim; d++)
@@ -319,7 +311,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="i">Index of the control point.</param>
 		/// <param name="x">Coordinates of the other point.</param>
 		/// <returns>Distance between control point at index i and point x.</returns>
-		double DistanceBetweenControlPointAndPoint(int i, params double[] x)
+		private double DistanceBetweenControlPointAndPoint(int i, params double[] x)
 		{
 			double sumsqr = 0;
 			for (int d = 0; d < _coordDim; d++)
@@ -333,7 +325,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Calculate the matrix for the polyharmonic spline and solves the linear equation to calculate the coefficients.
 		/// </summary>
-		void InternalCompute()
+		private void InternalCompute()
 		{
 			var N = _numberOfControlPoints;
 
@@ -343,7 +335,7 @@ namespace Altaxo.Calc.Interpolation
 			// there is no need for this matrix if we don't need to calculate the bending energy
 			_mtx_orig_k = new DoubleMatrix(N, N);
 
-			// Fill K (p x p, upper left of L) 
+			// Fill K (p x p, upper left of L)
 			// K is symmetrical so we really have to calculate only about half of the coefficients.
 			double a = 0.0;
 			for (int i = 0; i < N; ++i)
@@ -356,7 +348,6 @@ namespace Altaxo.Calc.Interpolation
 				}
 			}
 			a /= ((double)N) * N;
-
 
 			// Fill the rest of L with the values to do regularization and linear interpolation
 			for (int i = 0; i < N; ++i)
@@ -379,14 +370,10 @@ namespace Altaxo.Calc.Interpolation
 				for (int j = N; j < N + _coordDim + 1; ++j)
 					mtx_l[i, j] = 0;
 
-
-
-
-			// Solve the linear system 
+			// Solve the linear system
 			var solver = new DoubleLUDecomp(mtx_l);
 			if (solver.IsSingular)
 				throw new ArgumentException("The provided points lead to a singular matrix");
-
 
 			// Fill the right hand vector V with the values to spline; the last nCoordDim+1 elements are zero
 			_mtx_v = new DoubleVector(N + 1 + _coordDim);
@@ -397,7 +384,6 @@ namespace Altaxo.Calc.Interpolation
 
 			_mtx_v = solver.Solve(_mtx_v);
 		}
-
 
 		/// <summary>
 		/// Gets the interpolation value of given coordinates x and y.
@@ -420,7 +406,6 @@ namespace Altaxo.Calc.Interpolation
 			return h;
 		}
 
-
 		/// <summary>
 		/// Gets the bending energy of the interpolation.
 		/// </summary>
@@ -429,7 +414,5 @@ namespace Altaxo.Calc.Interpolation
 		{
 			return MatrixMath.MultiplyVectorFromLeftAndRight(_mtx_orig_k, _mtx_v);
 		}
-
-
 	}
 }

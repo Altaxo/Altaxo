@@ -1,51 +1,48 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.ColorProviderControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						  xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-             mc:Ignorable="d" 
-            
-						 >
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,8,0"/>
-				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
-		
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
-	
-    <Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2"/>
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2" />
 			</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="0" Content="Colorization:"/>
-		<ComboBox x:Name="_cbColorProvider" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" SelectionChanged="EhColorProviderChanged"/>
-	</Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0" Content="Colorization:" />
+			<ComboBox x:Name="_cbColorProvider" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" SelectionChanged="EhColorProviderChanged" />
+		</Grid>
 		<Border x:Name="_detailsPanel" HorizontalAlignment="Stretch" />
 		<Grid>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
-				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2"/>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="4"/>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
 			</Grid.RowDefinitions>
-			<Label Grid.Column="0" Grid.Row="0" Content="Preview:"/>
+			<Label Grid.Column="0" Grid.Row="0" Content="Preview:" />
 			<axogc:ImageWithNoSizeRequest x:Name="_previewPanel" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" Stretch="Fill" />
 		</Grid>
 	</StackPanel>

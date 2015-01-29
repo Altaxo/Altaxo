@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * NewtonRaphsonLineSearch.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Problem class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -41,12 +43,13 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public class NewtonRaphsonLineSearch : LineSearchMethod
 	{
-
 		///<summary>Constructor for Newton-Raphson Line Search</summary>
 		public NewtonRaphsonLineSearch(CostFunction costfunction)
 			: this(costfunction, new EndCriteria()) { }
+
 		public NewtonRaphsonLineSearch(CostFunction costfunction, EndCriteria endcriteria)
 			: this(costfunction, new EndCriteria(), 50, 1e-8) { }
+
 		public NewtonRaphsonLineSearch(CostFunction costfunction, EndCriteria endcriteria,
 			int maxiteration, double tolerance)
 		{

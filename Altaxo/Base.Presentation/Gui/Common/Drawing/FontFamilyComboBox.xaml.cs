@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,16 +29,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using sd = System.Drawing;
-using sdd = System.Drawing.Drawing2D;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -45,12 +40,11 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class FontFamilyComboBox : ImageComboBox
 	{
-
 		#region Converter
 
-		class Converter : IValueConverter
+		private class Converter : IValueConverter
 		{
-			FontFamilyComboBox _cb;
+			private FontFamilyComboBox _cb;
 
 			public Converter(FontFamilyComboBox c)
 			{
@@ -82,15 +76,15 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
+		#endregion Converter
 
 		#region Item
 
 		public class FontComboBoxItem : ImageComboBoxItem
 		{
-			static char[] _defaultChars;
+			private static char[] _defaultChars;
 
-			ImageSource _imgSource;
+			private ImageSource _imgSource;
 
 			static FontComboBoxItem()
 			{
@@ -125,12 +119,11 @@ namespace Altaxo.Gui.Common.Drawing
 				}
 			}
 
-			static char[] GetDisplayText(GlyphTypeface glyphTypeFace)
+			private static char[] GetDisplayText(GlyphTypeface glyphTypeFace)
 			{
 				string text = glyphTypeFace.SampleTexts[System.Globalization.CultureInfo.CurrentUICulture];
 				if (!string.IsNullOrEmpty(text))
 					return text.ToCharArray();
-
 
 				// else use the default characters, but test if they are present in the typeface
 				var chars = new List<char>();
@@ -143,7 +136,7 @@ namespace Altaxo.Gui.Common.Drawing
 				return chars.ToArray();
 			}
 
-			static ImageSource GetImage(sd.FontFamily fontFamily)
+			private static ImageSource GetImage(sd.FontFamily fontFamily)
 			{
 				const double border = 0.1;
 				const double height = 1;
@@ -191,7 +184,6 @@ namespace Altaxo.Gui.Common.Drawing
 						glyphRun.BaselineOrigin = new Point(0, glyphTypeFace.Baseline * fontSize);
 						((System.ComponentModel.ISupportInitialize)glyphRun).EndInit();
 
-
 						var glyphRunDrawing = new GlyphRunDrawing(Brushes.Black, glyphRun);
 						drawingGroup.Children.Add(glyphRunDrawing);
 					}
@@ -205,19 +197,18 @@ namespace Altaxo.Gui.Common.Drawing
 				geometryImage.Freeze();
 				return geometryImage;
 			}
-
 		}
 
 		#endregion Item
 
-		static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
-		static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
+		private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
+		private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
-		static HashSet<string> _gdiFontFamilyNames = new HashSet<string>();
+		private static HashSet<string> _gdiFontFamilyNames = new HashSet<string>();
 
-		static GdiToWpfBitmap _interopBitmap;
+		private static GdiToWpfBitmap _interopBitmap;
 
-		static sd.FontFamily GenericSansSerif;
+		private static sd.FontFamily GenericSansSerif;
 
 		public event DependencyPropertyChangedEventHandler SelectedFontFamilyChanged;
 
@@ -229,7 +220,7 @@ namespace Altaxo.Gui.Common.Drawing
 			var list = new List<sd.FontFamily>(sd.FontFamily.Families);
 			list.Sort((x, y) => string.Compare(x.Name, y.Name));
 
-			// note: it seems always possible to get from a Gdi font family name and the Gdi font style a 
+			// note: it seems always possible to get from a Gdi font family name and the Gdi font style a
 			// System.Windows.Media.Typeface using the constructor with one string argument
 			// the string argument must be the Gdi font family name, and appended to this "Bold" or "Italic" or "Bold Italic"
 
@@ -255,7 +246,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
+
 		private const string _nameOfValueProp = "SelectedFontFamily";
+
 		public FontFamily SelectedWpfFontFamily
 		{
 			get
@@ -265,7 +258,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 			set
 			{
-				
 			}
 		}
 
@@ -273,14 +265,13 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return (sd.FontFamily)GetValue(SelectedFontFamilyProperty); 
+				return (sd.FontFamily)GetValue(SelectedFontFamilyProperty);
 			}
 			set
 			{
 				SetValue(SelectedFontFamilyProperty, value);
 			}
 		}
-
 
 		public static readonly DependencyProperty SelectedFontFamilyProperty =
 				DependencyProperty.Register(_nameOfValueProp, typeof(sd.FontFamily), typeof(FontFamilyComboBox),
@@ -296,7 +287,8 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null != SelectedFontFamilyChanged)
 				SelectedFontFamilyChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		/*
 		public static ImageSource GetImage(sd.FontFamily join)

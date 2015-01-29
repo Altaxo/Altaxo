@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,41 +19,38 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
+using System.Text;
 
 namespace Altaxo.Settings.Scripting
 {
- 
+	public delegate void AssemblyAddedEventHandler(Assembly added);
 
-  public delegate void AssemblyAddedEventHandler(Assembly added);
+	/// <summary>
+	/// This class is responsible for holding the name of all those assemblies that should be referenced
+	/// in scripts.
+	/// </summary>
+	public static class ReferencedAssemblies
+	{
+		private static List<Assembly> _startupAssemblies = new List<Assembly>();
+		private static List<Assembly> _userAssemblies = new List<Assembly>();
+		private static List<Assembly> _userTemporaryAssemblies = new List<Assembly>();
+		public static AssemblyAddedEventHandler AssemblyAdded;
 
-  /// <summary>
-  /// This class is responsible for holding the name of all those assemblies that should be referenced
-  /// in scripts.
-  /// </summary>
-  public static class ReferencedAssemblies
-  {
-    static List<Assembly> _startupAssemblies = new List<Assembly>();
-    static List<Assembly> _userAssemblies = new List<Assembly>();
-    static List<Assembly> _userTemporaryAssemblies = new List<Assembly>();
-    public static AssemblyAddedEventHandler AssemblyAdded;
-
-
-    static ReferencedAssemblies()
-    {
+		static ReferencedAssemblies()
+		{
 			var assembliesLoadedSoFar = AppDomain.CurrentDomain.GetAssemblies();
 			// watch further loading of assemblies
 			AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(CurrentDomain_AssemblyLoad);
 
-
-      // Add available assemblies including the application itself 
-      foreach (Assembly asm in assembliesLoadedSoFar)
-      {
+			// Add available assemblies including the application itself
+			foreach (Assembly asm in assembliesLoadedSoFar)
+			{
 				if (asm.IsDynamic || (asm is System.Reflection.Emit.AssemblyBuilder))
 					continue;
 				try
@@ -67,16 +65,15 @@ namespace Altaxo.Settings.Scripting
 					continue;
 				}
 
-        // now we can add the assemblies to the startup assembly list. Those assemblies that are added are not dynamic, and should have an external file location
+				// now we can add the assemblies to the startup assembly list. Those assemblies that are added are not dynamic, and should have an external file location
 				lock (_startupAssemblies)
 				{
 					_startupAssemblies.Add(asm);
 				}
-      }
-		
+			}
 		}
 
-		static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+		private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
 		{
 			var asm = args.LoadedAssembly;
 
@@ -100,85 +97,83 @@ namespace Altaxo.Settings.Scripting
 				_startupAssemblies.Add(asm);
 			}
 		}
-		
 
-    public static void Initialize()
-    {
-    }
+		public static void Initialize()
+		{
+		}
 
-    static void OnAssemblyAdded(Assembly asm)
-    {
-      if (null != AssemblyAdded)
-        AssemblyAdded(asm);
-    }
+		private static void OnAssemblyAdded(Assembly asm)
+		{
+			if (null != AssemblyAdded)
+				AssemblyAdded(asm);
+		}
 
+		public static IEnumerable<Assembly> All
+		{
+			get
+			{
+				List<Assembly> list = new List<Assembly>();
 
-    public static IEnumerable<Assembly> All
-    {
-      get
-      {
-        List<Assembly> list = new List<Assembly>();
+				list.AddRange(_startupAssemblies);
+				list.AddRange(_userTemporaryAssemblies);
 
-        list.AddRange(_startupAssemblies);
-        list.AddRange(_userTemporaryAssemblies);
+				// now the user assemblies
+				//        foreach (Assembly asm in _userAssemblies)
+				//        yield return asm;
 
-        // now the user assemblies
-//        foreach (Assembly asm in _userAssemblies)
-  //        yield return asm;
+				// now the temporary user assemblies
+				// foreach (Assembly asm in _userTemporaryAssemblies)
+				// yield return asm;
+				return list;
+			}
+		}
 
-        // now the temporary user assemblies
-       // foreach (Assembly asm in _userTemporaryAssemblies)
-         // yield return asm;
-        return list;
-      }
-    }
+		public static IEnumerable<string> AllLocations
+		{
+			get
+			{
+				foreach (Assembly ass in _startupAssemblies)
+					yield return ass.Location;
 
-    public static IEnumerable<string> AllLocations
-    {
-      get
-      {
-        foreach(Assembly ass in _startupAssemblies)
-          yield return ass.Location;
+				foreach (Assembly ass in _userAssemblies)
+					yield return ass.Location;
 
-        foreach(Assembly ass in _userAssemblies)
-          yield return ass.Location;
+				foreach (Assembly ass in _userTemporaryAssemblies)
+					yield return ass.Location;
+			}
+		}
 
-        foreach(Assembly ass in _userTemporaryAssemblies)
-          yield return ass.Location;
-      }
-    }
+		/// <summary>
+		/// Determines if a list of assembly contains an assembly with the same location than a given assembly.
+		/// </summary>
+		/// <param name="asm"></param>
+		/// <param name="list"></param>
+		/// <returns></returns>
+		private static int FindAssemblyInList(Assembly asm, List<Assembly> list)
+		{
+			for (int i = 0; i < list.Count; i++)
+				if (list[i].Location == asm.Location)
+				{
+					return i;
+				}
 
-    /// <summary>
-    /// Determines if a list of assembly contains an assembly with the same location than a given assembly.
-    /// </summary>
-    /// <param name="asm"></param>
-    /// <param name="list"></param>
-    /// <returns></returns>
-    static int FindAssemblyInList(Assembly asm, List<Assembly> list)
-    {
-      for (int i = 0; i < list.Count; i++)
-        if (list[i].Location == asm.Location)
-        {
-          return i;
-        }
+			return -1;
+		}
 
-      return -1;
-    }
+		/// <summary>
+		/// Adds a assembly to the list of temporary user assemblies. If already in the list, it is assumed that
+		/// the provided assembly is newer, so this assembly will replace that in the list.
+		/// </summary>
+		/// <param name="asm">Provided assembly to add.</param>
+		public static void AddTemporaryUserAssembly(Assembly asm)
+		{
+			int idx = FindAssemblyInList(asm, _userTemporaryAssemblies);
+			if (idx < 0)
+				_userTemporaryAssemblies.Add(asm);
+			else
+				_userTemporaryAssemblies[idx] = asm;
 
-    /// <summary>
-    /// Adds a assembly to the list of temporary user assemblies. If already in the list, it is assumed that
-    /// the provided assembly is newer, so this assembly will replace that in the list.
-    /// </summary>
-    /// <param name="asm">Provided assembly to add.</param>
-    public static void AddTemporaryUserAssembly(Assembly asm)
-    {
-      int idx = FindAssemblyInList(asm, _userTemporaryAssemblies);
-      if (idx < 0)
-        _userTemporaryAssemblies.Add(asm);
-      else
-        _userTemporaryAssemblies[idx] = asm;
-
-      OnAssemblyAdded(asm);
-    }
-  }
+			OnAssemblyAdded(asm);
+		}
+	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,20 +21,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * ICostFunction.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
-
 	///<summary>Base class for cost function declaration</summary>
 	/// <remarks>
 	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
@@ -41,15 +42,14 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public interface ICostFunction
 	{
-
 		///<summary>Method to override to compute the cost function value of x</summary>
 		double Value(DoubleVector x);
 
-		///<summary>Method to override to calculate the grad_f, the first derivative of 
+		///<summary>Method to override to calculate the grad_f, the first derivative of
 		/// the cost function with respect to x</summary>
 		DoubleVector Gradient(DoubleVector x);
 
-		///<summary>Method to override to calculate the hessian, the second derivative of 
+		///<summary>Method to override to calculate the hessian, the second derivative of
 		/// the cost function with respect to x</summary>
 		DoubleMatrix Hessian(DoubleVector x);
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-	class Program
+	internal class Program
 	{
 		/// <summary>
 		/// Main entry point of the Altaxo auto updater program.
@@ -37,11 +38,10 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <para>args[0] is either 'stable' or 'unstable'</para>
 		/// <para>args[1] is the version string of the currently installed Altaxo version (e.g.: 1.2.3.4).</para>
 		/// </param>
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			try
 			{
-
 				if (args.Length != 2)
 				{
 					PrintUsage();
@@ -72,12 +72,11 @@ namespace Altaxo.Serialization.AutoUpdates
 					System.Threading.Thread.Sleep(1000);
 					Console.Write("Program ends in {0} s\r", i);
 				}
-
 			}
 		}
 
 		/// <summary>Prints the usage information.</summary>
-		static void PrintUsage()
+		private static void PrintUsage()
 		{
 			Console.WriteLine(
 				"This program has to be called with 2 arguments:\r\n\r\n" +
@@ -85,6 +84,5 @@ namespace Altaxo.Serialization.AutoUpdates
 				"args[1]: the version string of the currently installed Altaxo version\r\n\r\n"
 				);
 		}
-
 	}
 }

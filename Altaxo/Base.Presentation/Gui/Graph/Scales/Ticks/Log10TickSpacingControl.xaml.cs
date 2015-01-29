@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
@@ -58,8 +53,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			GuiHelper.SynchronizeSelectionFromGui(_cbSnapTicksToEnd);
 		}
 
-		
-
 		private void _edTransfoOperation_Changed(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
@@ -76,7 +69,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				e.AddError("The provided text can not be converted");
 		}
 
-		#region  ILinearTickSpacingView
+		#region ILinearTickSpacingView
 
 		public int? DecadesPerMajorTick
 		{
@@ -144,7 +137,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		public double MaxGrace
 		{
-			get { return _edMaxGrace.SelectedQuantityAsValueInSIUnits;}
+			get { return _edMaxGrace.SelectedQuantityAsValueInSIUnits; }
 			set { _edMaxGrace.SelectedQuantityAsValueInSIUnits = value; }
 		}
 
@@ -268,7 +261,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		public event Action<bool> TransfoOperationChanged;
 
-		#endregion  ILinearTickSpacingView
+		#endregion ILinearTickSpacingView
 
 		private void EhMinorTicks_ModeChanged(object sender, RoutedEventArgs e)
 		{
@@ -277,9 +270,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		private void EhDecadesPerMajorTick_ModeChanged(object sender, RoutedEventArgs e)
 		{
-			_edMajorDecades.IsEnabled = true==_rbDecadesPerMajorTickManual.IsChecked;
+			_edMajorDecades.IsEnabled = true == _rbDecadesPerMajorTickManual.IsChecked;
 		}
-
-	
 	}
 }

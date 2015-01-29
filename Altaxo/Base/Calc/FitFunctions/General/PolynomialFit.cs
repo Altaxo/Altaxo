@@ -24,7 +24,6 @@
 
 using Altaxo.Calc.Regression.Nonlinear;
 using System;
-using System.ComponentModel;
 
 namespace Altaxo.Calc.FitFunctions.General
 {

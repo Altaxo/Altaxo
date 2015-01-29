@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -132,7 +131,6 @@ namespace Altaxo.Serialization.AutoUpdates
 
 				return true;
 			}
-
 			catch (Exception)
 			{
 				return false;

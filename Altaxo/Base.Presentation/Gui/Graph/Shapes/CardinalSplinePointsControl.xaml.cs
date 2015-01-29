@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph;
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,16 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Graph;
-using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
@@ -46,6 +41,7 @@ namespace Altaxo.Gui.Graph.Shapes
 	public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
 	{
 		public event Action CurvePointsCopyTriggered;
+
 		public event Action CurvePointsPasteTriggered;
 
 		public CardinalSplinePointsControl()
@@ -65,12 +61,19 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-
-		class PointD2DClass : System.ComponentModel.IEditableObject
+		private class PointD2DClass : System.ComponentModel.IEditableObject
 		{
-			public PointD2DClass() { }
-			public PointD2DClass(PointD2D p) { X = p.X; Y = p.Y; }
+			public PointD2DClass()
+			{
+			}
+
+			public PointD2DClass(PointD2D p)
+			{
+				X = p.X; Y = p.Y;
+			}
+
 			public double X { get; set; }
+
 			public double Y { get; set; }
 
 			public DimensionfulQuantity XQuantity
@@ -97,25 +100,21 @@ namespace Altaxo.Gui.Graph.Shapes
 				}
 			}
 
-
-
-
 			public void BeginEdit()
 			{
-
 			}
 
 			public void CancelEdit()
 			{
-
 			}
 
 			public void EndEdit()
 			{
-
 			}
 		}
-		ObservableCollection<PointD2DClass> _curvePoints = new ObservableCollection<PointD2DClass>();
+
+		private ObservableCollection<PointD2DClass> _curvePoints = new ObservableCollection<PointD2DClass>();
+
 		public List<PointD2D> CurvePoints
 		{
 			get

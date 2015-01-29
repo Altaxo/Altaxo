@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,83 +29,84 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
+	public interface IRoutedPropertyReceiver
+	{
+		void SetRoutedProperty(IRoutedSetterProperty property);
 
-  public interface IRoutedPropertyReceiver
-  {
-    void SetRoutedProperty(IRoutedSetterProperty property);
-    void GetRoutedProperty(IRoutedGetterProperty property);
-  }
+		void GetRoutedProperty(IRoutedGetterProperty property);
+	}
 
+	public interface IRoutedSetterProperty
+	{
+		string Name { get; }
 
-  public interface IRoutedSetterProperty
-  {
-    string Name { get; }
-    bool InheritToChilds { get; }
-    System.Type TypeOfValue { get; }
-    object ValueAsObject { get; }
-  }
+		bool InheritToChilds { get; }
 
-  public interface IRoutedGetterProperty
-  {
-    string Name { get; }
-    System.Type TypeOfValue { get; }
-  }
+		System.Type TypeOfValue { get; }
 
+		object ValueAsObject { get; }
+	}
 
-  public class RoutedSetterProperty<T> : IRoutedSetterProperty
-  {
-    T _value;
-    string _name;
-    bool _inheritToChilds;
+	public interface IRoutedGetterProperty
+	{
+		string Name { get; }
 
-    public RoutedSetterProperty(string name, T value)
-    {
-      _name = name;
-      _value = value;
-    }
+		System.Type TypeOfValue { get; }
+	}
 
-    public virtual string Name { get { return _name; } }
+	public class RoutedSetterProperty<T> : IRoutedSetterProperty
+	{
+		private T _value;
+		private string _name;
+		private bool _inheritToChilds;
 
-    public T Value { get { return _value; } }
+		public RoutedSetterProperty(string name, T value)
+		{
+			_name = name;
+			_value = value;
+		}
 
-    public System.Type TypeOfValue { get { return typeof(T); } }
+		public virtual string Name { get { return _name; } }
 
-    public bool InheritToChilds { get { return _inheritToChilds; } set { _inheritToChilds = value; } }
-    
-    public object ValueAsObject
-    {
-      get
-      {
-        return _value;
-      }
-    }
-  }
- 
-  public class RoutedGetterProperty<T> : IRoutedGetterProperty
-  {
-    public string Name { get; set; }
-    public System.Type TypeOfValue { get { return typeof(T); } }
+		public T Value { get { return _value; } }
 
-    T _value;
-    bool _wasSet;
-    bool _doNotMatch;
+		public System.Type TypeOfValue { get { return typeof(T); } }
 
-    public T Value { get { return _value; } }
+		public bool InheritToChilds { get { return _inheritToChilds; } set { _inheritToChilds = value; } }
 
-    public void Merge(T t)
-    {
-      if (!_wasSet)
-      {
-        _value = t;
-        _wasSet = true;
-      }
-      else
-      {
-        if (!_doNotMatch && !object.Equals(t, _value))
-          _doNotMatch = true;
-      }
-    }
-  }
- 
+		public object ValueAsObject
+		{
+			get
+			{
+				return _value;
+			}
+		}
+	}
 
+	public class RoutedGetterProperty<T> : IRoutedGetterProperty
+	{
+		public string Name { get; set; }
+
+		public System.Type TypeOfValue { get { return typeof(T); } }
+
+		private T _value;
+		private bool _wasSet;
+		private bool _doNotMatch;
+
+		public T Value { get { return _value; } }
+
+		public void Merge(T t)
+		{
+			if (!_wasSet)
+			{
+				_value = t;
+				_wasSet = true;
+			}
+			else
+			{
+				if (!_doNotMatch && !object.Equals(t, _value))
+					_doNotMatch = true;
+			}
+		}
+	}
 }

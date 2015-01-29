@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Rotmg.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -43,11 +44,14 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 		private static readonly double dgam = 4096.0;
 		private static readonly double dgamsq = 4096.0 * 4096.0;
 #endif
-		private Rotmg() { }
+
+		private Rotmg()
+		{
+		}
+
 		///<summary>Compute the function of this class</summary>
 		internal static void Compute(ref float d1, ref float d2, ref float x1, float y1, out float[] P)
 		{
-
 			P = new float[5];
 
 #if MANAGED

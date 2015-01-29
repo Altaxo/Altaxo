@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
 using System;
 
 namespace Altaxo.Gui.Worksheet

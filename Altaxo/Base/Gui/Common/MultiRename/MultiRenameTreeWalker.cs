@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Main.PegParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Main.PegParser;
-
 namespace Altaxo.Gui.Common.MultiRename
 {
-	class MultiRenameTreeWalker
+	internal class MultiRenameTreeWalker
 	{
-		string _sourceText;
-		MultiRenameData _renameData;
-		PegNode _tree;
+		private string _sourceText;
+		private MultiRenameData _renameData;
+		private PegNode _tree;
 
 		public MultiRenameTreeWalker(string sourceText, MultiRenameData data)
 		{
@@ -41,8 +42,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			_renameData = data;
 			var parser = new MultiRenameParser(data);
 			parser.SetSource(_sourceText);
-			
-
 
 			bool bMatches = parser.MainSentence();
 			_tree = parser.GetRoot();
@@ -60,48 +59,48 @@ namespace Altaxo.Gui.Common.MultiRename
 				int startChild = child.match_.posBeg_;
 				if (startChild > startLiteral)
 				{
-					result.Elements.Add(new MultiRenameLiteralElement(_sourceText.Substring(startLiteral,startChild-startLiteral)));
+					result.Elements.Add(new MultiRenameLiteralElement(_sourceText.Substring(startLiteral, startChild - startLiteral)));
 				}
 				startLiteral = child.match_.posEnd_;
 
-
-				switch(child.id_)
+				switch (child.id_)
 				{
 					case (int)EAltaxo_MultiRename.EscBracket:
 						result.Elements.Add(HandleEscBracket(child));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntegerTemplate:
 						result.Elements.Add(HandleIntegerTemplate(child));
 						break;
+
 					case (int)EAltaxo_MultiRename.StringTemplate:
 						result.Elements.Add(HandleStringTemplate(child));
 						break;
+
 					case (int)EAltaxo_MultiRename.DateTimeTemplate:
 						result.Elements.Add(HandleDateTimeTemplate(child));
 						break;
-						case (int)EAltaxo_MultiRename.ArrayTemplate:
+
+					case (int)EAltaxo_MultiRename.ArrayTemplate:
 						result.Elements.Add(HandleArrayTemplate(child));
 						break;
-
 				}
 
 				child = child.next_;
 			}
 
-			if(_sourceText.Length>startLiteral)
-				result.Elements.Add(new MultiRenameLiteralElement(_sourceText.Substring(startLiteral,_sourceText.Length-startLiteral)));
+			if (_sourceText.Length > startLiteral)
+				result.Elements.Add(new MultiRenameLiteralElement(_sourceText.Substring(startLiteral, _sourceText.Length - startLiteral)));
 
 			return result;
 		}
 
-		
-
-		IMultiRenameElement HandleEscBracket(PegNode node)
+		private IMultiRenameElement HandleEscBracket(PegNode node)
 		{
 			return new MultiRenameLiteralElement("[");
 		}
 
-		IMultiRenameElement HandleIntegerTemplate(PegNode node)
+		private IMultiRenameElement HandleIntegerTemplate(PegNode node)
 		{
 			var childNode = node.child_;
 			if (childNode == null)
@@ -118,9 +117,11 @@ namespace Altaxo.Gui.Common.MultiRename
 					case (int)EAltaxo_MultiRename.IntArgNumberOfDigits:
 						numberOfDigits = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArg1st:
 						offset = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArg2nd:
 						step = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
@@ -130,16 +131,15 @@ namespace Altaxo.Gui.Common.MultiRename
 			return new MultiRenameIntegerElement(_renameData, shortCut, numberOfDigits, offset, step);
 		}
 
-		IMultiRenameElement HandleStringTemplate(PegNode node)
+		private IMultiRenameElement HandleStringTemplate(PegNode node)
 		{
 			var childNode = node.child_;
 			if (childNode == null)
 				throw new ArgumentNullException("childNode");
 			string shortCut = _sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length);
 
-
-			int start=0;
-			int last=-1;
+			int start = 0;
+			int last = -1;
 
 			while (null != (childNode = childNode.next_))
 			{
@@ -148,9 +148,11 @@ namespace Altaxo.Gui.Common.MultiRename
 					case (int)EAltaxo_MultiRename.IntArgOnly:
 						start = last = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArg1st:
 						start = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArg2nd:
 						last = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
@@ -160,7 +162,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			return new MultiRenameStringElement(_renameData, shortCut, start, last);
 		}
 
-		IMultiRenameElement HandleDateTimeTemplate(PegNode node)
+		private IMultiRenameElement HandleDateTimeTemplate(PegNode node)
 		{
 			string dateTimeFormat = null;
 			bool useUtcTime = false;
@@ -176,6 +178,7 @@ namespace Altaxo.Gui.Common.MultiRename
 					case (int)EAltaxo_MultiRename.StringContent:
 						dateTimeFormat = GetEscStringText(childNode);
 						break;
+
 					case (int)EAltaxo_MultiRename.DateTimeKind:
 						useUtcTime = 'u' == char.ToLowerInvariant(_sourceText[childNode.match_.posBeg_]);
 						break;
@@ -185,7 +188,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			return new MultiRenameDateTimeElement(_renameData, shortCut, dateTimeFormat, useUtcTime);
 		}
 
-		IMultiRenameElement HandleArrayTemplate(PegNode node)
+		private IMultiRenameElement HandleArrayTemplate(PegNode node)
 		{
 			var childNode = node.child_;
 			if (childNode == null)
@@ -203,12 +206,15 @@ namespace Altaxo.Gui.Common.MultiRename
 					case (int)EAltaxo_MultiRename.StringContent:
 						separator = GetEscStringText(childNode);
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArgOnly:
 						start = last = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArg1st:
 						start = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
+
 					case (int)EAltaxo_MultiRename.IntArg2nd:
 						last = int.Parse(_sourceText.Substring(childNode.match_.posBeg_, childNode.match_.Length));
 						break;
@@ -216,9 +222,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			}
 
 			return new MultiRenameArrayElement(_renameData, shortCut, start, last, separator);
-
 		}
-
 
 		private string GetText(PegNode node)
 		{
@@ -259,11 +263,7 @@ namespace Altaxo.Gui.Common.MultiRename
 				}
 			}
 
-
 			return stb.ToString();
 		}
-
-
 	} // end class TreeWalker
-
 }

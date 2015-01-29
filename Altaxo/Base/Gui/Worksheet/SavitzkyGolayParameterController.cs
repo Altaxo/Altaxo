@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Calc.Regression;
-using Altaxo.Gui;
 using System;
 
 namespace Altaxo.Gui.Worksheet

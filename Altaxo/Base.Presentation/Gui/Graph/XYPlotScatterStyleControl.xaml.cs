@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,39 +19,29 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Collections;
-using Altaxo.Gui.Common.Drawing;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-
-using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
- 
 	/// <summary>
 	/// Interaction logic for XYPlotScatterStyleControl.xaml
 	/// </summary>
 	public partial class XYPlotScatterStyleControl : UserControl, IXYPlotScatterStyleView
 	{
-    public event Action IndependentColorChanged;
-		PenControlsGlue _symbolPenGlue;
+		public event Action IndependentColorChanged;
+
+		private PenControlsGlue _symbolPenGlue;
 
 		private bool _enableDisableAll = false;
 		private int _suppressEvents = 0;
@@ -63,24 +54,21 @@ namespace Altaxo.Gui.Graph
 			_symbolPenGlue.CbBrush = _cbColor;
 		}
 
-	
-
 		private void EhSymbolShape_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-      if (null != _cbSymbolShape)
-      {
-        GuiHelper.SynchronizeSelectionFromGui(_cbSymbolShape);
-      }
+			if (null != _cbSymbolShape)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_cbSymbolShape);
+			}
 		}
 
-    private void EhSymbolStyle_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-    {
-      if (null != _cbSymbolStyle)
-      {
-        GuiHelper.SynchronizeSelectionFromGui(_cbSymbolStyle);
-      }
-    }
-
+		private void EhSymbolStyle_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+		{
+			if (null != _cbSymbolStyle)
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_cbSymbolStyle);
+			}
+		}
 
 		public void EnableDisableMain(bool bEnable)
 		{
@@ -93,10 +81,7 @@ namespace Altaxo.Gui.Graph
 			this._edSymbolSkipFrequency.IsEnabled = bEnable;
 		}
 
-	
-
 		#region IXYPlotScatterStyleView
-
 
 		public void InitializeSymbolStyle(SelectableListNodeList list)
 		{
@@ -110,19 +95,19 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializeDropLineConditions(SelectableListNodeList names)
 		{
-			_lbDropLines.Initialize( names );
+			_lbDropLines.Initialize(names);
 		}
 
 		public bool IndependentColor
 		{
 			get
 			{
-				return true==_chkIndependentColor.IsChecked;
+				return true == _chkIndependentColor.IsChecked;
 			}
-      set
-      {
-        this._chkIndependentColor.IsChecked = value;
-      }
+			set
+			{
+				this._chkIndependentColor.IsChecked = value;
+			}
 		}
 
 		public PenX SymbolPen
@@ -138,10 +123,9 @@ namespace Altaxo.Gui.Graph
 
 		public bool IndependentSymbolSize
 		{
-			get { return true==_chkIndependentSize.IsChecked; }
-      set { this._chkIndependentSize.IsChecked = value; }
+			get { return true == _chkIndependentSize.IsChecked; }
+			set { this._chkIndependentSize.IsChecked = value; }
 		}
-
 
 		public SelectableListNode SymbolStyle
 		{
@@ -151,52 +135,47 @@ namespace Altaxo.Gui.Graph
 		public double SymbolSize
 		{
 			get { return _cbSymbolSize.SelectedQuantityAsValueInPoints; }
-      set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
+			set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
 		}
 
 		public int SkipPoints
 		{
 			get
 			{
-					return _edSymbolSkipFrequency.Value;
+				return _edSymbolSkipFrequency.Value;
 			}
-      set
-      {
-        this._edSymbolSkipFrequency.Value = value;
-      }
+			set
+			{
+				this._edSymbolSkipFrequency.Value = value;
+			}
 		}
-    
 
 		public double RelativePenWidth
 		{
 			get
 			{
-        return _edRelativePenWidth.SelectedQuantityAsValueInSIUnits;
+				return _edRelativePenWidth.SelectedQuantityAsValueInSIUnits;
 			}
 			set
 			{
-        _edRelativePenWidth.SelectedQuantityAsValueInSIUnits = value;
+				_edRelativePenWidth.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
-		#endregion
+		#endregion IXYPlotScatterStyleView
 
-    private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
-    {
-      if (null != IndependentColorChanged)
-        IndependentColorChanged();
-    }
+		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
+		{
+			if (null != IndependentColorChanged)
+				IndependentColorChanged();
+		}
 
-
-    public  bool ShowPlotColorsOnly
-    {
-      set
-      {
-        _symbolPenGlue.ShowPlotColorsOnly = value;
-      }
-    }
-
-  
-
-  }
+		public bool ShowPlotColorsOnly
+		{
+			set
+			{
+				_symbolPenGlue.ShowPlotColorsOnly = value;
+			}
+		}
+	}
 }

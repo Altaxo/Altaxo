@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
-using Altaxo.Gui;
 using System;
-using System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {

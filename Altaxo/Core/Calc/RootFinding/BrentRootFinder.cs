@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (C) bsargos, Software Developer, France
 //    (see CodeProject article http://www.codeproject.com/Articles/16083/One-dimensional-root-finding-algorithms)
@@ -22,7 +23,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -34,6 +36,7 @@ namespace Altaxo.Calc.RootFinding
 			: base(function)
 		{
 		}
+
 		public BrentRootFinder(Func<double, double> function, int maxNumberOfIterations, double accuracy)
 			: base(function, maxNumberOfIterations, accuracy)
 		{

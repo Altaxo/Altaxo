@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -40,18 +42,12 @@ namespace Altaxo.Graph.Plot.Groups
 		/// <summary>
 		/// Fully independent color. Is neither a provider of the color nor a receiver.
 		/// </summary>
-		Independent=1,
-
-	
+		Independent = 1,
 
 		/// <summary>
 		/// Dependent color. Can not be a provider. When receiving the color from other providers, the alpha value of the original color is preserved.
 		/// This means that therefrom resulting color is probably not a plot color, and has no parent color set (this is the reason that the color can not act as provider).
 		/// </summary>
 		PreserveAlpha
-
-
-		
-
 	}
 }

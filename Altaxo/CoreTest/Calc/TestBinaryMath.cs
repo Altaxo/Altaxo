@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
 using NUnit.Framework;
+using System;
 
 namespace AltaxoTest.Calc
 {
@@ -86,7 +88,6 @@ namespace AltaxoTest.Calc
 				}
 			}
 
-
 			// 64 bit, signed
 			Assert.AreEqual(true, BinaryMath.IsPowerOfTwoOrZero((long)0));
 			for (int i = 0; i < 64; ++i)
@@ -112,9 +113,7 @@ namespace AltaxoTest.Calc
 					Assert.AreEqual(false, BinaryMath.IsPowerOfTwoOrZero((ulong)x));
 				}
 			}
-
 		}
-
 
 		[Test]
 		public void TestIsNonzeroPowerOfTwo()
@@ -145,7 +144,6 @@ namespace AltaxoTest.Calc
 				}
 			}
 
-
 			// 64 bit, signed
 			Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo((long)0));
 			for (int i = 0; i < 64; ++i)
@@ -171,9 +169,7 @@ namespace AltaxoTest.Calc
 					Assert.AreEqual(false, BinaryMath.IsNonzeroPowerOfTwo((ulong)x));
 				}
 			}
-
 		}
-
 
 		[Test]
 		public void TestNextPowerOfTwoGreaterOrEqual()
@@ -186,7 +182,7 @@ namespace AltaxoTest.Calc
 				Assert.AreEqual(x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((int)x));
 				if (i < 30)
 				{
-					Assert.AreEqual(x+x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((int)(x+1)));
+					Assert.AreEqual(x + x, BinaryMath.NextPowerOfTwoGreaterOrEqualThan((int)(x + 1)));
 				}
 			}
 
@@ -227,7 +223,6 @@ namespace AltaxoTest.Calc
 			}
 		}
 
-
 		[Test]
 		public void TestParityOfByte()
 		{
@@ -258,7 +253,6 @@ namespace AltaxoTest.Calc
 			Assert.AreEqual(true, BinaryMath.IsParityOdd((ushort)0x0008));
 		}
 
-
 		[Test]
 		public void TestParityOfUInt()
 		{
@@ -273,7 +267,6 @@ namespace AltaxoTest.Calc
 			Assert.AreEqual(true, BinaryMath.IsParityOdd(0x80000000u));
 			Assert.AreEqual(true, BinaryMath.IsParityOdd(0x00000008u));
 		}
-
 
 		[Test]
 		public void TestParityOfULong()

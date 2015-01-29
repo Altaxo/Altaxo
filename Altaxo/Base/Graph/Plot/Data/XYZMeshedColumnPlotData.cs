@@ -26,10 +26,8 @@ using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {

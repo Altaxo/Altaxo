@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,15 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Data;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -45,8 +38,8 @@ namespace Altaxo.Gui.Scripting
 	public partial class FitFunctionScriptControl : UserControl, IFitFunctionScriptView
 	{
 		private IFitFunctionScriptViewEventSink m_Controller;
-		 int _suppressEvents = 0;
-		 UserControl _scriptView;
+		private int _suppressEvents = 0;
+		private UserControl _scriptView;
 
 		public FitFunctionScriptControl()
 		{
@@ -97,10 +90,10 @@ namespace Altaxo.Gui.Scripting
 		private void _chkUserDefinedParameters_CheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (null != Controller && 0 == _suppressEvents)
-				Controller.EhView_UserDefinedParameterCheckChanged(true==_chkUserDefinedParameters.IsChecked);
+				Controller.EhView_UserDefinedParameterCheckChanged(true == _chkUserDefinedParameters.IsChecked);
 
-			this._cbNumberOfParameters.IsEnabled = true!=_chkUserDefinedParameters.IsChecked;
-			this._edParameterNames.IsEnabled = true==_chkUserDefinedParameters.IsChecked;
+			this._cbNumberOfParameters.IsEnabled = true != _chkUserDefinedParameters.IsChecked;
+			this._edParameterNames.IsEnabled = true == _chkUserDefinedParameters.IsChecked;
 		}
 
 		private void _cbNumberOfParameters_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -113,7 +106,7 @@ namespace Altaxo.Gui.Scripting
 		public IFitFunctionScriptViewEventSink Controller
 		{
 			get { return m_Controller; }
-      set { m_Controller = value; }
+			set { m_Controller = value; }
 		}
 
 		public void Close(bool withOK)
@@ -134,7 +127,7 @@ namespace Altaxo.Gui.Scripting
 			}
 
 			_scriptView = (UserControl)viewAsObject;
-			
+
 			if (null != _scriptView)
 			{
 				_scriptView.SetValue(Grid.ColumnProperty, 0);
@@ -146,50 +139,50 @@ namespace Altaxo.Gui.Scripting
 
 		public void SetCheckUseUserDefinedParameters(bool useUserDefParameters)
 		{
-			 _suppressEvents++;
-      IFitFunctionScriptViewEventSink tempcontroller = m_Controller; // trick to suppress changed event
-      m_Controller = null;
+			_suppressEvents++;
+			IFitFunctionScriptViewEventSink tempcontroller = m_Controller; // trick to suppress changed event
+			m_Controller = null;
 
-      this._chkUserDefinedParameters.IsChecked = useUserDefParameters;
-      m_Controller = tempcontroller;
-      _suppressEvents--;
+			this._chkUserDefinedParameters.IsChecked = useUserDefParameters;
+			m_Controller = tempcontroller;
+			_suppressEvents--;
 		}
 
 		public void SetParameterText(string text, bool enable)
 		{
 			_suppressEvents++;
-      this._edParameterNames.Text = text;
-      this._edParameterNames.IsEnabled = enable;
-      _suppressEvents--;
+			this._edParameterNames.Text = text;
+			this._edParameterNames.IsEnabled = enable;
+			_suppressEvents--;
 		}
 
 		public void SetIndependentVariableText(string text)
 		{
-			 _suppressEvents++;
-      this._edIndependentVariables.Text = text;
-      _suppressEvents--;
+			_suppressEvents++;
+			this._edIndependentVariables.Text = text;
+			_suppressEvents--;
 		}
 
 		public void SetDependentVariableText(string text)
 		{
-			 _suppressEvents++;
-      this._edDependentVariables.Text = text;
-      _suppressEvents--;
+			_suppressEvents++;
+			this._edDependentVariables.Text = text;
+			_suppressEvents--;
 		}
 
 		public void SetNumberOfParameters(int numberOfParameters, bool enable)
 		{
-			 _suppressEvents++;
-      this._cbNumberOfParameters.SelectedIndex = numberOfParameters;
-      this._cbNumberOfParameters.IsEnabled = enable;
-      _suppressEvents--;
+			_suppressEvents++;
+			this._cbNumberOfParameters.SelectedIndex = numberOfParameters;
+			this._cbNumberOfParameters.IsEnabled = enable;
+			_suppressEvents--;
 		}
 
 		public void EnableScriptView(object view, bool enable)
 		{
 			var c = view as UserControl;
-      if (c != null)
-        c.IsEnabled = enable;
+			if (c != null)
+				c.IsEnabled = enable;
 		}
 	}
 }

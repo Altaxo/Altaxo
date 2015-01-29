@@ -1,47 +1,46 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.ColorProviderBaseControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-             mc:Ignorable="d" 
-             >
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,8,0"/>
-				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1"/>
-			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1"/>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Color below:"/>
-		<axogcd:ColorComboBox x:Name="_cbColorBelow" Grid.Column="1" Grid.Row="0" SelectedColorChanged="EhColorBelowChanged"/>
-		<Label Grid.Column="0" Grid.Row="2" Content="Color above:"/>
-		<axogcd:ColorComboBox x:Name="_cbColorAbove" Grid.Column="1" Grid.Row="2"  SelectedColorChanged="EhColorAboveChanged"/>
-		<Label Grid.Column="0" Grid.Row="4" Content="Color of invalid point:"/>
-		<axogcd:ColorComboBox x:Name="_cbInvalid" Grid.Column="1" Grid.Row="4"  SelectedColorChanged="EhColorInvalidChanged"/>
-		<Label Grid.Column="0" Grid.Row="6" Content="Transparency (%):"/>
-		<axogc:DecimalUpDown x:Name="_edTransparency" Grid.Column="1" Grid.Row="6" Minimum="0" Maximum="100" Change="5" DecimalPlaces="1" ValueChanged="EhTransparencyChanged"/>
-		<Label Grid.Column="0" Grid.Row="8" Content="Color steps:"/>
-		<axogc:Int32UpDown x:Name="_edColorSteps" Grid.Column="1" Grid.Row="8" Minimum="0" MinimumReplacementText="No steps (Continuous)" ValueChanged="EhColorStepsChanged"/>
+		<Label Grid.Column="0" Grid.Row="0" Content="Color below:" />
+		<axogcd:ColorComboBox x:Name="_cbColorBelow" Grid.Column="1" Grid.Row="0" SelectedColorChanged="EhColorBelowChanged" />
+		<Label Grid.Column="0" Grid.Row="2" Content="Color above:" />
+		<axogcd:ColorComboBox x:Name="_cbColorAbove" Grid.Column="1" Grid.Row="2"  SelectedColorChanged="EhColorAboveChanged" />
+		<Label Grid.Column="0" Grid.Row="4" Content="Color of invalid point:" />
+		<axogcd:ColorComboBox x:Name="_cbInvalid" Grid.Column="1" Grid.Row="4"  SelectedColorChanged="EhColorInvalidChanged" />
+		<Label Grid.Column="0" Grid.Row="6" Content="Transparency (%):" />
+		<axogc:DecimalUpDown x:Name="_edTransparency" Grid.Column="1" Grid.Row="6" Minimum="0" Maximum="100" Change="5" DecimalPlaces="1" ValueChanged="EhTransparencyChanged" />
+		<Label Grid.Column="0" Grid.Row="8" Content="Color steps:" />
+		<axogc:Int32UpDown x:Name="_edColorSteps" Grid.Column="1" Grid.Row="8" Minimum="0" MinimumReplacementText="No steps (Continuous)" ValueChanged="EhColorStepsChanged" />
 	</Grid>
 </UserControl>

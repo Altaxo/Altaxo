@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {

@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Serialization;
 using System;
 
 namespace Altaxo.Graph.Scales.Boundaries

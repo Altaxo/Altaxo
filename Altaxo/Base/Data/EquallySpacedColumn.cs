@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Data
 {
 	/// <summary>
-	/// The EquallySpacedColumn is a simple readable numeric column. The value of an element is 
+	/// The EquallySpacedColumn is a simple readable numeric column. The value of an element is
 	/// calculated from y = a+b*i. This means the value of the first element is a, the values are equally spaced by b.
 	/// </summary>
 	[Serializable]
@@ -33,13 +35,14 @@ namespace Altaxo.Data
 	{
 		/// <summary>The start value, i.e. the value at index 0.</summary>
 		protected double _start = 0;
+
 		/// <summary>The spacing value between consecutive elements.</summary>
 		protected double _increment = 1;
 
-
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EquallySpacedColumn), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -57,7 +60,8 @@ namespace Altaxo.Data
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Creates a EquallySpacedColumn with starting value start and spacing increment.
@@ -78,7 +82,6 @@ namespace Altaxo.Data
 		{
 			return new EquallySpacedColumn(_start, _increment);
 		}
-
 
 		/// <summary>
 		/// Simply returns the value i.
@@ -121,7 +124,5 @@ namespace Altaxo.Data
 		{
 			get { return "EquallySpacedColumn(" + _start.ToString() + "," + _increment.ToString() + ")"; }
 		}
-
 	}
-
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,79 +19,75 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
-
 using NUnit.Framework;
+using System;
+
 namespace AltaxoTest.Calc.Regression
 {
-
 	[TestFixture]
 	public class Test_enorm
 	{
 		protected double[] arr = new double[90001];
 
-
 		[Test]
 		public void ZeroElements()
 		{
-			arr[0]=1;
-			double r = NLFit.enorm(0,arr);
-			NUnit.Framework.Assert.AreEqual(0.0,r,0);
+			arr[0] = 1;
+			double r = NLFit.enorm(0, arr);
+			NUnit.Framework.Assert.AreEqual(0.0, r, 0);
 		}
 
 		[Test]
 		public void OneElement()
 		{
-			for(int i=0;i<arr.Length;i++) 
-				arr[i] = (i+1);
-			
-			for(int i=0;i<arr.Length;i++) 
+			for (int i = 0; i < arr.Length; i++)
+				arr[i] = (i + 1);
+
+			for (int i = 0; i < arr.Length; i++)
 			{
-				double r = NLFit.enorm(1,arr,i);
-				NUnit.Framework.Assert.AreEqual((double)(i+1),r,0);
+				double r = NLFit.enorm(1, arr, i);
+				NUnit.Framework.Assert.AreEqual((double)(i + 1), r, 0);
 			}
 		}
-
 
 		[Test]
 		public void NormalElements()
 		{
 			// we use the law 3^2 + 4^2 = 5^2
-			arr[0]=400;;
-			for(int i=1;i<90001;i++) 
+			arr[0] = 400; ;
+			for (int i = 1; i < 90001; i++)
 				arr[i] = 1;
-			double r = NLFit.enorm(90001,arr);
-			NUnit.Framework.Assert.AreEqual(500,r,0);
+			double r = NLFit.enorm(90001, arr);
+			NUnit.Framework.Assert.AreEqual(500, r, 0);
 		}
 
 		[Test]
 		public void NormalAndBigElements()
 		{
 			// we use the law 3^2 + 4^2 = 5^2
-			arr[0]=400E19;;
-			for(int i=1;i<90001;i++) 
+			arr[0] = 400E19; ;
+			for (int i = 1; i < 90001; i++)
 				arr[i] = 1E19;
-			double r = NLFit.enorm(90001,arr);
-			NUnit.Framework.Assert.AreEqual(500E19,r,100E10);
+			double r = NLFit.enorm(90001, arr);
+			NUnit.Framework.Assert.AreEqual(500E19, r, 100E10);
 		}
 
 		[Test]
 		public void NormalAndSmallElements()
 		{
 			// we use the law 3^2 + 4^2 = 5^2
-			arr[0]=400E-20;;
-			for(int i=1;i<90001;i++) 
+			arr[0] = 400E-20; ;
+			for (int i = 1; i < 90001; i++)
 				arr[i] = 1E-20;
-			double r = NLFit.enorm(90001,arr);
-			NUnit.Framework.Assert.AreEqual(500E-20,r,0);
+			double r = NLFit.enorm(90001, arr);
+			NUnit.Framework.Assert.AreEqual(500E-20, r, 0);
 		}
 	}
-
-
 
 	[TestFixture]
 	public class Test_LevenbergMarquardtFit
@@ -112,7 +109,6 @@ namespace AltaxoTest.Calc.Regression
 			}
 		}
 
-
 		public void FitFunction2plus5xMod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
 		{
 			Assert.IsTrue(numberOfParameter == 2, "NumberOfParameter must be 2 in this test.");
@@ -123,16 +119,12 @@ namespace AltaxoTest.Calc.Regression
 			double a = parameter[0];
 			double b = parameter[1];
 
-			for (int i = 0; i < ys.Length;++i)
+			for (int i = 0; i < ys.Length; ++i)
 			{
-				double x = i-10;
+				double x = i - 10;
 				ys[i] = (a + b * x) - (2 + 5 * x);
 			}
 		}
-
-
-
-
 
 		[Test]
 		public void Test_2plus5x()
@@ -148,7 +140,6 @@ namespace AltaxoTest.Calc.Regression
 			Assert.AreEqual(2, param[0], 1E-5, "Fit parameter 0 should be 2 in this model");
 			Assert.AreEqual(5, param[1], 1E-5, "Fit parameter 1 should be 5 in this model");
 		}
-
 
 		[Test]
 		public void Test_2plus5xMod()
@@ -205,7 +196,6 @@ namespace AltaxoTest.Calc.Regression
 			Assert.AreEqual(1, param[2], 1E-4, "Fit parameter 2 should be 1 in this model");
 		}
 
-
 		public void FitFunction7malCos3xplus1Mod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
 		{
 			Assert.IsTrue(numberOfParameter == 3, "NumberOfParameter must be 3 in this test.");
@@ -244,8 +234,6 @@ namespace AltaxoTest.Calc.Regression
 			Assert.AreEqual(1, param[2], 1E-4, "Fit parameter 2 should be 1 in this model");
 		}
 
-
-
 		/// <summary>
 		/// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
 		/// </summary>
@@ -254,7 +242,7 @@ namespace AltaxoTest.Calc.Regression
 		/// <param name="p"></param>
 		/// <param name="x"></param>
 		/// <param name="info"></param>
-		void poly2(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+		private void poly2(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
 		{
 			Assert.IsTrue(p.Length == 2);
 			Assert.IsTrue(x.Length == 9);
@@ -263,9 +251,7 @@ namespace AltaxoTest.Calc.Regression
 
 			for (int i = 0; i < 9; i++)
 				x[i] = p[0] + p[1] * (i + 1) - y[i];
-
 		}
-
 
 		[Test]
 		public void Test_Poly2()
@@ -273,7 +259,6 @@ namespace AltaxoTest.Calc.Regression
 			double[] param = new double[2];
 			param[0] = 0.1;
 			param[1] = 1.01;
-
 
 			double[] ys = new double[9];
 			int info = 0;
@@ -295,7 +280,6 @@ namespace AltaxoTest.Calc.Regression
 			Assert.AreEqual(0.021164, covar[3], 0.001);
 		}
 
-
 		/// <summary>
 		/// Generates the values sum from i=1 to 9 of p[0]+p[1]*i - y
 		/// </summary>
@@ -304,7 +288,7 @@ namespace AltaxoTest.Calc.Regression
 		/// <param name="p"></param>
 		/// <param name="x"></param>
 		/// <param name="info"></param>
-		void poly3(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+		private void poly3(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
 		{
 			if (p.Length != 2)
 				throw new ArgumentException("p");
@@ -333,7 +317,6 @@ namespace AltaxoTest.Calc.Regression
 			param[0] = 1;
 			param[1] = 1;
 
-
 			double[] ys = new double[2];
 			int info = 0;
 
@@ -348,9 +331,7 @@ namespace AltaxoTest.Calc.Regression
 			double[] covar = new double[2 * 2];
 			double chisqr;
 			NLFit.ComputeCovariances(new NLFit.LMFunction(this.poly3), param, 2, 2, covar, out chisqr);
-
 		}
-
 
 		/// <summary>
 		/// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
@@ -360,7 +341,7 @@ namespace AltaxoTest.Calc.Regression
 		/// /// <param name="p"></param>
 		/// <param name="x"></param>
 		/// <param name="info"></param>
-		void poly4(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+		private void poly4(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
 		{
 			Assert.IsTrue(p.Length == 2);
 			Assert.IsTrue(x.Length == 10);
@@ -383,7 +364,6 @@ namespace AltaxoTest.Calc.Regression
 			param[0] = 1;
 			param[1] = 1E10;
 
-
 			double[] ys = new double[10];
 			int info = 0;
 
@@ -405,9 +385,7 @@ namespace AltaxoTest.Calc.Regression
 			// Origin calculates a dependence value of 0.92115 out here
 			double dependency = (covar[1] * covar[1]) / (covar[0] * covar[3]);
 			Assert.AreEqual(0.92115, dependency, 1E-4, "Dependency should be around 0.92115");
-
 		}
-
 
 		/// <summary>
 		/// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
@@ -418,7 +396,7 @@ namespace AltaxoTest.Calc.Regression
 		/// <param name="p"></param>
 		/// <param name="x"></param>
 		/// <param name="info"></param>
-		void poly5(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+		private void poly5(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
 		{
 			Assert.IsTrue(p.Length == 3);
 			Assert.IsTrue(x.Length == 10);
@@ -462,9 +440,9 @@ namespace AltaxoTest.Calc.Regression
 			Assert.AreEqual(0.19511, Math.Sqrt(covar[0]), 1e-4, "Square root of covariance of parameter0 should be 0.19511");
 			Assert.AreEqual(0.00197, Math.Sqrt(covar[3 * 1 + 1]), 1e-5, "Square root of covariance of parameter1 should be 0.00197");
 			Assert.AreEqual(3.50947, Math.Sqrt(covar[3 * 2 + 2]), 1e-4, "Square root of covariance of parameter1 should be 3.50947");
-		
+
 			double dep;
-			double dep01 = (covar[3*0+1] * covar[3*1+0]) / (covar[3*0+0]*covar[3*1+1]);
+			double dep01 = (covar[3 * 0 + 1] * covar[3 * 1 + 0]) / (covar[3 * 0 + 0] * covar[3 * 1 + 1]);
 			double dep02 = (covar[3 * 0 + 2] * covar[3 * 2 + 0]) / (covar[3 * 0 + 0] * covar[3 * 2 + 2]);
 			dep = 1 - (1 - dep01) * (1 - dep02);
 			Assert.AreEqual(0.96865, dep, 1E-2, "Dependency should be around 0.97");
@@ -478,24 +456,22 @@ namespace AltaxoTest.Calc.Regression
 			double dep21 = (covar[3 * 2 + 1] * covar[3 * 1 + 2]) / (covar[3 * 2 + 2] * covar[3 * 1 + 1]);
 			dep = 1 - (1 - dep20) * (1 - dep21);
 			Assert.AreEqual(0.755, dep, 1E-2, "Dependency should be around 0.755");
-
 		}
 	}
-
 
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	class MainMain
+	internal class MainMain
 	{
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			double[] arr = { 1E20, 1, 1E-20 };
-			double result = NLFit.enorm(3,arr);
+			double result = NLFit.enorm(3, arr);
 		}
 	}
 }

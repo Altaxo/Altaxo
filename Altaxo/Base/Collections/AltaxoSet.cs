@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,13 +34,10 @@ namespace Altaxo.Collections
 	/// <typeparam name="T"></typeparam>
 	public class AltaxoSet<T> : ICollection<T>
 	{
-		List<T> _itemList = new List<T>();
-		Dictionary<T, int> _itemHash = new Dictionary<T, int>();
-
-
+		private List<T> _itemList = new List<T>();
+		private Dictionary<T, int> _itemHash = new Dictionary<T, int>();
 
 		#region ICollection<T> Members
-
 
 		public void Add(T item)
 		{
@@ -108,10 +107,9 @@ namespace Altaxo.Collections
 				}
 				return false;
 			}
-
 		}
 
-		#endregion
+		#endregion ICollection<T> Members
 
 		#region IEnumerable<T> Members
 
@@ -120,7 +118,7 @@ namespace Altaxo.Collections
 			return _itemList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<T> Members
 
 		#region IEnumerable Members
 
@@ -129,11 +127,11 @@ namespace Altaxo.Collections
 			return _itemList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 
 		#region other members
 
-		void InvalidateHash()
+		private void InvalidateHash()
 		{
 			_itemHash = null;
 		}
@@ -141,7 +139,7 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Rehashes the hash list if structural changes occur.
 		/// </summary>
-		void EnsureHashNotNull()
+		private void EnsureHashNotNull()
 		{
 			if (null != _itemHash)
 				return;
@@ -152,7 +150,6 @@ namespace Altaxo.Collections
 				_itemHash.Add(_itemList[i], i);
 			}
 		}
-
 
 		public int IndexOf(T item)
 		{
@@ -171,7 +168,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-		#endregion
-
+		#endregion other members
 	}
 }

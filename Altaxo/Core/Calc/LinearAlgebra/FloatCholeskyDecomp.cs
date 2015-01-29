@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * FloatCholeskyDecomp.cs
@@ -29,7 +31,6 @@
 */
 
 using System;
-
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -46,7 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		private FloatMatrix matrix;
 
 		///<summary>Constructor for Cholesky decomposition class. The constructor performs the factorization of a symmetric positive
-		///definite matrax and the Cholesky factored matrix is accessible by the <c>Factor</c> property. The factor is the lower 
+		///definite matrax and the Cholesky factored matrix is accessible by the <c>Factor</c> property. The factor is the lower
 		///triangular factor.</summary>
 		///<param name="matrix">The matrix to factor.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
@@ -168,7 +169,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		///<summary>Solves a system on linear equations, AX=B, where A is the factored matrixed.</summary>
 		///<param name="B">RHS side of the system.</param>
-		///<returns>the solution matrix, X.</returns>  
+		///<returns>the solution matrix, X.</returns>
 		///<exception cref="ArgumentNullException">B is null.</exception>
 		///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
 		///<exception cref="ArgumentException">The number of rows of A and B must be the same.</exception>
@@ -231,7 +232,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		///<summary>Solves a system on linear equations, AX=B, where A is the factored matrixed.</summary>
 		///<param name="B">RHS side of the system.</param>
-		///<returns>the solution vector, X.</returns>  
+		///<returns>the solution vector, X.</returns>
 		///<exception cref="ArgumentNullException">B is null.</exception>
 		///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
 		///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
@@ -288,7 +289,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		///<summary>Calculates the inverse of the matrix.</summary>
-		///<returns>the inverse of the matrix.</returns>  
+		///<returns>the inverse of the matrix.</returns>
 		///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
 		public FloatMatrix GetInverse()
 		{

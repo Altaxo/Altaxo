@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -52,7 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 	/// <summary>
 	/// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-	/// can be appended to the right of the matrix. 
+	/// can be appended to the right of the matrix.
 	/// </summary>
 	public interface IFloatExtensibleVector : IFloatVector
 	{
@@ -62,7 +64,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">The vector to append.</param>
 		void Append(IROFloatVector a);
 	}
-
 
 	public abstract class AbstractROFloatVector : IROFloatVector
 	{
@@ -78,7 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			get;
 		}
 
-		#endregion
+		#endregion IROVector Members
 
 		#region INumericSequence Members
 
@@ -87,7 +88,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			get;
 		}
 
-		#endregion
+		#endregion INumericSequence Members
 	}
 
 	public class ROFloatVector : AbstractROFloatVector
@@ -99,14 +100,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			_data = array;
 		}
 
-
-
 		static public implicit operator ROFloatVector(float[] src)
 		{
 			return new ROFloatVector(src);
 		}
-
-
 
 		#region IROVector Members
 
@@ -115,7 +112,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			get { return _data.Length; }
 		}
 
-		#endregion
+		#endregion IROVector Members
 
 		#region INumericSequence Members
 
@@ -124,7 +121,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			get { return _data[i]; }
 		}
 
-		#endregion
+		#endregion INumericSequence Members
 	}
-
 }

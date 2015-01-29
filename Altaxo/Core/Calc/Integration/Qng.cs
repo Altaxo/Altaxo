@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,29 +35,28 @@ namespace Altaxo.Calc.Integration
 	/// </summary>
 	public class Qng : IntegrationBase
 	{
-
 		#region Rescale_Error
+
 		/* integration/err.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-		static double
+		private static double
 		rescale_error(double err, double result_abs, double result_asc)
 		{
 			err = Math.Abs(err);
@@ -86,23 +87,24 @@ namespace Altaxo.Calc.Integration
 			return err;
 		}
 
-		#endregion
+		#endregion Rescale_Error
 
 		#region qng.h
+
 		/* integration/qng.h
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -114,7 +116,8 @@ namespace Altaxo.Calc.Integration
 			 1981. */
 
 		/* x1, abscissae common to the 10-, 21-, 43- and 87-point rule */
-		static readonly double[] x1 = {
+
+		private static readonly double[] x1 = {
   0.973906528517171720077964012084452,
   0.865063366688984510732096688423493,
   0.679409568299024406234327365114874,
@@ -123,7 +126,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w10, weights of the 10-point formula */
-		static readonly double[] w10 = {
+
+		private static readonly double[] w10 = {
   0.066671344308688137593568809893332,
   0.149451349150580593145776339657697,
   0.219086362515982043995534934228163,
@@ -132,7 +136,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* x2, abscissae common to the 21-, 43- and 87-point rule */
-		static readonly double[] x2 = {
+
+		private static readonly double[] x2 = {
   0.995657163025808080735527280689003,
   0.930157491355708226001207180059508,
   0.780817726586416897063717578345042,
@@ -141,7 +146,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w21a, weights of the 21-point formula for abscissae x1 */
-		static readonly double[] w21a = {
+
+		private static readonly double[] w21a = {
   0.032558162307964727478818972459390,
   0.075039674810919952767043140916190,
   0.109387158802297641899210590325805,
@@ -150,7 +156,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w21b, weights of the 21-point formula for abscissae x2 */
-		static readonly double[] w21b = {
+
+		private static readonly double[] w21b = {
   0.011694638867371874278064396062192,
   0.054755896574351996031381300244580,
   0.093125454583697605535065465083366,
@@ -160,7 +167,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* x3, abscissae common to the 43- and 87-point rule */
-		static readonly double[] x3 = {
+
+		private static readonly double[] x3 = {
   0.999333360901932081394099323919911,
   0.987433402908088869795961478381209,
   0.954807934814266299257919200290473,
@@ -175,7 +183,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w43a, weights of the 43-point formula for abscissae x1, x3 */
-		static readonly double[] w43a = {
+
+		private static readonly double[] w43a = {
   0.016296734289666564924281974617663,
   0.037522876120869501461613795898115,
   0.054694902058255442147212685465005,
@@ -189,7 +198,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w43b, weights of the 43-point formula for abscissae x3 */
-		static readonly double[] w43b = {
+
+		private static readonly double[] w43b = {
   0.001844477640212414100389106552965,
   0.010798689585891651740465406741293,
   0.021895363867795428102523123075149,
@@ -205,7 +215,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* x4, abscissae of the 87-point rule */
-		static readonly double[] x4 = {
+
+		private static readonly double[] x4 = {
   0.999902977262729234490529830591582,
   0.997989895986678745427496322365960,
   0.992175497860687222808523352251425,
@@ -231,7 +242,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w87a, weights of the 87-point formula for abscissae x1, x2, x3 */
-		static readonly double[] w87a = {
+
+		private static readonly double[] w87a = {
   0.008148377384149172900002878448190,
   0.018761438201562822243935059003794,
   0.027347451050052286161582829741283,
@@ -256,7 +268,8 @@ namespace Altaxo.Calc.Integration
 };
 
 		/* w87b, weights of the 87-point formula for abscissae x4    */
-		static readonly double[] w87b = {
+
+		private static readonly double[] w87b = {
   0.000274145563762072350016527092881,
   0.001807124155057942948341311753254,
   0.004096869282759164864458070683480,
@@ -282,31 +295,30 @@ namespace Altaxo.Calc.Integration
   0.037361073762679023410321241766599
 };
 
-
-		#endregion
+		#endregion qng.h
 
 		#region qng.c
+
 		/* integration/qng.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-		static GSL_ERROR
+		private static GSL_ERROR
 		gsl_integration_qng(Func<double, double> f,
 												 double a, double b,
 												 double epsabs, double epsrel,
@@ -468,6 +480,6 @@ namespace Altaxo.Calc.Integration
 			return new GSL_ERROR("failed to reach tolerance with highest-order rule", GSL_ERR.GSL_ETOL, bDebug);
 		}
 
-		#endregion
+		#endregion qng.c
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Dotc.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -38,7 +39,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Dotc
 	{
-		private Dotc() { }
+		private Dotc()
+		{
+		}
+
 		///<summary>Check arguments so that errors don't occur in native code</summary>
 		private static void ArgumentCheck(int n, object X, int lenX, ref int incx, object Y, int lenY, ref int incy)
 		{
@@ -69,6 +73,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 				throw new ArgumentException("The dimension of Y must be at least 1 + (n-1) * incy.");
 			}
 		}
+
 		///<summary>Compute the function of this class</summary>
 
 		internal static ComplexFloat Compute(int n, ComplexFloat[] X, int incx, ComplexFloat[] Y, int incy)
@@ -94,7 +99,6 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 #endif
 			return ret;
 		}
-
 
 		internal static Complex Compute(int n, Complex[] X, int incx, Complex[] Y, int incy)
 		{

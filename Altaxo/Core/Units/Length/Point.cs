@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,7 +31,8 @@ namespace Altaxo.Units.Length
 {
 	public class Point : IUnit
 	{
-		static readonly Point _instance = new Point();
+		private static readonly Point _instance = new Point();
+
 		public static Point Instance { get { return _instance; } }
 
 		protected Point()

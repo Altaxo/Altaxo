@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
 using System;
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using System.Windows.Automation;
-using System.Globalization;
-using System.Diagnostics;
-
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
@@ -50,9 +49,11 @@ namespace Altaxo.Gui.Common
 
 		protected class DoubleUpDownConverter : ValidationRule, IValueConverter
 		{
-			DoubleUpDown _parent;
+			private DoubleUpDown _parent;
 
-			public DoubleUpDownConverter() { }
+			public DoubleUpDownConverter()
+			{
+			}
 
 			public DoubleUpDownConverter(DoubleUpDown parent)
 			{
@@ -87,13 +88,11 @@ namespace Altaxo.Gui.Common
 				return validationResult;
 			}
 
-
 			public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture, out ValidationResult validationResult)
 			{
 				validationResult = ValidationResult.ValidResult;
 
 				string s = (string)obj;
-
 
 				if (null != _parent)
 				{
@@ -121,11 +120,12 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		#endregion
+		#endregion Converter
 
 		#region Properties
 
 		#region Value
+
 		public double Value
 		{
 			get { return (double)GetValue(ValueProperty); }
@@ -152,12 +152,14 @@ namespace Altaxo.Gui.Common
 			var newValue = (double)args.NewValue;
 
 			#region Fire Automation events
+
 			var peer = UIElementAutomationPeer.FromElement(control) as DoubleUpDownAutomationPeer;
 			if (peer != null)
 			{
 				peer.RaiseValueChangedEvent(oldValue, newValue);
 			}
-			#endregion
+
+			#endregion Fire Automation events
 
 			var e = new RoutedPropertyChangedEventArgs<double>(oldValue, newValue, ValueChangedEvent);
 			control.OnValueChanged(e);
@@ -181,9 +183,11 @@ namespace Altaxo.Gui.Common
 
 			return newValue;
 		}
-		#endregion
+
+		#endregion Value
 
 		#region ValueIfTextIsEmpty
+
 		public double? ValueIfTextIsEmpty
 		{
 			get { return (double?)GetValue(ValueIfTextIsEmptyProperty); }
@@ -198,9 +202,10 @@ namespace Altaxo.Gui.Common
 						"ValueIfTextIsEmpty", typeof(double?), typeof(DoubleUpDown)
 		);
 
-		#endregion
+		#endregion ValueIfTextIsEmpty
 
 		#region ValueString
+
 		public string ValueString
 		{
 			get
@@ -216,9 +221,10 @@ namespace Altaxo.Gui.Common
 
 		private NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
 
-		#endregion
+		#endregion ValueString
 
 		#region Minimum
+
 		public double Minimum
 		{
 			get { return (double)GetValue(MinimumProperty); }
@@ -245,9 +251,11 @@ namespace Altaxo.Gui.Common
 			DoubleUpDown control = (DoubleUpDown)element;
 			return minimum;
 		}
-		#endregion
+
+		#endregion Minimum
 
 		#region Maximum
+
 		public double Maximum
 		{
 			get { return (double)GetValue(MaximumProperty); }
@@ -274,9 +282,11 @@ namespace Altaxo.Gui.Common
 			double newMaximum = (double)value;
 			return Math.Max(newMaximum, control.Minimum);
 		}
-		#endregion
+
+		#endregion Maximum
 
 		#region Change
+
 		public double Change
 		{
 			get { return (double)GetValue(ChangeProperty); }
@@ -298,7 +308,6 @@ namespace Altaxo.Gui.Common
 
 		private static void OnChangeChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
 
 		private static object CoerceChange(DependencyObject element, object value)
@@ -309,11 +318,12 @@ namespace Altaxo.Gui.Common
 			return newChange;
 		}
 
-		#endregion
+		#endregion Change
 
-		#endregion
+		#endregion Properties
 
 		#region Events
+
 		/// <summary>
 		/// Identifies the ValueChanged routed event.
 		/// </summary>
@@ -329,10 +339,10 @@ namespace Altaxo.Gui.Common
 			add { AddHandler(ValueChangedEvent, value); }
 			remove { RemoveHandler(ValueChangedEvent, value); }
 		}
-		#endregion
+
+		#endregion Events
 
 		#region Commands
-
 
 		protected override void OnIncrease()
 		{
@@ -343,6 +353,7 @@ namespace Altaxo.Gui.Common
 			else
 				this.Value = double.MaxValue;
 		}
+
 		protected override void OnDecrease()
 		{
 			// avoid an underflow before coerce of the value
@@ -351,17 +362,18 @@ namespace Altaxo.Gui.Common
 			else
 				this.Value = double.MinValue;
 		}
+
 		protected override void OnGotoMinimum()
 		{
 			this.Value = this.Minimum;
 		}
+
 		protected override void OnGotoMaximum()
 		{
 			this.Value = this.Maximum;
 		}
 
-
-		#endregion
+		#endregion Commands
 
 		#region Automation
 
@@ -369,7 +381,8 @@ namespace Altaxo.Gui.Common
 		{
 			return new DoubleUpDownAutomationPeer(this);
 		}
-		#endregion
+
+		#endregion Automation
 	}
 
 	public class DoubleUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
@@ -455,7 +468,7 @@ namespace Altaxo.Gui.Common
 			get { return (double)MyOwner.Value; }
 		}
 
-		#endregion
+		#endregion IRangeValueProvider Members
 
 		private DoubleUpDown MyOwner
 		{
@@ -464,8 +477,5 @@ namespace Altaxo.Gui.Common
 				return (DoubleUpDown)base.Owner;
 			}
 		}
-
-
 	}
-
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.SyntheticBrushes
 {
@@ -46,7 +45,7 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SyntheticBrushBase), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -63,14 +62,13 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
 		public override Altaxo.Graph.PointD2D Size
 		{
-			get	{ return new Altaxo.Graph.PointD2D(_repeatLengthPt, _repeatLengthPt);	}
+			get { return new Altaxo.Graph.PointD2D(_repeatLengthPt, _repeatLengthPt); }
 		}
 
 		[System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]
@@ -80,7 +78,7 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 			get { return _repeatLengthPt; }
 			set { _repeatLengthPt = value; }
 		}
-	
+
 		protected int GetPixelDimensions(double maxEffectiveResolutionDpi)
 		{
 			// use a factor of 2 for safety, thus we have at least two pixels of the bitmap mapping to 1 pixel of the drawing
@@ -90,7 +88,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 			pixels = (pixels + 15) & 0xFFFFFF0; // round to multiples of 16
 			return pixels;
 		}
-
 
 		protected int GetPixelDimensions(double maxEffectiveResolutionDpi, double relativeStructureSize, int minimumPixelsForStructureSize)
 		{
@@ -102,7 +99,6 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 			pixels = (pixels + 15) & 0xFFFFFF0; // round to multiples of 16
 			return pixels;
 		}
-
 
 		public override string ContentHash
 		{
@@ -145,7 +141,5 @@ namespace Altaxo.Graph.Gdi.SyntheticBrushes
 		{
 			get { return true; }
 		}
-
 	}
-
 }

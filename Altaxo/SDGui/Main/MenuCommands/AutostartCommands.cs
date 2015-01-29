@@ -22,18 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Gui;
-using Altaxo.Gui.SharpDevelop;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Commands;
-using ICSharpCode.SharpDevelop.Gui;
 using System;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Remoting;
-using System.Security.Policy;
 
 namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 {

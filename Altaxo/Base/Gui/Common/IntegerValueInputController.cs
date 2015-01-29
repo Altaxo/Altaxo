@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.ComponentModel;
 
 namespace Altaxo.Gui.Common
 {

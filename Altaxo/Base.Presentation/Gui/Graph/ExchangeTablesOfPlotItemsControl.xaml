@@ -1,81 +1,79 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.ExchangeTablesOfPlotItemsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             >
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="TableItemsContextMenu">
-			<MenuItem Header="Choose new table..." Click="EhChooseTable"/>
-			<MenuItem Header="Choose new folder..." Click="EhChooseFolder"/>
+			<MenuItem Header="Choose new table..." Click="EhChooseTable" />
+			<MenuItem Header="Choose new folder..." Click="EhChooseFolder" />
 		</ContextMenu>
 
 		<Style x:Key="TableItemsContainer" TargetType="{x:Type ListViewItem}">
-			<Setter Property="ContextMenu" Value="{StaticResource TableItemsContextMenu}"/>
+			<Setter Property="ContextMenu" Value="{StaticResource TableItemsContextMenu}" />
 		</Style>
-
 	</UserControl.Resources>
-    <Grid>
+	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 		<!-- the catching of PreviewMouseRightButtonDown is a trick to maintain the selected items when using the context menu -->
-		<Label Content="Currently used table(s) and their replacement(s):" Grid.Row="0" Grid.ColumnSpan="2" Margin="4,0,4,0"/>
+		<Label Content="Currently used table(s) and their replacement(s):" Grid.Row="0" Grid.ColumnSpan="2" Margin="4,0,4,0" />
 		<ListView x:Name="_guiTableList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="4,0,4,0"
 							SelectionChanged="EhItemsSelectionChanged"
-							PreviewMouseRightButtonDown="EhTableList_MouseRightButtonDown" 
-							ScrollViewer.VerticalScrollBarVisibility="Visible" 
+							PreviewMouseRightButtonDown="EhTableList_MouseRightButtonDown"
+							ScrollViewer.VerticalScrollBarVisibility="Visible"
 							ItemContainerStyle="{StaticResource TableItemsContainer}">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Header="Current table" DisplayMemberBinding="{Binding Text}" Width="400"/>
-					<GridViewColumn Header="Replacement table" DisplayMemberBinding="{Binding Text1}" Width="400"/>
-					<GridViewColumn Header="Status" DisplayMemberBinding="{Binding Text2}" Width="100"/>
+					<GridViewColumn Header="Current table" DisplayMemberBinding="{Binding Text}" Width="400" />
+					<GridViewColumn Header="Replacement table" DisplayMemberBinding="{Binding Text1}" Width="400" />
+					<GridViewColumn Header="Status" DisplayMemberBinding="{Binding Text2}" Width="100" />
 				</GridView>
 			</ListView.View>
 		</ListView>
 
-		<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Fill="Lavender" Height="4" Margin="0,6,0,6"/>
+		<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Fill="Lavender" Height="4" Margin="0,6,0,6" />
 		<Button Content="Choose a table for replacement of selected tables..." Grid.Row="3" Margin="4" Click="EhChooseTable"
-						ToolTip="Select a single table that is used as replacement table."/>
-		<Button Content="Choose table(s) with the same name in another folder..." Grid.Row="4" Margin="4" Click="EhChooseFolder" 
+						ToolTip="Select a single table that is used as replacement table." />
+		<Button Content="Choose table(s) with the same name in another folder..." Grid.Row="4" Margin="4" Click="EhChooseFolder"
 						ToolTip="Tries to find table(s) with the same short name in a folder of your choice." />
 		<Expander x:Name="_guiCommonSubstringPanel" Header="Replace common substrings in the names of selected tables" Grid.Row="5" Grid.ColumnSpan="2" Expanded="EhCommonSubstringOperations_VisibilityChanged" Collapsed="EhCommonSubstringOperations_VisibilityChanged">
-			<Grid >
+			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="*" MinHeight="100" MaxHeight="300"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" MinHeight="100" MaxHeight="300" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition />
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<Border Grid.RowSpan="5" Grid.ColumnSpan="3" BorderBrush="Lavender" BorderThickness="4"/>
+				<Border Grid.RowSpan="5" Grid.ColumnSpan="3" BorderBrush="Lavender" BorderThickness="4" />
 				<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="3" Background="Lavender"  Margin="4,4,4,0">
-					<Label Content="Search common substring:"/>
-					<RadioButton x:Name="_guiSearchCommonSubstringCharacterwise" Content="character-wise" Checked="EhSearchCommonSubstringCharacterWiseChanged" VerticalAlignment="Center" Margin="4"/>
-					<RadioButton x:Name="_guiSearchCommonSubstringSubfolderwise" Content="subfolder-wise" IsChecked="True" Checked="EhSearchCommonSubstringCharacterWiseChanged" VerticalAlignment="Center" Margin="4"/>
+					<Label Content="Search common substring:" />
+					<RadioButton x:Name="_guiSearchCommonSubstringCharacterwise" Content="character-wise" Checked="EhSearchCommonSubstringCharacterWiseChanged" VerticalAlignment="Center" Margin="4" />
+					<RadioButton x:Name="_guiSearchCommonSubstringSubfolderwise" Content="subfolder-wise" IsChecked="True" Checked="EhSearchCommonSubstringCharacterWiseChanged" VerticalAlignment="Center" Margin="4" />
 				</StackPanel>
-				<Label Content="Common substring (feel free to edit the text):" Grid.Row="1" Grid.Column="0"/>
-				<TextBox x:Name="_guiCommonSubstring" Grid.Row="2" Grid.Column="0" TextChanged="EhCommonSubstringTextChanged" Margin="4,0,4,0"/>
-				<ListBox x:Name="_guiListOfCommonSubstrings" Grid.Row="3" Grid.Column="0" SelectionMode="Single"  ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="EhListOfCommonSubstringsSelectionChanged" Margin="4,2,4,4"/>
-				<Label Content="Replace with:" Grid.Row="1" Grid.Column="1"/>
-				<TextBox x:Name="_guiReplacementCandidate" IsReadOnly="True" Grid.Column="1" Grid.Row="2" Margin="4,0,4,0"/>
-				<ListBox x:Name="_guiListOfReplacementCandidates" Grid.Row="3" Grid.Column="1" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto"  SelectionChanged="EhListOfReplacementCandidatesSelectionChanged" Margin="4,2,4,4"/>
-				<Button Content="Apply!" Grid.Row="2" Grid.Column="2" Click="EhApplyReplacementForCommonSubstring" Margin="4"/>
+				<Label Content="Common substring (feel free to edit the text):" Grid.Row="1" Grid.Column="0" />
+				<TextBox x:Name="_guiCommonSubstring" Grid.Row="2" Grid.Column="0" TextChanged="EhCommonSubstringTextChanged" Margin="4,0,4,0" />
+				<ListBox x:Name="_guiListOfCommonSubstrings" Grid.Row="3" Grid.Column="0" SelectionMode="Single"  ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="EhListOfCommonSubstringsSelectionChanged" Margin="4,2,4,4" />
+				<Label Content="Replace with:" Grid.Row="1" Grid.Column="1" />
+				<TextBox x:Name="_guiReplacementCandidate" IsReadOnly="True" Grid.Column="1" Grid.Row="2" Margin="4,0,4,0" />
+				<ListBox x:Name="_guiListOfReplacementCandidates" Grid.Row="3" Grid.Column="1" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto"  SelectionChanged="EhListOfReplacementCandidatesSelectionChanged" Margin="4,2,4,4" />
+				<Button Content="Apply!" Grid.Row="2" Grid.Column="2" Click="EhApplyReplacementForCommonSubstring" Margin="4" />
 			</Grid>
 		</Expander>
 	</Grid>

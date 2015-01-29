@@ -26,7 +26,6 @@ using Altaxo.Data;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

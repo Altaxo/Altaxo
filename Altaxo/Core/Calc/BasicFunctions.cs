@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\hypot3f.cc
@@ -28,11 +29,7 @@
 //          MatPack-1.7.3\Source\clnrel.cc
 //          MatPack-1.7.3\Source\dcbrt.cc
 
-
-
 using System;
-
-
 
 namespace Altaxo.Calc
 {
@@ -47,16 +44,18 @@ namespace Altaxo.Calc
 		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
 		/// </summary>
 		public const double DBL_EPSILON = 2.2204460492503131e-016;
+
 		/// <summary>
 		/// The smallest positive double number.
 		/// </summary>
 		public const double DBL_MIN = double.Epsilon;
+
 		/// <summary>
 		/// The biggest positive double number.
 		/// </summary>
 		public const double DBL_MAX = double.MaxValue;
 
-		#endregion
+		#endregion Common Constants
 
 		#region Helper functions
 
@@ -81,7 +80,6 @@ namespace Altaxo.Calc
 			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
 		}
 
-
 		/// <summary>
 		/// Round to nearest integer.
 		/// </summary>
@@ -92,16 +90,14 @@ namespace Altaxo.Calc
 			return (d > 0) ? (int)(d + 0.5) : -(int)(-d + 0.5);
 		}
 
-
-		#endregion
-
+		#endregion Helper functions
 
 		#region hypot3f
 
 		//-----------------------------------------------------------------------------//
 
 		/// <summary>
-		/// The standard hypot() function for three arguments taking care of overflows and zerodivides. 
+		/// The standard hypot() function for three arguments taking care of overflows and zerodivides.
 		/// </summary>
 		/// <param name="x">First argument.</param>
 		/// <param name="y">Second argument.</param>
@@ -110,7 +106,7 @@ namespace Altaxo.Calc
 		public static float hypot(float x, float y, float z)
 		//
 		// The standard hypot() function for three arguments taking care
-		// of overflows and zerodivides. 
+		// of overflows and zerodivides.
 		//
 		// Version for float arguments.
 		//
@@ -140,12 +136,12 @@ namespace Altaxo.Calc
 			return (float)(h * Math.Sqrt(1 + f * f + g * g));
 		}
 
-		#endregion
+		#endregion hypot3f
 
 		#region hypot3d
 
 		/// <summary>
-		/// The standard hypot() function for three arguments taking care of overflows and zerodivides. 
+		/// The standard hypot() function for three arguments taking care of overflows and zerodivides.
 		/// </summary>
 		/// <param name="x">First argument.</param>
 		/// <param name="y">Second argument.</param>
@@ -154,7 +150,7 @@ namespace Altaxo.Calc
 		public static double hypot(double x, double y, double z)
 		//
 		// The standard hypot() function for three arguments taking care
-		// of overflows and zerodivides. 
+		// of overflows and zerodivides.
 		//
 		// Version for double arguments.
 		//
@@ -190,12 +186,9 @@ namespace Altaxo.Calc
 			return h * Math.Sqrt(1 + f * f + g * g);
 		}
 
-		#endregion
-
-
+		#endregion hypot3d
 
 		#region LogRel
-
 
 		/// <summary>
 		/// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
@@ -216,7 +209,6 @@ namespace Altaxo.Calc
 		{
 			return _LogRel.LogRel(x, false);
 		}
-
 
 		/// <summary>
 		/// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
@@ -239,10 +231,9 @@ namespace Altaxo.Calc
 			return _LogRel.LogRel(x, bDebug);
 		}
 
-
-		class _LogRel
+		private class _LogRel
 		{
-			static readonly double[] alnrcs_LogRel = 
+			private static readonly double[] alnrcs_LogRel =
   {
     0.10378693562743769800686267719098e+1,
     -0.13364301504908918098766041553133e+0,
@@ -289,10 +280,8 @@ namespace Altaxo.Calc
     0.63533936180236187354180266666666e-31
   };
 
-
-			static readonly int nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
-			static readonly double xmin_LogRel = -1.0 + Math.Sqrt(DBL_EPSILON);
-
+			private static readonly int nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
+			private static readonly double xmin_LogRel = -1.0 + Math.Sqrt(DBL_EPSILON);
 
 			/// <summary>
 			/// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
@@ -311,9 +300,6 @@ namespace Altaxo.Calc
 			/// </remarks>
 			public static double LogRel(double x, bool bDebug)
 			{
-
-
-
 				if (x <= -1.0)
 				{
 					if (bDebug)
@@ -332,13 +318,11 @@ namespace Altaxo.Calc
 				else
 					return Math.Log(1.0 + x);
 			}
-
-
 		} // end class _LogRel
-		#endregion
+
+		#endregion LogRel
 
 		#region LogRel (complex)
-
 
 		/// <summary>
 		/// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
@@ -359,8 +343,6 @@ namespace Altaxo.Calc
 		{
 			return LogRel(z, false);
 		}
-
-
 
 		/// <summary>
 		/// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
@@ -390,7 +372,7 @@ namespace Altaxo.Calc
 			return new Complex(0.5 * LogRel(2.0 * z.Re + rho * rho, bDebug), ComplexMath.Arg(1.0 + z));
 		}
 
-		#endregion
+		#endregion LogRel (complex)
 
 		#region PMod
 
@@ -429,7 +411,6 @@ namespace Altaxo.Calc
 				return (offset + start - len + 1) / len;
 		}
 
-		#endregion
-
+		#endregion PMod
 	}
 }

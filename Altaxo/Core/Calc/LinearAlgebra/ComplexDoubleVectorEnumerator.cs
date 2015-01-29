@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * ComplexDoubleVectorEnumerator.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -34,7 +36,7 @@ using System.Collections;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	///<summary>
-	/// Defines an Enumerator for the Complex Double Vector that supports 
+	/// Defines an Enumerator for the Complex Double Vector that supports
 	/// simple iteration over each vector component.
 	///</summary>
 	/// <remarks>
@@ -65,6 +67,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return v[index];
 			}
 		}
+
 		object IEnumerator.Current
 		{
 			get { return Current; }

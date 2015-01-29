@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,25 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Graph;
+using Altaxo.Graph.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.ColorManagement;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -50,7 +46,7 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <summary>
 		/// Special tree node for a color set. This tree node fills its child items only when it gets expanded.
 		/// </summary>
-		class NGTreeNodeForColorSet : NGTreeNode
+		private class NGTreeNodeForColorSet : NGTreeNode
 		{
 			public NGTreeNodeForColorSet(IColorSet colorSet)
 				: base(true)
@@ -75,10 +71,10 @@ namespace Altaxo.Gui.Common.Drawing
 		/// </summary>
 		public class TreeViewDataTemplateSelector : DataTemplateSelector
 		{
-			FrameworkElement _parent;
-			DataTemplate _namedColorTemplate;
-			DataTemplate _colorSetTemplate;
-			DataTemplate _treeOtherTemplate;
+			private FrameworkElement _parent;
+			private DataTemplate _namedColorTemplate;
+			private DataTemplate _colorSetTemplate;
+			private DataTemplate _treeOtherTemplate;
 
 			public TreeViewDataTemplateSelector(FrameworkElement ele)
 			{
@@ -113,19 +109,18 @@ namespace Altaxo.Gui.Common.Drawing
 					}
 				}
 
-
 				return base.SelectTemplate(item, container);
 			}
 		}
 
-		#endregion
+		#endregion Inner classes
 
 		/// <summary>Maximum number of colors shown under "last used colors" (or "last used brushes").</summary>
 		protected const int MaxNumberOfLastLocalUsedColors = 5;
 
-
 		/// <summary>Gets access to the tree view, which shows the color sets.</summary>
 		protected abstract TreeView GuiTreeView { get; }
+
 		/// <summary>Gets access to the ComboBox, which shows the colors or brushes of the current color set.</summary>
 		protected abstract ComboBox GuiComboBox { get; }
 
@@ -137,7 +132,6 @@ namespace Altaxo.Gui.Common.Drawing
 		/// </value>
 		protected abstract NamedColor InternalSelectedColor { get; set; }
 
-
 		/// <summary>
 		/// Fills the combo box with items, whose name starts with a given <paramref name="filterString"/> .
 		/// </summary>
@@ -145,7 +139,6 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <param name="onlyIfItemsRemaining">If set to <c>false</c>, and no items match the filter criterium, the content of the ComboBox is left unchanged. Otherwise, even if no items match the filter criterium, the contents of the ComboBox is set to those items that match the criterium.</param>
 		/// <returns><c>True</c> if at least one item match the filter criterium. <c>False</c> if no item match the criterium.</returns>
 		protected abstract bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining);
-
 
 		/// <summary>
 		/// Temporary storage for the selected value of the TreeView when the Popup is opened
@@ -158,14 +151,11 @@ namespace Altaxo.Gui.Common.Drawing
 		/// <summary>Filter string to filter the items in the ComboBox. The item names must start with the string stored here.</summary>
 		protected string _filterString = string.Empty;
 
-
-
 		/// <summary>Property that describes whether the TreeView dropdown is open.</summary>
 		public static readonly DependencyProperty IsTreeDropDownOpenProperty;
+
 		/// <summary>Poperty that describes whether only plot colors should be shown in the TreeView and the ComboBox.</summary>
 		public static readonly DependencyProperty ShowPlotColorsOnlyProperty;
-
-
 
 		#region Constructors
 
@@ -174,7 +164,8 @@ namespace Altaxo.Gui.Common.Drawing
 			IsTreeDropDownOpenProperty = DependencyProperty.Register("IsTreeDropDownOpen", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
 			ShowPlotColorsOnlyProperty = DependencyProperty.Register("ShowPlotColorsOnly", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, EhShowPlotColorsOnlyChanged));
 		}
-		#endregion
+
+		#endregion Constructors
 
 		#region Dependency property
 
@@ -239,7 +230,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return color;
 		}
 
-
 		/// <summary>
 		/// Gets or sets a value indicating whether the popup showing the TreeView is open.
 		/// </summary>
@@ -250,7 +240,7 @@ namespace Altaxo.Gui.Common.Drawing
 			set { SetValue(IsTreeDropDownOpenProperty, value); }
 		}
 
-		#endregion
+		#endregion Dependency property
 
 		#region Tree View
 
@@ -276,7 +266,6 @@ namespace Altaxo.Gui.Common.Drawing
 				thiss.OnTreePopupClosed();
 		}
 
-
 		/// <summary>
 		/// Called when the TreeView popup is opened.
 		/// </summary>
@@ -285,7 +274,6 @@ namespace Altaxo.Gui.Common.Drawing
 			_selectedFromTreeView = GuiTreeView.SelectedValue;
 			Mouse.Capture(this, CaptureMode.SubTree);
 		}
-
 
 		/// <summary>
 		/// Closes the popup if it is open (meaning the mouse is captured) and the user clicked outside the popup.
@@ -296,15 +284,11 @@ namespace Altaxo.Gui.Common.Drawing
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(e);
-			if (true==IsTreeDropDownOpen && Mouse.Captured == this && e.OriginalSource == this)
+			if (true == IsTreeDropDownOpen && Mouse.Captured == this && e.OriginalSource == this)
 			{
 				IsTreeDropDownOpen = false;
 			}
 		}
-	
-
-
-
 
 		/// <summary>
 		/// Called when the TreeView popup is closed.
@@ -366,7 +350,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		#endregion Tree view event handlers
 
 		#region Tree view data handling
@@ -395,12 +378,15 @@ namespace Altaxo.Gui.Common.Drawing
 					case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
 						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
+
 					case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
 						app.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
+
 					case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
 						user.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
+
 					case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
 						proj.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
@@ -444,14 +430,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#endregion Tree view data handling
 
-		#endregion Tree view
+		#endregion Tree View
 
 		#region ComboBox
 
 		/// <summary>
 		/// Chooses the color set whose colors are shown in the ComboBox.
 		/// </summary>
-		/// <returns>The color set whose colors are shown in the ComboBox. Normally, the color set the currently selected color belongs to is shown in the ComboBox. 
+		/// <returns>The color set whose colors are shown in the ComboBox. Normally, the color set the currently selected color belongs to is shown in the ComboBox.
 		/// If the currently selected color has no parent color set, the 'Builtin/KnownColors' color set will be shown.</returns>
 		protected virtual IColorSet GetColorSetForComboBox()
 		{
@@ -462,8 +448,7 @@ namespace Altaxo.Gui.Common.Drawing
 				return NamedColors.Instance;
 		}
 
-
-		#endregion
+		#endregion ComboBox
 
 		#region Key processing of user control
 
@@ -498,8 +483,7 @@ namespace Altaxo.Gui.Common.Drawing
 			base.OnKeyDown(e);
 		}
 
-		#endregion
-
+		#endregion Key processing of user control
 
 		#region Context menus
 
@@ -551,7 +535,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return true;
 		}
 
-
 		/// <summary>
 		/// Stores an item as last used item in a list.
 		/// </summary>
@@ -567,7 +550,8 @@ namespace Altaxo.Gui.Common.Drawing
 			for (int i = _listOfLocalLastUsedItems.Count - 1; i >= MaxNumberOfLastLocalUsedColors; --i)
 				_listOfLocalLastUsedItems.RemoveAt(i);
 		}
-		#endregion
+
+		#endregion Context menus
 
 		#region Code to close the TreeView popup
 
@@ -595,10 +579,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
-		#endregion
-
+		#endregion Code to close the TreeView popup
 	}
-
-
 }

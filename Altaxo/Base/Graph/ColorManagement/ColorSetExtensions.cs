@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -60,19 +62,18 @@ namespace Altaxo.Graph.ColorManagement
 		/// <returns>The color that is the specified number of steps away of the specified color in the set. The color set is given by the <see cref="NamedColor.ParentColorSet"/> in the given color.</returns>
 		public static NamedColor GetNextPlotColor(this NamedColor c, int step, out int wraps)
 		{
-      var colorSet = c.ParentColorSet;
-      if (colorSet == null)
-      {
-        wraps = 0;
-        return c;
-      }
+			var colorSet = c.ParentColorSet;
+			if (colorSet == null)
+			{
+				wraps = 0;
+				return c;
+			}
 
 			int i = colorSet.IndexOf(c);
 			if (i >= 0)
 			{
 				wraps = Calc.BasicFunctions.NumberOfWraps(colorSet.Count, i, step);
 				return colorSet[Calc.BasicFunctions.PMod(i + step, colorSet.Count)];
-
 			}
 			else
 			{
@@ -101,7 +102,6 @@ namespace Altaxo.Graph.ColorManagement
 			{
 				wraps = Calc.BasicFunctions.NumberOfWraps(colorSet.Count, idx, step);
 				return Calc.BasicFunctions.PMod(idx + step, colorSet.Count);
-
 			}
 			else
 			{

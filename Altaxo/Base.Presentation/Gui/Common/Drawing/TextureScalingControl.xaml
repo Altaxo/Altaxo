@@ -1,59 +1,57 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Common.Drawing.TextureScalingControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-             >
+						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
-				<Setter Property="Margin" Value="4"/>
-				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="Margin" Value="4" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
 		<Style TargetType="RadioButton">
 			<Style.Setters>
-				<Setter Property="Margin" Value="4,1,4,1"/>
+				<Setter Property="Margin" Value="4,1,4,1" />
 			</Style.Setters>
 		</Style>
-
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"  SharedSizeGroup="LabelColumn1"/>
-			<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1"/>
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
-			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2"/>
+			<ColumnDefinition Width="Auto"  SharedSizeGroup="LabelColumn1" />
+			<ColumnDefinition Width="*"  SharedSizeGroup="EditColumn1" />
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<GroupBox Header="Keep texture aspect ratio" Grid.Column="0" Grid.ColumnSpan="2" Margin="4">
 			<StackPanel>
-				<RadioButton x:Name="_guiKeepAspectNo" Content="No" Checked="EhKeepAspectChanged"/>
-				<RadioButton x:Name="_guiKeepAspectX" Content="X priority" Checked="EhKeepAspectChanged"/>
-				<RadioButton x:Name="_guiKeepAspectY" Content="Y priority" Checked="EhKeepAspectChanged"/>
+				<RadioButton x:Name="_guiKeepAspectNo" Content="No" Checked="EhKeepAspectChanged" />
+				<RadioButton x:Name="_guiKeepAspectX" Content="X priority" Checked="EhKeepAspectChanged" />
+				<RadioButton x:Name="_guiKeepAspectY" Content="Y priority" Checked="EhKeepAspectChanged" />
 			</StackPanel>
 		</GroupBox>
 		<GroupBox Header="Texture size" Grid.Column="2" Grid.ColumnSpan="2" Margin="4">
 			<StackPanel>
-				<RadioButton x:Name="_guiScaleWithSource" Content="Rel. to source" Checked="EhScalingModeChanged"/>
-				<RadioButton x:Name="_guiScaleWithDest" Content="Rel. to destination" Checked="EhScalingModeChanged"/>
-				<RadioButton x:Name="_guiScaleWithAbs" Content="Absolute" Checked="EhScalingModeChanged"/>
+				<RadioButton x:Name="_guiScaleWithSource" Content="Rel. to source" Checked="EhScalingModeChanged" />
+				<RadioButton x:Name="_guiScaleWithDest" Content="Rel. to destination" Checked="EhScalingModeChanged" />
+				<RadioButton x:Name="_guiScaleWithAbs" Content="Absolute" Checked="EhScalingModeChanged" />
 			</StackPanel>
 		</GroupBox>
-		<Label Content="X size:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXSize"/>
+		<Label Content="X size:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXSize" />
 		<Label Content="Y size:" Grid.Column="2" Grid.Row="1" x:Name="_guiLabelYSize" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize" Grid.Column="1" Grid.Row="1" Margin="4" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" SelectedQuantityChanged="EhXSizeChanged"/>
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize" Grid.Column="3" Grid.Row="1" Margin="4" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" SelectedQuantityChanged="EhYSizeChanged"/>
-			
-		<Label Content="X scale:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXScale"/>
-		<Label Content="Y scale:" Grid.Column="2" Grid.Row="1" x:Name="_guiLabelYScale"/>
+		<axogc:QuantityWithUnitTextBox x:Name="_guiXSize" Grid.Column="1" Grid.Row="1" Margin="4" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" SelectedQuantityChanged="EhXSizeChanged" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiYSize" Grid.Column="3" Grid.Row="1" Margin="4" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" SelectedQuantityChanged="EhYSizeChanged" />
+
+		<Label Content="X scale:" Grid.Column="0" Grid.Row="1" x:Name="_guiLabelXScale" />
+		<Label Content="Y scale:" Grid.Column="2" Grid.Row="1" x:Name="_guiLabelYScale" />
 		<axogcd:ScaleComboBox x:Name="_guiXScale" Grid.Column="1" Grid.Row="1" IsForYScale="False" Margin="4" SelectedQuantityChanged="EhXScaleChanged" />
-		<axogcd:ScaleComboBox x:Name="_guiYScale" Grid.Column="3" Grid.Row="1" IsForYScale="True" Margin="4" SelectedQuantityChanged="EhYScaleChanged"  />
+		<axogcd:ScaleComboBox x:Name="_guiYScale" Grid.Column="3" Grid.Row="1" IsForYScale="True" Margin="4" SelectedQuantityChanged="EhYScaleChanged" />
 	</Grid>
 </UserControl>

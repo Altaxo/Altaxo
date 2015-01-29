@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -41,9 +36,9 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class LineThicknessComboBox : LengthImageComboBox
 	{
-		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { 0.001, 0.125, 0.25, 0.5, 1, 2, 3, 5, 10 };
+		private static readonly double[] _initialValues = new double[] { 0.001, 0.125, 0.25, 0.5, 1, 2, 3, 5, 10 };
 
 		public LineThicknessComboBox()
 		{
@@ -56,7 +51,6 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Source = GetImage(SelectedQuantityAsValueInPoints);
 		}
 
-
 		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			base.OnSelectedQuantityChanged(obj, args);
@@ -68,8 +62,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
-
 		public override ImageSource GetItemImage(object item)
 		{
 			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Length.Point.Instance);
@@ -79,12 +71,10 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-
 		public override string GetItemText(object item)
 		{
 			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
 		}
-
 
 		public static DrawingImage GetImage(double thickness)
 		{
@@ -99,7 +89,6 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
 			drawingGroup.Children.Add(geometryDrawing);
 
-
 			geometryDrawing = new GeometryDrawing { Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)) };
 			geometryDrawing.Pen = new Pen(Brushes.Black, Math.Min(height, thickness * height / nominalHeight));
 			drawingGroup.Children.Add(geometryDrawing);
@@ -111,6 +100,5 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryImage.Freeze();
 			return geometryImage;
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,29 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
 using NUnit.Framework;
-
+using System;
 
 namespace AltaxoTest.Calc
 {
-  [TestFixture]
-  public class TestBesselRelated
-  {
+	[TestFixture]
+	public class TestBesselRelated
+	{
+		[Test]
+		public void TestBesselK1()
+		{
+			Assert.AreEqual(0.6019072301972345747375400, BesselRelated.BesselK1(1), 1E-14);
+		}
 
-    [Test]
-    public  void TestBesselK1()
-    {
-      Assert.AreEqual(0.6019072301972345747375400,BesselRelated.BesselK1(1),1E-14);
-    }
-
-    [Test]
-    public  void TestBesselExpK1()
-    {
-      Assert.AreEqual(1.636153486263258246513311,BesselRelated.BesselExpK1(1),1E-14);
-    }
-  }
+		[Test]
+		public void TestBesselExpK1()
+		{
+			Assert.AreEqual(1.636153486263258246513311, BesselRelated.BesselExpK1(1), 1E-14);
+		}
+	}
 }

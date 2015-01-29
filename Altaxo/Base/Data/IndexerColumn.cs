@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,35 +19,38 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Data
 {
-
 	/// <summary>
-	/// The indexer column is a simple readable numeric column. The value of an element is 
+	/// The indexer column is a simple readable numeric column. The value of an element is
 	/// it's index in the column, i.e. GetDoubleAt(i) simply returns the value i.
 	/// </summary>
 	[Serializable]
 	public class IndexerColumn : INumericColumn, IReadableColumn, ICloneable
 	{
-
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IndexerColumn), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				IndexerColumn s = null != o ? (IndexerColumn)o : new IndexerColumn();
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
+
 		/// <summary>
 		/// Creates a cloned instance of this object.
 		/// </summary>
@@ -55,6 +59,7 @@ namespace Altaxo.Data
 		{
 			return new IndexerColumn();
 		}
+
 		/// <summary>
 		/// Simply returns the value i.
 		/// </summary>
@@ -96,8 +101,5 @@ namespace Altaxo.Data
 		{
 			get { return "IndexerColumn"; }
 		}
-
 	}
-
-
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Ink;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -47,9 +47,6 @@ namespace Altaxo.Gui.Common.Drawing
 			_newColor = _oldColor;
 			InitializeComponent();
 		}
-
-
-
 
 		public Color SelectedColor
 		{
@@ -75,10 +72,10 @@ namespace Altaxo.Gui.Common.Drawing
 		//
 		// Implementation
 
-		bool _notUserInitiated;
+		private bool _notUserInitiated;
 
 		// Updates values of controls when new DA is set (or upon initialization).
-		void UpdateControlValues()
+		private void UpdateControlValues()
 		{
 			_notUserInitiated = true;
 			try
@@ -96,7 +93,6 @@ namespace Altaxo.Gui.Common.Drawing
 				// Set brightness and opacity.
 				brightnessSlider.Value = f;
 				opacitySlider.Value = _newColor.ScA;
-
 			}
 			finally
 			{
@@ -105,7 +101,7 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		// Updates visual properties of all controls, in response to any change.
-		void UpdateControlVisuals()
+		private void UpdateControlVisuals()
 		{
 			Color c = _newColor;
 
@@ -128,7 +124,7 @@ namespace Altaxo.Gui.Common.Drawing
 		//
 		// Event Handlers
 
-		void EhColorCombControl_ColorSelected(object sender, ColorEventArgs e)
+		private void EhColorCombControl_ColorSelected(object sender, ColorEventArgs e)
 		{
 			if (_notUserInitiated) return;
 
@@ -145,7 +141,7 @@ namespace Altaxo.Gui.Common.Drawing
 			UpdateControlVisuals();
 		}
 
-		void EhBrightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		private void EhBrightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (_notUserInitiated) return;
 
@@ -162,7 +158,7 @@ namespace Altaxo.Gui.Common.Drawing
 			UpdateControlVisuals();
 		}
 
-		void EhOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		private void EhOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (_notUserInitiated) return;
 
@@ -172,6 +168,5 @@ namespace Altaxo.Gui.Common.Drawing
 			_newColor = Color.FromScRgb(a, c.ScR, c.ScG, c.ScB);
 			UpdateControlVisuals();
 		}
-
 	}
 }

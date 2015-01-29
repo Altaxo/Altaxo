@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Settings
 {
@@ -50,18 +47,14 @@ namespace Altaxo.Gui.Settings
 			_guiControlHost.PreviewGotKeyboardFocus += new KeyboardFocusChangedEventHandler(EhHostControlKeyboardFocused);
 		}
 
-		void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
+		private void EhHostControlKeyboardFocused(object sender, KeyboardFocusChangedEventArgs e)
 		{
 			if (null != CurrentTopicViewMadeDirty)
 				CurrentTopicViewMadeDirty();
 		}
 
-		
-		
-
 		private void EhTopicChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-
 			if (TopicSelectionChanged != null)
 				TopicSelectionChanged((Collections.NGTreeNode)e.NewValue);
 		}
@@ -72,8 +65,6 @@ namespace Altaxo.Gui.Settings
 		{
 			_guiTopics.ItemsSource = topics;
 		}
-
-		
 
 		public void InitializeTopicView(string title, object guiTopicObject)
 		{
@@ -88,15 +79,16 @@ namespace Altaxo.Gui.Settings
 				case 0:
 					_guiDirtyIndicator.Fill = Brushes.Transparent;
 					break;
+
 				case 1:
 					_guiDirtyIndicator.Fill = Brushes.Black;
 					break;
+
 				case 2:
 					_guiDirtyIndicator.Fill = Brushes.Red;
 					break;
 			}
 		}
-
 
 		public void SetSelectedNode(Collections.NGTreeNode node)
 		{
@@ -107,7 +99,6 @@ namespace Altaxo.Gui.Settings
 				item.Focus();
 				item.IsSelected = true;
 			}
-
 		}
 	}
 }

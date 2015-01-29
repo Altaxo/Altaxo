@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,14 +21,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-//Port of JAMPACK's householder implementation. 
+#endregion Copyright
+
+//Port of JAMPACK's householder implementation.
 using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	/// <summary>
 	/// Householder transformations.
 	/// </summary>
@@ -37,7 +38,10 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </remarks>
 	internal class Householder
 	{
-		private Householder() { }
+		private Householder()
+		{
+		}
+
 		public static ComplexDoubleVector GenerateColumn(IComplexDoubleMatrix A, int r1, int r2, int c)
 		{
 			int ru = r2 - r1 + 1;
@@ -188,7 +192,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return UA(u, A, r1, r2, c1, c2, new ComplexDoubleVector(c2 - c1 + 1));
 		}
 
-
 		public static IComplexDoubleMatrix AU(IComplexDoubleMatrix A, IROComplexDoubleVector u, int r1, int r2, int c1, int c2, IComplexDoubleVector v)
 		{
 			if (r2 < r1 || c2 < c1)
@@ -225,7 +228,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return A;
 		}
-
 
 		public static IComplexDoubleMatrix AU(IComplexDoubleMatrix A, IROComplexDoubleVector u, int r1, int r2, int c1, int c2)
 		{
@@ -387,7 +389,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return UA(u, A, r1, r2, c1, c2, new ComplexFloatVector(c2 - c1 + 1));
 		}
 
-
 		public static IComplexFloatMatrix AU(IComplexFloatMatrix A, IROComplexFloatVector u, int r1, int r2, int c1, int c2, IComplexFloatVector v)
 		{
 			if (r2 < r1 || c2 < c1)
@@ -424,7 +425,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return A;
 		}
-
 
 		public static IComplexFloatMatrix AU(IComplexFloatMatrix A, IROComplexFloatVector u, int r1, int r2, int c1, int c2)
 		{
@@ -567,7 +567,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return UA(u, A, r1, r2, c1, c2, new FloatVector(c2 - c1 + 1));
 		}
 
-
 		public static IFloatMatrix AU(IFloatMatrix A, IROFloatVector u, int r1, int r2, int c1, int c2, IFloatVector v)
 		{
 			if (r2 < r1 || c2 < c1)
@@ -602,7 +601,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return A;
 		}
-
 
 		public static IFloatMatrix AU(IFloatMatrix A, IROFloatVector u, int r1, int r2, int c1, int c2)
 		{
@@ -744,7 +742,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return UA(u, A, r1, r2, c1, c2, new DoubleVector(c2 - c1 + 1));
 		}
 
-
 		public static IMatrix AU(IMatrix A, DoubleVector u, int r1, int r2, int c1, int c2, IVector v)
 		{
 			if (r2 < r1 || c2 < c1)
@@ -780,7 +777,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A;
 		}
 
-
 		public static IMatrix AU(IMatrix A, DoubleVector u, int r1, int r2, int c1, int c2)
 		{
 			if (r2 < r1)
@@ -789,7 +785,5 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return AU(A, u, r1, r2, c1, c2, new DoubleVector(r2 - r1 + 1));
 		}
-
-
 	}
 }

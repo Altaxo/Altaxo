@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,25 +21,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Dot.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
 	///<summary>Computes a vector-vector dot product.</summary>
-	///<remarks> Calculates <c> result = x^T * y = x[1]*y[1] + x[2]*y[2] + ... + x[n]*y[n] </c></remarks> 
+	///<remarks> Calculates <c> result = x^T * y = x[1]*y[1] + x[2]*y[2] + ... + x[n]*y[n] </c></remarks>
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Dot
 	{
-		private Dot() { }
+		private Dot()
+		{
+		}
+
 		///<summary>Check arguments so that errors don't occur in native code</summary>
 		private static void ArgumentCheck(int n, object X, int lenX, ref int incx, object Y, int lenY, ref int incy)
 		{
@@ -95,7 +99,6 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 #endif
 			return ret;
 		}
-
 
 		internal static double Compute(int n, double[] X, int incx, double[] Y, int incy)
 		{

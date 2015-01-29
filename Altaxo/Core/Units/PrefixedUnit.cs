@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -30,13 +32,14 @@ namespace Altaxo.Units
 	public interface IPrefixedUnit
 	{
 		SIPrefix Prefix { get; }
+
 		IUnit Unit { get; }
 	}
 
 	public struct PrefixedUnit : IPrefixedUnit
 	{
-		IUnit _unit;
-		SIPrefix _prefix;
+		private IUnit _unit;
+		private SIPrefix _prefix;
 
 		public PrefixedUnit(SIPrefix prefix, IUnit unit)
 		{
@@ -44,11 +47,8 @@ namespace Altaxo.Units
 			_unit = unit;
 		}
 
-
 		public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
 
 		public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
-
-
 	}
 }

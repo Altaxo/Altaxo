@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
@@ -42,15 +38,22 @@ namespace Altaxo.Gui.Graph
 	public partial class ExchangeTablesOfPlotItemsControl : UserControl, IExchangeTablesOfPlotItemsView
 	{
 		public event Action ChooseTableForSelectedItems;
-		public event Action ChooseFolderForSelectedItems;
-		public event Action TableSelectionChanged;
-		public event Action ListOfCommonSubstringsSelectionChanged;
-		public event Action ApplySubstringReplacement;
-		public event Action CommonSubstringTextChanged;
-		public event Action ListOfSubstringReplacementCandidatesSelectionChanged;
-		public event Action SearchCommonSubstringsCharacterWiseChanged;
-		public event Action CommonSubstringPanelVisibilityChanged;
 
+		public event Action ChooseFolderForSelectedItems;
+
+		public event Action TableSelectionChanged;
+
+		public event Action ListOfCommonSubstringsSelectionChanged;
+
+		public event Action ApplySubstringReplacement;
+
+		public event Action CommonSubstringTextChanged;
+
+		public event Action ListOfSubstringReplacementCandidatesSelectionChanged;
+
+		public event Action SearchCommonSubstringsCharacterWiseChanged;
+
+		public event Action CommonSubstringPanelVisibilityChanged;
 
 		public ExchangeTablesOfPlotItemsControl()
 		{
@@ -82,7 +85,7 @@ namespace Altaxo.Gui.Graph
 		private void EhChooseTable(object sender, RoutedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiTableList);
-			if(null!=ChooseTableForSelectedItems)
+			if (null != ChooseTableForSelectedItems)
 				ChooseTableForSelectedItems();
 		}
 
@@ -112,7 +115,7 @@ namespace Altaxo.Gui.Graph
 		private void EhListOfReplacementCandidatesSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiListOfReplacementCandidates);
-			
+
 			if (null != _guiListOfReplacementCandidates.SelectedItem)
 				_guiReplacementCandidate.Text = _guiListOfReplacementCandidates.SelectedItem.ToString();
 			else
@@ -134,12 +137,11 @@ namespace Altaxo.Gui.Graph
 				CommonSubstringTextChanged();
 		}
 
-
 		public bool SearchCommonSubstringsCharacterWise
 		{
 			get
 			{
-				return true==_guiSearchCommonSubstringCharacterwise.IsChecked;
+				return true == _guiSearchCommonSubstringCharacterwise.IsChecked;
 			}
 			set
 			{
@@ -159,7 +161,6 @@ namespace Altaxo.Gui.Graph
 			if (null != CommonSubstringPanelVisibilityChanged)
 				CommonSubstringPanelVisibilityChanged();
 		}
-
 
 		public bool IsCommonSubstringPanelVisible
 		{

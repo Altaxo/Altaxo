@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,12 @@ using System.Linq;
 using System.Text;
 
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
 	using Altaxo.Main;
+
 	/// <summary>
 	/// Responsible for painting the Worksheet column styles with Wpf technology.
 	/// </summary>
@@ -46,7 +47,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			Altaxo.Worksheet.DateTimeColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), DateTimeColumnStyle_Paint);
 			Altaxo.Worksheet.TextColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), TextColumnStyle_Paint);
 		}
-
 
 		public static void PaintBackground(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, Altaxo.Graph.RectangleD cellRectangle, bool bSelected)
 		{
@@ -68,20 +68,17 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			string text = "[" + nRow + "]";
 
-      var font = WpfFontManager.ToWpf(thiss.TextFont);
+			var font = WpfFontManager.ToWpf(thiss.TextFont);
 			var fontSize = (thiss.TextFont.Size * 96) / 72;
 			var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
 			FormattedText t;
 
-
 			t = new FormattedText(text, System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, txtBrush);
 			t.MaxTextWidth = cellRectangle.Width;
 			t.TextAlignment = TextAlignment.Center;
 			dc.DrawText(t, cellRectangle.Location); // ("[" + nRow + "]", _textFont, _textBrush, cellRectangle, _textFormat);
-
 		}
-
 
 		private static void ColumnHeaderStyle_Paint(Altaxo.Worksheet.ColumnHeaderStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
@@ -93,9 +90,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)AbsoluteDocumentPath.GetRootNodeImplementing(data, typeof(Altaxo.Data.DataColumnCollection));
 			string columnnumber = dataColCol.GetColumnNumber(data).ToString();
 			string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
-      var font = WpfFontManager.ToWpf(thiss.TextFont);
-      var fontSize = (thiss.TextFont.Size * 96) / 72;
-      var fontheight = font.FontFamily.LineSpacing * fontSize;
+			var font = WpfFontManager.ToWpf(thiss.TextFont);
+			var fontSize = (thiss.TextFont.Size * 96) / 72;
+			var fontheight = font.FontFamily.LineSpacing * fontSize;
 			var nameRectangle = cellRectangle;
 			nameRectangle.Height = Math.Max(fontheight, cellRectangle.Height - fontheight);
 			var numRectangle = cellRectangle;
@@ -122,7 +119,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			dc.DrawText(t, nameRectangle.Location);
 		}
 
-
 		private static void DoubleColumnStyle_Paint(Altaxo.Worksheet.DoubleColumnStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
@@ -148,15 +144,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		private static void GeneralText_Paint(Altaxo.Worksheet.ColumnStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, string textToDraw, TextAlignment alignment, bool bSelected)
 		{
-
 			var dc = (DrawingContext)drawingContext;
 			Rect cellRectangle = cellRect.ToWpf();
 
 			thiss.PaintBackground(dc, cellRect, bSelected);
 
-
-      var font = WpfFontManager.ToWpf(thiss.TextFont);
-			var fontSize = ( thiss.TextFont.Size * 96 )/ 72;
+			var font = WpfFontManager.ToWpf(thiss.TextFont);
+			var fontSize = (thiss.TextFont.Size * 96) / 72;
 			var txtBrush = bSelected ? thiss.DefaultSelectedTextBrush.ToWpf() : thiss.TextBrush.ToWpf();
 
 			FormattedText t;
@@ -171,6 +165,5 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			thiss.Paint(typeof(DrawingContext), dc, cellRectangle, nRow, data, bSelected);
 		}
-
 	}
 }

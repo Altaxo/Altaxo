@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
+using Altaxo.Data;
 using System.Windows;
 using System.Windows.Media;
-
-using Altaxo.Data;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
 	using WA = Altaxo.Worksheet.AreaRetrieval;
+
 	public static class WorksheetPaintingWpf
 	{
-
 		#region Selection
 
 		/// <summary>
@@ -42,7 +43,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			return table.PropCols.ColumnCount > 0 && (selectedPropertyColumns.Count > 0 || selectedPropertyRows.Count > 0);
 		}
 
-		#endregion
+		#endregion Selection
 
 		/// <summary>
 		/// Paints part of the worksheet to the drawing context. Row and column header are always threaten as visible here.
@@ -73,7 +74,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			var dataTable = layout.DataTable;
 
-
 			bool bDrawColumnHeader = false;
 
 			int firstTableRowToDraw = WA.GetFirstVisibleTableRow(clipRectangle.Top, layout, vertScrollPos);
@@ -90,13 +90,10 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			bool bArePropertyRowsSelected = selectedPropertyRows.Count > 0;
 			bool bArePropertyCellsSelected = ArePropertyCellsSelected(dataTable, selectedPropertyColumns, selectedPropertyRows);
 
-
 			int yShift = 0;
-
 
 			var cellRectangle = new Altaxo.Graph.RectangleD();
 			double left, width;
-
 
 			if (clipRectangle.Top < layout.ColumnHeaderStyle.Height)
 			{
@@ -137,7 +134,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 				layout.RowHeaderStyle.Paint(dc, cellRectangle, nRow, null, bAreRowsSelected && selectedDataRows.Contains(nRow));
 			}
 
-
 			if (clipRectangle.Bottom >= layout.ColumnHeaderStyle.Height || clipRectangle.Right >= layout.RowHeaderStyle.Width)
 			{
 				int numberOfColumnsToDraw;
@@ -174,7 +170,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 					}
 				}
 
-
 				// draw the cells
 				for (int nCol = firstColToDraw, nIncCol = 0; nIncCol < numberOfColumnsToDraw; nCol++, nIncCol++)
 				{
@@ -201,7 +196,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 						cellRectangle.Y = 0;
 						layout.ColumnHeaderStyle.Paint(dc, cellRectangle, 0, dataTable[nCol], bColumnSelected || bPropertyRowSelected);
 					}
-
 
 					yShift = WA.GetTopCoordinateOfTableRow(firstTableRowToDraw, layout, vertScrollPos);
 					cellRectangle.Height = layout.RowHeaderStyle.Height;

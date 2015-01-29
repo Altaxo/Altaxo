@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -52,7 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 	/// <summary>
 	/// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-	/// can be appended to the right of the matrix. 
+	/// can be appended to the right of the matrix.
 	/// </summary>
 	public interface IExtensibleVector : IVector
 	{
@@ -62,7 +64,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">The vector to append.</param>
 		void Append(IROVector a);
 	}
-
 
 	public abstract class AbstractRODoubleVector : IROVector, System.Collections.Generic.IList<double>
 	{
@@ -84,15 +85,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			set;
 		}
 
-		#endregion
+		#endregion IROVector Members
 
 		#region INumericSequence Members
 
-
-
 		protected abstract double GetElementAt(int i);
 
-		#endregion
+		#endregion INumericSequence Members
 
 		public int IndexOf(double item)
 		{
@@ -174,12 +173,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 	}
 
-
 	public abstract class AbstractDoubleVector : AbstractRODoubleVector, IVector
 	{
 		protected abstract void SetElementAt(int i, double value);
 	}
-
 
 	public class RODoubleVector : AbstractRODoubleVector
 	{
@@ -190,14 +187,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			_data = array;
 		}
 
-
-
 		static public implicit operator RODoubleVector(double[] src)
 		{
 			return new RODoubleVector(src);
 		}
-
-
 
 		#region IROVector Members
 
@@ -218,7 +211,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		#endregion
+		#endregion IROVector Members
 
 		#region INumericSequence Members
 
@@ -227,6 +220,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return _data[i];
 		}
 
-		#endregion
+		#endregion INumericSequence Members
 	}
 }

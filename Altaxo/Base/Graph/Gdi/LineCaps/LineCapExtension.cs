@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.LineCaps
 {
@@ -33,8 +35,8 @@ namespace Altaxo.Graph.Gdi.LineCaps
 	[System.ComponentModel.ImmutableObject(true)]
 	public abstract class LineCapExtension
 	{
-		double _minimumAbsoluteSizePt;
-		double _minimumRelativeSize;
+		private double _minimumAbsoluteSizePt;
+		private double _minimumRelativeSize;
 
 		protected LineCapExtension()
 		{
@@ -42,9 +44,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			_minimumRelativeSize = DefaultMinimumRelativeSize;
 		}
 
-
 		public abstract LineCapExtension Clone(double minimumAbsoluteSizePt, double minimumRelativeSize);
-
 
 		protected LineCapExtension(double minimumAbsoluteSizePt, double minimumRelativeSize)
 		{
@@ -52,12 +52,10 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			_minimumRelativeSize = minimumRelativeSize;
 		}
 
-
 		public virtual double MinimumAbsoluteSizePt
 		{
 			get { return _minimumAbsoluteSizePt; }
 		}
-
 
 		public virtual double MinimumRelativeSize
 		{
@@ -86,6 +84,7 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		public abstract double DefaultMinimumRelativeSize { get; }
 
 		public abstract void SetStartCap(Pen pen, float size);
+
 		public abstract void SetEndCap(Pen pen, float size);
 
 		public override bool Equals(object obj)
@@ -124,13 +123,12 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			return !(a == b);
 		}
 
-
 		#region Cap styles registry
 
-		static LineCaps.FlatCap _defaultStyle;
-		static System.Collections.Generic.SortedDictionary<string, LineCapExtension> _registeredStyles;
-		static System.Collections.Generic.List<LineCapExtension> _registeredStylesSortedByName;
-		static System.Collections.Generic.SortedDictionary<string, LineCapExtension> _deprecatedGdiStyles;
+		private static LineCaps.FlatCap _defaultStyle;
+		private static System.Collections.Generic.SortedDictionary<string, LineCapExtension> _registeredStyles;
+		private static System.Collections.Generic.List<LineCapExtension> _registeredStylesSortedByName;
+		private static System.Collections.Generic.SortedDictionary<string, LineCapExtension> _deprecatedGdiStyles;
 
 		public static LineCapExtension Flat
 		{
@@ -177,7 +175,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 				throw new ArgumentException(string.Format("Unknown LineCapEx style: {0}", name), "name");
 		}
 
-
 		public static LineCapExtension FromNameAndAbsAndRelSize(string name, double sizePt, double relSize)
 		{
 			LineCapExtension currentStyle;
@@ -201,7 +198,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			return _registeredStylesSortedByName;
 		}
 
-
 		static LineCapExtension()
 		{
 			_defaultStyle = new LineCaps.FlatCap();
@@ -210,7 +206,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			_deprecatedGdiStyles = new System.Collections.Generic.SortedDictionary<string, LineCapExtension>();
 			foreach (LineCap cap in Enum.GetValues(typeof(LineCap)))
 			{
-
 				switch (cap)
 				{
 					case LineCap.AnchorMask:
@@ -218,24 +213,31 @@ namespace Altaxo.Graph.Gdi.LineCaps
 					case LineCap.NoAnchor:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), _defaultStyle);
 						break;
+
 					case LineCap.Square:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.SquareFLineCap(0, 1));
 						break;
+
 					case LineCap.Round:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.CircleFLineCap(0, 1));
 						break;
+
 					case LineCap.Triangle:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.DiamondFLineCap(0, 1));
 						break;
+
 					case LineCap.ArrowAnchor:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.ArrowF10LineCap(0, 2));
 						break;
+
 					case LineCap.SquareAnchor:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.SquareFLineCap(0, 1.5));
 						break;
+
 					case LineCap.RoundAnchor:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.CircleFLineCap(0, 2));
 						break;
+
 					case LineCap.DiamondAnchor:
 						_deprecatedGdiStyles.Add(Enum.GetName(typeof(LineCap), cap), new LineCaps.DiamondFLineCap(0, 2));
 						break;
@@ -259,7 +261,6 @@ namespace Altaxo.Graph.Gdi.LineCaps
 			_registeredStylesSortedByName = new List<LineCapExtension>(nameList.Select(x => _registeredStyles[x]));
 		}
 
-
-		#endregion
+		#endregion Cap styles registry
 	}
 }

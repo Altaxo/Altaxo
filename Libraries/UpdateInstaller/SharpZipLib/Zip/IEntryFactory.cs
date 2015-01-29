@@ -22,7 +22,7 @@
 // making a combined work based on this library.  Thus, the terms and
 // conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give you
 // permission to link this library with independent modules to produce an
 // executable, regardless of the license terms of these independent
@@ -73,10 +73,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <param name="useFileSystem">If true get details from the file system for this directory if it exists.</param>
 		/// <returns>Returns a <see cref="ZipEntry">directory entry</see> based on the <paramref name="directoryName"/> passed.</returns>
 		ZipEntry MakeDirectoryEntry(string directoryName, bool useFileSystem);
-		
+
 		/// <summary>
 		/// Get/set the <see cref="INameTransform"></see> applicable.
 		/// </summary>
-		INameTransform NameTransform { get; set;  }
+		INameTransform NameTransform { get; set; }
 	}
 }

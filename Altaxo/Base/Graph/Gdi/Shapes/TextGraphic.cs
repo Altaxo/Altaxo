@@ -22,20 +22,16 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	using Background;
-	using Graph.Plot.Data;
 	using Plot;
-	using Plot.Data;
 
 	/// <summary>
 	/// TextGraphics provides not only simple text on a graph,

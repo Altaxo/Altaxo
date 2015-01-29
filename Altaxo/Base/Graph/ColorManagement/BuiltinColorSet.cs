@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,17 +29,17 @@ using System.Text;
 
 namespace Altaxo.Graph.ColorManagement
 {
-  /// <summary>
-  /// 
-  /// </summary>
+	/// <summary>
+	///
+	/// </summary>
 	public abstract class BuiltinColorSet : IColorSet
-  {
+	{
 		protected List<NamedColor> _innerList;
 
 		protected readonly string _name;
 		protected Dictionary<string, int> _nameToIndexDictionary;
 		protected Dictionary<AxoColor, int> _colorToIndexDictionary;
-    protected Dictionary<ColorNameKey, int> _colornameToIndexDictionary;
+		protected Dictionary<ColorNameKey, int> _colornameToIndexDictionary;
 
 		#region Serialization
 
@@ -47,8 +49,7 @@ namespace Altaxo.Graph.ColorManagement
 		// a new serialization version of the color set is created. Old versions should be deserialized also,
 		// but of course with the original colors.
 
-		#endregion
-
+		#endregion Serialization
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BuiltinColorSet"/> class with the provided name and the colors.
@@ -69,7 +70,6 @@ namespace Altaxo.Graph.ColorManagement
 			BuildSideDictionaries();
 		}
 
-
 		/// <summary>
 		/// Build all dictionaries for fast acess of colors by name, by color value and by combined color value and name.
 		/// </summary>
@@ -85,20 +85,19 @@ namespace Altaxo.Graph.ColorManagement
 			else
 				_colorToIndexDictionary.Clear();
 
-      if (null == _colornameToIndexDictionary)
-        _colornameToIndexDictionary = new Dictionary<ColorNameKey, int>();
-      else
-        _colornameToIndexDictionary.Clear();
+			if (null == _colornameToIndexDictionary)
+				_colornameToIndexDictionary = new Dictionary<ColorNameKey, int>();
+			else
+				_colornameToIndexDictionary.Clear();
 
-			for (int i = _innerList.Count-1; i >=0; --i)
+			for (int i = _innerList.Count - 1; i >= 0; --i)
 			{
 				var c = _innerList[i];
 				_nameToIndexDictionary[c.Name] = i;
 				_colorToIndexDictionary[c.Color] = i;
-        _colornameToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
+				_colornameToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
 			}
 		}
-
 
 		#region IPlotColorSet
 
@@ -117,7 +116,6 @@ namespace Altaxo.Graph.ColorManagement
 		{
 			get { return ColorSetLevel.Builtin; }
 		}
-
 
 		/// <summary>
 		/// Not allowed for a builtin color set. Calling this function will throw an <see cref="InvalidOperationException"/>.
@@ -284,8 +282,7 @@ namespace Altaxo.Graph.ColorManagement
 			}
 		}
 
-	
-		#endregion
+		#endregion IPlotColorSet
 
 		/// <summary>
 		/// Tries to find a color with a given name.
@@ -310,7 +307,6 @@ namespace Altaxo.Graph.ColorManagement
 			}
 		}
 
-
 		/// <summary>
 		/// Tries to find a color with a given color value.
 		/// </summary>
@@ -334,7 +330,6 @@ namespace Altaxo.Graph.ColorManagement
 			}
 		}
 
-
 		/// <summary>
 		/// Tries to find a color with the color and the name of the given named color.
 		/// </summary>
@@ -344,20 +339,20 @@ namespace Altaxo.Graph.ColorManagement
 		/// <returns>
 		///   <c>True</c>, if the color with the given color value and name is found in this collection. Otherwise, <c>false</c> is returned.
 		/// </returns>
-    public bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor)
-    {
-      int idx;
-      if (_colornameToIndexDictionary.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
-      {
-        namedColor = _innerList[idx];
-        return true;
-      }
-      else
-      {
-        namedColor = default(NamedColor);
-        return false;
-      }
-    }
+		public bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor)
+		{
+			int idx;
+			if (_colornameToIndexDictionary.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
+			{
+				namedColor = _innerList[idx];
+				return true;
+			}
+			else
+			{
+				namedColor = default(NamedColor);
+				return false;
+			}
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this instance is used as a plot color set.
@@ -365,7 +360,7 @@ namespace Altaxo.Graph.ColorManagement
 		/// <value>
 		/// 	<c>true</c> if this instance is a plot color set; otherwise, <c>false</c>.
 		/// </value>
-		public abstract bool IsPlotColorSet	{ get; }
+		public abstract bool IsPlotColorSet { get; }
 
 		/// <summary>
 		/// Not allowed for a builtin color set. Will throw an <see cref="InvalidOperationException"/>.
@@ -376,60 +371,57 @@ namespace Altaxo.Graph.ColorManagement
 				throw new InvalidOperationException("This is a built-in color set that can not be declared as plot color set");
 		}
 
+		/// <summary>
+		/// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
+		/// </summary>
+		/// <param name="other">The other set to compare with.</param>
+		/// <returns>
+		///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
+		/// </returns>
+		public bool HasSameContentAs(IList<NamedColor> other)
+		{
+			return HaveSameNamedColors(this, other);
+		}
 
-    /// <summary>
-    /// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
-    /// </summary>
-    /// <param name="other">The other set to compare with.</param>
-    /// <returns>
-    ///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
-    /// </returns>
-    public bool HasSameContentAs(IList<NamedColor> other)
-    {
-      return HaveSameNamedColors(this,other);
-    }
+		private static System.Security.Cryptography.MD5CryptoServiceProvider _md5Evaluator = new System.Security.Cryptography.MD5CryptoServiceProvider();
+		private static System.Text.UTF8Encoding _textEncoder = new UTF8Encoding();
 
-    static System.Security.Cryptography.MD5CryptoServiceProvider _md5Evaluator = new System.Security.Cryptography.MD5CryptoServiceProvider();
-    static System.Text.UTF8Encoding _textEncoder = new UTF8Encoding();
+		/// <summary>
+		/// Computes from a set of named colors an MD5 hash value. The hash value considers both the name and the value of the colors (but not the set the color belongs to).
+		/// </summary>
+		/// <param name="colors">The enumeration of named colors.</param>
+		/// <returns>An hash value that is unique to this enumeration of colors.</returns>
+		public static byte[] ComputeNamedColorHash(IEnumerable<NamedColor> colors)
+		{
+			var stb = new StringBuilder();
+			foreach (var color in colors)
+			{
+				stb.Append(color.Name);
+				stb.Append(color.Color.ToInvariantString());
+			}
 
+			if (stb.Length == 0)                 // if the enumeration is empty
+				stb.Append("EmptyAltaxoColorSet"); // then use this string to compute the hash
 
-    /// <summary>
-    /// Computes from a set of named colors an MD5 hash value. The hash value considers both the name and the value of the colors (but not the set the color belongs to).
-    /// </summary>
-    /// <param name="colors">The enumeration of named colors.</param>
-    /// <returns>An hash value that is unique to this enumeration of colors.</returns>
-    public static byte[] ComputeNamedColorHash(IEnumerable<NamedColor> colors)
-    {
-      var stb = new StringBuilder();
-      foreach(var color in colors)
-      {
-        stb.Append(color.Name);
-        stb.Append(color.Color.ToInvariantString());
-      }
+			var bytes = _textEncoder.GetBytes(stb.ToString());
+			return _md5Evaluator.ComputeHash(bytes);
+		}
 
-      if (stb.Length == 0)                 // if the enumeration is empty
-        stb.Append("EmptyAltaxoColorSet"); // then use this string to compute the hash
+		public static bool HaveSameNamedColors(IColorSet first, IList<NamedColor> other)
+		{
+			if (first.Count != other.Count)
+				return false;
+			int len = first.Count;
 
-      var bytes = _textEncoder.GetBytes(stb.ToString());
-      return _md5Evaluator.ComputeHash(bytes);
-    }
+			for (int i = 0; i < len; ++i)
+				if (first[i].Name != other[i].Name)
+					return false;
 
-    public static bool HaveSameNamedColors(IColorSet first, IList<NamedColor> other)
-    {
-      if (first.Count != other.Count)
-        return false;
-      int len = first.Count;
+			for (int i = 0; i < len; ++i)
+				if (first[i].Color != other[i].Color)
+					return false;
 
-      for (int i = 0; i < len; ++i)
-        if (first[i].Name != other[i].Name)
-          return false;
-
-      for (int i = 0; i < len; ++i)
-        if (first[i].Color != other[i].Color)
-          return false;
-
-      return true;
-    }
+			return true;
+		}
 	}
-
 }

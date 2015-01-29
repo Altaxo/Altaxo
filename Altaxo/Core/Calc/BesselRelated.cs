@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\dbesj0.cc
@@ -44,8 +45,6 @@
 //                               dbi.cc
 //                               dbie.cc
 
-
-
 using System;
 
 namespace Altaxo.Calc
@@ -60,17 +59,19 @@ namespace Altaxo.Calc
 		/// <summary>
 		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
 		/// </summary>
-		const double DBL_EPSILON = 2.2204460492503131e-016;
+		private const double DBL_EPSILON = 2.2204460492503131e-016;
+
 		/// <summary>
 		/// The smallest positive double number.
 		/// </summary>
-		const double DBL_MIN = double.Epsilon;
+		private const double DBL_MIN = double.Epsilon;
+
 		/// <summary>
 		/// The biggest positive double number.
 		/// </summary>
-		const double DBL_MAX = double.MaxValue;
+		private const double DBL_MAX = double.MaxValue;
 
-		#endregion
+		#endregion Common Constants
 
 		#region Helper functions
 
@@ -79,7 +80,7 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The number whose sign is returned.</param>
 		/// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
-		static int sign(double x)
+		private static int sign(double x)
 		{
 			return (x > 0) ? 1 : (x < 0) ? -1 : 0;
 		}
@@ -90,32 +91,30 @@ namespace Altaxo.Calc
 		/// <param name="x">The first number.</param>
 		/// <param name="y">The second number whose sign is used.</param>
 		/// <returns>The first number x with the sign of the second argument y.</returns>
-		static double CopySign(double x, double y)
+		private static double CopySign(double x, double y)
 		{
 			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
 		}
-
 
 		/// <summary>
 		/// Round to nearest integer.
 		/// </summary>
 		/// <param name="d">The argument.</param>
 		/// <returns>The nearest integer of the argument d.</returns>
-		static int Nint(double d)
+		private static int Nint(double d)
 		{
 			return (d > 0) ? (int)(d + 0.5) : -(int)(-d + 0.5);
 		}
 
-
-		#endregion
+		#endregion Helper functions
 
 		#region initds
 
 		/// <summary>
-		/// Initialize the orthogonal series, represented by the array os, so 
-		/// that initds is the number of terms needed to insure the error is no 
-		/// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
-		/// machine precision. 
+		/// Initialize the orthogonal series, represented by the array os, so
+		/// that initds is the number of terms needed to insure the error is no
+		/// larger than eta.  Ordinarily, eta will be chosen to be one-tenth
+		/// machine precision.
 		/// </summary>
 		/// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
 		/// <param name="nos">Number of coefficients in OS.</param>
@@ -126,7 +125,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
 		/// to C++.
 		/// </remarks>
-		static int initds(double[] os, int nos, double eta)
+		private static int initds(double[] os, int nos, double eta)
 		{
 			if (nos < 1)
 				throw new ArgumentException("Number of coefficients is less than 1");
@@ -146,34 +145,34 @@ namespace Altaxo.Calc
 			return i;
 		}
 
-		#endregion
+		#endregion initds
 
 		#region dcsevl
 
 		/// <summary>
-		/// Evaluate the n-term Chebyshev series cs at x.  Adapted from 
-		/// a method presented in the paper by Broucke referenced below. 
+		/// Evaluate the n-term Chebyshev series cs at x.  Adapted from
+		/// a method presented in the paper by Broucke referenced below.
 		/// </summary>
 		/// <param name="x">Value at which the series is to be evaluated. </param>
-		/// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
-		/// cs, only half the first coefficient is summed. 
+		/// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating
+		/// cs, only half the first coefficient is summed.
 		/// </param>
 		/// <param name="n">number of terms in array cs.</param>
 		/// <returns>The n-term Chebyshev series cs at x.</returns>
 		/// <remarks>
 		/// References:
 		///
-		/// R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
-		/// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
+		/// R. Broucke, Ten subroutines for the manipulation of Chebyshev series,
+		/// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256.
 		///
-		/// L. Fox and I. B. Parker, Chebyshev Polynomials in 
-		///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
+		/// L. Fox and I. B. Parker, Chebyshev Polynomials in
+		///      Numerical Analysis, Oxford University Press, 1968,  page 56.
 		///
 		/// This is a translation from the Fortran version of SLATEC, FNLIB,
-		/// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL) 
+		/// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL)
 		/// to C++.
 		/// </remarks>
-		static double dcsevl(double x, double[] cs, int n)
+		private static double dcsevl(double x, double[] cs, int n)
 		{
 #if DEBUG
 			if (n < 1)
@@ -195,21 +194,19 @@ namespace Altaxo.Calc
 			return (b0 - b2) * 0.5;
 		}
 
-		#endregion
+		#endregion dcsevl
 
 		#region d9b0mp
 
-		static void d9b0mp(double x, out double ampl, out double theta)
+		private static void d9b0mp(double x, out double ampl, out double theta)
 		{
 			_d9b0mp.d9b0mp(x, out ampl, out theta);
 		}
 
-
-		class _d9b0mp
+		private class _d9b0mp
 		{
-
-			static readonly double[] _d9b0mp_bm0cs = 
-  { 
+			private static readonly double[] _d9b0mp_bm0cs =
+  {
     0.09211656246827742712573767730182,
     -0.001050590997271905102480716371755,
     1.470159840768759754056392850952e-5,
@@ -246,10 +243,10 @@ namespace Altaxo.Calc
     -3.298094961231737245750613333333e-30,
     7.763931143074065031714133333333e-31,
     -1.841031343661458478421333333333e-31,
-    4.395880138594310737100799999999e-32 
+    4.395880138594310737100799999999e-32
   };
 
-			static readonly double[] _d9b0mp_bth0cs = 
+			private static readonly double[] _d9b0mp_bth0cs =
   {
     -0.24901780862128936717709793789967,
     4.8550299609623749241048615535485e-4,
@@ -294,11 +291,11 @@ namespace Altaxo.Calc
     -3.9220375242408016397989131626158e-31,
     1.5818107030056522138590618845692e-31,
     -6.4525506144890715944344098365426e-32,
-    2.6611111369199356137177018346367e-32 
+    2.6611111369199356137177018346367e-32
   };
 
-			static readonly double[] _d9b0mp_bm02cs = 
-  { 
+			private static readonly double[] _d9b0mp_bm02cs =
+  {
     0.0950041514522838136933086133556,
     -3.801864682365670991748081566851e-4,
     2.258339301031481192951829927224e-6,
@@ -338,11 +335,11 @@ namespace Altaxo.Calc
     8.3997075092942994860616583532e-31,
     -3.172997595562602355567423936152e-31,
     1.215205298881298554583333026514e-31,
-    -4.715852749754438693013210568045e-32 
+    -4.715852749754438693013210568045e-32
   };
 
-			static readonly double[] _d9b0mp_bt02cs = 
-  { 
+			private static readonly double[] _d9b0mp_bt02cs =
+  {
     -0.24548295213424597462050467249324,
     0.0012544121039084615780785331778299,
     -3.1253950414871522854973446709571e-5,
@@ -381,58 +378,55 @@ namespace Altaxo.Calc
     2.0779909972536284571238399999999e-30,
     -5.0211170221417221674325333333333e-31,
     1.2208360279441714184191999999999e-31,
-    -2.9860056267039913454250666666666e-32 
+    -2.9860056267039913454250666666666e-32
   };
-			static readonly double pi4 = 0.785398163397448309615660845819876;
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xmax = 1.0 / DBL_EPSILON;
-			static readonly int _d9b0mp_nbm0 = initds(_d9b0mp_bm0cs, 37, eta);
-			static readonly int _d9b0mp_nbt02 = initds(_d9b0mp_bt02cs, 39, eta);
-			static readonly int _d9b0mp_nbm02 = initds(_d9b0mp_bm02cs, 40, eta);
-			static readonly int _d9b0mp_nbth0 = initds(_d9b0mp_bth0cs, 44, eta);
 
+			private static readonly double pi4 = 0.785398163397448309615660845819876;
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double xmax = 1.0 / DBL_EPSILON;
+			private static readonly int _d9b0mp_nbm0 = initds(_d9b0mp_bm0cs, 37, eta);
+			private static readonly int _d9b0mp_nbt02 = initds(_d9b0mp_bt02cs, 39, eta);
+			private static readonly int _d9b0mp_nbm02 = initds(_d9b0mp_bm02cs, 40, eta);
+			private static readonly int _d9b0mp_nbth0 = initds(_d9b0mp_bth0cs, 44, eta);
 
 			//-----------------------------------------------------------------------------//
 			//
 			// void d9b0mp (double x, double& ampl, double& theta)
 			//
-			// Evaluate the modulus and phase for the Bessel J0 and Y0 functions. 
+			// Evaluate the modulus and phase for the Bessel J0 and Y0 functions.
 			//
 			// This is a translation from the Fortran version of SLATEC, FNLIB,
 			// CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
 			// to C++.
 			//
-			// Series for BM0        on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   4.40E-32 
-			//                                         log weighted error  31.36 
-			//                               significant figures required  30.02 
-			//                                    decimal places required  32.14 
+			// Series for BM0        on the interval  1.56250E-02 to  6.25000E-02
+			//                                        with weighted error   4.40E-32
+			//                                         log weighted error  31.36
+			//                               significant figures required  30.02
+			//                                    decimal places required  32.14
 			//
-			// Series for BTH0       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   2.66E-32 
-			//                                         log weighted error  31.57 
-			//                               significant figures required  30.67 
-			//                                    decimal places required  32.40 
+			// Series for BTH0       on the interval  0.          to  1.56250E-02
+			//                                        with weighted error   2.66E-32
+			//                                         log weighted error  31.57
+			//                               significant figures required  30.67
+			//                                    decimal places required  32.40
 			//
-			// Series for BM02       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   4.72E-32 
-			//                                         log weighted error  31.33 
-			//                               significant figures required  30.00 
-			//                                    decimal places required  32.13 
+			// Series for BM02       on the interval  0.          to  1.56250E-02
+			//                                        with weighted error   4.72E-32
+			//                                         log weighted error  31.33
+			//                               significant figures required  30.00
+			//                                    decimal places required  32.13
 			//
-			// Series for BT02       on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   2.99E-32 
-			//                                         log weighted error  31.52 
-			//                               significant figures required  30.61 
-			//                                    decimal places required  32.32 
+			// Series for BT02       on the interval  1.56250E-02 to  6.25000E-02
+			//                                        with weighted error   2.99E-32
+			//                                         log weighted error  31.52
+			//                               significant figures required  30.61
+			//                                    decimal places required  32.32
 			//
 			//-----------------------------------------------------------------------------//
 
 			public static void d9b0mp(double x, out double ampl, out double theta)
 			{
-
-
-
 				if (x < 4.0)
 				{
 					ampl = theta = double.NaN;
@@ -458,20 +452,20 @@ namespace Altaxo.Calc
 				}
 			}
 		}
-		#endregion
+
+		#endregion d9b0mp
 
 		#region d9b1mp
 
-		static void d9b1mp(double x, out double ampl, out double theta)
+		private static void d9b1mp(double x, out double ampl, out double theta)
 		{
 			_d9b1mp.d9b1mp(x, out ampl, out theta);
 		}
 
-		class _d9b1mp
+		private class _d9b1mp
 		{
-
-			static readonly double[] _d9b1mp_bm1cs = 
-  { 
+			private static readonly double[] _d9b1mp_bm1cs =
+  {
     0.1069845452618063014969985308538,
     0.003274915039715964900729055143445,
     -2.987783266831698592030445777938e-5,
@@ -508,11 +502,11 @@ namespace Altaxo.Calc
     3.695641006570938054301013333333e-30,
     -8.687115921144668243012266666666e-31,
     2.057080846158763462929066666666e-31,
-    -4.905225761116225518523733333333e-32 
+    -4.905225761116225518523733333333e-32
   };
 
-			static readonly double[] _d9b1mp_bt12cs = 
-  { 
+			private static readonly double[] _d9b1mp_bt12cs =
+  {
     0.73823860128742974662620839792764,
     -0.0033361113174483906384470147681189,
     6.1463454888046964698514899420186e-5,
@@ -551,11 +545,11 @@ namespace Altaxo.Calc
     -2.3237636337765716765354666666666e-30,
     5.6074510673522029406890666666666e-31,
     -1.3616465391539005860522666666666e-31,
-    3.3263109233894654388906666666666e-32 
+    3.3263109233894654388906666666666e-32
   };
 
-			static readonly double[] _d9b1mp_bm12cs = 
-  { 
+			private static readonly double[] _d9b1mp_bm12cs =
+  {
     0.09807979156233050027272093546937,
     0.001150961189504685306175483484602,
     -4.312482164338205409889358097732e-6,
@@ -595,11 +589,11 @@ namespace Altaxo.Calc
     -8.945966744690612473234958242979e-31,
     3.37608516065723102663714897824e-31,
     -1.291791454620656360913099916966e-31,
-    5.008634462958810520684951501254e-32 
+    5.008634462958810520684951501254e-32
   };
 
-			static readonly double[] _d9b1mp_bth1cs = 
-  { 
+			private static readonly double[] _d9b1mp_bth1cs =
+  {
     0.74749957203587276055443483969695,
     -0.0012400777144651711252545777541384,
     9.9252442404424527376641497689592e-6,
@@ -643,59 +637,55 @@ namespace Altaxo.Calc
     4.1618290825377144306861917197064e-31,
     -1.6771639203643714856501347882887e-31,
     6.8361997776664389173535928028528e-32,
-    -2.817224786123364116673957462281e-32 
+    -2.817224786123364116673957462281e-32
   };
 
-			static readonly double pi4 = 0.785398163397448309615660845819876;
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xmax = 1.0 / DBL_EPSILON;
-			static readonly int _d9b1mp_nbm1 = initds(_d9b1mp_bm1cs, 37, eta);
-			static readonly int _d9b1mp_nbt12 = initds(_d9b1mp_bt12cs, 39, eta);
-			static readonly int _d9b1mp_nbm12 = initds(_d9b1mp_bm12cs, 40, eta);
-			static readonly int _d9b1mp_nbth1 = initds(_d9b1mp_bth1cs, 44, eta);
-
-
+			private static readonly double pi4 = 0.785398163397448309615660845819876;
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double xmax = 1.0 / DBL_EPSILON;
+			private static readonly int _d9b1mp_nbm1 = initds(_d9b1mp_bm1cs, 37, eta);
+			private static readonly int _d9b1mp_nbt12 = initds(_d9b1mp_bt12cs, 39, eta);
+			private static readonly int _d9b1mp_nbm12 = initds(_d9b1mp_bm12cs, 40, eta);
+			private static readonly int _d9b1mp_nbth1 = initds(_d9b1mp_bth1cs, 44, eta);
 
 			//-----------------------------------------------------------------------------//
 			//
 			// void d9b1mp (double x, double& ampl, double& theta)
 			//
-			// Evaluate the modulus and phase for the Bessel J1 and Y1 functions. 
+			// Evaluate the modulus and phase for the Bessel J1 and Y1 functions.
 			//
 			// This is a translation from the Fortran version of SLATEC, FNLIB,
 			// CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
 			// to C++.
 			//
-			// Series for BM1        on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   4.91E-32  
-			//                                         log weighted error  31.31 
-			//                               significant figures required  30.04 
-			//                                    decimal places required  32.09 
+			// Series for BM1        on the interval  1.56250E-02 to  6.25000E-02
+			//                                        with weighted error   4.91E-32
+			//                                         log weighted error  31.31
+			//                               significant figures required  30.04
+			//                                    decimal places required  32.09
 			//
-			// Series for BT12       on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   3.33E-32 
-			//                                         log weighted error  31.48 
-			//                               significant figures required  31.05 
-			//                                    decimal places required  32.27 
+			// Series for BT12       on the interval  1.56250E-02 to  6.25000E-02
+			//                                        with weighted error   3.33E-32
+			//                                         log weighted error  31.48
+			//                               significant figures required  31.05
+			//                                    decimal places required  32.27
 			//
-			// Series for BM12       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   5.01E-32 
-			//                                         log weighted error  31.30 
-			//                               significant figures required  29.99 
-			//                                    decimal places required  32.10 
+			// Series for BM12       on the interval  0.          to  1.56250E-02
+			//                                        with weighted error   5.01E-32
+			//                                         log weighted error  31.30
+			//                               significant figures required  29.99
+			//                                    decimal places required  32.10
 			//
-			// Series for BTH1       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   2.82E-32 
-			//                                         log weighted error  31.55 
-			//                               significant figures required  31.12 
-			//                                    decimal places required  32.37 
+			// Series for BTH1       on the interval  0.          to  1.56250E-02
+			//                                        with weighted error   2.82E-32
+			//                                         log weighted error  31.55
+			//                               significant figures required  31.12
+			//                                    decimal places required  32.37
 			//
 			//-----------------------------------------------------------------------------//
 
 			public static void d9b1mp(double x, out double ampl, out double theta)
 			{
-
-
 				if (x < 4.0)
 				{
 					ampl = theta = double.NaN;
@@ -706,7 +696,6 @@ namespace Altaxo.Calc
 					double z = (128.0 / (x * x) - 5.0) / 3.0;
 					ampl = (dcsevl(z, _d9b1mp_bm1cs, _d9b1mp_nbm1) + 0.75) / Math.Sqrt(x);
 					theta = x - pi4 * 3.0 + dcsevl(z, _d9b1mp_bt12cs, _d9b1mp_nbt12) / x;
-
 				}
 				else
 				{
@@ -722,20 +711,20 @@ namespace Altaxo.Calc
 				}
 			}
 		}
-		#endregion
+
+		#endregion d9b1mp
 
 		#region d9aimp
 
-		static void d9aimp(double x, out double ampl, out double theta)
+		private static void d9aimp(double x, out double ampl, out double theta)
 		{
 			_d9aimp.d9aimp(x, out ampl, out theta);
 		}
 
-
-		class _d9aimp
+		private class _d9aimp
 		{
-			static readonly double[] am20cs = 
-    { 
+			private static readonly double[] am20cs =
+    {
       0.0108716749086561856615730588125,
       3.69489228982663555091728665146e-4,
       4.40680100484689563667507001327e-6,
@@ -792,11 +781,11 @@ namespace Altaxo.Calc
       2.15610934097716900471935862504e-31,
       1.12468857265869178296752823613e-31,
       5.90331560632838091123040811797e-32,
-      3.11735667692928562046280505333e-32 
+      3.11735667692928562046280505333e-32
     };
 
-			static readonly double[] ath0cs = 
-    { 
+			private static readonly double[] ath0cs =
+    {
       -0.08172601764161634499840208700543,
       -8.004012824788273287596481113068e-4,
       -3.186525268782113203795553628242e-6,
@@ -849,11 +838,11 @@ namespace Altaxo.Calc
       -2.122161865044262927723650698206e-31,
       -1.065996156704879052472060798561e-31,
       -5.393568608816949116410688086892e-32,
-      -2.74817485104395482227849651787e-32 
+      -2.74817485104395482227849651787e-32
     };
 
-			static readonly double[] am21cs = 
-    { 
+			private static readonly double[] am21cs =
+    {
       0.00592790266721309588375717482814,
       0.0020056940539316518642869521769,
       9.11081850262275893553072526291e-5,
@@ -913,11 +902,11 @@ namespace Altaxo.Calc
       5.11470691906900141641632107724e-31,
       2.06801709795538770250900316706e-31,
       8.37891344768519001325996867583e-32,
-      3.40168991971489802052339079577e-32 
+      3.40168991971489802052339079577e-32
     };
 
-			static readonly double[] ath1cs = 
-    { 
+			private static readonly double[] ath1cs =
+    {
       -0.06972849916208883845888148415037,
       -0.005108722790650044987073448077961,
       -8.644335996989755094525334749512e-5,
@@ -975,11 +964,11 @@ namespace Altaxo.Calc
       -4.570031437748533058179991688533e-31,
       -1.826276602045346104809934028799e-31,
       -7.315349993385250469111066350933e-32,
-      -2.936925599971429781637815773866e-32 
+      -2.936925599971429781637815773866e-32
     };
 
-			static readonly double[] am22cs = 
-    { 
+			private static readonly double[] am22cs =
+    {
       -0.0156284448062534112753545828583,
       0.00778336445239681307018943100334,
       8.6705777047718952840607281211e-4,
@@ -1053,11 +1042,11 @@ namespace Altaxo.Calc
       4.32695414934180170112000952983e-31,
       1.9149728819399457061292986044e-31,
       8.48164622402392354171298331562e-32,
-      3.75947065173955919947455052934e-32 
+      3.75947065173955919947455052934e-32
     };
 
-			static readonly double[] ath2cs = 
-    { 
+			private static readonly double[] ath2cs =
+    {
       0.004405273458718778997061127057775,
       -0.03042919452318454608483844239873,
       -0.001385653283771793791602692842653,
@@ -1129,74 +1118,70 @@ namespace Altaxo.Calc
       -5.842848522173090120487606971706e-31,
       -2.567488423238302631121274357678e-31,
       -1.129232322268882185791505819151e-31,
-      -4.970947029753336916550570105023e-32 
+      -4.970947029753336916550570105023e-32
     };
 
-			static readonly double pi4 = 0.78539816339744830961566084581988;
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xsml = -1.0 / Math.Pow(0.5 * DBL_EPSILON, 0.3333);
-			static readonly int nam20 = initds(am20cs, 57, eta);
-			static readonly int nath0 = initds(ath0cs, 53, eta);
-			static readonly int nam21 = initds(am21cs, 60, eta);
-			static readonly int nath1 = initds(ath1cs, 58, eta);
-			static readonly int nam22 = initds(am22cs, 74, eta);
-			static readonly int nath2 = initds(ath2cs, 72, eta);
-
-
+			private static readonly double pi4 = 0.78539816339744830961566084581988;
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double xsml = -1.0 / Math.Pow(0.5 * DBL_EPSILON, 0.3333);
+			private static readonly int nam20 = initds(am20cs, 57, eta);
+			private static readonly int nath0 = initds(ath0cs, 53, eta);
+			private static readonly int nam21 = initds(am21cs, 60, eta);
+			private static readonly int nath1 = initds(ath1cs, 58, eta);
+			private static readonly int nam22 = initds(am22cs, 74, eta);
+			private static readonly int nath2 = initds(ath2cs, 72, eta);
 
 			//-----------------------------------------------------------------------------//
 			//
 			// void d9aimp (double x, double& ampl, double& theta)
 			//
-			// Evaluate the Airy modulus and phase for x <= -1.0 
+			// Evaluate the Airy modulus and phase for x <= -1.0
 			//
 			// This is a translation from the Fortran version of SLATEC, FNLIB,
 			// CATEGORY C10D,  REVISION 900720, originally written by Fullerton W.,(LANL)
 			// to C++.
 			//
 			//
-			// Series for AM20       on the interval -1.56250E-02 to  0. 
-			//                                        with weighted error   3.12E-32 
-			//                                         log weighted error  31.51 
-			//                               significant figures required  29.24 
-			//                                    decimal places required  32.38 
+			// Series for AM20       on the interval -1.56250E-02 to  0.
+			//                                        with weighted error   3.12E-32
+			//                                         log weighted error  31.51
+			//                               significant figures required  29.24
+			//                                    decimal places required  32.38
 			//
-			// Series for ATH0       on the interval -1.56250E-02 to  0. 
-			//                                        with weighted error   2.75E-32 
-			//                                         log weighted error  31.56 
-			//                               significant figures required  30.17 
-			//                                    decimal places required  32.42 
+			// Series for ATH0       on the interval -1.56250E-02 to  0.
+			//                                        with weighted error   2.75E-32
+			//                                         log weighted error  31.56
+			//                               significant figures required  30.17
+			//                                    decimal places required  32.42
 			//
-			// Series for AM21       on the interval -1.25000E-01 to -1.56250E-02 
-			//                                        with weighted error   3.40E-32 
-			//                                         log weighted error  31.47 
-			//                               significant figures required  29.02 
-			//                                    decimal places required  32.36 
+			// Series for AM21       on the interval -1.25000E-01 to -1.56250E-02
+			//                                        with weighted error   3.40E-32
+			//                                         log weighted error  31.47
+			//                               significant figures required  29.02
+			//                                    decimal places required  32.36
 			//
-			// Series for ATH1       on the interval -1.25000E-01 to -1.56250E-02 
-			//                                        with weighted error   2.94E-32 
-			//                                         log weighted error  31.53 
-			//                               significant figures required  30.08 
-			//                                    decimal places required  32.41 
+			// Series for ATH1       on the interval -1.25000E-01 to -1.56250E-02
+			//                                        with weighted error   2.94E-32
+			//                                         log weighted error  31.53
+			//                               significant figures required  30.08
+			//                                    decimal places required  32.41
 			//
-			// Series for AM22       on the interval -1.00000E+00 to -1.25000E-01 
-			//                                        with weighted error   3.76E-32 
-			//                                         log weighted error  31.42 
-			//                               significant figures required  29.47 
-			//                                    decimal places required  32.36 
+			// Series for AM22       on the interval -1.00000E+00 to -1.25000E-01
+			//                                        with weighted error   3.76E-32
+			//                                         log weighted error  31.42
+			//                               significant figures required  29.47
+			//                                    decimal places required  32.36
 			//
-			// Series for ATH2       on the interval -1.00000E+00 to -1.25000E-01 
-			//                                        with weighted error   4.97E-32 
-			//                                         log weighted error  31.30 
-			//                               significant figures required  29.79 
-			//                                    decimal places required  32.23 
+			// Series for ATH2       on the interval -1.00000E+00 to -1.25000E-01
+			//                                        with weighted error   4.97E-32
+			//                                         log weighted error  31.30
+			//                               significant figures required  29.79
+			//                                    decimal places required  32.23
 			//
 			//-----------------------------------------------------------------------------//
 
 			public static void d9aimp(double x, out double ampl, out double theta)
 			{
-
-
 				double z, sqrtx;
 
 				if (x >= -4.0) goto L20;
@@ -1229,13 +1214,14 @@ namespace Altaxo.Calc
 				theta = pi4 - x * sqrtx * theta;
 			}
 		}
-		#endregion
+
+		#endregion d9aimp
 
 		#region BesselJ0
 
 		/// <summary>
-		/// BesselJ0(x) calculates the double precision Bessel function of 
-		/// the first kind of order zero for double precision argument x. 
+		/// BesselJ0(x) calculates the double precision Bessel function of
+		/// the first kind of order zero for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <returns>Bessel function of the first kind of order zero for argument x.</returns>
@@ -1245,8 +1231,8 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselJ0(x) calculates the double precision Bessel function of 
-		/// the first kind of order zero for double precision argument x. 
+		/// BesselJ0(x) calculates the double precision Bessel function of
+		/// the first kind of order zero for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -1256,11 +1242,10 @@ namespace Altaxo.Calc
 			return _BesselJ0.BesselJ0(x, bDebug);
 		}
 
-		class _BesselJ0
+		private class _BesselJ0
 		{
-
-			static readonly double[] _BesselJ0_bj0cs = 
-  { 
+			private static readonly double[] _BesselJ0_bj0cs =
+  {
     0.10025416196893913701073127264074,
     -0.66522300776440513177678757831124,
     0.2489837034982813137046046872668,
@@ -1279,26 +1264,25 @@ namespace Altaxo.Calc
     -1.0319144794166698148522666666666e-24,
     4.06081782748733227008e-27,
     -1.4143836005240913919999999999999e-29,
-    4.391090549669888e-32 
+    4.391090549669888e-32
   };
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
-			static readonly int _BesselJ0_ntj0 = initds(_BesselJ0_bj0cs, 19, 0.5 * DBL_EPSILON * 0.1);
 
-
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
+			private static readonly int _BesselJ0_ntj0 = initds(_BesselJ0_bj0cs, 19, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselJ0(x) calculates the double precision Bessel function of 
-			/// the first kind of order zero for double precision argument x. 
+			/// BesselJ0(x) calculates the double precision Bessel function of
+			/// the first kind of order zero for double precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
 			/// <returns>Bessel function of the first kind of order zero for argument x</returns>
 			/// <remarks><code>
-			/// Series for BJ0        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   4.39E-32 
-			///                                         log weighted error  31.36 
-			///                               significant figures required  31.21 
-			///                                    decimal places required  32.00 
+			/// Series for BJ0        on the interval  0.          to  1.60000E+01
+			///                                        with weighted error   4.39E-32
+			///                                         log weighted error  31.36
+			///                               significant figures required  31.21
+			///                                    decimal places required  32.00
 			///
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10A1, REVISION 891214 originally written by Fullerton W.,(LANL)
@@ -1306,9 +1290,6 @@ namespace Altaxo.Calc
 			/// </code></remarks>
 			public static double BesselJ0(double x, bool bDebug)
 			{
-
-
-
 				double y = Math.Abs(x);
 				if (y > 4.0) goto L20;
 
@@ -1322,18 +1303,18 @@ namespace Altaxo.Calc
 				d9b0mp(y, out ampl, out theta);
 				return ampl * Math.Cos(theta);
 			}
-
 		}
-		#endregion
+
+		#endregion BesselJ0
 
 		#region BesselJ1
 
 		/// <summary>
-		/// BesselJ1(x) calculates the double precision Bessel function of the 
-		/// first kind of order one for double precision argument x. 
+		/// BesselJ1(x) calculates the double precision Bessel function of the
+		/// first kind of order one for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// first kind of order one for argument x.</returns>
 		public static double BesselJ1(double x)
 		{
@@ -1341,22 +1322,22 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselJ1(x) calculates the double precision Bessel function of the 
-		/// first kind of order one for double precision argument x. 
+		/// BesselJ1(x) calculates the double precision Bessel function of the
+		/// first kind of order one for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// first kind of order one for argument x.</returns>
 		public static double BesselJ1(double x, bool bDebug)
 		{
 			return _BesselJ1.BesselJ1(x, bDebug);
 		}
 
-		class _BesselJ1
+		private class _BesselJ1
 		{
-			static readonly double[] _BesselJ1_bj1cs = 
-  { 
+			private static readonly double[] _BesselJ1_bj1cs =
+  {
     -0.117261415133327865606240574524003,
     -0.253615218307906395623030884554698,
     0.0501270809844695685053656363203743,
@@ -1375,39 +1356,35 @@ namespace Altaxo.Calc
     -3.24869378211199841143466666666666e-26,
     1.2022376772274102272e-28,
     -3.95201221265134933333333333333333e-31,
-    1.16167808226645333333333333333333e-33 
+    1.16167808226645333333333333333333e-33
   };
 
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
-			static readonly double xmin = DBL_MIN * 2.0;
-			static readonly int _BesselJ1_ntj1 = initds(_BesselJ1_bj1cs, 19, 0.5 * DBL_EPSILON * 0.1);
-
-
-
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
+			private static readonly double xmin = DBL_MIN * 2.0;
+			private static readonly int _BesselJ1_ntj1 = initds(_BesselJ1_bj1cs, 19, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselJ1(x) calculates the double precision Bessel function of the 
-			/// first kind of order one for double precision argument x. 
+			/// BesselJ1(x) calculates the double precision Bessel function of the
+			/// first kind of order one for double precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Bessel function of the 
+			/// <returns>Bessel function of the
 			/// first kind of order one for argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10A1, REVISION 910401 originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BJ1        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   1.16E-33 
-			///                                         log weighted error  32.93 
-			///                               significant figures required  32.36 
-			///                                    decimal places required  33.57 
+			/// Series for BJ1        on the interval  0.          to  1.60000E+01
+			///                                        with weighted error   1.16E-33
+			///                                         log weighted error  32.93
+			///                               significant figures required  32.36
+			///                                    decimal places required  33.57
 			/// </code></remarks>
 			public static double BesselJ1(double x, bool bDebug)
 			{
 				double ret_val = 0.0;
-
 
 				double y = Math.Abs(x);
 				if (y > 4.0) goto L20;
@@ -1431,18 +1408,18 @@ namespace Altaxo.Calc
 				return CopySign(ampl, x) * Math.Cos(theta);
 			}
 		}
-		#endregion
+
+		#endregion BesselJ1
 
 		#region BesselJn
 
-
 		/// <summary>
-		/// BesselJ(n,x) calculates the double precision Bessel function of the 
-		/// first kind of order n for double precision argument x. 
+		/// BesselJ(n,x) calculates the double precision Bessel function of the
+		/// first kind of order n for double precision argument x.
 		/// </summary>
 		/// <param name="n">The order of the bessel function.</param>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// first kind of order n for argument x.</returns>
 		/// <remarks><code>
 		/// Miller's downward recurrence algorithm is used.
@@ -1454,13 +1431,13 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselJ(n,x) calculates the double precision Bessel function of the 
-		/// first kind of order n for double precision argument x. 
+		/// BesselJ(n,x) calculates the double precision Bessel function of the
+		/// first kind of order n for double precision argument x.
 		/// </summary>
 		/// <param name="n">The order of the bessel function.</param>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// first kind of order n for argument x.</returns>
 		/// <remarks><code>
 		/// Miller's downward recurrence algorithm is used.
@@ -1534,16 +1511,16 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion BesselJn
 
 		#region BesselY0
 
 		/// <summary>
-		/// BesselY0(x) calculates the double precision Bessel function of the 
-		/// second kind of order zero for double precision argument X. 
+		/// BesselY0(x) calculates the double precision Bessel function of the
+		/// second kind of order zero for double precision argument X.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// second kind of order zero for argument x.</returns>
 		public static double BesselY0(double x)
 		{
@@ -1551,23 +1528,22 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselY0(x) calculates the double precision Bessel function of the 
-		/// second kind of order zero for double precision argument X. 
+		/// BesselY0(x) calculates the double precision Bessel function of the
+		/// second kind of order zero for double precision argument X.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// second kind of order zero for argument x.</returns>
 		public static double BesselY0(double x, bool bDebug)
 		{
 			return _BesselY0.BesselY0(x, bDebug);
 		}
 
-		class _BesselY0
+		private class _BesselY0
 		{
-
-			static readonly double[] _BesselY0_by0cs = 
-  { 
+			private static readonly double[] _BesselY0_by0cs =
+  {
     -0.01127783939286557321793980546028,
     -0.1283452375604203460480884531838,
     -0.1043788479979424936581762276618,
@@ -1586,32 +1562,31 @@ namespace Altaxo.Calc
     1.79550366443615794982912e-24,
     -7.229627125448010478933333333333e-27,
     2.571727931635168597333333333333e-29,
-    -8.141268814163694933333333333333e-32 
+    -8.141268814163694933333333333333e-32
   };
 
-			static readonly double twodpi = 0.636619772367581343075535053490057;
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly int _BesselY0_nty0 = initds(_BesselY0_by0cs, 19, 0.5 * DBL_EPSILON * 0.1);
-
+			private static readonly double twodpi = 0.636619772367581343075535053490057;
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+			private static readonly int _BesselY0_nty0 = initds(_BesselY0_by0cs, 19, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselY0(x) calculates the double precision Bessel function of the 
-			/// second kind of order zero for double precision argument X. 
+			/// BesselY0(x) calculates the double precision Bessel function of the
+			/// second kind of order zero for double precision argument X.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Bessel function of the 
+			/// <returns>Bessel function of the
 			/// second kind of order zero for argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BY0        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   8.14E-32 
-			///                                         log weighted error  31.09 
-			///                               significant figures required  30.31 
-			///                                    decimal places required  31.73 
+			/// Series for BY0        on the interval  0.          to  1.60000E+01
+			///                                        with weighted error   8.14E-32
+			///                                         log weighted error  31.09
+			///                               significant figures required  30.31
+			///                                    decimal places required  31.73
 			/// </code></remarks>
 			public static double BesselY0(double x, bool bDebug)
 			{
@@ -1622,7 +1597,6 @@ namespace Altaxo.Calc
 					else
 						return double.NaN;
 				}
-
 
 				if (x > 4.0)
 				{
@@ -1640,16 +1614,16 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion BesselY0
 
 		#region BesselY1
 
 		/// <summary>
-		/// BesselY1(x) calculates the double precision Bessel function of the 
+		/// BesselY1(x) calculates the double precision Bessel function of the
 		/// second kind of order for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// second kind of order for argument x.</returns>
 		public static double BesselY1(double x)
 		{
@@ -1657,22 +1631,22 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselY1(x) calculates the double precision Bessel function of the 
+		/// BesselY1(x) calculates the double precision Bessel function of the
 		/// second kind of order for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// second kind of order for argument x.</returns>
 		public static double BesselY1(double x, bool bDebug)
 		{
 			return _BesselY1.BesselY1(x, bDebug);
 		}
 
-		class _BesselY1
+		private class _BesselY1
 		{
-			static readonly double[] _BesselY1_by1cs = 
-  { 
+			private static readonly double[] _BesselY1_by1cs =
+  {
     0.0320804710061190862932352018628015,
     1.26270789743350044953431725999727,
     0.00649996189992317500097490637314144,
@@ -1692,38 +1666,36 @@ namespace Altaxo.Calc
     2.27019940315566414370133333333333e-25,
     -8.59539035394523108693333333333333e-28,
     2.88540437983379456e-30,
-    -8.64754113893717333333333333333333e-33 
+    -8.64754113893717333333333333333333e-33
   };
 
-			static readonly double twodpi = 0.636619772367581343075535053490057;
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01) * 1.571;
-			static readonly int _BesselY1_nty1 = initds(_BesselY1_by1cs, 20, 0.5 * DBL_EPSILON * 0.1);
-
+			private static readonly double twodpi = 0.636619772367581343075535053490057;
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+			private static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01) * 1.571;
+			private static readonly int _BesselY1_nty1 = initds(_BesselY1_by1cs, 20, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselY1(x) calculates the double precision Bessel function of the 
+			/// BesselY1(x) calculates the double precision Bessel function of the
 			/// second kind of order for double precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Bessel function of the 
+			/// <returns>Bessel function of the
 			/// second kind of order for argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BY1        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   8.65E-33 
-			///                                         log weighted error  32.06 
-			///                               significant figures required  32.17 
-			///                                    decimal places required  32.71 
+			/// Series for BY1        on the interval  0.          to  1.60000E+01
+			///                                        with weighted error   8.65E-33
+			///                                         log weighted error  32.06
+			///                               significant figures required  32.17
+			///                                    decimal places required  32.71
 			/// </code></remarks>
 			public static double BesselY1(double x, bool bDebug)
 			{
 				double y;
-
 
 				if (x <= 0.0)
 				{
@@ -1732,7 +1704,6 @@ namespace Altaxo.Calc
 					else
 						return double.NaN;
 				}
-
 
 				if (x > 4.0) goto L20;
 
@@ -1753,20 +1724,19 @@ namespace Altaxo.Calc
 				d9b1mp(x, out ampl, out theta);
 				return ampl * Math.Sin(theta);
 			}
-
 		}
-		#endregion
+
+		#endregion BesselY1
 
 		#region BesselYn
 
-
 		/// <summary>
-		/// BesselY(n,x) calculates the double precision Bessel function of the 
-		/// second kind of order n for double precision argument x. 
+		/// BesselY(n,x) calculates the double precision Bessel function of the
+		/// second kind of order n for double precision argument x.
 		/// </summary>
 		/// <param name="n">The order of the Bessel function.</param>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// second kind of order n for argument x.</returns>
 		/// <remarks><code>
 		/// Implemented by B. M. Gammel, last revision 13.03.1996
@@ -1776,15 +1746,14 @@ namespace Altaxo.Calc
 			return BesselY(n, x, false);
 		}
 
-
 		/// <summary>
-		/// BesselY(n,x) calculates the double precision Bessel function of the 
-		/// second kind of order n for double precision argument x. 
+		/// BesselY(n,x) calculates the double precision Bessel function of the
+		/// second kind of order n for double precision argument x.
 		/// </summary>
 		/// <param name="n">The order of the Bessel function.</param>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Bessel function of the 
+		/// <returns>Bessel function of the
 		/// second kind of order n for argument x.</returns>
 		/// <remarks><code>
 		/// Implemented by B. M. Gammel, last revision 13.03.1996
@@ -1817,18 +1786,18 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion BesselYn
 
 		#region BesselI0
 
 		/// <summary>
 		/// BesselI0(x) calculates the double precision modified (hyperbolic)
-		/// Bessel function of the first kind of order zero and double precision 
+		/// Bessel function of the first kind of order zero and double precision
 		/// argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <returns>Modified (hyperbolic)
-		/// Bessel function of the first kind of order zero and double precision 
+		/// Bessel function of the first kind of order zero and double precision
 		/// argument x.</returns>
 		public static double BesselI0(double x)
 		{
@@ -1837,23 +1806,23 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// BesselI0(x) calculates the double precision modified (hyperbolic)
-		/// Bessel function of the first kind of order zero and double precision 
+		/// Bessel function of the first kind of order zero and double precision
 		/// argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
 		/// <returns>Modified (hyperbolic)
-		/// Bessel function of the first kind of order zero and double precision 
+		/// Bessel function of the first kind of order zero and double precision
 		/// argument x.</returns>
 		public static double BesselI0(double x, bool bDebug)
 		{
 			return _BesselI0.BesselI0(x, bDebug);
 		}
 
-		class _BesselI0
+		private class _BesselI0
 		{
-			static readonly double[] _BesselI0_bi0cs = 
-  { 
+			private static readonly double[] _BesselI0_bi0cs =
+  {
     -0.07660547252839144951081894976243285,
     1.927337953993808269952408750881196,
     0.2282644586920301338937029292330415,
@@ -1871,61 +1840,57 @@ namespace Altaxo.Calc
     9.004564101094637431466666666666666e-26,
     2.240647369123670016e-28,
     4.903034603242837333333333333333333e-31,
-    9.508172606122666666666666666666666e-34 
+    9.508172606122666666666666666666666e-34
   };
-			static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
-			static readonly double _BesselI0_xmax = Math.Log(DBL_MAX);
-			static readonly int _BesselI0_nti0 = initds(_BesselI0_bi0cs, 18, 0.5 * DBL_EPSILON * 0.1);
 
+			private static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+			private static readonly double _BesselI0_xmax = Math.Log(DBL_MAX);
+			private static readonly int _BesselI0_nti0 = initds(_BesselI0_bi0cs, 18, 0.5 * DBL_EPSILON * 0.1);
 
 			//-----------------------------------------------------------------------------//
 			//
 			// double BesselI0 (double x)
 			//
 			// BesselI0(x) calculates the double precision modified (hyperbolic)
-			// Bessel function of the first kind of order zero and double precision 
+			// Bessel function of the first kind of order zero and double precision
 			// argument x.
 			//
 			// This is a translation from the Fortran version of SLATEC, FNLIB,
 			// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			// to C++.
 			//
-			// Series for BI0        on the interval  0.          to  9.00000E+00 
-			//                                        with weighted error   9.51E-34 
-			//                                         log weighted error  33.02 
-			//                               significant figures required  33.31 
-			//                                    decimal places required  33.65 
+			// Series for BI0        on the interval  0.          to  9.00000E+00
+			//                                        with weighted error   9.51E-34
+			//                                         log weighted error  33.02
+			//                               significant figures required  33.31
+			//                                    decimal places required  33.65
 			//
 			//-----------------------------------------------------------------------------//
 
 			/// <summary>
 			/// BesselI0(x) calculates the double precision modified (hyperbolic)
-			/// Bessel function of the first kind of order zero and double precision 
+			/// Bessel function of the first kind of order zero and double precision
 			/// argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
 			/// <returns>Modified (hyperbolic)
-			/// Bessel function of the first kind of order zero and double precision 
+			/// Bessel function of the first kind of order zero and double precision
 			/// argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BI0        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   9.51E-34 
-			///                                         log weighted error  33.02 
-			///                               significant figures required  33.31 
-			///                                    decimal places required  33.65 
+			/// Series for BI0        on the interval  0.          to  9.00000E+00
+			///                                        with weighted error   9.51E-34
+			///                                         log weighted error  33.02
+			///                               significant figures required  33.31
+			///                                    decimal places required  33.65
 			/// </code></remarks>
 			public static double BesselI0(double x, bool bDebug)
 			{
-
 				double ret_val;
-
-
-
 
 				double y = Math.Abs(x);
 				if (y > 3.0) goto L20;
@@ -1947,46 +1912,46 @@ namespace Altaxo.Calc
 				return Math.Exp(y) * BesselExpI0(x, bDebug);
 			}
 		}
-		#endregion
+
+		#endregion BesselI0
 
 		#region BesselExpI0
 
 		/// <summary>
-		/// BesselExpI0(x) calculates the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// zero for double precision argument x.  The result is the Bessel 
-		/// function i0(X) multiplied by exp(-abs(x)). 
+		/// BesselExpI0(x) calculates the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
+		/// zero for double precision argument x.  The result is the Bessel
+		/// function i0(X) multiplied by exp(-abs(x)).
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>The exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
+		/// <returns>The exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
 		/// zero for argument x.</returns>
 		public static double BesselExpI0(double x)
 		{
 			return _BesselExpI0.BesselExpI0(x, false);
 		}
 
-
 		/// <summary>
-		/// BesselExpI0(x) calculates the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// zero for double precision argument x.  The result is the Bessel 
-		/// function i0(X) multiplied by exp(-abs(x)). 
+		/// BesselExpI0(x) calculates the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
+		/// zero for double precision argument x.  The result is the Bessel
+		/// function i0(X) multiplied by exp(-abs(x)).
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>The exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
+		/// <returns>The exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
 		/// zero for argument x.</returns>
 		public static double BesselExpI0(double x, bool bDebug)
 		{
 			return _BesselExpI0.BesselExpI0(x, bDebug);
 		}
 
-		class _BesselExpI0
+		private class _BesselExpI0
 		{
-			static readonly double[] _BesselExpI0_bi0cs = 
-  { 
+			private static readonly double[] _BesselExpI0_bi0cs =
+  {
     -0.07660547252839144951081894976243285,
     1.927337953993808269952408750881196,
     0.2282644586920301338937029292330415,
@@ -2004,11 +1969,11 @@ namespace Altaxo.Calc
     9.004564101094637431466666666666666e-26,
     2.240647369123670016e-28,
     4.903034603242837333333333333333333e-31,
-    9.508172606122666666666666666666666e-34 
+    9.508172606122666666666666666666666e-34
   };
 
-			static readonly double[] _BesselExpI0_ai0cs = 
-  { 
+			private static readonly double[] _BesselExpI0_ai0cs =
+  {
     0.07575994494023795942729872037438,
     0.007591380810823345507292978733204,
     4.153131338923750501863197491382e-4,
@@ -2054,10 +2019,10 @@ namespace Altaxo.Calc
     3.736796722063098229642581333333e-31,
     1.602073983156851963365512533333e-31,
     -8.700424864057229884522495999999e-32,
-    2.741320937937481145603413333333e-32 
+    2.741320937937481145603413333333e-32
   };
 
-			static readonly double[] _BesselExpI0_ai02cs = 
+			private static readonly double[] _BesselExpI0_ai02cs =
   {
     0.0544904110141088316078960962268,
     0.003369116478255694089897856629799,
@@ -2127,52 +2092,48 @@ namespace Altaxo.Calc
     1.886287118039704490077874479431e-31,
     2.16019687224365891314903141406e-31,
     -1.605454124919743200584465949655e-31,
-    1.965352984594290603938848073318e-32 
+    1.965352984594290603938848073318e-32
   };
 
-			static readonly double _BesselExpI0_eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double _BesselExpI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
-			static readonly int _BesselExpI0_nti0 = initds(_BesselExpI0_bi0cs, 18, _BesselExpI0_eta);
-			static readonly int _BesselExpI0_ntai0 = initds(_BesselExpI0_ai0cs, 46, _BesselExpI0_eta);
-			static readonly int _BesselExpI0_ntai02 = initds(_BesselExpI0_ai02cs, 69, _BesselExpI0_eta);
-
-
-
-
+			private static readonly double _BesselExpI0_eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double _BesselExpI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+			private static readonly int _BesselExpI0_nti0 = initds(_BesselExpI0_bi0cs, 18, _BesselExpI0_eta);
+			private static readonly int _BesselExpI0_ntai0 = initds(_BesselExpI0_ai0cs, 46, _BesselExpI0_eta);
+			private static readonly int _BesselExpI0_ntai02 = initds(_BesselExpI0_ai02cs, 69, _BesselExpI0_eta);
 
 			/// <summary>
-			/// BesselExpI0(x) calculates the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
-			/// zero for double precision argument x.  The result is the Bessel 
-			/// function i0(X) multiplied by exp(-abs(x)). 
+			/// BesselExpI0(x) calculates the double precision exponentially scaled
+			/// modified (hyperbolic) Bessel function of the first kind of order
+			/// zero for double precision argument x.  The result is the Bessel
+			/// function i0(X) multiplied by exp(-abs(x)).
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>The exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
+			/// <returns>The exponentially scaled
+			/// modified (hyperbolic) Bessel function of the first kind of order
 			/// zero for argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 891214, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BI0        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   9.51E-34  
-			///                                         log weighted error  33.02 
-			///                               significant figures required  33.31 
-			///                                    decimal places required  33.65 
+			/// Series for BI0        on the interval  0.          to  9.00000E+00
+			///                                        with weighted error   9.51E-34
+			///                                         log weighted error  33.02
+			///                               significant figures required  33.31
+			///                                    decimal places required  33.65
 			///
-			/// Series for AI0        on the interval  1.25000E-01 to  3.33333E-01 
-			///                                        with weighted error   2.74E-32 
-			///                                         log weighted error  31.56 
-			///                               significant figures required  30.15 
-			///                                    decimal places required  32.39 
+			/// Series for AI0        on the interval  1.25000E-01 to  3.33333E-01
+			///                                        with weighted error   2.74E-32
+			///                                         log weighted error  31.56
+			///                               significant figures required  30.15
+			///                                    decimal places required  32.39
 			///
-			/// Series for AI02       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   1.97E-32 
-			///                                         log weighted error  31.71 
-			///                               significant figures required  30.15 
-			///                                    decimal places required  32.63 
+			/// Series for AI02       on the interval  0.          to  1.25000E-01
+			///                                        with weighted error   1.97E-32
+			///                                         log weighted error  31.71
+			///                               significant figures required  30.15
+			///                                    decimal places required  32.63
 			/// </code></remarks>
 			public static double BesselExpI0(double x, bool bDebug)
 			{
@@ -2193,18 +2154,19 @@ namespace Altaxo.Calc
 					return (dcsevl(16.0 / y - 1.0, _BesselExpI0_ai02cs, _BesselExpI0_ntai02) + 0.375) / Math.Sqrt(y);
 			}
 		}
-		#endregion
+
+		#endregion BesselExpI0
 
 		#region BesselI1
 
 		/// <summary>
-		/// BesselI1(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the first kind of order one and double precision 
-		/// argument x. 
+		/// BesselI1(x) calculates the double precision modified (hyperbolic)
+		/// Bessel function of the first kind of order one and double precision
+		/// argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>The modified (hyperbolic) 
-		/// Bessel function of the first kind of order one and double precision 
+		/// <returns>The modified (hyperbolic)
+		/// Bessel function of the first kind of order one and double precision
 		/// argument x.</returns>
 		public static double BesselI1(double x)
 		{
@@ -2212,24 +2174,24 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselI1(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the first kind of order one and double precision 
-		/// argument x. 
+		/// BesselI1(x) calculates the double precision modified (hyperbolic)
+		/// Bessel function of the first kind of order one and double precision
+		/// argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>The modified (hyperbolic) 
-		/// Bessel function of the first kind of order one and double precision 
+		/// <returns>The modified (hyperbolic)
+		/// Bessel function of the first kind of order one and double precision
 		/// argument x.</returns>
 		public static double BesselI1(double x, bool bDebug)
 		{
 			return _BesselI1.BesselI1(x, bDebug);
 		}
 
-		class _BesselI1
+		private class _BesselI1
 		{
-			static readonly double[] _BesselI1_bi1cs = 
-  { 
+			private static readonly double[] _BesselI1_bi1cs =
+  {
     -0.0019717132610998597316138503218149,
     0.40734887667546480608155393652014,
     0.034838994299959455866245037783787,
@@ -2246,45 +2208,38 @@ namespace Altaxo.Calc
     1.1205749502562039344810666666666e-24,
     2.9875441934468088832e-27,
     6.9732310939194709333333333333333e-30,
-    1.43679482206208e-32 
+    1.43679482206208e-32
   };
 
-			static readonly double _BesselI1_xmin = DBL_MIN * 2.0;
-			static readonly double _BesselI1_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
-			static readonly double _BesselI1_xmax = Math.Log(DBL_MAX);
-			static readonly int _BesselI1_nti1 = initds(_BesselI1_bi1cs, 17, 0.5 * DBL_EPSILON * 0.1);
-
+			private static readonly double _BesselI1_xmin = DBL_MIN * 2.0;
+			private static readonly double _BesselI1_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+			private static readonly double _BesselI1_xmax = Math.Log(DBL_MAX);
+			private static readonly int _BesselI1_nti1 = initds(_BesselI1_bi1cs, 17, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselI1(x) calculates the double precision modified (hyperbolic) 
-			/// Bessel function of the first kind of order one and double precision 
-			/// argument x. 
+			/// BesselI1(x) calculates the double precision modified (hyperbolic)
+			/// Bessel function of the first kind of order one and double precision
+			/// argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>The modified (hyperbolic) 
-			/// Bessel function of the first kind of order one and double precision 
+			/// <returns>The modified (hyperbolic)
+			/// Bessel function of the first kind of order one and double precision
 			/// argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BI1        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   1.44E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  31.45 
-			///                                    decimal places required  32.46 
+			/// Series for BI1        on the interval  0.          to  9.00000E+00
+			///                                        with weighted error   1.44E-32
+			///                                         log weighted error  31.84
+			///                               significant figures required  31.45
+			///                                    decimal places required  32.46
 			/// </code></remarks>
 			public static double BesselI1(double x, bool bDebug)
 			{
-
-
 				double ret_val;
-
-
-
-
 
 				double y = Math.Abs(x);
 				if (y > 3.0) goto L20;
@@ -2316,19 +2271,19 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion BesselI1
 
 		#region BesselExpI1
 
 		/// <summary>
-		/// BesselExpI1(x) calculates the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// one for double precision argument x.  The result is I1(x) 
-		/// multiplied by exp(-abs(x)). 
+		/// BesselExpI1(x) calculates the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
+		/// one for double precision argument x.  The result is I1(x)
+		/// multiplied by exp(-abs(x)).
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>The exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
+		/// <returns>The exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
 		/// one for argument x.</returns>
 		public static double BesselExpI1(double x)
 		{
@@ -2336,25 +2291,25 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselExpI1(x) calculates the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// one for double precision argument x.  The result is I1(x) 
-		/// multiplied by exp(-abs(x)). 
+		/// BesselExpI1(x) calculates the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
+		/// one for double precision argument x.  The result is I1(x)
+		/// multiplied by exp(-abs(x)).
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>The exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
+		/// <returns>The exponentially scaled
+		/// modified (hyperbolic) Bessel function of the first kind of order
 		/// one for argument x.</returns>
 		public static double BesselExpI1(double x, bool bDebug)
 		{
 			return _BesselExpI1.BesselExpI1(x, bDebug);
 		}
 
-		class _BesselExpI1
+		private class _BesselExpI1
 		{
-			static readonly double[] bi1cs = 
-  { 
+			private static readonly double[] bi1cs =
+  {
     -0.0019717132610998597316138503218149,
     0.40734887667546480608155393652014,
     0.034838994299959455866245037783787,
@@ -2371,11 +2326,11 @@ namespace Altaxo.Calc
     1.1205749502562039344810666666666e-24,
     2.9875441934468088832e-27,
     6.9732310939194709333333333333333e-30,
-    1.43679482206208e-32 
+    1.43679482206208e-32
   };
 
-			static readonly double[] ai1cs = 
-  { 
+			private static readonly double[] ai1cs =
+  {
     -0.02846744181881478674100372468307,
     -0.01922953231443220651044448774979,
     -6.115185857943788982256249917785e-4,
@@ -2421,11 +2376,11 @@ namespace Altaxo.Calc
     -2.731831789689084989162564266666e-31,
     -1.858905021708600715771903999999e-31,
     9.212682974513933441127765333333e-32,
-    -2.813835155653561106370833066666e-32 
+    -2.813835155653561106370833066666e-32
   };
 
-			static readonly double[] ai12cs = 
-  { 
+			private static readonly double[] ai12cs =
+  {
     0.02857623501828012047449845948469,
     -0.009761097491361468407765164457302,
     -1.105889387626237162912569212775e-4,
@@ -2494,59 +2449,53 @@ namespace Altaxo.Calc
     -1.808343145039336939159368876687e-31,
     -2.231677718203771952232448228939e-31,
     1.619029596080341510617909803614e-31,
-    -1.83407990880494141390130843921e-32 
+    -1.83407990880494141390130843921e-32
   };
 
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xmin = DBL_MIN * 2.0;
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
-			static readonly int nti1 = initds(bi1cs, 17, eta);
-			static readonly int ntai1 = initds(ai1cs, 46, eta);
-			static readonly int ntai12 = initds(ai12cs, 69, eta);
-
-
-
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double xmin = DBL_MIN * 2.0;
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+			private static readonly int nti1 = initds(bi1cs, 17, eta);
+			private static readonly int ntai1 = initds(ai1cs, 46, eta);
+			private static readonly int ntai12 = initds(ai12cs, 69, eta);
 
 			/// <summary>
-			/// BesselExpI1(x) calculates the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
-			/// one for double precision argument x.  The result is I1(x) 
-			/// multiplied by exp(-abs(x)). 
+			/// BesselExpI1(x) calculates the double precision exponentially scaled
+			/// modified (hyperbolic) Bessel function of the first kind of order
+			/// one for double precision argument x.  The result is I1(x)
+			/// multiplied by exp(-abs(x)).
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>The exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
+			/// <returns>The exponentially scaled
+			/// modified (hyperbolic) Bessel function of the first kind of order
 			/// one for argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BI1        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   1.44E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  31.45 
-			///                                    decimal places required  32.46 
+			/// Series for BI1        on the interval  0.          to  9.00000E+00
+			///                                        with weighted error   1.44E-32
+			///                                         log weighted error  31.84
+			///                               significant figures required  31.45
+			///                                    decimal places required  32.46
 			///
-			/// Series for AI1        on the interval  1.25000E-01 to  3.33333E-01 
-			///                                        with weighted error   2.81E-32 
-			///                                         log weighted error  31.55 
-			///                               significant figures required  29.93 
-			///                                    decimal places required  32.38 
+			/// Series for AI1        on the interval  1.25000E-01 to  3.33333E-01
+			///                                        with weighted error   2.81E-32
+			///                                         log weighted error  31.55
+			///                               significant figures required  29.93
+			///                                    decimal places required  32.38
 			///
-			/// Series for AI12       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   1.83E-32 
-			///                                         log weighted error  31.74 
-			///                               significant figures required  29.97 
-			///                                    decimal places required  32.66 
+			/// Series for AI12       on the interval  0.          to  1.25000E-01
+			///                                        with weighted error   1.83E-32
+			///                                         log weighted error  31.74
+			///                               significant figures required  29.97
+			///                                    decimal places required  32.66
 			/// </code></remarks>
 			public static double BesselExpI1(double x, bool bDebug)
 			{
-
 				double ret_val;
-
-
 
 				double y = Math.Abs(x);
 				if (y > 3.0) goto L20;
@@ -2567,26 +2516,26 @@ namespace Altaxo.Calc
 			L20:
 				if (y <= 8.0)
 					ret_val = (dcsevl((48.0 / y - 11.0) / 5.0, ai1cs, ntai1) + 0.375) / Math.Sqrt(y);
-				else // if (y > 8.0) 
+				else // if (y > 8.0)
 					ret_val = (dcsevl(16.0 / y - 1.0, ai12cs, ntai12) + 0.375) / Math.Sqrt(y);
 
 				return CopySign(ret_val, x);
 			}
-
 		}
-		#endregion
+
+		#endregion BesselExpI1
 
 		#region BesselK0
 
 		/// <summary>
-		/// BesselK0(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the third kind of order zero for double 
-		/// precision argument x.  The argument must be greater than zero 
+		/// BesselK0(x) calculates the double precision modified (hyperbolic)
+		/// Bessel function of the third kind of order zero for double
+		/// precision argument x.  The argument must be greater than zero
 		/// but not so large that the result underflows.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Modified (hyperbolic) 
-		/// Bessel function of the third kind of order zero for double 
+		/// <returns>Modified (hyperbolic)
+		/// Bessel function of the third kind of order zero for double
 		/// precision argument x.</returns>
 		public static double BesselK0(double x)
 		{
@@ -2594,26 +2543,25 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselK0(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the third kind of order zero for double 
-		/// precision argument x.  The argument must be greater than zero 
+		/// BesselK0(x) calculates the double precision modified (hyperbolic)
+		/// Bessel function of the third kind of order zero for double
+		/// precision argument x.  The argument must be greater than zero
 		/// but not so large that the result underflows.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Modified (hyperbolic) 
-		/// Bessel function of the third kind of order zero for double 
+		/// <returns>Modified (hyperbolic)
+		/// Bessel function of the third kind of order zero for double
 		/// precision argument x.</returns>
 		public static double BesselK0(double x, bool bDebug)
 		{
 			return _BesselK0.BesselK0(x, bDebug);
 		}
 
-		class _BesselK0
+		private class _BesselK0
 		{
-
-			static readonly double[] bk0cs = 
-  { 
+			private static readonly double[] bk0cs =
+  {
     -0.0353273932339027687201140060063153,
     0.344289899924628486886344927529213,
     0.0359799365153615016265721303687231,
@@ -2629,42 +2577,38 @@ namespace Altaxo.Calc
     1.36542498844078185908053333333333e-24,
     2.07527526690666808319999999999999e-27,
     2.7128142180729856e-30,
-    3.08259388791466666666666666666666e-33 
+    3.08259388791466666666666666666666e-33
   };
 
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly double xmaxt = -Math.Log(DBL_MIN);
-			static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
-			static readonly int ntk0 = initds(bk0cs, 16, 0.5 * DBL_EPSILON * 0.1);
-
-
-
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+			private static readonly double xmaxt = -Math.Log(DBL_MIN);
+			private static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
+			private static readonly int ntk0 = initds(bk0cs, 16, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselK0(x) calculates the double precision modified (hyperbolic) 
-			/// Bessel function of the third kind of order zero for double 
-			/// precision argument x.  The argument must be greater than zero 
+			/// BesselK0(x) calculates the double precision modified (hyperbolic)
+			/// Bessel function of the third kind of order zero for double
+			/// precision argument x.  The argument must be greater than zero
 			/// but not so large that the result underflows.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Modified (hyperbolic) 
-			/// Bessel function of the third kind of order zero for double 
+			/// <returns>Modified (hyperbolic)
+			/// Bessel function of the third kind of order zero for double
 			/// precision argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BK0        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   3.08E-33 
-			///                                         log weighted error  32.51 
-			///                               significant figures required  32.05 
-			///                                    decimal places required  33.11 
+			/// Series for BK0        on the interval  0.          to  4.00000E+00
+			///                                        with weighted error   3.08E-33
+			///                                         log weighted error  32.51
+			///                               significant figures required  32.05
+			///                                    decimal places required  33.11
 			/// </code></remarks>
 			public static double BesselK0(double x, bool bDebug)
 			{
-
 				double y;
 
 				if (x <= 0.0)
@@ -2688,19 +2632,19 @@ namespace Altaxo.Calc
 				return Math.Exp(-x) * BesselExpK0(x, bDebug);
 			}
 		}
-		#endregion
+
+		#endregion BesselK0
 
 		#region BesselExpK0
 
-
 		/// <summary>
-		/// BesselExpK0 (x)  computes the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of 
-		/// order zero for positive double precision argument X. 
+		/// BesselExpK0 (x)  computes the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of
+		/// order zero for positive double precision argument X.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of 
+		/// <returns>Exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of
 		/// order zero for positive double precision argument x.</returns>
 		public static double BesselExpK0(double x)
 		{
@@ -2708,25 +2652,24 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselExpK0 (x)  computes the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of 
-		/// order zero for positive double precision argument X. 
+		/// BesselExpK0 (x)  computes the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of
+		/// order zero for positive double precision argument X.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of 
+		/// <returns>Exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of
 		/// order zero for positive double precision argument x.</returns>
 		public static double BesselExpK0(double x, bool bDebug)
 		{
 			return _BesselExpK0.BesselExpK0(x, bDebug);
 		}
 
-		class _BesselExpK0
+		private class _BesselExpK0
 		{
-
-			static readonly double[] bk0cs = 
-  { 
+			private static readonly double[] bk0cs =
+  {
     -0.0353273932339027687201140060063153,
     0.344289899924628486886344927529213,
     0.0359799365153615016265721303687231,
@@ -2742,11 +2685,11 @@ namespace Altaxo.Calc
     1.36542498844078185908053333333333e-24,
     2.07527526690666808319999999999999e-27,
     2.7128142180729856e-30,
-    3.08259388791466666666666666666666e-33 
+    3.08259388791466666666666666666666e-33
   };
 
-			static readonly double[] ak0cs = 
-  { 
+			private static readonly double[] ak0cs =
+  {
     -0.07643947903327941424082978270088,
     -0.02235652605699819052023095550791,
     7.734181154693858235300618174047e-4,
@@ -2784,11 +2727,11 @@ namespace Altaxo.Calc
     3.316143281480227195890346666666e-30,
     -6.746863644145295941085866666666e-31,
     1.382429146318424677635413333333e-31,
-    -2.851874167359832570811733333333e-32 
+    -2.851874167359832570811733333333e-32
   };
 
-			static readonly double[] ak02cs = 
-  { 
+			private static readonly double[] ak02cs =
+  {
     -0.01201869826307592239839346212452,
     -0.009174852691025695310652561075713,
     1.444550931775005821048843878057e-4,
@@ -2821,55 +2764,50 @@ namespace Altaxo.Calc
     -2.988226453005757788979199999999e-30,
     5.796831375216836520618666666666e-31,
     -1.145035994347681332155733333333e-31,
-    2.301266594249682802005333333333e-32 
+    2.301266594249682802005333333333e-32
   };
 
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly int ntk0 = initds(bk0cs, 16, eta);
-			static readonly int ntak0 = initds(ak0cs, 38, eta);
-			static readonly int ntak02 = initds(ak02cs, 33, eta);
-
-
-
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+			private static readonly int ntk0 = initds(bk0cs, 16, eta);
+			private static readonly int ntak0 = initds(ak0cs, 38, eta);
+			private static readonly int ntak02 = initds(ak02cs, 33, eta);
 
 			/// <summary>
-			/// BesselExpK0 (x)  computes the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of 
-			/// order zero for positive double precision argument X. 
+			/// BesselExpK0 (x)  computes the double precision exponentially scaled
+			/// modified (hyperbolic) Bessel function of the third kind of
+			/// order zero for positive double precision argument X.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of 
+			/// <returns>Exponentially scaled
+			/// modified (hyperbolic) Bessel function of the third kind of
 			/// order zero for positive double precision argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BK0        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   3.08E-33 
-			///                                         log weighted error  32.51 
-			///                               significant figures required  32.05 
-			///                                    decimal places required  33.11 
+			/// Series for BK0        on the interval  0.          to  4.00000E+00
+			///                                        with weighted error   3.08E-33
+			///                                         log weighted error  32.51
+			///                               significant figures required  32.05
+			///                                    decimal places required  33.11
 			///
-			/// Series for AK0        on the interval  1.25000E-01 to  5.00000E-01 
-			///                                        with weighted error   2.85E-32 
-			///                                         log weighted error  31.54 
-			///                               significant figures required  30.19 
-			///                                    decimal places required  32.33 
+			/// Series for AK0        on the interval  1.25000E-01 to  5.00000E-01
+			///                                        with weighted error   2.85E-32
+			///                                         log weighted error  31.54
+			///                               significant figures required  30.19
+			///                                    decimal places required  32.33
 			///
-			/// Series for AK02       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   2.30E-32 
-			///                                         log weighted error  31.64 
-			///                               significant figures required  29.68 
-			///                                    decimal places required  32.40 
+			/// Series for AK02       on the interval  0.          to  1.25000E-01
+			///                                        with weighted error   2.30E-32
+			///                                         log weighted error  31.64
+			///                               significant figures required  29.68
+			///                                    decimal places required  32.40
 			/// </code></remarks>
 			public static double BesselExpK0(double x, bool bDebug)
 			{
-
-
 				if (x <= 0.0)
 				{
 					if (bDebug)
@@ -2891,23 +2829,24 @@ namespace Altaxo.Calc
 			L20:
 				if (x <= 8.0)
 					return (dcsevl((16.0 / x - 5.0) / 3.0, ak0cs, ntak0) + 1.25) / Math.Sqrt(x);
-				else // if (x > 8.0) 
+				else // if (x > 8.0)
 					return (dcsevl(16.0 / x - 1.0, ak02cs, ntak02) + 1.25) / Math.Sqrt(x);
 			}
 		}
-		#endregion
+
+		#endregion BesselExpK0
 
 		#region BesselK1
 
 		/// <summary>
-		/// BesselK1(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the third kind of order one for double precision 
-		/// argument x.  The argument must be large enough that the result does 
-		/// not overflow and small enough that the result does not underflow. 
+		/// BesselK1(x) calculates the double precision modified (hyperbolic)
+		/// Bessel function of the third kind of order one for double precision
+		/// argument x.  The argument must be large enough that the result does
+		/// not overflow and small enough that the result does not underflow.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Modified (hyperbolic) 
-		/// Bessel function of the third kind of order one for double precision 
+		/// <returns>Modified (hyperbolic)
+		/// Bessel function of the third kind of order one for double precision
 		/// argument x.</returns>
 		public static double BesselK1(double x)
 		{
@@ -2915,25 +2854,25 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselK1(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the third kind of order one for double precision 
-		/// argument x.  The argument must be large enough that the result does 
-		/// not overflow and small enough that the result does not underflow. 
+		/// BesselK1(x) calculates the double precision modified (hyperbolic)
+		/// Bessel function of the third kind of order one for double precision
+		/// argument x.  The argument must be large enough that the result does
+		/// not overflow and small enough that the result does not underflow.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Modified (hyperbolic) 
-		/// Bessel function of the third kind of order one for double precision 
+		/// <returns>Modified (hyperbolic)
+		/// Bessel function of the third kind of order one for double precision
 		/// argument x.</returns>
 		public static double BesselK1(double x, bool bDebug)
 		{
 			return _BesselK1.BesselK1(x, bDebug);
 		}
 
-		class _BesselK1
+		private class _BesselK1
 		{
-			static readonly double[] bk1cs = 
-  { 
+			private static readonly double[] bk1cs =
+  {
     0.025300227338947770532531120868533,
     -0.35315596077654487566723831691801,
     -0.12261118082265714823479067930042,
@@ -2949,42 +2888,39 @@ namespace Altaxo.Calc
     -3.2338347459944491991893333333333e-23,
     -5.3312750529265274999466666666666e-26,
     -7.5130407162157226666666666666666e-29,
-    -9.1550857176541866666666666666666e-32 
+    -9.1550857176541866666666666666666e-32
   };
 
-			static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01);
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly double xmaxt = -Math.Log(DBL_MIN);
-			static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
-			static readonly int ntk1 = initds(bk1cs, 16, 0.5 * DBL_EPSILON * 0.1);
-
+			private static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01);
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+			private static readonly double xmaxt = -Math.Log(DBL_MIN);
+			private static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
+			private static readonly int ntk1 = initds(bk1cs, 16, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// BesselK1(x) calculates the double precision modified (hyperbolic) 
-			/// Bessel function of the third kind of order one for double precision 
-			/// argument x.  The argument must be large enough that the result does 
-			/// not overflow and small enough that the result does not underflow. 
+			/// BesselK1(x) calculates the double precision modified (hyperbolic)
+			/// Bessel function of the third kind of order one for double precision
+			/// argument x.  The argument must be large enough that the result does
+			/// not overflow and small enough that the result does not underflow.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Modified (hyperbolic) 
-			/// Bessel function of the third kind of order one for double precision 
+			/// <returns>Modified (hyperbolic)
+			/// Bessel function of the third kind of order one for double precision
 			/// argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BK1        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   9.16E-32 
-			///                                         log weighted error  31.04 
-			///                               significant figures required  30.61 
-			///                                    decimal places required  31.64 
+			/// Series for BK1        on the interval  0.          to  4.00000E+00
+			///                                        with weighted error   9.16E-32
+			///                                         log weighted error  31.04
+			///                               significant figures required  30.61
+			///                                    decimal places required  31.64
 			/// </code></remarks>
 			public static double BesselK1(double x, bool bDebug)
 			{
-
-
 				double y;
 
 				if (x <= 0.0)
@@ -3020,18 +2956,18 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion BesselK1
 
 		#region BesselExpK1
 
 		/// <summary>
-		/// BesselExpK1(x) computes the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of order 
-		/// one for positive double precision argument x. 
+		/// BesselExpK1(x) computes the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of order
+		/// one for positive double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of order 
+		/// <returns>Exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of order
 		/// one for positive double precision argument x.</returns>
 		public static double BesselExpK1(double x)
 		{
@@ -3039,24 +2975,24 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// BesselExpK1(x) computes the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of order 
-		/// one for positive double precision argument x. 
+		/// BesselExpK1(x) computes the double precision exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of order
+		/// one for positive double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of order 
+		/// <returns>Exponentially scaled
+		/// modified (hyperbolic) Bessel function of the third kind of order
 		/// one for positive double precision argument x.</returns>
 		public static double BesselExpK1(double x, bool bDebug)
 		{
 			return _BesselExpK1.BesselExpK1(x, bDebug);
 		}
 
-		class _BesselExpK1
+		private class _BesselExpK1
 		{
-			static readonly double[] bk1cs = 
-    { 
+			private static readonly double[] bk1cs =
+    {
       0.025300227338947770532531120868533,
       -0.35315596077654487566723831691801,
       -0.12261118082265714823479067930042,
@@ -3072,11 +3008,11 @@ namespace Altaxo.Calc
       -3.2338347459944491991893333333333e-23,
       -5.3312750529265274999466666666666e-26,
       -7.5130407162157226666666666666666e-29,
-      -9.1550857176541866666666666666666e-32 
+      -9.1550857176541866666666666666666e-32
     };
 
-			static readonly double[] ak1cs = 
-    { 
+			private static readonly double[] ak1cs =
+    {
       0.27443134069738829695257666227266,
       0.07571989953199367817089237814929,
       -0.0014410515564754061229853116175625,
@@ -3114,11 +3050,11 @@ namespace Altaxo.Calc
       -3.5884555967329095821994666666666e-30,
       7.2906290492694257991679999999999e-31,
       -1.4918449845546227073024e-31,
-      3.0736573872934276300799999999999e-32 
+      3.0736573872934276300799999999999e-32
     };
 
-			static readonly double[] ak12cs = 
-    { 
+			private static readonly double[] ak12cs =
+    {
       0.06379308343739001036600488534102,
       0.02832887813049720935835030284708,
       -2.475370673905250345414545566732e-4,
@@ -3151,56 +3087,51 @@ namespace Altaxo.Calc
       3.145111321357848674303999999999e-30,
       -6.092998312193127612416e-31,
       1.202021939369815834623999999999e-31,
-      -2.412930801459408841386666666666e-32 
+      -2.412930801459408841386666666666e-32
     };
 
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01);
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly int ntk1 = initds(bk1cs, 16, eta);
-			static readonly int ntak1 = initds(ak1cs, 38, eta);
-			static readonly int ntak12 = initds(ak12cs, 33, eta);
-
-
-
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
+			private static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01);
+			private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+			private static readonly int ntk1 = initds(bk1cs, 16, eta);
+			private static readonly int ntak1 = initds(ak1cs, 38, eta);
+			private static readonly int ntak12 = initds(ak12cs, 33, eta);
 
 			/// <summary>
-			/// BesselExpK1(x) computes the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of order 
-			/// one for positive double precision argument x. 
+			/// BesselExpK1(x) computes the double precision exponentially scaled
+			/// modified (hyperbolic) Bessel function of the third kind of order
+			/// one for positive double precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of order 
+			/// <returns>Exponentially scaled
+			/// modified (hyperbolic) Bessel function of the third kind of order
 			/// one for positive double precision argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BK1        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   9.16E-32 
-			///                                         log weighted error  31.04 
-			///                               significant figures required  30.61 
-			///                                    decimal places required  31.64 
+			/// Series for BK1        on the interval  0.          to  4.00000E+00
+			///                                        with weighted error   9.16E-32
+			///                                         log weighted error  31.04
+			///                               significant figures required  30.61
+			///                                    decimal places required  31.64
 			///
-			/// Series for AK1        on the interval  1.25000E-01 to  5.00000E-01 
-			///                                        with weighted error   3.07E-32 
-			///                                         log weighted error  31.51 
-			///                               significant figures required  30.71 
-			///                                    decimal places required  32.30 
+			/// Series for AK1        on the interval  1.25000E-01 to  5.00000E-01
+			///                                        with weighted error   3.07E-32
+			///                                         log weighted error  31.51
+			///                               significant figures required  30.71
+			///                                    decimal places required  32.30
 			///
-			/// Series for AK12       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   2.41E-32 
-			///                                         log weighted error  31.62 
-			///                               significant figures required  30.25 
-			///                                    decimal places required  32.38 
+			/// Series for AK12       on the interval  0.          to  1.25000E-01
+			///                                        with weighted error   2.41E-32
+			///                                         log weighted error  31.62
+			///                               significant figures required  30.25
+			///                                    decimal places required  32.38
 			/// </code></remarks>
 			public static double BesselExpK1(double x, bool bDebug)
 			{
-
-
 				double y;
 
 				if (x <= 0.0)
@@ -3228,17 +3159,18 @@ namespace Altaxo.Calc
 			L20:
 				if (x <= 8.0)
 					return (dcsevl((16.0 / x - 5.0) / 3.0, ak1cs, ntak1) + 1.25) / Math.Sqrt(x);
-				else // if (x > 8.0) 
+				else // if (x > 8.0)
 					return (dcsevl(16.0 / x - 1.0, ak12cs, ntak12) + 1.25) / Math.Sqrt(x);
 			}
 		}
-		#endregion
+
+		#endregion BesselExpK1
 
 		#region AiryAi
 
 		/// <summary>
-		/// AiryAi(x) calculates the double precision Airy function for double 
-		/// precision argument x. 
+		/// AiryAi(x) calculates the double precision Airy function for double
+		/// precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <returns>Airy function for argument x.</returns>
@@ -3248,8 +3180,8 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// AiryAi(x) calculates the double precision Airy function for double 
-		/// precision argument x. 
+		/// AiryAi(x) calculates the double precision Airy function for double
+		/// precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -3259,12 +3191,10 @@ namespace Altaxo.Calc
 			return _AiryAi.AiryAi(x, bDebug);
 		}
 
-		class _AiryAi
+		private class _AiryAi
 		{
-
-
-			static readonly double[] aifcs = 
-    { 
+			private static readonly double[] aifcs =
+    {
       -0.037971358496669997496197089469414,
       0.059191888537263638574319728013777,
       9.862928057727997536560389104406e-4,
@@ -3277,11 +3207,11 @@ namespace Altaxo.Calc
       7.75137721966848870392384e-23,
       4.4548112037175638391466666666666e-26,
       2.1092845231692343466666666666666e-29,
-      8.3701735910741333333333333333333e-33 
+      8.3701735910741333333333333333333e-33
     };
 
-			static readonly double[] aigcs = 
-    { 
+			private static readonly double[] aigcs =
+    {
       0.018152365581161273011556209957864,
       0.021572563166010755534030638819968,
       2.5678356987483249659052428090133e-4,
@@ -3294,20 +3224,19 @@ namespace Altaxo.Calc
       8.3063073770821340343829333333333e-24,
       4.4657538493718567445333333333333e-27,
       1.9900855034518869333333333333333e-30,
-      7.4702885256533333333333333333333e-34 
+      7.4702885256533333333333333333333e-34
     };
 
-			static readonly double x3sml = Math.Pow(0.5 * DBL_EPSILON, 0.3334),
+			private static readonly double x3sml = Math.Pow(0.5 * DBL_EPSILON, 0.3334),
 				xmaxt = Math.Pow(Math.Log(DBL_MIN) * -1.5, 0.6667),
 				xmax = xmaxt - xmaxt * Math.Log(xmaxt) / (Math.Sqrt(xmaxt) * 4.0 + 1.0) - 0.01;
 
-			static readonly int naif = initds(aifcs, 13, 0.5 * DBL_EPSILON * 0.1);
-			static readonly int naig = initds(aigcs, 13, 0.5 * DBL_EPSILON * 0.1);
-
+			private static readonly int naif = initds(aifcs, 13, 0.5 * DBL_EPSILON * 0.1);
+			private static readonly int naig = initds(aigcs, 13, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// AiryAi(x) calculates the double precision Airy function for double 
-			/// precision argument x. 
+			/// AiryAi(x) calculates the double precision Airy function for double
+			/// precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -3317,21 +3246,20 @@ namespace Altaxo.Calc
 			/// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   8.37E-33 
-			///                                         log weighted error  32.08 
-			///                               significant figures required  30.87 
-			///                                    decimal places required  32.63 
+			/// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   8.37E-33
+			///                                         log weighted error  32.08
+			///                               significant figures required  30.87
+			///                                    decimal places required  32.63
 			///
-			/// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   7.47E-34 
-			///                                         log weighted error  33.13 
-			///                               significant figures required  31.50 
-			///                                    decimal places required  33.68 
+			/// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   7.47E-34
+			///                                         log weighted error  33.13
+			///                               significant figures required  31.50
+			///                                    decimal places required  33.68
 			/// </code></remarks>
 			public static double AiryAi(double x, bool bDebug)
 			{
-
 				double z, theta, xm;
 
 				if (x >= -1.0) goto L20;
@@ -3354,19 +3282,20 @@ namespace Altaxo.Calc
 				return 0.0;
 			}
 		}
-		#endregion
+
+		#endregion AiryAi
 
 		#region AiryExpAi
 
 		/// <summary>
-		/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
-		/// Airy function depending on the value of the argument.  The function 
+		/// AiryExpAi(x) calculates the Airy function or the exponentially scaled
+		/// Airy function depending on the value of the argument.  The function
 		/// and argument are both double precision. Returns
-		/// Ai(x)                       for x &lt;= 0.0 
+		/// Ai(x)                       for x &lt;= 0.0
 		/// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function or the exponentially scaled 
+		/// <returns>Airy function or the exponentially scaled
 		/// Airy function depending on the value of the argument.</returns>
 		public static double AiryExpAi(double x)
 		{
@@ -3374,25 +3303,25 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
-		/// Airy function depending on the value of the argument.  The function 
+		/// AiryExpAi(x) calculates the Airy function or the exponentially scaled
+		/// Airy function depending on the value of the argument.  The function
 		/// and argument are both double precision. Returns
-		/// Ai(x)                       for x &lt;= 0.0 
+		/// Ai(x)                       for x &lt;= 0.0
 		/// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Airy function or the exponentially scaled 
+		/// <returns>Airy function or the exponentially scaled
 		/// Airy function depending on the value of the argument.</returns>
 		public static double AiryExpAi(double x, bool bDebug)
 		{
 			return _AiryExpAi.AiryExpAi(x, bDebug);
 		}
 
-		class _AiryExpAi
+		private class _AiryExpAi
 		{
-			static readonly double[] aifcs = 
-    { 
+			private static readonly double[] aifcs =
+    {
       -0.037971358496669997496197089469414,
       0.059191888537263638574319728013777,
       9.862928057727997536560389104406e-4,
@@ -3405,11 +3334,11 @@ namespace Altaxo.Calc
       7.75137721966848870392384e-23,
       4.4548112037175638391466666666666e-26,
       2.1092845231692343466666666666666e-29,
-      8.3701735910741333333333333333333e-33 
+      8.3701735910741333333333333333333e-33
     };
 
-			static readonly double[] aigcs = 
-    { 
+			private static readonly double[] aigcs =
+    {
       0.018152365581161273011556209957864,
       0.021572563166010755534030638819968,
       2.5678356987483249659052428090133e-4,
@@ -3422,11 +3351,11 @@ namespace Altaxo.Calc
       8.3063073770821340343829333333333e-24,
       4.4657538493718567445333333333333e-27,
       1.9900855034518869333333333333333e-30,
-      7.4702885256533333333333333333333e-34 
+      7.4702885256533333333333333333333e-34
     };
 
-			static readonly double[] aip1cs = 
-    { 
+			private static readonly double[] aip1cs =
+    {
       -0.02146951858910538455460863467778,
       -0.007535382535043301166219720865565,
       5.971527949026380852035388881994e-4,
@@ -3483,11 +3412,11 @@ namespace Altaxo.Calc
       -7.701158157787598216982761745066e-31,
       2.79053330796893041758178377728e-31,
       -1.013807715111284006452241367039e-31,
-      3.692580158719624093658286216533e-32 
+      3.692580158719624093658286216533e-32
     };
 
-			static readonly double[] aip2cs = 
-    { 
+			private static readonly double[] aip2cs =
+    {
       -0.00174314496929375513390355844011,
       -0.0016789385432554167163219061348,
       3.59653403352166035885983858114e-5,
@@ -3524,66 +3453,61 @@ namespace Altaxo.Calc
       -2.09396142298188169434453333333e-30,
       5.27008873478945503182848e-31,
       -1.34457433014553385789030399999e-31,
-      3.47570964526601147340117333333e-32 
+      3.47570964526601147340117333333e-32
     };
 
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1,
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1,
 				x3sml = Math.Pow(eta, 0.3333),
 				x32sml = x3sml * x3sml * 1.3104,
 				xbig = Math.Pow(DBL_MAX, 0.6666);
 
-			static readonly int naif = initds(aifcs, 13, eta);
-			static readonly int naig = initds(aigcs, 13, eta);
-			static readonly int naip1 = initds(aip1cs, 57, eta);
-			static readonly int naip2 = initds(aip2cs, 37, eta);
-
-
+			private static readonly int naif = initds(aifcs, 13, eta);
+			private static readonly int naig = initds(aigcs, 13, eta);
+			private static readonly int naip1 = initds(aip1cs, 57, eta);
+			private static readonly int naip2 = initds(aip2cs, 37, eta);
 
 			/// <summary>
-			/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
-			/// Airy function depending on the value of the argument.  The function 
+			/// AiryExpAi(x) calculates the Airy function or the exponentially scaled
+			/// Airy function depending on the value of the argument.  The function
 			/// and argument are both double precision. Returns
-			/// Ai(x)                       for x &lt;= 0.0 
+			/// Ai(x)                       for x &lt;= 0.0
 			/// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Airy function or the exponentially scaled 
+			/// <returns>Airy function or the exponentially scaled
 			/// Airy function depending on the value of the argument.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   8.37E-33 
-			///                                         log weighted error  32.08 
-			///                               significant figures required  30.87 
-			///                                    decimal places required  32.63 
+			/// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   8.37E-33
+			///                                         log weighted error  32.08
+			///                               significant figures required  30.87
+			///                                    decimal places required  32.63
 			///
-			/// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   7.47E-34 
-			///                                         log weighted error  33.13 
-			///                               significant figures required  31.50 
-			///                                    decimal places required  33.68 
+			/// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   7.47E-34
+			///                                         log weighted error  33.13
+			///                               significant figures required  31.50
+			///                                    decimal places required  33.68
 			///
-			/// Series for AIP1       on the interval  1.25000E-01 to  1.00000E+00 
-			///                                        with weighted error   3.69E-32 
-			///                                         log weighted error  31.43 
-			///                               significant figures required  29.55 
-			///                                    decimal places required  32.31 
+			/// Series for AIP1       on the interval  1.25000E-01 to  1.00000E+00
+			///                                        with weighted error   3.69E-32
+			///                                         log weighted error  31.43
+			///                               significant figures required  29.55
+			///                                    decimal places required  32.31
 			///
-			/// Series for AIP2       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   3.48E-32 
-			///                                         log weighted error  31.46 
-			///                               significant figures required  28.74 
-			///                                    decimal places required  32.24 
+			/// Series for AIP2       on the interval  0.          to  1.25000E-01
+			///                                        with weighted error   3.48E-32
+			///                                         log weighted error  31.46
+			///                               significant figures required  28.74
+			///                                    decimal places required  32.24
 			/// </code></remarks>
 			public static double AiryExpAi(double x, bool bDebug)
 			{
-
-
-
 				double sqrtx, xm, z, theta, ret_val;
 
 				if (x >= -1.0) goto L20;
@@ -3611,16 +3535,17 @@ namespace Altaxo.Calc
 				return (dcsevl(z, aip2cs, naip2) + 0.28125) / Math.Sqrt(sqrtx);
 			}
 		}
-		#endregion
+
+		#endregion AiryExpAi
 
 		#region AiryBi
 
 		/// <summary>
-		/// AiryBi(x) calculates the double precision Airy function of the 
-		/// second kind for double precision argument x. 
+		/// AiryBi(x) calculates the double precision Airy function of the
+		/// second kind for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function of the 
+		/// <returns>Airy function of the
 		/// second kind for double precision argument x.</returns>
 		public static double AiryBi(double x)
 		{
@@ -3628,22 +3553,22 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// AiryBi(x) calculates the double precision Airy function of the 
-		/// second kind for double precision argument x. 
+		/// AiryBi(x) calculates the double precision Airy function of the
+		/// second kind for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Airy function of the 
+		/// <returns>Airy function of the
 		/// second kind for double precision argument x.</returns>
 		public static double AiryBi(double x, bool bDebug)
 		{
 			return _AiryBi.AiryBi(x, bDebug);
 		}
 
-		class _AiryBi
+		private class _AiryBi
 		{
-			static readonly double[] bifcs = 
-    { 
+			private static readonly double[] bifcs =
+    {
       -0.016730216471986649483537423928176,
       0.10252335834249445611426362777757,
       0.0017083092507381516539429650242013,
@@ -3656,11 +3581,11 @@ namespace Altaxo.Calc
       1.3425779173097804625882666666666e-22,
       7.7159593429658887893333333333333e-26,
       3.6533879617478566399999999999999e-29,
-      1.4497565927953066666666666666666e-32 
+      1.4497565927953066666666666666666e-32
     };
 
-			static readonly double[] bigcs = 
-    { 
+			private static readonly double[] bigcs =
+    {
       0.022466223248574522283468220139024,
       0.037364775453019545441727561666752,
       4.4476218957212285696215294326639e-4,
@@ -3673,11 +3598,11 @@ namespace Altaxo.Calc
       1.4386946400390433219483733333333e-23,
       7.7349125612083468629333333333333e-27,
       3.4469292033849002666666666666666e-30,
-      1.2938919273216e-33 
+      1.2938919273216e-33
     };
 
-			static readonly double[] bif2cs = 
-    { 
+			private static readonly double[] bif2cs =
+    {
       0.0998457269381604104468284257993,
       0.47862497786300553772211467318231,
       0.025155211960433011771324415436675,
@@ -3692,10 +3617,10 @@ namespace Altaxo.Calc
       3.6815778736393142842922666666666e-23,
       5.0960868449338261333333333333333e-26,
       6.0003386926288554666666666666666e-29,
-      6.0827497446570666666666666666666e-32 
+      6.0827497446570666666666666666666e-32
     };
 
-			static readonly double[] big2cs = 
+			private static readonly double[] big2cs =
     {
       0.033305662145514340465176188111647,
       0.161309215123197067613287532084943,
@@ -3711,63 +3636,57 @@ namespace Altaxo.Calc
       3.46551923027689419722666666666666e-24,
       4.53926336320504514133333333333333e-27,
       5.07884996513522346666666666666666e-30,
-      4.91020674696533333333333333333333e-33 
+      4.91020674696533333333333333333333e-33
     };
 
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1,
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1,
 				x3sml = Math.Pow(eta, 0.3333),
 				xmax = Math.Pow(Math.Log(DBL_MAX) * 1.5, 0.6666);
 
-			static readonly int nbif = initds(bifcs, 13, eta);
-			static readonly int nbig = initds(bigcs, 13, eta);
-			static readonly int nbif2 = initds(bif2cs, 15, eta);
-			static readonly int nbig2 = initds(big2cs, 15, eta);
-
-
-
-
+			private static readonly int nbif = initds(bifcs, 13, eta);
+			private static readonly int nbig = initds(bigcs, 13, eta);
+			private static readonly int nbif2 = initds(bif2cs, 15, eta);
+			private static readonly int nbig2 = initds(big2cs, 15, eta);
 
 			/// <summary>
-			/// AiryBi(x) calculates the double precision Airy function of the 
-			/// second kind for double precision argument x. 
+			/// AiryBi(x) calculates the double precision Airy function of the
+			/// second kind for double precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Airy function of the 
+			/// <returns>Airy function of the
 			/// second kind for double precision argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.45E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  30.85 
-			///                                    decimal places required  32.40 
+			/// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   1.45E-32
+			///                                         log weighted error  31.84
+			///                               significant figures required  30.85
+			///                                    decimal places required  32.40
 			///
-			/// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.29E-33 
-			///                                         log weighted error  32.89 
-			///                               significant figures required  31.48 
-			///                                    decimal places required  33.45 
+			/// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   1.29E-33
+			///                                         log weighted error  32.89
+			///                               significant figures required  31.48
+			///                                    decimal places required  33.45
 			///
-			/// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   6.08E-32 
-			///                                         log weighted error  31.22 
-			///                        approx significant figures required  30.8 
-			///                                    decimal places required  31.80 
+			/// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00
+			///                                        with weighted error   6.08E-32
+			///                                         log weighted error  31.22
+			///                        approx significant figures required  30.8
+			///                                    decimal places required  31.80
 			///
-			/// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   4.91E-33 
-			///                                         log weighted error  32.31 
-			///                        approx significant figures required  31.6 
-			///                                    decimal places required  32.90 
+			/// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00
+			///                                        with weighted error   4.91E-33
+			///                                         log weighted error  32.31
+			///                        approx significant figures required  31.6
+			///                                    decimal places required  32.90
 			/// </code></remarks>
 			public static double AiryBi(double x, bool bDebug)
 			{
-
-
 				double z, theta, xm;
 
 				if (x >= -1.0) goto L20;
@@ -3797,22 +3716,23 @@ namespace Altaxo.Calc
 				return AiryExpBi(x, bDebug) * Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
 			}
 		}
-		#endregion
+
+		#endregion AiryBi
 
 		#region AiryExpBi
 
 		/// <summary>
-		/// AiryExpBi(x) calculates the double precision Airy function of the 
-		/// second kind or the double precision exponentially scaled Airy 
-		/// function of the second kind, depending on the value of the 
-		/// double precision argument x. Returns 
+		/// AiryExpBi(x) calculates the double precision Airy function of the
+		/// second kind or the double precision exponentially scaled Airy
+		/// function of the second kind, depending on the value of the
+		/// double precision argument x. Returns
 		///     Bi(x)                      for x &lt;= 0.0
-		///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
+		///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0
 		/// </summary>
 		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function of the 
-		/// second kind or the exponentially scaled Airy 
-		/// function of the second kind, depending on the value of the 
+		/// <returns>Airy function of the
+		/// second kind or the exponentially scaled Airy
+		/// function of the second kind, depending on the value of the
 		/// argument x.</returns>
 		public static double AiryExpBi(double x)
 		{
@@ -3820,27 +3740,27 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// AiryExpBi(x) calculates the double precision Airy function of the 
-		/// second kind or the double precision exponentially scaled Airy 
-		/// function of the second kind, depending on the value of the 
-		/// double precision argument x. Returns 
+		/// AiryExpBi(x) calculates the double precision Airy function of the
+		/// second kind or the double precision exponentially scaled Airy
+		/// function of the second kind, depending on the value of the
+		/// double precision argument x. Returns
 		///     Bi(x)                      for x &lt;= 0.0
-		///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
+		///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-		/// <returns>Airy function of the 
-		/// second kind or the exponentially scaled Airy 
-		/// function of the second kind, depending on the value of the 
+		/// <returns>Airy function of the
+		/// second kind or the exponentially scaled Airy
+		/// function of the second kind, depending on the value of the
 		/// argument x.</returns>
 		public static double AiryExpBi(double x, bool bDebug)
 		{
 			return _AiryExpBi.AiryExpBi(x, bDebug);
 		}
 
-		class _AiryExpBi
+		private class _AiryExpBi
 		{
-			static readonly double[] bifcs = 
+			private static readonly double[] bifcs =
     {
       -0.016730216471986649483537423928176,
       0.10252335834249445611426362777757,
@@ -3854,11 +3774,11 @@ namespace Altaxo.Calc
       1.3425779173097804625882666666666e-22,
       7.7159593429658887893333333333333e-26,
       3.6533879617478566399999999999999e-29,
-      1.4497565927953066666666666666666e-32 
+      1.4497565927953066666666666666666e-32
     };
 
-			static readonly double[] bigcs = 
-    { 
+			private static readonly double[] bigcs =
+    {
       0.022466223248574522283468220139024,
       0.037364775453019545441727561666752,
       4.4476218957212285696215294326639e-4,
@@ -3871,10 +3791,10 @@ namespace Altaxo.Calc
       1.4386946400390433219483733333333e-23,
       7.7349125612083468629333333333333e-27,
       3.4469292033849002666666666666666e-30,
-      1.2938919273216e-33 
+      1.2938919273216e-33
     };
 
-			static readonly double[] bif2cs = 
+			private static readonly double[] bif2cs =
     {
       0.0998457269381604104468284257993,
       0.47862497786300553772211467318231,
@@ -3890,10 +3810,10 @@ namespace Altaxo.Calc
       3.6815778736393142842922666666666e-23,
       5.0960868449338261333333333333333e-26,
       6.0003386926288554666666666666666e-29,
-      6.0827497446570666666666666666666e-32 
+      6.0827497446570666666666666666666e-32
     };
 
-			static readonly double[] big2cs = 
+			private static readonly double[] big2cs =
     {
       0.033305662145514340465176188111647,
       0.161309215123197067613287532084943,
@@ -3909,10 +3829,10 @@ namespace Altaxo.Calc
       3.46551923027689419722666666666666e-24,
       4.53926336320504514133333333333333e-27,
       5.07884996513522346666666666666666e-30,
-      4.91020674696533333333333333333333e-33 
+      4.91020674696533333333333333333333e-33
     };
 
-			static readonly double[] bip1cs = 
+			private static readonly double[] bip1cs =
     {
       -0.083220474779434474687471864707973,
       0.011461189273711742889920226128031,
@@ -3963,7 +3883,7 @@ namespace Altaxo.Calc
       -1.0558306941230714314205866666666e-32
     };
 
-			static readonly double[] bip2cs = 
+			private static readonly double[] bip2cs =
     {
       -0.11359673758598867913797310895527,
       0.0041381473947881595760052081171444,
@@ -4052,85 +3972,80 @@ namespace Altaxo.Calc
       -1.3581011996074695047063597884122e-31,
       1.3999743518492413270568048380345e-31,
       -5.9754904545248477620884562981118e-32,
-      -4.0391653875428313641045327529856e-33 
+      -4.0391653875428313641045327529856e-33
     };
 
-			static readonly double atr = 8.75069057084843450880771988210148,
+			private static readonly double atr = 8.75069057084843450880771988210148,
 				btr = -2.09383632135605431360096498526268,
 				eta = 0.5 * DBL_EPSILON * 0.1,
 				x3sml = Math.Pow(eta, 0.3333),
 				x32sml = x3sml * x3sml * 1.3104,
 				xbig = Math.Pow(DBL_MAX, 0.6666);
 
-			static readonly int nbif = initds(bifcs, 13, eta);
-			static readonly int nbig = initds(bigcs, 13, eta);
-			static readonly int nbif2 = initds(bif2cs, 15, eta);
-			static readonly int nbig2 = initds(big2cs, 15, eta);
-			static readonly int nbip1 = initds(bip1cs, 47, eta);
-			static readonly int nbip2 = initds(bip2cs, 88, eta);
-
-
-
+			private static readonly int nbif = initds(bifcs, 13, eta);
+			private static readonly int nbig = initds(bigcs, 13, eta);
+			private static readonly int nbif2 = initds(bif2cs, 15, eta);
+			private static readonly int nbig2 = initds(big2cs, 15, eta);
+			private static readonly int nbip1 = initds(bip1cs, 47, eta);
+			private static readonly int nbip2 = initds(bip2cs, 88, eta);
 
 			/// <summary>
-			/// AiryExpBi(x) calculates the double precision Airy function of the 
-			/// second kind or the double precision exponentially scaled Airy 
-			/// function of the second kind, depending on the value of the 
-			/// double precision argument x. Returns 
+			/// AiryExpBi(x) calculates the double precision Airy function of the
+			/// second kind or the double precision exponentially scaled Airy
+			/// function of the second kind, depending on the value of the
+			/// double precision argument x. Returns
 			///     Bi(x)                      for x &lt;= 0.0
-			///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
+			///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-			/// <returns>Airy function of the 
-			/// second kind or the exponentially scaled Airy 
-			/// function of the second kind, depending on the value of the 
+			/// <returns>Airy function of the
+			/// second kind or the exponentially scaled Airy
+			/// function of the second kind, depending on the value of the
 			/// argument x.</returns>
 			/// <remarks><code>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
 			/// CATEGORY C10D, REVISION 891214, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.45E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  30.85 
-			///                                    decimal places required  32.40 
+			/// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   1.45E-32
+			///                                         log weighted error  31.84
+			///                               significant figures required  30.85
+			///                                    decimal places required  32.40
 			///
-			/// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.29E-33 
-			///                                         log weighted error  32.89 
-			///                               significant figures required  31.48 
-			///                                    decimal places required  33.45 
+			/// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00
+			///                                        with weighted error   1.29E-33
+			///                                         log weighted error  32.89
+			///                               significant figures required  31.48
+			///                                    decimal places required  33.45
 			///
-			/// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   6.08E-32 
-			///                                         log weighted error  31.22 
-			///                        approx significant figures required  30.8 
-			///                                    decimal places required  31.80 
+			/// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00
+			///                                        with weighted error   6.08E-32
+			///                                         log weighted error  31.22
+			///                        approx significant figures required  30.8
+			///                                    decimal places required  31.80
 			///
-			/// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   4.91E-33 
-			///                                         log weighted error  32.31 
-			///                        approx significant figures required  31.6 
-			///                                    decimal places required  32.90 
+			/// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00
+			///                                        with weighted error   4.91E-33
+			///                                         log weighted error  32.31
+			///                        approx significant figures required  31.6
+			///                                    decimal places required  32.90
 			///
-			/// Series for BIP1       on the interval  1.25000E-01 to  3.53553E-01 
-			///                                        with weighted error   1.06E-32 
-			///                                         log weighted error  31.98 
-			///                               significant figures required  30.61 
-			///                                    decimal places required  32.81 
+			/// Series for BIP1       on the interval  1.25000E-01 to  3.53553E-01
+			///                                        with weighted error   1.06E-32
+			///                                         log weighted error  31.98
+			///                               significant figures required  30.61
+			///                                    decimal places required  32.81
 			///
-			/// Series for BIP2       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   4.04E-33 
-			///                                         log weighted error  32.39 
-			///                               significant figures required  31.15 
-			///                                    decimal places required  33.37 
+			/// Series for BIP2       on the interval  0.          to  1.25000E-01
+			///                                        with weighted error   4.04E-33
+			///                                         log weighted error  32.39
+			///                               significant figures required  31.15
+			///                                    decimal places required  33.37
 			/// </code></remarks>
 			public static double AiryExpBi(double x, bool bDebug)
 			{
-
-
 				double ret_val, z, theta, sqrtx, xm;
 
 				if (x >= -1.0) goto L20;
@@ -4165,7 +4080,7 @@ namespace Altaxo.Calc
 				return (dcsevl(z, bip2cs, nbip2) + 0.625) / Math.Sqrt(sqrtx);
 			}
 		}
-		#endregion
 
+		#endregion AiryExpBi
 	}
 }

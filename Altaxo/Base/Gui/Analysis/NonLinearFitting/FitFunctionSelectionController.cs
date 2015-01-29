@@ -27,11 +27,6 @@ using Altaxo.Graph;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
 using System;
-using System.Collections;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Reflection;
 using System.Text;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting

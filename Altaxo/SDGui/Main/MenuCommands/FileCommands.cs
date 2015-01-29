@@ -22,13 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo;
-using Altaxo.Main;
 using ICSharpCode.Core;
-using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpZipLib.Zip;
 using System;
 
 namespace Altaxo.Main.Commands

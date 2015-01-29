@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
-
 
 using System;
 
@@ -32,12 +33,12 @@ namespace Altaxo.Calc.Fourier
 	//
 	// Short Description:
 	// ------------------
-	//  This class is used to convolve or deconvolve a real-valued data set (including 
+	//  This class is used to convolve or deconvolve a real-valued data set (including
 	//  any user supplied zero padding) with a response function. All arrays must
-	//  have the same dimensions. The data set (and of course the other arrays) 
-	//  can be either one-dimensional, two-dimensional, or three-dimensional, 
-	//  i.e. d = 1,2,3.  Each dimension must be of the form n = (2**p)*(3**q)*(5**r), 
-	//  because of the underlying FFT. The d-dimensional data can be either single 
+	//  have the same dimensions. The data set (and of course the other arrays)
+	//  can be either one-dimensional, two-dimensional, or three-dimensional,
+	//  i.e. d = 1,2,3.  Each dimension must be of the form n = (2**p)*(3**q)*(5**r),
+	//  because of the underlying FFT. The d-dimensional data can be either single
 	//  precision (FLOAT := float) or double precision (FLOAT := double).
 	//  This class is derived from class MpFFT, thus it owns all member functions
 	//  of class MpFFT.
@@ -46,20 +47,20 @@ namespace Altaxo.Calc.Fourier
 	// -----------
 	//
 	//   *--------------------------------------------------*
-	//   | MpConvolution<FLOAT> (void)                      |  
-	//   | MpConvolution<FLOAT> (int n1)                    |  
-	//   | MpConvolution<FLOAT> (int n1, int n2)            |  
-	//   | MpConvolution<FLOAT> (int n1, int n2, int n3)    |  
+	//   | MpConvolution<FLOAT> (void)                      |
+	//   | MpConvolution<FLOAT> (int n1)                    |
+	//   | MpConvolution<FLOAT> (int n1, int n2)            |
+	//   | MpConvolution<FLOAT> (int n1, int n2, int n3)    |
 	//   *--------------------------------------------------*
 	//
 	//      "FLOAT" is to be replaced by either "float" or "double".
-	//  Setup convolution/deconvolution for one, two or three 
+	//  Setup convolution/deconvolution for one, two or three
 	//  dimensions. The dimensions n1,n2,and n3 must be of the form
 	//               n = (2**p) * (3**q) * (5**r)
 	//  otherwise an error will be generated and the error handler function
 	//  Matpack.Error() is called. On instantiation the underlying class MpFFT
 	//      will allocate and calculate some trigonometric tables (cf. MpFFT above).
-	//  
+	//
 	// Convolution Functions:
 	// ----------------------
 	//
@@ -77,15 +78,15 @@ namespace Altaxo.Calc.Fourier
 	//     The result is returned in the array result[]. All arrays including
 	//     the scratch[] array must have the same dimensions (or larger).
 	//     The data set (and of course the other arrays) can be either one-dimensional,
-	//     two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
+	//     two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be
 	//     of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
-	//     The d-dimensional data can be either single precision (FLOAT := float) 
+	//     The d-dimensional data can be either single precision (FLOAT := float)
 	//     or double precision (FLOAT := double).
 	//
 	//     Arguments
 	//     ---------
 	//     FLOAT data[]          The real-valued data set. Note, that you have to
-	//                           care for end effects by zero padding. This means, 
+	//                           care for end effects by zero padding. This means,
 	//                           that you have to pad the data with a number of zeros
 	//                           on one end equal to the maximal positive duration
 	//                           or maximal negative duration of the response function,
@@ -97,32 +98,31 @@ namespace Altaxo.Calc.Fourier
 	//                           response function at positive times, while the second
 	//                           half of the array contains the impulse response
 	//                           function at negative times, counting down from the
-	//                           element with the highest index. The array must have 
+	//                           element with the highest index. The array must have
 	//                           at least the size of the data array.
 	//
-	//     FLOAT result[]        The result array. It must have 
+	//     FLOAT result[]        The result array. It must have
 	//                           at least the size of the data array.
 	//
 	//     FLOAT scratch[]       A work array. If a NULL pointer is passed the
 	//           work array is allocated and freed auotomatically.
-	//                           If the array is given by the user it must have 
+	//                           If the array is given by the user it must have
 	//                           at least the size of the data array.
 	//
-	//     int isign = forward   If isign == forward a convolution is performed. 
+	//     int isign = forward   If isign == forward a convolution is performed.
 	//                           If isign == inverse then a deconvolution is performed.
 	//
 	//     Return values
 	//     -------------
 	//     In the case of a convolution (isign == forward) the value "true" is returned
 	//     always. In the case of deconvolution (isign == inverse) the value "false" is
-	//     returned if the FFT transform of the response function is exactly zero for 
-	//     some value. This indicates that the original convolution has lost all 
+	//     returned if the FFT transform of the response function is exactly zero for
+	//     some value. This indicates that the original convolution has lost all
 	//     information at this particular frequency, so that a reconstruction is not
 	//     possible. If the transform of the response function is non-zero everywhere
 	//     the deconvolution can be performed and the value "true" is returned.
 	//
 	//-----------------------------------------------------------------------------//
-
 
 	/// <summary>
 	///     Convolves or deconvolves a real-valued data set data[] (including any
@@ -130,14 +130,13 @@ namespace Altaxo.Calc.Fourier
 	///     The result is returned in the array result[]. All arrays including
 	///     the scratch[] array must have the same dimensions (or larger).
 	///     The data set (and of course the other arrays) can be either one-dimensional,
-	///     two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
+	///     two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be
 	///     of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
-	///     The d-dimensional data can be either single precision (FLOAT := float) 
-	///     or double precision (FLOAT := double).  
+	///     The d-dimensional data can be either single precision (FLOAT := float)
+	///     or double precision (FLOAT := double).
 	/// </summary>
 	public class Pfa235Convolution : Pfa235FFT
 	{
-
 		/// <summary>
 		/// Uninitialized setup.
 		/// </summary>
@@ -150,7 +149,7 @@ namespace Altaxo.Calc.Fourier
 		/// 1-dimensional setup
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for one 
+		/// Setup fast Fourier transform / back-transform for one
 		/// dimensions. The dimension n1 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// </remarks>
@@ -163,7 +162,7 @@ namespace Altaxo.Calc.Fourier
 		/// 2-dimensional setup.
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for two  
+		/// Setup fast Fourier transform / back-transform for two
 		/// dimensions. The dimensions n1 andn2 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// </remarks>
@@ -177,7 +176,7 @@ namespace Altaxo.Calc.Fourier
 		/// 3-dimensional setup
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for three 
+		/// Setup fast Fourier transform / back-transform for three
 		/// dimensions. The dimensions n1,n2,and n3 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// </remarks>
@@ -192,13 +191,13 @@ namespace Altaxo.Calc.Fourier
 		/// The result is returned in the array result[]. All arrays including
 		/// the scratch[] array must have the same dimensions (or larger).
 		/// The data set (and of course the other arrays) can be either one-dimensional,
-		/// two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
+		/// two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be
 		/// of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
-		/// The d-dimensional data can be either single precision (FLOAT := float) 
+		/// The d-dimensional data can be either single precision (FLOAT := float)
 		/// or double precision (FLOAT := double).    /// </summary>
 		/// <param name="data">
 		///The real-valued data set. Note, that you have to
-		///                           care for end effects by zero padding. This means, 
+		///                           care for end effects by zero padding. This means,
 		///                           that you have to pad the data with a number of zeros
 		///                           on one end equal to the maximal positive duration
 		///                           or maximal negative duration of the response function,
@@ -210,28 +209,28 @@ namespace Altaxo.Calc.Fourier
 		///  response function at positive times, while the second
 		///  half of the array contains the impulse response
 		///  function at negative times, counting down from the
-		///  element with the highest index. The array must have 
+		///  element with the highest index. The array must have
 		///  at least the size of the data array.
 		/// </param>
 		/// <param name="result">
-		/// The result array. It must have 
+		/// The result array. It must have
 		/// at least the size of the data array.
 		/// </param>
 		/// <param name="scratch">
 		///  A work array. If a NULL pointer is passed the
 		/// work array is allocated and freed auotomatically.
-		/// If the array is given by the user it must have 
+		/// If the array is given by the user it must have
 		/// at least the size of the data array.
 		/// </param>
 		/// <param name="isign">
-		/// If isign == forward a convolution is performed. 
+		/// If isign == forward a convolution is performed.
 		/// If isign == inverse then a deconvolution is performed.
 		/// </param>
 		/// <returns>
 		/// In the case of a convolution (isign == forward) the value "true" is returned
 		/// always. In the case of deconvolution (isign == inverse) the value "false" is
-		/// returned if the FFT transform of the response function is exactly zero for 
-		/// some value. This indicates that the original convolution has lost all 
+		/// returned if the FFT transform of the response function is exactly zero for
+		/// some value. This indicates that the original convolution has lost all
 		/// information at this particular frequency, so that a reconstruction is not
 		/// possible. If the transform of the response function is non-zero everywhere
 		/// the deconvolution can be performed and the value "true" is returned.
@@ -242,7 +241,7 @@ namespace Altaxo.Calc.Fourier
 		/// The FFT of the real-valued data array and the real-valued response array is
 		/// calculated in one step. This is done by regarding the two arrays
 		/// as the real part and the imaginary part of one complex-valued array.
-		/// 
+		///
 		/// Possible improvements
 		/// ---------------------
 		/// * When doing the backtransform only a real transform is necessary.
@@ -289,7 +288,6 @@ namespace Altaxo.Calc.Fourier
 
 			if (ndim == 1)
 			{
-
 				// First copy the arrays data and response to result and scratch,
 				// respectively, to prevent overwriting of the original data.
 				Array.Copy(data, result, size);
@@ -303,7 +301,6 @@ namespace Altaxo.Calc.Fourier
 
 				if (isign == FourierDirection.Forward)
 				{
-
 					double scale = 0.25 / n;
 					result[0] *= scratch[0] / n;
 					scratch[0] = 0;
@@ -314,15 +311,13 @@ namespace Altaxo.Calc.Fourier
 							sr = scratch[i] + scratch[n - i],
 							si = scratch[i] - scratch[n - i];
 						result[i] = scale * (rr * sr + ri * si);   // real part
-						scratch[i] = scale * (si * sr - ri * rr);   // imaginary part 
+						scratch[i] = scale * (si * sr - ri * rr);   // imaginary part
 						result[n - i] = result[i];     // symmetry
 						scratch[n - i] = -scratch[i];       // symmetry
 					}
-
 				}
 				else /* isign == inverse */
 				{
-
 					double mag;
 					if ((mag = Square(scratch[0])) == 0.0)
 					{   // check for zero divide
@@ -343,7 +338,7 @@ namespace Altaxo.Calc.Fourier
 							goto ErrorExit;
 						}
 						result[i] = (rr * sr - ri * si) / (n * mag);  // real part
-						scratch[i] = (si * sr + ri * rr) / (n * mag);  // imaginary part 
+						scratch[i] = (si * sr + ri * rr) / (n * mag);  // imaginary part
 						result[n - i] = result[i];     // symmetry
 						scratch[n - i] = -scratch[i];       // symmetry
 					}
@@ -355,11 +350,9 @@ namespace Altaxo.Calc.Fourier
 				//---------------------------------------------------------------------------//
 				//  2-dimensional convolution
 				//---------------------------------------------------------------------------//
-
 			}
 			else if (ndim == 2)
 			{
-
 				int n = dim[0],
 					m = dim[1];
 
@@ -393,7 +386,7 @@ namespace Altaxo.Calc.Fourier
 						for (int j = 0; j < m; j++)
 						{
 							int l = row_order ? i * id + j : j * id + i;
-							// do complex division (a+ib)/(c+id) = 
+							// do complex division (a+ib)/(c+id) =
 							// (a+ib)(c-id)/(cc+dd) = [(ac+bd) + i((a+b)(c-d)-ac+bd)]/(cc+dd)
 							if ((mag = Square(response[l]) + Square(scratch[l])) == 0.0)
 							{
@@ -414,11 +407,9 @@ namespace Altaxo.Calc.Fourier
 				//---------------------------------------------------------------------------//
 				//  3-dimensional convolution
 				//---------------------------------------------------------------------------//
-
 			}
 			else if (ndim == 3)
 			{
-
 				int n = dim[0],
 					m = dim[1],
 					p = dim[2];
@@ -455,7 +446,7 @@ namespace Altaxo.Calc.Fourier
 							for (int k = 0; k < p; k++)
 							{
 								int l = row_order ? (i * m + j) * id + k : (k * m + j) * id + i;
-								// do complex division (a+ib)/(c+id) = 
+								// do complex division (a+ib)/(c+id) =
 								// (a+ib)(c-id)/(cc+dd) = [(ac+bd) + i((a+b)(c-d)-ac+bd)]/(cc+dd)
 								if ((mag = Square(response[l]) + Square(scratch[l])) == 0.0)
 								{
@@ -476,11 +467,8 @@ namespace Altaxo.Calc.Fourier
 
 		ErrorExit:
 
-
 			return status;
 		}
-
-
 
 		/// <summary>
 		/// Convolves or deconvolves a splitted complex-valued data set data[] (including any
@@ -488,12 +476,12 @@ namespace Altaxo.Calc.Fourier
 		/// The result is returned in the splitted complex arrays resultre[] and resultim[]. All arrays including
 		/// the scratch[] arrays must have the same dimensions (or larger).
 		/// The data set (and of course the other arrays) can be either one-dimensional,
-		/// two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
+		/// two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be
 		/// of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
 		/// </summary>
 		/// <param name="datare">
 		/// The splitted complex-valued data set. Note, that you have to
-		/// care for end effects by zero padding. This means, 
+		/// care for end effects by zero padding. This means,
 		/// that you have to pad the data with a number of zeros
 		/// on one end equal to the maximal positive duration
 		/// or maximal negative duration of the response function,
@@ -506,36 +494,36 @@ namespace Altaxo.Calc.Fourier
 		///  response function at positive times, while the second
 		///  half of the array contains the impulse response
 		///  function at negative times, counting down from the
-		///  element with the highest index. The array must have 
+		///  element with the highest index. The array must have
 		///  at least the size of the data array.
 		/// </param>
 		/// <param name="responseim">The imaginary part of the response array.</param>
 		/// <param name="resultre">
-		/// The real part of the result array. It must have 
+		/// The real part of the result array. It must have
 		/// at least the size of the data array.
 		/// </param>
 		/// <param name="resultim">The imaginary part of the result array.</param>
 		/// <param name="scratchre">
 		///  A work array. If a NULL pointer is passed the
 		/// work array is allocated and freed auotomatically.
-		/// If the array is given by the user it must have 
+		/// If the array is given by the user it must have
 		/// at least the size of the data array.
 		/// </param>
 		/// <param name="scratchim">
 		///  A work array. If a NULL pointer is passed the
 		/// work array is allocated and freed auotomatically.
-		/// If the array is given by the user it must have 
+		/// If the array is given by the user it must have
 		/// at least the size of the data array.
 		/// </param>
 		/// <param name="isign">
-		/// If isign == forward a convolution is performed. 
+		/// If isign == forward a convolution is performed.
 		/// If isign == inverse then a deconvolution is performed.
 		/// </param>
 		/// <returns>
 		/// In the case of a convolution (isign == forward) the value "true" is returned
 		/// always. In the case of deconvolution (isign == inverse) the value "false" is
-		/// returned if the FFT transform of the response function is exactly zero for 
-		/// some value. This indicates that the original convolution has lost all 
+		/// returned if the FFT transform of the response function is exactly zero for
+		/// some value. This indicates that the original convolution has lost all
 		/// information at this particular frequency, so that a reconstruction is not
 		/// possible. If the transform of the response function is non-zero everywhere
 		/// the deconvolution can be performed and the value "true" is returned.
@@ -583,7 +571,6 @@ namespace Altaxo.Calc.Fourier
 
 			if (ndim == 1)
 			{
-
 				// First copy the arrays data and response to result and scratch,
 				// respectively, to prevent overwriting of the original data.
 				Array.Copy(datare, resultre, size);
@@ -600,7 +587,6 @@ namespace Altaxo.Calc.Fourier
 
 				if (isign == FourierDirection.Forward)
 				{
-
 					double scale = 1.0 / n;
 					for (int i = 0; i < n; i++)
 					{
@@ -612,7 +598,6 @@ namespace Altaxo.Calc.Fourier
 				}
 				else /* isign == inverse */
 				{
-
 					double mag;
 					if ((mag = Square(scratchre[0]) + Square(scratchim[0])) == 0.0)
 					{   // check for zero divide
@@ -631,7 +616,7 @@ namespace Altaxo.Calc.Fourier
 							goto ErrorExit;
 						}
 						resultre[i] = (rr * sr - ri * si) / (n * mag);  // real part
-						resultim[i] = (si * sr + ri * rr) / (n * mag);  // imaginary part 
+						resultim[i] = (si * sr + ri * rr) / (n * mag);  // imaginary part
 					}
 				}
 				// transform back - this is an inverse FFT
@@ -645,8 +630,6 @@ namespace Altaxo.Calc.Fourier
 		ErrorExit:
 			return status;
 		}
-
-
 
 		/// <summary>
 		/// Performs a correlation of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
@@ -687,7 +670,6 @@ namespace Altaxo.Calc.Fourier
 				size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
 			}
 
-
 			if (ndim == 1)
 			{
 				base.FFT(src1real, src1imag, FourierDirection.Forward);
@@ -698,7 +680,6 @@ namespace Altaxo.Calc.Fourier
 			else
 				throw new NotImplementedException("Sorry, correlation for dimensions > 1 is not implemented yet! Will you do it?");
 		}
-
 
 		/// <summary>
 		/// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
@@ -764,7 +745,6 @@ namespace Altaxo.Calc.Fourier
 				size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
 			}
 
-
 			if (null == scratchreal || scratchreal.Length < n)
 				scratchreal = new double[size];
 			if (null == scratchimag || scratchimag.Length < n)
@@ -786,7 +766,6 @@ namespace Altaxo.Calc.Fourier
 			}
 			else
 				throw new NotImplementedException("Sorry, correlation for dimensions > 1 is not implemented yet! Will you do it?");
-
 		}
 
 		public bool CyclicCorrelation(double[] data, double[] response, double[] result, int nn, double[] scratch)
@@ -827,7 +806,6 @@ namespace Altaxo.Calc.Fourier
 
 			if (ndim == 1)
 			{
-
 				// First copy the arrays data and response to result and scratch,
 				// respectively, to prevent overwriting of the original data.
 				Array.Copy(data, result, size);
@@ -849,7 +827,7 @@ namespace Altaxo.Calc.Fourier
 						sr = scratch[i] + scratch[n - i],
 						si = result[n - i] - result[i];
 					result[i] = scale * (rr * sr + ri * si);   // real part
-					scratch[i] = scale * (rr * si - ri * sr);   // imaginary part 
+					scratch[i] = scale * (rr * si - ri * sr);   // imaginary part
 					result[n - i] = result[i];     // symmetry
 					scratch[n - i] = -scratch[i];       // symmetry
 				}
@@ -857,7 +835,6 @@ namespace Altaxo.Calc.Fourier
 
 			// transform back - this is an inverse FFT
 			base.FFT(result, scratch, FourierDirection.Inverse);
-
 
 			return true;
 		}
@@ -873,5 +850,4 @@ namespace Altaxo.Calc.Fourier
 			return x * x;
 		}
 	}
-
 }

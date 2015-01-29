@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Interop;
-
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 		[DllImport("User32.dll")]
 		public static extern int DestroyIcon(IntPtr hIcon);
 
-		#endregion
+		#endregion Interop
 
 		public ImageSource DefaultImageSource { get; set; }
 
@@ -74,8 +74,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			return GetIcon(fileName, SHGFI_SMALLICON);
 		}
 
-
-		public  ImageSource GetIcon(string fileName, uint flags)
+		public ImageSource GetIcon(string fileName, uint flags)
 		{
 			var shinfo = new SHFILEINFO();
 			SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_ICON | flags);
@@ -86,7 +85,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			DestroyIcon(iconHandle);
 			return img;
 		}
-
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{

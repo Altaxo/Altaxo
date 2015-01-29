@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,26 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui
 {
-  /// <summary>
-  /// Implemented by class attributes, where one class (that has the attribute assigned to) is responsible for another type of class (the destination class type).
-  /// </summary>
-  public interface IClassForClassAttribute
-  {
+	/// <summary>
+	/// Implemented by class attributes, where one class (that has the attribute assigned to) is responsible for another type of class (the destination class type).
+	/// </summary>
+	public interface IClassForClassAttribute
+	{
+		/// <summary>
+		/// The destination class type.
+		/// </summary>
+		System.Type TargetType { get; }
 
-    /// <summary>
-    /// The destination class type.
-    /// </summary>
-    System.Type TargetType { get; }
-
-    /// <summary>
-    /// The priority. Attributes with higher priority are preferred over such attributes with lower priority.
-    /// </summary>
-    int Priority { get; }
-  }
+		/// <summary>
+		/// The priority. Attributes with higher priority are preferred over such attributes with lower priority.
+		/// </summary>
+		int Priority { get; }
+	}
 }

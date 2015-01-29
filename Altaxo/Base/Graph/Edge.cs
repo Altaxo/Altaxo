@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
@@ -32,8 +33,6 @@ namespace Altaxo.Graph
 	[Serializable]
 	public enum EdgeType { Left = 0, Bottom = 1, Right = 2, Top = 3 }
 
-
-
 	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EdgeType), 0)]
 	public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 	{
@@ -41,14 +40,13 @@ namespace Altaxo.Graph
 		{
 			info.SetNodeContent(obj.ToString());
 		}
+
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
-
 			string val = info.GetNodeContent();
 			return System.Enum.Parse(typeof(EdgeType), val, true);
 		}
 	}
-
 
 	/// <summary>
 	/// Edge provides some common functions that apply to one of the
@@ -59,27 +57,26 @@ namespace Altaxo.Graph
 	{
 		private EdgeType m_StyleType;
 
-
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Edge), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				Edge s = (Edge)obj;
 				info.AddValue("EdgeType", s.m_StyleType);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
-
 				EdgeType type = (EdgeType)info.GetValue("EdgeType", null);
 				Edge s = null != o ? (Edge)o : new Edge(type);
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public Edge(EdgeType st)
 		{
@@ -107,7 +104,6 @@ namespace Altaxo.Graph
 
 				case EdgeType.Top:
 					return new PointF(0, 0);
-
 			} // end of switch
 			return new PointF(0, 0);
 		}
@@ -127,11 +123,9 @@ namespace Altaxo.Graph
 
 				case EdgeType.Top:
 					return new PointF(layerSize.Width, 0);
-
 			} // end of switch
 			return new PointF(0, 0);
 		}
-
 
 		public static PointF GetPointBetween(PointF p1, PointF p2, double rel)
 		{
@@ -153,10 +147,8 @@ namespace Altaxo.Graph
 
 				case EdgeType.Top:
 					return new PointF((float)(rel * layerSize.Width), 0);
-
 			} // end of switch
 			return new PointF(0, 0);
-
 		}
 
 		public float GetEdgeLength(SizeF layerSize)
@@ -170,7 +162,6 @@ namespace Altaxo.Graph
 				case EdgeType.Bottom:
 				case EdgeType.Top:
 					return layerSize.Width;
-
 			} // end of switch
 			return 0;
 		}
@@ -207,7 +198,6 @@ namespace Altaxo.Graph
 
 					case EdgeType.Top:
 						return new PointF(0, -1);
-
 				} // end of switch
 				return new PointF(0, 0);
 			}
@@ -230,11 +220,9 @@ namespace Altaxo.Graph
 
 					case EdgeType.Top:
 						return new PointF(0, 1);
-
 				} // end of switch
 				return new PointF(0, 0);
 			}
 		}
-
 	} // end of struct Edge
 }

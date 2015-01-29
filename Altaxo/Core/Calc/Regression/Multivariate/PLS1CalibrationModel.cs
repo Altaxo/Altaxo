@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,68 +19,57 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc.LinearAlgebra;
-
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  public class PLS1CalibrationModel : MultivariateCalibrationModel
-  {
-   
+	public class PLS1CalibrationModel : MultivariateCalibrationModel
+	{
+		private IROMatrix[] _xWeights;
+		private IROMatrix[] _xLoads;
+		private IROMatrix[] _yLoads;
+		private IROMatrix[] _crossProduct;
 
-    IROMatrix[] _xWeights;
-    IROMatrix[] _xLoads;
-    IROMatrix[] _yLoads;
-    IROMatrix[] _crossProduct;
+		public override int NumberOfY
+		{
+			get { return _numberOfY; }
+			set
+			{
+				_numberOfY = value;
+				Allocate(value);
+			}
+		}
 
-   
+		protected void Allocate(int numberOfY)
+		{
+			_xWeights = new IROMatrix[numberOfY];
+			_xLoads = new IROMatrix[numberOfY];
+			_yLoads = new IROMatrix[numberOfY];
+			_crossProduct = new IROMatrix[numberOfY];
+		}
 
-    public override int NumberOfY
-    {
-      get { return _numberOfY; }
-      set 
-      {
-        _numberOfY = value;
-        Allocate(value);
-      }
-    }
+		public IROMatrix[] XWeights
+		{
+			get { return _xWeights; }
+		}
 
-   
-    protected void Allocate(int numberOfY)
-    {
-      _xWeights = new IROMatrix[numberOfY] ;
-      _xLoads = new IROMatrix[numberOfY];
-      _yLoads = new IROMatrix[numberOfY];
-      _crossProduct = new IROMatrix[numberOfY];
-    }
+		public IROMatrix[] XLoads
+		{
+			get { return _xLoads; }
+		}
 
+		public IROMatrix[] YLoads
+		{
+			get { return _yLoads; }
+		}
 
-    public IROMatrix[] XWeights
-    {
-      get { return _xWeights; }
-    }
-
-    public IROMatrix[] XLoads
-    {
-      get { return _xLoads; }
-    }
-
-    public IROMatrix[] YLoads
-    {
-      get { return _yLoads; }
-    }
-
-    public IROMatrix[] CrossProduct
-    {
-      get { return _crossProduct; }
-    }
-
-  
-  
-  }
-
-
+		public IROMatrix[] CrossProduct
+		{
+			get { return _crossProduct; }
+		}
+	}
 }

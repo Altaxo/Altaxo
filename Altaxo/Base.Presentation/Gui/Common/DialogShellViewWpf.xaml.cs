@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common
 {
@@ -41,8 +37,8 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class DialogShellViewWpf : Window, IDialogShellView
 	{
-		UIElement _hostedControl;
-		Altaxo.Graph.RectangleD _workArea;
+		private UIElement _hostedControl;
+		private Altaxo.Graph.RectangleD _workArea;
 
 		public DialogShellViewWpf()
 		{
@@ -56,12 +52,7 @@ namespace Altaxo.Gui.Common
 			_hostedControl.SetValue(Grid.RowProperty, 0);
 			_hostedControl.SetValue(Grid.ColumnProperty, 0);
 			_grid.Children.Add(_hostedControl);
-
-
 		}
-
-
-	
 
 		/// <summary>
 		/// Overrides the logic for determining the size of the dialog window. See remarks for details.
@@ -69,20 +60,19 @@ namespace Altaxo.Gui.Common
 		/// <param name="availableSize"></param>
 		/// <returns></returns>
 		/// <remarks>
-		/// There are two changes from the default behaviour: 
+		/// There are two changes from the default behaviour:
 		/// <para>(i) when the dialog is loaded, the size is adjusted so that it is not bigger than
 		/// the available working area on the screen. If the initial position of the dialog is chosen so that the right lower corner of the dialog would be outside
 		/// of the working area, it is adjusted so that it is inside the working area.</para>
 		/// <para>
-		/// If during the dialog is showed the size of the content changed, the dialog box size is adjusted so that the lower right corner of the dialog window would 
+		/// If during the dialog is showed the size of the content changed, the dialog box size is adjusted so that the lower right corner of the dialog window would
 		/// always be inside the working area. This does not apply if the user had manually changed the size of the dialog box before.
 		/// </para>
-		/// 
+		///
 		/// </remarks>
 		protected override Size MeasureOverride(Size availableSize)
 		{
 			_workArea = Current.Gui.GetScreenInformation(this.Left, this.Top);
-
 
 			if (!this.IsLoaded) // when the dialog is initially loaded
 			{
@@ -109,13 +99,11 @@ namespace Altaxo.Gui.Common
 			return base.MeasureOverride(availableSize);
 		}
 
-
 		/// <summary>Override this method to arrange and size a window and its child elements.</summary>
 		/// <param name="arrangeBounds">A <see cref="T:System.Windows.Size"/> that reflects the final size that the window should use to arrange itself and its children.</param>
 		/// <returns>A <see cref="T:System.Windows.Size"/> that reflects the actual size that was used.</returns>
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-
 			if (!this.IsLoaded) // when the dialog is initially loaded
 			{
 				// adjust the top and left position of the dialog if neccessary so that the dialog box fits inside the working area
@@ -125,10 +113,8 @@ namespace Altaxo.Gui.Common
 					this.Left = _workArea.Right - arrangeBounds.Width;
 			}
 
-
 			return base.ArrangeOverride(arrangeBounds);
 		}
-
 
 		#region IDialogShellView
 
@@ -146,9 +132,7 @@ namespace Altaxo.Gui.Common
 
 		public event Action ButtonApplyPressed;
 
-		#endregion
-
-
+		#endregion IDialogShellView
 
 		#region Event handlers
 
@@ -163,7 +147,6 @@ namespace Altaxo.Gui.Common
 			{
 				this.DialogResult = true;
 			}
-
 		}
 
 		private void EhButtonCancelPressed(object sender, RoutedEventArgs e)
@@ -178,7 +161,6 @@ namespace Altaxo.Gui.Common
 		{
 			if (null != ButtonApplyPressed)
 				ButtonApplyPressed();
-
 		}
 
 		private void EhViewLoaded(object sender, RoutedEventArgs e)
@@ -186,9 +168,6 @@ namespace Altaxo.Gui.Common
 			_hostedControl.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
 		}
 
-		#endregion
-
-
-
+		#endregion Event handlers
 	}
 }

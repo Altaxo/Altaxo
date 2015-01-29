@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 //#define LinkedListDebug
 
@@ -29,7 +31,6 @@ using System.Text;
 
 namespace Altaxo.Collections.Text
 {
-
 	/// <summary>
 	/// Problem solver for the longest common substring problems, operating in O(N) time (N being the text length), and using a doubly linked list of class instances. Thus a lot of intermediate objects is created. The
 	/// code runs slightly slower than <see cref="LongestCommonSubstringA"/>, but is provided here because it is closer to the original code (see below) and easier to understand.
@@ -38,12 +39,11 @@ namespace Altaxo.Collections.Text
 	/// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
 	/// This code was by D.Lellinger adopted from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
 	/// </remarks>
-	class LongestCommonSubstringL : LongestCommonSubstringBaseL
+	internal class LongestCommonSubstringL : LongestCommonSubstringBaseL
 	{
 		// intermediate data neccessary for the algorithm
-		
-		LLElement[] _textPtr;
-		
+
+		private LLElement[] _textPtr;
 
 		/// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -115,7 +115,7 @@ namespace Altaxo.Collections.Text
 		}
 
 		/// <summary>Cleans the intermediates so the garbage collector can get them.</summary>
-		void CleanIntermediates()
+		private void CleanIntermediates()
 		{
 			_ddlList = null;
 			_textPtr = null;
@@ -134,9 +134,8 @@ namespace Altaxo.Collections.Text
 				_singleResultOfNumberOfWords = new SuffixArrayRegion[_numberOfWords + 1];
 		}
 
-
 		/// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
-		void PostProcessResults()
+		private void PostProcessResults()
 		{
 			_maximumNumberOfWordsWithCommonSubstring = 0;
 			for (int i = _lcsOfNumberOfWords.Length - 1; i >= 0; --i)
@@ -149,12 +148,7 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
-	
-
-		
-
-
-		void lcp_update(int lcp_i, int index)
+		private void lcp_update(int lcp_i, int index)
 		{
 			var current = _ddlList.Last;
 			var last_updated = current;
@@ -178,7 +172,7 @@ namespace Altaxo.Collections.Text
 					}
 				}
 				else
-					{
+				{
 					if (current.Lcp > _lcsOfNumberOfWords[list_pos])
 					{
 						_lcsOfNumberOfWords[list_pos] = current.Lcp;
@@ -207,7 +201,7 @@ namespace Altaxo.Collections.Text
 			end.IntervalSize = size;
 		}
 
-		void list_update(int i)
+		private void list_update(int i)
 		{
 			var sa_i = _suffixArray[i];
 			var textlcp = _LCPS[i];
@@ -216,10 +210,8 @@ namespace Altaxo.Collections.Text
 
 			if (_lastLcp[textlcp] != nodeToRemove || nodeToRemove.IntervalBegin != nodeToRemove)
 			{
-
 				// decrease interval size
 				--_lastLcp[textlcp].IntervalSize;
-
 
 				// if text_item is the end of an interval
 				if (nodeToRemove == _lastLcp[textlcp])
@@ -228,13 +220,11 @@ namespace Altaxo.Collections.Text
 					_lastLcp[nodeToRemove.Lcp] = nodeToRemove.Next;
 				}
 
-
 			// if text_item is the beginning of an interval
 				else if (nodeToRemove == _lastLcp[textlcp].IntervalBegin)
 				{
 					create_interval(nodeToRemove.IntervalEnd, nodeToRemove.Previous, nodeToRemove.IntervalEnd.Lcp, nodeToRemove.IntervalEnd.IntervalSize);
 				}
-
 
 				// reset interval pointers
 				nodeToRemove.IntervalEnd = nodeToRemove;
@@ -244,7 +234,6 @@ namespace Altaxo.Collections.Text
 
 			if (_ddlList.Last != nodeToRemove)
 			{
-
 				// remove nodeToRemove from the list, and add it to the end
 				_ddlList.Remove(nodeToRemove);
 				_ddlList.AddLast(nodeToRemove);
@@ -254,8 +243,7 @@ namespace Altaxo.Collections.Text
 			nodeToRemove.Idx = i;
 		}
 
-
-		#if LinkedListDebug
+#if LinkedListDebug
 
 		void Test()
 		{
@@ -274,8 +262,6 @@ namespace Altaxo.Collections.Text
 				var last_interval_node = e;
 				var first_interval_node = e.IntervalEnd;
 				int currIntervalLen = 1;
-
-
 
 				// test the intermediate nodes
 				while (!object.ReferenceEquals(e, first_interval_node))
@@ -310,7 +296,6 @@ namespace Altaxo.Collections.Text
 				throw new ArgumentOutOfRangeException();
 		}
 
-
 		void print_debug()
 		{
 			var e = _ddlList.Last;
@@ -324,6 +309,4 @@ namespace Altaxo.Collections.Text
 
 #endif
 	}
-
 }
-

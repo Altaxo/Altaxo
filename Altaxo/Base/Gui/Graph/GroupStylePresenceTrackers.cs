@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -34,11 +36,10 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public class ColorGroupStylePresenceTracker
 	{
-		Action _actionIfGroupStyleRemovedOrAdded;
+		private Action _actionIfGroupStyleRemovedOrAdded;
 
 		/// <summary>Contains the color group style of the parent plot item collection (if present).</summary>
-		Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
-
+		private Altaxo.Graph.Plot.Groups.ColorGroupStyle _colorGroupStyle;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ColorGroupStylePresenceTracker"/> class.
@@ -50,7 +51,6 @@ namespace Altaxo.Gui.Graph
 			_colorGroupStyle = GetColorGroupStyle(plotStyle);
 			_actionIfGroupStyleRemovedOrAdded = actionIfGroupStyleRemovedOrAdded;
 		}
-
 
 		/// <summary>
 		/// Gets a value indicating whether a color group style is present in the group style collection.
@@ -70,7 +70,6 @@ namespace Altaxo.Gui.Graph
 			return null != _colorGroupStyle && !isIndependentColorChosen;
 		}
 
-
 		/// <summary>
 		/// Queries, if only plot colors should be shown in the Gui interface of the plot style.
 		/// </summary>
@@ -80,7 +79,6 @@ namespace Altaxo.Gui.Graph
 		{
 			return null != _colorGroupStyle && colorLinkage == ColorLinkage.Dependent;
 		}
-
 
 		public static Altaxo.Graph.Plot.Groups.ColorGroupStyle GetColorGroupStyle(Altaxo.Main.IDocumentLeafNode doc)
 		{
@@ -94,5 +92,4 @@ namespace Altaxo.Gui.Graph
 				return null;
 		}
 	}
-
 }

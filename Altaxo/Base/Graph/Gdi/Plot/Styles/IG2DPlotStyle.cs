@@ -31,7 +31,6 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-	using Graph.Plot.Groups;
 	using Groups;
 
 	public interface IG2DPlotStyle :

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -35,31 +37,30 @@ namespace Altaxo.Calc.Integration
 	/// a precomputed table of Chebyshev moments.
 	/// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
 	/// /// </remarks>
-	class QawsIntegration : IntegrationBase
+	internal class QawsIntegration : IntegrationBase
 	{
 		#region qaws.c
+
 		/* integration/qaws.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-
-		static GSL_ERROR
+		private static GSL_ERROR
 		gsl_integration_qaws(Func<double, double> f,
 													double a, double b,
 													gsl_integration_qaws_table t,
@@ -216,7 +217,6 @@ namespace Altaxo.Calc.Integration
 				workspace.retrieve(out a_i, out b_i, out r_i, out e_i);
 
 				iteration++;
-
 			}
 			while (iteration < limit && 0 == error_type && errsum > tolerance);
 
@@ -245,32 +245,32 @@ namespace Altaxo.Calc.Integration
 			{
 				return new GSL_ERROR("could not integrate function", GSL_ERR.GSL_EFAILED, bDebug);
 			}
-
 		}
 
-		#endregion
+		#endregion qaws.c
 
 		#region qc25s.c
+
 		/* integration/qc25s.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-		struct fn_qaws_params
+		private struct fn_qaws_params
 		{
 			public Func<double, double> function;
 			public double a;
@@ -278,8 +278,7 @@ namespace Altaxo.Calc.Integration
 			public gsl_integration_qaws_table table;
 		};
 
-
-		static void
+		private static void
 		qc25s(Func<double, double> f, double a, double b, double a1, double b1,
 					 gsl_integration_qaws_table t,
 					 out double result, out double abserr, out bool err_reliable)
@@ -389,10 +388,9 @@ namespace Altaxo.Calc.Integration
 
 				return;
 			}
-
 		}
 
-		static double
+		private static double
 		fn_qaws(double x, fn_qaws_params p)
 		{
 			Func<double, double> f = p.function;
@@ -415,7 +413,7 @@ namespace Altaxo.Calc.Integration
 			return factor * f(x);
 		}
 
-		static double
+		private static double
 		fn_qaws_L(double x, fn_qaws_params p)
 		{
 			Func<double, double> f = p.function;
@@ -432,7 +430,7 @@ namespace Altaxo.Calc.Integration
 			return factor * f(x);
 		}
 
-		static double
+		private static double
 		fn_qaws_R(double x, fn_qaws_params p)
 		{
 			Func<double, double> f = p.function;
@@ -449,8 +447,7 @@ namespace Altaxo.Calc.Integration
 			return factor * f(x);
 		}
 
-
-		static void
+		private static void
 		compute_result(double[] r, double[] cheb12, double[] cheb24,
 										out double result12, out double result24)
 		{
@@ -472,23 +469,24 @@ namespace Altaxo.Calc.Integration
 			result24 = res24;
 		}
 
-		#endregion
+		#endregion qc25s.c
 
 		#region integration.h and momo.c
+
 		/* Workspace for QAWS integrator */
 
-		class gsl_integration_qaws_table
+		private class gsl_integration_qaws_table
 		{
-			public double alpha=0;
-			public double beta=0;
-			public int mu=0;
-			public int nu=0;
+			public double alpha = 0;
+			public double beta = 0;
+			public int mu = 0;
+			public int nu = 0;
 			public double[] ri = new double[25];
 			public double[] rj = new double[25];
 			public double[] rg = new double[25];
 			public double[] rh = new double[25];
 		}
 
-		#endregion
+		#endregion integration.h and momo.c
 	}
 }

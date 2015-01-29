@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,36 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
-	using Altaxo.Gui.Common;
 	using Altaxo.Graph.Gdi.Shapes;
+	using Altaxo.Gui.Common;
 
 	/// <summary>
 	/// Interaction logic for FloatingScaleControl.xaml
 	/// </summary>
 	public partial class FloatingScaleControl : UserControl, IFloatingScaleView
 	{
-		BackgroundControlsGlue _backgroundGlue;
+		private BackgroundControlsGlue _backgroundGlue;
+
 		public event Action TickSpacingTypeChanged;
-
-
 
 		public FloatingScaleControl()
 		{
@@ -98,8 +91,10 @@ namespace Altaxo.Gui.Graph.Shapes
 					default:
 					case FloatingScaleSpanType.IsLogicalValue:
 						return _guiLogicalScaleSpan.SelectedQuantityAsValueInSIUnits;
+
 					case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
 						return _guiSpanDifferenceValue.SelectedValue;
+
 					case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
 						return _guiSpanRatioValue.SelectedValue;
 				}
@@ -111,9 +106,11 @@ namespace Altaxo.Gui.Graph.Shapes
 					case FloatingScaleSpanType.IsLogicalValue:
 						_guiLogicalScaleSpan.SelectedQuantityAsValueInSIUnits = value;
 						break;
+
 					case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
 						_guiSpanDifferenceValue.SelectedValue = value;
 						break;
+
 					case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
 						_guiSpanRatioValue.SelectedValue = value;
 						break;
@@ -156,7 +153,6 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-
 		public IConditionalDocumentView MinorLabelView
 		{
 			set
@@ -165,7 +161,8 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		double _lastConvertedScaleSpan;
+		private double _lastConvertedScaleSpan;
+
 		private void EhScaleSpanValidating(object sender, ValidationEventArgs<string> e)
 		{
 			if (!double.TryParse(e.ValueToValidate, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentUICulture, out _lastConvertedScaleSpan))
@@ -186,16 +183,15 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-
 		public Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType ScaleSegmentType
 		{
 			get
 			{
 				if (true == _guiScaleTypeRatio.IsChecked)
 					return Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.RatioToOrg;
-				else if(true == _guiScaleTypeDifference.IsChecked)
+				else if (true == _guiScaleTypeDifference.IsChecked)
 					return Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.DifferenceToOrg;
-				else 
+				else
 					return Altaxo.Graph.Gdi.Shapes.FloatingScale.ScaleSegmentType.Normal;
 			}
 			set
@@ -211,12 +207,10 @@ namespace Altaxo.Gui.Graph.Shapes
 			set { _guiTickSpacingGroupBox.Content = value; }
 		}
 
-
 		public void InitializeTickSpacingTypes(Collections.SelectableListNodeList names)
 		{
 			GuiHelper.Initialize(_guiTickSpacingTypes, names);
 		}
-
 
 		public Altaxo.Graph.Gdi.Background.IBackgroundStyle SelectedBackground
 		{

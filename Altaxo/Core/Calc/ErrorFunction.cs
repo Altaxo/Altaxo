@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Originalfile Matpack-1.7.3\source\function\derf.cc
@@ -51,10 +53,7 @@
 |                                                                               |
 \*-----------------------------------------------------------------------------*/
 
-
-
 using System;
-
 
 namespace Altaxo.Calc
 {
@@ -68,37 +67,34 @@ namespace Altaxo.Calc
 		/// <summary>
 		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
 		/// </summary>
-		const double DBL_EPSILON = 2.2204460492503131e-016;
+		private const double DBL_EPSILON = 2.2204460492503131e-016;
+
 		/// <summary>
 		/// The smallest positive double number.
 		/// </summary>
-		const double DBL_MIN = double.Epsilon;
+		private const double DBL_MIN = double.Epsilon;
+
 		/// <summary>
 		/// The biggest positive double number.
 		/// </summary>
-		const double DBL_MAX = double.MaxValue;
-
+		private const double DBL_MAX = double.MaxValue;
 
 		/// <summary>
 		/// The value 2/sqrt(Pi).
 		/// </summary>
-		const double M_2_SQRTPI = 1.1283791670955125738961589031216;
-
+		private const double M_2_SQRTPI = 1.1283791670955125738961589031216;
 
 		/// <summary>
 		/// Square root of Pi.
 		/// </summary>
-		const double sqrtpi = 1.77245385090551602729816748334115;
+		private const double sqrtpi = 1.77245385090551602729816748334115;
 
 		/// <summary>
 		/// Square root of Epsilon.
 		/// </summary>
 		private static readonly double sqeps = Math.Sqrt(DBL_EPSILON);
 
-
-
-
-		#endregion
+		#endregion Constants
 
 		#region Helper functions
 
@@ -107,7 +103,7 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The number whose sign is returned.</param>
 		/// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
-		static int sign(double x)
+		private static int sign(double x)
 		{
 			return (x > 0) ? 1 : (x < 0) ? -1 : 0;
 		}
@@ -118,32 +114,30 @@ namespace Altaxo.Calc
 		/// <param name="x">The first number.</param>
 		/// <param name="y">The second number whose sign is used.</param>
 		/// <returns>The first number x with the sign of the second argument y.</returns>
-		static double CopySign(double x, double y)
+		private static double CopySign(double x, double y)
 		{
 			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
 		}
-
 
 		/// <summary>
 		/// Round to nearest integer.
 		/// </summary>
 		/// <param name="d">The argument.</param>
 		/// <returns>The nearest integer of the argument d.</returns>
-		static int Nint(double d)
+		private static int Nint(double d)
 		{
 			return (d > 0) ? (int)(d + 0.5) : -(int)(-d + 0.5);
 		}
 
-
-		#endregion
+		#endregion Helper functions
 
 		#region initds
 
 		/// <summary>
-		/// Initialize the orthogonal series, represented by the array os, so 
-		/// that initds is the number of terms needed to insure the error is no 
-		/// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
-		/// machine precision. 
+		/// Initialize the orthogonal series, represented by the array os, so
+		/// that initds is the number of terms needed to insure the error is no
+		/// larger than eta.  Ordinarily, eta will be chosen to be one-tenth
+		/// machine precision.
 		/// </summary>
 		/// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
 		/// <param name="nos">Number of coefficients in OS.</param>
@@ -154,7 +148,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
 		/// to C++.
 		/// </remarks>
-		static int initds(double[] os, int nos, double eta)
+		private static int initds(double[] os, int nos, double eta)
 		{
 			if (nos < 1)
 				throw new ArgumentException("Number of coefficients is less than 1");
@@ -174,34 +168,34 @@ namespace Altaxo.Calc
 			return i;
 		}
 
-		#endregion
+		#endregion initds
 
 		#region dcsevl
 
 		/// <summary>
-		/// Evaluate the n-term Chebyshev series cs at x.  Adapted from 
-		/// a method presented in the paper by Broucke referenced below. 
+		/// Evaluate the n-term Chebyshev series cs at x.  Adapted from
+		/// a method presented in the paper by Broucke referenced below.
 		/// </summary>
 		/// <param name="x">Value at which the series is to be evaluated. </param>
-		/// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
-		/// cs, only half the first coefficient is summed. 
+		/// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating
+		/// cs, only half the first coefficient is summed.
 		/// </param>
 		/// <param name="n">number of terms in array cs.</param>
 		/// <returns>The n-term Chebyshev series cs at x.</returns>
 		/// <remarks>
 		/// References:
 		///
-		/// R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
-		/// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
+		/// R. Broucke, Ten subroutines for the manipulation of Chebyshev series,
+		/// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256.
 		///
-		/// L. Fox and I. B. Parker, Chebyshev Polynomials in 
-		///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
+		/// L. Fox and I. B. Parker, Chebyshev Polynomials in
+		///      Numerical Analysis, Oxford University Press, 1968,  page 56.
 		///
 		/// This is a translation from the Fortran version of SLATEC, FNLIB,
-		/// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL) 
+		/// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL)
 		/// to C++.
 		/// </remarks>
-		static double dcsevl(double x, double[] cs, int n)
+		private static double dcsevl(double x, double[] cs, int n)
 		{
 #if DEBUG
 			if (n < 1)
@@ -223,13 +217,13 @@ namespace Altaxo.Calc
 			return (b0 - b2) * 0.5;
 		}
 
-		#endregion
+		#endregion dcsevl
 
 		#region Erf function
 
 		/// <summary>
-		/// Erf(x) calculates the double precision error function for double 
-		/// precision argument x. 
+		/// Erf(x) calculates the double precision error function for double
+		/// precision argument x.
 		/// </summary>
 		/// <param name="x">The argument x.</param>
 		/// <returns>The error function value of the argument x.</returns>
@@ -238,11 +232,11 @@ namespace Altaxo.Calc
 		/// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Series for erf        on the interval  0.          to  1.00000E+00 
-		///                        with weighted error   1.28E-32 
-		///                        log weighted error  31.89 
-		///                        significant figures required  31.05 
-		///                        decimal places required  32.55 
+		/// Series for erf        on the interval  0.          to  1.00000E+00
+		///                        with weighted error   1.28E-32
+		///                        log weighted error  31.89
+		///                        significant figures required  31.05
+		///                        decimal places required  32.55
 		/// </code></remarks>
 		public static double Erf(double x)
 		{
@@ -250,8 +244,8 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Erf(x) calculates the double precision error function for double 
-		/// precision argument x. 
+		/// Erf(x) calculates the double precision error function for double
+		/// precision argument x.
 		/// </summary>
 		/// <param name="x">The argument x.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -261,24 +255,24 @@ namespace Altaxo.Calc
 		/// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Series for erf        on the interval  0.          to  1.00000E+00 
-		///                        with weighted error   1.28E-32 
-		///                        log weighted error  31.89 
-		///                        significant figures required  31.05 
-		///                        decimal places required  32.55 
+		/// Series for erf        on the interval  0.          to  1.00000E+00
+		///                        with weighted error   1.28E-32
+		///                        log weighted error  31.89
+		///                        significant figures required  31.05
+		///                        decimal places required  32.55
 		/// </code></remarks>
 		public static double Erf(double x, bool bDebug)
 		{
 			return _Erf.Erf(x, bDebug);
 		}
 
-		class _Erf
+		private class _Erf
 		{
 			/// <summary>
 			/// Coefficient array for Erf function
 			/// </summary>
-			static readonly double[] erfcs = 
-  { 
+			private static readonly double[] erfcs =
+  {
     -0.049046121234691808039984544033376,
     -0.14226120510371364237824741899631,
     0.010035582187599795575754676712933,
@@ -299,22 +293,20 @@ namespace Altaxo.Calc
     -6.5980120782851343155199999999999e-27,
     8.6550114699637626197333333333333e-29,
     -1.0788925177498064213333333333333e-30,
-    1.2811883993017002666666666666666e-32 
+    1.2811883993017002666666666666666e-32
   };
 
 			// used for Erf
-			static readonly double xbig = Math.Sqrt(-Math.Log(sqrtpi * 0.5 * DBL_EPSILON));
+			private static readonly double xbig = Math.Sqrt(-Math.Log(sqrtpi * 0.5 * DBL_EPSILON));
 
 			/// <summary>
 			/// Number of terms for the Erf function
 			/// </summary>
-			static int nterf = initds(erfcs, 21, 0.5 * DBL_EPSILON * 0.1);
-
-
+			private static int nterf = initds(erfcs, 21, 0.5 * DBL_EPSILON * 0.1);
 
 			/// <summary>
-			/// Erf(x) calculates the double precision error function for double 
-			/// precision argument x. 
+			/// Erf(x) calculates the double precision error function for double
+			/// precision argument x.
 			/// </summary>
 			/// <param name="x">The argument x.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -324,26 +316,22 @@ namespace Altaxo.Calc
 			/// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for erf        on the interval  0.          to  1.00000E+00 
-			///                        with weighted error   1.28E-32 
-			///                        log weighted error  31.89 
-			///                        significant figures required  31.05 
-			///                        decimal places required  32.55 
+			/// Series for erf        on the interval  0.          to  1.00000E+00
+			///                        with weighted error   1.28E-32
+			///                        log weighted error  31.89
+			///                        significant figures required  31.05
+			///                        decimal places required  32.55
 			/// </remarks>
 			public static double Erf(double x, bool bDebug)
 			{
-
-
-
-
 				double y = Math.Abs(x);
 				if (y > 1.0) goto L20;
 
-				// erf(x) = 1.0 - erfc(x)  for  -1.0 <= x <= 1.0 
+				// erf(x) = 1.0 - erfc(x)  for  -1.0 <= x <= 1.0
 
 				if (y <= sqeps)
 					return x * 2.0 * x / sqrtpi;
-				else // if (y > sqeps) 
+				else // if (y > sqeps)
 					return x * (dcsevl(x * 2.0 * x - 1.0, erfcs, nterf) + 1.0);
 
 				// erf(x) = 1.0 - erfc(x) for abs(x) > 1.0
@@ -351,17 +339,17 @@ namespace Altaxo.Calc
 				L20:
 				if (y <= xbig)
 					return CopySign(1.0 - Erfc(y), x);
-				else // if (y > xbig)  
+				else // if (y > xbig)
 					return sign(x);
 			} // Function
 		}
-		#endregion
+
+		#endregion Erf function
 
 		#region Erfc function
 
-
 		/// <summary>
-		/// Erfc(x) calculates the double precision complementary error function 
+		/// Erfc(x) calculates the double precision complementary error function
 		/// for double precision argument x.
 		/// </summary>
 		/// <param name="x">The argument x.</param>
@@ -372,7 +360,7 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Erfc(x) calculates the double precision complementary error function 
+		/// Erfc(x) calculates the double precision complementary error function
 		/// for double precision argument x.
 		/// </summary>
 		/// <param name="x">The argument x.</param>
@@ -383,14 +371,13 @@ namespace Altaxo.Calc
 			return _Erfc.Erfc(x, bDebug);
 		}
 
-		class _Erfc
+		private class _Erfc
 		{
-
 			/// <summary>
 			/// Coefficient array for Erf function
 			/// </summary>
-			static readonly double[] erfcs = 
-  { 
+			private static readonly double[] erfcs =
+  {
     -0.049046121234691808039984544033376,
     -0.14226120510371364237824741899631,
     0.010035582187599795575754676712933,
@@ -411,12 +398,11 @@ namespace Altaxo.Calc
     -6.5980120782851343155199999999999e-27,
     8.6550114699637626197333333333333e-29,
     -1.0788925177498064213333333333333e-30,
-    1.2811883993017002666666666666666e-32 
+    1.2811883993017002666666666666666e-32
   };
 
-
-			static readonly double[] erc2cs = 
-  { 
+			private static readonly double[] erc2cs =
+  {
     -0.06960134660230950112739150826197,
     -0.04110133936262089348982212084666,
     0.003914495866689626881561143705244,
@@ -465,11 +451,11 @@ namespace Altaxo.Calc
     -1.3784193221930940993896448e-30,
     3.691326793107069042251093333333e-31,
     -9.909389590624365420653226666666e-32,
-    2.666491705195388413323946666666e-32 
+    2.666491705195388413323946666666e-32
   };
 
-			static readonly double[] erfccs = 
-  { 
+			private static readonly double[] erfccs =
+  {
     0.0715179310202924774503697709496,
     -0.0265324343376067157558893386681,
     0.00171115397792085588332699194606,
@@ -528,23 +514,22 @@ namespace Altaxo.Calc
     -2.38099288253145918675346190062e-30,
     1.0990528301027615735972668375e-30,
     -4.86771374164496572732518677435e-31,
-    1.52587726411035756763200828211e-31 
+    1.52587726411035756763200828211e-31
   };
 
 			// used for Erfc
-			static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xsml = -Math.Sqrt(-Math.Log(sqrtpi * 0.5 * DBL_EPSILON));
-			static readonly double txmax = Math.Sqrt(-Math.Log(sqrtpi * DBL_MIN));
-			static readonly double xmax = txmax - Math.Log(txmax) * 0.5 / txmax - 0.01;
+			private static readonly double eta = 0.5 * DBL_EPSILON * 0.1;
 
+			private static readonly double xsml = -Math.Sqrt(-Math.Log(sqrtpi * 0.5 * DBL_EPSILON));
+			private static readonly double txmax = Math.Sqrt(-Math.Log(sqrtpi * DBL_MIN));
+			private static readonly double xmax = txmax - Math.Log(txmax) * 0.5 / txmax - 0.01;
 
-			static readonly int nterf = initds(erfcs, 21, eta);
-			static readonly int nterfc = initds(erfccs, 59, eta);
-			static readonly int nterc2 = initds(erc2cs, 49, eta);
-
+			private static readonly int nterf = initds(erfcs, 21, eta);
+			private static readonly int nterfc = initds(erfccs, 59, eta);
+			private static readonly int nterc2 = initds(erc2cs, 49, eta);
 
 			/// <summary>
-			/// Erfc(x) calculates the double precision complementary error function 
+			/// Erfc(x) calculates the double precision complementary error function
 			/// for double precision argument x.
 			/// </summary>
 			/// <param name="x">The argument x.</param>
@@ -555,35 +540,33 @@ namespace Altaxo.Calc
 			/// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for erf        on the interval  0.0          to  1.00000E+00 
-			///                                        with weighted Error   1.28E-32 
-			///                                         log weighted Error  31.89 
-			///                               significant figures required  31.05 
-			///                                    decimal places required  32.55 
+			/// Series for erf        on the interval  0.0          to  1.00000E+00
+			///                                        with weighted Error   1.28E-32
+			///                                         log weighted Error  31.89
+			///                               significant figures required  31.05
+			///                                    decimal places required  32.55
 			///
-			/// Series for erc2       on the interval  2.50000E-01 to  1.00000E+00 
-			///                                        with weighted Error   2.67E-32 
-			/// 
-			///                                         log weighted Error  31.57 
-			///                               significant figures required  30.31 
-			///                                    decimal places required  32.42 
+			/// Series for erc2       on the interval  2.50000E-01 to  1.00000E+00
+			///                                        with weighted Error   2.67E-32
 			///
-			/// Series for erfc       on the interval  0.0          to  2.50000E-01 
-			///                                        with weighted error   1.53E-31 
-			/// 
-			///                                         log weighted error  30.82 
-			///                               significant figures required  29.47 
-			///                                    decimal places required  31.70 
+			///                                         log weighted Error  31.57
+			///                               significant figures required  30.31
+			///                                    decimal places required  32.42
+			///
+			/// Series for erfc       on the interval  0.0          to  2.50000E-01
+			///                                        with weighted error   1.53E-31
+			///
+			///                                         log weighted error  30.82
+			///                               significant figures required  29.47
+			///                                    decimal places required  31.70
 			/// </code></remarks>
 			public static double Erfc(double x, bool bDebug)
 			{
-
-
 				double ret_val, y;
 
 				if (x > xsml) goto L20;
 
-				// erfc(x) = 1.0 - erf(x)  for  x < xsml 
+				// erfc(x) = 1.0 - erf(x)  for  x < xsml
 
 				return 2.0;
 
@@ -593,21 +576,21 @@ namespace Altaxo.Calc
 				y = Math.Abs(x);
 				if (y > 1.0) goto L30;
 
-				// erfc(x) = 1.0 - erf(x)  for abs(x) <= 1.0 
+				// erfc(x) = 1.0 - erf(x)  for abs(x) <= 1.0
 
 				if (y < sqeps)
 					return (1.0 - x * 2.0 / sqrtpi);
-				else // if (y >= sqeps) 
+				else // if (y >= sqeps)
 					return (1.0 - x * (dcsevl(x * 2.0 * x - 1.0, erfcs, nterf) + 1.0));
 
-				// erfc(x) = 1.0 - erf(x)  for  1.0 < abs(x) <= xmax 
+				// erfc(x) = 1.0 - erf(x)  for  1.0 < abs(x) <= xmax
 
 				L30:
 				y *= y;
 				if (y <= 4.0)
 					ret_val = Math.Exp(-y) / Math.Abs(x)
 						* (dcsevl((8.0 / y - 5.0) / 3.0, erc2cs, nterc2) + 0.5);
-				else // if (y > 4.0) 
+				else // if (y > 4.0)
 					ret_val = Math.Exp(-y) / Math.Abs(x)
 						* (dcsevl(8.0 / y - 1.0, erfccs, nterfc) + 0.5);
 
@@ -623,7 +606,7 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion Erfc function
 
 		#region Inverse Erf
 
@@ -651,7 +634,7 @@ namespace Altaxo.Calc
 			return oneBySqrt2 * _Cephes.ndtri(0.5 * (y + 1));
 		}
 
-		class _Cephes
+		private class _Cephes
 		{
 			/*              polevl.c
 			 *              p1evl.c
@@ -696,7 +679,6 @@ namespace Altaxo.Calc
 			 * program in microcode or assembly language.
 			 *
 			 */
-
 
 			/*
 			Cephes Math Library Release 2.1:  December, 1988
@@ -748,11 +730,6 @@ namespace Altaxo.Calc
 				return (ans);
 			}
 
-
-
-
-
-
 			/*              ndtri.c
  *
  *  Inverse of Normal distribution function
@@ -800,7 +777,6 @@ namespace Altaxo.Calc
  *
  */
 
-
 			/*
 			Cephes Math Library Release 2.1:  January, 1989
 			Copyright 1984, 1987, 1989 by Stephen L. Moshier
@@ -814,10 +790,11 @@ namespace Altaxo.Calc
 			// static double MAXNUM = double.NaN;
 
 			/* sqrt(2pi) */
-			static double s2pi = 2.50662827463100050242E0;
+			private static double s2pi = 2.50662827463100050242E0;
 
 			/* approximation for 0 <= |y - 0.5| <= 3/8 */
-			static readonly double[] P0 = new double[]
+
+			private static readonly double[] P0 = new double[]
 {
   -5.99633501014107895267E1,
   9.80010754185999661536E1,
@@ -825,7 +802,8 @@ namespace Altaxo.Calc
   1.39312609387279679503E1,
   -1.23916583867381258016E0,
       };
-			static readonly double[] Q0 = new double[]
+
+			private static readonly double[] Q0 = new double[]
 {
   /* 1.00000000000000000000E0,*/
   1.95448858338141759834E0,
@@ -841,7 +819,8 @@ namespace Altaxo.Calc
 			/* Approximation for interval z = sqrt(-2 log y ) between 2 and 8
 			 * i.e., y between exp(-2) = .135 and exp(-32) = 1.27e-14.
 			 */
-			static readonly double[] P1 = new double[] 
+
+			private static readonly double[] P1 = new double[]
 {
   4.05544892305962419923E0,
   3.15251094599893866154E1,
@@ -853,7 +832,8 @@ namespace Altaxo.Calc
   -3.50424626827848203418E-2,
   -8.57456785154685413611E-4,
       };
-			static readonly double[] Q1 = new double[] 
+
+			private static readonly double[] Q1 = new double[]
 {
   /*  1.00000000000000000000E0,*/
   1.57799883256466749731E1,
@@ -870,7 +850,7 @@ namespace Altaxo.Calc
 			 * i.e., y between exp(-32) = 1.27e-14 and exp(-2048) = 3.67e-890.
 			 */
 
-			static readonly double[] P2 = new double[] 
+			private static readonly double[] P2 = new double[]
 {
   3.23774891776946035970E0,
   6.91522889068984211695E0,
@@ -882,7 +862,8 @@ namespace Altaxo.Calc
   2.65806974686737550832E-6,
   6.23974539184983293730E-9,
       };
-			static readonly double[] Q2 = new double[]
+
+			private static readonly double[] Q2 = new double[]
 {
   /*  1.00000000000000000000E0,*/
   6.02427039364742014255E0,
@@ -941,18 +922,19 @@ namespace Altaxo.Calc
 				return (x);
 			}
 		}
-		#endregion
+
+		#endregion Inverse Erf
 
 		#region Dawson
 
 		/// <summary>
-		/// Dawson(x) evaluates Dawson's integral for a double precision real argument x. 
+		/// Dawson(x) evaluates Dawson's integral for a double precision real argument x.
 		/// <code>
-		///                       2  / x   2 
-		///                     -x   |    t 
-		///             F(x) = e     |   e    dt 
-		///                          | 
-		///                          / 0 
+		///                       2  / x   2
+		///                     -x   |    t
+		///             F(x) = e     |   e    dt
+		///                          |
+		///                          / 0
 		/// </code>
 		/// </summary>
 		/// <param name="x">The function argument</param>
@@ -963,13 +945,13 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Dawson(x) evaluates Dawson's integral for a double precision real argument x. 
+		/// Dawson(x) evaluates Dawson's integral for a double precision real argument x.
 		/// <code>
-		///                       2  / x   2 
-		///                     -x   |    t 
-		///             F(x) = e     |   e    dt 
-		///                          | 
-		///                          / 0 
+		///                       2  / x   2
+		///                     -x   |    t
+		///             F(x) = e     |   e    dt
+		///                          |
+		///                          / 0
 		/// </code>
 		/// </summary>
 		/// <param name="x">The function argument</param>
@@ -980,7 +962,7 @@ namespace Altaxo.Calc
 			return _Dawson.Dawson(x, bDebug);
 		}
 
-		class _Dawson
+		private class _Dawson
 		{
 			private static readonly double zero = 0.0;
 			private static readonly double xsmall = Math.Sqrt(0.5 * DBL_EPSILON);
@@ -990,17 +972,17 @@ namespace Altaxo.Calc
 			//----------------------------------------------------------------------
 			// Coefficients for R(9,9) approximation for  |x| < 2.5
 			//----------------------------------------------------------------------
-			private static double[] p1 = 
-  { 
+			private static double[] p1 =
+  {
     -2.6902039878870478241e-12, 4.18572065374337710778e-10,
     -1.34848304455939419963e-8, 9.28264872583444852976e-7,
     -1.23877783329049120592e-5, 4.07205792429155826266e-4,
     -0.00284388121441008500446, 0.0470139022887204722217,
-    -0.138868086253931995101,   1.00000000000000000004 
+    -0.138868086253931995101,   1.00000000000000000004
   };
 
-			private static double[] q1 = 
-  { 
+			private static double[] q1 =
+  {
     1.71257170854690554214e-10, 1.19266846372297253797e-8,
     4.32287827678631772231e-7,  1.03867633767414421898e-5,
     1.7891096528424624934e-4,   0.00226061077235076703171,
@@ -1012,22 +994,22 @@ namespace Altaxo.Calc
 			// for  x in [2.5, 3.5)
 			//----------------------------------------------------------------------
 
-			private static double[] p2 = 
-  { 
+			private static double[] p2 =
+  {
     -1.7095380470085549493,  -37.9258977271042880786,
     26.1935631268825992835,   12.5808703738951251885,
     -22.7571829525075891337,    4.56604250725163310122,
     -7.3308008989640287075,   46.5842087940015295573,
-    -17.3717177843672791149,    0.500260183622027967838 
+    -17.3717177843672791149,    0.500260183622027967838
   };
 
-			private static double[] q2 = 
-  { 
+			private static double[] q2 =
+  {
     1.82180093313514478378, 1100.67081034515532891,
     -7.08465686676573000364,  453.642111102577727153,
     40.6209742218935689922,   302.890110610122663923,
     170.641269745236227356,    951.190923960381458747,
-    0.206522691539642105009 
+    0.206522691539642105009
   };
 
 			//----------------------------------------------------------------------
@@ -1035,22 +1017,22 @@ namespace Altaxo.Calc
 			// for  x in [3.5, 5.0]
 			//----------------------------------------------------------------------
 
-			private static double[] p3 = 
-  { 
+			private static double[] p3 =
+  {
     -4.55169503255094815112,  -18.6647123338493852582,
     -7.36315669126830526754,  -66.8407240337696756838,
     48.450726508149145213,     26.9790586735467649969,
     -33.5044149820592449072,     7.50964459838919612289,
-    -1.48432341823343965307,    0.499999810924858824981 
+    -1.48432341823343965307,    0.499999810924858824981
   };
 
-			private static double[] q3 = 
-  { 
+			private static double[] q3 =
+  {
     44.7820908025971749852,    99.8607198039452081913,
     14.0238373126149385228,  3488.17758822286353588,
     -9.18871385293215873406, 1240.18500009917163023,
     -68.8024952504512254535,    -2.3125157538514514307,
-    0.250041492369922381761 
+    0.250041492369922381761
   };
 
 			//----------------------------------------------------------------------
@@ -1058,110 +1040,107 @@ namespace Altaxo.Calc
 			// for  |x| > 5.0
 			//----------------------------------------------------------------------
 
-			private static double[] p4 = 
-  { 
+			private static double[] p4 =
+  {
     -8.11753647558432685797,  -38.404388247745445343,
     -22.3787669028751886675,   -28.8301992467056105854,
     -5.99085540418222002197,  -11.3867365736066102577,
     -6.5282872752698074159,    -4.50002293000355585708,
-    -2.50000000088955834952,    0.5000000000000004884 
+    -2.50000000088955834952,    0.5000000000000004884
   };
 
-			private static double[] q4 = 
-  { 
+			private static double[] q4 =
+  {
     269.382300417238816428,     50.4198958742465752861,
     61.1539671480115846173,   208.210246935564547889,
     19.7325365692316183531,   -12.2097010558934838708,
     -6.99732735041547247161,   -2.49999970104184464568,
-    0.749999999999027092188 
+    0.749999999999027092188
   };
 
-
-
 			/// <summary>
-			/// Dawson(x) evaluates Dawson's integral for a double precision real argument x. 
+			/// Dawson(x) evaluates Dawson's integral for a double precision real argument x.
 			/// <code>
-			///                       2  / x   2 
-			///                     -x   |    t 
-			///             F(x) = e     |   e    dt 
-			///                          | 
-			///                          / 0 
+			///                       2  / x   2
+			///                     -x   |    t
+			///             F(x) = e     |   e    dt
+			///                          |
+			///                          / 0
 			/// </code>
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
 			/// <returns></returns>
 			/// <remarks><code>
-			/// The main computation uses rational Chebyshev approximations 
-			/// published in Math. Comp. 24, 171-178 (1970) by Cody, Paciorek 
-			/// and Thacher.  This transportable program is patterned after the 
-			/// machine-dependent FUNPACK program DDAW(X), but cannot match that 
-			/// version for efficiency or accuracy.  This version uses rational 
-			/// approximations that are theoretically accurate to about 19 
-			/// significant decimal digits.  The accuracy achieved depends on the 
-			/// arithmetic system, the compiler, the intrinsic functions, and 
-			/// proper selection of the machine-dependent constants. 
+			/// The main computation uses rational Chebyshev approximations
+			/// published in Math. Comp. 24, 171-178 (1970) by Cody, Paciorek
+			/// and Thacher.  This transportable program is patterned after the
+			/// machine-dependent FUNPACK program DDAW(X), but cannot match that
+			/// version for efficiency or accuracy.  This version uses rational
+			/// approximations that are theoretically accurate to about 19
+			/// significant decimal digits.  The accuracy achieved depends on the
+			/// arithmetic system, the compiler, the intrinsic functions, and
+			/// proper selection of the machine-dependent constants.
 			///
-			/// Underflow: The program returns 0.0 for |X| > XMAX. 
+			/// Underflow: The program returns 0.0 for |X| > XMAX.
 			///
 			/// This is a translation from the Fortran version of a SPECFUN (NETLIB)
-			/// REVISION June 15, 1988 , originally written by W. J. Cody, (Mathematics 
-			/// and Computer Science Division, Argonne National Laboratory, Argonne, 
-			/// IL 60439) to C++. 
+			/// REVISION June 15, 1988 , originally written by W. J. Cody, (Mathematics
+			/// and Computer Science Division, Argonne National Laboratory, Argonne,
+			/// IL 60439) to C++.
 			///
 			/// Explanation of machine-dependent constants:
 			///
-			///   XINF   = largest positive machine number 
+			///   XINF   = largest positive machine number
 			///            (ANSI C: DBL_MAX)
-			///   XMIN   = the smallest positive machine number. 
+			///   XMIN   = the smallest positive machine number.
 			///            (ANSI C: DBL_MIN)
-			///   EPS    = smallest positive number such that 1+eps > 1. 
-			///            Approximately  beta**(-p), where beta is the machine 
-			///            radix and p is the number of significant base-beta 
-			///            digits in a floating-point number. 
+			///   EPS    = smallest positive number such that 1+eps > 1.
+			///            Approximately  beta**(-p), where beta is the machine
+			///            radix and p is the number of significant base-beta
+			///            digits in a floating-point number.
 			///            (ANSI C: 0.5*DBL_EPSILON)
-			///   XMAX   = absolute argument beyond which DAW(X) underflows. 
-			///            XMAX = min(0.5/xmin, xinf). 
-			///   XSMALL = absolute argument below DAW(X)  may be represented 
-			///            by X.  We recommend XSMALL = sqrt(eps). 
-			///   XLARGE = argument beyond which DAW(X) may be represented by 
-			///            1/(2x).  We recommend XLARGE = 1/sqrt(eps). 
+			///   XMAX   = absolute argument beyond which DAW(X) underflows.
+			///            XMAX = min(0.5/xmin, xinf).
+			///   XSMALL = absolute argument below DAW(X)  may be represented
+			///            by X.  We recommend XSMALL = sqrt(eps).
+			///   XLARGE = argument beyond which DAW(X) may be represented by
+			///            1/(2x).  We recommend XLARGE = 1/sqrt(eps).
 			///
-			/// Approximate values for some important machines are 
+			/// Approximate values for some important machines are
 			///
-			///                        beta  p     eps     xmin       xinf 
+			///                        beta  p     eps     xmin       xinf
 			///
-			///  CDC 7600      (S.P.)    2  48  7.11E-15  3.14E-294  1.26E+322 
-			///  CRAY-1        (S.P.)    2  48  7.11E-15  4.58E-2467 5.45E+2465 
-			///  IEEE (IBM/XT, 
-			///    SUN, etc.)  (S.P.)    2  24  1.19E-07  1.18E-38   3.40E+38 
-			///  IEEE (IBM/XT, 
-			///    SUN, etc.)  (D.P.)    2  53  1.11D-16  2.23E-308  1.79D+308 
-			///  IBM 3033      (D.P.)   16  14  1.11D-16  5.40D-79   7.23D+75 
-			///  VAX 11/780    (S.P.)    2  24  5.96E-08  2.94E-39   1.70E+38 
-			///                (D.P.)    2  56  1.39D-17  2.94D-39   1.70D+38 
-			///   (G Format)   (D.P.)    2  53  1.11D-16  5.57D-309  8.98D+307 
+			///  CDC 7600      (S.P.)    2  48  7.11E-15  3.14E-294  1.26E+322
+			///  CRAY-1        (S.P.)    2  48  7.11E-15  4.58E-2467 5.45E+2465
+			///  IEEE (IBM/XT,
+			///    SUN, etc.)  (S.P.)    2  24  1.19E-07  1.18E-38   3.40E+38
+			///  IEEE (IBM/XT,
+			///    SUN, etc.)  (D.P.)    2  53  1.11D-16  2.23E-308  1.79D+308
+			///  IBM 3033      (D.P.)   16  14  1.11D-16  5.40D-79   7.23D+75
+			///  VAX 11/780    (S.P.)    2  24  5.96E-08  2.94E-39   1.70E+38
+			///                (D.P.)    2  56  1.39D-17  2.94D-39   1.70D+38
+			///   (G Format)   (D.P.)    2  53  1.11D-16  5.57D-309  8.98D+307
 			///
-			///                         XSMALL     XLARGE     XMAX 
+			///                         XSMALL     XLARGE     XMAX
 			///
-			///  CDC 7600      (S.P.)  5.96E-08   1.68E+07  1.59E+293 
-			///  CRAY-1        (S.P.)  5.96E-08   1.68E+07  5.65E+2465 
-			///  IEEE (IBM/XT, 
-			///    SUN, etc.)  (S.P.)  2.44E-04   4.10E+03  4.25E+37 
-			///  IEEE (IBM/XT, 
-			///    SUN, etc.)  (D.P.)  1.05E-08   9.49E+07  2.24E+307 
-			///  IBM 3033      (D.P.)  3.73D-09   2.68E+08  7.23E+75 
-			///  VAX 11/780    (S.P.)  2.44E-04   4.10E+03  1.70E+38 
-			///                (D.P.)  3.73E-09   2.68E+08  1.70E+38 
-			///   (G Format)   (D.P.)  1.05E-08   9.49E+07  8.98E+307 
+			///  CDC 7600      (S.P.)  5.96E-08   1.68E+07  1.59E+293
+			///  CRAY-1        (S.P.)  5.96E-08   1.68E+07  5.65E+2465
+			///  IEEE (IBM/XT,
+			///    SUN, etc.)  (S.P.)  2.44E-04   4.10E+03  4.25E+37
+			///  IEEE (IBM/XT,
+			///    SUN, etc.)  (D.P.)  1.05E-08   9.49E+07  2.24E+307
+			///  IBM 3033      (D.P.)  3.73D-09   2.68E+08  7.23E+75
+			///  VAX 11/780    (S.P.)  2.44E-04   4.10E+03  1.70E+38
+			///                (D.P.)  3.73E-09   2.68E+08  1.70E+38
+			///   (G Format)   (D.P.)  1.05E-08   9.49E+07  8.98E+307
 			///
 			///
 			/// These values are not neccessary in ANSI C++ because they are calculated
-			/// at compile time from values given in the standard libraries! 
-			/// </code></remarks>    
+			/// at compile time from values given in the standard libraries!
+			/// </code></remarks>
 			public static double Dawson(double x, bool bDebug)
 			{
-
 				const double half = 0.5;
 				const double one = 1.0;
 				const double six25 = 6.25;
@@ -1189,7 +1168,7 @@ namespace Altaxo.Calc
 					if (y < six25)
 					{
 						// --------------------------------------------------------------
-						//  abs(x) < 2.5 
+						//  abs(x) < 2.5
 						// --------------------------------------------------------------
 						sump = p1[0];
 						sumq = q1[0];
@@ -1203,7 +1182,7 @@ namespace Altaxo.Calc
 					else if (y < one225)
 					{
 						// --------------------------------------------------------------
-						//  2.5 <= abs(x) < 3.5 
+						//  2.5 <= abs(x) < 3.5
 						// --------------------------------------------------------------
 						frac = zero;
 						for (int i = 0; i < 9; ++i)
@@ -1213,7 +1192,7 @@ namespace Altaxo.Calc
 					else if (y < two5)
 					{
 						// --------------------------------------------------------------
-						//  3.5 <= abs(x) < 5.0 
+						//  3.5 <= abs(x) < 5.0
 						// --------------------------------------------------------------
 						frac = zero;
 						for (int i = 0; i < 9; ++i)
@@ -1223,7 +1202,7 @@ namespace Altaxo.Calc
 					else
 					{
 						// --------------------------------------------------------------
-						//  5.0 <= abs(x) .<= xlarge 
+						//  5.0 <= abs(x) .<= xlarge
 						// --------------------------------------------------------------
 						w2 = one / x / x;
 						frac = zero;
@@ -1235,41 +1214,41 @@ namespace Altaxo.Calc
 				}
 				return ret_val;
 			}
-
 		}
-		#endregion
+
+		#endregion Dawson
 
 		#region Faddeeva
 
 		/// <summary>
-		/// Given a complex number z = (x,y), this subroutine computes 
-		/// the value of the Faddeeva function w(z) = exp(-z^2)*erfc(-i*z), 
-		/// where erfc is the complex complementary error function and i means sqrt(-1). 
+		/// Given a complex number z = (x,y), this subroutine computes
+		/// the value of the Faddeeva function w(z) = exp(-z^2)*erfc(-i*z),
+		/// where erfc is the complex complementary error function and i means sqrt(-1).
 		/// </summary>
 		/// <param name="z">The function argument.</param>
 		/// <returns>The faddeeva function w(z).</returns>
 		/// <remarks>
 		/// <code>
-		/// The accuracy of the algorithm for z in the 1st and 2nd quadrant 
-		/// is 14 significant digits; in the 3rd and 4th it is 13 significant 
-		/// digits outside a circular region with radius 0.126 around a zero 
-		/// of the function. 
+		/// The accuracy of the algorithm for z in the 1st and 2nd quadrant
+		/// is 14 significant digits; in the 3rd and 4th it is 13 significant
+		/// digits outside a circular region with radius 0.126 around a zero
+		/// of the function.
 		///
-		/// All real variables in the program are double precision. 
-		/// The parameter M_2_SQRTPI equals 2/sqrt(pi).  
+		/// All real variables in the program are double precision.
+		/// The parameter M_2_SQRTPI equals 2/sqrt(pi).
 		///
-		/// The routine is not underflow-protected but any variable can be 
-		/// put to 0 upon underflow; 
+		/// The routine is not underflow-protected but any variable can be
+		/// put to 0 upon underflow;
 		///
 		/// The routine is overflow-protected: Matpack::Error() is called.
 		///
 		/// References:
 		///
-		/// (1) G.P.M. Poppe, C.M.J. Wijers; More Efficient Computation of 
+		/// (1) G.P.M. Poppe, C.M.J. Wijers; More Efficient Computation of
 		///     the Complex Error-Function, ACM Trans. Math. Software,
 		///     Vol. 16, no. 1, pp. 47.
 		/// (2) Algorithm 680, collected algorithms from ACM.
-		/// 
+		///
 		/// The Fortran source code was translated to C++ by B.M. Gammel
 		/// and added to the Matpack library, 1992.
 		///
@@ -1282,35 +1261,35 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Given a complex number z = (x,y), this subroutine computes 
-		/// the value of the Faddeeva function w(z) = exp(-z^2)*erfc(-i*z), 
-		/// where erfc is the complex complementary error function and i means sqrt(-1). 
+		/// Given a complex number z = (x,y), this subroutine computes
+		/// the value of the Faddeeva function w(z) = exp(-z^2)*erfc(-i*z),
+		/// where erfc is the complex complementary error function and i means sqrt(-1).
 		/// </summary>
 		/// <param name="z">The function argument.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
 		/// <returns>The faddeeva function w(z).</returns>
 		/// <remarks>
 		/// <code>
-		/// The accuracy of the algorithm for z in the 1st and 2nd quadrant 
-		/// is 14 significant digits; in the 3rd and 4th it is 13 significant 
-		/// digits outside a circular region with radius 0.126 around a zero 
-		/// of the function. 
+		/// The accuracy of the algorithm for z in the 1st and 2nd quadrant
+		/// is 14 significant digits; in the 3rd and 4th it is 13 significant
+		/// digits outside a circular region with radius 0.126 around a zero
+		/// of the function.
 		///
-		/// All real variables in the program are double precision. 
-		/// The parameter M_2_SQRTPI equals 2/sqrt(pi).  
+		/// All real variables in the program are double precision.
+		/// The parameter M_2_SQRTPI equals 2/sqrt(pi).
 		///
-		/// The routine is not underflow-protected but any variable can be 
-		/// put to 0 upon underflow; 
+		/// The routine is not underflow-protected but any variable can be
+		/// put to 0 upon underflow;
 		///
 		/// The routine is overflow-protected: Matpack::Error() is called.
 		///
 		/// References:
 		///
-		/// (1) G.P.M. Poppe, C.M.J. Wijers; More Efficient Computation of 
+		/// (1) G.P.M. Poppe, C.M.J. Wijers; More Efficient Computation of
 		///     the Complex Error-Function, ACM Trans. Math. Software,
 		///     Vol. 16, no. 1, pp. 47.
 		/// (2) Algorithm 680, collected algorithms from ACM.
-		/// 
+		///
 		/// The Fortran source code was translated to C++ by B.M. Gammel
 		/// and added to the Matpack library, 1992.
 		///
@@ -1319,7 +1298,7 @@ namespace Altaxo.Calc
 		/// </remarks>
 		public static Complex Faddeeva(Complex z, bool bDebug)
 		{
-			// The maximum value of rmaxreal equals the root of the largest number 
+			// The maximum value of rmaxreal equals the root of the largest number
 			// rmax which can still be implemented on the computer in double precision
 			// floating-point arithmetic
 			double rmaxreal = Math.Sqrt(DBL_MAX);
@@ -1361,10 +1340,9 @@ namespace Altaxo.Calc
 
 			if (a)
 			{
-
-				// If (qrho < 0.085264) then the Faddeeva-function is evaluated 
-				// using a power-series (Abramowitz/Stegun, equation (7.1.5), p.297). 
-				// n is the minimum number of terms needed to obtain the required 
+				// If (qrho < 0.085264) then the Faddeeva-function is evaluated
+				// using a power-series (Abramowitz/Stegun, equation (7.1.5), p.297).
+				// n is the minimum number of terms needed to obtain the required
 				// accuracy.
 
 				qrho = (1 - y * 0.85) * Math.Sqrt(qrho);
@@ -1387,21 +1365,19 @@ namespace Altaxo.Calc
 
 				u = u1 * u2 - v1 * v2;
 				v = u1 * v2 + v1 * u2;
-
 			}
 			else
 			{
-
-				//  If (qrho > 1.0) then w(z) is evaluated using the Laplace continued 
+				//  If (qrho > 1.0) then w(z) is evaluated using the Laplace continued
 				//  fraction.  nu is the minimum number of terms needed to obtain the
-				//  required accuracy. 
+				//  required accuracy.
 				//  if ((qrho > 0.085264) && (qrho < 1.0)) then w(z) is evaluated
 				//  by a truncated Taylor expansion, where the Laplace continued
-				//  fraction is used to calculate the derivatives of w(z). 
+				//  fraction is used to calculate the derivatives of w(z).
 				//  kapn is the minimum number of terms in the Taylor expansion needed
-				//  to obtain the required accuracy. 
+				//  to obtain the required accuracy.
 				//  nu is the minimum number of terms of the continued fraction needed
-				//  to calculate the derivatives with the required accuracy. 
+				//  to calculate the derivatives with the required accuracy.
 
 				if (qrho > 1.0)
 				{
@@ -1456,11 +1432,10 @@ namespace Altaxo.Calc
 					u = Math.Exp(-(xabs * xabs));
 			}
 
-			//  evaluation of w(z) in the other quadrants 
+			//  evaluation of w(z) in the other quadrants
 
 			if (yi < 0.0)
 			{
-
 				if (a)
 				{
 					u2 *= 2;
@@ -1487,7 +1462,6 @@ namespace Altaxo.Calc
 				u = u2 - u;
 				v = v2 - v;
 				if (xi > 0.0) v = -v;
-
 			}
 			else if (xi < 0.0)
 				v = -v;
@@ -1495,7 +1469,6 @@ namespace Altaxo.Calc
 			return new Complex(u, v);
 		}
 
-
-		#endregion
-	} // class 
+		#endregion Faddeeva
+	} // class
 } // namespace

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,7 +31,8 @@ namespace Altaxo.Units.Dimensionless
 {
 	public class Percent : IUnit
 	{
-		static readonly Percent _instance = new Percent();
+		private static readonly Percent _instance = new Percent();
+
 		public static Percent Instance { get { return _instance; } }
 
 		protected Percent()
@@ -66,5 +69,4 @@ namespace Altaxo.Units.Dimensionless
 			get { return Unity.Instance; }
 		}
 	}
-
 }

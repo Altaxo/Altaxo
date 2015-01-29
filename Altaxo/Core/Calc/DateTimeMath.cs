@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,9 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
-using System.Diagnostics;
 
 namespace Altaxo.Calc
 {
@@ -31,9 +33,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded down to the start of a year. If <paramref name="x"/> designates exactly the start of a year, then x is returned unchanged. 
+		///  The date x is rounded down to the start of a year. If <paramref name="x"/> designates exactly the start of a year, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundDownToStartOfYear(DateTime x)
 		{
 			return new DateTime(x.Year, 1, 1, 0, 0, 0, x.Kind);
@@ -44,9 +46,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded up to the next start of a year. If <paramref name="x"/> designates exactly the start of a year, then x is returned unchanged. 
+		///  The date x is rounded up to the next start of a year. If <paramref name="x"/> designates exactly the start of a year, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundUpToStartOfYear(DateTime x)
 		{
 			if (x == RoundDownToStartOfYear(x))
@@ -60,9 +62,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded down to the start of a month. If <paramref name="x"/> designates exactly the start of a month, then x is returned unchanged. 
+		///  The date x is rounded down to the start of a month. If <paramref name="x"/> designates exactly the start of a month, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundDownToStartOfMonth(DateTime x)
 		{
 			return new DateTime(x.Year, x.Month, 1, 0, 0, 0, x.Kind);
@@ -73,9 +75,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded up to the next start of a month. If <paramref name="x"/> designates exactly the start of a month, then x is returned unchanged. 
+		///  The date x is rounded up to the next start of a month. If <paramref name="x"/> designates exactly the start of a month, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundUpToStartOfMonth(DateTime x)
 		{
 			if (x == RoundDownToStartOfMonth(x))
@@ -89,9 +91,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded down to the start of a day. If <paramref name="x"/> designates exactly the start of a day, then x is returned unchanged. 
+		///  The date x is rounded down to the start of a day. If <paramref name="x"/> designates exactly the start of a day, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundDownToStartOfDay(DateTime x)
 		{
 			return new DateTime(x.Year, x.Month, x.Day, 0, 0, 0, x.Kind);
@@ -102,9 +104,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded up to the next start of a day. If <paramref name="x"/> designates exactly the start of a day, then x is returned unchanged. 
+		///  The date x is rounded up to the next start of a day. If <paramref name="x"/> designates exactly the start of a day, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundUpToStartOfDay(DateTime x)
 		{
 			DateTime start = RoundDownToStartOfDay(x);
@@ -118,9 +120,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded down to the start of an hour. If <paramref name="x"/> designates exactly the start of an hour, then x is returned unchanged. 
+		///  The date x is rounded down to the start of an hour. If <paramref name="x"/> designates exactly the start of an hour, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundDownToStartOfHour(DateTime x)
 		{
 			return new DateTime(x.Year, x.Month, x.Day, x.Hour, 0, 0, x.Kind);
@@ -131,9 +133,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded up to the next start of an hour. If <paramref name="x"/> designates exactly the start of an hour, then x is returned unchanged. 
+		///  The date x is rounded up to the next start of an hour. If <paramref name="x"/> designates exactly the start of an hour, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundUpToStartOfHour(DateTime x)
 		{
 			DateTime start = RoundDownToStartOfHour(x);
@@ -147,7 +149,7 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded down to the start of a minute. If <paramref name="x"/> designates exactly the start of a minute, then x is returned unchanged. 
+		///  The date x is rounded down to the start of a minute. If <paramref name="x"/> designates exactly the start of a minute, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
 		/// </returns>
 		public static DateTime RoundDownToStartOfMinute(DateTime x)
@@ -160,9 +162,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded up to the next start of a minute. If <paramref name="x"/> designates exactly the start of a minute, then x is returned unchanged. 
+		///  The date x is rounded up to the next start of a minute. If <paramref name="x"/> designates exactly the start of a minute, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundUpToStartOfMinute(DateTime x)
 		{
 			DateTime start = RoundDownToStartOfMinute(x);
@@ -176,9 +178,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded down to the start of a second. If <paramref name="x"/> designates exactly the start of a second, then x is returned unchanged. 
+		///  The date x is rounded down to the start of a second. If <paramref name="x"/> designates exactly the start of a second, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundDownToStartOfSecond(DateTime x)
 		{
 			return new DateTime(x.Year, x.Month, x.Day, x.Hour, x.Minute, x.Second, x.Kind);
@@ -189,9 +191,9 @@ namespace Altaxo.Calc
 		/// </summary>
 		/// <param name="x">The date argument.</param>
 		/// <returns>
-		///  The date x is rounded up to the next start of a second. If <paramref name="x"/> designates exactly the start of a second, then x is returned unchanged. 
+		///  The date x is rounded up to the next start of a second. If <paramref name="x"/> designates exactly the start of a second, then x is returned unchanged.
 		/// The time zone information of the return value is copied from <paramref name="x"/>.
-		/// </returns>	
+		/// </returns>
 		public static DateTime RoundUpToStartOfSecond(DateTime x)
 		{
 			DateTime start = RoundDownToStartOfSecond(x);
@@ -200,7 +202,7 @@ namespace Altaxo.Calc
 			return start.AddSeconds(1);
 		}
 
-		/// <summary>Rounds down the date so that it starts at the first day of a year and is less than or equal to <paramref name="x"/>. 
+		/// <summary>Rounds down the date so that it starts at the first day of a year and is less than or equal to <paramref name="x"/>.
 		/// The resulting year number then is k*<paramref name="n"/>, with k being an integer.</summary>
 		/// <param name="x">The date.</param>
 		/// <param name="n">The number of years to round down. Must be greater than or equal to 1.</param>
@@ -210,9 +212,7 @@ namespace Altaxo.Calc
 			return new DateTime(Altaxo.Calc.Rounding.RoundDown(x.Year, n), 1, 1, 0, 0, 0, x.Kind);
 		}
 
-
-
-		/// <summary>Rounds up the date so that it starts at the first day of a year and is greater than or equal to <paramref name="x"/>. 
+		/// <summary>Rounds up the date so that it starts at the first day of a year and is greater than or equal to <paramref name="x"/>.
 		/// The resulting year number then is k*<paramref name="n"/>, with k being an integer.</summary>
 		/// <param name="x">The date.</param>
 		/// <param name="n">The number of years to round up. Must be greater than or equal to 1.</param>
@@ -223,9 +223,7 @@ namespace Altaxo.Calc
 			return new DateTime(Altaxo.Calc.Rounding.RoundUp(x.Year + (x == beginningOfThisYear ? 0 : 1), n), 1, 1, 0, 0, 0, x.Kind);
 		}
 
-
-
-		/// <summary>Rounds down the date so that it starts at the first day of a month and is less than or equal to <paramref name="x"/>. 
+		/// <summary>Rounds down the date so that it starts at the first day of a month and is less than or equal to <paramref name="x"/>.
 		/// The resulting month number then is 1 + k*<paramref name="n"/>, with k being an integer.</summary>
 		/// <param name="x">The date.</param>
 		/// <param name="n">The number of months to round down. Must be greater than or equal to 1.</param>
@@ -240,12 +238,10 @@ namespace Altaxo.Calc
 			if (totalMonth < 0)
 				return DateTime.MinValue;
 			else
-				return new DateTime(1+(totalMonth/12), 1+(totalMonth%12), 1, 0, 0, 0, x.Kind);
+				return new DateTime(1 + (totalMonth / 12), 1 + (totalMonth % 12), 1, 0, 0, 0, x.Kind);
 		}
 
-
-
-		/// <summary>Rounds up the date so that it starts at the first day of a month and is greater than or equal to <paramref name="x"/>. 
+		/// <summary>Rounds up the date so that it starts at the first day of a month and is greater than or equal to <paramref name="x"/>.
 		/// The resulting month number then is 1 + k*<paramref name="n"/>, with k being an integer.</summary>
 		/// <param name="x">The date.</param>
 		/// <param name="n">The number of months to round up. Must be greater than or equal to 1.</param>
@@ -259,7 +255,6 @@ namespace Altaxo.Calc
 			else
 				return new DateTime(1 + (totalMonth / 12), 1 + (totalMonth % 12), 1, 0, 0, 0, x.Kind);
 		}
-
 
 		private static DateTime GetStartOffset(DateTime d, TimeSpan span)
 		{
@@ -280,7 +275,6 @@ namespace Altaxo.Calc
 			return start;
 		}
 
-
 		public static DateTime RoundUpSpan(DateTime d, TimeSpan span)
 		{
 			//if span is a day or greater, it should be rounded with respect to the start of the month
@@ -295,7 +289,6 @@ namespace Altaxo.Calc
 			return start + TimeSpan.FromTicks(roundedTicks);
 		}
 
-
 		public static DateTime RoundDownSpan(DateTime d, TimeSpan span)
 		{
 			//if span is a day or greater, it should be rounded with respect to the start of the month
@@ -309,6 +302,5 @@ namespace Altaxo.Calc
 			long roundedTicks = Altaxo.Calc.Rounding.RoundDown(tickdiff, span.Ticks);
 			return start + TimeSpan.FromTicks(roundedTicks);
 		}
-
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -47,8 +49,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			_shortCut = shortCut;
 		}
 
-
-
 		/// <summary>Retrieves the content for this element by providing the original object index of the object and a sort order.</summary>
 		/// <param name="originalListIndex">Index in the original object list of <see cref="MultiRenameData"/>.</param>
 		/// <param name="currentSortIndex">Index of the current sort order (for instance when sorted in a view).</param>
@@ -58,13 +58,12 @@ namespace Altaxo.Gui.Common.MultiRename
 
 	public class MultiRenameLiteralElement : IMultiRenameElement
 	{
-		string _literal;
+		private string _literal;
 
 		public MultiRenameLiteralElement(string literal)
 		{
 			_literal = literal;
 		}
-
 
 		public string GetContent(int originalListIndex, int currentSortIndex)
 		{
@@ -74,11 +73,10 @@ namespace Altaxo.Gui.Common.MultiRename
 
 	public class MultiRenameElementCollection : IMultiRenameElement
 	{
-		List<IMultiRenameElement> _elements = new List<IMultiRenameElement>();
+		private List<IMultiRenameElement> _elements = new List<IMultiRenameElement>();
 
 		public MultiRenameElementCollection()
 		{
-
 		}
 
 		public List<IMultiRenameElement> Elements { get { return _elements; } }
@@ -95,7 +93,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
 	public class MultiRenameStringElement : MultiRenameBaseElement
 	{
-		int _start, _last;
+		private int _start, _last;
 
 		public MultiRenameStringElement(MultiRenameData multiRenameData, string shortCut, int start, int last)
 			: base(multiRenameData, shortCut)
@@ -132,10 +130,10 @@ namespace Altaxo.Gui.Common.MultiRename
 
 	public class MultiRenameIntegerElement : MultiRenameBaseElement
 	{
-		int _numberOfDigits;
-		int _offset;
-		int _step;
-		string _formatString;
+		private int _numberOfDigits;
+		private int _offset;
+		private int _step;
+		private string _formatString;
 
 		public MultiRenameIntegerElement(MultiRenameData multiRenameData, string shortCut, int numberOfDigits, int offset, int step)
 			: base(multiRenameData, shortCut)
@@ -165,16 +163,16 @@ namespace Altaxo.Gui.Common.MultiRename
 
 	public class MultiRenameDateTimeElement : MultiRenameBaseElement
 	{
-		const string DefaultDateTimeFormat = "yyyy-dd-MM HH:mm:ss";
-		string _dateTimeFormat;
-		bool _useUtcTime;
+		private const string DefaultDateTimeFormat = "yyyy-dd-MM HH:mm:ss";
+		private string _dateTimeFormat;
+		private bool _useUtcTime;
+
 		public MultiRenameDateTimeElement(MultiRenameData multiRenameData, string shortCut, string dateTimeFormat, bool useUtcTime)
 			: base(multiRenameData, shortCut)
 		{
 			_dateTimeFormat = string.IsNullOrEmpty(dateTimeFormat) ? DefaultDateTimeFormat : dateTimeFormat;
 
 			_useUtcTime = useUtcTime;
-
 		}
 
 		public override string GetContent(int originalListIndex, int currentSortIndex)
@@ -199,8 +197,8 @@ namespace Altaxo.Gui.Common.MultiRename
 
 	public class MultiRenameArrayElement : MultiRenameBaseElement
 	{
-		int _start, _last;
-		string _separator;
+		private int _start, _last;
+		private string _separator;
 
 		public MultiRenameArrayElement(MultiRenameData multiRenameData, string shortCut, int start, int last, string separator)
 			: base(multiRenameData, shortCut)
@@ -233,6 +231,4 @@ namespace Altaxo.Gui.Common.MultiRename
 				return string.Empty;
 		}
 	}
-
-
 }

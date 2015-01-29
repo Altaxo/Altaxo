@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,6 @@ using System.Text;
 
 namespace Altaxo
 {
-
 	/// <summary>
 	/// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancellationPending" />, and
 	/// if it is <c>true</c>, return in a safe way.
@@ -51,7 +52,6 @@ namespace Altaxo
 		/// <param name="text">Report text</param>
 		/// <param name="progressValue">The progress as fraction (0..1).</param>
 		void ReportProgress(string text, double progressValue);
-
 
 		/// <summary>
 		/// Returns true if the activity was cancelled by the user. The script has to check this value periodically. If it is set to true, the script should return.

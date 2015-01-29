@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
@@ -33,12 +34,12 @@ namespace Altaxo.Data
 		#region Helper classes
 
 		#region Sorting foundation
+
 		public delegate int RowComparismMethod(int i, int j);
+
 		public delegate void RowSwapMethod(int i, int j);
 
-
-
-		static void downheap(int N, int k, RowComparismMethod CMP, RowSwapMethod swap)
+		private static void downheap(int N, int k, RowComparismMethod CMP, RowSwapMethod swap)
 		{
 			while (k <= N / 2)
 			{
@@ -62,14 +63,13 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Sorts elements in an order provided by the comparism method. Needs N log N operations. Worst case (already sorted) is something like 20% slower.
 		/// </summary>
 		/// <param name="count">Number of elements to sort (from indices 0 to count-1).</param>
 		/// <param name="compare">A compare method wich takes two indices and compares the elements at those indices.</param>
 		/// <param name="swap">A swap method which swaps the elements at two indices.</param>
-		static void HeapSort(int count, RowComparismMethod compare, RowSwapMethod swap)
+		private static void HeapSort(int count, RowComparismMethod compare, RowSwapMethod swap)
 		{
 			int N;
 			int k;
@@ -103,8 +103,8 @@ namespace Altaxo.Data
 				downheap(N, 0, compare, swap);
 			}
 		}
-		#endregion
 
+		#endregion Sorting foundation
 
 		/// <summary>
 		/// Sorts the elements, but maintains the original order in the provided array. Instead, an array of indices is created. The elements are
@@ -159,10 +159,10 @@ namespace Altaxo.Data
 			return destinationIndexArray;
 		}
 
-		class DataColumnCollectionRowSwapper
+		private class DataColumnCollectionRowSwapper
 		{
-			List<DataColumn> _colsToSwap;
-			AltaxoVariant _var;
+			private List<DataColumn> _colsToSwap;
+			private AltaxoVariant _var;
 
 			public DataColumnCollectionRowSwapper(DataColumnCollection coll, int forColumnGroup)
 			{
@@ -185,12 +185,12 @@ namespace Altaxo.Data
 			}
 		}
 
-		class DataTableColumnSwapper
+		private class DataTableColumnSwapper
 		{
-			DataTable _table;
-			int _propColumns;
+			private DataTable _table;
+			private int _propColumns;
 
-			AltaxoVariant _var;
+			private AltaxoVariant _var;
 
 			public DataTableColumnSwapper(DataTable table)
 			{
@@ -200,7 +200,6 @@ namespace Altaxo.Data
 
 			public void Swap(int i, int j)
 			{
-
 				_table.DataColumns.SwapColumnPositions(i, j);
 				DataColumnCollection prop = _table.PropCols;
 				for (int n = 0; n < _propColumns; n++)
@@ -212,13 +211,13 @@ namespace Altaxo.Data
 			}
 		}
 
-		class DataTableSelectedColumnSwapper
+		private class DataTableSelectedColumnSwapper
 		{
-			DataTable _table;
-			int _propColumns;
-			IAscendingIntegerCollection _selIndices;
+			private DataTable _table;
+			private int _propColumns;
+			private IAscendingIntegerCollection _selIndices;
 
-			AltaxoVariant _var;
+			private AltaxoVariant _var;
 
 			public DataTableSelectedColumnSwapper(DataTable table, IAscendingIntegerCollection selectedDataColumns)
 			{
@@ -243,10 +242,11 @@ namespace Altaxo.Data
 			}
 		}
 
-		class DoubleColumnComparer
+		private class DoubleColumnComparer
 		{
-			DoubleColumn _col;
-			bool _ascendingOrder;
+			private DoubleColumn _col;
+			private bool _ascendingOrder;
+
 			public DoubleColumnComparer(DoubleColumn sortCol, bool ascending)
 			{
 				_col = sortCol;
@@ -259,11 +259,11 @@ namespace Altaxo.Data
 			}
 		}
 
-		class SelectedDoubleColumnComparer
+		private class SelectedDoubleColumnComparer
 		{
-			DoubleColumn _col;
-			bool _ascendingOrder;
-			IAscendingIntegerCollection _selIndices;
+			private DoubleColumn _col;
+			private bool _ascendingOrder;
+			private IAscendingIntegerCollection _selIndices;
 
 			public SelectedDoubleColumnComparer(DoubleColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending)
 			{
@@ -280,10 +280,11 @@ namespace Altaxo.Data
 			}
 		}
 
-		class DataColumnComparer
+		private class DataColumnComparer
 		{
-			DataColumn _col;
-			bool _ascendingOrder;
+			private DataColumn _col;
+			private bool _ascendingOrder;
+
 			public DataColumnComparer(DataColumn sortCol, bool ascending)
 			{
 				_col = sortCol;
@@ -301,11 +302,12 @@ namespace Altaxo.Data
 			}
 		}
 
-		class SelectedDataColumnComparer
+		private class SelectedDataColumnComparer
 		{
-			DataColumn _col;
-			bool _ascendingOrder;
-			IAscendingIntegerCollection _selIndices;
+			private DataColumn _col;
+			private bool _ascendingOrder;
+			private IAscendingIntegerCollection _selIndices;
+
 			public SelectedDataColumnComparer(DataColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending)
 			{
 				_col = sortCol;
@@ -327,11 +329,10 @@ namespace Altaxo.Data
 			}
 		}
 
-		class MultipleDataColumnComparer
+		private class MultipleDataColumnComparer
 		{
-			DataColumn[] _col;
-			bool _ascendingOrder;
-
+			private DataColumn[] _col;
+			private bool _ascendingOrder;
 
 			public MultipleDataColumnComparer(DataColumn[] sortCols, bool ascending)
 			{
@@ -354,12 +355,10 @@ namespace Altaxo.Data
 			}
 		}
 
-
-		#endregion
-
+		#endregion Helper classes
 
 		/// <summary>
-		/// Sorts the data rows of a table (more accurate: of all columns belonging to a column group, see below), using the data of column <paramref name="col"/> to determine the order. 
+		/// Sorts the data rows of a table (more accurate: of all columns belonging to a column group, see below), using the data of column <paramref name="col"/> to determine the order.
 		/// </summary>
 		/// <param name="table">The table where the data columns should be sorted.</param>
 		/// <param name="col">The column which is used for determining the order of the entries.
@@ -405,7 +404,6 @@ namespace Altaxo.Data
 				HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
 			}
 		}
-
 
 		/// <summary>
 		/// Sorts the data rows of a DataColumnCollection (more accurate: of all columns belonging to a column group, see below), using a specified column.
@@ -456,7 +454,6 @@ namespace Altaxo.Data
 			}
 		}
 
-
 		/// <summary>
 		/// Sort the order of the data columns (not rows!) of a table based on a specified property column. The relationship of property data to data columns is maintained.
 		/// </summary>
@@ -478,7 +475,5 @@ namespace Altaxo.Data
 				HeapSort(selectedDataCols.Count, new SelectedDataColumnComparer(propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
 			}
 		}
-
 	}
 }
-

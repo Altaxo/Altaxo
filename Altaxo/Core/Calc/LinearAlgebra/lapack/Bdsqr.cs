@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Bdsqr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Bdsqr {
-    private  Bdsqr() {}                           
+    private  Bdsqr() {}
     private static void ArgumentCheck(int n, int ncvt, int nru, int ncc, object d, object e, object vt, int ldvt, object u, int ldu, object c, int ldc) {
       if ( d == null ) {
         throw new ArgumentNullException("d cannot be null.");
@@ -89,9 +89,8 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if ( ncc < 0 ) {
         throw new ArgumentException("ncc must be at least zero.", "ncc");
       }
-
     }
-  
+
     internal static int Compute( int n, int ncvt, int nru, int ncc, float[] d, float[] e, float[] vt, int ldvt, float[] u, int ldu, float[] c, int ldc ){
       ArgumentCheck(n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
       if( d.Length < 1 ){
@@ -129,7 +128,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if( ncc !=0 && c != null && c.Length < ldc*ncc ){
         throw new ArgumentException("The length of c must be at least ldc*ncc.", "c");
       }
-      
+
       return dna_lapack_dbdsqr(UpLo.Upper, n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
     }
 
@@ -150,7 +149,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if( ncc !=0 && c != null && c.Length < ldc*ncc ){
         throw new ArgumentException("The length of c must be at least ldc*ncc.", "c");
       }
-      
+
       return dna_lapack_cbdsqr(UpLo.Upper, n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
     }
 
@@ -171,7 +170,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
       if( ncc !=0 && c != null && c.Length < ldc*ncc ){
         throw new ArgumentException("The length of c must be at least ldc*ncc.", "c");
       }
-      
+
       return dna_lapack_zbdsqr(UpLo.Upper, n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
     }
 

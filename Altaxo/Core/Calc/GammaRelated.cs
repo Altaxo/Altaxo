@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\d9gmit.cc
@@ -45,7 +47,6 @@
 
 using System;
 
-
 namespace Altaxo.Calc
 {
 	/// <summary>
@@ -58,19 +59,22 @@ namespace Altaxo.Calc
 		/// <summary>
 		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
 		/// </summary>
-		const double DBL_EPSILON = 2.2204460492503131e-016;
+		private const double DBL_EPSILON = 2.2204460492503131e-016;
+
 		/// <summary>
 		/// The smallest positive number that can be represented by <see cref="System.Double"/>.
 		/// </summary>
-		const double DBL_MIN = double.Epsilon;
+		private const double DBL_MIN = double.Epsilon;
+
 		/// <summary>
 		/// The biggest positive number that can be represented by <see cref="System.Double"/>.
 		/// </summary>
-		const double DBL_MAX = double.MaxValue;
+		private const double DBL_MAX = double.MaxValue;
 
-		#endregion
+		#endregion Common Constants
 
 		#region Helper functions
+
 		// Square
 		private static double sqr(double x)
 		{
@@ -94,7 +98,6 @@ namespace Altaxo.Calc
 			return (x - y * quotient);
 		}
 
-
 		/// <summary>
 		/// Return first number with sign of second number
 		/// </summary>
@@ -106,7 +109,7 @@ namespace Altaxo.Calc
 			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
 		}
 
-		#endregion
+		#endregion Helper functions
 
 		#region d9gmit
 
@@ -123,7 +126,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		/// </remarks>
-		static double d9gmit(double a, double x, double algap1, double sgngam)
+		private static double d9gmit(double a, double x, double algap1, double sgngam)
 		{
 			// machine constants
 			const double eps = 0.25 * DoubleConstants.DBL_EPSILON;
@@ -189,14 +192,14 @@ namespace Altaxo.Calc
 			return ret_val;
 		}
 
-		#endregion
+		#endregion d9gmit
 
 		#region d9lgmc
 
-		class d9lgmc
+		private class d9lgmc
 		{
-			static readonly double[] algmcs = 
-  { 
+			private static readonly double[] algmcs =
+  {
     0.1666389480451863247205729650822,
     -1.384948176067563840732986059135e-5,
     9.810825646924729426157171547487e-9,
@@ -211,16 +214,15 @@ namespace Altaxo.Calc
     -3.547598158101070547199999999999e-27,
     1.025680058010470912e-28,
     -3.401102254316748799999999999999e-30,
-    1.276642195630062933333333333333e-31 
+    1.276642195630062933333333333333e-31
   };
 
-			static int nalgm;
-			static bool d9lgmc_first = true;
-
+			private static int nalgm;
+			private static bool d9lgmc_first = true;
 
 			/// <summary>
-			/// Compute the log gamma correction factor for x >= 10.0 so that 
-			/// log (dgamma(x)) = log(sqrt(2*pi)) + (x-0.5)*log(x) - x + d9lgmc(x) 
+			/// Compute the log gamma correction factor for x >= 10.0 so that
+			/// log (dgamma(x)) = log(sqrt(2*pi)) + (x-0.5)*log(x) - x + d9lgmc(x)
 			/// </summary>
 			/// <param name="x">The function argument x.</param>
 			/// <returns>The log gamma correction factor for x>=10.0.</returns>
@@ -229,16 +231,15 @@ namespace Altaxo.Calc
 			/// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for ALGM       on the interval  0.          to  1.00000E-02 
-			///                                        with weighted error   1.28E-31 
+			/// Series for ALGM       on the interval  0.          to  1.00000E-02
+			///                                        with weighted error   1.28E-31
 			///
-			///                                         log weighted error  30.89 
-			///                               significant figures required  29.81 
-			///                                    decimal places required  31.48 
+			///                                         log weighted error  30.89
+			///                               significant figures required  29.81
+			///                                    decimal places required  31.48
 			/// </remarks>
 			public static double f(double x)
 			{
-
 				double xbig = 1.0 / Math.Sqrt(0.5 * DBL_EPSILON);
 				double xmax = Math.Exp(Math.Min(Math.Log(DBL_MAX / 12.0), -Math.Log(DBL_MIN * 12.0)));
 
@@ -264,9 +265,9 @@ namespace Altaxo.Calc
 				ret_val = 0.0;
 				throw new ArgumentException("x so big d9lgmc(x) underflows");
 			}
-
 		}
-		#endregion
+
+		#endregion d9lgmc
 
 		#region d9lgic
 
@@ -283,7 +284,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		/// </remarks>
-		static double d9lgic(double a, double x, double alx)
+		private static double d9lgic(double a, double x, double alx)
 		{
 			// machine constants
 			const double eps = 0.25 * DBL_EPSILON;
@@ -310,18 +311,17 @@ namespace Altaxo.Calc
 			return (a * alx - x + Math.Log(s / xpa));
 		}
 
-
-		#endregion
+		#endregion d9lgic
 
 		#region d9lgit
 
-		class d9lgit
+		private class d9lgit
 		{
-			static readonly double sqeps_d9lgit = Math.Sqrt(DBL_EPSILON);
-			const double eps_d9lgit = 0.25 * DBL_EPSILON;
+			private static readonly double sqeps_d9lgit = Math.Sqrt(DBL_EPSILON);
+			private const double eps_d9lgit = 0.25 * DBL_EPSILON;
 
 			/// <summary>
-			/// Compute the logarithm of Tricomi's incomplete Gamma function 
+			/// Compute the logarithm of Tricomi's incomplete Gamma function
 			/// with Perron's continued fraction for large x and a >= x.
 			/// </summary>
 			/// <param name="a"></param>
@@ -369,11 +369,11 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion d9lgit
 
 		#region LogRel
 
-		static readonly double[] alnrcs_LogRel = 
+		private static readonly double[] alnrcs_LogRel =
   {
     0.10378693562743769800686267719098e+1,
     -0.13364301504908918098766041553133e+0,
@@ -420,8 +420,8 @@ namespace Altaxo.Calc
     0.63533936180236187354180266666666e-31
   };
 
-		static int nlnrel_LogRel = 0;
-		static double xmin_LogRel = 0.0;
+		private static int nlnrel_LogRel = 0;
+		private static double xmin_LogRel = 0.0;
 
 		/// <summary>
 		/// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
@@ -437,9 +437,8 @@ namespace Altaxo.Calc
 		///                               significant figures required  30.93
 		///                                    decimal places required  32.01
 		/// </remarks>
-		static double LogRel(double x)
+		private static double LogRel(double x)
 		{
-
 			if (nlnrel_LogRel == 0)
 			{
 				nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
@@ -460,20 +459,18 @@ namespace Altaxo.Calc
 				return Math.Log(1.0 + x);
 		}
 
-
-
-		#endregion
+		#endregion LogRel
 
 		#region d9gmic
 
-		class d9gmic
+		private class d9gmic
 		{
-			const double euler_d9gmic = 0.5772156649015328606065120900824;
-			static readonly double bot_d9gmic = Math.Log(DBL_MIN);
-			const double eps_d9gmic = 0.25 * DBL_EPSILON;
+			private const double euler_d9gmic = 0.5772156649015328606065120900824;
+			private static readonly double bot_d9gmic = Math.Log(DBL_MIN);
+			private const double eps_d9gmic = 0.25 * DBL_EPSILON;
 
 			/// <summary>
-			/// Compute the complementary incomplete gamma function for a near 
+			/// Compute the complementary incomplete gamma function for a near
 			/// a negative integer and for small x.
 			/// </summary>
 			/// <param name="a"></param>
@@ -489,7 +486,6 @@ namespace Altaxo.Calc
 			/// </remarks>
 			public static double f(double a, double x, double alx)
 			{
-
 				double ret_val, alng, sgng, s, t, fkp1, fk, fm, te;
 
 				if (a > 0.0)
@@ -558,27 +554,28 @@ namespace Altaxo.Calc
 				return ret_val;
 			}
 		}
-		#endregion
+
+		#endregion d9gmic
 
 		#region dgamlm
 
-		class dgamlm
+		private class dgamlm
 		{
-			static readonly double alnsml = Math.Log(DBL_MIN);
-			static readonly double alnbig = Math.Log(DBL_MAX);
+			private static readonly double alnsml = Math.Log(DBL_MIN);
+			private static readonly double alnbig = Math.Log(DBL_MAX);
 
 			/// <summary>
-			/// Calculate the minimum and maximum legal bounds for x in Gamma(x). 
-			/// xmin and xmax are not the only bounds, but they are the only non- 
-			/// trivial ones to calculate. 
+			/// Calculate the minimum and maximum legal bounds for x in Gamma(x).
+			/// xmin and xmax are not the only bounds, but they are the only non-
+			/// trivial ones to calculate.
 			/// </summary>
 			/// <param name="xmin">
-			/// double precision minimum legal value of x in gamma(x).  Any 
-			/// smaller value of x might result in underflow. 
+			/// double precision minimum legal value of x in gamma(x).  Any
+			/// smaller value of x might result in underflow.
 			/// </param>
 			/// <param name="xmax">
-			///   xmax  double precision maximum legal value of x in gamma(x).  Any 
-			///       larger value of x might cause overflow. 
+			///   xmax  double precision maximum legal value of x in gamma(x).  Any
+			///       larger value of x might cause overflow.
 			/// </param>
 			/// <remarks>
 			/// This is a translation from the Fortran version of SLATEC, FNLIB,
@@ -587,7 +584,6 @@ namespace Altaxo.Calc
 			/// </remarks>
 			public static void f(out double xmin, out double xmax)
 			{
-
 				double xold, xln;
 				int i;
 
@@ -624,7 +620,7 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion dgamlm
 
 		#region LnGamma
 
@@ -642,7 +638,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 891214, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///  LnGamma(x)
 		/// </code></remarks>
 		public static double LnGamma(double x, out double sgn)
@@ -665,7 +661,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 891214, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///  LnGamma(x)
 		/// </code></remarks>
 		public static double LnGamma(double x, out double sgn, bool bDebug)
@@ -679,9 +675,9 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Calculates the double precision logarithm of the 
-		/// absolute value of the Gamma function for double precision 
-		/// argument x. 
+		/// Calculates the double precision logarithm of the
+		/// absolute value of the Gamma function for double precision
+		/// argument x.
 		/// </summary>
 		/// <param name="x">The function argument x.</param>
 		/// <returns>The logarithm of the absolute value of the Gamma function.</returns>
@@ -690,7 +686,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   Gamma(x)
 		///   d9lgmc(x)
 		/// </remarks>
@@ -700,9 +696,9 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Calculates the double precision logarithm of the 
-		/// absolute value of the Gamma function for double precision 
-		/// argument x. 
+		/// Calculates the double precision logarithm of the
+		/// absolute value of the Gamma function for double precision
+		/// argument x.
 		/// </summary>
 		/// <param name="x">The function argument x.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -712,7 +708,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   Gamma(x)
 		///   d9lgmc(x)
 		/// </remarks>
@@ -728,7 +724,7 @@ namespace Altaxo.Calc
 			double y = Math.Abs(x);
 			if (y > 10.0) goto L20;
 
-			// log(abs(Gamma(x))) for abs(x) <= 10.0 
+			// log(abs(Gamma(x))) for abs(x) <= 10.0
 			return Math.Log(Math.Abs(Gamma(x, bDebug)));
 
 		L20:
@@ -759,13 +755,13 @@ namespace Altaxo.Calc
 			return sqpi2l + (x - 0.5) * Math.Log(y) - x - Math.Log(sinpiy) - d9lgmc.f(y);
 		}
 
-		#endregion
+		#endregion LnGamma
 
 		#region Gamma
 
 		/// <summary>
-		/// Gamma(x) calculates the double precision complete Gamma function 
-		/// for double precision argument x. 
+		/// Gamma(x) calculates the double precision complete Gamma function
+		/// for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument x.</param>
 		/// <returns>The Gamma function of the argument x.</returns>
@@ -775,11 +771,11 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Series for GAM        on the interval  0.          to  1.00000E+00 
-		///                                        with weighted error   5.79E-32 
-		///                                         log weighted error  31.24 
-		///                               significant figures required  30.00 
-		///                                    decimal places required  32.05 
+		/// Series for GAM        on the interval  0.          to  1.00000E+00
+		///                                        with weighted error   5.79E-32
+		///                                         log weighted error  31.24
+		///                               significant figures required  30.00
+		///                                    decimal places required  32.05
 		/// </code></remarks>
 		public static double Gamma(double x)
 		{
@@ -787,8 +783,8 @@ namespace Altaxo.Calc
 		}
 
 		/// <summary>
-		/// Gamma(x) calculates the double precision complete Gamma function 
-		/// for double precision argument x. 
+		/// Gamma(x) calculates the double precision complete Gamma function
+		/// for double precision argument x.
 		/// </summary>
 		/// <param name="x">The function argument x.</param>
 		/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -799,21 +795,21 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Series for GAM        on the interval  0.          to  1.00000E+00 
-		///                                        with weighted error   5.79E-32 
-		///                                         log weighted error  31.24 
-		///                               significant figures required  30.00 
-		///                                    decimal places required  32.05 
+		/// Series for GAM        on the interval  0.          to  1.00000E+00
+		///                                        with weighted error   5.79E-32
+		///                                         log weighted error  31.24
+		///                               significant figures required  30.00
+		///                                    decimal places required  32.05
 		/// </code></remarks>
 		public static double Gamma(double x, bool bDebug)
 		{
 			return _Gamma.Gamma(x, bDebug);
 		}
 
-		class _Gamma
+		private class _Gamma
 		{
-			static readonly double[] gamcs = 
-  { 
+			private static readonly double[] gamcs =
+  {
     0.008571195590989331421920062399942,
     0.004415381324841006757191315771652,
     0.05685043681599363378632664588789,
@@ -855,16 +851,16 @@ namespace Altaxo.Calc
     1.146998663140024384347613866666e-29,
     -1.967938586345134677295103999999e-30,
     3.376448816585338090334890666666e-31,
-    -5.793070335782135784625493333333e-32 
+    -5.793070335782135784625493333333e-32
   };
 
-			static int n_Gamma;
-			static bool first_Gamma = true;
-			static double xmin_Gamma, xmax_Gamma;
+			private static int n_Gamma;
+			private static bool first_Gamma = true;
+			private static double xmin_Gamma, xmax_Gamma;
 
 			/// <summary>
-			/// Gamma(x) calculates the double precision complete Gamma function 
-			/// for double precision argument x. 
+			/// Gamma(x) calculates the double precision complete Gamma function
+			/// for double precision argument x.
 			/// </summary>
 			/// <param name="x">The function argument x.</param>
 			/// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -874,15 +870,14 @@ namespace Altaxo.Calc
 			/// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
 			/// to C++.
 			///
-			/// Series for GAM        on the interval  0.          to  1.00000E+00 
-			///                                        with weighted error   5.79E-32 
-			///                                         log weighted error  31.24 
-			///                               significant figures required  30.00 
-			///                                    decimal places required  32.05 
+			/// Series for GAM        on the interval  0.          to  1.00000E+00
+			///                                        with weighted error   5.79E-32
+			///                                         log weighted error  31.24
+			///                               significant figures required  30.00
+			///                                    decimal places required  32.05
 			/// </remarks>
 			public static double Gamma(double x, bool bDebug)
 			{
-
 				const double pi = 3.1415926535897932384626433832795;
 				const double sq2pil = 0.91893853320467274178032973640562;
 				double dxrel = Math.Sqrt(DBL_EPSILON);
@@ -904,8 +899,8 @@ namespace Altaxo.Calc
 				double y = Math.Abs(x);
 				if (y > 10.0) goto L50;
 
-				// compute gamma(x) for -xbnd <= x <= xbnd.  Reduce interval and find 
-				// gamma(1+y) for 0.0 <= y < 1.0 first of all. 
+				// compute gamma(x) for -xbnd <= x <= xbnd.  Reduce interval and find
+				// gamma(1+y) for 0.0 <= y < 1.0 first of all.
 
 				n = (int)x;
 				if (x < 0.0) --n;
@@ -917,7 +912,7 @@ namespace Altaxo.Calc
 
 				if (n > 0) goto L30;
 
-				// compute gamma(x) for x < 1.0 
+				// compute gamma(x) for x < 1.0
 
 				n = -n;
 				if (x == 0.0)
@@ -943,7 +938,7 @@ namespace Altaxo.Calc
 					ret_val /= x + i - 1;
 				return ret_val;
 
-				// gamma(x) for x >= 2.0 and x <= 10.0 
+				// gamma(x) for x >= 2.0 and x <= 10.0
 
 				L30:
 				for (i = 1; i <= n; ++i)
@@ -988,7 +983,8 @@ namespace Altaxo.Calc
 				return -pi / (y * sinpiy * ret_val);
 			}
 		}
-		#endregion
+
+		#endregion Gamma
 
 		#region Fac
 
@@ -1023,11 +1019,10 @@ namespace Altaxo.Calc
 			return _Fac.Fac(n, bDebug);
 		}
 
-
-		class _Fac
+		private class _Fac
 		{
-			static readonly double[] facn = 
-  { 
+			private static readonly double[] facn =
+  {
     1.0,
     1.0,
     2.0,
@@ -1058,12 +1053,12 @@ namespace Altaxo.Calc
     1.0888869450418352160768e28,
     3.04888344611713860501504e29,
     8.841761993739701954543616e30,
-    2.6525285981219105863630848e32 
+    2.6525285981219105863630848e32
   };
 
-			const double sq2pil_Fac = 0.91893853320467274178032973640562;
-			static int nmax_Fac = 0;
-			static double xmin_Fac, xmax_Fac;
+			private const double sq2pil_Fac = 0.91893853320467274178032973640562;
+			private static int nmax_Fac = 0;
+			private static double xmin_Fac, xmax_Fac;
 
 			/// <summary>
 			/// Fac(n) calculates the double precision factorial for the integer argument n.
@@ -1078,8 +1073,6 @@ namespace Altaxo.Calc
 			/// </remarks>
 			public static double Fac(int n, bool bDebug)
 			{
-
-
 				if (nmax_Fac == 0)
 				{
 					dgamlm.f(out xmin_Fac, out xmax_Fac);
@@ -1107,11 +1100,12 @@ namespace Altaxo.Calc
 				double x = (double)(n + 1);
 				return Math.Exp((x - 0.5) * Math.Log(x) - x + sq2pil_Fac + d9lgmc.f(x));
 			}
-
 		}
-		#endregion
+
+		#endregion Fac
 
 		#region Binomial
+
 		/// <summary>
 		/// Gives the binomial coefficient ( n over m).
 		/// </summary>
@@ -1133,7 +1127,8 @@ namespace Altaxo.Calc
 		{
 			return GammaRelated.LnGamma(n + 1) - GammaRelated.LnGamma(m + 1) - GammaRelated.LnGamma(n - m + 1);
 		}
-		#endregion
+
+		#endregion Binomial
 
 		#region RcpGamma
 
@@ -1148,11 +1143,11 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   Gamma(x)
 		///   LnGamma(x,sgn)
 		/// </code></remarks>
-		static double RcpGamma(double x)
+		private static double RcpGamma(double x)
 		{
 			return RcpGamma(x, false);
 		}
@@ -1169,11 +1164,11 @@ namespace Altaxo.Calc
 		/// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   Gamma(x)
 		///   LnGamma(x,sgn)
 		/// </code></remarks>
-		static double RcpGamma(double x, bool bDebug)
+		private static double RcpGamma(double x, bool bDebug)
 		{
 			if (x <= 0.0 && Dint(x) == x)
 				return 0.0;
@@ -1187,8 +1182,7 @@ namespace Altaxo.Calc
 				return 1.0 / Gamma(x, bDebug);
 		}
 
-
-		#endregion
+		#endregion RcpGamma
 
 		#region GammaI
 
@@ -1210,7 +1204,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C7E, REVISION 900315, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   LnGamma(x)      - logarithm of the Gamma function
 		///   GammaIT(x,a)    - Tricomi's incomplete gamma function
 		/// </code></remarks>
@@ -1238,11 +1232,11 @@ namespace Altaxo.Calc
 		/// CATEGORY C7E, REVISION 900315, originally written by Fullerton W.,(LANL)
 		/// to C++.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   LnGamma(x)      - logarithm of the Gamma function
 		///   GammaIT(x,a)    - Tricomi's incomplete gamma function
 		/// </code></remarks>
-		static double GammaI(double x, double a, bool bDebug)
+		private static double GammaI(double x, double a, bool bDebug)
 		{
 			if (a <= 0.0)
 			{
@@ -1263,16 +1257,15 @@ namespace Altaxo.Calc
 			return (x == 0.0) ? 0.0 : Math.Exp(LnGamma(a, bDebug) + a * Math.Log(x)) * GammaIT(x, a, bDebug);
 		}
 
-
-		#endregion
+		#endregion GammaI
 
 		#region GammaIT
 
 		/// <summary>
 		/// GammaIT(x,a) evaluates Tricomi's incomplete gamma function defined by
-		/// 
+		///
 		///   GammaIT = x**(-a)/Gamma(a) * integral from 0 to x of exp(-t) * t**(a-1.0)
-		/// 
+		///
 		/// for a > 0.0 and by analytic continuation for a &lt;= 0.0.
 		/// Gamma(x) is the complete gamma function of x.
 		/// </summary>
@@ -1281,14 +1274,14 @@ namespace Altaxo.Calc
 		/// <returns>Tricomi's incomplete gamma function of x and a.</returns>
 		/// <remarks><code>
 		/// GammaIT(x,a) is evaluated for arbitrary real values of a and for
-		/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
+		/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0),
 		/// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
 		/// which is a fatal error.
-		/// 
+		///
 		/// The function and both arguments are double.
 		/// A slight deterioration of 2 or 3 digits accuracy will occur when
 		/// GammaIT is very large or very small in absolute value, because log-
-		/// arithmic variables are used.  Also, if the parameter  a  is very 
+		/// arithmic variables are used.  Also, if the parameter  a  is very
 		/// close to a negative integer (but not a negative integer), there is
 		/// a loss of accuracy, which is reported if the result is less than
 		/// half machine precision.
@@ -1298,19 +1291,19 @@ namespace Altaxo.Calc
 		/// to C++.
 		///
 		/// References:
-		///    (1) W. Gautschi, A computational procedure for incomplete 
-		///        gamma functions, ACM Transactions on Mathematical 
+		///    (1) W. Gautschi, A computational procedure for incomplete
+		///        gamma functions, ACM Transactions on Mathematical
 		///        Software 5, 4 (December 1979), pp. 466-481.
 		///    (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-		///        ACM Transactions on Mathematical Software 5, 4 
+		///        ACM Transactions on Mathematical Software 5, 4
 		///        (December 1979), pp. 482-489.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   LnGamma(x)      - logarithm of the Gamma function
 		///   LnGamma(x,sgn)  - logarithm and sign of the Gamma function
 		///   RcpGamma(x)     - reciprocal of the Gamma function
 		///   d9gmit(a,x,algap1,sgngam)
-		///   d9lgit(a,x,algap1) 
+		///   d9lgit(a,x,algap1)
 		///   d9lgic(a,x,alx)
 		/// </code></remarks>
 		public static double GammaIT(double x, double a)
@@ -1320,9 +1313,9 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// GammaIT(x,a) evaluates Tricomi's incomplete gamma function defined by
-		/// 
+		///
 		///   GammaIT = x**(-a)/Gamma(a) * integral from 0 to x of exp(-t) * t**(a-1.0)
-		/// 
+		///
 		/// for a > 0.0 and by analytic continuation for a &lt;= 0.0.
 		/// Gamma(x) is the complete gamma function of x.
 		/// </summary>
@@ -1332,14 +1325,14 @@ namespace Altaxo.Calc
 		/// <returns>Tricomi's incomplete gamma function of x and a.</returns>
 		/// <remarks><code>
 		/// GammaIT(x,a) is evaluated for arbitrary real values of a and for
-		/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
+		/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0),
 		/// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
 		/// which is a fatal error.
-		/// 
+		///
 		/// The function and both arguments are double.
 		/// A slight deterioration of 2 or 3 digits accuracy will occur when
 		/// GammaIT is very large or very small in absolute value, because log-
-		/// arithmic variables are used.  Also, if the parameter  a  is very 
+		/// arithmic variables are used.  Also, if the parameter  a  is very
 		/// close to a negative integer (but not a negative integer), there is
 		/// a loss of accuracy, which is reported if the result is less than
 		/// half machine precision.
@@ -1349,19 +1342,19 @@ namespace Altaxo.Calc
 		/// to C++.
 		///
 		/// References:
-		///    (1) W. Gautschi, A computational procedure for incomplete 
-		///        gamma functions, ACM Transactions on Mathematical 
+		///    (1) W. Gautschi, A computational procedure for incomplete
+		///        gamma functions, ACM Transactions on Mathematical
 		///        Software 5, 4 (December 1979), pp. 466-481.
 		///    (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-		///        ACM Transactions on Mathematical Software 5, 4 
+		///        ACM Transactions on Mathematical Software 5, 4
 		///        (December 1979), pp. 482-489.
 		///
-		/// Routines called: 
+		/// Routines called:
 		///   LnGamma(x)      - logarithm of the Gamma function
 		///   LnGamma(x,sgn)  - logarithm and sign of the Gamma function
 		///   RcpGamma(x)     - reciprocal of the Gamma function
 		///   d9gmit(a,x,algap1,sgngam)
-		///   d9lgit(a,x,algap1) 
+		///   d9lgit(a,x,algap1)
 		///   d9lgic(a,x,alx)
 		/// </code></remarks>
 		public static double GammaIT(double x, double a, bool bDebug)
@@ -1369,20 +1362,16 @@ namespace Altaxo.Calc
 			return _GammaIT.GammaIT(x, a, bDebug);
 		}
 
-
-
-
-		class _GammaIT
+		private class _GammaIT
 		{
-			static readonly double alneps_GammaIT = -Math.Log(0.5 * DBL_EPSILON);
-			static readonly double sqeps_GammaIT = Math.Sqrt(DBL_EPSILON);
-
+			private static readonly double alneps_GammaIT = -Math.Log(0.5 * DBL_EPSILON);
+			private static readonly double sqeps_GammaIT = Math.Sqrt(DBL_EPSILON);
 
 			/// <summary>
 			/// GammaIT(x,a) evaluates Tricomi's incomplete gamma function defined by
-			/// 
+			///
 			///   GammaIT = x**(-a)/Gamma(a) * integral from 0 to x of exp(-t) * t**(a-1.0)
-			/// 
+			///
 			/// for a > 0.0 and by analytic continuation for a &lt;= 0.0.
 			/// Gamma(x) is the complete gamma function of x.
 			/// </summary>
@@ -1392,14 +1381,14 @@ namespace Altaxo.Calc
 			/// <returns>Tricomi's incomplete gamma function of x and a.</returns>
 			/// <remarks><code>
 			/// GammaIT(x,a) is evaluated for arbitrary real values of a and for
-			/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
+			/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0),
 			/// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
 			/// which is a fatal error.
-			/// 
+			///
 			/// The function and both arguments are double.
 			/// A slight deterioration of 2 or 3 digits accuracy will occur when
 			/// GammaIT is very large or very small in absolute value, because log-
-			/// arithmic variables are used.  Also, if the parameter  a  is very 
+			/// arithmic variables are used.  Also, if the parameter  a  is very
 			/// close to a negative integer (but not a negative integer), there is
 			/// a loss of accuracy, which is reported if the result is less than
 			/// half machine precision.
@@ -1409,19 +1398,19 @@ namespace Altaxo.Calc
 			/// to C++.
 			///
 			/// References:
-			///    (1) W. Gautschi, A computational procedure for incomplete 
-			///        gamma functions, ACM Transactions on Mathematical 
+			///    (1) W. Gautschi, A computational procedure for incomplete
+			///        gamma functions, ACM Transactions on Mathematical
 			///        Software 5, 4 (December 1979), pp. 466-481.
 			///    (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-			///        ACM Transactions on Mathematical Software 5, 4 
+			///        ACM Transactions on Mathematical Software 5, 4
 			///        (December 1979), pp. 482-489.
 			///
-			/// Routines called: 
+			/// Routines called:
 			///   LnGamma(x)      - logarithm of the Gamma function
 			///   LnGamma(x,sgn)  - logarithm and sign of the Gamma function
 			///   RcpGamma(x)     - reciprocal of the Gamma function
 			///   d9gmit(a,x,algap1,sgngam)
-			///   d9lgit(a,x,algap1) 
+			///   d9lgit(a,x,algap1)
 			///   d9lgic(a,x,alx)
 			/// </code></remarks>
 			public static double GammaIT(double x, double a, bool bDebug)
@@ -1496,7 +1485,8 @@ namespace Altaxo.Calc
 				}
 			}
 		}
-		#endregion
+
+		#endregion GammaIT
 
 		#region GammaIC
 
@@ -1506,7 +1496,7 @@ namespace Altaxo.Calc
 		///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
 		///
 		/// GammaIC(x,a) is evaluated for arbitrary real values of A and for
-		/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
+		/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0),
 		/// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
@@ -1516,7 +1506,7 @@ namespace Altaxo.Calc
 		/// A slight deterioration of 2 or 3 digits accuracy will occur when
 		/// GammaIC is very large or very small in absolute value, because log-
 		/// arithmic variables are used.  Also, if the parameter A is very close
-		/// to a negative integer (but not a negative integer), there is a loss 
+		/// to a negative integer (but not a negative integer), there is a loss
 		/// of accuracy, which is reported if the result is less than half
 		/// machine precision.
 		///
@@ -1530,7 +1520,7 @@ namespace Altaxo.Calc
 		///     gamma functions, ACM Transactions on Mathematical
 		///     Software 5, 4 (December 1979), pp. 466-481.
 		/// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-		///     ACM Transactions on Mathematical Software 5, 4 
+		///     ACM Transactions on Mathematical Software 5, 4
 		///     (December 1979), pp. 482-489.
 		///
 		/// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
@@ -1540,14 +1530,13 @@ namespace Altaxo.Calc
 			return _GammaIC.GammaIC(x, a, false);
 		}
 
-
 		/// <summary>
 		/// Evaluate the complementary incomplete Gamma function
 		///
 		///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
 		///
 		/// GammaIC(x,a) is evaluated for arbitrary real values of A and for
-		/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
+		/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0),
 		/// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
@@ -1558,7 +1547,7 @@ namespace Altaxo.Calc
 		/// A slight deterioration of 2 or 3 digits accuracy will occur when
 		/// GammaIC is very large or very small in absolute value, because log-
 		/// arithmic variables are used.  Also, if the parameter A is very close
-		/// to a negative integer (but not a negative integer), there is a loss 
+		/// to a negative integer (but not a negative integer), there is a loss
 		/// of accuracy, which is reported if the result is less than half
 		/// machine precision.
 		///
@@ -1572,7 +1561,7 @@ namespace Altaxo.Calc
 		///     gamma functions, ACM Transactions on Mathematical
 		///     Software 5, 4 (December 1979), pp. 466-481.
 		/// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-		///     ACM Transactions on Mathematical Software 5, 4 
+		///     ACM Transactions on Mathematical Software 5, 4
 		///     (December 1979), pp. 482-489.
 		///
 		/// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
@@ -1582,7 +1571,6 @@ namespace Altaxo.Calc
 			return _GammaIC.GammaIC(x, a, bDebug);
 		}
 
-
 		/// <summary>
 		/// Evaluate the complementary incomplete Gamma function
 		///
@@ -1590,7 +1578,7 @@ namespace Altaxo.Calc
 		///
 		/// The order of parameters is the same as the Mathematica function Gamma[a,z0].
 		/// Gamma(a,z0) is evaluated for arbitrary real values of A and for
-		/// non-negative values of x (even though Gamma is defined for z0 &lt; 0.0), 
+		/// non-negative values of x (even though Gamma is defined for z0 &lt; 0.0),
 		/// except that for z0 = 0 and a &lt;= 0.0, Gamma is undefined.
 		/// </summary>
 		/// <param name="a">The function argument.</param>
@@ -1601,7 +1589,7 @@ namespace Altaxo.Calc
 		/// A slight deterioration of 2 or 3 digits accuracy will occur when
 		/// GammaIC is very large or very small in absolute value, because log-
 		/// arithmic variables are used.  Also, if the parameter A is very close
-		/// to a negative integer (but not a negative integer), there is a loss 
+		/// to a negative integer (but not a negative integer), there is a loss
 		/// of accuracy, which is reported if the result is less than half
 		/// machine precision.
 		///
@@ -1615,7 +1603,7 @@ namespace Altaxo.Calc
 		///     gamma functions, ACM Transactions on Mathematical
 		///     Software 5, 4 (December 1979), pp. 466-481.
 		/// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-		///     ACM Transactions on Mathematical Software 5, 4 
+		///     ACM Transactions on Mathematical Software 5, 4
 		///     (December 1979), pp. 482-489.
 		///
 		/// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
@@ -1632,7 +1620,7 @@ namespace Altaxo.Calc
 		///
 		/// The order of parameters is the same as the Mathematica function Gamma[a,z0].
 		/// Gamma(a,z0) is evaluated for arbitrary real values of A and for
-		/// non-negative values of x (even though Gamma is defined for z0 &lt; 0.0), 
+		/// non-negative values of x (even though Gamma is defined for z0 &lt; 0.0),
 		/// except that for z0 = 0 and a &lt;= 0.0, Gamma is undefined.
 		/// </summary>
 		/// <param name="a">The function argument.</param>
@@ -1642,7 +1630,7 @@ namespace Altaxo.Calc
 		/// A slight deterioration of 2 or 3 digits accuracy will occur when
 		/// GammaIC is very large or very small in absolute value, because log-
 		/// arithmic variables are used.  Also, if the parameter A is very close
-		/// to a negative integer (but not a negative integer), there is a loss 
+		/// to a negative integer (but not a negative integer), there is a loss
 		/// of accuracy, which is reported if the result is less than half
 		/// machine precision.
 		///
@@ -1656,7 +1644,7 @@ namespace Altaxo.Calc
 		///     gamma functions, ACM Transactions on Mathematical
 		///     Software 5, 4 (December 1979), pp. 466-481.
 		/// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-		///     ACM Transactions on Mathematical Software 5, 4 
+		///     ACM Transactions on Mathematical Software 5, 4
 		///     (December 1979), pp. 482-489.
 		///
 		/// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
@@ -1708,12 +1696,11 @@ namespace Altaxo.Calc
 			}
 		}
 
-
-		class _GammaIC
+		private class _GammaIC
 		{
-			const double eps_GammaIC = 0.25 * DBL_EPSILON;
-			static readonly double sqeps_GammaIC = Math.Sqrt(DBL_EPSILON);
-			static readonly double alneps_GammaIC = -Math.Log(0.5 * DBL_EPSILON);
+			private const double eps_GammaIC = 0.25 * DBL_EPSILON;
+			private static readonly double sqeps_GammaIC = Math.Sqrt(DBL_EPSILON);
+			private static readonly double alneps_GammaIC = -Math.Log(0.5 * DBL_EPSILON);
 
 			/// <summary>
 			/// Evaluate the complementary incomplete Gamma function
@@ -1721,7 +1708,7 @@ namespace Altaxo.Calc
 			///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
 			///
 			/// GammaIC(x,a) is evaluated for arbitrary real values of A and for
-			/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
+			/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0),
 			/// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
@@ -1732,7 +1719,7 @@ namespace Altaxo.Calc
 			/// A slight deterioration of 2 or 3 digits accuracy will occur when
 			/// GammaIC is very large or very small in absolute value, because log-
 			/// arithmic variables are used.  Also, if the parameter A is very close
-			/// to a negative integer (but not a negative integer), there is a loss 
+			/// to a negative integer (but not a negative integer), there is a loss
 			/// of accuracy, which is reported if the result is less than half
 			/// machine precision.
 			///
@@ -1746,14 +1733,13 @@ namespace Altaxo.Calc
 			///     gamma functions, ACM Transactions on Mathematical
 			///     Software 5, 4 (December 1979), pp. 466-481.
 			/// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-			///     ACM Transactions on Mathematical Software 5, 4 
+			///     ACM Transactions on Mathematical Software 5, 4
 			///     (December 1979), pp. 482-489.
 			///
 			/// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
 			/// </code></remarks>
 			public static double GammaIC(double x, double a, bool bDebug)
 			{
-
 				double aeps, sgng, e, h, t, ainta, alngs = 0, gstar, sgngs = 0, algap1, sgngam, sga, alx;
 				bool izero;
 
@@ -1850,9 +1836,9 @@ namespace Altaxo.Calc
 				t = Math.Log(Math.Abs(h)) + algap1 - Math.Log((Math.Abs(a)));
 				return sgng * Math.Exp(t);
 			}
-
 		}
-		#endregion
+
+		#endregion GammaIC
 
 		#region LnBeta and Beta
 
@@ -1867,7 +1853,7 @@ namespace Altaxo.Calc
 		/// This is a translation from the Fortran version of DLBETA(A,B), SLATEC, FNLIB,
 		/// CATEGORY C7B, REVISION 900727, originally written by Fullerton W.,(LANL)
 		/// to C++.
-		/// 
+		///
 		/// Calls d9lgmc(x), LogRel(x), LnGamma(x), Gamma(x)
 		/// </code></remarks>
 		public static double LnBeta(double a, double b)
@@ -1887,7 +1873,7 @@ namespace Altaxo.Calc
 		/// This is a translation from the Fortran version of DLBETA(A,B), SLATEC, FNLIB,
 		/// CATEGORY C7B, REVISION 900727, originally written by Fullerton W.,(LANL)
 		/// to C++.
-		/// 
+		///
 		/// Calls d9lgmc(x), LogRel(x), LnGamma(x), Gamma(x)
 		/// </code></remarks>
 		public static double LnBeta(double a, double b, bool bDebug)
@@ -1917,7 +1903,6 @@ namespace Altaxo.Calc
 				d1 = d2 + (p - 0.5) * Math.Log(p / (p + q));
 				double d4 = -p / (p + q);
 				ret_val = d1 + q * LogRel(d4);
-
 			}
 			else if (q >= 10.0)
 			{
@@ -1926,7 +1911,6 @@ namespace Altaxo.Calc
 				d1 = LnGamma(p) + corr;
 				double d2 = -p / (p + q);
 				ret_val = d1 + p - p * Math.Log(p + q) + (q - 0.5) * LogRel(d2);
-
 			}
 			else
 			{
@@ -1960,7 +1944,7 @@ namespace Altaxo.Calc
 			return Math.Exp(LnBeta(a, b, bDebug));
 		}
 
-		#endregion
+		#endregion LnBeta and Beta
 
 		#region BetaI and BetaIR
 
@@ -1991,7 +1975,6 @@ namespace Altaxo.Calc
 			return Beta(a, b, bDebug) * _BetaIR.BetaIR(x, a, b, bDebug);
 		}
 
-
 		/// <summary>
 		/// BetaIR(x,a,b) calculates the double precision incomplete beta function ratio.
 		/// <code>
@@ -2010,10 +1993,10 @@ namespace Altaxo.Calc
 		/// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
 		/// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
 		/// to C++.
-		/// 
-		/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+		///
+		/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
 		///             Communications of the ACM 17, 3 (March 1974), pp. 156.
-		/// 
+		///
 		/// Calls   LnBeta(a,b)
 		/// </code></remarks>
 		public static double BetaIR(double x, double a, double b)
@@ -2039,10 +2022,10 @@ namespace Altaxo.Calc
 		/// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
 		/// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
 		/// to C++.
-		/// 
-		/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+		///
+		/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
 		///             Communications of the ACM 17, 3 (March 1974), pp. 156.
-		/// 
+		///
 		/// Calls   LnBeta(a,b)
 		/// </code></remarks>
 		public static double BetaRegularized(double x, double a, double b)
@@ -2069,10 +2052,10 @@ namespace Altaxo.Calc
 		/// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
 		/// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
 		/// to C++.
-		/// 
-		/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+		///
+		/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
 		///             Communications of the ACM 17, 3 (March 1974), pp. 156.
-		/// 
+		///
 		/// Calls   LnBeta(a,b)
 		/// </code></remarks>
 		public static double BetaIR(double x, double a, double b, bool bDebug)
@@ -2080,15 +2063,12 @@ namespace Altaxo.Calc
 			return _BetaIR.BetaIR(x, a, b, bDebug);
 		}
 
-
-
-		class _BetaIR
+		private class _BetaIR
 		{
-
-			const double eps_BetaI = 0.5 * DBL_EPSILON;
-			const double sml_BetaI = DBL_MIN;
-			static readonly double alneps_BetaI = Math.Log(eps_BetaI);
-			static readonly double alnsml_BetaI = Math.Log(sml_BetaI);
+			private const double eps_BetaI = 0.5 * DBL_EPSILON;
+			private const double sml_BetaI = DBL_MIN;
+			private static readonly double alneps_BetaI = Math.Log(eps_BetaI);
+			private static readonly double alnsml_BetaI = Math.Log(sml_BetaI);
 
 			/// <summary>
 			/// BetaIR(x,a,b) calculates the double precision incomplete beta function ratio.
@@ -2109,15 +2089,14 @@ namespace Altaxo.Calc
 			/// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
 			/// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
 			/// to C++.
-			/// 
-			/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+			///
+			/// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
 			///             Communications of the ACM 17, 3 (March 1974), pp. 156.
-			/// 
+			///
 			/// Calls   LnBeta(a,b)
 			/// </code></remarks>
 			public static double BetaIR(double x, double pin, double qin, bool bDebug)
 			{
-
 				double ret_val, d__1, term, c__, p, q, y, p1, xb, xi, ps, finsum;
 				int i__, i__1, n, ib;
 
@@ -2163,7 +2142,7 @@ namespace Altaxo.Calc
 				term = ret_val * p;
 				if (ps == 1.0) goto L40;
 
-				// Computing MAX 
+				// Computing MAX
 				d__1 = alneps_BetaI / Math.Log(y);
 				n = (int)Math.Max(d__1, 4.0);
 				i__1 = n;
@@ -2228,10 +2207,9 @@ namespace Altaxo.Calc
 
 				return ret_val;
 			}
-
 		}
 
-		#endregion
+		#endregion BetaI and BetaIR
 
 		#region LogRel (complex)
 
@@ -2250,7 +2228,7 @@ namespace Altaxo.Calc
 		///                = complex (0.5*log(r**2), arg(1+z))
 		///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
 		/// </remarks>
-		static Complex LogRel(Complex z)
+		private static Complex LogRel(Complex z)
 		{
 			if (ComplexMath.Abs(1.0 + z) < Math.Sqrt(DBL_EPSILON))
 				System.Diagnostics.Trace.WriteLine("Warning (LogRel): answer less than half precision because z too near -1");
@@ -2262,11 +2240,11 @@ namespace Altaxo.Calc
 			return new Complex(0.5 * LogRel(2.0 * z.Re + rho * rho), ComplexMath.Arg(1.0 + z));
 		}
 
-		#endregion
+		#endregion LogRel (complex)
 
 		#region c9lgmc
 
-		static readonly double[] _c9lgmc_bern = {
+		private static readonly double[] _c9lgmc_bern = {
                                               0.083333333333333333,
                                               -0.0027777777777777778,
                                               0.00079365079365079365,
@@ -2280,16 +2258,15 @@ namespace Altaxo.Calc
                                               13.402864044168392
                                             };
 
-		static int _c9lgmc_nterm = 0;
-		static double _c9lgmc_bound = 0.0;
-		static double _c9lgmc_xbig = 0.0;
-		static double _c9lgmc_xmax = 0.0;
-
+		private static int _c9lgmc_nterm = 0;
+		private static double _c9lgmc_bound = 0.0;
+		private static double _c9lgmc_xbig = 0.0;
+		private static double _c9lgmc_xmax = 0.0;
 
 		/// <summary>
-		/// Compute the log gamma correction term for large abs(z) when real(z) &gt; 0.0 
-		/// and for large abs(imag(y)) when real(z) &lt; 0.0.  
-		/// Matpack special functions - c9lgmc() log gamma correction term 
+		/// Compute the log gamma correction term for large abs(z) when real(z) &gt; 0.0
+		/// and for large abs(imag(y)) when real(z) &lt; 0.0.
+		/// Matpack special functions - c9lgmc() log gamma correction term
 		/// </summary>
 		/// <param name="zin">The complex parameter z.</param>
 		/// <returns>The log gamma correction term.</returns>
@@ -2298,10 +2275,9 @@ namespace Altaxo.Calc
 		/// We find c9lgmc so that
 		/// clog(cgamma(z)) = 0.5*alog(2.*pi) + (z-0.5)*clog(z) - z + c9lgmc(z).
 		/// </remarks>
-		static Complex c9lgmc(Complex zin)
+		private static Complex c9lgmc(Complex zin)
 		{
 			Complex z, z2inv, retval;
-
 
 			if (_c9lgmc_nterm == 0)
 			{
@@ -2326,7 +2302,6 @@ namespace Altaxo.Calc
 			{
 				System.Diagnostics.Trace.WriteLine("Warning (c9lgm): z so big c9lgmc underflows");
 				return new Complex(0.0, 0.0);
-
 			}
 			else
 			{
@@ -2341,11 +2316,9 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
+		#endregion c9lgmc
 
 		#region Gamma(complex)
-
-
 
 		/// <summary>
 		/// Complex Gamma function.
@@ -2376,11 +2349,10 @@ namespace Altaxo.Calc
 			return ComplexMath.Exp(LnGamma(z, bDebug));
 		}
 
-
-
-		#endregion
+		#endregion Gamma(complex)
 
 		#region LnGamma(complex)
+
 		/// <summary>
 		/// Complex logarithm of the gamma function.
 		/// </summary>
@@ -2395,7 +2367,6 @@ namespace Altaxo.Calc
 		{
 			return _LnGamma.LnGamma(z, false);
 		}
-
 
 		/// <summary>
 		/// Complex logarithm of the gamma function.
@@ -2413,14 +2384,11 @@ namespace Altaxo.Calc
 			return _LnGamma.LnGamma(z, bDebug);
 		}
 
-
-
-		class _LnGamma
+		private class _LnGamma
 		{
-			static double _LnGamma_bound = 0.0;
-			static double _LnGamma_dxrel = 0.0;
-			static double _LnGamma_rmax = 0.0;
-
+			private static double _LnGamma_bound = 0.0;
+			private static double _LnGamma_dxrel = 0.0;
+			private static double _LnGamma_rmax = 0.0;
 
 			//-----------------------------------------------------------------------------//
 			// August 1980 edition.  W. Fullerton c3, Los Alamos Scientific Lab.
@@ -2433,8 +2401,6 @@ namespace Altaxo.Calc
 				const double sq2pil = 0.91893853320467274;
 
 				Complex retval;
-
-
 
 				if (_LnGamma_bound == 0.0)
 				{
@@ -2466,7 +2432,7 @@ namespace Altaxo.Calc
 
 				if (cabsz < _LnGamma_bound) goto L20;
 
-				// use the reflection formula for real(z) negative, 
+				// use the reflection formula for real(z) negative,
 				// abs(z) large, and abs(imag(y)) small.
 				if (y > 0.0) z = z.GetConjugate();
 				corr = ComplexMath.Exp(-Complex.FromRealImaginary(0.0, 2.0 * Math.PI) * z);
@@ -2526,7 +2492,8 @@ namespace Altaxo.Calc
 				return retval;
 			}
 		}
-		#endregion
+
+		#endregion LnGamma(complex)
 
 		#region InverseBeta
 
@@ -2543,20 +2510,20 @@ namespace Altaxo.Calc
 			return _xinbta.xinbta_(p, q, log_beta, alpha, ref _ifault);
 		}
 
-		class _xinbta
+		private class _xinbta
 		{
-			const double c_b4 = 10.0;
-			const double sae = -308.0;
-			const double zero = 0.0;
-			const double one = 1.0;
-			const double two = 2.0;
-			const double three = 3.0;
-			const double four = 4.0;
-			const double five = 5.0;
-			const double six = 6.0;
+			private const double c_b4 = 10.0;
+			private const double sae = -308.0;
+			private const double zero = 0.0;
+			private const double one = 1.0;
+			private const double two = 2.0;
+			private const double three = 3.0;
+			private const double four = 4.0;
+			private const double five = 5.0;
+			private const double six = 6.0;
 
 			/// <summary>
-			/// 
+			///
 			/// </summary>
 			/// <param name="p">first beta distribution parameter. Must be &gt; 0.</param>
 			/// <param name="q">second beta distribution parameter.  Must be &gt; 0.</param>
@@ -2565,12 +2532,12 @@ namespace Altaxo.Calc
 			/// <param name="ifault">On return, indicates an error if not zero.</param>
 			/// <returns>The inverse of the incomplete beta ratio.</returns>
 			/// <remarks><code>
-			///  Author:  Glen Cowan 
-			///  Date:    5-Jan-1998 
-			///  XINBTA  algorithm AS109  Appl. Statist. (1977) vol. 26, no. 1 
+			///  Author:  Glen Cowan
+			///  Date:    5-Jan-1998
+			///  XINBTA  algorithm AS109  Appl. Statist. (1977) vol. 26, no. 1
 			///  Modified 26 April 2001 by Glen Cowan:
-			///  variable SAE in XINBTA changed from -37D.0 to -308D.0 to avoid 
-			///  infinite loop (only a problem on digital unix). 
+			///  variable SAE in XINBTA changed from -37D.0 to -308D.0 to avoid
+			///  infinite loop (only a problem on digital unix).
 			/// </code>
 			/// </remarks>
 			public static double xinbta_(
@@ -2582,11 +2549,8 @@ namespace Altaxo.Calc
 			{
 				/* Initialized data */
 
-
-
 				/* System generated locals */
 				double ret_val, d__1, d__2, d__3;
-
 
 				/* Local variables */
 				double a, g, h__, r__, s, t, w, y, pp, qq, sq, tx, adj, acu;
@@ -2594,7 +2558,6 @@ namespace Altaxo.Calc
 				double fpu, xin;
 				bool indx;
 				double prev, yprev;
-
 
 				/*     algorithm as 109 appl. statist. (1977), vol.26, no.1 */
 				/*     (replacing algorithm as 64  appl. statist. (1973), */
@@ -2609,7 +2572,6 @@ namespace Altaxo.Calc
 				/*     log of complete beta function, beta, is assumed to be known. */
 
 				/*     Auxiliary function required: BETAIN = algorithm AS63 */
-
 
 				/*     Define accuracy and initialise. */
 				/*     SAE below is the most negative decimal exponent which does not */
@@ -2781,20 +2743,20 @@ namespace Altaxo.Calc
 				}
 				return ret_val;
 			} /* xinbta_ */
-
 		}
-		#endregion
+
+		#endregion InverseBeta
 
 		#region betain
+
 		/// <summary>
 		/// Helper class to calculate the incomplete beta ratio if the log beta is known.
 		/// </summary>
-		class _betain
+		private class _betain
 		{
-
-			const double zero = 0.0;
-			const double one = 1.0;
-			const double acu = 1e-15;
+			private const double zero = 0.0;
+			private const double one = 1.0;
+			private const double acu = 1e-15;
 
 			/// <summary>
 			/// Calculates the incomplete beta ratio if log(beta) is known.
@@ -2808,9 +2770,9 @@ namespace Altaxo.Calc
 			/// <remarks>
 			/// <code>
 			/// Adopted from the following source:
-			/// Author:  Glen Cowan 
-			/// Date:    5-Jan-1998 
-			/// BETAIN  algorithm  AS63  Appl. Statist. (1973), vol.22, no. 3 
+			/// Author:  Glen Cowan
+			/// Date:    5-Jan-1998
+			/// BETAIN  algorithm  AS63  Appl. Statist. (1973), vol.22, no. 3
 			/// </code></remarks>
 			public static double betain_(
 				double x,
@@ -2820,8 +2782,6 @@ namespace Altaxo.Calc
 				ref int ifault)
 			{
 				/* Initialized data */
-
-
 
 				/* System generated locals */
 				double ret_val;
@@ -2833,13 +2793,11 @@ namespace Altaxo.Calc
 				bool indx;
 				double temp, term;
 
-
 				/*     algorithm as 63  appl. statist. (1973), vol.22, no.3 */
 
 				/*     computes incomplete beta function ratio for arguments */
 				/*     x between zero and one, p and q positive. */
 				/*     log of complete beta function, beta, is assumed to be known */
-
 
 				/*     define accuracy and initialise */
 
@@ -2926,19 +2884,18 @@ namespace Altaxo.Calc
 				return ret_val;
 			} /* betain_ */
 		}
-		#endregion
+
+		#endregion betain
 
 		#region igami
-
 
 		static public double InverseGammaRegularized(double a, double z)
 		{
 			return _Cephes.igami(a, z);
 		}
 
-		class _Cephes
+		private class _Cephes
 		{
-
 			/*              igam.c
 			 *
 			 *  Incomplete gamma integral
@@ -3032,17 +2989,16 @@ namespace Altaxo.Calc
 			* MACHEP =  1.11022302462515654042E-16       2**-53
 			* MAXLOG =  7.09782712893383996843E2         log(2**1024)
 			* MINLOG = -7.08396418532264106224E2         log(2**-1022)
-			* MAXNUM =  1.7976931348623158E308           2**1024 
+			* MAXNUM =  1.7976931348623158E308           2**1024
 			*/
 
-			static double MACHEP = 1.11022302462515654042E-16;
-			static double MAXNUM = double.MaxValue;
-			static double MAXLOG = 7.09782712893383996843E2;
+			private static double MACHEP = 1.11022302462515654042E-16;
+			private static double MAXNUM = double.MaxValue;
+			private static double MAXLOG = 7.09782712893383996843E2;
 			// static double MINLOG = -7.08396418532264106224E2;
 
-
-			static double big = 4.503599627370496e15;
-			static double biginv = 2.22044604925031308085e-16;
+			private static double big = 4.503599627370496e15;
+			private static double biginv = 2.22044604925031308085e-16;
 
 			static public double igamc(double a, double x)
 			{
@@ -3105,8 +3061,6 @@ namespace Altaxo.Calc
 				return (ans * ax);
 			}
 
-
-
 			/* left tail of incomplete gamma function:
 			 *
 			 *          inf.      k
@@ -3132,7 +3086,6 @@ namespace Altaxo.Calc
 				if (ax < -MAXLOG)
 				{
 					throw new ArithmeticException("UNDERFLOW");
-
 				}
 				ax = Math.Exp(ax);
 
@@ -3151,9 +3104,6 @@ namespace Altaxo.Calc
 
 				return (ans * ax / a);
 			}
-
-
-
 
 			/*              igami()
 	 *
@@ -3181,7 +3131,7 @@ namespace Altaxo.Calc
 	 *  where
 	 *
 	 *  t = 1 - d - ndtri(p) sqrt(d)
-	 * 
+	 *
 	 * and
 	 *
 	 *  d = 1/9a,
@@ -3208,8 +3158,6 @@ namespace Altaxo.Calc
 			//#include <math.h>
 			//#include "mconf.h"
 			//#include "cephes.h"
-
-
 
 			static public double igami(double a, double y0)
 			{
@@ -3334,7 +3282,6 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
-
+		#endregion igami
 	} // end of class GammaRelated
 } // end of namespace

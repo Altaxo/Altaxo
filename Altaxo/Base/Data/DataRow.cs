@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,14 +29,13 @@ using System.Text;
 
 namespace Altaxo.Data
 {
-
 	/// <summary>
 	/// Wrapper struct for a row of a data column collection.
 	/// </summary>
 	public struct DataRow : IEnumerable<AltaxoVariant>
 	{
-		DataColumnCollection _col;
-		int _rowIdx;
+		private DataColumnCollection _col;
+		private int _rowIdx;
 
 		/// <summary>
 		/// Constructor
@@ -97,7 +98,7 @@ namespace Altaxo.Data
 				yield return _col[i][_rowIdx];
 		}
 
-		#endregion
+		#endregion IEnumerable<AltaxoVariant> Members
 
 		#region IEnumerable Members
 
@@ -111,6 +112,6 @@ namespace Altaxo.Data
 				yield return _col[i][_rowIdx];
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 	}
 }

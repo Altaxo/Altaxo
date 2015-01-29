@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Multivariate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -50,7 +44,6 @@ namespace Altaxo.Gui.Worksheet
 
 		private void cbAnalysisMethod_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
-
 		}
 
 		private void edMaxNumFactors_ValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
@@ -105,12 +98,15 @@ namespace Altaxo.Gui.Worksheet
 				case CrossPRESSCalculationType.None:
 					rbCrossValidationNone.IsChecked = true;
 					break;
+
 				case CrossPRESSCalculationType.ExcludeEveryMeasurement:
 					rbCrossValidationEvery.IsChecked = true;
 					break;
+
 				case CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements:
 					rbCrossValidationGroups.IsChecked = true;
 					break;
+
 				case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
 					this.rbCrossValidationHalfEnsemble.IsChecked = true;
 					break;
@@ -123,6 +119,6 @@ namespace Altaxo.Gui.Worksheet
 
 		public event Action<int> AnalysisMethodChanged;
 
-		#endregion
+		#endregion IPLSStartAnalysisView
 	}
 }

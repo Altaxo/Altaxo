@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\ei.cc
-
 
 using System;
 
@@ -33,9 +34,6 @@ namespace Altaxo.Calc
 	/// </summary>
 	public class ExpIntegralRelated
 	{
-
-
-
 		/// <summary>
 		/// This function program computes approximate values for the
 		/// exponential integral  Ei(x), where  x  is real.
@@ -72,8 +70,6 @@ namespace Altaxo.Calc
 			return calcei(x, 2);
 		}
 
-
-
 		//-----------------------------------------------------------------------------//
 		//
 		// PROTOTYPES:
@@ -81,15 +77,15 @@ namespace Altaxo.Calc
 		//-----------------------------------------------------------------------------//
 		// double ExpIntegralEi (double x);
 		//-----------------------------------------------------------------------------//
-		// 
-		//    This routine computes the exponential integral Ei(x) for real 
+		//
+		//    This routine computes the exponential integral Ei(x) for real
 		//    arguments x where
 		//
 		//              /  integral (from t=-infinity to t=x) (exp(t)/t),  x > 0
 		//     Ei(x) = <
 		//              \ -integral (from t=-x to t=infinity) (exp(t)/t),  x < 0
 		//
-		//    and where the first integral is a principal value integral. 
+		//    and where the first integral is a principal value integral.
 		//    The argument x must not be equal to 0.
 		//
 		//    Error returns:  -x >  xbig   underflow  returns  0
@@ -101,7 +97,7 @@ namespace Altaxo.Calc
 		// double ExpIntegralExpEi (double x);
 		//-----------------------------------------------------------------------------//
 		//
-		//    This routine computes the exponential integral  exp(-x) * Ei(x). 
+		//    This routine computes the exponential integral  exp(-x) * Ei(x).
 		//    The argument x must not be equal to 0.
 		//
 		//    Error returns:   x == 0      illegal    returns  -xinf
@@ -111,7 +107,7 @@ namespace Altaxo.Calc
 		// double ExpIntegralE1 (double x);
 		//-----------------------------------------------------------------------------//
 		//
-		//    This routine computes the exponential integral E1(x). 
+		//    This routine computes the exponential integral E1(x).
 		//    The argument x must be greater than  0.
 		//
 		//    Error returns:   x >  xbig   underflow  returns  0
@@ -124,7 +120,7 @@ namespace Altaxo.Calc
 		//-----------------------------------------------------------------------------//
 		//
 		//  The routine double calcei(double arg, int ii) is intended for internal
-		//  use only, all computations within the packet being concentrated 
+		//  use only, all computations within the packet being concentrated
 		//  in this routine.  The parameter usage is as follows:
 		//
 		//      Function Call                   Parameters
@@ -166,7 +162,7 @@ namespace Altaxo.Calc
 		//                           beta      minexp      maxexp
 		//
 		//  CRAY-1        (S.P.)       2       -8193        8191
-		//  Cyber 180/185 
+		//  Cyber 180/185
 		//    under NOS   (S.P.)       2        -975        1070
 		//  IEEE (IBM/XT,
 		//    SUN, etc.)  (S.P.)       2        -126         128
@@ -179,7 +175,7 @@ namespace Altaxo.Calc
 		//                           XBIG       XINF       XMAX
 		//
 		//  CRAY-1        (S.P.)    5670.31  5.45E+2465   5686.21
-		//  Cyber 180/185 
+		//  Cyber 180/185
 		//    under NOS   (S.P.)     669.31  1.26E+322     748.28
 		//  IEEE (IBM/XT,
 		//    SUN, etc.)  (S.P.)      82.93  3.40E+38       93.24
@@ -203,7 +199,6 @@ namespace Altaxo.Calc
 		//                   Latest modification: October 30, 1996
 		//-----------------------------------------------------------------------------//
 
-
 		//-------------------------------------------------------------------------//
 		// Mathematical constants
 		// exp40 = exp(40)
@@ -211,7 +206,7 @@ namespace Altaxo.Calc
 		// x01/x11 + x02 = zero of Ei to extra precision
 		//-------------------------------------------------------------------------//
 
-		const double zero = 0.0,
+		private const double zero = 0.0,
 			p037 = 0.037,
 			half = 0.5,
 			one = 1.0,
@@ -222,7 +217,7 @@ namespace Altaxo.Calc
 			twelve = 12.0,
 			two4 = 24.0,
 			fourty = 40.0,
-			exp40 = 2.353852668370199854078999e17, // exp(40.0) 
+			exp40 = 2.353852668370199854078999e17, // exp(40.0)
 			x01 = 381.5,
 			x11 = 1024.0,
 			x02 = -5.1182968633365538008e-5,
@@ -232,7 +227,7 @@ namespace Altaxo.Calc
 		// Machine-dependent constants for IEEE arithmetics
 		//-------------------------------------------------------------------------//
 
-		const double xinf = 1.79e+308,
+		private const double xinf = 1.79e+308,
 			xmax = 716.351,
 			xbig = 701.84;
 
@@ -240,14 +235,15 @@ namespace Altaxo.Calc
 		// Coefficients  for -1.0 <= x < 0.0
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] a = 
+		private static readonly double[] a =
     {
       1.1669552669734461083368e2, 2.1500672908092918123209e3,
       1.5924175980637303639884e4, 8.9904972007457256553251e4,
       1.5026059476436982420737e5,-1.4815102102575750838086e5,
-      5.0196785185439843791020e0 
+      5.0196785185439843791020e0
     };
-		static readonly double[] b = 
+
+		private static readonly double[] b =
     {
       4.0205465640027706061433e1, 7.5043163907103936624165e2,
       8.1258035174768735759855e3, 5.2440529172056355429883e4,
@@ -258,7 +254,7 @@ namespace Altaxo.Calc
 		// Coefficients for -4.0 <= x < -1.0
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] c = 
+		private static readonly double[] c =
     {
       3.828573121022477169108e-1, 1.107326627786831743809e+1,
       7.246689782858597021199e+1, 1.700632978311516129328e+2,
@@ -266,7 +262,8 @@ namespace Altaxo.Calc
       1.487967702840464066613e+1, 9.999989642347613068437e-1,
       1.737331760720576030932e-8
     };
-		static readonly double[] d = 
+
+		private static readonly double[] d =
     {
       8.258160008564488034698e-2, 4.344836335509282083360e+0,
       4.662179610356861756812e+1, 1.775728186717289799677e+2,
@@ -279,7 +276,7 @@ namespace Altaxo.Calc
 		// Coefficients for x < -4.0
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] e = 
+		private static readonly double[] e =
     {
       1.3276881505637444622987e+2,3.5846198743996904308695e+4,
       1.7283375773777593926828e+5,2.6181454937205639647381e+5,
@@ -287,7 +284,8 @@ namespace Altaxo.Calc
       1.0816852399095915622498e+4,1.0611777263550331766871e03,
       5.2199632588522572481039e+1,9.9999999999999999087819e-1
     };
-		static readonly double[] f = 
+
+		private static readonly double[] f =
     {
       3.9147856245556345627078e+4,2.5989762083608489777411e+5,
       5.5903756210022864003380e+5,5.4616842050691155735758e+5,
@@ -300,12 +298,13 @@ namespace Altaxo.Calc
 		//  Coefficients for rational approximation to ln(x/a), |1-x/a| < .1
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] plg = 
+		private static readonly double[] plg =
     {
       -2.4562334077563243311e+01,2.3642701335621505212e+02,
       -5.4989956895857911039e+02,3.5687548468071500413e+02
     };
-		static readonly double[] qlg = 
+
+		private static readonly double[] qlg =
     {
       -3.5553900764052419184e+01,1.9400230218539473193e+02,
       -3.3442903192607538956e+02,1.7843774234035750207e+02
@@ -316,7 +315,7 @@ namespace Altaxo.Calc
 		// ratio of Chebyshev polynomials
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] p = 
+		private static readonly double[] p =
     {
       -1.2963702602474830028590e01,-1.2831220659262000678155e03,
       -1.4287072500197005777376e04,-1.4299841572091610380064e06,
@@ -324,7 +323,8 @@ namespace Altaxo.Calc
       3.1984354235237738511048e08,-2.5301823984599019348858e10,
       1.2177698136199594677580e10,-2.0829040666802497120940e11
     };
-		static readonly double[] q = 
+
+		private static readonly double[] q =
     {
       7.6886718750000000000000e01,-5.5648470543369082846819e03,
       1.9418469440759880361415e05,-4.2648434812177161405483e06,
@@ -337,7 +337,7 @@ namespace Altaxo.Calc
 		// j-fraction coefficients for 6.0 <= x < 12.0
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] r = 
+		private static readonly double[] r =
     {
       -2.645677793077147237806e00,-2.378372882815725244124e00,
       -2.421106956980653511550e01, 1.052976392459015155422e01,
@@ -345,7 +345,8 @@ namespace Altaxo.Calc
       1.120011024227297451523e01,-3.988850730390541057912e00,
       9.565134591978630774217e00, 9.981193787537396413219e-1
     };
-		static readonly double[] s = 
+
+		private static readonly double[] s =
     {
       1.598517957704779356479e-4, 4.644185932583286942650e00,
       3.697412299772985940785e02,-8.791401054875438925029e00,
@@ -358,7 +359,7 @@ namespace Altaxo.Calc
 		// j-fraction coefficients for 12.0 <= x < 24.0
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] p1 = 
+		private static readonly double[] p1 =
     {
       -1.647721172463463140042e00,-1.860092121726437582253e01,
       -1.000641913989284829961e01,-2.105740799548040450394e01,
@@ -366,7 +367,8 @@ namespace Altaxo.Calc
       2.495487730402059440626e01, 2.652575818452799819855e01,
       -1.845086232391278674524e00, 9.999933106160568739091e-1
     };
-		static readonly double[] q1 = 
+
+		private static readonly double[] q1 =
     {
       9.792403599217290296840e01, 6.403800405352415551324e01,
       5.994932325667407355255e01, 2.538819315630708031713e02,
@@ -379,7 +381,7 @@ namespace Altaxo.Calc
 		// j-fraction coefficients for  X >= 24.0
 		//-------------------------------------------------------------------------//
 
-		static readonly double[] p2 = 
+		private static readonly double[] p2 =
     {
       1.75338801265465972390e02,-2.23127670777632409550e02,
       -1.81949664929868906455e01,-2.79798528624305389340e01,
@@ -387,7 +389,8 @@ namespace Altaxo.Calc
       -7.06810977895029358836e00,-5.00006640413131002475e00,
       -3.00000000320981265753e00, 1.00000000000000485503e00
     };
-		static readonly double[] q2 = 
+
+		private static readonly double[] q2 =
     {
       3.97845977167414720840e04, 3.97277109100414518365e00,
       1.37790390235747998793e02, 1.17179220502086455287e02,
@@ -396,15 +399,12 @@ namespace Altaxo.Calc
       1.99999999999048104167e00
     };
 
-
-
-		static double calcei(double arg, int ii)
+		private static double calcei(double arg, int ii)
 		{
 			int i;
 			double ei, frac, sump, sumq, t, w, xmx0, y, ysq;
 			double[] px = new double[10];
 			double[] qx = new double[10];
-
 
 			//-------------------------------------------------------------------------//
 			// code starts here
@@ -413,14 +413,11 @@ namespace Altaxo.Calc
 			double x = arg;
 			if (x == zero)
 			{
-
 				ei = -xinf;
 				if (ii == 2) ei = -ei;
-
 			}
 			else if ((x < zero) || (ii == 2))
 			{
-
 				//---------------------------------------------------------------------//
 				// Calculate Ei for negative argument or for E1.
 				//---------------------------------------------------------------------//
@@ -472,11 +469,9 @@ namespace Altaxo.Calc
 					}
 				}
 				if (ii == 2) ei = -ei;
-
 			}
 			else if (x < six)
 			{
-
 				//---------------------------------------------------------------------//
 				//  To improve conditioning, rational approximations are expressed
 				//  in terms of Chebyshev polynomials for 0 <= x < 6, and in
@@ -501,14 +496,11 @@ namespace Altaxo.Calc
 
 				if (Math.Abs(xmx0) >= p037)
 				{
-
 					ei = Math.Log(x / x0) + xmx0 * frac;
 					if (ii == 3) ei *= Math.Exp(-x);
-
 				}
 				else
 				{
-
 					//-----------------------------------------------------------------//
 					// Special approximation to  ln(x/x0)  for x close to x0
 					//-----------------------------------------------------------------//
@@ -525,31 +517,25 @@ namespace Altaxo.Calc
 					ei = (sump / (sumq * (x + x0)) + frac) * xmx0;
 					if (ii == 3) ei *= Math.Exp(-x);
 				}
-
 			}
 			else if (x < twelve)
 			{
-
 				frac = zero;
 				for (i = 0; i < 9; i++)
 					frac = s[i] / (r[i] + x + frac);
 				ei = (r[9] + frac) / x;
 				if (ii != 3) ei *= Math.Exp(x);
-
 			}
 			else if (x <= two4)
 			{
-
 				frac = zero;
 				for (i = 0; i < 9; i++)
 					frac = q1[i] / (p1[i] + x + frac);
 				ei = (p1[9] + frac) / x;
 				if (ii != 3) ei *= Math.Exp(x);
-
 			}
 			else
 			{
-
 				if ((x >= xmax) && (ii < 3))
 				{
 					ei = xinf;

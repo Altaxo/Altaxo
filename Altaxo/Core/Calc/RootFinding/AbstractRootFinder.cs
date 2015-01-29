@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (C) bsargos, Software Developer, France
 //    (see CodeProject article http://www.codeproject.com/Articles/16083/One-dimensional-root-finding-algorithms)
@@ -22,31 +23,38 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.RootFinding
 {
-
 	public abstract class AbstractRootFinder
 	{
 		#region Constants
-		static readonly StringResourceKey SRK_RangeArgumentInvalid = new StringResourceKey("RootFinding.RangeArgumentInvalid", "The provided range is not valid", "");
-		static readonly StringResourceKey SRK_InvalidRange = new StringResourceKey("RootFinding.InvalidRange", "Invalid range while finding root", "");
-		static readonly StringResourceKey SRK_AccuracyNotReached = new StringResourceKey("RootFinding.AccuracyNotReached", "The accuracy couldn't be reached within the specified number of iterations", "");
-		static readonly StringResourceKey SRK_RootNotFound = new StringResourceKey("RootFinding.RootNotFound", "The algorithm ended without root in the range", "");
-		static readonly StringResourceKey SRK_RootNotBracketed = new StringResourceKey("RootFinding.RootNotBracketed", "The algorithm could not start because the root seemed not to be bracketed", "");
-		static readonly StringResourceKey SRK_InadequateAlgorithm = new StringResourceKey("RootFinding.InadequateAlgorithm", "This algorithm is not able to solve this equation", "");
+
+		private static readonly StringResourceKey SRK_RangeArgumentInvalid = new StringResourceKey("RootFinding.RangeArgumentInvalid", "The provided range is not valid", "");
+		private static readonly StringResourceKey SRK_InvalidRange = new StringResourceKey("RootFinding.InvalidRange", "Invalid range while finding root", "");
+		private static readonly StringResourceKey SRK_AccuracyNotReached = new StringResourceKey("RootFinding.AccuracyNotReached", "The accuracy couldn't be reached within the specified number of iterations", "");
+		private static readonly StringResourceKey SRK_RootNotFound = new StringResourceKey("RootFinding.RootNotFound", "The algorithm ended without root in the range", "");
+		private static readonly StringResourceKey SRK_RootNotBracketed = new StringResourceKey("RootFinding.RootNotBracketed", "The algorithm could not start because the root seemed not to be bracketed", "");
+		private static readonly StringResourceKey SRK_InadequateAlgorithm = new StringResourceKey("RootFinding.InadequateAlgorithm", "This algorithm is not able to solve this equation", "");
 
 		protected static string MessageRangeArgumentInvalid { get { return StringResources.AltaxoCore.GetString(SRK_RangeArgumentInvalid); } }
+
 		protected static string MessageInvalidRange { get { return StringResources.AltaxoCore.GetString(SRK_InvalidRange); } }
+
 		protected static string MessageAccuracyNotReached { get { return StringResources.AltaxoCore.GetString(SRK_AccuracyNotReached); } }
+
 		protected static string MessageRootNotFound { get { return StringResources.AltaxoCore.GetString(SRK_RootNotFound); } }
+
 		protected static string MessageRootNotBracketed { get { return StringResources.AltaxoCore.GetString(SRK_RootNotBracketed); } }
+
 		protected static string MessageInadequateAlgorithm { get { return StringResources.AltaxoCore.GetString(SRK_InadequateAlgorithm); } }
 
 		protected static double double_Accuracy = 9.99200722162641E-16;
+
 		#endregion Constants
 
 		#region Variables
@@ -79,6 +87,7 @@ namespace Altaxo.Calc.RootFinding
 			_maximumNumberOfIterations = maxNumberOfIterations;
 			_accuracy = accuracy;
 		}
+
 		#endregion Construction
 
 		#region Properties
@@ -126,7 +135,6 @@ namespace Altaxo.Calc.RootFinding
 			if (xmin >= xmax)
 				throw new RootFinderException(MessageInvalidRange, 0, new Range(xmin, xmax), 0.0);
 
-
 			var fmin = _function(xmin);
 			var fmax = _function(xmax);
 			int iiter = 0;
@@ -139,7 +147,6 @@ namespace Altaxo.Calc.RootFinding
 					fmin = _function(xmin += factor * (xmin - xmax));
 				else
 					fmax = _function(xmax += factor * (xmax - xmin));
-
 			} while (iiter++ < _maximumNumberOfIterations);
 
 			throw new RootFinderException(MessageRootNotFound, iiter, new Range(fmin, fmax), 0.0);
@@ -204,6 +211,5 @@ namespace Altaxo.Calc.RootFinding
 		}
 
 		#endregion Helper methods
-
 	}
 }

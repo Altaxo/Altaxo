@@ -25,14 +25,10 @@
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Graph
 {

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Potrs.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,28 +34,26 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Potrs {
     private Potrs() {}
 
     private static void ArgumentCheck(UpLo uplo, int n, int nrhs, object A, int lda, object B, int ldb){
-      if (n<0) 
+      if (n<0)
         throw new ArgumentException("n must be at least zero.", "n");
-      if (nrhs<0) 
+      if (nrhs<0)
         throw new ArgumentException("nrhs must be at least zero.", "nrhs");
-      if (A==null) 
+      if (A==null)
         throw new ArgumentNullException("A","A cannot be null.");
-      if (lda<n || lda<1) 
+      if (lda<n || lda<1)
         throw new ArgumentException("lda must be at least max(1,n)");
-      if (B==null) 
+      if (B==null)
         throw new ArgumentNullException("B","B cannot be null.");
-      if (ldb<n || ldb<1) 
+      if (ldb<n || ldb<1)
         throw new ArgumentException("ldb must be at least max(1,n)", "ldb");
     }
-    
+
     internal static int Compute( UpLo uplo, int n, int nrhs, float[] A, int lda, float[] B, int ldb  ){
       ArgumentCheck(uplo, n, nrhs, A, lda, B, ldb);
       return dna_lapack_spotrs(uplo, n, nrhs, A, lda, B, ldb);

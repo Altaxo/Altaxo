@@ -29,7 +29,6 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	using Altaxo.Collections;
 	using Altaxo.Data;
 
 	public interface IExpandCyclingVariableView

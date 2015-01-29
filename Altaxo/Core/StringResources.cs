@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -32,21 +34,18 @@ namespace Altaxo
 	/// </summary>
 	public class StringResources
 	{
-		System.Resources.ResourceManager _defaultResourceMgr;
-		Dictionary<string, System.Resources.ResourceManager> _resourceManagersByLanguage;
-		System.Reflection.Assembly _assemblyContainingTheResources;
-		string _resourcePath;
-		string _resourceName;
+		private System.Resources.ResourceManager _defaultResourceMgr;
+		private Dictionary<string, System.Resources.ResourceManager> _resourceManagersByLanguage;
+		private System.Reflection.Assembly _assemblyContainingTheResources;
+		private string _resourcePath;
+		private string _resourceName;
 
-
-		static StringResources _AltaxoCoreResources = new StringResources("Altaxo.Resources", "StringResources", System.Reflection.Assembly.GetExecutingAssembly());
-
+		private static StringResources _AltaxoCoreResources = new StringResources("Altaxo.Resources", "StringResources", System.Reflection.Assembly.GetExecutingAssembly());
 
 		/// <summary>
 		/// Gets the altaxo core string resources.
 		/// </summary>
 		public static StringResources AltaxoCore { get { return _AltaxoCoreResources; } }
-
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StringResources"/> class.
@@ -75,8 +74,7 @@ namespace Altaxo
 			_resourceManagersByLanguage.Add("en", _defaultResourceMgr);
 		}
 
-
-			/// <summary>
+		/// <summary>
 		/// Gets a resource string for a given resource key.
 		/// </summary>
 		/// <param name="resourceKey">The resource key.</param>
@@ -113,20 +111,15 @@ namespace Altaxo
 				_resourceManagersByLanguage.Add(cu, mgr); // add the manager even if it is null -> this then indicates that no such resource localization exists.
 			}
 
-
 			string result;
 			mgr = _resourceManagersByLanguage[cu];
 			if (null != mgr && null != (result = mgr.GetString(resourceKey.Key)))
 				return result;
 
-			if(null != (result = _defaultResourceMgr.GetString(resourceKey.Key)))
-					return result;
+			if (null != (result = _defaultResourceMgr.GetString(resourceKey.Key)))
+				return result;
 
-				return resourceKey.ExampleStringValue;
+			return resourceKey.ExampleStringValue;
 		}
-
-
-		
-
 	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,26 +19,27 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Reflection;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace Altaxo.Serialization
 {
-  /// <summary>
-  /// Summary description for EnumParsing.
-  /// </summary>
-  public class EnumParsing
-  {
-    public static string GetDescription(Enum value)
-    {
-      FieldInfo fi= value.GetType().GetField(value.ToString()); 
-      DescriptionAttribute[] attributes = 
-        (DescriptionAttribute[])fi.GetCustomAttributes(
-        typeof(DescriptionAttribute), false);
-      return (attributes.Length>0)?attributes[0].Description:value.ToString();
-    }
-  }
+	/// <summary>
+	/// Summary description for EnumParsing.
+	/// </summary>
+	public class EnumParsing
+	{
+		public static string GetDescription(Enum value)
+		{
+			FieldInfo fi = value.GetType().GetField(value.ToString());
+			DescriptionAttribute[] attributes =
+				(DescriptionAttribute[])fi.GetCustomAttributes(
+				typeof(DescriptionAttribute), false);
+			return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+		}
+	}
 }

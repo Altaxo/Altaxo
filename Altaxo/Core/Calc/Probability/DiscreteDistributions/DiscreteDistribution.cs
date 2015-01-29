@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,27 +28,26 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
-  public abstract class DiscreteDistribution : Distribution
-  {
-    public DiscreteDistribution(Generator generator)
-      : base(generator)
-    {
-    }
+	public abstract class DiscreteDistribution : Distribution
+	{
+		public DiscreteDistribution(Generator generator)
+			: base(generator)
+		{
+		}
 
-    public virtual double CDF(double x)
-    {
-      throw new NotImplementedException();
-    }
+		public virtual double CDF(double x)
+		{
+			throw new NotImplementedException();
+		}
 
-    public virtual double PDF(double x)
-    {
-      throw new NotImplementedException();
-    }
+		public virtual double PDF(double x)
+		{
+			throw new NotImplementedException();
+		}
 
-    public virtual double Quantile(double x)
-    {
-      throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
-    }
-
-  }
+		public virtual double Quantile(double x)
+		{
+			throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
+		}
+	}
 }

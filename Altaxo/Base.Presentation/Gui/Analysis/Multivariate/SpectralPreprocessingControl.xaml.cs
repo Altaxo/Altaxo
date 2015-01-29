@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Multivariate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -108,10 +102,7 @@ namespace Altaxo.Gui.Worksheet
 				EnsembleScaleChanged(true == _chkEnsembleScale.IsChecked);
 		}
 
-
-
-
-		#region  ISpectralPreprocessingView
+		#region ISpectralPreprocessingView
 
 		public void InitializeMethod(SpectralPreprocessingMethod method)
 		{
@@ -120,15 +111,19 @@ namespace Altaxo.Gui.Worksheet
 				case SpectralPreprocessingMethod.None:
 					this._rbMethodNone.IsChecked = true;
 					break;
+
 				case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
 					this._rbMethodMSC.IsChecked = true;
 					break;
+
 				case SpectralPreprocessingMethod.StandardNormalVariate:
 					this._rbMethodSNV.IsChecked = true;
 					break;
+
 				case SpectralPreprocessingMethod.FirstDerivative:
 					this._rbMethod1stDer.IsChecked = true;
 					break;
+
 				case SpectralPreprocessingMethod.SecondDerivative:
 					this._rbMethod2ndDer.IsChecked = true;
 					break;
@@ -142,12 +137,15 @@ namespace Altaxo.Gui.Worksheet
 				case 0:
 					this._rbDetrendingZero.IsChecked = true;
 					break;
+
 				case 1:
 					this._rbDetrending1st.IsChecked = true;
 					break;
+
 				case 2:
 					this._rbDetrending2nd.IsChecked = true;
 					break;
+
 				default:
 					this._rbDetrendingNone.IsChecked = true;
 					break;
@@ -165,6 +163,6 @@ namespace Altaxo.Gui.Worksheet
 
 		public event Action<bool> EnsembleScaleChanged;
 
-		#endregion
+		#endregion ISpectralPreprocessingView
 	}
 }

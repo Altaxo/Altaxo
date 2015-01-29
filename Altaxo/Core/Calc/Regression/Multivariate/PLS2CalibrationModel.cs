@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,79 +19,66 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc.LinearAlgebra;
-
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
+	public interface IPLS2CalibrationModel : IMultivariateCalibrationModel
+	{
+		IROMatrix XWeights
+		{
+			get;
+		}
 
+		IROMatrix XLoads
+		{
+			get;
+		}
 
-  public interface IPLS2CalibrationModel : IMultivariateCalibrationModel
-  {
+		IROMatrix YLoads
+		{
+			get;
+		}
 
-   
+		IROMatrix CrossProduct
+		{
+			get;
+		}
+	}
 
-    IROMatrix XWeights  
-    {
-      get;
-    }
+	public class PLS2CalibrationModel : MultivariateCalibrationModel, IPLS2CalibrationModel
+	{
+		private IROMatrix _xWeights;
+		private IROMatrix _xLoads;
+		private IROMatrix _yLoads;
+		private IROMatrix _crossProduct;
 
-    IROMatrix XLoads
-    {
-      get ;
-    }
+		public IROMatrix XWeights
+		{
+			get { return _xWeights; }
+			set { _xWeights = value; }
+		}
 
-    IROMatrix YLoads
-    {
-      get ;
-    }
+		public IROMatrix XLoads
+		{
+			get { return _xLoads; }
+			set { _xLoads = value; }
+		}
 
-    IROMatrix CrossProduct
-    {
-      get ;
-    }
-  }
+		public IROMatrix YLoads
+		{
+			get { return _yLoads; }
+			set { _yLoads = value; }
+		}
 
-
-  public class PLS2CalibrationModel : MultivariateCalibrationModel, IPLS2CalibrationModel
-  {
-
-    IROMatrix _xWeights;
-    IROMatrix _xLoads;
-    IROMatrix _yLoads;
-    IROMatrix _crossProduct;
-   
-
-    public IROMatrix XWeights
-    {
-      get { return _xWeights; }
-      set { _xWeights = value; }
-    }
-
-    public IROMatrix XLoads
-    {
-      get { return _xLoads; }
-      set { _xLoads = value; }
-    }
-
-    public IROMatrix YLoads
-    {
-      get { return _yLoads; }
-      set { _yLoads = value; }
-    }
-
-    public IROMatrix CrossProduct
-    {
-      get { return _crossProduct; }
-      set { _crossProduct = value; }
-    }
-
- 
-   
-  }
-
-
+		public IROMatrix CrossProduct
+		{
+			get { return _crossProduct; }
+			set { _crossProduct = value; }
+		}
+	}
 }

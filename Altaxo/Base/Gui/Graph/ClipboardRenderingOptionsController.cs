@@ -23,12 +23,9 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;

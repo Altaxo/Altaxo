@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
@@ -41,8 +36,8 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class XYGridStyleControl : UserControl, IXYGridStyleView
 	{
-		NotifyChangedValue<bool> _isGridStyleEnabled = new NotifyChangedValue<bool>();
-		NotifyChangedValue<string> _headerTitle = new NotifyChangedValue<string>();
+		private NotifyChangedValue<bool> _isGridStyleEnabled = new NotifyChangedValue<bool>();
+		private NotifyChangedValue<string> _headerTitle = new NotifyChangedValue<string>();
 
 		public XYGridStyleControl()
 		{
@@ -51,44 +46,36 @@ namespace Altaxo.Gui.Graph
 
 		private void EhEnableCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if(null!=ShowGridChanged)
-				ShowGridChanged(true==_chkEnable.IsChecked);
-
+			if (null != ShowGridChanged)
+				ShowGridChanged(true == _chkEnable.IsChecked);
 		}
-
-		
 
 		private void EhShowZeroOnlyCheckChanged(object sender, RoutedEventArgs e)
 		{
 			if (null != ShowZeroOnlyChanged)
-				ShowZeroOnlyChanged(true==_chkShowZeroOnly.IsChecked);
+				ShowZeroOnlyChanged(true == _chkShowZeroOnly.IsChecked);
 		}
-
-		
 
 		private void EhShowMinorCheckChanged(object sender, RoutedEventArgs e)
 		{
-			if(null!=ShowMinorGridChanged)
-				ShowMinorGridChanged(true==_chkShowMinor.IsChecked);
+			if (null != ShowMinorGridChanged)
+				ShowMinorGridChanged(true == _chkShowMinor.IsChecked);
 		}
 
-	
-
 		#region IXYGridStyleView
-		
+
 		public event Action<bool> ShowGridChanged;
+
 		public event Action<bool> ShowMinorGridChanged;
+
 		public event Action<bool> ShowZeroOnlyChanged;
-		
 
 		public void InitializeBegin()
 		{
-			
 		}
 
 		public void InitializeEnd()
 		{
-			
 		}
 
 		public void InitializeMajorGridStyle(Common.Drawing.IColorTypeThicknessPenController controller)
@@ -124,6 +111,6 @@ namespace Altaxo.Gui.Graph
 			this._chkShowZeroOnly.IsEnabled = showzeroonly;
 		}
 
-		#endregion
+		#endregion IXYGridStyleView
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
-	using Shapes;
 	public abstract class HitTestObjectBase : IHitTestObject
 	{
 		#region Internal classes
@@ -39,7 +40,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected class NoopGrip : IGripManipulationHandle
 		{
-			GraphicsPath _displayPath;
+			private GraphicsPath _displayPath;
 
 			public NoopGrip(GraphicsPath displayPath)
 			{
@@ -83,12 +84,10 @@ namespace Altaxo.Graph.Gdi
 				return false;
 			}
 
-
-
-			#endregion
+			#endregion IGripManipulationHandle Members
 		}
 
-		#endregion
+		#endregion Internal classes
 
 		/// <summary>
 		/// Transformation matrix which transforms the coordinates of the parent of the hitted object (i.e. the parent layer)
@@ -137,8 +136,6 @@ namespace Altaxo.Graph.Gdi
 
 		public abstract GraphicsPath ObjectOutlineForArrangements { get; }
 
-
-
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
 		/// </summary>
@@ -152,7 +149,6 @@ namespace Altaxo.Graph.Gdi
 			return currentGripLevel;
 		}
 
-
 		/// <summary>
 		/// Shifts the position of the object by x and y. Used to arrange objects.
 		/// </summary>
@@ -160,9 +156,8 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dy">Shift value of y in page coordinates.</param>
 		public abstract void ShiftPosition(double dx, double dy);
 
+		private DoubleClickHandler _DoubleClick;
 
-
-		DoubleClickHandler _DoubleClick;
 		public DoubleClickHandler DoubleClick
 		{
 			get { return _DoubleClick; }
@@ -172,7 +167,8 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
 		/// </summary>
-		DoubleClickHandler _Remove;
+		private DoubleClickHandler _Remove;
+
 		/// <summary>
 		/// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
 		/// </summary>
@@ -181,6 +177,7 @@ namespace Altaxo.Graph.Gdi
 			get { return _Remove; }
 			set { _Remove = value; }
 		}
+
 		/// <summary>
 		/// This handles the double-click event
 		/// </summary>
@@ -193,16 +190,16 @@ namespace Altaxo.Graph.Gdi
 				return false;
 		}
 
-		HostLayer _parentLayer;
+		private HostLayer _parentLayer;
+
 		public HostLayer ParentLayer
 		{
 			get { return _parentLayer; }
 			set { _parentLayer = value; }
 		}
 
-		#endregion
+		#endregion IHitTestObject Members
 	}
-
 
 	/// <summary>
 	/// This class holds the arrangement path by itself.
@@ -219,7 +216,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Creates a new HitTestObject.
 		/// </summary>
-		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects. 
+		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects.
 		/// You have to provide it in coordinates of the parent layer.</param>
 		/// <param name="hitobject">The hitted object.</param>
 		public HitTestObject(GraphicsPath objectPath, object hitobject)
@@ -231,7 +228,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Creates a new HitTestObject.
 		/// </summary>
-		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects. 
+		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects.
 		/// This path is in object world coordinates.</param>
 		/// <param name="transformation">Transformation matrix of the object.</param>
 		/// <param name="hitobject">The hitted object.</param>
@@ -284,6 +281,6 @@ namespace Altaxo.Graph.Gdi
 			// per default: do nothing
 		}
 
-		#endregion
+		#endregion IHitTestObject Members
 	}
 }

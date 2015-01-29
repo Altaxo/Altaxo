@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,21 +21,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * CostFunction.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Problem class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 
 namespace Altaxo.Calc.Optimization
 {
-
 	///<summary>Base class for cost function declaration</summary>
 	/// <remarks>
 	/// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
@@ -42,11 +43,10 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public abstract class CostFunction : ICostFunction
 	{
-
 		///<summary>Method to override to compute the cost function value of x</summary>
 		public abstract double Value(DoubleVector x);
 
-		///<summary>Method to override to calculate the grad_f, the first derivative of 
+		///<summary>Method to override to calculate the grad_f, the first derivative of
 		/// the cost function with respect to x</summary>
 		public virtual DoubleVector Gradient(DoubleVector x)
 		{
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Optimization
 			return grad;
 		}
 
-		///<summary>Method to override to calculate the Hessian of f, the second derivative of 
+		///<summary>Method to override to calculate the Hessian of f, the second derivative of
 		/// the cost function with respect to x</summary>
 		public virtual DoubleMatrix Hessian(DoubleVector x)
 		{
@@ -83,13 +83,11 @@ namespace Altaxo.Calc.Optimization
 		}
 
 		protected ConstraintDefinition constraint_ = new NoConstraint();
-
 	}
-
 
 	public class Simple1DCostFunction : CostFunction
 	{
-		Func<double, double> _func;
+		private Func<double, double> _func;
 
 		public Simple1DCostFunction(Func<double, double> func)
 		{
@@ -104,7 +102,7 @@ namespace Altaxo.Calc.Optimization
 
 	public class Simple2DCostFunction : CostFunction
 	{
-		Func<double, double, double> _func;
+		private Func<double, double, double> _func;
 
 		public Simple2DCostFunction(Func<double, double, double> func)
 		{

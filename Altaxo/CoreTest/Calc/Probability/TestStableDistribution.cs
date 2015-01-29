@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,31 +19,31 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc;
 using Altaxo.Calc.Probability;
 using NUnit.Framework;
-
+using System;
 
 namespace AltaxoTest.Calc.Probability
 {
-  [TestFixture]
-  public class TestStableDistribution
-  {
-    #region PDF test data
-    /* Mathematica code to create the table following (use the stable packet from the mathematica library web site)
-    
+	[TestFixture]
+	public class TestStableDistribution
+	{
+		#region PDF test data
+
+		/* Mathematica code to create the table following (use the stable packet from the mathematica library web site)
+
      << StableDistribution`SMath`
-    
+
     flarguments = Flatten[ Table[
       {
         {1/2, 7/8, 1, 9/8, 3/2, 2}[[i]],
         {-1, -1/2, 0, 1/2, 1}[[j]],
         {-10, -4, -1/2, 0, 1/2, 4, 10}[[k]]
         }, {i, 1, 6}, {j, 1, 5}, {k, 1, 7}], 2]
-    
     For[i = 1, i ? Length[flarguments], i += 1,
   alpha = flarguments[[i]][[1]];
   beta = flarguments[[i]][[2]];
@@ -54,15 +55,15 @@ namespace AltaxoTest.Calc.Probability
     Print[alpha, " ", beta, " ", xx, " ", yy];
     strm = OpenAppend["C:\\TEMP\\output.txt", CharacterEncoding -> "
           ASCII", FormatType -> OutputForm];
-    Write[strm, 
-        "new double[]{", FortranForm[alpha], ",", FortranForm[beta], ",", 
+    Write[strm,
+        "new double[]{", FortranForm[alpha], ",", FortranForm[beta], ",",
   FortranForm[xx], ",", FortranForm[yy], "},"];
      Close[strm]
     ];
   ]
     */
 
-    double[][] _pdfTestS0 = new double[][]{
+		private double[][] _pdfTestS0 = new double[][]{
 new double[]{0.1875,-1,-9.625,0.00622146382441951485},
 new double[]{0.1875,-1,-3.625,0.0152180462319058695},
 new double[]{0.1875,-1,-0.125,0.0700998044335274717},
@@ -271,43 +272,44 @@ new double[]{2,1,0.875,0.162388011933184181},
 new double[]{2,1,4.375,0.0415763651114948735},
 new double[]{2,1,10.375,0.0000290451394404738393},
 };
-    #endregion
 
-    [Test]
-    public void PdfTestS0()
-    {
-      for (int i = 0; i < _pdfTestS0.Length; i++)
-      {
-        double alpha = _pdfTestS0[i][0];
-        double beta = _pdfTestS0[i][1];
-        double x = _pdfTestS0[i][2];
-        double expectedy = _pdfTestS0[i][3];
-        double y = StableDistributionS0.PDF(x, alpha, beta, 1.7, 3.0/8.0);
-        double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i,alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
+		#endregion PDF test data
 
-    [Test]
-    public void PdfTestS0Spec()
-    {
-      int i = 140; 
-      {
-        double alpha = _pdfTestS0[i][0];
-        double beta = _pdfTestS0[i][1];
-        double x = _pdfTestS0[i][2];
-        double expectedy = _pdfTestS0[i][3];
-        double y = StableDistributionS0.PDF(x, alpha, beta, 1.7, 3.0/8.0);
-        double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
+		[Test]
+		public void PdfTestS0()
+		{
+			for (int i = 0; i < _pdfTestS0.Length; i++)
+			{
+				double alpha = _pdfTestS0[i][0];
+				double beta = _pdfTestS0[i][1];
+				double x = _pdfTestS0[i][2];
+				double expectedy = _pdfTestS0[i][3];
+				double y = StableDistributionS0.PDF(x, alpha, beta, 1.7, 3.0 / 8.0);
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
 
-    double[][] _cdfTestS0 = new double[][]{
+		[Test]
+		public void PdfTestS0Spec()
+		{
+			int i = 140;
+			{
+				double alpha = _pdfTestS0[i][0];
+				double beta = _pdfTestS0[i][1];
+				double x = _pdfTestS0[i][2];
+				double expectedy = _pdfTestS0[i][3];
+				double y = StableDistributionS0.PDF(x, alpha, beta, 1.7, 3.0 / 8.0);
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
+
+		private double[][] _cdfTestS0 = new double[][]{
 new double[]{0.1875,-1,-10,0.48098909889099806},
 new double[]{0.1875,-1,-4,0.534153158297503599},
 new double[]{0.1875,-1,-0.5,0.620322398276004584},
@@ -503,64 +505,62 @@ new double[]{2,1,4,0.931296729870530805},
 new double[]{2,1,10,0.999965714364872786},
 };
 
-    [Test]
-    public void CdfTestS0()
-    {
-      for (int i = 0; i < _cdfTestS0.Length; i++)
-      {
-        double alpha = _cdfTestS0[i][0];
-        double beta = _cdfTestS0[i][1];
-        double x = _cdfTestS0[i][2];
-        double expectedy = _cdfTestS0[i][3];
-        double y = StableDistributionS0.CDF(x, alpha, beta, 1.7, 3.0/7.0);
-        double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
+		[Test]
+		public void CdfTestS0()
+		{
+			for (int i = 0; i < _cdfTestS0.Length; i++)
+			{
+				double alpha = _cdfTestS0[i][0];
+				double beta = _cdfTestS0[i][1];
+				double x = _cdfTestS0[i][2];
+				double expectedy = _cdfTestS0[i][3];
+				double y = StableDistributionS0.CDF(x, alpha, beta, 1.7, 3.0 / 7.0);
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
 
-    [Test]
-    public void CdfTestS0Spec()
-    {
-      int i = 70;
-      {
-        double alpha = _cdfTestS0[i][0];
-        double beta = _cdfTestS0[i][1];
-        double x = _cdfTestS0[i][2];
-        double expectedy = _cdfTestS0[i][3];
-        double y = StableDistributionS0.CDF(x, alpha, beta, 1.7, 3.0/7.0);
-        double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
+		[Test]
+		public void CdfTestS0Spec()
+		{
+			int i = 70;
+			{
+				double alpha = _cdfTestS0[i][0];
+				double beta = _cdfTestS0[i][1];
+				double x = _cdfTestS0[i][2];
+				double expectedy = _cdfTestS0[i][3];
+				double y = StableDistributionS0.CDF(x, alpha, beta, 1.7, 3.0 / 7.0);
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
 
-    #region Test S1
+		#region Test S1
 
-    /* The following Mathematica code was used to generate the table (Note here that sigma=1.7 and mu=3/7)
+		/* The following Mathematica code was used to generate the table (Note here that sigma=1.7 and mu=3/7)
      * The output text must be further processed by replacing " with nothing and 0.e with 0.0e
-     
+
      << "StableDistribution`SMath`"
-     
+
      flarguments = Flatten[Table[{
         {3/16, 7/8, 1, 9/8, 17/10, 2}[[i]],
         {-1, -4^(-1), 0, 3/8, 1}[[j]],
         {-10, -4, -2^(-1), 0, 1/2, 4, 10}[[k]]},
       {i, 1, 6}, {j, 1, 5}, {k, 1, 7}], 2]
-     
-     For[i = 1, i <= Length[flarguments], i += 1, alpha = flarguments[[i]][[1]]; 
-   beta = flarguments[[i]][[2]]; xx = flarguments[[i]][[3]]; 
-   yy = N[SPDF[xx, {alpha, beta, 17/10, 3/7}, 1, GaussPoints -> 30, MaxRecursion -> 10, WorkingPrecision -> 64], 18]; 
-   If[NumericQ[yy], Print[alpha, " ", beta, " ", xx, " ", yy]; 
+     For[i = 1, i <= Length[flarguments], i += 1, alpha = flarguments[[i]][[1]];
+   beta = flarguments[[i]][[2]]; xx = flarguments[[i]][[3]];
+   yy = N[SPDF[xx, {alpha, beta, 17/10, 3/7}, 1, GaussPoints -> 30, MaxRecursion -> 10, WorkingPrecision -> 64], 18];
+   If[NumericQ[yy], Print[alpha, " ", beta, " ", xx, " ", yy];
      strm = OpenAppend["C:\\TEMP\\outputS1.txt", CharacterEncoding->"ASCII", FormatType ->CForm];
-     Write[strm, "new double[]{", 
+     Write[strm, "new double[]{",
      alpha, ",", beta, ",", xx, ",", yy, "},"]; Close[strm]]; ]
-     
    */
 
-    double[][] _pdfTestS1 = new double[][]{
+		private double[][] _pdfTestS1 = new double[][]{
 new double[]{0.1875,-1,-10,0.0062770180013548},
 new double[]{0.1875,-1,-4,0.0155315416430183},
 new double[]{0.1875,-1,-0.5,0.07665072},
@@ -781,53 +781,49 @@ new double[]{2,1,4,0.0550494776762009875},
 new double[]{2,1,10,0.0000600054567345840717}
      };
 
+		[Test]
+		public void PdfTestS1()
+		{
+			for (int i = 0; i < _pdfTestS1.Length; i++)
+			{
+				double alpha = _pdfTestS1[i][0];
+				double beta = _pdfTestS1[i][1];
+				double x = _pdfTestS1[i][2];
+				double expectedy = _pdfTestS1[i][3];
+				double y = double.NaN;
+				try
+				{
+					y = StableDistributionS1.PDF(x, alpha, beta, 1.7, 3.0 / 7.0);
+				}
+				catch (Exception ex)
+				{
+					Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
+				}
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
 
-    [Test]
-    public void PdfTestS1()
-    {
-      for (int i = 0; i < _pdfTestS1.Length; i++)
-      {
-        
-       
-          double alpha = _pdfTestS1[i][0];
-          double beta = _pdfTestS1[i][1];
-          double x = _pdfTestS1[i][2];
-          double expectedy = _pdfTestS1[i][3];
-          double y = double.NaN;
-          try
-          {
-            y = StableDistributionS1.PDF(x, alpha, beta, 1.7, 3.0 / 7.0);
-          }
-          catch (Exception ex)
-          {
-            Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
-          } 
-          double maxdelta = Math.Abs(expectedy / 1E7);
-          maxdelta = Math.Max(maxdelta, 1e-25);
-          string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-          Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
+		[Test]
+		public void PdfTestSpecS1()
+		{
+			int i = 12;
+			{
+				double alpha = _pdfTestS1[i][0];
+				double beta = _pdfTestS1[i][1];
+				double x = _pdfTestS1[i][2];
+				double expectedy = _pdfTestS1[i][3];
+				double y = StableDistributionS1.PDF(x, alpha, beta, 1.7, 3.0 / 7.0);
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
 
-
-    [Test]
-    public void PdfTestSpecS1()
-    {
-      int i = 12;
-      {
-        double alpha = _pdfTestS1[i][0];
-        double beta = _pdfTestS1[i][1];
-        double x = _pdfTestS1[i][2];
-        double expectedy = _pdfTestS1[i][3];
-        double y = StableDistributionS1.PDF(x, alpha, beta, 1.7, 3.0 / 7.0);
-        double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
-
-    double[][] _cdfTestS1 = new double[][]{
+		private double[][] _cdfTestS1 = new double[][]{
 new double[]{0.1875,-1,-10,0.484143353990892722},
 new double[]{0.1875,-1,-4,0.541709809574655192},
 new double[]{0.1875,-1,-0.5,0.65176025277584569},
@@ -1016,42 +1012,38 @@ new double[]{2,1,4,0.931296729870530805},
 new double[]{2,1,10,0.999965714364872786},
 };
 
-    [Test]
-    public void CdfTestS1()
-    {
-      for (int i = 0; i < _cdfTestS1.Length; i++)
-      {
+		[Test]
+		public void CdfTestS1()
+		{
+			for (int i = 0; i < _cdfTestS1.Length; i++)
+			{
+				double alpha = _cdfTestS1[i][0];
+				double beta = _cdfTestS1[i][1];
+				double x = _cdfTestS1[i][2];
+				double expectedy = _cdfTestS1[i][3];
+				double y = double.NaN;
+				try
+				{
+					y = StableDistributionS1.CDF(x, alpha, beta, 1.7, 3.0 / 7.0);
+				}
+				catch (Exception ex)
+				{
+					Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
+				}
+				double maxdelta = Math.Abs(expectedy / 1E7);
+				maxdelta = Math.Max(maxdelta, 1e-25);
+				string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+				Assert.AreEqual(expectedy, y, maxdelta, msg);
+			}
+		}
 
+		#endregion Test S1
 
-        double alpha = _cdfTestS1[i][0];
-        double beta = _cdfTestS1[i][1];
-        double x = _cdfTestS1[i][2];
-        double expectedy = _cdfTestS1[i][3];
-        double y = double.NaN;
-        try
-        {
-          y = StableDistributionS1.CDF(x, alpha, beta, 1.7, 3.0 / 7.0);
-        }
-        catch (Exception ex)
-        {
-          Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
-        }
-        double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
-      }
-    }
+		#region Test S0 to Feller conversion
 
+		#region Test data
 
-    #endregion
-
-
-    #region Test S0 to Feller conversion
-
-    #region Test data
-
-    static readonly double[][] _dataS0ToFeller =
+		private static readonly double[][] _dataS0ToFeller =
       {
     new double[]{1.421085471520200371742249e-14,-1.0,0,1.421085471520200371742249e-14,0,1.00000000000001753193928,2.232235838725524415666714e-14},
 new double[]{1.421085471520200371742249e-14,-1.0,7.888609052210118054117286e-31,1.421085471520200371742249e-14,7.888609052210118054117286e-31,1.00000000000001753193928,2.232235838725524415666714e-14},
@@ -1233,196 +1225,189 @@ new double[]{2.0,0.9990234375,0.0009765625,0,0,1.0,0},
 new double[]{2.0,0.999999999883584678173065,1.16415321826934814453125e-10,0,0,1.0,0},
 new double[]{2.0,1.0,7.888609052210118054117286e-31,0,0,1.0,0},
 new double[]{2.0,1.0,0,0,0,1.0,0}
-
       };
-#endregion
 
-    #region Forward test
-    static double Tolerance(double expected, double actual)
-    {
-      if (expected == 0)
-        return Math.Abs(actual);
-      else
-        return Math.Abs((actual - expected) / expected)/DoubleConstants.DBL_EPSILON;
-    }
+		#endregion Test data
 
-    [Test]
-    public void TestS0ToFellerConversion()
-    {
-      double tol = DoubleConstants.DBL_EPSILON;
+		#region Forward test
 
-      double maxtolgamma=0, maxtolaga=0, maxtolsigmaf=0, maxtolmuf=0;
-      int maxtolgammai=-1, maxtolagai=-1, maxtolsigmafi=-1, maxtolmufi=-1;
-      double t;
+		private static double Tolerance(double expected, double actual)
+		{
+			if (expected == 0)
+				return Math.Abs(actual);
+			else
+				return Math.Abs((actual - expected) / expected) / DoubleConstants.DBL_EPSILON;
+		}
 
-      for(int i=0;i<_dataS0ToFeller.Length;i++)
-      {
+		[Test]
+		public void TestS0ToFellerConversion()
+		{
+			double tol = DoubleConstants.DBL_EPSILON;
 
-        double alpha = _dataS0ToFeller[i][0];
-        double beta = _dataS0ToFeller[i][1];
-        double abe = _dataS0ToFeller[i][2];
-        double expgamma = _dataS0ToFeller[i][3];
-        double expaga = _dataS0ToFeller[i][4];
-        double expsigmaf = _dataS0ToFeller[i][5];
-        double expmuf = _dataS0ToFeller[i][6];
+			double maxtolgamma = 0, maxtolaga = 0, maxtolsigmaf = 0, maxtolmuf = 0;
+			int maxtolgammai = -1, maxtolagai = -1, maxtolsigmafi = -1, maxtolmufi = -1;
+			double t;
 
+			for (int i = 0; i < _dataS0ToFeller.Length; i++)
+			{
+				double alpha = _dataS0ToFeller[i][0];
+				double beta = _dataS0ToFeller[i][1];
+				double abe = _dataS0ToFeller[i][2];
+				double expgamma = _dataS0ToFeller[i][3];
+				double expaga = _dataS0ToFeller[i][4];
+				double expsigmaf = _dataS0ToFeller[i][5];
+				double expmuf = _dataS0ToFeller[i][6];
 
-        double gamma, aga, sigmaf, muf;
-        StableDistributionBase.ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+				double gamma, aga, sigmaf, muf;
+				StableDistributionBase.ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
 
-        t = Tolerance(expgamma, gamma);
-        if (t > maxtolgamma)
-        {
-          maxtolgamma = t;
-          maxtolgammai = i;
-        }
-        
-        t = Tolerance(expaga, aga);
-        if (t > maxtolaga)
-        {
-          maxtolaga = t;
-          maxtolagai = i;
-        }
+				t = Tolerance(expgamma, gamma);
+				if (t > maxtolgamma)
+				{
+					maxtolgamma = t;
+					maxtolgammai = i;
+				}
 
-        t = Tolerance(expsigmaf, sigmaf);
-        if (t > maxtolsigmaf)
-        {
-          maxtolsigmaf = t;
-          maxtolsigmafi = i;
-        }
+				t = Tolerance(expaga, aga);
+				if (t > maxtolaga)
+				{
+					maxtolaga = t;
+					maxtolagai = i;
+				}
 
-        t = Tolerance(expmuf, muf);
-        if (t > maxtolmuf)
-        {
-          maxtolmuf = t;
-          maxtolmufi = i;
-        }
-      
-      }
+				t = Tolerance(expsigmaf, sigmaf);
+				if (t > maxtolsigmaf)
+				{
+					maxtolsigmaf = t;
+					maxtolsigmafi = i;
+				}
 
-      /*
-      string msg = string.Format("Gamma, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", maxtolgammai, alpha, beta, abe, expgamma, gamma);
-      Assert.AreEqual(expgamma, gamma, expgamma * tol * 10, msg);
+				t = Tolerance(expmuf, muf);
+				if (t > maxtolmuf)
+				{
+					maxtolmuf = t;
+					maxtolmufi = i;
+				}
+			}
 
-      msg = string.Format("Aga, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", i, alpha, beta, abe, expaga, aga);
-      Assert.AreEqual(expaga, aga, expaga * tol * 4000, msg);
+			/*
+			string msg = string.Format("Gamma, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", maxtolgammai, alpha, beta, abe, expgamma, gamma);
+			Assert.AreEqual(expgamma, gamma, expgamma * tol * 10, msg);
 
-      msg = string.Format("Sigmaf, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", i, alpha, beta, abe, expsigmaf, sigmaf);
-      Assert.AreEqual(expsigmaf, sigmaf, expsigmaf * tol * 4, msg);
+			msg = string.Format("Aga, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", i, alpha, beta, abe, expaga, aga);
+			Assert.AreEqual(expaga, aga, expaga * tol * 4000, msg);
 
-      msg = string.Format("Muf, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", i, alpha, beta, abe, expmuf, muf);
-      Assert.AreEqual(expmuf, muf, expmuf * tol * 4, msg);
-      */
+			msg = string.Format("Sigmaf, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", i, alpha, beta, abe, expsigmaf, sigmaf);
+			Assert.AreEqual(expsigmaf, sigmaf, expsigmaf * tol * 4, msg);
 
-      string msg;
+			msg = string.Format("Muf, i={0}, alpha={1}, beta={2}, abe={3}, expected={4}, actual={5}", i, alpha, beta, abe, expmuf, muf);
+			Assert.AreEqual(expmuf, muf, expmuf * tol * 4, msg);
+			*/
 
-      msg = String.Format("Gamma, i={0}", maxtolgammai);
-      Assert.Less(1, maxtolgamma/DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Aga, i={0}", maxtolagai);
-      Assert.Less(1, maxtolaga / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Sigmaf, i={0}", maxtolsigmafi);
-      Assert.Less(1, maxtolsigmaf / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Muf, i={0}", maxtolmufi);
-      Assert.Less(1, maxtolmuf / DoubleConstants.DBL_EPSILON, msg);
-    }
+			string msg;
 
-    [Test]
-    public void TestS0Aeq1()
-    {
-      double alpha=1;
-      double abe = 0;
-      double beta = 1+abe;
-      double x = 10;
-      double precision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
-      object temp=null;
+			msg = String.Format("Gamma, i={0}", maxtolgammai);
+			Assert.Less(1, maxtolgamma / DoubleConstants.DBL_EPSILON, msg);
+			msg = String.Format("Aga, i={0}", maxtolagai);
+			Assert.Less(1, maxtolaga / DoubleConstants.DBL_EPSILON, msg);
+			msg = String.Format("Sigmaf, i={0}", maxtolsigmafi);
+			Assert.Less(1, maxtolsigmaf / DoubleConstants.DBL_EPSILON, msg);
+			msg = String.Format("Muf, i={0}", maxtolmufi);
+			Assert.Less(1, maxtolmuf / DoubleConstants.DBL_EPSILON, msg);
+		}
 
-      StableDistributionS0.Aeq1D dec = new StableDistributionS0.Aeq1D(x, beta, abe);
-      double ycore = dec.PDFCore(1.0/3.0);
+		[Test]
+		public void TestS0Aeq1()
+		{
+			double alpha = 1;
+			double abe = 0;
+			double beta = 1 + abe;
+			double x = 10;
+			double precision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
+			object temp = null;
 
-      double y1 = StableDistributionS0.PDF(x, alpha, beta, abe, ref temp, precision);
-      double y2 = StableDistributionS0.PDFMethodAlphaOne(x, beta, abe, ref temp, precision);
+			StableDistributionS0.Aeq1D dec = new StableDistributionS0.Aeq1D(x, beta, abe);
+			double ycore = dec.PDFCore(1.0 / 3.0);
 
-      Assert.AreEqual(y1, y2, y1 * precision);
-    }
+			double y1 = StableDistributionS0.PDF(x, alpha, beta, abe, ref temp, precision);
+			double y2 = StableDistributionS0.PDFMethodAlphaOne(x, beta, abe, ref temp, precision);
 
-    [Test]
-    public void TestFellerToS0Conversion()
-    {
-      double tol = DoubleConstants.DBL_EPSILON;
+			Assert.AreEqual(y1, y2, y1 * precision);
+		}
 
-      double maxtolbeta = 0, maxtolabe = 0, maxtolsigma0 = 0, maxtolmu0 = 0;
-      int maxtolbetai = -1, maxtolabei = -1, maxtolsigma0i = -1, maxtolmu0i = -1;
-      double t;
+		[Test]
+		public void TestFellerToS0Conversion()
+		{
+			double tol = DoubleConstants.DBL_EPSILON;
 
-      for (int i = 0; i < _dataS0ToFeller.Length; i++)
-      {
+			double maxtolbeta = 0, maxtolabe = 0, maxtolsigma0 = 0, maxtolmu0 = 0;
+			int maxtolbetai = -1, maxtolabei = -1, maxtolsigma0i = -1, maxtolmu0i = -1;
+			double t;
 
-        double alpha = _dataS0ToFeller[i][0];
-        double expbeta = _dataS0ToFeller[i][1];
-        double expabe = _dataS0ToFeller[i][2];
-        double gamma = _dataS0ToFeller[i][3];
-        double aga = _dataS0ToFeller[i][4];
-        double sigmaf = _dataS0ToFeller[i][5];
-        double muf = _dataS0ToFeller[i][6];
+			for (int i = 0; i < _dataS0ToFeller.Length; i++)
+			{
+				double alpha = _dataS0ToFeller[i][0];
+				double expbeta = _dataS0ToFeller[i][1];
+				double expabe = _dataS0ToFeller[i][2];
+				double gamma = _dataS0ToFeller[i][3];
+				double aga = _dataS0ToFeller[i][4];
+				double sigmaf = _dataS0ToFeller[i][5];
+				double muf = _dataS0ToFeller[i][6];
 
-        if (alpha == 2)
-          continue;
+				if (alpha == 2)
+					continue;
 
+				double beta, abe, sigma0, mu0, expsigma0 = 1, expmu0 = 0;
+				StableDistributionBase.ParameterConversionFellerToS0(alpha, gamma, aga, sigmaf, muf, out beta, out abe, out sigma0, out mu0);
 
-        double beta, abe, sigma0, mu0, expsigma0=1, expmu0=0;
-        StableDistributionBase.ParameterConversionFellerToS0(alpha, gamma, aga,  sigmaf, muf, out beta, out abe, out sigma0, out mu0);
+				t = Tolerance(expbeta, beta);
+				if (t > maxtolbeta)
+				{
+					maxtolbeta = t;
+					maxtolbetai = i;
+				}
 
-        t = Tolerance(expbeta, beta);
-        if (t > maxtolbeta)
-        {
-          maxtolbeta = t;
-          maxtolbetai = i;
-        }
+				t = Tolerance(expabe, abe);
+				if (t > maxtolabe)
+				{
+					maxtolabe = t;
+					maxtolabei = i;
+				}
 
-        t = Tolerance(expabe, abe);
-        if (t > maxtolabe)
-        {
-          maxtolabe = t;
-          maxtolabei = i;
-        }
+				t = Tolerance(expsigma0, sigma0);
+				if (t > maxtolsigma0)
+				{
+					maxtolsigma0 = t;
+					maxtolsigma0i = i;
+				}
 
-        t = Tolerance(expsigma0, sigma0);
-        if (t > maxtolsigma0)
-        {
-          maxtolsigma0 = t;
-          maxtolsigma0i = i;
-        }
+				t = Tolerance(expmu0, mu0 / muf);
+				if (t > maxtolmu0)
+				{
+					maxtolmu0 = t;
+					maxtolmu0i = i;
+				}
+			}
 
-        t = Tolerance(expmu0, mu0 / muf);
-        if (t > maxtolmu0)
-        {
-          maxtolmu0 = t;
-          maxtolmu0i = i;
-        }
+			string msg;
 
-      }
+			msg = String.Format("beta, i={0}", maxtolbetai);
+			Assert.Less(1, maxtolbeta / DoubleConstants.DBL_EPSILON, msg);
+			msg = String.Format("abe, i={0}", maxtolabei);
+			Assert.Less(1, maxtolabe / DoubleConstants.DBL_EPSILON, msg);
+			msg = String.Format("Sigma0, i={0}", maxtolsigma0i);
+			Assert.Less(1, maxtolsigma0 / DoubleConstants.DBL_EPSILON, msg);
+			msg = String.Format("Mu0, i={0}", maxtolmu0i);
+			Assert.Less(1, maxtolmu0 / DoubleConstants.DBL_EPSILON, msg);
+		}
 
-     
+		#endregion Forward test
 
-      string msg;
+		#endregion Test S0 to Feller conversion
 
-      msg = String.Format("beta, i={0}", maxtolbetai);
-      Assert.Less(1, maxtolbeta / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("abe, i={0}", maxtolabei);
-      Assert.Less(1, maxtolabe / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Sigma0, i={0}", maxtolsigma0i);
-      Assert.Less(1, maxtolsigma0 / DoubleConstants.DBL_EPSILON, msg);
-      msg = String.Format("Mu0, i={0}", maxtolmu0i);
-      Assert.Less(1, maxtolmu0 / DoubleConstants.DBL_EPSILON, msg);
-    }
+		#region Text OneMinusExp
 
-    #endregion
-
-    #endregion
-
-    #region Text OneMinusExp
-
-    static readonly double[][] _ONETestData = 
+		private static readonly double[][] _ONETestData =
       {
 new double[]{-50.0,0.999999999999999999999807},
 new double[]{-20.0,0.9999999979388463775614422},
@@ -1456,37 +1441,36 @@ new double[]{20.0,-4.851651944097902779691068e8},
 new double[]{50.0,-5.184705528587072464086453e21}
       };
 
+		[Test]
+		public void TestOneMinusExp()
+		{
+			double tol = DoubleConstants.DBL_EPSILON;
 
-    [Test]
-    public void TestOneMinusExp()
-    {
-      double tol = DoubleConstants.DBL_EPSILON;
+			double maxtol = 0;
+			int maxtoli = -1;
+			double t;
 
-      double maxtol = 0;
-      int maxtoli = -1;
-      double t;
+			for (int i = 0; i < _ONETestData.Length; i++)
+			{
+				double x = _ONETestData[i][0];
+				double expFunc = _ONETestData[i][1];
 
-      for (int i = 0; i < _ONETestData.Length; i++)
-      {
+				double func = StableDistributionBase.OneMinusExp(x);
 
-        double x = _ONETestData[i][0];
-        double expFunc = _ONETestData[i][1];
+				t = Tolerance(expFunc, func);
+				if (t > maxtol)
+				{
+					maxtol = t;
+					maxtoli = i;
+				}
+			}
 
-        double func = StableDistributionBase.OneMinusExp(x);
+			string msg;
 
-        t = Tolerance(expFunc, func);
-        if (t > maxtol)
-        {
-          maxtol = t;
-          maxtoli = i;
-        }
-      }
+			msg = String.Format("i={0}", maxtoli);
+			Assert.Less(maxtol, 1, msg);
+		}
 
-      string msg;
-
-      msg = String.Format("i={0}", maxtoli);
-      Assert.Less(maxtol, 1, msg);
-    }
-    #endregion
-  }
+		#endregion Text OneMinusExp
+	}
 }

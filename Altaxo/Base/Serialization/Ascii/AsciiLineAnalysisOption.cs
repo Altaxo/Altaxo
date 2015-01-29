@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
-
 	/// <summary>
 	/// Immutable key for Ascii line analysis dictionary. Contains the separation strategy, the number format and the date/time format used to analyze a single line of Ascii data.
 	/// </summary>
 	public class AsciiLineAnalysisOption
 	{
-		IAsciiSeparationStrategy _separationStrategy;
-		System.Globalization.CultureInfo _numberFormat;
-		System.Globalization.CultureInfo _dateTimeFormat;
-		int _cachedHashCode;
+		private IAsciiSeparationStrategy _separationStrategy;
+		private System.Globalization.CultureInfo _numberFormat;
+		private System.Globalization.CultureInfo _dateTimeFormat;
+		private int _cachedHashCode;
 
 		public AsciiLineAnalysisOption(IAsciiSeparationStrategy s, System.Globalization.CultureInfo n, System.Globalization.CultureInfo d)
 		{
@@ -47,7 +47,9 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		public IAsciiSeparationStrategy SeparationStrategy { get { return _separationStrategy; } }
+
 		public System.Globalization.CultureInfo NumberFormat { get { return _numberFormat; } }
+
 		public System.Globalization.CultureInfo DateTimeFormat { get { return _dateTimeFormat; } }
 
 		public override bool Equals(object obj)

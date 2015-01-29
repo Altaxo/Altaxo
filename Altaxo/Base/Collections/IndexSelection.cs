@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Collections
 {
-
-
-
 	/// <summary>
 	/// Summary description for IndexSelection.
 	/// </summary>
@@ -34,7 +33,6 @@ namespace Altaxo.Collections
 	{
 		protected int _lastSelectedIndex = 0;
 		protected bool _useExtendedSelectionBehaviour = true;
-
 
 		public int LastSelection
 		{
@@ -70,7 +68,6 @@ namespace Altaxo.Collections
 					this.Clear();
 				}
 
-
 				int beg, end;
 				if (nIndex >= LastSelection)
 				{ beg = _lastSelectedIndex; end = nIndex; }
@@ -83,9 +80,8 @@ namespace Altaxo.Collections
 					if (!this.Contains(i))
 						this.Add(i);
 				}
-
 			}
-			else // no modifier key 
+			else // no modifier key
 			{
 				// Clear the selection, if the user clicked again on a single selection
 				if (this.Count == 1 && this.Contains(nIndex))

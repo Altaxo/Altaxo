@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,22 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Altaxo.Calc.LinearAlgebra;
-
 namespace Altaxo.Calc.Optimization
 {
-
 	public class BruteForceLineSearch : LineSearchMethod
 	{
-		int _numberOfInitialDivisions;
-		int _numberOfSubsequentDivisions;
-		int _divisionDepth;
+		private int _numberOfInitialDivisions;
+		private int _numberOfSubsequentDivisions;
+		private int _divisionDepth;
 
 		public BruteForceLineSearch(ICostFunction cost)
 		{
@@ -115,7 +115,6 @@ namespace Altaxo.Calc.Optimization
 			DoubleVector xLeft = bound0 * (1 - rmin) + bound1 * rmin;
 			DoubleVector xRight = bound0 * (1 - rmax) + bound1 * rmax;
 
-
 			if (divisionDepth <= 0)
 			{
 				return bound0 * (1 - r) + bound1 * r;
@@ -148,7 +147,6 @@ namespace Altaxo.Calc.Optimization
 				return xLeft * (1 - r) + xRight * r;
 		}
 
-
 		private int SearchMinimumByDivision(LinearAlgebra.DoubleVector bound0, LinearAlgebra.DoubleVector bound1, int numberOfInitialDivisions)
 		{
 			double minValue = double.PositiveInfinity;
@@ -166,7 +164,6 @@ namespace Altaxo.Calc.Optimization
 			}
 			return imin;
 		}
-
 
 		private DoubleVector BinaryMinimumSearch(DoubleVector xLeft, double valLeft, DoubleVector xMiddle, double valMiddle, DoubleVector xRight, double valRight, int recursionDepth)
 		{
@@ -196,6 +193,5 @@ namespace Altaxo.Calc.Optimization
 				return BinaryMinimumSearch(xLeftMiddle, valLeftMiddle, xMiddle, valMiddle, xRightMiddle, valRightMiddle, recursionDepth - 1);
 			}
 		}
-
 	}
 }

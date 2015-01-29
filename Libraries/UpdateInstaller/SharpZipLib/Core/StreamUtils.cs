@@ -20,7 +20,7 @@
 // making a combined work based on this library.  Thus, the terms and
 // conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give you
 // permission to link this library with independent modules to produce an
 // executable, regardless of the license terms of these independent
@@ -66,26 +66,32 @@ namespace ICSharpCode.SharpZipLib.Core
 		/// <exception cref="EndOfStreamException">End of stream is encountered before all the data has been read.</exception>
 		static public void ReadFully(Stream stream, byte[] buffer, int offset, int count)
 		{
-			if ( stream == null ) {
+			if (stream == null)
+			{
 				throw new ArgumentNullException("stream");
 			}
 
-			if ( buffer == null ) {
+			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
 			}
 
 			// Offset can equal length when buffer and count are 0.
-			if ( (offset < 0) || (offset > buffer.Length) ) {
+			if ((offset < 0) || (offset > buffer.Length))
+			{
 				throw new ArgumentOutOfRangeException("offset");
 			}
 
-			if ( (count < 0) || (offset + count > buffer.Length) ) {
+			if ((count < 0) || (offset + count > buffer.Length))
+			{
 				throw new ArgumentOutOfRangeException("count");
 			}
 
-			while ( count > 0 ) {
+			while (count > 0)
+			{
 				int readCount = stream.Read(buffer, offset, count);
-				if ( readCount <= 0 ) {
+				if (readCount <= 0)
+				{
 					throw new EndOfStreamException();
 				}
 				offset += readCount;
@@ -101,31 +107,38 @@ namespace ICSharpCode.SharpZipLib.Core
 		/// <param name="buffer">The buffer to use during copying.</param>
 		static public void Copy(Stream source, Stream destination, byte[] buffer)
 		{
-			if (source == null) {
+			if (source == null)
+			{
 				throw new ArgumentNullException("source");
 			}
 
-			if (destination == null) {
+			if (destination == null)
+			{
 				throw new ArgumentNullException("destination");
 			}
 
-			if (buffer == null) {
+			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
 			}
 
 			// Ensure a reasonable size of buffer is used without being prohibitive.
-			if (buffer.Length < 128) {
+			if (buffer.Length < 128)
+			{
 				throw new ArgumentException("Buffer is too small", "buffer");
 			}
 
 			bool copying = true;
 
-			while (copying) {
+			while (copying)
+			{
 				int bytesRead = source.Read(buffer, 0, buffer.Length);
-				if (bytesRead > 0) {
+				if (bytesRead > 0)
+				{
 					destination.Write(buffer, 0, bytesRead);
 				}
-				else {
+				else
+				{
 					destination.Flush();
 					copying = false;
 				}
@@ -163,28 +176,33 @@ namespace ICSharpCode.SharpZipLib.Core
 		/// If the value is negative the target is calculated by looking at the stream.</param>
 		/// <remarks>This form is specialised for use within #Zip to support events during archive operations.</remarks>
 		static public void Copy(Stream source, Stream destination,
-			byte[] buffer, 
-			ProgressHandler progressHandler, TimeSpan updateInterval, 
+			byte[] buffer,
+			ProgressHandler progressHandler, TimeSpan updateInterval,
 			object sender, string name, long fixedTarget)
 		{
-			if (source == null) {
+			if (source == null)
+			{
 				throw new ArgumentNullException("source");
 			}
 
-			if (destination == null) {
+			if (destination == null)
+			{
 				throw new ArgumentNullException("destination");
 			}
 
-			if (buffer == null) {
+			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
 			}
 
 			// Ensure a reasonable size of buffer is used without being prohibitive.
-			if (buffer.Length < 128) {
+			if (buffer.Length < 128)
+			{
 				throw new ArgumentException("Buffer is too small", "buffer");
 			}
 
-			if (progressHandler == null) {
+			if (progressHandler == null)
+			{
 				throw new ArgumentNullException("progressHandler");
 			}
 
@@ -194,10 +212,12 @@ namespace ICSharpCode.SharpZipLib.Core
 			long processed = 0;
 			long target = 0;
 
-			if (fixedTarget >= 0) {
+			if (fixedTarget >= 0)
+			{
 				target = fixedTarget;
 			}
-			else if (source.CanSeek) {
+			else if (source.CanSeek)
+			{
 				target = source.Length - source.Position;
 			}
 
@@ -207,19 +227,23 @@ namespace ICSharpCode.SharpZipLib.Core
 
 			bool progressFired = true;
 
-			while (copying) {
+			while (copying)
+			{
 				int bytesRead = source.Read(buffer, 0, buffer.Length);
-				if (bytesRead > 0) {
+				if (bytesRead > 0)
+				{
 					processed += bytesRead;
 					progressFired = false;
 					destination.Write(buffer, 0, bytesRead);
 				}
-				else {
+				else
+				{
 					destination.Flush();
 					copying = false;
 				}
 
-				if (DateTime.Now - marker > updateInterval) {
+				if (DateTime.Now - marker > updateInterval)
+				{
 					progressFired = true;
 					marker = DateTime.Now;
 					args = new ProgressEventArgs(name, processed, target);
@@ -229,7 +253,8 @@ namespace ICSharpCode.SharpZipLib.Core
 				}
 			}
 
-			if (!progressFired) {
+			if (!progressFired)
+			{
 				args = new ProgressEventArgs(name, processed, target);
 				progressHandler(sender, args);
 			}

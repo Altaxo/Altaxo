@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -44,7 +46,6 @@ namespace Altaxo.Gui.Common
 			ValidationFunction = validationFunction;
 		}
 
-
 		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
 		{
 			if (null != ValidationFunction)
@@ -53,7 +54,6 @@ namespace Altaxo.Gui.Common
 				return ValidationResult.ValidResult;
 		}
 	}
-
 
 	/// <summary>
 	/// Forwards the validation function. The validation function is expected to return an error string. If the string is null,
@@ -73,7 +73,6 @@ namespace Altaxo.Gui.Common
 			ValidationFunction = validationFunction;
 		}
 
-
 		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
 		{
 			if (null != ValidationFunction)
@@ -87,7 +86,6 @@ namespace Altaxo.Gui.Common
 			}
 		}
 	}
-
 
 	/// <summary>
 	/// Validates using <see cref="System.ComponentModel.CancelEventArgs"/>. If the <see cref="System.ComponentModel.CancelEventArgs.Cancel"/> property
@@ -105,7 +103,6 @@ namespace Altaxo.Gui.Common
 		{
 			ValidationFunction = validationFunction;
 		}
-
 
 		public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
 		{

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,14 +30,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -43,11 +39,11 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class BrushTypeComboBox : ImageComboBox
 	{
-		class CC : IValueConverter
+		private class CC : IValueConverter
 		{
-			BrushTypeComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
+			private BrushTypeComboBox _cb;
+			private object _originalToolTip;
+			private bool _hasValidationError;
 
 			public CC(BrushTypeComboBox c)
 			{
@@ -58,8 +54,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (BrushType)value;
 				return _cb._cachedItems[val];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -68,13 +62,12 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		static Dictionary<BrushType, ImageSource> _cachedImages = new Dictionary<BrushType, ImageSource>();
+		private static Dictionary<BrushType, ImageSource> _cachedImages = new Dictionary<BrushType, ImageSource>();
 
-		Dictionary<BrushType, ImageComboBoxItem> _cachedItems = new Dictionary<BrushType, ImageComboBoxItem>();
+		private Dictionary<BrushType, ImageComboBoxItem> _cachedItems = new Dictionary<BrushType, ImageComboBoxItem>();
 
 		/// <summary>Occurs when the selected type of brush changed.</summary>
 		public event DependencyPropertyChangedEventHandler SelectedBrushTypeChanged;
-
 
 		static BrushTypeComboBox()
 		{
@@ -85,16 +78,15 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			_cachedItems.Add(BrushType.SolidBrush, new ImageComboBoxItem(this, BrushType.SolidBrush));
-			_cachedItems.Add(BrushType.LinearGradientBrush, new ImageComboBoxItem(this, BrushType.LinearGradientBrush)); 
-			_cachedItems.Add(BrushType.TriangularShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapeLinearGradientBrush)); 
+			_cachedItems.Add(BrushType.LinearGradientBrush, new ImageComboBoxItem(this, BrushType.LinearGradientBrush));
+			_cachedItems.Add(BrushType.TriangularShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapeLinearGradientBrush));
 			_cachedItems.Add(BrushType.SigmaBellShapeLinearGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapeLinearGradientBrush));
 			_cachedItems.Add(BrushType.PathGradientBrush, new ImageComboBoxItem(this, BrushType.PathGradientBrush));
 			_cachedItems.Add(BrushType.TriangularShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.TriangularShapePathGradientBrush));
 			_cachedItems.Add(BrushType.SigmaBellShapePathGradientBrush, new ImageComboBoxItem(this, BrushType.SigmaBellShapePathGradientBrush));
 			_cachedItems.Add(BrushType.HatchBrush, new ImageComboBoxItem(this, BrushType.HatchBrush));
-			_cachedItems.Add(BrushType.SyntheticTextureBrush, new ImageComboBoxItem(this,BrushType.SyntheticTextureBrush));
+			_cachedItems.Add(BrushType.SyntheticTextureBrush, new ImageComboBoxItem(this, BrushType.SyntheticTextureBrush));
 			_cachedItems.Add(BrushType.TextureBrush, new ImageComboBoxItem(this, BrushType.TextureBrush));
-
 
 			Items.Add(_cachedItems[BrushType.SolidBrush]);
 			Items.Add(_cachedItems[BrushType.LinearGradientBrush]);
@@ -107,7 +99,6 @@ namespace Altaxo.Gui.Common.Drawing
 			Items.Add(_cachedItems[BrushType.SyntheticTextureBrush]);
 			Items.Add(_cachedItems[BrushType.TextureBrush]);
 
-
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
 			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
@@ -116,7 +107,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
+
 		private const string _nameOfValueProp = "BrushType";
+
 		public BrushType BrushType
 		{
 			get { return (BrushType)GetValue(BrushTypeProperty); }
@@ -131,7 +124,8 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			((BrushTypeComboBox)obj).EhBrushTypeChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		protected virtual void EhBrushTypeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -143,7 +137,6 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null != SelectedBrushTypeChanged)
 				SelectedBrushTypeChanged(obj, args);
 		}
-
 
 		public override string GetItemText(object item)
 		{
@@ -159,7 +152,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public static DrawingImage GetImage(BrushType val)
 		{
@@ -179,9 +171,11 @@ namespace Altaxo.Gui.Common.Drawing
 				case BrushType.SolidBrush:
 					geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
 					break;
+
 				case BrushType.LinearGradientBrush:
 					geometryDrawing.Brush = new LinearGradientBrush(Colors.Black, Colors.White, 0);
 					break;
+
 				case BrushType.TriangularShapeLinearGradientBrush:
 					{
 						var gStops = new GradientStopCollection();
@@ -191,6 +185,7 @@ namespace Altaxo.Gui.Common.Drawing
 						geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
 					}
 					break;
+
 				case BrushType.SigmaBellShapeLinearGradientBrush:
 					{
 						var gStops = new GradientStopCollection();
@@ -200,16 +195,19 @@ namespace Altaxo.Gui.Common.Drawing
 						geometryDrawing.Brush = new LinearGradientBrush(gStops, 0);
 					}
 					break;
+
 				case BrushType.PathGradientBrush:
 				case BrushType.TriangularShapePathGradientBrush:
 				case BrushType.SigmaBellShapePathGradientBrush:
 					geometryDrawing.Brush = new RadialGradientBrush(Colors.Black, Colors.White);
 					break;
+
 				case BrushType.HatchBrush:
 				case BrushType.SyntheticTextureBrush:
 				case BrushType.TextureBrush:
 					geometryDrawing.Brush = new SolidColorBrush(Colors.Black);
 					break;
+
 				default:
 					break;
 			}

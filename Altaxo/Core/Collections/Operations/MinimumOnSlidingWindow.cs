@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -44,20 +46,21 @@ namespace Altaxo.Collections.Operations
 			public int ExpireGeneration;
 		}
 
-		#endregion
+		#endregion Item
 
 		/// <summary>Counter that is incremented each time an element is added</summary>
-		int _generation;
+		private int _generation;
+
 		/// <summary>Array of Bucket structs storing the value and the generation when this value will become invalid.</summary>
-		Bucket[] _items;
+		private Bucket[] _items;
+
 		/// <summary>Index of the bucket with the lowest value in the bucket array.</summary>
-		int _minItemIdx;
+		private int _minItemIdx;
 
 		/// <summary>Index of the bucket that was the last added value in the array.</summary>
-		int _lastItemIdx;
+		private int _lastItemIdx;
 
-		Func<T, T, int> _comparer;
-
+		private Func<T, T, int> _comparer;
 
 		/// <summary>Initializes a new instance of the <see cref="MinimumOnSlidingWindow&lt;T&gt;"/> class.</summary>
 		/// <param name="numberOfItems">The number of items N. The algorithm evaluates the minimum of the last N items that where added to this instance.</param>
@@ -103,7 +106,7 @@ namespace Altaxo.Collections.Operations
 					_minItemIdx = 0;
 			}
 
-			if (_comparer(val, _items[_minItemIdx].Value)<=0)
+			if (_comparer(val, _items[_minItemIdx].Value) <= 0)
 			{
 				_items[_minItemIdx].Value = val;
 				_items[_minItemIdx].ExpireGeneration = _generation + _items.Length;
@@ -111,7 +114,7 @@ namespace Altaxo.Collections.Operations
 			}
 			else
 			{
-				while (_comparer(val, _items[_lastItemIdx].Value)<=0)
+				while (_comparer(val, _items[_lastItemIdx].Value) <= 0)
 				{
 					if (_lastItemIdx == 0)
 						_lastItemIdx = _items.Length;

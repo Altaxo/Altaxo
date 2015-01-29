@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,26 +28,19 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-  using Altaxo.Graph;
-  using Altaxo.Graph.Gdi;
+	using Altaxo.Graph;
+	using Altaxo.Graph.Gdi;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml
 	/// </summary>
 	public partial class AxisLabelStyleControl : UserControl, IAxisLabelStyleView
 	{
-		BackgroundControlsGlue _backgroundGlue;
-		GdiFontGlue _fontGlue;
+		private BackgroundControlsGlue _backgroundGlue;
+		private GdiFontGlue _fontGlue;
 
 		public AxisLabelStyleControl()
 		{
@@ -60,7 +55,6 @@ namespace Altaxo.Gui.Graph
 			_fontGlue.GuiFontSize = m_cbFontSize;
 		}
 
-
 		public event Action LabelStyleChanged;
 
 		private void m_cbLabelStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
@@ -71,11 +65,7 @@ namespace Altaxo.Gui.Graph
 				LabelStyleChanged();
 		}
 
-
-
-		#region  IXYAxisLabelStyleView
-
-
+		#region IXYAxisLabelStyleView
 
 		public FontX LabelFont
 		{
@@ -182,7 +172,6 @@ namespace Altaxo.Gui.Graph
 		{
 			get { return _edSuppressLabelValues.Text; }
 			set { _edSuppressLabelValues.Text = value; }
-
 		}
 
 		public string SuppressedLabelsByNumber
@@ -211,7 +200,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
 		/// <summary>Sets the label formatting specific GUI control. If no specific options are available, this property is set to <c>null</c>.</summary>
 		/// <value>The label formatting specific GUI control.</value>
 		public object LabelFormattingSpecificGuiControl
@@ -222,7 +210,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion  IXYAxisLabelStyleView
+		#endregion IXYAxisLabelStyleView
 
 		public EventHandler EhSelectedFontChanged { get; set; }
 

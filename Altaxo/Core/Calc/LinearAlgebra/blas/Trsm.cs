@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Trsm.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -53,7 +55,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       if ( n < 0) {
         throw new ArgumentException("n must be zero or greater", "n");
       }
-    
+
       if (side == Side.Left) {
         if(lda < System.Math.Max(1,m)){
           throw new ArgumentException("lda must be at least max(1,m).", "lda");
@@ -66,7 +68,6 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
       if(ldb < System.Math.Max(1,m)){
         throw new ArgumentException("lda must be at least max(1,m).","ldb");
       }
-
     }
 
     ///<summary>Compute the function of this class</summary>
@@ -75,28 +76,28 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
         transA = Transpose.Trans;
       }
       ArgumentCheck(side, m, n, A, lda, B, ldb);
-      
+
       dna_blas_strsm(order, side, uplo, transA, diag, m, n, alpha, A, lda, B, ldb);
     }
-    
+
     internal static void Compute( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, double alpha, double[] A, int lda, double[] B, int ldb ){
       if ( transA == Transpose.ConjTrans ) {
         transA = Transpose.Trans;
       }
       ArgumentCheck(side, m, n, A, lda, B, ldb);
-      
+
       dna_blas_dtrsm(order, side, uplo, transA, diag, m, n, alpha, A, lda, B, ldb);
     }
-    
+
     internal static void Compute( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, ComplexFloat alpha, ComplexFloat[] A, int lda, ComplexFloat[] B, int ldb ){
       ArgumentCheck(side, m, n, A, lda, B, ldb);
-      
+
       dna_blas_ctrsm(order, side, uplo, transA, diag, m, n, ref alpha, A, lda, B, ldb);
     }
-    
+
     internal static void Compute( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, Complex alpha, Complex[] A, int lda, Complex[] B, int ldb ){
       ArgumentCheck(side, m, n, A, lda, B, ldb);
-      
+
       dna_blas_ztrsm(order, side, uplo, transA, diag, m, n, ref alpha, A, lda, B, ldb);
     }
 

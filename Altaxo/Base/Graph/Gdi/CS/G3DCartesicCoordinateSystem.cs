@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.CS
 {
-	class G3DCartesicCoordinateSystem : G2DCoordinateSystem
+	internal class G3DCartesicCoordinateSystem : G2DCoordinateSystem
 	{
-		struct TMatrix
+		private struct TMatrix
 		{
 			public double M11;
 			public double M12;
@@ -43,8 +44,7 @@ namespace Altaxo.Graph.Gdi.CS
 			//public double M33;
 		}
 
-		TMatrix _projectionMatrix;
-
+		private TMatrix _projectionMatrix;
 
 		/// <summary>
 		/// Copies the member variables from another coordinate system.
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.CS
 			UpdateProjectionMatrix();
 		}
 
-		void UpdateProjectionMatrix()
+		private void UpdateProjectionMatrix()
 		{
 			// for test use isometric
 
@@ -106,7 +106,6 @@ namespace Altaxo.Graph.Gdi.CS
 
 		public override bool LogicalToLayerCoordinates(Logical3D r, out double xlocation, out double ylocation)
 		{
-
 			xlocation = _projectionMatrix.M11 * r.RX + _projectionMatrix.M12 * r.RY + _projectionMatrix.M13 * r.RZ;
 			ylocation = _projectionMatrix.M21 * r.RX + _projectionMatrix.M22 * r.RY + _projectionMatrix.M23 * r.RZ;
 			ylocation = _projectionMatrix.M22 - ylocation;
@@ -146,7 +145,6 @@ namespace Altaxo.Graph.Gdi.CS
 			int vertAx = 1;
 			int deptAx = 2;
 
-
 			if (null == _axisStyleInformation)
 				_axisStyleInformation = new List<CSAxisInformation>();
 			else
@@ -177,8 +175,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.PreferedLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
-
-
 			// LeftFront
 			info = new CSAxisInformation(new CSLineID(vertAx, 0, 0));
 			_axisStyleInformation.Add(info);
@@ -191,7 +187,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
-
 			// RightFront
 			info = new CSAxisInformation(new CSLineID(vertAx, 1, 0));
 			_axisStyleInformation.Add(info);
@@ -202,7 +197,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfSecondUpSide = "Behind";
 			info.PreferedLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
-
 
 			// BottomBack
 			info = new CSAxisInformation(new CSLineID(horzAx, 0, 1));
@@ -239,7 +233,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
-
 			// RightBack
 			info = new CSAxisInformation(new CSLineID(vertAx, 1, 1));
 			_axisStyleInformation.Add(info);
@@ -250,9 +243,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfSecondUpSide = "Behind";
 			info.PreferedLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
-
-
-
 
 			// BottomLeft
 			info = new CSAxisInformation(new CSLineID(deptAx, 0, 0));
@@ -277,8 +267,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.PreferedLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
-
-
 			// BottomRight
 			info = new CSAxisInformation(new CSLineID(deptAx, 1, 0));
 			_axisStyleInformation.Add(info);
@@ -291,7 +279,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
-
 			// TopRight
 			info = new CSAxisInformation(new CSLineID(deptAx, 1, 1));
 			_axisStyleInformation.Add(info);
@@ -302,19 +289,6 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfSecondUpSide = "Above";
 			info.PreferedLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 			// XAxis: Y=0, Z=0
 			info = new CSAxisInformation(CSLineID.FromPhysicalValue(horzAx, 0));
@@ -345,11 +319,9 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
 			info.PreferedLabelSide = CSAxisSide.FirstDown;
-
-
 		}
 
-		static readonly string[,] _axisNamesNormal = new string[,] { 
+		private static readonly string[,] _axisNamesNormal = new string[,] {
 		{ "Above", "Below", "Behind", "Before" },
 		{ "Right", "Left",  "Behind", "Before" },
 		{ "Right", "Left",  "Above", "Below" }
@@ -363,7 +335,6 @@ namespace Altaxo.Graph.Gdi.CS
 		{
 			return _axisNamesNormal[id.ParallelAxisNumber, (int)side];
 		}
-
 
 		public override object Clone()
 		{

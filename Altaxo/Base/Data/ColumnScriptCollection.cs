@@ -22,9 +22,7 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using Altaxo.Scripting;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 

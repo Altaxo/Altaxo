@@ -22,13 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Gui;
-using Altaxo.Serialization;
 using System;
-using System.Drawing;
 
 namespace Altaxo.Gui.Graph
 {

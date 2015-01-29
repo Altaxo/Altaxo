@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,27 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Gui.Common;
-
 	/// <summary>
 	/// Interaction logic for LayerControl.xaml
 	/// </summary>
@@ -50,15 +42,12 @@ namespace Altaxo.Gui.Graph
 
 		public event System.ComponentModel.CancelEventHandler TabValidating;
 
-
 		public HostLayerControl()
 		{
 			InitializeComponent();
 		}
 
-
 		#region ILayerView Members
-
 
 		public void AddTab(string name, string text)
 		{
@@ -87,8 +76,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-
-
 		public void SelectTab(string name)
 		{
 			foreach (TabItem page in this._tabCtrl.Items)
@@ -101,19 +88,10 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
+		#endregion ILayerView Members
 
+		private int _tabControl_SelectionChanged_Calls;
 
-		
-
-
-
-		#endregion
-
-
-	
-
-
-		int _tabControl_SelectionChanged_Calls;
 		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (!object.ReferenceEquals(e.OriginalSource, _tabCtrl))
@@ -161,7 +139,5 @@ namespace Altaxo.Gui.Graph
 				--_tabControl_SelectionChanged_Calls;
 			}
 		}
-
-		
 	}
 }

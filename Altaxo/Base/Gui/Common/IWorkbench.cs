@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,59 +19,59 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Gui.Common
 {
-  /// <summary>
-  /// Summary description for IWorkbench.
-  /// </summary>
-  public interface IWorkbench 
-  {
-    /// <summary>Gets the corresponding workbench GUI object, i.e for Windows the main windows form.</summary>
-    object ViewObject { get; }
+	/// <summary>
+	/// Summary description for IWorkbench.
+	/// </summary>
+	public interface IWorkbench
+	{
+		/// <summary>Gets the corresponding workbench GUI object, i.e for Windows the main windows form.</summary>
+		object ViewObject { get; }
 
-    /// <summary>Gets the active view content, i.e. in most cases it returns the controller that controls the content.</summary>
-    object ActiveViewContent { get; }
-    
-    /// <summary>The view content collection.</summary>
-    System.Collections.ICollection ViewContentCollection { get; }
+		/// <summary>Gets the active view content, i.e. in most cases it returns the controller that controls the content.</summary>
+		object ActiveViewContent { get; }
 
-    /// <summary>
-    /// Shows the view content. The type of object content depends on the GUI type. SharpDevelop's GUI
-    /// requires an object of type IViewContent; 
-    /// </summary>
-    /// <param name="content">The view content that should be shown.</param>
-    void ShowView(object content);
+		/// <summary>The view content collection.</summary>
+		System.Collections.ICollection ViewContentCollection { get; }
 
-    /// <summary>
-    /// Closes the view content. The type of object content depends on the GUI type. SharpDevelop's GUI
-    /// requires an object of type IViewContent; 
-    /// </summary>
-    /// <param name="content">The view content that should be shown.</param>
-    void CloseContent(object content);
+		/// <summary>
+		/// Shows the view content. The type of object content depends on the GUI type. SharpDevelop's GUI
+		/// requires an object of type IViewContent;
+		/// </summary>
+		/// <param name="content">The view content that should be shown.</param>
+		void ShowView(object content);
 
-    /// <summary>
-    /// Closes all views.
-    /// </summary>
-    void CloseAllViews();
+		/// <summary>
+		/// Closes the view content. The type of object content depends on the GUI type. SharpDevelop's GUI
+		/// requires an object of type IViewContent;
+		/// </summary>
+		/// <param name="content">The view content that should be shown.</param>
+		void CloseContent(object content);
 
-    /// <summary>
-    /// Informs the workbench that the project instance has changed.
-    /// </summary>
-    /// <param name="sender">Sender of this message.</param>
-    /// <param name="e">Information about the project change.</param>
-    void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e);
+		/// <summary>
+		/// Closes all views.
+		/// </summary>
+		void CloseAllViews();
 
-    /// <summary>Fired if the current view (and so the view content) changed.</summary>
-    event EventHandler ActiveWorkbenchWindowChanged;
+		/// <summary>
+		/// Informs the workbench that the project instance has changed.
+		/// </summary>
+		/// <param name="sender">Sender of this message.</param>
+		/// <param name="e">Information about the project change.</param>
+		void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e);
 
-    /// <summary>
-    /// Object for executing methods on the main thread.
-    /// </summary>
-    System.ComponentModel.ISynchronizeInvoke SynchronizingObject { get; }
-  }
+		/// <summary>Fired if the current view (and so the view content) changed.</summary>
+		event EventHandler ActiveWorkbenchWindowChanged;
 
+		/// <summary>
+		/// Object for executing methods on the main thread.
+		/// </summary>
+		System.ComponentModel.ISynchronizeInvoke SynchronizingObject { get; }
+	}
 }

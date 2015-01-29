@@ -23,13 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Gui.Common;
-using Altaxo.Serialization;
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Reflection;
 
 namespace Altaxo
 {

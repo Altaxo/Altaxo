@@ -25,10 +25,9 @@
 using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices;  // For use of the GuidAttribute, ProgIdAttribute and ClassInterfaceAttribute.
+
+// For use of the GuidAttribute, ProgIdAttribute and ClassInterfaceAttribute.
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 

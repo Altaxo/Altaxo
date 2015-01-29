@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +30,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -44,11 +41,11 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		#region Converter
 
-		class CC : IValueConverter
+		private class CC : IValueConverter
 		{
-			ComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
+			private ComboBox _cb;
+			private object _originalToolTip;
+			private bool _hasValidationError;
 
 			public CC(ComboBox c)
 			{
@@ -135,12 +132,13 @@ namespace Altaxo.Gui.Common.Drawing
 				return error;
 			}
 		}
-		#endregion
 
-		static Dictionary<DashStyleEx, ImageSource> _cachedImages = new Dictionary<DashStyleEx, ImageSource>();
-		CC _valueConverter;
-		static Dictionary<string, DashStyleEx> _knownStylesDict = new Dictionary<string, DashStyleEx>();
-		static DashStyleEx[] _knownStylesList;
+		#endregion Converter
+
+		private static Dictionary<DashStyleEx, ImageSource> _cachedImages = new Dictionary<DashStyleEx, ImageSource>();
+		private CC _valueConverter;
+		private static Dictionary<string, DashStyleEx> _knownStylesDict = new Dictionary<string, DashStyleEx>();
+		private static DashStyleEx[] _knownStylesList;
 
 		static DashStyleComboBox()
 		{
@@ -148,7 +146,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 			foreach (var e in _knownStylesList)
 				_knownStylesDict.Add(e.ToString(), e);
-
 		}
 
 		public DashStyleComboBox()
@@ -170,7 +167,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
-		const string _nameOfValueProp = "SelectedDashStyle";
+
+		private const string _nameOfValueProp = "SelectedDashStyle";
+
 		public DashStyleEx SelectedDashStyle
 		{
 			get { return (DashStyleEx)GetValue(SelectedDashStyleProperty); }
@@ -185,7 +184,8 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			((DashStyleComboBox)obj).EhSelectedDashStyleChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		protected virtual void EhSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -204,7 +204,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public override string GetItemText(object item)
 		{
@@ -242,8 +241,6 @@ namespace Altaxo.Gui.Common.Drawing
 				dashStyle = new DashStyle(list, 0);
 			}
 
-
-
 			// draws a transparent outline to fix the borders
 			var drawingGroup = new DrawingGroup();
 
@@ -255,7 +252,6 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryDrawing = new GeometryDrawing() { Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)) };
 			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { DashStyle = dashStyle };
 			drawingGroup.Children.Add(geometryDrawing);
-
 
 			var geometryImage = new DrawingImage(drawingGroup);
 

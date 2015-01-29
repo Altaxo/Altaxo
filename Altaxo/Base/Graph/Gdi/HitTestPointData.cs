@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using System.Drawing;
-using System.Drawing.Drawing2D;
-
 
 namespace Altaxo.Graph.Gdi
 {
@@ -37,13 +35,13 @@ namespace Altaxo.Graph.Gdi
 	public class HitTestPointData
 	{
 		/// <summary>Hitted point in page coordinates.</summary>
-		PointD2D _hittedPointInPageCoord;
+		private PointD2D _hittedPointInPageCoord;
 
 		/// <summary>The ratio between displayed sizes and page scale sizes, i.e. the zoom factor on the display.</summary>
-		double _pageScale;
+		private double _pageScale;
 
 		/// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
-		TransformationMatrix2D _transformation;
+		private TransformationMatrix2D _transformation;
 
 		/// <summary>
 		/// Constructor.
@@ -56,7 +54,6 @@ namespace Altaxo.Graph.Gdi
 			_pageScale = pageScale;
 			_transformation = new TransformationMatrix2D();
 		}
-
 
 		/// <summary>
 		/// Copy constructor.
@@ -80,11 +77,10 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// The ratio between displayed sizes and page scale sizes, i.e. the zoom factor on the display.
 		/// </summary>
-		double PageScale
+		private double PageScale
 		{
 			get { return _pageScale; }
 		}
-
 
 		/// <summary>
 		/// Transformation of this item that transform world coordinates to page coordinates.
@@ -109,9 +105,6 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-
-
-
 		public HitTestPointData NewFromTranslationRotationScaleShear(double x, double y, double rotation, double scaleX, double scaleY, double shear)
 		{
 			var result = new HitTestPointData(this);
@@ -126,17 +119,12 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-
-
 		public HitTestPointData NewFromAdditionalTransformation(TransformationMatrix2D additionalTransformation)
 		{
 			var result = new HitTestPointData(this);
 			result.Transformation.PrependTransform(additionalTransformation);
 			return result;
 		}
-
-
-
 
 		/// <summary>
 		/// Returns the hitted point in world coordinated by applying the inverse current coordinate transformation.
@@ -157,7 +145,5 @@ namespace Altaxo.Graph.Gdi
 			result = additionalTransform.InverseTransformPoint(result);
 			return result;
 		}
-
-
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,10 +35,9 @@ namespace Altaxo.Gui.Common
 {
 	public class ValidatingTextBox : TextBox
 	{
-		NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
-		bool _isInitialTextModified;
-		bool _isValidatedSuccessfully = true;
-
+		private NotifyChangedValue<string> _validatedText = new NotifyChangedValue<string>();
+		private bool _isInitialTextModified;
+		private bool _isValidatedSuccessfully = true;
 
 		public ValidatingTextBox()
 		{
@@ -83,8 +84,8 @@ namespace Altaxo.Gui.Common
 
 		#endregion Change selection behaviour
 
-
 		#region Dependency property
+
 		public string ValidatedText
 		{
 			get { var result = (string)GetValue(ValidatedTextProperty); return result; }
@@ -97,10 +98,9 @@ namespace Altaxo.Gui.Common
 
 		private static void OnValidatedTextChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-		#endregion
 
+		#endregion Dependency property
 
 		public string InitialText
 		{
@@ -152,8 +152,5 @@ namespace Altaxo.Gui.Common
 				return null;
 			}
 		}
-
-
 	}
 }
-

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using Altaxo.Calc;
+#endregion Copyright
+
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
+using System;
 
 namespace AltaxoTest.Calc.Interpolation
 {
@@ -32,12 +33,12 @@ namespace AltaxoTest.Calc.Interpolation
 	/// Test for the cross validated cubic spline.
 	/// </summary>
 	/// <remarks> The test data originates from the output of Algorithm 642, which was translated by f2c into C and feeded with the test data below.
-  /// Note that I replaced the tau which has only few decimal places in original 642.f with the more accurate tau=1.6180339887498948482045868343656.
+	/// Note that I replaced the tau which has only few decimal places in original 642.f with the more accurate tau=1.6180339887498948482045868343656.
 	/// </remarks>
 	[TestFixture]
 	public class TestCrossValidatedCubicSpline
 	{
-double[][] _testvals = {
+		private double[][] _testvals = {
 new double[]{0.00843301352350958, -0.152243837374951},
 new double[]{0.025019470131189, -0.119734055655511},
 new double[]{0.0501815571171146, 0.461729355636735},
@@ -89,8 +90,9 @@ new double[]{0.948752005481511, -0.980323659089009},
 new double[]{0.967142143027768, -0.739075684559176},
 new double[]{0.992733618149565, -0.756103993847516}
 													 };
+
 		// expected y at the x given by testvals
-double[] _refy = {
+		private double[] _refy = {
 -0.131090586,
 -0.0251559085,
 0.130926503,
@@ -143,7 +145,7 @@ double[] _refy = {
 -0.831558495
 };
 
-double[][] _expectedCoefficients = {
+		private double[][] _expectedCoefficients = {
 new double[]{6.39641658,0,-34.8903219},
 new double[]{6.3676205,-1.73612043,-190.888186},
 new double[]{5.9176802,-16.1455559,354.740377},
@@ -195,7 +197,7 @@ new double[]{1.41850619,30.2236272,-374.632901},
 new double[]{2.15004016,9.55497549,-124.455187}
 																			 };
 
-double[] _expectedErrorEstimates = {
+		private double[] _expectedErrorEstimates = {
 0.132517647,
 0.102039213,
 0.0846107055,
@@ -246,10 +248,9 @@ double[] _expectedErrorEstimates = {
 0.0841143745,
 0.095333084,
 0.139785028
-
 																			 };
 
-    double[] _expectedFitVars = {
+		private double[] _expectedFitVars = {
 0.9614375,
 39.6239287,
 0.0433056129,
@@ -259,27 +260,27 @@ double[] _expectedErrorEstimates = {
 1
   };
 
-void AreEqual(double expected, double current, double reldev, double absdev, string msg)
-{
-	double min, max;
-	bool passes = false;
-	if (expected == 0)
-	{
-		min = -Math.Abs(absdev);
-		max = Math.Abs(absdev);
-		passes = current >= min && current <= max;
-	}
-	else
-	{
-		double dev = Math.Abs(expected * reldev);
-		min = expected - dev;
-		max = expected + dev;
-		passes = current >= min && current <= max;
-	}
+		private void AreEqual(double expected, double current, double reldev, double absdev, string msg)
+		{
+			double min, max;
+			bool passes = false;
+			if (expected == 0)
+			{
+				min = -Math.Abs(absdev);
+				max = Math.Abs(absdev);
+				passes = current >= min && current <= max;
+			}
+			else
+			{
+				double dev = Math.Abs(expected * reldev);
+				min = expected - dev;
+				max = expected + dev;
+				passes = current >= min && current <= max;
+			}
 
-	if (!passes)
-		Assert.Fail("Value {0} is not in the interval [{1},{2}], ({3})", current, min, max, msg);
-}
+			if (!passes)
+				Assert.Fail("Value {0} is not in the interval [{1},{2}], ({3})", current, min, max, msg);
+		}
 
 		[Test]
 		public void Test1()
@@ -290,7 +291,6 @@ void AreEqual(double expected, double current, double reldev, double absdev, str
 			double[] y = new double[len];
 			double[] dy = new double[len];
 
-
 			for (int i = 0; i < len; i++)
 			{
 				x[i] = _testvals[i][0];
@@ -298,23 +298,20 @@ void AreEqual(double expected, double current, double reldev, double absdev, str
 				dy[i] = 1;
 			}
 
-
 			CrossValidatedCubicSpline spline = new CrossValidatedCubicSpline();
 			spline.CalculateErrorEstimates = true;
 
 			spline.SetErrorVariance(VectorMath.ToROVector(dy), -1);
 			spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(y));
 
-
 			// Test the values y at the points x[i] - this are the coefficients of 0th order
 			for (int i = 0; i < len; i++)
 			{
-				AreEqual(_refy[i], spline.Coefficient0[i], 1e-7,0,"Coeff0["+i.ToString()+"]");
+				AreEqual(_refy[i], spline.Coefficient0[i], 1e-7, 0, "Coeff0[" + i.ToString() + "]");
 			}
 
-	
 			// test the higher order coefficients
-			for (int i = 0; i < len-1; i++)
+			for (int i = 0; i < len - 1; i++)
 			{
 				AreEqual(_expectedCoefficients[i][0], spline.Coefficient1[i], 1e-7, 0, "Coeff1[" + i.ToString() + "]");
 				AreEqual(_expectedCoefficients[i][1], spline.Coefficient2[i], 1e-7, 0, "Coeff2[" + i.ToString() + "]");
@@ -327,15 +324,13 @@ void AreEqual(double expected, double current, double reldev, double absdev, str
 				AreEqual(_expectedErrorEstimates[i], spline.ErrorEstimate[i], 1e-7, 0, "Error[" + i.ToString() + "]");
 			}
 
-			AreEqual(_expectedFitVars[0], spline.SmoothingParameter, 1e-7, 0,"SmoothingParameter");
-      AreEqual(_expectedFitVars[1], spline.EstimatedDegreesOfFreedom, 1e-7, 0, "EstimatedDegreesofFreedom");
-      AreEqual(_expectedFitVars[2], spline.GeneralizedCrossValidation, 1e-7, 0, "GeneralizedCrossValidation");
-      AreEqual(_expectedFitVars[3], spline.MeanSquareResidual, 1e-7, 0, "MeanSquareResidual");
-      AreEqual(_expectedFitVars[4], spline.EstimatedTrueMeanSquareError, 1e-7, 0, "EstimatedTrueMeanSquareError");
-      AreEqual(_expectedFitVars[5], spline.EstimatedErrorVariance, 1e-7, 0, "EstimatedErrorVariance");
-      AreEqual(_expectedFitVars[6], spline.MeanSquareOfInputVariance, 1e-7, 0, "MeanSquareOfInputVariance");
-			
-
+			AreEqual(_expectedFitVars[0], spline.SmoothingParameter, 1e-7, 0, "SmoothingParameter");
+			AreEqual(_expectedFitVars[1], spline.EstimatedDegreesOfFreedom, 1e-7, 0, "EstimatedDegreesofFreedom");
+			AreEqual(_expectedFitVars[2], spline.GeneralizedCrossValidation, 1e-7, 0, "GeneralizedCrossValidation");
+			AreEqual(_expectedFitVars[3], spline.MeanSquareResidual, 1e-7, 0, "MeanSquareResidual");
+			AreEqual(_expectedFitVars[4], spline.EstimatedTrueMeanSquareError, 1e-7, 0, "EstimatedTrueMeanSquareError");
+			AreEqual(_expectedFitVars[5], spline.EstimatedErrorVariance, 1e-7, 0, "EstimatedErrorVariance");
+			AreEqual(_expectedFitVars[6], spline.MeanSquareOfInputVariance, 1e-7, 0, "MeanSquareOfInputVariance");
 		}
 	}
 }

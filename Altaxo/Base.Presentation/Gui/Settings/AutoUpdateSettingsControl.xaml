@@ -1,77 +1,76 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Settings.AutoUpdateSettingsControl"
 						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc ="clr-namespace:Altaxo.Gui.Common"
-						 mc:Ignorable="d" >
+						 mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="CheckBox">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,1,8,1"/>
+				<Setter Property="Margin" Value="8,1,8,1" />
 			</Style.Setters>
 		</Style>
 
 		<Style TargetType="RadioButton">
 			<Style.Setters>
-				<Setter Property="Margin" Value="8,1,8,1"/>
+				<Setter Property="Margin" Value="8,1,8,1" />
 			</Style.Setters>
 		</Style>
-
 	</UserControl.Resources>
-	<GroupBox x:Name="_guiMainGroup" >
+	<GroupBox x:Name="_guiMainGroup">
 		<GroupBox.Header>
-			<CheckBox x:Name="_guiEnableAutoUpdates" Content="Enable auto updates" IsChecked="True" FontWeight="Bold" Margin="0" Checked="EhEnableAutoUpdatesChanged" Unchecked="EhEnableAutoUpdatesChanged"  />
+			<CheckBox x:Name="_guiEnableAutoUpdates" Content="Enable auto updates" IsChecked="True" FontWeight="Bold" Margin="0" Checked="EhEnableAutoUpdatesChanged" Unchecked="EhEnableAutoUpdatesChanged" />
 		</GroupBox.Header>
 		<StackPanel>
 			<GroupBox Margin="0,4,0,0">
 				<GroupBox.Header>
-					<Label Content="Download" FontWeight="Bold" FontStyle="Italic"/>
+					<Label Content="Download" FontWeight="Bold" FontStyle="Italic" />
 				</GroupBox.Header>
 
 				<StackPanel>
-					<GroupBox Header="Versions to download"  Margin="0,4,0,0"  >
+					<GroupBox Header="Versions to download"  Margin="0,4,0,0">
 						<StackPanel>
-							<RadioButton x:Name="_guiDownloadStableOnly"  Content="Stable versions only"/>
-							<RadioButton x:Name="_guiDownloadStableAndUnstable" Content="Stable and unstable versions"/>
+							<RadioButton x:Name="_guiDownloadStableOnly"  Content="Stable versions only" />
+							<RadioButton x:Name="_guiDownloadStableAndUnstable" Content="Stable and unstable versions" />
 						</StackPanel>
 					</GroupBox>
 					<GroupBox Header="Look for a new version"  Margin="0,4,0,0">
 						<StackPanel>
-							<RadioButton x:Name="_guiDownloadAlways" Content="Every time Altaxo is running"/>
-							<RadioButton x:Name="_guiDownloadWeekly" Content="Once a week"/>
-							<RadioButton x:Name="_guiDownloadMonthly" Content="Once a month"/>
+							<RadioButton x:Name="_guiDownloadAlways" Content="Every time Altaxo is running" />
+							<RadioButton x:Name="_guiDownloadWeekly" Content="Once a week" />
+							<RadioButton x:Name="_guiDownloadMonthly" Content="Once a month" />
 						</StackPanel>
 					</GroupBox>
 					<GroupBox Header="Download window">
-						<CheckBox x:Name="_guiShowDownloadWindow" Content="Show download window"/>
+						<CheckBox x:Name="_guiShowDownloadWindow" Content="Show download window" />
 					</GroupBox>
 				</StackPanel>
 			</GroupBox>
 
 			<GroupBox>
 				<GroupBox.Header>
-					<Label Content="Installation" FontWeight="Bold" FontStyle="Italic"/>
+					<Label Content="Installation" FontWeight="Bold" FontStyle="Italic" />
 				</GroupBox.Header>
 				<StackPanel>
 					<GroupBox Header="User interaction">
 						<StackPanel>
-						<CheckBox x:Name="_guiConfirmInstallation" Content="Confirm installation"/>
-						<CheckBox x:Name="_guiShowInstallationWindow" Content="Show installation window"/>
+							<CheckBox x:Name="_guiConfirmInstallation" Content="Confirm installation" />
+							<CheckBox x:Name="_guiShowInstallationWindow" Content="Show installation window" />
 							<StackPanel Orientation="Horizontal">
-								<Label Content="      Close installation window automatically after" VerticalAlignment="Center"/>
+								<Label Content="      Close installation window automatically after" VerticalAlignment="Center" />
 								<axogc:Int32UpDown x:Name="_guiCloseInstallationWindowTime" Minimum="0" MaximumReplacementText="Never" IsGotoMinimumAndMaximumVisible="True" IsEnabled="{Binding ElementName=_guiShowInstallationWindow, Path=IsChecked}" />
-								<Label Content="sec" VerticalAlignment="Center"/>
+								<Label Content="sec" VerticalAlignment="Center" />
 							</StackPanel>
 						</StackPanel>
 					</GroupBox>
-				<GroupBox Header="Install a new version">
-					<StackPanel>
-						<RadioButton x:Name="_guiInstallAtStartup"  Content="When Altaxo is starting"/>
-						<RadioButton x:Name="_guiInstallAtShutdown" Content="When Altaxo is ending"/>
-						<RadioButton x:Name="_guiInstallEitherStartupOrShutdown" Content="Either Altaxo is starting or ending"/>
-					</StackPanel>
-				</GroupBox>
+					<GroupBox Header="Install a new version">
+						<StackPanel>
+							<RadioButton x:Name="_guiInstallAtStartup"  Content="When Altaxo is starting" />
+							<RadioButton x:Name="_guiInstallAtShutdown" Content="When Altaxo is ending" />
+							<RadioButton x:Name="_guiInstallEitherStartupOrShutdown" Content="Either Altaxo is starting or ending" />
+						</StackPanel>
+					</GroupBox>
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>

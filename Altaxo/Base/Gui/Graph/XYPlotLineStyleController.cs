@@ -27,14 +27,9 @@ using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
-using Altaxo.Gui.Common.Drawing;
 using Altaxo.Main;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Graph
 {

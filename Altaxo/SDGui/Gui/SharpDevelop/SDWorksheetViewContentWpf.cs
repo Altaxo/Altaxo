@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,29 +19,23 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Windows;
-using System.Collections.Generic;
-using Altaxo;
-using Altaxo.Main;
-using Altaxo.Worksheet;
-using Altaxo.Gui.Worksheet.Viewing;
+#endregion Copyright
 
-using ICSharpCode.Core;
-using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpDevelop.Gui;
+using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.SharpDevelop
 {
 	public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
 	{
-		Altaxo.Gui.Worksheet.Viewing.WorksheetController _controller;
+		private Altaxo.Gui.Worksheet.Viewing.WorksheetController _controller;
 
 		#region Constructors
+
 		/// <summary>
-		/// Creates a GraphController which shows the <see cref="Altaxo.Graph.Gdi.GraphDocument"/> in the <c>layout</c>.    
+		/// Creates a GraphController which shows the <see cref="Altaxo.Graph.Gdi.GraphDocument"/> in the <c>layout</c>.
 		/// </summary>
 		/// <param name="layout">The graph layout which holds the graph document.</param>
 		public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)
@@ -82,19 +77,18 @@ namespace Altaxo.Gui.SharpDevelop
 			}
 		}
 
-		void EhTitleNameChanged(object sender, EventArgs e)
+		private void EhTitleNameChanged(object sender, EventArgs e)
 		{
 			SetTitle();
 		}
 
-		void SetTitle()
+		private void SetTitle()
 		{
 			if (_controller != null && _controller.DataTable != null)
 				this.TitleName = _controller.DataTable.Name;
 		}
 
-
-		#endregion
+		#endregion Constructors
 
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller
 		{
@@ -107,7 +101,9 @@ namespace Altaxo.Gui.SharpDevelop
 		}
 
 		#region Abstract View Content overrides
+
 		#region Required
+
 		public override object Control
 		{
 			get { return _controller.ViewObject; }
@@ -120,9 +116,10 @@ namespace Altaxo.Gui.SharpDevelop
 				return (_controller.ViewObject as Altaxo.Gui.Worksheet.Viewing.IWorksheetView).GuiInitiallyFocusedElement;
 			}
 		}
-		#endregion
 
-		#endregion
+		#endregion Required
+
+		#endregion Abstract View Content overrides
 
 		#region IEditable Members
 
@@ -137,7 +134,7 @@ namespace Altaxo.Gui.SharpDevelop
 			}
 		}
 
-		#endregion
+		#endregion IEditable Members
 
 		#region IClipboardHandler Members
 
@@ -191,6 +188,6 @@ namespace Altaxo.Gui.SharpDevelop
 			_controller.SelectAll();
 		}
 
-		#endregion
+		#endregion IClipboardHandler Members
 	}
 }

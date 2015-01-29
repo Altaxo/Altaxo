@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * ComplexDoubleSVDDecomp.cs
@@ -29,8 +31,6 @@
 */
 
 using System;
-
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -77,6 +77,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return v;
 			}
 		}
+
 		///<summary>Returns the singular values as a diagonal matrix.</summary>
 		///<returns>the singular values as a diagonal matrix.</returns>
 		public ComplexDoubleMatrix W
@@ -681,7 +682,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			matrix = null;
 		}
+
 #if MANAGED
+
 		private static double dcabs1(Complex z)
 		{
 			double s = System.Math.Abs(z.Real) + System.Math.Abs(z.Imag);
@@ -808,6 +811,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				A[i, Col1] = z;
 			}
 		}
+
 #endif
 	}
 }

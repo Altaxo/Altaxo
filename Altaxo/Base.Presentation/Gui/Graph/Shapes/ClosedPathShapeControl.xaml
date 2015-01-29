@@ -22,7 +22,7 @@
 			<Setter Property="Height" Value="8" />
 		</Style>
 	</UserControl.Resources>
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -37,7 +37,7 @@
 		<GroupBox Grid.Row="0" Header="Outlining">
 			<axogcd:PenSimpleConditionalControl x:Name="_outlinePenControl" />
 		</GroupBox>
-			<GroupBox Grid.Row="2" Header="Filling">
+		<GroupBox Grid.Row="2" Header="Filling">
 			<axogcd:BrushSimpleConditionalControl x:Name="_fillingBrushControl" />
 		</GroupBox>
 		<GroupBox  Grid.Row="4" Header="Location">

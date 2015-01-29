@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,23 +28,15 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public partial class GradientFocusComboBox : DimensionfulQuantityImageComboBox
 	{
-		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
+		private static readonly double[] _initialValues = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
 
 		static GradientFocusComboBox()
 		{
@@ -55,7 +49,6 @@ namespace Altaxo.Gui.Common.Drawing
 			_converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
 
 			InitializeComponent();
-
 
 			foreach (var e in _initialValues)
 				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
@@ -71,7 +64,6 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Margin = new Thickness(_img.Margin.Left, _img.Margin.Top + hMargin, _img.Margin.Right, _img.Margin.Bottom + hMargin);
 			_img.Height = h - 2 * hMargin;
 		}
-
 
 		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
 		{
@@ -100,7 +92,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		public override ImageSource GetItemImage(object item)
 		{
 			double val = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
@@ -109,7 +100,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public override string GetItemText(object item)
 		{

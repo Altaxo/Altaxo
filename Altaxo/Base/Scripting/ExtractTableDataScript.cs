@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,238 +19,227 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Reflection;
-using Altaxo.Serialization;
+#endregion Copyright
+
 using Altaxo.Data;
+using System;
 
 namespace Altaxo.Scripting
 {
+	public interface IExtractTableDataScriptText : IScriptText
+	{
+		/// <summary>
+		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
+		/// If this function returns true, the corresponding row will be copyied to a new data table.
+		/// </summary>
+		/// <param name="myTable">The data table this script is working on.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
+		/// inside the column script and can be recalled by the Errors property.</remarks>
+		bool Execute(Altaxo.Data.DataTable myTable);
+	}
 
-  public interface IExtractTableDataScriptText : IScriptText
-  {
-    /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
-    /// If this function returns true, the corresponding row will be copyied to a new data table.
-    /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
-    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
-    /// inside the column script and can be recalled by the Errors property.</remarks>
-    bool Execute(Altaxo.Data.DataTable myTable);
-  }
- 
-  /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a property column script. 
-  /// </summary>
- 
-  public class ExtractTableDataScript : AbstractScript, IExtractTableDataScriptText
-  {
-    #region Serialization
+	/// <summary>
+	/// Holds the text, the module (=executable), and some properties of a property column script.
+	/// </summary>
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.ExtractTableDataScript",0)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.ExtractTableDataScript), 1)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        AbstractScript s = (AbstractScript)obj;
-    
-        info.AddBaseValueEmbedded(s,typeof(AbstractScript));
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        ExtractTableDataScript s = null!=o ? (ExtractTableDataScript)o : new ExtractTableDataScript();
-        
-        // deserialize the base class
-        info.GetBaseValueEmbedded(s,typeof(AbstractScript),parent);
-        
-        return s;
-      }
-    }
+	public class ExtractTableDataScript : AbstractScript, IExtractTableDataScriptText
+	{
+		#region Serialization
 
-  
-    #endregion
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.ExtractTableDataScript", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.ExtractTableDataScript), 1)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AbstractScript s = (AbstractScript)obj;
 
+				info.AddBaseValueEmbedded(s, typeof(AbstractScript));
+			}
 
-    /// <summary>
-    /// Creates an empty column script. Default Style is "Set Column".
-    /// </summary>
-    public ExtractTableDataScript()
-    {
-    }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ExtractTableDataScript s = null != o ? (ExtractTableDataScript)o : new ExtractTableDataScript();
 
-    /// <summary>
-    /// Creates a column script as a copy from another script.
-    /// </summary>
-    /// <param name="b">The script to copy from.</param>
-    public ExtractTableDataScript(ExtractTableDataScript b)
-      : this(b,false)
-    {
-    }
+				// deserialize the base class
+				info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
-    /// <summary>
-    /// Creates a column script as a copy from another script.
-    /// </summary>
-    /// <param name="b">The script to copy from.</param>
-    /// <param name="forModification">If true, the new script text can be modified.</param>
-    public ExtractTableDataScript(ExtractTableDataScript b, bool forModification)
-      : base(b, forModification)
-    {
-    }
-    /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
-    /// </summary>
-    public override string ScriptObjectType
-    {
-      get { return "Altaxo.Calc.ExtractWorksheetDataScript"; }
-    }
+				return s;
+			}
+		}
 
-    /// <summary>
-    /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
-    /// </summary>
-    public override string CodeHeader
-    {
-      get
-      {
-        return
-          "#region ScriptHeader\r\n"+
-          "using System;\r\n" + 
-          "using Altaxo;\r\n" + 
-          "using Altaxo.Calc;\r\n" + 
-          "using Altaxo.Data;\r\n" + 
-          "namespace Altaxo.Calc\r\n" + 
-          "{\r\n" + 
-          "\tpublic class ExtractWorksheetDataScript : Altaxo.Calc.ExtractTableValuesExeBase\r\n" +
-          "\t{\r\n"+
-          "\t\tpublic override bool IsRowIncluded(Altaxo.Data.DataTable mytable, int i)\r\n" +
-          "\t\t{\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n"+ 
-          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
-      }
-    }
+		#endregion Serialization
 
-    public override string CodeStart
-    {
-      get
-      {
-        return
-          "#endregion\r\n"+
-          "\t\t\t// ----- add your script below this line -----\r\n";
-      }
-    }
+		/// <summary>
+		/// Creates an empty column script. Default Style is "Set Column".
+		/// </summary>
+		public ExtractTableDataScript()
+		{
+		}
 
-    public override string CodeUserDefault
-    {
-      get
-      {
-        return
-          "\t\t\t\r\n" + 
-          "\t\t\treturn col[\"B\"][i]>0;\r\n" +
-          "\t\t\t\r\n"
-          ;
-      }
-    }
+		/// <summary>
+		/// Creates a column script as a copy from another script.
+		/// </summary>
+		/// <param name="b">The script to copy from.</param>
+		public ExtractTableDataScript(ExtractTableDataScript b)
+			: this(b, false)
+		{
+		}
 
-    public override string CodeEnd
-    {
-      get
-      {
-        return
-          "\t\t\t// ----- add your script above this line -----\r\n"+
-          "#region ScriptFooter\r\n";
-      }
-    }
+		/// <summary>
+		/// Creates a column script as a copy from another script.
+		/// </summary>
+		/// <param name="b">The script to copy from.</param>
+		/// <param name="forModification">If true, the new script text can be modified.</param>
+		public ExtractTableDataScript(ExtractTableDataScript b, bool forModification)
+			: base(b, forModification)
+		{
+		}
 
-    /// <summary>
-    /// Get the ending text of the script, dependent on the ScriptStyle.
-    /// </summary>
-    public override string CodeTail
-    {
-      get
-      {
-        return 
-          
-          "\t\t} // method\r\n" +
-          "\t} // class\r\n" + 
-          "} //namespace\r\n"+
-          "#endregion\r\n";
-      }
-    }
+		/// <summary>
+		/// Gives the type of the script object (full name), which is created after successfull compilation.
+		/// </summary>
+		public override string ScriptObjectType
+		{
+			get { return "Altaxo.Calc.ExtractWorksheetDataScript"; }
+		}
 
+		/// <summary>
+		/// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+		/// </summary>
+		public override string CodeHeader
+		{
+			get
+			{
+				return
+					"#region ScriptHeader\r\n" +
+					"using System;\r\n" +
+					"using Altaxo;\r\n" +
+					"using Altaxo.Calc;\r\n" +
+					"using Altaxo.Data;\r\n" +
+					"namespace Altaxo.Calc\r\n" +
+					"{\r\n" +
+					"\tpublic class ExtractWorksheetDataScript : Altaxo.Calc.ExtractTableValuesExeBase\r\n" +
+					"\t{\r\n" +
+					"\t\tpublic override bool IsRowIncluded(Altaxo.Data.DataTable mytable, int i)\r\n" +
+					"\t\t{\r\n" +
+					"\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
+					"\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n" +
+					"\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
+			}
+		}
 
+		public override string CodeStart
+		{
+			get
+			{
+				return
+					"#endregion\r\n" +
+					"\t\t\t// ----- add your script below this line -----\r\n";
+			}
+		}
 
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public override object Clone()
-    {
-      return new ExtractTableDataScript(this,true);
-    }
-    
+		public override string CodeUserDefault
+		{
+			get
+			{
+				return
+					"\t\t\t\r\n" +
+					"\t\t\treturn col[\"B\"][i]>0;\r\n" +
+					"\t\t\t\r\n"
+					;
+			}
+		}
 
-    /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the Execute function of this script object is called.
-    /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
-    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
-    /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute(Altaxo.Data.DataTable myTable)
-    {
-      if(null==_scriptObject)
-      {
-        _errors = new string[1]{"Script Object is null"};
-        return false;
-      }
+		public override string CodeEnd
+		{
+			get
+			{
+				return
+					"\t\t\t// ----- add your script above this line -----\r\n" +
+					"#region ScriptFooter\r\n";
+			}
+		}
 
+		/// <summary>
+		/// Get the ending text of the script, dependent on the ScriptStyle.
+		/// </summary>
+		public override string CodeTail
+		{
+			get
+			{
+				return
 
-      DataTable clonedTable = (DataTable)myTable.Clone();
-      clonedTable.DataColumns.RemoveRowsAll();
+					"\t\t} // method\r\n" +
+					"\t} // class\r\n" +
+					"} //namespace\r\n" +
+					"#endregion\r\n";
+			}
+		}
 
+		/// <summary>
+		/// Clones the script.
+		/// </summary>
+		/// <returns>The cloned object.</returns>
+		public override object Clone()
+		{
+			return new ExtractTableDataScript(this, true);
+		}
 
-      Altaxo.Collections.AscendingIntegerCollection rowsToCopy = new Altaxo.Collections.AscendingIntegerCollection();
+		/// <summary>
+		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the Execute function of this script object is called.
+		/// </summary>
+		/// <param name="myTable">The data table this script is working on.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
+		/// inside the column script and can be recalled by the Errors property.</remarks>
+		public bool Execute(Altaxo.Data.DataTable myTable)
+		{
+			if (null == _scriptObject)
+			{
+				_errors = new string[1] { "Script Object is null" };
+				return false;
+			}
 
-      int len = myTable.DataRowCount;
+			DataTable clonedTable = (DataTable)myTable.Clone();
+			clonedTable.DataColumns.RemoveRowsAll();
 
-    
+			Altaxo.Collections.AscendingIntegerCollection rowsToCopy = new Altaxo.Collections.AscendingIntegerCollection();
 
-      try
-      {
-        Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)_scriptObject;
-        for(int i=0;i<len;i++)
-        {
-          if(scriptObject.IsRowIncluded(myTable,i))
-            rowsToCopy.Add(i);
-        }
-      }
-      catch(Exception ex)
-      {
-        _errors = new string[1];
-        _errors[0] = ex.ToString();
-        return false;
-      }
+			int len = myTable.DataRowCount;
 
-      for(int i=myTable.DataColumns.ColumnCount-1;i>=0;i--)
-      {
-        for(int j=rowsToCopy.Count-1;j>=0;j--)
-        {
-          clonedTable.DataColumns[i][j] = myTable.DataColumns[i][rowsToCopy[j]];
-        }
-      }
+			try
+			{
+				Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)_scriptObject;
+				for (int i = 0; i < len; i++)
+				{
+					if (scriptObject.IsRowIncluded(myTable, i))
+						rowsToCopy.Add(i);
+				}
+			}
+			catch (Exception ex)
+			{
+				_errors = new string[1];
+				_errors[0] = ex.ToString();
+				return false;
+			}
 
-      Current.Project.DataTableCollection.Add(clonedTable);
-      Current.ProjectService.OpenOrCreateWorksheetForTable(clonedTable);
+			for (int i = myTable.DataColumns.ColumnCount - 1; i >= 0; i--)
+			{
+				for (int j = rowsToCopy.Count - 1; j >= 0; j--)
+				{
+					clonedTable.DataColumns[i][j] = myTable.DataColumns[i][rowsToCopy[j]];
+				}
+			}
 
-      return true;
-    }
-  } // end of class PropertyColumnScript
+			Current.Project.DataTableCollection.Add(clonedTable);
+			Current.ProjectService.OpenOrCreateWorksheetForTable(clonedTable);
+
+			return true;
+		}
+	} // end of class PropertyColumnScript
 }

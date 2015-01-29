@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,24 +29,27 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-  /// <summary>
-  /// Font styles that are numerically compatible to the <see cref="System.Drawing.FontStyle"/> enumeration.
-  /// </summary>
-  [Flags]
-  public enum FontXStyle
-  {
-    /// <summary>Normal text.</summary>
-    Regular = 0,
-    /// <summary>Bold text.</summary>
-    Bold = 1,
-    /// <summary>Italic text.</summary>
-    Italic = 2,
-    /// <summary>Underlined text.</summary>
-    Underline = 4,
-    /// <summary>Striked out text.</summary>
-    Strikeout = 8
-  }
+	/// <summary>
+	/// Font styles that are numerically compatible to the <see cref="System.Drawing.FontStyle"/> enumeration.
+	/// </summary>
+	[Flags]
+	public enum FontXStyle
+	{
+		/// <summary>Normal text.</summary>
+		Regular = 0,
 
+		/// <summary>Bold text.</summary>
+		Bold = 1,
+
+		/// <summary>Italic text.</summary>
+		Italic = 2,
+
+		/// <summary>Underlined text.</summary>
+		Underline = 4,
+
+		/// <summary>Striked out text.</summary>
+		Strikeout = 8
+	}
 
 	/// <summary>
 	/// Designates whether for a given font the specified styles are available.
@@ -54,14 +59,17 @@ namespace Altaxo.Graph
 	{
 		/// <summary>No style is available at all.</summary>
 		NoStyleAvailable = 0,
+
 		/// <summary>A regular style is available for the font.</summary>
 		RegularStyleAvailable = 1,
+
 		/// <summary>The bold style is available for the font.</summary>
 		BoldStyleAvailable = 2,
+
 		/// <summary>The italic style is available for the font.</summary>
 		ItalicStyleAvailable = 4,
-		/// <summary>The bold and italic style is available for the font.</summary>
-		BoldAndItalicStyleAvailable = 8 
-	};
 
+		/// <summary>The bold and italic style is available for the font.</summary>
+		BoldAndItalicStyleAvailable = 8
+	};
 }

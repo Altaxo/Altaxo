@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -35,7 +37,7 @@ namespace Altaxo.Calc.Integration
 	/// the endpoints of the integration ranges defined by the integration region and locations
 	/// of the singularities. For example, to integrate over the region (a, b) with break-points
 	/// at x1, x2, x3 (where a &lt; x1 &lt; x2 &lt; x3 &lt; b) the following pts array should be used:
-	/// <code> 
+	/// <code>
 	/// pts[0] = a
 	/// pts[1] = x1
 	/// pts[2] = x2
@@ -50,9 +52,10 @@ namespace Altaxo.Calc.Integration
 	public class QagpIntegration : IntegrationBase
 	{
 		#region offical C# interface
-		bool _debug;
-		gsl_integration_workspace _workSpace;
-		gsl_integration_rule _integrationRule;
+
+		private bool _debug;
+		private gsl_integration_workspace _workSpace;
+		private gsl_integration_rule _integrationRule;
 
 		/// <summary>
 		/// Returns the default integration rule used for this class.
@@ -96,7 +99,6 @@ namespace Altaxo.Calc.Integration
 			_integrationRule = integrationRule;
 			_debug = debug;
 		}
-
 
 		/// <summary>
 		/// Adaptive integration with known singular points.
@@ -170,7 +172,6 @@ namespace Altaxo.Calc.Integration
 			return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
 		}
 
-
 		/// <summary>
 		/// Adaptive integration with known singular points using the integration rule and debug setting given in the constructor.
 		/// </summary>
@@ -189,8 +190,6 @@ namespace Altaxo.Calc.Integration
 		{
 			return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, _integrationRule, _debug, out result, out abserr);
 		}
-
-
 
 		/// <summary>
 		/// Adaptive integration with known singular points.
@@ -281,7 +280,6 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, pts, npts, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr, ref tempStorage);
 		}
 
-
 		/// <summary>
 		/// Adaptive integration with known singular points using default settings for integration rule and debugging.
 		/// </summary>
@@ -306,30 +304,28 @@ namespace Altaxo.Calc.Integration
 			return Integration(f, pts, npts, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
 		}
 
-
-		#endregion
+		#endregion offical C# interface
 
 		/* integration/qagp.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-		static GSL_ERROR
+		private static GSL_ERROR
 		qagp(Func<double, double> f,
 					double[] pts, int npts,
 					double epsabs, double epsrel,
@@ -443,7 +439,6 @@ namespace Altaxo.Calc.Integration
 				}
 
 				errsum = errsum + workspace.elist[i];
-
 			}
 
 			for (i = 0; i < nint; i++)
@@ -684,7 +679,6 @@ namespace Altaxo.Calc.Integration
 				workspace.reset_nrmax();
 				extrapolate = false;
 				error_over_large_intervals = errsum;
-
 			}
 			while (iteration < limit);
 
@@ -780,6 +774,5 @@ namespace Altaxo.Calc.Integration
 				return new GSL_ERROR("could not integrate function", GSL_ERR.GSL_EFAILED, bDebug);
 			}
 		}
-
 	}
 }

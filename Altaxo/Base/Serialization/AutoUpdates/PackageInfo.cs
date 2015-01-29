@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -44,7 +46,6 @@ namespace Altaxo.Serialization.AutoUpdates
 
 		/// <summary>Gets the file length of the package.</summary>
 		public long FileLength { get; private set; }
-
 
 		/// <summary>Name (without path) of the version file, both at the remote location and on the local hard disk.</summary>
 		public const string VersionFileName = "VersionInfo.txt";
@@ -74,7 +75,6 @@ namespace Altaxo.Serialization.AutoUpdates
 			result.Hash = entries[3].Trim();
 
 			return result;
-
 		}
 
 		/// <summary>Determines whether the provided string designates either the stable or the unstable build.</summary>
@@ -100,7 +100,6 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
-
 		/// <summary>Gets the hash as hexadecimal string.</summary>
 		/// <param name="hash">The hash.</param>
 		/// <returns>Hexadecimal string representing the hash.</returns>
@@ -113,7 +112,6 @@ namespace Altaxo.Serialization.AutoUpdates
 			return stb.ToString();
 		}
 
-
 		/// <summary>Gets the name of the package file.</summary>
 		/// <param name="version">The version of the package.</param>
 		/// <returns>The package file name.</returns>
@@ -121,7 +119,6 @@ namespace Altaxo.Serialization.AutoUpdates
 		{
 			return "AltaxoBinaries-" + version.ToString(4) + ".zip";
 		}
-
 
 		/// <summary>Gets the stable identifier (either 'Unstable' or 'Stable').</summary>
 		/// <param name="loadUnstable">Determines either to return 'Unstable' or 'Stable'</param>
@@ -139,9 +136,7 @@ namespace Altaxo.Serialization.AutoUpdates
 			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Altaxo\\AutoUpdates\\" + GetStableIdentifier(loadUnstableVersion));
 		}
 
-
-
-				/// <summary>If there already a package in the download directory, this function gets the present downloaded package. If anything is invalid (wrong format of the version file,
+		/// <summary>If there already a package in the download directory, this function gets the present downloaded package. If anything is invalid (wrong format of the version file,
 		/// wrong hash sum), the return value is <c>Null</c>.</summary>
 		/// <param name="fs">Stream to read the version info from. This must be the opened stream of the VersionInfo.txt file in the download directory.</param>
 		/// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
@@ -193,7 +188,6 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 
 			return null;
-
 		}
 
 		/// <summary>Gets the last time a check for new updates was made</summary>
@@ -211,10 +205,8 @@ namespace Altaxo.Serialization.AutoUpdates
 			catch (Exception)
 			{
 			}
-			
+
 			return DateTime.MinValue;
-
 		}
-
 	}
 }

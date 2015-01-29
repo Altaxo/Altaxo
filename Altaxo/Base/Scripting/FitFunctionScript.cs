@@ -23,12 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Data;
-using Altaxo.Serialization;
 using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Reflection;
 
 namespace Altaxo.Scripting
 {

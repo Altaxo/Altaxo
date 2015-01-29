@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -56,8 +58,8 @@ namespace Altaxo.Calc.Integration
 	public class QawfIntegration : QawoIntegration
 	{
 		#region offical C# interface
-		gsl_integration_workspace _cycleWorkspace;
 
+		private gsl_integration_workspace _cycleWorkspace;
 
 		/// <summary>
 		/// Creates an instance of this integration class with a default integration rule and default debug flag setting.
@@ -66,7 +68,6 @@ namespace Altaxo.Calc.Integration
 			: this(DefaultDebugFlag)
 		{
 		}
-
 
 		/// <summary>
 		/// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
@@ -105,7 +106,6 @@ namespace Altaxo.Calc.Integration
 			if (null == _cycleWorkspace || limit > _cycleWorkspace.limit)
 				_cycleWorkspace = new gsl_integration_workspace(limit);
 
-
 			if (null == _qawoTable)
 			{
 				_qawoTable = new gsl_integration_qawo_table(omega, 1, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE, _defaultOscTableLength);
@@ -134,32 +134,30 @@ namespace Altaxo.Calc.Integration
 			return algo.Integrate(f, a, oscTerm, omega, epsabs, limit, out result, out abserr);
 		}
 
-		#endregion
-
+		#endregion offical C# interface
 
 		#region qawf.c
 
 		/* integration/qawf.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-		static GSL_ERROR
+		private static GSL_ERROR
 		gsl_integration_qawf(Func<double, double> f,
 													double a,
 													double epsabs,
@@ -327,7 +325,6 @@ namespace Altaxo.Calc.Integration
 					if (err_ext <= epsabs && 10 * correc >= epsabs)
 						break;
 				}
-
 			}
 
 			if (iteration == limit)
@@ -409,10 +406,8 @@ namespace Altaxo.Calc.Integration
 			{
 				return new GSL_ERROR("could not integrate function", GSL_ERR.GSL_EFAILED, bDebug);
 			}
-
 		}
 
-
-		#endregion
+		#endregion qawf.c
 	}
 }

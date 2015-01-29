@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -41,7 +37,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 	/// </summary>
 	public partial class FileBrowserControl : UserControl, ICSharpCode.SharpDevelop.Gui.IPadContent, IFileTreeView, IFileListView
 	{
-		FileBrowserController _controller;
+		private FileBrowserController _controller;
 
 		/// <summary>
 		/// Occurs when the user activates the selected items (either by double-clicking on it, or by pressing Enter).
@@ -54,7 +50,6 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 			_controller = new FileBrowserController(this, this);
 		}
-
 
 		#region ICSharpCode.SharpDevelop.Gui.IPadContent
 
@@ -70,10 +65,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 		public void Dispose()
 		{
-			
 		}
 
-		#endregion
+		#endregion ICSharpCode.SharpDevelop.Gui.IPadContent
 
 		#region IFileTreeView
 
@@ -84,17 +78,14 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
 		public event Action<Collections.NGTreeNode> FolderTreeNodeSelected;
 
-		#endregion
-
+		#endregion IFileTreeView
 
 		#region IFileListView
-
-		
 
 		public void Initialize_FileListColumnNames(ICollection<string> names)
 		{
 			int i = 0;
-			foreach(var name in names)
+			foreach (var name in names)
 			{
 				/*
 				var gvc = new GridViewColumn() { Header = name };
@@ -111,7 +102,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 			_listView.ItemsSource = files;
 		}
 
-		#endregion
+		#endregion IFileListView
 
 		private void EhTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,7 @@ using System.Text;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>This class was translated to C# from the JAMA1.0.2 package.</remarks>
 	public class QRDecomposition
@@ -244,6 +246,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			Solve(B, result);
 			return result;
 		}
+
 		public IMatrix GetSolution(IROMatrix A, IROMatrix B)
 		{
 			Decompose(A);
@@ -258,6 +261,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			Solve(B, result);
 			return result;
 		}
+
 		public DoubleVector GetSolution(IROMatrix A, IROVector B)
 		{
 			Decompose(A);
@@ -271,6 +275,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			Decompose(A);
 			Solve(B, Result);
 		}
+
 		public void Solve(IROMatrix A, IROVector B, IVector Result)
 		{
 			Decompose(A);
@@ -403,8 +408,5 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < result.Length; i++)
 				result[i] = X[i];
 		}
-
 	}
-
-
 }

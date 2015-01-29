@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,31 +19,31 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>
-  /// Determines how to do a Partial Least Squares Analysis.
-  /// </summary>
-  public struct MultivariateAnalysisOptions
-  {
-    /// <summary>
-    /// Get/sets the maximum number of factors to calculate
-    /// </summary>
-    public int MaxNumberOfFactors;
+	/// <summary>
+	/// Determines how to do a Partial Least Squares Analysis.
+	/// </summary>
+	public struct MultivariateAnalysisOptions
+	{
+		/// <summary>
+		/// Get/sets the maximum number of factors to calculate
+		/// </summary>
+		public int MaxNumberOfFactors;
 
-    /// <summary>
-    /// How to do the calculation of Cross PRESS values.
-    /// </summary>
-    public CrossPRESSCalculationType CrossPRESSCalculation;
+		/// <summary>
+		/// How to do the calculation of Cross PRESS values.
+		/// </summary>
+		public CrossPRESSCalculationType CrossPRESSCalculation;
 
-    /// <summary>
-    /// Get/sets the class that will handles the analysis.
-    /// </summary>
-    public System.Type AnalysisMethod;
-  }
+		/// <summary>
+		/// Get/sets the class that will handles the analysis.
+		/// </summary>
+		public System.Type AnalysisMethod;
+	}
 }

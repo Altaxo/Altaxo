@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Main;
 using Altaxo.Worksheet.Commands.Analysis;
 using System;
 using System.Collections.Generic;

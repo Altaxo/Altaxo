@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,8 +28,6 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	using Gdi.Plot.Groups;
-
 	public static class PlotGroupStyle
 	{
 		public static bool ShouldAddExternalGroupStyle(
@@ -36,7 +36,6 @@ namespace Altaxo.Graph.Plot.Groups
 		{
 			return !externalGroups.ContainsType(type);
 		}
-
 
 		public static bool ShouldAddLocalGroupStyle(
 			IPlotGroupStyleCollection externalGroups,
@@ -51,7 +50,6 @@ namespace Altaxo.Graph.Plot.Groups
 
 			return (!found && localGroups != null);
 		}
-
 
 		public static T GetStyleToInitialize<T>(
 			IPlotGroupStyleCollection externalGroups,
@@ -76,7 +74,6 @@ namespace Altaxo.Graph.Plot.Groups
 			else
 				return default(T);
 		}
-
 
 		/// <summary>
 		/// Looks first in externalGroups, then in localGroups for the type of PlotGroupStyle to apply.

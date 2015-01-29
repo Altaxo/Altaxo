@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,34 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using ICSharpCode.AvalonEdit.AddIn;
+using ICSharpCode.SharpDevelop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
-
-
-using Altaxo.Gui;
-using Altaxo.Gui.Scripting;
-
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Folding;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.AddIn;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -55,17 +40,17 @@ namespace Altaxo.Gui.Scripting
 	[UserControlForController(typeof(IPureScriptViewEventSink), 120)]
 	public partial class SDPureScriptControlWpf : UserControl, IPureScriptView
 	{
-		AvalonEditViewContent _editViewContent;
-		ICSharpCode.AvalonEdit.AddIn.CodeEditor _codeView;
+		private AvalonEditViewContent _editViewContent;
+		private ICSharpCode.AvalonEdit.AddIn.CodeEditor _codeView;
 
 		public SDPureScriptControlWpf()
 		{
 			InitializeComponent();
 		}
 
-		void InitializeEditor(string initialText, string scriptName)
+		private void InitializeEditor(string initialText, string scriptName)
 		{
-			// The trick is here to create an untitled file, so that the binary content is used, 
+			// The trick is here to create an untitled file, so that the binary content is used,
 			// but at the same time to give the file an unique name in order to get processed by the parser
 			var openFile = FileService.CreateUntitledOpenedFile(scriptName, StringToByte(initialText));
 
@@ -77,30 +62,27 @@ namespace Altaxo.Gui.Scripting
 			this.Content = _codeView;
 		}
 
+		private bool _registered;
 
-
-		bool _registered;
-		void Register()
+		private void Register()
 		{
 			if (!_registered)
 			{
 				_registered = true;
 				ParserService.RegisterModalContent(_editViewContent);
 			}
-
 		}
-		void Unregister()
-		{
 
+		private void Unregister()
+		{
 			ParserService.UnregisterModalContent();
 			_registered = false;
-
 		}
-
 
 		#region IPureScriptView Members
 
-		IPureScriptViewEventSink _controller;
+		private IPureScriptViewEventSink _controller;
+
 		public IPureScriptViewEventSink Controller
 		{
 			get
@@ -140,9 +122,7 @@ namespace Altaxo.Gui.Scripting
 				var location = _codeView.Document.GetLocation(value);
 				_codeView.PrimaryTextEditor.TextArea.Caret.Location = location;
 				_codeView.PrimaryTextEditor.ScrollToLine(location.Line);
-
 			}
-
 		}
 
 		public int InitialScriptCursorLocation
@@ -151,7 +131,6 @@ namespace Altaxo.Gui.Scripting
 			{
 				// do nothing here, because folding is active
 			}
-
 		}
 
 		/// <summary>
@@ -161,7 +140,6 @@ namespace Altaxo.Gui.Scripting
 		/// <param name="column">Script column (1-based).</param>
 		public void SetScriptCursorLocation(int line, int column)
 		{
-
 			/* to mark the word that causes the error
 			var offset = _codeView.Document.GetOffset(line, column);
 			var textLine = _codeView.Document.GetLineByNumber(line);
@@ -177,26 +155,23 @@ namespace Altaxo.Gui.Scripting
 			_codeView.PrimaryTextEditor.TextArea.Focus();
 		}
 
-
 		public void MarkText(int pos1, int pos2)
 		{
 			_codeView.PrimaryTextEditor.TextArea.Selection = ICSharpCode.AvalonEdit.Editing.Selection.Create(_codeView.PrimaryTextEditor.TextArea, pos1, pos2);
 		}
 
+		#endregion IPureScriptView Members
 
+		private Window _parentForm;
 
-
-		#endregion
-
-		Window _parentForm;
-		void edFormula_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+		private void edFormula_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
 			if (_codeView.IsVisible)
 			{
 				if (null == _parentForm)
 				{
 					_parentForm = Window.GetWindow(this);
-					_parentForm.Closing +=_parentForm_Closing;
+					_parentForm.Closing += _parentForm_Closing;
 
 					Register();
 				}
@@ -209,7 +184,6 @@ namespace Altaxo.Gui.Scripting
 			Unregister();
 		}
 
-
 		public static byte[] StringToByte(string fileContent)
 		{
 			MemoryStream memoryStream = new MemoryStream();
@@ -218,6 +192,5 @@ namespace Altaxo.Gui.Scripting
 			tw.Flush();
 			return memoryStream.ToArray();
 		}
-
 	}
 }

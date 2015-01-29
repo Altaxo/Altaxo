@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.Fourier
 {
-
 	/// <summary>
 	/// This class provides reference methods related to Fourier transformation that are slow and not very accurate.
 	/// Do not use them except for comparism and testing purposes!
@@ -35,12 +34,11 @@ namespace Altaxo.Calc.Fourier
 	/// </summary>
 	public class NativeFourierMethods
 	{
-
 		#region Correlation
 
 		/// <summary>
 		/// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
-		/// different from the other two arrays. 
+		/// different from the other two arrays.
 		/// </summary>
 		/// <param name="arr1">First array (kernel).</param>
 		/// <param name="arr2">Second array (data).</param>
@@ -66,7 +64,7 @@ namespace Altaxo.Calc.Fourier
 
 		/// <summary>
 		/// Performes a cyclic correlation between splitted complex arrays and stores the result in resultarr. Resultarr must be
-		/// different from the input arrays. 
+		/// different from the input arrays.
 		/// </summary>
 		/// <param name="src1real">First array (kernel, real part values).</param>
 		/// <param name="src1imag">First array (kernel, imaginary part values).</param>
@@ -110,7 +108,7 @@ namespace Altaxo.Calc.Fourier
 
 		/// <summary>
 		/// Performes a non-cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
-		/// different from the other two arrays. 
+		/// different from the other two arrays.
 		/// </summary>
 		/// <param name="arr1">First array.</param>
 		/// <param name="arr2">Second array.</param>
@@ -136,13 +134,14 @@ namespace Altaxo.Calc.Fourier
 				}
 			}
 		}
-		#endregion
+
+		#endregion Correlation
 
 		#region Convolution
 
 		/// <summary>
 		/// Performes a cyclic convolution between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
-		/// different from the other two arrays. 
+		/// different from the other two arrays.
 		/// </summary>
 		/// <param name="arr1">First array.</param>
 		/// <param name="arr2">Second array.</param>
@@ -164,10 +163,9 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
 		/// <summary>
 		/// Performes a cyclic convolution between splitted complex arrays and stores the result in resultarr. Resultarr must be
-		/// different from the input arrays. 
+		/// different from the input arrays.
 		/// </summary>
 		/// <param name="src1real">First array (real part values).</param>
 		/// <param name="src1imag">First array (imaginary part values).</param>
@@ -207,10 +205,9 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
 		/// <summary>
 		/// Performes a non-cyclic convolution between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
-		/// different from the other two arrays. 
+		/// different from the other two arrays.
 		/// </summary>
 		/// <param name="arr1">First array.</param>
 		/// <param name="arr2">Second array.</param>
@@ -237,9 +234,10 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		#endregion
+		#endregion Convolution
 
 		#region FourierTransformation
+
 		/// <summary>
 		/// Performs a native fouriertransformation of a real value array.
 		/// </summary>
@@ -328,7 +326,6 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
 		/// <summary>
 		/// Performs a inline native fouriertransformation of real and imaginary part arrays.
 		/// </summary>
@@ -380,7 +377,6 @@ namespace Altaxo.Calc.Fourier
 						resre[count - k] = sumimag;
 					resre[k] = sumreal;
 				}
-
 			}
 			else // FourierDirection.Inverse
 			{
@@ -410,9 +406,7 @@ namespace Altaxo.Calc.Fourier
 					}
 					resre[k] = sumreal;
 				}
-
 			}
-
 
 			if (useShadowCopy)
 			{
@@ -420,8 +414,6 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		#endregion
-
+		#endregion FourierTransformation
 	}
-
 }

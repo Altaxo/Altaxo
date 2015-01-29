@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,8 +28,6 @@ using System.Linq;
 using System.Text;
 
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Altaxo.Gui
@@ -39,7 +39,7 @@ namespace Altaxo.Gui
 		// Create a collection of child visual objects.
 		private DrawingVisual _child;
 
-		Action<DrawingContext> _renderMethod;
+		private Action<DrawingContext> _renderMethod;
 
 		public VisualHost()
 			: this(null)
@@ -68,7 +68,6 @@ namespace Altaxo.Gui
 			this.Visibility = Visibility.Visible;
 		}
 
-
 		// Provide a required override for the VisualChildrenCount property.
 		protected override int VisualChildrenCount
 		{
@@ -94,5 +93,4 @@ namespace Altaxo.Gui
 			base.OnRender(drawingContext);
 		}
 	}
-
 }

@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using Altaxo.Gui;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 

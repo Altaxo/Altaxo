@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Main;
 using System;

@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
@@ -193,7 +192,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 			if (this._cachedMaxValue != this._maxValue)
 				data |= BoundariesChangedData.UpperBoundChanged;
 
-			if(0!=data)
+			if (0 != data)
 				_accumulatedEventData = new BoundariesChangedEventArgs(data);
 
 			base.OnResume();

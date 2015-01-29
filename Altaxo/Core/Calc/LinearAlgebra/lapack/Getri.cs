@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,18 +21,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Getri.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 #if !MANAGED
 using System;
 using System.Runtime.InteropServices;
-
-
 
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
@@ -53,31 +53,31 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
     }
     internal static int Compute( int n, float[] A, int lda, int[] ipiv ){
       ArgumentCheck(n,A,lda, ipiv);
-      
+
       return dna_lapack_sgetri(Configuration.BlockSize, n,A,lda,ipiv);
     }
 
     internal static int Compute( int n, double[] A, int lda, int[] ipiv ){
       ArgumentCheck(n,A,lda, ipiv);
-      
+
       return dna_lapack_dgetri(Configuration.BlockSize, n,A,lda,ipiv);
     }
 
     internal static int Compute( int n, ComplexFloat[] A, int lda, int[] ipiv ){
       ArgumentCheck(n,A,lda,ipiv);
-      
+
       return dna_lapack_cgetri(Configuration.BlockSize, n,A,lda,ipiv);
     }
 
     internal static int Compute( int n, Complex[] A, int lda, int[] ipiv ){
       ArgumentCheck(n,A,lda,ipiv);
-      
+
       return dna_lapack_zgetri(Configuration.BlockSize, n,A,lda,ipiv);
     }
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_sgetri( int block_size, int n, [In,Out]float[] A, int lda, [In]int[] ipiv );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dgetri( int block_size, int n, [In,Out]double[] A, int lda, [In]int[] ipiv );
 

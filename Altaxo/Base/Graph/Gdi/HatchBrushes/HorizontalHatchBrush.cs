@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HorizontalHatchBrush), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -51,8 +51,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			}
 		}
 
-
-		#endregion
+		#endregion Serialization
 
 		public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
 		{
@@ -68,7 +67,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
 				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
 
-				using (Pen pen = new Pen(foreColor, (float)(pixelDim * _structureFactor )))
+				using (Pen pen = new Pen(foreColor, (float)(pixelDim * _structureFactor)))
 				{
 					pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
 					g.DrawLine(pen, -bmp.Width, bmp.Height * 0.5f, bmp.Width * 2, bmp.Height * 0.5f);
@@ -85,5 +84,4 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			return result;
 		}
 	}
-
 }

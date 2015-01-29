@@ -24,25 +24,18 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
-using Altaxo.Serialization.Ascii;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.Commands;
 using System;
 
 //using System.Drawing;
 //using System.Drawing.Drawing2D;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {

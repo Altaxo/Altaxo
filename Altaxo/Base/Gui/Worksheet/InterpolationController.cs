@@ -23,9 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Calc;
-using Altaxo.Calc.Regression;
 using Altaxo.Collections;
-using Altaxo.Gui;
 using System;
 using System.Collections.Generic;
 

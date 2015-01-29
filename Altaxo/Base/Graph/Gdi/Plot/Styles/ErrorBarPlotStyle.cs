@@ -34,7 +34,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi.Plot.Data;
-	using Altaxo.Graph.Gdi.Plot.Groups;
 	using Altaxo.Main;
 
 	public class ErrorBarPlotStyle

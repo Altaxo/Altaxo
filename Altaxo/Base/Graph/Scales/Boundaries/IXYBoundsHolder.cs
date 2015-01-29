@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  /// <summary>
-  /// Implemented by objects that hold x bounds and y bounds, for instance XYPlotAssociations.
-  /// </summary>
-  public interface IXYBoundsHolder : IXBoundsHolder, IYBoundsHolder
-  {
-  }
-
+	/// <summary>
+	/// Implemented by objects that hold x bounds and y bounds, for instance XYPlotAssociations.
+	/// </summary>
+	public interface IXYBoundsHolder : IXBoundsHolder, IYBoundsHolder
+	{
+	}
 }

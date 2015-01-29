@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Groups;
-using Altaxo.Graph.Plot.Groups;
-using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;

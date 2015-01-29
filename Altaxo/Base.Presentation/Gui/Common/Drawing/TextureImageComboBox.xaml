@@ -2,19 +2,18 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
-    SnapsToDevicePixels="True"
-					>
+    SnapsToDevicePixels="True">
 	<ComboBox.Resources>
 		<DataTemplate  DataType="{x:Type local:ImageComboBoxItem}">
 			<StackPanel Orientation="Horizontal" Margin="2">
-				<Image Source="{Binding Image}" MaxWidth="24" MaxHeight="24"/>
-				<TextBlock Text="{Binding Path=Text}" Margin="4 0 4 0" VerticalAlignment="Center"/>
+				<Image Source="{Binding Image}" MaxWidth="24" MaxHeight="24" />
+				<TextBlock Text="{Binding Path=Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
 			</StackPanel>
 		</DataTemplate>
 	</ComboBox.Resources>
 	<ComboBox.ContextMenu>
 		<ContextMenu x:Name="_contextMenu">
-			<MenuItem Header="Load texture from file .." x:Name="_menuLoadTextureFromFile" Click="EhLoadFromFile"/>
+			<MenuItem Header="Load texture from file .." x:Name="_menuLoadTextureFromFile" Click="EhLoadFromFile" />
 		</ContextMenu>
 	</ComboBox.ContextMenu>
 </local:ImageComboBox>

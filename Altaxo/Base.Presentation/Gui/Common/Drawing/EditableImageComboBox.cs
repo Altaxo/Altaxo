@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,14 +29,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -49,24 +44,23 @@ namespace Altaxo.Gui.Common.Drawing
 		protected TextBox _editBox;
 
 		/// <summary>
-		/// Get around the bug that the context menu of the editable part is not bound to the combobox 
+		/// Get around the bug that the context menu of the editable part is not bound to the combobox
 		/// (<see href="http://www.wpfmentor.com/2008/12/setting-context-menu-on-editable.html"/>)
 		/// </summary>
 		public override void OnApplyTemplate()
 		{
 			base.OnApplyTemplate();
 
-			// Use Snoop to find the name of the TextBox part  
-			// http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html  
+			// Use Snoop to find the name of the TextBox part
+			// http://wpfmentor.blogspot.com/2008/11/understand-bubbling-and-tunnelling-in-5.html
 			_editBox = (TextBox)Template.FindName("PART_EditableTextBox", this);
 			_editBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Right;
 
-			// Create a template-binding in code  
+			// Create a template-binding in code
 			Binding binding = new Binding("ContextMenu");
 			binding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
 			BindingOperations.SetBinding(_editBox, FrameworkElement.ContextMenuProperty, binding);
-		}  
-
+		}
 
 		public EditableImageComboBox()
 		{
@@ -81,7 +75,6 @@ namespace Altaxo.Gui.Common.Drawing
 			SetImageFromContent();
 		}
 
-
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
 			base.OnRenderSizeChanged(sizeInfo);
@@ -93,16 +86,13 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		protected virtual void ImplantImage(double width, double height)
 		{
 			_img.Height = _editBox.ActualHeight;
 			_img.Margin = _editBox.Margin;
 			_img.Stretch = Stretch.Uniform;
 
-
 			var parent = _editBox.Parent;
-
 
 			var stackPanel = new StackPanel();
 			stackPanel.Orientation = Orientation.Horizontal;
@@ -143,16 +133,16 @@ namespace Altaxo.Gui.Common.Drawing
 			// now some special properties
 			if (parent is Grid)
 			{
-				foreach(DependencyProperty dp in new DependencyProperty[]{ Grid.RowProperty, Grid.ColumnProperty, Grid.RowSpanProperty, Grid.ColumnSpanProperty})
+				foreach (DependencyProperty dp in new DependencyProperty[] { Grid.RowProperty, Grid.ColumnProperty, Grid.RowSpanProperty, Grid.ColumnSpanProperty })
 				{
-				stackPanel.SetValue(dp, _editBox.GetValue(dp));
+					stackPanel.SetValue(dp, _editBox.GetValue(dp));
 				}
 			}
 			if (parent is DockPanel)
 			{
 				stackPanel.SetValue(DockPanel.DockProperty, _editBox.GetValue(DockPanel.DockProperty));
 			}
-			
+
 			/*
 
 			if (_editBox.Parent is Grid) // most Windows version have the TextBox located inside a Grid
@@ -201,9 +191,7 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 
 			*/
-		
 		}
-
 
 		/// <summary>Prints the visual childs recursively (intended only for debugging).</summary>
 		/// <param name="start">The parent.</param>
@@ -212,15 +200,15 @@ namespace Altaxo.Gui.Common.Drawing
 		private void PrintVisualChilds(DependencyObject start, int level, StringBuilder stb)
 		{
 			int count = VisualTreeHelper.GetChildrenCount(start);
-			for(int i=0;i<count;++i)
+			for (int i = 0; i < count; ++i)
 			{
 				var child = VisualTreeHelper.GetChild(start, i);
-				for(int j=0;j<level;++j) 
+				for (int j = 0; j < level; ++j)
 					stb.Append("  ");
-				if(child is Grid)
+				if (child is Grid)
 					stb.AppendFormat("child[{0}]: {1} (#cols:{2})", i, child.ToString(), ((Grid)child).ColumnDefinitions.Count);
 				else
-					stb.AppendFormat("child[{0}]: {1}",i,child.ToString());
+					stb.AppendFormat("child[{0}]: {1}", i, child.ToString());
 				stb.AppendLine();
 				PrintVisualChilds(child, level + 1, stb);
 			}

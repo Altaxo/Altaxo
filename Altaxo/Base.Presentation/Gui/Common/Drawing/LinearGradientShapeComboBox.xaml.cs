@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,14 +30,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -43,9 +39,9 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class LinearGradientShapeComboBox : ImageComboBox
 	{
-		class CC : IValueConverter
+		private class CC : IValueConverter
 		{
-			LinearGradientShapeComboBox _cb;
+			private LinearGradientShapeComboBox _cb;
 
 			public CC(LinearGradientShapeComboBox c)
 			{
@@ -56,8 +52,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (LinearGradientShape)value;
 				return _cb._cachedItems[val];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -66,9 +60,9 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		static Dictionary<LinearGradientShape, ImageSource> _cachedImages = new Dictionary<LinearGradientShape, ImageSource>();
+		private static Dictionary<LinearGradientShape, ImageSource> _cachedImages = new Dictionary<LinearGradientShape, ImageSource>();
 
-		Dictionary<LinearGradientShape, ImageComboBoxItem> _cachedItems = new Dictionary<LinearGradientShape, ImageComboBoxItem>();
+		private Dictionary<LinearGradientShape, ImageComboBoxItem> _cachedItems = new Dictionary<LinearGradientShape, ImageComboBoxItem>();
 
 		static LinearGradientShapeComboBox()
 		{
@@ -92,7 +86,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
+
 		private const string _nameOfValueProp = "LinearGradientShape";
+
 		public LinearGradientShape LinearGradientShape
 		{
 			get { return (LinearGradientShape)GetValue(LinearGradientShapeProperty); }
@@ -107,14 +103,12 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			((LinearGradientShapeComboBox)obj).EhLinearGradientShapeChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		protected virtual void EhLinearGradientShapeChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-
-
 
 		public override string GetItemText(object item)
 		{
@@ -130,7 +124,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_cachedImages.Add(val, result = GetImage(val));
 			return result;
 		}
-
 
 		public static DrawingImage GetImage(LinearGradientShape val)
 		{
@@ -150,6 +143,7 @@ namespace Altaxo.Gui.Common.Drawing
 				case LinearGradientShape.Linear:
 					geometryDrawing.Brush = new System.Windows.Media.LinearGradientBrush(Colors.Black, Colors.White, 0);
 					break;
+
 				case LinearGradientShape.SigmaBell:
 					{
 						var gradStop = new GradientStopCollection();
@@ -161,6 +155,7 @@ namespace Altaxo.Gui.Common.Drawing
 						geometryDrawing.Brush = new System.Windows.Media.LinearGradientBrush(gradStop, 0);
 					}
 					break;
+
 				case LinearGradientShape.Triangular:
 					{
 						var gradStop = new GradientStopCollection();
@@ -170,6 +165,7 @@ namespace Altaxo.Gui.Common.Drawing
 						geometryDrawing.Brush = new System.Windows.Media.LinearGradientBrush(gradStop, 0);
 					}
 					break;
+
 				default:
 					break;
 			}

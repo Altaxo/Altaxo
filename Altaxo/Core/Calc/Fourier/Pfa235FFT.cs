@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,14 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Calc.Fourier
 {
-
 	/// <summary>
 	///  Generalized prime factor complex fast Fourier transform and
 	///  backtransform in one, two, and three dimensions (d = 1,2,3).
@@ -34,14 +34,14 @@ namespace Altaxo.Calc.Fourier
 	///  double precision complex numbers or in two seperate vectors of doubles
 	///  for the real and imaginary parts respectively, or in single precision,
 	///  either in a vector of complex or in two seperate vectors of float.
-	///  A leading dimension different from the first data dimension can be 
-	///  specified - this can prevent memory-bank conflicts and therefore  
+	///  A leading dimension different from the first data dimension can be
+	///  specified - this can prevent memory-bank conflicts and therefore
 	///  dramatically improves performance on vector machines with interleaved memory.
 	///  The Fourier transform is always perfored inplace. The data array can be
 	///  stored either in column (Fortran convention) or row (C convention) order.
 	///  This makes about 40 different combinations (float - double, dimension,
-	///  order, complex - real) which can be easily accessed 
-	///  by a simple class definition:  
+	///  order, complex - real) which can be easily accessed
+	///  by a simple class definition:
 	/// </summary>
 	public class Pfa235FFT
 	{
@@ -54,22 +54,19 @@ namespace Altaxo.Calc.Fourier
 		///   Reset to 64 for other Cray machines, or to any large value
 		///   (greater than or equal to lot) for a scalar computer.
 		/// </summary>
-		const int lvr = 1024;
+		private const int lvr = 1024;
 
 		/// <summary>
-		/// The last three loops in function gpfft3d() in gpfft3d.cc are prime candidates 
-		/// for parallelism as they call independent multi-1D ffts.  Just set the  
-		/// constant "nthreads" to the number of processors to use. 
+		/// The last three loops in function gpfft3d() in gpfft3d.cc are prime candidates
+		/// for parallelism as they call independent multi-1D ffts.  Just set the
+		/// constant "nthreads" to the number of processors to use.
 		/// </summary>
-		const int nthreads = 1;
-
-
+		private const int nthreads = 1;
 
 		//    public enum Direction { Forward = -1, Inverse = 1 };
 		// constructors and assigment
 
-
-		enum ROW_ORDER { def_row_order = 1 };  // set to true for the C convention
+		private enum ROW_ORDER { def_row_order = 1 };  // set to true for the C convention
 
 		protected int id, ndim, trisize;
 		protected bool row_order = true;
@@ -82,13 +79,13 @@ namespace Altaxo.Calc.Fourier
 		/// uninitialized setup
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for one, two or three 
+		/// Setup fast Fourier transform / back-transform for one, two or three
 		/// dimensions. The dimensions n1,n2,and n3 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// otherwise an error will be generated and the error handler function
 		/// Matpack.Error() is called. On instantiation some trigonometric tables
 		/// will be allocated and calculated. This approach avoids multiple
-		/// twiddle factor recalculations if several FFTs are calculated for data 
+		/// twiddle factor recalculations if several FFTs are calculated for data
 		/// with the same dimensions. Sometimes it is convenient to define an
 		/// "empty" setup (first constructor) and assign a setup later (see
 		/// copying and assignment). As default the multi-dimensional data
@@ -96,7 +93,7 @@ namespace Altaxo.Calc.Fourier
 		/// data stored in column order (Fortran convention) use the member
 		/// function SetOrder() to change the order - see below. For optimizations
 		/// on vector machines with separate memory banks an extra leading dimension
-		/// can be defined to avoid bank conflicts - also see SetOrder(). 
+		/// can be defined to avoid bank conflicts - also see SetOrder().
 		/// </remarks>
 
 		public Pfa235FFT()
@@ -107,13 +104,13 @@ namespace Altaxo.Calc.Fourier
 		/// 1-dimensional setup
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for one, two or three 
+		/// Setup fast Fourier transform / back-transform for one, two or three
 		/// dimensions. The dimensions n1,n2,and n3 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// otherwise an error will be generated and the error handler function
 		/// Matpack.Error() is called. On instantiation some trigonometric tables
 		/// will be allocated and calculated. This approach avoids multiple
-		/// twiddle factor recalculations if several FFTs are calculated for data 
+		/// twiddle factor recalculations if several FFTs are calculated for data
 		/// with the same dimensions. Sometimes it is convenient to define an
 		/// "empty" setup (first constructor) and assign a setup later (see
 		/// copying and assignment). As default the multi-dimensional data
@@ -121,7 +118,7 @@ namespace Altaxo.Calc.Fourier
 		/// data stored in column order (Fortran convention) use the member
 		/// function SetOrder() to change the order - see below. For optimizations
 		/// on vector machines with separate memory banks an extra leading dimension
-		/// can be defined to avoid bank conflicts - also see SetOrder(). 
+		/// can be defined to avoid bank conflicts - also see SetOrder().
 		/// </remarks>
 		public Pfa235FFT(int n1)
 		{
@@ -141,13 +138,13 @@ namespace Altaxo.Calc.Fourier
 		/// 2-dimensional setup
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for one, two or three 
+		/// Setup fast Fourier transform / back-transform for one, two or three
 		/// dimensions. The dimensions n1,n2,and n3 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// otherwise an error will be generated and the error handler function
 		/// Matpack.Error() is called. On instantiation some trigonometric tables
 		/// will be allocated and calculated. This approach avoids multiple
-		/// twiddle factor recalculations if several FFTs are calculated for data 
+		/// twiddle factor recalculations if several FFTs are calculated for data
 		/// with the same dimensions. Sometimes it is convenient to define an
 		/// "empty" setup (first constructor) and assign a setup later (see
 		/// copying and assignment). As default the multi-dimensional data
@@ -155,13 +152,12 @@ namespace Altaxo.Calc.Fourier
 		/// data stored in column order (Fortran convention) use the member
 		/// function SetOrder() to change the order - see below. For optimizations
 		/// on vector machines with separate memory banks an extra leading dimension
-		/// can be defined to avoid bank conflicts - also see SetOrder(). 
-		/// </remarks>  
+		/// can be defined to avoid bank conflicts - also see SetOrder().
+		/// </remarks>
 		public Pfa235FFT(int n1, int n2)
 		{
 			ndim = 2;
 			row_order = true;
-
 
 			int[][] pqr = new int[2][];
 			pqr[0] = new int[3];
@@ -186,18 +182,17 @@ namespace Altaxo.Calc.Fourier
 				gpfasetup(trigs, trindex[i], dim[i]);
 		}
 
-
 		/// <summary>
 		/// 3-dimensional setup
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for one, two or three 
+		/// Setup fast Fourier transform / back-transform for one, two or three
 		/// dimensions. The dimensions n1,n2,and n3 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// otherwise an error will be generated and the error handler function
 		/// Matpack.Error() is called. On instantiation some trigonometric tables
 		/// will be allocated and calculated. This approach avoids multiple
-		/// twiddle factor recalculations if several FFTs are calculated for data 
+		/// twiddle factor recalculations if several FFTs are calculated for data
 		/// with the same dimensions. Sometimes it is convenient to define an
 		/// "empty" setup (first constructor) and assign a setup later (see
 		/// copying and assignment). As default the multi-dimensional data
@@ -205,7 +200,7 @@ namespace Altaxo.Calc.Fourier
 		/// data stored in column order (Fortran convention) use the member
 		/// function SetOrder() to change the order - see below. For optimizations
 		/// on vector machines with separate memory banks an extra leading dimension
-		/// can be defined to avoid bank conflicts - also see SetOrder(). 
+		/// can be defined to avoid bank conflicts - also see SetOrder().
 		/// </remarks>
 		public Pfa235FFT(int n1, int n2, int n3)
 		{
@@ -240,19 +235,17 @@ namespace Altaxo.Calc.Fourier
 				gpfasetup(trigs, trindex[i], dim[i]);
 		}
 
-
-
 		/// <summary>
 		///  Copy-Constructor
 		/// </summary>
 		/// <remarks>
-		/// Setup fast Fourier transform / back-transform for one, two or three 
+		/// Setup fast Fourier transform / back-transform for one, two or three
 		/// dimensions. The dimensions n1,n2,and n3 must be of the form
 		///              n = (2**p) * (3**q) * (5**r)
 		/// otherwise an error will be generated and the error handler function
 		/// Matpack.Error() is called. On instantiation some trigonometric tables
 		/// will be allocated and calculated. This approach avoids multiple
-		/// twiddle factor recalculations if several FFTs are calculated for data 
+		/// twiddle factor recalculations if several FFTs are calculated for data
 		/// with the same dimensions. Sometimes it is convenient to define an
 		/// "empty" setup (first constructor) and assign a setup later (see
 		/// copying and assignment). As default the multi-dimensional data
@@ -260,8 +253,8 @@ namespace Altaxo.Calc.Fourier
 		/// data stored in column order (Fortran convention) use the member
 		/// function SetOrder() to change the order - see below. For optimizations
 		/// on vector machines with separate memory banks an extra leading dimension
-		/// can be defined to avoid bank conflicts - also see SetOrder(). 
-		/// </remarks>  
+		/// can be defined to avoid bank conflicts - also see SetOrder().
+		/// </remarks>
 		public Pfa235FFT(Pfa235FFT fft)
 		{
 			// copy all elements
@@ -278,11 +271,9 @@ namespace Altaxo.Calc.Fourier
 			// allocate and copy trigs
 			trigs = new double[trisize];
 			Array.Copy(fft.trigs, 0, this.trigs, 0, fft.trigs.Length);
-
 		}
 
 		// FFT functions
-
 
 		/// <summary>
 		/// Factorize the number into powers of 2, 3, and 5
@@ -308,7 +299,6 @@ namespace Altaxo.Calc.Fourier
 			return (n == 1); // return false if decomposition failed
 		}
 
-
 		/// <summary>
 		/// Test if the number n can be factorized into powers of 2, 3 and 5.
 		/// </summary>
@@ -320,35 +310,34 @@ namespace Altaxo.Calc.Fourier
 			return Factorize(n, pqr);
 		}
 
-
 		/// <summary>
 		/// Set information about the row order and the leading dimension.
 		/// If the row order argument is non-zero then the d-dimensional data
 		/// are assumed to be stored in row order (the C convention), otherwise if
 		/// zero then column order (the Fortran convention) is assumed.
-		/// The leading dimension can be choosen different from the first/last 
+		/// The leading dimension can be choosen different from the first/last
 		/// dimension of the array. This can give a significant
 		/// speed increase on some vector machines avoiding memory-bank conflicts.
 		/// If the data are stored column-ordered (Fortran style) then the leading
 		/// dimension is the first dimension, otherwise if the data are stored row-
-		/// ordered (C style) then the last dimension is the leading dimension 
+		/// ordered (C style) then the last dimension is the leading dimension
 		/// and will be padded!
 		/// </summary>
-		/// <param name="row">If the row order argument is non-zero then the 
-		///       d-dimensional data are assumed to be stored in 
+		/// <param name="row">If the row order argument is non-zero then the
+		///       d-dimensional data are assumed to be stored in
 		///       row order (the C convention), otherwise if
-		///         zero then column order (the Fortran convention) 
+		///         zero then column order (the Fortran convention)
 		///       is assumed. Initially row order is assumed!</param>
 		/// <param name="lead">The leading dimension can be choosen different
 		///       from the first/last dimension of the array. This
-		///       can give a significant speed increase on some 
+		///       can give a significant speed increase on some
 		///       vector machines avoiding memory-bank conflicts.
-		///         If the data are stored column-ordered (Fortran 
-		///       style) then the leading dimension is the first 
+		///         If the data are stored column-ordered (Fortran
+		///       style) then the leading dimension is the first
 		///       dimension, otherwise if the data are stored row-
-		///         ordered (C style) then the last dimension is the 
-		///       leading dimension and will be padded!</param> 
-		void SetOrder(int row, int lead)
+		///         ordered (C style) then the last dimension is the
+		///       leading dimension and will be padded!</param>
+		private void SetOrder(int row, int lead)
 		{
 			if (ndim == 0)
 				throw new ArithmeticException("Pfa235FFT::SetOrder: no dimensions are specified");
@@ -359,7 +348,6 @@ namespace Altaxo.Calc.Fourier
 			// set corresponding leading dimension
 			if (row_order) /* C convention */
 			{
-
 				if (lead <= 0)
 					id = dim[ndim - 1];
 				else if (lead < dim[ndim - 1])
@@ -367,11 +355,9 @@ namespace Altaxo.Calc.Fourier
 						lead, dim[ndim - 1]));
 				else
 					id = lead;
-
 			}
 			else /* column order, Fortran convention */
 			{
-
 				if (lead <= 0)
 					id = dim[0];
 				else if (lead < dim[0])
@@ -382,35 +368,32 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
-
 		/// <summary>
 		/// Get information about the row order and the leading dimension.
 		/// </summary>
-		/// <param name="row">If the row order argument is non-zero then the 
-		///       d-dimensional data are assumed to be stored in 
+		/// <param name="row">If the row order argument is non-zero then the
+		///       d-dimensional data are assumed to be stored in
 		///       row order (the C convention), otherwise if
-		///         zero then column order (the Fortran convention) 
+		///         zero then column order (the Fortran convention)
 		///       is assumed. Initially row order is assumed!</param>
 		/// <param name="lead">The leading dimension can be choosen different
 		///       from the first/last dimension of the array. This
-		///       can give a significant speed increase on some 
+		///       can give a significant speed increase on some
 		///       vector machines avoiding memory-bank conflicts.
-		///         If the data are stored column-ordered (Fortran 
-		///       style) then the leading dimension is the first 
+		///         If the data are stored column-ordered (Fortran
+		///       style) then the leading dimension is the first
 		///       dimension, otherwise if the data are stored row-
-		///         ordered (C style) then the last dimension is the 
+		///         ordered (C style) then the last dimension is the
 		///       leading dimension and will be padded!</param>
-		void GetOrder(out int row, out int lead)
+		private void GetOrder(out int row, out int lead)
 		{
 			row = row_order ? 1 : 0;
 			lead = id;
 		}
 
-
 		//-----------------------------------------------------------------------------//
 		// Complex forward/backward FFT for 1/2/3 dimensions
-		// Interface with complex<FLOAT> data vector 
+		// Interface with complex<FLOAT> data vector
 		//-----------------------------------------------------------------------------//
 
 		/*
@@ -420,50 +403,43 @@ int FFT (complex<FLOAT> c[], int isign)
 	FLOAT *d = (FLOAT*)c;
 
 	if (ndim == 0) {
-
 		Matpack.Error("Pfa235FFT: no dimensions have been specified");
-
 	} else if (ndim == 1) {
-
 		// leading dimension is ignored, row_order doesn't matter
 		gpfa(d, d+1, trigs, 2, 0, dim[0], 1, -isign);
-
 	} else if (ndim == 2) {
-
 		int one,two;
 		if (row_order) {  // C style
-			one = 0; two = 1; 
+			one = 0; two = 1;
 		} else {    // column order (Fortran style)
-			one = 1; two = 0; 
+			one = 1; two = 0;
 		}
 
 		int lot = (dim[one] + nthreads - 1) / nthreads;
 		for (int i = 0; i < nthreads; ++i) {
 			int offset = 2 * id * lot * i;
-			gpfa(d+offset, d+offset+1, trigs+trindex[two], 
+			gpfa(d+offset, d+offset+1, trigs+trindex[two],
 		 2, 2*id, dim[two], min(lot,dim[one]-i*lot), -isign);
 		}
-		gpfa(d, d+1, trigs+trindex[one], 
+		gpfa(d, d+1, trigs+trindex[one],
 	 2*id, 2, dim[one], dim[two], -isign);
-
 	} else if (ndim == 3) {
-
 		int one,two,three;
 		if (row_order) {  // C style
 			one = 0; two = 1; three = 2;
 		} else {    // column order (Fortran style)
-			one = 2; two = 1; three = 0; 
+			one = 2; two = 1; three = 0;
 		}
 
 		int lot = (dim[two] * dim[one] + nthreads - 1) / nthreads;
 		for (int i = 0; i < nthreads; ++i) {
 			int offset = 2 * id * lot * i;
-			gpfa(d+offset, d+offset+1, trigs+trindex[three], 
+			gpfa(d+offset, d+offset+1, trigs+trindex[three],
 		 2, 2*id, dim[three], min(lot,dim[two]*dim[one]-i*lot), -isign);
 		}
 		for (int i = 0; i < dim[one]; ++i) {
 			int offset = 2 * id * dim[two] * i;
-			gpfa(d+offset, d+offset+1, trigs+trindex[two], 
+			gpfa(d+offset, d+offset+1, trigs+trindex[two],
 		 2*id, 2, dim[two], dim[three], -isign);
 		}
 		lot = (id * dim[two] + nthreads - 1) / nthreads;
@@ -476,7 +452,6 @@ int FFT (complex<FLOAT> c[], int isign)
 	return 1;
 }
 */
-
 
 		/// <summary>
 		/// Complex forward/backward FFT for 1/2/3 dimensions
@@ -492,20 +467,15 @@ int FFT (complex<FLOAT> c[], int isign)
 		{
 			if (ndim == 0)
 			{
-
 				throw new ArithmeticException("Pfa235FFT: no dimensions have been specified");
-
 			}
 			else if (ndim == 1)
 			{
-
 				// leading dimension is ignored, row_order doesn't matter
 				gpfa(re, 0, im, 0, trigs, 0, 1, 0, dim[0], 1, (int)isign);
-
 			}
 			else if (ndim == 2)
 			{
-
 				int one, two;
 				if (row_order)
 				{ // C style
@@ -525,11 +495,9 @@ int FFT (complex<FLOAT> c[], int isign)
 				}
 				gpfa(re, 0, im, 0, trigs, trindex[one],
 					id, 1, dim[one], dim[two], (int)isign);
-
 			}
 			else if (ndim == 3)
 			{
-
 				int one, two, three;
 				if (row_order)
 				{ // C style
@@ -564,7 +532,6 @@ int FFT (complex<FLOAT> c[], int isign)
 			return 1;
 		}
 
-
 		/// <summary>
 		/// Performs two FFTs of the two real values arrays and store the result
 		/// in the arrays.
@@ -586,7 +553,6 @@ int FFT (complex<FLOAT> c[], int isign)
 			int n = dim[0];
 			if (isign == FourierDirection.Forward)
 			{
-
 				this.FFT(real1, real2, isign);
 				int i, j;
 				for (i = 1, j = n - 1; i < j; i++, j--)
@@ -627,13 +593,13 @@ int FFT (complex<FLOAT> c[], int isign)
 		}
 
 		/// <summary>
-		///   Raise the integer x to an integer power n with the minimal number of 
+		///   Raise the integer x to an integer power n with the minimal number of
 		///   multiplications. The exponent n must be non-negative.
 		/// </summary>
 		/// <param name="x">The integer to rise.</param>
 		/// <param name="n">The power, must be non-negative.</param>
 		/// <returns>x^n</returns>
-		static int powii(int x, int n)
+		private static int powii(int x, int n)
 		{
 			if (n < 0)
 				throw new ArithmeticException("powii: exponent must be non-negative");
@@ -655,18 +621,17 @@ int FFT (complex<FLOAT> c[], int isign)
 
 		#region GPFA Algorithms
 
-
-		static void gpfa2f(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
+		private static void gpfa2f(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
 		{
-			// *************************************************************** 
-			// *                                                             * 
-			// *  n.b. lvr = length of vector registers, set to 128 for c90. * 
-			// *  reset to 64 for other cray machines, or to any large value * 
-			// *  (greater than or equal to lot) for a scalar computer.      * 
-			// *                                                             * 
-			// *************************************************************** 
+			// ***************************************************************
+			// *                                                             *
+			// *  n.b. lvr = length of vector registers, set to 128 for c90. *
+			// *  reset to 64 for other cray machines, or to any large value *
+			// *  (greater than or equal to lot) for a scalar computer.      *
+			// *                                                             *
+			// ***************************************************************
 
-			// System generated locals 
+			// System generated locals
 			int i__2, i__3, i__4, i__5, i__6, i__7, i__8, i__9, i__10;
 
 			int ninc, left, nvex, j, k, l, m = 0, ipass, nblox, jstep, m2, n2, m8,
@@ -679,7 +644,7 @@ int FFT (complex<FLOAT> c[], int isign)
 				bjh, aji, bjm, ajj, bjj, ajk, ajl, bji, bjk, ajo, bjl, bjo, ajm,
 				ajn, ajp, bjn, bjp;
 
-			// Parameter adjustments 
+			// Parameter adjustments
 			--trOffs;
 			--bOffs;
 			--aOffs;
@@ -713,12 +678,11 @@ int FFT (complex<FLOAT> c[], int isign)
 			s = (double)isign;
 			istart = 1;
 
-			//  loop on blocks of lvr transforms 
-			//  -------------------------------- 
+			//  loop on blocks of lvr transforms
+			//  --------------------------------
 
 			for (nb = 1; nb <= nblox; ++nb)
 			{
-
 				if (left <= lvr)
 				{
 					nvex = left;
@@ -736,8 +700,8 @@ int FFT (complex<FLOAT> c[], int isign)
 
 				la = 1;
 
-				//  loop on type I radix-4 passes 
-				//  ----------------------------- 
+				//  loop on type I radix-4 passes
+				//  -----------------------------
 				mu = inq % 4;
 				if (isign == -1) mu = 4 - mu;
 				ss = 1.0;
@@ -750,16 +714,16 @@ int FFT (complex<FLOAT> c[], int isign)
 					jstep = n * inc / (la << 2);
 					jstepl = jstep - ninc;
 
-					//  k = 0 loop (no twiddle factors) 
-					//  ------------------------------- 
+					//  k = 0 loop (no twiddle factors)
+					//  -------------------------------
 					i__3 = (n - 1) * inc;
 					i__4 = jstep << 2;
 					for (jjj = 0; i__4 < 0 ? jjj >= i__3 : jjj <= i__3; jjj += i__4)
 					{
 						ja = istart + jjj;
 
-						//     "transverse" loop 
-						//     ----------------- 
+						//     "transverse" loop
+						//     -----------------
 						i__5 = inq;
 						for (nu = 1; nu <= i__5; ++nu)
 						{
@@ -780,8 +744,8 @@ int FFT (complex<FLOAT> c[], int isign)
 							}
 							j = 0;
 
-							//  loop across transforms 
-							//  ---------------------- 
+							//  loop across transforms
+							//  ----------------------
 
 							i__6 = nvex;
 							for (l = 1; l <= i__6; ++l)
@@ -820,13 +784,13 @@ int FFT (complex<FLOAT> c[], int isign)
 						}
 					}
 
-					//  finished if n2 = 4 
-					//  ------------------ 
+					//  finished if n2 = 4
+					//  ------------------
 					if (n2 == 4) goto L490;
 					kk = la << 1;
 
-					//  loop on nonzero k 
-					//  ----------------- 
+					//  loop on nonzero k
+					//  -----------------
 					i__4 = jstep - ink;
 					i__3 = ink;
 					for (k = ink; i__3 < 0 ? k >= i__4 : k <= i__4; k += i__3)
@@ -838,16 +802,16 @@ int FFT (complex<FLOAT> c[], int isign)
 						co3 = trigs[trOffs + kk * 3 + 1];
 						si3 = s * trigs[trOffs + kk * 3 + 2];
 
-						//  loop along transform 
-						//  -------------------- 
+						//  loop along transform
+						//  --------------------
 						i__5 = (n - 1) * inc;
 						i__6 = jstep << 2;
 						for (jjj = k; i__6 < 0 ? jjj >= i__5 : jjj <= i__5; jjj += i__6)
 						{
 							ja = istart + jjj;
 
-							//     "transverse" loop 
-							//     ----------------- 
+							//     "transverse" loop
+							//     -----------------
 							i__7 = inq;
 							for (nu = 1; nu <= i__7; ++nu)
 							{
@@ -868,8 +832,8 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 								j = 0;
 
-								//  loop across transforms 
-								//  ---------------------- 
+								//  loop across transforms
+								//  ----------------------
 
 								i__8 = nvex;
 								for (l = 1; l <= i__8; ++l)
@@ -900,7 +864,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + jd + j] = si3 * (t2 + u3) + co3 * (u2 - t3);
 									j += jump;
 								}
-								// -----( end of loop across transforms ) 
+								// -----( end of loop across transforms )
 								ja += jstepx;
 								if (ja < istart)
 								{
@@ -908,32 +872,32 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 							}
 						}
-						// -----( end of loop along transforms ) 
+						// -----( end of loop along transforms )
 						kk += la << 1;
 					}
-					// -----( end of loop on nonzero k ) 
+					// -----( end of loop on nonzero k )
 					la <<= 2;
 				}
-			// -----( end of loop on type I radix-4 passes) 
+			// -----( end of loop on type I radix-4 passes)
 
-				//  central radix-2 pass 
-			//  -------------------- 
+				//  central radix-2 pass
+			//  --------------------
 			L200:
 				if (m2 == 0) goto L300;
 
 				jstep = n * inc / (la << 1);
 				jstepl = jstep - ninc;
 
-				//  k=0 loop (no twiddle factors) 
-				//  ----------------------------- 
+				//  k=0 loop (no twiddle factors)
+				//  -----------------------------
 				i__2 = (n - 1) * inc;
 				i__3 = jstep << 1;
 				for (jjj = 0; i__3 < 0 ? jjj >= i__2 : jjj <= i__2; jjj += i__3)
 				{
 					ja = istart + jjj;
 
-					//     "transverse" loop 
-					//     ----------------- 
+					//     "transverse" loop
+					//     -----------------
 					i__4 = inq;
 					for (nu = 1; nu <= i__4; ++nu)
 					{
@@ -944,8 +908,8 @@ int FFT (complex<FLOAT> c[], int isign)
 						}
 						j = 0;
 
-						//  loop across transforms 
-						//  ---------------------- 
+						//  loop across transforms
+						//  ----------------------
 
 						i__6 = nvex;
 						for (l = 1; l <= i__6; ++l)
@@ -962,7 +926,7 @@ int FFT (complex<FLOAT> c[], int isign)
 							b[bOffs + jb + j] = u0;
 							j += jump;
 						}
-						// -----(end of loop across transforms) 
+						// -----(end of loop across transforms)
 						ja += jstepx;
 						if (ja < istart)
 						{
@@ -971,8 +935,8 @@ int FFT (complex<FLOAT> c[], int isign)
 					}
 				}
 
-				//  finished if n2=2 
-				//  ---------------- 
+				//  finished if n2=2
+				//  ----------------
 				if (n2 == 2)
 				{
 					goto L490;
@@ -980,8 +944,8 @@ int FFT (complex<FLOAT> c[], int isign)
 
 				kk = la << 1;
 
-				//  loop on nonzero k 
-				//  ----------------- 
+				//  loop on nonzero k
+				//  -----------------
 				i__3 = jstep - ink;
 				i__2 = ink;
 				for (k = ink; i__2 < 0 ? k >= i__3 : k <= i__3; k += i__2)
@@ -989,16 +953,16 @@ int FFT (complex<FLOAT> c[], int isign)
 					co1 = trigs[trOffs + kk + 1];
 					si1 = s * trigs[trOffs + kk + 2];
 
-					//  loop along transforms 
-					//  --------------------- 
+					//  loop along transforms
+					//  ---------------------
 					i__4 = (n - 1) * inc;
 					i__6 = jstep << 1;
 					for (jjj = k; i__6 < 0 ? jjj >= i__4 : jjj <= i__4; jjj += i__6)
 					{
 						ja = istart + jjj;
 
-						//     "transverse" loop 
-						//     ----------------- 
+						//     "transverse" loop
+						//     -----------------
 						i__5 = inq;
 						for (nu = 1; nu <= i__5; ++nu)
 						{
@@ -1009,11 +973,10 @@ int FFT (complex<FLOAT> c[], int isign)
 							}
 							j = 0;
 
-							//  loop across transforms 
-							//  ---------------------- 
+							//  loop across transforms
+							//  ----------------------
 							if (kk == n2 / 2)
 							{
-
 								i__7 = nvex;
 								for (l = 1; l <= i__7; ++l)
 								{
@@ -1028,11 +991,9 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + jb + j] = t0;
 									j += jump;
 								}
-
 							}
 							else
 							{
-
 								i__7 = nvex;
 								for (l = 1; l <= i__7; ++l)
 								{
@@ -1048,10 +1009,9 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + jb + j] = si1 * t0 + co1 * u0;
 									j += jump;
 								}
-
 							}
 
-							// -----(end of loop across transforms) 
+							// -----(end of loop across transforms)
 							ja += jstepx;
 							if (ja < istart)
 							{
@@ -1059,17 +1019,17 @@ int FFT (complex<FLOAT> c[], int isign)
 							}
 						}
 					}
-					// -----(end of loop along transforms) 
+					// -----(end of loop along transforms)
 					kk += la << 1;
 				}
-				// -----(end of loop on nonzero k) 
-				// -----(end of radix-2 pass) 
+				// -----(end of loop on nonzero k)
+				// -----(end of radix-2 pass)
 
 				la <<= 1;
 				goto L400;
 
-				//  central radix-8 pass 
-			//  -------------------- 
+				//  central radix-8 pass
+			//  --------------------
 			L300:
 				if (m8 == 0) goto L400;
 				jstep = n * inc / (la << 3);
@@ -1082,8 +1042,8 @@ int FFT (complex<FLOAT> c[], int isign)
 				if (mu == 3 || mu == 5) c2 = -c2;
 				c3 = c1 * c2;
 
-				//  stage 1 
-				//  ------- 
+				//  stage 1
+				//  -------
 				i__2 = jstep - ink;
 				i__3 = ink;
 				for (k = 0; i__3 < 0 ? k >= i__2 : k <= i__2; k += i__3)
@@ -1094,8 +1054,8 @@ int FFT (complex<FLOAT> c[], int isign)
 					{
 						ja = istart + jjj;
 
-						//     "transverse" loop 
-						//     ----------------- 
+						//     "transverse" loop
+						//     -----------------
 						i__5 = inq;
 						for (nu = 1; nu <= i__5; ++nu)
 						{
@@ -1190,19 +1150,19 @@ int FFT (complex<FLOAT> c[], int isign)
 					}
 				}
 
-				//  stage 2 
-				//  ------- 
+				//  stage 2
+				//  -------
 
-				//  k=0 (no twiddle factors) 
-				//  ------------------------ 
+				//  k=0 (no twiddle factors)
+				//  ------------------------
 				i__3 = (n - 1) * inc;
 				i__2 = jstep << 3;
 				for (jjj = 0; i__2 < 0 ? jjj >= i__3 : jjj <= i__3; jjj += i__2)
 				{
 					ja = istart + jjj;
 
-					//     "transverse" loop 
-					//     ----------------- 
+					//     "transverse" loop
+					//     -----------------
 					i__4 = inq;
 					for (nu = 1; nu <= i__4; ++nu)
 					{
@@ -1306,15 +1266,14 @@ int FFT (complex<FLOAT> c[], int isign)
 
 				if (n2 == 8) goto L490;
 
-				//  loop on nonzero k 
-				//  ----------------- 
+				//  loop on nonzero k
+				//  -----------------
 				kk = la << 1;
 
 				i__2 = jstep - ink;
 				i__3 = ink;
 				for (k = ink; i__3 < 0 ? k >= i__2 : k <= i__2; k += i__3)
 				{
-
 					co1 = trigs[trOffs + kk + 1];
 					si1 = s * trigs[trOffs + kk + 2];
 					co2 = trigs[trOffs + (kk << 1) + 1];
@@ -1336,8 +1295,8 @@ int FFT (complex<FLOAT> c[], int isign)
 					{
 						ja = istart + jjj;
 
-						//     "transverse" loop 
-						//     ----------------- 
+						//     "transverse" loop
+						//     -----------------
 						i__5 = inq;
 						for (nu = 1; nu <= i__5; ++nu)
 						{
@@ -1443,8 +1402,8 @@ int FFT (complex<FLOAT> c[], int isign)
 
 				la <<= 3;
 
-				//  loop on type II radix-4 passes 
-			//  ------------------------------ 
+				//  loop on type II radix-4 passes
+			//  ------------------------------
 			L400:
 				mu = inq % 4;
 				if (isign == -1) mu = 4 - mu;
@@ -1458,21 +1417,20 @@ int FFT (complex<FLOAT> c[], int isign)
 					jstepl = jstep - ninc;
 					laincl = la * ink - ninc;
 
-					//  k=0 loop (no twiddle factors) 
-					//  ----------------------------- 
+					//  k=0 loop (no twiddle factors)
+					//  -----------------------------
 					i__2 = (la - 1) * ink;
 					i__6 = jstep << 2;
 					for (ll = 0; i__6 < 0 ? ll >= i__2 : ll <= i__2; ll += i__6)
 					{
-
 						i__4 = (n - 1) * inc;
 						i__5 = (la << 2) * ink;
 						for (jjj = ll; i__5 < 0 ? jjj >= i__4 : jjj <= i__4; jjj += i__5)
 						{
 							ja = istart + jjj;
 
-							//     "transverse" loop 
-							//     ----------------- 
+							//     "transverse" loop
+							//     -----------------
 							i__7 = inq;
 							for (nu = 1; nu <= i__7; ++nu)
 							{
@@ -1553,8 +1511,8 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 								j = 0;
 
-								//  loop across transforms 
-								//  ---------------------- 
+								//  loop across transforms
+								//  ----------------------
 
 								i__8 = nvex;
 								for (l = 1; l <= i__8; ++l)
@@ -1589,7 +1547,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									ajd = t2 + u3;
 									bjb = u2 + t3;
 									b[bOffs + jm + j] = u2 - t3;
-									// ---------------------- 
+									// ----------------------
 									ajg = a[aOffs + jg + j];
 									t0 = ajb + ajg;
 									t2 = ajb - ajg;
@@ -1618,7 +1576,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									ajh = t2 + u3;
 									b[bOffs + jf + j] = u2 + t3;
 									bjh = u2 - t3;
-									// ---------------------- 
+									// ----------------------
 									ajk = a[aOffs + jk + j];
 									t0 = ajc + ajk;
 									t2 = ajc - ajk;
@@ -1645,7 +1603,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									a[aOffs + jo + j] = t2 + u3;
 									b[bOffs + jg + j] = u2 + t3;
 									b[bOffs + jo + j] = u2 - t3;
-									// ---------------------- 
+									// ----------------------
 									ajm = a[aOffs + jm + j];
 									t0 = ajm + ajl;
 									t2 = ajm - ajl;
@@ -1672,7 +1630,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + jp + j] = u2 - t3;
 									j += jump;
 								}
-								// -----( end of loop across transforms ) 
+								// -----( end of loop across transforms )
 								ja += jstepx;
 								if (ja < istart)
 								{
@@ -1681,16 +1639,16 @@ int FFT (complex<FLOAT> c[], int isign)
 							}
 						}
 					}
-					// -----( end of double loop for k=0 ) 
+					// -----( end of double loop for k=0 )
 
-					//  finished if last pass 
-					//  --------------------- 
+					//  finished if last pass
+					//  ---------------------
 					if (ipass == m) goto L490;
 
 					kk = la << 1;
 
-					//     loop on nonzero k 
-					//     ----------------- 
+					//     loop on nonzero k
+					//     -----------------
 					i__6 = jstep - ink;
 					i__2 = ink;
 					for (k = ink; i__2 < 0 ? k >= i__6 : k <= i__6; k += i__2)
@@ -1702,21 +1660,20 @@ int FFT (complex<FLOAT> c[], int isign)
 						co3 = trigs[trOffs + kk * 3 + 1];
 						si3 = s * trigs[trOffs + kk * 3 + 2];
 
-						//  double loop along first transform in block 
-						//  ------------------------------------------ 
+						//  double loop along first transform in block
+						//  ------------------------------------------
 						i__5 = (la - 1) * ink;
 						i__4 = jstep << 2;
 						for (ll = k; i__4 < 0 ? ll >= i__5 : ll <= i__5; ll += i__4)
 						{
-
 							i__7 = (n - 1) * inc;
 							i__8 = (la << 2) * ink;
 							for (jjj = ll; i__8 < 0 ? jjj >= i__7 : jjj <= i__7; jjj += i__8)
 							{
 								ja = istart + jjj;
 
-								//     "transverse" loop 
-								//     ----------------- 
+								//     "transverse" loop
+								//     -----------------
 								i__9 = inq;
 								for (nu = 1; nu <= i__9; ++nu)
 								{
@@ -1797,8 +1754,8 @@ int FFT (complex<FLOAT> c[], int isign)
 									}
 									j = 0;
 
-									//  loop across transforms 
-									//  ---------------------- 
+									//  loop across transforms
+									//  ----------------------
 
 									i__10 = nvex;
 									for (l = 1; l <= i__10; ++l)
@@ -1833,7 +1790,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										bjc = si2 * (t0 - t1) + co2 * (u0 - u1);
 										ajd = co3 * (t2 + u3) - si3 * (u2 - t3);
 										b[bOffs + jm + j] = si3 * (t2 + u3) + co3 * (u2 - t3);
-										// ---------------------------------------- 
+										// ----------------------------------------
 										ajg = a[aOffs + jg + j];
 										t0 = ajb + ajg;
 										t2 = ajb - ajg;
@@ -1862,7 +1819,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + jj + j] = si2 * (t0 - t1) + co2 * (u0 - u1);
 										ajh = co3 * (t2 + u3) - si3 * (u2 - t3);
 										bjh = si3 * (t2 + u3) + co3 * (u2 - t3);
-										// ---------------------------------------- 
+										// ----------------------------------------
 										ajk = a[aOffs + jk + j];
 										t0 = ajc + ajk;
 										t2 = ajc - ajk;
@@ -1889,7 +1846,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + jk + j] = si2 * (t0 - t1) + co2 * (u0 - u1);
 										a[aOffs + jo + j] = co3 * (t2 + u3) - si3 * (u2 - t3);
 										b[bOffs + jo + j] = si3 * (t2 + u3) + co3 * (u2 - t3);
-										// ---------------------------------------- 
+										// ----------------------------------------
 										ajm = a[aOffs + jm + j];
 										t0 = ajm + ajl;
 										t2 = ajm - ajl;
@@ -1916,7 +1873,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + jp + j] = si3 * (t2 + u3) + co3 * (u2 - t3);
 										j += jump;
 									}
-									// -----(end of loop across transforms) 
+									// -----(end of loop across transforms)
 									ja += jstepx;
 									if (ja < istart)
 									{
@@ -1925,33 +1882,33 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 							}
 						}
-						// -----( end of double loop for this k ) 
+						// -----( end of double loop for this k )
 						kk += la << 1;
 					}
-					// -----( end of loop over values of k ) 
+					// -----( end of loop over values of k )
 					la <<= 2;
 				}
-			// -----( end of loop on type II radix-4 passes ) 
-			// -----( nvex transforms completed) 
+			// -----( end of loop on type II radix-4 passes )
+			// -----( nvex transforms completed)
 			L490:
 				istart += nvex * jump;
 			}
 			// -----( end of loop on blocks of transforms )
 		}
 
-		static void gpfa3f(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
+		private static void gpfa3f(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
 		{
 			const double sin60 = 0.866025403784437;
 
-			// *************************************************************** 
-			// *                                                             * 
-			// *  n.b. lvr = length of vector registers, set to 128 for c90. * 
-			// *  reset to 64 for other cray machines, or to any large value * 
-			// *  (greater than or equal to lot) for a scalar computer.      * 
-			// *                                                             * 
-			// *************************************************************** 
+			// ***************************************************************
+			// *                                                             *
+			// *  n.b. lvr = length of vector registers, set to 128 for c90. *
+			// *  reset to 64 for other cray machines, or to any large value *
+			// *  (greater than or equal to lot) for a scalar computer.      *
+			// *                                                             *
+			// ***************************************************************
 
-			// System generated locals 
+			// System generated locals
 			int i__1, i__2, i__3, i__4, i__5, i__6, i__7, i__8, i__9, i__10;
 
 			double s, c1, t1, t2, t3, u1, u2, u3, co1, co2, si1, si2, aja, ajb,
@@ -1985,12 +1942,11 @@ int FFT (complex<FLOAT> c[], int isign)
 			s = (double)isign;
 			istart = 1;
 
-			//  loop on blocks of lvr transforms 
-			//  -------------------------------- 
+			//  loop on blocks of lvr transforms
+			//  --------------------------------
 			i__1 = nblox;
 			for (nb = 1; nb <= i__1; ++nb)
 			{
-
 				if (left <= lvr)
 				{
 					nvex = left;
@@ -2008,24 +1964,24 @@ int FFT (complex<FLOAT> c[], int isign)
 
 				la = 1;
 
-				//  loop on type I radix-3 passes 
-				//  ----------------------------- 
+				//  loop on type I radix-3 passes
+				//  -----------------------------
 				i__2 = mh;
 				for (ipass = 1; ipass <= i__2; ++ipass)
 				{
 					jstep = n * inc / (la * 3);
 					jstepl = jstep - ninc;
 
-					//  k = 0 loop (no twiddle factors) 
-					//  ------------------------------- 
+					//  k = 0 loop (no twiddle factors)
+					//  -------------------------------
 					i__3 = (n - 1) * inc;
 					i__4 = jstep * 3;
 					for (jjj = 0; i__4 < 0 ? jjj >= i__3 : jjj <= i__3; jjj += i__4)
 					{
 						ja = istart + jjj;
 
-						//  "transverse" loop 
-						//  ----------------- 
+						//  "transverse" loop
+						//  -----------------
 						i__5 = inq;
 						for (nu = 1; nu <= i__5; ++nu)
 						{
@@ -2041,8 +1997,8 @@ int FFT (complex<FLOAT> c[], int isign)
 							}
 							j = 0;
 
-							//  loop across transforms 
-							//  ---------------------- 
+							//  loop across transforms
+							//  ----------------------
 
 							i__6 = nvex;
 							for (l = 1; l <= i__6; ++l)
@@ -2075,13 +2031,13 @@ int FFT (complex<FLOAT> c[], int isign)
 						}
 					}
 
-					//  finished if n3 = 3 
-					//  ------------------ 
+					//  finished if n3 = 3
+					//  ------------------
 					if (n3 == 3) goto L490;
 					kk = la << 1;
 
-					//  loop on nonzero k 
-					//  ----------------- 
+					//  loop on nonzero k
+					//  -----------------
 					i__4 = jstep - ink;
 					i__3 = ink;
 					for (k = ink; i__3 < 0 ? k >= i__4 : k <= i__4; k += i__3)
@@ -2091,16 +2047,16 @@ int FFT (complex<FLOAT> c[], int isign)
 						co2 = trigs[trOffs + (kk << 1) + 1];
 						si2 = s * trigs[trOffs + (kk << 1) + 2];
 
-						//  loop along transform 
-						//  -------------------- 
+						//  loop along transform
+						//  --------------------
 						i__5 = (n - 1) * inc;
 						i__6 = jstep * 3;
 						for (jjj = k; i__6 < 0 ? jjj >= i__5 : jjj <= i__5; jjj += i__6)
 						{
 							ja = istart + jjj;
 
-							//  "transverse" loop 
-							//  ----------------- 
+							//  "transverse" loop
+							//  -----------------
 							i__7 = inq;
 							for (nu = 1; nu <= i__7; ++nu)
 							{
@@ -2116,8 +2072,8 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 								j = 0;
 
-								//  loop across transforms 
-								//  ---------------------- 
+								//  loop across transforms
+								//  ----------------------
 
 								i__8 = nvex;
 								for (l = 1; l <= i__8; ++l)
@@ -2142,7 +2098,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + jc + j] = si2 * (t2 + u3) + co2 * (u2 - t3);
 									j += jump;
 								}
-								// -----( end of loop across transforms ) 
+								// -----( end of loop across transforms )
 								ja += jstepx;
 								if (ja < istart)
 								{
@@ -2150,16 +2106,16 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 							}
 						}
-						// -----( end of loop along transforms ) 
+						// -----( end of loop along transforms )
 						kk += la << 1;
 					}
-					// -----( end of loop on nonzero k ) 
+					// -----( end of loop on nonzero k )
 					la *= 3;
 				}
-				// -----( end of loop on type I radix-3 passes) 
+				// -----( end of loop on type I radix-3 passes)
 
-				//  loop on type II radix-3 passes 
-				//  ------------------------------ 
+				//  loop on type II radix-3 passes
+				//  ------------------------------
 
 				i__2 = m;
 				for (ipass = mh + 1; ipass <= i__2; ++ipass)
@@ -2168,21 +2124,20 @@ int FFT (complex<FLOAT> c[], int isign)
 					jstepl = jstep - ninc;
 					laincl = la * ink - ninc;
 
-					//  k=0 loop (no twiddle factors) 
-					//  ----------------------------- 
+					//  k=0 loop (no twiddle factors)
+					//  -----------------------------
 					i__3 = (la - 1) * ink;
 					i__4 = jstep * 3;
 					for (ll = 0; i__4 < 0 ? ll >= i__3 : ll <= i__3; ll += i__4)
 					{
-
 						i__6 = (n - 1) * inc;
 						i__5 = la * 3 * ink;
 						for (jjj = ll; i__5 < 0 ? jjj >= i__6 : jjj <= i__6; jjj += i__5)
 						{
 							ja = istart + jjj;
 
-							//  "transverse" loop 
-							//  ----------------- 
+							//  "transverse" loop
+							//  -----------------
 							i__7 = inq;
 							for (nu = 1; nu <= i__7; ++nu)
 							{
@@ -2228,8 +2183,8 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 								j = 0;
 
-								//  loop across transforms 
-								//  ---------------------- 
+								//  loop across transforms
+								//  ----------------------
 
 								i__8 = nvex;
 								for (l = 1; l <= i__8; ++l)
@@ -2256,7 +2211,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + jd + j] = u2 + t3;
 									ajc = t2 + u3;
 									bjc = u2 - t3;
-									// ---------------------- 
+									// ----------------------
 									aje = a[aOffs + je + j];
 									ajf = a[aOffs + jf + j];
 									t1 = aje + ajf;
@@ -2277,7 +2232,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + je + j] = u2 + t3;
 									a[aOffs + jh + j] = t2 + u3;
 									b[bOffs + jh + j] = u2 - t3;
-									// ---------------------- 
+									// ----------------------
 									aji = a[aOffs + ji + j];
 									t1 = ajf + aji;
 									ajg = a[aOffs + jg + j];
@@ -2300,7 +2255,7 @@ int FFT (complex<FLOAT> c[], int isign)
 									b[bOffs + ji + j] = u2 - t3;
 									j += jump;
 								}
-								// -----( end of loop across transforms ) 
+								// -----( end of loop across transforms )
 								ja += jstepx;
 								if (ja < istart)
 								{
@@ -2309,15 +2264,15 @@ int FFT (complex<FLOAT> c[], int isign)
 							}
 						}
 					}
-					// -----( end of double loop for k=0 ) 
+					// -----( end of double loop for k=0 )
 
-					//  finished if last pass 
-					//  --------------------- 
+					//  finished if last pass
+					//  ---------------------
 					if (ipass == m) goto L490;
 					kk = la << 1;
 
-					//     loop on nonzero k 
-					//     ----------------- 
+					//     loop on nonzero k
+					//     -----------------
 					i__4 = jstep - ink;
 					i__3 = ink;
 					for (k = ink; i__3 < 0 ? k >= i__4 : k <= i__4; k += i__3)
@@ -2327,21 +2282,20 @@ int FFT (complex<FLOAT> c[], int isign)
 						co2 = trigs[trOffs + (kk << 1) + 1];
 						si2 = s * trigs[trOffs + (kk << 1) + 2];
 
-						//  double loop along first transform in block 
-						//  ------------------------------------------ 
+						//  double loop along first transform in block
+						//  ------------------------------------------
 						i__5 = (la - 1) * ink;
 						i__6 = jstep * 3;
 						for (ll = k; i__6 < 0 ? ll >= i__5 : ll <= i__5; ll += i__6)
 						{
-
 							i__7 = (n - 1) * inc;
 							i__8 = la * 3 * ink;
 							for (jjj = ll; i__8 < 0 ? jjj >= i__7 : jjj <= i__7; jjj += i__8)
 							{
 								ja = istart + jjj;
 
-								//  "transverse" loop 
-								//  ----------------- 
+								//  "transverse" loop
+								//  -----------------
 								i__9 = inq;
 								for (nu = 1; nu <= i__9; ++nu)
 								{
@@ -2387,8 +2341,8 @@ int FFT (complex<FLOAT> c[], int isign)
 									}
 									j = 0;
 
-									//  loop across transforms 
-									//  ---------------------- 
+									//  loop across transforms
+									//  ----------------------
 
 									i__10 = nvex;
 									for (l = 1; l <= i__10; ++l)
@@ -2415,7 +2369,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + jd + j] = si1 * (t2 - u3) + co1 * (u2 + t3);
 										ajc = co2 * (t2 + u3) - si2 * (u2 - t3);
 										bjc = si2 * (t2 + u3) + co2 * (u2 - t3);
-										// ---------------------- 
+										// ----------------------
 										aje = a[aOffs + je + j];
 										ajf = a[aOffs + jf + j];
 										t1 = aje + ajf;
@@ -2436,7 +2390,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + je + j] = si1 * (t2 - u3) + co1 * (u2 + t3);
 										a[aOffs + jh + j] = co2 * (t2 + u3) - si2 * (u2 - t3);
 										b[bOffs + jh + j] = si2 * (t2 + u3) + co2 * (u2 - t3);
-										// ---------------------- 
+										// ----------------------
 										aji = a[aOffs + ji + j];
 										t1 = ajf + aji;
 										ajg = a[aOffs + jg + j];
@@ -2459,7 +2413,7 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + ji + j] = si2 * (t2 + u3) + co2 * (u2 - t3);
 										j += jump;
 									}
-									// -----(end of loop across transforms) 
+									// -----(end of loop across transforms)
 									ja += jstepx;
 									if (ja < istart)
 									{
@@ -2468,35 +2422,35 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 							}
 						}
-						// -----( end of double loop for this k ) 
+						// -----( end of double loop for this k )
 						kk += la << 1;
 					}
-					// -----( end of loop over values of k ) 
+					// -----( end of loop over values of k )
 					la *= 3;
 				}
-			// -----( end of loop on type II radix-3 passes ) 
-			// -----( nvex transforms completed) 
+			// -----( end of loop on type II radix-3 passes )
+			// -----( nvex transforms completed)
 			L490:
 				istart += nvex * jump;
 			}
 			// -----( end of loop on blocks of transforms )
 		}
 
-		static void gpfa5f(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
+		private static void gpfa5f(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
 		{
 			const double sin36 = 0.587785252292473,
 							sin72 = 0.951056516295154,
 							qrt5 = 0.559016994374947;
 
-			// *************************************************************** 
-			// *                                                             * 
-			// *  n.b. lvr = length of vector registers, set to 128 for c90. * 
-			// *  reset to 64 for other cray machines, or to any large value * 
-			// *  (greater than or equal to lot) for a scalar computer.      * 
-			// *                                                             * 
-			// *************************************************************** 
+			// ***************************************************************
+			// *                                                             *
+			// *  n.b. lvr = length of vector registers, set to 128 for c90. *
+			// *  reset to 64 for other cray machines, or to any large value *
+			// *  (greater than or equal to lot) for a scalar computer.      *
+			// *                                                             *
+			// ***************************************************************
 
-			// System generated locals 
+			// System generated locals
 			int i__1, i__2, i__3, i__4, i__5, i__6, i__7, i__8, i__9, i__10;
 
 			double s, c1, c2, c3, t1, t2, t3, t4, t5, t6, t7, t8, t9, u1, u2, u3,
@@ -2513,7 +2467,7 @@ int FFT (complex<FLOAT> c[], int isign)
 				laincl, jn, jo, jp, jq, jr, js, jt, ju, jv, jw, jx, jy, jstepl,
 				istart, jstepx, jjj, ink, inq;
 
-			// Parameter adjustments 
+			// Parameter adjustments
 			--trOffs;
 			--bOffs;
 			--aOffs;
@@ -2546,12 +2500,11 @@ int FFT (complex<FLOAT> c[], int isign)
 			s = (double)isign;
 			istart = 1;
 
-			//  loop on blocks of lvr transforms 
-			//  -------------------------------- 
+			//  loop on blocks of lvr transforms
+			//  --------------------------------
 			i__1 = nblox;
 			for (nb = 1; nb <= i__1; ++nb)
 			{
-
 				if (left <= lvr)
 				{
 					nvex = left;
@@ -2569,8 +2522,8 @@ int FFT (complex<FLOAT> c[], int isign)
 
 				la = 1;
 
-				//  loop on type I radix-5 passes 
-				//  ----------------------------- 
+				//  loop on type I radix-5 passes
+				//  -----------------------------
 				i__2 = mh;
 				for (ipass = 1; ipass <= i__2; ++ipass)
 				{
@@ -2578,13 +2531,12 @@ int FFT (complex<FLOAT> c[], int isign)
 					jstepl = jstep - ninc;
 					kk = 0;
 
-					//  loop on k 
-					//  --------- 
+					//  loop on k
+					//  ---------
 					i__3 = jstep - ink;
 					i__4 = ink;
 					for (k = 0; i__4 < 0 ? k >= i__3 : k <= i__3; k += i__4)
 					{
-
 						if (k > 0)
 						{
 							co1 = trigs[trOffs + kk + 1];
@@ -2597,16 +2549,16 @@ int FFT (complex<FLOAT> c[], int isign)
 							si4 = s * trigs[trOffs + (kk << 2) + 2];
 						}
 
-						//  loop along transform 
-						//  -------------------- 
+						//  loop along transform
+						//  --------------------
 						i__5 = (n - 1) * inc;
 						i__6 = jstep * 5;
 						for (jjj = k; i__6 < 0 ? jjj >= i__5 : jjj <= i__5; jjj += i__6)
 						{
 							ja = istart + jjj;
 
-							//     "transverse" loop 
-							//     ----------------- 
+							//     "transverse" loop
+							//     -----------------
 							i__7 = inq;
 							for (nu = 1; nu <= i__7; ++nu)
 							{
@@ -2632,12 +2584,11 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 								j = 0;
 
-								//  loop across transforms 
-								//  ---------------------- 
+								//  loop across transforms
+								//  ----------------------
 								if (k == 0)
 								{
-
-									// dir$ ivdep, shortloop 
+									// dir$ ivdep, shortloop
 									i__8 = nvex;
 									for (l = 1; l <= i__8; ++l)
 									{
@@ -2685,12 +2636,10 @@ int FFT (complex<FLOAT> c[], int isign)
 										b[bOffs + jd + j] = u9 - t10;
 										j += jump;
 									}
-
 								}
 								else
 								{
-
-									// dir$ ivdep,shortloop 
+									// dir$ ivdep,shortloop
 									i__8 = nvex;
 									for (l = 1; l <= i__8; ++l)
 									{
@@ -2746,10 +2695,9 @@ int FFT (complex<FLOAT> c[], int isign)
 											t10);
 										j += jump;
 									}
-
 								}
 
-								// -----( end of loop across transforms ) 
+								// -----( end of loop across transforms )
 
 								ja += jstepx;
 								if (ja < istart)
@@ -2758,18 +2706,18 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 							}
 						}
-						// -----( end of loop along transforms ) 
+						// -----( end of loop along transforms )
 						kk += la << 1;
 					}
-					// -----( end of loop on nonzero k ) 
+					// -----( end of loop on nonzero k )
 					la *= 5;
 				}
-				// -----( end of loop on type I radix-5 passes) 
+				// -----( end of loop on type I radix-5 passes)
 
 				if (n == 5) goto L490;
 
-				//  loop on type II radix-5 passes 
-				//  ------------------------------ 
+				//  loop on type II radix-5 passes
+				//  ------------------------------
 
 				i__2 = m;
 				for (ipass = mh + 1; ipass <= i__2; ++ipass)
@@ -2779,13 +2727,12 @@ int FFT (complex<FLOAT> c[], int isign)
 					laincl = la * ink - ninc;
 					kk = 0;
 
-					//     loop on k 
-					//     --------- 
+					//     loop on k
+					//     ---------
 					i__4 = jstep - ink;
 					i__3 = ink;
 					for (k = 0; i__3 < 0 ? k >= i__4 : k <= i__4; k += i__3)
 					{
-
 						if (k > 0)
 						{
 							co1 = trigs[trOffs + kk + 1];
@@ -2798,21 +2745,20 @@ int FFT (complex<FLOAT> c[], int isign)
 							si4 = s * trigs[trOffs + (kk << 2) + 2];
 						}
 
-						//  double loop along first transform in block 
-						//  ------------------------------------------ 
+						//  double loop along first transform in block
+						//  ------------------------------------------
 						i__6 = (la - 1) * ink;
 						i__5 = jstep * 5;
 						for (ll = k; i__5 < 0 ? ll >= i__6 : ll <= i__6; ll += i__5)
 						{
-
 							i__7 = (n - 1) * inc;
 							i__8 = la * 5 * ink;
 							for (jjj = ll; i__8 < 0 ? jjj >= i__7 : jjj <= i__7; jjj += i__8)
 							{
 								ja = istart + jjj;
 
-								//     "transverse" loop 
-								//     ----------------- 
+								//     "transverse" loop
+								//     -----------------
 								i__9 = inq;
 								for (nu = 1; nu <= i__9; ++nu)
 								{
@@ -2938,12 +2884,11 @@ int FFT (complex<FLOAT> c[], int isign)
 									}
 									j = 0;
 
-									//  loop across transforms 
-									//  ---------------------- 
+									//  loop across transforms
+									//  ----------------------
 									if (k == 0)
 									{
-
-										// dir$ ivdep, shortloop 
+										// dir$ ivdep, shortloop
 										i__10 = nvex;
 										for (l = 1; l <= i__10; ++l)
 										{
@@ -2997,7 +2942,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jk + j] = u9 + t10;
 											ajd = t9 + u10;
 											bjd = u9 - t10;
-											// ---------------------- 
+											// ----------------------
 											ajg = a[aOffs + jg + j];
 											ajj = a[aOffs + jj + j];
 											t1 = ajg + ajj;
@@ -3046,7 +2991,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jl + j] = u9 + t10;
 											a[aOffs + jq + j] = t9 + u10;
 											b[bOffs + jq + j] = u9 - t10;
-											// ---------------------- 
+											// ----------------------
 											ajo = a[aOffs + jo + j];
 											t1 = ajh + ajo;
 											ajm = a[aOffs + jm + j];
@@ -3093,7 +3038,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jm + j] = u9 + t10;
 											a[aOffs + jr + j] = t9 + u10;
 											b[bOffs + jr + j] = u9 - t10;
-											// ---------------------- 
+											// ----------------------
 											ajt = a[aOffs + jt + j];
 											t1 = aji + ajt;
 											ajs = a[aOffs + js + j];
@@ -3140,7 +3085,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jn + j] = u9 + t10;
 											a[aOffs + js + j] = t9 + u10;
 											b[bOffs + js + j] = u9 - t10;
-											// ---------------------- 
+											// ----------------------
 											ajv = a[aOffs + jv + j];
 											ajy = a[aOffs + jy + j];
 											t1 = ajv + ajy;
@@ -3187,12 +3132,10 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jt + j] = u9 - t10;
 											j += jump;
 										}
-
 									}
 									else
 									{
-
-										// dir$ ivdep, shortloop 
+										// dir$ ivdep, shortloop
 										i__10 = nvex;
 										for (l = 1; l <= i__10; ++l)
 										{
@@ -3250,7 +3193,7 @@ int FFT (complex<FLOAT> c[], int isign)
 												+ t10);
 											ajd = co3 * (t9 + u10) - si3 * (u9 - t10);
 											bjd = si3 * (t9 + u10) + co3 * (u9 - t10);
-											// ---------------------- 
+											// ----------------------
 											ajg = a[aOffs + jg + j];
 											ajj = a[aOffs + jj + j];
 											t1 = ajg + ajj;
@@ -3299,7 +3242,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jl + j] = si2 * (t9 - u10) + co2 * (u9 + t10);
 											a[aOffs + jq + j] = co3 * (t9 + u10) - si3 * (u9 - t10);
 											b[bOffs + jq + j] = si3 * (t9 + u10) + co3 * (u9 - t10);
-											// ---------------------- 
+											// ----------------------
 											ajo = a[aOffs + jo + j];
 											t1 = ajh + ajo;
 											ajm = a[aOffs + jm + j];
@@ -3346,7 +3289,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jm + j] = si2 * (t9 - u10) + co2 * (u9 + t10);
 											a[aOffs + jr + j] = co3 * (t9 + u10) - si3 * (u9 - t10);
 											b[bOffs + jr + j] = si3 * (t9 + u10) + co3 * (u9 - t10);
-											// ---------------------- 
+											// ----------------------
 											ajt = a[aOffs + jt + j];
 											t1 = aji + ajt;
 											ajs = a[aOffs + js + j];
@@ -3393,7 +3336,7 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jn + j] = si2 * (t9 - u10) + co2 * (u9 + t10);
 											a[aOffs + js + j] = co3 * (t9 + u10) - si3 * (u9 - t10);
 											b[bOffs + js + j] = si3 * (t9 + u10) + co3 * (u9 - t10);
-											// ---------------------- 
+											// ----------------------
 											ajv = a[aOffs + jv + j];
 											ajy = a[aOffs + jy + j];
 											t1 = ajv + ajy;
@@ -3440,10 +3383,9 @@ int FFT (complex<FLOAT> c[], int isign)
 											b[bOffs + jt + j] = si3 * (t9 + u10) + co3 * (u9 - t10);
 											j += jump;
 										}
-
 									}
 
-									// -----(end of loop across transforms) 
+									// -----(end of loop across transforms)
 
 									ja += jstepx;
 									if (ja < istart)
@@ -3453,47 +3395,46 @@ int FFT (complex<FLOAT> c[], int isign)
 								}
 							}
 						}
-						// -----( end of double loop for this k ) 
+						// -----( end of double loop for this k )
 						kk += la << 1;
 					}
-					// -----( end of loop over values of k ) 
+					// -----( end of loop over values of k )
 					la *= 5;
 				}
-			// -----( end of loop on type II radix-5 passes ) 
-			// -----( nvex transforms completed) 
+			// -----( end of loop on type II radix-5 passes )
+			// -----( nvex transforms completed)
 			L490:
 				istart += nvex * jump;
 			}
 			// -----( end of loop on blocks of transforms )
-
 		}
 
 		//-----------------------------------------------------------------------------//
 		//
 		//    gpfasetup(trigs,n)
 		//
-		//        setup routine for self-sorting in-place 
+		//        setup routine for self-sorting in-place
 		//        generalized prime factor (complex) fft
 		//
-		//    input : 
-		//    ----- 
-		//        n is the length of the transforms. n must be of the form: 
-		//          ----------------------------------- 
-		//            n = (2**ip) * (3**iq) * (5**ir) 
-		//          ----------------------------------- 
+		//    input :
+		//    -----
+		//        n is the length of the transforms. n must be of the form:
+		//          -----------------------------------
+		//            n = (2**ip) * (3**iq) * (5**ir)
+		//          -----------------------------------
 		//
-		//    output: 
-		//    ------ 
-		//        trigs is a table of twiddle factors, 
-		//          of length 2*pqr (real) words, where: 
-		//          -------------------------------------- 
-		//            pqr = (2**ip) + (3**iq) + (5**ir) 
-		//          -------------------------------------- 
+		//    output:
+		//    ------
+		//        trigs is a table of twiddle factors,
+		//          of length 2*pqr (real) words, where:
+		//          --------------------------------------
+		//            pqr = (2**ip) + (3**iq) + (5**ir)
+		//          --------------------------------------
 		//
 		//    Written by Clive Temperton 1990.
 		//
 		//-----------------------------------------------------------------------------//
-		static void gpfasetup(double[] trigs, int trOffs, int n)
+		private static void gpfasetup(double[] trigs, int trOffs, int n)
 		{
 			int ifac, kink, irot, i, k, kk, ni, ll, ip, iq, nn, ir;
 			int[] nj = new int[3];
@@ -3501,10 +3442,10 @@ int FFT (complex<FLOAT> c[], int isign)
 
 			const double twopi = 2 * Math.PI;
 
-			// Decompose n into factors 2,3,5 
-			// ------------------------------ 
+			// Decompose n into factors 2,3,5
+			// ------------------------------
 
-			// Parameter adjustments 
+			// Parameter adjustments
 			--trOffs;
 
 			nn = n;
@@ -3532,7 +3473,7 @@ int FFT (complex<FLOAT> c[], int isign)
 			iq = nj[1];
 			ir = nj[2];
 
-			// Compute list of rotated twiddle factors 
+			// Compute list of rotated twiddle factors
 			// ---------------------------------------
 
 			nj[0] = powii(2, ip);
@@ -3565,55 +3506,55 @@ int FFT (complex<FLOAT> c[], int isign)
 
 		//-----------------------------------------------------------------------------//
 		//
-		// gpfa: self-sorting in-place generalized prime factor (complex) fft 
+		// gpfa: self-sorting in-place generalized prime factor (complex) fft
 		//
 		// Definition:
 		// -----------
-		//        x(j) = sum(k=0,...,n-1) ( c(k) * exp(isign*2*i*j*k*pi/n) ) 
+		//        x(j) = sum(k=0,...,n-1) ( c(k) * exp(isign*2*i*j*k*pi/n) )
 		//
 		// Prototype:
 		// ----------
-		//   void gpfa (FLOAT a[], FLOAT b[], FLOAT trigs[], 
+		//   void gpfa (FLOAT a[], FLOAT b[], FLOAT trigs[],
 		//              int inc, int jump, int n, int lot, int isign)
 		//
 		// Arguments:
 		// ----------
-		//   a      is first real input/output vector. The first element is 
+		//   a      is first real input/output vector. The first element is
 		//          indexed by a[0].
 		//
-		//   b      is first imaginary input/output vector. The first element is 
+		//   b      is first imaginary input/output vector. The first element is
 		//          indexed by b[0].
 		//
-		//   trigs  is a table of twiddle factors, precalculated 
-		//          by calling function 'gpfasetup'. The first element is 
+		//   trigs  is a table of twiddle factors, precalculated
+		//          by calling function 'gpfasetup'. The first element is
 		//          indexed by trigs[0].
 		//
-		//   inc    is the increment within each data vector 
+		//   inc    is the increment within each data vector
 		//
-		//   jump   is the increment between data vectors 
+		//   jump   is the increment between data vectors
 		//
 		//   n      is the length of the transforms which must be of the form
-		//          n = (2**ip) * (3**iq) * (5**ir) 
+		//          n = (2**ip) * (3**iq) * (5**ir)
 		//
-		//   lot    is the number of transforms 
+		//   lot    is the number of transforms
 		//
-		//   isign  = +1 for forward transform 
-		//          = -1 for inverse transform 
+		//   isign  = +1 for forward transform
+		//          = -1 for inverse transform
 		//
 		// References:
-		// ----------- 
+		// -----------
 		//  1) Originally written by:
 		//
-		//           Clive Temperton 
-		//           Recherche en Prevision Numerique 
-		//           Atmospheric Environment Service, Canada 
+		//           Clive Temperton
+		//           Recherche en Prevision Numerique
+		//           Atmospheric Environment Service, Canada
 		//
-		//   2) For a mathematical development of the algorithm used, see: 
+		//   2) For a mathematical development of the algorithm used, see:
 		//
-		//            C. Temperton, "A Generalized Prime Factor FFT Algorithm for 
-		//            any n = (2**p)(3**q)(5**r)", SIAM J.Sci.Stat.Comp., May 1992. 
+		//            C. Temperton, "A Generalized Prime Factor FFT Algorithm for
+		//            any n = (2**p)(3**q)(5**r)", SIAM J.Sci.Stat.Comp., May 1992.
 		//
-		//  3) Conversion to C++ based on Clive Tempertons original algorithm 
+		//  3) Conversion to C++ based on Clive Tempertons original algorithm
 		//     by B. M. Gammel, Jan 1997. Worked over the whole code.
 		//
 		//  4) The original Fortran source files can be obtained freely from
@@ -3621,7 +3562,7 @@ int FFT (complex<FLOAT> c[], int isign)
 		//
 		//-----------------------------------------------------------------------------//
 		// the basic gpfa routine can also be used directly
-		static void gpfa(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int lot, int isign)
+		private static void gpfa(double[] a, int aOffs, double[] b, int bOffs, double[] trigs, int trOffs, int inc, int jump, int n, int lot, int isign)
 		{
 			int i, kk;
 			int[] nj = new int[3];
@@ -3631,8 +3572,8 @@ int FFT (complex<FLOAT> c[], int isign)
 			--bOffs;
 			--aOffs;
 
-			// decompose n into factors 2,3,5 
-			// ------------------------------ 
+			// decompose n into factors 2,3,5
+			// ------------------------------
 
 			int nn = n,
 				ifac = 2;
@@ -3661,7 +3602,6 @@ int FFT (complex<FLOAT> c[], int isign)
 			if (isign != 1 && isign != -1)
 			{
 				throw new ArithmeticException(string.Format("gpfa: {0} is not a legal value of isign = +1/-1", isign));
-
 			}
 
 			int ip = nj[0],
@@ -3688,8 +3628,6 @@ int FFT (complex<FLOAT> c[], int isign)
 			}
 		}
 
-		#endregion
-
-
+		#endregion GPFA Algorithms
 	}
 }

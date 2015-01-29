@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -29,7 +31,6 @@ namespace Altaxo.Calc.Fourier
 	/// </summary>
 	public class ArrayMath
 	{
-
 		/// <summary>
 		/// Copies an array of <see cref="Complex" /> elements into an array of the real part values and an array of the imaginary part values.
 		/// </summary>
@@ -147,9 +148,8 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
 		/// <summary>
-		/// Multiplies the elements of array arr1 and array arr2 by a factor. 
+		/// Multiplies the elements of array arr1 and array arr2 by a factor.
 		/// </summary>
 		/// <param name="arr1">The first array.</param>
 		/// <param name="arr2">The second array.</param>

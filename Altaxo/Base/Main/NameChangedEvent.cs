@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,27 +19,28 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Main
 {
-
-  public class NameChangedEventArgs : TunnelingEventArgs
-  {
+	public class NameChangedEventArgs : TunnelingEventArgs
+	{
 		public object Source { get; private set; }
+
 		public string OldName { get; private set; }
+
 		public string NewName { get; private set; }
 
-    public NameChangedEventArgs(object source, string oldName, string newName)
-    {
+		public NameChangedEventArgs(object source, string oldName, string newName)
+		{
 			this.Source = source;
-      this.OldName = oldName;
-      this.NewName = newName;
-    }
-  }
+			this.OldName = oldName;
+			this.NewName = newName;
+		}
+	}
 
-  public delegate void NameChangedEventHandler(object sender, NameChangedEventArgs e);
-
+	public delegate void NameChangedEventHandler(object sender, NameChangedEventArgs e);
 }

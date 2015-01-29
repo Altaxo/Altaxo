@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -33,7 +35,10 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </remarks>
 	internal class Hypotenuse
 	{
-		private Hypotenuse() { }
+		private Hypotenuse()
+		{
+		}
+
 		public static double Compute(double a, double b)
 		{
 			double r;
@@ -53,6 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return r;
 		}
+
 		public static float Compute(float a, float b)
 		{
 			float r;

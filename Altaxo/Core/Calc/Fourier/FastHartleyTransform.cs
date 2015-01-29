@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,10 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
-
 
 using System;
 
@@ -32,7 +33,6 @@ namespace Altaxo.Calc.Fourier
 	/// </summary>
 	public class FastHartleyTransform
 	{
-
 		/*-----------------------------------------------------------------------------*\
 		| Fast Fourier Transform, Fast Hartley Transform                   fhttrigtbl.h |
 		|                                                                               |
@@ -59,11 +59,10 @@ namespace Altaxo.Calc.Fourier
 		|                                                                               |
 		\*-----------------------------------------------------------------------------*/
 
-
 		//----------------------------------------------------------------------------//
 		//
-		// Due to the finite tables in the original code (n=20) the fft routines failed 
-		// if the size of the vector to be transformed exceeded N = 2^17. 
+		// Due to the finite tables in the original code (n=20) the fft routines failed
+		// if the size of the vector to be transformed exceeded N = 2^17.
 		//
 		// I extended the tables to 60 entries with 50 digits precision and added
 		// several changes.
@@ -71,15 +70,12 @@ namespace Altaxo.Calc.Fourier
 		//
 		//----------------------------------------------------------------------------//
 
-
 		//----------------------------------------------------------------------------//
 		// Since the original fht routine contained pointer variables
 		// I had to change the code for fht and I included the original #defines
 		// for TRIG_GOOD
 		// Dirk Lellinger 2002
 		//----------------------------------------------------------------------------//
-
-
 
 		//----------------------------------------------------------------------------//
 		// table containing sec[pi/(2^n)]/2, n=3,4,5,...
@@ -151,7 +147,6 @@ namespace Altaxo.Calc.Fourier
     0.50000000000000000000000000000000000185626627493301
   };
 
-
 		//----------------------------------------------------------------------------//
 		// table containing cos[pi/(2^n)], n=0,1,2,...
 		// with 50 digits precision generated with Mathematica
@@ -222,7 +217,6 @@ namespace Altaxo.Calc.Fourier
     0.99999999999999999999999999999999999628746745013398
   };
 
-
 		//----------------------------------------------------------------------------//
 		// table containing sin[pi/(2^n)], n=0,1,2,...
 		// with 50 digits precision generated with Mathematica
@@ -292,8 +286,6 @@ namespace Altaxo.Calc.Fourier
     5.4497945281384873429363139134265195198776426588784e-18,
     2.7248972640692436714681569567132597700550911173371e-18
   };
-
-
 
 		//----------------------------------------------------------------------------//
 		// table containing cos[pi/(2^n)], n=0,1,2,...
@@ -435,8 +427,6 @@ namespace Altaxo.Calc.Fourier
     2.7248972640692436714681569567132597700550911173371e-18
   };
 
-
-
 		/*-----------------------------------------------------------------------------*\
 		| Fast Fourier Transform based on Fast Hartley Transform              fhtfft.cc |
 		|                                                                               |
@@ -464,12 +454,12 @@ namespace Altaxo.Calc.Fourier
 		// #include "fht.h"
 
 		//-----------------------------------------------------------------------------//
-		// 
+		//
 		// The following algorithms for the 'best and fastest implementation' of the
 		// FFT in C are due to a public posting in the newsgroups
 		//
 		//    sci.math.num-analysis,sci.math,comp.lang.c,comp.lang.c++,comp.dsp
-		// by 
+		// by
 		//    Ron Mayer, 19 Mar 1993, from  ACUSON, Mountain View, CA
 		//    mayer@acuson.com
 		//
@@ -477,7 +467,7 @@ namespace Altaxo.Calc.Fourier
 		// transform FFT by means of a fast Hartley transform FHT. It is superior to
 		// the code published in the Numerical Recipies and some other published code.
 		// That is the reason why I decided to include it into the MatPack C++ library.
-		// I left the original code unchanged exept for introducing prototypes for all 
+		// I left the original code unchanged exept for introducing prototypes for all
 		// functions according to the ANSI standard. All functions now compile with
 		// ANSI C and C++. Note that the file "trigtbl.h" is included.
 		//
@@ -485,14 +475,14 @@ namespace Altaxo.Calc.Fourier
 		// -------------
 		// The FFT routines in their original version competely failed if the vector
 		// exceeded a certain size. This was due to the limited size of the trig tables
-		// in "fhttrigtbl.h". I (B. Gammel) extended the tables to 60 entries with 50 digits 
+		// in "fhttrigtbl.h". I (B. Gammel) extended the tables to 60 entries with 50 digits
 		// precision (plus some other changes) which should be sufficient also for the
 		// next three computer generations.
 		//
 		// Important Note:
 		// ---------------
-		// Ron Mayer notes (below) that the Fast Hartley Trasform code below is 
-		// restricted by patents (U.S. Patent No. 4,646,256 (1987)). 
+		// Ron Mayer notes (below) that the Fast Hartley Trasform code below is
+		// restricted by patents (U.S. Patent No. 4,646,256 (1987)).
 		// As noted in Computer in Pysics, Vol. 9, No. 4,
 		// Jul/Aug 1995 pp 373-379 it was placed in the public domain by the
 		// Board of Trustees of Stanford University in 1994 and is now freely available.
@@ -523,8 +513,8 @@ namespace Altaxo.Calc.Fourier
 		//
 		//  void fht_realifft (int n, double* real);
 		//      The inverse of the fht_realfft() routine above.
-		// 
-		//      
+		//
+		//
 		// NOTE: This routine uses at least 2 patented algorithms, and may be
 		//       under the restrictions of a bunch of different organizations.
 		//       Although I wrote it completely myself; it is kind of a derivative
@@ -550,7 +540,7 @@ namespace Altaxo.Calc.Fourier
 		//
 		// The follwing comments from Ron Mayer came along with the code:
 		// --------------------------------------------------------------
-		// 
+		//
 		// As I'm sure you realize, 'best' depends quite a bit on what you
 		// consider best, and 'fastest' depends largely on the number of points,
 		// what compiler, and what architecture you're using.  If it's amazingly
@@ -558,12 +548,12 @@ namespace Altaxo.Calc.Fourier
 		// writing your own to meet your specific application.  Short of
 		// specialized hardware, if you can use a real valued FFT this would be
 		// your best optimization (should be faster by a factor of 2).
-		// 
+		//
 		// It seems that two of the source code sections in your summary used
 		// 'a duhamel-holman split radix fft'.  Perhaps this is considered a
 		// 'standard piece of code', but I do know of two different fft's which
-		// in my opinion qualify as both 'faster' and 'better'. 
-		// 
+		// in my opinion qualify as both 'faster' and 'better'.
+		//
 		// I tried comparing my code to the code by Dave Edelblute that you
 		// included in your previous posting; but the times for that code was so
 		// much worse (twice as slow) that it's unlikely that such code would
@@ -574,19 +564,19 @@ namespace Altaxo.Calc.Fourier
 		// tested in the second part of this posting so someone can point out
 		// where I screwed up.  (If anyone tries it, please let me know if you
 		// get the same results...)
-		// 
+		//
 		// The best' published FFT routine I have studied recently is based on
 		// Singleton's mixed-radix FFT algorithm.  His routine has a number of
 		// optimizations which include a decent trig function generator, and
 		// doing a quite optimized radix-4 transforms and only 0 or 1 radix-2
 		// transforms for any power of 2.  It is also neat in that it works with
 		// any sized array, not just powers of 2!  I believe the published
-		// version is in fortran; but someone at work translated it to C, and 
+		// version is in fortran; but someone at work translated it to C, and
 		// it seems to be ~25% faster than the duhamel-holman routine you posted
 		// in your summary (if I compiled it correctly).  I can probably dig up a
 		// reference to this code next time I dig through all my school stuff if
 		// anyone really needs it.
-		// 
+		//
 		// The 'fastest' (for typical computers: single processor, non-vector,
 		// fast-integer-math, slower-floating-point-math, slow-trig-function) FFT
 		// routine I have ever seen is one I wrote myself; trying to incorporate
@@ -594,9 +584,9 @@ namespace Altaxo.Calc.Fourier
 		// I was at college.  As you can see in the file 'summary.sparc' included
 		// below, it is nearly twice as fast as the duhamel-holman routine you
 		// posted in your posting.
-		// 
+		//
 		// The routine I came up with includes the following optimizations:
-		// 
+		//
 		//   1) It is a wrapper around a highly optimized FHT (hartley transform)
 		//      A FHT better localizes memory accesses for large transforms,
 		//      thereby avoiding paging.  Hartley transforms are also much easier
@@ -608,17 +598,17 @@ namespace Altaxo.Calc.Fourier
 		//          1/2pointFFT-> real_valued_FFT
 		//      so my real-valued fft is even better when compared to most
 		//      published real valued ffts.
-		// 
+		//
 		//   2) Avoid multiplications by 1 and zero (and sometimes sqrt2).
 		//      Many published routines such as Numerical Recipes seem to spend
 		//      a lot of time multiplying by cos(0), cos(pi), etc. and almost all
 		//      seem to do 1/sqrt_2*x+1/sqrt_2*y instead of 1/sqrt_2*(x+y).
-		// 
+		//
 		//   3) Faster trig generation.
 		//      Most algorithms use 1 'sin' library call for each level of the
 		//      transform; and 2 real multiplications and 2 real additions for
 		//      each needed trig value within it's loop.
-		// 
+		//
 		//      I use a stable algorithm to generate each trig value using 1 real
 		//      multiplication and 1 real addition for each value using a small
 		//      (log(n)) table of trig values.  The tradeoff is that I require
@@ -628,7 +618,7 @@ namespace Altaxo.Calc.Fourier
 		//      values required for FFTs are for evenly spaced angles, I avoid
 		//      all calls to slow trig library functions which are unnecessarily
 		//      complex because they need to work for arbitrary values.
-		// 
+		//
 		//   4) Generate less trig values
 		//      I use the identities sin(x)=sin(pi-x)=-sin(pi+x)=-sin(-x),etc. to
 		//      avoid excessive trig calculations, and sin(2x) = 2*cos(x)*sin(x)
@@ -636,22 +626,22 @@ namespace Altaxo.Calc.Fourier
 		//      stable than average trig generator mentioned in (3) above allows
 		//      me to use the unstable sin(2x) = 2*cos(x)*sin(x) hack for every
 		//      other 'level' in the FFT without the usual loss of accuracy.
-		// 
+		//
 		//   5) Mixed 2,4-radix inner loop.
 		//      By doing two levels in the inner loop, I gain all the advantages
 		//      of a radix-4 algorithm; primarily reducing integer arithmetic and
 		//      memory access.  This has a great affect on large arrays when
 		//      paging occurs.
-		// 
+		//
 		//   6) Unrolling loops and variable storage to optimize register
 		//      allocation.  I try not to require storing too many values in
 		//      variables at any one time to ease a compilers register
-		//      allocation. 
-		// 
+		//      allocation.
+		//
 		//   7) Remove low levels of the transform out of the loop.  It's
 		//      significantly faster to do 8 point transforms explicitly; rather
 		//      than using the general loop.
-		// 
+		//
 		// One catch to this routine is that at least two of the algorithms used
 		// by it are patented(!) (just about any FHT is patented by R. Bracewell;
 		// and the stable trig generator is patented by O. Buneman; both at
@@ -660,18 +650,18 @@ namespace Altaxo.Calc.Fourier
 		// routine, so subject to their restrictions; it was worked on for a
 		// Stanford project, so they have a claim on it;  and I optimized it
 		// further working for this company, so they probably claim parts of it.
-		// 
+		//
 		// Considering Gauss apparently used the equivalent of real valued FFTs
 		// in 1805; and Euler did fourier transforms it in the mid 1700s; I'm
 		// amazed that people still want to claim this math.
-		// 
+		//
 		//
 		// Here are the test results posted by Ron Mayer
 		// ---------------------------------------------
 		//
 		// This file contains a benchmark results of a number of popular FFT
 		// algorithms.  The algorithms compared are:
-		// 
+		//
 		//     FFT-numrec
 		//         The FFT from numerical recipies, converted to double precision
 		//     FFT-duhamel
@@ -687,13 +677,13 @@ namespace Altaxo.Calc.Fourier
 		//         double precision.
 		//     real-FFT-mayer
 		//         An original real valued FFT by Ron Mayer (mayer@acuson.com)
-		// 
+		//
 		// I compiled each of the programs using gcc 2.0 with the -O4 flag on a
 		// Sun Sparc 1; and timed (using the "clock()" function in SunOS) a
 		// number of iterations of forward and reverse transforms of a known data
 		// set.  At the end of the iterations of forward and reverse transforms I
 		// compared the data with the original to check for accumulated errors.
-		// 
+		//
 		// algorithm                  # of       # of     time           errors
 		//   used                   iterations   points
 		//
@@ -743,10 +733,8 @@ namespace Altaxo.Calc.Fourier
 		// include trigonometric table generator
 		//-----------------------------------------------------------------------------//
 
-
 		private const double SQRT2_2 = 0.70710678118654752440084436210484;
 		private const double SQRT2 = 2 * SQRT2_2;
-
 
 		/// <summary>
 		/// Return true if number is 0 (!) or a power of two
@@ -757,6 +745,7 @@ namespace Altaxo.Calc.Fourier
 		{
 			return ((x & -x) == x);
 		}
+
 		//----------------------------------------------------------------------------//
 
 		/// <summary>
@@ -794,7 +783,6 @@ namespace Altaxo.Calc.Fourier
 
 			if (k == 0)
 			{
-
 				for (fi = 0, fn = n; fi < fn; fi += 4)
 				{
 					double f0, f1, f2, f3;
@@ -807,11 +795,9 @@ namespace Altaxo.Calc.Fourier
 					fz[fi + 3] = (f1 - f3);
 					fz[fi + 1] = (f1 + f3);
 				}
-
 			}
 			else
 			{
-
 				for (fi = 0, fn = n, gi = fi + 1; fi < fn; fi += 8, gi += 8)
 				{
 					double s1, c1, s2, c2, s3, c3, s4, c4, g0, f0, f1, g1, f2, g2, f3, g3;
@@ -840,7 +826,6 @@ namespace Altaxo.Calc.Fourier
 					fz[gi + 6] = g1 - g3;
 					fz[gi + 2] = g1 + g3;
 				}
-
 			}
 
 			if (n < 16) return;
@@ -894,7 +879,6 @@ namespace Altaxo.Calc.Fourier
 					s1 = 0;
 				}
 
-
 				for (i = 1; i < kx; i++)
 				{
 					double c2, s2;
@@ -915,9 +899,6 @@ namespace Altaxo.Calc.Fourier
 							coswrk[i2] = halsec[i2] * (coswrk[i2 - 1] + coswrk[j2]);
 						}
 					}
-
-
-
 
 					c2 = c1 * c1 - s1 * s1;
 					s2 = 2 * (c1 * s1);
@@ -958,13 +939,10 @@ namespace Altaxo.Calc.Fourier
 				}
 
 				// TRIG_RESET(k,c1,s1);
-
 			} while (k4 < n);
 		}
 
 		//----------------------------------------------------------------------------//
-
-
 
 		/// <summary>
 		///      Does a fourier transform of 'n' points of the 'real' and
@@ -988,7 +966,6 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-
 		/// <summary>
 		///      Does an in-place inverse fourier transform of 'n' points of the 'real'
 		///      and 'imag' arrays.
@@ -1010,7 +987,6 @@ namespace Altaxo.Calc.Fourier
 			FHT(real, n);
 			FHT(imag, n);
 		}
-
 
 		/// <summary>
 		///      Does the inverse of a real-valued fourier transform of 'n' points.
@@ -1052,7 +1028,6 @@ namespace Altaxo.Calc.Fourier
 				real[i] = (a + b) * 0.5;
 			}
 		}
-
 
 		/// <summary>
 		/// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
@@ -1156,7 +1131,6 @@ namespace Altaxo.Calc.Fourier
 			FHT(result, n);
 		}
 
-
 		/// <summary>
 		/// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is leaved intact.
 		/// </summary>
@@ -1204,7 +1178,6 @@ namespace Altaxo.Calc.Fourier
 
 			FHT(result, n);
 		}
-
 
 		/// <summary>
 		/// Performs a convolution of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
@@ -1268,8 +1241,6 @@ namespace Altaxo.Calc.Fourier
 			ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0 / n, n);
 		}
 
-
-
 		/// <summary>
 		/// Performs a correlation of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
 		/// input arrays will be destroyed!
@@ -1292,7 +1263,6 @@ namespace Altaxo.Calc.Fourier
 			ArrayMath.MultiplySplittedComplexArraysCrossed(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n, 1.0 / n);
 			FFT(resultreal, resultimag, n);
 		}
-
 
 		/// <summary>
 		/// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
@@ -1357,10 +1327,9 @@ namespace Altaxo.Calc.Fourier
 			FFT(resultreal, resultimag, n);
 		}
 
-
 		/// <summary>
 		/// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
-		/// different from the other two arrays. 
+		/// different from the other two arrays.
 		/// </summary>
 		/// <param name="arr1">First array.</param>
 		/// <param name="arr2">Second array.</param>

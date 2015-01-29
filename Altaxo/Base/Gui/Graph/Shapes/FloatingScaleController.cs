@@ -24,7 +24,6 @@
 
 using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Graph.Scales.Ticks;
 using System;

@@ -22,12 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Calc;
-using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Probability;
 using Altaxo.Calc.Regression;
-using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;

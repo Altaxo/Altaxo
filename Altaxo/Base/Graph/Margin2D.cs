@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -31,16 +33,17 @@ namespace Altaxo.Graph
 	public struct Margin2D : IEquatable<Margin2D>
 	{
 		public double Left { get; set; }
-		public double Top { get; set; }
-		public double Right { get; set; }
-		public double Bottom { get; set; }
 
+		public double Top { get; set; }
+
+		public double Right { get; set; }
+
+		public double Bottom { get; set; }
 
 		#region Serialization
 
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Margin2D), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -50,11 +53,10 @@ namespace Altaxo.Graph
 				info.AddValue("Top", s.Top);
 				info.AddValue("Right", s.Right);
 				info.AddValue("Bottom", s.Bottom);
-
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				var s = null != o ? (Margin2D)o : new Margin2D();
 
 				s.Left = info.GetDouble("Left");
@@ -66,10 +68,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-
-		#endregion
-
-
+		#endregion Serialization
 
 		public bool Equals(Margin2D other)
 		{

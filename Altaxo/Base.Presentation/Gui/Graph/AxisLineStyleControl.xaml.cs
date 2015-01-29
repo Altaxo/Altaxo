@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,17 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph
 {
-	using Altaxo.Collections;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Gui.Common.Drawing;
 
@@ -45,9 +39,9 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class AxisLineStyleControl : UserControl, IAxisLineStyleView
 	{
-		PenControlsGlue _linePenGlue;
-		PenControlsGlue _majorPenGlue;
-		PenControlsGlue _minorPenGlue;
+		private PenControlsGlue _linePenGlue;
+		private PenControlsGlue _majorPenGlue;
+		private PenControlsGlue _minorPenGlue;
 
 		public AxisLineStyleControl()
 		{
@@ -56,7 +50,6 @@ namespace Altaxo.Gui.Graph
 			_linePenGlue = new PenControlsGlue(false);
 			_linePenGlue.CbBrush = _lineBrushColor;
 			_linePenGlue.CbLineThickness = _lineLineThickness;
-
 
 			_majorPenGlue = new PenControlsGlue(false);
 			_majorPenGlue.CbBrush = _majorLineColor;
@@ -69,7 +62,7 @@ namespace Altaxo.Gui.Graph
 			_linePenGlue.PenChanged += new EventHandler(EhLinePen_Changed);
 		}
 
-		void EhLinePen_Changed(object sender, EventArgs e)
+		private void EhLinePen_Changed(object sender, EventArgs e)
 		{
 			if (false == _chkCustomMajorColor.IsChecked)
 			{
@@ -86,7 +79,6 @@ namespace Altaxo.Gui.Graph
 				_lineMajorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
 			if (false == _chkCustomMinorThickness.IsChecked)
 				_lineMinorThickness.SelectedQuantity = _lineLineThickness.SelectedQuantity;
-
 		}
 
 		private void EhIndividualMajorColor_CheckChanged(object sender, RoutedEventArgs e)
@@ -119,26 +111,25 @@ namespace Altaxo.Gui.Graph
 
 		#region Helper
 
-		bool CustomMajorThickness
+		private bool CustomMajorThickness
 		{
 			set
 			{
 				_chkCustomMajorThickness.IsChecked = value;
 				_lineMajorThickness.IsEnabled = value;
-
 			}
 		}
-		bool CustomMinorThickness
+
+		private bool CustomMinorThickness
 		{
 			set
 			{
 				_chkCustomMinorThickness.IsChecked = value;
 				_lineMinorThickness.IsEnabled = value;
-
 			}
 		}
 
-		bool CustomMajorColor
+		private bool CustomMajorColor
 		{
 			set
 			{
@@ -146,7 +137,8 @@ namespace Altaxo.Gui.Graph
 				this._majorLineColor.IsEnabled = value;
 			}
 		}
-		bool CustomMinorColor
+
+		private bool CustomMinorColor
 		{
 			set
 			{
@@ -155,7 +147,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion Helper
 
 		#region IAxisLineStyleView
 
@@ -246,7 +238,6 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				return (Collections.SelectableListNodeList)_majorWhichTicksLayout.ItemsSource;
-
 			}
 			set
 			{
@@ -259,7 +250,6 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				return (Collections.SelectableListNodeList)_minorWhichTicksLayout.ItemsSource;
-
 			}
 			set
 			{
@@ -267,6 +257,6 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		#endregion
+		#endregion IAxisLineStyleView
 	}
 }

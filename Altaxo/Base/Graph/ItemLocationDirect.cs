@@ -492,8 +492,6 @@ namespace Altaxo.Graph
 
 		#endregion Properties
 
-
-
 		#region Methods
 
 		/// <summary>

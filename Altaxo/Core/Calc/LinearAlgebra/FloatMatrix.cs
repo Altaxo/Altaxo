@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,22 +21,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * FloatMatrix.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Text;
 using System.Collections;
-
+using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	///<summary>
 	/// Defines a matrix of floats.
 	///</summary>
@@ -51,13 +51,16 @@ namespace Altaxo.Calc.LinearAlgebra
 #else
     internal float[] data;
 #endif
-		int rows;
-		int columns;
+		private int rows;
+		private int columns;
 
 		///<summary>Constructor for square matrix with its components set to zero.</summary>
 		///<param name="dimension">Dimensions of square matrix.</param>
 		///<exception cref="ArgumentException">dimension isn't positive.</exception>
-		public FloatMatrix(int dimension) : this(dimension, dimension) { }
+		public FloatMatrix(int dimension)
+			: this(dimension, dimension)
+		{
+		}
 
 		///<summary>Constructor for matrix with its components set to zero.</summary>
 		///<param name="rows">Number of rows.</param>
@@ -92,7 +95,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<param name="dimension">Dimensions of square matrix.</param>
 		///<param name="value"><c>float</c> value to fill all matrix components.</param>
 		///<exception cref="ArgumentException">dimension parameter isn't positive</exception>
-		public FloatMatrix(int dimension, float value) : this(dimension, dimension, value) { }
+		public FloatMatrix(int dimension, float value)
+			: this(dimension, dimension, value)
+		{
+		}
 
 		///<summary>Constructor for matrix with components set to a specified value</summary>
 		///<param name="rows">Number of rows.</param>
@@ -204,7 +210,6 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 		}
 
-
 		///<summary>Explicit conversion from <c>DoubleMatrix</c> matrix</summary>
 		///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
 		static public explicit operator FloatMatrix(DoubleMatrix source)
@@ -281,7 +286,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return (FloatMatrix)source;
 		}
 
-
 		///<summary>Implicit conversion from <c>float</c> array.</summary>
 		///<param name="source"><c>float</c> array to make a deep copy conversion from.</param>
 		static public implicit operator FloatMatrix(float[,] source)
@@ -318,7 +322,6 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 			}
 			return ret;
-
 		}
 
 		///<summary>Return the number of rows in the <c>FloatMatrix</c> variable.</summary>
@@ -593,7 +596,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>Calculates the Frobenius norm of this matrix.</summary>
-		/// <returns>the Frobenius norm of this matrix.</returns> 
+		/// <returns>the Frobenius norm of this matrix.</returns>
 		public float GetFrobeniusNorm()
 		{
 			float ret = 0;
@@ -610,6 +613,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return ret;
 		}
+
 		///<summary>Calculates the condition number of the matrix.</summary>
 		///<returns>the condition number of the matrix.</returns>
 		/// <exception cref="NotSquareMatrixException">the matrix is not square.</exception>
@@ -680,7 +684,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return ret;
 		}
-
 
 		///<summary>Set the diagonal of the <c>FloatMatrix</c> to the values in a <c>FloatVector</c> variable.</summary>
 		///<param name="source"><c>FloatVector</c> with values to insert into diagonal of <c>FloatMatrix</c>.</param>
@@ -1488,14 +1491,14 @@ namespace Altaxo.Calc.LinearAlgebra
 					data[i][j] *= a;
 				}
 			}
-#else 
+#else
       Blas.Scal.Compute( data.Length, a, data, 1 );
 #endif
 		}
 
-		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatVector</c></summary>                
-		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>                
-		///<param name="y"><c>FloatVector</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatVector</c></summary>
+		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>
+		///<param name="y"><c>FloatVector</c> to act as right operator.</param>
 		///<returns><c>FloatMatrix</c> with results</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">matrix or vector is null.</exception>
@@ -1523,15 +1526,15 @@ namespace Altaxo.Calc.LinearAlgebra
 					ret.data[i] += x.data[i][j] * y.data[j];
 				}
 			}
-#else 
+#else
       Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
 #endif
 			return ret;
 		}
 
-		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatVector</c>.</summary>                
-		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>                
-		///<param name="y"><c>FloatVector</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatVector</c>.</summary>
+		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>
+		///<param name="y"><c>FloatVector</c> to act as right operator.</param>
 		///<returns><c>FloatMatrix</c> with results</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix or vector is null.</exception>
@@ -1548,8 +1551,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			return x * y;
 		}
 
-		///<summary>Multiply this <c>FloatMatrix</c> with a <c>FloatVector</c> and return results in this <c>FloatMatrix</c>.</summary>                                                                                            
-		///<param name="x"><c>FloatVector</c> to act as right operator.</param>                                                
+		///<summary>Multiply this <c>FloatMatrix</c> with a <c>FloatVector</c> and return results in this <c>FloatMatrix</c>.</summary>
+		///<param name="x"><c>FloatVector</c> to act as right operator.</param>
 		///<exception cref="ArgumentException">Exception thrown if parameter dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException"><c>x</c> is null.</exception>
 		public void Multiply(FloatVector x)
@@ -1575,7 +1578,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					temp[i][0] += data[i][j] * x.data[j];
 				}
 			}
-#else 
+#else
       float[] temp = new float[rows];
       Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
 #endif
@@ -1583,9 +1586,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			columns = 1;
 		}
 
-		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatMatrix.</c></summary>                
-		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>                
-		///<param name="y"><c>FloatMatrix</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatMatrix.</c></summary>
+		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>
+		///<param name="y"><c>FloatMatrix</c> to act as right operator.</param>
 		///<returns><c>FloatMatrix</c> with results.</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix is null.</exception>
@@ -1624,12 +1627,11 @@ namespace Altaxo.Calc.LinearAlgebra
         x.rows, y.columns, x.columns, 1, x.data, x.rows, y.data, y.rows, 1, ret.data, ret.rows);
 #endif
 			return ret;
-
 		}
 
-		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatMatrix</c>.</summary>                
-		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>                
-		///<param name="y"><c>FloatMatrix</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>FloatMatrix</c> with a <c>FloatMatrix</c>.</summary>
+		///<param name="x"><c>FloatMatrix</c> to act as left operator.</param>
+		///<param name="y"><c>FloatMatrix</c> to act as right operator.</param>
 		///<returns><c>FloatMatrix</c> with results</returns>
 		///<exception cref="ArgumentException"> dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix is null.</exception>
@@ -1642,8 +1644,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			return x * y;
 		}
 
-		///<summary>Multiply this <c>FloatMatrix</c> with a <c>FloatMatrix</c> and return results in this <c>FloatMatrix</c></summary>                                
-		///<param name="x"><c>FloatMatrix</c> to act as right operator.</param>                
+		///<summary>Multiply this <c>FloatMatrix</c> with a <c>FloatMatrix</c> and return results in this <c>FloatMatrix</c></summary>
+		///<param name="x"><c>FloatMatrix</c> to act as right operator.</param>
 		///<returns><c>FloatMatrix</c> with results</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException"><c>x</c> is null.</exception>
@@ -1794,6 +1796,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.rows * this.columns; }
 		}
+
 		int ICollection.Count
 		{
 			get { return this.Count; }
@@ -1804,6 +1807,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.data.IsSynchronized; }
 		}
+
 		bool ICollection.IsSynchronized
 		{
 			get { return this.IsSynchronized; }
@@ -1820,6 +1824,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			this.data.CopyTo(array, index);
 		}
+
 		void ICollection.CopyTo(Array array, int index)
 		{
 			this.CopyTo(array, index);
@@ -1916,7 +1921,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#region Additions due to Adoption
 
-
 		///<summary>Constructor for matrix that makes a deep copy of a given <c>IROFloatMatrix</c>.</summary>
 		///<param name="source"><c>IROFloatMatrix</c> to deep copy into new matrix.</param>
 		///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
@@ -1953,7 +1957,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 		}
 
-		#endregion
+		#endregion Additions due to Adoption
 
 		#region Additions due to Adoption to Altaxo
 
@@ -2013,8 +2017,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		#endregion
-
+		#endregion Additions due to Adoption to Altaxo
 	}
 }
-

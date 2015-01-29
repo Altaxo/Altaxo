@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -31,67 +33,87 @@ namespace Altaxo.Data
 		// names seems to be used by the compiler for the operators itself
 		// so we use here vopAddition and so on (the v from virtual)
 
-
 		bool vop_Addition(object a, out object b);
+
 		bool vop_Addition_Rev(object a, out object b);
 
 		bool vop_Subtraction(object a, out object b);
+
 		bool vop_Subtraction_Rev(object a, out object b);
 
 		bool vop_Multiplication(object a, out object b);
+
 		bool vop_Multiplication_Rev(object a, out object b);
 
 		bool vop_Division(object a, out object b);
+
 		bool vop_Division_Rev(object a, out object b);
 
 		bool vop_Modulo(object a, out object b);
+
 		bool vop_Modulo_Rev(object a, out object b);
 
 		bool vop_And(object a, out object b);
+
 		bool vop_And_Rev(object a, out object b);
 
 		bool vop_Or(object a, out object b);
+
 		bool vop_Or_Rev(object a, out object b);
 
 		bool vop_Xor(object a, out object b);
+
 		bool vop_Xor_Rev(object a, out object b);
 
 		bool vop_ShiftLeft(object a, out object b);
+
 		bool vop_ShiftLeft_Rev(object a, out object b);
 
 		bool vop_ShiftRight(object a, out object b);
+
 		bool vop_ShiftRight_Rev(object a, out object b);
 
 		bool vop_Equal(object a, out bool b);
+
 		bool vop_Equal_Rev(object a, out bool b);
 
 		bool vop_NotEqual(object a, out bool b);
+
 		bool vop_NotEqual_Rev(object a, out bool b);
 
 		bool vop_Lesser(object a, out bool b);
+
 		bool vop_Lesser_Rev(object a, out bool b);
 
 		bool vop_Greater(object a, out bool b);
+
 		bool vop_Greater_Rev(object a, out bool b);
 
 		bool vop_LesserOrEqual(object a, out bool b);
+
 		bool vop_LesserOrEqual_Rev(object a, out bool b);
 
 		bool vop_GreaterOrEqual(object a, out bool b);
+
 		bool vop_GreaterOrEqual_Rev(object a, out bool b);
 
 		// Unary operators
 
 		bool vop_Plus(out object a);
+
 		bool vop_Minus(out object a);
+
 		bool vop_Not(out object a);
+
 		bool vop_Complement(out object a);
+
 		bool vop_Increment(out object a);
+
 		bool vop_Decrement(out object a);
+
 		bool vop_True(out bool a);
+
 		bool vop_False(out bool a);
-
-
 	}
 
 	/// <summary>
@@ -105,15 +127,16 @@ namespace Altaxo.Data
 	{
 		public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject }
 
-		Content _typeOfContent;
-		double _double;
-		object _object;
-
+		private Content _typeOfContent;
+		private double _double;
+		private object _object;
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoVariant), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -123,15 +146,19 @@ namespace Altaxo.Data
 				{
 					case Content.VNull:
 						break;
+
 					case Content.VDouble:
 						info.AddValue("Value", s._double);
 						break;
+
 					case Content.VDateTime:
 						info.AddValue("Value", (DateTime)s._object);
 						break;
+
 					case Content.VString:
 						info.AddValue("Value", (string)s._object);
 						break;
+
 					default:
 						info.AddValue("Value", s._object);
 						break;
@@ -148,15 +175,19 @@ namespace Altaxo.Data
 				{
 					case Content.VNull:
 						break;
+
 					case Content.VDouble:
 						s._double = info.GetDouble("Value");
 						break;
+
 					case Content.VDateTime:
 						s._object = info.GetDateTime("Value");
 						break;
+
 					case Content.VString:
 						s._object = info.GetString("Value");
 						break;
+
 					default:
 						s._object = info.GetValue("Value", s);
 						break;
@@ -167,15 +198,14 @@ namespace Altaxo.Data
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				AltaxoVariant s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
 
+		#endregion Version 0
 
+		#endregion Serialization
 
 		public AltaxoVariant(AltaxoVariant a)
 		{
@@ -184,19 +214,20 @@ namespace Altaxo.Data
 			_object = a._object;
 		}
 
-
 		public AltaxoVariant(double d)
 		{
 			_typeOfContent = Content.VDouble;
 			_double = d;
 			_object = null;
 		}
+
 		public AltaxoVariant(DateTime f)
 		{
 			_typeOfContent = Content.VDateTime;
 			_object = f;
 			_double = 0;
 		}
+
 		public AltaxoVariant(string s)
 		{
 			_typeOfContent = Content.VString;
@@ -254,7 +285,6 @@ namespace Altaxo.Data
 		{
 			return this._typeOfContent == c;
 		}
-
 
 		public bool IsTypeOrNull(Content c)
 		{
@@ -357,11 +387,11 @@ namespace Altaxo.Data
 		}
 
 		/*
-		public static explicit operator double(AltaxoVariant f) 
+		public static explicit operator double(AltaxoVariant f)
 		{
 			if(f.m_Content==Content.VDouble)
 				return f.m_Double;
-			else 
+			else
 				return f.ToDouble();
 		}
 		*/
@@ -372,8 +402,6 @@ namespace Altaxo.Data
 				return f._double;
 			throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type Double");
 		}
-
-
 
 		public static implicit operator AltaxoVariant(double f)
 		{
@@ -571,9 +599,6 @@ namespace Altaxo.Data
 				throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a._typeOfContent.ToString() + " and " + b.ToString());
 		}
 
-
-
-
 		public static bool operator ==(AltaxoVariant a, AltaxoVariant b)
 		{
 			bool result;
@@ -644,7 +669,6 @@ namespace Altaxo.Data
 			else throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
 		}
 
-
 		public static bool operator <=(AltaxoVariant a, AltaxoVariant b)
 		{
 			bool result;
@@ -689,7 +713,6 @@ namespace Altaxo.Data
 			else throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
 		}
 
-
 		// Unary operators
 
 		public static AltaxoVariant operator +(AltaxoVariant a)
@@ -710,7 +733,6 @@ namespace Altaxo.Data
 			throw new AltaxoOperatorException("Error: Try to apply unary plus operator to variant " + a.ToString());
 		}
 
-
 		public static AltaxoVariant operator -(AltaxoVariant a)
 		{
 			object result;
@@ -718,8 +740,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return new AltaxoVariant();
+
 				case Content.VDouble:
 					return new AltaxoVariant(-a._double);
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_Minus(out result))
 						return new AltaxoVariant(result);
@@ -735,8 +759,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return new AltaxoVariant();
+
 				case Content.VDouble:
 					return new AltaxoVariant((double)(a._double == 0 ? 1 : 0));
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_Not(out result))
 						return new AltaxoVariant(result);
@@ -752,8 +778,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return new AltaxoVariant();
+
 				case Content.VDouble:
 					return new AltaxoVariant((double)~(long)a._double);
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_Complement(out result))
 						return new AltaxoVariant(result);
@@ -769,8 +797,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return new AltaxoVariant();
+
 				case Content.VDouble:
 					return new AltaxoVariant(a._double + 1);
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_Increment(out result))
 						return new AltaxoVariant(result);
@@ -786,8 +816,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return new AltaxoVariant();
+
 				case Content.VDouble:
 					return new AltaxoVariant(a._double - 1);
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_Decrement(out result))
 						return new AltaxoVariant(result);
@@ -803,8 +835,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return false;
+
 				case Content.VDouble:
 					return a._double != 0 ? true : false;
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_True(out result))
 						return result;
@@ -820,8 +854,10 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return false;
+
 				case Content.VDouble:
 					return a._double == 0 ? true : false;
+
 				case Content.VOperatable:
 					if (((IOperatable)a._object).vop_False(out result))
 						return result;
@@ -829,7 +865,6 @@ namespace Altaxo.Data
 			}
 			throw new AltaxoOperatorException("Error: Try to apply unary false operator to variant " + a.ToString());
 		}
-
 
 		#region IComparable Members
 
@@ -848,12 +883,16 @@ namespace Altaxo.Data
 			{
 				case Content.VNull:
 					return 0;
+
 				case Content.VDouble:
 					return _double.CompareTo(from._double);
+
 				case Content.VDateTime:
 					return ((DateTime)_object).CompareTo(from._object);
+
 				case Content.VString:
 					return string.Compare((string)_object, (string)from._object);
+
 				default:
 					if (this._object is IComparable)
 						return ((IComparable)this._object).CompareTo(from._object);
@@ -862,6 +901,6 @@ namespace Altaxo.Data
 			}
 		}
 
-		#endregion
+		#endregion IComparable Members
 	} // end of AltaxoVariant
 } // end of namespace

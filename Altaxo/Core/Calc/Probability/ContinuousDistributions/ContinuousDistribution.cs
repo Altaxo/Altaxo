@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -31,7 +33,6 @@ namespace Altaxo.Calc.Probability
 	/// </summary>
 	public abstract class ContinuousDistribution : Distribution
 	{
-
 		/// <summary>Initializes a new instance of the <see cref="ContinuousDistribution"/> class.</summary>
 		/// <param name="generator">The random number generator used.</param>
 		public ContinuousDistribution(Generator generator)
@@ -67,13 +68,15 @@ namespace Altaxo.Calc.Probability
 
 		/// <summary>Maximum value of a System.Double.</summary>
 		protected const double DBL_MAX = double.MaxValue;
+
 		/// <summary>Smallest positive value of a System.Double.</summary>
 		protected const double DBL_MIN = double.Epsilon; // god saves microsoft!
+
 		/// <summary>Maximum binary exponent of a <see cref="System.Double"/>.</summary>
 		protected const int DBL_MAX_EXP = 1024;
+
 		/// <summary>Natural logarithm of 2.</summary>
 		protected const double M_LN2 = 0.69314718055994530941723212145818;
-
 
 		/// <summary>
 		/// Return first number with sign of second number
@@ -86,7 +89,6 @@ namespace Altaxo.Calc.Probability
 			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
 		}
 
-		#endregion
-
+		#endregion Helper functions and constants
 	}
 }

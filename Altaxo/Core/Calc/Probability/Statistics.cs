@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Calc;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Probability
 {
@@ -72,7 +72,6 @@ namespace Altaxo.Calc.Probability
 			return result / n;
 		}
 
-
 		public static double StandardDeviation(this IROVector x)
 		{
 			double mean = Mean(x);
@@ -80,7 +79,7 @@ namespace Altaxo.Calc.Probability
 			for (int i = 0; i < x.Length; i++)
 				sum += RMath.Pow2(x[i] - mean);
 
-			return Math.Sqrt(sum/(x.Length-1));
+			return Math.Sqrt(sum / (x.Length - 1));
 		}
 
 		public static double InterQuartileRange(this IROVector x)
@@ -118,31 +117,30 @@ namespace Altaxo.Calc.Probability
 					double curr = x[i];
 					if (!(curr >= prev))
 						throw new ArgumentException("Array x is not sorted in ascending order at index " + i.ToString());
-					if(double.IsNaN(curr))
+					if (double.IsNaN(curr))
 						throw new ArgumentException("Array x contains missing values at index " + i.ToString());
 					prev = curr;
 				}
 			}
 
-			if(!f.IsInIntervalCC(0,1))
+			if (!f.IsInIntervalCC(0, 1))
 				throw new ArgumentException("f outside [0,1]");
-			
+
 			double index = f * (n - 1);
 			int lhs = (int)index;
-			 double delta = index - lhs;
+			double delta = index - lhs;
 			double result;
 
 			if (n == 0)
 				return 0.0;
 
-		
 			if (lhs == n - 1)
 			{
-				result = x[ lhs * stride];
+				result = x[lhs * stride];
 			}
 			else
 			{
-				result = (1 - delta) * x[ lhs * stride] + delta * x[ (lhs + 1) * stride];
+				result = (1 - delta) * x[lhs * stride] + delta * x[(lhs + 1) * stride];
 			}
 
 			return result;
@@ -162,12 +160,14 @@ namespace Altaxo.Calc.Probability
 		public struct ProbabilityDensityResult
 		{
 			public IROVector X { get; set; }
+
 			public IROVector Y { get; set; }
+
 			public double Bandwidth { get; set; }
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="bw"></param>
@@ -215,7 +215,6 @@ namespace Altaxo.Calc.Probability
 			if (n > 512)
 				n = BinaryMath.NextPowerOfTwoGreaterOrEqualThan(n);
 
-
 			if (bw.IsNaN() && !(width.IsNaN() && null == widthSel))
 			{
 				if (!width.IsNaN())
@@ -229,24 +228,31 @@ namespace Altaxo.Calc.Probability
 						case ConvolutionKernel.Gaussian:
 							fac = 4;
 							break;
+
 						case ConvolutionKernel.Rectangular:
 							fac = 2 * Math.Sqrt(3);
 							break;
+
 						case ConvolutionKernel.Triangular:
 							fac = 2 * Math.Sqrt(6);
 							break;
+
 						case ConvolutionKernel.Epanechnikov:
 							fac = 2 * Math.Sqrt(5);
 							break;
+
 						case ConvolutionKernel.Biweight:
 							fac = 2 * Math.Sqrt(7);
 							break;
+
 						case ConvolutionKernel.Cosine:
 							fac = 2 / Math.Sqrt(1 / 3 - 2 / (Math.PI * Math.PI));
 							break;
+
 						case ConvolutionKernel.Optcosine:
 							fac = 2 / Math.Sqrt(1 - 8 / (Math.PI * Math.PI));
 							break;
+
 						default:
 							throw new ArgumentException("Unknown convolution kernel");
 					}
@@ -267,26 +273,31 @@ namespace Altaxo.Calc.Probability
 					case "nrd0":
 						//nrd0 = bw.nrd0(x),
 						break;
+
 					case "nrd":
 						//nrd = bw.nrd(x),
 						break;
+
 					case "ucv":
 						//ucv = bw.ucv(x),
 						break;
+
 					case "bcv":
 						//bcv = bw.bcv(x),
 						break;
+
 					case "sj":
 						//sj = , "sj-ste" = bw.SJ(x, method="ste"),
 						break;
+
 					case "sj-dpi":
 						//"sj-dpi" = bw.SJ(x, method="dpi"),
 						break;
+
 					default:
 						throw new ArgumentException("Unknown bandwith selection rule: " + bwSel.ToString());
 				}
 			}
-
 
 			if (!RMath.IsFinite(bw))
 				throw new ArithmeticException("Bandwidth is not finite");
@@ -323,30 +334,37 @@ namespace Altaxo.Calc.Probability
 				case ConvolutionKernel.Gaussian:
 					kords.Apply(new Probability.NormalDistribution(0, bw).PDF);
 					break;
+
 				case ConvolutionKernel.Rectangular:
 					double a = bw * Math.Sqrt(3);
 					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? 0.5 / a : 0; });
 					break;
+
 				case ConvolutionKernel.Triangular:
 					a = bw * Math.Sqrt(6);
 					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? (1 - Math.Abs(xx) / a) / a : 0; });
 					break;
+
 				case ConvolutionKernel.Epanechnikov:
 					a = bw * Math.Sqrt(5);
 					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? 0.75 * (1 - RMath.Pow2(Math.Abs(xx) / a)) / a : 0; });
 					break;
+
 				case ConvolutionKernel.Biweight:
 					a = bw * Math.Sqrt(7);
 					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? 15.0 / 16.0 * RMath.Pow2(1 - RMath.Pow2(Math.Abs(xx) / a)) / a : 0; });
 					break;
+
 				case ConvolutionKernel.Cosine:
 					a = bw / Math.Sqrt(1.0 / 3 - 2 / RMath.Pow2(Math.PI));
 					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? (1 + Math.Cos(Math.PI * xx / a)) / (2 * a) : 0; });
 					break;
+
 				case ConvolutionKernel.Optcosine:
 					a = bw / Math.Sqrt(1 - 8 / RMath.Pow2(Math.PI));
 					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? Math.PI / 4 * Math.Cos(Math.PI * xx / (2 * a)) / a : 0; });
 					break;
+
 				default:
 					throw new ArgumentException("Unknown convolution kernel");
 			}
@@ -364,10 +382,8 @@ namespace Altaxo.Calc.Probability
 			return new ProbabilityDensityResult() { X = xu, Y = VectorMath.ToROVector(res2), Bandwidth = bw };
 		}
 
-
-
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="xmass"></param>
@@ -378,7 +394,7 @@ namespace Altaxo.Calc.Probability
 		/// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file massdist.c</remarks>
 		public static void MassDistribution(
 				this IROVector x,
-				IROVector xmass, 
+				IROVector xmass,
 				double xlow, double xhigh,
 				IVector y,
 				int ny

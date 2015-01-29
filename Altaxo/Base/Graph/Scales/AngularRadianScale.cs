@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -29,10 +31,10 @@ namespace Altaxo.Graph.Scales
 {
 	public class AngularRadianScale : AngularScale
 	{
-
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularRadianScale), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -49,7 +51,6 @@ namespace Altaxo.Graph.Scales
 
 			protected virtual void OnAfterDeserialization(AngularRadianScale s)
 			{
-
 			}
 
 			protected virtual AngularRadianScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -59,8 +60,8 @@ namespace Altaxo.Graph.Scales
 				return s;
 			}
 		}
-		#endregion
 
+		#endregion Serialization
 
 		public AngularRadianScale()
 		{

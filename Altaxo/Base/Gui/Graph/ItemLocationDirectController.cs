@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using Altaxo;
-using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui;
-using Altaxo.Serialization;
 using Altaxo.Units;
 using System;
 
@@ -232,8 +227,6 @@ namespace Altaxo.Gui.Graph
 			_view.ScaleYChanged -= EhScaleYChanged;
 			base.DetachView();
 		}
-
-
 
 		#region Service members
 

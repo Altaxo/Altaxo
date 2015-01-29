@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,55 +29,53 @@ using System.Text;
 
 namespace Altaxo.Main
 {
-  public class DocumentInformation
-  {
-    string _documentIdentifier;
-    string _documentNotes;
+	public class DocumentInformation
+	{
+		private string _documentIdentifier;
+		private string _documentNotes;
 
-    #region Serialization
+		#region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentInformation), 0)]
-    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        DocumentInformation s = (DocumentInformation)obj;
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentInformation), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DocumentInformation s = (DocumentInformation)obj;
 
-        info.AddValue("Identifier", s.DocumentIdentifier);
-        info.AddValue("Notes", s.DocumentNotes);
+				info.AddValue("Identifier", s.DocumentIdentifier);
+				info.AddValue("Notes", s.DocumentNotes);
+			}
 
-      }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DocumentInformation s = SDeserialize(o, info, parent);
+				return s;
+			}
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DocumentInformation s = SDeserialize(o, info, parent);
-        return s;
-      }
+			protected virtual DocumentInformation SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DocumentInformation s = null != o ? (DocumentInformation)o : new DocumentInformation();
 
+				s._documentIdentifier = info.GetString("Identifier");
+				s._documentNotes = info.GetString("Notes");
 
-      protected virtual DocumentInformation SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        DocumentInformation s = null != o ? (DocumentInformation)o : new DocumentInformation();
+				return s;
+			}
+		}
 
-        s._documentIdentifier = info.GetString("Identifier");
-        s._documentNotes = info.GetString("Notes");
+		#endregion Serialization
 
-        return s;
-      }
-    }
-    #endregion
+		public string DocumentIdentifier
+		{
+			get { return null == _documentIdentifier ? string.Empty : _documentIdentifier; }
+			set { _documentIdentifier = value; }
+		}
 
-
-    public string DocumentIdentifier
-    {
-      get { return null==_documentIdentifier ? string.Empty : _documentIdentifier; }
-      set { _documentIdentifier = value; }
-    }
-
-    public string DocumentNotes
-    {
-      get { return _documentNotes; }
-      set { _documentNotes = value; }
-    }
-  }
+		public string DocumentNotes
+		{
+			get { return _documentNotes; }
+			set { _documentNotes = value; }
+		}
+	}
 }

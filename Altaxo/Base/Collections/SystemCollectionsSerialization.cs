@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections;
 
 namespace Altaxo.Collections
 {
-
 	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.ArrayList), 0)]
 	public class SystemCollectionsArrayListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 	{
-
 		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 		{
 			var s = (ArrayList)obj;
@@ -54,11 +54,9 @@ namespace Altaxo.Collections
 		}
 	}
 
-
 	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<object>), 0)]
 	public class SystemCollectionsListOfObjectListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 	{
-
 		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 		{
 			var s = (System.Collections.Generic.List<object>)obj;
@@ -82,8 +80,4 @@ namespace Altaxo.Collections
 			return s;
 		}
 	}
-
-
-
-
-} 
+}

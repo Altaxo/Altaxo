@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,21 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -41,10 +36,9 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class MiterLimitComboBox : LengthImageComboBox
 	{
-		static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		static readonly double[] _initialValues = new double[] { 0, 4, 6, 8, 10, 12 };
-
+		private static readonly double[] _initialValues = new double[] { 0, 4, 6, 8, 10, 12 };
 
 		public MiterLimitComboBox()
 		{
@@ -56,9 +50,7 @@ namespace Altaxo.Gui.Common.Drawing
 				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Length.Point.Instance)));
 
 			_img.Source = GetImage(SelectedQuantityAsValueInPoints);
-
 		}
-
 
 		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -71,7 +63,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-
 		public override ImageSource GetItemImage(object item)
 		{
 			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Length.Point.Instance);
@@ -81,12 +72,10 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-
 		public override string GetItemText(object item)
 		{
 			return (string)_converter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.CurrentUICulture);
 		}
-
 
 		public static DrawingImage GetImage(double miterLimit)
 		{
@@ -105,7 +94,7 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryDrawing = new GeometryDrawing();
 			var figure = new PathFigure();
 			figure.StartPoint = new Point(width, height * 0.875);
-			figure.Segments.Add(new PolyLineSegment(new Point[] 
+			figure.Segments.Add(new PolyLineSegment(new Point[]
       {
         new Point(width / 2, height / 2),
         new Point(width, height * 0.175) }, true));

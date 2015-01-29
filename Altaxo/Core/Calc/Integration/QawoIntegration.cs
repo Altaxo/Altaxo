@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,7 @@ using System.Text;
 namespace Altaxo.Calc.Integration
 {
 	public enum OscillatoryTerm { Cosine, Sine };
+
 	/// <summary>
 	/// QAWO adaptive integration for oscillatory functions
 	/// </summary>
@@ -55,13 +58,12 @@ namespace Altaxo.Calc.Integration
 	/// </remarks>
 	public class QawoIntegration : IntegrationBase
 	{
-
 		#region offical C# interface
+
 		protected static int _defaultOscTableLength = 20;
 		protected bool _debug;
 		protected gsl_integration_workspace _workSpace;
 		protected gsl_integration_qawo_table _qawoTable;
-
 
 		/// <summary>
 		/// Creates an instance of this integration class with a default integration rule and default debug flag setting.
@@ -70,7 +72,6 @@ namespace Altaxo.Calc.Integration
 			: this(DefaultDebugFlag)
 		{
 		}
-
 
 		/// <summary>
 		/// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
@@ -134,7 +135,7 @@ namespace Altaxo.Calc.Integration
 			return algo.Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, out result, out abserr);
 		}
 
-		#endregion
+		#endregion offical C# interface
 
 		protected enum gsl_integration_qawo_enum { GSL_INTEG_COSINE, GSL_INTEG_SINE };
 
@@ -147,13 +148,11 @@ namespace Altaxo.Calc.Integration
 			public gsl_integration_qawo_enum sine;
 			public double[] chebmo;
 
-
 			public
 				gsl_integration_qawo_table(double omega, double L,
 																	gsl_integration_qawo_enum sine,
 																	int n)
 			{
-
 				if (n == 0)
 				{
 					throw new ArgumentOutOfRangeException("table length n must be positive integer");
@@ -203,7 +202,6 @@ namespace Altaxo.Calc.Integration
 				return; //GSL_SUCCESS;
 			}
 
-
 			public void set_length(double L)
 			{
 				/* return immediately if the length is the same as the old length */
@@ -232,8 +230,7 @@ namespace Altaxo.Calc.Integration
 				return; // GSL_SUCCESS;
 			}
 
-
-			static void
+			private static void
  compute_moments(double par, double[] chebmo, int chebmostart)
 			{
 				double[] v = new double[28], d = new double[25], d1 = new double[25], d2 = new double[25];
@@ -292,7 +289,6 @@ namespace Altaxo.Calc.Integration
 					v[noeq + 2] = v[noeq + 2] - 2 * asap * par2 * (an - 1) * (an - 2);
 
 					dgtsl(noeq, d1, d, d2, LinearAlgebra.VectorMath.ToVector(v, 3, v.Length - 3));
-
 				}
 				else
 				{
@@ -309,7 +305,6 @@ namespace Altaxo.Calc.Integration
 						an = an + 2.0;
 					}
 				}
-
 
 				for (i = 0; i < 13; i++)
 				{
@@ -356,7 +351,6 @@ namespace Altaxo.Calc.Integration
 					v[noeq + 1] = v[noeq + 1] - 2 * asap * par2 * (an - 1) * (an - 2);
 
 					dgtsl(noeq, d1, d, d2, LinearAlgebra.VectorMath.ToVector(v, 2, v.Length - 2));
-
 				}
 				else
 				{
@@ -377,15 +371,13 @@ namespace Altaxo.Calc.Integration
 				{
 					chebmo[chebmostart + 2 * i + 1] = v[i];
 				}
-
 			}
 
-
-			static GSL_ERR
+			private static GSL_ERR
 dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 			{
-				/* solves a tridiagonal matrix A x = b 
-     
+				/* solves a tridiagonal matrix A x = b
+
 					 c[1 .. n - 1]   subdiagonal of the matrix A
 					 d[0 .. n - 1]   diagonal of the matrix A
 					 e[0 .. n - 2]   superdiagonal of the matrix A
@@ -452,14 +444,12 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 						e[k1] = 0;
 						b[k1] = b[k1] + t * b[k];
 					}
-
 				}
 
 				if (c[n - 1] == 0)
 				{
 					return GSL_ERR.GSL_FAILURE;
 				}
-
 
 				b[n - 1] = b[n - 1] / c[n - 1];
 
@@ -473,32 +463,26 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 				return GSL_ERR.GSL_SUCCESS;
 			}
-
-
-
 		}
 
-
 		/* integration/qawo.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
-
 
 		protected static GSL_ERROR
 		gsl_integration_qawo(Func<double, double> f,
@@ -825,7 +809,6 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 				workspace.reset_nrmax();
 				extrapolate = false;
 				error_over_large_intervals = errsum;
-
 			}
 			while (iteration < limit);
 
@@ -922,37 +905,36 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 			{
 				return new GSL_ERROR("could not integrate function", GSL_ERR.GSL_EFAILED, bDebug);
 			}
-
 		}
 
 		#region QC25f
 
 		/* integration/qc25f.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-		struct fn_fourier_params
+		private struct fn_fourier_params
 		{
 			public Func<double, double> function;
 			public double omega;
 		}
 
-		static void
+		private static void
 		qc25f(Func<double, double> f, double a, double b,
 					 gsl_integration_qawo_table wf, int level,
 					 out double result, out double abserr, out double resabs, out double resasc)
@@ -980,7 +962,6 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 					weighted_function = delegate(double t) { return fn_cos(t, fn_params); };
 				}
 
-
 				QK15.Integration(weighted_function, a, b, out result, out abserr,
 															out resabs, out resasc);
 
@@ -1002,7 +983,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 				{
 					/* table overflow should not happen, check before calling */
 					new GSL_ERROR("table overflow in internal function", GSL_ERR.GSL_ESANITY, true);
-					throw new ArithmeticException("table overflow in internal function"); // 
+					throw new ArithmeticException("table overflow in internal function"); //
 				}
 
 				/* obtain moments from the table */
@@ -1056,7 +1037,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 			}
 		}
 
-		static double fn_sin(double x, fn_fourier_params p)
+		private static double fn_sin(double x, fn_fourier_params p)
 		{
 			Func<double, double> f = p.function;
 			double w = p.omega;
@@ -1065,7 +1046,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 			return f(x) * sinwx;
 		}
 
-		static double fn_cos(double x, fn_fourier_params p)
+		private static double fn_cos(double x, fn_fourier_params p)
 		{
 			Func<double, double> f = p.function;
 			double w = p.omega;
@@ -1073,7 +1054,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 			double coswx = Math.Cos(wx);
 			return f(x) * coswx;
 		}
-		#endregion
 
+		#endregion QC25f
 	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,7 @@ using System.Text;
 namespace Altaxo.Main.Services.PropertyReflection
 {
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>
 	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -51,12 +53,12 @@ namespace Altaxo.Main.Services.PropertyReflection
 			get { return _categoryName; }
 		}
 
-		#endregion
+		#endregion Initialization
 
 		#region Fields
 
 		private readonly string _categoryName;
 
-		#endregion
+		#endregion Fields
 	}
 }

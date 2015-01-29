@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,19 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Data;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -47,44 +43,44 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	{
 		#region Members
 
-		const int idxVariablesColumn = 0;
-		const int idxErrorFuncColumn = 1;
-		const int idxRectLeftColumn = 2;
-		const int idxVariablesNameColumn = 3;
-		const int idxParameterNameColumn = 4;
-		const int idxParameterSymbolColumn = 5; // and 6
-		const int idxParameterColumn = 7;
+		private const int idxVariablesColumn = 0;
+		private const int idxErrorFuncColumn = 1;
+		private const int idxRectLeftColumn = 2;
+		private const int idxVariablesNameColumn = 3;
+		private const int idxParameterNameColumn = 4;
+		private const int idxParameterSymbolColumn = 5; // and 6
+		private const int idxParameterColumn = 7;
 
-
-		FitElement _fitElement;
-		int _numberOfX;
-		int _numberOfY;
-		int _numberOfParameter;
-		int _totalSlots;
+		private FitElement _fitElement;
+		private int _numberOfX;
+		private int _numberOfY;
+		private int _numberOfParameter;
+		private int _totalSlots;
 
 		/// <summary>Width of the IVarianceScaling box.</summary>
-		int _errorFunctionWidth;
+		private int _errorFunctionWidth;
+
 		/// <summary>X position of the IVarianceScaling box.</summary>
-		int _errorFunctionX;
+		private int _errorFunctionX;
 
 		/// <summary>X coordinate of the left edge of the external parameters boxes.</summary>
-		int _externalParametersX;
+		private int _externalParametersX;
+
 		/// <summary>With of the external parameters boxes.</summary>
-		int _externalParametersWidth;
+		private int _externalParametersWidth;
 
-		int _VariablesX = 0;
-		int _DependentVariablesWidth;
-		int _DependentVariablesY;
-		int _IndependentVariablesWidth;
-		bool _fitFunctionSelected;
+		private int _VariablesX = 0;
+		private int _DependentVariablesWidth;
+		private int _DependentVariablesY;
+		private int _IndependentVariablesWidth;
+		private bool _fitFunctionSelected;
 
-		#endregion
+		#endregion Members
 
 		public FitElementControl()
 		{
 			InitializeComponent();
 		}
-
 
 		#region Work
 
@@ -96,7 +92,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			var standardRightInnerLabelMargin = new Thickness(0, 0, 2, 0);
 			double circleDiameter = FontSize;
 			double circleThickness = 1;
-
 
 			_grid.Children.Clear();
 			_grid.RowDefinitions.Clear();
@@ -110,7 +105,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_colL2.Width = colW;
 			_colR1.Width = colW;
 			_colR2.Width = colW;
-
 
 			// Button with fit function name
 			{
@@ -331,41 +325,41 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			return name;
 		}
 
-		void EhClickOnFitFunction(object sender, RoutedEventArgs e)
+		private void EhClickOnFitFunction(object sender, RoutedEventArgs e)
 		{
 			_controller.EhView_ChooseFitFunction();
 			_controller.EhView_EditFitFunction();
 		}
 
-		void EhClickOnPlotRange(object sender, RoutedEventArgs e)
+		private void EhClickOnPlotRange(object sender, RoutedEventArgs e)
 		{
 			_controller.EhView_ChooseFitRange();
 
 			((ContentControl)sender).Content = GetTextShownForPlotRange();
 		}
 
-		void EhClickOnParameter(object sender, RoutedEventArgs e)
+		private void EhClickOnParameter(object sender, RoutedEventArgs e)
 		{
 			int idx = (int)((FrameworkElement)sender).Tag;
 			_controller.EhView_ChooseExternalParameter(idx);
 			((ContentControl)sender).Content = GetTextShownForParameter(idx);
 		}
 
-		void EhClickOnErrorFunction(object sender, RoutedEventArgs e)
+		private void EhClickOnErrorFunction(object sender, RoutedEventArgs e)
 		{
 			int idx = (int)((FrameworkElement)sender).Tag;
 			_controller.EhView_ChooseErrorFunction(idx);
 			((ContentControl)sender).Content = GetTextShownForErrorEvaluation(idx);
 		}
 
-		void EhClickOnDependentVariable(object sender, RoutedEventArgs e)
+		private void EhClickOnDependentVariable(object sender, RoutedEventArgs e)
 		{
 			int idx = (int)((FrameworkElement)sender).Tag;
 			_controller.EhView_ChooseDependentColumn(idx);
 			((ContentControl)sender).Content = GetTextShownForDependentVariable(idx);
 		}
 
-		void EhRemoveDependentVariable(object sender, RoutedEventArgs e)
+		private void EhRemoveDependentVariable(object sender, RoutedEventArgs e)
 		{
 			var fwe = (FrameworkElement)((FrameworkElement)sender).Tag; // the menuItem has the corresponding button as tag
 			int idx = (int)(fwe.Tag); // the button's tag contains the index
@@ -373,20 +367,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			((ContentControl)fwe).Content = GetTextShownForDependentVariable(idx);
 		}
 
-		void EhClickOnIndependentVariable(object sender, RoutedEventArgs e)
+		private void EhClickOnIndependentVariable(object sender, RoutedEventArgs e)
 		{
 			int idx = (int)((FrameworkElement)sender).Tag;
 			_controller.EhView_ChooseIndependentColumn(idx);
 			((ContentControl)sender).Content = GetTextShownForIndependentVariable(idx);
 		}
 
-
-		#endregion
-
+		#endregion Work
 
 		#region IFitElementView
 
-		IFitElementViewEventSink _controller;
+		private IFitElementViewEventSink _controller;
+
 		public IFitElementViewEventSink Controller
 		{
 			get
@@ -413,7 +406,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void Refresh()
 		{
-
 		}
 
 		public bool FitFunctionSelected
@@ -425,6 +417,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		#endregion
+		#endregion IFitElementView
 	}
 }

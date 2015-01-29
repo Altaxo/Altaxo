@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,21 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using System.Windows;
 using System.Windows.Controls;
-
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
 	public class MultipleChoiceListView : ListView
 	{
-		SelectableListNodeList _choices;
+		private SelectableListNodeList _choices;
 
 		public void Initialize(SelectableListNodeList choices)
 		{
@@ -56,7 +55,7 @@ namespace Altaxo.Gui.Common
 			this.SelectionChanged += EhSelectionChanged; // now allow event again
 		}
 
-		void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void EhSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
 			_choices.ClearSelectionsAll();

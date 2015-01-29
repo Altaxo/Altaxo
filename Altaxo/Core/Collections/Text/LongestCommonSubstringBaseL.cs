@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // #define LinkedListDebug
 
@@ -40,23 +42,29 @@ namespace Altaxo.Collections.Text
 	{
 		#region internal types
 
-	/// <summary>
+		/// <summary>
 		/// Element of the linked list array.
 		/// </summary>
 		protected class LLElement
 		{
 			/// <summary>First occurence in the suffix array.</summary>
 			public int Idx;
+
 			/// <summary>Longest common prefix.</summary>
 			public int Lcp;
+
 			/// <summary>Next list element in the array, or null if no such element exists.</summary>
 			public LLElement Next;
+
 			/// <summary>Previous list element in the array, or null if no such element exists.</summary>
 			public LLElement Previous;
+
 			/// <summary>First list element of the interval to which this list element belongs.</summary>
 			public LLElement IntervalBegin;
+
 			/// <summary>Last list element of the interval to which this list element belongs.</summary>
 			public LLElement IntervalEnd;
+
 			/// <summary>Length of the interval (number of nodes) that belong to the interval to which this list element belongs.</summary>
 			public int IntervalSize;
 
@@ -102,9 +110,9 @@ namespace Altaxo.Collections.Text
 		/// </summary>
 		protected class LinkedList
 		{
-			LLElement _first;
-			LLElement _last;
-			int _count;
+			private LLElement _first;
+			private LLElement _last;
+			private int _count;
 
 			public void AddLast(LLElement node)
 			{
@@ -143,7 +151,6 @@ namespace Altaxo.Collections.Text
 				--_count;
 			}
 
-
 			public LLElement First
 			{
 				get
@@ -167,15 +174,14 @@ namespace Altaxo.Collections.Text
 					return _count;
 				}
 			}
-
 		}
 
 		#endregion internal types
 
 		// intermediate data neccessary for the algorithm
 		protected LinkedList _ddlList;
-		protected LLElement[] _lastLcp;
 
+		protected LLElement[] _lastLcp;
 
 		/// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
@@ -183,7 +189,6 @@ namespace Altaxo.Collections.Text
 			: base(gsa)
 		{
 		}
-
 
 #if LinkedListDebug
 		protected virtual void print_debug()
@@ -197,8 +202,5 @@ namespace Altaxo.Collections.Text
 			}
 		}
 #endif
-
 	}
-
 }
-

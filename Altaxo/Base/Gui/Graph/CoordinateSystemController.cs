@@ -25,7 +25,6 @@
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common;
-using Altaxo.Main;
 using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;

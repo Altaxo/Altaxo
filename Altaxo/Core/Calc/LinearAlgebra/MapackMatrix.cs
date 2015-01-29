@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,8 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 // -------------------------------------------------------------------------
 // Lutz Roeder's .NET Mapack, adapted from Mapack for COM and Jama routines.
@@ -27,7 +28,6 @@
 // http://www.aisto.com/roeder/dotnet
 // roeder@aisto.com
 // -------------------------------------------------------------------------
-
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -132,7 +132,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// <remarks>
 	///   For a symmetric, positive definite matrix <c>A</c>, the Cholesky decomposition is a
 	///   lower triangular matrix <c>L</c> so that <c>A = L * L'</c>.
-	///   If the matrix is not symmetric or positive definite, the constructor returns a partial 
+	///   If the matrix is not symmetric or positive definite, the constructor returns a partial
 	///   decomposition and sets two internal variables that can be queried using the
 	///   <see cref="IsSymmetric"/> and <see cref="IsPositiveDefinite"/> properties.
 	/// </remarks>
@@ -196,7 +196,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </summary>
 	/// <remarks>
 	///   For an m-by-n matrix <c>A</c> with <c>m &gt;= n</c>, the QR decomposition is an m-by-n
-	///   orthogonal matrix <c>Q</c> and an n-by-n upper triangular 
+	///   orthogonal matrix <c>Q</c> and an n-by-n upper triangular
 	///   matrix <c>R</c> so that <c>A = Q * R</c>.
 	///   The QR decompostion always exists, even if the matrix does not have
 	///   full rank, so the constructor will never fail.  The primary use of the
@@ -339,7 +339,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			this.data = data;
 		}
 
-		double[][] Array
+		private double[][] Array
 		{
 			get { return data; }
 		}
@@ -1740,10 +1740,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			void tred2()
+			private void tred2()
 			{
 				// Symmetric Householder reduction to tridiagonal form.
-				// This is derived from the Algol procedures tred2 by Bowdler, Martin, Reinsch, and Wilkinson, 
+				// This is derived from the Algol procedures tred2 by Bowdler, Martin, Reinsch, and Wilkinson,
 				// Handbook for Auto. Comp., Vol.ii-Linear Algebra, and the corresponding Fortran subroutine in EISPACK.
 				for (int j = 0; j < n; j++)
 					d[j] = V[n - 1, j];
@@ -1860,10 +1860,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				e[0] = 0.0;
 			}
 
-			void tql2()
+			private void tql2()
 			{
 				// Symmetric tridiagonal QL algorithm.
-				// This is derived from the Algol procedures tql2, by Bowdler, Martin, Reinsch, and Wilkinson, 
+				// This is derived from the Algol procedures tql2, by Bowdler, Martin, Reinsch, and Wilkinson,
 				// Handbook for Auto. Comp., Vol.ii-Linear Algebra, and the corresponding Fortran subroutine in EISPACK.
 				for (int i = 1; i < n; i++)
 					e[i - 1] = e[i];
@@ -1979,10 +1979,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			void orthes()
+			private void orthes()
 			{
 				// Nonsymmetric reduction to Hessenberg form.
-				// This is derived from the Algol procedures orthes and ortran, by Martin and Wilkinson, 
+				// This is derived from the Algol procedures orthes and ortran, by Martin and Wilkinson,
 				// Handbook for Auto. Comp., Vol.ii-Linear Algebra, and the corresponding Fortran subroutines in EISPACK.
 				int low = 0;
 				int high = n - 1;
@@ -2067,7 +2067,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			void cdiv(double xr, double xi, double yr, double yi)
+			private void cdiv(double xr, double xi, double yr, double yi)
 			{
 				// Complex scalar division.
 				double r, d;
@@ -2087,9 +2087,9 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			void hqr2()
+			private void hqr2()
 			{
-				// Nonsymmetric reduction from Hessenberg to real Schur form.   
+				// Nonsymmetric reduction from Hessenberg to real Schur form.
 				// This is derived from the Algol procedure hqr2, by Martin and Wilkinson, Handbook for Auto. Comp.,
 				// Vol.ii-Linear Algebra, and the corresponding  Fortran subroutine in EISPACK.
 				int nn = this.n;
@@ -2207,7 +2207,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					}
 					else
 					{
-						// No convergence yet  
+						// No convergence yet
 
 						// Form shift
 						x = H[n, n];

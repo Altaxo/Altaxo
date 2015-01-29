@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * OptimizationMethod.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 using System.Text;
 
 namespace Altaxo.Calc.Optimization
@@ -42,9 +44,9 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public abstract class OptimizationMethod : IFormattable
 	{
-
 		///<summary> Optimization ending critera </summary>
 		public EndCriteria endCriteria_;
+
 		///<summary> Optimization Cost Function </summary>
 		public ICostFunction costFunction_;
 
@@ -112,5 +114,4 @@ namespace Altaxo.Calc.Optimization
 			return sb.ToString(); */
 		}
 	}
-
 }

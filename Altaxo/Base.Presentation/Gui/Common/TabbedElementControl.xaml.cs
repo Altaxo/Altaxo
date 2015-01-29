@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Common
 {
@@ -63,9 +58,7 @@ namespace Altaxo.Gui.Common
 			var item = new TabItem();
 			item.Header = title;
 
-
 			item.Content = (UIElement)view;
-
 
 			item.LostFocus += item_LostFocus;
 			item.GotFocus += item_GotFocus;
@@ -73,13 +66,13 @@ namespace Altaxo.Gui.Common
 			_tabControl.Items.Add(item);
 		}
 
-		void item_GotFocus(object sender, RoutedEventArgs e)
+		private void item_GotFocus(object sender, RoutedEventArgs e)
 		{
 			if (null != ChildControl_Entered)
 				ChildControl_Entered(sender, EventArgs.Empty);
 		}
 
-		void item_LostFocus(object sender, RoutedEventArgs e)
+		private void item_LostFocus(object sender, RoutedEventArgs e)
 		{
 			if (null != ChildControl_Validated)
 				ChildControl_Validated(sender, EventArgs.Empty);

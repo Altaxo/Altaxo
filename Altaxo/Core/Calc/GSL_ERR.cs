@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -65,7 +67,6 @@ namespace Altaxo.Calc
 		GSL_EOF = 32   /* end of file */
 	} ;
 
-
 	public class GSL_ERROR
 	{
 		public string Message;
@@ -73,7 +74,8 @@ namespace Altaxo.Calc
 
 		#region Fixed static values
 
-		static GSL_ERROR _sSuccess = new GSL_ERROR("Success", GSL_ERR.GSL_SUCCESS, false);
+		private static GSL_ERROR _sSuccess = new GSL_ERROR("Success", GSL_ERR.GSL_SUCCESS, false);
+
 		public static GSL_ERROR SUCCESS
 		{
 			get
@@ -82,7 +84,8 @@ namespace Altaxo.Calc
 			}
 		}
 
-		static GSL_ERROR _sContinue = new GSL_ERROR("Continue", GSL_ERR.GSL_CONTINUE, false);
+		private static GSL_ERROR _sContinue = new GSL_ERROR("Continue", GSL_ERR.GSL_CONTINUE, false);
+
 		public static GSL_ERROR CONTINUE
 		{
 			get
@@ -91,9 +94,7 @@ namespace Altaxo.Calc
 			}
 		}
 
-		#endregion
-
-
+		#endregion Fixed static values
 
 		public GSL_ERROR(string message, GSL_ERR number, bool bDebug)
 		{

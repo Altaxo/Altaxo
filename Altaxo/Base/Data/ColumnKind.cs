@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
-using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
-
-
 	/// <summary>
 	/// The main purpose of the column.
 	/// </summary>
@@ -35,48 +33,55 @@ namespace Altaxo.Data
 	public enum ColumnKind
 	{
 		/// <summary>
-		/// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots) 
+		/// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots)
 		/// </summary>
 		V = 0,
+
 		/// <summary>
 		/// Column values are the first independent variable.
 		/// </summary>
 		X = 1,
+
 		/// <summary>
 		/// Column values are the second independent variable.
 		/// </summary>
 		Y = 2,
+
 		/// <summary>
 		/// Column values are the third independent variable.
 		/// </summary>
 		Z = 3,
+
 		/// <summary>
 		/// Column values are +- error values.
 		/// </summary>
 		Err = 4,
+
 		/// <summary>
 		/// Column values are + error values.
 		/// </summary>
 		pErr = 5,
+
 		/// <summary>
 		/// Column values are - error values.
 		/// </summary>
 		mErr = 6,
+
 		/// <summary>
 		/// Column values are labels.
 		/// </summary>
 		Label = 7,
+
 		/// <summary>
 		/// Column values are the plot condition, i.e. if zero, the row is ignored during plotting.
 		/// </summary>
 		Condition = 8
 	}
 
-
 	public class ColumnKindChangeEventArgs : System.EventArgs
 	{
-		ColumnKind _oldKind;
-		ColumnKind _newKind;
+		private ColumnKind _oldKind;
+		private ColumnKind _newKind;
 
 		public ColumnKindChangeEventArgs(ColumnKind oldKind, ColumnKind newKind)
 		{
@@ -85,10 +90,7 @@ namespace Altaxo.Data
 		}
 
 		public ColumnKind OldKind { get { return _oldKind; } }
+
 		public ColumnKind NewKind { get { return _newKind; } }
-
-
 	}
-
-
 }

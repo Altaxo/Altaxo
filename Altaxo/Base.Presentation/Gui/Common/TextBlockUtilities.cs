@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,20 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
-using System.Windows.Automation;
-using System.Globalization;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Windows.Data;
-
 
 namespace Altaxo.Gui.Common
 {
@@ -98,18 +92,17 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		private static void ComputeAutoTooltip(TextBlock textBlock)
 		{
-      textBlock.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
-      var width = textBlock.DesiredSize.Width;
+			textBlock.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+			var width = textBlock.DesiredSize.Width;
 
-      if (textBlock.ActualWidth < width)
-      {
-        ToolTipService.SetToolTip(textBlock, textBlock.Text);
-      }
-      else
-      {
-        ToolTipService.SetToolTip(textBlock, null);
-      }
+			if (textBlock.ActualWidth < width)
+			{
+				ToolTipService.SetToolTip(textBlock, textBlock.Text);
+			}
+			else
+			{
+				ToolTipService.SetToolTip(textBlock, null);
+			}
 		}
 	}
-
 }

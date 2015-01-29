@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,88 +19,82 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using NUnit.Framework;
+#endregion Copyright
+
 using Altaxo.Calc.Fourier;
+using NUnit.Framework;
+using System;
 
 namespace AltaxoTest.Calc.Fourier
 {
+	[TestFixture]
+	public class TestChirpConvolution
+	{
+		private const int nLowerLimit = 4;
+		private const int nUpperLimit = 66;
+		private const double maxTolerableEpsPerN = 1E-15;
+		private SplittedComplexConvolutionTests _test;
 
-  [TestFixture]
-  public class TestChirpConvolution
-  {
-    const int nLowerLimit=4;
-    const int nUpperLimit=66;
-    const double maxTolerableEpsPerN=1E-15;
-    SplittedComplexConvolutionTests _test ;
+		public TestChirpConvolution()
+		{
+			_test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(ChirpFFT.CyclicConvolution));
+		}
 
-    public TestChirpConvolution()
-    {
-      _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(ChirpFFT.CyclicConvolution));
-    }
+		[Test]
+		public void Test01BothZero()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestBothZero(i);
+		}
 
+		[Test]
+		public void Test02OneZero()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestOneZero(i);
+		}
 
-    [Test]
-    public void Test01BothZero()
-    {
-      
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestBothZero(i);
-    }
+		[Test]
+		public void Test03ReOne_ZeroPos()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_ZeroPos(i);
+		}
 
-    [Test]
-    public void Test02OneZero()
-    {
-      
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestOneZero(i);
-    }
+		[Test]
+		public void Test04OneReOne_OtherRandom()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestOneReOne_OtherRandom(i);
+		}
 
+		[Test]
+		public void Test05OneImOne_OtherRandom()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestOneImOne_OtherRandom(i);
+		}
 
-    [Test]
-    public void Test03ReOne_ZeroPos()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_ZeroPos(i);
-    }
+		[Test]
+		public void Test06ReOne_OnePos_OtherRandom()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestReOne_OnePos_OtherRandom(i);
+		}
 
-    [Test]
-    public void Test04OneReOne_OtherRandom()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestOneReOne_OtherRandom(i);
-    }
+		[Test]
+		public void Test07ImOne_OnePos_OtherRandom()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestImOne_OnePos_OtherRandom(i);
+		}
 
-    [Test]
-    public void Test05OneImOne_OtherRandom()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestOneImOne_OtherRandom(i);
-    }
-    
-    [Test]
-    public void Test06ReOne_OnePos_OtherRandom()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_OnePos_OtherRandom(i);
-    }
-    
-    [Test]
-    public void Test07ImOne_OnePos_OtherRandom()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestImOne_OnePos_OtherRandom(i);
-    }
-
-    [Test]
-    public void Test08BothRandom()
-    {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestBothRandom(i);
-    }
-
-
-  }
+		[Test]
+		public void Test08BothRandom()
+		{
+			for (int i = nLowerLimit; i <= nUpperLimit; i++)
+				_test.TestBothRandom(i);
+		}
+	}
 }

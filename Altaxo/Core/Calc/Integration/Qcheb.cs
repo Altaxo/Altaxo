@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,8 +35,9 @@ namespace Altaxo.Calc.Integration
 	public class Qcheb
 	{
 		#region Official C# interface
-		double[] _fval = new double[25]; // working space
-		double[] _v = new double[12]; // working space
+
+		private double[] _fval = new double[25]; // working space
+		private double[] _v = new double[12]; // working space
 
 		public Qcheb()
 		{
@@ -52,42 +55,38 @@ namespace Altaxo.Calc.Integration
 			gsl_integration_qcheb(f, a, b, cheb12, cheb24, fval, v);
 		}
 
-
-
-		#endregion
-
+		#endregion Official C# interface
 
 		/* integration/qcheb.c
- * 
+ *
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-		readonly static double[] x = { 0.9914448613738104,     
+		private static readonly double[] x = { 0.9914448613738104,
                          0.9659258262890683,
-                         0.9238795325112868,     
+                         0.9238795325112868,
                          0.8660254037844386,
-                         0.7933533402912352,     
+                         0.7933533402912352,
                          0.7071067811865475,
-                         0.6087614290087206,     
+                         0.6087614290087206,
                          0.5000000000000000,
-                         0.3826834323650898,     
+                         0.3826834323650898,
                          0.2588190451025208,
                          0.1305261922200516 };
-
 
 		/// <summary>
 		///This function computes the 12-th order and 24-th order Chebyshev
@@ -100,18 +99,15 @@ namespace Altaxo.Calc.Integration
 		/// <param name="cheb24"></param>
 		/// <param name="fval">working space, must be of length 25</param>
 		/// <param name="v">working space, must be of length 12</param>
-		static void gsl_integration_qcheb(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24,
+		private static void gsl_integration_qcheb(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24,
 			double[] fval, // working space, must be of length 25
 			double[] v     // working space, must be of length 12
 			)
 		{
 			int i;
 
-
 			/* These are the values of cos(pi*k/24) for k=1..11 needed for the
 				 Chebyshev expansion of f(x) */
-
-
 
 			double center = 0.5 * (b + a);
 			double half_length = 0.5 * (b - a);
@@ -293,6 +289,5 @@ namespace Altaxo.Calc.Integration
 			cheb24[0] *= 1.0 / 24.0;
 			cheb24[24] *= 1.0 / 24.0;
 		}
-
 	}
 }

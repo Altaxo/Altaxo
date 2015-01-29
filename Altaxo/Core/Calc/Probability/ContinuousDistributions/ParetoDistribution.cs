@@ -1,8 +1,8 @@
 /*
  * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
- * 
+ *
  * This file is part of Troschuetz.Random Class Library.
- * 
+ *
  * Troschuetz.Random is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * ParetoDistribution.cs, 21.09.2006
- * 
+ *
  * 09.08.2006: Initial version
- * 21.09.2006: Adapted to change in base class (field "generator" declared private (formerly protected) 
+ * 21.09.2006: Adapted to change in base class (field "generator" declared private (formerly protected)
  *             and made accessible through new protected property "Generator")
- * 
+ *
  */
 
 using System;
@@ -31,13 +31,14 @@ namespace Altaxo.Calc.Probability
 	/// Provides generation of pareto distributed random numbers.
 	/// </summary>
 	/// <remarks>
-    /// The implementation of the <see cref="ParetoDistribution"/> type bases upon information presented on
-    ///   <a href="http://en.wikipedia.org/wiki/Pareto_distribution">Wikipedia - Pareto distribution</a> and
-    ///   <a href="http://www.xycoon.com/par_random.htm">Xycoon - Pareto Distribution</a>.
-    /// </remarks>
-  public class ParetoDistribution : ContinuousDistribution
+	/// The implementation of the <see cref="ParetoDistribution"/> type bases upon information presented on
+	///   <a href="http://en.wikipedia.org/wiki/Pareto_distribution">Wikipedia - Pareto distribution</a> and
+	///   <a href="http://www.xycoon.com/par_random.htm">Xycoon - Pareto Distribution</a>.
+	/// </remarks>
+	public class ParetoDistribution : ContinuousDistribution
 	{
 		#region instance fields
+
 		/// <summary>
 		/// Gets or sets the parameter alpha which is used for generation of pareto distributed random numbers.
 		/// </summary>
@@ -50,17 +51,17 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-        Initialize(value, beta);
-        	}
+				Initialize(value, beta);
+			}
 		}
 
 		/// <summary>
 		/// Stores the parameter alpha which is used for generation of pareto distributed random numbers.
 		/// </summary>
 		private double alpha;
-		
+
 		/// <summary>
-        /// Gets or sets the parameter beta which is used for generation of pareto distributed random numbers.
+		/// Gets or sets the parameter beta which is used for generation of pareto distributed random numbers.
 		/// </summary>
 		/// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
 		public double Beta
@@ -71,73 +72,77 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-        Initialize(alpha, value);
-        	}
+				Initialize(alpha, value);
+			}
 		}
 
 		/// <summary>
-        /// Stores the parameter beta which is used for generation of pareto distributed random numbers.
+		/// Stores the parameter beta which is used for generation of pareto distributed random numbers.
 		/// </summary>
 		private double beta;
 
-        /// <summary>
-        /// Stores an intermediate result for generation of pareto distributed random numbers.
-        /// </summary>
-        /// <remarks>
-        /// Speeds up random number generation cause this value only depends on distribution parameters 
-        ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
-        /// </remarks>
-        private double helper1;
-        #endregion
+		/// <summary>
+		/// Stores an intermediate result for generation of pareto distributed random numbers.
+		/// </summary>
+		/// <remarks>
+		/// Speeds up random number generation cause this value only depends on distribution parameters
+		///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
+		/// </remarks>
+		private double helper1;
+
+		#endregion instance fields
 
 		#region construction
+
 		/// <summary>
-        /// Initializes a new instance of the <see cref="ParetoDistribution"/> class, using a 
-        ///   <see cref="StandardGenerator"/> as underlying random number generator.
+		/// Initializes a new instance of the <see cref="ParetoDistribution"/> class, using a
+		///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
-        public ParetoDistribution()
-            : this(DefaultGenerator)
+		public ParetoDistribution()
+			: this(DefaultGenerator)
 		{
 		}
 
 		/// <summary>
-        /// Initializes a new instance of the <see cref="ParetoDistribution"/> class, using the specified 
-        ///   <see cref="Generator"/> as underlying random number generator.
-        /// </summary>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
-        public ParetoDistribution(Generator generator)
-            : this(1,1,generator)
-        {
-            
-        }
-    public ParetoDistribution(double alpha, double beta)
-      : this(alpha, beta, DefaultGenerator)
-    {
-    }
-    public ParetoDistribution(double alpha, double beta, Generator generator)
-      : base(generator)
-    {
-      Initialize(alpha, beta);
-    }
+		/// Initializes a new instance of the <see cref="ParetoDistribution"/> class, using the specified
+		///   <see cref="Generator"/> as underlying random number generator.
+		/// </summary>
+		/// <param name="generator">A <see cref="Generator"/> object.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+		/// </exception>
+		public ParetoDistribution(Generator generator)
+			: this(1, 1, generator)
+		{
+		}
 
-		#endregion
-	
+		public ParetoDistribution(double alpha, double beta)
+			: this(alpha, beta, DefaultGenerator)
+		{
+		}
+
+		public ParetoDistribution(double alpha, double beta, Generator generator)
+			: base(generator)
+		{
+			Initialize(alpha, beta);
+		}
+
+		#endregion construction
+
 		#region instance methods
-    public void Initialize(double alpha, double beta)
-    {
-      if (!IsValidAlpha(alpha))
-        throw new ArgumentOutOfRangeException("Alpha out of range (must be positive)");
-      if (!IsValidBeta(beta))
-        throw new ArgumentOutOfRangeException("Beta out of range (must be positive)");
-      
-      this.alpha = alpha;
-      this.beta = beta;
 
-      this.helper1 = 1.0 / this.beta;
-    }
+		public void Initialize(double alpha, double beta)
+		{
+			if (!IsValidAlpha(alpha))
+				throw new ArgumentOutOfRangeException("Alpha out of range (must be positive)");
+			if (!IsValidBeta(beta))
+				throw new ArgumentOutOfRangeException("Beta out of range (must be positive)");
+
+			this.alpha = alpha;
+			this.beta = beta;
+
+			this.helper1 = 1.0 / this.beta;
+		}
 
 		/// <summary>
 		/// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
@@ -150,7 +155,7 @@ namespace Altaxo.Calc.Probability
 		{
 			return value > 0.0;
 		}
-		
+
 		/// <summary>
 		/// Determines whether the specified value is valid for parameter <see cref="Beta"/>.
 		/// </summary>
@@ -163,11 +168,11 @@ namespace Altaxo.Calc.Probability
 			return value > 0.0;
 		}
 
-       
-        #endregion
+		#endregion instance methods
 
 		#region overridden Distribution members
-        /// <summary>
+
+		/// <summary>
 		/// Gets the minimum possible value of pareto distributed random numbers.
 		/// </summary>
 		public override double Minimum
@@ -181,7 +186,7 @@ namespace Altaxo.Calc.Probability
 		/// <summary>
 		/// Gets the maximum possible value of pareto distributed random numbers.
 		/// </summary>
-        public override double Maximum
+		public override double Maximum
 		{
 			get
 			{
@@ -192,105 +197,104 @@ namespace Altaxo.Calc.Probability
 		/// <summary>
 		/// Gets the mean value of pareto distributed random numbers.
 		/// </summary>
-        public override double Mean
+		public override double Mean
 		{
 			get
 			{
-                if (this.beta > 1.0)
-                {
-                    return this.alpha * this.beta / (this.beta - 1.0);
-                }
-                else
-                {
-                    return double.NaN;
-                }
+				if (this.beta > 1.0)
+				{
+					return this.alpha * this.beta / (this.beta - 1.0);
+				}
+				else
+				{
+					return double.NaN;
+				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets the median of pareto distributed random numbers.
 		/// </summary>
-        public override double Median
+		public override double Median
 		{
 			get
 			{
-                return this.alpha * Math.Pow(2.0, 1.0 / this.beta);
+				return this.alpha * Math.Pow(2.0, 1.0 / this.beta);
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets the variance of pareto distributed random numbers.
 		/// </summary>
-        public override double Variance
+		public override double Variance
 		{
 			get
 			{
-                if (this.beta > 2.0)
-                {
-                    return this.beta * Math.Pow(this.alpha, 2.0) / Math.Pow(this.beta - 1.0, 2.0) / (this.beta - 2.0);
-                }
-                else
-                {
-                    return double.NaN;
-                }
+				if (this.beta > 2.0)
+				{
+					return this.beta * Math.Pow(this.alpha, 2.0) / Math.Pow(this.beta - 1.0, 2.0) / (this.beta - 2.0);
+				}
+				else
+				{
+					return double.NaN;
+				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets the mode of pareto distributed random numbers.
 		/// </summary>
-        public override double[] Mode
+		public override double[] Mode
 		{
 			get
 			{
-                return new double[] { this.alpha };
+				return new double[] { this.alpha };
 			}
 		}
-		
+
 		/// <summary>
 		/// Returns a pareto distributed floating point random number.
 		/// </summary>
 		/// <returns>A pareto distributed double-precision floating point number.</returns>
-        public override double NextDouble()
+		public override double NextDouble()
 		{
-            return this.alpha / Math.Pow(1.0 - this.Generator.NextDouble(), this.helper1);
+			return this.alpha / Math.Pow(1.0 - this.Generator.NextDouble(), this.helper1);
 		}
-		#endregion
 
-    #region CdfPdfQuantile
+		#endregion overridden Distribution members
 
-    public override double CDF(double x)
-    {
-      return CDF(x, alpha, beta);
-    }
-    public static double CDF(double x, double alpha, double beta)
-    {
-      return 1 - Math.Pow(alpha / x, beta);
-    }
+		#region CdfPdfQuantile
 
+		public override double CDF(double x)
+		{
+			return CDF(x, alpha, beta);
+		}
 
+		public static double CDF(double x, double alpha, double beta)
+		{
+			return 1 - Math.Pow(alpha / x, beta);
+		}
 
-    public override double PDF(double x)
-    {
-      return PDF(x, alpha, beta);
-    }
-    public static double PDF(double x, double alpha, double beta)
-    {
-      return Math.Pow(alpha, beta) * beta * Math.Pow(x, -1 - beta);
-    }
+		public override double PDF(double x)
+		{
+			return PDF(x, alpha, beta);
+		}
 
+		public static double PDF(double x, double alpha, double beta)
+		{
+			return Math.Pow(alpha, beta) * beta * Math.Pow(x, -1 - beta);
+		}
 
-    public override double Quantile(double p)
-    {
-      return Quantile(p, alpha, beta);
-    }
-    public static double Quantile(double p, double alpha, double beta)
-    {
-      return alpha * Math.Pow(1 - p, -1 / beta);
-    }
+		public override double Quantile(double p)
+		{
+			return Quantile(p, alpha, beta);
+		}
 
+		public static double Quantile(double p, double alpha, double beta)
+		{
+			return alpha * Math.Pow(1 - p, -1 / beta);
+		}
 
-    #endregion
-
+		#endregion CdfPdfQuantile
 	}
 }

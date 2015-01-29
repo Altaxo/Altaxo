@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -33,39 +35,39 @@ namespace Altaxo.Collections.Text
 	/// </summary>
 	public class IntegerText
 	{
-		/// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements. 
+		/// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
 		/// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
 		/// </summary>
-		int[] _text;
-		
+		private int[] _text;
+
 		/// <summary>
-		/// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the 
+		/// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
 		/// array <see cref="_text"/> is needed to be longer than <see cref="_textLength"/>, since some additional elements are neccessary for most algorithms.
 		/// </summary>
-		int _textLength;
+		private int _textLength;
 
 		/// <summary>
 		/// Number of additional elements of array <see cref="_textLength"/>. Thus the length of this array is <see cref="_paddingLength"/> + <see cref="_textLength"/>.
 		/// </summary>
-		int _paddingLength;
+		private int _paddingLength;
 
 		/// <summary>
 		/// Size of the alphabet, i.e. the number of unique elements that occur in the original text (or, number of unique list elements). If the text was separated into individual words, the number of words (= number of separator elements) also
 		/// contribute to the alphabet size.
 		/// </summary>
-		int _alphabetSize;
+		private int _alphabetSize;
 
 		/// <summary>
 		/// Number of words, if the text was separated into individual words. Otherwise, this field is equal to one.
 		/// </summary>
-		int _numberOfWords;
+		private int _numberOfWords;
 
 		/// <summary>
 		/// Start positions of the words in which the original text was separated in the array <see cref="_text"/>.
 		/// </summary>
-		int[] _wordStartPositions;
+		private int[] _wordStartPositions;
 
-		/// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements. 
+		/// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
 		/// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
 		/// </summary>
 		public int[] Text
@@ -77,7 +79,7 @@ namespace Altaxo.Collections.Text
 		}
 
 		/// <summary>
-		/// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the 
+		/// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
 		/// array <see cref="_text"/> is needed to be longer than <see cref="_textLength"/>, since some additional elements are neccessary for most algorithms.
 		/// </summary>
 		public int TextLength
@@ -147,7 +149,6 @@ namespace Altaxo.Collections.Text
 
 			int numberOfSeparators = (withSeparators ? listCount : 0);
 
-
 			// preprocess the dictionary to give each unique element in the dictionary a unique number
 			int startInt = 1 + numberOfSeparators; // list.Count integers offset for the separator char + the zero char to append for the suffix sort algorithm
 
@@ -156,7 +157,6 @@ namespace Altaxo.Collections.Text
 			{
 				dict[key] = startInt++;
 			}
-
 
 			int[] text = new int[totalNumberOfElements + numberOfSeparators + padding];
 			int[] wordStarts = new int[listCount + 1];
@@ -184,9 +184,6 @@ namespace Altaxo.Collections.Text
 
 			return result;
 		}
-	
-		
-
 
 		/// <summary>Generates an integer text from arbitrary elements. Each list in <paramref name="lists"/> is treated as separate word. Each element is such a list is treated as character. The algorithm determines the lexicographical order of all elements in all lists
 		/// and then maps each unique element to an integer value, with increasing values in the lexicographical order of the elements. A unique mapping is even possible, if the elements are not sortable (i.e. if they not implement IComparable).</summary>
@@ -225,16 +222,14 @@ namespace Altaxo.Collections.Text
 
 			int numberOfSeparators = (withSeparators ? listCount : 0);
 
-
 			// preprocess the dictionary to give each unique element in the dictionary a unique number
 			int startInt = 1 + numberOfSeparators; // list.Count integers offset for the separator char + the zero char to append for the suffix sort algorithm
 
-			var dict = new Dictionary<T,int>();
-			foreach(var key in sSet)
+			var dict = new Dictionary<T, int>();
+			foreach (var key in sSet)
 			{
 				dict[key] = startInt++;
 			}
-
 
 			int[] text = new int[totalNumberOfElements + numberOfSeparators + padding];
 			int[] wordStarts = new int[listCount + 1];
@@ -247,7 +242,7 @@ namespace Altaxo.Collections.Text
 				{
 					text[i++] = dict[ele];
 				}
-				if(withSeparators)
+				if (withSeparators)
 					text[i++] = separator++; // add the separator
 
 				wordStarts[++word] = i;

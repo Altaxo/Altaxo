@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -118,9 +113,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_controller.EhView_DoSimulation(true == _rbFromEquallySpacedInterval.IsChecked, true == _chkUseUnusedDependentVarsAlso.IsChecked);
 		}
 
-		#region  INonlinearFitView
+		#region INonlinearFitView
 
-		INonlinearFitViewEventSink _controller;
+		private INonlinearFitViewEventSink _controller;
+
 		public INonlinearFitViewEventSink Controller
 		{
 			get
@@ -133,7 +129,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		UIElement _setParameterControl;
+		private UIElement _setParameterControl;
+
 		public void SetParameterControl(object control)
 		{
 			this._parameterControlHost.Child = null;
@@ -141,19 +138,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			this._parameterControlHost.Child = _setParameterControl;
 		}
 
-		UIElement _funcSelControl;
+		private UIElement _funcSelControl;
+
 		public void SetSelectFunctionControl(object control)
 		{
 			_funcSelControlHost.Child = null;
 			_funcSelControl = control as UIElement;
 			_funcSelControlHost.Child = _funcSelControl;
-
 		}
 
-		UIElement _fitEnsembleControl;
+		private UIElement _fitEnsembleControl;
+
 		public void SetFitEnsembleControl(object control)
 		{
-
 			this._tpFitEnsemble.Content = null;
 			_fitEnsembleControl = control as UIElement;
 			this._tpFitEnsemble.Content = _fitEnsembleControl;
@@ -174,6 +171,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			return _ctrlEquallySpacedInterval;
 		}
 
-		#endregion
+		#endregion INonlinearFitView
 	}
 }

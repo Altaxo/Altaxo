@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,7 @@ using System.Text;
 namespace Altaxo.Gui.Common.MultiRename
 {
 	/// <summary>
-	/// Data neccessary to rename a list of objects (but can also used for instance for exporting a list of objects). The idea behind is to have a bunch of shortcuts, like [N], that can be used as variables for the rename operation. 
+	/// Data neccessary to rename a list of objects (but can also used for instance for exporting a list of objects). The idea behind is to have a bunch of shortcuts, like [N], that can be used as variables for the rename operation.
 	/// Since using this class is somewhat complex, see the remarks for the details.
 	/// </summary>
 	/// <remarks>
@@ -50,9 +52,9 @@ namespace Altaxo.Gui.Common.MultiRename
 		/// <summary>
 		/// Shortcut types
 		/// </summary>
-		enum ShortcutType { Integer, String, StringArray, DateTime };
+		private enum ShortcutType { Integer, String, StringArray, DateTime };
 
-		class ShortcutInformation
+		private class ShortcutInformation
 		{
 			public ShortcutInformation(ShortcutType type, string description)
 			{
@@ -61,70 +63,70 @@ namespace Altaxo.Gui.Common.MultiRename
 			}
 
 			public ShortcutType ShortcutType { get; private set; }
+
 			public string ShortcutDescription { get; private set; }
 		}
 
-		class RenameInfo
+		private class RenameInfo
 		{
 			public object ObjectToRename;
 			public string OldName;
 			public string NewName;
 		}
 
-		#endregion
+		#endregion Inner classes
 
 		/// <summary>
 		/// Pattern string that is initially shown when the multi rename dialog opens.
 		/// </summary>
-		string _defaultPatternString;
+		private string _defaultPatternString;
 
 		/// <summary>
 		/// Stores for every shortcut some information, for instance the type of shortcut, and a description, which can be shown in a Gui view.
 		/// </summary>
-		Dictionary<string, ShortcutInformation> _shortcutToType = new Dictionary<string, ShortcutInformation>();
+		private Dictionary<string, ShortcutInformation> _shortcutToType = new Dictionary<string, ShortcutInformation>();
 
 		/// <summary>
 		/// Stores for every number shortcut a function which is able to retrieve the shortcut's item, for instance the name of the object. For this, it is neccessary to call the function with two arguments,
 		/// the object itself and the current index of the object into the list view. Since the list view can be sorted by various columns, the index of the object in the list may change.
 		/// </summary>
-		Dictionary<string, Func<object, int, int>> _integerShortcutToGetter = new Dictionary<string, Func<object, int, int>>();
+		private Dictionary<string, Func<object, int, int>> _integerShortcutToGetter = new Dictionary<string, Func<object, int, int>>();
 
 		/// <summary>
 		/// Stores for every DateTime shortcut a function which is able to retrieve a DateTime that can be deduced from the shortcut's item, for instance the creation date of the item. For this, it is neccessary to call the function with two arguments,
 		/// the object itself and the current index of the object into the list view. Since the list view can be sorted by various columns, the index of the object in the list may change.
 		/// </summary>
-		Dictionary<string, Func<object, int, DateTime>> _dateTimeShortcutToGetter = new Dictionary<string, Func<object, int, DateTime>>();
-	
+		private Dictionary<string, Func<object, int, DateTime>> _dateTimeShortcutToGetter = new Dictionary<string, Func<object, int, DateTime>>();
+
 		/// <summary>
 		/// Stores for every String shortcut a function which is able to retrieve a text string from the shortcut's item, for instance the full name of the object. For this, it is neccessary to call the function with two arguments,
 		/// the object itself and the current index of the object into the list view. Since the list view can be sorted by various columns, the index of the object in the list may change.
 		/// </summary>
-		Dictionary<string, Func<object, int, string>> _stringShortcutToGetter = new Dictionary<string, Func<object, int, string>>();
-		
+		private Dictionary<string, Func<object, int, string>> _stringShortcutToGetter = new Dictionary<string, Func<object, int, string>>();
+
 		/// <summary>
 		/// Stores for every Array shortcut a function which is able to retrieve a string array from the shortcut's item, for instance the full name of the object split into individual folder parts. For this, it is neccessary to call the function with two arguments,
 		/// the object itself and the current index of the object into the list view. Since the list view can be sorted by various columns, the index of the object in the list may change.
 		/// </summary>
-		Dictionary<string, Func<object, int, string[]>> _stringArrayShortcutToGetter = new Dictionary<string, Func<object, int, string[]>>();
+		private Dictionary<string, Func<object, int, string[]>> _stringArrayShortcutToGetter = new Dictionary<string, Func<object, int, string[]>>();
 
 		/// <summary>
 		/// Stores the objects to rename along with the old name and the new name.
 		/// </summary>
-		List<RenameInfo> _objectsToRename = new List<RenameInfo>();
-
+		private List<RenameInfo> _objectsToRename = new List<RenameInfo>();
 
 		/// <summary>
 		/// This handler is called when the items should be processed (renamed, exported or so). If the function succeeds, the return value should be zero or an empty list.
 		/// If the function is partially unsuccessfull, for instance because some items could not be renamed, the function should return those unsuccessfully processed items in the list.
 		/// </summary>
-		Func<MultiRenameData, List<object>> _renameActionHandler;
+		private Func<MultiRenameData, List<object>> _renameActionHandler;
 
 		/// <summary>
 		/// Stores columns of information for the objects to rename. Key is the column name, value is a function which retrieves a string for each object.
 		/// Note that it is assumed that the first list item corresponds to the old name of the object. This is shown in the first column.
 		/// The second column is reserved for the new name. Then the other columns follow.
 		/// </summary>
-		List<KeyValuePair<string, Func<object, string>>> _columnsOfObjectInformation = new List<KeyValuePair<string, Func<object, string>>>();
+		private List<KeyValuePair<string, Func<object, string>>> _columnsOfObjectInformation = new List<KeyValuePair<string, Func<object, string>>>();
 
 		/// <summary>Gets or sets the default pattern string, i.e. the pattern string that is initially shown when the multi rename dialog opens.</summary>
 		/// <value>Pattern string that is initially shown when the multi rename dialog opens.</value>
@@ -133,7 +135,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			get { return _defaultPatternString; }
 			set { _defaultPatternString = value; }
 		}
-
 
 		/// <summary>
 		/// Stores columns of information for the objects to rename. Key is the column name, value is a function which retrieves a string for each object.
@@ -144,7 +145,6 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			get { return _columnsOfObjectInformation; }
 		}
-
 
 		/// <summary>Return the number of objects to be processed (renamed etc).</summary>
 		public int ObjectsToRenameCount
@@ -162,10 +162,9 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			foreach (object o in list)
 			{
-				_objectsToRename.Add(new RenameInfo() { ObjectToRename=o, OldName=null, NewName=null });
+				_objectsToRename.Add(new RenameInfo() { ObjectToRename = o, OldName = null, NewName = null });
 			}
 		}
-
 
 		/// <summary>Gets the i-th object to rename.</summary>
 		/// <param name="i">Index of the object in the internal list.</param>
@@ -192,7 +191,6 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			return _objectsToRename[i].NewName;
 		}
-
 
 		/// <summary>Gets the integer value of a integer shortcut.</summary>
 		/// <param name="shortcut">The shortcut (has to be registered as integer shortcut before).</param>
@@ -234,8 +232,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			return _stringArrayShortcutToGetter[shortcut](GetObjectToRename(originalListIndex), currentSortIndex);
 		}
 
-
-	
 		/// <summary>Registers the rename action handler.
 		/// This handler is called when the items should be processed (renamed, exported or so). If the function succeeds, the return value should be zero or an empty list.
 		/// If the function is partially unsuccessfull, for instance because some items could not be renamed, the function should return those unsuccessfully processed items in the list.
@@ -246,7 +242,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			_renameActionHandler = handler;
 		}
 
-
 		/// <summary>Gets the description of a shortcut.</summary>
 		/// <param name="shortcut">The shortcut.</param>
 		/// <returns>The description of the shortcut. This has to be provided when registering the shortcut with one of the <c>Register..Shortcut</c> functions.</returns>
@@ -254,7 +249,6 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			return _shortcutToType[shortcut].ShortcutDescription;
 		}
-
 
 		/// <summary>Registers an integer shortcut.</summary>
 		/// <param name="shortcut">The shortcut string (without square brackets).</param>
@@ -265,7 +259,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			_shortcutToType.Add(shortcut, new ShortcutInformation(ShortcutType.Integer, descriptionText));
 			_integerShortcutToGetter.Add(shortcut, valueGetter);
 		}
-
 
 		/// <summary>Registers a string shortcut.</summary>
 		/// <param name="shortcut">The shortcut string (without square brackets).</param>
@@ -297,7 +290,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			_stringArrayShortcutToGetter.Add(shortcut, valueGetter);
 		}
 
-
 		/// <summary>
 		/// Register a column for a Gui list that shows the properties of the objects to rename, for instance its old name, its creation date, its new name etc.
 		/// </summary>
@@ -318,7 +310,6 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			return _columnsOfObjectInformation[columnNumber].Value(_objectsToRename[rowNumber]);
 		}
-
 
 		/// <summary>
 		/// Retrieves the names of all integer shortcuts.
@@ -356,11 +347,10 @@ namespace Altaxo.Gui.Common.MultiRename
 			return _stringArrayShortcutToGetter.Keys;
 		}
 
-
 		/// <summary>
 		/// Calls the function that finally process the items, for instance rename them, export them etc.
 		/// </summary>
-		/// <returns>True when the action was successfull. In this case a Gui dialog can be closed. 
+		/// <returns>True when the action was successfull. In this case a Gui dialog can be closed.
 		/// If the return value is false, the action failed at least for some items. Then, this instance will contain now those items for which the action failed. In this case a dialog should not
 		/// be closed, and the items which remain should be renamed in a second step then.</returns>
 		public bool DoRename()
@@ -369,7 +359,7 @@ namespace Altaxo.Gui.Common.MultiRename
 			{
 				var list = _renameActionHandler(this);
 
-				if (list != null && list.Count!=0)
+				if (list != null && list.Count != 0)
 				{
 					_objectsToRename.Clear();
 					AddObjectsToRename(list);
@@ -382,6 +372,5 @@ namespace Altaxo.Gui.Common.MultiRename
 			}
 			return true;
 		}
-
 	}
 }

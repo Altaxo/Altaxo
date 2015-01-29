@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,44 +19,43 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Collections;
 using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-  public class ViewDescriptionElement : ICloneable
-  {
-    public string Title;
-    public object View;
+	public class ViewDescriptionElement : ICloneable
+	{
+		public string Title;
+		public object View;
 
-    public ViewDescriptionElement(ViewDescriptionElement from)
-    {
-      this.Title = from.Title;
-      this.View = from.View;
-    }
+		public ViewDescriptionElement(ViewDescriptionElement from)
+		{
+			this.Title = from.Title;
+			this.View = from.View;
+		}
 
-    public ViewDescriptionElement(string title, object view)
-    {
-      this.Title = title;
-      this.View = view;
-    }
+		public ViewDescriptionElement(string title, object view)
+		{
+			this.Title = title;
+			this.View = view;
+		}
 
-    public ViewDescriptionElement Clone()
-    {
-      return new ViewDescriptionElement(this);
-    }
+		public ViewDescriptionElement Clone()
+		{
+			return new ViewDescriptionElement(this);
+		}
 
-    #region ICloneable Members
+		#region ICloneable Members
 
+		object ICloneable.Clone()
+		{
+			return new ViewDescriptionElement(this);
+		}
 
-    object ICloneable.Clone()
-    {
-      return new ViewDescriptionElement(this);
-    }
-
-    #endregion
-  }
+		#endregion ICloneable Members
+	}
 }

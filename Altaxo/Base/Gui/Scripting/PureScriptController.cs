@@ -193,8 +193,6 @@ namespace Altaxo.Gui.Scripting
 
 		#endregion IApplyController Members
 
-
-
 		#region IPureScriptController
 
 		/// <summary>

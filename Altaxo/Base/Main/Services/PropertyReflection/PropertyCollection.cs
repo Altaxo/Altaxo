@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,19 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.ComponentModel;
+using System.Text;
 
 namespace Altaxo.Main.Services.PropertyReflection
 {
-
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <remarks>
 	/// <para>This class originated from the 'WPG Property Grid' project (<see href="http://wpg.codeplex.com"/>), licensed under Ms-PL.</para>
@@ -39,7 +39,9 @@ namespace Altaxo.Main.Services.PropertyReflection
 	{
 		#region Initialization
 
-		public PropertyCollection() { }
+		public PropertyCollection()
+		{
+		}
 
 		//public PropertyCollection(object instance)
 		//    : this(instance, false)
@@ -57,7 +59,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 				TypeConverter tc = TypeDescriptor.GetConverter(instance);
 				if (tc == null || !tc.GetPropertiesSupported())
 				{
-
 					if (instance is ICustomTypeDescriptor)
 						properties = ((ICustomTypeDescriptor)instance).GetProperties();
 					else
@@ -93,7 +94,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 
 			if (noCategory)
 			{
-
 				foreach (Property property in propertyCollection)
 				{
 					if (filter == "" || property.Name.ToLower().Contains(filter))
@@ -127,7 +127,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 
 		private void CollectProperties(object instance, PropertyDescriptor descriptor, List<Property> propertyCollection, bool automaticlyExpandObjects, string filter)
 		{
-
 			if (descriptor.Attributes[typeof(FlatAttribute)] == null)
 			{
 				Property property = new Property(instance, descriptor);
@@ -158,6 +157,6 @@ namespace Altaxo.Main.Services.PropertyReflection
 			}
 		}
 
-		#endregion
+		#endregion Initialization
 	}
 }

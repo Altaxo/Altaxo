@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Orgqr.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,12 +34,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Orgqr {
-    private  Orgqr() {}                           
+    private  Orgqr() {}
     private static void ArgumentCheck( int m, int n, int k, Object A, int lda, Object tau ) {
       if ( A == null ) {
         throw new ArgumentNullException("A","A cannot be null.");
@@ -71,7 +71,7 @@ namespace Altaxo.Calc.LinearAlgebra.Lapack{
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_sorgqr( int block_size, int m, int n, int k, [In,Out]float[] A, int lda, [In,Out]float[] tau );
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern int dna_lapack_dorgqr( int block_size, int m, int n, int k, [In,Out]double[] A, int lda, [In,Out]double[] tau );
   }

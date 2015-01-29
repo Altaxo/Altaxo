@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,18 +19,20 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Resources;
+using System.Text;
 
 namespace Altaxo.Graph
 {
 	#region ImageProxy
+
 	/// <summary>
 	/// Holds an image, either from a resource or from a file stream or from the clipboard.
 	/// </summary>
@@ -38,7 +41,6 @@ namespace Altaxo.Graph
 	{
 		protected const double InchesPerPoint = 1 / 72.0;
 		protected const double PointsPerInch = 72.0;
-
 
 		public override string ToString()
 		{
@@ -115,14 +117,12 @@ namespace Altaxo.Graph
 		{
 			return obj is ImageProxy;
 		}
-
-
-
-
 	}
-	#endregion
+
+	#endregion ImageProxy
 
 	#region ResourceImageProxy
+
 	/// <summary>
 	/// Holds an image, either from a resource or from a file stream or from the clipboard.
 	/// </summary>
@@ -132,20 +132,21 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Either the name of a resource, or the original file name.
 		/// </summary>
-		string _url;
-		string _name;
+		private string _url;
+
+		private string _name;
 
 		// Cached objects
 		[NonSerialized]
-		WeakReference _image;
+		private WeakReference _image;
 
 		[NonSerialized]
-		PointD2D _imageSizePt;
-
+		private PointD2D _imageSizePt;
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ResourceImageProxy), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -156,7 +157,6 @@ namespace Altaxo.Graph
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				ResourceImageProxy s = SDeserialize(o, info, parent);
 				return s;
 			}
@@ -169,7 +169,8 @@ namespace Altaxo.Graph
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public override string ToString()
 		{
@@ -220,9 +221,7 @@ namespace Altaxo.Graph
 			return img;
 		}
 
-
 		public override string Name { get { return _name; } }
-
 
 		public override PointD2D Size
 		{
@@ -275,7 +274,6 @@ namespace Altaxo.Graph
 				_image = null;
 			}
 
-
 			return image;
 		}
 
@@ -296,11 +294,13 @@ namespace Altaxo.Graph
 			return result;
 		}
 
-		#endregion
+		#endregion ICloneable Members
 	}
-	#endregion
+
+	#endregion ResourceImageProxy
 
 	#region MemoryStreamImageProxy
+
 	/// <summary>
 	/// Holds an image, either from a resource or from a file stream or from the clipboard.
 	/// </summary>
@@ -310,25 +310,26 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Either the name of a resource, or the original file name.
 		/// </summary>
-		string _url;
-		string _name;
-		MemoryStream _stream;
-		string _hash;
+		private string _url;
+
+		private string _name;
+		private MemoryStream _stream;
+		private string _hash;
 
 		/// <summary>Image size in points (1/72 inch).</summary>
-		PointD2D _imageSizePt;
+		private PointD2D _imageSizePt;
 
 		// Cached objects
 		[NonSerialized]
-		WeakReference _image;
+		private WeakReference _image;
 
 		// Static helpers
-		static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
-
+		private static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
 
 		#region Serialization
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MemoryStreamImageProxy), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -341,14 +342,12 @@ namespace Altaxo.Graph
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				MemoryStreamImageProxy s = SDeserialize(o, info, parent);
 				return s;
 			}
 
 			public virtual MemoryStreamImageProxy SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				MemoryStreamImageProxy s = null != o ? (MemoryStreamImageProxy)o : new MemoryStreamImageProxy();
 				s._url = info.GetString("Url");
 				s._name = info.GetString("Name");
@@ -358,7 +357,8 @@ namespace Altaxo.Graph
 				return s;
 			}
 		}
-		#endregion
+
+		#endregion Serialization
 
 		public override string ToString()
 		{
@@ -377,7 +377,6 @@ namespace Altaxo.Graph
 				var from = obj as MemoryStreamImageProxy;
 				if (null != from)
 				{
-
 					this._url = from._url;
 					this._name = from._name;
 					this._stream = from._stream;
@@ -452,13 +451,12 @@ namespace Altaxo.Graph
 			return img;
 		}
 
-
-
 		private void ComputeStreamHash()
 		{
 			byte[] hash = _md5.ComputeHash(_stream);
 			SetHash(hash);
 		}
+
 		private void SetHash(byte[] hash)
 		{
 			StringBuilder stb = new StringBuilder();
@@ -467,7 +465,6 @@ namespace Altaxo.Graph
 
 			_hash = stb.ToString();
 		}
-
 
 		private void CopyFromStream(Stream istr)
 		{
@@ -479,7 +476,6 @@ namespace Altaxo.Graph
 			int readed;
 			while (0 != (readed = istr.Read(buffer, 0, buffer.Length)))
 				_stream.Write(buffer, 0, readed);
-
 
 			_stream.Flush();
 			_stream.Seek(0, SeekOrigin.Begin);
@@ -499,7 +495,6 @@ namespace Altaxo.Graph
 		}
 
 		public override string Name { get { return _name; } }
-
 
 		public override bool IsValid
 		{
@@ -584,10 +579,7 @@ namespace Altaxo.Graph
 			get { return _hash; }
 		}
 
-
 		#region ICloneable Members
-
-
 
 		public override object Clone()
 		{
@@ -596,16 +588,17 @@ namespace Altaxo.Graph
 			return result;
 		}
 
-		#endregion
+		#endregion ICloneable Members
 	}
-	#endregion
+
+	#endregion MemoryStreamImageProxy
 
 	#region HatchImageProxy
 
 	/// <summary>
 	/// Class that creates images 'on the fly', by using an algorithmus.
 	/// </summary>
-	abstract class SyntheticImageProxy : ImageProxy
+	internal abstract class SyntheticImageProxy : ImageProxy
 	{
 		public override Image GetImage()
 		{
@@ -632,7 +625,6 @@ namespace Altaxo.Graph
 			throw new NotImplementedException();
 		}
 	}
-
 
 	public interface ISyntheticRepeatableTexture : Main.ICopyFrom, ICloneable
 	{
@@ -663,7 +655,6 @@ namespace Altaxo.Graph
 
 	public abstract class SyntheticRepeatableTexture : ImageProxy, ISyntheticRepeatableTexture
 	{
-
 		public override Image GetImage()
 		{
 			return GetImage(300);
@@ -684,15 +675,8 @@ namespace Altaxo.Graph
 			return isCopied && (obj is SyntheticRepeatableTexture);
 		}
 
-		#endregion
-
-
+		#endregion ISyntheticRepeatableTexture Members
 	}
 
-
-
-
-
-
-	#endregion
+	#endregion HatchImageProxy
 }

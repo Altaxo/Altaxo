@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 // #define LinkedListDebug
 
@@ -29,8 +31,6 @@ using System.Text;
 
 namespace Altaxo.Collections.Text
 {
-
-
 	/// <summary>
 	/// Evaluates the longest string, that is i) common to a number of words and ii) is repeated a certain number of times in those strings.
 	/// The number of repeats the string should occur in each word is given by an array of integers here.
@@ -48,7 +48,6 @@ namespace Altaxo.Collections.Text
 	/// </remarks>
 	public class LongestCommonGeneralizedRepeatL : LongestCommonSubstringBase
 	{
-
 		#region internal types
 
 		/// <summary>
@@ -58,18 +57,25 @@ namespace Altaxo.Collections.Text
 		{
 			/// <summary>First occurence in the suffix array.</summary>
 			public int Idx;
+
 			/// <summary>Longest common prefix.</summary>
 			public int Lcp;
+
 			/// <summary>Next list element in the array, or null if no such element exists.</summary>
 			public DDLElement Next;
+
 			/// <summary>Previous list element in the array, or null if no such element exists.</summary>
 			public DDLElement Previous;
+
 			/// <summary>First list element of the interval to which this list element belongs.</summary>
 			public DDLElement IntervalBegin;
+
 			/// <summary>Last list element of the interval to which this list element belongs.</summary>
 			public DDLElement IntervalEnd;
+
 			/// <summary>Length of the interval (number of nodes) that belong to the interval to which this list element belongs.</summary>
 			public int IntervalSize;
+
 			/// <summary>Number of the word this element belongs to.</summary>
 			public int Text;
 
@@ -118,9 +124,9 @@ namespace Altaxo.Collections.Text
 		/// </summary>
 		protected class LinkedObjectList
 		{
-			DDLElement _first;
-			DDLElement _last;
-			int _count;
+			private DDLElement _first;
+			private DDLElement _last;
+			private int _count;
 
 			public void AddLast(DDLElement node)
 			{
@@ -159,7 +165,6 @@ namespace Altaxo.Collections.Text
 				--_count;
 			}
 
-
 			public DDLElement First
 			{
 				get
@@ -183,7 +188,6 @@ namespace Altaxo.Collections.Text
 					return _count;
 				}
 			}
-
 		}
 
 		protected struct PreResult
@@ -198,24 +202,26 @@ namespace Altaxo.Collections.Text
 
 		// intermediate data neccessary for the algorithm
 		protected LinkedObjectList _ddlList;
+
 		protected DDLElement[] _lastLcp;
+
 		// intermediate data neccessary for the algorithm
-		DDLElement[][] _items;
-		int[] _x_repeats;
-		int[] list_sizes;
-		int[] _last_index;
-		
+		private DDLElement[][] _items;
+
+		private int[] _x_repeats;
+		private int[] list_sizes;
+		private int[] _last_index;
+
 		/// <summary>For a given number of words as the index, this array stores some preliminarily found suffix regions for some algorithms (e.g. generalized common repeat algorithm).</summary>
 		protected List<PreResult> _preResults;
-		MinimumOnSlidingWindow[] _pqls;
 
+		private MinimumOnSlidingWindow[] _pqls;
 
 		/// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
 		public LongestCommonGeneralizedRepeatL(GeneralizedSuffixArray gsa)
 			: base(gsa)
 		{
-		
 		}
 
 		/// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
@@ -227,7 +233,7 @@ namespace Altaxo.Collections.Text
 			_x_repeats = x_repeats;
 		}
 
-			/// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
+		/// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
 		/// the state of <see cref="P:StoreVerboseResults"/>.
 		/// </summary>
 		/// <returns>This instance.</returns>
@@ -294,8 +300,6 @@ namespace Altaxo.Collections.Text
 			return this;
 		}
 
-	
-
 		private void InitializeIntermediates()
 		{
 			// initialize items
@@ -323,7 +327,6 @@ namespace Altaxo.Collections.Text
 					_items[i][0].IntervalSize = 1;
 			}
 
-
 			// initialize intermediates
 			_last_index = new int[_numberOfWords];
 			_pqls = new MinimumOnSlidingWindow[_numberOfWords];
@@ -334,8 +337,6 @@ namespace Altaxo.Collections.Text
 			}
 
 			_lastLcp = new DDLElement[_maximumLcp + 1];
-
-
 
 			var begin = _ddlList.Last.Previous; // front.prev->prev;
 			DDLElement end = _ddlList.First; // originally back.next
@@ -361,7 +362,7 @@ namespace Altaxo.Collections.Text
 		}
 
 		/// <summary>Cleans the intermediates so the garbage collector can get them.</summary>
-		void CleanIntermediates()
+		private void CleanIntermediates()
 		{
 			_ddlList = null;
 			_items = null;
@@ -396,7 +397,7 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonGeneralizedRepeatL"/>).</summary>
 		/// <param name="i">The i.</param>
-		void list_update(int i)
+		private void list_update(int i)
 		{
 			var sa_i = _suffixArray[i];
 			var textlcp = _LCPS[i];
@@ -405,23 +406,19 @@ namespace Altaxo.Collections.Text
 			var text_item = _items[wordIdx][_last_index[wordIdx]];
 			_last_index[wordIdx] = (_last_index[wordIdx] + 1) % list_sizes[wordIdx];
 
-			
 			_pqls[wordIdx].Add(textlcp);
 			int former_textlcp = _pqls[wordIdx].MinimumValue;
 			_pqls[wordIdx].Remove();
 			textlcp = _pqls[wordIdx].MinimumValue;
 
-
 			if (_x_repeats[wordIdx] > 1 && _lastLcp[textlcp].IntervalSize >= 0)
 				_lastLcp[textlcp].IntervalSize++;
-
 
 			if (_lastLcp[former_textlcp] != text_item || text_item.IntervalBegin != text_item)
 			{
 				// decrease interval size
 				if (_x_repeats[wordIdx] != 0 && _lastLcp[textlcp].IntervalSize >= 0)
 					_lastLcp[former_textlcp].IntervalSize--;
-
 
 				// if text_item is the end of an interval
 				if (text_item == _lastLcp[former_textlcp])
@@ -433,7 +430,6 @@ namespace Altaxo.Collections.Text
 						_lastLcp[text_item.Lcp] = text_item.Next;
 					}
 				}
-
 
 				// if text_item is the beginning of an interval
 				else if (text_item == _lastLcp[former_textlcp].IntervalBegin)
@@ -465,13 +461,11 @@ namespace Altaxo.Collections.Text
 			text_item.Idx = i;
 		}
 
-
-
 		/// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonGeneralizedRepeatL"/>).</summary>
 		/// <param name="lcp_i">The lcp_i.</param>
 		/// <param name="index">The index.</param>
 		/// <param name="clean"></param>
-		void lcp_update(int lcp_i, int index, bool clean)
+		private void lcp_update(int lcp_i, int index, bool clean)
 		{
 			var current = _ddlList.Last;
 			var last_updated = current;
@@ -509,7 +503,6 @@ namespace Altaxo.Collections.Text
 			_lastLcp[lcp_i] = last_updated;
 		}
 
-
 		/// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
 		protected void EvaluateMaximumNumberOfWordsWithCommonSubstring()
 		{
@@ -524,19 +517,17 @@ namespace Altaxo.Collections.Text
 			}
 		}
 
-
 		/// <summary>Stores a common substring occurence.</summary>
 		/// <param name="list_pos">Number of words that have this common substring.</param>
 		/// <param name="beg">Start index of the suffix in the suffix array.</param>
 		/// <param name="end">End index of the suffix in the suffix array.</param>
 		/// <param name="lcs">Longest common substring in the suffix array in the range [beg, end].</param>
-		void StorePreResult(int list_pos, int beg, int end, int lcs)
+		private void StorePreResult(int list_pos, int beg, int end, int lcs)
 		{
 			_preResults.Add(new PreResult { Begin = beg, End = end, WordIdx = list_pos, Lcs = lcs });
 		}
 
-
-		void FlushResults(int length)
+		private void FlushResults(int length)
 		{
 			for (int i = 0; i < _preResults.Count; ++i)
 			{
@@ -544,9 +535,9 @@ namespace Altaxo.Collections.Text
 				if (res.Lcs > length)
 				{
 					bool reallyGreater = res.Lcs > _lcsOfNumberOfWords[res.WordIdx];
-					if(res.Lcs>=_lcsOfNumberOfWords[res.WordIdx])
+					if (res.Lcs >= _lcsOfNumberOfWords[res.WordIdx])
 						StoreVerboseResult(res.WordIdx, res.Begin, res.End, reallyGreater);
-					if(reallyGreater)
+					if (reallyGreater)
 						_lcsOfNumberOfWords[res.WordIdx] = res.Lcs;
 				}
 			}
@@ -568,14 +559,11 @@ namespace Altaxo.Collections.Text
 			for (int i = 0; i < _numberOfWords; ++i)
 				Console.Write("{0} ", _pqls[i].MinimumValue);
 			Console.WriteLine();
-
 		}
 
 		private void Test()
 		{
 		}
 #endif
-		
-		
 	}
 }

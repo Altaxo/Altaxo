@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Drawing;
+#endregion Copyright
+
 using Altaxo.Graph.Scales;
+using System;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -31,7 +32,6 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public interface IPlotArea
 	{
-
 		/// <summary>
 		/// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.
 		/// </summary>
@@ -51,7 +51,6 @@ namespace Altaxo.Graph.Gdi
 
 		G2DCoordinateSystem CoordinateSystem { get; }
 
-
 		/// <summary>
 		/// Returns the size of the rectangular layer area.
 		/// </summary>
@@ -69,9 +68,5 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="id">The plane identifier</param>
 		void UpdateCSPlaneID(CSPlaneID id);
-
-
 	}
-
-
 }

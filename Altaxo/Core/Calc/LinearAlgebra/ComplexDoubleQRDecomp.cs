@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,7 +21,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * ComplexDoubleQRDecomp.cs
@@ -29,7 +31,6 @@
 */
 
 using System;
-
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -51,7 +52,6 @@ namespace Altaxo.Calc.LinearAlgebra
     int[] jpvt;
     private Complex[] qr;
 #endif
-
 
 		///<summary>Constructor for QR decomposition class. The constructor performs the factorization and the upper and
 		///lower matrices are accessible by the <c>Q</c> and <c>R</c> properties.</summary>
@@ -243,6 +243,5 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 			return ret;
 		}
-
 	}
 }

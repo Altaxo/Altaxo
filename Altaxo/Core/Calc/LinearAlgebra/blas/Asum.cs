@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,15 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Asum.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
+
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -38,7 +40,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Asum
 	{
-		private Asum() { }
+		private Asum()
+		{
+		}
+
 		///<summary>Check arguments so that errors don't occur in native code</summary>
 		private static void ArgumentCheck(int n, object X, int incx, int lenX)
 		{
@@ -162,6 +167,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 #endif
 			return ret;
 		}
+
 #if !MANAGED
     ///<summary>P/Invoke to wrapper with native code</summary>
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
@@ -169,7 +175,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern double dna_blas_dasum( int N, [In]double[] X, int incX);
-  
+
     [DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
     private static extern float dna_blas_scasum( int N, [In]ComplexFloat[] X, int incX);
 

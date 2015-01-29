@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -42,19 +44,19 @@ namespace Altaxo.Serialization.AutoUpdates
 	public partial class InstallerMainWindow : Window
 	{
 		public UpdateInstaller _installer;
-		System.Threading.Tasks.Task _installerTask;
+		private System.Threading.Tasks.Task _installerTask;
 
 		public double _progress;
 		public string _message = string.Empty;
-		System.Windows.Threading.DispatcherTimer _timer;
-		Brush _normalBackground;
-		bool _isCancellationRequested = false;
-		bool _installerFinishedSuccessfully = false;
+		private System.Windows.Threading.DispatcherTimer _timer;
+		private Brush _normalBackground;
+		private bool _isCancellationRequested = false;
+		private bool _installerFinishedSuccessfully = false;
 
-		bool _showInstallationWindow;
-		int _timeoutAfterSucessfullInstallation;
+		private bool _showInstallationWindow;
+		private int _timeoutAfterSucessfullInstallation;
 
-		int _timeLeftBeforeClosing;
+		private int _timeLeftBeforeClosing;
 
 		/// <summary>Initializes a new instance of the <see cref="InstallerMainWindow"/> class.</summary>
 		public InstallerMainWindow(bool showInstallationWindow, int timeoutAfterSuccessfullInstallation)
@@ -72,13 +74,10 @@ namespace Altaxo.Serialization.AutoUpdates
 			Loaded += new RoutedEventHandler(EhLoaded);
 		}
 
-	
-
-
 		/// <summary>Called when the window is loaded.</summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-		void EhLoaded(object sender, RoutedEventArgs e)
+		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
 			if (null != _installer)
 			{
@@ -134,10 +133,9 @@ namespace Altaxo.Serialization.AutoUpdates
 			_guiProgress.Value = 0;
 			_guiMessages.Text = message;
 			_guiMessages.Background = new SolidColorBrush(Colors.LightPink);
-			
+
 			this.Visibility = System.Windows.Visibility.Visible;
 		}
-
 
 		/// <summary>Called when the user requests to close the window.</summary>
 		/// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.</param>
@@ -154,7 +152,7 @@ namespace Altaxo.Serialization.AutoUpdates
 		/// <summary>Called when the timer event occured.</summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void EhInstallationTimerTick(object sender, EventArgs e)
+		private void EhInstallationTimerTick(object sender, EventArgs e)
 		{
 			_guiProgress.Value = _progress;
 			_guiProgressText.Content = string.Format("{0:F1}% completed", _progress);
@@ -191,11 +189,10 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
-
 		/// <summary>Called when the timer event occured.</summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void EhCountDownTimerTick(object sender, EventArgs e)
+		private void EhCountDownTimerTick(object sender, EventArgs e)
 		{
 			--_timeLeftBeforeClosing;
 

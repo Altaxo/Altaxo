@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,12 +30,14 @@ namespace Altaxo.Graph
 {
 	public class CSPlaneIDList : IList<CSPlaneID>
 	{
-		List<CSPlaneID> _innerList = new List<CSPlaneID>();
+		private List<CSPlaneID> _innerList = new List<CSPlaneID>();
 
 		#region Serialization
+
 		#region Version 0
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneIDList), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -43,6 +47,7 @@ namespace Altaxo.Graph
 					info.AddValue("e", plane);
 				info.CommitArray();
 			}
+
 			protected virtual CSPlaneIDList SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				CSPlaneIDList s = (o == null ? new CSPlaneIDList() : (CSPlaneIDList)o);
@@ -57,13 +62,14 @@ namespace Altaxo.Graph
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-
 				CSPlaneIDList s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
-		#endregion
-		#endregion
+
+		#endregion Version 0
+
+		#endregion Serialization
 
 		public void AddClonedRange(IEnumerable<CSPlaneID> list)
 		{
@@ -100,7 +106,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-		#endregion
+		#endregion IList<CSPlaneID> Members
 
 		#region ICollection<CSPlaneID> Members
 
@@ -139,7 +145,7 @@ namespace Altaxo.Graph
 			return _innerList.Remove(item);
 		}
 
-		#endregion
+		#endregion ICollection<CSPlaneID> Members
 
 		#region IEnumerable<CSPlaneID> Members
 
@@ -148,16 +154,15 @@ namespace Altaxo.Graph
 			return _innerList.GetEnumerator();
 		}
 
-		#endregion
+		#endregion IEnumerable<CSPlaneID> Members
 
 		#region IEnumerable Members
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return _innerList.GetEnumerator();
-
 		}
 
-		#endregion
+		#endregion IEnumerable Members
 	}
 }

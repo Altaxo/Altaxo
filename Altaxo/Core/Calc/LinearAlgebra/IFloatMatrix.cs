@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
@@ -31,8 +33,10 @@ namespace Altaxo.Calc.LinearAlgebra
 	{
 		/// <summary>Gets an element of the matrix at (row, col).</summary>
 		float this[int row, int col] { get; }
+
 		/// <summary>The number of rows of the matrix.</summary>
 		int Rows { get; }
+
 		/// <summary>The number of columns of the matrix.</summary>
 		int Columns { get; }
 	}
@@ -44,12 +48,11 @@ namespace Altaxo.Calc.LinearAlgebra
 	{
 		/// <summary>Get / sets an element of the matrix at (row, col).</summary>
 		new float this[int row, int col] { get; set; }
-
 	}
 
 	/// <summary>
 	/// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-	/// can be appended to the right of the matrix. 
+	/// can be appended to the right of the matrix.
 	/// </summary>
 	public interface IRightExtensibleFloatMatrix : IFloatMatrix
 	{
@@ -61,10 +64,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		void AppendRight(IROFloatMatrix a);
 	}
 
-
 	/// <summary>
 	/// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-	/// can be appended to the bottom of the matrix. 
+	/// can be appended to the bottom of the matrix.
 	/// </summary>
 	public interface IBottomExtensibleFloatMatrix : IFloatMatrix
 	{
@@ -78,13 +80,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
 	/// <summary>
 	/// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-	/// can be appended either to the right or to the bottom of the matrix. 
+	/// can be appended either to the right or to the bottom of the matrix.
 	/// </summary>
 	public interface IExtensibleFloatMatrix : IRightExtensibleFloatMatrix, IBottomExtensibleFloatMatrix
 	{
 	}
-
-
-
-
 }

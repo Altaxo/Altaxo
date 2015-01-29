@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,22 +19,17 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Automation;
-using System.Windows.Automation.Peers;
-using System.Globalization;
-using System.Diagnostics;
-
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Common
 {
-
 	/// <summary>
 	/// Base class for numeric up-down controls. As a base class, this class is independent on the type of number. Is is presumed, that derived classes implement a property
 	/// named 'Value', which is the numeric value represented by this control.
@@ -106,27 +102,23 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-
-
 		#region Change selection behaviour
 
 		// The next three overrides change the selection behaviour of the text box as described in
 		// 'How to SelectAll in TextBox when TextBox gets focus by mouse click?'
 		// (http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/564b5731-af8a-49bf-b297-6d179615819f/)
 
-		void EhTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		private void EhTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
 		{
 			((TextBox)sender).SelectAll();
 		}
 
-
-		void EhTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		private void EhTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			((TextBox)sender).SelectAll();
 		}
 
-
-		void EhTextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		private void EhTextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			var textBox = (TextBox)sender;
 			if (!textBox.IsKeyboardFocusWithin)
@@ -139,10 +131,8 @@ namespace Altaxo.Gui.Common
 				base.OnPreviewMouseLeftButtonDown(e);
 			}
 		}
-	
 
 		#endregion Change selection behaviour
-
 
 		/// <summary>
 		/// Derived classes must provide a new instance of an object that derives from <see cref="ValidationRule"/> and implements <see cref="IValueConverter"/> here.
@@ -150,7 +140,7 @@ namespace Altaxo.Gui.Common
 		/// <returns>A new instance that is able to convert and validate the provided text.</returns>
 		protected abstract object GetNewValidationRuleAndConverter();
 
-		#endregion
+		#endregion Construction
 
 		#region Properties
 
@@ -174,7 +164,7 @@ namespace Altaxo.Gui.Common
 						new FrameworkPropertyMetadata(false)
 		);
 
-		#endregion
+		#endregion IsGotoMinimumAndMaximumVisible
 
 		#region MinimumReplacementText
 
@@ -195,7 +185,7 @@ namespace Altaxo.Gui.Common
 						"MinimumReplacementText", typeof(string), typeof(NumericUpDownBase)
 		);
 
-		#endregion
+		#endregion MinimumReplacementText
 
 		#region MaximumReplacementText
 
@@ -216,7 +206,7 @@ namespace Altaxo.Gui.Common
 						"MaximumReplacementText", typeof(string), typeof(NumericUpDownBase)
 		);
 
-		#endregion
+		#endregion MaximumReplacementText
 
 		#endregion Properties
 
@@ -361,18 +351,22 @@ namespace Altaxo.Gui.Common
 
 		/// <summary>
 		/// Derived classes should change the property 'Value' to the maximum value.
-		/// </summary>	
+		/// </summary>
 		protected abstract void OnGotoMaximum();
 
 		/// <summary>Stores the <see cref="IncreaseCommand"/>.</summary>
 		private static RoutedCommand _increaseCommand;
+
 		/// <summary>Stores the <see cref="DecreaseCommand"/>.</summary>
 		private static RoutedCommand _decreaseCommand;
+
 		/// <summary>Stores the <see cref="GotoMinimumCommand"/>.</summary>
 		private static RoutedCommand _gotoMinimumCommand;
+
 		/// <summary>Stores the <see cref="GotoMaximumCommand"/>.</summary>
 		private static RoutedCommand _gotoMaximumCommand;
-		#endregion
+
+		#endregion Commands
 
 		#region Mouse handling
 
@@ -395,6 +389,6 @@ namespace Altaxo.Gui.Common
 			}
 		}
 
-		#endregion
+		#endregion Mouse handling
 	}
 }

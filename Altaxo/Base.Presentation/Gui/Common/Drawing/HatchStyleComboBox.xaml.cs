@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,23 +19,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -43,11 +39,11 @@ namespace Altaxo.Gui.Common.Drawing
 	/// </summary>
 	public partial class HatchStyleComboBox : ImageComboBox
 	{
-		class CC : IValueConverter
+		private class CC : IValueConverter
 		{
-			HatchStyleComboBox _cb;
-			object _originalToolTip;
-			bool _hasValidationError;
+			private HatchStyleComboBox _cb;
+			private object _originalToolTip;
+			private bool _hasValidationError;
 
 			public CC(HatchStyleComboBox c)
 			{
@@ -58,8 +54,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (HatchStyle)value;
 				return _cb._cachedItems[val];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -68,9 +62,9 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		static Dictionary<HatchStyle, ImageSource> _cachedImages = new Dictionary<HatchStyle, ImageSource>();
+		private static Dictionary<HatchStyle, ImageSource> _cachedImages = new Dictionary<HatchStyle, ImageSource>();
 
-		Dictionary<HatchStyle, ImageComboBoxItem> _cachedItems = new Dictionary<HatchStyle, ImageComboBoxItem>();
+		private Dictionary<HatchStyle, ImageComboBoxItem> _cachedItems = new Dictionary<HatchStyle, ImageComboBoxItem>();
 
 		static HatchStyleComboBox()
 		{
@@ -94,7 +88,9 @@ namespace Altaxo.Gui.Common.Drawing
 		}
 
 		#region Dependency property
+
 		private const string _nameOfValueProp = "HatchStyle";
+
 		public HatchStyle HatchStyle
 		{
 			get { return (HatchStyle)GetValue(HatchStyleProperty); }
@@ -109,14 +105,12 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			((HatchStyleComboBox)obj).EhHatchStyleChanged(obj, args);
 		}
-		#endregion
+
+		#endregion Dependency property
 
 		protected virtual void EhHatchStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-
-
 
 		public override string GetItemText(object item)
 		{
@@ -133,7 +127,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-
 		public static DrawingImage GetImage(HatchStyle val)
 		{
 			double height = 1;
@@ -146,8 +139,6 @@ namespace Altaxo.Gui.Common.Drawing
 			geometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, width, height)));
 
 			var geometryDrawing = new GeometryDrawing() { Geometry = geometryGroup };
-
-
 
 			DrawingImage geometryImage = new DrawingImage(geometryDrawing);
 

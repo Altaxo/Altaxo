@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,17 +21,18 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * MinimizationMethod.cs
- * 
+ *
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
  * NB: Constraint class inspired by the optimization frame in the QuantLib library
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
+using System;
 using System.Text;
 
 namespace Altaxo.Calc.Optimization
@@ -42,11 +44,12 @@ namespace Altaxo.Calc.Optimization
 	/// </remarks>
 	public abstract class FunctionMinimizeMethod : OptimizationMethod
 	{
-
 		///<summary> Iteration Solutions </summary>
 		protected DoubleVector[] iterationVectors_;
+
 		///<summary> Iteration Values </summary>
 		protected double[] iterationValues_;
+
 		///<summary> Iteration Gradient Norms </summary>
 		protected double[] iterationGradientNorms_;
 
@@ -55,11 +58,13 @@ namespace Altaxo.Calc.Optimization
 		{
 			get { return this.iterationVectors_; }
 		}
+
 		///<summary> Get initial vector </summary>
 		public DoubleVector InitialVector
 		{
 			get { return this.iterationVectors_[0]; }
 		}
+
 		///<summary> Get minimum vector </summary>
 		public DoubleVector SolutionVector
 		{
@@ -71,11 +76,13 @@ namespace Altaxo.Calc.Optimization
 		{
 			get { return this.iterationValues_; }
 		}
+
 		///<summary> Get initial value </summary>
 		public double InitialValue
 		{
 			get { return this.iterationValues_[0]; }
 		}
+
 		///<summary> Get value of minimum vector </summary>
 		public double SolutionValue
 		{

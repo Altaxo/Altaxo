@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -73,7 +75,6 @@ namespace Altaxo.Main
 		/// </value>
 		object EmbeddedObject { get; }
 
-
 		/// <summary>
 		/// Registers the application for COM.
 		/// </summary>
@@ -90,7 +91,6 @@ namespace Altaxo.Main
 		/// <param name="altaxoObject">The altaxo object (for instance graph document).</param>
 		/// <returns>The document's Com object.</returns>
 		System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsComObjectForDocument(object altaxoObject);
-
 
 		/// <summary>
 		/// Gets the documents data object for the document. The document's data object must only implement <see cref="System.Runtime.InteropServices.ComTypes.IDataObject"/>.

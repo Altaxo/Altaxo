@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,49 +19,48 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Collections;
 using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-  public class ControlViewElement : ViewDescriptionElement, ICloneable
-  {
-    public IApplyController Controller;
+	public class ControlViewElement : ViewDescriptionElement, ICloneable
+	{
+		public IApplyController Controller;
 
-    public ControlViewElement(ControlViewElement from)
-      : base(from)
-    {
-      this.Controller = from.Controller;
-    }
+		public ControlViewElement(ControlViewElement from)
+			: base(from)
+		{
+			this.Controller = from.Controller;
+		}
 
-    public ControlViewElement(string title, IApplyController controller, object view)
-      : base(title,view)
-    {
-      this.Controller = controller;
-    }
+		public ControlViewElement(string title, IApplyController controller, object view)
+			: base(title, view)
+		{
+			this.Controller = controller;
+		}
 
-    public ControlViewElement(string title, IMVCAController controller)
-      : base(title,controller.ViewObject)
-    {
-      this.Controller = controller;
-    }
+		public ControlViewElement(string title, IMVCAController controller)
+			: base(title, controller.ViewObject)
+		{
+			this.Controller = controller;
+		}
 
-    public new ControlViewElement Clone()
-    {
-      return new ControlViewElement(this);
-    }
+		public new ControlViewElement Clone()
+		{
+			return new ControlViewElement(this);
+		}
 
-    #region ICloneable Members
+		#region ICloneable Members
 
+		object ICloneable.Clone()
+		{
+			return new ControlViewElement(this);
+		}
 
-    object ICloneable.Clone()
-    {
-      return new ControlViewElement(this);
-    }
-
-    #endregion
-  }
+		#endregion ICloneable Members
+	}
 }

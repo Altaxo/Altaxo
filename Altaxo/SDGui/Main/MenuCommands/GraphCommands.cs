@@ -22,27 +22,20 @@
 
 #endregion Copyright
 
-using Altaxo;
 using Altaxo.Collections;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
-using Altaxo.Gui;
-using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
 using ICSharpCode.Core;
-using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Graph.Commands
 {

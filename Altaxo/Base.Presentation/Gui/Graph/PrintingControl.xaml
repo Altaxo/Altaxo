@@ -1,173 +1,165 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Graph.PrintingControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-             mc:Ignorable="d" 
-						 Loaded="EhLoaded" Unloaded="EhUnloaded"
-             >
+             mc:Ignorable="d"
+						 Loaded="EhLoaded" Unloaded="EhUnloaded">
 
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		
 
 		<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-			<GroupBox Header="Printer" >
+			<GroupBox Header="Printer">
 				<Grid>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="1"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="1"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="1"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="4"/>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="1" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="1" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="1" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="4" />
 					</Grid.RowDefinitions>
-					<Label Grid.Column="0" Content="Name:"/>
-					<ComboBox x:Name="_cbAvailablePrinters" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPrinterSelectionChanged"/>
-					<Button Content="Properties.." Grid.Row="0" Grid.Column="4" Click="EhShowPrinterProperties"/>
-					<Label Grid.Column="0" Grid.Row="2" Content="Status:"/>
-					<Label x:Name="_guiPrinterStatus" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="2" Content="Ready"/>
-					<Label Grid.Column="0" Grid.Row="4" Content="Location:"/>
-					<Label x:Name="_guiPrinterLocation"  Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="4" Content="Unknown"/>
-					<Label Grid.Column="0" Grid.Row="6" Content="Comment:"/>
-					<Label x:Name="_guiPrinterComment"  Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="6" Content="Unknown"/>
+					<Label Grid.Column="0" Content="Name:" />
+					<ComboBox x:Name="_cbAvailablePrinters" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPrinterSelectionChanged" />
+					<Button Content="Properties.." Grid.Row="0" Grid.Column="4" Click="EhShowPrinterProperties" />
+					<Label Grid.Column="0" Grid.Row="2" Content="Status:" />
+					<Label x:Name="_guiPrinterStatus" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="2" Content="Ready" />
+					<Label Grid.Column="0" Grid.Row="4" Content="Location:" />
+					<Label x:Name="_guiPrinterLocation"  Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="4" Content="Unknown" />
+					<Label Grid.Column="0" Grid.Row="6" Content="Comment:" />
+					<Label x:Name="_guiPrinterComment"  Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="6" Content="Unknown" />
 				</Grid>
 			</GroupBox>
 
-			<GroupBox Header="Paper" >
+			<GroupBox Header="Paper">
 				<Grid>
 					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="4"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="4"/>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="4" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="4" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
 					</Grid.ColumnDefinitions>
-					<Label Grid.Row="0" Grid.Column="0" Content="Size"/>
-					<ComboBox x:Name="_guiPaperSize" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPaperSizeChanged"/>
-					<Label Grid.Row="2" Grid.Column="0" Content="Source"/>
-					<ComboBox x:Name="_guiPaperSource" Grid.Row="2" Grid.Column="2" SelectionChanged="EhPaperSourceChanged"/>
+					<Label Grid.Row="0" Grid.Column="0" Content="Size" />
+					<ComboBox x:Name="_guiPaperSize" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPaperSizeChanged" />
+					<Label Grid.Row="2" Grid.Column="0" Content="Source" />
+					<ComboBox x:Name="_guiPaperSource" Grid.Row="2" Grid.Column="2" SelectionChanged="EhPaperSourceChanged" />
 				</Grid>
 			</GroupBox>
 			<GroupBox Header="Orientation">
 				<StackPanel Orientation="Vertical">
-					<RadioButton x:Name="_guiPaperOrientationPortrait" Content="Portrait" Checked="EhPaperOrientationPortrait"/>
-					<RadioButton x:Name="_guiPaperOrientationLandscape" Content="Landscape" Checked="EhPaperOrientationLandscape"/>
+					<RadioButton x:Name="_guiPaperOrientationPortrait" Content="Portrait" Checked="EhPaperOrientationPortrait" />
+					<RadioButton x:Name="_guiPaperOrientationLandscape" Content="Landscape" Checked="EhPaperOrientationLandscape" />
 				</StackPanel>
 			</GroupBox>
 
-			<GroupBox Header="Margins" >
+			<GroupBox Header="Margins">
 				<Grid>
 					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="4"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="4"/>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="4" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="4" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="4"/>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="4" />
 					</Grid.ColumnDefinitions>
-					<Label Grid.Row="0" Grid.Column="0" Content="Left"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginLeft" Grid.Row="0" Grid.Column="2" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginLeftChanged"/>
-					<Label Grid.Row="0" Grid.Column="4" Content="Right"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginRight" Grid.Row="0" Grid.Column="6" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginRightChanged"/>
-					<Label Grid.Row="2" Grid.Column="0" Content="Top"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginTop" Grid.Row="2" Grid.Column="2" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginTopChanged"/>
-					<Label Grid.Row="2" Grid.Column="4" Content="Bottom"/>
-					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginBottom" Grid.Row="2" Grid.Column="6" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginBottomChanged"/>
-
+					<Label Grid.Row="0" Grid.Column="0" Content="Left" />
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginLeft" Grid.Row="0" Grid.Column="2" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginLeftChanged" />
+					<Label Grid.Row="0" Grid.Column="4" Content="Right" />
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginRight" Grid.Row="0" Grid.Column="6" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginRightChanged" />
+					<Label Grid.Row="2" Grid.Column="0" Content="Top" />
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginTop" Grid.Row="2" Grid.Column="2" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginTopChanged" />
+					<Label Grid.Row="2" Grid.Column="4" Content="Bottom" />
+					<axogc:QuantityWithUnitTextBox x:Name="_guiMarginBottom" Grid.Row="2" Grid.Column="6" UnitEnvironment="{x:Static axog:PaperMarginEnvironment.Instance}" SelectedQuantityChanged="EhMarginBottomChanged" />
 				</Grid>
 			</GroupBox>
-
 		</StackPanel>
 
-		<GroupBox x:Name="_documentPrintOptionsViewHost" Header="Options" Grid.Row="1" Grid.Column="0"/>
-		
+		<GroupBox x:Name="_documentPrintOptionsViewHost" Header="Options" Grid.Row="1" Grid.Column="0" />
+
 		<GroupBox Header="Copies" Grid.Row="2" Grid.Column="0">
 			<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="4"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="4"/>
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="4"/>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="4"/>
-			</Grid.ColumnDefinitions>
-				<Label Content="No of copies:" Grid.Row="0" Grid.Column="0"/>
-				<axogc:Int32UpDown x:Name="_guiNumberOfCopies" Grid.Row="0" Grid.Column="2" Minimum="1" Maximum="9999" ValueChanged="EhNoOfCopiesChanged"/>
-				<Label Content="Collate copies:" Grid.Row="2" Grid.Column="0"/>
-				<CheckBox x:Name="_guiCollateCopies" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Checked="EhCollateCopiesChanged" Unchecked="EhCollateCopiesChanged"/>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="4" />
+				</Grid.ColumnDefinitions>
+				<Label Content="No of copies:" Grid.Row="0" Grid.Column="0" />
+				<axogc:Int32UpDown x:Name="_guiNumberOfCopies" Grid.Row="0" Grid.Column="2" Minimum="1" Maximum="9999" ValueChanged="EhNoOfCopiesChanged" />
+				<Label Content="Collate copies:" Grid.Row="2" Grid.Column="0" />
+				<CheckBox x:Name="_guiCollateCopies" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Checked="EhCollateCopiesChanged" Unchecked="EhCollateCopiesChanged" />
 			</Grid>
 		</GroupBox>
 
 		<GroupBox Header="Preview" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*" MaxWidth="4"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*" MaxWidth="4"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*" MaxWidth="4"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*" MaxWidth="4"/>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" MaxWidth="4" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" MaxWidth="4" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" MaxWidth="4" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" MaxWidth="4" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="4"/>
-					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Fill="AliceBlue" SizeChanged="EhPreviewImageSizeChanged"/>
-				<axogc:ImageWithNoSizeRequest x:Name="_previewImage" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" SnapsToDevicePixels="True"/>
-				<Button  Grid.Column="1" Grid.Row="2" Content="|&lt;" Click="EhPreviewFirstPage"/>
-				<Button   Grid.Column="3" Grid.Row="2"  Content="&lt;" Click="EhPreviewPreviousPage"/>
-				<Label  Grid.Column="5" Grid.Row="2"  x:Name="_edPreviewPageOfPages" Content="1 of 1"/>
+				<Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Fill="AliceBlue" SizeChanged="EhPreviewImageSizeChanged" />
+				<axogc:ImageWithNoSizeRequest x:Name="_previewImage" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" SnapsToDevicePixels="True" />
+				<Button  Grid.Column="1" Grid.Row="2" Content="|&lt;" Click="EhPreviewFirstPage" />
+				<Button   Grid.Column="3" Grid.Row="2"  Content="&lt;" Click="EhPreviewPreviousPage" />
+				<Label  Grid.Column="5" Grid.Row="2"  x:Name="_edPreviewPageOfPages" Content="1 of 1" />
 				<Button   Grid.Column="7" Grid.Row="2"   Content="&gt;" Click="EhPreviewNextPage" />
-				<Button   Grid.Column="9" Grid.Row="2"   Content="&gt;|" Click="EhPreviewLastPage"/>
+				<Button   Grid.Column="9" Grid.Row="2"   Content="&gt;|" Click="EhPreviewLastPage" />
 			</Grid>
 		</GroupBox>
-
-
 	</Grid>
-
-
 </UserControl>

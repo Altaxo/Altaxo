@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * DoubleMatrix.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
@@ -34,7 +36,6 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
 	///<summary>
 	/// Defines a matrix of doubles.
 	///</summary>
@@ -50,13 +51,16 @@ namespace Altaxo.Calc.LinearAlgebra
 #else
     internal double[] data;
 #endif
-		int rows;
-		int columns;
+		private int rows;
+		private int columns;
 
 		///<summary>Constructor for square matrix with its components set to zero.</summary>
 		///<param name="dimension">Dimensions of square matrix.</param>
 		///<exception cref="ArgumentException">dimension isn't positive.</exception>
-		public DoubleMatrix(int dimension) : this(dimension, dimension) { }
+		public DoubleMatrix(int dimension)
+			: this(dimension, dimension)
+		{
+		}
 
 		///<summary>Constructor for matrix with its components set to zero.</summary>
 		///<param name="rows">Number of rows.</param>
@@ -91,7 +95,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<param name="dimension">Dimensions of square matrix.</param>
 		///<param name="value"><c>double</c> value to fill all matrix components.</param>
 		///<exception cref="ArgumentException">dimension parameter isn't positive</exception>
-		public DoubleMatrix(int dimension, double value) : this(dimension, dimension, value) { }
+		public DoubleMatrix(int dimension, double value)
+			: this(dimension, dimension, value)
+		{
+		}
 
 		///<summary>Constructor for matrix with components set to a specified value</summary>
 		///<param name="rows">Number of rows.</param>
@@ -169,7 +176,6 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 		}
 
-
 		///<summary>Constructor for matrix that makes a deep copy of a given double matrix.</summary>
 		///<param name="source"><c>DoubleMatrix</c> to deep copy into new matrix.</param>
 		///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
@@ -236,7 +242,6 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 		}
 
-
 		///<summary>Constructor for double matrix given an array of <c>float</c> values.</summary>
 		///<param name="values">Array of <c>float</c> values to fill matrix.</param>
 		///<exception cref="ArgumentNullException"><c>values</c> is null.</exception>
@@ -270,7 +275,6 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #endif
 		}
-
 
 		///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
 		///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
@@ -352,7 +356,6 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 			}
 			return ret;
-
 		}
 
 		///<summary>Return the number of rows in the <c>DoubleMatrix</c> variable.</summary>
@@ -462,7 +465,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			return (int)this.GetFrobeniusNorm();
 		}
-
 
 		///<summary>Convert <c>DoubleMatrix</c> into <c>double</c> array</summary>
 		///<returns><c>double</c> array with data from <c>DoubleMatrix</c>.</returns>
@@ -627,7 +629,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>Calculates the Frobenius norm of this matrix.</summary>
-		/// <returns>the Frobenius norm of this matrix.</returns> 
+		/// <returns>the Frobenius norm of this matrix.</returns>
 		public double GetFrobeniusNorm()
 		{
 			double ret = 0;
@@ -644,6 +646,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			return ret;
 		}
+
 		///<summary>Calculates the condition number of the matrix.</summary>
 		///<returns>the condition number of the matrix.</returns>
 		/// <exception cref="NotSquareMatrixException">the matrix is not square.</exception>
@@ -1545,14 +1548,14 @@ namespace Altaxo.Calc.LinearAlgebra
 					data[i][j] *= a;
 				}
 			}
-#else 
+#else
       Blas.Scal.Compute( data.Length, a, data, 1 );
 #endif
 		}
 
-		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleVector</c></summary>                
-		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>                
-		///<param name="b"><c>DoubleVector</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleVector</c></summary>
+		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>
+		///<param name="b"><c>DoubleVector</c> to act as right operator.</param>
 		///<returns><c>DoubleMatrix</c> with results</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix or vector is null.</exception>
@@ -1581,15 +1584,15 @@ namespace Altaxo.Calc.LinearAlgebra
 					ret.data[i] += a.data[i][j] * b.data[j];
 				}
 			}
-#else 
+#else
       Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, a.rows, a.columns, 1, a.data, a.rows, b.data, 1, 1, ret.data, 1);
 #endif
 			return ret;
 		}
 
-		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleVector</c>.</summary>                
-		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>                
-		///<param name="b"><c>DoubleVector</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleVector</c>.</summary>
+		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>
+		///<param name="b"><c>DoubleVector</c> to act as right operator.</param>
 		///<returns><c>DoubleMatrix</c> with results</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix or vector is null.</exception>
@@ -1606,8 +1609,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			return a * b;
 		}
 
-		///<summary>Multiply this <c>DoubleMatrix</c> with a <c>DoubleVector</c> and return results in this <c>DoubleMatrix</c>.</summary>                                                                                            
-		///<param name="a"><c>DoubleVector</c> to act as right operator.</param>                                                
+		///<summary>Multiply this <c>DoubleMatrix</c> with a <c>DoubleVector</c> and return results in this <c>DoubleMatrix</c>.</summary>
+		///<param name="a"><c>DoubleVector</c> to act as right operator.</param>
 		///<exception cref="ArgumentException">Exception thrown if parameter dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException"><c>x</c> is null.</exception>
 		public void Multiply(DoubleVector a)
@@ -1633,7 +1636,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					temp[i][0] += data[i][j] * a.data[j];
 				}
 			}
-#else 
+#else
       double[] temp = new double[rows];
       Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, a.Length, a.data, 1, 1, temp, 1);
 #endif
@@ -1641,9 +1644,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			columns = 1;
 		}
 
-		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleMatrix.</c></summary>                
-		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>                
-		///<param name="b"><c>DoubleMatrix</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleMatrix.</c></summary>
+		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>
+		///<param name="b"><c>DoubleMatrix</c> to act as right operator.</param>
 		///<returns><c>DoubleMatrix</c> with results.</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix is null.</exception>
@@ -1682,12 +1685,11 @@ namespace Altaxo.Calc.LinearAlgebra
         a.rows, b.columns, a.columns, 1, a.data, a.rows, b.data, b.rows, 1, ret.data, ret.rows);
 #endif
 			return ret;
-
 		}
 
-		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleMatrix</c>.</summary>                
-		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>                
-		///<param name="b"><c>DoubleMatrix</c> to act as right operator.</param>                
+		///<summary>Multiply a <c>DoubleMatrix</c> with a <c>DoubleMatrix</c>.</summary>
+		///<param name="a"><c>DoubleMatrix</c> to act as left operator.</param>
+		///<param name="b"><c>DoubleMatrix</c> to act as right operator.</param>
 		///<returns><c>DoubleMatrix</c> with results</returns>
 		///<exception cref="ArgumentException"> dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException">either matrix is null.</exception>
@@ -1703,8 +1705,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			} return a * b;
 		}
 
-		///<summary>Multiply this <c>DoubleMatrix</c> with a <c>DoubleMatrix</c> and return results in this <c>DoubleMatrix</c></summary>                                
-		///<param name="a"><c>DoubleMatrix</c> to act as right operator.</param>                
+		///<summary>Multiply this <c>DoubleMatrix</c> with a <c>DoubleMatrix</c> and return results in this <c>DoubleMatrix</c></summary>
+		///<param name="a"><c>DoubleMatrix</c> to act as right operator.</param>
 		///<returns><c>DoubleMatrix</c> with results</returns>
 		///<exception cref="ArgumentException">dimensions are not conformable.</exception>
 		///<exception cref="ArgumentNullException"><c>x</c> is null.</exception>
@@ -1854,6 +1856,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.rows * this.columns; }
 		}
+
 		int ICollection.Count
 		{
 			get { return this.Count; }
@@ -1864,6 +1867,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get { return this.data.IsSynchronized; }
 		}
+
 		bool ICollection.IsSynchronized
 		{
 			get { return this.IsSynchronized; }
@@ -1880,6 +1884,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			this.data.CopyTo(array, index);
 		}
+
 		void ICollection.CopyTo(Array array, int index)
 		{
 			this.CopyTo(array, index);
@@ -1976,7 +1981,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#region Additions due to Adoption
 
-
 		///<summary>Constructor for matrix that makes a deep copy of a given <c>IROMatrix</c>.</summary>
 		///<param name="source"><c>IROMatrix</c> to deep copy into new matrix.</param>
 		///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
@@ -2013,7 +2017,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 		}
 
-		#endregion
+		#endregion Additions due to Adoption
 
 		#region Additions due to Adoption to Altaxo
 
@@ -2022,7 +2026,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="matrix">The matrix to convert to an array.</param>
 		/// <param name="result">The resulting array must be given.</param>
-		static void ToLinearArray(IROMatrix matrix, double[] result)
+		private static void ToLinearArray(IROMatrix matrix, double[] result)
 		{
 			int rows = matrix.Rows;
 			int columns = matrix.Columns;
@@ -2032,14 +2036,13 @@ namespace Altaxo.Calc.LinearAlgebra
 				for (int i = 0; i < rows; ++i)
 					result[k++] = matrix[i, j];
 		}
-
 
 		/// <summary>
 		/// This creates a linear array for use with unmanaged routines.
 		/// </summary>
 		/// <param name="matrix">The matrix to convert to an array.</param>
 		/// <param name="result">The resulting array must be given.</param>
-		static void ToLinearArray(IROFloatMatrix matrix, double[] result)
+		private static void ToLinearArray(IROFloatMatrix matrix, double[] result)
 		{
 			int rows = matrix.Rows;
 			int columns = matrix.Columns;
@@ -2050,21 +2053,17 @@ namespace Altaxo.Calc.LinearAlgebra
 					result[k++] = matrix[i, j];
 		}
 
-
 		/// <summary>
 		/// This creates a linear array for use with unmanaged routines.
 		/// </summary>
 		/// <param name="source">The vector to convert to an array.</param>
 		/// <param name="result">The resulting vector must be given.</param>
-		static void ToLinearArray(IROVector source, double[] result)
+		private static void ToLinearArray(IROVector source, double[] result)
 		{
 			int length = source.Length;
 			for (int i = 0; i < length; ++i)
 				result[i] = source[i];
 		}
-
-
-
 
 		/// <summary>
 		/// This creates a linear array for use with unmanaged routines.
@@ -2090,7 +2089,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-
 		/// <summary>
 		/// This creates a linear array for use with unmanaged routines.
 		/// </summary>
@@ -2103,8 +2101,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		#endregion
-
+		#endregion Additions due to Adoption to Altaxo
 	}
 }
-

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
@@ -32,7 +32,6 @@ namespace Altaxo.Graph
 	/// </summary>
 	public static class Drawing2DRelated
 	{
-
 		/// <summary>
 		/// Calculates the distance between two points.
 		/// </summary>
@@ -100,7 +99,6 @@ namespace Altaxo.Graph
 				return false;
 			else
 				return SquareDistanceLineToPoint(point, lineOrg, lineEnd) <= distance * distance;
-
 		}
 	}
 }

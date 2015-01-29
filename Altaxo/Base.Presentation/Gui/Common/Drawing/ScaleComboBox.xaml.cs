@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,29 +28,21 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Altaxo.Gui.Common.Drawing
 {
 	public partial class ScaleComboBox : DimensionfulQuantityImageComboBox
 	{
 		/// <summary>The items here were stored for the x scale only.</summary>
-		static Dictionary<double, ImageSource> _cachedXImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedXImages = new Dictionary<double, ImageSource>();
 
 		/// <summary>The items here were stored for the x scale only.</summary>
-		static Dictionary<double, ImageSource> _cachedYImages = new Dictionary<double, ImageSource>();
+		private static Dictionary<double, ImageSource> _cachedYImages = new Dictionary<double, ImageSource>();
 
-		bool _isForYScale;
+		private bool _isForYScale;
 
-		static readonly double[] _initialValues = new double[] { 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0 };
+		private static readonly double[] _initialValues = new double[] { 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0 };
 
 		static ScaleComboBox()
 		{
@@ -68,9 +62,6 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Source = GetImage(SelectedQuantityInSIUnits, _isForYScale);
 		}
 
-	
-
-
 		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
 		{
 			string error = null;
@@ -84,7 +75,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 			return error == null ? ValidationResult.ValidResult : new ValidationResult(false, error);
 		}
-
 
 		public bool IsForYScale
 		{
@@ -104,7 +94,6 @@ namespace Altaxo.Gui.Common.Drawing
 				_img.Source = GetImage(val, _isForYScale);
 			}
 		}
-
 
 		public override ImageSource GetItemImage(object item)
 		{
@@ -167,7 +156,6 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 			else
 			{
-
 				var drawing1 = new GeometryDrawing();
 				if (absscale > 2)
 					drawing1.Geometry = new EllipseGeometry(new Point(width / 2, height / 2), (width / 2), (height / 2) / absscale);
@@ -248,11 +236,8 @@ namespace Altaxo.Gui.Common.Drawing
 				group.Children.Add(drawing1);
 			}
 
-
-
 			if (isForY)
 				group.Transform = new RotateTransform(90, width / 2, height / 2);
-
 
 			var geometryImage = new DrawingImage(group);
 

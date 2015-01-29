@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Resources;
+using System.Text;
 
 namespace Altaxo.Graph.Gdi.HatchBrushes
 {
@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CircleHatchBrush), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -51,9 +51,7 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 			}
 		}
 
-
-		#endregion
-
+		#endregion Serialization
 
 		public override Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor)
 		{
@@ -66,12 +64,12 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 				{
 					g.FillRectangle(brush, new Rectangle(Point.Empty, bmp.Size));
 				}
-				
+
 				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy; // we want the foreground color to be not influenced by the background color if we have a transparent foreground color
 
 				using (var brush = new SolidBrush(foreColor))
 				{
-					double w = pixelDim * _structureFactor ;
+					double w = pixelDim * _structureFactor;
 					double s = 0.5 * (pixelDim - w);
 					g.FillEllipse(brush, (float)s, (float)s, (float)w, (float)w);
 				}

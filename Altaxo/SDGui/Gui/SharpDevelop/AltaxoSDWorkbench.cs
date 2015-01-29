@@ -25,14 +25,10 @@
 using ICSharpCode.Core;
 
 //using ICSharpCode.Core.WinForms;
-using ICSharpCode.Core.Presentation;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace Altaxo.Gui.SharpDevelop
 {

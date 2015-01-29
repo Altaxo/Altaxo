@@ -23,19 +23,14 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Altaxo.Graph.Gdi
 {
-	using Altaxo.Main.Properties;
 	using Altaxo.Serialization.Clipboard;
 
 	/// <summary>

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,78 +19,74 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
+
 using System;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>
-  /// IMultivariateCalibrationModel contains the basic data for a
-  /// multivariate calibration model
-  /// </summary>
-  public interface IMultivariateCalibrationModel
-  {
-    int NumberOfX
-    {
-      get; 
-    }
+	/// <summary>
+	/// IMultivariateCalibrationModel contains the basic data for a
+	/// multivariate calibration model
+	/// </summary>
+	public interface IMultivariateCalibrationModel
+	{
+		int NumberOfX
+		{
+			get;
+		}
 
-    int NumberOfY
-    {
-      get; 
-    }
+		int NumberOfY
+		{
+			get;
+		}
 
+		int NumberOfFactors
+		{
+			get;
+		}
 
-    int NumberOfFactors
-    {
-      get;
-    }
+		IMultivariatePreprocessingModel PreprocessingModel
+		{
+			get;
+		}
+	}
 
-    IMultivariatePreprocessingModel PreprocessingModel
-    {
-      get; 
-    }
-  }
+	public class MultivariateCalibrationModel : IMultivariateCalibrationModel
+	{
+		protected int _numberOfX;
+		protected int _numberOfY;
+		protected int _numberOfFactors;
 
-  public class MultivariateCalibrationModel : IMultivariateCalibrationModel
-  {
-    protected int _numberOfX;
-    protected int _numberOfY;
-    protected int _numberOfFactors;
+		private MultivariatePreprocessingModel _preprocessingData;
 
-    MultivariatePreprocessingModel _preprocessingData;
+		public IMultivariatePreprocessingModel PreprocessingModel
+		{
+			get { return _preprocessingData; }
+		}
 
+		public void SetPreprocessingModel(MultivariatePreprocessingModel val)
+		{
+			_preprocessingData = val;
+		}
 
-    public IMultivariatePreprocessingModel PreprocessingModel
-    {
-      get { return _preprocessingData; }
-    }
+		public int NumberOfX
+		{
+			get { return _numberOfX; }
+			set { _numberOfX = value; }
+		}
 
+		public virtual int NumberOfY
+		{
+			get { return _numberOfY; }
+			set { _numberOfY = value; }
+		}
 
-    public void SetPreprocessingModel(MultivariatePreprocessingModel val)
-    {
-      _preprocessingData = val; 
-    }
-
-   
-    public int NumberOfX
-    {
-      get { return _numberOfX; }
-      set { _numberOfX = value; }
-    }
-
-    public virtual int NumberOfY
-    {
-      get { return _numberOfY; }
-      set { _numberOfY = value; }
-    }
-
-    public int NumberOfFactors
-    {
-      get { return _numberOfFactors; }
-      set { _numberOfFactors = value; }
-    }
-  }
-
+		public int NumberOfFactors
+		{
+			get { return _numberOfFactors; }
+			set { _numberOfFactors = value; }
+		}
+	}
 }

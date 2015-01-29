@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,24 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Gui.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Altaxo.Gui;
-using Altaxo.Gui.Graph.Scales.Rescaling;
 
 namespace Altaxo.Gui.Graph
 {
@@ -45,14 +37,14 @@ namespace Altaxo.Gui.Graph
 	[UserControlForController(typeof(IOrgEndSpanViewEventReceiver))]
 	public partial class OrgEndSpanControl : UserControl, IOrgEndSpanView
 	{
-		IOrgEndSpanViewEventReceiver _controller;
+		private IOrgEndSpanViewEventReceiver _controller;
 
 		public OrgEndSpanControl()
 		{
 			InitializeComponent();
 		}
 
-		static void SetChoice(ComboBox cb, string[] choices, int selected)
+		private static void SetChoice(ComboBox cb, string[] choices, int selected)
 		{
 			cb.ItemsSource = choices;
 			cb.SelectedIndex = selected;
@@ -91,7 +83,6 @@ namespace Altaxo.Gui.Graph
 			if (_controller != null)
 				if (_controller.EhValue2Changed(this.edText2.Text))
 					e.AddError("Provided text is not valid");
-
 		}
 
 		private void edText3_Validating(object sender, ValidationEventArgs<string> e)
@@ -154,40 +145,33 @@ namespace Altaxo.Gui.Graph
 			this.edText3.Text = txt;
 		}
 
-
 		public void EnableChoice1(bool enable)
 		{
 			this.cbCombo1.IsEnabled = enable;
-
 		}
 
 		public void EnableChoice2(bool enable)
 		{
 			this.cbCombo2.IsEnabled = enable;
-
 		}
 
 		public void EnableChoice3(bool enable)
 		{
 			this.cbCombo3.IsEnabled = enable;
-
 		}
 
 		public void EnableValue1(bool enable)
 		{
-
 			this.edText1.IsEnabled = enable;
 		}
 
 		public void EnableValue2(bool enable)
 		{
-
 			this.edText2.IsEnabled = enable;
 		}
 
 		public void EnableValue3(bool enable)
 		{
-
 			this.edText3.IsEnabled = enable;
 		}
 

@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Serialization.Ascii;
 using System;
 using System.IO;

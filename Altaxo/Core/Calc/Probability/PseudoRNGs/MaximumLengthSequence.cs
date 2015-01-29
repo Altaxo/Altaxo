@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2012 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,12 +30,13 @@ using System.Text;
 namespace Altaxo.Calc.Probability
 {
 	/// <summary>
-	/// Represents a maximum length sequence (MLS). Those sequences have a repeat length of 2^k-1, with k being an integer value (k=2..64). 
+	/// Represents a maximum length sequence (MLS). Those sequences have a repeat length of 2^k-1, with k being an integer value (k=2..64).
 	/// This class allows the generation of sequences with a length of 2^2-1 up to 2^64-1.
 	/// </summary>
 	public class MaximumLengthSequence
 	{
 		#region Tap values
+
 		/// <summary>
 		/// Tap values for sequence lengths of 2^2-1 ... 2^64-1. The value at index k represents the tap value to generate a sequence of length 2^k-1. The values at index 0 and  1 are unused and set to zero.
 		/// </summary>
@@ -106,13 +109,14 @@ namespace Altaxo.Calc.Probability
 			0x8000000000000000 | 0x4000000000000000 | 0x1000000000000000 | 0x0800000000000000, // 2^64-1
 		};
 
-		#endregion
-		const int MinimumSequenceLength = 3;
-		const int MinimumNumberOfStages = 2;
+		#endregion Tap values
 
-		int _numberOfStages;
-		ulong _sequenceLength;
-		ulong _tap;
+		private const int MinimumSequenceLength = 3;
+		private const int MinimumNumberOfStages = 2;
+
+		private int _numberOfStages;
+		private ulong _sequenceLength;
+		private ulong _tap;
 
 		private MaximumLengthSequence()
 		{
@@ -123,7 +127,7 @@ namespace Altaxo.Calc.Probability
 		/// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given number of stages.</returns>
 		public static MaximumLengthSequence FromNumberOfStages(int numberOfStages)
 		{
-			if (!(numberOfStages>=2))
+			if (!(numberOfStages >= 2))
 				throw new ArgumentOutOfRangeException("numberOfStages must be >= 2");
 			if (!(numberOfStages <= 64))
 				throw new ArgumentOutOfRangeException("numberOfStages must be <= 64");
@@ -135,7 +139,6 @@ namespace Altaxo.Calc.Probability
 
 			return result;
 		}
-
 
 		/// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
 		/// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
@@ -170,7 +173,7 @@ namespace Altaxo.Calc.Probability
 			return result;
 		}
 
-		/// <summary>Gets or sets the tap value. When setting the tap value, only basic tests will be made to ensure its validity. 
+		/// <summary>Gets or sets the tap value. When setting the tap value, only basic tests will be made to ensure its validity.
 		/// Thus, it can not be fully ensured that the provided tap value will generate a maximum length sequence.</summary>
 		/// <value>The tap value. The highest bit that is set in the tap value determines the length of the maximum length sequence.</value>
 		public ulong TapValue
@@ -184,7 +187,7 @@ namespace Altaxo.Calc.Probability
 				if (!(value >= 3))
 					throw new ArgumentException("Invalid tap value: tap value has to be >= 3");
 
-				int numberOfStages = 1+BinaryMath.Ld(value);
+				int numberOfStages = 1 + BinaryMath.Ld(value);
 				ulong seqLen = GetSequenceLengthFromNumberOfStages(numberOfStages);
 				ulong highestBit = seqLen ^ (seqLen >> 1);
 
@@ -262,7 +265,6 @@ namespace Altaxo.Calc.Probability
 			return result;
 		}
 
-
 		#region Instance sequence getters
 
 		/// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
@@ -291,8 +293,6 @@ namespace Altaxo.Calc.Probability
 			else
 				return GetSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
 		}
-
-
 
 		/// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
 		/// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.Probability
 			}
 		}
 
-		#endregion 32 bit
+		#endregion static 32 bit methods
 
 		#region static 64 bit methods
 
@@ -451,7 +451,6 @@ namespace Altaxo.Calc.Probability
 			}
 		}
 
-		#endregion 64 bit
-
+		#endregion static 64 bit methods
 	}
 }

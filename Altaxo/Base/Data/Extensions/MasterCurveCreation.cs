@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc;
+using Altaxo.Calc.Interpolation;
+using Altaxo.Calc.Optimization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Collections;
-using Altaxo.Calc.Interpolation;
-using Altaxo.Calc.Optimization;
-using Altaxo.Calc;
 
 namespace Altaxo.Data
 {
@@ -37,7 +37,6 @@ namespace Altaxo.Data
 	public static class MasterCurveCreation
 	{
 		#region Helper types
-
 
 		public class CurveData : List<List<DoubleColumn>>
 		{
@@ -52,7 +51,7 @@ namespace Altaxo.Data
 			/// List of groups of columns. The outer list normally contains 2 items: a group of columns containing the real parts of the measured values,
 			/// and another group of columns containing the imaginary part of the measured values.
 			/// </summary>
-			List<List<DoubleColumn>> _columnGroups = new List<List<DoubleColumn>>();
+			private List<List<DoubleColumn>> _columnGroups = new List<List<DoubleColumn>>();
 
 			/// <summary>
 			/// List of groups of columns. The outer list normally contains 2 items: a group of columns containing the real parts of the measured values,
@@ -65,6 +64,7 @@ namespace Altaxo.Data
 
 			/// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
 			public bool LogarithmizeXForInterpolation { get; set; }
+
 			/// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
 			public bool LogarithmizeYForInterpolation { get; set; }
 
@@ -76,7 +76,7 @@ namespace Altaxo.Data
 			/// <summary>
 			/// Resulting list of shift factors (or offsets).
 			/// </summary>
-			List<double> _resultingShiftFactors = new List<double>();
+			private List<double> _resultingShiftFactors = new List<double>();
 
 			/// <summary>
 			/// Resulting list of shift factors (or offsets).
@@ -101,6 +101,7 @@ namespace Altaxo.Data
 		{
 			/// <summary>Shifts by multiplying a constant value to all x values. Use this if your x values are not logarithmized already.</summary>
 			Factor,
+
 			/// <summary>Shifts by adding a constant value to all x values. Use this if your x values are already logarithmized.</summary>
 			Offset
 		}
@@ -141,11 +142,12 @@ namespace Altaxo.Data
 
 			/// <summary>List of all x values of the points that are used for the interpolation.</summary>
 			public IList<double> XValues { get { return InterpolationValues.Keys; } }
+
 			/// <summary>List of all y values of the points that are used for the interpolation.</summary>
 			public IList<double> YValues { get { return InterpolationValues.Values; } }
 
 			/// <summary>List of all points used for the interpolation, sorted by the x values. Keys are the x-Values, values are the y-values.</summary>
-			SortedList<double, double> InterpolationValues;
+			private SortedList<double, double> InterpolationValues;
 
 			/// <summary>
 			/// Initialized the instance.
@@ -214,7 +216,6 @@ namespace Altaxo.Data
 					new WrapperIListToIRoVector(InterpolationValues.Keys), new WrapperIListToIRoVector(InterpolationValues.Values));
 			}
 
-
 			#region Wrapper class
 
 			/// <summary>
@@ -222,7 +223,7 @@ namespace Altaxo.Data
 			/// </summary>
 			private class WrapperIListToIRoVector : Altaxo.Calc.LinearAlgebra.IROVector
 			{
-				IList<double> _list;
+				private IList<double> _list;
 
 				public WrapperIListToIRoVector(IList<double> list)
 				{
@@ -236,7 +237,7 @@ namespace Altaxo.Data
 					get { return _list.Count; }
 				}
 
-				#endregion
+				#endregion IROVector Members
 
 				#region INumericSequence Members
 
@@ -245,32 +246,30 @@ namespace Altaxo.Data
 					get { return _list[i]; }
 				}
 
-				#endregion
+				#endregion INumericSequence Members
 			}
 
-
-			#endregion
+			#endregion Wrapper class
 		}
 
-		#endregion
-
+		#endregion Interpolation information
 
 		/// <summary>
 		/// Stores the current columns.
 		/// </summary>
-		struct CurrentColumnInformation
+		private struct CurrentColumnInformation
 		{
 			/// <summary>Current x column.</summary>
 			public DoubleColumn CurrentXCol;
+
 			/// <summary>Current y column.</summary>
 			public DoubleColumn CurrentYCol;
 		}
 
-		#endregion
+		#endregion Helper types
 
 		public static void CreateMasterCurve(Options options)
 		{
-
 			// First we create the initial interpolation of the master column
 			// then we successively add columns by shifting the x and merge them with the interpolation
 			var indexOfReferenceColumnInColumnGroup = options.IndexOfReferenceColumnInColumnGroup;
@@ -280,7 +279,6 @@ namespace Altaxo.Data
 			options.ResultingShifts.Clear();
 			for (int i = 0; i < maxColumns; i++)
 				options.ResultingShifts.Add(0);
-
 
 			var interpolations = new InterpolationInformation[options.ColumnGroups.Count];
 			options.ResultingInterpolation = interpolations;
@@ -295,7 +293,6 @@ namespace Altaxo.Data
 
 				interpolations[nColumnGroup].AddXYColumnToInterpolation(0, xCol, yCol, options);
 			}
-
 
 			// now take the other columns, and shift them with respect to the interpolation
 			// in each shift group we have a list of columns, the first of those columns is initially processed with a shift of 1
@@ -351,7 +348,6 @@ namespace Altaxo.Data
 					globalMaxShift = globalMaxShift - diff;
 					globalMinShift = globalMinShift + diff;
 
-
 					double currentShiftFactor = initialShift;
 					switch (options.OptimizationMethod)
 					{
@@ -362,6 +358,7 @@ namespace Altaxo.Data
 									shiftFactor => GetMeanSignedPenalty(interpolations, currentColumns, shiftFactor, options), globalMinShift, globalMaxShift);
 							}
 							break;
+
 						case OptimizationMethod.OptimizeSquaredDifference:
 							{
 								Func<double, double> optFunc = delegate(double shift)
@@ -380,7 +377,6 @@ namespace Altaxo.Data
 								var result = optimizationMethod.Search(vec, dir, initialStep);
 								currentShiftFactor = result[0];
 								// currentShiftFactor = optimizationMethod.SolutionVector[0];
-
 							}
 							break;
 
@@ -402,10 +398,10 @@ namespace Altaxo.Data
 								currentShiftFactor = result[0];
 							}
 							break;
+
 						default:
 							throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
 					}
-
 
 					if (currentShiftFactor.IsFinite())
 					{
@@ -422,8 +418,6 @@ namespace Altaxo.Data
 				}
 			}
 		}
-
-
 
 		public static bool GetMinMaxOfFirstColumnForValidSecondColumn(DoubleColumn x, DoubleColumn y, bool doLogX, bool doLogY, out double min, out double max)
 		{
@@ -444,7 +438,6 @@ namespace Altaxo.Data
 			return max >= min;
 		}
 
-
 		/// <summary>
 		/// Calculates a mean signed penalty value for the current shift factor of the current column. By making the penalty value zero, the current column will fit optimally into the so far created master curve.
 		/// </summary>
@@ -453,7 +446,7 @@ namespace Altaxo.Data
 		/// <param name="shift">Current shift (direct or log of shiftFactor).</param>
 		/// <param name="options">Options for creating the master curve.</param>
 		/// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-		static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
+		private static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
 		{
 			double penalty;
 			int points;
@@ -485,7 +478,7 @@ namespace Altaxo.Data
 		/// <param name="shift">Current shift (direct or log of shiftFactor).</param>
 		/// <param name="options">Options for creating the master curve.</param>
 		/// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-		static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
+		private static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, CurrentColumnInformation[] currentColumns, double shift, Options options)
 		{
 			double penalty;
 			int points;
@@ -508,7 +501,6 @@ namespace Altaxo.Data
 
 			return penaltyPoints > 0 ? penaltySum / penaltyPoints : float.MaxValue;
 		}
-
 
 		/// <summary>
 		/// Gets the mean difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
@@ -561,7 +553,6 @@ namespace Altaxo.Data
 			//System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
 		}
 
-
 		/// <summary>
 		/// Gets the mean squared difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
 		/// </summary>
@@ -612,7 +603,5 @@ namespace Altaxo.Data
 
 			//System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
 		}
-
-
 	}
 }

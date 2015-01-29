@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -45,16 +47,22 @@ namespace Altaxo.Collections.Text
 		{
 			/// <summary>First occurence in the suffix array.</summary>
 			public int Idx;
+
 			/// <summary>Longest common prefix.</summary>
 			public int Lcp;
+
 			/// <summary>Index of the next list element in the array, or -1 if no such element exists.</summary>
 			public int Next;
+
 			/// <summary>Index of the previous list element in the array, or -1 if no such element exists.</summary>
 			public int Previous;
+
 			/// <summary>Index of the first list element of the interval to which this list element belongs.</summary>
 			public int IntervalBegin;
+
 			/// <summary>Index of the last list element of the interval to which this list element belongs.</summary>
 			public int IntervalEnd;
+
 			/// <summary>Length of the interval (number of nodes) that belong to the interval to which this list element belongs.</summary>
 			public int IntervalSize;
 		}
@@ -92,7 +100,6 @@ namespace Altaxo.Collections.Text
 					else
 						Last = prev;
 
-
 					L[node].Next = -1;
 					L[node].Previous = Last;
 					L[Last].Next = node;
@@ -121,9 +128,6 @@ namespace Altaxo.Collections.Text
 				L = null;
 				First = Last = 0;
 			}
-
-
-
 		}
 
 		#endregion internal types
@@ -132,19 +136,16 @@ namespace Altaxo.Collections.Text
 
 		/// <summary>Keeps a linked list of <see cref="LLElement"/>s.</summary>
 		protected LinkedList _ddlList;
-		
+
 		/// <summary></summary>
 		protected int[] _lastLcp;
 
-
-
-			/// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
+		/// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
 		/// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
 		public LongestCommonSubstringBaseA(GeneralizedSuffixArray gsa)
 			: base(gsa)
 		{
 		}
-
 
 		/// <summary>Prints all linked list items for debugging purposes.</summary>
 		protected virtual void print_debug()

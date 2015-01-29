@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
 using System;
 using System.Collections.Generic;

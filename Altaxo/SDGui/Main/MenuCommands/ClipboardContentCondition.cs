@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,17 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections;
-using System.Xml;
-
+#endregion Copyright
 
 using ICSharpCode.Core;
-
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
+using System;
 
 namespace Altaxo.Main.Commands
 {
@@ -54,6 +49,4 @@ namespace Altaxo.Main.Commands
 			return false;
 		}
 	}
-
-
 }

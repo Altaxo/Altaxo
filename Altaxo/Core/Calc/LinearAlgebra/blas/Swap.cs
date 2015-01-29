@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,16 +21,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Swap.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra.Blas
 {
@@ -37,7 +38,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Swap
 	{
-		private Swap() { }
+		private Swap()
+		{
+		}
+
 		///<summary>Check arguments so that errors don't occur in native code</summary>
 		private static void ArgumentCheck(int n, object X, int lenX, ref int incx, object Y, int lenY, ref int incy)
 		{
@@ -72,6 +76,7 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 				throw new ArgumentException("The dimension of Y must be at least 1 + (n-1) * incy.");
 			}
 		}
+
 		///<summary>Compute the function of this class</summary>
 		internal static void Compute(int n, float[] X, int incx, float[] Y, int incy)
 		{

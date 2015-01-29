@@ -1,9 +1,9 @@
 ﻿<Window x:Class="Altaxo.Gui.Common.BackgroundCancelDialogWpf"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              Width="200"
 				SizeToContent="WidthAndHeight"
 				Title="Operation in progress ..."
@@ -11,12 +11,12 @@
 				Loaded="EhDialogLoaded">
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="8"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="16"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="8"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="8" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="16" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="8" />
 		</Grid.RowDefinitions>
 		<ProgressBar x:Name="_guiProgressFraction" Grid.Row="0" MinHeight="16" Margin="4" Minimum="0" Maximum="1"></ProgressBar>
 		<TextBlock x:Name="_guiProgressText" Grid.Row="2" Margin="5" MinHeight="80" TextWrapping="Wrap">An operation has not yet finished. If you feel that the operation takes unusual long time, you can interrupt it.</TextBlock>

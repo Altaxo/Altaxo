@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -34,10 +36,10 @@ namespace Altaxo.Serialization.Xml
 	/// </summary>
 	public class FrameworkXmlSerializationWrapper : System.Xml.Serialization.IXmlSerializable
 	{
-		static Altaxo.Serialization.Xml.XmlStreamSerializationInfo _xmlWriting = new XmlStreamSerializationInfo();
-		static Altaxo.Serialization.Xml.XmlStreamDeserializationInfo _xmlReading = new XmlStreamDeserializationInfo();
+		private static Altaxo.Serialization.Xml.XmlStreamSerializationInfo _xmlWriting = new XmlStreamSerializationInfo();
+		private static Altaxo.Serialization.Xml.XmlStreamDeserializationInfo _xmlReading = new XmlStreamDeserializationInfo();
 
-		object _wrappedObject;
+		private object _wrappedObject;
 
 		/// <summary>
 		/// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> to the class.
@@ -74,9 +76,6 @@ namespace Altaxo.Serialization.Xml
 			_xmlWriting.EndWriting();
 		}
 
-
-
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FrameworkXmlSerializationWrapper" /> class. This empty constructur
 		/// is intended for deserialization.
@@ -84,7 +83,6 @@ namespace Altaxo.Serialization.Xml
 		public FrameworkXmlSerializationWrapper()
 		{
 		}
-
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FrameworkXmlSerializationWrapper" /> class with the provided object to wrap.

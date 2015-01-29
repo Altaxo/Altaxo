@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 //
@@ -20,11 +21,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 /*
  * Potri.cs
- * 
+ *
  * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
 */
 
@@ -32,22 +34,20 @@
 using System;
 using System.Runtime.InteropServices;
 
-
-
 namespace Altaxo.Calc.LinearAlgebra.Lapack{
   [System.Security.SuppressUnmanagedCodeSecurityAttribute]
   internal sealed class Potri{
     private Potri(){}
-    
+
     private static void ArgumentCheck(UpLo uplo, int n, object A, int lda){
-      if (n<0) 
+      if (n<0)
         throw new ArgumentException("n must be at least zero.", "n");
-      if (A==null) 
+      if (A==null)
         throw new ArgumentNullException("A","A cannot be null.");
-      if (lda<n || lda<1) 
+      if (lda<n || lda<1)
         throw new ArgumentException("lda must be at least max(1,n)", "lda");
     }
-    
+
     internal static int Compute( UpLo uplo, int n, float[] A, int lda  ){
       ArgumentCheck(uplo, n, A, lda);
       return dna_lapack_spotri(uplo, n, A, lda);

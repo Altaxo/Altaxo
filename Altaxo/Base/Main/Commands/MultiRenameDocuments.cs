@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Gui.Common.MultiRename;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Gui.Common.MultiRename;
 
 namespace Altaxo.Main.Commands
 {
@@ -51,7 +52,6 @@ namespace Altaxo.Main.Commands
 
 			renameData.DefaultPatternString = "[N]";
 
-
 			renameData.RegisterRenameActionHandler(RenameDocuments);
 
 			var controller = new Altaxo.Gui.Common.MultiRename.MultiRenameController();
@@ -59,7 +59,6 @@ namespace Altaxo.Main.Commands
 
 			Current.Gui.ShowDialog(controller, "Rename items");
 		}
-
 
 		/// <summary>
 		/// Renames the documents using the items and functions registered in <paramref name="renameData"/>.
@@ -97,7 +96,6 @@ namespace Altaxo.Main.Commands
 			return renameFailedObjects;
 		}
 
-
 		/// <summary>
 		/// Register common shortcuts that are available for all documents (worksheets and graphs), like name, path, creation date etc.
 		/// </summary>
@@ -117,7 +115,7 @@ namespace Altaxo.Main.Commands
 
 		#region Sub-functions for shortcuts
 
-		static int GetCounter(object o, int i)
+		private static int GetCounter(object o, int i)
 		{
 			return i;
 		}
@@ -146,13 +144,13 @@ namespace Altaxo.Main.Commands
 			return Altaxo.Main.ProjectFolder.GetFolderPart(name);
 		}
 
-		static string[] GetNamePartArray(object o, int i)
+		private static string[] GetNamePartArray(object o, int i)
 		{
 			var name = GetFullName(o, i);
 			return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
 		}
 
-		static string[] GetFolderPartArray(object o, int i)
+		private static string[] GetFolderPartArray(object o, int i)
 		{
 			var name = GetFolderName(o, i);
 			if (name.EndsWith("" + Altaxo.Main.ProjectFolder.DirectorySeparatorChar))
@@ -166,7 +164,10 @@ namespace Altaxo.Main.Commands
 		/// <param name="o">Document object.</param>
 		/// <param name="i">This parameter is ignored.</param>
 		/// <returns>Full name of the document.</returns>
-		public static string GetFullName(object o, int i) { return GetFullName(o); }
+		public static string GetFullName(object o, int i)
+		{
+			return GetFullName(o);
+		}
 
 		/// <summary>
 		/// Gets the full name of a document. See the class documentation for which type of documents can be used as argument.
@@ -189,7 +190,7 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-		static void SetName(object o, string newName)
+		private static void SetName(object o, string newName)
 		{
 			if (o is Altaxo.Data.DataTable)
 			{
@@ -205,7 +206,7 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-		static DateTime GetCreationDate(object o, int i)
+		private static DateTime GetCreationDate(object o, int i)
 		{
 			return GetCreationDate(o).ToLocalTime();
 		}
@@ -220,7 +221,7 @@ namespace Altaxo.Main.Commands
 			return GetCreationDate(o).ToLocalTime().ToString();
 		}
 
-		static DateTime GetCreationDate(object o)
+		private static DateTime GetCreationDate(object o)
 		{
 			if (o is Altaxo.Data.DataTable)
 			{
@@ -236,7 +237,6 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-		#endregion
-
+		#endregion Sub-functions for shortcuts
 	}
 }

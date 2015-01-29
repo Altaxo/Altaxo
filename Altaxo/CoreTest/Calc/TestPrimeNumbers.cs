@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,16 +19,16 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion Copyright
+
 using Altaxo.Calc;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace AltaxoTest.Calc
 {
-
 	[TestFixture]
 	public class TestPrimeNumbers
 	{
@@ -45,8 +46,8 @@ namespace AltaxoTest.Calc
 		[Test]
 		public void TestNonPrimalityOfExampleNumbers()
 		{
-			Assert.IsFalse(PrimeNumberMath.IsPrime(4),"4");
-			Assert.IsFalse(PrimeNumberMath.IsPrime(9),"9");
+			Assert.IsFalse(PrimeNumberMath.IsPrime(4), "4");
+			Assert.IsFalse(PrimeNumberMath.IsPrime(9), "9");
 			Assert.IsFalse(PrimeNumberMath.IsPrime(29209157L), "29209157L");
 			Assert.IsFalse(PrimeNumberMath.IsPrime(6863624473L), "6863624473L");
 		}
@@ -69,7 +70,7 @@ namespace AltaxoTest.Calc
 		[Test]
 		public void TestGetAllDivisors()
 		{
-			int number = 2*2*3*5*5*7;
+			int number = 2 * 2 * 3 * 5 * 5 * 7;
 
 			var naivList = new List<int>();
 
@@ -86,7 +87,6 @@ namespace AltaxoTest.Calc
 			{
 				Assert.AreEqual(naivList[i], ourList[i], string.Format("List entry [{0}]", i));
 			}
-
 		}
 
 		[Test]
@@ -97,6 +97,5 @@ namespace AltaxoTest.Calc
 			Assert.AreEqual(6803, list[0]);
 			Assert.AreEqual(6823, list[1]);
 		}
-
 	}
 }

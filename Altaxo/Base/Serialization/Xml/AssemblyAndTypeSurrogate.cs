@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,74 +19,71 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 
 namespace Altaxo.Serialization.Xml
 {
-  /// <summary>
-  /// Summary description for AssemblyAndTypeSurrogate.
-  /// </summary>
-  /// 
-  public class AssemblyAndTypeSurrogate
-  {
-    string _assemblyName;
-    string _typeName;
+	/// <summary>
+	/// Summary description for AssemblyAndTypeSurrogate.
+	/// </summary>
+	///
+	public class AssemblyAndTypeSurrogate
+	{
+		private string _assemblyName;
+		private string _typeName;
 
+		#region Serialization
 
-    #region Serialization
- 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AssemblyAndTypeSurrogate), 0)]
+		public class XmlSerializationSurrogate : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AssemblyAndTypeSurrogate s = (AssemblyAndTypeSurrogate)obj;
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AssemblyAndTypeSurrogate),0)]
-      public class XmlSerializationSurrogate : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        AssemblyAndTypeSurrogate s = (AssemblyAndTypeSurrogate)obj;
-       
-        info.AddValue("AssemblyName",s._assemblyName);
-        info.AddValue("TypeName",s._typeName);
-      }
+				info.AddValue("AssemblyName", s._assemblyName);
+				info.AddValue("TypeName", s._typeName);
+			}
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AssemblyAndTypeSurrogate s = o==null ? new AssemblyAndTypeSurrogate() : (AssemblyAndTypeSurrogate)o;
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				AssemblyAndTypeSurrogate s = o == null ? new AssemblyAndTypeSurrogate() : (AssemblyAndTypeSurrogate)o;
 
-        s._assemblyName = info.GetString("AssemblyName");
-        s._typeName = info.GetString("TypeName");
+				s._assemblyName = info.GetString("AssemblyName");
+				s._typeName = info.GetString("TypeName");
 
-        return s;
-      }
-        
-    }
+				return s;
+			}
+		}
 
-   
-    #endregion
+		#endregion Serialization
 
-    protected AssemblyAndTypeSurrogate()
-    {
-    }
+		protected AssemblyAndTypeSurrogate()
+		{
+		}
 
-    public AssemblyAndTypeSurrogate(object o)
-    {
-      if(o==null)
-        throw new ArgumentNullException("To determine the type, the argument must not be null");
-      this._assemblyName = o.GetType().Assembly.FullName;
-      this._typeName = o.GetType().FullName;
-    }
+		public AssemblyAndTypeSurrogate(object o)
+		{
+			if (o == null)
+				throw new ArgumentNullException("To determine the type, the argument must not be null");
+			this._assemblyName = o.GetType().Assembly.FullName;
+			this._typeName = o.GetType().FullName;
+		}
 
-    public object CreateInstance()
-    {
-      try
-      {
-        System.Runtime.Remoting.ObjectHandle oh =  System.Activator.CreateInstance(_assemblyName,_typeName);
-        return oh.Unwrap();
-      }
-      catch(Exception)
-      {
-      }
-      return null;
-    }
-  }
+		public object CreateInstance()
+		{
+			try
+			{
+				System.Runtime.Remoting.ObjectHandle oh = System.Activator.CreateInstance(_assemblyName, _typeName);
+				return oh.Unwrap();
+			}
+			catch (Exception)
+			{
+			}
+			return null;
+		}
+	}
 }

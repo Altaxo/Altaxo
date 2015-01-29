@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,6 @@ using System.Text;
 
 namespace Altaxo.Gui.Common.MultiRename
 {
-
 	/// <summary>
 	/// Extends the parser generated from the PEG grammar, so that the keywords are no longer fixed, but can be stored into collections.
 	/// </summary>
@@ -38,7 +39,7 @@ namespace Altaxo.Gui.Common.MultiRename
 		/// <summary>
 		/// Specific comparer, that orders string so that the longest strings come first. This is essential for looking up of parser literals.
 		/// </summary>
-		class LongestFirstComparer : IComparer<string>
+		private class LongestFirstComparer : IComparer<string>
 		{
 			public int Compare(string x, string y)
 			{
@@ -46,20 +47,19 @@ namespace Altaxo.Gui.Common.MultiRename
 				int leny = null == y ? 0 : y.Length;
 
 				if (lenx != leny) // make sorting so that the longest strings come first
-					return lenx<leny ? 1 : -1;
+					return lenx < leny ? 1 : -1;
 				else
 					return string.Compare(x, y);
 			}
 		}
 
+		#endregion specific string comparer
 
-		#endregion
-
-		static LongestFirstComparer _comparer = new LongestFirstComparer();
-		SortedSet<string> _integerTChars;
-		SortedSet<string> _stringTChars;
-		SortedSet<string> _arrayTChars;
-		SortedSet<string> _dateTimeTChars;
+		private static LongestFirstComparer _comparer = new LongestFirstComparer();
+		private SortedSet<string> _integerTChars;
+		private SortedSet<string> _stringTChars;
+		private SortedSet<string> _arrayTChars;
+		private SortedSet<string> _dateTimeTChars;
 
 		/// <summary>
 		/// Contain all keywords that can be used as integer number, like counter, row number and so on.
@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Common.MultiRename
 		{
 			get { return _integerTChars; }
 		}
-		
+
 		/// <summary>
 		/// Contain all keywords that can be used as strings, like name.
 		/// </summary>
@@ -109,13 +109,12 @@ namespace Altaxo.Gui.Common.MultiRename
 			: base()
 		{
 			_integerTChars = new SortedSet<string>(renameData.GetIntegerShortcuts(), _comparer);
-			_stringTChars = new SortedSet<string>(renameData.GetStringShortcuts(),_comparer);
-			_arrayTChars = new SortedSet<string>(renameData.GetArrayShortcuts(),_comparer);
-			_dateTimeTChars = new SortedSet<string>(renameData.GetDateTimeShortcuts(),_comparer);
+			_stringTChars = new SortedSet<string>(renameData.GetStringShortcuts(), _comparer);
+			_arrayTChars = new SortedSet<string>(renameData.GetArrayShortcuts(), _comparer);
+			_dateTimeTChars = new SortedSet<string>(renameData.GetDateTimeShortcuts(), _comparer);
 		}
 
-
-		bool IsOneOf(SortedSet<string> list)
+		private bool IsOneOf(SortedSet<string> list)
 		{
 			foreach (string s in list)
 			{
@@ -124,7 +123,6 @@ namespace Altaxo.Gui.Common.MultiRename
 			}
 			return false;
 		}
-
 
 		public override bool IntegerTChar()
 		{

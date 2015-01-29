@@ -28,8 +28,6 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
-	using Gdi.Plot.Groups;
-
 	public class BarWidthPositionGroupStyle
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,

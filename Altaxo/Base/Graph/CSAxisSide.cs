@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -34,10 +36,13 @@ namespace Altaxo.Graph
 	{
 		/// <summary>Direction to lower logical values of the first alternate axis.</summary>
 		FirstDown = 0,
+
 		/// <summary>Direction to higher logical values of the first alternate axis.</summary>
 		FirstUp = 1,
+
 		/// <summary>Direction to lower logical values of the second alternate axis.</summary>
 		SecondDown = 2,
+
 		/// <summary>Direction to higher logical values of the second alternate axis.</summary>
 		SecondUp = 3
 	};

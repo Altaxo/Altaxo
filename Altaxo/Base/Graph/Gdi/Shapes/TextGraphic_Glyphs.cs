@@ -31,10 +31,8 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
-	using Background;
 	using Graph.Plot.Data;
 	using Plot;
-	using Plot.Data;
 
 	public partial class TextGraphic : GraphicBase
 	{

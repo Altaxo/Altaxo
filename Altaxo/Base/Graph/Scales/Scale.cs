@@ -23,13 +23,11 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Serialization;
 using System;
 
 namespace Altaxo.Graph.Scales
 {
 	using Boundaries;
-	using Rescaling;
 
 	/// <summary>
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.

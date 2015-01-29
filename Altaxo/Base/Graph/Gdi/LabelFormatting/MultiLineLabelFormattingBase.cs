@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,13 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Data;
 using System;
 using System.Drawing;
 
-using Altaxo.Data;
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
 	/// <summary>
@@ -31,14 +33,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 	/// </summary>
 	public abstract class MultiLineLabelFormattingBase : LabelFormattingBase
 	{
-		double _relativeLineSpacing = 1;
-		StringAlignment _textBlockAlignment;
-
+		private double _relativeLineSpacing = 1;
+		private StringAlignment _textBlockAlignment;
 
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiLineLabelFormattingBase), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -47,6 +48,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				info.AddValue("LineSpacing", s._relativeLineSpacing);
 				info.AddEnum("BlockAlignment", s._textBlockAlignment);
 			}
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				MultiLineLabelFormattingBase s = (MultiLineLabelFormattingBase)o;
@@ -58,7 +60,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-		#endregion
+		#endregion Serialization
 
 		protected MultiLineLabelFormattingBase()
 		{
@@ -68,7 +70,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			: base(from) // everything is done here, since CopyFrom is virtual
 		{
 		}
-
 
 		public override bool CopyFrom(object obj)
 		{
@@ -97,7 +98,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			}
 		}
 
-
 		public StringAlignment TextBlockAlignment
 		{
 			get
@@ -109,9 +109,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				_textBlockAlignment = value;
 			}
 		}
-
-
-
 
 		/// <summary>
 		/// Measures a couple of items and prepares them for being drawn.
@@ -182,7 +179,6 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 					_stringSize[i] = g.MeasureString(_text[i], _font.ToGdi(), new PointF(0, 0), strfmt);
 					bounds.ExpandToInclude(new RectangleD(position, _stringSize[i]));
 					position.Y += _stringSize[i].Y * _lineSpacing;
-
 				}
 				_size = bounds.Size;
 			}
@@ -208,6 +204,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 						case StringAlignment.Center:
 							posX += (_size.X - _stringSize[i].X) * 0.5;
 							break;
+
 						case StringAlignment.Far:
 							posX += (_size.X - _stringSize[i].X);
 							break;
@@ -218,37 +215,39 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				}
 			}
 
-
-			double GetHorizontalOffset()
+			private double GetHorizontalOffset()
 			{
 				switch (_horizontalAlignment)
 				{
 					default:
 					case StringAlignment.Near:
 						return 0;
+
 					case StringAlignment.Center:
 						return _size.X / 2;
+
 					case StringAlignment.Far:
 						return _size.X;
 				}
 			}
 
-			double GetVerticalOffset()
+			private double GetVerticalOffset()
 			{
 				switch (_verticalAlignment)
 				{
 					default:
 					case StringAlignment.Near:
 						return 0;
+
 					case StringAlignment.Center:
 						return _size.Y / 2;
+
 					case StringAlignment.Far:
 						return _size.Y;
 				}
 			}
 
-			#endregion
-
+			#endregion IMeasuredLabelItem Members
 		}
 	}
 }

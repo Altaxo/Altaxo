@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,11 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Collections;
 using System;
 using System.Text;
-using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -33,20 +35,24 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	public class LevMarAdapter
 	{
 		#region inner classes
+
 		/// <summary>Caches the temporary memory space of one fit element.</summary>
-		class CachedFitElementInfo
+		private class CachedFitElementInfo
 		{
 			/// <summary>Parameter array for temporary purpose.</summary>
 			public double[] Parameters;
+
 			/// <summary>Value result array for temporary purpose.</summary>
 			public double[] Ys;
+
 			/// <summary>Independent variable array for temporary purpose.</summary>
 			public double[] Xs;
+
 			/// <summary>Array of jacobians (derivatives of the function value with respect to the parameters) for temporary purpose.</summary>
 			public double[][] DYs;
 
 			/// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
-			/// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the 
+			/// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the
 			/// global constant parameter list.
 			/// </summary>
 			public int[] ParameterMapping;
@@ -59,37 +65,38 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			/// </summary>
 			public IAscendingIntegerCollection ValidRows;
 		}
-		#endregion
+
+		#endregion inner classes
 
 		/// <summary>The fit ensemble this adapter is using.</summary>
-		FitEnsemble _fitEnsemble;
+		private FitEnsemble _fitEnsemble;
 
 		/// <summary>
 		/// List of constant parameters (i.e. parameters that are not changed during the fitting session).
 		/// For convenience, all parameters are stored here (the varying parameters too), but only the constant parameters are used.
 		/// </summary>
-		double[] _constantParameters;
+		private double[] _constantParameters;
 
 		/// <summary>Caches the temporary information of all fit elements.</summary>
-		CachedFitElementInfo[] _cachedFitElementInfo;
+		private CachedFitElementInfo[] _cachedFitElementInfo;
 
 		/// <summary>Number of total valid data points (y-values) of the fit ensemble.</summary>
-		int _cachedNumberOfData;
+		private int _cachedNumberOfData;
 
 		/// <summary>Holds the parameters that can vary during the fit.</summary>
-		double[] _cachedVaryingParameters;
+		private double[] _cachedVaryingParameters;
 
 		/// <summary>During the fitting procedure, this holds the original y data.</summary>
-		double[] _cachedDependentValues; // 
+		private double[] _cachedDependentValues; //
 
 		/// <summary>If this array is set, the weights are used to scale the fit differences (yreal-yfit).</summary>
-		double[] _cachedWeights;
+		private double[] _cachedWeights;
 
 		/// <summary>Holds (after the fit) the resulting covariances of the parameters.</summary>
-		double[] _resultingCovariances;
+		private double[] _resultingCovariances;
 
 		/// <summary>After the fit, this is the resulting sum of squares of the deviations.</summary>
-		double _resultingSumChiSquare;
+		private double _resultingSumChiSquare;
 
 		/// <summary>
 		/// Constructor of the adapter.
@@ -108,7 +115,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// Internal function to set up the cached data for the fitting procedure.
 		/// </summary>
 		/// <param name="paraSet">The set of parameters (the information which parameters are fixed is mainly used here).</param>
-		void CalculateCachedData(ParameterSet paraSet)
+		private void CalculateCachedData(ParameterSet paraSet)
 		{
 			// Preparation: Store the parameter names by name and index, and store
 			// all parameter values in _constantParameters
@@ -133,7 +140,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					_cachedVaryingParameters[k++] = paraSet[i].Parameter;
 				}
 			}
-
 
 			_cachedNumberOfData = 0;
 			_cachedFitElementInfo = new CachedFitElementInfo[_fitEnsemble.Count];
@@ -166,7 +172,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				// calculate the total number of data points
 				_cachedNumberOfData += numVariablesUsed * info.ValidRows.Count;
 
-
 				// now create the parameter mapping
 				info.ParameterMapping = new int[fitEle.NumberOfParameters];
 
@@ -198,9 +203,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			else
 				_cachedWeights = null;
 		}
-
-
-
 
 		/// <summary>Number of total valid data points (y-values) of the fit ensemble. This is the array
 		/// size you will need to store the fitting functions output.</summary>
@@ -334,7 +336,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-
 		/// <summary>
 		/// Calculates the fitting values.
 		/// </summary>
@@ -374,7 +375,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					int idx = info.ParameterMapping[i];
 					info.Parameters[i] = idx >= 0 ? parameter[idx] : _constantParameters[-1 - idx];
 				}
-
 
 				IAscendingIntegerCollection validRows = info.ValidRows;
 				int numValidRows = validRows.Count;
@@ -430,7 +430,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int idx = info.ParameterMapping[i];
 				parameters[i] = idx >= 0 ? _cachedVaryingParameters[idx] : _constantParameters[-1 - idx];
 			}
-
 		}
 
 		/// <summary>
@@ -454,7 +453,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				CachedFitElementInfo info = _cachedFitElementInfo[ele];
 				FitElement fitEle = _fitEnsemble[ele];
 
-
 				// make sure, that the dimension of the DYs is ok
 				if (info.DYs == null || info.DYs.Length != fitEle.NumberOfDependentVariables || info.DYs[0].Length != fitEle.NumberOfParameters)
 					info.DYs = LinearAlgebra.JaggedArrayMath.GetMatrixArray(fitEle.NumberOfDependentVariables, fitEle.NumberOfParameters);
@@ -465,7 +463,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					int idx = info.ParameterMapping[i];
 					info.Parameters[i] = idx >= 0 ? parameter[idx] : _constantParameters[-1 - idx];
 				}
-
 
 				IAscendingIntegerCollection validRows = info.ValidRows;
 				int numValidRows = validRows.Count;
@@ -512,14 +509,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			return _resultingSumChiSquare;
 		}
 
-		class NelderMeadCostFunction : Calc.Optimization.CostFunction
+		private class NelderMeadCostFunction : Calc.Optimization.CostFunction
 		{
-			LevMarAdapter _adapter;
+			private LevMarAdapter _adapter;
 
 			public NelderMeadCostFunction(LevMarAdapter adapter)
 			{
 				_adapter = adapter;
 			}
+
 			public override double Value(Altaxo.Calc.LinearAlgebra.DoubleVector x)
 			{
 				for (int i = 0; i < _adapter._cachedVaryingParameters.Length; ++i)
@@ -527,14 +525,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 				return _adapter.EvaluateChiSquare();
 			}
-
 		}
+
 		public void DoSimplexMinimization()
 		{
 			Calc.Optimization.NelderMead nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
 			nm.Minimize(new Calc.LinearAlgebra.DoubleVector(this._cachedVaryingParameters));
 		}
-
 
 		/// <summary>
 		/// This function determines, wheter or not all fit functions provide the jacobians. In this case, the
@@ -550,7 +547,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 			return true;
 		}
-
 
 		public void Fit()
 		{
@@ -570,7 +566,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			_resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
 			NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare);
-
 		}
 
 		/// <summary>
@@ -595,10 +590,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				null // arbitrary data
 				);
 
-
 			_resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
 			NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare);
-
 		}
 
 		public double ResultingChiSquare
@@ -611,7 +604,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void CopyParametersBackTo(ParameterSet pset)
 		{
-
 			if (pset.Count != this._constantParameters.Length)
 				throw new ArgumentException("Length of parameter set pset does not match with cached length of parameter set");
 			int varyingPara = 0;
@@ -638,7 +630,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					pset[i].Parameter = this._constantParameters[i];
 					pset[i].Variance = 0;
 				}
-
 			}
 			pset.OnInitializationFinished();
 		}

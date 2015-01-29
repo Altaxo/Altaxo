@@ -22,16 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Graph.Plot.Data;
-	using Plot.Data;
-	using Scales;
 
 	/// <summary>
 	/// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.

@@ -22,9 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
-using Altaxo.Gui;
-using Altaxo.Main.Services;
 using Altaxo.Scripting;
 using System;
 using System.Text.RegularExpressions;

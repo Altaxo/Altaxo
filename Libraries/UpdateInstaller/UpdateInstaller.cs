@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,15 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+#endregion Copyright
 
 using ICSharpCode.SharpZipLib.Zip;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -35,34 +36,33 @@ namespace Altaxo.Serialization.AutoUpdates
 	/// </summary>
 	public class UpdateInstaller
 	{
-		static System.Threading.EventWaitHandle _eventWaitHandle;
+		private static System.Threading.EventWaitHandle _eventWaitHandle;
 
-		const string PackListRelativePath = "doc\\PackList.txt";
-		
+		private const string PackListRelativePath = "doc\\PackList.txt";
+
 		/// <summary>Name of the event that signals to Altaxo that Altaxo now should shutdown in order to be updated.</summary>
-		string _eventName;
+		private string _eventName;
 
 		/// <summary>Full name of the zip file that contains the update files.</summary>
-		string _packageName;
+		private string _packageName;
 
 		/// <summary>Full name of the Altaxo executable that should be updated.</summary>
-		string _altaxoExecutableFullName;
+		private string _altaxoExecutableFullName;
 
 		/// <summary>Full path to the installation directory (the directory in which the subdirs 'bin', 'doc', 'Addins' and 'data' resides).</summary>
-		string _pathToInstallation;
+		private string _pathToInstallation;
 
 		/// <summary>If true, this indicates that the waiting for the end of Altaxo was already done successfully. Thus in a possible second installation attempt we can skip this waiting.</summary>
-		bool _isWaitingForAltaxosEndDone;
-		
-		/// <summary>If true, this indicates that the removing of the old installation files was already done successfully. Thus in a possible second installation attempt we can skip this step.</summary>
-		bool _isRemovingOldFilesDone;
-		
-		/// <summary>If true, this indicates that the deletion of orphaned directories was already done successfully. Thus in a possible second installation attempt we can skip this step.</summary>
-		bool _isDeletingOrphanedDirectoriesDone;
+		private bool _isWaitingForAltaxosEndDone;
 
+		/// <summary>If true, this indicates that the removing of the old installation files was already done successfully. Thus in a possible second installation attempt we can skip this step.</summary>
+		private bool _isRemovingOldFilesDone;
+
+		/// <summary>If true, this indicates that the deletion of orphaned directories was already done successfully. Thus in a possible second installation attempt we can skip this step.</summary>
+		private bool _isDeletingOrphanedDirectoriesDone;
 
 		/// <summary>Initializes a new instance of the <see cref="Downloader"/> class.</summary>
-		/// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it 
+		/// <param name="loadUnstable">If set to <c>true</c>, the <see cref="Downloader"/> take a look for the latest unstable version. If set to <c>false</c>, it
 		/// looks for the latest stable version.</param>
 		/// <param name="currentProgramVersion">The version of the currently installed Altaxo program.</param>
 		public UpdateInstaller(string eventName, string packageFullFileName, string altaxoExecutableFullFileName)
@@ -70,7 +70,6 @@ namespace Altaxo.Serialization.AutoUpdates
 			_eventName = eventName;
 			_packageName = packageFullFileName;
 			_altaxoExecutableFullName = altaxoExecutableFullFileName;
-
 
 			_pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
 			if (!Path.IsPathRooted(_pathToInstallation))
@@ -87,18 +86,16 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
-
-
 		/// <summary>Runs the installer</summary>
 		/// <param name="ReportProgress">Used to report the installation progress. Arguments are the progress in percent and a progress message. If this function returns true, the program must thow an <see cref="System.Threading.ThreadInterruptedException"/>.</param>
-		public void Run(Func<double,string,bool> ReportProgress)
+		public void Run(Func<double, string, bool> ReportProgress)
 		{
 			string pathToInstallation = Path.GetDirectoryName(_altaxoExecutableFullName);
 
 			using (FileStream fs = new FileStream(_packageName, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				fs.Seek(0, SeekOrigin.Begin);
-			
+
 				if (!_isWaitingForAltaxosEndDone)
 				{
 					// signal Altaxo, that we have the stream now
@@ -129,7 +126,7 @@ namespace Altaxo.Serialization.AutoUpdates
 				}
 
 				_isWaitingForAltaxosEndDone = true;
-				ReportProgress(0,"Altaxo now has ended and is ready to be updated");
+				ReportProgress(0, "Altaxo now has ended and is ready to be updated");
 
 				if (!_isRemovingOldFilesDone)
 				{
@@ -163,7 +160,6 @@ namespace Altaxo.Serialization.AutoUpdates
 				}
 				_isDeletingOrphanedDirectoriesDone = true;
 
-
 				// and extract the new files
 				ReportProgress(0, "Extracting new installation files ...");
 				ExtractPackageFiles(fs, ReportProgress);
@@ -189,14 +185,14 @@ namespace Altaxo.Serialization.AutoUpdates
 			var zipFile = new ZipFile(fs);
 			byte[] buffer = new byte[4096];
 
-			double totalNumberOfFiles =  zipFile.Count;
+			double totalNumberOfFiles = zipFile.Count;
 			int currentProcessedFile = -1;
 			foreach (ZipEntry entry in zipFile)
 			{
 				++currentProcessedFile;
 				var destinationFileName = Path.Combine(_pathToInstallation, entry.Name);
 				var destinationPath = Path.GetDirectoryName(destinationFileName);
-				ReportProgress(100*currentProcessedFile/totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName));
+				ReportProgress(100 * currentProcessedFile / totalNumberOfFiles, string.Format("Updating file {0}", destinationFileName));
 
 				if (!Directory.Exists(destinationPath))
 					Directory.CreateDirectory(destinationPath);
@@ -252,7 +248,6 @@ namespace Altaxo.Serialization.AutoUpdates
 			return false;
 		}
 
-
 		/// <summary>Removes the old installation files. For this purpose, the pack list file of the old installation is opened, and all files that match the content of the pack list files are removed.</summary>
 		private void RemoveOldInstallationFiles()
 		{
@@ -286,12 +281,11 @@ namespace Altaxo.Serialization.AutoUpdates
 			}
 		}
 
-
 		/// <summary>Deletes the directory if it is orphaned, i.e. contains no files or subfolders. The call is recursive, i.e. prior to looking if this directory doesn't contain files or folders,
 		/// the operation is applied to all subfolders of the directory.</summary>
 		/// <param name="dir">The full path of the directory.</param>
 		/// <returns>True if this directory was orphaned and thus was deleted.</returns>
-		static bool DeleteDirIfOrphaned(DirectoryInfo dir, Func<double,string,bool> ReportProgress)
+		private static bool DeleteDirIfOrphaned(DirectoryInfo dir, Func<double, string, bool> ReportProgress)
 		{
 			bool isOrphaned = true;
 
@@ -306,7 +300,6 @@ namespace Altaxo.Serialization.AutoUpdates
 				isOrphaned = false; // not orphaned
 			if (dir.GetDirectories().Length != 0)
 				isOrphaned = false; // not orphaned
-
 
 			// if the directory is orphaned, the it can be deleted
 			if (isOrphaned)

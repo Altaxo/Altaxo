@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,33 +19,30 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-using System.Drawing;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Background;
-using Altaxo.Gui.Common.Drawing;
-
 namespace Altaxo.Gui.Graph
 {
 	public class BackgroundControlsGlue : FrameworkElement
 	{
-
-
 		public BackgroundControlsGlue()
 		{
-
 		}
 
 		#region IBackgroundStyle
 
-		IBackgroundStyle _doc;
+		private IBackgroundStyle _doc;
+
 		public IBackgroundStyle BackgroundStyle
 		{
 			get
@@ -60,25 +58,24 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-    /// <summary>
-    /// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
-    /// </summary>
+		/// <summary>
+		/// Occurs when the background style instance changed to another instance. This event is <b>not</b> fired when only members of the background style changed (e.g. the brush).
+		/// </summary>
 		public event EventHandler BackgroundStyleChanged;
 
-    protected virtual void OnBackgroundStyleChanged()
+		protected virtual void OnBackgroundStyleChanged()
 		{
 			if (BackgroundStyleChanged != null)
 				BackgroundStyleChanged(this, EventArgs.Empty);
 		}
 
-		#endregion
-
-
+		#endregion IBackgroundStyle
 
 		#region Style
 
-		System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
-		ComboBox _cbStyle;
+		private System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
+		private ComboBox _cbStyle;
+
 		public ComboBox CbStyle
 		{
 			get { return _cbStyle; }
@@ -97,7 +94,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhStyle_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhStyle_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_cbStyle.SelectedIndex > 0)
 				_doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[_cbStyle.SelectedIndex - 1]);
@@ -110,10 +107,9 @@ namespace Altaxo.Gui.Graph
 
 			OnBackgroundStyleChanged();
 			UpdateBrushState();
-
 		}
 
-		void InitializeBackgroundStyle()
+		private void InitializeBackgroundStyle()
 		{
 			int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
 			string[] names = Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true);
@@ -125,25 +121,23 @@ namespace Altaxo.Gui.Graph
 			_cbStyle.SelectedIndex = sel + 1;
 		}
 
-
-
-		#endregion
+		#endregion Style
 
 		#region Brush
 
+		/// <summary>
+		/// Occurs when the background brush changed.
+		/// </summary>
+		public event EventHandler BackgroundBrushChanged;
 
-    /// <summary>
-    /// Occurs when the background brush changed.
-    /// </summary>
-    public event EventHandler BackgroundBrushChanged;
+		protected virtual void OnBackgroundBrushChanged()
+		{
+			if (BackgroundBrushChanged != null)
+				BackgroundBrushChanged(this, EventArgs.Empty);
+		}
 
-    protected virtual void OnBackgroundBrushChanged()
-    {
-      if (BackgroundBrushChanged != null)
-        BackgroundBrushChanged(this, EventArgs.Empty);
-    }
+		private BrushComboBox _cbBrush;
 
-		BrushComboBox _cbBrush;
 		public BrushComboBox CbBrush
 		{
 			get { return _cbBrush; }
@@ -155,7 +149,7 @@ namespace Altaxo.Gui.Graph
 				}
 
 				_cbBrush = value;
-        _cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
+				_cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
 				_cbBrush.SelectedBrush = new BrushX(Altaxo.Graph.NamedColors.Aqua);
 
 				if (_doc != null && _cbBrush != null && _doc.Brush != null)
@@ -170,7 +164,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void EhBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhBrush_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (_doc != null)
 			{
@@ -179,7 +173,8 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		Control _lblBrush;
+		private Control _lblBrush;
+
 		public Control LabelBrush
 		{
 			get
@@ -193,7 +188,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		void UpdateBrushState()
+		private void UpdateBrushState()
 		{
 			bool vis = _doc != null && _doc.SupportsBrush;
 
@@ -203,28 +198,23 @@ namespace Altaxo.Gui.Graph
 				_lblBrush.IsEnabled = vis;
 		}
 
-		#endregion
+		#endregion Brush
 
+		#region ShowPlotColorsOnly
 
-    #region ShowPlotColorsOnly
+		private bool _showPlotColorsOnly;
 
-    private bool _showPlotColorsOnly;
+		public bool ShowPlotColorsOnly
+		{
+			get { return _showPlotColorsOnly; }
+			set
+			{
+				_showPlotColorsOnly = value;
+				if (null != _cbBrush)
+					_cbBrush.ShowPlotColorsOnly = value;
+			}
+		}
 
-    public bool ShowPlotColorsOnly
-    {
-      get { return _showPlotColorsOnly; }
-      set
-      {
-        _showPlotColorsOnly = value;
-        if (null != _cbBrush)
-          _cbBrush.ShowPlotColorsOnly = value;
-      }
-    }
-    
-
-
-
-    #endregion
-
-  }
+		#endregion ShowPlotColorsOnly
+	}
 }

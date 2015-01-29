@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -26,23 +28,22 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-  [Serializable]
-  public enum XAnchorPositionType { Left, Center, Right }
+	[Serializable]
+	public enum XAnchorPositionType { Left, Center, Right }
 
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics+XAnchorPositionType", 0)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAnchorPositionType), 0)]
-  public class XAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-    {
-      info.SetNodeContent(obj.ToString());
-    }
-    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-    {
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics+XAnchorPositionType", 0)]
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAnchorPositionType), 0)]
+	public class XAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+	{
+		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			info.SetNodeContent(obj.ToString());
+		}
 
-      string val = info.GetNodeContent();
-      return System.Enum.Parse(typeof(XAnchorPositionType), val, true);
-    }
-  }
-
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+		{
+			string val = info.GetNodeContent();
+			return System.Enum.Parse(typeof(XAnchorPositionType), val, true);
+		}
+	}
 }

@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,201 +19,193 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Reflection;
-using Altaxo.Serialization;
-using Altaxo.Data;
 
 namespace Altaxo.Scripting
 {
+	public interface IFunctionEvaluationScriptText : IScriptText
+	{
+		/// <summary>
+		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the function "EvalulateFunctionValue" will be called with the provided parameter x.
+		/// If this function throws an exception, the value double.NaN will be returned.
+		/// </summary>
+		/// <param name="x">The x argument for the function.</param>
+		/// <returns>The function value.</returns>
+		double Evaluate(double x);
+	}
 
-  public interface IFunctionEvaluationScriptText : IScriptText
-  {
-    /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the function "EvalulateFunctionValue" will be called with the provided parameter x.
-    /// If this function throws an exception, the value double.NaN will be returned.
-    /// </summary>
-    /// <param name="x">The x argument for the function.</param>
-    /// <returns>The function value.</returns>
-    double Evaluate(double x);
-  }
- 
-  /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a property column script. 
-  /// </summary>
- 
-  public class FunctionEvaluationScript : AbstractScript, IFunctionEvaluationScriptText, Altaxo.Calc.IScalarFunctionDD
-  {
-    #region Serialization
+	/// <summary>
+	/// Holds the text, the module (=executable), and some properties of a property column script.
+	/// </summary>
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.FunctionEvaluationScript), 0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        AbstractScript s = (AbstractScript)obj;
-    
-        info.AddBaseValueEmbedded(s,typeof(AbstractScript));
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        FunctionEvaluationScript s = null!=o ? (FunctionEvaluationScript)o : new FunctionEvaluationScript();
-        
-        // deserialize the base class
-        info.GetBaseValueEmbedded(s,typeof(AbstractScript),parent);
-        
-        return s;
-      }
-    }
+	public class FunctionEvaluationScript : AbstractScript, IFunctionEvaluationScriptText, Altaxo.Calc.IScalarFunctionDD
+	{
+		#region Serialization
 
-  
-    #endregion
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.FunctionEvaluationScript), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AbstractScript s = (AbstractScript)obj;
 
+				info.AddBaseValueEmbedded(s, typeof(AbstractScript));
+			}
 
-    /// <summary>
-    /// Creates an empty script.
-    /// </summary>
-    public FunctionEvaluationScript()
-    {
-    }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				FunctionEvaluationScript s = null != o ? (FunctionEvaluationScript)o : new FunctionEvaluationScript();
 
-    /// <summary>
-    /// Creates a column script as a copy from another script.
-    /// </summary>
-    /// <param name="b">The script to copy from.</param>
-    public FunctionEvaluationScript(FunctionEvaluationScript b)
-      : base(b,false)
-    {
-    }
-    /// <summary>
-    /// Creates a column script as a copy from another script.
-    /// </summary>
-    /// <param name="b">The script to copy from.</param>
-    /// <param name="forModification">If true, the new script text can be modified.</param>
-    public FunctionEvaluationScript(FunctionEvaluationScript b, bool forModification)
-      : base(b,forModification)
-    {
-    }
+				// deserialize the base class
+				info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
-    /// <summary>
-    /// Gives the type of the script object (full name), which is created after successfull compilation.
-    /// </summary>
-    public override string ScriptObjectType
-    {
-      get { return "Altaxo.Calc.FunctionEvaluationScript"; }
-    }
+				return s;
+			}
+		}
 
-    /// <summary>
-    /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
-    /// </summary>
-    public override string CodeHeader
-    {
-      get
-      {
-        return
-          "#region ScriptHeader\r\n"+
-          "using System;\r\n" + 
-          "using Altaxo;\r\n" + 
-          "using Altaxo.Calc;\r\n" + 
-          "using Altaxo.Data;\r\n" + 
-          "namespace Altaxo.Calc\r\n" + 
-          "{\r\n" + 
-          "\tpublic class FunctionEvaluationScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
-          "\t{\r\n"+
-          "\t\tpublic override double EvaluateFunctionValue(double x)\r\n" +
-          "\t\t{\r\n"; 
-      }
-    }
+		#endregion Serialization
 
-    public override string CodeStart
-    {
-      get
-      {
-        return
-          "#endregion\r\n"+
-          "\t\t\t// ----- add your script below this line -----\r\n";
-      }
-    }
+		/// <summary>
+		/// Creates an empty script.
+		/// </summary>
+		public FunctionEvaluationScript()
+		{
+		}
 
-    public override string CodeUserDefault
-    {
-      get
-      {
-        return
-          "\t\t\t\r\n" + 
-          "\t\t\treturn Sin(x);\r\n" +
-          "\t\t\t\r\n"
-          ;
-      }
-    }
+		/// <summary>
+		/// Creates a column script as a copy from another script.
+		/// </summary>
+		/// <param name="b">The script to copy from.</param>
+		public FunctionEvaluationScript(FunctionEvaluationScript b)
+			: base(b, false)
+		{
+		}
 
-    public override string CodeEnd
-    {
-      get
-      {
-        return
-          "\t\t\t// ----- add your script above this line -----\r\n"+
-          "#region ScriptFooter\r\n";
-      }
-    }
+		/// <summary>
+		/// Creates a column script as a copy from another script.
+		/// </summary>
+		/// <param name="b">The script to copy from.</param>
+		/// <param name="forModification">If true, the new script text can be modified.</param>
+		public FunctionEvaluationScript(FunctionEvaluationScript b, bool forModification)
+			: base(b, forModification)
+		{
+		}
 
-    /// <summary>
-    /// Get the ending text of the script, dependent on the ScriptStyle.
-    /// </summary>
-    public override string CodeTail
-    {
-      get
-      {
-        return 
-          
-          "\t\t} // method\r\n" +
-          "\t} // class\r\n" + 
-          "} //namespace\r\n"+
-          "#endregion\r\n";
-      }
-    }
+		/// <summary>
+		/// Gives the type of the script object (full name), which is created after successfull compilation.
+		/// </summary>
+		public override string ScriptObjectType
+		{
+			get { return "Altaxo.Calc.FunctionEvaluationScript"; }
+		}
 
+		/// <summary>
+		/// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+		/// </summary>
+		public override string CodeHeader
+		{
+			get
+			{
+				return
+					"#region ScriptHeader\r\n" +
+					"using System;\r\n" +
+					"using Altaxo;\r\n" +
+					"using Altaxo.Calc;\r\n" +
+					"using Altaxo.Data;\r\n" +
+					"namespace Altaxo.Calc\r\n" +
+					"{\r\n" +
+					"\tpublic class FunctionEvaluationScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
+					"\t{\r\n" +
+					"\t\tpublic override double EvaluateFunctionValue(double x)\r\n" +
+					"\t\t{\r\n";
+			}
+		}
 
+		public override string CodeStart
+		{
+			get
+			{
+				return
+					"#endregion\r\n" +
+					"\t\t\t// ----- add your script below this line -----\r\n";
+			}
+		}
 
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public override object Clone()
-    {
-      return new FunctionEvaluationScript(this,true);
-    }
+		public override string CodeUserDefault
+		{
+			get
+			{
+				return
+					"\t\t\t\r\n" +
+					"\t\t\treturn Sin(x);\r\n" +
+					"\t\t\t\r\n"
+					;
+			}
+		}
 
-   
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
-    public double Evaluate(double x)
-    {
-      if(null==_scriptObject && !_wasTriedToCompile)
-        Compile();
+		public override string CodeEnd
+		{
+			get
+			{
+				return
+					"\t\t\t// ----- add your script above this line -----\r\n" +
+					"#region ScriptFooter\r\n";
+			}
+		}
 
-      if(null==_scriptObject)
-      {
-        _errors = new string[1]{"Script Object is null"};
-        return double.NaN;
-      }
+		/// <summary>
+		/// Get the ending text of the script, dependent on the ScriptStyle.
+		/// </summary>
+		public override string CodeTail
+		{
+			get
+			{
+				return
 
-      try
-      {
-        return ((Altaxo.Calc.FunctionEvaluationScriptBase)_scriptObject).EvaluateFunctionValue(x);
-      }
-      catch(Exception)
-      {
-        return double.NaN;
-      }
-    }
-  } // end of class
+					"\t\t} // method\r\n" +
+					"\t} // class\r\n" +
+					"} //namespace\r\n" +
+					"#endregion\r\n";
+			}
+		}
+
+		/// <summary>
+		/// Clones the script.
+		/// </summary>
+		/// <returns>The cloned object.</returns>
+		public override object Clone()
+		{
+			return new FunctionEvaluationScript(this, true);
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="x"></param>
+		/// <returns></returns>
+		public double Evaluate(double x)
+		{
+			if (null == _scriptObject && !_wasTriedToCompile)
+				Compile();
+
+			if (null == _scriptObject)
+			{
+				_errors = new string[1] { "Script Object is null" };
+				return double.NaN;
+			}
+
+			try
+			{
+				return ((Altaxo.Calc.FunctionEvaluationScriptBase)_scriptObject).EvaluateFunctionValue(x);
+			}
+			catch (Exception)
+			{
+				return double.NaN;
+			}
+		}
+	} // end of class
 }

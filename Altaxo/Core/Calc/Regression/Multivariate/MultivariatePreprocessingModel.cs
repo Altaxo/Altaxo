@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,118 +19,106 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
+
 using Altaxo.Calc.LinearAlgebra;
-
+using System;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
+	/// <summary>
+	/// Contains the basic data that where obtained during preprocessing.
+	/// </summary>
+	public interface IMultivariatePreprocessingModel
+	{
+		int[] SpectralRegions
+		{
+			get;
+		}
 
-  /// <summary>
-  /// Contains the basic data that where obtained during preprocessing.
-  /// </summary>
-  public interface IMultivariatePreprocessingModel
-  {
-   
-    int[] SpectralRegions
-    {
-      get;
-    }
+		IROVector XOfX
+		{
+			get;
+		}
 
-    IROVector XOfX
-    {
-      get;
-    }
+		IROVector XMean
+		{
+			get;
+		}
 
+		IROVector XScale
+		{
+			get;
+		}
 
-    IROVector XMean
-    {
-      get ; 
-    }
+		IROVector YMean
+		{
+			get;
+		}
 
-    IROVector XScale
-    {
-      get; 
-    }
+		IROVector YScale
+		{
+			get;
+		}
 
-    IROVector YMean
-    {
-      get ; 
-    }
+		SpectralPreprocessingOptions PreprocessOptions
+		{
+			get;
+		}
+	}
 
-    IROVector YScale
-    {
-      get ; 
-    }
+	public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
+	{
+		private SpectralPreprocessingOptions _preprocessOptions;
 
-    SpectralPreprocessingOptions PreprocessOptions
-    {
-      get;
-    }
-  }
+		private int[] _spectralRegions;
+		private IROVector _xOfX;
+		private IROVector _xMean;
+		private IROVector _xScale;
+		private IROVector _yMean;
+		private IROVector _yScale;
 
+		public SpectralPreprocessingOptions PreprocessOptions
+		{
+			get { return _preprocessOptions; }
+			set { _preprocessOptions = value; }
+		}
 
-  public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
-  {
-    
-    SpectralPreprocessingOptions _preprocessOptions;
+		public int[] SpectralRegions
+		{
+			get { return _spectralRegions; }
+			set { _spectralRegions = value; }
+		}
 
-    int[]     _spectralRegions;
-    IROVector _xOfX;
-    IROVector _xMean;
-    IROVector _xScale;
-    IROVector _yMean;
-    IROVector _yScale;
+		public IROVector XOfX
+		{
+			get { return _xOfX; }
+			set { _xOfX = value; }
+		}
 
+		public IROVector XMean
+		{
+			get { return _xMean; }
+			set { _xMean = value; }
+		}
 
+		public IROVector XScale
+		{
+			get { return _xScale; }
+			set { _xScale = value; }
+		}
 
-    public SpectralPreprocessingOptions PreprocessOptions
-    {
-      get { return _preprocessOptions; }
-      set { _preprocessOptions = value; }
-    }
+		public IROVector YMean
+		{
+			get { return _yMean; }
+			set { _yMean = value; }
+		}
 
-
-    public int[] SpectralRegions
-    {
-      get { return _spectralRegions; }
-      set { _spectralRegions = value; }
-    }
-
-    public IROVector XOfX
-    {
-      get { return _xOfX; }
-      set { _xOfX = value; }
-    }
-
-
-    public IROVector XMean
-    {
-      get { return _xMean; }
-      set { _xMean = value; }
-    }
-
-    public IROVector XScale
-    {
-      get { return _xScale; }
-      set { _xScale = value; }
-    }
-
-    public IROVector YMean
-    {
-      get { return _yMean; }
-      set { _yMean = value; }
-    }
-
-    public IROVector YScale
-    {
-      get { return _yScale; }
-      set { _yScale = value; }
-    }
-
-
-
-  }
+		public IROVector YScale
+		{
+			get { return _yScale; }
+			set { _yScale = value; }
+		}
+	}
 }

@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2014 Dr. Dirk Lellinger
@@ -18,14 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
+
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -49,10 +50,10 @@ namespace Altaxo.Calc.Interpolation
 	/// variance estimate, and should only be accepted if the error variance
 	/// estimate is reckoned to be correct.
 	/// Bayesian estimates of the standard error of each smoothed data value are
-	/// returned in the array 'se' (if a non null vector is given for the 
-	/// paramenter 'se' - use (double*)0 if you don't want estimates). 
-	/// These also depend on the error variance estimate and should only 
-	/// be accepted if the error variance estimate is reckoned to be correct. 
+	/// returned in the array 'se' (if a non null vector is given for the
+	/// paramenter 'se' - use (double*)0 if you don't want estimates).
+	/// These also depend on the error variance estimate and should only
+	/// be accepted if the error variance estimate is reckoned to be correct.
 	/// See reference 4.
 	/// The number of arithmetic operations and the amount of storage required by
 	/// the routine are both proportional to 'n', so that very large data sets may
@@ -80,7 +81,7 @@ namespace Altaxo.Calc.Interpolation
 	///
 	/// Fortran source code transfered to C++ by B.M.Gammel, Physik Department,
 	/// TU Muenchen, 8046 Garching, Germany. Revision of september 1992.
-	/// 
+	///
 	/// C++ source code transfered to C# by Dirk Lellinger.
 	///
 	/// References:
@@ -99,21 +100,19 @@ namespace Altaxo.Calc.Interpolation
 	/// </remarks>
 	public class CrossValidatedCubicSpline : CurveBase, IInterpolationFunction
 	{
-
 		//----------------------------------------------------------------------------//
 		// static globals
 		//----------------------------------------------------------------------------//
 
-		const double zero = 0.0;
-		const double one = 1.0;
-		const double two = 2.0;
-
+		private const double zero = 0.0;
+		private const double one = 1.0;
+		private const double two = 2.0;
 
 		//----------------------------------------------------------------------------//
 		// error flags
 		//----------------------------------------------------------------------------//
 
-		enum ErrorFlag
+		private enum ErrorFlag
 		{
 			no_error = 0,
 			too_few_datapoints = 1,
@@ -158,8 +157,7 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-		#endregion
-
+		#endregion Input parameters
 
 		#region Fit results
 
@@ -280,8 +278,8 @@ namespace Altaxo.Calc.Interpolation
 		}
 
 		/// <summary>
-		/// Estimate of the error variance. 
-		/// The value coincides with the output value of var if var is negative on input. 
+		/// Estimate of the error variance.
+		/// The value coincides with the output value of var if var is negative on input.
 		/// It is calculated with the unscaled values of the df[i] to facilitate
 		/// comparisons with a priori variance estimates.
 		/// </summary>
@@ -308,9 +306,7 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-		#endregion
-
-
+		#endregion Fit results
 
 		#region Low level functions
 
@@ -329,10 +325,8 @@ namespace Altaxo.Calc.Interpolation
 				avh, err, p, q, delta, r1, r2, r3, r4;
 			double[] stat = new double[6];
 
-
 			// Parameter adjustments
 			wk_dim1 = n + 2;
-
 
 			spint(n, xx, out avh, f, df, out avdf, yy, c1, c2, c3,
 				wwr, wwt, out error_flag); // Note wwr has 3*(N+2), wwt has 2*(N+2)
@@ -415,7 +409,6 @@ namespace Altaxo.Calc.Interpolation
 
 			do
 			{  // golden section search for local minimum
-
 				if (gf3 > gf4)
 				{
 					r1 = r3;
@@ -448,7 +441,6 @@ namespace Altaxo.Calc.Interpolation
 				}
 
 				err = (r2 - r1) / (r1 + r2);
-
 			} while (err * err + one > one && err > 1e-6);
 
 			r1 = (r1 + r2) * 0.5;
@@ -494,14 +486,12 @@ namespace Altaxo.Calc.Interpolation
 			return (int)error_flag;
 		}
 
-
-		#endregion
-
+		#endregion cubgcv
 
 		#region spint
 
 		// LelliD spint is now fully zero based
-		static void spint(int n,
+		private static void spint(int n,
 			double[] x, // Original 1..N , now 0..N-1
 			out double avh,
 			double[] y, // Original 1..N, now 0..N-1
@@ -572,7 +562,6 @@ namespace Altaxo.Calc.Interpolation
 			for (i = 0; i < n; ++i) // Lellid modified
 				dy[i] /= avdy;
 
-
 			// initialize h,f
 			h = (x[1] - x[0]) / avh; // LelliD
 			f = (y[1] - y[0]) / h; // LelliD
@@ -606,9 +595,10 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-		#endregion
+		#endregion spint
 
 		#region spfit
+
 		//
 		// Fits a cubic smoothing spline to data with relative
 		// weighting dy for a given value of the smoothing parameter
@@ -631,9 +621,9 @@ namespace Altaxo.Calc.Interpolation
 		// when var is negative.
 		//
 		// now all arrays zero based by LelliD
-		static void spfit(int n,
+		private static void spfit(int n,
 			double[] x, // const double *x,
-			double avh, // double *avh, 
+			double avh, // double *avh,
 			double[] dy, // const double *dy,
 			double rho,
 			out double p, // double *p,
@@ -642,11 +632,11 @@ namespace Altaxo.Calc.Interpolation
 			double var, // double *var,
 			double[] stat, // double *stat,
 			double[] a, // double *a,
-			double[] c1, // double *c1, 
+			double[] c1, // double *c1,
 			double[] c2, // double *c2,
 			double[] c3, // double *c3,
 			double[] r, // double *r,
-			double[] t, // double *t, 
+			double[] t, // double *t,
 			double[] u, // double *u,
 			double[] v // double *v
 			)
@@ -744,14 +734,14 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-		#endregion
+		#endregion spfit
 
 		#region sperr
 
-		// calculates bayesian estimates of the standard errors of the fitted 
+		// calculates bayesian estimates of the standard errors of the fitted
 		// values of a cubic smoothing spline by calculating the diagonal elements
-		// of the influence matrix. 
-		static void sperr( // converted to zero based arrays by LelliD
+		// of the influence matrix.
+		private static void sperr( // converted to zero based arrays by LelliD
 			int n,
 			double[] x,
 			double avh,
@@ -763,8 +753,6 @@ namespace Altaxo.Calc.Interpolation
 		{
 			int i, r_dim1;
 			double f, g, h, f1, g1, h1, d1;
-
-
 
 			r_dim1 = n + 2;
 
@@ -796,15 +784,13 @@ namespace Altaxo.Calc.Interpolation
 			}
 		}
 
-		#endregion
-
+		#endregion sperr
 
 		#region spcof
 
-
-		// calculates coefficients of a cubic smoothing spline from 
+		// calculates coefficients of a cubic smoothing spline from
 		// parameters calculated by subroutine spfit.
-		static void spcof( // converted to zero based by LelliD
+		private static void spcof( // converted to zero based by LelliD
 			int n,
 			double[] x,
 			double avh,
@@ -819,8 +805,6 @@ namespace Altaxo.Calc.Interpolation
 			double[] u,
 			double[] v)
 		{
-
-
 			// calculate a
 			double qh = q / (avh * avh);
 			for (int i = 0; i < n; ++i) // LelliD
@@ -840,13 +824,15 @@ namespace Altaxo.Calc.Interpolation
 
 			c1[n - 1] = c2[n - 1] = c3[n - 1] = 0.0; // LelliD
 		}
-		#endregion
-		#endregion // low level functions
+
+		#endregion spcof
+
+		#endregion Low level functions
 
 		//----------------------------------------------------------------------------//
 		//
-		// int MpCrossValidatedSpline (const Vector &X, 
-		//                             const Vector &F, 
+		// int MpCrossValidatedSpline (const Vector &X,
+		//                             const Vector &F,
 		//                             Vector &DF,
 		//             Vector &Y, Vector &C1, Vector &C2, Vector &C3,
 		//             double& var, Vector &SE, Vector &WK)
@@ -906,8 +892,8 @@ namespace Altaxo.Calc.Interpolation
 		//                  If a NullVector is passed to the subroutine
 		//        then no standard error estimates are computed.
 		//
-		//            WK    Work vector of length 7*(n+2)+1, arbitrary offset. 
-		//                  On normal exit the first 7 values of wk are assigned 
+		//            WK    Work vector of length 7*(n+2)+1, arbitrary offset.
+		//                  On normal exit the first 7 values of wk are assigned
 		//                  as follows:
 		//
 		//                  ( here we arbitrarily start numbering from 0)
@@ -955,9 +941,6 @@ namespace Altaxo.Calc.Interpolation
 
 			// here we must use a copy of the original vectors
 
-
-
-
 			// Empty data vectors - free auxilliary storage
 			if (x.Length == 0)
 			{
@@ -982,9 +965,7 @@ namespace Altaxo.Calc.Interpolation
 			base.x = xstore;
 			base.y = ystore;
 
-
 			var n = x.Length;
-
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
 			// vector already has the appropriate dimension.
@@ -1019,8 +1000,6 @@ namespace Altaxo.Calc.Interpolation
 				return 0;
 			}
 
-
-
 			// set standard deviation of the points to 1 if dy is not set or has
 			// the wrong length
 			if (dy.Store() == null || dy.Length != xstore.Length)
@@ -1050,11 +1029,8 @@ namespace Altaxo.Calc.Interpolation
 			double[] ss = null;
 			if (se.Length > 0) ss = se.Store();
 
-
-
 			return cubgcv(xx, f, df, n, yy, c1, c2, c3, ss, wwr, wwt, wwu, wwv);
 		}
-
 
 		public override double GetXOfU(double u)
 		{
@@ -1076,7 +1052,6 @@ namespace Altaxo.Calc.Interpolation
 			return CubicSplineHorner(u, x, y0, y1, y2, y3);
 		}
 
-
 		public void SetErrorVariance(IROVector dyy, double errvar)
 		{
 			dy.CopyFrom(dyy);
@@ -1094,10 +1069,5 @@ namespace Altaxo.Calc.Interpolation
 				var = value;
 			}
 		}
-
-
-
 	}
-
-
 }

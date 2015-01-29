@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,14 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -75,8 +77,6 @@ namespace Altaxo.Graph.Gdi
 			var s = 1 / Math.Sqrt(p.X * p.X + p.Y * p.Y);
 			return new PointF((float)(p.X * s), (float)(p.Y * s));
 		}
-
-
 
 		/// <summary>
 		/// Multiply a size structure with a factor.
@@ -173,12 +173,16 @@ namespace Altaxo.Graph.Gdi
 	{
 		/// <summary>Initially the center of the cross.</summary>
 		public PointF Center;
+
 		/// <summary>Initially the top of the cross.</summary>
 		public PointF Top;
+
 		/// <summary>Initially the bottom of the cross.</summary>
 		public PointF Bottom;
+
 		/// <summary>Initially the left of the cross.</summary>
 		public PointF Left;
+
 		/// <summary>Initially the right of the cross.</summary>
 		public PointF Right;
 
@@ -197,7 +201,11 @@ namespace Altaxo.Graph.Gdi
 			Right = new PointF(center.X + horzLength, center.Y);
 		}
 
-		private double sqr(double x) { return x * x; }
+		private double sqr(double x)
+		{
+			return x * x;
+		}
+
 		/// <summary>
 		/// Returns the minimum extension of the arms..
 		/// </summary>

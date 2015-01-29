@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,13 +19,11 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
-using System;
+#endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Data;
+using System;
 
 namespace Altaxo.Data
 {
@@ -40,7 +39,6 @@ namespace Altaxo.Data
 		public static readonly string DefaultStandardErrorColumnName = "se";
 		public static readonly string DefaultSumColumnName = "Sum";
 		public static readonly string DefaultNumberOfItemsColumnName = "N";
-
 
 		/// <summary>
 		/// Calculates statistics of selected columns. Returns a new table where the statistical data will be written to.
@@ -76,7 +74,6 @@ namespace Altaxo.Data
 			return table;
 		}
 
-
 		/// <summary>
 		/// Calculates statistics of selected columns. Creates a new table where the statistical data will be written to.
 		/// </summary>
@@ -98,9 +95,6 @@ namespace Altaxo.Data
 
 			if (numcols == 0)
 				return; // nothing selected
-
-
-
 
 			// add a text column and some double columns
 			// note: statistics is only possible for numeric columns since
@@ -135,7 +129,7 @@ namespace Altaxo.Data
 				if (rows == 0)
 					continue;
 
-				// now do the statistics 
+				// now do the statistics
 				Data.INumericColumn ncol = (Data.INumericColumn)col;
 				double sum = 0;
 				double sumsqr = 0;
@@ -152,7 +146,6 @@ namespace Altaxo.Data
 				}
 				// now fill a new row in the worksheet
 
-
 				double mean = sum / NN;
 				double ymy0sqr = sumsqr - sum * sum / NN;
 				if (ymy0sqr < 0) ymy0sqr = 0; // if this is lesser zero, it is a rounding error, so set it to zero
@@ -166,9 +159,7 @@ namespace Altaxo.Data
 				colSum[currRow] = sum;
 				colN[currRow] = NN;
 				currRow++; // for the next column
-
 			} // for all selected columns
-
 
 			if (currRow != 0)
 			{
@@ -176,7 +167,6 @@ namespace Altaxo.Data
 				AppendStatisticalData(destinationTable, colMean, colSd, colSe, colSum, colN);
 			}
 		}
-
 
 		/// <summary>
 		/// Calculates statistics of selected columns. Creates a new table where the statistical data will be written to.
@@ -212,7 +202,6 @@ namespace Altaxo.Data
 			return table;
 		}
 
-
 		/// <summary>
 		/// Calculates statistics of selected columns. Creates a new table where the statistical data will be written to.
 		/// </summary>
@@ -237,7 +226,6 @@ namespace Altaxo.Data
 			if (numrows == 0)
 				return;
 
-
 			Data.DoubleColumn cRows = new DoubleColumn();
 
 			// 1st column is the mean, and holds the sum during the calculation
@@ -255,7 +243,7 @@ namespace Altaxo.Data
 			// 5th column is the number of items for statistics
 			Data.DoubleColumn c5 = new Data.DoubleColumn();
 
-			// first fill the cols c1, c2, c5 with zeros because we want to sum up 
+			// first fill the cols c1, c2, c5 with zeros because we want to sum up
 			for (int i = 0; i < numrows; i++)
 			{
 				c1[i] = 0;
@@ -263,14 +251,13 @@ namespace Altaxo.Data
 				c5[i] = 0;
 			}
 
-
 			for (int si = 0; si < numcols; si++)
 			{
 				Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
 				if (!(col is Altaxo.Data.INumericColumn))
 					continue;
 
-				// now do the statistics 
+				// now do the statistics
 				Data.INumericColumn ncol = (Data.INumericColumn)col;
 				for (int i = 0; i < numrows; i++)
 				{
@@ -286,7 +273,6 @@ namespace Altaxo.Data
 					c5[i] += 1;
 				}
 			} // for all selected columns
-
 
 			// now calculate the statistics
 			for (int i = 0; i < numrows; i++)
@@ -311,11 +297,9 @@ namespace Altaxo.Data
 				}
 			} // for all rows
 
-
 			destinationTable.EnsureExistence(DefaultRowNumberColumnName, typeof(DoubleColumn), ColumnKind.X, 0).Append(cRows);
 			AppendStatisticalData(destinationTable, c1, c2, c2, c4, c5);
 		}
-
 
 		/// <summary>
 		/// Creates a table for statistics on columns. Property columns are included in the statistical table.
@@ -327,7 +311,6 @@ namespace Altaxo.Data
 		{
 			DataTable result = new DataTable();
 			result.Name = Altaxo.Main.ProjectFolder.PrependToName(srcTable.Name, "Statistics of ");
-
 
 			result.DataColumns.Add(new TextColumn(), DefaultColumnNameColumnName, ColumnKind.X, 0);
 			AddSourcePropertyColumns(srcTable, selectedColumns, result);
@@ -365,7 +348,6 @@ namespace Altaxo.Data
 
 		private static void AddStatisticColumns(DataTable result)
 		{
-
 			result.DataColumns.Add(new DoubleColumn(), DefaultMeanColumnName, ColumnKind.Y, 0);
 			result.DataColumns.Add(new DoubleColumn(), DefaultStandardDeviationColumnName, ColumnKind.Y, 0);
 			result.DataColumns.Add(new DoubleColumn(), DefaultStandardErrorColumnName, ColumnKind.Y, 0);
@@ -381,7 +363,6 @@ namespace Altaxo.Data
 			destinationTable.EnsureExistence(DefaultSumColumnName, typeof(DoubleColumn), ColumnKind.Y, 0).Append(colSum);
 			destinationTable.EnsureExistence(DefaultNumberOfItemsColumnName, typeof(DoubleColumn), ColumnKind.Y, 0).Append(colN);
 		}
-
 
 		private static void AddSourcePropertyColumns(DataTable srctable, IAscendingIntegerCollection selectedColumns, DataTable destinationTable)
 		{
@@ -402,6 +383,5 @@ namespace Altaxo.Data
 				destinationTable.DataColumns.Add(clonedColumn, srctable.PropertyColumns.GetColumnName(i), srctable.PropertyColumns.GetColumnKind(i), srctable.PropertyColumns.GetColumnGroup(i));
 			}
 		}
-
 	}
 }

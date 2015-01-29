@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,10 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
 
+#endregion Copyright
 
 using System;
-using Altaxo.Serialization;
-using Altaxo;
 
 namespace Altaxo.Data
 {
@@ -55,28 +54,33 @@ namespace Altaxo.Data
 		{
 			return null;
 		}
+
 		public override void SetValueAt(int i, AltaxoVariant val)
 		{
 		}
+
 		public override AltaxoVariant GetVariantAt(int i)
 		{
 			return null;
 		}
+
 		public override bool IsElementEmpty(int i)
 		{
 			return true;
 		}
+
 		public override void SetElementEmpty(int i)
 		{
 		}
 
-
 		public override void CopyDataFrom(object o)
 		{
 		}
-		public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow 
+
+		public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow
 		{
 		}
+
 		public override void InsertRows(int nBeforeRow, int nCount) // inserts additional empty rows
 		{
 		}

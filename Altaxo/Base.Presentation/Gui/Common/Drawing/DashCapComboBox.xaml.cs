@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,15 +29,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using sdd = System.Drawing.Drawing2D;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -46,9 +42,9 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		#region Converter
 
-		class Converter : IValueConverter
+		private class Converter : IValueConverter
 		{
-			DashCapComboBox _cb;
+			private DashCapComboBox _cb;
 
 			public Converter(DashCapComboBox c)
 			{
@@ -59,8 +55,6 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var val = (sdd.DashCap)value;
 				return _cb._cachedItems[val];
-
-
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -69,15 +63,15 @@ namespace Altaxo.Gui.Common.Drawing
 			}
 		}
 
-		#endregion
-		static Dictionary<sdd.DashCap, ImageSource> _cachedImages = new Dictionary<sdd.DashCap, ImageSource>();
+		#endregion Converter
 
-		Dictionary<sdd.DashCap, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.DashCap, ImageComboBoxItem>();
+		private static Dictionary<sdd.DashCap, ImageSource> _cachedImages = new Dictionary<sdd.DashCap, ImageSource>();
+
+		private Dictionary<sdd.DashCap, ImageComboBoxItem> _cachedItems = new Dictionary<sdd.DashCap, ImageComboBoxItem>();
 
 		public DashCapComboBox()
 		{
 			InitializeComponent();
-
 
 			foreach (sdd.DashCap e in Enum.GetValues(typeof(sdd.DashCap)))
 			{
@@ -92,8 +86,8 @@ namespace Altaxo.Gui.Common.Drawing
 			this.SetBinding(ComboBox.SelectedItemProperty, binding);
 		}
 
-
 		#region Dependency property
+
 		private const string _nameOfValueProp = "SelectedDashCap";
 
 		public sdd.DashCap SelectedDashCap
@@ -108,10 +102,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private static void OnSelectedDashCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-
 		}
-		#endregion
 
+		#endregion Dependency property
 
 		public override string GetItemText(object item)
 		{
@@ -128,7 +121,6 @@ namespace Altaxo.Gui.Common.Drawing
 			return result;
 		}
 
-
 		public static DrawingImage GetImage(sdd.DashCap val)
 		{
 			double height = 1;
@@ -141,9 +133,11 @@ namespace Altaxo.Gui.Common.Drawing
 				case sdd.DashCap.Flat:
 					dashCap = PenLineCap.Flat;
 					break;
+
 				case sdd.DashCap.Round:
 					dashCap = PenLineCap.Round;
 					break;
+
 				case sdd.DashCap.Triangle:
 					dashCap = PenLineCap.Triangle;
 					break;

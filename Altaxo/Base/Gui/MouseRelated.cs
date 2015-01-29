@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -28,21 +30,26 @@ using System.Text;
 namespace Altaxo.Gui
 {
 	/// <summary>
-	/// Specifies constants that define which mouse button was pressed. 
+	/// Specifies constants that define which mouse button was pressed.
 	/// </summary>
 	[Flags]
 	public enum AltaxoMouseButtons
 	{
 		/// <summary>No mouse button was pressed.</summary>
 		None,
+
 		/// <summary>The left mouse button was pressed.</summary>
-		Left, //   
+		Left, //
+
 		/// <summary>The middle mouse button was pressed. </summary>
 		Middle,
+
 		/// <summary>The right mouse button was pressed.</summary>
 		Right,
+
 		/// <summary>The first XButton was pressed.</summary>
 		XButton1,
+
 		/// <summary>The second XButton was pressed. </summary>
 		XButton2,
 	}
@@ -52,14 +59,17 @@ namespace Altaxo.Gui
 	{
 		/// <summary>Gets which mouse button was pressed.</summary>
 		public AltaxoMouseButtons Button { get; set; }
-		/// <summary>Gets the number of times the mouse button was pressed and released. </summary>
-		int Clicks { get; set; }
-		/// <summary>Gets a signed count of the number of detents the mouse wheel has rotated. A detent is one notch of the mouse wheel. </summary>
-		int Delta { get; set; }
-		/// <summary>Gets the x-coordinate of the mouse during the generating mouse event.</summary>
-		double X { get; set; }
-		/// <summary>Gets the y-coordinate of the mouse during the generating mouse event. </summary>
-		double Y { get; set; }
-	}
 
+		/// <summary>Gets the number of times the mouse button was pressed and released. </summary>
+		private int Clicks { get; set; }
+
+		/// <summary>Gets a signed count of the number of detents the mouse wheel has rotated. A detent is one notch of the mouse wheel. </summary>
+		private int Delta { get; set; }
+
+		/// <summary>Gets the x-coordinate of the mouse during the generating mouse event.</summary>
+		private double X { get; set; }
+
+		/// <summary>Gets the y-coordinate of the mouse during the generating mouse event. </summary>
+		private double Y { get; set; }
+	}
 }

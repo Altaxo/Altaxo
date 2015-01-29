@@ -21,7 +21,7 @@
 // making a combined work based on this library.  Thus, the terms and
 // conditions of the GNU General Public License cover the whole
 // combination.
-// 
+//
 // As a special exception, the copyright holders of this library give you
 // permission to link this library with independent modules to produce an
 // executable, regardless of the license terms of these independent
@@ -36,18 +36,18 @@
 //
 
 #if !NET_1_1 && !NETCF_2_0
-// Framework version 2.0 required for Rfc2898DeriveBytes 
+// Framework version 2.0 required for Rfc2898DeriveBytes
 
 using System;
 using System.Security.Cryptography;
 
-namespace ICSharpCode.SharpZipLib.Encryption {
-
+namespace ICSharpCode.SharpZipLib.Encryption
+{
 	/// <summary>
 	/// Transforms stream using AES in CTR mode
 	/// </summary>
-	internal class ZipAESTransform : ICryptoTransform {
-
+	internal class ZipAESTransform : ICryptoTransform
+	{
 		private const int PWD_VER_LENGTH = 2;
 
 		// WinZip use iteration count of 1000 for PBKDF2 key generation
@@ -78,8 +78,8 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <param name="blockSize">The encryption strength, in bytes eg 16 for 128 bits.</param>
 		/// <param name="writeMode">True when creating a zip, false when reading. For the AuthCode.</param>
 		///
-		public ZipAESTransform(string key, byte[] saltBytes, int blockSize, bool writeMode) {
-
+		public ZipAESTransform(string key, byte[] saltBytes, int blockSize, bool writeMode)
+		{
 			if (blockSize != 16 && blockSize != 32)	// 24 valid for AES but not supported by Winzip
 				throw new Exception("Invalid blocksize " + blockSize + ". Must be 16 or 32.");
 			if (saltBytes.Length != blockSize / 2)
@@ -106,20 +106,24 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Implement the ICryptoTransform method.
 		/// </summary>
-		public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) {
-
+		public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+		{
 			// Pass the data stream to the hash algorithm for generating the Auth Code.
 			// This does not change the inputBuffer. Do this before decryption for read mode.
-			if (!_writeMode) {
+			if (!_writeMode)
+			{
 				_hmacsha1.TransformBlock(inputBuffer, inputOffset, inputCount, inputBuffer, inputOffset);
 			}
 			// Encrypt with AES in CTR mode. Regards to Dr Brian Gladman for this.
 			int ix = 0;
-			while (ix < inputCount) {
-				if (_encrPos == ENCRYPT_BLOCK) {
+			while (ix < inputCount)
+			{
+				if (_encrPos == ENCRYPT_BLOCK)
+				{
 					/* increment encryption nonce   */
 					int j = 0;
-					while (++_counterNonce[j] == 0) {
+					while (++_counterNonce[j] == 0)
+					{
 						++j;
 					}
 					/* encrypt the nonce to form next xor buffer    */
@@ -130,8 +134,9 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 				//
 				ix++;
 			}
-			if (_writeMode) {
-				// This does not change the buffer. 
+			if (_writeMode)
+			{
+				// This does not change the buffer.
 				_hmacsha1.TransformBlock(outputBuffer, outputOffset, inputCount, outputBuffer, outputOffset);
 			}
 			return inputCount;
@@ -140,8 +145,10 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Returns the 2 byte password verifier
 		/// </summary>
-		public byte[] PwdVerifier {
-			get {
+		public byte[] PwdVerifier
+		{
+			get
+			{
 				return _pwdVerifier;
 			}
 		}
@@ -149,9 +156,11 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Returns the 10 byte AUTH CODE to be checked or appended immediately following the AES data stream.
 		/// </summary>
-		public byte[] GetAuthCode() {
+		public byte[] GetAuthCode()
+		{
 			// We usually don't get advance notice of final block. Hash requres a TransformFinal.
-			if (!_finalised) {
+			if (!_finalised)
+			{
 				byte[] dummy = new byte[0];
 				_hmacsha1.TransformFinalBlock(dummy, 0, 0);
 				_finalised = true;
@@ -164,16 +173,18 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Not implemented.
 		/// </summary>
-		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount) {
-
+		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+		{
 			throw new NotImplementedException("ZipAESTransform.TransformFinalBlock");
 		}
 
 		/// <summary>
 		/// Gets the size of the input data blocks in bytes.
 		/// </summary>
-		public int InputBlockSize {
-			get {
+		public int InputBlockSize
+		{
+			get
+			{
 				return _blockSize;
 			}
 		}
@@ -181,8 +192,10 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Gets the size of the output data blocks in bytes.
 		/// </summary>
-		public int OutputBlockSize {
-			get {
+		public int OutputBlockSize
+		{
+			get
+			{
 				return _blockSize;
 			}
 		}
@@ -190,8 +203,10 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Gets a value indicating whether multiple blocks can be transformed.
 		/// </summary>
-		public bool CanTransformMultipleBlocks {
-			get {
+		public bool CanTransformMultipleBlocks
+		{
+			get
+			{
 				return true;
 			}
 		}
@@ -199,8 +214,10 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Gets a value indicating whether the current transform can be reused.
 		/// </summary>
-		public bool CanReuseTransform {
-			get {
+		public bool CanReuseTransform
+		{
+			get
+			{
 				return true;
 			}
 		}
@@ -208,12 +225,13 @@ namespace ICSharpCode.SharpZipLib.Encryption {
 		/// <summary>
 		/// Cleanup internal state.
 		/// </summary>
-		public void Dispose() {
+		public void Dispose()
+		{
 			_encryptor.Dispose();
 		}
 
-		#endregion
-
+		#endregion ICryptoTransform Members
 	}
 }
+
 #endif

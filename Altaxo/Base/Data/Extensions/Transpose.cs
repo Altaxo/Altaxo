@@ -1,4 +1,5 @@
 #region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,12 +19,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 
 namespace Altaxo.Data
 {
@@ -67,7 +68,7 @@ namespace Altaxo.Data
 		/// <param name="table">The table to transpose.</param>
 		/// <param name="numConvertedDataColumns">Number of data columns that will be converted to property columns.</param>
 		/// <param name="numConvertedPropertyColumns">Number of property columns that will become data columns.</param>
-		/// <param name="allowUserInteraction">If set to true, and transpose is not possible without problems, the user will be ask to cancel the transpose. 
+		/// <param name="allowUserInteraction">If set to true, and transpose is not possible without problems, the user will be ask to cancel the transpose.
 		/// If set to false, the transpose will be performed anyway. (But you can ask if transpose is possible by calling <c>IsTransposePossible</c>.
 		/// </param>
 		/// <returns>Null if the transpose was performed without problems, otherwise a error message would be given.</returns>
@@ -80,8 +81,6 @@ namespace Altaxo.Data
 			int indexDifferentColumn;
 			if (!TransposeIsPossible(table, datacols, out indexDifferentColumn))
 			{
-
-
 				if (allowUserInteraction)
 				{
 					string message = string.Format("The columns to transpose have not all the same type. The type of column[{0}] ({1}) differs from the type of column[{2}] ({3}). Continue anyway?",
@@ -96,13 +95,11 @@ namespace Altaxo.Data
 				}
 			}
 
-
 			string error = table.Transpose(datacols, propcols);
 			if (error != null && allowUserInteraction)
 			{
 				Current.Gui.ErrorMessageBox(error);
 			}
-
 
 			return error;
 		}
