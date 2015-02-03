@@ -33,14 +33,9 @@ namespace Altaxo.Data
 	/// This is the base class of all data columns in Altaxo. This base class provides readable, writeable
 	/// columns with a defined count.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(Altaxo.Data.DataColumn.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	[Serializable()]
 	public abstract class DataColumn :
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		Main.IEventIndicatedDisposable,
-		System.Runtime.Serialization.ISerializable,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IReadableColumn,
 		IWriteableColumn,
 		IDefinedCount,
@@ -56,42 +51,6 @@ namespace Altaxo.Data
 		protected static int _addSpace = 32; // array space is increased by multiplying with increasefactor + addspase
 
 		#region Serialization
-
-		/// <summary>
-		/// This class is responsible for the serialization of the DataColumn (version 0).
-		/// </summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>Serializes the DataColumn given by object obj.</summary>
-			/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
-			/// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
-			/// </remarks>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
-			}
-
-			/// <summary>
-			/// Deserializes the <see cref="DataColumn"/> instance.
-			/// </summary>
-			/// <param name="obj">The empty DataColumn instance, created by the runtime.</param>
-			/// <param name="info">Serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The surrogate selector.</param>
-			/// <returns>The deserialized object.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
-				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
-				s._parent = null;
-
-				// set the helper data
-				return s;
-			}
-		}
 
 		/// <summary>
 		/// This class is responsible for the serialization of the DataColumn (version 0).
@@ -123,48 +82,6 @@ namespace Altaxo.Data
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// This function is called on end of deserialization.
-		/// </summary>
-		/// <param name="obj">The deserialized DataColumn instance.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-		}
-
-		/// <summary>
-		/// Special deserialization constructor (supports ISerializable).
-		/// </summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The serialization context.</param>
-		protected DataColumn(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>
-		/// Deserializes the <see cref="DataColumn"/> instance.
-		/// </summary>
-		/// <param name="obj">The empty DataColumn instance, created by the runtime.</param>
-		/// <param name="info">Serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <param name="selector">The surrogate selector.</param>
-		/// <returns>The deserialized object.</returns>
-		public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			return new SerializationSurrogate0().SetObjectData(this, info, context, null);
-		}
-
-		/// <summary>Serializes the DataColumn given by object obj.</summary>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
-		/// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
-		/// </remarks>
-		public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			new SerializationSurrogate0().GetObjectData(this, info, context);
 		}
 
 		#endregion Serialization

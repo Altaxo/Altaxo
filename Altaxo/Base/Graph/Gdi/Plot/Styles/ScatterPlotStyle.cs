@@ -198,13 +198,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 	} // end of class XYPlotScatterStyles
 
-	[SerializationSurrogate(0, typeof(ScatterPlotStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class ScatterPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle,
-		System.Runtime.Serialization.IDeserializationCallback
+		IG2DPlotStyle
 	{
 		protected XYPlotScatterStyles.Shape _shape;
 		protected XYPlotScatterStyles.Style _style;
@@ -236,47 +233,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected BrushX _cachedFillBrush;
 
 		#region Serialization
-
-		/// <summary>Used to serialize the A2DPlotScatterStyle Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes A2DPlotScatterStyle Version 0.
-			/// </summary>
-			/// <param name="obj">The A2DPlotScatterStyle to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				ScatterPlotStyle s = (ScatterPlotStyle)obj;
-				info.AddValue("Shape", s._shape);
-				info.AddValue("Style", s._style);
-				info.AddValue("DropLine", s._dropLine);
-				info.AddValue("Pen", s._pen);
-				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("RelativePenWidth", s._relativePenWidth);
-			}
-
-			/// <summary>
-			/// Deserializes the A2DPlotScatterStyle Version 0.
-			/// </summary>
-			/// <param name="obj">The empty A2DPlotScatterStyle object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized A2DPlotScatterStyle.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				ScatterPlotStyle s = (ScatterPlotStyle)obj;
-				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
-				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-				s._dropLine = (CSPlaneIDList)info.GetValue("DropLine", typeof(List<CSPlaneID>));
-				s._pen = (PenX)info.GetValue("Pen", typeof(PenX));
-				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 1)] // by accident this was never different from 0
@@ -400,17 +356,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the cached values
-			SetCachedValues();
-			CreateEventChain();
 		}
 
 		#endregion Serialization

@@ -39,14 +39,10 @@ namespace Altaxo.Worksheet
 	/// data, for instance m_Width and color of columns
 	/// additionally, it is responsible for the conversion of data to text and vice versa
 	/// </summary>
-	[SerializationSurrogate(0, typeof(ColumnStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	[Serializable]
 	public abstract class ColumnStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		System.ICloneable,
-		System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
+		System.ICloneable
 	{
 		protected static BrushX _defaultNormalBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Window)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
 		protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(GdiColorHelper.ToNamedColor(SystemColors.Control)) { ParentObject = Main.SuspendableDocumentNode.StaticInstance };
@@ -73,39 +69,6 @@ namespace Altaxo.Worksheet
 		protected BrushX _backgroundBrush;
 
 		#region Serialization
-
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				ColumnStyle s = (ColumnStyle)obj;
-				info.AddValue("Size", (float)s._columnSize);
-				info.AddValue("Pen", s._cellPen);
-				info.AddValue("TextBrush", s._textBrush);
-				info.AddValue("BkgBrush", s._backgroundBrush);
-				info.AddValue("Alignment", s._textFormat.Alignment);
-
-				info.AddValue("Font", s._textFont);
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				ColumnStyle s = (ColumnStyle)obj;
-
-				s._columnSize = (int)info.GetSingle("Size");
-				s._cellPen = (PenX)info.GetValue("Pen", typeof(PenX));
-				s._textBrush = (BrushX)info.GetValue("TextBrush", typeof(BrushX));
-				s._backgroundBrush = (BrushX)info.GetValue("BkgBrush", typeof(BrushX));
-				s._textFormat = new StringFormat();
-				s._textFormat.Alignment = (StringAlignment)info.GetValue("Alignment", typeof(StringAlignment));
-
-				// Deserialising a font with SoapFormatter raises an error at least in Net1SP2, so I had to circuumvent this
-				s._textFont = (FontX)info.GetValue("Font", typeof(FontX));
-				//  s.m_TextFont = new Font("Arial",8);
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -223,10 +186,6 @@ namespace Altaxo.Worksheet
 				s.ParentObject = (Main.IDocumentNode)parent;
 				return s;
 			}
-		}
-
-		public virtual void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion Serialization

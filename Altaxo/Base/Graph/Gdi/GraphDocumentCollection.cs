@@ -31,7 +31,6 @@ namespace Altaxo.Graph.Gdi
 	public class GraphDocumentCollection :
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		Main.IParentOfINameOwnerChildNodes,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IEnumerable<GraphDocument>,
 		Altaxo.Main.INamedObjectCollection
 	{
@@ -65,33 +64,6 @@ namespace Altaxo.Graph.Gdi
 				base.ParentObject = value; // allow setting to null
 			}
 		}
-
-		#region Serialization
-
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				GraphDocumentCollection s = (GraphDocumentCollection)obj;
-				// info.AddValue("Parent",s.parent);
-				info.AddValue("Graphs", s._graphsByName);
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				GraphDocumentCollection s = (GraphDocumentCollection)obj;
-				// s.parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s._graphsByName = (SortedDictionary<string, GraphDocument>)(info.GetValue("Graphs", typeof(SortedDictionary<string, GraphDocument>)));
-
-				return s;
-			}
-		}
-
-		public void OnDeserialization(object obj)
-		{
-		}
-
-		#endregion Serialization
 
 		public bool IsDirty
 		{

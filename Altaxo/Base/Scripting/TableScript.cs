@@ -30,48 +30,11 @@ namespace Altaxo.Scripting
 	/// <summary>
 	/// Holds the text, the module (=executable), and some properties of a column script.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(TableScript.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	[Serializable()]
 	public class TableScript
 		:
-		AbstractScript,
-		System.Runtime.Serialization.IDeserializationCallback
+		AbstractScript
 	{
 		#region Serialization
-
-		/// <summary>
-		/// Responsible for serialization of the column script version 0.
-		/// </summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes the table script
-			/// </summary>
-			/// <param name="obj">The table script to serialize.</param>
-			/// <param name="info">Serialization info.</param>
-			/// <param name="context">Streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				TableScript s = (TableScript)obj;
-				info.AddValue("Text", s.ScriptText);
-			}
-
-			/// <summary>
-			/// Deserialized the column script.
-			/// </summary>
-			/// <param name="obj">The uninitialized column script instance.</param>
-			/// <param name="info">Serialization info.</param>
-			/// <param name="context">Streaming context.</param>
-			/// <param name="selector">Surrogate selector.</param>
-			/// <returns></returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				TableScript s = (TableScript)obj;
-				s.ScriptText = info.GetString("Text");
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.TableScript", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.TableScript), 1)]
@@ -91,15 +54,6 @@ namespace Altaxo.Scripting
 				s.ScriptText = info.GetString("Text");
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Is called when deserialization has finished.
-		/// </summary>
-		/// <param name="obj"></param>
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
 		}
 
 		#endregion Serialization

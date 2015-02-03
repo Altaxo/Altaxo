@@ -32,12 +32,9 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Summary description for Altaxo.Data.DataTableCollection.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(Altaxo.Data.DataTableCollection.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class DataTableCollection
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IParentOfINameOwnerChildNodes,
 		ICollection<DataTable>
 	{
@@ -59,43 +56,7 @@ namespace Altaxo.Data
 			this._parent = parent;
 		}
 
-		#region Serialization
 
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
-				// info.AddValue("Parent",s._parent);
-				info.AddValue("Tables", s._itemsByName);
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
-				// s._parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s._itemsByName = (SortedDictionary<string, DataTable>)(info.GetValue("Tables", typeof(SortedDictionary<string, DataTable>)));
-
-				return s;
-			}
-		}
-
-		public void OnDeserialization(object obj)
-		{
-			if (!_isDeserializationFinished && obj is DeserializationFinisher) // if deserialization has completely finished now
-			{
-				_isDeserializationFinished = true;
-				DeserializationFinisher finisher = new DeserializationFinisher(this);
-				// set the _parent object for the data tables
-				foreach (DataTable dt in _itemsByName.Values)
-				{
-					dt.ParentObject = this;
-					dt.OnDeserialization(finisher);
-				}
-			}
-		}
-
-		#endregion Serialization
 
 		#region ICollection<DataTable> Members
 

@@ -43,13 +43,9 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// <summary>
 	/// Association of data and style specialized for x-y-plots of column data.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(DensityImagePlotItem.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	[Serializable]
 	public class DensityImagePlotItem
 		:
 		PlotItem,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IXBoundsHolder,
 		IYBoundsHolder
 	{
@@ -57,41 +53,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		protected DensityImagePlotStyle _plotStyle;
 
 		#region Serialization
-
-		/// <summary>Used to serialize the DensityImagePlotItem Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes DensityImagePlotItem Version 0.
-			/// </summary>
-			/// <param name="obj">The DensityImagePlotItem to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				DensityImagePlotItem s = (DensityImagePlotItem)obj;
-				info.AddValue("Data", s._plotData);
-				info.AddValue("Style", s._plotStyle);
-			}
-
-			/// <summary>
-			/// Deserializes the DensityImagePlotItem Version 0.
-			/// </summary>
-			/// <param name="obj">The empty DensityImagePlotItem object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized DensityImagePlotItem.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				DensityImagePlotItem s = (DensityImagePlotItem)obj;
-
-				s._plotData = (XYZMeshedColumnPlotData)info.GetValue("Data", typeof(XYZMeshedColumnPlotData));
-				s._plotStyle = (DensityImagePlotStyle)info.GetValue("Style", typeof(DensityImagePlotStyle));
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotItem", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem), 1)]
@@ -120,25 +81,6 @@ namespace Altaxo.Graph.Gdi.Plot
 					s.Style = ps;
 					return s;
 				}
-			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// Restore the event chain
-
-			if (null != _plotData)
-			{
-				_plotData.ParentObject = this;
-			}
-
-			if (null != _plotStyle)
-			{
-				_plotStyle.ParentObject = this;
 			}
 		}
 

@@ -45,8 +45,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class DensityImagePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		Main.ICopyFrom,
-		System.Runtime.Serialization.IDeserializationCallback
+		Main.ICopyFrom
 	{
 		[Serializable]
 		private enum CachedImageType { None, LinearEquidistant, Other };
@@ -98,41 +97,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		private object _imageConditionMemento;
 
 		#region Serialization
-
-		/// <summary>Used to serialize the XYLineScatterPlotStyle Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes XYLineScatterPlotStyle Version 0.
-			/// </summary>
-			/// <param name="obj">The DensityImagePlotStyle to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
-
-				// nothing to save up to now
-			}
-
-			/// <summary>
-			/// Deserializes the DensityImagePlotStyle Version 0.
-			/// </summary>
-			/// <param name="obj">The empty DensityImagePlotStyle to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized DensityImagePlotStyle.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
-				s.InitializeMembers();
-
-				// Nothing to deserialize in the moment
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotStyle", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -224,15 +188,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// At the moment, there is nothing to do here
 		}
 
 		#endregion Serialization

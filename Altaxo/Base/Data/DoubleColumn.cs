@@ -32,14 +32,9 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Summary description for Altaxo.Data.DoubleColumn.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(Altaxo.Data.DoubleColumn.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	[Serializable()]
 	public class DoubleColumn
 		:
 		Altaxo.Data.DataColumn,
-		System.Runtime.Serialization.ISerializable,
-		System.Runtime.Serialization.IDeserializationCallback,
 		INumericColumn,
 		Altaxo.Calc.LinearAlgebra.IROVector
 	{
@@ -257,66 +252,6 @@ namespace Altaxo.Data
 
 		#region "Serialization"
 
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
-				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-
-					// serialize the base class
-					surr.GetObjectData(obj, info, context); // stream the data of the base object
-				}
-				else
-				{
-					((DataColumn)s).GetObjectData(info, context);
-				}
-
-				if (s._count != s._capacity)
-				{
-					// instead of the data array itself, stream only the first m_Count
-					// array elements, since only they contain data
-					double[] streamarray = new Double[s._count];
-					System.Array.Copy(s._data, streamarray, s._count);
-					info.AddValue("Data", streamarray);
-				}
-				else // if the array is fully filled, we don't need to save a shrinked copy
-				{
-					info.AddValue("Data", s._data);
-				}
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
-				// get the surrogate selector of the base class
-
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-					// deserialize the base class
-					surr.SetObjectData(obj, info, context, selector);
-				}
-				else
-				{
-					((DataColumn)s).SetObjectData(obj, info, context, selector);
-				}
-
-				s._data = (double[])(info.GetValue("Data", typeof(double[])));
-				s._capacity = null == s._data ? 0 : s._data.Length;
-				s._count = s._capacity;
-
-				return s;
-			}
-		}
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DoubleColumn), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -347,26 +282,6 @@ namespace Altaxo.Data
 
 				return s;
 			}
-		}
-
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-		}
-
-		protected DoubleColumn(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			SetObjectData(this, info, context, null);
-		}
-
-		public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-		{
-			return new SerializationSurrogate0().SetObjectData(this, info, context, null);
-		}
-
-		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			new SerializationSurrogate0().GetObjectData(this, info, context);
 		}
 
 		#endregion "Serialization"

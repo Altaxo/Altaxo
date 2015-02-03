@@ -93,9 +93,7 @@ namespace Altaxo.Main
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		IProxy,
-		System.ICloneable,
-		System.Runtime.Serialization.ISerializable,
-		System.Runtime.Serialization.IDeserializationCallback
+		System.ICloneable
 	{
 		[NonSerialized]
 		protected WeakReference _docNodeRef;
@@ -109,32 +107,6 @@ namespace Altaxo.Main
 		protected WeakActionHandler<object, object, TunnelingEventArgs> _weakDocNodeTunneledEventHandler;
 
 		#region Serialization
-
-		#region ISerializable Members (Clipboard Serialization)
-
-		public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			var docNode = InternalDocNode;
-			if (docNode != null)
-				info.AddValue("Node", Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode));
-			else if (_docNodePath != null)
-				info.AddValue("Node", _docNodePath);
-		}
-
-		protected DocNodeProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			object node = info.GetValue("Node", typeof(object));
-			if (node is Main.AbsoluteDocumentPath)
-				InternalDocumentPath = (Main.AbsoluteDocumentPath)node;
-			else
-				SetDocNode(node as IDocumentLeafNode);
-		}
-
-		public void OnDeserialization(object sender)
-		{
-		}
-
-		#endregion ISerializable Members (Clipboard Serialization)
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocNodeProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

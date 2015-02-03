@@ -30,8 +30,6 @@ using System.Drawing;
 
 namespace Altaxo.Worksheet
 {
-	[SerializationSurrogate(0, typeof(ColumnHeaderStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class ColumnHeaderStyle : ColumnStyle
 	{
 		[NonSerialized]
@@ -41,41 +39,6 @@ namespace Altaxo.Worksheet
 		private StringFormat _rightUpperTextFormat = new StringFormat();
 
 		#region Serialization
-
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-
-					surr.GetObjectData(obj, info, context); // stream the data of the base object
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-					surr.SetObjectData(obj, info, context, selector);
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-				return obj;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnHeaderStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -92,11 +55,6 @@ namespace Altaxo.Worksheet
 				info.GetBaseValueEmbedded(s, typeof(ColumnHeaderStyle).BaseType, parent);
 				return s;
 			}
-		}
-
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
 		}
 
 		#endregion Serialization

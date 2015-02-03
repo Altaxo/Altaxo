@@ -98,8 +98,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// <summary>
 	/// Summary description for XYPlotLineStyle.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(LinePlotStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class LinePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
@@ -161,51 +159,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected FillPathOneRangeTemplate _cachedFillOneRange; // subroutine to get a fill path
 
 		#region Serialization
-
-		/// <summary>Used to serialize the XYPlotLineStyle Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes XYPlotLineStyle Version 0.
-			/// </summary>
-			/// <param name="obj">The XYPlotLineStyle to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("Pen", s._penHolder);
-				info.AddValue("Connection", s._connectionStyle);
-				info.AddValue("LineSymbolGap", s._useLineSymbolGap);
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingPoints);
-				info.AddValue("FillArea", s._fillArea);
-				info.AddValue("FillBrush", s._fillBrush);
-				info.AddValue("FillDirection", s._fillDirection);
-			}
-
-			/// <summary>
-			/// Deserializes the XYPlotLineStyle Version 0.
-			/// </summary>
-			/// <param name="obj">The empty XYPlotLineStyle object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized XYPlotLineStyle.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				LinePlotStyle s = (LinePlotStyle)obj;
-
-				s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
-				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
-				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
-				s._fillArea = info.GetBoolean("FillArea");
-				s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
-				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", typeof(CSPlaneID));
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 1)] // by accident, it was never different from 0

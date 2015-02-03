@@ -38,12 +38,9 @@ namespace Altaxo.Graph.Plot.Data
 	/// <summary>
 	/// Summary description for XYColumnPlotData.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(XYColumnPlotData.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class XYColumnPlotData
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.Runtime.Serialization.IDeserializationCallback,
 		System.ICloneable
 	{
 		protected Altaxo.Data.IReadableColumnProxy _xColumn; // the X-Column
@@ -73,72 +70,6 @@ namespace Altaxo.Graph.Plot.Data
 		protected bool _isCachedDataValid = false;
 
 		#region Serialization
-
-		#region Binary
-
-		/// <summary>Used to serialize the XYColumnPlotData Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes XYColumnPlotData Version 0.
-			/// </summary>
-			/// <param name="obj">The XYColumnPlotData to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				XYColumnPlotData s = (XYColumnPlotData)obj;
-
-				info.AddValue("XColumn", s._xColumn);
-				info.AddValue("YColumn", s._yColumn);
-
-				info.AddValue("XBoundaries", s._xBoundaries);
-				info.AddValue("YBoundaries", s._yBoundaries);
-			}
-
-			/// <summary>
-			/// Deserializes the XYColumnPlotData Version 0.
-			/// </summary>
-			/// <param name="obj">The empty XYColumnPlotData object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized XYColumnPlotData.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				XYColumnPlotData s = (XYColumnPlotData)obj;
-
-				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", typeof(IReadableColumnProxy));
-				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", typeof(IReadableColumnProxy));
-
-				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", typeof(IPhysicalBoundaries));
-				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", typeof(IPhysicalBoundaries));
-
-				return s;
-			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the event chain
-			if (_xColumn != null)
-				_xColumn.ParentObject = this;
-
-			if (_yColumn != null)
-				_yColumn.ParentObject = this;
-
-			if (null != _xBoundaries)
-				_xBoundaries.ParentObject = this;
-
-			if (null != _yBoundaries)
-				_yBoundaries.ParentObject = this;
-		}
-
-		#endregion Binary
 
 		#region Xml 0 und 1
 

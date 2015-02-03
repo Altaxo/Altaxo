@@ -34,12 +34,9 @@ namespace Altaxo
 	/// <summary>
 	/// Summary description for AltaxoDocument.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(AltaxoDocument.SerializationSurrogate0))]
-	[SerializationVersion(0, "Initial version of the main document only contains m_DataSet")]
 	public class AltaxoDocument
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
-		IDeserializationCallback,
 		Main.INamedObjectCollection
 	{
 		/// <summary>Collection of all data tables in this document.</summary>
@@ -84,44 +81,6 @@ namespace Altaxo
 		}
 
 		#region Serialization
-
-		private class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				AltaxoDocument s = (AltaxoDocument)obj;
-				info.AddValue("DataTableCollection", s._dataTables);
-				//info.AddValue("Worksheets",s.m_Worksheets);
-				//  info.AddValue("GraphForms",s.m_GraphForms);
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				AltaxoDocument s = (AltaxoDocument)obj;
-				s._dataTables = (Altaxo.Data.DataTableCollection)info.GetValue("DataTableCollection", typeof(Altaxo.Data.DataTableCollection));
-				// s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
-				//s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
-				//  s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
-				s._isDirty = false;
-				return s;
-			}
-		}
-
-		public void OnDeserialization(object obj)
-		{
-			if (!_isDeserializationFinished && obj is DeserializationFinisher)
-			{
-				_isDeserializationFinished = true;
-				DeserializationFinisher finisher = new DeserializationFinisher(this);
-
-				_dataTables.ParentObject = this;
-				_dataTables.OnDeserialization(finisher);
-			}
-		}
-
-		public void RestoreWindowsAfterDeserialization()
-		{
-		}
 
 		public void SaveToZippedFile(ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{

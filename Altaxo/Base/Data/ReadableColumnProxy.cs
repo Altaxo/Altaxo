@@ -155,15 +155,6 @@ namespace Altaxo.Data
 	{
 		#region Serialization
 
-		#region Clipboard
-
-		protected ReadableColumnProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			: base(info, context)
-		{
-		}
-
-		#endregion Clipboard
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.ReadableColumnProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{

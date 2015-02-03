@@ -41,8 +41,7 @@ namespace Altaxo.Serialization.Xml
 		private System.Collections.Hashtable m_Surrogates = new System.Collections.Hashtable();
 
 		/// <summary>
-		/// Used to store the actual serialization versions of the classes. Classes which are not marked with the <see cref="SerializationVersionAttribute" /> attribute
-		/// are considered to have a version of 0.
+		/// Used to store the actual serialization versions of the classes.
 		/// </summary>
 		/// <remarks>The keys for the hashtable are System.Type objects, the values are integers storing the serialization version.</remarks>
 		private System.Collections.Hashtable m_Versions = new System.Collections.Hashtable();

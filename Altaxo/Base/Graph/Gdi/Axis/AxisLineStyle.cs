@@ -35,12 +35,9 @@ namespace Altaxo.Graph.Gdi.Axis
 	/// <summary>
 	/// XYAxisStyle is responsible for painting the axes on rectangular two dimensional layers.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(AxisLineStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class AxisLineStyle
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IRoutedPropertyReceiver,
 		Main.ICopyFrom
 	{
@@ -77,58 +74,6 @@ namespace Altaxo.Graph.Gdi.Axis
 		protected CSAxisInformation _cachedAxisStyleInfo;
 
 		#region Serialization
-
-		/// <summary>Used to serialize the axis style Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes the axis style (version 0).
-			/// </summary>
-			/// <param name="obj">The axis style to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				AxisLineStyle s = (AxisLineStyle)obj;
-				info.AddValue("AxisPen", s._axisPen);
-				info.AddValue("MajorPen", s._majorTickPen);
-				info.AddValue("MinorPen", s._minorTickPen);
-				info.AddValue("MajorLength", s._majorTickLength);
-				info.AddValue("MinorLength", s._minorTickLength);
-				info.AddValue("MajorRight", s._showFirstUpMajorTicks);
-				info.AddValue("MajorLeft", s._showFirstDownMajorTicks);
-				info.AddValue("MinorRight", s._showFirstUpMinorTicks);
-				info.AddValue("MinorLeft", s._showFirstDownMinorTicks);
-				info.AddValue("AxisPosition", s._axisPosition);
-			}
-
-			/// <summary>
-			/// Deserializes the axis style (version 0).
-			/// </summary>
-			/// <param name="obj">The empty axis object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized linear axis.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				AxisLineStyle s = (AxisLineStyle)obj;
-
-				s._axisPen = (PenX)info.GetValue("AxisPen", typeof(PenX));
-				s._majorTickPen = (PenX)info.GetValue("MajorPen", typeof(PenX));
-				s._minorTickPen = (PenX)info.GetValue("MinorPen", typeof(PenX));
-
-				s._majorTickLength = info.GetDouble("MajorLength");
-				s._minorTickLength = info.GetDouble("MinorLength");
-				s._showFirstUpMajorTicks = (bool)info.GetBoolean("MajorRight");
-				s._showFirstDownMajorTicks = (bool)info.GetBoolean("MajorLeft");
-				s._showFirstUpMinorTicks = (bool)info.GetBoolean("MinorRight");
-				s._showFirstDownMinorTicks = (bool)info.GetBoolean("MinorLeft");
-				s._axisPosition = (RADouble)info.GetValue("AxisPosition", typeof(RADouble));
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisStyle", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -225,14 +170,6 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion Serialization

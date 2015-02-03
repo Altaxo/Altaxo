@@ -30,54 +30,11 @@ using System.Drawing;
 
 namespace Altaxo.Worksheet
 {
-	[SerializationSurrogate(0, typeof(RowHeaderStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class RowHeaderStyle : Altaxo.Worksheet.ColumnStyle
 	{
 		protected int _rowHeight = 20;
 
 		#region Serialization
-
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-
-					surr.GetObjectData(obj, info, context); // stream the data of the base object
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-				RowHeaderStyle s = (RowHeaderStyle)obj;
-				info.AddValue("Height", (float)s._rowHeight);
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				// first the base class
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
-					surr.SetObjectData(obj, info, context, selector);
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-				// now the class itself
-				RowHeaderStyle s = (RowHeaderStyle)obj;
-				s._rowHeight = (int)info.GetSingle("Height");
-				return obj;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RowHeaderStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -96,11 +53,6 @@ namespace Altaxo.Worksheet
 				s._rowHeight = info.GetInt32("Height");
 				return s;
 			}
-		}
-
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
 		}
 
 		#endregion Serialization

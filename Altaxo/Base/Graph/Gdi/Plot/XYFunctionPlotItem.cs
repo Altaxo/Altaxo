@@ -38,48 +38,11 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// <summary>
 	/// Association of data and style specialized for x-y-plots of column data.
 	/// </summary>
-	[SerializationSurrogate(0, typeof(XYFunctionPlotItem.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	public class XYFunctionPlotItem : G2DPlotItem, System.Runtime.Serialization.IDeserializationCallback
+	public class XYFunctionPlotItem : G2DPlotItem
 	{
 		protected XYFunctionPlotData _plotData;
 
 		#region Serialization
-
-		/// <summary>Used to serialize theXYDataPlot Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes XYColumnPlotItem Version 0.
-			/// </summary>
-			/// <param name="obj">The XYColumnPlotItem to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
-				info.AddValue("Data", s._plotData);
-				info.AddValue("Style", s._plotStyles);
-			}
-
-			/// <summary>
-			/// Deserializes the XYColumnPlotItem Version 0.
-			/// </summary>
-			/// <param name="obj">The empty XYColumnPlotItem object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized XYColumnPlotItem.</returns>
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
-
-				s._plotData = (XYFunctionPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
-				s._plotStyles = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -143,25 +106,6 @@ namespace Altaxo.Graph.Gdi.Plot
 					s.Style = ps;
 					return s;
 				}
-			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// Restore the event chain
-
-			if (null != _plotData)
-			{
-				_plotData.ParentObject = this;
-			}
-
-			if (null != _plotStyles)
-			{
-				_plotStyles.ParentObject = this;
 			}
 		}
 

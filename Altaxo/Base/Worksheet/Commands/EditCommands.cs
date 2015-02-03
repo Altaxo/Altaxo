@@ -366,12 +366,8 @@ namespace Altaxo.Worksheet.Commands
 			if (dg.AreColumnsOrRowsSelected)
 			{
 				// copy the data as table with the selected columns
-				Altaxo.Data.DataTable.ClipboardMemento tablememento = new Altaxo.Data.DataTable.ClipboardMemento(
-					dg.DataTable, dg.SelectedDataColumns, dg.SelectedDataRows, dg.SelectedPropertyColumns, dg.SelectedPropertyRows);
-				dao.SetData("Altaxo.Data.DataTable.ClipboardMemento", tablememento);
-
-				// now copy the data object to the clipboard
-				Current.Gui.SetClipboardDataObject(dao, true);
+				var tablememento = new Altaxo.Data.DataTable.ClipboardMemento(dg.DataTable, dg.SelectedDataColumns, dg.SelectedDataRows, dg.SelectedPropertyColumns, dg.SelectedPropertyRows);
+				Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToClipboard("Altaxo.Data.DataTable.ClipboardMemento", tablememento);
 			}
 		}
 
@@ -946,7 +942,7 @@ namespace Altaxo.Worksheet.Commands
 
 			if (dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
 			{
-				Altaxo.Data.DataTable.ClipboardMemento tablememento = (Altaxo.Data.DataTable.ClipboardMemento)dao.GetData("Altaxo.Data.DataTable.ClipboardMemento");
+				var tablememento = (Altaxo.Data.DataTable.ClipboardMemento)Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Data.DataTable.ClipboardMemento");
 				return tablememento.DataTable;
 			}
 

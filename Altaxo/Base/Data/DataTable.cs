@@ -43,13 +43,9 @@ namespace Altaxo.Data
 	/// All these column types are derived from the base class <see cref="DataColumn"/>.<para/>
 	/// There is also a similar concept like metadata in database programs: Each column can have some property values associated with. The property values
 	/// are organized in property columns and can be retrieved by the <see cref="DataTable.PropCols"/> property of the table.</remarks>
-	[SerializationSurrogate(0, typeof(Altaxo.Data.DataTable.SerializationSurrogate0))]
-	[SerializationSurrogate(1, typeof(Altaxo.Data.DataTable.SerializationSurrogate1))]
-	[SerializationVersion(1)]
 	public class DataTable
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.Runtime.Serialization.IDeserializationCallback,
 		Main.IProjectItem,
 		Main.Properties.IPropertyBagOwner
 	{
@@ -118,72 +114,6 @@ namespace Altaxo.Data
 		#endregion Members
 
 		#region Serialization
-
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection), context, out ss);
-					surr.GetObjectData(obj, info, context); // stream the data of the base object
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-
-				info.AddValue("Name", s._name); // name of the Table
-				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if (null != ss)
-				{
-					System.Runtime.Serialization.ISerializationSurrogate surr =
-						ss.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection), context, out ss);
-					surr.SetObjectData(obj, info, context, selector);
-				}
-				else
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
-				}
-
-				s._name = info.GetString("Name");
-				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", typeof(DataColumnCollection));
-
-				return s;
-			}
-		}
-
-		public class SerializationSurrogate1 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-
-				info.AddValue("Name", s._name); // name of the Table
-				info.AddValue("DataCols", s.DataColumns); // the data columns of that table
-				info.AddValue("PropCols", s._propertyColumns); // the property columns of that table
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-
-				s._name = info.GetString("Name");
-				s._dataColumns = (DataColumnCollection)info.GetValue("DataCols", typeof(DataColumnCollection));
-				s._propertyColumns = (DataColumnCollection)info.GetValue("PropCols", typeof(DataColumnCollection));
-
-				return s;
-			}
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.DataTable", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -413,31 +343,12 @@ namespace Altaxo.Data
 			}
 		}
 
-		public virtual void OnDeserialization(object obj)
-		{
-			//base.Parent = this;
-			//base.OnDeserialization(obj);
-
-			if (!_table_DeserializationFinished && obj is DeserializationFinisher)
-			{
-				_table_DeserializationFinished = true;
-				// set the parent data table of the data column collection
-
-				// now inform the dependent objects
-				DeserializationFinisher finisher = new DeserializationFinisher(this);
-				this._dataColumns.ParentObject = this;
-				this._dataColumns.OnDeserialization(finisher);
-				this._propertyColumns.ParentObject = this;
-				this._propertyColumns.OnDeserialization(finisher);
-			}
-		}
-
 		/// <summary>
 		/// This class is responsible for the special purpose to serialize a data table for clipboard. Do not use
 		/// it for permanent serialization purposes, since it does not contain version handling.
 		/// </summary>
 		[Serializable]
-		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
+		public class ClipboardMemento
 		{
 			private DataTable _table;
 			private IAscendingIntegerCollection _selectedDataColumns;
@@ -468,6 +379,52 @@ namespace Altaxo.Data
 				this._selectedPropertyRows = selectedPropertyRows;
 			}
 
+			#region Serialization
+
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable.ClipboardMemento), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (Altaxo.Data.DataTable.ClipboardMemento)obj;
+
+					info.AddValue("Name", s._table.Name);
+
+					// special case: if no data cell is selected, then serialize the property data as when they where data columns
+					if (s._selectedDataColumns.Count == 0 && s._selectedDataRows.Count == 0)
+					{
+						// exchange data and properties
+						info.AddValue("DataColumns", new DataColumnCollection.ClipboardMemento(s._table.PropCols, s._selectedPropertyColumns, s._selectedPropertyRows, true));
+						info.AddValue("PropertyColumns", new DataColumnCollection.ClipboardMemento(s._table.DataColumns, s._selectedDataColumns, s._selectedDataRows, true));
+					}
+					else
+					{ // normal serialization of data and properties
+						info.AddValue("DataColumns", new DataColumnCollection.ClipboardMemento(s._table.DataColumns, s._selectedDataColumns, s._selectedDataRows, true));
+						info.AddValue("PropertyColumns", new DataColumnCollection.ClipboardMemento(s._table.PropCols, s._selectedPropertyColumns, s._selectedDataColumns, true));
+					}
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+				{
+					var s = (Altaxo.Data.DataTable.ClipboardMemento)o ?? new Altaxo.Data.DataTable.ClipboardMemento(info);
+
+					var tableName = info.GetString("Name");
+					DataColumnCollection.ClipboardMemento datacolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("DataColumns", typeof(DataColumnCollection.ClipboardMemento));
+					DataColumnCollection.ClipboardMemento propcolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("PropertyColumns", typeof(DataColumnCollection.ClipboardMemento));
+
+					s._table = new DataTable(datacolMemento.Collection, propcolMemento.Collection);
+					s._table.Name = tableName;
+
+					return s;
+				}
+			}
+
+			private ClipboardMemento(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			{
+			}
+
+			#endregion Serialization
+
 			/// <summary>
 			/// Returns the (deserialized) table.
 			/// </summary>
@@ -475,38 +432,6 @@ namespace Altaxo.Data
 			{
 				get { return _table; }
 			}
-
-			#region ISerializable Members
-
-			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				info.AddValue("Name", _table.Name);
-
-				// special case: if no data cell is selected, then serialize the property data as when they where data columns
-				if (_selectedDataColumns.Count == 0 && _selectedDataRows.Count == 0)
-				{
-					// exchange data and properties
-					info.AddValue("DataColumns", new DataColumnCollection.ClipboardMemento(_table.PropCols, _selectedPropertyColumns, _selectedPropertyRows, true));
-					info.AddValue("PropertyColumns", new DataColumnCollection.ClipboardMemento(_table.DataColumns, _selectedDataColumns, _selectedDataRows, true));
-				}
-				else
-				{ // normal serialization of data and properties
-					info.AddValue("DataColumns", new DataColumnCollection.ClipboardMemento(_table.DataColumns, _selectedDataColumns, _selectedDataRows, true));
-					info.AddValue("PropertyColumns", new DataColumnCollection.ClipboardMemento(_table.PropCols, _selectedPropertyColumns, _selectedDataColumns, true));
-				}
-			}
-
-			public ClipboardMemento(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				_table = new DataTable();
-				_table.Name = info.GetString("Name");
-				DataColumnCollection.ClipboardMemento datacolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("DataColumns", typeof(DataColumnCollection.ClipboardMemento));
-				_table._dataColumns = datacolMemento.Collection;
-				DataColumnCollection.ClipboardMemento propcolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("PropertyColumns", typeof(DataColumnCollection.ClipboardMemento));
-				_table._propertyColumns = propcolMemento.Collection;
-			}
-
-			#endregion ISerializable Members
 		}
 
 		#endregion Serialization

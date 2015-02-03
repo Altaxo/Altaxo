@@ -30,12 +30,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
-	[SerializationSurrogate(0, typeof(Altaxo.Data.DataColumnCollection.SerializationSurrogate0))]
-	[SerializationVersion(0)]
 	public class DataColumnCollection :
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<DataColumnCollectionChangedEventArgs>,
 		IList<DataRow>,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IDisposable,
 		ICloneable
 	{
@@ -204,32 +201,6 @@ namespace Altaxo.Data
 
 		#region Serialization
 
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
-
-				info.AddValue("Columns", s._columnsByNumber);
-				// serialize the column scripts
-				info.AddValue("ColumnScripts", s._columnScripts);
-			}
-
-			public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
-
-				s._columnsByNumber = (List<DataColumn>)(info.GetValue("Columns", typeof(List<DataColumn>)));
-				s._columnScripts = (ColumnScriptCollection)(info.GetValue("ColumnScripts", typeof(ColumnScriptCollection)));
-
-				// set up helper objects
-				s._columnsByName = new Dictionary<string, DataColumn>();
-				s._nameOfLastColumnAdded = "";
-				s._lastColumnNameGenerated = "";
-				return s;
-			}
-		}
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -301,43 +272,11 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Final measures for the object after deserialization.
-		/// </summary>
-		/// <param name="obj">The object for which the deserialization has finished.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			if (!_isDeserializationFinished && obj is DeserializationFinisher)
-			{
-				_isDeserializationFinished = true;
-				DeserializationFinisher finisher = new DeserializationFinisher(this);
-
-				// 1. Set the parent Data table of the columns,
-				// because they may be feel lonesome
-				int nCols = _columnsByNumber.Count;
-				_numberOfRows = 0;
-				DataColumn dc;
-				for (int i = 0; i < nCols; i++)
-				{
-					dc = (DataColumn)_columnsByNumber[i];
-					dc.ParentObject = this;
-					dc.OnDeserialization(finisher);
-
-					// add it also to the column name cache
-					_columnsByName.Add(dc.Name, dc);
-
-					// count the maximumn number of rows
-					if (dc.Count > _numberOfRows)
-						_numberOfRows = dc.Count;
-				}
-			}
-		}
-
-		/// <summary>
 		/// This class is responsible for the special purpose to serialize a data table for clipboard. Do not use
 		/// it for permanent serialization purposes, since it does not contain version handling.
 		/// </summary>
 		[Serializable]
-		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
+		public class ClipboardMemento
 		{
 			private DataColumnCollection _collection;
 			private IAscendingIntegerCollection _selectedColumns;
@@ -373,83 +312,97 @@ namespace Altaxo.Data
 				get { return _collection; }
 			}
 
-			#region ISerializable Members
+			#region Serialization
 
-			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection.ClipboardMemento), 0)]
+			private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 			{
-				int numberOfColumns;
-				bool useColumnSelection;
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					var s = (Altaxo.Data.DataColumnCollection.ClipboardMemento)obj;
 
-				// special case - no selection
-				if (_selectedColumns.Count == 0 && _selectedRows.Count == 0 && _useOnlySelections)
-				{
-					numberOfColumns = 0;
-					useColumnSelection = false;
-				}
-				else if (_selectedColumns.Count == 0)
-				{
-					numberOfColumns = _collection.ColumnCount;
-					useColumnSelection = false;
-				}
-				else
-				{
-					numberOfColumns = _selectedColumns.Count;
-					useColumnSelection = true;
-				}
+					int numberOfColumns;
+					bool useColumnSelection;
 
-				int numberOfRows = 0;
-				bool useRowSelection;
-				if (_selectedRows.Count == 0)
-				{
-					numberOfRows = _collection.RowCount;
-					useRowSelection = false;
-				}
-				else
-				{
-					numberOfRows = _selectedRows.Count;
-					useRowSelection = true;
-				}
-
-				info.AddValue("ColumnCount", numberOfColumns);
-
-				for (int nCol = 0; nCol < numberOfColumns; nCol++)
-				{
-					int colidx = useColumnSelection ? _selectedColumns[nCol] : nCol;
-					DataColumnInfo columninfo = _collection.GetColumnInfo(colidx);
-					info.AddValue("ColumnName_" + nCol.ToString(), columninfo.Name);
-					info.AddValue("ColumnGroup_" + nCol.ToString(), columninfo.Group);
-					info.AddValue("ColumnKind_" + nCol.ToString(), columninfo.Kind);
-
-					// now create an instance of this column and copy the data
-					DataColumn column = _collection[colidx];
-					DataColumn newcolumn = (DataColumn)Activator.CreateInstance(_collection[colidx].GetType());
-					for (int nRow = 0; nRow < numberOfRows; nRow++)
+					// special case - no selection
+					if (s._selectedColumns.Count == 0 && s._selectedRows.Count == 0 && s._useOnlySelections)
 					{
-						int rowidx = useRowSelection ? _selectedRows[nRow] : nRow;
-						newcolumn[nRow] = column[rowidx];
-					} // for all rows
-					info.AddValue("Column_" + nCol.ToString(), newcolumn);
-				} // for all columns
-			} // end serialization
+						numberOfColumns = 0;
+						useColumnSelection = false;
+					}
+					else if (s._selectedColumns.Count == 0)
+					{
+						numberOfColumns = s._collection.ColumnCount;
+						useColumnSelection = false;
+					}
+					else
+					{
+						numberOfColumns = s._selectedColumns.Count;
+						useColumnSelection = true;
+					}
 
-			public ClipboardMemento(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			{
-				_collection = new DataColumnCollection();
+					int numberOfRows = 0;
+					bool useRowSelection;
+					if (s._selectedRows.Count == 0)
+					{
+						numberOfRows = s._collection.RowCount;
+						useRowSelection = false;
+					}
+					else
+					{
+						numberOfRows = s._selectedRows.Count;
+						useRowSelection = true;
+					}
 
-				int numberOfColumns = info.GetInt32("ColumnCount");
-				for (int nCol = 0; nCol < numberOfColumns; nCol++)
+					info.AddValue("ColumnCount", numberOfColumns);
+
+					for (int nCol = 0; nCol < numberOfColumns; nCol++)
+					{
+						int colidx = useColumnSelection ? s._selectedColumns[nCol] : nCol;
+						DataColumnInfo columninfo = s._collection.GetColumnInfo(colidx);
+						info.AddValue("ColumnName_" + nCol.ToString(), columninfo.Name);
+						info.AddValue("ColumnGroup_" + nCol.ToString(), columninfo.Group);
+						info.AddValue("ColumnKind_" + nCol.ToString(), (int)columninfo.Kind);
+
+						// now create an instance of this column and copy the data
+						DataColumn column = s._collection[colidx];
+						DataColumn newcolumn = (DataColumn)Activator.CreateInstance(s._collection[colidx].GetType());
+						for (int nRow = 0; nRow < numberOfRows; nRow++)
+						{
+							int rowidx = useRowSelection ? s._selectedRows[nRow] : nRow;
+							newcolumn[nRow] = column[rowidx];
+						} // for all rows
+						info.AddValue("Column_" + nCol.ToString(), newcolumn);
+					} // for all columns
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 				{
-					string name = info.GetString("ColumnName_" + nCol.ToString());
-					int group = info.GetInt32("ColumnGroup_" + nCol.ToString());
-					ColumnKind kind = (ColumnKind)info.GetValue("ColumnKind_" + nCol.ToString(), typeof(ColumnKind));
+					var s = (Altaxo.Data.DataColumnCollection.ClipboardMemento)o ?? new Altaxo.Data.DataColumnCollection.ClipboardMemento(info);
 
-					DataColumn column = (DataColumn)info.GetValue("Column_" + nCol.ToString(), typeof(DataColumn));
+					s._collection = new DataColumnCollection();
 
-					_collection.Add(column, name, kind, group);
+					int numberOfColumns = info.GetInt32("ColumnCount");
+					for (int nCol = 0; nCol < numberOfColumns; nCol++)
+					{
+						string name = info.GetString("ColumnName_" + nCol.ToString());
+						int group = info.GetInt32("ColumnGroup_" + nCol.ToString());
+						ColumnKind kind = (ColumnKind)info.GetInt32("ColumnKind_" + nCol.ToString());
+
+						DataColumn column = (DataColumn)info.GetValue("Column_" + nCol.ToString(), typeof(DataColumn));
+
+						s._collection.Add(column, name, kind, group);
+					}
+
+					return s;
 				}
 			}
 
-			#endregion ISerializable Members
+			private ClipboardMemento(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			{
+			}
+
+			#endregion Serialization
 		}
 
 		#endregion Serialization
