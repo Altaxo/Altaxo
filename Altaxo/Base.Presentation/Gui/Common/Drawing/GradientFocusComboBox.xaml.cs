@@ -111,7 +111,6 @@ namespace Altaxo.Gui.Common.Drawing
 			const double height = 1;
 			const double width = 2;
 			const double lineWidth = 0;
-			const double lwHalf = lineWidth / 2;
 
 			// draws a transparent outline to fix the borders
 			var geometryDrawing = new GeometryDrawing();

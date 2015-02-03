@@ -55,8 +55,6 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_cbScales, names);
 		}
 
-		private UserControl _boundaryControl = null;
-
 		public void SetBoundaryView(object guiobject)
 		{
 			_boundaryHost.Child = guiobject as UIElement;

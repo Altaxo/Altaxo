@@ -207,6 +207,11 @@ namespace Altaxo.Graph
 			return this._scalingMode == other._scalingMode && this._aspectPreserving == other._aspectPreserving && this._x == other._x && this._y == other._y;
 		}
 
+		public override int GetHashCode()
+		{
+			return 17 * _scalingMode.GetHashCode() + 31 * _aspectPreserving.GetHashCode() + 61 * _x.GetHashCode() + 127 * _y.GetHashCode();
+		}
+
 		/// <summary>Implements the operator ==.</summary>
 		/// <param name="t1">First value.</param>
 		/// <param name="t2">Second value.</param>

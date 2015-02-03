@@ -100,8 +100,6 @@ namespace Altaxo.Gui.Graph
 			_guiLinkedScalePropertiesHost.Child = guiobject as UIElement;
 		}
 
-		private UIElement _scaleControl = null;
-
 		public void SetScaleView(object guiobject)
 		{
 			_guiBoundaryHost.Child = null;
@@ -118,8 +116,6 @@ namespace Altaxo.Gui.Graph
 		public event Action TickSpacingTypeChanged;
 
 		public event Action LinkTargetChanged;
-
-		public event Action<bool> LinkChanged;
 
 		#endregion IAxisScaleView
 	}

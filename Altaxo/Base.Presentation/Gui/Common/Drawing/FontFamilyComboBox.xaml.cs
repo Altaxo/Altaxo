@@ -138,7 +138,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 			private static ImageSource GetImage(sd.FontFamily fontFamily)
 			{
-				const double border = 0.1;
 				const double height = 1;
 				const double width = 2;
 				const double fontSize = 1;
@@ -205,8 +204,6 @@ namespace Altaxo.Gui.Common.Drawing
 		private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
 		private static HashSet<string> _gdiFontFamilyNames = new HashSet<string>();
-
-		private static GdiToWpfBitmap _interopBitmap;
 
 		private static sd.FontFamily GenericSansSerif;
 

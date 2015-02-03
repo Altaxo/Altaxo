@@ -44,8 +44,6 @@ namespace Altaxo.Gui.Common.Drawing
 		private class CC : IValueConverter
 		{
 			private TextureImageComboBox _cb;
-			private object _originalToolTip;
-			private bool _hasValidationError;
 
 			public CC(TextureImageComboBox c)
 			{

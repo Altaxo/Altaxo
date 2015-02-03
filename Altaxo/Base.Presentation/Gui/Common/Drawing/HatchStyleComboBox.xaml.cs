@@ -42,8 +42,6 @@ namespace Altaxo.Gui.Common.Drawing
 		private class CC : IValueConverter
 		{
 			private HatchStyleComboBox _cb;
-			private object _originalToolTip;
-			private bool _hasValidationError;
 
 			public CC(HatchStyleComboBox c)
 			{

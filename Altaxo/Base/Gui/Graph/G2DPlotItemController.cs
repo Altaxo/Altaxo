@@ -78,8 +78,6 @@ namespace Altaxo.Gui.Graph
 
 		private PlotGroupStyleCollection _groupStyles;
 
-		private IG2DPlotStyle _additionalPlotStyle;
-
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
 		private IMVCANController _plotGroupController;
 
@@ -88,8 +86,6 @@ namespace Altaxo.Gui.Graph
 		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
 		private Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
-
-		private IMVCANController _additionalPlotStyleController;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -120,8 +116,6 @@ namespace Altaxo.Gui.Graph
 
 				yield return new ControllerAndSetNullMethod(null, () => _styleControllerDictionary = null);
 			}
-
-			yield return new ControllerAndSetNullMethod(_additionalPlotStyleController, () => _additionalPlotStyleController = null);
 		}
 
 		protected override void Initialize(bool initData)
@@ -301,12 +295,6 @@ namespace Altaxo.Gui.Graph
 			{
 				if (null != _styleControllerList[i])
 					_styleControllerList[i].InitializeDocument(_doc.Style[i]);
-			}
-
-			if (_additionalPlotStyle != null && _additionalPlotStyleController != null)
-			{
-				_doc.Style.PrepareNewSubStyle(_additionalPlotStyle, layer, _doc.GetRangesAndPoints(layer));
-				_additionalPlotStyleController.InitializeDocument(_additionalPlotStyle);
 			}
 		}
 

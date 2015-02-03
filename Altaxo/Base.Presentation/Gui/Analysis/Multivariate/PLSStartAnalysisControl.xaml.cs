@@ -44,6 +44,8 @@ namespace Altaxo.Gui.Worksheet
 
 		private void cbAnalysisMethod_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
+			if (null != AnalysisMethodChanged)
+				AnalysisMethodChanged(this.cbAnalysisMethod.SelectedIndex);
 		}
 
 		private void edMaxNumFactors_ValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)

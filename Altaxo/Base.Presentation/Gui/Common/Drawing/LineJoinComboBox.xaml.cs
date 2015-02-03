@@ -43,8 +43,6 @@ namespace Altaxo.Gui.Common.Drawing
 		private class CC : IValueConverter
 		{
 			private LineJoinComboBox _cb;
-			private object _originalToolTip;
-			private bool _hasValidationError;
 
 			public CC(LineJoinComboBox c)
 			{

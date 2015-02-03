@@ -45,7 +45,6 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			private ComboBox _cb;
 			private object _originalToolTip;
-			private bool _hasValidationError;
 
 			public CC(ComboBox c)
 			{
@@ -118,13 +117,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 				if (null != error)
 				{
-					_hasValidationError = true;
 					_originalToolTip = _cb.ToolTip;
 					_cb.ToolTip = error;
 				}
 				else
 				{
-					_hasValidationError = false;
 					_cb.ToolTip = _originalToolTip;
 					_originalToolTip = null;
 				}

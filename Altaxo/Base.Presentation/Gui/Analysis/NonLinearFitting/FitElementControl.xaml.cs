@@ -56,23 +56,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		private int _numberOfY;
 		private int _numberOfParameter;
 		private int _totalSlots;
-
-		/// <summary>Width of the IVarianceScaling box.</summary>
-		private int _errorFunctionWidth;
-
-		/// <summary>X position of the IVarianceScaling box.</summary>
-		private int _errorFunctionX;
-
-		/// <summary>X coordinate of the left edge of the external parameters boxes.</summary>
-		private int _externalParametersX;
-
-		/// <summary>With of the external parameters boxes.</summary>
-		private int _externalParametersWidth;
-
-		private int _VariablesX = 0;
-		private int _DependentVariablesWidth;
-		private int _DependentVariablesY;
-		private int _IndependentVariablesWidth;
 		private bool _fitFunctionSelected;
 
 		#endregion Members

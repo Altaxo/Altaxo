@@ -37,8 +37,6 @@ namespace Altaxo.Gui.Settings
 	{
 		public event Action CultureChanged;
 
-		public event Action OverrideSystemCultureChanged;
-
 		public CultureSettingsControl()
 		{
 			InitializeComponent();

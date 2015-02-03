@@ -78,8 +78,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private bool _isForEndCap;
 
-		private static SortedDictionary<string, int> _lineCaps;
-
 		public LineCapComboBox()
 		{
 			InitializeComponent();

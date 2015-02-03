@@ -36,8 +36,6 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class HostLayerControl : UserControl, IHostLayerView
 	{
-		private int _suppressEventCounter = 0;
-
 		public event Action<string> PageChanged;
 
 		public event System.ComponentModel.CancelEventHandler TabValidating;
