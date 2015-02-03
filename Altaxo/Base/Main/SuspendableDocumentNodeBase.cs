@@ -180,10 +180,10 @@ namespace Altaxo.Main
 		protected abstract void AccumulatedEventData_Clear();
 
 		/// <summary>
-		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
+		/// Accumulates the change event data of the child.
 		/// </summary>
-		/// <param name="sender">The sender of the change notification (currently unused).</param>
-		/// <param name="e">The change event args can provide details of the change (currently unused).</param>
+		/// <param name="sender">The sender of the change event notification.</param>
+		/// <param name="e">The change event args can provide details of the change.</param>
 		protected abstract void AccumulateChangeData(object sender, EventArgs e);
 
 		/// <summary>
@@ -244,7 +244,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Resumes changed events, either with taking the accumulated event data into account (see <see cref="M:Resume()"/>) or discarding the accumulated event data (see <see cref="ResumeSilently"/>,
+		/// Resumes changed events, either with taking the accumulated event data into account (see <see cref="M:Resume(ISuspendToken)"/>) or discarding the accumulated event data (see <see cref="ResumeSilently"/>,
 		/// depending on the provided argument <paramref name="eventFiring"/>.
 		/// </summary>
 		/// <param name="suspendToken">The suspend token.</param>
@@ -457,6 +457,14 @@ namespace Altaxo.Main
 				tmpNode.Dispose();
 		}
 
+		/// <summary>
+		/// Sets a member variable of this instance and raise a change event with <see cref="System.EventArgs.Empty"/> if the new value is different from the old value.
+		/// The comparison is done using the <see cref="IEquatable{T}"/> interface of the member variable.
+		/// Note: to set members that implement <see cref="IDocumentNode"/> please use the Child... functions.
+		/// </summary>
+		/// <typeparam name="T">Type of member variable.</typeparam>
+		/// <param name="memberVariable">The member variable to set.</param>
+		/// <param name="value">The new value.</param>
 		protected void SetMemberAndRaiseSelfChanged<T>(ref T memberVariable, T value) where T : IEquatable<T>
 		{
 			var oldValue = memberVariable;
@@ -473,6 +481,14 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Sets a member variable of this instance and raise a change event with <see cref="System.EventArgs.Empty"/> if the new value is different from the old value.
+		/// The comparison is done using the <see cref="IEquatable{T}"/> interface of the member variable.
+		/// Note: to set members that implement <see cref="IDocumentNode"/> please use the Child... functions.
+		/// </summary>
+		/// <typeparam name="T">Type of member variable.</typeparam>
+		/// <param name="memberVariable">The member variable to set.</param>
+		/// <param name="value">The new value.</param>
 		protected void SetMemberAndRaiseSelfChanged<T>(ref T? memberVariable, T? value) where T : struct, IEquatable<T>
 		{
 			var oldValue = memberVariable;
@@ -489,6 +505,14 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Sets a member variable (which is an Enum) of this instance and raise a change event with <see cref="System.EventArgs.Empty"/> if the new value is different from the old value.
+		/// The comparison is done using the <see cref="IEquatable{T}"/> interface of the member variable.
+		/// Note: to set members that implement <see cref="IDocumentNode"/> please use the Child... functions.
+		/// </summary>
+		/// <typeparam name="T">Type of member variable.</typeparam>
+		/// <param name="memberVariable">The member variable to set.</param>
+		/// <param name="value">The new value.</param>
 		protected void SetMemberEnumAndRaiseSelfChanged<T>(ref T memberVariable, T value)
 		{
 			var oldValue = memberVariable;
@@ -573,6 +597,11 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
+			/// <summary>
+		/// Reports not connected document nodes, i.e. child nodes having no parent.
+		/// </summary>
+		/// <param name="showStatistics">If set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
+		/// <returns>True if there were not connected documen nodes; otherwise false.</returns>
 		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
 			int numberOfNodes = 0;
@@ -617,10 +646,10 @@ namespace Altaxo.Main
 #else
 
 		/// <summary>
-		/// Reports not connected document nodes, i.e. child node having no parent.
+		/// Reports not connected document nodes, i.e. child nodes having no parent. This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase.
 		/// </summary>
-		/// <param name="showStatistics">if set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
-		/// <returns></returns>
+		/// <param name="showStatistics">If set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
+		/// <returns>True if there were not connected documen nodes; otherwise false.</returns>
 		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
 			GC.Collect();

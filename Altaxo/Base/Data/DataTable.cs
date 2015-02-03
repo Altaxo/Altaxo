@@ -104,13 +104,6 @@ namespace Altaxo.Data
 		/// start with "tmp/".</remarks>
 		protected Main.Properties.PropertyBag _tableProperties;
 
-		// Helper Data
-
-		/// <summary>
-		/// Used to indicate that the Deserialization process has finished.
-		/// </summary>
-		private bool _table_DeserializationFinished = false;
-
 		#endregion Members
 
 		#region Serialization

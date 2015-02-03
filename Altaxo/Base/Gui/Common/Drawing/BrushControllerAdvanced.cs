@@ -247,7 +247,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			bool foreColor = false, backColor = false, exchangeColor = false, wrapMode = false,
 				gradientFocus = false, gradientColorScale = false, gradientAngle = false,
-				textureScale = false, textureImage = false, textureOffsetX = false, textureOffsetY = false, additionalProperties = false;
+				textureScale = false, textureImage = false, textureOffsetX = false, textureOffsetY = false;
 
 			switch (_doc.BrushType)
 			{

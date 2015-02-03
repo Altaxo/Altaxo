@@ -39,7 +39,6 @@ namespace Altaxo.Gui.DataConnection
 	{
 		private IDataPreviewView _view;
 		private System.Data.DataTable dt;
-		private System.Drawing.Size size;
 
 		public DataPreviewController(System.Data.DataTable dt)
 		{

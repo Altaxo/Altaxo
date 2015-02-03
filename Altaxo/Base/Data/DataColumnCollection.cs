@@ -192,11 +192,6 @@ namespace Altaxo.Data
 		/// </summary>
 		protected bool _triedOutRegularNaming = false;
 
-		/// <summary>
-		/// Flag to signal if deserialization is finished.
-		/// </summary>
-		private bool _isDeserializationFinished = false;
-
 		#endregion Member data
 
 		#region Serialization

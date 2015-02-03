@@ -329,12 +329,24 @@ namespace Altaxo.Main
 
 		#region Tunneling event handling
 
+		/// <summary>
+		/// Is called by the parent when a tunneling event happened in the parent.
+		/// </summary>
+		/// <param name="sender">The sender (i.e. the parent of this instance).</param>
+		/// <param name="originalSource">The original source of the tunneling event.</param>
+		/// <param name="e">The <see cref="TunnelingEventArgs" /> instance containing the event data.</param>
 		public override void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e)
 		{
 			OnTunnelingEvent(originalSource, e);
 			NotifyChildrenTunnelingEventHappened(originalSource, e);
 		}
 
+		/// <summary>
+		/// Is called by this instance if a tunneling event happened into this instance.
+		/// The tunneling event triggers the <see cref="SuspendableDocumentNodeBase.TunneledEvent" /> and is - depending on the provided parameter - also distributed to all childs of this instance.
+		/// </summary>
+		/// <param name="e">The <see cref="TunnelingEventArgs" /> instance containing the event data.</param>
+		/// <param name="distributeThisEventToChilds">if set to <c>true</c>, the tunneling event is distributed to all childs of this instance.</param>
 		public override void EhSelfTunnelingEventHappened(TunnelingEventArgs e, bool distributeThisEventToChilds)
 		{
 			OnTunnelingEvent(this, e);
@@ -343,6 +355,11 @@ namespace Altaxo.Main
 				NotifyChildrenTunnelingEventHappened(this, e);
 		}
 
+		/// <summary>
+		/// Notifies the child nodes of this instance that a tunneling event has happened.
+		/// </summary>
+		/// <param name="originalSource">The original source of the tunneling event.</param>
+		/// <param name="e">The <see cref="TunnelingEventArgs"/> instance containing the event data.</param>
 		protected virtual void NotifyChildrenTunnelingEventHappened(IDocumentNode originalSource, TunnelingEventArgs e)
 		{
 			foreach (var tuple in GetDocumentNodeChildrenWithName())
@@ -352,8 +369,22 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Infrastructure: Gets all child nodes of this instance along with its name, and optionally, a method to set the member variable which holds that child node to <c>null</c>.
+		/// The returned enumeration is used to (i) provide default implementations for <see cref="GetChildObjectNamed"/> and <see cref="GetNameOfChildObject"/> and (ii) to dispose all
+		/// child objects when this instance (the parent) is disposed.
+		/// </summary>
+		/// <returns>Enumeration of all child nodes of this instance along with their name and optionally a method to set the member variable which holds that child node to <c>null</c>.</returns>
 		protected abstract IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName();
 
+		/// <summary>
+		/// Retrieves the child node of this instance with the name <code>name</code>.
+		/// </summary>
+		/// <param name="name">The child nodes name.</param>
+		/// <returns>
+		/// The child node with the specified name, or <code>null</code> if no such node exists.
+		/// </returns>
+		/// <exception cref="System.ArgumentNullException">The specified name was null.</exception>
 		public virtual IDocumentLeafNode GetChildObjectNamed(string name)
 		{
 			if (null == name)
@@ -362,6 +393,12 @@ namespace Altaxo.Main
 			return GetDocumentNodeChildrenWithName().FirstOrDefault(tuple => tuple.Name == name).DocumentNode;
 		}
 
+		/// <summary>
+		/// Gets the name of child node.
+		/// </summary>
+		/// <param name="docNode">The child node.</param>
+		/// <returns>The name of the child node.</returns>
+		/// <exception cref="System.ArgumentNullException">The provided argument docNode was null.</exception>
 		public virtual string GetNameOfChildObject(IDocumentLeafNode docNode)
 		{
 			if (null == docNode)

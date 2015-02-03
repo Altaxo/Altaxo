@@ -48,15 +48,10 @@ namespace Altaxo.Data
 		/// </summary>
 		public event EventHandler<Main.NamedObjectCollectionChangedEventArgs> CollectionChanged;
 
-		[NonSerialized()]
-		private bool _isDeserializationFinished = false;
-
 		public DataTableCollection(AltaxoDocument parent)
 		{
 			this._parent = parent;
 		}
-
-
 
 		#region ICollection<DataTable> Members
 

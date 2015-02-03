@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		Main.ICopyFrom
 	{
-		private List<AltaxoVariant> _additionalMajorTicks;
+		private List<AltaxoVariant> _additionalTicks;
 
 		#region Serialization
 
@@ -46,8 +46,8 @@ namespace Altaxo.Graph.Scales.Ticks
 			{
 				AdditionalTicks s = (AdditionalTicks)obj;
 
-				info.CreateArray("ByValues", s._additionalMajorTicks.Count);
-				foreach (AltaxoVariant v in s._additionalMajorTicks)
+				info.CreateArray("ByValues", s._additionalTicks.Count);
+				foreach (AltaxoVariant v in s._additionalTicks)
 					info.AddValue("e", (object)v);
 				info.CommitArray();
 			}
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 				count = info.OpenArray("ByValues");
 				for (int i = 0; i < count; i++)
-					s._additionalMajorTicks.Add((AltaxoVariant)info.GetValue("e", s));
+					s._additionalTicks.Add((AltaxoVariant)info.GetValue("e", s));
 				info.CloseArray(count);
 
 				return s;
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public AdditionalTicks()
 		{
-			_additionalMajorTicks = new List<AltaxoVariant>();
+			_additionalTicks = new List<AltaxoVariant>();
 		}
 
 		public AdditionalTicks(AdditionalTicks from)
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			if (null == from)
 				return false;
 
-			_additionalMajorTicks = new List<AltaxoVariant>(from._additionalMajorTicks);
+			_additionalTicks = new List<AltaxoVariant>(from._additionalTicks);
 			return true;
 		}
 
@@ -112,15 +112,20 @@ namespace Altaxo.Graph.Scales.Ticks
 			else
 			{
 				var from = (AdditionalTicks)obj;
-				return _additionalMajorTicks.SequenceEqual(from._additionalMajorTicks);
+				return _additionalTicks.SequenceEqual(from._additionalTicks);
 			}
+		}
+
+		public override int GetHashCode()
+		{
+			return _additionalTicks.GetHashCode();
 		}
 
 		public bool IsEmpty
 		{
 			get
 			{
-				return _additionalMajorTicks.Count == 0;
+				return _additionalTicks.Count == 0;
 			}
 		}
 
@@ -128,7 +133,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		{
 			get
 			{
-				return _additionalMajorTicks;
+				return _additionalTicks;
 			}
 		}
 	}

@@ -67,9 +67,6 @@ namespace Altaxo
 
 		public event EventHandler DirtyChanged;
 
-		[NonSerialized]
-		private bool _isDeserializationFinished = false;
-
 		public AltaxoDocument()
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);

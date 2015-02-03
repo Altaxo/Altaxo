@@ -105,7 +105,6 @@ namespace Altaxo.Serialization.Ascii
 				{
 					AsciiImportOptions asciiImportOptions = null;
 					IDataSourceImportOptions importOptions = null;
-					AbsoluteAndRelativeFileName asciiFilePath = null;
 
 					CopyHelper.Copy(ref importOptions, from._importOptions);
 					CopyHelper.Copy(ref asciiImportOptions, from._asciiImportOptions);

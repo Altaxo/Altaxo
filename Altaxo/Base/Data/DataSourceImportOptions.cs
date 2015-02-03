@@ -257,11 +257,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
-		/// </summary>
-		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged;
-
-		/// <summary>
 		/// Gets a value indicating whether the table script is executed after importing data from this data source.
 		/// </summary>
 		/// <value>
