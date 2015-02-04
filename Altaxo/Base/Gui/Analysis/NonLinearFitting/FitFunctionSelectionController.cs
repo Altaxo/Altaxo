@@ -151,7 +151,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				{
 					if (args[0] is FitFunctionScript)
 					{
-						Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController ctrl = new Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController((FitFunctionScript)args[0]);
+						var ctrl = new Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController();
+						ctrl.InitializeDocument((FitFunctionScript)args[0]);
 						if (Current.Gui.ShowDialog(ctrl, "Store?"))
 						{
 							// add the new script to the list

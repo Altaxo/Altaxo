@@ -279,12 +279,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			FitFunctionScript script = new FitFunctionScript();
 
+		Label_EditScript:
 			object scriptAsObject = script;
 			if (Current.Gui.ShowDialog(ref scriptAsObject, "Create fit function"))
 			{
 				script = (FitFunctionScript)scriptAsObject;
 
-				Current.Gui.ShowDialog(new FitFunctionNameAndCategoryController(script), "Name your script");
+				var nameController = new FitFunctionNameAndCategoryController();
+				nameController.InitializeDocument(script);
+				if (!Current.Gui.ShowDialog(nameController, "Name your script"))
+					goto Label_EditScript;
 
 				Current.Project.FitFunctionScripts.Add(script);
 
