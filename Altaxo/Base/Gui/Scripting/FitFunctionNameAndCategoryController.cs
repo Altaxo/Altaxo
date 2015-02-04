@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Scripting
 {
+	[ExpectedTypeOfView(typeof(IMultiChildView))]
 	public class FitFunctionNameAndCategoryController : Altaxo.Gui.Common.MultiChildController
 	{
 		private FitFunctionScript _doc;
