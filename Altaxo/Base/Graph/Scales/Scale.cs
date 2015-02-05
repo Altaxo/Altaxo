@@ -56,6 +56,21 @@ namespace Altaxo.Graph.Scales
 
 		#endregion ICloneable Members
 
+		#region event handling
+
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (e is BoundariesChangedEventArgs)
+			{
+				Rescale();
+				e = EventArgs.Empty;
+			}
+
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion event handling
+
 		/// <summary>
 		/// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
 		/// a physical value of the axis origin must return a value of zero

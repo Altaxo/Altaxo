@@ -100,6 +100,14 @@ namespace Altaxo.Main
 				_accumulatedEventData.Clear();
 		}
 
+		protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
+		{
+			System.Diagnostics.Debug.Assert(_accumulatedEventData == null || _accumulatedEventData.Count == 0);
+
+			foreach (var ev in e)
+				_accumulatedEventData.Add(ev);
+		}
+
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			_accumulatedEventData.SetOrAccumulate(e);

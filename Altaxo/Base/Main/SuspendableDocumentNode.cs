@@ -103,6 +103,10 @@ namespace Altaxo.Main
 					{
 						OnChanged(singleArg); // Fire the changed event
 					}
+					else // we were suspended again by the parent
+					{
+						AccumulatedChangeData_SetBackAfterResumeAndSuspend(singleArg);
+					}
 				}
 			}
 			else // there is more than one event arg accumulated
@@ -120,6 +124,10 @@ namespace Altaxo.Main
 				{
 					foreach (var eventArg in accumulatedEvents)
 						OnChanged(eventArg); // Fire the changed event
+				}
+				else // we were suspended again by the parent
+				{
+					AccumulatedChangeData_SetBackAfterResumeAndSuspend(accumulatedEvents);
 				}
 			}
 		}

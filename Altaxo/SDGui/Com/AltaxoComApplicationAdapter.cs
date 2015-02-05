@@ -100,6 +100,7 @@ namespace Altaxo.Com
 				ComDebug.ReportInfo("Make main window visible");
 				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Visible;
 				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = true;
+				((System.Windows.Window)Current.Workbench.ViewObject).BringIntoView();
 				ComDebug.ReportInfo("Make main window visible - done!");
 			});
 		}

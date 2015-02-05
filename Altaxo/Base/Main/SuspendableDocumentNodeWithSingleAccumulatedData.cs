@@ -82,6 +82,21 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
+		/// Sets the change data without further processing. This function is infrastructure and intended to use only in OnResume after the parent has suspended this node again.
+		/// </summary>
+		/// <param name="e">The event args (one or more).</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">Not possible to set more than one event arg here.</exception>
+		protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
+		{
+			System.Diagnostics.Debug.Assert(_accumulatedEventData == null);
+
+			if (e.Length > 1)
+				throw new ArgumentOutOfRangeException("Not possible to set more than one event arg here.");
+			if (e.Length > 0)
+				_accumulatedEventData = (T)e[0];
+		}
+
+		/// <summary>
 		/// Accumulates the change data of the child. Currently only a flag is set to signal that the table has changed.
 		/// </summary>
 		/// <param name="sender">The sender of the change notification (currently unused).</param>

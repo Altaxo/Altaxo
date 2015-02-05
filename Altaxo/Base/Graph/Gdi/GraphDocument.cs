@@ -669,6 +669,8 @@ typeof(GraphDocument),
 			}
 		}
 
+		private object _paintLock = new object();
+
 		/// <summary>
 		/// Paints the graph.
 		/// </summary>
@@ -682,30 +684,35 @@ typeof(GraphDocument),
 			if (System.Threading.Thread.CurrentThread == _paintThread)
 				throw new InvalidOperationException("DoPaint is called reentrant (i.e. from the same thread that is already executing DoPaint");
 
-			while (null != _paintThread) // seems that another thread also wants to paint, this can happen when a Com Container want to have a image at the same time as the user interface
-				System.Threading.Thread.Sleep(1); // then the other thread must wait, until the first paint operation is finished
-
-			System.Diagnostics.Debug.Assert(null == _paintThread, "We waited, thus _paintThread should be null");
-
-			_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
-
-			try
+			lock (_paintLock)
 			{
-				// First set the current thread's document culture
-				_paintThread.CurrentCulture = this.GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
+				System.Diagnostics.Debug.Assert(null == _paintThread, "We waited, thus _paintThread should be null");
 
-				AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
+				_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 
-				RootLayer.PaintPreprocessing(this);
+				try
+				{
+					// First set the current thread's document culture
+					_paintThread.CurrentCulture = this.GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
 
-				RootLayer.Paint(g, bForPrinting);
+					using (var suspendToken = SuspendGetToken())
+					{
+						AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
 
-				RootLayer.PaintPostprocessing();
-			}
-			finally
-			{
-				_paintThread = null;
-			}
+						RootLayer.PaintPreprocessing(this);
+
+						RootLayer.Paint(g, bForPrinting);
+
+						RootLayer.PaintPostprocessing();
+
+						suspendToken.ResumeSilently();
+					}
+				}
+				finally
+				{
+					_paintThread = null;
+				}
+			} // end of lock
 		} // end of function DoPaint
 
 		public static FontX GetDefaultFont(Altaxo.Main.Properties.IReadOnlyPropertyBag context)

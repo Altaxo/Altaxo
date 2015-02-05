@@ -180,6 +180,13 @@ namespace Altaxo.Main
 		protected abstract void AccumulatedEventData_Clear();
 
 		/// <summary>
+		/// Sets the change data without further processing. This function is infrastructure and intended to use only in OnResume after the parent has suspended this node again.
+		/// That's why it is presumed that the accumulated event data is empty when this function is called.
+		/// </summary>
+		/// <param name="e">The event args (one or more).</param>
+		protected abstract void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e);
+
+		/// <summary>
 		/// Accumulates the change event data of the child.
 		/// </summary>
 		/// <param name="sender">The sender of the change event notification.</param>

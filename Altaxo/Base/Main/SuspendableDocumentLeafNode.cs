@@ -106,7 +106,7 @@ namespace Altaxo.Main
 		protected virtual void OnResume()
 		{
 			EventArgs singleArg;
-			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg) && null != singleArg) // we have a single event arg accumulated
+			if (AccumulatedEventData_HasZeroOrOneEventArg(out singleArg)) // we have a single event arg accumulated
 			{
 				if (null == singleArg) // no events during suspended state
 				{
@@ -125,6 +125,10 @@ namespace Altaxo.Main
 					{
 						OnChanged(singleArg); // Fire the changed event
 					}
+					else // we were suspended again by the parent
+					{
+						AccumulatedChangeData_SetBackAfterResumeAndSuspend(singleArg);
+					}
 				}
 			}
 			else // there is more than one event arg accumulated
@@ -142,6 +146,10 @@ namespace Altaxo.Main
 				{
 					foreach (var eventArg in accumulatedEvents)
 						OnChanged(eventArg); // Fire the changed event
+				}
+				else // we were suspended again by the parent
+				{
+					AccumulatedChangeData_SetBackAfterResumeAndSuspend(accumulatedEvents);
 				}
 			}
 		}

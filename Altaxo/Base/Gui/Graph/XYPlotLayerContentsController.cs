@@ -1199,6 +1199,11 @@ namespace Altaxo.Gui.Graph
 			{
 				throw new NotImplementedException();
 			}
+
+			protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		#endregion Inner classes
