@@ -564,6 +564,84 @@ namespace Altaxo
 			}
 		}
 
+		/// <summary>
+		/// Tries to get an existring project item with the same type and name as the provided item.
+		/// </summary>
+		/// <param name="item">The item to test for.</param>
+		/// <returns>True an item with the same type and name as the provided item exists in the project, that existing item is returned; otherwise, the return value is null.</returns>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		/// <exception cref="System.ArgumentOutOfRangeException"></exception>
+		public IProjectItem TryGetExistingItemWithSameTypeAndName(IProjectItem item)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+
+			string name = item.Name;
+
+			if (item is Altaxo.Data.DataTable)
+			{
+				if (this.DataTableCollection.Contains(name))
+					return this.DataTableCollection[name];
+			}
+			else if (item is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				if (this.GraphDocumentCollection.Contains(item.Name))
+					return this.GraphDocumentCollection[item.Name];
+			}
+			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+			{
+				if (this.ProjectFolderProperties.Contains(item.Name))
+					return this.ProjectFolderProperties[item.Name];
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException(string.Format("Processing an item of type {0} is currently not implemented", item.GetType()));
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Tests whether an item with the same type and name is already present in the project.
+		/// </summary>
+		/// <param name="item">The item to test.</param>
+		/// <returns>True if an item with the same type and same name is already present in the project.</returns>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		/// <exception cref="System.ArgumentOutOfRangeException"></exception>
+		public bool ExistsItemWithSameTypeAndName(IProjectItem item)
+		{
+			return null != TryGetExistingItemWithSameTypeAndName(item);
+		}
+
+		/// <summary>
+		/// Removes the provided project item to the Altaxo project, for instance a table or a graph, to the project.
+		/// </summary>
+		/// <param name="item">The item to remove.</param>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
+		public void RemoveItem(IProjectItem item)
+		{
+			if (null == item)
+				throw new ArgumentNullException("item");
+
+			if (item is Altaxo.Data.DataTable)
+			{
+				this.DataTableCollection.Remove((Altaxo.Data.DataTable)item);
+			}
+			else if (item is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				this.GraphDocumentCollection.Remove((Altaxo.Graph.Gdi.GraphDocument)item);
+			}
+			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+			{
+				this.ProjectFolderProperties.Remove((Altaxo.Main.Properties.ProjectFolderPropertyDocument)item);
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException(string.Format("Removing an item of type {0} is currently not implemented", item.GetType()));
+			}
+		}
+
 		#endregion Static functions
 	}
 }

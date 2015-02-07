@@ -87,6 +87,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	public class CmdListItemCopyToMultipleFolders : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CopySelectedListItemsToMultipleFolders();
+		}
+	}
+
 	public class CmdListItemClipboardCopy : ProjectBrowseControllerCommand
 	{
 		protected override void Run(ProjectBrowseController ctrl)

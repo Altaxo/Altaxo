@@ -72,6 +72,34 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			CopyDocuments(list, areDocumentsFromOneFolder, originalFolderName);
 		}
 
+		/// <summary>
+		/// Moves the selected list items to a folder that is asked for by a dialog.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		public static void CopySelectedListItemsToMultipleFolders(this ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems();
+
+			string originalFolderName = null;
+			bool areDocumentsFromOneFolder = ctrl.IsProjectFolderSelected(out originalFolderName);
+
+			var dlgDoc = new Altaxo.Gui.ProjectBrowser.CopyItemsToMultipleFolderData();
+			dlgDoc.RelocateReferences = true;
+			if (!Current.Gui.ShowDialog(ref dlgDoc, "Select folders to copy to", false))
+				return;
+
+			foreach (var newFolderName in dlgDoc.FoldersToCopyTo)
+			{
+				DocNodePathReplacementOptions relocateOptions = null;
+				if (true == dlgDoc.RelocateReferences)
+				{
+					relocateOptions = new DocNodePathReplacementOptions();
+					relocateOptions.AddPathReplacementsForAllProjectItemTypes(originalFolderName, newFolderName);
+				}
+				Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null, dlgDoc.OverwriteExistingItems);
+			}
+		}
+
 		private const string rootFolderDisplayName = "<<<root folder>>>";
 
 		/// <summary>
@@ -119,7 +147,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				}
 			}
 
-			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null);
+			Current.Project.Folders.CopyItemsToFolder(list, newFolderName, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
 		}
 
 		public static void RenameSelectedListItem(this ProjectBrowseController ctrl)

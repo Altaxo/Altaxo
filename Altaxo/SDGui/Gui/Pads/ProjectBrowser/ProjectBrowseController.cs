@@ -1199,7 +1199,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 							}
 						}
 
-						Current.Project.Folders.CopyItemsToFolder(projectItems, targetFolder, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null);
+						Current.Project.Folders.CopyItemsToFolder(projectItems, targetFolder, null != relocateOptions ? relocateOptions.Visit : (DocNodeProxyReporter)null, false);
 					}
 				}
 				else

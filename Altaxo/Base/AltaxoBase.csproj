@@ -353,6 +353,7 @@
     <Compile Include="Gui\MVCANDControllerEditImmutableDocBase.cs" />
     <Compile Include="Gui\MVCANDControllerEditCopyOfDocBase.cs" />
     <Compile Include="Gui\MVCANDControllerEditOriginalDocBase.cs" />
+    <Compile Include="Gui\ProjectBrowser\CopyItemsToMultipleFoldersController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiDocumentAnalysisOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\AsciiImportOptionsController.cs" />
     <Compile Include="Gui\Serialization\Ascii\SingleCharSeparationStrategyController.cs" />

@@ -949,6 +949,8 @@
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemMoveTo" />
 			<MenuItem id="CopyToFolder" label="${res:XML.ProjectBrowserMenu.CopyToFolder}" description="${res:XML.ProjectBrowserMenu.CopyToFolder.Description}"
 								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemCopyTo" />
+			<MenuItem id="CopyToMultipleFolders" label="${res:XML.ProjectBrowserMenu.CopyToMultipleFolders}" description="${res:XML.ProjectBrowserMenu.CopyToMultipleFolders.Description}"
+								class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemCopyToMultipleFolders" />
 			<MenuItem id="MultiRenameItems" label="${res:XML.ProjectBrowserMenu.MultiRenameItems}" description="${res:XML.ProjectBrowserMenu.MultiRenameItems.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiRenameItems" />
 			<MenuItem id="CmdExchangeTablesForPlotItems" label="${res:XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems}" description="${res:XML.ProjectBrowserMenu.CmdExchangeTablesForPlotItems.Description}"

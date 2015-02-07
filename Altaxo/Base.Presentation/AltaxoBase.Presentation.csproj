@@ -665,6 +665,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\ProjectBrowser\CopyItemsToMultipleFoldersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Serialization\Ascii\AsciiCharControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1352,6 +1356,9 @@
     </Compile>
     <Compile Include="Gui\Main\PropertyBagControl.xaml.cs">
       <DependentUpon>PropertyBagControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\ProjectBrowser\CopyItemsToMultipleFoldersControl.xaml.cs">
+      <DependentUpon>CopyItemsToMultipleFoldersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Serialization\Ascii\AsciiCharControl.xaml.cs">
       <DependentUpon>AsciiCharControl.xaml</DependentUpon>

@@ -800,13 +800,14 @@ namespace Altaxo.Main
 		/// <param name="list">List of items to copy.</param>
 		/// <param name="destinationFolderName">Destination folder name.</param>
 		/// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
-		public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter ReportProxies)
+		/// <param name="overwriteExistingItemsOfSameType">If true, any item with the same name and same type will be replaced by the copied item. (if false, a new name is found for the copied item which not conflicts with the existing items).</param>
+		public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter ReportProxies, bool overwriteExistingItemsOfSameType)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
 			foreach (object item in list)
 			{
-				CopyItemToFolder(item, destinationFolderName, ReportProxies);
+				CopyItemToFolder(item, destinationFolderName, ReportProxies, overwriteExistingItemsOfSameType);
 			}
 		}
 
@@ -816,7 +817,8 @@ namespace Altaxo.Main
 		/// <param name="item">Item to copy. Has to be either a <see cref="ProjectFolder"/>, or a project item (<see cref="IProjectItem"/>).</param>
 		/// <param name="destinationFolderName">Destination folder name.</param>
 		/// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
-		public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter ReportProxies)
+		/// <param name="overwriteExistingItemsOfSameType">If true, any item with the same name and same type will be replaced by the copied item. (if false, a new name is found for the copied item which not conflicts with the existing items).</param>
+		public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter ReportProxies, bool overwriteExistingItemsOfSameType)
 		{
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
@@ -831,7 +833,7 @@ namespace Altaxo.Main
 				{
 					var oldItemFolder = ProjectFolder.GetFolderPart(((INameOwner)subitem).Name);
 					var newItemFolder = oldItemFolder.Replace(orgName, destName);
-					CopyItemToFolder(subitem, newItemFolder, ReportProxies);
+					CopyItemToFolder(subitem, newItemFolder, ReportProxies, overwriteExistingItemsOfSameType);
 				}
 			}
 			else if (item is IProjectItem)
@@ -840,6 +842,14 @@ namespace Altaxo.Main
 				var orgName = projectItem.Name;
 				var clonedItem = (IProjectItem)projectItem.Clone();
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
+
+				if (overwriteExistingItemsOfSameType)
+				{
+					var existingItem = Current.Project.TryGetExistingItemWithSameTypeAndName(clonedItem);
+					if (null != existingItem)
+						Current.Project.RemoveItem(existingItem);
+				}
+
 				Current.Project.AddItem(clonedItem);
 
 				if (null != ReportProxies)
