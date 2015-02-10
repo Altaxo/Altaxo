@@ -84,10 +84,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 				s._dataBounds.ParentObject = s;
 
 				s._rescaling = new LogarithmicAxisRescaleConditions();
-				s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
+				s._rescaling.SetUserParameters(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
 
 				LogarithmicAxisRescaleConditions rescaling = new LogarithmicAxisRescaleConditions();
-				rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
+				rescaling.SetUserParameters(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
 				s._rescaling = rescaling;
 
 				return s;
@@ -546,9 +546,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 		public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
 		{
-			bool isAutoOrg, isAutoEnd;
-			rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-			ProcessDataBounds(xorg, !isAutoOrg, xend, !isAutoEnd);
+			rescaling.OnDataBoundsChanged(xorg, xend);
+			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
 		}
 
 		protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)

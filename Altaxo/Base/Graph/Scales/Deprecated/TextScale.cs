@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			_dataBounds = new TextBoundaries();
 			_dataBounds.ParentObject = this;
 
-			_rescaling = new NumericAxisRescaleConditions();
+			_rescaling = new LinearScaleRescaleConditions();
 		}
 
 		public TextScale(TextScale from)
@@ -263,9 +263,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 		public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
 		{
-			bool isAutoOrg, isAutoEnd;
-			rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-			ProcessDataBounds(xorg, !isAutoOrg, xend, !isAutoEnd);
+			rescaling.OnDataBoundsChanged(xorg, xend);
+			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
 		}
 
 		public override void ProcessDataBounds(Altaxo.Data.AltaxoVariant org, bool orgfixed, Altaxo.Data.AltaxoVariant end, bool endfixed)

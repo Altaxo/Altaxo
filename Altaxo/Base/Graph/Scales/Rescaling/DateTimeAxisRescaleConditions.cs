@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 			ref BoundaryRescaling endRes,
 			ref BoundaryRescaling spanRes)
 		{
-			NumericAxisRescaleConditions.Normalize(ref orgRes, ref endRes, ref spanRes);
+			//NumericAxisRescaleConditions.Normalize(ref orgRes, ref endRes, ref spanRes);
 		}
 
 		/// <summary>
@@ -328,6 +328,11 @@ namespace Altaxo.Graph.Scales.Rescaling
 						break;
 				}
 			}
+		}
+
+		internal void OnUserZoomed(DateTime dateTime1, DateTime dateTime2)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

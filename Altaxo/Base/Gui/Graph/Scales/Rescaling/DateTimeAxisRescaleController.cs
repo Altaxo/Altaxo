@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 				if (_orgRescaling == BoundaryRescaling.Auto && _endRescaling == BoundaryRescaling.Auto && (_orgChanged || _endChanged))
 					_scale.SetScaleOrgEnd(_org, _end);
 				else
-					_scale.Rescale();
+					_scale.OnUserRescaled();
 			}
 
 			_orgChanged = _endChanged = false;

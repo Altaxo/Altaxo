@@ -153,7 +153,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var colorProvider = new ColorProvider.ColorProviderBGMYR() { ColorBelow = colorBelow, ColorAbove = colorAbove, ColorInvalid = colorInvalid, Transparency = 0 };
 				var scale = scalingStyle == ScalingStyle.Logarithmic ? (NumericalScale)new Log10Scale() : (NumericalScale)new LinearScale();
 
-				scale.Rescaling.SetOrgAndEnd(
+				scale.Rescaling.SetUserParameters(
 					double.IsNaN(vRangeFrom) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
 					vRangeFrom,
 					double.IsNaN(vRangeTo) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,

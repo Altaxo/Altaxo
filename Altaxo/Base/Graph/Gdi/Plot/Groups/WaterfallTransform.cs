@@ -631,7 +631,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					throw new NotImplementedException();
 				}
 
-				public override void Rescale()
+				public override void OnUserRescaled()
 				{
 					throw new NotImplementedException();
 				}
@@ -644,6 +644,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				public override bool IsEndExtendable
 				{
 					get { throw new NotImplementedException(); }
+				}
+
+				public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+				{
+					throw new NotImplementedException();
 				}
 			}
 

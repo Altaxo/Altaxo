@@ -1,8 +1,8 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,30 +23,34 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
-	/// <summary>
-	/// Summary description for LogarithmicAxisRescaleConditions.
-	/// </summary>
-	[Serializable]
-	public class InverseAxisRescaleConditions : NumericAxisRescaleConditions
+	using Altaxo.Graph.Scales.Boundaries;
+
+	public class LinearScaleRescaleConditions : NumericAxisRescaleConditions
 	{
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseAxisRescaleConditions), 0)]
+		/// <summary>
+		/// Initial version 2015-02-10.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearScaleRescaleConditions), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (InverseAxisRescaleConditions)obj;
+				var s = (LinearScaleRescaleConditions)obj;
 
 				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (InverseAxisRescaleConditions)o : new InverseAxisRescaleConditions();
+				var s = (LinearScaleRescaleConditions)o ?? new LinearScaleRescaleConditions();
 
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
@@ -56,18 +60,20 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 		#endregion Serialization
 
-		public InverseAxisRescaleConditions()
+		public LinearScaleRescaleConditions()
 		{
+			_dataBoundsOrg = _resultingOrg = 0;
+			_dataBoundsEnd = _resultingEnd = 1;
 		}
 
-		public InverseAxisRescaleConditions(InverseAxisRescaleConditions from)
+		public LinearScaleRescaleConditions(LinearScaleRescaleConditions from)
 			: base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 
 		public override object Clone()
 		{
-			return new InverseAxisRescaleConditions(this);
+			return new LinearScaleRescaleConditions(this);
 		}
 
 		/// <summary>
@@ -87,16 +93,15 @@ namespace Altaxo.Graph.Scales.Rescaling
 				}
 				else
 				{
-					var offs = 0.5 * Math.Abs(dataBoundsOrg);
-					dataBoundsOrg = dataBoundsOrg - offs;
-					dataBoundsEnd = dataBoundsEnd + offs;
+					dataBoundsOrg = dataBoundsOrg - Math.Abs(dataBoundsOrg);
+					dataBoundsEnd = dataBoundsEnd + Math.Abs(dataBoundsEnd);
 				}
 			}
 		}
 
 		protected override double GetDataBoundsScaleMean()
 		{
-			return 0.5 * _dataBoundsOrg * _dataBoundsEnd / (_dataBoundsOrg + _dataBoundsEnd);
+			return 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
 		}
 	}
 }

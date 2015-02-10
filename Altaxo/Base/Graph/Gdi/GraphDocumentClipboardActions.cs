@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Gdi
 			if (from is GraphDocument)
 			{
 				doc.CopyFrom((GraphDocument)from, options);
-				doc.RescaleAxes();
+				doc.OnUserRescaledAxes();
 			}
 		}
 
@@ -171,7 +171,7 @@ namespace Altaxo.Graph.Gdi
 			if (null != layer)
 			{
 				doc.RootLayer.ElementAt(layerNumber).CopyFrom(layer, options);
-				doc.RescaleAxes();
+				doc.OnUserRescaledAxes();
 			}
 		}
 

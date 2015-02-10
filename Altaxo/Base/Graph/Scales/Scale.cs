@@ -28,6 +28,7 @@ using System;
 namespace Altaxo.Graph.Scales
 {
 	using Boundaries;
+	using Ticks;
 
 	/// <summary>
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
@@ -62,7 +63,7 @@ namespace Altaxo.Graph.Scales
 		{
 			if (e is BoundariesChangedEventArgs)
 			{
-				Rescale();
+				OnUserRescaled();
 				e = EventArgs.Empty;
 			}
 
@@ -121,13 +122,20 @@ namespace Altaxo.Graph.Scales
 		/// <param name="end">The scale end.</param>
 		/// <returns>Null when the settings where applied. An string describing the problem otherwise.</returns>
 		/// <remarks>Settings like fixed boundaries or the data bounds will be ignored by this function. However, the next call
-		/// to <see cref="Rescale"/> will override the scale bounds.</remarks>
+		/// to <see cref="OnUserRescaled"/> will override the scale bounds.</remarks>
 		public abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
 
 		/// <summary>
-		/// Adjusts org and end considering fixed org and end values and the data boundaries.
+		/// Called when user has pressed the rescale button.
 		/// </summary>
-		public abstract void Rescale();
+		public abstract void OnUserRescaled();
+
+		/// <summary>
+		/// Called when user zoomed has used the zoom tool to zoom into the data.
+		/// </summary>
+		/// <param name="newZoomOrg">The new zoom orgigin.</param>
+		/// <param name="newZoomEnd">The new zoom end.</param>
+		public abstract void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd);
 
 		/// <summary>
 		/// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.

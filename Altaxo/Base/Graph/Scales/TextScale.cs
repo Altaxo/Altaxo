@@ -108,7 +108,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds = new TextBoundaries();
 			_dataBounds.ParentObject = this;
 
-			_rescaling = new NumericAxisRescaleConditions();
+			_rescaling = new LinearScaleRescaleConditions();
 			_rescaling.ParentObject = this;
 		}
 
@@ -244,30 +244,43 @@ namespace Altaxo.Graph.Scales
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		public override void Rescale()
+		public override void OnUserRescaled()
 		{
-			double xorg = 0;
-			double xend = 1;
+			_rescaling.OnUserRescaled();
+		}
 
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = 0.5;
-				xend = _dataBounds.NumberOfItems + 0.5;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
+		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+		{
+			_rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
 		}
 
 		#region Changed event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, _dataBounds))
+			{
+				double xorg = 0;
+				double xend = 1;
+				if (null != _dataBounds && !_dataBounds.IsEmpty)
+				{
+					xorg = 0.5;
+					xend = _dataBounds.NumberOfItems + 0.5;
+				}
+
+				_rescaling.OnDataBoundsChanged(xorg, xend);
+				e = null;
+				return false;
+			}
+
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+		}
 
 		protected override void OnChanged(EventArgs e)
 		{
 			if (e is BoundariesChangedEventArgs)
 			{
-				Rescale();
+				OnUserRescaled();
 			}
 
 			base.OnChanged(e);

@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// This command will rescale all axes in all layers
 		/// </summary>
-		public static void RescaleAxes(this GraphDocument doc)
+		public static void OnUserRescaledAxes(this GraphDocument doc)
 		{
 			doc.RootLayer.ExecuteFromTopmostChildToRoot(
 				(layer) =>
@@ -79,8 +79,7 @@ namespace Altaxo.Graph.Gdi
 					var xylayer = layer as XYPlotLayer;
 					if (null != xylayer)
 					{
-						xylayer.RescaleXAxis();
-						xylayer.RescaleYAxis();
+						xylayer.OnUserRescaledAxes();
 					}
 				});
 		}

@@ -525,12 +525,17 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		public override void Rescale()
+		public override void OnUserRescaled()
 		{
 			var scaleLinkedTo = ScaleLinkedTo;
 
 			if (null != scaleLinkedTo)
-				scaleLinkedTo.Rescale();
+				scaleLinkedTo.OnUserRescaled();
+		}
+
+		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+		{
+			// ignore this - we are linked
 		}
 
 		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)

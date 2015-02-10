@@ -101,5 +101,31 @@ namespace Altaxo.Graph.Scales
 				return new AltaxoVariant(End);
 			}
 		}
+
+		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+		{
+			Rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
+		}
+
+		public override void OnUserRescaled()
+		{
+			Rescaling.OnUserRescaled();
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
+			{
+				Rescaling.OnDataBoundsChanged(DataBounds.LowerBound, DataBounds.UpperBound);
+				return false; // no need to handle DataBounds changed further, only if rescaling is changed there is need to do something
+			}
+			else if (object.ReferenceEquals(sender, Rescaling)) // Rescaling has changed
+			{
+				SetScaleOrgEnd(Rescaling.ResultingOrg, Rescaling.ResultingEnd);
+				// Fall through
+			}
+
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+		}
 	} // end of class
 }

@@ -584,45 +584,13 @@ namespace Altaxo.Graph.Gdi
 			return this.IsXAxisLinked;
 		}
 
-		public void RescaleXAxis()
+		/// <summary>
+		/// Called when the user pressed the rescale button.
+		/// </summary>
+		public void OnUserRescaledAxes()
 		{
-			if (null == this.PlotItems)
-				return; // can happen during deserialization
-
-			var scaleBounds = _scales.X.Scale.DataBoundsObject;
-			if (null != scaleBounds)
-			{
-				// we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
-				// generates a OnBoundaryChanged event, and by handling this the boundaries of all other plot items are merged into the axis boundary,
-				// but (alas!) not all boundaries are now of the new type!
-				using (var xBoundariesChangedSuspendToken = _plotAssociationXBoundariesChanged_EventSuspender.SuspendGetToken())
-				{
-					using (var suspendToken = scaleBounds.SuspendGetToken())
-					{
-						scaleBounds.Reset();
-						foreach (IGPlotItem pa in this.PlotItems)
-						{
-							if (pa is IXBoundsHolder)
-							{
-								// merge the bounds with x and yAxis
-								((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
-							}
-						}
-
-						// take also the axis styles with physical values into account
-						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-						{
-							if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
-								scaleBounds.Add(id.PhysicalValueOtherFirst);
-						}
-
-						suspendToken.Resume();
-					}
-					xBoundariesChangedSuspendToken.Resume();
-				}
-				_scales.X.Scale.Rescale();
-			}
-			// _linkedScales.X.Scale.ProcessDataBounds();
+			_scales.X.Scale.OnUserRescaled();
+			_scales.Y.Scale.OnUserRescaled();
 		}
 
 		/// <summary>Gets or sets the y axis of this layer.</summary>
@@ -647,49 +615,6 @@ namespace Altaxo.Graph.Gdi
 			{
 				return this._scales.Y.Scale is LinkedScale;
 			}
-		}
-
-		public void RescaleYAxis()
-		{
-			if (null == this.PlotItems)
-				return; // can happen during deserialization
-
-			var scaleBounds = _scales.Y.Scale.DataBoundsObject;
-
-			if (null != scaleBounds)
-			{
-				// we have to disable our own Handler since if we change one DataBound of a association,
-				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
-				//but (alas!) not all boundaries are now of the new type!
-				using (var yBoundariesChangedSuspendToken = _plotAssociationYBoundariesChanged_EventSuspender.SuspendGetToken())
-				{
-					using (var suspendToken = scaleBounds.SuspendGetToken())
-					{
-						scaleBounds.Reset();
-						foreach (IGPlotItem pa in this.PlotItems)
-						{
-							if (pa is IYBoundsHolder)
-							{
-								// merge the bounds with x and yAxis
-								((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
-							}
-						}
-						// take also the axis styles with physical values into account
-						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-						{
-							if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
-								scaleBounds.Add(id.PhysicalValueOtherFirst);
-							else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
-								scaleBounds.Add(id.PhysicalValueOtherSecond);
-						}
-
-						suspendToken.Resume();
-					}
-					yBoundariesChangedSuspendToken.Resume();
-				}
-				_scales.Y.Scale.Rescale();
-			}
-			// _linkedScales.Y.Scale.ProcessDataBounds();
 		}
 
 		private bool EhYAxisInterrogateBoundaryChangedEvent()
@@ -1034,9 +959,9 @@ namespace Altaxo.Graph.Gdi
 			// after deserialisation the data bounds object of the scale is empty:
 			// then we have to rescale the axis
 			if (Scales.X.Scale.DataBoundsObject.IsEmpty)
-				RescaleXAxis();
+				InitializeXScaleDataBounds();
 			if (Scales.Y.Scale.DataBoundsObject.IsEmpty)
-				RescaleYAxis();
+				InitializeYScaleDataBounds();
 
 			_plotItems.PrepareGroupStyles(null, this);
 			_plotItems.ApplyGroupStyles(null);
@@ -1215,6 +1140,48 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
+		/// Initializes the x scale data bounds, for instance if the scale instance has changed or was deserialized.
+		/// </summary>
+		protected void InitializeXScaleDataBounds()
+		{
+			if (null == this.PlotItems)
+				return; // can happen during deserialization
+
+			var scaleBounds = _scales.X.Scale.DataBoundsObject;
+			if (null != scaleBounds)
+			{
+				// we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
+				// generates a OnBoundaryChanged event, and by handling this the boundaries of all other plot items are merged into the axis boundary,
+				// but (alas!) not all boundaries are now of the new type!
+				using (var xBoundariesChangedSuspendToken = _plotAssociationXBoundariesChanged_EventSuspender.SuspendGetToken())
+				{
+					using (var suspendToken = scaleBounds.SuspendGetToken())
+					{
+						scaleBounds.Reset();
+						foreach (IGPlotItem pa in this.PlotItems)
+						{
+							if (pa is IXBoundsHolder)
+							{
+								// merge the bounds with x and yAxis
+								((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+							}
+						}
+
+						// take also the axis styles with physical values into account
+						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+						{
+							if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
+								scaleBounds.Add(id.PhysicalValueOtherFirst);
+						}
+
+						suspendToken.Resume();
+					}
+					xBoundariesChangedSuspendToken.Resume();
+				}
+			}
+		}
+
+		/// <summary>
 		/// This handler is called if a y-boundary from any of the plotassociations of this layer
 		/// has changed. We then have to recalculate the boundaries.
 		/// </summary>
@@ -1244,16 +1211,62 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
+		/// Initializes the y scale data bounds, for instance if the scale instance has changed or was deserialized.
+		/// </summary>
+		protected void InitializeYScaleDataBounds()
+		{
+			if (null == this.PlotItems)
+				return; // can happen during deserialization
+
+			var scaleBounds = _scales.Y.Scale.DataBoundsObject;
+
+			if (null != scaleBounds)
+			{
+				// we have to disable our own Handler since if we change one DataBound of a association,
+				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
+				//but (alas!) not all boundaries are now of the new type!
+				using (var yBoundariesChangedSuspendToken = _plotAssociationYBoundariesChanged_EventSuspender.SuspendGetToken())
+				{
+					using (var suspendToken = scaleBounds.SuspendGetToken())
+					{
+						scaleBounds.Reset();
+						foreach (IGPlotItem pa in this.PlotItems)
+						{
+							if (pa is IYBoundsHolder)
+							{
+								// merge the bounds with x and yAxis
+								((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+							}
+						}
+						// take also the axis styles with physical values into account
+						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+						{
+							if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
+								scaleBounds.Add(id.PhysicalValueOtherFirst);
+							else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
+								scaleBounds.Add(id.PhysicalValueOtherSecond);
+						}
+
+						suspendToken.Resume();
+					}
+					yBoundariesChangedSuspendToken.Resume();
+				}
+				_scales.Y.Scale.OnUserRescaled();
+			}
+			// _linkedScales.Y.Scale.ProcessDataBounds();
+		}
+
+		/// <summary>
 		/// Absorbs the event from the ScaleCollection and distributes it further.
 		/// </summary>
 		/// <param name="e">The event data of the scale.</param>
 		private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
 		{
 			if (object.ReferenceEquals(_scales.X.Scale, e.NewScale))
-				RescaleXAxis();
+				InitializeXScaleDataBounds();
 
 			if (object.ReferenceEquals(_scales.Y.Scale, e.NewScale))
-				RescaleYAxis();
+				InitializeYScaleDataBounds();
 		}
 
 		#endregion Handler of child events

@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Scales
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		public override void Rescale()
+		public override void OnUserRescaled()
 		{
 		}
 

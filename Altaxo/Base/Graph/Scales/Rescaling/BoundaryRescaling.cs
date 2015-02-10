@@ -69,6 +69,21 @@ namespace Altaxo.Graph.Scales.Rescaling
 		/// <summary>
 		/// The axis boundary is set to use the span from the other axis boundary.
 		/// </summary>
-		UseSpan = 4
+		UseSpan = 4,
+
+		/// <summary>
+		/// Use boundary values provided by the user, but only till the next zoom or data change.
+		/// </summary>
+		AutoTempFixed = 4,
+
+		/// <summary>
+		/// Use boundary values provided by the user, and when zooming, use the new values as if they were user provided. Ignore any data driven boundary changes.
+		/// </summary>
+		FixedManually = 5,
+
+		/// <summary>
+		/// Use boundary values provided by the user. When zooming, keep the user provided values, and when rescaling, set the boundaries back to the user provided values. Ignore any data driven boundary changes.
+		/// </summary>
+		FixedZoomable = 6
 	}
 }

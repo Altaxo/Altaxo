@@ -262,7 +262,9 @@
     <Compile Include="Graph\RectangleExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Graph\Scales\InverseScale.cs" />
+    <Compile Include="Graph\Scales\Rescaling\BoundariesRelativeTo.cs" />
     <Compile Include="Graph\Scales\Rescaling\InverseAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Common\AscendingIntegerCollectionController.cs" />
@@ -295,6 +297,7 @@
     <Compile Include="Gui\Graph\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\InverseAxisRescaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\DateTimeTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\InverseTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\TextTickSpacingController.cs" />

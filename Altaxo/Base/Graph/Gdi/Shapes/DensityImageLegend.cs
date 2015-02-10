@@ -344,7 +344,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			// after deserialisation the data bounds object of the scale is empty:
 			// then we have to rescale the axis
 			if (_cachedArea.Scales[0].Scale.DataBoundsObject.IsEmpty)
-				_cachedArea.Scales[0].Scale.Rescale();
+				_cachedArea.Scales[0].Scale.OnUserRescaled();
 
 			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 		}
@@ -417,7 +417,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				suspendToken.Resume();
 			}
-			legendScale.Rescale(); // and do a rescale to apply the changes to the boundaries
+			legendScale.OnUserRescaled(); // and do a rescale to apply the changes to the boundaries
 
 			// Fill the bitmap
 

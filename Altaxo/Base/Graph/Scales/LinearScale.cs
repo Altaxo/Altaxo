@@ -111,11 +111,8 @@ namespace Altaxo.Graph.Scales
 		/// </summary>
 		public LinearScale()
 		{
-			_dataBounds = new FiniteNumericalBoundaries();
-			_dataBounds.ParentObject = this;
-
-			_rescaling = new NumericAxisRescaleConditions();
-			_rescaling.ParentObject = this;
+			_dataBounds = new FiniteNumericalBoundaries() { ParentObject = this };
+			_rescaling = new LinearScaleRescaleConditions() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -131,7 +128,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds.ParentObject = this;
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling = null == from.Rescaling ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
 			this._rescaling.ParentObject = this;
 		}
 
@@ -146,7 +143,7 @@ namespace Altaxo.Graph.Scales
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
 			ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new NumericAxisRescaleConditions());
+			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -295,28 +292,11 @@ namespace Altaxo.Graph.Scales
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		public override void Rescale()
-		{
-			double xorg = 0;
-			double xend = 1;
-
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = _dataBounds.LowerBound;
-				xend = _dataBounds.UpperBound;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
-		}
-
 		protected override void OnChanged(EventArgs e)
 		{
 			if (e is BoundariesChangedEventArgs)
 			{
-				Rescale();
+				OnUserRescaled();
 			}
 
 			base.OnChanged(e);

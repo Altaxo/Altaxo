@@ -186,7 +186,7 @@ namespace Altaxo.Graph.Scales
 		{
 			if (null != _scale)
 			{
-				_scale.Rescale();
+				_scale.OnUserRescaled();
 				UpdateIfScaleChanged();
 			}
 		}

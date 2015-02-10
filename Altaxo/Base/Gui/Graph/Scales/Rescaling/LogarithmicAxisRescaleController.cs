@@ -34,52 +34,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 	[UserControllerForObject(typeof(LogarithmicAxisRescaleConditions), 1)]
 	public class LogarithmicAxisRescaleController
 		:
-		NumericAxisRescaleController
+		LinearScaleRescaleConditionsController
 	{
-		#region IOrgEndSpanControlEventReceiver Members
-
-		public override bool EhValue1Changed(string txt)
-		{
-			if (!GUIConversion.IsDouble(txt))
-				return true;
-
-			double val;
-			GUIConversion.IsDouble(txt, out val);
-			if (val > 0)
-			{
-				_org = val;
-				_orgChanged = true;
-			}
-			return val <= 0;
-		}
-
-		public override bool EhValue2Changed(string txt)
-		{
-			if (!GUIConversion.IsDouble(txt))
-				return true;
-
-			double val;
-			GUIConversion.IsDouble(txt, out val);
-			if (val > 0)
-			{
-				_end = val;
-				_endChanged = true;
-			}
-			return val <= 0;
-		}
-
-		public override bool EhValue3Changed(string txt)
-		{
-			if (!GUIConversion.IsDouble(txt))
-				return true;
-
-			double val;
-			GUIConversion.IsDouble(txt, out val);
-			if (val > 0)
-				_span = val;
-			return val <= 0;
-		}
-
-		#endregion IOrgEndSpanControlEventReceiver Members
 	}
 }

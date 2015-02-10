@@ -285,26 +285,6 @@ namespace Altaxo.Graph.Scales
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		public override void Rescale()
-		{
-			double xorg = double.NaN;
-			double xend = double.NaN;
-
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = _dataBounds.LowerBound;
-				xend = _dataBounds.UpperBound;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			if (!(xorg > 0) || !(xend > 0))
-				HandleInvalidOrgOrEnd(ref xorg, ref xend);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
-		}
-
 		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			double o = org.ToDouble();
@@ -327,7 +307,7 @@ namespace Altaxo.Graph.Scales
 		{
 			if (e is BoundariesChangedEventArgs)
 			{
-				Rescale(); // calculate new bounds and fire AxisChanged event
+				OnUserRescaled(); // calculate new bounds and fire AxisChanged event
 			}
 
 			base.OnChanged(e);

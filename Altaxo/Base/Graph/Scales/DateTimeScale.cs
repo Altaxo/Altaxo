@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		public override void Rescale()
+		public override void OnUserRescaled()
 		{
 			DateTime xorg = DateTime.MinValue;
 			DateTime xend = DateTime.MinValue.AddDays(1);
@@ -336,11 +336,16 @@ namespace Altaxo.Graph.Scales
 			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
 		}
 
+		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+		{
+			_rescaling.OnUserZoomed((DateTime)newZoomOrg, (DateTime)newZoomEnd);
+		}
+
 		protected override void OnChanged(EventArgs e)
 		{
 			if (e is BoundariesChangedEventArgs)
 			{
-				Rescale();
+				OnUserRescaled();
 			}
 
 			base.OnChanged(e);

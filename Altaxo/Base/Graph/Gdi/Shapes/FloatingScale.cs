@@ -738,7 +738,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return null;
 			}
 
-			public override void Rescale()
+			public override void OnUserRescaled()
+			{
+			}
+
+			public override void OnUserZoomed(Data.AltaxoVariant newZoomOrg, Data.AltaxoVariant newZoomEnd)
 			{
 			}
 		}

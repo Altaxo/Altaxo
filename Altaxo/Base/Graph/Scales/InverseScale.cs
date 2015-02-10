@@ -208,6 +208,11 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
+		public override void OnUserRescaled()
+		{
+			_rescaling.OnUserRescaled();
+		}
+
 		/// <summary>
 		/// Get the internal DataBound object (mostly for merging).
 		/// </summary>
@@ -313,30 +318,13 @@ namespace Altaxo.Graph.Scales
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		public override void Rescale()
-		{
-			double xorg = 0;
-			double xend = 1;
-
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = _dataBounds.UpperBound;
-				xend = _dataBounds.LowerBound;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
-		}
-
 		#region Changed event handling
 
 		protected override void OnChanged(EventArgs e)
 		{
 			if (e is BoundariesChangedEventArgs)
 			{
-				Rescale();
+				OnUserRescaled();
 			}
 
 			base.OnChanged(e);
