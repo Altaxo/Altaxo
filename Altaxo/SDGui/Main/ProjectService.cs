@@ -942,7 +942,7 @@ namespace Altaxo.Main
 		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder_Unsynchronized(string folderName)
 		{
 			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
-				PropertyExtensions.GetPropertyContextOfProjectFolder(folderName), "GRAPH", folderName, false);
+				PropertyExtensions.GetPropertyContextOfProjectFolder(folderName), null, folderName, false);
 
 			return CreateNewGraph_Unsynchronized(graph);
 		}
@@ -979,7 +979,11 @@ namespace Altaxo.Main
 		{
 			if (graph == null)
 				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
-					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
+					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), null, ProjectFolder.RootFolderName, false);
+
+			// make sure that new graph is contained in project
+			if (!Current.Project.GraphDocumentCollection.Contains(graph.Name))
+				Current.Project.GraphDocumentCollection.Add(graph);
 
 			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDGraphViewContent(graph);
 
