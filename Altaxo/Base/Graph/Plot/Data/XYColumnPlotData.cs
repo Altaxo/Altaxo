@@ -891,9 +891,7 @@ namespace Altaxo.Graph.Plot.Data
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (object.ReferenceEquals(sender, _xColumn))
-				_isCachedDataValid = false;
-			else if (object.ReferenceEquals(sender, _yColumn))
+			if (object.ReferenceEquals(sender, _xColumn) || object.ReferenceEquals(sender, _yColumn))
 				_isCachedDataValid = false;
 
 			// If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
@@ -911,6 +909,26 @@ namespace Altaxo.Graph.Plot.Data
 			}
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		/// <summary>
+		/// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,
+		/// and trigger the boundary changed event if one of the boundaries have changed.
+		/// </summary>
+		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
+		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
+		/// <returns>
+		/// The return value of the base handling function
+		/// </returns>
+		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, _xColumn) || object.ReferenceEquals(sender, _yColumn))
+				_isCachedDataValid = false;
+
+			if (!_isCachedDataValid)
+				CalculateCachedData(); // Calculates cached data -> If boundaries changed, this will trigger a boundary changed event
+
+			return base.HandleLowPriorityChildChangeCases(sender, ref e);
 		}
 
 		#endregion Change event handling

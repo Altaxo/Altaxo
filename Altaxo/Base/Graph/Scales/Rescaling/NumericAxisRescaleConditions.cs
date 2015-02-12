@@ -327,131 +327,17 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 		#region Resulting Org/End to/fron User Org/End
 
-		protected double GetResultingOrgFromUserProvidedOrg()
-		{
-			switch (_userProvidedOrgRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _userProvidedOrgValue;
+		protected abstract double GetResultingOrgFromUserProvidedOrg();
 
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedOrgValue + _dataBoundsOrg;
+		protected abstract double GetUserProvidedOrgFromResultingOrg(double resultingOrg);
 
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedOrgValue + _dataBoundsEnd;
+		//		protected abstract double GetResultingOrgFromDataBoundsOrg();
 
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedOrgValue + GetDataBoundsScaleMean();
+		protected abstract double GetResultingEndFromUserProvidedEnd();
 
-				default:
-					throw new NotImplementedException();
-			}
-		}
+		protected abstract double GetUserProvidedEndFromResultingEnd(double resultingEnd);
 
-		protected double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
-		{
-			switch (_userProvidedOrgRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return resultingOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return resultingOrg - _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return resultingOrg - _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return resultingOrg - GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		protected double GetResultingOrgFromDataBoundsOrg()
-		{
-			switch (_userProvidedOrgRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedOrgValue + _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedOrgValue + _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedOrgValue + GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		protected double GetResultingEndFromUserProvidedEnd()
-		{
-			switch (_userProvidedEndRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _userProvidedEndValue;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedEndValue + _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedEndValue + _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedEndValue + GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		protected double GetUserProvidedEndFromResultingEnd(double resultingEnd)
-		{
-			switch (_userProvidedEndRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return resultingEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return resultingEnd - _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return resultingEnd - _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return resultingEnd - GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		protected double GetResultingEndFromDataBoundsEnd()
-		{
-			switch (_userProvidedEndRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedEndValue + _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedEndValue + _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedEndValue + GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
+		//		protected abstract double GetResultingEndFromDataBoundsEnd();
 
 		#endregion Resulting Org/End to/fron User Org/End
 
@@ -479,7 +365,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					else
 					{
 						_resultingOrg = _dataBoundsOrg;
-						_isResultingOrgFixed = false;
+						_isResultingOrgFixed = false; // because resultingOrg can go further down to resultingUserProvidedOrgValue
 					}
 					break;
 
@@ -487,7 +373,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					if (resultingUserProvidedOrgValue <= _dataBoundsOrg)
 					{
 						_resultingOrg = resultingUserProvidedOrgValue;
-						_isResultingOrgFixed = true;
+						_isResultingOrgFixed = false;
 					}
 					else
 					{
@@ -497,9 +383,14 @@ namespace Altaxo.Graph.Scales.Rescaling
 					break;
 
 				case BoundaryRescaling.Auto:
+					_resultingOrg = _dataBoundsOrg;
+					_isResultingOrgFixed = false;
+					break;
+
 				case BoundaryRescaling.AutoTempFixed:
 					_resultingOrg = _dataBoundsOrg;
 					_isResultingOrgFixed = false;
+					_orgRescaling = BoundaryRescaling.Auto;
 					break;
 			}
 		}
@@ -511,8 +402,13 @@ namespace Altaxo.Graph.Scales.Rescaling
 			switch (_orgRescaling)
 			{
 				case BoundaryRescaling.Auto:
+					_resultingOrg = _dataBoundsOrg;
+					_isResultingOrgFixed = false;
+					break;
+
 				case BoundaryRescaling.AutoTempFixed:
-					_resultingOrg = GetResultingOrgFromDataBoundsOrg();
+					_orgRescaling = BoundaryRescaling.Auto; // Fall back to Auto rescaling
+					_resultingOrg = _dataBoundsOrg;
 					_isResultingOrgFixed = false;
 					break;
 
@@ -537,7 +433,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					if (resultingUserProvidedOrgValue <= _dataBoundsOrg)
 					{
 						_resultingOrg = resultingUserProvidedOrgValue;
-						_isResultingOrgFixed = true;
+						_isResultingOrgFixed = false;
 					}
 					else
 					{
@@ -571,11 +467,13 @@ namespace Altaxo.Graph.Scales.Rescaling
 					_orgRescaling = BoundaryRescaling.AutoTempFixed;
 					_resultingOrg = zoomValueOrg;
 					_isResultingOrgFixed = true;
+					_userProvidedOrgValue = GetUserProvidedOrgFromResultingOrg(_resultingOrg);
 					break;
 
 				case BoundaryRescaling.AutoTempFixed:
 					_resultingOrg = zoomValueOrg;
 					_isResultingOrgFixed = true;
+					_userProvidedOrgValue = GetUserProvidedOrgFromResultingOrg(_resultingOrg);
 					break;
 
 				case BoundaryRescaling.Fixed:
@@ -596,29 +494,13 @@ namespace Altaxo.Graph.Scales.Rescaling
 					break;
 
 				case BoundaryRescaling.LessOrEqual:
-					if (resultingUserProvidedOrgValue <= zoomValueOrg)
-					{
-						_resultingOrg = resultingUserProvidedOrgValue;
-						_isResultingOrgFixed = true;
-					}
-					else
-					{
-						_resultingOrg = zoomValueOrg;
-						_isResultingOrgFixed = true;
-					}
+					_resultingOrg = zoomValueOrg;
+					_isResultingOrgFixed = true;
 					break;
 
 				case BoundaryRescaling.GreaterOrEqual:
-					if (resultingUserProvidedOrgValue >= _dataBoundsOrg)
-					{
-						_resultingOrg = resultingUserProvidedOrgValue;
-						_isResultingOrgFixed = true;
-					}
-					else
-					{
-						_resultingOrg = zoomValueOrg;
-						_isResultingOrgFixed = true;
-					}
+					_resultingOrg = zoomValueOrg;
+					_isResultingOrgFixed = true;
 					break;
 			}
 		}
@@ -653,7 +535,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					if (resultingUserProvidedOrgValue <= _dataBoundsOrg)
 					{
 						_resultingOrg = resultingUserProvidedOrgValue;
-						_isResultingOrgFixed = true;
+						_isResultingOrgFixed = false;
 					}
 					else
 					{
@@ -697,7 +579,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					else
 					{
 						_resultingEnd = _dataBoundsEnd;
-						_isResultingEndFixed = true;
+						_isResultingEndFixed = false;
 					}
 					break;
 
@@ -705,19 +587,24 @@ namespace Altaxo.Graph.Scales.Rescaling
 					if (resultingUserProvidedEndValue <= _dataBoundsEnd)
 					{
 						_resultingEnd = resultingUserProvidedEndValue;
-						_isResultingEndFixed = false;
+						_isResultingEndFixed = true;
 					}
 					else
 					{
 						_resultingEnd = _dataBoundsEnd;
-						_isResultingEndFixed = true;
+						_isResultingEndFixed = false; // because resultingEnd can go further up to resultingUserProvidedValue
 					}
 					break;
 
 				case BoundaryRescaling.Auto:
+					_resultingEnd = _dataBoundsEnd;
+					_isResultingEndFixed = false;
+					break;
+
 				case BoundaryRescaling.AutoTempFixed:
 					_resultingEnd = _dataBoundsEnd;
 					_isResultingEndFixed = false;
+					_endRescaling = BoundaryRescaling.Auto; // Fall back to auto rescaling
 					break;
 			}
 		}
@@ -729,8 +616,13 @@ namespace Altaxo.Graph.Scales.Rescaling
 			switch (_endRescaling)
 			{
 				case BoundaryRescaling.Auto:
+					_resultingEnd = _dataBoundsEnd;
+					_isResultingEndFixed = false;
+					break;
+
 				case BoundaryRescaling.AutoTempFixed:
-					_resultingEnd = GetResultingEndFromDataBoundsEnd();
+					_endRescaling = BoundaryRescaling.Auto;
+					_resultingEnd = _dataBoundsEnd;
 					_isResultingEndFixed = false;
 					break;
 
@@ -760,7 +652,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					else
 					{
 						_resultingEnd = _dataBoundsEnd;
-						_isResultingEndFixed = true;
+						_isResultingEndFixed = false;
 					}
 					break;
 
@@ -768,12 +660,12 @@ namespace Altaxo.Graph.Scales.Rescaling
 					if (resultingUserProvidedEndValue <= _dataBoundsEnd)
 					{
 						_resultingEnd = resultingUserProvidedEndValue;
-						_isResultingEndFixed = false;
+						_isResultingEndFixed = true;
 					}
 					else
 					{
 						_resultingEnd = _dataBoundsEnd;
-						_isResultingEndFixed = true;
+						_isResultingEndFixed = false;
 					}
 					break;
 			}
@@ -789,11 +681,13 @@ namespace Altaxo.Graph.Scales.Rescaling
 					_endRescaling = BoundaryRescaling.AutoTempFixed;
 					_resultingEnd = zoomValueEnd;
 					_isResultingEndFixed = true;
+					_userProvidedEndValue = GetUserProvidedEndFromResultingEnd(_resultingEnd);
 					break;
 
 				case BoundaryRescaling.AutoTempFixed:
 					_resultingEnd = zoomValueEnd;
 					_isResultingEndFixed = true;
+					_userProvidedEndValue = GetUserProvidedEndFromResultingEnd(_resultingEnd);
 					break;
 
 				case BoundaryRescaling.Fixed:
@@ -814,29 +708,13 @@ namespace Altaxo.Graph.Scales.Rescaling
 					break;
 
 				case BoundaryRescaling.LessOrEqual:
-					if (resultingUserProvidedEndValue <= zoomValueEnd)
-					{
-						_resultingEnd = resultingUserProvidedEndValue;
-						_isResultingEndFixed = true;
-					}
-					else
-					{
-						_resultingEnd = zoomValueEnd;
-						_isResultingEndFixed = true;
-					}
+					_resultingEnd = zoomValueEnd;
+					_isResultingEndFixed = true;
 					break;
 
 				case BoundaryRescaling.GreaterOrEqual:
-					if (resultingUserProvidedEndValue >= _dataBoundsEnd)
-					{
-						_resultingEnd = resultingUserProvidedEndValue;
-						_isResultingEndFixed = true;
-					}
-					else
-					{
-						_resultingEnd = zoomValueEnd;
-						_isResultingEndFixed = true;
-					}
+					_resultingEnd = zoomValueEnd;
+					_isResultingEndFixed = true;
 					break;
 			}
 		}
@@ -863,7 +741,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 					else
 					{
 						_resultingEnd = _dataBoundsEnd;
-						_isResultingEndFixed = true;
+						_isResultingEndFixed = false;
 					}
 					break;
 
@@ -871,12 +749,12 @@ namespace Altaxo.Graph.Scales.Rescaling
 					if (resultingUserProvidedEndValue <= _dataBoundsEnd)
 					{
 						_resultingEnd = resultingUserProvidedEndValue;
-						_isResultingEndFixed = false;
+						_isResultingEndFixed = true;
 					}
 					else
 					{
 						_resultingEnd = _dataBoundsEnd;
-						_isResultingEndFixed = true;
+						_isResultingEndFixed = false;
 					}
 					break;
 

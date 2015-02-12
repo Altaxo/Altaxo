@@ -42,6 +42,7 @@ namespace Altaxo.Graph.Scales
 		protected double _cachedOneByAxisSpan;
 		protected Boundaries.NumericalBoundaries _dataBounds;
 		protected Rescaling.AngularRescaleConditions _rescaling;
+		protected Ticks.NumericTickSpacing _tickSpacing;
 
 		#region Serialization
 
@@ -264,5 +265,30 @@ namespace Altaxo.Graph.Scales
 		}
 
 		#endregion NumericalScale
+
+		public override object Clone()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+				if (!(value is Ticks.NumericTickSpacing))
+					throw new ArgumentException("Value must be of type NumericTickSpacing");
+
+				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+				{
+					EhChildChanged(Rescaling, EventArgs.Empty);
+				}
+			}
+		}
 	}
 }

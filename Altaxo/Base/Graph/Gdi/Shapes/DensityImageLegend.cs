@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("PlotItem", s._plotItemProxy);
 				info.AddValue("IsOrientationVertical", s.IsOrientationVertical);
 				info.AddValue("IsScaleReversed", s.IsScaleReversed);
-				info.AddValue("Scale", s.ScaleWithTicks.Scale);
+				info.AddValue("Scale", s.ScaleWithTicks);
 				info.AddValue("TickSpacing", s.ScaleWithTicks.TickSpacing);
 				info.AddValue("AxisStyles", s._axisStyles);
 			}
@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			// _scaleIsReversed = false;
 
 			var cachedScale = (NumericalScale)PlotItem.Style.Scale.Clone();
-			var scaleTickSpacing = ScaleWithTicks.CreateDefaultTicks(cachedScale.GetType());
+			var scaleTickSpacing = Altaxo.Graph.Scales.Scale.CreateDefaultTicks(cachedScale.GetType());
 			_cachedArea = new DensityLegendArea(Size, true, false, cachedScale, scaleTickSpacing);
 			//_cachedArea.ParentObject = this; // --> moved to the end of this function
 
@@ -261,7 +261,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public ScaleWithTicks ScaleWithTicks
+		public Scale ScaleWithTicks
 		{
 			get
 			{
@@ -343,8 +343,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			// after deserialisation the data bounds object of the scale is empty:
 			// then we have to rescale the axis
-			if (_cachedArea.Scales[0].Scale.DataBoundsObject.IsEmpty)
-				_cachedArea.Scales[0].Scale.OnUserRescaled();
+			if (_cachedArea.Scales[0].DataBoundsObject.IsEmpty)
+				_cachedArea.Scales[0].OnUserRescaled();
 
 			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 		}
@@ -405,7 +405,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				colorProvider = new Plot.ColorProvider.ColorProviderBGRY();
 			}
 
-			var legendScale = (NumericalScale)ScaleWithTicks.Scale;
+			var legendScale = (NumericalScale)ScaleWithTicks;
 			var legendTickSpacing = ScaleWithTicks.TickSpacing;
 
 			// We set the boundaries of our legend scale to the org and end of the z-scale of the density image item.
@@ -522,8 +522,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_size = size;
 				_scales = new ScaleCollection() { ParentObject = this };
-				_scales[0] = new ScaleWithTicks(scale, tickSpacing);
-				_scales[1] = new ScaleWithTicks(new LinearScale(), new NoTickSpacing());
+				_scales[0] = scale; scale.TickSpacing = tickSpacing;
+				_scales[1] = new LinearScale() { TickSpacing = null };
 				_coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem() { ParentObject = this };
 				_coordinateSystem.IsXYInterchanged = isXYInterchanged;
 				_coordinateSystem.IsXReverse = isXReversed;
@@ -559,12 +559,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public Scale XAxis
 			{
-				get { return _scales[0].Scale; }
+				get { return _scales[0]; }
 			}
 
 			public Scale YAxis
 			{
-				get { return _scales[1].Scale; }
+				get { return _scales[1]; }
 			}
 
 			public ScaleCollection Scales

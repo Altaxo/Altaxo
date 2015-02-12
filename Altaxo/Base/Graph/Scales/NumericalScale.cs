@@ -121,8 +121,21 @@ namespace Altaxo.Graph.Scales
 			}
 			else if (object.ReferenceEquals(sender, Rescaling)) // Rescaling has changed
 			{
-				SetScaleOrgEnd(Rescaling.ResultingOrg, Rescaling.ResultingEnd);
+				if (null == TickSpacing)
+				{
+					SetScaleOrgEnd(Rescaling.ResultingOrg, Rescaling.ResultingEnd);
+				}
+				else
+				{
+					AltaxoVariant org = Rescaling.ResultingOrg, end = Rescaling.ResultingEnd;
+					TickSpacing.PreProcessScaleBoundaries(ref org, ref end, !Rescaling.IsResultingOrgFixed, !Rescaling.IsResultingEndFixed);
+					SetScaleOrgEnd(org, end);
+					TickSpacing.FinalProcessScaleBoundaries(org, end, this);
+				}
 				// Fall through
+			}
+			else if (object.ReferenceEquals(sender, TickSpacing))
+			{
 			}
 
 			return base.HandleLowPriorityChildChangeCases(sender, ref e);

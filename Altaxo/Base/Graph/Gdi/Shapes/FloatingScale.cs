@@ -426,18 +426,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
 					{
-						var physValue = layer.Scales[_scaleNumber].Scale.NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
 						physValue += _scaleSpanValue; // to be replaced by the scale span
-						var logValue = layer.Scales[_scaleNumber].Scale.PhysicalVariantToNormal(physValue);
+						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
 						rEnd[_scaleNumber] = logValue;
 					}
 					break;
 
 				case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
 					{
-						var physValue = layer.Scales[_scaleNumber].Scale.NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
 						physValue *= _scaleSpanValue; // to be replaced by the scale span
-						var logValue = layer.Scales[_scaleNumber].Scale.PhysicalVariantToNormal(physValue);
+						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
 						rEnd[_scaleNumber] = logValue;
 					}
 					break;
@@ -453,11 +453,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_axisStyle = axStyle;
 			}
 
-			ScaleWithTicks scaleWithTicks = null;
-			var privScale = new ScaleSegment(layer.Scales[_scaleNumber].Scale, rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
+			Scale scaleWithTicks = null;
+			var privScale = new ScaleSegment(layer.Scales[_scaleNumber], rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
 			_tickSpacing.FinalProcessScaleBoundaries(privScale.OrgAsVariant, privScale.EndAsVariant, privScale);
-			scaleWithTicks = new ScaleWithTicks(privScale, _tickSpacing);
-			var privLayer = new LayerSegment(layer, scaleWithTicks, rBegin, rEnd, _scaleNumber);
+			privScale.TickSpacing = _tickSpacing;
+			var privLayer = new LayerSegment(layer, privScale, rBegin, rEnd, _scaleNumber);
 
 			if (_background == null)
 			{
@@ -545,7 +545,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			private ScaleCollection _scaleCollection = new ScaleCollection();
 
-			public LayerSegment(IPlotArea underlyingArea, ScaleWithTicks scaleWithTicks, Logical3D org, Logical3D end, int scaleNumber)
+			public LayerSegment(IPlotArea underlyingArea, Scale scaleWithTicks, Logical3D org, Logical3D end, int scaleNumber)
 			{
 				_underlyingArea = underlyingArea;
 				_org = org;
@@ -578,12 +578,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public Scale XAxis
 			{
-				get { return _scaleCollection[0].Scale; }
+				get { return _scaleCollection[0]; }
 			}
 
 			public Scale YAxis
 			{
-				get { return _scaleCollection[1].Scale; }
+				get { return _scaleCollection[1]; }
 			}
 
 			public ScaleCollection Scales
@@ -744,6 +744,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public override void OnUserZoomed(Data.AltaxoVariant newZoomOrg, Data.AltaxoVariant newZoomEnd)
 			{
+			}
+
+			public override TickSpacing TickSpacing
+			{
+				get
+				{
+					return null;
+				}
+				set
+				{
+					throw new NotImplementedException();
+				}
 			}
 		}
 

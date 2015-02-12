@@ -582,7 +582,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		{
 			CSLineID styleID = styleInfo.Identifier;
 			_cachedAxisStyleInfo = styleInfo.Clone();
-			Scale axis = layer.Scales[styleID.ParallelAxisNumber].Scale;
+			Scale axis = layer.Scales[styleID.ParallelAxisNumber];
 
 			TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 

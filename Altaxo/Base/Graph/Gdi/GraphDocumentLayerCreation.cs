@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Gdi
 			if (null != linkedLayerAsXYPlotLayer)
 			{
 				// create a linked x axis of the same type than in the linked layer
-				var scaleLinkedTo = linkedLayerAsXYPlotLayer.Scales.X.Scale;
+				var scaleLinkedTo = linkedLayerAsXYPlotLayer.Scales.X;
 				var xScale = new Scales.LinkedScale((Scales.Scale)scaleLinkedTo.Clone());
 				newlayer.Scales.SetScaleWithTicks(0, xScale, (Scales.Ticks.TickSpacing)linkedLayerAsXYPlotLayer.Scales.X.TickSpacing.Clone());
 				xScale.ScaleLinkedTo = scaleLinkedTo; // only now can we set the ScaleLinkedTo, because by now xScale should have a parent object

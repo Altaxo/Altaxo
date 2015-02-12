@@ -33,12 +33,14 @@ namespace Altaxo.Graph.Scales
 	/// </summary>
 
 	[Serializable]
-	public class LinearScale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
+	public class LinearScale : NumericalScale
 	{
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds;
 
 		protected NumericAxisRescaleConditions _rescaling;
+
+		protected Ticks.NumericTickSpacing _tickSpacing;
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -61,21 +63,24 @@ namespace Altaxo.Graph.Scales
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearScale), 3)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinearScale", 3)]
 		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				LinearScale s = (LinearScale)obj;
 				info.AddValue("Org", s._cachedAxisOrg);
 				info.AddValue("End", s._cachedAxisEnd);
 				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				 */
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LinearScale s = null != o ? (LinearScale)o : new LinearScale();
+				LinearScale s = (LinearScale)o ?? new LinearScale(info);
 
 				s._cachedAxisOrg = (double)info.GetDouble("Org");
 				s._cachedAxisEnd = (double)info.GetDouble("End");
@@ -90,21 +95,61 @@ namespace Altaxo.Graph.Scales
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s;
 
+				s._tickSpacing = new Ticks.LinearTickSpacing();
+				s._tickSpacing.ParentObject = s;
+
 				return s;
 			}
 		}
 
 		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
+		/// 2015-02-11 Add Tickspacing
 		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearScale), 4)]
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			// restore the event chain
-			_dataBounds.ParentObject = this;
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinearScale s = (LinearScale)obj;
+				info.AddValue("Org", s._cachedAxisOrg);
+				info.AddValue("End", s._cachedAxisEnd);
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("TickSpacing", s._tickSpacing);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinearScale s = (LinearScale)o ?? new LinearScale(info);
+
+				s._cachedAxisOrg = (double)info.GetDouble("Org");
+				s._cachedAxisEnd = (double)info.GetDouble("End");
+				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
+				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
+				s._isOrgExtendable = false;
+				s._isEndExtendable = false;
+
+				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
+
+				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
+				s._dataBounds.ParentObject = s;
+
+				s._tickSpacing = (Ticks.NumericTickSpacing)info.GetValue("TickSpacing", s);
+				s._tickSpacing.ParentObject = s;
+
+				return s;
+			}
 		}
 
 		#endregion Serialization
+
+		/// <summary>
+		/// Constructor for deserialization only.
+		/// </summary>
+		protected LinearScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
 
 		/// <summary>
 		/// Creates a default linear axis with org=0 and end=1.
@@ -113,6 +158,7 @@ namespace Altaxo.Graph.Scales
 		{
 			_dataBounds = new FiniteNumericalBoundaries() { ParentObject = this };
 			_rescaling = new LinearScaleRescaleConditions() { ParentObject = this };
+			_tickSpacing = new Ticks.LinearTickSpacing() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -121,38 +167,40 @@ namespace Altaxo.Graph.Scales
 		/// <param name="from">A other linear axis from which to copy from.</param>
 		public LinearScale(LinearScale from)
 		{
-			this._cachedAxisEnd = from._cachedAxisEnd;
-			this._cachedAxisOrg = from._cachedAxisOrg;
-			this._cachedAxisSpan = from._cachedAxisSpan;
-			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
-			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
-
-			this._rescaling = null == from.Rescaling ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
-			this._rescaling.ParentObject = this;
+			CopyFrom(from);
 		}
 
-		public virtual void CopyFrom(LinearScale from)
+		public virtual bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			this._cachedAxisEnd = from._cachedAxisEnd;
-			this._cachedAxisOrg = from._cachedAxisOrg;
-			this._cachedAxisSpan = from._cachedAxisSpan;
-			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+			var from = obj as LinearScale;
+			if (null != from)
+			{
+				this._cachedAxisEnd = from._cachedAxisEnd;
+				this._cachedAxisOrg = from._cachedAxisOrg;
+				this._cachedAxisSpan = from._cachedAxisSpan;
+				this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-			ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
+				ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+				ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
+				ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.LinearTickSpacing());
+				return true;
+			}
+			return false;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _dataBounds)
-				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+				yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
 
 			if (null != _rescaling)
-				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+				yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
 		}
 
 		public override object Clone()
@@ -205,6 +253,24 @@ namespace Altaxo.Graph.Scales
 		public override NumericalBoundaries DataBounds
 		{
 			get { return _dataBounds; }
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+				if (!(value is Ticks.NumericTickSpacing))
+					throw new ArgumentException("Value must be of type NumericTickSpacing");
+
+				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+					EhChildChanged(Rescaling, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -290,16 +356,6 @@ namespace Altaxo.Graph.Scales
 
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
-		}
-
-		protected override void OnChanged(EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
-			{
-				OnUserRescaled();
-			}
-
-			base.OnChanged(e);
 		}
 	} // end of class LinearAxis
 }

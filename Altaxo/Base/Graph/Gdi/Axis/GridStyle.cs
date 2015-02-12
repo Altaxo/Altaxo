@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			if (!_showGrid)
 				return;
 
-			Scale axis = layer.Scales[axisnumber].Scale;
+			Scale axis = layer.Scales[axisnumber];
 			TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
 
 			RectangleD layerRect = new RectangleD(PointD2D.Empty, layer.Size);

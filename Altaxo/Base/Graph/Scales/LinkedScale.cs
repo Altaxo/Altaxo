@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Scales
 						var sibling = parentLayer.Layers[linkedLayerIndex] as Altaxo.Graph.Gdi.XYPlotLayer;
 						if (null != sibling)
 						{
-							scale = sibling.Scales[linkedScaleIndex].Scale;
+							scale = sibling.Scales[linkedScaleIndex];
 						}
 					}
 				}
@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Scales
 						var sibling = parentLayer.Layers[_linkedLayerIndex] as Altaxo.Graph.Gdi.XYPlotLayer;
 						if (null != sibling)
 						{
-							scale = sibling.Scales[_linkedScaleIndex].Scale;
+							scale = sibling.Scales[_linkedScaleIndex];
 						}
 					}
 				}
@@ -454,6 +454,18 @@ namespace Altaxo.Graph.Scales
 					OnLinkPropertiesChanged();
 					EhSelfChanged(EventArgs.Empty);
 				}
+			}
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return WrappedScale.TickSpacing;
+			}
+			set
+			{
+				WrappedScale.TickSpacing = value;
 			}
 		}
 

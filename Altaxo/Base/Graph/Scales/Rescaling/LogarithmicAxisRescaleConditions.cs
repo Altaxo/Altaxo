@@ -72,6 +72,17 @@ namespace Altaxo.Graph.Scales.Rescaling
 			return new LogarithmicAxisRescaleConditions(this);
 		}
 
+		public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
+		{
+			if (double.IsNaN(orgValue) || !Altaxo.Calc.RMath.IsFinite(orgValue) || orgValue <= 0)
+				throw new ArgumentOutOfRangeException("orgValue should be a finite and positive number but is " + orgValue.ToString());
+
+			if (double.IsNaN(endValue) || !Altaxo.Calc.RMath.IsFinite(endValue) || endValue <= 0)
+				throw new ArgumentOutOfRangeException("endValue should be a finite and positive number but is " + endValue.ToString());
+
+			base.SetUserParameters(orgRescaling, orgRelativeTo, orgValue, endRescaling, endRelativeTo, endValue);
+		}
+
 		/// <summary>
 		/// Fixes the data bounds org and end. Here we modify the bounds if org and end are equal.
 		/// </summary>
@@ -91,5 +102,93 @@ namespace Altaxo.Graph.Scales.Rescaling
 		{
 			return Math.Sqrt(_dataBoundsOrg * _dataBoundsEnd);
 		}
+
+		#region Resulting Org/End to/fron User Org/End
+
+		protected override double GetResultingOrgFromUserProvidedOrg()
+		{
+			switch (_userProvidedOrgRelativeTo)
+			{
+				case BoundariesRelativeTo.Absolute:
+					return _userProvidedOrgValue;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+					return _userProvidedOrgValue * _dataBoundsOrg;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+					return _userProvidedOrgValue * _dataBoundsEnd;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsMean:
+					return _userProvidedOrgValue * GetDataBoundsScaleMean();
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		protected override double GetUserProvidedOrgFromResultingOrg(double resultingOrg)
+		{
+			switch (_userProvidedOrgRelativeTo)
+			{
+				case BoundariesRelativeTo.Absolute:
+					return resultingOrg;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+					return resultingOrg / _dataBoundsOrg;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+					return resultingOrg / _dataBoundsEnd;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsMean:
+					return resultingOrg / GetDataBoundsScaleMean();
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		protected override double GetResultingEndFromUserProvidedEnd()
+		{
+			switch (_userProvidedEndRelativeTo)
+			{
+				case BoundariesRelativeTo.Absolute:
+					return _userProvidedEndValue;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+					return _userProvidedEndValue * _dataBoundsOrg;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+					return _userProvidedEndValue * _dataBoundsEnd;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsMean:
+					return _userProvidedEndValue * GetDataBoundsScaleMean();
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		protected override double GetUserProvidedEndFromResultingEnd(double resultingEnd)
+		{
+			switch (_userProvidedEndRelativeTo)
+			{
+				case BoundariesRelativeTo.Absolute:
+					return resultingEnd;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+					return resultingEnd / _dataBoundsOrg;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+					return resultingEnd / _dataBoundsEnd;
+
+				case BoundariesRelativeTo.RelativeToDataBoundsMean:
+					return resultingEnd / GetDataBoundsScaleMean();
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		#endregion Resulting Org/End to/fron User Org/End
 	}
 }

@@ -48,6 +48,8 @@ namespace Altaxo.Graph.Scales
 
 		protected DateTimeAxisRescaleConditions _rescaling;
 
+		protected Ticks.TickSpacing _tickSpacing;
+
 		/// <summary>True if org is allowed to be extended to smaller values.</summary>
 		protected bool _isOrgExtendable;
 
@@ -276,6 +278,24 @@ namespace Altaxo.Graph.Scales
 			get
 			{
 				return this._rescaling;
+			}
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+				if (!(value is Ticks.NumericTickSpacing))
+					throw new ArgumentException("Value must be of type NumericTickSpacing");
+
+				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+					EhChildChanged(Rescaling, EventArgs.Empty);
 			}
 		}
 

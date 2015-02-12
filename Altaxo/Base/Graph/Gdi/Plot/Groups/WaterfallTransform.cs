@@ -496,8 +496,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				_xScale = new TransformedScale(layer.XAxis, xinc);
 				_yScale = new TransformedScale(layer.YAxis, yinc);
 				_scales = new ScaleCollection();
-				_scales[0] = new ScaleWithTicks(_xScale, new Altaxo.Graph.Scales.Ticks.NoTickSpacing()); ;
-				_scales[1] = new ScaleWithTicks(_yScale, new Altaxo.Graph.Scales.Ticks.NoTickSpacing()); ;
+				_scales[0] = _xScale;
+				_scales[1] = _yScale;
 			}
 
 			#region IPlotArea Members
@@ -649,6 +649,18 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
 				{
 					throw new NotImplementedException();
+				}
+
+				public override Scales.Ticks.TickSpacing TickSpacing
+				{
+					get
+					{
+						return null;
+					}
+					set
+					{
+						throw new NotImplementedException();
+					}
 				}
 			}
 

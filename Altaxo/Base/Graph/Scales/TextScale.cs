@@ -37,6 +37,8 @@ namespace Altaxo.Graph.Scales
 
 		protected NumericAxisRescaleConditions _rescaling;
 
+		protected Ticks.TickSpacing _tickSpacing;
+
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
 		protected double _cachedAxisOrg = 0;
@@ -182,6 +184,24 @@ namespace Altaxo.Graph.Scales
 		public override IPhysicalBoundaries DataBoundsObject
 		{
 			get { return _dataBounds; }
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+				if (!(value is Ticks.NumericTickSpacing))
+					throw new ArgumentException("Value must be of type NumericTickSpacing");
+
+				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+					EhChildChanged(this.RescalingObject, EventArgs.Empty);
+			}
 		}
 
 		public override Altaxo.Data.AltaxoVariant OrgAsVariant

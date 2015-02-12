@@ -24,6 +24,7 @@
 
 using Altaxo.Data;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Scales
 {
@@ -98,6 +99,8 @@ namespace Altaxo.Graph.Scales
 		/// </summary>
 		public abstract object RescalingObject { get; }
 
+		public abstract TickSpacing TickSpacing { get; set; }
+
 		/// <summary>
 		/// Returns the <see cref="IPhysicalBoundaries"/> object that is associated with that axis.
 		/// </summary>
@@ -150,6 +153,8 @@ namespace Altaxo.Graph.Scales
 				if (definedtype.IsVisible)
 					sm_AvailableScales.Add(definedtype.Name, definedtype);
 			}
+
+			RegisterDefaultTicking();
 		}
 
 		/// <summary>Returns the collection of available axes.</summary>
@@ -157,5 +162,48 @@ namespace Altaxo.Graph.Scales
 		{
 			get { return sm_AvailableScales; }
 		}
-	} // end of class Axis
+
+		#region Default ticking
+
+		private static Dictionary<System.Type, SortedDictionary<int, System.Type>> _scaleToTickSpacingTypes = new Dictionary<Type, SortedDictionary<int, Type>>();
+
+		public static void RegisterDefaultTicking(System.Type scaleType, System.Type tickSpacingType, int priority)
+		{
+			if (!_scaleToTickSpacingTypes.ContainsKey(scaleType))
+				_scaleToTickSpacingTypes.Add(scaleType, new SortedDictionary<int, Type>());
+			_scaleToTickSpacingTypes[scaleType].Add(priority, tickSpacingType);
+		}
+
+		public static TickSpacing CreateDefaultTicks(System.Type type)
+		{
+			if (_scaleToTickSpacingTypes.ContainsKey(type))
+			{
+				SortedDictionary<int, Type> dict = _scaleToTickSpacingTypes[type];
+
+				foreach (KeyValuePair<int, System.Type> entry in dict)
+					return (TickSpacing)System.Activator.CreateInstance(entry.Value);
+			}
+
+			return new NoTickSpacing();
+		}
+
+		private static void RegisterDefaultTicking()
+		{
+			RegisterDefaultTicking(typeof(DateTimeScale), typeof(DateTimeTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(AngularDegreeScale), typeof(AngularDegreeTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(AngularRadianScale), typeof(AngularRadianTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(TextScale), typeof(TextTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(Log10Scale), typeof(Log10TickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(LinearScale), typeof(LinearTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(InverseScale), typeof(InverseTickSpacing), 100);
+		}
+
+		#endregion Default ticking
+	}
 }

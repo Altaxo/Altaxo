@@ -31,14 +31,58 @@ namespace Altaxo.Graph.Scales
 	public class ScaleCollection
 	:
 	Main.SuspendableDocumentNodeWithSetOfEventArgs,
-	IEnumerable<ScaleWithTicks>
+	IEnumerable<Scale>
 	{
-		private ScaleWithTicks[] _scales = new ScaleWithTicks[2];
+		private Scale[] _scales = new Scale[2];
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleCollection), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.ScaleCollection", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
+				ScaleCollection s = (ScaleCollection)obj;
+
+				info.CreateArray("Members", s._scales.Length);
+				for (int i = 0; i < s._scales.Length; ++i)
+					info.AddValue("e", s._scales[i]);
+				info.CommitArray();
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ScaleCollection s = SDeserialize(o, info, parent);
+				return s;
+			}
+
+			protected virtual ScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ScaleCollection s = null != o ? (ScaleCollection)o : new ScaleCollection();
+
+				int count = info.OpenArray("Members");
+				s._scales = new Scale[count];
+				for (int i = 0; i < count; ++i)
+				{
+					info.OpenElement(); // e
+					var scale = (Scale)info.GetValue("Scale", s);
+					var tickspacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
+					scale.TickSpacing = tickspacing;
+					scale.ParentObject = s;
+					s._scales[i] = scale;
+					info.CloseElement();
+				}
+				info.CloseArray(count);
+
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleCollection), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -61,9 +105,12 @@ namespace Altaxo.Graph.Scales
 				ScaleCollection s = null != o ? (ScaleCollection)o : new ScaleCollection();
 
 				int count = info.OpenArray("Members");
-				s._scales = new ScaleWithTicks[count];
+				s._scales = new Scale[count];
 				for (int i = 0; i < count; ++i)
-					s.SetScaleWithTicks(i, (ScaleWithTicks)info.GetValue("e", s));
+				{
+					s._scales[i] = (Scale)info.GetValue("e", s);
+					s._scales[i].ParentObject = s;
+				}
 				info.CloseArray(count);
 
 				return s;
@@ -74,9 +121,9 @@ namespace Altaxo.Graph.Scales
 
 		public ScaleCollection()
 		{
-			_scales = new ScaleWithTicks[2];
-			this.InternalSetScaleWithTicks(0, new ScaleWithTicks(new LinearScale()));
-			this.InternalSetScaleWithTicks(1, new ScaleWithTicks(new LinearScale()));
+			_scales = new Scale[2];
+			this.InternalSetScaleWithTicks(0, new LinearScale());
+			this.InternalSetScaleWithTicks(1, new LinearScale());
 		}
 
 		public ScaleCollection(ScaleCollection from)
@@ -94,7 +141,7 @@ namespace Altaxo.Graph.Scales
 				int len = Math.Min(this._scales.Length, from._scales.Length);
 				for (int i = 0; i < len; i++)
 				{
-					this.InternalSetScaleWithTicks(i, (ScaleWithTicks)from._scales[i].Clone());
+					this.InternalSetScaleWithTicks(i, (Scale)from._scales[i].Clone());
 				}
 
 				suspendToken.Resume();
@@ -163,23 +210,33 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		public ScaleWithTicks X
+		public Scale X
 		{
 			get
 			{
 				return _scales[0];
 			}
+			set
+			{
+				if (ChildSetMember(ref _scales[0], value))
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
-		public ScaleWithTicks Y
+		public Scale Y
 		{
 			get
 			{
 				return _scales[1];
 			}
+			set
+			{
+				if (ChildSetMember(ref _scales[1], value))
+					EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
-		public ScaleWithTicks this[int i]
+		public Scale this[int i]
 		{
 			get
 			{
@@ -193,20 +250,21 @@ namespace Altaxo.Graph.Scales
 
 		public Scale Scale(int i)
 		{
-			return _scales[i].Scale;
+			return _scales[i];
 		}
 
 		public void SetScale(int i, Scale ax)
 		{
-			SetScaleWithTicks(i, new ScaleWithTicks(ax));
+			SetScaleWithTicks(i, ax);
 		}
 
 		public void SetScaleWithTicks(int i, Scale scale, Ticks.TickSpacing ticks)
 		{
-			_scales[i].SetTo(scale, ticks);
+			scale.TickSpacing = ticks;
+			_scales[i] = scale;
 		}
 
-		public void SetScaleWithTicks(int i, ScaleWithTicks scaleWithTicks)
+		public void SetScaleWithTicks(int i, Scale scaleWithTicks)
 		{
 			InternalSetScaleWithTicks(i, scaleWithTicks);
 		}
@@ -215,19 +273,19 @@ namespace Altaxo.Graph.Scales
 		{
 			for (int i = 0; i < _scales.Length; i++)
 			{
-				if (_scales[i].Scale == ax)
+				if (object.ReferenceEquals(_scales[i], ax))
 					return i;
 			}
 
 			return -1;
 		}
 
-		protected void InternalSetScaleWithTicks(int i, ScaleWithTicks newvalue)
+		protected void InternalSetScaleWithTicks(int i, Scale newvalue)
 		{
 			ChildSetMember(ref _scales[i], newvalue);
 		}
 
-		public IEnumerator<ScaleWithTicks> GetEnumerator()
+		public IEnumerator<Scale> GetEnumerator()
 		{
 			for (int i = 0; i < _scales.Length; ++i)
 				yield return _scales[i];

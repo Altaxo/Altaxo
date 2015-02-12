@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 			graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize)); 	// apply the default location from the property in the path
 
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
-			layer.Scales[0] = new Scales.ScaleWithTicks(new Scales.AngularDegreeScale(), new Scales.Ticks.AngularDegreeTickSpacing());
+			layer.Scales[0] = new Scales.AngularDegreeScale() { TickSpacing = new Scales.Ticks.AngularDegreeTickSpacing() };
 
 			layer.CreateDefaultAxes(propertyContext);
 

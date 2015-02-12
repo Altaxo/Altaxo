@@ -57,6 +57,8 @@ namespace Altaxo.Graph.Scales
 
 		protected LogarithmicAxisRescaleConditions _rescaling;
 
+		protected Ticks.TickSpacing _tickSpacing;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale), 3)]
@@ -111,6 +113,7 @@ namespace Altaxo.Graph.Scales
 		{
 			_rescaling = new LogarithmicAxisRescaleConditions() { ParentObject = this };
 			_dataBounds = new PositiveFiniteNumericalBoundaries() { ParentObject = this };
+			_tickSpacing = new Ticks.Log10TickSpacing() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -156,6 +159,24 @@ namespace Altaxo.Graph.Scales
 			get
 			{
 				return _rescaling;
+			}
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+				if (!(value is Ticks.NumericTickSpacing))
+					throw new ArgumentException("Value must be of type NumericTickSpacing");
+
+				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+					EhChildChanged(Rescaling, EventArgs.Empty);
 			}
 		}
 

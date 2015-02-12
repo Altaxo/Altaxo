@@ -371,8 +371,8 @@ namespace Altaxo.Graph.Gdi
 				{
 					for (int i = 0; i < _scales.Count; i++)
 					{
-						Scale oldScale = oldscales == null ? null : oldscales[i].Scale;
-						Scale newScale = _scales[i].Scale;
+						Scale oldScale = oldscales == null ? null : oldscales[i];
+						Scale newScale = _scales[i];
 						if (!object.ReferenceEquals(oldScale, newScale))
 							EhSelfChanged(new ScaleInstanceChangedEventArgs(oldScale, newScale) { ScaleIndex = i });
 					}
@@ -560,11 +560,11 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return _scales.X.Scale;
+				return _scales.X;
 			}
 			set
 			{
-				_scales.X.Scale = value;
+				_scales.X = value;
 			}
 		}
 
@@ -574,7 +574,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return this._scales.X.Scale is LinkedScale;
+				return this._scales.X is LinkedScale;
 			}
 		}
 
@@ -589,8 +589,8 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public void OnUserRescaledAxes()
 		{
-			_scales.X.Scale.OnUserRescaled();
-			_scales.Y.Scale.OnUserRescaled();
+			_scales.X.OnUserRescaled();
+			_scales.Y.OnUserRescaled();
 		}
 
 		/// <summary>Gets or sets the y axis of this layer.</summary>
@@ -599,11 +599,11 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return _scales.Y.Scale;
+				return _scales.Y;
 			}
 			set
 			{
-				_scales.Y.Scale = value;
+				_scales.Y = value;
 			}
 		}
 
@@ -613,7 +613,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			get
 			{
-				return this._scales.Y.Scale is LinkedScale;
+				return this._scales.Y is LinkedScale;
 			}
 		}
 
@@ -622,102 +622,6 @@ namespace Altaxo.Graph.Gdi
 			// do nothing here, for the future we can decide to change the linked axis boundaries
 			return this.IsYAxisLinked;
 		}
-
-		/// <summary>
-		/// Ensures that all linked scales have their scalesLinkedTo instances updated (in case the layer instance or the scale instance has changed in the meantime).
-		/// Note that here we should not enforce the link properties (like xOrg = SomeCalculation depending on scaleLinkedTo). This is done later, after the plot items are updated
-		/// </summary>
-		protected void UpdateScaleLinks()
-		{
-			foreach (var swt in Scales.Where(s => s.Scale is LinkedScale))
-			{
-				UpdateScaleLink(swt);
-			}
-		}
-
-		/// <summary>
-		/// Updates the scale link of a <see cref="ScaleWithTicks"/> where the Scale is of type <see cref="LinkedScale"/>
-		/// </summary>
-		/// <param name="swt">The <see cref="ScaleWithTicks"/> instance.</param>
-		/// <remarks>
-		/// <para>This updates either the scaleLinkedTo and/or the scale number and layer number.</para>
-		/// <para>The scaleLinkedTo has precedence: if it still exist in any of the sibling layers, the layer number and scale number will be updated and the scaleLinked to will be preserved</para>
-		/// <para>The other case is when the scaleLinkedTo no longer exists in any of the sibling layers: then it is tried to find a layer with the stored layer number and the scale with the stored scale number</para>
-		/// <para>If both cases fail, then the scale is transformed from a linked scale to a normal scale.</para>
-		/// </remarks>
-		protected void UpdateScaleLink(ScaleWithTicks swt)
-		{
-			/*
-			LinkedScale ls = (LinkedScale)swt.Scale;
-			Scale scaleLinkedTo = ls.ScaleLinkedTo;
-
-			var layerLinkedTo = Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(scaleLinkedTo);
-			int layerLinkedToIndex, scaleLinkedToIndex;
-
-			if (layerLinkedTo != null &&
-					object.ReferenceEquals(this.ParentLayer, layerLinkedTo.ParentLayer) &&
-					!object.ReferenceEquals(this, layerLinkedTo) &&
-					(scaleLinkedToIndex = layerLinkedTo.Scales.IndexOfFirst(x => object.ReferenceEquals(x.Scale, scaleLinkedTo))) >= 0
-				)
-			{
-				// then we have the first case: the linked layer still exist
-				layerLinkedToIndex = layerLinkedTo.LayerNumber;
-				ls.LinkedLayerIndex = layerLinkedToIndex;
-				ls.LinkedScaleIndex = scaleLinkedToIndex;
-				return; // first case handled
-			}
-
-			// we assume the second case and try to find a layer with the stored layer index, and therein a scale with the stored scale index
-			layerLinkedToIndex = ls.LinkedLayerIndex;
-			scaleLinkedToIndex = ls.LinkedScaleIndex;
-
-			scaleLinkedTo = null;
-			layerLinkedTo = null;
-			if (layerLinkedToIndex >= 0 && layerLinkedToIndex < ParentLayerList.Count)
-				layerLinkedTo = ParentLayerList[layerLinkedToIndex] as XYPlotLayer;
-
-			if (null != layerLinkedTo && scaleLinkedToIndex >= 0 && scaleLinkedToIndex < layerLinkedTo.Scales.Count)
-				scaleLinkedTo = layerLinkedTo.Scales[scaleLinkedToIndex].Scale;
-
-			if (scaleLinkedTo != null)
-			{
-				ls.ScaleLinkedTo = scaleLinkedTo;
-				return; // second case successfully handled
-			}
-
-			// both cases fail, so we must convert the linked scale to a normal scale
-			swt.Scale = ls.WrappedScale; // set the scale to the wrapped scale
-			ls.ScaleLinkedTo = null; // free the event wiring
-			*/
-		}
-
-		/*
-		/// <summary>
-		/// Draws an isoline on the plot area.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="pen">The style of the pen used to draw the line.</param>
-		/// <param name="axis">Axis for which the isoline to draw.</param>
-		/// <param name="relaxisval">Relative value (0..1) on this axis.</param>
-		/// <param name="relaltstart">Relative value for the alternate axis of the start of the line.</param>
-		/// <param name="relaltend">Relative value for the alternate axis of the end of the line.</param>
-		public void DrawIsoLine(Graphics g, Pen pen, int axis, double relaxisval, double relaltstart, double relaltend)
-		{
-			double x1, y1, x2, y2;
-			if (axis == 0)
-			{
-				this.CoordinateSystem.LogicalToLayerCoordinates(relaxisval, relaltstart, out x1, out y1);
-				this.CoordinateSystem.LogicalToLayerCoordinates(relaxisval, relaltend, out x2, out y2);
-			}
-			else
-			{
-				this.CoordinateSystem.LogicalToLayerCoordinates(relaltstart, relaxisval, out x1, out y1);
-				this.CoordinateSystem.LogicalToLayerCoordinates(relaltend, relaxisval, out x2, out y2);
-			}
-
-			g.DrawLine(pen, (float)x1, (float)y1, (float)x2, (float)y2);
-		}
-		*/
 
 		#endregion Scale related
 
@@ -950,17 +854,15 @@ namespace Altaxo.Graph.Gdi
 		{
 			base.PaintPreprocessing(parentObject);
 
-			UpdateScaleLinks();
-
 			// Before we paint the axis, we have to make sure that all plot items
 			// had their data updated, so that the axes are updated before they are drawn!
 			_plotItems.PrepareScales(this);
 
 			// after deserialisation the data bounds object of the scale is empty:
 			// then we have to rescale the axis
-			if (Scales.X.Scale.DataBoundsObject.IsEmpty)
+			if (Scales.X.DataBoundsObject.IsEmpty)
 				InitializeXScaleDataBounds();
-			if (Scales.Y.Scale.DataBoundsObject.IsEmpty)
+			if (Scales.Y.DataBoundsObject.IsEmpty)
 				InitializeYScaleDataBounds();
 
 			_plotItems.PrepareGroupStyles(null, this);
@@ -1123,15 +1025,15 @@ namespace Altaxo.Graph.Gdi
 			if (!_plotAssociationXBoundariesChanged_EventSuspender.IsSuspended)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				using (var suspendToken = _scales.X.Scale.DataBoundsObject.SuspendGetToken())
+				using (var suspendToken = _scales.X.DataBoundsObject.SuspendGetToken())
 				{
-					_scales.X.Scale.DataBoundsObject.Reset();
+					_scales.X.DataBoundsObject.Reset();
 					foreach (IGPlotItem pa in this.PlotItems)
 					{
 						if (pa is IXBoundsHolder)
 						{
 							// merge the bounds with x and yAxis
-							((IXBoundsHolder)pa).MergeXBoundsInto(_scales.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+							((IXBoundsHolder)pa).MergeXBoundsInto(_scales.X.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
 						}
 					}
 					suspendToken.Resume();
@@ -1147,7 +1049,7 @@ namespace Altaxo.Graph.Gdi
 			if (null == this.PlotItems)
 				return; // can happen during deserialization
 
-			var scaleBounds = _scales.X.Scale.DataBoundsObject;
+			var scaleBounds = _scales.X.DataBoundsObject;
 			if (null != scaleBounds)
 			{
 				// we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
@@ -1194,15 +1096,15 @@ namespace Altaxo.Graph.Gdi
 			if (!_plotAssociationYBoundariesChanged_EventSuspender.IsSuspended)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				using (var suspendToken = _scales.Y.Scale.DataBoundsObject.SuspendGetToken())
+				using (var suspendToken = _scales.Y.DataBoundsObject.SuspendGetToken())
 				{
-					_scales.Y.Scale.DataBoundsObject.Reset();
+					_scales.Y.DataBoundsObject.Reset();
 					foreach (IGPlotItem pa in this.PlotItems)
 					{
 						if (pa is IYBoundsHolder)
 						{
 							// merge the bounds with x and yAxis
-							((IYBoundsHolder)pa).MergeYBoundsInto(_scales.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+							((IYBoundsHolder)pa).MergeYBoundsInto(_scales.Y.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
 						}
 					}
 					suspendToken.Resume();
@@ -1218,7 +1120,7 @@ namespace Altaxo.Graph.Gdi
 			if (null == this.PlotItems)
 				return; // can happen during deserialization
 
-			var scaleBounds = _scales.Y.Scale.DataBoundsObject;
+			var scaleBounds = _scales.Y.DataBoundsObject;
 
 			if (null != scaleBounds)
 			{
@@ -1251,7 +1153,7 @@ namespace Altaxo.Graph.Gdi
 					}
 					yBoundariesChangedSuspendToken.Resume();
 				}
-				_scales.Y.Scale.OnUserRescaled();
+				_scales.Y.OnUserRescaled();
 			}
 			// _linkedScales.Y.Scale.ProcessDataBounds();
 		}
@@ -1262,10 +1164,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="e">The event data of the scale.</param>
 		private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
 		{
-			if (object.ReferenceEquals(_scales.X.Scale, e.NewScale))
+			if (object.ReferenceEquals(_scales.X, e.NewScale))
 				InitializeXScaleDataBounds();
 
-			if (object.ReferenceEquals(_scales.Y.Scale, e.NewScale))
+			if (object.ReferenceEquals(_scales.Y, e.NewScale))
 				InitializeYScaleDataBounds();
 		}
 

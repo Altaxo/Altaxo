@@ -266,6 +266,7 @@
     <Compile Include="Graph\Scales\Rescaling\InverseAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\NoNumericTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Common\AscendingIntegerCollectionController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
@@ -1091,7 +1092,6 @@
     <Compile Include="Graph\Scales\Ticks\Log10TickSpacing.cs" />
     <Compile Include="Graph\Scales\Ticks\NoTickSpacing.cs" />
     <Compile Include="Graph\Scales\Ticks\NumericTickSpacing.cs" />
-    <Compile Include="Graph\Scales\ScaleWithTicks.cs" />
     <Compile Include="Graph\Scales\Ticks\SuppressedTicks.cs" />
     <Compile Include="Graph\Scales\Ticks\TextTickSpacing.cs" />
     <Compile Include="Graph\Scales\Ticks\TickSpacing.cs" />
