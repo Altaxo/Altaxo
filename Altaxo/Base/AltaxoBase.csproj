@@ -261,10 +261,12 @@
     <Compile Include="Graph\NamedColors.cs" />
     <Compile Include="Graph\RectangleExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\InverseScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundariesRelativeTo.cs" />
-    <Compile Include="Graph\Scales\Rescaling\InverseAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\InverseScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\IScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
     <Compile Include="Graph\Scales\Ticks\NoNumericTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
@@ -297,7 +299,8 @@
     <Compile Include="Gui\Graph\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph\HostLayerController.cs" />
-    <Compile Include="Gui\Graph\Scales\Rescaling\InverseAxisRescaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeScaleRescaleConditionsController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\InverseScaleRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\DateTimeTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\InverseTickSpacingController.cs" />
@@ -351,6 +354,7 @@
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
     <Compile Include="Gui\Main\PropertyHierarchyController.cs" />
     <Compile Include="Gui\Main\PropertyBagController.cs" />
+    <Compile Include="Gui\MVCANControllerEditOriginalDocInstanceCanChangeBase.cs" />
     <Compile Include="Gui\MVCANControllerEditImmutableDocBase.cs" />
     <Compile Include="Gui\MVCANControllerEditCopyOfDocBase.cs" />
     <Compile Include="Gui\MVCANControllerEditOriginalDocBase.cs" />
@@ -1070,9 +1074,9 @@
     </Compile>
     <Compile Include="Graph\Scales\Rescaling\AngularRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundaryRescaling.cs" />
-    <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\DateTimeScaleRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\LogarithmicScaleRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\NumericScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Deprecated\Scale.cs" />
     <Compile Include="Graph\Scales\Scale.cs">
       <SubType>Code</SubType>
@@ -1148,9 +1152,7 @@
     <Compile Include="Gui\Graph\XYPlotLayerContentsController.cs" />
     <Compile Include="Gui\Graph\PlotGroupCollectionControllerAdvanced.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsController.cs" />
-    <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
-    <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
-    <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicScaleRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingController.cs" />
     <Compile Include="Gui\Graph\SingleColumnChoiceController.cs" />

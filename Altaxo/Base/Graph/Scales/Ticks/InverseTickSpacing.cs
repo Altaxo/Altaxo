@@ -209,42 +209,45 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool CopyFrom(object obj)
 		{
-			bool isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as InverseTickSpacing;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
-				var from = obj as InverseTickSpacing;
-				if (null != from)
-				{
-					CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
+				CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
 
-					_userDefinedMajorSpan = from._userDefinedMajorSpan;
-					_userDefinedMinorTicks = from._userDefinedMinorTicks;
+				_userDefinedMajorSpan = from._userDefinedMajorSpan;
+				_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
-					_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-					_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+				_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+				_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-					_minGrace = from._minGrace;
-					_maxGrace = from._maxGrace;
+				_minGrace = from._minGrace;
+				_maxGrace = from._maxGrace;
 
-					_snapOrgToTick = from._snapOrgToTick;
-					_snapEndToTick = from._snapEndToTick;
+				_snapOrgToTick = from._snapOrgToTick;
+				_snapEndToTick = from._snapEndToTick;
 
-					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
-					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
-					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
-					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
+				_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
+				_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
+				_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
+				_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
 
-					_transformationOffset = from._transformationOffset;
-					_transformationDivider = from._transformationDivider;
-					_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
+				_transformationOffset = from._transformationOffset;
+				_transformationDivider = from._transformationDivider;
+				_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
 
-					_majorTicks = new List<double>(from._majorTicks);
-					_minorTicks = new List<double>(from._minorTicks);
+				_majorTicks = new List<double>(from._majorTicks);
+				_minorTicks = new List<double>(from._minorTicks);
 
-					EhSelfChanged();
-				}
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return isCopied;
+			return true;
 		}
 
 		public override object Clone()

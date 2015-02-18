@@ -328,6 +328,15 @@ namespace Altaxo.Main
 		public bool IsDisposeInProgress { get { return _disposeState != 0; } }
 
 		/// <summary>
+		/// Sets the flag that dispose is in progress for this node and all child nodes recursively.
+		/// </summary>
+		public virtual void SetDisposeInProgress()
+		{
+			if (_disposeState == 0)
+				_disposeState = DisposeState_DisposeInProgress;
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether this instance is disposed.
 		/// </summary>
 		/// <value>
@@ -342,7 +351,7 @@ namespace Altaxo.Main
 		{
 			if (_disposeState == 0)
 			{
-				_disposeState = DisposeState_DisposeInProgress;
+				SetDisposeInProgress();
 				Dispose(true);
 			}
 

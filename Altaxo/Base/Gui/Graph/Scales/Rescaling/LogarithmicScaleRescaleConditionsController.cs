@@ -1,4 +1,4 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -33,7 +33,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-	public interface ILinearScaleRescaleConditionsView
+	public interface ILogarithmicScaleRescaleConditionsView
 	{
 		SelectableListNodeList OrgRescaling { set; }
 
@@ -52,9 +52,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 		event Action EndValueChanged;
 	}
 
-	[ExpectedTypeOfView(typeof(ILinearScaleRescaleConditionsView))]
-	[UserControllerForObject(typeof(LinearScaleRescaleConditions))]
-	public class LinearScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<LinearScaleRescaleConditions, ILinearScaleRescaleConditionsView>
+	[ExpectedTypeOfView(typeof(ILogarithmicScaleRescaleConditionsView))]
+	[UserControllerForObject(typeof(LogarithmicScaleRescaleConditions))]
+	public class LogarithmicScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<LogarithmicScaleRescaleConditions, ILogarithmicScaleRescaleConditionsView>
 	{
 		private SelectableListNodeList _orgRescalingChoices;
 		private SelectableListNodeList _endRescalingChoices;

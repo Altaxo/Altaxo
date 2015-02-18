@@ -104,20 +104,25 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool CopyFrom(object obj)
 		{
-			bool isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as AngularTickSpacing;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
-				var from = obj as AngularTickSpacing;
-				if (null != from)
-				{
-					_majorTickDivider = from._majorTickDivider;
-					_minorTickDivider = from._minorTickDivider;
-					_usePositiveNegativeAngles = from._usePositiveNegativeAngles;
-					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
-					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
-				}
+				_majorTickDivider = from._majorTickDivider;
+				_minorTickDivider = from._minorTickDivider;
+				_usePositiveNegativeAngles = from._usePositiveNegativeAngles;
+				_majorTicks = new List<AltaxoVariant>(from._majorTicks);
+				_minorTicks = new List<AltaxoVariant>(from._minorTicks);
+
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return isCopied;
+			return true;
 		}
 
 		public override Data.AltaxoVariant[] GetMajorTicksAsVariant()

@@ -54,14 +54,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 			}
 		}
 
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
-		{
-		}
-
 		#endregion Serialization
 
 		public FiniteNumericalBoundaries()

@@ -33,8 +33,14 @@ namespace Altaxo.Graph.Scales.Ticks
 	/// <summary>
 	/// Base class responsible for the spacing of ticks (major and minor) along a scale.
 	/// </summary>
-	public abstract class TickSpacing : Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
+	public abstract class TickSpacing
+		:
+		Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
 	{
+		protected static int _nextUpdateSequenceNumber;
+
+		protected int _updateSequenceNumber;
+
 		protected TickSpacing()
 		{
 		}
@@ -46,10 +52,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public abstract object Clone();
 
-		public virtual bool CopyFrom(object obj)
-		{
-			return obj is TickSpacing;
-		}
+		public abstract bool CopyFrom(object obj);
+
+		public int UpdateSequenceNumber { get { return _updateSequenceNumber; } }
 
 		/// <summary>
 		/// Decides giving a raw org and end value, whether or not the scale boundaries should be extended to
@@ -101,6 +106,18 @@ namespace Altaxo.Graph.Scales.Ticks
 				result[i] = scale.PhysicalVariantToNormal(vars[i]);
 
 			return result;
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			_updateSequenceNumber = _nextUpdateSequenceNumber++;
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected override void EhSelfChanged(EventArgs e)
+		{
+			_updateSequenceNumber = _nextUpdateSequenceNumber++;
+			base.EhSelfChanged(e);
 		}
 	}
 }

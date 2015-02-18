@@ -209,40 +209,45 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool CopyFrom(object obj)
 		{
-			bool isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as Log10TickSpacing;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
-				var from = obj as Log10TickSpacing;
-				if (null != from)
-				{
-					CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
+				CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
 
-					_userDefinedNumberOfDecadesPerMajorTick = from._userDefinedNumberOfDecadesPerMajorTick;
-					_userDefinedMinorTicks = from._userDefinedMinorTicks;
+				_userDefinedNumberOfDecadesPerMajorTick = from._userDefinedNumberOfDecadesPerMajorTick;
+				_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
-					_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-					_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+				_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+				_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-					_oneLever = from._oneLever;
-					_minGrace = from._minGrace;
-					_maxGrace = from._maxGrace;
-					_snapOrgToTick = from._snapOrgToTick;
-					_snapEndToTick = from._snapEndToTick;
+				_oneLever = from._oneLever;
+				_minGrace = from._minGrace;
+				_maxGrace = from._maxGrace;
+				_snapOrgToTick = from._snapOrgToTick;
+				_snapEndToTick = from._snapEndToTick;
 
-					_transformationDivider = from._transformationDivider;
-					_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
-					_transformationExponent = from._transformationExponent;
+				_transformationDivider = from._transformationDivider;
+				_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
+				_transformationExponent = from._transformationExponent;
 
-					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
-					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
-					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
-					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
+				ChildCopyToMember(ref _suppressedMajorTicks, from._suppressedMajorTicks);
+				ChildCopyToMember(ref _suppressedMinorTicks, from._suppressedMinorTicks);
+				ChildCopyToMember(ref _additionalMajorTicks, from._additionalMajorTicks);
+				ChildCopyToMember(ref _additionalMinorTicks, from._additionalMinorTicks);
 
-					_majorTicks = new List<double>(from._majorTicks);
-					_minorTicks = new List<double>(from._minorTicks);
-				}
+				_majorTicks = new List<double>(from._majorTicks);
+				_minorTicks = new List<double>(from._minorTicks);
+
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return isCopied;
+			return true;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

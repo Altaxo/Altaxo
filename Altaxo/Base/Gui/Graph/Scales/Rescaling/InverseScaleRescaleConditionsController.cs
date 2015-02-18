@@ -33,28 +33,9 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-	public interface ILinearScaleRescaleConditionsView
-	{
-		SelectableListNodeList OrgRescaling { set; }
-
-		SelectableListNodeList EndRescaling { set; }
-
-		SelectableListNodeList OrgRelativeTo { set; }
-
-		SelectableListNodeList EndRelativeTo { set; }
-
-		double OrgValue { set; get; }
-
-		double EndValue { set; get; }
-
-		event Action OrgValueChanged;
-
-		event Action EndValueChanged;
-	}
-
 	[ExpectedTypeOfView(typeof(ILinearScaleRescaleConditionsView))]
-	[UserControllerForObject(typeof(LinearScaleRescaleConditions))]
-	public class LinearScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<LinearScaleRescaleConditions, ILinearScaleRescaleConditionsView>
+	[UserControllerForObject(typeof(InverseScaleRescaleConditions))]
+	public class InverseScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<InverseScaleRescaleConditions, ILinearScaleRescaleConditionsView>
 	{
 		private SelectableListNodeList _orgRescalingChoices;
 		private SelectableListNodeList _endRescalingChoices;

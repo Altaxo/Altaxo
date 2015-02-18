@@ -46,20 +46,49 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected FiniteDateTimeBoundaries _dataBounds;
 
-		protected DateTimeAxisRescaleConditions _rescaling;
+		protected DateTimeScaleRescaleConditions _rescaling;
 
-		protected Ticks.TickSpacing _tickSpacing;
-
-		/// <summary>True if org is allowed to be extended to smaller values.</summary>
-		protected bool _isOrgExtendable;
-
-		/// <summary>True if end is allowed to be extended to higher values.</summary>
-		protected bool _isEndExtendable;
+		protected Ticks.DateTimeTickSpacing _tickSpacing;
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeScale), 2)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.DateTimeScale", 2)]
 		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
+				DateTimeScale s = (DateTimeScale)obj;
+
+				info.AddValue("Org", s._axisOrg);
+				info.AddValue("End", s._axisEnd);
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("Bounds", s._dataBounds);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale(info);
+
+				s._axisOrg = info.GetDateTime("Org");
+				s._axisEnd = info.GetDateTime("End");
+				s.ChildSetMember(ref s._rescaling, (DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
+				s.ChildSetMember(ref s._dataBounds, (FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._tickSpacing, new Ticks.DateTimeTickSpacing());
+
+				s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2015-02-13 Added TickSpacing
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeScale), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -69,27 +98,20 @@ namespace Altaxo.Graph.Scales
 				info.AddValue("End", s._axisEnd);
 				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("TickSpacing", s._tickSpacing);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DateTimeScale s = SDeserialize(o, info, parent);
-				OnAfterDeserialization(s);
-				return s;
-			}
-
-			public virtual void OnAfterDeserialization(DateTimeScale s)
-			{
-			}
-
-			protected virtual DateTimeScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale();
+				DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale(info);
 
 				s._axisOrg = info.GetDateTime("Org");
 				s._axisEnd = info.GetDateTime("End");
-				s.ChildSetMember(ref s._rescaling, (DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s));
+				s.ChildSetMember(ref s._rescaling, (DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
 				s.ChildSetMember(ref s._dataBounds, (FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._tickSpacing, (Ticks.DateTimeTickSpacing)info.GetValue("TickSpacing", s));
+
+				s.UpdateTicksAndOrgEndUsingRescalingObject();
 
 				return s;
 			}
@@ -99,27 +121,48 @@ namespace Altaxo.Graph.Scales
 
 		#region ICloneable Members
 
-		public void CopyFrom(DateTimeScale from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			this._axisOrg = from._axisOrg;
-			this._axisEnd = from._axisEnd;
+			var from = obj as DateTimeScale;
+			if (null == from)
+				return false;
 
-			ChildCopyToMember(ref _dataBounds, from._dataBounds);
-			ChildCopyToMember(ref _rescaling, from._rescaling);
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._axisOrg = from._axisOrg;
+				this._axisEnd = from._axisEnd;
+
+				ChildCopyToMember(ref _dataBounds, from._dataBounds);
+				ChildCopyToMember(ref _rescaling, from._rescaling);
+				ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
+
+				EhSelfChanged(EventArgs.Empty);
+				suspendToken.Resume();
+			}
+			return true;
 		}
 
-		public DateTimeScale(DateTimeScale from)
+		/// <summary>
+		/// Constructor for deserialization only.
+		/// </summary>
+		protected DateTimeScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			CopyFrom(from);
 		}
 
 		public DateTimeScale()
 		{
 			_dataBounds = new FiniteDateTimeBoundaries() { ParentObject = this };
-			_rescaling = new DateTimeAxisRescaleConditions() { ParentObject = this };
+			_rescaling = new DateTimeScaleRescaleConditions() { ParentObject = this };
+			_tickSpacing = new Ticks.DateTimeTickSpacing() { ParentObject = this };
+			UpdateTicksAndOrgEndUsingRescalingObject();
+		}
+
+		public DateTimeScale(DateTimeScale from)
+		{
+			CopyFrom(from);
 		}
 
 		/// <summary>
@@ -136,9 +179,11 @@ namespace Altaxo.Graph.Scales
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _dataBounds)
-				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+				yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
 			if (null != _rescaling)
-				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+				yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
 		}
 
 		/// <summary>
@@ -215,19 +260,7 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public override bool IsOrgExtendable
-		{
-			get { return _isOrgExtendable; }
-		}
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public override bool IsEndExtendable
-		{
-			get { return _isEndExtendable; }
-		}
-
-		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			DateTime o = (DateTime)org;
 			DateTime e = (DateTime)end;
@@ -243,17 +276,10 @@ namespace Altaxo.Graph.Scales
 		private void InternalSetOrgEnd(DateTime org, DateTime end, bool isOrgExtendable, bool isEndExtendable)
 		{
 			bool changed = _axisOrg != org ||
-				_axisEnd != end ||
-				_isOrgExtendable != isOrgExtendable ||
-				_isEndExtendable != isEndExtendable;
+				_axisEnd != end;
 
 			_axisOrg = org;
 			_axisEnd = end;
-			//_cachedAxisSpan = end - org;
-			//_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
-
-			_isOrgExtendable = isOrgExtendable;
-			_isEndExtendable = isEndExtendable;
 
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
@@ -262,7 +288,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public DateTimeAxisRescaleConditions Rescaling
+		public DateTimeScaleRescaleConditions Rescaling
 		{
 			get
 			{
@@ -273,7 +299,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override object RescalingObject
+		public override Rescaling.IScaleRescaleConditions RescalingObject
 		{
 			get
 			{
@@ -291,10 +317,10 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				if (!(value is Ticks.NumericTickSpacing))
-					throw new ArgumentException("Value must be of type NumericTickSpacing");
+				if (!(value is Ticks.DateTimeTickSpacing))
+					throw new ArgumentException("Value must be of type DateTimeTickSpacing");
 
-				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+				if (ChildSetMember(ref _tickSpacing, (Ticks.DateTimeTickSpacing)value))
 					EhChildChanged(Rescaling, EventArgs.Empty);
 			}
 		}
@@ -341,19 +367,7 @@ namespace Altaxo.Graph.Scales
 
 		public override void OnUserRescaled()
 		{
-			DateTime xorg = DateTime.MinValue;
-			DateTime xend = DateTime.MinValue.AddDays(1);
-
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = _dataBounds.LowerBound;
-				xend = _dataBounds.UpperBound;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
+			Rescaling.OnUserRescaled();
 		}
 
 		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
@@ -361,14 +375,62 @@ namespace Altaxo.Graph.Scales
 			_rescaling.OnUserZoomed((DateTime)newZoomOrg, (DateTime)newZoomEnd);
 		}
 
-		protected override void OnChanged(EventArgs e)
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (e is BoundariesChangedEventArgs)
+			if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
 			{
-				OnUserRescaled();
+				if (!DataBounds.IsEmpty)
+					Rescaling.OnDataBoundsChanged(DataBounds.LowerBound, DataBounds.UpperBound);
+				return false; // no need to handle DataBounds changed further, only if rescaling is changed there is need to do something
+			}
+			else if (object.ReferenceEquals(sender, Rescaling)) // Rescaling has changed
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
+				// Fall through
 			}
 
-			base.OnChanged(e);
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected virtual void AdjustResultingOrgEndToValidValues(ref DateTime resultingOrg, ref DateTime resultingEnd)
+		{
+			if (resultingEnd < resultingOrg)
+			{
+				var h = resultingOrg;
+				resultingOrg = resultingEnd;
+				resultingEnd = h;
+			}
+
+			if (resultingOrg == resultingEnd)
+			{
+				if ((resultingOrg - DateTime.MinValue) >= TimeSpan.FromDays(1))
+					resultingOrg = resultingOrg - TimeSpan.FromDays(1);
+				else
+					resultingOrg = DateTime.MinValue;
+
+				if ((DateTime.MaxValue - resultingEnd) >= TimeSpan.FromDays(1))
+					resultingEnd = resultingEnd + TimeSpan.FromDays(1);
+				else
+					resultingEnd = DateTime.MaxValue;
+			}
+		}
+
+		protected virtual void UpdateTicksAndOrgEndUsingRescalingObject()
+		{
+			DateTime org = Rescaling.ResultingOrg, end = Rescaling.ResultingEnd;
+			AdjustResultingOrgEndToValidValues(ref org, ref end);
+
+			if (null == TickSpacing)
+			{
+				SetScaleOrgEnd(org, end);
+			}
+			else
+			{
+				AltaxoVariant orgV = org, endV = end;
+				TickSpacing.PreProcessScaleBoundaries(ref orgV, ref endV, !Rescaling.IsResultingOrgFixed, !Rescaling.IsResultingEndFixed);
+				SetScaleOrgEnd(orgV, endV);
+				TickSpacing.FinalProcessScaleBoundaries(orgV, endV, this);
+			}
 		}
 	} // end of class
 }

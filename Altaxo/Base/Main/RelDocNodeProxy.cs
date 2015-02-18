@@ -188,11 +188,14 @@ namespace Altaxo.Main
 				throw new ArgumentNullException("docNode");
 			if (null == parentNode)
 				throw new ArgumentNullException("parentNode");
+			var docNodeRoot = Main.AbsoluteDocumentPath.GetRootNode(docNode);
+			var parentNodeRoot = Main.AbsoluteDocumentPath.GetRootNode(parentNode);
+			if (!object.ReferenceEquals(docNodeRoot, parentNodeRoot))
+				throw new ArgumentException(string.Format("parentNode (type: {0}) and docNode (type: {1}) have no common root. This suggests that one of the items is not rooted. Please report this error! The type of the parent node's root is {2}. The type of the docNode's root is {3}.", parentNode.GetType(), docNode.GetType(), parentNodeRoot.GetType(), docNodeRoot.GetType()));
 
 			InternalSetDocNode(docNode, parentNode);
 
-			if (null == _docNodePath)
-				throw new ArgumentException(string.Format("No relative path was found between parentNode (type: {0}) and docNode (type: {1}). This suggests that one of the items is not rooted. Please report this error!"));
+			System.Diagnostics.Debug.Assert(_docNodePath != null); // because we tested above that both nodes have a common root
 
 			_parent = parentNode;
 		}
@@ -372,7 +375,7 @@ namespace Altaxo.Main
 
 			value.TunneledEvent += (_weakDocNodeTunneledEventHandler = new WeakActionHandler<object, object, TunnelingEventArgs>(EhDocNode_TunneledEvent, handler => value.TunneledEvent -= handler));
 
-			if (!_docNodePath.IsIdentity) // it does not make sense to watch the changed event of our target node is our parent because the parent can handle the Changed event itself
+			if (null != _docNodePath && !_docNodePath.IsIdentity) // it does not make sense to watch the changed event of our target node is our parent because the parent can handle the Changed event itself
 			{
 				value.Changed += (_weakDocNodeChangedHandler = new WeakEventHandler(EhDocNode_Changed, handler => value.Changed -= handler));
 			}

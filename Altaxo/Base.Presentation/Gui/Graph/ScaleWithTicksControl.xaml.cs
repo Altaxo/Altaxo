@@ -44,10 +44,10 @@ namespace Altaxo.Gui.Graph
 		private void EhAxisType_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
-			if (null != AxisTypeChanged)
+			if (null != ScaleTypeChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(this.m_Scale_cbType);
-				AxisTypeChanged();
+				ScaleTypeChanged();
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(this._cbLinkTarget, names);
 		}
 
-		public void SetBoundaryView(object guiobject)
+		public void SetRescalingView(object guiobject)
 		{
 			_guiBoundaryHost.Child = guiobject as UIElement;
 		}
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Graph
 			_tickSpacingGroupBox.Content = guiobject as UIElement;
 		}
 
-		public event Action AxisTypeChanged;
+		public event Action ScaleTypeChanged;
 
 		public event Action TickSpacingTypeChanged;
 

@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds;
 
-		protected NumericAxisRescaleConditions _rescaling;
+		protected NumericScaleRescaleConditions _rescaling;
 
 		protected Ticks.NumericTickSpacing _tickSpacing;
 
@@ -54,12 +54,6 @@ namespace Altaxo.Graph.Scales
 
 		/// <summary>Current inverse of axis span (cached value).</summary>
 		protected double _cachedOneByAxisSpan = 1;
-
-		/// <summary>True if org is allowed to be extended to smaller values.</summary>
-		protected bool _isOrgExtendable;
-
-		/// <summary>True if end is allowed to be extended to higher values.</summary>
-		protected bool _isEndExtendable;
 
 		#region Serialization
 
@@ -86,10 +80,8 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisEnd = (double)info.GetDouble("End");
 				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
 				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
-				s._isOrgExtendable = false;
-				s._isEndExtendable = false;
 
-				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
 				s._rescaling.ParentObject = s;
 
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
@@ -97,6 +89,8 @@ namespace Altaxo.Graph.Scales
 
 				s._tickSpacing = new Ticks.LinearTickSpacing();
 				s._tickSpacing.ParentObject = s;
+
+				s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
 
 				return s;
 			}
@@ -113,8 +107,8 @@ namespace Altaxo.Graph.Scales
 				LinearScale s = (LinearScale)obj;
 				info.AddValue("Org", s._cachedAxisOrg);
 				info.AddValue("End", s._cachedAxisEnd);
-				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("TickSpacing", s._tickSpacing);
 			}
 
@@ -126,17 +120,17 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisEnd = (double)info.GetDouble("End");
 				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
 				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
-				s._isOrgExtendable = false;
-				s._isEndExtendable = false;
-
-				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
-				s._rescaling.ParentObject = s;
 
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s;
 
+				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
+
 				s._tickSpacing = (Ticks.NumericTickSpacing)info.GetValue("TickSpacing", s);
 				s._tickSpacing.ParentObject = s;
+
+				s.UpdateTicksAndOrgEndUsingRescalingObject();
 
 				return s;
 			}
@@ -159,6 +153,7 @@ namespace Altaxo.Graph.Scales
 			_dataBounds = new FiniteNumericalBoundaries() { ParentObject = this };
 			_rescaling = new LinearScaleRescaleConditions() { ParentObject = this };
 			_tickSpacing = new Ticks.LinearTickSpacing() { ParentObject = this };
+			UpdateTicksAndOrgEndUsingRescalingObject();
 		}
 
 		/// <summary>
@@ -170,7 +165,7 @@ namespace Altaxo.Graph.Scales
 			CopyFrom(from);
 		}
 
-		public virtual bool CopyFrom(object obj)
+		public override bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -224,22 +219,10 @@ namespace Altaxo.Graph.Scales
 			get { return _cachedAxisEnd; }
 		}
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public override bool IsOrgExtendable
-		{
-			get { return _isOrgExtendable; }
-		}
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public override bool IsEndExtendable
-		{
-			get { return _isEndExtendable; }
-		}
-
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override NumericAxisRescaleConditions Rescaling
+		public override NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{
@@ -326,7 +309,7 @@ namespace Altaxo.Graph.Scales
 			end = 1;
 		}
 
-		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			double o = org.ToDouble();
 			double e = end.ToDouble();
@@ -342,17 +325,12 @@ namespace Altaxo.Graph.Scales
 		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
 		{
 			bool changed = _cachedAxisOrg != org ||
-				_cachedAxisEnd != end ||
-				_isOrgExtendable != isOrgExtendable ||
-				_isEndExtendable != isEndExtendable;
+				_cachedAxisEnd != end;
 
 			_cachedAxisOrg = org;
 			_cachedAxisEnd = end;
 			_cachedAxisSpan = end - org;
 			_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
-
-			_isOrgExtendable = isOrgExtendable;
-			_isEndExtendable = isEndExtendable;
 
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);

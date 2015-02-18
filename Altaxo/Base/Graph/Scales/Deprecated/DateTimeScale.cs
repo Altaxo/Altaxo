@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected FiniteDateTimeBoundaries _dataBounds;
 
-		protected DateTimeAxisRescaleConditions _rescaling;
+		protected DateTimeScaleRescaleConditions _rescaling;
 
 		private SpanCompound _majorSpan;
 		private int _minorTicks;
@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 				s._majorSpan = new SpanCompound(spanUnit, span);
 				s._minorTicks = info.GetInt32("MinorTicks");
 				s.InternalSetDataBounds((FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
-				s.InternalSetRescaling((DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s));
+				s.InternalSetRescaling((DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
 
 				return s;
 			}
@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._minorTicks = from._minorTicks;
 
 			this.InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
-			this.InternalSetRescaling((DateTimeAxisRescaleConditions)from._rescaling.Clone());
+			this.InternalSetRescaling((DateTimeScaleRescaleConditions)from._rescaling.Clone());
 		}
 
 		public DateTimeScale(DateTimeScale from)
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		public DateTimeScale()
 		{
 			this.InternalSetDataBounds(new FiniteDateTimeBoundaries());
-			this.InternalSetRescaling(new DateTimeAxisRescaleConditions());
+			this.InternalSetRescaling(new DateTimeScaleRescaleConditions());
 		}
 
 		/// <summary>
@@ -158,7 +158,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._dataBounds.ParentObject = this;
 		}
 
-		protected void InternalSetRescaling(DateTimeAxisRescaleConditions rescaling)
+		protected void InternalSetRescaling(DateTimeScaleRescaleConditions rescaling)
 		{
 			this._rescaling = rescaling;
 		}
@@ -345,7 +345,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public DateTimeAxisRescaleConditions Rescaling
+		public DateTimeScaleRescaleConditions Rescaling
 		{
 			get
 			{
@@ -482,11 +482,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 				ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
 		}
 
-		public void ProcessDataBounds(DateTime xorg, DateTime xend, DateTimeAxisRescaleConditions rescaling)
+		public void ProcessDataBounds(DateTime xorg, DateTime xend, DateTimeScaleRescaleConditions rescaling)
 		{
-			bool isAutoOrg, isAutoEnd;
-			rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-			ProcessDataBounds(xorg, !isAutoOrg, xend, !isAutoEnd);
+			rescaling.OnDataBoundsChanged(xorg, xend);
+			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
 		}
 
 		/// <summary>

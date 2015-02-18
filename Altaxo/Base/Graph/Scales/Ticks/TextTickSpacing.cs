@@ -76,18 +76,23 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool CopyFrom(object obj)
 		{
-			bool isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as TextTickSpacing;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
-				var from = obj as TextTickSpacing;
-				if (null != from)
-				{
-					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
-					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
-					_majorTextTicks = new List<AltaxoVariant>(from._majorTextTicks);
-				}
+				_majorTicks = new List<AltaxoVariant>(from._majorTicks);
+				_minorTicks = new List<AltaxoVariant>(from._minorTicks);
+				_majorTextTicks = new List<AltaxoVariant>(from._majorTextTicks);
+
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return isCopied;
+			return true;
 		}
 
 		public override object Clone()

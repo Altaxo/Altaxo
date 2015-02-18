@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 	/// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
 	/// </summary>
 	[Serializable]
-	public class Log10Scale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
+	public class Log10Scale : NumericalScale
 	{
 		/// <summary>Decimal logarithm of axis org.</summary>
 		private double _log10Org = 0; // Log10 of physical axis org
@@ -45,9 +45,9 @@ namespace Altaxo.Graph.Scales.Deprecated
 		private int _decadesPerMajorTick = 1; // how many decades is one major tick
 
 		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
-		protected NumericalBoundaries _dataBounds = null;
+		protected NumericalBoundaries _dataBounds;
 
-		protected LogarithmicAxisRescaleConditions _rescaling;
+		protected LogarithmicScaleRescaleConditions _rescaling;
 
 		#region Serialization
 
@@ -80,15 +80,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 				bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
 				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
-
 				s._dataBounds.ParentObject = s;
 
-				s._rescaling = new LogarithmicAxisRescaleConditions();
+				s._rescaling = new LogarithmicScaleRescaleConditions() { ParentObject = s };
 				s._rescaling.SetUserParameters(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
-
-				LogarithmicAxisRescaleConditions rescaling = new LogarithmicAxisRescaleConditions();
-				rescaling.SetUserParameters(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
-				s._rescaling = rescaling;
 
 				return s;
 			}
@@ -131,20 +126,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 				s._dataBounds.ParentObject = s;
 
 				// new in version 1
-				s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling = (LogarithmicScaleRescaleConditions)info.GetValue("Rescaling", s);
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the event chain
-			_dataBounds.ParentObject = this;
 		}
 
 		#endregion Serialization
@@ -154,7 +139,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// </summary>
 		public Log10Scale()
 		{
-			_rescaling = new LogarithmicAxisRescaleConditions() { ParentObject = this };
+			_rescaling = new LogarithmicScaleRescaleConditions() { ParentObject = this };
 			_dataBounds = new PositiveFiniteNumericalBoundaries() { ParentObject = this };
 		}
 
@@ -173,7 +158,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._log10End = from._log10End;
 			this._log10Org = from._log10Org;
 
-			this._rescaling = null == from.Rescaling ? new LogarithmicAxisRescaleConditions() { ParentObject = this } : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling = null == from.Rescaling ? new LogarithmicScaleRescaleConditions() { ParentObject = this } : (LogarithmicScaleRescaleConditions)from.Rescaling.Clone();
 			this._rescaling.ParentObject = this;
 		}
 
@@ -198,7 +183,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override NumericAxisRescaleConditions Rescaling
+		public override NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{
@@ -544,7 +529,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
 		}
 
-		public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
+		public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
 		{
 			rescaling.OnDataBoundsChanged(xorg, xend);
 			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);

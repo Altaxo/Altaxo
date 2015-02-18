@@ -183,6 +183,9 @@ namespace Altaxo.Main
 		/// </summary>
 		protected override void EhSelfChanged(EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return; // do not handle any event if dispose is in progress or is already disposed
+
 			if (!IsSuspended)
 			{
 				// Notify parent

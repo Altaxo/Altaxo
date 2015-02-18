@@ -523,7 +523,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_size = size;
 				_scales = new ScaleCollection() { ParentObject = this };
 				_scales[0] = scale; scale.TickSpacing = tickSpacing;
-				_scales[1] = new LinearScale() { TickSpacing = null };
+				_scales[1] = new LinearScale() { TickSpacing = new NoNumericTickSpacing() };
 				_coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem() { ParentObject = this };
 				_coordinateSystem.IsXYInterchanged = isXYInterchanged;
 				_coordinateSystem.IsXReverse = isXReversed;

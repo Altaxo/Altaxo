@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Scales
 	public abstract class Scale
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		ICloneable
+		Main.ICopyFrom
 	{
 		private static int _instanceCounter;
 		private readonly int _instance = _instanceCounter++;
@@ -56,22 +56,9 @@ namespace Altaxo.Graph.Scales
 		/// <returns>The cloned copy of the axis.</returns>
 		public abstract object Clone();
 
+		public abstract bool CopyFrom(object obj);
+
 		#endregion ICloneable Members
-
-		#region event handling
-
-		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
-			{
-				OnUserRescaled();
-				e = EventArgs.Empty;
-			}
-
-			return base.HandleLowPriorityChildChangeCases(sender, ref e);
-		}
-
-		#endregion event handling
 
 		/// <summary>
 		/// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
@@ -97,7 +84,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Returns the rescaling conditions for this axis as object.
 		/// </summary>
-		public abstract object RescalingObject { get; }
+		public abstract Rescaling.IScaleRescaleConditions RescalingObject { get; }
 
 		public abstract TickSpacing TickSpacing { get; set; }
 
@@ -112,12 +99,6 @@ namespace Altaxo.Graph.Scales
 		/// <summary>The axis end point in physical units.</summary>
 		public abstract AltaxoVariant EndAsVariant { get; }
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public abstract bool IsOrgExtendable { get; }
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public abstract bool IsEndExtendable { get; }
-
 		/// <summary>
 		/// Sets the orgin and the end of the scale temporarily (until the next DataBoundaryChanged event).
 		/// </summary>
@@ -126,7 +107,7 @@ namespace Altaxo.Graph.Scales
 		/// <returns>Null when the settings where applied. An string describing the problem otherwise.</returns>
 		/// <remarks>Settings like fixed boundaries or the data bounds will be ignored by this function. However, the next call
 		/// to <see cref="OnUserRescaled"/> will override the scale bounds.</remarks>
-		public abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
+		protected abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
 
 		/// <summary>
 		/// Called when user has pressed the rescale button.

@@ -25,6 +25,7 @@
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -601,12 +602,17 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					throw new NotImplementedException();
 				}
 
+				public override bool CopyFrom(object obj)
+				{
+					throw new NotImplementedException();
+				}
+
 				protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 				{
 					yield break; // we do not own the _originalScale (is this OK?)
 				}
 
-				public override object RescalingObject
+				public override IScaleRescaleConditions RescalingObject
 				{
 					get { throw new NotImplementedException(); }
 				}
@@ -626,7 +632,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					get { throw new NotImplementedException(); }
 				}
 
-				public override string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end)
+				protected override string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end)
 				{
 					throw new NotImplementedException();
 				}
@@ -634,16 +640,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				public override void OnUserRescaled()
 				{
 					throw new NotImplementedException();
-				}
-
-				public override bool IsOrgExtendable
-				{
-					get { throw new NotImplementedException(); }
-				}
-
-				public override bool IsEndExtendable
-				{
-					get { throw new NotImplementedException(); }
 				}
 
 				public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)

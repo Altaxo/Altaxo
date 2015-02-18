@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Scales.Rescaling.DateTimeScaleRescaleConditionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="8" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="8" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="8" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="8" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+
+		<Label Grid.Row="0" Grid.Column="0" Content="Org:" />
+		<ComboBox Grid.Row="0" Grid.Column="2" x:Name="_guiOrgRescaling" SelectionChanged="EhComboBox_SelectionChanged" />
+		<axogc:DateTimeTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValueDT" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
+		<axogc:TimeSpanTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValueTS" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
+		<ComboBox Grid.Row="0" Grid.Column="6" x:Name="_guiOrgRelativeTo" SelectionChanged="EhOrgRelativeTo_SelectionChanged" />
+
+		<Label Grid.Row="2" Grid.Column="0" Content="End:" />
+		<ComboBox Grid.Row="2" Grid.Column="2" x:Name="_guiEndRescaling" SelectionChanged="EhComboBox_SelectionChanged" />
+		<axogc:DateTimeTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValueDT" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
+		<axogc:TimeSpanTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValueTS" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
+		<ComboBox Grid.Row="2" Grid.Column="6" x:Name="_guiEndRelativeTo" SelectionChanged="EhEndRelativeTo_SelectionChanged" />
+	</Grid>
+</UserControl>

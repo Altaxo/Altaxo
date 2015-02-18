@@ -150,6 +150,11 @@ namespace Altaxo.Serialization.Xml
 				m_Writer.WriteElementString(name, XmlConvert.ToString((int)val));
 		}
 
+		public void AddValue(string name, long val)
+		{
+			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+		}
+
 		public void AddValue(string name, string val)
 		{
 			m_Writer.WriteElementString(name, val);

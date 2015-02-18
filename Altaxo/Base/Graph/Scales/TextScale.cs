@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
 		protected TextBoundaries _dataBounds;
 
-		protected NumericAxisRescaleConditions _rescaling;
+		protected NumericScaleRescaleConditions _rescaling;
 
 		protected Ticks.TickSpacing _tickSpacing;
 
@@ -52,16 +52,49 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Current inverse of axis span (cached value).</summary>
 		protected double _cachedOneByAxisSpan = 1;
 
-		/// <summary>True if org is allowed to be extended to smaller values.</summary>
-		protected bool _isOrgExtendable;
-
-		/// <summary>True if end is allowed to be extended to higher values.</summary>
-		protected bool _isEndExtendable;
-
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.TextScale", 1)]
 		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
+				TextScale s = (TextScale)obj;
+
+				info.AddValue("Org", s._cachedAxisOrg);
+				info.AddValue("End", s._cachedAxisEnd);
+
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("Bounds", s._dataBounds);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				TextScale s = null != o ? (TextScale)o : new TextScale(info);
+
+				s._cachedAxisOrg = (double)info.GetDouble("Org");
+				s._cachedAxisEnd = (double)info.GetDouble("End");
+				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
+				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
+
+				s.ChildSetMember(ref s._rescaling, (NumericScaleRescaleConditions)info.GetValue("Rescaling", s));
+				s.ChildSetMember(ref s._dataBounds, (TextBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._tickSpacing, new Ticks.TextTickSpacing());
+
+				s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2015-02-13 Added TickSpacing
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 2)]
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -70,34 +103,25 @@ namespace Altaxo.Graph.Scales
 				info.AddValue("Org", s._cachedAxisOrg);
 				info.AddValue("End", s._cachedAxisEnd);
 
-				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("TickSpacing", s._tickSpacing);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				TextScale s = SDeserialize(o, info, parent);
-				OnAfterDeserialization(s);
-				return s;
-			}
-
-			public virtual void OnAfterDeserialization(TextScale s)
-			{
-			}
-
-			protected virtual TextScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				TextScale s = null != o ? (TextScale)o : new TextScale();
+				TextScale s = null != o ? (TextScale)o : new TextScale(info);
 
 				s._cachedAxisOrg = (double)info.GetDouble("Org");
 				s._cachedAxisEnd = (double)info.GetDouble("End");
 				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
 				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
-				s._isOrgExtendable = false;
-				s._isEndExtendable = false;
 
-				s.ChildSetMember(ref s._rescaling, (NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
 				s.ChildSetMember(ref s._dataBounds, (TextBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._rescaling, (NumericScaleRescaleConditions)info.GetValue("Rescaling", s));
+				s.ChildSetMember(ref s._tickSpacing, (Ticks.TickSpacing)info.GetValue("TickSpacing", s));
+
+				s.UpdateTicksAndOrgEndUsingRescalingObject();
 
 				return s;
 			}
@@ -105,13 +129,20 @@ namespace Altaxo.Graph.Scales
 
 		#endregion Serialization
 
+		/// <summary>
+		/// For deserialization purposes only: initializes a new instance of the <see cref="TextScale"/> class.
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected TextScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
 		public TextScale()
 		{
-			_dataBounds = new TextBoundaries();
-			_dataBounds.ParentObject = this;
-
-			_rescaling = new LinearScaleRescaleConditions();
-			_rescaling.ParentObject = this;
+			_dataBounds = new TextBoundaries() { ParentObject = this };
+			_rescaling = new LinearScaleRescaleConditions() { ParentObject = this };
+			_tickSpacing = new Ticks.TextTickSpacing() { ParentObject = this };
+			UpdateTicksAndOrgEndUsingRescalingObject();
 		}
 
 		public TextScale(TextScale from)
@@ -119,36 +150,47 @@ namespace Altaxo.Graph.Scales
 			CopyFrom(from);
 		}
 
-		private void CopyFrom(TextScale from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			_dataBounds = (TextBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
+			TextScale from = obj as TextScale;
 
-			_rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
-			_rescaling.ParentObject = this;
+			if (null == from)
+				return false;
 
-			_cachedAxisOrg = from._cachedAxisOrg;
-			_cachedAxisEnd = from._cachedAxisEnd;
-			_cachedAxisSpan = from._cachedAxisSpan;
-			_cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+			using (var suspendToken = SuspendGetToken())
+			{
+				_cachedAxisOrg = from._cachedAxisOrg;
+				_cachedAxisEnd = from._cachedAxisEnd;
+				_cachedAxisSpan = from._cachedAxisSpan;
+				_cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+
+				ChildCopyToMember(ref _dataBounds, from._dataBounds);
+				ChildCopyToMember(ref _rescaling, from._rescaling);
+				ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
+
+				EhSelfChanged(EventArgs.Empty);
+				suspendToken.Resume();
+			}
+
+			return true;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _dataBounds)
-				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+				yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
 			if (null != _rescaling)
-				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+				yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
 		}
 
 		public override object Clone()
 		{
-			TextScale result = new TextScale();
-			result.CopyFrom(this);
-			return result;
+			return new TextScale(this);
 		}
 
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
@@ -173,7 +215,7 @@ namespace Altaxo.Graph.Scales
 			return new AltaxoVariant(_cachedAxisOrg + x * _cachedAxisSpan);
 		}
 
-		public override object RescalingObject
+		public override IScaleRescaleConditions RescalingObject
 		{
 			get
 			{
@@ -196,10 +238,10 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				if (!(value is Ticks.NumericTickSpacing))
-					throw new ArgumentException("Value must be of type NumericTickSpacing");
+				if (!((value is Ticks.NumericTickSpacing) || (value is Ticks.TextTickSpacing)))
+					throw new ArgumentException("Value must be of type NumericTickSpacing or TextTickSpacing");
 
-				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+				if (ChildSetMember(ref _tickSpacing, value))
 					EhChildChanged(this.RescalingObject, EventArgs.Empty);
 			}
 		}
@@ -220,19 +262,7 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public override bool IsOrgExtendable
-		{
-			get { return _isOrgExtendable; }
-		}
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public override bool IsEndExtendable
-		{
-			get { return _isEndExtendable; }
-		}
-
-		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			double o = org.ToDouble();
 			double e = end.ToDouble();
@@ -240,25 +270,20 @@ namespace Altaxo.Graph.Scales
 			if (!(o < e))
 				return "org is not less than end";
 
-			InternalSetOrgEnd(o, e, false, false);
+			InternalSetOrgEnd(o, e);
 
 			return null;
 		}
 
-		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
+		private void InternalSetOrgEnd(double org, double end)
 		{
 			bool changed = _cachedAxisOrg != org ||
-				_cachedAxisEnd != end ||
-				_isOrgExtendable != isOrgExtendable ||
-				_isEndExtendable != isEndExtendable;
+				_cachedAxisEnd != end;
 
 			_cachedAxisOrg = org;
 			_cachedAxisEnd = end;
 			_cachedAxisSpan = end - org;
 			_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
-
-			_isOrgExtendable = isOrgExtendable;
-			_isEndExtendable = isEndExtendable;
 
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
@@ -278,7 +303,7 @@ namespace Altaxo.Graph.Scales
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (object.ReferenceEquals(sender, _dataBounds))
+			if (object.ReferenceEquals(sender, _dataBounds)) // Data bounds have changed
 			{
 				double xorg = 0;
 				double xend = 1;
@@ -292,18 +317,27 @@ namespace Altaxo.Graph.Scales
 				e = null;
 				return false;
 			}
-
-			return base.HandleLowPriorityChildChangeCases(sender, ref e);
-		}
-
-		protected override void OnChanged(EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
+			else if (object.ReferenceEquals(sender, _rescaling)) // Rescaling has changed
 			{
-				OnUserRescaled();
+				UpdateTicksAndOrgEndUsingRescalingObject();
 			}
 
-			base.OnChanged(e);
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected void UpdateTicksAndOrgEndUsingRescalingObject()
+		{
+			if (null == TickSpacing)
+			{
+				SetScaleOrgEnd(_rescaling.ResultingOrg, _rescaling.ResultingEnd);
+			}
+			else
+			{
+				AltaxoVariant org = _rescaling.ResultingOrg, end = _rescaling.ResultingEnd;
+				TickSpacing.PreProcessScaleBoundaries(ref org, ref end, !_rescaling.IsResultingOrgFixed, !_rescaling.IsResultingEndFixed);
+				SetScaleOrgEnd(org, end);
+				TickSpacing.FinalProcessScaleBoundaries(org, end, this);
+			}
 		}
 
 		#endregion Changed event handling

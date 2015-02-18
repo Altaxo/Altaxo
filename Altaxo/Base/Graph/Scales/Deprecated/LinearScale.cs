@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds = new FiniteNumericalBoundaries();
 
-		protected NumericAxisRescaleConditions _rescaling = new LinearScaleRescaleConditions();
+		protected NumericScaleRescaleConditions _rescaling = new LinearScaleRescaleConditions();
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -169,7 +169,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 				s._dataBounds.ParentObject = s;
 
 				// new in version 1
-				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
 				s._rescaling.ParentObject = s;
 
 				return s;
@@ -288,7 +288,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override NumericAxisRescaleConditions Rescaling
+		public override NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{
@@ -415,7 +415,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
 		}
 
-		public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
+		public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
 		{
 			rescaling.OnDataBoundsChanged(xorg, xend);
 			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);

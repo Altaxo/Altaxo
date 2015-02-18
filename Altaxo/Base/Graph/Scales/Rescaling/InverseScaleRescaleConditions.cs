@@ -30,23 +30,24 @@ namespace Altaxo.Graph.Scales.Rescaling
 	/// Summary description for LogarithmicAxisRescaleConditions.
 	/// </summary>
 	[Serializable]
-	public class InverseAxisRescaleConditions : NumericAxisRescaleConditions
+	public class InverseScaleRescaleConditions : NumericScaleRescaleConditions
 	{
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseAxisRescaleConditions), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Rescaling.InverseAxisRescaleConditions", 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScaleRescaleConditions), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (InverseAxisRescaleConditions)obj;
+				var s = (InverseScaleRescaleConditions)obj;
 
 				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (InverseAxisRescaleConditions)o : new InverseAxisRescaleConditions();
+				var s = null != o ? (InverseScaleRescaleConditions)o : new InverseScaleRescaleConditions();
 
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
@@ -56,18 +57,96 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 		#endregion Serialization
 
-		public InverseAxisRescaleConditions()
+		public InverseScaleRescaleConditions()
 		{
 		}
 
-		public InverseAxisRescaleConditions(InverseAxisRescaleConditions from)
+		public InverseScaleRescaleConditions(InverseScaleRescaleConditions from)
 			: base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 
 		public override object Clone()
 		{
-			return new InverseAxisRescaleConditions(this);
+			return new InverseScaleRescaleConditions(this);
+		}
+
+		public override double ResultingOrg
+		{
+			get
+			{
+				return 1 / _resultingOrg;
+			}
+		}
+
+		public double ResultingInverseOrg
+		{
+			get
+			{
+				return _resultingOrg;
+			}
+		}
+
+		public override double ResultingEnd
+		{
+			get
+			{
+				return 1 / _resultingEnd;
+			}
+		}
+
+		public double ResultingInverseEnd
+		{
+			get
+			{
+				return _resultingEnd;
+			}
+		}
+
+		public override double UserProvidedOrgValue
+		{
+			get
+			{
+				return 1 / _userProvidedOrgValue;
+			}
+		}
+
+		public override double UserProvidedEndValue
+		{
+			get
+			{
+				return 1 / _userProvidedEndValue;
+			}
+		}
+
+		public virtual void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
+		{
+			orgValue = 1 / orgValue;
+			endValue = 1 / endValue;
+
+			bool isChange =
+
+			_orgRescaling != orgRescaling ||
+			_userProvidedOrgRelativeTo != orgRelativeTo ||
+			_userProvidedOrgValue != orgValue ||
+			_endRescaling != endRescaling ||
+			_userProvidedEndRelativeTo != endRelativeTo ||
+			_userProvidedEndValue != endValue;
+
+			_orgRescaling = orgRescaling;
+			_userProvidedOrgRelativeTo = orgRelativeTo;
+			_userProvidedOrgValue = orgValue;
+
+			_endRescaling = endRescaling;
+			_userProvidedEndRelativeTo = endRelativeTo;
+			_userProvidedEndValue = endValue;
+
+			if (isChange)
+			{
+				ProcessOrg_UserParametersChanged();
+				ProcessEnd_UserParametersChanged();
+				EhSelfChanged();
+			}
 		}
 
 		/// <summary>
@@ -75,8 +154,14 @@ namespace Altaxo.Graph.Scales.Rescaling
 		/// </summary>
 		/// <param name="dataBoundsOrg">The data bounds org.</param>
 		/// <param name="dataBoundsEnd">The data bounds end.</param>
-		protected override void FixDataBoundsOrgAndEnd(ref double dataBoundsOrg, ref double dataBoundsEnd)
+		protected override void FixValuesForDataBoundsOrgAndEnd(ref double dataBoundsOrg, ref double dataBoundsEnd)
 		{
+			if (0 == dataBoundsOrg || 0 == dataBoundsEnd)
+				throw new ArgumentOutOfRangeException("Either dataBoundsOrg or dataBoundsEnd is null. This should not happend when InverseNumericalBoundaries were used.");
+
+			dataBoundsOrg = 1 / dataBoundsOrg; // invert the boundaries
+			dataBoundsEnd = 1 / dataBoundsEnd;
+
 			// ensure that data bounds always have some distance
 			if (dataBoundsOrg == dataBoundsEnd)
 			{
@@ -94,9 +179,27 @@ namespace Altaxo.Graph.Scales.Rescaling
 			}
 		}
 
+		protected override void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd)
+		{
+			zoomOrg = 1 / zoomOrg;
+			zoomEnd = 1 / zoomEnd;
+
+			if (zoomOrg == zoomEnd)
+			{
+				zoomOrg = -1;
+				zoomEnd = 1;
+			}
+			else if (zoomOrg > zoomEnd)
+			{
+				var h = zoomOrg;
+				zoomOrg = zoomEnd;
+				zoomEnd = h;
+			}
+		}
+
 		protected override double GetDataBoundsScaleMean()
 		{
-			return 0.5 * _dataBoundsOrg * _dataBoundsEnd / (_dataBoundsOrg + _dataBoundsEnd);
+			return 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
 		}
 
 		#region Resulting Org/End to/fron User Org/End
@@ -186,5 +289,65 @@ namespace Altaxo.Graph.Scales.Rescaling
 		}
 
 		#endregion Resulting Org/End to/fron User Org/End
+
+		#region Helper functions for dialog
+
+		public double GetOrgValueToShowInDialog(double currentResultingInverseOrg)
+		{
+			if (this._orgRescaling == BoundaryRescaling.Auto)
+			{
+				switch (this._userProvidedOrgRelativeTo)
+				{
+					case BoundariesRelativeTo.Absolute:
+						return currentResultingInverseOrg;
+
+					case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+						return currentResultingInverseOrg - _dataBoundsOrg;
+
+					case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+						return currentResultingInverseOrg - _dataBoundsEnd;
+
+					case BoundariesRelativeTo.RelativeToDataBoundsMean:
+						return currentResultingInverseOrg - 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
+
+					default:
+						throw new NotImplementedException();
+				}
+			}
+			else
+			{
+				return this._userProvidedOrgValue;
+			}
+		}
+
+		public double GetEndValueToShowInDialog(double currentResultingInverseEnd)
+		{
+			if (this._endRescaling == BoundaryRescaling.Auto)
+			{
+				switch (this._userProvidedEndRelativeTo)
+				{
+					case BoundariesRelativeTo.Absolute:
+						return currentResultingInverseEnd;
+
+					case BoundariesRelativeTo.RelativeToDataBoundsOrg:
+						return currentResultingInverseEnd - _dataBoundsOrg;
+
+					case BoundariesRelativeTo.RelativeToDataBoundsEnd:
+						return currentResultingInverseEnd - _dataBoundsEnd;
+
+					case BoundariesRelativeTo.RelativeToDataBoundsMean:
+						return currentResultingInverseEnd - 0.5 * (_dataBoundsOrg + _dataBoundsEnd);
+
+					default:
+						throw new NotImplementedException();
+				}
+			}
+			else
+			{
+				return this._userProvidedEndValue;
+			}
+		}
+
+		#endregion Helper functions for dialog
 	}
 }

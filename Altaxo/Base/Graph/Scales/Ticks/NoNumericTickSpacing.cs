@@ -12,6 +12,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new NoNumericTickSpacing();
 		}
 
+		public override bool CopyFrom(object obj)
+		{
+			return obj is NoNumericTickSpacing;
+		}
+
 		#region Serialization
 
 		/// <summary>

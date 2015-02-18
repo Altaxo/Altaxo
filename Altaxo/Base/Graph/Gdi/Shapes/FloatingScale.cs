@@ -25,6 +25,7 @@
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
@@ -545,7 +546,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			private ScaleCollection _scaleCollection = new ScaleCollection();
 
-			public LayerSegment(IPlotArea underlyingArea, Scale scaleWithTicks, Logical3D org, Logical3D end, int scaleNumber)
+			public LayerSegment(IPlotArea underlyingArea, Scale scale, Logical3D org, Logical3D end, int scaleNumber)
 			{
 				_underlyingArea = underlyingArea;
 				_org = org;
@@ -555,9 +556,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				for (int i = 0; i < _underlyingArea.Scales.Count; ++i)
 				{
 					if (i == _scaleNumber)
-						_scaleCollection.SetScaleWithTicks(i, scaleWithTicks);
+						_scaleCollection[i] = scale;
 					else
-						_scaleCollection.SetScaleWithTicks(i, _underlyingArea.Scales[i]);
+						_scaleCollection[i] = underlyingArea.Scales[i];
 				}
 			}
 
@@ -650,6 +651,30 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_segmentScaling = scaling;
 			}
 
+			public override bool CopyFrom(object obj)
+			{
+				if (object.ReferenceEquals(this, obj))
+					return true;
+
+				var from = obj as ScaleSegment;
+
+				if (null == from)
+					return false;
+
+				using (var suspendToken = SuspendGetToken())
+				{
+					this._relOrg = from._relOrg;
+					this._relEnd = from._relEnd;
+					this._underlyingScale = from._underlyingScale;
+					this._segmentScaling = from._segmentScaling;
+
+					EhSelfChanged(EventArgs.Empty);
+					suspendToken.Resume();
+				}
+
+				return true;
+			}
+
 			public override object Clone()
 			{
 				return new ScaleSegment(_underlyingScale, _relOrg, _relEnd, _segmentScaling);
@@ -657,8 +682,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 			{
-				if (null != _underlyingScale)
-					yield return new Main.DocumentNodeAndName(_underlyingScale, "UnderlyingScale");
+				yield break; // do not dispose _underlyingScale !! we are not the owner (the owner is the layer the scale belongs to)
 			}
 
 			public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
@@ -695,7 +719,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return y;
 			}
 
-			public override object RescalingObject
+			public override IScaleRescaleConditions RescalingObject
 			{
 				get { return _underlyingScale.RescalingObject; }
 			}
@@ -721,17 +745,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			public override bool IsOrgExtendable
-			{
-				get { return false; }
-			}
-
-			public override bool IsEndExtendable
-			{
-				get { return false; }
-			}
-
-			public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+			protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 			{
 				_relOrg = _underlyingScale.PhysicalVariantToNormal(org);
 				_relEnd = _underlyingScale.PhysicalVariantToNormal(end);

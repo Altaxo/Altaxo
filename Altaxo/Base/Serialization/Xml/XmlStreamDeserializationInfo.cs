@@ -138,6 +138,11 @@ namespace Altaxo.Serialization.Xml
 			return GetInt32();
 		}
 
+		public long GetInt64(string name)
+		{
+			return XmlConvert.ToInt64(m_Reader.ReadElementString());
+		}
+
 		public float GetSingle()
 		{
 			return XmlConvert.ToSingle(m_Reader.ReadElementString());

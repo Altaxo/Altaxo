@@ -277,7 +277,7 @@ namespace Altaxo.Graph.Gdi
 
 		public Scale GetScale(int i)
 		{
-			return _scales.Scale(i);
+			return _scales[i];
 		}
 
 		public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
@@ -305,7 +305,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (id.UsePhysicalValue)
 			{
-				double l = this.Scales.Scale(id.PerpendicularAxisNumber).PhysicalVariantToNormal(id.PhysicalValue);
+				double l = this.Scales[id.PerpendicularAxisNumber].PhysicalVariantToNormal(id.PhysicalValue);
 				id.LogicalValue = l;
 			}
 		}

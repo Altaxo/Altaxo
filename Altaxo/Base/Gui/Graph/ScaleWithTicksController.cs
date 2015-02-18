@@ -42,13 +42,13 @@ namespace Altaxo.Gui.Graph
 
 		void SetLinkedScalePropertiesView(object guiobject);
 
-		void SetBoundaryView(object guiobject);
+		void SetRescalingView(object guiobject);
 
 		void SetScaleView(object guiobject);
 
 		void SetTickSpacingView(object guiobject);
 
-		event Action AxisTypeChanged;
+		event Action ScaleTypeChanged;
 
 		event Action TickSpacingTypeChanged;
 
@@ -61,13 +61,13 @@ namespace Altaxo.Gui.Graph
 	/// Summary description for AxisScaleController.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IScaleWithTicksView))]
-	public class ScaleWithTicksController : MVCANControllerEditOriginalDocBase<Scale, IScaleWithTicksView>
+	public class ScaleWithTicksController : MVCANControllerEditOriginalDocInstanceCanChangeBase<Scale, IScaleWithTicksView>
 	{
 		protected IMVCAController _scaleController;
 
 		protected IMVCAController _linkedScaleParameterController;
 
-		protected IMVCAController _boundaryController;
+		protected IMVCAController _rescalingController;
 
 		protected IMVCAController _tickSpacingController;
 
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
-			yield return new ControllerAndSetNullMethod(_boundaryController, () => _boundaryController = null);
+			yield return new ControllerAndSetNullMethod(_rescalingController, () => _rescalingController = null);
 			yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
 			yield return new ControllerAndSetNullMethod(_linkedScaleParameterController, () => _linkedScaleParameterController = null);
 		}
@@ -94,6 +94,11 @@ namespace Altaxo.Gui.Graph
 			base.Dispose(isDisposing);
 		}
 
+		public ScaleWithTicksController(Action<Scale> SetNewScaleInstance)
+			: base(SetNewScaleInstance)
+		{
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);
@@ -103,7 +108,7 @@ namespace Altaxo.Gui.Graph
 			InitLinkProperties(initData);
 			InitScaleTypes(initData);
 			InitScaleController(initData);
-			InitBoundaryController(initData);
+			InitRescalingController(initData);
 			InitTickSpacingTypes(initData);
 			InitTickSpacingController(initData);
 		}
@@ -116,7 +121,7 @@ namespace Altaxo.Gui.Graph
 			if (null != _linkedScaleParameterController && false == _linkedScaleParameterController.Apply(disposeController))
 				return false;
 
-			if (null != _boundaryController && false == _boundaryController.Apply(disposeController))
+			if (null != _rescalingController && false == _rescalingController.Apply(disposeController))
 				return false;
 
 			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
@@ -125,9 +130,27 @@ namespace Altaxo.Gui.Graph
 			return ApplyEnd(true, disposeController); // all ok
 		}
 
+		protected override void AttachView()
+		{
+			base.AttachView();
+
+			_view.ScaleTypeChanged += this.EhView_ScaleTypeChanged;
+			_view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
+			_view.LinkTargetChanged += this.EhView_LinkTargetChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ScaleTypeChanged -= this.EhView_ScaleTypeChanged;
+			_view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
+			_view.LinkTargetChanged -= this.EhView_LinkTargetChanged;
+
+			base.DetachView();
+		}
+
 		/// <summary>
-		/// Gets or sets the scale to edit. This is the scale that is shown in the dialog. If _doc.Scale is a LinkedScale, the ScaleToEdit is the scale wrapped by the LinkedScale.
-		/// Otherwise it is _doc.Scale.
+		/// Gets or sets the scale to edit. This is the scale that is shown in the dialog. If _doc is a LinkedScale, the ScaleToEdit is the scale wrapped by the LinkedScale.
+		/// Otherwise it is _doc.
 		/// </summary>
 		/// <value>
 		/// The scale to edit.
@@ -172,14 +195,22 @@ namespace Altaxo.Gui.Graph
 				if (null != value)
 				{
 					if (!(_doc is LinkedScale))
+					{
+						var oldDoc = _doc;
 						_doc = new LinkedScale((Scale)_doc.Clone()); // Clone necessary to avoid ObjectDisposedProblems
+						OnDocumentInstanceChanged(oldDoc, _doc);
+					}
 
 					((LinkedScale)_doc).ScaleLinkedTo = value;
 				}
 				else // value is null
 				{
 					if (_doc is LinkedScale)
+					{
+						var oldDoc = _doc;
 						_doc = (Scale)((LinkedScale)_doc).WrappedScale.Clone(); // Clone to avoid ObjectDisposedProblems
+						OnDocumentInstanceChanged(oldDoc, _doc);
+					}
 				}
 			}
 		}
@@ -209,7 +240,7 @@ namespace Altaxo.Gui.Graph
 					var siblingLayers = mylayer.SiblingLayers;
 					if (null != siblingLayers)
 					{
-						var scaleLinkedTo = _doc.Scale is LinkedScale ? ((LinkedScale)_doc).ScaleLinkedTo : null;
+						var scaleLinkedTo = _doc is LinkedScale ? ((LinkedScale)_doc).ScaleLinkedTo : null;
 
 						for (int i = 0; i < siblingLayers.Count; ++i)
 						{
@@ -222,7 +253,7 @@ namespace Altaxo.Gui.Graph
 								var scale = lxy.Scales[j];
 
 								if (LinkedScale.WouldScaleBeDependentOnMe(_doc, scale))
-									continue; // Scale would be dependent on _doc.Scale, thus we can not link to it
+									continue; // Scale would be dependent on _doc, thus we can not link to it
 
 								var scaleName = j == 0 ? "x" : (j == 1 ? "y" : (j == 2 ? "z" : string.Format("{0}.", j)));
 								string name = string.Format("Layer[{0}] - {1} scale", i, scaleName);
@@ -314,19 +345,19 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void InitBoundaryController(bool bInit)
+		public void InitRescalingController(bool bInit)
 		{
 			if (bInit)
 			{
 				if (null != ScaleToEdit.RescalingObject && null == ScaleLinkedTo)
-					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit.RescalingObject, ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
+					_rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit.RescalingObject, ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
 				else
-					DisposeAndSetToNull(ref _boundaryController);
+					DisposeAndSetToNull(ref _rescalingController);
 			}
 
 			if (null != _view)
 			{
-				_view.SetBoundaryView(null != _boundaryController ? _boundaryController.ViewObject : null);
+				_view.SetRescalingView(null != _rescalingController ? _rescalingController.ViewObject : null);
 			}
 		}
 
@@ -347,23 +378,28 @@ namespace Altaxo.Gui.Graph
 
 		#region View event handlers
 
-		public void EhView_AxisTypeChanged()
+		public void EhView_ScaleTypeChanged()
 		{
-			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
+			Type scaleType = (Type)_scaleTypes.FirstSelectedNode.Tag;
 
 			try
 			{
-				if (axistype != ScaleToEdit.GetType())
+				if (scaleType != ScaleToEdit.GetType())
 				{
-					// replace the current axis by a new axis of the type axistype
-					Scale _oldAxis = ScaleToEdit;
-					ScaleToEdit = (Scale)System.Activator.CreateInstance(axistype);
+					// replace the current scale by a new scale of the type axistype
+					Scale oldScale = ScaleToEdit;
+					Scale newScale = (Scale)System.Activator.CreateInstance(scaleType);
+
+					OnDocumentInstanceChanged(oldScale, newScale);
+
+					ScaleToEdit = newScale;
 
 					// Try to set the same org and end as the axis before
 					// this will fail for instance if we switch from linear to logarithmic with negative bounds
 					try
 					{
-						ScaleToEdit.SetScaleOrgEnd(_oldAxis.OrgAsVariant, _oldAxis.EndAsVariant);
+						if (ScaleToEdit.RescalingObject is Altaxo.Main.ICopyFrom)
+							((Altaxo.Main.ICopyFrom)ScaleToEdit.RescalingObject).CopyFrom(oldScale.RescalingObject);
 					}
 					catch (Exception)
 					{
@@ -371,9 +407,7 @@ namespace Altaxo.Gui.Graph
 
 					InitScaleController(true);
 					// now we have also to replace the controller and the control for the axis boundaries
-					InitBoundaryController(true);
-
-					_doc.TickSpacing = Scale.CreateDefaultTicks(axistype);
+					InitRescalingController(true);
 					InitTickSpacingTypes(true);
 					InitTickSpacingController(true);
 				}
@@ -403,7 +437,7 @@ namespace Altaxo.Gui.Graph
 			ScaleLinkedTo = (Scale)_linkScaleChoices.FirstSelectedNode.Tag;
 
 			InitLinkProperties(true);
-			InitBoundaryController(true);
+			InitRescalingController(true);
 		}
 
 		public void EhView_LinkChanged(bool linked)
@@ -411,27 +445,5 @@ namespace Altaxo.Gui.Graph
 		}
 
 		#endregion View event handlers
-
-		#region IMVCAController
-
-		protected override void AttachView()
-		{
-			base.AttachView();
-
-			_view.AxisTypeChanged += this.EhView_AxisTypeChanged;
-			_view.TickSpacingTypeChanged += this.EhView_TickSpacingTypeChanged;
-			_view.LinkTargetChanged += this.EhView_LinkTargetChanged;
-		}
-
-		protected override void DetachView()
-		{
-			_view.AxisTypeChanged -= this.EhView_AxisTypeChanged;
-			_view.TickSpacingTypeChanged -= this.EhView_TickSpacingTypeChanged;
-			_view.LinkTargetChanged -= this.EhView_LinkTargetChanged;
-
-			base.DetachView();
-		}
-
-		#endregion IMVCAController
 	}
 }

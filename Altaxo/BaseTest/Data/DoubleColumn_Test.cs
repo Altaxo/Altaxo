@@ -339,6 +339,11 @@ namespace AltaxoTest.Data
 			{
 				get { throw new NotImplementedException(); }
 			}
+
+			public void SetDisposeInProgress()
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		[Test]

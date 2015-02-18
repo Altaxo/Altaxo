@@ -173,7 +173,8 @@ namespace Altaxo.Gui.Graph
 					// this will fail for instance if we switch from linear to logarithmic with negative bounds
 					try
 					{
-						newScale.SetScaleOrgEnd(oldScale.OrgAsVariant, oldScale.EndAsVariant);
+						if (newScale.RescalingObject is Altaxo.Main.ICopyFrom)
+							((Altaxo.Main.ICopyFrom)newScale.RescalingObject).CopyFrom(oldScale.RescalingObject);
 					}
 					catch (Exception)
 					{

@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 	/// that help tracking the boundaries of X and Y axis
 	/// </summary>
 	[Serializable]
-	public abstract class NumericalBoundaries : AbstractPhysicalBoundaries, System.Runtime.Serialization.IDeserializationCallback
+	public abstract class NumericalBoundaries : AbstractPhysicalBoundaries
 	{
 		protected double _minValue = double.MaxValue;
 		protected double _maxValue = double.MinValue;
@@ -50,6 +50,10 @@ namespace Altaxo.Graph.Scales.Boundaries
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				NumericalBoundaries s = (NumericalBoundaries)obj;
+
+				if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
+					throw new InvalidOperationException(string.Format("Type {0} has NumberOfItems={1}, but MinValue is {2} and MaxValue is {3}", s.GetType(), s._numberOfItems, s._minValue, s._maxValue));
+
 				info.AddValue("NumberOfItems", s._numberOfItems);
 				info.AddValue("MinValue", s._minValue);
 				info.AddValue("MaxValue", s._maxValue);
@@ -63,16 +67,12 @@ namespace Altaxo.Graph.Scales.Boundaries
 				s._minValue = info.GetDouble("MinValue");
 				s._maxValue = info.GetDouble("MaxValue");
 
+				// correct wrong serialization
+				if ((s._minValue == double.MaxValue || s._maxValue == double.MinValue) && s._numberOfItems != 0)
+					s._numberOfItems = 0;
+
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion Serialization
