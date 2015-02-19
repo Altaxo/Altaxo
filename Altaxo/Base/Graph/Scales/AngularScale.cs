@@ -100,11 +100,11 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisOrg = (double)info.GetDouble("Org");
 				s._cachedOneByAxisSpan = (double)info.GetDouble("1BySpan");
 
-				s._rescaling = (Rescaling.AngularRescaleConditions)info.GetValue("Rescaling", s);
-				s._rescaling.ParentObject = s;
-
 				s._dataBounds = (Boundaries.NumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s;
+
+				s._rescaling = (Rescaling.AngularRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
 
 				s._tickSpacing = (Ticks.NumericTickSpacing)info.GetValue("TickSpacing", s);
 				s._tickSpacing.ParentObject = s;

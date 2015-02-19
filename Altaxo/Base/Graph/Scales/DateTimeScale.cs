@@ -96,8 +96,8 @@ namespace Altaxo.Graph.Scales
 
 				info.AddValue("Org", s._axisOrg);
 				info.AddValue("End", s._axisEnd);
-				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("TickSpacing", s._tickSpacing);
 			}
 
@@ -107,8 +107,8 @@ namespace Altaxo.Graph.Scales
 
 				s._axisOrg = info.GetDateTime("Org");
 				s._axisEnd = info.GetDateTime("End");
-				s.ChildSetMember(ref s._rescaling, (DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
 				s.ChildSetMember(ref s._dataBounds, (FiniteDateTimeBoundaries)info.GetValue("Bounds", s));
+				s.ChildSetMember(ref s._rescaling, (DateTimeScaleRescaleConditions)info.GetValue("Rescaling", s));
 				s.ChildSetMember(ref s._tickSpacing, (Ticks.DateTimeTickSpacing)info.GetValue("TickSpacing", s));
 
 				s.UpdateTicksAndOrgEndUsingRescalingObject();
@@ -387,6 +387,10 @@ namespace Altaxo.Graph.Scales
 			{
 				UpdateTicksAndOrgEndUsingRescalingObject();
 				// Fall through
+			}
+			else if (object.ReferenceEquals(sender, TickSpacing))
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
 			}
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);

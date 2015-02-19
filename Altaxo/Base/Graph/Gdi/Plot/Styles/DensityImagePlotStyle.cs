@@ -226,19 +226,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return true;
 
 			var from = obj as DensityImagePlotStyle;
-			bool hasCopied = false;
-			if (null != from)
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
 				this._clipToLayer = from._clipToLayer;
 				this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
 				this.Scale = (NumericalScale)from._scale.Clone();
-
-				//this._parent = from._parent;
-
 				this._imageType = CachedImageType.None;
-				hasCopied = true;
+
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return hasCopied;
+			return true;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -519,7 +520,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			NumericalBoundaries pb = _scale.DataBounds;
 			myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-			myPlotAssociation.MergeVBoundsInto(pb);
+			using (var suspendToken = pb.SuspendGetToken())
+			{
+				pb.Reset();
+				myPlotAssociation.MergeVBoundsInto(pb);
+				suspendToken.Resume();
+			}
 
 			// --------------- end preparation of color scaling ------------------------------
 

@@ -354,6 +354,7 @@
     <Compile Include="Gui\Main\InstancePropertyController.cs" />
     <Compile Include="Gui\Main\PropertyHierarchyController.cs" />
     <Compile Include="Gui\Main\PropertyBagController.cs" />
+    <Compile Include="Gui\MVCANDControllerEditOriginalDocInstanceCanChangeBase.cs" />
     <Compile Include="Gui\MVCANControllerEditOriginalDocInstanceCanChangeBase.cs" />
     <Compile Include="Gui\MVCANControllerEditImmutableDocBase.cs" />
     <Compile Include="Gui\MVCANControllerEditCopyOfDocBase.cs" />

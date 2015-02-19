@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IColorProviderView))]
 	//[UserControllerForObject(typeof(IColorProvider), 101)]
-	public class ColorProviderController : MVCANDControllerEditOriginalDocBase<IColorProvider, IColorProviderView>
+	public class ColorProviderController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<IColorProvider, IColorProviderView>
 	{
 		protected IMVCAController _detailController;
 		protected object _detailView;
@@ -86,6 +86,11 @@ namespace Altaxo.Gui.Graph
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_detailController, () => _detailController = null);
+		}
+
+		public ColorProviderController(Action<IColorProvider> SetInstanceInParentDoc)
+			: base(SetInstanceInParentDoc)
+		{
 		}
 
 		public override void Dispose(bool isDisposing)
@@ -197,6 +202,7 @@ namespace Altaxo.Gui.Graph
 					}
 
 					_doc = newDoc;
+					OnDocumentInstanceChanged(oldDoc, newDoc);
 					OnMadeDirty(); // Change for the controller up in hierarchy to grab new document
 
 					if (null != _suspendToken)

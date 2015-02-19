@@ -118,7 +118,7 @@ namespace Altaxo.Main.Commands
 		public override void Run()
 		{
 			GC.Collect();
-			Altaxo.Main.SuspendableDocumentNode.ReportParentChildAndDisposedProblems(Current.Project);
+			Altaxo.Main.SuspendableDocumentNode.ReportParentChildAndDisposedProblems(Current.Project, true);
 		}
 	}
 }

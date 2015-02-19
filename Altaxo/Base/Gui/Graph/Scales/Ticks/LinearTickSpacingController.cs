@@ -113,8 +113,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.MajorTicks = GUIConversion.ToString(_doc.MajorTickSpan);
 				_view.MinorTicks = _doc.MinorTicks;
 				_view.ZeroLever = _doc.ZeroLever;
-				_view.MinGrace = _doc.MinGrace;
-				_view.MaxGrace = _doc.MaxGrace;
+				_view.MinGrace = _doc.OrgGrace;
+				_view.MaxGrace = _doc.EndGrace;
 
 				_snapTicksToOrg.Clear();
 				_snapTicksToEnd.Clear();
@@ -223,8 +223,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
 
 			_doc.ZeroLever = _view.ZeroLever;
-			_doc.MinGrace = _view.MinGrace;
-			_doc.MaxGrace = _view.MaxGrace;
+			_doc.OrgGrace = _view.MinGrace;
+			_doc.EndGrace = _view.MaxGrace;
 
 			_doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
 			_doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;

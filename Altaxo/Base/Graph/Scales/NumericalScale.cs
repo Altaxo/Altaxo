@@ -124,6 +124,10 @@ namespace Altaxo.Graph.Scales
 			{
 				UpdateTicksAndOrgEndUsingRescalingObject();
 			}
+			else if (object.ReferenceEquals(sender, TickSpacing))
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
+			}
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}

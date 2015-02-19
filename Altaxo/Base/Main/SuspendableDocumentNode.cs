@@ -935,8 +935,9 @@ namespace Altaxo.Main
 		/// Starting from the provided root node, this function reports any missing Pa Reports the parent child and disposed problems.
 		/// </summary>
 		/// <param name="node">The node to start with.</param>
+		/// <param name="showFinalLineEvenWithNoProblems">If true, a final line is written to the console even when no problems have occured.</param>
 		/// <returns>True if any problems were detected, otherwise false.</returns>
-		public static bool ReportParentChildAndDisposedProblems(IDocumentLeafNode node)
+		public static bool ReportParentChildAndDisposedProblems(IDocumentLeafNode node, bool showFinalLineEvenWithNoProblems)
 		{
 			bool problemsDetected = false;
 
@@ -964,9 +965,17 @@ namespace Altaxo.Main
 						entry.DocumentNode.ParentObject = pnode; // fix this problem in order to continue with the dectection
 					}
 
-					if (ReportParentChildAndDisposedProblems(entry.DocumentNode))
+					if (ReportParentChildAndDisposedProblems(entry.DocumentNode, false))
 						problemsDetected = true;
 				}
+			}
+
+			if (showFinalLineEvenWithNoProblems)
+			{
+				if (problemsDetected)
+					Current.Console.WriteLine("{0} Some problems in parent-child relationships were dectected (see above).", Altaxo.Serialization.GUIConversion.ToString(DateTime.Now));
+				else
+					Current.Console.WriteLine("{0} No problems in parent-child relationships were dectected.", Altaxo.Serialization.GUIConversion.ToString(DateTime.Now));
 			}
 
 			return problemsDetected;

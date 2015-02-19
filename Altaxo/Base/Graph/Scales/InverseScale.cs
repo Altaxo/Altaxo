@@ -113,8 +113,8 @@ namespace Altaxo.Graph.Scales
 				var s = (InverseScale)obj;
 				info.AddValue("InvOrg", s._cachedAxisOrgInv);
 				info.AddValue("InvEnd", s._cachedAxisEndInv);
-				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("TickSpacing", s._tickSpacing);
 			}
 
@@ -127,11 +127,11 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisSpanInv = s._cachedAxisEndInv - s._cachedAxisOrgInv;
 				s._cachedOneByAxisSpanInv = 1 / s._cachedAxisSpanInv;
 
-				s._rescaling = (InverseScaleRescaleConditions)info.GetValue("Rescaling", s);
-				s._rescaling.ParentObject = s;
-
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s; // restore the event chain
+
+				s._rescaling = (InverseScaleRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
 
 				s._tickSpacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
 				s._tickSpacing.ParentObject = s;
