@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Scales
 
 		protected NumericScaleRescaleConditions _rescaling;
 
-		protected Ticks.NumericTickSpacing _tickSpacing;
+		protected Ticks.TickSpacing _tickSpacing;
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -248,10 +248,8 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				if (!(value is Ticks.NumericTickSpacing))
-					throw new ArgumentException("Value must be of type NumericTickSpacing");
 
-				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+				if (ChildSetMember(ref _tickSpacing, value))
 					EhChildChanged(Rescaling, EventArgs.Empty);
 			}
 		}

@@ -166,7 +166,6 @@ namespace Altaxo.Scripting
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		ICloneable,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IScriptText
 	{
 		/// <summary>
@@ -233,14 +232,6 @@ namespace Altaxo.Scripting
 				s._scriptText = info.GetString("Text");
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Is called when deserialization has finished.
-		/// </summary>
-		/// <param name="obj"></param>
-		public virtual void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion Serialization

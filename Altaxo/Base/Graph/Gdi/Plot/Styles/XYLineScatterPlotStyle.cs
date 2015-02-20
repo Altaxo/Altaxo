@@ -54,9 +54,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	/// <summary>
 	/// Deprecated; only used for deserialization of old versions.
 	/// </summary>
-	internal class XYLineScatterPlotStyle :
-
-		System.Runtime.Serialization.IDeserializationCallback
+	internal class XYLineScatterPlotStyle
 	{
 		protected LinePlotStyle m_LineStyle;
 		protected ScatterPlotStyle m_ScatterStyle;
@@ -160,14 +158,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion Serialization

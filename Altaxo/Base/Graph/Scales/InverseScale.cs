@@ -262,8 +262,6 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				if (!(value is Ticks.NumericTickSpacing))
-					throw new ArgumentException("Value must be of type NumericTickSpacing");
 
 				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
 					EhChildChanged(Rescaling, EventArgs.Empty);
@@ -375,19 +373,5 @@ namespace Altaxo.Graph.Scales
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
 		}
-
-		#region Changed event handling
-
-		protected override void OnChanged(EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
-			{
-				OnUserRescaled();
-			}
-
-			base.OnChanged(e);
-		}
-
-		#endregion Changed event handling
 	}
 }

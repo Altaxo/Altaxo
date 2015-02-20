@@ -253,7 +253,7 @@ namespace Altaxo.Gui.Graph
 					}
 					if (_axisScaleController == null)
 					{
-						_axisScaleController = new ScaleWithTicksController(scale => { }) { UseDocumentCopy = UseDocument.Directly };
+						_axisScaleController = new ScaleWithTicksController(null) { UseDocumentCopy = UseDocument.Directly };
 						_axisScaleController.InitializeDocument(_doc.ScaleWithTicks);
 
 						Current.Gui.FindAndAttachControlTo(_axisScaleController);

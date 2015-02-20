@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Graph
 
 		public override bool InitializeDocument(params object[] args)
 		{
-			if (args != null || args.Length > 1 && args[1] is IGPlotItem)
+			if (args != null && args.Length > 1 && args[1] is IGPlotItem)
 				_parent = (IGPlotItem)args[1];
 
 			return base.InitializeDocument(args);

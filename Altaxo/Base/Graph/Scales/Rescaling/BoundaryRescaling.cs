@@ -42,16 +42,6 @@ namespace Altaxo.Graph.Scales.Rescaling
 		Fixed = 1,
 
 		/// <summary>
-		/// This axis boundary is set to a fixed value.
-		/// </summary>
-		Equal = 1,
-
-		/// <summary>
-		/// The axis boundary is set to fit the data, but is set not greater than a certain value.
-		/// </summary>
-		NotGreater = 2,
-
-		/// <summary>
 		/// The axis boundary is set to fit the data, but is set not greater than a certain value.
 		/// </summary>
 		LessOrEqual = 2,
@@ -60,16 +50,6 @@ namespace Altaxo.Graph.Scales.Rescaling
 		/// The axis boundary is set to fit the data, but is set not lesser than a certain value.
 		/// </summary>
 		GreaterOrEqual = 3,
-
-		/// <summary>
-		/// The axis boundary is set to fit the data, but is set not lesser than a certain value.
-		/// </summary>
-		NotLess = 3,
-
-		/// <summary>
-		/// The axis boundary is set to use the span from the other axis boundary.
-		/// </summary>
-		UseSpan = 4,
 
 		/// <summary>
 		/// Use boundary values provided by the user, but only till the next zoom or data change.

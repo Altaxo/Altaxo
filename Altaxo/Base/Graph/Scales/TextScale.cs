@@ -238,8 +238,6 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				if (!((value is Ticks.NumericTickSpacing) || (value is Ticks.TextTickSpacing)))
-					throw new ArgumentException("Value must be of type NumericTickSpacing or TextTickSpacing");
 
 				if (ChildSetMember(ref _tickSpacing, value))
 					EhChildChanged(this.RescalingObject, EventArgs.Empty);

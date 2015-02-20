@@ -954,6 +954,9 @@ namespace Altaxo.Graph.Gdi.Axis
 			{
 				double r = relpositions[i];
 
+				if (!Altaxo.Calc.RMath.IsInIntervalCC(r, -1000, 1000))
+					continue;
+
 				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
 				PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
 				PointD2D tickend = tickorg;

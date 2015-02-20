@@ -77,6 +77,11 @@ namespace Altaxo.Gui.Graph
 
 		protected SelectableListNodeList _linkScaleChoices;
 
+		/// <summary>
+		/// If true, the scale type can not be changed.
+		/// </summary>
+		protected bool _lockScaleType;
+
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
@@ -95,8 +100,11 @@ namespace Altaxo.Gui.Graph
 		}
 
 		public ScaleWithTicksController(Action<Scale> SetNewScaleInstance)
-			: base(SetNewScaleInstance)
+			: base(SetNewScaleInstance != null ? SetNewScaleInstance : (scale => { }))
 		{
+			// if providing a null value for the SetNewScaleInstance action, we lock the possibility to choose a new scale type
+			if (null == SetNewScaleInstance)
+				_lockScaleType = true;
 		}
 
 		protected override void Initialize(bool initData)
@@ -302,7 +310,13 @@ namespace Altaxo.Gui.Graph
 			if (initData)
 			{
 				_scaleTypes = new SelectableListNodeList();
-				Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
+				Type[] classes;
+
+				if (_lockScaleType) // if the scale type is locked (i.e.) can not be chosen by the user, we simply offer only the one scale type we have now
+					classes = new Type[] { _doc.GetType() };
+				else
+					classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
+
 				for (int i = 0; i < classes.Length; i++)
 				{
 					if (classes[i] == typeof(LinkedScale))

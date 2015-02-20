@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 	/// </summary>
 
 	[Serializable]
-	public class LinearScale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
+	public class LinearScale : NumericalScale
 	{
 		// primary values
 		/// <summary>Proposed value of axis origin, proposed either by the lower physical boundary or by the user (if axis org is fixed).</summary>
@@ -174,18 +174,6 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the cached values
-			SetCachedValues();
-			// restore the event chain
-			_dataBounds.ParentObject = this;
 		}
 
 		#endregion Serialization

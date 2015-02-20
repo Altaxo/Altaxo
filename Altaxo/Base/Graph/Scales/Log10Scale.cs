@@ -238,10 +238,8 @@ namespace Altaxo.Graph.Scales
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				if (!(value is Ticks.NumericTickSpacing))
-					throw new ArgumentException("Value must be of type NumericTickSpacing");
 
-				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+				if (ChildSetMember(ref _tickSpacing, value))
 					EhChildChanged(Rescaling, EventArgs.Empty);
 			}
 		}

@@ -35,6 +35,56 @@ namespace Altaxo.Graph.Scales.Rescaling
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		IScaleRescaleConditions
 	{
+		#region InnerClasses
+
+		/// <summary>
+		/// Old boundary rescaling until 2015-02
+		/// </summary>
+		public enum BoundaryRescalingV1
+		{
+			/// <summary>
+			/// Scale this boundary so that the data fits.
+			/// </summary>
+			Auto = 0,
+
+			/// <summary>
+			/// This axis boundary is set to a fixed value.
+			/// </summary>
+			Fixed = 1,
+
+			/// <summary>
+			/// This axis boundary is set to a fixed value.
+			/// </summary>
+			Equal = 1,
+
+			/// <summary>
+			/// The axis boundary is set to fit the data, but is set not greater than a certain value.
+			/// </summary>
+			NotGreater = 2,
+
+			/// <summary>
+			/// The axis boundary is set to fit the data, but is set not greater than a certain value.
+			/// </summary>
+			LessOrEqual = 2,
+
+			/// <summary>
+			/// The axis boundary is set to fit the data, but is set not lesser than a certain value.
+			/// </summary>
+			GreaterOrEqual = 3,
+
+			/// <summary>
+			/// The axis boundary is set to fit the data, but is set not lesser than a certain value.
+			/// </summary>
+			NotLess = 3,
+
+			/// <summary>
+			/// The axis boundary is set to use the span from the other axis boundary.
+			/// </summary>
+			UseSpan = 4,
+		}
+
+		#endregion InnerClasses
+
 		protected BoundaryRescaling _orgRescaling;
 		protected BoundaryRescaling _endRescaling;
 
@@ -87,11 +137,11 @@ namespace Altaxo.Graph.Scales.Rescaling
 				s._userProvidedOrgRelativeTo = BoundariesRelativeTo.Absolute;
 				s._userProvidedEndRelativeTo = BoundariesRelativeTo.Absolute;
 
-				var orgRescaling = (BoundaryRescaling)info.GetEnum("OrgRescaling", typeof(BoundaryRescaling));
+				var orgRescaling = (BoundaryRescaling)(int)info.GetEnum("OrgRescaling", typeof(BoundaryRescalingV1));
 				var org = info.GetDateTime("Org");
-				var endRescaling = (BoundaryRescaling)info.GetEnum("EndRescaling", typeof(BoundaryRescaling));
+				var endRescaling = (BoundaryRescaling)(int)info.GetEnum("EndRescaling", typeof(BoundaryRescalingV1));
 				var end = info.GetDateTime("End");
-				var spanRescaling = (BoundaryRescaling)info.GetEnum("SpanRescaling", typeof(BoundaryRescaling));
+				var spanRescaling = (BoundaryRescaling)(int)info.GetEnum("SpanRescaling", typeof(BoundaryRescalingV1));
 				var span = info.GetTimeSpan("Span");
 
 				if (4 == (int)orgRescaling)

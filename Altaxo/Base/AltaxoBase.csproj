@@ -268,7 +268,6 @@
     <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\IScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
-    <Compile Include="Graph\Scales\Ticks\NoNumericTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Common\AscendingIntegerCollectionController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
