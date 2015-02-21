@@ -95,6 +95,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				return false;
 
 			_additionalTicks = new List<AltaxoVariant>(from._additionalTicks);
+			EhSelfChanged();
+
 			return true;
 		}
 
@@ -129,7 +131,36 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		public IList<AltaxoVariant> ByValues
+		public AltaxoVariant this[int idx]
+		{
+			get
+			{
+				return _additionalTicks[idx];
+			}
+			set
+			{
+				var oldValue = _additionalTicks[idx];
+				_additionalTicks[idx] = value;
+				if (value != oldValue)
+					EhSelfChanged();
+			}
+		}
+
+		public void Clear()
+		{
+			var oldCount = _additionalTicks.Count;
+			_additionalTicks.Clear();
+			if (0 != oldCount)
+				EhSelfChanged();
+		}
+
+		public void Add(AltaxoVariant additionalTick)
+		{
+			_additionalTicks.Add(additionalTick);
+			EhSelfChanged();
+		}
+
+		public IEnumerable<AltaxoVariant> Values
 		{
 			get
 			{

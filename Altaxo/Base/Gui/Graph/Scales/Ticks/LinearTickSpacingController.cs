@@ -140,8 +140,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.SuppressMajorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByNumbers);
 				_view.SuppressMinorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByNumbers);
 
-				_view.AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.ByValues);
-				_view.AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.ByValues);
+				_view.AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.Values);
+				_view.AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.Values);
 			}
 		}
 
@@ -196,9 +196,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMajorTickValues, out varVals))
 			{
-				_doc.AdditionalMajorTicks.ByValues.Clear();
+				_doc.AdditionalMajorTicks.Clear();
 				foreach (AltaxoVariant v in varVals)
-					_doc.AdditionalMajorTicks.ByValues.Add(v);
+					_doc.AdditionalMajorTicks.Add(v);
 			}
 			else
 			{
@@ -207,9 +207,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMinorTickValues, out varVals))
 			{
-				_doc.AdditionalMinorTicks.ByValues.Clear();
+				_doc.AdditionalMinorTicks.Clear();
 				foreach (AltaxoVariant v in varVals)
-					_doc.AdditionalMinorTicks.ByValues.Add(v);
+					_doc.AdditionalMinorTicks.Add(v);
 			}
 			else
 			{

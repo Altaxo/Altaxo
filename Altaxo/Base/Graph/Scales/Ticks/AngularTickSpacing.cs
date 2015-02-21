@@ -125,6 +125,58 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
+		#region User parameters
+
+		public int MajorTickDivider
+		{
+			get
+			{
+				return _majorTickDivider;
+			}
+			set
+			{
+				var oldValue = _majorTickDivider;
+				_majorTickDivider = value;
+				if (value != oldValue)
+					EhSelfChanged();
+			}
+		}
+
+		public int MinorTickDivider
+		{
+			get
+			{
+				return _minorTickDivider;
+			}
+			set
+			{
+				var oldValue = _minorTickDivider;
+				_minorTickDivider = value;
+				if (value != oldValue)
+					EhSelfChanged();
+			}
+		}
+
+		/// <summary>If true, use degree instead of radian.</summary>
+		public abstract bool UseDegree { get; }
+
+		public bool UseSignedValues
+		{
+			get
+			{
+				return _usePositiveNegativeAngles;
+			}
+			set
+			{
+				var oldValue = _usePositiveNegativeAngles;
+				_usePositiveNegativeAngles = value;
+				if (value != oldValue)
+					EhSelfChanged();
+			}
+		}
+
+		#endregion User parameters
+
 		public override Data.AltaxoVariant[] GetMajorTicksAsVariant()
 		{
 			return _majorTicks.ToArray();
@@ -158,45 +210,6 @@ namespace Altaxo.Graph.Scales.Ticks
 		public int[] GetPossibleDividers()
 		{
 			return (int[])_possibleDividers.Clone();
-		}
-
-		public int MajorTickDivider
-		{
-			get
-			{
-				return _majorTickDivider;
-			}
-			set
-			{
-				_majorTickDivider = value;
-			}
-		}
-
-		public int MinorTickDivider
-		{
-			get
-			{
-				return _minorTickDivider;
-			}
-			set
-			{
-				_minorTickDivider = value;
-			}
-		}
-
-		/// <summary>If true, use degree instead of radian.</summary>
-		public abstract bool UseDegree { get; }
-
-		public bool UseSignedValues
-		{
-			get
-			{
-				return _usePositiveNegativeAngles;
-			}
-			set
-			{
-				_usePositiveNegativeAngles = value;
-			}
 		}
 
 		public override bool PreProcessScaleBoundaries(ref Altaxo.Data.AltaxoVariant org, ref Altaxo.Data.AltaxoVariant end, bool isOrgExtendable, bool isEndExtendable)

@@ -118,5 +118,29 @@ namespace Altaxo.Gui.Graph
 		public event Action LinkTargetChanged;
 
 		#endregion IAxisScaleView
+
+		public bool LinkScaleType
+		{
+			get
+			{
+				return true == _guiLinkScaleType.IsChecked;
+			}
+			set
+			{
+				_guiLinkScaleType.IsChecked = value;
+			}
+		}
+
+		public bool LinkTickSpacing
+		{
+			get
+			{
+				return _guiLinkTicks.IsChecked == true;
+			}
+			set
+			{
+				_guiLinkTicks.IsChecked = value;
+			}
+		}
 	}
 }

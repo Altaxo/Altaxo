@@ -48,8 +48,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <summary>If set, gives the physical value between two major ticks choosen by the user.</summary>
 		private double? _userDefinedMajorSpan;
 
-		private double _minGrace = 1 / 16.0;
-		private double _maxGrace = 1 / 16.0;
+		private double _orgGrace = 1 / 16.0;
+		private double _endGrace = 1 / 16.0;
 
 		private int _targetNumberOfMajorTicks = 4;
 		private int _targetNumberOfMinorTicks = 2;
@@ -113,8 +113,8 @@ namespace Altaxo.Graph.Scales.Ticks
 			{
 				InverseTickSpacing s = (InverseTickSpacing)obj;
 
-				info.AddValue("MinGrace", s._minGrace);
-				info.AddValue("MaxGrace", s._maxGrace);
+				info.AddValue("MinGrace", s._orgGrace);
+				info.AddValue("MaxGrace", s._endGrace);
 				info.AddEnum("SnapOrgToTick", s._snapOrgToTick);
 				info.AddEnum("SnapEndToTick", s._snapEndToTick);
 
@@ -157,8 +157,8 @@ namespace Altaxo.Graph.Scales.Ticks
 			protected virtual InverseTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				InverseTickSpacing s = null != o ? (InverseTickSpacing)o : new InverseTickSpacing();
-				s._minGrace = info.GetDouble("MinGrace");
-				s._maxGrace = info.GetDouble("MaxGrace");
+				s._orgGrace = info.GetDouble("MinGrace");
+				s._endGrace = info.GetDouble("MaxGrace");
 				s._snapOrgToTick = (BoundaryTickSnapping)info.GetEnum("SnapOrgToTick", typeof(BoundaryTickSnapping));
 				s._snapEndToTick = (BoundaryTickSnapping)info.GetEnum("SnapEndToTick", typeof(BoundaryTickSnapping));
 
@@ -226,8 +226,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
 				_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-				_minGrace = from._minGrace;
-				_maxGrace = from._maxGrace;
+				_orgGrace = from._orgGrace;
+				_endGrace = from._endGrace;
 
 				_snapOrgToTick = from._snapOrgToTick;
 				_snapEndToTick = from._snapEndToTick;
@@ -288,9 +288,9 @@ namespace Altaxo.Graph.Scales.Ticks
 				if (_targetNumberOfMinorTicks != from._targetNumberOfMinorTicks)
 					return false;
 
-				if (_minGrace != from._minGrace)
+				if (_orgGrace != from._orgGrace)
 					return false;
-				if (_maxGrace != from._maxGrace)
+				if (_endGrace != from._endGrace)
 					return false;
 
 				if (_snapOrgToTick != from._snapOrgToTick)
@@ -321,31 +321,33 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
-		public double MinGrace
+		#region User parameters
+
+		public double OrgGrace
 		{
 			get
 			{
-				return _minGrace;
+				return _orgGrace;
 			}
 			set
 			{
-				var oldValue = _minGrace;
-				_minGrace = value;
+				var oldValue = _orgGrace;
+				_orgGrace = value;
 				if (oldValue != value)
 					EhSelfChanged();
 			}
 		}
 
-		public double MaxGrace
+		public double EndGrace
 		{
 			get
 			{
-				return _maxGrace;
+				return _endGrace;
 			}
 			set
 			{
-				var oldValue = _maxGrace;
-				_maxGrace = value;
+				var oldValue = _endGrace;
+				_endGrace = value;
 				if (oldValue != value)
 					EhSelfChanged();
 			}
@@ -456,20 +458,34 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		private double TransformOriginalToModified(double x)
+		public int? MinorTicks
 		{
-			if (_transformationOperationIsMultiply)
-				return _transformationOffset + x * _transformationDivider;
-			else
-				return _transformationOffset + x / _transformationDivider;
+			get
+			{
+				return _userDefinedMinorTicks;
+			}
+			set
+			{
+				var oldValue = _userDefinedMinorTicks;
+				_userDefinedMinorTicks = value;
+				if (oldValue != value)
+					EhSelfChanged();
+			}
 		}
 
-		private double TransformModifiedToOriginal(double y)
+		public double? MajorTickSpan
 		{
-			if (_transformationOperationIsMultiply)
-				return (y - _transformationOffset) / _transformationDivider;
-			else
-				return (y - _transformationOffset) * _transformationDivider;
+			get
+			{
+				return _userDefinedMajorSpan;
+			}
+			set
+			{
+				var oldValue = _userDefinedMajorSpan;
+				_userDefinedMajorSpan = value;
+				if (oldValue != value)
+					EhSelfChanged();
+			}
 		}
 
 		public SuppressedTicks SuppressedMajorTicks
@@ -502,6 +518,24 @@ namespace Altaxo.Graph.Scales.Ticks
 			{
 				return _additionalMinorTicks;
 			}
+		}
+
+		#endregion User parameters
+
+		private double TransformOriginalToModified(double x)
+		{
+			if (_transformationOperationIsMultiply)
+				return _transformationOffset + x * _transformationDivider;
+			else
+				return _transformationOffset + x / _transformationDivider;
+		}
+
+		private double TransformModifiedToOriginal(double y)
+		{
+			if (_transformationOperationIsMultiply)
+				return (y - _transformationOffset) / _transformationDivider;
+			else
+				return (y - _transformationOffset) * _transformationDivider;
 		}
 
 		/// <summary>
@@ -540,36 +574,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				r[i] = scale.PhysicalVariantToNormal(1 / TransformModifiedToOriginal(_minorTicks[i]));
 
 			return r;
-		}
-
-		public int? MinorTicks
-		{
-			get
-			{
-				return _userDefinedMinorTicks;
-			}
-			set
-			{
-				var oldValue = _userDefinedMinorTicks;
-				_userDefinedMinorTicks = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
-		}
-
-		public double? MajorTickSpan
-		{
-			get
-			{
-				return _userDefinedMajorSpan;
-			}
-			set
-			{
-				var oldValue = _userDefinedMajorSpan;
-				_userDefinedMajorSpan = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
 		}
 
 		/// <summary>
@@ -683,7 +687,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMajorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMajorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMajorTicks.Values)
 				{
 					_majorTicks.Add(v);
 				}
@@ -728,7 +732,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMinorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMinorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMinorTicks.Values)
 				{
 					_minorTicks.Add(v);
 				}
@@ -812,7 +816,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		/// <summary>
-		/// Applies the value for <see cref="MinGrace"/> and <see cref="MaxGrace"/> to the scale and calculated proposed values for the boundaries.
+		/// Applies the value for <see cref="OrgGrace"/> and <see cref="EndGrace"/> to the scale and calculated proposed values for the boundaries.
 		/// </summary>
 		/// <param name="scaleOrg">Scale origin.</param>
 		/// <param name="scaleEnd">Scale end.</param>
@@ -827,15 +831,15 @@ namespace Altaxo.Graph.Scales.Ticks
 			propOrg = scaleOrg;
 			if (isOrgExtendable)
 			{
-				propOrg -= Math.Abs(_minGrace * scaleSpan);
-				modified |= (0 != _minGrace);
+				propOrg -= Math.Abs(_orgGrace * scaleSpan);
+				modified |= (0 != _orgGrace);
 			}
 
 			propEnd = scaleEnd;
 			if (isEndExtendable)
 			{
-				propEnd += Math.Abs(_maxGrace * scaleSpan);
-				modified |= (0 != _maxGrace);
+				propEnd += Math.Abs(_endGrace * scaleSpan);
+				modified |= (0 != _endGrace);
 			}
 
 			double range = propEnd - propOrg;

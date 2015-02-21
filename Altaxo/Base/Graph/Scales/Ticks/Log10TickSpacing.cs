@@ -47,8 +47,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		private int? _userDefinedNumberOfDecadesPerMajorTick;
 
 		private double _oneLever = 0.25;
-		private double _minGrace = 0.05;
-		private double _maxGrace = 0.05;
+		private double _orgGrace = 0.05;
+		private double _endGrace = 0.05;
 		private int _targetNumberOfMajorTicks = 6;
 		private int _targetNumberOfMinorTicks = 50;
 
@@ -111,8 +111,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				Log10TickSpacing s = (Log10TickSpacing)obj;
 
 				info.AddValue("OneLever", s._oneLever);
-				info.AddValue("MinGrace", s._minGrace);
-				info.AddValue("MaxGrace", s._maxGrace);
+				info.AddValue("MinGrace", s._orgGrace);
+				info.AddValue("MaxGrace", s._endGrace);
 				info.AddEnum("SnapOrgToTick", s._snapOrgToTick);
 				info.AddEnum("SnapEndToTick", s._snapEndToTick);
 
@@ -157,8 +157,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				Log10TickSpacing s = null != o ? (Log10TickSpacing)o : new Log10TickSpacing();
 
 				s._oneLever = info.GetDouble("OneLever");
-				s._minGrace = info.GetDouble("MinGrace");
-				s._maxGrace = info.GetDouble("MaxGrace");
+				s._orgGrace = info.GetDouble("MinGrace");
+				s._endGrace = info.GetDouble("MaxGrace");
 				s._snapOrgToTick = (BoundaryTickSnapping)info.GetEnum("SnapOrgToTick", typeof(BoundaryTickSnapping));
 				s._snapEndToTick = (BoundaryTickSnapping)info.GetEnum("SnapEndToTick", typeof(BoundaryTickSnapping));
 
@@ -227,8 +227,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
 				_oneLever = from._oneLever;
-				_minGrace = from._minGrace;
-				_maxGrace = from._maxGrace;
+				_orgGrace = from._orgGrace;
+				_endGrace = from._endGrace;
 				_snapOrgToTick = from._snapOrgToTick;
 				_snapEndToTick = from._snapEndToTick;
 
@@ -290,9 +290,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 				if (_oneLever != from._oneLever)
 					return false;
-				if (_minGrace != from._minGrace)
+				if (_orgGrace != from._orgGrace)
 					return false;
-				if (_maxGrace != from._maxGrace)
+				if (_endGrace != from._endGrace)
 					return false;
 
 				if (_snapOrgToTick != from._snapOrgToTick)
@@ -321,6 +321,8 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
+		#region User parameters
+
 		public double OneLever
 		{
 			get
@@ -329,31 +331,40 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _oneLever;
 				_oneLever = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
-		public double MinGrace
+		public double OrgGrace
 		{
 			get
 			{
-				return _minGrace;
+				return _orgGrace;
 			}
 			set
 			{
-				_minGrace = value;
+				var oldValue = _orgGrace;
+				_orgGrace = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
-		public double MaxGrace
+		public double EndGrace
 		{
 			get
 			{
-				return _maxGrace;
+				return _endGrace;
 			}
 			set
 			{
-				_maxGrace = value;
+				var oldValue = _endGrace;
+				_endGrace = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -365,7 +376,10 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _snapOrgToTick;
 				_snapOrgToTick = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -377,7 +391,10 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _snapEndToTick;
 				_snapEndToTick = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -389,7 +406,10 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _targetNumberOfMajorTicks;
 				_targetNumberOfMajorTicks = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -401,7 +421,10 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _targetNumberOfMinorTicks;
 				_targetNumberOfMinorTicks = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -413,7 +436,10 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _transformationDivider;
 				_transformationDivider = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -425,7 +451,10 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			set
 			{
+				var oldValue = _transformationOperationIsMultiply;
 				_transformationOperationIsMultiply = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 
@@ -443,6 +472,49 @@ namespace Altaxo.Graph.Scales.Ticks
 				return (y) / _transformationDivider;
 			else
 				return (y) * _transformationDivider;
+		}
+
+		/// <summary>Gets or sets the minor ticks.</summary>
+		/// <value>
+		/// <para>If the value is null, the number of minor ticks is determined automatically.</para>
+		/// <para>If the value is positive, the minor ticks will mark full decades only. The value then determines the number of decades per minor tick as (numberOfDecadesPerMajorTick / MinorTicks).</para>
+		/// <para>If the value is 0 or 1, no minor ticks will be visible.</para>
+		/// <para>If the value is -1, only mantissa values of 1, 4, and 7 are used as minor ticks (the 1 is used only if there is more than one decade per major tick).</para>
+		/// <para>If the value is -2, mantissa values of 1, 2 , 3, 4, 5, 6, 7, 8 and 9 are used as minor ticks (the 1 is used only if there is more than one decade per major tick).</para>
+		/// </value>
+		public int? MinorTicks
+		{
+			get
+			{
+				return _userDefinedMinorTicks;
+			}
+			set
+			{
+				var oldValue = _userDefinedMinorTicks;
+				_userDefinedMinorTicks = value;
+				if (value != oldValue)
+					EhSelfChanged();
+			}
+		}
+
+		/// <summary>Gets or sets the number of decades per major tick.</summary>
+		/// <value><para>If null, the number of decades per major tick is calculated automatically.</para>
+		/// <para>If the value is negative or null, no major ticks will be shown.</para>
+		/// <para>If the value is positive, the value represents the number of decades per major tick. Note that major ticks will appear only at decades that are a integer multiple of this value.</para>
+		/// </value>
+		public int? DecadesPerMajorTick
+		{
+			get
+			{
+				return _userDefinedNumberOfDecadesPerMajorTick;
+			}
+			set
+			{
+				var oldValue = _userDefinedNumberOfDecadesPerMajorTick;
+				_userDefinedNumberOfDecadesPerMajorTick = value;
+				if (value != oldValue)
+					EhSelfChanged();
+			}
 		}
 
 		public SuppressedTicks SuppressedMajorTicks
@@ -476,6 +548,8 @@ namespace Altaxo.Graph.Scales.Ticks
 				return _additionalMinorTicks;
 			}
 		}
+
+		#endregion User parameters
 
 		/// <summary>
 		/// GetMajorTicks returns the physical values
@@ -513,43 +587,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				r[i] = scale.PhysicalVariantToNormal(TransformModifiedToOriginal(_minorTicks[i]));
 
 			return r;
-		}
-
-		/// <summary>Gets or sets the minor ticks.</summary>
-		/// <value>
-		/// <para>If the value is null, the number of minor ticks is determined automatically.</para>
-		/// <para>If the value is positive, the minor ticks will mark full decades only. The value then determines the number of decades per minor tick as (numberOfDecadesPerMajorTick / MinorTicks).</para>
-		/// <para>If the value is 0 or 1, no minor ticks will be visible.</para>
-		/// <para>If the value is -1, only mantissa values of 1, 4, and 7 are used as minor ticks (the 1 is used only if there is more than one decade per major tick).</para>
-		/// <para>If the value is -2, mantissa values of 1, 2 , 3, 4, 5, 6, 7, 8 and 9 are used as minor ticks (the 1 is used only if there is more than one decade per major tick).</para>
-		/// </value>
-		public int? MinorTicks
-		{
-			get
-			{
-				return _userDefinedMinorTicks;
-			}
-			set
-			{
-				_userDefinedMinorTicks = value;
-			}
-		}
-
-		/// <summary>Gets or sets the number of decades per major tick.</summary>
-		/// <value><para>If null, the number of decades per major tick is calculated automatically.</para>
-		/// <para>If the value is negative or null, no major ticks will be shown.</para>
-		/// <para>If the value is positive, the value represents the number of decades per major tick. Note that major ticks will appear only at decades that are a integer multiple of this value.</para>
-		/// </value>
-		public int? DecadesPerMajorTick
-		{
-			get
-			{
-				return _userDefinedNumberOfDecadesPerMajorTick;
-			}
-			set
-			{
-				_userDefinedNumberOfDecadesPerMajorTick = value;
-			}
 		}
 
 		/// <summary>
@@ -647,7 +684,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			// Add additional ticks
 			if (!_additionalMajorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMajorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMajorTicks.Values)
 				{
 					_majorTicks.Add(v);
 				}
@@ -715,7 +752,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMinorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMinorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMinorTicks.Values)
 				{
 					_minorTicks.Add(v);
 				}
@@ -787,7 +824,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		/// <summary>
-		/// Applies the value for <see cref="MinGrace"/>, <see cref="MaxGrace"/> and <see cref="OneLever"/> to the scale and calculated proposed values for the boundaries.
+		/// Applies the value for <see cref="OrgGrace"/>, <see cref="EndGrace"/> and <see cref="OneLever"/> to the scale and calculated proposed values for the boundaries.
 		/// </summary>
 		/// <param name="scaleOrg">Scale origin.</param>
 		/// <param name="scaleEnd">Scale end.</param>
@@ -802,15 +839,15 @@ namespace Altaxo.Graph.Scales.Ticks
 			propOrg = Math.Log10(scaleOrg);
 			if (isOrgExtendable)
 			{
-				propOrg -= Math.Abs(_minGrace * scaleSpan);
-				modified |= (0 != _minGrace);
+				propOrg -= Math.Abs(_orgGrace * scaleSpan);
+				modified |= (0 != _orgGrace);
 			}
 
 			propEnd = Math.Log10(scaleEnd);
 			if (isEndExtendable)
 			{
-				propEnd += Math.Abs(_maxGrace * scaleSpan);
-				modified |= (0 != _maxGrace);
+				propEnd += Math.Abs(_endGrace * scaleSpan);
+				modified |= (0 != _endGrace);
 			}
 
 			double lever = Math.Abs(_oneLever * scaleSpan);

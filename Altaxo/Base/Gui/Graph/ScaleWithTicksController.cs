@@ -42,6 +42,10 @@ namespace Altaxo.Gui.Graph
 
 		void SetLinkedScalePropertiesView(object guiobject);
 
+		bool LinkScaleType { get; set; }
+
+		bool LinkTickSpacing { get; set; }
+
 		void SetRescalingView(object guiobject);
 
 		void SetScaleView(object guiobject);
@@ -134,6 +138,13 @@ namespace Altaxo.Gui.Graph
 
 			if (null != _tickSpacingController && false == _tickSpacingController.Apply(disposeController))
 				return false;
+
+			var lscale = _doc as LinkedScale;
+			if (null != lscale)
+			{
+				lscale.LinkScaleType = _view.LinkScaleType;
+				lscale.LinkTickSpacing = _view.LinkTickSpacing;
+			}
 
 			return ApplyEnd(true, disposeController); // all ok
 		}
@@ -302,6 +313,14 @@ namespace Altaxo.Gui.Graph
 					_view.SetLinkedScalePropertiesView(_linkedScaleParameterController.ViewObject);
 				else
 					_view.SetLinkedScalePropertiesView(null);
+
+				// other link properties
+				var lscale = _doc as LinkedScale;
+				if (null != lscale)
+				{
+					_view.LinkScaleType = lscale.LinkScaleType;
+					_view.LinkTickSpacing = lscale.LinkTickSpacing;
+				}
 			}
 		}
 

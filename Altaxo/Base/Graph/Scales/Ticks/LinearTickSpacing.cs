@@ -321,6 +321,8 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
+		#region User parameters
+
 		/// <summary>
 		/// Gets or sets the zero lever. This is a value (0..1) relative to the span of the scale, that designates how far
 		/// the origin or the end of the scale could be extended (in Auto rescale mode) in order to include the scale value = 0.
@@ -492,20 +494,34 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		private double TransformOriginalToModified(double x)
+		public int? MinorTicks
 		{
-			if (_transformationOperationIsMultiply)
-				return _transformationOffset + x * _transformationDivider;
-			else
-				return _transformationOffset + x / _transformationDivider;
+			get
+			{
+				return _userDefinedMinorTicks;
+			}
+			set
+			{
+				var oldValue = _userDefinedMinorTicks;
+				_userDefinedMinorTicks = value;
+				if (oldValue != value)
+					EhSelfChanged();
+			}
 		}
 
-		private double TransformModifiedToOriginal(double y)
+		public double? MajorTickSpan
 		{
-			if (_transformationOperationIsMultiply)
-				return (y - _transformationOffset) / _transformationDivider;
-			else
-				return (y - _transformationOffset) * _transformationDivider;
+			get
+			{
+				return _userDefinedMajorSpan;
+			}
+			set
+			{
+				var oldValue = _userDefinedMajorSpan;
+				_userDefinedMajorSpan = value;
+				if (oldValue != value)
+					EhSelfChanged();
+			}
 		}
 
 		public SuppressedTicks SuppressedMajorTicks
@@ -560,6 +576,24 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
+		#endregion User parameters
+
+		private double TransformOriginalToModified(double x)
+		{
+			if (_transformationOperationIsMultiply)
+				return _transformationOffset + x * _transformationDivider;
+			else
+				return _transformationOffset + x / _transformationDivider;
+		}
+
+		private double TransformModifiedToOriginal(double y)
+		{
+			if (_transformationOperationIsMultiply)
+				return (y - _transformationOffset) / _transformationDivider;
+			else
+				return (y - _transformationOffset) * _transformationDivider;
+		}
+
 		/// <summary>
 		/// GetMajorTicks returns the physical values
 		/// at which major ticks should occur
@@ -596,36 +630,6 @@ namespace Altaxo.Graph.Scales.Ticks
 				r[i] = scale.PhysicalVariantToNormal(TransformModifiedToOriginal(_minorTicks[i]));
 
 			return r;
-		}
-
-		public int? MinorTicks
-		{
-			get
-			{
-				return _userDefinedMinorTicks;
-			}
-			set
-			{
-				var oldValue = _userDefinedMinorTicks;
-				_userDefinedMinorTicks = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
-		}
-
-		public double? MajorTickSpan
-		{
-			get
-			{
-				return _userDefinedMajorSpan;
-			}
-			set
-			{
-				var oldValue = _userDefinedMajorSpan;
-				_userDefinedMajorSpan = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
 		}
 
 		/// <summary>
@@ -725,7 +729,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMajorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMajorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMajorTicks.Values)
 				{
 					_majorTicks.Add(v);
 				}
@@ -770,7 +774,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMinorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMinorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMinorTicks.Values)
 				{
 					_minorTicks.Add(v);
 				}

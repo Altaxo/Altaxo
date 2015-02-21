@@ -430,6 +430,48 @@ namespace Altaxo.Graph.Scales
 			return false; // no dependency detected
 		}
 
+		/// <summary>
+		/// If true, the type of wrapped scale is the same as the type of the scale linked to
+		/// </summary>
+		public bool LinkScaleType
+		{
+			get
+			{
+				return _linkScaleType;
+			}
+			set
+			{
+				var oldValue = _linkScaleType;
+				_linkScaleType = value;
+				if (value != oldValue)
+				{
+					OnLinkPropertiesChanged();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// If true, the tick spacing is used from the scale linked to 1:1
+		/// </summary>
+		public bool LinkTickSpacing
+		{
+			get
+			{
+				return _linkTickSpacing;
+			}
+			set
+			{
+				var oldValue = _linkTickSpacing;
+				_linkTickSpacing = value;
+				if (value != oldValue)
+				{
+					OnLinkPropertiesChanged();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
 		public bool IsStraightLink
 		{
 			get
