@@ -86,6 +86,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 				return false;
 
 			this._scaleOrigin = from._scaleOrigin;
+
+			EhSelfChanged();
+
 			return true;
 		}
 
@@ -102,7 +105,10 @@ namespace Altaxo.Graph.Scales.Rescaling
 			}
 			set
 			{
+				var oldValue = _scaleOrigin;
 				_scaleOrigin = value;
+				if (value != oldValue)
+					EhSelfChanged();
 			}
 		}
 	}

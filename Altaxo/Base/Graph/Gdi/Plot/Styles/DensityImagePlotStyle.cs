@@ -34,6 +34,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Graph.Scales.Ticks;
 	using Graph.Plot.Data;
 
 	/// <summary>
@@ -206,7 +207,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public DensityImagePlotStyle()
 		{
 			this.ColorProvider = new ColorProvider.ColorProviderBGMYR();
-			this.Scale = new LinearScale();
+			this.Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
 			InitializeMembers();
 		}
 
@@ -264,8 +265,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
 				if (ChildSetMember(ref _scale, value))
 				{
+					if (!(_scale.TickSpacing is NoTickSpacing))
+						_scale.TickSpacing = new NoTickSpacing(); // strip the old tickspacing, use NoTickspacing, since Ticks are not needed in the density image plot style
+
 					if (null != _scale)
 						EhChildChanged(_scale, EventArgs.Empty);
 					else

@@ -326,11 +326,6 @@ namespace Altaxo.Graph.Scales
 
 		#endregion NumericalScale
 
-		public override object Clone()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override Ticks.TickSpacing TickSpacing
 		{
 			get

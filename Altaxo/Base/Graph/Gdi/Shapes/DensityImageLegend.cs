@@ -497,7 +497,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (_cachedArea.Scales[0].GetType() != PlotItem.Style.Scale.GetType())
 			{
 				var cachedScale = (NumericalScale)PlotItem.Style.Scale.Clone();
-				var scaleTickSpacing = Altaxo.Graph.Scales.Scale.CreateDefaultTicks(cachedScale.GetType());
+				var scaleTickSpacing = Altaxo.Graph.Scales.Scale.CreateDefaultTicks(cachedScale.GetType()); // we have to use CreateDefaultTicks because the scale of the DensityImagePlotStyle has NoTickspacing as TickSpacing
 				_cachedArea = new DensityLegendArea(Size, true, false, cachedScale, scaleTickSpacing) { ParentObject = this };
 			}
 
