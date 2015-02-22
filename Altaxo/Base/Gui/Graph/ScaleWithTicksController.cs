@@ -46,6 +46,8 @@ namespace Altaxo.Gui.Graph
 
 		bool LinkTickSpacing { get; set; }
 
+		void SetVisibilityOfLinkElements(bool showLinkTargets, bool showOtherLinkProperties);
+
 		void SetRescalingView(object guiobject);
 
 		void SetScaleView(object guiobject);
@@ -86,6 +88,8 @@ namespace Altaxo.Gui.Graph
 		/// </summary>
 		protected bool _lockScaleType;
 
+		protected bool _hideLinkTargets;
+
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
@@ -103,17 +107,27 @@ namespace Altaxo.Gui.Graph
 			base.Dispose(isDisposing);
 		}
 
-		public ScaleWithTicksController(Action<Scale> SetNewScaleInstance)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ScaleWithTicksController"/> class.
+		/// </summary>
+		/// <param name="SetNewScaleInstance">Procedure that sets the scale in the parent instance (in case the scale type is changed by the user so that a new scale instance must be instantiated).</param>
+		/// <param name="hideLinkTargets">If set to <c>true</c>, the link targets will be hidden, so that the user can not setup a linked scale.</param>
+		public ScaleWithTicksController(Action<Scale> SetNewScaleInstance, bool hideLinkTargets)
 			: base(SetNewScaleInstance != null ? SetNewScaleInstance : (scale => { }))
 		{
 			// if providing a null value for the SetNewScaleInstance action, we lock the possibility to choose a new scale type
 			if (null == SetNewScaleInstance)
 				_lockScaleType = true;
+
+			_hideLinkTargets = hideLinkTargets;
 		}
 
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);
+
+			if (_doc is LinkedScale)
+				_hideLinkTargets = false;
 
 			FixScaleIfIsLinkedScaleWithInvalidTarget(initData);
 			InitLinkTargetScales(initData);
@@ -321,6 +335,7 @@ namespace Altaxo.Gui.Graph
 					_view.LinkScaleType = lscale.LinkScaleType;
 					_view.LinkTickSpacing = lscale.LinkTickSpacing;
 				}
+				_view.SetVisibilityOfLinkElements(!_hideLinkTargets, _doc is LinkedScale);
 			}
 		}
 

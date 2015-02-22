@@ -54,8 +54,8 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 			if (initData)
 			{
-				_orgRescalingChoices = new SelectableListNodeList(_doc.OrgRescaling);
-				_endRescalingChoices = new SelectableListNodeList(_doc.EndRescaling);
+				_orgRescalingChoices = LinearScaleRescaleConditionsController.CreateListNodeList(_doc.OrgRescaling);
+				_endRescalingChoices = LinearScaleRescaleConditionsController.CreateListNodeList(_doc.EndRescaling);
 
 				_orgRelativeToChoices = new SelectableListNodeList(_doc.OrgRelativeTo);
 				_endRelativeToChoices = new SelectableListNodeList(_doc.EndRelativeTo);

@@ -25,7 +25,7 @@
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Scale type:" />
 			<ComboBox x:Name="m_Scale_cbType" Grid.Column="1" Grid.Row="0" SelectionChanged="EhAxisType_SelectionChangeCommit" />
-			<Label  Grid.Column="0" Grid.Row="2" Content="Link scale to:" />
+			<Label x:Name="_guiLabelForLinkTarget"  Grid.Column="0" Grid.Row="2" Content="Link scale to:" />
 			<ComboBox x:Name="_cbLinkTarget" Grid.Column="1" Grid.Row="2" SelectionChanged="EhLinkTarget_SelectionChangeCommitted" />
 			<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
 				<CheckBox x:Name="_guiLinkScaleType" Content="Link scale type" Margin="0,0,8,0" />

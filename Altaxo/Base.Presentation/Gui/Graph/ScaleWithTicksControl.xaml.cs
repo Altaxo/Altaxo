@@ -142,5 +142,14 @@ namespace Altaxo.Gui.Graph
 				_guiLinkTicks.IsChecked = value;
 			}
 		}
+
+		public void SetVisibilityOfLinkElements(bool showLinkTargets, bool showOtherLinkProperties)
+		{
+			_cbLinkTarget.Visibility = showLinkTargets ? Visibility.Visible : Visibility.Collapsed;
+			_guiLabelForLinkTarget.Visibility = showLinkTargets ? Visibility.Visible : Visibility.Collapsed;
+
+			_guiLinkScaleType.Visibility = showOtherLinkProperties ? Visibility.Visible : Visibility.Collapsed;
+			_guiLinkTicks.Visibility = showOtherLinkProperties ? Visibility.Visible : Visibility.Collapsed;
+		}
 	}
 }

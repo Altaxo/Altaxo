@@ -73,8 +73,8 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 			if (initData)
 			{
-				_orgRescalingChoices = new SelectableListNodeList(_doc.OrgRescaling);
-				_endRescalingChoices = new SelectableListNodeList(_doc.EndRescaling);
+				_orgRescalingChoices = CreateListNodeList(_doc.OrgRescaling);
+				_endRescalingChoices = CreateListNodeList(_doc.EndRescaling);
 
 				_orgRelativeToChoices = new SelectableListNodeList(_doc.OrgRelativeTo);
 				_endRelativeToChoices = new SelectableListNodeList(_doc.EndRelativeTo);
@@ -120,6 +120,43 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 			_view.OrgValueChanged -= EhOrgValueChanged;
 			_view.EndValueChanged -= EhEndValueChanged;
 			base.DetachView();
+		}
+
+		#region Special Listnode class with description
+
+		private class ListNodeWithDescription : SelectableListNode
+		{
+			private string _description;
+
+			public ListNodeWithDescription(string text, object tag, bool isSelected, string description)
+				: base(text, tag, isSelected)
+			{
+				_description = description;
+			}
+
+			public override string Description
+			{
+				get
+				{
+					return _description;
+				}
+			}
+		}
+
+		#endregion Special Listnode class with description
+
+		public static SelectableListNodeList CreateListNodeList(BoundaryRescaling rescalingValue)
+		{
+			var result = new SelectableListNodeList();
+			var values = System.Enum.GetValues(rescalingValue.GetType());
+			foreach (var value in values)
+			{
+				Type t = value.GetType();
+				string description = Current.ResourceService.GetString("ClassNames." + t.FullName + "." + Enum.GetName(t, value) + ".Description");
+
+				result.Add(new ListNodeWithDescription(value.ToString(), value, value.ToString() == rescalingValue.ToString(), description));
+			}
+			return result;
 		}
 
 		private double GetOrgValueToShow()

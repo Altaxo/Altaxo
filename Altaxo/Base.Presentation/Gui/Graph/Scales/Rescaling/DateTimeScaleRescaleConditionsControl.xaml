@@ -25,13 +25,25 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Row="0" Grid.Column="0" Content="Org:" />
-		<ComboBox Grid.Row="0" Grid.Column="2" x:Name="_guiOrgRescaling" SelectionChanged="EhComboBox_SelectionChanged" />
+		<ComboBox Grid.Row="0" Grid.Column="2" x:Name="_guiOrgRescaling" SelectionChanged="EhComboBox_SelectionChanged">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Text}" ToolTip="{Binding Description}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 		<axogc:DateTimeTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValueDT" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
 		<axogc:TimeSpanTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValueTS" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
 		<ComboBox Grid.Row="0" Grid.Column="6" x:Name="_guiOrgRelativeTo" SelectionChanged="EhOrgRelativeTo_SelectionChanged" />
 
 		<Label Grid.Row="2" Grid.Column="0" Content="End:" />
-		<ComboBox Grid.Row="2" Grid.Column="2" x:Name="_guiEndRescaling" SelectionChanged="EhComboBox_SelectionChanged" />
+		<ComboBox Grid.Row="2" Grid.Column="2" x:Name="_guiEndRescaling" SelectionChanged="EhComboBox_SelectionChanged">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Text}" ToolTip="{Binding Description}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 		<axogc:DateTimeTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValueDT" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
 		<axogc:TimeSpanTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValueTS" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
 		<ComboBox Grid.Row="2" Grid.Column="6" x:Name="_guiEndRelativeTo" SelectionChanged="EhEndRelativeTo_SelectionChanged" />
