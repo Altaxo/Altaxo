@@ -454,7 +454,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_axisStyle = axStyle;
 			}
 
-			Scale scaleWithTicks = null;
 			var privScale = new ScaleSegment(layer.Scales[_scaleNumber], rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
 			_tickSpacing.FinalProcessScaleBoundaries(privScale.OrgAsVariant, privScale.EndAsVariant, privScale);
 			privScale.TickSpacing = _tickSpacing;
@@ -639,6 +638,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private double _relEnd;
 			private Scale _underlyingScale;
 			private ScaleSegmentType _segmentScaling;
+			private TickSpacing _tickSpacing;
 
 			public ScaleSegment(Scale underlyingScale, double relOrg, double relEnd, ScaleSegmentType scaling)
 			{
@@ -764,11 +764,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				get
 				{
-					return null;
+					return _tickSpacing;
 				}
 				set
 				{
-					throw new NotImplementedException();
+					_tickSpacing = value;
 				}
 			}
 		}
