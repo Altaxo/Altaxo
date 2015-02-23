@@ -404,13 +404,13 @@ namespace Altaxo.Graph.Gdi.Axis
 			if (_styleID.UsePhysicalValueOtherFirst)
 			{
 				// then update the logical value of this identifier
-				double logicalValue = layer.Scales[_styleID.AxisNumberOtherFirst].Scale.PhysicalVariantToNormal(_styleID.PhysicalValueOtherFirst);
+				double logicalValue = layer.Scales[_styleID.AxisNumberOtherFirst].PhysicalVariantToNormal(_styleID.PhysicalValueOtherFirst);
 				_styleID.LogicalValueOtherFirst = logicalValue;
 			}
 			if (_styleID.UsePhysicalValueOtherSecond)
 			{
 				// then update the logical value of this identifier
-				double logicalValue = layer.Scales[_styleID.AxisNumberOtherSecond].Scale.PhysicalVariantToNormal(_styleID.PhysicalValueOtherSecond);
+				double logicalValue = layer.Scales[_styleID.AxisNumberOtherSecond].PhysicalVariantToNormal(_styleID.PhysicalValueOtherSecond);
 				_styleID.LogicalValueOtherSecond = logicalValue;
 			}
 
@@ -419,7 +419,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			if (null != _customTickSpacing)
 			{
 				CSLineID styleID = _cachedAxisInfo.Identifier;
-				Scale scale = layer.Scales[styleID.ParallelAxisNumber].Scale;
+				Scale scale = layer.Scales[styleID.ParallelAxisNumber];
 				_customTickSpacing.FinalProcessScaleBoundaries(scale.OrgAsVariant, scale.EndAsVariant, scale);
 			}
 
@@ -456,7 +456,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				var labelSide = _majorLabelStyle.PredictLabelSide(_cachedAxisInfo);
 				var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
 				var scaleWithTicks = layer.Scales[_cachedAxisInfo.Identifier.ParallelAxisNumber];
-				this._majorLabelStyle.Paint(g, layer.CoordinateSystem, scaleWithTicks.Scale, _customTickSpacing ?? scaleWithTicks.TickSpacing, _cachedAxisInfo, outerDistance, false);
+				this._majorLabelStyle.Paint(g, layer.CoordinateSystem, scaleWithTicks, _customTickSpacing ?? scaleWithTicks.TickSpacing, _cachedAxisInfo, outerDistance, false);
 			}
 		}
 
@@ -467,7 +467,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				var labelSide = _minorLabelStyle.PredictLabelSide(_cachedAxisInfo);
 				var outerDistance = null == _axisLineStyle ? 0 : _axisLineStyle.GetOuterDistance(labelSide);
 				var scaleWithTicks = layer.Scales[_cachedAxisInfo.Identifier.ParallelAxisNumber];
-				this._minorLabelStyle.Paint(g, layer.CoordinateSystem, scaleWithTicks.Scale, _customTickSpacing ?? scaleWithTicks.TickSpacing, _cachedAxisInfo, outerDistance, true);
+				this._minorLabelStyle.Paint(g, layer.CoordinateSystem, scaleWithTicks, _customTickSpacing ?? scaleWithTicks.TickSpacing, _cachedAxisInfo, outerDistance, true);
 			}
 		}
 

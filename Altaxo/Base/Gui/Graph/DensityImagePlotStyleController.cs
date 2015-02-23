@@ -72,10 +72,10 @@ namespace Altaxo.Gui.Graph
 
 			if (initData)
 			{
-				_scaleController = new DensityScaleController();
+				_scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
 				_scaleController.InitializeDocument(_doc.Scale);
 
-				_colorProviderController = new ColorProviderController();
+				_colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
 				_colorProviderController.InitializeDocument(_doc.ColorProvider);
 			}
 

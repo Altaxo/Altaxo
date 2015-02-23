@@ -25,6 +25,7 @@
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -496,8 +497,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				_xScale = new TransformedScale(layer.XAxis, xinc);
 				_yScale = new TransformedScale(layer.YAxis, yinc);
 				_scales = new ScaleCollection();
-				_scales[0] = new ScaleWithTicks(_xScale, new Altaxo.Graph.Scales.Ticks.NoTickSpacing()); ;
-				_scales[1] = new ScaleWithTicks(_yScale, new Altaxo.Graph.Scales.Ticks.NoTickSpacing()); ;
+				_scales[0] = _xScale;
+				_scales[1] = _yScale;
 			}
 
 			#region IPlotArea Members
@@ -601,12 +602,17 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					throw new NotImplementedException();
 				}
 
+				public override bool CopyFrom(object obj)
+				{
+					throw new NotImplementedException();
+				}
+
 				protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 				{
 					yield break; // we do not own the _originalScale (is this OK?)
 				}
 
-				public override object RescalingObject
+				public override IScaleRescaleConditions RescalingObject
 				{
 					get { throw new NotImplementedException(); }
 				}
@@ -626,24 +632,31 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					get { throw new NotImplementedException(); }
 				}
 
-				public override string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end)
+				protected override string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end)
 				{
 					throw new NotImplementedException();
 				}
 
-				public override void Rescale()
+				public override void OnUserRescaled()
 				{
 					throw new NotImplementedException();
 				}
 
-				public override bool IsOrgExtendable
+				public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
 				{
-					get { throw new NotImplementedException(); }
+					throw new NotImplementedException();
 				}
 
-				public override bool IsEndExtendable
+				public override Scales.Ticks.TickSpacing TickSpacing
 				{
-					get { throw new NotImplementedException(); }
+					get
+					{
+						return null;
+					}
+					set
+					{
+						throw new NotImplementedException();
+					}
 				}
 			}
 

@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Scales
 	public class LinkedScaleParameters
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		ICloneable
+		Main.ICopyFrom
 	{
 		/// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
 		private double _orgA;
@@ -95,13 +95,19 @@ namespace Altaxo.Graph.Scales
 			CopyFrom(from);
 		}
 
-		public void CopyFrom(LinkedScaleParameters from)
+		public bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as LinkedScaleParameters;
+			if (null == from)
+				return false;
 
 			// this call has the advantage, that a change event is raised when the parameter really change
 			SetTo(from._orgA, from._orgB, from._endA, from.EndB);
+
+			return true;
 		}
 
 		public object Clone()

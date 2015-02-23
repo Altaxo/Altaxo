@@ -45,17 +45,12 @@ namespace Altaxo.Graph.Scales
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				AngularDegreeScale s = SDeserialize(o, info, parent);
-				OnAfterDeserialization(s);
 				return s;
-			}
-
-			protected virtual void OnAfterDeserialization(AngularDegreeScale s)
-			{
 			}
 
 			protected virtual AngularDegreeScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				AngularDegreeScale s = null != o ? (AngularDegreeScale)o : new AngularDegreeScale();
+				AngularDegreeScale s = null != o ? (AngularDegreeScale)o : new AngularDegreeScale(info);
 				info.GetBaseValueEmbedded(s, typeof(AngularScale), s);
 				return s;
 			}
@@ -63,7 +58,16 @@ namespace Altaxo.Graph.Scales
 
 		#endregion Serialization
 
+		/// <summary>
+		/// Constructor for deserialization only.
+		/// </summary>
+		protected AngularDegreeScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
+		{
+		}
+
 		public AngularDegreeScale()
+			: base(new Ticks.AngularDegreeTickSpacing())
 		{
 		}
 
@@ -74,7 +78,7 @@ namespace Altaxo.Graph.Scales
 
 		public override object Clone()
 		{
-			return new AngularDegreeScale();
+			return new AngularDegreeScale(this);
 		}
 
 		protected override bool UseDegree

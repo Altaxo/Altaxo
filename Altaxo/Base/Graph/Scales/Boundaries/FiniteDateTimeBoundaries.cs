@@ -30,7 +30,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 	/// Provides a class for tracking the boundaries of a plot association where the x-axis is a DateTime axis.
 	/// </summary>
 	[Serializable]
-	public class FiniteDateTimeBoundaries : AbstractPhysicalBoundaries, System.Runtime.Serialization.IDeserializationCallback
+	public class FiniteDateTimeBoundaries : AbstractPhysicalBoundaries
 	{
 		protected DateTime _minValue = DateTime.MaxValue;
 		protected DateTime _maxValue = DateTime.MinValue;
@@ -62,14 +62,6 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
 		}
 
 		#endregion Serialization

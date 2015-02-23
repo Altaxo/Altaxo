@@ -25,6 +25,7 @@
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
@@ -426,18 +427,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
 					{
-						var physValue = layer.Scales[_scaleNumber].Scale.NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
 						physValue += _scaleSpanValue; // to be replaced by the scale span
-						var logValue = layer.Scales[_scaleNumber].Scale.PhysicalVariantToNormal(physValue);
+						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
 						rEnd[_scaleNumber] = logValue;
 					}
 					break;
 
 				case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
 					{
-						var physValue = layer.Scales[_scaleNumber].Scale.NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
 						physValue *= _scaleSpanValue; // to be replaced by the scale span
-						var logValue = layer.Scales[_scaleNumber].Scale.PhysicalVariantToNormal(physValue);
+						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
 						rEnd[_scaleNumber] = logValue;
 					}
 					break;
@@ -453,11 +454,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_axisStyle = axStyle;
 			}
 
-			ScaleWithTicks scaleWithTicks = null;
-			var privScale = new ScaleSegment(layer.Scales[_scaleNumber].Scale, rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
+			var privScale = new ScaleSegment(layer.Scales[_scaleNumber], rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
 			_tickSpacing.FinalProcessScaleBoundaries(privScale.OrgAsVariant, privScale.EndAsVariant, privScale);
-			scaleWithTicks = new ScaleWithTicks(privScale, _tickSpacing);
-			var privLayer = new LayerSegment(layer, scaleWithTicks, rBegin, rEnd, _scaleNumber);
+			privScale.TickSpacing = _tickSpacing;
+			var privLayer = new LayerSegment(layer, privScale, rBegin, rEnd, _scaleNumber);
 
 			if (_background == null)
 			{
@@ -545,7 +545,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			private ScaleCollection _scaleCollection = new ScaleCollection();
 
-			public LayerSegment(IPlotArea underlyingArea, ScaleWithTicks scaleWithTicks, Logical3D org, Logical3D end, int scaleNumber)
+			public LayerSegment(IPlotArea underlyingArea, Scale scale, Logical3D org, Logical3D end, int scaleNumber)
 			{
 				_underlyingArea = underlyingArea;
 				_org = org;
@@ -555,9 +555,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				for (int i = 0; i < _underlyingArea.Scales.Count; ++i)
 				{
 					if (i == _scaleNumber)
-						_scaleCollection.SetScaleWithTicks(i, scaleWithTicks);
+						_scaleCollection[i] = scale;
 					else
-						_scaleCollection.SetScaleWithTicks(i, _underlyingArea.Scales[i]);
+						_scaleCollection[i] = underlyingArea.Scales[i];
 				}
 			}
 
@@ -578,12 +578,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public Scale XAxis
 			{
-				get { return _scaleCollection[0].Scale; }
+				get { return _scaleCollection[0]; }
 			}
 
 			public Scale YAxis
 			{
-				get { return _scaleCollection[1].Scale; }
+				get { return _scaleCollection[1]; }
 			}
 
 			public ScaleCollection Scales
@@ -638,6 +638,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private double _relEnd;
 			private Scale _underlyingScale;
 			private ScaleSegmentType _segmentScaling;
+			private TickSpacing _tickSpacing;
 
 			public ScaleSegment(Scale underlyingScale, double relOrg, double relEnd, ScaleSegmentType scaling)
 			{
@@ -650,6 +651,30 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_segmentScaling = scaling;
 			}
 
+			public override bool CopyFrom(object obj)
+			{
+				if (object.ReferenceEquals(this, obj))
+					return true;
+
+				var from = obj as ScaleSegment;
+
+				if (null == from)
+					return false;
+
+				using (var suspendToken = SuspendGetToken())
+				{
+					this._relOrg = from._relOrg;
+					this._relEnd = from._relEnd;
+					this._underlyingScale = from._underlyingScale;
+					this._segmentScaling = from._segmentScaling;
+
+					EhSelfChanged(EventArgs.Empty);
+					suspendToken.Resume();
+				}
+
+				return true;
+			}
+
 			public override object Clone()
 			{
 				return new ScaleSegment(_underlyingScale, _relOrg, _relEnd, _segmentScaling);
@@ -657,8 +682,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 			{
-				if (null != _underlyingScale)
-					yield return new Main.DocumentNodeAndName(_underlyingScale, "UnderlyingScale");
+				yield break; // do not dispose _underlyingScale !! we are not the owner (the owner is the layer the scale belongs to)
 			}
 
 			public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
@@ -695,7 +719,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				return y;
 			}
 
-			public override object RescalingObject
+			public override IScaleRescaleConditions RescalingObject
 			{
 				get { return _underlyingScale.RescalingObject; }
 			}
@@ -721,25 +745,31 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			public override bool IsOrgExtendable
-			{
-				get { return false; }
-			}
-
-			public override bool IsEndExtendable
-			{
-				get { return false; }
-			}
-
-			public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+			protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 			{
 				_relOrg = _underlyingScale.PhysicalVariantToNormal(org);
 				_relEnd = _underlyingScale.PhysicalVariantToNormal(end);
 				return null;
 			}
 
-			public override void Rescale()
+			public override void OnUserRescaled()
 			{
+			}
+
+			public override void OnUserZoomed(Data.AltaxoVariant newZoomOrg, Data.AltaxoVariant newZoomEnd)
+			{
+			}
+
+			public override TickSpacing TickSpacing
+			{
+				get
+				{
+					return _tickSpacing;
+				}
+				set
+				{
+					_tickSpacing = value;
+				}
 			}
 		}
 

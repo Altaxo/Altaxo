@@ -96,19 +96,24 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool CopyFrom(object obj)
 		{
-			bool isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as SpanTickSpacing;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
-				var from = obj as SpanTickSpacing;
-				if (null != from)
-				{
-					_relTickPosition = from._relTickPosition;
-					_showRatioEndOrg = from._showRatioEndOrg;
-					_transformationDivider = from._transformationDivider;
-					_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
-				}
+				_relTickPosition = from._relTickPosition;
+				_showRatioEndOrg = from._showRatioEndOrg;
+				_transformationDivider = from._transformationDivider;
+				_transformationOperationIsMultiply = from._transformationOperationIsMultiply;
+
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return isCopied;
+			return true;
 		}
 
 		public override object Clone()

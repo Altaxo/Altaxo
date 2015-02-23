@@ -56,6 +56,21 @@ namespace Altaxo.Graph.Scales
 
 		private LinkedScaleParameters _linkParameters;
 
+		/// <summary>
+		/// If true, the type of wrapped scale is the same as the type of the scale linked to
+		/// </summary>
+		protected bool _linkScaleType;
+
+		/// <summary>
+		/// If true, the tick spacing is used from the scale linked to 1:1
+		/// </summary>
+		protected bool _linkTickSpacing;
+
+		/// <summary>
+		/// The cached update sequence number of the TickSpacing of the scale linked to.
+		/// </summary>
+		protected int _cachedUSNOfScaleLinkedToTickSpacing;
+
 		#region Serialization
 
 		[Obsolete]
@@ -125,7 +140,7 @@ namespace Altaxo.Graph.Scales
 						var sibling = parentLayer.Layers[linkedLayerIndex] as Altaxo.Graph.Gdi.XYPlotLayer;
 						if (null != sibling)
 						{
-							scale = sibling.Scales[linkedScaleIndex].Scale;
+							scale = sibling.Scales[linkedScaleIndex];
 						}
 					}
 				}
@@ -206,7 +221,7 @@ namespace Altaxo.Graph.Scales
 						var sibling = parentLayer.Layers[_linkedLayerIndex] as Altaxo.Graph.Gdi.XYPlotLayer;
 						if (null != sibling)
 						{
-							scale = sibling.Scales[_linkedScaleIndex].Scale;
+							scale = sibling.Scales[_linkedScaleIndex];
 						}
 					}
 				}
@@ -222,7 +237,7 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// 2014-01-01 LinkedScale is now saved as a RelDocNodeProxy
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 4)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScale", 4)]
 		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -252,6 +267,43 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
+		/// <summary>
+		/// 2015-02-13 added parameters _linkScaleType and _linkTickSpacing
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 5)]
+		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinkedScale s = (LinkedScale)obj;
+
+				info.AddValue("ScaleWrapped", s._scaleWrapped);
+				info.AddValue("ScaleLinkedTo", s._scaleLinkedToProxy);
+				info.AddValue("LinkParameters", s._linkParameters);
+				info.AddValue("LinkScaleType", s._linkScaleType);
+				info.AddValue("LinkTickSpacing", s._linkTickSpacing);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScale s = SDeserialize(o, info, parent);
+				return s;
+			}
+
+			protected virtual LinkedScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
+
+				s.WrappedScale = (Scale)info.GetValue("ScaleWrapped", s);
+				s.ChildSetMember(ref s._scaleLinkedToProxy, (Main.RelDocNodeProxy)info.GetValue("ScaleLinkedTo", s));
+				s.LinkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
+				s._linkScaleType = info.GetBoolean("LinkScaleType");
+				s._linkTickSpacing = info.GetBoolean("LinkTickSpacing");
+
+				return s;
+			}
+		}
+
 		#endregion Serialization
 
 		private LinkedScale()
@@ -272,15 +324,30 @@ namespace Altaxo.Graph.Scales
 			_linkedScaleIndex = scaleNumberLinkedTo;
 		}
 
-		private void CopyFrom(LinkedScale from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			ChildCopyToMember(ref _linkParameters, from._linkParameters);
-			ChildCopyToMember(ref _scaleWrapped, from._scaleWrapped);
-			ChildSetMember(ref _scaleLinkedToProxy, new RelDocNodeProxy(from._scaleLinkedToProxy, true, this));
-			_cachedResolvedScaleLinkedToWeak.Target = from._cachedResolvedScaleLinkedToWeak.Target;
+			var from = obj as LinkedScale;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				ChildCopyToMember(ref _linkParameters, from._linkParameters);
+				ChildCopyToMember(ref _scaleWrapped, from._scaleWrapped);
+				ChildSetMember(ref _scaleLinkedToProxy, new RelDocNodeProxy(from._scaleLinkedToProxy, true, this));
+				this._linkScaleType = from._linkScaleType;
+				this._linkTickSpacing = from._linkTickSpacing;
+
+				_cachedResolvedScaleLinkedToWeak.Target = from._cachedResolvedScaleLinkedToWeak.Target;
+
+				EhSelfChanged(EventArgs.Empty);
+				suspendToken.Resume();
+			}
+
+			return true;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -361,6 +428,48 @@ namespace Altaxo.Graph.Scales
 				linkedScale = linkedScale.ScaleLinkedTo as LinkedScale;
 			}
 			return false; // no dependency detected
+		}
+
+		/// <summary>
+		/// If true, the type of wrapped scale is the same as the type of the scale linked to
+		/// </summary>
+		public bool LinkScaleType
+		{
+			get
+			{
+				return _linkScaleType;
+			}
+			set
+			{
+				var oldValue = _linkScaleType;
+				_linkScaleType = value;
+				if (value != oldValue)
+				{
+					OnLinkPropertiesChanged();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// If true, the tick spacing is used from the scale linked to 1:1
+		/// </summary>
+		public bool LinkTickSpacing
+		{
+			get
+			{
+				return _linkTickSpacing;
+			}
+			set
+			{
+				var oldValue = _linkTickSpacing;
+				_linkTickSpacing = value;
+				if (value != oldValue)
+				{
+					OnLinkPropertiesChanged();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
 		}
 
 		public bool IsStraightLink
@@ -457,6 +566,18 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return WrappedScale.TickSpacing;
+			}
+			set
+			{
+				WrappedScale.TickSpacing = value;
+			}
+		}
+
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
 		{
 			return _scaleWrapped.PhysicalVariantToNormal(x);
@@ -467,7 +588,7 @@ namespace Altaxo.Graph.Scales
 			return _scaleWrapped.NormalToPhysicalVariant(x);
 		}
 
-		public override object RescalingObject
+		public override Rescaling.IScaleRescaleConditions RescalingObject
 		{
 			get { return _scaleWrapped.RescalingObject; }
 		}
@@ -505,35 +626,20 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public override bool IsOrgExtendable
-		{
-			get
-			{
-				var scaleLinkedTo = ScaleLinkedTo;
-				return null == scaleLinkedTo ? false : scaleLinkedTo.IsOrgExtendable;
-			}
-		}
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public override bool IsEndExtendable
-		{
-			get
-			{
-				var scaleLinkedTo = ScaleLinkedTo;
-				return null == scaleLinkedTo ? false : scaleLinkedTo.IsEndExtendable;
-			}
-		}
-
-		public override void Rescale()
+		public override void OnUserRescaled()
 		{
 			var scaleLinkedTo = ScaleLinkedTo;
 
 			if (null != scaleLinkedTo)
-				scaleLinkedTo.Rescale();
+				scaleLinkedTo.OnUserRescaled();
 		}
 
-		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+		{
+			// ignore this - we are linked
+		}
+
+		protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			var scaleLinkedTo = ScaleLinkedTo;
 
@@ -544,7 +650,9 @@ namespace Altaxo.Graph.Scales
 					org = (org - LinkOrgA) / LinkOrgB;
 					end = (end - LinkEndA) / LinkEndB;
 				}
-				return scaleLinkedTo.SetScaleOrgEnd(org, end);
+
+				throw new NotImplementedException("What should we do here?");
+				//return scaleLinkedTo.SetScaleOrgEnd(org, end);
 			}
 			return null;
 		}
@@ -576,6 +684,25 @@ namespace Altaxo.Graph.Scales
 			var scaleLinkedTo = this.ScaleLinkedTo;
 			if (null != scaleLinkedTo)
 			{
+				// Test if the type of wrapped scale matches
+				if (_linkScaleType && scaleLinkedTo.GetType() != WrappedScale.GetType())
+				{
+					WrappedScale = (Scale)scaleLinkedTo.Clone();
+				}
+
+				if (_linkTickSpacing)
+				{
+					if (scaleLinkedTo.TickSpacing.GetType() != _scaleWrapped.TickSpacing.GetType())
+					{
+						_scaleWrapped.TickSpacing = (Ticks.TickSpacing)scaleLinkedTo.TickSpacing.Clone();
+					}
+					else if (scaleLinkedTo.TickSpacing.UpdateSequenceNumber != _cachedUSNOfScaleLinkedToTickSpacing)
+					{
+						_scaleWrapped.TickSpacing.CopyFrom(scaleLinkedTo.TickSpacing);
+						_cachedUSNOfScaleLinkedToTickSpacing = scaleLinkedTo.TickSpacing.UpdateSequenceNumber;
+					}
+				}
+
 				AltaxoVariant org = scaleLinkedTo.OrgAsVariant;
 				AltaxoVariant end = scaleLinkedTo.EndAsVariant;
 
@@ -584,8 +711,7 @@ namespace Altaxo.Graph.Scales
 					org = org * LinkOrgB + LinkOrgA;
 					end = end * LinkEndB + LinkEndA;
 				}
-
-				_scaleWrapped.SetScaleOrgEnd(org, end);
+				_scaleWrapped.RescalingObject.SetUserParameters(Rescaling.BoundaryRescaling.Fixed, Rescaling.BoundariesRelativeTo.Absolute, org, Rescaling.BoundaryRescaling.Fixed, Rescaling.BoundariesRelativeTo.Absolute, end);
 			}
 		}
 

@@ -39,6 +39,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new NoTickSpacing();
 		}
 
+		public override bool CopyFrom(object obj)
+		{
+			return obj is NoTickSpacing;
+		}
+
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			yield break;

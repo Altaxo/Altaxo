@@ -352,7 +352,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			return result.ToArray();
 		}
 
-		public override Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions Rescaling
+		public override Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{

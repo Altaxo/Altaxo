@@ -340,7 +340,7 @@ namespace Altaxo.Serialization
 
 		#region AltaxoVariant
 
-		public static string ToString(ICollection<AltaxoVariant> vals)
+		public static string ToString(IEnumerable<AltaxoVariant> vals)
 		{
 			StringBuilder stb = new StringBuilder();
 			bool first = true;

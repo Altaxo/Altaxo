@@ -25,6 +25,7 @@
 using Altaxo.Data;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -35,8 +36,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		Main.ICopyFrom
 	{
-		private List<AltaxoVariant> _suppressedTickValues;
-		private List<int> _suppressedTicksByNumber;
+		private ObservableCollection<AltaxoVariant> _suppressedTickValues;
+		private ObservableCollection<int> _suppressedTicksByNumber;
 
 		#region Serialization
 
@@ -88,8 +89,16 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public SuppressedTicks()
 		{
-			_suppressedTickValues = new List<AltaxoVariant>();
-			_suppressedTicksByNumber = new List<int>();
+			_suppressedTickValues = new ObservableCollection<AltaxoVariant>();
+			_suppressedTicksByNumber = new ObservableCollection<int>();
+
+			_suppressedTicksByNumber.CollectionChanged += EhCollectionChanged;
+			_suppressedTickValues.CollectionChanged += EhCollectionChanged;
+		}
+
+		private void EhCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			EhSelfChanged();
 		}
 
 		public SuppressedTicks(SuppressedTicks from)
@@ -103,16 +112,16 @@ namespace Altaxo.Graph.Scales.Ticks
 				return true;
 
 			var from = obj as SuppressedTicks;
-			if (null != from)
-			{
-				_suppressedTickValues = new List<AltaxoVariant>(from._suppressedTickValues);
-				_suppressedTicksByNumber = new List<int>(from._suppressedTicksByNumber);
-				return true;
-			}
-			else
-			{
+			if (null == from)
 				return false;
-			}
+
+			_suppressedTickValues = new ObservableCollection<AltaxoVariant>(from._suppressedTickValues);
+			_suppressedTicksByNumber = new ObservableCollection<int>(from._suppressedTicksByNumber);
+			_suppressedTicksByNumber.CollectionChanged += EhCollectionChanged;
+			_suppressedTickValues.CollectionChanged += EhCollectionChanged;
+			EhSelfChanged();
+
+			return true;
 		}
 
 		public object Clone()

@@ -45,17 +45,12 @@ namespace Altaxo.Graph.Scales
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				AngularRadianScale s = SDeserialize(o, info, parent);
-				OnAfterDeserialization(s);
 				return s;
-			}
-
-			protected virtual void OnAfterDeserialization(AngularRadianScale s)
-			{
 			}
 
 			protected virtual AngularRadianScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				AngularRadianScale s = null != o ? (AngularRadianScale)o : new AngularRadianScale();
+				AngularRadianScale s = null != o ? (AngularRadianScale)o : new AngularRadianScale(info);
 				info.GetBaseValueEmbedded(s, typeof(AngularScale), s);
 				return s;
 			}
@@ -63,7 +58,16 @@ namespace Altaxo.Graph.Scales
 
 		#endregion Serialization
 
+		/// <summary>
+		/// Constructor for deserialization only.
+		/// </summary>
+		protected AngularRadianScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
+		{
+		}
+
 		public AngularRadianScale()
+			: base(new Ticks.AngularRadianTickSpacing())
 		{
 		}
 
@@ -74,7 +78,7 @@ namespace Altaxo.Graph.Scales
 
 		public override object Clone()
 		{
-			return new AngularRadianScale();
+			return new AngularRadianScale(this);
 		}
 
 		protected override bool UseDegree

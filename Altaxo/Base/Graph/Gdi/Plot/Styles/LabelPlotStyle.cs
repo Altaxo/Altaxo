@@ -38,8 +38,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class LabelPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle,
-		System.Runtime.Serialization.IDeserializationCallback
+		IG2DPlotStyle
 	{
 		/// <summary>The font of the label.</summary>
 		protected FontX _font;
@@ -401,16 +400,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the cached values
-			SetCachedValues();
 		}
 
 		#endregion Serialization

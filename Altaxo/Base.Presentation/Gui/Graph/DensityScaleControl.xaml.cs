@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(_cbScales, names);
 		}
 
-		public void SetBoundaryView(object guiobject)
+		public void SetRescalingView(object guiobject)
 		{
 			_boundaryHost.Child = guiobject as UIElement;
 		}

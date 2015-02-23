@@ -109,6 +109,11 @@ namespace Altaxo.Main
 			{
 				get { return false; }
 			}
+
+			public void SetDisposeInProgress()
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		private static IDocumentNode _staticInstance = new StaticInstanceClass();

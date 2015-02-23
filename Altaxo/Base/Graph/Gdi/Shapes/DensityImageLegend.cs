@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.AddValue("PlotItem", s._plotItemProxy);
 				info.AddValue("IsOrientationVertical", s.IsOrientationVertical);
 				info.AddValue("IsScaleReversed", s.IsScaleReversed);
-				info.AddValue("Scale", s.ScaleWithTicks.Scale);
+				info.AddValue("Scale", s.ScaleWithTicks);
 				info.AddValue("TickSpacing", s.ScaleWithTicks.TickSpacing);
 				info.AddValue("AxisStyles", s._axisStyles);
 			}
@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			// _scaleIsReversed = false;
 
 			var cachedScale = (NumericalScale)PlotItem.Style.Scale.Clone();
-			var scaleTickSpacing = ScaleWithTicks.CreateDefaultTicks(cachedScale.GetType());
+			var scaleTickSpacing = Altaxo.Graph.Scales.Scale.CreateDefaultTicks(cachedScale.GetType());
 			_cachedArea = new DensityLegendArea(Size, true, false, cachedScale, scaleTickSpacing);
 			//_cachedArea.ParentObject = this; // --> moved to the end of this function
 
@@ -261,7 +261,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public ScaleWithTicks ScaleWithTicks
+		public Scale ScaleWithTicks
 		{
 			get
 			{
@@ -339,13 +339,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null == _cachedArea)
 				return;
 
+			UpdateIfPlotItemChanged();
+
 			_cachedArea.Size = Size; // Update the coordinate system size to meet the size of the graph item
-
-			// after deserialisation the data bounds object of the scale is empty:
-			// then we have to rescale the axis
-			if (_cachedArea.Scales[0].Scale.DataBoundsObject.IsEmpty)
-				_cachedArea.Scales[0].Scale.Rescale();
-
 			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 		}
 
@@ -405,19 +401,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				colorProvider = new Plot.ColorProvider.ColorProviderBGRY();
 			}
 
-			var legendScale = (NumericalScale)ScaleWithTicks.Scale;
+			var legendScale = (NumericalScale)ScaleWithTicks;
 			var legendTickSpacing = ScaleWithTicks.TickSpacing;
-
-			// We set the boundaries of our legend scale to the org and end of the z-scale of the density image item.
-			using (var suspendToken = legendScale.DataBounds.SuspendGetToken())
-			{
-				legendScale.DataBounds.Reset();
-				legendScale.DataBounds.Add(originalZScale.OrgAsVariant);
-				legendScale.DataBounds.Add(originalZScale.EndAsVariant);
-
-				suspendToken.Resume();
-			}
-			legendScale.Rescale(); // and do a rescale to apply the changes to the boundaries
 
 			// Fill the bitmap
 
@@ -502,9 +487,43 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#region IChildChangedEventSink Members
 
-		public new void EhChildChanged(object child, EventArgs e)
+		private void UpdateIfPlotItemChanged()
 		{
-			EhSelfChanged(EventArgs.Empty);
+			if (null == PlotItem)
+				return;
+
+			// Test whether the scale type is still the same than the scale of the plot item
+			// If not, we must create a new cachedArea
+			if (_cachedArea.Scales[0].GetType() != PlotItem.Style.Scale.GetType())
+			{
+				var cachedScale = (NumericalScale)PlotItem.Style.Scale.Clone();
+				var scaleTickSpacing = Altaxo.Graph.Scales.Scale.CreateDefaultTicks(cachedScale.GetType()); // we have to use CreateDefaultTicks because the scale of the DensityImagePlotStyle has NoTickspacing as TickSpacing
+				_cachedArea = new DensityLegendArea(Size, true, false, cachedScale, scaleTickSpacing) { ParentObject = this };
+			}
+
+			// We set the boundaries of our legend scale to the org and end of the z-scale of the density image PlotItem.
+			using (var suspendToken = ScaleWithTicks.DataBoundsObject.SuspendGetToken())
+			{
+				ScaleWithTicks.DataBoundsObject.Reset();
+
+				// Note: we do not use PlotItem.Style.Scale.DataBoundsObject here to merge with ScaleWithTicks.DataBoundsObject
+				// this is because in the PlotItem we can limit the scale to show only relevant data and to eliminate outliers
+				// that's why we bind our DataBoundsObject to the resulting Scale org and end
+				ScaleWithTicks.DataBoundsObject.Add(PlotItem.Style.Scale.Org);
+				ScaleWithTicks.DataBoundsObject.Add(PlotItem.Style.Scale.End);
+
+				suspendToken.Resume();
+			}
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, _plotItemProxy))
+			{
+				UpdateIfPlotItemChanged();
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
 
 		#endregion IChildChangedEventSink Members
@@ -522,8 +541,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				_size = size;
 				_scales = new ScaleCollection() { ParentObject = this };
-				_scales[0] = new ScaleWithTicks(scale, tickSpacing);
-				_scales[1] = new ScaleWithTicks(new LinearScale(), new NoTickSpacing());
+				_scales[0] = scale; scale.TickSpacing = tickSpacing;
+				_scales[1] = new LinearScale() { TickSpacing = new NoTickSpacing() };
 				_coordinateSystem = new Altaxo.Graph.Gdi.CS.G2DCartesicCoordinateSystem() { ParentObject = this };
 				_coordinateSystem.IsXYInterchanged = isXYInterchanged;
 				_coordinateSystem.IsXReverse = isXReversed;
@@ -559,12 +578,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public Scale XAxis
 			{
-				get { return _scales[0].Scale; }
+				get { return _scales[0]; }
 			}
 
 			public Scale YAxis
 			{
-				get { return _scales[1].Scale; }
+				get { return _scales[1]; }
 			}
 
 			public ScaleCollection Scales

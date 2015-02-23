@@ -24,10 +24,12 @@
 
 using Altaxo.Data;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph.Scales
 {
 	using Boundaries;
+	using Ticks;
 
 	/// <summary>
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
@@ -36,7 +38,7 @@ namespace Altaxo.Graph.Scales
 	public abstract class Scale
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		ICloneable
+		Main.ICopyFrom
 	{
 		private static int _instanceCounter;
 		private readonly int _instance = _instanceCounter++;
@@ -54,22 +56,9 @@ namespace Altaxo.Graph.Scales
 		/// <returns>The cloned copy of the axis.</returns>
 		public abstract object Clone();
 
+		public abstract bool CopyFrom(object obj);
+
 		#endregion ICloneable Members
-
-		#region event handling
-
-		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
-			{
-				Rescale();
-				e = EventArgs.Empty;
-			}
-
-			return base.HandleLowPriorityChildChangeCases(sender, ref e);
-		}
-
-		#endregion event handling
 
 		/// <summary>
 		/// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
@@ -95,7 +84,9 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Returns the rescaling conditions for this axis as object.
 		/// </summary>
-		public abstract object RescalingObject { get; }
+		public abstract Rescaling.IScaleRescaleConditions RescalingObject { get; }
+
+		public abstract TickSpacing TickSpacing { get; set; }
 
 		/// <summary>
 		/// Returns the <see cref="IPhysicalBoundaries"/> object that is associated with that axis.
@@ -108,12 +99,6 @@ namespace Altaxo.Graph.Scales
 		/// <summary>The axis end point in physical units.</summary>
 		public abstract AltaxoVariant EndAsVariant { get; }
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public abstract bool IsOrgExtendable { get; }
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public abstract bool IsEndExtendable { get; }
-
 		/// <summary>
 		/// Sets the orgin and the end of the scale temporarily (until the next DataBoundaryChanged event).
 		/// </summary>
@@ -121,13 +106,20 @@ namespace Altaxo.Graph.Scales
 		/// <param name="end">The scale end.</param>
 		/// <returns>Null when the settings where applied. An string describing the problem otherwise.</returns>
 		/// <remarks>Settings like fixed boundaries or the data bounds will be ignored by this function. However, the next call
-		/// to <see cref="Rescale"/> will override the scale bounds.</remarks>
-		public abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
+		/// to <see cref="OnUserRescaled"/> will override the scale bounds.</remarks>
+		protected abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
 
 		/// <summary>
-		/// Adjusts org and end considering fixed org and end values and the data boundaries.
+		/// Called when user has pressed the rescale button.
 		/// </summary>
-		public abstract void Rescale();
+		public abstract void OnUserRescaled();
+
+		/// <summary>
+		/// Called when user zoomed has used the zoom tool to zoom into the data.
+		/// </summary>
+		/// <param name="newZoomOrg">The new zoom orgigin.</param>
+		/// <param name="newZoomEnd">The new zoom end.</param>
+		public abstract void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd);
 
 		/// <summary>
 		/// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.
@@ -142,6 +134,8 @@ namespace Altaxo.Graph.Scales
 				if (definedtype.IsVisible)
 					sm_AvailableScales.Add(definedtype.Name, definedtype);
 			}
+
+			RegisterDefaultTicking();
 		}
 
 		/// <summary>Returns the collection of available axes.</summary>
@@ -149,5 +143,48 @@ namespace Altaxo.Graph.Scales
 		{
 			get { return sm_AvailableScales; }
 		}
-	} // end of class Axis
+
+		#region Default ticking
+
+		private static Dictionary<System.Type, SortedDictionary<int, System.Type>> _scaleToTickSpacingTypes = new Dictionary<Type, SortedDictionary<int, Type>>();
+
+		public static void RegisterDefaultTicking(System.Type scaleType, System.Type tickSpacingType, int priority)
+		{
+			if (!_scaleToTickSpacingTypes.ContainsKey(scaleType))
+				_scaleToTickSpacingTypes.Add(scaleType, new SortedDictionary<int, Type>());
+			_scaleToTickSpacingTypes[scaleType].Add(priority, tickSpacingType);
+		}
+
+		public static TickSpacing CreateDefaultTicks(System.Type type)
+		{
+			if (_scaleToTickSpacingTypes.ContainsKey(type))
+			{
+				SortedDictionary<int, Type> dict = _scaleToTickSpacingTypes[type];
+
+				foreach (KeyValuePair<int, System.Type> entry in dict)
+					return (TickSpacing)System.Activator.CreateInstance(entry.Value);
+			}
+
+			return new NoTickSpacing();
+		}
+
+		private static void RegisterDefaultTicking()
+		{
+			RegisterDefaultTicking(typeof(DateTimeScale), typeof(DateTimeTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(AngularDegreeScale), typeof(AngularDegreeTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(AngularRadianScale), typeof(AngularRadianTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(TextScale), typeof(TextTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(Log10Scale), typeof(Log10TickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(LinearScale), typeof(LinearTickSpacing), 100);
+
+			RegisterDefaultTicking(typeof(InverseScale), typeof(InverseTickSpacing), 100);
+		}
+
+		#endregion Default ticking
+	}
 }

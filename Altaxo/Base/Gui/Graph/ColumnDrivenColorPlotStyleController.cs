@@ -31,6 +31,7 @@ namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Data;
 	using Altaxo.Graph.Gdi.Plot.Styles;
+	using Altaxo.Graph.Scales;
 
 	public interface IColumnDrivenColorPlotStyleView
 	{
@@ -72,10 +73,10 @@ namespace Altaxo.Gui.Graph
 
 			if (initData)
 			{
-				_scaleController = new DensityScaleController() { UseDocumentCopy = UseDocument.Directly };
+				_scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
 				_scaleController.InitializeDocument(_doc.Scale);
 
-				_colorProviderController = new ColorProviderController() { UseDocumentCopy = UseDocument.Directly };
+				_colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
 				_colorProviderController.InitializeDocument(_doc.ColorProvider);
 			}
 

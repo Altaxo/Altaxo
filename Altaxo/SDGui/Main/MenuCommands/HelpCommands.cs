@@ -112,4 +112,13 @@ namespace Altaxo.Main.Commands
 			Current.Gui.ShowDialog(ctrl, "Brush pros");
 		}
 	}
+
+	public class ReportParentChildProblemsInDocument : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			GC.Collect();
+			Altaxo.Main.SuspendableDocumentNode.ReportParentChildAndDisposedProblems(Current.Project, true);
+		}
+	}
 }

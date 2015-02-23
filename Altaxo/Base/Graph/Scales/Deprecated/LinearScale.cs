@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 	/// </summary>
 
 	[Serializable]
-	public class LinearScale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
+	public class LinearScale : NumericalScale
 	{
 		// primary values
 		/// <summary>Proposed value of axis origin, proposed either by the lower physical boundary or by the user (if axis org is fixed).</summary>
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds = new FiniteNumericalBoundaries();
 
-		protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();
+		protected NumericScaleRescaleConditions _rescaling = new LinearScaleRescaleConditions();
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -115,8 +115,8 @@ namespace Altaxo.Graph.Scales.Deprecated
 				// restore the event chain
 				s._dataBounds.ParentObject = s;
 
-				s._rescaling = new NumericAxisRescaleConditions();
-				s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
+				s._rescaling = new LinearScaleRescaleConditions();
+				s._rescaling.SetUserParameters(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.End);
 				s._rescaling.ParentObject = s;
 
 				return s;
@@ -169,23 +169,11 @@ namespace Altaxo.Graph.Scales.Deprecated
 				s._dataBounds.ParentObject = s;
 
 				// new in version 1
-				s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
 				s._rescaling.ParentObject = s;
 
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// restore the cached values
-			SetCachedValues();
-			// restore the event chain
-			_dataBounds.ParentObject = this;
 		}
 
 		#endregion Serialization
@@ -220,7 +208,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._minorTicks = from._minorTicks;
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-			this._rescaling = null == from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+			this._rescaling = null == from.Rescaling ? new LinearScaleRescaleConditions() : (LinearScaleRescaleConditions)from.Rescaling.Clone();
 			this._rescaling.ParentObject = this;
 		}
 
@@ -242,7 +230,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._minorTicks = from._minorTicks;
 			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
-			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new NumericAxisRescaleConditions());
+			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new LinearScaleRescaleConditions());
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -288,7 +276,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override NumericAxisRescaleConditions Rescaling
+		public override NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{
@@ -415,11 +403,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 			ProcessDataBounds(_dataBounds.LowerBound, _dataBounds.UpperBound, _rescaling);
 		}
 
-		public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
+		public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
 		{
-			bool isAutoOrg, isAutoEnd;
-			rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-			ProcessDataBounds(xorg, !isAutoOrg, xend, !isAutoEnd);
+			rescaling.OnDataBoundsChanged(xorg, xend);
+			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
 		}
 
 		public override void ProcessDataBounds(double xorg, bool xorgfixed, double xend, bool xendfixed)

@@ -44,10 +44,10 @@ namespace Altaxo.Gui.Graph
 		private void EhAxisType_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
-			if (null != AxisTypeChanged)
+			if (null != ScaleTypeChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(this.m_Scale_cbType);
-				AxisTypeChanged();
+				ScaleTypeChanged();
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Graph
 			GuiHelper.Initialize(this._cbLinkTarget, names);
 		}
 
-		public void SetBoundaryView(object guiobject)
+		public void SetRescalingView(object guiobject)
 		{
 			_guiBoundaryHost.Child = guiobject as UIElement;
 		}
@@ -111,12 +111,45 @@ namespace Altaxo.Gui.Graph
 			_tickSpacingGroupBox.Content = guiobject as UIElement;
 		}
 
-		public event Action AxisTypeChanged;
+		public event Action ScaleTypeChanged;
 
 		public event Action TickSpacingTypeChanged;
 
 		public event Action LinkTargetChanged;
 
 		#endregion IAxisScaleView
+
+		public bool LinkScaleType
+		{
+			get
+			{
+				return true == _guiLinkScaleType.IsChecked;
+			}
+			set
+			{
+				_guiLinkScaleType.IsChecked = value;
+			}
+		}
+
+		public bool LinkTickSpacing
+		{
+			get
+			{
+				return _guiLinkTicks.IsChecked == true;
+			}
+			set
+			{
+				_guiLinkTicks.IsChecked = value;
+			}
+		}
+
+		public void SetVisibilityOfLinkElements(bool showLinkTargets, bool showOtherLinkProperties)
+		{
+			_cbLinkTarget.Visibility = showLinkTargets ? Visibility.Visible : Visibility.Collapsed;
+			_guiLabelForLinkTarget.Visibility = showLinkTargets ? Visibility.Visible : Visibility.Collapsed;
+
+			_guiLinkScaleType.Visibility = showOtherLinkProperties ? Visibility.Visible : Visibility.Collapsed;
+			_guiLinkTicks.Visibility = showOtherLinkProperties ? Visibility.Visible : Visibility.Collapsed;
+		}
 	}
 }

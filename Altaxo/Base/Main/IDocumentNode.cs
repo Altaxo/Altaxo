@@ -62,6 +62,11 @@ namespace Altaxo.Main
 		/// <c>true</c> if this instance is dispose in progress or already disposed; otherwise, <c>false</c>.
 		/// </value>
 		bool IsDisposeInProgress { get; }
+
+		/// <summary>
+		/// Sets the flag that dispose is in progress for this node and all child nodes recursively.
+		/// </summary>
+		void SetDisposeInProgress();
 	}
 
 	/// <summary>

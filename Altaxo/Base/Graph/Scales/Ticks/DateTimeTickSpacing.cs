@@ -429,8 +429,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <summary>If set, gives the physical value between two major ticks choosen by the user.</summary>
 		private TimeSpanEx? _userDefinedMajorSpan;
 
-		private double _minGrace = 0.05;
-		private double _maxGrace = 0.05;
+		private double _orgGrace = 0.05;
+		private double _endGrace = 0.05;
 		private int _targetNumberOfMajorTicks = 6;
 		private int _targetNumberOfMinorTicks = 2;
 
@@ -489,43 +489,41 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override bool CopyFrom(object obj)
 		{
-			bool isCopied = base.CopyFrom(obj);
-			if (isCopied && !object.ReferenceEquals(this, obj))
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as DateTimeTickSpacing;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
-				var from = obj as DateTimeTickSpacing;
-				if (null != from)
-				{
-					CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
+				CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
 
-					_userDefinedMajorSpan = from._userDefinedMajorSpan;
-					_userDefinedMinorTicks = from._userDefinedMinorTicks;
+				_userDefinedMajorSpan = from._userDefinedMajorSpan;
+				_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
-					_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
-					_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
+				_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+				_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
-					_minGrace = from._minGrace;
-					_maxGrace = from._maxGrace;
+				_orgGrace = from._orgGrace;
+				_endGrace = from._endGrace;
 
-					_snapOrgToTick = from._snapOrgToTick;
-					_snapEndToTick = from._snapEndToTick;
+				_snapOrgToTick = from._snapOrgToTick;
+				_snapEndToTick = from._snapEndToTick;
 
-					_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
-					_suppressedMajorTicks.ParentObject = this;
+				ChildCopyToMember(ref _suppressedMajorTicks, from._suppressedMajorTicks);
+				ChildCopyToMember(ref _suppressedMinorTicks, from._suppressedMinorTicks);
+				ChildCopyToMember(ref _additionalMajorTicks, from._additionalMajorTicks);
+				ChildCopyToMember(ref _additionalMinorTicks, from._additionalMinorTicks);
 
-					_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
-					_suppressedMinorTicks.ParentObject = this;
+				_majorTicks = new List<AltaxoVariant>(from._majorTicks);
+				_minorTicks = new List<AltaxoVariant>(from._minorTicks);
 
-					_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
-					_additionalMajorTicks.ParentObject = this;
-
-					_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
-					_additionalMinorTicks.ParentObject = this;
-
-					_majorTicks = new List<AltaxoVariant>(from._majorTicks);
-					_minorTicks = new List<AltaxoVariant>(from._minorTicks);
-				}
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return isCopied;
+			return true;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -545,33 +543,33 @@ namespace Altaxo.Graph.Scales.Ticks
 			return new DateTimeTickSpacing(this);
 		}
 
-		#region Properties
+		#region User parameters
 
-		public double MinGrace
+		public double OrgGrace
 		{
 			get
 			{
-				return _minGrace;
+				return _orgGrace;
 			}
 			set
 			{
-				var oldValue = _minGrace;
-				_minGrace = value;
+				var oldValue = _orgGrace;
+				_orgGrace = value;
 				if (oldValue != value)
 					EhSelfChanged();
 			}
 		}
 
-		public double MaxGrace
+		public double EndGrace
 		{
 			get
 			{
-				return _maxGrace;
+				return _endGrace;
 			}
 			set
 			{
-				var oldValue = _maxGrace;
-				_maxGrace = value;
+				var oldValue = _endGrace;
+				_endGrace = value;
 				if (oldValue != value)
 					EhSelfChanged();
 			}
@@ -637,6 +635,36 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
+		public int? MinorTicks
+		{
+			get
+			{
+				return _userDefinedMinorTicks;
+			}
+			set
+			{
+				var oldValue = _userDefinedMinorTicks;
+				_userDefinedMinorTicks = value;
+				if (oldValue != value)
+					EhSelfChanged();
+			}
+		}
+
+		public TimeSpanEx? MajorTickSpan
+		{
+			get
+			{
+				return _userDefinedMajorSpan;
+			}
+			set
+			{
+				var oldValue = _userDefinedMajorSpan;
+				_userDefinedMajorSpan = value;
+				if (!oldValue.Equals(value))
+					EhSelfChanged();
+			}
+		}
+
 		public SuppressedTicks SuppressedMajorTicks
 		{
 			get
@@ -669,37 +697,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		public int? MinorTicks
-		{
-			get
-			{
-				return _userDefinedMinorTicks;
-			}
-			set
-			{
-				var oldValue = _userDefinedMinorTicks;
-				_userDefinedMinorTicks = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
-		}
-
-		public TimeSpanEx? MajorTickSpan
-		{
-			get
-			{
-				return _userDefinedMajorSpan;
-			}
-			set
-			{
-				var oldValue = _userDefinedMajorSpan;
-				_userDefinedMajorSpan = value;
-				if (!oldValue.Equals(value))
-					EhSelfChanged();
-			}
-		}
-
-		#endregion Properties
+		#endregion User parameters
 
 		public override AltaxoVariant[] GetMajorTicksAsVariant()
 		{
@@ -790,7 +788,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMajorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMajorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMajorTicks.Values)
 				{
 					_majorTicks.Add(v);
 				}
@@ -826,7 +824,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (!_additionalMinorTicks.IsEmpty)
 			{
-				foreach (AltaxoVariant v in _additionalMinorTicks.ByValues)
+				foreach (AltaxoVariant v in _additionalMinorTicks.Values)
 				{
 					_minorTicks.Add(v);
 				}
@@ -903,7 +901,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		/// <summary>
-		/// Applies the value for <see cref="MinGrace"/> and <see cref="MaxGrace"/> to the scale and calculated proposed values for the boundaries.
+		/// Applies the value for <see cref="OrgGrace"/> and <see cref="EndGrace"/> to the scale and calculated proposed values for the boundaries.
 		/// </summary>
 		/// <param name="scaleOrg">Scale origin.</param>
 		/// <param name="scaleEnd">Scale end.</param>
@@ -920,7 +918,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			propOrg = scaleOrg;
 			if (isOrgExtendable)
 			{
-				TimeSpan orgToTheLeft = Multiply(Math.Abs(_minGrace), scaleSpan);
+				TimeSpan orgToTheLeft = Multiply(Math.Abs(_orgGrace), scaleSpan);
 				if (orgToTheLeft > (propOrg - DateTime.MinValue))
 					orgToTheLeft = (propOrg - DateTime.MinValue);
 
@@ -931,7 +929,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			propEnd = scaleEnd;
 			if (isEndExtendable)
 			{
-				TimeSpan endToTheRight = Multiply(Math.Abs(_maxGrace), scaleSpan);
+				TimeSpan endToTheRight = Multiply(Math.Abs(_endGrace), scaleSpan);
 				if (endToTheRight > (DateTime.MaxValue - propEnd))
 					endToTheRight = (DateTime.MaxValue - propEnd);
 

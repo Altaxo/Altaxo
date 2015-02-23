@@ -38,8 +38,7 @@ namespace Altaxo.Graph.Plot.Data
 	public class XYZMeshedColumnPlotData
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		System.ICloneable,
-		System.Runtime.Serialization.IDeserializationCallback
+		System.ICloneable
 	{
 		protected DataTableMatrixProxy _matrixProxy;
 
@@ -67,14 +66,6 @@ namespace Altaxo.Graph.Plot.Data
 		public int PlotRangeLength { get { return int.MaxValue; } set { } }
 
 		#region Serialization
-
-		#region Clipboard
-
-		public void OnDeserialization(object sender)
-		{
-		}
-
-		#endregion Clipboard
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 1)]

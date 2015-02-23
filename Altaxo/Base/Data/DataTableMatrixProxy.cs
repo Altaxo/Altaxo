@@ -942,7 +942,7 @@ namespace Altaxo.Data
 				return;
 
 			DataTable table = _dataTable.Document;
-			if (null == table)
+			if (null == table || table.IsDisposeInProgress)
 				return;
 
 			InternalRemoveDataColumnsWithDeviatingParentOrKindOrGroupNumber(table);

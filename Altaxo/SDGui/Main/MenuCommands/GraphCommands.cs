@@ -641,8 +641,7 @@ namespace Altaxo.Graph.Commands
 
 			if (l is XYPlotLayer)
 			{
-				((XYPlotLayer)l).RescaleXAxis();
-				((XYPlotLayer)l).RescaleYAxis();
+				((XYPlotLayer)l).OnUserRescaledAxes();
 			}
 		}
 	}

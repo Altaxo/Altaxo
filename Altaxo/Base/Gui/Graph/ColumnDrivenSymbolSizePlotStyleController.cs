@@ -31,6 +31,7 @@ namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Data;
 	using Altaxo.Graph.Gdi.Plot.Styles;
+	using Altaxo.Graph.Scales;
 
 	public interface IColumnDrivenSymbolSizePlotStyleView
 	{
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Graph
 
 			if (initData)
 			{
-				_scaleController = new DensityScaleController();
+				_scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale);
 				_scaleController.InitializeDocument(_doc.Scale);
 			}
 

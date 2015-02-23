@@ -102,7 +102,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG2DPlotStyle,
-		System.Runtime.Serialization.IDeserializationCallback,
 		IRoutedPropertyReceiver
 	{
 		/// <summary>
@@ -308,15 +307,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 				return s;
 			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			CreateEventChain();
 		}
 
 		#endregion Serialization

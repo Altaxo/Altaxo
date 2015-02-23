@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public abstract NumericAxisRescaleConditions Rescaling { get; }
+		public abstract NumericScaleRescaleConditions Rescaling { get; }
 
 		public override object RescalingObject
 		{

@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 		/// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
 		protected TextBoundaries _dataBounds;
 
-		protected NumericAxisRescaleConditions _rescaling;
+		protected NumericScaleRescaleConditions _rescaling;
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 				TextScale s = null != o ? (TextScale)o : new TextScale();
 
 				s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
-				s.InternalSetRescaling((NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
+				s.InternalSetRescaling((NumericScaleRescaleConditions)info.GetValue("Rescaling", s));
 				s.ProcessDataBounds();
 
 				return s;
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			_dataBounds = new TextBoundaries();
 			_dataBounds.ParentObject = this;
 
-			_rescaling = new NumericAxisRescaleConditions();
+			_rescaling = new LinearScaleRescaleConditions();
 		}
 
 		public TextScale(TextScale from)
@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			_dataBounds = (TextBoundaries)from._dataBounds.Clone();
 			_dataBounds.ParentObject = this;
 
-			_rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
+			_rescaling = from._rescaling == null ? null : (NumericScaleRescaleConditions)from._rescaling.Clone();
 			_rescaling.ParentObject = this;
 
 			_cachedAxisOrg = from._cachedAxisOrg;
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			this._dataBounds.ParentObject = this;
 		}
 
-		protected void InternalSetRescaling(NumericAxisRescaleConditions rescaling)
+		protected void InternalSetRescaling(NumericScaleRescaleConditions rescaling)
 		{
 			this._rescaling = rescaling;
 			this._rescaling.ParentObject = this;
@@ -261,11 +261,10 @@ namespace Altaxo.Graph.Scales.Deprecated
 			ProcessDataBounds(1, _dataBounds.NumberOfItems, _rescaling);
 		}
 
-		public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
+		public void ProcessDataBounds(double xorg, double xend, NumericScaleRescaleConditions rescaling)
 		{
-			bool isAutoOrg, isAutoEnd;
-			rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-			ProcessDataBounds(xorg, !isAutoOrg, xend, !isAutoEnd);
+			rescaling.OnDataBoundsChanged(xorg, xend);
+			ProcessDataBounds(rescaling.ResultingOrg, rescaling.IsResultingOrgFixed, rescaling.ResultingEnd, rescaling.IsResultingEndFixed);
 		}
 
 		public override void ProcessDataBounds(Altaxo.Data.AltaxoVariant org, bool orgfixed, Altaxo.Data.AltaxoVariant end, bool endfixed)

@@ -663,6 +663,8 @@
 				description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.AltaxoProvokeException" />
 			<MenuItem id="DevelopmentTest" label="DevelopmentTester"
 			 description="Development test" class="Altaxo.Main.Commands.DevelopmentTest" />
+			<MenuItem id="ReportParentChildProblems" label="Report parent-child problems in document"
+				 description="Report parent-child problems in document" class="Altaxo.Main.Commands.ReportParentChildProblemsInDocument" />
 			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="Altaxo.Main.Commands.HelpAboutAltaxo" />
 		</MenuItem>

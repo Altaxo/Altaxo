@@ -72,9 +72,9 @@
 		<axogc:Int32UpDown x:Name="_edTargetNumberMinorTicks" Grid.Column="1" Grid.Row="6" Minimum="0" Change="1" />
 		<Label Grid.Column="0" Grid.Row="8" Content="Zero lever:" />
 		<axogc:QuantityWithUnitTextBox  x:Name="_edZeroLever" Grid.Column="1" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Grid.Column="0" Grid.Row="10" Content="Min grace:" />
+		<Label Grid.Column="0" Grid.Row="10" Content="Org padding:" />
 		<axogc:QuantityWithUnitTextBox x:Name="_edMinGrace" Grid.Column="1" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Grid.Column="0" Grid.Row="12" Content="Max grace:" />
+		<Label Grid.Column="0" Grid.Row="12" Content="End padding:" />
 		<axogc:QuantityWithUnitTextBox x:Name="_edMaxGrace" Grid.Column="1" Grid.Row="12" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 		<Label Grid.Column="0" Grid.Row="14" Content="Snap to org:" />
 		<ComboBox x:Name="_cbSnapTicksToOrg" Grid.Column="1" Grid.Row="14" SelectionChanged="_cbSnapTicksToOrg_SelectionChangeCommitted" />

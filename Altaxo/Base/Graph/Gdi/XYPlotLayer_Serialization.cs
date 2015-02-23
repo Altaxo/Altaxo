@@ -24,6 +24,7 @@
 
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Rescaling;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -58,13 +59,11 @@ namespace Altaxo.Graph.Gdi
 			else
 				throw new ArgumentException("Axis type unknown");
 
-			var ticks = ScaleWithTicks.CreateDefaultTicks(transScale.GetType());
-
-			transScale.SetScaleOrgEnd(axis.OrgAsVariant, axis.EndAsVariant);
-			if (transScale.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions &&
-				axis.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions)
+			transScale.RescalingObject.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
+			if (transScale.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions &&
+				axis.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)
 			{
-				((Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions)transScale.RescalingObject).CopyFrom((Altaxo.Graph.Scales.Rescaling.NumericAxisRescaleConditions)axis.RescalingObject);
+				((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)transScale.RescalingObject).CopyFrom((Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)axis.RescalingObject);
 			}
 
 			if (isLinked)
@@ -74,7 +73,7 @@ namespace Altaxo.Graph.Gdi
 				transScale = ls;
 			}
 
-			_scales.SetScaleWithTicks(idx, transScale, ticks);
+			_scales[idx] = transScale;
 		}
 
 		private void SetupOldAxes(Altaxo.Graph.Scales.Deprecated.LinkedScaleCollection linkedScales)
@@ -736,8 +735,8 @@ namespace Altaxo.Graph.Gdi
 				// extract layer number
 				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
 				foreach (var scaleAndTick in s.Scales)
-					if (scaleAndTick.Scale is LinkedScale)
-						((LinkedScale)scaleAndTick.Scale).SetLinkedLayerIndex(layerNum, info);
+					if (scaleAndTick is LinkedScale)
+						((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
 			}
 		}
 
@@ -749,8 +748,8 @@ namespace Altaxo.Graph.Gdi
 				// extract layer number
 				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
 				foreach (var scaleAndTick in s.Scales)
-					if (scaleAndTick.Scale is LinkedScale)
-						((LinkedScale)scaleAndTick.Scale).SetLinkedLayerIndex(layerNum, info);
+					if (scaleAndTick is LinkedScale)
+						((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
 			}
 		}
 

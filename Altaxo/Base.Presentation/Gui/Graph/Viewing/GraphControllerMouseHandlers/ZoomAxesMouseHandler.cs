@@ -83,8 +83,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			try // trying to set the scales can go wrong..
 			{
-				layer.XAxis.SetScaleOrgEnd(xo, xe);
-				layer.YAxis.SetScaleOrgEnd(yo, ye);
+				layer.XAxis.OnUserZoomed(xo, xe);
+				layer.YAxis.OnUserZoomed(yo, ye);
 			}
 			catch (Exception)
 			{

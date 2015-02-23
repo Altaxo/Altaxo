@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Scales
 	/// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
 	/// </summary>
 	[Serializable]
-	public class Log10Scale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
+	public class Log10Scale : NumericalScale
 	{
 		/// <summary>Decimal logarithm of axis org. Should always been set together with <see cref="_cachedOrg"/>.</summary>
 		private double _log10Org = 0; // Log10 of physical axis org
@@ -46,24 +46,22 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Value of the end of the axis. This value is used to maintain numeric precision. Should always been set together with <see cref="_log10End"/>.</summary>
 		private double _cachedEnd = 10;
 
-		/// <summary>True if org is allowed to be extended to smaller values.</summary>
-		protected bool _isOrgExtendable;
-
-		/// <summary>True if end is allowed to be extended to higher values.</summary>
-		protected bool _isEndExtendable;
-
 		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
 		protected NumericalBoundaries _dataBounds;
 
-		protected LogarithmicAxisRescaleConditions _rescaling;
+		protected LogarithmicScaleRescaleConditions _rescaling;
+
+		protected Ticks.TickSpacing _tickSpacing;
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale), 3)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.Log10Scale", 3)]
 		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new ArgumentOutOfRangeException("Serialization of old version");
+				/*
 				Log10Scale s = (Log10Scale)obj;
 				info.AddValue("Log10Org", s._log10Org);
 				info.AddValue("Log10End", s._log10End);
@@ -71,46 +69,96 @@ namespace Altaxo.Graph.Scales
 				info.AddValue("Rescaling", s._rescaling);
 
 				info.AddValue("Bounds", s._dataBounds);
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale();
+				Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale(info);
 
 				s._log10Org = (double)info.GetDouble("Log10Org");
 				s._cachedOrg = Math.Pow(10, s._log10Org);
 
 				s._log10End = (double)info.GetDouble("Log10End");
 				s._cachedEnd = Math.Pow(10, s._log10End);
-				s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling = (LogarithmicScaleRescaleConditions)info.GetValue("Rescaling", s);
 				s._rescaling.ParentObject = s;
 
 				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s;
+
+				s._tickSpacing = new Ticks.Log10TickSpacing();
+				s._tickSpacing.ParentObject = s;
+
+				s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
 
 				return s;
 			}
 		}
 
 		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
+		/// 2015-02-13 Added TickSpacing
 		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale), 4)]
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			// restore the event chain
-			_dataBounds.ParentObject = this;
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Log10Scale s = (Log10Scale)obj;
+				info.AddValue("Log10Org", s._log10Org);
+
+				info.AddValue("Log10End", s._log10End);
+
+				info.AddValue("Bounds", s._dataBounds);
+
+				info.AddValue("Rescaling", s._rescaling);
+
+				info.AddValue("TickSpacing", s._tickSpacing);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				Log10Scale s = null != o ? (Log10Scale)o : new Log10Scale(info);
+
+				s._log10Org = (double)info.GetDouble("Log10Org");
+				s._cachedOrg = Math.Pow(10, s._log10Org);
+
+				s._log10End = (double)info.GetDouble("Log10End");
+				s._cachedEnd = Math.Pow(10, s._log10End);
+
+				s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds", s);
+				s._dataBounds.ParentObject = s;
+
+				s._rescaling = (LogarithmicScaleRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
+
+				s._tickSpacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
+				s._tickSpacing.ParentObject = s;
+
+				s.UpdateTicksAndOrgEndUsingRescalingObject();
+
+				return s;
+			}
 		}
 
 		#endregion Serialization
+
+		/// <summary>
+		/// Constructor for deserialization only.
+		/// </summary>
+		protected Log10Scale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
 
 		/// <summary>
 		/// Creates a default logarithmic axis with org=1 and end=10.
 		/// </summary>
 		public Log10Scale()
 		{
-			_rescaling = new LogarithmicAxisRescaleConditions() { ParentObject = this };
 			_dataBounds = new PositiveFiniteNumericalBoundaries() { ParentObject = this };
+			_rescaling = new LogarithmicScaleRescaleConditions() { ParentObject = this };
+			_tickSpacing = new Ticks.Log10TickSpacing() { ParentObject = this };
+			UpdateTicksAndOrgEndUsingRescalingObject();
 		}
 
 		/// <summary>
@@ -119,24 +167,45 @@ namespace Altaxo.Graph.Scales
 		/// <param name="from">The axis to copy from.</param>
 		public Log10Scale(Log10Scale from)
 		{
-			this._dataBounds = null == from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			this._dataBounds.ParentObject = this;
-			this._log10Org = from._log10Org;
-			this._cachedOrg = from._cachedOrg;
-			this._log10End = from._log10End;
-			this._cachedEnd = from._cachedEnd;
+			CopyFrom(from);
+		}
 
-			this._rescaling = null == from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
-			this._rescaling.ParentObject = this;
+		public override bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as Log10Scale;
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._log10Org = from._log10Org;
+				this._cachedOrg = from._cachedOrg;
+				this._log10End = from._log10End;
+				this._cachedEnd = from._cachedEnd;
+
+				this.ChildCopyToMember(ref _dataBounds, from._dataBounds);
+				this.ChildCopyToMember(ref _rescaling, from._rescaling);
+				this.ChildCopyToMember(ref _tickSpacing, from._tickSpacing);
+
+				EhSelfChanged(EventArgs.Empty);
+				suspendToken.Resume();
+			}
+			return true;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _dataBounds)
-				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+				yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
 
 			if (null != _rescaling)
-				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+				yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
 		}
 
 		/// <summary>
@@ -151,11 +220,27 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override NumericAxisRescaleConditions Rescaling
+		public override NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{
 				return _rescaling;
+			}
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+
+				if (ChildSetMember(ref _tickSpacing, value))
+					EhChildChanged(Rescaling, EventArgs.Empty);
 			}
 		}
 
@@ -233,18 +318,6 @@ namespace Altaxo.Graph.Scales
 			get { return _cachedEnd; }
 		}
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public override bool IsOrgExtendable
-		{
-			get { return _isOrgExtendable; }
-		}
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public override bool IsEndExtendable
-		{
-			get { return _isEndExtendable; }
-		}
-
 		private void HandleInvalidOrgOrEnd(ref double org, ref double end)
 		{
 			if (org > 0)
@@ -262,7 +335,7 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
+		private void InternalSetOrgEnd(double org, double end)
 		{
 			double lgorg = Math.Log10(org);
 			double lgend = Math.Log10(end);
@@ -271,41 +344,16 @@ namespace Altaxo.Graph.Scales
 			_cachedEnd = end;
 
 			bool changed = _log10Org != lgorg ||
-				_log10End != lgend ||
-				_isOrgExtendable != isOrgExtendable ||
-				_isEndExtendable != isEndExtendable;
+				_log10End != lgend;
 
 			_log10Org = lgorg;
 			_log10End = lgend;
-
-			_isOrgExtendable = isOrgExtendable;
-			_isEndExtendable = isEndExtendable;
 
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		public override void Rescale()
-		{
-			double xorg = double.NaN;
-			double xend = double.NaN;
-
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = _dataBounds.LowerBound;
-				xend = _dataBounds.UpperBound;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			if (!(xorg > 0) || !(xend > 0))
-				HandleInvalidOrgOrEnd(ref xorg, ref xend);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
-		}
-
-		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			double o = org.ToDouble();
 			double e = end.ToDouble();
@@ -317,22 +365,8 @@ namespace Altaxo.Graph.Scales
 			if (!(e > 0))
 				return "end is not positive";
 
-			InternalSetOrgEnd(o, e, false, false);
+			InternalSetOrgEnd(o, e);
 			return null;
 		}
-
-		#region Changed event handling
-
-		protected override void OnChanged(EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
-			{
-				Rescale(); // calculate new bounds and fire AxisChanged event
-			}
-
-			base.OnChanged(e);
-		}
-
-		#endregion Changed event handling
 	} // end of class Log10Axis
 }

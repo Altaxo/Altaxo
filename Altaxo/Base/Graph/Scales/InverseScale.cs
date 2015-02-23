@@ -44,7 +44,9 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds;
 
-		protected InverseAxisRescaleConditions _rescaling;
+		protected InverseScaleRescaleConditions _rescaling;
+
+		protected Ticks.TickSpacing _tickSpacing;
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -59,42 +61,82 @@ namespace Altaxo.Graph.Scales
 		/// <summary>Current inverse of axis span (cached value).</summary>
 		protected double _cachedOneByAxisSpanInv = 1;
 
-		/// <summary>True if org is allowed to be extended to smaller values.</summary>
-		protected bool _isOrgExtendable;
-
-		/// <summary>True if end is allowed to be extended to higher values.</summary>
-		protected bool _isEndExtendable;
-
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScale), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.InverseScale", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
+				var s = (InverseScale)obj;
+				info.AddValue("InvOrg", s._cachedAxisOrgInv);
+				info.AddValue("InvEnd", s._cachedAxisEndInv);
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("Bounds", s._dataBounds);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (InverseScale)o : new InverseScale(info);
+
+				s._cachedAxisOrgInv = (double)info.GetDouble("InvOrg");
+				s._cachedAxisEndInv = (double)info.GetDouble("InvEnd");
+				s._cachedAxisSpanInv = s._cachedAxisEndInv - s._cachedAxisOrgInv;
+				s._cachedOneByAxisSpanInv = 1 / s._cachedAxisSpanInv;
+
+				s._rescaling = (InverseScaleRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
+
+				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
+				s._dataBounds.ParentObject = s; // restore the event chain
+
+				s._tickSpacing = new Ticks.InverseTickSpacing();
+				s._tickSpacing.ParentObject = s;
+
+				s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2015-02-13 Added Ticks
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(InverseScale), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (InverseScale)obj;
 				info.AddValue("InvOrg", s._cachedAxisOrgInv);
 				info.AddValue("InvEnd", s._cachedAxisEndInv);
-				info.AddValue("Rescaling", s._rescaling);
 				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("TickSpacing", s._tickSpacing);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (InverseScale)o : new InverseScale();
+				var s = null != o ? (InverseScale)o : new InverseScale(info);
 
 				s._cachedAxisOrgInv = (double)info.GetDouble("InvOrg");
 				s._cachedAxisEndInv = (double)info.GetDouble("InvEnd");
 				s._cachedAxisSpanInv = s._cachedAxisEndInv - s._cachedAxisOrgInv;
 				s._cachedOneByAxisSpanInv = 1 / s._cachedAxisSpanInv;
-				s._isOrgExtendable = false;
-				s._isEndExtendable = false;
-
-				s._rescaling = (InverseAxisRescaleConditions)info.GetValue("Rescaling", s);
-				s._rescaling.ParentObject = s;
 
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s; // restore the event chain
+
+				s._rescaling = (InverseScaleRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling.ParentObject = s;
+
+				s._tickSpacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
+				s._tickSpacing.ParentObject = s;
+
+				s.UpdateTicksAndOrgEndUsingRescalingObject();
 
 				return s;
 			}
@@ -103,14 +145,21 @@ namespace Altaxo.Graph.Scales
 		#endregion Serialization
 
 		/// <summary>
+		/// Constructor for deserialization only.
+		/// </summary>
+		protected InverseScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
+		/// <summary>
 		/// Creates a default linear axis with org=0 and end=1.
 		/// </summary>
 		public InverseScale()
 		{
-			_dataBounds = new FiniteNumericalBoundaries();
-			_rescaling = new InverseAxisRescaleConditions();
-
-			_dataBounds.ParentObject = this;
+			_dataBounds = new InverseNumericalBoundaries() { ParentObject = this };
+			_rescaling = new InverseScaleRescaleConditions() { ParentObject = this };
+			_tickSpacing = new Ticks.InverseTickSpacing() { ParentObject = this };
+			UpdateTicksAndOrgEndUsingRescalingObject();
 		}
 
 		/// <summary>
@@ -119,29 +168,34 @@ namespace Altaxo.Graph.Scales
 		/// <param name="from">A other linear axis from which to copy from.</param>
 		public InverseScale(InverseScale from)
 		{
-			this._cachedAxisEndInv = from._cachedAxisEndInv;
-			this._cachedAxisOrgInv = from._cachedAxisOrgInv;
-			this._cachedAxisSpanInv = from._cachedAxisSpanInv;
-			this._dataBounds = null == from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
-			_dataBounds.ParentObject = this;
-			this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
-
-			this._rescaling = null == from.Rescaling ? new InverseAxisRescaleConditions() : (InverseAxisRescaleConditions)from.Rescaling.Clone();
-			this._rescaling.ParentObject = this;
+			CopyFrom(from);
 		}
 
-		public virtual void CopyFrom(InverseScale from)
+		public override bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			this._cachedAxisEndInv = from._cachedAxisEndInv;
-			this._cachedAxisOrgInv = from._cachedAxisOrgInv;
-			this._cachedAxisSpanInv = from._cachedAxisSpanInv;
-			this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
+			var from = obj as InverseScale;
+			if (null == from)
+				return false;
 
-			ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-			ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new InverseAxisRescaleConditions());
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._cachedAxisEndInv = from._cachedAxisEndInv;
+				this._cachedAxisOrgInv = from._cachedAxisOrgInv;
+				this._cachedAxisSpanInv = from._cachedAxisSpanInv;
+				this._cachedOneByAxisSpanInv = from._cachedOneByAxisSpanInv;
+
+				ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
+				ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new InverseScaleRescaleConditions());
+				ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.InverseTickSpacing());
+
+				EhSelfChanged(EventArgs.Empty);
+				suspendToken.Resume();
+			}
+
+			return true;
 		}
 
 		public override object Clone()
@@ -152,9 +206,11 @@ namespace Altaxo.Graph.Scales
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _dataBounds)
-				yield return new Main.DocumentNodeAndName(_dataBounds, "DataBounds");
+				yield return new Main.DocumentNodeAndName(_dataBounds, () => _dataBounds = null, "DataBounds");
 			if (null != _rescaling)
-				yield return new Main.DocumentNodeAndName(_rescaling, "Rescaling");
+				yield return new Main.DocumentNodeAndName(_rescaling, () => _rescaling = null, "Rescaling");
+			if (null != _tickSpacing)
+				yield return new Main.DocumentNodeAndName(_tickSpacing, () => _tickSpacing = null, "TickSpacing");
 		}
 
 		/// <summary>
@@ -185,27 +241,36 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
-		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
-		public override bool IsOrgExtendable
-		{
-			get { return _isOrgExtendable; }
-		}
-
-		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
-		public override bool IsEndExtendable
-		{
-			get { return _isEndExtendable; }
-		}
-
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public override NumericAxisRescaleConditions Rescaling
+		public override NumericScaleRescaleConditions Rescaling
 		{
 			get
 			{
 				return _rescaling;
 			}
+		}
+
+		public override Ticks.TickSpacing TickSpacing
+		{
+			get
+			{
+				return _tickSpacing;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException();
+
+				if (ChildSetMember(ref _tickSpacing, (Ticks.NumericTickSpacing)value))
+					EhChildChanged(Rescaling, EventArgs.Empty);
+			}
+		}
+
+		public override void OnUserRescaled()
+		{
+			_rescaling.OnUserRescaled();
 		}
 
 		/// <summary>
@@ -269,17 +334,17 @@ namespace Altaxo.Graph.Scales
 			end = 1;
 		}
 
-		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		protected override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
 		{
 			double o = org.ToDouble();
 			double e = end.ToDouble();
 
-			InternalSetOrgEnd(o, e, false, false);
+			InternalSetOrgEnd(o, e);
 
 			return null;
 		}
 
-		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
+		private void InternalSetOrgEnd(double org, double end)
 		{
 			double orgInv = 1 / org;
 			double endInv = 1 / end;
@@ -297,51 +362,16 @@ namespace Altaxo.Graph.Scales
 
 			bool changed =
 				_cachedAxisOrgInv != orgInv ||
-				_cachedAxisEndInv != endInv ||
-				_isOrgExtendable != isOrgExtendable ||
-				_isEndExtendable != isEndExtendable;
+				_cachedAxisEndInv != endInv
+			;
 
 			_cachedAxisOrgInv = orgInv;
 			_cachedAxisEndInv = endInv;
 			_cachedAxisSpanInv = endInv - orgInv;
 			_cachedOneByAxisSpanInv = 1 / _cachedAxisSpanInv;
 
-			_isOrgExtendable = isOrgExtendable;
-			_isEndExtendable = isEndExtendable;
-
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
 		}
-
-		public override void Rescale()
-		{
-			double xorg = 0;
-			double xend = 1;
-
-			if (null != _dataBounds && !_dataBounds.IsEmpty)
-			{
-				xorg = _dataBounds.UpperBound;
-				xend = _dataBounds.LowerBound;
-			}
-
-			bool isAutoOrg, isAutoEnd;
-			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-
-			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
-		}
-
-		#region Changed event handling
-
-		protected override void OnChanged(EventArgs e)
-		{
-			if (e is BoundariesChangedEventArgs)
-			{
-				Rescale();
-			}
-
-			base.OnChanged(e);
-		}
-
-		#endregion Changed event handling
 	}
 }

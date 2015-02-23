@@ -264,6 +264,9 @@ namespace Altaxo.Main
 		/// <param name="e">The change details.</param>
 		public void EhChildChanged(object sender, System.EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return; // do not handle any event if dispose is in progress or is already disposed
+
 			if (HandleHighPriorityChildChangeCases(sender, ref e))
 				return;
 
@@ -313,6 +316,9 @@ namespace Altaxo.Main
 		/// <param name="e">The change details.</param>
 		protected override void EhSelfChanged(EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return; // do not handle any event if dispose is in progress or is already disposed
+
 			if (!IsSuspendedOrResumeInProgress)
 			{
 				// Notify parent
@@ -418,6 +424,20 @@ namespace Altaxo.Main
 		#endregion Tunneling event handling
 
 		#region Dispose interface
+
+		/// <summary>
+		/// Sets the flag that dispose is in progress for this node and all child nodes recursively.
+		/// </summary>
+		public override void SetDisposeInProgress()
+		{
+			base.SetDisposeInProgress();
+
+			foreach (var tuple in GetDocumentNodeChildrenWithName())
+			{
+				if (null != tuple.DocumentNode)
+					tuple.DocumentNode.SetDisposeInProgress();
+			}
+		}
 
 		protected override void Dispose(bool isDisposing)
 		{
@@ -910,6 +930,56 @@ namespace Altaxo.Main
 		}
 
 		#region Diagnostic support
+
+		/// <summary>
+		/// Starting from the provided root node, this function reports any missing Pa Reports the parent child and disposed problems.
+		/// </summary>
+		/// <param name="node">The node to start with.</param>
+		/// <param name="showFinalLineEvenWithNoProblems">If true, a final line is written to the console even when no problems have occured.</param>
+		/// <returns>True if any problems were detected, otherwise false.</returns>
+		public static bool ReportParentChildAndDisposedProblems(IDocumentLeafNode node, bool showFinalLineEvenWithNoProblems)
+		{
+			bool problemsDetected = false;
+
+			if (node.IsDisposeInProgress)
+			{
+				Current.Console.WriteLine("Problem detected: Node {0} is already disposed!", Main.AbsoluteDocumentPath.GetAbsolutePath(node));
+				problemsDetected = true;
+			}
+
+			var pnode = node as SuspendableDocumentNode;
+			if (null != pnode)
+			{
+				foreach (var entry in pnode.GetDocumentNodeChildrenWithName())
+				{
+					if (entry.DocumentNode.ParentObject == null)
+					{
+						Current.Console.WriteLine("Problem detected: Child node {0} of parent {1} has no parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
+						problemsDetected = true;
+						entry.DocumentNode.ParentObject = pnode; // fix this problem in order to continue with the dectection
+					}
+					else if (!object.ReferenceEquals(pnode, entry.DocumentNode.ParentObject))
+					{
+						Current.Console.WriteLine("Problem detected: Child node {0} of parent {1} has a wrong parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
+						problemsDetected = true;
+						entry.DocumentNode.ParentObject = pnode; // fix this problem in order to continue with the dectection
+					}
+
+					if (ReportParentChildAndDisposedProblems(entry.DocumentNode, false))
+						problemsDetected = true;
+				}
+			}
+
+			if (showFinalLineEvenWithNoProblems)
+			{
+				if (problemsDetected)
+					Current.Console.WriteLine("{0} Some problems in parent-child relationships were dectected (see above).", Altaxo.Serialization.GUIConversion.ToString(DateTime.Now));
+				else
+					Current.Console.WriteLine("{0} No problems in parent-child relationships were dectected.", Altaxo.Serialization.GUIConversion.ToString(DateTime.Now));
+			}
+
+			return problemsDetected;
+		}
 
 #if DEBUG && TRACEDOCUMENTNODES
 

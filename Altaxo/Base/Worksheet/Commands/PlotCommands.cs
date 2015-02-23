@@ -369,14 +369,14 @@ namespace Altaxo.Worksheet.Commands
 			{
 				XYColumnPlotItem firstitem = (XYColumnPlotItem)pilist[0];
 				if (firstitem.Data.XColumn is TextColumn)
-					xylayer.Scales.SetScale(0, new TextScale());
+					xylayer.Scales[0] = new TextScale();
 				else if (firstitem.Data.XColumn is DateTimeColumn)
-					xylayer.Scales.SetScale(0, new DateTimeScale());
+					xylayer.Scales[0] = new DateTimeScale();
 
 				if (firstitem.Data.YColumn is TextColumn)
-					xylayer.Scales.SetScale(1, new TextScale());
+					xylayer.Scales[1] = new TextScale();
 				else if (firstitem.Data.YColumn is DateTimeColumn)
-					xylayer.Scales.SetScale(1, new DateTimeScale());
+					xylayer.Scales[1] = new DateTimeScale();
 			}
 
 			PlotItemCollection newPlotGroup = new PlotItemCollection(xylayer.PlotItems);

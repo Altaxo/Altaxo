@@ -321,7 +321,7 @@ namespace Altaxo.Gui.Graph
 					}
 					if (_axisScaleController[_currentScale] == null)
 					{
-						var ctrl = new ScaleWithTicksController();
+						var ctrl = new ScaleWithTicksController(scale => _doc.Scales[_currentScale] = scale, false);
 						ctrl.InitializeDocument(_doc.Scales[_currentScale]);
 						_axisScaleController[_currentScale] = ctrl;
 						Current.Gui.FindAndAttachControlTo(_axisScaleController[_currentScale]);

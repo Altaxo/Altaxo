@@ -34,6 +34,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Graph.Scales.Ticks;
 	using Graph.Plot.Data;
 
 	/// <summary>
@@ -153,7 +154,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var colorProvider = new ColorProvider.ColorProviderBGMYR() { ColorBelow = colorBelow, ColorAbove = colorAbove, ColorInvalid = colorInvalid, Transparency = 0 };
 				var scale = scalingStyle == ScalingStyle.Logarithmic ? (NumericalScale)new Log10Scale() : (NumericalScale)new LinearScale();
 
-				scale.Rescaling.SetOrgAndEnd(
+				scale.Rescaling.SetUserParameters(
 					double.IsNaN(vRangeFrom) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
 					vRangeFrom,
 					double.IsNaN(vRangeTo) ? Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Auto : Altaxo.Graph.Scales.Rescaling.BoundaryRescaling.Fixed,
@@ -206,7 +207,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public DensityImagePlotStyle()
 		{
 			this.ColorProvider = new ColorProvider.ColorProviderBGMYR();
-			this.Scale = new LinearScale();
+			this.Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
 			InitializeMembers();
 		}
 
@@ -226,19 +227,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return true;
 
 			var from = obj as DensityImagePlotStyle;
-			bool hasCopied = false;
-			if (null != from)
+			if (null == from)
+				return false;
+
+			using (var suspendToken = SuspendGetToken())
 			{
 				this._clipToLayer = from._clipToLayer;
 				this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
 				this.Scale = (NumericalScale)from._scale.Clone();
-
-				//this._parent = from._parent;
-
 				this._imageType = CachedImageType.None;
-				hasCopied = true;
+
+				EhSelfChanged();
+				suspendToken.Resume();
 			}
-			return hasCopied;
+			return true;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -263,8 +265,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
 				if (ChildSetMember(ref _scale, value))
 				{
+					if (!(_scale.TickSpacing is NoTickSpacing))
+						_scale.TickSpacing = new NoTickSpacing(); // strip the old tickspacing, use NoTickspacing, since Ticks are not needed in the density image plot style
+
 					if (null != _scale)
 						EhChildChanged(_scale, EventArgs.Empty);
 					else
@@ -519,7 +527,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			NumericalBoundaries pb = _scale.DataBounds;
 			myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-			myPlotAssociation.MergeVBoundsInto(pb);
+			using (var suspendToken = pb.SuspendGetToken())
+			{
+				pb.Reset();
+				myPlotAssociation.MergeVBoundsInto(pb);
+				suspendToken.Resume();
+			}
 
 			// --------------- end preparation of color scaling ------------------------------
 

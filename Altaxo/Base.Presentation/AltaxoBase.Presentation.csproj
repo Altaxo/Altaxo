@@ -485,6 +485,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Scales\Rescaling\DateTimeScaleRescaleConditionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\Scales\Rescaling\LogarithmicScaleRescaleConditionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -622,10 +634,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\Shapes\OpenPathShapeControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Graph\OrgEndSpanControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -890,6 +898,10 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\ItemsControlExtensions.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\TypeUtilities.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
+    <Compile Include="Gui\Common\TimeSpanTextBox.cs" />
+    <Compile Include="Gui\Common\DateTimeTextBox.cs" />
+    <Compile Include="Gui\Common\TimeSpanConverter.cs" />
+    <Compile Include="Gui\Common\DateTimeConverter.cs" />
     <Compile Include="Gui\DataObjectAdapter.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceControl.xaml.cs">
       <DependentUpon>RealFourierTransformation2DDataSourceControl.xaml</DependentUpon>
@@ -1216,6 +1228,15 @@
     <Compile Include="Gui\Graph\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeScaleRescaleConditionsControl.xaml.cs">
+      <DependentUpon>DateTimeScaleRescaleConditionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicScaleRescaleConditionsControl.xaml.cs">
+      <DependentUpon>LogarithmicScaleRescaleConditionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsControl.xaml.cs">
+      <DependentUpon>LinearScaleRescaleConditionsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml.cs">
       <DependentUpon>NoTickSpacingControl.xaml</DependentUpon>
     </Compile>
@@ -1325,9 +1346,6 @@
       <DependentUpon>OpenPathShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
-    <Compile Include="Gui\Graph\OrgEndSpanControl.xaml.cs">
-      <DependentUpon>OrgEndSpanControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingControl.xaml.cs">
       <DependentUpon>Log10TickSpacingControl.xaml</DependentUpon>
     </Compile>

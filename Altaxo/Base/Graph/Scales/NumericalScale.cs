@@ -60,9 +60,9 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Returns the rescaling conditions for this axis
 		/// </summary>
-		public abstract NumericAxisRescaleConditions Rescaling { get; }
+		public abstract NumericScaleRescaleConditions Rescaling { get; }
 
-		public override object RescalingObject
+		public override Rescaling.IScaleRescaleConditions RescalingObject
 		{
 			get
 			{
@@ -99,6 +99,51 @@ namespace Altaxo.Graph.Scales
 			get
 			{
 				return new AltaxoVariant(End);
+			}
+		}
+
+		public override void OnUserZoomed(AltaxoVariant newZoomOrg, AltaxoVariant newZoomEnd)
+		{
+			Rescaling.OnUserZoomed(newZoomOrg, newZoomEnd);
+		}
+
+		public override void OnUserRescaled()
+		{
+			Rescaling.OnUserRescaled();
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
+			{
+				if (!DataBounds.IsEmpty)
+					Rescaling.OnDataBoundsChanged(DataBounds.LowerBound, DataBounds.UpperBound);
+				return false; // no need to handle DataBounds changed further, only if rescaling is changed there is need to do something
+			}
+			else if (object.ReferenceEquals(sender, Rescaling)) // Rescaling has changed
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
+			}
+			else if (object.ReferenceEquals(sender, TickSpacing))
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected void UpdateTicksAndOrgEndUsingRescalingObject()
+		{
+			if (null == TickSpacing)
+			{
+				SetScaleOrgEnd(Rescaling.ResultingOrg, Rescaling.ResultingEnd);
+			}
+			else
+			{
+				AltaxoVariant org = Rescaling.ResultingOrg, end = Rescaling.ResultingEnd;
+				TickSpacing.PreProcessScaleBoundaries(ref org, ref end, !Rescaling.IsResultingOrgFixed, !Rescaling.IsResultingEndFixed);
+				SetScaleOrgEnd(org, end);
+				TickSpacing.FinalProcessScaleBoundaries(org, end, this);
 			}
 		}
 	} // end of class

@@ -43,6 +43,8 @@ namespace Altaxo.Serialization.Xml
 
 		int GetInt32(string name);
 
+		Int64 GetInt64(string name);
+
 		int? GetNullableInt32(string name);
 
 		float GetSingle();

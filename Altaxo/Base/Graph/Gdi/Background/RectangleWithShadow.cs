@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi.Background
 	public class RectangleWithShadow
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IBackgroundStyle, IDeserializationCallback
+		IBackgroundStyle
 	{
 		protected BrushX _brush;
 		protected double _shadowLength = 5;
@@ -91,14 +91,6 @@ namespace Altaxo.Graph.Gdi.Background
 		}
 
 		#endregion Serialization
-
-		#region IDeserializationCallback Members
-
-		public void OnDeserialization(object sender)
-		{
-		}
-
-		#endregion IDeserializationCallback Members
 
 		public RectangleWithShadow()
 		{

@@ -107,8 +107,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.DecadesPerMajorTick = _doc.DecadesPerMajorTick;
 				_view.MinorTicks = _doc.MinorTicks;
 				_view.OneLever = _doc.OneLever;
-				_view.MinGrace = _doc.MinGrace;
-				_view.MaxGrace = _doc.MaxGrace;
+				_view.MinGrace = _doc.OrgGrace;
+				_view.MaxGrace = _doc.EndGrace;
 
 				_snapTicksToOrg.Clear();
 				_snapTicksToEnd.Clear();
@@ -131,8 +131,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				_view.SuppressMajorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByNumbers);
 				_view.SuppressMinorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByNumbers);
 
-				_view.AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.ByValues);
-				_view.AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.ByValues);
+				_view.AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.Values);
+				_view.AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.Values);
 			}
 		}
 
@@ -187,9 +187,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMajorTickValues, out varVals))
 			{
-				_doc.AdditionalMajorTicks.ByValues.Clear();
+				_doc.AdditionalMajorTicks.Clear();
 				foreach (AltaxoVariant v in varVals)
-					_doc.AdditionalMajorTicks.ByValues.Add(v);
+					_doc.AdditionalMajorTicks.Add(v);
 			}
 			else
 			{
@@ -198,9 +198,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 			if (GUIConversion.TryParseMultipleAltaxoVariant(_view.AddMinorTickValues, out varVals))
 			{
-				_doc.AdditionalMinorTicks.ByValues.Clear();
+				_doc.AdditionalMinorTicks.Clear();
 				foreach (AltaxoVariant v in varVals)
-					_doc.AdditionalMinorTicks.ByValues.Add(v);
+					_doc.AdditionalMinorTicks.Add(v);
 			}
 			else
 			{
@@ -214,8 +214,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 			_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
 
 			_doc.OneLever = _view.OneLever;
-			_doc.MinGrace = _view.MinGrace;
-			_doc.MaxGrace = _view.MaxGrace;
+			_doc.OrgGrace = _view.MinGrace;
+			_doc.EndGrace = _view.MaxGrace;
 
 			_doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
 			_doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;
@@ -264,12 +264,12 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		private void EhMinGraceValidating(CancelEventArgs e)
 		{
-			_doc.MinGrace = _view.MinGrace;
+			_doc.OrgGrace = _view.MinGrace;
 		}
 
 		private void EhMaxGraceValidating(CancelEventArgs e)
 		{
-			_doc.MaxGrace = _view.MaxGrace;
+			_doc.EndGrace = _view.MaxGrace;
 		}
 
 		private void EhDivideByValidating(string txt, CancelEventArgs e)

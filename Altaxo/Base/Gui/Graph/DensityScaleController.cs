@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph
 	{
 		void InitializeAxisType(SelectableListNodeList names);
 
-		void SetBoundaryView(object guiobject);
+		void SetRescalingView(object guiobject);
 
 		void SetScaleView(object guiobject);
 
@@ -48,9 +48,9 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IDensityScaleView))]
 	// [UserControllerForObject(typeof(NumericalScale),101)] // outcommented since this causes an infinite loop when searching for detailed scale controllers
-	public class DensityScaleController : MVCANDControllerEditOriginalDocBase<Scale, IDensityScaleView>
+	public class DensityScaleController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<Scale, IDensityScaleView>
 	{
-		protected IMVCAController _boundaryController;
+		protected IMVCAController _rescalingController;
 
 		protected IMVCAController _scaleController;
 
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Graph
 
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			yield return new ControllerAndSetNullMethod(_boundaryController, () => _boundaryController = null);
+			yield return new ControllerAndSetNullMethod(_rescalingController, () => _rescalingController = null);
 			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
 		}
 
@@ -69,13 +69,18 @@ namespace Altaxo.Gui.Graph
 			base.Dispose(isDisposing);
 		}
 
+		public DensityScaleController(Action<Scale> SetInstanceInParentNode)
+			: base(SetInstanceInParentNode)
+		{
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);
 
 			InitScaleTypes(initData);
 			InitScaleController(initData);
-			InitBoundaryController(initData);
+			InitRescalingController(initData);
 		}
 
 		public override bool Apply(bool disposeController)
@@ -86,9 +91,9 @@ namespace Altaxo.Gui.Graph
 					return false;
 			}
 
-			if (null != _boundaryController)
+			if (null != _rescalingController)
 			{
-				if (false == _boundaryController.Apply(disposeController))
+				if (false == _rescalingController.Apply(disposeController))
 					return false;
 			}
 
@@ -131,7 +136,7 @@ namespace Altaxo.Gui.Graph
 			if (bInit)
 			{
 				object scaleObject = _doc;
-				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
+				_scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController), UseDocument.Directly);
 			}
 			if (null != _view)
 			{
@@ -139,19 +144,19 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public void InitBoundaryController(bool bInit)
+		public void InitRescalingController(bool bInit)
 		{
 			if (bInit)
 			{
 				object rescalingObject = _doc.RescalingObject;
 				if (rescalingObject != null)
-					_boundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
+					_rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
 				else
-					_boundaryController = null;
+					_rescalingController = null;
 			}
 			if (null != _view)
 			{
-				_view.SetBoundaryView(null != _boundaryController ? _boundaryController.ViewObject : null);
+				_view.SetRescalingView(null != _rescalingController ? _rescalingController.ViewObject : null);
 			}
 		}
 
@@ -173,7 +178,8 @@ namespace Altaxo.Gui.Graph
 					// this will fail for instance if we switch from linear to logarithmic with negative bounds
 					try
 					{
-						newScale.SetScaleOrgEnd(oldScale.OrgAsVariant, oldScale.EndAsVariant);
+						if (newScale.RescalingObject is Altaxo.Main.ICopyFrom)
+							((Altaxo.Main.ICopyFrom)newScale.RescalingObject).CopyFrom(oldScale.RescalingObject);
 					}
 					catch (Exception)
 					{
@@ -181,6 +187,7 @@ namespace Altaxo.Gui.Graph
 
 					_doc = newScale;
 
+					OnDocumentInstanceChanged(oldScale, newScale);
 					OnMadeDirty(); // chance for controllers up in hierarchy to catch new instance
 
 					if (null != _suspendToken)
@@ -191,7 +198,7 @@ namespace Altaxo.Gui.Graph
 
 					InitScaleController(true);
 					// now we have also to replace the controller and the control for the axis boundaries
-					InitBoundaryController(true);
+					InitRescalingController(true);
 				}
 			}
 			catch (Exception)
