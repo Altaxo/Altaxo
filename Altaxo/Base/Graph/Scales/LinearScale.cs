@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Scales
 				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
 				s._rescaling.ParentObject = s;
 
-				s._tickSpacing = (Ticks.NumericTickSpacing)info.GetValue("TickSpacing", s);
+				s._tickSpacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
 				s._tickSpacing.ParentObject = s;
 
 				s.UpdateTicksAndOrgEndUsingRescalingObject();
