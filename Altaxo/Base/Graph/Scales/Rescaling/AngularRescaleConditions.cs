@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 	public class AngularRescaleConditions
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		Main.ICopyFrom
+		IScaleRescaleConditions
 	{
 		/// <summary>Origin of the scale in degrees.</summary>
 		protected int _scaleOrigin;
@@ -97,6 +97,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 			return new AngularRescaleConditions(this);
 		}
 
+		/// <summary>Origin of the scale in degrees.</summary>
 		public int ScaleOrigin
 		{
 			get

@@ -30,10 +30,24 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
+	/// <summary>
+	/// Interface that has to be implemented by all rescaling condition classes.
+	/// </summary>
 	public interface IScaleRescaleConditions
 			:
 		Main.IDocumentLeafNode,
 		Main.ICopyFrom
+	{
+		//AltaxoVariant ResultingOrgAsVariant { get; }
+		//AltaxoVariant ResultingEndAsVariant { get; }
+
+		//bool IsResultingOrgFixed { get; }
+		//bool IsResultingEndFixed { get; }
+	}
+
+	public interface IUnboundNumericScaleRescaleConditions
+			:
+		IScaleRescaleConditions
 	{
 		void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, AltaxoVariant orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, AltaxoVariant endValue);
 	}

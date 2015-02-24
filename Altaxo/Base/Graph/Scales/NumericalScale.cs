@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Scales
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
 
-		protected void UpdateTicksAndOrgEndUsingRescalingObject()
+		protected virtual void UpdateTicksAndOrgEndUsingRescalingObject()
 		{
 			if (null == TickSpacing)
 			{

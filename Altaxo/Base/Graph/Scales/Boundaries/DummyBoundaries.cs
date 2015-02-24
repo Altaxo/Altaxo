@@ -30,6 +30,24 @@ namespace Altaxo.Graph.Scales.Boundaries
 {
 	public class DummyBoundaries : Main.SuspendableDocumentLeafNodeWithEventArgs, IPhysicalBoundaries
 	{
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyBoundaries), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (DummyBoundaries)o ?? new DummyBoundaries();
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		#region IPhysicalBoundaries Members
 
 		public bool Add(Altaxo.Data.IReadableColumn col, int idx)

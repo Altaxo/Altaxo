@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 	public class DateTimeScaleRescaleConditions
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IScaleRescaleConditions
+		IUnboundNumericScaleRescaleConditions
 	{
 		#region InnerClasses
 
@@ -962,7 +962,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 		#region IScaleRescaleConditions implementation
 
-		void IScaleRescaleConditions.SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, Data.AltaxoVariant orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, Data.AltaxoVariant endValue)
+		void IUnboundNumericScaleRescaleConditions.SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, Data.AltaxoVariant orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, Data.AltaxoVariant endValue)
 		{
 			long orgV, endV;
 			DateTimeKind orgK, endK;

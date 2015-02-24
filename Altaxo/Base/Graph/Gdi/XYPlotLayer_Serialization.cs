@@ -59,7 +59,9 @@ namespace Altaxo.Graph.Gdi
 			else
 				throw new ArgumentException("Axis type unknown");
 
-			transScale.RescalingObject.SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
+			if (transScale.RescalingObject is IUnboundNumericScaleRescaleConditions)
+				(transScale.RescalingObject as IUnboundNumericScaleRescaleConditions).SetUserParameters(BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.OrgAsVariant, BoundaryRescaling.AutoTempFixed, BoundariesRelativeTo.Absolute, axis.EndAsVariant);
+
 			if (transScale.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions &&
 				axis.RescalingObject is Altaxo.Graph.Scales.Rescaling.NumericScaleRescaleConditions)
 			{

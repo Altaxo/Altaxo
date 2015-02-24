@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Scales
 				var s = (AngularScale)obj;
 
 				info.AddValue("Org", s._cachedAxisOrg);
-				info.AddValue("1BySpan", s._cachedOneByAxisSpan);
+				info.AddValue("OneBySpan", s._cachedOneByAxisSpan);
 
 				info.AddValue("Bounds", s._dataBounds);
 				info.AddValue("Rescaling", s._rescaling);
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Scales
 				var s = (AngularScale)o;
 
 				s._cachedAxisOrg = (double)info.GetDouble("Org");
-				s._cachedOneByAxisSpan = (double)info.GetDouble("1BySpan");
+				s._cachedOneByAxisSpan = (double)info.GetDouble("OneBySpan");
 
 				s._dataBounds = (Boundaries.NumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s;
@@ -260,6 +260,14 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
+		public override IScaleRescaleConditions RescalingObject
+		{
+			get
+			{
+				return _rescaling;
+			}
+		}
+
 		public override Altaxo.Graph.Scales.Boundaries.NumericalBoundaries DataBounds
 		{
 			get
@@ -299,14 +307,10 @@ namespace Altaxo.Graph.Scales
 			return null;
 		}
 
-		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
+		private void InternalSetOrgEndFromRescalingObject()
 		{
-			double angle = UseDegree ? org : org * 180 / Math.PI;
-			// round the angle to full 90°
-			angle = Math.Round(angle / 90);
-			angle = Math.IEEERemainder(angle, 4);
-			int scaleOrigin = (int)angle;
-			org = UseDegree ? GetOriginInDegrees() : GetOriginInDegrees() * Math.PI / 180;
+			double org = UseDegree ? GetOriginInDegrees() : GetOriginInDegrees() * Math.PI / 180;
+			double end = UseDegree ? org + 360 : org + 2 * Math.PI;
 			double span = Math.Abs(end - org);
 
 			bool changed = _cachedAxisOrg != org ||
@@ -318,10 +322,6 @@ namespace Altaxo.Graph.Scales
 
 			if (changed)
 				EhSelfChanged(EventArgs.Empty);
-		}
-
-		public override void OnUserRescaled()
-		{
 		}
 
 		#endregion NumericalScale
@@ -341,6 +341,47 @@ namespace Altaxo.Graph.Scales
 				{
 					EhChildChanged(Rescaling, EventArgs.Empty);
 				}
+			}
+		}
+
+		public override void OnUserZoomed(Data.AltaxoVariant newZoomOrg, Data.AltaxoVariant newZoomEnd)
+		{
+			// Do nothing - zooming is not supported
+		}
+
+		public override void OnUserRescaled()
+		{
+			// Do nothing - rescaling is not supported
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, DataBounds)) // Data bounds have changed
+			{
+				return false; // no need to handle DataBounds changed further, only if rescaling is changed there is need to do something
+			}
+			else if (object.ReferenceEquals(sender, _rescaling)) // Rescaling has changed
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
+			}
+			else if (object.ReferenceEquals(sender, TickSpacing))
+			{
+				UpdateTicksAndOrgEndUsingRescalingObject();
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		protected override void UpdateTicksAndOrgEndUsingRescalingObject()
+		{
+			if (null == TickSpacing)
+			{
+				InternalSetOrgEndFromRescalingObject();
+			}
+			else
+			{
+				InternalSetOrgEndFromRescalingObject();
+				TickSpacing.FinalProcessScaleBoundaries(_cachedAxisOrg, _cachedAxisOrg + _cachedAxisSpan, this);
 			}
 		}
 	}

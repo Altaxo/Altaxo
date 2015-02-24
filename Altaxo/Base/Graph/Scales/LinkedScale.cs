@@ -711,7 +711,8 @@ namespace Altaxo.Graph.Scales
 					org = org * LinkOrgB + LinkOrgA;
 					end = end * LinkEndB + LinkEndA;
 				}
-				_scaleWrapped.RescalingObject.SetUserParameters(Rescaling.BoundaryRescaling.Fixed, Rescaling.BoundariesRelativeTo.Absolute, org, Rescaling.BoundaryRescaling.Fixed, Rescaling.BoundariesRelativeTo.Absolute, end);
+				if (_scaleWrapped.RescalingObject is Rescaling.IUnboundNumericScaleRescaleConditions)
+					(_scaleWrapped.RescalingObject as Rescaling.IUnboundNumericScaleRescaleConditions).SetUserParameters(Rescaling.BoundaryRescaling.Fixed, Rescaling.BoundariesRelativeTo.Absolute, org, Rescaling.BoundaryRescaling.Fixed, Rescaling.BoundariesRelativeTo.Absolute, end);
 			}
 		}
 

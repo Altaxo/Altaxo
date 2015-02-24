@@ -30,6 +30,24 @@ namespace Altaxo.Graph.Scales.Boundaries
 {
 	public class DummyNumericalBoundaries : NumericalBoundaries
 	{
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DummyNumericalBoundaries), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (DummyNumericalBoundaries)o ?? new DummyNumericalBoundaries();
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public DummyNumericalBoundaries()
 		{
 		}
