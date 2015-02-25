@@ -777,11 +777,18 @@ namespace Altaxo.Graph.Gdi
 			_grid.YPartitioning.Add(RADouble.NewRel(1 - DefaultChildLayerRelativePosition.Y - DefaultChildLayerRelativeSize.Y));
 		}
 
+		private static double RoundToFractions(double x, int parts)
+		{
+			return Math.Round(x * parts) / parts;
+		}
+
 		/// <summary>
 		/// If the <see cref="Grid"/> is <c>null</c>, then create a grid that represents the boundaries of the child layers.
 		/// </summary>
 		public void CreateGridIfNullOrEmpty()
 		{
+			const int RelValueRoundFraction = 1024 * 1024;
+
 			if (null != _grid && !_grid.IsEmpty)
 				return;
 
@@ -792,32 +799,32 @@ namespace Altaxo.Graph.Gdi
 
 			foreach (var l in Layers)
 			{
-				xPositions.Add(l.Position.X);
-				xPositions.Add(l.Position.X + l.Size.X);
-				yPositions.Add(l.Position.Y);
-				yPositions.Add(l.Position.Y + l.Size.Y);
+				xPositions.Add(RoundToFractions(l.Position.X / Size.X, RelValueRoundFraction));
+				xPositions.Add(RoundToFractions((l.Position.X + l.Size.X) / Size.X, RelValueRoundFraction));
+				yPositions.Add(RoundToFractions(l.Position.Y / Size.Y, RelValueRoundFraction));
+				yPositions.Add(RoundToFractions((l.Position.Y + l.Size.Y) / Size.Y, RelValueRoundFraction));
 			}
 
-			xPositions.Add(this.Size.X);
-			yPositions.Add(this.Size.Y);
+			xPositions.Add(1);
+			yPositions.Add(1);
 
-			var xPosPurified = new SortedSet<double>(xPositions.Where(x => x >= 0 && x <= this.Size.X));
-			var yPosPurified = new SortedSet<double>(yPositions.Where(y => y >= 0 && y <= this.Size.Y));
+			var xPosPurified = new SortedSet<double>(xPositions.Where(x => x >= 0 && x <= 1));
+			var yPosPurified = new SortedSet<double>(yPositions.Where(y => y >= 0 && y <= 1));
 
-			_grid = new GridPartitioning();
+			_grid = new GridPartitioning(); // make a new grid, but assign a parent only below in order to avoid unneccessary change notifications
 
 			double prev;
 
 			prev = 0;
 			foreach (var x in xPosPurified)
 			{
-				_grid.XPartitioning.Add(RADouble.NewRel((x - prev) / this.Size.X));
+				_grid.XPartitioning.Add(RADouble.NewRel(x - prev));
 				prev = x;
 			}
 			prev = 0;
 			foreach (var y in yPosPurified)
 			{
-				_grid.YPartitioning.Add(RADouble.NewRel((y - prev) / this.Size.Y));
+				_grid.YPartitioning.Add(RADouble.NewRel(y - prev));
 				prev = y;
 			}
 
@@ -827,6 +834,22 @@ namespace Altaxo.Graph.Gdi
 				_grid.XPartitioning.Add(RADouble.NewRel(_grid.XPartitioning.Count == 0 ? 1 : 0));
 			if (0 == _grid.YPartitioning.Count % 2)
 				_grid.YPartitioning.Add(RADouble.NewRel(_grid.YPartitioning.Count == 0 ? 1 : 0));
+
+			foreach (var l in Layers)
+			{
+				if (!(l.Location is ItemLocationByGrid))
+				{
+					var idX1 = Math.Round(_grid.XPartitioning.GetGridIndexFromAbsolutePosition(Size.X, l.Position.X), 3);
+					var idX2 = Math.Round(_grid.XPartitioning.GetGridIndexFromAbsolutePosition(Size.X, l.Position.X + l.Size.X), 3);
+					var idY1 = Math.Round(_grid.YPartitioning.GetGridIndexFromAbsolutePosition(Size.Y, l.Position.Y), 3);
+					var idY2 = Math.Round(_grid.YPartitioning.GetGridIndexFromAbsolutePosition(Size.Y, l.Position.Y + l.Size.Y), 3);
+
+					l.Location = new ItemLocationByGrid() { GridColumn = idX1, GridColumnSpan = idX2 - idX1, GridRow = idY1, GridRowSpan = idY2 - idY1 };
+				}
+			}
+
+			_grid.ParentObject = this;
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>

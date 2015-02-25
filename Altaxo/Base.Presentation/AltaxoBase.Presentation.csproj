@@ -1274,6 +1274,7 @@
     <Compile Include="Gui\Graph\TickSpacingControl.xaml.cs">
       <DependentUpon>TickSpacingControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EditGridMouseHandler.cs" />
     <Compile Include="Gui\Graph\Viewing\RenderTrigger.cs" />
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
       <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>

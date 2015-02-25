@@ -239,6 +239,10 @@ namespace Altaxo.Gui.Graph.Viewing
 							_mouseState = new ClosedCardinalSplineMouseHandler(this);
 							break;
 
+						case GraphToolType.EditGrid:
+							_mouseState = new EditGridMouseHandler(this);
+							break;
+
 						default:
 							throw new NotImplementedException("Type not implemented: " + value.ToString());
 					} // end switch

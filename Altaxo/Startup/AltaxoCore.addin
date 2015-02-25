@@ -736,6 +736,8 @@
 			<ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
 				class="Altaxo.Graph.Commands.NewLayerLegend" />
 			<ToolbarItem id="GraphCmdsSeparator"  type = "Separator" />
+			<ToolbarItem id="EditGrid" type="CheckBox" icon="Icons.16x16.EditGrid" tooltip="${res:XML.MainMenu.GraphMenu.Tools.EditGrid.Description}"
+				class="Altaxo.Graph.Commands.EditGridTool" />
 			<ToolbarItem id="ReadPlotItemData" type="CheckBox" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description}"
 				class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
 			<ToolbarItem id="ReadLayerCoordinates" type="CheckBox" icon="Icons.16x16.ReadLayer" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description}"

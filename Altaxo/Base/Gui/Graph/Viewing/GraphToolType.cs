@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		ZoomAxes,
 		RegularPolygonDrawing,
 		OpenCardinalSplineDrawing,
-		ClosedCardinalSplineDrawing
+		ClosedCardinalSplineDrawing,
+
+		/// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
+		EditGrid
 	}
 }

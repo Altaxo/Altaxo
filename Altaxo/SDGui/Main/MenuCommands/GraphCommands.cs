@@ -929,6 +929,15 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	/// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
+	public class EditGridTool : AbstractGraphToolsCommand
+	{
+		public EditGridTool()
+			: base(Gui.Graph.Viewing.GraphToolType.EditGrid)
+		{
+		}
+	}
+
 	/// <summary>
 	/// Tool for reading the x-y coordinate values of a layer.
 	/// </summary>

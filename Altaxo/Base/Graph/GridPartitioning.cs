@@ -143,6 +143,11 @@ namespace Altaxo.Graph
 
 		#endregion event handling
 
+		/// <summary>
+		/// Gets the absolute partition positions.
+		/// </summary>
+		/// <param name="totalSize">The total size of the partition.</param>
+		/// <returns>Array containing the absolute partition positions.</returns>
 		public double[] GetPartitionPositions(double totalSize)
 		{
 			double relSum = this.Sum(x => x.IsRelative ? x.Value : 0);
@@ -162,30 +167,109 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
+		/// Normalizes the relative values in the partition, so that their sum is 1.
+		/// </summary>
+		public void NormalizeRelativeValues()
+		{
+			double relSum = this.Sum(x => x.IsRelative ? x.Value : 0);
+			if (0 == relSum)
+				return;
+
+			double factor = 1 / relSum;
+
+			if (!Altaxo.Calc.RMath.IsFinite(factor))
+				return;
+
+			for (int i = 0; i < _innerList.Count; ++i)
+				if (_innerList[i].IsRelative)
+					_innerList[i] = RADouble.NewRel(_innerList[i].Value * factor);
+		}
+
+		/// <summary>
+		/// Adjusts the value at index <paramref name="idx"/> to match the absolute position given in <paramref name="absolutePosition"/>
+		/// </summary>
+		/// <param name="totalSize">The total size of the layer.</param>
+		/// <param name="idx">The index of the value to modify.</param>
+		/// <param name="absolutePosition">The new absolute position of the partition at the index <paramref name="idx"/>.</param>
+		public void AdjustIndexToMatchPosition(double totalSize, int idx, double absolutePosition)
+		{
+			double relSum = this.Sum(x => x.IsRelative ? x.Value : 0);
+			double absSum = this.Sum(x => x.IsAbsolute ? x.Value : 0);
+			double absValuePerRelativeValue = (totalSize - absSum) / relSum;
+
+			double position = 0;
+			for (int i = 0; i < idx; ++i)
+			{
+				var x = this[i];
+				position += x.IsAbsolute ? x.Value : x.Value * absValuePerRelativeValue;
+			}
+
+			double nextTwoCellsWidth =
+														(_innerList[idx].IsAbsolute ? _innerList[idx].Value : _innerList[idx].Value * absValuePerRelativeValue) +
+														(_innerList[idx + 1].IsAbsolute ? _innerList[idx + 1].Value : _innerList[idx + 1].Value * absValuePerRelativeValue);
+
+			double absNew = Math.Max(0, absolutePosition - position); // should not be smaller than
+			absNew = Math.Min(absNew, nextTwoCellsWidth);
+			if (_innerList[idx].IsAbsolute)
+			{
+				double absOld = _innerList[idx].Value;
+				double deltaAbs = absNew - absOld;
+
+				if (this[idx + 1].IsRelative)
+				{
+					_innerList[idx] = RADouble.NewAbs(absNew);
+					_innerList[idx + 1] = RADouble.NewRel(_innerList[idx + 1].Value - deltaAbs * relSum / (totalSize - absSum));
+				}
+				else // both idx and idx+1 are absolute
+				{
+					_innerList[idx] = RADouble.NewAbs(absNew);
+					_innerList[idx + 1] = RADouble.NewAbs(_innerList[idx + 1].Value - deltaAbs);
+				}
+			}
+			else
+			{
+				var relOld = _innerList[idx].Value;
+				var absOld = relOld * absValuePerRelativeValue;
+
+				if (this[idx + 1].IsRelative)
+				{
+					_innerList[idx] = new RADouble(absNew / absValuePerRelativeValue, true);
+					_innerList[idx + 1] = new RADouble(this[idx + 1].Value + (relOld - this[idx].Value), true);
+				}
+				else // idx+1 is absolute
+				{
+					double deltaAbs = absNew - absOld;
+					_innerList[idx] = RADouble.NewRel(_innerList[idx].Value + deltaAbs * relSum / (totalSize - absSum));
+					_innerList[idx + 1] = RADouble.NewAbs(_innerList[idx + 1].Value - deltaAbs);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets the partition position. A relative value of 0 gives the absolute position 0, a value of 1 gives the size of the first partition, a value of two the size of the first plus second partition and so on.
 		/// </summary>
-		/// <param name="relativeValue">The relative value.</param>
 		/// <param name="totalSize">The total size.</param>
-		/// <returns></returns>
-		public double GetPartitionPosition(double relativeValue, double totalSize)
+		/// <param name="gridIndex">The grid index that designates a position in the partition.</param>
+		/// <returns>The absolute position that belongs to the provided grid index.</returns>
+		public double GetAbsolutePositionFromGridIndex(double totalSize, double gridIndex)
 		{
 			var partPositions = GetPartitionPositions(totalSize);
 
-			if (relativeValue < 0)
+			if (gridIndex < 0)
 			{
-				return relativeValue * totalSize;
+				return gridIndex * totalSize;
 			}
-			else if (relativeValue < partPositions.Length)
+			else if (gridIndex < partPositions.Length)
 			{
-				int rlower = (int)Math.Floor(relativeValue);
-				double r = relativeValue - rlower;
+				int rlower = (int)Math.Floor(gridIndex);
+				double r = gridIndex - rlower;
 				double pl = rlower == 0 ? 0 : partPositions[rlower - 1];
 				double pu = partPositions[rlower];
 				return pl * (1 - r) + r * pu;
 			}
-			else if (relativeValue >= partPositions.Length)
+			else if (gridIndex >= partPositions.Length)
 			{
-				return (relativeValue - partPositions.Length) * totalSize + totalSize;
+				return (gridIndex - partPositions.Length) * totalSize + totalSize;
 			}
 			else
 			{
@@ -193,12 +277,58 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public void GetTilePositionSize(double start, double span, double totalSize, out double absoluteStart, out double absoluteSize)
+		/// <summary>
+		/// Gets the relative index from the absolute position.
+		/// </summary>
+		/// <param name="totalSize">The total size of the grid.</param>
+		/// <param name="absolutePosition">The absolute position inside (or outside) the grid.</param>
+		/// <returns>The relative index that corresponds to the provided absolute position.</returns>
+		public double GetGridIndexFromAbsolutePosition(double totalSize, double absolutePosition)
 		{
-			absoluteStart = GetPartitionPosition(start, totalSize);
-			absoluteSize = GetPartitionPosition(start + span, totalSize) - absoluteStart;
+			var partPositions = GetPartitionPositions(totalSize);
+
+			if (absolutePosition < 0) // on the left side outside the grid
+			{
+				return absolutePosition / totalSize;
+			}
+
+			double prevPosition = 0;
+			for (int i = 0; i < partPositions.Length; ++i)
+			{
+				double nextPosition = partPositions[i];
+				if (absolutePosition <= nextPosition)
+				{
+					var delta = nextPosition - prevPosition;
+					if (0 == delta)
+						return i;
+					else
+						return i + 1 + (absolutePosition - nextPosition) / delta;
+				}
+				prevPosition = nextPosition;
+			}
+
+			// else we are at the right side outside the grid
+			return partPositions.Length + (absolutePosition - totalSize) / totalSize;
 		}
 
+		/// <summary>
+		/// Gets the absolute start position and absolute size by providing a grid start index and grid span.
+		/// </summary>
+		/// <param name="totalSize">The total size of the partition.</param>
+		/// <param name="gridIndex">The grid index that designates the tile position.</param>
+		/// <param name="gridSpan">The grid span that designates the tile size.</param>
+		/// <param name="absoluteTilePosition">Result: the absolute position of the tile.</param>
+		/// <param name="absoluteTileSize">Result: the absolute size of the tile.</param>
+		public void GetAbsolutePositionAndSizeFromGridIndexAndSpan(double totalSize, double gridIndex, double gridSpan, out double absoluteTilePosition, out double absoluteTileSize)
+		{
+			absoluteTilePosition = GetAbsolutePositionFromGridIndex(totalSize, gridIndex);
+			absoluteTileSize = GetAbsolutePositionFromGridIndex(totalSize, gridIndex + gridSpan) - absoluteTilePosition;
+		}
+
+		/// <summary>
+		/// Gets the sum of all relative values.
+		/// </summary>
+		/// <returns>Sum of all relative values.</returns>
 		public double GetSumRelativeValues()
 		{
 			return this.Sum(x => x.IsRelative ? x.Value : 0);
@@ -464,8 +594,8 @@ namespace Altaxo.Graph
 		{
 			double xstart, xsize;
 			double ystart, ysize;
-			_xPartitioning.GetTilePositionSize(column, columnSpan, totalSize.X, out xstart, out xsize);
-			_yPartitioning.GetTilePositionSize(row, rowSpan, totalSize.Y, out ystart, out ysize);
+			_xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, column, columnSpan, out xstart, out xsize);
+			_yPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Y, row, rowSpan, out ystart, out ysize);
 			return new RectangleD(xstart, ystart, xsize, ysize);
 		}
 	}
