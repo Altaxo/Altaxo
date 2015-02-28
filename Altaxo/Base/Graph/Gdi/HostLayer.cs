@@ -729,17 +729,16 @@ namespace Altaxo.Graph.Gdi
 
 			bool isPositionChanged = newRect.LeftTop != _cachedLayerPosition;
 			bool isSizeChanged = newRect.Size != _cachedLayerSize;
-			if (isPositionChanged || isSizeChanged)
-			{
-				this._cachedLayerSize = newRect.Size;
-				this._cachedLayerPosition = newRect.LeftTop;
-				this.CalculateMatrix();
-				if (isSizeChanged)
-					OnSizeChanged();
 
-				if (isPositionChanged)
-					OnPositionChanged();
-			}
+			this._cachedLayerSize = newRect.Size;
+			this._cachedLayerPosition = newRect.LeftTop;
+			this.CalculateMatrix();
+
+			if (isSizeChanged)
+				OnSizeChanged();
+
+			if (isPositionChanged)
+				OnPositionChanged();
 		}
 
 		#endregion Position and Size
@@ -1260,12 +1259,12 @@ namespace Altaxo.Graph.Gdi
 			_accumulatedEventData = EventArgs.Empty;
 		}
 
-		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
 			if (sender is IItemLocation)
 				CalculateCachedSizeAndPosition();
 
-			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
 
 		#endregion Event firing
