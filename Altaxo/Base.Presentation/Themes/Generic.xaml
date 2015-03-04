@@ -15,6 +15,34 @@
 		</Style.Setters>
 	</Style>
 
+	<!-- *********************** Styles for DateTimeTextBox ************************************** -->
+	<Style TargetType="{x:Type axogc:DateTimeTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
+		<Style.Triggers>
+			<Trigger Property="Validation.HasError" Value="true">
+				<Setter Property="ToolTip"
+													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+												Path=(Validation.Errors)[0].ErrorContent}" />
+			</Trigger>
+		</Style.Triggers>
+		<Style.Setters>
+			<Setter Property="HorizontalContentAlignment" Value="Right" />
+		</Style.Setters>
+	</Style>
+
+	<!-- *********************** Styles for TimeSpanTextBox ************************************** -->
+	<Style TargetType="{x:Type axogc:TimeSpanTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
+		<Style.Triggers>
+			<Trigger Property="Validation.HasError" Value="true">
+				<Setter Property="ToolTip"
+													Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+												Path=(Validation.Errors)[0].ErrorContent}" />
+			</Trigger>
+		</Style.Triggers>
+		<Style.Setters>
+			<Setter Property="HorizontalContentAlignment" Value="Right" />
+		</Style.Setters>
+	</Style>
+
 	<!-- *********************** Styles for the QuantityWithUnitTextBox ************************************** -->
 	<Style TargetType="{x:Type axogc:QuantityWithUnitTextBox}" xmlns:axogc="clr-namespace:Altaxo.Gui.Common" BasedOn="{StaticResource {x:Type TextBox}}">
 		<Style.Triggers>

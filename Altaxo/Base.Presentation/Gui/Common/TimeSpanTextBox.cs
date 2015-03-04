@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		static TimeSpanTextBox()
 		{
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericDoubleTextBox), new FrameworkPropertyMetadata(typeof(NumericDoubleTextBox)));
+			DefaultStyleKeyProperty.OverrideMetadata(typeof(TimeSpanTextBox), new FrameworkPropertyMetadata(typeof(TimeSpanTextBox)));
 		}
 
 		/// <summary>

@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		static DateTimeTextBox()
 		{
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericDoubleTextBox), new FrameworkPropertyMetadata(typeof(NumericDoubleTextBox)));
+			DefaultStyleKeyProperty.OverrideMetadata(typeof(DateTimeTextBox), new FrameworkPropertyMetadata(typeof(DateTimeTextBox)));
 		}
 
 		/// <summary>
