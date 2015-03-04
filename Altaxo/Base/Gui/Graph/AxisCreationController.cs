@@ -107,7 +107,9 @@ namespace Altaxo.Gui.Graph
 
 		public object Clone()
 		{
-			throw new NotImplementedException();
+			var result = (AxisCreationArguments)this.MemberwiseClone();
+			result.AxisStyles = new List<CSAxisInformation>(this.AxisStyles);
+			return result;
 		}
 	}
 

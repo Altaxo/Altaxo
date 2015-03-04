@@ -375,21 +375,8 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				if (object.ReferenceEquals(_customTickSpacing, value))
-					return;
-
-				if (null != _customTickSpacing)
-				{
-				}
-
-				_customTickSpacing = value;
-
-				if (null != _customTickSpacing)
-				{
-					_customTickSpacing.ParentObject = this;
-				}
-
-				EhSelfChanged(EventArgs.Empty);
+				if (ChildSetMember(ref _customTickSpacing, value))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -420,7 +407,9 @@ namespace Altaxo.Graph.Gdi.Axis
 			{
 				CSLineID styleID = _cachedAxisInfo.Identifier;
 				Scale scale = layer.Scales[styleID.ParallelAxisNumber];
-				_customTickSpacing.FinalProcessScaleBoundaries(scale.OrgAsVariant, scale.EndAsVariant, scale);
+				Altaxo.Data.AltaxoVariant org = scale.OrgAsVariant, end = scale.EndAsVariant;
+				_customTickSpacing.PreProcessScaleBoundaries(ref org, ref end, false, false);
+				_customTickSpacing.FinalProcessScaleBoundaries(org, end, scale);
 			}
 
 			if (null != _axisTitle)

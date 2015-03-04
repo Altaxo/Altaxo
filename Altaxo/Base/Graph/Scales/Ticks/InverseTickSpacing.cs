@@ -171,20 +171,20 @@ namespace Altaxo.Graph.Scales.Ticks
 				s._transformationDivider = info.GetDouble("TransformationDivider");
 				s._transformationOperationIsMultiply = info.GetBoolean("TransformationIsMultiply");
 
-				s._suppressedMajorTicks = (SuppressedTicks)info.GetValue("SuppressedMajorTicks", s);
-				s._suppressedMinorTicks = (SuppressedTicks)info.GetValue("SuppressedMinorTicks", s);
-				s._additionalMajorTicks = (AdditionalTicks)info.GetValue("AdditionalMajorTicks", s);
-				s._additionalMinorTicks = (AdditionalTicks)info.GetValue("AdditionalMinorTicks", s);
+				s.ChildSetMember(ref s._suppressedMajorTicks, (SuppressedTicks)info.GetValue("SuppressedMajorTicks", s));
+				s.ChildSetMember(ref s._suppressedMinorTicks, (SuppressedTicks)info.GetValue("SuppressedMinorTicks", s));
+				s.ChildSetMember(ref s._additionalMajorTicks, (AdditionalTicks)info.GetValue("AdditionalMajorTicks", s));
+				s.ChildSetMember(ref s._additionalMinorTicks, (AdditionalTicks)info.GetValue("AdditionalMinorTicks", s));
 
 				if (s._suppressedMajorTicks == null)
-					s._suppressedMajorTicks = new SuppressedTicks();
+					s._suppressedMajorTicks = new SuppressedTicks() { ParentObject = s };
 				if (s._suppressedMinorTicks == null)
-					s._suppressedMinorTicks = new SuppressedTicks();
+					s._suppressedMinorTicks = new SuppressedTicks() { ParentObject = s };
 
 				if (s._additionalMajorTicks == null)
-					s._additionalMajorTicks = new AdditionalTicks();
+					s._additionalMajorTicks = new AdditionalTicks() { ParentObject = s };
 				if (s._additionalMinorTicks == null)
-					s._additionalMinorTicks = new AdditionalTicks();
+					s._additionalMinorTicks = new AdditionalTicks() { ParentObject = s };
 
 				return s;
 			}
@@ -196,10 +196,10 @@ namespace Altaxo.Graph.Scales.Ticks
 		{
 			_majorTicks = new List<double>();
 			_minorTicks = new List<double>();
-			_suppressedMajorTicks = new SuppressedTicks();
-			_suppressedMinorTicks = new SuppressedTicks();
-			_additionalMajorTicks = new AdditionalTicks();
-			_additionalMinorTicks = new AdditionalTicks();
+			_suppressedMajorTicks = new SuppressedTicks() { ParentObject = this };
+			_suppressedMinorTicks = new SuppressedTicks() { ParentObject = this };
+			_additionalMajorTicks = new AdditionalTicks() { ParentObject = this };
+			_additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
 		}
 
 		public InverseTickSpacing(InverseTickSpacing from)
@@ -232,10 +232,10 @@ namespace Altaxo.Graph.Scales.Ticks
 				_snapOrgToTick = from._snapOrgToTick;
 				_snapEndToTick = from._snapEndToTick;
 
-				_suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
-				_suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
-				_additionalMajorTicks = (AdditionalTicks)from._additionalMajorTicks.Clone();
-				_additionalMinorTicks = (AdditionalTicks)from._additionalMinorTicks.Clone();
+				ChildCopyToMember(ref _suppressedMajorTicks, from._suppressedMajorTicks);
+				ChildCopyToMember(ref _suppressedMinorTicks, from._suppressedMinorTicks);
+				ChildCopyToMember(ref _additionalMajorTicks, from._additionalMajorTicks);
+				ChildCopyToMember(ref _additionalMinorTicks, from._additionalMinorTicks);
 
 				_transformationOffset = from._transformationOffset;
 				_transformationDivider = from._transformationDivider;
