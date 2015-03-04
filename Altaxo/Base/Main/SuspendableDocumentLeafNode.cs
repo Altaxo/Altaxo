@@ -80,7 +80,7 @@ namespace Altaxo.Main
 		/// <value>
 		/// <c>true</c> if this instance is suspended; otherwise, <c>false</c>.
 		/// </value>
-		public override bool IsSuspended { get { return _suspendLevel != 0; } }
+		public override bool IsSuspended { get { return _suspendLevel > 0; } }
 
 		#endregion Suspend state questions
 
@@ -258,10 +258,6 @@ namespace Altaxo.Main
 						{
 						}
 					}
-					else if (newLevel < 0)
-					{
-						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
-					}
 				}
 			}
 
@@ -318,10 +314,6 @@ namespace Altaxo.Main
 						finally
 						{
 						}
-					}
-					else if (newLevel < 0)
-					{
-						throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
 					}
 
 					if (null != exceptionInAboutToBeResumed)
@@ -391,52 +383,32 @@ namespace Altaxo.Main
 
 				// Try to bring the suspend level to 0
 				int suspendLevel = _parent._suspendLevel;
-				while (suspendLevel != 0)
+				while (suspendLevel > 0)
 				{
-					if (suspendLevel > 0)
+					if (suspendLevel == 1)
 					{
-						if (suspendLevel == 1)
+						try
 						{
-							try
-							{
-								_parent.OnAboutToBeResumed();
-							}
-							catch (Exception ex)
-							{
-								ex1 = ex;
-							}
+							_parent.OnAboutToBeResumed();
 						}
-
-						suspendLevel = System.Threading.Interlocked.Decrement(ref _parent._suspendLevel);
-						++_numberOfSuspendLevelsAbsorbed;
-
-						if (suspendLevel == 0)
+						catch (Exception ex)
 						{
-							try
-							{
-								_parent.OnResume();
-							}
-							catch (Exception ex)
-							{
-								ex2 = ex;
-							}
+							ex1 = ex;
 						}
 					}
-					else if (suspendLevel < 0)
-					{
-						suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
-						--_numberOfSuspendLevelsAbsorbed;
 
-						if (suspendLevel == 1)
+					suspendLevel = System.Threading.Interlocked.Decrement(ref _parent._suspendLevel);
+					++_numberOfSuspendLevelsAbsorbed;
+
+					if (suspendLevel == 0)
+					{
+						try
 						{
-							try
-							{
-								_parent.OnSuspended();
-							}
-							catch (Exception ex)
-							{
-								ex3 = ex;
-							}
+							_parent.OnResume();
+						}
+						catch (Exception ex)
+						{
+							ex2 = ex;
 						}
 					}
 				}
@@ -451,33 +423,35 @@ namespace Altaxo.Main
 
 			public void Dispose(bool isDisposing)
 			{
-				Exception exception = null;
-				while (_numberOfSuspendLevelsAbsorbed > 0)
+				var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentLeafNode>(ref _parent, null);
+				if (parent != null)
 				{
-					int suspendLevel = System.Threading.Interlocked.Increment(ref _parent._suspendLevel);
-					--_numberOfSuspendLevelsAbsorbed;
-
-					if (suspendLevel == 1)
+					Exception exception = null;
+					while (_numberOfSuspendLevelsAbsorbed > 0)
 					{
-						if (1 == suspendLevel)
+						int suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
+						--_numberOfSuspendLevelsAbsorbed;
+
+						if (suspendLevel == 1)
 						{
-							try
+							if (1 == suspendLevel)
 							{
-								_parent.OnSuspended();
-							}
-							catch (Exception ex)
-							{
-								exception = ex;
+								try
+								{
+									parent.OnSuspended();
+								}
+								catch (Exception ex)
+								{
+									exception = ex;
+								}
 							}
 						}
 					}
+
+					// Suspend level is now restored
+					if (exception != null)
+						throw exception;
 				}
-
-				_parent = null;
-
-				// Suspend level is now restored
-				if (exception != null)
-					throw exception;
 			}
 		}
 

@@ -425,6 +425,9 @@ namespace Altaxo.Main
 		/// </summary>
 		protected void ClearWatch()
 		{
+#if DEBUG_DOCNODEPROXYLOGGING
+			Current.Console.WriteLine("DocNodeProxy.ClearWatch: path={0}", _docNodePath.ToString());
+#endif
 			if (null != _weakDocNodeTunneledEventHandler)
 			{
 				_weakDocNodeTunneledEventHandler.Remove();
@@ -594,6 +597,9 @@ namespace Altaxo.Main
 			var docNode = InternalDocNode;
 			if (docNode == null)
 			{
+#if DEBUG_DOCNODEPROXYLOGGING
+				Current.Console.WriteLine("DocNodeProxy.ResolveDocumentObject, path is <<{0}>>", _docNodePath);
+#endif
 				bool wasCompletelyResolved;
 				var node = Main.AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out wasCompletelyResolved);
 				if (null == node)
