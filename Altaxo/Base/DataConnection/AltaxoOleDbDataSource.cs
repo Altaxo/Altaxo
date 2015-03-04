@@ -43,7 +43,7 @@ namespace Altaxo.DataConnection
 
 		public AltaxoOleDbDataSource(string selectionStatement, AltaxoOleDbConnectionString connectionString)
 		{
-			_importOptions = new Data.DataSourceImportOptions();
+			_importOptions = new Data.DataSourceImportOptions() { ParentObject = this };
 			_dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
 		}
 
@@ -59,8 +59,9 @@ namespace Altaxo.DataConnection
 			var from = obj as AltaxoOleDbDataSource;
 			if (null != from)
 			{
-				CopyHelper.Copy(ref _importOptions, from._importOptions);
+				ChildCopyToMember(ref _importOptions, from._importOptions);
 				CopyHelper.CopyImmutable(ref _dataQuery, from._dataQuery);
+				EhSelfChanged(EventArgs.Empty);
 				return true;
 			}
 			return false;
@@ -79,7 +80,8 @@ namespace Altaxo.DataConnection
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield break;
+			if (null != _importOptions)
+				yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
 		}
 
 		#endregion Construction
@@ -107,7 +109,7 @@ namespace Altaxo.DataConnection
 				var s = (o == null ? new AltaxoOleDbDataSource() : (AltaxoOleDbDataSource)o);
 
 				s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
-				s._importOptions = (Data.DataSourceImportOptions)info.GetValue("ImportOptions", s);
+				s.ChildSetMember(ref s._importOptions, (Data.DataSourceImportOptions)info.GetValue("ImportOptions", s));
 				return s;
 			}
 

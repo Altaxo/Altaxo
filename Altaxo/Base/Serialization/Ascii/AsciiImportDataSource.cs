@@ -70,8 +70,8 @@ namespace Altaxo.Serialization.Ascii
 			{
 				var s = (o == null ? new AsciiImportDataSource() : (AsciiImportDataSource)o);
 
-				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
-				s._asciiImportOptions = (AsciiImportOptions)info.GetValue("AsciiImportOptions", s);
+				s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
+				s.ChildSetMember(ref s._asciiImportOptions, (AsciiImportOptions)info.GetValue("AsciiImportOptions", s));
 				var count = info.OpenArray("AsciiFiles");
 				for (int i = 0; i < count; ++i)
 					s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", s));
@@ -103,18 +103,15 @@ namespace Altaxo.Serialization.Ascii
 			{
 				using (var token = SuspendGetToken())
 				{
-					AsciiImportOptions asciiImportOptions = null;
-					IDataSourceImportOptions importOptions = null;
-
-					CopyHelper.Copy(ref importOptions, from._importOptions);
-					CopyHelper.Copy(ref asciiImportOptions, from._asciiImportOptions);
+					_asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._asciiFiles));
+					ChildSetMember(ref _importOptions, from._importOptions);
+					ChildSetMember(ref _asciiImportOptions, from._asciiImportOptions);
 					_asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersCloned(from._asciiFiles));
 
-					this.AsciiImportOptions = asciiImportOptions;
-					this.ImportOptions = importOptions;
-
-					return true;
+					EhSelfChanged(EventArgs.Empty);
+					token.Resume();
 				}
+				return true;
 			}
 			return false;
 		}
@@ -139,8 +136,8 @@ namespace Altaxo.Serialization.Ascii
 			{
 				_asciiFiles.Add(new AbsoluteAndRelativeFileName(fileName));
 			}
-			_asciiImportOptions = options.Clone();
-			_importOptions = new DataSourceImportOptions();
+			ChildCopyToMember(ref _asciiImportOptions, options);
+			_importOptions = new DataSourceImportOptions() { ParentObject = this };
 		}
 
 		public AsciiImportDataSource(AsciiImportDataSource from)
@@ -155,7 +152,11 @@ namespace Altaxo.Serialization.Ascii
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield break;
+			if (null != _asciiImportOptions)
+				yield return new Main.DocumentNodeAndName(_asciiImportOptions, () => _asciiImportOptions = null, "AsciiImportOptions");
+
+			if (null != _importOptions)
+				yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null, "ImportOptions");
 		}
 
 		#endregion Construction

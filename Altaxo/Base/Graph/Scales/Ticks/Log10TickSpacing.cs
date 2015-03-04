@@ -171,10 +171,10 @@ namespace Altaxo.Graph.Scales.Ticks
 				s._transformationDivider = info.GetDouble("TransformationDivider");
 				s._transformationOperationIsMultiply = info.GetBoolean("TransformationIsMultiply");
 
-				s._suppressedMajorTicks = (SuppressedTicks)info.GetValue("SuppressedMajorTicks", s);
-				s._suppressedMinorTicks = (SuppressedTicks)info.GetValue("SuppressedMinorTicks", s);
-				s._additionalMajorTicks = (AdditionalTicks)info.GetValue("AdditionalMajorTicks", s);
-				s._additionalMinorTicks = (AdditionalTicks)info.GetValue("AdditionalMinorTicks", s);
+				s.ChildSetMember(ref s._suppressedMajorTicks, (SuppressedTicks)info.GetValue("SuppressedMajorTicks", s));
+				s.ChildSetMember(ref s._suppressedMinorTicks, (SuppressedTicks)info.GetValue("SuppressedMinorTicks", s));
+				s.ChildSetMember(ref s._additionalMajorTicks, (AdditionalTicks)info.GetValue("AdditionalMajorTicks", s));
+				s.ChildSetMember(ref s._additionalMinorTicks, (AdditionalTicks)info.GetValue("AdditionalMinorTicks", s));
 
 				if (s._suppressedMajorTicks == null)
 					s._suppressedMajorTicks = new SuppressedTicks() { ParentObject = s };

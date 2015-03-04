@@ -557,7 +557,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					if (i == _scaleNumber)
 						_scaleCollection[i] = scale;
 					else
-						_scaleCollection[i] = underlyingArea.Scales[i];
+						_scaleCollection[i] = (Scale)underlyingArea.Scales[i].Clone();
 				}
 			}
 
