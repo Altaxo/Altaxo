@@ -213,9 +213,19 @@ namespace Altaxo.Graph.Gdi
 
 					if (nLayer >= numPresentLayers)
 					{
-						var newLayer = new XYPlotLayer(parentLayer);
-						newLayer.CreateDefaultAxes(context);
-						parentLayer.Layers.Add(newLayer);
+						var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(context, Guid.NewGuid().ToString(), "", false);
+
+						if (graph != null && graph.RootLayer.Layers.Count > 0)
+						{
+							var newLayer = (HostLayer)graph.RootLayer.Layers[0].Clone();
+							parentLayer.Layers.Add(newLayer);
+						}
+						else
+						{
+							var newLayer = new XYPlotLayer(parentLayer);
+							newLayer.CreateDefaultAxes(context);
+							parentLayer.Layers.Add(newLayer);
+						}
 					}
 
 					var oldSize = parentLayer.Layers[nLayer].Size;

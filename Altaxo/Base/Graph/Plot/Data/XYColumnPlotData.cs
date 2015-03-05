@@ -726,7 +726,14 @@ namespace Altaxo.Graph.Plot.Data
 			get { return this._plotRangeStart; }
 			set
 			{
+				var oldValue = _plotRangeStart;
 				_plotRangeStart = value < 0 ? 0 : value;
+
+				if (_plotRangeStart != oldValue)
+				{
+					_isCachedDataValid = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -736,8 +743,21 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		public int PlotRangeLength
 		{
-			get { return this._plotRangeLength; }
-			set { this._plotRangeLength = value < 0 ? 0 : value; }
+			get
+			{
+				return this._plotRangeLength;
+			}
+			set
+			{
+				var oldValue = _plotRangeLength;
+				_plotRangeLength = value < 0 ? 0 : value;
+
+				if (_plotRangeLength != oldValue)
+				{
+					_isCachedDataValid = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
 		}
 
 		private class MyPlotData
