@@ -254,7 +254,9 @@ namespace Altaxo.Gui.Graph
 			{
 				if (_doc is LinkedScale && ((LinkedScale)_doc).ScaleLinkedTo == null)
 				{
+					var oldScale = _doc;
 					_doc = (Scale)((LinkedScale)_doc).WrappedScale.Clone(); // this will replace the invalid linked scale with a clone of the wrapped scale
+					OnDocumentInstanceChanged(oldScale, _doc);
 				}
 			}
 		}
