@@ -155,7 +155,14 @@ namespace Altaxo.Worksheet
 				yield return new Main.DocumentNodeAndName(entry.Value, "DefaultColumnStyle_" + entry.Key.FullName);
 
 			foreach (var entry in _columnStyles)
-				yield return new Main.DocumentNodeAndName(entry.Value, "ColumnStyle_" + entry.Key.FullName);
+			{
+				// TODO we rely on the name of the data column here, but it can already be disposed off
+				// instead, we should maintain the name separately in the dictionary
+				if (entry.Key.IsDisposeInProgress)
+					yield return new Main.DocumentNodeAndName(entry.Value, "ColumnStyle_UnknownName");
+				else
+					yield return new Main.DocumentNodeAndName(entry.Value, "ColumnStyle_" + entry.Key.FullName);
+			}
 		}
 
 		protected override void Dispose(bool isDisposing)
