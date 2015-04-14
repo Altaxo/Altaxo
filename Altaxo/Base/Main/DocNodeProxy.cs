@@ -106,6 +106,15 @@ namespace Altaxo.Main
 		[NonSerialized]
 		protected WeakActionHandler<object, object, TunnelingEventArgs> _weakDocNodeTunneledEventHandler;
 
+#if DOCNODEPROXY_CONCURRENTDEBUG
+
+		[NonSerialized]
+		private System.Collections.Concurrent.ConcurrentQueue<string> _debug = new System.Collections.Concurrent.ConcurrentQueue<string>();
+
+		private int _debugUSN;
+
+#endif
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Main.DocNodeProxy", 0)]
@@ -325,6 +334,10 @@ namespace Altaxo.Main
 			if (!IsValidDocument(value))
 				throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
 
+#if DOCNODEPROXY_CONCURRENTDEBUG
+			_debug.Enqueue("START SetDocNode");
+#endif
+
 			if (null != _weakDocNodeChangedHandler)
 			{
 				_weakDocNodeChangedHandler.Remove();
@@ -335,6 +348,10 @@ namespace Altaxo.Main
 				_weakDocNodeTunneledEventHandler.Remove();
 				_weakDocNodeTunneledEventHandler = null;
 			}
+
+#if DOCNODEPROXY_CONCURRENTDEBUG
+			_debug.Enqueue("MIDDL SetDocNode EventHandlers removed");
+#endif
 
 			if (oldValue != null)
 			{
@@ -356,6 +373,10 @@ namespace Altaxo.Main
 			OnAfterSetDocNode();
 
 			EhSelfChanged(new Main.InstanceChangedEventArgs(oldValue, value));
+
+#if DOCNODEPROXY_CONCURRENTDEBUG
+			_debug.Enqueue("STOP  SetDocNode");
+#endif
 		}
 
 		/// <summary>
@@ -600,6 +621,11 @@ namespace Altaxo.Main
 #if DEBUG_DOCNODEPROXYLOGGING
 				Current.Console.WriteLine("DocNodeProxy.ResolveDocumentObject, path is <<{0}>>", _docNodePath);
 #endif
+
+#if DOCNODEPROXY_CONCURRENTDEBUG
+				_debug.Enqueue("START ResolveDocumentObject");
+#endif
+
 				bool wasCompletelyResolved;
 				var node = Main.AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, startnode, out wasCompletelyResolved);
 				if (null == node)
@@ -614,6 +640,10 @@ namespace Altaxo.Main
 				{
 					SetWatchOnNode(node);
 				}
+
+#if DOCNODEPROXY_CONCURRENTDEBUG
+				_debug.Enqueue("STOP  ResolveDocumentObject");
+#endif
 			}
 			return docNode;
 		}
@@ -624,6 +654,11 @@ namespace Altaxo.Main
 		/// <param name="node">The node to watch.</param>
 		protected virtual void SetWatchOnNode(IDocumentLeafNode node)
 		{
+#if DOCNODEPROXY_CONCURRENTDEBUG
+			int debugUsn = System.Threading.Interlocked.Increment(ref _debugUSN);
+			_debug.Enqueue("START SetWatchOnNode " + debugUsn.ToString());
+#endif
+
 			if (null == node)
 				throw new ArgumentNullException("node");
 
@@ -643,6 +678,10 @@ namespace Altaxo.Main
 
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("Start watching node <<{0}>> of total path <<{1}>>", AbsoluteDocumentPath.GetAbsolutePath(node), _docNodePath);
+#endif
+
+#if DOCNODEPROXY_CONCURRENTDEBUG
+			_debug.Enqueue("STOP  SetWatchOnNode " + debugUsn.ToString() + (_docNodeRef == null).ToString());
 #endif
 		}
 

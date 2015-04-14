@@ -57,6 +57,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakEventHandler
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakEventHandler> _removeAction;
@@ -100,6 +101,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
@@ -148,6 +150,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakEventHandler<TEventArgs> where TEventArgs : EventArgs
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakEventHandler<TEventArgs>> _removeAction;
@@ -191,6 +194,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
@@ -238,6 +242,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakPropertyChangedEventHandler
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakPropertyChangedEventHandler> _removeAction;
@@ -281,6 +286,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
@@ -328,6 +334,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakActionHandler
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakActionHandler> _removeAction;
@@ -369,6 +376,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
@@ -417,6 +425,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakActionHandler<T1>
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakActionHandler<T1>> _removeAction;
@@ -459,6 +468,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
@@ -508,6 +518,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakActionHandler<T1, T2>
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakActionHandler<T1, T2>> _removeAction;
@@ -551,6 +562,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
@@ -601,6 +613,7 @@ namespace Altaxo
 	/// </remarks>
 	public class WeakActionHandler<T1, T2, T3>
 	{
+		private static WeakReference _weakNullReference = new WeakReference(null);
 		private WeakReference _handlerObjectWeakRef;
 		private MethodInfo _handlerMethodInfo;
 		private Action<WeakActionHandler<T1, T2, T3>> _removeAction;
@@ -645,6 +658,7 @@ namespace Altaxo
 		/// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
 		public void Remove()
 		{
+			_handlerObjectWeakRef = _weakNullReference;
 			if (null != _removeAction)
 			{
 				_removeAction(this);
