@@ -163,7 +163,7 @@ namespace Altaxo.Main
 
 				var node = s.InternalDocNode;
 
-				if (null != node)
+				if (null != node && !node.IsDisposeInProgress)
 					s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
 
 				System.Diagnostics.Debug.Assert(null != s._docNodePath);

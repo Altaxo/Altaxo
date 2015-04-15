@@ -58,10 +58,13 @@ namespace Altaxo.Main
 		[NonSerialized]
 		private byte _disposeState;
 
-		/// <summary> Indicates that dispose is in progress.</summary>
+		/// <summary>Indicates that the object is fully alive, i.e. for the object neither dispose is in progress nor the object is disposed.</summary>
+		private const byte DisposeState_None = 0;
+
+		/// <summary>Indicates that dispose is in progress.</summary>
 		private const byte DisposeState_DisposeInProgress = 1;
 
-		/// <summary> Indicates that the instance is disposed.</summary>
+		/// <summary>Indicates that the instance is disposed.</summary>
 		private const byte DisposeState_Disposed = 2;
 
 		/// <summary>
@@ -349,9 +352,13 @@ namespace Altaxo.Main
 		/// </summary>
 		public void Dispose()
 		{
-			if (_disposeState == 0)
+			if (_disposeState < DisposeState_DisposeInProgress)
 			{
 				SetDisposeInProgress();
+			}
+
+			if (_disposeState < DisposeState_Disposed)
+			{
 				Dispose(true);
 			}
 
