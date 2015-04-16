@@ -515,6 +515,9 @@ namespace Altaxo.Graph.Plot.Data
 
 		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
 		{
+			if (this.IsDisposeInProgress)
+				return;
+
 			if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
 				this.SetXBoundsFromTemplate(xBounds);
 
@@ -526,6 +529,9 @@ namespace Altaxo.Graph.Plot.Data
 
 		public void CalculateCachedData()
 		{
+			if (this.IsDisposeInProgress)
+				return;
+
 			if (0 == RowCount || 0 == ColumnCount)
 				return;
 

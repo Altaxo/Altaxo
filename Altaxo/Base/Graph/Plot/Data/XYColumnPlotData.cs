@@ -645,6 +645,9 @@ namespace Altaxo.Graph.Plot.Data
 
 		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
 		{
+			if (this.IsDisposeInProgress)
+				return;
+
 			if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
 			{
 				_isCachedDataValid = false;
@@ -663,6 +666,9 @@ namespace Altaxo.Graph.Plot.Data
 
 		public void CalculateCachedData()
 		{
+			if (this.IsDisposeInProgress)
+				return;
+
 			// we can calulate the bounds only if they are set before
 			if (null == _xBoundaries || null == _yBoundaries)
 				return;
