@@ -45,6 +45,22 @@ namespace Altaxo.Serialization.Xml
 		private const int _size_of_double = 8;
 		private const int _size_of_DateTime = 8;
 
+		/// <summary>
+		/// This event is called if the deserialization process of all objects is finished and
+		/// the deserialized objects are sorted into the document. Then the application should
+		/// call AllFinished, which fires this event. The purpose of this event is to
+		/// resolve the references in the deserialized objects. This resolving process can be successfully
+		/// done only if the objects are put in the right places in the document, so that
+		/// the document paths can be resolved to the right objects.
+		/// </summary>
+		public event XmlDeserializationCallbackEventHandler DeserializationFinished;
+
+		/// <summary>
+		/// Occurs after (!) the deserialization process has completely finished, and the dirty flag of the document was cleared. This callback is intended to activate
+		/// the data sources of the document, which should be suspended during the deserialization process.
+		/// </summary>
+		public event Action AfterDeserializationHasCompletelyFinished;
+
 		public XmlStreamDeserializationInfo()
 		{
 			m_BufferSize = 16384;
@@ -85,9 +101,14 @@ namespace Altaxo.Serialization.Xml
 				DeserializationFinished(this, documentRoot, isFinallyCall);
 		}
 
-		#region IXmlSerializationInfo Members
+		public void AnnounceDeserializationHasCompletelyFinished()
+		{
+			var ev = AfterDeserializationHasCompletelyFinished;
+			if (null != ev)
+				ev();
+		}
 
-		public event XmlDeserializationCallbackEventHandler DeserializationFinished;
+		#region IXmlSerializationInfo Members
 
 		/// <summary>Returns the name of the current xml element.</summary>
 		public string CurrentElementName

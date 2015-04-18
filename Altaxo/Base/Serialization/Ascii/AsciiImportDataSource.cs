@@ -46,6 +46,10 @@ namespace Altaxo.Serialization.Ascii
 
 		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
 
+		/// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
+		[NonSerialized]
+		protected bool _isDeserializationInProgress;
+
 		#region Serialization
 
 		#region Version 0
@@ -69,13 +73,15 @@ namespace Altaxo.Serialization.Ascii
 			protected virtual AsciiImportDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (o == null ? new AsciiImportDataSource() : (AsciiImportDataSource)o);
-
+				s._isDeserializationInProgress = true;
 				s.ChildSetMember(ref s._importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", s));
 				s.ChildSetMember(ref s._asciiImportOptions, (AsciiImportOptions)info.GetValue("AsciiImportOptions", s));
 				var count = info.OpenArray("AsciiFiles");
 				for (int i = 0; i < count; ++i)
 					s._asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", s));
 				info.CloseArray(count);
+
+				info.AfterDeserializationHasCompletelyFinished += s.EhAfterDeserializationHasCompletelyFinished;
 
 				return s;
 			}
@@ -309,6 +315,9 @@ namespace Altaxo.Serialization.Ascii
 		{
 			SwitchOffWatching();
 
+			if (_isDeserializationInProgress)
+				return; // in serialization process - wait until serialization has finished
+
 			if (IsSuspended)
 				return; // in update operation - wait until finished
 
@@ -400,6 +409,12 @@ namespace Altaxo.Serialization.Ascii
 			{
 				_triggerBasedUpdate.Trigger();
 			}
+		}
+
+		private void EhAfterDeserializationHasCompletelyFinished()
+		{
+			_isDeserializationInProgress = false;
+			UpdateWatching();
 		}
 
 		protected override void Dispose(bool disposing)

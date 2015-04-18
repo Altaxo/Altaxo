@@ -35,9 +35,14 @@ namespace Altaxo.DataConnection
 	{
 		protected Data.IDataSourceImportOptions _importOptions;
 		private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
-		private int _updateReentrancyCount;
 
 		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+
+		private int _updateReentrancyCount;
+
+		/// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
+		[NonSerialized]
+		protected bool _isDeserializationInProgress;
 
 		#region Construction
 
@@ -108,8 +113,11 @@ namespace Altaxo.DataConnection
 			{
 				var s = (o == null ? new AltaxoOleDbDataSource() : (AltaxoOleDbDataSource)o);
 
+				s._isDeserializationInProgress = true;
 				s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
 				s.ChildSetMember(ref s._importOptions, (Data.DataSourceImportOptions)info.GetValue("ImportOptions", s));
+
+				info.AfterDeserializationHasCompletelyFinished += s.EhAfterDeserializationHasCompletelyFinished;
 				return s;
 			}
 
@@ -243,6 +251,9 @@ namespace Altaxo.DataConnection
 		{
 			SwitchOffWatching();
 
+			if (_isDeserializationInProgress)
+				return; // in serialization process - wait until serialization has finished
+
 			if (IsSuspended)
 				return; // in update operation - wait until finished
 
@@ -284,6 +295,12 @@ namespace Altaxo.DataConnection
 
 		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
 		{
+		}
+
+		private void EhAfterDeserializationHasCompletelyFinished()
+		{
+			_isDeserializationInProgress = false;
+			UpdateWatching();
 		}
 	}
 }

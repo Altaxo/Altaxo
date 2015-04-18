@@ -380,7 +380,10 @@ namespace Altaxo.Main
 				this.SetCurrentProject(newdocument, filename);
 				RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
 				info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
+
 				this.CurrentOpenProject.IsDirty = false;
+
+				info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
 			}
 			catch (Exception exc)
 			{
