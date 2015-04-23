@@ -96,8 +96,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var from = obj as ClosedPathShapeBase;
 				if (null != from)
 				{
-					this._fillBrush = (BrushX)from._fillBrush.Clone();
-					this._linePen = (PenX)from._linePen.Clone();
+					ChildCopyToMember(ref _fillBrush, from._fillBrush);
+					ChildCopyToMember(ref _linePen, from._linePen);
 				}
 			}
 			return isCopied;

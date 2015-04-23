@@ -65,6 +65,7 @@ namespace Altaxo.Gui.SharpDevelop
 
 			// events
 			_wb.Closing += EhOnClosing;
+			_wb.Closed += EhOnClosed;
 
 			_wb.Initialized += EhInitialized;
 		}
@@ -95,6 +96,12 @@ namespace Altaxo.Gui.SharpDevelop
 				if (null != comManager)
 					comManager.StopLocalServer();
 			}
+		}
+
+		private void EhOnClosed(object sender, System.EventArgs e)
+		{
+			Altaxo.Main.IProjectService projectService = Altaxo.Current.ProjectService;
+			projectService.DisposeProjectAndSetToNull();
 		}
 
 		#region IWorkbench Members

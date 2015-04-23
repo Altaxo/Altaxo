@@ -608,6 +608,18 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
+		/// Disposes the whole project and sets the current project to null.
+		/// </summary>
+		public void DisposeProjectAndSetToNull()
+		{
+			if (this._currentProject != null)
+			{
+				this._currentProject.Dispose();
+				this._currentProject = null;
+			}
+		}
+
+		/// <summary>
 		/// Returns all currently open views that show the given document object <code>document</code>.
 		/// The IViewContent must implement <see cref="Altaxo.Gui.IMVCControllerWrapper" /> in order to be found by this routine.
 		/// </summary>

@@ -97,8 +97,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 				var from = obj as OpenPathShapeBase;
 				if (from != null)
 				{
-					this._outlinePen = null == from._outlinePen ? null : (PenX)from._outlinePen.Clone();
-					this._linePen = (PenX)from._linePen.Clone();
+					ChildCopyToMember(ref _outlinePen, from._outlinePen);
+					ChildCopyToMember(ref _linePen, from._linePen);
 				}
 			}
 			return isCopied;

@@ -127,7 +127,7 @@ namespace Altaxo.Main
 				DocNodeProxy s = (DocNodeProxy)obj;
 
 				if (null != s.InternalDocNode)
-					info.AddValue("Node", Main.DocumentPath.GetAbsolutePath(s.InternalDocNode));
+					info.AddValue("Node", Main.DocumentPath.GetAbsolutePath(s.InternalDocumentObject));
 				else if (s._docNodePath != null)
 					info.AddValue("Node", s._docNodePath);
 				*/
@@ -161,7 +161,7 @@ namespace Altaxo.Main
 			{
 				DocNodeProxy s = (DocNodeProxy)obj;
 
-				var node = s.InternalDocNode;
+				var node = s.InternalDocumentNode;
 
 				if (null != node && !node.IsDisposeInProgress)
 					s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
@@ -225,9 +225,9 @@ namespace Altaxo.Main
 			if (from.IsDisposeInProgress)
 				throw new ObjectDisposedException("from");
 
-			if (null != from.InternalDocNode)
+			if (null != from.InternalDocumentNode)
 			{
-				this.SetDocNode(from.InternalDocNode); // than the new Proxy refers to the same document node
+				this.SetDocNode(from.InternalDocumentNode); // than the new Proxy refers to the same document node
 			}
 			else
 			{
@@ -327,7 +327,7 @@ namespace Altaxo.Main
 			if (null == value)
 				throw new ArgumentNullException("value");
 
-			var oldValue = InternalDocNode;
+			var oldValue = InternalDocumentNode;
 			if (object.ReferenceEquals(oldValue, value))
 				return;
 
@@ -484,7 +484,7 @@ namespace Altaxo.Main
 			{
 				// when our DocNode was disposed, it is probable that the parent of this node (and further parents) are disposed too
 				// thus we need to watch the first node that is not disposed
-				var docNode = InternalDocNode;
+				var docNode = InternalDocumentNode;
 				ClearDocNode();
 
 				if (!(sender is AltaxoDocument)) // if the whole document is disposed, there is no point in trying to watch something
@@ -508,9 +508,9 @@ namespace Altaxo.Main
 			}
 			else if (e is DocumentPathChangedEventArgs)
 			{
-				if (null != InternalDocNode)
+				if (null != InternalDocumentNode)
 				{
-					InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(InternalDocNode);
+					InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(InternalDocumentNode);
 					InternalCheckAbsolutePath();
 				}
 
@@ -532,27 +532,12 @@ namespace Altaxo.Main
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
 #endif
-
-			if (InternalDocNode != null)
+			var iNode = InternalDocumentNode;
+			if (null != iNode && !iNode.IsDisposeInProgress)
 			{
-				InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)InternalDocNode);
+				InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(iNode);
 				InternalCheckAbsolutePath();
-			}
-
-			EhSelfChanged(EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Gets the internal document node instance, without changing anything and without trying to resolve the path.
-		/// </summary>
-		/// <value>
-		/// The internal document node.
-		/// </value>
-		protected IDocumentLeafNode InternalDocNode
-		{
-			get
-			{
-				return (_docNodeRef == null ? null : _docNodeRef.Target) as IDocumentLeafNode;
+				EhSelfChanged(EventArgs.Empty);
 			}
 		}
 
@@ -562,7 +547,7 @@ namespace Altaxo.Main
 		/// <value>
 		/// The internal document node.
 		/// </value>
-		protected virtual IDocumentLeafNode InternalDocumentObject
+		protected IDocumentLeafNode InternalDocumentNode
 		{
 			get
 			{
@@ -601,7 +586,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				var docNode = InternalDocNode;
+				var docNode = InternalDocumentNode;
 				if (null != docNode)
 				{
 					InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath((Main.IDocumentLeafNode)docNode);
@@ -615,7 +600,7 @@ namespace Altaxo.Main
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 
-			var docNode = InternalDocNode;
+			var docNode = InternalDocumentNode;
 			if (docNode == null)
 			{
 #if DEBUG_DOCNODEPROXYLOGGING
@@ -634,7 +619,7 @@ namespace Altaxo.Main
 				if (wasCompletelyResolved)
 				{
 					SetDocNode(node);
-					docNode = InternalDocNode;
+					docNode = InternalDocumentNode;
 				}
 				else // not completely resolved
 				{
@@ -697,7 +682,7 @@ namespace Altaxo.Main
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
 #endif
 
-			System.Diagnostics.Debug.Assert(_docNodeRef == null);
+			System.Diagnostics.Debug.Assert(InternalDocumentNode == null);
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
 
@@ -730,7 +715,7 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhWatchedNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
-			System.Diagnostics.Debug.Assert(_docNodeRef == null);
+			System.Diagnostics.Debug.Assert(InternalDocumentNode == null);
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			var sourceAsDocNode = source as IDocumentLeafNode;
 			System.Diagnostics.Debug.Assert(senderAsDocNode != null);

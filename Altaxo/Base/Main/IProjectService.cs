@@ -190,6 +190,11 @@ namespace Altaxo.Main
 		void CloseProject(bool forceClose);
 
 		/// <summary>
+		/// Disposes the whole project and sets the current project to null.
+		/// </summary>
+		void DisposeProjectAndSetToNull();
+
+		/// <summary>
 		/// Saves the state of the main window into a zipped file.
 		/// </summary>
 		/// <param name="zippedStream">The file stream of the zip file.</param>
