@@ -74,8 +74,10 @@ namespace Altaxo.Gui.Worksheet
 
 			if (initData)
 			{
+				//_doc.SourceFileName
+
 				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-				_importAsciiOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.AsciiImportOptions }, typeof(IMVCANController), UseDocument.Directly);
+				_importAsciiOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.AsciiImportOptions, new AsciiImportOptionsAnalysisDataProvider(this) }, typeof(IMVCANController), UseDocument.Directly);
 				_fileNames = new SelectableListNodeList();
 				foreach (var files in _doc.SourceFileNames)
 				{
@@ -139,6 +141,46 @@ namespace Altaxo.Gui.Worksheet
 			_view.SortFileNamesAscending -= EhSortFileNamesAscending;
 
 			base.DetachView();
+		}
+
+		private class AsciiImportOptionsAnalysisDataProvider : Altaxo.Gui.Serialization.Ascii.IAsciiImportOptionsAnalysisDataProvider
+		{
+			private AsciiImportDataSourceController _parent;
+
+			internal AsciiImportOptionsAnalysisDataProvider(AsciiImportDataSourceController parent)
+			{
+				_parent = parent;
+			}
+
+			public System.IO.Stream GetStreamForAnalysis()
+			{
+				try
+				{
+					var str = AsciiImporter.GetAsciiInputFileStream(_parent._doc.SourceFileName);
+					return str;
+				}
+				catch (Exception)
+				{
+				}
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Gets a file stream of the first file for analysis purposes. Returns null without throwing an exception if the file is not available or could not be opened.
+		/// </summary>
+		/// <returns></returns>
+		private System.IO.Stream GetFileStreamForAnalysis()
+		{
+			try
+			{
+				var str = AsciiImporter.GetAsciiInputFileStream(_doc.SourceFileName);
+				return str;
+			}
+			catch (Exception)
+			{
+			}
+			return null;
 		}
 
 		private void EhDeleteFileName()

@@ -71,11 +71,25 @@ namespace Altaxo.Gui.Serialization.Ascii
 		bool ImportMultipleAsciiVertically { get; set; }
 	}
 
+	/// <summary>
+	/// Supports getting a stream of analysis data. Any function using the <see cref="AsciiImportOptionsController"/> can create an object which implemnts
+	/// this interface, and providing this object as second argument to the InitializeDocument function of the controller.
+	/// </summary>
+	public interface IAsciiImportOptionsAnalysisDataProvider
+	{
+		/// <summary>
+		/// Gets a stream for analysis of the ASCII file. If the stream could not be opened (file unavailable), this function will return null without throwinga an exception.
+		/// </summary>
+		/// <returns></returns>
+		System.IO.Stream GetStreamForAnalysis();
+	}
+
 	[ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
 	[UserControllerForObject(typeof(AsciiImportOptions))]
 	public class AsciiImportOptionsController : MVCANControllerEditOriginalDocBase<AsciiImportOptions, IAsciiImportOptionsView>
 	{
 		private System.IO.Stream _asciiStreamData;
+		private IAsciiImportOptionsAnalysisDataProvider _asciiStreamDataProvider;
 
 		private SelectableListNodeList _separationStrategyList;
 		private SelectableListNodeList _numberFormatList;
@@ -100,6 +114,8 @@ namespace Altaxo.Gui.Serialization.Ascii
 		{
 			if (args != null && args.Length >= 2 && args[1] is System.IO.Stream)
 				_asciiStreamData = args[1] as System.IO.Stream;
+			if (args != null && args.Length >= 2 && args[1] is IAsciiImportOptionsAnalysisDataProvider)
+				_asciiStreamDataProvider = args[1] as IAsciiImportOptionsAnalysisDataProvider;
 
 			if (args != null && args.Length >= 3 && args[2] is AsciiDocumentAnalysisOptions)
 				_analysisOptions = (AsciiDocumentAnalysisOptions)args[2];
@@ -318,6 +334,18 @@ namespace Altaxo.Gui.Serialization.Ascii
 				_doc = AsciiDocumentAnalysis.Analyze(_doc, _asciiStreamData, _analysisOptions);
 				_asciiStreamData.Seek(0, System.IO.SeekOrigin.Begin);
 				Initialize(true); // getting Gui elements filled with the result of the analysis
+			}
+			else if (_asciiStreamDataProvider != null)
+			{
+				using (var str = _asciiStreamDataProvider.GetStreamForAnalysis())
+				{
+					if (str != null)
+					{
+						str.Seek(0, System.IO.SeekOrigin.Begin);
+						_doc = AsciiDocumentAnalysis.Analyze(_doc, str, _analysisOptions);
+						Initialize(true); // getting Gui elements filled with the result of the analysis
+					}
+				}
 			}
 		}
 

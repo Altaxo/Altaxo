@@ -32,7 +32,10 @@ namespace Altaxo.Main
 	/// <summary>
 	/// Represents a storage for text that can be used like a text console.
 	/// </summary>
-	public interface ITextBackedConsole : ICloneable
+	public interface ITextBackedConsole
+		:
+		ICloneable,
+		System.ComponentModel.INotifyPropertyChanged // notify if the Text property changed
 	{
 		/// <summary>Writes the specified string value to the text backed console.</summary>
 		/// <param name="value">The string to write. </param>
@@ -73,6 +76,10 @@ namespace Altaxo.Main
 	{
 		private object _synchronizingObject;
 		private StringBuilder _stb;
+
+		/// <summary>Support for binding to a view. At least this event must be called when the Text property has changed.</summary>
+		[field: NonSerialized]
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextBackedConsole"/> class with empty text.
@@ -198,6 +205,15 @@ namespace Altaxo.Main
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
+		}
+
+		protected override void OnChanged(EventArgs e)
+		{
+			var ev = PropertyChanged;
+			if (null != ev)
+				ev(this, new System.ComponentModel.PropertyChangedEventArgs("Text"));
+
+			base.OnChanged(e);
 		}
 	}
 }
