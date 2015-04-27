@@ -121,7 +121,7 @@ namespace Altaxo.Serialization.Ascii
 			// if the document contains repeating white spaces, it is a good candidate for
 			// fixed column width structure
 
-			if (_containsRepeatingWhiteSpaces)
+			if (_containsRepeatingWhiteSpaces || (_containsTabs && _containsSpaces))
 			{
 				List<List<int>> listOfStringWordBounds = new List<List<int>>();
 				foreach (string s in firstLines)
@@ -129,22 +129,33 @@ namespace Altaxo.Serialization.Ascii
 
 				if (!_containsTabs)
 				{
-					_fixedBoundaries = FindCommonWordBoundaries(listOfStringWordBounds);
+					int quality;
+					_fixedBoundaries = FindCommonWordBoundaries(listOfStringWordBounds, out quality);
 				}
 				else
 				{
+					int quality4;
+					int quality8;
 					List<List<int>> listOfTabbedWordBounds = new List<List<int>>();
 					for (int i = 0; i < firstLines.Count; i++)
 						listOfTabbedWordBounds.Add(GetTabbedWordBounds(firstLines[i], listOfStringWordBounds[i], 4));
-					List<int> bounds4 = FindCommonWordBoundaries(listOfTabbedWordBounds);
+					List<int> bounds4 = FindCommonWordBoundaries(listOfTabbedWordBounds, out quality4);
 
 					listOfTabbedWordBounds.Clear();
 					for (int i = 0; i < firstLines.Count; i++)
 						listOfTabbedWordBounds.Add(GetTabbedWordBounds(firstLines[i], listOfStringWordBounds[i], 8));
-					List<int> bounds8 = FindCommonWordBoundaries(listOfTabbedWordBounds);
+					List<int> bounds8 = FindCommonWordBoundaries(listOfTabbedWordBounds, out quality8);
 
-					_fixedBoundaries = (bounds4.Count > bounds8.Count) ? bounds4 : bounds8;
-					_recognizedTabSize = (bounds4.Count > bounds8.Count) ? 4 : 8;
+					if (quality4 > quality8)
+					{
+						_fixedBoundaries = bounds4;
+						_recognizedTabSize = 4;
+					}
+					else
+					{
+						_fixedBoundaries = bounds8;
+						_recognizedTabSize = 8;
+					}
 				}
 			}
 		}
@@ -226,9 +237,10 @@ namespace Altaxo.Serialization.Ascii
 		/// Finds common word boundaries. You have to provide the word bounds for a few lines of text.
 		/// </summary>
 		/// <param name="listOfTabbedWordBounds">Tabbed word bounds for some lines of text.</param>
+		/// <param name="qualityScore">Returns a number that gives some hint about the quality of the found word boundaries. The higher this number, the more lines have common word boundaries.</param>
 		/// <returns>List of tabbed (!) positions that are most common to the majority of lines. Note that the first token
 		/// always start at 0, the first element in the list is the position of the second token.</returns>
-		private List<int> FindCommonWordBoundaries(List<List<int>> listOfTabbedWordBounds)
+		private List<int> FindCommonWordBoundaries(List<List<int>> listOfTabbedWordBounds, out int qualityScore)
 		{
 			double relThreshold = 0.5;
 			int maxlen = MaxTabbedLineLength(listOfTabbedWordBounds);
@@ -236,13 +248,16 @@ namespace Altaxo.Serialization.Ascii
 			int[] inWords = new int[maxlen + 1];
 			int[] startOfWords = new int[maxlen + 1];
 			int[] endOfWords = new int[maxlen + 1];
+			int[] deepInWords = new int[maxlen + 1];
 
 			ReportInsideOfWords(listOfTabbedWordBounds, inWords);
 			ReportStartOfWords(listOfTabbedWordBounds, startOfWords);
 			ReportEndOfWords(listOfTabbedWordBounds, endOfWords);
+			ReportDeepInsideOfWords(listOfTabbedWordBounds, deepInWords);
 
 			List<int> bounds = new List<int>();
-			bool lastLeftJustified = false;
+			int? lastLeftJustifiedPreliminaryRightBoundary = null;
+
 			int unsharpBoundFields = 0;
 
 			// now search for significant boundaries and if left or right-justified
@@ -260,35 +275,40 @@ namespace Altaxo.Serialization.Ascii
 							break;
 					int rightdecrement = endOfWords[nRightPos];
 
-					// if rightDecrement is higher than leftincrement, then the words are rightjustified
-					// if not they are leftjustified
-
-					if (rightdecrement >= leftincrement && rightdecrement > nThresh)
+					if (rightdecrement >= leftincrement && rightdecrement > nThresh) // right justified because rightDecrement is higher than leftincrement
 					{
-						if (true == lastLeftJustified && bounds.Count > 0)
+						if (lastLeftJustifiedPreliminaryRightBoundary.HasValue) // last field was left justified, this field is right justified, so this is tricky
 						{
 							// we have to find the boundary between the last left-justified field and
 							// the right justified field now, best in my opinion is the minimum of the word count
+							// because often this the minimum is broad, we use the mean value of minLPos (start of the minimum) and minRPos (end of the minimum)
 							int min = int.MaxValue;
-							int minPos = nPos;
-							for (int k = bounds[bounds.Count - 1]; k < nRightPos; k++)
+							int minLPos = lastLeftJustifiedPreliminaryRightBoundary.Value;
+							int minRPos = nLeftPos - 1;
+							for (int k = lastLeftJustifiedPreliminaryRightBoundary.Value; k < nLeftPos; k++)
 							{
 								if (inWords[k] < min)
 								{
 									min = inWords[k];
-									minPos = k;
+									minLPos = k;
+									minRPos = k;
+								}
+								else if (inWords[k] == min)
+								{
+									minRPos = k;
 								}
 							}
-							bounds.Add(minPos);
+							bounds.Add((minLPos + minRPos) / 2);
 						}
+
 						bounds.Add(nRightPos);
-						lastLeftJustified = false;
+						lastLeftJustifiedPreliminaryRightBoundary = null;
 					}
 					else if (leftincrement > rightdecrement && leftincrement > nThresh) // left justified
 					{
-						if (lastLeftJustified == true)
+						if (lastLeftJustifiedPreliminaryRightBoundary.HasValue) // last field was left justified, this field is left justified -> use this field's left boundary for the boundary between previous field and this field
 							bounds.Add(nLeftPos);
-						lastLeftJustified = true;
+						lastLeftJustifiedPreliminaryRightBoundary = nRightPos; // and store this fields preliminary right boundary
 					}
 					else // if both is not the case, this is a strong indicator that we don't have fixed positions
 					{
@@ -302,6 +322,17 @@ namespace Altaxo.Serialization.Ascii
 					nPos++;
 				}
 			}
+
+			// calculate score of result
+			qualityScore = 0;
+			for (int i = 0; i < bounds.Count; ++i)
+			{
+				var pos = bounds[i];
+				qualityScore += startOfWords[pos];
+				qualityScore += endOfWords[pos];
+				qualityScore -= deepInWords[pos];
+			}
+
 			return bounds;
 		}
 
@@ -373,6 +404,29 @@ namespace Altaxo.Serialization.Ascii
 					int end = list[i + 1];
 
 					for (int k = start; k < end; k++)
+						counterArray[k]++;
+				}
+			}
+		}
+
+		/// <summary>
+		/// When our position is just deep* inside of a word, the counterArray is incremented at this tabbed position by one.
+		/// This is done for every position in all lines, meaning that if a word is present in all N lines at the same position,
+		/// the counterArray is incremented at this position by N.
+		/// *Deep mean the position is neither on the start of the word nor at the end of the word.
+		/// </summary>
+		/// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
+		/// <param name="counterArray">Integer array with the line counts for each tabbed position.</param>
+		private void ReportDeepInsideOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
+		{
+			foreach (List<int> list in listOfTabbedWordBounds)
+			{
+				for (int i = 0; i < list.Count; i += 2)
+				{
+					int start = list[i];
+					int end = list[i + 1];
+
+					for (int k = start + 1; k < (end - 1); k++)
 						counterArray[k]++;
 				}
 			}

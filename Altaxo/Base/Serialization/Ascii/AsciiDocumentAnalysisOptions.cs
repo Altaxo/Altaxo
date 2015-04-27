@@ -45,7 +45,7 @@ namespace Altaxo.Serialization.Ascii
 		/// </summary>
 		public static string SettingsStoragePath = "Altaxo.Options.Serialization.Ascii.DocumentAnalysisOptions";
 
-		public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Table\\AsciiAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable), GetDefaultSystemOptions);
+		public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions;
 
 		/// <summary>Default number of Ascii lines to analyze.</summary>
 		public const int DefaultNumberOfLinesToAnalyze = 100;
@@ -136,6 +136,11 @@ namespace Altaxo.Serialization.Ascii
 				stb.Length -= 1;
 
 			return stb.ToString();
+		}
+
+		static AsciiDocumentAnalysisOptions()
+		{
+			PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Table\\AsciiAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable), GetDefaultSystemOptions);
 		}
 
 		/// <summary>
@@ -237,7 +242,7 @@ namespace Altaxo.Serialization.Ascii
 			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.InstalledUICulture);
 		}
 
-		protected static AsciiDocumentAnalysisOptions GetDefaultSystemOptions()
+		public static AsciiDocumentAnalysisOptions GetDefaultSystemOptions()
 		{
 			var options = new AsciiDocumentAnalysisOptions();
 			InitializeDefaultSystemValues(options);

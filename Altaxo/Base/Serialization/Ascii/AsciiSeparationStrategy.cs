@@ -240,18 +240,23 @@ namespace Altaxo.Serialization.Ascii
 		{
 			int len = line.Length;
 			int stringPos = 0;
-			for (int i = 0; i < _startPositions.Length; i++)
+			for (int i = 0; i <= _startPositions.Length; i++)
 			{
 				int startStringPos = stringPos;
-				stringPos = _startPositions[i];
-				if (stringPos > len)
+				stringPos = i < _startPositions.Length ? _startPositions[i] : len;
+
+				if (stringPos < len)
+				{
+					yield return line.Substring(startStringPos, stringPos - startStringPos);
+				}
+				else if (stringPos >= len && startStringPos < len)
 				{
 					yield return line.Substring(startStringPos, len - startStringPos);
 					break;
 				}
 				else
 				{
-					yield return line.Substring(startStringPos, stringPos - startStringPos);
+					break;
 				}
 			}
 		}
@@ -366,10 +371,10 @@ namespace Altaxo.Serialization.Ascii
 			for (int i = 0; i < _startPositions.Length; i++)
 			{
 				int startStringPos = stringPos;
-				int tabbedend = _startPositions[i];
+				int tabbedEndPos = _startPositions[i];
 
 				// now we have to look for the string position corresponding to the tabbedend
-				for (; (tabbedPos < tabbedend) && (stringPos < len); stringPos++)
+				for (; (tabbedPos < tabbedEndPos) && (stringPos < len); stringPos++)
 				{
 					if (line[stringPos] == '\t')
 						tabbedPos += _tabSize - (tabbedPos % _tabSize);
@@ -377,8 +382,12 @@ namespace Altaxo.Serialization.Ascii
 						tabbedPos++;
 				}
 
-				yield return line.Substring(startStringPos, stringPos - startStringPos);
+				if ((stringPos - startStringPos) > 0)
+					yield return line.Substring(startStringPos, stringPos - startStringPos);
 			}
+
+			if (line.Length - stringPos > 0)
+				yield return line.Substring(stringPos, line.Length - stringPos);
 		}
 
 		public bool CopyFrom(object obj)

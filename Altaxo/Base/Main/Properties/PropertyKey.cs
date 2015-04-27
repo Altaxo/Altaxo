@@ -91,7 +91,7 @@ namespace Altaxo.Main.Properties
 		public PropertyKey(string guidString, string propertyName, PropertyLevel applicationLevel, Type applicationItemType, Func<T> CreateBuiltinValue)
 			: base(typeof(T), guidString, propertyName, applicationLevel, applicationItemType)
 		{
-			if (null != CreateBuiltinValue)
+			if (null != CreateBuiltinValue && null != Current.PropertyService)
 			{
 				T value = CreateBuiltinValue();
 				Current.PropertyService.BuiltinSettings.SetValue(this, value);
