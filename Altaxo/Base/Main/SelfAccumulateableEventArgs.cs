@@ -43,6 +43,7 @@ namespace Altaxo.Main
 
 		/// <summary>
 		/// Override to ensure that only one instance of <see cref="SelfAccumulateableEventArgs"/> is contained in the accumulated event args collection.
+		/// You have to override GetHashCode in the following way: two instances of the same type, which can be merged together, should return the same hash code (and Equals should then return true).
 		/// </summary>
 		/// <returns>
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
@@ -54,6 +55,7 @@ namespace Altaxo.Main
 
 		/// <summary>
 		/// Override to ensure that only one instance of <see cref="SelfAccumulateableEventArgs"/> is contained in the accumulated event args collection.
+		/// You have to override Equals in the following way: two instances of the same type, which can be merged together, should return true (and GetHashCode should then return the same value).
 		/// </summary>
 		/// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
 		/// <returns>

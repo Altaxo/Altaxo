@@ -880,7 +880,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			_plotItems.Add(item);
 
 			OnCollectionChanged();
-			EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange));
 		}
 
 		public void AddRange(IEnumerable<IGPlotItem> items)
@@ -895,7 +894,6 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 
 			OnCollectionChanged();
-			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public void ClearPlotItems()
@@ -944,13 +942,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <summary>
 		/// This method must be called, if plot item members are added or removed to this collection.
 		/// </summary>
-		protected virtual void OnCollectionChanged()
-		{
-			_cachedPlotItemsFlattened = null;
-
-			if (_parent is PlotItemCollection)
-				((PlotItemCollection)_parent).OnCollectionChanged();
-		}
 
 		protected void FillPlotItemList(IList<IGPlotItem> list)
 		{
@@ -1078,6 +1069,25 @@ namespace Altaxo.Graph.Gdi.Plot
 		public void EhPlotGroups_Changed(object sender, EventArgs e)
 		{
 			EhSelfChanged(EventArgs.Empty);
+		}
+
+		protected virtual void OnCollectionChanged()
+		{
+			_cachedPlotItemsFlattened = null; // invalidate _cachedPlotItemsFlattened
+			EhSelfChanged(new SimpleCollectionChangedEventArgs(this)); // notify items down in the hierarchy to invalidate _cachedPlotItemsFlattened
+			EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange)); // notify that possibly the boundaries have been changed
+		}
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			var e1 = e as SimpleCollectionChangedEventArgs;
+			if (null != e1)
+			{
+				// if in items above the collection has changed, the flattened plot items get invalid
+				_cachedPlotItemsFlattened = null;
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
 		}
 
 		#endregion Event Handling

@@ -380,6 +380,7 @@
     <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />
     <Compile Include="Main\IProjectItem.cs" />
+    <Compile Include="Main\SimpleCollectionChangedEventArgs.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNode.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNodeWithEventArgs.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNodeWithSetOfEventArgs.cs" />
