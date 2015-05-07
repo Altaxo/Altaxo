@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi
 
 	public class HostLayer
 		:
-		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
+		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		ITreeListNodeWithParent<HostLayer>,
 		IGraphicBase,
 		Altaxo.Main.INamedObjectCollection
@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Gdi
 			using (var suspendToken = SuspendGetToken())
 			{
 				InternalCopyFrom(from, options);
-				_accumulatedEventData = EventArgs.Empty; // make sure that change is called after suspend
+				EhSelfChanged(EventArgs.Empty);	 // make sure that change is called after suspend
 			}
 		}
 
@@ -1252,11 +1252,6 @@ namespace Altaxo.Graph.Gdi
 				PositionChanged(this, new System.EventArgs());
 
 			EhSelfChanged(EventArgs.Empty);
-		}
-
-		protected override void AccumulateChangeData(object sender, EventArgs e)
-		{
-			_accumulatedEventData = EventArgs.Empty;
 		}
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)

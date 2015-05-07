@@ -25,14 +25,41 @@
 using Altaxo.Collections;
 using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AltaxoTest.Collections
 {
 	[TestFixture]
 	internal class TestPriorityQueue_KeyValue
 	{
+		#region Helpers
+
+		private static ConcurrentQueue<int> GetRandomListOfDistinctIntegers(int numberOfEntries)
+		{
+			var list = new ConcurrentQueue<int>();
+			var hash = new HashSet<int>();
+			var rnd = new Random();
+
+			int numEntry = 0;
+
+			while (numEntry < numberOfEntries)
+			{
+				var n = rnd.Next();
+				if (!hash.Contains(n))
+				{
+					list.Enqueue(n);
+					++numEntry;
+				}
+			}
+
+			return list;
+		}
+
+		#endregion Helpers
+
 		[Test]
 		public void TestOrder()
 		{
@@ -56,6 +83,85 @@ namespace AltaxoTest.Collections
 			}
 
 			Assert.AreEqual(0, queue.Count);
+		}
+
+		[Test]
+		public void Test002_Concurrency()
+		{
+			const int numberOfItems = 100000;
+
+			var sourceItems = GetRandomListOfDistinctIntegers(numberOfItems);
+			var sourceItemsSorted = new List<int>(sourceItems);
+			sourceItemsSorted.Sort();
+
+			var destinationItems = new ConcurrentBag<int>();
+
+			var queueToTest = new ConcurrentTokenizedPriorityQueue<int, int, int>(1, x => x + 1);
+
+			// 2 Enqueue tasks and 2 Dequeue tasks
+			Parallel.Invoke(new Action[]
+			{
+				// Enqueue
+ 				() =>
+				{
+					int item, token;
+					while (sourceItems.TryDequeue(out item))
+						queueToTest.Enqueue(item, item + 13, out token);
+				},
+				// Enqueue
+				() =>
+				{
+					int item, token;
+					while (sourceItems.TryDequeue(out item))
+						queueToTest.Enqueue(item, item + 13, out token);
+				},
+				// Dequeue
+				()=>
+					{
+						int key, value, toke;
+						int counter = 0;
+						while(counter<100)
+						{
+						while(queueToTest.TryDequeue(out key, out value, out toke))
+						{
+							Assert.AreEqual(key + 13, value);
+							destinationItems.Add(key);
+							counter = 0;
+						}
+						System.Threading.Thread.Sleep(10);
+						++counter;
+						}
+					},
+				// Dequeue
+					()=>
+					{
+						int key, value, toke;
+						int counter = 0;
+						while(counter<100)
+						{
+						while(queueToTest.TryDequeue(out key, out value, out toke))
+						{
+							Assert.AreEqual(key + 13, value);
+							destinationItems.Add(key);
+							counter = 0;
+						}
+						System.Threading.Thread.Sleep(10);
+						++counter;
+						}
+					}
+			});
+
+			Assert.AreEqual(0, sourceItems.Count, "All source items should be moved into the queueToTest and then to the destinationItems collection");
+			Assert.AreEqual(0, queueToTest.Count, "Queue should be empty, all items should be moved into the destinationItems collection");
+			Assert.AreEqual(numberOfItems, destinationItems.Count);
+			var list = new List<int>(destinationItems);
+
+			list.Sort();
+
+			for (int i = 0; i < numberOfItems; ++i)
+			{
+				Assert.AreEqual(sourceItemsSorted[i], list[i]);
+			}
 		}
 	}
 }

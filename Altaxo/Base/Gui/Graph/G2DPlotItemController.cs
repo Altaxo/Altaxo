@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Graph
 				}
 			}
 
-			ApplyPlotGroupView();
+			ApplyPlotGroupView(disposeController);
 
 			applyResult = true;
 
@@ -192,9 +192,9 @@ namespace Altaxo.Gui.Graph
 			return ApplyEnd(applyResult, disposeController);
 		}
 
-		private void ApplyPlotGroupView()
+		private void ApplyPlotGroupView(bool disposeController)
 		{
-			_plotGroupController.Apply(false);
+			_plotGroupController.Apply(disposeController);
 			_groupStyles.CopyFrom((PlotGroupStyleCollection)_plotGroupController.ModelObject);
 
 			// now distribute the new style to the other plot items
