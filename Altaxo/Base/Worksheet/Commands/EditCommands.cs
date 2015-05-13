@@ -352,23 +352,25 @@ namespace Altaxo.Worksheet.Commands
 		public static void CopyToClipboard(IWorksheetController dg)
 		{
 			Altaxo.Data.DataTable dt = dg.DataTable;
-			var dao = Current.Gui.GetNewClipboardDataObject();
+			var dataObject = Current.Gui.GetNewClipboardDataObject();
 
 			if (dg.AreDataCellsSelected)
 			{
-				WriteAsciiToClipBoardIfDataCellsSelected(dg, dao);
+				WriteAsciiToClipBoardIfDataCellsSelected(dg, dataObject);
 			}
 			else if (dg.ArePropertyCellsSelected && !(dg.AreDataCellsSelected))
 			{
-				WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(dg, dao);
+				WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(dg, dataObject);
 			}
 
 			if (dg.AreColumnsOrRowsSelected)
 			{
 				// copy the data as table with the selected columns
 				var tablememento = new Altaxo.Data.DataTable.ClipboardMemento(dg.DataTable, dg.SelectedDataColumns, dg.SelectedDataRows, dg.SelectedPropertyColumns, dg.SelectedPropertyRows);
-				Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToClipboard("Altaxo.Data.DataTable.ClipboardMemento", tablememento);
+				Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToDataObject("Altaxo.Data.DataTable.ClipboardMemento", tablememento, dataObject);
 			}
+
+			Current.Gui.SetClipboardDataObject(dataObject, true);
 		}
 
 		/// <summary>

@@ -1148,7 +1148,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public void CutSelectedObjectsToClipboard()
 		{
-			var dao = Current.Gui.GetNewClipboardDataObject();
 			var objectList = new ArrayList();
 			var notSerialized = new List<IHitTestObject>();
 
