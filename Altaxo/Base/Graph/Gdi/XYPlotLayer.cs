@@ -1030,12 +1030,18 @@ namespace Altaxo.Graph.Gdi
 					_scales.X.DataBoundsObject.Reset();
 					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						if (pa is IXBoundsHolder)
+						var paXB = pa as IXBoundsHolder;
+						if (null != paXB)
 						{
-							// merge the bounds with x and yAxis
-							((IXBoundsHolder)pa).MergeXBoundsInto(_scales.X.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+							using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
+							{
+								// merge the bounds with x and yAxis
+								paXB.MergeXBoundsInto(_scales.X.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+								paToken.ResumeSilently(); // resume the plot item silently here in order not to create further BoundaryChangedEventArgs
+							}
 						}
 					}
+
 					suspendToken.Resume();
 				}
 			}
@@ -1101,10 +1107,16 @@ namespace Altaxo.Graph.Gdi
 					_scales.Y.DataBoundsObject.Reset();
 					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						if (pa is IYBoundsHolder)
+						var paYB = pa as IYBoundsHolder;
+						if (null != paYB)
 						{
-							// merge the bounds with x and yAxis
-							((IYBoundsHolder)pa).MergeYBoundsInto(_scales.Y.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+							using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
+							{
+								// merge the bounds with x and yAxis
+								paYB.MergeYBoundsInto(_scales.Y.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+
+								paToken.ResumeSilently(); // resume the plot item silently here in order not to create further BoundaryChangedEventArgs
+							}
 						}
 					}
 					suspendToken.Resume();
