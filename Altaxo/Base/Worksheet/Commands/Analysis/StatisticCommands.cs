@@ -54,5 +54,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		}
 
 		#endregion Statistical commands
+
+		public static void CreateHistogram(WorksheetController ctrl)
+		{
+			var table = ctrl.DataTable.CreateHistogramOnColumns(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
+
+			if (!Current.Project.DataTableCollection.Contains(table))
+				Current.Project.DataTableCollection.Add(table);
+
+			// create a new worksheet without any columns
+			Current.ProjectService.CreateNewWorksheet(table);
+		}
 	}
 }

@@ -817,6 +817,14 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+	public class AnalysisStatisticsCreateHistogram : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.StatisticCommands.CreateHistogram(ctrl);
+		}
+	}
+
 	public class AnalysisMultiplyColumnsToMatrix : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
