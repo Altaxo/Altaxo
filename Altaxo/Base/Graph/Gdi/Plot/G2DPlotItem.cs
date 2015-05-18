@@ -117,31 +117,44 @@ namespace Altaxo.Graph.Gdi.Plot
 		public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
 		{
 			Processed2DPlotData pdata = GetRangesAndPoints(layer);
-			_localGroups = new PlotGroupStyleCollection() { ParentObject = this };
+			if (null == _localGroups)
+				_localGroups = new PlotGroupStyleCollection() { ParentObject = this };
 
-			// first add missing local group styles
-			_plotStyles.CollectLocalGroupStyles(externalGroups, _localGroups);
+			using (var suspendToken = _localGroups.SuspendGetToken())
+			{
+				_localGroups.Clear();
 
-			// for the newly created group styles BeginPrepare must be called
-			_localGroups.BeginPrepare();
+				// first add missing local group styles
+				_plotStyles.CollectLocalGroupStyles(externalGroups, _localGroups);
 
-			// now prepare the groups
-			_plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+				// for the newly created group styles BeginPrepare must be called
+				_localGroups.BeginPrepare();
 
-			// for the group styles in the local group, PrepareStep and EndPrepare must be called,
-			_localGroups.PrepareStep();
-			_localGroups.EndPrepare();
+				// now prepare the groups
+				_plotStyles.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
+
+				// for the group styles in the local group, PrepareStep and EndPrepare must be called,
+				_localGroups.PrepareStep();
+				_localGroups.EndPrepare();
+
+				suspendToken.ResumeSilently(); // we are not interested in changes in the _localGroup
+			}
 		}
 
 		public override void ApplyGroupStyles(PlotGroupStyleCollection externalGroups)
 		{
-			// for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
-			_localGroups.BeginApply();
+			using (var suspendToken = _localGroups.SuspendGetToken())
+			{
+				// for externalGroups, BeginApply was called already in the PlotItemCollection, for localGroups it has to be called here
+				_localGroups.BeginApply();
 
-			_plotStyles.ApplyGroupStyles(externalGroups, _localGroups);
+				_plotStyles.ApplyGroupStyles(externalGroups, _localGroups);
 
-			// for externalGroups, EndApply is called later in the PlotItemCollection, for localGroups it has to be called here
-			_localGroups.EndApply();
+				// for externalGroups, EndApply is called later in the PlotItemCollection, for localGroups it has to be called here
+				_localGroups.EndApply();
+
+				suspendToken.ResumeSilently(); // we are not interested in changes in the _localGroup
+			}
 		}
 
 		/// <summary>

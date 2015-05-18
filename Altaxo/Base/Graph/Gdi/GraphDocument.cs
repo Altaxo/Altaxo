@@ -193,6 +193,8 @@ typeof(GraphDocument),
 		[NonSerialized]
 		private PointD2D _cachedRootLayerSize;
 
+		private bool _isPaintPreprocessingActive;
+
 		#region "Serialization"
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 0)]
@@ -681,6 +683,8 @@ typeof(GraphDocument),
 		/// to the top left corner of the printable area before calling this routine.</remarks>
 		public void DoPaint(Graphics g, bool bForPrinting)
 		{
+			const int MaxPaintPreProcessingRetries = 10;
+
 			if (System.Threading.Thread.CurrentThread == _paintThread)
 				throw new InvalidOperationException("DoPaint is called reentrant (i.e. from the same thread that is already executing DoPaint");
 
@@ -695,12 +699,37 @@ typeof(GraphDocument),
 					// First set the current thread's document culture
 					_paintThread.CurrentCulture = this.GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null).Culture;
 
+					try
+					{
+						_isPaintPreprocessingActive = true;
+
+						for (int ithRetry = 1; ithRetry <= 10; ++ithRetry)
+						{
+							using (var suspendToken = SuspendGetToken())
+							{
+								AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
+
+								RootLayer.PaintPreprocessing(this);
+
+								if (this._suspendTokensOfChilds == null || _suspendTokensOfChilds.Count == 0)
+								{
+									suspendToken.Resume();
+									break;
+								}
+								suspendToken.Resume();
+							}
+#if DEBUG
+							Current.Console.WriteLine("Warning: MaxPaintPreProcessingRetries exceeded during painting of graph {0}.", this.Name);
+#endif
+						}
+					}
+					finally
+					{
+						_isPaintPreprocessingActive = false;
+					}
+
 					using (var suspendToken = SuspendGetToken())
 					{
-						AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
-
-						RootLayer.PaintPreprocessing(this);
-
 						RootLayer.Paint(g, bForPrinting);
 
 						RootLayer.PaintPostprocessing();
@@ -850,7 +879,8 @@ typeof(GraphDocument),
 				OnSizeChanged();
 			}
 
-			base.OnChanged(e);
+			if (!_isPaintPreprocessingActive)
+				base.OnChanged(e);
 		}
 
 		#endregion Change event handling

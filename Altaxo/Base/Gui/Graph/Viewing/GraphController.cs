@@ -73,10 +73,13 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private NGTreeNode _layerStructure;
 
+		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+
 		#region Constructors
 
 		protected GraphController()
 		{
+			InitTriggerBasedUpdate();
 		}
 
 		/// <summary>
@@ -88,6 +91,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (null == graphdoc)
 				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
 
+			InitTriggerBasedUpdate();
 			InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
 		}
 
@@ -144,6 +148,15 @@ namespace Altaxo.Gui.Graph.Viewing
 				_doc.RootLayer,
 				new List<int>(),
 				(sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
+		}
+
+		private void InitTriggerBasedUpdate()
+		{
+			_triggerBasedUpdate = new Altaxo.Main.TriggerBasedUpdate(Current.TimerQueue);
+			_triggerBasedUpdate.MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
+			_triggerBasedUpdate.MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
+			_triggerBasedUpdate.MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1);
+			_triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
 		}
 
 		#region Properties
@@ -672,12 +685,19 @@ namespace Altaxo.Gui.Graph.Viewing
 				return;
 			}
 
-			// if something changed on the graph, make sure that the layer and plot number reflect this changed
+			_triggerBasedUpdate.Trigger();
+		}
+
+		private void EhUpdateByTimerQueue()
+		{
+			// if something changed on the graph, make sure that the layer and plot number reflect this change
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
 
 			if (null != _view)
+			{
 				_view.InvalidateCachedGraphBitmapAndRepaint(); // this function is non-Gui thread safe
+			}
 		}
 
 		/// <summary>
@@ -1375,6 +1395,12 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public void Dispose()
 		{
+			if (null != _triggerBasedUpdate)
+			{
+				_triggerBasedUpdate.Dispose();
+				_triggerBasedUpdate = null;
+			}
+
 			if (_view is IDisposable)
 				((IDisposable)_view).Dispose();
 
