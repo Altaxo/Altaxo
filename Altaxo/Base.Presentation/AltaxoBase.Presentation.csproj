@@ -141,6 +141,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\AscendingIntegerCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -898,6 +902,9 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\ItemsControlExtensions.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\TypeUtilities.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
+    <Compile Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml.cs">
+      <DependentUpon>HistogramCreationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\TimeSpanTextBox.cs" />
     <Compile Include="Gui\Common\DateTimeTextBox.cs" />
     <Compile Include="Gui\Common\TimeSpanConverter.cs" />

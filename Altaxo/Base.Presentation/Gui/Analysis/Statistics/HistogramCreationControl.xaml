@@ -1,0 +1,123 @@
+﻿<UserControl x:Class="Altaxo.Gui.Analysis.Statistics.HistogramCreationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" MinWidth="40" />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+
+		<GroupBox Header="Errors" Grid.ColumnSpan="2" Grid.Row="0">
+			<ListBox x:Name="_guiErrors" />
+		</GroupBox>
+		<GroupBox Header="Warnings" Grid.ColumnSpan="2" Grid.Row="1">
+			<ListBox x:Name="_guiWarnings" />
+		</GroupBox>
+
+		<GroupBox Header="Info" Grid.ColumnSpan="2" Grid.Row="3">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+				<Label Content="Total number of values:" Grid.Row="0" />
+				<axogc:NumericDoubleTextBox x:Name="_guiTotalNumberOfValues" IsEnabled="False" Grid.Row="0" Grid.Column="1" />
+				<Label Content="Number of NaN values:" Grid.Row="2" />
+				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfNaNValues" IsEnabled="False" Grid.Row="2" Grid.Column="1" />
+				<Label Content="Number of infinite values:" Grid.Row="4" />
+				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfInfiniteValues" IsEnabled="False" Grid.Row="4" Grid.Column="1" />
+				<Label Content="Minimum value:" Grid.Row="6" />
+				<axogc:NumericDoubleTextBox x:Name="_guiMinimumValue" IsEnabled="False" Grid.Row="6" Grid.Column="1" />
+				<Label Content="Maximum value:" Grid.Row="8" />
+				<axogc:NumericDoubleTextBox x:Name="_guiMaximumValue" IsEnabled="False" Grid.Row="8" Grid.Column="1" />
+				<Label Content="Total number of values:" />
+			</Grid>
+		</GroupBox>
+
+		<CheckBox x:Name="_guiIgnoreNaNValues" Content="Ignore NaN values" Grid.Row="5" />
+		<CheckBox x:Name="_guiIgnoreInfiniteValues" Content="Ignore infinite values" Grid.Row="7" />
+		<DockPanel Grid.Row="9">
+			<CheckBox x:Name="_guiIgnoreValuesBelowLowerBoundary" Content="Ignore values " DockPanel.Dock="Left" />
+			<ToggleButton x:Name="_guiLowerBoundaryIsExclusive" Grid.Row="7" Grid.Column="0" DockPanel.Dock="Right">
+				<ToggleButton.Style>
+					<Style TargetType="ToggleButton">
+						<Style.Triggers>
+							<Trigger Property="IsChecked" Value="true">
+								<Setter Property="Content" Value="&lt;" />
+							</Trigger>
+							<Trigger Property="IsChecked" Value="false">
+								<Setter Property="Content" Value="&lt;=" />
+							</Trigger>
+						</Style.Triggers>
+					</Style>
+				</ToggleButton.Style>
+			</ToggleButton>
+		</DockPanel>
+		<axogc:NumericDoubleTextBox x:Name="_guiLowerBoundaryToIgnore" Grid.Row="9" Grid.Column="1" />
+
+		<DockPanel Grid.Row="11">
+			<CheckBox x:Name="_guiIgnoreValuesAboveUpperBoundary" Content="Ignore values " DockPanel.Dock="Left" />
+			<ToggleButton x:Name="_guiUpperBoundaryIsExclusive" Grid.Row="7" Grid.Column="0" DockPanel.Dock="Right">
+				<ToggleButton.Style>
+					<Style TargetType="ToggleButton">
+						<Style.Triggers>
+							<Trigger Property="IsChecked" Value="true">
+								<Setter Property="Content" Value="&gt;" />
+							</Trigger>
+							<Trigger Property="IsChecked" Value="false">
+								<Setter Property="Content" Value="&gt;=" />
+							</Trigger>
+						</Style.Triggers>
+					</Style>
+				</ToggleButton.Style>
+			</ToggleButton>
+		</DockPanel>
+		<axogc:NumericDoubleTextBox x:Name="_guiUpperBoundaryToIgnore"  Grid.Row="11" Grid.Column="1" />
+		<StackPanel Orientation="Horizontal" Grid.Row="13" Grid.ColumnSpan="2">
+			<RadioButton x:Name="_guiUseAutomaticBinning" Content=" Use automatic binning " />
+			<RadioButton x:Name="_guiUseUserDefinedBinning" Content=" Use user defined binning " />
+		</StackPanel>
+		<Label Content="Binning type:" Grid.Row="15" />
+		<ComboBox x:Name="_guiBinningType" Grid.Row="15" Grid.Column="1" />
+		<Border x:Name="_guiBinningControlHost" Grid.Row="17" Grid.ColumnSpan="2" />
+	</Grid>
+</UserControl>

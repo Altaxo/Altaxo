@@ -97,6 +97,24 @@ namespace Altaxo.Data
 		}
 	}
 
+	public class HistogramCreationInformation
+	{
+		private List<string> _warnings = new List<string>();
+		private List<string> _errors = new List<string>();
+
+		private int NumberOfValues { get; set; }
+
+		private int NumberOfNaNValues { get; set; }
+
+		private int NumberOfInfiniteValues { get; set; }
+
+		private double MinimumValue { get; set; }
+
+		private double MaximumValue { get; set; }
+
+		private HistogramCreationOptions CreationOptions { get; set; }
+	}
+
 	public struct Bin
 	{
 		private double _lowerBound;
