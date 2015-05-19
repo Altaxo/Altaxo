@@ -102,17 +102,21 @@ namespace Altaxo.Data
 		private List<string> _warnings = new List<string>();
 		private List<string> _errors = new List<string>();
 
-		private int NumberOfValues { get; set; }
+		public IEnumerable<string> Warnings { get { return _warnings; } }
 
-		private int NumberOfNaNValues { get; set; }
+		public IEnumerable<string> Errors { get { return _errors; } }
 
-		private int NumberOfInfiniteValues { get; set; }
+		public int NumberOfValues { get; set; }
 
-		private double MinimumValue { get; set; }
+		public int NumberOfNaNValues { get; set; }
 
-		private double MaximumValue { get; set; }
+		public int NumberOfInfiniteValues { get; set; }
 
-		private HistogramCreationOptions CreationOptions { get; set; }
+		public double MinimumValue { get; set; }
+
+		public double MaximumValue { get; set; }
+
+		public HistogramCreationOptions CreationOptions { get; set; }
 	}
 
 	public struct Bin
