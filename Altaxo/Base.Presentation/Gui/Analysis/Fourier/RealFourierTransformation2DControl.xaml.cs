@@ -45,6 +45,18 @@ namespace Altaxo.Gui.Analysis.Fourier
 			GuiHelper.InitializeChoicePanel<RadioButton>(_guiOutputQuantities, list);
 		}
 
+		public bool IsUserDefinedXIncrement
+		{
+			get
+			{
+				return true == _guiIsUserDefinedRowIncrement.IsChecked;
+			}
+			set
+			{
+				_guiIsUserDefinedRowIncrement.IsChecked = value;
+			}
+		}
+
 		public double XIncrement
 		{
 			get
@@ -54,6 +66,18 @@ namespace Altaxo.Gui.Analysis.Fourier
 			set
 			{
 				_guiXIncrement.SelectedValue = value;
+			}
+		}
+
+		public bool IsUserDefinedYIncrement
+		{
+			get
+			{
+				return true == _guiIsUserDefinedColumnIncrement.IsChecked;
+			}
+			set
+			{
+				_guiIsUserDefinedColumnIncrement.IsChecked = value;
 			}
 		}
 

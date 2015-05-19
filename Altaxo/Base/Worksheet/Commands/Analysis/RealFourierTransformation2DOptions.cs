@@ -41,7 +41,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		// Input options
 		protected double _rowIncrementValue;
 
+		protected bool _isUserDefinedRowIncrementValue;
+
 		protected double _columnIncrementValue;
+		protected bool _isUserDefinedColumnIncrementValue;
+
 		protected double? _replacementValueForNaNMatrixElements;
 		protected double? _replacementValueForInfiniteMatrixElements;
 		protected int? _dataPretreatmentCorrectionOrder;
@@ -143,7 +147,84 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		#endregion Version 0
 
+		#region Version 1
+
+		/// <summary>
+		/// 2015-05-19 Added IsUserDefinedRowIncrementValue and IsUserDefinedColumnIncrementValue
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RealFourierTransformation2DOptions), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (RealFourierTransformation2DOptions)obj;
+
+				info.AddValue("IsUserDefinedRowIncrementValue", s._isUserDefinedRowIncrementValue);
+				info.AddValue("RowIncrementValue", s._rowIncrementValue);
+				info.AddValue("IsUserDefinedColumnIncrementValue", s._isUserDefinedColumnIncrementValue);
+				info.AddValue("ColumnIncrementValue", s._columnIncrementValue);
+				info.AddValue("ReplacementValueForNaNMatrixElements", s._replacementValueForNaNMatrixElements);
+				info.AddValue("ReplacementValueForInfiniteMatrixElements", s._replacementValueForInfiniteMatrixElements);
+				info.AddValue("DataPretreatmentCorrectionOrder", s._dataPretreatmentCorrectionOrder);
+				info.AddValue("FourierWindow", s._fourierWindow);
+
+				info.AddEnum("KindOfOutputResult", s._kindOfOutputResult);
+				info.AddValue("CenterResult", s._centerResult);
+				info.AddValue("ResultFractionOfRows", s._resultFractionOfRows);
+				info.AddValue("ResultFractionOfColumns", s._resultFractionOfColumns);
+
+				info.AddValue("OutputFrequencyHeaderColumns", s._outputFrequencyHeaderColumns);
+				info.AddValue("FrequencyRowHeaderColumnName", s._frequencyRowHeaderColumnName);
+				info.AddValue("FrequencyColumnHeaderColumnName", s._frequencyColumnHeaderColumnName);
+
+				info.AddValue("OutputPeriodHeaderColumns", s._outputPeriodHeaderColumns);
+				info.AddValue("PeriodRowHeaderColumnName", s._periodRowHeaderColumnName);
+				info.AddValue("PeriodColumnHeaderColumnName", s._periodColumnHeaderColumnName);
+			}
+
+			protected virtual RealFourierTransformation2DOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new RealFourierTransformation2DOptions() : (RealFourierTransformation2DOptions)o);
+
+				s._isUserDefinedRowIncrementValue = info.GetBoolean("IsUserDefinedRowIncrementValue");
+				s._rowIncrementValue = info.GetDouble("RowIncrementValue");
+				s._isUserDefinedColumnIncrementValue = info.GetBoolean("IsUserDefinedColumnIncrementValue");
+				s._columnIncrementValue = info.GetDouble("ColumnIncrementValue");
+				s._replacementValueForNaNMatrixElements = info.GetNullableDouble("ReplacementValueForNaNMatrixElements");
+				s._replacementValueForInfiniteMatrixElements = info.GetNullableDouble("ReplacementValueForInfiniteMatrixElements");
+				s._dataPretreatmentCorrectionOrder = info.GetNullableInt32("DataPretreatmentCorrectionOrder");
+				s._fourierWindow = (Altaxo.Calc.Fourier.Windows.IWindows2D)info.GetValue("FourierWindow", s);
+
+				s._kindOfOutputResult = (RealFourierTransformationOutputKind)info.GetEnum("KindOfOutputResult", typeof(RealFourierTransformationOutputKind));
+				s._centerResult = info.GetBoolean("CenterResult");
+				s._resultFractionOfRows = info.GetDouble("ResultFractionOfRows");
+				s._resultFractionOfColumns = info.GetDouble("ResultFractionOfColumns");
+
+				s._outputFrequencyHeaderColumns = info.GetBoolean("OutputFrequencyHeaderColumns");
+				s._frequencyRowHeaderColumnName = info.GetString("FrequencyRowHeaderColumnName");
+				s._frequencyColumnHeaderColumnName = info.GetString("FrequencyColumnHeaderColumnName");
+
+				s._outputPeriodHeaderColumns = info.GetBoolean("OutputPeriodHeaderColumns");
+				s._periodRowHeaderColumnName = info.GetString("PeriodRowHeaderColumnName");
+				s._periodColumnHeaderColumnName = info.GetString("PeriodColumnHeaderColumnName");
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 1
+
 		#endregion Serialization
+
+		public bool IsUserDefinedRowIncrementValue { get { return _isUserDefinedRowIncrementValue; } set { _isUserDefinedRowIncrementValue = value; } }
+
+		public bool IsUserDefinedColumnIncrementValue { get { return _isUserDefinedColumnIncrementValue; } set { _isUserDefinedColumnIncrementValue = value; } }
 
 		public double RowIncrementValue { get { return _rowIncrementValue; } set { SetMemberAndRaiseSelfChanged(ref _rowIncrementValue, value); } }
 

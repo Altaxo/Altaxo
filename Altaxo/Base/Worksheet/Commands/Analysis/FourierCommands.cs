@@ -88,8 +88,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				double columnIncrementValue; string columnIncrementMessage;
 				proxy.TryGetColumnHeaderIncrement(out columnIncrementValue, out columnIncrementMessage);
 
+				options.IsUserDefinedRowIncrementValue = false;
 				options.RowIncrementValue = rowIncrementValue;
 				options.RowIncrementMessage = rowIncrementMessage;
+
+				options.IsUserDefinedColumnIncrementValue = false;
 				options.ColumnIncrementValue = columnIncrementValue;
 				options.ColumnIncrementMessage = columnIncrementMessage;
 			}
@@ -131,6 +134,24 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		/// <exception cref="System.NotImplementedException">Data pretreatment has an order which is not implemented yet.</exception>
 		public static void ExecuteFouriertransformation2D(DataTableMatrixProxy matrixProxy, RealFourierTransformation2DOptions options, DataTable destinationTable)
 		{
+			// preparation step
+
+			if (!options.IsUserDefinedRowIncrementValue)
+			{
+				double rowIncrementValue; string rowIncrementMessage;
+				matrixProxy.TryGetRowHeaderIncrement(out rowIncrementValue, out rowIncrementMessage);
+				options.RowIncrementValue = rowIncrementValue;
+				options.RowIncrementMessage = rowIncrementMessage;
+			}
+
+			if (!options.IsUserDefinedColumnIncrementValue)
+			{
+				double columnIncrementValue; string columnIncrementMessage;
+				matrixProxy.TryGetColumnHeaderIncrement(out columnIncrementValue, out columnIncrementMessage);
+				options.ColumnIncrementValue = columnIncrementValue;
+				options.ColumnIncrementMessage = columnIncrementMessage;
+			}
+
 			var matrix = matrixProxy.GetMatrix((r, c) => new Altaxo.Calc.LinearAlgebra.DoubleMatrixInArray1DRowMajorRepresentation(r, c));
 
 			var fft = new Altaxo.Calc.Fourier.RealFourierTransformation2D(matrix, true);

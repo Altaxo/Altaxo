@@ -33,9 +33,13 @@ namespace Altaxo.Gui.Analysis.Fourier
 {
 	public interface IRealFourierTransformation2DView
 	{
+		bool IsUserDefinedXIncrement { get; set; }
+
 		double XIncrement { get; set; }
 
 		void SetXIncrementWarning(string warning);
+
+		bool IsUserDefinedYIncrement { get; set; }
 
 		double YIncrement { get; set; }
 
@@ -102,8 +106,12 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 			if (_view != null)
 			{
+				_view.IsUserDefinedXIncrement = _doc.IsUserDefinedRowIncrementValue;
 				_view.XIncrement = _doc.RowIncrementValue;
+
+				_view.IsUserDefinedYIncrement = _doc.IsUserDefinedColumnIncrementValue;
 				_view.YIncrement = _doc.ColumnIncrementValue;
+
 				_view.SetXIncrementWarning(_doc.RowIncrementMessage);
 
 				_view.SetYIncrementWarning(_doc.ColumnIncrementMessage);
@@ -159,7 +167,10 @@ namespace Altaxo.Gui.Analysis.Fourier
 
 		public override bool Apply(bool disposeController)
 		{
+			_doc.IsUserDefinedRowIncrementValue = _view.IsUserDefinedXIncrement;
 			_doc.RowIncrementValue = _view.XIncrement;
+
+			_doc.IsUserDefinedColumnIncrementValue = _view.IsUserDefinedYIncrement;
 			_doc.ColumnIncrementValue = _view.YIncrement;
 
 			_doc.OutputKind = (Altaxo.Calc.Fourier.RealFourierTransformationOutputKind)_outputQuantities.FirstSelectedNode.Tag;

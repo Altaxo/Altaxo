@@ -53,11 +53,11 @@
 		<Rectangle Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
 		<Rectangle Grid.Row="23" Grid.Column="0" Grid.ColumnSpan="2" Fill="AliceBlue" Height="4" HorizontalAlignment="Stretch" />
 
-		<Label Grid.Column="0" Grid.Row="0">Row-Increment:</Label>
-		<axogc:NumericDoubleTextBox Grid.Column="1" Grid.Row="0" x:Name="_guiXIncrement" />
+		<CheckBox x:Name="_guiIsUserDefinedRowIncrement" Grid.Column="0" Grid.Row="0">User defined row increment:</CheckBox>
+		<axogc:NumericDoubleTextBox Grid.Column="1" Grid.Row="0" x:Name="_guiXIncrement" IsEnabled="{Binding ElementName=_guiIsUserDefinedRowIncrement, Path=IsChecked}" />
 
-		<Label Grid.Column="0" Grid.Row="2">Column-Increment:</Label>
-		<axogc:NumericDoubleTextBox  Grid.Column="1" Grid.Row="2" x:Name="_guiYIncrement" />
+		<CheckBox x:Name="_guiIsUserDefinedColumnIncrement" Grid.Column="0" Grid.Row="2">User defined column increment:</CheckBox>
+		<axogc:NumericDoubleTextBox  Grid.Column="1" Grid.Row="2" x:Name="_guiYIncrement" IsEnabled="{Binding ElementName=_guiIsUserDefinedColumnIncrement, Path=IsChecked}" />
 
 		<CheckBox x:Name="_guiUseReplacementValueforNaN" Grid.Row="4" Content="Use replacement value for NaN:" VerticalAlignment="Center" />
 		<axogc:NumericDoubleTextBox x:Name="_guiReplacementValueForNaN" Grid.Row="4" Grid.Column="1" IsEnabled="{Binding ElementName=_guiUseReplacementValueforNaN, Path=IsChecked}" />
