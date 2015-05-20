@@ -271,6 +271,7 @@
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationController.cs" />
+    <Compile Include="Gui\Analysis\Statistics\LinearBinningController.cs" />
     <Compile Include="Gui\Common\AscendingIntegerCollectionController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\DragDropDefinitions.cs" />

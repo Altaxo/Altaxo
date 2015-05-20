@@ -145,6 +145,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Analysis\Statistics\LinearBinningControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\AscendingIntegerCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -905,6 +909,10 @@
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml.cs">
       <DependentUpon>HistogramCreationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Analysis\Statistics\LinearBinningControl.xaml.cs">
+      <DependentUpon>LinearBinningControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Gui\Common\TimeSpanTextBox.cs" />
     <Compile Include="Gui\Common\DateTimeTextBox.cs" />
     <Compile Include="Gui\Common\TimeSpanConverter.cs" />

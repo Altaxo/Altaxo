@@ -81,30 +81,38 @@ namespace Altaxo.Data
 		public bool IsUpperBoundaryInclusive;
 
 		/// <summary>
+		/// Gets or sets a value indicating whether the binning type is defined by the user or is determined automatically.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the user defined the binning type; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsUserDefinedBinningType { get; set; }
+
+		/// <summary>
 		/// Gets or sets the user defined binning. If this property is defined, the binning defined in this property is used. If this property is null, the binning is done automatically.
 		/// </summary>
 		/// <value>
 		/// The user defined binning.
 		/// </value>
-		public IBinningDefinition UserDefinedBinning { get; set; }
+		public IBinningDefinition Binning { get; set; }
 
 		/// < inheritdoc />
 		public object Clone()
 		{
 			var result = (HistogramCreationOptions)this.MemberwiseClone();
-			result.UserDefinedBinning = this.UserDefinedBinning == null ? null : (IBinningDefinition)this.UserDefinedBinning.Clone();
+			result.Binning = this.Binning == null ? null : (IBinningDefinition)this.Binning.Clone();
 			return result;
 		}
 	}
 
-	public class HistogramCreationInformation
+	public class HistogramCreationInformation : ICloneable
 	{
 		private List<string> _warnings = new List<string>();
 		private List<string> _errors = new List<string>();
 
-		public IEnumerable<string> Warnings { get { return _warnings; } }
+		public IList<string> Warnings { get { return _warnings; } }
 
-		public IEnumerable<string> Errors { get { return _errors; } }
+		public IList<string> Errors { get { return _errors; } }
 
 		public int NumberOfValues { get; set; }
 
@@ -117,6 +125,15 @@ namespace Altaxo.Data
 		public double MaximumValue { get; set; }
 
 		public HistogramCreationOptions CreationOptions { get; set; }
+
+		public object Clone()
+		{
+			var result = (HistogramCreationInformation)this.MemberwiseClone();
+			result._warnings = new List<string>(_warnings);
+			result._errors = new List<string>(_errors);
+			result.CreationOptions = (HistogramCreationOptions)this.CreationOptions.Clone();
+			return result;
+		}
 	}
 
 	public struct Bin
@@ -154,11 +171,15 @@ namespace Altaxo.Data
 
 	public class LinearBinning : IBinningDefinition
 	{
-		public int BinLowerFactor { get; set; }
+		public bool IsUserDefinedBinOffset { get; set; }
 
 		public double BinOffset { get; set; }
 
+		public bool IsUserDefinedBinWidth { get; set; }
+
 		public double BinWidth { get; set; }
+
+		public int BinLowerFactor { get; set; }
 
 		public double Count { get; set; }
 
@@ -206,6 +227,105 @@ namespace Altaxo.Data
 
 	public static class HistogramCreation
 	{
+		#region Internal classes
+
+		private class NumericTableRegionEnumerator : IEnumerator<double>
+		{
+			private DataTable _srctable;
+			private IAscendingIntegerCollection _selectedColumns;
+			private IAscendingIntegerCollection _selectedRows;
+
+			private int _nCol = -1;
+			private int _nRow = 0;
+			private INumericColumn _col;
+
+			public NumericTableRegionEnumerator(DataTable srctable,
+			IAscendingIntegerCollection selectedColumns,
+			IAscendingIntegerCollection selectedRows)
+			{
+				_srctable = srctable;
+				_selectedColumns = selectedColumns;
+				_selectedRows = selectedRows;
+			}
+
+			public double Current
+			{
+				get
+				{
+					if (null != _col)
+						return _col[_selectedRows[_nRow]];
+					else
+						throw new InvalidOperationException("Before or behind enumeration");
+				}
+			}
+
+			public void Dispose()
+			{
+				_col = null;
+				_srctable = null;
+				_selectedColumns = null;
+				_selectedRows = null;
+			}
+
+			object System.Collections.IEnumerator.Current
+			{
+				get
+				{
+					if (null != _col)
+						return _col[_selectedRows[_nRow]];
+					else
+						throw new InvalidOperationException("Before or behind enumeration");
+				}
+			}
+
+			public bool MoveNext()
+			{
+				if (null != _col)
+				{
+					if (_nRow < _selectedRows.Count - 1)
+					{
+						++_nRow;
+						return true;
+					}
+					else
+					{
+						++_nCol;
+						if (_nCol < _selectedColumns.Count)
+						{
+							_nRow = 0;
+							_col = (INumericColumn)_srctable.DataColumns[_selectedColumns[_nCol]];
+							return true;
+						}
+						else
+						{
+							_col = null;
+							return false;
+						}
+					}
+				}
+				else // _col is null
+				{
+					if (_nCol < 0)
+					{
+						_nCol = 0;
+						_nRow = 0;
+						_col = (INumericColumn)_srctable.DataColumns[_selectedColumns[_nCol]];
+						return true;
+					}
+				}
+				return false;
+			}
+
+			public void Reset()
+			{
+				_col = null;
+				_nCol = -1;
+				_nRow = 0;
+			}
+		}
+
+		#endregion Internal classes
+
 		/// <summary>
 		/// Calculates statistics of selected columns. Returns a new table where the statistical data will be written to.
 		/// </summary>
@@ -218,44 +338,111 @@ namespace Altaxo.Data
 			IAscendingIntegerCollection selectedRows
 			)
 		{
+			var histInfo = new HistogramCreationInformation();
+
+			var enumerator = new NumericTableRegionEnumerator(srctable, selectedColumns, selectedRows);
+
 			var list = new List<double>();
+
+			Func<double, bool> IsExcluded;
+
+			var options = histInfo.CreationOptions;
+
+			if (options.LowerBoundaryToIgnore.HasValue && options.UpperBoundaryToIgnore.HasValue)
+			{
+				// 4 cases
+				if (options.IsLowerBoundaryInclusive && options.IsUpperBoundaryInclusive)
+					IsExcluded = (x) => (x <= options.LowerBoundaryToIgnore.Value || x >= options.UpperBoundaryToIgnore.Value);
+				else if (options.IsLowerBoundaryInclusive)
+					IsExcluded = (x) => (x <= options.LowerBoundaryToIgnore.Value || x > options.UpperBoundaryToIgnore.Value);
+				else if (options.IsUpperBoundaryInclusive)
+					IsExcluded = (x) => (x < options.LowerBoundaryToIgnore.Value || x >= options.UpperBoundaryToIgnore.Value);
+				else
+					IsExcluded = (x) => (x < options.LowerBoundaryToIgnore.Value || x > options.UpperBoundaryToIgnore.Value);
+			}
+			else if (options.LowerBoundaryToIgnore.HasValue)
+			{
+				// 2 cases
+				if (options.IsLowerBoundaryInclusive)
+					IsExcluded = (x) => (x <= options.LowerBoundaryToIgnore.Value);
+				else
+					IsExcluded = (x) => (x < options.LowerBoundaryToIgnore.Value);
+			}
+			else if (options.UpperBoundaryToIgnore.HasValue)
+			{
+				if (options.IsUpperBoundaryInclusive)
+					IsExcluded = (x) => (x >= options.UpperBoundaryToIgnore.Value);
+				else
+					IsExcluded = (x) => (x > options.UpperBoundaryToIgnore.Value);
+			}
+			else
+			{
+				IsExcluded = (x) => false;
+			}
 
 			int containsNaN = 0;
 			int containsInfinity = 0;
 
-			for (int i = 0; i < selectedColumns.Count; ++i)
+			while (enumerator.MoveNext())
 			{
-				INumericColumn col = (INumericColumn)srctable.DataColumns[selectedColumns[i]];
+				double x = enumerator.Current;
 
-				var dcol = srctable.DataColumns[selectedColumns[i]];
-
-				IAscendingIntegerCollection selRows = selectedRows;
-				if (selRows.Count == 0)
-					selRows = ContiguousIntegerRange.FromStartAndCount(0, dcol.Count);
-
-				for (int j = 0; j < selRows.Count; ++j)
+				if (double.IsNaN(x))
 				{
-					double x = col[selRows[j]];
-
-					if (double.IsNaN(x))
-					{
-						++containsNaN;
-					}
-					else if (!Altaxo.Calc.RMath.IsFinite(x))
-					{
-						++containsInfinity;
-					}
-					else
-					{
-						list.Add(srctable.DataColumns[i][j]);
-					}
+					++containsNaN;
+				}
+				else if (!Altaxo.Calc.RMath.IsFinite(x))
+				{
+					++containsInfinity;
+				}
+				else if (!IsExcluded(x))
+				{
+					list.Add(x);
 				}
 			}
+
 			list.Sort();
 
 			int numberOfValues = list.Count;
-			double minValue = list[0];
-			double maxValue = list[numberOfValues - 1];
+
+			histInfo.NumberOfValues = list.Count;
+			histInfo.NumberOfNaNValues = containsNaN;
+			histInfo.NumberOfInfiniteValues = containsInfinity;
+
+			double minValue = double.NaN;
+			double maxValue = double.NaN;
+
+			if (list.Count == 0)
+			{
+				histInfo.Errors.Add("No values available (number of selected values is null).");
+			}
+			else if (list.Count < 10)
+			{
+				histInfo.Warnings.Add("Number of selected values is less than 10");
+			}
+
+			if (list.Count > 0)
+			{
+				minValue = list[0];
+				maxValue = list[numberOfValues - 1];
+
+				histInfo.MinimumValue = minValue;
+				histInfo.MaximumValue = maxValue;
+
+				// here we must decide between linear binning and logarithmic binning
+				if (!histInfo.CreationOptions.IsUserDefinedBinningType)
+				{
+					Type binningType;
+
+					if (minValue > 0 && maxValue > 0 && (Math.Log10(maxValue) - Math.Log10(minValue)) > 3)
+						binningType = typeof(LogarithmicBinning);
+					else
+						binningType = typeof(LinearBinning);
+
+					if (binningType != histInfo.CreationOptions.Binning.GetType())
+						histInfo.CreationOptions.Binning = (IBinningDefinition)Activator.CreateInstance(binningType);
+				}
+			}
 
 			double q1 = list[(numberOfValues * 1) / 4]; // 25% Quantile
 			double q3 = list[(numberOfValues * 3) / 4]; // 75% Quantile

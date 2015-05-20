@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -77,15 +76,15 @@
 		<CheckBox x:Name="_guiIgnoreInfiniteValues" Content="Ignore infinite values" Grid.Row="7" />
 		<DockPanel Grid.Row="9">
 			<CheckBox x:Name="_guiIgnoreValuesBelowLowerBoundary" Content="Ignore values " DockPanel.Dock="Left" />
-			<ToggleButton x:Name="_guiLowerBoundaryIsExclusive" Grid.Row="7" Grid.Column="0" DockPanel.Dock="Right">
+			<ToggleButton x:Name="_guiIsLowerBoundaryInclusive" Grid.Row="7" Grid.Column="0" DockPanel.Dock="Right">
 				<ToggleButton.Style>
 					<Style TargetType="ToggleButton">
 						<Style.Triggers>
 							<Trigger Property="IsChecked" Value="true">
-								<Setter Property="Content" Value="&lt;" />
+								<Setter Property="Content" Value="&lt;=" />
 							</Trigger>
 							<Trigger Property="IsChecked" Value="false">
-								<Setter Property="Content" Value="&lt;=" />
+								<Setter Property="Content" Value="&lt;" />
 							</Trigger>
 						</Style.Triggers>
 					</Style>
@@ -96,15 +95,15 @@
 
 		<DockPanel Grid.Row="11">
 			<CheckBox x:Name="_guiIgnoreValuesAboveUpperBoundary" Content="Ignore values " DockPanel.Dock="Left" />
-			<ToggleButton x:Name="_guiUpperBoundaryIsExclusive" Grid.Row="7" Grid.Column="0" DockPanel.Dock="Right">
+			<ToggleButton x:Name="_guiIsUpperBoundaryInclusive" Grid.Row="7" Grid.Column="0" DockPanel.Dock="Right">
 				<ToggleButton.Style>
 					<Style TargetType="ToggleButton">
 						<Style.Triggers>
 							<Trigger Property="IsChecked" Value="true">
-								<Setter Property="Content" Value="&gt;" />
+								<Setter Property="Content" Value="&gt;=" />
 							</Trigger>
 							<Trigger Property="IsChecked" Value="false">
-								<Setter Property="Content" Value="&gt;=" />
+								<Setter Property="Content" Value="&gt;" />
 							</Trigger>
 						</Style.Triggers>
 					</Style>

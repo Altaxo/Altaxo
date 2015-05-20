@@ -119,15 +119,15 @@ namespace Altaxo.Gui.Analysis.Statistics
 			}
 		}
 
-		public bool IsLowerBoundaryIsExclusive
+		public bool IsLowerBoundaryInclusive
 		{
 			get
 			{
-				return true == _guiLowerBoundaryIsExclusive.IsChecked;
+				return true == _guiIsLowerBoundaryInclusive.IsChecked;
 			}
 			set
 			{
-				_guiLowerBoundaryIsExclusive.IsChecked = value;
+				_guiIsLowerBoundaryInclusive.IsChecked = value;
 			}
 		}
 
@@ -155,15 +155,15 @@ namespace Altaxo.Gui.Analysis.Statistics
 			}
 		}
 
-		public bool IsUpperBoundaryIsExclusive
+		public bool IsUpperBoundaryInclusive
 		{
 			get
 			{
-				return true == _guiUpperBoundaryIsExclusive.IsChecked;
+				return true == _guiIsUpperBoundaryInclusive.IsChecked;
 			}
 			set
 			{
-				_guiUpperBoundaryIsExclusive.IsChecked = value;
+				_guiIsUpperBoundaryInclusive.IsChecked = value;
 			}
 		}
 
