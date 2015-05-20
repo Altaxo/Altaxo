@@ -703,7 +703,7 @@ typeof(GraphDocument),
 					{
 						_isPaintPreprocessingActive = true;
 
-						for (int ithRetry = 1; ithRetry <= 10; ++ithRetry)
+						for (int ithRetry = 1; ithRetry <= MaxPaintPreProcessingRetries; ++ithRetry)
 						{
 							using (var suspendToken = SuspendGetToken())
 							{
@@ -719,7 +719,10 @@ typeof(GraphDocument),
 								suspendToken.Resume();
 							}
 #if DEBUG
-							Current.Console.WriteLine("Warning: MaxPaintPreProcessingRetries exceeded during painting of graph {0}.", this.Name);
+							if (ithRetry == MaxPaintPreProcessingRetries)
+							{
+								Current.Console.WriteLine("Warning: MaxPaintPreProcessingRetries exceeded during painting of graph {0}.", this.Name);
+							}
 #endif
 						}
 					}
