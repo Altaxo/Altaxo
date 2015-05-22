@@ -991,16 +991,19 @@ namespace Altaxo.Data
 
 			int lastRangeStart = 0;
 
+			var colsToDispose = new List<DataColumn>(selectedColumns.Count);
+
 			foreach (var range in selectedColumns.RangesDescending)
 			{
 				// first, Dispose the columns and set the places to null
 				for (int i = range.LastInclusive; i >= range.Start; i--)
 				{
-					string columnName = GetColumnName(this[i]);
-					this._columnScripts.Remove(this[i]);
-					this._columnInfoByColumn.Remove(_columnsByNumber[i]);
-					this._columnsByName.Remove(columnName);
-					this[i].Dispose();
+					var colToRemove = _columnsByNumber[i];
+					string columnName = GetColumnName(colToRemove);
+					_columnScripts.Remove(colToRemove);
+					_columnInfoByColumn.Remove(colToRemove);
+					_columnsByName.Remove(columnName);
+					colsToDispose.Add(colToRemove); // dont dispose column here directly, because it may trigger some events, and the handlers want to access this DataColumnCollection, which is now in an undefined state
 				}
 				this._columnsByNumber.RemoveRange(range.Start, range.Count);
 				lastRangeStart = range.Start;
@@ -1009,6 +1012,9 @@ namespace Altaxo.Data
 			// renumber the remaining columns
 			for (int i = _columnsByNumber.Count - 1; i >= lastRangeStart; i--)
 				((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
+
+			foreach (var col in colsToDispose)
+				col.Dispose();
 
 			// raise datachange event that some columns have changed
 			this.EhSelfChanged(DataColumnCollectionChangedEventArgs.CreateColumnRemoveArgs(lastRangeStart, nOriginalColumnCount, this._numberOfRows));
@@ -1522,7 +1528,7 @@ namespace Altaxo.Data
 		/// <returns>The column information of the provided column.</returns>
 		private DataColumnInfo GetColumnInfo(DataColumn datac)
 		{
-			return (DataColumnInfo)_columnInfoByColumn[datac];
+				return (DataColumnInfo)_columnInfoByColumn[datac];
 		}
 
 		/// <summary>
