@@ -408,20 +408,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// first, we have to calculate the span of logical values from the minimum logical value to the maximum logical value
 			int numberOfItems = 0;
-			double minLogical = double.MaxValue;
-			double maxLogical = double.MinValue;
 
-			foreach (int originalRowIndex in pdata.RangeList.OriginalRowIndices())
+			if (null != pdata)
 			{
-				double logicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
-				numberOfItems++;
-				if (logicalX < minLogical)
-					minLogical = logicalX;
-				if (logicalX > maxLogical)
-					maxLogical = logicalX;
-			}
+				double minLogical = double.MaxValue;
+				double maxLogical = double.MinValue;
+				foreach (int originalRowIndex in pdata.RangeList.OriginalRowIndices())
+				{
+					double logicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
+					numberOfItems++;
+					if (logicalX < minLogical)
+						minLogical = logicalX;
+					if (logicalX > maxLogical)
+						maxLogical = logicalX;
+				}
 
-			BarWidthPositionGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogical, maxLogical);
+				BarWidthPositionGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogical, maxLogical);
+			}
 			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarWidthPositionGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
 				bwp.Initialize(_relInnerGapWidth, _relOuterGapWidth);
