@@ -34,10 +34,10 @@
 		</Grid.RowDefinitions>
 
 		<GroupBox Header="Errors" Grid.ColumnSpan="2" Grid.Row="0">
-			<ListBox x:Name="_guiErrors" />
+			<ListBox x:Name="_guiErrors" Background="LightPink" />
 		</GroupBox>
 		<GroupBox Header="Warnings" Grid.ColumnSpan="2" Grid.Row="1">
-			<ListBox x:Name="_guiWarnings" />
+			<ListBox x:Name="_guiWarnings" Background="Yellow" />
 		</GroupBox>
 
 		<GroupBox Header="Info" Grid.ColumnSpan="2" Grid.Row="3">
@@ -112,11 +112,11 @@
 		</DockPanel>
 		<axogc:NumericDoubleTextBox x:Name="_guiUpperBoundaryToIgnore"  Grid.Row="11" Grid.Column="1" />
 		<StackPanel Orientation="Horizontal" Grid.Row="13" Grid.ColumnSpan="2">
-			<RadioButton x:Name="_guiUseAutomaticBinning" Content=" Use automatic binning " />
-			<RadioButton x:Name="_guiUseUserDefinedBinning" Content=" Use user defined binning " />
+			<RadioButton x:Name="_guiUseAutomaticBinning" Content=" Use automatic binning type " Checked="EhAutomaticBinningTypeChanged" />
+			<RadioButton x:Name="_guiUseUserDefinedBinning" Content=" Use user defined binning type " Checked="EhAutomaticBinningTypeChanged" />
 		</StackPanel>
 		<Label Content="Binning type:" Grid.Row="15" />
-		<ComboBox x:Name="_guiBinningType" Grid.Row="15" Grid.Column="1" />
+		<ComboBox x:Name="_guiBinningType" Grid.Row="15" Grid.Column="1" IsEnabled="{Binding ElementName=_guiUseUserDefinedBinning, Path=IsChecked}" SelectionChanged="EhBinningTypeChanged" />
 		<Border x:Name="_guiBinningControlHost" Grid.Row="17" Grid.ColumnSpan="2" />
 	</Grid>
 </UserControl>

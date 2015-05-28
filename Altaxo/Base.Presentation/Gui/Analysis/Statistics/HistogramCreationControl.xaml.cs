@@ -43,6 +43,10 @@ namespace Altaxo.Gui.Analysis.Statistics
 	/// </summary>
 	public partial class HistogramCreationControl : UserControl, IHistogramCreationView
 	{
+		public event Action BinningTypeChanged;
+
+		public event Action AutomaticBinningTypeChanged;
+
 		public HistogramCreationControl()
 		{
 			InitializeComponent();
@@ -199,6 +203,22 @@ namespace Altaxo.Gui.Analysis.Statistics
 		public object BinningView
 		{
 			set { _guiBinningControlHost.Child = value as UIElement; }
+		}
+
+		private void EhBinningTypeChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiBinningType);
+
+			var ev = BinningTypeChanged;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhAutomaticBinningTypeChanged(object sender, RoutedEventArgs e)
+		{
+			var ev = AutomaticBinningTypeChanged;
+			if (null != ev)
+				ev();
 		}
 	}
 }

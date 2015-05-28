@@ -57,13 +57,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		public static void CreateHistogram(WorksheetController ctrl)
 		{
-			var table = ctrl.DataTable.CreateHistogramOnColumns(ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
+			var table = Altaxo.Analysis.Statistics.Histograms.HistogramCreation.CreateHistogramOnColumns(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, Gui.UserInteractionLevel.InteractAlways);
 
-			if (!Current.Project.DataTableCollection.Contains(table))
+			if (null != table && !Current.Project.DataTableCollection.Contains(table))
+			{
 				Current.Project.DataTableCollection.Add(table);
 
-			// create a new worksheet without any columns
-			Current.ProjectService.CreateNewWorksheet(table);
+				// create a new worksheet without any columns
+				Current.ProjectService.CreateNewWorksheet(table);
+			}
 		}
 	}
 }

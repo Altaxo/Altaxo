@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Analysis.Statistics.Histograms;
 using Altaxo.Collections;
 using Altaxo.Data;
 using System;
@@ -68,6 +69,10 @@ namespace Altaxo.Gui.Analysis.Statistics
 		SelectableListNodeList BinningType { set; }
 
 		object BinningView { set; }
+
+		event Action BinningTypeChanged;
+
+		event Action AutomaticBinningTypeChanged;
 	}
 
 	[UserControllerForObject(typeof(HistogramCreationInformation))]
@@ -91,13 +96,24 @@ namespace Altaxo.Gui.Analysis.Statistics
 			{
 				_binningTypes.Clear();
 
-				var binningTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBinningDefinition));
+				var binningTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBinning));
 
 				foreach (var type in binningTypes)
 					_binningTypes.Add(new SelectableListNode(type.ToString(), type, type == _doc.CreationOptions.Binning.GetType()));
+
+				if (null != _binningController)
+				{
+					_binningController.Dispose();
+					_binningController = null;
+				}
+
+				_binningController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CreationOptions.Binning }, typeof(IMVCANController), UseDocument.Directly);
 			}
 			if (null != _view)
 			{
+				_view.Errors = _doc.Errors;
+				_view.Warnings = _doc.Warnings;
+
 				_view.TotalNumberOfValues = _doc.NumberOfValues;
 				_view.NumberOfNaNValues = _doc.NumberOfNaNValues;
 				_view.NumberOfInfiniteValues = _doc.NumberOfInfiniteValues;
@@ -107,12 +123,12 @@ namespace Altaxo.Gui.Analysis.Statistics
 				_view.IgnoreNaNValues = _doc.CreationOptions.IgnoreNaN;
 				_view.IgnoreInfiniteValues = _doc.CreationOptions.IgnoreInfinity;
 
-				_view.IgnoreValuesBelowLowerBoundary = !_doc.CreationOptions.LowerBoundaryToIgnore.HasValue;
+				_view.IgnoreValuesBelowLowerBoundary = _doc.CreationOptions.LowerBoundaryToIgnore.HasValue;
 				_view.IsLowerBoundaryInclusive = _doc.CreationOptions.IsLowerBoundaryInclusive;
 				if (_doc.CreationOptions.LowerBoundaryToIgnore.HasValue)
 					_view.LowerBoundary = _doc.CreationOptions.LowerBoundaryToIgnore.Value;
 
-				_view.IgnoreValuesAboveUpperBoundary = !_doc.CreationOptions.UpperBoundaryToIgnore.HasValue;
+				_view.IgnoreValuesAboveUpperBoundary = _doc.CreationOptions.UpperBoundaryToIgnore.HasValue;
 				_view.IsUpperBoundaryInclusive = _doc.CreationOptions.IsUpperBoundaryInclusive;
 				if (_doc.CreationOptions.UpperBoundaryToIgnore.HasValue)
 					_view.UpperBoundary = _doc.CreationOptions.UpperBoundaryToIgnore.Value;
@@ -120,6 +136,8 @@ namespace Altaxo.Gui.Analysis.Statistics
 				_view.BinningType = _binningTypes;
 
 				_view.UseAutomaticBinning = !_doc.CreationOptions.IsUserDefinedBinningType;
+
+				_view.BinningView = _binningController.ViewObject;
 			}
 		}
 
@@ -155,7 +173,106 @@ namespace Altaxo.Gui.Analysis.Statistics
 			if (!_binningController.Apply(disposeController))
 				return ApplyEnd(false, disposeController);
 
-			return ApplyEnd(true, disposeController);
+			bool shouldShowDialog = HistogramCreation.PopulateHistogramCreationInformation(_doc);
+
+			if (disposeController) // user pressed ok
+			{
+				if (ShouldLeaveDialogOpen(_doc))
+				{
+					Initialize(true);
+					return ApplyEnd(false, disposeController);
+				}
+				else
+				{
+					return ApplyEnd(true, disposeController);
+				}
+			}
+			else
+			{
+				// we pressed apply thus we must update the gui
+				if (ShouldLeaveDialogOpen(_doc))
+				{
+					Initialize(true);
+					return ApplyEnd(false, disposeController);
+				}
+				else
+				{
+					Initialize(true);
+					return ApplyEnd(true, disposeController);
+				}
+			}
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.BinningTypeChanged += EhBinningTypeChanged;
+			_view.AutomaticBinningTypeChanged += EhAutomaticBinningTypeChanged;
+		}
+
+		protected override void DetachView()
+		{
+			_view.AutomaticBinningTypeChanged -= EhAutomaticBinningTypeChanged;
+			_view.BinningTypeChanged -= EhBinningTypeChanged;
+			base.DetachView();
+		}
+
+		private void EhBinningTypeChanged()
+		{
+			var selNode = _binningTypes.FirstSelectedNode;
+			if (null == selNode)
+				return;
+			var bintype = (Type)selNode.Tag;
+
+			if (_doc.CreationOptions.Binning.GetType() == bintype)
+				return;
+
+			var binning = (IBinning)Activator.CreateInstance(bintype);
+
+			_doc.CreationOptions.Binning = binning;
+
+			HistogramCreation.PopulateHistogramCreationInformation(_doc);
+			Initialize(true);
+		}
+
+		private void EhAutomaticBinningTypeChanged()
+		{
+			var wasUserBefore = _doc.CreationOptions.IsUserDefinedBinningType;
+			_doc.CreationOptions.IsUserDefinedBinningType = !_view.UseAutomaticBinning;
+
+			if (!_doc.CreationOptions.IsUserDefinedBinningType && wasUserBefore)
+			{
+				HistogramCreation.PopulateHistogramCreationInformation(_doc);
+				Initialize(true);
+			}
+		}
+
+		private static bool ShouldLeaveDialogOpen(HistogramCreationInformation histInfo)
+		{
+			bool showDialog;
+			switch (histInfo.UserInteractionLevel)
+			{
+				case Gui.UserInteractionLevel.None:
+					showDialog = false;
+					break;
+
+				case Gui.UserInteractionLevel.InteractOnErrors:
+					showDialog = histInfo.Errors.Count > 0;
+					break;
+
+				case Gui.UserInteractionLevel.InteractOnWarningsAndErrors:
+					showDialog = histInfo.Errors.Count > 0 || histInfo.Warnings.Count > 0;
+					break;
+
+				case Gui.UserInteractionLevel.InteractAlways:
+					showDialog = histInfo.Errors.Count > 0 || histInfo.Warnings.Count > 0;
+					break;
+
+				default:
+					throw new NotImplementedException("userInteractionLevel");
+					break;
+			}
+			return showDialog;
 		}
 	}
 }

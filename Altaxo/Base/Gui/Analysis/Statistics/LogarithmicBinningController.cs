@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {
-	public interface ILinearBinningView
+	public interface ILogarithmicBinningView
 	{
 		bool IsUserDefinedBinOffset { get; set; }
 
@@ -20,9 +20,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 		double ResultingBinCount { set; }
 	}
 
-	[UserControllerForObject(typeof(LinearBinning))]
-	[ExpectedTypeOfView(typeof(ILinearBinningView))]
-	public class LinearBinningController : MVCANControllerEditOriginalDocBase<LinearBinning, ILinearBinningView>
+	[UserControllerForObject(typeof(LogarithmicBinning))]
+	[ExpectedTypeOfView(typeof(ILogarithmicBinningView))]
+	public class LogarithmicBinningController : MVCANControllerEditOriginalDocBase<LogarithmicBinning, ILogarithmicBinningView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Analysis.Statistics
 				_view.IsUserDefinedBinWidth = _doc.IsUserDefinedBinWidth;
 
 				_view.BinOffset = _doc.BinOffset;
-				_view.BinWidth = _doc.BinWidth;
+				_view.BinWidth = Math.Pow(10, _doc.BinWidthInDecades);
 				_view.ResultingBinCount = _doc.NumberOfBins;
 			}
 		}
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Analysis.Statistics
 				_doc.BinOffset = _view.BinOffset;
 
 			if (_doc.IsUserDefinedBinWidth)
-				_doc.BinWidth = _view.BinWidth;
+				_doc.BinWidthInDecades = Math.Log10(_view.BinWidth);
 
 			return ApplyEnd(true, disposeController);
 		}

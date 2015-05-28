@@ -145,6 +145,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Analysis\Statistics\LogarithmicBinningControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Analysis\Statistics\LinearBinningControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -908,6 +912,9 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml.cs">
       <DependentUpon>HistogramCreationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningControl.xaml.cs">
+      <DependentUpon>LogarithmicBinningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Analysis\Statistics\LinearBinningControl.xaml.cs">
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
