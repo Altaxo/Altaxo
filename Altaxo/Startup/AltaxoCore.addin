@@ -524,6 +524,8 @@
 					description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnColumns" />
 				<MenuItem id="StatisticsOnRows" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows}"
 					description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnRows" />
+				<MenuItem id="StatisticsCreateHist" label="${res:XML.MainMenu.AnalysisMenu.StatisticsCreateHistogram}"
+					description="${res:XML.MainMenu.AnalysisMenu.StatisticsCreateHistogram.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsCreateHistogram" />
 
 				<MenuItem id="ChemometricsMenu" label="${res:XML.MainMenu.Analysis.ChemometricsMenu}"  type="Menu">
 					<MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}"

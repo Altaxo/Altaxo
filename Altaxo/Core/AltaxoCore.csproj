@@ -381,6 +381,7 @@
     <Compile Include="Calc\LinearAlgebra\NotSquareMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\QRDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\InvalidDimensionMatrixException.cs" />
+    <Compile Include="Calc\LinearAlgebra\ROVectorBase.cs" />
     <Compile Include="Calc\LinearAlgebra\SingularMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\SVDDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\VectorMath.cs">

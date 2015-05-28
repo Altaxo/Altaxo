@@ -141,6 +141,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Analysis\Statistics\LogarithmicBinningControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Analysis\Statistics\LinearBinningControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Common\AscendingIntegerCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -898,6 +910,16 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\ItemsControlExtensions.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\TypeUtilities.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
+    <Compile Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml.cs">
+      <DependentUpon>HistogramCreationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningControl.xaml.cs">
+      <DependentUpon>LogarithmicBinningControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Analysis\Statistics\LinearBinningControl.xaml.cs">
+      <DependentUpon>LinearBinningControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Gui\Common\TimeSpanTextBox.cs" />
     <Compile Include="Gui\Common\DateTimeTextBox.cs" />
     <Compile Include="Gui\Common\TimeSpanConverter.cs" />
