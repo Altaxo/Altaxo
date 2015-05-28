@@ -31,12 +31,20 @@ namespace Altaxo.Analysis.Statistics.Histograms
 		public IList<string> Warnings { get { return _warnings; } }
 
 		/// <summary>
+		/// Gets or sets the number of original values (before filtering).
+		/// </summary>
+		/// <value>
+		/// The number of ensemble values before filtering.
+		/// </value>
+		public int NumberOfValuesOriginal { get; set; }
+
+		/// <summary>
 		/// Gets or sets the number of ensemble values.
 		/// </summary>
 		/// <value>
 		/// The number of ensemble values.
 		/// </value>
-		public int NumberOfValues { get; set; }
+		public int NumberOfValuesFiltered { get; set; }
 
 		/// <summary>
 		/// Gets or sets the number of ensemble values containing NaN (not-a-number).

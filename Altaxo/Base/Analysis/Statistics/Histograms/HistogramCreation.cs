@@ -203,22 +203,24 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
 			var options = histInfo.CreationOptions;
 
-			int containsNaN = 0;
-			int containsInfinity = 0;
+			int numberOfNaNValues = 0;
+			int numberOfInfiniteValues = 0;
+			int numberOfValuesOriginal = 0;
 
 			var dataEnumerator = histInfo.OriginalDataEnsemble;
 			dataEnumerator.Reset();
 			while (dataEnumerator.MoveNext())
 			{
+				++numberOfValuesOriginal;
 				double x = dataEnumerator.Current;
 
 				if (double.IsNaN(x))
 				{
-					++containsNaN;
+					++numberOfNaNValues;
 				}
 				else if (!Altaxo.Calc.RMath.IsFinite(x))
 				{
-					++containsInfinity;
+					++numberOfInfiniteValues;
 				}
 				else if (!IsExcluded(x))
 				{
@@ -226,13 +228,19 @@ namespace Altaxo.Analysis.Statistics.Histograms
 				}
 			}
 
+			if (numberOfNaNValues > 0 && !histInfo.CreationOptions.IgnoreNaN)
+				histInfo.Errors.Add("Data ensemble contains NaN values. Set the option 'Ignore NaN values' to ignore those values.");
+
+			if (numberOfInfiniteValues > 0 && !histInfo.CreationOptions.IgnoreInfinity)
+				histInfo.Errors.Add("Data ensemble contains infinite values. Set the option 'Ignore infinite values' to ignore those values.");
+
 			list.Sort();
 
 			int numberOfValues = list.Count;
-
-			histInfo.NumberOfValues = list.Count;
-			histInfo.NumberOfNaNValues = containsNaN;
-			histInfo.NumberOfInfiniteValues = containsInfinity;
+			histInfo.NumberOfValuesOriginal = numberOfValuesOriginal;
+			histInfo.NumberOfValuesFiltered = list.Count;
+			histInfo.NumberOfNaNValues = numberOfNaNValues;
+			histInfo.NumberOfInfiniteValues = numberOfInfiniteValues;
 
 			double minValue = double.NaN;
 			double maxValue = double.NaN;

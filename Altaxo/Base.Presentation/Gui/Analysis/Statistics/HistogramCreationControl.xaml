@@ -57,18 +57,21 @@
 					<RowDefinition />
 					<RowDefinition Height="Auto" />
 					<RowDefinition />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
 				</Grid.RowDefinitions>
-				<Label Content="Total number of values:" Grid.Row="0" />
-				<axogc:NumericDoubleTextBox x:Name="_guiTotalNumberOfValues" IsEnabled="False" Grid.Row="0" Grid.Column="1" />
-				<Label Content="Number of NaN values:" Grid.Row="2" />
-				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfNaNValues" IsEnabled="False" Grid.Row="2" Grid.Column="1" />
-				<Label Content="Number of infinite values:" Grid.Row="4" />
-				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfInfiniteValues" IsEnabled="False" Grid.Row="4" Grid.Column="1" />
-				<Label Content="Minimum value:" Grid.Row="6" />
-				<axogc:NumericDoubleTextBox x:Name="_guiMinimumValue" IsEnabled="False" Grid.Row="6" Grid.Column="1" />
-				<Label Content="Maximum value:" Grid.Row="8" />
-				<axogc:NumericDoubleTextBox x:Name="_guiMaximumValue" IsEnabled="False" Grid.Row="8" Grid.Column="1" />
-				<Label Content="Total number of values:" />
+				<Label Content="Number of values originally:" Grid.Row="0" />
+				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfValuesOriginal" IsEnabled="False" Grid.Row="0" Grid.Column="1" />
+				<Label Content="Number of values used:" Grid.Row="2" />
+				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfValuesFiltered" IsEnabled="False" Grid.Row="2" Grid.Column="1" />
+				<Label Content="Number of NaN values:" Grid.Row="4" />
+				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfNaNValues" IsEnabled="False" Grid.Row="4" Grid.Column="1" />
+				<Label Content="Number of infinite values:" Grid.Row="6" />
+				<axogc:NumericDoubleTextBox x:Name="_guiNumberOfInfiniteValues" IsEnabled="False" Grid.Row="6" Grid.Column="1" />
+				<Label Content="Minimum value:" Grid.Row="8" />
+				<axogc:NumericDoubleTextBox x:Name="_guiMinimumValue" IsEnabled="False" Grid.Row="8" Grid.Column="1" />
+				<Label Content="Maximum value:" Grid.Row="10" />
+				<axogc:NumericDoubleTextBox x:Name="_guiMaximumValue" IsEnabled="False" Grid.Row="10" Grid.Column="1" />
 			</Grid>
 		</GroupBox>
 

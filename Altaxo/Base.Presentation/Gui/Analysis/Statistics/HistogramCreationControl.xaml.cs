@@ -62,9 +62,14 @@ namespace Altaxo.Gui.Analysis.Statistics
 			set { _guiWarnings.ItemsSource = value; }
 		}
 
-		public double TotalNumberOfValues
+		public double NumberOfValuesOriginal
 		{
-			set { _guiTotalNumberOfValues.SelectedValue = value; }
+			set { _guiNumberOfValuesOriginal.SelectedValue = value; }
+		}
+
+		public double NumberOfValuesFiltered
+		{
+			set { _guiNumberOfValuesFiltered.SelectedValue = value; }
 		}
 
 		public double NumberOfNaNValues

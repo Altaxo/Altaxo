@@ -38,7 +38,9 @@ namespace Altaxo.Gui.Analysis.Statistics
 
 		IEnumerable<string> Warnings { set; }
 
-		double TotalNumberOfValues { set; }
+		double NumberOfValuesOriginal { set; }
+
+		double NumberOfValuesFiltered { set; }
 
 		double NumberOfNaNValues { set; }
 
@@ -114,7 +116,8 @@ namespace Altaxo.Gui.Analysis.Statistics
 				_view.Errors = _doc.Errors;
 				_view.Warnings = _doc.Warnings;
 
-				_view.TotalNumberOfValues = _doc.NumberOfValues;
+				_view.NumberOfValuesOriginal = _doc.NumberOfValuesOriginal;
+				_view.NumberOfValuesFiltered = _doc.NumberOfValuesFiltered;
 				_view.NumberOfNaNValues = _doc.NumberOfNaNValues;
 				_view.NumberOfInfiniteValues = _doc.NumberOfInfiniteValues;
 				_view.MinimumValue = _doc.MinimumValue;
