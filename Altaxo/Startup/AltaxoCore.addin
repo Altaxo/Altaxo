@@ -667,6 +667,10 @@
 			 description="Development test" class="Altaxo.Main.Commands.DevelopmentTest" />
 			<MenuItem id="ReportParentChildProblems" label="Report parent-child problems in document"
 				 description="Report parent-child problems in document" class="Altaxo.Main.Commands.ReportParentChildProblemsInDocument" />
+			<MenuItem id="OpenDownloadDirectory" label="Open download directory"
+			 description="Open Altaxo's download directory" class="Altaxo.Main.Commands.OpenDownloadDirectory" />
+			<MenuItem id="OpenSettingsDirectory" label="Open settings directory"
+			 description="Open Altaxo's settings directory" class="Altaxo.Main.Commands.OpenSettingsDirectory" />
 			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="Altaxo.Main.Commands.HelpAboutAltaxo" />
 		</MenuItem>

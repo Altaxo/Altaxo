@@ -91,12 +91,23 @@ namespace Altaxo.Serialization.AutoUpdates
 					var versionData = webClient.DownloadData(_downloadURL + PackageInfo.VersionFileName);
 					Console.WriteLine(" ok! ({0} bytes downloaded)", versionData.Length);
 					// we leave the file open, thus no other process can access it
-					var parsedVersion = PackageInfo.FromStream(new MemoryStream(versionData));
+					var parsedVersions = PackageInfo.FromStream(new MemoryStream(versionData));
 
 					fs.Write(versionData, 0, versionData.Length);
 					fs.Flush(); // write the new version to disc in order to change the write date
 
-					Console.WriteLine("The remote package version is: {0}", parsedVersion.Version);
+					// from all parsed versions, choose that one that matches the requirements
+					PackageInfo parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);
+
+					if (null != parsedVersion)
+					{
+						Console.WriteLine("The remote package version is: {0}", parsedVersion.Version);
+					}
+					else
+					{
+						Console.WriteLine("This computer does not match the requirements of any package. The version file contains {0} packages.", parsedVersions.Length);
+						return;
+					}
 
 					if (Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0) // if the remote version is higher than the currently installed Altaxo version
 					{

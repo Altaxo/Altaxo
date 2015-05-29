@@ -121,4 +121,59 @@ namespace Altaxo.Main.Commands
 			Altaxo.Main.SuspendableDocumentNode.ReportParentChildAndDisposedProblems(Current.Project, true);
 		}
 	}
+
+	public class OpenDownloadDirectory : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var dir1 = Altaxo.Serialization.AutoUpdates.PackageInfo.GetDownloadDirectory(false);
+			var dir2 = Altaxo.Serialization.AutoUpdates.PackageInfo.GetDownloadDirectory(true);
+
+			int len = Math.Min(dir1.Length, dir2.Length);
+			int i;
+			for (i = 0; i < len; ++i)
+				if (dir1[i] != dir2[i])
+					break;
+
+			string dir = dir1.Substring(0, i);
+
+			string args = "/e," + dir;
+
+			var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args);
+
+			processInfo.CreateNoWindow = false;
+			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
+			try
+			{
+				var proc = System.Diagnostics.Process.Start(processInfo);
+			}
+			catch (Exception)
+			{
+			}
+		}
+	}
+
+	public class OpenSettingsDirectory : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Altaxo");
+
+			string args = "/e," + dir;
+
+			var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args);
+
+			processInfo.CreateNoWindow = false;
+			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
+			try
+			{
+				var proc = System.Diagnostics.Process.Start(processInfo);
+			}
+			catch (Exception)
+			{
+			}
+		}
+	}
 }

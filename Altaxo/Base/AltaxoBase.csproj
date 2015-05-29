@@ -438,6 +438,8 @@
     <Compile Include="Serialization\Ascii\AsciiDocumentAnalysisOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiImportDataSource.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysisOption.cs" />
+    <Compile Include="Serialization\AutoUpdates\NetFrameworkVersionDetermination.cs" />
+    <Compile Include="Serialization\AutoUpdates\SystemRequirements.cs" />
     <Compile Include="Serialization\Clipboard\IDataObject.cs" />
     <Compile Include="Serialization\Clipboard\ProjectItemsPasteOptions.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
