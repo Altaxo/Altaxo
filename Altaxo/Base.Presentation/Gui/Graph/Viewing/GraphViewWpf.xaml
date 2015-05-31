@@ -23,8 +23,15 @@
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<local:RenderTrigger x:Name="_renderTrigger" />
-			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown">
+			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown" SizeChanged="EhGraphPanelSizeChanged">
+				<Image.CommandBindings>
+					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
+					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />
+					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete" />
+					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
+				</Image.CommandBindings>
+			</Image>
+			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphOverlay" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown">
 				<Image.CommandBindings>
 					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
 					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />

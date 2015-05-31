@@ -233,6 +233,7 @@
     <Compile Include="Graph\EventArgs.cs" />
     <Compile Include="Graph\Gdi\ClipboardRenderingOptions.cs" />
     <Compile Include="Graph\Gdi\EmbeddedObjectRenderingOptions.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentRenderManager.cs" />
     <Compile Include="Graph\Gdi\GraphExportOptions.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateBase.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.cs" />

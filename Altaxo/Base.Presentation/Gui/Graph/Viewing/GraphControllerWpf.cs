@@ -575,13 +575,20 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		public void DoPaintOverlay(Graphics g)
+		{
+			// special painting depending on current selected tool
+			g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
+			this._mouseState.AfterPaint(g);
+		}
+
 		/// <summary>
 		/// This functions scales the graphics context to be ready for painting.
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="bForPrinting">Indicates if the contexts is to be scaled
 		/// for printing purposed (true) or for painting to the screen (false).</param>
-		private void ScaleForPaint(Graphics g, bool bForPrinting)
+		public void ScaleForPaint(Graphics g, bool bForPrinting)
 		{
 			// g.SmoothingMode = SmoothingMode.AntiAlias;
 			// get the dpi settings of the graphics context,
@@ -607,7 +614,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <param name="g">The graphics context painting to.</param>
 		/// <param name="bForPrinting">If true, margins and background are not painted, as is usefull for printing.
 		/// Also, if true, the scale is temporarely set to 1.</param>
-		private void DoPaintUnbuffered(Graphics g, bool bForPrinting)
+		public void DoPaintUnbuffered(Graphics g, bool bForPrinting)
 		{
 			try
 			{

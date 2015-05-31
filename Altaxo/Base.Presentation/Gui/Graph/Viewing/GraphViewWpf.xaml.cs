@@ -58,8 +58,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			InitializeComponent();
 			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
-
-			_renderTrigger.RenderTriggered += EhRenderingTriggered;
 		}
 
 		public virtual void Dispose()
@@ -111,16 +109,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void EndPaintingGraph()
 		{
 			_wpfGdiBitmap.EndGdiPainting();
-		}
-
-		/// <summary>
-		/// Triggers the rendering of the graph area by invalidating the render trigger visual (this function is safe to call from other threads).
-		/// When the RenderTrigger's OnRender function is called, the RenderTrigger fires the event that called then <see cref="EhRenderingTriggered"/>.
-		///
-		/// </summary>
-		public void TriggerRenderingOfGraphArea()
-		{
-			Current.Gui.Execute(() => _renderTrigger.InvalidateVisual());
 		}
 
 		/// <summary>
@@ -240,18 +228,80 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		private void EhGraphPanelSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			var s = e.NewSize;
+
+			if (!(s.Width > 0 && s.Height > 0))
+				return;
+
+			_cachedGraphSizeX = (int)s.Width;
+			_cachedGraphSizeY = (int)s.Height;
+			_wpfGdiBitmap.Resize(_cachedGraphSizeX, _cachedGraphSizeY); ;
+			_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
+			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
+
+			if (null != Controller)
+				Controller.EhView_GraphPanelSizeChanged(); // inform
+		}
+
 		/// <summary>
 		/// Causes a complete redrawing of the graph. The cached graph bitmap will be marked as dirty and a repainting of the graph area is triggered with Gui render priority.
 		/// Note: it is save to call this function from non-Gui threads.
 		/// </summary>
 		void Altaxo.Gui.Graph.Viewing.IGraphView.InvalidateCachedGraphBitmapAndRepaint()
 		{
-			// TODO (Wpf) -> start a background thread which draws the image
-			// for the time being, we do the work directly
-			var guiController = Controller;
-			if (null != guiController)
-				guiController.InvalidateCachedGraphImage();
-			TriggerRenderingOfGraphArea();
+			if (null == Controller)
+				return;
+
+			/* // rendering in the background
+			Altaxo.Graph.Gdi.GraphDocumentRenderManager.Instance.AddTask(
+				_controller,
+				Controller.Doc,
+				() =>
+				{
+					return BeginPaintingGraph();
+				},
+				() =>
+				{
+					Current.Gui.Execute(() =>
+					{
+						EndPaintingGraph();
+					});
+				}
+				);
+				*/
+
+			//rendering in the renderTrigger Thread
+			var grfx = BeginPaintingGraph();
+
+			Controller.DoPaintUnbuffered(grfx, false);
+
+			Current.Gui.Execute(() =>
+			{
+				_graphPanel.Source = _wpfGdiBitmap.WpfBitmapSource;
+
+				Controller.DoPaintOverlay(grfx);
+
+				_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
+				//				EndPaintingGraph();
+			});
+
+			grfx.Dispose();
+		}
+
+		/// <summary>
+		/// Triggers the rendering of the graph area by invalidating the render trigger visual (this function is safe to call from other threads).
+		/// When the RenderTrigger's OnRender function is called, the RenderTrigger fires the event that called then <see cref="EhRenderingTriggered"/>.
+		///
+		/// </summary>
+		public void TriggerRenderingOfGraphArea()
+		{
+			var grfx = BeginPaintingGraph();
+			Controller.ScaleForPaint(grfx, false);
+			grfx.Clear(System.Drawing.Color.Transparent);
+			Controller.DoPaintOverlay(grfx);
+			_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
 		}
 
 		protected override void OnRender(DrawingContext drawingContext)
