@@ -82,13 +82,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected MouseStateHandler _mouseState;
 
-		/// <summary>
-		/// This holds a frozen image of the graph during the moving time
-		/// </summary>
-		protected Bitmap _cachedGraphImage;
-
-		protected bool _isCachedGraphImageDirty;
-
 		#endregion Member variables
 
 		#region Constructors
@@ -105,9 +98,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			_graphAreaBrush = new BrushX(NamedColors.Snow) { ParentObject = SuspendableDocumentNode.StaticInstance };
 
 			_screenResolutionDpi = Current.Gui.ScreenResolutionDpi;
-
-			// This holds a frozen image of the graph during the moving time
-			_cachedGraphImage = null;
 		}
 
 		public GraphControllerWpf()
@@ -452,143 +442,22 @@ namespace Altaxo.Gui.Graph.Viewing
 		#region Painting
 
 		/// <summary>
-		/// Marks the cached graph image as invalid, but causes no further action.
-		/// Note: it is save to call this function from non-gui-threads
-		/// </summary>
-		public void InvalidateCachedGraphImage()
-		{
-			this._isCachedGraphImageDirty = true;
-		}
-
-		/// <summary>
-		/// Marks the cached graph image as invalid, and triggers a repainting of the graph area with Gui render priority.
-		/// Thus, in the next rendering cycle, the cached graph image is recreated and used to repaint the graph area, followed by the custom mouse handler drawing.
-		/// </summary>
-		public void InvalidateCachedGraphImageAndRepaintOffline()
-		{
-			this._isCachedGraphImageDirty = true;
-			//RepaintGraphAreaForMouseHandler();
-
-			if (_viewWpf != null)
-				_viewWpf.TriggerRenderingOfGraphArea();
-		}
-
-		/// <summary>
 		/// If the cached graph bitmap is valid, the graph area is repainted immediately using the cached bitmap and then the custom mouse handler drawing.
 		/// If the cached graph bitmap is invalid, a repaint (and thus a recreation of the cached graph bitmap) is triggered, but only with Gui render priority.
 		/// </summary>
-		public void RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline()
+		public void RenderOverlay()
 		{
 			if (_viewWpf == null || Doc == null || _viewWpf.ViewportSizeInPoints == PointD2D.Empty)
 				return;
 
-			if (this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
-			{
-				RepaintGraphAreaImmediately();
-			}
-			else
-			{
-				_viewWpf.TriggerRenderingOfGraphArea();
-			}
-		}
-
-		/// <summary>
-		/// Causes an repaint of the graph area. If the cached graph bitmap is valid, it is used for repainting, followed by the custom mouse handler drawing. If the cached graph bitmap is not valid,
-		/// it is created first and used for painting, followed then by the custom mouse handler drawing.
-		/// </summary>
-		public void RepaintGraphAreaImmediately()
-		{
-			using (var grfx = this._viewWpf.BeginPaintingGraph())
-			{
-				this.DoPaint(grfx, false); // paint the cached graph image and the mouse handler drawings
-				_viewWpf.EndPaintingGraph(); // inform the view, that the painting is finished
-			}
-		}
-
-		/// <summary>
-		/// If for printing, does an unbuffered paint of the graph document into the given graphics context. If not for printing, it depends on
-		/// the state of the cached graph image: if not valid or dirty, the paint will be done into the cached graph image to make the cached graph image valid.
-		/// Then the cached graph image is drawn into the given graphics context. At the end additional drawing is to be added by the current mouse handler to
-		/// show for instance selection rectangles etc.
-		/// </summary>
-		/// <param name="g"></param>
-		/// <param name="bForPrinting"></param>
-		private void DoPaint(Graphics g, bool bForPrinting)
-		{
-			if (bForPrinting)
-			{
-				DoPaintUnbuffered(g, bForPrinting);
-			}
-			else // not for printing
-			{
-				var viewWpfGraphSize = _viewWpf.GraphSize;
-				if (viewWpfGraphSize.IsEmpty)
-					return; // nothing to do so far
-
-				// if neccessary, create a new bitmap for caching the graph image.
-				if (_cachedGraphImage == null || _cachedGraphImage.Width != viewWpfGraphSize.Width || _cachedGraphImage.Height != viewWpfGraphSize.Height)
-				{
-					if (_cachedGraphImage != null)
-					{
-						_cachedGraphImage.Dispose();
-						_cachedGraphImage = null;
-					}
-
-					// create a frozen bitmap of the graph
-					// using(Graphics g = m_View.CreateGraphGraphics())
-					try
-					{
-						_cachedGraphImage = new Bitmap(viewWpfGraphSize.Width, viewWpfGraphSize.Height, g);
-					}
-					catch (Exception)
-					{
-						throw new InvalidOperationException("Failed to create _cachedGraphImage");
-					}
-
-					_isCachedGraphImageDirty = true;
-				}
-
-				if (_cachedGraphImage == null)
-				{
-					DoPaintUnbuffered(g, bForPrinting);
-				}
-				else if (_isCachedGraphImageDirty)
-				{
-					using (Graphics gbmp = Graphics.FromImage(_cachedGraphImage))
-					{
-						DoPaintUnbuffered(gbmp, false);
-						_isCachedGraphImageDirty = false;
-					}
-
-					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, viewWpfGraphSize.Width, viewWpfGraphSize.Height);
-					ScaleForPaint(g, bForPrinting);
-				}
-				else
-				{
-					g.DrawImageUnscaled(_cachedGraphImage, 0, 0, viewWpfGraphSize.Width, viewWpfGraphSize.Height);
-					ScaleForPaint(g, bForPrinting); // to be in the same state as when drawing unbuffered
-				}
-
-				// special painting depending on current selected tool
-				g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
-				this._mouseState.AfterPaint(g);
-			}
-		}
-
-		public void DoPaintOverlay(Graphics g)
-		{
-			// special painting depending on current selected tool
-			g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
-			this._mouseState.AfterPaint(g);
+			_viewWpf.RenderOverlay();
 		}
 
 		/// <summary>
 		/// This functions scales the graphics context to be ready for painting.
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
-		/// <param name="bForPrinting">Indicates if the contexts is to be scaled
-		/// for printing purposed (true) or for painting to the screen (false).</param>
-		public void ScaleForPaint(Graphics g, bool bForPrinting)
+		public void ScaleForPaint(Graphics g)
 		{
 			// g.SmoothingMode = SmoothingMode.AntiAlias;
 			// get the dpi settings of the graphics context,
@@ -596,55 +465,37 @@ namespace Altaxo.Gui.Graph.Viewing
 			// used to adjust grid and margin sizing.
 
 			g.PageUnit = GraphicsUnit.Point;
+			g.PageScale = (float)this.ZoomFactor;
+		}
 
-			if (bForPrinting)
-			{
-				g.PageScale = 1;
-			}
-			else
-			{
-				g.PageScale = (float)this.ZoomFactor;
-			}
+		public void ScaleForPaintingGraphDocument(Graphics g)
+		{
+			ScaleForPaint(g);
+
+			g.Clear(this._nonPageAreaColor);
+			// Fill the page with its own color
+			//g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
+			//g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
+			g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.Size.X, (float)Doc.Size.Y);
+			// DrawMargins(g);
+
+			// Paint the graph now
+			//g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
+			g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
 		}
 
 		/// <summary>
-		/// Central routine for painting the graph. The painting can either be on the screen (bForPrinting=false), or
-		/// on a printer or file (bForPrinting=true).
+		/// Infrastructure: intended to be used by graph views to draw the overlay (the selection rectangles and handles of the currently selected tool) into a bitmap.
 		/// </summary>
-		/// <param name="g">The graphics context painting to.</param>
-		/// <param name="bForPrinting">If true, margins and background are not painted, as is usefull for printing.
-		/// Also, if true, the scale is temporarely set to 1.</param>
-		public void DoPaintUnbuffered(Graphics g, bool bForPrinting)
+		/// <param name="g">The graphics contexts (ususally created from a bitmap).</param>
+		public void DoPaintOverlay(Graphics g)
 		{
-			try
-			{
-				ScaleForPaint(g, bForPrinting);
+			ScaleForPaint(g);
+			g.Clear(System.Drawing.Color.Transparent);
 
-				if (!bForPrinting)
-				{
-					g.Clear(this._nonPageAreaColor);
-					// Fill the page with its own color
-					//g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
-					//g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
-					g.FillRectangle(_graphAreaBrush, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y, (float)Doc.Size.X, (float)Doc.Size.Y);
-					// DrawMargins(g);
-				}
-
-				// Paint the graph now
-				//g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
-				g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
-				Doc.DoPaint(g, bForPrinting);
-			}
-			catch (System.Exception ex)
-			{
-				g.PageUnit = GraphicsUnit.Point;
-				g.PageScale = 1;
-
-				g.DrawString(ex.ToString(),
-					new System.Drawing.Font(FontFamily.GenericSansSerif, 8),
-					System.Drawing.Brushes.Black,
-					new RectangleF(0, 0, (float)Doc.Size.X, (float)Doc.Size.Y));
-			}
+			// special painting depending on current selected tool
+			g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
+			this._mouseState.AfterPaint(g);
 		}
 
 		#endregion Painting

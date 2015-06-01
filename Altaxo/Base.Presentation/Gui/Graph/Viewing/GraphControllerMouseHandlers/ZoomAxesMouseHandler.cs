@@ -89,10 +89,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			catch (Exception)
 			{
 			}
-
-			// deselect the text tool
-			// this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 	}
 }

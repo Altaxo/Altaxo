@@ -56,7 +56,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				go.SetRelativeSizePositionFromAbsoluteValues(rect.Size, rect.LeftTop);
 				_grac.ActiveLayer.GraphObjects.Add(go);
 			}
-			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 	}
 }

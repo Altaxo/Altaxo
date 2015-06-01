@@ -129,8 +129,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 
 			UpdateCachedGridLinePositions();
-
-			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 
 		public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
@@ -183,7 +181,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					var part = _layerToEdit.Grid.YPartitioning;
 					part.AdjustIndexToMatchPosition(_layerToEdit.Size.Y, _movedGridLineIndex.Value, positionCurrentMouseInLayerCoordinates.Y);
 				}
-				_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+				_grac.RenderOverlay();
 			}
 			else // not moving a grid line
 			{
@@ -237,7 +235,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
-			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 
 		/// <summary>

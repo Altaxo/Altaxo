@@ -101,7 +101,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			ModifyCurrentMousePrintAreaCoordinate();
 
-			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline();
+			_grac.RenderOverlay();
 		}
 
 		protected virtual void ModifyCurrentMousePrintAreaCoordinate()
@@ -154,7 +154,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			// deselect the text tool
 			_grac.SetGraphToolFromInternal(Altaxo.Gui.Graph.Viewing.GraphToolType.ObjectPointer);
 			_grac.ActiveLayer.GraphObjects.Add(go);
-			_grac.InvalidateCachedGraphImageAndRepaintOffline();
 		}
 	}
 }

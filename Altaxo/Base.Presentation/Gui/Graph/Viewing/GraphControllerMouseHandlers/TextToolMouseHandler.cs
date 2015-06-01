@@ -83,7 +83,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				if (tgo != null && !tgo.Empty)
 				{
 					_grac.ActiveLayer.GraphObjects.Add(tgo);
-					_grac.InvalidateCachedGraphImageAndRepaintOffline();
 				}
 			}
 

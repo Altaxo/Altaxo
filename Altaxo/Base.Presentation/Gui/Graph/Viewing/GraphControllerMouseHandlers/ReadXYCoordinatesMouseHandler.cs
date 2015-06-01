@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				DisplayCrossCoordinates();
 			}
 
-			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+			_grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
 		} // end of function
 
 		private bool CalculateCrossCoordinates(PointD2D crossRootLayerCoord, out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			DisplayCrossCoordinates();
 
-			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+			_grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
 		}
 
 		/// <summary>
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			DisplayCrossCoordinates();
 
-			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+			_grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
 		}
 
 		public override void AfterPaint(Graphics g)

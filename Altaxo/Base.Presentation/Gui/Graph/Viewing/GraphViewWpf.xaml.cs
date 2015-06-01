@@ -54,10 +54,11 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>Used for debugging the number of updates to the graph.</summary>
 		private int _updateCount;
 
+		static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<Size, GdiToWpfBitmap>(16);
+
 		public GraphViewWpf()
 		{
 			InitializeComponent();
-			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
 		}
 
 		public virtual void Dispose()
@@ -94,54 +95,13 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Called by the PresentationGraphController to get a new graphics context for painting.
 		/// </summary>
 		/// <returns></returns>
-		public System.Drawing.Graphics BeginPaintingGraph()
+		public System.Drawing.Graphics GetGraphicsContextFromWpfGdiBitmap()
 		{
 			var grfx = _wpfGdiBitmap.BeginGdiPainting();
 			grfx.ResetTransform();
 			grfx.PageScale = 1;
 			grfx.PageUnit = System.Drawing.GraphicsUnit.Pixel;
 			return grfx;
-		}
-
-		/// <summary>
-		/// Called by the PresentationGraphController when the painting (into the _wpfGdiBitmap) is finished.
-		/// </summary>
-		public void EndPaintingGraph()
-		{
-			_wpfGdiBitmap.EndGdiPainting();
-		}
-
-		/// <summary>
-		/// This event is triggered by the render trigger. Since it is an event from a framework element, it is
-		/// always called in Gui thread.
-		/// </summary>
-		private void EhRenderingTriggered(double xsize, double ysize)
-		{
-			int actWidth = (int)xsize;
-			int actHeight = (int)ysize;
-
-			if (actWidth <= 0 || actHeight <= 0)
-				return;
-
-			var gc = Controller;
-			if (null != gc)
-			{
-				if (_cachedGraphSizeX != actWidth || _cachedGraphSizeY != actHeight)
-				{
-					_cachedGraphSizeX = actWidth;
-					_cachedGraphSizeY = actHeight;
-
-					_wpfGdiBitmap.Resize(_cachedGraphSizeX, _cachedGraphSizeY); ;
-					_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
-					_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
-					gc.EhView_GraphPanelSizeChanged(); // inform
-				}
-
-				gc.RepaintGraphAreaImmediately(); // triggers the rendering of the graph into a bitmap. At the end of the rendering process
-			}
-
-			++_updateCount;
-			//_guiUpdateCount.Content = _updateCount.ToString();
 		}
 
 		/// <summary>
@@ -242,7 +202,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
 
 			if (null != Controller)
-				Controller.EhView_GraphPanelSizeChanged(); // inform
+				Controller.EhView_GraphPanelSizeChanged(); // inform controller
+
+			((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 		/// <summary>
@@ -251,62 +213,67 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		void Altaxo.Gui.Graph.Viewing.IGraphView.InvalidateCachedGraphBitmapAndRepaint()
 		{
-			if (null == Controller)
+			var controller = Controller;
+			if (null == controller)
 				return;
 
-			/* // rendering in the background
+			// rendering in the background
 			Altaxo.Graph.Gdi.GraphDocumentRenderManager.Instance.AddTask(
-				_controller,
-				Controller.Doc,
+				controller,
+				controller.Doc,
 				() =>
 				{
-					return BeginPaintingGraph();
+					var g = GetGraphicsContextFromWpfGdiBitmap();
+					controller.ScaleForPaintingGraphDocument(g);
+					return g;
 				},
-				() =>
+				(grfx) =>
 				{
 					Current.Gui.Execute(() =>
 					{
-						EndPaintingGraph();
+						_graphPanel.Source = _wpfGdiBitmap.WpfBitmapSource;
+						grfx.Dispose();
+
+						RenderOverlay();
 					});
 				}
 				);
-				*/
 
+			/*
 			//rendering in the renderTrigger Thread
 			var grfx = BeginPaintingGraph();
 
 			Controller.DoPaintUnbuffered(grfx, false);
 
+			grfx.Dispose();
+
 			Current.Gui.Execute(() =>
 			{
 				_graphPanel.Source = _wpfGdiBitmap.WpfBitmapSource;
 
+				grfx = BeginPaintingGraph();
+				Controller.ScaleForPaint(grfx, false);
+				grfx.Clear(System.Drawing.Color.Transparent);
 				Controller.DoPaintOverlay(grfx);
+				grfx.Dispose();
 
 				_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
 				//				EndPaintingGraph();
 			});
 
-			grfx.Dispose();
+	*/
 		}
 
 		/// <summary>
-		/// Triggers the rendering of the graph area by invalidating the render trigger visual (this function is safe to call from other threads).
-		/// When the RenderTrigger's OnRender function is called, the RenderTrigger fires the event that called then <see cref="EhRenderingTriggered"/>.
-		///
+		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread.
 		/// </summary>
-		public void TriggerRenderingOfGraphArea()
+		public void RenderOverlay()
 		{
-			var grfx = BeginPaintingGraph();
-			Controller.ScaleForPaint(grfx, false);
-			grfx.Clear(System.Drawing.Color.Transparent);
-			Controller.DoPaintOverlay(grfx);
-			_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
-		}
-
-		protected override void OnRender(DrawingContext drawingContext)
-		{
-			base.OnRender(drawingContext);
+			using (var grfx = GetGraphicsContextFromWpfGdiBitmap())
+			{
+				Controller.DoPaintOverlay(grfx);
+				_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
+			}
 		}
 
 		public string GraphViewTitle

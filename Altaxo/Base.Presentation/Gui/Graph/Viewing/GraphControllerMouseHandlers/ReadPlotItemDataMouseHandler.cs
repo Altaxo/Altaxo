@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 					// here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
 					// of the grac
-					_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+					_grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
 				}
 			}
 		} // end of function
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			// here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
 			// of the grac
-			_grac.RepaintGraphAreaImmediatlyIfCachedBitmapValidElseOffline(); // no refresh necessary, only invalidate to show the cross
+			_grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
 		}
 
 		private void DisplayData(object plotItem, int rowIndex, AltaxoVariant x, AltaxoVariant y)

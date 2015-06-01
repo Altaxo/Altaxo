@@ -21,7 +21,7 @@ namespace Altaxo.Graph.Gdi
 			public GraphDocument Document { get; private set; }
 
 			private Func<System.Drawing.Graphics> _beforeRendering;
-			private Action _afterRendering;
+			private Action<System.Drawing.Graphics> _afterRendering;
 
 			public override bool Equals(object obj)
 			{
@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Gdi
 				return Owner.GetHashCode();
 			}
 
-			public GraphDocumentRenderTask(GraphDocumentRenderManager parent, object token, GraphDocument doc, Func<System.Drawing.Graphics> beforeRendering, Action afterRendering)
+			public GraphDocumentRenderTask(GraphDocumentRenderManager parent, object token, GraphDocument doc, Func<System.Drawing.Graphics> beforeRendering, Action<System.Drawing.Graphics> afterRendering)
 			{
 				if (null == parent)
 					throw new ArgumentNullException("parent");
@@ -64,10 +64,17 @@ namespace Altaxo.Graph.Gdi
 					Document.DoPaint(grfx, false);
 
 					if (null != _afterRendering)
-						_afterRendering();
+						_afterRendering(grfx);
 				}
 				catch (Exception ex)
 				{
+					Current.Console.WriteLine(
+					"{0}: Error drawing graph {1}\r\n" +
+					"Details: {2}",
+					DateTime.Now,
+					Document.Name,
+					ex
+					);
 				}
 				finally
 				{
@@ -90,7 +97,7 @@ namespace Altaxo.Graph.Gdi
 
 		private long _priority;
 
-		public void AddTask(object owner, GraphDocument doc, Func<System.Drawing.Graphics> actionBefore, Action actionAfter)
+		public void AddTask(object owner, GraphDocument doc, Func<System.Drawing.Graphics> actionBefore, Action<System.Drawing.Graphics> actionAfter)
 		{
 			var task = new GraphDocumentRenderTask(this, owner, doc, actionBefore, actionAfter);
 
