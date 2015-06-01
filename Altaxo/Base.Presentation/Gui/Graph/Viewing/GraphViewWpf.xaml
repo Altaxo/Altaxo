@@ -23,7 +23,8 @@
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown" SizeChanged="EhGraphPanelSizeChanged">
+			<Rectangle  SizeChanged="EhGraphPanelSizeChanged" />
+			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Fill" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown">
 				<Image.CommandBindings>
 					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
 					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />

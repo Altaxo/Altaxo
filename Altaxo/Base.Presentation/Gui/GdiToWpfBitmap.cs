@@ -231,6 +231,14 @@ namespace Altaxo.Gui
 			}
 		}
 
+		public System.Drawing.Size GdiSize
+		{
+			get
+			{
+				return new System.Drawing.Size(_width, _height);
+			}
+		}
+
 		public System.Windows.Interop.InteropBitmap WpfBitmap
 		{
 			get

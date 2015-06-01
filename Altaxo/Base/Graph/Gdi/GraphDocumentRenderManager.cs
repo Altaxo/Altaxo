@@ -20,8 +20,7 @@ namespace Altaxo.Graph.Gdi
 
 			public GraphDocument Document { get; private set; }
 
-			private Func<System.Drawing.Graphics> _beforeRendering;
-			private Action<System.Drawing.Graphics> _afterRendering;
+			private Action<GraphDocument, object> _rendering;
 
 			public override bool Equals(object obj)
 			{
@@ -37,7 +36,12 @@ namespace Altaxo.Graph.Gdi
 				return Owner.GetHashCode();
 			}
 
-			public GraphDocumentRenderTask(GraphDocumentRenderManager parent, object token, GraphDocument doc, Func<System.Drawing.Graphics> beforeRendering, Action<System.Drawing.Graphics> afterRendering)
+			public GraphDocumentRenderTask(
+				GraphDocumentRenderManager parent,
+				object token,
+				GraphDocument doc,
+				Action<GraphDocument, object> renderingAction
+				)
 			{
 				if (null == parent)
 					throw new ArgumentNullException("parent");
@@ -45,26 +49,20 @@ namespace Altaxo.Graph.Gdi
 					throw new ArgumentNullException("token");
 				if (null == doc)
 					throw new ArgumentNullException("doc");
-				if (null == beforeRendering)
-					throw new ArgumentNullException("beforeRendering");
+				if (null == renderingAction)
+					throw new ArgumentNullException("renderingAction");
 
 				_parent = parent;
 				Owner = token;
 				Document = doc;
-				_beforeRendering = beforeRendering;
-				_afterRendering = afterRendering;
+				_rendering = renderingAction;
 			}
 
 			public void RenderTask()
 			{
 				try
 				{
-					var grfx = _beforeRendering();
-
-					Document.DoPaint(grfx, false);
-
-					if (null != _afterRendering)
-						_afterRendering(grfx);
+					_rendering(Document, Owner);
 				}
 				catch (Exception ex)
 				{
@@ -97,9 +95,9 @@ namespace Altaxo.Graph.Gdi
 
 		private long _priority;
 
-		public void AddTask(object owner, GraphDocument doc, Func<System.Drawing.Graphics> actionBefore, Action<System.Drawing.Graphics> actionAfter)
+		public void AddTask(object owner, GraphDocument doc, Action<GraphDocument, object> renderingAction)
 		{
-			var task = new GraphDocumentRenderTask(this, owner, doc, actionBefore, actionAfter);
+			var task = new GraphDocumentRenderTask(this, owner, doc, renderingAction);
 
 			var newprio = System.Threading.Interlocked.Increment(ref _priority);
 

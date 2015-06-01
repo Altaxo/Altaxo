@@ -48,13 +48,12 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private WeakReference _controller = new WeakReference(null);
 
-		private GdiToWpfBitmap _wpfGdiBitmap = new GdiToWpfBitmap(100, 100);
-		private int _cachedGraphSizeX, _cachedGraphSizeY;
+		private System.Drawing.Size _cachedGraphSize;
 
 		/// <summary>Used for debugging the number of updates to the graph.</summary>
 		private int _updateCount;
 
-		static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<Size, GdiToWpfBitmap>(16);
+		static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap>(16);
 
 		public GraphViewWpf()
 		{
@@ -63,12 +62,6 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public virtual void Dispose()
 		{
-			if (null != _wpfGdiBitmap)
-			{
-				_graphPanel.Source = null;
-				_wpfGdiBitmap.Dispose();
-				_wpfGdiBitmap = null;
-			}
 			_controller = new WeakReference(null);
 		}
 
@@ -95,9 +88,9 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Called by the PresentationGraphController to get a new graphics context for painting.
 		/// </summary>
 		/// <returns></returns>
-		public System.Drawing.Graphics GetGraphicsContextFromWpfGdiBitmap()
+		public static System.Drawing.Graphics GetGraphicsContextFromWpfGdiBitmap(GdiToWpfBitmap gdiWpfBitmap)
 		{
-			var grfx = _wpfGdiBitmap.BeginGdiPainting();
+			var grfx = gdiWpfBitmap.BeginGdiPainting();
 			grfx.ResetTransform();
 			grfx.PageScale = 1;
 			grfx.PageUnit = System.Drawing.GraphicsUnit.Pixel;
@@ -111,7 +104,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return new System.Drawing.Size(_cachedGraphSizeX, _cachedGraphSizeY);
+				return _cachedGraphSize;
 			}
 		}
 
@@ -185,6 +178,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			set
 			{
 				_controller = new WeakReference(value as Altaxo.Gui.Graph.Viewing.GraphController);
+				((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
 			}
 		}
 
@@ -194,12 +188,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			if (!(s.Width > 0 && s.Height > 0))
 				return;
-
-			_cachedGraphSizeX = (int)s.Width;
-			_cachedGraphSizeY = (int)s.Height;
-			_wpfGdiBitmap.Resize(_cachedGraphSizeX, _cachedGraphSizeY); ;
-			_wpfGdiBitmap.GdiBitmap.SetResolution(96, 96);
-			_graphPanel.Source = _wpfGdiBitmap.WpfBitmap;
+			_cachedGraphSize = new System.Drawing.Size((int)s.Width, (int)s.Height);
 
 			if (null != Controller)
 				Controller.EhView_GraphPanelSizeChanged(); // inform controller
@@ -221,21 +210,30 @@ namespace Altaxo.Gui.Graph.Viewing
 			Altaxo.Graph.Gdi.GraphDocumentRenderManager.Instance.AddTask(
 				controller,
 				controller.Doc,
-				() =>
+				(graphDocument, token) =>
 				{
-					var g = GetGraphicsContextFromWpfGdiBitmap();
-					controller.ScaleForPaintingGraphDocument(g);
-					return g;
-				},
-				(grfx) =>
-				{
-					Current.Gui.Execute(() =>
-					{
-						_graphPanel.Source = _wpfGdiBitmap.WpfBitmapSource;
-						grfx.Dispose();
+					var size = _cachedGraphSize;
 
-						RenderOverlay();
-					});
+					if (size.Width > 1 && size.Height > 1)
+					{
+						GdiToWpfBitmap bmp;
+						if (!_gdiWpfBitmapManager.TryTake(size, out bmp))
+							Current.Gui.Execute(() => bmp = new GdiToWpfBitmap(size.Width, size.Height));
+
+						var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp);
+						controller.ScaleForPaintingGraphDocument(grfx);
+						graphDocument.DoPaint(grfx, false);
+
+						Current.Gui.Execute(() =>
+						{
+							_graphPanel.Source = bmp.WpfBitmapSource;
+							grfx.Dispose();
+
+							RenderOverlay(bmp);
+
+							_gdiWpfBitmapManager.Add(bmp.GdiSize, bmp);
+						});
+					}
 				}
 				);
 
@@ -266,13 +264,49 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		/// <summary>
 		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread.
+		/// Attention: if there is no cached bitmap, a new bitmap is created, but this must be done in the Gui context, so this can lead to deadlocks.
 		/// </summary>
 		public void RenderOverlay()
 		{
-			using (var grfx = GetGraphicsContextFromWpfGdiBitmap())
+			var size = _cachedGraphSize;
+
+			if (size.Width > 1 && size.Height > 1)
 			{
-				Controller.DoPaintOverlay(grfx);
-				_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
+				GdiToWpfBitmap bmp;
+				if (!_gdiWpfBitmapManager.TryTake(size, out bmp))
+					Current.Gui.Execute(() => bmp = new GdiToWpfBitmap(size.Width, size.Height));
+				try
+				{
+					RenderOverlay(bmp);
+				}
+				finally
+				{
+					_gdiWpfBitmapManager.Add(bmp.GdiSize, bmp);
+				}
+			}
+			else
+			{
+				_graphOverlay.Source = null;
+			}
+		}
+
+		/// <summary>
+		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread.
+		/// </summary>
+		public void RenderOverlay(GdiToWpfBitmap bmp)
+		{
+			var controller = Controller;
+			if (null != controller)
+			{
+				using (var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp))
+				{
+					controller.DoPaintOverlay(grfx);
+					_graphOverlay.Source = bmp.WpfBitmapSource;
+				}
+			}
+			else
+			{
+				_graphOverlay.Source = null;
 			}
 		}
 
@@ -390,7 +424,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				const double factor = 72.0 / 96.0;
-				return new Altaxo.Graph.PointD2D(_cachedGraphSizeX * factor, _cachedGraphSizeY * factor);
+				return new Altaxo.Graph.PointD2D(_cachedGraphSize.Width * factor, _cachedGraphSize.Height * factor);
 			}
 		}
 
