@@ -242,15 +242,91 @@ namespace Altaxo.Main.Services
 
 		#endregion ScriptCompilerResult
 
+		#region ConcurrentScriptCompilerDictionary
+
+		private class ConcurrentScriptCompilerDictionary
+		{
+			private Dictionary<string, ScriptCompilerResult> _compilerResultsByTextHash = new Dictionary<string, ScriptCompilerResult>();
+			private Dictionary<Assembly, ScriptCompilerResult> _compilerResultsByAssembly = new Dictionary<Assembly, ScriptCompilerResult>();
+			System.Threading.ReaderWriterLockSlim _lock = new System.Threading.ReaderWriterLockSlim();
+
+			internal bool TryAdd(ScriptCompilerResult result)
+			{
+				if (null == result)
+					throw new ArgumentNullException("result");
+
+				_lock.EnterUpgradeableReadLock();
+				try
+				{
+					if (_compilerResultsByTextHash.ContainsKey(result.ScriptTextHash))
+					{
+						return false;
+					}
+					else
+					{
+						_lock.EnterWriteLock();
+						try
+						{
+							_compilerResultsByTextHash.Add(result.ScriptTextHash, result);
+							_compilerResultsByAssembly.Add(result.ScriptAssembly, result);
+							return true;
+						}
+						finally
+						{
+							_lock.ExitWriteLock();
+						}
+					}
+				}
+				finally
+				{
+					_lock.ExitUpgradeableReadLock();
+				}
+			}
+
+			internal bool TryGetValue(string scriptTextHash, out ScriptCompilerResult result)
+			{
+				if (string.IsNullOrEmpty(scriptTextHash))
+					throw new ArgumentNullException("scriptTextHash");
+
+				_lock.EnterReadLock();
+				try
+				{
+					return _compilerResultsByTextHash.TryGetValue(scriptTextHash, out result);
+				}
+				finally
+				{
+					_lock.ExitReadLock();
+				}
+			}
+
+			internal bool TryGetValue(Assembly assembly, out ScriptCompilerResult result)
+			{
+				if (null == assembly)
+					throw new ArgumentNullException("assembly");
+
+				_lock.EnterReadLock();
+				try
+				{
+					return _compilerResultsByAssembly.TryGetValue(assembly, out result);
+				}
+				finally
+				{
+					_lock.ExitReadLock();
+				}
+			}
+		}
+
+		#endregion ConcurrentScriptCompilerDictionary
+
 		#endregion internal classes
 
-		private static System.Collections.Hashtable _compilerResultsByTextHash = new System.Collections.Hashtable();
-		private static System.Collections.Hashtable _compilerResultsByAssembly = new System.Collections.Hashtable();
+		private static ConcurrentScriptCompilerDictionary _compilerResults = new ConcurrentScriptCompilerDictionary();
 
 		public IScriptCompilerResult GetCompilerResult(Assembly ass)
 		{
-			if (_compilerResultsByAssembly.ContainsKey(ass))
-				return (IScriptCompilerResult)_compilerResultsByAssembly[ass];
+			ScriptCompilerResult result;
+			if (_compilerResults.TryGetValue(ass, out result))
+				return result;
 			else
 				return null;
 		}
@@ -274,11 +350,14 @@ namespace Altaxo.Main.Services
 		/// <returns>True if successfully compiles, otherwise false.</returns>
 		public static IScriptCompilerResult Compile(string[] scriptText, out string[] errors)
 		{
+			ScriptCompilerResult result;
+
 			string scriptTextHash = ScriptCompilerResult.ComputeScriptTextHash(scriptText);
-			if (_compilerResultsByTextHash.Contains(scriptTextHash))
+
+			if (_compilerResults.TryGetValue(scriptTextHash, out result))
 			{
 				errors = null;
-				return (ScriptCompilerResult)_compilerResultsByTextHash[scriptTextHash];
+				return result;
 			}
 
 			Dictionary<string, string> providerOptions = new Dictionary<string, string>();
@@ -317,10 +396,8 @@ namespace Altaxo.Main.Services
 			}
 			else
 			{
-				ScriptCompilerResult result = new ScriptCompilerResult(scriptText, scriptTextHash, results.CompiledAssembly);
-
-				_compilerResultsByTextHash.Add(scriptTextHash, result);
-				_compilerResultsByAssembly.Add(result.ScriptAssembly, result);
+				result = new ScriptCompilerResult(scriptText, scriptTextHash, results.CompiledAssembly);
+				_compilerResults.TryAdd(result);
 				errors = null;
 				return result;
 			}

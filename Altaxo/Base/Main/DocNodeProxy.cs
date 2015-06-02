@@ -271,7 +271,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				System.Diagnostics.Debug.Assert(_docNodePath != null);
+				System.Diagnostics.Debug.Assert(_docNodePath != null || IsDisposeInProgress);
 				return false;
 			}
 		}
@@ -401,7 +401,7 @@ namespace Altaxo.Main
 		/// </remarks>
 		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
 		{
-			System.Diagnostics.Debug.Assert(null != _docNodePath);
+			System.Diagnostics.Debug.Assert(null != _docNodePath || IsDisposeInProgress);
 			if (null == rootNode)
 				throw new ArgumentNullException("rootNode");
 
@@ -598,7 +598,7 @@ namespace Altaxo.Main
 
 		protected virtual IDocumentLeafNode ResolveDocumentObject(Main.IDocumentLeafNode startnode)
 		{
-			System.Diagnostics.Debug.Assert(null != _docNodePath);
+			System.Diagnostics.Debug.Assert(null != _docNodePath || IsDisposeInProgress);
 
 			var docNode = InternalDocumentNode;
 			if (docNode == null)

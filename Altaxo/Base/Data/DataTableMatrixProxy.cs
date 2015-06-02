@@ -935,6 +935,9 @@ namespace Altaxo.Data
 			if (!_isDirty)
 				return;
 
+			if (this.IsDisposeInProgress)
+				return;
+
 			if (null == _dataTable)
 				TryGetDataTableProxyFromColumns(); // legacy, for instance from old XYZMeshedColumnPlotData, we have not stored the table reference
 

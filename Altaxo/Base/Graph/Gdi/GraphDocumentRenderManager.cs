@@ -66,13 +66,16 @@ namespace Altaxo.Graph.Gdi
 				}
 				catch (Exception ex)
 				{
-					Current.Console.WriteLine(
-					"{0}: Error drawing graph {1}\r\n" +
-					"Details: {2}",
-					DateTime.Now,
-					Document.Name,
-					ex
-					);
+					if (!Document.IsDisposeInProgress)
+					{
+						Current.Console.WriteLine(
+						"{0}: Error drawing graph {1}\r\n" +
+						"Details: {2}",
+						DateTime.Now,
+						Document.Name,
+						ex
+						);
+					}
 				}
 				finally
 				{

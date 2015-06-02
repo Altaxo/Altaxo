@@ -539,7 +539,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			get
 			{
-				return _screenResolutionDpi * (ZoomFactor * InchPerPoint);
+				return new PointD2D(96, 96) * (ZoomFactor * InchPerPoint);
 			}
 		}
 

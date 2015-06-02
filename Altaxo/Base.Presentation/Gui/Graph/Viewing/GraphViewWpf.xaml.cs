@@ -48,7 +48,8 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private WeakReference _controller = new WeakReference(null);
 
-		private System.Drawing.Size _cachedGraphSize;
+		private PointD2D _cachedGraphSize_96thInch;
+		private System.Drawing.Size _cachedGraphSize_Pixels;
 
 		/// <summary>Used for debugging the number of updates to the graph.</summary>
 		private int _updateCount;
@@ -95,17 +96,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			grfx.PageScale = 1;
 			grfx.PageUnit = System.Drawing.GraphicsUnit.Pixel;
 			return grfx;
-		}
-
-		/// <summary>
-		/// Gets the pixel dimensions of the graph bitmap.
-		/// </summary>
-		public System.Drawing.Size GraphSize
-		{
-			get
-			{
-				return _cachedGraphSize;
-			}
 		}
 
 		private PointD2D GetMousePosition(MouseEventArgs e)
@@ -188,7 +178,11 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			if (!(s.Width > 0 && s.Height > 0))
 				return;
-			_cachedGraphSize = new System.Drawing.Size((int)s.Width, (int)s.Height);
+
+			_cachedGraphSize_96thInch = new PointD2D(s.Width, s.Height);
+			var screenResolution = Current.Gui.ScreenResolutionDpi;
+			var grap = screenResolution * _cachedGraphSize_96thInch / 96.0;
+			_cachedGraphSize_Pixels = new System.Drawing.Size((int)grap.X, (int)grap.Y);
 
 			if (null != Controller)
 				Controller.EhView_GraphPanelSizeChanged(); // inform controller
@@ -212,7 +206,10 @@ namespace Altaxo.Gui.Graph.Viewing
 				controller.Doc,
 				(graphDocument, token) =>
 				{
-					var size = _cachedGraphSize;
+					if (graphDocument.IsDisposeInProgress)
+						return;
+
+					var size = _cachedGraphSize_Pixels;
 
 					if (size.Width > 1 && size.Height > 1)
 					{
@@ -222,7 +219,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 						var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp);
 						controller.ScaleForPaintingGraphDocument(grfx);
-						graphDocument.DoPaint(grfx, false);
+
+						if (!graphDocument.IsDisposeInProgress)
+							graphDocument.DoPaint(grfx, false);
 
 						Current.Gui.Execute(() =>
 						{
@@ -268,7 +267,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void RenderOverlay()
 		{
-			var size = _cachedGraphSize;
+			var size = _cachedGraphSize_Pixels;
 
 			if (size.Width > 1 && size.Height > 1)
 			{
@@ -424,7 +423,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				const double factor = 72.0 / 96.0;
-				return new Altaxo.Graph.PointD2D(_cachedGraphSize.Width * factor, _cachedGraphSize.Height * factor);
+				return new Altaxo.Graph.PointD2D(_cachedGraphSize_96thInch.X * factor, _cachedGraphSize_96thInch.Y * factor);
 			}
 		}
 
