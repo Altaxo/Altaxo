@@ -568,6 +568,7 @@
     <Compile Include="Collections\AscendingIntegerRangeCollection.cs" />
     <Compile Include="Collections\CachedObjectManagerByMaximumNumberOfItems.cs" />
     <Compile Include="Collections\ConcurrentTokenizedPriorityQueue_KeyValue.cs" />
+    <Compile Include="Collections\ConcurrentTokenizedLinkedList.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
     <Compile Include="Collections\EnumerationExtensions.cs" />
     <Compile Include="Collections\IAscendingIntegerCollection.cs" />

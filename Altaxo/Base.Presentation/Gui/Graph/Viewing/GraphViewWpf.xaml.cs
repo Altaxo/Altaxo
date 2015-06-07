@@ -56,9 +56,12 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap>(16);
 
+		static DrawingImage _busyWithRenderingDrawing = (DrawingImage)new DrawingImage(new GlyphRunDrawing(Brushes.Lavender, BuildGlyphRun(" Busy with rendering ... "))).GetAsFrozen();
+
 		public GraphViewWpf()
 		{
 			InitializeComponent();
+			_graphPanel.Source = _busyWithRenderingDrawing;
 		}
 
 		public virtual void Dispose()
@@ -515,6 +518,44 @@ namespace Altaxo.Gui.Graph.Viewing
 				gc.PasteObjectsFromClipboard();
 				e.Handled = true;
 			}
+		}
+
+		public static GlyphRun BuildGlyphRun(string text)
+		{
+			double fontSize = 50;
+			GlyphRun glyphs = null;
+
+			Typeface font = new Typeface("Arial");
+			GlyphTypeface glyphFace;
+			if (font.TryGetGlyphTypeface(out glyphFace))
+			{
+				glyphs = new GlyphRun();
+				System.ComponentModel.ISupportInitialize isi = glyphs;
+				isi.BeginInit();
+				glyphs.GlyphTypeface = glyphFace;
+				glyphs.FontRenderingEmSize = fontSize;
+
+				char[] textChars = text.ToCharArray();
+				glyphs.Characters = textChars;
+				ushort[] glyphIndices = new ushort[textChars.Length];
+				double[] advanceWidths = new double[textChars.Length];
+
+				for (int i = 0; i < textChars.Length; ++i)
+				{
+					int codepoint = textChars[i];
+					ushort glyphIndex = glyphFace.CharacterToGlyphMap[codepoint];
+					double glyphWidth = glyphFace.AdvanceWidths[glyphIndex];
+
+					glyphIndices[i] = glyphIndex;
+					advanceWidths[i] = glyphWidth * fontSize;
+				}
+				glyphs.GlyphIndices = glyphIndices;
+				glyphs.AdvanceWidths = advanceWidths;
+
+				glyphs.BaselineOrigin = new Point(0, glyphFace.Baseline * fontSize);
+				isi.EndInit();
+			}
+			return glyphs;
 		}
 	}
 }
