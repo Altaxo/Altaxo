@@ -268,13 +268,17 @@
     <Compile Include="Graph\NamedColors.cs" />
     <Compile Include="Graph\RectangleExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Graph\Scales\Boundaries\ProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />
+    <Compile Include="Graph\Scales\ProbabilityScale.cs" />
     <Compile Include="Graph\Scales\InverseScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundariesRelativeTo.cs" />
     <Compile Include="Graph\Scales\Rescaling\InverseScaleRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\ProbabilityScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\IScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\ProbabilityTickSpacing.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationController.cs" />
     <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningController.cs" />
@@ -313,6 +317,7 @@
     <Compile Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\DateTimeTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\InverseTickSpacingController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\ProbabilityTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\TextTickSpacingController.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingController.cs" />
     <Compile Include="Gui\Graph\TickSpacingController.cs" />
@@ -1246,7 +1251,9 @@
     <Compile Include="Graph\Gdi\Shapes\GraphicBase.ShearGripHandle.cs" />
     <Compile Include="Graph\Gdi\TranslationRotationShearxScaleTransformation2D.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Gui\Main\ProjectBrowser\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

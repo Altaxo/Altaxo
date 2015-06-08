@@ -509,6 +509,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Scales\Ticks\ProbabilityTickSpacingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1258,6 +1262,9 @@
     </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsControl.xaml.cs">
       <DependentUpon>LinearScaleRescaleConditionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\ProbabilityTickSpacingControl.xaml.cs">
+      <DependentUpon>ProbabilityTickSpacingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml.cs">
       <DependentUpon>NoTickSpacingControl.xaml</DependentUpon>
