@@ -36,12 +36,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 {
 	#region Interfaces
 
-	public interface IProbabilityTickSpacingView
+	public interface ICumulativeProbabilityTickSpacingView
 	{
-		string MajorTicks { set; }
-
-		int? MinorTicks { get; set; }
-
 		double MinGrace { get; set; }
 
 		double MaxGrace { get; set; }
@@ -70,8 +66,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 		string AddMinorTickValues { get; set; }
 
-		event Action<string, CancelEventArgs> MajorTicksValidating;
-
 		event Action<string, CancelEventArgs> DivideByValidating;
 
 		event Action<bool> TransfoOperationChanged;
@@ -79,9 +73,9 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 	#endregion Interfaces
 
-	[UserControllerForObject(typeof(ProbabilityTickSpacing), 200)]
-	[ExpectedTypeOfView(typeof(IProbabilityTickSpacingView))]
-	public class ProbabilityTickSpacingController : MVCANControllerEditOriginalDocBase<ProbabilityTickSpacing, IProbabilityTickSpacingView>
+	[UserControllerForObject(typeof(CumulativeProbabilityTickSpacing), 200)]
+	[ExpectedTypeOfView(typeof(ICumulativeProbabilityTickSpacingView))]
+	public class CumulativeProbabilityTickSpacingController : MVCANControllerEditOriginalDocBase<CumulativeProbabilityTickSpacing, ICumulativeProbabilityTickSpacingView>
 	{
 		private SelectableListNodeList _snapTicksToOrg = new SelectableListNodeList();
 		private SelectableListNodeList _snapTicksToEnd = new SelectableListNodeList();
@@ -104,8 +98,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 			if (_view != null)
 			{
-				_view.MajorTicks = GUIConversion.ToString(_doc.MajorTickSpan);
-				_view.MinorTicks = _doc.MinorTicks;
 				_view.MinGrace = _doc.OrgGrace;
 				_view.MaxGrace = _doc.EndGrace;
 
@@ -208,9 +200,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 				return false;
 			}
 
-			// MajorTicks were validated and set before
-			_doc.MinorTicks = _view.MinorTicks;
-
 			_doc.TargetNumberOfMajorTicks = _view.TargetNumberMajorTicks;
 			_doc.TargetNumberOfMinorTicks = _view.TargetNumberMinorTicks;
 
@@ -227,27 +216,16 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		{
 			base.AttachView();
 
-			_view.MajorTicksValidating += EhMajorSpanValidating;
 			_view.DivideByValidating += EhDivideByValidating;
 			_view.TransfoOperationChanged += EhTransformationOperationChanged;
 		}
 
 		protected override void DetachView()
 		{
-			_view.MajorTicksValidating -= EhMajorSpanValidating;
 			_view.DivideByValidating -= EhDivideByValidating;
 			_view.TransfoOperationChanged -= EhTransformationOperationChanged;
 
 			base.DetachView();
-		}
-
-		private void EhMajorSpanValidating(string txt, CancelEventArgs e)
-		{
-			double? val;
-			if (GUIConversion.IsDoubleOrNull(txt, out val))
-				_doc.MajorTickSpan = val;
-			else
-				e.Cancel = true;
 		}
 
 		private void EhDivideByValidating(string txt, CancelEventArgs e)

@@ -501,6 +501,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Scales\Rescaling\CumulativeProbabilityScaleRescaleConditionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Scales\Rescaling\LogarithmicScaleRescaleConditionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -509,7 +513,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Scales\Ticks\ProbabilityTickSpacingControl.xaml">
+    <Page Include="Gui\Graph\Scales\Ticks\CumulativeProbabilityTickSpacingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1257,14 +1261,17 @@
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeScaleRescaleConditionsControl.xaml.cs">
       <DependentUpon>DateTimeScaleRescaleConditionsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Scales\Rescaling\CumulativeProbabilityScaleRescaleConditionsControl.xaml.cs">
+      <DependentUpon>CumulativeProbabilityScaleRescaleConditionsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicScaleRescaleConditionsControl.xaml.cs">
       <DependentUpon>LogarithmicScaleRescaleConditionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\LinearScaleRescaleConditionsControl.xaml.cs">
       <DependentUpon>LinearScaleRescaleConditionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Scales\Ticks\ProbabilityTickSpacingControl.xaml.cs">
-      <DependentUpon>ProbabilityTickSpacingControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\Scales\Ticks\CumulativeProbabilityTickSpacingControl.xaml.cs">
+      <DependentUpon>CumulativeProbabilityTickSpacingControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml.cs">
       <DependentUpon>NoTickSpacingControl.xaml</DependentUpon>

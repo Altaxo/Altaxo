@@ -30,32 +30,27 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Scales
 {
 	/// <summary>
-	/// Represents a scale, whose logical value (0..1) is inverse proportional to the physical value. Note that when both axis origin and end are positive, axis origin is greater than axis end.
+	/// Represents a scale, whose logical value (0..1) is proportional to the quantile of the normal distribution.
 	/// </summary>
-	/// <remarks>
-	/// The logical value l is calculated from the physical value x by the following formula:
-	/// l = (1/x - 1/axisOrigin) / (1/axisEnd - 1/axisOrigin);
-	/// </remarks>
-	/// <example>
-	/// If the axis origin is 10 and the axis end is 1, then x=10 is mapped to the logical value l=0 (axis origin), x=1 is mapped to the logical value l=1 (axis end), and x=11/20 is mapped to l=0.5.
-	/// </example>
-	public class ProbabilityScale : NumericalScale
+	/// <remarks>This scale is used to create a normal probability plot <see href="http://en.wikipedia.org/wiki/Normal_probability_plot"/>.
+	/// If the data are consistent with a sample from a normal distribution, the points should approximately form a straight line.</remarks>
+	public class CumulativeProbabilityScale : NumericalScale
 	{
 		static readonly double SquareRootOf2 = Math.Sqrt(2);
 
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds;
 
-		protected ProbabilityScaleRescaleConditions _rescaling;
+		protected CumulativeProbabilityScaleRescaleConditions _rescaling;
 
 		protected Ticks.TickSpacing _tickSpacing;
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
-		protected double _cachedAxisOrg = 0.0002;
+		protected double _cachedAxisOrg = CumulativeProbabilityScaleRescaleConditions.DefaultOrgValue;
 
 		/// <summary>Current axis end (cached value).</summary>
-		protected double _cachedAxisEnd = 1 - 0.0002;
+		protected double _cachedAxisEnd = CumulativeProbabilityScaleRescaleConditions.DefaultEndValue;
 
 		protected double _cachedAxisQuantileOrg;
 		protected double _cachedAxisQuantileSpan;
@@ -65,12 +60,12 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// 2015-06-07 Initial version
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProbabilityScale), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityScale), 0)]
 		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ProbabilityScale)obj;
+				var s = (CumulativeProbabilityScale)obj;
 				info.AddValue("Org", s._cachedAxisOrg);
 				info.AddValue("End", s._cachedAxisOrg);
 				info.AddValue("Bounds", s._dataBounds);
@@ -80,7 +75,7 @@ namespace Altaxo.Graph.Scales
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (ProbabilityScale)o : new ProbabilityScale(info);
+				var s = null != o ? (CumulativeProbabilityScale)o : new CumulativeProbabilityScale(info);
 
 				s._cachedAxisOrg = (double)info.GetDouble("Org");
 				s._cachedAxisEnd = (double)info.GetDouble("End");
@@ -90,7 +85,7 @@ namespace Altaxo.Graph.Scales
 				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s; // restore the event chain
 
-				s._rescaling = (ProbabilityScaleRescaleConditions)info.GetValue("Rescaling", s);
+				s._rescaling = (CumulativeProbabilityScaleRescaleConditions)info.GetValue("Rescaling", s);
 				s._rescaling.ParentObject = s;
 
 				s._tickSpacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
@@ -107,26 +102,26 @@ namespace Altaxo.Graph.Scales
 		/// <summary>
 		/// Constructor for deserialization only.
 		/// </summary>
-		protected ProbabilityScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		protected CumulativeProbabilityScale(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 		}
 
 		/// <summary>
-		/// Creates a default linear axis with org=0 and end=1.
+		/// Creates a default cumulative probability scale.
 		/// </summary>
-		public ProbabilityScale()
+		public CumulativeProbabilityScale()
 		{
-			_dataBounds = new ProbabilityBoundaries() { ParentObject = this };
-			_rescaling = new ProbabilityScaleRescaleConditions() { ParentObject = this };
-			_tickSpacing = new Ticks.LinearTickSpacing() { ParentObject = this, EndGrace = 0, OrgGrace = 0, ZeroLever = 0 };
+			_dataBounds = new CumulativeProbabilityBoundaries() { ParentObject = this };
+			_rescaling = new CumulativeProbabilityScaleRescaleConditions() { ParentObject = this };
+			_tickSpacing = new Ticks.CumulativeProbabilityTickSpacing() { ParentObject = this };
 			UpdateTicksAndOrgEndUsingRescalingObject();
 		}
 
 		/// <summary>
 		/// Copy constructor.
 		/// </summary>
-		/// <param name="from">A other linear axis from which to copy from.</param>
-		public ProbabilityScale(ProbabilityScale from)
+		/// <param name="from">Another scale from which to copy from.</param>
+		public CumulativeProbabilityScale(CumulativeProbabilityScale from)
 		{
 			CopyFrom(from);
 		}
@@ -136,7 +131,7 @@ namespace Altaxo.Graph.Scales
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			var from = obj as ProbabilityScale;
+			var from = obj as CumulativeProbabilityScale;
 			if (null == from)
 				return false;
 
@@ -148,8 +143,8 @@ namespace Altaxo.Graph.Scales
 				this._cachedAxisQuantileSpan = from._cachedAxisQuantileSpan;
 
 				ChildCopyToMemberOrCreateNew(ref _dataBounds, from._dataBounds, () => new FiniteNumericalBoundaries());
-				ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new ProbabilityScaleRescaleConditions());
-				ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.LinearTickSpacing());
+				ChildCopyToMemberOrCreateNew(ref _rescaling, from._rescaling, () => new CumulativeProbabilityScaleRescaleConditions());
+				ChildCopyToMemberOrCreateNew(ref _tickSpacing, from._tickSpacing, () => new Ticks.CumulativeProbabilityTickSpacing());
 
 				EhSelfChanged(EventArgs.Empty);
 				suspendToken.Resume();
@@ -160,7 +155,7 @@ namespace Altaxo.Graph.Scales
 
 		public override object Clone()
 		{
-			return new ProbabilityScale(this);
+			return new CumulativeProbabilityScale(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -305,14 +300,14 @@ namespace Altaxo.Graph.Scales
 			double e = end.ToDouble();
 
 			if (o <= 0)
-				o = 0.01;
+				o = CumulativeProbabilityScaleRescaleConditions.DefaultOrgValue;
 			else if (o >= 1)
-				o = 0.99;
+				o = CumulativeProbabilityScaleRescaleConditions.DefaultEndValue;
 
 			if (e <= 0)
-				e = 0.01;
+				e = CumulativeProbabilityScaleRescaleConditions.DefaultOrgValue;
 			else if (e >= 1)
-				e = 0.99;
+				e = CumulativeProbabilityScaleRescaleConditions.DefaultEndValue;
 
 			if (o == e)
 			{

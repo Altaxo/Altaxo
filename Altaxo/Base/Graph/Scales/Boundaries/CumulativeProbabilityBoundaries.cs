@@ -28,26 +28,26 @@ using System;
 namespace Altaxo.Graph.Scales.Boundaries
 {
 	/// <summary>
-	/// This type of boundary is intended for probability data in the range (0,1) (note the open boundaries)
+	/// This type of boundary is intended for cumulative probability data in the range (0,1) (note the open boundaries)
 	/// it keeps track of the smallest and the highest probability value that are neither 0 nor 1.
 	/// </summary>
 	[Serializable]
-	public class ProbabilityBoundaries : NumericalBoundaries
+	public class CumulativeProbabilityBoundaries : NumericalBoundaries
 	{
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProbabilityBoundaries), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityBoundaries), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ProbabilityBoundaries)obj;
+				var s = (CumulativeProbabilityBoundaries)obj;
 				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (ProbabilityBoundaries)o ?? new ProbabilityBoundaries();
+				var s = (CumulativeProbabilityBoundaries)o ?? new CumulativeProbabilityBoundaries();
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 				return s;
 			}
@@ -55,19 +55,19 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		#endregion Serialization
 
-		public ProbabilityBoundaries()
+		public CumulativeProbabilityBoundaries()
 			: base()
 		{
 		}
 
-		public ProbabilityBoundaries(ProbabilityBoundaries c)
+		public CumulativeProbabilityBoundaries(CumulativeProbabilityBoundaries c)
 			: base(c)
 		{
 		}
 
 		public override object Clone()
 		{
-			return new ProbabilityBoundaries(this);
+			return new CumulativeProbabilityBoundaries(this);
 		}
 
 		public override bool Add(IReadableColumn col, int idx)

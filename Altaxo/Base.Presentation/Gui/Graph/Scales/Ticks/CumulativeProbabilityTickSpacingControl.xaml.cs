@@ -34,20 +34,11 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 	/// <summary>
 	/// Interaction logic for ProbabilityTickSpacingControl.xaml
 	/// </summary>
-	public partial class ProbabilityTickSpacingControl : UserControl, IProbabilityTickSpacingView
+	public partial class CumulativeProbabilityTickSpacingControl : UserControl, ICumulativeProbabilityTickSpacingView
 	{
-		public ProbabilityTickSpacingControl()
+		public CumulativeProbabilityTickSpacingControl()
 		{
 			InitializeComponent();
-		}
-
-		private void _edMajorSpan_Validating(object sender, ValidationEventArgs<string> e)
-		{
-			var c = new System.ComponentModel.CancelEventArgs();
-			if (null != MajorTicksValidating)
-				MajorTicksValidating(_edMajorSpan.Text, c);
-			if (c.Cancel)
-				e.AddError("The provided text can not be converted");
 		}
 
 		private void _cbSnapTicksToOrg_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
@@ -79,37 +70,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		}
 
 		#region IProbabilityTickSpacingView
-
-		public string MajorTicks
-		{
-			set { _edMajorSpan.Text = value; }
-		}
-
-		public int? MinorTicks
-		{
-			get
-			{
-				if (_rbMinorTicksManual.IsChecked == true)
-					return _edMinorTicks.Value;
-				else
-					return null;
-			}
-			set
-			{
-				if (value == null)
-					_rbMinorTicksAutomatic.IsChecked = true;
-				else
-				{
-					_edMinorTicks.Value = value.Value;
-					_rbMinorTicksManual.IsChecked = true;
-				}
-			}
-		}
-
-		private void EhMinorTicks_ModeChanged(object sender, RoutedEventArgs e)
-		{
-			_edMinorTicks.IsEnabled = true == _rbMinorTicksManual.IsChecked;
-		}
 
 		public double MinGrace
 		{

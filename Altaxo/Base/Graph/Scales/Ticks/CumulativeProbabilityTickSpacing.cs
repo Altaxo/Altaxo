@@ -31,22 +31,18 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
+	using Altaxo.Graph.Scales.Rescaling;
+
 	/// <summary>
 	/// Tick settings for a Probability scale.
 	/// </summary>
-	public class ProbabilityTickSpacing : NumericTickSpacing
+	public class CumulativeProbabilityTickSpacing : NumericTickSpacing
 	{
 		private static readonly double[] _majorSpanValues = new double[] { 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 };
 		private static readonly int[] _minorSpanTicks = new int[] { 3, 5, 5, 3, 5, 5, 5, 2, 2, 5, 10, 10, 10, 10, 10, 10 };
 
 		/// <summary>Maximum allowed number of ticks in case manual tick input will produce a big amount of ticks.</summary>
 		protected static readonly int _maxSafeNumberOfTicks = 10000;
-
-		/// <summary>If set, gives the number of minor ticks choosen by the user.</summary>
-		private int? _userDefinedMinorTicks;
-
-		/// <summary>If set, gives the physical value between two major ticks choosen by the user.</summary>
-		private double? _userDefinedMajorSpan;
 
 		private double _orgGrace = 1 / 16.0;
 		private double _endGrace = 1 / 16.0;
@@ -94,12 +90,12 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProbabilityTickSpacing), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityTickSpacing), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				ProbabilityTickSpacing s = (ProbabilityTickSpacing)obj;
+				CumulativeProbabilityTickSpacing s = (CumulativeProbabilityTickSpacing)obj;
 
 				info.AddValue("MinGrace", s._orgGrace);
 				info.AddValue("MaxGrace", s._endGrace);
@@ -108,8 +104,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 				info.AddValue("TargetNumberOfMajorTicks", s._targetNumberOfMajorTicks);
 				info.AddValue("TargetNumberOfMinorTicks", s._targetNumberOfMinorTicks);
-				info.AddValue("UserDefinedMajorSpan", s._userDefinedMajorSpan);
-				info.AddValue("UserDefinedMinorTicks", s._userDefinedMinorTicks);
 
 				info.AddValue("TransformationDivider", s._transformationDivider);
 				info.AddValue("TransformationIsMultiply", s._transformationOperationIsMultiply);
@@ -137,13 +131,13 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ProbabilityTickSpacing s = SDeserialize(o, info, parent);
+				CumulativeProbabilityTickSpacing s = SDeserialize(o, info, parent);
 				return s;
 			}
 
-			protected virtual ProbabilityTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			protected virtual CumulativeProbabilityTickSpacing SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ProbabilityTickSpacing s = null != o ? (ProbabilityTickSpacing)o : new ProbabilityTickSpacing();
+				CumulativeProbabilityTickSpacing s = null != o ? (CumulativeProbabilityTickSpacing)o : new CumulativeProbabilityTickSpacing();
 				s._orgGrace = info.GetDouble("MinGrace");
 				s._endGrace = info.GetDouble("MaxGrace");
 				s._snapOrgToTick = (BoundaryTickSnapping)info.GetEnum("SnapOrgToTick", typeof(BoundaryTickSnapping));
@@ -151,8 +145,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 				s._targetNumberOfMajorTicks = info.GetInt32("TargetNumberOfMajorTicks");
 				s._targetNumberOfMinorTicks = info.GetInt32("TargetNumberOfMinorTicks");
-				s._userDefinedMajorSpan = info.GetNullableDouble("UserDefinedMajorSpan");
-				s._userDefinedMinorTicks = info.GetNullableInt32("UserDefinedMinorTicks");
 
 				s._transformationDivider = info.GetDouble("TransformationDivider");
 				s._transformationOperationIsMultiply = info.GetBoolean("TransformationIsMultiply");
@@ -168,7 +160,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		#endregion Serialization
 
-		public ProbabilityTickSpacing()
+		public CumulativeProbabilityTickSpacing()
 		{
 			_majorTicks = new List<double>();
 			_minorTicks = new List<double>();
@@ -178,7 +170,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			_additionalMinorTicks = new AdditionalTicks() { ParentObject = this };
 		}
 
-		public ProbabilityTickSpacing(ProbabilityTickSpacing from)
+		public CumulativeProbabilityTickSpacing(CumulativeProbabilityTickSpacing from)
 			: base(from) // everything is done here, since CopyFrom is virtual!
 		{
 		}
@@ -188,16 +180,13 @@ namespace Altaxo.Graph.Scales.Ticks
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			var from = obj as ProbabilityTickSpacing;
+			var from = obj as CumulativeProbabilityTickSpacing;
 			if (null == from)
 				return false;
 
 			using (var suspendToken = SuspendGetToken())
 			{
 				CopyHelper.Copy(ref _cachedMajorMinor, from._cachedMajorMinor);
-
-				_userDefinedMajorSpan = from._userDefinedMajorSpan;
-				_userDefinedMinorTicks = from._userDefinedMinorTicks;
 
 				_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
 				_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
@@ -241,23 +230,18 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public override object Clone()
 		{
-			return new ProbabilityTickSpacing(this);
+			return new CumulativeProbabilityTickSpacing(this);
 		}
 
 		public override bool Equals(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
-			else if (!(obj is ProbabilityTickSpacing))
+			else if (!(obj is CumulativeProbabilityTickSpacing))
 				return false;
 			else
 			{
-				var from = (ProbabilityTickSpacing)obj;
-
-				if (_userDefinedMajorSpan != from._userDefinedMajorSpan)
-					return false;
-				if (_userDefinedMinorTicks != from._userDefinedMinorTicks)
-					return false;
+				var from = (CumulativeProbabilityTickSpacing)obj;
 
 				if (_targetNumberOfMajorTicks != from._targetNumberOfMajorTicks)
 					return false;
@@ -431,36 +415,6 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 		}
 
-		public int? MinorTicks
-		{
-			get
-			{
-				return _userDefinedMinorTicks;
-			}
-			set
-			{
-				var oldValue = _userDefinedMinorTicks;
-				_userDefinedMinorTicks = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
-		}
-
-		public double? MajorTickSpan
-		{
-			get
-			{
-				return _userDefinedMajorSpan;
-			}
-			set
-			{
-				var oldValue = _userDefinedMajorSpan;
-				_userDefinedMajorSpan = value;
-				if (oldValue != value)
-					EhSelfChanged();
-			}
-		}
-
 		public SuppressedTicks SuppressedMajorTicks
 		{
 			get
@@ -586,6 +540,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (InternalPreProcessScaleBoundaries(ref dorg, ref dend, isOrgExtendable, isEndExtendable))
 			{
+				org = dorg;
+				end = dend;
 				return true;
 			}
 			else
@@ -711,23 +667,23 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (xorg <= 0)
 			{
-				xorg = 0.01;
+				xorg = CumulativeProbabilityScaleRescaleConditions.DefaultOrgValue;
 				modified = true;
 			}
 			else if (xorg >= 1)
 			{
-				xorg = 0.99;
+				xorg = CumulativeProbabilityScaleRescaleConditions.DefaultEndValue;
 				modified = true;
 			}
 
 			if (xend <= 0)
 			{
-				xend = 0.01;
+				xend = CumulativeProbabilityScaleRescaleConditions.DefaultOrgValue;
 				modified = true;
 			}
 			else if (xend >= 1)
 			{
-				xend = 0.99;
+				xend = CumulativeProbabilityScaleRescaleConditions.DefaultEndValue;
 				modified = true;
 			}
 
@@ -750,12 +706,10 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			// try applying Grace and OneLever only ...
 			double xOrgWithGraceAndOneLever, xEndWithGraceAndOneLever;
-			bool modGraceAndOneLever = GetOrgEndWithGraceAndZeroLever(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithGraceAndOneLever, out xEndWithGraceAndOneLever);
+			bool modGraceAndOneLever = GetOrgEndWithGrace(xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithGraceAndOneLever, out xEndWithGraceAndOneLever);
 
 			// try applying tick snapping only (without Grace and OneLever)
 			double xOrgWithTickSnapping, xEndWithTickSnapping;
-			double majorTickSpan;
-			int minorTicks;
 			bool modTickSnapping = GetOrgEndWithTickSnappingOnly(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out xOrgWithTickSnapping, out xEndWithTickSnapping);
 
 			// now compare the two
@@ -779,7 +733,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 		/// <summary>
-		/// Applies the value for <see cref="OrgGrace"/>, <see cref="EndGrace"/> and <see cref="ZeroLever"/> to the scale and calculated proposed values for the boundaries.
+		/// Applies the value for <see cref="OrgGrace"/>, <see cref="EndGrace"/> to the scale and calculated proposed values for the boundaries.
 		/// </summary>
 		/// <param name="scaleOrg">Scale origin.</param>
 		/// <param name="scaleEnd">Scale end.</param>
@@ -787,12 +741,30 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// <param name="isEndExtendable">True if the scale end can be extended.</param>
 		/// <param name="propOrg">Returns the proposed value of the scale origin.</param>
 		/// <param name="propEnd">Returns the proposed value of the scale end.</param>
-		public bool GetOrgEndWithGraceAndZeroLever(double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd)
+		public bool GetOrgEndWithGrace(double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd)
 		{
+			double SquareRootOf2 = Math.Sqrt(2);
 			var modified = false;
 
 			propOrg = scaleOrg;
 			propEnd = scaleEnd;
+
+			double quantOrg = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * scaleOrg);
+			double quantEnd = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * scaleEnd);
+
+			if (isOrgExtendable && OrgGrace > 0)
+			{
+				double propQuantOrg = quantOrg - OrgGrace * (quantEnd - quantOrg);
+				propOrg = 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(propQuantOrg / SquareRootOf2));
+				modified = true;
+			}
+
+			if (isEndExtendable && EndGrace > 0)
+			{
+				double propQuantEnd = quantEnd + EndGrace * (quantEnd - quantOrg);
+				propEnd = 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(propQuantEnd / SquareRootOf2));
+				modified = true;
+			}
 
 			return modified;
 		}

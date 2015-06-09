@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 {
 	using Altaxo.Graph.Scales.Boundaries;
 
-	public class ProbabilityScaleRescaleConditions : NumericScaleRescaleConditions
+	public class CumulativeProbabilityScaleRescaleConditions : NumericScaleRescaleConditions
 	{
 		public const double DefaultOrgValue = 0.0002;
 		public const double DefaultEndValue = 0.9998;
@@ -41,19 +41,19 @@ namespace Altaxo.Graph.Scales.Rescaling
 		/// <summary>
 		/// Initial version 2015-02-10.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProbabilityScaleRescaleConditions), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityScaleRescaleConditions), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ProbabilityScaleRescaleConditions)obj;
+				var s = (CumulativeProbabilityScaleRescaleConditions)obj;
 
 				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (ProbabilityScaleRescaleConditions)o ?? new ProbabilityScaleRescaleConditions();
+				var s = (CumulativeProbabilityScaleRescaleConditions)o ?? new CumulativeProbabilityScaleRescaleConditions();
 
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
@@ -63,38 +63,43 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 		#endregion Serialization
 
-		public ProbabilityScaleRescaleConditions()
+		public CumulativeProbabilityScaleRescaleConditions()
 		{
 			_dataBoundsOrg = _resultingOrg = DefaultOrgValue;
 			_dataBoundsEnd = _resultingEnd = DefaultEndValue;
 		}
 
-		public ProbabilityScaleRescaleConditions(ProbabilityScaleRescaleConditions from)
+		public CumulativeProbabilityScaleRescaleConditions(CumulativeProbabilityScaleRescaleConditions from)
 			: base(from) // all is done here, since CopyFrom is virtual!
 		{
 		}
 
 		public override object Clone()
 		{
-			return new ProbabilityScaleRescaleConditions(this);
+			return new CumulativeProbabilityScaleRescaleConditions(this);
 		}
 
 		public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
 		{
-			if (double.IsNaN(orgValue) || !Altaxo.Calc.RMath.IsFinite(orgValue))
+			if (orgRelativeTo != BoundariesRelativeTo.Absolute)
+				throw new ArgumentException(string.Format("{0} does only support orgRelativeTo={1]", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
+			if (endRelativeTo != BoundariesRelativeTo.Absolute)
+				throw new ArgumentException(string.Format("{0} does only support endRelativeTo={1]", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
+
+			if (double.IsNaN(orgValue) || !(0 < orgValue && orgValue < 1))
 			{
 				if (orgRescaling == BoundaryRescaling.Auto)
 					orgValue = DefaultOrgValue;  // ignore this error and set org to 0
 				else
-					throw new ArgumentOutOfRangeException("orgValue should be a finite number but is " + orgValue.ToString());
+					throw new ArgumentOutOfRangeException("orgValue should be a number 0 < orgValue < 1, but is " + orgValue.ToString());
 			}
 
-			if (double.IsNaN(endValue) || !Altaxo.Calc.RMath.IsFinite(endValue))
+			if (double.IsNaN(endValue) || !(0 < endValue && endValue < 1))
 			{
 				if (endRescaling == BoundaryRescaling.Auto)
 					endValue = DefaultEndValue;  // ignore this error and set end to 1
 				else
-					throw new ArgumentOutOfRangeException("endValue should be a finite number but is " + endValue.ToString());
+					throw new ArgumentOutOfRangeException("endValue should be number 0 < endValue < 1, but is " + endValue.ToString());
 			}
 
 			base.SetUserParameters(orgRescaling, orgRelativeTo, orgValue, endRescaling, endRelativeTo, endValue);
@@ -107,19 +112,21 @@ namespace Altaxo.Graph.Scales.Rescaling
 		/// <param name="dataBoundsEnd">The data bounds end.</param>
 		protected override void FixValuesForDataBoundsOrgAndEnd(ref double dataBoundsOrg, ref double dataBoundsEnd)
 		{
-			// ensure that data bounds always have some distance
+			if (dataBoundsOrg <= 0)
+				dataBoundsOrg = DefaultOrgValue;
+			else if (dataBoundsOrg >= 1)
+				dataBoundsOrg = DefaultEndValue;
+
+			if (dataBoundsEnd <= 0)
+				dataBoundsEnd = DefaultOrgValue;
+			else if (dataBoundsEnd >= 1)
+				dataBoundsEnd = DefaultEndValue;
+
 			if (dataBoundsOrg == dataBoundsEnd)
 			{
-				if (0 == dataBoundsOrg)
-				{
-					dataBoundsOrg = -1;
-					dataBoundsEnd = 1;
-				}
-				else
-				{
-					dataBoundsOrg = dataBoundsOrg - Math.Abs(dataBoundsOrg);
-					dataBoundsEnd = dataBoundsEnd + Math.Abs(dataBoundsEnd);
-				}
+				double h = dataBoundsOrg / 2;
+				dataBoundsOrg -= h;
+				dataBoundsEnd += h;
 			}
 		}
 
@@ -172,32 +179,6 @@ namespace Altaxo.Graph.Scales.Rescaling
 			}
 		}
 
-		/*
-		protected override double GetResultingOrgFromDataBoundsOrg()
-		{
-			if (_orgRescaling == BoundaryRescaling.Auto)
-				return _dataBoundsOrg; // TODO ERROR
-
-			switch (_userProvidedOrgRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedOrgValue + _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedOrgValue + _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedOrgValue + GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-		*/
-
 		protected override double GetResultingEndFromUserProvidedEnd()
 		{
 			switch (_userProvidedEndRelativeTo)
@@ -239,29 +220,6 @@ namespace Altaxo.Graph.Scales.Rescaling
 					throw new NotImplementedException();
 			}
 		}
-
-		/*
-		protected double GetResultingEndFromDataBoundsEnd()
-		{
-			switch (_userProvidedEndRelativeTo)
-			{
-				case BoundariesRelativeTo.Absolute:
-					return _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsOrg:
-					return _userProvidedEndValue + _dataBoundsOrg;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsEnd:
-					return _userProvidedEndValue + _dataBoundsEnd;
-
-				case BoundariesRelativeTo.RelativeToDataBoundsMean:
-					return _userProvidedEndValue + GetDataBoundsScaleMean();
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-		*/
 
 		#endregion Resulting Org/End to/fron User Org/End
 
