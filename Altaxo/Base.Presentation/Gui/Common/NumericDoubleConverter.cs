@@ -39,7 +39,33 @@ namespace Altaxo.Gui.Common
 
 		public bool DisallowZeroValues { get; set; }
 
-		public bool DisallowNegativeValues { get; set; }
+		public bool DisallowNegativeValues
+		{
+			get
+			{
+				return (true == IsMinValueInclusive && 0 == MinValue) || MinValue > 0;
+			}
+			set
+			{
+				if (MinValue <= 0)
+				{
+					IsMinValueInclusive = true;
+					MinValue = 0;
+				}
+			}
+		}
+
+		public double _minValue = double.NegativeInfinity;
+
+		public double MinValue { get { return _minValue; } set { _minValue = value; } }
+
+		public bool IsMinValueInclusive { get; set; }
+
+		public double _maxValue = double.PositiveInfinity;
+
+		public double MaxValue { get { return _maxValue; } set { _maxValue = value; } }
+
+		public bool IsMaxValueInclusive { get; set; }
 
 		private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
@@ -116,6 +142,16 @@ namespace Altaxo.Gui.Common
 				return new ValidationResult(false, "A value of zero is not valid here. Please enter a nonzero value!");
 			if (DisallowNegativeValues && result < 0)
 				return new ValidationResult(false, "A negative value is not valid here. Please enter a nonnegative value!");
+
+			if (!IsMinValueInclusive && !(result > MinValue))
+				return new ValidationResult(false, string.Format("A value <= {0} is not valid here. Please enter a value > {0}", MinValue));
+			if (IsMinValueInclusive && !(result >= MinValue))
+				return new ValidationResult(false, string.Format("A value < {0} is not valid here. Please enter a value >= {0}", MinValue));
+
+			if (!IsMaxValueInclusive && !(result < MaxValue))
+				return new ValidationResult(false, string.Format("A value >= {0} is not valid here. Please enter a value < {0}", MaxValue));
+			if (IsMaxValueInclusive && !(result <= MaxValue))
+				return new ValidationResult(false, string.Format("A value > {0} is not valid here. Please enter a value <= {0}", MaxValue));
 
 			return ValidationResult.ValidResult;
 		}

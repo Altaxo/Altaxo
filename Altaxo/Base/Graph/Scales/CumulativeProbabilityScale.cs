@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2015 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Scales
 		/// 2015-06-07 Initial version
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CumulativeProbabilityScale), 0)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisQuantileOrg = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * s._cachedAxisOrg);
 				s._cachedAxisQuantileSpan = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * s._cachedAxisEnd) - s._cachedAxisOrg;
 
-				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
+				s._dataBounds = (NumericalBoundaries)info.GetValue("Bounds", s);
 				s._dataBounds.ParentObject = s; // restore the event chain
 
 				s._rescaling = (CumulativeProbabilityScaleRescaleConditions)info.GetValue("Rescaling", s);
@@ -335,6 +335,8 @@ namespace Altaxo.Graph.Scales
 				_cachedAxisEnd != end
 			;
 
+			_cachedAxisOrg = org;
+			_cachedAxisEnd = end;
 			_cachedAxisQuantileOrg = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * org);
 			_cachedAxisQuantileSpan = SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * end) - _cachedAxisQuantileOrg;
 

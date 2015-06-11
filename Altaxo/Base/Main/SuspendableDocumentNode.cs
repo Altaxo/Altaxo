@@ -685,11 +685,11 @@ namespace Altaxo.Main
 				System.Diagnostics.Debug.Assert(_numberOfSuspendLevelsAbsorbed >= 0);
 
 				if (null != ex1)
-					throw ex1;
+					throw new System.Reflection.TargetInvocationException(ex1);
 				if (null != ex2)
-					throw ex2;
+					throw new System.Reflection.TargetInvocationException(ex2);
 				if (null != ex3)
-					throw ex3;
+					throw new System.Reflection.TargetInvocationException(ex3);
 			}
 
 			public void Dispose(bool isDisposing)

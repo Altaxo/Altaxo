@@ -87,16 +87,24 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
 		public override bool Apply(bool disposeController)
 		{
-			var orgRescaling = (BoundaryRescaling)_orgRescalingChoices.FirstSelectedNode.Tag;
-			var endRescaling = (BoundaryRescaling)_endRescalingChoices.FirstSelectedNode.Tag;
+			try
+			{
+				var orgRescaling = (BoundaryRescaling)_orgRescalingChoices.FirstSelectedNode.Tag;
+				var endRescaling = (BoundaryRescaling)_endRescalingChoices.FirstSelectedNode.Tag;
 
-			var orgRelativeTo = (BoundariesRelativeTo)_orgRelativeToChoices.FirstSelectedNode.Tag;
-			var endRelativeTo = (BoundariesRelativeTo)_endRelativeToChoices.FirstSelectedNode.Tag;
+				var orgRelativeTo = (BoundariesRelativeTo)_orgRelativeToChoices.FirstSelectedNode.Tag;
+				var endRelativeTo = (BoundariesRelativeTo)_endRelativeToChoices.FirstSelectedNode.Tag;
 
-			var orgValue = _view.OrgValue;
-			var endValue = _view.EndValue;
+				var orgValue = _view.OrgValue;
+				var endValue = _view.EndValue;
 
-			_doc.SetUserParameters(orgRescaling, orgRelativeTo, orgValue, endRescaling, endRelativeTo, endValue);
+				_doc.SetUserParameters(orgRescaling, orgRelativeTo, orgValue, endRescaling, endRelativeTo, endValue);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(ex.Message, "Errors applying your choices");
+				return ApplyEnd(false, disposeController);
+			}
 
 			return ApplyEnd(true, disposeController);
 		}

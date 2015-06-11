@@ -70,6 +70,14 @@ namespace Altaxo.Gui.Common
 
 		public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
+		public double MinValue { get { return _converter.MinValue; } set { _converter.MinValue = value; } }
+
+		public double MaxValue { get { return _converter.MaxValue; } set { _converter.MaxValue = value; } }
+
+		public bool IsMinValueInclusive { get { return _converter.IsMinValueInclusive; } set { _converter.IsMinValueInclusive = value; } }
+
+		public bool IsMaxValueInclusive { get { return _converter.IsMaxValueInclusive; } set { _converter.IsMaxValueInclusive = value; } }
+
 		#region Change selection behaviour
 
 		// The next three overrides change the selection behaviour of the text box as described in

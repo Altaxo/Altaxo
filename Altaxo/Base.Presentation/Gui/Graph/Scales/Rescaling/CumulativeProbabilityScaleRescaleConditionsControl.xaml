@@ -32,7 +32,7 @@
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>
-		<axogc:NumericDoubleTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValue" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
+		<axogc:NumericDoubleTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValue"  MinValue="0" IsMinValueInclusive="False"  MaxValue="1" IsMaxValueInclusive="False" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
 		<Label Grid.Row="2" Grid.Column="0" Content="End:" />
 		<ComboBox Grid.Row="2" Grid.Column="2" x:Name="_guiEndRescaling" SelectionChanged="EhComboBox_SelectionChanged">
 			<ComboBox.ItemTemplate>
@@ -41,6 +41,6 @@
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>
-		<axogc:NumericDoubleTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValue"  SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
+		<axogc:NumericDoubleTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValue" MinValue="0" IsMinValueInclusive="False"  MaxValue="1" IsMaxValueInclusive="False" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
 	</Grid>
 </UserControl>
