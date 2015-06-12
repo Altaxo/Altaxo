@@ -75,6 +75,9 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
 
+		[NonSerialized]
+		protected WeakEventHandler[] _weakEventHandlersForDoc;
+
 		#region Constructors
 
 		protected GraphController()
@@ -519,9 +522,10 @@ namespace Altaxo.Gui.Graph.Viewing
 			_doc = doc;
 
 			// we are using weak events here, to avoid that _doc will maintain strong references to the controller
-			_doc.Changed += new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x);
-			_doc.RootLayer.LayerCollectionChanged += new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.RootLayer.LayerCollectionChanged -= x);
-			_doc.SizeChanged += new WeakEventHandler(this.EhGraph_SizeChanged, x => _doc.SizeChanged -= x);
+			_weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
+			_doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x));
+			_doc.RootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.RootLayer.LayerCollectionChanged -= x));
+			_doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => _doc.SizeChanged -= x));
 
 			// if the host layer has at least one child, we set the active layer to the first child of the host layer
 			if (_doc.RootLayer.Layers.Count >= 1)
@@ -532,6 +536,20 @@ namespace Altaxo.Gui.Graph.Viewing
 			this.EnsureValidityOfCurrentPlotNumber();
 
 			OnTitleNameChanged(EventArgs.Empty);
+		}
+
+		private void InternalUninitializeGraphDocument()
+		{
+			// remove the weak event handlers from doc
+			var wev = _weakEventHandlersForDoc;
+			if (null != wev)
+			{
+				foreach (var ev in wev)
+					ev.Remove();
+				_weakEventHandlersForDoc = null;
+			}
+
+			_doc = null;
 		}
 
 		public Altaxo.Graph.Gdi.GraphDocument Doc
@@ -900,7 +918,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeTopToTop()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition(0, masterbounds.Y - bounds.Y); }
 			);
 		}
@@ -910,7 +928,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeBottomToTop()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition(0, (masterbounds.Y) - (bounds.Y + bounds.Height)); }
 			);
 		}
@@ -920,7 +938,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeTopToBottom()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height) - (bounds.Y)); }
 			);
 		}
@@ -930,7 +948,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeBottomToBottom()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height) - (bounds.Y + bounds.Height)); }
 			);
 		}
@@ -940,7 +958,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeLeftToLeft()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition(masterbounds.X - bounds.X, 0); }
 			);
 		}
@@ -950,7 +968,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeLeftToRight()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition((masterbounds.X + masterbounds.Width) - bounds.X, 0); }
 			);
 		}
@@ -960,7 +978,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeRightToLeft()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition((masterbounds.X) - (bounds.X + bounds.Width), 0); }
 			);
 		}
@@ -970,7 +988,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeRightToRight()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition((masterbounds.X + masterbounds.Width) - (bounds.X + bounds.Width), 0); }
 			);
 		}
@@ -980,7 +998,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeVertical()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition((masterbounds.X + masterbounds.Width * 0.5f) - (bounds.X + bounds.Width * 0.5f), 0); }
 			);
 		}
@@ -990,7 +1008,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		public void ArrangeHorizontal()
 		{
-			Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+			Arrange(delegate (IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
 			{ obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height * 0.5f) - (bounds.Y + bounds.Height * 0.5f)); }
 			);
 		}
@@ -1400,6 +1418,8 @@ namespace Altaxo.Gui.Graph.Viewing
 				_triggerBasedUpdate.Dispose();
 				_triggerBasedUpdate = null;
 			}
+
+			InternalUninitializeGraphDocument(); // remove event handlers and _doc
 
 			if (_view is IDisposable)
 				((IDisposable)_view).Dispose();
