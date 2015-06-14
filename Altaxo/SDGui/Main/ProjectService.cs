@@ -77,7 +77,13 @@ namespace Altaxo.Main
 			{
 				if (null != oldProject)
 				{
-					oldProject.Dispose();
+					try
+					{
+						oldProject.Dispose();
+					}
+					catch (Exception ex)
+					{
+					}
 				}
 
 				if (string.IsNullOrEmpty(oldProjectFileName) && null != _currentProject)

@@ -104,7 +104,10 @@ namespace Altaxo.Gui.Common.Drawing
 				_pen = value;
 
 				if (null != _pen)
-					_pen.Changed += (_weakPenChangedHandler = new WeakEventHandler(EhPenChanged, handler => _pen.Changed -= handler));
+				{
+					var pen = _pen;
+					pen.Changed += (_weakPenChangedHandler = new WeakEventHandler(EhPenChanged, handler => pen.Changed -= handler));
+				}
 
 				InitControlProperties();
 			}

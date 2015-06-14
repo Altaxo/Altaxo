@@ -56,7 +56,7 @@ namespace Altaxo.Gui.SharpDevelop
 		public SDWorksheetViewContent(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 		{
 			_controller = ctrl;
-			_controller.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => _controller.TitleNameChanged -= x);
+			ctrl.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => ctrl.TitleNameChanged -= x);
 			SetTitle();
 		}
 

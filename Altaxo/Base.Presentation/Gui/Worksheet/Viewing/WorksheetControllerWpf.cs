@@ -209,8 +209,12 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		{
 			base.InternalInitializeWorksheetLayout(layout);
 
-			_table.DataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(this.EhTableDataChanged, x => _table.DataColumns.Changed -= x));
-			_table.PropCols.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(this.EhPropertyDataChanged, x => _table.PropCols.Changed -= x));
+			{
+				var dataColumns = _table.DataColumns;
+				dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(this.EhTableDataChanged, x => dataColumns.Changed -= x));
+				var propColumns = _table.PropCols;
+				propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(this.EhPropertyDataChanged, x => propColumns.Changed -= x));
+			}
 			this.SetCachedNumberOfDataColumns();
 			this.SetCachedNumberOfDataRows();
 			this.SetCachedNumberOfPropertyColumns();

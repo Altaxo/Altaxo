@@ -286,6 +286,7 @@
     <Compile Include="Collections\TestPriorityQueue_Key.cs" />
     <Compile Include="Collections\Test_AscendingIntegerRangeCollection.cs" />
     <Compile Include="ResourceKeys.cs" />
+    <Compile Include="WeakEventHandlersTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

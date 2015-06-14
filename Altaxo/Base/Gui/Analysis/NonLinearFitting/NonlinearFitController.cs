@@ -107,7 +107,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
 			Current.Gui.FindAndAttachControlTo(_funcselController);
 
-			_doc.FitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, handler => _doc.FitEnsemble.Changed -= handler);
+			{
+				var fitEnsemble = _doc.FitEnsemble;
+				fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, handler => fitEnsemble.Changed -= handler);
+			}
 
 			_generationInterval = new Common.EquallySpacedInterval();
 			_generationIntervalController = new Common.EquallySpacedIntervalController();
@@ -279,7 +282,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			FitFunctionScript script = new FitFunctionScript();
 
-		Label_EditScript:
+			Label_EditScript:
 			object scriptAsObject = script;
 			if (Current.Gui.ShowDialog(ref scriptAsObject, "Create fit function"))
 			{

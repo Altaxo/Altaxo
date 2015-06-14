@@ -94,7 +94,8 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			_worksheetLayout = value;
 			_table = _worksheetLayout.DataTable;
-			_table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(this.EhTableNameChanged, x => _table.Changed -= x));
+			var table = _table; // use local variable for anonymous method below
+			_table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(this.EhTableNameChanged, x => table.Changed -= x));
 			OnTitleNameChanged();
 		}
 

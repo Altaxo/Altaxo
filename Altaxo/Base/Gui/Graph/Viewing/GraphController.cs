@@ -522,10 +522,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			_doc = doc;
 
 			// we are using weak events here, to avoid that _doc will maintain strong references to the controller
+			// Attention: use local variable doc instead of member _doc for the anonymous methods below!
 			_weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
-			_doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => _doc.Changed -= x));
-			_doc.RootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => _doc.RootLayer.LayerCollectionChanged -= x));
-			_doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => _doc.SizeChanged -= x));
+			_doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => doc.Changed -= x));
+			_doc.RootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => doc.RootLayer.LayerCollectionChanged -= x));
+			_doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => doc.SizeChanged -= x));
 
 			// if the host layer has at least one child, we set the active layer to the first child of the host layer
 			if (_doc.RootLayer.Layers.Count >= 1)

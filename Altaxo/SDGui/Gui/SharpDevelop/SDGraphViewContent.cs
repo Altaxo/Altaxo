@@ -102,7 +102,7 @@ namespace Altaxo.Gui.SharpDevelop
 		public SDGraphViewContent(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
 		{
 			_controller = ctrl;
-			_controller.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => _controller.TitleNameChanged -= x);
+			ctrl.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => ctrl.TitleNameChanged -= x);
 			SetTitle();
 		}
 
