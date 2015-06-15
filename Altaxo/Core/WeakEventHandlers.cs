@@ -37,7 +37,7 @@ namespace Altaxo
 	/// Thus there is no reference created from the event source to the event sink, and the event sink can be garbage collected.
 	/// </summary>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);
 	/// </code>
@@ -63,7 +63,7 @@ namespace Altaxo
 		private Action<WeakEventHandler> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakEventHandler.
+		/// Constructs the WeakEventHandler. Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the event to wrap (event sink).</param>
 		/// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
@@ -102,10 +102,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 
@@ -130,7 +130,7 @@ namespace Altaxo
 	/// </summary>
 	/// <typeparam name="TEventArgs">The specialized type of <see cref="EventArgs"/>.</typeparam>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.Changed += new WeakEventHandler&lt;MyEventArgs&gt;(this.EhHandleChange, x =&gt; source.Changed -= x);
 	/// </code>
@@ -156,7 +156,7 @@ namespace Altaxo
 		private Action<WeakEventHandler<TEventArgs>> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakEventHandler.
+		/// Constructs the WeakEventHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the event to wrap (event sink).</param>
 		/// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
@@ -195,10 +195,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 
@@ -222,7 +222,7 @@ namespace Altaxo
 	/// Thus there is no reference created from the event source to the event sink, and the event sink can be garbage collected.
 	/// </summary>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.Changed += new WeakEventHandler(this.EhHandleChange, x =&gt; source.Changed -= x);
 	/// </code>
@@ -248,7 +248,7 @@ namespace Altaxo
 		private Action<WeakPropertyChangedEventHandler> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakEventHandler.
+		/// Constructs the WeakEventHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the event to wrap (event sink).</param>
 		/// <param name="removeHandlerAction">Action that removes the event handling by this instance from the source.</param>
@@ -287,10 +287,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 
@@ -314,7 +314,7 @@ namespace Altaxo
 	/// Thus there is no reference created from the event source to the event sink, and the event sink can be garbage collected.
 	/// </summary>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.ActionEvent += new WeakActionHandler(this.EhActionHandling, x =&gt; source.ActionEvent -= x);
 	/// </code>
@@ -340,7 +340,7 @@ namespace Altaxo
 		private Action<WeakActionHandler> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakActionHandler.
+		/// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the action event (event sink).</param>
 		/// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
@@ -377,10 +377,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 
@@ -405,7 +405,7 @@ namespace Altaxo
 	/// </summary>
 	/// <typeparam name="T1">Action parameter.</typeparam>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.ActionEvent += new WeakActionHandler&lt;MyArg&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x);
 	/// </code>
@@ -431,7 +431,7 @@ namespace Altaxo
 		private Action<WeakActionHandler<T1>> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakActionHandler.
+		/// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the action event (event sink).</param>
 		/// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
@@ -469,10 +469,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 
@@ -498,7 +498,7 @@ namespace Altaxo
 	/// <typeparam name="T1">First action parameter.</typeparam>
 	/// <typeparam name="T2">Second action parameter.</typeparam>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use:  (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.ActionEvent += new WeakActionHandler&lt;MyArg1,MyArg2&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x);
 	/// </code>
@@ -524,7 +524,7 @@ namespace Altaxo
 		private Action<WeakActionHandler<T1, T2>> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakActionHandler.
+		/// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the action event (event sink).</param>
 		/// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
@@ -563,10 +563,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 
@@ -593,7 +593,7 @@ namespace Altaxo
 	/// <typeparam name="T2">Second action parameter.</typeparam>
 	/// <typeparam name="T3">Third action parameter.</typeparam>
 	/// <remarks>
-	/// Typical use:
+	/// Typical use (Attention: source has to be a local variable, <b>not</b> a member variable!)
 	/// <code>
 	/// source.ActionEvent += new WeakActionHandler&lt;MyArg1,MyArg2&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x);
 	/// </code>
@@ -619,7 +619,7 @@ namespace Altaxo
 		private Action<WeakActionHandler<T1, T2, T3>> _removeAction;
 
 		/// <summary>
-		/// Constructs the WeakActionHandler.
+		/// Constructs the WeakActionHandler.  Attention! Make sure that you don't use member variables in <paramref name="removeHandlerAction"/>! Instead, make a copy to a local variable before and use this variable.
 		/// </summary>
 		/// <param name="handler">Event handler for the action event (event sink).</param>
 		/// <param name="removeHandlerAction">Action that should remove the event handling by this instance.</param>
@@ -659,10 +659,10 @@ namespace Altaxo
 		public void Remove()
 		{
 			_handlerObjectWeakRef = _weakNullReference;
-			if (null != _removeAction)
+			var removeAction = System.Threading.Interlocked.Exchange(ref _removeAction, null);
+			if (null != removeAction)
 			{
-				_removeAction(this);
-				_removeAction = null;
+				removeAction(this);
 			}
 		}
 

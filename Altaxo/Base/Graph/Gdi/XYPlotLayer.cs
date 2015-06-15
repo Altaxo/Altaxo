@@ -224,31 +224,36 @@ namespace Altaxo.Graph.Gdi
 
 		private void EnsureAppropriateGridAndAxisStylePlaceHolders()
 		{
-			var gridIndex = _graphObjects.IndexOfFirst(x => x is GridPlanesPlaceHolder);
-			if (gridIndex < 0)
+			using (var suspendToken = _graphObjects.GetEventDisableToken())
 			{
-				_graphObjects.Insert(0, new GridPlanesPlaceHolder());
-				gridIndex = 0;
+				var gridIndex = _graphObjects.IndexOfFirst(x => x is GridPlanesPlaceHolder);
+				if (gridIndex < 0)
+				{
+					_graphObjects.Insert(0, new GridPlanesPlaceHolder());
+					gridIndex = 0;
+				}
+				else
+				{
+					// make sure that no more GridPlanesPlaceHolders are in the collection
+					_graphObjects.RemoveWhere((item, i) => (i > gridIndex) && (item is GridPlanesPlaceHolder));
+				}
+
+				// we try to place AxisStyleLinePlaceHolders after the GridPlanesPlaceHolder
+				// find the first of any placeholders for axis line styles, store as insert position, if not found use insert position after grid place holder
+				// from i= to count look for placeholders for axis line styles i, if not found insert it at insert position, store next position as insert position
+
+				var insertIdx = gridIndex + 1;
+				insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleLinePlaceHolder>(insertIdx);
+				insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleMajorLabelPlaceHolder>(insertIdx);
+				insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleMinorLabelPlaceHolder>(insertIdx);
+				insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleTitlePlaceHolder>(insertIdx);
+
+				// remove superfluous place holders
+				int maxCount = _axisStyles.Count;
+				_graphObjects.RemoveWhere(x => { var s = x as AxisStylePlaceHolderBase; return null != s && s.Index > maxCount; });
+
+				suspendToken.ResumeSilently();
 			}
-			else
-			{
-				// make sure that no more GridPlanesPlaceHolders are in the collection
-				_graphObjects.RemoveWhere((item, i) => (i > gridIndex) && (item is GridPlanesPlaceHolder));
-			}
-
-			// we try to place AxisStyleLinePlaceHolders after the GridPlanesPlaceHolder
-			// find the first of any placeholders for axis line styles, store as insert position, if not found use insert position after grid place holder
-			// from i= to count look for placeholders for axis line styles i, if not found insert it at insert position, store next position as insert position
-
-			var insertIdx = gridIndex + 1;
-			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleLinePlaceHolder>(insertIdx);
-			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleMajorLabelPlaceHolder>(insertIdx);
-			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleMinorLabelPlaceHolder>(insertIdx);
-			insertIdx = InsertMissingAxisStylePlaceHolders<AxisStyleTitlePlaceHolder>(insertIdx);
-
-			// remove superfluous place holders
-			int maxCount = _axisStyles.Count;
-			_graphObjects.RemoveWhere(x => { var s = x as AxisStylePlaceHolderBase; return null != s && s.Index > maxCount; });
 		}
 
 		private int InsertMissingAxisStylePlaceHolders<T>(int insertIdx) where T : AxisStylePlaceHolderBase, new()
@@ -792,7 +797,7 @@ namespace Altaxo.Graph.Gdi
 
 		private void EnsureAppropriatePlotItemPlaceHolders()
 		{
-			using (var token = _graphObjects.GetEventDisableToken())
+			using (var suspendToken = _graphObjects.GetEventDisableToken())
 			{
 				if (0 == _plotItemPlaceHolders.Count) // take special measures if not one plot item place holder -> this can happen when deserializing old versions prior to the introduction of place holders
 				{
@@ -822,6 +827,8 @@ namespace Altaxo.Graph.Gdi
 
 				for (int i = _plotItemPlaceHolders.Count - 1; i > idx; --i)
 					_plotItemPlaceHolders.RemoveAt(i);
+
+				suspendToken.ResumeSilently();
 			}
 		}
 
@@ -857,13 +864,6 @@ namespace Altaxo.Graph.Gdi
 			// Before we paint the axis, we have to make sure that all plot items
 			// had their data updated, so that the axes are updated before they are drawn!
 			_plotItems.PrepareScales(this);
-
-			// after deserialisation the data bounds object of the scale is empty:
-			// then we have to rescale the axis
-			if (Scales.X.DataBoundsObject.IsEmpty)
-				InitializeXScaleDataBounds();
-			if (Scales.Y.DataBoundsObject.IsEmpty)
-				InitializeYScaleDataBounds();
 
 			_plotItems.PrepareGroupStyles(null, this);
 			_plotItems.ApplyGroupStyles(null);
@@ -980,13 +980,13 @@ namespace Altaxo.Graph.Gdi
 
 		#region Event firing
 
-		protected override void OnSizeChanged()
+		protected override void OnCachedResultingSizeChanged()
 		{
 			// first update out direct childs
 			if (null != CoordinateSystem)
 				CoordinateSystem.UpdateAreaSize(this.Size);
 
-			base.OnSizeChanged();
+			base.OnCachedResultingSizeChanged();
 		}
 
 		#endregion Event firing

@@ -193,6 +193,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
 		}
 
+		private void EhIsGraphVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			//Current.Console.WriteLine("Graph is visible: {0}", e.NewValue);
+		}
+
 		/// <summary>
 		/// Causes a complete redrawing of the graph. The cached graph bitmap will be marked as dirty and a repainting of the graph area is triggered with Gui render priority.
 		/// Note: it is save to call this function from non-Gui threads.

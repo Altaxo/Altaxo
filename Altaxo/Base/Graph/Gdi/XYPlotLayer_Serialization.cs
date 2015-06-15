@@ -165,9 +165,8 @@ namespace Altaxo.Graph.Gdi
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				XYPlotLayer s = SDeserialize(o, info, parent);
-
 				s.CalculateMatrix();
-
+				info.DeserializationFinished += s.EhDeserializationFinished;
 				return s;
 			}
 
@@ -303,7 +302,6 @@ namespace Altaxo.Graph.Gdi
 
 				bool clipDataToFrame = info.GetBoolean("ClipDataToFrame");
 				s.ClipDataToFrame = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
-
 				return s;
 			}
 		}
@@ -358,6 +356,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				XYPlotLayer s = SDeserialize(o, info, parent);
 				s.CalculateMatrix();
+				info.DeserializationFinished += s.EhDeserializationFinished;
 				return s;
 			}
 
@@ -530,6 +529,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				XYPlotLayer s = SDeserialize(o, info, parent);
 				s.CalculateMatrix();
+				info.DeserializationFinished += s.EhDeserializationFinished;
 				return s;
 			}
 		}
@@ -645,6 +645,8 @@ namespace Altaxo.Graph.Gdi
 			{
 				XYPlotLayer s = SDeserialize(o, info, parent);
 				s.CalculateMatrix();
+				info.DeserializationFinished += s.EhDeserializationFinished;
+
 				return s;
 			}
 		}
@@ -715,11 +717,32 @@ namespace Altaxo.Graph.Gdi
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				XYPlotLayer s = SDeserialize(o, info, parent);
+				info.DeserializationFinished += s.EhDeserializationFinished;
 				return s;
 			}
 		}
 
 		#endregion Version 6
+
+		/// <summary>
+		/// Takes final measures after the deserialization has finished, but before the dirty flag is cleared. Here, the scale bounds are updated with
+		/// the data from the project.
+		/// </summary>
+		/// <param name="info">The deserialization information.</param>
+		/// <param name="documentRoot">The document root of the current document.</param>
+		/// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
+		protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+		{
+			if (isFinallyCall)
+			{
+				// after deserialisation the data bounds object of the scale is empty:
+				// then we have to rescale the axis
+				if (this.Scales.X.DataBoundsObject.IsEmpty)
+					this.InitializeXScaleDataBounds();
+				if (this.Scales.Y.DataBoundsObject.IsEmpty)
+					this.InitializeYScaleDataBounds();
+			}
+		}
 
 		private static void ProvideLinkedScalesWithLinkedLayerIndex(XYPlotLayer s, Main.RelDocNodeProxy linkedLayer, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{

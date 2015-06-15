@@ -284,7 +284,7 @@ namespace Altaxo.Main
 					}
 
 					if (null != exceptionInAboutToBeResumed)
-						throw exceptionInAboutToBeResumed;
+						throw new System.Reflection.TargetInvocationException(exceptionInAboutToBeResumed);
 				}
 			}
 

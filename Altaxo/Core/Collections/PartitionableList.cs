@@ -192,7 +192,7 @@ namespace Altaxo.Collections
 		/// of the using statement the Dispose function of the token is called automatically, which then reenables the events.
 		/// </summary>
 		/// <returns></returns>
-		public IDisposable GetEventDisableToken()
+		public ISuspendToken GetEventDisableToken()
 		{
 			return _eventState.Disable();
 		}
@@ -491,6 +491,13 @@ namespace Altaxo.Collections
 
 		#region EventDisabler
 
+		public interface ISuspendToken : IDisposable
+		{
+			void Resume();
+
+			void ResumeSilently();
+		}
+
 		/// <summary>
 		/// Helper class to temporarily disable something, e.g. some events. By calling <see cref="Disable"/> one gets a disposable token, that,
 		/// when disposed, enables again, which fires then the action that is given as parameter to the constructor. It is possible to make nested calls to <see cref="Disable"/>. In this case all tokens
@@ -500,41 +507,71 @@ namespace Altaxo.Collections
 		{
 			#region Inner class SuppressToken
 
-			private class SuppressToken : IDisposable
+			private class SuspendToken : ISuspendToken
 			{
 				private TemporaryDisabler _parent;
 
-				public SuppressToken(TemporaryDisabler parent)
+				internal SuspendToken(TemporaryDisabler parent)
 				{
+					var suspendLevel = System.Threading.Interlocked.Increment(ref parent._suspendLevel);
 					_parent = parent;
-					System.Threading.Interlocked.Increment(ref _parent._disablingLevel);
+				}
+
+				~SuspendToken()
+				{
+					Dispose();
 				}
 
 				/// <summary>
-				/// Disarms this SuppressToken so that it can not raise the suspend event anymore.
+				/// Disarms this SuppressToken so that it can not raise the resume event anymore.
 				/// </summary>
-				public void Disarm()
+				public void ResumeSilently()
 				{
-					if (_parent != null)
+					var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
+					if (parent != null)
 					{
-						var parent = _parent;
-						_parent = null;
-						int newLevel = System.Threading.Interlocked.Decrement(ref _parent._disablingLevel);
+						int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
+						if (0 == newLevel)
+						{
+							try
+							{
+								parent.OnResumeSilently();
+							}
+							finally
+							{
+							}
+						}
+						else if (newLevel < 0)
+						{
+							throw new ApplicationException("Fatal programming error - suppress level has fallen down to negative values");
+						}
 					}
+				}
+
+				public void Resume()
+				{
+					Dispose();
 				}
 
 				#region IDisposable Members
 
 				public void Dispose()
 				{
-					if (_parent != null)
+					var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler>(ref _parent, null);
+					if (parent != null)
 					{
-						var parent = _parent;
-						_parent = null;
-						int newLevel = System.Threading.Interlocked.Decrement(ref parent._disablingLevel);
+						int newLevel = System.Threading.Interlocked.Decrement(ref parent._suspendLevel);
+
 						if (0 == newLevel)
 						{
-							parent.OnReenabling();
+							try
+							{
+								parent.OnResume();
+							}
+							finally
+							{
+							}
 						}
 						else if (newLevel < 0)
 						{
@@ -549,7 +586,7 @@ namespace Altaxo.Collections
 			#endregion Inner class SuppressToken
 
 			/// <summary>How many times was the <see cref="Disable"/> function called (without disposing the tokens got in these calls)</summary>
-			private int _disablingLevel;
+			private int _suspendLevel;
 
 			/// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
 			private Action _reenablingEventHandler;
@@ -573,22 +610,22 @@ namespace Altaxo.Collections
 			/// <returns>An object, which must be disposed in order to re-enabling again.
 			/// The most convenient way is to use a using statement with this function call
 			/// </returns>
-			public IDisposable Disable()
+			public ISuspendToken Disable()
 			{
-				return new SuppressToken(this);
+				return new SuspendToken(this);
 			}
 
 			/// <summary>
 			/// Returns true when the disabling level is equal to zero (initial state).
 			/// Otherwise false.
 			/// </summary>
-			public bool IsEnabled { get { return _disablingLevel == 0; } }
+			public bool IsEnabled { get { return _suspendLevel == 0; } }
 
 			/// <summary>
 			/// Returns true when the disabling level is greater than zero (after calling the <see cref="Disable"/> function).
 			/// Returns false if the disabling level is zero.
 			/// </summary>
-			public bool IsDisabled { get { return _disablingLevel != 0; } }
+			public bool IsDisabled { get { return _suspendLevel != 0; } }
 
 			/// <summary>
 			/// Just fires the reenabling action that was given in the constructor,
@@ -596,17 +633,26 @@ namespace Altaxo.Collections
 			/// </summary>
 			public void ReenableShortly()
 			{
-				OnReenabling();
+				OnResume();
 			}
 
 			/// <summary>
 			/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
 			/// Per default, the resume event handler is called that you provided in the constructor.
 			/// </summary>
-			protected virtual void OnReenabling()
+			protected virtual void OnResume()
 			{
-				if (_reenablingEventHandler != null)
-					_reenablingEventHandler();
+				var ev = _reenablingEventHandler;
+				if (null != ev)
+					ev();
+			}
+
+			/// <summary>
+			/// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
+			/// Per default, the resume event handler is called that you provided in the constructor.
+			/// </summary>
+			protected virtual void OnResumeSilently()
+			{
 			}
 		}
 

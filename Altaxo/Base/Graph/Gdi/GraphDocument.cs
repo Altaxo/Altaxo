@@ -63,16 +63,16 @@ namespace Altaxo.Graph.Gdi
 				Main.Properties.PropertyLevel.All,
 				typeof(GraphDocument),
 				() => new ItemLocationDirect() { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY) })
+			{
+				EditingControllerCreation = (doc) =>
 				{
-					EditingControllerCreation = (doc) =>
-					{
-						var ctrl = new Gui.Graph.ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
-						ctrl.ShowPositionElements(false, false);
-						ctrl.ShowAnchorElements(false, false);
-						ctrl.InitializeDocument(doc);
-						return ctrl;
-					}
-				};
+					var ctrl = new Gui.Graph.ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+					ctrl.ShowPositionElements(false, false);
+					ctrl.ShowAnchorElements(false, false);
+					ctrl.InitializeDocument(doc);
+					return ctrl;
+				}
+			};
 
 		public static readonly Main.Properties.PropertyKey<FontX> PropertyKeyDefaultFont =
 				new Main.Properties.PropertyKey<FontX>(
@@ -98,14 +98,14 @@ Main.Properties.PropertyLevel.Document,
 typeof(GraphDocument),
 () => Altaxo.Graph.NamedColors.Black
 )
-{
-	EditingControllerCreation = (doc) =>
-	{
-		var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
-		ctrl.InitializeDocument(doc);
-		return ctrl;
-	}
-};
+			{
+				EditingControllerCreation = (doc) =>
+				{
+					var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+					ctrl.InitializeDocument(doc);
+					return ctrl;
+				}
+			};
 
 		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultBackColor =
 	new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
@@ -671,6 +671,36 @@ typeof(GraphDocument),
 			}
 		}
 
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (null != _paintThread)
+			{
+				var stb = new System.Text.StringBuilder();
+				var st = new System.Diagnostics.StackTrace(true);
+
+				var len = Math.Min(30, st.FrameCount);
+				for (int i = 1; i < len; ++i)
+				{
+					var frame = st.GetFrame(i);
+					var method = frame.GetMethod();
+
+					if (i > 2) stb.Append("\r\n\tin ");
+
+					stb.Append(method.DeclaringType.FullName);
+					stb.Append("|");
+					stb.Append(method.Name);
+					stb.Append("(L");
+					stb.Append(frame.GetFileLineNumber());
+					stb.Append(")");
+				}
+
+				Current.Console.WriteLine("Graph has changed during painting. Stacktrace:");
+				Current.Console.WriteLine(stb.ToString());
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
 		private object _paintLock = new object();
 
 		/// <summary>
@@ -705,25 +735,35 @@ typeof(GraphDocument),
 
 						for (int ithRetry = 1; ithRetry <= MaxPaintPreProcessingRetries; ++ithRetry)
 						{
-							using (var suspendToken = SuspendGetToken())
+							try
 							{
-								AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
-
-								RootLayer.PaintPreprocessing(this);
-
-								if (this._suspendTokensOfChilds == null || _suspendTokensOfChilds.Count == 0)
+								using (var suspendToken = SuspendGetToken())
 								{
+									AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
+
+									RootLayer.PaintPreprocessing(this);
+
+									if (this._suspendTokensOfChilds == null || _suspendTokensOfChilds.Count == 0)
+									{
+										suspendToken.Resume();
+										break;
+									}
 									suspendToken.Resume();
-									break;
 								}
-								suspendToken.Resume();
-							}
 #if DEBUG
-							if (ithRetry == MaxPaintPreProcessingRetries)
-							{
-								Current.Console.WriteLine("Warning: MaxPaintPreProcessingRetries exceeded during painting of graph {0}.", this.Name);
-							}
+								if (ithRetry == MaxPaintPreProcessingRetries)
+								{
+									Current.Console.WriteLine("Warning: MaxPaintPreProcessingRetries exceeded during painting of graph {0}.", this.Name);
+								}
 #endif
+							}
+							catch (Exception)
+							{
+								if (ithRetry == MaxPaintPreProcessingRetries)
+								{
+									throw;
+								}
+							}
 						}
 					}
 					finally

@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Gdi
 			using (var suspendToken = SuspendGetToken())
 			{
 				InternalCopyFrom(from, options);
-				EhSelfChanged(EventArgs.Empty);	 // make sure that change is called after suspend
+				EhSelfChanged(EventArgs.Empty);  // make sure that change is called after suspend
 			}
 		}
 
@@ -735,10 +735,10 @@ namespace Altaxo.Graph.Gdi
 			this.CalculateMatrix();
 
 			if (isSizeChanged)
-				OnSizeChanged();
+				OnCachedResultingSizeChanged();
 
 			if (isPositionChanged)
-				OnPositionChanged();
+				OnCachedResultingPositionChanged();
 		}
 
 		#endregion Position and Size
@@ -1230,28 +1230,32 @@ namespace Altaxo.Graph.Gdi
 
 		#region Event firing
 
-		protected virtual void OnSizeChanged()
+		/// <summary>
+		/// Called when the resulting size of this layer has changed. Is intended to inform child layers and own dependend objects of the size change.
+		/// Because it is only the cached size, it will not raise changed events. Those events must be raised in the function that caused the change of the resulting size.
+		/// </summary>
+		protected virtual void OnCachedResultingSizeChanged()
 		{
 			// first inform our childs
 			if (null != _childLayers)
 			{
 				foreach (var layer in _childLayers)
-					layer.SetParentSize(Size, true);
+					layer.SetParentSize(Size, false); // Do not raise change events here, it is only the cached size that changed
 			}
 
 			// now inform other listeners
 			if (null != SizeChanged)
 				SizeChanged(this, new System.EventArgs());
-
-			EhSelfChanged(EventArgs.Empty);
 		}
 
-		protected void OnPositionChanged()
+		/// <summary>
+		/// Called when the resulting position of this layer has changed. Is intended to inform child layers and own dependend objects of the position change.
+		/// Because it is only the cached position, it will not raise changed events. Those events must be raised in the function that caused the change of the resulting position.
+		/// </summary>
+		protected void OnCachedResultingPositionChanged()
 		{
 			if (null != PositionChanged)
 				PositionChanged(this, new System.EventArgs());
-
-			EhSelfChanged(EventArgs.Empty);
 		}
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)

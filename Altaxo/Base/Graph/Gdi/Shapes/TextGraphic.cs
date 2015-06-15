@@ -352,7 +352,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			//var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
 
 			// this._leftTop = new PointD2D(-xanchor, -yanchor);
-			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, true);
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, false);
 
 			this._cachedTextOffset = new PointD2D(distanceXL, distanceYU);
 		}

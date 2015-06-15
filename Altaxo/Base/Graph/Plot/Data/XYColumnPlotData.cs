@@ -67,7 +67,8 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		protected int _pointCount;
 
-		protected bool _isCachedDataValid = false;
+		protected bool _isCachedDataValidX = false;
+		protected bool _isCachedDataValidY = false;
 
 		#region Serialization
 
@@ -419,7 +420,8 @@ namespace Altaxo.Graph.Plot.Data
 				ChildCopyToMember(ref _yBoundaries, _yBoundaries);
 
 			this._pointCount = from._pointCount;
-			this._isCachedDataValid = from._isCachedDataValid;
+			this._isCachedDataValidX = from._isCachedDataValidX;
+			this._isCachedDataValidY = from._isCachedDataValidY;
 		}
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -502,7 +504,7 @@ namespace Altaxo.Graph.Plot.Data
 			if (null == _xBoundaries || pb.GetType() != _xBoundaries.GetType())
 				this.SetXBoundsFromTemplate(pb);
 
-			if (!this._isCachedDataValid)
+			if (!this._isCachedDataValidX)
 			{
 				using (var suspendToken = SuspendGetToken())
 				{
@@ -517,7 +519,7 @@ namespace Altaxo.Graph.Plot.Data
 			if (null == _yBoundaries || pb.GetType() != _yBoundaries.GetType())
 				this.SetYBoundsFromTemplate(pb);
 
-			if (!this._isCachedDataValid)
+			if (!this._isCachedDataValidY)
 			{
 				using (var suspendToken = SuspendGetToken())
 				{
@@ -538,7 +540,7 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				ChildCopyToMember(ref _xBoundaries, val);
 
-				_isCachedDataValid = false;
+				_isCachedDataValidX = false;
 
 				EhSelfChanged(EventArgs.Empty);
 			}
@@ -555,7 +557,7 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				if (ChildCopyToMember(ref _yBoundaries, val))
 				{
-					_isCachedDataValid = false;
+					_isCachedDataValidY = false;
 
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -583,7 +585,7 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get
 			{
-				if (!this._isCachedDataValid)
+				if (!this._isCachedDataValidX || !_isCachedDataValidY)
 					this.CalculateCachedData();
 				return this._pointCount;
 			}
@@ -602,7 +604,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (ChildSetMember(ref _xColumn, ReadableColumnProxyBase.FromColumn(value)))
 				{
-					_isCachedDataValid = false;
+					_isCachedDataValidX = _isCachedDataValidY = false; // this influences both x and y boundaries
 					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
@@ -621,7 +623,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (ChildSetMember(ref _yColumn, ReadableColumnProxyBase.FromColumn(value)))
 				{
-					_isCachedDataValid = false;
+					_isCachedDataValidX = _isCachedDataValidY = false; // this influences both x and y boundaries
 					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
@@ -650,17 +652,17 @@ namespace Altaxo.Graph.Plot.Data
 
 			if (_xBoundaries == null || (xBounds != null && _xBoundaries.GetType() != xBounds.GetType()))
 			{
-				_isCachedDataValid = false;
+				_isCachedDataValidX = false;
 				this.SetXBoundsFromTemplate(xBounds);
 			}
 
 			if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
 			{
-				_isCachedDataValid = false;
+				_isCachedDataValidY = false;
 				this.SetYBoundsFromTemplate(yBounds);
 			}
 
-			if (!_isCachedDataValid)
+			if (!_isCachedDataValidX || !_isCachedDataValidY)
 				CalculateCachedData();
 		}
 
@@ -670,57 +672,63 @@ namespace Altaxo.Graph.Plot.Data
 				return;
 
 			// we can calulate the bounds only if they are set before
-			if (null == _xBoundaries || null == _yBoundaries)
+			if (null == _xBoundaries && null == _yBoundaries)
 				return;
 
-			using (var suspendTokenX = this._xBoundaries.SuspendGetToken())
+			ISuspendToken suspendTokenX = null;
+			ISuspendToken suspendTokenY = null;
+
+			suspendTokenX = this._xBoundaries?.SuspendGetToken();
+			suspendTokenY = this._yBoundaries?.SuspendGetToken();
+
+			try
 			{
-				using (var suspendTokenY = this._yBoundaries.SuspendGetToken())
+				this._xBoundaries?.Reset();
+				this._yBoundaries?.Reset();
+
+				System.Diagnostics.Debug.Assert(_plotRangeStart >= 0);
+				System.Diagnostics.Debug.Assert(_plotRangeLength >= 0);
+
+				_pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
+
+				IReadableColumn xColumn = this.XColumn;
+				IReadableColumn yColumn = this.YColumn;
+
+				if (xColumn == null || yColumn == null)
 				{
-					this._xBoundaries.Reset();
-					this._yBoundaries.Reset();
+					_pointCount = 0;
+				}
+				else
+				{
+					if (xColumn is IDefinedCount)
+						_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)xColumn).Count);
+					if (yColumn is IDefinedCount)
+						_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)yColumn).Count);
 
-					System.Diagnostics.Debug.Assert(_plotRangeStart >= 0);
-					System.Diagnostics.Debug.Assert(_plotRangeLength >= 0);
-
-					_pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
-
-					IReadableColumn xColumn = this.XColumn;
-					IReadableColumn yColumn = this.YColumn;
-
-					if (xColumn == null || yColumn == null)
-					{
+					// if both columns are indefinite long, we set the length to zero
+					if (_pointCount == int.MaxValue || _pointCount < 0)
 						_pointCount = 0;
-					}
-					else
+
+					for (int i = _plotRangeStart; i < _pointCount; i++)
 					{
-						if (xColumn is IDefinedCount)
-							_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)xColumn).Count);
-						if (yColumn is IDefinedCount)
-							_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)yColumn).Count);
-
-						// if both columns are indefinite long, we set the length to zero
-						if (_pointCount == int.MaxValue || _pointCount < 0)
-							_pointCount = 0;
-
-						for (int i = _plotRangeStart; i < _pointCount; i++)
+						if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
 						{
-							if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
-							{
-								bool x_added = this._xBoundaries.Add(xColumn, i);
-								bool y_added = this._yBoundaries.Add(yColumn, i);
-							}
+							_xBoundaries?.Add(xColumn, i);
+							_yBoundaries?.Add(yColumn, i);
 						}
 					}
-
-					// now the cached data are valid
-					_isCachedDataValid = true;
-
-					// now when the cached data are valid, we can reenable the events
-
-					suspendTokenY.Resume();
 				}
-				suspendTokenX.Resume();
+
+				// now the cached data are valid
+				_isCachedDataValidX = null != _xBoundaries;
+				_isCachedDataValidY = null != _yBoundaries;
+
+				// now when the cached data are valid, we can reenable the events
+			}
+			finally
+			{
+				suspendTokenX?.Resume();
+				suspendTokenY?.Resume();
 			}
 		}
 
@@ -737,7 +745,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (_plotRangeStart != oldValue)
 				{
-					_isCachedDataValid = false;
+					_isCachedDataValidX = _isCachedDataValidY = false;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -760,7 +768,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (_plotRangeLength != oldValue)
 				{
-					_isCachedDataValid = false;
+					_isCachedDataValidX = _isCachedDataValidY = false;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -920,7 +928,7 @@ namespace Altaxo.Graph.Plot.Data
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
 			if (object.ReferenceEquals(sender, _xColumn) || object.ReferenceEquals(sender, _yColumn))
-				_isCachedDataValid = false;
+				_isCachedDataValidX = _isCachedDataValidY = false;
 
 			// If it is BoundaryChangedEventArgs, we have to set a flag for which boundary is affected
 			var eAsBCEA = e as BoundariesChangedEventArgs;
@@ -972,7 +980,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// </returns>
 		protected override void OnChanged(EventArgs e)
 		{
-			if (!_isCachedDataValid)
+			if (!_isCachedDataValidX || !_isCachedDataValidY)
 				CalculateCachedData(); // Calculates cached data -> If boundaries changed, this will trigger a boundary changed event
 
 			base.OnChanged(e);

@@ -207,6 +207,25 @@ namespace Altaxo.Main
 
 		#endregion Change event handling
 
+		#region Debug Helper functions
+
+		/// <summary>
+		/// Gets the absolute path of the node for debugging purposes.
+		/// </summary>
+		/// <value>
+		/// The absolute path.
+		/// </value>
+		protected string Debug_AbsolutePath
+		{
+			get
+			{
+				var rootNode = Altaxo.Main.AbsoluteDocumentPath.GetRootNode(this);
+				return Altaxo.Main.RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
+			}
+		}
+
+		#endregion Debug Helper functions
+
 		#region Inner class SuspendToken
 
 		private class SuspendToken : ISuspendToken
