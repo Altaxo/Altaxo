@@ -825,6 +825,40 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
+		private class ValueOfProperty : TextGlyph
+		{
+			string _propertyName;
+
+			public ValueOfProperty(StyleContext style, string propertyName)
+				: base(null, style)
+			{
+				_propertyName = propertyName;
+			}
+
+			public override void Measure(Graphics g, MeasureContext mc, double x)
+			{
+				_text = string.Empty;
+				var suspObj = mc.LinkedObject as Altaxo.Main.IDocumentLeafNode;
+				if (null != suspObj)
+				{
+					var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
+					if (null != context)
+					{
+						Altaxo.Main.Properties.IPropertyBag bag;
+						Altaxo.Main.Properties.PropertyBagInformation info;
+						object value;
+						if (context.TryGetValue<object>(_propertyName, out value, out bag, out info))
+						{
+							if (null != value)
+								_text = value.ToString();
+						}
+					}
+				}
+
+				base.Measure(g, mc, x);
+			}
+		}
+
 		#endregion Glyph leaves
 	}
 }

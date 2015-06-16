@@ -264,9 +264,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					case @"\id(":
 						{
-							string s = GetText(childNode);
+							const string DefPropertyHead = "$Property[\"";
+							const string DefPropertyTail = "\"]";
+
+							string s = GetText(childNode).Trim();
 							if (s == "$DI")
+							{
 								parent.Add(new DocumentIdentifier(context));
+							}
+							else if (s.StartsWith(DefPropertyHead) && s.EndsWith(DefPropertyTail))
+							{
+								string propertyName = s.Substring(DefPropertyHead.Length, s.Length - DefPropertyHead.Length - DefPropertyTail.Length);
+								if (!string.IsNullOrEmpty(propertyName))
+									parent.Add(new ValueOfProperty(context, propertyName));
+							}
 						}
 						break;
 
