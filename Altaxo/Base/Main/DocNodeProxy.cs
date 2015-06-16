@@ -471,6 +471,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_TunneledEvent: sender={0}, source={1} e={2}", sender, source, e);
 #endif
@@ -529,6 +532,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
 #endif
@@ -678,6 +684,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhWatchedNode_Changed(object sender, EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
 #endif
@@ -715,6 +724,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhWatchedNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 			System.Diagnostics.Debug.Assert(InternalDocumentNode == null);
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			var sourceAsDocNode = source as IDocumentLeafNode;

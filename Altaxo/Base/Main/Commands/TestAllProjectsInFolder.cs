@@ -234,7 +234,7 @@ namespace Altaxo.Main.Commands
 					}
 					catch (Exception ex)
 					{
-						Current.Console.WriteLine("Error closing file (after saving) {0}; Message: {1}", filename, ex.Message);
+						Current.Console.WriteLine("Error closing file (after saving) {0}; Message: {1}", filename, ex);
 						Current.Console.WriteLine("Operation will be stopped here because of error on closing");
 						return;
 					}
@@ -254,13 +254,13 @@ namespace Altaxo.Main.Commands
 
 						System.Threading.Thread.Sleep(1000);
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
 						++numberOfProjectsFailedToLoad;
 						monitor.ReportProgress(string.Format(
 							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
 							"Failed to re-open: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
-						Current.Console.WriteLine("Error re-opening file {0}", filename);
+						Current.Console.WriteLine("Error re-opening file {0}, Message: {1}", filename, ex);
 					}
 
 #if DEBUG && TRACEDOCUMENTNODES
@@ -290,7 +290,7 @@ namespace Altaxo.Main.Commands
 					}
 					catch (Exception ex)
 					{
-						Current.Console.WriteLine("Error closing file (after re-opening it) {0}; Message: {1}", filename, ex.Message);
+						Current.Console.WriteLine("Error closing file (after re-opening it) {0}; Message: {1}", filename, ex);
 						Current.Console.WriteLine("Operation will be stopped here because of error on closing");
 						return;
 					}
@@ -314,7 +314,7 @@ namespace Altaxo.Main.Commands
 					}
 					catch (Exception ex)
 					{
-						Current.Console.WriteLine("Error closing file {0}; Message: {1}", filename, ex.Message);
+						Current.Console.WriteLine("Error closing file {0}; Message: {1}", filename, ex);
 						Current.Console.WriteLine("Operation will be stopped here because of error on closing");
 						return;
 					}

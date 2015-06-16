@@ -58,6 +58,12 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		static DrawingImage _busyWithRenderingDrawing = (DrawingImage)new DrawingImage(new GlyphRunDrawing(Brushes.Lavender, BuildGlyphRun(" Busy with rendering ... "))).GetAsFrozen();
 
+		private volatile bool _isGraphVisible;
+
+		private volatile bool _isGraphUpToDate;
+
+		private WeakReference _cachedGraphImageSource = new WeakReference(new object());
+
 		public GraphViewWpf()
 		{
 			InitializeComponent();
@@ -86,6 +92,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		public void SetPanelCursor(Cursor cursor)
 		{
 			_graphPanel.Cursor = cursor;
+			_graphOverlay.Cursor = cursor;
 		}
 
 		/// <summary>
@@ -190,12 +197,35 @@ namespace Altaxo.Gui.Graph.Viewing
 			if (null != Controller)
 				Controller.EhView_GraphPanelSizeChanged(); // inform controller
 
-			((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
+			_isGraphUpToDate = false;
+			if (_isGraphVisible)
+				((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
 		}
 
 		private void EhIsGraphVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			//Current.Console.WriteLine("Graph is visible: {0}", e.NewValue);
+			_isGraphVisible = (bool)e.NewValue;
+
+			if (_isGraphVisible)
+			{
+				var graphImage = _cachedGraphImageSource.Target as ImageSource;
+
+				if (_isGraphUpToDate && null != graphImage)
+				{
+					_graphPanel.Source = graphImage;
+				}
+				else
+				{
+					_isGraphUpToDate = false;
+					_graphPanel.Source = _busyWithRenderingDrawing;
+					((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
+				}
+			}
+			else
+			{
+				_graphPanel.Source = null;
+				_graphOverlay.Source = null;
+			}
 		}
 
 		/// <summary>
@@ -203,6 +233,22 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Note: it is save to call this function from non-Gui threads.
 		/// </summary>
 		void Altaxo.Gui.Graph.Viewing.IGraphView.InvalidateCachedGraphBitmapAndRepaint()
+		{
+			if (_isGraphVisible)
+			{
+				StartCompleteRepaint();
+			}
+			else
+			{
+				_isGraphUpToDate = false;
+			}
+		}
+
+		/// <summary>
+		/// Causes a complete redrawing of the graph. The cached graph bitmap will be marked as dirty and a repainting of the graph area is triggered with Gui render priority.
+		/// Note: it is save to call this function from non-Gui threads.
+		/// </summary>
+		private void StartCompleteRepaint()
 		{
 			var controller = Controller;
 			if (null == controller)
@@ -233,7 +279,10 @@ namespace Altaxo.Gui.Graph.Viewing
 
 						Current.Gui.Execute(() =>
 						{
-							_graphPanel.Source = bmp.WpfBitmapSource;
+							var bmpSource = bmp.WpfBitmapSource;
+							_cachedGraphImageSource.Target = bmpSource;
+							_graphPanel.Source = bmpSource;
+							_isGraphUpToDate = true;
 							grfx.Dispose();
 
 							RenderOverlay(bmp);
