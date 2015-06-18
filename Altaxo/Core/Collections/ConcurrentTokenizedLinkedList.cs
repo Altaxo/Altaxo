@@ -65,6 +65,23 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Clears all items in the list.
+		/// </summary>
+		public void Clear()
+		{
+			_lock.EnterWriteLock();
+			try
+			{
+				_list.Clear();
+				_dictionary.Clear();
+			}
+			finally
+			{
+				_lock.ExitWriteLock();
+			}
+		}
+
+		/// <summary>
 		/// Tries to take the first item from the list.
 		/// </summary>
 		/// <param name="key">If successful, contains the key that was used to add the item.</param>

@@ -191,6 +191,8 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>The maximum number of tasks that should render concurrently.</summary>
 		private int _maxTasksConcurrentlyRendering = 1;
 
+		private volatile bool _isEnabled;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GraphDocumentRenderManager"/> class.
 		/// </summary>
@@ -199,6 +201,23 @@ namespace Altaxo.Graph.Gdi
 			_maxTasksConcurrentlyRendering = Math.Max(1, System.Environment.ProcessorCount - 2); // leave 1 processor for the Gui thread, and another for calculations
 			_tasksWaiting = new ConcurrentTokenizedLinkedList<object, GraphDocumentRenderTask>();
 			_tasksRendering = new ConcurrentDictionary<GraphDocument, GraphDocumentRenderTask>();
+
+			var projService = Current.ProjectService;
+			projService.ProjectClosed += EhProjectClosed;
+			projService.ProjectOpened += EhProjectOpened;
+			_isEnabled = null != Current.Project;
+		}
+
+		private void EhProjectOpened(object sender, Main.ProjectEventArgs e)
+		{
+			_isEnabled = true;
+			TryStartWaitingTasks();
+		}
+
+		private void EhProjectClosed(object sender, Main.ProjectEventArgs e)
+		{
+			_isEnabled = false;
+			_tasksWaiting.Clear();
 		}
 
 		/// <summary>
@@ -236,6 +255,9 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		private void TryStartWaitingTasks()
 		{
+			if (!_isEnabled)
+				return;
+
 			GraphDocumentRenderTask rendering;
 			object token;
 

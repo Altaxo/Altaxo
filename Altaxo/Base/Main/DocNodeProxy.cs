@@ -604,6 +604,9 @@ namespace Altaxo.Main
 
 		protected virtual IDocumentLeafNode ResolveDocumentObject(Main.IDocumentLeafNode startnode)
 		{
+			if (IsDisposeInProgress)
+				return null;
+
 			System.Diagnostics.Debug.Assert(null != _docNodePath || IsDisposeInProgress);
 
 			var docNode = InternalDocumentNode;

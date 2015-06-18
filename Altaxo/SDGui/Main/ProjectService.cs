@@ -63,6 +63,7 @@ namespace Altaxo.Main
 			if (null != _currentProject)
 			{
 				_currentProject.DirtyChanged -= EhProjectDirtyChanged;
+				OnProjectClosed(new ProjectEventArgs(oldProject));
 			}
 
 			_currentProject = project;
@@ -86,9 +87,6 @@ namespace Altaxo.Main
 					}
 				}
 
-				if (string.IsNullOrEmpty(oldProjectFileName) && null != _currentProject)
-					OnProjectOpened(new ProjectEventArgs(_currentProject));
-
 				OnProjectChanged();
 			}
 			else // Project instance has not changed
@@ -103,7 +101,9 @@ namespace Altaxo.Main
 			if (null != _currentProject)
 				throw new InvalidOperationException("There should be no document before creating the initial document");
 
-			SetCurrentProject(new AltaxoDocument(), null);
+			var newProject = new AltaxoDocument();
+			SetCurrentProject(newProject, null);
+			OnProjectOpened(new ProjectEventArgs(newProject));
 		}
 
 		/// <summary>
@@ -390,6 +390,8 @@ namespace Altaxo.Main
 				this.CurrentOpenProject.IsDirty = false;
 
 				info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
+
+				OnProjectOpened(new ProjectEventArgs(newdocument));
 			}
 			catch (Exception exc)
 			{
@@ -604,11 +606,14 @@ namespace Altaxo.Main
 					//closedProject.Dispose();
 
 					// now create a new project
-					this.SetCurrentProject(new Altaxo.AltaxoDocument(), null);
+					var newProject = new Altaxo.AltaxoDocument();
+					this.SetCurrentProject(newProject, null);
 
 					// dispose the old project
 					if (null != closedProject)
 						closedProject.Dispose();
+
+					OnProjectOpened(new ProjectEventArgs(newProject));
 				}
 			}
 		}
