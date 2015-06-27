@@ -79,7 +79,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 			}
 		}
 
-		/// < inheritdoc />
+		/// <inheritdoc />
 		public object Clone()
 		{
 			var result = (HistogramCreationOptions)this.MemberwiseClone();

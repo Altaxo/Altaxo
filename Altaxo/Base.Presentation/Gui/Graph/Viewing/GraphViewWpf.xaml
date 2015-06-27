@@ -23,23 +23,22 @@
 				<RowDefinition />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<Rectangle  SizeChanged="EhGraphPanelSizeChanged" />
-			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Uniform" Name="_graphPanel" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown" IsVisibleChanged="EhIsGraphVisibleChanged">
-				<Image.CommandBindings>
+			<Canvas Focusable="True"  x:Name="_guiCanvas"
+							SizeChanged="EhGraphPanelSizeChanged"
+							MouseWheel="EhGraphPanel_MouseWheel"
+							MouseMove="EhGraphPanel_MouseMove"
+							MouseDown="EhGraphPanel_MouseDown"
+							MouseUp="EhGraphPanel_MouseUp"
+							KeyDown="EhGraphPanel_KeyDown">
+				<Canvas.CommandBindings>
 					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
 					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />
 					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete" />
 					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
-				</Image.CommandBindings>
-			</Image>
-			<Image Grid.Row="0" Focusable="True" SnapsToDevicePixels="True" Stretch="Uniform" Name="_graphOverlay" MouseMove="EhGraphPanel_MouseMove" MouseDown="EhGraphPanel_MouseDown" MouseUp="EhGraphPanel_MouseUp" MouseWheel="EhGraphPanel_MouseWheel" KeyDown="EhGraphPanel_KeyDown">
-				<Image.CommandBindings>
-					<CommandBinding Command="Copy" CanExecute="EhEnableCmdCopy" Executed="EhCmdCopy" />
-					<CommandBinding Command="Cut" CanExecute="EhEnableCmdCut" Executed="EhCmdCut" />
-					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete" />
-					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
-				</Image.CommandBindings>
-			</Image>
+				</Canvas.CommandBindings>
+				<Image Focusable="False" SnapsToDevicePixels="True" Stretch="Uniform"  Name="_graphImage"     IsVisibleChanged="EhIsGraphVisibleChanged" />
+				<Image Focusable="False" SnapsToDevicePixels="True" Stretch="Uniform" Name="_graphOverlay" />
+			</Canvas>
 			<Label x:Name="_guiUpdateCount" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" />
 			<ScrollBar Grid.Row="1" Orientation="Horizontal" Name="_horizontalScrollBar" Scroll="EhHorizontalScrollBar_Scroll" />
 		</Grid>

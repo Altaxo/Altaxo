@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Color for the area of the view, where there is no page.
 		/// </summary>
-		protected Color _nonPageAreaColor;
+		protected Altaxo.Graph.NamedColor _nonPageAreaColor;
 
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// </summary>
 		protected virtual void SetMemberVariablesToDefault()
 		{
-			_nonPageAreaColor = Color.Gray;
+			_nonPageAreaColor = NamedColors.Gray;
 
 			_pageGroundBrush = new BrushX(NamedColors.LightGray) { ParentObject = SuspendableDocumentNode.StaticInstance };
 
@@ -254,6 +254,20 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			if (null != _viewWpf)
 				_viewWpf.SetPanelCursor(cursor);
+		}
+
+		/// <summary>
+		/// Gets the color of the non page area, i.e. the area that not belongs to the graph.
+		/// </summary>
+		/// <value>
+		/// The color of the non page area.
+		/// </value>
+		public Altaxo.Graph.NamedColor NonPageAreaColor
+		{
+			get
+			{
+				return _nonPageAreaColor;
+			}
 		}
 
 		#endregion Functions used by View

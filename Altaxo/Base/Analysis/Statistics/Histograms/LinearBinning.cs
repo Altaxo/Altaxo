@@ -151,7 +151,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
 		#region IBinningDefinition
 
-		/// < inheritdoc />
+		/// <inheritdoc />
 		public void CalculateBinPositionsFromSortedList(IList<double> list)
 		{
 			if (null == list)

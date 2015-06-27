@@ -54,20 +54,40 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>Used for debugging the number of updates to the graph.</summary>
 		private int _updateCount;
 
-		static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap>(16);
+		private static Altaxo.Collections.CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap> _gdiWpfBitmapManager = new CachedObjectManagerByMaximumNumberOfItems<System.Drawing.Size, GdiToWpfBitmap>(16);
 
-		static DrawingImage _busyWithRenderingDrawing = (DrawingImage)new DrawingImage(new GlyphRunDrawing(Brushes.Lavender, BuildGlyphRun(" Busy with rendering ... "))).GetAsFrozen();
+		private static DrawingImage _busyWithRenderingDrawing = (DrawingImage)new DrawingImage(new GlyphRunDrawing(Brushes.Lavender, BuildGlyphRun(" Busy with rendering ... "))).GetAsFrozen();
 
 		private volatile bool _isGraphVisible;
 
 		private volatile bool _isGraphUpToDate;
 
-		private WeakReference _cachedGraphImageSource = new WeakReference(new object());
+		private CachedGraphImage _cachedGraphImage;
+
+		private class CachedGraphImage
+		{
+			public PointD2D ViewPortsUpperLeftCornerInGraphCoordinates;
+			public PointD2D Size;
+			public double ZoomFactor;
+			private WeakReference _imageSource;
+
+			public ImageSource ImageSource
+			{
+				get
+				{
+					return _imageSource?.Target as ImageSource;
+				}
+				set
+				{
+					_imageSource = new WeakReference(value);
+				}
+			}
+		}
 
 		public GraphViewWpf()
 		{
 			InitializeComponent();
-			_graphPanel.Source = _busyWithRenderingDrawing;
+			_graphImage.Source = _busyWithRenderingDrawing;
 		}
 
 		public virtual void Dispose()
@@ -85,14 +105,13 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		public void FocusOnGraphPanel()
 		{
-			bool result = _graphPanel.Focus();
-			Keyboard.Focus(_graphPanel);
+			bool result = _guiCanvas.Focus();
+			Keyboard.Focus(_guiCanvas);
 		}
 
 		public void SetPanelCursor(Cursor cursor)
 		{
-			_graphPanel.Cursor = cursor;
-			_graphOverlay.Cursor = cursor;
+			_guiCanvas.Cursor = cursor;
 		}
 
 		/// <summary>
@@ -110,7 +129,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private PointD2D GetMousePosition(MouseEventArgs e)
 		{
-			var p = e.GetPosition(_graphPanel);
+			var p = e.GetPosition(_guiCanvas);
 			return new Altaxo.Graph.PointD2D(p.X, p.Y);
 		}
 
@@ -124,7 +143,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		private void EhGraphPanel_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			var guiController = Controller;
-			Keyboard.Focus(_graphPanel);
+			Keyboard.Focus(_guiCanvas);
 			var pos = GetMousePosition(e);
 			if (null != guiController)
 			{
@@ -147,7 +166,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			var guiController = Controller;
 			if (null != guiController)
+			{
 				guiController.EhView_GraphPanelMouseWheel(GetMousePosition(e), e);
+				ShowCachedGraphImage();
+			}
 		}
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
@@ -167,7 +189,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			get
 			{
 				// make sure that the returned element implements IInputElement
-				var result = _graphPanel;
+				var result = _graphImage;
 				System.Diagnostics.Debug.Assert(null != (result as System.Windows.IInputElement));
 				return result;
 			}
@@ -185,17 +207,20 @@ namespace Altaxo.Gui.Graph.Viewing
 		private void EhGraphPanelSizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			var s = e.NewSize;
+			_guiCanvas.Clip = new RectangleGeometry(new Rect(0, 0, s.Width, s.Height));
 
 			if (!(s.Width > 0 && s.Height > 0))
 				return;
 
 			_cachedGraphSize_96thInch = new PointD2D(s.Width, s.Height);
 			var screenResolution = Current.Gui.ScreenResolutionDpi;
-			var grap = screenResolution * _cachedGraphSize_96thInch / 96.0;
-			_cachedGraphSize_Pixels = new System.Drawing.Size((int)grap.X, (int)grap.Y);
+			var graphSizePixels = screenResolution * _cachedGraphSize_96thInch / 96.0;
+			_cachedGraphSize_Pixels = new System.Drawing.Size((int)graphSizePixels.X, (int)graphSizePixels.Y);
 
 			if (null != Controller)
 				Controller.EhView_GraphPanelSizeChanged(); // inform controller
+
+			ShowCachedGraphImage();
 
 			_isGraphUpToDate = false;
 			if (_isGraphVisible)
@@ -208,24 +233,60 @@ namespace Altaxo.Gui.Graph.Viewing
 
 			if (_isGraphVisible)
 			{
-				var graphImage = _cachedGraphImageSource.Target as ImageSource;
+				var ctrl = Controller;
+				if (null != ctrl)
+					_guiCanvas.Background = new SolidColorBrush(GuiHelper.ToWpf(ctrl.NonPageAreaColor));
 
-				if (_isGraphUpToDate && null != graphImage)
+				if (_isGraphUpToDate && true == ShowCachedGraphImage())
 				{
-					_graphPanel.Source = graphImage;
 				}
 				else
 				{
 					_isGraphUpToDate = false;
-					_graphPanel.Source = _busyWithRenderingDrawing;
+					_graphImage.Source = _busyWithRenderingDrawing;
+
 					((Altaxo.Gui.Graph.Viewing.IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
 				}
 			}
 			else
 			{
-				_graphPanel.Source = null;
+				_graphImage.Source = null;
 				_graphOverlay.Source = null;
 			}
+		}
+
+		private bool ShowCachedGraphImage()
+		{
+			var controller = Controller;
+			if (null != _cachedGraphImage && null != controller)
+			{
+				var imgSrc = _cachedGraphImage.ImageSource;
+				if (null != imgSrc)
+				{
+					var zoom1 = controller.ZoomFactor; // current zoom factor
+					var vpulcgc1 = controller.PositionOfViewportsUpperLeftCornerInGraphCoordinates; // current position of viewports upper left corner
+
+					var size1 = zoom1 * _cachedGraphImage.Size / _cachedGraphImage.ZoomFactor; // size that the graph image should take at the canvas' surface
+					var pos1 = (96 / 72.0) * zoom1 * (_cachedGraphImage.ViewPortsUpperLeftCornerInGraphCoordinates - vpulcgc1); // position of the upper left corner of the graph image that the graph image should take at the canvas surface
+
+					_graphImage.SetValue(Canvas.LeftProperty, pos1.X);
+					_graphImage.SetValue(Canvas.TopProperty, pos1.Y);
+					_graphImage.Width = size1.X;
+					_graphImage.Height = size1.Y;
+
+					_graphImage.Source = _cachedGraphImage.ImageSource;
+
+					_graphOverlay.SetValue(Canvas.LeftProperty, pos1.X);
+					_graphOverlay.SetValue(Canvas.TopProperty, pos1.Y);
+					_graphOverlay.Width = size1.X;
+					_graphOverlay.Height = size1.Y;
+
+					// Current.Console.WriteLine("ShowCGI, Zoom=({0}|{1}), PVULCGC=({2}|{3}), Size=({4}|{5}), CurrSize={6}, Pos={7}", _cachedGraphImage.ZoomFactor, zoom1, _cachedGraphImage.ViewPortsUpperLeftCornerInGraphCoordinates, vpulcgc1, _cachedGraphImage.Size, size1, _cachedGraphSize_96thInch, pos1);
+
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -273,6 +334,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 						var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp);
 						controller.ScaleForPaintingGraphDocument(grfx);
+						var cachedGraphImage = new CachedGraphImage { ZoomFactor = controller.ZoomFactor, ViewPortsUpperLeftCornerInGraphCoordinates = controller.PositionOfViewportsUpperLeftCornerInGraphCoordinates, Size = _cachedGraphSize_96thInch };
 
 						if (!graphDocument.IsDisposeInProgress)
 							graphDocument.DoPaint(grfx, false);
@@ -280,9 +342,11 @@ namespace Altaxo.Gui.Graph.Viewing
 						Current.Gui.Execute(() =>
 						{
 							var bmpSource = bmp.WpfBitmapSource;
-							_cachedGraphImageSource.Target = bmpSource;
-							_graphPanel.Source = bmpSource;
+							cachedGraphImage.ImageSource = bmpSource;
+							_cachedGraphImage = cachedGraphImage;
+							_graphImage.Source = bmpSource;
 							_isGraphUpToDate = true;
+							ShowCachedGraphImage();
 							grfx.Dispose();
 
 							RenderOverlay(bmp);
@@ -488,22 +552,22 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		private void EhHorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
 		{
-			if (e.ScrollEventType == ScrollEventType.ThumbTrack)
-				return;
-
 			var gc = Controller;
 			if (null != gc)
+			{
 				gc.EhView_Scroll();
+				ShowCachedGraphImage();
+			}
 		}
 
 		private void EhVerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
 		{
-			if (e.ScrollEventType == ScrollEventType.ThumbTrack)
-				return;
-
 			var gc = Controller;
 			if (null != gc)
+			{
 				gc.EhView_Scroll();
+				ShowCachedGraphImage();
+			}
 		}
 
 		private void EhEnableCmdCopy(object sender, CanExecuteRoutedEventArgs e)
