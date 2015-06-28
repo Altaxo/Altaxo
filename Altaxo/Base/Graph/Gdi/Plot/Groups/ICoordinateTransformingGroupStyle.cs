@@ -56,22 +56,24 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// Prepare the paint of the plot items that belongs to this group style.
 		/// </summary>
 		/// <param name="g">Graphics context used for drawing.</param>
+		/// <param name="paintContext">The paint context</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="coll">Collection of plot items to draw.</param>
-		void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll);
+		void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll);
 
 		/// <summary>
 		/// Finishes the painting of the plot items that belongs to this style. Paints the end.
 		/// </summary>
-		void PaintEnd();
+		void PaintPostprocessing();
 
 		/// <summary>
 		/// Paints the child of a plot item collection.
 		/// </summary>
 		/// <param name="g">Graphics context used for drawing.</param>
+		/// <param name="context">The paint context.</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="collection">Collection of plot items to draw.</param>
 		/// <param name="indexOfChild">Index of the item that should be painted in the <paramref name="collection"/>.</param>
-		void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection collection, int indexOfChild);
+		void PaintChild(System.Drawing.Graphics g, IPaintContext context, IPlotArea layer, PlotItemCollection collection, int indexOfChild);
 	}
 }

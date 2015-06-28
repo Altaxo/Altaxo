@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Gdi
 			var savedGraphics = g.Save();
 			float hx = e.PageSettings.HardMarginX; // in hundreths of inch
 			float hy = e.PageSettings.HardMarginY; // in hundreths of inch
-			//g.TranslateTransform(-hx,-hy);
+																						 //g.TranslateTransform(-hx,-hy);
 
 			float zoom;
 			PointF startLocationOnPage;
@@ -219,7 +219,13 @@ namespace Altaxo.Graph.Gdi
 
 			g.ScaleTransform(zoom, zoom);
 
-			_layers.Paint(g, true);
+			var paintContext = new GdiPaintContext();
+
+			_layers.PaintPreprocessing(paintContext);
+
+			_layers.Paint(g, paintContext);
+
+			_layers.PaintPostprocessing();
 
 			g.Restore(savedGraphics);
 		}

@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetRectangularObjectOutline();
 		}
 
-		public override void Paint(Graphics g, object obj)
+		public override void Paint(Graphics g, IPaintContext paintContext)
 		{
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 			TransformGraphics(g);

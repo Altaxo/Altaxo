@@ -233,10 +233,12 @@ namespace Altaxo.Gui.Graph.Shapes
 			g.FillRectangle(Brushes.Transparent, g.VisibleClipBounds);
 			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
+			var paintContext = new GdiPaintContext();
+
 			// set position and rotation to zero
 			//    m_TextObject.Position=new PointF(0,0);
 			//    m_TextObject.Rotation = 0;
-			_doc.Paint(g, _parentLayerOfOriginalDoc, true);
+			_doc.Paint(g, paintContext, true);
 
 			// restore the original position and rotation values
 			//      m_TextObject.Position = new PointF(m_PositionX,m_PositionY);

@@ -239,16 +239,22 @@ namespace Altaxo.Graph.Gdi.Axis
 			return false;
 		}
 
+		public void FixupInternalDataStructures(IPlotArea layer)
+		{
+			for (int i = 0; i < _axisStyles.Count; ++i)
+				_axisStyles[i].FixupInternalDataStructures(layer);
+		}
+
 		public void PaintPreprocessing(IPlotArea layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
 				_axisStyles[i].PaintPreprocessing(layer);
 		}
 
-		public void Paint(Graphics g, IPlotArea layer)
+		public void Paint(Graphics g, IPaintContext paintContext, IPlotArea layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
-				_axisStyles[i].Paint(g, layer);
+				_axisStyles[i].Paint(g, paintContext, layer);
 		}
 
 		public void PaintPostprocessing()

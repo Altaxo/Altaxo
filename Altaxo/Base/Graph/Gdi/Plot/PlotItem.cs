@@ -80,14 +80,23 @@ namespace Altaxo.Graph.Gdi.Plot
 		public abstract string GetName(string style);
 
 		/// <summary>
+		/// Called before painting takes place.
+		/// </summary>
+		/// <param name="context">The painting context.</param>
+		public virtual void PaintPreprocessing(IPaintContext context)
+		{
+		}
+
+		/// <summary>
 		/// This paints the plot to the layer.
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
+		/// <param name="context">The painting context.</param>
 		/// <param name="layer">The plot layer.</param>
 		/// <param name="previousPlotItem">Previous plot item.</param>
 		/// <param name="nextPlotItem">Next plot item.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		public abstract void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+		public abstract void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources. Must be overridden by a derived class.

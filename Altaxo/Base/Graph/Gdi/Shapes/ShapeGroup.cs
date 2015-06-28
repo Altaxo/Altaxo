@@ -190,14 +190,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// Paint the shape group in the graphic context.
 		/// </summary>
 		/// <param name="g">Graphic context.</param>
-		/// <param name="obj"></param>
-		public override void Paint(Graphics g, object obj)
+		/// <param name="paintContext">The paint context.</param>
+		public override void Paint(Graphics g, IPaintContext paintContext)
 		{
 			GraphicsState gs = g.Save();
 			this.TransformGraphics(g);
 
 			foreach (GraphicBase graphics in _groupedObjects)
-				graphics.Paint(g, this);
+				graphics.Paint(g, paintContext);
 
 			g.Restore(gs);
 		}

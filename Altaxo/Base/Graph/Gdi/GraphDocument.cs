@@ -740,8 +740,7 @@ typeof(GraphDocument),
 								using (var suspendToken = SuspendGetToken())
 								{
 									AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
-
-									RootLayer.PaintPreprocessing(this);
+									RootLayer.FixupInternalDataStructures();
 
 									if (this._suspendTokensOfChilds == null || _suspendTokensOfChilds.Count == 0)
 									{
@@ -773,7 +772,11 @@ typeof(GraphDocument),
 
 					using (var suspendToken = SuspendGetToken())
 					{
-						RootLayer.Paint(g, bForPrinting);
+						var paintContext = new GdiPaintContext();
+
+						RootLayer.PaintPreprocessing(paintContext);
+
+						RootLayer.Paint(g, paintContext);
 
 						RootLayer.PaintPostprocessing();
 

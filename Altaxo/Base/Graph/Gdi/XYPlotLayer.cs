@@ -857,30 +857,32 @@ namespace Altaxo.Graph.Gdi
 			_graphObjects.Insert(idx, new PlotItemPlaceHolder());
 		}
 
-		public override void PaintPreprocessing(object parentObject)
+		/// <summary>
+		/// Adjusts the internal data structures to ensure its validity.
+		/// </summary>
+		public override void FixupInternalDataStructures()
 		{
-			base.PaintPreprocessing(parentObject);
+			base.FixupInternalDataStructures();
 
 			// Before we paint the axis, we have to make sure that all plot items
 			// had their data updated, so that the axes are updated before they are drawn!
 			_plotItems.PrepareScales(this);
-
 			_plotItems.PrepareGroupStyles(null, this);
 			_plotItems.ApplyGroupStyles(null);
 
-			_axisStyles.PaintPreprocessing(this);
+			_axisStyles.FixupInternalDataStructures(this);
 
 			EnsureAppropriateGridAndAxisStylePlaceHolders();
 			EnsureAppropriatePlotItemPlaceHolders();
 		}
 
-		protected override void PaintInternal(Graphics g)
+		protected override void PaintInternal(Graphics g, IPaintContext paintContext)
 		{
 			// paint the background very first
 			_gridPlanes.PaintBackground(g, this);
 
 			// then paint the graph items
-			base.PaintInternal(g);
+			base.PaintInternal(g, paintContext);
 		}
 
 		/// <summary>
@@ -1658,13 +1660,15 @@ namespace Altaxo.Graph.Gdi
 				return null;
 			}
 
-			public virtual void PaintPreprocessing(object parentObject)
+			public virtual void FixupInternalDataStructures()
 			{
-				if (!object.ReferenceEquals(parentObject, this.ParentObject))
-					throw new InvalidOperationException(string.Format("Cached parentObject and parentObject in document do not match! This={0}, ParentCached={1}, ParentArg={2}", this.GetType(), ParentObject, parentObject));
 			}
 
-			public abstract void Paint(Graphics g, object obj);
+			public virtual void PaintPreprocessing(IPaintContext paintContext)
+			{
+			}
+
+			public abstract void Paint(Graphics g, IPaintContext paintContext);
 
 			public virtual PointD2D Position
 			{
@@ -1761,7 +1765,7 @@ namespace Altaxo.Graph.Gdi
 				return r;
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext paintContext)
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
@@ -1859,7 +1863,7 @@ namespace Altaxo.Graph.Gdi
 				return base.HitTest(hitData);
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext paintContext)
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer)
@@ -1936,7 +1940,7 @@ namespace Altaxo.Graph.Gdi
 				return base.HitTest(hitData);
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext paintContext)
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer)
@@ -2049,13 +2053,13 @@ namespace Altaxo.Graph.Gdi
 				return false;
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext paintContext)
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer)
 				{
 					if (Index >= 0 && Index < layer._axisStyles.Count)
-						layer._axisStyles.ItemAt(Index).PaintTitle(g, layer);
+						layer._axisStyles.ItemAt(Index).PaintTitle(g, paintContext, layer);
 				}
 			}
 
@@ -2104,7 +2108,7 @@ namespace Altaxo.Graph.Gdi
 				return string.Format("Grid plane(s)");
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext paintContext)
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer)
@@ -2184,7 +2188,7 @@ namespace Altaxo.Graph.Gdi
 				return "Plot item";
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext paintContext)
 			{
 				var layer = ParentObject as XYPlotLayer;
 				if (null != layer)
@@ -2201,11 +2205,11 @@ namespace Altaxo.Graph.Gdi
 							throw new InvalidOperationException("The member _plotItems is null on this layer!");
 						}
 
-						layer._plotItems.Paint(g, layer, null, null);
+						layer._plotItems.Paint(g, paintContext, layer, null, null);
 					}
 					else
 					{
-						PlotItemParent.PaintChild(g, layer, PlotItemIndex);
+						PlotItemParent.PaintChild(g, paintContext, layer, PlotItemIndex);
 					}
 
 					if (layer.ClipDataToFrame == LayerDataClipping.StrictToCS)

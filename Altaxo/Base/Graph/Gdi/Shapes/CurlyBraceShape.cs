@@ -36,7 +36,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
 		{
 			public DeprecatedCurlyBraceShape()
-				: base(new ItemLocationDirect(), (Altaxo.Main.Properties.IReadOnlyPropertyBag)null) { }
+				: base(new ItemLocationDirect(), (Altaxo.Main.Properties.IReadOnlyPropertyBag)null)
+			{ }
 
 			/// <summary>
 			/// Get the object outline for arrangements in object world coordinates.
@@ -47,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				throw new NotImplementedException();
 			}
 
-			public override void Paint(Graphics g, object obj)
+			public override void Paint(Graphics g, IPaintContext context)
 			{
 				throw new NotImplementedException();
 			}
@@ -152,7 +153,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetRectangularObjectOutline();
 		}
 
-		public override void Paint(Graphics g, object obj)
+		public override void Paint(Graphics g, IPaintContext context)
 		{
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);

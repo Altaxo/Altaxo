@@ -1120,7 +1120,12 @@ namespace Altaxo.Gui.Graph
 				throw new NotImplementedException();
 			}
 
-			public void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+			public void PaintPreprocessing(IPaintContext context)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 			{
 				throw new NotImplementedException();
 			}

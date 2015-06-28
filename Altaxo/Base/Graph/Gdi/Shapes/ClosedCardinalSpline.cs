@@ -277,7 +277,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
-		public override void Paint(Graphics g, object obj)
+		public override void Paint(Graphics g, IPaintContext context)
 		{
 			GraphicsState gs = g.Save();
 			TransformGraphics(g);

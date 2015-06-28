@@ -185,7 +185,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			return _cachedPlotDataUsedForPainting;
 		}
 
-		public override void Paint(Graphics g, IPlotArea layer, IGPlotItem prevPlotItem, IGPlotItem nextPlotItem)
+		public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem prevPlotItem, IGPlotItem nextPlotItem)
 		{
 			Processed2DPlotData pdata = GetRangesAndPoints(layer);
 			if (pdata != null)

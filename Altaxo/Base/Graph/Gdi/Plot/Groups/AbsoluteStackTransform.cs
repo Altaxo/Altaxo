@@ -214,15 +214,16 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			return yArray;
 		}
 
-		// members that are created at PaintParent and must be released at latest at FinishPainting
-		private Dictionary<G2DPlotItem, Processed2DPlotData> _plotDataDict; // if null, the PaintChild operation is carried out normally, that is without stack transform
-
-		public void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
 		{
-			_plotDataDict = null;
-			if (!CanUseStyle(layer, coll, out _plotDataDict))
+			Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict = null;
+			if (!CanUseStyle(layer, coll, out plotDataDict))
 			{
 				return;
+			}
+			else
+			{
+				paintContext.AddValue(this, plotDataDict);
 			}
 
 			AltaxoVariant[] yArray = null;
@@ -236,7 +237,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					idx++;
 
 					G2DPlotItem gpi = pi as G2DPlotItem;
-					Processed2DPlotData pdata = _plotDataDict[gpi];
+					Processed2DPlotData pdata = plotDataDict[gpi];
 					yArray = AddUp(yArray, pdata);
 
 					if (idx > 0) // this is not the first item
@@ -265,16 +266,17 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		public void PaintEnd()
+		public void PaintPostprocessing()
 		{
-			_plotDataDict = null;
 		}
 
-		public void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
+		public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int indexOfChild)
 		{
-			if (null == _plotDataDict) // if initializing this dict was not successfull, then make a normal plot
+			var plotDataDict = paintContext.GetValueOrDefault<Dictionary<G2DPlotItem, Processed2DPlotData>>(this);
+
+			if (null == plotDataDict) // if initializing this dict was not successfull, then make a normal plot
 			{
-				coll[indexOfChild].Paint(g, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
+				coll[indexOfChild].Paint(g, paintContext, layer, indexOfChild == coll.Count - 1 ? null : coll[indexOfChild + 1], indexOfChild == 0 ? null : coll[indexOfChild - 1]);
 				return;
 			}
 
@@ -282,19 +284,19 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			Processed2DPlotData nextPlotData = null;
 
 			if ((indexOfChild + 1) < coll.Count && (coll[indexOfChild + 1] is G2DPlotItem))
-				prevPlotData = _plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
+				prevPlotData = plotDataDict[coll[indexOfChild + 1] as G2DPlotItem];
 
 			if (indexOfChild > 0 && (coll[indexOfChild - 1] is G2DPlotItem))
-				nextPlotData = _plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
+				nextPlotData = plotDataDict[coll[indexOfChild - 1] as G2DPlotItem];
 
 			if (coll[indexOfChild] is G2DPlotItem)
 			{
 				var gpi = coll[indexOfChild] as G2DPlotItem;
-				gpi.Paint(g, layer, _plotDataDict[gpi], prevPlotData, nextPlotData);
+				gpi.Paint(g, layer, plotDataDict[gpi], prevPlotData, nextPlotData);
 			}
 			else
 			{
-				coll[indexOfChild].Paint(g, layer, null, null);
+				coll[indexOfChild].Paint(g, paintContext, layer, null, null);
 			}
 		}
 

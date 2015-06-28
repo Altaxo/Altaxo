@@ -55,11 +55,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		public static void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		public static void Paint(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
 		{
 			for (int i = coll.Count - 1; i >= 0; --i)
 			{
-				coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i + 1], i == 0 ? null : coll[i - 1]);
+				coll[i].Paint(g, paintContext, layer, i == coll.Count - 1 ? null : coll[i + 1], i == 0 ? null : coll[i - 1]);
 			}
 		}
 	}

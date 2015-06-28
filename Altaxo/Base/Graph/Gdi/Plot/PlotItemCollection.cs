@@ -759,17 +759,16 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		public void Paint(System.Drawing.Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		public virtual void PaintPreprocessing(IPaintContext paintContext)
 		{
-			PaintBegin(g, layer);
 		}
 
-		public void PaintBegin(System.Drawing.Graphics g, IPlotArea layer)
+		public void Paint(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			ICoordinateTransformingGroupStyle coordTransStyle;
 			if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
 			{
-				coordTransStyle.PaintBegin(g, layer, this);
+				coordTransStyle.PaintPreprocessing(g, paintContext, layer, this);
 			}
 			else
 			{
@@ -777,18 +776,19 @@ namespace Altaxo.Graph.Gdi.Plot
 			}
 		}
 
-		public void PaintChild(System.Drawing.Graphics g, IPlotArea layer, int indexOfChild)
+		public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, int indexOfChild)
 		{
 			ICoordinateTransformingGroupStyle coordTransStyle;
 			if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
 			{
-				coordTransStyle.PaintChild(g, layer, this, indexOfChild);
+				coordTransStyle.PaintChild(g, paintContext, layer, this, indexOfChild);
 			}
 			else
 			{
 				int hi = _plotItems.Count - 1;
 
 				_plotItems[indexOfChild].Paint(g,
+					paintContext,
 					layer,
 					indexOfChild > 0 ? _plotItems[indexOfChild - 1] : null,
 					indexOfChild < hi ? _plotItems[indexOfChild + 1] : null);

@@ -405,13 +405,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
-		public override void Paint(Graphics g, object obj)
+		public override void Paint(Graphics g, IPaintContext paintContext)
 		{
-			var layer = obj as XYPlotLayer;
+			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
 
 			if (null == layer)
 			{
-				PaintErrorInvalidLayerType(g, obj);
+				PaintErrorInvalidLayerType(g, paintContext);
 				return;
 			}
 
@@ -448,8 +448,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			var csLineId = new CSLineID(_scaleNumber, rBegin);
 			if (_axisStyle.StyleID != csLineId)
 			{
-				var context = this.GetPropertyContext();
-				var axStyle = new AxisStyle(new CSLineID(_scaleNumber, rBegin), false, false, false, null, context);
+				var propertyContext = this.GetPropertyContext();
+				var axStyle = new AxisStyle(new CSLineID(_scaleNumber, rBegin), false, false, false, null, propertyContext);
 				axStyle.CopyWithoutIdFrom(_axisStyle);
 				_axisStyle = axStyle;
 			}
@@ -461,7 +461,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (_background == null)
 			{
-				_axisStyle.Paint(g, privLayer, privLayer.GetAxisStyleInformation);
+				_axisStyle.Paint(g, paintContext, privLayer, privLayer.GetAxisStyleInformation);
 			}
 			else
 			{
@@ -471,7 +471,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					using (Graphics gg = Graphics.FromImage(bmp))
 					{
-						_axisStyle.Paint(gg, privLayer, privLayer.GetAxisStyleInformation);
+						_axisStyle.Paint(gg, paintContext, privLayer, privLayer.GetAxisStyleInformation);
 					}
 				}
 			}
@@ -509,7 +509,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				bounds1.Expand(_backgroundPadding);
 				_background.Draw(g, bounds1);
-				_axisStyle.Paint(g, privLayer, privLayer.GetAxisStyleInformation);
+				_axisStyle.Paint(g, paintContext, privLayer, privLayer.GetAxisStyleInformation);
 			}
 		}
 

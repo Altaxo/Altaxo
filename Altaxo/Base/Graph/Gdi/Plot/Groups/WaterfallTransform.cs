@@ -241,19 +241,27 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			}
 		}
 
-		// members that are created at PaintParent and must be released at latest at FinishPainting
-		private System.Drawing.Region[] _clippingColl;
-
-		private Processed2DPlotData[] _plotDataColl;
-		private double[] _xincColl;
-		private double[] _yincColl;
-
-		public void PaintBegin(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
+		private class CachedPaintData
 		{
-			_clippingColl = new System.Drawing.Region[coll.Count];
-			_plotDataColl = new Processed2DPlotData[coll.Count];
-			_xincColl = new double[coll.Count];
-			_yincColl = new double[coll.Count];
+			// members that are created at PaintParent and must be released at latest at FinishPainting
+			internal System.Drawing.Region[] _clippingColl;
+
+			internal Processed2DPlotData[] _plotDataColl;
+			internal double[] _xincColl;
+			internal double[] _yincColl;
+		}
+
+		public void PaintPreprocessing(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
+		{
+			var paintData = new CachedPaintData
+			{
+				_clippingColl = new System.Drawing.Region[coll.Count],
+				_plotDataColl = new Processed2DPlotData[coll.Count],
+				_xincColl = new double[coll.Count],
+				_yincColl = new double[coll.Count]
+			};
+
+			paintContext.AddValue(this, paintData);
 
 			// First prepare
 			int idx = -1;
@@ -263,11 +271,11 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				if (coll[i] is G2DPlotItem)
 				{
 					idx++;
-					double currxinc = _xincColl[i] = idx * _xinc * _scaleXInc;
-					double curryinc = _yincColl[i] = idx * _yinc * _scaleYInc;
+					double currxinc = paintData._xincColl[i] = idx * _xinc * _scaleXInc;
+					double curryinc = paintData._yincColl[i] = idx * _yinc * _scaleYInc;
 
 					G2DPlotItem gpi = coll[i] as G2DPlotItem;
-					Processed2DPlotData plotdata = _plotDataColl[i] = gpi.GetRangesAndPoints(layer);
+					Processed2DPlotData plotdata = paintData._plotDataColl[i] = gpi.GetRangesAndPoints(layer);
 					plotdata.PreviousItemData = previousPlotData;
 					previousPlotData = plotdata;
 
@@ -290,7 +298,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					if (_useClipping)
 					{
 						if (i == 0)
-							_clippingColl[i] = g.Clip;
+							paintData._clippingColl[i] = g.Clip;
 
 						Plot.Styles.LinePlotStyle linestyle = null;
 						foreach (Plot.Styles.IG2DPlotStyle st in gpi.Style)
@@ -306,55 +314,53 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 						{
 							GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
 							linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
-							if ((i + 1) < _clippingColl.Length)
+							if ((i + 1) < paintData._clippingColl.Length)
 							{
-								_clippingColl[i + 1] = (Region)_clippingColl[i].Clone();
-								_clippingColl[i + 1].Exclude(path);
+								paintData._clippingColl[i + 1] = (Region)paintData._clippingColl[i].Clone();
+								paintData._clippingColl[i + 1].Exclude(path);
 							}
 						}
 						else
 						{
-							if ((i + 1) < _clippingColl.Length)
-								_clippingColl[i + 1] = _clippingColl[i];
+							if ((i + 1) < paintData._clippingColl.Length)
+								paintData._clippingColl[i + 1] = paintData._clippingColl[i];
 						}
 					}
 				}
 			}
 		}
 
-		public void PaintEnd()
+		public void PaintPostprocessing()
 		{
-			_clippingColl = null;
-			_plotDataColl = null;
-			_xincColl = null;
-			_yincColl = null;
 		}
 
-		public void PaintChild(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll, int i)
+		public void PaintChild(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll, int i)
 		{
+			CachedPaintData paintData = paintContext.GetValue<CachedPaintData>(this);
+
 			if (_useClipping)
 			{
 				//g.SetClip(clippingColl[i], CombineMode.Replace);
-				g.Clip = _clippingColl[i];
+				g.Clip = paintData._clippingColl[i];
 			}
 
-			if (null == _plotDataColl[i])
+			if (null == paintData._plotDataColl[i])
 			{
-				coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
+				coll[i].Paint(g, paintContext, layer, i == coll.Count - 1 ? null : coll[i - 1], i == 0 ? null : coll[i - 1]);
 			}
 			else
 			{
-				TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, _xincColl[i], _yincColl[i]);
-				((G2DPlotItem)coll[i]).Paint(g, layerwrapper, _plotDataColl[i], i == coll.Count - 1 ? null : _plotDataColl[i + 1], i == 0 ? null : _plotDataColl[i - 1]);
+				TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, paintData._xincColl[i], paintData._yincColl[i]);
+				((G2DPlotItem)coll[i]).Paint(g, layerwrapper, paintData._plotDataColl[i], i == coll.Count - 1 ? null : paintData._plotDataColl[i + 1], i == 0 ? null : paintData._plotDataColl[i - 1]);
 			}
 
 			// The clipping region is no longer needed, so we can dispose it
 			if (_useClipping)
 			{
 				if (i == 0)
-					g.Clip = _clippingColl[0]; // restore the original clipping region
+					g.Clip = paintData._clippingColl[0]; // restore the original clipping region
 				else
-					_clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
+					paintData._clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
 			}
 		}
 

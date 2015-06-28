@@ -564,11 +564,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
 		}
 
-		private void MeasureGlyphs(Graphics g, FontCache cache, object linkedObject)
+		private void MeasureGlyphs(Graphics g, FontCache cache, IPaintContext paintContext)
 		{
 			MeasureContext mc = new MeasureContext();
 			mc.FontCache = cache;
-			mc.LinkedObject = linkedObject;
+			mc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this);
 			mc.TabStop = Glyph.MeasureString(g, "MMMM", _font).X;
 
 			if (null != _rootNode)
@@ -589,12 +589,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return GetRectangularObjectOutline();
 		}
 
-		public override void Paint(Graphics g, object obj)
+		public override void Paint(Graphics g, IPaintContext paintContext)
 		{
-			Paint(g, obj, false);
+			Paint(g, paintContext, false);
 		}
 
-		public void Paint(Graphics g, object obj, bool bForPreview)
+		public void Paint(Graphics g, IPaintContext paintContext, bool bForPreview)
 		{
 			//_isStructureInSync = false;
 			_isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
@@ -613,7 +613,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (!this._isMeasureInSync)
 				{
 					// this.MeasureStructure(g, obj);
-					this.MeasureGlyphs(g, fontCache, obj);
+					this.MeasureGlyphs(g, fontCache, paintContext);
 
 					MeasureBackground(g, _rootNode.Width, _rootNode.Height);
 
@@ -646,7 +646,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				DrawContext dc = new DrawContext();
 				dc.FontCache = fontCache;
 				dc.bForPreview = bForPreview;
-				dc.LinkedObject = obj;
+				dc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this);
 				dc.transformMatrix = transformmatrix;
 				dc._cachedSymbolPositions = _cachedSymbolPositions;
 				DrawGlyphs(g, dc, _cachedTextOffset.X, _cachedTextOffset.Y);

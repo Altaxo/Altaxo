@@ -101,14 +101,21 @@ namespace Altaxo.Graph.Gdi.Plot
 		void PrepareScales(IPlotArea layer);
 
 		/// <summary>
+		/// Called before painting takes place.
+		/// </summary>
+		/// <param name="context">The painting context.</param>
+		void PaintPreprocessing(IPaintContext context);
+
+		/// <summary>
 		/// This paints the plot to the layer.
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
+		/// <param name="context">The painting context.</param>
 		/// <param name="layer">The plot layer.</param>
 		/// <param name="previousPlotItem">Previous plot item.</param>
 		/// <param name="nextPlotItem">Next plot item. Can be null.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+		void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources.

@@ -1083,22 +1083,30 @@ namespace Altaxo.Graph.Gdi
 		#region Painting and Hit testing
 
 		/// <summary>
-		/// This function is called by the graph document before _any_ layer is painted. We have to make sure that all of our cached data becomes valid.
-		///
+		/// Adjusts the internal data structures to ensure its validity.
 		/// </summary>
-
-		public virtual void PaintPreprocessing(object parentObject)
+		public virtual void FixupInternalDataStructures()
 		{
-			if (!object.ReferenceEquals(parentObject, _parent))
-				throw new InvalidOperationException("Cached parent object does not matched parent object in argument!");
-
 			CalculateCachedSizeAndPosition();
 
 			var mySize = this.Size;
 			foreach (var graphObj in _graphObjects)
 			{
 				graphObj.SetParentSize(mySize, false);
-				graphObj.PaintPreprocessing(this);
+				graphObj.FixupInternalDataStructures();
+			}
+		}
+
+		/// <summary>
+		/// This function is called by the graph document before _any_ layer is painted. We have to make sure that all of our cached data becomes valid.
+		/// </summary>
+		/// <param name="context">The paint context.</param>
+		public virtual void PaintPreprocessing(IPaintContext context)
+		{
+			var mySize = this.Size;
+			foreach (var graphObj in _graphObjects)
+			{
+				graphObj.PaintPreprocessing(context);
 			}
 		}
 
@@ -1112,18 +1120,13 @@ namespace Altaxo.Graph.Gdi
 				obj.PaintPostprocessing();
 		}
 
-		public virtual void Paint(Graphics g, object o)
-		{
-			Paint(g);
-		}
-
-		public virtual void Paint(Graphics g)
+		public virtual void Paint(Graphics g, IPaintContext context)
 		{
 			GraphicsState savedgstate = g.Save();
 
 			g.MultiplyTransform(_transformation);
 
-			PaintInternal(g);
+			PaintInternal(g, context);
 
 			g.Restore(savedgstate);
 		}
@@ -1132,12 +1135,13 @@ namespace Altaxo.Graph.Gdi
 		/// Internal Paint routine. The graphics state saving and transform is already done here!
 		/// </summary>
 		/// <param name="g">The graphics context</param>
-		protected virtual void PaintInternal(Graphics g)
+		/// <param name="context">The paint context.</param>
+		protected virtual void PaintInternal(Graphics g, IPaintContext context)
 		{
 			int len = _graphObjects.Count;
 			for (int i = 0; i < len; i++)
 			{
-				_graphObjects[i].Paint(g, this);
+				_graphObjects[i].Paint(g, context);
 			}
 		}
 

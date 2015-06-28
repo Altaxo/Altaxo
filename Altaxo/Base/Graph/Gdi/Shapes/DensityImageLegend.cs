@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 				else
 				{
-					ChildSetMember(ref 	_plotItemProxy, new Main.RelDocNodeProxy(value, this));
+					ChildSetMember(ref _plotItemProxy, new Main.RelDocNodeProxy(value, this));
 				}
 			}
 		}
@@ -332,9 +332,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		public override void PaintPreprocessing(object parentObject)
+		public override void FixupInternalDataStructures()
 		{
-			base.PaintPreprocessing(parentObject);
+			base.FixupInternalDataStructures();
 
 			if (null == _cachedArea)
 				return;
@@ -342,10 +342,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 			UpdateIfPlotItemChanged();
 
 			_cachedArea.Size = Size; // Update the coordinate system size to meet the size of the graph item
+			_axisStyles.FixupInternalDataStructures(_cachedArea); // make sure the AxisStyles know about the size of the parent
+		}
+
+		public override void PaintPreprocessing(IPaintContext context)
+		{
+			base.PaintPreprocessing(context);
 			_axisStyles.PaintPreprocessing(_cachedArea); // make sure the AxisStyles know about the size of the parent
 		}
 
-		public override void Paint(System.Drawing.Graphics g, object obj)
+		public override void Paint(System.Drawing.Graphics g, IPaintContext paintContext)
 		{
 			if (null == _cachedArea)
 				return;
@@ -439,7 +445,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				g.Restore(graphicsState2); // make our tricks undone here
 			}
-			_axisStyles.Paint(g, _cachedArea);
+			_axisStyles.Paint(g, paintContext, _cachedArea);
 
 			g.Restore(graphicsState);
 		}

@@ -698,22 +698,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return true;
 		}
 
+		public virtual void FixupInternalDataStructures()
+		{
+		}
+
 		/// <summary>
 		/// Is called before the paint procedure is executed.
 		/// </summary>
-		/// <param name="parentObject">The parent object of this graphical object. Can be used in order to compare the cached parent object with this object here.</param>
-		public virtual void PaintPreprocessing(object parentObject)
+		/// <param name="context">The paint context.</param>
+		public virtual void PaintPreprocessing(IPaintContext context)
 		{
-			if (!object.ReferenceEquals(parentObject, _parent))
-				throw new InvalidOperationException("Cached parent object and parentObject in argument do not match!");
 		}
 
 		/// <summary>
 		/// Paint the object in the graphics context.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
-		/// <param name="obj">Additional information used to draw the object.</param>
-		public abstract void Paint(Graphics g, object obj);
+		/// <param name="context">Additional information used to draw the object.</param>
+		public abstract void Paint(Graphics g, IPaintContext context);
 
 		/// <summary>
 		/// Creates a cloned copy of this object.

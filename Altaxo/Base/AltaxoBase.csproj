@@ -238,6 +238,7 @@
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateBase.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.cs" />
+    <Compile Include="Graph\Gdi\IPaintContext.cs" />
     <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
     <Compile Include="Graph\FontXStyle.cs" />

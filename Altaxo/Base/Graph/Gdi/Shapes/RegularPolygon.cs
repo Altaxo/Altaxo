@@ -327,7 +327,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			return result;
 		}
 
-		public override void Paint(Graphics g, object obj)
+		public override void Paint(Graphics g, IPaintContext paintContext)
 		{
 			var path = GetPath();
 			var bounds = Bounds;

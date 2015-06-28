@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			return GetName(int.MaxValue);
 		}
 
-		public override void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		public override void Paint(Graphics g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			if (null != this._plotStyle)
 			{

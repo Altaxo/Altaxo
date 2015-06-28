@@ -380,12 +380,12 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		public void PaintPreprocessing(IPlotArea layer)
+		public void FixupInternalDataStructures(IPlotArea layer)
 		{
-			PaintPreprocessing(layer, layer.CoordinateSystem.GetAxisStyleInformation);
+			FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		public void PaintPreprocessing(IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		public void FixupInternalDataStructures(IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
 		{
 			// update the logical values of the physical axes before
 			if (_styleID.UsePhysicalValueOtherFirst)
@@ -416,18 +416,21 @@ namespace Altaxo.Graph.Gdi.Axis
 				_axisTitle.SetParentSize(layer.Size, false);
 		}
 
-		public void Paint(Graphics g, IPlotArea layer)
+		public void PaintPreprocessing(IPlotArea layer)
 		{
-			Paint(g, layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		public void Paint(Graphics g, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		public void Paint(Graphics g, IPaintContext paintContext, IPlotArea layer)
 		{
-			PaintPreprocessing(layer, GetAxisStyleInformation);
+			Paint(g, paintContext, layer, layer.CoordinateSystem.GetAxisStyleInformation);
+		}
+
+		public void Paint(Graphics g, IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		{
 			PaintLine(g, layer);
 			PaintMajorLabels(g, layer);
 			PaintMinorLabels(g, layer);
-			PaintTitle(g, layer);
+			PaintTitle(g, paintContext, layer);
 		}
 
 		public void PaintLine(Graphics g, IPlotArea layer)
@@ -460,11 +463,11 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		public void PaintTitle(Graphics g, IPlotArea layer)
+		public void PaintTitle(Graphics g, IPaintContext paintContext, IPlotArea layer)
 		{
 			if (IsTitleEnabled)
 			{
-				_axisTitle.Paint(g, layer);
+				_axisTitle.Paint(g, paintContext);
 			}
 		}
 
