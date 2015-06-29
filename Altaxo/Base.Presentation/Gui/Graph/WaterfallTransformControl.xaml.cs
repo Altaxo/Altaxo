@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph
 {
@@ -42,27 +43,37 @@ namespace Altaxo.Gui.Graph
 
 		#region IWaterfallTransformView Members
 
-		public string XScale
+		public void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
+		{
+			_edXScale.UnitEnvironment = environment;
+    }
+
+		public DimensionfulQuantity XScale
 		{
 			get
 			{
-				return _edXScale.Text;
+				return _edXScale.SelectedQuantity;
 			}
 			set
 			{
-				_edXScale.Text = value;
+				_edXScale.SelectedQuantity = value;
 			}
 		}
 
-		public string YScale
+		public void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
+		{
+			_edYScale.UnitEnvironment = environment;
+		}
+
+		public DimensionfulQuantity YScale
 		{
 			get
 			{
-				return _edYScale.Text;
+				return _edYScale.SelectedQuantity;
 			}
 			set
 			{
-				_edYScale.Text = value;
+				_edYScale.SelectedQuantity = value;
 			}
 		}
 

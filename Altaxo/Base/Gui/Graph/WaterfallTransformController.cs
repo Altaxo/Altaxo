@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,9 +34,13 @@ namespace Altaxo.Gui.Graph
 
 	public interface IWaterfallTransformView
 	{
-		string XScale { get; set; }
+		void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
 
-		string YScale { get; set; }
+		DimensionfulQuantity XScale { get; set; }
+
+		void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
+
+		DimensionfulQuantity YScale { get; set; }
 
 		bool UseClipping { get; set; }
 	}
@@ -57,35 +62,26 @@ namespace Altaxo.Gui.Graph
 
 			if (_view != null)
 			{
-				_view.XScale = Altaxo.Serialization.GUIConversion.ToString(_doc.XScale);
-				_view.YScale = Altaxo.Serialization.GUIConversion.ToString(_doc.YScale);
+				_view.SetXScaleUnitEnvironment(RelationEnvironment.Instance);
+				_view.XScale = new DimensionfulQuantity(_doc.XScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
+				_view.SetYScaleUnitEnvironment(RelationEnvironment.Instance);
+				_view.YScale = new DimensionfulQuantity(_doc.YScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
 				_view.UseClipping = _doc.UseClipping;
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			_doc.UseClipping = _view.UseClipping;
-
-			double xscale, yscale;
-
-			if (Altaxo.Serialization.GUIConversion.IsDouble(_view.XScale, out xscale))
+			try
 			{
-				_doc.XScale = xscale;
+				_doc.UseClipping = _view.UseClipping;
+				_doc.XScale = _view.XScale.AsValueInSIUnits;
+				_doc.YScale = _view.YScale.AsValueInSIUnits;
 			}
-			else
+			catch (Exception ex)
 			{
-				Current.Gui.ErrorMessageBox("XScale must contain a valid number");
-				return false;
-			}
-			if (Altaxo.Serialization.GUIConversion.IsDouble(_view.YScale, out yscale))
-			{
-				_doc.YScale = yscale;
-			}
-			else
-			{
-				Current.Gui.ErrorMessageBox("YScale must contain a valid number");
-				return false;
+				Current.Gui.ErrorMessageBox(ex.Message, "Error while applying..");
+				return ApplyEnd(false, disposeController);
 			}
 
 			return ApplyEnd(true, disposeController);
