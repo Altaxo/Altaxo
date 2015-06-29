@@ -876,6 +876,13 @@ namespace Altaxo.Graph.Gdi
 			EnsureAppropriatePlotItemPlaceHolders();
 		}
 
+		public override void PaintPreprocessing(IPaintContext context)
+		{
+			context.PushHierarchicalValue<IPlotArea>(nameof(IPlotArea), this);
+			base.PaintPreprocessing(context);
+			context.PopHierarchicalValue<IPlotArea>(nameof(IPlotArea));
+		}
+
 		protected override void PaintInternal(Graphics g, IPaintContext paintContext)
 		{
 			// paint the background very first

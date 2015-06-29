@@ -84,6 +84,22 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		static GraphViewWpf()
+		{
+			var glyphRun = BuildGlyphRun(" Busy with rendering...");
+			var glyphRunDrawing = new GlyphRunDrawing(Brushes.Lavender, glyphRun);
+			var tileBrush = new DrawingBrush();
+			tileBrush.Drawing = glyphRunDrawing;
+			tileBrush.Viewbox = new Rect(0, 0, glyphRunDrawing.Bounds.Right * 1.1, glyphRunDrawing.Bounds.Bottom * 1.5);
+			tileBrush.ViewboxUnits = BrushMappingMode.Absolute;
+			tileBrush.Viewport = glyphRunDrawing.Bounds;
+			tileBrush.ViewportUnits = BrushMappingMode.Absolute;
+			tileBrush.TileMode = TileMode.Tile;
+			var drawingRectangle = new RectangleGeometry(new Rect(0, 0, 2000, 2000));
+			var drawing = new GeometryDrawing(tileBrush, null, drawingRectangle);
+			_busyWithRenderingDrawing = new DrawingImage(drawing);
+		}
+
 		public GraphViewWpf()
 		{
 			InitializeComponent();
@@ -337,7 +353,7 @@ namespace Altaxo.Gui.Graph.Viewing
 						var cachedGraphImage = new CachedGraphImage { ZoomFactor = controller.ZoomFactor, ViewPortsUpperLeftCornerInGraphCoordinates = controller.PositionOfViewportsUpperLeftCornerInGraphCoordinates, Size = _cachedGraphSize_96thInch };
 
 						if (!graphDocument.IsDisposeInProgress)
-							graphDocument.DoPaint(grfx, false);
+							graphDocument.Paint(grfx, false);
 
 						Current.Gui.Execute(() =>
 						{

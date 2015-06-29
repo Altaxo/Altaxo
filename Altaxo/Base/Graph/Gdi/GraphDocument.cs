@@ -193,7 +193,12 @@ typeof(GraphDocument),
 		[NonSerialized]
 		private PointD2D _cachedRootLayerSize;
 
-		private bool _isPaintPreprocessingActive;
+		[NonSerialized]
+		private bool _isFixupInternalDataStructuresActive;
+
+		/// <summary>This flag is set if during fixup anything has changed.</summary>
+		[NonSerialized]
+		private bool _hasFixupChangedAnything;
 
 		#region "Serialization"
 
@@ -673,29 +678,37 @@ typeof(GraphDocument),
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (null != _paintThread)
+			if (null != _paintThread && object.ReferenceEquals(_paintThread, System.Threading.Thread.CurrentThread))
 			{
-				var stb = new System.Text.StringBuilder();
-				var st = new System.Diagnostics.StackTrace(true);
-
-				var len = Math.Min(30, st.FrameCount);
-				for (int i = 1; i < len; ++i)
+				if (_isFixupInternalDataStructuresActive)
 				{
-					var frame = st.GetFrame(i);
-					var method = frame.GetMethod();
-
-					if (i > 2) stb.Append("\r\n\tin ");
-
-					stb.Append(method.DeclaringType.FullName);
-					stb.Append("|");
-					stb.Append(method.Name);
-					stb.Append("(L");
-					stb.Append(frame.GetFileLineNumber());
-					stb.Append(")");
+					_hasFixupChangedAnything = true;
+					return false; // no further handling neccessary
 				}
+				else
+				{
+					var stb = new System.Text.StringBuilder();
+					var st = new System.Diagnostics.StackTrace(true);
 
-				Current.Console.WriteLine("Graph has changed during painting. Stacktrace:");
-				Current.Console.WriteLine(stb.ToString());
+					var len = Math.Min(30, st.FrameCount);
+					for (int i = 1; i < len; ++i)
+					{
+						var frame = st.GetFrame(i);
+						var method = frame.GetMethod();
+
+						if (i > 2) stb.Append("\r\n\tin ");
+
+						stb.Append(method.DeclaringType.FullName);
+						stb.Append("|");
+						stb.Append(method.Name);
+						stb.Append("(L");
+						stb.Append(frame.GetFileLineNumber());
+						stb.Append(")");
+					}
+
+					Current.Console.WriteLine("Graph has changed during painting. Stacktrace:");
+					Current.Console.WriteLine(stb.ToString());
+				}
 			}
 
 			return base.HandleHighPriorityChildChangeCases(sender, ref e);
@@ -711,9 +724,9 @@ typeof(GraphDocument),
 		/// <remarks>The reference point (0,0) of the GraphDocument
 		/// is the top left corner of the printable area (and not of the page area!). The hosting class has to translate the graphics origin
 		/// to the top left corner of the printable area before calling this routine.</remarks>
-		public void DoPaint(Graphics g, bool bForPrinting)
+		public void Paint(Graphics g, bool bForPrinting)
 		{
-			const int MaxPaintPreProcessingRetries = 10;
+			const int MaxFixupRetries = 10;
 
 			if (System.Threading.Thread.CurrentThread == _paintThread)
 				throw new InvalidOperationException("DoPaint is called reentrant (i.e. from the same thread that is already executing DoPaint");
@@ -731,34 +744,27 @@ typeof(GraphDocument),
 
 					try
 					{
-						_isPaintPreprocessingActive = true;
+						_isFixupInternalDataStructuresActive = true;
 
-						for (int ithRetry = 1; ithRetry <= MaxPaintPreProcessingRetries; ++ithRetry)
+						for (int ithRetry = 1; ithRetry <= MaxFixupRetries; ++ithRetry)
 						{
 							try
 							{
-								using (var suspendToken = SuspendGetToken())
-								{
-									AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
-									RootLayer.FixupInternalDataStructures();
-
-									if (this._suspendTokensOfChilds == null || _suspendTokensOfChilds.Count == 0)
-									{
-										suspendToken.Resume();
-										break;
-									}
-									suspendToken.Resume();
-								}
+								_hasFixupChangedAnything = false;
+								AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
+								RootLayer.FixupInternalDataStructures();
+								if (!_hasFixupChangedAnything)
+									break;
 #if DEBUG
-								if (ithRetry == MaxPaintPreProcessingRetries)
+								if (ithRetry == MaxFixupRetries)
 								{
-									Current.Console.WriteLine("Warning: MaxPaintPreProcessingRetries exceeded during painting of graph {0}.", this.Name);
+									Current.Console.WriteLine("Warning: MaxFixupRetries exceeded during painting of graph {0}.", this.Name);
 								}
 #endif
 							}
 							catch (Exception)
 							{
-								if (ithRetry == MaxPaintPreProcessingRetries)
+								if (ithRetry == MaxFixupRetries)
 								{
 									throw;
 								}
@@ -767,21 +773,16 @@ typeof(GraphDocument),
 					}
 					finally
 					{
-						_isPaintPreprocessingActive = false;
+						_isFixupInternalDataStructuresActive = false;
 					}
 
-					using (var suspendToken = SuspendGetToken())
-					{
-						var paintContext = new GdiPaintContext();
+					var paintContext = new GdiPaintContext();
 
-						RootLayer.PaintPreprocessing(paintContext);
+					RootLayer.PaintPreprocessing(paintContext);
 
-						RootLayer.Paint(g, paintContext);
+					RootLayer.Paint(g, paintContext);
 
-						RootLayer.PaintPostprocessing();
-
-						suspendToken.ResumeSilently();
-					}
+					RootLayer.PaintPostprocessing();
 				}
 				finally
 				{
@@ -925,7 +926,7 @@ typeof(GraphDocument),
 				OnSizeChanged();
 			}
 
-			if (!_isPaintPreprocessingActive)
+			if (!_isFixupInternalDataStructuresActive)
 				base.OnChanged(e);
 		}
 

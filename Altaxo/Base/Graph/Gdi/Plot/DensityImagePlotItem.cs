@@ -204,7 +204,12 @@ namespace Altaxo.Graph.Gdi.Plot
 		public override void PrepareScales(IPlotArea layer)
 		{
 			if (null != this._plotData)
+			{
 				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
+
+				if (null != this._plotStyle)
+					_plotStyle.PrepareScales(layer, _plotData);
+			}
 		}
 
 		protected override void OnChanged(EventArgs e)

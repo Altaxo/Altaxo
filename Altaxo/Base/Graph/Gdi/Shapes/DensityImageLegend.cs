@@ -339,6 +339,23 @@ namespace Altaxo.Graph.Gdi.Shapes
 			if (null == _cachedArea)
 				return;
 
+			if (null == PlotItem)
+			{
+				// search for the first density plot item in the layer
+				var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
+				if (null != layer)
+				{
+					foreach (var item in layer.PlotItems)
+					{
+						if (item is DensityImagePlotItem)
+						{
+							PlotItem = item as DensityImagePlotItem;
+							break;
+						}
+					}
+				}
+			}
+
 			UpdateIfPlotItemChanged();
 
 			_cachedArea.Size = Size; // Update the coordinate system size to meet the size of the graph item
@@ -374,23 +391,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 			Data.AltaxoVariant pend;
 			NumericalScale originalZScale;
 			Plot.IColorProvider colorProvider;
-
-			if (null == PlotItem)
-			{
-				// search for the first density plot item in the layer
-				var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
-				if (null != layer)
-				{
-					foreach (var item in layer.PlotItems)
-					{
-						if (item is DensityImagePlotItem)
-						{
-							PlotItem = item as DensityImagePlotItem;
-							break;
-						}
-					}
-				}
-			}
 
 			if (null != PlotItem)
 			{

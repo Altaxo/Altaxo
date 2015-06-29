@@ -311,7 +311,7 @@ namespace Altaxo.Graph.Gdi
 				}
 #endif
 
-				doc.DoPaint(grfx, true);
+				doc.Paint(grfx, true);
 			}
 
 			bitmap.SetResolution((float)destinationDpiResolution, (float)destinationDpiResolution);
@@ -725,7 +725,7 @@ namespace Altaxo.Graph.Gdi
 				}
 #endif
 
-						doc.DoPaint(grfxMetafile, true);
+						doc.Paint(grfxMetafile, true);
 					});
 
 			RenderAsEnhancedMetafileToStream(renderingProc, stream, doc.Size, sourceDpiResolution, outputScalingFactor, pixelFormat);

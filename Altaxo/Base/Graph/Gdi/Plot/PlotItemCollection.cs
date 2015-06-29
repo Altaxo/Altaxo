@@ -766,6 +766,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		public void Paint(System.Drawing.Graphics g, IPaintContext paintContext, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			ICoordinateTransformingGroupStyle coordTransStyle;
+			//var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(this);
 			if (null != (coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle))
 			{
 				coordTransStyle.PaintPreprocessing(g, paintContext, layer, this);

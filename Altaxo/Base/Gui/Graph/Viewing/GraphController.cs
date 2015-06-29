@@ -494,6 +494,45 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
+		static void Clamp(ref double value, double min, double max)
+		{
+			if (!(value >= min))
+				value = min;
+			if (!(value <= max))
+				value = max;
+		}
+
+		/// <summary>
+		/// Scrolls horizontally or vertically in response to a mouse wheel scroll event.
+		/// </summary>
+		/// <param name="horizontally">If set to <c>true</c>, we scroll horizontally; otherwise vertically.</param>
+		/// <param name="steps">The scroll steps. This is reported from the mouse wheel's event.</param>
+		protected void MouseWheelScroll(bool horizontally, int steps)
+		{
+			if (_isAutoZoomActive || _zoomFactor < AutoZoomFactor)
+			{
+				return; // scrolling not allowed
+			}
+			else
+			{
+				var scrollMaxima = SizeOfGraphWithMarginZoomed;
+				var scrollValues = ConvertGraphCoordinateToScrollbarValue(PositionOfViewportsUpperLeftCornerInGraphCoordinates);
+				var portSize = SizeOfViewport;
+
+				if (horizontally)
+				{
+					scrollValues.X += steps * portSize.X / (120.0 * 25);
+					Clamp(ref scrollValues.X, 0, scrollMaxima.X);
+				}
+				else
+				{
+					scrollValues.Y += steps * portSize.Y / (120.0 * 25);
+					Clamp(ref scrollValues.Y, 0, scrollMaxima.X);
+				}
+				PositionOfViewportsUpperLeftCornerInGraphCoordinates = ConvertScrollbarValueToGraphCoordinate(scrollValues);
+			}
+		}
+
 		#endregion Scrolling
 
 		#region Graph tools

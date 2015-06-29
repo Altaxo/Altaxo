@@ -32,6 +32,12 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="key">The key.</param>
 		/// <returns>The value, or the default value. An exception will be thrown if the specified key does not exist or a value with another type than the specified type is stored under the key.</returns>
 		T GetValueOrDefault<T>(object key);
+
+		void PushHierarchicalValue<T>(string name, T value);
+
+		T PopHierarchicalValue<T>(string name);
+
+		T GetHierarchicalValue<T>(string name);
 	}
 
 	/// <summary>
@@ -66,5 +72,68 @@ namespace Altaxo.Graph.Gdi
 				return default(T);
 			}
 		}
+
+		#region Hierarchical values
+
+		Dictionary<string, object> _hierarchicalData = new Dictionary<string, object>();
+
+		public void PushHierarchicalValue<T>(string name, T value)
+		{
+			object existing;
+			if (_hierarchicalData.TryGetValue(name, out existing))
+			{
+				var existingStack = existing as Stack<T>;
+				if (null != existingStack)
+					existingStack.Push(value);
+				else
+					throw new InvalidOperationException(string.Format("Expected stored type: {0}, but was {1}", typeof(Stack<T>), existing.GetType()));
+			}
+			else
+			{
+				var newStack = new Stack<T>();
+				newStack.Push(value);
+				_hierarchicalData.Add(name, newStack);
+			}
+		}
+
+		public T PopHierarchicalValue<T>(string name)
+		{
+			object existing;
+			if (_hierarchicalData.TryGetValue(name, out existing))
+			{
+				var existingStack = existing as Stack<T>;
+				if (null != existingStack)
+				{
+					return existingStack.Pop();
+				}
+				else
+				{
+					throw new InvalidOperationException(string.Format("Expected stored type: {0}, but was {1}", typeof(Stack<T>), existing.GetType()));
+				}
+			}
+			else
+			{
+				throw new InvalidOperationException(string.Format("Key {0} was not found in the dictionary.", name));
+			}
+		}
+
+		public T GetHierarchicalValue<T>(string name)
+		{
+			object existing;
+			if (_hierarchicalData.TryGetValue(name, out existing))
+			{
+				var existingStack = existing as Stack<T>;
+				if (null != existingStack)
+					return existingStack.Peek();
+				else
+					throw new InvalidOperationException(string.Format("Expected stored type: {0}, but was {1}", typeof(Stack<T>), existing.GetType()));
+			}
+			else
+			{
+				throw new InvalidOperationException(string.Format("Key {0} was not found in the dictionary.", name));
+			}
+		}
+
+		#endregion Hierarchical values
 	}
 }

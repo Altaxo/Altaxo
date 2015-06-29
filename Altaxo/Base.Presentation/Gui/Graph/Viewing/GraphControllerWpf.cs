@@ -394,6 +394,14 @@ namespace Altaxo.Gui.Graph.Viewing
 					ZoomAroundPivotPoint(newZoom, graphCoord);
 				}
 			}
+			else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+			{
+				MouseWheelScroll(true, e.Delta);
+			}
+			else
+			{
+				MouseWheelScroll(false, e.Delta);
+			}
 		}
 
 		#endregion Event handlers forwarded by view

@@ -329,6 +329,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// This routine ensures that the plot item updates all its cached data and send the appropriate
+		/// events if something has changed. Called before the layer paint routine paints the axes because
+		/// it must be ensured that the axes are scaled correctly before the plots are painted.
+		/// </summary>
+		/// <param name="layer">The plot layer.</param>
+		public void PrepareScales(IPlotArea layer, XYZMeshedColumnPlotData plotData)
+		{
+			NumericalBoundaries pb = _scale.DataBounds;
+			plotData.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+			using (var suspendToken = pb.SuspendGetToken())
+			{
+				pb.Reset();
+				plotData.MergeVBoundsInto(pb);
+				suspendToken.Resume();
+			}
+		}
+
+		/// <summary>
 		/// Paint the density image in the layer.
 		/// </summary>
 		/// <param name="gfrx">The graphics context painting in.</param>
@@ -524,15 +542,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
 		{
 			// ---------------- prepare the color scaling -------------------------------------
-
-			NumericalBoundaries pb = _scale.DataBounds;
-			myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-			using (var suspendToken = pb.SuspendGetToken())
-			{
-				pb.Reset();
-				myPlotAssociation.MergeVBoundsInto(pb);
-				suspendToken.Resume();
-			}
 
 			// --------------- end preparation of color scaling ------------------------------
 
