@@ -30,7 +30,14 @@
 				</GridView>
 			</ListView.View>
 		</ListView>
-		<Button Content="Add" Click="EhAddNewProperty" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4,0,4,0" />
+		<Button Content="Add" Click="EhAddNewProperty" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4,0,4,0" ToolTip="Add the selected available property" />
+		<Button Click="EhAddNewBasicProperty" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0,4,0" ToolTip="Add a user defined property value of a basic type (string, double, int, DateTime).">
+			<StackPanel	Orientation="Vertical">
+				<TextBlock Text="New" HorizontalAlignment="Center" />
+				<TextBlock Text="user" HorizontalAlignment="Center" />
+				<TextBlock Text="defined"  HorizontalAlignment="Center" />
+			</StackPanel>
+		</Button>
 		<StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal">
 			<Label Content="Existing properties:   " />
 			<RadioButton x:Name="_guiShowEditablePropertiesOnly" Content="Show editable only  " VerticalAlignment="Center" Checked="EhShowEditablePropertiesOnly" />
@@ -54,7 +61,7 @@
 				</GridView>
 			</ListView.View>
 		</ListView>
-		<Button Content="Edit" Click="EhEditPropertyValue" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" Margin="4,0,4,0" />
-		<Button Content="Del" Click="EhRemoveProperty" Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0,4,0" />
+		<Button Content="Edit" Click="EhEditPropertyValue" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" Margin="4,0,4,0" ToolTip="Edit the selected property's value" />
+		<Button Content="Del" Click="EhRemoveProperty" Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0,4,0" ToolTip="Delete the selected property" />
 	</Grid>
 </UserControl>

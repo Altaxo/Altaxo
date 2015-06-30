@@ -49,6 +49,11 @@ namespace Altaxo.Gui.Main
 		event Action PropertyCreation;
 
 		/// <summary>
+		/// Occurs when the user wants to create a new basic property (string, double, int, DateTime) with a user defined name.
+		/// </summary>
+		event Action AddNewBasicProperty;
+
+		/// <summary>
 		/// Occurs when the user wants to remove the selected property values.
 		/// </summary>
 		event Action ItemRemoving;
@@ -234,12 +239,16 @@ namespace Altaxo.Gui.Main
 			_view.PropertyCreation += EhCreateNewProperty;
 			_view.ItemRemoving += EhItemRemoving;
 			_view.ShowAllPropertiesChanged += EhShowAllProperties;
+			_view.AddNewBasicProperty += EhAddNewBasicProperty;
 		}
 
 		protected override void DetachView()
 		{
-			_view.ItemEditing -= EhItemEditing;
+			_view.AddNewBasicProperty -= EhAddNewBasicProperty;
+			_view.ShowAllPropertiesChanged -= EhShowAllProperties;
+			_view.ItemRemoving -= EhItemRemoving;
 			_view.PropertyCreation -= EhCreateNewProperty;
+			_view.ItemEditing -= EhItemEditing;
 			base.DetachView();
 		}
 
@@ -305,6 +314,20 @@ namespace Altaxo.Gui.Main
 			}
 
 			ShowPropertyValueDialog(propertyKey.GuidString, propertyKey.PropertyName, propertyValue);
+		}
+
+		private void EhAddNewBasicProperty()
+		{
+			var propertyData = new AddBasicPropertyValueData();
+			if (true == Current.Gui.ShowDialog(ref propertyData, "Add new user defined property value", false))
+			{
+				_doc.TopmostBag.SetValue(propertyData.PropertyName, propertyData.PropertyValue);
+
+				// update list and view
+				InitializeExistingPropertyValuesList();
+				if (null != _view)
+					_view.PropertyValueList = _propertyList;
+			}
 		}
 
 		private void EhShowAllProperties(bool value)

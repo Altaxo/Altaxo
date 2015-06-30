@@ -284,6 +284,7 @@
     <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningController.cs" />
     <Compile Include="Gui\Analysis\Statistics\LinearBinningController.cs" />
     <Compile Include="Gui\Common\AscendingIntegerCollectionController.cs" />
+    <Compile Include="Gui\Common\BasicTypes\DateTimeController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\DragDropDefinitions.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
@@ -325,6 +326,7 @@
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataController.cs" />
     <Compile Include="Gui\GuiTimeUnits.cs" />
     <Compile Include="Gui\IOptionPanel.cs" />
+    <Compile Include="Gui\Main\AddBasicPropertyValueController.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
     <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
@@ -450,6 +452,7 @@
     <Compile Include="Serialization\Clipboard\ProjectItemsPasteOptions.cs" />
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
+    <Compile Include="Serialization\Xml\SerializationOfBasicTypes.cs" />
     <Compile Include="Worksheet\Commands\Analysis\FourierTransformation2DDataSource.cs" />
     <Compile Include="Worksheet\Commands\Analysis\RealFourierTransformation2DOptions.cs" />
     <Compile Include="Worksheet\Commands\DataSourceCommands.cs" />

@@ -32,7 +32,7 @@ using System.Windows.Data;
 
 namespace Altaxo.Gui.Common
 {
-	public class DateTimeTextBox : TextBox
+	public class DateTimeTextBox : TextBox, Altaxo.Gui.Common.BasicTypes.IDateTimeNakedControl
 	{
 		public event DependencyPropertyChangedEventHandler SelectedValueChanged;
 

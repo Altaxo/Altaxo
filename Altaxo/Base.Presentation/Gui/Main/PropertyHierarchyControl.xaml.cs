@@ -43,6 +43,8 @@ namespace Altaxo.Gui.Main
 
 		public event Action PropertyCreation;
 
+		public event Action AddNewBasicProperty;
+
 		public event Action<bool> ShowAllPropertiesChanged;
 
 		public PropertyHierarchyControl()
@@ -91,6 +93,13 @@ namespace Altaxo.Gui.Main
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiAvailablePropertyKeyList);
 			var ev = PropertyCreation;
+			if (null != ev)
+				ev();
+		}
+
+		private void EhAddNewBasicProperty(object sender, RoutedEventArgs e)
+		{
+			var ev = AddNewBasicProperty;
 			if (null != ev)
 				ev();
 		}

@@ -850,7 +850,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 						if (context.TryGetValue<object>(_propertyName, out value, out bag, out info))
 						{
 							if (null != value)
-								_text = value.ToString();
+							{
+								var documentCulture = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture);
+								_text = string.Format(documentCulture.Culture, "{0}", value);
+							}
 						}
 					}
 				}
