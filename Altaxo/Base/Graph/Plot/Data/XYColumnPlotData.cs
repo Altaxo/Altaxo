@@ -417,7 +417,7 @@ namespace Altaxo.Graph.Plot.Data
 				ChildCopyToMember(ref _xBoundaries, from._xBoundaries);
 
 			if (null != from._yBoundaries)
-				ChildCopyToMember(ref _yBoundaries, _yBoundaries);
+				ChildCopyToMember(ref _yBoundaries, from._yBoundaries);
 
 			this._pointCount = from._pointCount;
 			this._isCachedDataValidX = from._isCachedDataValidX;
@@ -538,11 +538,12 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null == _xBoundaries || val.GetType() != _xBoundaries.GetType())
 			{
-				ChildCopyToMember(ref _xBoundaries, val);
+				if (ChildCopyToMember(ref _xBoundaries, val))
+				{
+					_isCachedDataValidX = false;
 
-				_isCachedDataValidX = false;
-
-				EhSelfChanged(EventArgs.Empty);
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
