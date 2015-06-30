@@ -132,6 +132,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		}
 
 		/// <summary>
+		/// Returns true when painting the overlay is currently required; and false if it is not required.
+		/// </summary>
+		/// <returns>True when painting the overlay is currently required; and false if it is not required.</returns>
+		public virtual bool IsOverlayPaintingRequired { get { return true; } }
+
+		/// <summary>
 		/// This function is called if a key is pressed.
 		/// </summary>
 		/// <param name="e">Key event arguments.</param>

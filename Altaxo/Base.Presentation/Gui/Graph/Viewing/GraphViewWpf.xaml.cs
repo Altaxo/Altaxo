@@ -68,18 +68,32 @@ namespace Altaxo.Gui.Graph.Viewing
 		{
 			public PointD2D ViewPortsUpperLeftCornerInGraphCoordinates;
 			public PointD2D Size;
+			public System.Drawing.Size BitmapSize_Pixel;
 			public double ZoomFactor;
-			private WeakReference _imageSource;
+			private WeakReference _cachedGraphImageSource;
+			private WeakReference _cachedOverlayImageSource;
 
-			public ImageSource ImageSource
+			public ImageSource CachedGraphImageSource
 			{
 				get
 				{
-					return _imageSource?.Target as ImageSource;
+					return _cachedGraphImageSource?.Target as ImageSource;
 				}
 				set
 				{
-					_imageSource = new WeakReference(value);
+					_cachedGraphImageSource = new WeakReference(value);
+				}
+			}
+
+			public ImageSource CachedOverlayImageSource
+			{
+				get
+				{
+					return _cachedOverlayImageSource?.Target as ImageSource;
+				}
+				set
+				{
+					_cachedOverlayImageSource = new WeakReference(value);
 				}
 			}
 		}
@@ -276,7 +290,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			var controller = Controller;
 			if (null != _cachedGraphImage && null != controller)
 			{
-				var imgSrc = _cachedGraphImage.ImageSource;
+				var imgSrc = _cachedGraphImage.CachedGraphImageSource;
 				if (null != imgSrc)
 				{
 					var zoom1 = controller.ZoomFactor; // current zoom factor
@@ -290,12 +304,13 @@ namespace Altaxo.Gui.Graph.Viewing
 					_graphImage.Width = size1.X;
 					_graphImage.Height = size1.Y;
 
-					_graphImage.Source = _cachedGraphImage.ImageSource;
+					_graphImage.Source = _cachedGraphImage.CachedGraphImageSource;
 
 					_graphOverlay.SetValue(Canvas.LeftProperty, pos1.X);
 					_graphOverlay.SetValue(Canvas.TopProperty, pos1.Y);
 					_graphOverlay.Width = size1.X;
 					_graphOverlay.Height = size1.Y;
+					_graphOverlay.Source = _cachedGraphImage.CachedOverlayImageSource;
 
 					// Current.Console.WriteLine("ShowCGI, Zoom=({0}|{1}), PVULCGC=({2}|{3}), Size=({4}|{5}), CurrSize={6}, Pos={7}", _cachedGraphImage.ZoomFactor, zoom1, _cachedGraphImage.ViewPortsUpperLeftCornerInGraphCoordinates, vpulcgc1, _cachedGraphImage.Size, size1, _cachedGraphSize_96thInch, pos1);
 
@@ -350,7 +365,7 @@ namespace Altaxo.Gui.Graph.Viewing
 
 						var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp);
 						controller.ScaleForPaintingGraphDocument(grfx);
-						var cachedGraphImage = new CachedGraphImage { ZoomFactor = controller.ZoomFactor, ViewPortsUpperLeftCornerInGraphCoordinates = controller.PositionOfViewportsUpperLeftCornerInGraphCoordinates, Size = _cachedGraphSize_96thInch };
+						var cachedGraphImage = new CachedGraphImage { ZoomFactor = controller.ZoomFactor, ViewPortsUpperLeftCornerInGraphCoordinates = controller.PositionOfViewportsUpperLeftCornerInGraphCoordinates, Size = _cachedGraphSize_96thInch, BitmapSize_Pixel = size };
 
 						if (!graphDocument.IsDisposeInProgress)
 							graphDocument.Paint(grfx, false);
@@ -358,91 +373,95 @@ namespace Altaxo.Gui.Graph.Viewing
 						Current.Gui.Execute(() =>
 						{
 							var bmpSource = bmp.WpfBitmapSource;
-							cachedGraphImage.ImageSource = bmpSource;
+							cachedGraphImage.CachedGraphImageSource = bmpSource;
 							_cachedGraphImage = cachedGraphImage;
 							_graphImage.Source = bmpSource;
 							_isGraphUpToDate = true;
-							ShowCachedGraphImage();
 							grfx.Dispose();
 
-							RenderOverlay(bmp);
-
+							var overlay = GetImageSourceByRenderingOverlay(controller, bmp, cachedGraphImage);
+							_graphOverlay.Source = overlay;
+							cachedGraphImage.CachedOverlayImageSource = overlay;
 							_gdiWpfBitmapManager.Add(bmp.GdiSize, bmp);
+
+							ShowCachedGraphImage();
 						});
 					}
 				}
 				);
-
-			/*
-			//rendering in the renderTrigger Thread
-			var grfx = BeginPaintingGraph();
-
-			Controller.DoPaintUnbuffered(grfx, false);
-
-			grfx.Dispose();
-
-			Current.Gui.Execute(() =>
-			{
-				_graphPanel.Source = _wpfGdiBitmap.WpfBitmapSource;
-
-				grfx = BeginPaintingGraph();
-				Controller.ScaleForPaint(grfx, false);
-				grfx.Clear(System.Drawing.Color.Transparent);
-				Controller.DoPaintOverlay(grfx);
-				grfx.Dispose();
-
-				_graphOverlay.Source = _wpfGdiBitmap.WpfBitmapSource;
-				//				EndPaintingGraph();
-			});
-
-	*/
 		}
 
 		/// <summary>
-		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread.
+		/// Called from the controller when the graph tool has changed.
+		/// </summary>
+		internal void EhGraphToolChanged()
+		{
+			RenderOverlayAndShowImmediately();
+		}
+
+		/// <summary>
+		/// Called from the controller when the overlay changed and should be rendered anew.
+		/// </summary>
+		internal void EhRenderOverlayTriggered()
+		{
+			RenderOverlayAndShowImmediately();
+		}
+
+		/// <summary>
+		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread. Then it is stored
+		/// in cachedGraphImage and is also immediatly assigned to be shown in the view.
 		/// Attention: if there is no cached bitmap, a new bitmap is created, but this must be done in the Gui context, so this can lead to deadlocks.
 		/// </summary>
-		public void RenderOverlay()
+		private void RenderOverlayAndShowImmediately()
 		{
-			var size = _cachedGraphSize_Pixels;
+			var controller = Controller;
+			var cachedGraphImage = _cachedGraphImage;
+			ImageSource overlay = null;
 
-			if (size.Width > 1 && size.Height > 1)
+			if (
+				null != controller &&
+				controller.IsOverlayPaintingRequired &&
+				null != cachedGraphImage &&
+				cachedGraphImage.BitmapSize_Pixel.Width > 1 &&
+				cachedGraphImage.BitmapSize_Pixel.Height > 1)
 			{
+				var size = cachedGraphImage.BitmapSize_Pixel;
+
 				GdiToWpfBitmap bmp;
 				if (!_gdiWpfBitmapManager.TryTake(size, out bmp))
 					Current.Gui.Execute(() => bmp = new GdiToWpfBitmap(size.Width, size.Height));
+
 				try
 				{
-					RenderOverlay(bmp);
+					overlay = GetImageSourceByRenderingOverlay(controller, bmp, cachedGraphImage);
 				}
 				finally
 				{
 					_gdiWpfBitmapManager.Add(bmp.GdiSize, bmp);
 				}
 			}
-			else
-			{
-				_graphOverlay.Source = null;
-			}
+			if (null != _cachedGraphImage)
+				_cachedGraphImage.CachedOverlayImageSource = overlay;
+			_graphOverlay.Source = overlay;
 		}
 
 		/// <summary>
 		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread.
+		/// Attention: if there is no cached bitmap, a new bitmap is created, but this must be done in the Gui context, so this can lead to deadlocks.
 		/// </summary>
-		public void RenderOverlay(GdiToWpfBitmap bmp)
+		private static ImageSource GetImageSourceByRenderingOverlay(GraphControllerWpf controller, GdiToWpfBitmap bmp, CachedGraphImage cachedGraphImage)
 		{
-			var controller = Controller;
-			if (null != controller)
+			if (controller.IsOverlayPaintingRequired)
 			{
 				using (var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp))
 				{
-					controller.DoPaintOverlay(grfx);
-					_graphOverlay.Source = bmp.WpfBitmapSource;
+					controller.DoPaintOverlay(grfx, cachedGraphImage.ZoomFactor, cachedGraphImage.ViewPortsUpperLeftCornerInGraphCoordinates);
+					return bmp.WpfBitmapSource;
 				}
 			}
 			else
 			{
-				_graphOverlay.Source = null;
+				return null;
 			}
 		}
 

@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		protected int DisplayedGripLevel;
 
 		/// <summary>List of selected HitTestObjects</summary>
-		protected List<IHitTestObject> _selectedObjects = new List<IHitTestObject>();
+		protected List<IHitTestObject> _selectedObjects;
 
 		#endregion Members
 
@@ -175,6 +175,8 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			_grac = grac;
 			if (_grac != null)
 				_grac.SetPanelCursor(Cursors.Arrow);
+
+			_selectedObjects = new List<IHitTestObject>();
 		}
 
 		public override Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType
@@ -195,6 +197,18 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			get
 			{
 				return _selectedObjects;
+			}
+		}
+
+		/// <summary>
+		/// Returns true when painting the overlay is currently required; and false if it is not required.
+		/// </summary>
+		/// <returns>True when painting the overlay is currently required; and false if it is not required.</returns>
+		public override bool IsOverlayPaintingRequired
+		{
+			get
+			{
+				return _selectedObjects.Count > 0;
 			}
 		}
 

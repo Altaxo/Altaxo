@@ -864,15 +864,6 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		/// <summary>
-		/// This function is called if the user changed the GraphTool.
-		/// </summary>
-		/// <param name="currGraphToolType">The type of the new selected GraphTool.</param>
-		public virtual void EhView_CurrentGraphToolChoosen(System.Type currGraphToolType)
-		{
-			// this.CurrentGraphToolType = currGraphToolType;
-		}
-
 		public virtual void EhView_CurrentGraphToolChanged()
 		{
 			if (null != CurrentGraphToolChanged)

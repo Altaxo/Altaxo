@@ -241,6 +241,8 @@ namespace Altaxo.Gui.Graph.Viewing
 						_viewWpf.FocusOnGraphPanel();
 
 					EhView_CurrentGraphToolChanged();
+					if (null != _viewWpf)
+						_viewWpf.EhGraphToolChanged();
 				}
 			}
 		}
@@ -464,18 +466,6 @@ namespace Altaxo.Gui.Graph.Viewing
 		#region Painting
 
 		/// <summary>
-		/// If the cached graph bitmap is valid, the graph area is repainted immediately using the cached bitmap and then the custom mouse handler drawing.
-		/// If the cached graph bitmap is invalid, a repaint (and thus a recreation of the cached graph bitmap) is triggered, but only with Gui render priority.
-		/// </summary>
-		public void RenderOverlay()
-		{
-			if (_viewWpf == null || Doc == null || _viewWpf.ViewportSizeInPoints == PointD2D.Empty)
-				return;
-
-			_viewWpf.RenderOverlay();
-		}
-
-		/// <summary>
 		/// This functions scales the graphics context to be ready for painting.
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
@@ -507,17 +497,44 @@ namespace Altaxo.Gui.Graph.Viewing
 		}
 
 		/// <summary>
+		/// If the cached graph bitmap is valid, the graph area is repainted immediately using the cached bitmap and then the custom mouse handler drawing.
+		/// If the cached graph bitmap is invalid, a repaint (and thus a recreation of the cached graph bitmap) is triggered, but only with Gui render priority.
+		/// </summary>
+		public void RenderOverlay()
+		{
+			if (_viewWpf == null || Doc == null || _viewWpf.ViewportSizeInPoints == PointD2D.Empty)
+				return;
+
+			_viewWpf.EhRenderOverlayTriggered();
+		}
+
+		/// <summary>
 		/// Infrastructure: intended to be used by graph views to draw the overlay (the selection rectangles and handles of the currently selected tool) into a bitmap.
 		/// </summary>
 		/// <param name="g">The graphics contexts (ususally created from a bitmap).</param>
-		public void DoPaintOverlay(Graphics g)
+		public void DoPaintOverlay(Graphics g, double zoomFactor, PointD2D positionOfViewportsUpperLeftCornerInGraphCoordinates)
 		{
-			ScaleForPaint(g);
+			// g.SmoothingMode = SmoothingMode.AntiAlias;
+			// get the dpi settings of the graphics context,
+			// for example; 96dpi on screen, 600dpi for the printer
+			// used to adjust grid and margin sizing.
+
+			g.PageUnit = GraphicsUnit.Point;
+			g.PageScale = (float)zoomFactor;
+
 			g.Clear(System.Drawing.Color.Transparent);
 
 			// special painting depending on current selected tool
-			g.TranslateTransform((float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-PositionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
+			g.TranslateTransform((float)-positionOfViewportsUpperLeftCornerInGraphCoordinates.X, (float)-positionOfViewportsUpperLeftCornerInGraphCoordinates.Y);
 			this._mouseState.AfterPaint(g);
+		}
+
+		public bool IsOverlayPaintingRequired
+		{
+			get
+			{
+				return this._mouseState.IsOverlayPaintingRequired;
+			}
 		}
 
 		#endregion Painting
