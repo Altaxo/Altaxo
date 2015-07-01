@@ -196,7 +196,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 			SetCountFromValueMinimumMaximum(minValue, maxValue);
 		}
 
-		/// < inheritdoc />
+		/// <inheritdoc />
 		public void CalculateBinsFromSortedList(IList<double> sortedListOfValues)
 		{
 			_binCounts = new int[_numberOfBins];

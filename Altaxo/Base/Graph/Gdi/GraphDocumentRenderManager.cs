@@ -102,13 +102,13 @@ namespace Altaxo.Graph.Gdi
 				)
 			{
 				if (null == parent)
-					throw new ArgumentNullException("parent");
+					throw new ArgumentNullException(nameof(parent));
 				if (null == token)
-					throw new ArgumentNullException("token");
+					throw new ArgumentNullException(nameof(token));
 				if (null == doc)
-					throw new ArgumentNullException("doc");
+					throw new ArgumentNullException(nameof(doc));
 				if (null == renderingAction)
-					throw new ArgumentNullException("renderingAction");
+					throw new ArgumentNullException(nameof(renderingAction));
 
 				_parent = parent;
 				Owner = token;
@@ -161,10 +161,11 @@ namespace Altaxo.Graph.Gdi
 					if (!Document.IsDisposeInProgress && !MoreTrialsAllowed)
 					{
 						Current.Console.WriteLine(
-						"{0}: Error drawing graph {1}\r\n" +
-						"Details: {2}",
+						"{0}: Error drawing graph {1} (file: {2})\r\n" +
+						"Details: {3}",
 						DateTime.Now,
 						Document.Name,
+						Current.Project.Name,
 						ex
 						);
 					}

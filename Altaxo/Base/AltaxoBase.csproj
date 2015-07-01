@@ -222,6 +222,7 @@
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\TableDataSourceBase.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinColorSet.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinDarkPlotColorSet.cs" />
     <Compile Include="Graph\ColorManagement\ColorSetIdentifier.cs" />
