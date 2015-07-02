@@ -174,9 +174,9 @@ namespace Altaxo.Main
 		protected RelDocNodeProxy(Main.RelativeDocumentPath docNodePath, Main.IDocumentNode parentNode)
 		{
 			if (null == docNodePath)
-				throw new ArgumentNullException("docNodePath");
+				throw new ArgumentNullException(nameof(docNodePath));
 			if (null == parentNode)
-				throw new ArgumentNullException("parentNode");
+				throw new ArgumentNullException(nameof(parentNode));
 
 			_parent = parentNode;
 			_docNodePath = docNodePath;
@@ -185,9 +185,9 @@ namespace Altaxo.Main
 		public RelDocNodeProxy(Main.IDocumentLeafNode docNode, Main.IDocumentNode parentNode)
 		{
 			if (null == docNode)
-				throw new ArgumentNullException("docNode");
+				throw new ArgumentNullException(nameof(docNode));
 			if (null == parentNode)
-				throw new ArgumentNullException("parentNode");
+				throw new ArgumentNullException(nameof(parentNode));
 			var docNodeRoot = Main.AbsoluteDocumentPath.GetRootNode(docNode);
 			var parentNodeRoot = Main.AbsoluteDocumentPath.GetRootNode(parentNode);
 			if (!object.ReferenceEquals(docNodeRoot, parentNodeRoot))
@@ -422,7 +422,7 @@ namespace Altaxo.Main
 			set
 			{
 				if (null == value)
-					throw new ArgumentNullException("value");
+					throw new ArgumentNullException(nameof(value));
 
 				_docNodePath = value;
 			}
@@ -430,6 +430,9 @@ namespace Altaxo.Main
 
 		protected virtual IDocumentLeafNode ResolveDocumentObject()
 		{
+			if (IsDisposeInProgress)
+				return null;
+
 			System.Diagnostics.Debug.Assert(null != _docNodePath);
 
 			var docNode = InternalDocNode;
@@ -470,6 +473,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("RelDocNodeProxy.EhDocNode_TunneledEvent: sender={0}, source={1} e={2}", sender, source, e);
 #endif
@@ -527,6 +533,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhDocNode_Changed(object sender, EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhDocNode_Changed: sender={0}, e={1}", sender, e);
 #endif
@@ -550,7 +559,7 @@ namespace Altaxo.Main
 		protected virtual void SetWatchOnNode(IDocumentLeafNode node)
 		{
 			if (null == node)
-				throw new ArgumentNullException("node");
+				throw new ArgumentNullException(nameof(node));
 
 			if (null != _weakDocNodeChangedHandler)
 			{
@@ -579,6 +588,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhWatchedNode_TunneledEvent(object sender, object source, Main.TunnelingEventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 			System.Diagnostics.Debug.Assert(_docNodeRef == null);
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			var sourceAsDocNode = source as IDocumentLeafNode;
@@ -595,7 +607,7 @@ namespace Altaxo.Main
 				bool wasResolvedCompletely;
 				var node = RelativeDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
 				if (null == node)
-					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
+					throw new InvalidProgramException(nameof(node) + " should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
 				if (wasResolvedCompletely)
 				{
@@ -621,6 +633,9 @@ namespace Altaxo.Main
 		/// <param name="e"></param>
 		private void EhWatchedNode_Changed(object sender, EventArgs e)
 		{
+			if (IsDisposeInProgress)
+				return;
+
 #if DEBUG_DOCNODEPROXYLOGGING
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
 #endif

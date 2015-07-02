@@ -85,7 +85,7 @@ namespace Altaxo.Main
 		public RelativeDocumentPath(int numberOfLevelsDown, IEnumerable<string> path)
 		{
 			if (numberOfLevelsDown < 0)
-				throw new ArgumentOutOfRangeException("numberOfLevelsDown shall be >=0");
+				throw new ArgumentOutOfRangeException(nameof(numberOfLevelsDown), "shall be >=0");
 
 			this._numberOfLevelsDown = numberOfLevelsDown;
 			_pathParts = path.ToArray();
@@ -199,9 +199,9 @@ namespace Altaxo.Main
 		public static RelativeDocumentPath GetRelativePathFromTo(IDocumentLeafNode startnode, IDocumentLeafNode endnode, IDocumentNode stoppernode)
 		{
 			if (startnode == null)
-				throw new ArgumentNullException("startnode");
+				throw new ArgumentNullException(nameof(startnode));
 			if (endnode == null)
-				throw new ArgumentNullException("endnode");
+				throw new ArgumentNullException(nameof(endnode));
 
 			if (object.ReferenceEquals(startnode, endnode))
 				return IdentityPath; // Start node and end node are identical
@@ -234,14 +234,14 @@ namespace Altaxo.Main
 			}
 
 			if (null == commonNodes)
-				throw new InvalidOperationException("commonNode should always be != null");
+				throw new InvalidOperationException(nameof(commonNode) + " should always be != null");
 
 			var idx = endNodesList.IndexOf(commonNode);
 
 			if (idx < 0)
-				throw new InvalidOperationException("idx of commonNode in endNodesList should always be >=0");
+				throw new InvalidOperationException(nameof(idx) + " of commonNode in endNodesList should always be >=0");
 			else if (idx == 0)
-				throw new InvalidOperationException("idx=0 should not happen because this means identical startnode and endnode");
+				throw new InvalidOperationException(nameof(idx) + "=0 should not happen because this means identical startnode and endnode");
 
 			return new RelativeDocumentPath(numberOfNodesDown, endNodesList.TakeFromUpperIndexDownToLowerIndex(idx - 1, 0).Select(x => x.ParentObject.GetNameOfChildObject(x)));
 		}
@@ -249,9 +249,9 @@ namespace Altaxo.Main
 		public static IDocumentLeafNode GetObject(RelativeDocumentPath path, IDocumentLeafNode startnode)
 		{
 			if (null == path)
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 			if (null == startnode)
-				throw new ArgumentNullException("startnode");
+				throw new ArgumentNullException(nameof(startnode));
 
 			var node = startnode;
 
@@ -289,9 +289,9 @@ namespace Altaxo.Main
 		public static IDocumentLeafNode GetNodeOrLeastResolveableNode(RelativeDocumentPath path, IDocumentLeafNode startnode, out bool pathWasCompletelyResolved)
 		{
 			if (null == path)
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException(nameof(path));
 			if (null == startnode)
-				throw new ArgumentNullException("startnode");
+				throw new ArgumentNullException(nameof(startnode));
 
 			var node = startnode;
 			var prevNode = startnode;
@@ -342,7 +342,7 @@ namespace Altaxo.Main
 		public static RelativeDocumentPath FromOldDeprecated(AbsoluteDocumentPath absPath)
 		{
 			if (null == absPath)
-				throw new ArgumentNullException("absPath");
+				throw new ArgumentNullException(nameof(absPath));
 
 			int numberOfLevelsDown = 0;
 			var pathList = new List<string>();

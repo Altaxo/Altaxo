@@ -192,7 +192,7 @@ namespace Altaxo.Main
 		public DocNodeProxy(IDocumentLeafNode docNode)
 		{
 			if (null == docNode)
-				throw new ArgumentNullException("docNode");
+				throw new ArgumentNullException(nameof(docNode));
 
 			SetDocNode(docNode);
 		}
@@ -208,7 +208,7 @@ namespace Altaxo.Main
 		protected DocNodeProxy(Main.AbsoluteDocumentPath docNodePath)
 		{
 			if (null == docNodePath)
-				throw new ArgumentNullException("docNodePath");
+				throw new ArgumentNullException(nameof(docNodePath));
 
 			InternalDocumentPath = docNodePath;
 			InternalCheckAbsolutePath();
@@ -221,9 +221,9 @@ namespace Altaxo.Main
 		public DocNodeProxy(DocNodeProxy from)
 		{
 			if (null == from)
-				throw new ArgumentNullException("from");
+				throw new ArgumentNullException(nameof(from));
 			if (from.IsDisposeInProgress)
-				throw new ObjectDisposedException("from");
+				throw new ObjectDisposedException(nameof(from));
 
 			if (null != from.InternalDocumentNode)
 			{
@@ -325,7 +325,7 @@ namespace Altaxo.Main
 		public void SetDocNode(IDocumentLeafNode value)
 		{
 			if (null == value)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 
 			var oldValue = InternalDocumentNode;
 			if (object.ReferenceEquals(oldValue, value))
@@ -403,7 +403,7 @@ namespace Altaxo.Main
 		{
 			System.Diagnostics.Debug.Assert(null != _docNodePath || IsDisposeInProgress);
 			if (null == rootNode)
-				throw new ArgumentNullException("rootNode");
+				throw new ArgumentNullException(nameof(rootNode));
 
 			AbsoluteDocumentPath newPath;
 			var success = _docNodePath.ReplacePathParts(partToReplace, newPart, out newPath);
@@ -570,7 +570,7 @@ namespace Altaxo.Main
 			set
 			{
 				if (null == value)
-					throw new ArgumentNullException("value");
+					throw new ArgumentNullException(nameof(value));
 
 				_docNodePath = value;
 			}
@@ -654,7 +654,7 @@ namespace Altaxo.Main
 #endif
 
 			if (null == node)
-				throw new ArgumentNullException("node");
+				throw new ArgumentNullException(nameof(node));
 
 			if (null != _weakDocNodeChangedHandler)
 			{
@@ -758,7 +758,7 @@ namespace Altaxo.Main
 				bool wasResolvedCompletely;
 				var node = AbsoluteDocumentPath.GetNodeOrLeastResolveableNode(_docNodePath, sourceAsDocNode, out wasResolvedCompletely);
 				if (null == node)
-					throw new InvalidProgramException("node should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
+					throw new InvalidProgramException(nameof(node) + " should always be != null, since we use absolute paths, and at least an AltaxoDocument should be resolved here.");
 
 				if (wasResolvedCompletely)
 				{
