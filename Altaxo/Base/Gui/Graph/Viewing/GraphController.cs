@@ -554,19 +554,21 @@ namespace Altaxo.Gui.Graph.Viewing
 		private void InternalInitializeGraphDocument(GraphDocument doc)
 		{
 			if (_doc != null)
-				throw new ApplicationException("_doc is already initialized");
+				throw new ApplicationException(nameof(_doc) + " is already initialized");
 			if (doc == null)
-				throw new ArgumentNullException("doc");
+				throw new ArgumentNullException(nameof(doc));
 
 			_doc = doc;
 
-			// we are using weak events here, to avoid that _doc will maintain strong references to the controller
-			// Attention: use local variable doc instead of member _doc for the anonymous methods below!
-			_weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
-			_doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => doc.Changed -= x));
-			_doc.RootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => doc.RootLayer.LayerCollectionChanged -= x));
-			_doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => doc.SizeChanged -= x));
-
+			{
+				// we are using weak events here, to avoid that _doc will maintain strong references to the controller
+				// Attention: use local variable doc instead of member _doc for the anonymous methods below!
+				var rootLayer = doc.RootLayer; // local variable for rootLayer
+				_weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
+				doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => doc.Changed -= x));
+				rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
+				doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => doc.SizeChanged -= x));
+			}
 			// if the host layer has at least one child, we set the active layer to the first child of the host layer
 			if (_doc.RootLayer.Layers.Count >= 1)
 				_currentLayerNumber = new List<int>() { 0 };
