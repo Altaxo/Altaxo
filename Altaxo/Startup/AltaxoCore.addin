@@ -977,6 +977,8 @@
 		<Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.Gdi.GraphDocument" action="Disable">
 			<MenuItem id="MultiExportGraphs" label="${res:XML.ProjectBrowserMenu.MultiExportGraphs}" description="${res:XML.ProjectBrowserMenu.MultiExportGraphs.Description}"
 				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiExportGraphs" />
+			<MenuItem id="MultiRescaleGraphs" label="${res:XML.ProjectBrowserMenu.MultiRescaleGraphs}" description="${res:XML.ProjectBrowserMenu.MultiRescaleGraphs.Description}"
+				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiRescaleGraphs" />
 		</Condition>
 
 		<MenuItem id="NewWindow" label="${res:XML.MainMenu.FileMenu.New}" type="Menu">

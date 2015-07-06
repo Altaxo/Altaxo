@@ -594,6 +594,8 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		public void OnUserRescaledAxes()
 		{
+			EhXBoundaryChangedEventFromPlotItem();
+			EhYBoundaryChangedEventFromPlotItem();
 			_scales.X.OnUserRescaled();
 			_scales.Y.OnUserRescaled();
 		}

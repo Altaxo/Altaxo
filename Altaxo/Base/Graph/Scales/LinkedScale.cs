@@ -420,7 +420,7 @@ namespace Altaxo.Graph.Scales
 			while (null != linkedScale)
 			{
 				if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, linkedScale))
-					return true;	// this means a direct circular dependency (we are at the original scale), so return true
+					return true;  // this means a direct circular dependency (we are at the original scale), so return true
 
 				if (object.ReferenceEquals(scaleThatWouldBecomeALinkedScale, linkedScale.ScaleLinkedTo))
 					return true; // That would mean a circular dependency also, thus also return true;
@@ -603,10 +603,11 @@ namespace Altaxo.Graph.Scales
 					throw new InvalidProgramException("_scaleLinkedTo is reference equal to this scale. Please report this error to the forum");
 
 				// it is not possible for a this scale to act back to the scale which is linked
-				// but to make the plot items influence the range of the linked scale we can give back
-				// the data bounds object of the linked scale
+				// 2015-07-06 dont give the databounds object of the linked scale, because the following will happen:
+				// when the user pressed rescale or the data changed in the layer with this scale, the data of this layer where given to the linked scale
+				// but this will not take the data of the layer where the linked scale resides into account, thus avoid this
 
-				return scaleLinkedTo == null ? _scaleWrapped.DataBoundsObject : scaleLinkedTo.DataBoundsObject;
+				return _scaleWrapped.DataBoundsObject;
 			}
 		}
 

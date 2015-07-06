@@ -84,6 +84,16 @@ namespace Altaxo.Graph.Gdi
 				});
 		}
 
+		/// <summary>
+		/// This command will rescale all axes in all layers of all graph documents provided in <paramref name="docs"/>.
+		/// </summary>
+		/// <param name="docs">The graph documents to rescale.</param>
+		public static void OnUserRescaledAxes(IEnumerable<GraphDocument> docs)
+		{
+			foreach (var doc in docs)
+				OnUserRescaledAxes(doc);
+		}
+
 		#region Layer manipulation
 
 		public static void ShowLayerDialog(this GraphDocument doc, IList<int> layerNumber)

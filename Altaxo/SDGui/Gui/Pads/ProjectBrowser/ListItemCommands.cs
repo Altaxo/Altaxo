@@ -264,6 +264,29 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	/// 	/// <summary>
+	/// This command will rescale all axes in all layers of all selected graph documents.
+	/// </summary>
+	public class CmdMultiRescaleGraphs : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
+			int count = list.Count();
+
+			if (count == 0)
+			{
+				Current.Gui.ErrorMessageBox("There were no graph documents selected for rescaling!", "No graph documents selected");
+				return;
+			}
+			else
+			{
+				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowExportMultipleGraphsDialogAndExportOptions(list);
+				Current.Gui.InfoMessageBox(string.Format("Axes of {0} graph document(s) rescaled.", "Success"));
+			}
+		}
+	}
+
 	public class CmdExchangeTablesForPlotItems : ProjectBrowseControllerCommand
 	{
 		protected override void Run(ProjectBrowseController ctrl)

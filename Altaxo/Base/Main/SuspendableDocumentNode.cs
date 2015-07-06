@@ -905,6 +905,21 @@ namespace Altaxo.Main
 		#region Diagnostic support
 
 		/// <summary>
+		/// Gets the absolute path of the node for debugging purposes.
+		/// </summary>
+		/// <value>
+		/// The absolute path.
+		/// </value>
+		protected string Debug_AbsolutePath
+		{
+			get
+			{
+				var rootNode = Altaxo.Main.AbsoluteDocumentPath.GetRootNode(this);
+				return Altaxo.Main.RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
+			}
+		}
+
+		/// <summary>
 		/// Starting from the provided root node, this function reports any missing Pa Reports the parent child and disposed problems.
 		/// </summary>
 		/// <param name="node">The node to start with.</param>
