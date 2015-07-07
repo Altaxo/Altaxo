@@ -270,7 +270,7 @@ namespace Altaxo.Graph.Gdi.CS
 			isX ^= _isXYInterchanged;
 
 			bool isUp = side == CSAxisSide.FirstUp;
-			isUp ^= isX ? _isXreverse : _isYreverse;
+			isUp ^= isX ? _isYreverse : _isXreverse;
 
 			bool isOuterLine = (id.LogicalValueOtherFirst == 0 || id.LogicalValueOtherFirst == 1);
 

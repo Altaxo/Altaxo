@@ -163,6 +163,7 @@
     <Compile Include="Data\DoubleColumn_Test.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Graph\CS\G2DCartesicCoordinateSystem_Test.cs" />
     <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions_Test.cs" />
     <Compile Include="Graph\Scales\TickSpacing\LinearTickSpacing_Test.cs" />
     <Compile Include="Main\ProjectFolder_Test.cs" />
