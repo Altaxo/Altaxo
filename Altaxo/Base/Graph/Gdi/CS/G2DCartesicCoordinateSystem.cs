@@ -203,62 +203,77 @@ namespace Altaxo.Graph.Gdi.CS
 				_axisStyleInformation.Clear();
 
 			CSAxisInformation info;
+			CSLineID lineID;
 
 			// Left
-			info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 1 : 0));
+			lineID = new CSLineID(vertAx, horzRev ? 1 : 0);
+			info = new CSAxisInformation(lineID);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "Left";
-			info.NameOfFirstDownSide = horzRev ? "Inner" : "Outer";
-			info.NameOfFirstUpSide = horzRev ? "Outer" : "Inner";
+			info.NameOfAxisStyle = GetAxisName(lineID);
+			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
+			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
 			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
 			// Right
-			info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 0 : 1));
+			lineID = new CSLineID(vertAx, horzRev ? 0 : 1);
+			info = new CSAxisInformation(lineID);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "Right";
-			info.NameOfFirstDownSide = horzRev ? "Outer" : "Inner";
-			info.NameOfFirstUpSide = horzRev ? "Inner" : "Outer";
+			info.NameOfAxisStyle = GetAxisName(lineID);
+			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
+			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
 			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.IsShownByDefault = false;
+			info.HasTitleByDefault = false;
 
 			// Bottom
-			info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 1 : 0));
+			lineID = new CSLineID(horzAx, vertRev ? 1 : 0);
+			info = new CSAxisInformation(lineID);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "Bottom";
-			info.NameOfFirstDownSide = vertRev ? "Inner" : "Outer";
-			info.NameOfFirstUpSide = vertRev ? "Outer" : "Inner";
+			info.NameOfAxisStyle = GetAxisName(lineID);
+			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
+			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
 			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
 			// Top
-			info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
+			lineID = new CSLineID(horzAx, vertRev ? 0 : 1);
+			info = new CSAxisInformation(lineID);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "Top";
-			info.NameOfFirstDownSide = vertRev ? "Outer" : "Inner";
-			info.NameOfFirstUpSide = vertRev ? "Inner" : "Outer";
+			info.NameOfAxisStyle = GetAxisName(lineID);
+			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
+			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
 			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.IsShownByDefault = false;
+			info.HasTitleByDefault = false;
 
 			// Y=0
-			info = new CSAxisInformation(CSLineID.FromPhysicalValue(horzAx, 0));
+			lineID = CSLineID.FromPhysicalValue(horzAx, 0);
+			info = new CSAxisInformation(lineID);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "Y=0";
-			info.NameOfFirstUpSide = vertRev ? "Below" : "Above";
-			info.NameOfFirstDownSide = vertRev ? "Above" : "Below";
+			info.NameOfAxisStyle = GetAxisName(lineID);
+			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
+			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
 			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.IsShownByDefault = false;
+			info.HasTitleByDefault = false;
 
 			// X=0
-			info = new CSAxisInformation(CSLineID.FromPhysicalValue(vertAx, 0));
+			lineID = CSLineID.FromPhysicalValue(vertAx, 0);
+			info = new CSAxisInformation(lineID);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "X=0";
-			info.NameOfFirstDownSide = horzRev ? "Right" : "Left";
-			info.NameOfFirstUpSide = horzRev ? "Left" : "Right";
+			info.NameOfAxisStyle = GetAxisName(lineID);
+			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
+			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
 			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.IsShownByDefault = false;
+			info.HasTitleByDefault = false;
 		}
 
-		private static readonly string[,] _axisNamesNormal = new string[,] { { "Above", "Below" }, { "Right", "Left" } };
-		private static readonly string[,] _axisNamesOuterLines = new string[,] { { "Out", "In" }, { "Out", "In" } };
+		private static readonly string[,] _axisSideNamesNormal = new string[,] { { "Above", "Below" }, { "Right", "Left" } };
+		private static readonly string[,] _axisSideNamesOuterLines = new string[,] { { "Out", "In" }, { "Out", "In" } };
 
 		/// <summary>Gets the name of the axis side.</summary>
 		/// <param name="id">The axis identifier.</param>
@@ -266,21 +281,66 @@ namespace Altaxo.Graph.Gdi.CS
 		/// <returns>The name of the axis side for the axis line given by the identifier.</returns>
 		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
 		{
-			bool isX = id.ParallelAxisNumber == 0;
-			isX ^= _isXYInterchanged;
-
-			bool isUp = side == CSAxisSide.FirstUp;
-			isUp ^= isX ? _isYreverse : _isXreverse;
-
+			bool isHorizontal = id.ParallelAxisNumber == 0 ^ _isXYInterchanged;
 			bool isOuterLine = (id.LogicalValueOtherFirst == 0 || id.LogicalValueOtherFirst == 1);
 
 			if (isOuterLine)
-				isUp ^= (0 == id.LogicalValueOtherFirst);
-
-			if (isOuterLine)
-				return _axisNamesOuterLines[isX ? 0 : 1, isUp ? 0 : 1];
+			{
+				bool isPointingOutwards = (id.LogicalValueOtherFirst == 0 && side == CSAxisSide.FirstDown) || (id.LogicalValueOtherFirst == 1 && side == CSAxisSide.FirstUp);
+				return _axisSideNamesOuterLines[isHorizontal ? 0 : 1, isPointingOutwards ? 0 : 1];
+			}
 			else
-				return _axisNamesNormal[isX ? 0 : 1, isUp ? 0 : 1];
+			{
+				bool isRight = ((id.ParallelAxisNumber == 0 && _isYreverse) || (id.ParallelAxisNumber == 1 && _isXreverse)) ^ (side == CSAxisSide.FirstUp);
+				return _axisSideNamesNormal[isHorizontal ? 0 : 1, isRight ? 0 : 1];
+			}
+		}
+
+		public string GetAxisName(CSLineID id)
+		{
+			if (id.Is3DIdentifier)
+				throw new ArgumentException(nameof(id) + " is a 3D identifier, but here a 2D identifier is expected");
+
+			if (id.UsePhysicalValueOtherFirst)
+			{
+				bool isX = id.ParallelAxisNumber == 0 ^ _isXYInterchanged;
+				return string.Format("{0}={1}", isX ? "X" : "Y", id.PhysicalValueOtherFirst);
+			}
+			else // logical values
+			{
+				if (id.LogicalValueOtherFirst == 0 || id.LogicalValueOtherFirst == 1)
+				{
+					return GetAxisName_Logical0Or1(id);
+				}
+				else
+				{
+					if (id.LogicalValueOtherFirst <= 0.5)
+					{
+						var id1 = id.Clone();
+						id1.LogicalValueOtherFirst = 0;
+						var basename = GetAxisName_Logical0Or1(id1);
+						return string.Format("{0} ({1}% offset)", basename, id.LogicalValueOtherFirst * 100);
+					}
+					else // id.LogicalValueOtherFirst>0.5)
+					{
+						var id1 = id.Clone();
+						id1.LogicalValueOtherFirst = 1;
+						var basename = GetAxisName_Logical0Or1(id1);
+						return string.Format("{0} ({1}% offset)", basename, (id.LogicalValueOtherFirst - 1) * 100);
+					}
+				}
+			}
+		}
+
+		private static readonly string[,] _axisNamesOuterLines = new string[,] { { "Bottom", "Top" }, { "Left", "Right" } };
+
+		private string GetAxisName_Logical0Or1(CSLineID id)
+		{
+			bool isParallelXAxis = (id.ParallelAxisNumber == 0) ^ _isXYInterchanged;
+
+			bool isLogical0 = (id.LogicalValueOtherFirst == 0) ^ ((isParallelXAxis && _isXreverse) || (!isParallelXAxis && _isYreverse));
+
+			return _axisNamesOuterLines[isParallelXAxis ? 0 : 1, isLogical0 ? 0 : 1];
 		}
 
 		/// <summary>
