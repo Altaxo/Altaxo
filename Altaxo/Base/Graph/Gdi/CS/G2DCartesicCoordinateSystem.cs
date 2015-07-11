@@ -104,10 +104,6 @@ namespace Altaxo.Graph.Gdi.CS
 
 		#endregion Serialization
 
-		public G2DCartesicCoordinateSystem()
-		{
-		}
-
 		/// <summary>
 		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
 		/// </summary>
@@ -336,11 +332,11 @@ namespace Altaxo.Graph.Gdi.CS
 
 		private string GetAxisName_Logical0Or1(CSLineID id)
 		{
-			bool isParallelXAxis = (id.ParallelAxisNumber == 0) ^ _isXYInterchanged;
+			bool isHorizontal = (id.ParallelAxisNumber == 0) ^ _isXYInterchanged;
 
-			bool isLogical0 = (id.LogicalValueOtherFirst == 0) ^ ((isParallelXAxis && _isXreverse) || (!isParallelXAxis && _isYreverse));
+			bool isLogical0 = (id.LogicalValueOtherFirst == 0) ^ ((id.ParallelAxisNumber == 1 && _isXreverse) || (id.ParallelAxisNumber == 0 && _isYreverse));
 
-			return _axisNamesOuterLines[isParallelXAxis ? 0 : 1, isLogical0 ? 0 : 1];
+			return _axisNamesOuterLines[isHorizontal ? 0 : 1, isLogical0 ? 0 : 1];
 		}
 
 		/// <summary>

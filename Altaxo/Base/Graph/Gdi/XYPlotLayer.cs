@@ -691,77 +691,82 @@ namespace Altaxo.Graph.Gdi
 				else
 				{
 					TextGraphic tg = new TextGraphic(this.GetPropertyContext());
-					tg.SetParentSize(this.Size, false);
 
 					CSAxisInformation info = CoordinateSystem.GetAxisStyleInformation(id);
 
-					// find out the position and orientation of the item
-					double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1;
-					if (id.ParallelAxisNumber == 0)
-						ry0 = ry1 = id.LogicalValueOtherFirst;
-					else
-						rx0 = rx1 = id.LogicalValueOtherFirst;
-
-					PointD2D normDirection;
-					Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
-					var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
-					double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
-
-					tg.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
-					tg.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
-
-					double distance = 0;
-					AxisStyle axisStyle = _axisStyles[id];
-					if (null != axisStyle.AxisLineStyle)
-						distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
-					double labelFontSize = 0;
-					if (axisStyle.AreMajorLabelsEnabled)
-						labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);
-					if (axisStyle.AreMinorLabelsEnabled)
-						labelFontSize = Math.Max(labelFontSize, axisStyle.MinorLabelStyle.FontSize);
-					const double scaleFontWidth = 4;
-					const double scaleFontHeight = 1.5;
-
-					if (-45 <= angle && angle <= 45)
-					{
-						//case EdgeType.Right:
-						tg.Rotation = 90;
-						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-						tg.Location.LocalAnchorY = RADouble.NewRel(0); // Top
-						distance += scaleFontWidth * labelFontSize;
-					}
-					else if (-135 <= angle && angle <= -45)
-					{
-						//case Top:
-						tg.Rotation = 0;
-						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-						tg.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-						distance += scaleFontHeight * labelFontSize;
-					}
-					else if (45 <= angle && angle <= 135)
-					{
-						//case EdgeType.Bottom:
-						tg.Rotation = 0;
-						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-						tg.Location.LocalAnchorY = RADouble.NewRel(0); // Top
-						distance += scaleFontHeight * labelFontSize;
-					}
-					else
-					{
-						//case EdgeType.Left:
-
-						tg.Rotation = 90;
-						tg.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-						tg.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-						distance += scaleFontWidth * labelFontSize;
-					}
-
-					tg.Location.PositionX = RADouble.NewAbs(distance * normDirection.X); // because this is relative to the reference point, we don't need to take the location into account here, it is set above
-					tg.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);
+					tg.SetParentSize(this.Size, false);
+					SetDefaultAxisTitlePositionAndOrientation(tg, id, info);
 					tg.Text = newtitle;
 					_axisStyles.AxisStyleEnsured(id).Title = tg;
 				}
 			}
+		}
+
+		private void SetDefaultAxisTitlePositionAndOrientation(TextGraphic axisTitle, CSLineID id, CSAxisInformation info)
+		{
+			// find out the position and orientation of the item
+			double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1;
+			if (id.ParallelAxisNumber == 0)
+				ry0 = ry1 = id.LogicalValueOtherFirst;
+			else
+				rx0 = rx1 = id.LogicalValueOtherFirst;
+
+			PointD2D normDirection;
+			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
+			var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
+			double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
+
+			axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
+			axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
+
+			double distance = 0;
+			AxisStyle axisStyle = _axisStyles[id];
+			if (null != axisStyle.AxisLineStyle)
+				distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
+			double labelFontSize = 0;
+			if (axisStyle.AreMajorLabelsEnabled)
+				labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);
+			if (axisStyle.AreMinorLabelsEnabled)
+				labelFontSize = Math.Max(labelFontSize, axisStyle.MinorLabelStyle.FontSize);
+			const double scaleFontWidth = 4;
+			const double scaleFontHeight = 1.5;
+
+			if (-45 <= angle && angle <= 45)
+			{
+				//case EdgeType.Right:
+				axisTitle.Rotation = 90;
+				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+				axisTitle.Location.LocalAnchorY = RADouble.NewRel(0); // Top
+				distance += scaleFontWidth * labelFontSize;
+			}
+			else if (-135 <= angle && angle <= -45)
+			{
+				//case Top:
+				axisTitle.Rotation = 0;
+				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+				axisTitle.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+				distance += scaleFontHeight * labelFontSize;
+			}
+			else if (45 <= angle && angle <= 135)
+			{
+				//case EdgeType.Bottom:
+				axisTitle.Rotation = 0;
+				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+				axisTitle.Location.LocalAnchorY = RADouble.NewRel(0); // Top
+				distance += scaleFontHeight * labelFontSize;
+			}
+			else
+			{
+				//case EdgeType.Left:
+
+				axisTitle.Rotation = 90;
+				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
+				axisTitle.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+				distance += scaleFontWidth * labelFontSize;
+			}
+
+			axisTitle.Location.PositionX = RADouble.NewAbs(distance * normDirection.X); // because this is relative to the reference point, we don't need to take the location into account here, it is set above
+			axisTitle.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);
 		}
 
 		public string DefaultYAxisTitleString
@@ -1000,9 +1005,29 @@ namespace Altaxo.Graph.Gdi
 			base.OnCachedResultingSizeChanged();
 		}
 
+		protected virtual void OnCoordinateSystemChanged()
+		{
+			// if the coordinate system has changed, try to bring all axis titles back to their default position
+			_axisStyles.UpdateCoordinateSystem(_coordinateSystem);
+
+			foreach (var axisStyle in _axisStyles)
+			{
+				if (null != axisStyle.Title)
+					SetDefaultAxisTitlePositionAndOrientation(axisStyle.Title, axisStyle.StyleID, _coordinateSystem.GetAxisStyleInformation(axisStyle.StyleID));
+			}
+		}
+
 		#endregion Event firing
 
 		#region Handler of child events
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(sender, _coordinateSystem))
+				OnCoordinateSystemChanged();
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
 
 		protected override void OnChanged(EventArgs e)
 		{

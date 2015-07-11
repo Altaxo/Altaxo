@@ -359,11 +359,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_accumulatedEventData = EventArgs.Empty;
 		}
 
-		protected override bool HandleLowPriorityChildChangeCases(object sender, ref EventArgs e)
+		protected override void OnChanged(EventArgs e)
 		{
 			UpdateTransformationMatrix();
 
-			return base.HandleLowPriorityChildChangeCases(sender, ref e);
+			base.OnChanged(e);
 		}
 
 		#endregion Suspend/Resume
@@ -561,13 +561,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <param name="eventFiring">Designates whether the change event should be fired.</param>
 		protected virtual void SetSize(double width, double height, Main.EventFiring eventFiring)
 		{
-			var oldWidth = Width;
-			var oldHeight = Height;
-
 			_location.SetAbsoluteSize(new PointD2D(width, height), eventFiring);
-
-			if (eventFiring == Main.EventFiring.Enabled && (width != oldWidth || height != oldHeight))
-				EhSelfChanged(EventArgs.Empty);
 		}
 
 		/// <summary>

@@ -293,5 +293,92 @@ namespace AltaxoTest.Graph.CS
 			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true, IsYReverse = true };
 			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
 		}
+
+		[Test]
+		public void Test08_AllEdgeRight()
+		{
+			string expectedSide = "Right";
+			var cs = new G2DCartesicCoordinateSystem(); // Normal
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXReverse = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true }; // Normal
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 0)));
+		}
+
+		[Test]
+		public void Test09_AllEdgeBottom()
+		{
+			string expectedSide = "Bottom";
+			var cs = new G2DCartesicCoordinateSystem(); // Normal
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXReverse = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true }; // Normal
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 1)));
+		}
+
+		[Test]
+		public void Test09_AllEdgeTop()
+		{
+			string expectedSide = "Top";
+			var cs = new G2DCartesicCoordinateSystem(); // Normal
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXReverse = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(0, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true }; // Normal
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 0)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 1)));
+
+			cs = new G2DCartesicCoordinateSystem() { IsXYInterchanged = true, IsXReverse = true, IsYReverse = true };
+			Assert.AreEqual(expectedSide, cs.GetAxisName(new CSLineID(1, 0)));
+		}
 	}
 }
