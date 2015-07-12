@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 		}
 
-		public void Remove(CSLineID id)
+		public bool Remove(CSLineID id)
 		{
 			int idx = -1;
 			for (int i = 0; i < _axisStyles.Count; i++)
@@ -167,7 +167,14 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 
 			if (idx >= 0)
+			{
 				_axisStyles.RemoveAt(idx);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		/// <summary>

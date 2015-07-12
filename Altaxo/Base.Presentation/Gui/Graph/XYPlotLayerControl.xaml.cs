@@ -40,6 +40,8 @@ namespace Altaxo.Gui.Graph
 
 		public event Action<bool> CreateOrMoveAxis;
 
+		public event Action DeleteAxis;
+
 		public event Action SecondChoiceChanged;
 
 		public event Action<string> PageChanged;
@@ -161,7 +163,7 @@ namespace Altaxo.Gui.Graph
 					}
 				}
 
-			end_of_function:
+				end_of_function:
 				--_tabControl_SelectionChanged_Calls;
 			}
 		}
@@ -178,6 +180,13 @@ namespace Altaxo.Gui.Graph
 			e.Handled = true;
 			if (_suppressEventCounter == 0 && null != CreateOrMoveAxis)
 				CreateOrMoveAxis(true);
+		}
+
+		private void EhDeleteAxis(object sender, RoutedEventArgs e)
+		{
+			e.Handled = true;
+			if (_suppressEventCounter == 0 && null != DeleteAxis)
+				DeleteAxis();
 		}
 	}
 }

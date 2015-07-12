@@ -49,6 +49,8 @@ namespace Altaxo.Gui.Graph
 
 		event Action<bool> CreateOrMoveAxis;
 
+		event Action DeleteAxis;
+
 		event Action SecondChoiceChanged;
 
 		event Action<string> PageChanged;
@@ -170,6 +172,7 @@ namespace Altaxo.Gui.Graph
 			_view.PageChanged += EhView_PageChanged;
 			_view.SecondChoiceChanged += EhView_SecondChoiceChanged;
 			_view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
+			_view.DeleteAxis += EhView_DeleteAxis;
 		}
 
 		protected override void DetachView()
@@ -178,6 +181,7 @@ namespace Altaxo.Gui.Graph
 			_view.PageChanged -= EhView_PageChanged;
 			_view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
 			_view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
+			_view.DeleteAxis -= EhView_DeleteAxis;
 		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -453,7 +457,7 @@ namespace Altaxo.Gui.Graph
 			}
 			else if (_primaryChoice == LayerControllerTabType.Axes)
 			{
-				_currentAxisID = (CSLineID)_listOfAxes.FirstSelectedNode.Tag;
+				_currentAxisID = (CSLineID)(_listOfAxes.FirstSelectedNode?.Tag ?? _listOfAxes[0].Tag);
 			}
 			else if (_primaryChoice == LayerControllerTabType.Planes)
 			{
@@ -514,6 +518,30 @@ namespace Altaxo.Gui.Graph
 			_currentAxisID = newIdentity;
 			SetSecondaryChoiceToAxes();
 			SetCurrentTabController(false);
+		}
+
+		public void EhView_DeleteAxis()
+		{
+			if (!ApplyCurrentController(false, false))
+				return;
+
+			if (_listOfAxes.Count <= 1)
+				return;
+
+			var axisID = _currentAxisID;
+			if (true == Current.Gui.YesNoMessageBox("Are you sure that you want to delete this axis?", "Confirmation", false))
+			{
+				if (true == _doc.AxisStyles.Remove(axisID))
+				{
+					_axisControl.Remove(axisID);
+					var axisItem = _listOfAxes.First(x => axisID != (CSLineID)(x.Tag));
+					axisItem.IsSelected = true;
+					_currentAxisID = (CSLineID)(axisItem.Tag);
+					_listOfAxes.RemoveWhere(x => axisID == (CSLineID)(x.Tag));
+					SetSecondaryChoiceToAxes();
+					SetCurrentTabController(false);
+				}
+			}
 		}
 
 		private bool ApplyCurrentController(bool force, bool disposeCurrentController)
