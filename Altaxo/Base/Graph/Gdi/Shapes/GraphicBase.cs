@@ -760,9 +760,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public virtual IHitTestObject HitTest(HitTestRectangularData rectHit)
+		public virtual IHitTestObject HitTest(HitTestRectangularData parentHitData)
 		{
-			if (rectHit.IsCovering(Bounds))
+			var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
+			if (localHitData.IsCovering(Bounds))
 				return GetNewHitTestObject();
 			else
 				return null;

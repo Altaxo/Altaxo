@@ -1694,6 +1694,11 @@ namespace Altaxo.Graph.Gdi
 				return null;
 			}
 
+			public virtual IHitTestObject HitTest(HitTestRectangularData hitData)
+			{
+				return null;
+			}
+
 			public virtual void FixupInternalDataStructures()
 			{
 			}

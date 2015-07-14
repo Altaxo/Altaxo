@@ -41,6 +41,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestPointData hitData);
 
+		Altaxo.Graph.Gdi.IHitTestObject HitTest(Altaxo.Graph.Gdi.HitTestRectangularData hitData);
+
 		/// <summary>
 		/// Fixups the internal data structures of the object. The object is allowed to send change notifications during this call.
 		/// </summary>

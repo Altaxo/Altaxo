@@ -168,6 +168,13 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>List of selected HitTestObjects</summary>
 		protected List<IHitTestObject> _selectedObjects;
 
+		/// <summary>
+		/// If not null, this is the rectangular selection area drawn by the user.
+		/// </summary>
+		protected RectangleD? _rectangleSelectionArea_GraphCoordinates;
+
+		protected static Brush _blueTransparentBrush = new SolidBrush(Color.FromArgb(64, 0, 0, 255));
+
 		#endregion Members
 
 		public ObjectPointerMouseHandler(GraphControllerWpf grac)
@@ -197,18 +204,6 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			get
 			{
 				return _selectedObjects;
-			}
-		}
-
-		/// <summary>
-		/// Returns true when painting the overlay is currently required; and false if it is not required.
-		/// </summary>
-		/// <returns>True when painting the overlay is currently required; and false if it is not required.</returns>
-		public override bool IsOverlayPaintingRequired
-		{
-			get
-			{
-				return _selectedObjects.Count > 0;
 			}
 		}
 
@@ -259,6 +254,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			for (int i = 0; i < DisplayedGrips.Length; i++)
 				DisplayedGrips[i].Show(g, _grac.ZoomFactor);
+		}
+
+		public void DisplaySelectionRectangle(Graphics g)
+		{
+			RectangleF r = GuiHelper.ToSysDraw(_rectangleSelectionArea_GraphCoordinates.Value);
+			g.FillRectangle(_blueTransparentBrush, r);
 		}
 
 		/// <summary>
@@ -343,6 +344,19 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				AddSelectedObject(rootLayerCoord, clickedObject);
 		} // end of function
 
+		/// <summary>
+		/// Adds the selected objects from rectangular selection. Here, we do not activate a grip.
+		/// Instead, we only show the selection rectangles.
+		/// </summary>
+		/// <param name="selObjects">The selected objects to add.</param>
+		private void AddSelectedObjectsFromRectangularSelection(IList<IHitTestObject> selObjects)
+		{
+			_selectedObjects.AddRange(selObjects);
+			DisplayedGripLevel = 1;
+			DisplayedGrips = GetGripsFromSelectedObjects();
+			ActiveGrip = null;
+		}
+
 		private void AddSelectedObject(PointD2D graphXY, IHitTestObject clickedObject)
 		{
 			_selectedObjects.Add(clickedObject);
@@ -404,6 +418,24 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				_wereObjectsMoved = true;
 				_grac.RenderOverlay();
 			}
+			else if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				var diffPos = position - _positionLastMouseDownInMouseCoordinates;
+
+				var oldRect = _rectangleSelectionArea_GraphCoordinates;
+
+				if (null != _rectangleSelectionArea_GraphCoordinates ||
+						Math.Abs(diffPos.X) >= System.Windows.SystemParameters.MinimumHorizontalDragDistance ||
+						Math.Abs(diffPos.Y) >= System.Windows.SystemParameters.MinimumHorizontalDragDistance)
+				{
+					var pt1 = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
+					var rect = new RectangleD(pt1, PointD2D.Empty);
+					rect.ExpandToInclude(_grac.ConvertMouseToRootLayerCoordinates(position));
+					_rectangleSelectionArea_GraphCoordinates = rect;
+				}
+				if (null != _rectangleSelectionArea_GraphCoordinates)
+					_grac.RenderOverlay();
+			}
 		}
 
 		/// <summary>
@@ -416,7 +448,15 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnMouseUp(position, e);
 
-			if (ActiveGrip != null)
+			if (e.LeftButton == MouseButtonState.Released && null != _rectangleSelectionArea_GraphCoordinates)
+			{
+				List<IHitTestObject> foundObjects;
+				_grac.FindGraphObjectInRootLayerRectangle(_rectangleSelectionArea_GraphCoordinates.Value, out foundObjects);
+				AddSelectedObjectsFromRectangularSelection(foundObjects);
+				_rectangleSelectionArea_GraphCoordinates = null;
+				_grac.RenderOverlay();
+			}
+			else if (ActiveGrip != null)
 			{
 				bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
 				bool bRepaint = false;
@@ -479,10 +519,30 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			base.OnClick(position, e);
 		}
 
+		/// <summary>
+		/// Returns true when painting the overlay is currently required; and false if it is not required.
+		/// </summary>
+		/// <returns>True when painting the overlay is currently required; and false if it is not required.</returns>
+		public override bool IsOverlayPaintingRequired
+		{
+			get
+			{
+				return _selectedObjects.Count > 0 || null != _rectangleSelectionArea_GraphCoordinates;
+			}
+		}
+
 		public override void AfterPaint(Graphics g)
 		{
-			DisplayedGrips = GetGripsFromSelectedObjects(); // Update grip positions according to the move
-			DisplayGrips(g);
+			if (null != _rectangleSelectionArea_GraphCoordinates)
+			{
+				DisplaySelectionRectangle(g);
+			}
+			else
+			{
+				DisplayedGrips = GetGripsFromSelectedObjects(); // Update grip positions according to the move
+				DisplayGrips(g);
+			}
+
 			base.AfterPaint(g);
 		}
 

@@ -371,6 +371,11 @@ namespace Altaxo.Gui
 			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 		}
 
+		public static System.Drawing.RectangleF ToSysDraw(this Altaxo.Graph.RectangleD rect)
+		{
+			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
+		}
+
 		public static System.Drawing.Rectangle ToSysDrawInt(this Rect rect)
 		{
 			return new System.Drawing.Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);

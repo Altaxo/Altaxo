@@ -635,6 +635,13 @@ namespace Altaxo.Gui.Graph.Viewing
 			return false;
 		}
 
+		public void FindGraphObjectInRootLayerRectangle(RectangleD rectRootLayerCoordinates, out List<IHitTestObject> foundObjects)
+		{
+			foundObjects = new List<IHitTestObject>();
+			var hitData = new HitTestRectangularData(rectRootLayerCoordinates, this.ZoomFactor);
+			RootLayer.HitTest(hitData, foundObjects);
+		}
+
 		#endregion Finding objects at position
 	}
 }

@@ -1217,6 +1217,50 @@ namespace Altaxo.Graph.Gdi
 			return null;
 		}
 
+		/// <summary>
+		/// Hit test of retangular hit test data against the layer (here treated as IGraphicBase object).
+		/// Decision is here not to allow the layer itself to be selected by rectangular selection, instead we
+		/// allow all subobjects to be selected.
+		/// </summary>
+		/// <param name="hitData">The hit data.</param>
+		/// <returns>Here: null, because it was decided that the layer can not be selected by rectangular selection.</returns>
+		public virtual IHitTestObject HitTest(HitTestRectangularData hitData)
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Collects all sub-objects of this layer that are selected by a rectangular selection area into a list.
+		/// </summary>
+		/// <param name="parentHitData">The hit data (having parent coordinates).</param>
+		/// <param name="selectedObjects">List where to collect all selected objects.</param>
+		public virtual void HitTest(HitTestRectangularData parentHitData, List<IHitTestObject> selectedObjects)
+		{
+			var localHitData = parentHitData.NewFromAdditionalTransformation(_transformation);
+
+			// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+			for (int i = _graphObjects.Count - 1; i >= 0; --i)
+			{
+				var hit = _graphObjects[i].HitTest(localHitData);
+				if (null != hit)
+				{
+					if (null == hit.ParentLayer)
+						hit.ParentLayer = this;
+
+					if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
+						hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
+
+					hit.Transform(localHitData.Transformation); // ins Root-System transformieren
+					selectedObjects.Add(hit);
+				}
+			}
+
+			foreach (var childLayer in Layers)
+			{
+				childLayer.HitTest(localHitData, selectedObjects);
+			}
+		}
+
 		private static bool EhGraphicsObject_Remove(IHitTestObject o)
 		{
 			var go = (IGraphicBase)o.HittedObject;
