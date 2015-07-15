@@ -99,6 +99,10 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// Returns the control that should be focused initially.
 		/// </summary>
 		object GuiInitiallyFocusedElement { get; }
+
+		void CaptureMouse();
+
+		void ReleaseMouseCapture();
 	}
 
 	public interface IGraphViewEventSink

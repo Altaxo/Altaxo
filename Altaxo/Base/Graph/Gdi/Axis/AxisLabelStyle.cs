@@ -825,6 +825,15 @@ namespace Altaxo.Graph.Gdi.Axis
 				return null;
 		}
 
+		public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData parentHitData)
+		{
+			GraphicsPath gp = GetSelectionPath();
+			if (parentHitData.IsCovering(gp.PathPoints))
+				return new HitTestObject(gp, this);
+			else
+				return null;
+		}
+
 		public void AdjustRectangle(ref RectangleD r, StringAlignment horz, StringAlignment vert)
 		{
 			switch (vert)

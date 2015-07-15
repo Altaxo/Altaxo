@@ -461,6 +461,18 @@ namespace Altaxo.Gui.Graph.Viewing
 			return shouldDeleted;
 		}
 
+		internal void CaptureMouse()
+		{
+			if (null != _view)
+				_view.CaptureMouse();
+		}
+
+		internal void ReleaseMouseCapture()
+		{
+			if (null != _view)
+				_view.ReleaseMouseCapture();
+		}
+
 		#endregion Event handlers set-up by this controller
 
 		#region Painting

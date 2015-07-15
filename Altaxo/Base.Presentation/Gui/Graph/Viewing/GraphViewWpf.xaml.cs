@@ -710,5 +710,15 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 			return glyphs;
 		}
+
+		void IGraphView.CaptureMouse()
+		{
+			this._guiCanvas.CaptureMouse();
+		}
+
+		void IGraphView.ReleaseMouseCapture()
+		{
+			this._guiCanvas.ReleaseMouseCapture();
+		}
 	}
 }

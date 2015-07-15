@@ -192,6 +192,17 @@ namespace Altaxo.Graph.Gdi
 			return true;
 		}
 
+		public bool IsCovering(System.Drawing.PointF[] pathPoints)
+		{
+			foreach (var pathPoint in pathPoints)
+			{
+				var pt = _transformation.TransformPoint(new PointD2D(pathPoint.X, pathPoint.Y));
+				if (!_hittedAreaInPageCoord.Contains(pt))
+					return false;
+			}
+			return true;
+		}
+
 		public bool IsCovering(RectangleD rect, TransformationMatrix2D additionalTransform)
 		{
 			PointD2D pt;

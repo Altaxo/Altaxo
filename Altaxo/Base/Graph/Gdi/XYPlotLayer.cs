@@ -1835,6 +1835,30 @@ namespace Altaxo.Graph.Gdi
 				return base.HitTest(hitData);
 			}
 
+			public override IHitTestObject HitTest(HitTestRectangularData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData, false)))
+					{
+						hit.DoubleClick = AxisScaleEditorMethod;
+						return hit;
+					}
+
+					// hit testing the axes - secondly now with the ticks
+					// in this case the TitleAndFormat editor for the axis should be shown
+					if (axisStyle.IsAxisLineEnabled && null != (hit = axisStyle.AxisLineStyle.HitTest(layer, hitData, true)))
+					{
+						hit.DoubleClick = AxisStyleEditorMethod;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
 			public override PointD2D Position // Position of the line is fixed
 			{
 				get
@@ -1893,6 +1917,23 @@ namespace Altaxo.Graph.Gdi
 				{
 					var axisStyle = layer._axisStyles.ItemAt(Index);
 					if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+					{
+						hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
+						hit.Remove = layer.EhAxisLabelMajorStyleRemove;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
+			public override IHitTestObject HitTest(HitTestRectangularData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (axisStyle.AreMajorLabelsEnabled && null != (hit = axisStyle.MajorLabelStyle.HitTest(layer, hitData)))
 					{
 						hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
 						hit.Remove = layer.EhAxisLabelMajorStyleRemove;
@@ -1970,6 +2011,23 @@ namespace Altaxo.Graph.Gdi
 				{
 					var axisStyle = layer._axisStyles.ItemAt(Index);
 					if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle.HitTest(layer, hitData.GetHittedPointInWorldCoord())))
+					{
+						hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
+						hit.Remove = layer.EhAxisLabelMinorStyleRemove;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
+			public override IHitTestObject HitTest(HitTestRectangularData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (axisStyle.AreMinorLabelsEnabled && null != (hit = axisStyle.MinorLabelStyle.HitTest(layer, hitData)))
 					{
 						hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
 						hit.Remove = layer.EhAxisLabelMinorStyleRemove;
@@ -2058,6 +2116,23 @@ namespace Altaxo.Graph.Gdi
 			}
 
 			public override IHitTestObject HitTest(HitTestPointData hitData)
+			{
+				IHitTestObject hit = null;
+				var layer = ParentObject as XYPlotLayer;
+				if (null != layer && Index >= 0 && Index < layer._axisStyles.Count)
+				{
+					var axisStyle = layer._axisStyles.ItemAt(Index);
+					if (null != axisStyle && null != axisStyle.Title && null != (hit = axisStyle.Title.HitTest(hitData)))
+					{
+						if (null == hit.Remove)
+							hit.Remove = EhRemoveAxisStyleTitle;
+						return hit;
+					}
+				}
+				return base.HitTest(hitData);
+			}
+
+			public override IHitTestObject HitTest(HitTestRectangularData hitData)
 			{
 				IHitTestObject hit = null;
 				var layer = ParentObject as XYPlotLayer;

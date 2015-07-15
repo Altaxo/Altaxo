@@ -293,6 +293,12 @@ namespace Altaxo.Graph.Gdi.Axis
 			return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
 		}
 
+		public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
+		{
+			GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
+			return hitData.IsCovering(selectionPath.PathPoints) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
+		}
+
 		/// <summary>
 		/// Returns the used space from the middle line of the axis
 		/// to the last outer object (either the outer major thicks or half

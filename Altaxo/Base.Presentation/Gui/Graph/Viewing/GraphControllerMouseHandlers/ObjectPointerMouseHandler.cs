@@ -428,6 +428,11 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 						Math.Abs(diffPos.X) >= System.Windows.SystemParameters.MinimumHorizontalDragDistance ||
 						Math.Abs(diffPos.Y) >= System.Windows.SystemParameters.MinimumHorizontalDragDistance)
 				{
+					if (null == _rectangleSelectionArea_GraphCoordinates)
+					{
+						_grac.CaptureMouse();
+					}
+
 					var pt1 = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
 					var rect = new RectangleD(pt1, PointD2D.Empty);
 					rect.ExpandToInclude(_grac.ConvertMouseToRootLayerCoordinates(position));
@@ -453,6 +458,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				List<IHitTestObject> foundObjects;
 				_grac.FindGraphObjectInRootLayerRectangle(_rectangleSelectionArea_GraphCoordinates.Value, out foundObjects);
 				AddSelectedObjectsFromRectangularSelection(foundObjects);
+				_grac.ReleaseMouseCapture();
 				_rectangleSelectionArea_GraphCoordinates = null;
 				_grac.RenderOverlay();
 			}
