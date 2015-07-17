@@ -600,6 +600,42 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				_grac.ArrangeRightToRight();
 				return true;
 			}
+			else if (keyData == Key.Left || keyData == Key.Right || keyData == Key.Up || keyData == Key.Down)
+			{
+				if (_grac.SelectedObjects.Count > 0)
+				{
+					PointD2D direction;
+					switch (keyData)
+					{
+						case Key.Right:
+							direction = new PointD2D(1, 0);
+							break;
+
+						case Key.Left:
+							direction = new PointD2D(-1, 0);
+							break;
+
+						case Key.Down:
+							direction = new PointD2D(0, 1);
+							break;
+
+						case Key.Up:
+							direction = new PointD2D(0, -1);
+							break;
+
+						default:
+							direction = new PointD2D(0, 0);
+							break;
+					}
+
+					_grac.MoveSelectedObjects(direction,
+					Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift),
+					Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl),
+					Keyboard.IsKeyDown(Key.CapsLock)
+					);
+					return true; // by returning true: don't allow navigation between Gui elements using the arrow keys
+				}
+			}
 
 			return false; // per default the key is not processed
 		}

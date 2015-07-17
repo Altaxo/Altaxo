@@ -1444,6 +1444,113 @@ namespace Altaxo.Gui.Graph.Viewing
 
 		#endregion Arrange
 
+		#region Movement in X Y direction
+
+		/// <summary>
+		/// Determines the parent layer of the selected objects, as far as all selected objects belong to the same layer.
+		/// </summary>
+		/// <returns>The layer all selected objects belong to. If the selected objects belong to different layers, the return value is null.</returns>
+		public HostLayer GetParentLayerOfSelectedObjects()
+		{
+			HostLayer layer4all = null;
+			foreach (IHitTestObject o in SelectedObjects)
+			{
+				var layer = AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>((IDocumentLeafNode)o.HittedObject);
+				if (layer == null)
+					continue;
+
+				if (layer4all == null)
+					layer4all = layer;
+				else if (!object.ReferenceEquals(layer, layer4all))
+					return null;
+			}
+
+			return layer4all;
+		}
+
+		/// <summary>
+		/// Moves the selected objects in a certain direction in response to an arrow key pressed.
+		/// </summary>
+		/// <param name="directionNormed">The direction (normed) in which the movement should be carried out.</param>
+		/// <param name="isShiftPressed">True if the shift key was pressed along with the arrow key.</param>
+		/// <param name="isCtrlPressed">True if the ctrl key was pressed along with the arrow key.</param>
+		/// <param name="isCapsLockPressed">True if the CapsLock key was pressed along with the arrow key.</param>
+		public void MoveSelectedObjects(
+			PointD2D directionNormed,
+			bool isShiftPressed,
+			bool isCtrlPressed,
+			bool isCapsLockPressed
+		)
+		{
+			// Ctrl -> move by 0.5% instead of 5%
+			// Shift -> Shift absolute instead of relativ
+			// Alt -> use root layer in every case, even if all selected objects have the same layer
+
+			int stepsPerSpan = isCtrlPressed ? 200 : 20;
+			double absoluteSize = Math.Abs(directionNormed.DotProduct(_doc.Size));
+			double stepWidth = absoluteSize / stepsPerSpan;
+			PointD2D shift = directionNormed * stepWidth;
+
+			if (isShiftPressed)
+			{
+				HostLayer layer4all = null;
+
+				if (!isCapsLockPressed)
+				{
+					// are all selected objects are from one layer? (but only if ALT not pressed)
+					layer4all = GetParentLayerOfSelectedObjects();
+				}
+
+				TransformationMatrix2D layer4allTransform = null;
+				TransformationMatrix2D layer4allBackTransform = null;
+				if (null != layer4all)
+				{
+					// if there a layer where all selected objects belong to, use the size and transformation of that layer (instead of the root layer)
+					absoluteSize = Math.Abs(directionNormed.DotProduct(layer4all.Size));
+					stepWidth = absoluteSize / stepsPerSpan;
+					layer4allTransform = layer4all.TransformationFromRootToHere();
+					layer4allBackTransform = layer4allTransform.Inverse();
+				}
+
+				// determine the common outline rectangle of all selected objects
+				RectangleD bounds = new RectangleD();
+				bool boundsInitialized = false;
+				foreach (IHitTestObject o in SelectedObjects)
+				{
+					var outline = o.ObjectOutlineForArrangements;
+					layer4allBackTransform?.TransformPath(outline);
+					RectangleD r = outline.GetBounds();
+					if (boundsInitialized)
+					{
+						bounds.ExpandToInclude(r);
+					}
+					else
+					{
+						bounds = r;
+						boundsInitialized = true;
+					}
+				}
+
+				// now calculate the shift
+				bool moveRightOrBottom = directionNormed.DotProduct(new PointD2D(1, 1)) > 0;
+				double front = directionNormed.GetMemberwiseAbs().DotProduct(moveRightOrBottom ? bounds.RightBottom : bounds.LeftTop);
+				double frontByStepWidth = stepsPerSpan * (front / absoluteSize);
+				double nextFrontByStepWidth = moveRightOrBottom ? Math.Ceiling(frontByStepWidth + 1E-3) : Math.Floor(frontByStepWidth - 1E-3);
+				stepWidth = Math.Abs(frontByStepWidth - nextFrontByStepWidth) * (absoluteSize / stepsPerSpan);
+				shift = directionNormed * stepWidth;
+				if (null != layer4allTransform)
+					shift = layer4allTransform.TransformVector(shift);
+			}
+
+			// shift the objects here
+			foreach (IHitTestObject o in SelectedObjects)
+			{
+				o.ShiftPosition(shift.X, shift.Y);
+			}
+		}
+
+		#endregion Movement in X Y direction
+
 		public void Dispose()
 		{
 			if (null != _triggerBasedUpdate)

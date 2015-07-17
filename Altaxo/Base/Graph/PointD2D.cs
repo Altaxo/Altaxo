@@ -205,6 +205,15 @@ namespace Altaxo.Graph
 			return new PointD2D(-X, -Y);
 		}
 
+		/// <summary>
+		/// Returns a new <see cref="PointD2D"/> based on the existing one, but with both Abs(X) instead of X, and Abs(Y) instead of Y.
+		/// </summary>
+		/// <returns>New <see cref="PointD2D"/> based on the existing one, but with both Abs(X) instead of X, and Abs(Y) instead of Y.</returns>
+		public PointD2D GetMemberwiseAbs()
+		{
+			return new PointD2D(Math.Abs(X), Math.Abs(Y));
+		}
+
 		public PointD2D GetRotatedByDegree(double rotation, PointD2D pivot)
 		{
 			return GetRotatedByRad(rotation * Math.PI / 180, pivot);

@@ -414,7 +414,7 @@ namespace Altaxo.Graph.Gdi
 
 		public void TransformPath(System.Drawing.Drawing2D.GraphicsPath path)
 		{
-			TransformPoints(path.PathPoints);
+			path.Transform(this);
 		}
 
 		public void InverseTransformPoint(ref double x, ref double y)
@@ -441,6 +441,23 @@ namespace Altaxo.Graph.Gdi
 		public PointF InverseTransformPoint(PointF pt)
 		{
 			return new PointF((float)(((pt.X - dx) * sy + (dy - pt.Y) * rx) / determinant), (float)(((dx - pt.X) * ry + (pt.Y - dy) * sx) / determinant));
+		}
+
+		/// <summary>
+		/// Gets the inverse of the matrix.
+		/// </summary>
+		/// <returns></returns>
+		public TransformationMatrix2D Inverse()
+		{
+			return new TransformationMatrix2D(
+				sy / determinant,
+				-ry / determinant,
+				-rx / determinant,
+				sx / determinant,
+				(dy * rx - dx * sy) / determinant,
+				(dx * ry - dy * sy) / determinant
+				)
+			{ determinant = 1 / this.determinant };
 		}
 
 		public PointD2D InverseTransformVector(PointD2D pt)
