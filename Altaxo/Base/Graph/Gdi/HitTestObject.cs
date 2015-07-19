@@ -156,6 +156,13 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dy">Shift value of y in page coordinates.</param>
 		public abstract void ShiftPosition(double dx, double dy);
 
+		/// <summary>
+		/// Changes the size of the hitted item either in x or in y direction.
+		/// </summary>
+		/// <param name="x">If not null, this is the new x size of the hitted object.</param>
+		/// <param name="y">If not null, this is the new y size of the hitted object.</param>
+		public abstract void ChangeSize(double? x, double? y);
+
 		private DoubleClickHandler _DoubleClick;
 
 		public DoubleClickHandler DoubleClick
@@ -277,6 +284,11 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="dx">Shift value of x in page coordinates.</param>
 		/// <param name="dy">Shift value of y in page coordinates.</param>
 		public override void ShiftPosition(double dx, double dy)
+		{
+			// per default: do nothing
+		}
+
+		public override void ChangeSize(double? x, double? y)
 		{
 			// per default: do nothing
 		}

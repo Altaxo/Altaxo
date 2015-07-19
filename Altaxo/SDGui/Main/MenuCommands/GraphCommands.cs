@@ -422,6 +422,22 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+	public class ArrangeSameHorizontalSize : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.ArrangeSameHorizontalSize();
+		}
+	}
+
+	public class ArrangeSameVerticalSize : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			ctrl.ArrangeSameVerticalSize();
+		}
+	}
+
 	public class MoveGraphItemUp : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)

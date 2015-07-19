@@ -56,6 +56,30 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
+			public override void ChangeSize(double? x, double? y)
+			{
+				var hit = _hitobject as GraphicBase;
+
+				PointD2D currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
+				PointD2D destinationSizeRootCoord = currentSizeRootCoord;
+				if (x.HasValue)
+					destinationSizeRootCoord.X = x.Value;
+				if (y.HasValue)
+					destinationSizeRootCoord.Y = y.Value;
+
+				if (null != hit)
+				{
+					if (!hit.AutoSize)
+					{
+						var t = _matrix.Clone();
+						t.AppendTransform(hit._transformation);
+						var innerRect = RectangleExtensions.GetIncludedTransformedRectangle(new RectangleD(PointD2D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
+						hit.Width = innerRect.Width;
+						hit.Height = innerRect.Height;
+					}
+				}
+			}
+
 			public override GraphicsPath ObjectOutlineForArrangements
 			{
 				get

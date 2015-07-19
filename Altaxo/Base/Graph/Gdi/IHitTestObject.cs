@@ -73,6 +73,13 @@ namespace Altaxo.Graph.Gdi
 		void ShiftPosition(double dx, double dy);
 
 		/// <summary>
+		/// Changes the size of the hitted item either in x or in y direction.
+		/// </summary>
+		/// <param name="x">If not null, this is the new x size of the hitted object.</param>
+		/// <param name="y">If not null, this is the new y size of the hitted object.</param>
+		void ChangeSize(double? x, double? y);
+
+		/// <summary>
 		/// Delegate to handle double click events. Should return true if the object was removed during the processing. Otherwise returns false.
 		/// </summary>
 		DoubleClickHandler DoubleClick { get; set; }

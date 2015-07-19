@@ -801,6 +801,10 @@
 				class="Altaxo.Graph.Commands.ArrangeHorizontalTable" />
 			<ToolbarItem id="ArrangeVerticalTable" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description}"
 				class="Altaxo.Graph.Commands.ArrangeVerticalTable" />
+			<ToolbarItem id="ArrangeSameHorzSize" icon="Icons.16x16.ArrangeSameHorizontalSize" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeSameHorizontalSize.Description}"
+				class="Altaxo.Graph.Commands.ArrangeSameHorizontalSize" />
+			<ToolbarItem id="ArrangeSameVerticalSize" icon="Icons.16x16.ArrangeSameVerticalSize" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeSameVerticalSize.Description}"
+				class="Altaxo.Graph.Commands.ArrangeSameVerticalSize" />
 			<ToolbarItem id="GroupObjects" icon="Icons.16x16.GroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.GroupShapes.Description}"
 				class="Altaxo.Graph.Commands.GroupSelectedObjects" />
 			<ToolbarItem id="UngroupObjects" icon="Icons.16x16.UngroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.UngroupShapes.Description}"

@@ -1094,6 +1094,45 @@ namespace Altaxo.Gui.Graph.Viewing
 			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
 		}
 
+		public void ArrangeSameSizeBase(Action<IHitTestObject, RectangleF, RectangleF> ArrangeAction)
+		{
+			if (SelectedObjects.Count < 2)
+				return;
+
+			RectangleF masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements.GetBounds();
+
+			// now move each object to the new position, which is the difference in the position of the bounds.X
+			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
+			{
+				IHitTestObject o = SelectedObjects[i];
+				RectangleF bounds = o.ObjectOutlineForArrangements.GetBounds();
+
+				ArrangeAction(o, bounds, masterbound);
+			}
+
+			_view.InvalidateCachedGraphBitmapAndRepaint(); // force a refresh
+		}
+
+		public void ArrangeSameHorizontalSize()
+		{
+			ArrangeSameSizeBase(
+				(o, bounds, masterbound) =>
+				{
+					o.ChangeSize(masterbound.Width, null);
+				}
+				);
+		}
+
+		public void ArrangeSameVerticalSize()
+		{
+			ArrangeSameSizeBase(
+				(o, bounds, masterbound) =>
+				{
+					o.ChangeSize(null, masterbound.Height);
+				}
+				);
+		}
+
 		public void MoveSelectedGraphItemsUp()
 		{
 			var selectedItems = new HashSet<object>();
