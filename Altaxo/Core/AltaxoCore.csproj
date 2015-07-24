@@ -302,6 +302,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\LinearAlgebra\DoubleVectorEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\FastNonnegativeLeastSquares.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatCholeskyDecomp.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatLevinson.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatLUDecomp.cs" />
@@ -384,6 +385,7 @@
     <Compile Include="Calc\LinearAlgebra\ROVectorBase.cs" />
     <Compile Include="Calc\LinearAlgebra\SingularMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\SVDDecomposition.cs" />
+    <Compile Include="Calc\LinearAlgebra\TikhonovRegularizedNonnegativeMatrixFactorization.cs" />
     <Compile Include="Calc\LinearAlgebra\VectorMath.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -595,6 +597,7 @@
     <Compile Include="Collections\Text\SubstringPosition.cs" />
     <Compile Include="Calc\PrimeNumberMath.cs" />
     <Compile Include="Collections\TreeNodeExtensions.cs" />
+    <Compile Include="MatrixNorm.cs" />
     <Compile Include="StringResources.cs" />
     <Compile Include="Science\Energy.cs" />
     <Compile Include="StringResourceKey.cs" />

@@ -244,6 +244,7 @@
     <Compile Include="Calc\LinearAlgebra\DoubleSymmetricLevinsonTest.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleVectorEnumeratorTest.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleVectorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FastNonnegativeLeastSquaresTest.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatCholeskyDecompTest.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatLevinsonTest.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatLUDecompTest.cs" />
@@ -256,6 +257,7 @@
     <Compile Include="Calc\LinearAlgebra\FloatVectorTest.cs" />
     <Compile Include="Calc\LinearAlgebra\MatrixMathTest.cs" />
     <Compile Include="Calc\LinearAlgebra\TestSingularValueDecomposition.cs" />
+    <Compile Include="Calc\LinearAlgebra\TikhonovRegularizedNonnegativeMatrixFactorizationTest.cs" />
     <Compile Include="Calc\Optimization\ConjugateGradientTest.cs" />
     <Compile Include="Calc\Optimization\EndCriteriaTest.cs" />
     <Compile Include="Calc\Optimization\NelderMeadTest.cs" />

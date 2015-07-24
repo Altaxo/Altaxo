@@ -276,6 +276,33 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
 		}
 
+		/// <summary>
+		/// Creates a matrix with elements set to random values between 0 and 1.
+		/// </summary>
+		/// <param name="rows">Numer of rows of the matrix to create.</param>
+		/// <param name="columns">Number of columns of the matrix to create.</param>
+		/// <returns>Matrix with elements set to random values between 0 and 1</returns>
+		public static DoubleMatrix Random(int rows, int columns)
+		{
+			Random rnd = new Random();
+
+			var result = new DoubleMatrix(rows, columns);
+			for (int i = 0; i < rows; ++i)
+				for (int j = 0; j < columns; ++j)
+					result[i, j] = rnd.NextDouble();
+
+			return result;
+		}
+
+		public static DoubleMatrix Diag(IROVector v)
+		{
+			var result = new DoubleMatrix(v.Length, v.Length);
+			for (int i = 0; i < v.Length; ++i)
+				result[i, i] = v[i];
+
+			return result;
+		}
+
 		///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
 		///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
 		static public implicit operator DoubleMatrix(FloatMatrix source)
@@ -1702,7 +1729,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (a.columns != b.rows)
 			{
 				throw new ArgumentException("Matrices are not conformable.");
-			} return a * b;
+			}
+			return a * b;
 		}
 
 		///<summary>Multiply this <c>DoubleMatrix</c> with a <c>DoubleMatrix</c> and return results in this <c>DoubleMatrix</c></summary>
@@ -1822,8 +1850,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
 		public string ToString(string format, IFormatProvider formatProvider)
 		{
-			StringBuilder sb = new StringBuilder("rows: ");
-			sb.Append(rows).Append(", cols: ").Append(columns).Append(System.Environment.NewLine);
+			StringBuilder sb = new StringBuilder();
+
+			sb.AppendFormat("{0}x{1} ", rows, columns);
+
+			sb.Append("[");
 
 			for (int i = 0; i < rows; i++)
 			{
@@ -1837,9 +1868,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 				if (i != rows - 1)
 				{
-					sb.Append(System.Environment.NewLine);
+					sb.Append("; ");
 				}
 			}
+			sb.Append("]");
+
 			return sb.ToString();
 		}
 

@@ -23,6 +23,9 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -565,7 +568,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// </summary>
 			/// <param name="s">The scalar to convert.</param>
 			/// <returns>The value of the element[0,0], which is the only element of the scalar.</returns>
-			public static implicit operator double(Scalar s)
+			public static implicit operator double (Scalar s)
 			{
 				return s.m_Value;
 			}
@@ -2031,6 +2034,210 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#endregion Addition, Subtraction, Multiply and combined operations
 
+		#region Iterations
+
+		/// <summary>
+		/// Determines whether any element of the provided matrix <paramref name="a"/> fulfills the given predicate.
+		/// </summary>
+		/// <param name="a">The matrix.</param>
+		/// <param name="predicate">The predicate to fulfill. 1st argument is the row number, 2nd arg is the column number, 3rd arg is the element value at row and column. The return value is the predicate.</param>
+		/// <returns>True if any element of the provided matrix <paramref name="a"/> fulfills the given predicate; otherwise false.</returns>
+		public static bool Any(this IROMatrix a, Func<int, int, double, bool> predicate)
+		{
+			int NC = a.Columns;
+			int NR = a.Rows;
+			for (int c = 0; c < NC; ++c)
+				for (int r = 0; r < NR; ++r)
+					if (predicate(r, c, a[r, c]))
+						return true;
+
+			return false;
+		}
+
+		#endregion Iterations
+
+		#region Submatrix
+
+		private static Func<int, int, DoubleMatrix> _defaultMatrixGenerator = (r, c) => new DoubleMatrix(r, c);
+
+		/// <summary>
+		/// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of matrix to return.</typeparam>
+		/// <param name="a">The original matrix.</param>
+		/// <param name="selectedRows">Selected rows. The rows of the submatrix consist of all rows of the original matrix where selectedRows[row] is true.</param>
+		/// <param name="selectedColumns">Selected columns. The columns of the submatrix consist of all columns of the original matrix where selectedColumns[col] is true.</param>
+		/// <param name="MatrixGenerator">Function to generate the returned matrix. 1st arg is the number of rows, 2nd arg the number of columns. The function have to generate a new matrix with the given number of rows and columns.</param>
+		/// <returns>The submatrix containing selected elements of the original matrix <paramref name="a"/>.</returns>
+		public static T SubMatrix<T>(this IROMatrix a, bool[] selectedRows, bool[] selectedColumns, Func<int, int, T> MatrixGenerator) where T : IMatrix
+		{
+			int NRR = selectedRows.Count(ele => true == ele);
+			int NCC = selectedColumns.Count(ele => true == ele);
+
+			var result = MatrixGenerator(NRR, NCC);
+
+			int NC = a.Columns;
+			int NR = a.Rows;
+
+			for (int c = 0, cc = 0; c < NC; ++c)
+			{
+				if (selectedColumns[c])
+				{
+					for (int r = 0, rr = 0; r < NR; ++r)
+					{
+						if (selectedRows[r])
+						{
+							result[rr, cc] = a[r, c];
+							++rr;
+						}
+					}
+					++cc;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of matrix to return.</typeparam>
+		/// <param name="a">The original matrix.</param>
+		/// <param name="selectedRows">Selected rows. The rows of the submatrix consist of all rows of the original matrix whose index is contained in selectedRows.</param>
+		/// <param name="selectedColumns">Selected columns. The columns of the submatrix consist of all columns of the original matrix whose index is contained in selectedColumns.</param>
+		/// <param name="MatrixGenerator">Function to generate the returned matrix. 1st arg is the number of rows, 2nd arg the number of columns. The function have to generate a new matrix with the given number of rows and columns.</param>
+		/// <returns>The submatrix containing selected elements of the original matrix <paramref name="a"/>.</returns>
+		public static T SubMatrix<T>(this IROMatrix a, int[] selectedRows, int[] selectedColumns, Func<int, int, T> MatrixGenerator) where T : IMatrix
+		{
+			int NRR = selectedRows.Length;
+			int NCC = selectedColumns.Length;
+
+			var result = MatrixGenerator(NRR, NCC);
+
+			int NC = a.Columns;
+			int NR = a.Rows;
+
+			for (int cc = 0; cc < NCC; ++cc)
+			{
+				int c = selectedColumns[cc];
+				{
+					for (int rr = 0; rr < NRR; ++rr)
+					{
+						int r = selectedRows[rr];
+						{
+							result[rr, cc] = a[r, c];
+						}
+					}
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of matrix to return.</typeparam>
+		/// <param name="a">The original matrix.</param>
+		/// <param name="selectedRows">Selected rows. The rows of the submatrix consist of all rows whose index is contained in selectedRows.</param>
+		/// <param name="selectedColumns">Selected columns. The columns of the submatrix consist of all columns of the original matrix where selectedColumns[col] is true.</param>
+		/// <param name="MatrixGenerator">Function to generate the returned matrix. 1st arg is the number of rows, 2nd arg the number of columns. The function have to generate a new matrix with the given number of rows and columns.</param>
+		/// <returns>The submatrix containing selected elements of the original matrix <paramref name="a"/>.</returns>
+		public static T SubMatrix<T>(this IROMatrix a, int[] selectedRows, bool[] selectedColumns, Func<int, int, T> MatrixGenerator) where T : IMatrix
+		{
+			int NRR = selectedRows.Length;
+			int NCC = selectedColumns.Count(ele => true == ele);
+
+			var result = MatrixGenerator(NRR, NCC);
+
+			int NC = a.Columns;
+			int NR = a.Rows;
+
+			for (int c = 0, cc = 0; c < NC; ++c)
+			{
+				if (selectedColumns[c])
+				{
+					for (int rr = 0; rr < NRR; ++rr)
+					{
+						int r = selectedRows[rr];
+						{
+							result[rr, cc] = a[r, c];
+						}
+					}
+					++cc;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of matrix to return.</typeparam>
+		/// <param name="a">The original matrix.</param>
+		/// <param name="selectedRows">Selected rows. The rows of the submatrix consist of all rows of the original matrix where selectedRows[row] is true.</param>
+		/// <param name="selectedColumns">Selected columns. The columns of the submatrix consist of all columns of the original matrix whose index is contained in selectedColumns.</param>
+		/// <param name="MatrixGenerator">Function to generate the returned matrix. 1st arg is the number of rows, 2nd arg the number of columns. The function have to generate a new matrix with the given number of rows and columns.</param>
+		/// <returns>The submatrix containing selected elements of the original matrix <paramref name="a"/>.</returns>
+		public static T SubMatrix<T>(this IROMatrix a, bool[] selectedRows, int[] selectedColumns, Func<int, int, T> MatrixGenerator) where T : IMatrix
+		{
+			int NRR = selectedRows.Count(ele => true == ele);
+			int NCC = selectedColumns.Length;
+
+			var result = MatrixGenerator(NRR, NCC);
+
+			int NC = a.Columns;
+			int NR = a.Rows;
+
+			for (int cc = 0; cc < NCC; ++cc)
+			{
+				int c = selectedColumns[cc];
+				{
+					for (int r = 0, rr = 0; r < NR; ++r)
+					{
+						if (selectedRows[r])
+						{
+							result[rr, cc] = a[r, c];
+							++rr;
+						}
+					}
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of matrix to return.</typeparam>
+		/// <param name="a">The original matrix.</param>
+		/// <param name="selectedRows">Selected rows. The rows of the submatrix consist of all rows of the original matrix where selectedRows[row] is true.</param>
+		/// <param name="selectedColumn">Selected column. The submatrix consists of one column, whose values originate from the original matrix selectedColumn.</param>
+		/// <param name="MatrixGenerator">Function to generate the returned matrix. 1st arg is the number of rows, 2nd arg the number of columns. The function have to generate a new matrix with the given number of rows and columns.</param>
+		/// <returns>The submatrix containing selected elements of the original matrix <paramref name="a"/>.</returns>
+		public static T SubMatrix<T>(this IROMatrix a, bool[] selectedRows, int selectedColumn, Func<int, int, T> MatrixGenerator) where T : IMatrix
+		{
+			return SubMatrix(a, selectedRows, new int[] { selectedColumn }, MatrixGenerator);
+		}
+
+		/// <summary>
+		/// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of matrix to return.</typeparam>
+		/// <param name="a">The original matrix.</param>
+		/// <param name="selectedRow">Selected row. The submatrix consists of one row, whose values originate from the original matrix selectedRow.</param>
+		/// <param name="selectedColumns">Selected columns. The columns of the submatrix consist of all columns of the original matrix where selectedColumns[col] is true.</param>
+		/// <param name="MatrixGenerator">Function to generate the returned matrix. 1st arg is the number of rows, 2nd arg the number of columns. The function have to generate a new matrix with the given number of rows and columns.</param>
+		/// <returns>The submatrix containing selected elements of the original matrix <paramref name="a"/>.</returns>
+		public static T SubMatrix<T>(this IROMatrix a, int selectedRow, bool[] selectedColumns, Func<int, int, T> MatrixGenerator) where T : IMatrix
+		{
+			return SubMatrix(a, new int[] { selectedRow }, selectedColumns, MatrixGenerator);
+		}
+
+		#endregion Submatrix
+
 		/// <summary>
 		/// Replaces all matrix elements that are NaN (not a number) with the value of <paramref name="replacementValue"/>.
 		/// </summary>
@@ -2246,7 +2453,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="a">The matrix where to set the elements.</param>
 		/// <param name="scalar">The value which is used to set each element with.</param>
-		public static void SetMatrixElements(IMatrix a, double scalar)
+		public static void SetMatrixElements(this IMatrix a, double scalar)
 		{
 			for (int i = 0; i < a.Rows; i++)
 				for (int j = 0; j < a.Columns; j++)
@@ -2254,10 +2461,22 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
+		/// Sets the matrix elements to the value provided by a setter function <paramref name="Setter"/>.
+		/// </summary>
+		/// <param name="a">The matrix for which to set the elements.</param>
+		/// <param name="Setter">The setter function. First arg is the row index, 2nd arg the column index. The return value is used to set the matrix element.</param>
+		public static void SetMatrixElements(this IMatrix a, Func<int, int, double> Setter)
+		{
+			for (int i = 0; i < a.Rows; i++)
+				for (int j = 0; j < a.Columns; j++)
+					a[i, j] = Setter(i, j);
+		}
+
+		/// <summary>
 		/// Set all elements in the matrix to 0 (zero)
 		/// </summary>
 		/// <param name="a">The matrix to zero.</param>
-		public static void ZeroMatrix(IMatrix a)
+		public static void ZeroMatrix(this IMatrix a)
 		{
 			SetMatrixElements(a, 0);
 		}
@@ -2661,6 +2880,83 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static SingularValueDecomposition GetSingularValueDecomposition(IMatrix inout)
 		{
 			return new SingularValueDecomposition(inout);
+		}
+
+		/// <summary>
+		/// Get the minimum value of all elements of the specified matrix <paramref name="a"/>.
+		/// </summary>
+		/// <param name="a">The matrix.</param>
+		/// <returns>Minimum value of all elements of the specified matrix <paramref name="a"/>.</returns>
+		public static double Min(this IROMatrix a)
+		{
+			double min = a[0, 0];
+
+			for (int i = 0; i < a.Rows; ++i)
+				for (int j = 0; j < a.Columns; ++j)
+					min = Math.Min(min, a[i, j]);
+
+			return min;
+		}
+
+		/// <summary>
+		/// Get the maximum value of all elements of the specified matrix <paramref name="a"/>.
+		/// </summary>
+		/// <param name="a">The matrix.</param>
+		/// <returns>Maximum value of all elements of the specified matrix <paramref name="a"/>.</returns>
+		public static double Max(this IROMatrix a)
+		{
+			double max = a[0, 0];
+
+			for (int i = 0; i < a.Rows; ++i)
+				for (int j = 0; j < a.Columns; ++j)
+					max = Math.Max(max, a[i, j]);
+
+			return max;
+		}
+
+		/// <summary>
+		/// Get the trace of square matrix <paramref name="a"/>, i.e. the sum of diagonal elements.
+		/// </summary>
+		/// <param name="a">The matrix.</param>
+		/// <returns>Trace of square matrix <paramref name="a"/>, i.e. the sum of diagonal elements.</returns>
+		public static double Trace(this IROMatrix a)
+		{
+			if (a.Rows != a.Columns)
+				throw new ArgumentException(string.Format("Matrix needs to be a square matrix, but has dimensions {0}x{1}", a.Rows, a.Columns), nameof(a));
+
+			double sum = 0;
+			for (int i = a.Columns - 1; i >= 0; --i)
+				sum += a[i, i];
+
+			return sum;
+		}
+
+		public static double Norm(this IROMatrix a, MatrixNorm ntype)
+		{
+			if (null == a)
+				throw new ArgumentNullException(nameof(a));
+
+			double result = 0;
+			switch (ntype)
+			{
+				case MatrixNorm.M1Norm:
+					{
+						for (int c = 0; c < a.Columns; ++c)
+						{
+							double sum = 0;
+							for (int r = 0; r < a.Rows; ++r)
+								sum += Math.Abs(a[r, c]);
+
+							result = Math.Max(result, sum);
+						}
+					}
+					break;
+
+				default:
+					throw new NotImplementedException("Norm not implemented: " + ntype.ToString());
+			}
+
+			return result;
 		}
 
 		/// <summary>
