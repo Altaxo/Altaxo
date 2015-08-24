@@ -5,22 +5,44 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+	/// <summary>
+	/// Implementation of an algorithm that finds a vector x with all elements xi&gt;=0 which minimizes |X*x-y|.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Literature: Rasmus Bro and Sijmen De Jong, 'A fast non-negativity-constrained least squares algorithm', Journal of Chemometrics, Vol. 11, 393-401 (1997)
+	/// </para>
+	/// <para>
+	/// Algorithm modified by Dirk Lellinger 2015 to allow a mixture of restricted and unrestricted parameters.
+	/// </para>
+	/// </remarks>
 	public static class FastNonnegativeLeastSquares
 	{
 		/// <summary>
-		/// Exection of the fast nonnegative least squares algorithm. The algorithm finds an vector x with all elements xi&gt;=0 which minimizes |X*x-y|.
+		/// Execution of the fast nonnegative least squares algorithm. The algorithm finds a vector x with all elements xi&gt;=0 which minimizes |X*x-y|.
 		/// </summary>
 		/// <param name="XtX">X transposed multiplied by X, thus a square matrix.</param>
 		/// <param name="Xty">X transposed multiplied by Y, thus a matrix with one column and same number of rows as X.</param>
-		/// <param name="tolerance">Can be null. Used to determine if a solution element is less than or equal to zero.</param>
+		/// <param name="isRestrictedToPositiveValues">Function that takes the parameter index as argument and returns true if the parameter at this index is restricted to positive values; otherwise the return value must be false.</param>
+		/// <param name="tolerance">Used to decide if a solution element is less than or equal to zero. If this is null, a default tolerance of tolerance = MAX(SIZE(XtX)) * NORM(XtX,1) * EPS is used.</param>
 		/// <param name="x">Output: solution vector (matrix with one column and number of rows according to dimension of X.</param>
 		/// <param name="w">Output: Lagrange vector. Elements which take place in the fit are set to 0. Elements fixed to zero contain a negative number.</param>
-		public static void Execute(IROMatrix XtX, IROMatrix Xty, double? tolerance, out IMatrix x, out IMatrix w)
+		/// <remarks>
+		/// <para>
+		/// Literature: Rasmus Bro and Sijmen De Jong, 'A fast non-negativity-constrained least squares algorithm', Journal of Chemometrics, Vol. 11, 393-401 (1997)
+		/// </para>
+		/// <para>
+		/// Algorithm modified by Dirk Lellinger 2015 to allow a mixture of restricted and unrestricted parameters.
+		/// </para>
+		/// </remarks>
+		public static void Execution(IROMatrix XtX, IROMatrix Xty, Func<int, bool> isRestrictedToPositiveValues, double? tolerance, out IMatrix x, out IMatrix w)
 		{
 			if (null == XtX)
 				throw new ArgumentNullException(nameof(XtX));
 			if (null == Xty)
 				throw new ArgumentNullException(nameof(Xty));
+			if (null == isRestrictedToPositiveValues)
+				throw new ArgumentNullException(nameof(isRestrictedToPositiveValues));
 
 			if (XtX.Rows != XtX.Columns)
 				throw new ArgumentException("Matrix should be a square matrix", nameof(XtX));
@@ -41,16 +63,24 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// P = zeros(1, n);
 			// Z = 1:n;
-			var P = new bool[n]; // POSITIVE SET: all indices which are currently not fixed (Negative set is simple this, but inverted)
+			var P = new bool[n]; // POSITIVE SET: all indices which are currently not fixed are marked with TRUE (Negative set is simply this, but inverted)
+			bool initializationOfSolutionRequired = false;
+			for (int i = 0; i < n; ++i)
+			{
+				bool isNotRestricted = !isRestrictedToPositiveValues(i);
+				P[i] = isNotRestricted;
+				initializationOfSolutionRequired |= isNotRestricted;
+			}
 
 			// x = P';
 			x = matrixGenerator(n, 1);
 
 			// w = Xty-XtX*x;
-			w = new DoubleMatrix(Xty);
-			var helper = matrixGenerator(n, 1);
-			MatrixMath.Multiply(XtX, x, helper);
-			MatrixMath.Subtract(w, helper, w);
+			w = matrixGenerator(n, 1);
+			MatrixMath.Copy(Xty, w);
+			var helper_n_1 = matrixGenerator(n, 1);
+			MatrixMath.Multiply(XtX, x, helper_n_1);
+			MatrixMath.Subtract(w, helper_n_1, w);
 
 			// set up iteration criterion
 			int iter = 0;
@@ -58,42 +88,46 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// outer loop to put variables into set to hold positive coefficients
 			// while any(Z) & any(w(ZZ) > tol)
-			while (P.Any(ele => false == ele) && w.Any((r, c, ele) => false == P[r] && ele > tol))
+			while (initializationOfSolutionRequired || (P.Any(ele => false == ele) && w.Any((r, c, ele) => false == P[r] && ele > tol)))
 			{
-				// [wt, t] = max(w(ZZ));
-				// t = ZZ(t);
-				int t = -1; // INDEX
-				double wt = double.NegativeInfinity;
-				for (int i = 0; i < n; ++i)
+				if (initializationOfSolutionRequired)
 				{
-					if (!P[i])
+					initializationOfSolutionRequired = false;
+				}
+				else
+				{
+					// [wt, t] = max(w(ZZ));
+					// t = ZZ(t);
+					int t = -1; // INDEX
+					double wt = double.NegativeInfinity;
+					for (int i = 0; i < n; ++i)
 					{
-						if (w[i, 0] > wt)
+						if (!P[i])
 						{
-							wt = w[i, 0];
-							t = i;
+							if (w[i, 0] > wt)
+							{
+								wt = w[i, 0];
+								t = i;
+							}
 						}
 					}
+
+					// P(1, t) = t;
+					// Z(t) = 0;
+					P[t] = true;
 				}
 
-				// P(1, t) = t;
-				// Z(t) = 0;
-				P[t] = true;
-
 				// z(PP')=(Xty(PP)'/XtX(PP,PP)');
-				var temp1 = Xty.SubMatrix(P, 0, matrixGenerator); // Xty(PP)'
-																													//temp1.Transpose();
-				var temp2 = XtX.SubMatrix(P, P, matrixGenerator);
-				//temp2.Transpose();
-				var solver = new DoubleLUDecomp(temp2);
-				var temp3 = solver.Solve(temp1);
-				var z = new DoubleMatrix(n, 1);
+				var subXty = Xty.SubMatrix(P, 0, matrixGenerator); // Xty(PP)'
+				var subXtX = XtX.SubMatrix(P, P, matrixGenerator);
+				var solver = new DoubleLUDecomp(subXtX);
+				var subSolution = solver.Solve(subXty);
+				var z = matrixGenerator(n, 1);
 				for (int i = 0, ii = 0; i < n; ++i)
-					z[i, 0] = P[i] ? temp3[ii++, 0] : 0;
+					z[i, 0] = P[i] ? subSolution[ii++, 0] : 0;
 
-				// inner loop to remove elements from the positive set which no longer belong
-
-				while (z.Any((r, c, ele) => true == P[r] && ele <= tol) && iter < itmax)
+				// C. Inner loop (to remove elements from the positive set which no longer belong to)
+				while (z.Any((r, c, ele) => true == P[r] && ele <= tol && isRestrictedToPositiveValues(r)) && iter < itmax)
 				{
 					++iter;
 					// QQ = find((z <= tol) & P');
@@ -101,7 +135,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					double alpha = double.PositiveInfinity;
 					for (int i = 0; i < n; ++i)
 					{
-						if ((z[i, 0] <= tol && true == P[i]))
+						if ((z[i, 0] <= tol && true == P[i] && isRestrictedToPositiveValues(i)))
 						{
 							alpha = Math.Min(alpha, x[i, 0] / (x[i, 0] - z[i, 0]));
 						}
@@ -116,7 +150,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 					for (int i = 0; i < n; ++i)
 					{
-						if (Math.Abs(x[i, 0]) < tol && P[i] == true)
+						if (Math.Abs(x[i, 0]) < tol && P[i] == true && isRestrictedToPositiveValues(i))
 						{
 							P[i] = false;
 						}
@@ -127,23 +161,41 @@ namespace Altaxo.Calc.LinearAlgebra
 					//nzz = size(ZZ);
 					//z(PP) = (Xty(PP)'/XtX(PP,PP)');
 
-					var subXtyt = Xty.SubMatrix(P, 0, matrixGenerator);
-
-					var subXtXt = XtX.SubMatrix(P, P, matrixGenerator);
-
-					solver = new DoubleLUDecomp(subXtXt);
-					var subResult = solver.Solve(subXtyt);
+					subXty = Xty.SubMatrix(P, 0, matrixGenerator);
+					subXtX = XtX.SubMatrix(P, P, matrixGenerator);
+					solver = new DoubleLUDecomp(subXtX);
+					subSolution = solver.Solve(subXty);
 
 					for (int i = 0, ii = 0; i < n; ++i)
-						z[i, 0] = P[i] ? subResult[ii++, 0] : 0;
+						z[i, 0] = P[i] ? subSolution[ii++, 0] : 0;
 				} // end inner loop
 
 				MatrixMath.Copy(z, x);
 				MatrixMath.Copy(Xty, w);
-				var temp4 = matrixGenerator(Xty.Rows, Xty.Columns);
-				MatrixMath.Multiply(XtX, x, temp4);
-				MatrixMath.Subtract(w, temp4, w);
+				MatrixMath.Multiply(XtX, x, helper_n_1);
+				MatrixMath.Subtract(w, helper_n_1, w);
 			}
+		}
+
+		/// <summary>
+		/// Execution of the fast nonnegative least squares algorithm. The algorithm finds a vector x with all elements xi&gt;=0 which minimizes |X*x-y|.
+		/// </summary>
+		/// <param name="XtX">X transposed multiplied by X, thus a square matrix.</param>
+		/// <param name="Xty">X transposed multiplied by Y, thus a matrix with one column and same number of rows as X.</param>
+		/// <param name="tolerance">Used to decide if a solution element is less than or equal to zero. If this is null, a default tolerance of tolerance = MAX(SIZE(XtX)) * NORM(XtX,1) * EPS is used.</param>
+		/// <param name="x">Output: solution vector (matrix with one column and number of rows according to dimension of X.</param>
+		/// <param name="w">Output: Lagrange vector. Elements which take place in the fit are set to 0. Elements fixed to zero contain a negative number.</param>
+		/// <remarks>
+		/// <para>
+		/// Literature: Rasmus Bro and Sijmen De Jong, 'A fast non-negativity-constrained least squares algorithm', Journal of Chemometrics, Vol. 11, 393-401 (1997)
+		/// </para>
+		/// <para>
+		/// Algorithm modified by Dirk Lellinger 2015 to allow a mixture of restricted and unrestricted parameters.
+		/// </para>
+		/// </remarks>
+		public static void Execution(IROMatrix XtX, IROMatrix Xty, double? tolerance, out IMatrix x, out IMatrix w)
+		{
+			Execution(XtX, Xty, (i) => true, tolerance, out x, out w);
 		}
 	}
 }

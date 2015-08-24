@@ -9,8 +9,11 @@ namespace Altaxo.Calc.LinearAlgebra
 	[TestFixture]
 	public static class FastNonnegativeLeastSquaresTest
 	{
+		/// <summary>
+		/// Test set from Literature Rasmus Bro and Sijmen De Jong, 'A fast non-negativity-constrained least squares algorithm', Journal of Chemometrics, Vol. 11, 393-401 (1997)
+		/// </summary>
 		[Test]
-		public static void Test01()
+		public static void Test01a()
 		{
 			var X = new DoubleMatrix(new double[,] { { 73, 71, 52 }, { 87, 74, 46 }, { 72, 2, 7 }, { 80, 89, 71 } });
 			var y = new DoubleMatrix(new double[,] { { 49 }, { 67 }, { 68 }, { 20 } });
@@ -19,17 +22,153 @@ namespace Altaxo.Calc.LinearAlgebra
 			var Xty = X.GetTranspose() * y;
 
 			IMatrix x, w;
-			FastNonnegativeLeastSquares.Execute(XtX, Xty, null, out x, out w);
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
 
 			Assert.AreEqual(0.65, x[0, 0], 0.01);
 			Assert.AreEqual(0, x[1, 0], 0.01);
 			Assert.AreEqual(0, x[2, 0], 0.01);
 
-			Assert.AreEqual(0, w[0, 0]);
+			Assert.AreEqual(0, w[0, 0], 1e-8);
 			Assert.Less(w[1, 0], 0);
 			Assert.Less(w[2, 0], 0);
 		}
 
+		/// <summary>
+		/// Another test set which utilitizes the inner loop of the algorithm.
+		/// </summary>
+		[Test]
+		public static void Test01b()
+		{
+			var X = new DoubleMatrix(new double[,] { { 771, 307, 765, 280 }, { 404, 802, 29, 703 }, { 166, 446, 8, 236 }, { 985, 225, 510, 731 }, { 109, 12, 382, 89 } });
+			var y = new DoubleMatrix(new double[,] { { 83 }, { 339 }, { 330 }, { 731 }, { 896 } });
+
+			var XtX = X.GetTranspose() * X;
+			var Xty = X.GetTranspose() * y;
+
+			IMatrix x, w;
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+
+			Assert.AreEqual(0, x[0, 0], 1e-4);
+			Assert.AreEqual(0, x[1, 0], 1e-4);
+			Assert.AreEqual(0.41813, x[2, 0], 1e-4);
+			Assert.AreEqual(0.58480, x[3, 0], 1e-4);
+
+			Assert.Less(w[0, 0], 0);
+			Assert.Less(w[1, 0], 0);
+			Assert.AreEqual(0, w[2, 0], 1e-8);
+			Assert.AreEqual(0, w[3, 0], 1e-8);
+		}
+
+		/// <summary>
+		/// Another test set which utilitizes the inner loop of the algorithm multiple times.
+		/// </summary>
+		[Test]
+		public static void Test01c()
+		{
+			var X = new DoubleMatrix(new double[,] { { 106, 743, 746, 73 }, { 579, 420, 531, 584 }, { 693, 234, 562, 255 }, { 484, 381, 474, 360 }, { 313, 68, 78, 301 } });
+			var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+
+			var XtX = X.GetTranspose() * X;
+			var Xty = X.GetTranspose() * y;
+
+			IMatrix x, w;
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+
+			Assert.AreEqual(0, x[0, 0], 1e-4);
+			Assert.AreEqual(0.90443, x[1, 0], 1e-4);
+			Assert.AreEqual(0, x[2, 0], 1e-4);
+			Assert.AreEqual(0.29507, x[3, 0], 1e-4);
+
+			Assert.Less(w[0, 0], 0);
+			Assert.AreEqual(0, w[1, 0], 1e-8);
+			Assert.Less(w[2, 0], 0);
+			Assert.AreEqual(0, w[3, 0], 1e-8);
+		}
+
+		/// <summary>
+		/// Same test set as in <see cref="Test01c"/>, but here the first parameter is unrestricted.
+		/// </summary>
+		[Test]
+		public static void Test01d1()
+		{
+			var X = new DoubleMatrix(new double[,] { { 106, 743, 746, 73 }, { 579, 420, 531, 584 }, { 693, 234, 562, 255 }, { 484, 381, 474, 360 }, { 313, 68, 78, 301 } });
+			var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+
+			var XtX = X.GetTranspose() * X;
+			var Xty = X.GetTranspose() * y;
+
+			IMatrix x, w;
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 0, null, out x, out w);
+
+			Assert.AreEqual(-0.07097, x[0, 0], 1e-4);
+			Assert.AreEqual(0.91034, x[1, 0], 1e-4);
+			Assert.AreEqual(0, x[2, 0], 1e-4);
+			Assert.AreEqual(0.37911, x[3, 0], 1e-4);
+
+			Assert.AreEqual(0, w[0, 0], 1e-8);
+			Assert.AreEqual(0, w[1, 0], 1e-8);
+			Assert.Less(w[2, 0], 0);
+			Assert.AreEqual(0, w[3, 0], 1e-8);
+		}
+
+		/// <summary>
+		/// Same test set as in <see cref="Test01d1"/>, but permutated, to make sure that the result does not depend on the position of the unrestricted parameter.
+		/// </summary>
+		[Test]
+		public static void Test01d2()
+		{
+			var X = new DoubleMatrix(new double[,] { { 73, 746, 743, 106 }, { 584, 531, 420, 579 }, { 255, 562, 234, 693 }, { 360, 474, 381, 484 }, { 301, 78, 68, 313 } });
+			var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+
+			var XtX = X.GetTranspose() * X;
+			var Xty = X.GetTranspose() * y;
+
+			IMatrix x, w;
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 3, null, out x, out w);
+
+			Assert.AreEqual(0.37911, x[0, 0], 1e-4);
+			Assert.AreEqual(0, x[1, 0], 1e-4);
+			Assert.AreEqual(0.91034, x[2, 0], 1e-4);
+			Assert.AreEqual(-0.07097, x[3, 0], 1e-4);
+
+			Assert.AreEqual(0, w[0, 0], 1e-8);
+			Assert.Less(w[1, 0], 0);
+			Assert.AreEqual(0, w[2, 0], 1e-8);
+			Assert.AreEqual(0, w[3, 0], 1e-8);
+		}
+
+		/// <summary>
+		/// Same test set as in <see cref="Test01d1"/>, but permutated, and all parameter unrestricted.
+		/// </summary>
+		[Test]
+		public static void Test01e_2()
+		{
+			var X = new DoubleMatrix(new double[,] { { 73, 746, 743, 106 }, { 584, 531, 420, 579 }, { 255, 562, 234, 693 }, { 360, 474, 381, 484 }, { 301, 78, 68, 313 } });
+			var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+
+			var XtX = X.GetTranspose() * X;
+			var Xty = X.GetTranspose() * y;
+
+			var solver = new DoubleLUDecomp(XtX);
+			var expected = solver.Solve(Xty);
+
+			IMatrix x, w;
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => false, null, out x, out w);
+
+			Assert.AreEqual(expected[0, 0], x[0, 0], 1e-4);
+			Assert.AreEqual(expected[1, 0], x[1, 0], 1e-4);
+			Assert.AreEqual(expected[2, 0], x[2, 0], 1e-4);
+			Assert.AreEqual(expected[3, 0], x[3, 0], 1e-4);
+
+			Assert.AreEqual(0, w[0, 0], 1e-8);
+			Assert.AreEqual(0, w[1, 0], 1e-8);
+			Assert.AreEqual(0, w[2, 0], 1e-8);
+			Assert.AreEqual(0, w[3, 0], 1e-8);
+		}
+
+		/// <summary>
+		/// A practical example with exponential functions to fit.
+		/// </summary>
 		[Test]
 		public static void Test02()
 		{
@@ -64,7 +203,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			MatrixMath.MultiplyFirstTransposed(X, y, Xty);
 
 			IMatrix x, w;
-			FastNonnegativeLeastSquares.Execute(XtX, Xty, null, out x, out w);
+			FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
 
 			Assert.AreEqual(0.2, x[0, 0], 1e-6);
 			Assert.AreEqual(0.6, x[1, 0], 1e-6);
@@ -72,5 +211,47 @@ namespace Altaxo.Calc.LinearAlgebra
 			Assert.AreEqual(0.6, x[3, 0], 1e-6);
 			Assert.AreEqual(0.2, x[4, 0], 1e-6);
 		}
+
+		/* used to find test examples which enters the inner iteration loop
+		**
+
+		[Test]
+		public static void Test03()
+		{
+			int NR = 5;
+			int NC = 4;
+
+			for (int seed = 0; seed < int.MaxValue; ++seed)
+			{
+				var rnd = new Random(seed);
+
+				// erzeuge Basisfunktionen
+				var X = new DoubleMatrix(NR, NC);
+				for (int c = 0; c < NC; ++c)
+				{
+					for (int r = 0; r < NR; ++r)
+					{
+						X[r, c] = rnd.Next(1, 1000);
+					}
+				}
+
+				var y = new DoubleMatrix(NR, 1);
+				for (int r = 0; r < NR; ++r)
+				{
+					y[r, 0] = rnd.Next(1, 1000);
+				}
+
+				var XtX = new DoubleMatrix(NC, NC);
+				MatrixMath.MultiplyFirstTransposed(X, X, XtX);
+
+				var Xty = new DoubleMatrix(NC, 1);
+				MatrixMath.MultiplyFirstTransposed(X, y, Xty);
+
+				IMatrix x, w;
+				FastNonnegativeLeastSquares.Execute(XtX, Xty, null, out x, out w);
+			}
+		}
+
+		*/
 	}
 }
