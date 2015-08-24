@@ -671,6 +671,8 @@
 			 description="Open Altaxo's download directory" class="Altaxo.Main.Commands.OpenDownloadDirectory" />
 			<MenuItem id="OpenSettingsDirectory" label="Open settings directory"
 			 description="Open Altaxo's settings directory" class="Altaxo.Main.Commands.OpenSettingsDirectory" />
+			<MenuItem id="OpenProjectDirectory" label="Open project directory"
+			 description="Open Altaxo's current project directory" class="Altaxo.Main.Commands.OpenProjectDirectory" />
 			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="Altaxo.Main.Commands.HelpAboutAltaxo" />
 		</MenuItem>

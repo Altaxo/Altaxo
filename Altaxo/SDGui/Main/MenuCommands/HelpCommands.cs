@@ -176,4 +176,36 @@ namespace Altaxo.Main.Commands
 			}
 		}
 	}
+
+	/// <summary>
+	/// This command opens the project directory (i.e. the directory where the current project is stored) in Windows explorer.
+	/// </summary>
+	public class OpenProjectDirectory : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			if (string.IsNullOrEmpty(Current.ProjectService.CurrentProjectFileName))
+			{
+				Current.Gui.ErrorMessageBox("Sorry, can't open project directory because the current project is not saved yet.", "Error");
+				return;
+			}
+
+			string dir = System.IO.Path.GetDirectoryName(Current.ProjectService.CurrentProjectFileName);
+
+			string args = "/e," + dir;
+
+			var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args);
+
+			processInfo.CreateNoWindow = false;
+			processInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
+			try
+			{
+				var proc = System.Diagnostics.Process.Start(processInfo);
+			}
+			catch (Exception)
+			{
+			}
+		}
+	}
 }

@@ -55,7 +55,7 @@ namespace Altaxo.Calc
 
 			double sum = term1;
 
-			for (; ; )
+			for (;;)
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -103,7 +103,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (; ; )
+			for (;;)
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -170,7 +170,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (; ; )
+			for (;;)
 			{
 				k2m1fac *= (k + k) * (k + k + 1);
 				++k;
@@ -231,7 +231,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (; ; )
+			for (;;)
 			{
 				k2m1fac *= (k + k) * (k + k + 1);
 				++k;
@@ -295,7 +295,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (; ; )
+			for (;;)
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -350,7 +350,7 @@ namespace Altaxo.Calc
 
 			double sum = term1;
 
-			for (; ; )
+			for (;;)
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -406,7 +406,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (; ; )
+			for (;;)
 			{
 				k2m2fac *= (k + k) * (k + k - 1);
 				++k;
@@ -461,7 +461,7 @@ namespace Altaxo.Calc
 
 			double prev = curr;
 
-			for (; ; )
+			for (;;)
 			{
 				k2m2fac *= (k + k) * (k + k - 1);
 				++k;
@@ -528,7 +528,7 @@ namespace Altaxo.Calc
 				if (_respline == null)
 					CreateRealPartSpline();
 
-				double log_OneMinusRe = _respline.Interpolate(beta, y);
+				double log_OneMinusRe = _respline.Value.Interpolate(beta, y);
 
 				return 1 - Math.Exp(log_OneMinusRe);
 			}
@@ -559,7 +559,7 @@ namespace Altaxo.Calc
 				if (_imspline == null)
 					CreateImaginaryPartSpline();
 
-				double log_ar = _imspline.Interpolate(beta, y);
+				double log_ar = _imspline.Value.Interpolate(beta, y);
 
 				return -beta * Math.Exp(log_ar);
 			}
@@ -633,23 +633,23 @@ namespace Altaxo.Calc
 
 		#region Interpolation
 
-		private static Interpolation.BivariateAkimaSpline _imspline;
-		private static Interpolation.BivariateAkimaSpline _respline;
+		private static System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline> _imspline = new System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateImaginaryPartSpline);
+		private static System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline> _respline = new System.Threading.ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateRealPartSpline);
 
-		private static void CreateImaginaryPartSpline()
+		private static Interpolation.BivariateAkimaSpline CreateImaginaryPartSpline()
 		{
 			IROVector x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
 			IROVector y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
 			IROMatrix z = MatrixMath.ToROMatrix(_imdata);
-			_imspline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
+			return new Interpolation.BivariateAkimaSpline(x, y, z, false);
 		}
 
-		private static void CreateRealPartSpline()
+		private static Interpolation.BivariateAkimaSpline CreateRealPartSpline()
 		{
 			IROVector x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
 			IROVector y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
 			IROMatrix z = MatrixMath.ToROMatrix(_redata);
-			_respline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
+			return new Interpolation.BivariateAkimaSpline(x, y, z, false);
 		}
 
 		#endregion Interpolation
@@ -1787,7 +1787,7 @@ new double[]{
 -0.69592620217441536,-0.68025112110087371,-0.66481284286798614,-0.649611639826136,-0.63464766921699911,-0.61992097269691315,-0.6054314760842282,-0.59117898933220869,-0.57716320672812882,-0.56338370731826581,-0.54983995555755583,
 -0.53653130218174749,-0.52345698529896556,-0.51061613169669939,-0.49800775835935129,-0.48563077419064038,-0.47348398193434732,-0.46156608028612278,-0.44987566618836511,-0.43841123729950993,-0.42717119462846437,-0.41615384532437161,
 -0.40535740561140454,-0.39478000385786666,-0.38441968376852237,-0.37427440768879244,-0.36434206000922942,-0.35462045065853603,-0.34510731867330413,-0.33580033583263136,-0.3266971103458165,-0.31779519058143996,-0.30909206882629792}
-    };
+		};
 
 		#endregion RealPart
 
@@ -2923,7 +2923,7 @@ new double[]{
 -0.70010939145646922,-0.69994564552328742,-0.70002413625650328,-0.70034512138884619,-0.7009087402088322,-0.70171501308560469,-0.70276384122468072,-0.70405500665620158,-0.7055881724563281,-0.7073628832014528,-0.70937856565393487,
 -0.71163452967710117,-0.71412996937630757,-0.71686396446192513,-0.71983548182921442,-0.723043377349178,-0.72648639786365043,-0.73016318337709685,-0.734072269436852,-0.73821208969284668,-0.74258097862724071,-0.7471771744438187,
 -0.75199882210649982,-0.75704397651588229,-0.7623106058123762,-0.76779659479418194,-0.77349974843814573,-0.7794177955113688,-0.78554839226135653,-0.79188912617247809,-0.79843751977654986,-0.80519103450546792,-0.81214707457398361}
-    };
+		};
 
 		#endregion ImaginaryPart
 
