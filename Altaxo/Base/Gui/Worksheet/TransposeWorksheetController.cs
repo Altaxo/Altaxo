@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -47,61 +48,31 @@ namespace Altaxo.Gui.Worksheet
 	/// Summary description for TransposeWorksheetController.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(ITransposeWorksheetView))]
-	public class TransposeWorksheetController : IMVCAController
+	[UserControllerForObject(typeof(Altaxo.Data.TransposeOptions))]
+	public class TransposeWorksheetController : MVCANControllerEditOriginalDocBase<Altaxo.Data.TransposeOptions, ITransposeWorksheetView>
 	{
-		private Altaxo.Data.DataTable _table;
-		private ITransposeWorksheetView _view;
-
-		public TransposeWorksheetController(Altaxo.Data.DataTable table)
+		protected override void Initialize(bool initData)
 		{
-			_table = table;
-		}
+			base.Initialize(initData);
 
-		#region IApplyController Members
-
-		public bool Apply(bool disposeController)
-		{
-			Altaxo.Data.Transposing.Transpose(_table, _view.DataColumnsMoveToPropertyColumns, _view.PropertyColumnsMoveToDataColumns, true);
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-
-		#endregion IApplyController Members
-
-		#region IMVCController Members
-
-		public object ViewObject
-		{
-			get
+			if (null != _view)
 			{
-				return _view;
-			}
-			set
-			{
-				_view = value as ITransposeWorksheetView;
+				_view.DataColumnsMoveToPropertyColumns = _doc.DataColumnsMoveToPropertyColumns;
+				_view.PropertyColumnsMoveToDataColumns = _doc.PropertyColumnsMoveToDataColumns;
 			}
 		}
 
-		public object ModelObject
+		public override bool Apply(bool disposeController)
 		{
-			get { return null; }
+			_doc.DataColumnsMoveToPropertyColumns = _view.DataColumnsMoveToPropertyColumns;
+			_doc.PropertyColumnsMoveToDataColumns = _view.PropertyColumnsMoveToDataColumns;
+
+			return ApplyEnd(true, disposeController);
 		}
 
-		public void Dispose()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
 		}
-
-		#endregion IMVCController Members
 	}
 }

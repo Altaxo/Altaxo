@@ -615,6 +615,31 @@ namespace Altaxo.Data
 		/// </exception>
 		public DataColumn EnsureExistenceAtPositionStrictly(int columnNumber, string columnName, System.Type expectedColumnType, ColumnKind columnKind, int groupNumber)
 		{
+			return EnsureExistenceAtPositionStrictly(columnNumber, columnName, true, expectedColumnType, columnKind, groupNumber);
+		}
+
+		/// <summary>
+		/// Ensures the existence of a column with exactly the provided properties at the provided position.
+		/// </summary>
+		/// <param name="columnNumber">The column number. Have to be in the range (0..ColumnCount). If the value is ColumnCount, a new column is added.</param>
+		/// <param name="columnName">Name of the column. If another column with the same name exists, the existing column with the same name will be renamed (if the existing column has a higher column number).
+		/// <param name="strictColumnName">If true, and another column with the same name exists to the left of this column, an exception is thrown. Otherwise, a new unique name based on the provided name will be found for this column.</param>
+		/// If the existing column with the same name has a lower column number, an exception is thrown.</param>
+		/// <param name="expectedColumnType">Expected type of the column. If a column with the provided type exists at the provided position, this column is used. If the column at the provided position
+		/// is of a different type, a new column with the provided type is created, and is then used to replace the column at the provided position.</param>
+		/// <param name="columnKind">Kind of the column.</param>
+		/// <param name="groupNumber">The group number of the column.</param>
+		/// <returns>A column with exactly the provided properties at exactly the provided position.</returns>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// If columnNumber is either less than 0 or greater than <see cref="ColumnCount"/>
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// If the provided type is not a subclass of <see cref="DataColumn"/> or is an abstract type.
+		/// or
+		/// A column with the same name already exists to the left of the provided position.
+		/// </exception>
+		public DataColumn EnsureExistenceAtPositionStrictly(int columnNumber, string columnName, bool strictColumnName, System.Type expectedColumnType, ColumnKind columnKind, int groupNumber)
+		{
 			if (columnNumber < 0)
 				throw new ArgumentOutOfRangeException("columnNumber must not be < 0");
 			if (columnNumber > ColumnCount)
@@ -658,12 +683,21 @@ namespace Altaxo.Data
 				else // ColumnName exists already
 				{
 					int otherColumnNumber = GetColumnNumber(this[columnName]);
-					if (otherColumnNumber < columnNumber)
+					if ((otherColumnNumber < columnNumber) && strictColumnName)
 						throw new InvalidOperationException("A column with the same name already exists to the left of the current column.");
-					// Create an arbitrary name
-					string newName = FindUniqueColumnName(columnName);
-					SetColumnName(otherColumnNumber, newName);
-					SetColumnName(columnNumber, columnName);
+					if (otherColumnNumber < columnNumber) // the same name exists to the left of the current column
+					{
+						// Create an arbitrary name for the new column
+						string newName = FindUniqueColumnName(columnName);
+						SetColumnName(columnNumber, newName);
+					}
+					else
+					{
+						// Create an arbitrary name for the other column
+						string newName = FindUniqueColumnName(columnName);
+						SetColumnName(otherColumnNumber, newName);
+						SetColumnName(columnNumber, columnName);
+					}
 				}
 			}
 
@@ -1045,8 +1079,10 @@ namespace Altaxo.Data
 				tmpInfo[i] = (DataColumnInfo)this._columnInfoByColumn[_columnsByNumber[i]];
 
 				IColumnScriptText script;
-				this._columnScripts.TryGetValue(tmpColumn[i], out script);
-				tmpScript[i] = (IColumnScriptText)script.Clone(); // clone the script also
+				if (this._columnScripts.TryGetValue(tmpColumn[i], out script))
+				{
+					tmpScript[i] = (IColumnScriptText)script.Clone(); // clone the script also
+				}
 			}
 
 			this.RemoveColumns(selectedColumns);
@@ -1107,7 +1143,7 @@ namespace Altaxo.Data
 				var destCol = this[i];
 				destCol[destRow] = src[i][srcRow];
 				if (destCol.Count > _numberOfRows)
-					_numberOfRows = destCol.Count;		// we silently update the row count here, otherwise we cannot append more columns
+					_numberOfRows = destCol.Count;    // we silently update the row count here, otherwise we cannot append more columns
 			}
 		}
 
@@ -1528,7 +1564,7 @@ namespace Altaxo.Data
 		/// <returns>The column information of the provided column.</returns>
 		private DataColumnInfo GetColumnInfo(DataColumn datac)
 		{
-				return (DataColumnInfo)_columnInfoByColumn[datac];
+			return (DataColumnInfo)_columnInfoByColumn[datac];
 		}
 
 		/// <summary>
@@ -2179,7 +2215,7 @@ namespace Altaxo.Data
 			string tryName;
 			if (_triedOutRegularNaming)
 			{
-				for (; ; )
+				for (;;)
 				{
 					tryName = ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
 					if (!_columnsByName.ContainsKey(tryName))
@@ -2228,7 +2264,7 @@ namespace Altaxo.Data
 			}
 
 			// if no success, append a hex string
-			for (; ; )
+			for (;;)
 			{
 				string tryName = sbase + ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
 				if (!_columnsByName.ContainsKey(tryName))

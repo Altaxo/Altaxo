@@ -75,8 +75,15 @@ namespace Altaxo.Worksheet.Commands
 
 		public static void Transpose(IWorksheetController ctrl)
 		{
-			TransposeWorksheetController transposectrl = new TransposeWorksheetController(ctrl.DataTable);
-			Current.Gui.ShowDialog(transposectrl, "Transpose worksheet", false);
+			var srcTable = ctrl.DataTable;
+			var options = new Altaxo.Data.TransposeOptions(srcTable.DataColumnCount, srcTable.PropertyColumnCount);
+			if (!Current.Gui.ShowDialog(ref options, "Transpose worksheet", false))
+				return;
+
+			var destTable = Current.Project.CreateNewTable(srcTable.Name + "_Transposed", false);
+
+			Altaxo.Data.Transposing.Transpose(srcTable, options.DataColumnsMoveToPropertyColumns, options.PropertyColumnsMoveToDataColumns, destTable);
+			Current.ProjectService.ShowDocumentView(destTable);
 		}
 
 		public static void AddDataColumns(IWorksheetController ctrl)
