@@ -76,14 +76,16 @@ namespace Altaxo.Worksheet.Commands
 		public static void Transpose(IWorksheetController ctrl)
 		{
 			var srcTable = ctrl.DataTable;
-			var options = new Altaxo.Data.TransposeOptions(srcTable.DataColumnCount, srcTable.PropertyColumnCount);
+			var options = new Altaxo.Data.DataTableTransposeOptions(srcTable.DataColumnCount, srcTable.PropertyColumnCount);
 			if (!Current.Gui.ShowDialog(ref options, "Transpose worksheet", false))
 				return;
 
 			var destTable = Current.Project.CreateNewTable(srcTable.Name + "_Transposed", false);
 
-			Altaxo.Data.Transposing.Transpose(srcTable, options.DataColumnsMoveToPropertyColumns, options.PropertyColumnsMoveToDataColumns, destTable);
+			Altaxo.Data.Transposing.Transpose(srcTable, options, destTable);
 			Current.ProjectService.ShowDocumentView(destTable);
+
+			destTable.DataSource = new Altaxo.Data.DataTableTransposeDataSource(new Data.DataTableProxy(srcTable), options, new Data.DataSourceImportOptions());
 		}
 
 		public static void AddDataColumns(IWorksheetController ctrl)

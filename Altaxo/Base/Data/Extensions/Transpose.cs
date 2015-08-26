@@ -32,7 +32,7 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Options for transposing a worksheet.
 	/// </summary>
-	public class TransposeOptions : ICloneable
+	public class DataTableTransposeOptions : ICloneable
 	{
 		private int _availableNumberOfDataColumns;
 		private int _availableNumberOfPropertyColumns;
@@ -70,11 +70,78 @@ namespace Altaxo.Data
 		public int PropertyColumnsMoveToDataColumns { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TransposeOptions"/> class.
+		/// Gets or sets a value indicating whether the existing column names of the source table should be stored in the first data column of the transposed table.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the existing column names of the source table should be stored in the first data column of the transposed table; otherwise, <c>false</c>.
+		/// </value>
+		public bool StoreDataColumnNamesInFirstDataColumn { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the first data column of the source table should be used to set the column names in the transposed table.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the first data column of the source table should be used to set the column names in the transposed table; otherwise, <c>false</c>.
+		/// </value>
+		public bool UseFirstDataColumnForColumnNaming { get; set; }
+
+		private string _columnNamingPreString = "Row";
+
+		public string ColumnNamingPreString
+		{
+			get { return _columnNamingPreString; }
+			set { _columnNamingPreString = value ?? string.Empty; }
+		}
+
+		#region Serialization
+
+		#region Version 0
+
+		/// <summary>
+		/// 2015-08-26 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableTransposeOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (DataTableTransposeOptions)obj;
+
+				info.AddValue("NumberOfDataColumnsMovingToPropertyColumns", s.DataColumnsMoveToPropertyColumns);
+				info.AddValue("NumberOfPropertyColumnsMovingToDataColumns", s.PropertyColumnsMoveToDataColumns);
+				info.AddValue("StoreDataColumnNamesInFirstDataColumn", s.StoreDataColumnNamesInFirstDataColumn);
+				info.AddValue("UseFirstDataColumnForColumnNaming", s.UseFirstDataColumnForColumnNaming);
+				info.AddValue("ColumnNamingPreString", s.ColumnNamingPreString);
+			}
+
+			protected virtual DataTableTransposeOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new DataTableTransposeOptions(0, 0) : (DataTableTransposeOptions)o);
+				s.DataColumnsMoveToPropertyColumns = info.GetInt32("NumberOfDataColumnsMovingToPropertyColumns");
+				s.PropertyColumnsMoveToDataColumns = info.GetInt32("NumberOfPropertyColumnsMovingToDataColumns");
+				s.StoreDataColumnNamesInFirstDataColumn = info.GetBoolean("StoreDataColumnNamesInFirstDataColumn");
+				s.UseFirstDataColumnForColumnNaming = info.GetBoolean("UseFirstDataColumnForColumnNaming");
+				s.ColumnNamingPreString = info.GetString("ColumnNamingPreString");
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 0
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DataTableTransposeOptions"/> class.
 		/// </summary>
 		/// <param name="availableNumberOfDataColumns">The available number of data columns.</param>
 		/// <param name="availableNumberOfPropertyColumns">The available number of property columns.</param>
-		public TransposeOptions(int availableNumberOfDataColumns, int availableNumberOfPropertyColumns)
+		public DataTableTransposeOptions(int availableNumberOfDataColumns, int availableNumberOfPropertyColumns)
 		{
 			_availableNumberOfDataColumns = availableNumberOfDataColumns;
 			_availableNumberOfPropertyColumns = availableNumberOfPropertyColumns;
@@ -84,6 +151,313 @@ namespace Altaxo.Data
 		{
 			return this.MemberwiseClone();
 		}
+	}
+
+	public class DataTableTransposeDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+	{
+		private DataTableTransposeOptions _processOptions;
+		private DataTableProxy _processData;
+		private IDataSourceImportOptions _importOptions;
+
+		public Action<IAltaxoTableDataSource> _dataSourceChanged;
+
+		#region Serialization
+
+		#region Version 0
+
+		/// <summary>
+		/// 2015-08-26 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableTransposeDataSource), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (DataTableTransposeDataSource)obj;
+
+				info.AddValue("ProcessData", s._processData);
+				info.AddValue("ProcessOptions", s._processOptions);
+				info.AddValue("ImportOptions", s._importOptions);
+			}
+
+			protected virtual DataTableTransposeDataSource SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (o == null ? new DataTableTransposeDataSource() : (DataTableTransposeDataSource)o);
+
+				s._processData = (DataTableProxy)info.GetValue("ProcessData", s);
+				s._processOptions = (DataTableTransposeOptions)info.GetValue("ProcessOptions", s);
+				s._importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", s);
+
+				s.InputData = s._processData;
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Version 0
+
+		#endregion Serialization
+
+		protected DataTableTransposeDataSource()
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DataTableTransposeDataSource"/> class.
+		/// </summary>
+		/// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
+		/// <param name="dataSourceOptions">The Fourier transformation options.</param>
+		/// <param name="importOptions">The data source import options.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// inputData
+		/// or
+		/// transformationOptions
+		/// or
+		/// importOptions
+		/// </exception>
+		public DataTableTransposeDataSource(DataTableProxy inputData, DataTableTransposeOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+		{
+			if (null == inputData)
+				throw new ArgumentNullException(nameof(inputData));
+			if (null == dataSourceOptions)
+				throw new ArgumentNullException(nameof(dataSourceOptions));
+			if (null == importOptions)
+				throw new ArgumentNullException(nameof(importOptions));
+
+			using (var token = SuspendGetToken())
+			{
+				this.TransposeOptions = dataSourceOptions;
+				this.ImportOptions = importOptions;
+				this.InputData = inputData;
+			}
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ExpandCyclingVariableColumnDataSource"/> class.
+		/// </summary>
+		/// <param name="from">Another instance to copy from.</param>
+		public DataTableTransposeDataSource(DataTableTransposeDataSource from)
+		{
+			CopyFrom(from);
+		}
+
+		/// <summary>
+		/// Copies from another instance.
+		/// </summary>
+		/// <param name="obj">The object to copy from.</param>
+		/// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as DataTableTransposeDataSource;
+			if (null != from)
+			{
+				using (var token = SuspendGetToken())
+				{
+					DataTableTransposeOptions dataSourceOptions = null;
+					DataTableProxy inputData = null;
+					IDataSourceImportOptions importOptions = null;
+
+					CopyHelper.Copy(ref importOptions, from._importOptions);
+					CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
+					CopyHelper.Copy(ref inputData, from._processData);
+
+					this.TransposeOptions = dataSourceOptions;
+					this.ImportOptions = importOptions;
+					this.InputData = inputData;
+
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
+		public object Clone()
+		{
+			return new DataTableTransposeDataSource(this);
+		}
+
+		#region IAltaxoTableDataSource
+
+		/// <summary>
+		/// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
+		/// </summary>
+		/// <param name="destinationTable">The destination table.</param>
+		public void FillData(DataTable destinationTable)
+		{
+			try
+			{
+				DataTable srcTable = _processData.Document;
+				if (srcTable == null)
+					throw new InvalidOperationException(string.Format("Source table was not found: {0}", _processData));
+
+				Transposing.Transpose(srcTable, _processOptions, destinationTable);
+			}
+			catch (Exception ex)
+			{
+				destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", this.GetType().Name, ex.Message);
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
+		/// </summary>
+		public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
+		{
+			add
+			{
+				bool isFirst = null == _dataSourceChanged;
+				_dataSourceChanged += value;
+				if (isFirst)
+				{
+					//EhInputDataChanged(this, EventArgs.Empty);
+				}
+			}
+			remove
+			{
+				_dataSourceChanged -= value;
+				bool isLast = null == _dataSourceChanged;
+				if (isLast)
+				{
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the input data.
+		/// </summary>
+		/// <value>
+		/// The input data. This data is the input for the 2D-Fourier transformation.
+		/// </value>
+		public DataTableProxy InputData
+		{
+			get
+			{
+				return _processData;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				if (ChildSetMember(ref _processData, value))
+				{
+					EhChildChanged(_processData, EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the data source import options.
+		/// </summary>
+		/// <value>
+		/// The import options.
+		/// </value>
+		/// <exception cref="System.ArgumentNullException">ImportOptions</exception>
+		public Data.IDataSourceImportOptions ImportOptions
+		{
+			get
+			{
+				return _importOptions;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				var oldValue = _importOptions;
+
+				_importOptions = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the options for the transpose operation.
+		/// </summary>
+		/// <value>
+		/// The transpose options.
+		/// </value>
+		/// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
+		public DataTableTransposeOptions TransposeOptions
+		{
+			get
+			{
+				return _processOptions;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				var oldValue = _processOptions;
+
+				_processOptions = value;
+			}
+		}
+
+		#region Change event handling
+
+		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
+		{
+			if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
+			{
+				if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
+				{
+					e = TableDataSourceChangedEventArgs.Empty;
+				}
+				else
+				{
+					return true; // if option is not DataSourceChanged, absorb this event
+				}
+			}
+
+			return base.HandleHighPriorityChildChangeCases(sender, ref e);
+		}
+
+		#endregion Change event handling
+
+		#region Document Node functions
+
+		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _processData)
+				yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
+		}
+
+		#endregion Document Node functions
+
+		/// <summary>
+		/// Called after deserization of a data source instance, when it is already associated with a data table.
+		/// </summary>
+		public void OnAfterDeserialization()
+		{
+		}
+
+		/// <summary>
+		/// Visits all document references.
+		/// </summary>
+		/// <param name="ReportProxies">The report proxies.</param>
+		public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
+		{
+			if (_processData != null)
+				ReportProxies(_processData, this, "ProcessData");
+		}
+
+		#endregion IAltaxoTableDataSource
 	}
 
 	/// <summary>
@@ -121,88 +495,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Transpose a worksheet.
-		/// </summary>
-		/// <param name="table">The table to transpose.</param>
-		/// <param name="numConvertedDataColumns">Number of data columns that will be converted to property columns.</param>
-		/// <param name="numConvertedPropertyColumns">Number of property columns that will become data columns.</param>
-		/// <param name="allowUserInteraction">If set to true, and transpose is not possible without problems, the user will be ask to cancel the transpose.
-		/// If set to false, the transpose will be performed anyway. (But you can ask if transpose is possible by calling <c>IsTransposePossible</c>.
-		/// </param>
-		/// <returns>Null if the transpose was performed without problems, otherwise a error message would be given.</returns>
-		static public string Transpose(this DataTable table, int numConvertedDataColumns, int numConvertedPropertyColumns, bool allowUserInteraction)
-		{
-			int datacols = Math.Min(table.DataColumnCount, numConvertedDataColumns);
-			int propcols = Math.Min(table.PropertyColumnCount, numConvertedPropertyColumns);
-
-			// test if the transpose is possible
-			int indexDifferentColumn;
-			if (!TransposeIsPossible(table, datacols, out indexDifferentColumn))
-			{
-				if (allowUserInteraction)
-				{
-					string message = string.Format("The columns to transpose have not all the same type. The type of column[{0}] ({1}) differs from the type of column[{2}] ({3}). Continue anyway?",
-				 indexDifferentColumn,
-				 table[indexDifferentColumn].GetType(),
-				 datacols,
-				 table[datacols].GetType());
-
-					bool result = Current.Gui.YesNoMessageBox(message, "Attention", false);
-					if (result == false)
-						return "Cancelled by user";
-				}
-			}
-
-			string error = table.Transpose(datacols, propcols);
-			if (error != null && allowUserInteraction)
-			{
-				Current.Gui.ErrorMessageBox(error);
-			}
-
-			return error;
-		}
-
-		/// <summary>
-		/// Transpose transpose the table, i.e. exchange columns and rows
-		/// this can only work if all columns in the table are of the same type
-		/// </summary>
-		/// <param name="srcTable">Table to transpose.</param>
-		/// <param name="numberOfDataColumnsChangeToPropertyColumns">Number of data columns that are changed to property columns before transposing the table.</param>
-		/// <param name="numberOfPropertyColumnsChangeToDataColumns">Number of property columns that are changed to data columns before transposing the table.</param>
-		/// <returns>null if succeeded, error string otherwise</returns>
-		public static string TransposeInline(DataTable srcTable, int numberOfDataColumnsChangeToPropertyColumns, int numberOfPropertyColumnsChangeToDataColumns)
-		{
-			numberOfDataColumnsChangeToPropertyColumns = Math.Max(numberOfDataColumnsChangeToPropertyColumns, 0);
-			numberOfDataColumnsChangeToPropertyColumns = Math.Min(numberOfDataColumnsChangeToPropertyColumns, srcTable.DataColumnCount);
-
-			numberOfPropertyColumnsChangeToDataColumns = Math.Max(numberOfPropertyColumnsChangeToDataColumns, 0);
-			numberOfPropertyColumnsChangeToDataColumns = Math.Min(numberOfPropertyColumnsChangeToDataColumns, srcTable.PropertyColumnCount);
-
-			// first, save the first data columns that are changed to property columns
-			Altaxo.Data.DataColumnCollection savedDataColumns = new DataColumnCollection();
-			Altaxo.Data.DataColumnCollection savedPropColumns = new DataColumnCollection();
-
-			Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, numberOfDataColumnsChangeToPropertyColumns);
-			Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, numberOfPropertyColumnsChangeToDataColumns);
-			// store the columns temporarily in another collection and remove them from the original collections
-			srcTable.DataColumns.MoveColumnsTo(savedDataColumns, 0, savedDataColIndices);
-			srcTable.PropertyColumns.MoveColumnsTo(savedPropColumns, 0, savedPropColIndices);
-
-			// now transpose the data columns
-			srcTable.DataColumns.Transpose();
-
-			savedDataColumns.InsertRows(0, numberOfPropertyColumnsChangeToDataColumns); // take offset caused by newly inserted prop columns->data columns into account
-			savedDataColumns.MoveColumnsTo(srcTable.PropertyColumns, 0, savedDataColIndices);
-
-			savedPropColumns.RemoveRows(0, numberOfDataColumnsChangeToPropertyColumns); // take offset caused by data columns changed to property columns into account
-			savedPropColumns.MoveColumnsTo(srcTable.DataColumns, 0, savedPropColIndices);
-
-			// now insert both the temporary stored DataColumnCollections at the beginning
-
-			return null; // no error message
-		}
-
-		/// <summary>
 		/// Tests whether or not all columns in this collection have the same type.
 		/// </summary>
 		/// <param name="col">The column collection containing the columns to test.</param>
@@ -236,11 +528,13 @@ namespace Altaxo.Data
 		/// this can only work if all columns in the table are of the same type
 		/// </summary>
 		/// <param name="srcTable">Table to transpose.</param>
-		/// <param name="numberOfDataColumnsChangeToPropertyColumns">Number of data columns that are changed to property columns before transposing the table.</param>
-		/// <param name="numberOfPropertyColumnsChangeToDataColumns">Number of property columns that are changed to data columns before transposing the table.</param>
+		/// <param name="options">Options that control the transpose process.</param>
 		/// <param name="destTable">Table in which the transposed table should be stored.</param>
-		/// <returns>null if succeeded, error string otherwise</returns>
-		public static void Transpose(DataTable srcTable, int numberOfDataColumnsChangeToPropertyColumns, int numberOfPropertyColumnsChangeToDataColumns, DataTable destTable)
+		/// <exception cref="ArgumentNullException">
+		/// </exception>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="InvalidOperationException">The data columns to transpose are not of the same type. The first column that has a deviating type is column number  + firstDifferentColumnIndex.ToString()</exception>
+		public static void Transpose(DataTable srcTable, DataTableTransposeOptions options, DataTable destTable)
 		{
 			if (null == srcTable)
 				throw new ArgumentNullException(nameof(srcTable));
@@ -249,75 +543,96 @@ namespace Altaxo.Data
 			if (object.ReferenceEquals(srcTable, destTable))
 				throw new ArgumentException(nameof(srcTable) + " and " + nameof(destTable) + " are identical. This inline transpose operation is not supported.");
 
-			numberOfDataColumnsChangeToPropertyColumns = Math.Max(numberOfDataColumnsChangeToPropertyColumns, 0);
-			numberOfDataColumnsChangeToPropertyColumns = Math.Min(numberOfDataColumnsChangeToPropertyColumns, srcTable.DataColumnCount);
+			int numberOfDataColumnsChangeToPropertyColumns = Math.Min(options.DataColumnsMoveToPropertyColumns, srcTable.DataColumnCount);
 
-			numberOfPropertyColumnsChangeToDataColumns = Math.Max(numberOfPropertyColumnsChangeToDataColumns, 0);
-			numberOfPropertyColumnsChangeToDataColumns = Math.Min(numberOfPropertyColumnsChangeToDataColumns, srcTable.PropertyColumnCount);
+			int numberOfPropertyColumnsChangeToDataColumns = Math.Min(options.PropertyColumnsMoveToDataColumns, srcTable.PropertyColumnCount);
 
-			var selSrcColumnIndices = ContiguousIntegerRange.FromStartAndEndExclusive(numberOfDataColumnsChangeToPropertyColumns, srcTable.DataColumnCount);
+			// number of data columns in the destination table that originates either from converted property columns or from the label column which contains the column names
+			int numberOfPriorDestDataColumns = numberOfPropertyColumnsChangeToDataColumns + (options.StoreDataColumnNamesInFirstDataColumn ? 1 : 0);
+
+			var dataColumnsToTransposeIndices = ContiguousIntegerRange.FromStartAndEndExclusive(numberOfDataColumnsChangeToPropertyColumns, srcTable.DataColumnCount);
 
 			int firstDifferentColumnIndex;
-			if (!AreAllColumnsOfTheSameType(srcTable.DataColumns, selSrcColumnIndices, out firstDifferentColumnIndex))
+			if (!AreAllColumnsOfTheSameType(srcTable.DataColumns, dataColumnsToTransposeIndices, out firstDifferentColumnIndex))
 			{
 				throw new InvalidOperationException("The data columns to transpose are not of the same type. The first column that has a deviating type is column number " + firstDifferentColumnIndex.ToString());
 			}
 
-			destTable.DataColumns.ClearData();
-			destTable.PropCols.ClearData();
-
-			// 1st, copy the property columns to data columns
-			for (int i = 0; i < numberOfPropertyColumnsChangeToDataColumns; ++i)
+			using (var suspendToken = destTable.SuspendGetToken())
 			{
-				var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(i, srcTable.PropertyColumns.GetColumnName(i), srcTable.PropertyColumns[i].GetType(), srcTable.PropertyColumns.GetColumnKind(i), srcTable.PropertyColumns.GetColumnGroup(i));
-				var srcCol = srcTable.PropertyColumns[i];
-				for (int j = numberOfDataColumnsChangeToPropertyColumns, k = 0; j < srcCol.Count; ++j, ++k)
-					destCol[k] = srcCol[j];
-			}
+				destTable.DataColumns.ClearData();
+				destTable.PropCols.ClearData();
 
-			// 2rd, transpose the data columns
-
-			int srcRows = 0;
-			foreach (int i in selSrcColumnIndices)
-				srcRows = Math.Max(srcRows, srcTable.DataColumns[i].Count);
-
-			// create as many columns in destTable as srcRows and fill them with data
-			Type columnType = selSrcColumnIndices.Count > 0 ? srcTable.DataColumns[selSrcColumnIndices[0]].GetType() : null;
-			for (int i = 0; i < srcRows; ++i)
-			{
-				var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(numberOfPropertyColumnsChangeToDataColumns + i, "Row" + i.ToString(), columnType, ColumnKind.V, 0);
-				int k = 0;
-				foreach (int j in selSrcColumnIndices)
-					destCol[k++] = srcTable.DataColumns[j][i];
-			}
-
-			// 3rd, copy the first data columns to property columns
-			for (int i = 0; i < numberOfDataColumnsChangeToPropertyColumns; ++i)
-			{
-				var destCol = destTable.PropertyColumns.EnsureExistenceAtPositionStrictly(i, srcTable.DataColumns.GetColumnName(i), srcTable.DataColumns[i].GetType(), srcTable.DataColumns.GetColumnKind(i), srcTable.DataColumns.GetColumnGroup(i));
-				var srcCol = srcTable.DataColumns[i];
-				for (int j = numberOfPropertyColumnsChangeToDataColumns, k = 0; k < srcCol.Count; ++j, ++k)
-					destCol[j] = srcCol[k];
-			}
-
-			// 4th, fill the rest of the property columns with the rest of the data columns
-			for (int i = 0; i < numberOfDataColumnsChangeToPropertyColumns; ++i)
-			{
-				for (int j = 0; j < numberOfPropertyColumnsChangeToDataColumns; ++j)
+				// 0th, store the data column names in the first column
+				if (options.StoreDataColumnNamesInFirstDataColumn)
 				{
-					try
-					{
-						destTable.PropertyColumns[i][j] = srcTable.PropertyColumns[j][i];
-					}
-					catch { }
+					var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(0, "DataColumnNames", typeof(TextColumn), ColumnKind.Label, 0);
+					for (int j = numberOfDataColumnsChangeToPropertyColumns, k = 0; j < srcTable.DataColumnCount; ++j, ++k)
+						destCol[k] = srcTable.DataColumns.GetColumnName(j);
 				}
-			}
 
-			// and 5th, copy the remaining property columns to property columns
-			for (int i = numberOfPropertyColumnsChangeToDataColumns, j = numberOfDataColumnsChangeToPropertyColumns; i < srcTable.PropertyColumns.ColumnCount; ++i, ++j)
-			{
-				var destCol = destTable.PropertyColumns.EnsureExistenceAtPositionStrictly(j, srcTable.PropertyColumns.GetColumnName(i), srcTable.PropertyColumns[i].GetType(), srcTable.PropertyColumns.GetColumnKind(i), srcTable.DataColumns.GetColumnGroup(i));
-				destCol.Data = srcTable.PropertyColumns[i];
+				int numberOfExtraPriorDestColumns = (options.StoreDataColumnNamesInFirstDataColumn ? 1 : 0);
+
+				// 1st, copy the property columns to data columns
+				for (int i = 0; i < numberOfPropertyColumnsChangeToDataColumns; ++i)
+				{
+					var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(i + numberOfExtraPriorDestColumns, srcTable.PropertyColumns.GetColumnName(i), srcTable.PropertyColumns[i].GetType(), srcTable.PropertyColumns.GetColumnKind(i), srcTable.PropertyColumns.GetColumnGroup(i));
+					var srcCol = srcTable.PropertyColumns[i];
+					for (int j = numberOfDataColumnsChangeToPropertyColumns, k = 0; j < srcCol.Count; ++j, ++k)
+						destCol[k] = srcCol[j];
+				}
+
+				// 2rd, transpose the data columns
+				int srcRows = 0;
+				foreach (int i in dataColumnsToTransposeIndices)
+					srcRows = Math.Max(srcRows, srcTable.DataColumns[i].Count);
+
+				// create as many columns in destTable as srcRows and fill them with data
+				Type columnType = dataColumnsToTransposeIndices.Count > 0 ? srcTable.DataColumns[dataColumnsToTransposeIndices[0]].GetType() : null;
+				for (int i = 0; i < srcRows; ++i)
+				{
+					string destColName = string.Format("{0}{1}", options.ColumnNamingPreString, i);
+					if (options.UseFirstDataColumnForColumnNaming)
+					{
+						destColName = string.Format("{0}{1}", options.ColumnNamingPreString, srcTable.DataColumns[0][i]);
+					}
+
+					var destCol = destTable.DataColumns.EnsureExistenceAtPositionStrictly(numberOfPriorDestDataColumns + i, destColName, false, columnType, ColumnKind.V, 0);
+					int k = 0;
+					foreach (int j in dataColumnsToTransposeIndices)
+						destCol[k++] = srcTable.DataColumns[j][i];
+				}
+
+				// 3rd, copy the first data columns to property columns
+				for (int i = 0; i < numberOfDataColumnsChangeToPropertyColumns; ++i)
+				{
+					var destCol = destTable.PropertyColumns.EnsureExistenceAtPositionStrictly(i, srcTable.DataColumns.GetColumnName(i), srcTable.DataColumns[i].GetType(), srcTable.DataColumns.GetColumnKind(i), srcTable.DataColumns.GetColumnGroup(i));
+					var srcCol = srcTable.DataColumns[i];
+					for (int j = numberOfPriorDestDataColumns, k = 0; k < srcCol.Count; ++j, ++k)
+						destCol[j] = srcCol[k];
+				}
+
+				// 4th, fill the rest of the property columns with the rest of the data columns
+				for (int i = 0; i < numberOfDataColumnsChangeToPropertyColumns; ++i)
+				{
+					for (int j = 0; j < numberOfPropertyColumnsChangeToDataColumns; ++j)
+					{
+						try
+						{
+							destTable.PropertyColumns[i][j + numberOfExtraPriorDestColumns] = srcTable.PropertyColumns[j][i];
+						}
+						catch { }
+					}
+				}
+
+				// and 5th, copy the remaining property columns to property columns
+				for (int i = numberOfPropertyColumnsChangeToDataColumns, j = numberOfDataColumnsChangeToPropertyColumns; i < srcTable.PropertyColumns.ColumnCount; ++i, ++j)
+				{
+					var destCol = destTable.PropertyColumns.EnsureExistenceAtPositionStrictly(j, srcTable.PropertyColumns.GetColumnName(i), false, srcTable.PropertyColumns[i].GetType(), srcTable.PropertyColumns.GetColumnKind(i), srcTable.DataColumns.GetColumnGroup(i));
+					destCol.Data = srcTable.PropertyColumns[i];
+				}
+
+				suspendToken.Resume();
 			}
 		}
 	}

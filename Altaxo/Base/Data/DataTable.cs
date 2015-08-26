@@ -856,7 +856,7 @@ namespace Altaxo.Data
 			using (var suspendToken = SuspendGetToken())
 			{
 				_dataColumns.CopyOrReplaceOrAdd(idx, datac, name); // add the column to the collection
-				// no need to insert a property row here (only when inserting)
+																													 // no need to insert a property row here (only when inserting)
 			}
 		}
 
@@ -1039,58 +1039,6 @@ namespace Altaxo.Data
 		{
 			this._dataColumns.ChangeColumnPosition(selectedIndices, newPosition);
 			this._propertyColumns.ChangeRowPosition(selectedIndices, newPosition);
-		}
-
-		/// <summary>
-		/// Transpose transpose the table, i.e. exchange columns and rows
-		/// this can only work if all columns in the table are of the same type
-		/// </summary>
-		/// <returns>null if succeeded, error string otherwise</returns>
-		public virtual string Transpose()
-		{
-			// TODO: do also look at the property columns for transposing
-			_dataColumns.Transpose();
-
-			return null; // no error message
-		}
-
-		/// <summary>
-		/// Transpose transpose the table, i.e. exchange columns and rows
-		/// this can only work if all columns in the table are of the same type
-		/// </summary>
-		/// <param name="numberOfDataColumnsChangeToPropertyColumns">Number of data columns that are changed to property columns before transposing the table.</param>
-		/// <param name="numberOfPropertyColumnsChangeToDataColumns">Number of property columns that are changed to data columns before transposing the table.</param>
-		/// <returns>null if succeeded, error string otherwise</returns>
-		public virtual string Transpose(int numberOfDataColumnsChangeToPropertyColumns, int numberOfPropertyColumnsChangeToDataColumns)
-		{
-			numberOfDataColumnsChangeToPropertyColumns = Math.Max(numberOfDataColumnsChangeToPropertyColumns, 0);
-			numberOfDataColumnsChangeToPropertyColumns = Math.Min(numberOfDataColumnsChangeToPropertyColumns, this.DataColumnCount);
-
-			numberOfPropertyColumnsChangeToDataColumns = Math.Max(numberOfPropertyColumnsChangeToDataColumns, 0);
-			numberOfPropertyColumnsChangeToDataColumns = Math.Min(numberOfPropertyColumnsChangeToDataColumns, this.PropertyColumnCount);
-
-			// first, save the first data columns that are changed to property columns
-			Altaxo.Data.DataColumnCollection savedDataColumns = new DataColumnCollection();
-			Altaxo.Data.DataColumnCollection savedPropColumns = new DataColumnCollection();
-
-			Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, numberOfDataColumnsChangeToPropertyColumns);
-			Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, numberOfPropertyColumnsChangeToDataColumns);
-			// store the columns temporarily in another collection and remove them from the original collections
-			DataColumns.MoveColumnsTo(savedDataColumns, 0, savedDataColIndices);
-			this.PropertyColumns.MoveColumnsTo(savedPropColumns, 0, savedPropColIndices);
-
-			// now transpose the data columns
-			_dataColumns.Transpose();
-
-			savedDataColumns.InsertRows(0, numberOfPropertyColumnsChangeToDataColumns); // take offset caused by newly inserted prop columns->data columns into account
-			savedDataColumns.MoveColumnsTo(this.PropertyColumns, 0, savedDataColIndices);
-
-			savedPropColumns.RemoveRows(0, numberOfDataColumnsChangeToPropertyColumns); // take offset caused by data columns changed to property columns into account
-			savedPropColumns.MoveColumnsTo(this.DataColumns, 0, savedPropColIndices);
-
-			// now insert both the temporary stored DataColumnCollections at the beginning
-
-			return null; // no error message
 		}
 
 		/// <summary>

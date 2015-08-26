@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Altaxo.Gui.Data.DataTableTransposeOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Common">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="8" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="8" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="8" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="8" />
+    </Grid.RowDefinitions>
+    <GroupBox Grid.Column="0">
+      <GroupBox.Header>
+        <TextBlock Width="120" TextWrapping="Wrap" >Number of data columns changing to property columns:</TextBlock>
+      </GroupBox.Header>
+      <local:Int32UpDown x:Name="_ctrlNumMovedDataCols"  Minimum="0" MinimumReplacementText="None" MaximumReplacementText="All" />
+    </GroupBox>
+    <GroupBox Grid.Column="1">
+      <GroupBox.Header>
+        <TextBlock Width="120" TextWrapping="Wrap" >Number of property columns changing to data columns:</TextBlock>
+      </GroupBox.Header>
+      <local:Int32UpDown x:Name="_ctrlNumMovedPropCols" Minimum="0" MinimumReplacementText="None" MaximumReplacementText="All" />
+    </GroupBox>
+    <CheckBox x:Name="_guiStoreSourceDataColumnNames" Content="Store source data column names in first data column of destination table" Grid.Row="2" Grid.ColumnSpan="2" />
+    <CheckBox x:Name="_guiUseFirstColForColumnNames" Content="Use first source data column for column names of destination table" Grid.Row="4" Grid.ColumnSpan="2" />
+
+		<Label Grid.Row="6" Content="Pre - string for new column name:" />
+		<TextBox Grid.Row="6" Grid.Column="1" x:Name="_guiPreStringForColumnName" Margin="8,4,8,4" />
+  </Grid>
+</UserControl>

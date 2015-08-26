@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2015 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -30,18 +30,9 @@ using System.Text;
 
 namespace Altaxo.Gui.Data
 {
-	public interface ICommonDataSourceView
-	{
-		void SetProcessOptionsControl(object p);
-
-		void SetImportOptionsControl(object p);
-
-		void SetProcessDataControl(object p);
-	}
-
 	[ExpectedTypeOfView(typeof(ICommonDataSourceView))]
-	[UserControllerForObject(typeof(ExpandCyclingVariableColumnDataSource))]
-	public class ExpandCyclingVariableDataSourceController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnDataSource, ICommonDataSourceView>, IMVCSupportsApplyCallback
+	[UserControllerForObject(typeof(DataTableTransposeDataSource))]
+	public class DataTableTransposeDataSourceController : MVCANControllerEditOriginalDocBase<DataTableTransposeDataSource, ICommonDataSourceView>, IMVCSupportsApplyCallback
 	{
 		private IMVCANController _dataSourceOptionsController;
 		private IMVCANController _processOptionsController;
@@ -63,9 +54,9 @@ namespace Altaxo.Gui.Data
 			if (initData)
 			{
 				_dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-				_processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ExpandCyclingVariableColumnOptions }, typeof(IMVCANController), UseDocument.Directly);
+				_processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.TransposeOptions }, typeof(IMVCANController), UseDocument.Directly);
 
-				_processDataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
+				_processDataController = new DataTableProxyController() { UseDocumentCopy = UseDocument.Directly };
 				_processDataController.InitializeDocument(_doc.InputData);
 				Current.Gui.FindAndAttachControlTo(_processDataController);
 			}

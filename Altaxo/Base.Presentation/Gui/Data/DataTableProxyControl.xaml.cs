@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2015 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,38 +22,41 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data
 {
 	/// <summary>
-	/// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
+	/// Interaction logic for DataTableProxyControl.xaml
 	/// </summary>
-	public partial class ExpandCyclingVariableDataSourceControl : UserControl, ICommonDataSourceView
+	public partial class DataTableProxyControl : UserControl, IDataTableProxyView
 	{
-		public ExpandCyclingVariableDataSourceControl()
+		public DataTableProxyControl()
 		{
 			InitializeComponent();
 		}
 
-		public void SetProcessOptionsControl(object p)
+		public void InitializeTables(SelectableListNodeList tables)
 		{
-			_guiProcessOptionsHost.Child = p as UIElement;
+			GuiHelper.Initialize(_guiDataTables, tables);
 		}
 
-		public void SetImportOptionsControl(object p)
+		private void EhDataTableChanged(object sender, SelectionChangedEventArgs e)
 		{
-			_guiImportOptionsHost.Child = p as UIElement;
-		}
-
-		public void SetProcessDataControl(object p)
-		{
-			_guiProcessDataHost.Child = p as UIElement;
+			GuiHelper.SynchronizeSelectionFromGui(_guiDataTables);
 		}
 	}
 }

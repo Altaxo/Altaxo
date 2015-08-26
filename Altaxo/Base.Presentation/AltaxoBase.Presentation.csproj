@@ -425,6 +425,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Data\DataTableProxyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Data\ExpandCyclingVariableOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -885,7 +889,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Worksheet\TransposeWorksheetControl.xaml">
+    <Page Include="Gui\Data\DataTableTransposeOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1204,6 +1208,9 @@
     </Compile>
     <Compile Include="Gui\Data\DataSourceImportOptionsControl.xaml.cs">
       <DependentUpon>DataSourceImportOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\DataTableProxyControl.xaml.cs">
+      <DependentUpon>DataTableProxyControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableOptionsControl.xaml</DependentUpon>
@@ -1578,8 +1585,8 @@
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceControl.xaml.cs">
       <DependentUpon>ImportAsciiDataSourceControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Worksheet\TransposeWorksheetControl.xaml.cs">
-      <DependentUpon>TransposeWorksheetControl.xaml</DependentUpon>
+    <Compile Include="Gui\Data\DataTableTransposeOptionsControl.xaml.cs">
+      <DependentUpon>DataTableTransposeOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />

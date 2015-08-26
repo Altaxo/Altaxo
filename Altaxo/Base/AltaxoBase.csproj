@@ -302,7 +302,9 @@
     <Compile Include="Gui\DataConnection\QueryDesignerController.cs" />
     <Compile Include="Gui\DataConnection\QueryPropertiesController.cs" />
     <Compile Include="Gui\Data\DataSourceImportOptionsController.cs" />
+    <Compile Include="Gui\Data\DataTableProxyController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataController.cs" />
+    <Compile Include="Gui\Data\DataTableTransposeDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
@@ -886,7 +888,7 @@
     <Compile Include="Gui\Worksheet\SavitzkyGolayParameterController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Gui\Worksheet\TransposeWorksheetController.cs">
+    <Compile Include="Gui\Data\DataTableTransposeOptionsController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Worksheet\RowHeaderStyle.cs">
