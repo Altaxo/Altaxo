@@ -227,25 +227,44 @@ namespace Altaxo.Serialization.Ascii
 		/// <param name="options">The options.</param>
 		protected static void InitializeDefaultSystemValues(AsciiDocumentAnalysisOptions options)
 		{
+			InitializeWithCultures(
+			options,
+			System.Globalization.CultureInfo.InvariantCulture,
+			System.Globalization.CultureInfo.CurrentCulture,
+			System.Globalization.CultureInfo.CurrentUICulture,
+			System.Globalization.CultureInfo.InstalledUICulture
+			);
+		}
+
+		/// <summary>
+		/// Initializes  an instance of <see cref="AsciiDocumentAnalysisOptions"/> with the default system values.
+		/// </summary>
+		/// <param name="options">The options.</param>
+		/// <param name="cultures">The cultures to test.</param>
+		protected static void InitializeWithCultures(AsciiDocumentAnalysisOptions options, params CultureInfo[] cultures)
+		{
 			options._numberOfLinesToAnalyze = 30;
 			options._numberFormatsToTest.Clear();
 			options._dateTimeFormatsToTest.Clear();
 
-			options._numberFormatsToTest.Add(System.Globalization.CultureInfo.InvariantCulture);
-			options._numberFormatsToTest.Add(System.Globalization.CultureInfo.CurrentCulture);
-			options._numberFormatsToTest.Add(System.Globalization.CultureInfo.CurrentUICulture);
-			options._numberFormatsToTest.Add(System.Globalization.CultureInfo.InstalledUICulture);
-
-			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.InvariantCulture);
-			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.CurrentCulture);
-			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.CurrentUICulture);
-			options._dateTimeFormatsToTest.Add(System.Globalization.CultureInfo.InstalledUICulture);
+			foreach (var culture in cultures)
+			{
+				options._numberFormatsToTest.Add(culture);
+				options._dateTimeFormatsToTest.Add(culture);
+			}
 		}
 
 		public static AsciiDocumentAnalysisOptions GetDefaultSystemOptions()
 		{
 			var options = new AsciiDocumentAnalysisOptions();
 			InitializeDefaultSystemValues(options);
+			return options;
+		}
+
+		public static AsciiDocumentAnalysisOptions GetOptionsForCultures(params System.Globalization.CultureInfo[] cultures)
+		{
+			var options = new AsciiDocumentAnalysisOptions();
+			InitializeWithCultures(options, cultures);
 			return options;
 		}
 

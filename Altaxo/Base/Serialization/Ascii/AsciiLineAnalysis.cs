@@ -120,6 +120,14 @@ namespace Altaxo.Serialization.Ascii
 		}
 
 		/// <summary>
+		/// Problem: the line: '23,2014 2,3' is not parsed as expected in the two numbers 23,2014 and 2,3 (German culture), but instead in the number 23, then into a DateTime (with year=2014 and month=2), and a number 3.
+		/// In order to avoid that for instance "2014 2" is parsed to a valid DateTime, we have two possibilities (i) use DateTime.TryParseExact, or (ii) excluded certain patterns with a regular expression.
+		/// While the first choice is generally slow (we must use TryParseExcact with all possible formats for a given culture, it takes 17 sec for 1 Mio calls), the second choice is faster. It is sufficient to
+		/// exclude patterns which contains digits first, then one or more whitespaces, optionally a minus sign, and then digits again.
+		/// </summary>
+		private static System.Text.RegularExpressions.Regex _dateTimeExclusingPattern = new System.Text.RegularExpressions.Regex(@"^\d+\s+-*\d+$");
+
+		/// <summary>
 		/// Tests wether or not the string s is a date/time string.
 		/// </summary>
 		/// <param name="s">The string to test.</param>
@@ -128,7 +136,7 @@ namespace Altaxo.Serialization.Ascii
 		public static bool IsDateTime(string s, System.Globalization.CultureInfo dateTimeFormat)
 		{
 			DateTime result;
-			return DateTime.TryParse(s, dateTimeFormat.DateTimeFormat, System.Globalization.DateTimeStyles.None, out result);
+			return DateTime.TryParse(s, dateTimeFormat.DateTimeFormat, System.Globalization.DateTimeStyles.None, out result) && !_dateTimeExclusingPattern.Match(s).Success;
 		}
 
 		/// <summary>

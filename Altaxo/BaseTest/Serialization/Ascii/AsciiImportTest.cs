@@ -356,5 +356,49 @@ namespace BaseTest.Serialization.Ascii
 				ascii.StandardTest(iColumnMode.ToString());
 			}
 		}
+
+		[Test]
+		public static void Test04_SingleCharTabGermanCulture()
+		{
+			for (int iColumnMode = 0; iColumnMode < 81; ++iColumnMode)
+			{
+				var ascii = new AsciiTestInputForSingleCharSeparation { MaxFieldWidth = 11, SeparationChar = '\t', Culture = System.Globalization.CultureInfo.GetCultureInfo("de") };
+				ascii.BuildAsciiText();
+				ascii.StandardTest(iColumnMode.ToString());
+			}
+		}
+
+		[Test]
+		public static void Test05_SingleCharTabGermanCulture2()
+		{
+			var GermanCulture = System.Globalization.CultureInfo.GetCultureInfo("de");
+			var rnd = new Random();
+
+			var stb = new StringBuilder();
+
+			var arr = new double[100, 2];
+
+			for (int i = 0; i < 100; ++i)
+			{
+				arr[i, 0] = Math.Round(rnd.NextDouble() * 10, 3);
+				arr[i, 1] = Math.Round(rnd.NextDouble() * 10, 3);
+				stb.Append(arr[i, 0].ToString(GermanCulture));
+				stb.Append("\t");
+				stb.Append(arr[i, 0].ToString(GermanCulture));
+				stb.AppendLine();
+			}
+
+			// now test this document
+			var options = AsciiDocumentAnalysisOptions.GetOptionsForCultures(System.Globalization.CultureInfo.InvariantCulture, GermanCulture);
+			var bytes = System.Text.Encoding.UTF8.GetBytes(stb.ToString());
+			var analysis = AsciiDocumentAnalysis.Analyze(null, new System.IO.MemoryStream(bytes), options);
+			var separation = analysis.SeparationStrategy;
+
+			Assert.AreEqual(2, analysis.RecognizedStructure.Count);
+			Assert.IsTrue(AsciiColumnType.Double == analysis.RecognizedStructure[0].ColumnType);
+			Assert.IsTrue(AsciiColumnType.Double == analysis.RecognizedStructure[1].ColumnType);
+
+			Assert.IsTrue("de" == analysis.NumberFormatCulture.TwoLetterISOLanguageName);
+		}
 	}
 }
