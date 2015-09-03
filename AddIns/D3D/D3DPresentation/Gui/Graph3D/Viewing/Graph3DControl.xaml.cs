@@ -23,6 +23,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		public Graph3DControl()
 		{
 			InitializeComponent();
+
+			this.Canvas1.Scene = new Scene();
 		}
 
 		public object GuiInitiallyFocusedElement
