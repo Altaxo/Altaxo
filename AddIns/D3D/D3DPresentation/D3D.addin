@@ -1,0 +1,24 @@
+<AddIn name        = "D3D"
+       url         = "http://altaxo.sf.net"
+       version     = "1.0.0">
+
+	<Manifest>
+		<Identity name="Altaxo.AddIns.D3D" />
+	</Manifest>
+
+	<Runtime>
+		<Import assembly="D3DBase.dll" />
+		<Import assembly="D3DPresentation.dll" />
+	</Runtime>
+
+	<Path name = "/Altaxo/Workbench/MainMenu">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
+			<MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}"  type="Menu">
+				<Condition name ="SelectedDataColumns" selected="*" action="Disable">
+					<MenuItem id="Plot3D" label="Plot3D" icon="Icons.16x16.PlotLine"
+						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.Plot3D" />
+				</Condition>
+			</MenuItem>
+		</Condition>
+	</Path>
+</AddIn>
