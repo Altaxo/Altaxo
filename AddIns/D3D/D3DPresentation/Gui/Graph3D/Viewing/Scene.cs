@@ -59,9 +59,17 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private ISceneHost Host;
 		private InputLayout VertexLayout;
 		private DataStream VertexStream;
-		private Buffer Vertices;
+		private Buffer _nonindexedTriangleVerticesPositionColor;
+		private int _nonindexedTriangleVerticesPositionColor_Count;
+
 		private Effect SimpleEffect;
 		private Color4 OverlayColor = new Color4(1.0f);
+
+		private Buffer IndexedVertices;
+		private Buffer IndexedVerticesIndexes;
+		private int IndexedVerticesIndexes_Count;
+
+		private D3D10GraphicContext _drawing;
 
 		void IScene.Attach(ISceneHost host)
 		{
@@ -86,30 +94,104 @@ namespace Altaxo.Gui.Graph3D.Viewing
 								new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
 						});
 
-			this.VertexStream = new DataStream(3 * 32, true, true);
-			this.VertexStream.WriteRange(new[] {
-								new Vector4(0.0f, 0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1f),
-								new Vector4(0.5f, -0.5f, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1f),
-								new Vector4(-0.5f, -0.5f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1f)
-						});
-			this.VertexStream.Position = 0;
-
-			this.Vertices = new Buffer(device, this.VertexStream, new BufferDescription()
+			if (_drawing != null)
 			{
-				BindFlags = BindFlags.VertexBuffer,
-				CpuAccessFlags = CpuAccessFlags.None,
-				OptionFlags = ResourceOptionFlags.None,
-				SizeInBytes = 3 * 32,
-				Usage = ResourceUsage.Default
+				BringDrawingIntoBuffers(_drawing);
 			}
-			);
+			else
+			{
+				this.VertexStream = new DataStream(3 * 32, true, true);
+				this.VertexStream.WriteRange(new[] {
+								new Vector4(0.0f, 0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1f),
+								new Vector4(0.5f, -0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1f),
+								new Vector4(-0.5f, -0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1f)
+						});
+				this.VertexStream.Position = 0;
+
+				this._nonindexedTriangleVerticesPositionColor = new Buffer(device, this.VertexStream, new BufferDescription()
+				{
+					BindFlags = BindFlags.VertexBuffer,
+					CpuAccessFlags = CpuAccessFlags.None,
+					OptionFlags = ResourceOptionFlags.None,
+					SizeInBytes = 3 * 32,
+					Usage = ResourceUsage.Default
+				}
+				);
+				device.Flush();
+			}
+		}
+
+		public void SetDrawing(D3D10GraphicContext drawing)
+		{
+			var olddrawing = _drawing;
+			_drawing = drawing;
+
+			if (olddrawing != null)
+				olddrawing.Dispose();
+
+			BringDrawingIntoBuffers(drawing);
+		}
+
+		private void BringDrawingIntoBuffers(D3D10GraphicContext drawing)
+		{
+			Device device = this.Host?.Device;
+			if (device == null)
+				return;
+			{
+				Disposer.RemoveAndDispose(ref this._nonindexedTriangleVerticesPositionColor);
+				var buf = drawing.BuffersNonindexedTrianglesPositionColor;
+				if (null != buf && 0 != buf.VertexCount)
+				{
+					buf.VertexStream.Position = 0;
+					this._nonindexedTriangleVerticesPositionColor = new Buffer(device, buf.VertexStream, new BufferDescription()
+					{
+						BindFlags = BindFlags.VertexBuffer,
+						CpuAccessFlags = CpuAccessFlags.None,
+						OptionFlags = ResourceOptionFlags.None,
+						SizeInBytes = (int)buf.VertexStreamLength,
+						Usage = ResourceUsage.Default
+					});
+					this._nonindexedTriangleVerticesPositionColor_Count = buf.VertexCount;
+				}
+			}
+
+			// IndexedTriangles Position Color
+
+			{
+				Disposer.RemoveAndDispose(ref this.IndexedVertices);
+				Disposer.RemoveAndDispose(ref this.IndexedVerticesIndexes);
+				var buf = drawing.BuffersIndexTrianglesPositionColor;
+				if (null != buf && buf.TriangleCount > 0)
+				{
+					buf.VertexStream.Position = 0;
+					this.IndexedVertices = new Buffer(device, buf.VertexStream, new BufferDescription()
+					{
+						BindFlags = BindFlags.VertexBuffer,
+						CpuAccessFlags = CpuAccessFlags.None,
+						OptionFlags = ResourceOptionFlags.None,
+						SizeInBytes = buf.VertexStreamLength,
+						Usage = ResourceUsage.Default
+					});
+
+					buf.IndexStream.Position = 0;
+					this.IndexedVerticesIndexes = new Buffer(device, buf.IndexStream, new BufferDescription()
+					{
+						BindFlags = BindFlags.IndexBuffer,
+						CpuAccessFlags = CpuAccessFlags.None,
+						OptionFlags = ResourceOptionFlags.None,
+						SizeInBytes = buf.IndexStreamLength,
+						Usage = ResourceUsage.Default
+					});
+					this.IndexedVerticesIndexes_Count = buf.TriangleCount * 3;
+				}
+			}
 
 			device.Flush();
 		}
 
 		void IScene.Detach()
 		{
-			Disposer.RemoveAndDispose(ref this.Vertices);
+			Disposer.RemoveAndDispose(ref this._nonindexedTriangleVerticesPositionColor);
 			Disposer.RemoveAndDispose(ref this.VertexLayout);
 			Disposer.RemoveAndDispose(ref this.SimpleEffect);
 			Disposer.RemoveAndDispose(ref this.VertexStream);
@@ -126,21 +208,50 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Device device = this.Host.Device;
 			if (device == null)
 				return;
-			device.InputAssembler.InputLayout = this.VertexLayout;
-			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.Vertices, 32, 0));
 
-			EffectTechnique technique = this.SimpleEffect.GetTechniqueByIndex(0);
-			EffectPass pass = technique.GetPassByIndex(0);
+			// device.ClearRenderTargetView(RenderTargetView, new Color4(0x0000FFFF));
 
-			EffectVectorVariable overlayColor = this.SimpleEffect.GetVariableBySemantic("OverlayColor").AsVector();
-
-			overlayColor.Set(this.OverlayColor);
-
-			for (int i = 0; i < technique.Description.PassCount; ++i)
+			if (null != _nonindexedTriangleVerticesPositionColor)
 			{
-				pass.Apply();
-				device.Draw(3, 0);
+				device.InputAssembler.InputLayout = this.VertexLayout;
+				device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+				device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._nonindexedTriangleVerticesPositionColor, 32, 0));
+
+				EffectTechnique technique = this.SimpleEffect.GetTechniqueByIndex(0);
+				EffectPass pass = technique.GetPassByIndex(0);
+
+				EffectVectorVariable overlayColor = this.SimpleEffect.GetVariableBySemantic("OverlayColor").AsVector();
+
+				overlayColor.Set(this.OverlayColor);
+
+				for (int i = 0; i < technique.Description.PassCount; ++i)
+				{
+					pass.Apply();
+					device.Draw(_nonindexedTriangleVerticesPositionColor_Count, 0);
+				}
+			}
+
+			if (null != this.IndexedVerticesIndexes && null != IndexedVertices)
+			{
+				// Indexed vertices position color
+
+				device.InputAssembler.InputLayout = this.VertexLayout;
+				device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+				device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.IndexedVertices, 32, 0));
+				device.InputAssembler.SetIndexBuffer(this.IndexedVerticesIndexes, Format.R32_UInt, 0);
+
+				EffectTechnique technique = this.SimpleEffect.GetTechniqueByIndex(0);
+				EffectPass pass = technique.GetPassByIndex(0);
+
+				EffectVectorVariable overlayColor = this.SimpleEffect.GetVariableBySemantic("OverlayColor").AsVector();
+
+				overlayColor.Set(this.OverlayColor);
+
+				for (int i = 0; i < technique.Description.PassCount; ++i)
+				{
+					pass.Apply();
+					device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
+				}
 			}
 		}
 	}

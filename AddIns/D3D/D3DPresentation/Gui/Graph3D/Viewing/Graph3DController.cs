@@ -22,7 +22,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		public object ViewObject
+		public virtual object ViewObject
 		{
 			get
 			{
@@ -32,6 +32,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			set
 			{
 				_view = value;
+
+				if (_view is IGraph3DView)
+				{
+					((IGraph3DView)_view).Controller = this;
+				}
 			}
 		}
 
@@ -46,7 +51,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
 		}
 
 		public bool InitializeDocument(params object[] args)
@@ -81,12 +85,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		public bool Apply(bool disposeController)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
 		public bool Revert(bool disposeController)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 	}
 }

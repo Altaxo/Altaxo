@@ -74,6 +74,7 @@
     <Compile Include="Gui\Graph3D\Common\DPFCanvas.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D10GraphicContext.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>

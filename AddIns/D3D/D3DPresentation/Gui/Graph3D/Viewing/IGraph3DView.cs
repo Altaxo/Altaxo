@@ -9,5 +9,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	public interface IGraph3DView
 	{
 		object GuiInitiallyFocusedElement { get; }
+		Graph3DController Controller { set; }
 	}
 }

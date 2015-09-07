@@ -44,6 +44,11 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		public Color4 ClearColor = SharpDX.Color.Black;
 
+		/// <summary>
+		/// Occurs when 3D rendering is ready.
+		/// </summary>
+		public event EventHandler D3DStarted;
+
 		public DPFCanvas()
 		{
 			this.RenderTimer = new Stopwatch();
@@ -58,6 +63,8 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			this.StartD3D();
 			this.StartRendering();
+
+			D3DStarted?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void EhUnloaded(object sender, RoutedEventArgs e)
@@ -178,8 +185,11 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
-			this.CreateAndBindTargets();
-			base.OnRenderSizeChanged(sizeInfo);
+			if (null != this.Device)
+			{
+				this.CreateAndBindTargets();
+				base.OnRenderSizeChanged(sizeInfo);
+			}
 		}
 
 		private void Render(TimeSpan sceneTime)

@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graph3D\Graph3DDocument.cs" />
+    <Compile Include="Graph3D\IGraphicContext3D.cs" />
+    <Compile Include="Graph3D\IPositionColorIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph3D\IPositionColorTriangleBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

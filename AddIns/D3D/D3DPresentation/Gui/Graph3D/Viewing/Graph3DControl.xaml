@@ -8,6 +8,6 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
-    <axogg3c:DPFCanvas x:Name="Canvas1" Stretch="Fill" />
+    <axogg3c:DPFCanvas x:Name="_d3dCanvas" Stretch="Fill" />
   </Grid>
 </UserControl>
