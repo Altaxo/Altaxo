@@ -24,26 +24,28 @@ namespace Altaxo.Graph3D
 
 			var offs = pctb.VertexCount;
 
-			// /* Indexed triangle
+			/* Indexed triangle
 			pctb.AddTriangleVertex(0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1f);
 			pctb.AddTriangleVertex(0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1f);
 			pctb.AddTriangleVertex(-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1f);
 			pctb.AddTriangleIndices(0 + offs, 1 + offs, 2 + offs);
-			// */
+			*/
 
-			/*
+			PointD3D[] colors = new[] { new PointD3D(1,0,0), new PointD3D(0,1,0), new PointD3D(0,0,1),
+				new PointD3D(1,1,0), new PointD3D(1,0,1), new PointD3D(0,1,1)};
 
-			foreach (var vertexAndNormal in Cube.GetIndexedVerticesWithNormal_Vertices(-0.5f, 0.5f, 0.5f, 1, 1, 1))
+			int colorIndex = 0;
+			foreach (var vertexAndNormal in Cube.GetIndexedVerticesWithNormal_Vertices(-0.5f, -0.5f, -0.5f, 1, 1, 1))
 			{
-				pctb.AddTriangleVertex((float)vertexAndNormal.P1.X, (float)vertexAndNormal.P1.Y, (float)vertexAndNormal.P1.Z, 1f, 1f, 1f, 0f, 1f);
+				var color = colors[colorIndex / 4];
+				pctb.AddTriangleVertex((float)vertexAndNormal.P1.X, (float)vertexAndNormal.P1.Y, (float)vertexAndNormal.P1.Z, 1f, (float)color.X, (float)color.Y, (float)color.Z, 1f);
+				++colorIndex;
 			}
 
 			foreach (var idx in Cube.GetIndexedVerticesWithNormal_Indices())
 			{
 				pctb.AddTriangleIndices(offs + idx.Index1, offs + idx.Index2, offs + idx.Index3);
 			}
-
-			*/
 		}
 	}
 
@@ -127,7 +129,7 @@ namespace Altaxo.Graph3D
 		{
 			// Front z = _z
 			yield return new ThreeIndices(0, 1, 2);
-			yield return new ThreeIndices(1, 3, 2);
+			yield return new ThreeIndices(0, 2, 3);
 
 			// Back z = z+dz
 			yield return new ThreeIndices(4, 5, 6);

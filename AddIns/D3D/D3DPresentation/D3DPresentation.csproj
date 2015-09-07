@@ -104,6 +104,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="CompiledShaders\Simple.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\MiniCube.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\MiniCube.cso" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -151,6 +153,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Vs40File Include="Shaders\MiniCube.fx" />
+    <Ps40File Include="Shaders\MiniCube.fx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -162,6 +168,8 @@
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <Target Name="BeforeBuild">
     <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders" Profile="fx_4_0" />
+    <Shader InputFiles="@(Vs40File)" OutputPath="$(ProjectDir)\CompiledShaders\VS" Profile="vs_4_0" EntryPoint="VS" />
+    <Shader InputFiles="@(Ps40File)" OutputPath="$(ProjectDir)\CompiledShaders\PS" Profile="ps_4_0" EntryPoint="PS" />
   </Target>
   <Target Name="AfterBuild">
   </Target>

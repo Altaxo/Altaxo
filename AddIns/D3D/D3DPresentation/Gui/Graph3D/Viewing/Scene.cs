@@ -71,6 +71,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private D3D10GraphicContext _drawing;
 
+		protected Buffer _constantBuffer;
+
+		private int _renderCounter;
+
 		void IScene.Attach(ISceneHost host)
 		{
 			this.Host = host;
@@ -79,20 +83,30 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (device == null)
 				throw new Exception("Scene host device is null");
 
-			var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.Simple.cso");
-			ShaderBytecode shaderBytes = ShaderBytecode.FromStream(stream);
+			var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.VS.MiniCube.cso");
+			ShaderBytecode vertexShaderByteCode = ShaderBytecode.FromStream(stream);
+			var vertexShader = new VertexShader(device, vertexShaderByteCode);
 
-			// ShaderBytecode shaderBytes = ShaderBytecode.CompileFromFile("Simple.fx", "fx_4_0", ShaderFlags.None, EffectFlags.None, null, null);
+			stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.PS.MiniCube.cso");
+			ShaderBytecode pixelShaderByteCode = ShaderBytecode.FromStream(stream);
+			var pixelShader = new PixelShader(device, pixelShaderByteCode);
 
-			this.SimpleEffect = new Effect(device, shaderBytes);
-
-			EffectTechnique technique = this.SimpleEffect.GetTechniqueByIndex(0); ;
-			EffectPass pass = technique.GetPassByIndex(0);
-
-			this.VertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
+			this.VertexLayout = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode), new[] {
 								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 								new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
 						});
+
+			// Create Constant Buffer
+			_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+
+			// Prepare All the stages
+			device.InputAssembler.InputLayout = this.VertexLayout;
+			//			device.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+			//			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertices, Utilities.SizeOf<Vector4>() * 2, 0));
+			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
+			device.VertexShader.Set(vertexShader);
+			//			device.Rasterizer.SetViewports(new Viewport(0, 0, form.ClientSize.Width, form.ClientSize.Height, 0.0f, 1.0f));
+			device.PixelShader.Set(pixelShader);
 
 			if (_drawing != null)
 			{
@@ -209,7 +223,18 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (device == null)
 				return;
 
-			// device.ClearRenderTargetView(RenderTargetView, new Color4(0x0000FFFF));
+			float time = _renderCounter / 100f;
+			++_renderCounter;
+
+			// Prepare matrices
+			var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
+			var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, 100.0f);
+			var viewProj = Matrix.Multiply(view, proj);
+
+			// Update WorldViewProj Matrix
+			var worldViewProj = Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * viewProj;
+			worldViewProj.Transpose();
+			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
 
 			if (null != _nonindexedTriangleVerticesPositionColor)
 			{
@@ -217,18 +242,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 				device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._nonindexedTriangleVerticesPositionColor, 32, 0));
 
-				EffectTechnique technique = this.SimpleEffect.GetTechniqueByIndex(0);
-				EffectPass pass = technique.GetPassByIndex(0);
-
-				EffectVectorVariable overlayColor = this.SimpleEffect.GetVariableBySemantic("OverlayColor").AsVector();
-
-				overlayColor.Set(this.OverlayColor);
-
-				for (int i = 0; i < technique.Description.PassCount; ++i)
-				{
-					pass.Apply();
-					device.Draw(_nonindexedTriangleVerticesPositionColor_Count, 0);
-				}
+				device.Draw(_nonindexedTriangleVerticesPositionColor_Count, 0);
 			}
 
 			if (null != this.IndexedVerticesIndexes && null != IndexedVertices)
@@ -239,19 +253,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 				device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.IndexedVertices, 32, 0));
 				device.InputAssembler.SetIndexBuffer(this.IndexedVerticesIndexes, Format.R32_UInt, 0);
-
-				EffectTechnique technique = this.SimpleEffect.GetTechniqueByIndex(0);
-				EffectPass pass = technique.GetPassByIndex(0);
-
-				EffectVectorVariable overlayColor = this.SimpleEffect.GetVariableBySemantic("OverlayColor").AsVector();
-
-				overlayColor.Set(this.OverlayColor);
-
-				for (int i = 0; i < technique.Description.PassCount; ++i)
-				{
-					pass.Apply();
-					device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
-				}
+				device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
 			}
 		}
 	}

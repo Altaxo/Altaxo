@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 namespace Altaxo.Gui.Graph3D.Common
 {
+	using Altaxo.Graph;
 	using SharpDX;
 	using SharpDX.Direct3D10;
 	using SharpDX.DXGI;
@@ -269,6 +270,18 @@ namespace Altaxo.Gui.Graph3D.Common
 		SharpDX.Direct3D10.Device ISceneHost.Device
 		{
 			get { return this.Device; }
+		}
+
+		public PointD2D HostSize
+		{
+			get
+			{
+				Texture2D renderTarget = this.RenderTarget;
+				if (renderTarget == null)
+					return new PointD2D(0, 0);
+
+				return new PointD2D(renderTarget.Description.Width, renderTarget.Description.Height);
+			}
 		}
 	}
 }
