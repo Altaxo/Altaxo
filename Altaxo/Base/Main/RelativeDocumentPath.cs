@@ -243,7 +243,7 @@ namespace Altaxo.Main
 			else if (idx == 0)
 				throw new InvalidOperationException(nameof(idx) + "=0 should not happen because this means identical startnode and endnode");
 
-			return new RelativeDocumentPath(numberOfNodesDown, endNodesList.TakeFromUpperIndexDownToLowerIndex(idx - 1, 0).Select(x => x.ParentObject.GetNameOfChildObject(x)));
+			return new RelativeDocumentPath(numberOfNodesDown, endNodesList.TakeFromUpperIndexExclusiveDownToLowerIndexInclusive(idx, 0).Select(x => x.ParentObject.GetNameOfChildObject(x)));
 		}
 
 		public static IDocumentLeafNode GetObject(RelativeDocumentPath path, IDocumentLeafNode startnode)

@@ -216,7 +216,7 @@ namespace Altaxo.Collections
 		/// <param name="upperIndexInclusive">The upper index (inclusive).</param>
 		/// <param name="lowerIndexInclusive">The lower index (inclusive).</param>
 		/// <returns></returns>
-		public static IEnumerable<T> TakeFromUpperIndexDownToLowerIndex<T>(this IList<T> list, int upperIndexInclusive, int lowerIndexInclusive)
+		public static IEnumerable<T> TakeFromUpperIndexInclusiveDownToLowerIndexInclusive<T>(this IList<T> list, int upperIndexInclusive, int lowerIndexInclusive)
 		{
 			if (null == list)
 				throw new ArgumentNullException("list");
@@ -224,6 +224,27 @@ namespace Altaxo.Collections
 				throw new ArgumentException("upperIndexInclusive should be >= lowerIndexInclusive");
 
 			for (int i = upperIndexInclusive; i >= lowerIndexInclusive; --i)
+				yield return list[i];
+		}
+
+		/// <summary>
+		/// Takes all elements of a list, starting from index <paramref name="upperIndexExclusive"/> - 1 down to the index <paramref name="lowerIndexInclusive"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of list elements</typeparam>
+		/// <param name="list">The list of elements.</param>
+		/// <param name="upperIndexExclusive">The upper index (exclusive).</param>
+		/// <param name="lowerIndexInclusive">The lower index (inclusive).</param>
+		/// <returns>All elements of a list, starting from index <paramref name="upperIndexExclusive"/> - 1 down to the index <paramref name="lowerIndexInclusive"/>.</returns>
+		public static IEnumerable<T> TakeFromUpperIndexExclusiveDownToLowerIndexInclusive<T>(this IList<T> list, int upperIndexExclusive, int lowerIndexInclusive)
+		{
+			if (null == list)
+				throw new ArgumentNullException(nameof(list));
+			if (lowerIndexInclusive < 0)
+				throw new ArgumentOutOfRangeException(nameof(lowerIndexInclusive) + " should be >= 0");
+			if (!(upperIndexExclusive >= lowerIndexInclusive))
+				throw new ArgumentException(nameof(upperIndexExclusive) + " should be >= " + nameof(lowerIndexInclusive));
+
+			for (int i = upperIndexExclusive - 1; i >= lowerIndexInclusive; --i)
 				yield return list[i];
 		}
 	}

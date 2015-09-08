@@ -436,7 +436,7 @@ namespace Altaxo.Main
 				throw new InvalidOperationException(msg);
 			}
 
-			return new AbsoluteDocumentPath(list.TakeFromUpperIndexDownToLowerIndex(list.Count - 1, 0));
+			return new AbsoluteDocumentPath(list.TakeFromUpperIndexExclusiveDownToLowerIndexInclusive(list.Count, 0));
 		}
 
 		public static string GetPathString(IDocumentLeafNode node, int maxDepth)
