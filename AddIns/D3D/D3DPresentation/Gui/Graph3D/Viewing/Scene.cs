@@ -227,12 +227,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			++_renderCounter;
 
 			// Prepare matrices
-			var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
+			var view = Matrix.LookAtLH(new Vector3(0, 0, -50), new Vector3(0, 0, 0), Vector3.UnitY);
 			var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, 100.0f);
 			var viewProj = Matrix.Multiply(view, proj);
 
 			// Update WorldViewProj Matrix
-			var worldViewProj = Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * viewProj;
+			var worldViewProj = Matrix.Translation(-0.5f, -0.5f, -0.5f) * Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * viewProj;
 			worldViewProj.Transpose();
 			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
 

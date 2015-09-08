@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,9 +44,52 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graph3D\Graph3DDocument.cs" />
+    <Compile Include="Graph3D\HostLayer.cs" />
+    <Compile Include="Graph3D\IGraphicBase3D.cs" />
     <Compile Include="Graph3D\IGraphicContext3D.cs" />
     <Compile Include="Graph3D\IPositionColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph3D\IPositionColorTriangleBuffer.cs" />
+    <Compile Include="Graph3D\MatrixD3D.cs" />
+    <Compile Include="Graph3D\Primitives\CrossSection.cs" />
+    <Compile Include="Graph3D\Primitives\Cube.cs" />
+    <Compile Include="Graph3D\Primitives\LineCap3D.cs" />
+    <Compile Include="Graph3D\Primitives\LineCap3DContour.cs" />
+    <Compile Include="Graph3D\Primitives\Polyline3D.cs" />
+    <Compile Include="Graph3D\Primitives\Text3D.cs" />
+    <Compile Include="Graph3D\VectorD3D.cs" />
+    <Compile Include="Graph3D\Point3D.cs" />
+    <Compile Include="Graph3D\Point3DMath.cs" />
+    <Compile Include="Graph3D\TwoPointsD3D.cs" />
+    <Compile Include="Poly2Tri\P2T.cs" />
+    <Compile Include="Poly2Tri\Polygon\Polygon.cs" />
+    <Compile Include="Poly2Tri\Polygon\PolygonPoint.cs" />
+    <Compile Include="Poly2Tri\Polygon\PolygonSet.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\DelaunayTriangle.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\AdvancingFront.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\AdvancingFrontNode.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweep.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweepBasin.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweepConstraint.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweepContext.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweepDebugContext.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweepEdgeEvent.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\DTSweepPointComparator.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Delaunay\Sweep\PointOnEdgeException.cs" />
+    <Compile Include="Poly2Tri\Triangulation\ITriangulatable.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Orientation.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Sets\ConstrainedPointSet.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Sets\PointSet.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationAlgorithm.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationConstraint.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationContext.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationDebugContext.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationMode.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationPoint.cs" />
+    <Compile Include="Poly2Tri\Triangulation\TriangulationUtil.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Util\PointGenerator.cs" />
+    <Compile Include="Poly2Tri\Triangulation\Util\PolygonGenerator.cs" />
+    <Compile Include="Poly2Tri\Utility\FixedArray3.cs" />
+    <Compile Include="Poly2Tri\Utility\FixedBitArray3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +101,12 @@
       <Project>{7045c197-9da8-4fa4-886c-992acadd838f}</Project>
       <Name>AltaxoCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Poly2Tri\AUTHORS.txt" />
+    <Content Include="Poly2Tri\LICENSE.txt" />
+    <Content Include="Poly2Tri\README-Altaxo.txt" />
+    <Content Include="Poly2Tri\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
