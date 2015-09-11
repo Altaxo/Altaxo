@@ -779,7 +779,7 @@ namespace Altaxo.Graph
 			set
 			{
 				var oldValue = _positionY;
-				InternalSetAbsolutePositionXSilent(value);
+				InternalSetAbsolutePositionYSilent(value);
 				if (oldValue != _positionY)
 					EhSelfChanged();
 			}
@@ -874,7 +874,7 @@ namespace Altaxo.Graph
 
 			var oldPos = this.AbsolutePosition;
 			this.InternalSetAbsolutePositionXSilent(oldPos.X + (oldRefX - newRefX));
-			this.InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefX - newRefX));
+			this.InternalSetAbsolutePositionYSilent(oldPos.Y + (oldRefY - newRefY));
 			_parentAnchorX = newParentAnchorX;
 			_parentAnchorY = newParentAnchorY;
 		}

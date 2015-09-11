@@ -397,7 +397,7 @@ namespace Altaxo.Graph.Gdi
 				SizeX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.X),
 				SizeY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativeSize.Y),
 				PositionX = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X),
-				PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.X)
+				PositionY = RADouble.NewRel(HostLayer.DefaultChildLayerRelativePosition.Y)
 			};
 		}
 
