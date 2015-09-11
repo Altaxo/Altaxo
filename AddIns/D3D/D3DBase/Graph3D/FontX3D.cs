@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,49 +31,46 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public struct PointD3D
+	public class FontX3D
 	{
-		public double X;
-		public double Y;
-		public double Z;
+		private FontX _font;
+		private double _depth;
 
-		public PointD3D(double x, double y, double z)
+		public FontX3D(FontX font, double depth)
 		{
-			X = x;
-			Y = y;
-			Z = z;
+			_font = font;
+			_depth = depth;
 		}
 
-		public static PointD3D Empty { get { return new PointD3D(); } }
-
-		public static PointD3D operator +(PointD3D a, VectorD3D b)
+		public FontX Font
 		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			get { return _font; }
 		}
 
-		public static PointD3D operator +(VectorD3D b, PointD3D a)
+		public double Depth
 		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			get
+			{
+				return _depth;
+			}
 		}
 
-		public static VectorD3D operator -(PointD3D a, PointD3D b)
+		public double Size
 		{
-			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+			get
+			{
+				return _font.Size;
+			}
 		}
 
-		public static bool operator ==(PointD3D a, PointD3D b)
+		public FontX3D GetFontWithNewSize(double newSize)
 		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+			return new FontX3D(_font.GetFontWithNewSize(newSize), _depth);
 		}
 
-		public static bool operator !=(PointD3D a, PointD3D b)
+		public FontX3D GetFontWithNewFamily(string newFamily)
 		{
-			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
-		}
-
-		public static explicit operator PointD3D(VectorD3D v)
-		{
-			return new PointD3D(v.X, v.Y, v.Z);
+			return new FontX3D(_font.GetFontWithNewFamily(newFamily), _depth);
 		}
 	}
 }

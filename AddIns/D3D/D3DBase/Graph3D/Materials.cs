@@ -30,49 +30,11 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public struct PointD3D
+	internal class Materials
 	{
-		public double X;
-		public double Y;
-		public double Z;
-
-		public PointD3D(double x, double y, double z)
+		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
 		{
-			X = x;
-			Y = y;
-			Z = z;
-		}
-
-		public static PointD3D Empty { get { return new PointD3D(); } }
-
-		public static PointD3D operator +(PointD3D a, VectorD3D b)
-		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-		}
-
-		public static PointD3D operator +(VectorD3D b, PointD3D a)
-		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-		}
-
-		public static VectorD3D operator -(PointD3D a, PointD3D b)
-		{
-			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-		}
-
-		public static bool operator ==(PointD3D a, PointD3D b)
-		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-		}
-
-		public static bool operator !=(PointD3D a, PointD3D b)
-		{
-			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
-		}
-
-		public static explicit operator PointD3D(VectorD3D v)
-		{
-			return new PointD3D(v.X, v.Y, v.Z);
+			throw new NotImplementedException();
 		}
 	}
 }

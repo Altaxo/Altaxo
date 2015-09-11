@@ -28,51 +28,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Primitives
 {
-	public struct PointD3D
+	public class StraightLineSweepPath3D : ISweepPath3D
 	{
-		public double X;
-		public double Y;
-		public double Z;
+		private PointD3D _p0, _p1;
 
-		public PointD3D(double x, double y, double z)
+		public StraightLineSweepPath3D(PointD3D p0, PointD3D p1)
 		{
-			X = x;
-			Y = y;
-			Z = z;
+			_p0 = p0;
+			_p1 = p1;
 		}
 
-		public static PointD3D Empty { get { return new PointD3D(); } }
-
-		public static PointD3D operator +(PointD3D a, VectorD3D b)
+		public int Count
 		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			get
+			{
+				return 2;
+			}
 		}
 
-		public static PointD3D operator +(VectorD3D b, PointD3D a)
+		public PointD3D GetPoint(int idx)
 		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			switch (idx)
+			{
+				case 0:
+					return _p0;
+					break;
+
+				case 1:
+					return _p1;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(idx));
+			}
 		}
 
-		public static VectorD3D operator -(PointD3D a, PointD3D b)
+		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
-			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-		}
-
-		public static bool operator ==(PointD3D a, PointD3D b)
-		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-		}
-
-		public static bool operator !=(PointD3D a, PointD3D b)
-		{
-			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
-		}
-
-		public static explicit operator PointD3D(VectorD3D v)
-		{
-			return new PointD3D(v.X, v.Y, v.Z);
+			return true;
 		}
 	}
 }

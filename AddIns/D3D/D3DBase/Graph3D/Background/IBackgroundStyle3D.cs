@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,51 +28,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Background
 {
-	public struct PointD3D
+	public interface IBackgroundStyle3D : Main.IDocumentLeafNode, ICloneable
 	{
-		public double X;
-		public double Y;
-		public double Z;
-
-		public PointD3D(double x, double y, double z)
-		{
-			X = x;
-			Y = y;
-			Z = z;
-		}
-
-		public static PointD3D Empty { get { return new PointD3D(); } }
-
-		public static PointD3D operator +(PointD3D a, VectorD3D b)
-		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-		}
-
-		public static PointD3D operator +(VectorD3D b, PointD3D a)
-		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-		}
-
-		public static VectorD3D operator -(PointD3D a, PointD3D b)
-		{
-			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-		}
-
-		public static bool operator ==(PointD3D a, PointD3D b)
-		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-		}
-
-		public static bool operator !=(PointD3D a, PointD3D b)
-		{
-			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
-		}
-
-		public static explicit operator PointD3D(VectorD3D v)
-		{
-			return new PointD3D(v.X, v.Y, v.Z);
-		}
+		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
 	}
 }

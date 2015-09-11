@@ -35,8 +35,8 @@ namespace Altaxo.Graph3D.Primitives
 		private static readonly VectorD3D _yVector = new VectorD3D(0, 1, 0);
 		private static readonly VectorD3D _zVector = new VectorD3D(0, 0, 1);
 
-		private CrossSectionOfLine _crossSection;
-		private List<PointD3D> _linePoints;
+		private ICrossSectionOfLine _crossSection;
+		private IList<PointD3D> _linePoints;
 
 		private VectorD3D _endEastVector;
 		private VectorD3D _endNorthVector;
@@ -46,7 +46,7 @@ namespace Altaxo.Graph3D.Primitives
 		public VectorD3D EndNorthVector { get { return _endNorthVector; } }
 		public VectorD3D EndAdvanceVector { get { return _endAdvanceVector; } }
 
-		public Polyline3D(CrossSectionOfLine cross, List<PointD3D> linePoints)
+		public Polyline3D(ICrossSectionOfLine cross, IList<PointD3D> linePoints)
 		{
 			_crossSection = cross;
 

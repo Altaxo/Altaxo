@@ -35,10 +35,23 @@ namespace Altaxo.Graph3D.Primitives
 	{
 		private string _text = "Käppi";
 		private double _fontSize = 12;
+		private double _depth = 3;
+		private FontX3D _font;
 		private const double distanceCutThreshold = 0.0001;
 
 		private List<Poly2Tri.Polygon> _polygons = new List<Poly2Tri.Polygon>();
-		private double _depth = 3;
+
+		public Text3D()
+		{
+		}
+
+		public Text3D(string text, FontX3D font)
+		{
+			_text = text;
+			_fontSize = font.Size;
+			_depth = font.Depth;
+			_font = font;
+		}
 
 		/* This method determines whether the points an ArrayList of SDEPoint objects are clockwise or anti-clockwise.
   * It does it by calculating the area using this alogrithm:
@@ -90,6 +103,15 @@ namespace Altaxo.Graph3D.Primitives
 			double dx = b.X - a.X;
 			double dy = b.Y - a.Y;
 			return Math.Sqrt(dx * dx + dy * dy);
+		}
+
+		public static VectorD3D MeasureString(string text, FontX3D font, System.Drawing.StringFormat strgfmt)
+		{
+			var path = new System.Drawing.Drawing2D.GraphicsPath();
+			path.AddString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font).FontFamily, 0, 1000, new System.Drawing.PointF(0, 0), strgfmt);
+			var size = path.GetBounds();
+			path.Dispose();
+			return new VectorD3D(size.Width * font.Size / 1000.0, size.Height * font.Size / 1000.0, font.Depth);
 		}
 
 		private void CreatePolygons()

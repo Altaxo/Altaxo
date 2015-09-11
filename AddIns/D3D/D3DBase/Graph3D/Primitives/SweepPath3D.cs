@@ -28,51 +28,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Primitives
 {
-	public struct PointD3D
+	public class SweepPath3D : ISweepPath3D
 	{
-		public double X;
-		public double Y;
-		public double Z;
+		private List<PointD3D> _points = new List<PointD3D>();
+		private List<bool> _isSharpTransition = new List<bool>();
 
-		public PointD3D(double x, double y, double z)
+		public SweepPath3D(PointD3D p1, PointD3D p2)
 		{
-			X = x;
-			Y = y;
-			Z = z;
+			_points.Add(p1);
+			_points.Add(p2);
 		}
 
-		public static PointD3D Empty { get { return new PointD3D(); } }
-
-		public static PointD3D operator +(PointD3D a, VectorD3D b)
+		public void AddPoint(PointD3D point, bool isNextTransitionSharp)
 		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			var idx = _points.Count;
+
+			_points.Add(point);
+
+			var count = _isSharpTransition.Count;
+			if (idx == count)
+			{
+				_isSharpTransition.Add(isNextTransitionSharp);
+			}
+			else if (idx < count)
+			{
+				_isSharpTransition[idx] = isNextTransitionSharp;
+			}
+			else
+			{
+				for (int i = count; i < idx; ++i)
+					_isSharpTransition.Add(false);
+				_isSharpTransition[idx] = isNextTransitionSharp;
+			}
 		}
 
-		public static PointD3D operator +(VectorD3D b, PointD3D a)
+		public PointD3D GetPoint(int idx)
 		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+			return _points[idx];
 		}
 
-		public static VectorD3D operator -(PointD3D a, PointD3D b)
+		public IList<PointD3D> Points
 		{
-			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+			get
+			{
+				return _points;
+			}
 		}
 
-		public static bool operator ==(PointD3D a, PointD3D b)
+		public int Count
 		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+			get
+			{
+				return _points.Count;
+			}
 		}
 
-		public static bool operator !=(PointD3D a, PointD3D b)
+		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
-			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
-		}
-
-		public static explicit operator PointD3D(VectorD3D v)
-		{
-			return new PointD3D(v.X, v.Y, v.Z);
+			return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
 		}
 	}
 }

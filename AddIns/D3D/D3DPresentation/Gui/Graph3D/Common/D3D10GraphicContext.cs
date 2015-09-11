@@ -34,13 +34,15 @@ namespace Altaxo.Gui.Graph3D.Common
 
 	using SharpDX;
 
-	public class D3D10GraphicContext : IGraphicContext3D, IDisposable
+	public class D3D10GraphicContext : GraphicContext3DBase, IDisposable
 	{
 		protected PositionColorTriangleBuffer _positionColorTriangleBuffer;
 
 		protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
 
-		public IPositionColorTriangleBuffer GetPositionColorTriangleBuffer(int numberOfVertices)
+		private GraphicState _transformation = new GraphicState() { Transformation = MatrixD3D.Identity };
+
+		public override IPositionColorTriangleBuffer GetPositionColorTriangleBuffer(int numberOfVertices)
 		{
 			if (null == _positionColorTriangleBuffer)
 				_positionColorTriangleBuffer = new PositionColorTriangleBuffer(this);
@@ -48,7 +50,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			return _positionColorTriangleBuffer;
 		}
 
-		public IPositionColorIndexedTriangleBuffer GetPositionColorIndexedTriangleBuffer(int numberOfVertices)
+		public override IPositionColorIndexedTriangleBuffer GetPositionColorIndexedTriangleBuffer(int numberOfVertices)
 		{
 			if (null == _positionColorIndexedTriangleBuffer)
 				_positionColorIndexedTriangleBuffer = new PositionColorIndexedTriangleBuffer(this);
@@ -68,6 +70,42 @@ namespace Altaxo.Gui.Graph3D.Common
 		public PositionColorIndexedTriangleBuffer BuffersIndexTrianglesPositionColor { get { return _positionColorIndexedTriangleBuffer; } }
 
 		#endregion Rendering
+
+		#region Transformation
+
+		internal GraphicState Transformation
+		{
+			get
+			{
+				return _transformation;
+			}
+		}
+
+		public override object SaveGraphicsState()
+		{
+			return new GraphicState { Transformation = _transformation.Transformation };
+		}
+
+		public override void RestoreGraphicsState(object graphicsState)
+		{
+			var gs = graphicsState as GraphicState;
+			if (null != gs)
+				_transformation.Transformation = gs.Transformation;
+			else
+				throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
+		}
+
+		public override void MultiplyTransform(MatrixD3D m)
+		{
+			_transformation.Transformation.PrependTransform(m);
+		}
+
+		internal class GraphicState
+		{
+			public Altaxo.Graph3D.MatrixD3D Transformation;
+		}
+
+		#endregion Transformation
 	}
 
 	public class PositionColorTriangleBuffer : IPositionColorTriangleBuffer, IDisposable
@@ -153,7 +191,9 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		public void AddTriangleVertex(float x, float y, float z, float w, float r, float g, float b, float a)
 		{
-			_vertexStream.Write(new Vector4(x, y, z, w));
+			var pt = _parent.Transformation.Transformation.TransformPoint(new PointD3D(x, y, z));
+
+			_vertexStream.Write(new Vector4((float)pt.X, (float)pt.Y, (float)pt.Z, w));
 			_vertexStream.Write(new Vector4(r, g, b, a));
 			++_numberOfVertices;
 		}

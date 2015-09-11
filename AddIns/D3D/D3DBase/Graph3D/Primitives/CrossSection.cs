@@ -33,7 +33,7 @@ namespace Altaxo.Graph3D.Primitives
 	/// Represents the cross section of an line. It is assumed here that the midpoint of the line is the point (0,0) and that all
 	/// edges can be connected to the midpoint without leaving the cross section.
 	/// </summary>
-	public class CrossSectionOfLine
+	public class CrossSectionOfLine : ICrossSectionOfLine
 	{
 		private PointD3D[] _vertices;
 		private bool[] _isVertexSharp;

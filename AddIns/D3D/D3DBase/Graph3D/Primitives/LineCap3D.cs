@@ -59,7 +59,7 @@ namespace Altaxo.Graph3D.Primitives
 
 			int currIndex = startIndex;
 
-			var vectorTransform = new MatrixD3D(e.X, e.Y, e.Z, 0, n.X, n.Y, n.Z, 0, currSeg.X, currSeg.Y, currSeg.Z, 0, 0, 0, 0, 0); // used to transform the normal vectors into 3D-Space
+			var vectorTransform = new MatrixD3D(e.X, e.Y, e.Z, n.X, n.Y, n.Z, currSeg.X, currSeg.Y, currSeg.Z, 0, 0, 0); // used to transform the normal vectors into 3D-Space
 
 			for (int contourVertexIdx = 0, contourNormalIdx = 0; contourVertexIdx < contour.NumberOfVertices; ++contourVertexIdx, ++contourNormalIdx)
 			{

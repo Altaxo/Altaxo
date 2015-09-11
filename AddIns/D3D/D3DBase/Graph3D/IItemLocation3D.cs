@@ -26,53 +26,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public struct PointD3D
+	public interface IItemLocation3D
+	:
+	Altaxo.Main.IDocumentLeafNode,
+	Altaxo.Main.ICopyFrom
 	{
-		public double X;
-		public double Y;
-		public double Z;
+		double RotationX { get; set; }
+		double RotationY { get; set; }
+		double RotationZ { get; set; }
 
-		public PointD3D(double x, double y, double z)
-		{
-			X = x;
-			Y = y;
-			Z = z;
-		}
+		double ShearX { get; set; }
 
-		public static PointD3D Empty { get { return new PointD3D(); } }
+		double ShearY { get; set; }
 
-		public static PointD3D operator +(PointD3D a, VectorD3D b)
-		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-		}
+		double ShearZ { get; set; }
 
-		public static PointD3D operator +(VectorD3D b, PointD3D a)
-		{
-			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-		}
+		double ScaleX { get; set; }
 
-		public static VectorD3D operator -(PointD3D a, PointD3D b)
-		{
-			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-		}
+		double ScaleY { get; set; }
 
-		public static bool operator ==(PointD3D a, PointD3D b)
-		{
-			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-		}
-
-		public static bool operator !=(PointD3D a, PointD3D b)
-		{
-			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
-		}
-
-		public static explicit operator PointD3D(VectorD3D v)
-		{
-			return new PointD3D(v.X, v.Y, v.Z);
-		}
+		double ScaleZ { get; set; }
 	}
 }

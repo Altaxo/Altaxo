@@ -90,10 +90,10 @@ namespace Altaxo.Graph3D
 			double qw_qv = qw / qv;
 
 			return new MatrixD3D(
-				e.X - v.X * qn_qv, e.Y - v.Y * qn_qv, e.Z - v.Z * qn_qv, 0,
-				n.X - v.X * qw_qv, n.Y - v.Y * qw_qv, n.Z - v.Z * qw_qv, 0,
-				0, 0, 0, 0,
-				p.X, p.Y, p.Z, 1);
+				e.X - v.X * qn_qv, e.Y - v.Y * qn_qv, e.Z - v.Z * qn_qv,
+				n.X - v.X * qw_qv, n.Y - v.Y * qw_qv, n.Z - v.Z * qw_qv,
+				0, 0, 0,
+				p.X, p.Y, p.Z);
 		}
 
 		/// <summary>
@@ -107,10 +107,10 @@ namespace Altaxo.Graph3D
 		public static MatrixD3D Get2DProjectionToPlane(VectorD3D e, VectorD3D n, PointD3D p)
 		{
 			return new MatrixD3D(
-				e.X, e.Y, e.Z, 0,
-				n.X, n.Y, n.Z, 0,
-				0, 0, 0, 0,
-				p.X, p.Y, p.Z, 1);
+				e.X, e.Y, e.Z,
+				n.X, n.Y, n.Z,
+				0, 0, 0,
+				p.X, p.Y, p.Z);
 		}
 	}
 }

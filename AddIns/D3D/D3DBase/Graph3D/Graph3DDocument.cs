@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Graph;
+using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,6 +83,35 @@ namespace Altaxo.Graph3D
 				},
 				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
 				ref offs);
+
+			var penRed = new PenX3D(NamedColors.Red, 4);
+			gc.DrawLine(penRed, new PointD3D(0, 0, 0), new PointD3D(30, 0, 0));
+			var penGreen = new PenX3D(NamedColors.Green, 4);
+			gc.DrawLine(penGreen, new PointD3D(0, 0, 0), new PointD3D(0, 30, 0));
+			var penBlue = new PenX3D(NamedColors.AliceBlue, 4);
+			gc.DrawLine(penBlue, new PointD3D(0, 0, 0), new PointD3D(0, 0, 30));
+		}
+
+		public static double GetDefaultPenWidth(IReadOnlyPropertyBag context)
+		{
+			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(context);
+		}
+
+		public static double GetDefaultMajorTickLength(IReadOnlyPropertyBag context)
+		{
+			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultMajorTickLength(context);
+		}
+
+		public static Altaxo.Graph.NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
+		{
+			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultForeColor(context);
+		}
+
+		public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
+		{
+			var font = Altaxo.Graph.Gdi.GraphDocument.GetDefaultFont(context);
+
+			return new FontX3D(font, font.Size * 0.25);
 		}
 	}
 }
