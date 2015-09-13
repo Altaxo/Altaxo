@@ -28,12 +28,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.Background
+namespace Altaxo.Graph3D
 {
-	public interface IBackgroundStyle3D : Main.IDocumentLeafNode, ICloneable
+	public class TransformedRectangularVolume
 	{
-		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
+		private RectangleD3D _rectangle;
+		private MatrixD3D _transformation;
 
-		RectangleD3D MeasureItem(RectangleD3D textRectangle);
+		public TransformedRectangularVolume(RectangleD3D rectangle, MatrixD3D transformation)
+		{
+			_rectangle = rectangle;
+			_transformation = transformation;
+		}
 	}
 }

@@ -29,6 +29,8 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph3D
 {
+	using Shapes;
+
 	/// <summary>
 	/// Summary description for GraphicsObjectCollection.
 	/// </summary>

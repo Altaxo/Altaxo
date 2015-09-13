@@ -22,68 +22,45 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public class FontX3D
+	public class FontManager3D
 	{
-		private FontX _font;
-		private double _depth;
+		private static Bitmap _bmp = new Bitmap(16, 16);
+		private static Graphics _graphics;
 
-		public FontX3D(FontX font, double depth)
+		static FontManager3D()
 		{
-			_font = font;
-			_depth = depth;
+			_bmp = new Bitmap(16, 16);
+			_graphics = Graphics.FromImage(_bmp);
 		}
 
-		public FontX Font
+		public static VectorD3D MeasureString(string text, FontX3D font, StringFormat format)
 		{
-			get { return _font; }
+			var size = _graphics.MeasureString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font), new PointF(0, 0), format);
+			return new VectorD3D(size.Width, size.Height, font.Depth);
 		}
 
-		public double Depth
+		public static FontInfo GetFontInformation(FontX3D font)
 		{
-			get
-			{
-				return _depth;
-			}
-		}
+			// get some properties of the font
+			var gdiFont = Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font);
+			double size = gdiFont.Size;
+			double cyLineSpace = gdiFont.GetHeight(_graphics); // space between two lines
+			int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
+			int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
+			int iCellDescent = gdiFont.FontFamily.GetCellDescent(gdiFont.Style);
+			double cyAscent = cyLineSpace * iCellAscent / iCellSpace;
+			double cyDescent = cyLineSpace * iCellDescent / iCellSpace;
 
-		public double Size
-		{
-			get
-			{
-				return _font.Size;
-			}
-		}
-
-		public FontXStyle Style
-		{
-			get
-			{
-				return _font.Style;
-			}
-		}
-
-		public FontX3D GetFontWithNewSize(double newSize)
-		{
-			return new FontX3D(_font.GetFontWithNewSize(newSize), _depth);
-		}
-
-		public FontX3D GetFontWithNewFamily(string newFamily)
-		{
-			return new FontX3D(_font.GetFontWithNewFamily(newFamily), _depth);
-		}
-
-		internal FontX3D GetFontWithNewStyle(FontXStyle style)
-		{
-			return new FontX3D(_font.GetFontWithNewStyle(style), _depth);
+			return new FontInfo(cyLineSpace, cyAscent, cyDescent, size);
 		}
 	}
 }

@@ -44,6 +44,8 @@ namespace Altaxo.Graph3D
 
 		public abstract void MultiplyTransform(MatrixD3D m);
 
+		public abstract void TranslateTransform(double x, double y, double z);
+
 		#region Primitives rendering
 
 		public virtual void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1)

@@ -22,18 +22,25 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
+using Altaxo.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.Background
+namespace Altaxo.Graph3D.Plot
 {
-	public interface IBackgroundStyle3D : Main.IDocumentLeafNode, ICloneable
+	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentLeafNode, ITreeListNodeWithParent<IGPlotItem>
 	{
-		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
+		void PaintSymbol(IGraphicContext3D g, RectangleD3D symbolRect);
 
-		RectangleD3D MeasureItem(RectangleD3D textRectangle);
+		string GetName(int v);
+	}
+
+	public interface XYColumnPlotItem : IGPlotItem
+	{
+		XYColumnPlotData Data { get; set; }
 	}
 }

@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Shapes
 {
 	public interface IGraphicBase3D
 		:
@@ -53,9 +53,9 @@ namespace Altaxo.Graph3D
 		/// stored in the paint <paramref name="context"/>.
 		/// </summary>
 		/// <param name="context">The paint context.</param>
-		void PaintPreprocessing(IGraphicContext3D context);
+		void PaintPreprocessing(Altaxo.Graph.Gdi.IPaintContext context);
 
-		void Paint(IGraphicContext3D context);
+		void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext context);
 
 		/// <summary>
 		/// Determines whether this graphical object is compatible with the parent specified in the argument.

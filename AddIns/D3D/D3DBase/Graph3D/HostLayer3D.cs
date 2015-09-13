@@ -30,6 +30,8 @@ using System.Linq;
 
 namespace Altaxo.Graph3D
 {
+	using Shapes;
+
 	public class HostLayer3D :
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		ITreeListNodeWithParent<HostLayer3D>,
@@ -602,7 +604,7 @@ namespace Altaxo.Graph3D
 
 		#region IGraphicBase3D
 
-		public void FixupInternalDataStructures()
+		public virtual void FixupInternalDataStructures()
 		{
 			CalculateCachedSizeAndPosition();
 
@@ -614,18 +616,42 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public void PaintPreprocessing(IGraphicContext3D context)
+		public virtual void PaintPreprocessing(Altaxo.Graph.Gdi.IPaintContext paintcontext)
 		{
 			var mySize = this.Size;
 			foreach (var graphObj in _graphObjects)
 			{
-				graphObj.PaintPreprocessing(context);
+				graphObj.PaintPreprocessing(paintcontext);
 			}
 		}
 
-		public void Paint(IGraphicContext3D context)
+		public virtual void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext paintcontext)
 		{
-			throw new NotImplementedException();
+			var savedgstate = g.SaveGraphicsState();
+
+			g.MultiplyTransform(_transformation);
+
+			PaintInternal(g, paintcontext);
+
+			g.RestoreGraphicsState(savedgstate);
+		}
+
+		/// <summary>
+		/// Internal Paint routine. The graphics state saving and transform is already done here!
+		/// </summary>
+		/// <param name="g">The graphics context</param>
+		/// <param name="context">The paint context.</param>
+		protected virtual void PaintInternal(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext context)
+		{
+			int len = _graphObjects.Count;
+			for (int i = 0; i < len; i++)
+			{
+				_graphObjects[i].Paint(g, context);
+			}
+		}
+
+		public virtual void PaintPostprocessing()
+		{
 		}
 
 		public bool IsCompatibleWithParent(object parentObject)

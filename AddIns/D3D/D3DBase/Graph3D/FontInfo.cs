@@ -28,12 +28,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.Background
+namespace Altaxo.Graph3D
 {
-	public interface IBackgroundStyle3D : Main.IDocumentLeafNode, ICloneable
+	/// <summary>
+	/// Holds Information about the metrics of a font.
+	/// </summary>
+	public class FontInfo
 	{
-		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
+		public double cyLineSpace { get; private set; } // cached linespace value of the font
 
-		RectangleD3D MeasureItem(RectangleD3D textRectangle);
+		public double cyAscent { get; private set; }    // cached ascent value of the font
+
+		public double cyDescent { get; private set; } /// cached descent value of the font
+
+		public double Size { get; private set; }
+
+		public FontInfo(double cylinespace, double cyascent, double cydescent, double size)
+		{
+			cyLineSpace = cylinespace;
+			cyAscent = cyascent;
+			cyDescent = cydescent;
+			Size = size;
+		}
 	}
 }

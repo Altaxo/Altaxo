@@ -100,6 +100,11 @@ namespace Altaxo.Gui.Graph3D.Common
 			_transformation.Transformation.PrependTransform(m);
 		}
 
+		public override void TranslateTransform(double x, double y, double z)
+		{
+			_transformation.Transformation.TranslatePrepend(x, y, z);
+		}
+
 		internal class GraphicState
 		{
 			public Altaxo.Graph3D.MatrixD3D Transformation;
