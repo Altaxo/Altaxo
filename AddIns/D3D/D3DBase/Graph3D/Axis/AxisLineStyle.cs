@@ -151,9 +151,9 @@ namespace Altaxo.Graph3D.Axis
 		/// </summary>
 		public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
 		{
-			double penWidth = Graph3DDocument.GetDefaultPenWidth(context);
-			double majorTickLength = Graph3DDocument.GetDefaultMajorTickLength(context);
-			var color = Graph3DDocument.GetDefaultForeColor(context);
+			double penWidth = GraphDocument3D.GetDefaultPenWidth(context);
+			double majorTickLength = GraphDocument3D.GetDefaultMajorTickLength(context);
+			var color = GraphDocument3D.GetDefaultForeColor(context);
 
 			_axisPen = new PenX3D(color, penWidth) { ParentObject = this };
 			_majorTickPen = new PenX3D(color, penWidth) { ParentObject = this };
@@ -610,7 +610,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showFirstUpMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _majorTickLength;
 					tickend.Y += outVector.Y * _majorTickLength;
@@ -619,7 +619,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showFirstDownMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _majorTickLength;
 					tickend.Y += outVector.Y * _majorTickLength;
@@ -628,7 +628,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showSecondUpMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.SecondUp);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _majorTickLength;
 					tickend.Y += outVector.Y * _majorTickLength;
@@ -637,7 +637,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showSecondDownMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.SecondDown);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _majorTickLength;
 					tickend.Y += outVector.Y * _majorTickLength;
@@ -654,7 +654,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showFirstUpMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _minorTickLength;
 					tickend.Y += outVector.Y * _minorTickLength;
@@ -663,7 +663,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showFirstDownMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _minorTickLength;
 					tickend.Y += outVector.Y * _minorTickLength;
@@ -673,7 +673,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showSecondUpMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.SecondUp);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _minorTickLength;
 					tickend.Y += outVector.Y * _minorTickLength;
@@ -682,7 +682,7 @@ namespace Altaxo.Graph3D.Axis
 				if (_showSecondDownMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.SecondDown);
-					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg;
 					tickend.X += outVector.X * _minorTickLength;
 					tickend.Y += outVector.Y * _minorTickLength;

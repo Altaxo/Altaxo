@@ -71,6 +71,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private D3D10GraphicContext _drawing;
 
+		private Altaxo.Graph3D.SceneSettings _sceneSettings;
+
 		protected Buffer _constantBuffer;
 
 		private int _renderCounter;
@@ -144,6 +146,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				olddrawing.Dispose();
 
 			BringDrawingIntoBuffers(drawing);
+		}
+
+		public void SetSceneSettings(Altaxo.Graph3D.SceneSettings sceneSettings)
+		{
+			_sceneSettings = sceneSettings;
 		}
 
 		private void BringDrawingIntoBuffers(D3D10GraphicContext drawing)
@@ -227,12 +234,43 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			++_renderCounter;
 
 			// Prepare matrices
-			var view = Matrix.LookAtLH(new Vector3(0, 0, -50), new Vector3(0, 0, 0), Vector3.UnitY);
-			var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, 100.0f);
+			//var view = Matrix.LookAtLH(new Vector3(0, 0, -1500), new Vector3(0, 0, 0), Vector3.UnitY);
+			//var proj = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, float.MaxValue);
+
+			Matrix view, proj;
+
+			if (null != _sceneSettings)
+			{
+				var cam = _sceneSettings.Camera;
+				var eye = cam.EyePosition;
+				var target = cam.TargetPosition;
+				var up = cam.UpVector;
+				view = Matrix.LookAtRH(new Vector3((float)eye.X, (float)eye.Y, (float)eye.Z), new Vector3((float)target.X, (float)target.Y, (float)target.Z), new Vector3((float)up.X, (float)up.Y, (float)up.Z));
+				if (cam is Altaxo.Graph3D.Camera.PerspectiveCamera)
+				{
+					var angle = (cam as Altaxo.Graph3D.Camera.PerspectiveCamera).Angle;
+					proj = Matrix.PerspectiveFovRH((float)angle, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, float.MaxValue);
+				}
+				else if (cam is Altaxo.Graph3D.Camera.OrthographicCamera)
+				{
+					var scale = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).Scale;
+					proj = Matrix.OrthoRH((float)scale, (float)(scale * Host.HostSize.Y / Host.HostSize.X), 1.0f, 2000.0f);
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+			else
+			{
+				view = Matrix.LookAtRH(new Vector3(0, 0, -1500), new Vector3(0, 0, 0), Vector3.UnitY);
+				proj = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, float.MaxValue);
+			}
 			var viewProj = Matrix.Multiply(view, proj);
 
 			// Update WorldViewProj Matrix
-			var worldViewProj = Matrix.Translation(-0.5f, -0.5f, -0.5f) * Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * viewProj;
+			//var worldViewProj = Matrix.Translation(-300.0f, -300.0f, -300.0f) * Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * viewProj;
+			var worldViewProj = viewProj;
 			worldViewProj.Transpose();
 			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
 

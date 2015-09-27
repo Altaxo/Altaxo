@@ -60,12 +60,7 @@ namespace Altaxo.Graph3D
 
 		public override object Clone()
 		{
-			throw new NotImplementedException();
-		}
-
-		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
-		{
-			throw new NotImplementedException();
+			return new G3DCartesicCoordinateSystem();
 		}
 
 		public override ISweepPath3D GetIsoline(Logical3D r0, Logical3D r1)
@@ -99,9 +94,212 @@ namespace Altaxo.Graph3D
 			return true;
 		}
 
+		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
+		{
+			string name = "Unknown";
+			switch (id.ParallelAxisNumber)
+			{
+				case 0: // parallel axis is X
+					{
+						switch (side)
+						{
+							case CSAxisSide.FirstDown:
+								name = "front";
+								break;
+
+							case CSAxisSide.FirstUp:
+								name = "back";
+								break;
+
+							case CSAxisSide.SecondDown:
+								name = "down";
+								break;
+
+							case CSAxisSide.SecondUp:
+								name = "up";
+								break;
+						}
+					}
+					break;
+
+				case 1: // parallel axis is Y
+					{
+						switch (side)
+						{
+							case CSAxisSide.FirstDown:
+								name = "left";
+								break;
+
+							case CSAxisSide.FirstUp:
+								name = "right";
+								break;
+
+							case CSAxisSide.SecondDown:
+								name = "down";
+								break;
+
+							case CSAxisSide.SecondUp:
+								name = "up";
+								break;
+						}
+					}
+					break;
+
+				case 2: // parallel axis is Z
+					{
+						switch (side)
+						{
+							case CSAxisSide.FirstDown:
+								name = "left";
+								break;
+
+							case CSAxisSide.FirstUp:
+								name = "right";
+								break;
+
+							case CSAxisSide.SecondDown:
+								name = "front";
+								break;
+
+							case CSAxisSide.SecondUp:
+								name = "back";
+								break;
+						}
+					}
+					break;
+			}
+
+			return name;
+		}
+
+		public string GetAxisLineName(CSLineID id)
+		{
+			string basename = "";
+			string specname = "";
+			string name = "Unknown";
+			switch (id.ParallelAxisNumber)
+			{
+				case 0: // parallel axis is X
+					{
+						basename = "X-axis";
+						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
+							specname = "bottom-front";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
+							specname = "bottom-back";
+						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
+							specname = "top-front";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
+							specname = "top-back";
+					}
+					break;
+
+				case 1: // parallel axis is Y
+					{
+						basename = "Y-axis";
+						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
+							specname = "left-bottom";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
+							specname = "right-bottom";
+						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
+							specname = "left-top";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
+							specname = "right-top";
+					}
+					break;
+
+				case 2: // parallel axis is Z
+					{
+						basename = "Z-axis";
+						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
+							specname = "left-front";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
+							specname = "right-front";
+						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
+							specname = "left-back";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
+							specname = "right-back";
+					}
+					break;
+			}
+
+			return basename + "(" + specname + ")";
+		}
+
+		public CSAxisSide GetPreferredLabelSide(CSLineID id)
+		{
+			CSAxisSide axisSide = CSAxisSide.FirstDown;
+
+			switch (id.ParallelAxisNumber)
+			{
+				case 0: // parallel axis is X
+					{
+						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
+							axisSide = CSAxisSide.FirstDown; // "bottom-front";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
+							axisSide = CSAxisSide.FirstUp; //  "bottom-back";
+						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
+							axisSide = CSAxisSide.SecondUp;// "top-front";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
+							axisSide = CSAxisSide.SecondUp; // "top-back";
+					}
+					break;
+
+				case 1: // parallel axis is Y
+					{
+						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
+							axisSide = CSAxisSide.FirstDown; // "left-bottom";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
+							axisSide = CSAxisSide.FirstUp; // "right-bottom";
+						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
+							axisSide = CSAxisSide.FirstDown; //	"left-top";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
+							axisSide = CSAxisSide.FirstUp; // "right-top";
+					}
+					break;
+
+				case 2: // parallel axis is Z
+					{
+						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
+							axisSide = CSAxisSide.FirstDown; // "left-front";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
+							axisSide = CSAxisSide.FirstUp; // "right-front";
+						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
+							axisSide = CSAxisSide.FirstDown; // "left-back";
+						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
+							axisSide = CSAxisSide.FirstUp; // "right-back";
+					}
+					break;
+			}
+
+			return axisSide;
+		}
+
 		protected override void UpdateAxisInfo()
 		{
-			throw new NotImplementedException();
+			_axisStyleInformation.Clear();
+
+			for (int axisnumber = 0; axisnumber <= 2; ++axisnumber)
+			{
+				for (int firstother = 0; firstother <= 1; ++firstother)
+				{
+					for (int secondother = 0; secondother <= 1; ++secondother)
+					{
+						var lineId = new CSLineID(axisnumber, firstother, secondother);
+						var item = new CSAxisInformation(lineId);
+
+						item.NameOfFirstDownSide = GetAxisSideName(lineId, CSAxisSide.FirstDown);
+						item.NameOfFirstUpSide = GetAxisSideName(lineId, CSAxisSide.FirstUp);
+						item.NameOfSecondDownSide = GetAxisSideName(lineId, CSAxisSide.SecondDown);
+						item.NameOfSecondUpSide = GetAxisSideName(lineId, CSAxisSide.SecondUp);
+						item.NameOfAxisStyle = GetAxisLineName(lineId);
+						item.PreferedLabelSide = GetPreferredLabelSide(lineId);
+						item.IsShownByDefault = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
+						item.HasTitleByDefault = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
+
+						_axisStyleInformation.Add(item);
+					}
+				}
+			}
 		}
 	}
 }

@@ -71,6 +71,43 @@ namespace Altaxo.Graph3D
 			_determinant = -(m13 * m22 * m31) + m12 * m23 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33;
 		}
 
+		/// <summary>
+		/// Creates the rotation matrix from axis and angle radian.
+		/// </summary>
+		/// <param name="u">The axis about which the rotation takes place.</param>
+		/// <param name="angleRadian">The rotation angle in radian.</param>
+		/// <param name="center">The center of rotation.</param>
+		/// <returns>Matrix that describes the drotation.</returns>
+		public static MatrixD3D CreateRotationMatrixFromAxisAndAngleRadian(VectorD3D u, double angleRadian, PointD3D center)
+		{
+			double cosTheta = Math.Cos(angleRadian);
+			double oMCosTheta = 1 - cosTheta;
+			double sinTheta = Math.Sin(angleRadian);
+
+			double m11 = cosTheta + u.X * u.X * oMCosTheta;
+			double m12 = u.X * u.Y * oMCosTheta + u.Z * sinTheta;
+			double m13 = u.Z * u.X * oMCosTheta - u.Y * sinTheta;
+
+			double m21 = u.X * u.Y * oMCosTheta - u.Z * sinTheta;
+			double m22 = cosTheta + u.Y * u.Y * oMCosTheta;
+			double m23 = u.Z * u.Y * oMCosTheta + u.X * sinTheta;
+
+			double m31 = u.X * u.Z * oMCosTheta + u.Y * sinTheta;
+			double m32 = u.Y * u.Z * oMCosTheta - u.X * sinTheta;
+			double m33 = cosTheta + u.Z * u.Z * oMCosTheta;
+
+			double offsetX = 0, offsetY = 0, offsetZ = 0;
+
+			if (center.X != 0.0 || center.Y != 0.0 || center.Z != 0.0)
+			{
+				offsetX = -center.X * m11 - center.Y * m21 - center.Z * m31 + center.X;
+				offsetY = -center.X * m12 - center.Y * m22 - center.Z * m32 + center.Y;
+				offsetZ = -center.X * m13 - center.Y * m23 - center.Z * m33 + center.Z;
+			}
+
+			return new MatrixD3D(m11, m12, m13, m21, m22, m23, m31, m32, m33, offsetX, offsetY, offsetZ);
+		}
+
 		public VectorD3D Transform(VectorD3D v)
 		{
 			double x = v.X;

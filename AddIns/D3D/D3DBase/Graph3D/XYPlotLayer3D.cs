@@ -207,7 +207,7 @@ namespace Altaxo.Graph3D
 		{
 			this.CoordinateSystem = coordinateSystem;
 			this.AxisStyles = new AxisStyleCollection();
-			this.Scales = new ScaleCollection();
+			this.Scales = new ScaleCollection(3);
 			this.GridPlanes = new GridPlaneCollection();
 			this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
 			this.PlotItems = new PlotItemCollection(this);
@@ -231,7 +231,7 @@ namespace Altaxo.Graph3D
 			Logical3D r;
 			r.RX = XAxis.PhysicalVariantToNormal(acc.GetXPhysical(idx));
 			r.RY = YAxis.PhysicalVariantToNormal(acc.GetYPhysical(idx));
-			r.RZ = Is3D ? ZAxis.PhysicalVariantToNormal(acc.GetZPhysical(idx)) : 0;
+			r.RZ = ZAxis.PhysicalVariantToNormal(acc.GetZPhysical(idx));
 			return r;
 		}
 
@@ -632,19 +632,35 @@ namespace Altaxo.Graph3D
 		private void SetDefaultAxisTitlePositionAndOrientation(TextGraphic axisTitle, CSLineID id, CSAxisInformation info)
 		{
 			// find out the position and orientation of the item
-			double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1;
+			double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1, rz0 = 0, rz1 = 1;
 			if (id.ParallelAxisNumber == 0)
+			{
 				ry0 = ry1 = id.LogicalValueOtherFirst;
-			else
+				rz0 = rz1 = id.LogicalValueOtherSecond;
+			}
+			else if (id.ParallelAxisNumber == 1)
+			{
 				rx0 = rx1 = id.LogicalValueOtherFirst;
+				rz0 = rz1 = id.LogicalValueOtherSecond;
+			}
+			else if (id.ParallelAxisNumber == 2)
+			{
+				rx0 = rx1 = id.LogicalValueOtherFirst;
+				ry0 = ry1 = id.LogicalValueOtherFirst;
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
 
 			VectorD3D normDirection;
 			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
-			var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
+			var location = CoordinateSystem.GetPositionAndNormalizedDirection(new Logical3D(rx0, ry0, rz0), new Logical3D(rx1, ry1, rz1), 0.5, tdirection, out normDirection);
 			double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
 			axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
 			axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
+			axisTitle.Location.ParentAnchorZ = RADouble.NewRel(location.Z / this.Size.Z); // set the z anchor of the parent
 
 			double distance = 0;
 			AxisStyle axisStyle = _axisStyles[id];
@@ -689,11 +705,13 @@ namespace Altaxo.Graph3D
 				axisTitle.RotationZ = 90;
 				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
 				axisTitle.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
+				axisTitle.Location.LocalAnchorZ = RADouble.NewRel(0.5); // Center
 				distance += scaleFontWidth * labelFontSize;
 			}
 
 			axisTitle.Location.PositionX = RADouble.NewAbs(distance * normDirection.X); // because this is relative to the reference point, we don't need to take the location into account here, it is set above
 			axisTitle.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);
+			axisTitle.Location.PositionZ = RADouble.NewAbs(distance * normDirection.Z);
 		}
 
 		public string DefaultYAxisTitleString
@@ -751,6 +769,8 @@ namespace Altaxo.Graph3D
 		{
 			// paint the background very first
 			_gridPlanes.PaintBackground(g, this);
+
+			_axisStyles.Paint(g, paintContext, this);
 
 			// then paint the graph items
 			base.PaintInternal(g, paintContext);

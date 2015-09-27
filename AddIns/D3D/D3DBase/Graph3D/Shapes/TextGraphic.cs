@@ -118,8 +118,8 @@ namespace Altaxo.Graph3D.Shapes
 			if (null == context)
 				context = PropertyExtensions.GetPropertyContextOfProject();
 
-			_font = Graph3DDocument.GetDefaultFont(context);
-			_textBrush = Materials.GetSolidMaterial(Graph3DDocument.GetDefaultForeColor(context));
+			_font = GraphDocument3D.GetDefaultFont(context);
+			_textBrush = Materials.GetSolidMaterial(GraphDocument3D.GetDefaultForeColor(context));
 			_textBrush.ParentObject = this;
 		}
 

@@ -17,7 +17,7 @@ namespace Altaxo.Worksheet.Commands
 			System.Windows.TextAlignment alignment = new System.Windows.TextAlignment();
 			string t = alignment.ToString();
 
-			var graph = new Graph3D.Graph3DDocument();
+			var graph = Graph3D.GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
 			var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
 

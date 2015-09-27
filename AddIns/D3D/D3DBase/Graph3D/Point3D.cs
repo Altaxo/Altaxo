@@ -60,6 +60,11 @@ namespace Altaxo.Graph3D
 			return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 		}
 
+		public static PointD3D operator -(PointD3D a, VectorD3D b)
+		{
+			return new PointD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+		}
+
 		public static bool operator ==(PointD3D a, PointD3D b)
 		{
 			return a.X == b.X && a.Y == b.Y && a.Z == b.Z;

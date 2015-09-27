@@ -185,8 +185,8 @@ namespace Altaxo.Graph3D.Axis
 			if (null == context)
 				context = PropertyExtensions.GetPropertyContextOfProject();
 
-			_font = Graph3DDocument.GetDefaultFont(context);
-			var foreColor = Graph3DDocument.GetDefaultForeColor(context);
+			_font = GraphDocument3D.GetDefaultFont(context);
+			var foreColor = GraphDocument3D.GetDefaultForeColor(context);
 
 			_brush = Materials.GetSolidMaterial(foreColor);
 			_brush.ParentObject = this;
@@ -690,7 +690,7 @@ namespace Altaxo.Graph3D.Axis
 					continue;
 
 				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
-				PointD3D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
+				PointD3D tickorg = coordSyst.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 				PointD3D tickend = tickorg;
 				tickend.X += outVector.X * outerDistance;
 				tickend.Y += outVector.Y * outerDistance;

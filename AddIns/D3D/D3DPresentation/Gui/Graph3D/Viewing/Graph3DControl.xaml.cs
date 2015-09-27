@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				return;
 
 			var drawing = new D3D10GraphicContext();
-			_controller.Doc.Draw(drawing);
+			_controller.Doc.Paint(drawing);
 
 			var olddrawing = _drawing;
 			_drawing = drawing;
@@ -78,7 +78,33 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				olddrawing.Dispose();
 			}
+
+			_scene.SetSceneSettings(_controller.Doc.Scene);
 			_scene.SetDrawing(drawing);
+		}
+
+		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.NumPad7)
+			{
+			}
+
+			if (e.Key == Key.Up)
+				_controller.EhMoveOrRoll(0, 1, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
+			else if (e.Key == Key.Down)
+				_controller.EhMoveOrRoll(0, -1, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
+			else if (e.Key == Key.Right)
+				_controller.EhMoveOrRoll(1, 0, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
+			else if (e.Key == Key.Left)
+				_controller.EhMoveOrRoll(-1, 0, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
+		}
+
+		private void EhMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			var mousePosition = e.GetPosition(this._d3dCanvas);
+			double relX = mousePosition.X / _d3dCanvas.ActualWidth;
+			double relY = 1 - mousePosition.Y / _d3dCanvas.ActualHeight;
+			_controller.EhMouseWheel(relX, relY, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth, e.Delta);
 		}
 	}
 }

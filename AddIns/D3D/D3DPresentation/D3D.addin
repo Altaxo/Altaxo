@@ -21,4 +21,15 @@
 			</MenuItem>
 		</Condition>
 	</Path>
+
+	<Path name = "/Altaxo/Workbench/ToolBar/Standard">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+			<ToolbarItem id="ViewFront" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+				class="Altaxo.Graph3D.Commands.ViewFront" />
+			<ToolbarItem id="ViewTop" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+				class="Altaxo.Graph3D.Commands.ViewTop" />
+			<ToolbarItem id="ViewRightFrontTop" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+				class="Altaxo.Graph3D.Commands.ViewRightFrontTop" />
+		</Condition>
+	</Path>
 </AddIn>

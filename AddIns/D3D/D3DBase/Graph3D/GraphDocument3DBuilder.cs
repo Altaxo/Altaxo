@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,59 +30,22 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	internal class Materials
+	public static class GraphDocument3DBuilder
 	{
-		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
+		public static GraphDocument3D CreateNewStandardGraphWithXYZPlotLayer(Main.Properties.IReadOnlyPropertyBag context)
 		{
-			return new SolidColor(color);
-		}
-	}
+			if (null == context)
+				context = Altaxo.PropertyExtensions.GetPropertyContextOfProject();
 
-	public class SolidColor : Altaxo.Main.SuspendableDocumentLeafNodeWithEventArgs, IMaterial3D
-	{
-		private Altaxo.Graph.NamedColor _color;
+			var graph = new GraphDocument3D();
 
-		public SolidColor(Altaxo.Graph.NamedColor color)
-		{
-			_color = color;
-		}
+			var xyzlayer = new XYPlotLayer3D(graph.RootLayer, new G3DCartesicCoordinateSystem());
 
-		public NamedColor Color
-		{
-			get
-			{
-				return _color;
-			}
+			graph.RootLayer.Layers.Add(xyzlayer);
 
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
+			xyzlayer.CreateDefaultAxes(context);
 
-		public bool SupportsGetColor
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		public bool SupportsSetColor
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		public object Clone()
-		{
-			return new SolidColor(_color);
-		}
-
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
+			return graph;
 		}
 	}
 }

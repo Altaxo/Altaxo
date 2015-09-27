@@ -214,8 +214,8 @@ namespace Altaxo.Gui.Graph3D.Common
 		public void AddTriangleIndices(int v1, int v2, int v3)
 		{
 			_indexStream.Write(v1);
-			_indexStream.Write(v2);
 			_indexStream.Write(v3);
+			_indexStream.Write(v2);
 			++_numberOfTriangles;
 		}
 	}

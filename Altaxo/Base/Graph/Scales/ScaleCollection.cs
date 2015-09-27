@@ -129,15 +129,23 @@ namespace Altaxo.Graph.Scales
 		}
 
 		public ScaleCollection()
+			: this(2)
 		{
-			_scales = new Scale[2];
-			this[0] = new LinearScale();
-			this[1] = new LinearScale();
+		}
+
+		public ScaleCollection(int numberOfScales)
+		{
+			if (numberOfScales <= 0)
+				throw new ArgumentOutOfRangeException(nameof(numberOfScales) + " must be >= 1");
+
+			_scales = new Scale[numberOfScales];
+			for (int i = 0; i < numberOfScales; ++i)
+				this[i] = new LinearScale();
 		}
 
 		public ScaleCollection(ScaleCollection from)
 		{
-			_scales = new Scale[2];
+			_scales = new Scale[from._scales.Length];
 			CopyFrom(from);
 		}
 

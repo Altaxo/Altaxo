@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,59 +30,32 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	internal class Materials
+	public class SceneSettings : Main.SuspendableDocumentLeafNodeWithEventArgs
 	{
-		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
-		{
-			return new SolidColor(color);
-		}
-	}
+		private Camera.CameraBase _camera;
 
-	public class SolidColor : Altaxo.Main.SuspendableDocumentLeafNodeWithEventArgs, IMaterial3D
-	{
-		private Altaxo.Graph.NamedColor _color;
-
-		public SolidColor(Altaxo.Graph.NamedColor color)
+		public SceneSettings()
 		{
-			_color = color;
+			//_camera = new Camera.PerspectiveCamera();
+
+			_camera = new Camera.OrthographicCamera() { Scale = 1000 };
 		}
 
-		public NamedColor Color
+		public Camera.CameraBase Camera
 		{
 			get
 			{
-				return _color;
+				return _camera;
 			}
-
 			set
 			{
-				throw new NotImplementedException();
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				_camera = value;
+
+				EhSelfChanged();
 			}
-		}
-
-		public bool SupportsGetColor
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		public bool SupportsSetColor
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		public object Clone()
-		{
-			return new SolidColor(_color);
-		}
-
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
 		}
 	}
 }

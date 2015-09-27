@@ -303,7 +303,7 @@ namespace Altaxo.Graph3D
 		/// <param name="normalizeddirection">Returns the normalized direction vector,i.e. a vector of norm 1, that
 		/// goes in the logical direction provided by the previous argument. </param>
 		/// <returns>The location (in layer coordinates) of the isoline point.</returns>
-		public virtual PointD3D GetNormalizedDirection(
+		public virtual PointD3D GetPositionAndNormalizedDirection(
 				Logical3D r0, Logical3D r1,
 				double t,
 				Logical3D direction,

@@ -22,68 +22,51 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Camera
 {
-	internal class Materials
+	public class OrthographicCamera : CameraBase
 	{
-		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
-		{
-			return new SolidColor(color);
-		}
-	}
+		public double Scale { get; set; }
 
-	public class SolidColor : Altaxo.Main.SuspendableDocumentLeafNodeWithEventArgs, IMaterial3D
-	{
-		private Altaxo.Graph.NamedColor _color;
-
-		public SolidColor(Altaxo.Graph.NamedColor color)
+		public OrthographicCamera()
 		{
-			_color = color;
+			Scale = 1;
 		}
 
-		public NamedColor Color
+		public OrthographicCamera(OrthographicCamera from)
 		{
-			get
-			{
-				return _color;
-			}
-
-			set
-			{
-				throw new NotImplementedException();
-			}
+			CopyFrom(from);
 		}
 
-		public bool SupportsGetColor
+		public override bool CopyFrom(object obj)
 		{
-			get
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			if (false == base.CopyFrom(obj))
+				return false;
+
+			var from = obj as OrthographicCamera;
+			if (null != from)
 			{
+				this.Scale = from.Scale;
 				return true;
 			}
-		}
-
-		public bool SupportsSetColor
-		{
-			get
+			else
 			{
 				return false;
 			}
 		}
 
-		public object Clone()
+		public override object Clone()
 		{
-			return new SolidColor(_color);
-		}
-
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
+			return new OrthographicCamera(this);
 		}
 	}
 }

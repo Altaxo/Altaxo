@@ -8,6 +8,12 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
   <Grid>
-    <axogg3c:DPFCanvas x:Name="_d3dCanvas" Stretch="Fill" />
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    <StackPanel Grid.Column="0"  Name="_layerToolBar" MinWidth="16" />
+    <axogg3c:DPFCanvas x:Name="_d3dCanvas" Grid.Column="1" Stretch="Fill" Focusable="True" KeyDown="EhGraphPanel_KeyDown" MouseWheel="EhMouseWheel">
+    </axogg3c:DPFCanvas>
   </Grid>
 </UserControl>

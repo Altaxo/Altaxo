@@ -83,6 +83,7 @@
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Scene.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
+    <Compile Include="MenuCommands\GraphCommands.cs" />
     <Compile Include="MenuCommands\PlotCommands.cs" />
   </ItemGroup>
   <ItemGroup>

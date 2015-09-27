@@ -114,6 +114,11 @@ namespace Altaxo.Graph3D
 			return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
 		}
 
+		public static explicit operator VectorD3D(PointD3D v)
+		{
+			return new VectorD3D(v.X, v.Y, v.Z);
+		}
+
 		#endregion operators
 
 		#region static functions

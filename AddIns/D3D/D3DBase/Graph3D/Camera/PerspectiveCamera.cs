@@ -22,68 +22,53 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Camera
 {
-	internal class Materials
+	public class PerspectiveCamera : CameraBase
 	{
-		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
-		{
-			return new SolidColor(color);
-		}
-	}
+		public double Angle { get; set; }
 
-	public class SolidColor : Altaxo.Main.SuspendableDocumentLeafNodeWithEventArgs, IMaterial3D
-	{
-		private Altaxo.Graph.NamedColor _color;
-
-		public SolidColor(Altaxo.Graph.NamedColor color)
+		public PerspectiveCamera()
 		{
-			_color = color;
+			Angle = Math.PI / 4;
+			EyePosition = new PointD3D(0, 0, -1500);
+			UpVector = new VectorD3D(0, 0, 1);
 		}
 
-		public NamedColor Color
+		public PerspectiveCamera(PerspectiveCamera from)
 		{
-			get
-			{
-				return _color;
-			}
-
-			set
-			{
-				throw new NotImplementedException();
-			}
+			CopyFrom(from);
 		}
 
-		public bool SupportsGetColor
+		public override bool CopyFrom(object obj)
 		{
-			get
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			if (false == base.CopyFrom(obj))
+				return false;
+
+			var from = obj as PerspectiveCamera;
+			if (null != from)
 			{
+				this.Angle = from.Angle;
 				return true;
 			}
-		}
-
-		public bool SupportsSetColor
-		{
-			get
+			else
 			{
 				return false;
 			}
 		}
 
-		public object Clone()
+		public override object Clone()
 		{
-			return new SolidColor(_color);
-		}
-
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
+			return new PerspectiveCamera(this);
 		}
 	}
 }

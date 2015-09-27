@@ -28,6 +28,7 @@ namespace Altaxo.Gui.Graph3D.Common
 	using System.Diagnostics;
 	using System.Windows;
 	using System.Windows.Controls;
+	using System.Windows.Input;
 	using System.Windows.Media;
 	using Device = SharpDX.Direct3D10.Device1;
 
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		private IScene RenderScene;
 		private bool SceneAttached;
 
-		public Color4 ClearColor = SharpDX.Color.Black;
+		public Color4 ClearColor = SharpDX.Color.White;
 
 		/// <summary>
 		/// Occurs when 3D rendering is ready.
@@ -55,6 +56,22 @@ namespace Altaxo.Gui.Graph3D.Common
 			this.RenderTimer = new Stopwatch();
 			this.Loaded += this.EhLoaded;
 			this.Unloaded += this.EhUnloaded;
+			this.GotFocus += EhFocused;
+			this.GotKeyboardFocus += EhGotKeyboardFocus;
+			this.MouseDown += EhMouseDown;
+		}
+
+		private void EhMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			this.Focus();
+		}
+
+		private void EhGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+		}
+
+		private void EhFocused(object sender, RoutedEventArgs e)
+		{
 		}
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
@@ -64,6 +81,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			this.StartD3D();
 			this.StartRendering();
+			this.Focusable = true;
 
 			D3DStarted?.Invoke(this, EventArgs.Empty);
 		}

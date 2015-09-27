@@ -51,12 +51,16 @@
     <Compile Include="Graph3D\Axis\GridPlaneCollection.cs" />
     <Compile Include="Graph3D\Axis\GridStyle.cs" />
     <Compile Include="Graph3D\Background\IBackgroundStyle3D.cs" />
+    <Compile Include="Graph3D\Camera\CameraBase.cs" />
+    <Compile Include="Graph3D\Camera\OrthographicCamera.cs" />
+    <Compile Include="Graph3D\Camera\PerspectiveCamera.cs" />
     <Compile Include="Graph3D\FontInfo.cs" />
     <Compile Include="Graph3D\FontManager3D.cs" />
     <Compile Include="Graph3D\FontX3D.cs" />
     <Compile Include="Graph3D\G3DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph3D\G3DCoordinateSystem.cs" />
-    <Compile Include="Graph3D\Graph3DDocument.cs" />
+    <Compile Include="Graph3D\GraphDocument3D.cs" />
+    <Compile Include="Graph3D\GraphDocument3DBuilder.cs" />
     <Compile Include="Graph3D\GraphicCollection3D.cs" />
     <Compile Include="Graph3D\GraphicContext3DBase.cs" />
     <Compile Include="Graph3D\GridPartitioning3D.cs" />
@@ -64,6 +68,7 @@
     <Compile Include="Graph3D\ItemLocationDirectAutoSize.cs" />
     <Compile Include="Graph3D\Plot\IGPlotItem.cs" />
     <Compile Include="Graph3D\Plot\PlotItemCollection.cs" />
+    <Compile Include="Graph3D\SceneSettings.cs" />
     <Compile Include="Graph3D\Shapes\IGraphicBase3D.cs" />
     <Compile Include="Graph3D\IGraphicContext3D.cs" />
     <Compile Include="Graph3D\IItemLocation3D.cs" />
