@@ -77,6 +77,56 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Members
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-09-29 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnDrivenColorPlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ColumnDrivenColorPlotStyle)obj;
+
+				info.AddValue("DataColumn", s._dataColumnProxy);
+				info.AddValue("Scale", s._scale);
+
+				info.AddValue("ColorProvider", s._colorProvider);
+
+				info.AddValue("AppliesToFill", s._appliesToFill);
+				info.AddValue("AppliesToStroke", s._appliesToStroke);
+				info.AddValue("AppliesToBackground", s._appliesToBackground);
+			}
+
+			protected virtual ColumnDrivenColorPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ColumnDrivenColorPlotStyle)o ?? new ColumnDrivenColorPlotStyle();
+
+				s._dataColumnProxy = (Altaxo.Data.INumericColumnProxy)info.GetValue("DataColumn", s);
+				if (null != s._dataColumnProxy) s._dataColumnProxy.ParentObject = s;
+
+				s._scale = (NumericalScale)info.GetValue("Scale", s);
+				if (null != s._scale) s._scale.ParentObject = s;
+
+				s._colorProvider = (IColorProvider)info.GetValue("ColorProvider", s);
+				if (null != s._colorProvider) s._colorProvider.ParentObject = s;
+
+				s._appliesToFill = info.GetBoolean("AppliesToFill");
+				s._appliesToStroke = info.GetBoolean("AppliesToStroke");
+				s._appliesToBackground = info.GetBoolean("AppliesToBackground");
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return SDeserialize(o, info, parent);
+			}
+		}
+
+		#endregion Serialization
+
 		/// <summary>
 		/// Creates a new instance with default values.
 		/// </summary>

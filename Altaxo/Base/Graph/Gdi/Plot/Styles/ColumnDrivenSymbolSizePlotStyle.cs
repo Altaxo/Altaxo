@@ -93,6 +93,57 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Members
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-09-29 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnDrivenSymbolSizePlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ColumnDrivenSymbolSizePlotStyle)obj;
+
+				info.AddValue("DataColumn", s._dataColumnProxy);
+				info.AddValue("Scale", s._scale);
+
+				info.AddValue("SymbolSizeAt0", s._symbolSizeAt0);
+				info.AddValue("SymbolSizeAt1", s._symbolSizeAt1);
+				info.AddValue("SymbolSizeBelow", s._symbolSizeBelow);
+				info.AddValue("SymbolSizeAbove", s._symbolSizeAbove);
+				info.AddValue("SymbolSizeInvalid", s._symbolSizeInvalid);
+				info.AddValue("NumberOfSteps", s._numberOfSteps);
+			}
+
+			protected virtual ColumnDrivenSymbolSizePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ColumnDrivenSymbolSizePlotStyle)o ?? new ColumnDrivenSymbolSizePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+
+				s._dataColumnProxy = (Altaxo.Data.INumericColumnProxy)info.GetValue("DataColumn", s);
+				if (null != s._dataColumnProxy) s._dataColumnProxy.ParentObject = s;
+
+				s._scale = (NumericalScale)info.GetValue("Scale", s);
+				if (null != s._scale) s._scale.ParentObject = s;
+
+				s._symbolSizeAt0 = info.GetDouble("SymbolSizeAt0");
+				s._symbolSizeAt1 = info.GetDouble("SymbolSizeAt1");
+				s._symbolSizeBelow = info.GetDouble("SymbolSizeBelow");
+				s._symbolSizeAbove = info.GetDouble("SymbolSizeAbove");
+				s._symbolSizeInvalid = info.GetDouble("SymbolSizeInvalid");
+				s._numberOfSteps = info.GetInt32("NumberOfSteps");
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return SDeserialize(o, info, parent);
+			}
+		}
+
+		#endregion Serialization
+
 		/// <summary>
 		/// Creates a new instance with default values.
 		/// </summary>

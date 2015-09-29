@@ -194,6 +194,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		#endregion Constructors
 
+		public override void FixupInternalDataStructures()
+		{
+			base.FixupInternalDataStructures();
+
+			var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
+
+			_axisStyle.FixupInternalDataStructures(layer);
+		}
+
 		public override bool IsCompatibleWithParent(object parentObject)
 		{
 			return parentObject is XYPlotLayer;
