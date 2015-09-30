@@ -299,12 +299,12 @@ namespace Altaxo.Graph3D.Axis
 		{
 		}
 
-		public void Paint(IGraphicContext3D g, axogdi.IPaintContext paintContext, IPlotArea3D layer)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer)
 		{
 			Paint(g, paintContext, layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		public void Paint(IGraphicContext3D g, axogdi.IPaintContext paintContext, IPlotArea3D layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
 		{
 			PaintLine(g, layer);
 			PaintMajorLabels(g, layer);
@@ -342,7 +342,7 @@ namespace Altaxo.Graph3D.Axis
 			}
 		}
 
-		public void PaintTitle(IGraphicContext3D g, axogdi.IPaintContext paintContext, IPlotArea3D layer)
+		public void PaintTitle(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer)
 		{
 			if (IsTitleEnabled)
 			{

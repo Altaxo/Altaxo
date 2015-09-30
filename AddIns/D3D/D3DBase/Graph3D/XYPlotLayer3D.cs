@@ -71,6 +71,10 @@ namespace Altaxo.Graph3D
 		[NonSerialized]
 		private Main.SuspendableObject _plotAssociationYBoundariesChanged_EventSuspender = new Main.SuspendableObject();
 
+		/// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
+		[NonSerialized]
+		private Main.SuspendableObject _plotAssociationZBoundariesChanged_EventSuspender = new Main.SuspendableObject();
+
 		#endregion Member variables
 
 		#region Constructors
@@ -761,6 +765,7 @@ namespace Altaxo.Graph3D
 		public override void PaintPreprocessing(IPaintContext context)
 		{
 			context.PushHierarchicalValue<IPlotArea3D>(nameof(IPlotArea3D), this);
+			_plotItems.PaintPreprocessing(context);
 			base.PaintPreprocessing(context);
 			context.PopHierarchicalValue<IPlotArea3D>(nameof(IPlotArea3D));
 		}
@@ -771,6 +776,8 @@ namespace Altaxo.Graph3D
 			_gridPlanes.PaintBackground(g, this);
 
 			_axisStyles.Paint(g, paintContext, this);
+
+			_plotItems.Paint(g, paintContext, this, null, null);
 
 			// then paint the graph items
 			base.PaintInternal(g, paintContext);
@@ -875,6 +882,8 @@ namespace Altaxo.Graph3D
 				EhXBoundaryChangedEventFromPlotItem();
 			if (data.HasFlag(BoundariesChangedData.YBoundariesChanged))
 				EhYBoundaryChangedEventFromPlotItem();
+			if (data.HasFlag(BoundariesChangedData.ZBoundariesChanged))
+				EhZBoundaryChangedEventFromPlotItem();
 		}
 
 		/// <summary>
@@ -1033,6 +1042,86 @@ namespace Altaxo.Graph3D
 				_scales.Y.OnUserRescaled();
 			}
 			// _linkedScales.Y.Scale.ProcessDataBounds();
+		}
+
+		/// <summary>
+		/// This handler is called if a z-boundary from any of the plotassociations of this layer
+		/// has changed. We then have to recalculate the boundaries.
+		/// </summary>
+		/// <remarks>Unfortunately we do not know if the boundary is extended or shrinked, if is is extended
+		/// if would be possible to merge only the changed boundary into the z-axis boundary.
+		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
+		/// all PlotAssociations of this layer.</remarks>
+		protected void EhZBoundaryChangedEventFromPlotItem()
+		{
+			if (!_plotAssociationZBoundariesChanged_EventSuspender.IsSuspended)
+			{
+				// now we have to inform all the PlotAssociations that a new axis was loaded
+				using (var suspendToken = _scales[2].DataBoundsObject.SuspendGetToken())
+				{
+					_scales[2].DataBoundsObject.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
+					{
+						var paZB = pa as IZBoundsHolder;
+						if (null != paZB)
+						{
+							using (var paToken = pa.SuspendGetToken()) // we have to suspend the plotitem. When the boundary data in the plot item are not uptodate, it would otherwise create new BoundaryChangedEventArgs, which would lead to inefficiency or a stack overflow
+							{
+								// merge the bounds with x and yAxis
+								paZB.MergeZBoundsInto(_scales[2].DataBoundsObject); // merge all z-boundaries in the z-axis boundary object
+
+								paToken.ResumeSilently(); // resume the plot item silently here in order not to create further BoundaryChangedEventArgs
+							}
+						}
+					}
+					suspendToken.Resume();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Initializes the y scale data bounds, for instance if the scale instance has changed or was deserialized.
+		/// </summary>
+		protected void InitializeZScaleDataBounds()
+		{
+			if (null == this.PlotItems)
+				return; // can happen during deserialization
+
+			var scaleBounds = _scales[2].DataBoundsObject;
+
+			if (null != scaleBounds)
+			{
+				// we have to disable our own Handler since if we change one DataBound of a association,
+				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
+				//but (alas!) not all boundaries are now of the new type!
+				using (var zBoundariesChangedSuspendToken = _plotAssociationZBoundariesChanged_EventSuspender.SuspendGetToken())
+				{
+					using (var suspendToken = scaleBounds.SuspendGetToken())
+					{
+						scaleBounds.Reset();
+						foreach (IGPlotItem pa in this.PlotItems)
+						{
+							if (pa is IZBoundsHolder)
+							{
+								// merge the bounds with x and yAxis
+								((IZBoundsHolder)pa).MergeZBoundsInto(scaleBounds); // merge all z-boundaries in the x-axis boundary object
+							}
+						}
+						// take also the axis styles with physical values into account
+						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+						{
+							if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherSecond) // z
+								scaleBounds.Add(id.PhysicalValueOtherSecond);
+							else if (id.ParallelAxisNumber == 1 && id.UsePhysicalValueOtherFirst)
+								scaleBounds.Add(id.PhysicalValueOtherFirst);
+						}
+
+						suspendToken.Resume();
+					}
+					zBoundariesChangedSuspendToken.Resume();
+				}
+				_scales[2].OnUserRescaled();
+			}
 		}
 
 		/// <summary>

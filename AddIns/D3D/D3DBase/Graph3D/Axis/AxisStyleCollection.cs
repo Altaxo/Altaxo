@@ -260,7 +260,7 @@ namespace Altaxo.Graph3D.Axis
 				_axisStyles[i].PaintPreprocessing(layer);
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext paintContext, IPlotArea3D layer)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
 				_axisStyles[i].Paint(g, paintContext, layer);

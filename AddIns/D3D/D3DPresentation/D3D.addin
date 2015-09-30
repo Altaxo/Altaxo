@@ -17,6 +17,8 @@
 				<Condition name ="SelectedDataColumns" selected="*" action="Disable">
 					<MenuItem id="Plot3D" label="Plot3D" icon="Icons.16x16.PlotLine"
 						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.Plot3D" />
+					<MenuItem id="PlotSurface3D" label="Plot3D" icon="Icons.16x16.PlotLine"
+						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
 				</Condition>
 			</MenuItem>
 		</Condition>

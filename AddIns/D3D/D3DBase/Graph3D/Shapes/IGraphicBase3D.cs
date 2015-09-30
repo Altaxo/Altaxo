@@ -53,9 +53,9 @@ namespace Altaxo.Graph3D.Shapes
 		/// stored in the paint <paramref name="context"/>.
 		/// </summary>
 		/// <param name="context">The paint context.</param>
-		void PaintPreprocessing(Altaxo.Graph.Gdi.IPaintContext context);
+		void PaintPreprocessing(Altaxo.Graph.IPaintContext context);
 
-		void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext context);
+		void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context);
 
 		/// <summary>
 		/// Determines whether this graphical object is compatible with the parent specified in the argument.

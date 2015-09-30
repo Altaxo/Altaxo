@@ -240,6 +240,7 @@
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\IPaintContext.cs" />
+    <Compile Include="Graph\IPaintContext.cs" />
     <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
     <Compile Include="Graph\FontXStyle.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Graph\Scales\Boundaries\CumulativeProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\IZBoundsHolder.cs" />
     <Compile Include="Graph\Scales\CumulativeProbabilityScale.cs" />
     <Compile Include="Graph\Scales\InverseScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundariesRelativeTo.cs" />

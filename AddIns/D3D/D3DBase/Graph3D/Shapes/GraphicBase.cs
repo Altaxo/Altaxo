@@ -602,7 +602,7 @@ namespace Altaxo.Graph3D.Shapes
 		/// Is called before the paint procedure is executed.
 		/// </summary>
 		/// <param name="context">The paint context.</param>
-		public virtual void PaintPreprocessing(Altaxo.Graph.Gdi.IPaintContext context)
+		public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext context)
 		{
 		}
 
@@ -611,7 +611,7 @@ namespace Altaxo.Graph3D.Shapes
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="context">Additional information used to draw the object.</param>
-		public abstract void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext context);
+		public abstract void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context);
 
 		/// <summary>
 		/// Creates a cloned copy of this object.

@@ -616,7 +616,7 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public virtual void PaintPreprocessing(Altaxo.Graph.Gdi.IPaintContext paintcontext)
+		public virtual void PaintPreprocessing(Altaxo.Graph.IPaintContext paintcontext)
 		{
 			var mySize = this.Size;
 			foreach (var graphObj in _graphObjects)
@@ -625,7 +625,7 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public virtual void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext paintcontext)
+		public virtual void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintcontext)
 		{
 			var savedgstate = g.SaveGraphicsState();
 
@@ -641,7 +641,7 @@ namespace Altaxo.Graph3D
 		/// </summary>
 		/// <param name="g">The graphics context</param>
 		/// <param name="context">The paint context.</param>
-		protected virtual void PaintInternal(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext context)
+		protected virtual void PaintInternal(IGraphicContext3D g, Altaxo.Graph.IPaintContext context)
 		{
 			int len = _graphObjects.Count;
 			for (int i = 0; i < len; i++)

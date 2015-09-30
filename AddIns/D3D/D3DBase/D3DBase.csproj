@@ -66,8 +66,16 @@
     <Compile Include="Graph3D\GridPartitioning3D.cs" />
     <Compile Include="Graph3D\HostLayer3D.cs" />
     <Compile Include="Graph3D\ItemLocationDirectAutoSize.cs" />
+    <Compile Include="Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
+    <Compile Include="Graph3D\Plot\Styles\SurfacePlotStyle.cs" />
+    <Compile Include="Graph3D\Plot\SurfacePlotItem.cs" />
+    <Compile Include="Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
+    <Compile Include="Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />
     <Compile Include="Graph3D\Plot\IGPlotItem.cs" />
+    <Compile Include="Graph3D\Plot\PlotItem.cs" />
     <Compile Include="Graph3D\Plot\PlotItemCollection.cs" />
+    <Compile Include="Graph3D\Plot\XYColumnPlotItem.cs" />
+    <Compile Include="Graph3D\Ray3D.cs" />
     <Compile Include="Graph3D\SceneSettings.cs" />
     <Compile Include="Graph3D\Shapes\IGraphicBase3D.cs" />
     <Compile Include="Graph3D\IGraphicContext3D.cs" />
@@ -107,6 +115,7 @@
     <Compile Include="Graph3D\Point3DMath.cs" />
     <Compile Include="Graph3D\TwoPointsD3D.cs" />
     <Compile Include="Graph3D\XYPlotLayer3D.cs" />
+    <Compile Include="Graph3D\IHitTestObject.cs" />
     <Compile Include="Poly2Tri\P2T.cs" />
     <Compile Include="Poly2Tri\Polygon\Polygon.cs" />
     <Compile Include="Poly2Tri\Polygon\PolygonPoint.cs" />

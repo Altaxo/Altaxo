@@ -398,7 +398,7 @@ namespace Altaxo.Graph3D.Shapes
 			_rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
 		}
 
-		private void MeasureGlyphs(IGraphicContext3D g, FontCache cache, Altaxo.Graph.Gdi.IPaintContext paintContext)
+		private void MeasureGlyphs(IGraphicContext3D g, FontCache cache, Altaxo.Graph.IPaintContext paintContext)
 		{
 			MeasureContext mc = new MeasureContext();
 			mc.FontCache = cache;
@@ -414,12 +414,12 @@ namespace Altaxo.Graph3D.Shapes
 			_rootNode.Draw(g, dc, x, y + _rootNode.ExtendAboveBaseline, z);
 		}
 
-		public override void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext paintContext)
+		public override void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext)
 		{
 			Paint(g, paintContext, false);
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.Gdi.IPaintContext paintContext, bool bForPreview)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, bool bForPreview)
 		{
 			//_isStructureInSync = false;
 			_isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID

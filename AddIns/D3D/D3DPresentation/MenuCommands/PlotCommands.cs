@@ -6,9 +6,22 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Worksheet.Commands
 {
-	public class Plot3D : AbstractWorksheetControllerCommand
+	using Altaxo.Graph3D;
+	using Data;
+	using Graph.Plot.Data;
+	using Graph3D.Plot;
+	using Graph3D.Plot.Styles;
+
+	/// <summary>
+	/// Ensure that the PresentationCore dll is loaded.
+	/// </summary>
+	internal static class PresentationCoreLoader
 	{
-		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		/// <summary>
+		/// Ensures that the presentation core DLL loaded.
+		/// </summary>
+		/// <returns></returns>
+		public static string EnsurePresentationCoreLoaded()
 		{
 			// Problem: here maybe the PresentationCore is not referenced in this assembly, because it was up to now not needed
 			// Result: the reflection subsystem will skip this assembly when searching for user controls, because it thinks that we have no dependency
@@ -16,6 +29,16 @@ namespace Altaxo.Worksheet.Commands
 			// Solution: make sure that the presentation core is referenced, by referencing an arbitrary type in it
 			System.Windows.TextAlignment alignment = new System.Windows.TextAlignment();
 			string t = alignment.ToString();
+
+			return t;
+		}
+	}
+
+	public class Plot3D : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
 			var graph = Graph3D.GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
@@ -28,6 +51,49 @@ namespace Altaxo.Worksheet.Commands
 
 			if (null != Current.Workbench)
 				Current.Workbench.ShowView(viewContent);
+		}
+	}
+
+	public class PlotSurface3D : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			PresentationCoreLoader.EnsurePresentationCoreLoaded();
+
+			var graph = Graph3D.GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
+
+			AddDensityImage(ctrl, graph);
+
+			var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
+
+			if (null == graphController.ViewObject)
+				Current.Gui.FindAndAttachControlTo(graphController);
+
+			var viewContent = new Altaxo.Gui.SharpDevelop.SDGraph3DViewContent(graphController);
+
+			if (null != Current.Workbench)
+				Current.Workbench.ShowView(viewContent);
+		}
+
+		/// <summary>
+		/// Plots a density image of the selected columns.
+		/// </summary>
+		/// <param name="dg"></param>
+		public static void AddDensityImage(Altaxo.Gui.Worksheet.Viewing.IWorksheetController dg, GraphDocument3D graph)
+		{
+			var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer3D>().First();
+			var context = graph.GetPropertyContext();
+
+			var plotStyle = new DensityImagePlotStyle();
+
+			XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
+			if (assoc.DataTableMatrix.RowHeaderColumn == null)
+				assoc.DataTableMatrix.RowHeaderColumn = new IndexerColumn();
+			if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
+				assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
+
+			var pi = new DensityImagePlotItem(assoc, plotStyle);
+			xylayer.PlotItems.Add(pi);
 		}
 	}
 }

@@ -513,7 +513,7 @@ namespace Altaxo.Graph.Plot.Data
 				return "Empty (no data)";
 		}
 
-		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
+		public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds, IPhysicalBoundaries zBounds = null)
 		{
 			if (this.IsDisposeInProgress)
 				return;
@@ -523,6 +523,9 @@ namespace Altaxo.Graph.Plot.Data
 
 			if (_yBoundaries == null || (yBounds != null && _yBoundaries.GetType() != yBounds.GetType()))
 				this.SetYBoundsFromTemplate(yBounds);
+
+			if (_vBoundaries == null || (zBounds != null && _vBoundaries.GetType() != zBounds.GetType()))
+				this.SetVBoundsFromTemplate(zBounds);
 
 			CalculateCachedData();
 		}
