@@ -264,6 +264,14 @@ namespace Altaxo.Graph3D.Axis
 			FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
+		internal IHitTestObject HitTest(HitTestPointData parentCoord)
+		{
+			IHitTestObject hit;
+
+			hit = _axisTitle.HitTest(parentCoord);
+			return hit;
+		}
+
 		public void FixupInternalDataStructures(IPlotArea3D layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
 		{
 			// update the logical values of the physical axes before

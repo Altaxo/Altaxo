@@ -299,6 +299,17 @@ namespace Altaxo.Graph3D.Axis
 			return _axisStyles.GetEnumerator();
 		}
 
+		internal IHitTestObject HitTest(HitTestPointData parentCoord)
+		{
+			foreach (var axisStyle in _axisStyles)
+			{
+				var hit = axisStyle.HitTest(parentCoord);
+				if (null != hit)
+					return hit;
+			}
+			return null;
+		}
+
 		#endregion IEnumerable Members
 	}
 }

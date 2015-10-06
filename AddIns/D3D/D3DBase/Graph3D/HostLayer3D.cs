@@ -629,7 +629,7 @@ namespace Altaxo.Graph3D
 		{
 			var savedgstate = g.SaveGraphicsState();
 
-			g.MultiplyTransform(_transformation);
+			g.PrependTransform(_transformation);
 
 			PaintInternal(g, paintcontext);
 
@@ -1313,5 +1313,76 @@ namespace Altaxo.Graph3D
 		}
 
 		#endregion XYPlotLayer properties and methods
+
+		#region Hit test
+
+		protected IHitTestObject ForwardTransform(IHitTestObject o)
+		{
+			o.Transform(_transformation);
+			return o;
+		}
+
+		public virtual IHitTestObject HitTest(HitTestPointData parentCoord)
+		{
+			return HitTest(parentCoord, false);
+		}
+
+		public IHitTestObject HitTest(HitTestPointData parentCoord, bool plotItemsOnly)
+		{
+			//			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
+			HitTestPointData localCoord = parentCoord.NewFromAdditionalTransformation(this._transformation);
+
+			return HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
+		}
+
+		protected virtual IHitTestObject HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
+		{
+			IHitTestObject hit;
+
+			if (!plotItemsOnly)
+			{
+				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for (int i = _graphObjects.Count - 1; i >= 0; --i)
+				{
+					hit = _graphObjects[i].HitTest(localCoord);
+					if (null != hit)
+					{
+						if (null == hit.ParentLayer)
+							hit.ParentLayer = this;
+
+						if (null == hit.Remove && (hit.HittedObject is IGraphicBase3D))
+							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
+						return ForwardTransform(hit);
+					}
+				}
+			}
+			else // Plot Items Only
+			{
+				// hit testing all graph objects, this is done in reverse order compared to the painting, so the "upper" items are found first.
+				for (int i = _graphObjects.Count - 1; i >= 0; --i)
+				{
+					var layer = _graphObjects[i] as HostLayer3D;
+					if (null == layer)
+						continue;
+					hit = layer.HitTest(localCoord, plotItemsOnly);
+					if (null != hit)
+					{
+						System.Diagnostics.Debug.Assert(hit.ParentLayer != null, "Parent layer must be set, because the hitted plot item originates from another layer!");
+						return ForwardTransform(hit);
+					}
+				}
+			}
+
+			return null;
+		}
+
+		private static bool EhGraphicsObject_Remove(IHitTestObject o)
+		{
+			var go = (IGraphicBase3D)o.HittedObject;
+			o.ParentLayer.GraphObjects.Remove(go);
+			return true;
+		}
+
+		#endregion Hit test
 	}
 }

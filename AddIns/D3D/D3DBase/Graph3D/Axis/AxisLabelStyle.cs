@@ -729,7 +729,7 @@ namespace Altaxo.Graph3D.Axis
 				math.TranslatePrepend((mrect.X - morg.X + emSize * _xOffset), (mrect.Y - morg.Y + emSize * _yOffset), (mrect.Z - morg.Z + emSize * _zOffset));
 
 				var gs = g.SaveGraphicsState();
-				g.MultiplyTransform(math);
+				g.PrependTransform(math);
 
 				if (this._backgroundStyle != null)
 					_backgroundStyle.Draw(g, new RectangleD3D(PointD3D.Empty, msize));

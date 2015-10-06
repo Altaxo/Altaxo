@@ -794,6 +794,20 @@ namespace Altaxo.Graph3D
 			base.PaintPostprocessing();
 		}
 
+		protected override IHitTestObject HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
+		{
+			IHitTestObject hit;
+
+			if (!plotItemsOnly)
+			{
+				hit = _axisStyles.HitTest(localCoord);
+				if (null != hit)
+					return hit;
+			}
+
+			return base.HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
+		}
+
 		#endregion Painting and Hit testing
 
 		#region Editor methods

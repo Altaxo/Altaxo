@@ -55,11 +55,23 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
+		internal void SetPanelCursor(Cursor arrow)
+		{
+			_d3dCanvas.Cursor = arrow;
+		}
+
 		public object GuiInitiallyFocusedElement
 		{
 			get
 			{
 				return this;
+			}
+		}
+
+		public int[] CurrentLayer
+		{
+			set
+			{
 			}
 		}
 
@@ -105,6 +117,41 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			double relX = mousePosition.X / _d3dCanvas.ActualWidth;
 			double relY = 1 - mousePosition.Y / _d3dCanvas.ActualHeight;
 			_controller.EhMouseWheel(relX, relY, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth, e.Delta);
+		}
+
+		private Altaxo.Graph3D.PointD3D GetMousePosition(MouseEventArgs e)
+		{
+			var p = e.GetPosition(_d3dCanvas);
+			return new Altaxo.Graph3D.PointD3D(p.X / _d3dCanvas.ActualWidth, 1 - p.Y / _d3dCanvas.ActualHeight, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth);
+		}
+
+		private void EhGraphPanel_MouseMove(object sender, MouseEventArgs e)
+		{
+			var guiController = _controller;
+			if (null != guiController)
+				guiController.EhView_GraphPanelMouseMove(GetMousePosition(e), e);
+		}
+
+		private void EhGraphPanel_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			var guiController = _controller;
+			Keyboard.Focus(_d3dCanvas);
+			var pos = GetMousePosition(e);
+			if (null != guiController)
+			{
+				guiController.EhView_GraphPanelMouseDown(pos, e);
+				if (e.ClickCount >= 2 && e.LeftButton == MouseButtonState.Pressed)
+					guiController.EhView_GraphPanelMouseDoubleClick(pos, e);
+				else if (e.ClickCount == 1 && e.LeftButton == MouseButtonState.Pressed)
+					guiController.EhView_GraphPanelMouseClick(pos, e);
+			}
+		}
+
+		private void EhGraphPanel_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			var guiController = _controller;
+			if (null != guiController)
+				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e), e);
 		}
 	}
 }

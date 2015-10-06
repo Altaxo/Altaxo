@@ -172,6 +172,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 						SizeInBytes = (int)buf.VertexStreamLength,
 						Usage = ResourceUsage.Default
 					});
+
 					this._nonindexedTriangleVerticesPositionColor_Count = buf.VertexCount;
 				}
 			}
@@ -184,8 +185,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				var buf = drawing.BuffersIndexTrianglesPositionColor;
 				if (null != buf && buf.TriangleCount > 0)
 				{
-					buf.VertexStream.Position = 0;
-					this.IndexedVertices = new Buffer(device, buf.VertexStream, new BufferDescription()
+					//buf.VertexStream.Position = 0;
+					this.IndexedVertices = Buffer.Create<float>(device, buf.VertexStream, new BufferDescription()
 					{
 						BindFlags = BindFlags.VertexBuffer,
 						CpuAccessFlags = CpuAccessFlags.None,
@@ -194,8 +195,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 						Usage = ResourceUsage.Default
 					});
 
-					buf.IndexStream.Position = 0;
-					this.IndexedVerticesIndexes = new Buffer(device, buf.IndexStream, new BufferDescription()
+					//buf.IndexStream.Position = 0;
+					this.IndexedVerticesIndexes = Buffer.Create<int>(device, buf.IndexStream, new BufferDescription()
 					{
 						BindFlags = BindFlags.IndexBuffer,
 						CpuAccessFlags = CpuAccessFlags.None,

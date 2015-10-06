@@ -42,7 +42,7 @@ namespace Altaxo.Graph3D
 
 		public abstract void RestoreGraphicsState(object graphicsState);
 
-		public abstract void MultiplyTransform(MatrixD3D m);
+		public abstract void PrependTransform(MatrixD3D m);
 
 		public abstract void TranslateTransform(double x, double y, double z);
 
@@ -59,7 +59,7 @@ namespace Altaxo.Graph3D
 			var color = pen.Color.Color;
 
 			line.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex((float)position.X, (float)position.Y, (float)position.Z, 1, color.ScR, color.ScG, color.ScB, color.ScA),
+				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, color.ScR, color.ScG, color.ScB, color.ScA),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);
 		}
@@ -86,7 +86,7 @@ namespace Altaxo.Graph3D
 				var color = pen.Color.Color;
 
 				line.AddWithNormals(
-					(position, normal) => buf.AddTriangleVertex((float)position.X, (float)position.Y, (float)position.Z, 1, color.ScR, color.ScG, color.ScB, color.ScA),
+					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, color.ScR, color.ScG, color.ScB, color.ScA),
 					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 					ref offset);
 
@@ -119,7 +119,7 @@ namespace Altaxo.Graph3D
 					else
 						color = new PointD3D(0, 0, 1);
 
-					pctb.AddTriangleVertex((float)pt.X, (float)pt.Y, (float)pt.Z, 1, (float)color.X, (float)color.Y, (float)color.Z, 1);
+					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
 				},
 				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
 				ref offs);

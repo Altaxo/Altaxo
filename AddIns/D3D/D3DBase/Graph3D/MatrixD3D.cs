@@ -35,7 +35,7 @@ namespace Altaxo.Graph3D
 		private double M11, M12, M13;
 		private double M21, M22, M23;
 		private double M31, M32, M33;
-		private double OffsetX, OffsetY, OffsetZ;
+		private double M41, M42, M43;
 		private double _determinant;
 
 		private static MatrixD3D _identityMatrix;
@@ -66,7 +66,7 @@ namespace Altaxo.Graph3D
 			M11 = m11; M12 = m12; M13 = m13;
 			M21 = m21; M22 = m22; M23 = m23;
 			M31 = m31; M32 = m32; M33 = m33;
-			OffsetX = offsetX; OffsetY = offsetY; OffsetZ = offsetZ;
+			M41 = offsetX; M42 = offsetY; M43 = offsetZ;
 
 			_determinant = -(m13 * m22 * m31) + m12 * m23 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33;
 		}
@@ -131,9 +131,9 @@ namespace Altaxo.Graph3D
 			double y = p.Y;
 			double z = p.Z;
 			return new PointD3D(
-			x * M11 + y * M21 + z * M31 + OffsetX,
-			x * M12 + y * M22 + z * M32 + OffsetY,
-			x * M13 + y * M23 + z * M33 + OffsetZ
+			x * M11 + y * M21 + z * M31 + M41,
+			x * M12 + y * M22 + z * M32 + M42,
+			x * M13 + y * M23 + z * M33 + M43
 			);
 		}
 
@@ -159,9 +159,9 @@ namespace Altaxo.Graph3D
 			M31 = scaleZ * (cosY * cosZ * shearX * shearZ - cosZ * (cosX + shearX * sinX) * sinY + (-(cosX * shearX) + sinX) * sinZ);
 			M32 = scaleZ * (cosY * shearX * shearZ * sinZ + cosX * (cosZ * shearX - sinY * sinZ) - sinX * (cosZ + shearX * sinY * sinZ));
 			M33 = scaleZ * (cosX * cosY + cosY * shearX * sinX + shearX * shearZ * sinY);
-			OffsetX = translateX;
-			OffsetY = translateY;
-			OffsetZ = translateZ;
+			M41 = translateX;
+			M42 = translateY;
+			M43 = translateZ;
 
 			_determinant = scaleX * scaleY * scaleZ;
 		}
@@ -177,9 +177,16 @@ namespace Altaxo.Graph3D
 
 		public void TranslatePrepend(double x, double y, double z)
 		{
-			OffsetX += M11 * x + M21 * y + M31 * z;
-			OffsetY += M12 * x + M22 * y + M32 * z;
-			OffsetZ += M13 * x + M23 * y + M33 * z;
+			M41 += M11 * x + M21 * y + M31 * z;
+			M42 += M12 * x + M22 * y + M32 * z;
+			M43 += M13 * x + M23 * y + M33 * z;
+		}
+
+		public void TranslateAppend(double dx, double dy, double dz)
+		{
+			M41 += dx;
+			M42 += dy;
+			M43 += dz;
 		}
 
 		public void RotationXDegreePrepend(double angleX)
@@ -233,36 +240,74 @@ namespace Altaxo.Graph3D
 			M23 = cz * M23 - h13 * sz;
 		}
 
+		#endregion Prepend transformations
+
+		#region Append transformations
+
+		public void AppendTransform(MatrixD3D f)
+		{
+			double h1, h2, h3;
+
+			h1 = M11 * f.M11 + M12 * f.M21 + M13 * f.M31;
+			h2 = M11 * f.M12 + M12 * f.M22 + M13 * f.M32;
+			h3 = M11 * f.M13 + M12 * f.M23 + M13 * f.M33;
+			M11 = h1; M12 = h2; M13 = h3;
+
+			h1 = M21 * f.M11 + M22 * f.M21 + M23 * f.M31;
+			h2 = M21 * f.M12 + M22 * f.M22 + M23 * f.M32;
+			h3 = M21 * f.M13 + M22 * f.M23 + M23 * f.M33;
+			M21 = h1; M22 = h2; M23 = h3;
+
+			h1 = M31 * f.M11 + M32 * f.M21 + M33 * f.M31;
+			h2 = M31 * f.M12 + M32 * f.M22 + M33 * f.M32;
+			h3 = M31 * f.M13 + M32 * f.M23 + M33 * f.M33;
+			M31 = h1; M32 = h2; M33 = h3;
+
+			h1 = M41 * f.M11 + M42 * f.M21 + M43 * f.M31 + f.M41;
+			h2 = M41 * f.M12 + M42 * f.M22 + M43 * f.M32 + f.M42;
+			h3 = M41 * f.M13 + M42 * f.M23 + M43 * f.M33 + f.M42;
+			M41 = h1; M42 = h2; M43 = h3;
+
+			_determinant *= f._determinant;
+		}
+
 		public void PrependTransform(MatrixD3D a)
 		{
-			M11 = a.M11 * M11 + a.M12 * M21 + a.M13 * M31;
-			M12 = a.M11 * M12 + a.M12 * M22 + a.M13 * M32;
-			M13 = a.M11 * M13 + a.M12 * M23 + a.M13 * M33;
-			M21 = a.M21 * M11 + a.M22 * M21 + a.M23 * M31;
-			M22 = a.M21 * M12 + a.M22 * M22 + a.M23 * M32;
-			M23 = a.M21 * M13 + a.M22 * M23 + a.M23 * M33;
-			M31 = a.M31 * M11 + a.M32 * M21 + a.M33 * M31;
-			M32 = a.M31 * M12 + a.M32 * M22 + a.M33 * M32;
-			M33 = a.M31 * M13 + a.M32 * M23 + a.M33 * M33;
-			OffsetX += a.OffsetX * M11 + a.OffsetY * M21 + a.OffsetZ * M31;
-			OffsetY += a.OffsetX * M12 + a.OffsetY * M22 + a.OffsetZ * M32;
-			OffsetZ += a.OffsetX * M13 + a.OffsetY * M23 + a.OffsetZ * M33;
+			double h1, h2, h3, h4;
+
+			h1 = M11 * a.M11 + M21 * a.M12 + M31 * a.M13;
+			h2 = M11 * a.M21 + M21 * a.M22 + M31 * a.M23;
+			h3 = M11 * a.M31 + M21 * a.M32 + M31 * a.M33;
+			h4 = M11 * a.M41 + M21 * a.M42 + M31 * a.M43;
+			M11 = h1; M21 = h2; M31 = h3; M41 += h4;
+
+			h1 = M12 * a.M11 + M22 * a.M12 + M32 * a.M13;
+			h2 = M12 * a.M21 + M22 * a.M22 + M32 * a.M23;
+			h3 = M12 * a.M31 + M22 * a.M32 + M32 * a.M33;
+			h4 = M12 * a.M41 + M22 * a.M42 + M32 * a.M43;
+			M12 = h1; M22 = h2; M32 = h3; M42 += h4;
+
+			h1 = M13 * a.M11 + M23 * a.M12 + M33 * a.M13;
+			h2 = M13 * a.M21 + M23 * a.M22 + M33 * a.M23;
+			h3 = M13 * a.M31 + M23 * a.M32 + M33 * a.M33;
+			h4 = M13 * a.M41 + M23 * a.M42 + M33 * a.M43;
+			M13 = h1; M23 = h2; M33 = h3; M43 += h4;
 
 			_determinant *= a._determinant;
 		}
 
-		#endregion Prepend transformations
+		#endregion Append transformations
 
 		#region Inverse transformations
 
 		public PointD3D InverseTransformPoint(PointD3D p)
 		{
 			return new PointD3D(
-				(M23 * (M32 * (OffsetX - p.X) + M31 * (-OffsetY + p.Y)) + M22 * (-(M33 * OffsetX) + M31 * OffsetZ + M33 * p.X - M31 * p.Z) + M21 * (M33 * OffsetY - M32 * OffsetZ - M33 * p.Y + M32 * p.Z)) / _determinant,
+				(M23 * (M32 * (M41 - p.X) + M31 * (-M42 + p.Y)) + M22 * (-(M33 * M41) + M31 * M43 + M33 * p.X - M31 * p.Z) + M21 * (M33 * M42 - M32 * M43 - M33 * p.Y + M32 * p.Z)) / _determinant,
 
-				(M13 * (M32 * (-OffsetX + p.X) + M31 * (OffsetY - p.Y)) + M12 * (M33 * OffsetX - M31 * OffsetZ - M33 * p.X + M31 * p.Z) + M11 * (-(M33 * OffsetY) + M32 * OffsetZ + M33 * p.Y - M32 * p.Z)) / _determinant,
+				(M13 * (M32 * (-M41 + p.X) + M31 * (M42 - p.Y)) + M12 * (M33 * M41 - M31 * M43 - M33 * p.X + M31 * p.Z) + M11 * (-(M33 * M42) + M32 * M43 + M33 * p.Y - M32 * p.Z)) / _determinant,
 
-				(M13 * (M22 * (OffsetX - p.X) + M21 * (-OffsetY + p.Y)) + M12 * (-(M23 * OffsetX) + M21 * OffsetZ + M23 * p.X - M21 * p.Z) + M11 * (M23 * OffsetY - M22 * OffsetZ - M23 * p.Y + M22 * p.Z)) / _determinant
+				(M13 * (M22 * (M41 - p.X) + M21 * (-M42 + p.Y)) + M12 * (-(M23 * M41) + M21 * M43 + M23 * p.X - M21 * p.Z) + M11 * (M23 * M42 - M22 * M43 - M23 * p.Y + M22 * p.Z)) / _determinant
 				);
 		}
 

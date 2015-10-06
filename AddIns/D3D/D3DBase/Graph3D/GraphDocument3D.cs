@@ -646,7 +646,7 @@ namespace Altaxo.Graph3D
 					else if (n.X == -1)
 						color = colors[5];
 
-					pctb.AddTriangleVertex((float)pt.X, (float)pt.Y, (float)pt.Z, 1, (float)color.X, (float)color.Y, (float)color.Z, 1);
+					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
 				},
 				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
 				ref offs);
@@ -670,7 +670,7 @@ namespace Altaxo.Graph3D
 					else
 						color = new PointD3D(0, 0, 1);
 
-					pctb.AddTriangleVertex((float)pt.X, (float)pt.Y, (float)pt.Z, 1, (float)color.X, (float)color.Y, (float)color.Z, 1);
+					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
 				},
 				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
 				ref offs);
@@ -695,7 +695,7 @@ namespace Altaxo.Graph3D
 					else if (n.X == -1)
 						color = colors[5];
 
-					pctb.AddTriangleVertex((float)pt.X, (float)pt.Y, (float)pt.Z, 1, (float)color.X, (float)color.Y, (float)color.Z, 1);
+					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
 				},
 				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
 				ref offs);

@@ -360,7 +360,7 @@ namespace Altaxo.Graph3D.Plot.Styles
 					double lz = zScale.PhysicalVariantToNormal(matrix[i, j]);
 					var color = _colorProvider.GetColor(lz);
 					gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
-					buf.AddTriangleVertex((float)pt.X, (float)pt.Y, (float)pt.Z, 1, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+					buf.AddTriangleVertex(pt.X, pt.Y, pt.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 				}
 			}
 

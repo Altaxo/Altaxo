@@ -63,7 +63,7 @@ namespace Altaxo.Graph3D
 
 		void RestoreGraphicsState(object graphicsState);
 
-		void MultiplyTransform(MatrixD3D m);
+		void PrependTransform(MatrixD3D m);
 
 		void TranslateTransform(double x, double y, double z);
 	}

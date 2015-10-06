@@ -68,5 +68,20 @@ namespace Altaxo.Graph3D.Camera
 		{
 			return new OrthographicCamera(this);
 		}
+
+		/// <summary>
+		/// Gets a matrix for a hit point on the screen. The hit point is given in relative coordinates (X and Y component). The screen's aspect ratio is given in the Z component.
+		/// The result is a matrix which transforms world coordinates in that way that the hit ray in world coordinates is transformed to x=0 and y=0 and z being the distance to the camera.
+		/// </summary>
+		/// <param name="relativeScreenPosition">The relative screen position (X and Y component), as well as the screen's aspect ratio (Z component).</param>
+		/// <returns>
+		/// Matrix which transforms world coordinates in that way that the hit ray in world coordinates is transformed to x=0 and y=0 and z being the distance to the camera.
+		/// </returns>
+		public override MatrixD3D GetHitRayMatrix(PointD3D relativeScreenPosition)
+		{
+			var result = LookAtRHMatrix;
+			result.TranslateAppend((0.5 - relativeScreenPosition.X) * Scale, (0.5 - relativeScreenPosition.Y) * Scale * relativeScreenPosition.Z, 0);
+			return result;
+		}
 	}
 }

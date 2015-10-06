@@ -43,7 +43,7 @@ namespace Altaxo.Graph3D
 		/// In case of closed shapes, it is the outline path of the shape.
 		/// </summary>
 		/// <returns>Object outline.</returns>
-		RectangleD3D ObjectOutlineForArrangements { get; }
+		IObjectOutline ObjectOutlineForArrangements { get; }
 
 		/// <summary>
 		/// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.

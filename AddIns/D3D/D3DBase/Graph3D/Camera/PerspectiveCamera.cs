@@ -70,5 +70,10 @@ namespace Altaxo.Graph3D.Camera
 		{
 			return new PerspectiveCamera(this);
 		}
+
+		public override MatrixD3D GetHitRayMatrix(PointD3D relativeScreenPosition)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

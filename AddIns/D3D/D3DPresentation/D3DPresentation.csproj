@@ -80,6 +80,8 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControllerWpf.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Scene.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
@@ -158,6 +160,7 @@
     <Vs40File Include="Shaders\MiniCube.fx" />
     <Ps40File Include="Shaders\MiniCube.fx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

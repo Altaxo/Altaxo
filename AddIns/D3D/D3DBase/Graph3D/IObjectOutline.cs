@@ -28,20 +28,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Graph3D.Viewing
+namespace Altaxo.Graph3D
 {
-	public interface IGraph3DView
+	public interface IObjectOutline
 	{
-		object GuiInitiallyFocusedElement { get; }
-		Graph3DController Controller { set; }
+	}
 
-		/// <summary>
-		/// Sets the currently active layer. If the view has some means to show the
-		/// currently active layer (like a toolbar or so), it has to indicate the current
-		/// active layer by setting the state of this indicator.
-		/// </summary>
-		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
-		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
-		int[] CurrentLayer { set; }
+	public class RectangularObjectOutline : IObjectOutline
+	{
+		private MatrixD3D _transformation;
+		private RectangleD3D _rectangle;
+
+		public RectangularObjectOutline(RectangleD3D rectangle, MatrixD3D transformation)
+		{
+			_rectangle = rectangle;
+			_transformation = transformation;
+		}
 	}
 }

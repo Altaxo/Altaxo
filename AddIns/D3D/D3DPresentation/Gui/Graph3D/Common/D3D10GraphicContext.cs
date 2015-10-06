@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Graph3D.Common
 				throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
 		}
 
-		public override void MultiplyTransform(MatrixD3D m)
+		public override void PrependTransform(MatrixD3D m)
 		{
 			_transformation.Transformation.PrependTransform(m);
 		}
@@ -146,21 +146,21 @@ namespace Altaxo.Gui.Graph3D.Common
 	public class PositionColorIndexedTriangleBuffer : IPositionColorIndexedTriangleBuffer, IDisposable
 	{
 		private D3D10GraphicContext _parent;
-		protected DataStream _vertexStream;
-		protected DataStream _indexStream;
+		protected float[] _vertexStream;
+		protected int[] _indexStream;
 		protected int _numberOfVertices;
 		protected int _numberOfTriangles;
 
 		public PositionColorIndexedTriangleBuffer(D3D10GraphicContext parent)
 		{
 			_parent = parent;
-			_vertexStream = new DataStream(1024 * 1024 * 3 * 32, true, true);
-			_indexStream = new DataStream(1024 * 1024 * 12, true, true);
+			_vertexStream = new float[1024 * 1024 * 3];
+			_indexStream = new int[1024 * 1024];
 		}
 
-		public DataStream VertexStream { get { return _vertexStream; } }
+		public float[] VertexStream { get { return _vertexStream; } }
 
-		public DataStream IndexStream { get { return _indexStream; } }
+		public int[] IndexStream { get { return _indexStream; } }
 
 		public int VertexCount
 		{
@@ -194,28 +194,43 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 		}
 
-		public void AddTriangleVertex(float x, float y, float z, float w, float r, float g, float b, float a)
+		public void AddTriangleVertex(double x, double y, double z, float r, float g, float b, float a)
 		{
 			var pt = _parent.Transformation.Transformation.TransformPoint(new PointD3D(x, y, z));
+			int offs = _numberOfVertices << 3;
 
-			_vertexStream.Write(new Vector4((float)pt.X, (float)pt.Y, (float)pt.Z, w));
-			_vertexStream.Write(new Vector4(r, g, b, a));
+			if (offs + 8 >= _vertexStream.Length)
+				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+
+			_vertexStream[offs + 0] = (float)pt.X;
+			_vertexStream[offs + 1] = (float)pt.Y;
+			_vertexStream[offs + 2] = (float)pt.Z;
+			_vertexStream[offs + 3] = 1;
+			_vertexStream[offs + 4] = r;
+			_vertexStream[offs + 5] = g;
+			_vertexStream[offs + 6] = b;
+			_vertexStream[offs + 7] = a;
 			++_numberOfVertices;
 		}
 
 		public void Dispose()
 		{
-			Disposer.RemoveAndDispose(ref _vertexStream);
-			Disposer.RemoveAndDispose(ref _indexStream);
+			_vertexStream = null;
+			_indexStream = null;
 			_numberOfTriangles = 0;
 			_numberOfVertices = 0;
 		}
 
 		public void AddTriangleIndices(int v1, int v2, int v3)
 		{
-			_indexStream.Write(v1);
-			_indexStream.Write(v3);
-			_indexStream.Write(v2);
+			int offs = _numberOfTriangles * 3;
+
+			if (offs + 3 >= _indexStream.Length)
+				Array.Resize(ref _indexStream, _indexStream.Length * 2);
+
+			_indexStream[offs + 0] = v1;
+			_indexStream[offs + 1] = v3;
+			_indexStream[offs + 2] = v2;
 			++_numberOfTriangles;
 		}
 	}

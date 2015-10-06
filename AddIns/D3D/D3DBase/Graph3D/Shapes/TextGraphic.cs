@@ -485,6 +485,22 @@ namespace Altaxo.Graph3D.Shapes
 		public static Altaxo.Graph.Gdi.DoubleClickHandler PlotItemEditorMethod;
 		public static Altaxo.Graph.Gdi.DoubleClickHandler TextGraphicsEditorMethod;
 
+		public override IHitTestObject HitTest(HitTestPointData parentHitData)
+		{
+			//			HitTestPointData layerHitTestData = pageC.NewFromTranslationRotationScaleShear(Position.X, Position.Y, -Rotation, ScaleX, ScaleY, ShearX);
+			var localHitData = parentHitData.NewFromAdditionalTransformation(this._transformation);
+
+			double z;
+			if (localHitData.IsHit(_cachedExtendedTextBounds, out z))
+			{
+				return new HitTestObject(new RectangularObjectOutline(_cachedExtendedTextBounds, localHitData.Transformation), this);
+			}
+			else
+			{
+				return null;
+			}
+		}
+
 		#endregion Hit testing and handling
 
 		#region Deprecated classes

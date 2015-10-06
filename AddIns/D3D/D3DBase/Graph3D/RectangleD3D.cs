@@ -288,6 +288,12 @@ namespace Altaxo.Graph3D
 			}
 		}
 
+		/// <summary>
+		/// Gets the vertices in binary order (x: 0th digit, y: 1st digit, z: 2nd digit).
+		/// </summary>
+		/// <value>
+		/// The vertices.
+		/// </value>
 		public IEnumerable<PointD3D> Vertices
 		{
 			get
@@ -295,11 +301,43 @@ namespace Altaxo.Graph3D
 				yield return new PointD3D(_x, _y, _z);
 				yield return new PointD3D(_x + _sizeX, _y, _z);
 				yield return new PointD3D(_x, _y + _sizeY, _z);
-				yield return new PointD3D(_x, _y, _z + _sizeZ);
 				yield return new PointD3D(_x + _sizeX, _y + _sizeY, _z);
+				yield return new PointD3D(_x, _y, _z + _sizeZ);
 				yield return new PointD3D(_x + _sizeX, _y, _z + _sizeZ);
 				yield return new PointD3D(_x, _y + _sizeY, _z + _sizeZ);
 				yield return new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ);
+			}
+		}
+
+		/// <summary>
+		/// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
+		/// The order is front, back, top, bottom, left, right.
+		/// </summary>
+		/// <value>
+		/// The triangle indices.
+		/// </value>
+		public IEnumerable<Tuple<int, int, int>> TriangleIndices
+		{
+			get
+			{
+				// Front
+				yield return new Tuple<int, int, int>(0, 2, 3);
+				yield return new Tuple<int, int, int>(0, 3, 1);
+				// Back
+				yield return new Tuple<int, int, int>(4, 7, 6);
+				yield return new Tuple<int, int, int>(4, 5, 7);
+				// Top
+				yield return new Tuple<int, int, int>(2, 6, 7);
+				yield return new Tuple<int, int, int>(2, 7, 3);
+				// Bottom
+				yield return new Tuple<int, int, int>(0, 5, 4);
+				yield return new Tuple<int, int, int>(0, 1, 5);
+				// Left
+				yield return new Tuple<int, int, int>(0, 4, 6);
+				yield return new Tuple<int, int, int>(0, 6, 2);
+				// Right
+				yield return new Tuple<int, int, int>(1, 7, 5);
+				yield return new Tuple<int, int, int>(1, 3, 7);
 			}
 		}
 
