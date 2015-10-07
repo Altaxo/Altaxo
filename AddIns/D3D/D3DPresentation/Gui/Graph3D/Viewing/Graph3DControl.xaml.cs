@@ -15,8 +15,10 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph3D.Viewing
 {
+	using Altaxo.Collections;
 	using Altaxo.Graph3D;
 	using Altaxo.Gui.Graph3D.Common;
+	using System.Windows.Controls.Primitives;
 
 	/// <summary>
 	/// Interaction logic for Graph3DControl.xaml
@@ -60,6 +62,44 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_d3dCanvas.Cursor = arrow;
 		}
 
+		public void SetLayerStructure(NGTreeNode value, int[] currentLayerNumber)
+		{
+			_layerToolBar.Children.Clear();
+
+			foreach (var node in value.TakeFromHereToFirstLeaves())
+			{
+				var newbutton = new ToggleButton() { Content = node.Text, Tag = node.Tag };
+				newbutton.Margin = new Thickness(node.Level * 8, 2, 1, 0);
+				newbutton.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+				newbutton.Click += new RoutedEventHandler(EhLayerButton_Click);
+				newbutton.ContextMenuOpening += new ContextMenuEventHandler(EhLayerButton_ContextMenuOpening);
+				newbutton.IsChecked = System.Linq.Enumerable.SequenceEqual((int[])(node.Tag), currentLayerNumber);
+
+				_layerToolBar.Children.Add(newbutton);
+			}
+		}
+
+		private void EhLayerButton_Click(object sender, RoutedEventArgs e)
+		{
+			var gc = _controller;
+			if (null != gc)
+			{
+				var pushedLayerNumber = (int[])((ButtonBase)sender).Tag;
+
+				gc.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
+			}
+		}
+
+		private void EhLayerButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			var gc = _controller;
+			if (null != gc)
+			{
+				var i = (int[])((ToggleButton)sender).Tag;
+				gc.EhView_ShowDataContextMenu(i, this, new Altaxo.Graph.PointD2D(e.CursorLeft, e.CursorTop));
+			}
+		}
+
 		public object GuiInitiallyFocusedElement
 		{
 			get
@@ -73,6 +113,28 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			set
 			{
 			}
+		}
+
+		public Altaxo.Graph.PointD2D ViewportSizeInPoints
+		{
+			get
+			{
+				const double factor = 72.0 / 96.0;
+				return new Altaxo.Graph.PointD2D(_d3dCanvas.ActualWidth * factor, _d3dCanvas.ActualHeight * factor);
+			}
+		}
+
+		public string GraphViewTitle
+		{
+			set
+			{
+				// TODO (Wpf)
+			}
+		}
+
+		public void FullRepaint()
+		{
+			EhDocumentChanged();
 		}
 
 		public void EhDocumentChanged()

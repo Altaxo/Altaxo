@@ -1312,6 +1312,27 @@ namespace Altaxo.Graph3D
 				hl.VisitDocumentReferences(Report);
 		}
 
+		/// <summary>
+		/// Returns the document name of the layer at index i. Actually, this is a name of the form L0, L1, L2 and so on.
+		/// </summary>
+		/// <param name="layerIndex">The layer index.</param>
+		/// <returns>The name of the layer at index i.</returns>
+		public static string GetDefaultNameOfLayer(IList<int> layerIndex)
+		{
+			if (layerIndex.Count == 0)
+				return "RL";
+
+			var stb = new System.Text.StringBuilder();
+
+			stb.AppendFormat("L{0}", layerIndex[0]);
+
+			for (int k = 1; k < layerIndex.Count; ++k)
+
+				stb.AppendFormat("-{0}", layerIndex[k]);
+
+			return stb.ToString();
+		}
+
 		#endregion XYPlotLayer properties and methods
 
 		#region Hit test

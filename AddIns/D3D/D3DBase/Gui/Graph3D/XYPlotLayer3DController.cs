@@ -37,5 +37,17 @@ namespace Altaxo.Gui.Graph3D
 		{
 			throw new NotImplementedException();
 		}
+
+		public static void RegisterEditHandlers()
+		{
+			// register here editor methods
+			/*
+			XYPlotLayer.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
+			XYPlotLayer.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
+			XYPlotLayer.AxisLabelMajorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMajorStyleEdit);
+			XYPlotLayer.AxisLabelMinorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMinorStyleEdit);
+			XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
+			*/
+		}
 	}
 }

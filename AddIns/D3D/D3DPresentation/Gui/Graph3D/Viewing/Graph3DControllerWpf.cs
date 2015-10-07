@@ -33,7 +33,12 @@ using System.Windows.Input;
 namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Graph;
+	using Altaxo.Graph3D;
+	using Altaxo.Graph3D.Plot;
+	using Altaxo.Graph3D.Plot.Groups;
+	using Altaxo.Graph3D.Shapes;
 	using Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers;
+	using Altaxo.Main;
 
 	[UserControllerForObject(typeof(Altaxo.Graph3D.GraphDocument3D))]
 	[ExpectedTypeOfView(typeof(IGraph3DView))]
@@ -41,6 +46,17 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	{
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected MouseStateHandler _mouseState;
+
+		static Graph3DControllerWpf()
+		{
+			//_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
+
+			// register here editor methods
+			XYPlotLayer3DController.RegisterEditHandlers();
+			XYPlotLayer3D.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
+		}
 
 		public Graph3DControllerWpf()
 		{
@@ -121,6 +137,54 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		public virtual void EhView_GraphPanelMouseDoubleClick(PointD3D position, MouseButtonEventArgs e)
 		{
 			_mouseState.OnDoubleClick(position, e);
+		}
+
+		/// <summary>
+		/// Handles the double click event onto a plot item.
+		/// </summary>
+		/// <param name="hit">Object containing information about the double clicked object.</param>
+		/// <returns>True if the object should be deleted, false otherwise.</returns>
+		protected static bool EhEditTextGraphics(IHitTestObject hit)
+		{
+			var layer = hit.ParentLayer;
+			TextGraphic tg = (TextGraphic)hit.HittedObject;
+
+			bool shouldDeleted = false;
+
+			object tgoo = tg;
+			if (Current.Gui.ShowDialog(ref tgoo, "Edit text", true))
+			{
+				tg = (TextGraphic)tgoo;
+				if (tg == null || tg.Empty)
+				{
+					if (null != hit.Remove)
+						shouldDeleted = hit.Remove(hit);
+					else
+						shouldDeleted = false;
+				}
+				else
+				{
+					if (tg.ParentObject is IChildChangedEventSink)
+						((IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
+				}
+			}
+
+			return shouldDeleted;
+		}
+
+		/// <summary>
+		/// Handles the double click event onto a plot item.
+		/// </summary>
+		/// <param name="hit">Object containing information about the double clicked object.</param>
+		/// <returns>True if the object should be deleted, false otherwise.</returns>
+		protected static bool EhEditPlotItem(IHitTestObject hit)
+		{
+			XYPlotLayer3D actLayer = hit.ParentLayer as XYPlotLayer3D;
+			IGPlotItem pa = (IGPlotItem)hit.HittedObject;
+
+			Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+
+			return false;
 		}
 	}
 }

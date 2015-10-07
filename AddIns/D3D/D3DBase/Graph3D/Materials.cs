@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	internal class Materials
+	public class Materials
 	{
 		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
 		{

@@ -32,8 +32,21 @@ namespace Altaxo.Gui.Graph3D.Viewing
 {
 	public interface IGraph3DView
 	{
+		/// <summary>
+		/// Returns the control that should be focused initially.
+		/// </summary>
 		object GuiInitiallyFocusedElement { get; }
+
+		/// <summary>
+		/// Sets the controller of the view;
+		/// </summary>
 		Graph3DController Controller { set; }
+
+		/// <summary>
+		/// Sets the number of layers that are in the graph. The view has to reflect the change in the number of layers
+		/// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
+		/// </summary>
+		void SetLayerStructure(Altaxo.Collections.NGTreeNode structure, int[] currentLayerNumber);
 
 		/// <summary>
 		/// Sets the currently active layer. If the view has some means to show the
@@ -43,5 +56,20 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
 		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
 		int[] CurrentLayer { set; }
+
+		/// <summary>
+		/// This sets the title of the graph view.
+		/// </summary>
+		string GraphViewTitle { set; }
+
+		/// <summary>
+		/// Returns the size in points (=1/72 inch) of the area, wherein the graph is painted.
+		/// </summary>
+		Altaxo.Graph.PointD2D ViewportSizeInPoints { get; }
+
+		/// <summary>
+		/// Called if a full repaint of the graph is neccessary.
+		/// </summary>
+		void FullRepaint();
 	}
 }

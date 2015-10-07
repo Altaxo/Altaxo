@@ -9,9 +9,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Collections;
 	using Altaxo.Graph3D;
 	using Altaxo.Graph3D.Camera;
+	using Altaxo.Main;
 
 	public class Graph3DController : IDisposable, IMVCANController
 	{
+		/// <summary>
+		/// Is called each time the name for the content has changed.
+		/// </summary>
 		public event EventHandler TitleNameChanged;
 
 		public IGraph3DView _view;
@@ -25,6 +29,154 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		/// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
 		protected int _currentPlotNumber = -1;
+
+		private NGTreeNode _layerStructure;
+
+		protected Altaxo.Main.TriggerBasedUpdate _triggerBasedUpdate;
+
+		[NonSerialized]
+		protected WeakEventHandler[] _weakEventHandlersForDoc;
+
+		#region Constructors
+
+		protected Graph3DController()
+		{
+			InitTriggerBasedUpdate();
+		}
+
+		/// <summary>
+		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
+		/// </summary>
+		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
+		protected Graph3DController(GraphDocument3D graphdoc)
+		{
+			if (null == graphdoc)
+				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
+
+			InitTriggerBasedUpdate();
+			InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
+		}
+
+		public bool InitializeDocument(params object[] args)
+		{
+			if (null == args || args.Length == 0)
+				return false;
+			if (args[0] is GraphDocument3D)
+			{
+				InternalInitializeGraphDocument(args[0] as GraphDocument3D);
+			}
+			/*
+			else if (args[0] is GraphViewLayout)
+			{
+				var o = (GraphViewLayout)args[0];
+				_isAutoZoomActive = o.IsAutoZoomActive;
+				_zoomFactor = o.ZoomFactor;
+				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = o.PositionOfViewportsUpperLeftCornerInRootLayerCoordinates;
+				InternalInitializeGraphDocument(o.GraphDocument);
+			}
+			*/
+			else
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
+
+		#endregion Constructors
+
+		protected void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				InitLayerStructure();
+			}
+
+			if (null != _view)
+			{
+				InitLayerStructure();
+				_view.SetLayerStructure(_layerStructure, this.CurrentLayerNumber.ToArray()); // tell the view how many layers we have
+
+				// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
+				this.EhView_GraphPanelSizeChanged();
+			}
+		}
+
+		private void InitLayerStructure()
+		{
+			_layerStructure = Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(
+				_doc.RootLayer,
+				new List<int>(),
+				(sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer3D.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
+		}
+
+		private void InitTriggerBasedUpdate()
+		{
+			_triggerBasedUpdate = new Altaxo.Main.TriggerBasedUpdate(Current.TimerQueue);
+			_triggerBasedUpdate.MinimumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
+			_triggerBasedUpdate.MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
+			_triggerBasedUpdate.MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1);
+			_triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
+		}
+
+		#region Properties
+
+		/// <summary>
+		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
+		/// </summary>
+		public HostLayer3D RootLayer
+		{
+			get { return _doc.RootLayer; }
+		}
+
+		#endregion Properties
+
+		private void InternalInitializeGraphDocument(GraphDocument3D doc)
+		{
+			if (_doc != null)
+				throw new ApplicationException(nameof(_doc) + " is already initialized");
+			if (doc == null)
+				throw new ArgumentNullException(nameof(doc));
+
+			_doc = doc;
+
+			{
+				// we are using weak events here, to avoid that _doc will maintain strong references to the controller
+				// Attention: use local variable doc instead of member _doc for the anonymous methods below!
+				var rootLayer = doc.RootLayer; // local variable for rootLayer
+				_weakEventHandlersForDoc = new WeakEventHandler[3]; // storage for WeakEventhandlers for later removal
+				doc.Changed += (_weakEventHandlersForDoc[0] = new WeakEventHandler(this.EhGraph_Changed, x => doc.Changed -= x));
+				rootLayer.LayerCollectionChanged += (_weakEventHandlersForDoc[1] = new WeakEventHandler(this.EhGraph_LayerCollectionChanged, x => rootLayer.LayerCollectionChanged -= x));
+				doc.SizeChanged += (_weakEventHandlersForDoc[2] = new WeakEventHandler(this.EhGraph_SizeChanged, x => doc.SizeChanged -= x));
+			}
+			// if the host layer has at least one child, we set the active layer to the first child of the host layer
+			if (_doc.RootLayer.Layers.Count >= 1)
+				_currentLayerNumber = new List<int>() { 0 };
+
+			// Ensure the current layer and plot numbers are valid
+			this.EnsureValidityOfCurrentLayerNumber();
+			this.EnsureValidityOfCurrentPlotNumber();
+
+			OnTitleNameChanged(EventArgs.Empty);
+		}
+
+		private void InternalUninitializeGraphDocument()
+		{
+			// remove the weak event handlers from doc
+			var wev = _weakEventHandlersForDoc;
+			if (null != wev)
+			{
+				foreach (var ev in wev)
+					ev.Remove();
+				_weakEventHandlersForDoc = null;
+			}
+
+			_doc = null;
+		}
 
 		public object ModelObject
 		{
@@ -55,27 +207,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		public UseDocument UseDocumentCopy
-		{
-			set
-			{
-			}
-		}
-
 		public IList<object> SelectedObjects { get; internal set; }
 
 		public void Dispose()
 		{
-		}
-
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || args.Length == 0 || !(args[0] is GraphDocument3D))
-				return false;
-
-			_doc = (GraphDocument3D)args[0];
-
-			return true;
 		}
 
 		/// <summary>
@@ -133,6 +268,61 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		{
 			_doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
 			return _doc.RootLayer.ElementAt(_currentLayerNumber);
+		}
+
+		/// <summary>
+		/// Get / sets the currently active plot by number.
+		/// </summary>
+		public int CurrentPlotNumber
+		{
+			get
+			{
+				return _currentPlotNumber;
+			}
+			set
+			{
+				var layer = ActiveLayer as XYPlotLayer3D;
+
+				if (null != layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to be greater or equal than zero");
+
+				if (null != layer && value >= layer.PlotItems.Flattened.Length)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to  be lesser than actual count: " + layer.PlotItems.Flattened.Length.ToString());
+
+				_currentPlotNumber = value < 0 ? -1 : value;
+			}
+		}
+
+		/// <summary>
+		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
+		/// the current plot number is set to -1.
+		/// </summary>
+		public void EnsureValidityOfCurrentPlotNumber()
+		{
+			var layer = EnsureValidityOfCurrentLayerNumber() as XYPlotLayer3D;
+
+			// if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
+			if (null != layer) // if the ActiveLayer exists
+			{
+				// if the XYColumnPlotData don't exist anymore, correct it
+				if (layer.PlotItems.Flattened.Length > 0) // if at least one plotitem exists
+				{
+					if (_currentPlotNumber < 0)
+						CurrentPlotNumber = 0;
+					else if (_currentPlotNumber > layer.PlotItems.Flattened.Length)
+						CurrentPlotNumber = 0;
+				}
+				else
+				{
+					if (-1 != _currentPlotNumber)
+						CurrentPlotNumber = -1;
+				}
+			}
+			else // if no layer anymore
+			{
+				if (-1 != _currentPlotNumber)
+					CurrentPlotNumber = -1;
+			}
 		}
 
 		/// <summary>
@@ -347,5 +537,155 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			foundInLayerNumber = null;
 			return false;
 		}
+
+		#region Event handlers from GraphDocument
+
+		/// <summary>
+		/// Called if something in the <see cref="GraphDocument"/> changed.
+		/// </summary>
+		/// <param name="sender">Not used (always the GraphDocument).</param>
+		/// <param name="e">The EventArgs.</param>
+		protected void EhGraph_Changed(object sender, System.EventArgs e)
+		{
+			var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
+			if (null != eAsNOC && eAsNOC.WasItemRenamed)
+			{
+				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument3D)sender, eAsNOC.OldName);
+				return;
+			}
+
+			_triggerBasedUpdate.Trigger();
+		}
+
+		private void EhUpdateByTimerQueue()
+		{
+			// if something changed on the graph, make sure that the layer and plot number reflect this change
+			this.EnsureValidityOfCurrentLayerNumber();
+			this.EnsureValidityOfCurrentPlotNumber();
+
+			if (null != _view)
+			{
+				_view.FullRepaint(); // this function is non-Gui thread safe
+			}
+		}
+
+		/// <summary>
+		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
+		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
+		/// <param name="sender">The sender of the event (the GraphDocument).</param>
+		/// <param name="e">The event arguments.</param>
+		protected void EhGraph_SizeChanged(object sender, System.EventArgs e)
+		{
+			Current.Gui.BeginExecute(EhGraph_BoundsChanged_Unsynchronized);
+		}
+
+		protected void EhGraph_BoundsChanged_Unsynchronized()
+		{
+			/*
+			if (_view != null)
+			{
+				if (this._isAutoZoomActive)
+					this.RefreshAutoZoom(false);
+				_view.InvalidateCachedGraphBitmapAndRepaint();
+			}
+			*/
+		}
+
+		/// <summary>
+		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
+		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
+		/// <param name="sender">The sender of the event (the GraphDocument).</param>
+		/// <param name="e">The event arguments.</param>
+		protected void EhGraph_LayerCollectionChanged(object sender, System.EventArgs e)
+		{
+			Current.Gui.BeginExecute(EhGraph_LayerCollectionChanged_Unsynchronized);
+		}
+
+		protected void EhGraph_LayerCollectionChanged_Unsynchronized()
+		{
+			var oldActiveLayer = new List<int>(this._currentLayerNumber);
+
+			// Ensure that the current layer and current plot are valid anymore
+			var newActiveLayer = EnsureValidityOfCurrentLayerNumber();
+
+			// even if the active layer number not changed, it can be that the layer itself has changed from
+			// one to another, so make sure that the current plot number is valid also
+			EnsureValidityOfCurrentPlotNumber();
+
+			// make sure the view knows about when the number of layers changed
+			InitLayerStructure();
+			if (_view != null)
+			{
+				_view.SetLayerStructure(_layerStructure, _currentLayerNumber.ToArray());
+			}
+		}
+
+		private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
+		{
+			if (null != _view)
+				_view.GraphViewTitle = Doc.Name;
+
+			this.TitleName = Doc.Name;
+		}
+
+		/// <summary>
+		/// Handles the event when the size of the graph area is changed.
+		/// </summary>
+		public virtual void EhView_GraphPanelSizeChanged()
+		{
+			/*
+			if (_isAutoZoomActive)
+			{
+				RefreshAutoZoom(false);
+			}
+			else
+			{
+				if (null != _view && 0 != _view.ViewportSizeInPoints.X && 0 != _view.ViewportSizeInPoints.Y)
+					SetViewsScrollbarParameter();
+			}
+			*/
+		}
+
+		/// <summary>
+		/// The controller should show a data context menu (contains all plots of the currentLayer).
+		/// </summary>
+		/// <param name="currLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
+		/// <param name="parent">The parent control which is the parent of the context menu.</param>
+		/// <param name="pt">The location where the context menu should be shown.</param>
+		public virtual void EhView_ShowDataContextMenu(int[] currLayer, object parent, Altaxo.Graph.PointD2D pt)
+		{
+			int oldCurrLayer = this.ActiveLayer.Number;
+
+			this.CurrentLayerNumber = new List<int>(currLayer);
+
+			if (null != this.ActiveLayer)
+			{
+				Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
+			}
+		}
+
+		/// <summary>
+		/// This is the whole name of the content, e.g. the file name or
+		/// the url depending on the type of the content.
+		/// </summary>
+		public string TitleName
+		{
+			get
+			{
+				return this.Doc.Name;
+			}
+			set
+			{
+				OnTitleNameChanged(EventArgs.Empty);
+			}
+		}
+
+		protected virtual void OnTitleNameChanged(System.EventArgs e)
+		{
+			if (null != TitleNameChanged)
+				TitleNameChanged(this, e);
+		}
+
+		#endregion Event handlers from GraphDocument
 	}
 }

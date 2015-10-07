@@ -299,9 +299,13 @@ namespace Altaxo.Graph3D.Shapes
 			}
 			set
 			{
-				_font = value;
-				this._isStructureInSync = false; // since the font is cached in the structure, it must be renewed
-				this._isMeasureInSync = false;
+				if (!object.ReferenceEquals(_font, value))
+				{
+					_font = value;
+					this._isStructureInSync = false; // since the font is cached in the structure, it must be renewed
+					this._isMeasureInSync = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -318,8 +322,14 @@ namespace Altaxo.Graph3D.Shapes
 			}
 			set
 			{
+				var oldText = _text;
 				_text = value;
-				this._isStructureInSync = false;
+
+				if (oldText != _text)
+				{
+					this._isStructureInSync = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -482,8 +492,8 @@ namespace Altaxo.Graph3D.Shapes
 
 		#region Hit testing and handling
 
-		public static Altaxo.Graph.Gdi.DoubleClickHandler PlotItemEditorMethod;
-		public static Altaxo.Graph.Gdi.DoubleClickHandler TextGraphicsEditorMethod;
+		public static DoubleClickHandler PlotItemEditorMethod;
+		public static DoubleClickHandler TextGraphicsEditorMethod;
 
 		public override IHitTestObject HitTest(HitTestPointData parentHitData)
 		{
@@ -493,7 +503,9 @@ namespace Altaxo.Graph3D.Shapes
 			double z;
 			if (localHitData.IsHit(_cachedExtendedTextBounds, out z))
 			{
-				return new HitTestObject(new RectangularObjectOutline(_cachedExtendedTextBounds, localHitData.Transformation), this);
+				var result = new HitTestObject(new RectangularObjectOutline(_cachedExtendedTextBounds, localHitData.Transformation), this);
+				result.DoubleClick = TextGraphicsEditorMethod;
+				return result;
 			}
 			else
 			{

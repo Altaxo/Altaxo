@@ -70,11 +70,23 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\Graph3D\Common\MaterialComboBox.xaml.cs">
+      <DependentUpon>MaterialComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Common\Disposer.cs" />
     <Compile Include="Gui\Graph3D\Common\DPFCanvas.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D10GraphicContext.cs" />
+    <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
+      <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
+      <DependentUpon>AnchoringControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
+      <DependentUpon>TextGraphicControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
@@ -117,6 +129,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
+      <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
+      <Name>AltaxoBase.Presentation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj">
       <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
       <Name>AltaxoBase</Name>
@@ -151,6 +167,22 @@
     <Fx40File Include="Gui\Graph3D\Viewing\Simple.fx" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Gui\Graph3D\Common\MaterialComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\ItemLocationDirectControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Viewing\Graph3DControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

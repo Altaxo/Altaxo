@@ -166,7 +166,7 @@ namespace Altaxo.Units
 			if (null == unit)
 				throw new ArgumentNullException("unit");
 			if (null == _unit)
-				throw new InvalidOperationException("This instance is empty");
+				throw new InvalidOperationException("This instance is empty, i.e. the unit of this quantity is set to null.");
 			if (unit.SIUnit != this._unit.SIUnit)
 				throw new ArgumentException(string.Format("Provided unit ({0}) is incompatible with this unit ({1})", unit.SIUnit, this._unit));
 

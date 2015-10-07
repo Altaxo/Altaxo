@@ -71,6 +71,10 @@ namespace Altaxo.Graph3D
 			}
 		}
 
+		/// <summary>Gets the name of the font family.</summary>
+		/// <value>The name of the font family.</value>
+		public string FontFamilyName { get { return _font.FontFamilyName; } }
+
 		public FontX3D GetFontWithNewSize(double newSize)
 		{
 			return new FontX3D(_font.GetFontWithNewSize(newSize), _depth);
@@ -84,6 +88,11 @@ namespace Altaxo.Graph3D
 		internal FontX3D GetFontWithNewStyle(FontXStyle style)
 		{
 			return new FontX3D(_font.GetFontWithNewStyle(style), _depth);
+		}
+
+		internal FontX3D GetFontWithNewDepth(double newDepth)
+		{
+			return new FontX3D(_font, newDepth);
 		}
 	}
 }

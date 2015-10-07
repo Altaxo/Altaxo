@@ -62,5 +62,10 @@ namespace Altaxo.Graph3D
 
 			return new FontInfo(cyLineSpace, cyAscent, cyDescent, size);
 		}
+
+		internal static FontX3D GetFont(string fontFamilyName, double size, double depth, FontStyle regular)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

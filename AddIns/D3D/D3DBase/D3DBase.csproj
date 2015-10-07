@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\..\rtDir\AddIns\D3D\D3DBase.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -120,6 +121,8 @@
     <Compile Include="Graph3D\IHitTestObject.cs" />
     <Compile Include="Graph3D\IObjectOutline.cs" />
     <Compile Include="Gui\Graph3D\HostLayer3DController.cs" />
+    <Compile Include="Gui\Graph3D\ItemLocationDirectController.cs" />
+    <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayer3DController.cs" />
     <Compile Include="Poly2Tri\P2T.cs" />
     <Compile Include="Poly2Tri\Polygon\Polygon.cs" />
