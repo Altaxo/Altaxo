@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph;
+using Altaxo.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -66,7 +67,7 @@ namespace Altaxo.Graph3D.Axis
 			this._planeID = from._planeID;
 			this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
 			this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-			this.Background = from._background == null ? null : (IMaterial3D)from._background.Clone();
+			this.Background = from._background;
 		}
 
 		#region Serialization
@@ -126,8 +127,6 @@ namespace Altaxo.Graph3D.Axis
 				yield return new Main.DocumentNodeAndName(_grid1, "Grid1");
 			if (null != _grid2)
 				yield return new Main.DocumentNodeAndName(_grid2, "Grid2");
-			if (null != _background)
-				yield return new Main.DocumentNodeAndName(_background, "Background");
 		}
 
 		public GridPlane Clone()
@@ -182,10 +181,10 @@ namespace Altaxo.Graph3D.Axis
 			get { return _background; }
 			set
 			{
-				if (ChildSetMember(ref _background, value))
-				{
+				var oldValue = _background;
+				_background = value;
+				if (!object.ReferenceEquals(oldValue, _background))
 					EhSelfChanged(EventArgs.Empty);
-				}
 			}
 		}
 

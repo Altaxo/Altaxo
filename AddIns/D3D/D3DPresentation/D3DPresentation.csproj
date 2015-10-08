@@ -70,6 +70,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\MaterialComparer.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>
@@ -77,7 +84,8 @@
     <Compile Include="Gui\Graph3D\Common\DPFCanvas.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D10GraphicContext.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
+    <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
     </Compile>
@@ -121,6 +129,10 @@
     <EmbeddedResource Include="CompiledShaders\Simple.cso" />
     <EmbeddedResource Include="CompiledShaders\PS\MiniCube.cso" />
     <EmbeddedResource Include="CompiledShaders\VS\MiniCube.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\PN_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\PN_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\PNC_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\PNC_DULL.cso" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -191,6 +203,10 @@
   <ItemGroup>
     <Vs40File Include="Shaders\MiniCube.fx" />
     <Ps40File Include="Shaders\MiniCube.fx" />
+    <Vs40File Include="Shaders\PN_DULL.fx" />
+    <Ps40File Include="Shaders\PN_DULL.fx" />
+    <Vs40File Include="Shaders\PNC_DULL.fx" />
+    <Ps40File Include="Shaders\PNC_DULL.fx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

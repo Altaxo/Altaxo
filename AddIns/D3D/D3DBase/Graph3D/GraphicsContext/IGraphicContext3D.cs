@@ -29,25 +29,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.GraphicsContext
 {
 	public interface IGraphicContext3D
 	{
 		/// <summary>
-		/// Gets a buffer that takes triangle data, consisting of vertex position and vertex color.
+		/// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
 		/// </summary>
-		/// <param name="numberOfVertices">Number of vertices intended to store.</param>
-		/// <returns>A buffer that takes triangle data, consisting of vertex position and vertex color</returns>
-		IPositionColorTriangleBuffer GetPositionColorTriangleBuffer(int numberOfVertices);
+		/// <param name="material">The material to use.</param>
+		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
+		PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial3D material);
 
 		/// <summary>
-		/// Gets a buffer that takes triangle data, consisting of vertex position and vertex color.
+		/// Gets an indexed triangle buffer with a normal, i.e. either <see cref="IPositionNormalIndexedTriangleBuffer"/>, <see cref="IPositionNormalColorIndexedTriangleBuffer"/> or <see cref="IPositionNormalUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
 		/// </summary>
-		/// <param name="numberOfVertices">Number of vertices intended to store.</param>
-		/// <returns>A buffer that takes triangle data, consisting of vertex position and vertex color</returns>
-		IPositionColorIndexedTriangleBuffer GetPositionColorIndexedTriangleBuffer(int numberOfVertices);
+		/// <param name="material">The material to use.</param>
+		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
+		PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial3D material);
 
 		#region Primitives rendering
+
+		void DrawLineObsolete(PenX3D pen, PointD3D p0, PointD3D p1);
 
 		void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1);
 

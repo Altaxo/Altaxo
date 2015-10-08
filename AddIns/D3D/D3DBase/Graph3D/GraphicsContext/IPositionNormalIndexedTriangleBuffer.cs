@@ -22,28 +22,29 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.GraphicsContext;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.LabelFormatting
+namespace Altaxo.Graph3D.GraphicsContext
 {
 	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
+	/// Interface to a buffer that stores indexed triangle data consisting of position and normal.
 	/// </summary>
-	public interface IMeasuredLabelItem
+	public interface IPositionNormalIndexedTriangleBuffer : IIndexedTriangleBuffer
 	{
 		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
-		/// </summary>
-		VectorD3D Size { get; }
-
 		/// <summary>
-		/// Draws the label to a specified point.
+		/// Adds the specified vertex.
 		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point);
+		/// <param name="x">The x position.</param>
+		/// <param name="y">The y position.</param>
+		/// <param name="z">The z position.</param>
+		/// <param name="nx">The x component of the normal.</param>
+		/// <param name="ny">The y component of the normal.</param>
+		/// <param name="nz">The z component of the normal.</param>
+		void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz);
 	}
 }

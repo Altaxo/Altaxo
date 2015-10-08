@@ -22,28 +22,41 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.GraphicsContext;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.LabelFormatting
+namespace Altaxo.Graph3D.GraphicsContext
 {
 	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
+	/// Interface to a buffer that stores indexed triangle data. This interface is the base interface of all indexed triangle buffers.
 	/// </summary>
-	public interface IMeasuredLabelItem
+	public interface IIndexedTriangleBuffer
 	{
 		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
+		/// Gets the number of triangles already stored in the buffer.
 		/// </summary>
-		VectorD3D Size { get; }
+		/// <value>
+		/// The index offset, i.e. the number of triangles already stored in the buffer.
+		/// </value>
+		int VertexCount { get; }
 
 		/// <summary>
-		/// Draws the label to a specified point.
+		/// Gets the number of triangles (the number of indices is 3 times the number of triangles).
 		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point);
+		/// <value>
+		/// Number of triangles (the number of indices is 3 times the number of triangles).
+		/// </value>
+		int TriangleCount { get; }
+
+		/// <summary>
+		/// Adds the indices for one triangle.
+		/// </summary>
+		/// <param name="v1">The index of vertex 1.</param>
+		/// <param name="v2">The index of vertex 2.</param>
+		/// <param name="v3">The index of vertex 3.</param>
+		void AddTriangleIndices(int v1, int v2, int v3);
 	}
 }

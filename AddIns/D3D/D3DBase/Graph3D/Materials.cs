@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph;
+using Altaxo.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,13 +34,61 @@ namespace Altaxo.Graph3D
 {
 	public class Materials
 	{
+		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
+
 		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
+		{
+			return new SolidColor(color);
+		}
+
+		public static IMaterial3D GetMaterialWithNewColor(IMaterial3D material, NamedColor newColor)
+		{
+			return material.WithColor(newColor);
+		}
+
+		public static IMaterial3D GetSolidMaterialWithoutColorOrTexture()
+		{
+			return _materialWithoutColorOrTexture;
+		}
+	}
+
+	public class MaterialWithoutColorOrTexture : IMaterial3D
+	{
+		public NamedColor Color
+		{
+			get
+			{
+				return NamedColors.Black;
+			}
+		}
+
+		public bool HasColor
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public bool HasTexture
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
+		{
+		}
+
+		public IMaterial3D WithColor(NamedColor color)
 		{
 			return new SolidColor(color);
 		}
 	}
 
-	public class SolidColor : Altaxo.Main.SuspendableDocumentLeafNodeWithEventArgs, IMaterial3D
+	public class SolidColor : IMaterial3D
 	{
 		private Altaxo.Graph.NamedColor _color;
 
@@ -61,7 +110,7 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public bool SupportsGetColor
+		public bool HasColor
 		{
 			get
 			{
@@ -69,7 +118,7 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public bool SupportsSetColor
+		public bool HasTexture
 		{
 			get
 			{
@@ -77,13 +126,16 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public object Clone()
-		{
-			return new SolidColor(_color);
-		}
-
 		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
 		{
+		}
+
+		public IMaterial3D WithColor(NamedColor color)
+		{
+			if (color == this._color)
+				return this;
+			else
+				return new SolidColor(color);
 		}
 	}
 }

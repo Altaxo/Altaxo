@@ -38,13 +38,13 @@ namespace Altaxo.Graph3D
 	{
 		public double _thickness1;
 		public double _thickness2;
-		private NamedColor _color;
+		private IMaterial3D _material;
 
 		protected Primitives.ICrossSectionOfLine _crossSection;
 
 		public PenX3D(NamedColor color, double thickness)
 		{
-			_color = color;
+			_material = Materials.GetSolidMaterial(color);
 			_thickness1 = thickness;
 			_thickness2 = thickness;
 			_crossSection = Primitives.CrossSectionOfLine.GetSquareCrossSection(_thickness1, _thickness2);
@@ -92,18 +92,33 @@ namespace Altaxo.Graph3D
 			}
 		}
 
+		public IMaterial3D Material
+		{
+			get
+			{
+				return _material;
+			}
+			set
+			{
+				var oldValue = _material;
+				_material = value;
+				if (!object.ReferenceEquals(oldValue, _material))
+					EhSelfChanged();
+			}
+		}
+
 		public NamedColor Color
 		{
 			get
 			{
-				return _color;
+				return _material.Color;
 			}
 			set
 			{
-				var oldValue = _color;
-				_color = value;
+				var oldValue = _material;
+				_material = Materials.GetMaterialWithNewColor(oldValue, value);
 
-				if (value != oldValue)
+				if (!object.ReferenceEquals(oldValue, _material))
 					EhSelfChanged();
 			}
 		}

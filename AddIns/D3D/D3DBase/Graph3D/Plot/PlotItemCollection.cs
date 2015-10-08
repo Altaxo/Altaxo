@@ -40,6 +40,7 @@ namespace Altaxo.Graph3D.Plot
 {
 	using Altaxo.Graph.Plot.Groups;
 	using Graph.Gdi;
+	using GraphicsContext;
 	using Groups;
 	using System.Collections;
 

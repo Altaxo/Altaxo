@@ -45,19 +45,31 @@
 
 namespace Altaxo.Gui.Graph3D.Viewing
 {
+	using Altaxo.Graph3D;
+	using Altaxo.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
 	using SharpDX;
 	using SharpDX.D3DCompiler;
 	using SharpDX.Direct3D10;
 	using SharpDX.DXGI;
 	using System;
+	using System.Linq;
 	using Buffer = SharpDX.Direct3D10.Buffer;
 	using Device = SharpDX.Direct3D10.Device;
 
 	public class Scene : IScene
 	{
 		private ISceneHost Host;
-		private InputLayout VertexLayout;
+
+		private InputLayout VertextLayout_Position;
+		private InputLayout VertextLayout_PositionNormal;
+
+		private InputLayout VertextLayout_PositionColor;
+		private InputLayout VertextLayout_PositionNormalColor;
+
+		private InputLayout VertextLayout_PositionUV;
+		private InputLayout VertextLayout_PositionNormalUV;
+
 		private DataStream VertexStream;
 		private Buffer _nonindexedTriangleVerticesPositionColor;
 		private int _nonindexedTriangleVerticesPositionColor_Count;
@@ -75,7 +87,21 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		protected Buffer _constantBuffer;
 
+		protected Buffer _constantBufferForColor;
+
 		private int _renderCounter;
+
+		private VertexShader vertexShader_PC;
+
+		private PixelShader pixelShader_PC;
+
+		private VertexShader vertexShader_PN;
+
+		private PixelShader pixelShader_PN;
+
+		private VertexShader vertexShader_PNC;
+
+		private PixelShader pixelShader_PNC;
 
 		void IScene.Attach(ISceneHost host)
 		{
@@ -87,28 +113,77 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.VS.MiniCube.cso");
 			ShaderBytecode vertexShaderByteCode = ShaderBytecode.FromStream(stream);
-			var vertexShader = new VertexShader(device, vertexShaderByteCode);
+			vertexShader_PC = new VertexShader(device, vertexShaderByteCode);
 
 			stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.PS.MiniCube.cso");
 			ShaderBytecode pixelShaderByteCode = ShaderBytecode.FromStream(stream);
-			var pixelShader = new PixelShader(device, pixelShaderByteCode);
+			pixelShader_PC = new PixelShader(device, pixelShaderByteCode);
 
-			this.VertexLayout = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode), new[] {
+			stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.VS.PN_DULL.cso");
+			ShaderBytecode vertexShaderByteCode_PN = ShaderBytecode.FromStream(stream);
+			vertexShader_PN = new VertexShader(device, vertexShaderByteCode_PN);
+
+			stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.PS.PN_DULL.cso");
+			ShaderBytecode pixelShaderByteCode_PN = ShaderBytecode.FromStream(stream);
+			pixelShader_PN = new PixelShader(device, pixelShaderByteCode_PN);
+
+			stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.VS.PNC_DULL.cso");
+			ShaderBytecode vertexShaderByteCode_PNC = ShaderBytecode.FromStream(stream);
+			vertexShader_PNC = new VertexShader(device, vertexShaderByteCode_PNC);
+
+			stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.PS.PNC_DULL.cso");
+			ShaderBytecode pixelShaderByteCode_PNC = ShaderBytecode.FromStream(stream);
+			pixelShader_PNC = new PixelShader(device, pixelShaderByteCode_PNC);
+
+			/*
+			this.VertextLayout_Position = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode), new[] {
+								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
+						});
+
+				*/
+
+			this.VertextLayout_PositionNormal = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode_PN), new[] {
+								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+								new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
+						});
+
+			this.VertextLayout_PositionColor = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode), new[] {
 								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 								new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
 						});
 
+			this.VertextLayout_PositionNormalColor = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode_PNC), new[] {
+								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+								new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+								new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
+						});
+			/*
+			this.VertextLayout_PositionUV = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode), new[] {
+								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+								new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+						});
+
+			this.VertextLayout_PositionNormalUV = new InputLayout(device, ShaderSignature.GetInputSignature(vertexShaderByteCode), new[] {
+								new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+								new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+								new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
+						});
+
+			*/
+
 			// Create Constant Buffer
 			_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
-
+			_constantBufferForColor = new Buffer(device, Utilities.SizeOf<Vector4>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+			/*
 			// Prepare All the stages
-			device.InputAssembler.InputLayout = this.VertexLayout;
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionColor;
 			//			device.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 			//			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertices, Utilities.SizeOf<Vector4>() * 2, 0));
 			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
-			device.VertexShader.Set(vertexShader);
+			device.VertexShader.Set(vertexShader_PC);
 			//			device.Rasterizer.SetViewports(new Viewport(0, 0, form.ClientSize.Width, form.ClientSize.Height, 0.0f, 1.0f));
-			device.PixelShader.Set(pixelShader);
+			device.PixelShader.Set(pixelShader_PC);
+			*/
 
 			if (_drawing != null)
 			{
@@ -158,24 +233,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Device device = this.Host?.Device;
 			if (device == null)
 				return;
-			{
-				Disposer.RemoveAndDispose(ref this._nonindexedTriangleVerticesPositionColor);
-				var buf = drawing.BuffersNonindexedTrianglesPositionColor;
-				if (null != buf && 0 != buf.VertexCount)
-				{
-					buf.VertexStream.Position = 0;
-					this._nonindexedTriangleVerticesPositionColor = new Buffer(device, buf.VertexStream, new BufferDescription()
-					{
-						BindFlags = BindFlags.VertexBuffer,
-						CpuAccessFlags = CpuAccessFlags.None,
-						OptionFlags = ResourceOptionFlags.None,
-						SizeInBytes = (int)buf.VertexStreamLength,
-						Usage = ResourceUsage.Default
-					});
-
-					this._nonindexedTriangleVerticesPositionColor_Count = buf.VertexCount;
-				}
-			}
+			/*
 
 			// IndexedTriangles Position Color
 
@@ -209,12 +267,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 
 			device.Flush();
+
+	*/
 		}
 
 		void IScene.Detach()
 		{
 			Disposer.RemoveAndDispose(ref this._nonindexedTriangleVerticesPositionColor);
-			Disposer.RemoveAndDispose(ref this.VertexLayout);
+			Disposer.RemoveAndDispose(ref this.VertextLayout_PositionColor);
 			Disposer.RemoveAndDispose(ref this.SimpleEffect);
 			Disposer.RemoveAndDispose(ref this.VertexStream);
 		}
@@ -273,27 +333,180 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			//var worldViewProj = Matrix.Translation(-300.0f, -300.0f, -300.0f) * Matrix.RotationX(time) * Matrix.RotationY(time * 2) * Matrix.RotationZ(time * .7f) * viewProj;
 			var worldViewProj = viewProj;
 			worldViewProj.Transpose();
+			//device.UpdateSubresource(ref worldViewProj, _constantBuffer);
+
+			foreach (var entry in _drawing.PositionColorIndexedTriangleBuffers)
+			{
+				DrawPositionColorIndexedTriangleBuffer(device, entry.Value, entry.Key, worldViewProj);
+			}
+
+			foreach (var entry in _drawing.PositionNormalIndexedTriangleBuffers)
+			{
+				DrawPositionNormalIndexedTriangleBuffer(device, entry.Value, entry.Key, worldViewProj);
+			}
+
+			foreach (var entry in _drawing.PositionNormalColorIndexedTriangleBuffers)
+			{
+				DrawPositionNormalColorIndexedTriangleBuffer(device, entry.Value, entry.Key, worldViewProj);
+			}
+		}
+
+		private void DrawPositionColorIndexedTriangleBuffer(Device device, PositionColorIndexedTriangleBuffer buf, IMaterial3D material, Matrix worldViewProj)
+		{
+			// Create Constant Buffer
+			//_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+
+			// Prepare All the stages
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionNormal;
+			//			device.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+			//			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertices, Utilities.SizeOf<Vector4>() * 2, 0));
+			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
+			device.VertexShader.Set(vertexShader_PC);
+			//			device.Rasterizer.SetViewports(new Viewport(0, 0, form.ClientSize.Width, form.ClientSize.Height, 0.0f, 1.0f));
+			device.PixelShader.Set(pixelShader_PC);
+
 			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
 
-			if (null != _nonindexedTriangleVerticesPositionColor)
+			// hier
+
+			Disposer.RemoveAndDispose(ref this.IndexedVertices);
+			Disposer.RemoveAndDispose(ref this.IndexedVerticesIndexes);
+
+			if (null == buf || buf.TriangleCount == 0)
+				return;
+
+			//buf.VertexStream.Position = 0;
+			this.IndexedVertices = Buffer.Create<float>(device, buf.VertexStream, new BufferDescription()
 			{
-				device.InputAssembler.InputLayout = this.VertexLayout;
-				device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-				device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._nonindexedTriangleVerticesPositionColor, 32, 0));
+				BindFlags = BindFlags.VertexBuffer,
+				CpuAccessFlags = CpuAccessFlags.None,
+				OptionFlags = ResourceOptionFlags.None,
+				SizeInBytes = buf.VertexStreamLength,
+				Usage = ResourceUsage.Default
+			});
 
-				device.Draw(_nonindexedTriangleVerticesPositionColor_Count, 0);
-			}
-
-			if (null != this.IndexedVerticesIndexes && null != IndexedVertices)
+			//buf.IndexStream.Position = 0;
+			this.IndexedVerticesIndexes = Buffer.Create<int>(device, buf.IndexStream, new BufferDescription()
 			{
-				// Indexed vertices position color
+				BindFlags = BindFlags.IndexBuffer,
+				CpuAccessFlags = CpuAccessFlags.None,
+				OptionFlags = ResourceOptionFlags.None,
+				SizeInBytes = buf.IndexStreamLength,
+				Usage = ResourceUsage.Default
+			});
+			this.IndexedVerticesIndexes_Count = buf.TriangleCount * 3;
 
-				device.InputAssembler.InputLayout = this.VertexLayout;
-				device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-				device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.IndexedVertices, 32, 0));
-				device.InputAssembler.SetIndexBuffer(this.IndexedVerticesIndexes, Format.R32_UInt, 0);
-				device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
-			}
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionColor;
+			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.IndexedVertices, 32, 0));
+			device.InputAssembler.SetIndexBuffer(this.IndexedVerticesIndexes, Format.R32_UInt, 0);
+			device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
+		}
+
+		private void DrawPositionNormalIndexedTriangleBuffer(Device device, PositionNormalIndexedTriangleBuffer buf, IMaterial3D material, Matrix worldViewProj)
+		{
+			// Create Constant Buffer
+			//_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+
+			// Prepare All the stages
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionNormal;
+			//			device.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
+			//			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertices, Utilities.SizeOf<Vector4>() * 2, 0));
+			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
+			device.VertexShader.SetConstantBuffer(1, _constantBufferForColor);
+
+			device.VertexShader.Set(vertexShader_PN);
+			//			device.Rasterizer.SetViewports(new Viewport(0, 0, form.ClientSize.Width, form.ClientSize.Height, 0.0f, 1.0f));
+			device.PixelShader.Set(pixelShader_PN);
+
+			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
+
+			var color = material.Color.Color;
+			Vector4 colorVec = new Vector4(color.ScR, color.ScG, color.ScB, color.ScA);
+			device.UpdateSubresource(ref colorVec, _constantBufferForColor);
+
+			Disposer.RemoveAndDispose(ref this.IndexedVertices);
+			Disposer.RemoveAndDispose(ref this.IndexedVerticesIndexes);
+
+			if (null == buf || buf.TriangleCount == 0)
+				return;
+
+			//buf.VertexStream.Position = 0;
+			this.IndexedVertices = Buffer.Create<float>(device, buf.VertexStream, new BufferDescription()
+			{
+				BindFlags = BindFlags.VertexBuffer,
+				CpuAccessFlags = CpuAccessFlags.None,
+				OptionFlags = ResourceOptionFlags.None,
+				SizeInBytes = buf.VertexStreamLength,
+				Usage = ResourceUsage.Default
+			});
+
+			//buf.IndexStream.Position = 0;
+			this.IndexedVerticesIndexes = Buffer.Create<int>(device, buf.IndexStream, new BufferDescription()
+			{
+				BindFlags = BindFlags.IndexBuffer,
+				CpuAccessFlags = CpuAccessFlags.None,
+				OptionFlags = ResourceOptionFlags.None,
+				SizeInBytes = buf.IndexStreamLength,
+				Usage = ResourceUsage.Default
+			});
+			this.IndexedVerticesIndexes_Count = buf.TriangleCount * 3;
+
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionNormal;
+			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.IndexedVertices, 32, 0));
+			device.InputAssembler.SetIndexBuffer(this.IndexedVerticesIndexes, Format.R32_UInt, 0);
+			device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
+		}
+
+		private void DrawPositionNormalColorIndexedTriangleBuffer(Device device, PositionNormalColorIndexedTriangleBuffer buf, IMaterial3D material, Matrix worldViewProj)
+		{
+			// Create Constant Buffer
+			//		_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+
+			// Prepare All the stages
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionNormalColor;
+			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+			//			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertices, Utilities.SizeOf<Vector4>() * 2, 0));
+			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
+			device.VertexShader.Set(vertexShader_PNC);
+			//			device.Rasterizer.SetViewports(new Viewport(0, 0, form.ClientSize.Width, form.ClientSize.Height, 0.0f, 1.0f));
+			device.PixelShader.Set(pixelShader_PNC);
+
+			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
+
+			Disposer.RemoveAndDispose(ref this.IndexedVertices);
+			Disposer.RemoveAndDispose(ref this.IndexedVerticesIndexes);
+
+			if (null == buf || buf.TriangleCount == 0)
+				return;
+
+			//buf.VertexStream.Position = 0;
+			this.IndexedVertices = Buffer.Create<float>(device, buf.VertexStream, new BufferDescription()
+			{
+				BindFlags = BindFlags.VertexBuffer,
+				CpuAccessFlags = CpuAccessFlags.None,
+				OptionFlags = ResourceOptionFlags.None,
+				SizeInBytes = buf.VertexStreamLength,
+				Usage = ResourceUsage.Default
+			});
+
+			//buf.IndexStream.Position = 0;
+			this.IndexedVerticesIndexes = Buffer.Create<int>(device, buf.IndexStream, new BufferDescription()
+			{
+				BindFlags = BindFlags.IndexBuffer,
+				CpuAccessFlags = CpuAccessFlags.None,
+				OptionFlags = ResourceOptionFlags.None,
+				SizeInBytes = buf.IndexStreamLength,
+				Usage = ResourceUsage.Default
+			});
+			this.IndexedVerticesIndexes_Count = buf.TriangleCount * 3;
+
+			device.InputAssembler.InputLayout = this.VertextLayout_PositionNormalColor;
+			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this.IndexedVertices, 48, 0));
+			device.InputAssembler.SetIndexBuffer(this.IndexedVerticesIndexes, Format.R32_UInt, 0);
+			device.DrawIndexed(IndexedVerticesIndexes_Count, 0, 0);
 		}
 	}
 }

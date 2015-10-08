@@ -35,6 +35,7 @@ namespace Altaxo.Graph3D.Axis
 {
 	using Altaxo.Graph;
 	using Altaxo.Graph3D.LabelFormatting;
+	using GraphicsContext;
 
 	/// <summary>
 	/// Responsible for setting position, rotation, font, color etc. of axis labels.
@@ -132,7 +133,6 @@ namespace Altaxo.Graph3D.Axis
 
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._brush = (IMaterial3D)info.GetValue("Brush", s);
-				s._brush.ParentObject = s;
 
 				s.BackgroundStyle = (Background.IBackgroundStyle3D)info.GetValue("Background", s);
 
@@ -189,7 +189,6 @@ namespace Altaxo.Graph3D.Axis
 			var foreColor = GraphDocument3D.GetDefaultForeColor(context);
 
 			_brush = Materials.GetSolidMaterial(foreColor);
-			_brush.ParentObject = this;
 
 			_automaticRotationShift = true;
 			_suppressedLabels = new SuppressedTicks() { ParentObject = this };
@@ -219,7 +218,7 @@ namespace Altaxo.Graph3D.Axis
 				_horizontalAlignment = from._horizontalAlignment;
 				_verticalAlignment = from._verticalAlignment;
 
-				ChildCopyToMember(ref _brush, from._brush);
+				_brush = from._brush;
 
 				_automaticRotationShift = from._automaticRotationShift;
 				_xOffset = from._xOffset;
@@ -249,9 +248,6 @@ namespace Altaxo.Graph3D.Axis
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _brush)
-				yield return new Main.DocumentNodeAndName(_brush, "Brush");
-
 			if (null != _labelFormatting)
 				yield return new Main.DocumentNodeAndName(_labelFormatting, "LabelFormatting");
 
@@ -314,16 +310,11 @@ namespace Altaxo.Graph3D.Axis
 			get { return this._brush.Color; }
 			set
 			{
-				var oldColor = this.Color;
-				if (value != oldColor)
-				{
-					if (this._brush.SupportsSetColor)
-						this._brush.Color = value;
-					else
-						this._brush = Materials.GetSolidMaterial(value);
+				var oldValue = _brush;
+				_brush = Materials.GetMaterialWithNewColor(_brush, value);
 
+				if (!object.ReferenceEquals(oldValue, _brush))
 					EhSelfChanged(EventArgs.Empty);
-				}
 			}
 		}
 
@@ -336,8 +327,11 @@ namespace Altaxo.Graph3D.Axis
 			}
 			set
 			{
-				this._brush = (IMaterial3D)value.Clone();
-				EhSelfChanged(EventArgs.Empty);
+				var oldValue = _brush;
+				this._brush = value;
+
+				if (!object.ReferenceEquals(oldValue, _brush))
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

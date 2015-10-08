@@ -22,28 +22,40 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.GraphicsContext;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.LabelFormatting
+namespace Altaxo.Graph3D.GraphicsContext.D3D
 {
-	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
-	/// </summary>
-	public interface IMeasuredLabelItem
+	public class PositionUVIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionUVIndexedTriangleBuffer
 	{
-		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
-		/// </summary>
-		VectorD3D Size { get; }
+		public PositionUVIndexedTriangleBuffer(D3D10GraphicContext parent)
+			: base(parent)
+		{
+		}
 
-		/// <summary>
-		/// Draws the label to a specified point.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point);
+		protected override int BytesPerVertex { get { return 6 * 4; } }
+
+		public void AddTriangleVertex(double x, double y, double z, double u, double v)
+		{
+			var pt = _parent.Transformation.Transformation.TransformPoint(new PointD3D(x, y, z));
+
+			int offs = _numberOfVertices * 6;
+
+			if (offs + 6 >= _vertexStream.Length)
+				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+
+			_vertexStream[offs + 0] = (float)pt.X;
+			_vertexStream[offs + 1] = (float)pt.Y;
+			_vertexStream[offs + 2] = (float)pt.Z;
+			_vertexStream[offs + 3] = 1;
+
+			_vertexStream[offs + 4] = (float)u;
+			_vertexStream[offs + 5] = (float)v;
+			++_numberOfVertices;
+		}
 	}
 }

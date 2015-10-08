@@ -39,6 +39,7 @@ namespace Altaxo.Graph3D
 	using Altaxo.Graph3D.Plot;
 	using Altaxo.Graph3D.Shapes;
 	using Altaxo.Main.Properties;
+	using GraphicsContext;
 
 	/// <summary>
 	/// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.

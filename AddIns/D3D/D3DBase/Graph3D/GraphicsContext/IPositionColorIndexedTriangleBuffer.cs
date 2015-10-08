@@ -22,28 +22,29 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.GraphicsContext;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.LabelFormatting
+namespace Altaxo.Graph3D.GraphicsContext
 {
 	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
+	/// Interface to a buffer that stores indexed triangle data consisting of position and color.
 	/// </summary>
-	public interface IMeasuredLabelItem
+	public interface IPositionColorIndexedTriangleBuffer : IIndexedTriangleBuffer
 	{
 		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
+		/// Adds the specified vertex.
 		/// </summary>
-		VectorD3D Size { get; }
-
-		/// <summary>
-		/// Draws the label to a specified point.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point);
+		/// <param name="x">The x position.</param>
+		/// <param name="y">The y position.</param>
+		/// <param name="z">The z position.</param>
+		/// <param name="r">The r color component.</param>
+		/// <param name="g">The g color component.</param>
+		/// <param name="b">The b color component.</param>
+		/// <param name="a">The a color component.</param>
+		void AddTriangleVertex(double x, double y, double z, float r, float g, float b, float a);
 	}
 }

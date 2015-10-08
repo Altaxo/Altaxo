@@ -36,6 +36,7 @@ namespace Altaxo.Graph3D.Plot
 	using Altaxo.Graph.Plot;
 	using Altaxo.Graph.Plot.Groups;
 	using Altaxo.Main;
+	using GraphicsContext;
 	using Groups;
 
 	/// <summary>

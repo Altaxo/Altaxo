@@ -32,6 +32,7 @@ using System.Drawing;
 namespace Altaxo.Graph3D.Axis
 {
 	using Altaxo.Graph;
+	using GraphicsContext;
 	using axogdi = Altaxo.Graph.Gdi;
 
 	/// <summary>

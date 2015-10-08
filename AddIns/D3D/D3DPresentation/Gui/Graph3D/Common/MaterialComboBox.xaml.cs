@@ -85,8 +85,7 @@ namespace Altaxo.Gui.Graph3D.Common
 				var selMaterial = InternalSelectedMaterial;
 				if (null != selMaterial)
 				{
-					selMaterial = (IMaterial3D)selMaterial.Clone();
-					selMaterial.Color = value;
+					selMaterial = Materials.GetMaterialWithNewColor(selMaterial, value);
 					InternalSelectedMaterial = selMaterial;
 				}
 			}
@@ -112,15 +111,10 @@ namespace Altaxo.Gui.Graph3D.Common
 		{
 			get
 			{
-				return (IMaterial3D)((ICloneable)GetValue(SelectedMaterialProperty)).Clone(); // use only a copy - don't give the original selected brush away from this combobox, it might be changed externally
+				return (IMaterial3D)((ICloneable)GetValue(SelectedMaterialProperty)); // Material is immutable, no need for cloning
 			}
 			set
 			{
-				if (null != value)
-				{
-					value = (IMaterial3D)value.Clone(); // IMaterial may be not immutable, so it must be ensured that SelectedMaterial stored here can not be changed externally
-					value.ParentObject = Altaxo.Main.SuspendableDocumentNode.StaticInstance;
-				}
 				SetValue(SelectedMaterialProperty, value);
 			}
 		}
@@ -158,14 +152,12 @@ namespace Altaxo.Gui.Graph3D.Common
 			var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
 			if (!brush.Color.Equals(coercedColor))
 			{
-				brush = (IMaterial3D)brush.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-				brush.Color = coercedColor;
+				brush = Materials.GetMaterialWithNewColor(brush, coercedColor);
 			}
 
 			if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || false == brush.Color.ParentColorSet.IsPlotColorSet))
 			{
-				brush = (IMaterial3D)brush.Clone();
-				brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+				brush = Materials.GetMaterialWithNewColor(brush, ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 			}
 			return brush;
 		}
@@ -335,8 +327,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			NamedColor newColor;
 			if (base.InternalShowCustomColorDialog(sender, out newColor))
 			{
-				var newMat = (IMaterial3D)InternalSelectedMaterial.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-				newMat.Color = newColor;
+				var newMat = Materials.GetMaterialWithNewColor((IMaterial3D)InternalSelectedMaterial, newColor);
 				InternalSelectedMaterial = newMat;
 			}
 		}
@@ -346,8 +337,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			NamedColor newColor;
 			if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
 			{
-				var newMat = (IMaterial3D)InternalSelectedMaterial.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-				newMat.Color = newColor;
+				var newMat = Materials.GetMaterialWithNewColor((IMaterial3D)InternalSelectedMaterial, newColor);
 				InternalSelectedMaterial = newMat;
 			}
 		}

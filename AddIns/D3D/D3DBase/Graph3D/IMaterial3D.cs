@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph;
+using Altaxo.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,12 +32,14 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public interface IMaterial3D : Main.IDocumentLeafNode, ICloneable
+	public interface IMaterial3D : Altaxo.Main.IImmutable
 	{
-		Altaxo.Graph.NamedColor Color { get; set; }
+		Altaxo.Graph.NamedColor Color { get; }
 
-		bool SupportsGetColor { get; }
-		bool SupportsSetColor { get; }
+		bool HasColor { get; }
+		bool HasTexture { get; }
+
+		IMaterial3D WithColor(NamedColor color);
 
 		void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD);
 	}

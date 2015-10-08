@@ -30,6 +30,7 @@ using System.Linq;
 
 namespace Altaxo.Graph3D
 {
+	using GraphicsContext;
 	using Shapes;
 
 	public class HostLayer3D :

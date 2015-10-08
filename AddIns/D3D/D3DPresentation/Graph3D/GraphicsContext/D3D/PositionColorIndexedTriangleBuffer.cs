@@ -22,19 +22,41 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.Background
+namespace Altaxo.Graph3D.GraphicsContext.D3D
 {
-	public interface IBackgroundStyle3D : Main.IDocumentLeafNode, ICloneable
+	public class PositionColorIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionColorIndexedTriangleBuffer
 	{
-		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
+		public PositionColorIndexedTriangleBuffer(D3D10GraphicContext parent)
+			: base(parent)
+		{
+		}
 
-		RectangleD3D MeasureItem(RectangleD3D textRectangle);
+		protected override int BytesPerVertex { get { return 8 * 4; } }
+
+		public void AddTriangleVertex(double x, double y, double z, float r, float g, float b, float a)
+		{
+			var pt = _parent.Transformation.Transformation.TransformPoint(new PointD3D(x, y, z));
+
+			int offs = _numberOfVertices << 3;
+
+			if (offs + 8 >= _vertexStream.Length)
+				Array.Resize(ref _vertexStream, _vertexStream.Length * 2);
+
+			_vertexStream[offs + 0] = (float)pt.X;
+			_vertexStream[offs + 1] = (float)pt.Y;
+			_vertexStream[offs + 2] = (float)pt.Z;
+			_vertexStream[offs + 3] = 1;
+			_vertexStream[offs + 4] = r;
+			_vertexStream[offs + 5] = g;
+			_vertexStream[offs + 6] = b;
+			_vertexStream[offs + 7] = a;
+			++_numberOfVertices;
+		}
 	}
 }

@@ -39,6 +39,7 @@ namespace Altaxo.Graph3D.Plot.Styles
 	using Altaxo.Graph.Gdi.Plot.ColorProvider;
 	using Altaxo.Graph.Scales.Ticks;
 	using Graph.Plot.Data;
+	using GraphicsContext;
 
 	/// <summary>
 	/// This plot style is responsible for showing density plots as pixel image. Because of the limitation to a pixel image, each pixel is correlated
@@ -347,9 +348,9 @@ namespace Altaxo.Graph3D.Plot.Styles
 		{
 			_imageType = CachedImageType.LinearEquidistant;
 
-			var buf = g.GetPositionColorIndexedTriangleBuffer(0);
-
-			var offs = buf.VertexCount;
+			var buffers = g.GetPositionIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
+			var buf = buffers.PositionColorIndexedTriangleBuffer;
+			var offs = buffers.IndexedTriangleBuffer.VertexCount;
 
 			PointD3D pt;
 			var zScale = gl.Scales[2];

@@ -24,6 +24,7 @@
 
 using Altaxo.Graph;
 using Altaxo.Graph3D;
+using Altaxo.Graph3D.GraphicsContext;
 using System;
 using System.Windows.Input;
 

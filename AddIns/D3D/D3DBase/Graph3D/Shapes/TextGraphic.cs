@@ -33,6 +33,7 @@ namespace Altaxo.Graph3D.Shapes
 	using Altaxo.Graph;
 	using Altaxo.Graph3D.Plot;
 	using Background;
+	using GraphicsContext;
 
 	/// <summary>
 	/// TextGraphics provides not only simple text on a graph,
@@ -90,7 +91,6 @@ namespace Altaxo.Graph3D.Shapes
 				s._text = info.GetString("Text");
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._textBrush = (IMaterial3D)info.GetValue("Brush", s);
-				s._textBrush.ParentObject = s;
 
 				s.Background = (IBackgroundStyle3D)info.GetValue("BackgroundStyle", s);
 
@@ -120,7 +120,6 @@ namespace Altaxo.Graph3D.Shapes
 
 			_font = GraphDocument3D.GetDefaultFont(context);
 			_textBrush = Materials.GetSolidMaterial(GraphDocument3D.GetDefaultForeColor(context));
-			_textBrush.ParentObject = this;
 		}
 
 		public TextGraphic(PointD3D graphicPosition, string text, FontX3D textFont, NamedColor textColor)
@@ -152,8 +151,7 @@ namespace Altaxo.Graph3D.Shapes
 					this._text = from._text;
 					this._font = from._font;
 
-					this._textBrush = from._textBrush == null ? null : (IMaterial3D)from._textBrush.Clone();
-					if (null != _textBrush) _textBrush.ParentObject = this;
+					this._textBrush = from._textBrush;
 
 					this._background = from._background == null ? null : (IBackgroundStyle3D)from._background.Clone();
 					if (null != _background) _background.ParentObject = this;
@@ -182,9 +180,6 @@ namespace Altaxo.Graph3D.Shapes
 
 		private IEnumerable<Main.DocumentNodeAndName> GetMyDocumentNodeChildrenWithName()
 		{
-			if (null != _textBrush)
-				yield return new Main.DocumentNodeAndName(_textBrush, "TextBrush");
-
 			if (null != _background)
 				yield return new Main.DocumentNodeAndName(_background, "Background");
 		}
@@ -341,10 +336,14 @@ namespace Altaxo.Graph3D.Shapes
 			}
 			set
 			{
-				_textBrush = Materials.GetSolidMaterial(value);
-				_textBrush.ParentObject = this;
-				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
-				EhSelfChanged(EventArgs.Empty);
+				var oldValue = _textBrush;
+				_textBrush = Materials.GetMaterialWithNewColor(_textBrush, value);
+
+				if (!object.ReferenceEquals(oldValue, _textBrush))
+				{
+					_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -358,11 +357,14 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				if (value == null)
 					throw new ArgumentNullException();
+				var oldValue = _textBrush;
+				_textBrush = value;
 
-				_textBrush = (IMaterial3D)value.Clone();
-				_textBrush.ParentObject = this;
-				_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
-				EhSelfChanged(EventArgs.Empty);
+				if (!object.ReferenceEquals(oldValue, _textBrush))
+				{
+					_isStructureInSync = false; // we must invalidate the structure, because the color is part of the structures temp storage
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 

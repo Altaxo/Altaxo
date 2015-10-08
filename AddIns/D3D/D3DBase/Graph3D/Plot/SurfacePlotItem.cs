@@ -38,6 +38,7 @@ namespace Altaxo.Graph3D.Plot
 	using Graph;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
+	using GraphicsContext;
 	using Groups;
 	using Styles;
 

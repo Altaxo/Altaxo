@@ -22,28 +22,27 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.GraphicsContext;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D.LabelFormatting
+namespace Altaxo.Graph3D.GraphicsContext
 {
-	/// <summary>
-	/// Interface for an label item that is ready to draw and was already measured.
-	/// </summary>
-	public interface IMeasuredLabelItem
+	public struct PositionNormalIndexedTriangleBuffers
 	{
-		/// <summary>
-		/// Size of the enclosing rectangle of the label item.
-		/// </summary>
-		VectorD3D Size { get; }
+		public IIndexedTriangleBuffer IndexedTriangleBuffer;
+		public IPositionNormalIndexedTriangleBuffer PositionNormalIndexedTriangleBuffer;
+		public IPositionNormalColorIndexedTriangleBuffer PositionNormalColorIndexedTriangleBuffer;
+		public IPositionNormalUVIndexedTriangleBuffer PositionNormalUVIndexedTriangleBuffer;
+	}
 
-		/// <summary>
-		/// Draws the label to a specified point.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="brush">The brush to use for the drawing.</param>
-		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point);
+	public struct PositionIndexedTriangleBuffers
+	{
+		public IIndexedTriangleBuffer IndexedTriangleBuffer;
+		public IPositionIndexedTriangleBuffer PositionIndexedTriangleBuffer;
+		public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffer;
+		public IPositionUVIndexedTriangleBuffer PositionUVIndexedTriangleBuffer;
 	}
 }

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph;
+using Altaxo.Graph3D.GraphicsContext;
 using Altaxo.Main;
 using Altaxo.Main.Properties;
 using System;
@@ -615,97 +616,26 @@ namespace Altaxo.Graph3D
 
 			RootLayer.PaintPostprocessing();
 
+			//DrawSomething2(g);
 			DrawSomeStuff(g);
-		}
-
-		public void DrawHostLayerSizedCube(IGraphicContext3D gc)
-		{
-			PointD3D[] colors = new[] { new PointD3D(1,0,0), new PointD3D(0,1,0), new PointD3D(0,0,1),
-				new PointD3D(1,1,0), new PointD3D(1,0,1), new PointD3D(0,1,1)};
-
-			var l = this.RootLayer.Position;
-			var s = this.RootLayer.Size;
-
-			var pctb = gc.GetPositionColorIndexedTriangleBuffer(100);
-			var offs = pctb.VertexCount;
-
-			Primitives.Cube.Add(l.X, l.Y, l.Z, s.X, s.Y, s.Z,
-				(pt, n) =>
-				{
-					PointD3D color = colors[0];
-					if (n.Z == 1)
-						color = colors[0];
-					else if (n.Z == -1)
-						color = colors[1];
-					else if (n.Y == 1)
-						color = colors[2];
-					else if (n.Y == -1)
-						color = colors[3];
-					else if (n.X == 1)
-						color = colors[4];
-					else if (n.X == -1)
-						color = colors[5];
-
-					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
-				},
-				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
-				ref offs);
 		}
 
 		public void DrawSomeStuff(IGraphicContext3D gc)
 		{
-			var pctb = gc.GetPositionColorIndexedTriangleBuffer(3);
-
-			var offs = pctb.VertexCount;
-
-			var txt = new Primitives.Text3D();
-			txt.AddWithNormals(
-				(pt, n) =>
-				{
-					PointD3D color;
-					if (n.Z == 1)
-						color = new PointD3D(1, 0, 0);
-					else if (n.Z == -1)
-						color = new PointD3D(0, 1, 0);
-					else
-						color = new PointD3D(0, 0, 1);
-
-					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
-				},
-				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
-				ref offs);
-
-			PointD3D[] colors = new[] { new PointD3D(1,0,0), new PointD3D(0,1,0), new PointD3D(0,0,1),
-				new PointD3D(1,1,0), new PointD3D(1,0,1), new PointD3D(0,1,1)};
-
-			Primitives.Cube.Add(0, 0, 0, 1, 1, 1,
-				(pt, n) =>
-				{
-					PointD3D color = colors[0];
-					if (n.Z == 1)
-						color = colors[0];
-					else if (n.Z == -1)
-						color = colors[1];
-					else if (n.Y == 1)
-						color = colors[2];
-					else if (n.Y == -1)
-						color = colors[3];
-					else if (n.X == 1)
-						color = colors[4];
-					else if (n.X == -1)
-						color = colors[5];
-
-					pctb.AddTriangleVertex(pt.X, pt.Y, pt.Z, (float)color.X, (float)color.Y, (float)color.Z, 1);
-				},
-				(i0, i1, i2) => pctb.AddTriangleIndices(i0, i1, i2),
-				ref offs);
-
 			var penRed = new PenX3D(NamedColors.Red, 4);
 			gc.DrawLine(penRed, new PointD3D(0, 0, 0), new PointD3D(30, 0, 0));
 			var penGreen = new PenX3D(NamedColors.Green, 4);
 			gc.DrawLine(penGreen, new PointD3D(0, 0, 0), new PointD3D(0, 30, 0));
 			var penBlue = new PenX3D(NamedColors.Blue, 4);
 			gc.DrawLine(penBlue, new PointD3D(0, 0, 0), new PointD3D(0, 0, 30));
+		}
+
+		public void DrawSomething2(IGraphicContext3D gc)
+		{
+			var gcc = (GraphicContext3DBase)gc;
+
+			var penRed = new PenX3D(NamedColors.Red, 4);
+			gcc.DrawTriangle(Materials.GetSolidMaterial(NamedColors.Red), new PointD3D(0, 0, 0), new PointD3D(50, 50, 0), new PointD3D(0, 50, 0));
 		}
 	}
 }

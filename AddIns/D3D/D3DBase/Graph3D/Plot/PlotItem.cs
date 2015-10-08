@@ -33,6 +33,7 @@ namespace Altaxo.Graph3D.Plot
 	using Altaxo.Main;
 	using Graph;
 	using Graph.Plot.Groups;
+	using GraphicsContext;
 	using Groups;
 
 	[Serializable]

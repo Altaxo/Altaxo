@@ -31,6 +31,7 @@ using System.Drawing;
 namespace Altaxo.Graph3D.Axis
 {
 	using Altaxo.Graph;
+	using GraphicsContext;
 
 	/// <summary>
 	/// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)
