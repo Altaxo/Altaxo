@@ -1212,10 +1212,10 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="e">The event data of the scale.</param>
 		private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
 		{
-			if (object.ReferenceEquals(_scales.X, e.NewScale))
+			if (object.ReferenceEquals(_scales?.X, e.NewScale))
 				InitializeXScaleDataBounds();
 
-			if (object.ReferenceEquals(_scales.Y, e.NewScale))
+			if (object.ReferenceEquals(_scales?.Y, e.NewScale))
 				InitializeYScaleDataBounds();
 		}
 

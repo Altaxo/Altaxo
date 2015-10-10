@@ -59,11 +59,29 @@ namespace Altaxo.Graph3D.GraphicsContext.D3D
 			}
 		}
 
+		public IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>> PositionIndexedTriangleBuffersAsIndexedTriangleBuffers
+		{
+			get
+			{
+				foreach (var entry in _positionIndexedTriangleBuffers)
+					yield return new KeyValuePair<IMaterial3D, IndexedTriangleBuffer>(entry.Key, entry.Value);
+			}
+		}
+
 		public IEnumerable<KeyValuePair<IMaterial3D, PositionNormalIndexedTriangleBuffer>> PositionNormalIndexedTriangleBuffers
 		{
 			get
 			{
 				return _positionNormalIndexedTriangleBuffers;
+			}
+		}
+
+		public IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>> PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers
+		{
+			get
+			{
+				foreach (var entry in _positionNormalIndexedTriangleBuffers)
+					yield return new KeyValuePair<IMaterial3D, IndexedTriangleBuffer>(entry.Key, entry.Value);
 			}
 		}
 
@@ -75,11 +93,29 @@ namespace Altaxo.Graph3D.GraphicsContext.D3D
 			}
 		}
 
+		public IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>> PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers
+		{
+			get
+			{
+				foreach (var entry in _positionColorIndexedTriangleBuffers)
+					yield return new KeyValuePair<IMaterial3D, IndexedTriangleBuffer>(entry.Key, entry.Value);
+			}
+		}
+
 		public IEnumerable<KeyValuePair<IMaterial3D, PositionNormalColorIndexedTriangleBuffer>> PositionNormalColorIndexedTriangleBuffers
 		{
 			get
 			{
 				return _positionNormalColorIndexedTriangleBuffers;
+			}
+		}
+
+		public IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>> PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers
+		{
+			get
+			{
+				foreach (var entry in _positionNormalColorIndexedTriangleBuffers)
+					yield return new KeyValuePair<IMaterial3D, IndexedTriangleBuffer>(entry.Key, entry.Value);
 			}
 		}
 
@@ -91,11 +127,29 @@ namespace Altaxo.Graph3D.GraphicsContext.D3D
 			}
 		}
 
+		public IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>> PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers
+		{
+			get
+			{
+				foreach (var entry in _positionUVIndexedTriangleBuffers)
+					yield return new KeyValuePair<IMaterial3D, IndexedTriangleBuffer>(entry.Key, entry.Value);
+			}
+		}
+
 		public IEnumerable<KeyValuePair<IMaterial3D, PositionNormalUVIndexedTriangleBuffer>> PositionNormalUVIndexedTriangleBuffers
 		{
 			get
 			{
 				return _positionNormalUVIndexedTriangleBuffers;
+			}
+		}
+
+		public IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>> PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers
+		{
+			get
+			{
+				foreach (var entry in _positionNormalUVIndexedTriangleBuffers)
+					yield return new KeyValuePair<IMaterial3D, IndexedTriangleBuffer>(entry.Key, entry.Value);
 			}
 		}
 

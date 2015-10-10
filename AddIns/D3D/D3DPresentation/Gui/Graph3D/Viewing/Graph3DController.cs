@@ -203,6 +203,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				if (_view != null)
 				{
 					_view.Controller = this;
+					Initialize(false);
 				}
 			}
 		}

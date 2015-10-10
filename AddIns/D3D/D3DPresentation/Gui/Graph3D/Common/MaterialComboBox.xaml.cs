@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		{
 			get
 			{
-				return (IMaterial3D)((ICloneable)GetValue(SelectedMaterialProperty)); // Material is immutable, no need for cloning
+				return (IMaterial3D)GetValue(SelectedMaterialProperty); // Material is immutable, no need for cloning
 			}
 			set
 			{
@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		{
 			get
 			{
-				return ((IMaterial3D)GetValue(SelectedMaterialProperty));
+				return (IMaterial3D)GetValue(SelectedMaterialProperty);
 			}
 			set
 			{

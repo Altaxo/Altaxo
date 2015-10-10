@@ -127,12 +127,18 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="CompiledShaders\Simple.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\MiniCube.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\MiniCube.cso" />
     <EmbeddedResource Include="CompiledShaders\PS\PN_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\VS\PN_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\PS\PNC_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\VS\PNC_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\PC_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\PNT_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\PT_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\PS\P_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\PC_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\PNT_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\PT_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\VS\P_DULL.cso" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -201,12 +207,18 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Vs40File Include="Shaders\MiniCube.fx" />
-    <Ps40File Include="Shaders\MiniCube.fx" />
+    <Vs40File Include="Shaders\P_DULL.fx" />
+    <Ps40File Include="Shaders\P_DULL.fx" />
+    <Vs40File Include="Shaders\PC_DULL.fx" />
+    <Ps40File Include="Shaders\PC_DULL.fx" />
+    <Vs40File Include="Shaders\PT_DULL.fx" />
+    <Ps40File Include="Shaders\PT_DULL.fx" />
     <Vs40File Include="Shaders\PN_DULL.fx" />
     <Ps40File Include="Shaders\PN_DULL.fx" />
     <Vs40File Include="Shaders\PNC_DULL.fx" />
     <Ps40File Include="Shaders\PNC_DULL.fx" />
+    <Vs40File Include="Shaders\PNT_DULL.fx" />
+    <Ps40File Include="Shaders\PNT_DULL.fx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
