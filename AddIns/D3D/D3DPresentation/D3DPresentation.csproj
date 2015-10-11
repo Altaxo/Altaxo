@@ -171,10 +171,6 @@
       <Project>{35cef10f-2d4c-45f2-9dd1-161e0fec583c}</Project>
       <Name>ICSharpCode.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\D3DBase\D3DBase.csproj">
-      <Project>{309d4efa-ee4f-4502-b6de-6c347c117e50}</Project>
-      <Name>D3DBase</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="D3D.addin">
