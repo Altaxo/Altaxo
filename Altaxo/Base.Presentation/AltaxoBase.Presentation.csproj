@@ -453,7 +453,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\ItemLocationByGridControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\ItemLocationDirectControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\LayerPositionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1253,8 +1261,14 @@
     <Compile Include="Gui\Graph3D\GridPartitioningControl.xaml.cs">
       <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph3D\ItemLocationByGridControl.xaml.cs">
+      <DependentUpon>ItemLocationByGridControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\LayerPositionControl.xaml.cs">
+      <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Materials\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>

@@ -394,7 +394,9 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Graph3D\GridPartitioningController.cs" />
     <Compile Include="Gui\Graph3D\HostLayer3DController.cs" />
+    <Compile Include="Gui\Graph3D\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph3D\ItemLocationDirectController.cs" />
+    <Compile Include="Gui\Graph3D\LayerPositionController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayer3DController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
