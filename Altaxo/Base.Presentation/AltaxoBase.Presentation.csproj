@@ -449,6 +449,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\ItemLocationDirectControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Materials\MaterialComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\ArrangeLayersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1230,6 +1246,18 @@
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\GetIconExtension.cs" />
     <Compile Include="Gui\GetBitmapExtension.cs" />
+    <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
+      <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Materials\MaterialComboBox.xaml.cs">
+      <DependentUpon>MaterialComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
+      <DependentUpon>AnchoringControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
+      <DependentUpon>TextGraphicControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
     </Compile>

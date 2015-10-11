@@ -4,11 +4,11 @@
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing;assembly=AltaxoBase.Presentation"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph;assembly=AltaxoBase.Presentation"
-						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes;assembly=AltaxoBase.Presentation"
-						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Graph3D.Common"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes"
+						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Graph3D.Materials"
 						 mc:Ignorable="d"
 						 Loaded="EhLoaded">
   <UserControl.Resources>

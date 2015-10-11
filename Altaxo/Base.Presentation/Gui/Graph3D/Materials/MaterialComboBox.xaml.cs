@@ -33,7 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace Altaxo.Gui.Graph3D.Common
+namespace Altaxo.Gui.Graph3D.Materials
 {
 	using Altaxo.Graph3D;
 	using Altaxo.Gui.Common.Drawing;

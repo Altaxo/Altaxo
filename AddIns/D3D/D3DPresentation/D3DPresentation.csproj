@@ -77,24 +77,12 @@
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
-    <Compile Include="Gui\Graph3D\Common\MaterialComboBox.xaml.cs">
-      <DependentUpon>MaterialComboBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph3D\Common\Disposer.cs" />
     <Compile Include="Gui\Graph3D\Common\DPFCanvas.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
-    <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
-      <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
-      <DependentUpon>AnchoringControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
-      <DependentUpon>TextGraphicControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
@@ -178,25 +166,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Fx40File Include="Gui\Graph3D\Viewing\Simple.fx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Gui\Graph3D\Common\MaterialComboBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Graph3D\ItemLocationDirectControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Gui\Graph3D\Viewing\Graph3DControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
