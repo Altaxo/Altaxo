@@ -449,6 +449,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\GridPartitioningControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\ItemLocationDirectControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1246,6 +1250,9 @@
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\GetIconExtension.cs" />
     <Compile Include="Gui\GetBitmapExtension.cs" />
+    <Compile Include="Gui\Graph3D\GridPartitioningControl.xaml.cs">
+      <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
     </Compile>

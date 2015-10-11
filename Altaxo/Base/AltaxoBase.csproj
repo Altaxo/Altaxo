@@ -392,6 +392,7 @@
     <Compile Include="Gui\Data\DataTableTransposeDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
+    <Compile Include="Gui\Graph3D\GridPartitioningController.cs" />
     <Compile Include="Gui\Graph3D\HostLayer3DController.cs" />
     <Compile Include="Gui\Graph3D\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
