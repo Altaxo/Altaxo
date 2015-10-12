@@ -138,5 +138,20 @@ namespace Altaxo.Graph3D
 					EhSelfChanged();
 			}
 		}
+
+		public PenX3D WithTickness1(double selectedQuantityAsValueInPoints)
+		{
+			throw new NotImplementedException();
+		}
+
+		public PenX3D WithTickness2(double selectedQuantityAsValueInPoints)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static bool AreEqualUnlessWidth(PenX3D pen1, PenX3D pen2)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

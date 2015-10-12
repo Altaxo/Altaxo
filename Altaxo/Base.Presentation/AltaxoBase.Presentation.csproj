@@ -449,7 +449,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Axis\AxisLabelStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Axis\AxisLineStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Axis\AxisStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\GraphicItemsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\GridPartitioningControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\HostLayerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -466,6 +486,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\Materials\MaterialComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\PenAllPropertiesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1258,8 +1282,25 @@
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\GetIconExtension.cs" />
     <Compile Include="Gui\GetBitmapExtension.cs" />
+    <Compile Include="Gui\Graph3D\Axis\AxisLabelStyleControl.xaml.cs">
+      <DependentUpon>AxisLabelStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Axis\AxisLineStyleControl.xaml.cs">
+      <DependentUpon>AxisLineStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Axis\AxisStyleControl.xaml.cs">
+      <DependentUpon>AxisStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\BackgroundControlsGlue.cs" />
+    <Compile Include="Gui\Graph3D\GdiFontGlue.cs" />
+    <Compile Include="Gui\Graph3D\GraphicItemsControl.xaml.cs">
+      <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\GridPartitioningControl.xaml.cs">
       <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\HostLayerControl.xaml.cs">
+      <DependentUpon>HostLayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\ItemLocationByGridControl.xaml.cs">
       <DependentUpon>ItemLocationByGridControl.xaml</DependentUpon>
@@ -1273,6 +1314,10 @@
     <Compile Include="Gui\Graph3D\Materials\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph3D\PenAllPropertiesControl.xaml.cs">
+      <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
     </Compile>

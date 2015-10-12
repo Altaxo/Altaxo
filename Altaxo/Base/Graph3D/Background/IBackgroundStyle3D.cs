@@ -36,5 +36,8 @@ namespace Altaxo.Graph3D.Background
 		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
 
 		RectangleD3D MeasureItem(RectangleD3D textRectangle);
+
+		IMaterial3D Material { get; set; }
+		bool SupportsUserDefinedMaterial { get; set; }
 	}
 }

@@ -95,6 +95,12 @@ namespace Altaxo.Graph3D
 
 		#endregion Member variables
 
+		#region Editor methods
+
+		public static DoubleClickHandler LayerPositionEditorMethod;
+
+		#endregion Editor methods
+
 		#region Event definitions
 
 		/// <summary>Fired when the size of the layer changed.</summary>

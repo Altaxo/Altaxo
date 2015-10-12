@@ -454,6 +454,21 @@ namespace Altaxo.Graph3D.Axis
 			}
 		}
 
+		/// <summary>The z offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
+		public double ZOffset
+		{
+			get { return this._zOffset; }
+			set
+			{
+				double oldValue = this._zOffset;
+				this._zOffset = value;
+				if (value != oldValue)
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
 		/// <summary>The angle of the label.</summary>
 		public double RotationX
 		{

@@ -343,7 +343,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				if (activeLayer is XYPlotLayer3D)
 					XYPlotLayer3DController.ShowDialog((XYPlotLayer3D)activeLayer);
 				else
-					HostLayer3DController.ShowDialog(activeLayer);
+					HostLayerController.ShowDialog(activeLayer);
 			}
 		}
 
