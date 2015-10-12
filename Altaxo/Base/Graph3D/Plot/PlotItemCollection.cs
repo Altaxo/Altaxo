@@ -63,6 +63,12 @@ namespace Altaxo.Graph3D.Plot
 		[NonSerialized]
 		private IGPlotItem[] _cachedPlotItemsFlattened;
 
+		public PlotItemCollection()
+		{
+			_plotItems = new List<IGPlotItem>();
+			//_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
+		}
+
 		/// <summary>
 		/// Copy constructor. Clones (!) all items. The parent owner is set to null and has to be set afterwards.
 		/// </summary>

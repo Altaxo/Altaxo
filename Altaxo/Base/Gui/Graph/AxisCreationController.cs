@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph
 		/// </value>
 		public bool MoveAxis { get; set; }
 
-		public void InitializeAxisInformationList(G2DCoordinateSystem cs, AxisStyleCollection currentAxisStyles)
+		public void InitializeAxisInformationList(ICoordinateSystem cs, AxisStyleCollection currentAxisStyles)
 		{
 			var dict = new Dictionary<CSLineID, CSAxisInformation>();
 			AxisStyles = new List<CSAxisInformation>();

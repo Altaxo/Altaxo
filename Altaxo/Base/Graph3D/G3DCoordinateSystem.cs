@@ -32,6 +32,7 @@ namespace Altaxo.Graph3D
 	public abstract class G3DCoordinateSystem
 		:
 		Main.SuspendableDocumentLeafNodeWithSetOfEventArgs,
+		Altaxo.Graph.ICoordinateSystem,
 		ICloneable
 	{
 		protected VectorD3D _layerSize;

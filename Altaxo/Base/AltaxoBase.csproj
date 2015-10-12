@@ -323,6 +323,7 @@
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\IPaintContext.cs" />
+    <Compile Include="Graph\ICoordinateSystem.cs" />
     <Compile Include="Graph\IPaintContext.cs" />
     <Compile Include="Graph\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\FontX.cs" />
@@ -392,9 +393,14 @@
     <Compile Include="Gui\Data\DataTableTransposeDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
+    <Compile Include="Gui\Graph3D\Axis\AxisCreationController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisLineStyleController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Axis\AxisStyleControllerConditionalGlue.cs" />
+    <Compile Include="Gui\Graph3D\Axis\GridPlaneController.cs" />
+    <Compile Include="Gui\Graph3D\Axis\XYGridStyleController.cs" />
+    <Compile Include="Gui\Graph3D\ColorTypeThicknessPenController.cs" />
     <Compile Include="Gui\Graph3D\CoordinateSystemController.cs" />
     <Compile Include="Gui\Graph3D\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph3D\GridPartitioningController.cs" />
@@ -405,6 +411,8 @@
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayer3DController.cs" />
+    <Compile Include="Gui\Graph3D\XYPlotLayerContentsController.cs" />
+    <Compile Include="Gui\Graph3D\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\ColorManagement\NamedColorChoiceController.cs" />
     <Compile Include="Gui\Graph\ColorManagement\ColorControllerHelper.cs" />

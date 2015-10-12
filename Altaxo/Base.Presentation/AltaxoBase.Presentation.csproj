@@ -449,6 +449,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Axis\AxisCreationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Axis\AxisLabelStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -458,6 +462,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\Axis\AxisStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Axis\XYGridStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -498,6 +510,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\XYPlotLayerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1282,6 +1298,9 @@
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\GetIconExtension.cs" />
     <Compile Include="Gui\GetBitmapExtension.cs" />
+    <Compile Include="Gui\Graph3D\Axis\AxisCreationControl.xaml.cs">
+      <DependentUpon>AxisCreationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Axis\AxisLabelStyleControl.xaml.cs">
       <DependentUpon>AxisLabelStyleControl.xaml</DependentUpon>
     </Compile>
@@ -1291,7 +1310,13 @@
     <Compile Include="Gui\Graph3D\Axis\AxisStyleControl.xaml.cs">
       <DependentUpon>AxisStyleControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph3D\Axis\XYGridStyleControl.xaml.cs">
+      <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\BackgroundControlsGlue.cs" />
+    <Compile Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml.cs">
+      <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\GdiFontGlue.cs" />
     <Compile Include="Gui\Graph3D\GraphicItemsControl.xaml.cs">
       <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
@@ -1323,6 +1348,9 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\XYPlotLayerControl.xaml.cs">
+      <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
