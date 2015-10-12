@@ -67,12 +67,12 @@ namespace Altaxo.Gui.Graph3D.Axis
 			if (false == _chkCustomMajorColor.IsChecked)
 			{
 				if (this._majorPenGlue.Pen != null)
-					this._majorPenGlue.Pen.Material = _linePenGlue.Pen.Material;
+					this._majorPenGlue.Pen = _majorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
 			}
 			if (false == _chkCustomMinorColor.IsChecked)
 			{
 				if (this._minorPenGlue.Pen != null)
-					this._minorPenGlue.Pen.Material = _linePenGlue.Pen.Material;
+					this._minorPenGlue.Pen = _minorPenGlue.Pen.WithMaterial(_linePenGlue.Pen.Material);
 			}
 
 			if (false == _chkCustomMajorThickness.IsChecked)

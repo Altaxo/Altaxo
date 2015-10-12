@@ -82,13 +82,11 @@ namespace Altaxo.Graph3D.Axis
 				{
 					s._showZeroOnly = info.GetBoolean("ZeroOnly");
 					s._majorPen = (PenX3D)info.GetValue("MajorPen", s);
-					s._majorPen.ParentObject = s;
 
 					s._showMinor = info.GetBoolean("ShowMinor");
 					if (s._showMinor)
 					{
 						s._minorPen = (PenX3D)info.GetValue("MinorPen", s);
-						s._minorPen.ParentObject = s;
 					}
 				}
 
@@ -113,8 +111,8 @@ namespace Altaxo.Graph3D.Axis
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			this.MajorPen = from._majorPen == null ? null : (PenX3D)(from._majorPen.Clone());
-			this.MinorPen = from._minorPen == null ? null : (PenX3D)(from._minorPen.Clone());
+			this.MajorPen = from._majorPen;
+			this.MinorPen = from._minorPen;
 			this._showGrid = from._showGrid;
 			this._showMinor = from._showMinor;
 			this._showZeroOnly = from._showZeroOnly;
@@ -122,10 +120,7 @@ namespace Altaxo.Graph3D.Axis
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _majorPen)
-				yield return new Main.DocumentNodeAndName(_majorPen, "MajorPen");
-			if (null != _minorPen)
-				yield return new Main.DocumentNodeAndName(_minorPen, "MinorPen");
+			yield break;
 		}
 
 		public PenX3D MajorPen
@@ -138,7 +133,9 @@ namespace Altaxo.Graph3D.Axis
 			}
 			set
 			{
-				if (ChildSetMember(ref _majorPen, value ?? new PenX3D(NamedColors.Blue, 1)))
+				var oldValue = _majorPen;
+				_majorPen = value;
+				if (!object.ReferenceEquals(oldValue, value))
 				{
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -156,7 +153,9 @@ namespace Altaxo.Graph3D.Axis
 			}
 			set
 			{
-				if (ChildSetMember(ref _minorPen, value ?? new PenX3D(NamedColors.LightBlue, 1)))
+				var oldValue = _majorPen;
+				_minorPen = value;
+				if (!object.ReferenceEquals(oldValue, value))
 				{
 					EhSelfChanged(EventArgs.Empty);
 				}

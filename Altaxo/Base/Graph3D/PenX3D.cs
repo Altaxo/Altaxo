@@ -32,9 +32,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public class PenX3D :
-		Main.SuspendableDocumentNodeWithEventArgs,
-		ICloneable, IDisposable
+	public class PenX3D : Altaxo.Main.IImmutable
 	{
 		public double _thickness1;
 		public double _thickness2;
@@ -50,30 +48,19 @@ namespace Altaxo.Graph3D
 			_crossSection = Primitives.CrossSectionOfLine.GetSquareCrossSection(_thickness1, _thickness2);
 		}
 
-		public object Clone()
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			yield break;
-		}
-
 		public double Thickness1
 		{
 			get
 			{
 				return _thickness1;
 			}
-			set
-			{
-				var oldValue = _thickness1;
-				_thickness1 = value;
+		}
 
-				if (value != oldValue)
-					EhSelfChanged();
-			}
+		public PenX3D WithThickness1(double thickness1)
+		{
+			var result = (PenX3D)this.MemberwiseClone();
+			result._thickness1 = thickness1;
+			return result;
 		}
 
 		public double Thickness2
@@ -82,14 +69,21 @@ namespace Altaxo.Graph3D
 			{
 				return _thickness2;
 			}
-			set
-			{
-				var oldValue = _thickness2;
-				_thickness2 = value;
+		}
 
-				if (value != oldValue)
-					EhSelfChanged();
-			}
+		public PenX3D WithThickness2(double thickness2)
+		{
+			var result = (PenX3D)this.MemberwiseClone();
+			result._thickness2 = thickness2;
+			return result;
+		}
+
+		public PenX3D WithUniformThickness(double thickness)
+		{
+			var result = (PenX3D)this.MemberwiseClone();
+			result._thickness1 = thickness;
+			result._thickness2 = thickness;
+			return result;
 		}
 
 		public IMaterial3D Material
@@ -98,13 +92,16 @@ namespace Altaxo.Graph3D
 			{
 				return _material;
 			}
-			set
-			{
-				var oldValue = _material;
-				_material = value;
-				if (!object.ReferenceEquals(oldValue, _material))
-					EhSelfChanged();
-			}
+		}
+
+		public PenX3D WithMaterial(IMaterial3D material)
+		{
+			if (null == material)
+				throw new ArgumentNullException(nameof(material));
+
+			var result = (PenX3D)this.MemberwiseClone();
+			result._material = material;
+			return result;
 		}
 
 		public NamedColor Color
@@ -113,14 +110,13 @@ namespace Altaxo.Graph3D
 			{
 				return _material.Color;
 			}
-			set
-			{
-				var oldValue = _material;
-				_material = Materials.GetMaterialWithNewColor(oldValue, value);
+		}
 
-				if (!object.ReferenceEquals(oldValue, _material))
-					EhSelfChanged();
-			}
+		public PenX3D WithColor(NamedColor color)
+		{
+			var result = (PenX3D)this.MemberwiseClone();
+			result._material = Materials.GetMaterialWithNewColor(result._material, color);
+			return result;
 		}
 
 		public Primitives.ICrossSectionOfLine CrossSection
@@ -129,24 +125,13 @@ namespace Altaxo.Graph3D
 			{
 				return _crossSection;
 			}
-			set
-			{
-				var oldValue = _crossSection;
-				_crossSection = value;
-
-				if (!object.ReferenceEquals(value, oldValue))
-					EhSelfChanged();
-			}
 		}
 
-		public PenX3D WithTickness1(double selectedQuantityAsValueInPoints)
+		public PenX3D WithCrossSection(Primitives.ICrossSectionOfLine crossSection)
 		{
-			throw new NotImplementedException();
-		}
-
-		public PenX3D WithTickness2(double selectedQuantityAsValueInPoints)
-		{
-			throw new NotImplementedException();
+			var result = (PenX3D)this.MemberwiseClone();
+			result._crossSection = crossSection;
+			return result;
 		}
 
 		public static bool AreEqualUnlessWidth(PenX3D pen1, PenX3D pen2)

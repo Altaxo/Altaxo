@@ -96,19 +96,7 @@ namespace Altaxo.Gui.Graph3D
 				if (null == value)
 					throw new NotImplementedException("Pen is null");
 
-				if (null != _pen && null != _weakPenChangedHandler)
-				{
-					_weakPenChangedHandler.Remove();
-					_weakPenChangedHandler = null;
-				}
-
 				_pen = value;
-
-				if (null != _pen)
-				{
-					var pen = _pen;
-					pen.Changed += (_weakPenChangedHandler = new WeakEventHandler(EhPenChanged, handler => pen.Changed -= handler));
-				}
 
 				InitControlProperties();
 			}
@@ -212,7 +200,7 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				_pen.Material = _cbBrush.SelectedMaterial;
+				_pen = _pen.WithMaterial(_cbBrush.SelectedMaterial);
 				OnPenChanged();
 			}
 		}
@@ -312,7 +300,7 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				_pen = _pen.WithTickness1(_cbThickness1.SelectedQuantityAsValueInPoints);
+				_pen = _pen.WithThickness1(_cbThickness1.SelectedQuantityAsValueInPoints);
 				OnPenChanged();
 			}
 		}
@@ -344,7 +332,7 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				_pen = _pen.WithTickness2(_cbThickness2.SelectedQuantityAsValueInPoints);
+				_pen = _pen.WithThickness2(_cbThickness2.SelectedQuantityAsValueInPoints);
 				OnPenChanged();
 			}
 		}

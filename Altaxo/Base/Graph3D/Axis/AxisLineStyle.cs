@@ -156,9 +156,9 @@ namespace Altaxo.Graph3D.Axis
 			double majorTickLength = GraphDocument3D.GetDefaultMajorTickLength(context);
 			var color = GraphDocument3D.GetDefaultForeColor(context);
 
-			_axisPen = new PenX3D(color, penWidth) { ParentObject = this };
-			_majorTickPen = new PenX3D(color, penWidth) { ParentObject = this };
-			_minorTickPen = new PenX3D(color, penWidth) { ParentObject = this };
+			_axisPen = new PenX3D(color, penWidth);
+			_majorTickPen = new PenX3D(color, penWidth);
+			_minorTickPen = new PenX3D(color, penWidth);
 			_majorTickLength = majorTickLength;
 			_minorTickLength = majorTickLength / 2;
 			_showFirstUpMajorTicks = true; // true if right major ticks should be visible
@@ -191,7 +191,7 @@ namespace Altaxo.Graph3D.Axis
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				ChildCopyToMember(ref _axisPen, from._axisPen);
+				this._axisPen = from._axisPen;
 				this._axisPosition1 = from._axisPosition1;
 				this._axisPosition2 = from._axisPosition2;
 				this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
@@ -199,9 +199,9 @@ namespace Altaxo.Graph3D.Axis
 				this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
 				this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
 				this._majorTickLength = from._majorTickLength;
-				ChildCopyToMember(ref _majorTickPen, from._majorTickPen);
+				this._majorTickPen = from._majorTickPen;
 				this._minorTickLength = from._minorTickLength;
-				ChildCopyToMember(ref _minorTickPen, from._minorTickPen);
+				this._minorTickPen = from._minorTickPen;
 
 				this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
@@ -214,14 +214,7 @@ namespace Altaxo.Graph3D.Axis
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _axisPen)
-				yield return new Main.DocumentNodeAndName(_axisPen, "AxisPen");
-
-			if (null != _majorTickPen)
-				yield return new Main.DocumentNodeAndName(_majorTickPen, "MajorTickPen");
-
-			if (null != _minorTickPen)
-				yield return new Main.DocumentNodeAndName(_minorTickPen, "MinorTickPen");
+			yield break;
 		}
 
 		/// <summary>
@@ -301,7 +294,10 @@ namespace Altaxo.Graph3D.Axis
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (ChildSetMember(ref _axisPen, value))
+				var oldValue = _axisPen;
+				_axisPen = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
 				{
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -316,7 +312,10 @@ namespace Altaxo.Graph3D.Axis
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (ChildSetMember(ref _majorTickPen, value))
+				var oldValue = _majorTickPen;
+				_majorTickPen = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
 				{
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -331,7 +330,10 @@ namespace Altaxo.Graph3D.Axis
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (ChildSetMember(ref _minorTickPen, value))
+				var oldValue = _minorTickPen;
+				_minorTickPen = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
 				{
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -499,9 +501,9 @@ namespace Altaxo.Graph3D.Axis
 			get { return this._axisPen.Thickness1; }
 			set
 			{
-				this._axisPen.Thickness1 = value;
-				this._majorTickPen.Thickness1 = value;
-				this._minorTickPen.Thickness1 = value;
+				_axisPen = _axisPen.WithThickness1(value);
+				_majorTickPen = _majorTickPen.WithThickness1(value);
+				_minorTickPen = _minorTickPen.WithThickness1(value);
 				EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -517,9 +519,9 @@ namespace Altaxo.Graph3D.Axis
 			get { return this._axisPen.Thickness2; }
 			set
 			{
-				this._axisPen.Thickness2 = value;
-				this._majorTickPen.Thickness2 = value;
-				this._minorTickPen.Thickness2 = value;
+				_axisPen = _axisPen.WithThickness2(value);
+				_majorTickPen = _majorTickPen.WithThickness2(value);
+				_minorTickPen = _minorTickPen.WithThickness2(value);
 				EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -535,9 +537,9 @@ namespace Altaxo.Graph3D.Axis
 			get { return this._axisPen.Color; }
 			set
 			{
-				this._axisPen.Color = value;
-				this._majorTickPen.Color = value;
-				this._minorTickPen.Color = value;
+				_axisPen = _axisPen.WithColor(value);
+				_majorTickPen = _majorTickPen.WithColor(value);
+				_minorTickPen = _minorTickPen.WithColor(value);
 				EhSelfChanged(EventArgs.Empty);
 			}
 		}
@@ -706,12 +708,9 @@ namespace Altaxo.Graph3D.Axis
 				case "StrokeWidth":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this._axisPen.Thickness1 = prop.Value;
-						this._axisPen.Thickness2 = prop.Value;
-						this._majorTickPen.Thickness1 = prop.Value;
-						this._majorTickPen.Thickness2 = prop.Value;
-						this._minorTickPen.Thickness1 = prop.Value;
-						this._minorTickPen.Thickness2 = prop.Value;
+						_axisPen = _axisPen.WithUniformThickness(prop.Value);
+						_majorTickPen = _majorTickPen.WithUniformThickness(prop.Value);
+						_minorTickPen = _minorTickPen.WithUniformThickness(prop.Value);
 						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
