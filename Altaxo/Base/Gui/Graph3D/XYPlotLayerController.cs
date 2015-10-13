@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph3D
 
 		private IMVCAController _currentController;
 
-		protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
+		protected CoordinateSystemController _coordinateController;
 		protected IMVCANController _layerPositionController;
 		protected IMVCANController _layerContentsController;
 		protected IMVCAController[] _axisScaleController;
@@ -120,6 +120,9 @@ namespace Altaxo.Gui.Graph3D
 
 		private XYPlotLayerController(XYPlotLayer3D layer, string currentPage, int axisScaleIdx, CSLineID id, UseDocument useDocumentCopy)
 		{
+			if (!id.Is3DIdentifier)
+				throw new ArgumentException(nameof(id) + " has to be a 3D identifier!");
+
 			_useDocumentCopy = useDocumentCopy == UseDocument.Copy;
 			_currentAxisID = id;
 			_currentScale = axisScaleIdx;
@@ -343,7 +346,7 @@ namespace Altaxo.Gui.Graph3D
 					}
 					if (null == this._coordinateController)
 					{
-						this._coordinateController = new Altaxo.Gui.Graph.CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
+						this._coordinateController = new CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
 						_coordinateController.InitializeDocument(_doc.CoordinateSystem);
 						Current.Gui.FindAndAttachControlTo(this._coordinateController);
 					}
@@ -580,7 +583,7 @@ namespace Altaxo.Gui.Graph3D
 
 		public static bool ShowDialog(XYPlotLayer3D layer)
 		{
-			return ShowDialog(layer, "Scale", new CSLineID(0, 0));
+			return ShowDialog(layer, "Scale", new CSLineID(0, 0, 0));
 		}
 
 		public static bool ShowDialog(XYPlotLayer3D layer, string currentPage)

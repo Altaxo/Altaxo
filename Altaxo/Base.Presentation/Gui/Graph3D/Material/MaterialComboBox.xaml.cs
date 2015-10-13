@@ -33,7 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace Altaxo.Gui.Graph3D.Materials
+namespace Altaxo.Gui.Graph3D.Material
 {
 	using Altaxo.Graph3D;
 	using Altaxo.Gui.Common.Drawing;
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph3D.Materials
 	/// <summary>
 	/// Interaction logic for ColorComboBoxEx.xaml
 	/// </summary>
-	public partial class MaterialComboBox : ColorComboBoxBase
+	public partial class MaterialComboBox : ColorComboBoxBase, Altaxo.Gui.Graph3D.Material.IMaterialViewSimple
 	{
 		public static readonly DependencyProperty SelectedMaterialProperty;
 

@@ -78,13 +78,18 @@ namespace Altaxo.Graph3D
 			}
 		}
 
+		public bool Equals(IMaterial3D other)
+		{
+			return other is MaterialWithoutColorOrTexture;
+		}
+
 		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
 		{
 		}
 
 		public IMaterial3D WithColor(NamedColor color)
 		{
-			return new SolidColor(color);
+			return this;
 		}
 	}
 
@@ -103,11 +108,6 @@ namespace Altaxo.Graph3D
 			{
 				return _color;
 			}
-
-			set
-			{
-				throw new NotImplementedException();
-			}
 		}
 
 		public bool HasColor
@@ -124,6 +124,12 @@ namespace Altaxo.Graph3D
 			{
 				return false;
 			}
+		}
+
+		public bool Equals(IMaterial3D other)
+		{
+			var othersd = other as SolidColor;
+			return null != othersd && this.Color == othersd.Color;
 		}
 
 		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)

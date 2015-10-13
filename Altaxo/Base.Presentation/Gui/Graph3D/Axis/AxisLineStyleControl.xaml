@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Materials"
+						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Material"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d">
   <UserControl.Resources>

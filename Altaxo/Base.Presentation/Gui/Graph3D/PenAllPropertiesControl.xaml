@@ -6,7 +6,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Materials"
+						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Material"
              mc:Ignorable="d">
   <Grid>
     <Grid.RowDefinitions>

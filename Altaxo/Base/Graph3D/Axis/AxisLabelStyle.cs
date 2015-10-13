@@ -729,11 +729,11 @@ namespace Altaxo.Graph3D.Axis
 				math.TranslatePrepend(morg.X, morg.Y, morg.Z);
 
 				if (this._rotationZ != 0)
-					math.RotationZDegreePrepend(-this._rotationZ);
+					math.RotationZDegreePrepend(this._rotationZ);
 				if (this._rotationY != 0)
-					math.RotationYDegreePrepend(-this._rotationZ);
+					math.RotationYDegreePrepend(this._rotationY);
 				if (this._rotationX != 0)
-					math.RotationXDegreePrepend(-this._rotationZ);
+					math.RotationXDegreePrepend(this._rotationX);
 
 				math.TranslatePrepend((mrect.X - morg.X + emSize * _xOffset), (mrect.Y - morg.Y + emSize * _yOffset), (mrect.Z - morg.Z + emSize * _zOffset));
 

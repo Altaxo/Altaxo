@@ -166,7 +166,7 @@ namespace Altaxo.Graph3D.Axis
 		public void Add(GridPlane plane)
 		{
 			if (null == plane)
-				throw new ArgumentNullException("plane");
+				throw new ArgumentNullException(nameof(plane));
 
 			plane.ParentObject = this;
 			_innerList.Add(plane);

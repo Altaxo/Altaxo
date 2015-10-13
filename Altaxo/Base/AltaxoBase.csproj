@@ -270,6 +270,7 @@
     <Compile Include="Graph3D\LabelFormatting\LabelFormattingBase.cs" />
     <Compile Include="Graph3D\LabelFormatting\NumericLabelFormattingAuto.cs" />
     <Compile Include="Graph3D\Materials.cs" />
+    <Compile Include="Graph3D\Material\NoMaterial.cs" />
     <Compile Include="Graph3D\MatrixD3D.cs" />
     <Compile Include="Graph3D\PenX3D.cs" />
     <Compile Include="Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
@@ -408,9 +409,9 @@
     <Compile Include="Gui\Graph3D\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph3D\ItemLocationDirectController.cs" />
     <Compile Include="Gui\Graph3D\LayerPositionController.cs" />
+    <Compile Include="Gui\Graph3D\Material\MaterialControllerSimple.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
-    <Compile Include="Gui\Graph3D\XYPlotLayer3DController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayerContentsController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />

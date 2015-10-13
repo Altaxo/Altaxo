@@ -24,6 +24,7 @@
 
 using Altaxo.Graph3D;
 using Altaxo.Graph3D.Axis;
+using Altaxo.Graph3D.Material;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing;
 using System;
@@ -67,8 +68,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 				Current.Gui.FindAndAttachControlTo(_grid2);
 				ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
 
-				_background = new BrushControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
-				_background.InitializeDocument(_doc.Background);
+				_background = new Material.BrushControllerSimple() { UseDocumentCopy = UseDocument.Directly };
+				_background.InitializeDocument(_doc.Background ?? Altaxo.Graph3D.Material.NoMaterial.Instance);
 				Current.Gui.FindAndAttachControlTo(_background);
 				ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
 
@@ -84,7 +85,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			_doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
 			_doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
 			var backBrush = (IMaterial3D)_background.ModelObject;
-			_doc.Background = backBrush;
+			_doc.Background = Altaxo.Graph3D.Material.NoMaterial.Instance == backBrush ? null : backBrush;
 
 			return ApplyEnd(true, disposeController);
 		}

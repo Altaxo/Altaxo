@@ -131,7 +131,7 @@ namespace Altaxo.Graph3D
 			// Plot items
 			if (0 != (options & GraphCopyOptions.CopyLayerPlotItems))
 			{
-				this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
+				this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems, true);
 			}
 			else if (0 != (options & GraphCopyOptions.CopyLayerPlotStyles))
 			{
@@ -774,7 +774,7 @@ namespace Altaxo.Graph3D
 		protected override void PaintInternal(IGraphicContext3D g, IPaintContext paintContext)
 		{
 			// paint the background very first
-			_gridPlanes.PaintBackground(g, this);
+			_gridPlanes.Paint(g, this);
 
 			_axisStyles.Paint(g, paintContext, this);
 

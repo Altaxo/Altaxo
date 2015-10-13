@@ -497,7 +497,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Materials\MaterialComboBox.xaml">
+    <Page Include="Gui\Graph3D\Material\MaterialComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1336,9 +1336,10 @@
     <Compile Include="Gui\Graph3D\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Materials\MaterialComboBox.xaml.cs">
+    <Compile Include="Gui\Graph3D\Material\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph3D\Material\MaterialConverter.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesControl.xaml.cs">
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>

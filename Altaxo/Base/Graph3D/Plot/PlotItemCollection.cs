@@ -34,6 +34,7 @@ using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph3D.Plot
@@ -75,7 +76,7 @@ namespace Altaxo.Graph3D.Plot
 		/// <param name="from">The PlotItemCollection to clone this list from.</param>
 		public PlotItemCollection(PlotItemCollection from)
 			:
-			this(null, from)
+			this(null, from, true)
 		{
 		}
 
@@ -86,10 +87,20 @@ namespace Altaxo.Graph3D.Plot
 			//_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
-		public PlotItemCollection(XYPlotLayer3D owner, IEnumerable<IGPlotItem> plotItems)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PlotItemCollection"/> class.
+		/// </summary>
+		/// <param name="owner">The owner of this collection.</param>
+		/// <param name="plotItems">The plot items that should initially belong to this collection.</param>
+		/// <param name="clonePlotItems">If set to <c>true</c> the plot items are cloned before added to this collection. If false, the plot items are added directly to this collection.</param>
+		public PlotItemCollection(XYPlotLayer3D owner, IEnumerable<IGPlotItem> plotItems, bool clonePlotItems)
 		{
 			_parent = owner;
-			_plotItems = new List<IGPlotItem>(plotItems);
+
+			if (clonePlotItems)
+				_plotItems = new List<IGPlotItem>(plotItems.Select(pi => (IGPlotItem)pi.Clone()));
+			else
+				_plotItems = new List<IGPlotItem>(plotItems);
 		}
 
 		public IGPlotItem[] Flattened

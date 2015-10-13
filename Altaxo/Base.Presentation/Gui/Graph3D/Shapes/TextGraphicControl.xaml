@@ -8,7 +8,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
 						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes"
-						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Graph3D.Materials"
+						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Graph3D.Material"
 						 mc:Ignorable="d"
 						 Loaded="EhLoaded">
   <UserControl.Resources>

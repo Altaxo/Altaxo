@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			//_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
 
 			// register here editor methods
-			XYPlotLayer3DController.RegisterEditHandlers();
+			XYPlotLayerController.RegisterEditHandlers();
 			XYPlotLayer3D.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
 			TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
 			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);

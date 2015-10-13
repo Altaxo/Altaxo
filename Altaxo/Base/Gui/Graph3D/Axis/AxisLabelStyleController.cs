@@ -209,7 +209,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_view.AutomaticAlignment = _doc.AutomaticAlignment;
 				_view.RotationX = _doc.RotationX;
 				_view.RotationY = _doc.RotationY;
-				_view.RotationZ = _doc.RotationX;
+				_view.RotationZ = _doc.RotationZ;
 				_view.OffsetX = _doc.XOffset;
 				_view.OffsetY = _doc.YOffset;
 				_view.OffsetZ = _doc.ZOffset;

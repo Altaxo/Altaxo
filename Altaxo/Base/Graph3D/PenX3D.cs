@@ -58,8 +58,11 @@ namespace Altaxo.Graph3D
 
 		public PenX3D WithThickness1(double thickness1)
 		{
+			if (_thickness1 == thickness1)
+				return this;
 			var result = (PenX3D)this.MemberwiseClone();
 			result._thickness1 = thickness1;
+			result._crossSection = Primitives.CrossSectionOfLine.GetSquareCrossSection(_thickness1, _thickness2);
 			return result;
 		}
 
@@ -73,8 +76,12 @@ namespace Altaxo.Graph3D
 
 		public PenX3D WithThickness2(double thickness2)
 		{
+			if (_thickness2 == thickness2)
+				return this;
+
 			var result = (PenX3D)this.MemberwiseClone();
 			result._thickness2 = thickness2;
+			result._crossSection = Primitives.CrossSectionOfLine.GetSquareCrossSection(_thickness1, _thickness2);
 			return result;
 		}
 
@@ -83,6 +90,7 @@ namespace Altaxo.Graph3D
 			var result = (PenX3D)this.MemberwiseClone();
 			result._thickness1 = thickness;
 			result._thickness2 = thickness;
+			result._crossSection = Primitives.CrossSectionOfLine.GetSquareCrossSection(_thickness1, _thickness2);
 			return result;
 		}
 
@@ -136,7 +144,12 @@ namespace Altaxo.Graph3D
 
 		public static bool AreEqualUnlessWidth(PenX3D pen1, PenX3D pen2)
 		{
-			throw new NotImplementedException();
+			bool isEqual =
+
+				pen1.Material == pen2.Material &&
+				pen1.CrossSection.GetType() == pen2.CrossSection.GetType();
+
+			return isEqual;
 		}
 	}
 }

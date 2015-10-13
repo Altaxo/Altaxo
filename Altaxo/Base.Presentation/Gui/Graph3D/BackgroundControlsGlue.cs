@@ -25,7 +25,7 @@
 using Altaxo.Graph3D;
 using Altaxo.Graph3D.Background;
 using Altaxo.Gui.Common.Drawing;
-using Altaxo.Gui.Graph3D.Materials;
+using Altaxo.Gui.Graph3D.Material;
 using System;
 using System.Collections.Generic;
 using System.Text;

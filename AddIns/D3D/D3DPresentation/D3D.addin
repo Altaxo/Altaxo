@@ -7,7 +7,6 @@
 	</Manifest>
 
 	<Runtime>
-		<Import assembly="D3DBase.dll" />
 		<Import assembly="D3DPresentation.dll" />
 	</Runtime>
 

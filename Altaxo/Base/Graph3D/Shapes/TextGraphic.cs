@@ -465,7 +465,7 @@ namespace Altaxo.Graph3D.Shapes
 
 				var transformmatrix = MatrixD3D.FromTranslationRotationShearScale(
 				_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
-				-RotationX, -RotationY, -RotationZ,
+				RotationX, RotationY, RotationZ,
 				ShearX, ShearY, ShearZ,
 				ScaleX, ScaleY, ScaleZ);
 				transformmatrix.TranslatePrepend(bounds.X, bounds.Y, bounds.Z);

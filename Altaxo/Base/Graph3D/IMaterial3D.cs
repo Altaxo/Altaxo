@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
-	public interface IMaterial3D : Altaxo.Main.IImmutable
+	public interface IMaterial3D : Altaxo.Main.IImmutable, IEquatable<IMaterial3D>
 	{
 		Altaxo.Graph.NamedColor Color { get; }
 

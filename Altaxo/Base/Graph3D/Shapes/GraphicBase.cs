@@ -557,7 +557,7 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				g.PrependTransform(MatrixD3D.FromTranslationRotationShearScale(
 					_location.AbsolutePivotPosition.X, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
-					-_location.RotationX, -_location.RotationY, _location.RotationZ,
+					_location.RotationX, _location.RotationY, _location.RotationZ,
 					_location.ShearX, _location.ShearY, _location.ShearZ,
 					_location.ScaleX, _location.ScaleY, _location.ScaleY
 					));
@@ -578,7 +578,7 @@ namespace Altaxo.Graph3D.Shapes
 		{
 			_transformation.SetTranslationRotationShearScale(
 				_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
-				-RotationX, -RotationY, -RotationZ,
+				RotationX, RotationY, RotationZ,
 				ShearX, ShearY, ShearZ,
 				ScaleX, ScaleY, ScaleZ);
 		}

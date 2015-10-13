@@ -202,29 +202,44 @@ namespace Altaxo.Graph3D.Axis
 
 		public void PaintBackground(IGraphicContext3D g, IPlotArea3D layer)
 		{
-			/*
-			Region region = layer.CoordinateSystem.GetRegion();
-			if (_background != null)
+			if (null == _background)
+				return;
+
+			var cs = layer.CoordinateSystem;
+			if (layer.CoordinateSystem is G3DCartesicCoordinateSystem)
 			{
-				RectangleF innerArea = region.GetBounds(g);
-				//_background.SetEnvironment(innerArea, BrushX.GetEffectiveMaximumResolution(g, 1));
-				g.FillRegion(_background, region);
+				var p = new PointD3D[4];
+				p[0] = cs.GetPointOnPlane(_planeID, new Logical3D(0, 0));
+				p[1] = cs.GetPointOnPlane(_planeID, new Logical3D(0, 1));
+				p[2] = cs.GetPointOnPlane(_planeID, new Logical3D(1, 0));
+				p[3] = cs.GetPointOnPlane(_planeID, new Logical3D(1, 1));
+
+				var buffer = g.GetPositionNormalIndexedTriangleBuffer(_background);
+				var offs = buffer.IndexedTriangleBuffer.TriangleCount;
+
+				if (null != buffer.PositionNormalIndexedTriangleBuffer)
+				{
+					for (int i = 0; i < 4; ++i)
+						buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, 0, 0, 1);
+
+					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 1 + offs, 3 + offs);
+					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 2 + offs, 3 + offs);
+					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 3 + offs, 1 + offs);
+					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 3 + offs, 2 + offs);
+				}
 			}
-			*/
+			else
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		public void PaintGrid(IGraphicContext3D g, IPlotArea3D layer)
 		{
-			/*
-			Region region = layer.CoordinateSystem.GetRegion();
-			Region oldClipRegion = g.Clip;
-			g.Clip = region;
 			if (null != _grid1)
 				_grid1.Paint(g, layer, _planeID.InPlaneAxisNumber1);
 			if (null != _grid2)
 				_grid2.Paint(g, layer, _planeID.InPlaneAxisNumber2);
-			g.Clip = oldClipRegion;
-			*/
 		}
 
 		public void Paint(IGraphicContext3D g, IPlotArea3D layer)

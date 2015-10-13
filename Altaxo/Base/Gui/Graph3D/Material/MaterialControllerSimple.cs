@@ -1,8 +1,8 @@
-﻿#region Copyright
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,29 +25,40 @@
 using Altaxo.Graph3D;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Graph3D
+namespace Altaxo.Gui.Graph3D.Material
 {
-	public class XYPlotLayer3DController
+	public interface IMaterialViewSimple
 	{
-		public static void ShowDialog(XYPlotLayer3D activeLayer)
+		IMaterial3D SelectedMaterial { get; set; }
+	}
+
+	[UserControllerForObject(typeof(IMaterial3D))]
+	[ExpectedTypeOfView(typeof(IMaterialViewSimple))]
+	public class BrushControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial3D, IMaterialViewSimple>
+	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			throw new NotImplementedException();
+			yield break;
 		}
 
-		public static void RegisterEditHandlers()
+		protected override void Initialize(bool initData)
 		{
-			// register here editor methods
-			/*
-			XYPlotLayer.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
-			XYPlotLayer.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
-			XYPlotLayer.AxisLabelMajorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMajorStyleEdit);
-			XYPlotLayer.AxisLabelMinorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMinorStyleEdit);
-			XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
-			*/
+			base.Initialize(initData);
+
+			if (_view != null)
+			{
+				_view.SelectedMaterial = _doc;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			if (_doc != null)
+				_doc = _view.SelectedMaterial;
+
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }
