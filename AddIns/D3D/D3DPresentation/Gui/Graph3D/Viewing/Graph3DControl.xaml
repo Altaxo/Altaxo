@@ -13,12 +13,12 @@
       <ColumnDefinition />
     </Grid.ColumnDefinitions>
     <StackPanel Grid.Column="0"  Name="_layerToolBar" MinWidth="16" />
-    <axogg3c:DPFCanvas x:Name="_d3dCanvas" Grid.Column="1" Stretch="Fill" Focusable="True"
+    <axogg3c:D3D10Canvas x:Name="_d3dCanvas" Grid.Column="1" Stretch="Fill" Focusable="True"
 											 KeyDown="EhGraphPanel_KeyDown"
 											 MouseWheel="EhMouseWheel"
 											 MouseMove="EhGraphPanel_MouseMove"
 												MouseDown="EhGraphPanel_MouseDown"
 												MouseUp="EhGraphPanel_MouseUp">
-    </axogg3c:DPFCanvas>
+    </axogg3c:D3D10Canvas>
   </Grid>
 </UserControl>

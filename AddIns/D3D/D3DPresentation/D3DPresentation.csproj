@@ -58,6 +58,9 @@
     <Reference Include="SharpDX.Toolkit">
       <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Toolkit.Graphics">
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Graphics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -83,12 +86,18 @@
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D11Canvas.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D11BitmapExporter.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D10BitmapExporter.cs" />
     <Compile Include="Gui\Graph3D\Common\Disposer.cs" />
-    <Compile Include="Gui\Graph3D\Common\DPFCanvas.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D10Canvas.cs" />
+    <Compile Include="Gui\Graph3D\Common\DX11ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
     <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
+    <Compile Include="Gui\Graph3D\Common\TextureExtensions.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\D3D11Scene.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
@@ -97,7 +106,7 @@
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\Scene.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\D3D10Scene.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
     <Compile Include="MenuCommands\GraphCommands.cs" />
     <Compile Include="MenuCommands\PlotCommands.cs" />

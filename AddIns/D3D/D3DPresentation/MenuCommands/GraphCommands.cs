@@ -88,4 +88,12 @@ namespace Altaxo.Graph3D.Commands
 			ctrl.ViewRightFrontTop();
 		}
 	}
+
+	public class Export3D : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.Export3D();
+		}
+	}
 }

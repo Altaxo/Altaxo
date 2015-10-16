@@ -21,7 +21,8 @@ namespace Altaxo.Gui.Graph3D.Common
 {
 	using Altaxo.Graph;
 	using SharpDX;
-	using SharpDX.Direct3D10;
+	using SharpDX.Direct3D;
+	using SharpDX.Direct3D11;
 	using SharpDX.DXGI;
 	using System;
 	using System.ComponentModel;
@@ -30,16 +31,16 @@ namespace Altaxo.Gui.Graph3D.Common
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
-	using Device = SharpDX.Direct3D10.Device1;
+	using Device = SharpDX.Direct3D11.Device;
 
-	public partial class DPFCanvas : Image, ISceneHost
+	public partial class D3D11Canvas : Image
 	{
-		private Device Device;
+		private Device _device;
 		private Texture2D RenderTarget;
 		private Texture2D DepthStencil;
 		private RenderTargetView RenderTargetView;
 		private DepthStencilView DepthStencilView;
-		private DX10ImageSource D3DSurface;
+		private DX11ImageSource D3DSurface;
 		private Stopwatch RenderTimer;
 		private IScene RenderScene;
 		private bool SceneAttached;
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// </summary>
 		public event EventHandler D3DStarted;
 
-		public DPFCanvas()
+		public D3D11Canvas()
 		{
 			this.RenderTimer = new Stopwatch();
 			this.Loaded += this.EhLoaded;
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
-			if (DPFCanvas.IsInDesignMode)
+			if (D3D11Canvas.IsInDesignMode)
 				return;
 
 			this.StartD3D();
@@ -88,7 +89,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		private void EhUnloaded(object sender, RoutedEventArgs e)
 		{
-			if (DPFCanvas.IsInDesignMode)
+			if (D3D10Canvas.IsInDesignMode)
 				return;
 
 			this.StopRendering();
@@ -97,9 +98,9 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		private void StartD3D()
 		{
-			this.Device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+			this._device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 
-			this.D3DSurface = new DX10ImageSource();
+			this.D3DSurface = new DX11ImageSource();
 			this.D3DSurface.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
 
 			this.CreateAndBindTargets();
@@ -123,13 +124,13 @@ namespace Altaxo.Gui.Graph3D.Common
 			Disposer.RemoveAndDispose(ref this.DepthStencilView);
 			Disposer.RemoveAndDispose(ref this.RenderTarget);
 			Disposer.RemoveAndDispose(ref this.DepthStencil);
-			Disposer.RemoveAndDispose(ref this.Device);
+			Disposer.RemoveAndDispose(ref this._device);
 		}
 
 		private void CreateAndBindTargets()
 		{
 			if (null != this.D3DSurface)
-				this.D3DSurface.SetRenderTargetDX10(null);
+				this.D3DSurface.SetRenderTargetDX11(null);
 
 			Disposer.RemoveAndDispose(ref this.RenderTargetView);
 			Disposer.RemoveAndDispose(ref this.DepthStencilView);
@@ -167,12 +168,12 @@ namespace Altaxo.Gui.Graph3D.Common
 				ArraySize = 1,
 			};
 
-			this.RenderTarget = new Texture2D(this.Device, colordesc);
-			this.DepthStencil = new Texture2D(this.Device, depthdesc);
-			this.RenderTargetView = new RenderTargetView(this.Device, this.RenderTarget);
-			this.DepthStencilView = new DepthStencilView(this.Device, this.DepthStencil);
+			this.RenderTarget = new Texture2D(this._device, colordesc);
+			this.DepthStencil = new Texture2D(this._device, depthdesc);
+			this.RenderTargetView = new RenderTargetView(this._device, this.RenderTarget);
+			this.DepthStencilView = new DepthStencilView(this._device, this.DepthStencil);
 
-			this.D3DSurface.SetRenderTargetDX10(this.RenderTarget);
+			this.D3DSurface.SetRenderTargetDX11(this.RenderTarget);
 		}
 
 		private void StartRendering()
@@ -204,7 +205,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
-			if (null != this.Device)
+			if (null != this._device)
 			{
 				this.CreateAndBindTargets();
 				base.OnRenderSizeChanged(sizeInfo);
@@ -213,9 +214,11 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		private void Render(TimeSpan sceneTime)
 		{
-			SharpDX.Direct3D10.Device device = this.Device;
-			if (device == null)
+			var dev = this._device;
+			if (dev == null)
 				return;
+
+			var device = new DeviceContext(dev);
 
 			Texture2D renderTarget = this.RenderTarget;
 			if (renderTarget == null)
@@ -225,7 +228,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			int targetHeight = renderTarget.Description.Height;
 
 			device.OutputMerger.SetTargets(this.DepthStencilView, this.RenderTargetView);
-			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
+			device.Rasterizer.SetViewports(new ViewportF[] { new ViewportF(0, 0, targetWidth, targetHeight, 0.0f, 1.0f) });
 
 			device.ClearRenderTargetView(this.RenderTargetView, this.ClearColor);
 			device.ClearDepthStencilView(this.DepthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
@@ -235,7 +238,7 @@ namespace Altaxo.Gui.Graph3D.Common
 				if (!this.SceneAttached)
 				{
 					this.SceneAttached = true;
-					this.RenderScene.Attach(this);
+					this.RenderScene.Attach(_device, HostSize);
 				}
 
 				this.Scene.Update(this.RenderTimer.Elapsed);
@@ -285,9 +288,9 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 		}
 
-		SharpDX.Direct3D10.Device ISceneHost.Device
+		public SharpDX.Direct3D11.Device Device
 		{
-			get { return this.Device; }
+			get { return this._device; }
 		}
 
 		public PointD2D HostSize

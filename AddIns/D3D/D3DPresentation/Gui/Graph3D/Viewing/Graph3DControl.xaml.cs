@@ -28,14 +28,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	{
 		private Graph3DControllerWpf _controller;
 
-		private Scene _scene;
+		private D3D10Scene _scene;
 		private D3D10GraphicContext _drawing;
 
 		public Graph3DControl()
 		{
 			InitializeComponent();
 
-			_scene = new Scene();
+			_scene = new D3D10Scene();
 			this._d3dCanvas.Scene = _scene;
 			_d3dCanvas.D3DStarted += EhD3DStarted;
 		}

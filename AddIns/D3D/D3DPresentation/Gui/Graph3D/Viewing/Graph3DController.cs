@@ -422,6 +422,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Doc.Scene.Camera = newCamera;
 		}
 
+		public void Export3D()
+		{
+			var exporter = new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter();
+
+			var scene = new Altaxo.Gui.Graph3D.Viewing.D3D10Scene();
+
+			var g = new Altaxo.Graph3D.GraphicsContext.D3D.D3D10GraphicContext();
+
+			Doc.Paint(g);
+
+			scene.SetSceneSettings(Doc.Scene);
+			scene.SetDrawing(g);
+
+			exporter.Export(4000, 4000, scene);
+		}
+
 		public void EhMouseWheel(double relX, double relY, double aspectRatio, int delta)
 		{
 			if (Doc.Scene.Camera is OrthographicCamera)

@@ -37,19 +37,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Buffer = SharpDX.Direct3D10.Buffer;
 	using Device = SharpDX.Direct3D10.Device;
 
-	public class Scene : IScene
+	public class D3D10Scene : ID3D10Scene
 	{
-		private ISceneHost Host;
-
-		private D3D10GraphicContext _drawing;
-
-		private Altaxo.Graph3D.SceneSettings _sceneSettings;
-
-		protected Buffer _constantBuffer;
-
-		protected Buffer _constantBufferForColor;
-
-		private int _renderCounter;
+		#region Internal structs
 
 		internal struct RenderLayout
 		{
@@ -85,6 +75,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
+		#endregion Internal structs
+
+		private Device _hostDevice;
+
+		private Altaxo.Graph.PointD2D _hostSize;
+
+		private D3D10GraphicContext _drawing;
+
+		private Altaxo.Graph3D.SceneSettings _sceneSettings;
+
+		protected Buffer _constantBuffer;
+
+		protected Buffer _constantBufferForColor;
+
+		private int _renderCounter;
+
 		private string[] _layoutNames = new string[6] { "P", "PC", "PT", "PN", "PNC", "PNT" };
 
 		private RenderLayout[] _renderLayouts = new RenderLayout[6];
@@ -97,13 +103,20 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private List<VertexAndIndexDeviceBuffer>[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[6];
 
-		void IScene.Attach(ISceneHost host)
+		public void Attach(SharpDX.ComObject hostDevice, Altaxo.Graph.PointD2D hostSize)
 		{
-			this.Host = host;
+			Attach((Device)hostDevice, hostSize);
+		}
 
-			Device device = host.Device;
-			if (device == null)
-				throw new Exception("Scene host device is null");
+		public void Attach(Device hostDevice, Altaxo.Graph.PointD2D hostSize)
+		{
+			if (hostDevice == null)
+				throw new ArgumentNullException(nameof(hostDevice));
+
+			_hostDevice = hostDevice;
+			_hostSize = hostSize;
+
+			Device device = _hostDevice;
 
 			int i;
 
@@ -201,7 +214,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private void BringDrawingIntoBuffers(D3D10GraphicContext drawing)
 		{
-			Device device = this.Host?.Device;
+			Device device = _hostDevice;
 			if (device == null)
 				return;
 
@@ -278,7 +291,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		void IScene.Render()
 		{
-			Device device = this.Host.Device;
+			Device device = _hostDevice;
 			if (device == null)
 				return;
 
@@ -299,12 +312,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				if (cam is Altaxo.Graph3D.Camera.PerspectiveCamera)
 				{
 					var angle = (cam as Altaxo.Graph3D.Camera.PerspectiveCamera).Angle;
-					proj = Matrix.PerspectiveFovRH((float)angle, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, float.MaxValue);
+					proj = Matrix.PerspectiveFovRH((float)angle, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
 				}
 				else if (cam is Altaxo.Graph3D.Camera.OrthographicCamera)
 				{
 					var scale = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).Scale;
-					proj = Matrix.OrthoRH((float)scale, (float)(scale * Host.HostSize.Y / Host.HostSize.X), 1.0f, 2000.0f);
+					proj = Matrix.OrthoRH((float)scale, (float)(scale * _hostSize.Y / _hostSize.X), 1.0f, 2000.0f);
 				}
 				else
 				{
@@ -314,7 +327,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			else
 			{
 				view = Matrix.LookAtRH(new Vector3(0, 0, -1500), new Vector3(0, 0, 0), Vector3.UnitY);
-				proj = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)(Host.HostSize.X / Host.HostSize.Y), 0.1f, float.MaxValue);
+				proj = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
 			}
 			var viewProj = Matrix.Multiply(view, proj);
 

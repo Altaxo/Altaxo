@@ -23,15 +23,6 @@ namespace Altaxo.Gui.Graph3D.Common
 	using System;
 
 	/// <summary>
-	/// Designates a location, where a scene can be rendered to.
-	/// </summary>
-	public interface ISceneHost
-	{
-		Device Device { get; }
-		Altaxo.Graph.PointD2D HostSize { get; }
-	}
-
-	/// <summary>
 	/// Scene.
 	/// </summary>
 	public interface IScene
@@ -40,7 +31,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// Attaches the scene to the specified scene host.
 		/// </summary>
 		/// <param name="host">The scene host.</param>
-		void Attach(ISceneHost host);
+		void Attach(SharpDX.ComObject hostDevice, Altaxo.Graph.PointD2D hostSize);
 
 		/// <summary>
 		/// Detaches this scene from the scene host.
@@ -57,5 +48,29 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// Renders this scene to the scene host.
 		/// </summary>
 		void Render();
+	}
+
+	/// <summary>
+	/// Scene.
+	/// </summary>
+	public interface ID3D10Scene : IScene
+	{
+		/// <summary>
+		/// Attaches the scene to the specified scene host.
+		/// </summary>
+		/// <param name="host">The scene host.</param>
+		void Attach(SharpDX.Direct3D10.Device hostDevice, Altaxo.Graph.PointD2D hostSize);
+	}
+
+	/// <summary>
+	/// Scene.
+	/// </summary>
+	public interface ID3D11Scene : IScene
+	{
+		/// <summary>
+		/// Attaches the scene to the specified scene host.
+		/// </summary>
+		/// <param name="host">The scene host.</param>
+		void Attach(SharpDX.Direct3D11.Device hostDevice, Altaxo.Graph.PointD2D hostSize);
 	}
 }

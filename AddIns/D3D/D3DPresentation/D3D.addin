@@ -16,10 +16,14 @@
 				<Condition name ="SelectedDataColumns" selected="*" action="Disable">
 					<MenuItem id="Plot3D" label="Plot3D" icon="Icons.16x16.PlotLine"
 						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.Plot3D" />
-					<MenuItem id="PlotSurface3D" label="Plot3D" icon="Icons.16x16.PlotLine"
+					<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
 						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
 				</Condition>
 			</MenuItem>
+		</Condition>
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+			<MenuItem id="Export3D" label="Export3D" icon="Icons.16x16.PlotLine"
+			description="Plot3DDescription" class="Altaxo.Graph3D.Commands.Export3D" />
 		</Condition>
 	</Path>
 
