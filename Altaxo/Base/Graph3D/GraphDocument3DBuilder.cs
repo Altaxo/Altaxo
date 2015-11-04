@@ -39,7 +39,7 @@ namespace Altaxo.Graph3D
 
 			var graph = new GraphDocument3D();
 
-			var xyzlayer = new XYPlotLayer3D(graph.RootLayer, new G3DCartesicCoordinateSystem());
+			var xyzlayer = new XYPlotLayer3D(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
 
 			graph.RootLayer.Layers.Add(xyzlayer);
 

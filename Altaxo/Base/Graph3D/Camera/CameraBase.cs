@@ -36,6 +36,15 @@ namespace Altaxo.Graph3D.Camera
 		public PointD3D EyePosition { get; set; }
 		public PointD3D TargetPosition { get; set; }
 
+		/// <summary>
+		/// Gets or sets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
+		/// It is not serialized either.
+		/// </summary>
+		/// <value>
+		/// The screen offset (this is a relative value - relative to the dimensions of the screen).
+		/// </value>
+		public Altaxo.Graph.PointD2D ScreenOffset { get; set; }
+
 		public CameraBase()
 		{
 			EyePosition = new PointD3D(0, 0, -1500);
@@ -55,6 +64,7 @@ namespace Altaxo.Graph3D.Camera
 				this.UpVector = from.UpVector;
 				this.EyePosition = from.EyePosition;
 				this.TargetPosition = from.TargetPosition;
+				// ScreenOffset is temporary, thus it is _not_ copied here
 				return true;
 			}
 			else

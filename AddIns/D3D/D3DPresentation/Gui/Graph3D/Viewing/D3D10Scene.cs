@@ -300,7 +300,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			float time = _renderCounter / 100f;
 			++_renderCounter;
 
-			Matrix view, proj;
+			Matrix view, proj, viewProj;
+
+			Matrix worldViewProjTr; // world-view matrix, transposed
+
+			MatrixD3D viewProjD3D;
 
 			if (null != _sceneSettings)
 			{
@@ -313,11 +317,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				{
 					var angle = (cam as Altaxo.Graph3D.Camera.PerspectiveCamera).Angle;
 					proj = Matrix.PerspectiveFovRH((float)angle, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
+					viewProj = Matrix.Multiply(view, proj);
+
+					// Update WorldViewProj Matrix
+					worldViewProjTr = viewProj;
+					worldViewProjTr.Transpose();
 				}
 				else if (cam is Altaxo.Graph3D.Camera.OrthographicCamera)
 				{
-					var scale = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).Scale;
-					proj = Matrix.OrthoRH((float)scale, (float)(scale * _hostSize.Y / _hostSize.X), 1.0f, 2000.0f);
+					viewProjD3D = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).GetLookAtRHTimesOrthoRHMatrix(_hostSize.Y / _hostSize.X, 1, 2000);
+
+					worldViewProjTr = new Matrix(
+						(float)viewProjD3D.M11, (float)viewProjD3D.M21, (float)viewProjD3D.M31, (float)viewProjD3D.M41,
+						(float)viewProjD3D.M12, (float)viewProjD3D.M22, (float)viewProjD3D.M32, (float)viewProjD3D.M42,
+						(float)viewProjD3D.M13, (float)viewProjD3D.M23, (float)viewProjD3D.M33, (float)viewProjD3D.M43,
+						0, 0, 0, 1
+						);
 				}
 				else
 				{
@@ -328,26 +343,26 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				view = Matrix.LookAtRH(new Vector3(0, 0, -1500), new Vector3(0, 0, 0), Vector3.UnitY);
 				proj = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
-			}
-			var viewProj = Matrix.Multiply(view, proj);
+				viewProj = Matrix.Multiply(view, proj);
 
-			// Update WorldViewProj Matrix
-			var worldViewProj = viewProj;
-			worldViewProj.Transpose();
+				// Update WorldViewProj Matrix
+				worldViewProjTr = viewProj;
+				worldViewProjTr.Transpose();
+			}
 
 			foreach (var entry in _thisTriangleDeviceBuffers[1]) // Position-Color
 			{
-				DrawPositionColorIndexedTriangleBuffer(device, entry, worldViewProj);
+				DrawPositionColorIndexedTriangleBuffer(device, entry, worldViewProjTr);
 			}
 
 			foreach (var entry in _thisTriangleDeviceBuffers[3]) // Position-Normal
 			{
-				DrawPositionNormalIndexedTriangleBuffer(device, entry, worldViewProj);
+				DrawPositionNormalIndexedTriangleBuffer(device, entry, worldViewProjTr);
 			}
 
 			foreach (var entry in _thisTriangleDeviceBuffers[4]) // Position-Normal-Color
 			{
-				DrawPositionNormalColorIndexedTriangleBuffer(device, entry, worldViewProj);
+				DrawPositionNormalColorIndexedTriangleBuffer(device, entry, worldViewProjTr);
 			}
 		}
 

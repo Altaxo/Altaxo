@@ -102,10 +102,11 @@ namespace Altaxo.Graph3D
 		/// <exception cref="System.InvalidOperationException">Using SetAutoSize is not supported because IsAutoSized is false</exception>
 		public void SetSizeInAutoSizeMode(VectorD3D autoSize, bool isChangeEventEnabled)
 		{
-			if (_sizeX.IsRelative || _sizeY.IsRelative || _sizeX.Value != autoSize.X || _sizeY.Value != autoSize.Y)
+			if (_sizeX.IsRelative || _sizeY.IsRelative || _sizeZ.IsRelative || _sizeX.Value != autoSize.X || _sizeY.Value != autoSize.Y || _sizeZ.Value != autoSize.Z)
 			{
 				_sizeX = RADouble.NewAbs(autoSize.X);
 				_sizeY = RADouble.NewAbs(autoSize.Y);
+				_sizeZ = RADouble.NewAbs(autoSize.Z);
 
 				if (isChangeEventEnabled)
 					EhSelfChanged();

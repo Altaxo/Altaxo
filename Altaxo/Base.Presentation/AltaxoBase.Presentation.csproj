@@ -1549,6 +1549,7 @@
     <Compile Include="Gui\Main\PropertyBagControl.xaml.cs">
       <DependentUpon>PropertyBagControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\PathGeometryHelper.cs" />
     <Compile Include="Gui\ProjectBrowser\CopyItemsToMultipleFoldersControl.xaml.cs">
       <DependentUpon>CopyItemsToMultipleFoldersControl.xaml</DependentUpon>
     </Compile>

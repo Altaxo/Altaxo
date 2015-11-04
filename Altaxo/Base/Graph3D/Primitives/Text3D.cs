@@ -109,6 +109,7 @@ namespace Altaxo.Graph3D.Primitives
 		{
 			var path = new System.Drawing.Drawing2D.GraphicsPath();
 			path.AddString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font).FontFamily, 0, 1000, new System.Drawing.PointF(0, 0), strgfmt);
+
 			var size = path.GetBounds();
 			path.Dispose();
 			return new VectorD3D(size.Width * font.Size / 1000.0, size.Height * font.Size / 1000.0, font.Depth);
@@ -189,6 +190,8 @@ namespace Altaxo.Graph3D.Primitives
 			var pdict = new Dictionary<PointF, int>();
 			int[] threeIndices = new int[3];
 
+			// Front face - it has a z value of +depth
+
 			foreach (var polygon in _polygons)
 			{
 				pdict.Clear();
@@ -207,7 +210,7 @@ namespace Altaxo.Graph3D.Primitives
 							int idx = pdict.Count;
 							pdict.Add(p, idx);
 							threeIndices[i] = (startIndex + idx);
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 0, -1));
+							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, _depth), new VectorD3D(0, 0, -1));
 						}
 					}
 					AddIndices(threeIndices[0], threeIndices[1], threeIndices[2]);
@@ -222,8 +225,8 @@ namespace Altaxo.Graph3D.Primitives
 				{
 					int i2 = 2 * i;
 					var p = polygon.Points[i];
+					AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, _depth), new VectorD3D(0, 1, 0));
 					AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 1, 0));
-					AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, -_depth), new VectorD3D(0, 1, 0));
 
 					// now the triangles
 					AddIndices(
@@ -248,8 +251,8 @@ namespace Altaxo.Graph3D.Primitives
 						{
 							int i2 = 2 * i;
 							var p = ph.Points[i];
+							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, _depth), new VectorD3D(0, 1, 0));
 							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 1, 0));
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, -_depth), new VectorD3D(0, 1, 0));
 
 							// now the triangles
 							AddIndices(
@@ -284,7 +287,7 @@ namespace Altaxo.Graph3D.Primitives
 							int idx = pdict.Count;
 							pdict.Add(p, idx);
 							threeIndices[i] = (startIndex + idx);
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, -_depth), new VectorD3D(0, 0, 1));
+							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 0, 1));
 						}
 					}
 					AddIndices(threeIndices[0], threeIndices[2], threeIndices[1]);

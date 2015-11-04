@@ -46,7 +46,7 @@ namespace Altaxo.Graph3D.Shapes
 				FontInfo result;
 				if (!_fontInfoDictionary.TryGetValue(id, out result))
 				{
-					result = FontManager3D.GetFontInformation(id);
+					result = FontManager3D.Instance.GetFontInformation(id);
 					_fontInfoDictionary.Add(id, result);
 				}
 				return result;
@@ -146,18 +146,18 @@ namespace Altaxo.Graph3D.Shapes
 			public StyleContext Style { get; set; }
 
 			/// <summary>X position.</summary>
-			public double X { get; set; }
+			public double PositionX { get; set; }
 
 			/// <summary>Y position.</summary>
-			public double Y { get; set; }
+			public double PositionY { get; set; }
 
 			/// <summary>Width of the object.</summary>
-			public double Width { get; set; }
+			public double SizeX { get; set; }
 
 			public double SizeZ { get; set; }
 
 			/// <summary>Height of the object. Setting this propery, you will set <see cref="ExtendAboveBaseline" /> and <see cref="ExtendBelowBaseline" /> both to Height/2.</summary>
-			public double Height
+			public double SizeY
 			{
 				get { return ExtendAboveBaseline + ExtendBelowBaseline; }
 				set { ExtendAboveBaseline = value / 2; ExtendBelowBaseline = value / 2; }
@@ -172,8 +172,8 @@ namespace Altaxo.Graph3D.Shapes
 			/// <summary></summary>
 			public virtual void Measure(MeasureContext mc, double x)
 			{
-				Width = 0;
-				Height = 0;
+				SizeX = 0;
+				SizeY = 0;
 				SizeZ = 0;
 			}
 
@@ -202,7 +202,7 @@ namespace Altaxo.Graph3D.Shapes
 			/// <returns>Width and height of the text packed into a <see cref="VectorD3D"/> structure.</returns>
 			public static VectorD3D MeasureString(string text, FontX3D font)
 			{
-				return FontManager3D.MeasureString(text, font, _stringFormat);
+				return FontManager3D.Instance.MeasureString(text, font, _stringFormat);
 			}
 		}
 
@@ -254,7 +254,7 @@ namespace Altaxo.Graph3D.Shapes
 				}
 				else
 				{
-					return line.Height;
+					return line.SizeY;
 				}
 			}
 
@@ -262,18 +262,19 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
 
-				double w = 0, h = 0;
+				double sizeX = 0, sizeY = 0, sizeZ = 0;
 				double y = 0;
 
 				foreach (var ch in _childs)
 				{
 					ch.Measure(mc, x);
-					w = Math.Max(w, ch.Width);
-					h = y + ch.Height;
+					sizeX = Math.Max(sizeX, ch.SizeX);
+					sizeY = y + ch.SizeY;
+					sizeZ = Math.Max(sizeZ, ch.SizeZ);
 					y += GetLineSpacing(ch, fontInfo);
 				}
 
-				Width = w;
+				SizeX = sizeX;
 				if (_childs.Count == 1)
 				{
 					ExtendAboveBaseline = _childs[0].ExtendAboveBaseline;
@@ -281,14 +282,15 @@ namespace Altaxo.Graph3D.Shapes
 				}
 				else if (_childs.Count == 2)
 				{
-					double heightDiff = h - (_childs[0].Height + _childs[1].Height);
-					ExtendAboveBaseline = _childs[0].Height + heightDiff / 2;
-					ExtendBelowBaseline = _childs[1].Height + heightDiff / 2;
+					double heightDiff = sizeY - (_childs[0].SizeY + _childs[1].SizeY);
+					ExtendAboveBaseline = _childs[0].SizeY + heightDiff / 2;
+					ExtendBelowBaseline = _childs[1].SizeY + heightDiff / 2;
 				}
 				else
 				{
-					Height = h;
+					SizeY = sizeY;
 				}
+				SizeZ = sizeZ;
 			}
 
 			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
@@ -311,13 +313,15 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				ExtendBelowBaseline = 0;
 				ExtendAboveBaseline = 0;
-				Width = 0;
+				SizeX = 0;
+				SizeZ = 0;
 				foreach (var glyph in _childs)
 				{
-					glyph.Measure(mc, x + Width);
+					glyph.Measure(mc, x + SizeX);
 					ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, glyph.ExtendAboveBaseline);
 					ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, glyph.ExtendBelowBaseline);
-					Width += glyph.Width;
+					SizeX += glyph.SizeX;
+					SizeZ = Math.Max(SizeZ, glyph.SizeZ);
 				}
 			}
 
@@ -327,7 +331,7 @@ namespace Altaxo.Graph3D.Shapes
 				foreach (var ch in _childs)
 				{
 					ch.Draw(g, dc, x, ybase, zbase);
-					x += ch.Width;
+					x += ch.SizeX;
 				}
 			}
 		}
@@ -362,7 +366,8 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				ExtendAboveBaseline = 0;
 				ExtendBelowBaseline = 0;
-				Width = 0;
+				SizeX = 0;
+				SizeZ = 0;
 				if (_child != null)
 				{
 					_child.Measure(mc, x);
@@ -371,7 +376,8 @@ namespace Altaxo.Graph3D.Shapes
 					double shift = (0.35 * fontInfo.cyAscent);
 					ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _child.ExtendBelowBaseline + shift);
 					ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _child.ExtendAboveBaseline - shift);
-					Width = Math.Max(Width, _child.Width);
+					SizeX = Math.Max(SizeX, _child.SizeX);
+					SizeZ = Math.Max(SizeZ, _child.SizeZ);
 				}
 			}
 
@@ -391,7 +397,8 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				ExtendAboveBaseline = 0;
 				ExtendBelowBaseline = 0;
-				Width = 0;
+				SizeX = 0;
+				SizeZ = 0;
 				if (_child != null)
 				{
 					_child.Measure(mc, x);
@@ -399,7 +406,8 @@ namespace Altaxo.Graph3D.Shapes
 					double shift = (0.35 * fontInfo.cyAscent);
 					ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _child.ExtendBelowBaseline - shift);
 					ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _child.ExtendAboveBaseline + shift);
-					Width = Math.Max(Width, _child.Width);
+					SizeX = Math.Max(SizeX, _child.SizeX);
+					SizeZ = Math.Max(SizeZ, _child.SizeZ);
 				}
 			}
 
@@ -419,13 +427,15 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				ExtendAboveBaseline = 0;
 				ExtendBelowBaseline = 0;
-				Width = 0;
+				SizeX = 0;
+				SizeZ = 0;
 				if (_child != null)
 				{
 					_child.Measure(mc, x);
 					ExtendBelowBaseline = _child.ExtendBelowBaseline;
 					ExtendAboveBaseline = _child.ExtendAboveBaseline;
-					Width = _child.Width;
+					SizeX = _child.SizeX;
+					SizeZ = _child.SizeZ;
 				}
 			}
 
@@ -435,8 +445,8 @@ namespace Altaxo.Graph3D.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase, zbase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-					double psize = FontManager3D.MeasureString(".", Style.FontId, this.StringFormat).X;
-					g.DrawString(".", Style.FontId, Style.brush, new PointD3D((xbase + _child.Width / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase), this.StringFormat);
+					double psize = FontManager3D.Instance.MeasureString(".", Style.FontId, this.StringFormat).X;
+					g.DrawString(".", Style.FontId, Style.brush, new PointD3D((xbase + _child.SizeX / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase), this.StringFormat);
 				}
 			}
 		}
@@ -447,13 +457,15 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				ExtendAboveBaseline = 0;
 				ExtendBelowBaseline = 0;
-				Width = 0;
+				SizeX = 0;
+				SizeZ = 0;
 				if (_child != null)
 				{
 					_child.Measure(mc, x);
 					ExtendBelowBaseline = _child.ExtendBelowBaseline;
 					ExtendAboveBaseline = _child.ExtendAboveBaseline;
-					Width = _child.Width;
+					SizeX = _child.SizeX;
+					SizeZ = _child.SizeZ;
 				}
 			}
 
@@ -515,7 +527,8 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				ExtendAboveBaseline = 0;
 				ExtendBelowBaseline = 0;
-				Width = 0;
+				SizeX = 0;
+				SizeZ = 0;
 
 				var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
 				if (_subscript != null)
@@ -525,7 +538,8 @@ namespace Altaxo.Graph3D.Shapes
 					double shift = (0.35 * fontInfo.cyAscent);
 					ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _subscript.ExtendBelowBaseline + shift);
 					ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _subscript.ExtendAboveBaseline - shift);
-					Width = Math.Max(Width, _subscript.Width);
+					SizeX = Math.Max(SizeX, _subscript.SizeX);
+					SizeZ = Math.Max(SizeZ, _subscript.SizeZ);
 				}
 				if (_superscript != null)
 				{
@@ -534,7 +548,8 @@ namespace Altaxo.Graph3D.Shapes
 					double shift = (0.35 * fontInfo.cyAscent);
 					ExtendBelowBaseline = Math.Max(ExtendBelowBaseline, _subscript.ExtendBelowBaseline - shift);
 					ExtendAboveBaseline = Math.Max(ExtendAboveBaseline, _subscript.ExtendAboveBaseline + shift);
-					Width = Math.Max(Width, _superscript.Width);
+					SizeX = Math.Max(SizeX, _superscript.SizeX);
+					SizeZ = Math.Max(SizeZ, _superscript.SizeZ);
 				}
 			}
 
@@ -565,9 +580,11 @@ namespace Altaxo.Graph3D.Shapes
 			public override void Measure(MeasureContext mc, double x)
 			{
 				var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
-				Width = FontManager3D.MeasureString(_text, Style.FontId, _stringFormat).X;
+				var size = FontManager3D.Instance.MeasureString(_text, Style.FontId, _stringFormat);
+				SizeX = size.X;
 				ExtendAboveBaseline = fontInfo.cyAscent;
 				ExtendBelowBaseline = fontInfo.cyDescent;
+				SizeZ = size.Z;
 			}
 
 			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
@@ -586,14 +603,14 @@ namespace Altaxo.Graph3D.Shapes
 		{
 			public override void Measure(MeasureContext mc, double x)
 			{
-				Height = 0;
-				Width = 0;
+				SizeY = 0;
+				SizeX = 0;
 				SizeZ = 0;
 
 				double tab = mc.TabStop;
 
 				if (!(tab > 0))
-					tab = FontManager3D.MeasureString("MMMM", Style.BaseFontId, _stringFormat).X;
+					tab = FontManager3D.Instance.MeasureString("MMMM", Style.BaseFontId, _stringFormat).X;
 
 				if (!(tab > 0))
 					tab = Style.BaseFontId.Size * 4;
@@ -601,7 +618,7 @@ namespace Altaxo.Graph3D.Shapes
 				if (tab > 0)
 				{
 					double t = Math.Floor(x / tab);
-					Width = (t + 1) * tab - x;
+					SizeX = (t + 1) * tab - x;
 				}
 			}
 		}
@@ -720,8 +737,9 @@ namespace Altaxo.Graph3D.Shapes
 
 			public override void Measure(MeasureContext mc, double x)
 			{
-				Width = 0;
-				Height = 0;
+				SizeX = 0;
+				SizeY = 0;
+				SizeZ = 0;
 
 				var mylayer = mc.LinkedObject as HostLayer3D;
 				if (null == mylayer)
@@ -736,9 +754,11 @@ namespace Altaxo.Graph3D.Shapes
 				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{
 					var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
-					Width = FontManager3D.MeasureString("MMM", Style.FontId, _stringFormat).X;
+					var size = FontManager3D.Instance.MeasureString("MMM", Style.FontId, _stringFormat);
+					SizeX = size.X;
 					ExtendAboveBaseline = fontInfo.cyAscent;
 					ExtendBelowBaseline = fontInfo.cyDescent;
+					SizeZ = size.Z;
 				}
 			}
 
@@ -760,14 +780,14 @@ namespace Altaxo.Graph3D.Shapes
 					IGPlotItem pa = layer.PlotItems.Flattened[_plotNumber];
 
 					PointD3D symbolpos = new PointD3D(xbase, (ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent), 0);
-					RectangleD3D symbolRect = new RectangleD3D(symbolpos, new VectorD3D(Width, 0, 0));
+					RectangleD3D symbolRect = new RectangleD3D(symbolpos, new VectorD3D(SizeX, 0, 0));
 					symbolRect.Inflate(0, fontInfo.Size, 0);
 					pa.PaintSymbol(g, symbolRect);
 
 					if (!dc.bForPreview)
 					{
 						var volume = new TransformedRectangularVolume(
-							new RectangleD3D(symbolpos.X, symbolpos.Y - 0.5 * fontInfo.cyLineSpace, 0, Width, fontInfo.cyLineSpace, 0), dc.transformMatrix);
+							new RectangleD3D(symbolpos.X, symbolpos.Y - 0.5 * fontInfo.cyLineSpace, 0, SizeX, fontInfo.cyLineSpace, 0), dc.transformMatrix);
 						dc._cachedSymbolPositions.Add(volume, pa);
 					}
 				}

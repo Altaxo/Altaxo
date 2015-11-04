@@ -173,7 +173,7 @@ namespace Altaxo.Graph3D
 		protected XYPlotLayer3D(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 			: base(info)
 		{
-			this.CoordinateSystem = new G3DCartesicCoordinateSystem();
+			this.CoordinateSystem = new CS.G3DCartesicCoordinateSystem();
 			this.AxisStyles = new AxisStyleCollection();
 			this.Scales = new ScaleCollection();
 			this.Location = new ItemLocationDirect3D();
@@ -182,7 +182,7 @@ namespace Altaxo.Graph3D
 		}
 
 		public XYPlotLayer3D(HostLayer3D parentLayer)
-			: this(parentLayer, GetChildLayerDefaultLocation(), new G3DCartesicCoordinateSystem())
+			: this(parentLayer, GetChildLayerDefaultLocation(), new CS.G3DCartesicCoordinateSystem())
 		{
 		}
 
@@ -197,7 +197,7 @@ namespace Altaxo.Graph3D
 		/// <param name="parentLayer">The parent layer of the constructed layer.</param>
 		/// <param name="location">The location of the constructed layer.</param>
 		public XYPlotLayer3D(HostLayer3D parentLayer, IItemLocation3D location)
-			: this(parentLayer, location, new G3DCartesicCoordinateSystem())
+			: this(parentLayer, location, new CS.G3DCartesicCoordinateSystem())
 		{
 		}
 

@@ -30,7 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.CS
 {
 	public class G3DCartesicCoordinateSystem : G3DCoordinateSystem
 	{

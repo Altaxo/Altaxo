@@ -221,6 +221,24 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
+		/// Gets an invariant description string, providing the font family, the size and the style of a font.
+		/// </summary>
+		/// <param name="family">The font family name.</param>
+		/// <param name="style">The font style.</param>
+		/// <returns>An invariant description string that can be used to describe the font.</returns>
+		public static string GetInvariantDescriptionStringWithoutSizeInformation(string family, FontXStyle style)
+		{
+			if (style == FontXStyle.Regular)
+			{
+				return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}", family);
+			}
+			else
+			{
+				return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}, style={1}", family, style);
+			}
+		}
+
+		/// <summary>
 		/// Extracts font family name, size and style from the invariant description string.
 		/// </summary>
 		/// <param name="fontID">Invariant description string.</param>
@@ -271,6 +289,14 @@ namespace Altaxo.Graph
 		/// The invariant description string.
 		/// </value>
 		public string InvariantDescriptionString { get { return _invariantDescriptionString; } }
+
+		/// <summary>
+		/// Gets the invariant description string, but without size information. This is useful in some caching situations, for instance caching character geometries.
+		/// </summary>
+		/// <value>
+		/// The invariant description string without size information.
+		/// </value>
+		public string InvariantDescriptionStringWithoutSizeInformation { get { return GetInvariantDescriptionStringWithoutSizeInformation(_fontFamilyName, _style); } }
 
 		/// <summary>
 		/// Gets the size of the font in Altaxo units, which are points (1/72 inch).

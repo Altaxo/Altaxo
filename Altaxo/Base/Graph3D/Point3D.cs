@@ -79,5 +79,10 @@ namespace Altaxo.Graph3D
 		{
 			return new PointD3D(v.X, v.Y, v.Z);
 		}
+
+		public override string ToString()
+		{
+			return X.ToString() + "; " + Y.ToString() + "; " + Z.ToString();
+		}
 	}
 }

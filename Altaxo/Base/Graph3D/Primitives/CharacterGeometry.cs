@@ -26,63 +26,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Primitives
 {
-	public class SceneSettings : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
+	public class CharacterGeometry
 	{
-		private Camera.CameraBase _camera;
+		private List<PolygonWithNormalsD2D> _characterContour;
 
-		public SceneSettings()
+		private IndexedTriangles _frontFace;
+
+		public IList<PolygonWithNormalsD2D> CharacterContour { get { return _characterContour; } }
+
+		public IndexedTriangles FrontFace { get { return _frontFace; } }
+
+		public double AdvanceWidth { get; protected set; }
+		public double LeftSideBearing { get; protected set; }
+		public double RightSideBearing { get; protected set; }
+
+		public CharacterGeometry(List<PolygonWithNormalsD2D> characterContour, IndexedTriangles frontFace, double advanceWidth, double leftSideBearing, double rightSideBearing)
 		{
-			//_camera = new Camera.PerspectiveCamera();
-
-			_camera = new Camera.OrthographicCamera() { Scale = 1000 };
-		}
-
-		public SceneSettings(SceneSettings from)
-		{
-			CopyFrom(from);
-		}
-
-		public virtual bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var from = obj as SceneSettings;
-
-			if (null != from)
-			{
-				this._camera = (Camera.CameraBase)from._camera.Clone();
-				EhSelfChanged();
-				return true;
-			}
-
-			return false;
-		}
-
-		public object Clone()
-		{
-			return new SceneSettings(this);
-		}
-
-		public Camera.CameraBase Camera
-		{
-			get
-			{
-				return _camera;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
-
-				_camera = value;
-
-				EhSelfChanged();
-			}
+			_characterContour = characterContour;
+			_frontFace = frontFace;
+			AdvanceWidth = advanceWidth;
+			LeftSideBearing = leftSideBearing;
+			RightSideBearing = rightSideBearing;
 		}
 	}
 }

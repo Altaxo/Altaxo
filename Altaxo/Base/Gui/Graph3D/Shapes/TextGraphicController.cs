@@ -275,11 +275,11 @@ namespace Altaxo.Gui.Graph3D.Shapes
 
 			// make sure that regular style is available
 			if (ff.IsStyleAvailable(FontStyle.Regular))
-				this._doc.Font = FontManager3D.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontStyle.Regular);
+				this._doc.Font = FontManager3D.Instance.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Regular);
 			else if (ff.IsStyleAvailable(FontStyle.Bold))
-				this._doc.Font = FontManager3D.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontStyle.Bold);
+				this._doc.Font = FontManager3D.Instance.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Bold);
 			else if (ff.IsStyleAvailable(FontStyle.Italic))
-				this._doc.Font = FontManager3D.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontStyle.Italic);
+				this._doc.Font = FontManager3D.Instance.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Italic);
 
 			_view.InvalidatePreviewPanel();
 		}

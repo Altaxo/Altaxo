@@ -32,10 +32,29 @@ namespace Altaxo.Graph3D
 {
 	public struct MatrixD3D
 	{
+		public double M11 { get; private set; }
+		public double M12 { get; private set; }
+		public double M13 { get; private set; }
+
+		public double M21 { get; private set; }
+		public double M22 { get; private set; }
+		public double M23 { get; private set; }
+
+		public double M31 { get; private set; }
+		public double M32 { get; private set; }
+		public double M33 { get; private set; }
+
+		public double M41 { get; private set; }
+		public double M42 { get; private set; }
+		public double M43 { get; private set; }
+
+		/*
 		private double M11, M12, M13;
 		private double M21, M22, M23;
 		private double M31, M32, M33;
 		private double M41, M42, M43;
+		*/
+
 		private double _determinant;
 
 		private static MatrixD3D _identityMatrix;
@@ -265,7 +284,7 @@ namespace Altaxo.Graph3D
 
 			h1 = M41 * f.M11 + M42 * f.M21 + M43 * f.M31 + f.M41;
 			h2 = M41 * f.M12 + M42 * f.M22 + M43 * f.M32 + f.M42;
-			h3 = M41 * f.M13 + M42 * f.M23 + M43 * f.M33 + f.M42;
+			h3 = M41 * f.M13 + M42 * f.M23 + M43 * f.M33 + f.M43;
 			M41 = h1; M42 = h2; M43 = h3;
 
 			_determinant *= f._determinant;

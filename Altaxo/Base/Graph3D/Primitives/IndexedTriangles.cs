@@ -26,63 +26,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Graph3D.Primitives
 {
-	public class SceneSettings : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
+	using Altaxo.Graph;
+
+	public class IndexedTriangles
 	{
-		private Camera.CameraBase _camera;
+		public PointD2D[] Vertices { get; private set; }
+		public int[] TriangleIndices { get; private set; }
 
-		public SceneSettings()
+		public IndexedTriangles(PointD2D[] vertices, int[] triangleIndices)
 		{
-			//_camera = new Camera.PerspectiveCamera();
-
-			_camera = new Camera.OrthographicCamera() { Scale = 1000 };
-		}
-
-		public SceneSettings(SceneSettings from)
-		{
-			CopyFrom(from);
-		}
-
-		public virtual bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var from = obj as SceneSettings;
-
-			if (null != from)
-			{
-				this._camera = (Camera.CameraBase)from._camera.Clone();
-				EhSelfChanged();
-				return true;
-			}
-
-			return false;
-		}
-
-		public object Clone()
-		{
-			return new SceneSettings(this);
-		}
-
-		public Camera.CameraBase Camera
-		{
-			get
-			{
-				return _camera;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
-
-				_camera = value;
-
-				EhSelfChanged();
-			}
+			Vertices = vertices;
+			TriangleIndices = triangleIndices;
 		}
 	}
 }

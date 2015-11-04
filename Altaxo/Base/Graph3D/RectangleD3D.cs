@@ -139,7 +139,7 @@ namespace Altaxo.Graph3D
 			_z = position.Z;
 			_sizeX = size.X;
 			_sizeY = size.Y;
-			_sizeZ = size.Y;
+			_sizeZ = size.Z;
 		}
 
 		public static RectangleD3D Empty
@@ -286,6 +286,28 @@ namespace Altaxo.Graph3D
 					_sizeZ = p.Z - _z;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Creates a rectangle that includes all the provided points.
+		/// </summary>
+		/// <param name="points">The points that the rectangle should include.</param>
+		/// <returns>The rectangle that includes all the provided points.</returns>
+		/// <exception cref="System.ArgumentException">Enumeration is empty!</exception>
+		public static RectangleD3D NewRectangleIncludingAllPoints(IEnumerable<PointD3D> points)
+		{
+			var en = points.GetEnumerator();
+			if (!en.MoveNext())
+				throw new ArgumentException("Enumeration is empty!", nameof(points));
+
+			var result = new RectangleD3D(en.Current, VectorD3D.Empty);
+
+			while (en.MoveNext())
+			{
+				result.ExpandToInclude(en.Current);
+			}
+
+			return result;
 		}
 
 		/// <summary>

@@ -67,8 +67,8 @@ namespace Altaxo.Graph3D.Shapes
 		/// <summary>
 		/// 2015-09-11 initial version
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 3)]
-		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphic), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -191,9 +191,9 @@ namespace Altaxo.Graph3D.Shapes
 
 		#region Background
 
-		protected void MeasureBackground(IGraphicContext3D g, double textWidth, double textHeight)
+		protected void MeasureBackground(IGraphicContext3D g, double itemSizeX, double itemSizeY, double itemSizeZ)
 		{
-			var fontInfo = FontManager3D.GetFontInformation(_font);
+			var fontInfo = FontManager3D.Instance.GetFontInformation(_font);
 
 			double widthOfOne_n = Glyph.MeasureString("n", _font).X;
 			double widthOfThree_M = Glyph.MeasureString("MMM", _font).X;
@@ -212,7 +212,7 @@ namespace Altaxo.Graph3D.Shapes
 				distanceYL = 0; // lower y distance
 			}
 
-			var size = new VectorD3D((textWidth + distanceXL + distanceXR), (textHeight + distanceYU + distanceYL), 0);
+			var size = new VectorD3D((itemSizeX + distanceXL + distanceXR), (itemSizeY + distanceYU + distanceYL), itemSizeZ);
 			_cachedExtendedTextBounds = new RectangleD3D(PointD3D.Empty, size);
 			var textRectangle = new RectangleD3D(new PointD3D(-distanceXL, -distanceYU, 0), size);
 
@@ -223,9 +223,9 @@ namespace Altaxo.Graph3D.Shapes
 
 				size = backgroundRect.Size;
 				distanceXL = -backgroundRect.X;
-				distanceXR = (backgroundRect.XPlusSizeX - textWidth);
+				distanceXR = (backgroundRect.XPlusSizeX - itemSizeX);
 				distanceYU = -backgroundRect.YPlusSizeY;
-				distanceYL = (backgroundRect.Y - textHeight);
+				distanceYL = (backgroundRect.Y - itemSizeY);
 			}
 
 			//var xanchor = _location.PivotX.GetValueRelativeTo(size.X);
@@ -452,7 +452,7 @@ namespace Altaxo.Graph3D.Shapes
 					// this.MeasureStructure(g, obj);
 					this.MeasureGlyphs(g, fontCache, paintContext);
 
-					MeasureBackground(g, _rootNode.Width, _rootNode.Height);
+					MeasureBackground(g, _rootNode.SizeX, _rootNode.SizeY, _rootNode.SizeZ);
 
 					_isMeasureInSync = true;
 				}

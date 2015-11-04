@@ -206,7 +206,7 @@ namespace Altaxo.Graph3D.Axis
 				return;
 
 			var cs = layer.CoordinateSystem;
-			if (layer.CoordinateSystem is G3DCartesicCoordinateSystem)
+			if (layer.CoordinateSystem is CS.G3DCartesicCoordinateSystem)
 			{
 				var p = new PointD3D[4];
 				p[0] = cs.GetPointOnPlane(_planeID, new Logical3D(0, 0));
