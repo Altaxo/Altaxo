@@ -99,6 +99,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 		public event Action ShowCustomTickSpacingChanged;
 
+		public event Action EditTitle;
+
 		public object LineStyleView
 		{
 			set
@@ -169,6 +171,11 @@ namespace Altaxo.Gui.Graph3D.Axis
 		{
 			if (null != ShowCustomTickSpacingChanged)
 				ShowCustomTickSpacingChanged();
+		}
+
+		private void EhEditTitle_Click(object sender, RoutedEventArgs e)
+		{
+			EditTitle?.Invoke();
 		}
 	}
 }

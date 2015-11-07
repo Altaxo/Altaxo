@@ -39,8 +39,6 @@ namespace Altaxo.Graph3D.Primitives
 		private FontX3D _font;
 		private const double distanceCutThreshold = 0.0001;
 
-		private List<Poly2Tri.Polygon> _polygons = new List<Poly2Tri.Polygon>();
-
 		public Text3D()
 		{
 		}
@@ -51,18 +49,6 @@ namespace Altaxo.Graph3D.Primitives
 			_fontSize = font.Size;
 			_depth = font.Depth;
 			_font = font;
-		}
-
-		/* This method determines whether the points an ArrayList of SDEPoint objects are clockwise or anti-clockwise.
-  * It does it by calculating the area using this alogrithm:
-  * Area = Area + (X2 - X1) * (Y2 + Y1) / 2
- * If the area is positive then it is anti-clockwise, otherwise it is clockwise.
- * @param ptArrayList an ArrayList of SDEPoint objects likely to be used to generate a polygon
-	*/
-
-		private bool isClockwise(List<PolygonPoint> ptArrayList)
-		{
-			return GetPolygonArea(ptArrayList) < 0;
 		}
 
 		private double GetPolygonArea(List<PolygonPoint> ptArrayList)
@@ -115,184 +101,95 @@ namespace Altaxo.Graph3D.Primitives
 			return new VectorD3D(size.Width * font.Size / 1000.0, size.Height * font.Size / 1000.0, font.Depth);
 		}
 
-		private void CreatePolygons()
-		{
-			_polygons.Clear();
-
-			var path = new System.Drawing.Drawing2D.GraphicsPath();
-			path.AddString(_text, new System.Drawing.FontFamily("Calibri"), 0, 1000, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
-			path.Flatten();
-			double minDist = _fontSize * distanceCutThreshold;
-
-			var types = path.PathTypes;
-			var pts = path.PathPoints;
-			var len = path.PointCount;
-			int i;
-			var l = new List<PolygonPoint>();
-
-			for (i = 0; i < len; ++i)
-			{
-				l.Add(new PolygonPoint(pts[i].X / 1000, (1000 - pts[i].Y) / 1000));
-				if ((types[i] & 0x80) != 0)
-				{
-					++i;
-					break;
-				}
-			}
-
-			if (GetDistance(l[0], l[l.Count - 1]) < minDist)
-				l.RemoveAt(l.Count - 1);
-
-			var p = new Poly2Tri.Polygon(l);
-			l.Clear();
-
-			while (i < len)
-			{
-				for (; i < len; ++i)
-				{
-					l.Add(new PolygonPoint(pts[i].X / 1000, (1000 - pts[i].Y) / 1000));
-					if ((types[i] & 0x80) != 0)
-					{
-						++i;
-						break;
-					}
-				}
-
-				if (GetDistance(l[0], l[l.Count - 1]) < minDist)
-					l.RemoveAt(l.Count - 1);
-
-				var b = isClockwise(l);
-
-				if (!b)
-				{
-					Poly2Tri.P2T.Triangulate(p);
-					_polygons.Add(p); // Trianguliere und addiere das alte Polygon
-
-					p = new Poly2Tri.Polygon(l);
-				}
-				else
-				{
-					p.AddHole(new Poly2Tri.Polygon(l));
-				}
-
-				l.Clear();
-			}
-
-			Poly2Tri.P2T.Triangulate(p);
-			_polygons.Add(p);
-		}
-
 		public void AddWithNormals(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int startIndex)
 		{
-			if (_polygons.Count == 0)
-				CreatePolygons();
+			var fm = FontManager3D.Instance;
 
-			var pdict = new Dictionary<PointF, int>();
-			int[] threeIndices = new int[3];
+			double positionX = 0;
+			double positionY = 0;
 
-			// Front face - it has a z value of +depth
+			bool isFirstChar = true;
 
-			foreach (var polygon in _polygons)
+			foreach (var textChar in _text)
 			{
-				pdict.Clear();
-				foreach (var tri in polygon.Triangles)
+				var charGeo = fm.GetCharacterGeometry(_font.Font, textChar);
+
+				double scale = this._fontSize / charGeo.FontSize;
+
+				if (isFirstChar)
 				{
-					for (int i = 0; i <= 2; ++i)
+					isFirstChar = false;
+					positionY = scale * (charGeo.LineSpacing - charGeo.BaseLine);
+					positionX = scale * (charGeo.LeftSideBearing < 0 ? -charGeo.LeftSideBearing : 0);
+				}
+
+
+				// ------ Front face ------------------
+				var frontFace = charGeo.FrontFace;
+				var frontFaceIndices = frontFace.TriangleIndices;
+
+				foreach (var pt in frontFace.Vertices)
+				{
+					AddPositionAndNormal(new PointD3D(pt.X * scale + positionX, pt.Y * scale + positionY, _depth), new VectorD3D(0, 0, 1)); // Front face vertices having z=_depth
+				}
+
+				for (int i = 0; i < frontFaceIndices.Length; i += 3)
+				{
+					AddIndices(frontFaceIndices[i + 0] + startIndex, frontFaceIndices[i + 1] + startIndex, frontFaceIndices[i + 2] + startIndex); // Front face indices
+				}
+
+				startIndex += frontFace.Vertices.Length;
+
+				// ------ Back face ------------------
+
+				foreach (var pt in frontFace.Vertices)
+				{
+					AddPositionAndNormal(new PointD3D(pt.X * scale + positionX, pt.Y * scale + positionY, 0), new VectorD3D(0, 0, -1)); // Back face vertices having z=0
+				}
+
+				for (int i = 0; i < frontFaceIndices.Length; i += 3)
+				{
+					AddIndices(frontFaceIndices[i + 0] + startIndex, frontFaceIndices[i + 2] + startIndex, frontFaceIndices[i + 1] + startIndex); // Front face indices
+				}
+
+				startIndex += frontFace.Vertices.Length;
+
+				// ------------ Walls ----------------------------
+
+				foreach (var contour in charGeo.CharacterContour)
+				{
+					var contourPoints = contour.Points;
+					var contourNormals = contour.Normals;
+
+					for (int i = 0; i < contourPoints.Length; ++i)
 					{
-						var p = new PointF(tri.Points[i].Xf, tri.Points[i].Yf);
-						int pos;
-						if (pdict.TryGetValue(p, out pos))
-						{
-							threeIndices[i] = (pos + startIndex);
-						}
-						else
-						{
-							int idx = pdict.Count;
-							pdict.Add(p, idx);
-							threeIndices[i] = (startIndex + idx);
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, _depth), new VectorD3D(0, 0, -1));
-						}
+						var pt = contourPoints[i];
+						var nm = contourNormals[i];
+						AddPositionAndNormal(new PointD3D(pt.X * scale + positionX, pt.Y * scale + positionY, _depth), new VectorD3D(nm.X, nm.Y, 0));
+						AddPositionAndNormal(new PointD3D(pt.X * scale + positionX, pt.Y * scale + positionY, 0), new VectorD3D(nm.X, nm.Y, 0));
 					}
-					AddIndices(threeIndices[0], threeIndices[1], threeIndices[2]);
-				}
-				startIndex += pdict.Count;
 
-				// now extrude the depth
-
-				int len = polygon.Points.Count;
-				int len2 = 2 * len;
-				for (int i = 0; i < len; ++i)
-				{
-					int i2 = 2 * i;
-					var p = polygon.Points[i];
-					AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, _depth), new VectorD3D(0, 1, 0));
-					AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 1, 0));
-
-					// now the triangles
-					AddIndices(
-					startIndex + i2,
-					startIndex + (i2 + 2) % len2,
-					startIndex + i2 + 1);
-
-					AddIndices(
-					startIndex + i2 + 1,
-					startIndex + (i2 + 2) % len2,
-					startIndex + (i2 + 3) % len2);
-				}
-				startIndex += len2;
-
-				if (null != polygon.Holes)
-				{
-					foreach (var ph in polygon.Holes)
+					int wallVertexCount = contourPoints.Length * 2;
+					for (int i = 0; i < contourPoints.Length; ++i)
 					{
-						len = ph.Points.Count;
-						len2 = 2 * len;
-						for (int i = 0; i < len; ++i)
-						{
-							int i2 = 2 * i;
-							var p = ph.Points[i];
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, _depth), new VectorD3D(0, 1, 0));
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 1, 0));
+						var pt0 = contourPoints[i];
+						var pt1 = contourPoints[(i + 1) % contourPoints.Length];
 
-							// now the triangles
-							AddIndices(
-							startIndex + i2,
-							startIndex + (i2 + 2) % len2,
-							startIndex + i2 + 1);
+						if (pt0 == pt1)
+							continue;
 
-							AddIndices(
-							startIndex + i2 + 1,
-							startIndex + (i2 + 2) % len2,
-							startIndex + (i2 + 3) % len2);
-						}
-						startIndex += len2;
+						var i0 = (2 * i);
+						var i1 = (2 * i + 1);
+						var i2 = (2 * i + 2) % wallVertexCount;
+						var i3 = (2 * i + 3) % wallVertexCount;
+						AddIndices(i0 + startIndex, i1 + startIndex, i2 + startIndex);
+						AddIndices(i1 + startIndex, i3 + startIndex, i2 + startIndex);
 					}
+
+					startIndex += wallVertexCount;
 				}
 
-				// now the back side
-
-				pdict.Clear();
-				foreach (var tri in polygon.Triangles)
-				{
-					for (int i = 2; i >= 0; --i)
-					{
-						var p = new PointF(tri.Points[i].Xf, tri.Points[i].Yf);
-						int pos;
-						if (pdict.TryGetValue(p, out pos))
-						{
-							threeIndices[i] = (pos + startIndex);
-						}
-						else
-						{
-							int idx = pdict.Count;
-							pdict.Add(p, idx);
-							threeIndices[i] = (startIndex + idx);
-							AddPositionAndNormal(new PointD3D(p.X * _fontSize, p.Y * _fontSize, 0), new VectorD3D(0, 0, 1));
-						}
-					}
-					AddIndices(threeIndices[0], threeIndices[2], threeIndices[1]);
-				}
-				startIndex += pdict.Count;
+				positionX += charGeo.AdvanceWidth * scale;
 			}
 		}
 	}

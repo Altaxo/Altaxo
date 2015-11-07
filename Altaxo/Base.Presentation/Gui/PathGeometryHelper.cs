@@ -36,7 +36,7 @@ namespace Altaxo.Gui
 
 	public static class PathGeometryHelper
 	{
-		public static PolygonD2D GetGlyphPolygon(PathFigure figure, double deviationAngleInDegrees, double deviationAbsolute)
+		public static PolygonD2D GetGlyphPolygon(PathFigure figure, bool reverseY, double deviationAngleInDegrees, double deviationAbsolute)
 		{
 			PolyBezierSegment polyBezierSegment;
 			PolyLineSegment polyLineSegment;
@@ -46,7 +46,7 @@ namespace Altaxo.Gui
 			if (flattenedFigure.Segments.Count != 1)
 				throw new NotSupportedException();
 
-			var points = (flattenedFigure.Segments[0] as PolyLineSegment).Points.Select(p => new PointD2D(p.X, p.Y)).ToArray();
+			var points = (flattenedFigure.Segments[0] as PolyLineSegment).Points.Select(p => ToAltaxo(p, reverseY)).ToArray();
 
 			var sharpPoints = new HashSet<PointD2D>();
 
@@ -64,7 +64,7 @@ namespace Altaxo.Gui
 					// Consider the straight line segment from the prevPoint to figure.StartPoint in the case that the startpoint and the endpoint of the figure are different
 					startVector = endVector = figure.StartPoint - prevEndPoint;
 					if (!IsSmoothJoint(startVector, prevEndVector))
-						sharpPoints.Add(prevEndPoint.ToAltaxo());
+						sharpPoints.Add(ToAltaxo(prevEndPoint, reverseY));
 					prevEndVector = endVector;
 					prevEndPoint = figure.StartPoint;
 				}
@@ -73,7 +73,7 @@ namespace Altaxo.Gui
 				GetStartAndEndVector(prevEndPoint, seg, out endPoint, out startVector, out endVector);
 
 				if (!IsSmoothJoint(startVector, prevEndVector))
-					sharpPoints.Add(prevEndPoint.ToAltaxo());
+					sharpPoints.Add(ToAltaxo(prevEndPoint, reverseY));
 
 				if (null != (polyLineSegment = (seg as PolyLineSegment)))
 				{
@@ -81,7 +81,7 @@ namespace Altaxo.Gui
 					for (int j = 0; j < polyLineSegment.Points.Count - 1; ++j)
 					{
 						if (!IsSmoothJoint(polyLineSegment.Points[j] - preP, polyLineSegment.Points[j + 1] - polyLineSegment.Points[j]))
-							sharpPoints.Add(polyLineSegment.Points[j].ToAltaxo());
+							sharpPoints.Add(ToAltaxo(polyLineSegment.Points[j], reverseY));
 						preP = polyLineSegment.Points[j];
 					}
 
@@ -91,7 +91,7 @@ namespace Altaxo.Gui
 				{
 					for (int j = 2; j < polyBezierSegment.Points.Count - 1; j += 3)
 						if (!IsSmoothJoint(polyBezierSegment.Points[j] - polyBezierSegment.Points[j - 1], polyBezierSegment.Points[j + 1] - polyBezierSegment.Points[j]))
-							sharpPoints.Add(polyBezierSegment.Points[j].ToAltaxo());
+							sharpPoints.Add(ToAltaxo(polyBezierSegment.Points[j], reverseY));
 				}
 
 				prevEndVector = endVector;
@@ -99,6 +99,14 @@ namespace Altaxo.Gui
 			}
 
 			return new PolygonD2D(points, sharpPoints);
+		}
+
+		private static PointD2D ToAltaxo(Point pt, bool reverseY)
+		{
+			if (reverseY)
+				return new PointD2D(pt.X, -pt.Y);
+			else
+				return new PointD2D(pt.X, pt.Y);
 		}
 
 		public static bool IsSmoothJoint(Vector v1, Vector v2)

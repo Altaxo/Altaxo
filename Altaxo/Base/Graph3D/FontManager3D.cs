@@ -37,6 +37,14 @@ namespace Altaxo.Graph3D
 	{
 		private static FontManager3D _instance;
 
+		/// <summary>
+		/// The _cached character outlines. Key is the invariant Gdi typeface name. Value is a dictionary with text character as key and the polygonal shape of this character as value.
+		/// </summary>
+		private Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>>();
+
+		private Bitmap _bmp = new Bitmap(16, 16);
+		private Graphics _graphics;
+
 		public static FontManager3D Instance
 		{
 			get
@@ -56,9 +64,6 @@ namespace Altaxo.Graph3D
 		{
 			_instance = new FontManager3D();
 		}
-
-		private Bitmap _bmp = new Bitmap(16, 16);
-		private Graphics _graphics;
 
 		protected FontManager3D()
 		{
@@ -94,12 +99,7 @@ namespace Altaxo.Graph3D
 
 		private const double FontSizeForCaching = 1024;
 
-		/// <summary>
-		/// The _cached character outlines. Key is the invariant Gdi typeface name. Value is a dictionary with text character as key and the polygonal shape of this character as value.
-		/// </summary>
-		private Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>>();
-
-		public Primitives.CharacterGeometry GetCharacterOutline(Altaxo.Graph.FontX font, char textChar)
+		public Primitives.CharacterGeometry GetCharacterGeometry(Altaxo.Graph.FontX font, char textChar)
 		{
 			var typefaceName = font.InvariantDescriptionStringWithoutSizeInformation;
 
@@ -130,7 +130,10 @@ namespace Altaxo.Graph3D
 
 			var indexedTriangles = Triangulate(polygons); // Triangles that can be used for the front and the back side of the character
 
-			var result = new Primitives.CharacterGeometry(polygonsWithNormal, indexedTriangles, charOutline.AdvanceWidth, charOutline.LeftSideBearing, charOutline.RightSideBearing);
+			var result = new Primitives.CharacterGeometry(
+				polygonsWithNormal, indexedTriangles,
+				charOutline.FontSize, charOutline.LineSpacing, charOutline.Baseline,
+				charOutline.AdvanceWidth, charOutline.LeftSideBearing, charOutline.RightSideBearing);
 
 			return result;
 		}
@@ -172,7 +175,7 @@ namespace Altaxo.Graph3D
 					if (!pointToIndex.TryGetValue(p2, out i2))
 					{
 						i2 = pointList.Count;
-						pointToIndex.Add(p0, i2);
+						pointToIndex.Add(p2, i2);
 						pointList.Add(p2);
 					}
 
@@ -233,10 +236,10 @@ namespace Altaxo.Graph3D
 		{
 			if (node.Contour != null && node.Contour.Count != 0)
 			{
-				var points = new List<PointD2D>(node.Contour.Select(x => new PointD2D(x.X / 65536.0, x.Y / 65536.0))).ToArray();
-				var sharpPts = new HashSet<PointD2D>(sharpPoints.Select(x => new PointD2D(x.X / 65536.0, x.Y / 65536.0)));
+				var pointsInThisPolygon = node.Contour.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
+				var sharpPointsInThisPolygon = node.Contour.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
 
-				var polygon = new PolygonD2D(points, sharpPts);
+				var polygon = new PolygonD2D(pointsInThisPolygon.ToArray(), new HashSet<PointD2D>(sharpPointsInThisPolygon));
 				polygon.IsHole = node.IsHole;
 				polygonList.Add(polygon);
 
@@ -295,6 +298,9 @@ namespace Altaxo.Graph3D
 			public double AdvanceWidth;
 			public double LeftSideBearing;
 			public double RightSideBearing;
+			public double FontSize;
+			public double LineSpacing;
+			public double Baseline;
 		}
 
 		/// <summary>

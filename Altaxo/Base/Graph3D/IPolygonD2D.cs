@@ -178,6 +178,11 @@ namespace Altaxo.Graph3D
 
 				startPoint = srcPoints[i];
 			}
+
+			if (numPoints != destIdx)
+			{
+				System.Diagnostics.Debug.Assert(destIdx == numPoints);
+			}
 		}
 
 		private PointD2D GetNormal(PointD2D polygonVector, bool isHole)

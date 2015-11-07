@@ -307,14 +307,9 @@ namespace Altaxo.Gui
 
 		#region Outlines of Wpf fonts
 
-		private static GlyphTypeface GetGlyphTypeface(Altaxo.Graph.FontX font)
+		private static Typeface GetTypeface(Altaxo.Graph.FontX font)
 		{
-			Typeface typeface = font.ToWpf();
-			GlyphTypeface gtf;
-			if (typeface.TryGetGlyphTypeface(out gtf))
-				return gtf;
-			else
-				return null;
+			return font.ToWpf();
 		}
 
 		#endregion Outlines of Wpf fonts
@@ -334,9 +329,12 @@ namespace Altaxo.Gui
 			{
 				RawCharacterOutline result = new RawCharacterOutline();
 
-				var glyphTypeface = GetGlyphTypeface(font);
+				Typeface typeface = GetTypeface(font);
+				FontFamily fontFamily = typeface.FontFamily;
 
-				if (null == glyphTypeface)
+				GlyphTypeface glyphTypeface;
+
+				if (!typeface.TryGetGlyphTypeface(out glyphTypeface))
 					return result;
 
 				ushort glyphNumber;
@@ -344,9 +342,12 @@ namespace Altaxo.Gui
 					return result;
 
 				// Fill in the geometry
-				result.AdvanceWidth = glyphTypeface.AdvanceWidths[glyphNumber];
-				result.LeftSideBearing = glyphTypeface.LeftSideBearings[glyphNumber];
-				result.RightSideBearing = glyphTypeface.RightSideBearings[glyphNumber];
+				result.AdvanceWidth = fontSize * glyphTypeface.AdvanceWidths[glyphNumber];
+				result.LeftSideBearing = fontSize * glyphTypeface.LeftSideBearings[glyphNumber];
+				result.RightSideBearing = fontSize * glyphTypeface.RightSideBearings[glyphNumber];
+				result.FontSize = fontSize;
+				result.LineSpacing = fontSize * fontFamily.LineSpacing;
+				result.Baseline = fontSize * fontFamily.Baseline;
 
 				var glyphGeo = (PathGeometry)glyphTypeface.GetGlyphOutline(glyphNumber, fontSize, 0);
 
@@ -354,7 +355,7 @@ namespace Altaxo.Gui
 
 				foreach (PathFigure figure in glyphGeo.Figures)
 				{
-					var polygon = PathGeometryHelper.GetGlyphPolygon(figure, 5, 0.001 * fontSize);
+					var polygon = PathGeometryHelper.GetGlyphPolygon(figure, true, 5, 0.001 * fontSize);
 					polygonList.Add(polygon);
 				}
 

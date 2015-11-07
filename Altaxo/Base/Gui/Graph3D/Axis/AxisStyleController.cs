@@ -47,6 +47,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 		event Action ShowCustomTickSpacingChanged;
 
+		event Action EditTitle;
+
 		object LineStyleView { set; }
 
 		object TickSpacingView { set; }
@@ -151,6 +153,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			_view.ShowMajorLabelsChanged += EhShowMajorLabelsChanged;
 			_view.ShowMinorLabelsChanged += EhShowMinorLabelsChanged;
 			_view.ShowCustomTickSpacingChanged += EhShowCustomTickSpacingChanged;
+			_view.EditTitle += EhEditAxisTitle;
 		}
 
 		protected override void DetachView()
@@ -159,6 +162,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			_view.ShowMajorLabelsChanged -= EhShowMajorLabelsChanged;
 			_view.ShowMinorLabelsChanged -= EhShowMinorLabelsChanged;
 			_view.ShowCustomTickSpacingChanged -= EhShowCustomTickSpacingChanged;
+			_view.EditTitle -= EhEditAxisTitle;
 
 			base.DetachView();
 		}
@@ -242,6 +246,16 @@ namespace Altaxo.Gui.Graph3D.Axis
 					_doc.HideMinorLabels();
 
 				OnMadeDirty();
+			}
+		}
+
+		private void EhEditAxisTitle()
+		{
+			var title = _doc.Title;
+			if (Current.Gui.ShowDialog(ref title, "Edit title", true))
+			{
+				_doc.Title = title;
+				_view.AxisTitle = _doc.TitleText;
 			}
 		}
 	}
