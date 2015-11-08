@@ -34,6 +34,12 @@ namespace Altaxo.Gui.Graph3D.Common
 		void Attach(SharpDX.ComObject hostDevice, Altaxo.Graph.PointD2D hostSize);
 
 		/// <summary>
+		/// Informes the scene that the host size has changed.
+		/// </summary>
+		/// <param name="hostSize">Size of the host.</param>
+		void SetHostSize(Altaxo.Graph.PointD2D hostSize);
+
+		/// <summary>
 		/// Detaches this scene from the scene host.
 		/// </summary>
 		void Detach();

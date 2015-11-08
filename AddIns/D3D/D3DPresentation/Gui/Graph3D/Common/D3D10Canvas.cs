@@ -207,6 +207,8 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (null != this._device)
 			{
 				this.CreateAndBindTargets();
+				Scene?.SetHostSize(HostSize);
+
 				base.OnRenderSizeChanged(sizeInfo);
 			}
 		}

@@ -181,6 +181,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
+		public void SetHostSize(Altaxo.Graph.PointD2D hostSize)
+		{
+			_hostSize = hostSize;
+		}
+
 		public void SetDrawing(D3D10GraphicContext drawing)
 		{
 			var olddrawing = _drawing;
