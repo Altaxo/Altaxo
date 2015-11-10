@@ -38,12 +38,12 @@ namespace Altaxo.Graph3D
 		private static FontManager3D _instance;
 
 		/// <summary>
-		/// The _cached character outlines. Key is the invariant Gdi typeface name. Value is a dictionary with text character as key and the polygonal shape of this character as value.
+		/// The _cached character outlines. Key is the invariant Gdi typeface name (without size information, as obtained with <see cref="Altaxo.Graph.FontX.InvariantDescriptionStringWithoutSizeInformation"/>). Value is a dictionary with text character as key and the polygonal shape of this character as value.
 		/// </summary>
-		private Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>>();
+		protected Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>>();
 
-		private Bitmap _bmp = new Bitmap(16, 16);
-		private Graphics _graphics;
+		protected Bitmap _bmp = new Bitmap(16, 16);
+		protected Graphics _graphics;
 
 		public static FontManager3D Instance
 		{
@@ -67,19 +67,28 @@ namespace Altaxo.Graph3D
 
 		protected FontManager3D()
 		{
-			_bmp = new Bitmap(16, 16);
-			_graphics = Graphics.FromImage(_bmp);
 		}
 
-		public VectorD3D MeasureString(string text, FontX3D font, StringFormat format)
+		private void EnsureGraphicsCreated()
 		{
+			if (null == _graphics)
+			{
+				_bmp = new Bitmap(16, 16);
+				_graphics = Graphics.FromImage(_bmp);
+			}
+		}
+
+		public virtual VectorD3D MeasureString(string text, FontX3D font, StringFormat format)
+		{
+			EnsureGraphicsCreated();
 			var size = _graphics.MeasureString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font), new PointF(0, 0), format);
 			return new VectorD3D(size.Width, size.Height, font.Depth);
 		}
 
-		public FontInfo GetFontInformation(FontX3D font)
+		public virtual FontInfo GetFontInformation(FontX3D font)
 		{
 			// get some properties of the font
+			EnsureGraphicsCreated();
 			var gdiFont = Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font);
 			double size = gdiFont.Size;
 			double cyLineSpace = gdiFont.GetHeight(_graphics); // space between two lines
@@ -97,7 +106,7 @@ namespace Altaxo.Graph3D
 			return new FontX3D(Altaxo.Graph.Gdi.GdiFontManager.GetFont(fontFamilyName, size, style), depth);
 		}
 
-		private const double FontSizeForCaching = 1024;
+		protected const double FontSizeForCaching = 1024;
 
 		public Primitives.CharacterGeometry GetCharacterGeometry(Altaxo.Graph.FontX font, char textChar)
 		{
@@ -120,7 +129,7 @@ namespace Altaxo.Graph3D
 			return cachedChar;
 		}
 
-		private Primitives.CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, Altaxo.Graph.FontX font)
+		protected Primitives.CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, Altaxo.Graph.FontX font)
 		{
 			var charOutline = InternalGetCharacterOutlineForCaching(textChar, font); // get the - already simplified - polygonal shape of the character
 

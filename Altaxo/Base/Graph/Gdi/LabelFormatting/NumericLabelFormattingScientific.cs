@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			double mant;
 			SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
 
-			var gdiFont = font.ToGdi();
+			var gdiFont = GdiFontManager.ToGdi(font);
 			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, new PointF(0, 0), strfmt);
 			SizeF size2 = g.MeasureString(exponent, gdiFont, new PointF(size1.Width, 0), strfmt);
 			SizeF size3 = g.MeasureString(_suffix, gdiFont, new PointF(0, 0), strfmt);
@@ -197,14 +197,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 			double mant;
 			SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
 
-			var gdiFont = font.ToGdi();
+			var gdiFont = GdiFontManager.ToGdi(font);
 			SizeF size1 = g.MeasureString(_prefix + firstpart + middelpart, gdiFont, morg, strfmt);
 			g.DrawString(_prefix + firstpart + middelpart, gdiFont, brush, morg, strfmt);
 			var orginalY = morg.Y;
 			morg.X += size1.Width;
 			morg.Y += size1.Height / 3;
 			FontX font2 = font.GetFontWithNewSize(font.Size * 2 / 3.0);
-			var gdiFont2 = font2.ToGdi();
+			var gdiFont2 = GdiFontManager.ToGdi(font2);
 			g.DrawString(exponent, gdiFont2, brush, morg);
 			if (!string.IsNullOrEmpty(_suffix))
 			{
@@ -253,7 +253,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				}
 				firstp[i] = firstpart;
 				expos[i] = exponent;
-				maxexposize = Math.Max(maxexposize, g.MeasureString(exponent, localfont2.ToGdi(), new PointF(0, 0), strfmt).Width);
+				maxexposize = Math.Max(maxexposize, g.MeasureString(exponent, GdiFontManager.ToGdi(localfont2), new PointF(0, 0), strfmt).Width);
 			}
 
 			if (firstpartmax > 0 && firstpartmax > firstpartmin) // then we must use special measures to equilibrate the mantissa
@@ -300,9 +300,9 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				_font1 = font1;
 				_font2 = font2;
 				_strfmt = strfmt;
-				_size1 = g.MeasureString(_firstpart, _font1.ToGdi(), new PointF(0, 0), strfmt);
-				_size2 = g.MeasureString(_exponent, _font2.ToGdi(), new PointF(_size1.Width, 0), strfmt);
-				_size3 = g.MeasureString(_lastpart, _font1.ToGdi(), new PointF(0, 0), strfmt);
+				_size1 = g.MeasureString(_firstpart, GdiFontManager.ToGdi(_font1), new PointF(0, 0), strfmt);
+				_size2 = g.MeasureString(_exponent, GdiFontManager.ToGdi(_font2), new PointF(_size1.Width, 0), strfmt);
+				_size3 = g.MeasureString(_lastpart, GdiFontManager.ToGdi(_font1), new PointF(0, 0), strfmt);
 				_rightPadding = maxexposize - _size2.Width;
 			}
 
@@ -316,15 +316,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			public virtual void Draw(Graphics g, BrushX brush, PointF point)
 			{
-				g.DrawString(_firstpart, _font1.ToGdi(), brush, point, _strfmt);
+				g.DrawString(_firstpart, GdiFontManager.ToGdi(_font1), brush, point, _strfmt);
 
 				point.X += _size1.Width;
 				point.Y += 0;
 
-				g.DrawString(_exponent, _font2.ToGdi(), brush, point, _strfmt);
+				g.DrawString(_exponent, GdiFontManager.ToGdi(_font2), brush, point, _strfmt);
 
 				point.X += _size2.Width;
-				g.DrawString(_lastpart, _font1.ToGdi(), brush, point, _strfmt);
+				g.DrawString(_lastpart, GdiFontManager.ToGdi(_font1), brush, point, _strfmt);
 			}
 
 			#endregion IMeasuredLabelItem Members

@@ -159,7 +159,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		public virtual System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
 		{
 			string text = _prefix + FormatItem(mtick) + _suffix;
-			return g.MeasureString(text, font.ToGdi(), morg, strfmt);
+			return g.MeasureString(text, GdiFontManager.ToGdi(font), morg, strfmt);
 		}
 
 		/// <summary>
@@ -174,7 +174,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 		public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, FontX font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
 		{
 			string text = _prefix + FormatItem(item) + _suffix;
-			g.DrawString(text, font.ToGdi(), brush, morg, strfmt);
+			g.DrawString(text, GdiFontManager.ToGdi(font), brush, morg, strfmt);
 		}
 
 		/// <summary>
@@ -221,7 +221,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				_text = itemtext;
 				_font = font;
 				_strfmt = strfmt;
-				_size = g.MeasureString(_text, _font.ToGdi(), new PointF(0, 0), strfmt);
+				_size = g.MeasureString(_text, GdiFontManager.ToGdi(_font), new PointF(0, 0), strfmt);
 			}
 
 			public virtual SizeF Size
@@ -234,7 +234,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 			public virtual void Draw(Graphics g, BrushX brush, PointF point)
 			{
-				g.DrawString(_text, _font.ToGdi(), brush, point, _strfmt);
+				g.DrawString(_text, GdiFontManager.ToGdi(_font), brush, point, _strfmt);
 			}
 
 			#endregion IMeasuredLabelItem Members

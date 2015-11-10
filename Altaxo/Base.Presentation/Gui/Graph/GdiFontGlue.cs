@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Graph
 			{
 				FontSize = value.Size;
 				FontStyle = value.Style;
-				FontFamily = value.GdiFontFamily();
+				FontFamily = GdiFontManager.GdiFontFamily(value);
 			}
 		}
 

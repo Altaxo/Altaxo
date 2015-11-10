@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Graph.Shapes
 				_view.EditText = _doc.Text;
 
 				// fill the font name combobox with all fonts
-				_view.SelectedFontFamily = _doc.Font.GdiFontFamily();
+				_view.SelectedFontFamily = GdiFontManager.GdiFontFamily(_doc.Font);
 
 				_view.SelectedFontSize = _doc.Font.Size;
 				_view.SelectedLineSpacing = _doc.LineSpacing;

@@ -722,7 +722,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var fontSize = this.FontSize;
 			float xpos = (float)(_xOffset * fontSize);
 			float ypos = (float)(-_yOffset * fontSize);
-			var gdiFont = _font.ToGdi();
+			var gdiFont = GdiFontManager.ToGdi(_font);
 			SizeF stringsize = g.MeasureString(label, gdiFont, new PointF(xpos, ypos), _cachedStringFormat);
 
 			if (this._backgroundStyle != null)
@@ -953,9 +953,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
 		{
 			if (this.IsColorProvider)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.LabelBrush.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.LabelBrush.Color; });
 			else if (this.IsBackgroundColorProvider)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._backgroundStyle.Brush.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._backgroundStyle.Brush.Color; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -965,21 +965,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsColorReceiver)
 			{
 				// try to get a constant color ...
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.LabelBrush.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.LabelBrush.Color = c; });
 			}
 
 			if (this.IsBackgroundColorReceiver)
 			{
 				if (this._backgroundColorLinkage == ColorLinkage.Dependent)
-					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._backgroundStyle.Brush.Color = c; });
+					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._backgroundStyle.Brush.Color = c; });
 				else if (this._backgroundColorLinkage == ColorLinkage.PreserveAlpha)
-					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._backgroundStyle.Brush.Color = c.NewWithAlphaValue(_backgroundStyle.Brush.Color.Color.A); });
+					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._backgroundStyle.Brush.Color = c.NewWithAlphaValue(_backgroundStyle.Brush.Color.Color.A); });
 			}
 
 			if (this.IsColorReceiver || this.IsBackgroundColorReceiver)
 			{
 				// but if there is a color evaluation function, then use that function with higher priority
-				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}
 		}
 

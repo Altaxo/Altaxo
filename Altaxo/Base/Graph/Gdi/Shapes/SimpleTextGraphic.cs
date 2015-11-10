@@ -202,15 +202,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			if (this.AutoSize)
 			{
-				var mySize = g.MeasureString(_text, _font.ToGdi());
+				var mySize = g.MeasureString(_text, GdiFontManager.ToGdi(_font));
 				this.Width = mySize.Width;
 				this.Height = mySize.Height;
-				g.DrawString(_text, _font.ToGdi(), new SolidBrush(_color), 0, 0, strfmt);
+				g.DrawString(_text, GdiFontManager.ToGdi(_font), new SolidBrush(_color), 0, 0, strfmt);
 			}
 			else
 			{
 				System.Drawing.RectangleF rect = new RectangleF(0, 0, (float)this.Width, (float)this.Height);
-				g.DrawString(_text, _font.ToGdi(), new SolidBrush(_color), rect, strfmt);
+				g.DrawString(_text, GdiFontManager.ToGdi(_font), new SolidBrush(_color), rect, strfmt);
 			}
 
 			g.Restore(gs);

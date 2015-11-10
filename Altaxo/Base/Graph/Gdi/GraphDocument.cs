@@ -813,7 +813,7 @@ typeof(GraphDocument),
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new GraphicsPath())
 				{
-					path.AddString("-", font.GdiFontFamily(), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					path.AddString("-", GdiFontManager.GdiFontFamily(font), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Height > 0)
@@ -863,7 +863,7 @@ typeof(GraphDocument),
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new GraphicsPath())
 				{
-					path.AddString("x", font.GdiFontFamily(), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					path.AddString("x", GdiFontManager.GdiFontFamily(font), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Height > 0)
@@ -889,7 +889,7 @@ typeof(GraphDocument),
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new GraphicsPath())
 				{
-					path.AddString("0", font.GdiFontFamily(), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					path.AddString("0", GdiFontManager.GdiFontFamily(font), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Width > 0)

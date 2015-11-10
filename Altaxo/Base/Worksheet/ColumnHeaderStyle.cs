@@ -102,7 +102,7 @@ namespace Altaxo.Worksheet
 			string columnnumber = dataColCol.GetColumnNumber(data).ToString();
 			string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(), dataColCol.GetColumnGroup(data));
 
-			var gdiTextFont = _textFont.ToGdi();
+			var gdiTextFont = GdiFontManager.ToGdi(_textFont);
 
 			var fontheight = gdiTextFont.GetHeight(dc);
 			Rectangle nameRectangle = cellRectangle;

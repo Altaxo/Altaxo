@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private static void InternalGetInformation(Graphics g, FontInfo result, FontX font)
 			{
 				// get some properties of the font
-				var gdiFont = font.ToGdi();
+				var gdiFont = GdiFontManager.ToGdi(font);
 				result.Size = gdiFont.Size;
 				result.cyLineSpace = gdiFont.GetHeight(g); // space between two lines
 				int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <returns>Width and height of the text packed into a <see cref="PointD2D"/> structure.</returns>
 			public static PointD2D MeasureString(Graphics g, string text, FontX font)
 			{
-				var result = g.MeasureString(text, font.ToGdi(), PointF.Empty, _stringFormat);
+				var result = g.MeasureString(text, GdiFontManager.ToGdi(font), PointF.Empty, _stringFormat);
 				return new PointD2D(result.Width, result.Height);
 			}
 		}
@@ -471,7 +471,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-					var gdiFont = Style.FontId.ToGdi();
+					var gdiFont = GdiFontManager.ToGdi(Style.FontId);
 					double psize = g.MeasureString(".", gdiFont, PointF.Empty, this.StringFormat).Width;
 					g.DrawString(".", gdiFont, Style.brush, (float)(xbase + _child.Width / 2 - psize / 2), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
@@ -500,7 +500,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-					g.DrawString("_", Style.FontId.ToGdi(), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
+					g.DrawString("_", GdiFontManager.ToGdi(Style.FontId), Style.brush, (float)(xbase), (float)(ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), this.StringFormat);
 				}
 			}
 		}
@@ -602,7 +602,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override void Measure(Graphics g, MeasureContext mc, double x)
 			{
 				var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-				Width = g.MeasureString(_text, Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
+				Width = g.MeasureString(_text, GdiFontManager.ToGdi(Style.FontId), PointF.Empty, _stringFormat).Width;
 				ExtendAboveBaseline = fontInfo.cyAscent;
 				ExtendBelowBaseline = fontInfo.cyDescent;
 			}
@@ -610,7 +610,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(g, Style.FontId);
-				g.DrawString(_text, Style.FontId.ToGdi(), Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
+				g.DrawString(_text, GdiFontManager.ToGdi(Style.FontId), Style.brush, (float)xbase, (float)(ybase - fontInfo.cyAscent), _stringFormat);
 			}
 
 			public override string ToString()
@@ -629,7 +629,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				double tab = mc.TabStop;
 
 				if (!(tab > 0))
-					tab = g.MeasureString("MMMM", Style.BaseFontId.ToGdi(), PointF.Empty, _stringFormat).Width;
+					tab = g.MeasureString("MMMM", GdiFontManager.ToGdi(Style.BaseFontId), PointF.Empty, _stringFormat).Width;
 
 				if (!(tab > 0))
 					tab = Style.BaseFontId.Size * 4;
@@ -772,7 +772,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{
 					var fontInfo = mc.FontCache.GetFontInfo(g, Style.FontId);
-					Width = g.MeasureString("MMM", Style.FontId.ToGdi(), PointF.Empty, _stringFormat).Width;
+					Width = g.MeasureString("MMM", GdiFontManager.ToGdi(Style.FontId), PointF.Empty, _stringFormat).Width;
 					ExtendAboveBaseline = fontInfo.cyAscent;
 					ExtendBelowBaseline = fontInfo.cyDescent;
 				}
@@ -827,7 +827,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class ValueOfProperty : TextGlyph
 		{
-			string _propertyName;
+			private string _propertyName;
 
 			public ValueOfProperty(StyleContext style, string propertyName)
 				: base(null, style)

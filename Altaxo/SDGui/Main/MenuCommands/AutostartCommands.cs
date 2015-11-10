@@ -56,7 +56,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Current.SetHighResolutionClock(new Altaxo.Main.Services.HighResolutionClock());
 			Altaxo.Current.SetTimerQueue(new Altaxo.Main.Services.TimerQueue(Altaxo.Current.HighResolutionClock));
 
-			Altaxo.Graph.Gdi.GdiFontManager.Register();
+			//Altaxo.Graph.Gdi.GdiFontManager.Register();
 			Altaxo.Gui.WpfFontManager.Register();
 
 			// we construct the main document (for now)

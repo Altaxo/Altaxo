@@ -34,55 +34,101 @@ namespace Altaxo.Graph.Gdi
 	/// <summary>
 	/// Manages <see cref="System.Drawing.Font"/> instances and corresponds them with the Altaxo fonts  (<see cref="FontX"/>).
 	/// </summary>
-	public static class GdiFontManager
+	public class GdiFontManager
 	{
-		private static System.Drawing.FontConverter _fontConverter = new System.Drawing.FontConverter();
+		protected static GdiFontManager _instance;
 
-		/// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.</summary>
-		private static System.Collections.Concurrent.ConcurrentDictionary<string, Font> _fontDictionary = new System.Collections.Concurrent.ConcurrentDictionary<string, Font>();
+		protected System.Drawing.FontConverter _gdiFontConverter = new System.Drawing.FontConverter();
+
+		/// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.
+		/// Key is the invariant description string, value is the Gdi font instance with the specific style and size.
+		/// </summary>
+		protected System.Collections.Concurrent.ConcurrentDictionary<string, Font> _descriptionToGdiFont = new System.Collections.Concurrent.ConcurrentDictionary<string, Font>();
 
 		/// <summary>Corresponds the font's invariant description string with a reference counter. It counts the number of <see cref="FontX"/> instances with this description string.
 		/// When the reference counter falls down to zero, the Gdi+ font instance can be released.</summary>
-		private static System.Collections.Concurrent.ConcurrentDictionary<string, int> _fontReferenceCounter = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+		protected System.Collections.Concurrent.ConcurrentDictionary<string, int> _gdiFontReferenceCounter = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
 
-		private static ConcurrentDictionary<string, FontStylePresence> _availableFontFamilies;
+		protected ConcurrentDictionary<string, FontStylePresence> _gdiFontFamilies;
 
 		/// <summary>
 		/// Registers this instance with the <see cref="FontX"/> font system.
 		/// </summary>
 		public static void Register()
 		{
-			// empty function - but when called, the static constructor is called, which then registers this FontManager with FontX
+			// when called, the instance of this class is set to a new instance of this class,
+			// which then registers this FontManager with FontX
+
+			if (null == _instance)
+				SetInstance(new GdiFontManager());
 		}
 
-		static GdiFontManager()
+		public static void SetInstance(GdiFontManager newInstance)
+		{
+			var oldInstance = _instance;
+
+			if (!object.ReferenceEquals(oldInstance, newInstance))
+			{
+				_instance = newInstance;
+
+				oldInstance?.Dispose();
+			}
+		}
+
+		protected GdiFontManager()
 		{
 			FontX.FontConstructed += EhAnnounceConstructionOfFontX;
 			FontX.FontDestructed += EhAnnounceDestructionOfFontX;
 
 			Microsoft.Win32.SystemEvents.InstalledFontsChanged += EhInstalledFontsChanged;
-			_availableFontFamilies = EnumerateAvailableFonts();
+
+			InternalBuildDictionaries();
 		}
 
-		private static ConcurrentDictionary<string, FontStylePresence> EnumerateAvailableFonts()
+		protected virtual void Dispose()
+		{
+			FontX.FontConstructed -= EhAnnounceConstructionOfFontX;
+			FontX.FontDestructed -= EhAnnounceDestructionOfFontX;
+
+			Microsoft.Win32.SystemEvents.InstalledFontsChanged -= EhInstalledFontsChanged;
+		}
+
+		protected virtual void InternalBuildDictionaries()
+		{
+			_gdiFontFamilies = BuildGdiFontFamilies();
+		}
+
+		protected virtual ConcurrentDictionary<string, FontStylePresence> BuildGdiFontFamilies()
 		{
 			var dict = new ConcurrentDictionary<string, FontStylePresence>();
 			foreach (var fontFamily in System.Drawing.FontFamily.Families)
 			{
-				FontStylePresence pres = FontStylePresence.NoStyleAvailable;
-				if (fontFamily.IsStyleAvailable(FontStyle.Regular))
-					pres |= FontStylePresence.RegularStyleAvailable;
-				if (fontFamily.IsStyleAvailable(FontStyle.Bold))
-					pres |= FontStylePresence.BoldStyleAvailable;
-				if (fontFamily.IsStyleAvailable(FontStyle.Italic))
-					pres |= FontStylePresence.ItalicStyleAvailable;
-				if (fontFamily.IsStyleAvailable(FontStyle.Bold | FontStyle.Italic))
-					pres |= FontStylePresence.BoldAndItalicStyleAvailable;
+				FontStylePresence pres = GetFontStylePresence(fontFamily);
 
 				if (FontStylePresence.NoStyleAvailable != pres)
 					dict.TryAdd(fontFamily.Name, pres);
 			}
 			return dict;
+		}
+
+		protected static FontStylePresence GetFontStylePresence(FontFamily fontFamily)
+		{
+			FontStylePresence pres = FontStylePresence.NoStyleAvailable;
+			if (fontFamily.IsStyleAvailable(FontStyle.Regular))
+				pres |= FontStylePresence.RegularStyleAvailable;
+			if (fontFamily.IsStyleAvailable(FontStyle.Bold))
+				pres |= FontStylePresence.BoldStyleAvailable;
+			if (fontFamily.IsStyleAvailable(FontStyle.Italic))
+				pres |= FontStylePresence.ItalicStyleAvailable;
+			if (fontFamily.IsStyleAvailable(FontStyle.Bold | FontStyle.Italic))
+				pres |= FontStylePresence.BoldAndItalicStyleAvailable;
+			return pres;
+		}
+
+		protected virtual void InternalGetAvailableFontFamilies(IDictionary<string, FontStylePresence> dictionaryToStoreTheResult)
+		{
+			foreach (var entry in _gdiFontFamilies)
+				dictionaryToStoreTheResult.Add(entry.Key, entry.Value);
 		}
 
 		public static void GetAvailableFontFamilies(IDictionary<string, FontStylePresence> dictionaryToStoreTheResult)
@@ -92,8 +138,19 @@ namespace Altaxo.Graph.Gdi
 			if (dictionaryToStoreTheResult.Count != 0)
 				throw new ArgumentException("The provided dictionary is not empty");
 
-			foreach (var entry in _availableFontFamilies)
-				dictionaryToStoreTheResult.Add(entry.Key, entry.Value);
+			_instance.InternalGetAvailableFontFamilies(dictionaryToStoreTheResult);
+		}
+
+		/// <summary>
+		/// Determines whether a font family with the provided name is available.
+		/// </summary>
+		/// <param name="fontFamilyName">Name of the font family to test.</param>
+		/// <returns>
+		///   <c>true</c> if a font family with the given font family name is available; otherwise, <c>false</c>.
+		/// </returns>
+		protected virtual bool InternalIsFontFamilyAvailable(string fontFamilyName)
+		{
+			return _gdiFontFamilies.ContainsKey(fontFamilyName);
 		}
 
 		/// <summary>
@@ -105,7 +162,21 @@ namespace Altaxo.Graph.Gdi
 		/// </returns>
 		public static bool IsFontFamilyAvailable(string fontFamilyName)
 		{
-			return _availableFontFamilies.ContainsKey(fontFamilyName);
+			return _instance.InternalIsFontFamilyAvailable(fontFamilyName);
+		}
+
+		/// <summary>
+		/// Determines whether a font with the given font family name and font style is available.
+		/// </summary>
+		/// <param name="fontFamilyName">Name of the font family.</param>
+		/// <param name="style">The font style to test for (underline and strikeout are always available, thus they are not tested).</param>
+		/// <returns>
+		///   <c>true</c> if a font with the provided family name and style is available; otherwise, <c>false</c>.
+		/// </returns>
+		protected virtual bool InternalIsFontFamilyAndStyleAvailable(string fontFamilyName, FontXStyle style)
+		{
+			FontStylePresence pres;
+			return _gdiFontFamilies.TryGetValue(fontFamilyName, out pres) && pres.HasFlag(ConvertFontXStyleToFontStylePresence(style));
 		}
 
 		/// <summary>
@@ -118,8 +189,7 @@ namespace Altaxo.Graph.Gdi
 		/// </returns>
 		public static bool IsFontFamilyAndStyleAvailable(string fontFamilyName, FontXStyle style)
 		{
-			FontStylePresence pres;
-			return _availableFontFamilies.TryGetValue(fontFamilyName, out pres) && pres.HasFlag(ConvertFontXStyleToFontStylePresence(style));
+			return _instance.InternalIsFontFamilyAndStyleAvailable(fontFamilyName, style);
 		}
 
 		/// <summary>
@@ -170,27 +240,47 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
+		/// Gets a GDI font from the invariant string using the fontConverter.
+		/// </summary>
+		/// <param name="invariantDescriptionString">The invariant description string.</param>
+		/// <returns>Gdi font.</returns>
+		protected virtual Font InternalGetGdiFontFromInvariantString(string invariantDescriptionString)
+		{
+			return (Font)_gdiFontConverter.ConvertFromInvariantString(invariantDescriptionString);
+		}
+
+		/// <summary>
 		/// Retrieves the Gdi+ font instance that the provided <see cref="FontX"/> argument is describing.
 		/// </summary>
 		/// <param name="fontX">The fontX instance.</param>
 		/// <returns>The Gdi+ font instance that corresponds with the argument. If the font family of the fontX argument is not found, a default font (Microsoft Sans Serif) is returned.</returns>
-		public static Font ToGdi(this FontX fontX)
+		protected virtual Font InternalToGdi(FontX fontX)
 		{
 			string fontID = fontX.InvariantDescriptionString;
 			Font result;
-			if (!_fontDictionary.TryGetValue(fontID, out result))
+			if (!_descriptionToGdiFont.TryGetValue(fontID, out result))
 			{
-				result = _fontDictionary.AddOrUpdate(fontID,
-					x => (Font)_fontConverter.ConvertFromInvariantString(x),
+				result = _descriptionToGdiFont.AddOrUpdate(fontID,
+					x => InternalGetGdiFontFromInvariantString(x),
 					(x, y) => y);
 			}
 
 			return result;
 		}
 
+		/// <summary>
+		/// Retrieves the Gdi+ font instance that the provided <see cref="FontX"/> argument is describing.
+		/// </summary>
+		/// <param name="fontX">The fontX instance.</param>
+		/// <returns>The Gdi+ font instance that corresponds with the argument. If the font family of the fontX argument is not found, a default font (Microsoft Sans Serif) is returned.</returns>
+		public static Font ToGdi(FontX fontX)
+		{
+			return _instance.InternalToGdi(fontX);
+		}
+
 		/// <summary>Gets the height of the font in points (1/72 inch).</summary>
 		/// <param name="fontX">The font instance.</param>
-		public static double Height(this FontX fontX)
+		public static double Height(FontX fontX)
 		{
 			return ToGdi(fontX).GetHeight(72);
 		}
@@ -200,7 +290,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="fontX">The provided FontX instance.</param>
 		/// <returns>The Gdi font family of the Gdi font which is associated with the provided FontX instance.</returns>
-		public static FontFamily GdiFontFamily(this FontX fontX)
+		public static FontFamily GdiFontFamily(FontX fontX)
 		{
 			return ToGdi(fontX).FontFamily;
 		}
@@ -209,23 +299,23 @@ namespace Altaxo.Graph.Gdi
 		/// Is called upon every construction of a <see cref="FontX"/> instance.
 		/// </summary>
 		/// <param name="fontID">The invariant description string of the constructed <see cref="FontX"/> instance.</param>
-		private static void EhAnnounceConstructionOfFontX(string fontID)
+		protected virtual void EhAnnounceConstructionOfFontX(string fontID)
 		{
-			_fontReferenceCounter.AddOrUpdate(fontID, 1, (x, y) => y + 1);
+			_gdiFontReferenceCounter.AddOrUpdate(fontID, 1, (x, y) => y + 1);
 		}
 
 		/// <summary>
 		/// Is called upon every destruction of a <see cref="FontX"/> instance.
 		/// </summary>
 		/// <param name="fontID">The invariant description string of the destructed <see cref="FontX"/> instance.</param>
-		private static void EhAnnounceDestructionOfFontX(string fontID)
+		protected virtual void EhAnnounceDestructionOfFontX(string fontID)
 		{
-			int refCount = _fontReferenceCounter.AddOrUpdate(fontID, 0, (x, y) => Math.Max(0, y - 1));
+			int refCount = _gdiFontReferenceCounter.AddOrUpdate(fontID, 0, (x, y) => Math.Max(0, y - 1));
 			if (0 == refCount)
 			{
-				_fontReferenceCounter.TryRemove(fontID, out refCount);
+				_gdiFontReferenceCounter.TryRemove(fontID, out refCount);
 				Font gdiFont;
-				_fontDictionary.TryRemove(fontID, out gdiFont);
+				_descriptionToGdiFont.TryRemove(fontID, out gdiFont);
 			}
 		}
 
@@ -234,9 +324,9 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private static void EhInstalledFontsChanged(object sender, EventArgs e)
+		protected virtual void EhInstalledFontsChanged(object sender, EventArgs e)
 		{
-			_availableFontFamilies = EnumerateAvailableFonts();
+			_gdiFontFamilies = BuildGdiFontFamilies();
 		}
 	}
 }

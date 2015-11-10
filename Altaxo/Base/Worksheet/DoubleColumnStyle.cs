@@ -95,9 +95,9 @@ namespace Altaxo.Worksheet
 			string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
 
 			if (bSelected)
-				dc.DrawString(myString, _textFont.ToGdi(), _defaultSelectedTextBrush, cellRectangle, _textFormat);
+				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
 			else
-				dc.DrawString(myString, _textFont.ToGdi(), _textBrush, cellRectangle, _textFormat);
+				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _textBrush, cellRectangle, _textFormat);
 		}
 
 		public static Dictionary<System.Type, Action<DoubleColumnStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, Graph.RectangleD, int, Data.DataColumn, bool>>();

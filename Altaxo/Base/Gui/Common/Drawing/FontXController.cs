@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null != _view)
 			{
 				// fill the font name combobox with all fonts
-				_view.SelectedFontFamily = _doc.GdiFontFamily();
+				_view.SelectedFontFamily = GdiFontManager.GdiFontFamily(_doc);
 				_view.SelectedFontSize = _doc.Size;
 			}
 		}

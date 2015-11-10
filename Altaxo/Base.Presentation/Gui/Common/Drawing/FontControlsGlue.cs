@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				_font = value;
 
-				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = _font.GdiFontFamily();
+				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(_font);
 				if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
 				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
 			}
@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbFontFamily = value;
 				if (_font != null && _cbFontFamily != null)
-					_cbFontFamily.SelectedFontFamily = _font.GdiFontFamily();
+					_cbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(_font);
 
 				if (_cbFontFamily != null)
 					dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
