@@ -33,7 +33,7 @@ namespace Altaxo.Geometry
 	/// <summary>
 	/// Implementation of a closed polygon in 2D space.
 	/// </summary>
-	public class PolygonD2D
+	public class PolygonClosedD2D
 	{
 		protected PointD2D[] _points;
 
@@ -47,15 +47,15 @@ namespace Altaxo.Geometry
 		/// <value>
 		/// The parent.
 		/// </value>
-		public PolygonD2D Parent { get; set; }
+		public PolygonClosedD2D Parent { get; set; }
 
-		public PolygonD2D(PointD2D[] points, HashSet<PointD2D> sharpPoints)
+		public PolygonClosedD2D(PointD2D[] points, HashSet<PointD2D> sharpPoints)
 		{
 			_points = points;
 			_sharpPoints = sharpPoints;
 		}
 
-		public PolygonD2D(PolygonD2D template, double scale)
+		public PolygonClosedD2D(PolygonClosedD2D template, double scale)
 		{
 			_points = template._points.Select(p => new PointD2D(p.X * scale, p.Y * scale)).ToArray();
 			_sharpPoints = new HashSet<PointD2D>(template._sharpPoints.Select(p => new PointD2D(p.X * scale, p.Y * scale)));

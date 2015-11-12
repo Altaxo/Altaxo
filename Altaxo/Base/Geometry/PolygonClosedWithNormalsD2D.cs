@@ -34,7 +34,7 @@ namespace Altaxo.Geometry
 	/// Stores a closed polygon and the normals. In order to distinguish between soft vertices and sharp vertices, the sharp vertices are
 	/// stored twice, because every sharp vertex has two normals. Thus there is a 1:1 relationship between the indices of the normals and the points.
 	/// </summary>
-	public class PolygonWithNormalsD2D
+	public class PolygonClosedWithNormalsD2D
 	{
 		private PointD2D[] _points;
 		private PointD2D[] _normals;
@@ -42,7 +42,7 @@ namespace Altaxo.Geometry
 		public PointD2D[] Points { get { return _points; } }
 		public PointD2D[] Normals { get { return _normals; } }
 
-		public PolygonWithNormalsD2D(PolygonD2D template)
+		public PolygonClosedWithNormalsD2D(PolygonClosedD2D template)
 		{
 			var numPoints = template.Points.Length + template.SharpPoints.Count;
 

@@ -26,12 +26,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
-	public struct PointsTupleD3D
+	public class RectangleTransformedD3D
 	{
-		public PointD3D P1;
-		public PointD3D P2;
+		private RectangleD3D _rectangle;
+		private MatrixD3D _transformation;
+
+		public RectangleTransformedD3D(RectangleD3D rectangle, MatrixD3D transformation)
+		{
+			_rectangle = rectangle;
+			_transformation = transformation;
+		}
 	}
 }

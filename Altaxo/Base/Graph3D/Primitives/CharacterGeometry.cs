@@ -32,11 +32,11 @@ namespace Altaxo.Graph3D.Primitives
 {
 	public class CharacterGeometry
 	{
-		private List<PolygonWithNormalsD2D> _characterContour;
+		private List<PolygonClosedWithNormalsD2D> _characterContour;
 
 		private IndexedTriangles _frontFace;
 
-		public IList<PolygonWithNormalsD2D> CharacterContour { get { return _characterContour; } }
+		public IList<PolygonClosedWithNormalsD2D> CharacterContour { get { return _characterContour; } }
 
 		public IndexedTriangles FrontFace { get { return _frontFace; } }
 
@@ -47,7 +47,7 @@ namespace Altaxo.Graph3D.Primitives
 		public double LeftSideBearing { get; protected set; }
 		public double RightSideBearing { get; protected set; }
 
-		public CharacterGeometry(List<PolygonWithNormalsD2D> characterContour, IndexedTriangles frontFace,
+		public CharacterGeometry(List<PolygonClosedWithNormalsD2D> characterContour, IndexedTriangles frontFace,
 			double fontSize, double lineSpacing, double baseLine,
 			double advanceWidth, double leftSideBearing, double rightSideBearing)
 		{

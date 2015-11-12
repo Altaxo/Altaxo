@@ -37,7 +37,7 @@ namespace Altaxo.Gui
 
 	public static class PathGeometryHelper
 	{
-		public static PolygonD2D GetGlyphPolygon(PathFigure figure, bool reverseY, double deviationAngleInDegrees, double deviationAbsolute)
+		public static PolygonClosedD2D GetGlyphPolygon(PathFigure figure, bool reverseY, double deviationAngleInDegrees, double deviationAbsolute)
 		{
 			PolyBezierSegment polyBezierSegment;
 			PolyLineSegment polyLineSegment;
@@ -99,7 +99,7 @@ namespace Altaxo.Gui
 				prevEndPoint = endPoint;
 			}
 
-			return new PolygonD2D(points, sharpPoints);
+			return new PolygonClosedD2D(points, sharpPoints);
 		}
 
 		private static PointD2D ToAltaxo(Point pt, bool reverseY)

@@ -53,7 +53,7 @@ namespace Altaxo.Graph3D.Shapes
 		#region Cached or temporary variables
 
 		/// <summary>Hashtable where the keys are graphic paths giving the position of a symbol into the list, and the values are the plot items.</summary>
-		protected Dictionary<TransformedRectangularVolume, IGPlotItem> _cachedSymbolPositions = new Dictionary<TransformedRectangularVolume, IGPlotItem>();
+		protected Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
 
 		private StructuralGlyph _rootNode;
 		protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created

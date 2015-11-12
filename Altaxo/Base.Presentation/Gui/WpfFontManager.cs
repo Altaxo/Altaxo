@@ -608,7 +608,7 @@ namespace Altaxo.Gui
 
 				var glyphGeo = (PathGeometry)glyphTypeface.GetGlyphOutline(glyphNumber, fontSize, 0);
 
-				var polygonList = new List<PolygonD2D>();
+				var polygonList = new List<PolygonClosedD2D>();
 
 				foreach (PathFigure figure in glyphGeo.Figures)
 				{

@@ -130,7 +130,7 @@ namespace Altaxo.Graph3D.Shapes
 
 			public bool bForPreview { get; set; }
 
-			public Dictionary<TransformedRectangularVolume, IGPlotItem> _cachedSymbolPositions = new Dictionary<TransformedRectangularVolume, IGPlotItem>();
+			public Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
 			public MatrixD3D transformMatrix;
 		}
 
@@ -788,7 +788,7 @@ namespace Altaxo.Graph3D.Shapes
 
 					if (!dc.bForPreview)
 					{
-						var volume = new TransformedRectangularVolume(
+						var volume = new RectangleTransformedD3D(
 							new RectangleD3D(symbolpos.X, symbolpos.Y - 0.5 * fontInfo.cyLineSpace, 0, SizeX, fontInfo.cyLineSpace, 0), dc.transformMatrix);
 						dc._cachedSymbolPositions.Add(volume, pa);
 					}

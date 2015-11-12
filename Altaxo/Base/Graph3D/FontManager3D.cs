@@ -136,7 +136,7 @@ namespace Altaxo.Graph3D
 
 			var polygons = charOutline.Outline;
 
-			var polygonsWithNormal = new List<PolygonWithNormalsD2D>(polygons.Select(poly => new PolygonWithNormalsD2D(poly))); // get the polygons with normal, used to form the walls of the character
+			var polygonsWithNormal = new List<PolygonClosedWithNormalsD2D>(polygons.Select(poly => new PolygonClosedWithNormalsD2D(poly))); // get the polygons with normal, used to form the walls of the character
 
 			var indexedTriangles = Triangulate(polygons); // Triangles that can be used for the front and the back side of the character
 
@@ -153,7 +153,7 @@ namespace Altaxo.Graph3D
 		/// </summary>
 		/// <param name="polygons">The polygons to triangulate.</param>
 		/// <returns>Instance of the <see cref="Primitives.IndexedTriangles"/> class, which holds the triangle vertices as well as the indices.</returns>
-		private static Primitives.IndexedTriangles Triangulate(IList<PolygonD2D> polygons)
+		private static Primitives.IndexedTriangles Triangulate(IList<PolygonClosedD2D> polygons)
 		{
 			var triangles = GetTriangles(polygons);
 			var pointList = new List<PointD2D>();
@@ -232,8 +232,8 @@ namespace Altaxo.Graph3D
 			clipper.AddPaths(clipperPolygonsInput, ClipperLib.PolyType.ptSubject, true);
 			clipper.Execute(ClipperLib.ClipType.ctUnion, clipperPolygons, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNegative);
 
-			var polygons = new List<PolygonD2D>();
-			var dictClipperNodeToNode = new Dictionary<ClipperLib.PolyNode, PolygonD2D>(); // helper dictionary
+			var polygons = new List<PolygonClosedD2D>();
+			var dictClipperNodeToNode = new Dictionary<ClipperLib.PolyNode, PolygonClosedD2D>(); // helper dictionary
 			ClipperPolyTreeToPolygonListRecursively(clipperPolygons, sharpPoints, allPoints, polygons, dictClipperNodeToNode);
 
 			var result = rawOutline;
@@ -242,14 +242,14 @@ namespace Altaxo.Graph3D
 			return result;
 		}
 
-		private static void ClipperPolyTreeToPolygonListRecursively(ClipperLib.PolyNode node, HashSet<ClipperLib.IntPoint> sharpPoints, HashSet<ClipperLib.IntPoint> allPoints, List<PolygonD2D> polygonList, IDictionary<ClipperLib.PolyNode, PolygonD2D> dictClipperNodeToNode)
+		private static void ClipperPolyTreeToPolygonListRecursively(ClipperLib.PolyNode node, HashSet<ClipperLib.IntPoint> sharpPoints, HashSet<ClipperLib.IntPoint> allPoints, List<PolygonClosedD2D> polygonList, IDictionary<ClipperLib.PolyNode, PolygonClosedD2D> dictClipperNodeToNode)
 		{
 			if (node.Contour != null && node.Contour.Count != 0)
 			{
 				var pointsInThisPolygon = node.Contour.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
 				var sharpPointsInThisPolygon = node.Contour.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
 
-				var polygon = new PolygonD2D(pointsInThisPolygon.ToArray(), new HashSet<PointD2D>(sharpPointsInThisPolygon));
+				var polygon = new PolygonClosedD2D(pointsInThisPolygon.ToArray(), new HashSet<PointD2D>(sharpPointsInThisPolygon));
 				polygon.IsHole = node.IsHole;
 				polygonList.Add(polygon);
 
@@ -270,7 +270,7 @@ namespace Altaxo.Graph3D
 			}
 		}
 
-		public static List<Poly2Tri.Polygon> GetTriangles(IList<PolygonD2D> polygons)
+		public static List<Poly2Tri.Polygon> GetTriangles(IList<PolygonClosedD2D> polygons)
 		{
 			var result = new List<Poly2Tri.Polygon>();
 
@@ -304,7 +304,7 @@ namespace Altaxo.Graph3D
 
 		protected struct RawCharacterOutline
 		{
-			public IList<PolygonD2D> Outline;
+			public IList<PolygonClosedD2D> Outline;
 			public double AdvanceWidth;
 			public double LeftSideBearing;
 			public double RightSideBearing;

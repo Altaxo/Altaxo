@@ -289,7 +289,7 @@
     <Compile Include="Graph3D\Plot\SurfacePlotItem.cs" />
     <Compile Include="Graph3D\Plot\XYColumnPlotItem.cs" />
     <Compile Include="Geometry\Point3D.cs" />
-    <Compile Include="Geometry\Point3DMath.cs" />
+    <Compile Include="Geometry\Math3D.cs" />
     <Compile Include="Graph3D\Primitives\BezierCurveFlattener.cs" />
     <Compile Include="Graph3D\Primitives\CharacterGeometry.cs" />
     <Compile Include="Graph3D\Primitives\CrossSection.cs" />
@@ -311,7 +311,7 @@
     <Compile Include="Graph3D\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph3D\Shapes\TextGraphic_Parser.cs" />
     <Compile Include="Graph3D\Shapes\TextGraphic_TreeWalker.cs" />
-    <Compile Include="Geometry\TransformedRectangularVolume.cs" />
+    <Compile Include="Geometry\RectangleTransformedD3D.cs" />
     <Compile Include="Geometry\VectorD3D.cs" />
     <Compile Include="Graph3D\XYPlotLayer3D.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinColorSet.cs" />

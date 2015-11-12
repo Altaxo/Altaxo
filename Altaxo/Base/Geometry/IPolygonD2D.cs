@@ -22,23 +22,33 @@
 
 #endregion Copyright
 
+using Altaxo.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
-	public class TransformedRectangularVolume
+	/// <summary>
+	/// Represents a closed polygon in 2D space.
+	/// </summary>
+	public interface IPolygonD2D
 	{
-		private RectangleD3D _rectangle;
-		private MatrixD3D _transformation;
+		/// <summary>
+		/// Gets the points that form the closed polygon.
+		/// </summary>
+		/// <value>
+		/// The points.
+		/// </value>
+		IList<PointD2D> Points { get; }
 
-		public TransformedRectangularVolume(RectangleD3D rectangle, MatrixD3D transformation)
-		{
-			_rectangle = rectangle;
-			_transformation = transformation;
-		}
+		/// <summary>
+		/// Gets the points of the polygon which are sharp points. Points of the polygon which are not in this set are considered to be soft points.
+		/// </summary>
+		/// <value>
+		/// The sharp points.
+		/// </value>
+		ISet<PointD2D> SharpPoints { get; }
 	}
 }
