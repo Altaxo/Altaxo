@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph;
 
 	public class FontManager3D

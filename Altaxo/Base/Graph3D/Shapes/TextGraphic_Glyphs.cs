@@ -31,6 +31,7 @@ using System.Text;
 
 namespace Altaxo.Graph3D.Shapes
 {
+	using Altaxo.Geometry;
 	using Graph.Plot.Data;
 	using GraphicsContext;
 	using Plot;

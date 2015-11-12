@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Collections;
+	using Altaxo.Geometry;
 	using Altaxo.Graph3D;
 	using Altaxo.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
@@ -182,10 +183,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_controller.EhMouseWheel(relX, relY, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth, e.Delta);
 		}
 
-		private Altaxo.Graph3D.PointD3D GetMousePosition(MouseEventArgs e)
+		private PointD3D GetMousePosition(MouseEventArgs e)
 		{
 			var p = e.GetPosition(_d3dCanvas);
-			return new Altaxo.Graph3D.PointD3D(p.X / _d3dCanvas.ActualWidth, 1 - p.Y / _d3dCanvas.ActualHeight, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth);
+			return new PointD3D(p.X / _d3dCanvas.ActualWidth, 1 - p.Y / _d3dCanvas.ActualHeight, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth);
 		}
 
 		private void EhGraphPanel_MouseMove(object sender, MouseEventArgs e)

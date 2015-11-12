@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph3D.GraphicsContext;
 using System;
 
@@ -65,6 +66,6 @@ namespace Altaxo.Graph3D.Shapes
 		/// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
 		bool IsCompatibleWithParent(object parentObject);
 
-		Altaxo.Graph3D.PointD3D Position { get; set; }
+		PointD3D Position { get; set; }
 	}
 }

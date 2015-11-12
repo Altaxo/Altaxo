@@ -223,6 +223,11 @@
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\TableDataSourceBase.cs" />
+    <Compile Include="Geometry\IPolygonD2D.cs" />
+    <Compile Include="Geometry\PointsTupleD3D.cs" />
+    <Compile Include="Geometry\PolygonClosedD2D.cs" />
+    <Compile Include="Geometry\PolygonClosedWithNormalsD2D.cs" />
+    <Compile Include="Geometry\RayD3D.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Graph3D\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph3D\Axis\AxisLineStyle.cs" />
@@ -263,7 +268,6 @@
     <Compile Include="Graph3D\IMaterial3D.cs" />
     <Compile Include="Graph3D\IObjectOutline.cs" />
     <Compile Include="Graph3D\IPlotArea3D.cs" />
-    <Compile Include="Graph3D\IPolygonD2D.cs" />
     <Compile Include="Graph3D\ItemLocationByGrid3D.cs" />
     <Compile Include="Graph3D\ItemLocationDirect3D.cs" />
     <Compile Include="Graph3D\ItemLocationDirectAutoSize.cs" />
@@ -273,7 +277,7 @@
     <Compile Include="Graph3D\LabelFormatting\NumericLabelFormattingAuto.cs" />
     <Compile Include="Graph3D\Materials.cs" />
     <Compile Include="Graph3D\Material\NoMaterial.cs" />
-    <Compile Include="Graph3D\MatrixD3D.cs" />
+    <Compile Include="Geometry\MatrixD3D.cs" />
     <Compile Include="Graph3D\PenX3D.cs" />
     <Compile Include="Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
@@ -284,8 +288,8 @@
     <Compile Include="Graph3D\Plot\Styles\SurfacePlotStyle.cs" />
     <Compile Include="Graph3D\Plot\SurfacePlotItem.cs" />
     <Compile Include="Graph3D\Plot\XYColumnPlotItem.cs" />
-    <Compile Include="Graph3D\Point3D.cs" />
-    <Compile Include="Graph3D\Point3DMath.cs" />
+    <Compile Include="Geometry\Point3D.cs" />
+    <Compile Include="Geometry\Point3DMath.cs" />
     <Compile Include="Graph3D\Primitives\BezierCurveFlattener.cs" />
     <Compile Include="Graph3D\Primitives\CharacterGeometry.cs" />
     <Compile Include="Graph3D\Primitives\CrossSection.cs" />
@@ -299,8 +303,7 @@
     <Compile Include="Graph3D\Primitives\StraightLineSweepPath3D.cs" />
     <Compile Include="Graph3D\Primitives\SweepPath3D.cs" />
     <Compile Include="Graph3D\Primitives\Text3D.cs" />
-    <Compile Include="Graph3D\Ray3D.cs" />
-    <Compile Include="Graph3D\RectangleD3D.cs" />
+    <Compile Include="Geometry\RectangleD3D.cs" />
     <Compile Include="Graph3D\SceneSettings.cs" />
     <Compile Include="Graph3D\Shapes\GraphicBase.cs" />
     <Compile Include="Graph3D\Shapes\IGraphicBase3D.cs" />
@@ -308,9 +311,8 @@
     <Compile Include="Graph3D\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph3D\Shapes\TextGraphic_Parser.cs" />
     <Compile Include="Graph3D\Shapes\TextGraphic_TreeWalker.cs" />
-    <Compile Include="Graph3D\TransformedRectangularVolume.cs" />
-    <Compile Include="Graph3D\TwoPointsD3D.cs" />
-    <Compile Include="Graph3D\VectorD3D.cs" />
+    <Compile Include="Geometry\TransformedRectangularVolume.cs" />
+    <Compile Include="Geometry\VectorD3D.cs" />
     <Compile Include="Graph3D\XYPlotLayer3D.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinColorSet.cs" />
     <Compile Include="Graph\ColorManagement\BuiltinDarkPlotColorSet.cs" />

@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph3D.GraphicsContext.D3D
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph3D;
 	using Altaxo.Graph3D.GraphicsContext;
 	using SharpDX;
@@ -299,7 +300,7 @@ namespace Altaxo.Graph3D.GraphicsContext.D3D
 
 		internal class GraphicState
 		{
-			public Altaxo.Graph3D.MatrixD3D Transformation;
+			public MatrixD3D Transformation;
 		}
 
 		#endregion Transformation

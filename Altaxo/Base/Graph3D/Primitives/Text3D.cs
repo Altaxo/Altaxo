@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Poly2Tri;
 using System;
 using System.Collections.Generic;

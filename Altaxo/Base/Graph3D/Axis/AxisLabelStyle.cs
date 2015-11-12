@@ -33,6 +33,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph3D.Axis
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph;
 	using Altaxo.Graph3D.LabelFormatting;
 	using GraphicsContext;

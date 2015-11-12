@@ -26,13 +26,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Geometry
 {
-	public struct TwoPointsD3D
+	/// <summary>
+	/// A infinite line in 3D space.
+	/// </summary>
+	public class Ray3D
 	{
-		public PointD3D P1;
-		public PointD3D P2;
+		private PointD3D _origin;
+		private VectorD3D _direction;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Ray3D"/> class.
+		/// </summary>
+		/// <param name="origin">The origin of the line (one arbitrary point at the line).</param>
+		/// <param name="direction">The direction of the line.</param>
+		public Ray3D(PointD3D origin, VectorD3D direction)
+		{
+			_origin = origin;
+			_direction = direction;
+		}
+
+		/// <summary>
+		/// Gets the origin, i.e. one point at the line.
+		/// </summary>
+		/// <value>
+		/// The origin.
+		/// </value>
+		public PointD3D Origin { get { return _origin; } }
+
+		/// <summary>
+		/// Gets the direction of the line.
+		/// </summary>
+		/// <value>
+		/// The direction.
+		/// </value>
+		public VectorD3D Direction { get { return _direction; } }
 	}
 }

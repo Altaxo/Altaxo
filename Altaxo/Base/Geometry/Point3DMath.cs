@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Geometry
 {
 	public static class Math3D
 	{

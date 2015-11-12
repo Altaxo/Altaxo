@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Calc;
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;

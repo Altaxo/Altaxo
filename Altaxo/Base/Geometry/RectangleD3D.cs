@@ -28,7 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Geometry
 {
 	/// <summary>
 	/// RectangleD describes a rectangle in 3D space.

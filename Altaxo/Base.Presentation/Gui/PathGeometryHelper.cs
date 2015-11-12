@@ -32,6 +32,7 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph;
 
 	public static class PathGeometryHelper

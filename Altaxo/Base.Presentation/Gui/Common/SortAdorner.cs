@@ -30,13 +30,15 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common
 {
+	using swm = System.Windows.Media;
+
 	public class SortAdorner : Adorner
 	{
-		private readonly static Geometry _AscGeometry =
-			 Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
+		private readonly static swm.Geometry _AscGeometry =
+			 swm.Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
 
-		private readonly static Geometry _DescGeometry =
-				Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
+		private readonly static swm.Geometry _DescGeometry =
+				swm.Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
 
 		public ListSortDirection Direction { get; private set; }
 

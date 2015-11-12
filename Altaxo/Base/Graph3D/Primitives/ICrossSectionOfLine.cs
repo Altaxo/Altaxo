@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
+
 namespace Altaxo.Graph3D.Primitives
 {
 	public interface ICrossSectionOfLine

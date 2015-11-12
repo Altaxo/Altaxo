@@ -24,6 +24,7 @@
 
 namespace Altaxo.Gui.Graph3D.Viewing
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph3D;
 	using Altaxo.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;

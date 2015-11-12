@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Graph3D.Primitives
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph;
 
 	public class IndexedTriangles

@@ -28,41 +28,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph3D
+namespace Altaxo.Geometry
 {
-	/// <summary>
-	/// A infinite line in 3D space.
-	/// </summary>
-	public class Ray3D
+	public class TransformedRectangularVolume
 	{
-		private PointD3D _origin;
-		private VectorD3D _direction;
+		private RectangleD3D _rectangle;
+		private MatrixD3D _transformation;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Ray3D"/> class.
-		/// </summary>
-		/// <param name="origin">The origin of the line (one arbitrary point at the line).</param>
-		/// <param name="direction">The direction of the line.</param>
-		public Ray3D(PointD3D origin, VectorD3D direction)
+		public TransformedRectangularVolume(RectangleD3D rectangle, MatrixD3D transformation)
 		{
-			_origin = origin;
-			_direction = direction;
+			_rectangle = rectangle;
+			_transformation = transformation;
 		}
-
-		/// <summary>
-		/// Gets the origin, i.e. one point at the line.
-		/// </summary>
-		/// <value>
-		/// The origin.
-		/// </value>
-		public PointD3D Origin { get { return _origin; } }
-
-		/// <summary>
-		/// Gets the direction of the line.
-		/// </summary>
-		/// <value>
-		/// The direction.
-		/// </value>
-		public VectorD3D Direction { get { return _direction; } }
 	}
 }

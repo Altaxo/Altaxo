@@ -25,6 +25,7 @@
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
+using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using System;
