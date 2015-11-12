@@ -30,32 +30,50 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
+	/// <summary>
+	/// Transformation matrix for affine transformations in 3D space.
+	/// The elements M41, M42 and M43 are assumed to be 0, while M44 is assumed to be 1.
+	/// </summary>
 	public struct MatrixD3D
 	{
+		/// <summary>Gets the matrix element M[1,1].</summary>
 		public double M11 { get; private set; }
+
+		/// <summary>Gets the matrix element M[1,2].</summary>
 		public double M12 { get; private set; }
+
+		/// <summary>Gets the matrix element M[1,3].</summary>
 		public double M13 { get; private set; }
 
+		/// <summary>Gets the matrix element M[2,1].</summary>
 		public double M21 { get; private set; }
+
+		/// <summary>Gets the matrix element M[2,2].</summary>
 		public double M22 { get; private set; }
+
+		/// <summary>Gets the matrix element M[2,2].</summary>
 		public double M23 { get; private set; }
 
+		/// <summary>Gets the matrix element M[3,1].</summary>
 		public double M31 { get; private set; }
+
+		/// <summary>Gets the matrix element M[3,1].</summary>
 		public double M32 { get; private set; }
+
+		/// <summary>Gets the matrix element M[3,3].</summary>
 		public double M33 { get; private set; }
 
+		/// <summary>Gets the matrix element M[4,1]. This is OffsetX.</summary>
 		public double M41 { get; private set; }
+
+		/// <summary>Gets the matrix element M[4,2]. This is OffsetY.</summary>
 		public double M42 { get; private set; }
+
+		/// <summary>Gets the matrix element M[4,3]. This is OffsetZ.</summary>
 		public double M43 { get; private set; }
 
-		/*
-		private double M11, M12, M13;
-		private double M21, M22, M23;
-		private double M31, M32, M33;
-		private double M41, M42, M43;
-		*/
-
-		private double _determinant;
+		/// <summary>The determinant of the matrix.</summary>
+		public double Determinant { get; private set; }
 
 		private static MatrixD3D _identityMatrix;
 
@@ -68,6 +86,9 @@ namespace Altaxo.Geometry
 				0, 0, 0);
 		}
 
+		/// <summary>
+		/// Gets the identity matrix.
+		/// </summary>
 		public static MatrixD3D Identity
 		{
 			get
@@ -76,6 +97,21 @@ namespace Altaxo.Geometry
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MatrixD3D"/> struct.
+		/// </summary>
+		/// <param name="m11">The element M11.</param>
+		/// <param name="m12">The element M12.</param>
+		/// <param name="m13">The element M13.</param>
+		/// <param name="m21">The element M21.</param>
+		/// <param name="m22">The element M22.</param>
+		/// <param name="m23">The element M23.</param>
+		/// <param name="m31">The element M31.</param>
+		/// <param name="m32">The element M32.</param>
+		/// <param name="m33">The element M33.</param>
+		/// <param name="offsetX">The element M41, which is offset x.</param>
+		/// <param name="offsetY">The element M42, which is offset y.</param>
+		/// <param name="offsetZ">The element M43, which is offset z.</param>
 		public MatrixD3D(
 		double m11, double m12, double m13,
 		double m21, double m22, double m23,
@@ -87,7 +123,7 @@ namespace Altaxo.Geometry
 			M31 = m31; M32 = m32; M33 = m33;
 			M41 = offsetX; M42 = offsetY; M43 = offsetZ;
 
-			_determinant = -(m13 * m22 * m31) + m12 * m23 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33;
+			Determinant = -(m13 * m22 * m31) + m12 * m23 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33;
 		}
 
 		/// <summary>
@@ -127,6 +163,12 @@ namespace Altaxo.Geometry
 			return new MatrixD3D(m11, m12, m13, m21, m22, m23, m31, m32, m33, offsetX, offsetY, offsetZ);
 		}
 
+		/// <summary>
+		/// Transforms the specified vector <paramref name="v"/>. For a vector transform, the offset elements M41..M43 are ignored.
+		/// The transformation is carried out as a prepend transformation, i.e. result = v * matrix (v considered as horizontal vector).
+		/// </summary>
+		/// <param name="v">The vector to transform.</param>
+		/// <returns>The transformed vector.</returns>
 		public VectorD3D Transform(VectorD3D v)
 		{
 			double x = v.X;
@@ -144,6 +186,12 @@ namespace Altaxo.Geometry
 			return Transform(p);
 		}
 
+		/// <summary>
+		/// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
+		/// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
+		/// </summary>
+		/// <param name="p">The point to transform.</param>
+		/// <returns>The transformed point.</returns>
 		public PointD3D Transform(PointD3D p)
 		{
 			double x = p.X;
@@ -156,6 +204,21 @@ namespace Altaxo.Geometry
 			);
 		}
 
+		/// <summary>
+		/// Sets this transformation matrix by specifying translation, rotation, shear and scale.
+		/// </summary>
+		/// <param name="translateX">The translation in x direction.</param>
+		/// <param name="translateY">The translation in y direction.</param>
+		/// <param name="translateZ">The translation in z direction.</param>
+		/// <param name="angleX">The rotation around x axis in degrees.</param>
+		/// <param name="angleY">The rotation around y axis in degrees</param>
+		/// <param name="angleZ">The rotation around z axis in degrees</param>
+		/// <param name="shearX">The shear value x.</param>
+		/// <param name="shearY">The shear value y.</param>
+		/// <param name="shearZ">The shear value z.</param>
+		/// <param name="scaleX">The scale value x.</param>
+		/// <param name="scaleY">The scale value y.</param>
+		/// <param name="scaleZ">The scale value z.</param>
 		public void SetTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
 		{
 			double phi;
@@ -182,9 +245,25 @@ namespace Altaxo.Geometry
 			M42 = translateY;
 			M43 = translateZ;
 
-			_determinant = scaleX * scaleY * scaleZ;
+			Determinant = scaleX * scaleY * scaleZ;
 		}
 
+		/// <summary>
+		/// Gets a transformation matrix by specifying translation, rotation, shear and scale.
+		/// </summary>
+		/// <param name="translateX">The translation in x direction.</param>
+		/// <param name="translateY">The translation in y direction.</param>
+		/// <param name="translateZ">The translation in z direction.</param>
+		/// <param name="angleX">The rotation around x axis in degrees.</param>
+		/// <param name="angleY">The rotation around y axis in degrees</param>
+		/// <param name="angleZ">The rotation around z axis in degrees</param>
+		/// <param name="shearX">The shear value x.</param>
+		/// <param name="shearY">The shear value y.</param>
+		/// <param name="shearZ">The shear value z.</param>
+		/// <param name="scaleX">The scale value x.</param>
+		/// <param name="scaleY">The scale value y.</param>
+		/// <param name="scaleZ">The scale value z.</param>
+		/// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
 		public static MatrixD3D FromTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
 		{
 			var result = new MatrixD3D();
@@ -192,6 +271,13 @@ namespace Altaxo.Geometry
 			return result;
 		}
 
+		/// <summary>
+		/// Gets a transformation matrix by specifying rotation (translation is 0, shear is 0 and scale is 1).
+		/// </summary>
+		/// <param name="angleX">The rotation around x axis in degrees.</param>
+		/// <param name="angleY">The rotation around y axis in degrees</param>
+		/// <param name="angleZ">The rotation around z axis in degrees</param>
+		/// <returns>The transformation matrix.</returns>
 		public static MatrixD3D FromRotation(double angleX, double angleY, double angleZ)
 		{
 			var result = new MatrixD3D();
@@ -201,6 +287,12 @@ namespace Altaxo.Geometry
 
 		#region Prepend transformations
 
+		/// <summary>
+		/// Prepends a translate transformation to this matrix.
+		/// </summary>
+		/// <param name="x">The x component of translation.</param>
+		/// <param name="y">The y component of translation.</param>
+		/// <param name="z">The z component of translation.</param>
 		public void TranslatePrepend(double x, double y, double z)
 		{
 			M41 += M11 * x + M21 * y + M31 * z;
@@ -208,13 +300,23 @@ namespace Altaxo.Geometry
 			M43 += M13 * x + M23 * y + M33 * z;
 		}
 
-		public void TranslateAppend(double dx, double dy, double dz)
+		/// <summary>
+		/// Appends a translate transformation to this matrix.
+		/// </summary>
+		/// <param name="x">The x component of translation.</param>
+		/// <param name="y">The y component of translation.</param>
+		/// <param name="z">The z component of translation.</param>
+		public void TranslateAppend(double x, double y, double z)
 		{
-			M41 += dx;
-			M42 += dy;
-			M43 += dz;
+			M41 += x;
+			M42 += y;
+			M43 += z;
 		}
 
+		/// <summary>
+		/// Prepends a rotation transformation around x axis. The angle is specified in degrees.
+		/// </summary>
+		/// <param name="angleX">The angle in degrees.</param>
 		public void RotationXDegreePrepend(double angleX)
 		{
 			double phi;
@@ -232,6 +334,10 @@ namespace Altaxo.Geometry
 			M33 = cx * M33 - h23 * sx;
 		}
 
+		/// <summary>
+		/// Prepends a rotation transformation around y axis. The angle is specified in degrees.
+		/// </summary>
+		/// <param name="angleY">The angle in degrees.</param>
 		public void RotationYDegreePrepend(double angleY)
 		{
 			double phi;
@@ -249,6 +355,10 @@ namespace Altaxo.Geometry
 			M33 = cy * M33 - h13 * sy;
 		}
 
+		/// <summary>
+		/// Prepends a rotation transformation around z axis. The angle is specified in degrees.
+		/// </summary>
+		/// <param name="angleZ">The angle in degrees.</param>
 		public void RotationZDegreePrepend(double angleZ)
 		{
 			double phi;
@@ -270,6 +380,10 @@ namespace Altaxo.Geometry
 
 		#region Append transformations
 
+		/// <summary>
+		/// Appends a transformation matrix <paramref name="f"/> to this matrix.
+		/// </summary>
+		/// <param name="f">The matrix to append.</param>
 		public void AppendTransform(MatrixD3D f)
 		{
 			double h1, h2, h3;
@@ -294,9 +408,13 @@ namespace Altaxo.Geometry
 			h3 = M41 * f.M13 + M42 * f.M23 + M43 * f.M33 + f.M43;
 			M41 = h1; M42 = h2; M43 = h3;
 
-			_determinant *= f._determinant;
+			Determinant *= f.Determinant;
 		}
 
+		/// <summary>
+		/// Prepends a transformation matrix <paramref name="f"/> to this matrix.
+		/// </summary>
+		/// <param name="a">The matrix to prepend.</param>
 		public void PrependTransform(MatrixD3D a)
 		{
 			double h1, h2, h3, h4;
@@ -319,32 +437,42 @@ namespace Altaxo.Geometry
 			h4 = M13 * a.M41 + M23 * a.M42 + M33 * a.M43;
 			M13 = h1; M23 = h2; M33 = h3; M43 += h4;
 
-			_determinant *= a._determinant;
+			Determinant *= a.Determinant;
 		}
 
 		#endregion Append transformations
 
 		#region Inverse transformations
 
+		/// <summary>
+		/// Inverse transform a point p in such a way that the result will fullfill the relation p = result * matrix ( the * operator being the prepend transformation for points).
+		/// </summary>
+		/// <param name="p">The point p to inverse transform.</param>
+		/// <returns>The inverse transformation of point <paramref name="p"/>.</returns>
 		public PointD3D InverseTransformPoint(PointD3D p)
 		{
 			return new PointD3D(
-				(M23 * (M32 * (M41 - p.X) + M31 * (-M42 + p.Y)) + M22 * (-(M33 * M41) + M31 * M43 + M33 * p.X - M31 * p.Z) + M21 * (M33 * M42 - M32 * M43 - M33 * p.Y + M32 * p.Z)) / _determinant,
+				(M23 * (M32 * (M41 - p.X) + M31 * (-M42 + p.Y)) + M22 * (-(M33 * M41) + M31 * M43 + M33 * p.X - M31 * p.Z) + M21 * (M33 * M42 - M32 * M43 - M33 * p.Y + M32 * p.Z)) / Determinant,
 
-				(M13 * (M32 * (-M41 + p.X) + M31 * (M42 - p.Y)) + M12 * (M33 * M41 - M31 * M43 - M33 * p.X + M31 * p.Z) + M11 * (-(M33 * M42) + M32 * M43 + M33 * p.Y - M32 * p.Z)) / _determinant,
+				(M13 * (M32 * (-M41 + p.X) + M31 * (M42 - p.Y)) + M12 * (M33 * M41 - M31 * M43 - M33 * p.X + M31 * p.Z) + M11 * (-(M33 * M42) + M32 * M43 + M33 * p.Y - M32 * p.Z)) / Determinant,
 
-				(M13 * (M22 * (M41 - p.X) + M21 * (-M42 + p.Y)) + M12 * (-(M23 * M41) + M21 * M43 + M23 * p.X - M21 * p.Z) + M11 * (M23 * M42 - M22 * M43 - M23 * p.Y + M22 * p.Z)) / _determinant
+				(M13 * (M22 * (M41 - p.X) + M21 * (-M42 + p.Y)) + M12 * (-(M23 * M41) + M21 * M43 + M23 * p.X - M21 * p.Z) + M11 * (M23 * M42 - M22 * M43 - M23 * p.Y + M22 * p.Z)) / Determinant
 				);
 		}
 
+		/// <summary>
+		/// Inverse transform a vector p in such a way that the result will fullfill the relation p = result * matrix ( the * operator being the prepend transformation for vectors).
+		/// </summary>
+		/// <param name="p">The point p to inverse transform.</param>
+		/// <returns>The inverse transformation of point <paramref name="p"/>.</returns>
 		public VectorD3D InverseTransformVector(VectorD3D p)
 		{
 			return new VectorD3D(
-				(-(M23 * M32 * p.X) + M22 * M33 * p.X + M23 * M31 * p.Y - M21 * M33 * p.Y - M22 * M31 * p.Z + M21 * M32 * p.Z) / _determinant,
+				(-(M23 * M32 * p.X) + M22 * M33 * p.X + M23 * M31 * p.Y - M21 * M33 * p.Y - M22 * M31 * p.Z + M21 * M32 * p.Z) / Determinant,
 
-				(M13 * M32 * p.X - M12 * M33 * p.X - M13 * M31 * p.Y + M11 * M33 * p.Y + M12 * M31 * p.Z - M11 * M32 * p.Z) / _determinant,
+				(M13 * M32 * p.X - M12 * M33 * p.X - M13 * M31 * p.Y + M11 * M33 * p.Y + M12 * M31 * p.Z - M11 * M32 * p.Z) / Determinant,
 
-				(-(M13 * M22 * p.X) + M12 * M23 * p.X + M13 * M21 * p.Y - M11 * M23 * p.Y - M12 * M21 * p.Z + M11 * M22 * p.Z) / _determinant
+				(-(M13 * M22 * p.X) + M12 * M23 * p.X + M13 * M21 * p.Y - M11 * M23 * p.Y - M12 * M21 * p.Z + M11 * M22 * p.Z) / Determinant
 
 				);
 		}

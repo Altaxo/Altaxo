@@ -31,7 +31,7 @@ using System.Text;
 namespace Altaxo.Geometry
 {
 	/// <summary>
-	/// Represents a closed polygon in 2D space.
+	/// Represents a open or closed polygon in 2D space.
 	/// </summary>
 	public interface IPolygonD2D
 	{
