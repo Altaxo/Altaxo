@@ -186,8 +186,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_labelSides.AddRange(list);
 
 				// horizontal and vertical alignment
-				_horizontalAlignmentChoices = new Collections.SelectableListNodeList(_doc.HorizontalAlignment);
-				_verticalAlignmentChoices = new Collections.SelectableListNodeList(_doc.VerticalAlignment);
+				_horizontalAlignmentChoices = new Collections.SelectableListNodeList(_doc.AlignmentX);
+				_verticalAlignmentChoices = new Collections.SelectableListNodeList(_doc.AlignmentY);
 
 				// label formatting type
 				var labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting));
@@ -210,9 +210,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_view.RotationX = _doc.RotationX;
 				_view.RotationY = _doc.RotationY;
 				_view.RotationZ = _doc.RotationZ;
-				_view.OffsetX = _doc.XOffset;
-				_view.OffsetY = _doc.YOffset;
-				_view.OffsetZ = _doc.ZOffset;
+				_view.OffsetX = _doc.OffsetX;
+				_view.OffsetY = _doc.OffsetY;
+				_view.OffsetZ = _doc.OffsetZ;
 				_view.Background = _doc.BackgroundStyle;
 				_view.SuppressedLabelsByValue = GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
 				_view.SuppressedLabelsByNumber = GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
@@ -228,15 +228,15 @@ namespace Altaxo.Gui.Graph3D.Axis
 		{
 			_doc.Font = _view.LabelFont;
 			_doc.Brush = _view.LabelMaterial;
-			_doc.HorizontalAlignment = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
-			_doc.VerticalAlignment = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentX = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentY = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
 			_doc.AutomaticAlignment = _view.AutomaticAlignment;
 			_doc.RotationX = _view.RotationX;
 			_doc.RotationY = _view.RotationY;
 			_doc.RotationZ = _view.RotationZ;
-			_doc.XOffset = _view.OffsetX;
-			_doc.YOffset = _view.OffsetY;
-			_doc.ZOffset = _view.OffsetZ;
+			_doc.OffsetX = _view.OffsetX;
+			_doc.OffsetY = _view.OffsetY;
+			_doc.OffsetZ = _view.OffsetZ;
 			_doc.BackgroundStyle = _view.Background;
 
 			AltaxoVariant[] varVals;

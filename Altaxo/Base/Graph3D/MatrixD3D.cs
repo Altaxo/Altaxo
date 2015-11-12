@@ -192,6 +192,13 @@ namespace Altaxo.Graph3D
 			return result;
 		}
 
+		public static MatrixD3D FromRotation(double angleX, double angleY, double angleZ)
+		{
+			var result = new MatrixD3D();
+			result.SetTranslationRotationShearScale(0, 0, 0, angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
+			return result;
+		}
+
 		#region Prepend transformations
 
 		public void TranslatePrepend(double x, double y, double z)

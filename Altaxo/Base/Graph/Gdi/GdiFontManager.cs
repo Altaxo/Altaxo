@@ -36,19 +36,26 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public class GdiFontManager
 	{
+		/// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
 		protected static GdiFontManager _instance;
 
-		protected System.Drawing.FontConverter _gdiFontConverter = new System.Drawing.FontConverter();
+		/// <summary>
+		/// Converter. Converts invariant font strings to Gdi fonts and vice versa.
+		/// </summary>
+		protected FontConverter _gdiFontConverter = new FontConverter();
 
 		/// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.
 		/// Key is the invariant description string, value is the Gdi font instance with the specific style and size.
 		/// </summary>
-		protected System.Collections.Concurrent.ConcurrentDictionary<string, Font> _descriptionToGdiFont = new System.Collections.Concurrent.ConcurrentDictionary<string, Font>();
+		protected ConcurrentDictionary<string, Font> _descriptionToGdiFont = new ConcurrentDictionary<string, Font>();
 
 		/// <summary>Corresponds the font's invariant description string with a reference counter. It counts the number of <see cref="FontX"/> instances with this description string.
 		/// When the reference counter falls down to zero, the Gdi+ font instance can be released.</summary>
-		protected System.Collections.Concurrent.ConcurrentDictionary<string, int> _gdiFontReferenceCounter = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+		protected ConcurrentDictionary<string, int> _gdiFontReferenceCounter = new ConcurrentDictionary<string, int>();
 
+		/// <summary>
+		/// Dictionary of the Gdi font families. Key is the Win32FamilyName, value is an indicator which styles of that font are present.
+		/// </summary>
 		protected ConcurrentDictionary<string, FontStylePresence> _gdiFontFamilies;
 
 		/// <summary>
@@ -63,6 +70,10 @@ namespace Altaxo.Graph.Gdi
 				SetInstance(new GdiFontManager());
 		}
 
+		/// <summary>
+		/// Sets the instance of <see cref="GdiFontManager"/> here in this class (used by the static methods of this class).
+		/// </summary>
+		/// <param name="newInstance">The new instance.</param>
 		public static void SetInstance(GdiFontManager newInstance)
 		{
 			var oldInstance = _instance;
@@ -75,6 +86,9 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="GdiFontManager" /> class.
+		/// </summary>
 		protected GdiFontManager()
 		{
 			FontX.FontConstructed += EhAnnounceConstructionOfFontX;
@@ -93,11 +107,18 @@ namespace Altaxo.Graph.Gdi
 			Microsoft.Win32.SystemEvents.InstalledFontsChanged -= EhInstalledFontsChanged;
 		}
 
+		/// <summary>
+		/// Build the font dictionaries.
+		/// </summary>
 		protected virtual void InternalBuildDictionaries()
 		{
 			_gdiFontFamilies = BuildGdiFontFamilies();
 		}
 
+		/// <summary>
+		/// Builds the GDI font families dictionary.
+		/// </summary>
+		/// <returns>The Gdi font family dictionary.</returns>
 		protected virtual ConcurrentDictionary<string, FontStylePresence> BuildGdiFontFamilies()
 		{
 			var dict = new ConcurrentDictionary<string, FontStylePresence>();
@@ -111,6 +132,11 @@ namespace Altaxo.Graph.Gdi
 			return dict;
 		}
 
+		/// <summary>
+		/// Finds out which font styles are available for the given Gdi font family.
+		/// </summary>
+		/// <param name="fontFamily">The Gdi font family.</param>
+		/// <returns>Value that indicate which styles are available for the fontFamily.</returns>
 		protected static FontStylePresence GetFontStylePresence(FontFamily fontFamily)
 		{
 			FontStylePresence pres = FontStylePresence.NoStyleAvailable;
@@ -125,12 +151,20 @@ namespace Altaxo.Graph.Gdi
 			return pres;
 		}
 
+		/// <summary>
+		/// Gets all available font families and stores them in the provided dictionary.
+		/// </summary>
+		/// <param name="dictionaryToStoreTheResult">The dictionary to store the result.</param>
 		protected virtual void InternalGetAvailableFontFamilies(IDictionary<string, FontStylePresence> dictionaryToStoreTheResult)
 		{
 			foreach (var entry in _gdiFontFamilies)
 				dictionaryToStoreTheResult.Add(entry.Key, entry.Value);
 		}
 
+		/// <summary>
+		/// Gets all available font families and stores them in the provided dictionary.
+		/// </summary>
+		/// <param name="dictionaryToStoreTheResult">The dictionary to store the result.</param>
 		public static void GetAvailableFontFamilies(IDictionary<string, FontStylePresence> dictionaryToStoreTheResult)
 		{
 			if (null == dictionaryToStoreTheResult)

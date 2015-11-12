@@ -297,11 +297,12 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
 
-				double y = ybase - ExtendAboveBaseline;
+				var y = ybase - ExtendBelowBaseline;
 
-				foreach (var ch in _childs)
+				for (int i = _childs.Count - 1; i >= 0; --i)
 				{
-					ch.Draw(g, dc, xbase, y + ch.ExtendAboveBaseline, zbase);
+					var ch = _childs[i];
+					ch.Draw(g, dc, xbase, y + ch.ExtendBelowBaseline, zbase);
 					y += GetLineSpacing(ch, fontInfo);
 				}
 			}
@@ -386,7 +387,7 @@ namespace Altaxo.Graph3D.Shapes
 				if (null != _child)
 				{
 					var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-					_child.Draw(g, dc, xbase, ybase + 0.35 * fontInfo.cyAscent, zbase);
+					_child.Draw(g, dc, xbase, ybase - 0.35 * fontInfo.cyAscent, zbase);
 				}
 			}
 		}
@@ -416,7 +417,7 @@ namespace Altaxo.Graph3D.Shapes
 				if (_child != null)
 				{
 					var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-					_child.Draw(g, dc, xbase, ybase - 0.35 * fontInfo.cyAscent, zbase);
+					_child.Draw(g, dc, xbase, ybase + 0.35 * fontInfo.cyAscent, zbase);
 				}
 			}
 		}
@@ -557,9 +558,9 @@ namespace Altaxo.Graph3D.Shapes
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
 				if (_subscript != null)
-					_subscript.Draw(g, dc, xbase, ybase + 0.35 * fontInfo.cyAscent, zbase);
+					_subscript.Draw(g, dc, xbase, ybase - 0.35 * fontInfo.cyAscent, zbase);
 				if (_superscript != null)
-					_superscript.Draw(g, dc, xbase, ybase - 0.35 * fontInfo.cyAscent, zbase);
+					_superscript.Draw(g, dc, xbase, ybase + 0.35 * fontInfo.cyAscent, zbase);
 			}
 		}
 
@@ -590,7 +591,7 @@ namespace Altaxo.Graph3D.Shapes
 			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-				g.DrawString(_text, Style.FontId, Style.brush, new PointD3D(xbase, (ybase - fontInfo.cyAscent), zbase), _stringFormat);
+				g.DrawString(_text, Style.FontId, Style.brush, new PointD3D(xbase, (ybase - fontInfo.cyDescent), zbase), _stringFormat);
 			}
 
 			public override string ToString()

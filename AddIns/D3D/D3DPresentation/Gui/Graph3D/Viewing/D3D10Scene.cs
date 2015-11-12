@@ -330,7 +330,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				}
 				else if (cam is Altaxo.Graph3D.Camera.OrthographicCamera)
 				{
-					viewProjD3D = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).GetLookAtRHTimesOrthoRHMatrix(_hostSize.Y / _hostSize.X, 1, 2000);
+					viewProjD3D = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).GetLookAtRHTimesOrthoRHMatrix(_hostSize.Y / _hostSize.X);
 
 					worldViewProjTr = new Matrix(
 						(float)viewProjD3D.M11, (float)viewProjD3D.M21, (float)viewProjD3D.M31, (float)viewProjD3D.M41,

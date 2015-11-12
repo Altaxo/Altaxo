@@ -47,20 +47,21 @@ namespace Altaxo.Graph3D.Axis
 	{
 		protected FontX3D _font;
 
-		protected StringAlignment _horizontalAlignment;
-		protected StringAlignment _verticalAlignment;
+		protected StringAlignment _alignmentX;
+		protected StringAlignment _alignmentY;
+		protected StringAlignment _alignmentZ;
 
 		protected StringFormat _stringFormat;
 		protected IMaterial3D _brush;
 
 		/// <summary>The x offset in EM units.</summary>
-		protected double _xOffset;
+		protected double _offsetX;
 
 		/// <summary>The y offset in EM units.</summary>
-		protected double _yOffset;
+		protected double _offsetY;
 
 		/// <summary>The z offset in EM units.</summary>
-		protected double _zOffset;
+		protected double _offsetZ;
 
 		/// <summary>The rotation of the label.</summary>
 		protected double _rotationX;
@@ -106,16 +107,17 @@ namespace Altaxo.Graph3D.Axis
 				info.AddValue("Background", s._backgroundStyle);
 
 				info.AddValue("AutoAlignment", s._automaticRotationShift);
-				info.AddEnum("HorzAlignment", s._horizontalAlignment);
-				info.AddEnum("VertAlignment", s._verticalAlignment);
+				info.AddEnum("AlignmentX", s._alignmentX);
+				info.AddEnum("AlignmentY", s._alignmentY);
+				info.AddEnum("AlignmentZ", s._alignmentY);
 
 				info.AddValue("RotationX", s._rotationX);
 				info.AddValue("RotationY", s._rotationY);
 				info.AddValue("RotationZ", s._rotationZ);
 
-				info.AddValue("XOffset", s._xOffset);
-				info.AddValue("YOffset", s._yOffset);
-				info.AddValue("ZOffset", s._zOffset);
+				info.AddValue("OffsetX", s._offsetX);
+				info.AddValue("OffsetY", s._offsetY);
+				info.AddValue("OffsetZ", s._offsetZ);
 
 				if (s._suppressedLabels.IsEmpty)
 					info.AddValue("SuppressedLabels", (object)null);
@@ -137,14 +139,15 @@ namespace Altaxo.Graph3D.Axis
 				s.BackgroundStyle = (Background.IBackgroundStyle3D)info.GetValue("Background", s);
 
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
-				s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
-				s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
+				s._alignmentX = (StringAlignment)info.GetEnum("AlignmentX", typeof(StringAlignment));
+				s._alignmentY = (StringAlignment)info.GetEnum("AlignmentY", typeof(StringAlignment));
+				s._alignmentZ = (StringAlignment)info.GetEnum("AlignmentZ", typeof(StringAlignment));
 				s._rotationX = info.GetDouble("RotationX");
 				s._rotationY = info.GetDouble("RotationY");
 				s._rotationZ = info.GetDouble("RotationZ");
-				s._xOffset = info.GetDouble("XOffset");
-				s._yOffset = info.GetDouble("YOffset");
-				s._zOffset = info.GetDouble("ZOffset");
+				s._offsetX = info.GetDouble("OffsetX");
+				s._offsetY = info.GetDouble("OffsetY");
+				s._offsetZ = info.GetDouble("OffsetZ");
 
 				s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
 				if (s._suppressedLabels != null)
@@ -215,15 +218,16 @@ namespace Altaxo.Graph3D.Axis
 
 				_font = from._font;
 				CopyHelper.Copy(ref _stringFormat, from._stringFormat);
-				_horizontalAlignment = from._horizontalAlignment;
-				_verticalAlignment = from._verticalAlignment;
+				_alignmentX = from._alignmentX;
+				_alignmentY = from._alignmentY;
+				_alignmentZ = from._alignmentZ;
 
 				_brush = from._brush;
 
 				_automaticRotationShift = from._automaticRotationShift;
-				_xOffset = from._xOffset;
-				_yOffset = from._yOffset;
-				_zOffset = from._zOffset;
+				_offsetX = from._offsetX;
+				_offsetY = from._offsetY;
+				_offsetZ = from._offsetZ;
 				_rotationX = from._rotationX;
 				_rotationY = from._rotationY;
 				_rotationZ = from._rotationZ;
@@ -425,13 +429,13 @@ namespace Altaxo.Graph3D.Axis
 		}
 
 		/// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
-		public double XOffset
+		public double OffsetX
 		{
-			get { return this._xOffset; }
+			get { return this._offsetX; }
 			set
 			{
-				double oldValue = this._xOffset;
-				this._xOffset = value;
+				double oldValue = this._offsetX;
+				this._offsetX = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -440,13 +444,13 @@ namespace Altaxo.Graph3D.Axis
 		}
 
 		/// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
-		public double YOffset
+		public double OffsetY
 		{
-			get { return this._yOffset; }
+			get { return this._offsetY; }
 			set
 			{
-				double oldValue = this._yOffset;
-				this._yOffset = value;
+				double oldValue = this._offsetY;
+				this._offsetY = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -455,13 +459,13 @@ namespace Altaxo.Graph3D.Axis
 		}
 
 		/// <summary>The z offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
-		public double ZOffset
+		public double OffsetZ
 		{
-			get { return this._zOffset; }
+			get { return this._offsetZ; }
 			set
 			{
-				double oldValue = this._zOffset;
-				this._zOffset = value;
+				double oldValue = this._offsetZ;
+				this._offsetZ = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -532,16 +536,16 @@ namespace Altaxo.Graph3D.Axis
 		}
 
 		/// <summary>Horizontal alignment of the label.</summary>
-		public System.Drawing.StringAlignment HorizontalAlignment
+		public System.Drawing.StringAlignment AlignmentX
 		{
 			get
 			{
-				return this._horizontalAlignment;
+				return this._alignmentX;
 			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = this.HorizontalAlignment;
-				this._horizontalAlignment = value;
+				System.Drawing.StringAlignment oldValue = _alignmentX;
+				this._alignmentX = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -550,13 +554,28 @@ namespace Altaxo.Graph3D.Axis
 		}
 
 		/// <summary>Vertical aligment of the label.</summary>
-		public System.Drawing.StringAlignment VerticalAlignment
+		public System.Drawing.StringAlignment AlignmentY
 		{
-			get { return this._verticalAlignment; }
+			get { return this._alignmentY; }
 			set
 			{
-				System.Drawing.StringAlignment oldValue = this.VerticalAlignment;
-				this._verticalAlignment = value;
+				System.Drawing.StringAlignment oldValue = _alignmentY;
+				this._alignmentY = value;
+				if (value != oldValue)
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>Vertical aligment of the label.</summary>
+		public System.Drawing.StringAlignment AlignmentZ
+		{
+			get { return this._alignmentZ; }
+			set
+			{
+				System.Drawing.StringAlignment oldValue = _alignmentZ;
+				this._alignmentZ = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -586,9 +605,22 @@ namespace Altaxo.Graph3D.Axis
 			}
 		}
 
-		public void AdjustRectangle(ref RectangleD3D r, StringAlignment horz, StringAlignment vert)
+		public void AdjustRectangle(ref RectangleD3D r, StringAlignment alignmentX, StringAlignment alignmentY, StringAlignment alignmentZ)
 		{
-			switch (vert)
+			switch (alignmentZ)
+			{
+				case StringAlignment.Near:
+					break;
+
+				case StringAlignment.Center:
+					r.Z -= 0.5 * r.SizeZ;
+					break;
+
+				case StringAlignment.Far:
+					r.Z -= r.SizeZ;
+					break;
+			}
+			switch (alignmentY)
 			{
 				case StringAlignment.Near:
 					break;
@@ -601,7 +633,7 @@ namespace Altaxo.Graph3D.Axis
 					r.Y -= r.SizeY;
 					break;
 			}
-			switch (horz)
+			switch (alignmentX)
 			{
 				case StringAlignment.Near:
 					break;
@@ -648,10 +680,6 @@ namespace Altaxo.Graph3D.Axis
 
 			VectorD3D outVector;
 			Logical3D outer;
-			var dist_x = outerDistance; // Distance from axis tick point to label
-			var dist_y = outerDistance; // y distance from axis tick point to label
-
-			// dist_x += this._font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
 
 			double[] relpositions;
 			AltaxoVariant[] ticks;
@@ -700,19 +728,33 @@ namespace Altaxo.Graph3D.Axis
 
 				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
 				PointD3D tickorg = coordSyst.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
-				PointD3D tickend = tickorg;
-				tickend.X += outVector.X * outerDistance;
-				tickend.Y += outVector.Y * outerDistance;
+				PointD3D tickend = tickorg + outVector * outerDistance;
 
 				var msize = labels[i].Size;
 				var morg = tickend;
 
 				if (_automaticRotationShift)
 				{
-					double alpha = _rotationZ * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
-					double shift = msize.Y * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.X + _font.Size / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
-					morg.X += (outVector.X * shift);
-					morg.Y += (outVector.Y * shift);
+					// if this option is choosen, we have to find a shift value that shifts the center of the text outwards so that the bounding box of the text will not cross the plane that is
+					// defined by the tickend point and the normal vector outVector
+
+					// Assume that the text is now centered x, y, and z around the point tickend (but here we use origin instead tickend)
+					math = MatrixD3D.FromRotation(_rotationX, _rotationY, _rotationZ);
+					// we have to find all points with negative distance to the plane spanned by tickend and the vector outVector (but again instead of tickend we use origin)
+					var msizePad = msize;
+					msizePad.X += (_font.Size * 1) / 3; // whereas above and below text no padding is neccessary, it is optically nicer to have left and right padding of the string by 1/6 of font size.
+					msizePad.Z += (_font.Size * 1) / 3; // same padding applies to z
+					var crect = new RectangleD3D((PointD3D)(-0.5 * msizePad), msizePad); // our text centered around origin
+
+					double shift = 0;
+					foreach (PointD3D p in crect.Vertices)
+					{
+						PointD3D ps = math.TransformPoint(p);
+						double distance = Math3D.GetDistancePointToPlane(ps, PointD3D.Empty, outVector);
+						if (-distance > shift)
+							shift = -distance; // only negative distances will count here
+					}
+					morg += outVector * shift;
 				}
 				else
 				{
@@ -721,9 +763,9 @@ namespace Altaxo.Graph3D.Axis
 
 				var mrect = new RectangleD3D(morg, msize);
 				if (_automaticRotationShift)
-					AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
+					AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center, StringAlignment.Center);
 				else
-					AdjustRectangle(ref mrect, _horizontalAlignment, _verticalAlignment);
+					AdjustRectangle(ref mrect, _alignmentX, _alignmentY, _alignmentZ);
 
 				math = MatrixD3D.Identity;
 				math.TranslatePrepend(morg.X, morg.Y, morg.Z);
@@ -735,7 +777,7 @@ namespace Altaxo.Graph3D.Axis
 				if (this._rotationX != 0)
 					math.RotationXDegreePrepend(this._rotationX);
 
-				math.TranslatePrepend((mrect.X - morg.X + emSize * _xOffset), (mrect.Y - morg.Y + emSize * _yOffset), (mrect.Z - morg.Z + emSize * _zOffset));
+				math.TranslatePrepend((mrect.X - morg.X + emSize * _offsetX), (mrect.Y - morg.Y + emSize * _offsetY), (mrect.Z - morg.Z + emSize * _offsetZ));
 
 				var gs = g.SaveGraphicsState();
 				g.PrependTransform(math);

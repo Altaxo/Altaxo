@@ -91,16 +91,6 @@ namespace Altaxo.Graph3D.Primitives
 			return Math.Sqrt(dx * dx + dy * dy);
 		}
 
-		public static VectorD3D MeasureString(string text, FontX3D font, System.Drawing.StringFormat strgfmt)
-		{
-			var path = new System.Drawing.Drawing2D.GraphicsPath();
-			path.AddString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font).FontFamily, 0, 1000, new System.Drawing.PointF(0, 0), strgfmt);
-
-			var size = path.GetBounds();
-			path.Dispose();
-			return new VectorD3D(size.Width * font.Size / 1000.0, size.Height * font.Size / 1000.0, font.Depth);
-		}
-
 		public void AddWithNormals(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int startIndex)
 		{
 			var fm = FontManager3D.Instance;
@@ -122,7 +112,6 @@ namespace Altaxo.Graph3D.Primitives
 					positionY = scale * (charGeo.LineSpacing - charGeo.BaseLine);
 					positionX = scale * (charGeo.LeftSideBearing < 0 ? -charGeo.LeftSideBearing : 0);
 				}
-
 
 				// ------ Front face ------------------
 				var frontFace = charGeo.FrontFace;

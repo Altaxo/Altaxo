@@ -27,7 +27,6 @@ using Altaxo.Graph3D;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +53,9 @@ namespace Altaxo.Gui
 
 		protected ConcurrentDictionary<string, int> _wpfFontReferenceCounter = new ConcurrentDictionary<string, int>();
 
+		/// <summary>
+		/// This class groups Wpf fonts (typefaces) similar to the Gdi+ font management. Key is the Win32 font family name. Value is a bundle of 4 Wpf typefaces (regular, bold, italic and bolditalic).
+		/// </summary>
 		protected AltaxoFontFamilies _altaxoFontFamilies;
 
 		/// <summary>
@@ -64,6 +66,7 @@ namespace Altaxo.Gui
 
 		/// <summary>
 		/// Relates the Win32FamilyName to a list of typefaces. Key is the Win32FamilyName, value is a list of typefaces with that Win32 family name.
+		/// The Win32FamilyName was retrieved from the GlyphTypeface's property with the same name.
 		/// </summary>
 		protected Dictionary<string, List<Typeface>> _win32FamilyNamesToTypefaces = new Dictionary<string, List<Typeface>>();
 
@@ -84,6 +87,10 @@ namespace Altaxo.Gui
 				SetInstance(new WpfFontManager());
 		}
 
+		/// <summary>
+		/// Sets the instance of <see cref="WpfFontManager"/> here in this class (used by the static methods of this class), as well as in the base class (<see cref="Altaxo.Graph.Gdi.GdiFontManager"/>).
+		/// </summary>
+		/// <param name="newInstance">The new instance.</param>
 		public static void SetInstance(WpfFontManager newInstance)
 		{
 			var oldInstance = _instance;
@@ -98,14 +105,17 @@ namespace Altaxo.Gui
 		public WpfFontManager()
 		{
 			Altaxo.Graph3D.FontManager3D.Instance = new WpfFontManager3D();
-
-			_altaxoFontFamilies = new AltaxoFontFamilies();
-			_altaxoFontFamilies.Build();
 		}
 
+		/// <summary>
+		/// Builds the internal font dictionaries.
+		/// </summary>
 		protected override void InternalBuildDictionaries()
 		{
 			base.InternalBuildDictionaries();
+
+			_altaxoFontFamilies = new AltaxoFontFamilies();
+			_altaxoFontFamilies.Build();
 
 			Dictionary<Typeface, Uri> typefacesUri;
 			Dictionary<string, List<Typeface>> win32FamilyNamesToTypefaces;
@@ -116,6 +126,12 @@ namespace Altaxo.Gui
 			AmendMissingFamilyNamesToGdiFontFamilies();
 		}
 
+		/// <summary>
+		/// Enumerates all available <see cref="GlyphTypeface"/>s, extracts the Win32FamilyName from it and builds the dictionary that relates Win32FamilyName to a bundle of <see cref="Typeface"/>s.
+		/// Additionally, it extracts the paths of the typeface's files.
+		/// </summary>
+		/// <param name="typefacesUri">On return, this is a dictionary which relates typeface to its font file URI.</param>
+		/// <param name="win32FamilyNamesToTypefaces">On return, this is a dictionary which relates the Win32FamilyName to a list of typefaces with that Win32 family name.</param>
 		private void BuildWin32FamilyToTypefacesAndUris(out Dictionary<Typeface, Uri> typefacesUri, out Dictionary<string, List<Typeface>> win32FamilyNamesToTypefaces)
 		{
 			typefacesUri = new Dictionary<Typeface, Uri>();
@@ -156,6 +172,9 @@ namespace Altaxo.Gui
 			}
 		}
 
+		/// <summary>
+		/// Amends the Gdi font families with families found in Wpf. Family names found here by the WpfFontManager that are not included in the base class GdiFontManager are added to the _gdiFontFamilies dictionary.
+		/// </summary>
 		protected void AmendMissingFamilyNamesToGdiFontFamilies()
 		{
 			foreach (var entry in _win32FamilyNamesToTypefaces)
@@ -196,7 +215,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		/// <param name="fontX">The font X to convert to a Wpf typeface.</param>
 		/// <returns>The Wpf typeface that corresponds to the provided <see cref="FontX"/> instance.</returns>
-		protected virtual System.Windows.Media.Typeface InternalToWpf(FontX fontX)
+		protected virtual Typeface InternalToWpf(FontX fontX)
 		{
 			string fontID = fontX.FontFamilyName + ", " + fontX.Style.ToString();
 			Typeface result;
@@ -216,7 +235,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		/// <param name="fontX">The font X to convert to a Wpf typeface.</param>
 		/// <returns>The Wpf typeface that corresponds to the provided <see cref="FontX"/> instance.</returns>
-		public static System.Windows.Media.Typeface ToWpf(FontX fontX)
+		public static Typeface ToWpf(FontX fontX)
 		{
 			return _instance.InternalToWpf(fontX);
 		}
@@ -348,38 +367,11 @@ namespace Altaxo.Gui
 			{
 				var style = font.Style;
 				var result = new Typeface(new FontFamily(font.FontFamilyName),
-					 style.HasFlag(FontXStyle.Italic) ? System.Windows.FontStyles.Italic : System.Windows.FontStyles.Normal,
-					 style.HasFlag(FontXStyle.Bold) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal,
-					 System.Windows.FontStretches.Normal);
+					 style.HasFlag(FontXStyle.Italic) ? FontStyles.Italic : FontStyles.Normal,
+					 style.HasFlag(FontXStyle.Bold) ? FontWeights.Bold : FontWeights.Normal,
+					 FontStretches.Normal);
 
 				return result;
-			}
-		}
-
-		/// <summary>
-		/// Is called upon every construction of a <see cref="FontX"/> instance.
-		/// </summary>
-		/// <param name="fontID">The invariant description string of the constructed <see cref="FontX"/> instance.</param>
-		protected override void EhAnnounceConstructionOfFontX(string fontID)
-		{
-			base.EhAnnounceConstructionOfFontX(fontID);
-			_wpfFontReferenceCounter.AddOrUpdate(fontID, 1, (x, y) => y + 1);
-		}
-
-		/// <summary>
-		/// Is called upon every destruction of a <see cref="FontX"/> instance.
-		/// </summary>
-		/// <param name="fontID">The invariant description string of the destructed <see cref="FontX"/> instance.</param>
-		protected override void EhAnnounceDestructionOfFontX(string fontID)
-		{
-			base.EhAnnounceDestructionOfFontX(fontID);
-
-			int refCount = _wpfFontReferenceCounter.AddOrUpdate(fontID, 0, (x, y) => Math.Max(0, y - 1));
-			if (0 == refCount)
-			{
-				_wpfFontReferenceCounter.TryRemove(fontID, out refCount);
-				Typeface nativeFont;
-				_descriptionToWpfTypeface.TryRemove(fontID, out nativeFont);
 			}
 		}
 
@@ -460,16 +452,27 @@ namespace Altaxo.Gui
 			}
 		}
 
+		/// <summary>
+		/// Bundle of 4 typefaces (regular, italic, bold and bolditalic) that resemble a Gdi+ font family. Please not that not all 4 typefaces have to be non-null.
+		/// </summary>
 		public class AltaxoFontFamily
 		{
+			/// <summary>Typeface for the regular style.</summary>
 			public Typeface Normal { get; set; }
+
+			/// <summary>Typeface for the italic style.</summary>
 			public Typeface Italic { get; set; }
+
+			/// <summary>Typeface for the bold style.</summary>
 			public Typeface Bold { get; set; }
+
+			/// <summary>Typeface for the bolditalic style.</summary>
 			public Typeface BoldItalic { get; set; }
 		}
 
 		/// <summary>
-		///  The font families, key is the family name similar to the Gdi family name, value is the family class that holds the type faces for all styles.
+		///  Dictionary of font families that resemble the Gdi+ font families.
+		/// Key is the family name similar to the Gdi family name, value is a bundle of 4 typefaces for the styles (regular, italic, bold, bolditalic).
 		/// </summary>
 		public class AltaxoFontFamilies : SortedDictionary<string, AltaxoFontFamily>
 		{
@@ -566,6 +569,9 @@ namespace Altaxo.Gui
 
 		#region FontManager3D override
 
+		/// <summary>
+		/// Extension to <see cref="Altaxo.Graph3D.FontManager3D"/> that implements the method to get the raw character outline of a character.
+		/// </summary>
 		protected class WpfFontManager3D : Altaxo.Graph3D.FontManager3D
 		{
 			/// <summary>
@@ -614,7 +620,14 @@ namespace Altaxo.Gui
 				return result;
 			}
 
-			public override VectorD3D MeasureString(string text, FontX3D font, StringFormat format)
+			/// <summary>
+			/// Measures the string.
+			/// </summary>
+			/// <param name="text">The text to measure.</param>
+			/// <param name="font">The text font.</param>
+			/// <param name="format">The format of the text. This parameter is ignored here.</param>
+			/// <returns></returns>
+			public override VectorD3D MeasureString(string text, FontX3D font, System.Drawing.StringFormat format)
 			{
 				var scale = font.Font.Size / FontSizeForCaching;
 				double offsetX = 0;
@@ -631,18 +644,23 @@ namespace Altaxo.Gui
 						isFirst = false;
 
 						if (geo.LeftSideBearing < 0)
-							offsetX = -geo.LeftSideBearing * scale;
+							offsetX = -geo.LeftSideBearing;
 					}
 
-					offsetX += geo.AdvanceWidth * scale;
+					offsetX += geo.AdvanceWidth;
 				}
 
 				if (null != geo && geo.RightSideBearing < 0)
-					offsetX += -geo.RightSideBearing * scale;
+					offsetX += -geo.RightSideBearing;
 
-				return new VectorD3D(offsetX, geo.LineSpacing, font.Depth);
+				return new VectorD3D(offsetX * scale, geo.LineSpacing * scale, font.Depth);
 			}
 
+			/// <summary>
+			/// Gets information about the font.
+			/// </summary>
+			/// <param name="font">The font.</param>
+			/// <returns>Font information.</returns>
 			public override FontInfo GetFontInformation(FontX3D font)
 			{
 				var typeface = WpfFontManager.ToWpf(font.Font);

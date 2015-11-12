@@ -197,7 +197,7 @@ namespace Altaxo.Graph3D.GraphicsContext
 
 		public virtual VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D, System.Drawing.StringFormat strfmt)
 		{
-			return Text3D.MeasureString(text, font, strfmt);
+			return FontManager3D.Instance.MeasureString(text, font, strfmt);
 		}
 
 		public virtual void DrawString(string text, FontX3D font, IMaterial3D brush, PointD3D point, System.Drawing.StringFormat strfmt)
@@ -211,7 +211,7 @@ namespace Altaxo.Graph3D.GraphicsContext
 			{
 				var buf = buffers.PositionNormalIndexedTriangleBuffer;
 				txt.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
+				(position, normal) => buf.AddTriangleVertex(position.X + point.X, position.Y + point.Y, position.Z + point.Z, normal.X, normal.Y, normal.Z),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);
 			}
@@ -225,7 +225,7 @@ namespace Altaxo.Graph3D.GraphicsContext
 				var a = color.ScA;
 
 				txt.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
+				(position, normal) => buf.AddTriangleVertex(position.X + point.X, position.Y + point.Y, position.Z + point.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);
 			}

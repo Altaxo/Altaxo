@@ -377,49 +377,72 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			return true;
 		}
 
-		internal void ViewFront()
+		/// <summary>
+		/// Make the views to look at the root layer center. The scale is choosen so that the size of the plot will be maximal.
+		/// </summary>
+		/// <param name="toEyeVector">The To-Eye vector (vector from the target to the camera position).</param>
+		/// <param name="cameraUpVector">The camera up vector.</param>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public void ViewToRootLayerCenter(VectorD3D toEyeVector, VectorD3D cameraUpVector)
 		{
-			var up = new Altaxo.Graph3D.VectorD3D(0, 0, 1);
-			var target = new Altaxo.Graph3D.PointD3D(Doc.RootLayer.Size.X / 2, Doc.RootLayer.Size.Y / 2, Doc.RootLayer.Size.Z / 2);
-			var eye = new Altaxo.Graph3D.PointD3D(0, -750, 0) + (Altaxo.Graph3D.VectorD3D)target;
+			double aspectRatio = 1;
+			if (null != _view)
+			{
+				var viewportSize = _view.ViewportSizeInPoints;
+				aspectRatio = viewportSize.Y / viewportSize.X;
+			}
+
+			var upVector = cameraUpVector.Normalized;
+			var targetPosition = (PointD3D)(0.5 * Doc.RootLayer.Size);
+			var cameraDistance = 10 * Doc.RootLayer.Size.Length;
+			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
 
 			var newCamera = (Altaxo.Graph3D.Camera.CameraBase)Doc.Scene.Camera.Clone();
+			newCamera.UpVector = upVector;
+			newCamera.TargetPosition = targetPosition;
+			newCamera.EyePosition = eyePosition;
+			newCamera.ZNear = cameraDistance / 8;
+			newCamera.ZFar = cameraDistance * 2;
 
-			newCamera.UpVector = up;
-			newCamera.TargetPosition = target;
-			newCamera.EyePosition = eye;
+			var orthoCamera = newCamera as OrthographicCamera;
+
+			if (null != orthoCamera)
+			{
+				orthoCamera.Scale = 1;
+
+				var mx = orthoCamera.GetLookAtRHTimesOrthoRHMatrix(aspectRatio);
+				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
+				// then we search for the maximum of the absulute value of x and y. This is our scale.
+				double absmax = 0;
+				foreach (var p in new RectangleD3D(Doc.RootLayer.Position, Doc.RootLayer.Size).Vertices)
+				{
+					var ps = mx.TransformPoint(p);
+					absmax = Math.Max(absmax, Math.Abs(ps.X));
+					absmax = Math.Max(absmax, Math.Abs(ps.Y));
+				}
+				orthoCamera.Scale = absmax;
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
 
 			Doc.Scene.Camera = newCamera;
 		}
 
-		internal void ViewTop()
+		public void ViewTop()
 		{
-			var up = new Altaxo.Graph3D.VectorD3D(0, 1, 0);
-			var target = new Altaxo.Graph3D.PointD3D(Doc.RootLayer.Size.X / 2, Doc.RootLayer.Size.Y / 2, Doc.RootLayer.Size.Z / 2);
-			var eye = new Altaxo.Graph3D.PointD3D(0, 0, 750) + (Altaxo.Graph3D.VectorD3D)target;
+			ViewToRootLayerCenter(new VectorD3D(0, 0, 1), new VectorD3D(0, 1, 0));
+		}
 
-			var newCamera = (Altaxo.Graph3D.Camera.CameraBase)Doc.Scene.Camera.Clone();
-
-			newCamera.UpVector = up;
-			newCamera.TargetPosition = target;
-			newCamera.EyePosition = eye;
-
-			Doc.Scene.Camera = newCamera;
+		internal void ViewFront()
+		{
+			ViewToRootLayerCenter(new VectorD3D(0, -1, 0), new VectorD3D(0, 0, 1));
 		}
 
 		public void ViewRightFrontTop()
 		{
-			var up = new Altaxo.Graph3D.VectorD3D(0, 0, 1);
-			var target = new Altaxo.Graph3D.PointD3D(Doc.RootLayer.Size.X / 2, Doc.RootLayer.Size.Y / 2, Doc.RootLayer.Size.Z / 2);
-			var eye = new Altaxo.Graph3D.PointD3D(250, -500, 500) + (Altaxo.Graph3D.VectorD3D)target;
-
-			var newCamera = (Altaxo.Graph3D.Camera.CameraBase)Doc.Scene.Camera.Clone();
-
-			newCamera.UpVector = up;
-			newCamera.TargetPosition = target;
-			newCamera.EyePosition = eye;
-
-			Doc.Scene.Camera = newCamera;
+			ViewToRootLayerCenter(new VectorD3D(1, -2, 2), new VectorD3D(0, 0, 1));
 		}
 
 		public void Export3D()

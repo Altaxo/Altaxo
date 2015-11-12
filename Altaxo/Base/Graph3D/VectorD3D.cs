@@ -51,6 +51,14 @@ namespace Altaxo.Graph3D
 			}
 		}
 
+		public double SquareOfLength
+		{
+			get
+			{
+				return (X * X + Y * Y + Z * Z);
+			}
+		}
+
 		public void Normalize()
 		{
 			var s = 1 / Length;
@@ -58,6 +66,8 @@ namespace Altaxo.Graph3D
 			Y *= s;
 			Z *= s;
 		}
+
+		public VectorD3D Normalized { get { var s = 1 / Length; return new VectorD3D(s * X, s * Y, s * Z); } }
 
 		public bool Equals(VectorD3D other)
 		{

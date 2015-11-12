@@ -118,6 +118,16 @@ namespace Altaxo.Graph3D.Camera
 		/// Gets the LookAtRH matrix multiplied with the OrthoRH (see <see cref="GetOrthoRHMatrix(double, double, double)"/>) matrix.
 		/// </summary>
 		/// <param name="aspectRatio">The aspect ratio of the screen (or whatever the 2D output medium is).</param>
+		/// <returns>The LookAtRH matrix multiplied with the OrthoRH matrix.</returns>
+		public MatrixD3D GetLookAtRHTimesOrthoRHMatrix(double aspectRatio)
+		{
+			return GetLookAtRHTimesOrthoRHMatrix(aspectRatio, ZNear, ZFar);
+		}
+
+		/// <summary>
+		/// Gets the LookAtRH matrix multiplied with the OrthoRH (see <see cref="GetOrthoRHMatrix(double, double, double)"/>) matrix.
+		/// </summary>
+		/// <param name="aspectRatio">The aspect ratio of the screen (or whatever the 2D output medium is).</param>
 		/// <param name="zNearPlane">The z near plane, i.e. the z camera coordinate of the near end of the view volume.</param>
 		/// <param name="zFarPlane">The z far plane, i.e. the z camera coordinate of the far end of the view volume.</param>
 		/// <returns>The LookAtRH matrix multiplied with the OrthoRH matrix.</returns>

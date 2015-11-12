@@ -35,6 +35,8 @@ namespace Altaxo.Graph3D.Camera
 		public VectorD3D UpVector { get; set; }
 		public PointD3D EyePosition { get; set; }
 		public PointD3D TargetPosition { get; set; }
+		public double ZNear { get; set; }
+		public double ZFar { get; set; }
 
 		/// <summary>
 		/// Gets or sets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
@@ -49,6 +51,8 @@ namespace Altaxo.Graph3D.Camera
 		{
 			EyePosition = new PointD3D(0, 0, -1500);
 			UpVector = new VectorD3D(0, 0, 1);
+			ZNear = 150;
+			ZFar = 3000;
 		}
 
 		public abstract object Clone();
@@ -64,6 +68,8 @@ namespace Altaxo.Graph3D.Camera
 				this.UpVector = from.UpVector;
 				this.EyePosition = from.EyePosition;
 				this.TargetPosition = from.TargetPosition;
+				this.ZNear = from.ZNear;
+				this.ZFar = from.ZFar;
 				// ScreenOffset is temporary, thus it is _not_ copied here
 				return true;
 			}

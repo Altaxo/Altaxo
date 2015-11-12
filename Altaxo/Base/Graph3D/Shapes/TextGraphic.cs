@@ -423,7 +423,7 @@ namespace Altaxo.Graph3D.Shapes
 
 		private void DrawGlyphs(IGraphicContext3D g, DrawContext dc, double x, double y, double z)
 		{
-			_rootNode.Draw(g, dc, x, y + _rootNode.ExtendAboveBaseline, z);
+			_rootNode.Draw(g, dc, x, y + _rootNode.ExtendBelowBaseline, z);
 		}
 
 		public override void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext)

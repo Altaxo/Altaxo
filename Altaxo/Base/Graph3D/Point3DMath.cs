@@ -112,5 +112,18 @@ namespace Altaxo.Graph3D
 				0, 0, 0,
 				p.X, p.Y, p.Z);
 		}
+
+		/// <summary>
+		/// Gets the distance of a point <paramref name="a"/> to a plane defined by a point <paramref name="p"/> and a normal vector <paramref name="q"/>. The distance is considered to be positive
+		/// if the point <paramref name="a"/> is located in the half space where the vector <paramref name="q"/> is pointing into.
+		/// </summary>
+		/// <param name="a">The point a.</param>
+		/// <param name="p">A point on a plane.</param>
+		/// <param name="q">The normal vector of that plane (can be not-normalized).</param>
+		/// <returns></returns>
+		public static double GetDistancePointToPlane(PointD3D a, PointD3D p, VectorD3D q)
+		{
+			return ((a.X - p.X) * q.X + (a.Y - p.Y) * q.Y + (a.Z - p.Z) * q.Z) / q.Length;
+		}
 	}
 }
