@@ -580,6 +580,7 @@
     <Compile Include="Collections\ContiguousNonNegativeIntegerRange.cs" />
     <Compile Include="Collections\ListExtensions.cs" />
     <Compile Include="Collections\Operations\MinimumOnSlidingWindow.cs" />
+    <Compile Include="Collections\PartialDictionary.cs" />
     <Compile Include="Collections\PartitionableList_PartialView.cs" />
     <Compile Include="Collections\PartitionableList.cs" />
     <Compile Include="Collections\PriorityQueue_Key.cs" />
