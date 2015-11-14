@@ -30,6 +30,8 @@ using System.Drawing;
 namespace Altaxo.Worksheet
 {
 	using Altaxo.Graph;
+	using Drawing;
+	using Geometry;
 
 	[Serializable]
 	public enum ColumnStyleType { RowHeader, ColumnHeader, PropertyHeader, PropertyCell, DataCell }
@@ -453,7 +455,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public abstract void Paint(System.Type dctype, object dc, Altaxo.Graph.RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
+		public abstract void Paint(System.Type dctype, object dc, RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
 		public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 

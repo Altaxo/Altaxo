@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using System;
@@ -45,10 +46,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		}
 
 		/// <summary>Stores the mouse position of the last mouse up event.</summary>
-		protected Altaxo.Graph.PointD2D _positionLastMouseUpInMouseCoordinates;
+		protected PointD2D _positionLastMouseUpInMouseCoordinates;
 
 		/// <summary>Stores the mouse position of the last mouse down event.</summary>
-		protected Altaxo.Graph.PointD2D _positionLastMouseDownInMouseCoordinates;
+		protected PointD2D _positionLastMouseDownInMouseCoordinates;
 
 		/// <summary>Active layer at the time of using the tool.</summary>
 		protected HostLayer _cachedActiveLayer;
@@ -70,7 +71,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public virtual void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
+		public virtual void OnMouseMove(PointD2D position, MouseEventArgs e)
 		{
 		}
 
@@ -80,7 +81,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public virtual void OnMouseUp(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public virtual void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
 		{
 			_positionLastMouseUpInMouseCoordinates = position;
 		}
@@ -91,7 +92,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">MouseEventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public virtual void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public virtual void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
 		{
 			_positionLastMouseDownInMouseCoordinates = position;
 		}
@@ -102,7 +103,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public virtual void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public virtual void OnClick(PointD2D position, MouseButtonEventArgs e)
 		{
 		}
 
@@ -112,7 +113,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs as provided by the view.</param>
 		/// <returns>The next mouse state handler that should handle mouse events.</returns>
-		public virtual void OnDoubleClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public virtual void OnDoubleClick(PointD2D position, MouseButtonEventArgs e)
 		{
 		}
 

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
@@ -160,7 +161,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			_grac.SetPanelCursor(Cursors.Arrow);
 		}
 
-		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
+		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
 		{
 			base.OnMouseMove(position, e);
 

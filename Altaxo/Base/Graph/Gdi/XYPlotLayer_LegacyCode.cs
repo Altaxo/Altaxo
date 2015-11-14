@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -438,7 +439,7 @@ namespace Altaxo.Graph.Gdi
 
 			#endregion "Serialization"
 
-		#endregion XYPlotLayerCollection
+			#endregion XYPlotLayerCollection
 		}
 	}
 }

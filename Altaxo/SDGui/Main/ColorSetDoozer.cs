@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
@@ -71,8 +73,8 @@ namespace Altaxo.Main
 			string id = args.Codon.Id;
 			bool isPlotColorSet = args.Codon.Properties.Get<bool>("IsPlotColorSet", false);
 
-			var subItems = args.BuildSubItems<Altaxo.Graph.NamedColor>();
-			var result = new Altaxo.Graph.ColorManagement.ColorSet(label, Graph.ColorManagement.ColorSetLevel.Application, subItems);
+			var subItems = args.BuildSubItems<NamedColor>();
+			var result = new ColorSet(label, ColorSetLevel.Application, subItems);
 			if (isPlotColorSet)
 				result.DeclareThisSetAsPlotColorSet();
 

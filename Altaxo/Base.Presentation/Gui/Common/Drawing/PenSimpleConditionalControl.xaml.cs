@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace Altaxo.Gui.Common.Drawing
 				else
 				{
 					var pen = _glue.Pen;
-					pen.Color = Altaxo.Graph.NamedColors.Transparent;
+					pen.Color = NamedColors.Transparent;
 					return pen;
 				}
 			}
@@ -75,7 +76,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (!_glue.Pen.IsVisible)
 			{
 				var pen = _glue.Pen;
-				pen.Color = Altaxo.Graph.NamedColors.Black;
+				pen.Color = NamedColors.Black;
 				_glue.Pen = pen;
 			}
 		}

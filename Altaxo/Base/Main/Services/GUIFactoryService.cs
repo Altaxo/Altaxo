@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
 using System;
@@ -916,10 +917,10 @@ namespace Altaxo.Main.Services
 		/// <param name="virtual_x">The virtual screen x coordinate of the point on the virtual screen.</param>
 		/// <param name="virtual_y">The virtual screen x coordinate of the point on the virtual screen.</param>
 		/// <returns>True if the function has successfully retrieved information, false otherwise.</returns>
-		public abstract Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y);
+		public abstract RectangleD GetScreenInformation(double virtual_x, double virtual_y);
 
 		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
-		public abstract Altaxo.Graph.PointD2D ScreenResolutionDpi { get; }
+		public abstract PointD2D ScreenResolutionDpi { get; }
 
 		public abstract bool ShowOpenFileDialog(OpenFileOptions options);
 

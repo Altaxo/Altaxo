@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Gdi
 	public class GraphDocumentPrintTask
 	{
 		private HostLayer _layers;
-		private Altaxo.Graph.SingleGraphPrintOptions _printOptions;
+		private SingleGraphPrintOptions _printOptions;
 		private int _page;
 		private bool _isPrintPreview;
 
@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Gdi
 		{
 		}
 
-		public GraphDocumentPrintTask(HostLayer rootLayer, Altaxo.Graph.SingleGraphPrintOptions options)
+		public GraphDocumentPrintTask(HostLayer rootLayer, SingleGraphPrintOptions options)
 		{
 			_layers = rootLayer;
 			_printOptions = options;

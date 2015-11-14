@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -113,15 +114,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 			static ShearGripHandle()
 			{
 				_shapePoints = new PointF[] {
-        new PointF(0,-smallY),
-        new PointF(bigX, -smallY),
-        new PointF(bigX, -arrY),
-        new PointF(2*bigX,-bigY),
-        new PointF(2*bigX, smallY),
-        new PointF(bigX, smallY),
-        new PointF(bigX, arrY),
-        new PointF(0, bigY),
-          };
+				new PointF(0,-smallY),
+				new PointF(bigX, -smallY),
+				new PointF(bigX, -arrY),
+				new PointF(2*bigX,-bigY),
+				new PointF(2*bigX, smallY),
+				new PointF(bigX, smallY),
+				new PointF(bigX, arrY),
+				new PointF(0, bigY),
+					};
 			}
 		}
 	}

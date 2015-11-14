@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (null != gc)
 			{
 				var i = (int[])((ToggleButton)sender).Tag;
-				gc.EhView_ShowDataContextMenu(i, this, new Altaxo.Graph.PointD2D(e.CursorLeft, e.CursorTop));
+				gc.EhView_ShowDataContextMenu(i, this, new PointD2D(e.CursorLeft, e.CursorTop));
 			}
 		}
 
@@ -117,12 +117,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		public Altaxo.Graph.PointD2D ViewportSizeInPoints
+		public PointD2D ViewportSizeInPoints
 		{
 			get
 			{
 				const double factor = 72.0 / 96.0;
-				return new Altaxo.Graph.PointD2D(_d3dCanvas.ActualWidth * factor, _d3dCanvas.ActualHeight * factor);
+				return new PointD2D(_d3dCanvas.ActualWidth * factor, _d3dCanvas.ActualHeight * factor);
 			}
 		}
 

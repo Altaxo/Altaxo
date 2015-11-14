@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;

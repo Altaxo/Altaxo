@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -116,20 +117,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 				_rotationGripShape.AddArc(-ri, -ri, 2 * ri, 2 * ri, -45, 90); // mit Innenradius beginnen
 
 				_rotationGripShape.AddLines(new PointF[]
-      {
-        new PointF(rii*cos45, rii*sin45),
-        new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
-        new PointF(raa*cos45, raa*sin45)
-      });
+			{
+				new PointF(rii*cos45, rii*sin45),
+				new PointF(rii*cos45, rii*sin45 + rotArrowWidth*cos45),
+				new PointF(raa*cos45, raa*sin45)
+			});
 
 				_rotationGripShape.AddArc(-ra, -ra, 2 * ra, 2 * ra, 45, -90); // Außenradius
 
 				_rotationGripShape.AddLines(new PointF[]
-      {
-        new PointF(raa*cos45, -raa*sin45),
-        new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
-        new PointF(rii*cos45, -rii*sin45),
-      });
+			{
+				new PointF(raa*cos45, -raa*sin45),
+				new PointF(rii*cos45, -rii*sin45 - rotArrowWidth*cos45),
+				new PointF(rii*cos45, -rii*sin45),
+			});
 
 				_rotationGripShape.CloseFigure();
 			}

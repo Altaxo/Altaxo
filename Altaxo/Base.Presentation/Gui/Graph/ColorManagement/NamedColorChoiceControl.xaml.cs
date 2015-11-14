@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 			}
 		}
 
-		public Altaxo.Graph.NamedColor SelectedColor
+		public NamedColor SelectedColor
 		{
 			get
 			{

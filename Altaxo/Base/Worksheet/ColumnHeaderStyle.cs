@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
 using System;
@@ -125,11 +126,11 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, Graph.RectangleD, int, Data.DataColumn, bool>>();
+		public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, RectangleD, int, Data.DataColumn, bool>>();
 
-		public override void Paint(System.Type dctype, object dc, Altaxo.Graph.RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		public override void Paint(System.Type dctype, object dc, RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
-			Action<ColumnHeaderStyle, object, Altaxo.Graph.RectangleD, int, Altaxo.Data.DataColumn, bool> action;
+			Action<ColumnHeaderStyle, object, RectangleD, int, Altaxo.Data.DataColumn, bool> action;
 			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
 				action(this, dc, cellRectangle, nRow, data, bSelected);
 			else

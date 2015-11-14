@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace Altaxo.Graph.Gdi
 				var s = null != o ? (EmbeddedObjectRenderingOptions)o : new EmbeddedObjectRenderingOptions();
 
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
-				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
+				s._backgroundColorForFormatsWithoutAlphaChannel = (NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
 				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
 				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
@@ -110,7 +111,7 @@ namespace Altaxo.Graph.Gdi
 
 				s._sourceDpiResolution = info.GetDouble("SourceResolution");
 				s._outputScalingFactor = info.GetDouble("OutputScaling");
-				s._backgroundColorForFormatsWithoutAlphaChannel = (Altaxo.Graph.NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
+				s._backgroundColorForFormatsWithoutAlphaChannel = (NamedColor)info.GetValue("BackgroundForFormatsWithoutAlphaChannel", s);
 				s.BackgroundBrush = (BrushX)info.GetValue("Background", s);
 				s._renderEnhancedMetafile = info.GetBoolean("RenderEnhancedMetafile");
 				s._renderEnhancedMetafileAsVectorFormat = info.GetBoolean("RenderEnhancedMetafileAsVectorFormat");
@@ -132,7 +133,7 @@ namespace Altaxo.Graph.Gdi
 			_renderEnhancedMetafileAsVectorFormat = false;
 			_renderWindowsMetafile = true;
 			_renderBitmap = true;
-			_backgroundColorForFormatsWithoutAlphaChannel = Altaxo.Graph.NamedColors.White;
+			_backgroundColorForFormatsWithoutAlphaChannel = NamedColors.White;
 			_backgroundBrush = null;
 			_outputScalingFactor = 1;
 		}
@@ -246,7 +247,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public Altaxo.Graph.NamedColor BackgroundColorForFormatsWithoutAlphaChannel
+		public NamedColor BackgroundColorForFormatsWithoutAlphaChannel
 		{
 			get
 			{

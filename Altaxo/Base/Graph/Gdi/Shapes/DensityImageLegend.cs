@@ -36,6 +36,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	using Altaxo.Graph.Gdi.Plot;
 	using Altaxo.Graph.Scales;
 	using Altaxo.Graph.Scales.Ticks;
+	using Geometry;
 
 	[Serializable]
 	public class DensityImageLegend : GraphicBase, Main.IChildChangedEventSink

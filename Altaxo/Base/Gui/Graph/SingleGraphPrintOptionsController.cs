@@ -31,6 +31,7 @@ namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Collections;
 	using Altaxo.Graph;
+	using Altaxo.Graph.Gdi;
 
 	public interface ISingleGraphPrintOptionsView
 	{

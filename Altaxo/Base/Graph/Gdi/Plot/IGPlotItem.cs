@@ -32,6 +32,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
+	using Geometry;
 	using Plot.Groups;
 
 	/// <summary>

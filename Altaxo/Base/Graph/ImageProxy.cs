@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -638,7 +640,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Physical size of both sides of the texture in points (1 point = 1/72 inch).
 		/// </summary>
-		Altaxo.Graph.PointD2D Size { get; }
+		PointD2D Size { get; }
 	}
 
 	public interface IHatchBrushTexture : ISyntheticRepeatableTexture

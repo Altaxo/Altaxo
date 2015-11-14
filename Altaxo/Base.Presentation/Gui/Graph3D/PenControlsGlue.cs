@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph3D;
 using Altaxo.Gui.Graph3D.Material;
 using System;
@@ -50,7 +51,7 @@ namespace Altaxo.Gui.Graph3D
 
 		public PenControlsGlue(bool isAllPropertiesGlue)
 		{
-			this.InternalSelectedPen = new PenX3D(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0], 1);
+			this.InternalSelectedPen = new PenX3D(BuiltinDarkPlotColorSet.Instance[0], 1);
 			_isAllPropertiesGlue = isAllPropertiesGlue;
 		}
 

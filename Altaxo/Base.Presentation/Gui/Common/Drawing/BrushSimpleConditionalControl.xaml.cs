@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Altaxo.Gui.Common.Drawing
 				else
 				{
 					var brush = _cbBrush.SelectedBrush;
-					brush.Color = Altaxo.Graph.NamedColors.Transparent;
+					brush.Color = NamedColors.Transparent;
 					return brush;
 				}
 			}
@@ -68,7 +69,7 @@ namespace Altaxo.Gui.Common.Drawing
 			var brush = _cbBrush.SelectedBrush.Clone();
 			if (!brush.IsVisible)
 			{
-				brush.Color = Altaxo.Graph.NamedColors.AliceBlue;
+				brush.Color = NamedColors.AliceBlue;
 				_cbBrush.SelectedBrush = brush;
 			}
 		}

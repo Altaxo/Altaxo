@@ -33,6 +33,7 @@ using System.Text;
 
 namespace Altaxo.Worksheet
 {
+	using Geometry;
 	using WA = Altaxo.Worksheet.AreaRetrieval;
 
 	/// <summary>
@@ -90,7 +91,7 @@ namespace Altaxo.Worksheet
 
 			int yShift = 0;
 
-			var cellRectangle = new Altaxo.Graph.RectangleD();
+			var cellRectangle = new RectangleD();
 			double left, width;
 
 			if (clipRectangle.Top < layout.ColumnHeaderStyle.Height)

@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -48,7 +50,7 @@ namespace Altaxo.Graph.Plot.Groups
 	{
 		private bool _isInitialized;
 		private bool _isStepEnabled;
-		private ColorManagement.IColorSet _colorSet;
+		private Drawing.ColorManagement.IColorSet _colorSet;
 
 		/// <summary>Index of the current color in the color set.</summary>
 		private int _colorIndex;
@@ -101,7 +103,7 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				s._colorSet = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				return s;
 			}
 		}
@@ -128,7 +130,7 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				s._colorSet = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				s._colorIndex = info.GetInt32("ColorIndex");
 				return s;
 			}
@@ -244,7 +246,7 @@ namespace Altaxo.Graph.Plot.Groups
 				return 0;
 
 			int wraps;
-			this._colorIndex = ColorManagement.ColorSetExtensions.GetNextPlotColorIndex(_colorSet, _colorIndex, step, out wraps);
+			this._colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_colorSet, _colorIndex, step, out wraps);
 			this._cachedColor = InternalGetColorFromColorSetAndIndex();
 			return wraps;
 		}
@@ -297,7 +299,7 @@ namespace Altaxo.Graph.Plot.Groups
 				else
 				{
 					if (null == _colorSet || !_colorSet.IsPlotColorSet || _colorSet.Count == 0)
-						_colorSet = ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors;
+						_colorSet = ColorSetManager.Instance.BuiltinDarkPlotColors;
 					_colorIndex = _colorSet.IndexOf(c.Color);
 					if (_colorIndex < 0)
 						_colorIndex = 0;
@@ -318,7 +320,7 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		public ColorManagement.IColorSet ColorSet
+		public Drawing.ColorManagement.IColorSet ColorSet
 		{
 			get
 			{
@@ -338,7 +340,7 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 			else
 			{
-				return ColorManagement.BuiltinDarkPlotColorSet.Instance[0];
+				return BuiltinDarkPlotColorSet.Instance[0];
 			}
 		}
 

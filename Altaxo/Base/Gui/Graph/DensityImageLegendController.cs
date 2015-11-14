@@ -430,7 +430,7 @@ namespace Altaxo.Gui.Graph
 			}
 			else if (object.ReferenceEquals(_currentController, _layerPositionController))
 			{
-				_doc.Location.CopyFrom((Altaxo.Graph.IItemLocation)_currentController.ModelObject);
+				_doc.Location.CopyFrom((IItemLocation)_currentController.ModelObject);
 			}
 
 			return true;

@@ -35,6 +35,7 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Graph.Scales.Ticks;
+	using Drawing;
 	using Graph.Plot.Data;
 
 	/// <summary>

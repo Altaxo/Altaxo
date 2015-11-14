@@ -32,6 +32,7 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
+	using Drawing;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Plot.Data;
@@ -133,7 +134,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			public void SetToNextStyle(ShapeAndStyle template, int steps)
 			{
 				int wraps;
-				SetToNextStyle(template, steps, out  wraps);
+				SetToNextStyle(template, steps, out wraps);
 			}
 
 			public void SetToNextStyle(ShapeAndStyle template, int step, out int wraps)
@@ -961,15 +962,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
 		{
 			if (this.IsColorProvider)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
 			SymbolShapeStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.ShapeAndStyle; });
 
 			if (this.IsSymbolSizeProvider)
-				SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SymbolSize; });
+				SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SymbolSize; });
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
+			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -977,27 +978,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsColorReceiver)
 			{
 				// try to get a constant color ...
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.Color = c; });
 				// but if there is a color evaluation function, then use that function with higher priority
-				if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; }))
+				if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; }))
 					_cachedColorForIndexFunction = null;
 			}
 
-			SymbolShapeStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(ShapeAndStyle c) { this.ShapeAndStyle = c; });
+			SymbolShapeStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (ShapeAndStyle c) { this.ShapeAndStyle = c; });
 
 			// per Default, set the symbol size evaluation function to null
 			_cachedSymbolSizeForIndexFunction = null;
 			if (!_independentSymbolSize)
 			{
 				// try to get a constant symbol size ...
-				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this.SymbolSize = size; });
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this.SymbolSize = size; });
 				// but if there is an symbol size evaluation function, then use this with higher priority.
-				if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; }))
+				if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; }))
 					_cachedSymbolSizeForIndexFunction = null;
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });
+			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
 		}
 
 		#endregion IPlotStyle Members

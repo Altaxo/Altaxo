@@ -1,4 +1,5 @@
-﻿using Altaxo.Geometry;
+﻿using Altaxo.Drawing;
+using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph3D.GraphicsContext;
 using System;

@@ -37,6 +37,7 @@ using System.Windows.Media;
 namespace Altaxo.Gui.Graph.Viewing
 {
 	using Altaxo.Graph;
+	using Geometry;
 
 	/// <summary>
 	/// Interaction logic for GraphView.xaml
@@ -160,7 +161,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		private PointD2D GetMousePosition(MouseEventArgs e)
 		{
 			var p = e.GetPosition(_guiCanvas);
-			return new Altaxo.Graph.PointD2D(p.X, p.Y);
+			return new PointD2D(p.X, p.Y);
 		}
 
 		private void EhGraphPanel_MouseMove(object sender, MouseEventArgs e)
@@ -482,11 +483,11 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		public Altaxo.Graph.PointD2D GraphScrollPosition
+		public PointD2D GraphScrollPosition
 		{
 			get
 			{
-				return new Altaxo.Graph.PointD2D(_horizontalScrollBar.Value, _verticalScrollBar.Value);
+				return new PointD2D(_horizontalScrollBar.Value, _verticalScrollBar.Value);
 			}
 		}
 
@@ -574,12 +575,12 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		public Altaxo.Graph.PointD2D ViewportSizeInPoints
+		public PointD2D ViewportSizeInPoints
 		{
 			get
 			{
 				const double factor = 72.0 / 96.0;
-				return new Altaxo.Graph.PointD2D(_cachedGraphSize_96thInch.X * factor, _cachedGraphSize_96thInch.Y * factor);
+				return new PointD2D(_cachedGraphSize_96thInch.X * factor, _cachedGraphSize_96thInch.Y * factor);
 			}
 		}
 

@@ -23,8 +23,12 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+
+using Altaxo.Drawing.ColorManagement;
+
 using Altaxo.Graph;
-using Altaxo.Graph.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,14 +90,14 @@ namespace Altaxo.Gui.Common.Drawing
 				NGTreeNode node = item as NGTreeNode;
 				if (node != null)
 				{
-					if (node.Tag is Altaxo.Graph.NamedColor)
+					if (node.Tag is NamedColor)
 					{
 						if (null == _namedColorTemplate)
 							_namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
 						if (null != _namedColorTemplate)
 							return _namedColorTemplate;
 					}
-					else if (node.Tag is Altaxo.Graph.ColorManagement.IColorSet)
+					else if (node.Tag is IColorSet)
 					{
 						if (null == _colorSetTemplate)
 							_colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");
@@ -359,7 +363,7 @@ namespace Altaxo.Gui.Common.Drawing
 		/// </summary>
 		protected virtual void UpdateTreeViewTreeNodes()
 		{
-			var manager = Altaxo.Graph.ColorManagement.ColorSetManager.Instance;
+			var manager = ColorSetManager.Instance;
 
 			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = ColorSetLevel.Builtin };
 			var app = new NGTreeNode() { Text = "Application", Tag = ColorSetLevel.Application };
@@ -375,19 +379,19 @@ namespace Altaxo.Gui.Common.Drawing
 
 				switch (set.Level)
 				{
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
+					case ColorSetLevel.Builtin:
 						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
 
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
+					case ColorSetLevel.Application:
 						app.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
 
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
+					case ColorSetLevel.UserDefined:
 						user.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
 
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
+					case ColorSetLevel.Project:
 						proj.Nodes.Add(new NGTreeNodeForColorSet(set));
 						break;
 				}

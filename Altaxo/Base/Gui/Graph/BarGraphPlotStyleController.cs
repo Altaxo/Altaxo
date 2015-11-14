@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -280,7 +282,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
 				{
-					_view.FillBrush = new BrushX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+					_view.FillBrush = new BrushX(BuiltinDarkPlotColorSet.Instance[0]);
 				}
 			}
 			_view.UseFill = newValue; // to enable/disable gui items in the control
@@ -298,7 +300,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else if (null == _view.FramePen || _view.FramePen.IsInvisible)
 				{
-					_view.FramePen = new PenX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+					_view.FramePen = new PenX(BuiltinDarkPlotColorSet.Instance[0]);
 				}
 			}
 

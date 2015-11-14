@@ -33,6 +33,7 @@ namespace Altaxo.Graph3D
 {
 	using Altaxo.Geometry;
 	using Altaxo.Graph;
+	using Drawing;
 
 	public class FontManager3D
 	{
@@ -102,14 +103,14 @@ namespace Altaxo.Graph3D
 			return new FontInfo(cyLineSpace, cyAscent, cyDescent, size);
 		}
 
-		public FontX3D GetFont(string fontFamilyName, double size, double depth, Altaxo.Graph.FontXStyle style)
+		public FontX3D GetFont(string fontFamilyName, double size, double depth, FontXStyle style)
 		{
 			return new FontX3D(Altaxo.Graph.Gdi.GdiFontManager.GetFont(fontFamilyName, size, style), depth);
 		}
 
 		protected const double FontSizeForCaching = 1024;
 
-		public Primitives.CharacterGeometry GetCharacterGeometry(Altaxo.Graph.FontX font, char textChar)
+		public Primitives.CharacterGeometry GetCharacterGeometry(FontX font, char textChar)
 		{
 			var typefaceName = font.InvariantDescriptionStringWithoutSizeInformation;
 
@@ -130,7 +131,7 @@ namespace Altaxo.Graph3D
 			return cachedChar;
 		}
 
-		protected Primitives.CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, Altaxo.Graph.FontX font)
+		protected Primitives.CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, FontX font)
 		{
 			var charOutline = InternalGetCharacterOutlineForCaching(textChar, font); // get the - already simplified - polygonal shape of the character
 
@@ -199,7 +200,7 @@ namespace Altaxo.Graph3D
 			return indexedTriangles;
 		}
 
-		private RawCharacterOutline InternalGetCharacterOutlineForCaching(char textChar, Altaxo.Graph.FontX font)
+		private RawCharacterOutline InternalGetCharacterOutlineForCaching(char textChar, FontX font)
 		{
 			var glyphTypeface = font.InvariantDescriptionStringWithoutSizeInformation;
 
@@ -320,7 +321,7 @@ namespace Altaxo.Graph3D
 		/// <param name="font">The font. The font size of this font is ignored, because it is given in the next parameter.</param>
 		/// <param name="fontSize">Size of the font.</param>
 		/// <returns>The list of polygons which forms the character.</returns>
-		protected virtual RawCharacterOutline GetRawCharacterOutline(char textChar, Altaxo.Graph.FontX font, double fontSize)
+		protected virtual RawCharacterOutline GetRawCharacterOutline(char textChar, FontX font, double fontSize)
 		{
 			throw new NotImplementedException("This is not implemented here, because it should be implemented in a derived class. This class should then set the static instance of this class to an instance of the derived class.");
 		}

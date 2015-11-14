@@ -23,11 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph.ColorManagement;
-using System;
+using Altaxo.Drawing.ColorManagement;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
@@ -55,7 +52,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 			if (initData)
 			{
 				IColorSet colorSetCurrentlySelected;
-				Altaxo.Graph.ColorManagement.ColorSetManager.Instance.TryGetValue(_doc.Level, _doc.Name, out colorSetCurrentlySelected);
+				ColorSetManager.Instance.TryGetValue(_doc.Level, _doc.Name, out colorSetCurrentlySelected);
 				ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, colorSetCurrentlySelected);
 			}
 			if (null != _view)

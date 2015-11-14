@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 
 namespace Altaxo.Graph.Gdi.Shapes
@@ -64,6 +65,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <returns><c>True</c> if this object is compatible with the parent object; otherwise <c>false</c>.</returns>
 		bool IsCompatibleWithParent(object parentObject);
 
-		Altaxo.Graph.PointD2D Position { get; set; }
+		PointD2D Position { get; set; }
 	}
 }

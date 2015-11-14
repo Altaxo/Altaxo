@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Gui.Common;
 using Altaxo.Main.Services;
 using System;
@@ -42,11 +43,11 @@ namespace Altaxo.Gui
 			get { return ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject).Handle; }
 		}
 
-		public override Altaxo.Graph.RectangleD GetScreenInformation(double virtual_x, double virtual_y)
+		public override RectangleD GetScreenInformation(double virtual_x, double virtual_y)
 		{
 			var wa = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)virtual_x, (int)virtual_y));
 
-			return new Altaxo.Graph.RectangleD(wa.X, wa.Y, wa.Width, wa.Height);
+			return new RectangleD(wa.X, wa.Y, wa.Width, wa.Height);
 		}
 
 		#endregion Still dependent on Windows Forms
@@ -90,22 +91,22 @@ namespace Altaxo.Gui
 			}
 		}
 
-		private Altaxo.Graph.PointD2D _screenResolution;
+		private PointD2D _screenResolution;
 
 		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
-		public override Altaxo.Graph.PointD2D ScreenResolutionDpi
+		public override PointD2D ScreenResolutionDpi
 		{
 			get
 			{
 				if (_screenResolution.IsEmpty)
 				{
 					if (null == Current.Workbench.ViewObject)
-						return new Altaxo.Graph.PointD2D(96, 96); // until we have a workbench, we assume 96 dpi
+						return new PointD2D(96, 96); // until we have a workbench, we assume 96 dpi
 					var MainWindowPresentationSource = System.Windows.PresentationSource.FromVisual((System.Windows.Window)Current.Workbench.ViewObject);
 					if (null == MainWindowPresentationSource)
-						return new Altaxo.Graph.PointD2D(96, 96); // until we have a valid presentation source, we assume 96 dpi
+						return new PointD2D(96, 96); // until we have a valid presentation source, we assume 96 dpi
 					var m = MainWindowPresentationSource.CompositionTarget.TransformToDevice;
-					_screenResolution = new Altaxo.Graph.PointD2D(96 * m.M11, 96 * m.M22);
+					_screenResolution = new PointD2D(96 * m.M11, 96 * m.M22);
 				}
 				return _screenResolution;
 			}

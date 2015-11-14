@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Altaxo.Gui.Common
 	public partial class DialogShellViewWpf : Window, IDialogShellView
 	{
 		private UIElement _hostedControl;
-		private Altaxo.Graph.RectangleD _workArea;
+		private RectangleD _workArea;
 
 		public DialogShellViewWpf()
 		{

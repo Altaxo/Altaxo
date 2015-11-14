@@ -27,6 +27,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Graph3D;
 	using Altaxo.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
+	using Geometry;
 	using SharpDX;
 	using SharpDX.D3DCompiler;
 	using SharpDX.Direct3D11;
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private DeviceContext _hostDeviceContext;
 
-		private Altaxo.Graph.PointD2D _hostSize;
+		private PointD2D _hostSize;
 
 		private D3D10GraphicContext _drawing;
 
@@ -105,12 +106,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private List<VertexAndIndexDeviceBuffer>[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[6];
 
-		public void Attach(SharpDX.ComObject hostDevice, Altaxo.Graph.PointD2D hostSize)
+		public void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize)
 		{
 			Attach((Device)hostDevice, hostSize);
 		}
 
-		public void Attach(Device hostDevice, Altaxo.Graph.PointD2D hostSize)
+		public void Attach(Device hostDevice, PointD2D hostSize)
 		{
 			if (hostDevice == null)
 				throw new ArgumentNullException(nameof(hostDevice));
@@ -181,7 +182,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		public void SetHostSize(Altaxo.Graph.PointD2D hostSize)
+		public void SetHostSize(PointD2D hostSize)
 		{
 			_hostSize = hostSize;
 		}

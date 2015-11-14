@@ -32,6 +32,7 @@ using System.Text;
 namespace Altaxo.Graph3D.Shapes
 {
 	using Altaxo.Geometry;
+	using Drawing;
 	using Graph.Plot.Data;
 	using GraphicsContext;
 	using Plot;
@@ -97,7 +98,7 @@ namespace Altaxo.Graph3D.Shapes
 				FontId = FontId.GetFontWithNewSize(scale * FontId.Size);
 			}
 
-			public void SetFontStyle(Altaxo.Graph.FontXStyle style)
+			public void SetFontStyle(FontXStyle style)
 			{
 				FontId = FontId.GetFontWithNewStyle(style);
 			}
@@ -106,7 +107,7 @@ namespace Altaxo.Graph3D.Shapes
 			/// Merges the providedstyle into the present style. Example: if the present style is Bold, and the style parameter is Italic, then the merged style is 'Bold Italic'.
 			/// </summary>
 			/// <param name="style">The style to merge with the present style.</param>
-			public void MergeFontStyle(Altaxo.Graph.FontXStyle style)
+			public void MergeFontStyle(FontXStyle style)
 			{
 				var newStyle = FontId.Style | style;
 				FontId = FontId.GetFontWithNewStyle(newStyle);

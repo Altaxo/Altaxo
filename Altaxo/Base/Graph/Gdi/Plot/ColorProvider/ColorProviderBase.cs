@@ -31,6 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 {
 	using Altaxo.Graph;
+	using Drawing;
 
 	/// <summary>
 	/// Abstract class to calculate a color out of a relative value that is normally

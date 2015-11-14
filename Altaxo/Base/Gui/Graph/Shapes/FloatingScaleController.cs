@@ -34,6 +34,7 @@ using System.Text;
 namespace Altaxo.Gui.Graph.Shapes
 {
 	using Altaxo.Gui.Common;
+	using Geometry;
 
 	public interface IFloatingScaleView
 	{
@@ -57,7 +58,7 @@ namespace Altaxo.Gui.Graph.Shapes
 
 		IConditionalDocumentView MinorLabelView { set; }
 
-		Altaxo.Graph.Margin2D BackgroundPadding { get; set; }
+		Margin2D BackgroundPadding { get; set; }
 
 		Altaxo.Graph.Gdi.Background.IBackgroundStyle SelectedBackground { get; set; }
 

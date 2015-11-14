@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.LineCaps;
 using System;
 using System.Collections.Generic;

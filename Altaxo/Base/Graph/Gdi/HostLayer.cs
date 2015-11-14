@@ -31,6 +31,7 @@ using System.Linq;
 
 namespace Altaxo.Graph.Gdi
 {
+	using Geometry;
 	using Shapes;
 
 	public class HostLayer

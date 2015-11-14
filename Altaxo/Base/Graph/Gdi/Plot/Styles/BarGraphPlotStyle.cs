@@ -31,6 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
+	using Drawing;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Plot.Data;
@@ -430,9 +431,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				bwp.Initialize(_relInnerGapWidth, _relOuterGapWidth);
 
 			if (!_independentFillColor && null != _fillBrush)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._fillBrush.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
 			else if (!_independentFrameColor && null != _framePen) // else if is used here because fill color has precedence over frame color
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._framePen.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._framePen.Color; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -445,20 +446,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (!_independentFillColor)
 			{
-				if (null == _fillBrush) _fillBrush = new BrushX(ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._fillBrush.Color = c; });
+				if (null == _fillBrush) _fillBrush = new BrushX(Drawing.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._fillBrush.Color = c; });
 
 				// but if there is a color evaluation function, then use that function with higher priority
-				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}
 
 			if (!_independentFrameColor)
 			{
-				if (null == _framePen) _framePen = new PenX(ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._framePen.Color = c; });
+				if (null == _framePen) _framePen = new PenX(Drawing.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._framePen.Color = c; });
 
 				// but if there is a color evaluation function, then use that function with higher priority
-				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}
 		}
 

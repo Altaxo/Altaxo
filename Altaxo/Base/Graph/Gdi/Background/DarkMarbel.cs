@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -149,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Background
 			RectangleF oA = (RectangleF)outerArea;
 			RectangleF iA = (RectangleF)innerArea;
 			g.FillPolygon(twhite, new PointF[] {
-                                                      new PointF(oA.Left,oA.Top), // upper left point
+																											new PointF(oA.Left,oA.Top), // upper left point
                                                       new PointF(oA.Right,oA.Top), // go to the right
                                                       new PointF(iA.Right,iA.Top), // go 45 deg left down in the upper right corner
                                                       new PointF(iA.Left,iA.Top), // upper left corner of the inner rectangle
@@ -159,10 +161,10 @@ namespace Altaxo.Graph.Gdi.Background
 
 			SolidBrush tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
 			g.FillPolygon(tblack, new PointF[] {
-                                                      new PointF(oA.Right,oA.Bottom),
-                                                      new PointF(oA.Right,oA.Top),
-                                                      new PointF(iA.Right,iA.Top),
-                                                      new PointF(iA.Right,iA.Bottom), // upper left corner of the inner rectangle
+																											new PointF(oA.Right,oA.Bottom),
+																											new PointF(oA.Right,oA.Top),
+																											new PointF(iA.Right,iA.Top),
+																											new PointF(iA.Right,iA.Bottom), // upper left corner of the inner rectangle
                                                       new PointF(iA.Left,iA.Bottom), // lower left corner of the inner rectangle
                                                       new PointF(oA.Left,oA.Bottom) // lower left corner
       });

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Drawing;
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs.</param>
 		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnClick(position, e);
 
@@ -93,7 +94,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
-		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
+		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
 		{
 			base.OnMouseMove(position, e);
 

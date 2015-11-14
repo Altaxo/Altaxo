@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Shapes;
 using System;
 using System.Collections.Generic;
@@ -71,7 +72,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="position">Mouse position.</param>
 		/// <param name="e">EventArgs.</param>
 		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override void OnClick(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public override void OnClick(PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnClick(position, e);
 
@@ -98,7 +99,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
-		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
+		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
 		{
 			base.OnMouseMove(position, e);
 
@@ -109,7 +110,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			_grac.RenderOverlay();
 		}
 
-		public override void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(position, e);
 			if (e.ChangedButton == MouseButton.Right)
@@ -196,7 +197,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 
 			if (_Points.Count > 2)
 			{
-				var pts = _Points.Select(x => (Altaxo.Graph.PointD2D)x.LayerCoordinates);
+				var pts = _Points.Select(x => x.LayerCoordinates);
 				var go = new ClosedCardinalSpline(pts, _tension, _grac.Doc.GetPropertyContext());
 				_grac.ActiveLayer.GraphObjects.Add(go);
 			}

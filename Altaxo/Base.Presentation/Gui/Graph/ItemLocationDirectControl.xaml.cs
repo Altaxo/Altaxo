@@ -32,6 +32,7 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Graph;
+	using Geometry;
 
 	/// <summary>
 	/// Interaction logic for LayerPositionControl.xaml

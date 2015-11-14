@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Graph.Gdi;
 using Altaxo.Gui;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
@@ -197,7 +198,7 @@ namespace Altaxo.Main
 					object readedobject = info.GetValue("Table", null);
 					if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
 						restoredControllers.Add(readedobject);
-					else if (readedobject is Altaxo.Graph.GraphViewLayout)
+					else if (readedobject is GraphViewLayout)
 						restoredControllers.Add(readedobject);
 					else if (readedobject is Altaxo.Worksheet.WorksheetViewLayout)
 						restoredControllers.Add(readedobject);
@@ -212,10 +213,10 @@ namespace Altaxo.Main
 
 			foreach (object o in restoredControllers)
 			{
-				if (o is Altaxo.Graph.GraphViewLayout)
+				if (o is GraphViewLayout)
 				{
 					var ctrl = new Altaxo.Gui.Graph.Viewing.GraphControllerWpf();
-					ctrl.InitializeDocument(o as Altaxo.Graph.GraphViewLayout);
+					ctrl.InitializeDocument(o as GraphViewLayout);
 					Current.Gui.FindAndAttachControlTo(ctrl);
 					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDGraphViewContent(ctrl));
 				}
@@ -660,9 +661,9 @@ namespace Altaxo.Main
 						else if (wvl.WorksheetLayout != null && object.ReferenceEquals(wvl.WorksheetLayout.DataTable, document))
 							contentList.Add(content);
 					}
-					else if (modelobject is Altaxo.Graph.GraphViewLayout)
+					else if (modelobject is GraphViewLayout)
 					{
-						var gvl = (Altaxo.Graph.GraphViewLayout)modelobject;
+						var gvl = (GraphViewLayout)modelobject;
 						if (object.ReferenceEquals(gvl.GraphDocument, document))
 							contentList.Add(content);
 					}

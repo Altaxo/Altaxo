@@ -33,6 +33,7 @@ using System.Text;
 
 namespace Altaxo.Com
 {
+	using Geometry;
 	using UnmanagedApi.Gdi32;
 	using UnmanagedApi.GdiPlus;
 	using UnmanagedApi.Kernel32;
@@ -431,7 +432,7 @@ namespace Altaxo.Com
 			uint size = 0;
 			byte[] buffer = null;
 
-			for (; ; )
+			for (;;)
 			{
 				// Convert the EMF records to WMF records.
 				// Determine the size of the buffer that will receive the converted records (first loop), and then fill the buffer (second loop).
@@ -469,7 +470,7 @@ namespace Altaxo.Com
 		/// </summary>
 		/// <param name="docSize">Size of the document in points (1/72 inch).</param>
 		/// <returns>The windows metafile placeable header as byte array.</returns>
-		public static byte[] GetWmfPlaceableHeaderBytes(Altaxo.Graph.PointD2D docSize)
+		public static byte[] GetWmfPlaceableHeaderBytes(PointD2D docSize)
 		{
 			WmfPlaceableFileHeader header = new WmfPlaceableFileHeader();
 			const ushort twips_per_inch = 1440;

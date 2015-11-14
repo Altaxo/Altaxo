@@ -28,6 +28,7 @@ using System;
 namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 {
 	using Altaxo.Settings;
+	using Drawing.ColorManagement;
 
 	public class AutostartCommand : AbstractCommand
 	{
@@ -80,7 +81,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
 			Altaxo.Current.SetFitFunctionService(fitFunctionService);
 			AddInTree.GetTreeNode("/Altaxo/BuiltinTextures").BuildChildItems<object>(this);
-			Altaxo.Graph.ColorManagement.ColorSetManager.Instance.AddRange(AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<Altaxo.Graph.ColorManagement.ColorSet>(this));
+			ColorSetManager.Instance.AddRange(AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<ColorSet>(this));
 			Altaxo.Main.Services.ParserServiceConnector.Initialize();
 			Altaxo.Serialization.AutoUpdates.UpdateDownloaderStarter.Run();
 		}

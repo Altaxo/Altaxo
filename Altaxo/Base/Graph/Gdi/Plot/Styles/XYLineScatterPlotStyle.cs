@@ -26,6 +26,7 @@ using System;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Drawing;
 	using Graph.Plot.Data;
 
 	/// <summary>

@@ -23,7 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph.ColorManagement;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 		/// <exception cref="System.InvalidProgramException"></exception>
 		public static void UpdateColorTreeViewTreeNodes(NGTreeNode rootNode, bool showPlotColorsOnly, object currentSelectedObject)
 		{
-			var manager = Altaxo.Graph.ColorManagement.ColorSetManager.Instance;
+			var manager = ColorSetManager.Instance;
 
 			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = ColorSetLevel.Builtin };
 			var app = new NGTreeNode() { Text = "Application", Tag = ColorSetLevel.Application };
@@ -77,15 +78,15 @@ namespace Altaxo.Gui.Graph.ColorManagement
 			var proj = new NGTreeNode() { Text = "Project", Tag = ColorSetLevel.Project };
 
 			IColorSet parentColorSetOfColor = null;
-			Altaxo.Graph.NamedColor selectedColor;
-			if (currentSelectedObject is Altaxo.Graph.NamedColor)
+			NamedColor selectedColor;
+			if (currentSelectedObject is NamedColor)
 			{
-				selectedColor = (Altaxo.Graph.NamedColor)currentSelectedObject;
+				selectedColor = (NamedColor)currentSelectedObject;
 				parentColorSetOfColor = selectedColor.ParentColorSet;
 			}
 			else
 			{
-				selectedColor = Altaxo.Graph.NamedColors.Black;
+				selectedColor = NamedColors.Black;
 			}
 
 			foreach (var set in manager.GetAllColorSets())
@@ -97,19 +98,19 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 				switch (set.Level)
 				{
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
+					case ColorSetLevel.Builtin:
 						builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
 						break;
 
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
+					case ColorSetLevel.Application:
 						app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
 						break;
 
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
+					case ColorSetLevel.UserDefined:
 						user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
 						break;
 
-					case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
+					case ColorSetLevel.Project:
 						proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
 						break;
 
@@ -130,7 +131,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 					foreach (var node in newNode.Nodes)
 					{
-						if ((node.Tag is Altaxo.Graph.NamedColor) && ((Altaxo.Graph.NamedColor)node.Tag) == selectedColor)
+						if ((node.Tag is NamedColor) && ((NamedColor)node.Tag) == selectedColor)
 							node.IsSelected = true;
 					}
 				}

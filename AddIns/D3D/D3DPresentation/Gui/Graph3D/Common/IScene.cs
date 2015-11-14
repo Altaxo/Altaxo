@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 namespace Altaxo.Gui.Graph3D.Common
 {
+	using Geometry;
 	using SharpDX.Direct3D10;
 	using System;
 
@@ -31,13 +32,13 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// Attaches the scene to the specified scene host.
 		/// </summary>
 		/// <param name="host">The scene host.</param>
-		void Attach(SharpDX.ComObject hostDevice, Altaxo.Graph.PointD2D hostSize);
+		void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize);
 
 		/// <summary>
 		/// Informes the scene that the host size has changed.
 		/// </summary>
 		/// <param name="hostSize">Size of the host.</param>
-		void SetHostSize(Altaxo.Graph.PointD2D hostSize);
+		void SetHostSize(PointD2D hostSize);
 
 		/// <summary>
 		/// Detaches this scene from the scene host.
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// Attaches the scene to the specified scene host.
 		/// </summary>
 		/// <param name="host">The scene host.</param>
-		void Attach(SharpDX.Direct3D10.Device hostDevice, Altaxo.Graph.PointD2D hostSize);
+		void Attach(SharpDX.Direct3D10.Device hostDevice, PointD2D hostSize);
 	}
 
 	/// <summary>
@@ -77,6 +78,6 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// Attaches the scene to the specified scene host.
 		/// </summary>
 		/// <param name="host">The scene host.</param>
-		void Attach(SharpDX.Direct3D11.Device hostDevice, Altaxo.Graph.PointD2D hostSize);
+		void Attach(SharpDX.Direct3D11.Device hostDevice, PointD2D hostSize);
 	}
 }

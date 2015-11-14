@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Graph.Viewing
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Main;
 	using Altaxo.Serialization.Clipboard;
+	using Geometry;
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
 	public abstract class GraphController : IGraphController, IGraphViewEventSink, IDisposable
@@ -494,7 +495,7 @@ namespace Altaxo.Gui.Graph.Viewing
 			}
 		}
 
-		static void Clamp(ref double value, double min, double max)
+		private static void Clamp(ref double value, double min, double max)
 		{
 			if (!(value >= min))
 				value = min;

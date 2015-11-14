@@ -33,6 +33,7 @@ using System.Windows.Media;
 namespace Altaxo.Gui.Worksheet.Viewing
 {
 	using Altaxo.Main;
+	using Geometry;
 
 	/// <summary>
 	/// Responsible for painting the Worksheet column styles with Wpf technology.
@@ -48,7 +49,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			Altaxo.Worksheet.TextColumnStyle.RegisteredPaintMethods.Add(typeof(DrawingContext), TextColumnStyle_Paint);
 		}
 
-		public static void PaintBackground(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, Altaxo.Graph.RectangleD cellRectangle, bool bSelected)
+		public static void PaintBackground(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, RectangleD cellRectangle, bool bSelected)
 		{
 			var cellRect = cellRectangle.ToWpf();
 			if (bSelected)
@@ -60,7 +61,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			dc.DrawLine(thiss.CellBorder.ToWpf(), cellRect.BottomRight, cellRect.TopRight);
 		}
 
-		private static void RowHeaderStyle_Paint(Altaxo.Worksheet.RowHeaderStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		private static void RowHeaderStyle_Paint(Altaxo.Worksheet.RowHeaderStyle thiss, object drawingContext, RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			var dc = (DrawingContext)drawingContext;
 			Rect cellRectangle = cellRect.ToWpf();
@@ -80,7 +81,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			dc.DrawText(t, cellRectangle.Location); // ("[" + nRow + "]", _textFont, _textBrush, cellRectangle, _textFormat);
 		}
 
-		private static void ColumnHeaderStyle_Paint(Altaxo.Worksheet.ColumnHeaderStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		private static void ColumnHeaderStyle_Paint(Altaxo.Worksheet.ColumnHeaderStyle thiss, object drawingContext, RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			var dc = (DrawingContext)drawingContext;
 			Rect cellRectangle = cellRect.ToWpf();
@@ -119,13 +120,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			dc.DrawText(t, nameRectangle.Location);
 		}
 
-		private static void DoubleColumnStyle_Paint(Altaxo.Worksheet.DoubleColumnStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		private static void DoubleColumnStyle_Paint(Altaxo.Worksheet.DoubleColumnStyle thiss, object drawingContext, RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
 			GeneralText_Paint(thiss, drawingContext, cellRect, myString, TextAlignment.Right, bSelected);
 		}
 
-		private static void DateTimeColumnStyle_Paint(Altaxo.Worksheet.DateTimeColumnStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		private static void DateTimeColumnStyle_Paint(Altaxo.Worksheet.DateTimeColumnStyle thiss, object drawingContext, RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			DateTime t = ((Altaxo.Data.DateTimeColumn)data)[nRow];
 
@@ -136,13 +137,13 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			GeneralText_Paint(thiss, drawingContext, cellRect, myString, TextAlignment.Right, bSelected);
 		}
 
-		private static void TextColumnStyle_Paint(Altaxo.Worksheet.TextColumnStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		private static void TextColumnStyle_Paint(Altaxo.Worksheet.TextColumnStyle thiss, object drawingContext, RectangleD cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			string myString = data[nRow].ToString();
 			GeneralText_Paint(thiss, drawingContext, cellRect, myString, TextAlignment.Right, bSelected);
 		}
 
-		private static void GeneralText_Paint(Altaxo.Worksheet.ColumnStyle thiss, object drawingContext, Altaxo.Graph.RectangleD cellRect, string textToDraw, TextAlignment alignment, bool bSelected)
+		private static void GeneralText_Paint(Altaxo.Worksheet.ColumnStyle thiss, object drawingContext, RectangleD cellRect, string textToDraw, TextAlignment alignment, bool bSelected)
 		{
 			var dc = (DrawingContext)drawingContext;
 			Rect cellRectangle = cellRect.ToWpf();
@@ -161,7 +162,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			dc.DrawText(t, cellRectangle.Location);
 		}
 
-		public static void Paint(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, Altaxo.Graph.RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		public static void Paint(this Altaxo.Worksheet.ColumnStyle thiss, DrawingContext dc, RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
 			thiss.Paint(typeof(DrawingContext), dc, cellRectangle, nRow, data, bSelected);
 		}

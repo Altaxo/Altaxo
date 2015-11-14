@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 
@@ -54,7 +55,7 @@ namespace Altaxo.Worksheet
 
 	public struct AreaInfo
 	{
-		public Altaxo.Graph.RectangleD AreaRectangle { get; set; }
+		public RectangleD AreaRectangle { get; set; }
 
 		public AreaType AreaType { get; set; }
 
@@ -390,24 +391,24 @@ namespace Altaxo.Worksheet
 
 		#region Cell
 
-		public static Altaxo.Graph.RectangleD GetCoordinatesOfDataCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
+		public static RectangleD GetCoordinatesOfDataCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
 		{
 			double x, y, w, h;
 			GetXCoordinatesOfColumn(nCol, layout, HorzScrollPos, out x, out w);
 
 			y = GetTopCoordinateOfTableRow(nRow, layout, VertScrollPos);
 			h = layout.RowHeaderStyle.Height;
-			return new Altaxo.Graph.RectangleD(x, y, w, h);
+			return new RectangleD(x, y, w, h);
 		}
 
-		public static Altaxo.Graph.RectangleD GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
+		public static RectangleD GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
 		{
 			double x, y, w, h;
 			GetXCoordinatesOfColumn(nRow, layout, HorzScrollPos, out x, out w);
 
 			y = GetTopCoordinateOfPropertyColumn(nCol, layout, VertScrollPos);
 			h = layout.PropertyColumnHeaderStyle.Height;
-			return new Altaxo.Graph.RectangleD(x, y, w, h);
+			return new RectangleD(x, y, w, h);
 		}
 
 		/// <summary>
@@ -507,7 +508,7 @@ namespace Altaxo.Worksheet
 		{
 			bool bIsPropertyColumn = false;
 			double left, top, width, height; // coordinates of clicked cell
-			//var _clickedCellRectangle = new Rect(0,0,0,0);
+																			 //var _clickedCellRectangle = new Rect(0,0,0,0);
 			var hittedColumn = GetColumnNumber(positionX, layout, HorzScrollPos, out left, out width);
 			var hittedRow = GetRowNumber(positionY, layout, VertScrollPos, out top, out height, out bIsPropertyColumn);
 			AreaType hittedAreaType;
@@ -544,7 +545,7 @@ namespace Altaxo.Worksheet
 			{
 				ColumnNumber = hittedColumn,
 				RowNumber = hittedRow,
-				AreaRectangle = new Altaxo.Graph.RectangleD(left, top, width, height),
+				AreaRectangle = new RectangleD(left, top, width, height),
 				AreaType = hittedAreaType
 			};
 			return result;

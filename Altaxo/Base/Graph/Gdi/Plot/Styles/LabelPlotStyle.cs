@@ -30,6 +30,8 @@ using System.Drawing;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
+	using Drawing;
+	using Geometry;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Plot.Data;

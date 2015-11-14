@@ -34,6 +34,7 @@ namespace Altaxo.Graph3D.Shapes
 	using Altaxo.Graph;
 	using Altaxo.Graph3D.Plot;
 	using Background;
+	using Drawing;
 	using GraphicsContext;
 
 	/// <summary>

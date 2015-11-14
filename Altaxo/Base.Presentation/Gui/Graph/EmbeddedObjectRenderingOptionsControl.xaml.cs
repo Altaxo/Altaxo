@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,7 +105,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public Altaxo.Graph.NamedColor BackgroundColor
+		public NamedColor BackgroundColor
 		{
 			get
 			{

@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using System;
@@ -35,20 +37,20 @@ using System.Windows.Media;
 namespace Altaxo.Gui.Common
 {
 	/// <summary>
-	/// Converts an Altaxo <see cref="Altaxo.Graph.NamedColor"/> value into a <see cref="System.Windows.Media.SolidColorBrush"/> value.
+	/// Converts an Altaxo <see cref="NamedColor"/> value into a <see cref="System.Windows.Media.SolidColorBrush"/> value.
 	/// </summary>
 	public class NamedColorToWpfBrushConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if (value is Altaxo.Graph.NamedColor)
+			if (value is NamedColor)
 			{
-				var c = (Altaxo.Graph.NamedColor)value;
+				var c = (NamedColor)value;
 				return new System.Windows.Media.SolidColorBrush(GuiHelper.ToWpf(c.Color));
 			}
-			else if (value is Altaxo.Graph.AxoColor)
+			else if (value is AxoColor)
 			{
-				var c = (Altaxo.Graph.AxoColor)value;
+				var c = (AxoColor)value;
 				return new System.Windows.Media.SolidColorBrush(GuiHelper.ToWpf(c));
 			}
 			else
@@ -63,20 +65,20 @@ namespace Altaxo.Gui.Common
 
 	public class NamedColorToColorSetNameConverter : IValueConverter
 	{
-		public string GetLevelString(Altaxo.Graph.ColorManagement.ColorSetLevel level)
+		public string GetLevelString(ColorSetLevel level)
 		{
 			switch (level)
 			{
-				case Altaxo.Graph.ColorManagement.ColorSetLevel.Builtin:
+				case ColorSetLevel.Builtin:
 					return "Builtin";
 
-				case Altaxo.Graph.ColorManagement.ColorSetLevel.Application:
+				case ColorSetLevel.Application:
 					return "App";
 
-				case Altaxo.Graph.ColorManagement.ColorSetLevel.UserDefined:
+				case ColorSetLevel.UserDefined:
 					return "User";
 
-				case Altaxo.Graph.ColorManagement.ColorSetLevel.Project:
+				case ColorSetLevel.Project:
 					return "Project";
 
 				default:
@@ -86,9 +88,9 @@ namespace Altaxo.Gui.Common
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if (value is Altaxo.Graph.NamedColor)
+			if (value is NamedColor)
 			{
-				var c = (Altaxo.Graph.NamedColor)value;
+				var c = (NamedColor)value;
 				if (c.ParentColorSet != null)
 					return string.Format("{0}/{1}", GetLevelString(c.ParentColorSet.Level), c.ParentColorSet.Name);
 				else

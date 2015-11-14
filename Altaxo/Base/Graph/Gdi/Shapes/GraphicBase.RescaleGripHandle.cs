@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -118,19 +119,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 			static RescaleGripHandle()
 			{
 				_shapePoints = new PointF[] {
-        new PointF(0,-bigY),
-        new PointF(barX, -bigY),
-        new PointF(barX, -smallY),
-        new PointF(barX+stegX,-smallY),
-        new PointF(barX+stegX, -bigY),
-        new PointF(2*barX+stegX, -bigY),
-        new PointF(2*barX+stegX, bigY),
-        new PointF(barX+stegX, bigY),
-        new PointF(barX+stegX, smallY),
-        new PointF(barX, smallY),
-        new PointF(barX, bigY),
-        new PointF(0, bigY),
-          };
+				new PointF(0,-bigY),
+				new PointF(barX, -bigY),
+				new PointF(barX, -smallY),
+				new PointF(barX+stegX,-smallY),
+				new PointF(barX+stegX, -bigY),
+				new PointF(2*barX+stegX, -bigY),
+				new PointF(2*barX+stegX, bigY),
+				new PointF(barX+stegX, bigY),
+				new PointF(barX+stegX, smallY),
+				new PointF(barX, smallY),
+				new PointF(barX, bigY),
+				new PointF(0, bigY),
+					};
 			}
 		}
 	}

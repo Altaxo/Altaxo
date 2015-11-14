@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;

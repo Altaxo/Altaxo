@@ -32,6 +32,7 @@ namespace Altaxo.Gui.Graph.Shapes
 {
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Gui.Common;
+	using Geometry;
 
 	/// <summary>
 	/// Interaction logic for FloatingScaleControl.xaml
@@ -51,13 +52,13 @@ namespace Altaxo.Gui.Graph.Shapes
 			_backgroundGlue.CbBrush = _guiBackgroundBrush;
 		}
 
-		public Altaxo.Graph.PointD2D DocPosition
+		public PointD2D DocPosition
 		{
 			get
 			{
 				var x = _edPositionX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
 				var y = _edPositionY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				return new Altaxo.Graph.PointD2D(x, y);
+				return new PointD2D(x, y);
 			}
 			set
 			{
@@ -224,11 +225,11 @@ namespace Altaxo.Gui.Graph.Shapes
 			}
 		}
 
-		public Altaxo.Graph.Margin2D BackgroundPadding
+		public Margin2D BackgroundPadding
 		{
 			get
 			{
-				var result = new Altaxo.Graph.Margin2D();
+				var result = new Margin2D();
 				result.Left = _guiMarginLeft.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
 				result.Top = _guiMarginTop.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
 				result.Right = _guiMarginRight.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);

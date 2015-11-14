@@ -28,6 +28,7 @@ using System;
 namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Graph;
+	using Drawing;
 
 	#region Interfaces
 

@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph
 {
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
+	using Drawing;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml

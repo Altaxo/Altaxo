@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Gui.Common.Drawing;
@@ -150,7 +151,7 @@ namespace Altaxo.Gui.Graph
 
 				_cbBrush = value;
 				_cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
-				_cbBrush.SelectedBrush = new BrushX(Altaxo.Graph.NamedColors.Aqua);
+				_cbBrush.SelectedBrush = new BrushX(NamedColors.Aqua);
 
 				if (_doc != null && _cbBrush != null && _doc.Brush != null)
 					_cbBrush.SelectedBrush = _doc.Brush;

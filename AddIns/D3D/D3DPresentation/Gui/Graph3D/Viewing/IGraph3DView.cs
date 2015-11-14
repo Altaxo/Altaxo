@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// Returns the size in points (=1/72 inch) of the area, wherein the graph is painted.
 		/// </summary>
-		Altaxo.Graph.PointD2D ViewportSizeInPoints { get; }
+		PointD2D ViewportSizeInPoints { get; }
 
 		/// <summary>
 		/// Called if a full repaint of the graph is neccessary.

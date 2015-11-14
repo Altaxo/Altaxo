@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -124,14 +125,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 			{
 				// The arrow has a length of 1 and a maximum witdth of 2*arrowWidth and a shaft width of 2*arrowShaft
 				_outsideArrowPoints = new PointF[] {
-        new PointF(0,_arrowHShaft),
-        new PointF(1-_arrowHWidth,_arrowHShaft),
-        new PointF(1-_arrowHWidth,_arrowHWidth),
-        new PointF(1,0),
-        new PointF(1-_arrowHWidth, -_arrowHWidth),
-        new PointF(1-_arrowHWidth, -_arrowHShaft),
-        new PointF(0,-_arrowHShaft)
-      };
+				new PointF(0,_arrowHShaft),
+				new PointF(1-_arrowHWidth,_arrowHShaft),
+				new PointF(1-_arrowHWidth,_arrowHWidth),
+				new PointF(1,0),
+				new PointF(1-_arrowHWidth, -_arrowHWidth),
+				new PointF(1-_arrowHWidth, -_arrowHShaft),
+				new PointF(0,-_arrowHShaft)
+			};
 			}
 		}
 	}

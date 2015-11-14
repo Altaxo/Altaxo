@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui.Graph3D.Common
 {
 	using Altaxo.Graph;
+	using Geometry;
 	using SharpDX;
 	using SharpDX.Direct3D;
 	using SharpDX.Direct3D11;

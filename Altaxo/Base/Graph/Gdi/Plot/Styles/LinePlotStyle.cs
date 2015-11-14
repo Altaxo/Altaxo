@@ -31,6 +31,8 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
+	using Drawing;
+	using Geometry;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
 	using Plot.Data;
@@ -1738,9 +1740,9 @@ out int lastIndex)
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
 		{
 			if (this.IsColorProvider)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 			else if (this._fillColorLinkage == ColorLinkage.Dependent && this._fillBrush != null)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._fillBrush.Color; });
+				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
 
 			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashStyle; });
 		}
@@ -1748,7 +1750,7 @@ out int lastIndex)
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			if (this.IsColorReceiver)
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.Color = c; });
 
 			if (this._fillArea && ColorLinkage.Independent != _fillColorLinkage)
 			{
@@ -1756,14 +1758,14 @@ out int lastIndex)
 					_fillBrush = new BrushX(NamedColors.Black);
 
 				if (_fillColorLinkage == ColorLinkage.Dependent)
-					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { _fillBrush.Color = c; });
+					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c; });
 				else if (ColorLinkage.PreserveAlpha == _fillColorLinkage)
-					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
+					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
 			}
 
-			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.LinePen.DashStyle = c; });
+			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (DashStyle c) { this.LinePen.DashStyle = c; });
 
-			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this._symbolGap = size; }))
+			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolGap = size; }))
 			{
 				this._symbolGap = 0;
 			}

@@ -46,7 +46,7 @@ namespace Altaxo.Graph3D.Camera
 		/// <value>
 		/// The screen offset (this is a relative value - relative to the dimensions of the screen).
 		/// </value>
-		public Altaxo.Graph.PointD2D ScreenOffset { get; set; }
+		public PointD2D ScreenOffset { get; set; }
 
 		public CameraBase()
 		{

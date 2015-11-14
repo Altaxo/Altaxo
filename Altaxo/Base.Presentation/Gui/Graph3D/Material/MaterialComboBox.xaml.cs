@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
-using Altaxo.Graph.ColorManagement;
 using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Graph3D.Material
 {
 	using Altaxo.Graph3D;
 	using Altaxo.Gui.Common.Drawing;
+	using Drawing;
 
 	/// <summary>
 	/// Interaction logic for ColorComboBoxEx.xaml

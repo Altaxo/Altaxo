@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph3D.GraphicsContext;
@@ -35,7 +36,7 @@ namespace Altaxo.Graph3D
 {
 	public interface IMaterial3D : Altaxo.Main.IImmutable, IEquatable<IMaterial3D>
 	{
-		Altaxo.Graph.NamedColor Color { get; }
+		NamedColor Color { get; }
 
 		bool HasColor { get; }
 		bool HasTexture { get; }

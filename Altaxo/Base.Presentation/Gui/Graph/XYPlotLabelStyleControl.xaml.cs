@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Units;

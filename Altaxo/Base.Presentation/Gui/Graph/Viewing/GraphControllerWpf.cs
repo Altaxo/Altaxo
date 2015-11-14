@@ -37,13 +37,15 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
+	using Drawing;
+	using Geometry;
 	using GraphControllerMouseHandlers;
 
 	/// <summary>
 	/// GraphController is our default implementation to control a graph view.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(GraphViewWpf))]
-	[UserControllerForObject(typeof(Altaxo.Graph.GraphViewLayout))]
+	[UserControllerForObject(typeof(GraphViewLayout))]
 	public class GraphControllerWpf : GraphController
 	{
 		#region Member variables
@@ -63,7 +65,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <summary>
 		/// Color for the area of the view, where there is no page.
 		/// </summary>
-		protected Altaxo.Graph.NamedColor _nonPageAreaColor;
+		protected NamedColor _nonPageAreaColor;
 
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
@@ -264,7 +266,7 @@ namespace Altaxo.Gui.Graph.Viewing
 		/// <value>
 		/// The color of the non page area.
 		/// </value>
-		public Altaxo.Graph.NamedColor NonPageAreaColor
+		public NamedColor NonPageAreaColor
 		{
 			get
 			{

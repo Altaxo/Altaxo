@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph;
 using System;
 using System.Drawing;
@@ -54,7 +55,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				_grac.SetPanelCursor(Cursors.Pen);
 		}
 
-		public override void OnMouseDown(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public override void OnMouseDown(PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnMouseDown(position, e);
 
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
-		public override void OnMouseMove(Altaxo.Graph.PointD2D position, MouseEventArgs e)
+		public override void OnMouseMove(PointD2D position, MouseEventArgs e)
 		{
 			base.OnMouseMove(position, e);
 
@@ -94,7 +95,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
-		public override void OnMouseUp(Altaxo.Graph.PointD2D position, MouseButtonEventArgs e)
+		public override void OnMouseUp(PointD2D position, MouseButtonEventArgs e)
 		{
 			base.OnMouseUp(position, e);
 

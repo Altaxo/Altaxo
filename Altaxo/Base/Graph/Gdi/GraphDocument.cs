@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Geometry;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
@@ -90,13 +93,13 @@ namespace Altaxo.Graph.Gdi
 					}
 				};
 
-		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultForeColor =
-			new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
+		public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
+			new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
 "2F138FDD-B96A-4C03-9BEF-83FC412E50B2",
 "Graph\\Colors\\Default fore color",
 Main.Properties.PropertyLevel.Document,
 typeof(GraphDocument),
-() => Altaxo.Graph.NamedColors.Black
+() => Altaxo.Drawing.NamedColors.Black
 )
 			{
 				EditingControllerCreation = (doc) =>
@@ -107,13 +110,13 @@ typeof(GraphDocument),
 				}
 			};
 
-		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultBackColor =
-	new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
+		public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultBackColor =
+	new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
 "90BB0E83-D1A4-40B7-9607-55D4B9C272C3",
 "Graph\\Colors\\Default back color",
 Main.Properties.PropertyLevel.Document,
 typeof(GraphDocument),
-() => Altaxo.Graph.NamedColors.AliceBlue
+() => Altaxo.Drawing.NamedColors.AliceBlue
 )
 	{
 		EditingControllerCreation = (doc) =>
@@ -124,13 +127,13 @@ typeof(GraphDocument),
 		}
 	};
 
-		public static readonly Main.Properties.PropertyKey<Altaxo.Graph.NamedColor> PropertyKeyDefaultPlotColor =
-new Main.Properties.PropertyKey<Altaxo.Graph.NamedColor>(
+		public static readonly Main.Properties.PropertyKey<NamedColor> PropertyKeyDefaultPlotColor =
+new Main.Properties.PropertyKey<NamedColor>(
 "D5DB4695-2630-4B7D-83E3-71CA3873B362",
 "Graph\\Colors\\Default plot color",
 Main.Properties.PropertyLevel.Document,
 typeof(GraphDocument),
-() => Altaxo.Graph.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]
+() => ColorSetManager.Instance.BuiltinDarkPlotColors[0]
 )
 {
 	EditingControllerCreation = (doc) =>

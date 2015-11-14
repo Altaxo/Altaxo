@@ -23,6 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;

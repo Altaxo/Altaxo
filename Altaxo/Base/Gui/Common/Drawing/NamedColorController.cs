@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,14 +32,14 @@ namespace Altaxo.Gui.Common.Drawing
 {
 	public interface INamedColorView
 	{
-		Altaxo.Graph.NamedColor SelectedColor { get; set; }
+		Altaxo.Drawing.NamedColor SelectedColor { get; set; }
 
 		event Action SelectedColorChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorView))]
-	[UserControllerForObject(typeof(Altaxo.Graph.NamedColor))]
-	public class NamedColorController : MVCANDControllerEditImmutableDocBase<Altaxo.Graph.NamedColor, INamedColorView>
+	[UserControllerForObject(typeof(NamedColor))]
+	public class NamedColorController : MVCANDControllerEditImmutableDocBase<NamedColor, INamedColorView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{

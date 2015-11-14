@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_documentPrintOptionsController = new SingleGraphPrintOptionsController() { UseDocumentCopy = UseDocument.Directly };
 				if (null == _doc.PrintOptions)
-					_doc.PrintOptions = new Altaxo.Graph.SingleGraphPrintOptions();
+					_doc.PrintOptions = new SingleGraphPrintOptions();
 				_documentPrintOptionsController.InitializeDocument(_doc.PrintOptions);
 				Current.Gui.FindAndAttachControlTo(_documentPrintOptionsController);
 				_doc.PrintOptions.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(this.EhDocumentPrintOptionsChanged, x => _doc.PrintOptions.PropertyChanged -= x);

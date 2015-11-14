@@ -32,6 +32,7 @@ using System.Text;
 
 namespace Altaxo.Com
 {
+	using Geometry;
 	using UnmanagedApi.Kernel32;
 	using UnmanagedApi.Ole32;
 
@@ -40,7 +41,7 @@ namespace Altaxo.Com
 		private ManagedDataAdviseHolder _dataAdviseHolder;
 		private AltaxoDocument _altaxoMiniProject;
 		private string _graphDocumentName;
-		private Altaxo.Graph.PointD2D _graphDocumentSize;
+		private PointD2D _graphDocumentSize;
 		private System.Drawing.Imaging.Metafile _graphDocumentMetafileImage;
 		private System.Drawing.Bitmap _graphDocumentBitmapImage;
 		private string _graphDocumentDropdownFileName;
@@ -405,7 +406,7 @@ namespace Altaxo.Com
 			return RenderEmbeddedObjectDescriptor(tymed, _graphDocumentSize);
 		}
 
-		public static IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed, Altaxo.Graph.PointD2D graphDocumentSize)
+		public static IntPtr RenderEmbeddedObjectDescriptor(TYMED tymed, PointD2D graphDocumentSize)
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderEmbeddedObjectDescriptor");
 

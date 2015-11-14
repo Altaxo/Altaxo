@@ -29,6 +29,7 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
+	using Geometry;
 	using WA = Altaxo.Worksheet.AreaRetrieval;
 
 	public static class WorksheetPaintingWpf
@@ -92,7 +93,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			int yShift = 0;
 
-			var cellRectangle = new Altaxo.Graph.RectangleD();
+			var cellRectangle = new RectangleD();
 			double left, width;
 
 			if (clipRectangle.Top < layout.ColumnHeaderStyle.Height)

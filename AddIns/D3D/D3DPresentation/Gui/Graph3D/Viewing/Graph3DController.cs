@@ -479,7 +479,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
 				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
-				orthoCamera.ScreenOffset = new Altaxo.Graph.PointD2D(offsX, offsY);
+				orthoCamera.ScreenOffset = new PointD2D(offsX, offsY);
 			}
 			else
 			{
@@ -723,7 +723,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <param name="currLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
 		/// <param name="parent">The parent control which is the parent of the context menu.</param>
 		/// <param name="pt">The location where the context menu should be shown.</param>
-		public virtual void EhView_ShowDataContextMenu(int[] currLayer, object parent, Altaxo.Graph.PointD2D pt)
+		public virtual void EhView_ShowDataContextMenu(int[] currLayer, object parent, PointD2D pt)
 		{
 			int oldCurrLayer = this.ActiveLayer.Number;
 

@@ -35,6 +35,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi.Plot.Data;
 	using Altaxo.Main;
+	using Drawing;
+	using Geometry;
 
 	public class ErrorBarPlotStyle
 		:
@@ -411,10 +413,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
 		{
 			if (!_independentColor)
-				Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return this._strokePen.Color; });
+				Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._strokePen.Color; });
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
+			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
 
 			// note: symbol size and barposition are only applied, but not prepared
 			// this item can not be used as provider of a symbol size
@@ -427,25 +429,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// color
 			if (!_independentColor)
 			{
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(NamedColor c) { this._strokePen.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._strokePen.Color = c; });
 
 				// but if there is a color evaluation function, then use that function with higher priority
-				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });
+			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
 
 			// symbol size
 			if (!_independentSymbolSize)
 			{
-				if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(double size) { this._symbolSize = size; }))
+				if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; }))
 				{
 					this._symbolSize = 0;
 				}
 
 				// but if there is an symbol size evaluation function, then use this with higher priority.
-				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
 			}
 
 			// bar position

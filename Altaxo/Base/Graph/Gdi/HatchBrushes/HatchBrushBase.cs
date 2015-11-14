@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -73,9 +75,9 @@ namespace Altaxo.Graph.Gdi.HatchBrushes
 
 		public abstract Image GetImage(double maxEffectiveResolutionDpi, NamedColor foreColor, NamedColor backColor);
 
-		public override Altaxo.Graph.PointD2D Size
+		public override PointD2D Size
 		{
-			get { return new Altaxo.Graph.PointD2D(_repeatLengthPt, _repeatLengthPt); }
+			get { return new PointD2D(_repeatLengthPt, _repeatLengthPt); }
 		}
 
 		[System.ComponentModel.Editor(typeof(Altaxo.Gui.Common.LengthValueInPointController), typeof(Altaxo.Gui.IMVCANController))]

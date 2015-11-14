@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph3D.GraphicsContext;
@@ -37,7 +38,7 @@ namespace Altaxo.Graph3D
 	{
 		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
 
-		public static IMaterial3D GetSolidMaterial(Altaxo.Graph.NamedColor color)
+		public static IMaterial3D GetSolidMaterial(NamedColor color)
 		{
 			return new SolidColor(color);
 		}
@@ -96,9 +97,9 @@ namespace Altaxo.Graph3D
 
 	public class SolidColor : IMaterial3D
 	{
-		private Altaxo.Graph.NamedColor _color;
+		private NamedColor _color;
 
-		public SolidColor(Altaxo.Graph.NamedColor color)
+		public SolidColor(NamedColor color)
 		{
 			_color = color;
 		}

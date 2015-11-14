@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Data;
+using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using System;
@@ -127,7 +128,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			else
 			{
 				AltaxoVariant xphys, yphys;
-				if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out  yphys))
+				if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out yphys))
 					Current.DataDisplay.WriteOneLine(string.Format(
 				 "Layer({0}) X={1}, Y={2}",
 				 _cachedActiveLayer.Name,
@@ -151,7 +152,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			{
 				AltaxoVariant xphys, yphys;
 				AltaxoVariant xphys2, yphys2;
-				if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out  yphys) && CalculateCrossCoordinates(rootLayerCoord, out xphys2, out yphys2))
+				if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out yphys) && CalculateCrossCoordinates(rootLayerCoord, out xphys2, out yphys2))
 				{
 					double distance = double.NaN;
 					AltaxoVariant dx = double.NaN, dy = double.NaN;
@@ -279,7 +280,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 				else
 				{
 					AltaxoVariant xphys, yphys;
-					if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out  yphys))
+					if (CalculateCrossCoordinates(_positionOfCrossInRootLayerCoordinates, out xphys, out yphys))
 						Current.Console.WriteLine("{0}\t{1}", xphys, yphys);
 				}
 				return true;

@@ -84,6 +84,7 @@ using System.Text.RegularExpressions;
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	using Altaxo.Main.PegParser;
+	using Drawing;
 
 	public partial class TextGraphic : GraphicBase
 	{

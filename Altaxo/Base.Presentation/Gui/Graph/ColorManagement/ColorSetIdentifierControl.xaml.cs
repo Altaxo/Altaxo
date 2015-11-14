@@ -23,6 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,14 +61,14 @@ namespace Altaxo.Gui.Graph.ColorManagement
 				NGTreeNode node = item as NGTreeNode;
 				if (node != null)
 				{
-					if (node.Tag is Altaxo.Graph.NamedColor)
+					if (node.Tag is NamedColor)
 					{
 						if (null == _namedColorTemplate)
 							_namedColorTemplate = (DataTemplate)_parent.TryFindResource("NamedColorTemplate");
 						if (null != _namedColorTemplate)
 							return _namedColorTemplate;
 					}
-					else if (node.Tag is Altaxo.Graph.ColorManagement.IColorSet)
+					else if (node.Tag is IColorSet)
 					{
 						if (null == _colorSetTemplate)
 							_colorSetTemplate = (DataTemplate)_parent.TryFindResource("ColorSetTemplate");

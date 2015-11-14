@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -273,17 +274,17 @@ namespace Altaxo.Gui
 			return Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
-		public static Altaxo.Graph.AxoColor ToAxo(this System.Drawing.Color c)
+		public static Altaxo.Drawing.AxoColor ToAxo(this System.Drawing.Color c)
 		{
-			return Altaxo.Graph.AxoColor.FromArgb(c.A, c.R, c.G, c.B);
+			return Altaxo.Drawing.AxoColor.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
-		public static System.Drawing.Color ToGdi(this Altaxo.Graph.AxoColor c)
+		public static System.Drawing.Color ToGdi(this Altaxo.Drawing.AxoColor c)
 		{
 			return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
 		}
 
-		public static System.Windows.Media.Color ToWpf(this Altaxo.Graph.AxoColor c)
+		public static System.Windows.Media.Color ToWpf(this Altaxo.Drawing.AxoColor c)
 		{
 			if (c.IsFromArgb)
 				return Color.FromArgb(c.A, c.R, c.G, c.B);
@@ -291,14 +292,14 @@ namespace Altaxo.Gui
 				return Color.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
 		}
 
-		public static System.Windows.Media.Color ToWpf(this Altaxo.Graph.NamedColor c)
+		public static System.Windows.Media.Color ToWpf(this Altaxo.Drawing.NamedColor c)
 		{
 			return ToWpf(c.Color);
 		}
 
-		public static Altaxo.Graph.AxoColor ToAxo(this System.Windows.Media.Color c)
+		public static Altaxo.Drawing.AxoColor ToAxo(this System.Windows.Media.Color c)
 		{
-			return Altaxo.Graph.AxoColor.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
+			return Altaxo.Drawing.AxoColor.FromScRgb(c.ScA, c.ScR, c.ScG, c.ScB);
 		}
 
 		public static System.Drawing.Color ToSysDraw(this System.Windows.Media.Color c)
@@ -312,7 +313,7 @@ namespace Altaxo.Gui
 
 		#region Point
 
-		public static Point ToWpf(this Altaxo.Graph.PointD2D pt)
+		public static Point ToWpf(this Altaxo.Geometry.PointD2D pt)
 		{
 			return new Point(pt.X, pt.Y);
 		}
@@ -327,9 +328,9 @@ namespace Altaxo.Gui
 			return new Point(pt.X, pt.Y);
 		}
 
-		public static Altaxo.Graph.PointD2D ToAltaxo(this Point pt)
+		public static PointD2D ToAltaxo(this Point pt)
 		{
-			return new Altaxo.Graph.PointD2D(pt.X, pt.Y);
+			return new PointD2D(pt.X, pt.Y);
 		}
 
 		public static System.Drawing.PointF ToSysDraw(this Point pt)
@@ -346,7 +347,7 @@ namespace Altaxo.Gui
 
 		#region Rectangle
 
-		public static Rect ToWpf(this Altaxo.Graph.RectangleD rect)
+		public static Rect ToWpf(this RectangleD rect)
 		{
 			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
 		}
@@ -361,9 +362,9 @@ namespace Altaxo.Gui
 			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		public static Altaxo.Graph.RectangleD ToAltaxo(this Rect rect)
+		public static RectangleD ToAltaxo(this Rect rect)
 		{
-			return new Altaxo.Graph.RectangleD(rect.X, rect.Y, rect.Width, rect.Height);
+			return new RectangleD(rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		public static System.Drawing.RectangleF ToSysDraw(this Rect rect)
@@ -371,7 +372,7 @@ namespace Altaxo.Gui
 			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 		}
 
-		public static System.Drawing.RectangleF ToSysDraw(this Altaxo.Graph.RectangleD rect)
+		public static System.Drawing.RectangleF ToSysDraw(this RectangleD rect)
 		{
 			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 		}
@@ -426,7 +427,7 @@ namespace Altaxo.Gui
 			{
 				using (var g = System.Drawing.Graphics.FromImage(bmp))
 				{
-					brush.SetEnvironment(new Altaxo.Graph.RectangleD(0, 0, xsize, ysize), 96);
+					brush.SetEnvironment(new RectangleD(0, 0, xsize, ysize), 96);
 					g.FillRectangle(brush, 0, 0, xsize, ysize);
 				}
 				var stream = Altaxo.Graph.ImageProxy.ImageToStream(bmp, System.Drawing.Imaging.ImageFormat.Png);

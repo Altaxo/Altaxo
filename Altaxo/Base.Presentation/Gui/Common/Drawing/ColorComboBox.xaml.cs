@@ -22,8 +22,9 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
-using Altaxo.Graph.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;

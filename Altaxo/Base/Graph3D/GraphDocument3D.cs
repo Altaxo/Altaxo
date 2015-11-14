@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 
 //using Altaxo.Graph;
@@ -124,7 +125,7 @@ namespace Altaxo.Graph3D
 			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(context);
 		}
 
-		public static Altaxo.Graph.NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
+		public static NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
 		{
 			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultForeColor(context);
 		}

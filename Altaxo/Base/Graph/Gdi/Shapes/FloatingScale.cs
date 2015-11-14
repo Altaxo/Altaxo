@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;

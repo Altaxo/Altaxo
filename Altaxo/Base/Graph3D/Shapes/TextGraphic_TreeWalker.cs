@@ -85,6 +85,7 @@ namespace Altaxo.Graph3D.Shapes
 {
 	using Altaxo.Graph;
 	using Altaxo.Main.PegParser;
+	using Drawing;
 
 	public partial class TextGraphic : GraphicBase
 	{
@@ -465,7 +466,7 @@ namespace Altaxo.Graph3D.Shapes
 							try
 							{
 								object result = conv.ConvertFromInvariantString(s1);
-								newContext.brush = Materials.GetSolidMaterial((Altaxo.Graph.NamedColor)result);
+								newContext.brush = Materials.GetSolidMaterial((NamedColor)result);
 							}
 							catch (Exception)
 							{

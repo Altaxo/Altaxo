@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -37,7 +38,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	public abstract partial class GraphicBase
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
-		Altaxo.Graph.Gdi.Shapes.IGraphicBase
+		IGraphicBase
 	{
 		/// <summary>
 		/// The size of the parent object.

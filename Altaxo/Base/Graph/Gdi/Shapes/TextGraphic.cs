@@ -31,6 +31,8 @@ using System.Linq;
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	using Background;
+	using Drawing;
+	using Geometry;
 	using Plot;
 
 	/// <summary>

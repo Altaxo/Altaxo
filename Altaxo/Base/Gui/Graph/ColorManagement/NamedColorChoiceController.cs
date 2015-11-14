@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,11 +34,11 @@ namespace Altaxo.Gui.Graph.ColorManagement
 	{
 		bool ShowPlotColorsOnly { set; }
 
-		Altaxo.Graph.NamedColor SelectedColor { get; set; }
+		NamedColor SelectedColor { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorChoiceView))]
-	public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<Altaxo.Graph.NamedColor, INamedColorChoiceView>
+	public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorChoiceView>
 	{
 		public bool ShowPlotColorsOnly { get; set; }
 

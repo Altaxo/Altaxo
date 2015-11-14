@@ -23,6 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Drawing;
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -389,7 +391,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
 				{
-					_view.FillBrush = new BrushX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+					_view.FillBrush = new BrushX(BuiltinDarkPlotColorSet.Instance[0]);
 				}
 			}
 
@@ -414,7 +416,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else if (null == _view.LinePen || _view.LinePen.IsInvisible)
 				{
-					_view.LinePen = new PenX(Altaxo.Graph.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+					_view.LinePen = new PenX(BuiltinDarkPlotColorSet.Instance[0]);
 				}
 			}
 

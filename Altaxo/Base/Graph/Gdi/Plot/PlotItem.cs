@@ -31,6 +31,7 @@ using System.Text;
 namespace Altaxo.Graph.Gdi.Plot
 {
 	using Altaxo.Main;
+	using Geometry;
 	using Graph.Plot.Groups;
 	using Groups;
 

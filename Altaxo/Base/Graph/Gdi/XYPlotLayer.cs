@@ -35,6 +35,7 @@ namespace Altaxo.Graph.Gdi
 {
 	using Altaxo.Main.Properties;
 	using Axis;
+	using Geometry;
 	using Plot;
 	using Shapes;
 

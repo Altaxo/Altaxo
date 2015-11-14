@@ -26,6 +26,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -1141,7 +1142,7 @@ namespace Altaxo.Gui.Graph
 				throw new NotImplementedException();
 			}
 
-			public IHitTestObject HitTest(IPlotArea layer, Altaxo.Graph.PointD2D hitpoint)
+			public IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
 			{
 				throw new NotImplementedException();
 			}

@@ -33,7 +33,9 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
+	using Drawing;
 	using Gdi.LabelFormatting;
+	using Geometry;
 
 	/// <summary>
 	/// Responsible for setting position, rotation, font, color etc. of axis labels.
