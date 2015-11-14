@@ -314,11 +314,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <value>
 		/// The bounds of the graphical object.
 		/// </value>
-		public override RectangleD Bounds
+		public override RectangleD2D Bounds
 		{
 			get
 			{
-				return new RectangleD(0, 0, Size.X, Size.Y);
+				return new RectangleD2D(0, 0, Size.X, Size.Y);
 			}
 		}
 

@@ -36,24 +36,24 @@ namespace Altaxo.Graph.Gdi
 	public class HitTestRectangularData
 	{
 		/// <summary>Hitted area in page coordinates.</summary>
-		private RectangleD _hittedAreaInPageCoord;
+		private RectangleD2D _hittedAreaInPageCoord;
 
 		/// <summary>The ratio between displayed sizes and page scale sizes, i.e. the zoom factor on the display.</summary>
 		private double _pageScale;
 
 		/// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
-		private TransformationMatrix2D _transformation;
+		private MatrixD2D _transformation;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="hitAreaPageCoord">Page coordinates (unit: points).</param>
 		/// <param name="pageScale">Current zoom factor, i.e. ration between displayed size on the screen and given size.</param>
-		public HitTestRectangularData(RectangleD hitAreaPageCoord, double pageScale)
+		public HitTestRectangularData(RectangleD2D hitAreaPageCoord, double pageScale)
 		{
 			_hittedAreaInPageCoord = hitAreaPageCoord;
 			_pageScale = pageScale;
-			_transformation = new TransformationMatrix2D();
+			_transformation = new MatrixD2D();
 		}
 
 		/// <summary>
@@ -64,13 +64,13 @@ namespace Altaxo.Graph.Gdi
 		{
 			_hittedAreaInPageCoord = from._hittedAreaInPageCoord;
 			this._pageScale = from._pageScale;
-			this._transformation = new TransformationMatrix2D(from._transformation);
+			this._transformation = new MatrixD2D(from._transformation);
 		}
 
 		/// <summary>
 		/// Returns the hitted point in page coordinates (unit: Points).
 		/// </summary>
-		public RectangleD HittedAreaInPageCoord
+		public RectangleD2D HittedAreaInPageCoord
 		{
 			get { return _hittedAreaInPageCoord; }
 		}
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Transformation of this item that transform world coordinates to page coordinates.
 		/// </summary>
-		public TransformationMatrix2D Transformation
+		public MatrixD2D Transformation
 		{
 			get
 			{
@@ -99,9 +99,9 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="additionalTransformation">The additional transformation matrix.</param>
 		/// <returns></returns>
-		public TransformationMatrix2D GetTransformation(TransformationMatrix2D additionalTransformation)
+		public MatrixD2D GetTransformation(MatrixD2D additionalTransformation)
 		{
-			var result = new TransformationMatrix2D(_transformation);
+			var result = new MatrixD2D(_transformation);
 			result.PrependTransform(additionalTransformation);
 			return result;
 		}
@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-		public HitTestRectangularData NewFromAdditionalTransformation(TransformationMatrix2D additionalTransformation)
+		public HitTestRectangularData NewFromAdditionalTransformation(MatrixD2D additionalTransformation)
 		{
 			var result = new HitTestRectangularData(this);
 			result.Transformation.PrependTransform(additionalTransformation);
@@ -131,13 +131,13 @@ namespace Altaxo.Graph.Gdi
 		/// Returns the hitted area in world coordinated by applying the inverse current coordinate transformation.
 		/// </summary>
 		/// <returns>Hitted point in world coordinates.</returns>
-		public TransformationMatrix2D GetHittedAreaInWorldCoord()
+		public MatrixD2D GetHittedAreaInWorldCoord()
 		{
 			var pt0 = _transformation.InverseTransformPoint(_hittedAreaInPageCoord.Location);
 			var pt1 = _transformation.InverseTransformVector(new PointD2D(0, _hittedAreaInPageCoord.Height));
 			var pt2 = _transformation.InverseTransformPoint(new PointD2D(_hittedAreaInPageCoord.Width, 0));
 
-			var result = new TransformationMatrix2D(pt1.X, pt1.Y, pt2.X, pt2.Y, pt0.X, pt0.Y);
+			var result = new MatrixD2D(pt1.X, pt1.Y, pt2.X, pt2.Y, pt0.X, pt0.Y);
 			return result;
 		}
 
@@ -145,7 +145,7 @@ namespace Altaxo.Graph.Gdi
 		/// Returns the hitted area in world coordinated by applying the inverse current coordinate transformation and then the provided inverse coordinate transformation.
 		/// </summary>
 		/// <returns>Hitted point in world coordinates.</returns>
-		public TransformationMatrix2D GetHittedAreaInWorldCoord(TransformationMatrix2D additionalTransform)
+		public MatrixD2D GetHittedAreaInWorldCoord(MatrixD2D additionalTransform)
 		{
 			var pt0 = _transformation.InverseTransformPoint(_hittedAreaInPageCoord.Location);
 			var pt1 = _transformation.InverseTransformVector(new PointD2D(0, _hittedAreaInPageCoord.Height));
@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi
 			pt1 = additionalTransform.InverseTransformVector(pt1);
 			pt2 = additionalTransform.InverseTransformVector(pt2);
 
-			var result = new TransformationMatrix2D(pt1.X, pt1.Y, pt2.X, pt2.Y, pt0.X, pt0.Y);
+			var result = new MatrixD2D(pt1.X, pt1.Y, pt2.X, pt2.Y, pt0.X, pt0.Y);
 			return result;
 		}
 
@@ -165,13 +165,13 @@ namespace Altaxo.Graph.Gdi
 			return _hittedAreaInPageCoord.Contains(pt);
 		}
 
-		public bool IsCovering(PointD2D pt, TransformationMatrix2D additionalTransform)
+		public bool IsCovering(PointD2D pt, MatrixD2D additionalTransform)
 		{
 			pt = _transformation.TransformPoint(additionalTransform.TransformPoint(pt));
 			return _hittedAreaInPageCoord.Contains(pt);
 		}
 
-		public bool IsCovering(RectangleD rect)
+		public bool IsCovering(RectangleD2D rect)
 		{
 			PointD2D pt;
 			pt = _transformation.TransformPoint(new PointD2D(rect.X, rect.Y));
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi
 			return true;
 		}
 
-		public bool IsCovering(RectangleD rect, TransformationMatrix2D additionalTransform)
+		public bool IsCovering(RectangleD2D rect, MatrixD2D additionalTransform)
 		{
 			PointD2D pt;
 			pt = _transformation.TransformPoint(additionalTransform.TransformPoint(new PointD2D(rect.X, rect.Y)));

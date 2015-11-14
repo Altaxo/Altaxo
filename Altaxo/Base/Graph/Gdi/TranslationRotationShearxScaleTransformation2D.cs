@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Gdi
 		private double _shearX;
 		private double _scaleX = 1;
 		private double _scaleY = 1;
-		private TransformationMatrix2D _transformation = new TransformationMatrix2D();
+		private MatrixD2D _transformation = new MatrixD2D();
 
 		/// <summary>
 		/// Translation (or location) of this transformation.
@@ -213,7 +213,7 @@ namespace Altaxo.Graph.Gdi
 		/// Returns the transformation matrix. For performance reasons, this is the value stored in this instance.
 		/// If you intend to change the transformation, consider using <see cref="TransformationClone"/> instead.
 		/// </summary>
-		public TransformationMatrix2D Transformation
+		public MatrixD2D Transformation
 		{
 			get
 			{
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Returns a clone of the transformation matrix.
 		/// </summary>
-		public TransformationMatrix2D TransformationClone
+		public MatrixD2D TransformationClone
 		{
 			get
 			{
@@ -289,7 +289,7 @@ namespace Altaxo.Graph.Gdi
 		/// Sets the value for translation, roation, shear and scale from a transformation matrix.
 		/// </summary>
 		/// <param name="transformation"></param>
-		public void SetFrom(TransformationMatrix2D transformation)
+		public void SetFrom(MatrixD2D transformation)
 		{
 			SetTranslationRotationShearxScale(transformation.X, transformation.Y, transformation.Rotation, transformation.Shear, transformation.ScaleX, transformation.ScaleY);
 		}

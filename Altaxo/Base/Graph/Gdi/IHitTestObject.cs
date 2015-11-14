@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Drawing.Drawing2D;
 
@@ -49,13 +50,13 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// This will return the transformation matrix. This matrix translates from coordinates of the object to global coordinates.
 		/// </summary>
-		TransformationMatrix2D Transformation { get; }
+		MatrixD2D Transformation { get; }
 
 		/// <summary>
 		/// Transform the internal positions according to the provided transformation matrix.
 		/// </summary>
 		/// <param name="x"></param>
-		void Transform(TransformationMatrix2D x);
+		void Transform(MatrixD2D x);
 
 		/// <summary>
 		/// This will return the object itself, i.e. the object which corresponds to the selection path.

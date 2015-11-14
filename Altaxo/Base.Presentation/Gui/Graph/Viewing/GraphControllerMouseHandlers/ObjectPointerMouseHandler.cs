@@ -172,7 +172,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// If not null, this is the rectangular selection area drawn by the user.
 		/// </summary>
-		protected RectangleD? _rectangleSelectionArea_GraphCoordinates;
+		protected RectangleD2D? _rectangleSelectionArea_GraphCoordinates;
 
 		protected static Brush _blueTransparentBrush = new SolidBrush(Color.FromArgb(64, 0, 0, 255));
 
@@ -435,7 +435,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					}
 
 					var pt1 = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
-					var rect = new RectangleD(pt1, PointD2D.Empty);
+					var rect = new RectangleD2D(pt1, PointD2D.Empty);
 					rect.ExpandToInclude(_grac.ConvertMouseToRootLayerCoordinates(position));
 					_rectangleSelectionArea_GraphCoordinates = rect;
 				}

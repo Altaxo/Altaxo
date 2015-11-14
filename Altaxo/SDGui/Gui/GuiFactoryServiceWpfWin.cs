@@ -43,11 +43,11 @@ namespace Altaxo.Gui
 			get { return ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject).Handle; }
 		}
 
-		public override RectangleD GetScreenInformation(double virtual_x, double virtual_y)
+		public override RectangleD2D GetScreenInformation(double virtual_x, double virtual_y)
 		{
 			var wa = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)virtual_x, (int)virtual_y));
 
-			return new RectangleD(wa.X, wa.Y, wa.Width, wa.Height);
+			return new RectangleD2D(wa.X, wa.Y, wa.Width, wa.Height);
 		}
 
 		#endregion Still dependent on Windows Forms

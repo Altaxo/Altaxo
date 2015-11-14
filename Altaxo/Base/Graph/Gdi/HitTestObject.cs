@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Gdi
 		/// Transformation matrix which transforms the coordinates of the parent of the hitted object (i.e. the parent layer)
 		/// into page coordinates.
 		/// </summary>
-		protected TransformationMatrix2D _matrix;
+		protected MatrixD2D _matrix;
 
 		/// <summary>The hitted object.</summary>
 		protected object _hitobject;
@@ -108,14 +108,14 @@ namespace Altaxo.Graph.Gdi
 		public HitTestObjectBase(object hitobject)
 		{
 			_hitobject = hitobject;
-			_matrix = new TransformationMatrix2D();
+			_matrix = new MatrixD2D();
 		}
 
 		/// <summary>
 		/// This will return the transformation matrix.
 		/// This matrix translates from coordinates of the parent of the object (i.e. mostly the parent layer) to global coordinates.
 		/// </summary>
-		public TransformationMatrix2D Transformation
+		public MatrixD2D Transformation
 		{
 			get { return _matrix; }
 		}
@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Gdi
 		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
 		/// </summary>
 		/// <param name="x">The transformation to append.</param>
-		public virtual void Transform(TransformationMatrix2D x)
+		public virtual void Transform(MatrixD2D x)
 		{
 			_matrix.AppendTransform(x);
 		}
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Gdi
 		/// This path is in object world coordinates.</param>
 		/// <param name="transformation">Transformation matrix of the object.</param>
 		/// <param name="hitobject">The hitted object.</param>
-		public HitTestObject(GraphicsPath objectPath, TransformationMatrix2D transformation, object hitobject)
+		public HitTestObject(GraphicsPath objectPath, MatrixD2D transformation, object hitobject)
 			: base(hitobject)
 		{
 			_objectPath = objectPath;
@@ -251,7 +251,7 @@ namespace Altaxo.Graph.Gdi
 		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
 		/// </summary>
 		/// <param name="x">The transformation to append.</param>
-		public override void Transform(TransformationMatrix2D x)
+		public override void Transform(MatrixD2D x)
 		{
 			base.Transform(x);
 			_objectPath.Transform(x);

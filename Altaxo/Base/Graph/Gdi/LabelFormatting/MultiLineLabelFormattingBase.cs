@@ -174,12 +174,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				_strfmt = strfmt;
 				_lineSpacing = lineSpacing;
 				_size = SizeF.Empty;
-				var bounds = RectangleD.Empty;
+				var bounds = RectangleD2D.Empty;
 				var position = new PointD2D();
 				for (int i = 0; i < _text.Length; ++i)
 				{
 					_stringSize[i] = g.MeasureString(_text[i], GdiFontManager.ToGdi(_font), new PointF(0, 0), strfmt);
-					bounds.ExpandToInclude(new RectangleD(position, _stringSize[i]));
+					bounds.ExpandToInclude(new RectangleD2D(position, _stringSize[i]));
 					position.Y += _stringSize[i].Y * _lineSpacing;
 				}
 				_size = bounds.Size;

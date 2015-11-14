@@ -39,14 +39,14 @@ namespace Altaxo.Graph.Gdi.Background
 		/// <param name="g">Graphics context.</param>
 		/// <param name="innerArea">Inner area of the item.</param>
 		/// <returns>The rectangle that encloses the item including the background.</returns>
-		RectangleD MeasureItem(Graphics g, RectangleD innerArea);
+		RectangleD2D MeasureItem(Graphics g, RectangleD2D innerArea);
 
 		/// <summary>
 		/// Draws the background.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="innerArea">The inner area of the item.</param>
-		void Draw(Graphics g, RectangleD innerArea);
+		void Draw(Graphics g, RectangleD2D innerArea);
 
 		/// <summary>
 		/// Draws the background with a custom brush. This function must be implemented only if <see cref="SupportsBrush"/> returns <c>true</c>.
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Background
 		/// <param name="g">Graphics context.</param>
 		/// <param name="brush">Brush used for drawing during this operation.</param>
 		/// <param name="innerArea">The inner area of the item.</param>
-		void Draw(Graphics g, BrushX brush, RectangleD innerArea);
+		void Draw(Graphics g, BrushX brush, RectangleD2D innerArea);
 
 		/// <summary>
 		/// True if the classes color property can be set/reset;

@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi
 		protected ImageProxy _textureImage; // für Texturebrush
 		protected TextureScaling _textureScale = TextureScaling.Default;
 
-		protected RectangleD _brushBoundingRectangle;
+		protected RectangleD2D _brushBoundingRectangle;
 
 		[NonSerialized]
 		protected Brush _cachedBrush;      // this is the cached brush object
@@ -1009,7 +1009,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
 		/// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:GetEffectiveMaximumResolution"/></param>
 		/// <returns>True if changes to the brush were made. False otherwise.</returns>
-		public bool SetEnvironment(RectangleD boundingRectangle, double maxEffectiveResolution)
+		public bool SetEnvironment(RectangleD2D boundingRectangle, double maxEffectiveResolution)
 		{
 			return SetEnvironment((RectangleF)boundingRectangle, maxEffectiveResolution);
 		}
@@ -1136,7 +1136,7 @@ namespace Altaxo.Graph.Gdi
 							{
 								GraphicsPath p = new GraphicsPath();
 								if (_brushBoundingRectangle.IsEmpty)
-									_brushBoundingRectangle = new RectangleD(0, 0, 1000, 1000);
+									_brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
 								var outerRectangle = _brushBoundingRectangle.OuterCircleBoundingBox;
 								p.AddEllipse((RectangleF)outerRectangle);
 								PathGradientBrush pgb = new PathGradientBrush(p);
@@ -1164,7 +1164,7 @@ namespace Altaxo.Graph.Gdi
 						case BrushType.SyntheticTextureBrush:
 						case BrushType.TextureBrush:
 							if (_brushBoundingRectangle.IsEmpty)
-								_brushBoundingRectangle = new RectangleD(0, 0, 1000, 1000);
+								_brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
 
 							Image img = null;
 							PointD2D finalSize = PointD2D.Empty;

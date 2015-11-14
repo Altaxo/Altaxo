@@ -635,7 +635,7 @@ typeof(GraphDocument),
 		/// Gets the bounds of the root layer.
 		/// </summary>
 		/// <returns></returns>
-		private RectangleD GetBounds()
+		private RectangleD2D GetBounds()
 		{
 			var s = _rootLayer.Size;
 			var p1 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, 0));
@@ -643,7 +643,7 @@ typeof(GraphDocument),
 			var p3 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(0, s.Y));
 			var p4 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD2D(s.X, s.Y));
 
-			var r = new RectangleD(p1, PointD2D.Empty);
+			var r = new RectangleD2D(p1, PointD2D.Empty);
 			r.ExpandToInclude(p2);
 			r.ExpandToInclude(p3);
 			r.ExpandToInclude(p4);

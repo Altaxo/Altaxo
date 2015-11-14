@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				int hitindex = -1;
 				for (int i = 1; i < ptArray.Length; i++)
 				{
-					if (Drawing2DRelated.IsPointIntoDistance((PointF)hitpoint, 5, ptArray[i - 1], ptArray[i]))
+					if (Math2D.IsPointIntoDistance((PointF)hitpoint, 5, ptArray[i - 1], ptArray[i]))
 					{
 						hitindex = i;
 						break;
@@ -283,11 +283,11 @@ namespace Altaxo.Graph.Gdi.Plot
 				int minindex = -1;
 				for (int i = 1; i < ptArray.Length; i++)
 				{
-					double distance = Drawing2DRelated.SquareDistanceLineToPoint(hitpoint, ptArray[i - 1], ptArray[i]);
+					double distance = Math2D.SquareDistanceLineToPoint(hitpoint, ptArray[i - 1], ptArray[i]);
 					if (distance < mindistance)
 					{
 						mindistance = distance;
-						minindex = Drawing2DRelated.Distance(ptArray[i - 1], hitpoint) < Drawing2DRelated.Distance(ptArray[i], hitpoint) ? i - 1 : i;
+						minindex = Math2D.Distance(ptArray[i - 1], hitpoint) < Math2D.Distance(ptArray[i], hitpoint) ? i - 1 : i;
 					}
 				}
 				// ok, minindex is the point we are looking for

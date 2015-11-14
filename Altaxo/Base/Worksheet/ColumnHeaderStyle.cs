@@ -126,11 +126,11 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, RectangleD, int, Data.DataColumn, bool>>();
+		public static Dictionary<System.Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<ColumnHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
-		public override void Paint(System.Type dctype, object dc, RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
-			Action<ColumnHeaderStyle, object, RectangleD, int, Altaxo.Data.DataColumn, bool> action;
+			Action<ColumnHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
 			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
 				action(this, dc, cellRectangle, nRow, data, bSelected);
 			else

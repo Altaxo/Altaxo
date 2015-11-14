@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected PointD2D _cachedLayerSize;
 
-		protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
+		protected MatrixD2D _transformation = new MatrixD2D();
 
 		/// <summary>
 		/// The child layers of this layers (this is a partial view of the <see cref="_graphObjects"/> collection).
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Gdi
 				}
 			}
 
-			_transformation = new TransformationMatrix2D();
+			_transformation = new MatrixD2D();
 			CalculateMatrix();
 		}
 
@@ -604,9 +604,9 @@ namespace Altaxo.Graph.Gdi
 			return pagecoordinates;
 		}
 
-		public TransformationMatrix2D TransformationFromRootToHere()
+		public MatrixD2D TransformationFromRootToHere()
 		{
-			TransformationMatrix2D result = new TransformationMatrix2D();
+			MatrixD2D result = new MatrixD2D();
 			foreach (var layer in this.TakeFromRootToHere())
 				result.PrependTransform(layer._transformation);
 			return result;
@@ -692,7 +692,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected void CalculateCachedSizeAndPosition()
 		{
-			RectangleD newRect;
+			RectangleD2D newRect;
 
 			if (null == _location)
 			{
@@ -712,15 +712,15 @@ namespace Altaxo.Graph.Gdi
 
 					if (gps.ForceFitIntoCell)
 					{
-						var t = new TransformationMatrix2D();
+						var t = new MatrixD2D();
 						t.SetTranslationRotationShearxScale(0, 0, -this.Rotation, this.ShearX, this.ScaleX, this.ScaleY);
 						var ele = t.Elements;
-						newRect = RectangleExtensions.GetIncludedTransformedRectangle(gridRect, t.SX, t.RX, t.RY, t.SY);
+						newRect = RectangleD2DExtensions.GetIncludedTransformedRectangle(gridRect, t.SX, t.RX, t.RY, t.SY);
 					}
 				}
 				else // ParentLayer is null, this is probably the root layer, thus use the _cachedParentLayersSize
 				{
-					newRect = new RectangleD(0, 0, _cachedParentLayerSize.X, _cachedParentLayerSize.Y);
+					newRect = new RectangleD2D(0, 0, _cachedParentLayerSize.X, _cachedParentLayerSize.Y);
 				}
 			}
 			else
@@ -862,7 +862,7 @@ namespace Altaxo.Graph.Gdi
 			if (this.Layers.Any((childLayer) => childLayer.Location is ItemLocationByGrid))
 				return false;
 
-			RectangleD enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
+			RectangleD2D enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
 			if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > this.Size.X || enclosingRect.Bottom > this.Size.Y)
 				return false;
 
@@ -881,7 +881,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (!isAnyChildLayerPosByGrid)
 			{
-				RectangleD enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
+				RectangleD2D enclosingRect = itemLocation.GetAbsoluteEnclosingRectangle();
 
 				if (enclosingRect.Left < 0 || enclosingRect.Top < 0 || enclosingRect.Right > this.Size.X || enclosingRect.Bottom > this.Size.Y)
 					return null;

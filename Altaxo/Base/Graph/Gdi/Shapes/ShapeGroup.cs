@@ -165,11 +165,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <value>
 		/// The bounds of the graphical object.
 		/// </value>
-		public override RectangleD Bounds
+		public override RectangleD2D Bounds
 		{
 			get
 			{
-				return new RectangleD(0, 0, Size.X, Size.Y);
+				return new RectangleD2D(0, 0, Size.X, Size.Y);
 			}
 		}
 
@@ -285,7 +285,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// </summary>
 		public void AdjustPosition()
 		{
-			RectangleD bounds = RectangleD.Empty;
+			RectangleD2D bounds = RectangleD2D.Empty;
 			bool boundsInitialized = false;
 			foreach (var e in _groupedObjects)
 			{
@@ -305,7 +305,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 				else
 				{
-					bounds = new RectangleD(p1.X, p1.Y, 0, 0);
+					bounds = new RectangleD2D(p1.X, p1.Y, 0, 0);
 					boundsInitialized = true;
 				}
 				bounds.ExpandToInclude(p2);

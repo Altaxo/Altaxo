@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected ItemLocationDirect _location;
 
 		/// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
-		protected TransformationMatrix2D _transformation = new TransformationMatrix2D();
+		protected MatrixD2D _transformation = new MatrixD2D();
 
 		#region Serialization
 
@@ -445,11 +445,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <value>
 		/// The bounds of the graphical object.
 		/// </value>
-		public virtual RectangleD Bounds
+		public virtual RectangleD2D Bounds
 		{
 			get
 			{
-				return new RectangleD(_location.AbsoluteVectorPivotToLeftUpper, Size);
+				return new RectangleD2D(_location.AbsoluteVectorPivotToLeftUpper, Size);
 			}
 		}
 
@@ -1089,7 +1089,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		protected internal void SetCoordinatesByAppendTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
+		protected internal void SetCoordinatesByAppendTransformation(MatrixD2D transform, Main.EventFiring eventFiring)
 		{
 			using (var token = SuspendGetToken())
 			{
@@ -1104,7 +1104,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		protected internal void SetCoordinatesByAppendInverseTransformation(TransformationMatrix2D transform, Main.EventFiring eventFiring)
+		protected internal void SetCoordinatesByAppendInverseTransformation(MatrixD2D transform, Main.EventFiring eventFiring)
 		{
 			using (var token = SuspendGetToken())
 			{
@@ -1284,7 +1284,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					outVec *= (gripSize / outVec.VectorLength);
 					PointD2D altVec = outVec.Get90DegreeRotated();
 					PointD2D ptStart = pos;
-					list.Add(new ResizeGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+					list.Add(new ResizeGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
 				}
 			}
 
@@ -1300,7 +1300,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					outVec *= (gripSize / outVec.VectorLength);
 					PointD2D altVec = outVec.Get90DegreeRotated();
 					PointD2D ptStart = pos;
-					list.Add(new RotationGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+					list.Add(new RotationGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
 				}
 			}
 
@@ -1318,7 +1318,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					outVec *= (gripSize / outVec.VectorLength);
 					PointD2D altVec = outVec.Get90DegreeRotated();
 					PointD2D ptStart = pos;
-					list.Add(new RescaleGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+					list.Add(new RescaleGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
 				}
 			}
 
@@ -1333,7 +1333,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					outVec *= (gripSize / outVec.VectorLength);
 					PointD2D altVec = outVec.Get90DegreeRotated();
 					PointD2D ptStart = pos;
-					list.Add(new ShearGripHandle(hitTest, _gripRelPositions[i], new TransformationMatrix2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
+					list.Add(new ShearGripHandle(hitTest, _gripRelPositions[i], new MatrixD2D(outVec.X, outVec.Y, altVec.X, altVec.Y, ptStart.X, ptStart.Y)));
 				}
 			}
 

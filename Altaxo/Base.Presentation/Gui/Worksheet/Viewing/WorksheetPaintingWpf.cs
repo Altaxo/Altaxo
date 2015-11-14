@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 			int yShift = 0;
 
-			var cellRectangle = new RectangleD();
+			var cellRectangle = new RectangleD2D();
 			double left, width;
 
 			if (clipRectangle.Top < layout.ColumnHeaderStyle.Height)

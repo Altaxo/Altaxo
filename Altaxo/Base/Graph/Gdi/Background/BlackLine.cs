@@ -80,17 +80,17 @@ namespace Altaxo.Graph.Gdi.Background
 
 		#region IBackgroundStyle Members
 
-		public RectangleD MeasureItem(System.Drawing.Graphics g, RectangleD innerArea)
+		public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
 		{
 			return innerArea;
 		}
 
-		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
+		public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
 		{
 			g.DrawRectangle(Pens.Black, (float)innerArea.Left, (float)innerArea.Top, (float)innerArea.Width, (float)innerArea.Height);
 		}
 
-		public void Draw(Graphics g, BrushX brush, RectangleD innerArea)
+		public void Draw(Graphics g, BrushX brush, RectangleD2D innerArea)
 		{
 			throw new NotImplementedException();
 		}

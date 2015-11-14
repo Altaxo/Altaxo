@@ -55,7 +55,7 @@ namespace Altaxo.Worksheet
 
 	public struct AreaInfo
 	{
-		public RectangleD AreaRectangle { get; set; }
+		public RectangleD2D AreaRectangle { get; set; }
 
 		public AreaType AreaType { get; set; }
 
@@ -391,24 +391,24 @@ namespace Altaxo.Worksheet
 
 		#region Cell
 
-		public static RectangleD GetCoordinatesOfDataCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
+		public static RectangleD2D GetCoordinatesOfDataCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
 		{
 			double x, y, w, h;
 			GetXCoordinatesOfColumn(nCol, layout, HorzScrollPos, out x, out w);
 
 			y = GetTopCoordinateOfTableRow(nRow, layout, VertScrollPos);
 			h = layout.RowHeaderStyle.Height;
-			return new RectangleD(x, y, w, h);
+			return new RectangleD2D(x, y, w, h);
 		}
 
-		public static RectangleD GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
+		public static RectangleD2D GetCoordinatesOfPropertyCell(int nCol, int nRow, WorksheetLayout layout, int HorzScrollPos, int VertScrollPos)
 		{
 			double x, y, w, h;
 			GetXCoordinatesOfColumn(nRow, layout, HorzScrollPos, out x, out w);
 
 			y = GetTopCoordinateOfPropertyColumn(nCol, layout, VertScrollPos);
 			h = layout.PropertyColumnHeaderStyle.Height;
-			return new RectangleD(x, y, w, h);
+			return new RectangleD2D(x, y, w, h);
 		}
 
 		/// <summary>
@@ -545,7 +545,7 @@ namespace Altaxo.Worksheet
 			{
 				ColumnNumber = hittedColumn,
 				RowNumber = hittedRow,
-				AreaRectangle = new RectangleD(left, top, width, height),
+				AreaRectangle = new RectangleD2D(left, top, width, height),
 				AreaType = hittedAreaType
 			};
 			return result;

@@ -489,7 +489,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			_cachedPath = _axisStyle.AxisLineStyle.GetObjectPath(privLayer, true);
 
 			// calculate size information
-			RectangleD bounds1 = _cachedPath.GetBounds();
+			RectangleD2D bounds1 = _cachedPath.GetBounds();
 
 			if (_axisStyle.AreMinorLabelsEnabled)
 			{
@@ -497,7 +497,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (path.PointCount > 0)
 				{
 					_cachedPath.AddPath(path, false);
-					RectangleD bounds2 = path.GetBounds();
+					RectangleD2D bounds2 = path.GetBounds();
 					bounds1.ExpandToInclude(bounds2);
 				}
 			}
@@ -507,7 +507,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				if (path.PointCount > 0)
 				{
 					_cachedPath.AddPath(path, false);
-					RectangleD bounds2 = path.GetBounds();
+					RectangleD2D bounds2 = path.GetBounds();
 					bounds1.ExpandToInclude(bounds2);
 				}
 			}

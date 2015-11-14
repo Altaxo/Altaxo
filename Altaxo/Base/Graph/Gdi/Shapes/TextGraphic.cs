@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
 		protected bool _isMeasureInSync = false; // true when all items are measured
 		protected PointD2D _cachedTextOffset; // offset of text to left upper corner of outer rectangle
-		protected RectangleD _cachedExtendedTextBounds; // the text bounds extended by some margin around it
+		protected RectangleD2D _cachedExtendedTextBounds; // the text bounds extended by some margin around it
 
 		#endregion Cached or temporary variables
 
@@ -335,8 +335,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 			PointD2D size = new PointD2D((textWidth + distanceXL + distanceXR), (textHeight + distanceYU + distanceYL));
-			_cachedExtendedTextBounds = new RectangleD(PointD2D.Empty, size);
-			RectangleD textRectangle = new RectangleD(new PointD2D(-distanceXL, -distanceYU), size);
+			_cachedExtendedTextBounds = new RectangleD2D(PointD2D.Empty, size);
+			RectangleD2D textRectangle = new RectangleD2D(new PointD2D(-distanceXL, -distanceYU), size);
 
 			if (this._background != null)
 			{

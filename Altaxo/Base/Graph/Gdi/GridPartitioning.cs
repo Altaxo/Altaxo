@@ -135,13 +135,13 @@ namespace Altaxo.Graph
 
 		public bool IsEmpty { get { return _xPartitioning.Count == 0 && _yPartitioning.Count == 0; } }
 
-		public RectangleD GetTileRectangle(double column, double row, double columnSpan, double rowSpan, PointD2D totalSize)
+		public RectangleD2D GetTileRectangle(double column, double row, double columnSpan, double rowSpan, PointD2D totalSize)
 		{
 			double xstart, xsize;
 			double ystart, ysize;
 			_xPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.X, column, columnSpan, out xstart, out xsize);
 			_yPartitioning.GetAbsolutePositionAndSizeFromGridIndexAndSpan(totalSize.Y, row, rowSpan, out ystart, out ysize);
-			return new RectangleD(xstart, ystart, xsize, ysize);
+			return new RectangleD2D(xstart, ystart, xsize, ysize);
 		}
 	}
 }

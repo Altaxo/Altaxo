@@ -1541,8 +1541,8 @@ namespace Altaxo.Gui.Graph.Viewing
 					layer4all = GetParentLayerOfSelectedObjects();
 				}
 
-				TransformationMatrix2D layer4allTransform = null;
-				TransformationMatrix2D layer4allBackTransform = null;
+				MatrixD2D layer4allTransform = null;
+				MatrixD2D layer4allBackTransform = null;
 				if (null != layer4all)
 				{
 					// if there a layer where all selected objects belong to, use the size and transformation of that layer (instead of the root layer)
@@ -1553,13 +1553,13 @@ namespace Altaxo.Gui.Graph.Viewing
 				}
 
 				// determine the common outline rectangle of all selected objects
-				RectangleD bounds = new RectangleD();
+				RectangleD2D bounds = new RectangleD2D();
 				bool boundsInitialized = false;
 				foreach (IHitTestObject o in SelectedObjects)
 				{
 					var outline = o.ObjectOutlineForArrangements;
 					layer4allBackTransform?.TransformPath(outline);
-					RectangleD r = outline.GetBounds();
+					RectangleD2D r = outline.GetBounds();
 					if (boundsInitialized)
 					{
 						bounds.ExpandToInclude(r);

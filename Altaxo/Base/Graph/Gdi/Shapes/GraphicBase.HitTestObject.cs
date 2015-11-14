@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					{
 						var t = _matrix.Clone();
 						t.AppendTransform(hit._transformation);
-						var innerRect = RectangleExtensions.GetIncludedTransformedRectangle(new RectangleD(PointD2D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
+						var innerRect = RectangleD2DExtensions.GetIncludedTransformedRectangle(new RectangleD2D(PointD2D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
 						hit.Width = innerRect.Width;
 						hit.Height = innerRect.Height;
 					}

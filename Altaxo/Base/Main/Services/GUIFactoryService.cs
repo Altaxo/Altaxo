@@ -917,7 +917,7 @@ namespace Altaxo.Main.Services
 		/// <param name="virtual_x">The virtual screen x coordinate of the point on the virtual screen.</param>
 		/// <param name="virtual_y">The virtual screen x coordinate of the point on the virtual screen.</param>
 		/// <returns>True if the function has successfully retrieved information, false otherwise.</returns>
-		public abstract RectangleD GetScreenInformation(double virtual_x, double virtual_y);
+		public abstract RectangleD2D GetScreenInformation(double virtual_x, double virtual_y);
 
 		/// <summary>Gets the screen resolution that is set in windows in dots per inch.</summary>
 		public abstract PointD2D ScreenResolutionDpi { get; }

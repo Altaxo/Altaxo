@@ -171,7 +171,7 @@ namespace Altaxo.Graph.Gdi
 			return new ItemLocationByGrid(this);
 		}
 
-		public RectangleD GetAbsolute(GridPartitioning partition, PointD2D parentSize)
+		public RectangleD2D GetAbsolute(GridPartitioning partition, PointD2D parentSize)
 		{
 			return partition.GetTileRectangle(_gridColumn, _gridRow, _gridColumnSpan, _gridRowSpan, parentSize);
 		}

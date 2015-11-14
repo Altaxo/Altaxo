@@ -30,7 +30,7 @@ namespace Altaxo.Geometry
 	/// RectangleD describes a rectangle in 2D space.
 	/// </summary>
 	[Serializable]
-	public struct RectangleD
+	public struct RectangleD2D
 	{
 		private double _x, _y, _w, _h;
 
@@ -64,12 +64,12 @@ namespace Altaxo.Geometry
 		/// 2015-11-15 Version 1 - Move to Altaxo.Geometry namespace and renaming to RectangleD2D
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.RectangleD", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD2D), 1)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				RectangleD s = (RectangleD)obj;
+				RectangleD2D s = (RectangleD2D)obj;
 				info.AddValue("X", s.X);
 				info.AddValue("Y", s.Y);
 				info.AddValue("Width", s.Width);
@@ -78,7 +78,7 @@ namespace Altaxo.Geometry
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				RectangleD s = null != o ? (RectangleD)o : new RectangleD();
+				RectangleD2D s = null != o ? (RectangleD2D)o : new RectangleD2D();
 				s.X = info.GetDouble("X");
 				s.Y = info.GetDouble("Y");
 				s.Width = info.GetDouble("Width");
@@ -90,7 +90,7 @@ namespace Altaxo.Geometry
 
 		#endregion Serialization
 
-		public RectangleD(double x, double y, double width, double height)
+		public RectangleD2D(double x, double y, double width, double height)
 			: this()
 		{
 			_x = x;
@@ -99,7 +99,7 @@ namespace Altaxo.Geometry
 			_h = height;
 		}
 
-		public RectangleD(PointD2D position, PointD2D size)
+		public RectangleD2D(PointD2D position, PointD2D size)
 		{
 			_x = position.X;
 			_y = position.Y;
@@ -107,11 +107,11 @@ namespace Altaxo.Geometry
 			_h = size.Y;
 		}
 
-		public static RectangleD Empty
+		public static RectangleD2D Empty
 		{
 			get
 			{
-				return new RectangleD();
+				return new RectangleD2D();
 			}
 		}
 
@@ -123,22 +123,22 @@ namespace Altaxo.Geometry
 			}
 		}
 
-		public static RectangleD FromLTRB(PointD2D a, PointD2D b)
+		public static RectangleD2D FromLTRB(PointD2D a, PointD2D b)
 		{
-			return new RectangleD(a.X, a.Y, b.X - a.X, b.Y - a.Y);
+			return new RectangleD2D(a.X, a.Y, b.X - a.X, b.Y - a.Y);
 		}
 
-		public static RectangleD FromLTRB(double ax, double ay, double bx, double by)
+		public static RectangleD2D FromLTRB(double ax, double ay, double bx, double by)
 		{
-			return new RectangleD(ax, ay, bx - ax, by - ay);
+			return new RectangleD2D(ax, ay, bx - ax, by - ay);
 		}
 
-		public static bool operator ==(RectangleD p, RectangleD q)
+		public static bool operator ==(RectangleD2D p, RectangleD2D q)
 		{
 			return p._x == q._x && p._y == q._y && p._w == q._w && p._h == q._h;
 		}
 
-		public static bool operator !=(RectangleD p, RectangleD q)
+		public static bool operator !=(RectangleD2D p, RectangleD2D q)
 		{
 			return !(p._x == q._x && p._y == q._y && p._w == q._w && p._h == q._h);
 		}
@@ -150,9 +150,9 @@ namespace Altaxo.Geometry
 
 		public override bool Equals(object obj)
 		{
-			if (obj is RectangleD)
+			if (obj is RectangleD2D)
 			{
-				var q = (RectangleD)obj;
+				var q = (RectangleD2D)obj;
 				return _x == q._x && _y == q._y && _w == q._w && _h == q._h;
 			}
 			else
@@ -166,24 +166,24 @@ namespace Altaxo.Geometry
 			return string.Format("X={0}; Y={1}; W={2}; H={3}", _x, _y, _w, _h); ;
 		}
 
-		public static explicit operator System.Drawing.RectangleF(RectangleD r)
+		public static explicit operator System.Drawing.RectangleF(RectangleD2D r)
 		{
 			return new System.Drawing.RectangleF((float)r._x, (float)r._y, (float)r._w, (float)r._h);
 		}
 
-		public static explicit operator System.Drawing.Rectangle(RectangleD r)
+		public static explicit operator System.Drawing.Rectangle(RectangleD2D r)
 		{
 			return new System.Drawing.Rectangle((int)r._x, (int)r._y, (int)r._w, (int)r._h);
 		}
 
-		public static implicit operator RectangleD(System.Drawing.RectangleF r)
+		public static implicit operator RectangleD2D(System.Drawing.RectangleF r)
 		{
-			return new RectangleD(r.X, r.Y, r.Width, r.Height);
+			return new RectangleD2D(r.X, r.Y, r.Width, r.Height);
 		}
 
-		public static implicit operator RectangleD(System.Drawing.Rectangle r)
+		public static implicit operator RectangleD2D(System.Drawing.Rectangle r)
 		{
-			return new RectangleD(r.X, r.Y, r.Width, r.Height);
+			return new RectangleD2D(r.X, r.Y, r.Width, r.Height);
 		}
 
 		public PointD2D Location
@@ -286,7 +286,7 @@ namespace Altaxo.Geometry
 			}
 		}
 
-		public void ExpandToInclude(RectangleD rect)
+		public void ExpandToInclude(RectangleD2D rect)
 		{
 			ExpandToInclude(rect.LeftTop);
 			ExpandToInclude(rect.LeftBottom);
@@ -306,12 +306,12 @@ namespace Altaxo.Geometry
 
 		/// <summary>Gets a rectangle that includes the smallest circle around this rectangle.</summary>
 		/// <value>A rectangle that includes the smallest circle around this rectangle.</value>
-		public RectangleD OuterCircleBoundingBox
+		public RectangleD2D OuterCircleBoundingBox
 		{
 			get
 			{
 				double d = Calc.BasicFunctions.hypot(_w, _h, 0);
-				return new RectangleD(_x + 0.5 * (_w - d), _y + 0.5 * (_h - d), d, d);
+				return new RectangleD2D(_x + 0.5 * (_w - d), _y + 0.5 * (_h - d), d, d);
 			}
 		}
 	}

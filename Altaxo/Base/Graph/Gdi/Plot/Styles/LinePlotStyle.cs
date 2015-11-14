@@ -660,7 +660,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (_fillArea)
 			{
 				if (null != _fillBrush)
-					_fillBrush.SetEnvironment(new RectangleD(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
+					_fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 
 				layer.UpdateCSPlaneID(_fillDirection);
 			}

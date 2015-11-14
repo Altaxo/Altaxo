@@ -1398,7 +1398,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="boundingRectangle">Bounding rectangle used for gradient textures.</param>
 		/// <param name="maxEffectiveResolution">Maximum effective resolution in Dpi. This information is neccessary for repeatable texture brushes. You can calculate this using <see cref="M:BrushX.GetMaximumEffectiveResolution"/></param>
 		/// <returns>True if changes to the pen's brush were made. False otherwise.</returns>
-		public bool SetEnvironment(RectangleD boundingRectangle, double maxEffectiveResolution)
+		public bool SetEnvironment(RectangleD2D boundingRectangle, double maxEffectiveResolution)
 		{
 			bool changed = false;
 			if (_brush != null)

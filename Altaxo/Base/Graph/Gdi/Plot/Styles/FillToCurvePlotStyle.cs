@@ -366,7 +366,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// ensure that brush and pen are cached
 				if (null != _fillBrush)
 				{
-					_fillBrush.SetEnvironment(new RectangleD(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
+					_fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 				}
 
 				PlotRangeList rangeList = pdata.RangeList;
@@ -385,7 +385,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// ensure that brush and pen are cached
 			if (null != _fillBrush)
 			{
-				_fillBrush.SetEnvironment(new RectangleD(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
+				_fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 			}
 
 			PlotRangeList rangeList = pdata.RangeList;

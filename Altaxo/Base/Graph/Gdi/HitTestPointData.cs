@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Gdi
 		private double _pageScale;
 
 		/// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
-		private TransformationMatrix2D _transformation;
+		private MatrixD2D _transformation;
 
 		/// <summary>
 		/// Constructor.
@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			_hittedPointInPageCoord = hitPointPageCoord;
 			_pageScale = pageScale;
-			_transformation = new TransformationMatrix2D();
+			_transformation = new MatrixD2D();
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			_hittedPointInPageCoord = from._hittedPointInPageCoord;
 			this._pageScale = from._pageScale;
-			this._transformation = new TransformationMatrix2D(from._transformation);
+			this._transformation = new MatrixD2D(from._transformation);
 		}
 
 		/// <summary>
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// Transformation of this item that transform world coordinates to page coordinates.
 		/// </summary>
-		public TransformationMatrix2D Transformation
+		public MatrixD2D Transformation
 		{
 			get
 			{
@@ -99,9 +99,9 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="additionalTransformation">The additional transformation matrix.</param>
 		/// <returns></returns>
-		public TransformationMatrix2D GetTransformation(TransformationMatrix2D additionalTransformation)
+		public MatrixD2D GetTransformation(MatrixD2D additionalTransformation)
 		{
-			var result = new TransformationMatrix2D(_transformation);
+			var result = new MatrixD2D(_transformation);
 			result.PrependTransform(additionalTransformation);
 			return result;
 		}
@@ -120,7 +120,7 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-		public HitTestPointData NewFromAdditionalTransformation(TransformationMatrix2D additionalTransformation)
+		public HitTestPointData NewFromAdditionalTransformation(MatrixD2D additionalTransformation)
 		{
 			var result = new HitTestPointData(this);
 			result.Transformation.PrependTransform(additionalTransformation);
@@ -140,7 +140,7 @@ namespace Altaxo.Graph.Gdi
 		/// Returns the hitted point in world coordinated by applying the inverse current coordinate transformation and then the provided inverse coordinate transformation.
 		/// </summary>
 		/// <returns>Hitted point in world coordinates.</returns>
-		public PointD2D GetHittedPointInWorldCoord(TransformationMatrix2D additionalTransform)
+		public PointD2D GetHittedPointInWorldCoord(MatrixD2D additionalTransform)
 		{
 			var result = GetHittedPointInWorldCoord();
 			result = additionalTransform.InverseTransformPoint(result);

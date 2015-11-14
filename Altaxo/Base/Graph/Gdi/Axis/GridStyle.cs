@@ -210,7 +210,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			Scale axis = layer.Scales[axisnumber];
 			TickSpacing ticking = layer.Scales[axisnumber].TickSpacing;
 
-			RectangleD layerRect = new RectangleD(PointD2D.Empty, layer.Size);
+			RectangleD2D layerRect = new RectangleD2D(PointD2D.Empty, layer.Size);
 
 			if (_showZeroOnly)
 			{

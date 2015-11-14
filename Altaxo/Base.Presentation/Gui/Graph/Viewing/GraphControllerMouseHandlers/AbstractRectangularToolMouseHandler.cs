@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
-		public RectangleD GetNormalRectangle(PointD2D a, PointD2D b)
+		public RectangleD2D GetNormalRectangle(PointD2D a, PointD2D b)
 		{
 			var x = Math.Min(a.X, b.X);
 			var y = Math.Min(a.Y, b.Y);
@@ -192,12 +192,12 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 			var w = Math.Abs(a.X - b.X);
 			var h = Math.Abs(a.Y - b.Y);
 
-			return new RectangleD(x, y, w, h);
+			return new RectangleD2D(x, y, w, h);
 		}
 
 		private void DrawRectangleFromLTRB(Graphics g, PointD2D a, PointD2D b)
 		{
-			var rect = RectangleD.FromLTRB(a.X, a.Y, b.X, b.Y);
+			var rect = RectangleD2D.FromLTRB(a.X, a.Y, b.X, b.Y);
 			Pen pen = Pens.Blue;
 			g.DrawLine(pen, (float)a.X, (float)a.Y, (float)b.X, (float)a.Y);
 			g.DrawLine(pen, (float)b.X, (float)a.Y, (float)b.X, (float)b.Y);

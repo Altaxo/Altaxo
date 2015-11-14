@@ -455,7 +455,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public abstract void Paint(System.Type dctype, object dc, RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
+		public abstract void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
 		public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 

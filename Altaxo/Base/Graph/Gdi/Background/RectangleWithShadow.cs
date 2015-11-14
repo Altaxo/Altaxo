@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Gdi.Background
 
 		#region IBackgroundStyle Members
 
-		public RectangleD MeasureItem(System.Drawing.Graphics g, RectangleD innerArea)
+		public RectangleD2D MeasureItem(System.Drawing.Graphics g, RectangleD2D innerArea)
 		{
 			innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
 			innerArea.Width += _shadowLength;
@@ -174,12 +174,12 @@ namespace Altaxo.Graph.Gdi.Background
 			return innerArea;
 		}
 
-		public void Draw(System.Drawing.Graphics g, RectangleD innerArea)
+		public void Draw(System.Drawing.Graphics g, RectangleD2D innerArea)
 		{
 			Draw(g, _brush, innerArea);
 		}
 
-		public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD innerArea)
+		public void Draw(System.Drawing.Graphics g, BrushX brush, RectangleD2D innerArea)
 		{
 			BrushX shadowBrush = null;
 			if (object.ReferenceEquals(brush, _brush))

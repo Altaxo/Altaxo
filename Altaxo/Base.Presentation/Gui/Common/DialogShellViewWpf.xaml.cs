@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Common
 	public partial class DialogShellViewWpf : Window, IDialogShellView
 	{
 		private UIElement _hostedControl;
-		private RectangleD _workArea;
+		private RectangleD2D _workArea;
 
 		public DialogShellViewWpf()
 		{

@@ -101,11 +101,11 @@ namespace Altaxo.Worksheet
 				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _textBrush, cellRectangle, _textFormat);
 		}
 
-		public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, RectangleD, int, Data.DataColumn, bool>>();
+		public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();
 
-		public override void Paint(System.Type dctype, object dc, RectangleD cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		public override void Paint(System.Type dctype, object dc, RectangleD2D cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
-			Action<DoubleColumnStyle, object, RectangleD, int, Altaxo.Data.DataColumn, bool> action;
+			Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool> action;
 			if (RegisteredPaintMethods.TryGetValue(dctype, out action))
 				action(this, dc, cellRectangle, nRow, data, bSelected);
 			else

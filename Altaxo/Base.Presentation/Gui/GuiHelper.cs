@@ -347,7 +347,7 @@ namespace Altaxo.Gui
 
 		#region Rectangle
 
-		public static Rect ToWpf(this RectangleD rect)
+		public static Rect ToWpf(this RectangleD2D rect)
 		{
 			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
 		}
@@ -362,9 +362,9 @@ namespace Altaxo.Gui
 			return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		public static RectangleD ToAltaxo(this Rect rect)
+		public static RectangleD2D ToAltaxo(this Rect rect)
 		{
-			return new RectangleD(rect.X, rect.Y, rect.Width, rect.Height);
+			return new RectangleD2D(rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		public static System.Drawing.RectangleF ToSysDraw(this Rect rect)
@@ -372,7 +372,7 @@ namespace Altaxo.Gui
 			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 		}
 
-		public static System.Drawing.RectangleF ToSysDraw(this RectangleD rect)
+		public static System.Drawing.RectangleF ToSysDraw(this RectangleD2D rect)
 		{
 			return new System.Drawing.RectangleF((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 		}
@@ -427,7 +427,7 @@ namespace Altaxo.Gui
 			{
 				using (var g = System.Drawing.Graphics.FromImage(bmp))
 				{
-					brush.SetEnvironment(new RectangleD(0, 0, xsize, ysize), 96);
+					brush.SetEnvironment(new RectangleD2D(0, 0, xsize, ysize), 96);
 					g.FillRectangle(brush, 0, 0, xsize, ysize);
 				}
 				var stream = Altaxo.Graph.ImageProxy.ImageToStream(bmp, System.Drawing.Imaging.ImageFormat.Png);

@@ -288,7 +288,7 @@
     <Compile Include="Graph3D\Plot\Styles\SurfacePlotStyle.cs" />
     <Compile Include="Graph3D\Plot\SurfacePlotItem.cs" />
     <Compile Include="Graph3D\Plot\XYColumnPlotItem.cs" />
-    <Compile Include="Geometry\Point3D.cs" />
+    <Compile Include="Geometry\PointD3D.cs" />
     <Compile Include="Geometry\Math3D.cs" />
     <Compile Include="Graph3D\Primitives\BezierCurveFlattener.cs" />
     <Compile Include="Graph3D\Primitives\CharacterGeometry.cs" />
@@ -363,7 +363,7 @@
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Drawing\NamedColor.cs" />
     <Compile Include="Drawing\NamedColors.cs" />
-    <Compile Include="Geometry\RectangleExtensions.cs" />
+    <Compile Include="Geometry\RectangleD2DExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Graph\Scales\Boundaries\CumulativeProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />
@@ -817,7 +817,7 @@
     <Compile Include="Data\Variant.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Geometry\Drawing2DRelated.cs">
+    <Compile Include="Geometry\Math2D.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Geometry\Edge.cs">
@@ -831,7 +831,7 @@
     <Compile Include="Graph\Procedures\PolynomialFitting.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Geometry\RectangleD.cs">
+    <Compile Include="Geometry\RectangleD2D.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\SystemDrawingSerialization.cs">
@@ -1136,7 +1136,7 @@
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Parser.cs" />
-    <Compile Include="Graph\Gdi\TransformationMatrix2D.cs" />
+    <Compile Include="Geometry\MatrixD2D.cs" />
     <Compile Include="Graph\IRoutedProperty.cs" />
     <Compile Include="Graph\Gdi\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />

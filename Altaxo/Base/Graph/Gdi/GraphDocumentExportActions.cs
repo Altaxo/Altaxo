@@ -288,13 +288,13 @@ namespace Altaxo.Graph.Gdi
 
 				if (null != backbrush1)
 				{
-					backbrush1.SetEnvironment(new RectangleD(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
+					backbrush1.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
 					grfx.FillRectangle(backbrush1, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
 				}
 
 				if (null != backbrush2)
 				{
-					backbrush2.SetEnvironment(new RectangleD(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
+					backbrush2.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
 					grfx.FillRectangle(backbrush2, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
 				}
 
@@ -710,7 +710,7 @@ namespace Altaxo.Graph.Gdi
 					{
 						if (backgroundBrush != null)
 						{
-							backgroundBrush.SetEnvironment(new RectangleD(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
+							backgroundBrush.SetEnvironment(new RectangleD2D(0, 0, doc.Size.X, doc.Size.Y), sourceDpiResolution);
 							grfxMetafile.FillRectangle(backgroundBrush, new RectangleF(0, 0, (float)doc.Size.X, (float)doc.Size.Y));
 						}
 

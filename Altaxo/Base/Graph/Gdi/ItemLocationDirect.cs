@@ -501,7 +501,7 @@ namespace Altaxo.Graph.Gdi
 		/// Gets the absolute enclosing rectangle without taking into account ScaleX, ScaleY, Rotation and Shear (SSRS).
 		/// </summary>
 		/// <returns>The enclosing rectangle in absolute values.</returns>
-		public RectangleD GetAbsoluteEnclosingRectangleWithoutSSRS()
+		public RectangleD2D GetAbsoluteEnclosingRectangleWithoutSSRS()
 		{
 			var mySizeX = _sizeX.GetValueRelativeTo(_parentSize.X);
 			var mySizeY = _sizeY.GetValueRelativeTo(_parentSize.Y);
@@ -509,16 +509,16 @@ namespace Altaxo.Graph.Gdi
 			var myPosX = _parentAnchorX.GetValueRelativeTo(_parentSize.X) + _positionX.GetValueRelativeTo(_parentSize.X) - _localAnchorX.GetValueRelativeTo(mySizeX);
 			var myPosY = _parentAnchorY.GetValueRelativeTo(_parentSize.Y) + _positionY.GetValueRelativeTo(_parentSize.Y) - _localAnchorY.GetValueRelativeTo(mySizeY);
 
-			return new RectangleD(myPosX, myPosY, mySizeX, mySizeY);
+			return new RectangleD2D(myPosX, myPosY, mySizeX, mySizeY);
 		}
 
 		/// <summary>
 		/// Gets the absolute enclosing rectangle, taking into account ScaleX, ScaleY, Rotation and Shear (SSRS).
 		/// </summary>
 		/// <returns>The enclosing rectangle in absolute values.</returns>
-		public RectangleD GetAbsoluteEnclosingRectangle()
+		public RectangleD2D GetAbsoluteEnclosingRectangle()
 		{
-			Altaxo.Graph.Gdi.TransformationMatrix2D m = new Gdi.TransformationMatrix2D();
+			MatrixD2D m = new MatrixD2D();
 			m.SetTranslationRotationShearxScale(AbsolutePivotPositionX, AbsolutePivotPositionY, -Rotation, ShearX, ScaleX, ScaleY);
 			m.TranslatePrepend(AbsoluteVectorPivotToLeftUpper.X, AbsoluteVectorPivotToLeftUpper.Y);
 
@@ -528,7 +528,7 @@ namespace Altaxo.Graph.Gdi
 			var p3 = m.TransformPoint(new PointD2D(0, s.Y));
 			var p4 = m.TransformPoint(new PointD2D(s.X, s.Y));
 
-			var r = new RectangleD(p1, PointD2D.Empty);
+			var r = new RectangleD2D(p1, PointD2D.Empty);
 			r.ExpandToInclude(p2);
 			r.ExpandToInclude(p3);
 			r.ExpandToInclude(p4);

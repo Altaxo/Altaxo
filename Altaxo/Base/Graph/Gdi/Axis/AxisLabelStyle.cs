@@ -836,7 +836,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				return null;
 		}
 
-		public void AdjustRectangle(ref RectangleD r, StringAlignment horz, StringAlignment vert)
+		public void AdjustRectangle(ref RectangleD2D r, StringAlignment horz, StringAlignment vert)
 		{
 			switch (vert)
 			{
@@ -989,7 +989,7 @@ namespace Altaxo.Graph.Gdi.Axis
 					morg.X += (outVector.X * _font.Size / 3);
 				}
 
-				RectangleD mrect = new RectangleD(morg, msize);
+				RectangleD2D mrect = new RectangleD2D(morg, msize);
 				if (_automaticRotationShift)
 					AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
 				else
@@ -1007,9 +1007,9 @@ namespace Altaxo.Graph.Gdi.Axis
 				g.MultiplyTransform(math);
 
 				if (this._backgroundStyle != null)
-					_backgroundStyle.Draw(g, new RectangleD(PointD2D.Empty, msize));
+					_backgroundStyle.Draw(g, new RectangleD2D(PointD2D.Empty, msize));
 
-				_brush.SetEnvironment(new RectangleD(PointD2D.Empty, msize), BrushX.GetEffectiveMaximumResolution(g, 1));
+				_brush.SetEnvironment(new RectangleD2D(PointD2D.Empty, msize), BrushX.GetEffectiveMaximumResolution(g, 1));
 				labels[i].Draw(g, _brush, new PointF(0, 0));
 				g.Restore(gs); // Restore the graphics state
 

@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet
 			Graphics dc,
 			Altaxo.Worksheet.WorksheetLayout layout,
 			Size viewSize,
-			RectangleD clipRectangle,
+			RectangleD2D clipRectangle,
 			IAscendingIntegerCollection selectedDataColumns,
 			IAscendingIntegerCollection selectedDataRows,
 			IAscendingIntegerCollection selectedPropertyColumns,
@@ -91,7 +91,7 @@ namespace Altaxo.Worksheet
 
 			int yShift = 0;
 
-			var cellRectangle = new RectangleD();
+			var cellRectangle = new RectangleD2D();
 			double left, width;
 
 			if (clipRectangle.Top < layout.ColumnHeaderStyle.Height)

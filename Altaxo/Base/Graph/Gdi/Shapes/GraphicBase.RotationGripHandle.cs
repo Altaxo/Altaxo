@@ -40,10 +40,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private PointD2D _drawrPosition;
 			private PointD2D _fixrPosition;
 			private PointD2D _fixaPosition;
-			private TransformationMatrix2D _spanningHalfYRhombus;
+			private MatrixD2D _spanningHalfYRhombus;
 			private bool _hasMoved;
 
-			public RotationGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
+			public RotationGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;

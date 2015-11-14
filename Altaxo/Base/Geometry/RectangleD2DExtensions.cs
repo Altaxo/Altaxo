@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
-	public static class RectangleExtensions
+	public static class RectangleD2DExtensions
 	{
 		/// <summary>
 		/// Calculates the dimensions of the greatest (by area) rectangle included in an outer rectangle, where the inner rectangle is rotated/sheared/scaled.
@@ -46,7 +46,7 @@ namespace Altaxo.Geometry
 		/// or
 		/// Y-Size of outer rectangle must be > 0
 		/// </exception>
-		public static RectangleD GetIncludedTransformedRectangle(this RectangleD outerRectangle, double sx, double rx, double ry, double sy)
+		public static RectangleD2D GetIncludedTransformedRectangle(this RectangleD2D outerRectangle, double sx, double rx, double ry, double sy)
 		{
 			PointD2D outerRectangleSize = outerRectangle.Size;
 
@@ -115,7 +115,7 @@ namespace Altaxo.Geometry
 				}
 			}
 
-			RectangleD innerRect = new RectangleD();
+			RectangleD2D innerRect = new RectangleD2D();
 			innerRect.ExpandToInclude(new PointD2D(sx * sizeX + rx * sizeY, ry * sizeX + sy * sizeY));
 			innerRect.ExpandToInclude(new PointD2D(sx * sizeX, ry * sizeX));
 			innerRect.ExpandToInclude(new PointD2D(rx * sizeY, sy * sizeY));
@@ -123,7 +123,7 @@ namespace Altaxo.Geometry
 			var outerMiddle = outerRectangle.CenterCenter;
 			var innerMiddle = innerRect.CenterCenter;
 
-			return new RectangleD((outerMiddle.X - innerMiddle.X), (outerMiddle.Y - innerMiddle.Y), sizeX, sizeY);
+			return new RectangleD2D((outerMiddle.X - innerMiddle.X), (outerMiddle.Y - innerMiddle.Y), sizeX, sizeY);
 		}
 	}
 }

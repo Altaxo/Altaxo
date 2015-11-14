@@ -41,12 +41,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private PointD2D _fixaPosition;
 			private PointD2D _initialMousePosition;
 			private double _initialShear, _initialRotation, _initialScaleX, _initialScaleY;
-			private TransformationMatrix2D _spanningHalfYRhombus;
+			private MatrixD2D _spanningHalfYRhombus;
 			private bool _hasMoved;
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
 
-			public ShearGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
+			public ShearGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;

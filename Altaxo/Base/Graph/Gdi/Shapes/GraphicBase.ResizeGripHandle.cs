@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			private PointD2D _fixaPosition;
 			private PointD2D _initialMousePosition;
 			private PointD2D _initialSize;
-			private TransformationMatrix2D _spanningHalfYRhombus;
+			private MatrixD2D _spanningHalfYRhombus;
 			private bool _hasMoved;
 
 			private GraphicBase GraphObject { get { return (GraphicBase)_parent.HittedObject; } }
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			/// <param name="parent">The data for the object that is about to be resized.</param>
 			/// <param name="relPos">The relative position of the handle. A value of 0 designates left (x) or top (y). A value of 1 designates right (x) or bottom (y).</param>
 			/// <param name="spanningHalfYRhombus">The spanning half y rhombus.</param>
-			public ResizeGripHandle(IHitTestObject parent, PointD2D relPos, TransformationMatrix2D spanningHalfYRhombus)
+			public ResizeGripHandle(IHitTestObject parent, PointD2D relPos, MatrixD2D spanningHalfYRhombus)
 			{
 				_parent = parent;
 				_drawrPosition = relPos;
