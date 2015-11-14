@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D
 {
-	public interface IItemLocation3D
+	public interface IItemLocation
 	:
 	Altaxo.Main.IDocumentLeafNode,
 	Altaxo.Main.ICopyFrom

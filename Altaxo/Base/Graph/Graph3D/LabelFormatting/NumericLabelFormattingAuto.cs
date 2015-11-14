@@ -37,6 +37,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 		#region Serialization
 
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingAuto), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -44,14 +47,14 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			{
 				NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
 
-				info.AddBaseValueEmbedded(s, typeof(LabelFormattingBase));
+				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				NumericLabelFormattingAuto s = null != o ? (NumericLabelFormattingAuto)o : new NumericLabelFormattingAuto();
+				var s = (NumericLabelFormattingAuto)o ?? new NumericLabelFormattingAuto();
 
-				info.GetBaseValueEmbedded(s, typeof(LabelFormattingBase), parent);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 				return s;
 			}
 		}

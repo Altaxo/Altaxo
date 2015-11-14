@@ -35,6 +35,32 @@ namespace Altaxo.Graph.Graph3D.Camera
 	{
 		public double Scale { get; set; }
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OrthographicCamera), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (OrthographicCamera)obj;
+				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+				info.AddValue("Scale", s.Scale);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (OrthographicCamera)o ?? new OrthographicCamera();
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				s.Scale = info.GetDouble("Scale");
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public OrthographicCamera()
 		{
 			Scale = 1;

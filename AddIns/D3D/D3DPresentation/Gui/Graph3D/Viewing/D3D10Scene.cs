@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		internal struct VertexAndIndexDeviceBuffer
 		{
-			public IMaterial3D Material;
+			public IMaterial Material;
 			public Buffer VertexBuffer;
 			public Buffer IndexBuffer;
 			public int VertexCount;
@@ -226,7 +226,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				return;
 
 			var buffersOfType =
-				new IEnumerable<KeyValuePair<IMaterial3D, IndexedTriangleBuffer>>[]
+				new IEnumerable<KeyValuePair<IMaterial, IndexedTriangleBuffer>>[]
 				{
 				drawing.PositionIndexedTriangleBuffersAsIndexedTriangleBuffers,
 				drawing.PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers,

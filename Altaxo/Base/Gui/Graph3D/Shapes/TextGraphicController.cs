@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 
 		double SelectedLineSpacing { get; set; }
 
-		IMaterial3D SelectedFontBrush { get; set; }
+		IMaterial SelectedFontBrush { get; set; }
 
 		void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
 
@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 	[ExpectedTypeOfView(typeof(ITextGraphicView))]
 	internal class TextGraphicController : MVCANControllerEditOriginalDocBase<TextGraphic, ITextGraphicView>, ITextGraphicViewEventSink
 	{
-		private XYPlotLayer3D _parentLayerOfOriginalDoc;
+		private XYZPlotLayer _parentLayerOfOriginalDoc;
 
 		private IMVCANController _locationController;
 
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 
 			if (initData)
 			{
-				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer3D>(_doc);
+				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
 
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
 				Current.Gui.FindAndAttachControlTo(_locationController);
@@ -167,7 +167,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 				return false;
 
 			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
-				_doc.Location.CopyFrom((ItemLocationDirect3D)_locationController.ModelObject);
+				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
 			return ApplyEnd(true, disposeController);
 		}

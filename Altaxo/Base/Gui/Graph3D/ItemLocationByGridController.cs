@@ -70,10 +70,10 @@ namespace Altaxo.Gui.Graph3D
 	/// Summary description for LayerPositionController.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IItemLocationByGridView))]
-	[UserControllerForObject(typeof(ItemLocationByGrid3D))]
-	public class ItemLocationByGridController : MVCANControllerEditOriginalDocBase<ItemLocationByGrid3D, IItemLocationByGridView>
+	[UserControllerForObject(typeof(ItemLocationByGrid))]
+	public class ItemLocationByGridController : MVCANControllerEditOriginalDocBase<ItemLocationByGrid, IItemLocationByGridView>
 	{
-		private GridPartitioning3D _parentLayerGrid;
+		private GridPartitioning _parentLayerGrid;
 
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -84,9 +84,9 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (args.Length < 2)
 				return false;
-			if (!(args[1] is GridPartitioning3D))
+			if (!(args[1] is GridPartitioning))
 				return false;
-			_parentLayerGrid = (GridPartitioning3D)args[1];
+			_parentLayerGrid = (GridPartitioning)args[1];
 
 			return base.InitializeDocument(args);
 		}

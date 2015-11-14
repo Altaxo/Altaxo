@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Graph3D
 				Altaxo.Gui.Graph.SingleColumnChoiceController.AddAllTableNodes(_availableItemsRootNode);
 
 				// Data clipping
-				var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer3D>(_doc);
+				var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
 				if (null == layer)
 				{
 					_dataClippingChoices = null;
@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Graph3D
 			if (null != _dataClippingChoices)
 			{
 				var selNode = _dataClippingChoices.FirstSelectedNode;
-				var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer3D>(_doc);
+				var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
 				if (null != layer && null != selNode)
 					layer.ClipDataToFrame = (Altaxo.Graph.LayerDataClipping)selNode.Tag;
 			}
@@ -256,7 +256,7 @@ namespace Altaxo.Gui.Graph3D
 		{
 			// in this override, we try to suspend the XYPlotLayer this collection belongs to
 			// this is because we want to modify properties of the layer, like the clip property
-			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer3D>(_doc);
+			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
 
 			if (null != layer)
 				return layer.SuspendGetToken();
@@ -1114,7 +1114,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles, IPlotArea3D layer)
+			public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection styles, IPlotArea layer)
 			{
 				throw new NotImplementedException();
 			}
@@ -1129,7 +1129,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public void PrepareScales(IPlotArea3D layer)
+			public void PrepareScales(IPlotArea layer)
 			{
 				throw new NotImplementedException();
 			}
@@ -1139,7 +1139,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public void Paint(Graphics g, Altaxo.Graph.IPaintContext context, IPlotArea3D layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+			public void Paint(Graphics g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 			{
 				throw new NotImplementedException();
 			}
@@ -1154,7 +1154,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public IHitTestObject HitTest(IPlotArea3D layer, PointD2D hitpoint)
+			public IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
 			{
 				throw new NotImplementedException();
 			}
@@ -1229,7 +1229,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea3D layer)
+			public void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer)
 			{
 				throw new NotImplementedException();
 			}
@@ -1239,7 +1239,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea3D layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+			public void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 			{
 				throw new NotImplementedException();
 			}
@@ -1249,7 +1249,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public IHitTestObject HitTest(IPlotArea3D layer, Ray3D hitpoint)
+			public IHitTestObject HitTest(IPlotArea layer, Ray3D hitpoint)
 			{
 				throw new NotImplementedException();
 			}

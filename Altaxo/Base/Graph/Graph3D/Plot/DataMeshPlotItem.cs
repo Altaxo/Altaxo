@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 	/// <summary>
 	/// Association of data and style specialized for x-y-plots of column data.
 	/// </summary>
-	public class DensityImagePlotItem
+	public class DataMeshPlotItem
 		:
 		PlotItem,
 		IXBoundsHolder,
@@ -53,32 +53,35 @@ namespace Altaxo.Graph.Graph3D.Plot
 		IZBoundsHolder
 	{
 		protected XYZMeshedColumnPlotData _plotData;
-		protected DensityImagePlotStyle _plotStyle;
+		protected DataMeshPlotStyle _plotStyle;
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem), 0)]
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataMeshPlotItem), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				DensityImagePlotItem s = (DensityImagePlotItem)obj;
+				var s = (DataMeshPlotItem)obj;
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyle);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
-				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style", null);
+				var pa = (XYZMeshedColumnPlotData)info.GetValue("Data", null);
+				var ps = (DataMeshPlotStyle)info.GetValue("Style", null);
 
 				if (o == null)
 				{
-					return new DensityImagePlotItem(pa, ps);
+					return new DataMeshPlotItem(pa, ps);
 				}
 				else
 				{
-					DensityImagePlotItem s = (DensityImagePlotItem)o;
+					DataMeshPlotItem s = (DataMeshPlotItem)o;
 					s.Data = pa;
 					s.Style = ps;
 					return s;
@@ -96,13 +99,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 				yield return new Main.DocumentNodeAndName(_plotStyle, () => _plotStyle = null, "Style");
 		}
 
-		public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps)
+		public DataMeshPlotItem(XYZMeshedColumnPlotData pa, DataMeshPlotStyle ps)
 		{
 			this.Data = pa;
 			this.Style = ps;
 		}
 
-		public DensityImagePlotItem(DensityImagePlotItem from)
+		public DataMeshPlotItem(DataMeshPlotItem from)
 		{
 			CopyFrom(from);
 		}
@@ -115,11 +118,11 @@ namespace Altaxo.Graph.Graph3D.Plot
 			var copied = base.CopyFrom(obj);
 			if (copied)
 			{
-				var from = obj as DensityImagePlotItem;
+				var from = obj as DataMeshPlotItem;
 				if (null != from)
 				{
 					this.Data = from._plotData.Clone();   // also wires the event
-					this.Style = (DensityImagePlotStyle)from.Style.Clone(); // also wires the event
+					this.Style = (DataMeshPlotStyle)from.Style.Clone(); // also wires the event
 				}
 			}
 			return copied;
@@ -127,7 +130,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
 		public override object Clone()
 		{
-			return new DensityImagePlotItem(this);
+			return new DataMeshPlotItem(this);
 		}
 
 		public object Data
@@ -152,7 +155,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		public override Main.IDocumentLeafNode StyleObject
 		{
 			get { return _plotStyle; }
-			set { this.Style = (DensityImagePlotStyle)value; }
+			set { this.Style = (DataMeshPlotStyle)value; }
 		}
 
 		public override Main.IDocumentLeafNode DataObject
@@ -160,14 +163,14 @@ namespace Altaxo.Graph.Graph3D.Plot
 			get { return _plotData; }
 		}
 
-		public DensityImagePlotStyle Style
+		public DataMeshPlotStyle Style
 		{
 			get { return _plotStyle; }
 			set
 			{
 				if (null == value)
 					throw new System.ArgumentNullException();
-				if (ChildSetMember(ref _plotStyle, (DensityImagePlotStyle)value))
+				if (ChildSetMember(ref _plotStyle, (DataMeshPlotStyle)value))
 				{
 					EhSelfChanged(PlotItemStyleChangedEventArgs.Empty);
 				}
@@ -189,7 +192,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 			return GetName(int.MaxValue);
 		}
 
-		public override void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea3D layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		public override void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			if (null != this._plotStyle)
 			{
@@ -203,7 +206,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// it must be ensured that the axes are scaled correctly before the plots are painted.
 		/// </summary>
 		/// <param name="layer">The plot layer.</param>
-		public override void PrepareScales(IPlotArea3D layer)
+		public override void PrepareScales(IPlotArea layer)
 		{
 			if (null != this._plotData)
 			{
@@ -272,7 +275,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		{
 		}
 
-		public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea3D layer)
+		public override void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
 		{
 		}
 
@@ -287,9 +290,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
 		public override void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
 		{
-			if (!(template is DensityImagePlotItem))
+			if (!(template is DataMeshPlotItem))
 				return;
-			DensityImagePlotItem from = (DensityImagePlotItem)template;
+			DataMeshPlotItem from = (DataMeshPlotItem)template;
 			_plotStyle.CopyFrom(from._plotStyle);
 		}
 

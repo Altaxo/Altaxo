@@ -35,11 +35,54 @@ namespace Altaxo.Graph.Graph3D
 {
 	public class PenX3D : Altaxo.Main.IImmutable
 	{
-		public double _thickness1;
-		public double _thickness2;
-		private IMaterial3D _material;
+		#region Member variables
 
-		protected Primitives.ICrossSectionOfLine _crossSection;
+		private double _thickness1;
+
+		private double _thickness2;
+
+		private IMaterial _material;
+
+		private Primitives.ICrossSectionOfLine _crossSection;
+
+		#endregion Member variables
+
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX3D), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (PenX3D)obj;
+
+				info.AddValue("Thickness1", s._thickness1);
+				info.AddValue("Thickness2", s._thickness2);
+				info.AddValue("CrossSection", s._crossSection);
+				info.AddValue("Material", s._material);
+			}
+
+			protected virtual PenX3D SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var thickness1 = info.GetDouble("Thickness1");
+				var thickness2 = info.GetDouble("Thickness2");
+				var crossSection = (Primitives.ICrossSectionOfLine)info.GetValue("CrossSection", null);
+				var material = (IMaterial)info.GetValue("Material", null);
+
+				return new PenX3D(material, thickness1, thickness2, crossSection);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		public PenX3D(NamedColor color, double thickness)
 		{
@@ -47,6 +90,14 @@ namespace Altaxo.Graph.Graph3D
 			_thickness1 = thickness;
 			_thickness2 = thickness;
 			_crossSection = Primitives.CrossSectionOfLine.GetSquareCrossSection(_thickness1, _thickness2);
+		}
+
+		public PenX3D(IMaterial material, double thickness1, double thickness2, Primitives.ICrossSectionOfLine crossSection)
+		{
+			_material = material;
+			_thickness1 = thickness1;
+			_thickness2 = thickness2;
+			_crossSection = crossSection;
 		}
 
 		public double Thickness1
@@ -95,7 +146,7 @@ namespace Altaxo.Graph.Graph3D
 			return result;
 		}
 
-		public IMaterial3D Material
+		public IMaterial Material
 		{
 			get
 			{
@@ -103,7 +154,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public PenX3D WithMaterial(IMaterial3D material)
+		public PenX3D WithMaterial(IMaterial material)
 		{
 			if (null == material)
 				throw new ArgumentNullException(nameof(material));

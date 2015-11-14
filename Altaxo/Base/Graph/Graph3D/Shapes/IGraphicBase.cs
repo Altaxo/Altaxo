@@ -29,7 +29,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 {
 	using GraphicsContext;
 
-	public interface IGraphicBase3D
+	public interface IGraphicBase
 		:
 		Main.IChangedEventSource,
 		Main.IDocumentLeafNode,

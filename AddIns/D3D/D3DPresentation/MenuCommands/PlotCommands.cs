@@ -40,7 +40,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
-			var graph = GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
+			var graph = GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
 			var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
 
@@ -60,7 +60,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
-			var graph = GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
+			var graph = GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
 			AddDensityImage(ctrl, graph);
 
@@ -79,12 +79,12 @@ namespace Altaxo.Worksheet.Commands
 		/// Plots a density image of the selected columns.
 		/// </summary>
 		/// <param name="dg"></param>
-		public static void AddDensityImage(Altaxo.Gui.Worksheet.Viewing.IWorksheetController dg, GraphDocument3D graph)
+		public static void AddDensityImage(Altaxo.Gui.Worksheet.Viewing.IWorksheetController dg, GraphDocument graph)
 		{
-			var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer3D>().First();
+			var xylayer = graph.RootLayer.Layers.OfType<XYZPlotLayer>().First();
 			var context = graph.GetPropertyContext();
 
-			var plotStyle = new DensityImagePlotStyle();
+			var plotStyle = new DataMeshPlotStyle();
 
 			XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.DataTable, dg.SelectedDataRows, dg.SelectedDataColumns, dg.SelectedPropertyColumns);
 			if (assoc.DataTableMatrix.RowHeaderColumn == null)
@@ -92,7 +92,7 @@ namespace Altaxo.Worksheet.Commands
 			if (assoc.DataTableMatrix.ColumnHeaderColumn == null)
 				assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
-			var pi = new DensityImagePlotItem(assoc, plotStyle);
+			var pi = new DataMeshPlotItem(assoc, plotStyle);
 			xylayer.PlotItems.Add(pi);
 		}
 	}

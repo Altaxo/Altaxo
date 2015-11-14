@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Graph3D
 {
 	using GraphicsContext;
 
-	public class GraphDocument3D
+	public class GraphDocument
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IProjectItem,
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph3D
 
 		#region Member variables
 
-		private HostLayer3D _rootLayer;
+		private HostLayer _rootLayer;
 
 		private string _name;
 
@@ -158,18 +158,58 @@ namespace Altaxo.Graph.Graph3D
 
 		#endregion Properties and Property-Keys
 
+		#region "Serialization"
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 0)]
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (GraphDocument)obj;
+
+				info.AddValue("Name", s._name);
+				info.AddValue("GraphIdentifier", s._graphIdentifier);
+				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
+				info.AddValue("Notes", s._notes.Text);
+				info.AddValue("RootLayer", s._rootLayer);
+
+				info.AddValue("Properties", s._graphProperties);
+			}
+
+			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				s._name = info.GetString("Name");
+				s._graphIdentifier = info.GetString("GraphIdentifier");
+				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
+				s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
+				s._notes.Text = info.GetString("Notes");
+				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
+				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (GraphDocument)o ?? new GraphDocument();
+				Deserialize(s, info, parent);
+				return s;
+			}
+		}
+
+		#endregion "Serialization"
+
 		#region Construction / Copying
 
 		/// <summary>
 		/// Creates a empty GraphDocument with no layers and a standard size of A4 landscape.
 		/// </summary>
-		public GraphDocument3D()
+		public GraphDocument()
 		{
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole() { ParentObject = this };
 			_sceneSettings = new SceneSettings();
-			this.RootLayer = new HostLayer3D() { ParentObject = this };
-			this.RootLayer.Location = new ItemLocationDirect3D
+			this.RootLayer = new HostLayer() { ParentObject = this };
+			this.RootLayer.Location = new ItemLocationDirect
 			{
 				SizeX = RADouble.NewAbs(DefaultRootLayerSizeX),
 				SizeY = RADouble.NewAbs(DefaultRootLayerSizeY),
@@ -178,12 +218,12 @@ namespace Altaxo.Graph.Graph3D
 			_sceneSettings = new SceneSettings() { ParentObject = this };
 		}
 
-		public GraphDocument3D(GraphDocument3D from)
+		public GraphDocument(GraphDocument from)
 		{
 			using (var suppressToken = SuspendGetToken())
 			{
 				_creationTime = _lastChangeTime = DateTime.UtcNow;
-				this.RootLayer = new HostLayer3D(null, new ItemLocationDirect3D { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY), SizeZ = RADouble.NewAbs(DefaultRootLayerSizeZ) });
+				this.RootLayer = new HostLayer(null, new ItemLocationDirect { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY), SizeZ = RADouble.NewAbs(DefaultRootLayerSizeZ) });
 
 				CopyFrom(from, Altaxo.Graph.Gdi.GraphCopyOptions.All);
 
@@ -191,7 +231,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public void CopyFrom(GraphDocument3D from, Altaxo.Graph.Gdi.GraphCopyOptions options)
+		public void CopyFrom(GraphDocument from, Altaxo.Graph.Gdi.GraphCopyOptions options)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -221,7 +261,7 @@ namespace Altaxo.Graph.Graph3D
 				var newRootLayer = RootLayer;
 				if (Altaxo.Graph.Gdi.GraphCopyOptions.CopyLayerAll == (options & Altaxo.Graph.Gdi.GraphCopyOptions.CopyLayerAll))
 				{
-					newRootLayer = (HostLayer3D)from._rootLayer.Clone();
+					newRootLayer = (HostLayer)from._rootLayer.Clone();
 				}
 				else if (0 != (options & Altaxo.Graph.Gdi.GraphCopyOptions.CopyLayerAll))
 				{
@@ -236,7 +276,7 @@ namespace Altaxo.Graph.Graph3D
 
 		public object Clone()
 		{
-			return new GraphDocument3D(this);
+			return new GraphDocument(this);
 		}
 
 		#endregion Construction / Copying
@@ -431,7 +471,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// The collection of layers of the graph.
 		/// </summary>
-		public HostLayer3D RootLayer
+		public HostLayer RootLayer
 		{
 			get { return _rootLayer; }
 			private set
@@ -528,7 +568,7 @@ namespace Altaxo.Graph.Graph3D
 		/// Fires the Invalidate event.
 		/// </summary>
 		/// <param name="sender">The layer which needs to be repainted.</param>
-		protected internal virtual void OnInvalidate(XYPlotLayer3D sender)
+		protected internal virtual void OnInvalidate(XYZPlotLayer sender)
 		{
 			EhSelfChanged(EventArgs.Empty);
 		}
@@ -585,7 +625,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <typeparam name="TLayer">The type of the layer.</typeparam>
 		/// <returns>The first layer in the graph with the provided type.</returns>
-		public TLayer GetFirstLayerOfType<TLayer>() where TLayer : HostLayer3D
+		public TLayer GetFirstLayerOfType<TLayer>() where TLayer : HostLayer
 		{
 			return RootLayer.Layers.OfType<TLayer>().First();
 		}
@@ -594,9 +634,9 @@ namespace Altaxo.Graph.Graph3D
 		/// Gets the first xy plot layer of the graph. If such a layer is not found, an exception is thrown.
 		/// </summary>
 		/// <returns>The first xy plot layer.</returns>
-		public XYPlotLayer3D GetFirstXYPlotLayer()
+		public XYZPlotLayer GetFirstXYPlotLayer()
 		{
-			return GetFirstLayerOfType<XYPlotLayer3D>();
+			return GetFirstLayerOfType<XYZPlotLayer>();
 		}
 
 		#endregion Convenience functions

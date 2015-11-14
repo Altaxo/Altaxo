@@ -46,6 +46,6 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="g">Graphics context.</param>
 		/// <param name="brush">The brush to use for the drawing.</param>
 		/// <param name="point">The point where to draw the item.</param>
-		void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point);
+		void Draw(IGraphicContext3D g, IMaterial brush, PointD3D point);
 	}
 }

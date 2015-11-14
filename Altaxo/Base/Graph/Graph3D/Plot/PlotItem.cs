@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="previousPlotItem">Previous plot item.</param>
 		/// <param name="nextPlotItem">Next plot item.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		public abstract void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea3D layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+		public abstract void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources. Must be overridden by a derived class.
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// it must be ensured that the axes are scaled correctly before the plots are painted.
 		/// </summary>
 		/// <param name="layer">The plot layer.</param>
-		public abstract void PrepareScales(IPlotArea3D layer);
+		public abstract void PrepareScales(IPlotArea layer);
 
 		/// <summary>
 		/// Creates a cloned copy of this object.
@@ -182,7 +182,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="layer">The layer in which this plot item is drawn into.</param>
 		/// <param name="hitpoint">The point where the mouse is pressed.</param>
 		/// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-		public virtual IHitTestObject HitTest(IPlotArea3D layer, Ray3D hitpoint)
+		public virtual IHitTestObject HitTest(IPlotArea layer, Ray3D hitpoint)
 		{
 			return null;
 		}
@@ -191,7 +191,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 
 		public abstract void CollectStyles(PlotGroupStyleCollection styles);
 
-		public abstract void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea3D layer);
+		public abstract void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
 
 		public abstract void ApplyGroupStyles(PlotGroupStyleCollection externalGroups);
 

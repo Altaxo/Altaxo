@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Graph3D
 {
 	public abstract class HitTestObjectBase : IHitTestObject
 	{
-		private HostLayer3D _parentLayer;
+		private HostLayer _parentLayer;
 
 		/*
 
@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Graph3D
 				return false;
 		}
 
-		public HostLayer3D ParentLayer
+		public HostLayer ParentLayer
 		{
 			get { return _parentLayer; }
 			set { _parentLayer = value; }

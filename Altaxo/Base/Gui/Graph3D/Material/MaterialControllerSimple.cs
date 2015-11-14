@@ -31,12 +31,12 @@ namespace Altaxo.Gui.Graph3D.Material
 {
 	public interface IMaterialViewSimple
 	{
-		IMaterial3D SelectedMaterial { get; set; }
+		IMaterial SelectedMaterial { get; set; }
 	}
 
-	[UserControllerForObject(typeof(IMaterial3D))]
+	[UserControllerForObject(typeof(IMaterial))]
 	[ExpectedTypeOfView(typeof(IMaterialViewSimple))]
-	public class BrushControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial3D, IMaterialViewSimple>
+	public class BrushControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialViewSimple>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{

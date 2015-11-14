@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			}
 		}
 
-		public IMaterial3D LabelMaterial
+		public IMaterial LabelMaterial
 		{
 			get
 			{

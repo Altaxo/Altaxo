@@ -30,16 +30,16 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
-	public static class GraphDocument3DBuilder
+	public static class GraphDocumentBuilder
 	{
-		public static GraphDocument3D CreateNewStandardGraphWithXYZPlotLayer(Main.Properties.IReadOnlyPropertyBag context)
+		public static GraphDocument CreateNewStandardGraphWithXYZPlotLayer(Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (null == context)
 				context = Altaxo.PropertyExtensions.GetPropertyContextOfProject();
 
-			var graph = new GraphDocument3D();
+			var graph = new GraphDocument();
 
-			var xyzlayer = new XYPlotLayer3D(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
+			var xyzlayer = new XYZPlotLayer(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
 
 			graph.RootLayer.Layers.Add(xyzlayer);
 

@@ -43,13 +43,13 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public abstract void TranslateTransform(double x, double y, double z);
 
-		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial3D material);
+		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
-		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial3D material);
+		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
 		#region Primitives rendering
 
-		public void DrawTriangle(IMaterial3D material, PointD3D p0, PointD3D p1, PointD3D p2)
+		public void DrawTriangle(IMaterial material, PointD3D p0, PointD3D p1, PointD3D p2)
 		{
 			var buffers = GetPositionNormalIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
 
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			return FontManager3D.Instance.MeasureString(text, font, strfmt);
 		}
 
-		public virtual void DrawString(string text, FontX3D font, IMaterial3D brush, PointD3D point, System.Drawing.StringFormat strfmt)
+		public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, System.Drawing.StringFormat strfmt)
 		{
 			var txt = new Text3D(text, font);
 

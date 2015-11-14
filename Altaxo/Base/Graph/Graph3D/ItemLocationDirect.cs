@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Graph.Graph3D
 {
 	[Serializable]
-	public class ItemLocationDirect3D : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation3D
+	public class ItemLocationDirect : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
 	{
 		#region Members
 
@@ -91,14 +91,14 @@ namespace Altaxo.Graph.Graph3D
 		#region Serialization
 
 		/// <summary>
-		/// 2013-10-01 initial version.
+		/// 2015-11-14 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirect3D), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirect), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ItemLocationDirect3D)obj;
+				var s = (ItemLocationDirect)obj;
 
 				info.AddValue("ParentSize", s._parentSize);
 
@@ -121,17 +121,19 @@ namespace Altaxo.Graph.Graph3D
 				info.AddValue("RotationX", s._rotationX);
 				info.AddValue("RotationY", s._rotationY);
 				info.AddValue("RotationZ", s._rotationZ);
+
 				info.AddValue("ShearX", s._shearX);
 				info.AddValue("ShearY", s._shearY);
 				info.AddValue("ShearZ", s._shearZ);
+
 				info.AddValue("ScaleX", s._scaleX);
 				info.AddValue("ScaleY", s._scaleY);
 				info.AddValue("ScaleZ", s._scaleZ);
 			}
 
-			protected virtual ItemLocationDirect3D SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			protected virtual ItemLocationDirect SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (ItemLocationDirect3D)o : new ItemLocationDirect3D();
+				var s = null != o ? (ItemLocationDirect)o : new ItemLocationDirect();
 
 				s._parentSize = (VectorD3D)info.GetValue("ParentSize", s);
 
@@ -168,7 +170,7 @@ namespace Altaxo.Graph.Graph3D
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ItemLocationDirect3D s = SDeserialize(o, info, parent);
+				ItemLocationDirect s = SDeserialize(o, info, parent);
 				return s;
 			}
 		}
@@ -177,7 +179,7 @@ namespace Altaxo.Graph.Graph3D
 
 		#region Construction and copying
 
-		public ItemLocationDirect3D()
+		public ItemLocationDirect()
 		{
 			_localAnchorX = RADouble.NewRel(0);
 			_localAnchorY = RADouble.NewRel(0);
@@ -190,12 +192,12 @@ namespace Altaxo.Graph.Graph3D
 			_scaleZ = 1;
 		}
 
-		public ItemLocationDirect3D(ItemLocationDirect3D from)
+		public ItemLocationDirect(ItemLocationDirect from)
 		{
 			CopyFrom(from);
 		}
 
-		public ItemLocationDirect3D(IItemLocation3D from)
+		public ItemLocationDirect(IItemLocation from)
 		{
 			CopyFrom(from);
 		}
@@ -205,9 +207,9 @@ namespace Altaxo.Graph.Graph3D
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			if (obj is ItemLocationDirect3D)
+			if (obj is ItemLocationDirect)
 			{
-				var from = (ItemLocationDirect3D)obj;
+				var from = (ItemLocationDirect)obj;
 				this._parentSize = from._parentSize;
 
 				this._positionX = from._positionX;
@@ -241,9 +243,9 @@ namespace Altaxo.Graph.Graph3D
 				EhSelfChanged();
 				return true;
 			}
-			else if (obj is IItemLocation3D)
+			else if (obj is IItemLocation)
 			{
-				var from = (IItemLocation3D)obj;
+				var from = (IItemLocation)obj;
 				this._rotationX = from.RotationX;
 				this._rotationY = from.RotationY;
 				this._rotationZ = from.RotationZ;
@@ -262,12 +264,12 @@ namespace Altaxo.Graph.Graph3D
 
 		object System.ICloneable.Clone()
 		{
-			return new ItemLocationDirect3D(this);
+			return new ItemLocationDirect(this);
 		}
 
-		public virtual ItemLocationDirect3D Clone()
+		public virtual ItemLocationDirect Clone()
 		{
-			return new ItemLocationDirect3D(this);
+			return new ItemLocationDirect(this);
 		}
 
 		#endregion Construction and copying

@@ -30,25 +30,25 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D
 {
-	public class ItemLocationDirectAutoSize3D : ItemLocationDirect3D, ICloneable
+	public class ItemLocationDirectAutoSize : ItemLocationDirect, ICloneable
 	{
 		#region Serialization
 
 		/// <summary>
-		/// 2015-09-12 initial version.
+		/// 2015-11-14 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirectAutoSize3D), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationDirectAutoSize), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAutoSize3D).BaseType);
+				info.AddBaseValueEmbedded(obj, typeof(ItemLocationDirectAutoSize).BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (ItemLocationDirectAutoSize3D)o : new ItemLocationDirectAutoSize3D();
-				info.GetBaseValueEmbedded(s, typeof(ItemLocationDirectAutoSize3D).BaseType, parent);
+				var s = (ItemLocationDirectAutoSize)o ?? new ItemLocationDirectAutoSize();
+				info.GetBaseValueEmbedded(s, typeof(ItemLocationDirectAutoSize).BaseType, parent);
 				return s;
 			}
 		}
@@ -57,28 +57,28 @@ namespace Altaxo.Graph.Graph3D
 
 		#region Construction and copying
 
-		public ItemLocationDirectAutoSize3D()
+		public ItemLocationDirectAutoSize()
 		{
 		}
 
-		public ItemLocationDirectAutoSize3D(ItemLocationDirect3D from)
+		public ItemLocationDirectAutoSize(ItemLocationDirect from)
 		{
 			CopyFrom(from);
 		}
 
-		public ItemLocationDirectAutoSize3D(IItemLocation3D from)
+		public ItemLocationDirectAutoSize(IItemLocation from)
 		{
 			CopyFrom(from);
 		}
 
 		object System.ICloneable.Clone()
 		{
-			return new ItemLocationDirectAutoSize3D(this);
+			return new ItemLocationDirectAutoSize(this);
 		}
 
-		public override ItemLocationDirect3D Clone()
+		public override ItemLocationDirect Clone()
 		{
-			return new ItemLocationDirectAutoSize3D(this);
+			return new ItemLocationDirectAutoSize(this);
 		}
 
 		#endregion Construction and copying

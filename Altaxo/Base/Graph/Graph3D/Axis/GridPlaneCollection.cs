@@ -53,6 +53,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region Version 0
 
+		/// <summary>
+		/// 2015-11-15 initial version.
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlaneCollection), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -202,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			return false;
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea3D layer)
+		public void Paint(IGraphicContext3D g, IPlotArea layer)
 		{
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].Paint(g, layer);
@@ -213,7 +216,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="layer">The layer.</param>
-		public void PaintBackground(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintBackground(IGraphicContext3D g, IPlotArea layer)
 		{
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].PaintBackground(g, layer);
@@ -224,7 +227,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// </summary>
 		/// <param name="g">The g.</param>
 		/// <param name="layer">The layer.</param>
-		public void PaintGrid(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintGrid(IGraphicContext3D g, IPlotArea layer)
 		{
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].PaintGrid(g, layer);

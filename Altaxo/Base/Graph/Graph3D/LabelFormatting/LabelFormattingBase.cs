@@ -44,6 +44,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 		#region Serialization
 
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelFormattingBase), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -173,7 +176,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="strfmt">String format.</param>
 		/// <param name="item">The item to draw.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
-		public virtual void DrawItem(IGraphicContext3D g, IMaterial3D brush, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointD3D morg)
+		public virtual void DrawItem(IGraphicContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointD3D morg)
 		{
 			string text = _prefix + FormatItem(item) + _suffix;
 			g.DrawString(text, font, brush, morg, strfmt);
@@ -234,7 +237,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				}
 			}
 
-			public virtual void Draw(IGraphicContext3D g, IMaterial3D brush, PointD3D point)
+			public virtual void Draw(IGraphicContext3D g, IMaterial brush, PointD3D point)
 			{
 				g.DrawString(_text, _font, brush, point, _strfmt);
 			}

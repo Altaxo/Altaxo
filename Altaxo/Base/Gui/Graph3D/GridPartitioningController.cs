@@ -55,8 +55,8 @@ namespace Altaxo.Gui.Graph3D
 	}
 
 	[ExpectedTypeOfView(typeof(IGridPartitioningView))]
-	[UserControllerForObject(typeof(GridPartitioning3D))]
-	public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning3D, IGridPartitioningView>
+	[UserControllerForObject(typeof(GridPartitioning))]
+	public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
 	{
 		private ObservableCollection<Units.DimensionfulQuantity> _xPartitionValues;
 		private ObservableCollection<Units.DimensionfulQuantity> _yPartitionValues;
@@ -96,13 +96,13 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (args.Length < 2)
 				return false;
-			if (!(args[0] is GridPartitioning3D))
+			if (!(args[0] is GridPartitioning))
 				return false;
 
 			if (args[1] is VectorD3D)
 				_parentLayerSize = (VectorD3D)args[1];
-			else if (args[1] is HostLayer3D)
-				_parentLayerSize = ((HostLayer3D)args[1]).Size;
+			else if (args[1] is HostLayer)
+				_parentLayerSize = ((HostLayer)args[1]).Size;
 			else
 				_parentLayerSize = new VectorD3D(600, 400, 400);
 

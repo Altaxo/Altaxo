@@ -41,9 +41,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 		public ConditionalDocumentController<AxisStyle> AxisStyleCondController { get; private set; }
 
-		public ConditionalDocumentController<AxisLabelStyle3D> MajorLabelCondController { get; private set; }
+		public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController { get; private set; }
 
-		public ConditionalDocumentController<AxisLabelStyle3D> MinorLabelCondController { get; private set; }
+		public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController { get; private set; }
 
 		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			MinorLabelCondController.AnnounceEnabledChanged(_doc[AxisInformation.Identifier].AreMinorLabelsEnabled);
 		}
 
-		private AxisLabelStyle3D CreateMajorLabel()
+		private AxisLabelStyle CreateMajorLabel()
 		{
 			bool wasPresentBefore = _doc.Contains(AxisInformation.Identifier);
 			AxisStyleCondController.AnnounceEnabledChanged(true);
@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			}
 		}
 
-		private AxisLabelStyle3D CreateMinorLabel()
+		private AxisLabelStyle CreateMinorLabel()
 		{
 			bool wasPresentBefore = _doc.Contains(AxisInformation.Identifier);
 			AxisStyleCondController.AnnounceEnabledChanged(true);
@@ -201,8 +201,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 			_context = _doc.GetPropertyContext();
 
 			AxisStyleCondController = new ConditionalDocumentController<AxisStyle>(CreateAxisStyle, RemoveAxisStyle, CreateAxisStyleController) { UseDocumentCopy = UseDocument.Directly };
-			MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle3D>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
-			MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle3D>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
+			MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
+			MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
 
 			if (_doc.Contains(AxisInformation.Identifier))
 			{

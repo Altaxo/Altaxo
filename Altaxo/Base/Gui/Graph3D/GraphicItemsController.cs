@@ -43,9 +43,9 @@ namespace Altaxo.Gui.Graph3D
 		event Action SelectedItemsRemove;
 	}
 
-	[UserControllerForObject(typeof(GraphicCollection3D))]
+	[UserControllerForObject(typeof(GraphicCollection))]
 	[ExpectedTypeOfView(typeof(IGraphicItemsView))]
-	public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection3D, IGraphicItemsView>
+	public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
 	{
 		private SelectableListNodeList _itemsList;
 
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph3D
 				_doc.Clear();
 				foreach (var node in _itemsList)
 				{
-					_doc.Add((IGraphicBase3D)node.Tag);
+					_doc.Add((IGraphicBase)node.Tag);
 				}
 			}
 			return ApplyEnd(true, disposeController);

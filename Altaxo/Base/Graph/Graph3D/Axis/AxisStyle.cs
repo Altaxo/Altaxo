@@ -55,12 +55,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <summary>
 		/// Determines the style of the major labels.
 		/// </summary>
-		private AxisLabelStyle3D _majorLabelStyle;
+		private AxisLabelStyle _majorLabelStyle;
 
 		/// <summary>
 		/// Determines the style of the minor labels.
 		/// </summary>
-		private AxisLabelStyle3D _minorLabelStyle;
+		private AxisLabelStyle _minorLabelStyle;
 
 		/// <summary>
 		/// The title of the axis.
@@ -101,8 +101,8 @@ namespace Altaxo.Graph.Graph3D.Axis
 				s._styleID = (CSLineID)info.GetValue("StyleID", s);
 				s.TickSpacing = (TickSpacing)info.GetValue("TickSpacing", s);
 				s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
-				s.MajorLabelStyle = (AxisLabelStyle3D)info.GetValue("MajorLabelStyle", s);
-				s.MinorLabelStyle = (AxisLabelStyle3D)info.GetValue("MinorLabelStyle", s);
+				s.MajorLabelStyle = (AxisLabelStyle)info.GetValue("MajorLabelStyle", s);
+				s.MinorLabelStyle = (AxisLabelStyle)info.GetValue("MinorLabelStyle", s);
 				s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
 
 				return s;
@@ -134,8 +134,8 @@ namespace Altaxo.Graph.Graph3D.Axis
 		{
 			this.TickSpacing = from._customTickSpacing == null ? null : (TickSpacing)from._customTickSpacing.Clone();
 			this.AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
-			this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyle3D)from._majorLabelStyle.Clone();
-			this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyle3D)from._minorLabelStyle.Clone();
+			this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyle)from._majorLabelStyle.Clone();
+			this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyle)from._minorLabelStyle.Clone();
 			this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 		}
 
@@ -205,10 +205,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 				_cachedAxisInfo = value;
 				if (_axisLineStyle != null)
 					_axisLineStyle.CachedAxisInformation = value;
-				if (_majorLabelStyle is AxisLabelStyle3D)
-					((AxisLabelStyle3D)_majorLabelStyle).CachedAxisInformation = value;
-				if (_minorLabelStyle is AxisLabelStyle3D)
-					((AxisLabelStyle3D)_minorLabelStyle).CachedAxisInformation = value;
+				if (_majorLabelStyle is AxisLabelStyle)
+					((AxisLabelStyle)_majorLabelStyle).CachedAxisInformation = value;
+				if (_minorLabelStyle is AxisLabelStyle)
+					((AxisLabelStyle)_minorLabelStyle).CachedAxisInformation = value;
 			}
 		}
 
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <param name="go">The object to remove.</param>
 		/// <returns> If the provided object is a child object and
 		/// the child object could be removed, the return value is true.</returns>
-		public bool Remove(IGraphicBase3D go)
+		public bool Remove(IGraphicBase go)
 		{
 			// test our own objects for removal (only that that _are_ removable)
 			if (object.ReferenceEquals(go, this._axisTitle))
@@ -258,7 +258,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void FixupInternalDataStructures(IPlotArea3D layer)
+		public void FixupInternalDataStructures(IPlotArea layer)
 		{
 			FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
@@ -271,7 +271,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			return hit;
 		}
 
-		public void FixupInternalDataStructures(IPlotArea3D layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		public void FixupInternalDataStructures(IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
 		{
 			// update the logical values of the physical axes before
 			if (_styleID.UsePhysicalValueOtherFirst)
@@ -302,16 +302,16 @@ namespace Altaxo.Graph.Graph3D.Axis
 				_axisTitle.SetParentSize(layer.Size, false);
 		}
 
-		public void PaintPreprocessing(IPlotArea3D layer)
+		public void PaintPreprocessing(IPlotArea layer)
 		{
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
 		{
 			Paint(g, paintContext, layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
 		{
 			PaintLine(g, layer);
 			PaintMajorLabels(g, layer);
@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			PaintTitle(g, paintContext, layer);
 		}
 
-		public void PaintLine(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintLine(IGraphicContext3D g, IPlotArea layer)
 		{
 			if (IsAxisLineEnabled)
 			{
@@ -327,7 +327,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintMajorLabels(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintMajorLabels(IGraphicContext3D g, IPlotArea layer)
 		{
 			if (AreMajorLabelsEnabled)
 			{
@@ -338,7 +338,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintMinorLabels(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintMinorLabels(IGraphicContext3D g, IPlotArea layer)
 		{
 			if (AreMinorLabelsEnabled)
 			{
@@ -349,7 +349,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintTitle(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer)
+		public void PaintTitle(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
 		{
 			if (IsTitleEnabled)
 			{
@@ -399,7 +399,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		public void ShowMajorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (_majorLabelStyle == null)
-				MajorLabelStyle = new AxisLabelStyle3D(context) { CachedAxisInformation = _cachedAxisInfo };
+				MajorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
 		}
 
 		public void HideMajorLabels()
@@ -421,7 +421,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		public void ShowMinorLabels(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (_minorLabelStyle == null)
-				MinorLabelStyle = new AxisLabelStyle3D(context) { CachedAxisInformation = _cachedAxisInfo };
+				MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
 		}
 
 		public void HideMinorLabels()
@@ -482,7 +482,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <summary>
 		/// Determines the style of the major labels.
 		/// </summary>
-		public AxisLabelStyle3D MajorLabelStyle
+		public AxisLabelStyle MajorLabelStyle
 		{
 			get
 			{
@@ -508,7 +508,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <summary>
 		/// Determines the style of the minor labels.
 		/// </summary>
-		public AxisLabelStyle3D MinorLabelStyle
+		public AxisLabelStyle MinorLabelStyle
 		{
 			get
 			{

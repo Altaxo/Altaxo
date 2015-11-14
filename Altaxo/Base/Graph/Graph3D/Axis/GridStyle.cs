@@ -47,8 +47,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GridStyle", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 1)]
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -200,7 +202,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea3D layer, int axisnumber)
+		public void Paint(IGraphicContext3D g, IPlotArea layer, int axisnumber)
 		{
 			if (!_showGrid)
 				return;

@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers;
 	using Altaxo.Main;
 
-	[UserControllerForObject(typeof(GraphDocument3D))]
+	[UserControllerForObject(typeof(GraphDocument))]
 	[ExpectedTypeOfView(typeof(IGraph3DView))]
 	public class Graph3DControllerWpf : Graph3DController
 	{
@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			// register here editor methods
 			XYPlotLayerController.RegisterEditHandlers();
-			XYPlotLayer3D.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			XYZPlotLayer.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
 			TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
 			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
 		}
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this);
 		}
 
-		public Graph3DControllerWpf(GraphDocument3D graphdoc)
+		public Graph3DControllerWpf(GraphDocument graphdoc)
 		{
 			_doc = graphdoc;
 			_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this);
@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <returns>True if the object should be deleted, false otherwise.</returns>
 		protected static bool EhEditPlotItem(IHitTestObject hit)
 		{
-			XYPlotLayer3D actLayer = hit.ParentLayer as XYPlotLayer3D;
+			XYZPlotLayer actLayer = hit.ParentLayer as XYZPlotLayer;
 			IGPlotItem pa = (IGPlotItem)hit.HittedObject;
 
 			Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);

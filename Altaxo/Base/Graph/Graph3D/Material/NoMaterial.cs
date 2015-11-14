@@ -10,9 +10,9 @@ namespace Altaxo.Graph.Graph3D.Material
 {
 	using GraphicsContext;
 
-	public sealed class NoMaterial : IMaterial3D
+	public sealed class NoMaterial : IMaterial
 	{
-		public static IMaterial3D Instance { get; private set; }
+		public static IMaterial Instance { get; private set; }
 
 		static NoMaterial()
 		{
@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Graph3D.Material
 			}
 		}
 
-		public bool Equals(IMaterial3D other)
+		public bool Equals(IMaterial other)
 		{
 			return object.ReferenceEquals(other, this);
 		}
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.Material
 			throw new NotImplementedException();
 		}
 
-		public IMaterial3D WithColor(NamedColor color)
+		public IMaterial WithColor(NamedColor color)
 		{
 			throw new NotImplementedException();
 		}

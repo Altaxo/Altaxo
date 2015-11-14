@@ -45,10 +45,10 @@ namespace Altaxo.Graph.Graph3D
 	/// <summary>
 	/// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
 	/// </summary>
-	public partial class XYPlotLayer3D
+	public partial class XYZPlotLayer
 		:
-		HostLayer3D,
-		IPlotArea3D
+		HostLayer,
+		IPlotArea
 	{
 		#region Member variables
 
@@ -79,6 +79,99 @@ namespace Altaxo.Graph.Graph3D
 
 		#endregion Member variables
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-14 initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (XYZPlotLayer)obj;
+
+				info.AddBaseValueEmbedded(obj, typeof(HostLayer));
+
+				// CoordinateSystem
+				info.AddValue("CoordinateSystem", s._coordinateSystem);
+
+				// Scales
+				info.AddValue("Scales", s._scales);
+
+				// Grid planes
+				info.AddValue("GridPlanes", s._gridPlanes);
+
+				// Axis styles
+				info.AddValue("AxisStyles", s._axisStyles);
+
+				// Data clipping
+				info.AddValue("DataClipping", s._dataClipping);
+
+				// Plots
+				info.AddValue("Plots", s._plotItems);
+			}
+
+			protected virtual XYZPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (XYZPlotLayer)o ?? new XYZPlotLayer(info);
+
+				info.GetBaseValueEmbedded(s, typeof(HostLayer), parent);
+
+				// CoordinateSystem
+				s.CoordinateSystem = (G3DCoordinateSystem)info.GetValue("CoordinateSystem", s);
+				s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
+
+				// Scales
+				s.Scales = (ScaleCollection)info.GetValue("Scales", s);
+
+				// Grid planes
+				s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes", s);
+
+				// Axis Styles
+				s.AxisStyles = (AxisStyleCollection)info.GetValue("AxisStyles", s);
+
+				// Data Clipping
+				s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
+
+				// PlotItemCollection
+				s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = SDeserialize(o, info, parent);
+				info.DeserializationFinished += s.EhDeserializationFinished;
+				return s;
+			}
+		}
+
+			/// <summary>
+			/// Takes final measures after the deserialization has finished, but before the dirty flag is cleared. Here, the scale bounds are updated with
+			/// the data from the project.
+			/// </summary>
+			/// <param name="info">The deserialization information.</param>
+			/// <param name="documentRoot">The document root of the current document.</param>
+			/// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
+			protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+			{
+				if (isFinallyCall)
+				{
+					// after deserialisation the data bounds object of the scale is empty:
+					// then we have to rescale the axis
+					if (this.Scales.X.DataBoundsObject.IsEmpty)
+						this.InitializeXScaleDataBounds();
+					if (this.Scales.Y.DataBoundsObject.IsEmpty)
+						this.InitializeYScaleDataBounds();
+				if (this.Scales.Z.DataBoundsObject.IsEmpty)
+					this.InitializeZScaleDataBounds();
+			}
+		}
+
+		#endregion Serialization
+
 		#region Constructors
 
 		#region Copying
@@ -87,7 +180,7 @@ namespace Altaxo.Graph.Graph3D
 		/// The copy constructor.
 		/// </summary>
 		/// <param name="from"></param>
-		public XYPlotLayer3D(XYPlotLayer3D from)
+		public XYZPlotLayer(XYZPlotLayer from)
 			: base(from)
 		{
 		}
@@ -98,11 +191,11 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="obj">The object (layer) from which to copy.</param>
 		/// <param name="options">Copy options.</param>
-		protected override void InternalCopyFrom(HostLayer3D obj, GraphCopyOptions options)
+		protected override void InternalCopyFrom(HostLayer obj, GraphCopyOptions options)
 		{
 			base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
-			var from = obj as XYPlotLayer3D;
+			var from = obj as XYZPlotLayer;
 			if (null == from)
 				return;
 
@@ -141,15 +234,15 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		protected override void InternalCopyGraphItems(HostLayer3D from, GraphCopyOptions options)
+		protected override void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options)
 		{
 			bool bGraphItems = options.HasFlag(GraphCopyOptions.CopyLayerGraphItems);
 			bool bChildLayers = options.HasFlag(GraphCopyOptions.CopyChildLayers);
 			bool bLegends = options.HasFlag(GraphCopyOptions.CopyLayerLegends);
 
-			var criterium = new Func<IGraphicBase3D, bool>(x =>
+			var criterium = new Func<IGraphicBase, bool>(x =>
 			{
-				if (x is HostLayer)
+				if (x is Gdi.HostLayer)
 					return bChildLayers;
 
 				if (x is LegendText)
@@ -163,7 +256,7 @@ namespace Altaxo.Graph.Graph3D
 
 		public override object Clone()
 		{
-			return new XYPlotLayer3D(this);
+			return new XYZPlotLayer(this);
 		}
 
 		#endregion Copying
@@ -171,23 +264,23 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// Constructor for deserialization purposes only.
 		/// </summary>
-		protected XYPlotLayer3D(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		protected XYZPlotLayer(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 			: base(info)
 		{
 			this.CoordinateSystem = new CS.G3DCartesicCoordinateSystem();
 			this.AxisStyles = new AxisStyleCollection();
 			this.Scales = new ScaleCollection();
-			this.Location = new ItemLocationDirect3D();
+			this.Location = new ItemLocationDirect();
 			this.GridPlanes = new GridPlaneCollection();
 			this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
 		}
 
-		public XYPlotLayer3D(HostLayer3D parentLayer)
+		public XYZPlotLayer(HostLayer parentLayer)
 			: this(parentLayer, GetChildLayerDefaultLocation(), new CS.G3DCartesicCoordinateSystem())
 		{
 		}
 
-		public XYPlotLayer3D(HostLayer3D parentLayer, G3DCoordinateSystem coordinateSystem)
+		public XYZPlotLayer(HostLayer parentLayer, G3DCoordinateSystem coordinateSystem)
 			: this(parentLayer, GetChildLayerDefaultLocation(), coordinateSystem)
 		{
 		}
@@ -197,7 +290,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="parentLayer">The parent layer of the constructed layer.</param>
 		/// <param name="location">The location of the constructed layer.</param>
-		public XYPlotLayer3D(HostLayer3D parentLayer, IItemLocation3D location)
+		public XYZPlotLayer(HostLayer parentLayer, IItemLocation location)
 			: this(parentLayer, location, new CS.G3DCartesicCoordinateSystem())
 		{
 		}
@@ -208,7 +301,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <param name="parentLayer">The parent layer of the newly created layer.</param>
 		/// <param name="location">The position of the layer on the printable area in points (1/72 inch).</param>
 		/// <param name="coordinateSystem">The coordinate system to use for the layer.</param>
-		public XYPlotLayer3D(HostLayer3D parentLayer, IItemLocation3D location, G3DCoordinateSystem coordinateSystem)
+		public XYZPlotLayer(HostLayer parentLayer, IItemLocation location, G3DCoordinateSystem coordinateSystem)
 			: base(parentLayer, location)
 		{
 			this.CoordinateSystem = coordinateSystem;
@@ -368,7 +461,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public override void Remove(IGraphicBase3D go)
+		public override void Remove(IGraphicBase go)
 		{
 			if (_axisStyles.Remove(go))
 				return;
@@ -766,10 +859,10 @@ namespace Altaxo.Graph.Graph3D
 
 		public override void PaintPreprocessing(IPaintContext context)
 		{
-			context.PushHierarchicalValue<IPlotArea3D>(nameof(IPlotArea3D), this);
+			context.PushHierarchicalValue<IPlotArea>(nameof(IPlotArea), this);
 			_plotItems.PaintPreprocessing(context);
 			base.PaintPreprocessing(context);
-			context.PopHierarchicalValue<IPlotArea3D>(nameof(IPlotArea3D));
+			context.PopHierarchicalValue<IPlotArea>(nameof(IPlotArea));
 		}
 
 		protected override void PaintInternal(IGraphicContext3D g, IPaintContext paintContext)
@@ -822,7 +915,7 @@ namespace Altaxo.Graph.Graph3D
 
 		private bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
 		{
-			var als = o.HittedObject as AxisLabelStyle3D;
+			var als = o.HittedObject as AxisLabelStyle;
 			AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
 			if (axisStyle != null)
 			{
@@ -834,7 +927,7 @@ namespace Altaxo.Graph.Graph3D
 
 		private bool EhAxisLabelMinorStyleRemove(IHitTestObject o)
 		{
-			var als = o.HittedObject as AxisLabelStyle3D;
+			var als = o.HittedObject as AxisLabelStyle;
 			AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
 			if (axisStyle != null)
 			{

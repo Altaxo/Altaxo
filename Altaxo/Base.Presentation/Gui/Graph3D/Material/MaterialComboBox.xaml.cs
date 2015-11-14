@@ -48,13 +48,13 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		public event DependencyPropertyChangedEventHandler SelectedMaterialChanged;
 
-		private List<IMaterial3D> _lastLocalUsedItems = new List<IMaterial3D>();
+		private List<IMaterial> _lastLocalUsedItems = new List<IMaterial>();
 
 		#region Constructors
 
 		static MaterialComboBox()
 		{
-			SelectedMaterialProperty = DependencyProperty.Register("SelectedMaterial", typeof(IMaterial3D), typeof(MaterialComboBox), new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce));
+			SelectedMaterialProperty = DependencyProperty.Register("SelectedMaterial", typeof(IMaterial), typeof(MaterialComboBox), new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce));
 		}
 
 		public MaterialComboBox()
@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Graph3D.Material
 		#region Dependency property
 
 		/// <summary>
-		/// Gets/sets the selected brush. Since <see cref="IMaterial3D"/> is not immutable, the material is cloned when setting the property, as well as when getting the property.
+		/// Gets/sets the selected brush. Since <see cref="IMaterial"/> is not immutable, the material is cloned when setting the property, as well as when getting the property.
 		/// </summary>
 		/// <remarks>
 		/// <para>Reasons to clone the brush at setting/getting:</para>
@@ -108,11 +108,11 @@ namespace Altaxo.Gui.Graph3D.Material
 		/// The user selects a brush in this MaterialComboBox, the value is used by an external function, which changes the color. Here also, the new color is not shown in the MaterialComboBox.
 		/// </para>
 		/// </remarks>
-		public IMaterial3D SelectedMaterial
+		public IMaterial SelectedMaterial
 		{
 			get
 			{
-				return (IMaterial3D)GetValue(SelectedMaterialProperty); // Material is immutable, no need for cloning
+				return (IMaterial)GetValue(SelectedMaterialProperty); // Material is immutable, no need for cloning
 			}
 			set
 			{
@@ -127,11 +127,11 @@ namespace Altaxo.Gui.Graph3D.Material
 		/// <value>
 		/// The selected brush.
 		/// </value>
-		protected IMaterial3D InternalSelectedMaterial
+		protected IMaterial InternalSelectedMaterial
 		{
 			get
 			{
-				return (IMaterial3D)GetValue(SelectedMaterialProperty);
+				return (IMaterial)GetValue(SelectedMaterialProperty);
 			}
 			set
 			{
@@ -142,10 +142,10 @@ namespace Altaxo.Gui.Graph3D.Material
 		private static object EhSelectedMaterialCoerce(DependencyObject obj, object coerceValue)
 		{
 			var thiss = (MaterialComboBox)obj;
-			return thiss.InternalSelectedMaterialCoerce(obj, (IMaterial3D)coerceValue);
+			return thiss.InternalSelectedMaterialCoerce(obj, (IMaterial)coerceValue);
 		}
 
-		protected virtual IMaterial3D InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial3D brush)
+		protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial brush)
 		{
 			if (null == brush)
 				brush = Materials.GetSolidMaterial(NamedColors.Transparent);
@@ -170,8 +170,8 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		protected virtual void OnSelectedMaterialChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			var oldMat = (IMaterial3D)args.OldValue;
-			var newMat = (IMaterial3D)args.NewValue;
+			var oldMat = (IMaterial)args.OldValue;
+			var newMat = (IMaterial)args.NewValue;
 
 			var oldColor = oldMat.Color;
 			var newColor = newMat.Color;
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		#region ComboBox data handling
 
-		private void UpdateComboBoxSourceSelection(IMaterial3D brush)
+		private void UpdateComboBoxSourceSelection(IMaterial brush)
 		{
 			if (brush.Equals(_guiComboBox.SelectedValue))
 				return;
@@ -254,7 +254,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			return result;
 		}
 
-		protected static List<object> GetFilteredList(IList<IMaterial3D> originalList, string filterString, bool showPlotColorsOnly)
+		protected static List<object> GetFilteredList(IList<IMaterial> originalList, string filterString, bool showPlotColorsOnly)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();
@@ -297,8 +297,8 @@ namespace Altaxo.Gui.Graph3D.Material
 			}
 			else
 			{
-				if (_guiComboBox.SelectedValue is IMaterial3D)
-					this.InternalSelectedMaterial = (IMaterial3D)_guiComboBox.SelectedValue;
+				if (_guiComboBox.SelectedValue is IMaterial)
+					this.InternalSelectedMaterial = (IMaterial)_guiComboBox.SelectedValue;
 				else
 					this.InternalSelectedMaterial = Materials.GetSolidMaterial((NamedColor)_guiComboBox.SelectedValue);
 			}
@@ -328,7 +328,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			NamedColor newColor;
 			if (base.InternalShowCustomColorDialog(sender, out newColor))
 			{
-				var newMat = Materials.GetMaterialWithNewColor((IMaterial3D)InternalSelectedMaterial, newColor);
+				var newMat = Materials.GetMaterialWithNewColor((IMaterial)InternalSelectedMaterial, newColor);
 				InternalSelectedMaterial = newMat;
 			}
 		}
@@ -338,7 +338,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			NamedColor newColor;
 			if (base.InternalChooseOpacityFromContextMenu(sender, out newColor))
 			{
-				var newMat = Materials.GetMaterialWithNewColor((IMaterial3D)InternalSelectedMaterial, newColor);
+				var newMat = Materials.GetMaterialWithNewColor((IMaterial)InternalSelectedMaterial, newColor);
 				InternalSelectedMaterial = newMat;
 			}
 		}

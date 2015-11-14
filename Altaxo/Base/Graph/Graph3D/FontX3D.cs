@@ -37,6 +37,32 @@ namespace Altaxo.Graph.Graph3D
 		private FontX _font;
 		private double _depth;
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FontX3D), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (FontX3D)obj;
+				info.AddValue("Font", s._font);
+				info.AddValue("Depth", s._depth);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var font = (FontX)info.GetValue("Font", null);
+				var depth = info.GetDouble("Depth");
+				var s = new FontX3D(font, depth);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public FontX3D(FontX font, double depth)
 		{
 			_font = font;

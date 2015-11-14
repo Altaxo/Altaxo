@@ -38,23 +38,23 @@ namespace Altaxo.Graph.Graph3D
 	{
 		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
 
-		public static IMaterial3D GetSolidMaterial(NamedColor color)
+		public static IMaterial GetSolidMaterial(NamedColor color)
 		{
 			return new SolidColor(color);
 		}
 
-		public static IMaterial3D GetMaterialWithNewColor(IMaterial3D material, NamedColor newColor)
+		public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
 		{
 			return material.WithColor(newColor);
 		}
 
-		public static IMaterial3D GetSolidMaterialWithoutColorOrTexture()
+		public static IMaterial GetSolidMaterialWithoutColorOrTexture()
 		{
 			return _materialWithoutColorOrTexture;
 		}
 	}
 
-	public class MaterialWithoutColorOrTexture : IMaterial3D
+	public class MaterialWithoutColorOrTexture : IMaterial
 	{
 		public NamedColor Color
 		{
@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public bool Equals(IMaterial3D other)
+		public bool Equals(IMaterial other)
 		{
 			return other is MaterialWithoutColorOrTexture;
 		}
@@ -89,13 +89,13 @@ namespace Altaxo.Graph.Graph3D
 		{
 		}
 
-		public IMaterial3D WithColor(NamedColor color)
+		public IMaterial WithColor(NamedColor color)
 		{
 			return this;
 		}
 	}
 
-	public class SolidColor : IMaterial3D
+	public class SolidColor : IMaterial
 	{
 		private NamedColor _color;
 
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public bool Equals(IMaterial3D other)
+		public bool Equals(IMaterial other)
 		{
 			var othersd = other as SolidColor;
 			return null != othersd && this.Color == othersd.Color;
@@ -138,7 +138,7 @@ namespace Altaxo.Graph.Graph3D
 		{
 		}
 
-		public IMaterial3D WithColor(NamedColor color)
+		public IMaterial WithColor(NamedColor color)
 		{
 			if (color == this._color)
 				return this;

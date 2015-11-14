@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 	public abstract partial class GraphicBase
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
-		IGraphicBase3D
+		IGraphicBase
 	{
 		/// <summary>
 		/// The size of the parent object.
@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		/// <remarks>The location is the vector from the reference point of the parent (normally the left upper corner of the parent) to the reference point of this object (normally
 		/// also the left upper corner of the object).</remarks>
-		protected ItemLocationDirect3D _location;
+		protected ItemLocationDirect _location;
 
 		/// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
 		protected MatrixD3D _transformation = MatrixD3D.Identity;
@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				GraphicBase s = (GraphicBase)o;
 
 				if (null != s._location) s._location.Dispose(); // because location probably is set already in the derived object
-				s._location = (ItemLocationDirect3D)info.GetValue("Location", s);
+				s._location = (ItemLocationDirect)info.GetValue("Location", s);
 				if (null != s._location) s._location.ParentObject = s;
 
 				s.UpdateTransformationMatrix();
@@ -89,7 +89,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// <summary>
 		/// Initializes a fresh instance of this class with default values
 		/// </summary>
-		protected GraphicBase(ItemLocationDirect3D location)
+		protected GraphicBase(ItemLocationDirect location)
 		{
 			if (null == location)
 				throw new ArgumentNullException("location");
@@ -191,7 +191,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			}
 		}
 
-		public ItemLocationDirect3D Location
+		public ItemLocationDirect Location
 		{
 			get
 			{
@@ -322,7 +322,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// <param name="o">The graphics object whose position is scaled.</param>
 		/// <param name="xscale">The xscale ratio.</param>
 		/// <param name="yscale">The yscale ratio.</param>
-		public static void ScalePosition(IGraphicBase3D o, double xscale, double yscale, double zscale)
+		public static void ScalePosition(IGraphicBase o, double xscale, double yscale, double zscale)
 		{
 			if (o != null)
 			{

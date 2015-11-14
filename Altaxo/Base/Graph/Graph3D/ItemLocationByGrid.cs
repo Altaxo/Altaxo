@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D
 {
-	public class ItemLocationByGrid3D : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation3D
+	public class ItemLocationByGrid : Main.SuspendableDocumentLeafNodeWithEventArgs, IItemLocation
 	{
 		/// <summary>
 		/// The number of the grid column where the cell starts horizontal.
@@ -93,14 +93,14 @@ namespace Altaxo.Graph.Graph3D
 		#region Serialization
 
 		/// <summary>
-		/// 2013-12-01 initial version.
+		/// 2015-11-14 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationByGrid3D), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ItemLocationByGrid), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ItemLocationByGrid3D)obj;
+				var s = (ItemLocationByGrid)obj;
 
 				info.AddValue("PosX", s._gridPosX);
 				info.AddValue("PosY", s._gridPosY);
@@ -120,9 +120,9 @@ namespace Altaxo.Graph.Graph3D
 				info.AddValue("ForceFitIntoCell", s._forceFitIntoCell);
 			}
 
-			protected virtual ItemLocationByGrid3D SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			protected virtual ItemLocationByGrid SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (ItemLocationByGrid3D)o : new ItemLocationByGrid3D();
+				var s = null != o ? (ItemLocationByGrid)o : new ItemLocationByGrid();
 
 				s._gridPosX = info.GetDouble("PosX");
 				s._gridPosY = info.GetDouble("PosY");
@@ -153,11 +153,11 @@ namespace Altaxo.Graph.Graph3D
 
 		#endregion Serialization
 
-		public ItemLocationByGrid3D()
+		public ItemLocationByGrid()
 		{
 		}
 
-		public ItemLocationByGrid3D(ItemLocationByGrid3D from)
+		public ItemLocationByGrid(ItemLocationByGrid from)
 		{
 			CopyFrom(from);
 		}
@@ -167,9 +167,9 @@ namespace Altaxo.Graph.Graph3D
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			if (obj is ItemLocationByGrid3D)
+			if (obj is ItemLocationByGrid)
 			{
-				var from = (ItemLocationByGrid3D)obj;
+				var from = (ItemLocationByGrid)obj;
 				this._gridPosX = from._gridPosX;
 				this._gridPosY = from._gridPosY;
 				this._gridPosZ = from._gridPosZ;
@@ -194,9 +194,9 @@ namespace Altaxo.Graph.Graph3D
 				EhSelfChanged();
 				return true;
 			}
-			else if (obj is IItemLocation3D)
+			else if (obj is IItemLocation)
 			{
-				var from = (IItemLocation3D)obj;
+				var from = (IItemLocation)obj;
 				this._rotationX = from.RotationX;
 				this._rotationY = from.RotationY;
 				this._rotationZ = from.RotationZ;
@@ -217,15 +217,15 @@ namespace Altaxo.Graph.Graph3D
 
 		object System.ICloneable.Clone()
 		{
-			return new ItemLocationByGrid3D(this);
+			return new ItemLocationByGrid(this);
 		}
 
-		public ItemLocationByGrid3D Clone()
+		public ItemLocationByGrid Clone()
 		{
-			return new ItemLocationByGrid3D(this);
+			return new ItemLocationByGrid(this);
 		}
 
-		public RectangleD3D GetAbsolute(GridPartitioning3D partition, VectorD3D parentSize)
+		public RectangleD3D GetAbsolute(GridPartitioning partition, VectorD3D parentSize)
 		{
 			return partition.GetTileRectangle(_gridPosX, _gridPosY, _gridPosZ, _gridSpanX, _gridSpanY, _gridSpanZ, parentSize);
 		}

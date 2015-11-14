@@ -264,6 +264,18 @@ namespace Altaxo.Graph.Scales
 			}
 		}
 
+		public Scale Z
+		{
+			get
+			{
+				return this[2];
+			}
+			set
+			{
+				this[2] = value;
+			}
+		}
+
 		public Scale this[int i]
 		{
 			get

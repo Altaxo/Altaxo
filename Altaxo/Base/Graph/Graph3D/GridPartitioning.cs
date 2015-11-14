@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
-	public class GridPartitioning3D
+	public class GridPartitioning
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		Main.ICopyFrom
@@ -47,29 +47,29 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// 2015-09-49 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPartitioning3D), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPartitioning), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (GridPartitioning3D)obj;
+				var s = (GridPartitioning)obj;
 
 				info.AddValue("XPartitioning", s._xPartitioning);
 				info.AddValue("YPartitioning", s._yPartitioning);
 				info.AddValue("ZPartitioning", s._zPartitioning);
 			}
 
-			protected virtual GridPartitioning3D SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			protected virtual GridPartitioning SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (o == null ? new GridPartitioning3D() : (GridPartitioning3D)o);
+				var s = (o == null ? new GridPartitioning() : (GridPartitioning)o);
 
-				s._xPartitioning = (Altaxo.Graph.LinearPartitioning)info.GetValue("XPartitioning", s);
+				s._xPartitioning = (LinearPartitioning)info.GetValue("XPartitioning", s);
 				if (null != s._xPartitioning) s._xPartitioning.ParentObject = s;
 
-				s._yPartitioning = (Altaxo.Graph.LinearPartitioning)info.GetValue("YPartitioning", s);
+				s._yPartitioning = (LinearPartitioning)info.GetValue("YPartitioning", s);
 				if (null != s._yPartitioning) s._yPartitioning.ParentObject = s;
 
-				s._zPartitioning = (Altaxo.Graph.LinearPartitioning)info.GetValue("ZPartitioning", s);
+				s._zPartitioning = (LinearPartitioning)info.GetValue("ZPartitioning", s);
 				if (null != s._yPartitioning) s._yPartitioning.ParentObject = s;
 
 				return s;
@@ -86,18 +86,18 @@ namespace Altaxo.Graph.Graph3D
 
 		#endregion Serialization
 
-		public GridPartitioning3D()
+		public GridPartitioning()
 		{
-			_xPartitioning = new Altaxo.Graph.LinearPartitioning() { ParentObject = this };
-			_yPartitioning = new Altaxo.Graph.LinearPartitioning() { ParentObject = this };
-			_zPartitioning = new Altaxo.Graph.LinearPartitioning() { ParentObject = this };
+			_xPartitioning = new LinearPartitioning() { ParentObject = this };
+			_yPartitioning = new LinearPartitioning() { ParentObject = this };
+			_zPartitioning = new LinearPartitioning() { ParentObject = this };
 		}
 
-		public GridPartitioning3D(GridPartitioning3D from)
+		public GridPartitioning(GridPartitioning from)
 		{
-			_xPartitioning = new Altaxo.Graph.LinearPartitioning() { ParentObject = this };
-			_yPartitioning = new Altaxo.Graph.LinearPartitioning() { ParentObject = this };
-			_zPartitioning = new Altaxo.Graph.LinearPartitioning() { ParentObject = this };
+			_xPartitioning = new LinearPartitioning() { ParentObject = this };
+			_yPartitioning = new LinearPartitioning() { ParentObject = this };
+			_zPartitioning = new LinearPartitioning() { ParentObject = this };
 			CopyFrom(from);
 		}
 
@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Graph3D
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			var from = obj as GridPartitioning3D;
+			var from = obj as GridPartitioning;
 			if (null != from)
 			{
 				using (var suspendToken = SuspendGetToken())
@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Graph3D
 
 		public object Clone()
 		{
-			return new GridPartitioning3D(this);
+			return new GridPartitioning(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -137,11 +137,11 @@ namespace Altaxo.Graph.Graph3D
 				yield return new Main.DocumentNodeAndName(_zPartitioning, () => _zPartitioning = null, "ZPartitioning");
 		}
 
-		public Altaxo.Graph.LinearPartitioning XPartitioning { get { return _xPartitioning; } }
+		public LinearPartitioning XPartitioning { get { return _xPartitioning; } }
 
-		public Altaxo.Graph.LinearPartitioning YPartitioning { get { return _yPartitioning; } }
+		public LinearPartitioning YPartitioning { get { return _yPartitioning; } }
 
-		public Altaxo.Graph.LinearPartitioning ZPartitioning { get { return _zPartitioning; } }
+		public LinearPartitioning ZPartitioning { get { return _zPartitioning; } }
 
 		public virtual bool IsEmpty { get { return _xPartitioning.Count == 0 && _yPartitioning.Count == 0 && _zPartitioning.Count == 0; } }
 

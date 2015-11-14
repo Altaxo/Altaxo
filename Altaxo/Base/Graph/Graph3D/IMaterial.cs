@@ -34,14 +34,14 @@ namespace Altaxo.Graph.Graph3D
 {
 	using GraphicsContext;
 
-	public interface IMaterial3D : Altaxo.Main.IImmutable, IEquatable<IMaterial3D>
+	public interface IMaterial : Altaxo.Main.IImmutable, IEquatable<IMaterial>
 	{
 		NamedColor Color { get; }
 
 		bool HasColor { get; }
 		bool HasTexture { get; }
 
-		IMaterial3D WithColor(NamedColor color);
+		IMaterial WithColor(NamedColor color);
 
 		void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD);
 	}

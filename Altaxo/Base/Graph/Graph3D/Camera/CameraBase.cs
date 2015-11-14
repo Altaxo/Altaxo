@@ -31,12 +31,34 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.Camera
 {
+	/// <summary>
+	/// Represents the camera.
+	/// </summary>
 	public abstract class CameraBase : Main.ICopyFrom
 	{
+		/// <summary>
+		/// Gets or sets the camera up vector.
+		/// </summary>
 		public VectorD3D UpVector { get; set; }
+
+		/// <summary>
+		/// Gets or sets the camera position, the so-called eye position.
+		/// </summary>
 		public PointD3D EyePosition { get; set; }
+
+		/// <summary>
+		/// Gets or sets the position the camera is looking at.
+		/// </summary>
 		public PointD3D TargetPosition { get; set; }
+
+		/// <summary>
+		/// Gets or sets the minimum distance the camera is 'seeing' something. Objects closer than this distance (from the camera) will not be visible.
+		/// </summary>
 		public double ZNear { get; set; }
+
+		/// <summary>
+		/// Gets or sets the maximum distance the camera is 'seeing' something. Objects farther away than this distance (from the camera) will not be visible.
+		/// </summary>
 		public double ZFar { get; set; }
 
 		/// <summary>
@@ -48,6 +70,39 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// </value>
 		public PointD2D ScreenOffset { get; set; }
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CameraBase), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (CameraBase)obj;
+
+				info.AddValue("UpVector", s.UpVector);
+				info.AddValue("EyePosition", s.EyePosition);
+				info.AddValue("TargetPosition", s.TargetPosition);
+				info.AddValue("ZNear", s.ZNear);
+				info.AddValue("ZFar", s.ZFar);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (CameraBase)o;
+				s.UpVector = (VectorD3D)info.GetValue("UpVector", s);
+				s.EyePosition = (PointD3D)info.GetValue("EyePosition", s);
+				s.TargetPosition = (PointD3D)info.GetValue("TargetPosition", s);
+				s.ZNear = info.GetDouble("ZNear");
+				s.ZFar = info.GetDouble("ZFar");
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public CameraBase()
 		{
 			EyePosition = new PointD3D(0, 0, -1500);
@@ -56,8 +111,22 @@ namespace Altaxo.Graph.Graph3D.Camera
 			ZFar = 3000;
 		}
 
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
 		public abstract object Clone();
 
+		/// <summary>
+		/// Try to copy from another object. Should try to copy even if the object to copy from is not of
+		/// the same type, but a base type. In this case only the base properties should be copied.
+		/// </summary>
+		/// <param name="obj">Object to copy from.</param>
+		/// <returns>
+		/// True if at least parts of the object could be copied, false if the object to copy from is incompatible.
+		/// </returns>
 		public virtual bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))

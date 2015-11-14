@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 		/// <summary>
 		/// Initializes the content of the Color combo box.
 		/// </summary>
-		IMaterial3D LabelMaterial { get; set; }
+		IMaterial LabelMaterial { get; set; }
 
 		/// <summary>
 		/// Initializes the background.
@@ -142,9 +142,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 	/// <summary>
 	/// Summary description.
 	/// </summary>
-	[UserControllerForObject(typeof(AxisLabelStyle3D))]
+	[UserControllerForObject(typeof(AxisLabelStyle))]
 	[ExpectedTypeOfView(typeof(IAxisLabelStyleView))]
-	public class AxisLabelStyleController : MVCANControllerEditOriginalDocBase<AxisLabelStyle3D, IAxisLabelStyleView>
+	public class AxisLabelStyleController : MVCANControllerEditOriginalDocBase<AxisLabelStyle, IAxisLabelStyleView>
 	{
 		private SelectableListNodeList _labelSides;
 		private SelectableListNodeList _horizontalAlignmentChoices;

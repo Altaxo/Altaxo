@@ -118,8 +118,8 @@ namespace Altaxo.Gui.Graph3D
 	/// Summary description for LayerPositionController.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IItemLocationDirectView))]
-	[UserControllerForObject(typeof(ItemLocationDirect3D))]
-	public class ItemLocationDirectController : MVCANControllerEditOriginalDocBase<ItemLocationDirect3D, IItemLocationDirectView>
+	[UserControllerForObject(typeof(ItemLocationDirect))]
+	public class ItemLocationDirectController : MVCANControllerEditOriginalDocBase<ItemLocationDirect, IItemLocationDirectView>
 	{
 		private VectorD3D _parentSize;
 		private QuantityWithUnitGuiEnvironment _xSizeEnvironment, _xPositionEnvironment;

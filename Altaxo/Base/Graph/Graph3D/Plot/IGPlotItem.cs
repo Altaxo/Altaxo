@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// </summary>
 		/// <param name="styles">The collection of group styles.</param>
 		/// <param name="layer">The plot layer.</param>
-		void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea3D layer);
+		void PrepareGroupStyles(PlotGroupStyleCollection styles, IPlotArea layer);
 
 		/// <summary>
 		/// Applies the group styles to this plot item. This function is called for all plot items in a group before
@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// This function is called before the call to PrepareStyles.
 		/// </summary>
 		/// <param name="layer">The plot layer.</param>
-		void PrepareScales(IPlotArea3D layer);
+		void PrepareScales(IPlotArea layer);
 
 		/// <summary>
 		/// Called before painting takes place.
@@ -121,7 +121,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="previousPlotItem">Previous plot item.</param>
 		/// <param name="nextPlotItem">Next plot item. Can be null.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea3D layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+		void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources.
@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="layer">The layer in which this plot item is drawn into.</param>
 		/// <param name="hitpoint">The point where the mouse is pressed.</param>
 		/// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-		IHitTestObject HitTest(IPlotArea3D layer, Ray3D hitpoint);
+		IHitTestObject HitTest(IPlotArea layer, Ray3D hitpoint);
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

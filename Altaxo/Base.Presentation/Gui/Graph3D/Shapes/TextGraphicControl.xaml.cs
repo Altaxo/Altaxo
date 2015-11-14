@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 			}
 		}
 
-		public IMaterial3D SelectedFontBrush
+		public IMaterial SelectedFontBrush
 		{
 			get
 			{

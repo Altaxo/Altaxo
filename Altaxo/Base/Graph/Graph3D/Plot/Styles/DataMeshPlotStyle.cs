@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	/// on linear axes.
 	/// </summary>
 	[Serializable]
-	public class DensityImagePlotStyle
+	public class DataMeshPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
 		Main.ICopyFrom
@@ -80,12 +80,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle), 0)]
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataMeshPlotStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+				DataMeshPlotStyle s = (DataMeshPlotStyle)obj;
 
 				info.AddValue("ClipToLayer", s._clipToLayer);
 				info.AddValue("Scale", s._scale);
@@ -94,7 +97,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+				DataMeshPlotStyle s = null != o ? (DataMeshPlotStyle)o : new DataMeshPlotStyle();
 
 				s._clipToLayer = info.GetBoolean("ClipToLayer");
 				s.Scale = (NumericalScale)info.GetValue("Scale", s);
@@ -116,7 +119,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// Initializes the style to default values.
 		/// </summary>
-		public DensityImagePlotStyle()
+		public DataMeshPlotStyle()
 		{
 			this.ColorProvider = new ColorProviderBGMYR();
 			this.Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
@@ -127,7 +130,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// Copy constructor.
 		/// </summary>
 		/// <param name="from">The style to copy from.</param>
-		public DensityImagePlotStyle(DensityImagePlotStyle from)
+		public DataMeshPlotStyle(DataMeshPlotStyle from)
 		{
 			InitializeMembers();
 			CopyFrom(from);
@@ -138,7 +141,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			var from = obj as DensityImagePlotStyle;
+			var from = obj as DataMeshPlotStyle;
 			if (null == from)
 				return false;
 
@@ -166,7 +169,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public object Clone()
 		{
-			return new DensityImagePlotStyle(this);
+			return new DataMeshPlotStyle(this);
 		}
 
 		public NumericalScale Scale
@@ -246,7 +249,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// it must be ensured that the axes are scaled correctly before the plots are painted.
 		/// </summary>
 		/// <param name="layer">The plot layer.</param>
-		public void PrepareScales(IPlotArea3D layer, XYZMeshedColumnPlotData plotData)
+		public void PrepareScales(IPlotArea layer, XYZMeshedColumnPlotData plotData)
 		{
 			NumericalBoundaries pb = _scale.DataBounds;
 			plotData.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
@@ -264,7 +267,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="gfrx">The graphics context painting in.</param>
 		/// <param name="gl">The layer painting in.</param>
 		/// <param name="plotObject">The data to plot.</param>
-		public void Paint(IGraphicContext3D gfrx, IPlotArea3D gl, object plotObject) // plots the curve with the choosen style
+		public void Paint(IGraphicContext3D gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
 		{
 			if (!(plotObject is XYZMeshedColumnPlotData))
 				return; // we cannot plot any other than a TwoDimMeshDataAssociation now
@@ -335,14 +338,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return _colorProvider.GetColor(relval);
 		}
 
-		private void BuildImage(IGraphicContext3D gfrx, IPlotArea3D gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
+		private void BuildImage(IGraphicContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
 		{
 			BuildImageV1(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
 		}
 
 		private void BuildImageV1(
 			IGraphicContext3D g,
-			IPlotArea3D gl,
+			IPlotArea gl,
 			IROVector lx,
 			IROVector ly,
 			IROMatrix matrix)

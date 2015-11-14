@@ -39,7 +39,7 @@ namespace Altaxo.Gui.SharpDevelop
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		public SDGraph3DViewContent(GraphDocument3D graphdoc)
+		public SDGraph3DViewContent(GraphDocument graphdoc)
 			: this(graphdoc, false)
 		{
 		}
@@ -49,7 +49,7 @@ namespace Altaxo.Gui.SharpDevelop
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		/// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
-		protected SDGraph3DViewContent(GraphDocument3D graphdoc, bool bDeserializationConstructor)
+		protected SDGraph3DViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
 			: this(new Altaxo.Gui.Graph3D.Viewing.Graph3DControllerWpf(graphdoc))
 		{
 		}

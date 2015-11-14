@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Graph3D
 	/// <summary>
 	/// Interface used for all plot items and styles to get information for plotting their data.
 	/// </summary>
-	public interface IPlotArea3D
+	public interface IPlotArea
 	{
 		/// <summary>
 		/// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.

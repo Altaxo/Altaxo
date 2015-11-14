@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		// 2015-09-10 initial version
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 0)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -154,9 +154,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// </summary>
 		public AxisLineStyle(Main.Properties.IReadOnlyPropertyBag context)
 		{
-			double penWidth = GraphDocument3D.GetDefaultPenWidth(context);
-			double majorTickLength = GraphDocument3D.GetDefaultMajorTickLength(context);
-			var color = GraphDocument3D.GetDefaultForeColor(context);
+			double penWidth = GraphDocument.GetDefaultPenWidth(context);
+			double majorTickLength = GraphDocument.GetDefaultMajorTickLength(context);
+			var color = GraphDocument.GetDefaultForeColor(context);
 
 			_axisPen = new PenX3D(color, penWidth);
 			_majorTickPen = new PenX3D(color, penWidth);
@@ -589,7 +589,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <param name="layer">The layer the axis belongs to.</param>
 		/// <param name="styleInfo">The axis information of the axis to paint.</param>
 		/// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
-		public void Paint(IGraphicContext3D g, IPlotArea3D layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
+		public void Paint(IGraphicContext3D g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
 		{
 			CSLineID styleID = styleInfo.Identifier;
 			_cachedAxisStyleInfo = styleInfo.Clone();

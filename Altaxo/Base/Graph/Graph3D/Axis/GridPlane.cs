@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <summary>
 		/// Background of the grid plane.
 		/// </summary>
-		private IMaterial3D _background;
+		private IMaterial _background;
 
 		[NonSerialized]
 		private GridIndexer _cachedIndexer;
@@ -72,6 +72,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region Version 0
 
+		/// <summary>
+		/// 2015-11-14 initial version-
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlane), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -91,7 +94,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
 				s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
 				s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);
-				s.Background = (IMaterial3D)info.GetValue("Background", s);
+				s.Background = (IMaterial)info.GetValue("Background", s);
 
 				return s;
 			}
@@ -174,7 +177,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			get { return _cachedIndexer; }
 		}
 
-		public IMaterial3D Background
+		public IMaterial Background
 		{
 			get { return _background; }
 			set
@@ -198,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintBackground(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintBackground(IGraphicContext3D g, IPlotArea layer)
 		{
 			if (null == _background)
 				return;
@@ -232,7 +235,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintGrid(IGraphicContext3D g, IPlotArea3D layer)
+		public void PaintGrid(IGraphicContext3D g, IPlotArea layer)
 		{
 			if (null != _grid1)
 				_grid1.Paint(g, layer, _planeID.InPlaneAxisNumber1);
@@ -240,7 +243,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				_grid2.Paint(g, layer, _planeID.InPlaneAxisNumber2);
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea3D layer)
+		public void Paint(IGraphicContext3D g, IPlotArea layer)
 		{
 			PaintBackground(g, layer);
 			PaintGrid(g, layer);

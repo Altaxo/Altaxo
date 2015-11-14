@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns></returns>
 		object HittedObject { get; set; }
 
-		HostLayer3D ParentLayer { get; set; }
+		HostLayer ParentLayer { get; set; }
 
 		/// <summary>
 		/// Shifts the position of the hitted object according to the x and y values.

@@ -30,8 +30,8 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if (value is IMaterial3D)
-				return GetImageSourceFromBrushX((IMaterial3D)value, _width, _height);
+			if (value is IMaterial)
+				return GetImageSourceFromBrushX((IMaterial)value, _width, _height);
 			else if (value is NamedColor)
 				return GetImageSourceFromAxoColor(((NamedColor)value).Color, _width, _height);
 			else if (value is AxoColor)
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			return geometryImage;
 		}
 
-		public static ImageSource GetImageSourceFromBrushX(IMaterial3D val, int width, int height)
+		public static ImageSource GetImageSourceFromBrushX(IMaterial val, int width, int height)
 		{
 			//
 			// Create the Geometry to draw.
@@ -73,14 +73,14 @@ namespace Altaxo.Gui.Graph3D.Material
 	}
 
 	/// <summary>
-	/// Converts a <see cref="IMaterial3D"/> to a string, which represents the name of this brush.
+	/// Converts a <see cref="IMaterial"/> to a string, which represents the name of this brush.
 	/// </summary>
 	public class MaterialToMaterialNameConverter : IValueConverter
 	{
 		/// <summary>
 		/// Converts a <see cref="Material"/> to its name.
 		/// </summary>
-		/// <param name="value">A <see cref="IMaterial3D"/> object.</param>
+		/// <param name="value">A <see cref="IMaterial"/> object.</param>
 		/// <param name="targetType">Ignored. Return type is always string.</param>
 		/// <param name="parameter">Ignored</param>
 		/// <param name="culture">The culture to use in the converter. Ignored.</param>
@@ -89,15 +89,15 @@ namespace Altaxo.Gui.Graph3D.Material
 		/// </returns>
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if (value is IMaterial3D)
-				return GetNameForBrushX((IMaterial3D)value);
+			if (value is IMaterial)
+				return GetNameForBrushX((IMaterial)value);
 			else if (value is NamedColor)
 				return ((NamedColor)value).Name;
 			else
 				return null;
 		}
 
-		public static string GetNameForBrushX(IMaterial3D brush)
+		public static string GetNameForBrushX(IMaterial brush)
 		{
 			string name;
 			if (brush == null)

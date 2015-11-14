@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 			_doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
 			_doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
-			var backBrush = (IMaterial3D)_background.ModelObject;
+			var backBrush = (IMaterial)_background.ModelObject;
 			_doc.Background = NoMaterial.Instance == backBrush ? null : backBrush;
 
 			return ApplyEnd(true, disposeController);

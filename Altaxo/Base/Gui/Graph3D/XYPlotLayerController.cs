@@ -78,9 +78,9 @@ namespace Altaxo.Gui.Graph3D
 	/// <summary>
 	/// Summary description for LayerController.
 	/// </summary>
-	[UserControllerForObject(typeof(XYPlotLayer3D))]
+	[UserControllerForObject(typeof(XYZPlotLayer))]
 	[ExpectedTypeOfView(typeof(IXYPlotLayerView))]
-	public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYPlotLayer3D, IXYPlotLayerView>
+	public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYZPlotLayer, IXYPlotLayerView>
 	{
 		private string _currentPageName;
 
@@ -108,17 +108,17 @@ namespace Altaxo.Gui.Graph3D
 		private SelectableListNodeList _listOfPlanes;
 		private SelectableListNodeList _listOfUniqueItem;
 
-		public XYPlotLayerController(XYPlotLayer3D layer, UseDocument useDocumentCopy)
+		public XYPlotLayerController(XYZPlotLayer layer, UseDocument useDocumentCopy)
 			: this(layer, "Scale", 1, null, useDocumentCopy)
 		{
 		}
 
-		public XYPlotLayerController(XYPlotLayer3D layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
+		public XYPlotLayerController(XYZPlotLayer layer, string currentPage, CSLineID id, UseDocument useDocumentCopy)
 			: this(layer, currentPage, id.ParallelAxisNumber, id, useDocumentCopy)
 		{
 		}
 
-		private XYPlotLayerController(XYPlotLayer3D layer, string currentPage, int axisScaleIdx, CSLineID id, UseDocument useDocumentCopy)
+		private XYPlotLayerController(XYZPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id, UseDocument useDocumentCopy)
 		{
 			if (!id.Is3DIdentifier)
 				throw new ArgumentException(nameof(id) + " has to be a 3D identifier!");
@@ -568,7 +568,7 @@ namespace Altaxo.Gui.Graph3D
 
 			if (object.ReferenceEquals(_currentController, _layerPositionController))
 			{
-				_doc.Location = (IItemLocation3D)_currentController.ModelObject;
+				_doc.Location = (IItemLocation)_currentController.ModelObject;
 			}
 			else if (_currentPageName == "GridStyle")
 			{
@@ -581,17 +581,17 @@ namespace Altaxo.Gui.Graph3D
 
 		#region Dialog
 
-		public static bool ShowDialog(XYPlotLayer3D layer)
+		public static bool ShowDialog(XYZPlotLayer layer)
 		{
 			return ShowDialog(layer, "Scale", new CSLineID(0, 0, 0));
 		}
 
-		public static bool ShowDialog(XYPlotLayer3D layer, string currentPage)
+		public static bool ShowDialog(XYZPlotLayer layer, string currentPage)
 		{
 			return ShowDialog(layer, currentPage, new CSLineID(0, 0));
 		}
 
-		public static bool ShowDialog(XYPlotLayer3D layer, string currentPage, CSLineID currentEdge)
+		public static bool ShowDialog(XYZPlotLayer layer, string currentPage, CSLineID currentEdge)
 		{
 			XYPlotLayerController ctrl = new XYPlotLayerController(layer, currentPage, currentEdge, UseDocument.Copy);
 			return Current.Gui.ShowDialog(ctrl, layer.Name, true);
@@ -605,16 +605,16 @@ namespace Altaxo.Gui.Graph3D
 		{
 			// register here editor methods
 
-			XYPlotLayer3D.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
-			XYPlotLayer3D.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
-			XYPlotLayer3D.AxisLabelMajorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMajorStyleEdit);
-			XYPlotLayer3D.AxisLabelMinorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMinorStyleEdit);
-			XYPlotLayer3D.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
+			XYZPlotLayer.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
+			XYZPlotLayer.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
+			XYZPlotLayer.AxisLabelMajorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMajorStyleEdit);
+			XYZPlotLayer.AxisLabelMinorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMinorStyleEdit);
+			XYZPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
 		}
 
 		public static bool EhLayerPositionEdit(IHitTestObject hit)
 		{
-			var layer = hit.HittedObject as XYPlotLayer3D;
+			var layer = hit.HittedObject as XYZPlotLayer;
 			if (layer == null)
 				return false;
 
@@ -629,7 +629,7 @@ namespace Altaxo.Gui.Graph3D
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			var xylayer = hit.ParentLayer as XYPlotLayer3D;
+			var xylayer = hit.ParentLayer as XYZPlotLayer;
 			if (null != xylayer)
 				ShowDialog(xylayer, "Scale", style.AxisStyleID);
 
@@ -642,7 +642,7 @@ namespace Altaxo.Gui.Graph3D
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			var xylayer = hit.ParentLayer as XYPlotLayer3D;
+			var xylayer = hit.ParentLayer as XYZPlotLayer;
 			if (null != xylayer)
 				ShowDialog(xylayer, "TitleAndFormat", style.AxisStyleID);
 
@@ -651,11 +651,11 @@ namespace Altaxo.Gui.Graph3D
 
 		public static bool EhAxisLabelMajorStyleEdit(IHitTestObject hit)
 		{
-			var style = hit.HittedObject as AxisLabelStyle3D;
+			var style = hit.HittedObject as AxisLabelStyle;
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			var xylayer = hit.ParentLayer as XYPlotLayer3D;
+			var xylayer = hit.ParentLayer as XYZPlotLayer;
 			if (null != xylayer)
 				ShowDialog(xylayer, "MajorLabels", style.AxisStyleID);
 
@@ -664,11 +664,11 @@ namespace Altaxo.Gui.Graph3D
 
 		public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
 		{
-			var style = hit.HittedObject as AxisLabelStyle3D;
+			var style = hit.HittedObject as AxisLabelStyle;
 			if (style == null || hit.ParentLayer == null)
 				return false;
 
-			var xylayer = hit.ParentLayer as XYPlotLayer3D;
+			var xylayer = hit.ParentLayer as XYZPlotLayer;
 			if (null != xylayer)
 				ShowDialog(xylayer, "MinorLabels", style.AxisStyleID);
 

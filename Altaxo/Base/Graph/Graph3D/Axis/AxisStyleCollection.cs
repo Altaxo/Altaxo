@@ -47,6 +47,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region Serialization
 
+		/// <summary>
+		/// 2015-11-14 initial version
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -238,7 +241,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
 		}
 
-		public bool Remove(IGraphicBase3D go)
+		public bool Remove(IGraphicBase go)
 		{
 			for (int i = 0; i < this._axisStyles.Count; ++i)
 				if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
@@ -247,19 +250,19 @@ namespace Altaxo.Graph.Graph3D.Axis
 			return false;
 		}
 
-		public void FixupInternalDataStructures(IPlotArea3D layer)
+		public void FixupInternalDataStructures(IPlotArea layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
 				_axisStyles[i].FixupInternalDataStructures(layer);
 		}
 
-		public void PaintPreprocessing(IPlotArea3D layer)
+		public void PaintPreprocessing(IPlotArea layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
 				_axisStyles[i].PaintPreprocessing(layer);
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer)
+		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
 		{
 			for (int i = 0; i < _axisStyles.Count; ++i)
 				_axisStyles[i].Paint(g, paintContext, layer);

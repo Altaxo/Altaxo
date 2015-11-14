@@ -22,9 +22,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		public IGraph3DView _view;
 
-		protected GraphDocument3D _doc;
+		protected GraphDocument _doc;
 
-		public GraphDocument3D Doc { get { return _doc; } }
+		public GraphDocument Doc { get { return _doc; } }
 
 		/// <summary>Number of the currently selected layer (or null if no layer is present).</summary>
 		protected IList<int> _currentLayerNumber = new List<int>();
@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		protected Graph3DController(GraphDocument3D graphdoc)
+		protected Graph3DController(GraphDocument graphdoc)
 		{
 			if (null == graphdoc)
 				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
@@ -63,9 +63,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		{
 			if (null == args || args.Length == 0)
 				return false;
-			if (args[0] is GraphDocument3D)
+			if (args[0] is GraphDocument)
 			{
-				InternalInitializeGraphDocument(args[0] as GraphDocument3D);
+				InternalInitializeGraphDocument(args[0] as GraphDocument);
 			}
 			/*
 			else if (args[0] is GraphViewLayout)
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_layerStructure = Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(
 				_doc.RootLayer,
 				new List<int>(),
-				(sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer3D.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
+				(sn, indices) => new NGTreeNode { Tag = indices.ToArray(), Text = HostLayer.GetDefaultNameOfLayer(indices) }, (parent, child) => parent.Nodes.Add(child));
 		}
 
 		private void InitTriggerBasedUpdate()
@@ -130,14 +130,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
 		/// </summary>
-		public HostLayer3D RootLayer
+		public HostLayer RootLayer
 		{
 			get { return _doc.RootLayer; }
 		}
 
 		#endregion Properties
 
-		private void InternalInitializeGraphDocument(GraphDocument3D doc)
+		private void InternalInitializeGraphDocument(GraphDocument doc)
 		{
 			if (_doc != null)
 				throw new ApplicationException(nameof(_doc) + " is already initialized");
@@ -219,7 +219,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// Returns the currently active layer. There is always an active layer.
 		/// </summary>
-		public HostLayer3D ActiveLayer
+		public HostLayer ActiveLayer
 		{
 			get
 			{
@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// check the validity of the CurrentLayerNumber and correct it
 		/// </summary>
-		public HostLayer3D EnsureValidityOfCurrentLayerNumber()
+		public HostLayer EnsureValidityOfCurrentLayerNumber()
 		{
 			_doc.RootLayer.EnsureValidityOfNodeIndex(_currentLayerNumber);
 			return _doc.RootLayer.ElementAt(_currentLayerNumber);
@@ -284,7 +284,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 			set
 			{
-				var layer = ActiveLayer as XYPlotLayer3D;
+				var layer = ActiveLayer as XYZPlotLayer;
 
 				if (null != layer && 0 != layer.PlotItems.Flattened.Length && value < 0)
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber", value, "CurrentPlotNumber has to be greater or equal than zero");
@@ -302,7 +302,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// </summary>
 		public void EnsureValidityOfCurrentPlotNumber()
 		{
-			var layer = EnsureValidityOfCurrentLayerNumber() as XYPlotLayer3D;
+			var layer = EnsureValidityOfCurrentLayerNumber() as XYZPlotLayer;
 
 			// if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
 			if (null != layer) // if the ActiveLayer exists
@@ -342,8 +342,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (null != ActiveLayer && System.Linq.Enumerable.SequenceEqual(_currentLayerNumber, oldCurrLayer) && false == bAlternative)
 			{
 				var activeLayer = ActiveLayer;
-				if (activeLayer is XYPlotLayer3D)
-					XYPlotLayerController.ShowDialog((XYPlotLayer3D)activeLayer);
+				if (activeLayer is XYZPlotLayer)
+					XYPlotLayerController.ShowDialog((XYZPlotLayer)activeLayer);
 				else
 					HostLayerController.ShowDialog(activeLayer);
 			}
@@ -622,7 +622,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
 			if (null != eAsNOC && eAsNOC.WasItemRenamed)
 			{
-				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument3D)sender, eAsNOC.OldName);
+				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
 				return;
 			}
 

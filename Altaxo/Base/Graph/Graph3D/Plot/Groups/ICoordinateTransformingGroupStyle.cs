@@ -43,7 +43,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <param name="layer">The layer.</param>
 		/// <param name="pb">The physical boundaries to merge with.</param>
 		/// <param name="coll">The collection of plot items.</param>
-		void MergeXBoundsInto(IPlotArea3D layer, IPhysicalBoundaries pb, PlotItemCollection coll);
+		void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
 
 		/// <summary>
 		/// Merges the Y bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <param name="layer">The layer.</param>
 		/// <param name="pb">The physical boundaries to merge with.</param>
 		/// <param name="coll">The collection of plot items.</param>
-		void MergeYBoundsInto(IPlotArea3D layer, IPhysicalBoundaries pb, PlotItemCollection coll);
+		void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
 
 		/// <summary>
 		/// Merges the Z bounds of all plot items in the collection <paramref name="coll"/> into the boundaries <paramref name="pb"/>.
@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <param name="layer">The layer.</param>
 		/// <param name="pb">The physical boundaries to merge with.</param>
 		/// <param name="coll">The collection of plot items.</param>
-		void MergeZBoundsInto(IPlotArea3D layer, IPhysicalBoundaries pb, PlotItemCollection coll);
+		void MergeZBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
 
 		/// <summary>
 		/// Prepare the paint of the plot items that belongs to this group style.
@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <param name="paintContext">The paint context</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="coll">Collection of plot items to draw.</param>
-		void PaintPreprocessing(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea3D layer, PlotItemCollection coll);
+		void PaintPreprocessing(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll);
 
 		/// <summary>
 		/// Finishes the painting of the plot items that belongs to this style. Paints the end.
@@ -85,6 +85,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="collection">Collection of plot items to draw.</param>
 		/// <param name="indexOfChild">Index of the item that should be painted in the <paramref name="collection"/>.</param>
-		void PaintChild(System.Drawing.Graphics g, Altaxo.Graph.IPaintContext context, IPlotArea3D layer, PlotItemCollection collection, int indexOfChild);
+		void PaintChild(System.Drawing.Graphics g, Altaxo.Graph.IPaintContext context, IPlotArea layer, PlotItemCollection collection, int indexOfChild);
 	}
 }

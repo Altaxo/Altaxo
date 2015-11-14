@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 	/// <summary>
 	/// Responsible for setting position, rotation, font, color etc. of axis labels.
 	/// </summary>
-	public class AxisLabelStyle3D :
+	public class AxisLabelStyle :
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		IRoutedPropertyReceiver,
 		Main.ICopyFrom
@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		protected StringAlignment _alignmentZ;
 
 		protected StringFormat _stringFormat;
-		protected IMaterial3D _brush;
+		protected IMaterial _brush;
 
 		/// <summary>The x offset in EM units.</summary>
 		protected double _offsetX;
@@ -95,14 +95,15 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle3D), 0)]
-		private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		/// <summary>
+		/// 2015-11-14 initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			// 2012-05-28 _prefixText and _postfixText deprecated and moved to LabelFormattingBase
-
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				AxisLabelStyle3D s = (AxisLabelStyle3D)obj;
+				AxisLabelStyle s = (AxisLabelStyle)obj;
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._brush);
 				info.AddValue("Background", s._backgroundStyle);
@@ -132,10 +133,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				AxisLabelStyle3D s = null != o ? (AxisLabelStyle3D)o : new AxisLabelStyle3D(info);
+				AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle(info);
 
 				s._font = (FontX3D)info.GetValue("Font", s);
-				s._brush = (IMaterial3D)info.GetValue("Brush", s);
+				s._brush = (IMaterial)info.GetValue("Brush", s);
 
 				s.BackgroundStyle = (Background.IBackgroundStyle3D)info.GetValue("Background", s);
 
@@ -180,17 +181,17 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#endregion Serialization
 
-		protected AxisLabelStyle3D(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		protected AxisLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 		}
 
-		public AxisLabelStyle3D(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (null == context)
 				context = PropertyExtensions.GetPropertyContextOfProject();
 
-			_font = GraphDocument3D.GetDefaultFont(context);
-			var foreColor = GraphDocument3D.GetDefaultForeColor(context);
+			_font = GraphDocument.GetDefaultFont(context);
+			var foreColor = GraphDocument.GetDefaultForeColor(context);
 
 			_brush = Materials.GetSolidMaterial(foreColor);
 
@@ -200,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			SetStringFormat();
 		}
 
-		public AxisLabelStyle3D(AxisLabelStyle3D from)
+		public AxisLabelStyle(AxisLabelStyle from)
 		{
 			CopyFrom(from);
 		}
@@ -209,7 +210,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
-			var from = obj as AxisLabelStyle3D;
+			var from = obj as AxisLabelStyle;
 			if (null == from)
 				return false;
 
@@ -248,7 +249,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		public virtual object Clone()
 		{
-			return new AxisLabelStyle3D(this);
+			return new AxisLabelStyle(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -324,7 +325,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		}
 
 		/// <summary>The brush. During setting, the brush is cloned.</summary>
-		public IMaterial3D Brush
+		public IMaterial Brush
 		{
 			get
 			{

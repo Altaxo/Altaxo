@@ -65,6 +65,47 @@ namespace Altaxo.Graph.Graph3D.Plot
 		[NonSerialized]
 		private IGPlotItem[] _cachedPlotItemsFlattened;
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PlotItemCollection s = (PlotItemCollection)obj;
+
+				info.CreateArray("PlotItems", s.Count);
+				for (int i = 0; i < s.Count; i++)
+					info.AddValue("PlotItem", s[i]);
+				info.CommitArray();
+
+				info.AddValue("GroupStyles", s._plotGroupStyles);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				PlotItemCollection s = null != o ? (PlotItemCollection)o : new PlotItemCollection();
+
+				int count = info.OpenArray();
+				IGPlotItem[] plotItems = new IGPlotItem[count];
+				for (int i = 0; i < count; i++)
+				{
+					s.Add((IGPlotItem)info.GetValue("PlotItem", s));
+				}
+				info.CloseArray(count);
+
+				s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+				if (null != s._plotGroupStyles) s._plotGroupStyles.ParentObject = s;
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public PlotItemCollection()
 		{
 			_plotItems = new List<IGPlotItem>();
@@ -81,7 +122,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		{
 		}
 
-		public PlotItemCollection(XYPlotLayer3D owner)
+		public PlotItemCollection(XYZPlotLayer owner)
 		{
 			_parent = owner;
 			_plotItems = new List<IGPlotItem>();
@@ -94,7 +135,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="owner">The owner of this collection.</param>
 		/// <param name="plotItems">The plot items that should initially belong to this collection.</param>
 		/// <param name="clonePlotItems">If set to <c>true</c> the plot items are cloned before added to this collection. If false, the plot items are added directly to this collection.</param>
-		public PlotItemCollection(XYPlotLayer3D owner, IEnumerable<IGPlotItem> plotItems, bool clonePlotItems)
+		public PlotItemCollection(XYZPlotLayer owner, IEnumerable<IGPlotItem> plotItems, bool clonePlotItems)
 		{
 			_parent = owner;
 
@@ -172,11 +213,11 @@ namespace Altaxo.Graph.Graph3D.Plot
 			}
 		}
 
-		public XYPlotLayer3D ParentLayer
+		public XYZPlotLayer ParentLayer
 		{
 			get
 			{
-				return Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer3D>(this);
+				return Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(this);
 			}
 		}
 
@@ -237,13 +278,13 @@ namespace Altaxo.Graph.Graph3D.Plot
 			return _plotItems.GetEnumerator();
 		}
 
-		public void PrepareScales(IPlotArea3D layer)
+		public void PrepareScales(Graph3D.IPlotArea layer)
 		{
 			foreach (IGPlotItem pi in _plotItems)
 				pi.PrepareScales(layer);
 		}
 
-		public void PrepareGroupStyles(PlotGroupStyleCollection parentPlotGroupStyles, IPlotArea3D layer)
+		public void PrepareGroupStyles(PlotGroupStyleCollection parentPlotGroupStyles, Graph3D.IPlotArea layer)
 		{
 			PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles, layer);
 		}
@@ -341,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 				pi.PaintPreprocessing(context);
 		}
 
-		public void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea3D layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		public void Paint(IGraphicContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			for (int i = 0; i < _plotItems.Count; ++i)
 			{
@@ -355,7 +396,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 				pi.PaintPostprocessing();
 		}
 
-		public Graph3D.IHitTestObject HitTest(IPlotArea3D layer, Ray3D hitpoint)
+		public Graph3D.IHitTestObject HitTest(Graph3D.IPlotArea layer, Ray3D hitpoint)
 		{
 			throw new NotImplementedException();
 		}
@@ -397,7 +438,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <para>BarGraph: to count items, calculating the width and position of each item afterwards.</para>
 		/// <para>It is <b>not</b> used to enumerate colors, line styles etc., since this is done during the Apply stage.</para>
 		/// </remarks>
-		protected void PrepareGroupStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentGroupStyles, IPlotArea3D layer)
+		protected void PrepareGroupStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentGroupStyles, Graph3D.IPlotArea layer)
 		{
 			bool transferFromParentStyles =
 			 parentGroupStyles != null &&

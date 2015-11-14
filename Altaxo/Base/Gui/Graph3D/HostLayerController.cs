@@ -50,9 +50,9 @@ namespace Altaxo.Gui.Graph3D
 	/// <summary>
 	/// Summary description for LayerController.
 	/// </summary>
-	[UserControllerForObject(typeof(HostLayer3D))]
+	[UserControllerForObject(typeof(HostLayer))]
 	[ExpectedTypeOfView(typeof(IHostLayerView))]
-	public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer3D, IHostLayerView>
+	public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, IHostLayerView>
 	{
 		private string _currentPageName;
 
@@ -66,12 +66,12 @@ namespace Altaxo.Gui.Graph3D
 
 		private SelectableListNodeList _listOfUniqueItem;
 
-		public HostLayerController(HostLayer3D layer)
+		public HostLayerController(HostLayer layer)
 			: this(layer, "Position")
 		{
 		}
 
-		private HostLayerController(HostLayer3D layer, string currentPage)
+		private HostLayerController(HostLayer layer, string currentPage)
 		{
 			_currentPageName = currentPage;
 			InitializeDocument(layer);
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Graph3D
 
 			if (object.ReferenceEquals(_currentController, _layerPositionController))
 			{
-				_doc.Location = (IItemLocation3D)_currentController.ModelObject;
+				_doc.Location = (IItemLocation)_currentController.ModelObject;
 			}
 
 			_lastControllerApplied = _currentController;
@@ -224,12 +224,12 @@ namespace Altaxo.Gui.Graph3D
 
 		#region Dialog
 
-		public static bool ShowDialog(HostLayer3D layer)
+		public static bool ShowDialog(HostLayer layer)
 		{
 			return ShowDialog(layer, "Position");
 		}
 
-		public static bool ShowDialog(HostLayer3D layer, string currentPage)
+		public static bool ShowDialog(HostLayer layer, string currentPage)
 		{
 			HostLayerController ctrl = new HostLayerController(layer, currentPage);
 			return Current.Gui.ShowDialog(ctrl, layer.Name, true);
@@ -243,12 +243,12 @@ namespace Altaxo.Gui.Graph3D
 		{
 			// register here editor methods
 
-			HostLayer3D.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
+			HostLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
 		}
 
 		public static bool EhLayerPositionEdit(IHitTestObject hit)
 		{
-			var layer = hit.HittedObject as XYPlotLayer3D;
+			var layer = hit.HittedObject as XYZPlotLayer;
 			if (layer == null)
 				return false;
 

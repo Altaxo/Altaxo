@@ -75,9 +75,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 			public FontX3D FontId { get; set; }
 
-			public IMaterial3D brush;
+			public IMaterial brush;
 
-			public StyleContext(FontX3D font, IMaterial3D brush)
+			public StyleContext(FontX3D font, IMaterial brush)
 			{
 				FontId = font;
 				this.brush = brush;
@@ -662,13 +662,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				string result = string.Empty;
 
 				// first of all, retrieve the actual name
-				var mylayer = obj as HostLayer3D;
+				var mylayer = obj as HostLayer;
 				if (null == mylayer)
 					return result;
 
-				var layer = mylayer as XYPlotLayer3D;
+				var layer = mylayer as XYZPlotLayer;
 				if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
-					layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer3D;
+					layer = mylayer.SiblingLayers[_layerNumber] as XYZPlotLayer;
 				if (null == layer)
 					return result;
 				IGPlotItem pa = null;
@@ -744,12 +744,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				SizeY = 0;
 				SizeZ = 0;
 
-				var mylayer = mc.LinkedObject as HostLayer3D;
+				var mylayer = mc.LinkedObject as HostLayer;
 				if (null == mylayer)
 					return;
-				XYPlotLayer3D layer = mylayer as XYPlotLayer3D;
+				XYZPlotLayer layer = mylayer as XYZPlotLayer;
 				if (_layerNumber >= 0 && null != mylayer.SiblingLayers && _layerNumber < mylayer.SiblingLayers.Count)
-					layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer3D;
+					layer = mylayer.SiblingLayers[_layerNumber] as XYZPlotLayer;
 
 				if (null == layer)
 					return;
@@ -767,12 +767,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
-				var mylayer = (HostLayer3D)dc.LinkedObject;
+				var mylayer = (HostLayer)dc.LinkedObject;
 
-				var layer = mylayer as XYPlotLayer3D;
+				var layer = mylayer as XYZPlotLayer;
 
 				if (_layerNumber >= 0 && mylayer.SiblingLayers != null && _layerNumber < mylayer.SiblingLayers.Count)
-					layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer3D;
+					layer = mylayer.SiblingLayers[_layerNumber] as XYZPlotLayer;
 
 				if (null == layer)
 					return;

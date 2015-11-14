@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 	{
 		protected string _text = ""; // the text, which contains the formatting symbols
 		protected FontX3D _font;
-		protected IMaterial3D _textBrush = Materials.GetSolidMaterial(NamedColors.Black);
+		protected IMaterial _textBrush = Materials.GetSolidMaterial(NamedColors.Black);
 		protected IBackgroundStyle3D _background = null;
 		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 
@@ -85,13 +85,13 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (TextGraphic)o : new TextGraphic(info);
+				var s = (TextGraphic)o ?? new TextGraphic(info);
 
 				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
 
 				s._text = info.GetString("Text");
 				s._font = (FontX3D)info.GetValue("Font", s);
-				s._textBrush = (IMaterial3D)info.GetValue("Brush", s);
+				s._textBrush = (IMaterial)info.GetValue("Brush", s);
 
 				s.Background = (IBackgroundStyle3D)info.GetValue("BackgroundStyle", s);
 
@@ -109,22 +109,22 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		/// <param name="info">The information.</param>
 		protected TextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(new ItemLocationDirectAutoSize3D())
+			: base(new ItemLocationDirectAutoSize())
 		{
 		}
 
 		public TextGraphic(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-			: base(new ItemLocationDirectAutoSize3D())
+			: base(new ItemLocationDirectAutoSize())
 		{
 			if (null == context)
 				context = PropertyExtensions.GetPropertyContextOfProject();
 
-			_font = GraphDocument3D.GetDefaultFont(context);
-			_textBrush = Materials.GetSolidMaterial(GraphDocument3D.GetDefaultForeColor(context));
+			_font = GraphDocument.GetDefaultFont(context);
+			_textBrush = Materials.GetSolidMaterial(GraphDocument.GetDefaultForeColor(context));
 		}
 
 		public TextGraphic(PointD3D graphicPosition, string text, FontX3D textFont, NamedColor textColor)
-			: base(new ItemLocationDirectAutoSize3D())
+			: base(new ItemLocationDirectAutoSize())
 		{
 			this.SetPosition(graphicPosition, Main.EventFiring.Suppressed);
 			this.Font = textFont;
@@ -233,7 +233,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			//var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
 
 			// this._leftTop = new PointD2D(-xanchor, -yanchor);
-			((ItemLocationDirectAutoSize3D)_location).SetSizeInAutoSizeMode(size, false);
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, false);
 
 			this._cachedTextOffset = new PointD3D(distanceXL, distanceYU, 0);
 		}
@@ -348,7 +348,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			}
 		}
 
-		public IMaterial3D TextFillBrush
+		public IMaterial TextFillBrush
 		{
 			get
 			{
@@ -415,7 +415,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		{
 			MeasureContext mc = new MeasureContext();
 			mc.FontCache = cache;
-			mc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer3D>(this);
+			mc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this);
 			mc.TabStop = Glyph.MeasureString("MMMM", _font).X;
 
 			if (null != _rootNode)
@@ -483,7 +483,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				DrawContext dc = new DrawContext();
 				dc.FontCache = fontCache;
 				dc.bForPreview = bForPreview;
-				dc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer3D>(this);
+				dc.LinkedObject = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this);
 				dc.transformMatrix = transformmatrix;
 				dc._cachedSymbolPositions = _cachedSymbolPositions;
 				DrawGlyphs(g, dc, _cachedTextOffset.X, _cachedTextOffset.Y, _cachedTextOffset.Z);

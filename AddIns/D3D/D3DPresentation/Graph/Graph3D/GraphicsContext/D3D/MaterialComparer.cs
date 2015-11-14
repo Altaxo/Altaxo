@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class MaterialComparer : IEqualityComparer<IMaterial3D>
+	public class MaterialComparer : IEqualityComparer<IMaterial>
 	{
 		private const int _hashForMaterialWithoutColorOrTexture = 632982942;
 		private const int _hashForSolidColor = 3853932;
@@ -43,7 +43,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			Instance = new MaterialComparer();
 		}
 
-		public bool Equals(IMaterial3D x, IMaterial3D y)
+		public bool Equals(IMaterial x, IMaterial y)
 		{
 			if (x.GetType() != y.GetType())
 				return false;
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			}
 		}
 
-		public int GetHashCode(IMaterial3D m)
+		public int GetHashCode(IMaterial m)
 		{
 			MaterialWithoutColorOrTexture mwct;
 			SolidColor msc;

@@ -39,14 +39,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		/// </summary>
 		/// <param name="material">The material to use.</param>
 		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
-		PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial3D material);
+		PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
 		/// <summary>
 		/// Gets an indexed triangle buffer with a normal, i.e. either <see cref="IPositionNormalIndexedTriangleBuffer"/>, <see cref="IPositionNormalColorIndexedTriangleBuffer"/> or <see cref="IPositionNormalUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
 		/// </summary>
 		/// <param name="material">The material to use.</param>
 		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
-		PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial3D material);
+		PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
 		#region Primitives rendering
 
@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D, StringFormat strfmt);
 
-		void DrawString(string text, FontX3D font, IMaterial3D brush, PointD3D point, StringFormat strfmt);
+		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, StringFormat strfmt);
 
 		#endregion Primitives rendering
 

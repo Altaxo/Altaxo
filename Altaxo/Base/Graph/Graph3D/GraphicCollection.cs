@@ -35,18 +35,21 @@ namespace Altaxo.Graph.Graph3D
 	/// Summary description for GraphicsObjectCollection.
 	/// </summary>
 	[Serializable]
-	public class GraphicCollection3D
+	public class GraphicCollection
 		:
-		PartitionableList<IGraphicBase3D>
+		PartitionableList<IGraphicBase>
 	{
 		#region "Serialization"
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection3D), 0)]
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				GraphicCollection3D s = (GraphicCollection3D)obj;
+				GraphicCollection s = (GraphicCollection)obj;
 
 				info.CreateArray("GraphObjects", s.Count);
 				for (int i = 0; i < s.Count; i++)
@@ -56,12 +59,12 @@ namespace Altaxo.Graph.Graph3D
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				IList<IGraphicBase3D> s = null != o ? (IList<IGraphicBase3D>)o : new List<IGraphicBase3D>();
+				IList<IGraphicBase> s = null != o ? (IList<IGraphicBase>)o : new List<IGraphicBase>();
 
 				int count = info.OpenArray();
 				for (int i = 0; i < count; i++)
 				{
-					IGraphicBase3D go = (IGraphicBase3D)info.GetValue("e", s);
+					IGraphicBase go = (IGraphicBase)info.GetValue("e", s);
 					s.Add(go);
 				}
 				info.CloseArray(count);
@@ -72,7 +75,7 @@ namespace Altaxo.Graph.Graph3D
 
 		#endregion "Serialization"
 
-		public GraphicCollection3D(Action<IGraphicBase3D> insertAction)
+		public GraphicCollection(Action<IGraphicBase> insertAction)
 			: base(insertAction)
 		{
 		}

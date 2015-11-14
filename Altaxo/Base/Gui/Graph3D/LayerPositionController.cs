@@ -47,14 +47,14 @@ namespace Altaxo.Gui.Graph3D
 	/// Summary description for LayerPositionController.
 	/// </summary>
 	[ExpectedTypeOfView(typeof(ILayerPositionView))]
-	public class LayerPositionController : MVCANDControllerEditOriginalDocBase<IItemLocation3D, ILayerPositionView>
+	public class LayerPositionController : MVCANDControllerEditOriginalDocBase<IItemLocation, ILayerPositionView>
 	{
 		// the document
-		private HostLayer3D _layer;
+		private HostLayer _layer;
 
 		private IMVCANController _subController;
 
-		private Dictionary<Type, IItemLocation3D> _instances;
+		private Dictionary<Type, IItemLocation> _instances;
 
 		protected bool _isRootLayerPosition = false;
 
@@ -75,9 +75,9 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (args.Length < 2)
 				return false;
-			if (!(args[1] is HostLayer3D))
+			if (!(args[1] is HostLayer))
 				return false;
-			_layer = (HostLayer3D)args[1];
+			_layer = (HostLayer)args[1];
 
 			return base.InitializeDocument(args);
 		}
@@ -88,18 +88,18 @@ namespace Altaxo.Gui.Graph3D
 
 			if (initData)
 			{
-				_instances = new Dictionary<Type, IItemLocation3D>();
+				_instances = new Dictionary<Type, IItemLocation>();
 				_instances.Add(_doc.GetType(), _doc);
 
-				if (_layer.ParentLayer == null && !(_doc is ItemLocationDirect3D))
-					_doc = new ItemLocationDirect3D();
+				if (_layer.ParentLayer == null && !(_doc is ItemLocationDirect))
+					_doc = new ItemLocationDirect();
 
 				CreateSubController();
 			}
 
 			if (null != _view)
 			{
-				_view.UseDirectPositioning = _doc is ItemLocationDirect3D;
+				_view.UseDirectPositioning = _doc is ItemLocationDirect;
 				_view.SubPositionView = _subController.ViewObject;
 				_view.IsPositioningTypeChoiceVisible = !IsRootLayerPosition;
 			}
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph3D
 
 		private void CreateSubController()
 		{
-			if (_doc is ItemLocationDirect3D)
+			if (_doc is ItemLocationDirect)
 			{
 				ItemLocationDirectController ctrl;
 				_subController = ctrl = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Graph3D
 				}
 				_subController.InitializeDocument(_doc, _layer.ParentLayerSize);
 			}
-			else if (_doc is ItemLocationByGrid3D)
+			else if (_doc is ItemLocationByGrid)
 			{
 				if (null == _layer.ParentLayer)
 					throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
@@ -153,26 +153,26 @@ namespace Altaxo.Gui.Graph3D
 		private void EhPositioningTypeChanged()
 		{
 			if (_subController.Apply(false))
-				_instances[_subController.ModelObject.GetType()] = (IItemLocation3D)_subController.ModelObject;
+				_instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
 			bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer == null; // if this is the root layer, then choice of grid positioning is not available
 
-			IItemLocation3D oldDoc = _doc;
-			IItemLocation3D newDoc = null;
+			IItemLocation oldDoc = _doc;
+			IItemLocation newDoc = null;
 
 			if (useDirectPositioning)
 			{
-				if (_instances.ContainsKey(typeof(ItemLocationDirect3D)))
-					newDoc = _instances[typeof(ItemLocationDirect3D)];
+				if (_instances.ContainsKey(typeof(ItemLocationDirect)))
+					newDoc = _instances[typeof(ItemLocationDirect)];
 				else
-					newDoc = new ItemLocationDirect3D();
+					newDoc = new ItemLocationDirect();
 			}
 			else
 			{
-				if (_instances.ContainsKey(typeof(ItemLocationByGrid3D)))
-					newDoc = _instances[typeof(ItemLocationByGrid3D)];
+				if (_instances.ContainsKey(typeof(ItemLocationByGrid)))
+					newDoc = _instances[typeof(ItemLocationByGrid)];
 				else
-					newDoc = new ItemLocationByGrid3D();
+					newDoc = new ItemLocationByGrid();
 			}
 
 			if (!object.ReferenceEquals(oldDoc, newDoc))
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph3D
 		{
 			get
 			{
-				return (null != _layer) && (_layer.ParentObject is GraphDocument3D);
+				return (null != _layer) && (_layer.ParentObject is GraphDocument);
 			}
 		}
 	}

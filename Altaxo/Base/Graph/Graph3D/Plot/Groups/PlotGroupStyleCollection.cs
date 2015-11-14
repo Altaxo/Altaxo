@@ -41,12 +41,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		#region Serialization
 
+		/// <summary>
+		/// 2015-11-14 initial version.
+		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollection), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				PlotGroupStyleCollection s = (PlotGroupStyleCollection)obj;
+				var s = (PlotGroupStyleCollection)obj;
 				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 
 				info.AddValue("TransformingStyle", s._coordinateTransformingStyle);
@@ -54,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				PlotGroupStyleCollection s = null != o ? (PlotGroupStyleCollection)o : new PlotGroupStyleCollection();
+				var s = (PlotGroupStyleCollection)o ?? new PlotGroupStyleCollection();
 
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 
