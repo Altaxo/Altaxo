@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D;
-using Altaxo.Graph3D.Background;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.Background;
 using System;
 using System.Collections.Generic;
 using System.Linq;

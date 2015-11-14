@@ -34,14 +34,14 @@ using System.Windows.Input;
 namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Graph;
-	using Altaxo.Graph3D;
-	using Altaxo.Graph3D.Plot;
-	using Altaxo.Graph3D.Plot.Groups;
-	using Altaxo.Graph3D.Shapes;
+	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.Plot;
+	using Altaxo.Graph.Graph3D.Plot.Groups;
+	using Altaxo.Graph.Graph3D.Shapes;
 	using Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers;
 	using Altaxo.Main;
 
-	[UserControllerForObject(typeof(Altaxo.Graph3D.GraphDocument3D))]
+	[UserControllerForObject(typeof(GraphDocument3D))]
 	[ExpectedTypeOfView(typeof(IGraph3DView))]
 	public class Graph3DControllerWpf : Graph3DController
 	{

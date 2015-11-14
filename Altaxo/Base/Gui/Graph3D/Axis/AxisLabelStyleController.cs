@@ -25,9 +25,9 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph;
-using Altaxo.Graph3D;
-using Altaxo.Graph3D.Axis;
-using Altaxo.Graph3D.Background;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.Axis;
+using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
@@ -287,7 +287,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			var type = (System.Type)_labelStyles.FirstSelectedNode.Tag;
 			if (_doc.LabelFormat.GetType() != type)
 			{
-				_doc.LabelFormat = (Altaxo.Graph3D.LabelFormatting.ILabelFormatting)Activator.CreateInstance(type);
+				_doc.LabelFormat = (Altaxo.Graph.Graph3D.LabelFormatting.ILabelFormatting)Activator.CreateInstance(type);
 				_labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
 				if (null != _view)
 					_view.LabelFormattingSpecificGuiControl = null == _labelFormattingSpecificController ? null : _labelFormattingSpecificController.ViewObject;

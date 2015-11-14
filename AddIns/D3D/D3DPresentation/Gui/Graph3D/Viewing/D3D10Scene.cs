@@ -25,8 +25,9 @@
 namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Geometry;
-	using Altaxo.Graph3D;
-	using Altaxo.Graph3D.GraphicsContext.D3D;
+	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
 	using SharpDX;
 	using SharpDX.D3DCompiler;
@@ -84,7 +85,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private D3D10GraphicContext _drawing;
 
-		private Altaxo.Graph3D.SceneSettings _sceneSettings;
+		private SceneSettings _sceneSettings;
 
 		protected Buffer _constantBuffer;
 
@@ -195,7 +196,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			BringDrawingIntoBuffers(drawing);
 		}
 
-		public void SetSceneSettings(Altaxo.Graph3D.SceneSettings sceneSettings)
+		public void SetSceneSettings(SceneSettings sceneSettings)
 		{
 			_sceneSettings = sceneSettings;
 		}
@@ -319,9 +320,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				var target = cam.TargetPosition;
 				var up = cam.UpVector;
 				view = Matrix.LookAtRH(new Vector3((float)eye.X, (float)eye.Y, (float)eye.Z), new Vector3((float)target.X, (float)target.Y, (float)target.Z), new Vector3((float)up.X, (float)up.Y, (float)up.Z));
-				if (cam is Altaxo.Graph3D.Camera.PerspectiveCamera)
+				if (cam is PerspectiveCamera)
 				{
-					var angle = (cam as Altaxo.Graph3D.Camera.PerspectiveCamera).Angle;
+					var angle = (cam as PerspectiveCamera).Angle;
 					proj = Matrix.PerspectiveFovRH((float)angle, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
 					viewProj = Matrix.Multiply(view, proj);
 
@@ -329,9 +330,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					worldViewProjTr = viewProj;
 					worldViewProjTr.Transpose();
 				}
-				else if (cam is Altaxo.Graph3D.Camera.OrthographicCamera)
+				else if (cam is OrthographicCamera)
 				{
-					viewProjD3D = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).GetLookAtRHTimesOrthoRHMatrix(_hostSize.Y / _hostSize.X);
+					viewProjD3D = (cam as OrthographicCamera).GetLookAtRHTimesOrthoRHMatrix(_hostSize.Y / _hostSize.X);
 
 					worldViewProjTr = new Matrix(
 						(float)viewProjD3D.M11, (float)viewProjD3D.M21, (float)viewProjD3D.M31, (float)viewProjD3D.M41,

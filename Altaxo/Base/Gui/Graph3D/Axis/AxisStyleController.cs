@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-using Altaxo.Graph3D.Axis;
+using Altaxo.Graph.Graph3D.Axis;
 using System;
 
 namespace Altaxo.Gui.Graph3D.Axis

@@ -35,7 +35,7 @@ using System.Windows.Documents;
 
 namespace Altaxo.Gui.Graph3D.Material
 {
-	using Altaxo.Graph3D;
+	using Altaxo.Graph.Graph3D;
 	using Altaxo.Gui.Common.Drawing;
 	using Drawing;
 

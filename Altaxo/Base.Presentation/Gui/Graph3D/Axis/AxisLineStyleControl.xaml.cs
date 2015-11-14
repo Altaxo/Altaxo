@@ -31,7 +31,7 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph3D.Axis
 {
-	using Altaxo.Graph3D;
+	using Altaxo.Graph.Graph3D;
 	using Collections;
 
 	/// <summary>

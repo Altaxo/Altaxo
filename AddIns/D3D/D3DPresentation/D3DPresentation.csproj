@@ -79,13 +79,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\MaterialComparer.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialComparer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D11Canvas.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D11BitmapExporter.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D10BitmapExporter.cs" />
@@ -94,8 +94,8 @@
     <Compile Include="Gui\Graph3D\Common\DX11ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
-    <Compile Include="Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\TextureExtensions.cs" />
     <Compile Include="Gui\Graph3D\Viewing\D3D11Scene.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">

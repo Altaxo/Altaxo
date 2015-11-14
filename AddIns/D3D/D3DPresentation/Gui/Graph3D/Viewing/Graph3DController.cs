@@ -8,8 +8,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Collections;
 	using Altaxo.Geometry;
-	using Altaxo.Graph3D;
-	using Altaxo.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Main;
 
 	public class Graph3DController : IDisposable, IMVCANController
@@ -398,7 +399,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var cameraDistance = 10 * Doc.RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
 
-			var newCamera = (Altaxo.Graph3D.Camera.CameraBase)Doc.Scene.Camera.Clone();
+			var newCamera = (CameraBase)Doc.Scene.Camera.Clone();
 			newCamera.UpVector = upVector;
 			newCamera.TargetPosition = targetPosition;
 			newCamera.EyePosition = eyePosition;
@@ -455,7 +456,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			var scene = new Altaxo.Gui.Graph3D.Viewing.D3D10Scene();
 
-			var g = new Altaxo.Graph3D.GraphicsContext.D3D.D3D10GraphicContext();
+			var g = new D3D10GraphicContext();
 
 			Doc.Paint(g);
 

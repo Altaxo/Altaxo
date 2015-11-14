@@ -23,8 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Background;
+using Altaxo.Graph.Graph3D;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
@@ -33,9 +32,8 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph3D.Shapes
 {
-	using Altaxo.Graph3D;
-	using Altaxo.Graph3D.Background;
-	using Altaxo.Graph3D.Shapes;
+	using Altaxo.Graph.Graph3D.Background;
+	using Altaxo.Graph.Graph3D.Shapes;
 	using Drawing;
 
 	#region Interfaces
@@ -112,7 +110,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 	[ExpectedTypeOfView(typeof(ITextGraphicView))]
 	internal class TextGraphicController : MVCANControllerEditOriginalDocBase<TextGraphic, ITextGraphicView>, ITextGraphicViewEventSink
 	{
-		private XYPlotLayer _parentLayerOfOriginalDoc;
+		private XYPlotLayer3D _parentLayerOfOriginalDoc;
 
 		private IMVCANController _locationController;
 
@@ -127,7 +125,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 
 			if (initData)
 			{
-				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(_doc);
+				_parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer3D>(_doc);
 
 				_locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
 				Current.Gui.FindAndAttachControlTo(_locationController);
@@ -169,7 +167,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 				return false;
 
 			if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
-				_doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
+				_doc.Location.CopyFrom((ItemLocationDirect3D)_locationController.ModelObject);
 
 			return ApplyEnd(true, disposeController);
 		}
@@ -244,10 +242,6 @@ namespace Altaxo.Gui.Graph3D.Shapes
 			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 			g.FillRectangle(Brushes.Transparent, g.VisibleClipBounds);
 			g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-
-			var paintContext = new GdiPaintContext();
-
-			//_doc.Paint(g, paintContext, true);
 		}
 
 		public void EhView_EditTextChanged()

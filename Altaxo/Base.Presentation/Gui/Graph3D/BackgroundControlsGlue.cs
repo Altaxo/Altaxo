@@ -23,8 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
-using Altaxo.Graph3D;
-using Altaxo.Graph3D.Background;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph3D.Material;
 using System;
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Graph3D
 
 				_cbBrush = value;
 				_cbBrush.ShowPlotColorsOnly = _showPlotColorsOnly;
-				_cbBrush.SelectedMaterial = Altaxo.Graph3D.Materials.GetSolidMaterial(NamedColors.Aqua);
+				_cbBrush.SelectedMaterial = Materials.GetSolidMaterial(NamedColors.Aqua);
 
 				if (_doc != null && _cbBrush != null && _doc.Material != null)
 					_cbBrush.SelectedMaterial = _doc.Material;

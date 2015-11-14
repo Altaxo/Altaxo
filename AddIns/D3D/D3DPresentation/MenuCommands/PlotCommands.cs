@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Worksheet.Commands
 {
-	using Altaxo.Graph3D;
 	using Data;
+	using Graph.Graph3D;
+	using Graph.Graph3D.Plot;
+	using Graph.Graph3D.Plot.Styles;
 	using Graph.Plot.Data;
-	using Graph3D.Plot;
-	using Graph3D.Plot.Styles;
 
 	/// <summary>
 	/// Ensure that the PresentationCore dll is loaded.
@@ -40,7 +40,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
-			var graph = Graph3D.GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
+			var graph = GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
 			var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
 
@@ -60,7 +60,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
-			var graph = Graph3D.GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
+			var graph = GraphDocument3DBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
 			AddDensityImage(ctrl, graph);
 

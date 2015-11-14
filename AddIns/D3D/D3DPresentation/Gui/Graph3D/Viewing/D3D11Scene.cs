@@ -24,8 +24,9 @@
 
 namespace Altaxo.Gui.Graph3D.Viewing
 {
-	using Altaxo.Graph3D;
-	using Altaxo.Graph3D.GraphicsContext.D3D;
+	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
 	using Geometry;
 	using SharpDX;
@@ -86,7 +87,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private D3D10GraphicContext _drawing;
 
-		private Altaxo.Graph3D.SceneSettings _sceneSettings;
+		private SceneSettings _sceneSettings;
 
 		protected Buffer _constantBuffer;
 
@@ -198,7 +199,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			BringDrawingIntoBuffers(drawing);
 		}
 
-		public void SetSceneSettings(Altaxo.Graph3D.SceneSettings sceneSettings)
+		public void SetSceneSettings(SceneSettings sceneSettings)
 		{
 			_sceneSettings = sceneSettings;
 		}
@@ -320,14 +321,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				var target = cam.TargetPosition;
 				var up = cam.UpVector;
 				view = Matrix.LookAtRH(new Vector3((float)eye.X, (float)eye.Y, (float)eye.Z), new Vector3((float)target.X, (float)target.Y, (float)target.Z), new Vector3((float)up.X, (float)up.Y, (float)up.Z));
-				if (cam is Altaxo.Graph3D.Camera.PerspectiveCamera)
+				if (cam is PerspectiveCamera)
 				{
-					var angle = (cam as Altaxo.Graph3D.Camera.PerspectiveCamera).Angle;
+					var angle = (cam as PerspectiveCamera).Angle;
 					proj = Matrix.PerspectiveFovRH((float)angle, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
 				}
-				else if (cam is Altaxo.Graph3D.Camera.OrthographicCamera)
+				else if (cam is OrthographicCamera)
 				{
-					var scale = (cam as Altaxo.Graph3D.Camera.OrthographicCamera).Scale;
+					var scale = (cam as OrthographicCamera).Scale;
 					proj = Matrix.OrthoRH((float)scale, (float)(scale * _hostSize.Y / _hostSize.X), 1.0f, 2000.0f);
 				}
 				else

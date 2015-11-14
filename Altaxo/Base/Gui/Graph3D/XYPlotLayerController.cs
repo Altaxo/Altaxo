@@ -24,8 +24,8 @@
 
 using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph3D;
-using Altaxo.Graph3D.Axis;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Gui.Graph3D.Axis;
 using System;
 using System.Collections.Generic;

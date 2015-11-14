@@ -32,8 +32,8 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph3D.Axis
 {
 	using Altaxo.Graph.Gdi.Background;
-	using Altaxo.Graph3D;
-	using Altaxo.Graph3D.Background;
+	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.Background;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml

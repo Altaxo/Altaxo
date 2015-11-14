@@ -25,7 +25,8 @@
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph;
-using Altaxo.Graph3D;
+using Altaxo.Graph.Graph3D;
+using Altaxo.Graph.Graph3D.Primitives;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -106,7 +107,7 @@ namespace Altaxo.Gui
 
 		public WpfFontManager()
 		{
-			Altaxo.Graph3D.FontManager3D.Instance = new WpfFontManager3D();
+			FontManager3D.Instance = new WpfFontManager3D();
 		}
 
 		/// <summary>
@@ -574,7 +575,7 @@ namespace Altaxo.Gui
 		/// <summary>
 		/// Extension to <see cref="Altaxo.Graph3D.FontManager3D"/> that implements the method to get the raw character outline of a character.
 		/// </summary>
-		protected class WpfFontManager3D : Altaxo.Graph3D.FontManager3D
+		protected class WpfFontManager3D : Altaxo.Graph.Graph3D.FontManager3D
 		{
 			/// <summary>
 			/// Gets the raw character outline, i.e. the polygonal shape that forms a character. The polygons are in their raw form, i.e. not simplified.
@@ -635,7 +636,7 @@ namespace Altaxo.Gui
 				double offsetX = 0;
 				bool isFirst = true;
 
-				Altaxo.Graph3D.Primitives.CharacterGeometry geo = null;
+				CharacterGeometry geo = null;
 
 				foreach (var c in text)
 				{
