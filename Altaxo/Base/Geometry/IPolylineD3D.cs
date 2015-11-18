@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
@@ -30,19 +29,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Geometry
 {
-	using GraphicsContext;
-
-	public interface IMaterial : Altaxo.Main.IImmutable, IEquatable<IMaterial>
+	public interface IPolylineD3D
 	{
-		NamedColor Color { get; }
+		PointD3D GetPoint(int idx);
 
-		bool HasColor { get; }
-		bool HasTexture { get; }
+		int Count { get; }
 
-		IMaterial WithColor(NamedColor color);
-
-		void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD);
+		bool IsTransitionFromIdxToNextIdxSharp(int idx);
 	}
 }

@@ -30,21 +30,24 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
-	public class Text3D
+	/// <summary>
+	/// Represents the solid geometry of a text string.
+	/// </summary>
+	public class SolidText
 	{
-		private string _text = "Käppi";
+		private string _text;
 		private double _fontSize = 12;
 		private double _depth = 3;
 		private FontX3D _font;
 		private const double distanceCutThreshold = 0.0001;
 
-		public Text3D()
+		public SolidText()
 		{
 		}
 
-		public Text3D(string text, FontX3D font)
+		public SolidText(string text, FontX3D font)
 		{
 			_text = text;
 			_fontSize = font.Size;
@@ -92,10 +95,8 @@ namespace Altaxo.Graph.Graph3D.Primitives
 			return Math.Sqrt(dx * dx + dy * dy);
 		}
 
-		public void AddWithNormals(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int startIndex)
+		public void AddWithNormals(Func<FontX, char, CharacterGeometry> GetCharacterGeometry, Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int startIndex)
 		{
-			var fm = FontManager3D.Instance;
-
 			double positionX = 0;
 			double positionY = 0;
 
@@ -103,7 +104,7 @@ namespace Altaxo.Graph.Graph3D.Primitives
 
 			foreach (var textChar in _text)
 			{
-				var charGeo = fm.GetCharacterGeometry(_font.Font, textChar);
+				var charGeo = GetCharacterGeometry(_font.Font, textChar);
 
 				double scale = this._fontSize / charGeo.FontSize;
 

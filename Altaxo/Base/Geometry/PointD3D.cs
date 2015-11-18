@@ -36,6 +36,34 @@ namespace Altaxo.Geometry
 		public double Y;
 		public double Z;
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-16 initial version 0.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD3D), 1)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (PointD3D)obj;
+				info.AddValue("X", s.X);
+				info.AddValue("Y", s.Y);
+				info.AddValue("Z", s.Z);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = null != o ? (PointD3D)o : new PointD3D();
+				s.X = info.GetDouble("X");
+				s.Y = info.GetDouble("Y");
+				s.Z = info.GetDouble("Z");
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public PointD3D(double x, double y, double z)
 		{
 			X = x;

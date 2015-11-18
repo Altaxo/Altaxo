@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Gui.Common.Drawing;

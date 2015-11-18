@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.GraphicsContext;
+	using Drawing.D3D;
 	using SharpDX;
 
 	public class D3D10GraphicContext : GraphicContext3DBase, IDisposable

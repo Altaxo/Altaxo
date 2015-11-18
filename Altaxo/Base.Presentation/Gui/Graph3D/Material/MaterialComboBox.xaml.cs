@@ -38,6 +38,7 @@ namespace Altaxo.Gui.Graph3D.Material
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Gui.Common.Drawing;
 	using Drawing;
+	using Drawing.D3D;
 
 	/// <summary>
 	/// Interaction logic for ColorComboBoxEx.xaml

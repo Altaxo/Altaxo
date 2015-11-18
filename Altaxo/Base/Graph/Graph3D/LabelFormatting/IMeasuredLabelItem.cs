@@ -28,6 +28,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
+	using Drawing.D3D;
 	using GraphicsContext;
 
 	/// <summary>

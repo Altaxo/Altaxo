@@ -29,9 +29,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
-	public class Cube
+	/// <summary>
+	/// Represents the solid geometry of a cube.
+	/// </summary>
+	public class SolidCube
 	{
 		public static void Add(double _x, double _y, double _z, double _dx, double _dy, double _dz,
 			Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int offset)

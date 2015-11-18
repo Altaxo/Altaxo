@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 {
 	using Background;
 	using Drawing;
+	using Drawing.D3D;
 	using GraphicsContext;
 	using Plot;
 

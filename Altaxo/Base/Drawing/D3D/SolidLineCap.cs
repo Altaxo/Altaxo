@@ -28,15 +28,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
-	public abstract class LineCap3D
+	public abstract class SolidLineCap
 	{
 	}
 
-	public class CrossSectionShapedLineCap : LineCap3D
+	public class CrossSectionShapedLineCap : SolidLineCap
 	{
-		public void Add(CrossSectionOfLine crossSection, LineCap3DContour contour, VectorD3D e, VectorD3D n, PointD3D start,
+		public void Add(ICrossSectionOfLine crossSection, LineCapContour contour, VectorD3D e, VectorD3D n, PointD3D start,
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
 			Action<int, int, int> AddIndices,
 			ref int startIndex)

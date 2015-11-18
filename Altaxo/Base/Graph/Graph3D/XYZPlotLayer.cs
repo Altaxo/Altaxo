@@ -25,7 +25,6 @@
 using Altaxo.Collections;
 using Altaxo.Geometry;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Scales.Ticks;
@@ -84,7 +83,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// 2015-11-14 initial version
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZPlotLayer), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -148,23 +147,23 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-			/// <summary>
-			/// Takes final measures after the deserialization has finished, but before the dirty flag is cleared. Here, the scale bounds are updated with
-			/// the data from the project.
-			/// </summary>
-			/// <param name="info">The deserialization information.</param>
-			/// <param name="documentRoot">The document root of the current document.</param>
-			/// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
-			protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+		/// <summary>
+		/// Takes final measures after the deserialization has finished, but before the dirty flag is cleared. Here, the scale bounds are updated with
+		/// the data from the project.
+		/// </summary>
+		/// <param name="info">The deserialization information.</param>
+		/// <param name="documentRoot">The document root of the current document.</param>
+		/// <param name="isFinallyCall">If set to <c>true</c> this is the last callback before the dirty flag is cleared for the document.</param>
+		protected virtual void EhDeserializationFinished(Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
+		{
+			if (isFinallyCall)
 			{
-				if (isFinallyCall)
-				{
-					// after deserialisation the data bounds object of the scale is empty:
-					// then we have to rescale the axis
-					if (this.Scales.X.DataBoundsObject.IsEmpty)
-						this.InitializeXScaleDataBounds();
-					if (this.Scales.Y.DataBoundsObject.IsEmpty)
-						this.InitializeYScaleDataBounds();
+				// after deserialisation the data bounds object of the scale is empty:
+				// then we have to rescale the axis
+				if (this.Scales.X.DataBoundsObject.IsEmpty)
+					this.InitializeXScaleDataBounds();
+				if (this.Scales.Y.DataBoundsObject.IsEmpty)
+					this.InitializeYScaleDataBounds();
 				if (this.Scales.Z.DataBoundsObject.IsEmpty)
 					this.InitializeZScaleDataBounds();
 			}
@@ -191,7 +190,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="obj">The object (layer) from which to copy.</param>
 		/// <param name="options">Copy options.</param>
-		protected override void InternalCopyFrom(HostLayer obj, GraphCopyOptions options)
+		protected override void InternalCopyFrom(HostLayer obj, Gdi.GraphCopyOptions options)
 		{
 			base.InternalCopyFrom(obj, options); // base copy, but keep in mind that InternalCopyGraphItems is overridden in this class
 
@@ -199,7 +198,7 @@ namespace Altaxo.Graph.Graph3D
 			if (null == from)
 				return;
 
-			if (0 != (options & GraphCopyOptions.CopyLayerScales))
+			if (0 != (options & Gdi.GraphCopyOptions.CopyLayerScales))
 			{
 				this.CoordinateSystem = (G3DCoordinateSystem)from.CoordinateSystem.Clone();
 
@@ -210,35 +209,35 @@ namespace Altaxo.Graph.Graph3D
 			// Coordinate Systems size must be updated in any case
 			this.CoordinateSystem.UpdateAreaSize(this._cachedLayerSize);
 
-			if (0 != (options & GraphCopyOptions.CopyLayerGrid))
+			if (0 != (options & Gdi.GraphCopyOptions.CopyLayerGrid))
 			{
 				this.GridPlanes = from._gridPlanes.Clone();
 			}
 
 			// Styles
 
-			if (0 != (options & GraphCopyOptions.CopyLayerAxes))
+			if (0 != (options & Gdi.GraphCopyOptions.CopyLayerAxes))
 			{
 				this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
 			}
 
 			// Plot items
-			if (0 != (options & GraphCopyOptions.CopyLayerPlotItems))
+			if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotItems))
 			{
 				this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems, true);
 			}
-			else if (0 != (options & GraphCopyOptions.CopyLayerPlotStyles))
+			else if (0 != (options & Gdi.GraphCopyOptions.CopyLayerPlotStyles))
 			{
 				// TODO apply the styles from from._plotItems to the PlotItems here
 				this.PlotItems.CopyFrom(from._plotItems, options);
 			}
 		}
 
-		protected override void InternalCopyGraphItems(HostLayer from, GraphCopyOptions options)
+		protected override void InternalCopyGraphItems(HostLayer from, Gdi.GraphCopyOptions options)
 		{
-			bool bGraphItems = options.HasFlag(GraphCopyOptions.CopyLayerGraphItems);
-			bool bChildLayers = options.HasFlag(GraphCopyOptions.CopyChildLayers);
-			bool bLegends = options.HasFlag(GraphCopyOptions.CopyLayerLegends);
+			bool bGraphItems = options.HasFlag(Gdi.GraphCopyOptions.CopyLayerGraphItems);
+			bool bChildLayers = options.HasFlag(Gdi.GraphCopyOptions.CopyChildLayers);
+			bool bLegends = options.HasFlag(Gdi.GraphCopyOptions.CopyLayerLegends);
 
 			var criterium = new Func<IGraphicBase, bool>(x =>
 			{
@@ -269,7 +268,7 @@ namespace Altaxo.Graph.Graph3D
 		{
 			this.CoordinateSystem = new CS.G3DCartesicCoordinateSystem();
 			this.AxisStyles = new AxisStyleCollection();
-			this.Scales = new ScaleCollection();
+			this.Scales = new ScaleCollection(3);
 			this.Location = new ItemLocationDirect();
 			this.GridPlanes = new GridPlaneCollection();
 			this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));

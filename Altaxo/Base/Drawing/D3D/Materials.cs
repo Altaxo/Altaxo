@@ -30,10 +30,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Drawing.D3D
 {
-	using GraphicsContext;
-
 	public class Materials
 	{
 		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
@@ -85,10 +83,6 @@ namespace Altaxo.Graph.Graph3D
 			return other is MaterialWithoutColorOrTexture;
 		}
 
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
-		}
-
 		public IMaterial WithColor(NamedColor color)
 		{
 			return this;
@@ -98,6 +92,30 @@ namespace Altaxo.Graph.Graph3D
 	public class SolidColor : IMaterial
 	{
 		private NamedColor _color;
+
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-18 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidColor), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (SolidColor)obj;
+
+				info.AddValue("Color", s._color);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var color = (NamedColor)info.GetValue("Color", null);
+				return new SolidColor(color);
+			}
+		}
+
+		#endregion Serialization
 
 		public SolidColor(NamedColor color)
 		{
@@ -132,10 +150,6 @@ namespace Altaxo.Graph.Graph3D
 		{
 			var othersd = other as SolidColor;
 			return null != othersd && this.Color == othersd.Color;
-		}
-
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
 		}
 
 		public IMaterial WithColor(NamedColor color)

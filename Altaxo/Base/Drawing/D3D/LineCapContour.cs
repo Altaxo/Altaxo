@@ -28,9 +28,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
-	public class LineCap3DContour
+	public class LineCapContour
 	{
 		private PointD3D[] _vertices;
 		private bool[] _isVertexSharp;
@@ -49,12 +49,12 @@ namespace Altaxo.Graph.Graph3D.Primitives
 				_normals[i].Normalize();
 		}
 
-		public static LineCap3DContour Ball
+		public static LineCapContour Ball
 		{
 			get
 			{
 				const int segments = 4;
-				var r = new LineCap3DContour();
+				var r = new LineCapContour();
 				r._vertices = new PointD3D[2 + segments];
 				r._normals = new VectorD3D[2 + segments];
 				r._isVertexSharp = new bool[2 + segments];
@@ -79,11 +79,11 @@ namespace Altaxo.Graph.Graph3D.Primitives
 			}
 		}
 
-		public static LineCap3DContour Arrow
+		public static LineCapContour Arrow
 		{
 			get
 			{
-				LineCap3DContour r = new LineCap3DContour();
+				LineCapContour r = new LineCapContour();
 				r._vertices = new PointD3D[3];
 				r._vertices[0] = new PointD3D(0, 0, 0);
 				r._vertices[1] = new PointD3D(1, 0, 0);
@@ -106,11 +106,11 @@ namespace Altaxo.Graph.Graph3D.Primitives
 			}
 		}
 
-		public static LineCap3DContour BigArrow
+		public static LineCapContour BigArrow
 		{
 			get
 			{
-				LineCap3DContour r = new LineCap3DContour();
+				LineCapContour r = new LineCapContour();
 				r._vertices = new PointD3D[3];
 				r._vertices[0] = new PointD3D(0, 0, 0);
 				r._vertices[1] = new PointD3D(2, 0, 0);
@@ -133,11 +133,11 @@ namespace Altaxo.Graph.Graph3D.Primitives
 			}
 		}
 
-		public static LineCap3DContour Block
+		public static LineCapContour Block
 		{
 			get
 			{
-				LineCap3DContour r = new LineCap3DContour();
+				LineCapContour r = new LineCapContour();
 				r._vertices = new PointD3D[4];
 				r._vertices[0] = new PointD3D(0, 0, 0);
 				r._vertices[1] = new PointD3D(1, 0, 0);

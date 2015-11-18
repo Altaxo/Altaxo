@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
+	using Drawing.D3D;
 	using GraphicsContext;
 
 	public class GraphDocument
@@ -161,7 +162,7 @@ namespace Altaxo.Graph.Graph3D
 		#region "Serialization"
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 0)]
-		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -173,8 +174,8 @@ namespace Altaxo.Graph.Graph3D
 				info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("RootLayer", s._rootLayer);
-
 				info.AddValue("Properties", s._graphProperties);
+				info.AddValue("SceneSettings", s._sceneSettings);
 			}
 
 			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -186,6 +187,7 @@ namespace Altaxo.Graph.Graph3D
 				s._notes.Text = info.GetString("Notes");
 				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
 				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
+				s.ChildSetMember(ref s._sceneSettings, (SceneSettings)info.GetValue("SceneSetting", s));
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

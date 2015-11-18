@@ -100,6 +100,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			return new BrowserListItem(name, showFullName, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
 		}
 
+		public static BrowserListItem GetBrowserListItem(Altaxo.Graph.Graph3D.GraphDocument t, bool showFullName)
+		{
+			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
+			return new BrowserListItem(name, showFullName, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
+		}
+
 		public static BrowserListItem GetBrowserListItem(Altaxo.Main.Properties.ProjectFolderPropertyDocument t, bool showFullName)
 		{
 			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
@@ -115,11 +121,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public static BrowserListItem GetBrowserListItemFromObject(object t, bool showFullName)
 		{
 			Altaxo.Graph.Gdi.GraphDocument gd;
+			Altaxo.Graph.Graph3D.GraphDocument g3;
 			Altaxo.Data.DataTable dt;
 			Altaxo.Main.Properties.ProjectFolderPropertyDocument propBag;
 			string folder;
 			if (null != (gd = t as Altaxo.Graph.Gdi.GraphDocument))
 				return GetBrowserListItem(gd, showFullName);
+			if (null != (g3 = t as Altaxo.Graph.Graph3D.GraphDocument))
+				return GetBrowserListItem(g3, showFullName);
 			else if (null != (dt = t as Altaxo.Data.DataTable))
 				return GetBrowserListItem(dt, showFullName);
 			else if (null != (propBag = t as Altaxo.Main.Properties.ProjectFolderPropertyDocument))
@@ -149,6 +158,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				_list.Add(GetBrowserListItem(t, true));
 			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
 				_list.Add(GetBrowserListItem(t, true));
+			foreach (Altaxo.Graph.Graph3D.GraphDocument t in Current.Project.Graph3DDocumentCollection)
+				_list.Add(GetBrowserListItem(t, true));
 			foreach (var t in Current.Project.ProjectFolderProperties)
 				_list.Add(GetBrowserListItem(t, true));
 
@@ -163,6 +174,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			GetItemList();
 			Current.Project.DataTableCollection.CollectionChanged += EhCollectionChanged;
 			Current.Project.GraphDocumentCollection.CollectionChanged += EhCollectionChanged;
+			Current.Project.Graph3DDocumentCollection.CollectionChanged += EhCollectionChanged;
 			Current.Project.ProjectFolderProperties.CollectionChanged += EhCollectionChanged;
 			OnListChange();
 		}
@@ -174,6 +186,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			Current.Project.DataTableCollection.CollectionChanged -= EhCollectionChanged;
 			Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
+			Current.Project.Graph3DDocumentCollection.CollectionChanged -= EhCollectionChanged;
 			Current.Project.ProjectFolderProperties.CollectionChanged -= EhCollectionChanged;
 		}
 
@@ -236,6 +249,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			_list = new SelectableListNodeList();
 			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
+				_list.Add(GetBrowserListItem(t, true));
+			foreach (Altaxo.Graph.Graph3D.GraphDocument t in Current.Project.Graph3DDocumentCollection)
 				_list.Add(GetBrowserListItem(t, true));
 
 			return _list;

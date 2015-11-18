@@ -35,6 +35,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 	using Altaxo.Graph.Graph3D.Background;
 	using Altaxo.Graph.Graph3D.Shapes;
 	using Drawing;
+	using Drawing.D3D;
 
 	#region Interfaces
 

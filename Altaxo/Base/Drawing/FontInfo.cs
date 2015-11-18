@@ -22,21 +22,33 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing
 {
-	public interface ISweepPath3D
+	/// <summary>
+	/// Holds Information about the metrics of a font.
+	/// </summary>
+	public class FontInfo
 	{
-		PointD3D GetPoint(int idx);
+		public double cyLineSpace { get; private set; } // cached linespace value of the font
 
-		int Count { get; }
+		public double cyAscent { get; private set; }    // cached ascent value of the font
 
-		bool IsTransitionFromIdxToNextIdxSharp(int idx);
+		public double cyDescent { get; private set; } /// cached descent value of the font
+
+		public double Size { get; private set; }
+
+		public FontInfo(double cylinespace, double cyascent, double cydescent, double size)
+		{
+			cyLineSpace = cylinespace;
+			cyAscent = cyascent;
+			cyDescent = cydescent;
+			Size = size;
+		}
 	}
 }

@@ -42,7 +42,10 @@ namespace Altaxo.Worksheet.Commands
 
 			var graph = GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
-			var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
+			Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
+			/*
+
+var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
 
 			if (null == graphController.ViewObject)
 				Current.Gui.FindAndAttachControlTo(graphController);
@@ -51,6 +54,7 @@ namespace Altaxo.Worksheet.Commands
 
 			if (null != Current.Workbench)
 				Current.Workbench.ShowView(viewContent);
+		*/
 		}
 	}
 

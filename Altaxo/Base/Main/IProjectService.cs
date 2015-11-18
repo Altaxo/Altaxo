@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 
@@ -240,7 +239,14 @@ namespace Altaxo.Main
 		/// <param name="graph">The graph document to delete.</param>
 		/// <param name="force">If true, the graph document is deleted without safety question,
 		/// if false, the user is ask before the graph document is deleted.</param>
-		void DeleteGraphDocument(GraphDocument graph, bool force);
+		void DeleteGraphDocument(Graph.Gdi.GraphDocument graph, bool force);
+
+		/// <summary>
+		/// This function will delete a project document and close all corresponding views.
+		/// </summary>
+		/// <param name="document">The document (project item) to delete.</param>
+		/// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
+		void DeleteDocument(IProjectItem document, bool force);
 
 		/// <summary>
 		/// Creates a new table and the view content for the newly created table.
@@ -309,7 +315,14 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph document.</param>
 		/// <returns>The view content for the provided graph document.</returns>
-		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(GraphDocument graph);
+		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(Graph.Gdi.GraphDocument graph);
+
+		/// <summary>
+		/// Creates a new view content for a graph document.
+		/// </summary>
+		/// <param name="graph">The graph document.</param>
+		/// <returns>The view content for the provided graph document.</returns>
+		Altaxo.Gui.Graph3D.Viewing.IGraphController CreateNewGraph3D(Graph.Graph3D.GraphDocument graph);
 
 		/// <summary>
 		/// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,
@@ -317,7 +330,15 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph for which a view must be found.</param>
 		/// <returns>The view content for the provided graph.</returns>
-		object OpenOrCreateGraphForGraphDocument(GraphDocument graph);
+		object OpenOrCreateGraphForGraphDocument(Graph.Gdi.GraphDocument graph);
+
+		/// <summary>
+		/// Opens a view that shows the document <paramref name="document"/>. If no view for the document can be found,
+		/// a new default view is created.
+		/// </summary>
+		/// <param name="document">The document for which a view must be found.</param>
+		/// <returns>The view content for the provided graph.</returns>
+		object OpenOrCreateViewContentForDocument(IProjectItem document);
 
 		/// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
 		/// <param name="ctrl">The Graph to remove.</param>

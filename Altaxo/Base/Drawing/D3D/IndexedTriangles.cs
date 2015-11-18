@@ -1,8 +1,8 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,44 +22,25 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Material
+namespace Altaxo.Drawing.D3D
 {
-	public interface IMaterialViewSimple
+	using Altaxo.Geometry;
+	using Altaxo.Graph;
+
+	public class IndexedTriangles
 	{
-		IMaterial SelectedMaterial { get; set; }
-	}
+		public PointD2D[] Vertices { get; private set; }
+		public int[] TriangleIndices { get; private set; }
 
-	[UserControllerForObject(typeof(IMaterial))]
-	[ExpectedTypeOfView(typeof(IMaterialViewSimple))]
-	public class BrushControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialViewSimple>
-	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		public IndexedTriangles(PointD2D[] vertices, int[] triangleIndices)
 		{
-			yield break;
-		}
-
-		protected override void Initialize(bool initData)
-		{
-			base.Initialize(initData);
-
-			if (_view != null)
-			{
-				_view.SelectedMaterial = _doc;
-			}
-		}
-
-		public override bool Apply(bool disposeController)
-		{
-			if (_doc != null)
-				_doc = _view.SelectedMaterial;
-
-			return ApplyEnd(true, disposeController);
+			Vertices = vertices;
+			TriangleIndices = triangleIndices;
 		}
 	}
 }

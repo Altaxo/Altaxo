@@ -39,6 +39,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using Altaxo.Graph.Gdi.Plot;
 	using Altaxo.Graph.Gdi.Plot.ColorProvider;
 	using Altaxo.Graph.Scales.Ticks;
+	using Drawing.D3D;
 	using Graph.Plot.Data;
 	using GraphicsContext;
 

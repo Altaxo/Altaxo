@@ -28,17 +28,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
 	/// <summary>
-	/// Represents the cross section of an line. It is assumed here that the midpoint of the line is the point (0,0) and that all
+	/// Represents the cross section of a line. It is assumed here that the midpoint of the line is the point (0,0) and that all
 	/// edges can be connected to the midpoint without leaving the cross section.
 	/// </summary>
 	public class CrossSectionOfLine : ICrossSectionOfLine
 	{
-		private PointD3D[] _vertices;
-		private bool[] _isVertexSharp;
-		private VectorD3D[] _normals;
+		protected double _size1, _size2;
+
+		protected PointD3D[] _vertices;
+		protected bool[] _isVertexSharp;
+		protected VectorD3D[] _normals;
+
+		public double Size1 { get { return _size1; } }
+		public double Size2 { get { return _size2; } }
+
+		public virtual ICrossSectionOfLine WithSize(double size1, double size2)
+		{
+			if (_size1 == size1 && _size2 == size2)
+			{
+				return this;
+			}
+			else
+			{
+				double scaleX = size1 / _size1;
+				double scaleY = size2 / _size2;
+
+				var result = new CrossSectionOfLine();
+				result._size1 = size1;
+				result._size2 = size2;
+				result._vertices = new PointD3D[this._vertices.Length];
+				for (int i = 0; i < _vertices.Length; ++i)
+					result._vertices[i] = new PointD3D(_vertices[i].X * scaleX, _vertices[i].Y * scaleY, _vertices[i].Z);
+				result._isVertexSharp = (bool[])this._isVertexSharp.Clone();
+				result._normals = new VectorD3D[this._normals.Length];
+				for (int i = 0; i < _normals.Length; ++i)
+					result._normals[i] = new VectorD3D(_normals[i].X * scaleY, _normals[i].Y * scaleX, _normals[i].Z).Normalized;
+				return result;
+			}
+		}
+
+		public virtual ICrossSectionOfLine WithSize1(double size1)
+		{
+			return WithSize(size1, _size2);
+		}
+
+		public virtual ICrossSectionOfLine WithSize2(double size2)
+		{
+			return WithSize(_size1, size2);
+		}
 
 		public PointD3D[] Vertices { get { return _vertices; } }
 		public bool[] IsVertexSharp { get { return _isVertexSharp; } }

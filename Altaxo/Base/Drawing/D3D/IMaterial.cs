@@ -22,20 +22,23 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
-	public interface ICrossSectionOfLine
+	public interface IMaterial : Altaxo.Main.IImmutable, IEquatable<IMaterial>
 	{
-		bool[] IsVertexSharp { get; }
-		VectorD3D[] Normals { get; }
-		int NumberOfNormals { get; }
-		int NumberOfVertices { get; }
-		PointD3D[] Vertices { get; }
+		NamedColor Color { get; }
 
-		double GetDistanceFromCenter(int i);
+		bool HasColor { get; }
+		bool HasTexture { get; }
 
-		double GetMaximalDistanceFromCenter();
+		IMaterial WithColor(NamedColor color);
 	}
 }

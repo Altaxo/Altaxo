@@ -34,6 +34,7 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Graph3D.Axis
 {
 	using Drawing;
+	using Drawing.D3D;
 	using Geometry;
 	using GraphicsContext;
 	using LabelFormatting;
@@ -787,7 +788,6 @@ namespace Altaxo.Graph.Graph3D.Axis
 				if (this._backgroundStyle != null)
 					_backgroundStyle.Draw(g, new RectangleD3D(PointD3D.Empty, msize));
 
-				_brush.SetEnvironment(g, new RectangleD3D(PointD3D.Empty, msize));
 				labels[i].Draw(g, _brush, PointD3D.Empty);
 				g.RestoreGraphicsState(gs); // Restore the graphics state
 			}

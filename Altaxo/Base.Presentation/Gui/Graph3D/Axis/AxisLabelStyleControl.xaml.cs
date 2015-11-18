@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 	using Altaxo.Graph.Gdi.Background;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Background;
+	using Drawing.D3D;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml
@@ -41,7 +42,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 	public partial class AxisLabelStyleControl : UserControl, IAxisLabelStyleView
 	{
 		private BackgroundControlsGlue _backgroundGlue;
-		private GdiFontGlue _fontGlue;
+		private FontX3DGlue _fontGlue;
 
 		public AxisLabelStyleControl()
 		{
@@ -50,7 +51,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			_backgroundGlue.CbBrush = _cbBackgroundBrush;
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
 
-			_fontGlue = new GdiFontGlue();
+			_fontGlue = new FontX3DGlue();
 			_fontGlue.GuiFontFamily = m_cbFontFamily;
 			_fontGlue.GuiFontStyle = m_cbFontStyle;
 			_fontGlue.GuiFontSize = m_cbFontSize;

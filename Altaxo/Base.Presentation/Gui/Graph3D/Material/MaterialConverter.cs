@@ -1,4 +1,5 @@
 ﻿using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using System;

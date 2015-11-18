@@ -31,7 +31,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	using Primitives;
+	using Drawing;
+	using Drawing.D3D;
 
 	public abstract class GraphicContext3DBase : IGraphicContext3D
 	{
@@ -79,7 +80,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public virtual void DrawLineObsolete(PenX3D pen, PointD3D p0, PointD3D p1)
 		{
-			var line = new Polyline3D(pen.CrossSection, new[] { p0, p1 });
+			var line = new SolidPolyline(pen.CrossSection, new[] { p0, p1 });
 			var buffers = GetPositionIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
 
 			var offset = buffers.IndexedTriangleBuffer.VertexCount;
@@ -106,7 +107,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public virtual void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1)
 		{
-			var line = new Polyline3D(pen.CrossSection, new[] { p0, p1 });
+			var line = new SolidPolyline(pen.CrossSection, new[] { p0, p1 });
 			var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
 			var offset = buffers.IndexedTriangleBuffer.VertexCount;
 
@@ -142,9 +143,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			}
 		}
 
-		public virtual void DrawLine(PenX3D pen, ISweepPath3D path)
+		public virtual void DrawLine(PenX3D pen, IPolylineD3D path)
 		{
-			var asStraightLine = path as Primitives.StraightLineSweepPath3D;
+			var asStraightLine = path as StraightLineAsPolylineD3D;
 
 			if (null != asStraightLine)
 			{
@@ -152,10 +153,10 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				return;
 			}
 
-			var asSweepPath = path as Primitives.SweepPath3D;
+			var asSweepPath = path as SweepPath3D;
 			if (null != asSweepPath)
 			{
-				var line = new Polyline3D(pen.CrossSection, asSweepPath.Points);
+				var line = new SolidPolyline(pen.CrossSection, asSweepPath.Points);
 				var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
 				var offset = buffers.IndexedTriangleBuffer.VertexCount;
 
@@ -203,7 +204,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, System.Drawing.StringFormat strfmt)
 		{
-			var txt = new Text3D(text, font);
+			var txt = new SolidText(text, font);
 
 			var buffers = GetPositionNormalIndexedTriangleBuffer(brush);
 			var offset = buffers.IndexedTriangleBuffer.VertexCount;
@@ -212,6 +213,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			{
 				var buf = buffers.PositionNormalIndexedTriangleBuffer;
 				txt.AddWithNormals(
+					FontManager3D.Instance.GetCharacterGeometry,
 				(position, normal) => buf.AddTriangleVertex(position.X + point.X, position.Y + point.Y, position.Z + point.Z, normal.X, normal.Y, normal.Z),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);
@@ -226,6 +228,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				var a = color.ScA;
 
 				txt.AddWithNormals(
+					FontManager3D.Instance.GetCharacterGeometry,
 				(position, normal) => buf.AddTriangleVertex(position.X + point.X, position.Y + point.Y, position.Z + point.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);

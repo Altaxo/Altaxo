@@ -31,6 +31,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
+	using Drawing.D3D;
 	using GraphicsContext;
 
 	/// <summary>

@@ -30,7 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Drawing.D3D
 {
 	public class FontX3D
 	{

@@ -29,10 +29,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Drawing.D3D
 {
 	using Altaxo.Geometry;
 	using Drawing;
+	using Drawing.D3D;
 
 	public class FontManager3D
 	{
@@ -41,7 +42,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// The _cached character outlines. Key is the invariant Gdi typeface name (without size information, as obtained with <see cref="Altaxo.Graph.FontX.InvariantDescriptionStringWithoutSizeInformation"/>). Value is a dictionary with text character as key and the polygonal shape of this character as value.
 		/// </summary>
-		protected Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, Primitives.CharacterGeometry>>();
+		protected Dictionary<string, Dictionary<char, CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, CharacterGeometry>>();
 
 		protected Bitmap _bmp = new Bitmap(16, 16);
 		protected Graphics _graphics;
@@ -109,18 +110,18 @@ namespace Altaxo.Graph.Graph3D
 
 		protected const double FontSizeForCaching = 1024;
 
-		public Primitives.CharacterGeometry GetCharacterGeometry(FontX font, char textChar)
+		public CharacterGeometry GetCharacterGeometry(FontX font, char textChar)
 		{
 			var typefaceName = font.InvariantDescriptionStringWithoutSizeInformation;
 
-			Dictionary<char, Primitives.CharacterGeometry> cachedCharacters;
+			Dictionary<char, CharacterGeometry> cachedCharacters;
 			if (!_cachedCharacterOutlines.TryGetValue(typefaceName, out cachedCharacters))
 			{
-				cachedCharacters = new Dictionary<char, Primitives.CharacterGeometry>();
+				cachedCharacters = new Dictionary<char, CharacterGeometry>();
 				_cachedCharacterOutlines.Add(typefaceName, cachedCharacters);
 			}
 
-			Primitives.CharacterGeometry cachedChar;
+			CharacterGeometry cachedChar;
 			if (!cachedCharacters.TryGetValue(textChar, out cachedChar))
 			{
 				cachedChar = InternalGetCharacterGeometryForCaching(textChar, font);
@@ -130,7 +131,7 @@ namespace Altaxo.Graph.Graph3D
 			return cachedChar;
 		}
 
-		protected Primitives.CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, FontX font)
+		protected CharacterGeometry InternalGetCharacterGeometryForCaching(char textChar, FontX font)
 		{
 			var charOutline = InternalGetCharacterOutlineForCaching(textChar, font); // get the - already simplified - polygonal shape of the character
 
@@ -140,7 +141,7 @@ namespace Altaxo.Graph.Graph3D
 
 			var indexedTriangles = Triangulate(polygons); // Triangles that can be used for the front and the back side of the character
 
-			var result = new Primitives.CharacterGeometry(
+			var result = new CharacterGeometry(
 				polygonsWithNormal, indexedTriangles,
 				charOutline.FontSize, charOutline.LineSpacing, charOutline.Baseline,
 				charOutline.AdvanceWidth, charOutline.LeftSideBearing, charOutline.RightSideBearing);
@@ -153,7 +154,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="polygons">The polygons to triangulate.</param>
 		/// <returns>Instance of the <see cref="Primitives.IndexedTriangles"/> class, which holds the triangle vertices as well as the indices.</returns>
-		private static Primitives.IndexedTriangles Triangulate(IList<PolygonClosedD2D> polygons)
+		private static IndexedTriangles Triangulate(IList<PolygonClosedD2D> polygons)
 		{
 			var triangles = GetTriangles(polygons);
 			var pointList = new List<PointD2D>();
@@ -195,7 +196,7 @@ namespace Altaxo.Graph.Graph3D
 				}
 			}
 
-			var indexedTriangles = new Primitives.IndexedTriangles(pointList.ToArray(), indexList.ToArray());
+			var indexedTriangles = new IndexedTriangles(pointList.ToArray(), indexList.ToArray());
 			return indexedTriangles;
 		}
 

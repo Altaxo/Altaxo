@@ -34,6 +34,31 @@ namespace Altaxo.Graph.Graph3D
 	{
 		private Camera.CameraBase _camera;
 
+		#region Serialization
+
+		/// <summary>
+		/// 2015-11-18 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SceneSettings), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (SceneSettings)obj;
+
+				info.AddValue("Camera", s._camera);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (SceneSettings)o ?? new SceneSettings();
+				s._camera = (Camera.CameraBase)info.GetValue("Camera", s);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
 		public SceneSettings()
 		{
 			//_camera = new Camera.PerspectiveCamera();

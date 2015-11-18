@@ -22,60 +22,49 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
+using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D
+namespace Altaxo.Gui.Graph3D.Viewing
 {
-	/// <summary>
-	/// Interaction logic for ColorTypeThicknessPenControl.xaml
-	/// </summary>
-	public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
+	public interface IGraphController : IMVCANController
 	{
-		private PenControlsGlue _glue;
+		/// <summary>
+		/// This returns the GraphDocument that is managed by this controller.
+		/// </summary>
+		GraphDocument Doc { get; }
 
-		public ColorTypeThicknessPenControl()
-		{
-			InitializeComponent();
+		/// <summary>
+		/// Returns the currently active layer, or null if there is no active layer.
+		/// </summary>
+		HostLayer ActiveLayer { get; }
 
-			_glue = new PenControlsGlue(false);
-			_glue.CbBrush = _cbColor;
-			//_glue.CbDashStyle = _cbLineType;
-			_glue.CbLineThickness1 = _cbThickness;
-		}
+		/// <summary>
+		/// Get / sets the currently active plot by number.
+		/// </summary>
+		int CurrentPlotNumber { get; set; }
 
-		#region IColorTypeThicknessPenView
+		/// <summary>
+		/// check the validity of the CurrentLayerNumber and correct it
+		/// </summary>
+		/// <returns>The currently active layer.</returns>
+		HostLayer EnsureValidityOfCurrentLayerNumber();
 
-		private IColorTypeThicknessPenViewEventSink _controller;
+		/// <summary>
+		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
+		/// the current plot number is set to -1.
+		/// </summary>
+		void EnsureValidityOfCurrentPlotNumber();
 
-		public IColorTypeThicknessPenViewEventSink Controller
-		{
-			get { return _controller; }
-			set { _controller = value; }
-		}
-
-		public PenX3D DocPen
-		{
-			get
-			{
-				return _glue.Pen;
-			}
-			set
-			{
-				_glue.Pen = value;
-			}
-		}
-
-		public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
-		{
-			_glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
-		}
-
-		#endregion IColorTypeThicknessPenView
+		/// <summary>
+		/// Does a complete new drawing of the graph, even if the graph is cached in a bitmap.
+		/// </summary>
+		void RefreshGraph();
 	}
 }

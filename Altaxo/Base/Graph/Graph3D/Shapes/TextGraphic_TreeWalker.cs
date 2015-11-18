@@ -86,6 +86,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 	using Altaxo.Graph;
 	using Altaxo.Main.PegParser;
 	using Drawing;
+	using Drawing.D3D;
 
 	public partial class TextGraphic : GraphicBase
 	{

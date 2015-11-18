@@ -94,6 +94,12 @@ namespace Altaxo.Graph.Gdi
 			return _graphsByName.ContainsKey(graphname);
 		}
 
+		public bool Contains(GraphDocument doc)
+		{
+			GraphDocument containedDoc;
+			return TryGetValue(doc.Name, out containedDoc) && object.ReferenceEquals(doc, containedDoc);
+		}
+
 		public bool TryGetValue(string graphName, out GraphDocument doc)
 		{
 			return _graphsByName.TryGetValue(graphName, out doc);

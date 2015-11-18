@@ -23,51 +23,28 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Drawing.D3D
 {
-	public class StraightLineSweepPath3D : ISweepPath3D
+	public interface ICrossSectionOfLine : Altaxo.Main.IImmutable
 	{
-		private PointD3D _p0, _p1;
+		double Size1 { get; }
+		double Size2 { get; }
 
-		public StraightLineSweepPath3D(PointD3D p0, PointD3D p1)
-		{
-			_p0 = p0;
-			_p1 = p1;
-		}
+		ICrossSectionOfLine WithSize(double size1, double size2);
 
-		public int Count
-		{
-			get
-			{
-				return 2;
-			}
-		}
+		ICrossSectionOfLine WithSize1(double size1);
 
-		public PointD3D GetPoint(int idx)
-		{
-			switch (idx)
-			{
-				case 0:
-					return _p0;
-					break;
+		ICrossSectionOfLine WithSize2(double size2);
 
-				case 1:
-					return _p1;
+		bool[] IsVertexSharp { get; }
+		VectorD3D[] Normals { get; }
+		int NumberOfNormals { get; }
+		int NumberOfVertices { get; }
+		PointD3D[] Vertices { get; }
 
-				default:
-					throw new ArgumentOutOfRangeException(nameof(idx));
-			}
-		}
+		double GetDistanceFromCenter(int i);
 
-		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
-		{
-			return true;
-		}
+		double GetMaximalDistanceFromCenter();
 	}
 }

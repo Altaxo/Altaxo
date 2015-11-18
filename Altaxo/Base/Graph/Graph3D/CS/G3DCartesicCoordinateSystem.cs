@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,12 +88,12 @@ namespace Altaxo.Graph.Graph3D.CS
 			return new G3DCartesicCoordinateSystem();
 		}
 
-		public override ISweepPath3D GetIsoline(Logical3D r0, Logical3D r1)
+		public override IPolylineD3D GetIsoline(Logical3D r0, Logical3D r1)
 		{
 			PointD3D pt0, pt1;
 			LogicalToLayerCoordinates(r0, out pt0);
 			LogicalToLayerCoordinates(r1, out pt1);
-			return new Primitives.StraightLineSweepPath3D(pt0, pt1);
+			return new StraightLineAsPolylineD3D(pt0, pt1);
 		}
 
 		public override bool LayerToLogicalCoordinates(PointD3D location, out Logical3D r)

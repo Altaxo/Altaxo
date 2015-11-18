@@ -26,21 +26,47 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Geometry
 {
-	using Altaxo.Geometry;
-	using Altaxo.Graph;
-
-	public class IndexedTriangles
+	public class StraightLineAsPolylineD3D : IPolylineD3D
 	{
-		public PointD2D[] Vertices { get; private set; }
-		public int[] TriangleIndices { get; private set; }
+		private PointD3D _p0, _p1;
 
-		public IndexedTriangles(PointD2D[] vertices, int[] triangleIndices)
+		public StraightLineAsPolylineD3D(PointD3D p0, PointD3D p1)
 		{
-			Vertices = vertices;
-			TriangleIndices = triangleIndices;
+			_p0 = p0;
+			_p1 = p1;
+		}
+
+		public int Count
+		{
+			get
+			{
+				return 2;
+			}
+		}
+
+		public PointD3D GetPoint(int idx)
+		{
+			switch (idx)
+			{
+				case 0:
+					return _p0;
+					break;
+
+				case 1:
+					return _p1;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(idx));
+			}
+		}
+
+		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
+		{
+			return true;
 		}
 	}
 }

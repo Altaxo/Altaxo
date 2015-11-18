@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using Altaxo.Main;
 using Altaxo.Serialization;
 using System;
@@ -44,6 +43,9 @@ namespace Altaxo
 
 		/// <summary>Collection of all graphs in this document.</summary>
 		protected Altaxo.Graph.Gdi.GraphDocumentCollection _graphs = null; // all graphs are stored here
+
+		/// <summary>Collection of all graphs in this document.</summary>
+		protected Altaxo.Graph.Graph3D.GraphDocumentCollection _graphs3D = null; // all graphs are stored here
 
 		/// <summary>
 		/// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
@@ -70,7 +72,9 @@ namespace Altaxo
 		public AltaxoDocument()
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);
-			_graphs = new GraphDocumentCollection(this);
+			_graphs = new Graph.Gdi.GraphDocumentCollection(this);
+			_graphs3D = new Graph.Graph3D.GraphDocumentCollection(this);
+
 			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyDocumentCollection(this);
 			_tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
 			_fitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection(this);
@@ -105,11 +109,30 @@ namespace Altaxo
 			}
 
 			// second, we save all graphs into the Graphs subdirectory
-			foreach (GraphDocument graph in this._graphs)
+			foreach (Graph.Gdi.GraphDocument graph in this._graphs)
 			{
 				try
 				{
 					zippedStream.StartFile("Graphs/" + graph.Name + ".xml", compressionLevel);
+					//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
+					//zippedStream.PutNextEntry(ZipEntry);
+					//zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream.Stream);
+					info.AddValue("Graph", graph);
+					info.EndWriting();
+				}
+				catch (Exception exc)
+				{
+					errorText.Append(exc.ToString());
+				}
+			}
+
+			// second, we save all graphs into the Graphs3D subdirectory
+			foreach (Graph.Graph3D.GraphDocument graph in this._graphs3D)
+			{
+				try
+				{
+					zippedStream.StartFile("Graphs3D/" + graph.Name + ".xml", compressionLevel);
 					//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
 					//zippedStream.PutNextEntry(ZipEntry);
 					//zippedStream.SetLevel(0);
@@ -217,8 +240,17 @@ namespace Altaxo
 						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 						info.BeginReading(zipinpstream);
 						object readedobject = info.GetValue("Graph", null);
-						if (readedobject is GraphDocument)
-							this._graphs.Add((GraphDocument)readedobject);
+						if (readedobject is Graph.Gdi.GraphDocument)
+							this._graphs.Add((Graph.Gdi.GraphDocument)readedobject);
+						info.EndReading();
+					}
+					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Graphs3D/"))
+					{
+						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
+						info.BeginReading(zipinpstream);
+						object readedobject = info.GetValue("Graph", null);
+						if (readedobject is Graph.Graph3D.GraphDocument)
+							this._graphs3D.Add((Graph.Graph3D.GraphDocument)readedobject);
 						info.EndReading();
 					}
 					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("TableLayouts/"))
@@ -290,6 +322,11 @@ namespace Altaxo
 		public Altaxo.Graph.Gdi.GraphDocumentCollection GraphDocumentCollection
 		{
 			get { return _graphs; }
+		}
+
+		public Altaxo.Graph.Graph3D.GraphDocumentCollection Graph3DDocumentCollection
+		{
+			get { return _graphs3D; }
 		}
 
 		public Altaxo.Worksheet.WorksheetLayoutCollection TableLayouts
@@ -421,6 +458,9 @@ namespace Altaxo
 				case "Graphs":
 					return this._graphs;
 
+				case "Graphs3D":
+					return this._graphs3D;
+
 				case "TableLayouts":
 					return this._tableLayouts;
 
@@ -444,6 +484,8 @@ namespace Altaxo
 				return "Tables";
 			else if (object.ReferenceEquals(o, this._graphs))
 				return "Graphs";
+			else if (object.ReferenceEquals(o, this._graphs3D))
+				return "Graphs3D";
 			else if (object.ReferenceEquals(o, this._tableLayouts))
 				return "TableLayouts";
 			else if (object.ReferenceEquals(o, this._fitFunctionScripts))
@@ -463,6 +505,9 @@ namespace Altaxo
 
 			if (null != _graphs)
 				yield return new Main.DocumentNodeAndName(_graphs, () => _graphs = null, "Graphs");
+
+			if (null != _graphs3D)
+				yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null, "Graphs3D");
 
 			if (null != _tableLayouts)
 				yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
@@ -491,6 +536,7 @@ namespace Altaxo
 			{
 				yield return typeof(Altaxo.Data.DataTable);
 				yield return typeof(Altaxo.Graph.Gdi.GraphDocument);
+				yield return typeof(Altaxo.Graph.Graph3D.GraphDocument);
 				yield return typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument);
 			}
 		}
@@ -506,6 +552,8 @@ namespace Altaxo
 				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
 			else if (type == typeof(Altaxo.Graph.Gdi.GraphDocument))
 				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.GraphDocumentCollection);
+			else if (type == typeof(Altaxo.Graph.Graph3D.GraphDocument))
+				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.Graph3DDocumentCollection);
 			else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
 				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.ProjectFolderProperties);
 			else
@@ -533,6 +581,40 @@ namespace Altaxo
 		/// <param name="item">The item to add.</param>
 		/// <exception cref="System.ArgumentNullException">item</exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
+		public bool ContainsItem(IProjectItem item)
+		{
+			if (null == item)
+				throw new ArgumentNullException(nameof(item));
+
+			if (item is Altaxo.Data.DataTable)
+			{
+				return this.DataTableCollection.Contains((Altaxo.Data.DataTable)item);
+			}
+			else if (item is Altaxo.Graph.Gdi.GraphDocument)
+			{
+				return this.GraphDocumentCollection.Contains((Altaxo.Graph.Gdi.GraphDocument)item);
+			}
+			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
+			{
+				return this.Graph3DDocumentCollection.Contains((Altaxo.Graph.Graph3D.GraphDocument)item);
+			}
+			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+			{
+				return this.ProjectFolderProperties.Contains(item.Name);
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException(string.Format("Processing an item of type {0} is currently not implemented", item.GetType()));
+			}
+		}
+
+		/// <summary>
+		/// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. For <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>s,
+		/// if a document with the same name is already present, the properties are merged.
+		/// </summary>
+		/// <param name="item">The item to add.</param>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
 		public void AddItem(IProjectItem item)
 		{
 			if (null == item)
@@ -545,6 +627,10 @@ namespace Altaxo
 			else if (item is Altaxo.Graph.Gdi.GraphDocument)
 			{
 				this.GraphDocumentCollection.Add((Altaxo.Graph.Gdi.GraphDocument)item);
+			}
+			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
+			{
+				this.Graph3DDocumentCollection.Add((Altaxo.Graph.Graph3D.GraphDocument)item);
 			}
 			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 			{
@@ -587,6 +673,11 @@ namespace Altaxo
 			{
 				if (this.GraphDocumentCollection.Contains(item.Name))
 					return this.GraphDocumentCollection[item.Name];
+			}
+			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
+			{
+				if (this.Graph3DDocumentCollection.Contains(item.Name))
+					return this.Graph3DDocumentCollection[item.Name];
 			}
 			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 			{
@@ -631,6 +722,10 @@ namespace Altaxo
 			else if (item is Altaxo.Graph.Gdi.GraphDocument)
 			{
 				this.GraphDocumentCollection.Remove((Altaxo.Graph.Gdi.GraphDocument)item);
+			}
+			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
+			{
+				this.Graph3DDocumentCollection.Remove((Altaxo.Graph.Graph3D.GraphDocument)item);
 			}
 			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 			{

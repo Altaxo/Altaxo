@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +30,7 @@ using System.Threading.Tasks;
 
 using System.Windows;
 
-namespace Altaxo.Graph.Graph3D.Primitives
+namespace Altaxo.Geometry
 {
 	using Altaxo.Graph;
 

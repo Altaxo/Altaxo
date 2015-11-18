@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Material
 {
+	using Drawing.D3D;
 	using GraphicsContext;
 
 	public sealed class NoMaterial : IMaterial
@@ -50,11 +51,6 @@ namespace Altaxo.Graph.Graph3D.Material
 		public bool Equals(IMaterial other)
 		{
 			return object.ReferenceEquals(other, this);
-		}
-
-		public void SetEnvironment(IGraphicContext3D g, RectangleD3D rectangleD)
-		{
-			throw new NotImplementedException();
 		}
 
 		public IMaterial WithColor(NamedColor color)

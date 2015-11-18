@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
@@ -54,7 +55,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1);
 
-		void DrawLine(PenX3D pen, Primitives.ISweepPath3D path);
+		void DrawLine(PenX3D pen, IPolylineD3D path);
 
 		VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D, StringFormat strfmt);
 

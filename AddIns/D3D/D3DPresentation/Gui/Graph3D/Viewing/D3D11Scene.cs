@@ -28,6 +28,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
+	using Drawing.D3D;
 	using Geometry;
 	using SharpDX;
 	using SharpDX.D3DCompiler;

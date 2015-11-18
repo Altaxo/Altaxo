@@ -23,10 +23,10 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
-using Altaxo.Graph.Graph3D.Primitives;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -573,9 +573,9 @@ namespace Altaxo.Gui
 		#region FontManager3D override
 
 		/// <summary>
-		/// Extension to <see cref="Altaxo.Graph3D.FontManager3D"/> that implements the method to get the raw character outline of a character.
+		/// Extension to <see cref="Altaxo.Drawing.D3D.FontManager3D"/> that implements the method to get the raw character outline of a character.
 		/// </summary>
-		protected class WpfFontManager3D : Altaxo.Graph.Graph3D.FontManager3D
+		protected class WpfFontManager3D : Altaxo.Drawing.D3D.FontManager3D
 		{
 			/// <summary>
 			/// Gets the raw character outline, i.e. the polygonal shape that forms a character. The polygons are in their raw form, i.e. not simplified.

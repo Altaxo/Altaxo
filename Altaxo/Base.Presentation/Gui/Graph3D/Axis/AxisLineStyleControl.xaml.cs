@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 {
 	using Altaxo.Graph.Graph3D;
 	using Collections;
+	using Drawing.D3D;
 
 	/// <summary>
 	/// Interaction logic for AxisLineStyleControl.xaml
@@ -186,7 +187,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_majorPenGlue.Pen = value;
 				if (value != null)
 				{
-					CustomMajorColor = !PenX3D.AreEqualUnlessWidth(value, _linePenGlue.Pen);
+					CustomMajorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
 					CustomMajorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
 				}
 			}
@@ -203,7 +204,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_minorPenGlue.Pen = value;
 				if (value != null)
 				{
-					CustomMinorColor = !PenX3D.AreEqualUnlessWidth(value, _linePenGlue.Pen);
+					CustomMinorColor = !PenX3D.AreEqualUnlessThickness(value, _linePenGlue.Pen);
 					CustomMinorThickness = (value.Thickness1 != _linePenGlue.Pen.Thickness1);
 				}
 			}

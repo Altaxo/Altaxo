@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;

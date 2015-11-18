@@ -742,6 +742,8 @@ namespace Altaxo.Main
 				OpenOrCreateWorksheetForTable((Altaxo.Data.DataTable)document);
 			else if (document is Altaxo.Graph.Gdi.GraphDocument)
 				OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)document);
+			else if (document is IProjectItem)
+				OpenOrCreateViewContentForDocument((IProjectItem)document);
 		}
 
 		private void SelectFirstAvailableView()
@@ -761,6 +763,127 @@ namespace Altaxo.Main
 				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowView(firstView, true);
 			 */
 		}
+
+		#region IProjectItem functions
+
+		/// <summary>
+		/// This function will delete a project item and close the corresponding views.
+		/// </summary>
+		/// <param name="document">The project item to delete</param>
+		/// <param name="force">If true, the document is deleted without safety question,
+		/// if false, the user is ask before the document is deleted.</param>
+		public void DeleteDocument(Main.IProjectItem document, bool force)
+		{
+			if (null == document)
+				throw new ArgumentNullException(nameof(document));
+
+			Current.Gui.Execute(DeleteDocument_Unsynchronized, document, force);
+		}
+
+		private void DeleteDocument_Unsynchronized(Main.IProjectItem document, bool force)
+		{
+			if (!force &&
+				false == Current.Gui.YesNoMessageBox(string.Format("Are you sure to remove the {0} and the corresponding views?", document.GetType().Name), "Attention", false))
+				return;
+
+			// close all windows
+			List<IViewContent> foundContent = SearchContentForDocument(document, int.MaxValue);
+			foreach (IViewContent content in foundContent)
+			{
+				content.WorkbenchWindow.CloseWindow(true);
+			}
+
+			Current.Project.RemoveItem(document);
+
+			// the following sequence is related to a bug encountered when closing a tabbed window by the program:
+			// the active view content is not updated because the dockpanel lost the focus
+			// to circumvent this, we focus on a new viewcontent, in this case the first one
+			SelectFirstAvailableView();
+		}
+
+		/// <summary>
+		/// Opens a view that shows the <paramref name="document"/>. If no view for the document can be found,
+		/// a new default view is created.
+		/// </summary>
+		/// <param name="document">The document for which a view must be found. This parameter must not be null.</param>
+		/// <returns>The view content for the provided document.</returns>
+		public object OpenOrCreateViewContentForDocument(IProjectItem document)
+		{
+			if (null == document)
+				throw new ArgumentNullException(nameof(document));
+
+			return Current.Gui.Evaluate(OpenOrCreateViewContentForDocument_Unsynchronized, document);
+		}
+
+		private object OpenOrCreateViewContentForDocument_Unsynchronized(IProjectItem document)
+		{
+			// if a content exist that show that graph, activate that content
+			List<IViewContent> foundContent = SearchContentForDocument(document, 1);
+			if (foundContent.Count > 0)
+			{
+				foundContent[0].WorkbenchWindow.SelectWindow();
+				return foundContent[0];
+			}
+
+			return CreateNewViewContent_Unsynchronized(document);
+
+			/*
+      if (document is Altaxo.Data.DataTable)
+				return CreateNewWorksheet_Unsynchronized((Altaxo.Data.DataTable)document);
+			else if (document is Altaxo.Graph.Gdi.GraphDocument)
+				return CreateNewGraph_Unsynchronized((Altaxo.Graph.Gdi.GraphDocument)document);     // otherwise create a new graph view
+			else if (document is Altaxo.Graph.Graph3D.GraphDocument)
+				return CreateNewGraph3D_Unsynchronized((Altaxo.Graph.Graph3D.GraphDocument)document);     // otherwise create a new graph view
+			else
+				throw new NotImplementedException(string.Format("Not implemented for type {0}", document?.GetType()));
+				*/
+		}
+
+		private IMVCController CreateNewViewContent_Unsynchronized(IProjectItem document)
+		{
+			if (document == null)
+				throw new ArgumentNullException(nameof(document));
+
+			// make sure that the item is already contained in the project
+			if (!Current.Project.ContainsItem(document))
+				Current.Project.AddItem(document);
+
+			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICSharpCode.SharpDevelop.Gui.AbstractViewContent));
+			System.Reflection.ConstructorInfo cinfo = null;
+			object viewContent = null;
+			foreach (Type type in types)
+			{
+				if (null != (cinfo = type.GetConstructor(new Type[] { typeof(Altaxo.Graph.Graph3D.GraphDocument) })))
+				{
+					var par = cinfo.GetParameters()[0];
+					if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
+					{
+						viewContent = cinfo.Invoke(new object[] { document });
+						break;
+					}
+				}
+			}
+
+			if (null == viewContent)
+				return null;
+
+			var viewContentAsControllerWrapper = viewContent as Altaxo.Gui.IMVCControllerWrapper;
+
+			if (null == viewContentAsControllerWrapper)
+				throw new InvalidOperationException("All Altaxo classes implementing SDGraphViewContent have to implement IMVCControllerWrapper, too!");
+
+			if (viewContentAsControllerWrapper.MVCController.ViewObject == null)
+			{
+				Current.Gui.FindAndAttachControlTo(viewContentAsControllerWrapper.MVCController);
+			}
+
+			if (null != Current.Workbench)
+				Current.Workbench.ShowView(viewContent);
+
+			return viewContentAsControllerWrapper.MVCController;
+		}
+
+		#endregion IProjectItem functions
 
 		#region Worksheet functions
 
@@ -1104,6 +1227,64 @@ namespace Altaxo.Main
 		}
 
 		#endregion Graph functions
+
+		#region Graph3D functions
+
+		/// <summary>
+		/// Creates a new graph document and the view content..
+		/// </summary>
+		/// <returns>The view content for the newly created graph.</returns>
+		public Altaxo.Gui.Graph3D.Viewing.IGraphController CreateNewGraph3D(Altaxo.Graph.Graph3D.GraphDocument doc)
+		{
+			if (null == doc)
+			{
+				doc = Altaxo.Graph.Graph3D.GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName));
+			}
+
+			return (Altaxo.Gui.Graph3D.Viewing.IGraphController)Current.Gui.Evaluate(CreateNewGraph3D_Unsynchronized, doc);
+		}
+
+		private IMVCController CreateNewGraph3D_Unsynchronized(Altaxo.Graph.Graph3D.GraphDocument graph)
+		{
+			if (graph == null)
+				throw new ArgumentNullException(nameof(graph));
+
+			// make sure that new graph is contained in project
+			if (!Current.Project.Graph3DDocumentCollection.Contains(graph.Name))
+				Current.Project.AddItem(graph);
+
+			var types = Altaxo.Main.Services.ReflectionService.GetSubclassesOf(typeof(Altaxo.Gui.SharpDevelop.SDGraphViewContent));
+			System.Reflection.ConstructorInfo cinfo = null;
+			foreach (Type type in types)
+			{
+				if (null != (cinfo = type.GetConstructor(new Type[] { typeof(Altaxo.Graph.Graph3D.GraphDocument) })))
+				{
+					break;
+				}
+			}
+
+			if (null == cinfo)
+				return null;
+
+			var viewContent = (Altaxo.Gui.SharpDevelop.SDGraphViewContent)cinfo.Invoke(new object[] { graph });
+
+			var viewContentAsControllerWrapper = viewContent as Altaxo.Gui.IMVCControllerWrapper;
+
+			if (null == viewContentAsControllerWrapper)
+				throw new InvalidOperationException("All Altaxo classes implementing SDGraphViewContent have to implement IMVCControllerWrapper, too!");
+
+			if (viewContentAsControllerWrapper.MVCController.ViewObject == null)
+			{
+				Current.Gui.FindAndAttachControlTo(viewContentAsControllerWrapper.MVCController);
+			}
+
+			if (null != Current.Workbench)
+				Current.Workbench.ShowView(viewContent);
+
+			return viewContentAsControllerWrapper.MVCController;
+		}
+
+		#endregion Graph3D functions
 
 		private void EhProjectDirtyChanged(object sender, EventArgs e)
 		{

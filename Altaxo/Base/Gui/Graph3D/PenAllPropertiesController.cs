@@ -30,6 +30,7 @@ using System.Text;
 namespace Altaxo.Gui.Graph3D
 {
 	using Altaxo.Graph.Graph3D;
+	using Drawing.D3D;
 
 	#region Interfaces
 

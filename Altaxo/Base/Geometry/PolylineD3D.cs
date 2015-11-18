@@ -22,33 +22,73 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Drawing.D3D
 {
-	/// <summary>
-	/// Holds Information about the metrics of a font.
-	/// </summary>
-	public class FontInfo
+	public class SweepPath3D : IPolylineD3D
 	{
-		public double cyLineSpace { get; private set; } // cached linespace value of the font
+		private List<PointD3D> _points = new List<PointD3D>();
+		private List<bool> _isSharpTransition = new List<bool>();
 
-		public double cyAscent { get; private set; }    // cached ascent value of the font
-
-		public double cyDescent { get; private set; } /// cached descent value of the font
-
-		public double Size { get; private set; }
-
-		public FontInfo(double cylinespace, double cyascent, double cydescent, double size)
+		public SweepPath3D(PointD3D p1, PointD3D p2)
 		{
-			cyLineSpace = cylinespace;
-			cyAscent = cyascent;
-			cyDescent = cydescent;
-			Size = size;
+			_points.Add(p1);
+			_points.Add(p2);
+		}
+
+		public void AddPoint(PointD3D point, bool isNextTransitionSharp)
+		{
+			var idx = _points.Count;
+
+			_points.Add(point);
+
+			var count = _isSharpTransition.Count;
+			if (idx == count)
+			{
+				_isSharpTransition.Add(isNextTransitionSharp);
+			}
+			else if (idx < count)
+			{
+				_isSharpTransition[idx] = isNextTransitionSharp;
+			}
+			else
+			{
+				for (int i = count; i < idx; ++i)
+					_isSharpTransition.Add(false);
+				_isSharpTransition[idx] = isNextTransitionSharp;
+			}
+		}
+
+		public PointD3D GetPoint(int idx)
+		{
+			return _points[idx];
+		}
+
+		public IList<PointD3D> Points
+		{
+			get
+			{
+				return _points;
+			}
+		}
+
+		public int Count
+		{
+			get
+			{
+				return _points.Count;
+			}
+		}
+
+		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
+		{
+			return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
 		}
 	}
 }
