@@ -216,6 +216,7 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ListView_DropHandler.cs" />
     <Compile Include="Main\MenuCommands\EmbeddedObjectModeEvaluator.cs" />
     <Compile Include="Main\MenuCommands\TableDataSourcePresentCondition.cs" />
+    <Compile Include="Main\IProjectItemDisplayBindingDescriptor.cs" />
     <Compile Include="UnmanagedApi\Advapi32\Advapi32Func.cs" />
     <Compile Include="UnmanagedApi\Advapi32\Enumerations.cs" />
     <Compile Include="UnmanagedApi\Advapi32\Structs.cs" />

@@ -40,8 +40,9 @@ namespace Altaxo.Graph
 		private string _nameOfSecondUpSide;
 		private CSAxisSide _preferedLabelSide;
 		private bool _isShownByDefault;
-
 		private bool _hasTitleByDefault;
+		private bool _hasTicksByDefault = true;
+		private bool _hasLabelsByDefault = true;
 
 		/// <summary>This is the logical value where the axis starts. Normally, this is 0 (zero). For a segment of an axis, this might be any value.</summary>
 		private double _logicalValueAxisOrg;
@@ -217,6 +218,18 @@ namespace Altaxo.Graph
 		{
 			get { return _hasTitleByDefault; }
 			set { _hasTitleByDefault = value; }
+		}
+
+		public bool HasTicksByDefault
+		{
+			get { return _hasTicksByDefault; }
+			set { _hasTicksByDefault = value; }
+		}
+
+		public bool HasLabelsByDefault
+		{
+			get { return _hasLabelsByDefault; }
+			set { _hasLabelsByDefault = value; }
 		}
 
 		/// <summary>This is the logical value where the axis starts. Normally, this is 0 (zero). For a segment of an axis, this might be any value.</summary>

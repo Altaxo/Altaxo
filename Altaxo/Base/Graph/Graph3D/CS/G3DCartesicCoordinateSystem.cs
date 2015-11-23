@@ -318,8 +318,10 @@ namespace Altaxo.Graph.Graph3D.CS
 						item.NameOfSecondUpSide = GetAxisSideName(lineId, CSAxisSide.SecondUp);
 						item.NameOfAxisStyle = GetAxisLineName(lineId);
 						item.PreferedLabelSide = GetPreferredLabelSide(lineId);
-						item.IsShownByDefault = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
-						item.HasTitleByDefault = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
+						item.IsShownByDefault = true; // lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
+						item.HasTicksByDefault = true;
+						item.HasLabelsByDefault = true;
+						item.HasTitleByDefault = true; // lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
 
 						_axisStyleInformation.Add(item);
 					}

@@ -853,7 +853,7 @@ namespace Altaxo.Main
 			object viewContent = null;
 			foreach (Type type in types)
 			{
-				if (null != (cinfo = type.GetConstructor(new Type[] { typeof(Altaxo.Graph.Graph3D.GraphDocument) })))
+				if (null != (cinfo = type.GetConstructor(new Type[] { document.GetType() })))
 				{
 					var par = cinfo.GetParameters()[0];
 					if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
@@ -865,7 +865,23 @@ namespace Altaxo.Main
 			}
 
 			if (null == viewContent)
-				return null;
+			{
+				foreach (IProjectItemDisplayBindingDescriptor descriptor in AddInTree.BuildItems<IProjectItemDisplayBindingDescriptor>("/Altaxo/Workbench/ProjectItemDisplayBindings", this, false))
+				{
+					if (descriptor.ProjectItemType == document.GetType())
+					{
+						if (null != (cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })))
+						{
+							var par = cinfo.GetParameters()[0];
+							if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
+							{
+								viewContent = cinfo.Invoke(new object[] { document });
+								break;
+							}
+						}
+					}
+				}
+			}
 
 			var viewContentAsControllerWrapper = viewContent as Altaxo.Gui.IMVCControllerWrapper;
 

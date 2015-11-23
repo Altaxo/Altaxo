@@ -43,18 +43,6 @@ namespace Altaxo.Worksheet.Commands
 			var graph = GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(null);
 
 			Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
-			/*
-
-var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
-
-			if (null == graphController.ViewObject)
-				Current.Gui.FindAndAttachControlTo(graphController);
-
-			var viewContent = new Altaxo.Gui.SharpDevelop.SDGraph3DViewContent(graphController);
-
-			if (null != Current.Workbench)
-				Current.Workbench.ShowView(viewContent);
-		*/
 		}
 	}
 
@@ -68,15 +56,7 @@ var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetC
 
 			AddDensityImage(ctrl, graph);
 
-			var graphController = (Gui.Graph3D.Viewing.Graph3DControllerWpf)Current.Gui.GetControllerAndControl(new object[] { graph }, typeof(Gui.IMVCANController), Gui.UseDocument.Directly);
-
-			if (null == graphController.ViewObject)
-				Current.Gui.FindAndAttachControlTo(graphController);
-
-			var viewContent = new Altaxo.Gui.SharpDevelop.SDGraph3DViewContent(graphController);
-
-			if (null != Current.Workbench)
-				Current.Workbench.ShowView(viewContent);
+			Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
 		}
 
 		/// <summary>

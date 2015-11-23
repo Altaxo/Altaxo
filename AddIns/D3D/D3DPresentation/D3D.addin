@@ -7,7 +7,9 @@
 	</Manifest>
 
 	<Runtime>
-		<Import assembly="D3DPresentation.dll" />
+		<Import assembly="D3DPresentation.dll">
+			<Doozer name="Graph3DDisplayBinding" class="Altaxo.Main.Graph3DDisplayBindingDoozer" />
+		</Import>
 	</Runtime>
 
 	<Path name = "/Altaxo/Workbench/MainMenu">
@@ -29,12 +31,28 @@
 
 	<Path name = "/Altaxo/Workbench/ToolBar/Standard">
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
-			<ToolbarItem id="ViewFront" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+			<ToolbarItem id="ViewFront" icon="Icons.16x16.ViewFront" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewFront.Description}"
 				class="Altaxo.Graph3D.Commands.ViewFront" />
-			<ToolbarItem id="ViewTop" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+			<ToolbarItem id="ViewRight" icon="Icons.16x16.ViewRight" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewRight.Description}"
+				class="Altaxo.Graph3D.Commands.ViewRight" />
+			<ToolbarItem id="ViewBack" icon="Icons.16x16.ViewBack" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewBack.Description}"
+				class="Altaxo.Graph3D.Commands.ViewBack" />
+			<ToolbarItem id="ViewLeft" icon="Icons.16x16.ViewLeft" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewLeft.Description}"
+				class="Altaxo.Graph3D.Commands.ViewLeft" />
+			<ToolbarItem id="ViewTop" icon="Icons.16x16.ViewTop" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewTop.Description}"
 				class="Altaxo.Graph3D.Commands.ViewTop" />
-			<ToolbarItem id="ViewRightFrontTop" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
-				class="Altaxo.Graph3D.Commands.ViewRightFrontTop" />
+			<ToolbarItem id="ViewBottom" icon="Icons.16x16.ViewBottom" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewBottom.Description}"
+				class="Altaxo.Graph3D.Commands.ViewBottom" />
+			<ToolbarItem id="ViewIsometricStandard" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+				class="Altaxo.Graph3D.Commands.ViewIsometricStandard" />
+			<ToolbarItem id="ViewIsometricLeftTop" icon="Icons.16x16.MoveToBottom" tooltip="${res:XML.MainMenu.GraphMenu.MoveGraphItemToBottom.Description}"
+				class="Altaxo.Graph3D.Commands.ViewIsometricLeftTop" />
 		</Condition>
+	</Path>
+
+	<Path name = "/Altaxo/Workbench/ProjectItemDisplayBindings">
+		<Graph3DDisplayBinding id = "Graph3D"
+										ProjectItemClass = "Altaxo.Graph.Graph3D.GraphDocument"
+										ViewContentClass  = "Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" />
 	</Path>
 </AddIn>

@@ -432,19 +432,44 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Doc.Scene.Camera = newCamera;
 		}
 
+		public void ViewFront()
+		{
+			ViewToRootLayerCenter(new VectorD3D(0, -1, 0), new VectorD3D(0, 0, 1));
+		}
+
+		public void ViewRight()
+		{
+			ViewToRootLayerCenter(new VectorD3D(1, 0, 0), new VectorD3D(0, 0, 1));
+		}
+
+		public void ViewBack()
+		{
+			ViewToRootLayerCenter(new VectorD3D(0, -1, 0), new VectorD3D(0, 0, 1));
+		}
+
+		public void ViewLeft()
+		{
+			ViewToRootLayerCenter(new VectorD3D(-1, 0, 0), new VectorD3D(0, 0, 1));
+		}
+
 		public void ViewTop()
 		{
 			ViewToRootLayerCenter(new VectorD3D(0, 0, 1), new VectorD3D(0, 1, 0));
 		}
 
-		internal void ViewFront()
+		internal void ViewBottom()
 		{
-			ViewToRootLayerCenter(new VectorD3D(0, -1, 0), new VectorD3D(0, 0, 1));
+			ViewToRootLayerCenter(new VectorD3D(0, 0, -1), new VectorD3D(0, -1, 0));
 		}
 
-		public void ViewRightFrontTop()
+		public void ViewIsometricStandard()
 		{
-			ViewToRootLayerCenter(new VectorD3D(1, -2, 2), new VectorD3D(0, 0, 1));
+			ViewToRootLayerCenter(new VectorD3D(-1, -1, 1), new VectorD3D(0, 0, 1));
+		}
+
+		public void ViewIsometricLeftTop()
+		{
+			ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1));
 		}
 
 		public void Export3D()

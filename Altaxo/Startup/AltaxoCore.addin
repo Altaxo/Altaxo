@@ -41,6 +41,7 @@
 			<Doozer name="Debugger" class="ICSharpCode.SharpDevelop.Debugging.DebuggerDoozer" />
 			<Doozer name="Directory" class="ICSharpCode.SharpDevelop.DirectoryDoozer" />
 			<Doozer name="TaskBoundAdditionalLogger" class="ICSharpCode.SharpDevelop.Project.TaskBoundAdditionalLoggerDoozer" />
+			<Doozer name="ProjectItemDisplayBinding" class="Altaxo.Main.ProjectItemDisplayBindingDoozer" />
 		</Import>
 		<Import assembly=":ICSharpCode.SharpZipLib" />
 		<Import assembly=":AltaxoBase" />

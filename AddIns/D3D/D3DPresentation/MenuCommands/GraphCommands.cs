@@ -73,6 +73,30 @@ namespace Altaxo.Graph3D.Commands
 		}
 	}
 
+	public class ViewRight : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.ViewRight();
+		}
+	}
+
+	public class ViewBack : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.ViewBack();
+		}
+	}
+
+	public class ViewLeft : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.ViewLeft();
+		}
+	}
+
 	public class ViewTop : AbstractGraph3DControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
@@ -81,11 +105,27 @@ namespace Altaxo.Graph3D.Commands
 		}
 	}
 
-	public class ViewRightFrontTop : AbstractGraph3DControllerCommand
+	public class ViewBottom : AbstractGraph3DControllerCommand
 	{
 		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
 		{
-			ctrl.ViewRightFrontTop();
+			ctrl.ViewBottom();
+		}
+	}
+
+	public class ViewIsometricStandard : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.ViewIsometricStandard();
+		}
+	}
+
+	public class ViewIsometricLeftTop : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.ViewIsometricLeftTop();
 		}
 	}
 

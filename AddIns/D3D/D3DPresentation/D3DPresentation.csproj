@@ -107,6 +107,7 @@
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\D3D10Scene.cs" />
+    <Compile Include="Gui\SharpDevelop\Graph3DDisplayBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
     <Compile Include="MenuCommands\GraphCommands.cs" />
     <Compile Include="MenuCommands\PlotCommands.cs" />
