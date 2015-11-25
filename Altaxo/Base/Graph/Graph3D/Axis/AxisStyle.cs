@@ -31,6 +31,7 @@ using System.Drawing;
 namespace Altaxo.Graph.Graph3D.Axis
 {
 	using GraphicsContext;
+	using Main.Properties;
 	using Shapes;
 
 	/// <summary>
@@ -165,6 +166,32 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
+		public AxisStyle(CSAxisInformation info, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			_styleID = info.Identifier;
+
+			if (isAxisLineEnabled)
+			{
+				ShowAxisLine(info.HasTicksByDefault, info.PreferredTickSide, context);
+			}
+
+			if (info.HasLabelsByDefault)
+			{
+				ShowMajorLabels(info.PreferredLabelSide, context);
+			}
+
+			if (info.HasLabelsByDefault && areMinorTicksEnabled)
+			{
+				ShowMinorLabels(info.PreferredLabelSide, context);
+			}
+
+			if (null != axisTitleOrNull)
+			{
+				ShowTitle(context);
+				_axisTitle.Text = axisTitleOrNull;
+			}
+		}
+
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _axisLineStyle)
@@ -266,8 +293,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		internal IHitTestObject HitTest(HitTestPointData parentCoord)
 		{
 			IHitTestObject hit;
-
-			hit = _axisTitle.HitTest(parentCoord);
+			hit = _axisTitle?.HitTest(parentCoord);
 			return hit;
 		}
 
@@ -380,6 +406,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 				AxisLineStyle = new AxisLineStyle(context);
 		}
 
+		private void ShowAxisLine(bool hasTicksByDefault, CSAxisSide preferredTickSide, IReadOnlyPropertyBag context)
+		{
+			if (_axisLineStyle == null)
+				AxisLineStyle = new AxisLineStyle(hasTicksByDefault, preferredTickSide, context);
+		}
+
 		public void HideAxisLine()
 		{
 			AxisLineStyle = null;
@@ -402,6 +434,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 				MajorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
 		}
 
+		public void ShowMajorLabels(CSAxisSide preferredLabelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (_majorLabelStyle == null)
+				MajorLabelStyle = new AxisLabelStyle(preferredLabelSide, context) { CachedAxisInformation = _cachedAxisInfo };
+		}
+
 		public void HideMajorLabels()
 		{
 			MajorLabelStyle = null;
@@ -422,6 +460,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 		{
 			if (_minorLabelStyle == null)
 				MinorLabelStyle = new AxisLabelStyle(context) { CachedAxisInformation = _cachedAxisInfo };
+		}
+
+		public void ShowMinorLabels(CSAxisSide preferredLabelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			if (_minorLabelStyle == null)
+				MinorLabelStyle = new AxisLabelStyle(preferredLabelSide, context) { CachedAxisInformation = _cachedAxisInfo };
 		}
 
 		public void HideMinorLabels()

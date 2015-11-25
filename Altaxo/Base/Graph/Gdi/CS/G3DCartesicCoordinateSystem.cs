@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Above";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Above";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstUp;
+			info.PreferredLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
 			// LeftFront
@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstUp;
+			info.PreferredLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
 			// BottomBack
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Above";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Above";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstUp;
+			info.PreferredLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
 			// LeftBack
@@ -230,7 +230,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstUp;
+			info.PreferredLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
 			// BottomLeft
@@ -253,7 +253,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Below";
 			info.NameOfSecondUpSide = "Above";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Below";
 			info.NameOfSecondUpSide = "Above";
-			info.PreferedLabelSide = CSAxisSide.FirstUp;
+			info.PreferredLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
 			// BottomRight
@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Below";
 			info.NameOfSecondUpSide = "Above";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -288,7 +288,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Below";
 			info.NameOfSecondUpSide = "Above";
-			info.PreferedLabelSide = CSAxisSide.FirstUp;
+			info.PreferredLabelSide = CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 
 			// XAxis: Y=0, Z=0
@@ -299,7 +299,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstDownSide = "Below";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 
 			// YAxis: X=0, Z=0
 			info = new CSAxisInformation(CSLineID.FromPhysicalValue(vertAx, 0));
@@ -309,7 +309,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 
 			// ZAxis: X=0,Y=0
 			info = new CSAxisInformation(CSLineID.FromPhysicalValue(deptAx, 0));
@@ -319,7 +319,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfFirstUpSide = "Right";
 			info.NameOfSecondDownSide = "Before";
 			info.NameOfSecondUpSide = "Behind";
-			info.PreferedLabelSide = CSAxisSide.FirstDown;
+			info.PreferredLabelSide = CSAxisSide.FirstDown;
 		}
 
 		private static readonly string[,] _axisNamesNormal = new string[,] {

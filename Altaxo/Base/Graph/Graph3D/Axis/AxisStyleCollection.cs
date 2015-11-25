@@ -219,6 +219,24 @@ namespace Altaxo.Graph.Graph3D.Axis
 			return prop;
 		}
 
+		/// <summary>
+		/// Creates the axis style with ShowAxisLine = true and ShowMajorLabels = true
+		/// </summary>
+		/// <param name="id">The axis style identifier.</param>
+		/// <param name="context">Property context used to determine default values, e.g. for the pen width or symbol size.</param>
+		/// <returns>The newly created axis style, if it was not in the collection before. Returns the unchanged axis style, if it was present already in the collection.</returns>
+		public AxisStyle CreateDefault(CSAxisInformation info, IReadOnlyPropertyBag context)
+		{
+			AxisStyle prop = this[info.Identifier];
+			if (prop == null)
+			{
+				prop = new AxisStyle(info, true, info.HasTicksByDefault, false, null, context);
+				prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(info.Identifier);
+				Add(prop);
+			}
+			return prop;
+		}
+
 		public bool Contains(CSLineID id)
 		{
 			return null != this[id];

@@ -259,9 +259,9 @@ namespace Altaxo.Graph.Graph3D.CS
 				case 0: // parallel axis is X
 					{
 						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.FirstDown; // "bottom-front";
+							axisSide = CSAxisSide.SecondDown; // "bottom-front";
 						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.FirstUp; //  "bottom-back";
+							axisSide = CSAxisSide.SecondDown; //  "bottom-back";
 						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
 							axisSide = CSAxisSide.SecondUp;// "top-front";
 						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
@@ -299,6 +299,29 @@ namespace Altaxo.Graph.Graph3D.CS
 			return axisSide;
 		}
 
+		private bool GetHasLabelsByDefault(CSLineID lineId)
+		{
+			bool result = false;
+			switch (lineId.ParallelAxisNumber)
+			{
+				case 0:
+					result = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0; // front-bottom
+					break;
+
+				case 1:
+					result = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0; // front-left
+					break;
+
+				case 2:
+					result = lineId.LogicalValueOtherFirst == 1 && lineId.LogicalValueOtherSecond == 0; // front - right
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+			return result;
+		}
+
 		protected override void UpdateAxisInfo()
 		{
 			_axisStyleInformation.Clear();
@@ -317,11 +340,12 @@ namespace Altaxo.Graph.Graph3D.CS
 						item.NameOfSecondDownSide = GetAxisSideName(lineId, CSAxisSide.SecondDown);
 						item.NameOfSecondUpSide = GetAxisSideName(lineId, CSAxisSide.SecondUp);
 						item.NameOfAxisStyle = GetAxisLineName(lineId);
-						item.PreferedLabelSide = GetPreferredLabelSide(lineId);
+						item.PreferredLabelSide = GetPreferredLabelSide(lineId);
+						item.PreferredTickSide = item.PreferredLabelSide;
 						item.IsShownByDefault = true; // lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
 						item.HasTicksByDefault = true;
-						item.HasLabelsByDefault = true;
-						item.HasTitleByDefault = true; // lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
+						item.HasLabelsByDefault = GetHasLabelsByDefault(lineId);
+						item.HasTitleByDefault = GetHasLabelsByDefault(lineId);
 
 						_axisStyleInformation.Add(item);
 					}

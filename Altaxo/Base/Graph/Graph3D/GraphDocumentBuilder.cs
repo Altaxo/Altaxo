@@ -30,6 +30,8 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
+	using Geometry;
+
 	public static class GraphDocumentBuilder
 	{
 		public static GraphDocument CreateNewStandardGraphWithXYZPlotLayer(Main.Properties.IReadOnlyPropertyBag context)
@@ -44,6 +46,8 @@ namespace Altaxo.Graph.Graph3D
 			graph.RootLayer.Layers.Add(xyzlayer);
 
 			xyzlayer.CreateDefaultAxes(context);
+
+			graph.ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1), 1);
 
 			return graph;
 		}

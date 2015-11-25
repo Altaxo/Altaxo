@@ -222,7 +222,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = "RightDirection";
 			info.NameOfFirstUpSide = horzRev ? "Below" : "Above";
 			info.NameOfFirstDownSide = horzRev ? "Above" : "Below";
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = "LeftDirection";
 			info.NameOfFirstUpSide = horzRev ? "Above" : "Below";
 			info.NameOfFirstDownSide = horzRev ? "Below" : "Above";
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 
 			// Top
 			info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 0.75 : 0.25));
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = "TopDirection";
 			info.NameOfFirstUpSide = horzRev ? "Right" : "Left";
 			info.NameOfFirstDownSide = horzRev ? "Left" : "Right";
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 
 			// Bottom
 			info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 0.25 : 0.75));
@@ -248,7 +248,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = "BottomDirection";
 			info.NameOfFirstUpSide = horzRev ? "Left" : "Right";
 			info.NameOfFirstDownSide = horzRev ? "Right" : "Left";
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 
 			// Outer circle
 			info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = "OuterCircle";
 			info.NameOfFirstDownSide = vertRev ? "Outer" : "Inner";
 			info.NameOfFirstUpSide = vertRev ? "Inner" : "Outer";
-			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -266,7 +266,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = "Inner circle";
 			info.NameOfFirstDownSide = vertRev ? "Inner" : "Outer";
 			info.NameOfFirstUpSide = vertRev ? "Outer" : "Inner";
-			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 		}
 
 		private static readonly string[,] _axisNamesNormal = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };

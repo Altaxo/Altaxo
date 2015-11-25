@@ -422,6 +422,8 @@
     <Compile Include="Gui\Graph3D\Material\MaterialControllerSimple.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraphController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayerContentsController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayerController.cs" />

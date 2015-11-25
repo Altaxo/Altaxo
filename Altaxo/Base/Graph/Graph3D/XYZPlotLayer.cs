@@ -554,11 +554,11 @@ namespace Altaxo.Graph.Graph3D
 			{
 				if (info.IsShownByDefault)
 				{
-					this.AxisStyles.CreateDefault(info.Identifier, context);
+					this.AxisStyles.CreateDefault(info, context);
 
 					if (info.HasTitleByDefault)
 					{
-						this.SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber == 0 ? "X axis" : "Y axis");
+						this.SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber == 0 ? "X axis" : info.Identifier.ParallelAxisNumber == 1 ? "Y axis" : "Z axis");
 					}
 				}
 			}
@@ -744,7 +744,7 @@ namespace Altaxo.Graph.Graph3D
 			else if (id.ParallelAxisNumber == 2)
 			{
 				rx0 = rx1 = id.LogicalValueOtherFirst;
-				ry0 = ry1 = id.LogicalValueOtherFirst;
+				ry0 = ry1 = id.LogicalValueOtherSecond;
 			}
 			else
 			{
@@ -752,9 +752,8 @@ namespace Altaxo.Graph.Graph3D
 			}
 
 			VectorD3D normDirection;
-			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
+			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferredLabelSide);
 			var location = CoordinateSystem.GetPositionAndNormalizedDirection(new Logical3D(rx0, ry0, rz0), new Logical3D(rx1, ry1, rz1), 0.5, tdirection, out normDirection);
-			double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
 			axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
 			axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
@@ -763,49 +762,24 @@ namespace Altaxo.Graph.Graph3D
 			double distance = 0;
 			AxisStyle axisStyle = _axisStyles[id];
 			if (null != axisStyle.AxisLineStyle)
-				distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
+				distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferredLabelSide);
 			double labelFontSize = 0;
 			if (axisStyle.AreMajorLabelsEnabled)
 				labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);
 			if (axisStyle.AreMinorLabelsEnabled)
 				labelFontSize = Math.Max(labelFontSize, axisStyle.MinorLabelStyle.FontSize);
-			const double scaleFontWidth = 4;
-			const double scaleFontHeight = 1.5;
 
-			if (-45 <= angle && angle <= 45)
-			{
-				//case EdgeType.Right:
-				axisTitle.RotationZ = 90;
-				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-				axisTitle.Location.LocalAnchorY = RADouble.NewRel(0); // Top
-				distance += scaleFontWidth * labelFontSize;
-			}
-			else if (-135 <= angle && angle <= -45)
-			{
-				//case Top:
-				axisTitle.RotationZ = 0;
-				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-				axisTitle.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-				distance += scaleFontHeight * labelFontSize;
-			}
-			else if (45 <= angle && angle <= 135)
-			{
-				//case EdgeType.Bottom:
-				axisTitle.RotationZ = 0;
-				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-				axisTitle.Location.LocalAnchorY = RADouble.NewRel(0); // Top
-				distance += scaleFontHeight * labelFontSize;
-			}
-			else
-			{
-				//case EdgeType.Left:
+			axisTitle.RotationX = 90; // Font height now is z, Font depth is y and x remains x
 
-				axisTitle.RotationZ = 90;
-				axisTitle.Location.LocalAnchorX = RADouble.NewRel(0.5); // Center
-				axisTitle.Location.LocalAnchorY = RADouble.NewRel(1); // Bottom
-				axisTitle.Location.LocalAnchorZ = RADouble.NewRel(0.5); // Center
-				distance += scaleFontWidth * labelFontSize;
-			}
+			axisTitle.Location.LocalAnchorX = normDirection.X == 0 ? RADouble.NewRel(0.5) : normDirection.X < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
+			axisTitle.Location.LocalAnchorY = normDirection.Z == 0 ? RADouble.NewRel(0.5) : normDirection.Z < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
+			axisTitle.Location.LocalAnchorZ = normDirection.Y == 0 ? RADouble.NewRel(0.5) : normDirection.Y < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
+
+			VectorD3D scaleFont = new VectorD3D(4, 1, 1.5);
+
+			distance += Math.Abs(scaleFont.X * normDirection.X) * labelFontSize;
+			distance += Math.Abs(scaleFont.Y * normDirection.Y) * labelFontSize;
+			distance += Math.Abs(scaleFont.Z * normDirection.Z) * labelFontSize;
 
 			axisTitle.Location.PositionX = RADouble.NewAbs(distance * normDirection.X); // because this is relative to the reference point, we don't need to take the location into account here, it is set above
 			axisTitle.Location.PositionY = RADouble.NewAbs(distance * normDirection.Y);

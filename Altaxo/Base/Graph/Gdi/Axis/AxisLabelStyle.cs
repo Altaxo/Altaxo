@@ -882,7 +882,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		/// <returns>The side of the axis where the label will be shown.</returns>
 		public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
 		{
-			return null != _labelSide ? _labelSide.Value : axisInformation.PreferedLabelSide;
+			return null != _labelSide ? _labelSide.Value : axisInformation.PreferredLabelSide;
 		}
 
 		/// <summary>
@@ -960,7 +960,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
 			double emSize = _font.Size;
-			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferedLabelSide;
+			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
 			for (int i = 0; i < ticks.Length; i++)
 			{
 				double r = relpositions[i];

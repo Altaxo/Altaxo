@@ -39,6 +39,7 @@ namespace Altaxo.Graph
 		private string _nameOfSecondDownSide;
 		private string _nameOfSecondUpSide;
 		private CSAxisSide _preferedLabelSide;
+		private CSAxisSide _preferedTickSide;
 		private bool _isShownByDefault;
 		private bool _hasTitleByDefault;
 		private bool _hasTicksByDefault = true;
@@ -202,10 +203,19 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Side of an axis style where the label is probably shown. For the bottom axis, this is for instance the right side, i.e. the outer side.
 		/// </summary>
-		public CSAxisSide PreferedLabelSide
+		public CSAxisSide PreferredLabelSide
 		{
 			get { return _preferedLabelSide; }
 			set { _preferedLabelSide = value; }
+		}
+
+		/// <summary>
+		/// Side of an axis style where the ticks are probably shown. For the bottom axis, this is for instance the right side, i.e. the outer side.
+		/// </summary>
+		public CSAxisSide PreferredTickSide
+		{
+			get { return _preferedTickSide; }
+			set { _preferedTickSide = value; }
 		}
 
 		public bool IsShownByDefault

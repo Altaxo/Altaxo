@@ -713,7 +713,7 @@ namespace Altaxo.Graph.Gdi
 				rx0 = rx1 = id.LogicalValueOtherFirst;
 
 			PointD2D normDirection;
-			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
+			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferredLabelSide);
 			var location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
 			double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
@@ -723,7 +723,7 @@ namespace Altaxo.Graph.Gdi
 			double distance = 0;
 			AxisStyle axisStyle = _axisStyles[id];
 			if (null != axisStyle.AxisLineStyle)
-				distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
+				distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferredLabelSide);
 			double labelFontSize = 0;
 			if (axisStyle.AreMajorLabelsEnabled)
 				labelFontSize = Math.Max(labelFontSize, axisStyle.MajorLabelStyle.FontSize);

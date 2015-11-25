@@ -10,7 +10,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
-	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
+
+	//using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Main;
 
 	public class Graph3DController : IDisposable, IMVCANController
@@ -349,22 +350,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		internal void CutSelectedObjectsToClipboard()
+		public void CutSelectedObjectsToClipboard()
 		{
 			throw new NotImplementedException();
 		}
 
-		internal void CopySelectedObjectsToClipboard()
+		public void CopySelectedObjectsToClipboard()
 		{
 			throw new NotImplementedException();
 		}
 
-		internal void PasteObjectsFromClipboard()
+		public void PasteObjectsFromClipboard()
 		{
 			throw new NotImplementedException();
 		}
 
-		internal void RemoveSelectedObjects()
+		public void RemoveSelectedObjects()
 		{
 			throw new NotImplementedException();
 		}
@@ -457,7 +458,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			ViewToRootLayerCenter(new VectorD3D(0, 0, 1), new VectorD3D(0, 1, 0));
 		}
 
-		internal void ViewBottom()
+		public void ViewBottom()
 		{
 			ViewToRootLayerCenter(new VectorD3D(0, 0, -1), new VectorD3D(0, -1, 0));
 		}
@@ -470,52 +471,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		public void ViewIsometricLeftTop()
 		{
 			ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1));
-		}
-
-		public void Export3D()
-		{
-			double dpiX = 300;
-			double dpiY = 300;
-
-			var exporter = new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter();
-
-			var scene = new Altaxo.Gui.Graph3D.Viewing.D3D10Scene();
-
-			var g = new D3D10GraphicContext();
-
-			Doc.Paint(g);
-
-			var matrix = Doc.Scene.Camera.LookAtRHMatrix;
-
-			var rect = new RectangleD3D(PointD3D.Empty, RootLayer.Size);
-			var bounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => matrix.Transform(x)));
-
-			int pixelsX = (int)(dpiX * bounds.SizeX / 72.0);
-			int pixelsY = (int)(dpiY * bounds.SizeY / 72.0);
-
-			double aspectRatio = pixelsY / (double)pixelsX;
-
-			var sceneSettings = (SceneSettings)Doc.Scene.Clone();
-
-			var orthoCamera = sceneSettings.Camera as OrthographicCamera;
-
-			if (null != orthoCamera)
-			{
-				orthoCamera.Scale = bounds.SizeX;
-
-				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
-				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
-				orthoCamera.ScreenOffset = new PointD2D(offsX, offsY);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-
-			scene.SetSceneSettings(sceneSettings);
-			scene.SetDrawing(g);
-
-			exporter.Export(pixelsX, pixelsY, scene);
 		}
 
 		public void EhMouseWheel(double relX, double relY, double aspectRatio, int delta)

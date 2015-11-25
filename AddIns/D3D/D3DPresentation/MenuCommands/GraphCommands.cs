@@ -28,6 +28,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
@@ -133,7 +134,7 @@ namespace Altaxo.Graph3D.Commands
 	{
 		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
 		{
-			ctrl.Export3D();
+			((Graph3DControllerWpf)ctrl).Export3D();
 		}
 	}
 }

@@ -61,13 +61,27 @@ namespace Altaxo.Drawing.D3D
 		private VectorD3D FindStartEastVector()
 		{
 			const double minAngle = 1E-4;
+			const double maxAngle = Math.PI - minAngle;
 
 			VectorD3D v = _linePoints[1] - _linePoints[0];
 
-			if (VectorD3D.AngleBetweenInRadians(v, _xVector) > minAngle)
+			double angle;
+			angle = VectorD3D.AngleBetweenInRadians(v, _xVector);
+			if (angle > minAngle && angle < maxAngle)
 				return _xVector;
-			if (VectorD3D.AngleBetweenInRadians(v, _yVector) > minAngle)
+			angle = VectorD3D.AngleBetweenInRadians(v, _yVector);
+			if (angle > minAngle && angle < maxAngle)
 				return _yVector;
+			angle = VectorD3D.AngleBetweenInRadians(v, _yVector);
+			if (angle > minAngle && angle < maxAngle)
+				return _zVector;
+
+			// if this was still not successfull then use y if x.y is not null, or x if
+
+			if (VectorD3D.DotProduct(v, _yVector) != 0)
+				return _yVector;
+			else if (VectorD3D.DotProduct(v, _xVector) != 0)
+				return _xVector;
 			else
 				return _zVector;
 		}

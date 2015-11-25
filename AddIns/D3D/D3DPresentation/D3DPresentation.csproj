@@ -101,11 +101,9 @@
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControllerWpf.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\D3D10Scene.cs" />
     <Compile Include="Gui\SharpDevelop\Graph3DDisplayBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />

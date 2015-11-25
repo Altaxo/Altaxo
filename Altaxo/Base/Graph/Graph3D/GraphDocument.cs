@@ -674,6 +674,9 @@ namespace Altaxo.Graph.Graph3D
 			gc.DrawLine(penGreen, new PointD3D(0, 0, 0), new PointD3D(0, 30, 0));
 			var penBlue = new PenX3D(NamedColors.Blue, 4);
 			gc.DrawLine(penBlue, new PointD3D(0, 0, 0), new PointD3D(0, 0, 30));
+
+			var penCrim = new PenX3D(NamedColors.Crimson, 4);
+			gc.DrawLine(penBlue, new PointD3D(0, 0, 0), new PointD3D(-30, 0, 0));
 		}
 
 		public void DrawSomething2(IGraphicContext3D gc)
@@ -682,6 +685,53 @@ namespace Altaxo.Graph.Graph3D
 
 			var penRed = new PenX3D(NamedColors.Red, 4);
 			gcc.DrawTriangle(Materials.GetSolidMaterial(NamedColors.Red), new PointD3D(0, 0, 0), new PointD3D(50, 50, 0), new PointD3D(0, 50, 0));
+		}
+
+		/// <summary>
+		/// Make the views to look at the root layer center. The scale is choosen so that the size of the plot will be maximal.
+		/// </summary>
+		/// <param name="toEyeVector">The To-Eye vector (vector from the target to the camera position).</param>
+		/// <param name="cameraUpVector">The camera up vector.</param>
+		/// <param name="aspectRatio">The aspect ratio of the view port. If in doubt, use 1.</param>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public void ViewToRootLayerCenter(VectorD3D toEyeVector, VectorD3D cameraUpVector, double aspectRatio)
+		{
+			var upVector = cameraUpVector.Normalized;
+			var targetPosition = (PointD3D)(0.5 * RootLayer.Size);
+			var cameraDistance = 10 * RootLayer.Size.Length;
+			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
+
+			var newCamera = (Camera.CameraBase)Scene.Camera.Clone();
+			newCamera.UpVector = upVector;
+			newCamera.TargetPosition = targetPosition;
+			newCamera.EyePosition = eyePosition;
+			newCamera.ZNear = cameraDistance / 8;
+			newCamera.ZFar = cameraDistance * 2;
+
+			var orthoCamera = newCamera as Camera.OrthographicCamera;
+
+			if (null != orthoCamera)
+			{
+				orthoCamera.Scale = 1;
+
+				var mx = orthoCamera.GetLookAtRHTimesOrthoRHMatrix(aspectRatio);
+				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
+				// then we search for the maximum of the absulute value of x and y. This is our scale.
+				double absmax = 0;
+				foreach (var p in new RectangleD3D(RootLayer.Position, RootLayer.Size).Vertices)
+				{
+					var ps = mx.TransformPoint(p);
+					absmax = Math.Max(absmax, Math.Abs(ps.X));
+					absmax = Math.Max(absmax, Math.Abs(ps.Y));
+				}
+				orthoCamera.Scale = absmax;
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+
+			Scene.Camera = newCamera;
 		}
 	}
 }

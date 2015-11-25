@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = GetAxisName(lineID);
 			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
 			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = GetAxisName(lineID);
 			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
 			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 			info.IsShownByDefault = false;
 			info.HasTitleByDefault = false;
 
@@ -230,7 +230,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = GetAxisName(lineID);
 			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
 			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = true;
 			info.HasTitleByDefault = true;
 
@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = GetAxisName(lineID);
 			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
 			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
+			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 			info.IsShownByDefault = false;
 			info.HasTitleByDefault = false;
 
@@ -252,7 +252,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = GetAxisName(lineID);
 			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
 			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = false;
 			info.HasTitleByDefault = false;
 
@@ -263,7 +263,7 @@ namespace Altaxo.Graph.Gdi.CS
 			info.NameOfAxisStyle = GetAxisName(lineID);
 			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
 			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
+			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 			info.IsShownByDefault = false;
 			info.HasTitleByDefault = false;
 		}

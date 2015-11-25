@@ -187,9 +187,16 @@ namespace Altaxo.Graph.Graph3D.Axis
 		}
 
 		public AxisLabelStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+			: this(null, context)
+		{
+		}
+
+		public AxisLabelStyle(CSAxisSide? labelSide, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			if (null == context)
 				context = PropertyExtensions.GetPropertyContextOfProject();
+
+			_labelSide = labelSide;
 
 			_font = GraphDocument.GetDefaultFont(context);
 			var foreColor = GraphDocument.GetDefaultForeColor(context);
@@ -197,6 +204,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			_brush = Materials.GetSolidMaterial(foreColor);
 
 			_automaticRotationShift = true;
+			_rotationX = 90;
 			_suppressedLabels = new SuppressedTicks() { ParentObject = this };
 			_labelFormatting = new LabelFormatting.NumericLabelFormattingAuto() { ParentObject = this };
 			SetStringFormat();
@@ -656,7 +664,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <returns>The side of the axis where the label will be shown.</returns>
 		public virtual CSAxisSide PredictLabelSide(CSAxisInformation axisInformation)
 		{
-			return null != _labelSide ? _labelSide.Value : axisInformation.PreferedLabelSide;
+			return null != _labelSide ? _labelSide.Value : axisInformation.PreferredLabelSide;
 		}
 
 		/// <summary>
@@ -721,7 +729,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
 
 			double emSize = _font.Size;
-			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferedLabelSide;
+			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
 			for (int i = 0; i < ticks.Length; i++)
 			{
 				double r = relpositions[i];
