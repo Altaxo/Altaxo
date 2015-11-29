@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,12 +23,25 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Main
 {
-	public interface IProjectItemDisplayBindingDescriptor
+	/// <summary>
+	/// Interface that all Altaxo project items must support. Currently, project items are the base items of an Altaxo<see cref="T:Altaxo.Main.Document"/>,
+	/// i.e. <see cref="T:Altaxo.Data.DataTable"/>s, <see cref="T:Altaxo.Graph.Gdi.GraphDocument"/>s and <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>.
+	/// </summary>
+	public interface IProjectItemCollection :
+		IParentOfINameOwnerChildNodes,
+		Altaxo.Main.INamedObjectCollection
 	{
-		Type ProjectItemType { get; }
-		Type GraphicalExporterType { get; }
+		/// <summary>
+		/// Determines whether the collection contains any project item with the specified name.
+		/// </summary>
+		/// <param name="projectItemName">Name of the project item.</param>
+		/// <returns>True if the collection contains any project item with the specified name.</returns>
+		bool ContainsAnyName(string projectItemName);
 	}
 }

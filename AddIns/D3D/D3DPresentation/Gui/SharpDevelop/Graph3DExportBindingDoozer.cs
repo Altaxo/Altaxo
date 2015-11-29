@@ -29,11 +29,11 @@ using System.Collections;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Graph3DDisplayBindingDoozer generates a class with interface <see cref="IProjectItemDisplayBindingDescriptor"/>, which can be used
-	/// to bind the project item of type <see cref="Altaxo.Graph.Graph3D.GraphDocument"/> to the appropriate view content.
+	/// <see cref="Graph3DExportBindingDoozer"/> generates a class with interface <see cref="Altaxo.Graph.IGraphExporter"/>, which can be used
+	/// to export the project item of type <see cref="Altaxo.Graph.Graph3D.GraphDocument"/> as an image to a stream.
 	///
 	/// </summary>
-	public class Graph3DDisplayBindingDoozer : IDoozer
+	public class Graph3DExportBindingDoozer : IDoozer
 	{
 		/// <summary>
 		/// Gets if the doozer handles codon conditions on its own.
@@ -59,16 +59,16 @@ namespace Altaxo.Main
 		private class Graph3DDisplayBindingDescriptor : IProjectItemDisplayBindingDescriptor
 		{
 			private Type _projectItemType;
-			private Type _viewContentType;
+			private Type _graphicalExporterType;
 			public Type ProjectItemType { get { return _projectItemType; } }
-			public Type GraphicalExporterType { get { return _viewContentType; } }
+			public Type GraphicalExporterType { get { return _graphicalExporterType; } }
 
 			private Codon _codon;
 
 			public string Id { get; set; }
 			public string Title { get; set; }
 
-			public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type viewContentType)
+			public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
 			{
 				if (codon == null)
 					throw new ArgumentNullException(nameof(codon));
@@ -83,12 +83,12 @@ namespace Altaxo.Main
 					this.Title = title;
 
 				_projectItemType = projectItemType;
-				_viewContentType = viewContentType;
+				_graphicalExporterType = graphicalExporterType;
 			}
 
 			public override string ToString()
 			{
-				return string.Format("[Graph3DDisplayBindingDescriptor ItemClass={0} ControllerClass={1}]", ProjectItemType, GraphicalExporterType);
+				return string.Format("[Graph3DExportBindingDescriptor ItemClass={0} ExporterClass={1}]", _projectItemType, _graphicalExporterType);
 			}
 		}
 	}

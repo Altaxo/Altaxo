@@ -23,9 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph3D.Viewing;
@@ -34,10 +32,12 @@ using Altaxo.Main;
 using Altaxo.Scripting;
 using ICSharpCode.Core;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
-namespace Altaxo.Graph3D.Commands
+namespace Altaxo.Graph.Graph3D.Commands
 {
 	/// <summary>
 	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
@@ -132,9 +132,64 @@ namespace Altaxo.Graph3D.Commands
 
 	public class Export3D : AbstractGraph3DControllerCommand
 	{
+		private static Altaxo.Graph.Gdi.GraphExportOptions _graphExportOptionsToFile = new Graph.Gdi.GraphExportOptions();
+
 		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
 		{
-			((Graph3DControllerWpf)ctrl).Export3D();
+			ShowFileExportSpecificDialog(ctrl.Doc);
+		}
+
+		public static void ShowFileExportSpecificDialog(GraphDocument doc)
+		{
+			object resopt = _graphExportOptionsToFile;
+			if (Current.Gui.ShowDialog(ref resopt, "Choose export options"))
+			{
+				_graphExportOptionsToFile = (Graph.Gdi.GraphExportOptions)resopt;
+			}
+			else
+			{
+				return;
+			}
+			ShowFileExportDialog(doc, _graphExportOptionsToFile);
+		}
+
+		public static void ShowFileExportDialog(GraphDocument doc, Altaxo.Graph.Gdi.GraphExportOptions graphExportOptions)
+		{
+			var saveOptions = new Altaxo.Gui.SaveFileOptions();
+			var list = GetFileFilterString(graphExportOptions.ImageFormat);
+			foreach (var entry in list)
+				saveOptions.AddFilter(entry.Key, entry.Value);
+			saveOptions.FilterIndex = 0;
+			saveOptions.RestoreDirectory = true;
+
+			if (Current.Gui.ShowSaveFileDialog(saveOptions))
+			{
+				using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+				{
+					new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter().SaveAsImageToStream(doc, graphExportOptions, myStream);
+					myStream.Close();
+				} // end openfile ok
+			} // end dlgresult ok
+		}
+
+		private static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
+		{
+			List<KeyValuePair<string, string>> filter = new List<KeyValuePair<string, string>>();
+
+			if (fmt == ImageFormat.Bmp)
+				filter.Add(new KeyValuePair<string, string>("*.bmp", "Bitmap files (*.bmp)"));
+			else if (ImageFormat.Gif == fmt)
+				filter.Add(new KeyValuePair<string, string>("*.gif", "Gif files (*.gif)"));
+			else if (ImageFormat.Jpeg == fmt)
+				filter.Add(new KeyValuePair<string, string>("*.jpg", "Jpeg files (*.jpg)"));
+			else if (ImageFormat.Png == fmt)
+				filter.Add(new KeyValuePair<string, string>("*.png", "Png files (*.png)"));
+			else if (ImageFormat.Tiff == fmt)
+				filter.Add(new KeyValuePair<string, string>("*.tif", "Tiff files (*.tif)"));
+
+			filter.Add(new KeyValuePair<string, string>("*.*", "All files (*.*)"));
+
+			return filter;
 		}
 	}
 }

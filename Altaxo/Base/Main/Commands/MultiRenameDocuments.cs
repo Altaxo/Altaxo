@@ -176,13 +176,9 @@ namespace Altaxo.Main.Commands
 		/// <returns>Full name of the document.</returns>
 		public static string GetFullName(object o)
 		{
-			if (o is Altaxo.Data.DataTable)
+			if (o is IProjectItem)
 			{
-				return ((Altaxo.Data.DataTable)o).Name;
-			}
-			else if (o is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				return ((Altaxo.Graph.Gdi.GraphDocument)o).Name;
+				return ((IProjectItem)o).Name;
 			}
 			else
 			{
@@ -192,13 +188,9 @@ namespace Altaxo.Main.Commands
 
 		private static void SetName(object o, string newName)
 		{
-			if (o is Altaxo.Data.DataTable)
+			if (o is IProjectItem)
 			{
-				((Altaxo.Data.DataTable)o).Name = newName;
-			}
-			else if (o is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				((Altaxo.Graph.Gdi.GraphDocument)o).Name = newName;
+				((IProjectItem)o).Name = newName;
 			}
 			else
 			{
@@ -223,13 +215,9 @@ namespace Altaxo.Main.Commands
 
 		private static DateTime GetCreationDate(object o)
 		{
-			if (o is Altaxo.Data.DataTable)
+			if (o is IProjectItem)
 			{
-				return ((Altaxo.Data.DataTable)o).CreationTimeUtc;
-			}
-			else if (o is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				return ((Altaxo.Graph.Gdi.GraphDocument)o).CreationTimeUtc;
+				return ((IProjectItem)o).CreationTimeUtc;
 			}
 			else
 			{

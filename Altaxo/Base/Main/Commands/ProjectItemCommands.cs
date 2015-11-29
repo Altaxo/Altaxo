@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ using System.Text;
 namespace Altaxo.Main.Commands
 {
 	using Altaxo.Serialization.Clipboard;
+	using Gui.Common;
 
 	/// <summary>
 	/// Commands on project items like DataTables, Graphs and so.
@@ -287,5 +289,61 @@ namespace Altaxo.Main.Commands
 		}
 
 		#endregion Clipboard commands
+
+		#region Rename Commands
+
+		/// <summary>
+		/// Shows a dialog to rename the table.
+		/// </summary>
+		/// <param name="projectItem">The project item to rename.</param>
+		public static void ShowRenameDialog(IProjectItem projectItem)
+		{
+			string projectItemTypeName = projectItem.GetType().Name;
+
+			TextValueInputController tvctrl = new TextValueInputController(projectItem.Name, string.Format("Enter a name for the {0}:", projectItem));
+			tvctrl.Validator = new RenameValidator(projectItem, projectItemTypeName);
+			if (Current.Gui.ShowDialog(tvctrl, string.Format("Rename {0}", projectItemTypeName), false))
+				projectItem.Name = tvctrl.InputText.Trim();
+		}
+
+		private class RenameValidator : TextValueInputController.NonEmptyStringValidator
+		{
+			private IProjectItem _projectItem;
+			private string _projectItemTypeName;
+
+			public RenameValidator(IProjectItem projectItem, string projectItemTypeName)
+				: base(string.Format("The {0} name must not be empty! Please enter a valid name.", projectItemTypeName))
+			{
+				if (null == projectItem)
+					throw new ArgumentNullException(nameof(projectItem));
+
+				_projectItem = projectItem;
+				_projectItemTypeName = projectItemTypeName;
+				if (null == projectItemTypeName)
+					_projectItemTypeName = _projectItem.GetType().Name;
+			}
+
+			public override string Validate(string projectItemName)
+			{
+				string err = base.Validate(projectItemName);
+				if (null != err)
+					return err;
+
+				if (_projectItem.Name == projectItemName)
+					return null; // name is the same => thus no renaming neccessary
+
+				var collection = (IProjectItemCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(_projectItem, typeof(IProjectItemCollection));
+
+				if (collection == null)
+					return null; // if there is no parent data set we can enter anything
+
+				if (collection.ContainsAnyName(projectItemName))
+					return string.Format("This {0} name already exists, please choose another name!", _projectItemTypeName);
+				else
+					return null;
+			}
+		}
+
+		#endregion Rename Commands
 	}
 }

@@ -227,6 +227,8 @@
 				</MenuItem>
 			</Condition>
 
+			<MenuItem id="AfterExportSeparator" type = "Separator" />
+
 			<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
 				<MenuItem id = "RecentProjects" attribute = "RecentProjects" label = "${res:XML.MainMenu.FileMenu.RecentProjects}" type="Menu">
 					<MenuItem id = "RecentProjectsBuilder" type = "Builder" class = "Altaxo.Main.Commands.RecentProjectsMenuBuilder" />

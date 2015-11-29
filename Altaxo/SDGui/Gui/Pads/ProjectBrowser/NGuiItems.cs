@@ -316,6 +316,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				if (Current.Project.GraphDocumentCollection.Contains(name))
 					return "A graph with the same name is already present in the project";
 			}
+			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
+			{
+				if (Current.Project.Graph3DDocumentCollection.Contains(name))
+					return "A graph with the same name is already present in the project";
+			}
 			else if (item is Altaxo.Data.DataTable)
 			{
 				if (Current.Project.DataTableCollection.Contains(name))
@@ -353,6 +358,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 					if (!Current.Project.GraphDocumentCollection.Contains(name))
 					{
 						((Altaxo.Graph.Gdi.GraphDocument)item).Name = fullName;
+						return true;
+					}
+				}
+				if (item is Altaxo.Graph.Graph3D.GraphDocument)
+				{
+					if (!Current.Project.Graph3DDocumentCollection.Contains(name))
+					{
+						((Altaxo.Graph.Graph3D.GraphDocument)item).Name = fullName;
 						return true;
 					}
 				}

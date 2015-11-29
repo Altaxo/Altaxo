@@ -158,13 +158,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			var obj = list[0];
 
-			if (obj is DataTable)
+			if (obj is IProjectItem)
 			{
-				Altaxo.Data.DataTableOtherActions.ShowRenameDialog((Altaxo.Data.DataTable)obj);
-			}
-			else if (obj is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				Altaxo.Graph.Gdi.GraphDocumentOtherActions.ShowRenameDialog((Altaxo.Graph.Gdi.GraphDocument)obj);
+				Altaxo.Main.Commands.ProjectItemCommands.ShowRenameDialog((IProjectItem)obj);
 			}
 			else if (obj is ProjectFolder)
 			{

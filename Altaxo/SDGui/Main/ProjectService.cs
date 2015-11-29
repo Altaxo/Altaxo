@@ -870,7 +870,7 @@ namespace Altaxo.Main
 				{
 					if (descriptor.ProjectItemType == document.GetType())
 					{
-						if (null != (cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })))
+						if (null != (cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[] { document.GetType() })))
 						{
 							var par = cinfo.GetParameters()[0];
 							if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type

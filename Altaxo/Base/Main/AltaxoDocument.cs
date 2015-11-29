@@ -72,8 +72,9 @@ namespace Altaxo
 		public AltaxoDocument()
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);
-			_graphs = new Graph.Gdi.GraphDocumentCollection(this);
-			_graphs3D = new Graph.Graph3D.GraphDocumentCollection(this);
+			var commonDictionaryForGraphs = new SortedDictionary<string, IProjectItem>();
+			_graphs = new Graph.Gdi.GraphDocumentCollection(this, commonDictionaryForGraphs);
+			_graphs3D = new Graph.Graph3D.GraphDocumentCollection(this, commonDictionaryForGraphs);
 
 			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyDocumentCollection(this);
 			_tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);

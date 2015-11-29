@@ -31,6 +31,9 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui.Graph3D.Common
 {
 	using Altaxo.Graph;
+	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Geometry;
 	using SharpDX;
 	using SharpDX.Direct3D10;
@@ -45,11 +48,66 @@ namespace Altaxo.Gui.Graph3D.Common
 	using Device = SharpDX.Direct3D10.Device1;
 	using STG = SharpDX.Toolkit.Graphics;
 
-	public class D3D10BitmapExporter
+	public class D3D10BitmapExporter : Altaxo.Graph.IGraphExporter
 	{
-		public Color4 ClearColor = SharpDX.Color.Beige;
+		/// <summary>
+		/// Saves the project item as image to the provided stream.
+		/// </summary>
+		/// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
+		/// <param name="options">The export options.</param>
+		/// <param name="toStream">The stream to save the image to.</param>
+		public void SaveAsImageToStream(Altaxo.Main.IProjectItem item, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
+		{
+			if (item == null)
+				throw new ArgumentNullException(nameof(item));
+			if (!(item is Altaxo.Graph.Graph3D.GraphDocument))
+				throw new ArgumentException(string.Format("Expected item of type {0}, but it is of type {1}", typeof(Altaxo.Graph.Graph3D.GraphDocument), item.GetType()));
+			var doc = (Altaxo.Graph.Graph3D.GraphDocument)item;
 
-		public void Export(int sizeX, int sizeY, ID3D10Scene scene)
+			double sourceDpi = options.SourceDpiResolution;
+
+			var exporter = new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter();
+
+			var scene = new Altaxo.Gui.Graph3D.Viewing.D3D10Scene();
+
+			var g = new D3D10GraphicContext();
+
+			doc.Paint(g);
+
+			var matrix = doc.Scene.Camera.LookAtRHMatrix;
+
+			var rect = new RectangleD3D(PointD3D.Empty, doc.RootLayer.Size);
+			var bounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => matrix.Transform(x)));
+
+			int pixelsX = (int)(sourceDpi * bounds.SizeX / 72.0);
+			int pixelsY = (int)(sourceDpi * bounds.SizeY / 72.0);
+
+			double aspectRatio = pixelsY / (double)pixelsX;
+
+			var sceneSettings = (SceneSettings)doc.Scene.Clone();
+
+			var orthoCamera = sceneSettings.Camera as OrthographicCamera;
+
+			if (null != orthoCamera)
+			{
+				orthoCamera.Scale = bounds.SizeX;
+
+				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
+				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
+				orthoCamera.ScreenOffset = new PointD2D(offsX, offsY);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+
+			scene.SetSceneSettings(sceneSettings);
+			scene.SetDrawing(g);
+
+			exporter.Export(pixelsX, pixelsY, scene, options, toStream);
+		}
+
+		public void Export(int sizeX, int sizeY, ID3D10Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
 		{
 			var device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport | DeviceCreationFlags.Debug, FeatureLevel.Level_10_0);
 
@@ -100,8 +158,13 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			device.OutputMerger.SetTargets(depthStencilView, renderTargetView);
 			device.Rasterizer.SetViewports(new Viewport(0, 0, sizeX, sizeY, 0.0f, 1.0f));
-
-			device.ClearRenderTargetView(renderTargetView, this.ClearColor);
+			Color4 clearColor = new Color4(1, 1, 1, 0); // Transparent
+			if (options.BackgroundBrush != null)
+			{
+				var axoColor = options.BackgroundBrush.Color.Color;
+				clearColor = new Color4(axoColor.ScR, axoColor.ScG, axoColor.ScB, axoColor.ScA);
+			}
+			device.ClearRenderTargetView(renderTargetView, clearColor);
 			device.ClearDepthStencilView(depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
 			scene.Attach(device, new PointD2D(sizeX, sizeY));
@@ -137,7 +200,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 
 			// renderTarget is now a non-MSAA renderTarget
-			Texture2DExtensions.Save(renderTarget);
+			Texture2DExtensions.SaveToStream(renderTarget, options.ImageFormat, options.DestinationDpiResolution, toStream);
 
 			scene.Detach();
 

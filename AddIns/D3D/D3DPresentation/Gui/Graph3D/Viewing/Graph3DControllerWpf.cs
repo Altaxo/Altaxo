@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
-using Altaxo.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,52 +85,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != view)
 				view.SetPanelCursor(arrow);
-		}
-
-		public void Export3D()
-		{
-			double dpiX = 300;
-			double dpiY = 300;
-
-			var exporter = new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter();
-
-			var scene = new Altaxo.Gui.Graph3D.Viewing.D3D10Scene();
-
-			var g = new D3D10GraphicContext();
-
-			Doc.Paint(g);
-
-			var matrix = Doc.Scene.Camera.LookAtRHMatrix;
-
-			var rect = new RectangleD3D(PointD3D.Empty, RootLayer.Size);
-			var bounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => matrix.Transform(x)));
-
-			int pixelsX = (int)(dpiX * bounds.SizeX / 72.0);
-			int pixelsY = (int)(dpiY * bounds.SizeY / 72.0);
-
-			double aspectRatio = pixelsY / (double)pixelsX;
-
-			var sceneSettings = (SceneSettings)Doc.Scene.Clone();
-
-			var orthoCamera = sceneSettings.Camera as OrthographicCamera;
-
-			if (null != orthoCamera)
-			{
-				orthoCamera.Scale = bounds.SizeX;
-
-				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
-				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
-				orthoCamera.ScreenOffset = new PointD2D(offsX, offsY);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-
-			scene.SetSceneSettings(sceneSettings);
-			scene.SetDrawing(g);
-
-			exporter.Export(pixelsX, pixelsY, scene);
 		}
 
 		/// <summary>

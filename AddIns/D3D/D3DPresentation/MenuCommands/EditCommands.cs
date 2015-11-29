@@ -22,13 +22,27 @@
 
 #endregion Copyright
 
+using Altaxo.Gui.Graph3D.Viewing;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Main
+namespace Altaxo.Graph.Graph3D.Commands
 {
-	public interface IProjectItemDisplayBindingDescriptor
+	public class CopyDocumentAsComObjectToClipboard : AbstractGraph3DControllerCommand
 	{
-		Type ProjectItemType { get; }
-		Type GraphicalExporterType { get; }
+		public override void Run(Graph3DController ctrl)
+		{
+			var doc = ctrl.Doc;
+
+			var comManager = (Com.ComManager)Current.ComManager;
+
+			var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
+
+			if (null != dataObject)
+				System.Windows.Clipboard.SetDataObject(dataObject);
+		}
 	}
 }

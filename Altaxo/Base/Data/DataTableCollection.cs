@@ -35,7 +35,7 @@ namespace Altaxo.Data
 	public class DataTableCollection
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		Main.IParentOfINameOwnerChildNodes,
+		Main.IProjectItemCollection,
 		ICollection<DataTable>
 	{
 		// Data
@@ -165,6 +165,18 @@ namespace Altaxo.Data
 				else
 					throw new ArgumentOutOfRangeException(string.Format("The table \"{0}\" don't exist!", name));
 			}
+		}
+
+		/// <summary>
+		/// Determines whether the collection contains any project item with the specified name.
+		/// </summary>
+		/// <param name="projectItemName">Name of the project item.</param>
+		/// <returns>
+		/// True if the collection contains any project item with the specified name.
+		/// </returns>
+		public bool ContainsAnyName(string projectItemName)
+		{
+			return null != projectItemName && _itemsByName.ContainsKey(projectItemName);
 		}
 
 		public bool Contains(string tablename)

@@ -46,5 +46,13 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="ProxyProcessing">Function that processes  the found <see cref="DocNodeProxy"/> instances.</param>
 		void VisitDocumentReferences(DocNodeProxyReporter ProxyProcessing);
+
+		/// <summary>
+		/// Gets the time this project item was created (in universal time UTC).
+		/// </summary>
+		/// <value>
+		/// The UTC creation time of the project item.
+		/// </value>
+		DateTime CreationTimeUtc { get; }
 	}
 }
