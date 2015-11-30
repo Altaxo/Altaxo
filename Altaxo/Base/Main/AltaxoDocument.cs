@@ -652,6 +652,68 @@ namespace Altaxo
 		}
 
 		/// <summary>
+		/// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. If another project item with the same name already exists,
+		/// a new unique name for the item is found, based on the given name.
+		/// For <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>s, if a document with the same name is already present, the properties are merged.
+		/// </summary>
+		/// <param name="item">The item to add.</param>
+		/// <exception cref="System.ArgumentNullException">item</exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
+		public void AddItemWithThisOrModifiedName(IProjectItem item)
+		{
+			if (null == item)
+				throw new ArgumentNullException(nameof(item));
+
+			Altaxo.Data.DataTable table;
+			Altaxo.Graph.Gdi.GraphDocument graphGdi;
+			Altaxo.Graph.Graph3D.GraphDocument graph3D;
+
+			if (null != (table = item as Altaxo.Data.DataTable))
+			{
+				if (table.Name == null || table.Name == string.Empty)
+					table.Name = Current.Project.DataTableCollection.FindNewTableName();
+				else if (Current.Project.DataTableCollection.Contains(table.Name))
+					table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
+
+				this.DataTableCollection.Add(table);
+			}
+			else if (null != (graphGdi = item as Altaxo.Graph.Gdi.GraphDocument))
+			{
+				if (graphGdi.Name == null || graphGdi.Name == string.Empty)
+					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewName();
+				else if (Current.Project.GraphDocumentCollection.Contains(graphGdi.Name))
+					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewName(graphGdi.Name);
+
+				this.GraphDocumentCollection.Add((Altaxo.Graph.Gdi.GraphDocument)item);
+			}
+			else if (null != (graph3D = item as Altaxo.Graph.Graph3D.GraphDocument))
+			{
+				if (graph3D.Name == null || graph3D.Name == string.Empty)
+					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewName();
+				else if (Current.Project.Graph3DDocumentCollection.Contains(graph3D.Name))
+					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewName(graph3D.Name);
+
+				this.Graph3DDocumentCollection.Add((Altaxo.Graph.Graph3D.GraphDocument)item);
+			}
+			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+			{
+				var doc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
+				if (!this.ProjectFolderProperties.Contains(doc.Name))
+				{
+					Current.Project.ProjectFolderProperties.Add(doc); // if not existing, then add the new property document
+				}
+				else
+				{
+					Current.Project.ProjectFolderProperties[doc.Name].PropertyBagNotNull.MergePropertiesFrom(doc.PropertyBag, true); // if existing, then merge the properties into the existing bag
+				}
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException(string.Format("Adding an item of type {0} is currently not implemented", item.GetType()));
+			}
+		}
+
+		/// <summary>
 		/// Tries to get an existring project item with the same type and name as the provided item.
 		/// </summary>
 		/// <param name="item">The item to test for.</param>
@@ -661,7 +723,7 @@ namespace Altaxo
 		public IProjectItem TryGetExistingItemWithSameTypeAndName(IProjectItem item)
 		{
 			if (null == item)
-				throw new ArgumentNullException("item");
+				throw new ArgumentNullException(nameof(item));
 
 			string name = item.Name;
 

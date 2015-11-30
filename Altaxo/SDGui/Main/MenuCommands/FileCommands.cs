@@ -103,30 +103,18 @@ namespace Altaxo.Main.Commands
 				myStream.Close();
 			}
 
-			// if it is a table, add it to the DataTableCollection
-			if (deserObject is Altaxo.Data.DataTable)
+			if (deserObject is IProjectItem)
 			{
-				Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
-				if (table.Name == null || table.Name == string.Empty)
-					table.Name = Current.Project.DataTableCollection.FindNewTableName();
-				else if (Current.Project.DataTableCollection.Contains(table.Name))
-					table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
-
-				Current.Project.DataTableCollection.Add(table);
+				Current.Project.AddItemWithThisOrModifiedName((IProjectItem)deserObject);
 				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
-
-				Current.ProjectService.CreateNewWorksheet(table);
+				Current.ProjectService.OpenOrCreateViewContentForDocument((IProjectItem)deserObject);
 			}
-			// if it is a table, add it to the DataTableCollection
 			else if (deserObject is Altaxo.Worksheet.TablePlusLayout)
 			{
 				Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
-				Altaxo.Data.DataTable table = tableAndLayout.Table;
-				if (table.Name == null || table.Name == string.Empty)
-					table.Name = Current.Project.DataTableCollection.FindNewTableName();
-				else if (Current.Project.DataTableCollection.Contains(table.Name))
-					table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
-				Current.Project.DataTableCollection.Add(table);
+				var table = tableAndLayout.Table;
+
+				Current.Project.AddItemWithThisOrModifiedName((IProjectItem)deserObject);
 
 				if (tableAndLayout.Layout != null)
 					Current.Project.TableLayouts.Add(tableAndLayout.Layout);
@@ -136,19 +124,6 @@ namespace Altaxo.Main.Commands
 				tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
 
 				Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
-			}
-			else if (deserObject is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				Altaxo.Graph.Gdi.GraphDocument graph = deserObject as Altaxo.Graph.Gdi.GraphDocument;
-				if (graph.Name == null || graph.Name == string.Empty)
-					graph.Name = Current.Project.GraphDocumentCollection.FindNewName();
-				else if (Current.Project.GraphDocumentCollection.Contains(graph.Name))
-					graph.Name = Current.Project.GraphDocumentCollection.FindNewName(graph.Name);
-
-				Current.Project.GraphDocumentCollection.Add(graph);
-				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references in the graph
-
-				Current.ProjectService.CreateNewGraph(graph);
 			}
 
 			info.AnnounceDeserializationEnd(Current.Project, true); // final deserialization end

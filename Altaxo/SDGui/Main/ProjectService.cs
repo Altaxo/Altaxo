@@ -638,7 +638,7 @@ namespace Altaxo.Main
 		/// <param name="document">The document for which views must be found.</param>
 		/// <param name="maxNumber">Max number of <see cref="IViewContent" /> to return.</param>
 		/// <returns>An array containing all views that show the document table. If no view is found, an empty array is returned.</returns>
-		public List<IViewContent> SearchContentForDocument(object document, int maxNumber)
+		public List<IViewContent> SearchViewContentForDocument(object document, int maxNumber)
 		{
 			List<IViewContent> contentList = new List<IViewContent>();
 			// first step : look in all views
@@ -706,7 +706,7 @@ namespace Altaxo.Main
 		/// <returns>True if there is at least one open view for the document.</returns>
 		public bool HasDocumentAnOpenView(object document)
 		{
-			return SearchContentForDocument(document, 1).Count > 0;
+			return SearchViewContentForDocument(document, 1).Count > 0;
 		}
 
 		/// <summary>
@@ -720,7 +720,7 @@ namespace Altaxo.Main
 
 		private void CloseDocumentViews_Unsynchronized(object document)
 		{
-			var list = SearchContentForDocument(document, int.MaxValue);
+			var list = SearchViewContentForDocument(document, int.MaxValue);
 			for (int i = list.Count - 1; i >= 0; i--)
 			{
 				list[i].WorkbenchWindow.CloseWindow(true);
@@ -787,7 +787,7 @@ namespace Altaxo.Main
 				return;
 
 			// close all windows
-			List<IViewContent> foundContent = SearchContentForDocument(document, int.MaxValue);
+			List<IViewContent> foundContent = SearchViewContentForDocument(document, int.MaxValue);
 			foreach (IViewContent content in foundContent)
 			{
 				content.WorkbenchWindow.CloseWindow(true);
@@ -817,8 +817,12 @@ namespace Altaxo.Main
 
 		private object OpenOrCreateViewContentForDocument_Unsynchronized(IProjectItem document)
 		{
+			// make sure the document is contained in our current project
+			if (!_currentProject.ContainsItem(document))
+				_currentProject.AddItemWithThisOrModifiedName(document);
+
 			// if a content exist that show that graph, activate that content
-			List<IViewContent> foundContent = SearchContentForDocument(document, 1);
+			List<IViewContent> foundContent = SearchViewContentForDocument(document, 1);
 			if (foundContent.Count > 0)
 			{
 				foundContent[0].WorkbenchWindow.SelectWindow();
@@ -846,7 +850,7 @@ namespace Altaxo.Main
 
 			// make sure that the item is already contained in the project
 			if (!Current.Project.ContainsItem(document))
-				Current.Project.AddItem(document);
+				Current.Project.AddItemWithThisOrModifiedName(document);
 
 			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICSharpCode.SharpDevelop.Gui.AbstractViewContent));
 			System.Reflection.ConstructorInfo cinfo = null;
@@ -1011,7 +1015,7 @@ namespace Altaxo.Main
 		private object OpenOrCreateWorksheetForTable_Unsynchronized(Altaxo.Data.DataTable table)
 		{
 			// if a content exist that show that table, activate that content
-			List<IViewContent> foundContent = SearchContentForDocument(table, 1);
+			List<IViewContent> foundContent = SearchViewContentForDocument(table, 1);
 			if (foundContent.Count > 0)
 			{
 				foundContent[0].WorkbenchWindow.SelectWindow();
@@ -1040,7 +1044,7 @@ namespace Altaxo.Main
 				return;
 
 			// close all windows
-			List<IViewContent> foundContent = SearchContentForDocument(table, int.MaxValue);
+			List<IViewContent> foundContent = SearchViewContentForDocument(table, int.MaxValue);
 			foreach (IViewContent content in foundContent)
 			{
 				content.WorkbenchWindow.CloseWindow(true);
@@ -1147,21 +1151,7 @@ namespace Altaxo.Main
 				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
 					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), null, ProjectFolder.RootFolderName, false);
 
-			// make sure that new graph is contained in project
-			if (!Current.Project.GraphDocumentCollection.Contains(graph.Name))
-				Current.Project.GraphDocumentCollection.Add(graph);
-
-			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDGraphViewContent(graph);
-
-			//Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
-			var view = new Altaxo.Gui.Graph.Viewing.GraphViewWpf();
-
-			ctrl.Controller.ViewObject = view;
-
-			if (null != Current.Workbench)
-				Current.Workbench.ShowView(ctrl);
-
-			return ctrl.Controller;
+			return (Altaxo.Gui.Graph.Viewing.IGraphController)OpenOrCreateViewContentForDocument_Unsynchronized(graph);
 		}
 
 		/// <summary>
@@ -1178,7 +1168,7 @@ namespace Altaxo.Main
 		private object OpenOrCreateGraphForGraphDocument_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
 			// if a content exist that show that graph, activate that content
-			List<IViewContent> foundContent = SearchContentForDocument(graph, 1);
+			List<IViewContent> foundContent = SearchViewContentForDocument(graph, 1);
 			if (foundContent.Count > 0)
 			{
 				foundContent[0].WorkbenchWindow.SelectWindow();
@@ -1207,7 +1197,7 @@ namespace Altaxo.Main
 				return;
 
 			// close all windows
-			List<IViewContent> foundContent = SearchContentForDocument(graph, int.MaxValue);
+			List<IViewContent> foundContent = SearchViewContentForDocument(graph, int.MaxValue);
 			foreach (IViewContent content in foundContent)
 			{
 				content.WorkbenchWindow.CloseWindow(true);
@@ -1257,47 +1247,7 @@ namespace Altaxo.Main
 				doc = Altaxo.Graph.Graph3D.GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName));
 			}
 
-			return (Altaxo.Gui.Graph3D.Viewing.IGraphController)Current.Gui.Evaluate(CreateNewGraph3D_Unsynchronized, doc);
-		}
-
-		private IMVCController CreateNewGraph3D_Unsynchronized(Altaxo.Graph.Graph3D.GraphDocument graph)
-		{
-			if (graph == null)
-				throw new ArgumentNullException(nameof(graph));
-
-			// make sure that new graph is contained in project
-			if (!Current.Project.Graph3DDocumentCollection.Contains(graph.Name))
-				Current.Project.AddItem(graph);
-
-			var types = Altaxo.Main.Services.ReflectionService.GetSubclassesOf(typeof(Altaxo.Gui.SharpDevelop.SDGraphViewContent));
-			System.Reflection.ConstructorInfo cinfo = null;
-			foreach (Type type in types)
-			{
-				if (null != (cinfo = type.GetConstructor(new Type[] { typeof(Altaxo.Graph.Graph3D.GraphDocument) })))
-				{
-					break;
-				}
-			}
-
-			if (null == cinfo)
-				return null;
-
-			var viewContent = (Altaxo.Gui.SharpDevelop.SDGraphViewContent)cinfo.Invoke(new object[] { graph });
-
-			var viewContentAsControllerWrapper = viewContent as Altaxo.Gui.IMVCControllerWrapper;
-
-			if (null == viewContentAsControllerWrapper)
-				throw new InvalidOperationException("All Altaxo classes implementing SDGraphViewContent have to implement IMVCControllerWrapper, too!");
-
-			if (viewContentAsControllerWrapper.MVCController.ViewObject == null)
-			{
-				Current.Gui.FindAndAttachControlTo(viewContentAsControllerWrapper.MVCController);
-			}
-
-			if (null != Current.Workbench)
-				Current.Workbench.ShowView(viewContent);
-
-			return viewContentAsControllerWrapper.MVCController;
+			return (Altaxo.Gui.Graph3D.Viewing.IGraphController)CreateNewViewContent_Unsynchronized(doc);
 		}
 
 		#endregion Graph3D functions

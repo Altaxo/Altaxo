@@ -33,12 +33,12 @@ using System.Text;
 namespace Altaxo.Graph.Procedures
 {
 	/// <summary>
-	/// Given a single GraphDocument, this class retrieves all the objects that are neccessary for this particular GraphDocument (tables, functions etc.)
+	/// Given a single GraphDocumentBase, this class retrieves all the objects that are neccessary for this particular GraphDocumentBase (tables, functions etc.)
 	/// and builds a new <see cref="Altaxo.AltaxoDocument"/> that contains these objects.
 	/// </summary>
 	public class MiniProjectBuilder
 	{
-		private GraphDocument _graph;
+		private GraphDocumentBase _graph;
 
 		/// <summary>
 		/// The _document to build.
@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Procedures
 		/// <param name="ensureEmbeddedObjectRenderingOptionsStoredInGraph">If set to <c>true</c>, the current embedded rendering options are stored as property in the graph document of the mini project.
 		/// This ensures that later on the graph is rendered in the client document exactly as it was chosen to be in the current project. If the mini project is not used for COM, leave that flag to <c>false.</c></param>
 		/// <returns>The mini project containing the cloned graph and all related data.</returns>
-		public AltaxoDocument GetMiniProject(GraphDocument graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
+		public AltaxoDocument GetMiniProject(GraphDocumentBase graph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
 		{
 			Initialize();
 
@@ -81,11 +81,11 @@ namespace Altaxo.Graph.Procedures
 			_columnsToChange = new Dictionary<DataColumn, DataTable>();
 		}
 
-		protected void CopyGraphToNewDocument(GraphDocument oldGraph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
+		protected void CopyGraphToNewDocument(GraphDocumentBase oldGraph, bool ensureEmbeddedObjectRenderingOptionsStoredInGraph)
 		{
-			var newGraph = (GraphDocument)oldGraph.Clone();
+			var newGraph = (GraphDocumentBase)oldGraph.Clone();
 			newGraph.Name = oldGraph.Name;
-			_document.GraphDocumentCollection.Add(newGraph);
+			_document.AddItem(newGraph);
 
 			if (ensureEmbeddedObjectRenderingOptionsStoredInGraph)
 			{
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Procedures
 			}
 		}
 
-		protected void CopyFolderPropertiesOf(GraphDocument oldGraph)
+		protected void CopyFolderPropertiesOf(GraphDocumentBase oldGraph)
 		{
 			foreach (var doc in PropertyExtensions.GetProjectFolderPropertyDocuments(oldGraph))
 			{
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Procedures
 			}
 		}
 
-		private void CopyDocumentInformation(GraphDocument graph)
+		private void CopyDocumentInformation(GraphDocumentBase graph)
 		{
 			var sourceDocument = (AltaxoDocument)Main.AbsoluteDocumentPath.GetRootNodeImplementing(graph, typeof(AltaxoDocument));
 

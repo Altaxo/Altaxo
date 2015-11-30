@@ -742,19 +742,19 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Handler for the menu item "Graph" - "New layer legend.
 	/// </summary>
-	public class SaveAsMiniProject : AbstractGraphControllerCommand
+	public static class SaveAsMiniProjectBase
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public static void Run(Altaxo.Graph.GraphDocumentBase doc)
 		{
 			var miniProjectBuilder = new Altaxo.Graph.Procedures.MiniProjectBuilder();
-			var newDocument = miniProjectBuilder.GetMiniProject(ctrl.Doc, false);
+			var newDocument = miniProjectBuilder.GetMiniProject(doc, false);
 			SaveProjectAs(newDocument);
 		}
 
 		/// <summary>
 		/// Asks the user for a file name for the current project, and then saves the project under the given name.
 		/// </summary>
-		public void SaveProjectAs(Altaxo.AltaxoDocument projectToSave)
+		public static void SaveProjectAs(Altaxo.AltaxoDocument projectToSave)
 		{
 			var dlg = new Altaxo.Gui.SaveFileOptions();
 
@@ -781,7 +781,7 @@ namespace Altaxo.Graph.Commands
 		/// </summary>
 		/// <param name="projectToSave">The project to save.</param>
 		/// <param name="filename"></param>
-		private void SaveProject(Altaxo.AltaxoDocument projectToSave, string filename)
+		public static void SaveProject(Altaxo.AltaxoDocument projectToSave, string filename)
 		{
 			using (var myStream = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.None))
 			{
@@ -794,6 +794,17 @@ namespace Altaxo.Graph.Commands
 				}
 				myStream.Close();
 			}
+		}
+	}
+
+	/// <summary>
+	/// Handler for the menu item "Graph" - "New layer legend.
+	/// </summary>
+	public class SaveAsMiniProject : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		{
+			SaveAsMiniProjectBase.Run(ctrl.Doc);
 		}
 	}
 

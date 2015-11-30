@@ -192,4 +192,40 @@ namespace Altaxo.Graph.Graph3D.Commands
 			return filter;
 		}
 	}
+
+	/// <summary>
+	/// Handler for the menu item "Graph" - "New layer legend.
+	/// </summary>
+	public class SaveAsMiniProject : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			Altaxo.Graph.Commands.SaveAsMiniProjectBase.Run(ctrl.Doc);
+		}
+	}
+
+	public class SaveGraphAsTemplate : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			System.IO.Stream myStream;
+			var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog();
+
+			saveFileDialog1.Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*";
+			saveFileDialog1.FilterIndex = 1;
+			saveFileDialog1.RestoreDirectory = true;
+
+			if (true == saveFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
+			{
+				if ((myStream = saveFileDialog1.OpenFile()) != null)
+				{
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+					info.BeginWriting(myStream);
+					info.AddValue("Graph", ctrl.Doc);
+					info.EndWriting();
+					myStream.Close();
+				}
+			}
+		}
+	}
 }

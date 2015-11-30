@@ -14,13 +14,26 @@
 	</Runtime>
 
 	<Path name = "/Altaxo/Workbench/MainMenu/File">
+
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
-			<MenuItem id="Graph3DExportSpecific"
-								insertbefore="AfterExportSeparator"
-								label="${res:XML.MainMenu.FileMenu.ExportGraph3D}"
+			<MenuItem id="SaveGraph3DAsTemplate"
+								insertbefore="SaveWindowSeparator"
+								label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
 								icon="Icons.16x16.NewDocumentIcon"
-								description="${res:XML.MainMenu.FileMenu.ExportGraph3D.Description}"
-								class="Altaxo.Graph.Graph3D.Commands.Export3D" />
+								description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.SaveGraphAsTemplate" />
+			<MenuItem id="SaveGraph3DMiniProject"
+								insertbefore="SaveWindowSeparator"
+								label="${res:XML.MainMenu.FileMenu.SaveGraphAsMiniProject}"
+								icon="Icons.16x16.NewDocumentIcon"
+								description="${res:XML.MainMenu.FileMenu.SaveGraphAsMiniProject.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.SaveAsMiniProject" />
+			<MenuItem id="Graph3DExportSpecific"
+							insertbefore="AfterExportSeparator"
+							label="${res:XML.MainMenu.FileMenu.ExportGraph3D}"
+							icon="Icons.16x16.NewDocumentIcon"
+							description="${res:XML.MainMenu.FileMenu.ExportGraph3D.Description}"
+							class="Altaxo.Graph.Graph3D.Commands.Export3D" />
 		</Condition>
 	</Path>
 
@@ -31,11 +44,11 @@
 								icon="Icons.16x16.NewDocumentIcon"
 								description="${res:XML.MainMenu.EditMenu.CopyPage.Description}"
 								class="Altaxo.Graph.Graph3D.Commands.CopyDocumentAsComObjectToClipboard" />
-				<MenuItem id="SetCopyPageOptions3D"
-									label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
-									icon="Icons.16x16.NewDocumentIcon"
-									description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
-									class="Altaxo.Graph.Commands.SetCopyPageOptions" />
+			<MenuItem id="SetCopyPageOptions3D"
+								label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
+								icon="Icons.16x16.NewDocumentIcon"
+								description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
+								class="Altaxo.Graph.Commands.SetCopyPageOptions" />
 		</Condition>
 	</Path>
 
