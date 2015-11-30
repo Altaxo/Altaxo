@@ -226,10 +226,17 @@ namespace Altaxo.Graph.Graph3D.Axis
 				this._axisPen = from._axisPen;
 				this._axisPosition1 = from._axisPosition1;
 				this._axisPosition2 = from._axisPosition2;
+
 				this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
 				this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
 				this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
 				this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
+
+				this._showSecondDownMajorTicks = from._showSecondDownMajorTicks;
+				this._showSecondDownMinorTicks = from._showSecondDownMinorTicks;
+				this._showSecondUpMajorTicks = from._showSecondUpMajorTicks;
+				this._showSecondUpMinorTicks = from._showSecondUpMinorTicks;
+
 				this._majorTickLength = from._majorTickLength;
 				this._majorTickPen = from._majorTickPen;
 				this._minorTickLength = from._minorTickLength;
