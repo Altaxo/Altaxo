@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +31,7 @@ using System.Text;
 
 namespace Altaxo.Com
 {
+	using Graph;
 	using UnmanagedApi.Ole32;
 
 	/// <summary>
@@ -57,7 +57,7 @@ namespace Altaxo.Com
 
 		private int _lastVerb;
 
-		private GraphDocument _document;
+		private GraphDocumentBase _document;
 
 		public GraphDocumentEmbeddedComObject(ComManager comManager)
 			: base(comManager)
@@ -101,7 +101,7 @@ namespace Altaxo.Com
 
 		#region Document management
 
-		public GraphDocument Document
+		public GraphDocumentBase Document
 		{
 			get
 			{
@@ -508,12 +508,26 @@ namespace Altaxo.Com
 
 			Marshal.ReleaseComObject(pstg);
 
-			Altaxo.Graph.Gdi.GraphDocument newDocument = null;
+			Altaxo.Graph.GraphDocumentBase newDocument = null;
 
-			if (null != documentName && Current.Project.GraphDocumentCollection.Contains(documentName))
-				newDocument = Current.Project.GraphDocumentCollection[documentName];
-			else if (null != Current.Project.GraphDocumentCollection.FirstOrDefault())
-				newDocument = Current.Project.GraphDocumentCollection.First();
+			if (null != documentName)
+			{
+				Altaxo.Graph.Gdi.GraphDocument newDocGdi;
+				Altaxo.Graph.Graph3D.GraphDocument newDoc3D;
+
+				if (Current.Project.GraphDocumentCollection.TryGetValue(documentName, out newDocGdi))
+					newDocument = newDocGdi;
+				else if (Current.Project.Graph3DDocumentCollection.TryGetValue(documentName, out newDoc3D))
+					newDocument = newDoc3D;
+			}
+
+			if (null == newDocument)
+			{
+				if (null != Current.Project.GraphDocumentCollection.FirstOrDefault())
+					newDocument = Current.Project.GraphDocumentCollection.First();
+				else if (null != Current.Project.Graph3DDocumentCollection.FirstOrDefault())
+					newDocument = Current.Project.Graph3DDocumentCollection.First();
+			}
 
 			if (null != newDocument)
 			{

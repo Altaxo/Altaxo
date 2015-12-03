@@ -142,7 +142,7 @@ namespace Altaxo.Com
 			return null;
 		}
 
-		public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentEmbeddedComObject documentComObject, GraphDocument oldDocument, GraphDocument newDocument)
+		public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentEmbeddedComObject documentComObject, GraphDocumentBase oldDocument, GraphDocumentBase newDocument)
 		{
 			System.Diagnostics.Debug.Assert(null == oldDocument);
 			System.Diagnostics.Debug.Assert(null != newDocument);

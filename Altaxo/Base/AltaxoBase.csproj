@@ -335,6 +335,7 @@
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\IPaintContext.cs" />
     <Compile Include="Graph\GraphDocumentBase.cs" />
+    <Compile Include="Graph\GraphDocumentBaseExportActions.cs" />
     <Compile Include="Graph\LinearPartitioning.cs" />
     <Compile Include="Graph\ICoordinateSystem.cs" />
     <Compile Include="Graph\IPaintContext.cs" />

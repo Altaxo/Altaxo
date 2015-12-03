@@ -1,5 +1,6 @@
 ﻿using Altaxo.Drawing;
 using Altaxo.Geometry;
+using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,11 +26,20 @@ namespace Altaxo.Graph.Graph3D
 			return RenderAsBitmap(doc, backbrush, null, pixelformat, sourceDpiResolution, destinationDpiResolution);
 		}
 
+		public static Bitmap RenderAsBitmap(this GraphDocument document, EmbeddedObjectRenderingOptions renderingOptions, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)
+		{
+			BrushX opaqueGround = null;
+			if (!GraphExportOptions.HasPixelFormatAlphaChannel(pixelFormat))
+				opaqueGround = new BrushX(renderingOptions.BackgroundColorForFormatsWithoutAlphaChannel);
+
+			return RenderAsBitmap(document, opaqueGround, renderingOptions.BackgroundBrush, pixelFormat, renderingOptions.SourceDpiResolution, renderingOptions.SourceDpiResolution * renderingOptions.OutputScalingFactor);
+		}
+
 		/// <summary>
 		/// Saves the graph as an bitmap file and returns the bitmap.
 		/// </summary>
 		/// <param name="doc">The graph document to export.</param>
-		/// <param name="backbrush1">First brush used to fill the background of the image. Can be <c>null</c>.</param>
+		/// <param name="backbrush1">First brush used to fill the background of the image (normally used with 24bbp bitmap formats to make the background opaque. Can be <c>null</c>.</param>
 		/// <param name="backbrush2">Second brush used to fill the background of the image. Can be <c>null</c>.</param>
 		/// <param name="pixelformat">Specify the pixelformat here.</param>
 		/// <param name="sourceDpiResolution">Resolution at which the graph document is rendered into a bitmap.</param>

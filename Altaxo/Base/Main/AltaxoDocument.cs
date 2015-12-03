@@ -73,6 +73,7 @@ namespace Altaxo
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);
 			var commonDictionaryForGraphs = new SortedDictionary<string, IProjectItem>();
+
 			_graphs = new Graph.Gdi.GraphDocumentCollection(this, commonDictionaryForGraphs);
 			_graphs3D = new Graph.Graph3D.GraphDocumentCollection(this, commonDictionaryForGraphs);
 
