@@ -29,7 +29,7 @@ using System.Collections;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// <see cref="Graph3DExportBindingDoozer"/> generates a class with interface <see cref="Altaxo.Graph.IGraphExporter"/>, which can be used
+	/// <see cref="Graph3DExportBindingDoozer"/> generates a class with interface <see cref="Altaxo.Main.IProjectItemImageExporter"/>, which can be used
 	/// to export the project item of type <see cref="Altaxo.Graph.Graph3D.GraphDocument"/> as an image to a stream.
 	///
 	/// </summary>
@@ -53,10 +53,10 @@ namespace Altaxo.Main
 		/// </summary>
 		public object BuildItem(BuildItemArgs args)
 		{
-			return new Graph3DDisplayBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.SharpDevelop.SDGraph3DViewContent));
+			return new Graph3DExportBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter));
 		}
 
-		private class Graph3DDisplayBindingDescriptor : IProjectItemDisplayBindingDescriptor
+		private class Graph3DExportBindingDescriptor : IProjectItemExportBindingDescriptor
 		{
 			private Type _projectItemType;
 			private Type _graphicalExporterType;
@@ -68,10 +68,13 @@ namespace Altaxo.Main
 			public string Id { get; set; }
 			public string Title { get; set; }
 
-			public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
+			public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
 			{
 				if (codon == null)
 					throw new ArgumentNullException(nameof(codon));
+
+				if (!Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(graphicalExporterType, typeof(Altaxo.Main.IProjectItemImageExporter)))
+					throw new Exception(string.Format("Error in codon {0}: the provided type in argument {1} is not of type {2}", codon, nameof(graphicalExporterType), typeof(Altaxo.Main.IProjectItemImageExporter)));
 
 				this._codon = codon;
 				this.Id = codon.Id;

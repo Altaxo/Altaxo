@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph3D.Common
 	using Device = SharpDX.Direct3D10.Device1;
 	using STG = SharpDX.Toolkit.Graphics;
 
-	public class D3D10BitmapExporter : Altaxo.Graph.IGraphExporter
+	public class D3D10BitmapExporter : Altaxo.Main.IProjectItemImageExporter
 	{
 		/// <summary>
 		/// Saves the project item as image to the provided stream.
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
 		/// <param name="options">The export options.</param>
 		/// <param name="toStream">The stream to save the image to.</param>
-		public void SaveAsImageToStream(Altaxo.Main.IProjectItem item, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
+		public void ExportAsImageToStream(Altaxo.Main.IProjectItem item, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
 		{
 			if (item == null)
 				throw new ArgumentNullException(nameof(item));

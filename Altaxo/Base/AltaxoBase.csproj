@@ -250,6 +250,7 @@
     <Compile Include="Graph\Graph3D\GraphDocument.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentBuilder.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentCollection.cs" />
+    <Compile Include="Graph\Graph3D\GraphDocumentExportActions.cs" />
     <Compile Include="Graph\Graph3D\GraphicCollection.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\GraphicContext3DBase.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IGraphicContext3D.cs" />
@@ -334,7 +335,6 @@
     <Compile Include="Graph\Gdi\GraphTemplates\TemplateWithXYPlotLayerWithG2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\IPaintContext.cs" />
     <Compile Include="Graph\GraphDocumentBase.cs" />
-    <Compile Include="Graph\IGraphExporter.cs" />
     <Compile Include="Graph\LinearPartitioning.cs" />
     <Compile Include="Graph\ICoordinateSystem.cs" />
     <Compile Include="Graph\IPaintContext.cs" />
@@ -523,6 +523,7 @@
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\DocumentNodeAndName.cs" />
     <Compile Include="Main\IProjectItemCollection.cs" />
+    <Compile Include="Main\IProjectItemImageExporter.cs" />
     <Compile Include="Main\RelativeDocumentPath.cs" />
     <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />

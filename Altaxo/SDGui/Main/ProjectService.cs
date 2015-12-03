@@ -874,7 +874,7 @@ namespace Altaxo.Main
 				{
 					if (descriptor.ProjectItemType == document.GetType())
 					{
-						if (null != (cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[] { document.GetType() })))
+						if (null != (cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })))
 						{
 							var par = cinfo.GetParameters()[0];
 							if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
@@ -1080,6 +1080,36 @@ namespace Altaxo.Main
 		}
 
 		#endregion Worksheet functions
+
+		#region common graph functions
+
+		/// <summary>
+		/// Gets an exporter that can be used to export an image of the provided project item.
+		/// </summary>
+		/// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
+		/// <returns>The image exporter class that can be used to export the item in graphical form, or null if no exporter could be found.</returns>
+		public IProjectItemImageExporter GetProjectItemImageExporter(IProjectItem item)
+		{
+			IProjectItemImageExporter result = null;
+
+			foreach (IProjectItemExportBindingDescriptor descriptor in AddInTree.BuildItems<IProjectItemExportBindingDescriptor>("/Altaxo/Workbench/ProjectItemExportBindings", this, false))
+			{
+				if (descriptor.ProjectItemType == item.GetType())
+				{
+					System.Reflection.ConstructorInfo cinfo;
+					if (null != (cinfo = descriptor.GraphicalExporterType.GetConstructor(new Type[0])))
+					{
+						result = cinfo.Invoke(new object[0]) as IProjectItemImageExporter;
+						if (null != result)
+							break;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		#endregion common graph functions
 
 		#region Graph functions
 

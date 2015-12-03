@@ -29,6 +29,12 @@ namespace Altaxo.Main
 	public interface IProjectItemDisplayBindingDescriptor
 	{
 		Type ProjectItemType { get; }
+		Type ViewContentType { get; }
+	}
+
+	public interface IProjectItemExportBindingDescriptor
+	{
+		Type ProjectItemType { get; }
 		Type GraphicalExporterType { get; }
 	}
 }

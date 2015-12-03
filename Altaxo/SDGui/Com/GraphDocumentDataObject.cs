@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +32,8 @@ using System.Text;
 namespace Altaxo.Com
 {
 	using Geometry;
+	using Graph;
+	using Graph.Gdi;
 	using UnmanagedApi.Kernel32;
 	using UnmanagedApi.Ole32;
 
@@ -47,7 +48,7 @@ namespace Altaxo.Com
 		private string _graphDocumentDropdownFileName;
 		private ClipboardRenderingOptions _graphExportOptions;
 
-		public GraphDocumentDataObject(GraphDocument graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
+		public GraphDocumentDataObject(GraphDocumentBase graphDocument, ProjectFileComObject fileComObject, ComManager comManager)
 			: base(comManager)
 		{
 			ComDebug.ReportInfo("{0} constructor.", this.GetType().Name);
@@ -62,10 +63,11 @@ namespace Altaxo.Com
 				_graphExportOptions.CopyFrom(embeddedRenderingOptions); // merge embedded rendering options
 
 			if ((_graphExportOptions.RenderEnhancedMetafile && _graphExportOptions.RenderEnhancedMetafileAsVectorFormat) ||
-				(_graphExportOptions.RenderDropFile && _graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Emf)
+					(_graphExportOptions.RenderDropFile && _graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Emf)
 				)
 			{
-				_graphDocumentMetafileImage = GraphDocumentExportActions.RenderAsEnhancedMetafileVectorFormat(graphDocument, _graphExportOptions);
+				if (graphDocument is Altaxo.Graph.Gdi.GraphDocument)
+					_graphDocumentMetafileImage = GraphDocumentExportActions.RenderAsEnhancedMetafileVectorFormat((Altaxo.Graph.Gdi.GraphDocument)graphDocument, _graphExportOptions);
 			}
 
 			if (null == _graphDocumentMetafileImage ||
@@ -74,7 +76,12 @@ namespace Altaxo.Com
 				(_graphExportOptions.RenderEnhancedMetafile && !_graphExportOptions.RenderEnhancedMetafileAsVectorFormat) ||
 				_graphExportOptions.RenderDropFile)
 			{
-				_graphDocumentBitmapImage = GraphDocumentExportActions.RenderAsBitmap(graphDocument, _graphExportOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _graphExportOptions.SourceDpiResolution, _graphExportOptions.SourceDpiResolution / _graphExportOptions.OutputScalingFactor);
+				if (graphDocument is Altaxo.Graph.Gdi.GraphDocument)
+					_graphDocumentBitmapImage = GraphDocumentExportActions.RenderAsBitmap((Altaxo.Graph.Gdi.GraphDocument)graphDocument, _graphExportOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _graphExportOptions.SourceDpiResolution, _graphExportOptions.SourceDpiResolution / _graphExportOptions.OutputScalingFactor);
+				else if (graphDocument is Altaxo.Graph.Graph3D.GraphDocument)
+					_graphDocumentBitmapImage = Altaxo.Graph.Graph3D.GraphDocumentExportActions.RenderAsBitmap((Altaxo.Graph.Graph3D.GraphDocument)graphDocument, _graphExportOptions.BackgroundBrush, System.Drawing.Imaging.PixelFormat.Format32bppArgb, _graphExportOptions.SourceDpiResolution, _graphExportOptions.SourceDpiResolution / _graphExportOptions.OutputScalingFactor);
+				else
+					throw new NotImplementedException();
 			}
 
 			if (_graphExportOptions.RenderEmbeddedObject)

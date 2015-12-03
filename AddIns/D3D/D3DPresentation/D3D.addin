@@ -48,7 +48,7 @@
 								label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
 								icon="Icons.16x16.NewDocumentIcon"
 								description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
-								class="Altaxo.Graph.Commands.SetCopyPageOptions" />
+								class="Altaxo.Graph.Graph3D.Commands.SetCopyPageOptions" />
 		</Condition>
 	</Path>
 

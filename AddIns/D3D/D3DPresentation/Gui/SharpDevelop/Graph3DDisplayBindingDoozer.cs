@@ -61,7 +61,7 @@ namespace Altaxo.Main
 			private Type _projectItemType;
 			private Type _viewContentType;
 			public Type ProjectItemType { get { return _projectItemType; } }
-			public Type GraphicalExporterType { get { return _viewContentType; } }
+			public Type ViewContentType { get { return _viewContentType; } }
 
 			private Codon _codon;
 
@@ -88,7 +88,7 @@ namespace Altaxo.Main
 
 			public override string ToString()
 			{
-				return string.Format("[Graph3DDisplayBindingDescriptor ItemClass={0} ControllerClass={1}]", ProjectItemType, GraphicalExporterType);
+				return string.Format("[Graph3DDisplayBindingDescriptor ItemClass={0} ControllerClass={1}]", ProjectItemType, ViewContentType);
 			}
 		}
 	}

@@ -130,6 +130,18 @@ namespace Altaxo.Graph.Graph3D.Commands
 		}
 	}
 
+	public class SetCopyPageOptions : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			object resultobj = Gdi.ClipboardRenderingOptions.CopyPageOptions;
+			if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))
+			{
+				Gdi.ClipboardRenderingOptions.CopyPageOptions = (Gdi.ClipboardRenderingOptions)resultobj;
+			}
+		}
+	}
+
 	public class Export3D : AbstractGraph3DControllerCommand
 	{
 		private static Altaxo.Graph.Gdi.GraphExportOptions _graphExportOptionsToFile = new Graph.Gdi.GraphExportOptions();
@@ -166,7 +178,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 			{
 				using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
-					new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter().SaveAsImageToStream(doc, graphExportOptions, myStream);
+					new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
 					myStream.Close();
 				} // end openfile ok
 			} // end dlgresult ok

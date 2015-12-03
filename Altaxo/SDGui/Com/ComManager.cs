@@ -35,6 +35,7 @@ using System.Windows;
 
 namespace Altaxo.Com
 {
+	using Graph;
 	using UnmanagedApi.Ole32;
 
 	public class ComManager : Altaxo.Main.IComManager
@@ -112,7 +113,7 @@ namespace Altaxo.Com
 			return newComObject;
 		}
 
-		public GraphDocumentDataObject GetDocumentsDataObjectForGraphDocument(GraphDocument doc)
+		public GraphDocumentDataObject GetDocumentsDataObjectForGraphDocument(GraphDocumentBase doc)
 		{
 			var newComObject = new GraphDocumentDataObject(doc, _fileComObject, this);
 			_lastUsedDataObject = new WeakReference(newComObject);
@@ -132,9 +133,9 @@ namespace Altaxo.Com
 
 		public System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object obj)
 		{
-			if (obj is GraphDocument)
+			if (obj is GraphDocumentBase)
 			{
-				var doc = (GraphDocument)obj;
+				var doc = (GraphDocumentBase)obj;
 				return GetDocumentsDataObjectForGraphDocument(doc);
 			}
 

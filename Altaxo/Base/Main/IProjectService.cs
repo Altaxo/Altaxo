@@ -346,6 +346,13 @@ namespace Altaxo.Main
 		void RemoveGraph(Altaxo.Gui.Graph.Viewing.IGraphController ctrl);
 
 		/// <summary>
+		/// Gets an exporter that can be used to export an image of the provided project item.
+		/// </summary>
+		/// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
+		/// <returns>The image exporter class that can be used to export the item in graphical form, or null if no exporter could be found.</returns>
+		IProjectItemImageExporter GetProjectItemImageExporter(IProjectItem item);
+
+		/// <summary>
 		/// Fired when a project is opened or a new empty project is created.
 		/// </summary>
 		event ProjectEventHandler ProjectOpened;
