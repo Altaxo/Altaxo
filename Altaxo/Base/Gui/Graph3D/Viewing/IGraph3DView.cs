@@ -69,8 +69,26 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		PointD2D ViewportSizeInPoints { get; }
 
 		/// <summary>
-		/// Called if a full repaint of the graph is neccessary.
+		/// Sets the camera, but does not trigger a new rendering.
 		/// </summary>
-		void FullRepaint();
+		/// <param name="camera">The camera.</param>
+		void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera);
+
+		/// <summary>
+		/// Sets a new geometry, but does not trigger rendering (use <see cref="TriggerRendering"/> for triggering rendering.
+		/// </summary>
+		/// <param name="drawing">The drawing.</param>
+		void SetDrawing(Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D drawing);
+
+		/// <summary>
+		/// Triggers a new rendering without building up a new geometry. Could be used for instance if the light or the camera has changed, but not the geometry.
+		/// </summary>
+		void TriggerRendering();
+
+		/// <summary>
+		/// Gets the graphic context that is appropriate for the view.
+		/// </summary>
+		/// <returns>New graphic context.</returns>
+		Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D GetGraphicContext();
 	}
 }

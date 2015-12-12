@@ -291,6 +291,36 @@ namespace Altaxo.Graph
 			get { return new CSPlaneID(2, 1); }
 		}
 
+		public static CSPlaneID Front3D
+		{
+			get { return new CSPlaneID(1, 0); }
+		}
+
+		public static CSPlaneID Back3D
+		{
+			get { return new CSPlaneID(1, 1); }
+		}
+
+		public static CSPlaneID Left3D
+		{
+			get { return new CSPlaneID(0, 0); }
+		}
+
+		public static CSPlaneID Right3D
+		{
+			get { return new CSPlaneID(0, 1); }
+		}
+
+		public static CSPlaneID Bottom3D
+		{
+			get { return new CSPlaneID(2, 0); }
+		}
+
+		public static CSPlaneID Top3D
+		{
+			get { return new CSPlaneID(2, 1); }
+		}
+
 		public static explicit operator CSLineID(CSPlaneID plane)
 		{
 			if (plane._perpendicularAxisNumber < 0)

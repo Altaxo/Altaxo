@@ -302,7 +302,10 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				_pen = _pen.WithThickness1(_cbThickness1.SelectedQuantityAsValueInPoints);
+				if (null != _cbThickness2)
+					_pen = _pen.WithThickness1(_cbThickness1.SelectedQuantityAsValueInPoints);
+				else
+					_pen = _pen.WithUniformThickness(_cbThickness1.SelectedQuantityAsValueInPoints);
 				OnPenChanged();
 			}
 		}

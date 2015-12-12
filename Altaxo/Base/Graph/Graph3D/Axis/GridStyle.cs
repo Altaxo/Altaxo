@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea layer, int axisnumber)
+		public void Paint(IGraphicContext3D g, IPlotArea layer, CSPlaneID plane, int axisnumber)
 		{
 			if (!_showGrid)
 				return;
@@ -220,16 +220,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 				//_majorPen.SetEnvironment(layerRect, BrushX.GetEffectiveMaximumResolution(g, 1));
 				if (rel >= 0 && rel <= 1)
 				{
-					if (axisnumber == 0)
-					{
-						var line = layer.CoordinateSystem.GetIsoline(new Logical3D(rel, 0), new Logical3D(rel, 1));
-						g.DrawLine(MajorPen, line);
-					}
-					else
-					{
-						var line = layer.CoordinateSystem.GetIsoline(new Logical3D(0, rel), new Logical3D(1, rel));
-						g.DrawLine(MajorPen, line);
-					}
+					Logical3D logV = new Logical3D();
+					logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
+					logV.SetR(axisnumber, rel);
+					var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
+					var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
+					g.DrawLine(MajorPen, line);
 				}
 			}
 			else
@@ -242,18 +238,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 					ticks = ticking.GetMinorTicksNormal(axis);
 					for (int i = 0; i < ticks.Length; ++i)
 					{
-						if (axisnumber == 0)
-						{
-							var line = layer.CoordinateSystem.GetIsoline(new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
-							g.DrawLine(MinorPen, line);
-						}
-						else
-						{
-							var line = layer.CoordinateSystem.GetIsoline(new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
-							g.DrawLine(MinorPen, line);
-						}
-
-						//layer.DrawIsoLine(g, MinorPen, axisnumber, ticks[i], 0, 1);
+						Logical3D logV = new Logical3D();
+						logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
+						logV.SetR(axisnumber, ticks[i]);
+						var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
+						var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
+						g.DrawLine(MinorPen, line);
 					}
 				}
 
@@ -261,18 +251,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 				ticks = ticking.GetMajorTicksNormal(axis);
 				for (int i = 0; i < ticks.Length; ++i)
 				{
-					if (axisnumber == 0)
-					{
-						var line = layer.CoordinateSystem.GetIsoline(new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
-						g.DrawLine(MajorPen, line);
-					}
-					else
-					{
-						var line = layer.CoordinateSystem.GetIsoline(new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
-						g.DrawLine(MajorPen, line);
-					}
-
-					//layer.DrawIsoLine(g, MajorPen, axisnumber, ticks[i], 0, 1);
+					Logical3D logV = new Logical3D();
+					logV.SetR(plane.PerpendicularAxisNumber, plane.LogicalValue);
+					logV.SetR(axisnumber, ticks[i]);
+					var thirdAxisNumber = Logical3D.GetPerpendicularAxisNumber(plane.PerpendicularAxisNumber, axisnumber);
+					var line = layer.CoordinateSystem.GetIsoline(logV.WithR(thirdAxisNumber, 0), logV.WithR(thirdAxisNumber, 1));
+					g.DrawLine(MajorPen, line);
 				}
 			}
 		}

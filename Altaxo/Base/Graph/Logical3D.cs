@@ -52,6 +52,72 @@ namespace Altaxo.Graph
 			RZ = 0;
 		}
 
+		public Logical3D WithR(int axisNumber, double r)
+		{
+			var result = this;
+			result.SetR(axisNumber, r);
+			return result;
+		}
+
+		public void SetR(int axisNumber, double r)
+		{
+			switch (axisNumber)
+			{
+				case 0:
+					RX = r;
+					break;
+
+				case 1:
+					RY = r;
+					break;
+
+				case 2:
+					RZ = r;
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		/// <summary>
+		/// Gets the perpendicular axis number. Given a first and a second axis number, this gives the third axis number that is unequal to the first and the second.
+		/// </summary>
+		/// <param name="axisNumber1">The axis number1.</param>
+		/// <param name="axisNumber2">The axis number2.</param>
+		/// <returns>The third axis number.</returns>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// Out of range [0,2]
+		/// or
+		/// Out of range [0,2]
+		/// or
+		/// Second axis number is equal to first axis number
+		/// </exception>
+		public static int GetPerpendicularAxisNumber(int axisNumber1, int axisNumber2)
+		{
+			if (axisNumber1 < 0 || axisNumber1 > 2)
+				throw new ArgumentOutOfRangeException(nameof(axisNumber1), "Out of range [0,2]");
+			if (axisNumber2 < 0 || axisNumber2 > 2)
+				throw new ArgumentOutOfRangeException(nameof(axisNumber2), "Out of range [0,2]");
+			if (axisNumber1 == axisNumber2)
+				throw new ArgumentOutOfRangeException(nameof(axisNumber2), "Second axis number is equal to first axis number");
+
+			switch (axisNumber1)
+			{
+				case 0:
+					return axisNumber2 == 1 ? 2 : 1;
+
+				case 1:
+					return axisNumber2 == 0 ? 2 : 0;
+
+				case 2:
+					return axisNumber2 == 0 ? 1 : 0;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
 		/// <summary>
 		/// Returns the coordinate with index idx.
 		/// </summary>

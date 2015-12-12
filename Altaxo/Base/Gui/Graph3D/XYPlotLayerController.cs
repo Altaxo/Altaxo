@@ -268,8 +268,13 @@ namespace Altaxo.Gui.Graph3D
 
 			// Planes
 			_listOfPlanes = new SelectableListNodeList();
-			_currentPlaneID = CSPlaneID.Front;
-			_listOfPlanes.Add(new SelectableListNode("Front", _currentPlaneID, true));
+			_currentPlaneID = CSPlaneID.Back3D;
+			_listOfPlanes.Add(new SelectableListNode("Left", CSPlaneID.Left3D, true));
+			_listOfPlanes.Add(new SelectableListNode("Front", CSPlaneID.Front3D, true));
+			_listOfPlanes.Add(new SelectableListNode("Right", CSPlaneID.Right3D, true));
+			_listOfPlanes.Add(new SelectableListNode("Back", CSPlaneID.Back3D, true));
+			_listOfPlanes.Add(new SelectableListNode("Top", CSPlaneID.Top3D, true));
+			_listOfPlanes.Add(new SelectableListNode("Bottom", CSPlaneID.Bottom3D, true));
 
 			_GridStyleController = new Dictionary<CSPlaneID, IMVCANController>();
 		}

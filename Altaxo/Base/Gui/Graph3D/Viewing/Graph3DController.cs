@@ -40,6 +40,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		[NonSerialized]
 		protected WeakEventHandler[] _weakEventHandlersForDoc;
 
+		private Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D _drawing;
+
 		#region Constructors
 
 		protected Graph3DController()
@@ -101,11 +103,23 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != _view)
 			{
+				_view.SetCamera(_doc.Scene.Camera);
+
 				InitLayerStructure();
 				_view.SetLayerStructure(_layerStructure, this.CurrentLayerNumber.ToArray()); // tell the view how many layers we have
 
 				// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
 				this.EhView_GraphPanelSizeChanged();
+
+				if (null != _drawing)
+				{
+					_view.SetDrawing(_drawing);
+					_view.TriggerRendering();
+				}
+				else
+				{
+					EhUpdateByTimerQueue();
+				}
 			}
 		}
 
@@ -400,18 +414,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var cameraDistance = 10 * Doc.RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
 
-			var newCamera = (CameraBase)Doc.Scene.Camera.Clone();
-			newCamera.UpVector = upVector;
-			newCamera.TargetPosition = targetPosition;
-			newCamera.EyePosition = eyePosition;
-			newCamera.ZNear = cameraDistance / 8;
-			newCamera.ZFar = cameraDistance * 2;
+			var newCamera = Doc.Scene.Camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
 
 			var orthoCamera = newCamera as OrthographicCamera;
 
 			if (null != orthoCamera)
 			{
-				orthoCamera.Scale = 1;
+				orthoCamera = orthoCamera.WithScale(1);
 
 				var mx = orthoCamera.GetLookAtRHTimesOrthoRHMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
@@ -423,7 +432,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					absmax = Math.Max(absmax, Math.Abs(ps.X));
 					absmax = Math.Max(absmax, Math.Abs(ps.Y));
 				}
-				orthoCamera.Scale = absmax;
+				newCamera = orthoCamera.WithScale(absmax);
 			}
 			else
 			{
@@ -492,10 +501,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					-(scaleAfter - scaleBefore) * (eye.Y * tam1h * up.X - eye.X * tam1h * up.Y + aspectRatio * tbm1h * up.Z)
 					);
 
-				var newCamera = (OrthographicCamera)Doc.Scene.Camera.Clone();
-				newCamera.EyePosition += shift;
-				newCamera.TargetPosition += shift;
-				newCamera.Scale = scaleAfter;
+				var oldCamera = (OrthographicCamera)Doc.Scene.Camera;
+				var newCamera = ((OrthographicCamera)Doc.Scene.Camera).WithEyeTargetScale(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift, scaleAfter);
 				Doc.Scene.Camera = newCamera;
 			}
 		}
@@ -518,30 +525,26 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (stepX != 0)
 			{
 				double angleRadian = Math.PI * stepX / 18;
-				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, Doc.Scene.Camera.UpVector)));
-				var matrix = MatrixD3D.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, Doc.Scene.Camera.TargetPosition);
+				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, VectorD3D.CrossProduct(cam.EyeVector, cam.UpVector)));
+				var matrix = MatrixD3D.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
-				var newEye = matrix.TransformPoint(Doc.Scene.Camera.EyePosition);
-				var newUp = matrix.Transform(Doc.Scene.Camera.UpVector);
-				var newCamera = (CameraBase)Doc.Scene.Camera.Clone();
-				newCamera.EyePosition = newEye;
-				newCamera.UpVector = newUp;
-				Doc.Scene.Camera = newCamera;
+				var newEye = matrix.TransformPoint(cam.EyePosition);
+				var newUp = matrix.Transform(cam.UpVector);
+				cam = cam.WithUpEye(newUp, newEye);
 			}
 
 			if (stepY != 0)
 			{
 				double angleRadian = Math.PI * stepY / 18;
-				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.NormalizedEyeVector, Doc.Scene.Camera.UpVector));
-				var matrix = MatrixD3D.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, Doc.Scene.Camera.TargetPosition);
+				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.NormalizedEyeVector, cam.UpVector));
+				var matrix = MatrixD3D.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
-				var newEye = matrix.TransformPoint(Doc.Scene.Camera.EyePosition);
-				var newUp = matrix.Transform(Doc.Scene.Camera.UpVector);
-				var newCamera = (CameraBase)Doc.Scene.Camera.Clone();
-				newCamera.EyePosition = newEye;
-				newCamera.UpVector = newUp;
-				Doc.Scene.Camera = newCamera;
+				var newEye = matrix.TransformPoint(cam.EyePosition);
+				var newUp = matrix.Transform(cam.UpVector);
+				cam = cam.WithUpEye(newUp, newEye);
 			}
+
+			Doc.Scene.Camera = cam;
 		}
 
 		public void EhMove(double stepX, double stepY)
@@ -549,17 +552,16 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			VectorD3D xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.NormalizedEyeVector, Doc.Scene.Camera.UpVector));
 			VectorD3D yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, Doc.Scene.Camera.UpVector)));
 
-			if (Doc.Scene.Camera is OrthographicCamera)
+			var cam = Doc.Scene.Camera;
+
+			if (cam is OrthographicCamera)
 			{
-				var newCamera = Doc.Scene.Camera.Clone() as OrthographicCamera;
-
-				var shift = (xaxis * stepX + yaxis * stepY) * (newCamera.Scale / 20);
-
-				newCamera.EyePosition += shift;
-				newCamera.TargetPosition += shift;
-
-				Doc.Scene.Camera = newCamera;
+				var oldCamera = (OrthographicCamera)Doc.Scene.Camera;
+				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.Scale / 20);
+				cam = oldCamera.WithEyeTarget(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift);
 			}
+
+			Doc.Scene.Camera = cam;
 		}
 
 		/// <summary>
@@ -605,10 +607,20 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
 				return;
 			}
-
-			_triggerBasedUpdate.Trigger();
+			else if (e is CameraChangedEventArgs) // Only the camera has changed, there is no need to rebuild the geometry
+			{
+				_view.SetCamera(_doc.Scene.Camera);
+				_view?.TriggerRendering();
+			}
+			else // everything else need to rebuild the geometry
+			{
+				_triggerBasedUpdate.Trigger();
+			}
 		}
 
+		/// <summary>
+		/// Called when the timer has elapsed.
+		/// </summary>
 		private void EhUpdateByTimerQueue()
 		{
 			// if something changed on the graph, make sure that the layer and plot number reflect this change
@@ -617,7 +629,16 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != _view)
 			{
-				_view.FullRepaint(); // this function is non-Gui thread safe
+				var newDrawing = _view.GetGraphicContext();
+				_doc.Paint(newDrawing);
+
+				var oldDrawing = _drawing;
+				_drawing = newDrawing;
+				_view.SetDrawing(_drawing);
+				_view.SetCamera(_doc.Scene.Camera);
+				_view.TriggerRendering();
+
+				(oldDrawing as IDisposable)?.Dispose();
 			}
 		}
 

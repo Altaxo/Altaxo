@@ -84,24 +84,25 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			double aspectRatio = pixelsY / (double)pixelsX;
 
-			var sceneSettings = (SceneSettings)doc.Scene.Clone();
+			var sceneCamera = doc.Scene.Camera;
 
-			var orthoCamera = sceneSettings.Camera as OrthographicCamera;
-
-			if (null != orthoCamera)
+			if (sceneCamera is OrthographicCamera)
 			{
-				orthoCamera.Scale = bounds.SizeX;
+				var orthoCamera = (OrthographicCamera)sceneCamera;
+				orthoCamera = orthoCamera.WithScale(bounds.SizeX);
 
 				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
 				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
 				orthoCamera.ScreenOffset = new PointD2D(offsX, offsY);
+
+				sceneCamera = orthoCamera;
 			}
 			else
 			{
 				throw new NotImplementedException();
 			}
 
-			scene.SetSceneSettings(sceneSettings);
+			scene.SetCamera(sceneCamera);
 			scene.SetDrawing(g);
 
 			exporter.Export(pixelsX, pixelsY, scene, options, toStream);

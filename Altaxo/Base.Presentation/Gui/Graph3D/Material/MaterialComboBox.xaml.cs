@@ -65,6 +65,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			InitializeComponent();
 
 			UpdateComboBoxSourceSelection(InternalSelectedMaterial);
+
 			UpdateTreeViewSelection();
 		}
 

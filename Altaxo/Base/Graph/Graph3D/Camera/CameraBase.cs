@@ -32,34 +32,40 @@ using System.Threading.Tasks;
 namespace Altaxo.Graph.Graph3D.Camera
 {
 	/// <summary>
-	/// Represents the camera.
+	/// Represents the camera. Classes derived from here are meant to be immutable.
 	/// </summary>
-	public abstract class CameraBase : Main.ICopyFrom
+	public abstract class CameraBase : Main.IImmutable
 	{
+		protected VectorD3D _upVector;
+		protected PointD3D _eyePosition;
+		protected PointD3D _targetPosition;
+		protected double _zNear;
+		protected double _zFar;
+
 		/// <summary>
 		/// Gets or sets the camera up vector.
 		/// </summary>
-		public VectorD3D UpVector { get; set; }
+		public VectorD3D UpVector { get { return _upVector; } }
 
 		/// <summary>
 		/// Gets or sets the camera position, the so-called eye position.
 		/// </summary>
-		public PointD3D EyePosition { get; set; }
+		public PointD3D EyePosition { get { return _eyePosition; } }
 
 		/// <summary>
 		/// Gets or sets the position the camera is looking at.
 		/// </summary>
-		public PointD3D TargetPosition { get; set; }
+		public PointD3D TargetPosition { get { return _targetPosition; } }
 
 		/// <summary>
 		/// Gets or sets the minimum distance the camera is 'seeing' something. Objects closer than this distance (from the camera) will not be visible.
 		/// </summary>
-		public double ZNear { get; set; }
+		public double ZNear { get { return _zNear; } }
 
 		/// <summary>
 		/// Gets or sets the maximum distance the camera is 'seeing' something. Objects farther away than this distance (from the camera) will not be visible.
 		/// </summary>
-		public double ZFar { get; set; }
+		public double ZFar { get { return _zFar; } }
 
 		/// <summary>
 		/// Gets or sets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
@@ -70,83 +76,52 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// </value>
 		public PointD2D ScreenOffset { get; set; }
 
-		#region Serialization
-
 		/// <summary>
-		/// 2015-11-14 initial version.
+		/// Creates a new camera with provided upVector, eyePosition, targetPosition, znear and  zfar distance..
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CameraBase), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		/// <param name="upVector">Up vector.</param>
+		/// <param name="eyePosition">The eye position.</param>
+		/// <param name="targetPosition">The target position.</param>
+		/// <param name="zNear">The z near distance.</param>
+		/// <param name="zFar">The z far distance.</param>
+		/// <returns>New camera with the provided parameters.</returns>
+		public CameraBase WithUpEyeTargetZNearZFar(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar)
 		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (CameraBase)obj;
-
-				info.AddValue("UpVector", s.UpVector);
-				info.AddValue("EyePosition", s.EyePosition);
-				info.AddValue("TargetPosition", s.TargetPosition);
-				info.AddValue("ZNear", s.ZNear);
-				info.AddValue("ZFar", s.ZFar);
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (CameraBase)o;
-				s.UpVector = (VectorD3D)info.GetValue("UpVector", s);
-				s.EyePosition = (PointD3D)info.GetValue("EyePosition", s);
-				s.TargetPosition = (PointD3D)info.GetValue("TargetPosition", s);
-				s.ZNear = info.GetDouble("ZNear");
-				s.ZFar = info.GetDouble("ZFar");
-				return s;
-			}
-		}
-
-		#endregion Serialization
-
-		public CameraBase()
-		{
-			EyePosition = new PointD3D(0, 0, -1500);
-			UpVector = new VectorD3D(0, 0, 1);
-			ZNear = 150;
-			ZFar = 3000;
+			var result = (CameraBase)this.MemberwiseClone();
+			result._upVector = upVector;
+			result._eyePosition = eyePosition;
+			result._targetPosition = targetPosition;
+			result._zNear = zNear;
+			result._zFar = zFar;
+			return result;
 		}
 
 		/// <summary>
-		/// Creates a new object that is a copy of the current instance.
+		/// Creates a new camera with provided upVector and eyePosition.
 		/// </summary>
-		/// <returns>
-		/// A new object that is a copy of this instance.
-		/// </returns>
-		public abstract object Clone();
+		/// <param name="upVector">Up vector.</param>
+		/// <param name="eyePosition">The eye position.</param>
+		/// <returns>New camera with the provided parameters.</returns>
+		public CameraBase WithUpEye(VectorD3D upVector, PointD3D eyePosition)
+		{
+			var result = (CameraBase)this.MemberwiseClone();
+			result._upVector = upVector;
+			result._eyePosition = eyePosition;
+			return result;
+		}
 
 		/// <summary>
-		/// Try to copy from another object. Should try to copy even if the object to copy from is not of
-		/// the same type, but a base type. In this case only the base properties should be copied.
+		/// Creates a new camera with provided  eyePosition and targetPosition;
 		/// </summary>
-		/// <param name="obj">Object to copy from.</param>
-		/// <returns>
-		/// True if at least parts of the object could be copied, false if the object to copy from is incompatible.
-		/// </returns>
-		public virtual bool CopyFrom(object obj)
+		/// <param name="eyePosition">The eye position.</param>
+		/// <param name="targetPosition">The target position.</param>
+		/// <returns>New camera with the provided parameters.</returns>
+		public CameraBase WithEyeTarget(PointD3D eyePosition, PointD3D targetPosition)
 		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var from = obj as CameraBase;
-			if (null != from)
-			{
-				this.UpVector = from.UpVector;
-				this.EyePosition = from.EyePosition;
-				this.TargetPosition = from.TargetPosition;
-				this.ZNear = from.ZNear;
-				this.ZFar = from.ZFar;
-				// ScreenOffset is temporary, thus it is _not_ copied here
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			var result = (CameraBase)this.MemberwiseClone();
+			result._eyePosition = eyePosition;
+			result._targetPosition = targetPosition;
+			return result;
 		}
 
 		/// <summary>

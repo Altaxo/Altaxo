@@ -18,6 +18,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Collections;
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Graph3D;
+	using Altaxo.Graph.Graph3D.GraphicsContext;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph3D.Common;
 	using System.Windows.Controls.Primitives;
@@ -30,7 +31,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private Graph3DControllerWpf _controller;
 
 		private D3D10Scene _scene;
-		private D3D10GraphicContext _drawing;
 
 		public Graph3DControl()
 		{
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private void EhD3DStarted(object sender, EventArgs e)
 		{
 			_d3dCanvas.D3DStarted -= EhD3DStarted;
-			EhDocumentChanged();
+			TriggerRendering();
 		}
 
 		Graph3DController IGraph3DView.Controller
@@ -53,9 +53,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				var oldcontroller = _controller;
 				_controller = value as Graph3DControllerWpf;
-
-				if (!object.ReferenceEquals(oldcontroller, _controller))
-					EhDocumentChanged();
 			}
 		}
 
@@ -134,29 +131,17 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		public void FullRepaint()
+		/// <summary>
+		/// Triggers a new rendering without building up a new geometry. Could be used for instance if the light or the camera has changed, but not the geometry.
+		/// </summary>
+		public void TriggerRendering()
 		{
-			EhDocumentChanged();
+			Current.Gui.Execute(() => _d3dCanvas.TriggerRendering());
 		}
 
-		public void EhDocumentChanged()
+		public void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera)
 		{
-			if (null == _controller)
-				return;
-
-			var drawing = new D3D10GraphicContext();
-			_controller.Doc.Paint(drawing);
-
-			var olddrawing = _drawing;
-			_drawing = drawing;
-
-			if (null != olddrawing)
-			{
-				olddrawing.Dispose();
-			}
-
-			_scene.SetSceneSettings(_controller.Doc.Scene);
-			_scene.SetDrawing(drawing);
+			_scene.SetCamera(camera);
 		}
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
@@ -216,6 +201,19 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var guiController = _controller;
 			if (null != guiController)
 				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e), e);
+		}
+
+		public void SetDrawing(IGraphicContext3D drawing)
+		{
+			if (null == drawing)
+				throw new ArgumentNullException();
+
+			_scene.SetDrawing((D3D10GraphicContext)drawing);
+		}
+
+		public IGraphicContext3D GetGraphicContext()
+		{
+			return new D3D10GraphicContext();
 		}
 	}
 }

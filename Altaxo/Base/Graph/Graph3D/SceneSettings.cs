@@ -30,9 +30,11 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
+	using Camera;
+
 	public class SceneSettings : Main.SuspendableDocumentLeafNodeWithEventArgs, Main.ICopyFrom
 	{
-		private Camera.CameraBase _camera;
+		private CameraBase _camera;
 
 		#region Serialization
 
@@ -63,7 +65,7 @@ namespace Altaxo.Graph.Graph3D
 		{
 			//_camera = new Camera.PerspectiveCamera();
 
-			_camera = new Camera.OrthographicCamera() { Scale = 1000 };
+			_camera = new Camera.OrthographicCamera();
 		}
 
 		public SceneSettings(SceneSettings from)
@@ -80,7 +82,7 @@ namespace Altaxo.Graph.Graph3D
 
 			if (null != from)
 			{
-				this._camera = (Camera.CameraBase)from._camera.Clone();
+				this._camera = from.Camera;
 				EhSelfChanged();
 				return true;
 			}
@@ -93,7 +95,7 @@ namespace Altaxo.Graph.Graph3D
 			return new SceneSettings(this);
 		}
 
-		public Camera.CameraBase Camera
+		public CameraBase Camera
 		{
 			get
 			{
@@ -104,9 +106,11 @@ namespace Altaxo.Graph.Graph3D
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
+				var oldValue = _camera;
 				_camera = value;
 
-				EhSelfChanged();
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged(CameraChangedEventArgs.Empty);
 			}
 		}
 	}

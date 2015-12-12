@@ -55,6 +55,16 @@ namespace Altaxo.Graph.Graph3D
 		[NonSerialized]
 		private VectorD3D _cachedRootLayerSize;
 
+		/// <summary>
+		/// Occurs when the geometry has changed. This includes events that are able to change the geometry implicitly, for instance changing the properties of the graph.
+		/// </summary>
+		public event EventHandler GeometryChanged;
+
+		/// <summary>
+		/// Occurs when only the camera has changed. This does not require a new buildup of the geometry.
+		/// </summary>
+		public event EventHandler CameraChanged;
+
 		#endregion Member variables
 
 		#region Properties and Property-Keys
@@ -443,18 +453,13 @@ namespace Altaxo.Graph.Graph3D
 			var cameraDistance = 10 * RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
 
-			var newCamera = (Camera.CameraBase)Scene.Camera.Clone();
-			newCamera.UpVector = upVector;
-			newCamera.TargetPosition = targetPosition;
-			newCamera.EyePosition = eyePosition;
-			newCamera.ZNear = cameraDistance / 8;
-			newCamera.ZFar = cameraDistance * 2;
+			var newCamera = Scene.Camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
 
 			var orthoCamera = newCamera as Camera.OrthographicCamera;
 
 			if (null != orthoCamera)
 			{
-				orthoCamera.Scale = 1;
+				orthoCamera = orthoCamera.WithScale(1);
 
 				var mx = orthoCamera.GetLookAtRHTimesOrthoRHMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
@@ -466,7 +471,7 @@ namespace Altaxo.Graph.Graph3D
 					absmax = Math.Max(absmax, Math.Abs(ps.X));
 					absmax = Math.Max(absmax, Math.Abs(ps.Y));
 				}
-				orthoCamera.Scale = absmax;
+				newCamera = orthoCamera.WithScale(absmax);
 			}
 			else
 			{

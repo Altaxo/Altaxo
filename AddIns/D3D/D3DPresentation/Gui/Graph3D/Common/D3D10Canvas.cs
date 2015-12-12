@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (this.RenderTimer.IsRunning)
 				return;
 
-			CompositionTarget.Rendering += OnRendering;
+			//CompositionTarget.Rendering += OnRendering;
 			this.RenderTimer.Start();
 		}
 
@@ -195,6 +195,14 @@ namespace Altaxo.Gui.Graph3D.Common
 		}
 
 		private void OnRendering(object sender, EventArgs e)
+		{
+			TriggerRendering();
+		}
+
+		/// <summary>
+		/// Triggers a rendering, and invalidates the bitmap afterwards
+		/// </summary>
+		public void TriggerRendering()
 		{
 			if (!this.RenderTimer.IsRunning)
 				return;
@@ -211,6 +219,8 @@ namespace Altaxo.Gui.Graph3D.Common
 				Scene?.SetHostSize(HostSize);
 
 				base.OnRenderSizeChanged(sizeInfo);
+
+				TriggerRendering();
 			}
 		}
 

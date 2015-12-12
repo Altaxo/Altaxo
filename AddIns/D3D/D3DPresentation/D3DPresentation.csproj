@@ -156,26 +156,32 @@
     <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
       <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
       <Name>AltaxoBase.Presentation</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj">
       <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
       <Name>AltaxoBase</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Altaxo\Core\AltaxoCore.csproj">
       <Project>{7045c197-9da8-4fa4-886c-992acadd838f}</Project>
       <Name>AltaxoCore</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Altaxo\SDGui\AltaxoSDGui.csproj">
       <Project>{9ebab076-12f4-4549-9fd5-6d2b8b387b06}</Project>
       <Name>AltaxoSDGui</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\SD\Main\Base\Project\ICSharpCode.SharpDevelop.csproj">
       <Project>{2748ad25-9c63-4e12-877b-4dce96fbed54}</Project>
       <Name>ICSharpCode.SharpDevelop</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\SD\Main\Core\Project\ICSharpCode.Core.csproj">
       <Project>{35cef10f-2d4c-45f2-9dd1-161e0fec583c}</Project>
       <Name>ICSharpCode.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

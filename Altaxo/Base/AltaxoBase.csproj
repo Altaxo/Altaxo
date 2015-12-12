@@ -240,6 +240,7 @@
     <Compile Include="Graph\Graph3D\Axis\GridStyle.cs" />
     <Compile Include="Graph\Graph3D\Background\IBackgroundStyle3D.cs" />
     <Compile Include="Graph\Graph3D\Camera\CameraBase.cs" />
+    <Compile Include="Graph\Graph3D\Camera\CameraChangedEventArgs.cs" />
     <Compile Include="Graph\Graph3D\Camera\OrthographicCamera.cs" />
     <Compile Include="Graph\Graph3D\Camera\PerspectiveCamera.cs" />
     <Compile Include="Drawing\FontInfo.cs" />
@@ -280,9 +281,10 @@
     <Compile Include="Graph\Graph3D\LabelFormatting\LabelFormattingBase.cs" />
     <Compile Include="Graph\Graph3D\LabelFormatting\NumericLabelFormattingAuto.cs" />
     <Compile Include="Drawing\D3D\Materials.cs" />
-    <Compile Include="Graph\Graph3D\Material\NoMaterial.cs" />
+    <Compile Include="Drawing\D3D\Material\MaterialWithoutColorOrTexture.cs" />
     <Compile Include="Geometry\MatrixD3D.cs" />
     <Compile Include="Drawing\D3D\PenX3D.cs" />
+    <Compile Include="Drawing\D3D\Material\SolidColor.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />

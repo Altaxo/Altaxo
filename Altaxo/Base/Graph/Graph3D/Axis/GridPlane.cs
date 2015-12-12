@@ -211,10 +211,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 			if (layer.CoordinateSystem is CS.G3DCartesicCoordinateSystem)
 			{
 				var p = new PointD3D[4];
-				p[0] = cs.GetPointOnPlane(_planeID, new Logical3D(0, 0));
-				p[1] = cs.GetPointOnPlane(_planeID, new Logical3D(0, 1));
-				p[2] = cs.GetPointOnPlane(_planeID, new Logical3D(1, 0));
-				p[3] = cs.GetPointOnPlane(_planeID, new Logical3D(1, 1));
+				p[0] = cs.GetPointOnPlane(_planeID, 0, 0);
+				p[1] = cs.GetPointOnPlane(_planeID, 0, 1);
+				p[2] = cs.GetPointOnPlane(_planeID, 1, 0);
+				p[3] = cs.GetPointOnPlane(_planeID, 1, 1);
 
 				var buffer = g.GetPositionNormalIndexedTriangleBuffer(_background);
 				var offs = buffer.IndexedTriangleBuffer.TriangleCount;
@@ -239,9 +239,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 		public void PaintGrid(IGraphicContext3D g, IPlotArea layer)
 		{
 			if (null != _grid1)
-				_grid1.Paint(g, layer, _planeID.InPlaneAxisNumber1);
+				_grid1.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber1);
 			if (null != _grid2)
-				_grid2.Paint(g, layer, _planeID.InPlaneAxisNumber2);
+				_grid2.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber2);
 		}
 
 		public void Paint(IGraphicContext3D g, IPlotArea layer)

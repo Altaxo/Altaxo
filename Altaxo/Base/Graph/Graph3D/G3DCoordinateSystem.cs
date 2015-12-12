@@ -225,6 +225,19 @@ namespace Altaxo.Graph.Graph3D
 			return result;
 		}
 
+		public PointD3D GetPointOnPlane(CSPlaneID id, double logicalFirstOther, double logicalSecondOther)
+		{
+			PointD3D result;
+			if (id.PerpendicularAxisNumber == 0)
+				LogicalToLayerCoordinates(new Logical3D(id.LogicalValue, logicalFirstOther, logicalSecondOther), out result);
+			else if (id.PerpendicularAxisNumber == 1)
+				LogicalToLayerCoordinates(new Logical3D(logicalFirstOther, id.LogicalValue, logicalSecondOther), out result);
+			else
+				LogicalToLayerCoordinates(new Logical3D(logicalFirstOther, logicalSecondOther, id.LogicalValue), out result);
+
+			return result;
+		}
+
 		/// <summary>
 		/// Get a line along the axis designated by the argument id from the logical values r0 to r1.
 		/// </summary>

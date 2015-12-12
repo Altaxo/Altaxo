@@ -32,132 +32,25 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Drawing.D3D
 {
-	public class Materials
-	{
-		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
+    using Material;
 
-		public static IMaterial GetSolidMaterial(NamedColor color)
-		{
-			return new SolidColor(color);
-		}
+    public class Materials
+    {
+        public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
 
-		public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
-		{
-			return material.WithColor(newColor);
-		}
+        public static IMaterial GetSolidMaterial(NamedColor color)
+        {
+            return new SolidColor(color);
+        }
 
-		public static IMaterial GetSolidMaterialWithoutColorOrTexture()
-		{
-			return _materialWithoutColorOrTexture;
-		}
-	}
+        public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
+        {
+            return material.WithColor(newColor);
+        }
 
-	public class MaterialWithoutColorOrTexture : IMaterial
-	{
-		public NamedColor Color
-		{
-			get
-			{
-				return NamedColors.Black;
-			}
-		}
-
-		public bool HasColor
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		public bool HasTexture
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		public bool Equals(IMaterial other)
-		{
-			return other is MaterialWithoutColorOrTexture;
-		}
-
-		public IMaterial WithColor(NamedColor color)
-		{
-			return this;
-		}
-	}
-
-	public class SolidColor : IMaterial
-	{
-		private NamedColor _color;
-
-		#region Serialization
-
-		/// <summary>
-		/// 2015-11-18 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidColor), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (SolidColor)obj;
-
-				info.AddValue("Color", s._color);
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var color = (NamedColor)info.GetValue("Color", null);
-				return new SolidColor(color);
-			}
-		}
-
-		#endregion Serialization
-
-		public SolidColor(NamedColor color)
-		{
-			_color = color;
-		}
-
-		public NamedColor Color
-		{
-			get
-			{
-				return _color;
-			}
-		}
-
-		public bool HasColor
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		public bool HasTexture
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		public bool Equals(IMaterial other)
-		{
-			var othersd = other as SolidColor;
-			return null != othersd && this.Color == othersd.Color;
-		}
-
-		public IMaterial WithColor(NamedColor color)
-		{
-			if (color == this._color)
-				return this;
-			else
-				return new SolidColor(color);
-		}
-	}
+        public static IMaterial GetSolidMaterialWithoutColorOrTexture()
+        {
+            return _materialWithoutColorOrTexture;
+        }
+    }
 }

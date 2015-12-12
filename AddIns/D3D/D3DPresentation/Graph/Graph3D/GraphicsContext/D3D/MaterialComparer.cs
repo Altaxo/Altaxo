@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.D3D.Material;
 using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
@@ -32,58 +33,58 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	public class MaterialComparer : IEqualityComparer<IMaterial>
-	{
-		private const int _hashForMaterialWithoutColorOrTexture = 632982942;
-		private const int _hashForSolidColor = 3853932;
+    public class MaterialComparer : IEqualityComparer<IMaterial>
+    {
+        private const int _hashForMaterialWithoutColorOrTexture = 632982942;
+        private const int _hashForSolidColor = 3853932;
 
-		public static MaterialComparer Instance { get; private set; }
+        public static MaterialComparer Instance { get; private set; }
 
-		static MaterialComparer()
-		{
-			Instance = new MaterialComparer();
-		}
+        static MaterialComparer()
+        {
+            Instance = new MaterialComparer();
+        }
 
-		public bool Equals(IMaterial x, IMaterial y)
-		{
-			if (x.GetType() != y.GetType())
-				return false;
+        public bool Equals(IMaterial x, IMaterial y)
+        {
+            if (x.GetType() != y.GetType())
+                return false;
 
-			MaterialWithoutColorOrTexture mwct;
-			SolidColor msc1, msc2;
+            MaterialWithoutColorOrTexture mwct;
+            SolidColor msc1, msc2;
 
-			if (null != (mwct = x as MaterialWithoutColorOrTexture))
-			{
-				return true;
-			}
-			else if (null != (msc1 = x as SolidColor))
-			{
-				msc2 = y as SolidColor;
-				return msc1.Color.Color == msc2.Color.Color;
-			}
-			else
-			{
-				throw new NotImplementedException("Unknown material class" + x.GetType().ToString());
-			}
-		}
+            if (null != (mwct = x as MaterialWithoutColorOrTexture))
+            {
+                return true;
+            }
+            else if (null != (msc1 = x as SolidColor))
+            {
+                msc2 = y as SolidColor;
+                return msc1.Color.Color == msc2.Color.Color;
+            }
+            else
+            {
+                throw new NotImplementedException("Unknown material class" + x.GetType().ToString());
+            }
+        }
 
-		public int GetHashCode(IMaterial m)
-		{
-			MaterialWithoutColorOrTexture mwct;
-			SolidColor msc;
+        public int GetHashCode(IMaterial m)
+        {
+            MaterialWithoutColorOrTexture mwct;
+            SolidColor msc;
 
-			if (null != (mwct = m as MaterialWithoutColorOrTexture))
-			{
-				return _hashForMaterialWithoutColorOrTexture;
-			}
-			else if (null != (msc = m as SolidColor))
-			{
-				return _hashForSolidColor + msc.Color.GetHashCode();
-			}
-			else
-			{
-				throw new NotImplementedException("Unknown material class" + m.GetType().ToString());
-			}
-		}
-	}
+            if (null != (mwct = m as MaterialWithoutColorOrTexture))
+            {
+                return _hashForMaterialWithoutColorOrTexture;
+            }
+            else if (null != (msc = m as SolidColor))
+            {
+                return _hashForSolidColor + msc.Color.GetHashCode();
+            }
+            else
+            {
+                throw new NotImplementedException("Unknown material class" + m.GetType().ToString());
+            }
+        }
+    }
 }

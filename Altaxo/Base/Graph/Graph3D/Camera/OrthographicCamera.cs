@@ -33,7 +33,9 @@ namespace Altaxo.Graph.Graph3D.Camera
 {
 	public class OrthographicCamera : CameraBase
 	{
-		public double Scale { get; set; }
+		protected double _scale;
+
+		public double Scale { get { return _scale; } }
 
 		#region Serialization
 
@@ -46,15 +48,23 @@ namespace Altaxo.Graph.Graph3D.Camera
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (OrthographicCamera)obj;
-				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
-				info.AddValue("Scale", s.Scale);
+				info.AddValue("UpVector", s._upVector);
+				info.AddValue("EyePosition", s._eyePosition);
+				info.AddValue("TargetPosition", s._targetPosition);
+				info.AddValue("ZNear", s._zNear);
+				info.AddValue("ZFar", s._zFar);
+				info.AddValue("Scale", s._scale);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (OrthographicCamera)o ?? new OrthographicCamera();
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				s.Scale = info.GetDouble("Scale");
+				s._upVector = (VectorD3D)info.GetValue("UpVector", s);
+				s._eyePosition = (PointD3D)info.GetValue("EyePosition", s);
+				s._targetPosition = (PointD3D)info.GetValue("TargetPosition", s);
+				s._zNear = info.GetDouble("ZNear");
+				s._zFar = info.GetDouble("ZFar");
+				s._scale = info.GetDouble("Scale");
 				return s;
 			}
 		}
@@ -63,50 +73,37 @@ namespace Altaxo.Graph.Graph3D.Camera
 
 		public OrthographicCamera()
 		{
-			Scale = 1;
+			_upVector = new VectorD3D(0, 0, 1);
+			_eyePosition = new PointD3D(0, 0, -1500);
+			_zNear = 150;
+			_zFar = 3000;
+			_scale = 1000;
+		}
+
+		public OrthographicCamera WithScale(double scale)
+		{
+			if (_scale == scale)
+				return this;
+
+			var result = (OrthographicCamera)this.MemberwiseClone();
+			result._scale = scale;
+			return result;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OrthographicCamera"/> class.
+		/// Creates a new camera with provided  eyePosition and targetPosition;
 		/// </summary>
-		/// <param name="from">Camera to copy the data from.</param>
-		public OrthographicCamera(OrthographicCamera from)
+		/// <param name="eyePosition">The eye position.</param>
+		/// <param name="targetPosition">The target position.</param>
+		/// <param name="scale">The scale.</param>
+		/// <returns>New camera with the provided parameters.</returns>
+		public OrthographicCamera WithEyeTargetScale(PointD3D eyePosition, PointD3D targetPosition, double scale)
 		{
-			CopyFrom(from);
-		}
-
-		/// <summary>
-		/// Makes a copy of the provided instance.
-		/// </summary>
-		/// <param name="obj">The object to copy from.</param>
-		/// <returns>A copy of the provided instance.</returns>
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			if (false == base.CopyFrom(obj))
-				return false;
-
-			var from = obj as OrthographicCamera;
-			if (null != from)
-			{
-				this.Scale = from.Scale;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Clones this instance.
-		/// </summary>
-		/// <returns>Clone of this instance.</returns>
-		public override object Clone()
-		{
-			return new OrthographicCamera(this);
+			var result = (OrthographicCamera)this.MemberwiseClone();
+			result._eyePosition = eyePosition;
+			result._targetPosition = targetPosition;
+			result._scale = scale;
+			return result;
 		}
 
 		/// <summary>
