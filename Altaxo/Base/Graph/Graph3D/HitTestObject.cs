@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Graph3D
 		/// Transformation matrix which transforms the coordinates of the parent of the hitted object (i.e. the parent layer)
 		/// into page coordinates.
 		/// </summary>
-		protected MatrixD3D _matrix;
+		protected Matrix4x3 _matrix;
 
 		/// <summary>The hitted object.</summary>
 		protected object _hitobject;
@@ -112,14 +112,14 @@ namespace Altaxo.Graph.Graph3D
 		public HitTestObjectBase(object hitobject)
 		{
 			_hitobject = hitobject;
-			_matrix = MatrixD3D.Identity;
+			_matrix = Matrix4x3.Identity;
 		}
 
 		/// <summary>
 		/// This will return the transformation matrix.
 		/// This matrix translates from coordinates of the parent of the object (i.e. mostly the parent layer) to global coordinates.
 		/// </summary>
-		public MatrixD3D Transformation
+		public Matrix4x3 Transformation
 		{
 			get { return _matrix; }
 		}
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph3D
 		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
 		/// </summary>
 		/// <param name="x">The transformation to append.</param>
-		public virtual void Transform(MatrixD3D x)
+		public virtual void Transform(Matrix4x3 x)
 		{
 			_matrix.AppendTransform(x);
 		}

@@ -80,7 +80,7 @@ namespace Altaxo.Geometry
 		/// <param name="p">Point on the projection plane.</param>
 		/// <param name="q">Normal of the projection plane.</param>
 		/// <returns>Matrix that transforms 2D points to a plane. (The 2D points are in fact 3D points with a z-coordinate that is ignored.</returns>
-		public static MatrixD3D Get2DProjectionToPlaneToPlane(VectorD3D e, VectorD3D n, VectorD3D v, PointD3D p, VectorD3D q)
+		public static Matrix4x3 Get2DProjectionToPlaneToPlane(VectorD3D e, VectorD3D n, VectorD3D v, PointD3D p, VectorD3D q)
 		{
 			double qn = VectorD3D.DotProduct(q, e);
 			double qw = VectorD3D.DotProduct(q, n);
@@ -89,7 +89,7 @@ namespace Altaxo.Geometry
 			double qn_qv = qn / qv;
 			double qw_qv = qw / qv;
 
-			return new MatrixD3D(
+			return new Matrix4x3(
 				e.X - v.X * qn_qv, e.Y - v.Y * qn_qv, e.Z - v.Z * qn_qv,
 				n.X - v.X * qw_qv, n.Y - v.Y * qw_qv, n.Z - v.Z * qw_qv,
 				0, 0, 0,
@@ -104,9 +104,9 @@ namespace Altaxo.Geometry
 		/// <param name="n">North vector: direction, in which the y-coordinate of the original points is projected.</param>
 		/// <param name="p">The 3D point, which is the origin of the spanned plane (the original point with the coordinates (0,0) is projected to this point.</param>
 		/// <returns>A transformation matrix that projects 2D points (in fact: 3D-points with ignored z-coordinate) to a plane in 3D space.</returns>
-		public static MatrixD3D Get2DProjectionToPlane(VectorD3D e, VectorD3D n, PointD3D p)
+		public static Matrix4x3 Get2DProjectionToPlane(VectorD3D e, VectorD3D n, PointD3D p)
 		{
-			return new MatrixD3D(
+			return new Matrix4x3(
 				e.X, e.Y, e.Z,
 				n.X, n.Y, n.Z,
 				0, 0, 0,

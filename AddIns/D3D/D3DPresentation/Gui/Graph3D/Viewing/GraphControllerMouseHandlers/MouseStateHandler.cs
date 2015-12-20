@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		protected HostLayer _cachedActiveLayer;
 
 		/// <summary>Transformation that can be used to transform root layer coordinates into the coordinates of the cached active layer.</summary>
-		protected MatrixD3D _cachedActiveLayerTransformation;
+		protected Matrix4x3 _cachedActiveLayerTransformation;
 
 		public abstract Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType { get; }
 

@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 		protected Dictionary<IMaterial, PositionUVIndexedTriangleBuffer> _positionUVIndexedTriangleBuffers = new Dictionary<IMaterial, PositionUVIndexedTriangleBuffer>(MaterialComparer.Instance);
 		protected Dictionary<IMaterial, PositionNormalUVIndexedTriangleBuffer> _positionNormalUVIndexedTriangleBuffers = new Dictionary<IMaterial, PositionNormalUVIndexedTriangleBuffer>(MaterialComparer.Instance);
 
-		private GraphicState _transformation = new GraphicState() { Transformation = MatrixD3D.Identity };
+		private GraphicState _transformation = new GraphicState() { Transformation = Matrix4x3.Identity };
 
 		public void Dispose()
 		{
@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 				throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
 		}
 
-		public override void PrependTransform(MatrixD3D m)
+		public override void PrependTransform(Matrix4x3 m)
 		{
 			_transformation.Transformation.PrependTransform(m);
 		}
@@ -301,7 +301,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		internal class GraphicState
 		{
-			public MatrixD3D Transformation;
+			public Matrix4x3 Transformation;
 		}
 
 		#endregion Transformation

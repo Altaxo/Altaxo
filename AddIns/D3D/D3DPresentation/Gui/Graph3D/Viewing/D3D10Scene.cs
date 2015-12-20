@@ -136,40 +136,40 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
             i = 0;
             _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
-                        });
+                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
+                                                });
 
             i = 1;
             _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
-                        });
+                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                                                new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
+                                                });
 
             i = 2;
             _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
-                        });
+                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+                                                });
 
             i = 3;
             _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
-                        });
+                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
+                                                });
 
             i = 4;
             _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
-                                new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
-                        });
+                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+                                                                new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
+                                                });
 
             i = 5;
             _renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
-                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
-                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
-                        });
+                                                                new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                                                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+                                                                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
+                                                });
 
             // Create Constant Buffers
             _constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
@@ -222,15 +222,15 @@ namespace Altaxo.Gui.Graph3D.Viewing
                 return;
 
             var buffersOfType =
-                new IEnumerable<KeyValuePair<IMaterial, IndexedTriangleBuffer>>[]
-                {
-                drawing.PositionIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                drawing.PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                drawing.PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                drawing.PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                drawing.PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
-                drawing.PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers
-                };
+                    new IEnumerable<KeyValuePair<IMaterial, IndexedTriangleBuffer>>[]
+                    {
+                                drawing.PositionIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                drawing.PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                drawing.PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                drawing.PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                drawing.PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
+                                drawing.PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers
+                    };
 
             for (int i = 0; i < buffersOfType.Length; ++i)
             {
@@ -307,11 +307,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
             float time = _renderCounter / 100f;
             ++_renderCounter;
 
-            Matrix view, proj, viewProj;
-
             Matrix worldViewProjTr; // world-view matrix, transposed
-
-            MatrixD3D viewProjD3D;
 
             if (null != _camera)
             {
@@ -319,39 +315,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
                 var eye = cam.EyePosition;
                 var target = cam.TargetPosition;
                 var up = cam.UpVector;
-                view = Matrix.LookAtRH(new Vector3((float)eye.X, (float)eye.Y, (float)eye.Z), new Vector3((float)target.X, (float)target.Y, (float)target.Z), new Vector3((float)up.X, (float)up.Y, (float)up.Z));
-                if (cam is PerspectiveCamera)
-                {
-                    viewProjD3D = (cam as PerspectiveCamera).GetLookAtRHTimesPerspectiveRHMatrix(_hostSize.Y / _hostSize.X);
+                //view = Matrix.LookAtRH(new Vector3((float)eye.X, (float)eye.Y, (float)eye.Z), new Vector3((float)target.X, (float)target.Y, (float)target.Z), new Vector3((float)up.X, (float)up.Y, (float)up.Z));
 
-                    worldViewProjTr = new Matrix(
+                //var viewProjD3D = (cam as PerspectiveCamera).GetLookAtRHTimesPerspectiveRHMatrix(_hostSize.Y / _hostSize.X);
+                var viewProjD3D = cam.GetViewProjectionMatrix(_hostSize.Y / _hostSize.X);
+                worldViewProjTr = new Matrix(
                         (float)viewProjD3D.M11, (float)viewProjD3D.M21, (float)viewProjD3D.M31, (float)viewProjD3D.M41,
                         (float)viewProjD3D.M12, (float)viewProjD3D.M22, (float)viewProjD3D.M32, (float)viewProjD3D.M42,
                         (float)viewProjD3D.M13, (float)viewProjD3D.M23, (float)viewProjD3D.M33, (float)viewProjD3D.M43,
-                        0, 0, 0, 1
+                        (float)viewProjD3D.M14, (float)viewProjD3D.M24, (float)viewProjD3D.M34, (float)viewProjD3D.M44
                         );
-                }
-                else if (cam is OrthographicCamera)
-                {
-                    viewProjD3D = (cam as OrthographicCamera).GetLookAtRHTimesOrthoRHMatrix(_hostSize.Y / _hostSize.X);
-
-                    worldViewProjTr = new Matrix(
-                        (float)viewProjD3D.M11, (float)viewProjD3D.M21, (float)viewProjD3D.M31, (float)viewProjD3D.M41,
-                        (float)viewProjD3D.M12, (float)viewProjD3D.M22, (float)viewProjD3D.M32, (float)viewProjD3D.M42,
-                        (float)viewProjD3D.M13, (float)viewProjD3D.M23, (float)viewProjD3D.M33, (float)viewProjD3D.M43,
-                        0, 0, 0, 1
-                        );
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
             }
             else
             {
-                view = Matrix.LookAtRH(new Vector3(0, 0, -1500), new Vector3(0, 0, 0), Vector3.UnitY);
-                proj = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
-                viewProj = Matrix.Multiply(view, proj);
+                var view = Matrix.LookAtRH(new Vector3(0, 0, -1500), new Vector3(0, 0, 0), Vector3.UnitY);
+                var proj = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)(_hostSize.X / _hostSize.Y), 0.1f, float.MaxValue);
+                var viewProj = Matrix.Multiply(view, proj);
 
                 // Update WorldViewProj Matrix
                 worldViewProjTr = viewProj;

@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public abstract void RestoreGraphicsState(object graphicsState);
 
-		public abstract void PrependTransform(MatrixD3D m);
+		public abstract void PrependTransform(Matrix4x3 m);
 
 		public abstract void TranslateTransform(double x, double y, double z);
 

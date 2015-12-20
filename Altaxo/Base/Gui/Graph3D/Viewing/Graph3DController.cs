@@ -526,7 +526,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				double angleRadian = Math.PI * stepX / 18;
 				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, VectorD3D.CrossProduct(cam.EyeVector, cam.UpVector)));
-				var matrix = MatrixD3D.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
+				var matrix = Matrix4x3.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
 				var newEye = matrix.TransformPoint(cam.EyePosition);
 				var newUp = matrix.Transform(cam.UpVector);
@@ -537,7 +537,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				double angleRadian = Math.PI * stepY / 18;
 				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.NormalizedEyeVector, cam.UpVector));
-				var matrix = MatrixD3D.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
+				var matrix = Matrix4x3.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
 				var newEye = matrix.TransformPoint(cam.EyePosition);
 				var newUp = matrix.Transform(cam.UpVector);
@@ -576,7 +576,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		{
 			var camera = Doc.Scene.Camera;
 
-			MatrixD3D hitmatrix = Doc.Scene.Camera.GetHitRayMatrix(relativeScreenPosition);
+			Matrix4x3 hitmatrix = Doc.Scene.Camera.GetHitRayMatrix(relativeScreenPosition);
 			var hitdata = new HitTestPointData(hitmatrix);
 
 			foundObject = Doc.RootLayer.HitTest(hitdata, plotItemsOnly);

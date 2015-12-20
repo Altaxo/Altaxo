@@ -33,9 +33,9 @@ namespace Altaxo.Geometry
 	public class RectangleTransformedD3D
 	{
 		private RectangleD3D _rectangle;
-		private MatrixD3D _transformation;
+		private Matrix4x3 _transformation;
 
-		public RectangleTransformedD3D(RectangleD3D rectangle, MatrixD3D transformation)
+		public RectangleTransformedD3D(RectangleD3D rectangle, Matrix4x3 transformation)
 		{
 			_rectangle = rectangle;
 			_transformation = transformation;

@@ -37,10 +37,10 @@ namespace Altaxo.Graph.Graph3D
 
 	public class RectangularObjectOutline : IObjectOutline
 	{
-		private MatrixD3D _transformation;
+		private Matrix4x3 _transformation;
 		private RectangleD3D _rectangle;
 
-		public RectangularObjectOutline(RectangleD3D rectangle, MatrixD3D transformation)
+		public RectangularObjectOutline(RectangleD3D rectangle, Matrix4x3 transformation)
 		{
 			_rectangle = rectangle;
 			_transformation = transformation;

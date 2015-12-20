@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		protected ItemLocationDirect _location;
 
 		/// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
-		protected MatrixD3D _transformation = MatrixD3D.Identity;
+		protected Matrix4x3 _transformation = Matrix4x3.Identity;
 
 		#region Serialization
 
@@ -558,7 +558,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		{
 			if (RotationX != 0 || RotationY != 0 || RotationZ != 0 || ScaleX != 1 || ScaleY != 1 || ScaleZ != 1 || ShearX != 0 || ShearY != 0 || ShearZ != 0)
 			{
-				g.PrependTransform(MatrixD3D.FromTranslationRotationShearScale(
+				g.PrependTransform(Matrix4x3.FromTranslationRotationShearScale(
 					_location.AbsolutePivotPosition.X, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
 					_location.RotationX, _location.RotationY, _location.RotationZ,
 					_location.ShearX, _location.ShearY, _location.ShearZ,

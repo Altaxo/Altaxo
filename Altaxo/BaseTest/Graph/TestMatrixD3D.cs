@@ -37,10 +37,10 @@ namespace BaseTest.Graph
 	{
 		private static System.Random _random = new Random(432);
 
-		public static MatrixD3D GetRndMatrix()
+		public static Matrix4x3 GetRndMatrix()
 		{
 			Func<int> r = () => _random.Next(1, 100);
-			return new MatrixD3D(r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r());
+			return new Matrix4x3(r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r());
 		}
 
 		public static PointD3D GetRndPoint()

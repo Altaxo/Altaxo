@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			public bool bForPreview { get; set; }
 
 			public Dictionary<RectangleTransformedD3D, IGPlotItem> _cachedSymbolPositions = new Dictionary<RectangleTransformedD3D, IGPlotItem>();
-			public MatrixD3D transformMatrix;
+			public Matrix4x3 transformMatrix;
 		}
 
 		private class Glyph

@@ -36,14 +36,14 @@ namespace Altaxo.Graph.Graph3D
 	public class HitTestPointData
 	{
 		/// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
-		private MatrixD3D _transformation;
+		private Matrix4x3 _transformation;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="hitPointPageCoord">Page coordinates (unit: points).</param>
 		/// <param name="pageScale">Current zoom factor, i.e. ration between displayed size on the screen and given size.</param>
-		public HitTestPointData(MatrixD3D transformation)
+		public HitTestPointData(Matrix4x3 transformation)
 		{
 			_transformation = transformation;
 		}
@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// Transformation of this item that transform world coordinates to page coordinates.
 		/// </summary>
-		public MatrixD3D Transformation
+		public Matrix4x3 Transformation
 		{
 			get
 			{
@@ -73,14 +73,14 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="additionalTransformation">The additional transformation matrix.</param>
 		/// <returns></returns>
-		public MatrixD3D GetTransformation(MatrixD3D additionalTransformation)
+		public Matrix4x3 GetTransformation(Matrix4x3 additionalTransformation)
 		{
-			MatrixD3D result = _transformation;
+			Matrix4x3 result = _transformation;
 			result.PrependTransform(additionalTransformation);
 			return result;
 		}
 
-		public HitTestPointData NewFromAdditionalTransformation(MatrixD3D additionalTransformation)
+		public HitTestPointData NewFromAdditionalTransformation(Matrix4x3 additionalTransformation)
 		{
 			var result = new HitTestPointData(this);
 			result._transformation.PrependTransform(additionalTransformation);

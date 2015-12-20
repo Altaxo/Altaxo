@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		protected VectorD3D _cachedLayerSize;
 
-		protected MatrixD3D _transformation = MatrixD3D.Identity;
+		protected Matrix4x3 _transformation = Matrix4x3.Identity;
 
 		/// <summary>
 		/// The child layers of this layers (this is a partial view of the <see cref="_graphObjects"/> collection).
@@ -975,7 +975,7 @@ namespace Altaxo.Graph.Graph3D
 			if (_location is ItemLocationDirect)
 			{
 				var locD = (ItemLocationDirect)_location;
-				_transformation = MatrixD3D.FromTranslationRotationShearScale(
+				_transformation = Matrix4x3.FromTranslationRotationShearScale(
 					locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, locD.AbsolutePivotPositionZ,
 					-locD.RotationX, -locD.RotationY, -locD.RotationZ,
 					locD.ShearX, locD.ShearY, locD.ShearZ,
@@ -984,7 +984,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 			else
 			{
-				_transformation = MatrixD3D.FromTranslationRotationShearScale(
+				_transformation = Matrix4x3.FromTranslationRotationShearScale(
 					_cachedLayerPosition.X, _cachedLayerPosition.Y, _cachedLayerPosition.Z,
 					-_location.RotationX, -_location.RotationY, -_location.RotationZ,
 					_location.ShearX, _location.ShearY, _location.ShearZ,
@@ -1004,9 +1004,9 @@ namespace Altaxo.Graph.Graph3D
 			return pagecoordinates;
 		}
 
-		public MatrixD3D TransformationFromRootToHere()
+		public Matrix4x3 TransformationFromRootToHere()
 		{
-			MatrixD3D result = MatrixD3D.Identity;
+			Matrix4x3 result = Matrix4x3.Identity;
 			foreach (var layer in this.TakeFromRootToHere())
 				result.PrependTransform(layer._transformation);
 			return result;
