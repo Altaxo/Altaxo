@@ -297,7 +297,10 @@ namespace Altaxo.Gui
 				}
 
 				if ((_clonedCopyOfDoc is IDisposable) && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
+				{
 					((IDisposable)_clonedCopyOfDoc).Dispose();
+					_clonedCopyOfDoc = default(TModel);
+				}
 
 				_isDisposed = true;
 			}

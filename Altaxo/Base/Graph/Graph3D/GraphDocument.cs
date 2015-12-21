@@ -249,6 +249,9 @@ namespace Altaxo.Graph.Graph3D
 
 			if (null != _notes)
 				yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
+
+			if (null != _sceneSettings)
+				yield return new Main.DocumentNodeAndName(_sceneSettings, () => _sceneSettings = null, "Scene");
 		}
 
 		public SceneSettings Scene

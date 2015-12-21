@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi.CS;
 using Altaxo.Graph.Scales;
 using System;
 
@@ -71,5 +69,10 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="id">The plane identifier</param>
 		void UpdateCSPlaneID(CSPlaneID id);
+
+		/// <summary>
+		/// Determines whether plot data are clipped to the frame boundaries or not.
+		/// </summary>
+		LayerDataClipping ClipDataToFrame { get; }
 	}
 }

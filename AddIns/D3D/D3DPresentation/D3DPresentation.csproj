@@ -80,8 +80,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialAndClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialComparer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBufferWithClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />

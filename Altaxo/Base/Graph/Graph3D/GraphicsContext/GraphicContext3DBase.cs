@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	using Drawing;
 	using Drawing.D3D;
 
 	public abstract class GraphicContext3DBase : IGraphicContext3D
@@ -45,6 +44,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		public abstract void TranslateTransform(double x, double y, double z);
 
 		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
+
+		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
 
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
@@ -213,7 +214,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			{
 				var buf = buffers.PositionNormalIndexedTriangleBuffer;
 				txt.AddWithNormals(
-					FontManager3D.Instance.GetCharacterGeometry,
+						FontManager3D.Instance.GetCharacterGeometry,
 				(position, normal) => buf.AddTriangleVertex(position.X + point.X, position.Y + point.Y, position.Z + point.Z, normal.X, normal.Y, normal.Z),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);
@@ -228,7 +229,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				var a = color.ScA;
 
 				txt.AddWithNormals(
-					FontManager3D.Instance.GetCharacterGeometry,
+						FontManager3D.Instance.GetCharacterGeometry,
 				(position, normal) => buf.AddTriangleVertex(position.X + point.X, position.Y + point.Y, position.Z + point.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
 				ref offset);

@@ -43,6 +43,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
 		/// <summary>
+		/// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
+		/// </summary>
+		/// <param name="material">The material to use.</param>
+		/// <param name="clipPlanes">The clip planes to use.</param>
+		/// <returns>Indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.</returns>
+		PositionIndexedTriangleBuffers GetPositionIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] clipPlanes);
+
+		/// <summary>
 		/// Gets an indexed triangle buffer with a normal, i.e. either <see cref="IPositionNormalIndexedTriangleBuffer"/>, <see cref="IPositionNormalColorIndexedTriangleBuffer"/> or <see cref="IPositionNormalUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
 		/// </summary>
 		/// <param name="material">The material to use.</param>

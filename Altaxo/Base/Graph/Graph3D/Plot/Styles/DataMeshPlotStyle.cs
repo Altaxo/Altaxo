@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 using Altaxo.Geometry;
@@ -31,7 +30,6 @@ using Altaxo.Graph.Scales.Boundaries;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -50,9 +48,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	/// </summary>
 	[Serializable]
 	public class DataMeshPlotStyle
-		:
-		Main.SuspendableDocumentNodeWithEventArgs,
-		Main.ICopyFrom
+			:
+			Main.SuspendableDocumentNodeWithEventArgs,
+			Main.ICopyFrom
 	{
 		[Serializable]
 		private enum CachedImageType { None, LinearEquidistant, Other };
@@ -78,6 +76,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		[NonSerialized]
 		private CachedImageType _imageType;
+
+		private PlaneD3D[] _clipPlanes = new PlaneD3D[6];
 
 		#region Serialization
 
@@ -279,14 +279,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			IROVector logicalRowHeaderValues, logicalColumnHeaderValues;
 
 			myPlotAssociation.DataTableMatrix.GetWrappers(
-				gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
-				Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
-				gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
-				Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
-				out matrix,
-				out logicalRowHeaderValues,
-				out logicalColumnHeaderValues
-				);
+					gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
+					Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
+					gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
+					Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
+					out matrix,
+					out logicalRowHeaderValues,
+					out logicalColumnHeaderValues
+					);
 
 			int cols = matrix.Columns;
 			int rows = matrix.Rows;
@@ -345,15 +345,32 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		private void BuildImageV1(
-			IGraphicContext3D g,
-			IPlotArea gl,
-			IROVector lx,
-			IROVector ly,
-			IROMatrix matrix)
+				IGraphicContext3D g,
+				IPlotArea gl,
+				IROVector lx,
+				IROVector ly,
+				IROMatrix matrix)
 		{
 			_imageType = CachedImageType.LinearEquidistant;
 
-			var buffers = g.GetPositionIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
+			PositionIndexedTriangleBuffers buffers;
+
+			if (gl.ClipDataToFrame == LayerDataClipping.None)
+			{
+				buffers = g.GetPositionIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
+			}
+			else
+			{
+				_clipPlanes[0] = new PlaneD3D(1, 0, 0, 0);
+				_clipPlanes[1] = new PlaneD3D(-1, 0, 0, -gl.Size.X);
+				_clipPlanes[2] = new PlaneD3D(0, 1, 0, 0);
+				_clipPlanes[3] = new PlaneD3D(0, -1, 0, -gl.Size.Y);
+				_clipPlanes[4] = new PlaneD3D(0, 0, 1, 0);
+				_clipPlanes[5] = new PlaneD3D(0, 0, -1, -gl.Size.Z);
+
+				buffers = g.GetPositionIndexedTriangleBufferWithClipping(Materials.GetSolidMaterialWithoutColorOrTexture(), _clipPlanes);
+			}
+
 			var buf = buffers.PositionColorIndexedTriangleBuffer;
 			var offs = buffers.IndexedTriangleBuffer.VertexCount;
 
