@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		private Stopwatch RenderTimer;
 		private IScene RenderScene;
 		private bool SceneAttached;
-		private D3D10GammaCorrector _gammaCorrector = new D3D10GammaCorrector();
+		private D3D10GammaCorrector _gammaCorrector;
 
 		public Color4 ClearColor = SharpDX.Color.White;
 
@@ -120,7 +120,8 @@ namespace Altaxo.Gui.Graph3D.Common
 				this.SceneAttached = false;
 			}
 
-			this.D3DSurface.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
+			if (null != this.D3DSurface)
+				this.D3DSurface.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
 			this.Source = null;
 
 			Disposer.RemoveAndDispose(ref this.D3DSurface);
@@ -131,7 +132,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			Disposer.RemoveAndDispose(ref this.RenderTarget);
 			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediate);
 			Disposer.RemoveAndDispose(ref this.DepthStencil);
-			_gammaCorrector.Detach(_device);
+			Disposer.RemoveAndDispose(ref this._gammaCorrector);
 			Disposer.RemoveAndDispose(ref this._device);
 		}
 
@@ -147,7 +148,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			Disposer.RemoveAndDispose(ref this.RenderTarget);
 			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediate);
 			Disposer.RemoveAndDispose(ref this.DepthStencil);
-			_gammaCorrector.Detach(_device);
+			Disposer.RemoveAndDispose(ref this._gammaCorrector);
 
 			int width = Math.Max((int)base.ActualWidth, 100);
 			int height = Math.Max((int)base.ActualHeight, 100);
@@ -201,7 +202,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			this.RenderTargetIntermediateShaderResourceView = new ShaderResourceView(this._device, this.RenderTargetIntermediate);
 			this.RenderTargetView = new RenderTargetView(this._device, this.RenderTarget);
 			this.DepthStencilView = new DepthStencilView(this._device, this.DepthStencil);
-			_gammaCorrector.Attach(_device, "Altaxo.CompiledShaders.Effects.GammaCorrector.cso");
+			this._gammaCorrector = new D3D10GammaCorrector(_device, "Altaxo.CompiledShaders.Effects.GammaCorrector.cso");
 
 			this.D3DSurface.SetRenderTargetDX10(this.RenderTarget);
 		}

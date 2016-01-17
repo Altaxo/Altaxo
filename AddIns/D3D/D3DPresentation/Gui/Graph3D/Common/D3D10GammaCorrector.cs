@@ -37,19 +37,18 @@ namespace Altaxo.Gui.Graph3D.Common
 	using Buffer = SharpDX.Direct3D10.Buffer;
 	using Device = SharpDX.Direct3D10.Device;
 
-	public class D3D10GammaCorrector
+	public class D3D10GammaCorrector : IDisposable
 	{
 		private InputLayout _vertexLayout;
 		private Buffer _vertices;
 		private Effect _effect;
 		private Device _cachedDevice;
 
-		public void Attach(Device device, string gammaCorrectorResourcePath)
+		public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
 		{
 			if (device == null)
 				throw new ArgumentNullException(nameof(device));
-			if (_cachedDevice != null)
-				throw new InvalidOperationException("This instance was not properly detached before!");
+
 			_cachedDevice = device;
 
 			ShaderBytecode shaderBytes = null;
@@ -58,10 +57,11 @@ namespace Altaxo.Gui.Graph3D.Common
 				if (null == stream)
 					throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
 
-				shaderBytes = ShaderBytecode.FromStream(stream);
+				using (shaderBytes = ShaderBytecode.FromStream(stream))
+				{
+					this._effect = new Effect(device, shaderBytes);
+				}
 			}
-
-			this._effect = new Effect(device, shaderBytes);
 
 			EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
 			EffectPass pass = technique.GetPassByIndex(0);
@@ -82,25 +82,11 @@ namespace Altaxo.Gui.Graph3D.Common
 						});
 		}
 
-		public void Detach(Device device)
-		{
-			if (device == null)
-				throw new ArgumentNullException(nameof(device));
-
-			if (_cachedDevice == null)
-				return; // already detached
-
-			if (!object.ReferenceEquals(device, _cachedDevice))
-				throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
-
-			Disposer.RemoveAndDispose(ref this._vertexLayout);
-			Disposer.RemoveAndDispose(ref this._vertices);
-			Disposer.RemoveAndDispose(ref this._effect);
-			_cachedDevice = null;
-		}
-
 		public void Render(Device device, ShaderResourceView textureView)
 		{
+			if (_isDisposed)
+				throw new ObjectDisposedException(this.GetType().Name);
+
 			if (device == null)
 				return;
 			if (!object.ReferenceEquals(device, _cachedDevice))
@@ -122,5 +108,45 @@ namespace Altaxo.Gui.Graph3D.Common
 				device.Draw(6, 0);
 			}
 		}
+
+		#region IDisposable Support
+
+		private bool _isDisposed = false; // To detect redundant calls
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!_isDisposed)
+			{
+				if (disposing)
+				{
+					Disposer.RemoveAndDispose(ref this._vertexLayout);
+					Disposer.RemoveAndDispose(ref this._vertices);
+					Disposer.RemoveAndDispose(ref this._effect);
+					_cachedDevice = null;
+				}
+
+				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+				// TODO: set large fields to null.
+
+				_isDisposed = true;
+			}
+		}
+
+		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+		// ~D3D10GammaCorrector() {
+		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		//   Dispose(false);
+		// }
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// TODO: uncomment the following line if the finalizer is overridden above.
+			// GC.SuppressFinalize(this);
+		}
+
+		#endregion IDisposable Support
 	}
 }
