@@ -37,13 +37,17 @@ namespace Altaxo.Gui.Graph3D.Common
 	{
 		private Device _device;
 		private Texture2D RenderTarget;
+		private Texture2D RenderTargetIntermediate;
 		private Texture2D DepthStencil;
 		private RenderTargetView RenderTargetView;
+		private RenderTargetView RenderTargetIntermediateView;
+		private ShaderResourceView RenderTargetIntermediateShaderResourceView;
 		private DepthStencilView DepthStencilView;
 		private DX10ImageSource D3DSurface;
 		private Stopwatch RenderTimer;
 		private IScene RenderScene;
 		private bool SceneAttached;
+		private D3D10GammaCorrector _gammaCorrector = new D3D10GammaCorrector();
 
 		public Color4 ClearColor = SharpDX.Color.White;
 
@@ -121,9 +125,13 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			Disposer.RemoveAndDispose(ref this.D3DSurface);
 			Disposer.RemoveAndDispose(ref this.RenderTargetView);
+			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateView);
+			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateShaderResourceView);
 			Disposer.RemoveAndDispose(ref this.DepthStencilView);
 			Disposer.RemoveAndDispose(ref this.RenderTarget);
+			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediate);
 			Disposer.RemoveAndDispose(ref this.DepthStencil);
+			_gammaCorrector.Detach(_device);
 			Disposer.RemoveAndDispose(ref this._device);
 		}
 
@@ -133,9 +141,13 @@ namespace Altaxo.Gui.Graph3D.Common
 				this.D3DSurface.SetRenderTargetDX10(null);
 
 			Disposer.RemoveAndDispose(ref this.RenderTargetView);
+			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateView);
+			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateShaderResourceView);
 			Disposer.RemoveAndDispose(ref this.DepthStencilView);
 			Disposer.RemoveAndDispose(ref this.RenderTarget);
+			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediate);
 			Disposer.RemoveAndDispose(ref this.DepthStencil);
+			_gammaCorrector.Detach(_device);
 
 			int width = Math.Max((int)base.ActualWidth, 100);
 			int height = Math.Max((int)base.ActualHeight, 100);
@@ -154,6 +166,20 @@ namespace Altaxo.Gui.Graph3D.Common
 				ArraySize = 1
 			};
 
+			Texture2DDescription renderTextureDescriptionForD3D9 = new Texture2DDescription
+			{
+				BindFlags = BindFlags.None,
+				Format = Format.B8G8R8A8_UNorm,
+				Width = width,
+				Height = height,
+				MipLevels = 1,
+				SampleDescription = new SampleDescription(1, 0),
+				Usage = ResourceUsage.Staging,
+				OptionFlags = ResourceOptionFlags.Shared,
+				CpuAccessFlags = CpuAccessFlags.Read,
+				ArraySize = 1
+			};
+
 			Texture2DDescription depthdesc = new Texture2DDescription
 			{
 				BindFlags = BindFlags.DepthStencil,
@@ -169,9 +195,13 @@ namespace Altaxo.Gui.Graph3D.Common
 			};
 
 			this.RenderTarget = new Texture2D(this._device, colordesc);
+			this.RenderTargetIntermediate = new Texture2D(this._device, colordesc);
 			this.DepthStencil = new Texture2D(this._device, depthdesc);
+			this.RenderTargetIntermediateView = new RenderTargetView(this._device, this.RenderTargetIntermediate);
+			this.RenderTargetIntermediateShaderResourceView = new ShaderResourceView(this._device, this.RenderTargetIntermediate);
 			this.RenderTargetView = new RenderTargetView(this._device, this.RenderTarget);
 			this.DepthStencilView = new DepthStencilView(this._device, this.DepthStencil);
+			_gammaCorrector.Attach(_device, "Altaxo.CompiledShaders.Effects.GammaCorrector.cso");
 
 			this.D3DSurface.SetRenderTargetDX10(this.RenderTarget);
 		}
@@ -230,17 +260,17 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (device == null)
 				return;
 
-			Texture2D renderTarget = this.RenderTarget;
+			Texture2D renderTarget = this.RenderTargetIntermediate;
 			if (renderTarget == null)
 				return;
 
 			int targetWidth = renderTarget.Description.Width;
 			int targetHeight = renderTarget.Description.Height;
 
-			device.OutputMerger.SetTargets(this.DepthStencilView, this.RenderTargetView);
+			device.OutputMerger.SetTargets(this.DepthStencilView, this.RenderTargetIntermediateView);
 			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
 
-			device.ClearRenderTargetView(this.RenderTargetView, this.ClearColor);
+			device.ClearRenderTargetView(this.RenderTargetIntermediateView, this.ClearColor);
 			device.ClearDepthStencilView(this.DepthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
 			if (this.Scene != null)
@@ -254,6 +284,15 @@ namespace Altaxo.Gui.Graph3D.Common
 				this.Scene.Update(this.RenderTimer.Elapsed);
 				this.Scene.Render();
 			}
+
+			device.Flush();
+
+			// now start a 2nd stage of rendering, in order to gamma-correct the image
+			// we use the RenderTextureIntermediate that was the target in the first stage now as a ShaderResource in this 2nd stage
+			device.OutputMerger.SetTargets(this.RenderTargetView);
+			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
+			device.ClearRenderTargetView(this.RenderTargetView, SharpDX.Color.Black);
+			_gammaCorrector.Render(this.Device, this.RenderTargetIntermediateShaderResourceView);
 
 			device.Flush();
 		}

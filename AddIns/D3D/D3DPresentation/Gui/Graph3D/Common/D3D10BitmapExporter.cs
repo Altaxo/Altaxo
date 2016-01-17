@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			Texture2DDescription colordesc = new Texture2DDescription
 			{
 				BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-				Format = Format.B8G8R8A8_UNorm,
+				Format = Format.B8G8R8A8_UNorm_SRgb,
 				Width = sizeX,
 				Height = sizeY,
 				MipLevels = 1,
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Graph3D.Common
 				Texture2DDescription renderTarget2Description = new Texture2DDescription
 				{
 					BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-					Format = Format.B8G8R8A8_UNorm,
+					Format = Format.B8G8R8A8_UNorm_SRgb,
 					Width = sizeX,
 					Height = sizeY,
 					MipLevels = 1,

@@ -88,6 +88,7 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D10GammaCorrector.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D11Canvas.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D11BitmapExporter.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D10BitmapExporter.cs" />
@@ -145,6 +146,7 @@
     <EmbeddedResource Include="CompiledShaders\VS\PNT_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\VS\PT_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\VS\P_DULL.cso" />
+    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -210,6 +212,7 @@
     <Ps40File Include="Shaders\PNC_DULL.fx" />
     <Vs40File Include="Shaders\PNT_DULL.fx" />
     <Ps40File Include="Shaders\PNT_DULL.fx" />
+    <Fx40File Include="Shaders\GammaCorrector.fx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -223,7 +226,7 @@
   </Target>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <Target Name="BeforeBuild">
-    <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders" Profile="fx_4_0" />
+    <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
     <Shader InputFiles="@(Vs40File)" OutputPath="$(ProjectDir)\CompiledShaders\VS" Profile="vs_4_0" EntryPoint="VS" />
     <Shader InputFiles="@(Ps40File)" OutputPath="$(ProjectDir)\CompiledShaders\PS" Profile="ps_4_0" EntryPoint="PS" />
   </Target>
