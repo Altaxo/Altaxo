@@ -192,6 +192,7 @@
     <Content Include="D3D.addin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Fx40File Include="Shaders\Lighting.fx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Gui\Graph3D\Viewing\Graph3DControl.xaml">

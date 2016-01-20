@@ -28,9 +28,24 @@ struct PS_IN
 {
 	float4 pos : SV_POSITION;
 	float4 col : COLOR;
+	float4 clip0 : SV_ClipDistance0;
+	float2 clip1 : SV_ClipDistance1;
 };
 
-float4x4 worldViewProj;
+cbuffer sceneBuffer
+{
+	float4x4 worldViewProj;
+}
+
+cbuffer clipBuffer
+{
+	float4 plane0;
+	float4 plane1;
+	float4 plane2;
+	float4 plane3;
+	float4 plane4;
+	float4 plane5;
+}
 
 PS_IN VS(VS_IN input)
 {
@@ -38,6 +53,9 @@ PS_IN VS(VS_IN input)
 
 	output.pos = mul(input.pos, worldViewProj);
 	output.col = input.col;
+
+	output.clip0 = float4(dot(input.pos, plane0), dot(input.pos, plane1), dot(input.pos, plane2), dot(input.pos, plane3));
+	output.clip1 = float2(dot(input.pos, plane4), dot(input.pos, plane5));
 
 	return output;
 }

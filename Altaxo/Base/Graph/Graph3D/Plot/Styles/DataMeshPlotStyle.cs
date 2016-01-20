@@ -344,6 +344,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			BuildImageV1(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
 		}
 
+		private struct VertexPoint
+		{
+			public PointD3D Point;
+			public int Idx;
+		}
+
 		private void BuildImageV1(
 				IGraphicContext3D g,
 				IPlotArea gl,
@@ -353,11 +359,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			_imageType = CachedImageType.LinearEquidistant;
 
-			PositionIndexedTriangleBuffers buffers;
+			PositionNormalIndexedTriangleBuffers buffers;
 
 			if (gl.ClipDataToFrame == LayerDataClipping.None)
 			{
-				buffers = g.GetPositionIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
+				buffers = g.GetPositionNormalIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
 			}
 			else
 			{
@@ -368,11 +374,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				_clipPlanes[4] = new PlaneD3D(0, 0, 1, 0);
 				_clipPlanes[5] = new PlaneD3D(0, 0, -1, -gl.Size.Z);
 
-				buffers = g.GetPositionIndexedTriangleBufferWithClipping(Materials.GetSolidMaterialWithoutColorOrTexture(), _clipPlanes);
+				buffers = g.GetPositionNormalIndexedTriangleBufferWithClipping(Materials.GetSolidMaterialWithoutColorOrTexture(), _clipPlanes);
 			}
 
-			var buf = buffers.PositionColorIndexedTriangleBuffer;
+			var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
 			var offs = buffers.IndexedTriangleBuffer.VertexCount;
+
+			int lxl = lx.Length;
+			int lyl = ly.Length;
+			int lxlm1 = lx.Length - 1;
+			int lylm1 = ly.Length - 1;
+
+			var vertexPoints = new PointD3D[lxl, lyl];
+			var vertexColors = new Color[lxl, lyl];
 
 			PointD3D pt;
 			var zScale = gl.Scales[2];
@@ -381,16 +395,49 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				for (int j = 0; j < ly.Length; ++j)
 				{
 					double lz = zScale.PhysicalVariantToNormal(matrix[i, j]);
-					var color = _colorProvider.GetColor(lz);
 					gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
-					buf.AddTriangleVertex(pt.X, pt.Y, pt.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+
+					vertexPoints[i, j] = pt;
+					vertexColors[i, j] = _colorProvider.GetColor(lz);
+
+					//buf.AddTriangleVertex(pt.X, pt.Y, pt.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 				}
 			}
 
-			int lxl = lx.Length;
-			int lyl = ly.Length;
-			int lxlm1 = lx.Length - 1;
-			int lylm1 = ly.Length - 1;
+			// calculate the normals
+			for (int i = 0; i < lx.Length; ++i)
+			{
+				for (int j = 0; j < ly.Length; ++j)
+				{
+					var pm = vertexPoints[i, j];
+					VectorD3D normal = VectorD3D.Empty;
+					if (i > 0)
+					{
+						if (j > 0)
+							normal += vertexPoints[i - 1, j - 1] - pm;
+						normal += vertexPoints[i - 1, j] - pm;
+						if (j < lylm1)
+							normal += vertexPoints[i - 1, j + 1] - pm;
+					}
+					{
+						if (j > 0)
+							normal += vertexPoints[i, j - 1] - pm;
+						if (j < lylm1)
+							normal += vertexPoints[i, j + 1] - pm;
+					}
+					if (i < lxlm1)
+					{
+						if (j > 0)
+							normal += vertexPoints[i + 1, j - 1] - pm;
+						normal += vertexPoints[i + 1, j] - pm;
+						if (j < lylm1)
+							normal += vertexPoints[i + 1, j + 1] - pm;
+					}
+
+					var color = vertexColors[i, j];
+					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+				}
+			}
 
 			for (int i = 0; i < lxlm1; ++i)
 			{

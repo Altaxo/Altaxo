@@ -264,9 +264,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					var indexCount = buf.TriangleCount * 3;
 
 					Plane[] clipPlanes = null;
-					if (buf is PositionColorIndexedTriangleBufferWithClipping)
+					if (buf is PositionNormalColorIndexedTriangleBufferWithClipping)
 					{
-						var axoClipPlanes = (buf as PositionColorIndexedTriangleBufferWithClipping).ClipPlanes;
+						var axoClipPlanes = (buf as PositionNormalColorIndexedTriangleBufferWithClipping).ClipPlanes;
 						if (null != axoClipPlanes)
 							clipPlanes = axoClipPlanes.Select(axoPlane => new Plane((float)axoPlane.X, (float)axoPlane.Y, (float)axoPlane.Z, (float)-axoPlane.W)).ToArray();
 					}
@@ -467,11 +467,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
+			device.VertexShader.SetConstantBuffer(1, _constantBufferForSixPlanes);
 
 			device.VertexShader.Set(_renderLayouts[layoutNumber].VertexShader);
 			device.PixelShader.Set(_renderLayouts[layoutNumber].PixelShader);
 
 			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
+
+			var planes = new SixPlanes();
+			if (null != deviceBuffers.ClipPlanes)
+			{
+				for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
+				{
+					planes[i] = deviceBuffers.ClipPlanes[i];
+				}
+			}
+			device.UpdateSubresource(ref planes, _constantBufferForSixPlanes);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 48, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);

@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
-		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
+		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
 
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
 
