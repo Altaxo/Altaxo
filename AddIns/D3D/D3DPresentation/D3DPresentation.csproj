@@ -147,6 +147,7 @@
     <EmbeddedResource Include="CompiledShaders\VS\PT_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\VS\P_DULL.cso" />
     <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
+    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

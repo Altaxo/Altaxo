@@ -18,9 +18,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
+float4x4 WorldViewProj;
+
 cbuffer cbViewTransformation
 {
-	float4x4 WorldViewProj;
 	float3 EyePosition;
 }
 
@@ -54,6 +55,18 @@ cbuffer cbLights
 	float4 SpotCosOuterCone;
 
 	float4 SpotCosInnerConeRcp;
+}
+
+// Buffer used for clipping operations
+// plane0 ... plane5 are the six clip planes
+cbuffer cbClipPlanes
+{
+	float4 plane0;
+	float4 plane1;
+	float4 plane2;
+	float4 plane3;
+	float4 plane4;
+	float4 plane5;
 }
 
 float4 dot4x4(float4 aX, float4 aY, float4 aZ, float4 bX, float4 bY, float4 bZ)
@@ -119,6 +132,23 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	return float4(finalColor, diffuseColor.w);
 }
 
+struct VS_IN_P
+{
+	float4 pos : POSITION;
+};
+
+struct VS_IN_PC
+{
+	float4 pos : POSITION;
+	float4 col : COLOR;
+};
+
+struct VS_IN_PT
+{
+	float4 pos : POSITION;
+	float2 uv : TEXCOORD0;
+};
+
 struct VS_IN_PN
 {
 	float4 pos : POSITION;
@@ -132,13 +162,57 @@ struct VS_IN_PNC
 	float4 col : COLOR;
 };
 
+struct VS_IN_PNT
+{
+	float4 pos : POSITION;
+	float4 nml : NORMAL;
+	float2 uv : TEXCOORD0;
+};
+
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
 	float3 posW : POSITION;
 	float3 normal : NORMAL;
 	float4 col : COLOR;
+	float4 clip0 : SV_ClipDistance0;
+	float2 clip1 : SV_ClipDistance1;
 };
+
+PS_IN VS_P(VS_IN_P input)
+{
+	PS_IN output = (PS_IN)0;
+
+	output.pos = mul(input.pos, WorldViewProj);
+	output.posW = input.pos;
+	output.normal = float3(0, 0, 1);
+	output.col = MaterialDiffuseColor;
+
+	return output;
+}
+
+PS_IN VS_PC(VS_IN_PC input)
+{
+	PS_IN output = (PS_IN)0;
+
+	output.pos = mul(input.pos, WorldViewProj);
+	output.posW = input.pos;
+	output.normal = float3(0, 0, 1);
+	output.col = input.col;
+	return output;
+}
+
+PS_IN VS_PT(VS_IN_PT input)
+{
+	PS_IN output = (PS_IN)0;
+
+	output.pos = mul(input.pos, WorldViewProj);
+	output.posW = input.pos;
+	output.normal = float3(0, 0, 1);
+	output.col = float4(0, 0, 0, 1);
+
+	return output;
+}
 
 PS_IN VS_PN(VS_IN_PN input)
 {
@@ -159,15 +233,71 @@ PS_IN VS_PNC(VS_IN_PNC input)
 	output.normal = input.nml;
 	output.col = input.col;
 
+	output.clip0 = float4(dot(input.pos, plane0), dot(input.pos, plane1), dot(input.pos, plane2), dot(input.pos, plane3));
+	output.clip1 = float2(dot(input.pos, plane4), dot(input.pos, plane5));
+
+	return output;
+}
+
+PS_IN VS_PNT(VS_IN_PNT input)
+{
+	PS_IN output = (PS_IN)0;
+
+	output.pos = mul(input.pos, WorldViewProj);
+	output.posW = input.pos.xyz;
+	output.normal = input.nml;
+	output.col = float4(0, 0, 0, 1);
+
 	return output;
 }
 
 float4 PS(PS_IN input) : SV_Target
 {
-	return CalcLighting(input.posW, input.normal, input.col);
+	float4 col1 = float4(1,0,0,1);
+	float4 col2 = float4(0, 1, 0, 1);
+	float3 normal = normalize(input.normal);
+
+	return lerp(col1, col2, 0.5*(normal.z + 1)); // downwards = col1 (red); upwards = col2 (green)
 }
 
-technique10 ShadeUniformColoredObjects
+/*
+float4 PS(PS_IN input) : SV_Target
+{
+	return CalcLighting(input.posW, input.normal, input.col);
+}
+*/
+
+technique10 Shade_P
+{
+	pass P0
+	{
+		SetGeometryShader(0);
+		SetVertexShader(CompileShader(vs_4_0, VS_P()));
+		SetPixelShader(CompileShader(ps_4_0, PS()));
+	}
+}
+
+technique10 Shade_PC
+{
+	pass P0
+	{
+		SetGeometryShader(0);
+		SetVertexShader(CompileShader(vs_4_0, VS_PC()));
+		SetPixelShader(CompileShader(ps_4_0, PS()));
+	}
+}
+
+technique10 Shade_PT
+{
+	pass P0
+	{
+		SetGeometryShader(0);
+		SetVertexShader(CompileShader(vs_4_0, VS_PT()));
+		SetPixelShader(CompileShader(ps_4_0, PS()));
+	}
+}
+
+technique10 Shade_PN
 {
 	pass P0
 	{
@@ -177,12 +307,22 @@ technique10 ShadeUniformColoredObjects
 	}
 }
 
-technique10 ShadePerVertexColoredObjects
+technique10 Shade_PNC
 {
 	pass P0
 	{
 		SetGeometryShader(0);
 		SetVertexShader(CompileShader(vs_4_0, VS_PNC()));
+		SetPixelShader(CompileShader(ps_4_0, PS()));
+	}
+}
+
+technique10 Shade_PNT
+{
+	pass P0
+	{
+		SetGeometryShader(0);
+		SetVertexShader(CompileShader(vs_4_0, VS_PNT()));
 		SetPixelShader(CompileShader(ps_4_0, PS()));
 	}
 }

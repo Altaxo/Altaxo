@@ -46,16 +46,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		internal struct RenderLayout
 		{
 			public InputLayout VertexLayout;
-			public VertexShader VertexShader;
-			public ShaderBytecode VertexShaderByteCode;
-			public PixelShader PixelShader;
+			public EffectTechnique technique;
+			public EffectPass pass;
 
 			public void Dispose()
 			{
 				Disposer.RemoveAndDispose(ref VertexLayout);
-				Disposer.RemoveAndDispose(ref VertexShader);
-				Disposer.RemoveAndDispose(ref VertexShaderByteCode);
-				Disposer.RemoveAndDispose(ref PixelShader);
+				Disposer.RemoveAndDispose(ref technique);
+				Disposer.RemoveAndDispose(ref pass);
 			}
 		}
 
@@ -100,6 +98,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private RenderLayout[] _renderLayouts = new RenderLayout[6];
 
+		private Effect _lightingEffect;
+
 		/// <summary>
 		/// The _this triangle buffers. These buffers are used for current rendering
 		/// 0: Position, 1: PositionColor, 2: PositionUV, 3: PositionNormal, 4: PositionNormalColor, 5: PositionNormalUV
@@ -123,59 +123,71 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			Device device = _hostDevice;
 
+			using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.Effects.Lighting.cso"))
+			{
+				if (null == stream)
+					throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", "Altaxo.CompiledShaders.Effects.Lighting.cso"));
+
+				using (var shaderBytes = ShaderBytecode.FromStream(stream))
+				{
+					_lightingEffect = new Effect(device, shaderBytes);
+				}
+			}
+
 			int i;
 
 			for (i = 0; i < _layoutNames.Length; ++i)
 			{
-				var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.VS." + _layoutNames[i] + "_DULL.cso");
-				_renderLayouts[i].VertexShaderByteCode = ShaderBytecode.FromStream(stream);
-				_renderLayouts[i].VertexShader = new VertexShader(device, _renderLayouts[i].VertexShaderByteCode);
+				string techniqueName = "Shade_" + _layoutNames[i];
+				_renderLayouts[i].technique = this._lightingEffect.GetTechniqueByName(techniqueName);
+				_renderLayouts[i].pass = _renderLayouts[i].technique.GetPassByIndex(0);
 
-				stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Altaxo.CompiledShaders.PS." + _layoutNames[i] + "_DULL.cso");
-				ShaderBytecode pixelShaderByteCode = ShaderBytecode.FromStream(stream);
-				_renderLayouts[i].PixelShader = new PixelShader(device, pixelShaderByteCode);
+				if (null == _renderLayouts[i].technique || !_renderLayouts[i].technique.IsValid)
+					throw new InvalidProgramException(string.Format("Technique {0} was not found or is invalid", techniqueName));
+				if (null == _renderLayouts[i].pass || !_renderLayouts[i].pass.IsValid)
+					throw new InvalidProgramException(string.Format("Pass[0] of technique {0} was not found or is invalid", techniqueName));
 			}
 
 			i = 0;
-			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
 																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0)
 																								});
 
 			i = 1;
-			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
 																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 																																new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0)
 																								});
 
 			i = 2;
-			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
 																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 																																new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
 																								});
 
 			i = 3;
-			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
 																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 																																new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0)
 																								});
 
 			i = 4;
-			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
 																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 																																new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
 																																new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 32, 0)
 																								});
 
 			i = 5;
-			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].VertexShaderByteCode, new[] {
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
 																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
 																																new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
 																																new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
 																								});
 
 			// Create Constant Buffers
-			_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
-			_constantBufferForColor = new Buffer(device, Utilities.SizeOf<Vector4>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+			//_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+			//_constantBufferForColor = new Buffer(device, Utilities.SizeOf<Vector4>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
 			_constantBufferForSixPlanes = new Buffer(device, Utilities.SizeOf<Vector4>() * 6, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
 
 			if (_drawing != null)
@@ -437,13 +449,16 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
-			device.VertexShader.SetConstantBuffer(1, _constantBufferForSixPlanes);
+			var cbWorldViewProj = this._lightingEffect.GetVariableByName("WorldViewProj").AsMatrix();
+			cbWorldViewProj.SetMatrixTranspose(worldViewProj);
 
-			device.VertexShader.Set(_renderLayouts[layoutNumber].VertexShader);
-			device.PixelShader.Set(_renderLayouts[layoutNumber].PixelShader);
+			//device.VertexShader.SetConstantBuffer(0, _constantBuffer);
+			//device.VertexShader.SetConstantBuffer(1, _constantBufferForSixPlanes);
 
-			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
+			//device.VertexShader.Set(_renderLayouts[layoutNumber].VertexShader);
+			//device.PixelShader.Set(_renderLayouts[layoutNumber].PixelShader);
+
+			//device.UpdateSubresource(ref worldViewProj, _constantBuffer);
 
 			var planes = new SixPlanes();
 			if (null != deviceBuffers.ClipPlanes)
@@ -454,10 +469,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				}
 			}
 
-			device.UpdateSubresource(ref planes, _constantBufferForSixPlanes);
+			//device.UpdateSubresource(ref planes, _constantBufferForSixPlanes);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
+
+			_renderLayouts[layoutNumber].pass.Apply();
 			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 		}
 
@@ -466,26 +483,24 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			int layoutNumber = 4;
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
-			device.VertexShader.SetConstantBuffer(1, _constantBufferForSixPlanes);
 
-			device.VertexShader.Set(_renderLayouts[layoutNumber].VertexShader);
-			device.PixelShader.Set(_renderLayouts[layoutNumber].PixelShader);
+			var cbWorldViewProj = this._lightingEffect.GetVariableByName("WorldViewProj").AsMatrix();
+			cbWorldViewProj.SetMatrixTranspose(worldViewProj);
 
-			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
-
-			var planes = new SixPlanes();
+			EffectConstantBuffer cbClipPlanes = this._lightingEffect.GetConstantBufferByName("cbClipPlanes");
 			if (null != deviceBuffers.ClipPlanes)
 			{
 				for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
 				{
-					planes[i] = deviceBuffers.ClipPlanes[i];
+					var planeVar = cbClipPlanes.GetMemberByName("plane" + i.ToString()).AsVector();
+					planeVar.Set(deviceBuffers.ClipPlanes[i]);
 				}
 			}
-			device.UpdateSubresource(ref planes, _constantBufferForSixPlanes);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 48, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
+
+			_renderLayouts[layoutNumber].pass.Apply();
 			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 		}
 
@@ -494,20 +509,19 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			int layoutNumber = 3;
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-			device.VertexShader.SetConstantBuffer(0, _constantBuffer);
-			device.VertexShader.SetConstantBuffer(1, _constantBufferForColor);
-
-			device.VertexShader.Set(_renderLayouts[layoutNumber].VertexShader);
-			device.PixelShader.Set(_renderLayouts[layoutNumber].PixelShader);
-
-			device.UpdateSubresource(ref worldViewProj, _constantBuffer);
 
 			var color = deviceBuffers.Material.Color.Color;
 			Vector4 colorVec = new Vector4(color.ScR, color.ScG, color.ScB, color.ScA);
-			device.UpdateSubresource(ref colorVec, _constantBufferForColor);
+			var cbMaterialDiffuseColor = this._lightingEffect.GetVariableByName("MaterialDiffuseColor").AsVector();
+			cbMaterialDiffuseColor.Set(ref colorVec);
+
+			var cbWorldViewProj = this._lightingEffect.GetVariableByName("WorldViewProj").AsMatrix();
+			cbWorldViewProj.SetMatrixTranspose(worldViewProj);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
+
+			_renderLayouts[layoutNumber].pass.Apply();
 			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 		}
 	}
