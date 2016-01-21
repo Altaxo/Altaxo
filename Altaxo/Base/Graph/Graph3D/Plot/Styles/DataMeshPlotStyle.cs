@@ -410,30 +410,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				for (int j = 0; j < ly.Length; ++j)
 				{
 					var pm = vertexPoints[i, j];
-					VectorD3D normal = VectorD3D.Empty;
-					if (i > 0)
-					{
-						if (j > 0)
-							normal += vertexPoints[i - 1, j - 1] - pm;
-						normal += vertexPoints[i - 1, j] - pm;
-						if (j < lylm1)
-							normal += vertexPoints[i - 1, j + 1] - pm;
-					}
-					{
-						if (j > 0)
-							normal += vertexPoints[i, j - 1] - pm;
-						if (j < lylm1)
-							normal += vertexPoints[i, j + 1] - pm;
-					}
-					if (i < lxlm1)
-					{
-						if (j > 0)
-							normal += vertexPoints[i + 1, j - 1] - pm;
-						normal += vertexPoints[i + 1, j] - pm;
-						if (j < lylm1)
-							normal += vertexPoints[i + 1, j + 1] - pm;
-					}
+					var vec1 = vertexPoints[Math.Min(i + 1, lxlm1), j] - vertexPoints[Math.Max(i - 1, 0), j];
+					var vec2 = vertexPoints[i, Math.Min(j + 1, lylm1)] - vertexPoints[i, Math.Max(j - 1, 0)];
 
+					var normal = VectorD3D.CrossProduct(vec1, vec2).Normalized;
 					var color = vertexColors[i, j];
 					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 				}

@@ -90,7 +90,7 @@ namespace Altaxo.Geometry
 
 		private PointD2D GetNormal(PointD2D polygonVector, bool isHole)
 		{
-			return new PointD2D(-polygonVector.Y, polygonVector.X);
+			return new PointD2D(polygonVector.Y, -polygonVector.X) / polygonVector.VectorLength;
 		}
 	}
 }

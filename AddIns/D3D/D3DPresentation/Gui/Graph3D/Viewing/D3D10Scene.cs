@@ -108,6 +108,29 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private List<VertexAndIndexDeviceBuffer>[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[6];
 
+		// Effect variables
+
+		// Transformation variables
+		private EffectConstantBuffer _cbViewTransformation;
+
+		private EffectMatrixVariable _evWorldViewProj;
+		private EffectVectorVariable _evEyePosition;
+
+		// Materials
+		private EffectConstantBuffer _cbMaterial;
+
+		private EffectVectorVariable _evMaterialDiffuseColor;
+		private EffectScalarVariable _evMaterialSpecularExponent;
+		private EffectScalarVariable _evMaterialSpecularIntensity;
+
+		// Clip planes
+		private EffectConstantBuffer _cbClipPlanes;
+
+		private EffectVectorVariable[] _evClipPlanes = new EffectVectorVariable[6];
+
+		// Lighting
+		private Lighting _lighting;
+
 		public void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize)
 		{
 			Attach((Device)hostDevice, hostSize);
@@ -188,8 +211,33 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			// Create Constant Buffers
 			//_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
 			//_constantBufferForColor = new Buffer(device, Utilities.SizeOf<Vector4>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
-			_constantBufferForSixPlanes = new Buffer(device, Utilities.SizeOf<Vector4>() * 6, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
+			//_constantBufferForSixPlanes = new Buffer(device, Utilities.SizeOf<Vector4>() * 6, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
 
+			// View transformation variables
+			_cbViewTransformation = this._lightingEffect.GetConstantBufferByName("cbViewTransformation");
+			_evWorldViewProj = _cbViewTransformation.GetMemberByName("WorldViewProj").AsMatrix();
+			_evEyePosition = _cbViewTransformation.GetMemberByName("EyePosition").AsVector();
+
+			_cbMaterial = this._lightingEffect.GetConstantBufferByName("cbMaterial");
+			_evMaterialDiffuseColor = _cbMaterial.GetMemberByName("MaterialDiffuseColor").AsVector();
+			_evMaterialSpecularExponent = _cbMaterial.GetMemberByName("MaterialSpecularExponent").AsScalar();
+			_evMaterialSpecularExponent.Set(4.0f);
+			_evMaterialSpecularIntensity = _cbMaterial.GetMemberByName("MaterialSpecularIntensity").AsScalar();
+			_evMaterialSpecularIntensity.Set(1.0f);
+
+			// Clip plane variables
+			_cbClipPlanes = this._lightingEffect.GetConstantBufferByName("cbClipPlanes");
+			for (i = 0; i < 6; ++i)
+			{
+				_evClipPlanes[i] = _cbClipPlanes.GetMemberByName("ClipPlane" + i.ToString(System.Globalization.CultureInfo.InvariantCulture)).AsVector();
+			}
+
+			// Lighting variables
+
+			_lighting.Initialize(_lightingEffect);
+			_lighting.SetDefaultLighting();
+
+			// --------------------
 			if (_drawing != null)
 			{
 				BringDrawingIntoBuffers(_drawing);
@@ -360,6 +408,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				worldViewProjTr.Transpose();
 			}
 
+			_evWorldViewProj.SetMatrixTranspose(ref worldViewProjTr);
+			_evEyePosition.Set(ToVector3(_camera.EyePosition));
+
 			foreach (var entry in _thisTriangleDeviceBuffers[1]) // Position-Color
 			{
 				DrawPositionColorIndexedTriangleBuffer(device, entry, worldViewProjTr);
@@ -449,8 +500,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-			var cbWorldViewProj = this._lightingEffect.GetVariableByName("WorldViewProj").AsMatrix();
-			cbWorldViewProj.SetMatrixTranspose(worldViewProj);
+			_evWorldViewProj.SetMatrixTranspose(ref worldViewProj);
 
 			//device.VertexShader.SetConstantBuffer(0, _constantBuffer);
 			//device.VertexShader.SetConstantBuffer(1, _constantBufferForSixPlanes);
@@ -484,16 +534,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-			var cbWorldViewProj = this._lightingEffect.GetVariableByName("WorldViewProj").AsMatrix();
-			cbWorldViewProj.SetMatrixTranspose(worldViewProj);
-
-			EffectConstantBuffer cbClipPlanes = this._lightingEffect.GetConstantBufferByName("cbClipPlanes");
 			if (null != deviceBuffers.ClipPlanes)
 			{
 				for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
 				{
-					var planeVar = cbClipPlanes.GetMemberByName("plane" + i.ToString()).AsVector();
-					planeVar.Set(deviceBuffers.ClipPlanes[i]);
+					_evClipPlanes[i].Set(deviceBuffers.ClipPlanes[i]);
 				}
 			}
 
@@ -502,6 +547,15 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			_renderLayouts[layoutNumber].pass.Apply();
 			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
+
+			if (null != deviceBuffers.ClipPlanes)
+			{
+				var emptyPlane = new Plane();
+				for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
+				{
+					_evClipPlanes[i].Set(emptyPlane);
+				}
+			}
 		}
 
 		private void DrawPositionNormalIndexedTriangleBuffer(Device device, VertexAndIndexDeviceBuffer deviceBuffers, Matrix worldViewProj)
@@ -510,19 +564,181 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-			var color = deviceBuffers.Material.Color.Color;
-			Vector4 colorVec = new Vector4(color.ScR, color.ScG, color.ScB, color.ScA);
-			var cbMaterialDiffuseColor = this._lightingEffect.GetVariableByName("MaterialDiffuseColor").AsVector();
-			cbMaterialDiffuseColor.Set(ref colorVec);
-
-			var cbWorldViewProj = this._lightingEffect.GetVariableByName("WorldViewProj").AsMatrix();
-			cbWorldViewProj.SetMatrixTranspose(worldViewProj);
+			Vector4 colorVec = ToVector4(deviceBuffers.Material.Color.Color);
+			_evMaterialDiffuseColor.Set(ref colorVec);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
 
 			_renderLayouts[layoutNumber].pass.Apply();
 			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
+		}
+
+		// helper
+
+		private static Vector3 ToVector3(PointD3D a)
+		{
+			return new Vector3((float)a.X, (float)a.Y, (float)a.Z);
+		}
+
+		private static Vector3 ToVector3(VectorD3D a)
+		{
+			return new Vector3((float)a.X, (float)a.Y, (float)a.Z);
+		}
+
+		private static Vector4 ToVector4(PointD3D a)
+		{
+			return new Vector4((float)a.X, (float)a.Y, (float)a.Z, 1.0f);
+		}
+
+		private static Vector3 ToVector3(Altaxo.Drawing.AxoColor color)
+		{
+			return new Vector3(color.ScR, color.ScG, color.ScB);
+		}
+
+		private static Vector3 ToVector3(Altaxo.Drawing.AxoColor color, double amplitude)
+		{
+			float amp = (float)amplitude;
+			return new Vector3(color.ScR * amp, color.ScG * amp, color.ScB * amp);
+		}
+
+		private static Vector4 ToVector4(Altaxo.Drawing.AxoColor color)
+		{
+			return new Vector4(color.ScR, color.ScG, color.ScB, color.ScA);
+		}
+
+		private struct Lighting
+		{
+			public EffectConstantBuffer _cbLighting;
+
+			public EffectVectorVariable HemisphericLightColorBelow;
+			public EffectVectorVariable HemisphericLightColorAbove;
+			public EffectVectorVariable HemisphericLightBelowToAboveVector;
+
+			public EffectVectorVariable LightPosX;
+			public EffectVectorVariable LightPosY;
+			public EffectVectorVariable LightPosZ;
+
+			// Light directions
+			public EffectVectorVariable LightDirX;
+
+			public EffectVectorVariable LightDirY;
+			public EffectVectorVariable LightDirZ;
+
+			public EffectVectorVariable LightColorR;
+			public EffectVectorVariable LightColorG;
+			public EffectVectorVariable LightColorB;
+
+			public EffectVectorVariable LightRangeRcp; // reciprocal of light range
+
+			public EffectVectorVariable CapsuleLen;
+
+			public EffectVectorVariable SpotCosOuterCone;
+
+			public EffectVectorVariable SpotCosInnerConeRcp;
+
+			private struct SingleLight
+			{
+				public Vector3 Color; // unused if Color == 0
+				public Vector3 Position;
+				public Vector3 Direction;
+				public float LightRangeRcp;
+				public float CapsuleLength;
+				public float SpotCosOuterCone;
+				public float SpotCosInnerConeRcp;
+			}
+
+			private SingleLight[] _singleLights;
+
+			public void Initialize(Effect effect)
+			{
+				_singleLights = new SingleLight[4];
+
+				_cbLighting = effect.GetConstantBufferByName("cbLights");
+				HemisphericLightColorBelow = _cbLighting.GetMemberByName("HemisphericLightColorBelow").AsVector();
+				HemisphericLightColorAbove = _cbLighting.GetMemberByName("HemisphericLightColorAbove").AsVector();
+				HemisphericLightBelowToAboveVector = _cbLighting.GetMemberByName("HemisphericLightBelowToAboveVector").AsVector();
+
+				LightPosX = _cbLighting.GetMemberByName("LightPosX").AsVector();
+				LightPosY = _cbLighting.GetMemberByName("LightPosY").AsVector();
+				LightPosZ = _cbLighting.GetMemberByName("LightPosZ").AsVector();
+
+				LightDirX = _cbLighting.GetMemberByName("LightDirX").AsVector();
+				LightDirY = _cbLighting.GetMemberByName("LightDirY").AsVector();
+				LightDirZ = _cbLighting.GetMemberByName("LightDirZ").AsVector();
+
+				LightColorR = _cbLighting.GetMemberByName("LightColorR").AsVector();
+				LightColorG = _cbLighting.GetMemberByName("LightColorG").AsVector();
+				LightColorB = _cbLighting.GetMemberByName("LightColorB").AsVector();
+
+				LightRangeRcp = _cbLighting.GetMemberByName("LightRangeRcp").AsVector();
+				CapsuleLen = _cbLighting.GetMemberByName("CapsuleLen").AsVector();
+				SpotCosOuterCone = _cbLighting.GetMemberByName("SpotCosOuterCone").AsVector();
+				SpotCosInnerConeRcp = _cbLighting.GetMemberByName("SpotCosInnerConeRcp").AsVector();
+			}
+
+			public void SetDefaultLighting()
+			{
+				HemisphericLightBelowToAboveVector.Set(new Vector3(0, 0, 1));
+				HemisphericLightColorBelow.Set(new Vector3(0.5f, 0.25f, 0.25f)); // slightly red
+				HemisphericLightColorAbove.Set(new Vector3(0.25f, 0.25f, 0.5f)); // slightly blue
+
+				ClearSingleLight(0);
+				ClearSingleLight(1);
+				ClearSingleLight(2);
+				ClearSingleLight(3);
+
+				SetDirectionalLight(0, Altaxo.Drawing.NamedColors.White.Color, 0.5, new VectorD3D(-2, -1, 1));
+
+				AssembleLights();
+			}
+
+			public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D direction)
+			{
+				direction = direction.Normalized;
+				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(direction * 1E7), direction, 0, 0, 0, 1);
+			}
+
+			private void SetSingleLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, VectorD3D direction, double lightRangeRcp, double capsuleLength, double spotCosOuterCone, double spotCosInnerConeRcp)
+			{
+				var sl = new SingleLight()
+				{
+					Color = ToVector3(color, colorAmplitude),
+					Position = ToVector3(position),
+					Direction = ToVector3(direction),
+					LightRangeRcp = (float)lightRangeRcp,
+					CapsuleLength = (float)capsuleLength,
+					SpotCosOuterCone = (float)spotCosOuterCone,
+					SpotCosInnerConeRcp = (float)spotCosInnerConeRcp
+				};
+
+				_singleLights[idx] = sl;
+			}
+
+			public void ClearSingleLight(int idx)
+			{
+				_singleLights[idx] = new SingleLight();
+			}
+
+			private void AssembleLights()
+			{
+				LightPosX.Set(new Vector4(_singleLights[0].Position.X, _singleLights[1].Position.X, _singleLights[2].Position.X, _singleLights[3].Position.X));
+				LightPosY.Set(new Vector4(_singleLights[0].Position.Y, _singleLights[1].Position.Y, _singleLights[2].Position.Y, _singleLights[3].Position.Y));
+				LightPosZ.Set(new Vector4(_singleLights[0].Position.Z, _singleLights[1].Position.Z, _singleLights[2].Position.Z, _singleLights[3].Position.Z));
+
+				LightDirX.Set(new Vector4(_singleLights[0].Direction.X, _singleLights[1].Direction.X, _singleLights[2].Direction.X, _singleLights[3].Direction.X));
+				LightDirY.Set(new Vector4(_singleLights[0].Direction.Y, _singleLights[1].Direction.Y, _singleLights[2].Direction.Y, _singleLights[3].Direction.Y));
+				LightDirZ.Set(new Vector4(_singleLights[0].Direction.Z, _singleLights[1].Direction.Z, _singleLights[2].Direction.Z, _singleLights[3].Direction.Z));
+
+				LightColorR.Set(new Vector4(_singleLights[0].Color.X, _singleLights[1].Color.X, _singleLights[2].Color.X, _singleLights[3].Color.X));
+				LightColorG.Set(new Vector4(_singleLights[0].Color.Y, _singleLights[1].Color.Y, _singleLights[2].Color.Y, _singleLights[3].Color.Y));
+				LightColorB.Set(new Vector4(_singleLights[0].Color.Z, _singleLights[1].Color.Z, _singleLights[2].Color.Z, _singleLights[3].Color.Z));
+
+				LightRangeRcp.Set(new Vector4(_singleLights[0].LightRangeRcp, _singleLights[1].LightRangeRcp, _singleLights[2].LightRangeRcp, _singleLights[3].LightRangeRcp));
+				CapsuleLen.Set(new Vector4(_singleLights[0].CapsuleLength, _singleLights[1].CapsuleLength, _singleLights[2].CapsuleLength, _singleLights[3].CapsuleLength));
+				SpotCosInnerConeRcp.Set(new Vector4(_singleLights[0].SpotCosInnerConeRcp, _singleLights[1].SpotCosInnerConeRcp, _singleLights[2].SpotCosInnerConeRcp, _singleLights[3].SpotCosInnerConeRcp));
+				SpotCosOuterCone.Set(new Vector4(_singleLights[0].SpotCosOuterCone, _singleLights[1].SpotCosOuterCone, _singleLights[2].SpotCosOuterCone, _singleLights[3].SpotCosOuterCone));
+			}
 		}
 	}
 }

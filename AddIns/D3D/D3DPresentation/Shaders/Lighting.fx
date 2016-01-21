@@ -18,22 +18,25 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-float4x4 WorldViewProj;
-
 cbuffer cbViewTransformation
 {
+	float4x4 WorldViewProj;
 	float3 EyePosition;
 }
 
 cbuffer cbMaterial
 {
 	float4 MaterialDiffuseColor;
-	float specExp;
-	float specIntensity;
+	float MaterialSpecularExponent;
+	float MaterialSpecularIntensity;
 }
 
 cbuffer cbLights
 {
+	float3 HemisphericLightColorBelow;
+	float3 HemisphericLightColorAbove;
+	float3 HemisphericLightBelowToAboveVector;
+
 	// Light positions of the 4 lights, every variable is one component; x, y, z, and w correspond to the 4 lights
 	float4 LightPosX;
 	float4 LightPosY;
@@ -58,15 +61,15 @@ cbuffer cbLights
 }
 
 // Buffer used for clipping operations
-// plane0 ... plane5 are the six clip planes
+// ClipPlane0 ... ClipPlane5 are the six clip planes
 cbuffer cbClipPlanes
 {
-	float4 plane0;
-	float4 plane1;
-	float4 plane2;
-	float4 plane3;
-	float4 plane4;
-	float4 plane5;
+	float4 ClipPlane0;
+	float4 ClipPlane1;
+	float4 ClipPlane2;
+	float4 ClipPlane3;
+	float4 ClipPlane4;
+	float4 ClipPlane5;
 }
 
 float4 dot4x4(float4 aX, float4 aY, float4 aZ, float4 bX, float4 bY, float4 bZ)
@@ -81,6 +84,7 @@ float4 dot4x1(float4 aX, float4 aY, float4 aZ, float3 b)
 
 float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 {
+	normal = normalize(normal);
 	float3 ToEye = EyePosition.xyz - position;
 	// Find the shortest distance between the pixel and capsules segment
 	float4 ToCapsuleStartX = position.xxxx - LightPosX;
@@ -112,7 +116,7 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	float4 HalfWayZ = ToEye.zzzz + ToLightZ;
 	float4 HalfWaySize = sqrt(dot4x4(HalfWayX, HalfWayY, HalfWayZ, HalfWayX, HalfWayY, HalfWayZ));
 	float4 NDotH = saturate(dot4x1(HalfWayX / HalfWaySize, HalfWayY / HalfWaySize, HalfWayZ / HalfWaySize, normal));
-	float4 SpecValue = pow(NDotH, specExp.xxxx) * specIntensity;
+	float4 SpecValue = pow(NDotH, MaterialSpecularExponent.xxxx) * MaterialSpecularIntensity;
 	//finalColor += float3(dot(LightColorR, SpecValue), dot(LightColorG, SpecValue), dot(LightColorB, SpecValue));
 
 	// Cone attenuation
@@ -125,9 +129,13 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	float4 Attn = DistToLightNorm * DistToLightNorm;
 	Attn *= conAtt; // Include the cone attenuation
 
+	// Hemispheric
+	float r = 0.5*(1 + dot(normal, HemisphericLightBelowToAboveVector));
+	float3 finalColor = lerp(HemisphericLightColorBelow, HemisphericLightColorAbove, r);
+
 	// Calculate the final color value
 	float4 pixelIntensity = (NDotL + SpecValue) * Attn;
-	float3 finalColor = float3(dot(LightColorR, pixelIntensity), dot(LightColorG, pixelIntensity), dot(LightColorB, pixelIntensity));
+	finalColor += float3(dot(LightColorR, pixelIntensity), dot(LightColorG, pixelIntensity), dot(LightColorB, pixelIntensity));
 	finalColor *= diffuseColor;
 	return float4(finalColor, diffuseColor.w);
 }
@@ -171,12 +179,12 @@ struct VS_IN_PNT
 
 struct PS_IN
 {
-	float4 pos : SV_POSITION;
-	float3 posW : POSITION;
-	float3 normal : NORMAL;
-	float4 col : COLOR;
-	float4 clip0 : SV_ClipDistance0;
-	float2 clip1 : SV_ClipDistance1;
+	float4 pos : SV_POSITION; // position in camera coordinates
+	float3 posW : POSITION; // position in world coordinates
+	float3 normal : NORMAL; // normal vector in world coordinates
+	float4 col : COLOR;  // pixel color
+	float4 clip0 : SV_ClipDistance0; // clip distances 0..3
+	float2 clip1 : SV_ClipDistance1; // clip distances 4..5
 };
 
 PS_IN VS_P(VS_IN_P input)
@@ -233,8 +241,8 @@ PS_IN VS_PNC(VS_IN_PNC input)
 	output.normal = input.nml;
 	output.col = input.col;
 
-	output.clip0 = float4(dot(input.pos, plane0), dot(input.pos, plane1), dot(input.pos, plane2), dot(input.pos, plane3));
-	output.clip1 = float2(dot(input.pos, plane4), dot(input.pos, plane5));
+	output.clip0 = float4(dot(input.pos, ClipPlane0), dot(input.pos, ClipPlane1), dot(input.pos, ClipPlane2), dot(input.pos, ClipPlane3));
+	output.clip1 = float2(dot(input.pos, ClipPlane4), dot(input.pos, ClipPlane5));
 
 	return output;
 }
@@ -251,21 +259,29 @@ PS_IN VS_PNT(VS_IN_PNT input)
 	return output;
 }
 
+/*
+// Lighting based on the normal only - the color of the object is completely ignored
 float4 PS(PS_IN input) : SV_Target
 {
-	float4 col1 = float4(1,0,0,1);
-	float4 col2 = float4(0, 1, 0, 1);
-	float3 normal = normalize(input.normal);
-
-	return lerp(col1, col2, 0.5*(normal.z + 1)); // downwards = col1 (red); upwards = col2 (green)
+	float r = 0.5*(1 + dot(normalize(input.normal), HemisphericLightBelowToAboveVector));
+	return float4(lerp(HemisphericLightColorBelow, HemisphericLightColorAbove, r), input.col.w);
 }
+*/
 
 /*
+// Lighting based on the normal and the color - but only for hemispheric light
+float4 PS(PS_IN input) : SV_Target
+{
+	float r = 0.5*(1 + dot(normalize(input.normal), HemisphericLightBelowToAboveVector));
+float3 materialColor = input.col.xyz;
+return float4(materialColor*lerp(HemisphericLightColorBelow, HemisphericLightColorAbove, r), input.col.w);
+}
+*/
+
 float4 PS(PS_IN input) : SV_Target
 {
 	return CalcLighting(input.posW, input.normal, input.col);
 }
-*/
 
 technique10 Shade_P
 {

@@ -216,19 +216,30 @@ namespace Altaxo.Graph.Graph3D.Axis
 				p[2] = cs.GetPointOnPlane(_planeID, 1, 0);
 				p[3] = cs.GetPointOnPlane(_planeID, 1, 1);
 
+				var normal = VectorD3D.CrossProduct(p[1] - p[0], p[2] - p[0]).Normalized;
+
 				var buffer = g.GetPositionNormalIndexedTriangleBuffer(_background);
-				var offs = buffer.IndexedTriangleBuffer.TriangleCount;
 
 				if (null != buffer.PositionNormalIndexedTriangleBuffer)
 				{
+					// front faces
+					var offs = buffer.IndexedTriangleBuffer.VertexCount;
 					for (int i = 0; i < 4; ++i)
-						buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, 0, 0, 1);
+						buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, normal.X, normal.Y, normal.Z);
 
 					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 1 + offs, 3 + offs);
-					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 2 + offs, 3 + offs);
+					buffer.IndexedTriangleBuffer.AddTriangleIndices(2 + offs, 0 + offs, 3 + offs);
+
+					// back faces
+					offs = buffer.IndexedTriangleBuffer.VertexCount;
+					for (int i = 0; i < 4; ++i)
+						buffer.PositionNormalIndexedTriangleBuffer.AddTriangleVertex(p[i].X, p[i].Y, p[i].Z, -normal.X, -normal.Y, -normal.Z);
+
 					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 3 + offs, 1 + offs);
-					buffer.IndexedTriangleBuffer.AddTriangleIndices(0 + offs, 3 + offs, 2 + offs);
+					buffer.IndexedTriangleBuffer.AddTriangleIndices(2 + offs, 3 + offs, 0 + offs);
 				}
+				else
+					throw new NotImplementedException();
 			}
 			else
 			{
