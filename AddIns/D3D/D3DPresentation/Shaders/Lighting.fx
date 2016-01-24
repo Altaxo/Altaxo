@@ -82,6 +82,8 @@ float4 dot4x1(float4 aX, float4 aY, float4 aZ, float3 b)
 	return aX * b.xxxx + aY * b.yyyy + aZ * b.zzzz;
 }
 
+// Credits: Doron Feinstein, HLSL Development Cookbook, Packt Publishing, 2013, page 32
+// The code in the book was augmented with hemispheric ambient lighting described in the same book on page 7
 float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 {
 	normal = normalize(normal);
@@ -129,7 +131,7 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	float4 Attn = DistToLightNorm * DistToLightNorm;
 	Attn *= conAtt; // Include the cone attenuation
 
-	// Hemispheric
+	// Hemispheric ambient lighting
 	float r = 0.5*(1 + dot(normal, HemisphericLightBelowToAboveVector));
 	float3 finalColor = lerp(HemisphericLightColorBelow, HemisphericLightColorAbove, r);
 

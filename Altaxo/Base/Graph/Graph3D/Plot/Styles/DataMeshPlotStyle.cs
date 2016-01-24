@@ -399,8 +399,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 					vertexPoints[i, j] = pt;
 					vertexColors[i, j] = _colorProvider.GetColor(lz);
-
-					//buf.AddTriangleVertex(pt.X, pt.Y, pt.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 				}
 			}
 
@@ -416,6 +414,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					var normal = VectorD3D.CrossProduct(vec1, vec2).Normalized;
 					var color = vertexColors[i, j];
 					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, -normal.X, -normal.Y, -normal.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 				}
 			}
 
@@ -424,16 +423,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				for (int j = 0; j < lylm1; ++j)
 				{
 					// upper side
-					buf.AddTriangleIndices(offs + 0, offs + lxl, offs + 1);
-					buf.AddTriangleIndices(offs + 1, offs + lxl, offs + lxl + 1);
+					buf.AddTriangleIndices(offs + 0, offs + 2 * lxl, offs + 2);
+					buf.AddTriangleIndices(offs + 2, offs + 2 * lxl, offs + 2 * lxl + 2);
 
 					// from below
-					buf.AddTriangleIndices(offs + 0, offs + 1, offs + lxl);
-					buf.AddTriangleIndices(offs + 1, offs + lxl + 1, offs + lxl);
+					buf.AddTriangleIndices(offs + 0 + 1, offs + 2 + 1, offs + 2 * lxl + 1);
+					buf.AddTriangleIndices(offs + 2 + 1, offs + 2 * lxl + 2 + 1, offs + 2 * lxl + 1);
 
-					++offs;
+					offs += 2;
 				}
-				++offs; // one extra increment because inner loop ends at one less than array size
+				offs += 2; // one extra increment because inner loop ends at one less than array size
 			}
 		}
 

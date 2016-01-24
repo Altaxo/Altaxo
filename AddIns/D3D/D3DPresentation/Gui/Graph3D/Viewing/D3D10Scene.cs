@@ -680,8 +680,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			public void SetDefaultLighting()
 			{
 				HemisphericLightBelowToAboveVector.Set(new Vector3(0, 0, 1));
-				HemisphericLightColorBelow.Set(new Vector3(0.5f, 0.25f, 0.25f)); // slightly red
-				HemisphericLightColorAbove.Set(new Vector3(0.25f, 0.25f, 0.5f)); // slightly blue
+				HemisphericLightColorBelow.Set(0.1f * new Vector3(0.55f, 0.5f, 0.5f)); // slightly red
+				HemisphericLightColorAbove.Set(new Vector3(0.5f, 0.5f, 0.55f)); // slightly blue
 
 				ClearSingleLight(0);
 				ClearSingleLight(1);
@@ -689,6 +689,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				ClearSingleLight(3);
 
 				SetDirectionalLight(0, Altaxo.Drawing.NamedColors.White.Color, 0.5, new VectorD3D(-2, -1, 1));
+				SetPointLight(1, Altaxo.Drawing.NamedColors.White.Color, 0.5, new PointD3D(200, 200, 200), 400);
+				SetCapsuleLight(2, Altaxo.Drawing.NamedColors.Red, 1, new PointD3D(400, 200, 200), 500, new VectorD3D(0, 1, 0), 200);
 
 				AssembleLights();
 			}
@@ -697,6 +699,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				direction = direction.Normalized;
 				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(direction * 1E7), direction, 0, 0, 0, 1);
+			}
+
+			public void SetPointLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, double range)
+			{
+				if (range <= 0)
+					throw new ArgumentOutOfRangeException(nameof(range));
+
+				SetSingleLight(idx, color, colorAmplitude, position, new VectorD3D(1, 0, 0), 1 / range, 0, 0, 1);
+			}
+
+			public void SetCapsuleLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, double range, VectorD3D capsuleDirection, double capsuleLength)
+			{
+				if (range <= 0)
+					throw new ArgumentOutOfRangeException(nameof(range));
+
+				SetSingleLight(idx, color, colorAmplitude, position, capsuleDirection, 1 / range, capsuleLength, 0, 1);
 			}
 
 			private void SetSingleLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, VectorD3D direction, double lightRangeRcp, double capsuleLength, double spotCosOuterCone, double spotCosInnerConeRcp)

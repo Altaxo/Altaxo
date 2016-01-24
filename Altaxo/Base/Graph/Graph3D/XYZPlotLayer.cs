@@ -1212,6 +1212,9 @@ namespace Altaxo.Graph.Graph3D
 		/// <param name="e">The event data of the scale.</param>
 		private void EhScaleInstanceChanged(ScaleInstanceChangedEventArgs e)
 		{
+			if (this.IsDisposeInProgress)
+				return;
+
 			if (object.ReferenceEquals(_scales.X, e.NewScale))
 				InitializeXScaleDataBounds();
 

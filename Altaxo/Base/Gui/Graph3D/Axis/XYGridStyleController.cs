@@ -102,9 +102,11 @@ namespace Altaxo.Gui.Graph3D.Axis
 		{
 			if (!this._majorController.Apply(disposeController))
 				return false;
+			_doc.MajorPen = (Altaxo.Drawing.D3D.PenX3D)_majorController.ModelObject;
 
 			if (!this._minorController.Apply(disposeController))
 				return false;
+			_doc.MinorPen = (Altaxo.Drawing.D3D.PenX3D)_minorController.ModelObject;
 
 			return ApplyEnd(true, disposeController);
 		}
