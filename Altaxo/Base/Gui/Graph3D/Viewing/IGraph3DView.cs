@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// Sets the camera, but does not trigger a new rendering.
 		/// </summary>
 		/// <param name="camera">The camera.</param>
-		void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera);
+		void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera, Altaxo.Graph.Graph3D.LightSettings lightSettings);
 
 		/// <summary>
 		/// Sets a new geometry, but does not trigger rendering (use <see cref="TriggerRendering"/> for triggering rendering.

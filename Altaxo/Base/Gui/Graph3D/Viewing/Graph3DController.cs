@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != _view)
 			{
-				_view.SetCamera(_doc.Scene.Camera);
+				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
 
 				InitLayerStructure();
 				_view.SetLayerStructure(_layerStructure, this.CurrentLayerNumber.ToArray()); // tell the view how many layers we have
@@ -609,7 +609,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 			else if (e is CameraChangedEventArgs) // Only the camera has changed, there is no need to rebuild the geometry
 			{
-				_view.SetCamera(_doc.Scene.Camera);
+				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
 				_view?.TriggerRendering();
 			}
 			else // everything else need to rebuild the geometry
@@ -635,7 +635,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				var oldDrawing = _drawing;
 				_drawing = newDrawing;
 				_view.SetDrawing(_drawing);
-				_view.SetCamera(_doc.Scene.Camera);
+				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
 				_view.TriggerRendering();
 
 				(oldDrawing as IDisposable)?.Dispose();

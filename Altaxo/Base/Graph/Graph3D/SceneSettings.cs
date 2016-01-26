@@ -36,6 +36,8 @@ namespace Altaxo.Graph.Graph3D
 	{
 		private CameraBase _camera;
 
+		private LightSettings _lighting;
+
 		#region Serialization
 
 		/// <summary>
@@ -66,6 +68,7 @@ namespace Altaxo.Graph.Graph3D
 			//_camera = new Camera.PerspectiveCamera();
 
 			_camera = new Camera.OrthographicCamera();
+			_lighting = new LightSettings();
 		}
 
 		public SceneSettings(SceneSettings from)
@@ -83,6 +86,7 @@ namespace Altaxo.Graph.Graph3D
 			if (null != from)
 			{
 				this._camera = from.Camera;
+				this._lighting = from._lighting;
 				EhSelfChanged();
 				return true;
 			}
@@ -108,6 +112,25 @@ namespace Altaxo.Graph.Graph3D
 
 				var oldValue = _camera;
 				_camera = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged(CameraChangedEventArgs.Empty);
+			}
+		}
+
+		public LightSettings Lighting
+		{
+			get
+			{
+				return _lighting;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				var oldValue = _lighting;
+				_lighting = value;
 
 				if (!object.ReferenceEquals(oldValue, value))
 					EhSelfChanged(CameraChangedEventArgs.Empty);

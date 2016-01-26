@@ -33,7 +33,7 @@ namespace Altaxo.Geometry
 	/// Represents a plane in 3d space. For the definition how it works as a clip plane see the example below.
 	/// </summary>
 	/// <example>
-	/// Lets assume the vector (x,y,z) of the clip plane is (1,0,0), i.e. points in x-direction, and the w component is -200. Then everything
+	/// Lets assume the normal vector (x,y,z) of the clip plane is (1,0,0), i.e. points in x-direction, and the w component is -200. Then everything
 	/// that is left of the point x=+200 is clipped (i.e. every point with x&lt;+200), and thus everything right (with x&gt;+200) is visible.
 	/// </example>
 	public struct PlaneD3D : IEqualityComparer<PlaneD3D>

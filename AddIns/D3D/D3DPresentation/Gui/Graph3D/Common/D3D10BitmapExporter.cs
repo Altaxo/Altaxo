@@ -103,6 +103,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 
 			scene.SetCamera(sceneCamera);
+			scene.SetLighting(doc.Scene.Lighting);
 			scene.SetDrawing(g);
 
 			exporter.Export(pixelsX, pixelsY, scene, options, toStream);

@@ -73,6 +73,20 @@ namespace Altaxo.Geometry
 
 		public static PointD3D Empty { get { return new PointD3D(); } }
 
+		/// <summary>
+		/// Gets a value indicating whether one of the members of this instance is <see cref="double.NaN"/>.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if one of the members of this instance is <see cref="double.NaN"/>; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsNaN
+		{
+			get
+			{
+				return double.IsNaN(X) || double.IsNaN(Y) || double.IsNaN(Z);
+			}
+		}
+
 		public static PointD3D operator +(PointD3D a, VectorD3D b)
 		{
 			return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);

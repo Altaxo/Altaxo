@@ -287,6 +287,12 @@
     <Compile Include="Geometry\Matrix4x3.cs" />
     <Compile Include="Drawing\D3D\PenX3D.cs" />
     <Compile Include="Drawing\D3D\Material\SolidColor.cs" />
+    <Compile Include="Graph\Graph3D\Lighting\IDiscreteLight.cs" />
+    <Compile Include="Graph\Graph3D\Lighting\SpotLight.cs" />
+    <Compile Include="Graph\Graph3D\Lighting\PointLight.cs" />
+    <Compile Include="Graph\Graph3D\Lighting\DirectionalLight.cs" />
+    <Compile Include="Graph\Graph3D\Lighting\HemisphericAmbientLight.cs" />
+    <Compile Include="Graph\Graph3D\LightSettings.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />

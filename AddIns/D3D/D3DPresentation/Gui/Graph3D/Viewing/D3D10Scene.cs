@@ -25,8 +25,10 @@
 namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Geometry;
+	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
+	using Altaxo.Graph.Graph3D.Lighting;
 	using Altaxo.Gui.Graph3D.Common;
 	using Drawing.D3D;
 	using SharpDX;
@@ -85,6 +87,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private D3D10GraphicContext _drawing;
 
 		private CameraBase _camera;
+
+		/// <summary>The light settings from AltaxoBase</summary>
+		private LightSettings _lightSettings;
 
 		protected Buffer _constantBuffer;
 
@@ -257,7 +262,18 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		public void SetCamera(CameraBase camera)
 		{
+			if (null == camera)
+				throw new ArgumentNullException(nameof(camera));
+
 			_camera = camera;
+		}
+
+		public void SetLighting(LightSettings lightSettings)
+		{
+			if (null == lightSettings)
+				throw new ArgumentNullException(nameof(lightSettings));
+
+			_lightSettings = lightSettings;
 		}
 
 		private void UseNextTriangleDeviceBuffers()
@@ -410,6 +426,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			_evWorldViewProj.SetMatrixTranspose(ref worldViewProjTr);
 			_evEyePosition.Set(ToVector3(_camera.EyePosition));
+
+			// lighting
+			_lighting.SetLighting(_lightSettings, _camera);
 
 			foreach (var entry in _thisTriangleDeviceBuffers[1]) // Position-Color
 			{
@@ -695,10 +714,84 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				AssembleLights();
 			}
 
-			public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D direction)
+			public void SetLighting(LightSettings lightSettings, CameraBase camera)
 			{
-				direction = direction.Normalized;
-				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(direction * 1E7), direction, 0, 0, 0, 1);
+				Matrix4x3 cameraM = Matrix4x3.Identity;
+				if (lightSettings.IsAnyLightAffixedToCamera)
+				{
+					// if a light is affixed to the camera, its position is considered to be in camera coordinates
+					// but here we need the light in world coordinates
+					// cameraM transforms from camera coordinates to world coordinates
+					cameraM = camera.InverseLookAtRHMatrix;
+				}
+
+				// first ambient light
+				var al = lightSettings.AmbientLight;
+				SetAmbientLight(al.ColorBelow.Color, al.ColorAbove.Color, al.LightAmplitude, al.IsAffixedToCamera ? cameraM.Transform(al.DirectionBelowToAbove) : al.DirectionBelowToAbove);
+
+				for (int idx = 0; idx < 4; ++idx)
+				{
+					var l = lightSettings.GetDiscreteLight(idx);
+					if (null == l)
+					{
+						ClearSingleLight(idx);
+					}
+					else if (l is DirectionalLight)
+					{
+						var dl = (DirectionalLight)l;
+						SetDirectionalLight(
+							idx,
+							dl.Color.Color,
+							dl.LightAmplitude,
+							dl.IsAffixedToCamera ? cameraM.Transform(dl.DirectionFromLight) : dl.DirectionFromLight
+							);
+					}
+					else if (l is PointLight)
+					{
+						var pl = (PointLight)l;
+						SetPointLight(
+							idx,
+							pl.Color.Color,
+							pl.LightAmplitude,
+							pl.IsAffixedToCamera ? cameraM.Transform(pl.Position) : pl.Position,
+							pl.Range
+							);
+					}
+					else if (l is SpotLight)
+					{
+						var sl = (SpotLight)l;
+						SetSpotLight(
+							idx,
+							sl.Color.Color,
+							sl.LightAmplitude,
+							sl.IsAffixedToCamera ? cameraM.Transform(sl.Position) : sl.Position,
+							sl.IsAffixedToCamera ? cameraM.Transform(sl.DirectionFromLight) : sl.DirectionFromLight,
+							sl.Range,
+							Math.Cos(sl.OuterConeAngle),
+							1 / Math.Cos(sl.InnerConeAngle)
+							);
+					}
+					else
+					{
+						throw new NotImplementedException(string.Format("The type of lighting ({0}) is not implemented here."));
+					}
+				}
+
+				AssembleLights();
+			}
+
+			public void SetAmbientLight(Altaxo.Drawing.AxoColor colorBelow, Altaxo.Drawing.AxoColor colorAbove, double lightAmplitude, VectorD3D directionBelowToAbove)
+			{
+				directionBelowToAbove.Normalize();
+				HemisphericLightBelowToAboveVector.Set(new Vector3((float)directionBelowToAbove.X, (float)directionBelowToAbove.Y, (float)directionBelowToAbove.Z));
+				HemisphericLightColorBelow.Set(ToVector3(colorBelow, lightAmplitude));
+				HemisphericLightColorAbove.Set(ToVector3(colorAbove, lightAmplitude));
+			}
+
+			public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D directionFromLight)
+			{
+				directionFromLight.Normalize();
+				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(-directionFromLight * 1E7), -directionFromLight, 0, 0, 0, 1);
 			}
 
 			public void SetPointLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, double range)
@@ -707,6 +800,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					throw new ArgumentOutOfRangeException(nameof(range));
 
 				SetSingleLight(idx, color, colorAmplitude, position, new VectorD3D(1, 0, 0), 1 / range, 0, 0, 1);
+			}
+
+			public void SetSpotLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, VectorD3D directionFromLight, double range, double cosOuterCone, double cosInnerConeRcp)
+			{
+				if (range <= 0)
+					throw new ArgumentOutOfRangeException(nameof(range));
+
+				SetSingleLight(idx, color, colorAmplitude, position, -directionFromLight, 1 / range, 0, cosOuterCone, cosInnerConeRcp);
 			}
 
 			public void SetCapsuleLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, double range, VectorD3D capsuleDirection, double capsuleLength)

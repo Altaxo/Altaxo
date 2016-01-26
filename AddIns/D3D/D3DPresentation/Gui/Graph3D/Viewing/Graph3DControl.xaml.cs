@@ -139,9 +139,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Current.Gui.Execute(() => _d3dCanvas.TriggerRendering());
 		}
 
-		public void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera)
+		public void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera, Altaxo.Graph.Graph3D.LightSettings lightSettings)
 		{
 			_scene.SetCamera(camera);
+			_scene.SetLighting(lightSettings);
 		}
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
