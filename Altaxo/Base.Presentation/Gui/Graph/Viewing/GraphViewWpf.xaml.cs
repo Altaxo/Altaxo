@@ -36,8 +36,8 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph;
-	using Geometry;
 
 	/// <summary>
 	/// Interaction logic for GraphView.xaml

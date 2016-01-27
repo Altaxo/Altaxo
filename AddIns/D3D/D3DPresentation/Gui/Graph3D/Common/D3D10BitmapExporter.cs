@@ -30,11 +30,11 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph3D.Common
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
-	using Geometry;
 	using SharpDX;
 	using SharpDX.Direct3D10;
 	using SharpDX.DXGI;

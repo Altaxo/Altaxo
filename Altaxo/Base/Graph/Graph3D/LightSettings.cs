@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Graph3D
 
 			var result = (LightSettings)this.MemberwiseClone();
 			result._ambientLight = ambientLight;
-			CalculateIsAnyAffixedToCamera();
+			result.CalculateIsAnyAffixedToCamera();
 
 			return result;
 		}
@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Graph3D
 					throw new ArgumentOutOfRangeException(nameof(idx));
 			}
 
-			CalculateIsAnyAffixedToCamera();
+			result.CalculateIsAnyAffixedToCamera();
 
 			return result;
 		}

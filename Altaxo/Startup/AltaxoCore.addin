@@ -117,6 +117,15 @@
 			 precreated ="true"
 			 defaultPosition = "Bottom"
 			 class    = "Altaxo.Gui.Pads.NotesController" />
+
+		<Pad id       = "AltaxoLightingWindow"
+		 category = "Main"
+		 title    = "${res:MainWindow.Windows.AltaxoLightingWindowLabel}"
+		 icon     = "Icons.16x16.Notepad"
+		 shortcut = "Control|Alt|L"
+		 precreated ="true"
+		 defaultPosition = "Right"
+		 class    = "Altaxo.Gui.Pads.LightingPad.LightingController" />
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/MainMenu">

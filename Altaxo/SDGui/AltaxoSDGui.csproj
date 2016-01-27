@@ -208,6 +208,10 @@
     <Compile Include="Com\OleObjectBase.cs" />
     <Compile Include="Com\RegistryHelper.cs" />
     <Compile Include="Com\RunningObjectTableHelper.cs" />
+    <Compile Include="Gui\Pads\LightingPad\LightingControl.xaml.cs">
+      <DependentUpon>LightingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\LightingPad\LightingController.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\IndexToImageConverter.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ListViewDragDropDataObject.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\TreeView_DragHandler.cs" />
@@ -341,6 +345,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Pads\LightingPad\LightingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -32,8 +32,8 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
+	using Altaxo.Geometry;
 	using Altaxo.Main;
-	using Geometry;
 
 	/// <summary>
 	/// Responsible for painting the Worksheet column styles with Wpf technology.

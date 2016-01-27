@@ -30,9 +30,9 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
+	using Altaxo.Geometry;
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Gui.Common;
-	using Geometry;
 
 	/// <summary>
 	/// Interaction logic for FloatingScaleControl.xaml

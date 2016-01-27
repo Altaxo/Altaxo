@@ -29,7 +29,7 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
-	using Geometry;
+	using Altaxo.Geometry;
 	using WA = Altaxo.Worksheet.AreaRetrieval;
 
 	public static class WorksheetPaintingWpf

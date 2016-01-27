@@ -32,8 +32,8 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Shapes
 {
+	using Altaxo.Geometry;
 	using Altaxo.Units;
-	using Geometry;
 
 	/// <summary>
 	/// Interaction logic for AnchoringControl.xaml

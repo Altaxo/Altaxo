@@ -449,6 +449,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Geometry\Direction3DSphericalControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph3D\Axis\AxisCreationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -496,6 +500,18 @@
     <Page Include="Gui\Graph3D\LayerPositionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Lighting\DirectionalLightControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Lighting\DiscreteLightControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph3D\Lighting\HemisphericAmbientLightControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph3D\Material\MaterialComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1296,6 +1312,9 @@
       <DependentUpon>ExpandCyclingVariableDataSourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\Geometry\Direction3DSphericalControl.xaml.cs">
+      <DependentUpon>Direction3DSphericalControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\GetIconExtension.cs" />
     <Compile Include="Gui\GetBitmapExtension.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisCreationControl.xaml.cs">
@@ -1336,6 +1355,16 @@
     <Compile Include="Gui\Graph3D\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph3D\Lighting\DirectionalLightControl.xaml.cs">
+      <DependentUpon>DirectionalLightControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Lighting\DiscreteLightControl.xaml.cs">
+      <DependentUpon>DiscreteLightControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Lighting\HemisphericAmbientLightControl.xaml.cs">
+      <DependentUpon>HemisphericAmbientLightControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Lighting\IDiscreteLightControl.cs" />
     <Compile Include="Gui\Graph3D\Material\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>

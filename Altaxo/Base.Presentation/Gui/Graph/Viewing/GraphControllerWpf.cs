@@ -37,8 +37,8 @@ using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Viewing
 {
+	using Altaxo.Geometry;
 	using Drawing;
-	using Geometry;
 	using GraphControllerMouseHandlers;
 
 	/// <summary>
