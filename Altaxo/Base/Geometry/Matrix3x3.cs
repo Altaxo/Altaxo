@@ -34,7 +34,7 @@ namespace Altaxo.Geometry
 	/// Transformation matrix for affine transformations in 3D space.
 	/// The elements M14, M24 and M34 are assumed to be 0, and M44 is assumed to be 1.
 	/// </summary>
-	public struct Matrix4x3
+	public struct Matrix3x3
 	{
 		/// <summary>Gets the matrix element M[1,1].</summary>
 		public double M11 { get; private set; }
@@ -57,9 +57,6 @@ namespace Altaxo.Geometry
 		/// <summary>Gets the matrix element M[2,2].</summary>
 		public double M23 { get; private set; }
 
-		/// <summary>Gets the matrix element M[2,4] (is always = 0).</summary>
-		public double M24 { get { return 0; } }
-
 		/// <summary>Gets the matrix element M[3,1].</summary>
 		public double M31 { get; private set; }
 
@@ -69,39 +66,23 @@ namespace Altaxo.Geometry
 		/// <summary>Gets the matrix element M[3,3].</summary>
 		public double M33 { get; private set; }
 
-		/// <summary>Gets the matrix element M[3,4] (is always = 0).</summary>
-		public double M34 { get { return 0; } }
-
-		/// <summary>Gets the matrix element M[4,1]. This is OffsetX.</summary>
-		public double M41 { get; private set; }
-
-		/// <summary>Gets the matrix element M[4,2]. This is OffsetY.</summary>
-		public double M42 { get; private set; }
-
-		/// <summary>Gets the matrix element M[4,3]. This is OffsetZ.</summary>
-		public double M43 { get; private set; }
-
-		/// <summary>Gets the matrix element M[4,4] (is always = 1).</summary>
-		public double M44 { get { return 1; } }
-
 		/// <summary>The determinant of the matrix.</summary>
 		public double Determinant { get; private set; }
 
-		private static Matrix4x3 _identityMatrix;
+		private static Matrix3x3 _identityMatrix;
 
-		static Matrix4x3()
+		static Matrix3x3()
 		{
-			_identityMatrix = new Matrix4x3(
+			_identityMatrix = new Matrix3x3(
 					1, 0, 0,
 					0, 1, 0,
-					0, 0, 1,
-					0, 0, 0);
+					0, 0, 1);
 		}
 
 		/// <summary>
 		/// Gets the identity matrix.
 		/// </summary>
-		public static Matrix4x3 Identity
+		public static Matrix3x3 Identity
 		{
 			get
 			{
@@ -121,19 +102,14 @@ namespace Altaxo.Geometry
 		/// <param name="m31">The element M31.</param>
 		/// <param name="m32">The element M32.</param>
 		/// <param name="m33">The element M33.</param>
-		/// <param name="m41">The element M41, which is offset x.</param>
-		/// <param name="m42">The element M42, which is offset y.</param>
-		/// <param name="m43">The element M43, which is offset z.</param>
-		public Matrix4x3(
+		public Matrix3x3(
 		double m11, double m12, double m13,
 		double m21, double m22, double m23,
-		double m31, double m32, double m33,
-		double m41, double m42, double m43)
+		double m31, double m32, double m33)
 		{
 			M11 = m11; M12 = m12; M13 = m13;
 			M21 = m21; M22 = m22; M23 = m23;
 			M31 = m31; M32 = m32; M33 = m33;
-			M41 = m41; M42 = m42; M43 = m43;
 
 			Determinant = -(m13 * m22 * m31) + m12 * m23 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33;
 		}
@@ -143,9 +119,8 @@ namespace Altaxo.Geometry
 		/// </summary>
 		/// <param name="u">The axis about which the rotation takes place.</param>
 		/// <param name="angleRadian">The rotation angle in radian.</param>
-		/// <param name="center">The center of rotation.</param>
 		/// <returns>Matrix that describes the drotation.</returns>
-		public static Matrix4x3 CreateRotationMatrixFromAxisAndAngleRadian(VectorD3D u, double angleRadian, PointD3D center)
+		public static Matrix3x3 CreateRotationMatrixFromAxisAndAngleRadian(VectorD3D u, double angleRadian)
 		{
 			double cosTheta = Math.Cos(angleRadian);
 			double oMCosTheta = 1 - cosTheta;
@@ -163,16 +138,7 @@ namespace Altaxo.Geometry
 			double m32 = u.Y * u.Z * oMCosTheta - u.X * sinTheta;
 			double m33 = cosTheta + u.Z * u.Z * oMCosTheta;
 
-			double offsetX = 0, offsetY = 0, offsetZ = 0;
-
-			if (center.X != 0.0 || center.Y != 0.0 || center.Z != 0.0)
-			{
-				offsetX = -center.X * m11 - center.Y * m21 - center.Z * m31 + center.X;
-				offsetY = -center.X * m12 - center.Y * m22 - center.Z * m32 + center.Y;
-				offsetZ = -center.X * m13 - center.Y * m23 - center.Z * m33 + center.Z;
-			}
-
-			return new Matrix4x3(m11, m12, m13, m21, m22, m23, m31, m32, m33, offsetX, offsetY, offsetZ);
+			return new Matrix3x3(m11, m12, m13, m21, m22, m23, m31, m32, m33);
 		}
 
 		/// <summary>
@@ -230,18 +196,15 @@ namespace Altaxo.Geometry
 			double y = p.Y;
 			double z = p.Z;
 			return new PointD3D(
-			x * M11 + y * M21 + z * M31 + M41,
-			x * M12 + y * M22 + z * M32 + M42,
-			x * M13 + y * M23 + z * M33 + M43
+			x * M11 + y * M21 + z * M31,
+			x * M12 + y * M22 + z * M32,
+			x * M13 + y * M23 + z * M33
 			);
 		}
 
 		/// <summary>
 		/// Sets this transformation matrix by specifying translation, rotation, shear and scale.
 		/// </summary>
-		/// <param name="translateX">The translation in x direction.</param>
-		/// <param name="translateY">The translation in y direction.</param>
-		/// <param name="translateZ">The translation in z direction.</param>
 		/// <param name="angleX">The rotation around x axis in degrees.</param>
 		/// <param name="angleY">The rotation around y axis in degrees</param>
 		/// <param name="angleZ">The rotation around z axis in degrees</param>
@@ -251,7 +214,7 @@ namespace Altaxo.Geometry
 		/// <param name="scaleX">The scale value x.</param>
 		/// <param name="scaleY">The scale value y.</param>
 		/// <param name="scaleZ">The scale value z.</param>
-		public void SetTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
+		public void SetRotationShearScale(double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
 		{
 			double phi;
 			phi = angleX * Math.PI / 180;
@@ -273,19 +236,12 @@ namespace Altaxo.Geometry
 			M31 = scaleZ * (cosY * cosZ * shearX * shearZ - cosZ * (cosX + shearX * sinX) * sinY + (-(cosX * shearX) + sinX) * sinZ);
 			M32 = scaleZ * (cosY * shearX * shearZ * sinZ + cosX * (cosZ * shearX - sinY * sinZ) - sinX * (cosZ + shearX * sinY * sinZ));
 			M33 = scaleZ * (cosX * cosY + cosY * shearX * sinX + shearX * shearZ * sinY);
-			M41 = translateX;
-			M42 = translateY;
-			M43 = translateZ;
-
 			Determinant = scaleX * scaleY * scaleZ;
 		}
 
 		/// <summary>
 		/// Gets a transformation matrix by specifying translation, rotation, shear and scale.
 		/// </summary>
-		/// <param name="translateX">The translation in x direction.</param>
-		/// <param name="translateY">The translation in y direction.</param>
-		/// <param name="translateZ">The translation in z direction.</param>
 		/// <param name="angleX">The rotation around x axis in degrees.</param>
 		/// <param name="angleY">The rotation around y axis in degrees</param>
 		/// <param name="angleZ">The rotation around z axis in degrees</param>
@@ -296,10 +252,10 @@ namespace Altaxo.Geometry
 		/// <param name="scaleY">The scale value y.</param>
 		/// <param name="scaleZ">The scale value z.</param>
 		/// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
-		public static Matrix4x3 FromTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
+		public static Matrix3x3 FromTranslationRotationShearScale(double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
 		{
-			var result = new Matrix4x3();
-			result.SetTranslationRotationShearScale(translateX, translateY, translateZ, angleX, angleY, angleZ, shearX, shearY, shearZ, scaleX, scaleY, scaleZ);
+			var result = new Matrix3x3();
+			result.SetRotationShearScale(angleX, angleY, angleZ, shearX, shearY, shearZ, scaleX, scaleY, scaleZ);
 			return result;
 		}
 
@@ -318,32 +274,6 @@ namespace Altaxo.Geometry
 		}
 
 		#region Prepend transformations
-
-		/// <summary>
-		/// Prepends a translate transformation to this matrix.
-		/// </summary>
-		/// <param name="x">The x component of translation.</param>
-		/// <param name="y">The y component of translation.</param>
-		/// <param name="z">The z component of translation.</param>
-		public void TranslatePrepend(double x, double y, double z)
-		{
-			M41 += M11 * x + M21 * y + M31 * z;
-			M42 += M12 * x + M22 * y + M32 * z;
-			M43 += M13 * x + M23 * y + M33 * z;
-		}
-
-		/// <summary>
-		/// Appends a translate transformation to this matrix.
-		/// </summary>
-		/// <param name="x">The x component of translation.</param>
-		/// <param name="y">The y component of translation.</param>
-		/// <param name="z">The z component of translation.</param>
-		public void TranslateAppend(double x, double y, double z)
-		{
-			M41 += x;
-			M42 += y;
-			M43 += z;
-		}
 
 		/// <summary>
 		/// Prepends a rotation transformation around x axis. The angle is specified in degrees.
@@ -416,7 +346,7 @@ namespace Altaxo.Geometry
 		/// Appends a transformation matrix <paramref name="f"/> to this matrix.
 		/// </summary>
 		/// <param name="f">The matrix to append.</param>
-		public void AppendTransform(Matrix4x3 f)
+		public void AppendTransform(Matrix3x3 f)
 		{
 			double h1, h2, h3;
 
@@ -435,11 +365,6 @@ namespace Altaxo.Geometry
 			h3 = M31 * f.M13 + M32 * f.M23 + M33 * f.M33;
 			M31 = h1; M32 = h2; M33 = h3;
 
-			h1 = M41 * f.M11 + M42 * f.M21 + M43 * f.M31 + f.M41;
-			h2 = M41 * f.M12 + M42 * f.M22 + M43 * f.M32 + f.M42;
-			h3 = M41 * f.M13 + M42 * f.M23 + M43 * f.M33 + f.M43;
-			M41 = h1; M42 = h2; M43 = h3;
-
 			Determinant *= f.Determinant;
 		}
 
@@ -447,27 +372,24 @@ namespace Altaxo.Geometry
 		/// Prepends a transformation matrix <paramref name="f"/> to this matrix.
 		/// </summary>
 		/// <param name="a">The matrix to prepend.</param>
-		public void PrependTransform(Matrix4x3 a)
+		public void PrependTransform(Matrix3x3 a)
 		{
 			double h1, h2, h3, h4;
 
 			h1 = M11 * a.M11 + M21 * a.M12 + M31 * a.M13;
 			h2 = M11 * a.M21 + M21 * a.M22 + M31 * a.M23;
 			h3 = M11 * a.M31 + M21 * a.M32 + M31 * a.M33;
-			h4 = M11 * a.M41 + M21 * a.M42 + M31 * a.M43;
-			M11 = h1; M21 = h2; M31 = h3; M41 += h4;
+			M11 = h1; M21 = h2; M31 = h3;
 
 			h1 = M12 * a.M11 + M22 * a.M12 + M32 * a.M13;
 			h2 = M12 * a.M21 + M22 * a.M22 + M32 * a.M23;
 			h3 = M12 * a.M31 + M22 * a.M32 + M32 * a.M33;
-			h4 = M12 * a.M41 + M22 * a.M42 + M32 * a.M43;
-			M12 = h1; M22 = h2; M32 = h3; M42 += h4;
+			M12 = h1; M22 = h2; M32 = h3;
 
 			h1 = M13 * a.M11 + M23 * a.M12 + M33 * a.M13;
 			h2 = M13 * a.M21 + M23 * a.M22 + M33 * a.M23;
 			h3 = M13 * a.M31 + M23 * a.M32 + M33 * a.M33;
-			h4 = M13 * a.M41 + M23 * a.M42 + M33 * a.M43;
-			M13 = h1; M23 = h2; M33 = h3; M43 += h4;
+			M13 = h1; M23 = h2; M33 = h3;
 
 			Determinant *= a.Determinant;
 		}
@@ -475,22 +397,6 @@ namespace Altaxo.Geometry
 		#endregion Append transformations
 
 		#region Inverse transformations
-
-		/// <summary>
-		/// Inverse transform a point p in such a way that the result will fullfill the relation p = result * matrix ( the * operator being the prepend transformation for points).
-		/// </summary>
-		/// <param name="p">The point p to inverse transform.</param>
-		/// <returns>The inverse transformation of point <paramref name="p"/>.</returns>
-		public PointD3D InverseTransformPoint(PointD3D p)
-		{
-			return new PointD3D(
-					(M23 * (M32 * (M41 - p.X) + M31 * (-M42 + p.Y)) + M22 * (-(M33 * M41) + M31 * M43 + M33 * p.X - M31 * p.Z) + M21 * (M33 * M42 - M32 * M43 - M33 * p.Y + M32 * p.Z)) / Determinant,
-
-					(M13 * (M32 * (-M41 + p.X) + M31 * (M42 - p.Y)) + M12 * (M33 * M41 - M31 * M43 - M33 * p.X + M31 * p.Z) + M11 * (-(M33 * M42) + M32 * M43 + M33 * p.Y - M32 * p.Z)) / Determinant,
-
-					(M13 * (M22 * (M41 - p.X) + M21 * (-M42 + p.Y)) + M12 * (-(M23 * M41) + M21 * M43 + M23 * p.X - M21 * p.Z) + M11 * (M23 * M42 - M22 * M43 - M23 * p.Y + M22 * p.Z)) / Determinant
-					);
-		}
 
 		/// <summary>
 		/// Inverse transform a vector p in such a way that the result will fullfill the relation p = result * matrix ( the * operator being the prepend transformation for vectors).
@@ -510,25 +416,6 @@ namespace Altaxo.Geometry
 		}
 
 		#endregion Inverse transformations
-
-		#region Conversion in other matrices
-
-		public Matrix3x3 GetTransposedInverse()
-		{
-			return new Matrix3x3(
-				(M22 * M33 - M23 * M32) / Determinant,
-				(M23 * M31 - M21 * M33) / Determinant,
-				(M21 * M32 - M22 * M31) / Determinant,
-				(M13 * M32 - M12 * M33) / Determinant,
-				(M11 * M33 - M13 * M31) / Determinant,
-				(M12 * M31 - M11 * M32) / Determinant,
-				(M12 * M23 - M13 * M22) / Determinant,
-				(M13 * M21 - M11 * M23) / Determinant,
-				(M11 * M22 - M12 * M21) / Determinant
-				);
-		}
-
-		#endregion Conversion in other matrices
 
 		public override string ToString()
 		{
@@ -553,12 +440,6 @@ namespace Altaxo.Geometry
 			stb.AppendFormat("M32="); stb.Append(M32); stb.Append("; ");
 			stb.AppendFormat("M33="); stb.Append(M33); stb.Append(";");
 			stb.Append("}, ");
-
-			stb.Append("{");
-			stb.AppendFormat("M41="); stb.Append(M41); stb.Append("; ");
-			stb.AppendFormat("M42="); stb.Append(M42); stb.Append("; ");
-			stb.AppendFormat("M43="); stb.Append(M43); stb.Append(";");
-			stb.Append("}");
 
 			stb.Append("}");
 

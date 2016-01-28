@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		private bool _isAffixedToCamera;
 		private double _lightAmplitude;
 		private NamedColor _color;
-		private VectorD3D _directionFromLight;
+		private VectorD3D _directionToLight;
 
 		#region Serialization
 
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 				info.AddValue("IsAffixedToCamera", s._isAffixedToCamera);
 				info.AddValue("LightAmplitude", s._lightAmplitude);
 				info.AddValue("Color", s._color);
-				info.AddValue("DirectionFromLight", s._directionFromLight);
+				info.AddValue("DirectionToLight", s._directionToLight);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 				s._isAffixedToCamera = info.GetBoolean("IsAffixedToCamera");
 				s._lightAmplitude = info.GetDouble("LightAmplitude");
 				s._color = (NamedColor)info.GetValue("Color", s);
-				s._directionFromLight = (VectorD3D)info.GetValue("DirectionFromLight", s);
+				s._directionToLight = (VectorD3D)info.GetValue("DirectionToLight", s);
 				return s;
 			}
 		}
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		{
 			_lightAmplitude = 1;
 			_color = NamedColors.White;
-			_directionFromLight = new VectorD3D(0, 0, -1);
+			_directionToLight = new VectorD3D(-Math.Sqrt(0.25), -Math.Sqrt(0.25), Math.Sqrt(0.5));
 		}
 
 		/// <summary>
@@ -96,9 +96,9 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// </summary>
 		/// <param name="lightAmplitude">The light amplitude.</param>
 		/// <param name="color">The color of light.</param>
-		/// <param name="directionFromLight">The direction from the light to the scene.</param>
+		/// <param name="directionToLight">The direction from the scene to the light.</param>
 		/// <param name="isAffixedToCamera">Value indicating whether the light source is affixed to the camera coordinate system or the world coordinate system.</param>
-		public DirectionalLight(double lightAmplitude, NamedColor color, VectorD3D directionFromLight, bool isAffixedToCamera)
+		public DirectionalLight(double lightAmplitude, NamedColor color, VectorD3D directionToLight, bool isAffixedToCamera)
 		{
 			_isAffixedToCamera = isAffixedToCamera;
 
@@ -107,8 +107,8 @@ namespace Altaxo.Graph.Graph3D.Lighting
 
 			_color = color;
 
-			var len = VerifyDirection(directionFromLight, nameof(directionFromLight));
-			_directionFromLight = directionFromLight / len;
+			var len = VerifyDirection(directionToLight, nameof(directionToLight));
+			_directionToLight = directionToLight / len;
 		}
 
 		#endregion Constructors
@@ -220,23 +220,23 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		#region Direction
 
 		/// <summary>
-		/// Gets the direction from the light to the scene.
+		/// Gets the direction from the scene to the light.
 		/// </summary>
-		public VectorD3D DirectionFromLight { get { return _directionFromLight; } }
+		public VectorD3D DirectionToLight { get { return _directionToLight; } }
 
 		/// <summary>
-		/// Gets a new instance of <see cref="DirectionalLight"/> with the provided value for <see cref="DirectionFromLight"/>.
+		/// Gets a new instance of <see cref="DirectionalLight"/> with the provided value for <see cref="DirectionToLight"/>.
 		/// </summary>
-		/// <param name="directionFromLight">The new value for <see cref="DirectionFromLight"/>.</param>
-		/// <returns>New instance of <see cref="DirectionalLight"/> with the provided value for <see cref="DirectionFromLight"/></returns>
-		public DirectionalLight WithDirectionFromLight(VectorD3D directionFromLight)
+		/// <param name="directionToLight">The new value for <see cref="DirectionToLight"/>.</param>
+		/// <returns>New instance of <see cref="DirectionalLight"/> with the provided value for <see cref="DirectionToLight"/></returns>
+		public DirectionalLight WithDirectionToLight(VectorD3D directionToLight)
 		{
-			if (!(directionFromLight == _directionFromLight))
+			if (!(directionToLight == _directionToLight))
 			{
-				var len = VerifyDirection(directionFromLight, nameof(directionFromLight));
+				var len = VerifyDirection(directionToLight, nameof(directionToLight));
 
 				var result = (DirectionalLight)this.MemberwiseClone();
-				result._directionFromLight = directionFromLight / len;
+				result._directionToLight = directionToLight / len;
 				return result;
 			}
 			else

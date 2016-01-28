@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph3D.Lighting
 				_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
 
 				_guiColor.SelectedColor = value.Color;
-				_guiDirection.SelectedValue = value.DirectionFromLight;
+				_guiDirection.SelectedValue = value.DirectionToLight;
 				_guiAttachedToCamera.IsChecked = value.IsAffixedToCamera;
 			}
 		}
@@ -99,6 +99,10 @@ namespace Altaxo.Gui.Graph3D.Lighting
 		private void EhLightAmplitudeBoxChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
+
+			if (_lightAmplitude > _guiLightAmplitudeSlider.Maximum)
+				_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
+
 			_guiLightAmplitudeSlider.Value = _lightAmplitude;
 
 			SelectedValueChanged?.Invoke(this, EventArgs.Empty);

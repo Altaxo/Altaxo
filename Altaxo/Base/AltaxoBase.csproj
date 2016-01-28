@@ -224,8 +224,10 @@
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\TableDataSourceBase.cs" />
     <Compile Include="Drawing\D3D\CrossSectionRectangular.cs" />
+    <Compile Include="Drawing\D3D\SolidIcoSphere.cs" />
     <Compile Include="Drawing\D3D\SolidPolyline.cs" />
     <Compile Include="Geometry\IPolygonD2D.cs" />
+    <Compile Include="Geometry\Matrix3x3.cs" />
     <Compile Include="Geometry\Matrix4x4.cs" />
     <Compile Include="Geometry\PlaneD3D.cs" />
     <Compile Include="Geometry\PointsTupleD3D.cs" />
@@ -320,6 +322,7 @@
     <Compile Include="Graph\Graph3D\SceneSettings.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\IGraphicBase.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\Sphere.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic_Parser.cs" />

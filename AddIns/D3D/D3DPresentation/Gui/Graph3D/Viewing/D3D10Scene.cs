@@ -430,6 +430,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			// lighting
 			_lighting.SetLighting(_lightSettings, _camera);
 
+			// Material
+
+			_evMaterialSpecularExponent.Set(22.0f);
+			_evMaterialSpecularIntensity.Set(10.0f);
+
 			foreach (var entry in _thisTriangleDeviceBuffers[1]) // Position-Color
 			{
 				DrawPositionColorIndexedTriangleBuffer(device, entry, worldViewProjTr);
@@ -743,7 +748,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 							idx,
 							dl.Color.Color,
 							dl.LightAmplitude,
-							dl.IsAffixedToCamera ? cameraM.Transform(dl.DirectionFromLight) : dl.DirectionFromLight
+							dl.IsAffixedToCamera ? cameraM.Transform(dl.DirectionToLight) : dl.DirectionToLight
 							);
 					}
 					else if (l is PointLight)
@@ -765,7 +770,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 							sl.Color.Color,
 							sl.LightAmplitude,
 							sl.IsAffixedToCamera ? cameraM.Transform(sl.Position) : sl.Position,
-							sl.IsAffixedToCamera ? cameraM.Transform(sl.DirectionFromLight) : sl.DirectionFromLight,
+							sl.IsAffixedToCamera ? cameraM.Transform(sl.DirectionToLight) : sl.DirectionToLight,
 							sl.Range,
 							Math.Cos(sl.OuterConeAngle),
 							1 / Math.Cos(sl.InnerConeAngle)
@@ -788,10 +793,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				HemisphericLightColorAbove.Set(ToVector3(colorAbove, lightAmplitude));
 			}
 
-			public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D directionFromLight)
+			public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D directionToLight)
 			{
-				directionFromLight.Normalize();
-				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(-directionFromLight * 1E7), -directionFromLight, 0, 0, 0, 1);
+				directionToLight.Normalize();
+				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(directionToLight * 1E7), directionToLight, 0, 0, 0, 1);
 			}
 
 			public void SetPointLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, double range)
@@ -802,12 +807,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				SetSingleLight(idx, color, colorAmplitude, position, new VectorD3D(1, 0, 0), 1 / range, 0, 0, 1);
 			}
 
-			public void SetSpotLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, VectorD3D directionFromLight, double range, double cosOuterCone, double cosInnerConeRcp)
+			public void SetSpotLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, VectorD3D directionToLight, double range, double cosOuterCone, double cosInnerConeRcp)
 			{
 				if (range <= 0)
 					throw new ArgumentOutOfRangeException(nameof(range));
 
-				SetSingleLight(idx, color, colorAmplitude, position, -directionFromLight, 1 / range, 0, cosOuterCone, cosInnerConeRcp);
+				SetSingleLight(idx, color, colorAmplitude, position, directionToLight, 1 / range, 0, cosOuterCone, cosInnerConeRcp);
 			}
 
 			public void SetCapsuleLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, double range, VectorD3D capsuleDirection, double capsuleLength)

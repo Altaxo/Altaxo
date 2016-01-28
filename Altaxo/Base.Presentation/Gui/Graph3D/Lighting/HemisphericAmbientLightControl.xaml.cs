@@ -74,6 +74,8 @@ namespace Altaxo.Gui.Graph3D.Lighting
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 				_lightAmplitude = value.LightAmplitude;
+				if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
+					_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
 				_guiLightAmplitudeSlider.Value = _lightAmplitude;
 				_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
 
@@ -91,6 +93,8 @@ namespace Altaxo.Gui.Graph3D.Lighting
 		private void EhLightAmplitudeBoxChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
+			if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
+				_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
 			_guiLightAmplitudeSlider.Value = _lightAmplitude;
 
 			ValueChanged?.Invoke(this, EventArgs.Empty);

@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		private double _lightAmplitude;
 		private NamedColor _color;
 		private PointD3D _position;
-		private VectorD3D _directionFromLight;
+		private VectorD3D _directionToLight;
 		private double _range;
 		private double _outerConeAngle;
 		private double _innerConeAngle;
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 				info.AddValue("LightAmplitude", s._lightAmplitude);
 				info.AddValue("Color", s._color);
 				info.AddValue("Position", s._position);
-				info.AddValue("DirectionFromLight", s._directionFromLight);
+				info.AddValue("DirectionToLight", s._directionToLight);
 				info.AddValue("Range", s._range);
 				info.AddValue("OuterConeAngle", s._outerConeAngle);
 				info.AddValue("InnerConeAngle", s._innerConeAngle);
@@ -81,7 +81,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 				s._lightAmplitude = info.GetDouble("LightAmplitude");
 				s._color = (NamedColor)info.GetValue("Color", s);
 				s._position = (PointD3D)info.GetValue("Position", s);
-				s._directionFromLight = (VectorD3D)info.GetValue("DirectionFromLight", s);
+				s._directionToLight = (VectorD3D)info.GetValue("DirectionToLight", s);
 				s._range = info.GetDouble("Range");
 				s._outerConeAngle = info.GetDouble("OuterConeAngle");
 				s._innerConeAngle = info.GetDouble("InnerConeAngle");
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 			_lightAmplitude = 1;
 			_color = NamedColors.White;
 			_range = 1;
-			_directionFromLight = new VectorD3D(0, 0, -1);
+			_directionToLight = new VectorD3D(0, 0, -1);
 			_outerConeAngle = Math.PI / 2;
 		}
 
@@ -111,12 +111,12 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// <param name="lightAmplitude">The light amplitude.</param>
 		/// <param name="color">The color of light.</param>
 		/// <param name="position">The position of the light.</param>
-		/// <param name="directionFromLight">The direction from the light to the scene.</param>
+		/// <param name="directionToLight">The direction from the scene to the light.</param>
 		/// <param name="range">The range of the light.</param>
 		/// <param name="outerConeAngle">The outer cone angle in radians.</param>
 		/// <param name="innerConeAngle">The inner cone angle in radians.</param>
 		/// <param name="isAffixedToCamera">Value indicating whether the light source is affixed to the camera coordinate system or the world coordinate system.</param>
-		public SpotLight(double lightAmplitude, NamedColor color, PointD3D position, VectorD3D directionFromLight, double range, double outerConeAngle, double innerConeAngle, bool isAffixedToCamera)
+		public SpotLight(double lightAmplitude, NamedColor color, PointD3D position, VectorD3D directionToLight, double range, double outerConeAngle, double innerConeAngle, bool isAffixedToCamera)
 		{
 			_isAffixedToCamera = isAffixedToCamera;
 
@@ -128,8 +128,8 @@ namespace Altaxo.Graph.Graph3D.Lighting
 			VerifyPosition(position, nameof(position));
 			_position = position;
 
-			var dlen = VerifyDirection(directionFromLight, nameof(directionFromLight));
-			_directionFromLight = directionFromLight / dlen;
+			var dlen = VerifyDirection(directionToLight, nameof(directionToLight));
+			_directionToLight = directionToLight / dlen;
 
 			VerifyRange(range, nameof(range));
 			_range = range;
@@ -293,23 +293,23 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		#region Direction
 
 		/// <summary>
-		/// Gets the direction from the light to the scene.
+		/// Gets the direction from the scene to the light.
 		/// </summary>
-		public VectorD3D DirectionFromLight { get { return _directionFromLight; } }
+		public VectorD3D DirectionToLight { get { return _directionToLight; } }
 
 		/// <summary>
-		/// Gets a new instance of <see cref="SpotLight"/> with the provided value for <see cref="DirectionFromLight"/>.
+		/// Gets a new instance of <see cref="SpotLight"/> with the provided value for <see cref="DirectionToLight"/>.
 		/// </summary>
-		/// <param name="directionFromLight">The new value for <see cref="DirectionFromLight"/>.</param>
-		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref="DirectionFromLight"/></returns>
-		public SpotLight WithDirectionFromLight(VectorD3D directionFromLight)
+		/// <param name="directionToLight">The new value for <see cref="DirectionToLight"/>.</param>
+		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref="DirectionToLight"/></returns>
+		public SpotLight WithDirectionToLight(VectorD3D directionToLight)
 		{
-			if (!(directionFromLight == _directionFromLight))
+			if (!(directionToLight == _directionToLight))
 			{
-				var len = VerifyDirection(directionFromLight, nameof(directionFromLight));
+				var len = VerifyDirection(directionToLight, nameof(directionToLight));
 
 				var result = (SpotLight)this.MemberwiseClone();
-				result._directionFromLight = directionFromLight / len;
+				result._directionToLight = directionToLight / len;
 				return result;
 			}
 			else

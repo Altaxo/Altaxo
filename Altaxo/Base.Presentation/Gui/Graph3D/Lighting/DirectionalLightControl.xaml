@@ -30,8 +30,8 @@
 		<CheckBox x:Name="_guiAttachedToCamera" Content="Is attached to camera" Grid.Row="0" Grid.ColumnSpan="3" Checked="EhAttachedToCameraChanged" Unchecked="EhAttachedToCameraChanged" />
 
 		<Label Content="Light amplitude:" Grid.Row="2" Grid.Column="0" />
-		<axogc:NumericDoubleTextBox x:Name="_guiLightAmplitudeBox" Grid.Row="2" Grid.Column="2" SelectedValueChanged="EhLightAmplitudeBoxChanged" />
-		<Slider x:Name="_guiLightAmplitudeSlider" Minimum="0" Maximum="10" Grid.Row="4" Grid.ColumnSpan="3" ValueChanged="EhLightAmplitudeSliderChanged" />
+		<axogc:NumericDoubleTextBox x:Name="_guiLightAmplitudeBox" Grid.Row="2" Grid.Column="2" MinValue="0" IsMinValueInclusive="True" SelectedValueChanged="EhLightAmplitudeBoxChanged" />
+		<Slider x:Name="_guiLightAmplitudeSlider" Minimum="0" Maximum="2" Grid.Row="4" Grid.ColumnSpan="3" ValueChanged="EhLightAmplitudeSliderChanged" />
 
 		<Label Content="Color:" Grid.Row="6" Grid.Column="0" />
 		<axogcd:ColorComboBox x:Name="_guiColor"  Grid.Row="6" Grid.Column="2" SelectedColorChanged="EhColorChanged" />

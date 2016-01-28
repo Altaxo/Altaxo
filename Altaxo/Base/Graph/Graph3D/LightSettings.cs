@@ -94,7 +94,8 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		public LightSettings()
 		{
-			_ambientLight = new HemisphericAmbientLight(1, NamedColors.LightGray, NamedColors.White, new VectorD3D(0, 0, 1), false);
+			_ambientLight = new HemisphericAmbientLight(0.8, NamedColors.LightGray, NamedColors.White, new VectorD3D(0, 0, 1), false);
+			_discreteLight0 = new DirectionalLight(0.2, NamedColors.White, new VectorD3D(-0.5, -0.5, Math.Sqrt(0.5)), false);
 		}
 
 		/// <summary>

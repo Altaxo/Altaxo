@@ -83,7 +83,8 @@ float4 dot4x1(float4 aX, float4 aY, float4 aZ, float3 b)
 }
 
 // Credits: Doron Feinstein, HLSL Development Cookbook, Packt Publishing, 2013, page 32
-// The code in the book was augmented with hemispheric ambient lighting described in the same book on page 7
+// dlellinger: The code in the book was augmented with hemispheric ambient lighting described in the same book on page 7
+// dlellinger: I modified the code to use Phong specular instead of Blinn specular
 float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 {
 	normal = normalize(normal);
@@ -111,15 +112,26 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	float4 NDotL = saturate(dot4x1(ToLightX, ToLightY, ToLightZ, normal));
 	//float3 finalColor = float3(dot(LightColorR, NDotL),	dot(LightColorG, NDotL), dot(LightColorB, NDotL));
 
-	// Blinn specular
 	ToEye = normalize(ToEye);
+	/*
+	// Blinn specular
 	float4 HalfWayX = ToEye.xxxx + ToLightX;
 	float4 HalfWayY = ToEye.yyyy + ToLightY;
 	float4 HalfWayZ = ToEye.zzzz + ToLightZ;
 	float4 HalfWaySize = sqrt(dot4x4(HalfWayX, HalfWayY, HalfWayZ, HalfWayX, HalfWayY, HalfWayZ));
-	float4 NDotH = saturate(dot4x1(HalfWayX / HalfWaySize, HalfWayY / HalfWaySize, HalfWayZ / HalfWaySize, normal));
+	// dlellinger: saturate(NDotL*1e9) is not in the Feinstein book. I included it to make sure light is only reflected if the face normal points to the light.
+	float4 NDotH = saturate(NDotL*1e9)*saturate(dot4x1(HalfWayX / HalfWaySize, HalfWayY / HalfWaySize, HalfWayZ / HalfWaySize, normal));
 	float4 SpecValue = pow(NDotH, MaterialSpecularExponent.xxxx) * MaterialSpecularIntensity;
 	//finalColor += float3(dot(LightColorR, SpecValue), dot(LightColorG, SpecValue), dot(LightColorB, SpecValue));
+	*/
+
+	// dlellinger: instead of Blinn specular, I use here Phong specular. This is not much more expensive and gives far better results
+	// Phong specular
+	float4 ReflectedX = 2 * normal.xxxx*NDotL - ToLightX;
+	float4 ReflectedY = 2 * normal.yyyy*NDotL - ToLightY;
+	float4 ReflectedZ = 2 * normal.zzzz*NDotL - ToLightZ;
+	float4 NDotH = saturate(NDotL*1e9)*saturate(dot4x1(ReflectedX, ReflectedY, ReflectedZ, ToEye)); // saturate(NDotL*1e9) is here to switch very fast between 0 and 1 (0 if the light comes from the back side, 1 if it shines on the front side). In this way it is ensured the light intensity is zero if coming from the wrong side
+	float4 SpecValue = pow(NDotH, MaterialSpecularExponent.xxxx) * MaterialSpecularIntensity;
 
 	// Cone attenuation
 	float4 cosAng = dot4x4(LightDirX, LightDirY, LightDirZ, ToLightX, ToLightY, ToLightZ);
