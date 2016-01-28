@@ -12,17 +12,22 @@
 			<ColumnDefinition MinWidth="64" Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition />
-			<RowDefinition />
-			<RowDefinition />
-			<RowDefinition />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="2" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition  Height="4" />
+
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="2" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition  Height="4" />
 		</Grid.RowDefinitions>
 		<Label Content="Polar angle:" Grid.Row="0" />
 		<axogc:NumericDoubleTextBox x:Name="_guiPolarAngleBox" Grid.Row="0" Grid.Column="1" MinValue="-180" IsMinValueInclusive="True" MaxValue="180" IsMaxValueInclusive="True" SelectedValueChanged="EhPolarAngleBoxValueChanged" />
-		<Slider x:Name="_guiPolarAngleSlider" Grid.Row="1" Grid.ColumnSpan="2"  Minimum="-180" Maximum="180" ValueChanged="EhPolarAngleSliderValueChanged" />
+		<Slider x:Name="_guiPolarAngleSlider" Grid.Row="2" Grid.ColumnSpan="2"  Minimum="-180" Maximum="180" ValueChanged="EhPolarAngleSliderValueChanged" />
 
-		<Label Content="Elevation angle:" Grid.Row="2" />
-		<axogc:NumericDoubleTextBox x:Name="_guiElevationAngleBox" Grid.Row="2" Grid.Column="1" MinValue="-90" IsMinValueInclusive="True" MaxValue="90" IsMaxValueInclusive="True" SelectedValueChanged="EhPolarAzimuthBoxValueChanged" />
-		<Slider x:Name="_guiElevationAngleSlider" Grid.Row="3" Grid.ColumnSpan="2" Minimum="-90" Maximum="90"  ValueChanged="EhAzimuthAngleSliderValueChanged" />
+		<Label Content="Elevation angle:" Grid.Row="4" />
+		<axogc:NumericDoubleTextBox x:Name="_guiElevationAngleBox" Grid.Row="4" Grid.Column="1" MinValue="-90" IsMinValueInclusive="True" MaxValue="90" IsMaxValueInclusive="True" SelectedValueChanged="EhPolarAzimuthBoxValueChanged" />
+		<Slider x:Name="_guiElevationAngleSlider" Grid.Row="6" Grid.ColumnSpan="2" Minimum="-90" Maximum="90"  ValueChanged="EhAzimuthAngleSliderValueChanged" />
 	</Grid>
 </UserControl>

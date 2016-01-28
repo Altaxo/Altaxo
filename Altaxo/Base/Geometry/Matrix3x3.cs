@@ -31,8 +31,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Geometry
 {
 	/// <summary>
-	/// Transformation matrix for affine transformations in 3D space.
-	/// The elements M14, M24 and M34 are assumed to be 0, and M44 is assumed to be 1.
+	/// Transformation matrix for affine transformations without translation in 3D space.
 	/// </summary>
 	public struct Matrix3x3
 	{
@@ -44,9 +43,6 @@ namespace Altaxo.Geometry
 
 		/// <summary>Gets the matrix element M[1,3].</summary>
 		public double M13 { get; private set; }
-
-		/// <summary>Gets the matrix element M[1,4] (is always = 0).</summary>
-		public double M14 { get { return 0; } }
 
 		/// <summary>Gets the matrix element M[2,1].</summary>
 		public double M21 { get; private set; }
@@ -91,7 +87,7 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Matrix4x3"/> struct.
+		/// Initializes a new instance of the <see cref="Matrix3x3"/> struct.
 		/// </summary>
 		/// <param name="m11">The element M11.</param>
 		/// <param name="m12">The element M12.</param>
@@ -142,7 +138,7 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Transforms the specified vector <paramref name="v"/>. For a vector transform, the offset elements M41..M43 are ignored.
+		/// Transforms the specified vector <paramref name="v"/>.
 		/// The transformation is carried out as a prepend transformation, i.e. result = v * matrix (v considered as horizontal vector).
 		/// </summary>
 		/// <param name="v">The vector to transform.</param>
@@ -185,7 +181,7 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
+		/// Transforms the specified point <paramref name="p"/>. Here, the point transform is carried out in the same way as the vector transform.
 		/// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
 		/// </summary>
 		/// <param name="p">The point to transform.</param>
@@ -266,10 +262,10 @@ namespace Altaxo.Geometry
 		/// <param name="angleY">The rotation around y axis in degrees</param>
 		/// <param name="angleZ">The rotation around z axis in degrees</param>
 		/// <returns>The transformation matrix.</returns>
-		public static Matrix4x3 FromRotation(double angleX, double angleY, double angleZ)
+		public static Matrix3x3 FromRotation(double angleX, double angleY, double angleZ)
 		{
-			var result = new Matrix4x3();
-			result.SetTranslationRotationShearScale(0, 0, 0, angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
+			var result = new Matrix3x3();
+			result.SetRotationShearScale(angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
 			return result;
 		}
 
@@ -374,7 +370,7 @@ namespace Altaxo.Geometry
 		/// <param name="a">The matrix to prepend.</param>
 		public void PrependTransform(Matrix3x3 a)
 		{
-			double h1, h2, h3, h4;
+			double h1, h2, h3;
 
 			h1 = M11 * a.M11 + M21 * a.M12 + M31 * a.M13;
 			h2 = M11 * a.M21 + M21 * a.M22 + M31 * a.M23;

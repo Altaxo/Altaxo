@@ -71,6 +71,18 @@ namespace Altaxo.Gui.Graph3D.Lighting
 					ctrl.SelectedValue = value as DirectionalLight;
 					ChangeHostControl(ctrl);
 				}
+				else if (value is PointLight)
+				{
+					var ctrl = new PointLightControl();
+					ctrl.SelectedValue = value as PointLight;
+					ChangeHostControl(ctrl);
+				}
+				else if (value is SpotLight)
+				{
+					var ctrl = new SpotLightControl();
+					ctrl.SelectedValue = value as SpotLight;
+					ChangeHostControl(ctrl);
+				}
 				else
 				{
 					throw new NotImplementedException();
@@ -91,9 +103,27 @@ namespace Altaxo.Gui.Graph3D.Lighting
 					break;
 
 				case "Directional":
-					var control = new DirectionalLightControl();
-					control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.DirectionalLight();
-					ctrl = control;
+					{
+						var control = new DirectionalLightControl();
+						control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.DirectionalLight();
+						ctrl = control;
+					}
+					break;
+
+				case "Point":
+					{
+						var control = new PointLightControl();
+						control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.PointLight();
+						ctrl = control;
+					}
+					break;
+
+				case "Spot":
+					{
+						var control = new SpotLightControl();
+						control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.SpotLight();
+						ctrl = control;
+					}
 					break;
 
 				default:
@@ -126,6 +156,14 @@ namespace Altaxo.Gui.Graph3D.Lighting
 			else if (newControl is DirectionalLightControl)
 			{
 				_guiDirectional.IsChecked = true;
+			}
+			else if (newControl is PointLightControl)
+			{
+				_guiPoint.IsChecked = true;
+			}
+			else if (newControl is SpotLightControl)
+			{
+				_guiSpot.IsChecked = true;
 			}
 			else
 			{

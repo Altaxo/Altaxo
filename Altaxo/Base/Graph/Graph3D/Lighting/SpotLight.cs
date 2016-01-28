@@ -423,8 +423,8 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		private void VerifyAngle(double value, string valueName)
 		{
-			if (!(value > 0))
-				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be > 0", valueName));
+			if (!(value >= 0))
+				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be >= 0", valueName));
 		}
 
 		#endregion OuterConeAngle

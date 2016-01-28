@@ -449,6 +449,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Geometry\Position3DSphericalControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Geometry\Direction3DSphericalControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -498,6 +502,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\LayerPositionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Lighting\SpotLightControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Lighting\PointLightControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1312,6 +1324,9 @@
       <DependentUpon>ExpandCyclingVariableDataSourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\Geometry\Position3DSphericalControl.xaml.cs">
+      <DependentUpon>Position3DSphericalControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Geometry\Direction3DSphericalControl.xaml.cs">
       <DependentUpon>Direction3DSphericalControl.xaml</DependentUpon>
     </Compile>
@@ -1354,6 +1369,12 @@
     </Compile>
     <Compile Include="Gui\Graph3D\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Lighting\SpotLightControl.xaml.cs">
+      <DependentUpon>SpotLightControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Lighting\PointLightControl.xaml.cs">
+      <DependentUpon>PointLightControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Lighting\DirectionalLightControl.xaml.cs">
       <DependentUpon>DirectionalLightControl.xaml</DependentUpon>
