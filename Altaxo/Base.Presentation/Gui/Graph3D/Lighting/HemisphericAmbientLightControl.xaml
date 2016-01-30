@@ -39,6 +39,6 @@
 		<axogcd:ColorComboBox x:Name="_guiColorAbove"  Grid.Row="6" Grid.Column="2" SelectedColorChanged="EhColorChanged" />
 		<Label Content="Color below:" Grid.Row="8" Grid.Column="0" />
 		<axogcd:ColorComboBox x:Name="_guiColorBelow" Grid.Row="8" Grid.Column="2"   SelectedColorChanged="EhColorChanged" />
-		<axogeo:Direction3DSphericalControl x:Name="_guiDirection" Grid.Row="10" Grid.ColumnSpan="3" SelectedValueChanged="EhDirectionChanged" />
+		<axogeo:Direction3DControl x:Name="_guiDirection" Grid.Row="10" Grid.ColumnSpan="3" SelectedValueChanged="EhDirectionChanged" />
 	</Grid>
 </UserControl>

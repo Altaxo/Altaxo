@@ -49,14 +49,22 @@ namespace Altaxo.Gui.Graph3D.Lighting
 
 		private double _lightRange;
 
+		private GuiChangeLocker _lock;
+
 		public PointLightControl()
 		{
 			InitializeComponent();
 		}
 
+		protected virtual void OnSelectedValueChanged()
+		{
+			if (_lock.IsNotLocked)
+				SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+		}
+
 		private void EhColorChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 
 		public Altaxo.Graph.Graph3D.Lighting.PointLight SelectedValue
@@ -76,22 +84,27 @@ namespace Altaxo.Gui.Graph3D.Lighting
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				_lightAmplitude = value.LightAmplitude;
-				if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
-					_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
-				_guiLightAmplitudeSlider.Value = _lightAmplitude;
-				_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
+				_lock.ExecuteLocked(
+					() =>
+					{
+						_lightAmplitude = value.LightAmplitude;
+						if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
+							_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
+						_guiLightAmplitudeSlider.Value = _lightAmplitude;
+						_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
 
-				_guiColor.SelectedColor = value.Color;
-				_guiPosition.SelectedValue = value.Position;
+						_guiColor.SelectedColor = value.Color;
+						_guiPosition.SelectedValue = value.Position;
 
-				_lightRange = value.Range;
-				if (_guiLightRangeSlider.Maximum < _lightRange)
-					_guiLightRangeSlider.Maximum = _lightRange;
-				_guiLightRangeBox.SelectedValue = _lightRange;
-				_guiLightRangeSlider.Value = _lightRange;
+						_lightRange = value.Range;
+						if (_guiLightRangeSlider.Maximum < _lightRange)
+							_guiLightRangeSlider.Maximum = _lightRange;
+						_guiLightRangeBox.SelectedValue = _lightRange;
+						_guiLightRangeSlider.Value = _lightRange;
 
-				_guiAttachedToCamera.IsChecked = value.IsAffixedToCamera;
+						_guiAttachedToCamera.IsChecked = value.IsAffixedToCamera;
+					}
+					);
 			}
 		}
 
@@ -105,50 +118,66 @@ namespace Altaxo.Gui.Graph3D.Lighting
 
 		private void EhAttachedToCameraChanged(object sender, RoutedEventArgs e)
 		{
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 
 		private void EhLightAmplitudeBoxChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+					() =>
+					{
+						_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
 
-			if (_lightAmplitude > _guiLightAmplitudeSlider.Maximum)
-				_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
+						if (_lightAmplitude > _guiLightAmplitudeSlider.Maximum)
+							_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
 
-			_guiLightAmplitudeSlider.Value = _lightAmplitude;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+						_guiLightAmplitudeSlider.Value = _lightAmplitude;
+					},
+					() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 
 		private void EhLightAmplitudeSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_lightAmplitude = _guiLightAmplitudeSlider.Value;
-			_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+					() =>
+					{
+						_lightAmplitude = _guiLightAmplitudeSlider.Value;
+						_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
+					},
+					() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 
 		private void EhPositionChanged(object sender, EventArgs e)
 		{
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 
 		private void EhLightRangeBoxChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_lightRange = _guiLightRangeBox.SelectedValue;
-			if (_guiLightRangeSlider.Maximum < _lightRange)
-				_guiLightRangeSlider.Maximum = _lightRange;
-			_guiLightRangeSlider.Value = _lightRange;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+				() =>
+				{
+					_lightRange = _guiLightRangeBox.SelectedValue;
+					if (_guiLightRangeSlider.Maximum < _lightRange)
+						_guiLightRangeSlider.Maximum = _lightRange;
+					_guiLightRangeSlider.Value = _lightRange;
+				},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 
 		private void EhLighRangeSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_lightRange = _guiLightRangeSlider.Value;
-			_guiLightRangeBox.SelectedValue = _lightRange;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+				() =>
+				{
+					_lightRange = _guiLightRangeSlider.Value;
+					_guiLightRangeBox.SelectedValue = _lightRange;
+				},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 	}
 }

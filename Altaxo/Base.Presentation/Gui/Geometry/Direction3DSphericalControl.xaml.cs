@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -48,6 +49,8 @@ namespace Altaxo.Gui.Geometry
 		private double _elevationAngleDegrees;
 
 		public event EventHandler SelectedValueChanged;
+
+		private GuiChangeLocker _lock;
 
 		public Direction3DSphericalControl()
 		{
@@ -75,45 +78,70 @@ namespace Altaxo.Gui.Geometry
 			set
 			{
 				double len = value.Length;
-				value /= len;
+				if (0 == len || double.IsNaN(len) || double.IsInfinity(len))
+					value = new VectorD3D(1, 0, 0);
+				else
+					value /= len;
 				_elevationAngleDegrees = Math.Asin(value.Z) * 180 / Math.PI;
 				_polarAngleDegrees = Math.Atan2(value.Y, value.X) * 180 / Math.PI;
 
-				_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
-				_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+				_lock.ExecuteLocked(
+					() =>
+					{
+						_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
+						_guiPolarAngleSlider.Value = _polarAngleDegrees;
+						_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+						_guiElevationAngleSlider.Value = _elevationAngleDegrees;
+					});
 			}
 		}
 
 		private void EhPolarAngleBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_polarAngleDegrees = _guiPolarAngleBox.SelectedValue;
-			_guiPolarAngleSlider.Value = _polarAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+			() =>
+			{
+				_polarAngleDegrees = _guiPolarAngleBox.SelectedValue;
+				_guiPolarAngleSlider.Value = _polarAngleDegrees;
+			},
+			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhPolarAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_polarAngleDegrees = _guiPolarAngleSlider.Value;
-			_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+			() =>
+			{
+				_polarAngleDegrees = _guiPolarAngleSlider.Value;
+				_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
+			},
+			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhPolarAzimuthBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_elevationAngleDegrees = _guiElevationAngleBox.SelectedValue;
-			_guiElevationAngleSlider.Value = _elevationAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+			() =>
+			{
+				_elevationAngleDegrees = _guiElevationAngleBox.SelectedValue;
+				_guiElevationAngleSlider.Value = _elevationAngleDegrees;
+			},
+			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhAzimuthAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_elevationAngleDegrees = _guiElevationAngleSlider.Value;
-			_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+			() =>
+			{
+				_elevationAngleDegrees = _guiElevationAngleSlider.Value;
+				_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+			},
+			() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 	}
 }

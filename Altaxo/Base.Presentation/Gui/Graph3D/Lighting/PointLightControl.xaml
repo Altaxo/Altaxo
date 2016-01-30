@@ -40,10 +40,10 @@
 		<Label Content="Color:" Grid.Row="6" Grid.Column="0" />
 		<axogcd:ColorComboBox x:Name="_guiColor"  Grid.Row="6" Grid.Column="2" SelectedColorChanged="EhColorChanged" />
 
-		<axogeo:Position3DSphericalControl x:Name="_guiPosition" Grid.Row="8" Grid.ColumnSpan="3" SelectedValueChanged="EhPositionChanged" />
+		<axogeo:Position3DControl x:Name="_guiPosition" Grid.Row="8" Grid.ColumnSpan="3" SelectedValueChanged="EhPositionChanged" />
 
 		<Label Content="Light range:" Grid.Row="10" Grid.Column="0" />
 		<axogc:NumericDoubleTextBox x:Name="_guiLightRangeBox" Grid.Row="10" Grid.Column="2" MinValue="0" IsMinValueInclusive="False" SelectedValueChanged="EhLightRangeBoxChanged" />
-		<Slider x:Name="_guiLightRangeSlider" Minimum="0" Maximum="2" Grid.Row="12" Grid.ColumnSpan="3" ValueChanged="EhLighRangeSliderChanged" />
+		<Slider x:Name="_guiLightRangeSlider" Minimum="1E-10" Maximum="2" Grid.Row="12" Grid.ColumnSpan="3" ValueChanged="EhLighRangeSliderChanged" />
 	</Grid>
 </UserControl>

@@ -47,6 +47,8 @@ namespace Altaxo.Gui.Graph3D.Lighting
 
 		private double _lightAmplitude;
 
+		private GuiChangeLocker _lock;
+
 		public DirectionalLightControl()
 		{
 			InitializeComponent();
@@ -73,13 +75,17 @@ namespace Altaxo.Gui.Graph3D.Lighting
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				_lightAmplitude = value.LightAmplitude;
-				_guiLightAmplitudeSlider.Value = _lightAmplitude;
-				_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
+				_lock.ExecuteLocked(
+					() =>
+					{
+						_lightAmplitude = value.LightAmplitude;
+						_guiLightAmplitudeSlider.Value = _lightAmplitude;
+						_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
 
-				_guiColor.SelectedColor = value.Color;
-				_guiDirection.SelectedValue = value.DirectionToLight;
-				_guiAttachedToCamera.IsChecked = value.IsAffixedToCamera;
+						_guiColor.SelectedColor = value.Color;
+						_guiDirection.SelectedValue = value.DirectionToLight;
+						_guiAttachedToCamera.IsChecked = value.IsAffixedToCamera;
+					});
 			}
 		}
 
@@ -91,34 +97,48 @@ namespace Altaxo.Gui.Graph3D.Lighting
 			}
 		}
 
+		protected void OnSelectedValueChanged()
+		{
+			if (_lock.IsNotLocked)
+				SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+		}
+
 		private void EhAttachedToCameraChanged(object sender, RoutedEventArgs e)
 		{
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 
 		private void EhLightAmplitudeBoxChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+				() =>
+				{
+					_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
 
-			if (_lightAmplitude > _guiLightAmplitudeSlider.Maximum)
-				_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
+					if (_lightAmplitude > _guiLightAmplitudeSlider.Maximum)
+						_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
 
-			_guiLightAmplitudeSlider.Value = _lightAmplitude;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+					_guiLightAmplitudeSlider.Value = _lightAmplitude;
+				},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 
 		private void EhLightAmplitudeSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_lightAmplitude = _guiLightAmplitudeSlider.Value;
-			_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+				() =>
+				{
+					_lightAmplitude = _guiLightAmplitudeSlider.Value;
+					_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
+				},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 
 		private void EhDirectionChanged(object sender, EventArgs e)
 		{
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 	}
 }

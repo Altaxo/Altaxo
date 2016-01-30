@@ -48,6 +48,8 @@ namespace Altaxo.Gui.Graph3D.Lighting
 
 		public event EventHandler SelectedValueChanged;
 
+		private GuiChangeLocker _lock;
+
 		public DiscreteLightControl()
 		{
 			InitializeComponent();
@@ -61,32 +63,37 @@ namespace Altaxo.Gui.Graph3D.Lighting
 			}
 			set
 			{
-				if (null == value)
-				{
-					ChangeHostControl(null);
-				}
-				else if (value is DirectionalLight)
-				{
-					var ctrl = new DirectionalLightControl();
-					ctrl.SelectedValue = value as DirectionalLight;
-					ChangeHostControl(ctrl);
-				}
-				else if (value is PointLight)
-				{
-					var ctrl = new PointLightControl();
-					ctrl.SelectedValue = value as PointLight;
-					ChangeHostControl(ctrl);
-				}
-				else if (value is SpotLight)
-				{
-					var ctrl = new SpotLightControl();
-					ctrl.SelectedValue = value as SpotLight;
-					ChangeHostControl(ctrl);
-				}
-				else
-				{
-					throw new NotImplementedException();
-				}
+				_lock.ExecuteLocked(
+					() =>
+					{
+						if (null == value)
+						{
+							ChangeHostControl(null);
+						}
+						else if (value is DirectionalLight)
+						{
+							var ctrl = new DirectionalLightControl();
+							ctrl.SelectedValue = value as DirectionalLight;
+							ChangeHostControl(ctrl);
+						}
+						else if (value is PointLight)
+						{
+							var ctrl = new PointLightControl();
+							ctrl.SelectedValue = value as PointLight;
+							ChangeHostControl(ctrl);
+						}
+						else if (value is SpotLight)
+						{
+							var ctrl = new SpotLightControl();
+							ctrl.SelectedValue = value as SpotLight;
+							ChangeHostControl(ctrl);
+						}
+						else
+						{
+							throw new NotImplementedException();
+						}
+					}
+					);
 			}
 		}
 
@@ -133,7 +140,9 @@ namespace Altaxo.Gui.Graph3D.Lighting
 			if (ctrl?.GetType() != _control?.GetType())
 			{
 				ChangeHostControl(ctrl);
-				SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+
+				if (_lock.IsNotLocked)
+					SelectedValueChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
@@ -143,11 +152,12 @@ namespace Altaxo.Gui.Graph3D.Lighting
 				_control.SelectedValueChanged -= EhSelectedValueChanged;
 
 			_control = newControl;
+			_guiControlHost.Child = (UIElement)_control;
 
 			if (null != _control)
 				_control.SelectedValueChanged += EhSelectedValueChanged;
 
-			_guiControlHost.Child = (UIElement)_control;
+			/*
 
 			if (newControl == null)
 			{
@@ -169,11 +179,13 @@ namespace Altaxo.Gui.Graph3D.Lighting
 			{
 				throw new NotImplementedException();
 			}
+			*/
 		}
 
 		private void EhSelectedValueChanged(object sender, EventArgs e)
 		{
-			SelectedValueChanged?.Invoke(this, e);
+			if (_lock.IsNotLocked)
+				SelectedValueChanged?.Invoke(this, e);
 		}
 	}
 }

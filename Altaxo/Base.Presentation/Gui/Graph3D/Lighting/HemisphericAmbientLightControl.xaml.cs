@@ -47,14 +47,22 @@ namespace Altaxo.Gui.Graph3D.Lighting
 
 		private double _lightAmplitude;
 
+		private GuiChangeLocker _lock;
+
 		public HemisphericAmbientLightControl()
 		{
 			InitializeComponent();
 		}
 
+		protected virtual void OnSelectedValueChanged()
+		{
+			if (_lock.IsNotLocked)
+				ValueChanged?.Invoke(this, EventArgs.Empty);
+		}
+
 		private void EhColorChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			ValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 
 		public Altaxo.Graph.Graph3D.Lighting.HemisphericAmbientLight SelectedValue
@@ -73,44 +81,57 @@ namespace Altaxo.Gui.Graph3D.Lighting
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
-				_lightAmplitude = value.LightAmplitude;
-				if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
-					_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
-				_guiLightAmplitudeSlider.Value = _lightAmplitude;
-				_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
 
-				_guiColorBelow.SelectedColor = value.ColorBelow;
-				_guiColorAbove.SelectedColor = value.ColorAbove;
-				_guiDirection.SelectedValue = value.DirectionBelowToAbove;
+				_lock.ExecuteLocked(
+					() =>
+					{
+						_lightAmplitude = value.LightAmplitude;
+						if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
+							_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
+						_guiLightAmplitudeSlider.Value = _lightAmplitude;
+						_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
+
+						_guiColorBelow.SelectedColor = value.ColorBelow;
+						_guiColorAbove.SelectedColor = value.ColorAbove;
+						_guiDirection.SelectedValue = value.DirectionBelowToAbove;
+					});
 			}
 		}
 
 		private void EhAttachedToCameraChanged(object sender, RoutedEventArgs e)
 		{
-			ValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 
 		private void EhLightAmplitudeBoxChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+		() =>
 		{
 			_lightAmplitude = _guiLightAmplitudeBox.SelectedValue;
 			if (_guiLightAmplitudeSlider.Maximum < _lightAmplitude)
 				_guiLightAmplitudeSlider.Maximum = _lightAmplitude;
 			_guiLightAmplitudeSlider.Value = _lightAmplitude;
-
-			ValueChanged?.Invoke(this, EventArgs.Empty);
+		},
+		() => ValueChanged?.Invoke(this, EventArgs.Empty)
+		);
 		}
 
 		private void EhLightAmplitudeSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_lightAmplitude = _guiLightAmplitudeSlider.Value;
-			_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
-
-			ValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+				() =>
+				{
+					_lightAmplitude = _guiLightAmplitudeSlider.Value;
+					_guiLightAmplitudeBox.SelectedValue = _lightAmplitude;
+				},
+				() => ValueChanged?.Invoke(this, EventArgs.Empty)
+				);
 		}
 
 		private void EhDirectionChanged(object sender, EventArgs e)
 		{
-			ValueChanged?.Invoke(this, EventArgs.Empty);
+			OnSelectedValueChanged();
 		}
 	}
 }

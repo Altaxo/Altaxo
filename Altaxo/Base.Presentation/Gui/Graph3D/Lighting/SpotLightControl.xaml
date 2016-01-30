@@ -48,13 +48,13 @@
 		<Label Content="Color:" Grid.Row="6" Grid.Column="0" />
 		<axogcd:ColorComboBox x:Name="_guiColor"  Grid.Row="6" Grid.Column="2" SelectedColorChanged="EhColorChanged" />
 
-		<axogeo:Position3DSphericalControl x:Name="_guiPosition" Grid.Row="8" Grid.ColumnSpan="3" SelectedValueChanged="EhPositionChanged" />
+		<axogeo:Position3DControl x:Name="_guiPosition" Grid.Row="8" Grid.ColumnSpan="3" SelectedValueChanged="EhPositionChanged" />
 
-		<axogeo:Direction3DSphericalControl x:Name="_guiDirection" Grid.Row="10" Grid.ColumnSpan="3" SelectedValueChanged="EhDirectionChanged" />
+		<axogeo:Direction3DControl x:Name="_guiDirection" Grid.Row="10" Grid.ColumnSpan="3" SelectedValueChanged="EhDirectionChanged" />
 
 		<Label Content="Light range:" Grid.Row="12" Grid.Column="0" />
 		<axogc:NumericDoubleTextBox x:Name="_guiLightRangeBox" Grid.Row="12" Grid.Column="2" MinValue="0" IsMinValueInclusive="False" SelectedValueChanged="EhLightRangeBoxChanged" />
-		<Slider x:Name="_guiLightRangeSlider" Minimum="0" Maximum="2" Grid.Row="14" Grid.ColumnSpan="3" ValueChanged="EhLighRangeSliderChanged" />
+		<Slider x:Name="_guiLightRangeSlider" Minimum="1e-10" Maximum="2" Grid.Row="14" Grid.ColumnSpan="3" ValueChanged="EhLighRangeSliderChanged" />
 
 		<Label Content="Inner cone angle:" Grid.Row="16" Grid.Column="0" />
 		<axogc:NumericDoubleTextBox x:Name="_guiInnerConeAngleBox" Grid.Row="16" Grid.Column="2" MinValue="0" IsMinValueInclusive="True" MaxValue="180" IsMaxValueInclusive="True" SelectedValueChanged="EhInnerConeAngleBoxChanged" />

@@ -50,6 +50,8 @@ namespace Altaxo.Gui.Geometry
 
 		public event EventHandler SelectedValueChanged;
 
+		private GuiChangeLocker _lock;
+
 		public Position3DSphericalControl()
 		{
 			InitializeComponent();
@@ -77,75 +79,104 @@ namespace Altaxo.Gui.Geometry
 			{
 				_distance = ((VectorD3D)value).Length;
 
-				if (_guiDistanceSlider.Maximum < _distance)
-					_guiDistanceSlider.Maximum = _distance;
-				_guiDistanceBox.SelectedValue = _distance;
-				_guiDistanceSlider.Value = _distance;
-
-				if (_distance > 0)
+				_lock.ExecuteLocked(
+				() =>
 				{
-					_elevationAngleDegrees = Math.Asin(value.Z / _distance) * 180 / Math.PI;
-					_polarAngleDegrees = Math.Atan2(value.Y, value.X) * 180 / Math.PI;
-				}
-				else
-				{
-					_elevationAngleDegrees = 0;
-					_polarAngleDegrees = 0;
-				}
+					if (_guiDistanceSlider.Maximum < _distance)
+						_guiDistanceSlider.Maximum = _distance;
+					_guiDistanceBox.SelectedValue = _distance;
+					_guiDistanceSlider.Value = _distance;
 
-				_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
-				_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+					if (_distance > 0)
+					{
+						_elevationAngleDegrees = Math.Asin(value.Z / _distance) * 180 / Math.PI;
+						_polarAngleDegrees = Math.Atan2(value.Y, value.X) * 180 / Math.PI;
+					}
+					else
+					{
+						_elevationAngleDegrees = 0;
+						_polarAngleDegrees = 0;
+					}
+
+					_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
+					_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+				}
+				);
 			}
 		}
 
 		private void EhPolarAngleBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_polarAngleDegrees = _guiPolarAngleBox.SelectedValue;
-			_guiPolarAngleSlider.Value = _polarAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+				() =>
+				{
+					_polarAngleDegrees = _guiPolarAngleBox.SelectedValue;
+					_guiPolarAngleSlider.Value = _polarAngleDegrees;
+				},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhPolarAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_polarAngleDegrees = _guiPolarAngleSlider.Value;
-			_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+						() =>
+						{
+							_polarAngleDegrees = _guiPolarAngleSlider.Value;
+							_guiPolarAngleBox.SelectedValue = _polarAngleDegrees;
+						},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhPolarAzimuthBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_elevationAngleDegrees = _guiElevationAngleBox.SelectedValue;
-			_guiElevationAngleSlider.Value = _elevationAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+						() =>
+						{
+							_elevationAngleDegrees = _guiElevationAngleBox.SelectedValue;
+							_guiElevationAngleSlider.Value = _elevationAngleDegrees;
+						},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhAzimuthAngleSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_elevationAngleDegrees = _guiElevationAngleSlider.Value;
-			_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+						() =>
+						{
+							_elevationAngleDegrees = _guiElevationAngleSlider.Value;
+							_guiElevationAngleBox.SelectedValue = _elevationAngleDegrees;
+						},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhDistanceBoxValueChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_distance = _guiDistanceBox.SelectedValue;
-			if (_guiDistanceSlider.Maximum < _distance)
-				_guiDistanceSlider.Maximum = _distance;
-			_guiDistanceSlider.Value = _distance;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+						() =>
+						{
+							_distance = _guiDistanceBox.SelectedValue;
+							if (_guiDistanceSlider.Maximum < _distance)
+								_guiDistanceSlider.Maximum = _distance;
+							_guiDistanceSlider.Value = _distance;
+						},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 
 		private void EhDistanceSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			_distance = _guiDistanceSlider.Value;
-			_guiDistanceBox.SelectedValue = _distance;
-
-			SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+			_lock.ExecuteLockedButOnlyIfNotLockedBefore(
+						() =>
+						{
+							_distance = _guiDistanceSlider.Value;
+							_guiDistanceBox.SelectedValue = _distance;
+						},
+				() => SelectedValueChanged?.Invoke(this, EventArgs.Empty)
+			);
 		}
 	}
 }

@@ -449,6 +449,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Geometry\Position3DControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Geometry\Position3DCartesianControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Geometry\Direction3DControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Geometry\Direction3DCartesianControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Geometry\Position3DSphericalControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1324,6 +1340,18 @@
       <DependentUpon>ExpandCyclingVariableDataSourceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
+    <Compile Include="Gui\Geometry\Position3DControl.xaml.cs">
+      <DependentUpon>Position3DControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Geometry\Position3DCartesianControl.xaml.cs">
+      <DependentUpon>Position3DCartesianControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Geometry\Direction3DControl.xaml.cs">
+      <DependentUpon>Direction3DControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Geometry\Direction3DCartesianControl.xaml.cs">
+      <DependentUpon>Direction3DCartesianControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Geometry\Position3DSphericalControl.xaml.cs">
       <DependentUpon>Position3DSphericalControl.xaml</DependentUpon>
     </Compile>
@@ -1585,6 +1613,7 @@
     <Compile Include="Gui\Graph\Shapes\ShapeGroupControl.xaml.cs">
       <DependentUpon>ShapeGroupControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\GuiChangeLocker.cs" />
     <Compile Include="Gui\IndexToImageConverter.cs" />
     <Compile Include="Gui\IWpfResourceService.cs" />
     <Compile Include="Gui\Main\AddBasicPropertyValueControl.xaml.cs">
