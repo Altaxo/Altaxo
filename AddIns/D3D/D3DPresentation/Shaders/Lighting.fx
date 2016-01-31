@@ -85,6 +85,8 @@ float4 dot4x1(float4 aX, float4 aY, float4 aZ, float3 b)
 // Credits: Doron Feinstein, HLSL Development Cookbook, Packt Publishing, 2013, page 32
 // dlellinger: The code in the book was augmented with hemispheric ambient lighting described in the same book on page 7
 // dlellinger: I modified the code to use Phong specular instead of Blinn specular
+// dlellinger: There is an error in the book: SpotCosInnerConeRcp is not 1/Cos(InnerConeAngle), but is 1/(Cos(InnerConeAngle)-Cos(OuterConeAngle))
+// dlellinger: I modified the light range code: if the distance is <= lightRange, the light amplitude is constant = LightAmplitude, at distances > lightRange, the light amplitude is LightAmplitude * (LightRange/Distance)^2. This is closer to physics.
 float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 {
 	normal = normalize(normal);
@@ -139,7 +141,7 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	conAtt *= conAtt;
 
 	// Attenuation
-	float4 DistToLightNorm = 1.0 - saturate(DistToLight * LightRangeRcp);
+	float4 DistToLightNorm = saturate(1.0 / (DistToLight * LightRangeRcp));
 	float4 Attn = DistToLightNorm * DistToLightNorm;
 	Attn *= conAtt; // Include the cone attenuation
 

@@ -765,6 +765,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					else if (l is SpotLight)
 					{
 						var sl = (SpotLight)l;
+
+						// calculation of SpotCosInnerConeRcp: it is in reality not 1/CosInnerConeAngle, but it is  1/(Cos(InnerConeAngle) - Cos(OuterConeAngle))
+						double diffCos = Math.Cos(sl.InnerConeAngle) - Math.Cos(sl.OuterConeAngle);
+						double SpotCosInnerConeRcp = diffCos >= 1E-18 ? 1 / diffCos : 1E18;
+
 						SetSpotLight(
 							idx,
 							sl.Color.Color,
@@ -773,7 +778,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 							sl.IsAffixedToCamera ? cameraM.Transform(sl.DirectionToLight) : sl.DirectionToLight,
 							sl.Range,
 							Math.Cos(sl.OuterConeAngle),
-							1 / Math.Cos(sl.InnerConeAngle)
+							SpotCosInnerConeRcp
 							);
 					}
 					else
@@ -804,7 +809,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				if (range <= 0)
 					throw new ArgumentOutOfRangeException(nameof(range));
 
-				SetSingleLight(idx, color, colorAmplitude, position, new VectorD3D(1, 0, 0), 1 / range, 0, 0, 1);
+				SetSingleLight(idx, color, colorAmplitude, position, new VectorD3D(1, 0, 0), 1 / range, 0, -1, 1E18);
 			}
 
 			public void SetSpotLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, PointD3D position, VectorD3D directionToLight, double range, double cosOuterCone, double cosInnerConeRcp)
