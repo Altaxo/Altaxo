@@ -127,6 +127,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private EffectVectorVariable _evMaterialDiffuseColor;
 		private EffectScalarVariable _evMaterialSpecularExponent;
 		private EffectScalarVariable _evMaterialSpecularIntensity;
+		private EffectScalarVariable _evMaterialSpecularMixingCoefficient;
 
 		// Clip planes
 		private EffectConstantBuffer _cbClipPlanes;
@@ -229,6 +230,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_evMaterialSpecularExponent.Set(4.0f);
 			_evMaterialSpecularIntensity = _cbMaterial.GetMemberByName("MaterialSpecularIntensity").AsScalar();
 			_evMaterialSpecularIntensity.Set(1.0f);
+			_evMaterialSpecularMixingCoefficient = _cbMaterial.GetMemberByName("MaterialSpecularMixingCoefficient").AsScalar();
+			_evMaterialSpecularMixingCoefficient.Set(0.75f);
 
 			// Clip plane variables
 			_cbClipPlanes = this._lightingEffect.GetConstantBufferByName("cbClipPlanes");
@@ -424,16 +427,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				worldViewProjTr.Transpose();
 			}
 
+			// World projection and camera
 			_evWorldViewProj.SetMatrixTranspose(ref worldViewProjTr);
 			_evEyePosition.Set(ToVector3(_camera.EyePosition));
 
 			// lighting
 			_lighting.SetLighting(_lightSettings, _camera);
 
-			// Material
-
-			_evMaterialSpecularExponent.Set(22.0f);
-			_evMaterialSpecularIntensity.Set(10.0f);
+			// Material is separate for each buffer, therefore it is set there
 
 			foreach (var entry in _thisTriangleDeviceBuffers[1]) // Position-Color
 			{
@@ -518,21 +519,25 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
+		private void SetShaderMaterialVariables(IMaterial material)
+		{
+			_evMaterialSpecularIntensity.Set((float)material.SpecularIntensity);
+			_evMaterialSpecularExponent.Set((float)material.SpecularExponent);
+			_evMaterialSpecularMixingCoefficient.Set((float)material.SpecularMixingCoefficient);
+			if (material.HasColor)
+			{
+				Vector4 colorVec = ToVector4(material.Color.Color);
+				_evMaterialDiffuseColor.Set(ref colorVec);
+			}
+		}
+
 		private void DrawPositionColorIndexedTriangleBuffer(Device device, VertexAndIndexDeviceBuffer deviceBuffers, Matrix worldViewProj)
 		{
 			int layoutNumber = 1;
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-			_evWorldViewProj.SetMatrixTranspose(ref worldViewProj);
-
-			//device.VertexShader.SetConstantBuffer(0, _constantBuffer);
-			//device.VertexShader.SetConstantBuffer(1, _constantBufferForSixPlanes);
-
-			//device.VertexShader.Set(_renderLayouts[layoutNumber].VertexShader);
-			//device.PixelShader.Set(_renderLayouts[layoutNumber].PixelShader);
-
-			//device.UpdateSubresource(ref worldViewProj, _constantBuffer);
+			SetShaderMaterialVariables(deviceBuffers.Material);
 
 			var planes = new SixPlanes();
 			if (null != deviceBuffers.ClipPlanes)
@@ -542,8 +547,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					planes[i] = deviceBuffers.ClipPlanes[i];
 				}
 			}
-
-			//device.UpdateSubresource(ref planes, _constantBufferForSixPlanes);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
@@ -565,6 +568,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					_evClipPlanes[i].Set(deviceBuffers.ClipPlanes[i]);
 				}
 			}
+
+			SetShaderMaterialVariables(deviceBuffers.Material);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 48, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
@@ -588,8 +593,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
 			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
 
-			Vector4 colorVec = ToVector4(deviceBuffers.Material.Color.Color);
-			_evMaterialDiffuseColor.Set(ref colorVec);
+			SetShaderMaterialVariables(deviceBuffers.Material);
 
 			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
 			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);

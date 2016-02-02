@@ -75,6 +75,23 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			return new Sphere(this);
 		}
 
+		public IMaterial Material
+		{
+			get
+			{
+				return _material;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+				var oldValue = _material;
+				_material = value;
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
 		public override IHitTestObject HitTest(HitTestPointData parentHitData)
 		{
 			var localHitData = parentHitData.NewFromAdditionalTransformation(this._transformation);

@@ -5,94 +5,285 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
-    public class SolidColor : IMaterial
-    {
-        private NamedColor _color;
+	public class SolidColor : IMaterial
+	{
+		/// <summary>
+		/// The diffuse color of the material.
+		/// </summary>
+		private NamedColor _color;
 
-        public static IMaterial NoMaterial { get; private set; } = new SolidColor(NamedColors.Transparent);
+		/// <summary>
+		/// The intensity of the specular reflection;
+		/// </summary>
+		private double _specularIntensity;
 
-        #region Serialization
+		/// <summary>
+		/// The specular exponent (phong lighting).
+		/// </summary>
+		private double _specularExponent;
 
-        /// <summary>
-        /// 2015-11-18 initial version.
-        /// </summary>
-        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidColor), 0)]
-        private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-        {
-            public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-            {
-                var s = (SolidColor)obj;
+		/// <summary>
+		/// Mixing coefficient for specular reflection: value between 0 and 1.
+		/// If 0, the reflected specular light is multiplied with the material diffuse color
+		/// If 1, the reflected specular light has the same color as the incident light (thus as if it is reflected at a white surface)
+		/// </summary>
+		private double _specularMixingCoefficient;
 
-                info.AddValue("Color", s._color);
-            }
+		public static IMaterial NoMaterial { get; private set; } = new SolidColor(NamedColors.Transparent, 0, 1, 0);
 
-            public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-            {
-                var color = (NamedColor)info.GetValue("Color", null);
-                return new SolidColor(color);
-            }
-        }
+		#region Serialization
 
-        #endregion Serialization
+		/// <summary>
+		/// 2015-11-18 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidColor), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (SolidColor)obj;
 
-        public SolidColor(NamedColor color)
-        {
-            _color = color;
-        }
+				info.AddValue("Color", s._color);
+				info.AddValue("SpecularIntensity", s._specularIntensity);
+				info.AddValue("SpecularExponent", s._specularExponent);
+				info.AddValue("SpecularMixing", s._specularMixingCoefficient);
+			}
 
-        public NamedColor Color
-        {
-            get
-            {
-                return _color;
-            }
-        }
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var color = (NamedColor)info.GetValue("Color", null);
+				double specularIntensity = info.GetDouble("SpecularIntensity");
+				double specularExponent = info.GetDouble("SpecularExponent");
+				double specularMixingCoefficient = info.GetDouble("SpecularMixing");
 
-        public bool HasColor
-        {
-            get
-            {
-                return true;
-            }
-        }
+				return new SolidColor(color, specularIntensity, specularExponent, specularMixingCoefficient);
+			}
+		}
 
-        public bool HasTexture
-        {
-            get
-            {
-                return false;
-            }
-        }
+		#endregion Serialization
 
-        public override bool Equals(object obj)
-        {
-            {
-                // this material is considered to be equal to another material, if this material has exactly
-                var other = obj as SolidColor;
-                if (null != other)
-                    return this.Color == other.Color;
-            }
+		#region Constructors
 
-            return false;
-        }
+		public SolidColor(NamedColor color)
+		{
+			_color = color;
+			_specularIntensity = 1;
+			_specularExponent = 3;
+			_specularMixingCoefficient = 0.75;
+		}
 
-        public override int GetHashCode()
-        {
-            return this.Color.GetHashCode();
-        }
+		public SolidColor(NamedColor color, double specularIntensity, double specularExponent, double specularMixingCoefficient)
+		{
+			_color = color;
 
-        public bool Equals(IMaterial other)
-        {
-            var othersd = other as SolidColor;
-            return null != othersd && this.Color == othersd.Color;
-        }
+			VerifySpecularIntensity(specularIntensity, nameof(specularIntensity));
+			_specularIntensity = specularIntensity;
 
-        public IMaterial WithColor(NamedColor color)
-        {
-            if (color == this._color)
-                return this;
-            else
-                return new SolidColor(color);
-        }
-    }
+			VerifySpecularExponent(specularExponent, nameof(specularExponent));
+			_specularExponent = specularExponent;
+
+			VerifySpecularMixingCoefficient(specularMixingCoefficient, nameof(specularMixingCoefficient));
+			_specularMixingCoefficient = specularMixingCoefficient;
+		}
+
+		#endregion Constructors
+
+		#region Color
+
+		public NamedColor Color
+		{
+			get
+			{
+				return _color;
+			}
+		}
+
+		public IMaterial WithColor(NamedColor color)
+		{
+			if (!(color == this._color))
+			{
+				var result = (SolidColor)this.MemberwiseClone();
+				result._color = color;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		#endregion Color
+
+		#region SpecularIntensity
+
+		/// <summary>
+		/// The intensity of the specular reflection;
+		/// </summary>
+		public double SpecularIntensity
+		{
+			get
+			{
+				return _specularIntensity;
+			}
+		}
+
+		public SolidColor WithSpecularIntensity(double specularIntensity)
+		{
+			if (!(specularIntensity == _specularIntensity))
+			{
+				VerifySpecularIntensity(specularIntensity, nameof(specularIntensity));
+
+				var result = (SolidColor)this.MemberwiseClone();
+				result._specularIntensity = specularIntensity;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		private void VerifySpecularIntensity(double value, string valueName)
+		{
+			if (!(value >= 0))
+				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be >= 0", valueName));
+		}
+
+		#endregion SpecularIntensity
+
+		#region SpecularExponent
+
+		/// <summary>
+		/// The specular exponent (phong lighting).
+		/// </summary>
+		public double SpecularExponent
+		{
+			get
+			{
+				return _specularExponent;
+			}
+		}
+
+		public SolidColor WithSpecularExponent(double specularExponent)
+		{
+			if (!(specularExponent == _specularExponent))
+			{
+				VerifySpecularExponent(specularExponent, nameof(specularExponent));
+
+				var result = (SolidColor)this.MemberwiseClone();
+				result._specularExponent = specularExponent;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		private void VerifySpecularExponent(double value, string valueName)
+		{
+			if (!(value >= 0))
+				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be >= 0", valueName));
+		}
+
+		#endregion SpecularExponent
+
+		#region SpecularMixingCoefficient
+
+		/// <summary>
+		/// Mixing coefficient for specular reflection: value between 0 and 1.
+		/// If 0, the reflected specular light is multiplied with the material diffuse color
+		/// If 1, the reflected specular light has the same color as the incident light (thus as if it is reflected at a white surface)
+		/// </summary>
+		public double SpecularMixingCoefficient
+		{
+			get
+			{
+				return _specularMixingCoefficient;
+			}
+		}
+
+		public SolidColor WithSpecularMixingCoefficient(double specularMixingCoefficient)
+		{
+			if (!(specularMixingCoefficient == _specularMixingCoefficient))
+			{
+				VerifySpecularExponent(specularMixingCoefficient, nameof(specularMixingCoefficient));
+
+				var result = (SolidColor)this.MemberwiseClone();
+				result._specularMixingCoefficient = specularMixingCoefficient;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		private void VerifySpecularMixingCoefficient(double value, string valueName)
+		{
+			if (!(value >= 0))
+				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be >= 0", valueName));
+			if (!(value <= 0))
+				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be <= 1", valueName));
+		}
+
+		#endregion SpecularMixingCoefficient
+
+		#region Infrastructure
+
+		public bool HasColor
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public bool HasTexture
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			// this material is considered to be equal to another material, if this material has exactly
+			var other = obj as SolidColor;
+			if (null != other)
+			{
+				return
+					this._color == other._color &&
+					this._specularIntensity == other._specularIntensity &&
+					this._specularExponent == other._specularExponent &&
+					this._specularMixingCoefficient == other._specularMixingCoefficient;
+			}
+
+			return false;
+		}
+
+		public bool Equals(IMaterial obj)
+		{
+			// this material is considered to be equal to another material, if this material has exactly
+			var other = obj as SolidColor;
+			if (null != other)
+			{
+				return
+					this._color == other._color &&
+					this._specularIntensity == other._specularIntensity &&
+					this._specularExponent == other._specularExponent &&
+					this._specularMixingCoefficient == other._specularMixingCoefficient;
+			}
+
+			return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return this._color.GetHashCode() + 3 * this._specularIntensity.GetHashCode() + 7 * _specularExponent.GetHashCode() + 13 * _specularMixingCoefficient.GetHashCode();
+		}
+
+		#endregion Infrastructure
+	}
 }

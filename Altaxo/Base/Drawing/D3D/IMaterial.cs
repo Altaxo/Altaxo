@@ -36,6 +36,12 @@ namespace Altaxo.Drawing.D3D
 	{
 		NamedColor Color { get; }
 
+		double SpecularIntensity { get; }
+
+		double SpecularExponent { get; }
+
+		double SpecularMixingCoefficient { get; }
+
 		bool HasColor { get; }
 		bool HasTexture { get; }
 

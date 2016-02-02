@@ -29,6 +29,11 @@ cbuffer cbMaterial
 	float4 MaterialDiffuseColor;
 	float MaterialSpecularExponent;
 	float MaterialSpecularIntensity;
+
+	// Mixing coefficient for specular reflection: value between 0 and 1
+	// if 0, the reflected specular light is multiplied with the material diffuse color
+	// if 1, the reflected specular light has the same color as the incident light (thus as if it is reflected at a white surface)
+	float MaterialSpecularMixingCoefficient;
 }
 
 cbuffer cbLights
@@ -150,9 +155,14 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	float3 finalColor = lerp(HemisphericLightColorBelow, HemisphericLightColorAbove, r);
 
 	// Calculate the final color value
-	float4 pixelIntensity = (NDotL + SpecValue) * Attn;
+	float4 pixelIntensity = (NDotL + (1 - MaterialSpecularMixingCoefficient)*SpecValue) * Attn;
 	finalColor += float3(dot(LightColorR, pixelIntensity), dot(LightColorG, pixelIntensity), dot(LightColorB, pixelIntensity));
 	finalColor *= diffuseColor;
+
+	// here comes the part that is specularly reflected with only the light color (but not the material color).
+	float4 pixelIntensity2 = SpecValue * Attn * MaterialSpecularMixingCoefficient;
+	finalColor += float3(dot(LightColorR, pixelIntensity2), dot(LightColorG, pixelIntensity2), dot(LightColorB, pixelIntensity2));
+
 	return float4(finalColor, diffuseColor.w);
 }
 
