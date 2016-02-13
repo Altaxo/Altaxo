@@ -90,5 +90,29 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// </summary>
 		/// <returns>New graphic context.</returns>
 		Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D GetGraphicContext();
+
+		/// <summary>
+		/// Gets the graphic context for root layer markers, i.e. for stuff that doesn't belong to the graph document.
+		/// </summary>
+		/// <returns>Graphic context for root layer markers</returns>
+		Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D GetGraphicContextForMarkers();
+
+		/// <summary>
+		/// Sets the marker geometry, brings it into the buffers. It doesn't trigger a new rendering, please use <see cref="TriggerRendering"/> for that.
+		/// </summary>
+		/// <param name="markerGeometry">The marker geometry.</param>
+		void SetMarkerGeometry(Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D markerGeometry);
+
+		/// <summary>
+		/// Gets the graphic context for overlay geometry, i.e. for geometry that shows if an object is selected, grips and so on.
+		/// </summary>
+		/// <returns>Graphic context for overlay geometry</returns>
+		Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D GetGraphicContextForOverlay();
+
+		/// <summary>
+		/// Sets the overlay geometry, bring it into the buffers. It doesn't trigger a new rendering, please use <see cref="TriggerRendering"/> for that.
+		/// </summary>
+		/// <param name="overlayGeometry">The overlay geometry.</param>
+		void SetOverlayGeometry(Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D overlayGeometry);
 	}
 }

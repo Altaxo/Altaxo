@@ -10,9 +10,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D.GraphicsContext;
 
 	//using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Main;
+	using Drawing;
+	using Drawing.D3D;
 
 	public class Graph3DController : IDisposable, IMVCANController
 	{
@@ -40,7 +43,17 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		[NonSerialized]
 		protected WeakEventHandler[] _weakEventHandlersForDoc;
 
-		private Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D _drawing;
+		private IGraphicContext3D _drawing;
+
+		/// <summary>
+		/// Additional geometry, that is not part of the graph, for instance the selection markers.
+		/// </summary>
+		private IGraphicContext3D __markerGeometry;
+
+		/// <summary>
+		/// If true, markers are shown in each of the corners of the graph document.
+		/// </summary>
+		private bool _showDocumentMarkers;
 
 		#region Constructors
 
@@ -577,19 +590,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// Looks for a graph object at pixel position <paramref name="pixelPos"/> and returns true if one is found.
 		/// </summary>
-		/// <param name="relativeScreenPosition">The relative screen coordinates. X and Y are relative screen coordinate values, Z is the screen's aspect ratio.</param>
+		/// <param name="hitData">The position of the mouse, expressed as transformation, that when applied, transformes the mouse coordinate to the point x=0, y=0, z=-Infinity....+Infinity.</param>
 		/// <param name="plotItemsOnly">If true, only the plot items where hit tested.</param>
 		/// <param name="foundObject">Found object if there is one found, else null</param>
 		/// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
 		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
-		public bool FindGraphObjectAtPixelPosition(PointD3D relativeScreenPosition, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
+		public bool FindGraphObjectAtPixelPosition(HitTestPointData hitData, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
 		{
-			var camera = Doc.Scene.Camera;
-
-			Matrix4x3 hitmatrix = Doc.Scene.Camera.GetHitRayMatrix(relativeScreenPosition);
-			var hitdata = new HitTestPointData(hitmatrix);
-
-			foundObject = Doc.RootLayer.HitTest(hitdata, plotItemsOnly);
+			foundObject = Doc.RootLayer.HitTest(hitData, plotItemsOnly);
 
 			if (null != foundObject && null != foundObject.ParentLayer)
 			{
@@ -646,6 +654,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				_drawing = newDrawing;
 				_view.SetDrawing(_drawing);
 				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
+
+				var markerGeometry = _view.GetGraphicContextForMarkers();
+				DrawRootLayerMarkers(markerGeometry);
+				_view.SetMarkerGeometry(markerGeometry);
+
 				_view.TriggerRendering();
 
 				(oldDrawing as IDisposable)?.Dispose();
@@ -664,14 +677,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		protected void EhGraph_BoundsChanged_Unsynchronized()
 		{
-			/*
-			if (_view != null)
+			var view = _view;
+			if (null != view)
 			{
-				if (this._isAutoZoomActive)
-					this.RefreshAutoZoom(false);
-				_view.InvalidateCachedGraphBitmapAndRepaint();
+				var g = view.GetGraphicContextForMarkers();
+				DrawRootLayerMarkers(g);
+				view.SetMarkerGeometry(g);
 			}
-			*/
 		}
 
 		/// <summary>
@@ -770,5 +782,111 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		}
 
 		#endregion Event handlers from GraphDocument
+
+		#region Drawing markers
+
+		private void DrawMarkerX(IPositionColorIndexedTriangleBuffer buf, PointD3D pos, double markerLenBy2, double markerThicknessBy2)
+		{
+			float r = 0, g = 0, b = 0;
+
+			// green marker in x-direction
+			var voffs = buf.VertexCount;
+			r = 1;
+			buf.AddTriangleVertex(pos.X + markerLenBy2, pos.Y + 0, pos.Z + 0, r, g, b, 1); // Point
+			buf.AddTriangleVertex(pos.X - markerLenBy2, pos.Y + markerThicknessBy2, pos.Z + markerThicknessBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerLenBy2, pos.Y - markerThicknessBy2, pos.Z + markerThicknessBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerLenBy2, pos.Y - markerThicknessBy2, pos.Z - markerThicknessBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerLenBy2, pos.Y + markerThicknessBy2, pos.Z - markerThicknessBy2, r, g, b, 1);
+			r = 0;
+
+			buf.AddTriangleIndices(0 + voffs, 1 + voffs, 2 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 2 + voffs, 3 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 3 + voffs, 4 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 4 + voffs, 1 + voffs);
+			buf.AddTriangleIndices(4 + voffs, 3 + voffs, 2 + voffs);
+			buf.AddTriangleIndices(4 + voffs, 2 + voffs, 1 + voffs);
+		}
+
+		private void DrawMarkerY(IPositionColorIndexedTriangleBuffer buf, PointD3D pos, double markerLenBy2, double markerThicknessBy2)
+		{
+			float r = 0, g = 0, b = 0;
+
+			// green marker in x-direction
+			var voffs = buf.VertexCount;
+			g = 1;
+			buf.AddTriangleVertex(pos.X + 0, pos.Y + markerLenBy2, pos.Z + 0, r, g, b, 1); // Point
+			buf.AddTriangleVertex(pos.X + markerThicknessBy2, pos.Y - markerLenBy2, pos.Z + markerThicknessBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X + markerThicknessBy2, pos.Y - markerLenBy2, pos.Z - markerThicknessBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y - markerLenBy2, pos.Z - markerThicknessBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y - markerLenBy2, pos.Z + markerThicknessBy2, r, g, b, 1);
+			g = 0;
+
+			buf.AddTriangleIndices(0 + voffs, 1 + voffs, 2 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 2 + voffs, 3 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 3 + voffs, 4 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 4 + voffs, 1 + voffs);
+			buf.AddTriangleIndices(4 + voffs, 3 + voffs, 2 + voffs);
+			buf.AddTriangleIndices(4 + voffs, 2 + voffs, 1 + voffs);
+		}
+
+		private void DrawMarkerZ(IPositionColorIndexedTriangleBuffer buf, PointD3D pos, double markerLenBy2, double markerThicknessBy2)
+		{
+			float r = 0, g = 0, b = 0;
+
+			// green marker in x-direction
+			var voffs = buf.VertexCount;
+			b = 1;
+			buf.AddTriangleVertex(pos.X + 0, pos.Y + 0, pos.Z + markerLenBy2, r, g, b, 1); // Point
+			buf.AddTriangleVertex(pos.X + markerThicknessBy2, pos.Y + markerThicknessBy2, pos.Z - markerLenBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y + markerThicknessBy2, pos.Z - markerLenBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X - markerThicknessBy2, pos.Y - markerThicknessBy2, pos.Z - markerLenBy2, r, g, b, 1);
+			buf.AddTriangleVertex(pos.X + markerThicknessBy2, pos.Y - markerThicknessBy2, pos.Z - markerLenBy2, r, g, b, 1);
+			b = 0;
+
+			buf.AddTriangleIndices(0 + voffs, 1 + voffs, 2 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 2 + voffs, 3 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 3 + voffs, 4 + voffs);
+			buf.AddTriangleIndices(0 + voffs, 4 + voffs, 1 + voffs);
+			buf.AddTriangleIndices(4 + voffs, 3 + voffs, 2 + voffs);
+			buf.AddTriangleIndices(4 + voffs, 2 + voffs, 1 + voffs);
+		}
+
+		public void DrawRootLayerMarkers(IOverlayContext3D gc)
+		{
+			var buf = gc.PositionColorIndexedTriangleBuffers;
+
+			VectorD3D size = Doc.RootLayer.Size;
+
+			double markerLen = Math.Max(size.X, Math.Max(size.Y, size.Z)) / 20.0;
+			double markerLenBy2 = markerLen / 2;
+			double markerThicknessBy2 = markerLenBy2 / 5.0;
+
+			RectangleD3D rect = new RectangleD3D(PointD3D.Empty, size);
+
+			foreach (var pos in rect.Vertices)
+			{
+				var posX = pos;
+				posX.X += pos.X == 0 ? markerLenBy2 : -markerLenBy2;
+				DrawMarkerX(buf, posX, markerLenBy2, markerThicknessBy2);
+
+				var posY = pos;
+				posY.Y += pos.Y == 0 ? markerLenBy2 : -markerLenBy2;
+				DrawMarkerY(buf, posY, markerLenBy2, markerThicknessBy2);
+
+				var posZ = pos;
+				posZ.Z += pos.Z == 0 ? markerLenBy2 : -markerLenBy2;
+				DrawMarkerZ(buf, posZ, markerLenBy2, markerThicknessBy2);
+			}
+
+			{
+				var lineBuffer = gc.PositionColorLineListBuffer;
+				foreach (var line in rect.Edges)
+				{
+					lineBuffer.AddLine(line.P0.X, line.P0.Y, line.P0.Z, line.P1.X, line.P1.Y, line.P1.Z, 1, 0, 0, 1);
+				}
+			}
+		}
+
+		#endregion Drawing markers
 	}
 }

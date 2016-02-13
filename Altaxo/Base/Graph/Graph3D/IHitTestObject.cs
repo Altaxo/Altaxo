@@ -52,10 +52,11 @@ namespace Altaxo.Graph.Graph3D
 		Matrix4x3 Transformation { get; }
 
 		/// <summary>
-		/// Transform the internal positions according to the provided transformation matrix.
+		/// Appends the provided transformation. Usually, the hit test object is created with the local transformation of the hitted object. When passing the hit test data to the parent object,
+		/// the parent object appends its own transformation, so that finally the transformation is able to transform from local coordinates of the hitted object to root layer coordinates.
 		/// </summary>
-		/// <param name="x"></param>
-		void Transform(Matrix4x3 x);
+		/// <param name="transformation">The transformation to append.</param>
+		void AppendTransformation(Matrix4x3 transformation);
 
 		/// <summary>
 		/// This will return the object itself, i.e. the object which corresponds to the selection path.
@@ -97,15 +98,12 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
 		bool OnDoubleClick();
 
-		/*
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
 		/// </summary>
-		/// <param name="pageScale"></param>
 		/// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
 		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-		IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
-		*/
+		IGripManipulationHandle[] GetGrips(int gripLevel);
 
 		/// <summary>
 		/// Retrieves the next grip level.

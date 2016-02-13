@@ -29,7 +29,7 @@ namespace Altaxo.Drawing.D3D.Material
 		/// </summary>
 		private double _specularMixingCoefficient;
 
-		public static IMaterial NoMaterial { get; private set; } = new SolidColor(NamedColors.Transparent, 0, 1, 0);
+		public static IMaterial NoMaterial { get; private set; } = new SolidColor(NamedColors.Transparent, 1, 3, 0.75);
 
 		#region Serialization
 
@@ -223,11 +223,42 @@ namespace Altaxo.Drawing.D3D.Material
 		{
 			if (!(value >= 0))
 				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be >= 0", valueName));
-			if (!(value <= 0))
+			if (!(value <= 1))
 				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be <= 1", valueName));
 		}
 
 		#endregion SpecularMixingCoefficient
+
+		#region Specular Properties
+
+		public SolidColor WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
+		{
+			if (!(specularIntensity == _specularIntensity) ||
+					!(specularExponent == _specularExponent) ||
+					!(specularMixingCoefficient == _specularMixingCoefficient))
+			{
+				VerifySpecularIntensity(specularIntensity, nameof(specularIntensity));
+				VerifySpecularExponent(specularExponent, nameof(specularExponent));
+				VerifySpecularExponent(specularMixingCoefficient, nameof(specularMixingCoefficient));
+
+				var result = (SolidColor)this.MemberwiseClone();
+				result._specularIntensity = specularIntensity;
+				result._specularExponent = specularExponent;
+				result._specularMixingCoefficient = specularMixingCoefficient;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		IMaterial IMaterial.WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
+		{
+			return WithSpecularProperties(specularIntensity, specularExponent, specularMixingCoefficient);
+		}
+
+		#endregion Specular Properties
 
 		#region Infrastructure
 

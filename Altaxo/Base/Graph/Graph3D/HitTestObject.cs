@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,67 +33,63 @@ namespace Altaxo.Graph.Graph3D
 {
 	public abstract class HitTestObjectBase : IHitTestObject
 	{
-		private HostLayer _parentLayer;
+		#region Internal classes
 
-		/*
+		/// <summary>
+		/// Grip that does nothing, but shows a blue polygon
+		/// </summary>
+		protected class NoopGrip : IGripManipulationHandle
+		{
+			private IObjectOutline _displayPath;
 
-				#region Internal classes
+			public NoopGrip(IObjectOutline displayPath)
+			{
+				_displayPath = displayPath;
+			}
 
-				/// <summary>
-				/// Grip that does nothing, but shows a blue polygon
-				/// </summary>
-				protected class NoopGrip : IGripManipulationHandle
+			#region IGripManipulationHandle Members
+
+			/// <summary>
+			/// Activates this grip, providing the initial position of the mouse.
+			/// </summary>
+			/// <param name="initialPosition">Initial position of the mouse.</param>
+			/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
+			/// thie activation is due to a regular mouse click in this grip.</param>
+			public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
+			{
+			}
+
+			public bool Deactivate()
+			{
+				return false;
+			}
+
+			public void MoveGrip(HitTestPointData newPosition)
+			{
+			}
+
+			/// <summary>Draws the grip in the graphics context.</summary>
+			/// <param name="g">Graphics context.</param>
+			public void Show(IOverlayContext3D g)
+			{
+				var buf = g.PositionColorLineListBuffer;
+				foreach (var line in _displayPath.AsLines)
 				{
-					private GraphicsPath _displayPath;
-
-					public NoopGrip(GraphicsPath displayPath)
-					{
-						_displayPath = displayPath;
-					}
-
-					#region IGripManipulationHandle Members
-
-					/// <summary>
-					/// Activates this grip, providing the initial position of the mouse.
-					/// </summary>
-					/// <param name="initialPosition">Initial position of the mouse.</param>
-					/// <param name="isActivatedUponCreation">If true the activation is called right after creation of this handle. If false,
-					/// thie activation is due to a regular mouse click in this grip.</param>
-					public void Activate(PointD2D initialPosition, bool isActivatedUponCreation)
-					{
-					}
-
-					public bool Deactivate()
-					{
-						return false;
-					}
-
-					public void MoveGrip(PointD2D newPosition)
-					{
-					}
-
-					/// <summary>Draws the grip in the graphics context.</summary>
-					/// <param name="g">Graphics context.</param>
-					/// <param name="pageScale">Current zoom factor that can be used to calculate pen width etc. for displaying the handle. Attention: this factor must not be used to transform the path of the handle.</param>
-					public void Show(Graphics g, double pageScale)
-					{
-						using (var pen = new Pen(Color.Blue, (float)(1 / pageScale)))
-						{
-							g.DrawPath(pen, _displayPath);
-						}
-					}
-
-					public bool IsGripHitted(PointD2D point)
-					{
-						return false;
-					}
-
-					#endregion IGripManipulationHandle Members
+					buf.AddLine(line.P0.X, line.P0.Y, line.P0.Z, line.P1.X, line.P1.Y, line.P1.Z, 0, 0, 1, 1);
 				}
+			}
 
-				#endregion Internal classes
+			public bool IsGripHitted(HitTestPointData point)
+			{
+				return false;
+			}
 
-				*/
+			#endregion IGripManipulationHandle Members
+		}
+
+		#endregion Internal classes
+
+		private HostLayer _parentLayer;
 
 		/// <summary>
 		/// Transformation matrix which transforms the coordinates of the parent of the hitted object (i.e. the parent layer)
@@ -128,9 +125,11 @@ namespace Altaxo.Graph.Graph3D
 		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
 		/// </summary>
 		/// <param name="x">The transformation to append.</param>
-		public virtual void Transform(Matrix4x3 x)
+		public virtual void AppendTransformation(Matrix4x3 x)
 		{
 			_matrix.AppendTransform(x);
+
+			ObjectOutlineForArrangements?.AppendTransformation(x);
 		}
 
 		public object HittedObject
@@ -141,15 +140,12 @@ namespace Altaxo.Graph.Graph3D
 
 		public abstract IObjectOutline ObjectOutlineForArrangements { get; }
 
-		/*
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
 		/// </summary>
-		/// <param name="pageScale"></param>
 		/// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
 		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-		public abstract IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel);
-		*/
+		public abstract IGripManipulationHandle[] GetGrips(int gripLevel);
 
 		public virtual int GetNextGripLevel(int currentGripLevel)
 		{
@@ -250,20 +246,15 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		/*
-
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
 		/// </summary>
-		/// <param name="pageScale"></param>
 		/// <param name="gripLevel">The grip level. For 0, only the translation grip is shown.</param>
 		/// <returns>Grip manipulation handles that are used to show the grips and to manipulate the object.</returns>
-		public override IGripManipulationHandle[] GetGrips(double pageScale, int gripLevel)
+		public override IGripManipulationHandle[] GetGrips(int gripLevel)
 		{
 			return new IGripManipulationHandle[] { new NoopGrip(_objectPath) };
 		}
-
-		*/
 
 		/// <summary>
 		/// Shifts the position of the object by x and y. Used to arrange objects.

@@ -870,7 +870,10 @@ namespace Altaxo.Graph.Graph3D
 			{
 				hit = _axisStyles.HitTest(localCoord);
 				if (null != hit)
+				{
+					hit.AppendTransformation(_transformation);
 					return hit;
+				}
 			}
 
 			return base.HitTestWithLocalCoordinates(localCoord, plotItemsOnly);

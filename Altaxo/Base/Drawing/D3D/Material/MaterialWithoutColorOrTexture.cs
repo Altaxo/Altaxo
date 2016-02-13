@@ -208,6 +208,37 @@ namespace Altaxo.Drawing.D3D.Material
 
 		#endregion SpecularMixingCoefficient
 
+		#region Specular Properties
+
+		public MaterialWithoutColorOrTexture WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
+		{
+			if (!(specularIntensity == _specularIntensity) ||
+					!(specularExponent == _specularExponent) ||
+					!(specularMixingCoefficient == _specularMixingCoefficient))
+			{
+				VerifySpecularIntensity(specularIntensity, nameof(specularIntensity));
+				VerifySpecularExponent(specularExponent, nameof(specularExponent));
+				VerifySpecularExponent(specularMixingCoefficient, nameof(specularMixingCoefficient));
+
+				var result = (MaterialWithoutColorOrTexture)this.MemberwiseClone();
+				result._specularIntensity = specularIntensity;
+				result._specularExponent = specularExponent;
+				result._specularMixingCoefficient = specularMixingCoefficient;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		IMaterial IMaterial.WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
+		{
+			return WithSpecularProperties(specularIntensity, specularExponent, specularMixingCoefficient);
+		}
+
+		#endregion Specular Properties
+
 		#region Infrastructure
 
 		public bool HasColor

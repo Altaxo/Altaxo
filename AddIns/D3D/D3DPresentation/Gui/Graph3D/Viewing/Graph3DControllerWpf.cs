@@ -119,6 +119,15 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		internal void RenderOverlay()
 		{
+			var view = _view;
+
+			if (null != view)
+			{
+				var g = view.GetGraphicContextForOverlay();
+				_mouseState.AfterPaint(g);
+				view.SetOverlayGeometry(g);
+				view.TriggerRendering();
+			}
 		}
 
 		/// <summary>

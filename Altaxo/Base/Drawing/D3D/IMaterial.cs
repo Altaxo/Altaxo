@@ -42,6 +42,8 @@ namespace Altaxo.Drawing.D3D
 
 		double SpecularMixingCoefficient { get; }
 
+		IMaterial WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient);
+
 		bool HasColor { get; }
 		bool HasTexture { get; }
 

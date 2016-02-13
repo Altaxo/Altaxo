@@ -507,7 +507,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			double z;
 			if (localHitData.IsHit(Bounds, out z))
 			{
-				var result = new HitTestObject(new RectangularObjectOutline(_cachedExtendedTextBounds, localHitData.Transformation), this);
+				var result = new HitTestObject(new RectangularObjectOutline(Bounds, _transformation), this);
 				result.DoubleClick = TextGraphicsEditorMethod;
 				return result;
 			}

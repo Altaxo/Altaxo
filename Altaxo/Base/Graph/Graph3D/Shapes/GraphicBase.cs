@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		protected GraphicBase(ItemLocationDirect location)
 		{
 			if (null == location)
-				throw new ArgumentNullException("location");
+				throw new ArgumentNullException(nameof(location));
 
 			_location = location;
 			_location.ParentObject = this;
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		protected GraphicBase(GraphicBase from)
 		{
 			if (null == from)
-				throw new ArgumentNullException("from");
+				throw new ArgumentNullException(nameof(from));
 
 			_location = from._location.Clone();
 			_location.ParentObject = this;
@@ -322,6 +322,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// <param name="o">The graphics object whose position is scaled.</param>
 		/// <param name="xscale">The xscale ratio.</param>
 		/// <param name="yscale">The yscale ratio.</param>
+		/// <param name="zscale">The zscale ratio.</param>
 		public static void ScalePosition(IGraphicBase o, double xscale, double yscale, double zscale)
 		{
 			if (o != null)
@@ -381,6 +382,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		/// <param name="sizeX">Unscaled width of the item.</param>
 		/// <param name="sizeY">Unscaled height of the item.</param>
+		/// <param name="sizeZ">Unscaled depth of the item.</param>
 		/// <param name="eventFiring">Designates whether the change event should be fired.</param>
 		protected virtual void SetSize(double sizeX, double sizeY, double sizeZ, Main.EventFiring eventFiring)
 		{

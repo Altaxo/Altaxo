@@ -115,7 +115,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		/// This function is called just after the paint event. The graphic context is in graph coordinates.
 		/// </summary>
 		/// <param name="g"></param>
-		public virtual void AfterPaint(IGraphicContext3D g)
+		public virtual void AfterPaint(IOverlayContext3D g)
 		{
 		}
 

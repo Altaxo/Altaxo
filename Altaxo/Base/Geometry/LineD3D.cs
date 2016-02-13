@@ -22,40 +22,46 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Drawing.D3D
+namespace Altaxo.Geometry
 {
-	using Material;
-
-	public class Materials
+	/// <summary>
+	/// A straight line in 3D space.
+	/// </summary>
+	public struct LineD3D
 	{
-		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
+		private PointD3D _p0;
+		private PointD3D _p1;
 
-		public static IMaterial GetNoMaterial()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LineD3D"/> struct.
+		/// </summary>
+		/// <param name="p0">The starting point of the line.</param>
+		/// <param name="p1">The end point of the line.</param>
+		public LineD3D(PointD3D p0, PointD3D p1)
 		{
-			return SolidColor.NoMaterial;
+			_p0 = p0;
+			_p1 = p1;
 		}
 
-		public static IMaterial GetSolidMaterial(NamedColor color)
-		{
-			return new SolidColor(color);
-		}
+		/// <summary>
+		/// Gets the starting point of the line.
+		/// </summary>
+		/// <value>
+		/// The starting point of the line.
+		/// </value>
+		public PointD3D P0 { get { return _p0; } }
 
-		public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
-		{
-			return material.WithColor(newColor);
-		}
-
-		public static IMaterial GetSolidMaterialWithoutColorOrTexture()
-		{
-			return _materialWithoutColorOrTexture;
-		}
+		/// <summary>
+		/// Gets the end point of the line.
+		/// </summary>
+		/// <value>
+		/// The end point of the line.
+		/// </value>
+		public PointD3D P1 { get { return _p1; } }
 	}
 }

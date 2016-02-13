@@ -158,11 +158,11 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		#region Transformation
 
-		internal GraphicState Transformation
+		public override Matrix4x3 Transformation
 		{
 			get
 			{
-				return _transformation;
+				return _transformation.Transformation;
 			}
 		}
 

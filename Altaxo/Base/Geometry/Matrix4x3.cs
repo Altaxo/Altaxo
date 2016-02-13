@@ -237,6 +237,26 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Sets this matrix to the identity matrix.
+		/// </summary>
+		public void SetToIdentity()
+		{
+			M11 = 1;
+			M12 = 0;
+			M13 = 0;
+			M21 = 0;
+			M22 = 1;
+			M23 = 0;
+			M31 = 0;
+			M32 = 0;
+			M33 = 1;
+			M41 = 0;
+			M42 = 0;
+			M43 = 0;
+			Determinant = 1;
+		}
+
+		/// <summary>
 		/// Sets this transformation matrix by specifying translation, rotation, shear and scale.
 		/// </summary>
 		/// <param name="translateX">The translation in x direction.</param>

@@ -233,6 +233,7 @@
     <Compile Include="Geometry\PointsTupleD3D.cs" />
     <Compile Include="Geometry\PolygonClosedD2D.cs" />
     <Compile Include="Geometry\PolygonClosedWithNormalsD2D.cs" />
+    <Compile Include="Geometry\LineD3D.cs" />
     <Compile Include="Geometry\RayD3D.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Graph\Graph3D\Axis\AxisLabelStyle.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\GraphicContext3DBase.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IGraphicContext3D.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\IPositionColorLineListBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionColorTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionIndexedTriangleBuffer.cs" />
@@ -269,9 +271,11 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\PositionNormalTriangleBuffers.cs" />
     <Compile Include="Graph\Graph3D\GridPartitioning.cs" />
+    <Compile Include="Graph\Graph3D\Grips\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Graph3D\HitTestObject.cs" />
     <Compile Include="Graph\Graph3D\HitTestPointData.cs" />
     <Compile Include="Graph\Graph3D\HostLayer.cs" />
+    <Compile Include="Graph\Graph3D\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Graph3D\IHitTestObject.cs" />
     <Compile Include="Graph\Graph3D\IItemLocation.cs" />
     <Compile Include="Drawing\D3D\IMaterial.cs" />
@@ -321,6 +325,7 @@
     <Compile Include="Geometry\RectangleD3D.cs" />
     <Compile Include="Graph\Graph3D\SceneSettings.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\GraphicBase.MovementGripHandle.cs" />
     <Compile Include="Graph\Graph3D\Shapes\IGraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\Sphere.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic.cs" />

@@ -31,9 +31,66 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
+	using Drawing;
 	using Drawing.D3D;
 
-	public abstract class GraphicContext3DBase : IGraphicContext3D
+	public class GraphicContextD3DPrimitivesBase
+	{
+		public static void DrawLine(PositionNormalIndexedTriangleBuffers buffers, PenX3D pen, PointD3D p0, PointD3D p1)
+		{
+			var line = new SolidPolyline(pen.CrossSection, new[] { p0, p1 });
+			var offset = buffers.IndexedTriangleBuffer.VertexCount;
+
+			if (null != buffers.PositionNormalIndexedTriangleBuffer)
+			{
+				var buf = buffers.PositionNormalIndexedTriangleBuffer;
+				line.AddWithNormals(
+				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
+				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+				ref offset);
+			}
+			else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+			{
+				var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
+				var color = pen.Color.Color;
+				var r = color.ScR;
+				var g = color.ScG;
+				var b = color.ScB;
+				var a = color.ScA;
+
+				line.AddWithNormals(
+				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
+				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+				ref offset);
+			}
+			else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
+			{
+				throw new NotImplementedException("Texture on a line is not supported yet");
+			}
+			else
+			{
+				throw new NotImplementedException("Unexpected type of buffer: " + buffers.IndexedTriangleBuffer.GetType().ToString());
+			}
+		}
+
+		public static void DrawLine(IIndexedTriangleBuffer buffer, PenX3D pen, PointD3D p0, PointD3D p1)
+		{
+			DrawLine(GetBuffers(buffer), pen, p0, p1);
+		}
+
+		private static PositionNormalIndexedTriangleBuffers GetBuffers(IIndexedTriangleBuffer buffer)
+		{
+			return new PositionNormalIndexedTriangleBuffers
+			{
+				IndexedTriangleBuffer = buffer,
+				PositionNormalIndexedTriangleBuffer = buffer as IPositionNormalIndexedTriangleBuffer,
+				PositionNormalColorIndexedTriangleBuffer = buffer as IPositionNormalColorIndexedTriangleBuffer,
+				PositionNormalUVIndexedTriangleBuffer = buffer as IPositionNormalUVIndexedTriangleBuffer
+			};
+		}
+	}
+
+	public abstract class GraphicContext3DBase : GraphicContextD3DPrimitivesBase, IGraphicContext3D
 	{
 		public abstract object SaveGraphicsState();
 
@@ -48,6 +105,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
 
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
+
+		public abstract Matrix4x3 Transformation { get; }
 
 		#region Primitives rendering
 
@@ -108,40 +167,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public virtual void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1)
 		{
-			var line = new SolidPolyline(pen.CrossSection, new[] { p0, p1 });
-			var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
-			var offset = buffers.IndexedTriangleBuffer.VertexCount;
-
-			if (null != buffers.PositionNormalIndexedTriangleBuffer)
-			{
-				var buf = buffers.PositionNormalIndexedTriangleBuffer;
-				line.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
-				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-				ref offset);
-			}
-			else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
-			{
-				var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
-				var color = pen.Color.Color;
-				var r = color.ScR;
-				var g = color.ScG;
-				var b = color.ScB;
-				var a = color.ScA;
-
-				line.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
-				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-				ref offset);
-			}
-			else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
-			{
-				throw new NotImplementedException("Texture on a line is not supported yet");
-			}
-			else
-			{
-				throw new NotImplementedException("Unexpected type of buffer: " + buffers.IndexedTriangleBuffer.GetType().ToString());
-			}
+			DrawLine(GetPositionNormalIndexedTriangleBuffer(pen.Material), pen, p0, p1);
 		}
 
 		public virtual void DrawLine(PenX3D pen, IPolylineD3D path)

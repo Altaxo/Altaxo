@@ -1345,12 +1345,6 @@ namespace Altaxo.Graph.Graph3D
 
 		#region Hit test
 
-		protected IHitTestObject ForwardTransform(IHitTestObject o)
-		{
-			o.Transform(_transformation);
-			return o;
-		}
-
 		public virtual IHitTestObject HitTest(HitTestPointData parentCoord)
 		{
 			return HitTest(parentCoord, false);
@@ -1381,7 +1375,9 @@ namespace Altaxo.Graph.Graph3D
 
 						if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
 							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
-						return ForwardTransform(hit);
+
+						hit.AppendTransformation(_transformation);
+						return hit;
 					}
 				}
 			}
@@ -1397,7 +1393,9 @@ namespace Altaxo.Graph.Graph3D
 					if (null != hit)
 					{
 						System.Diagnostics.Debug.Assert(hit.ParentLayer != null, "Parent layer must be set, because the hitted plot item originates from another layer!");
-						return ForwardTransform(hit);
+
+						hit.AppendTransformation(_transformation);
+						return hit;
 					}
 				}
 			}

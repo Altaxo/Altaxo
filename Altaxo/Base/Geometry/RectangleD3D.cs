@@ -332,6 +332,36 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Gets the edges of the rectange (first bottom edges, then the pillars, and then the top edges)
+		/// </summary>
+		/// <value>
+		/// The edges of the rectangle.
+		/// </value>
+		public IEnumerable<LineD3D> Edges
+		{
+			get
+			{
+				// Bottom
+				yield return new LineD3D(new PointD3D(_x, _y, _z), new PointD3D(_x + _sizeX, _y, _z));
+				yield return new LineD3D(new PointD3D(_x + _sizeX, _y, _z), new PointD3D(_x + _sizeX, _y + _sizeY, _z));
+				yield return new LineD3D(new PointD3D(_x + _sizeX, _y + _sizeY, _z), new PointD3D(_x, _y + _sizeY, _z));
+				yield return new LineD3D(new PointD3D(_x, _y + _sizeY, _z), new PointD3D(_x, _y, _z));
+
+				// Pillars
+				yield return new LineD3D(new PointD3D(_x, _y, _z), new PointD3D(_x, _y, _z + _sizeZ));
+				yield return new LineD3D(new PointD3D(_x + _sizeX, _y, _z), new PointD3D(_x + _sizeX, _y, _z + _sizeZ));
+				yield return new LineD3D(new PointD3D(_x + _sizeX, _y + _sizeY, _z), new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ));
+				yield return new LineD3D(new PointD3D(_x, _y + _sizeY, _z), new PointD3D(_x, _y + _sizeY, _z + _sizeZ));
+
+				// Top
+				yield return new LineD3D(new PointD3D(_x, _y, _z + _sizeZ), new PointD3D(_x + _sizeX, _y, _z + _sizeZ));
+				yield return new LineD3D(new PointD3D(_x + _sizeX, _y, _z + _sizeZ), new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ));
+				yield return new LineD3D(new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ), new PointD3D(_x, _y + _sizeY, _z + _sizeZ));
+				yield return new LineD3D(new PointD3D(_x, _y + _sizeY, _z + _sizeZ), new PointD3D(_x, _y, _z + _sizeZ));
+			}
+		}
+
+		/// <summary>
 		/// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
 		/// The order is front, back, top, bottom, left, right.
 		/// </summary>

@@ -416,30 +416,6 @@ namespace Altaxo.Graph.Graph3D
 			RootLayer.Paint(g, paintContext);
 
 			RootLayer.PaintPostprocessing();
-
-			//DrawSomething2(g);
-			DrawSomeStuff(g);
-		}
-
-		public void DrawSomeStuff(IGraphicContext3D gc)
-		{
-			var penRed = new PenX3D(NamedColors.Red, 4);
-			gc.DrawLine(penRed, new PointD3D(0, 0, 0), new PointD3D(30, 0, 0));
-			var penGreen = new PenX3D(NamedColors.Green, 4);
-			gc.DrawLine(penGreen, new PointD3D(0, 0, 0), new PointD3D(0, 30, 0));
-			var penBlue = new PenX3D(NamedColors.Blue, 4);
-			gc.DrawLine(penBlue, new PointD3D(0, 0, 0), new PointD3D(0, 0, 30));
-
-			var penCrim = new PenX3D(NamedColors.Crimson, 4);
-			gc.DrawLine(penBlue, new PointD3D(0, 0, 0), new PointD3D(-30, 0, 0));
-		}
-
-		public void DrawSomething2(IGraphicContext3D gc)
-		{
-			var gcc = (GraphicContext3DBase)gc;
-
-			var penRed = new PenX3D(NamedColors.Red, 4);
-			gcc.DrawTriangle(Materials.GetSolidMaterial(NamedColors.Red), new PointD3D(0, 0, 0), new PointD3D(50, 50, 0), new PointD3D(0, 50, 0));
 		}
 
 		/// <summary>

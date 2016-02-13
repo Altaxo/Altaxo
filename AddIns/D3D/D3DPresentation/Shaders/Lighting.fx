@@ -213,6 +213,12 @@ struct PS_IN
 	float2 clip1 : SV_ClipDistance1; // clip distances 4..5
 };
 
+struct PS_OVERLAY_IN
+{
+	float4 pos : SV_POSITION; // position in camera coordinates
+	float4 col : COLOR;  // pixel color
+};
+
 PS_IN VS_P(VS_IN_P input)
 {
 	PS_IN output = (PS_IN)0;
@@ -309,6 +315,24 @@ float4 PS(PS_IN input) : SV_Target
 	return CalcLighting(input.posW, input.normal, input.col);
 }
 
+// --------------------  Overlay rendering --------------------------------------
+
+PS_OVERLAY_IN VS_OVERLAY_PC(VS_IN_PC input)
+{
+	PS_OVERLAY_IN output = (PS_OVERLAY_IN)0;
+
+	output.pos = mul(input.pos, WorldViewProj);
+	output.col = input.col;
+	return output;
+}
+
+float4 PS_OVERLAY(PS_OVERLAY_IN input) : SV_Target
+{
+	return input.col;
+}
+
+// ---------------------End of overlay rendering --------------------------------
+
 technique10 Shade_P
 {
 	pass P0
@@ -324,8 +348,8 @@ technique10 Shade_PC
 	pass P0
 	{
 		SetGeometryShader(0);
-		SetVertexShader(CompileShader(vs_4_0, VS_PC()));
-		SetPixelShader(CompileShader(ps_4_0, PS()));
+		SetVertexShader(CompileShader(vs_4_0, VS_OVERLAY_PC()));
+		SetPixelShader(CompileShader(ps_4_0, PS_OVERLAY()));
 	}
 }
 

@@ -33,7 +33,12 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
-	public interface IGraphicContext3D
+	public interface ITransformationContext
+	{
+		Matrix4x3 Transformation { get; }
+	}
+
+	public interface IGraphicContext3D : ITransformationContext
 	{
 		/// <summary>
 		/// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.
@@ -78,5 +83,12 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		void PrependTransform(Matrix4x3 m);
 
 		void TranslateTransform(double x, double y, double z);
+	}
+
+	public interface IOverlayContext3D : ITransformationContext
+	{
+		IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffers { get; }
+
+		IPositionColorLineListBuffer PositionColorLineListBuffer { get; }
 	}
 }

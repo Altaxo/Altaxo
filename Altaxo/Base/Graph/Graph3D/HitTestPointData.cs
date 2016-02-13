@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <param name="p2">The point p2.</param>
 		/// <param name="z">The minimum z component of all three provided points.</param>
 		/// <returns>True if the point x=0, y=0 is included in the triangle, otherwise false.</returns>
-		private bool HitTestWithAlreadyTransformedPoints(PointD3D p0, PointD3D p1, PointD3D p2, out double z)
+		private static bool HitTestWithAlreadyTransformedPoints(PointD3D p0, PointD3D p1, PointD3D p2, out double z)
 		{
 			if (
 				(p0.X * p1.Y - p0.Y * p1.X) <= 0 &&
@@ -121,11 +121,38 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>True if the rectangle is hit by a ray given by x=0, y=0, z>0.</returns>
 		public bool IsHit(RectangleD3D r, out double z)
 		{
+			return IsRectangleHitByRay(r, _transformation, out z);
+		}
+
+		/// <summary>
+		/// Determines whether the specified 3D-rectangle r is hit by a ray given by x=0, y=0, z>0.
+		/// </summary>
+		/// <param name="r">The rectangle r.</param>
+		/// <param name="rectangleToWorldTransformation">An additional transformation that transformes the given rectangle into the same coordinates as the hit data.</param>
+		/// <param name="z">If there was a hit, this is the z coordinate of the hit.</param>
+		/// <returns>True if the rectangle is hit by a ray given by x=0, y=0, z>0.</returns>
+		public bool IsHit(RectangleD3D r, Matrix4x3 rectangleToWorldTransformation, out double z)
+		{
+			rectangleToWorldTransformation.AppendTransform(_transformation);
+
+			return IsRectangleHitByRay(r, rectangleToWorldTransformation, out z);
+		}
+
+		/// <summary>
+		/// Determines whether the specified 3D-rectangle r is hit by a ray given by the provided transformation matrix that would transform
+		/// the hit ray in a ray at x=0, y=0, and z=-Infinity .. +Infinity.
+		/// </summary>
+		/// <param name="r">The rectangle r.</param>
+		/// <param name="rayTransformation">The hit ray transformation.</param>
+		/// <param name="z">If there was a hit, this is the z coordinate of the hit (otherwise, NaN is returned).</param>
+		/// <returns>True if the rectangle is hit by a ray given by the provided hit ray matrix.</returns>
+		public static bool IsRectangleHitByRay(RectangleD3D r, Matrix4x3 rayTransformation, out double z)
+		{
 			PointD3D[] vertices = new PointD3D[8];
 
 			int i = 0;
 			foreach (var v in r.Vertices)
-				vertices[i++] = _transformation.TransformPoint(v);
+				vertices[i++] = rayTransformation.TransformPoint(v);
 
 			foreach (var ti in r.TriangleIndices)
 			{

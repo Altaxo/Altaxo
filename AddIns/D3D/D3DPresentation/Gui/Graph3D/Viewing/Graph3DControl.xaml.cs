@@ -204,6 +204,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e), e);
 		}
 
+		public IGraphicContext3D GetGraphicContext()
+		{
+			return new D3D10GraphicContext();
+		}
+
 		public void SetDrawing(IGraphicContext3D drawing)
 		{
 			if (null == drawing)
@@ -212,9 +217,30 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_scene.SetDrawing((D3D10GraphicContext)drawing);
 		}
 
-		public IGraphicContext3D GetGraphicContext()
+		public IOverlayContext3D GetGraphicContextForMarkers()
 		{
-			return new D3D10GraphicContext();
+			return new D3D10OverlayContext();
+		}
+
+		public void SetMarkerGeometry(IOverlayContext3D markerGeometry)
+		{
+			if (null == markerGeometry)
+				throw new ArgumentNullException();
+
+			_scene.SetMarkerGeometry((D3D10OverlayContext)markerGeometry);
+		}
+
+		public IOverlayContext3D GetGraphicContextForOverlay()
+		{
+			return new D3D10OverlayContext();
+		}
+
+		public void SetOverlayGeometry(IOverlayContext3D overlayGeometry)
+		{
+			if (null == overlayGeometry)
+				throw new ArgumentNullException();
+
+			_scene.SetOverlayGeometry((D3D10OverlayContext)overlayGeometry);
 		}
 	}
 }

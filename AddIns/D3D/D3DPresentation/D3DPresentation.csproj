@@ -79,9 +79,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10OverlayContext.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialAndClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialComparer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorLineListBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBufferWithClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\TextureExtensions.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\D3D10Scene_Lighting.cs" />
     <Compile Include="Gui\Graph3D\Viewing\D3D11Scene.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>

@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
 	public class PositionColorIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionColorIndexedTriangleBuffer
 	{
-		public PositionColorIndexedTriangleBuffer(D3D10GraphicContext parent)
+		public PositionColorIndexedTriangleBuffer(ITransformationContext parent)
 			: base(parent)
 		{
 		}
@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		public void AddTriangleVertex(double x, double y, double z, float r, float g, float b, float a)
 		{
-			var pt = _parent.Transformation.Transformation.TransformPoint(new PointD3D(x, y, z));
+			var pt = _parent.Transformation.TransformPoint(new PointD3D(x, y, z));
 
 			int offs = _numberOfVertices << 3;
 

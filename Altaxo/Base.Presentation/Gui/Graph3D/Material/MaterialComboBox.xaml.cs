@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Graph3D.Material
 		protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial brush)
 		{
 			if (null == brush)
-				brush = Materials.GetSolidMaterial(NamedColors.Transparent);
+				brush = Materials.GetNoMaterial();
 
 			var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
 			if (!brush.Color.Equals(coercedColor))
@@ -342,6 +342,31 @@ namespace Altaxo.Gui.Graph3D.Material
 			{
 				var newMat = Materials.GetMaterialWithNewColor((IMaterial)InternalSelectedMaterial, newColor);
 				InternalSelectedMaterial = newMat;
+			}
+		}
+
+		private void EhChooseSpecularPropertiesFromContextMenu(object sender, RoutedEventArgs e)
+		{
+			var sfsender = (FrameworkElement)sender;
+			string tag = (string)sfsender.Tag;
+			var tagparts = tag.Split(';');
+			if (tagparts.Length != 3)
+				return;
+
+			double specIntensity;
+			double specExponent;
+			double specMixing;
+
+			try
+			{
+				specIntensity = double.Parse(tagparts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+				specExponent = double.Parse(tagparts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+				specMixing = double.Parse(tagparts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+				var newMaterial = SelectedMaterial.WithSpecularProperties(specIntensity, specExponent, specMixing);
+				SelectedMaterial = newMaterial;
+			}
+			catch (Exception)
+			{
 			}
 		}
 

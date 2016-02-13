@@ -32,13 +32,13 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
 	public abstract class IndexedTriangleBuffer : IIndexedTriangleBuffer
 	{
-		protected D3D10GraphicContext _parent;
+		protected ITransformationContext _parent;
 		protected float[] _vertexStream;
 		protected int[] _indexStream;
 		protected int _numberOfVertices;
 		protected int _numberOfTriangles;
 
-		protected IndexedTriangleBuffer(D3D10GraphicContext parent)
+		protected IndexedTriangleBuffer(ITransformationContext parent)
 		{
 			_parent = parent;
 
