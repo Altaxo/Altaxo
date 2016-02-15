@@ -325,6 +325,7 @@
     <Compile Include="Geometry\RectangleD3D.cs" />
     <Compile Include="Graph\Graph3D\SceneSettings.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\GraphicBase.HitTestObject.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.MovementGripHandle.cs" />
     <Compile Include="Graph\Graph3D\Shapes\IGraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\Sphere.cs" />

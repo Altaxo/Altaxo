@@ -147,18 +147,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.NumPad7)
+			var guiController = _controller;
+			if (null != guiController)
 			{
+				bool result = guiController.EhView_ProcessCmdKey(e);
+				e.Handled = result;
 			}
-
-			if (e.Key == Key.Up)
-				_controller.EhMoveOrRoll(0, 1, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
-			else if (e.Key == Key.Down)
-				_controller.EhMoveOrRoll(0, -1, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
-			else if (e.Key == Key.Right)
-				_controller.EhMoveOrRoll(1, 0, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
-			else if (e.Key == Key.Left)
-				_controller.EhMoveOrRoll(-1, 0, e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control));
 		}
 
 		private void EhMouseWheel(object sender, MouseWheelEventArgs e)
@@ -166,7 +160,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var mousePosition = e.GetPosition(this._d3dCanvas);
 			double relX = mousePosition.X / _d3dCanvas.ActualWidth;
 			double relY = 1 - mousePosition.Y / _d3dCanvas.ActualHeight;
-			_controller.EhMouseWheel(relX, relY, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth, e.Delta);
+
+			bool isSHIFTpressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+			bool isCTRLpressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+			bool isALTpressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt);
+
+			_controller.EhMouseWheel(relX, relY, _d3dCanvas.ActualHeight / _d3dCanvas.ActualWidth, e.Delta, isSHIFTpressed, isCTRLpressed, isALTpressed);
 		}
 
 		private PointD3D GetMousePosition(MouseEventArgs e)

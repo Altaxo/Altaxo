@@ -505,15 +505,50 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1));
 		}
 
-		public void EhMouseWheel(double relX, double relY, double aspectRatio, int delta)
+		public void EhMouseWheel(double relX, double relY, double aspectRatio, int delta, bool isSHIFTpressed, bool isCTRLpressed, bool isALTpressed)
 		{
-			if (Doc.Scene.Camera is OrthographicCamera)
+			// MouseWheeling only: Zoom in/out
+			// MouseWheeling + SHIFT key:	Move camera vertically
+			// MouseWheeling + CTRL key: Move camera horizontally
+			// MouseWheeling + SHIFT + ALT: Rotate camera around horizontal axis
+			// MouseWheeling + SHIFT + CTRL: Rotate camera around vertical axis
+
+			if (!isSHIFTpressed && !isCTRLpressed && !isALTpressed)
 			{
-				var cam = Doc.Scene.Camera as OrthographicCamera;
+				CameraZoomByMouseWheel(relX, relY, aspectRatio, delta);
+			}
+			else if (isSHIFTpressed && !isCTRLpressed && !isALTpressed) // Move camera vertically
+			{
+				CameraMoveVerticallyByMouseWheel(relX, relY, aspectRatio, delta);
+			}
+			else if (!isSHIFTpressed && isCTRLpressed && !isALTpressed) // Move camera horizontally
+			{
+				CameraMoveHorizontallyByMouseWheel(relX, relY, aspectRatio, delta);
+			}
+			else if (isSHIFTpressed && !isCTRLpressed && isALTpressed) // rotate camera around horizontal axis
+			{
+				CameraRotateAroundHorizontalAxisByMouseWheel(relX, relY, aspectRatio, delta);
+			}
+			else if (isSHIFTpressed && isCTRLpressed && !isALTpressed) // rotate camera around vertical axis
+			{
+				CameraRotateAroundVerticalAxisByMouseWheel(relX, relY, aspectRatio, delta);
+			}
+		}
+
+		protected void CameraZoomByMouseWheel(double relX, double relY, double aspectRatio, double delta)
+		{
+			Doc.Scene.Camera = CameraZoomByMouseWheel(Doc.Scene.Camera, relX, relY, aspectRatio, delta / (4 * 120));
+		}
+
+		protected static CameraBase CameraZoomByMouseWheel(CameraBase camera, double relX, double relY, double aspectRatio, double delta)
+		{
+			if (camera is OrthographicCamera)
+			{
+				var cam = camera as OrthographicCamera;
 				var eye = cam.NormalizedEyeVector;
 				var up = cam.NormalizedUpVectorPerpendicularToEyeVector;
 				var scaleBefore = cam.Scale;
-				var scaleAfter = delta < 0 ? scaleBefore / 1.25 : scaleBefore * 1.25;
+				var scaleAfter = scaleBefore * Math.Pow(2, delta);
 
 				var tam1h = relX - 0.5;
 				var tbm1h = relY - 0.5;
@@ -524,31 +559,59 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					-(scaleAfter - scaleBefore) * (eye.Y * tam1h * up.X - eye.X * tam1h * up.Y + aspectRatio * tbm1h * up.Z)
 					);
 
-				var oldCamera = (OrthographicCamera)Doc.Scene.Camera;
-				var newCamera = ((OrthographicCamera)Doc.Scene.Camera).WithEyeTargetScale(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift, scaleAfter);
-				Doc.Scene.Camera = newCamera;
+				var oldCamera = (OrthographicCamera)camera;
+				var newCamera = ((OrthographicCamera)camera).WithEyeTargetScale(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift, scaleAfter);
+				return newCamera;
 			}
+
+			return camera;
 		}
 
-		public void EhMoveOrRoll(double stepX, double stepY, bool isControlPressed)
+		protected void CameraMoveHorizontallyByMouseWheel(double relX, double relY, double aspectRatio, int delta)
 		{
-			if (isControlPressed)
-				EhRoll(stepX, stepY);
-			else
-				EhMove(stepX, stepY);
+			CameraMoveRelative(delta / 4800.0, 0);
 		}
 
-		public void EhRoll(double stepX, double stepY)
+		protected void CameraMoveVerticallyByMouseWheel(double relX, double relY, double aspectRatio, int delta)
 		{
-			var cam = Doc.Scene.Camera;
+			CameraMoveRelative(0, delta / 4800.0);
+		}
 
+		protected void CameraRotateAroundHorizontalAxisByMouseWheel(double relX, double relY, double aspectRatio, int delta)
+		{
+			CameraRotateDegrees(delta / 24.0, 0);
+		}
+
+		protected void CameraRotateAroundVerticalAxisByMouseWheel(double relX, double relY, double aspectRatio, int delta)
+		{
+			CameraRotateDegrees(0, delta / 24.0);
+		}
+
+		/// <summary>
+		/// Rotates the camera.
+		/// </summary>
+		/// <param name="stepX">The rotation around the vertical axis in degrees.</param>
+		/// <param name="stepY">The rotation around the horizontal axis in degrees.</param>
+		public void CameraRotateDegrees(double stepX, double stepY)
+		{
+			Doc.Scene.Camera = CameraRotateDegrees(Doc.Scene.Camera, stepX, stepY);
+		}
+
+		/// <summary>
+		/// Rotates the camera.
+		/// </summary>
+		/// <param name="cam">Initial camera, i.e. camera prior to the rotation</param>
+		/// <param name="stepX">The rotation around the vertical axis in degrees.</param>
+		/// <param name="stepY">The rotation around the horizontal axis in degrees.</param>
+		public static CameraBase CameraRotateDegrees(CameraBase cam, double stepX, double stepY)
+		{
 			// the axis to turn the camera around is in case of stepY the Cross of UpVector and eyeVector
 			// in case of stepX it is the cross of the Upvector and the cross of UpVector and eyeVector
 
 			if (stepX != 0)
 			{
-				double angleRadian = Math.PI * stepX / 18;
-				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, VectorD3D.CrossProduct(cam.EyeVector, cam.UpVector)));
+				double angleRadian = stepX * Math.PI / 180.0;
+				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.EyeVector, VectorD3D.CrossProduct(cam.EyeVector, cam.UpVector)));
 				var matrix = Matrix4x3.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
 				var newEye = matrix.TransformPoint(cam.EyePosition);
@@ -558,7 +621,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (stepY != 0)
 			{
-				double angleRadian = Math.PI * stepY / 18;
+				double angleRadian = stepY * Math.PI / 180.0;
 				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.NormalizedEyeVector, cam.UpVector));
 				var matrix = Matrix4x3.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
@@ -567,24 +630,39 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				cam = cam.WithUpEye(newUp, newEye);
 			}
 
-			Doc.Scene.Camera = cam;
+			return cam;
 		}
 
-		public void EhMove(double stepX, double stepY)
+		/// <summary>
+		/// Moves the camera horizontally and vertically.
+		/// </summary>
+		/// <param name="stepX">The movement in horizontal direction. A value of 1 means movement corresponding to the full width of the scene.</param>
+		/// <param name="stepY">The movement in horizontal direction. A value of 1 means movement corresponding to the full height of the scene.</param>
+		public void CameraMoveRelative(double stepX, double stepY)
 		{
-			VectorD3D xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.NormalizedEyeVector, Doc.Scene.Camera.UpVector));
-			VectorD3D yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, VectorD3D.CrossProduct(Doc.Scene.Camera.EyeVector, Doc.Scene.Camera.UpVector)));
+			Doc.Scene.Camera = CameraMoveRelative(Doc.Scene.Camera, stepX, stepY);
+		}
 
-			var cam = Doc.Scene.Camera;
+		/// <summary>
+		/// Moves the camera horizontally and vertically.
+		/// </summary>
+		/// <param name="camera">The camera prior to the movement.</param>
+		/// <param name="stepX">The movement in horizontal direction. A value of 1 means movement corresponding to the full width of the scene.</param>
+		/// <param name="stepY">The movement in horizontal direction. A value of 1 means movement corresponding to the full height of the scene.</param>
+		/// <returns>The new camera after the movement.</returns>
+		public static CameraBase CameraMoveRelative(CameraBase camera, double stepX, double stepY)
+		{
+			VectorD3D xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.NormalizedEyeVector, camera.UpVector));
+			VectorD3D yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.EyeVector, VectorD3D.CrossProduct(camera.EyeVector, camera.UpVector)));
 
-			if (cam is OrthographicCamera)
+			if (camera is OrthographicCamera)
 			{
-				var oldCamera = (OrthographicCamera)Doc.Scene.Camera;
-				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.Scale / 20);
-				cam = oldCamera.WithEyeTarget(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift);
+				var oldCamera = (OrthographicCamera)camera;
+				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.Scale);
+				camera = oldCamera.WithEyeTarget(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift);
 			}
 
-			Doc.Scene.Camera = cam;
+			return camera;
 		}
 
 		/// <summary>

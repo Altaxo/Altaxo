@@ -110,6 +110,14 @@ namespace Altaxo.Geometry
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this instance is empty, i.e. all elements are zero.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is empty; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsEmpty { get { return 0 == X && 0 == Y && 0 == Z; } }
+
 		#region operators
 
 		public static VectorD3D operator +(VectorD3D a, VectorD3D b)

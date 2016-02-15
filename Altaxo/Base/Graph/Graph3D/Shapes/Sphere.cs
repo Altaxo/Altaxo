@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			double z;
 			if (localHitData.IsHit(Bounds, out z))
 			{
-				var result = new HitTestObject(new RectangularObjectOutline(this.Bounds, localHitData.Transformation), this);
+				var result = GetNewHitTestObject();
 				result.DoubleClick = null;
 				return result;
 			}
@@ -119,26 +119,27 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 				var offs = buffer.VertexCount;
 
-				var sphere = new SolidIcoSphere(3);
+				var sphere = new SolidIcoSphere(3); // gives a sphere with radius = 1
 
-				double sx = this.SizeX / 2;
-				double sy = this.SizeY / 2;
-				double sz = this.SizeZ / 2;
+				var bounds = this.Bounds;
 
-				double invsx = 1 / sx;
-				double invsy = 1 / sy;
-				double invsz = 1 / sz;
+				double sx = this.Bounds.SizeX / 2;
+				double sy = this.Bounds.SizeY / 2;
+				double sz = this.Bounds.SizeZ / 2;
 
-				var normalTransform = _transformation.GetTransposedInverse();
+				var dx = this.Bounds.X + sx;
+				var dy = this.Bounds.Y + sy;
+				var dz = this.Bounds.Z + sz;
+
+				var transformation = Matrix4x3.FromTranslationRotationShearScale(dx, dy, dz, 0, 0, 0, 0, 0, 0, sx, sy, sz);
+				transformation.AppendTransform(_transformation);
+
+				var normalTransform = transformation.GetTransposedInverse();
 
 				foreach (var entry in sphere.VerticesAndNormalsForSphere)
 				{
-					var pt = entry.Item1;
-					pt = new PointD3D(pt.X * sz, pt.Y * sy, pt.Z * sz);
-					pt = _transformation.Transform(pt);
-					var nm = entry.Item2;
-					nm = new VectorD3D(nm.X * invsx, nm.Y * invsy, nm.Z * invsz);
-					nm = normalTransform.Transform(nm);
+					var pt = transformation.Transform(entry.Item1);
+					var nm = normalTransform.Transform(entry.Item2);
 					nm.Normalize();
 					buffer.AddTriangleVertex(pt.X, pt.Y, pt.Z, nm.X, nm.Y, nm.Z);
 				}

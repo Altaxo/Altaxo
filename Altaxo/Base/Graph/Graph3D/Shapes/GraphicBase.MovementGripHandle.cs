@@ -56,9 +56,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			/// <param name="displayPath">The display path, i.e. the outline that is displayed on the plot.</param>
 			public MovementGripHandle(IHitTestObject parent, IObjectOutline gripPath, IObjectOutline displayPath)
 			{
+				if (null == parent)
+					throw new ArgumentNullException(nameof(parent));
+				if (null == gripPath)
+					throw new ArgumentNullException(nameof(gripPath));
+
 				_parent = parent;
 				_gripPath = gripPath;
-				_displayedPath = displayPath;
+				_displayedPath = displayPath ?? gripPath;
 			}
 
 			#region IGripManipulationHandle Members
@@ -71,6 +76,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			/// thie activation is due to a regular mouse click in this grip.</param>
 			public void Activate(HitTestPointData initialPosition, bool isActivatedUponCreation)
 			{
+				if (null == initialPosition)
+					throw new ArgumentNullException(nameof(initialPosition));
+
 				_wasActivatedUponCreation = isActivatedUponCreation;
 				_initialMousePosition = initialPosition;
 				_initialObjectPosition = ((GraphicBase)_parent.HittedObject).Position;
@@ -95,16 +103,60 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 			public void MoveGrip(HitTestPointData newPosition)
 			{
-				throw new NotImplementedException();
-				/*
-				var diff = newPosition - _initialMousePosition;
+				var objectToMove = ((GraphicBase)_parent.HittedObject);
+
+				var m = _initialMousePosition.Transformation; // initial ray position
+				var n = newPosition.Transformation;           // current ray position
+
+				double x = _initialObjectPosition.X;
+				double y = _initialObjectPosition.Y;
+				double z = _initialObjectPosition.Z;
+
+				// For the mathematics behind the following, see internal document "3D_MoveObjectByMovingRay"
+
+				double denom = m.M33 * n.M12 * n.M21 - m.M33 * n.M11 * n.M22 - m.M23 * n.M12 * n.M31 +
+	 m.M13 * n.M22 * n.M31 + m.M23 * n.M11 * n.M32 - m.M13 * n.M21 * n.M32;
+
+				if (0 == denom)
+					throw new ArgumentOutOfRangeException();
+
+				double dx = m.M23 * (-(m.M42 * n.M31) +
+			n.M32 * (m.M41 - n.M41 + m.M11 * x - n.M11 * x + m.M21 * y -
+				 n.M21 * y + m.M31 * z) +
+			n.M31 * (n.M42 - m.M12 * x + n.M12 * x - m.M22 * y +
+				 n.M22 * y - m.M32 * z)) +
+	 m.M33 * (m.M42 * n.M21 -
+			n.M22 * (m.M41 - n.M41 + m.M11 * x - n.M11 * x + m.M21 * y) -
+			(m.M31 * n.M22 - n.M22 * n.M31 + n.M21 * n.M32) * z +
+			n.M21 * (-n.M42 + m.M12 * x - n.M12 * x + m.M22 * y + m.M32 * z));
+
+				double dy = m.M13 * (m.M42 * n.M31 - n.M32 *
+			 (m.M41 - n.M41 + m.M11 * x - n.M11 * x + m.M21 * y -
+				 n.M21 * y + m.M31 * z) +
+			n.M31 * (-n.M42 + m.M12 * x - n.M12 * x + m.M22 * y -
+				 n.M22 * y + m.M32 * z)) +
+	 m.M33 * (-(m.M42 * n.M11) + n.M12 * (m.M41 - n.M41) +
+			n.M12 * (m.M11 * x + m.M21 * y - n.M21 * y + m.M31 * z -
+				 n.M31 * z) + n.M11 *
+			 (n.M42 - m.M12 * x - m.M22 * y + n.M22 * y - m.M32 * z +
+				 n.M32 * z));
+
+				double dz = m.M13 * (-(m.M42 * n.M21) +
+			n.M22 * (m.M41 - n.M41 + m.M11 * x - n.M11 * x + m.M21 * y) +
+			(m.M31 * n.M22 - n.M22 * n.M31 + n.M21 * n.M32) * z +
+			n.M21 * (n.M42 - m.M12 * x + n.M12 * x - m.M22 * y - m.M32 * z))
+		 + m.M23 * (m.M42 * n.M11 + n.M12 * (-m.M41 + n.M41) -
+			n.M12 * (m.M11 * x + m.M21 * y - n.M21 * y + m.M31 * z -
+				 n.M31 * z) + n.M11 *
+			 (-n.M42 + m.M12 * x + m.M22 * y - n.M22 * y + m.M32 * z -
+				 n.M32 * z));
+
+				var diff = new VectorD3D(dx / denom, dy / denom, dz / denom);
 
 				if (!diff.IsEmpty)
 					_hasMoved = true;
 
-				diff = _parent.Transformation.InverseTransformVector(diff);
-				((GraphicBase)_parent.HittedObject).SilentSetPosition(_initialObjectPosition + diff);
-				*/
+				objectToMove.SilentSetPosition(_initialObjectPosition + diff);
 			}
 
 			/// <summary>Draws the grip in the graphics context.</summary>

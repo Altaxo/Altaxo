@@ -148,6 +148,9 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		/// <summary>List of selected HitTestObjects</summary>
 		protected List<IHitTestObject> _selectedObjects;
 
+		/// <summary>If objects where really moved during the moving mode, this value become true</summary>
+		protected bool _wereObjectsMoved = false;
+
 		/// <summary>
 		/// Current displayed grip level;
 		/// </summary>
@@ -158,6 +161,9 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 
 		/// <summary>Grip that is currently dragged.</summary>
 		protected IGripManipulationHandle ActiveGrip;
+
+		/// <summary>Locker to suppress changed events during moving of objects.</summary>
+		protected Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
 
 		public ObjectPointerMouseHandler(Graph3DControllerWpf grac)
 		{
@@ -177,6 +183,24 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
+		/// <summary>
+		/// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
+		/// </summary>
+		public IHitTestObject SingleSelectedHitTestObject
+		{
+			get
+			{
+				if (_selectedObjects.Count != 1)
+					return null;
+
+				foreach (IHitTestObject graphObject in _selectedObjects) // foreach is here only for one object!
+				{
+					return graphObject;
+				}
+				return null;
+			}
+		}
+
 		public override void OnMouseDown(PointD3D position, MouseButtonEventArgs e)
 		{
 			var hitData = new HitTestPointData(_grac.Doc.Scene.Camera.GetHitRayMatrix(position));
@@ -188,6 +212,25 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
 			bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
 
+			ActiveGrip = GripHitTest(hitData);
+			if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
+			{
+				var superGrip = ActiveGrip as SuperGrip;
+				IHitTestObject hitTestObj;
+				IGripManipulationHandle gripHandle;
+				if (superGrip.GetHittedElement(hitData, out gripHandle, out hitTestObj))
+				{
+					_selectedObjects.Remove(hitTestObj);
+					superGrip.Remove(gripHandle);
+					return;
+				}
+			}
+			else if (ActiveGrip != null)
+			{
+				ActiveGrip.Activate(hitData, false);
+				return;
+			}
+
 			// search for a object first
 			IHitTestObject clickedObject;
 			int[] clickedLayerNumber = null;
@@ -198,6 +241,94 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 
 			if (null != clickedObject)
 				AddSelectedObject(hitData, clickedObject);
+		}
+
+		/// <summary>
+		/// Handles the mouse up event.
+		/// </summary>
+		/// <param name="position">Mouse position.</param>
+		/// <param name="e">MouseEventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
+		public override void OnMouseUp(PointD3D position, MouseButtonEventArgs e)
+		{
+			base.OnMouseUp(position, e);
+
+			/*
+			if (e.LeftButton == MouseButtonState.Released && null != _rectangleSelectionArea_GraphCoordinates)
+			{
+				List<IHitTestObject> foundObjects;
+				_grac.FindGraphObjectInRootLayerRectangle(_rectangleSelectionArea_GraphCoordinates.Value, out foundObjects);
+				AddSelectedObjectsFromRectangularSelection(foundObjects);
+				_grac.ReleaseMouseCapture();
+				_rectangleSelectionArea_GraphCoordinates = null;
+				_grac.RenderOverlay();
+				return;
+			}
+			*/
+
+			if (ActiveGrip != null)
+			{
+				bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
+				bool bRepaint = false;
+				_wereObjectsMoved = false;
+				_grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
+
+				bool chooseNextLevel = ActiveGrip.Deactivate();
+				ActiveGrip = null;
+
+				if (chooseNextLevel && null != SingleSelectedHitTestObject)
+				{
+					DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
+					bRepaint = true;
+				}
+
+				_grac.RenderOverlay();
+			}
+		}
+
+		/// <summary>
+		/// Handles the mouse move event.
+		/// </summary>
+		/// <param name="position">Mouse position.</param>
+		/// <param name="e">MouseEventArgs as provided by the view.</param>
+		/// <returns>The next mouse state handler that should handle mouse events.</returns>
+		public override void OnMouseMove(PointD3D position, MouseEventArgs e)
+		{
+			base.OnMouseMove(position, e);
+
+			var graphCoord = new HitTestPointData(_grac.Doc.Scene.Camera.GetHitRayMatrix(position));
+
+			if (null != ActiveGrip)
+			{
+				ActiveGrip.MoveGrip(graphCoord);
+				_wereObjectsMoved = true;
+				_grac.RenderOverlay();
+			}
+			/*
+			else if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				var diffPos = position - _positionLastMouseDownInMouseCoordinates;
+
+				var oldRect = _rectangleSelectionArea_GraphCoordinates;
+
+				if (null != _rectangleSelectionArea_GraphCoordinates ||
+						Math.Abs(diffPos.X) >= System.Windows.SystemParameters.MinimumHorizontalDragDistance ||
+						Math.Abs(diffPos.Y) >= System.Windows.SystemParameters.MinimumHorizontalDragDistance)
+				{
+					if (null == _rectangleSelectionArea_GraphCoordinates)
+					{
+						_grac.CaptureMouse();
+					}
+
+					var pt1 = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
+					var rect = new RectangleD2D(pt1, PointD2D.Empty);
+					rect.ExpandToInclude(_grac.ConvertMouseToRootLayerCoordinates(position));
+					_rectangleSelectionArea_GraphCoordinates = rect;
+				}
+				if (null != _rectangleSelectionArea_GraphCoordinates)
+					_grac.RenderOverlay();
+			}
+			*/
 		}
 
 		/// <summary>
@@ -230,6 +361,20 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 					//ClearSelections();
 				}
 			}
+		}
+
+		public override bool ProcessCmdKey(KeyEventArgs e)
+		{
+			// Note: a return value of true indicates that the key was processed, thus the key will not trigger further actions
+			var keyData = e.Key;
+
+			if (keyData == Key.Delete)
+			{
+				_grac.RemoveSelectedObjects();
+				return true;
+			}
+
+			return base.ProcessCmdKey(e);
 		}
 
 		/// <summary>
