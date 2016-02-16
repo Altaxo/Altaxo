@@ -94,19 +94,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		public override IHitTestObject HitTest(HitTestPointData parentHitData)
 		{
-			var localHitData = parentHitData.NewFromAdditionalTransformation(this._transformation);
-
-			double z;
-			if (localHitData.IsHit(Bounds, out z))
+			var result = base.HitTest(parentHitData);
+			if (null != result)
 			{
-				var result = GetNewHitTestObject();
 				result.DoubleClick = null;
-				return result;
 			}
-			else
-			{
-				return null;
-			}
+			return result;
 		}
 
 		public override void Paint(IGraphicContext3D g, IPaintContext context)

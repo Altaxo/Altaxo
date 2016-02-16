@@ -260,6 +260,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			if (object.ReferenceEquals(go, this._axisTitle))
 			{
 				_axisTitle = null;
+				EhSelfChanged(EventArgs.Empty);
 				return true;
 			}
 			return false;

@@ -255,6 +255,7 @@
     <Compile Include="Graph\Graph3D\G3DCoordinateSystem.cs" />
     <Compile Include="Graph\Graph3D\GraphDocument.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentBuilder.cs" />
+    <Compile Include="Graph\Graph3D\GraphDocumentClipboardActions.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentCollection.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentExportActions.cs" />
     <Compile Include="Graph\Graph3D\GraphicCollection.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="Graph\Graph3D\IPlotArea.cs" />
     <Compile Include="Graph\Graph3D\ItemLocationByGrid.cs" />
     <Compile Include="Graph\Graph3D\ItemLocationDirect.cs" />
+    <Compile Include="Graph\Graph3D\ItemLocationDirectAspectPreserving.cs" />
     <Compile Include="Graph\Graph3D\ItemLocationDirectAutoSize.cs" />
     <Compile Include="Graph\Graph3D\LabelFormatting\ILabelFormatting.cs" />
     <Compile Include="Graph\Graph3D\LabelFormatting\IMeasuredLabelItem.cs" />
@@ -324,10 +326,12 @@
     <Compile Include="Drawing\D3D\SolidText.cs" />
     <Compile Include="Geometry\RectangleD3D.cs" />
     <Compile Include="Graph\Graph3D\SceneSettings.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\EmbeddedImageGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.HitTestObject.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.MovementGripHandle.cs" />
     <Compile Include="Graph\Graph3D\Shapes\IGraphicBase.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\ImageGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\Sphere.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic_Glyphs.cs" />
@@ -443,11 +447,13 @@
     <Compile Include="Gui\Graph3D\LayerPositionController.cs" />
     <Compile Include="Gui\Graph3D\Material\MaterialControllerSimple.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\DataMeshPlotItemController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraphController.cs" />
-    <Compile Include="Gui\Graph3D\XYPlotLayerContentsController.cs" />
+    <Compile Include="Gui\Graph3D\XYZPlotLayerContentsController.cs" />
     <Compile Include="Gui\Graph3D\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
     <Compile Include="Gui\Graph\ColorManagement\NamedColorChoiceController.cs" />

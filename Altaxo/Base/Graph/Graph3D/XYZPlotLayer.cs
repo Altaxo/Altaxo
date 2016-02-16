@@ -460,12 +460,18 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public override void Remove(IGraphicBase go)
+		/// <summary>
+		/// Removes the specified graphics object. Derived classes can override this function not only to remove from the collection of graph objects,
+		/// but also from other places were graph objects can be stored, e.g. inside axis styles.
+		/// </summary>
+		/// <param name="go">The graphics object to remove..</param>
+		/// <returns>True if the graph object was removed; otherwise false.</returns>
+		public override bool Remove(IGraphicBase go)
 		{
 			if (_axisStyles.Remove(go))
-				return;
+				return true;
 			else
-				base.Remove(go);
+				return base.Remove(go);
 		}
 
 		public PlotItemCollection PlotItems
@@ -864,7 +870,7 @@ namespace Altaxo.Graph.Graph3D
 
 		protected override IHitTestObject HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
 		{
-			IHitTestObject hit;
+			IHitTestObject hit = null; 
 
 			if (!plotItemsOnly)
 			{
@@ -872,11 +878,18 @@ namespace Altaxo.Graph.Graph3D
 				if (null != hit)
 				{
 					hit.AppendTransformation(_transformation);
-					return hit;
 				}
 			}
 
-			return base.HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
+			if (null == hit)
+			{
+				hit = base.HitTestWithLocalCoordinates(localCoord, plotItemsOnly);
+			}
+
+			if (null != hit && hit.ParentLayer == null)
+				hit.ParentLayer = this;
+
+			return hit;
 		}
 
 		#endregion Painting and Hit testing

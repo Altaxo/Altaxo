@@ -183,6 +183,8 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			}
 		}
 
+		public IList<IHitTestObject> SelectedObjects { get { return _selectedObjects; } }
+
 		/// <summary>
 		/// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
 		/// </summary>
@@ -371,6 +373,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			if (keyData == Key.Delete)
 			{
 				_grac.RemoveSelectedObjects();
+				_grac.RenderOverlay();
 				return true;
 			}
 

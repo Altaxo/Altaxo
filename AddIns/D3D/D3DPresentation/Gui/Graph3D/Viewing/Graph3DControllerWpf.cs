@@ -67,9 +67,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// </summary>
 		private MiddelButtonAction _middleButtonCurrentAction;
 
+		private static IList<IHitTestObject> _emptyReadOnlyList;
+
 		static Graph3DControllerWpf()
 		{
-			//_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
+			_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
 
 			// register here editor methods
 			XYPlotLayerController.RegisterEditHandlers();
@@ -103,6 +105,17 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != view)
 				view.SetPanelCursor(arrow);
+		}
+
+		public override IList<IHitTestObject> SelectedObjects
+		{
+			get
+			{
+				if (_mouseState is ObjectPointerMouseHandler)
+					return ((ObjectPointerMouseHandler)_mouseState).SelectedObjects;
+				else
+					return _emptyReadOnlyList;
+			}
 		}
 
 		/// <summary>

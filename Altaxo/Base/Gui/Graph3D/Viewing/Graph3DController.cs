@@ -8,14 +8,19 @@ namespace Altaxo.Gui.Graph3D.Viewing
 {
 	using Altaxo.Collections;
 	using Altaxo.Geometry;
+	using Altaxo.Graph;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext;
+	using Altaxo.Graph.Graph3D.Shapes;
 
 	//using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Main;
+	using Altaxo.Serialization.Clipboard;
 	using Drawing;
 	using Drawing.D3D;
+	using System.Collections;
+	using System.Drawing;
 
 	public class Graph3DController : IDisposable, IMVCANController
 	{
@@ -248,7 +253,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		public IList<object> SelectedObjects { get; internal set; }
+		/// <summary>
+		/// Gets the selected objects. This property must be overriden in derived classes
+		/// </summary>
+		/// <value>
+		/// The selected objects.
+		/// </value>
+		public virtual IList<IHitTestObject> SelectedObjects { get; }
 
 		public void Dispose()
 		{
@@ -387,24 +398,196 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
+		public bool IsCmdCutEnabled()
+		{
+			return 0 != SelectedObjects.Count;
+		}
+
 		public void CutSelectedObjectsToClipboard()
 		{
-			throw new NotImplementedException();
+			var objectList = new ArrayList();
+			var notSerialized = new List<IHitTestObject>();
+
+			foreach (IHitTestObject o in SelectedObjects)
+			{
+				objectList.Add(o.HittedObject);
+			}
+
+			ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Graph3D.GraphObjectListAsXml", objectList);
+
+			// Remove the not serialized objects from the selection, so they are not removed from the graph..
+			foreach (IHitTestObject o in notSerialized)
+				SelectedObjects.Remove(o);
+
+			this.RemoveSelectedObjects();
+		}
+
+		public bool IsCmdCopyEnabled()
+		{
+			return true;
 		}
 
 		public void CopySelectedObjectsToClipboard()
 		{
-			throw new NotImplementedException();
+			if (0 == SelectedObjects.Count)
+			{
+				// we copy the whole graph as xml
+				ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Graph3D.GraphDocumentAsXml", _doc);
+			}
+			else
+			{
+				var objectList = new ArrayList();
+
+				foreach (IHitTestObject o in SelectedObjects)
+				{
+					objectList.Add(o.HittedObject);
+				}
+				ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Graph3D.GraphObjectListAsXml", objectList);
+			}
+		}
+
+		public bool IsCmdPasteEnabled()
+		{
+			return true;
 		}
 
 		public void PasteObjectsFromClipboard()
 		{
-			throw new NotImplementedException();
+			GraphDocument gd = this.Doc;
+			var dao = Current.Gui.OpenClipboardDataObject();
+
+			if (dao.GetDataPresent("Altaxo.Graph.Graph3D.GraphObjectListAsXml"))
+			{
+				object obj = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Graph3D.GraphObjectListAsXml");
+				if (obj is ICollection)
+				{
+					ICollection list = (ICollection)obj;
+					foreach (object item in list)
+					{
+						if (item is GraphicBase)
+							this.ActiveLayer.GraphObjects.Add(item as GraphicBase);
+						else if (item is Altaxo.Graph.Graph3D.Plot.IGPlotItem && ActiveLayer is XYZPlotLayer)
+							((XYZPlotLayer)ActiveLayer).PlotItems.Add((Altaxo.Graph.Graph3D.Plot.IGPlotItem)item);
+					}
+				}
+				return;
+			}
+			if (dao.GetDataPresent("Altaxo.Graph.Graph3D.GraphDocumentAsXml"))
+			{
+				Doc.PasteFromClipboardAsGraphStyle(true);
+				return;
+			}
+			if (dao.GetDataPresent("Altaxo.Graph.Graph3D.GraphLayerAsXml"))
+			{
+				Doc.PasteFromClipboardAsNewLayer();
+				return;
+			}
+
+			if (dao.ContainsFileDropList())
+			{
+				bool bSuccess = false;
+				System.Collections.Specialized.StringCollection coll = dao.GetFileDropList();
+				foreach (string filename in coll)
+				{
+					ImageProxy img;
+					try
+					{
+						img = ImageProxy.FromFile(filename);
+						if (img != null)
+						{
+							var size = this.ActiveLayer.Size;
+							size.X /= 2;
+							size.Y /= 2;
+
+							PointD2D imgSize = img.GetImage().PhysicalDimension;
+
+							double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
+							imgSize.X *= scale;
+							imgSize.Y *= scale;
+
+							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, new VectorD3D(imgSize.X, imgSize.Y, 0), img);
+							this.ActiveLayer.GraphObjects.Add(item);
+							bSuccess = true;
+							continue;
+						}
+					}
+					catch (Exception)
+					{
+					}
+				}
+				if (bSuccess)
+					return;
+			}
+
+			if (dao.GetDataPresent(typeof(System.Drawing.Imaging.Metafile)))
+			{
+				System.Drawing.Imaging.Metafile img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
+				if (img != null)
+				{
+					var size = 0.5 * this.ActiveLayer.Size;
+					size.Z = 0;
+					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
+					this.ActiveLayer.GraphObjects.Add(item);
+					return;
+				}
+			}
+			if (dao.ContainsImage())
+			{
+				Image img = dao.GetImage();
+				if (img != null)
+				{
+					var size = 0.5 * this.ActiveLayer.Size;
+					size.Z = 0;
+					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
+					this.ActiveLayer.GraphObjects.Add(item);
+					return;
+				}
+			}
+		}
+
+		public bool IsCmdDeleteEnabled()
+		{
+			return true;
+		}
+
+		public void CmdDelete()
+		{
+			if (SelectedObjects.Count > 0)
+			{
+				RemoveSelectedObjects();
+			}
+			else
+			{
+				// nothing is selected, we assume that the user wants to delete the worksheet itself
+				Current.ProjectService.DeleteDocument(Doc, false);
+			}
 		}
 
 		public void RemoveSelectedObjects()
 		{
-			throw new NotImplementedException();
+			if (null == SelectedObjects || SelectedObjects.Count == 0)
+				return;
+
+			using (var token = Doc.SuspendGetToken())
+			{
+				System.Collections.Generic.List<IHitTestObject> removedObjects = new System.Collections.Generic.List<IHitTestObject>();
+
+				foreach (IHitTestObject o in SelectedObjects)
+				{
+					if (o.Remove != null)
+					{
+						if (true == o.Remove(o))
+							removedObjects.Add(o);
+					}
+				}
+
+				if (removedObjects.Count > 0)
+				{
+					foreach (IHitTestObject o in removedObjects)
+						SelectedObjects.Remove(o);
+				}
+			}
+			// Redraw not neccessary since graph should trigger this by itself because some objects were removed
 		}
 
 		public bool Apply(bool disposeController)

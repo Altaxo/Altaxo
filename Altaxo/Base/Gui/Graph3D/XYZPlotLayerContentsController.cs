@@ -4,7 +4,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph3D
 {
 	#region Interfaces
 
-	public interface IXYPlotLayerContentsViewEventSink
+	public interface IXYZPlotLayerContentsViewEventSink
 	{
 		void EhView_DataAvailableBeforeExpand(NGTreeNode node);
 
@@ -98,12 +98,12 @@ namespace Altaxo.Gui.Graph3D
 		void AvailableItems_DragCancelled();
 	}
 
-	public interface IXYPlotLayerContentsView
+	public interface IXYZPlotLayerContentsView
 	{
 		/// <summary>
 		/// Get/sets the controller of this view.
 		/// </summary>
-		IXYPlotLayerContentsViewEventSink Controller { get; set; }
+		IXYZPlotLayerContentsViewEventSink Controller { get; set; }
 
 		IEnumerable<object> PlotItemsSelected { get; }
 
@@ -136,11 +136,11 @@ namespace Altaxo.Gui.Graph3D
 	/// Controls the content of a <see cref="PlotItemCollection" />
 	/// </summary>
 	[UserControllerForObject(typeof(PlotItemCollection))]
-	[ExpectedTypeOfView(typeof(IXYPlotLayerContentsView))]
-	public class XYPlotLayerContentsController
+	[ExpectedTypeOfView(typeof(IXYZPlotLayerContentsView))]
+	public class XYZPlotLayerContentsController
 		:
-		MVCANControllerEditOriginalDocBase<PlotItemCollection, IXYPlotLayerContentsView>,
-		IXYPlotLayerContentsViewEventSink, IMVCANController
+		MVCANControllerEditOriginalDocBase<PlotItemCollection, IXYZPlotLayerContentsView>,
+		IXYZPlotLayerContentsViewEventSink, IMVCANController
 	{
 		private NGTreeNode _plotItemsRootNode;
 		private NGTreeNodeCollection _plotItemsTree;

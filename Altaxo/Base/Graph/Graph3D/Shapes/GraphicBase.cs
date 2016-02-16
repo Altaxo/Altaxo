@@ -644,9 +644,24 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// <summary>
 		/// Tests a mouse click, whether or not it hits the object.
 		/// </summary>
-		/// <param name="hitData">Data containing the position of the click and the transformations.</param>
+		/// <param name="parentHitData">Data containing the position of the click and the transformations.</param>
 		/// <returns>Null if the object is not hitted. Otherwise data to further process the hitted object.</returns>
-		public abstract IHitTestObject HitTest(HitTestPointData hitData);
+		public virtual IHitTestObject HitTest(HitTestPointData parentHitData)
+		{
+			var localHitData = parentHitData.NewFromAdditionalTransformation(this._transformation);
+
+			double z;
+			if (localHitData.IsHit(Bounds, out z))
+			{
+				var result = GetNewHitTestObject();
+				result.DoubleClick = null;
+				return result;
+			}
+			else
+			{
+				return null;
+			}
+		}
 
 		#endregion HitTesting
 

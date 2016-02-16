@@ -1298,15 +1298,24 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public virtual void Remove(IGraphicBase go)
+		/// <summary>
+		/// Removes the specified graphics object. Derived classes can override this function not only to remove from the collection of graph objects,
+		/// but also from other places were graph objects can be stored, e.g. inside axis styles.
+		/// </summary>
+		/// <param name="go">The graphics object to remove..</param>
+		/// <returns>True if the graph object was removed; otherwise false.</returns>
+		public virtual bool Remove(IGraphicBase go)
 		{
 			if (_graphObjects.Contains(go))
 			{
 				if (_graphObjects.Remove(go))
 				{
 					go.Dispose();
+					return true;
 				}
 			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -1406,8 +1415,7 @@ namespace Altaxo.Graph.Graph3D
 		private static bool EhGraphicsObject_Remove(IHitTestObject o)
 		{
 			var go = (IGraphicBase)o.HittedObject;
-			o.ParentLayer.GraphObjects.Remove(go);
-			return true;
+			return o.ParentLayer.Remove(go);
 		}
 
 		#endregion Hit test

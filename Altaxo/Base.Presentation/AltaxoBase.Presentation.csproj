@@ -549,11 +549,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\XYZPlotLayerContentsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1422,11 +1430,17 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml.cs">
+      <DependentUpon>DataMeshPlotStyleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\XYZPlotLayerContentsControl.xaml.cs">
+      <DependentUpon>XYZPlotLayerContentsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\XYPlotLayerControl.xaml.cs">
       <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
@@ -1818,6 +1832,7 @@
       <Name>AltaxoCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
