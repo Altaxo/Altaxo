@@ -31,11 +31,29 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
+	/// <summary>
+	/// Represents a polyline, i.e. a line consisting of multiple line segments. This class contains additional information whether the joints between the line segments
+	/// are sharp or soft.
+	/// </summary>
 	public interface IPolylineD3D
 	{
 		PointD3D GetPoint(int idx);
 
+		/// <summary>
+		/// Gets the number of points.
+		/// </summary>
+		/// <value>
+		/// Number of points.
+		/// </value>
 		int Count { get; }
+
+		/// <summary>
+		/// Gets the points of this polyline. No information is contained here whether the joints are sharp or soft.
+		/// </summary>
+		/// <value>
+		/// The points that make out the polyline.
+		/// </value>
+		IEnumerable<PointD3D> Points { get; }
 
 		bool IsTransitionFromIdxToNextIdxSharp(int idx);
 	}

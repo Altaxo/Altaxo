@@ -78,6 +78,14 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
+		IEnumerable<PointD3D> IPolylineD3D.Points
+		{
+			get
+			{
+				return _points;
+			}
+		}
+
 		public int Count
 		{
 			get
@@ -89,6 +97,16 @@ namespace Altaxo.Drawing.D3D
 		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
 			return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
+		}
+
+		PointD3D IPolylineD3D.GetPoint(int idx)
+		{
+			throw new NotImplementedException();
+		}
+
+		bool IPolylineD3D.IsTransitionFromIdxToNextIdxSharp(int idx)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -64,6 +64,15 @@ namespace Altaxo.Geometry
 			}
 		}
 
+		public IEnumerable<PointD3D> Points
+		{
+			get
+			{
+				yield return _p0;
+				yield return _p1;
+			}
+		}
+
 		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
 			return true;

@@ -32,9 +32,9 @@ namespace Altaxo.Geometry
 {
 	public struct VectorD3D : IEquatable<VectorD3D>
 	{
-		public double X;
-		public double Y;
-		public double Z;
+		public double X { get; private set; }
+		public double Y { get; private set; }
+		public double Z { get; private set; }
 
 		#region Serialization
 
@@ -54,11 +54,10 @@ namespace Altaxo.Geometry
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (VectorD3D)o : new VectorD3D();
-				s.X = info.GetDouble("X");
-				s.Y = info.GetDouble("Y");
-				s.Z = info.GetDouble("Z");
-				return s;
+				var x = info.GetDouble("X");
+				var y = info.GetDouble("Y");
+				var z = info.GetDouble("Z");
+				return new VectorD3D(x, y, z);
 			}
 		}
 
@@ -69,6 +68,36 @@ namespace Altaxo.Geometry
 			X = x;
 			Y = y;
 			Z = z;
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the provided value.
+		/// </summary>
+		/// <param name="newX">The new x.</param>
+		/// <returns>New instance with <see cref="X"/> set to the provided value.</returns>
+		public VectorD3D WithX(double newX)
+		{
+			return new VectorD3D(newX, Y, Z);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the provided value.
+		/// </summary>
+		/// <param name="newY">The new x.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
+		public VectorD3D WithY(double newY)
+		{
+			return new VectorD3D(X, newY, Z);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Z"/> set to the provided value.
+		/// </summary>
+		/// <param name="newZ">The new z.</param>
+		/// <returns>New instance with <see cref="Z"/> set to the provided value.</returns>
+		public VectorD3D WithZ(double newZ)
+		{
+			return new VectorD3D(X, Y, newZ);
 		}
 
 		public double Length
@@ -85,14 +114,6 @@ namespace Altaxo.Geometry
 			{
 				return (X * X + Y * Y + Z * Z);
 			}
-		}
-
-		public void Normalize()
-		{
-			var s = 1 / Length;
-			X *= s;
-			Y *= s;
-			Z *= s;
 		}
 
 		public VectorD3D Normalized { get { var s = 1 / Length; return new VectorD3D(s * X, s * Y, s * Z); } }
@@ -117,6 +138,30 @@ namespace Altaxo.Geometry
 		/// <c>true</c> if this instance is empty; otherwise, <c>false</c>.
 		/// </value>
 		public bool IsEmpty { get { return 0 == X && 0 == Y && 0 == Z; } }
+
+		public override bool Equals(object obj)
+		{
+			if (obj is VectorD3D)
+			{
+				var from = (VectorD3D)obj;
+				return X == from.X && Y == from.Y && Z == from.Z;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public override int GetHashCode()
+		{
+			return X.GetHashCode() + 7 * Y.GetHashCode() + 13 * Z.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"VectorD3D({0}, {1}, {2})", X, Y, Z);
+		}
 
 		#region operators
 
@@ -185,6 +230,20 @@ namespace Altaxo.Geometry
 			return new VectorD3D(pt.X * ilen, pt.Y * ilen, pt.Z * ilen);
 		}
 
+		public static VectorD3D CreateNormalized(double x, double y, double z)
+		{
+			var k = x * x + y * y + z * z;
+
+			if (0 == k)
+				throw new ArgumentException("The provided data for x, y, z are all zero. This is not allowed for a vector to be normalized.", nameof(x));
+
+			if (!(k > 0))
+				throw new ArgumentException("The data for x, y or z contain invalid or infinite values", nameof(x));
+
+			k = 1 / Math.Sqrt(k);
+			return new VectorD3D(x * k, y * k, z * k);
+		}
+
 		public static VectorD3D CreateSum(VectorD3D pt1, VectorD3D pt2)
 		{
 			return new VectorD3D(pt1.X + pt2.X, pt1.Y + pt2.Y, pt1.Z + pt2.Z);
@@ -202,8 +261,8 @@ namespace Altaxo.Geometry
 
 		public static double AngleBetweenInRadians(VectorD3D vector1, VectorD3D vector2)
 		{
-			vector1.Normalize();
-			vector2.Normalize();
+			vector1 = vector1.Normalized;
+			vector2 = vector2.Normalized;
 			double radians;
 			if (VectorD3D.DotProduct(vector1, vector2) < 0.0)
 			{

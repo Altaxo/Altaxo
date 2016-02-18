@@ -35,17 +35,25 @@ namespace Altaxo.Graph.Graph3D
 	/// </summary>
 	public class HitTestPointData
 	{
-		/// <summary>Transformation of this item that transform world coordinates to page coordinates.</summary>
-		private Matrix4x3 _transformation;
+		/// <summary>Transformation that transform the coordinates of the object under test to hit coordinates. It is a hit if in hit coordinates
+		/// the object touches the ray xhit=0, yhit=0, zhit=-Infinity to +Infinity.</summary>
+		private Matrix4x3 _hitTransformation;
+
+		/// <summary>
+		/// Transformation that transforms the coordinates under test to world coordinates (i.e. to the graph's root layer coordinates).
+		/// Upon construction this is the identity matrix. As this object is distributed to leaf elements, the transformation is updates,
+		/// for instance by the local transformations of the layers.
+		/// </summary>
+		private Matrix4x3 _worldTransformation;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="hitPointPageCoord">Page coordinates (unit: points).</param>
-		/// <param name="pageScale">Current zoom factor, i.e. ration between displayed size on the screen and given size.</param>
+		/// <param name="transformation">The original hit ray matrix. Usually obtained using the mouse coordinates and the camera settings.</param>
 		public HitTestPointData(Matrix4x3 transformation)
 		{
-			_transformation = transformation;
+			_hitTransformation = transformation;
+			_worldTransformation = Matrix4x3.Identity;
 		}
 
 		/// <summary>
@@ -54,17 +62,38 @@ namespace Altaxo.Graph.Graph3D
 		/// <param name="from">Another HitTestData object to copy from.</param>
 		public HitTestPointData(HitTestPointData from)
 		{
-			this._transformation = from._transformation;
+			this._hitTransformation = from._hitTransformation;
+			this._worldTransformation = from._worldTransformation;
 		}
 
-		/// <summary>
-		/// Transformation of this item that transform world coordinates to page coordinates.
-		/// </summary>
-		public Matrix4x3 Transformation
+		public HitTestPointData NewFromAdditionalTransformation(Matrix4x3 additionalTransformation)
+		{
+			var result = new HitTestPointData(this);
+			result._hitTransformation.PrependTransform(additionalTransformation);
+			result._worldTransformation.PrependTransform(additionalTransformation);
+			return result;
+		}
+
+		/// <summary>Transformation that transform the coordinates of the object under test to hit coordinates. It is a hit if in hit coordinates
+		/// the object touches the ray xhit=0, yhit=0, zhit=-Infinity to +Infinity.</summary>
+		public Matrix4x3 HitTransformation
 		{
 			get
 			{
-				return _transformation;
+				return _hitTransformation;
+			}
+		}
+
+		/// <summary>
+		/// Transformation that transforms the coordinates under test to world coordinates (i.e. to the graph's root layer coordinates).
+		/// Upon construction this is the identity matrix. As this hit data is distributed to leaf elements, the transformation is updates,
+		/// for instance by the local transformations of the layers. Intended to use for construction of the IObjectOutline objects that indicate the hitted object.
+		/// </summary>
+		public Matrix4x3 WorldTransformation
+		{
+			get
+			{
+				return _worldTransformation;
 			}
 		}
 
@@ -73,17 +102,10 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="additionalTransformation">The additional transformation matrix.</param>
 		/// <returns></returns>
-		public Matrix4x3 GetTransformation(Matrix4x3 additionalTransformation)
+		public Matrix4x3 GetHitTransformationWithAdditionalTransformation(Matrix4x3 additionalTransformation)
 		{
-			Matrix4x3 result = _transformation;
+			Matrix4x3 result = _hitTransformation;
 			result.PrependTransform(additionalTransformation);
-			return result;
-		}
-
-		public HitTestPointData NewFromAdditionalTransformation(Matrix4x3 additionalTransformation)
-		{
-			var result = new HitTestPointData(this);
-			result._transformation.PrependTransform(additionalTransformation);
 			return result;
 		}
 
@@ -121,7 +143,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>True if the rectangle is hit by a ray given by x=0, y=0, z>0.</returns>
 		public bool IsHit(RectangleD3D r, out double z)
 		{
-			return IsRectangleHitByRay(r, _transformation, out z);
+			return IsRectangleHitByRay(r, _hitTransformation, out z);
 		}
 
 		/// <summary>
@@ -133,7 +155,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>True if the rectangle is hit by a ray given by x=0, y=0, z>0.</returns>
 		public bool IsHit(RectangleD3D r, Matrix4x3 rectangleToWorldTransformation, out double z)
 		{
-			rectangleToWorldTransformation.AppendTransform(_transformation);
+			rectangleToWorldTransformation.AppendTransform(_hitTransformation);
 
 			return IsRectangleHitByRay(r, rectangleToWorldTransformation, out z);
 		}
@@ -157,6 +179,66 @@ namespace Altaxo.Graph.Graph3D
 			foreach (var ti in r.TriangleIndices)
 			{
 				if (HitTestWithAlreadyTransformedPoints(vertices[ti.Item1], vertices[ti.Item2], vertices[ti.Item3], out z) && z < 0)
+					return true;
+			}
+
+			z = double.NaN;
+			return false;
+		}
+
+		/// <summary>
+		/// Determines whether a polyline is hit.
+		/// </summary>
+		/// <param name="points">The points that make out the polyline.</param>
+		/// <param name="maxDistance">The maximum distance to the polyline that is considered as a hit.</param>
+		/// <returns>True if the polyline is hit; otherwise false.</returns>
+		public bool IsHit(IEnumerable<PointD3D> points, double maxDistance)
+		{
+			double maxDistanceSq = maxDistance * maxDistance;
+			bool prevPointHasValue = false;
+			PointD3D prevPoint = PointD3D.Empty;
+			foreach (var p in points)
+			{
+				var currPoint = _hitTransformation.Transform(p);
+				if (prevPointHasValue)
+				{
+					// determine how far the line p0 and p1 is away from x=0 and y=0
+					var distsq = Math2D.SquareDistanceLineToPoint(PointD2D.Empty, new PointD2D(prevPoint.X, prevPoint.Y), new PointD2D(currPoint.X, currPoint.Y));
+					if (distsq <= maxDistanceSq)
+						return true;
+				}
+				prevPoint = currPoint;
+				prevPointHasValue = true;
+			}
+			return false;
+		}
+
+		public bool IsHit(LineD3D line, double thickness1, double thickness2)
+		{
+			if (!(line.Length > 0))
+				return false;
+
+			var eastnorth = Math3D.GetEastNorthVector(line);
+			var e = eastnorth.Item1; // east vector
+			var n = eastnorth.Item2; // north vector
+
+			double thickness1By2 = thickness1 / 2;
+			double thickness2By2 = thickness2 / 2;
+			PointD3D[] pts = new PointD3D[8];
+
+			pts[0] = _hitTransformation.Transform(line.P0 - thickness1By2 * e - thickness2By2 * n);
+			pts[1] = _hitTransformation.Transform(line.P1 - thickness1By2 * e - thickness2By2 * n);
+			pts[2] = _hitTransformation.Transform(line.P0 + thickness1By2 * e - thickness2By2 * n);
+			pts[3] = _hitTransformation.Transform(line.P1 + thickness1By2 * e - thickness2By2 * n);
+			pts[4] = _hitTransformation.Transform(line.P0 - thickness1By2 * e + thickness2By2 * n);
+			pts[5] = _hitTransformation.Transform(line.P1 - thickness1By2 * e + thickness2By2 * n);
+			pts[6] = _hitTransformation.Transform(line.P0 + thickness1By2 * e + thickness2By2 * n);
+			pts[7] = _hitTransformation.Transform(line.P1 + thickness1By2 * e + thickness2By2 * n);
+
+			double z;
+			foreach (var ti in RectangleD3D.GetTriangleIndices())
+			{
+				if (HitTestWithAlreadyTransformedPoints(pts[ti.Item1], pts[ti.Item2], pts[ti.Item3], out z) && z < 0)
 					return true;
 			}
 

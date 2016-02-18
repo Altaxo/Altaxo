@@ -91,8 +91,7 @@ namespace Altaxo.Drawing.D3D
 			if (_linePoints.Count < 2)
 				throw new ArgumentOutOfRangeException("linePoints.Count<2");
 
-			VectorD3D currSeg = _linePoints[1] - _linePoints[0];
-			currSeg.Normalize();
+			VectorD3D currSeg = (_linePoints[1] - _linePoints[0]).Normalized;
 
 			VectorD3D e = FindStartEastVector();
 			VectorD3D n = VectorD3D.CrossProduct(e, currSeg);
@@ -124,8 +123,7 @@ namespace Altaxo.Drawing.D3D
 
 			for (int mSeg = 1; mSeg < _linePoints.Count - 1; ++mSeg)
 			{
-				VectorD3D nextSeg = _linePoints[mSeg + 1] - _linePoints[mSeg];
-				nextSeg.Normalize();
+				VectorD3D nextSeg = (_linePoints[mSeg + 1] - _linePoints[mSeg]).Normalized;
 
 				VectorD3D midPlaneNormal = 0.5 * (currSeg + nextSeg);
 
@@ -211,9 +209,7 @@ namespace Altaxo.Drawing.D3D
 			PointD3D[] lastPositionsTransformed = new PointD3D[crossSectionVertexCount];
 			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
 
-			VectorD3D currSeg = _linePoints[1] - _linePoints[0];
-			currSeg.Normalize();
-
+			VectorD3D currSeg = (_linePoints[1] - _linePoints[0]).Normalized;
 			VectorD3D e = FindStartEastVector();
 			VectorD3D n = VectorD3D.CrossProduct(e, currSeg);
 
@@ -266,8 +262,7 @@ namespace Altaxo.Drawing.D3D
 
 			for (int mSeg = 1; mSeg < _linePoints.Count - 1; ++mSeg)
 			{
-				VectorD3D nextSeg = _linePoints[mSeg + 1] - _linePoints[mSeg];
-				nextSeg.Normalize();
+				VectorD3D nextSeg = (_linePoints[mSeg + 1] - _linePoints[mSeg]).Normalized;
 
 				VectorD3D midPlaneNormal = 0.5 * (currSeg + nextSeg);
 

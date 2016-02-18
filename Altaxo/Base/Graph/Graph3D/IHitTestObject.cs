@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Graph3D
 	public interface IHitTestObject
 	{
 		/// <summary>
-		/// Returns the object outline path in page coordinates used for arrangement of multiple objects together.
+		/// Returns the object outline path in root layer coordinates used for arrangement of multiple objects together.
 		/// Thus it should describes the object as accurate as possible.
 		/// In case of lines shapes, it is the line path without widening.
 		/// In case of closed shapes, it is the outline path of the shape.

@@ -28,6 +28,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -88,6 +89,21 @@ namespace Altaxo.Graph.Graph3D.Axis
 		protected RADouble _axisPosition2; // if relative, then relative to layer size, if absolute then in points
 
 		protected CSAxisInformation _cachedAxisStyleInfo;
+
+		/// <summary>
+		/// The line points that make out the main axis line (in parent layer coordinates). Used for hit testing
+		/// </summary>
+		[NonSerialized]
+		/// <summary>The main axis line cached for hit testing</summary>
+		protected PointD3D[] _cachedMainLinePointsUsedForHitTesting;
+
+		/// <summary>The major tick lines cached for hit testing</summary>
+		[NonSerialized]
+		private LineD3D[] _cachedMajorTickLinesUsedForHitTesting;
+
+		/// <summary>The minor tick lines cached for hit testing</summary>
+		[NonSerialized]
+		private LineD3D[] _cachedMinorTickLinesUsedForHitTesting;
 
 		#region Serialization
 
@@ -640,6 +656,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 			var sweepPath = layer.CoordinateSystem.GetIsoline(r0, r1);
 			g.DrawLine(_axisPen, sweepPath);
 
+			_cachedMainLinePointsUsedForHitTesting = sweepPath.Points.ToArray();
+			var majorTickLinesUsedForHitTesting = new List<LineD3D>();
+			var minorTickLinesUsedForHitTesting = new List<LineD3D>();
+
 			Logical3D outer;
 
 			// now the major ticks
@@ -655,6 +675,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _majorTickLength;
 					g.DrawLine(_majorTickPen, tickorg, tickend);
+					majorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 				if (_showFirstDownMajorTicks)
 				{
@@ -662,6 +683,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _majorTickLength;
 					g.DrawLine(_majorTickPen, tickorg, tickend);
+					majorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 				if (_showSecondUpMajorTicks)
 				{
@@ -669,6 +691,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _majorTickLength;
 					g.DrawLine(_majorTickPen, tickorg, tickend);
+					majorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 				if (_showSecondDownMajorTicks)
 				{
@@ -676,6 +699,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _majorTickLength;
 					g.DrawLine(_majorTickPen, tickorg, tickend);
+					majorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 			}
 
@@ -691,6 +715,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _minorTickLength;
 					g.DrawLine(_minorTickPen, tickorg, tickend);
+					minorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 				if (_showFirstDownMinorTicks)
 				{
@@ -698,6 +723,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _minorTickLength;
 					g.DrawLine(_minorTickPen, tickorg, tickend);
+					minorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 
 				if (_showSecondUpMinorTicks)
@@ -706,6 +732,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _minorTickLength;
 					g.DrawLine(_minorTickPen, tickorg, tickend);
+					minorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 				if (_showSecondDownMinorTicks)
 				{
@@ -713,8 +740,52 @@ namespace Altaxo.Graph.Graph3D.Axis
 					var tickorg = layer.CoordinateSystem.GetPositionAndNormalizedDirection(r0, r1, r, outer, out outVector);
 					var tickend = tickorg + outVector * _minorTickLength;
 					g.DrawLine(_minorTickPen, tickorg, tickend);
+					minorTickLinesUsedForHitTesting.Add(new LineD3D(tickorg, tickend));
 				}
 			}
+
+			_cachedMajorTickLinesUsedForHitTesting = majorTickLinesUsedForHitTesting.ToArray();
+			_cachedMinorTickLinesUsedForHitTesting = minorTickLinesUsedForHitTesting.ToArray();
+		}
+
+		public IHitTestObject HitTest(HitTestPointData hitData, bool testTickLines)
+		{
+			if (!testTickLines)
+			{
+				var mainAxisPoints = _cachedMainLinePointsUsedForHitTesting;
+				if (null != mainAxisPoints)
+				{
+					if (hitData.IsHit(mainAxisPoints, Math.Max(_axisPen.Thickness1, _axisPen.Thickness2)))
+						return new HitTestObject(new PolylineObjectOutline(_axisPen.Thickness1, _axisPen.Thickness2, mainAxisPoints), this);
+				}
+			}
+			else // Test Tick lines
+			{
+				// test major ticks for hit
+				if (null != _cachedMajorTickLinesUsedForHitTesting)
+				{
+					foreach (var line in _cachedMajorTickLinesUsedForHitTesting)
+					{
+						if (hitData.IsHit(line, _majorTickPen.Thickness1, _majorTickPen.Thickness2))
+							return new HitTestObject(
+								new MultipleSingleLinesObjectOutline(_majorTickPen.Thickness1, _majorTickPen.Thickness2, _cachedMajorTickLinesUsedForHitTesting),
+								this);
+					}
+				}
+				// test minor ticks for hit
+				if (null != _cachedMinorTickLinesUsedForHitTesting)
+				{
+					foreach (var line in _cachedMinorTickLinesUsedForHitTesting)
+					{
+						if (hitData.IsHit(line, _minorTickPen.Thickness1, _majorTickPen.Thickness2))
+							return new HitTestObject(
+								new MultipleSingleLinesObjectOutline(_minorTickPen.Thickness1, _minorTickPen.Thickness2, _cachedMinorTickLinesUsedForHitTesting),
+								this);
+					}
+				}
+			}
+
+			return null;
 		}
 
 		protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)

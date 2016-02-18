@@ -33,6 +33,7 @@ namespace Altaxo.Geometry
 	/// <summary>
 	/// Transformation matrix for affine transformations in 3D space.
 	/// The elements M14, M24 and M34 are assumed to be 0, and M44 is assumed to be 1.
+	/// Remember: when going from root to leaf node, <b>prepend</b> the new transformation to the existing transformation. And when going from leaf to root node, <b>append</b> the new transformation to the existing one.
 	/// </summary>
 	public struct Matrix4x3
 	{

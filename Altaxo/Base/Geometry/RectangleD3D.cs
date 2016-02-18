@@ -70,6 +70,94 @@ namespace Altaxo.Geometry
 
 		#endregion Serialization
 
+		#region Constructors
+
+		public RectangleD3D(double posX, double posY, double posZ, double sizeX, double sizeY, double sizeZ)
+		{
+			_x = posX;
+			_y = posY;
+			_z = posZ;
+			_sizeX = sizeX;
+			_sizeY = sizeY;
+			_sizeZ = sizeZ;
+		}
+
+		public RectangleD3D(PointD3D position, VectorD3D size)
+		{
+			_x = position.X;
+			_y = position.Y;
+			_z = position.Z;
+			_sizeX = size.X;
+			_sizeY = size.Y;
+			_sizeZ = size.Z;
+		}
+
+		#endregion Constructors
+
+		#region Setter
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the provided value.
+		/// </summary>
+		/// <param name="newX">The new x.</param>
+		/// <returns>New instance with <see cref="X"/> set to the provided value.</returns>
+		public RectangleD3D WithX(double newX)
+		{
+			return new RectangleD3D(newX, Y, Z, SizeX, SizeY, SizeZ);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the provided value.
+		/// </summary>
+		/// <param name="newY">The new x.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
+		public RectangleD3D WithY(double newY)
+		{
+			return new RectangleD3D(X, newY, Z, SizeX, SizeY, SizeZ);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Z"/> set to the provided value.
+		/// </summary>
+		/// <param name="newZ">The new z.</param>
+		/// <returns>New instance with <see cref="Z"/> set to the provided value.</returns>
+		public RectangleD3D WithZ(double newZ)
+		{
+			return new RectangleD3D(X, Y, newZ, SizeX, SizeY, SizeZ);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the X plus the provided value.
+		/// </summary>
+		/// <param name="addX">The value to add to <see cref="X"/>.</param>
+		/// <returns>New instance with <see cref="X"/> set to the X plus the provided value.</returns>
+		public RectangleD3D WithXPlus(double addX)
+		{
+			return new RectangleD3D(X + addX, Y, Z, SizeX, SizeY, SizeZ);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the Y plus the provided value.
+		/// </summary>
+		/// <param name="addY">The value to add to <see cref="Y"/>.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the Y plus the provided value.</returns>
+		public RectangleD3D WithYPlus(double addY)
+		{
+			return new RectangleD3D(X, Y + addY, Z, SizeX, SizeY, SizeZ);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Z"/> set to the Z plus the provided value.
+		/// </summary>
+		/// <param name="addZ">The value to add to <see cref="Z"/>.</param>
+		/// <returns>New instance with <see cref="Z"/> set to the Z plus the provided value.</returns>
+		public RectangleD3D WithZPlus(double addZ)
+		{
+			return new RectangleD3D(X, Y, Z + addZ, SizeX, SizeY, SizeZ);
+		}
+
+		#endregion Setter
+
 		public double X
 		{
 			get { return _x; }
@@ -119,27 +207,6 @@ namespace Altaxo.Geometry
 		{
 			get { return _sizeZ; }
 			set { _sizeZ = value; }
-		}
-
-		public RectangleD3D(double x, double y, double z, double width, double height, double sizeZ)
-			: this()
-		{
-			_x = x;
-			_y = y;
-			_z = z;
-			_sizeX = width;
-			_sizeY = height;
-			_sizeZ = sizeZ;
-		}
-
-		public RectangleD3D(PointD3D position, VectorD3D size)
-		{
-			_x = position.X;
-			_y = position.Y;
-			_z = position.Z;
-			_sizeX = size.X;
-			_sizeY = size.Y;
-			_sizeZ = size.Z;
 		}
 
 		public static RectangleD3D Empty
@@ -372,25 +439,37 @@ namespace Altaxo.Geometry
 		{
 			get
 			{
-				// Front
-				yield return new Tuple<int, int, int>(0, 2, 3);
-				yield return new Tuple<int, int, int>(0, 3, 1);
-				// Back
-				yield return new Tuple<int, int, int>(4, 7, 6);
-				yield return new Tuple<int, int, int>(4, 5, 7);
-				// Top
-				yield return new Tuple<int, int, int>(2, 6, 7);
-				yield return new Tuple<int, int, int>(2, 7, 3);
-				// Bottom
-				yield return new Tuple<int, int, int>(0, 5, 4);
-				yield return new Tuple<int, int, int>(0, 1, 5);
-				// Left
-				yield return new Tuple<int, int, int>(0, 4, 6);
-				yield return new Tuple<int, int, int>(0, 6, 2);
-				// Right
-				yield return new Tuple<int, int, int>(1, 7, 5);
-				yield return new Tuple<int, int, int>(1, 3, 7);
+				return GetTriangleIndices();
 			}
+		}
+
+		/// <summary>
+		/// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
+		/// The order is front, back, top, bottom, left, right.
+		/// </summary>
+		/// <return>
+		/// The triangle indices.
+		/// </return>
+		public static IEnumerable<Tuple<int, int, int>> GetTriangleIndices()
+		{
+			// Front
+			yield return new Tuple<int, int, int>(0, 2, 3);
+			yield return new Tuple<int, int, int>(0, 3, 1);
+			// Back
+			yield return new Tuple<int, int, int>(4, 7, 6);
+			yield return new Tuple<int, int, int>(4, 5, 7);
+			// Top
+			yield return new Tuple<int, int, int>(2, 6, 7);
+			yield return new Tuple<int, int, int>(2, 7, 3);
+			// Bottom
+			yield return new Tuple<int, int, int>(0, 5, 4);
+			yield return new Tuple<int, int, int>(0, 1, 5);
+			// Left
+			yield return new Tuple<int, int, int>(0, 4, 6);
+			yield return new Tuple<int, int, int>(0, 6, 2);
+			// Right
+			yield return new Tuple<int, int, int>(1, 7, 5);
+			yield return new Tuple<int, int, int>(1, 3, 7);
 		}
 
 		public void ExpandToInclude(RectangleD3D rect)

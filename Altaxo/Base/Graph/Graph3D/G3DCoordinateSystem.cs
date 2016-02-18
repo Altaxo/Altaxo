@@ -298,10 +298,7 @@ namespace Altaxo.Graph.Graph3D
 				*/
 			}
 
-			// Normalize the vector
-			direction.Normalize();
-
-			normalizeddirection = direction;
+			normalizeddirection = direction.Normalized;
 
 			return position;
 		}

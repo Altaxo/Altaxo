@@ -291,11 +291,37 @@ namespace Altaxo.Graph.Graph3D.Axis
 			FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		internal IHitTestObject HitTest(HitTestPointData parentCoord)
+		public IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod)
 		{
 			IHitTestObject hit;
-			hit = _axisTitle?.HitTest(parentCoord);
-			return hit;
+			if (null != (hit = _axisTitle?.HitTest(parentCoord)))
+				return hit;
+
+			if (this.IsAxisLineEnabled && null != (hit = _axisLineStyle.HitTest(parentCoord, false)))
+			{
+				hit.DoubleClick = AxisScaleEditorMethod;
+				return hit;
+			}
+
+			// hit testing the axes - secondly now with the ticks
+			// in this case the TitleAndFormat editor for the axis should be shown
+			if (this.IsAxisLineEnabled && null != (hit = _axisLineStyle.HitTest(parentCoord, true)))
+			{
+				hit.DoubleClick = AxisStyleEditorMethod;
+				return hit;
+			}
+
+			if (null != (hit = _majorLabelStyle?.HitTest(parentCoord)))
+			{
+				return hit;
+			}
+
+			if (null != (hit = _minorLabelStyle?.HitTest(parentCoord)))
+			{
+				return hit;
+			}
+
+			return null;
 		}
 
 		public void FixupInternalDataStructures(IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)

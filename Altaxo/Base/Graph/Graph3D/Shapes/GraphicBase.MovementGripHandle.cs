@@ -105,8 +105,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				var objectToMove = ((GraphicBase)_parent.HittedObject);
 
-				var m = _initialMousePosition.Transformation; // initial ray position
-				var n = newPosition.Transformation;           // current ray position
+				var m = _initialMousePosition.HitTransformation; // initial ray position
+				var n = newPosition.HitTransformation;           // current ray position
 
 				double x = _initialObjectPosition.X;
 				double y = _initialObjectPosition.Y;

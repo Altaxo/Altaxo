@@ -171,8 +171,7 @@ namespace Altaxo.Drawing.D3D
 			for (int i = 0; i < numVertices; ++i)
 			{
 				VectorD3D line = result._vertices[(i + 1) % numVertices] - result._vertices[i];
-				VectorD3D cross = VectorD3D.CrossProduct(line, zaxis);
-				cross.Normalize();
+				VectorD3D cross = VectorD3D.CrossProduct(line, zaxis).Normalized;
 				result._normals[(2 * i + 1) % numNormals] = cross;
 				result._normals[(2 * i + 2) % numNormals] = cross;
 			}

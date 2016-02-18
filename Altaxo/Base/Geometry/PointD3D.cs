@@ -32,9 +32,9 @@ namespace Altaxo.Geometry
 {
 	public struct PointD3D
 	{
-		public double X;
-		public double Y;
-		public double Z;
+		public double X { get; private set; }
+		public double Y { get; private set; }
+		public double Z { get; private set; }
 
 		#region Serialization
 
@@ -54,11 +54,10 @@ namespace Altaxo.Geometry
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (PointD3D)o : new PointD3D();
-				s.X = info.GetDouble("X");
-				s.Y = info.GetDouble("Y");
-				s.Z = info.GetDouble("Z");
-				return s;
+				var x = info.GetDouble("X");
+				var y = info.GetDouble("Y");
+				var z = info.GetDouble("Z");
+				return new PointD3D(x, y, z);
 			}
 		}
 
@@ -69,6 +68,66 @@ namespace Altaxo.Geometry
 			X = x;
 			Y = y;
 			Z = z;
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the provided value.
+		/// </summary>
+		/// <param name="newX">The new x.</param>
+		/// <returns>New instance with <see cref="X"/> set to the provided value.</returns>
+		public PointD3D WithX(double newX)
+		{
+			return new PointD3D(newX, Y, Z);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the provided value.
+		/// </summary>
+		/// <param name="newY">The new x.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
+		public PointD3D WithY(double newY)
+		{
+			return new PointD3D(X, newY, Z);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Z"/> set to the provided value.
+		/// </summary>
+		/// <param name="newZ">The new z.</param>
+		/// <returns>New instance with <see cref="Z"/> set to the provided value.</returns>
+		public PointD3D WithZ(double newZ)
+		{
+			return new PointD3D(X, Y, newZ);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the X plus the provided value.
+		/// </summary>
+		/// <param name="addX">The value to add to <see cref="X"/>.</param>
+		/// <returns>New instance with <see cref="X"/> set to the X plus the provided value.</returns>
+		public PointD3D WithXPlus(double addX)
+		{
+			return new PointD3D(X + addX, Y, Z);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the Y plus the provided value.
+		/// </summary>
+		/// <param name="addY">The value to add to <see cref="Y"/>.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the Y plus the provided value.</returns>
+		public PointD3D WithYPlus(double addY)
+		{
+			return new PointD3D(X, Y + addY, Z);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Z"/> set to the Z plus the provided value.
+		/// </summary>
+		/// <param name="addZ">The value to add to <see cref="Z"/>.</param>
+		/// <returns>New instance with <see cref="Z"/> set to the Z plus the provided value.</returns>
+		public PointD3D WithZPlus(double addZ)
+		{
+			return new PointD3D(X, Y, Z + addZ);
 		}
 
 		public static PointD3D Empty { get { return new PointD3D(); } }
@@ -122,9 +181,28 @@ namespace Altaxo.Geometry
 			return new PointD3D(v.X, v.Y, v.Z);
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (obj is PointD3D)
+			{
+				var from = (PointD3D)obj;
+				return X == from.X && Y == from.Y && Z == from.Z;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public override int GetHashCode()
+		{
+			return X.GetHashCode() + 7 * Y.GetHashCode() + 13 * Z.GetHashCode();
+		}
+
 		public override string ToString()
 		{
-			return X.ToString() + "; " + Y.ToString() + "; " + Z.ToString();
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"PointD3D({0}, {1}, {2})", X, Y, Z);
 		}
 	}
 }

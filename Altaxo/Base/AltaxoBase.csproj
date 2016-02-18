@@ -230,7 +230,6 @@
     <Compile Include="Geometry\Matrix3x3.cs" />
     <Compile Include="Geometry\Matrix4x4.cs" />
     <Compile Include="Geometry\PlaneD3D.cs" />
-    <Compile Include="Geometry\PointsTupleD3D.cs" />
     <Compile Include="Geometry\PolygonClosedD2D.cs" />
     <Compile Include="Geometry\PolygonClosedWithNormalsD2D.cs" />
     <Compile Include="Geometry\LineD3D.cs" />

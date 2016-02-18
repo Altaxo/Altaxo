@@ -132,8 +132,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				foreach (var entry in sphere.VerticesAndNormalsForSphere)
 				{
 					var pt = transformation.Transform(entry.Item1);
-					var nm = normalTransform.Transform(entry.Item2);
-					nm.Normalize();
+					var nm = normalTransform.Transform(entry.Item2).Normalized;
 					buffer.AddTriangleVertex(pt.X, pt.Y, pt.Z, nm.X, nm.Y, nm.Z);
 				}
 				foreach (var idx in sphere.TriangleIndicesForSphere)

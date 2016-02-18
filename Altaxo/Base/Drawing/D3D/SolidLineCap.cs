@@ -55,8 +55,7 @@ namespace Altaxo.Drawing.D3D
 			PointD3D[] lastPositionsTransformed = new PointD3D[crossSectionVertexCount];
 			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
 
-			VectorD3D currSeg = VectorD3D.CrossProduct(n, e);
-			currSeg.Normalize();
+			VectorD3D currSeg = VectorD3D.CrossProduct(n, e).Normalized;
 
 			int currIndex = startIndex;
 
@@ -164,12 +163,9 @@ namespace Altaxo.Drawing.D3D
 			}
 			else // non-degenerate case
 			{
-				VectorD3D a = new VectorD3D(maxRadius * c.X, 0, pp.X * c.Y);
-				VectorD3D b = new VectorD3D(0, maxRadius * c.X, pp.Y * c.Y);
-				a.Normalize();
-				b.Normalize();
-				tn = new VectorD3D(s.X * a.X, s.Y * b.Y, s.X * a.Z + s.Y * b.Z);
-				tn.Normalize();
+				VectorD3D a = new VectorD3D(maxRadius * c.X, 0, pp.X * c.Y).Normalized;
+				VectorD3D b = new VectorD3D(0, maxRadius * c.X, pp.Y * c.Y).Normalized;
+				tn = new VectorD3D(s.X * a.X, s.Y * b.Y, s.X * a.Z + s.Y * b.Z).Normalized;
 			}
 			return tn;
 		}
@@ -197,8 +193,7 @@ namespace Altaxo.Drawing.D3D
 			}
 			else // non-degenerate case
 			{
-				VectorD3D v = new VectorD3D(-c.X * c.Y * maxRadius * pp.X, -c.X * c.Y * maxRadius * pp.Y, c.X * c.X * maxRadius * maxRadius);
-				v.Normalize();
+				VectorD3D v = VectorD3D.CreateNormalized(-c.X * c.Y * maxRadius * pp.X, -c.X * c.Y * maxRadius * pp.Y, c.X * c.X * maxRadius * maxRadius);
 
 				double invr = (s.X * pp.X + s.Y * pp.Y) / (c.X * c.X * maxRadius * maxRadius + c.Y * c.Y * r);
 				tn = new VectorD3D(s.X - c.Y * c.Y * pp.X * invr, s.Y - c.Y * c.Y * pp.Y * invr, c.X * c.Y * maxRadius * invr);

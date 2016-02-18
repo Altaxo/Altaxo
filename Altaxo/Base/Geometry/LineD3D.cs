@@ -49,6 +49,26 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Returns a new line with <see cref="P0"/> set to the provided value.
+		/// </summary>
+		/// <param name="p0">The value for <see cref="P0"/>.</param>
+		/// <returns>A new line with <see cref="P0"/> set to the provided value.</returns>
+		public LineD3D WithP0(PointD3D p0)
+		{
+			return new LineD3D(p0, P1);
+		}
+
+		/// <summary>
+		/// Returns a new line with <see cref="P1"/> set to the provided value.
+		/// </summary>
+		/// <param name="p1">The value for <see cref="P1"/>.</param>
+		/// <returns>A new line with <see cref="P1"/> set to the provided value.</returns>
+		public LineD3D WithP1(PointD3D p1)
+		{
+			return new LineD3D(P0, p1);
+		}
+
+		/// <summary>
 		/// Gets the starting point of the line.
 		/// </summary>
 		/// <value>
@@ -63,5 +83,31 @@ namespace Altaxo.Geometry
 		/// The end point of the line.
 		/// </value>
 		public PointD3D P1 { get { return _p1; } }
+
+		/// <summary>
+		/// Gets the vector from <see cref="P0"/> to <see cref="P1"/>.
+		/// </summary>
+		/// <value>
+		/// The vector from <see cref="P0"/> to <see cref="P1"/>.
+		/// </value>
+		public VectorD3D Vector { get { return _p1 - _p0; } }
+
+		/// <summary>
+		/// Gets the length of the line.
+		/// </summary>
+		/// <value>
+		/// The length of the line.
+		/// </value>
+		public double Length { get { return (_p1 - _p0).Length; } }
+
+		/// <summary>
+		/// Gets the points of the line as enumeration.
+		/// </summary>
+		/// <returns>Enumeration of the two points of this line.</returns>
+		public IEnumerable<PointD3D> GetPoints()
+		{
+			yield return _p0;
+			yield return _p1;
+		}
 	}
 }

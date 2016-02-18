@@ -94,6 +94,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		private CSAxisInformation _cachedAxisStyleInfo;
 
+		/// <summary>
+		/// The cached label outlines used for hit testing
+		/// </summary>
+		private RectangularObjectOutline[] _cachedLabelOutlines;
+
 		#region Serialization
 
 		/// <summary>
@@ -616,19 +621,23 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void AdjustRectangle(ref RectangleD3D r, StringAlignment alignmentX, StringAlignment alignmentY, StringAlignment alignmentZ)
+		public RectangleD3D AdjustRectangle(RectangleD3D r, StringAlignment alignmentX, StringAlignment alignmentY, StringAlignment alignmentZ)
 		{
+			double rX = r.X;
+			double rY = r.Y;
+			double rZ = r.Z;
+
 			switch (alignmentZ)
 			{
 				case StringAlignment.Near:
 					break;
 
 				case StringAlignment.Center:
-					r.Z -= 0.5 * r.SizeZ;
+					rZ -= 0.5 * r.SizeZ;
 					break;
 
 				case StringAlignment.Far:
-					r.Z -= r.SizeZ;
+					rZ -= r.SizeZ;
 					break;
 			}
 			switch (alignmentY)
@@ -637,11 +646,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 					break;
 
 				case StringAlignment.Center:
-					r.Y -= 0.5 * r.SizeY;
+					rY -= 0.5 * r.SizeY;
 					break;
 
 				case StringAlignment.Far:
-					r.Y -= r.SizeY;
+					rY -= r.SizeY;
 					break;
 			}
 			switch (alignmentX)
@@ -650,13 +659,15 @@ namespace Altaxo.Graph.Graph3D.Axis
 					break;
 
 				case StringAlignment.Center:
-					r.X -= 0.5 * r.SizeX;
+					rX -= 0.5 * r.SizeX;
 					break;
 
 				case StringAlignment.Far:
-					r.X -= r.SizeX;
+					rX -= r.SizeX;
 					break;
 			}
+
+			return new RectangleD3D(rX, rY, rZ, r.SizeX, r.SizeY, r.SizeZ);
 		}
 
 		/// <summary>Predicts the side, where the label will be shown using the given axis information.</summary>
@@ -730,6 +741,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 			double emSize = _font.Size;
 			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
+			var labelOutlines = new RectangularObjectOutline[ticks.Length];
 			for (int i = 0; i < ticks.Length; i++)
 			{
 				double r = relpositions[i];
@@ -752,9 +764,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 					// Assume that the text is now centered x, y, and z around the point tickend (but here we use origin instead tickend)
 					math = Matrix4x3.FromRotation(_rotationX, _rotationY, _rotationZ);
 					// we have to find all points with negative distance to the plane spanned by tickend and the vector outVector (but again instead of tickend we use origin)
-					var msizePad = msize;
-					msizePad.X += (_font.Size * 1) / 3; // whereas above and below text no padding is neccessary, it is optically nicer to have left and right padding of the string by 1/6 of font size.
-					msizePad.Z += (_font.Size * 1) / 3; // same padding applies to z
+					var msizePad = msize + new VectorD3D(
+					(_font.Size * 1) / 3, // whereas above and below text no padding is neccessary, it is optically nicer to have left and right padding of the string by 1/6 of font size.
+					0,
+					(_font.Size * 1) / 3 // same padding applies to z
+					);
 					var crect = new RectangleD3D((PointD3D)(-0.5 * msizePad), msizePad); // our text centered around origin
 
 					double shift = 0;
@@ -769,14 +783,14 @@ namespace Altaxo.Graph.Graph3D.Axis
 				}
 				else
 				{
-					morg.X += (outVector.X * _font.Size / 3);
+					morg = morg.WithXPlus(outVector.X * _font.Size / 3);
 				}
 
 				var mrect = new RectangleD3D(morg, msize);
 				if (_automaticRotationShift)
-					AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center, StringAlignment.Center);
+					mrect = AdjustRectangle(mrect, StringAlignment.Center, StringAlignment.Center, StringAlignment.Center);
 				else
-					AdjustRectangle(ref mrect, _alignmentX, _alignmentY, _alignmentZ);
+					mrect = AdjustRectangle(mrect, _alignmentX, _alignmentY, _alignmentZ);
 
 				math = Matrix4x3.Identity;
 				math.TranslatePrepend(morg.X, morg.Y, morg.Z);
@@ -797,8 +811,26 @@ namespace Altaxo.Graph.Graph3D.Axis
 					_backgroundStyle.Draw(g, new RectangleD3D(PointD3D.Empty, msize));
 
 				labels[i].Draw(g, _brush, PointD3D.Empty);
+				labelOutlines[i] = new RectangularObjectOutline(new RectangleD3D(PointD3D.Empty, msize), math);
 				g.RestoreGraphicsState(gs); // Restore the graphics state
 			}
+
+			_cachedLabelOutlines = labelOutlines;
+		}
+
+		public IHitTestObject HitTest(HitTestPointData hitData)
+		{
+			var labelOutlines = _cachedLabelOutlines;
+
+			if (null == labelOutlines)
+				return null;
+
+			foreach (var outline in labelOutlines)
+			{
+				if (outline.IsHittedBy(hitData))
+					return new HitTestObject(new MultipleRectangularObjectOutlines(hitData.WorldTransformation, labelOutlines), this);
+			}
+			return null;
 		}
 
 		#region IRoutedPropertyReceiver Members

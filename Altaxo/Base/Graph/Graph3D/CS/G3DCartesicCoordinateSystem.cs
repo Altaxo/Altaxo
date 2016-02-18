@@ -114,8 +114,7 @@ namespace Altaxo.Graph.Graph3D.CS
 			LogicalToLayerCoordinates(r0, out pt0);
 			LogicalToLayerCoordinates(r1, out pt1);
 			LogicalToLayerCoordinates(r0.InterpolateTo(r1, t), out position);
-			direction = (pt1 - pt0);
-			direction.Normalize();
+			direction = (pt1 - pt0).Normalized;
 			return true;
 		}
 

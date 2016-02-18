@@ -204,7 +204,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			public void SetAmbientLight(Altaxo.Drawing.AxoColor colorBelow, Altaxo.Drawing.AxoColor colorAbove, double lightAmplitude, VectorD3D directionBelowToAbove)
 			{
-				directionBelowToAbove.Normalize();
+				directionBelowToAbove = directionBelowToAbove.Normalized;
 				HemisphericLightBelowToAboveVector.Set(new Vector3((float)directionBelowToAbove.X, (float)directionBelowToAbove.Y, (float)directionBelowToAbove.Z));
 				HemisphericLightColorBelow.Set(ToVector3(colorBelow, lightAmplitude));
 				HemisphericLightColorAbove.Set(ToVector3(colorAbove, lightAmplitude));
@@ -212,7 +212,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D directionToLight)
 			{
-				directionToLight.Normalize();
+				directionToLight = directionToLight.Normalized;
 				SetSingleLight(idx, color, colorAmplitude, (PointD3D)(directionToLight * 1E7), directionToLight, 0, 0, 0, 1);
 			}
 

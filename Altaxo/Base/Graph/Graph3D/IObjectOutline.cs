@@ -67,6 +67,19 @@ namespace Altaxo.Graph.Graph3D
 			_transformation = transformation;
 		}
 
+		/// <summary>
+		/// Returns a new <see cref="RectangularObjectOutline"/> object, at wich the provided transformation is appended.
+		/// Thus, when having a <see cref="RectangularObjectOutline"/> in object coordinates, by calling this function with the current
+		/// localToWorldTransformation, one gets a <see cref="RectangularObjectOutline"/> in world coordinates.
+		/// </summary>
+		/// <param name="transformation">The transformation to append.</param>
+		/// <returns>New <see cref="RectangularObjectOutline"/> object with the provided transformation appended.</returns>
+		public RectangularObjectOutline WithAdditionalTransformation(Matrix4x3 transformation)
+		{
+			transformation.PrependTransform(this._transformation);
+			return new RectangularObjectOutline(_rectangle, transformation);
+		}
+
 		public IEnumerable<LineD3D> AsLines
 		{
 			get
@@ -89,6 +102,47 @@ namespace Altaxo.Graph.Graph3D
 		{
 			double z;
 			return hitData.IsHit(_rectangle, _transformation, out z);
+		}
+	}
+
+	public class MultipleRectangularObjectOutlines : IObjectOutline
+	{
+		private RectangularObjectOutline[] _outlines;
+
+		public MultipleRectangularObjectOutlines(Matrix4x3 localToWorldTransformation, IEnumerable<RectangularObjectOutline> outlines)
+		{
+			_outlines = outlines.ToArray();
+			// Replace the original outline object with new one that contain the transformation from local (layer) to world coordinates (root layer).
+			for (int i = 0; i < _outlines.Length; ++i)
+			{
+				if (null != _outlines[i])
+					_outlines[i] = _outlines[i].WithAdditionalTransformation(localToWorldTransformation);
+			}
+		}
+
+		public IEnumerable<LineD3D> AsLines
+		{
+			get
+			{
+				foreach (var outline in _outlines)
+				{
+					foreach (var line in outline.AsLines)
+						yield return line;
+				}
+			}
+		}
+
+		public void AppendTransformation(Matrix4x3 transformation)
+		{
+		}
+
+		public bool IsHittedBy(HitTestPointData hitData)
+		{
+			foreach (var outline in _outlines)
+				if (outline.IsHittedBy(hitData))
+					return true;
+
+			return false;
 		}
 	}
 
@@ -140,6 +194,117 @@ namespace Altaxo.Graph.Graph3D
 					return true;
 			}
 			return false;
+		}
+	}
+
+	public class PolylineObjectOutline : IObjectOutline
+	{
+		private Matrix4x3 _transformation;
+
+		private PointD3D[] _points;
+		private double _thickness1By2;
+		private double _thickness2By2;
+
+		public PolylineObjectOutline(double thickness1, double thickness2, IEnumerable<PointD3D> points)
+		{
+			_thickness1By2 = thickness1 * 0.55;
+			_thickness2By2 = thickness2 * 0.55;
+			_points = points.ToArray();
+			_transformation = Matrix4x3.Identity;
+		}
+
+		public IEnumerable<LineD3D> AsLines
+		{
+			get
+			{
+				if (null == _points || _points.Length < 2)
+					yield break;
+
+				PointD3D prevPoint = PointD3D.Empty;
+				bool prevPointIsValid = false;
+				foreach (var tp in Math3D.GetPolylinePointsWithEastAndNorth(_points))
+				{
+					if (prevPointIsValid)
+					{
+						var ne = _thickness1By2 * tp.Item2 + _thickness2By2 * tp.Item3;
+						var se = _thickness1By2 * tp.Item2 - _thickness2By2 * tp.Item3;
+						var nw = -_thickness1By2 * tp.Item2 + _thickness2By2 * tp.Item3;
+						var sw = -_thickness1By2 * tp.Item2 - _thickness2By2 * tp.Item3;
+
+						yield return new LineD3D(_transformation.Transform(prevPoint + ne), _transformation.Transform(tp.Item1 + ne));
+						yield return new LineD3D(_transformation.Transform(prevPoint + se), _transformation.Transform(tp.Item1 + se));
+						yield return new LineD3D(_transformation.Transform(prevPoint + nw), _transformation.Transform(tp.Item1 + nw));
+						yield return new LineD3D(_transformation.Transform(prevPoint + sw), _transformation.Transform(tp.Item1 + sw));
+					}
+
+					prevPoint = tp.Item1;
+					prevPointIsValid = true;
+				}
+			}
+		}
+
+		public void AppendTransformation(Matrix4x3 transformation)
+		{
+			_transformation.AppendTransform(transformation);
+		}
+
+		public bool IsHittedBy(HitTestPointData hitData)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public class MultipleSingleLinesObjectOutline : IObjectOutline
+	{
+		private Matrix4x3 _transformation;
+
+		private LineD3D[] _lines;
+		private double _thickness1By2;
+		private double _thickness2By2;
+
+		public MultipleSingleLinesObjectOutline(double thickness1, double thickness2, IEnumerable<LineD3D> lines)
+		{
+			_thickness1By2 = thickness1 * 0.55;
+			_thickness2By2 = thickness2 * 0.55;
+			_lines = lines.ToArray();
+			_transformation = Matrix4x3.Identity;
+		}
+
+		public IEnumerable<LineD3D> AsLines
+		{
+			get
+			{
+				if (null == _lines || _lines.Length < 1)
+					yield break;
+
+				foreach (var line in _lines)
+				{
+					var tp = Math3D.GetEastNorthVector(line);
+
+					PointD3D prevPoint = line.P0;
+					PointD3D currPoint = line.P1;
+
+					var ne = _thickness1By2 * tp.Item1 + _thickness2By2 * tp.Item2;
+					var se = _thickness1By2 * tp.Item1 - _thickness2By2 * tp.Item2;
+					var nw = -_thickness1By2 * tp.Item1 + _thickness2By2 * tp.Item2;
+					var sw = -_thickness1By2 * tp.Item1 - _thickness2By2 * tp.Item2;
+
+					yield return new LineD3D(_transformation.Transform(prevPoint + ne), _transformation.Transform(currPoint + ne));
+					yield return new LineD3D(_transformation.Transform(prevPoint + se), _transformation.Transform(currPoint + se));
+					yield return new LineD3D(_transformation.Transform(prevPoint + nw), _transformation.Transform(currPoint + nw));
+					yield return new LineD3D(_transformation.Transform(prevPoint + sw), _transformation.Transform(currPoint + sw));
+				}
+			}
+		}
+
+		public void AppendTransformation(Matrix4x3 transformation)
+		{
+			_transformation.AppendTransform(transformation);
+		}
+
+		public bool IsHittedBy(HitTestPointData hitData)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

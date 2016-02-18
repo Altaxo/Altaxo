@@ -870,11 +870,11 @@ namespace Altaxo.Graph.Graph3D
 
 		protected override IHitTestObject HitTestWithLocalCoordinates(HitTestPointData localCoord, bool plotItemsOnly)
 		{
-			IHitTestObject hit = null; 
+			IHitTestObject hit = null;
 
 			if (!plotItemsOnly)
 			{
-				hit = _axisStyles.HitTest(localCoord);
+				hit = _axisStyles.HitTest(localCoord, AxisScaleEditorMethod, AxisStyleEditorMethod);
 				if (null != hit)
 				{
 					hit.AppendTransformation(_transformation);

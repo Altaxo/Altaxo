@@ -46,7 +46,7 @@ namespace Altaxo.Drawing.D3D
 		private void NormalizeNormals()
 		{
 			for (int i = 0; i < _normals.Length; ++i)
-				_normals[i].Normalize();
+				_normals[i] = _normals[i].Normalized;
 		}
 
 		public static LineCapContour Ball

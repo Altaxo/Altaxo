@@ -495,9 +495,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 						img = ImageProxy.FromFile(filename);
 						if (img != null)
 						{
-							var size = this.ActiveLayer.Size;
-							size.X /= 2;
-							size.Y /= 2;
+							var size = this.ActiveLayer.Size / 2;
 
 							PointD2D imgSize = img.GetImage().PhysicalDimension;
 
@@ -524,8 +522,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				System.Drawing.Imaging.Metafile img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
 				if (img != null)
 				{
-					var size = 0.5 * this.ActiveLayer.Size;
-					size.Z = 0;
+					var size = (0.5 * this.ActiveLayer.Size).WithZ(0);
 					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
 					this.ActiveLayer.GraphObjects.Add(item);
 					return;
@@ -536,8 +533,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				Image img = dao.GetImage();
 				if (img != null)
 				{
-					var size = 0.5 * this.ActiveLayer.Size;
-					size.Z = 0;
+					var size = 0.5 * this.ActiveLayer.Size.WithZ(0);
 					EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, size, ImageProxy.FromImage(img));
 					this.ActiveLayer.GraphObjects.Add(item);
 					return;
@@ -1126,16 +1122,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			foreach (var pos in rect.Vertices)
 			{
-				var posX = pos;
-				posX.X += pos.X == 0 ? markerLenBy2 : -markerLenBy2;
+				var posX = pos.WithXPlus(pos.X == 0 ? markerLenBy2 : -markerLenBy2);
 				DrawMarkerX(buf, posX, markerLenBy2, markerThicknessBy2);
 
-				var posY = pos;
-				posY.Y += pos.Y == 0 ? markerLenBy2 : -markerLenBy2;
+				var posY = pos.WithYPlus(pos.Y == 0 ? markerLenBy2 : -markerLenBy2);
 				DrawMarkerY(buf, posY, markerLenBy2, markerThicknessBy2);
 
-				var posZ = pos;
-				posZ.Z += pos.Z == 0 ? markerLenBy2 : -markerLenBy2;
+				var posZ = pos.WithZPlus(pos.Z == 0 ? markerLenBy2 : -markerLenBy2);
 				DrawMarkerZ(buf, posZ, markerLenBy2, markerThicknessBy2);
 			}
 
