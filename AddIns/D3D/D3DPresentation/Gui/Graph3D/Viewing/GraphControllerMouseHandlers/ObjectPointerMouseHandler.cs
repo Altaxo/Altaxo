@@ -346,9 +346,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			// if there is exactly one object selected, try to open the corresponding configuration dialog
 			if (_selectedObjects.Count == 1)
 			{
-				var graphEnum = _selectedObjects.GetEnumerator(); // get the enumerator
-				graphEnum.MoveNext(); // set the enumerator to the first item
-				IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
+				IHitTestObject graphObject = (IHitTestObject)SelectedObjects[0];
 
 				// Set the currently active layer to the layer the clicked object is belonging to.
 				if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
@@ -359,8 +357,6 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 					//EndMovingObjects(); // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
 					ClearSelections();  // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
 					graphObject.OnDoubleClick();
-
-					//ClearSelections();
 				}
 			}
 		}
@@ -387,8 +383,8 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		{
 			bool bRepaint = (_selectedObjects.Count > 0); // is a repaint neccessary
 			_selectedObjects.Clear();
-			//	DisplayedGrips = null;
-			//	ActiveGrip = null;
+			DisplayedGrips = null;
+			ActiveGrip = null;
 
 			if (bRepaint)
 				_grac.RenderOverlay();
