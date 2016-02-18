@@ -37,8 +37,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			/// Creates a new HitTestObject.
 			/// </summary>
 			/// <param name="parent">The hitted object.</param>
-			public GraphicBaseHitTestObject(GraphicBase parent)
-				: base(parent)
+			/// <param name="localToWorldTransformation">The transformation that transformes from the coordinate space in which the hitted object is embedded to world coordinates. This is usually the transformation from the layer coordinates to the root layer coordinates, but does not include the object's transformation.</param>
+			public GraphicBaseHitTestObject(GraphicBase parent, Matrix4x3 localToWorldTransformation)
+				: base(parent, localToWorldTransformation)
 			{
 			}
 

@@ -756,7 +756,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 				if (null != mainAxisPoints)
 				{
 					if (hitData.IsHit(mainAxisPoints, Math.Max(_axisPen.Thickness1, _axisPen.Thickness2)))
-						return new HitTestObject(new PolylineObjectOutline(_axisPen.Thickness1, _axisPen.Thickness2, mainAxisPoints), this);
+						return new HitTestObject(
+							new PolylineObjectOutline(_axisPen.Thickness1, _axisPen.Thickness2, mainAxisPoints, hitData.WorldTransformation),
+							this,
+							hitData.WorldTransformation);
 				}
 			}
 			else // Test Tick lines
@@ -768,8 +771,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 					{
 						if (hitData.IsHit(line, _majorTickPen.Thickness1, _majorTickPen.Thickness2))
 							return new HitTestObject(
-								new MultipleSingleLinesObjectOutline(_majorTickPen.Thickness1, _majorTickPen.Thickness2, _cachedMajorTickLinesUsedForHitTesting),
-								this);
+								new MultipleSingleLinesObjectOutline(_majorTickPen.Thickness1, _majorTickPen.Thickness2, _cachedMajorTickLinesUsedForHitTesting, hitData.WorldTransformation),
+								this,
+								hitData.WorldTransformation);
 					}
 				}
 				// test minor ticks for hit
@@ -779,8 +783,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 					{
 						if (hitData.IsHit(line, _minorTickPen.Thickness1, _majorTickPen.Thickness2))
 							return new HitTestObject(
-								new MultipleSingleLinesObjectOutline(_minorTickPen.Thickness1, _minorTickPen.Thickness2, _cachedMinorTickLinesUsedForHitTesting),
-								this);
+								new MultipleSingleLinesObjectOutline(_minorTickPen.Thickness1, _minorTickPen.Thickness2, _cachedMinorTickLinesUsedForHitTesting, hitData.WorldTransformation),
+								this,
+								hitData.WorldTransformation);
 					}
 				}
 			}

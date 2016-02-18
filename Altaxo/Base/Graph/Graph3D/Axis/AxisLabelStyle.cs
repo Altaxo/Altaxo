@@ -828,7 +828,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			foreach (var outline in labelOutlines)
 			{
 				if (outline.IsHittedBy(hitData))
-					return new HitTestObject(new MultipleRectangularObjectOutlines(hitData.WorldTransformation, labelOutlines), this);
+					return new HitTestObject(new MultipleRectangularObjectOutlines(labelOutlines, hitData.WorldTransformation), this, hitData.WorldTransformation);
 			}
 			return null;
 		}

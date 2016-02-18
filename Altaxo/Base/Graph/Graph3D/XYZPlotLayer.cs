@@ -875,10 +875,6 @@ namespace Altaxo.Graph.Graph3D
 			if (!plotItemsOnly)
 			{
 				hit = _axisStyles.HitTest(localCoord, AxisScaleEditorMethod, AxisStyleEditorMethod);
-				if (null != hit)
-				{
-					hit.AppendTransformation(_transformation);
-				}
 			}
 
 			if (null == hit)

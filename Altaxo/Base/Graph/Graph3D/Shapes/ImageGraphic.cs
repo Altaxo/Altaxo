@@ -207,15 +207,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		/// <summary>Creates a new hit test object. Here, a special hit test object is constructed, which suppresses the scale grips.</summary>
 		/// <returns>A newly created hit test object.</returns>
-		protected override IHitTestObject GetNewHitTestObject()
+		/// <param name="localToWorldTransformation">The transformation that transformes from the coordinate space in which the hitted object is embedded to world coordinates. This is usually the transformation from the layer coordinates to the root layer coordinates, but does not include the object's transformation.</param>
+		protected override IHitTestObject GetNewHitTestObject(Matrix4x3 localToWorldTransformation)
 		{
-			return new MyHitTestObject(this);
+			return new MyHitTestObject(this, localToWorldTransformation);
 		}
 
 		private class MyHitTestObject : GraphicBaseHitTestObject
 		{
-			public MyHitTestObject(ImageGraphic obj)
-				: base(obj)
+			public MyHitTestObject(ImageGraphic obj, Matrix4x3 localToWorldTransformation)
+				: base(obj, localToWorldTransformation)
 			{
 			}
 

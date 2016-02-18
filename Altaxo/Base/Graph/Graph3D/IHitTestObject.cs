@@ -52,13 +52,6 @@ namespace Altaxo.Graph.Graph3D
 		Matrix4x3 Transformation { get; }
 
 		/// <summary>
-		/// Appends the provided transformation. Usually, the hit test object is created with the local transformation of the hitted object. When passing the hit test data to the parent object,
-		/// the parent object appends its own transformation, so that finally the transformation is able to transform from local coordinates of the hitted object to root layer coordinates.
-		/// </summary>
-		/// <param name="transformation">The transformation to append.</param>
-		void AppendTransformation(Matrix4x3 transformation);
-
-		/// <summary>
 		/// This will return the object itself, i.e. the object which corresponds to the selection path.
 		/// </summary>
 		/// <returns></returns>

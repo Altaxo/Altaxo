@@ -1385,7 +1385,6 @@ namespace Altaxo.Graph.Graph3D
 						if (null == hit.Remove && (hit.HittedObject is IGraphicBase))
 							hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
 
-						hit.AppendTransformation(_transformation);
 						return hit;
 					}
 				}
@@ -1403,7 +1402,6 @@ namespace Altaxo.Graph.Graph3D
 					{
 						System.Diagnostics.Debug.Assert(hit.ParentLayer != null, "Parent layer must be set, because the hitted plot item originates from another layer!");
 
-						hit.AppendTransformation(_transformation);
 						return hit;
 					}
 				}

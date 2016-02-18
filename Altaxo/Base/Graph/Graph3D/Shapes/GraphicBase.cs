@@ -636,9 +636,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			return new RectangularObjectOutline(Bounds, _transformation);
 		}
 
-		protected virtual IHitTestObject GetNewHitTestObject()
+		/// <summary>
+		/// Gets a new hit test object.
+		/// </summary>
+		/// <param name="localToWorldTransformation">The transformation that transformes from the coordinate space in which the hitted object is embedded to world coordinates. This is usually the transformation from the layer coordinates to the root layer coordinates, but does not include the object's transformation.</param>
+		/// <returns>A new hit test object.</returns>
+		protected virtual IHitTestObject GetNewHitTestObject(Matrix4x3 localToWorldTransformation)
 		{
-			return new GraphicBaseHitTestObject(this);
+			return new GraphicBaseHitTestObject(this, localToWorldTransformation);
 		}
 
 		/// <summary>
@@ -653,7 +658,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			double z;
 			if (localHitData.IsHit(Bounds, out z))
 			{
-				var result = GetNewHitTestObject();
+				var result = GetNewHitTestObject(parentHitData.WorldTransformation);
 				result.DoubleClick = null;
 				return result;
 			}

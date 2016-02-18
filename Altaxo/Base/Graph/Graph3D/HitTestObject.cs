@@ -106,10 +106,11 @@ namespace Altaxo.Graph.Graph3D
 		/// Creates a new HitTestObject.
 		/// </summary>
 		/// <param name="hitobject">The hitted object.</param>
-		public HitTestObjectBase(object hitobject)
+		/// <param name="localToWorldTransformation">The transformation that transformes from the coordinate space in which the hitted object is embedded to world coordinates. This is usually the transformation from the layer coordinates to the root layer coordinates, but does not include the object's transformation.</param>
+		public HitTestObjectBase(object hitobject, Matrix4x3 localToWorldTransformation)
 		{
 			_hitobject = hitobject;
-			_matrix = Matrix4x3.Identity;
+			_matrix = localToWorldTransformation;
 		}
 
 		/// <summary>
@@ -119,17 +120,6 @@ namespace Altaxo.Graph.Graph3D
 		public Matrix4x3 Transformation
 		{
 			get { return _matrix; }
-		}
-
-		/// <summary>
-		/// Appends a transformation to the transformation matrix of the hit test object. Call this while walking down the hierarchie of objects.
-		/// </summary>
-		/// <param name="x">The transformation to append.</param>
-		public virtual void AppendTransformation(Matrix4x3 x)
-		{
-			_matrix.AppendTransform(x);
-
-			ObjectOutlineForArrangements?.AppendTransformation(x);
 		}
 
 		public object HittedObject
@@ -229,8 +219,9 @@ namespace Altaxo.Graph.Graph3D
 		/// <param name="objectPath">Path of the object outline used for arrangement of multiple objects.
 		/// You have to provide it in coordinates of the parent layer.</param>
 		/// <param name="hitobject">The hitted object.</param>
-		public HitTestObject(IObjectOutline objectPath, object hitobject)
-			: base(hitobject)
+		/// <param name="localToWorldTransformation">The transformation that transformes from the coordinate space in which the hitted object is embedded to world coordinates. This is usually the transformation from the layer coordinates to the root layer coordinates, but does not include the object's transformation.</param>
+		public HitTestObject(IObjectOutline objectPath, object hitobject, Matrix4x3 localToWorldTransformation)
+			: base(hitobject, localToWorldTransformation)
 		{
 			_objectPath = objectPath;
 		}

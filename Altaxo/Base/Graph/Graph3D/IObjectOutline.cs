@@ -32,6 +32,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
+	/// <summary>
+	/// Describes the outline of a 3D graphical object in order to show the selection markers.
+	/// </summary>
 	public interface IObjectOutline
 	{
 		/// <summary>
@@ -41,12 +44,6 @@ namespace Altaxo.Graph.Graph3D
 		/// Set of lines that describe the object outline.
 		/// </value>
 		IEnumerable<LineD3D> AsLines { get; }
-
-		/// <summary>
-		/// Appends an additional transformation to the object outline.
-		/// </summary>
-		/// <param name="transformation">The additional transformation.</param>
-		void AppendTransformation(Matrix4x3 transformation);
 
 		/// <summary>
 		/// Determines whether this outline is hitted by the specified hit data.
@@ -93,11 +90,6 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public void AppendTransformation(Matrix4x3 transformation)
-		{
-			_transformation.AppendTransform(transformation);
-		}
-
 		public bool IsHittedBy(HitTestPointData hitData)
 		{
 			double z;
@@ -109,7 +101,7 @@ namespace Altaxo.Graph.Graph3D
 	{
 		private RectangularObjectOutline[] _outlines;
 
-		public MultipleRectangularObjectOutlines(Matrix4x3 localToWorldTransformation, IEnumerable<RectangularObjectOutline> outlines)
+		public MultipleRectangularObjectOutlines(IEnumerable<RectangularObjectOutline> outlines, Matrix4x3 localToWorldTransformation)
 		{
 			_outlines = outlines.ToArray();
 			// Replace the original outline object with new one that contain the transformation from local (layer) to world coordinates (root layer).
@@ -130,10 +122,6 @@ namespace Altaxo.Graph.Graph3D
 						yield return line;
 				}
 			}
-		}
-
-		public void AppendTransformation(Matrix4x3 transformation)
-		{
 		}
 
 		public bool IsHittedBy(HitTestPointData hitData)
@@ -180,11 +168,6 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public void AppendTransformation(Matrix4x3 transformation)
-		{
-			_transformation.AppendTransform(transformation);
-		}
-
 		public bool IsHittedBy(HitTestPointData hitData)
 		{
 			double z;
@@ -205,12 +188,12 @@ namespace Altaxo.Graph.Graph3D
 		private double _thickness1By2;
 		private double _thickness2By2;
 
-		public PolylineObjectOutline(double thickness1, double thickness2, IEnumerable<PointD3D> points)
+		public PolylineObjectOutline(double thickness1, double thickness2, IEnumerable<PointD3D> points, Matrix4x3 localToWorldTransformation)
 		{
 			_thickness1By2 = thickness1 * 0.55;
 			_thickness2By2 = thickness2 * 0.55;
 			_points = points.ToArray();
-			_transformation = Matrix4x3.Identity;
+			_transformation = localToWorldTransformation;
 		}
 
 		public IEnumerable<LineD3D> AsLines
@@ -243,11 +226,6 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public void AppendTransformation(Matrix4x3 transformation)
-		{
-			_transformation.AppendTransform(transformation);
-		}
-
 		public bool IsHittedBy(HitTestPointData hitData)
 		{
 			throw new NotImplementedException();
@@ -262,12 +240,12 @@ namespace Altaxo.Graph.Graph3D
 		private double _thickness1By2;
 		private double _thickness2By2;
 
-		public MultipleSingleLinesObjectOutline(double thickness1, double thickness2, IEnumerable<LineD3D> lines)
+		public MultipleSingleLinesObjectOutline(double thickness1, double thickness2, IEnumerable<LineD3D> lines, Matrix4x3 localToWorldTransformation)
 		{
 			_thickness1By2 = thickness1 * 0.55;
 			_thickness2By2 = thickness2 * 0.55;
 			_lines = lines.ToArray();
-			_transformation = Matrix4x3.Identity;
+			_transformation = localToWorldTransformation;
 		}
 
 		public IEnumerable<LineD3D> AsLines
@@ -295,11 +273,6 @@ namespace Altaxo.Graph.Graph3D
 					yield return new LineD3D(_transformation.Transform(prevPoint + sw), _transformation.Transform(currPoint + sw));
 				}
 			}
-		}
-
-		public void AppendTransformation(Matrix4x3 transformation)
-		{
-			_transformation.AppendTransform(transformation);
 		}
 
 		public bool IsHittedBy(HitTestPointData hitData)

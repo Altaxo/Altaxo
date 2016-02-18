@@ -507,7 +507,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			double z;
 			if (localHitData.IsHit(Bounds, out z))
 			{
-				var result = GetNewHitTestObject();
+				var result = GetNewHitTestObject(parentHitData.WorldTransformation);
 				result.DoubleClick = TextGraphicsEditorMethod;
 				return result;
 			}
