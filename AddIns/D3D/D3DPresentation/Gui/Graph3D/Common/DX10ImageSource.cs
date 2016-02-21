@@ -56,29 +56,29 @@ namespace Altaxo.Gui.Graph3D.Common
 		[DllImport("user32.dll", SetLastError = false)]
 		private static extern IntPtr GetDesktopWindow();
 
-		private static int ActiveClients;
-		private static Direct3DEx D3DContext;
-		private static DeviceEx D3DDevice;
-		private Texture RenderTarget;
+		private static int _numberOfActiveClients;
+		private static Direct3DEx _d3DContext;
+		private static DeviceEx _d3DDevice;
+
+		private Texture _renderTarget;
 
 		public DX10ImageSource()
 		{
 			this.StartD3D();
-			DX10ImageSource.ActiveClients++;
+			DX10ImageSource._numberOfActiveClients++;
 		}
 
 		public void Dispose()
 		{
 			this.SetRenderTargetDX10(null);
-			Disposer.RemoveAndDispose(ref this.RenderTarget);
 
-			DX10ImageSource.ActiveClients--;
+			DX10ImageSource._numberOfActiveClients--;
 			this.EndD3D();
 		}
 
 		public void InvalidateD3DImage()
 		{
-			if (this.RenderTarget != null)
+			if (this._renderTarget != null)
 			{
 				base.Lock();
 				base.AddDirtyRect(new Int32Rect(0, 0, base.PixelWidth, base.PixelHeight));
@@ -88,9 +88,9 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D renderTarget)
 		{
-			if (this.RenderTarget != null)
+			if (this._renderTarget != null)
 			{
-				this.RenderTarget = null;
+				Disposer.RemoveAndDispose(ref this._renderTarget);
 
 				base.Lock();
 				base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, IntPtr.Zero);
@@ -111,8 +111,8 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (handle == IntPtr.Zero)
 				throw new ArgumentNullException("Handle");
 
-			this.RenderTarget = new Texture(DX10ImageSource.D3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
-			using (Surface surface = this.RenderTarget.GetSurfaceLevel(0))
+			this._renderTarget = new Texture(DX10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+			using (Surface surface = this._renderTarget.GetSurfaceLevel(0))
 			{
 				base.Lock();
 				base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
@@ -122,10 +122,10 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		private void StartD3D()
 		{
-			if (DX10ImageSource.ActiveClients != 0)
+			if (DX10ImageSource._numberOfActiveClients != 0)
 				return;
 
-			D3DContext = new Direct3DEx();
+			_d3DContext = new Direct3DEx();
 
 			PresentParameters presentparams = new PresentParameters();
 			presentparams.Windowed = true;
@@ -133,17 +133,17 @@ namespace Altaxo.Gui.Graph3D.Common
 			presentparams.DeviceWindowHandle = GetDesktopWindow();
 			presentparams.PresentationInterval = PresentInterval.Default;
 
-			DX10ImageSource.D3DDevice = new DeviceEx(D3DContext, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
+			DX10ImageSource._d3DDevice = new DeviceEx(_d3DContext, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
 		}
 
 		private void EndD3D()
 		{
-			if (DX10ImageSource.ActiveClients != 0)
+			if (DX10ImageSource._numberOfActiveClients != 0)
 				return;
 
-			Disposer.RemoveAndDispose(ref this.RenderTarget);
-			Disposer.RemoveAndDispose(ref DX10ImageSource.D3DDevice);
-			Disposer.RemoveAndDispose(ref DX10ImageSource.D3DContext);
+			Disposer.RemoveAndDispose(ref this._renderTarget);
+			Disposer.RemoveAndDispose(ref DX10ImageSource._d3DDevice);
+			Disposer.RemoveAndDispose(ref DX10ImageSource._d3DContext);
 		}
 
 		private IntPtr GetSharedHandle(SharpDX.Direct3D10.Texture2D Texture)

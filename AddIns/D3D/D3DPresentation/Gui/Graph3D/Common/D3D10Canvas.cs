@@ -36,20 +36,24 @@ namespace Altaxo.Gui.Graph3D.Common
 	public partial class D3D10Canvas : Image
 	{
 		private Device _device;
-		private Texture2D RenderTarget;
-		private Texture2D RenderTargetIntermediate;
-		private Texture2D DepthStencil;
-		private RenderTargetView RenderTargetView;
-		private RenderTargetView RenderTargetIntermediateView;
-		private ShaderResourceView RenderTargetIntermediateShaderResourceView;
-		private DepthStencilView DepthStencilView;
-		private DX10ImageSource D3DSurface;
-		private Stopwatch RenderTimer;
-		private IScene RenderScene;
-		private bool SceneAttached;
+
+		private Texture2D _depthStencil;
+		private DepthStencilView _depthStencilView;
+
+		private Texture2D _renderTarget;
+		private RenderTargetView _renderTargetView;
+
+		private Texture2D _renderTargetIntermediate;
+		private RenderTargetView _renderTargetIntermediateView;
+		private ShaderResourceView _renderTargetIntermediateShaderResourceView;
+
+		private DX10ImageSource _d3DSurface;
+
+		private IScene _renderScene;
+		private bool _isRenderSceneAttached;
 		private D3D10GammaCorrector _gammaCorrector;
 
-		public Color4 ClearColor = SharpDX.Color.White;
+		public Color4 _renderTargetClearColor = SharpDX.Color.White;
 
 		/// <summary>
 		/// Occurs when 3D rendering is ready.
@@ -58,7 +62,6 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		public D3D10Canvas()
 		{
-			this.RenderTimer = new Stopwatch();
 			this.Loaded += this.EhLoaded;
 			this.Unloaded += this.EhUnloaded;
 			this.GotFocus += EhFocused;
@@ -85,7 +88,6 @@ namespace Altaxo.Gui.Graph3D.Common
 				return;
 
 			this.StartD3D();
-			this.StartRendering();
 			this.Focusable = true;
 
 			D3DStarted?.Invoke(this, EventArgs.Empty);
@@ -96,7 +98,6 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (D3D10Canvas.IsInDesignMode)
 				return;
 
-			this.StopRendering();
 			this.EndD3D();
 		}
 
@@ -104,50 +105,50 @@ namespace Altaxo.Gui.Graph3D.Common
 		{
 			this._device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 
-			this.D3DSurface = new DX10ImageSource();
-			this.D3DSurface.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
+			this._d3DSurface = new DX10ImageSource();
+			this._d3DSurface.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
 
 			this.CreateAndBindTargets();
 
-			this.Source = this.D3DSurface;
+			this.Source = this._d3DSurface;
 		}
 
 		private void EndD3D()
 		{
-			if (this.RenderScene != null)
+			if (this._renderScene != null)
 			{
-				this.RenderScene.Detach();
-				this.SceneAttached = false;
+				this._renderScene.Detach();
+				this._isRenderSceneAttached = false;
 			}
 
-			if (null != this.D3DSurface)
-				this.D3DSurface.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
+			if (null != this._d3DSurface)
+				this._d3DSurface.IsFrontBufferAvailableChanged -= EhIsFrontBufferAvailableChanged;
 			this.Source = null;
 
-			Disposer.RemoveAndDispose(ref this.D3DSurface);
-			Disposer.RemoveAndDispose(ref this.RenderTargetView);
-			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateView);
-			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateShaderResourceView);
-			Disposer.RemoveAndDispose(ref this.DepthStencilView);
-			Disposer.RemoveAndDispose(ref this.RenderTarget);
-			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediate);
-			Disposer.RemoveAndDispose(ref this.DepthStencil);
+			Disposer.RemoveAndDispose(ref this._d3DSurface);
+			Disposer.RemoveAndDispose(ref this._renderTargetView);
+			Disposer.RemoveAndDispose(ref this._renderTargetIntermediateView);
+			Disposer.RemoveAndDispose(ref this._renderTargetIntermediateShaderResourceView);
+			Disposer.RemoveAndDispose(ref this._depthStencilView);
+			Disposer.RemoveAndDispose(ref this._renderTarget);
+			Disposer.RemoveAndDispose(ref this._renderTargetIntermediate);
+			Disposer.RemoveAndDispose(ref this._depthStencil);
 			Disposer.RemoveAndDispose(ref this._gammaCorrector);
 			Disposer.RemoveAndDispose(ref this._device);
 		}
 
 		private void CreateAndBindTargets()
 		{
-			if (null != this.D3DSurface)
-				this.D3DSurface.SetRenderTargetDX10(null);
+			if (null != this._d3DSurface)
+				this._d3DSurface.SetRenderTargetDX10(null);
 
-			Disposer.RemoveAndDispose(ref this.RenderTargetView);
-			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateView);
-			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediateShaderResourceView);
-			Disposer.RemoveAndDispose(ref this.DepthStencilView);
-			Disposer.RemoveAndDispose(ref this.RenderTarget);
-			Disposer.RemoveAndDispose(ref this.RenderTargetIntermediate);
-			Disposer.RemoveAndDispose(ref this.DepthStencil);
+			Disposer.RemoveAndDispose(ref this._renderTargetView);
+			Disposer.RemoveAndDispose(ref this._renderTargetIntermediateView);
+			Disposer.RemoveAndDispose(ref this._renderTargetIntermediateShaderResourceView);
+			Disposer.RemoveAndDispose(ref this._depthStencilView);
+			Disposer.RemoveAndDispose(ref this._renderTarget);
+			Disposer.RemoveAndDispose(ref this._renderTargetIntermediate);
+			Disposer.RemoveAndDispose(ref this._depthStencil);
 			Disposer.RemoveAndDispose(ref this._gammaCorrector);
 
 			int width = Math.Max((int)base.ActualWidth, 100);
@@ -195,39 +196,16 @@ namespace Altaxo.Gui.Graph3D.Common
 				ArraySize = 1,
 			};
 
-			this.RenderTarget = new Texture2D(this._device, colordesc);
-			this.RenderTargetIntermediate = new Texture2D(this._device, colordesc);
-			this.DepthStencil = new Texture2D(this._device, depthdesc);
-			this.RenderTargetIntermediateView = new RenderTargetView(this._device, this.RenderTargetIntermediate);
-			this.RenderTargetIntermediateShaderResourceView = new ShaderResourceView(this._device, this.RenderTargetIntermediate);
-			this.RenderTargetView = new RenderTargetView(this._device, this.RenderTarget);
-			this.DepthStencilView = new DepthStencilView(this._device, this.DepthStencil);
+			this._renderTarget = new Texture2D(this._device, colordesc);
+			this._renderTargetIntermediate = new Texture2D(this._device, colordesc);
+			this._depthStencil = new Texture2D(this._device, depthdesc);
+			this._renderTargetIntermediateView = new RenderTargetView(this._device, this._renderTargetIntermediate);
+			this._renderTargetIntermediateShaderResourceView = new ShaderResourceView(this._device, this._renderTargetIntermediate);
+			this._renderTargetView = new RenderTargetView(this._device, this._renderTarget);
+			this._depthStencilView = new DepthStencilView(this._device, this._depthStencil);
 			this._gammaCorrector = new D3D10GammaCorrector(_device, "Altaxo.CompiledShaders.Effects.GammaCorrector.cso");
 
-			this.D3DSurface.SetRenderTargetDX10(this.RenderTarget);
-		}
-
-		private void StartRendering()
-		{
-			if (this.RenderTimer.IsRunning)
-				return;
-
-			//CompositionTarget.Rendering += OnRendering;
-			this.RenderTimer.Start();
-		}
-
-		private void StopRendering()
-		{
-			if (!this.RenderTimer.IsRunning)
-				return;
-
-			CompositionTarget.Rendering -= OnRendering;
-			this.RenderTimer.Stop();
-		}
-
-		private void OnRendering(object sender, EventArgs e)
-		{
-			TriggerRendering();
+			this._d3DSurface.SetRenderTargetDX10(this._renderTarget);
 		}
 
 		/// <summary>
@@ -235,11 +213,8 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// </summary>
 		public void TriggerRendering()
 		{
-			if (!this.RenderTimer.IsRunning)
-				return;
-
-			this.Render(this.RenderTimer.Elapsed);
-			this.D3DSurface.InvalidateD3DImage();
+			this.Render();
+			this._d3DSurface?.InvalidateD3DImage();
 		}
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -255,57 +230,52 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 		}
 
-		private void Render(TimeSpan sceneTime)
+		private void Render()
 		{
 			SharpDX.Direct3D10.Device device = this._device;
 			if (device == null)
 				return;
 
-			Texture2D renderTarget = this.RenderTargetIntermediate;
+			Texture2D renderTarget = this._renderTargetIntermediate;
 			if (renderTarget == null)
 				return;
 
 			int targetWidth = renderTarget.Description.Width;
 			int targetHeight = renderTarget.Description.Height;
 
-			device.OutputMerger.SetTargets(this.DepthStencilView, this.RenderTargetIntermediateView);
+			device.OutputMerger.SetTargets(this._depthStencilView, this._renderTargetIntermediateView);
 			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
 
-			device.ClearRenderTargetView(this.RenderTargetIntermediateView, this.ClearColor);
-			device.ClearDepthStencilView(this.DepthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+			device.ClearRenderTargetView(this._renderTargetIntermediateView, this._renderTargetClearColor);
+			device.ClearDepthStencilView(this._depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
 			if (this.Scene != null)
 			{
-				if (!this.SceneAttached)
+				if (!this._isRenderSceneAttached)
 				{
-					this.SceneAttached = true;
-					this.RenderScene.Attach(_device, HostSize);
+					this._isRenderSceneAttached = true;
+					this._renderScene.Attach(_device, HostSize);
 				}
 
-				this.Scene.Update(this.RenderTimer.Elapsed);
 				this.Scene.Render();
 			}
 
-			device.Flush();
+			device.Flush(); // make intermediate render target valid
 
 			// now start a 2nd stage of rendering, in order to gamma-correct the image
 			// we use the RenderTextureIntermediate that was the target in the first stage now as a ShaderResource in this 2nd stage
-			device.OutputMerger.SetTargets(this.RenderTargetView);
+			device.OutputMerger.SetTargets(this._renderTargetView);
 			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
-			device.ClearRenderTargetView(this.RenderTargetView, SharpDX.Color.Black);
-			_gammaCorrector.Render(this.Device, this.RenderTargetIntermediateShaderResourceView);
+			device.ClearRenderTargetView(this._renderTargetView, SharpDX.Color.Black);
+			_gammaCorrector.Render(this.Device, this._renderTargetIntermediateShaderResourceView);
 
-			device.Flush();
+			device.Flush(); // make final render target valid
 		}
 
 		private void EhIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			// this fires when the screensaver kicks in, the machine goes into sleep or hibernate
 			// and any other catastrophic losses of the d3d device from WPF's point of view
-			if (this.D3DSurface.IsFrontBufferAvailable)
-				this.StartRendering();
-			else
-				this.StopRendering();
 		}
 
 		/// <summary>
@@ -324,17 +294,17 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		public IScene Scene
 		{
-			get { return this.RenderScene; }
+			get { return this._renderScene; }
 			set
 			{
-				if (ReferenceEquals(this.RenderScene, value))
+				if (ReferenceEquals(this._renderScene, value))
 					return;
 
-				if (this.RenderScene != null)
-					this.RenderScene.Detach();
+				if (this._renderScene != null)
+					this._renderScene.Detach();
 
-				this.SceneAttached = false;
-				this.RenderScene = value;
+				this._isRenderSceneAttached = false;
+				this._renderScene = value;
 			}
 		}
 
@@ -347,7 +317,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		{
 			get
 			{
-				Texture2D renderTarget = this.RenderTarget;
+				Texture2D renderTarget = this._renderTarget;
 				if (renderTarget == null)
 					return new PointD2D(0, 0);
 
