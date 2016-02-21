@@ -4,17 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F5DB883A-9996-45D4-A21D-3410549D5B6D}</ProjectGuid>
-    <OutputType>library</OutputType>
+    <ProjectGuid>{D08538DC-E8A8-473D-90E0-0436F551DFD4}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Altaxo</RootNamespace>
     <AssemblyName>D3DPresentation</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,148 +21,99 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\rtDir\AddIns\OriginConnector\</OutputPath>
+    <OutputPath>..\..\..\rtDir\AddIns\D3D\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\rtDir\AddIns\OriginConnector\D3DPresentation.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpDX">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D10">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D10.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D9">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D9.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DXGI">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Toolkit">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Toolkit.Graphics">
-      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Toolkit.Graphics.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SharpDX">
+      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler">
+      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D10">
+      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.Direct3D10.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10OverlayContext.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialAndClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialComparer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorLineListBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBufferWithClipping.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorLineListBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D10GammaCorrector.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D11Canvas.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D11BitmapExporter.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D10BitmapExporter.cs" />
-    <Compile Include="Gui\Graph3D\Common\Disposer.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D10Canvas.cs" />
-    <Compile Include="Gui\Graph3D\Common\DX11ImageSource.cs" />
+    <Compile Include="Gui\Graph3D\Common\D3D10GammaCorrector.cs" />
+    <Compile Include="Gui\Graph3D\Common\Disposer.cs" />
     <Compile Include="Gui\Graph3D\Common\DX10ImageSource.cs" />
     <Compile Include="Gui\Graph3D\Common\IScene.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10GraphicContext.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\TextureExtensions.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\D3D10Scene.cs" />
     <Compile Include="Gui\Graph3D\Viewing\D3D10Scene_Lighting.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\D3D11Scene.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Viewing\Graph3DControllerWpf.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\D3D10Scene.cs" />
-    <Compile Include="Gui\SharpDevelop\Graph3DExportBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\Graph3DDisplayBindingDoozer.cs" />
+    <Compile Include="Gui\SharpDevelop\Graph3DExportBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
     <Compile Include="MenuCommands\EditCommands.cs" />
     <Compile Include="MenuCommands\GraphCommands.cs" />
     <Compile Include="MenuCommands\PlotCommands.cs" />
+    <Compile Include="Properties\AssemblyInfo.autogenerated.cs" />
+    <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CompiledShaders\Simple.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\PN_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\PN_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\PNC_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\PNC_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\PC_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\PNT_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\PT_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\PS\P_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\PC_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\PNT_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\PT_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\VS\P_DULL.cso" />
-    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
-    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
-    <None Include="packages.config">
+    <Page Include="Gui\Graph3D\Viewing\Graph3DControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
-      <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
-      <Name>AltaxoBase.Presentation</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <Content Include="D3D.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Fx40File Include="Shaders\Lighting.fx" />
+    <Fx40File Include="Shaders\GammaCorrector.fx" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj">
       <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
       <Name>AltaxoBase</Name>
@@ -193,49 +141,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="D3D.addin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Fx40File Include="Shaders\Lighting.fx" />
+    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
+    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
   </ItemGroup>
-  <ItemGroup>
-    <Page Include="Gui\Graph3D\Viewing\Graph3DControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Vs40File Include="Shaders\P_DULL.fx" />
-    <Ps40File Include="Shaders\P_DULL.fx" />
-    <Vs40File Include="Shaders\PC_DULL.fx" />
-    <Ps40File Include="Shaders\PC_DULL.fx" />
-    <Vs40File Include="Shaders\PT_DULL.fx" />
-    <Ps40File Include="Shaders\PT_DULL.fx" />
-    <Vs40File Include="Shaders\PN_DULL.fx" />
-    <Ps40File Include="Shaders\PN_DULL.fx" />
-    <Vs40File Include="Shaders\PNC_DULL.fx" />
-    <Ps40File Include="Shaders\PNC_DULL.fx" />
-    <Vs40File Include="Shaders\PNT_DULL.fx" />
-    <Ps40File Include="Shaders\PNT_DULL.fx" />
-    <Fx40File Include="Shaders\GammaCorrector.fx" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\SharpDX.2.6.3\build\SharpDX.targets'))" />
-    <Error Condition="!Exists('..\..\..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets'))" />
-  </Target>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
+  <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
   <Target Name="BeforeBuild">
     <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
     <Shader InputFiles="@(Vs40File)" OutputPath="$(ProjectDir)\CompiledShaders\VS" Profile="vs_4_0" EntryPoint="VS" />
     <Shader InputFiles="@(Ps40File)" OutputPath="$(ProjectDir)\CompiledShaders\PS" Profile="ps_4_0" EntryPoint="PS" />
+    <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\..\MSBuildVersioning.xml" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  <Import Project="..\..\..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets" Condition="Exists('..\..\..\packages\SharpDX.Toolkit.2.6.3\build\SharpDX.Toolkit.targets')" />
 </Project>

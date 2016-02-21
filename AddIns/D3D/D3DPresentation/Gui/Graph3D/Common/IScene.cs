@@ -68,16 +68,4 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// <param name="host">The scene host.</param>
 		void Attach(SharpDX.Direct3D10.Device hostDevice, PointD2D hostSize);
 	}
-
-	/// <summary>
-	/// Scene.
-	/// </summary>
-	public interface ID3D11Scene : IScene
-	{
-		/// <summary>
-		/// Attaches the scene to the specified scene host.
-		/// </summary>
-		/// <param name="host">The scene host.</param>
-		void Attach(SharpDX.Direct3D11.Device hostDevice, PointD2D hostSize);
-	}
 }

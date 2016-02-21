@@ -46,7 +46,8 @@ namespace Altaxo.Gui.Graph3D.Common
 	using System.Windows.Input;
 	using System.Windows.Media;
 	using Device = SharpDX.Direct3D10.Device1;
-	using STG = SharpDX.Toolkit.Graphics;
+
+	//using STG = SharpDX.Toolkit.Graphics;
 
 	public class D3D10BitmapExporter : Altaxo.Main.IProjectItemImageExporter
 	{
