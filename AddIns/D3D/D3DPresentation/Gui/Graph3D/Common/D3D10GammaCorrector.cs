@@ -43,6 +43,7 @@ namespace Altaxo.Gui.Graph3D.Common
 		private Buffer _vertices;
 		private Effect _effect;
 		private Device _cachedDevice;
+		private bool _isDisposed = false;
 
 		public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
 		{
@@ -82,36 +83,7 @@ namespace Altaxo.Gui.Graph3D.Common
 						});
 		}
 
-		public void Render(Device device, ShaderResourceView textureView)
-		{
-			if (_isDisposed)
-				throw new ObjectDisposedException(this.GetType().Name);
-
-			if (device == null)
-				return;
-			if (!object.ReferenceEquals(device, _cachedDevice))
-				throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
-
-			device.InputAssembler.InputLayout = this._vertexLayout;
-			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._vertices, 24, 0));
-
-			EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
-			EffectPass pass = technique.GetPassByIndex(0);
-			var shaderResourceObj = this._effect.GetVariableByName("ShaderTexture");
-			EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
-			shaderResource.SetResource(textureView);
-
-			for (int i = 0; i < technique.Description.PassCount; ++i)
-			{
-				pass.Apply();
-				device.Draw(6, 0);
-			}
-		}
-
 		#region IDisposable Support
-
-		private bool _isDisposed = false; // To detect redundant calls
 
 		protected virtual void Dispose(bool disposing)
 		{
@@ -132,21 +104,41 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 		}
 
-		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-		// ~D3D10GammaCorrector() {
-		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-		//   Dispose(false);
-		// }
-
-		// This code added to correctly implement the disposable pattern.
 		public void Dispose()
 		{
-			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
 			Dispose(true);
-			// TODO: uncomment the following line if the finalizer is overridden above.
+			// uncomment the following line if the finalizer is overridden.
 			// GC.SuppressFinalize(this);
 		}
 
 		#endregion IDisposable Support
+
+		public void Render(Device device, ShaderResourceView textureView)
+		{
+			if (_isDisposed)
+				throw new ObjectDisposedException(this.GetType().Name);
+
+			if (device == null)
+				return;
+
+			if (!object.ReferenceEquals(device, _cachedDevice))
+				throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
+
+			device.InputAssembler.InputLayout = this._vertexLayout;
+			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(this._vertices, 24, 0));
+
+			EffectTechnique technique = this._effect.GetTechniqueByIndex(0);
+			EffectPass pass = technique.GetPassByIndex(0);
+			var shaderResourceObj = this._effect.GetVariableByName("ShaderTexture");
+			EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
+			shaderResource.SetResource(textureView);
+
+			for (int i = 0; i < technique.Description.PassCount; ++i)
+			{
+				pass.Apply();
+				device.Draw(6, 0);
+			}
+		}
 	}
 }

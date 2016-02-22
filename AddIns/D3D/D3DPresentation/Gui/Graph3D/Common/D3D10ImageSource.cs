@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph3D.Common
 	using System.Windows;
 	using System.Windows.Interop;
 
-	internal class DX10ImageSource : D3DImage, IDisposable
+	public class D3D10ImageSource : D3DImage, IDisposable
 	{
 		[DllImport("user32.dll", SetLastError = false)]
 		private static extern IntPtr GetDesktopWindow();
@@ -62,22 +62,44 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		private Texture _renderTarget;
 
-		public DX10ImageSource()
+		private bool _isDisposed;
+
+		public D3D10ImageSource()
 		{
-			this.StartD3D();
-			DX10ImageSource._numberOfActiveClients++;
+			if (1 == System.Threading.Interlocked.Increment(ref _numberOfActiveClients))
+			{
+				StartD3D();
+			}
+		}
+
+		~D3D10ImageSource()
+		{
+			Dispose(false);
 		}
 
 		public void Dispose()
 		{
-			this.SetRenderTargetDX10(null);
+			Dispose(true);
+		}
 
-			DX10ImageSource._numberOfActiveClients--;
-			this.EndD3D();
+		public void Dispose(bool disposing)
+		{
+			if (!_isDisposed)
+			{
+				_isDisposed = true;
+				Disposer.RemoveAndDispose(ref this._renderTarget);
+				if (0 == System.Threading.Interlocked.Decrement(ref _numberOfActiveClients))
+				{
+					EndD3D();
+				}
+			}
 		}
 
 		public void InvalidateD3DImage()
 		{
+			if (_isDisposed)
+				throw new ObjectDisposedException(this.GetType().Name);
+
 			if (this._renderTarget != null)
 			{
 				base.Lock();
@@ -88,6 +110,9 @@ namespace Altaxo.Gui.Graph3D.Common
 
 		public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D renderTarget)
 		{
+			if (_isDisposed)
+				throw new ObjectDisposedException(this.GetType().Name);
+
 			if (this._renderTarget != null)
 			{
 				Disposer.RemoveAndDispose(ref this._renderTarget);
@@ -103,7 +128,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (!IsShareable(renderTarget))
 				throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
 
-			Format format = DX10ImageSource.TranslateFormat(renderTarget);
+			Format format = D3D10ImageSource.TranslateFormat(renderTarget);
 			if (format == Format.Unknown)
 				throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
 
@@ -111,7 +136,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (handle == IntPtr.Zero)
 				throw new ArgumentNullException("Handle");
 
-			this._renderTarget = new Texture(DX10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+			this._renderTarget = new Texture(D3D10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
 			using (Surface surface = this._renderTarget.GetSurfaceLevel(0))
 			{
 				base.Lock();
@@ -120,11 +145,8 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 		}
 
-		private void StartD3D()
+		private static void StartD3D()
 		{
-			if (DX10ImageSource._numberOfActiveClients != 0)
-				return;
-
 			_d3DContext = new Direct3DEx();
 
 			PresentParameters presentparams = new PresentParameters();
@@ -133,20 +155,16 @@ namespace Altaxo.Gui.Graph3D.Common
 			presentparams.DeviceWindowHandle = GetDesktopWindow();
 			presentparams.PresentationInterval = PresentInterval.Default;
 
-			DX10ImageSource._d3DDevice = new DeviceEx(_d3DContext, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
+			D3D10ImageSource._d3DDevice = new DeviceEx(_d3DContext, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
 		}
 
-		private void EndD3D()
+		private static void EndD3D()
 		{
-			if (DX10ImageSource._numberOfActiveClients != 0)
-				return;
-
-			Disposer.RemoveAndDispose(ref this._renderTarget);
-			Disposer.RemoveAndDispose(ref DX10ImageSource._d3DDevice);
-			Disposer.RemoveAndDispose(ref DX10ImageSource._d3DContext);
+			Disposer.RemoveAndDispose(ref D3D10ImageSource._d3DDevice);
+			Disposer.RemoveAndDispose(ref D3D10ImageSource._d3DContext);
 		}
 
-		private IntPtr GetSharedHandle(SharpDX.Direct3D10.Texture2D Texture)
+		private static IntPtr GetSharedHandle(SharpDX.Direct3D10.Texture2D Texture)
 		{
 			SharpDX.DXGI.Resource resource = Texture.QueryInterface<SharpDX.DXGI.Resource>();
 			IntPtr result = resource.SharedHandle;

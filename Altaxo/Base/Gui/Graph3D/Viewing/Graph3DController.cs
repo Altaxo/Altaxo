@@ -684,7 +684,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1));
 		}
 
-		public void EhMouseWheel(double relX, double relY, double aspectRatio, int delta, bool isSHIFTpressed, bool isCTRLpressed, bool isALTpressed)
+		public void EhView_GraphPanelMouseWheel(double relX, double relY, double aspectRatio, int delta, bool isSHIFTpressed, bool isCTRLpressed, bool isALTpressed)
 		{
 			// MouseWheeling only: Zoom in/out
 			// MouseWheeling + SHIFT key:	Move camera vertically
@@ -996,6 +996,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					SetViewsScrollbarParameter();
 			}
 			*/
+
+			_view?.TriggerRendering();
 		}
 
 		/// <summary>

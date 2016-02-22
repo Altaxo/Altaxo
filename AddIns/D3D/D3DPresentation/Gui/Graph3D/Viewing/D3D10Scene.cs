@@ -414,8 +414,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 				System.Threading.Interlocked.Exchange(ref _nextTriangleDeviceBuffers[i], newDeviceBuffers);
 			}
-
-			device.Flush();
 		}
 
 		private void BringMarkerGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
