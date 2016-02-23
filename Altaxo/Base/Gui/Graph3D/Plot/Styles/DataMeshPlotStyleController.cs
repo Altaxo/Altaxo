@@ -40,7 +40,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 	public interface IDataMeshPlotStyleView
 	{
-		IDensityScaleView DensityScaleView { get; }
+		IDensityScaleView ColorScaleView { get; }
+
+		bool IsCustomColorScaleUsed { get; set; }
 
 		IColorProviderView ColorProviderView { get; }
 
@@ -74,8 +76,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			if (initData)
 			{
-				_scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
-				_scaleController.InitializeDocument(_doc.Scale);
+				_scaleController = new DensityScaleController(newScale => _doc.ColorScale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
+				_scaleController.InitializeDocument(_doc.ColorScale ?? new LinearScale());
 
 				_colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
 				_colorProviderController.InitializeDocument(_doc.ColorProvider);
@@ -83,7 +85,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			if (_view != null)
 			{
-				_scaleController.ViewObject = _view.DensityScaleView;
+				_scaleController.ViewObject = _view.ColorScaleView;
+				_view.IsCustomColorScaleUsed = null != _doc.ColorScale;
 				_colorProviderController.ViewObject = _view.ColorProviderView;
 				_view.ClipToLayer = _doc.ClipToLayer;
 			}
@@ -98,7 +101,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				return false;
 
 			_doc.ClipToLayer = _view.ClipToLayer;
-			_doc.Scale = (NumericalScale)_scaleController.ModelObject;
+			_doc.ColorScale = _view.IsCustomColorScaleUsed ? (NumericalScale)_scaleController.ModelObject : null;
 			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 
 			return ApplyEnd(true, disposeController);

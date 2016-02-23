@@ -40,72 +40,16 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ImageGraphic", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ImageGraphic", 1)]
+		/// <summary>
+		/// 2016-02-23: Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				throw new InvalidOperationException("Try to serialize old version");
-				/*
 				ImageGraphic s = (ImageGraphic)obj;
 				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
-				*/
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ImageGraphic s = (ImageGraphic)o;
-				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
-
-				s._isSizeCalculationBasedOnSourceSize = false;
-				var aspectPreserving = AspectRatioPreservingMode.None;
-				((ItemLocationDirectAspectPreserving)s._location).AspectRatioPreserving = aspectPreserving;
-
-				return s;
-			}
-		}
-
-		// 2012-03-21: Properties 'SizeBasedOnSourceSize' and 'AspectPreserving' added
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Shapes.ImageGraphic", 2)]
-		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new InvalidOperationException("Serialization of old version");
-				/*
-				ImageGraphic s = (ImageGraphic)obj;
-				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
-
-				info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
-				info.AddEnum("AspectPreserving", s._aspectPreserving);
-				*/
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ImageGraphic s = (ImageGraphic)o;
-				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
-
-				s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
-				var aspectPreserving = (AspectRatioPreservingMode)info.GetEnum("AspectPreserving", typeof(AspectRatioPreservingMode));
-				((ItemLocationDirectAspectPreserving)s._location).AspectRatioPreserving = aspectPreserving;
-
-				return s;
-			}
-		}
-
-		/// <summary>
-		/// 2013-12-12: Properties 'AspectPreserving' removed, because now it is part of ItemLocationDirectAspectPreserving
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic), 3)]
-		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ImageGraphic s = (ImageGraphic)obj;
-				info.AddBaseValueEmbedded(s, typeof(ImageGraphic).BaseType);
-
 				info.AddValue("SizeBasedOnSourceSize", s._isSizeCalculationBasedOnSourceSize);
 			}
 
@@ -113,7 +57,6 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				ImageGraphic s = (ImageGraphic)o;
 				info.GetBaseValueEmbedded(s, typeof(ImageGraphic).BaseType, parent);
-
 				s._isSizeCalculationBasedOnSourceSize = info.GetBoolean("SizeBasedOnSourceSize");
 
 				return s;

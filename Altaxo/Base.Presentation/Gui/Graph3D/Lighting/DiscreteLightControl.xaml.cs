@@ -66,83 +66,103 @@ namespace Altaxo.Gui.Graph3D.Lighting
 				_lock.ExecuteLocked(
 					() =>
 					{
-						if (null == value)
-						{
-							ChangeHostControl(null);
-						}
-						else if (value is DirectionalLight)
-						{
-							var ctrl = new DirectionalLightControl();
-							ctrl.SelectedValue = value as DirectionalLight;
-							ChangeHostControl(ctrl);
-						}
-						else if (value is PointLight)
-						{
-							var ctrl = new PointLightControl();
-							ctrl.SelectedValue = value as PointLight;
-							ChangeHostControl(ctrl);
-						}
-						else if (value is SpotLight)
-						{
-							var ctrl = new SpotLightControl();
-							ctrl.SelectedValue = value as SpotLight;
-							ChangeHostControl(ctrl);
-						}
-						else
-						{
-							throw new NotImplementedException();
-						}
+						ChangeHostControlAccordingToNewLight(value);
+						SetRadioButtonAccordingToNewLight(value);
 					}
 					);
 			}
 		}
 
+		/// <summary>
+		/// Called when the radio button signals that the user want to change the light type.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs" /> instance containing the event data.</param>
 		private void EhLightTypeChanged(object sender, RoutedEventArgs e)
 		{
-			string tag = (string)((RadioButton)sender).Tag;
-
-			IDiscreteLightControl ctrl;
-
-			switch (tag)
+			if (_lock.IsNotLocked)
 			{
-				case "NotUsed":
-					ctrl = null;
-					break;
-
-				case "Directional":
-					{
-						var control = new DirectionalLightControl();
-						control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.DirectionalLight();
-						ctrl = control;
-					}
-					break;
-
-				case "Point":
-					{
-						var control = new PointLightControl();
-						control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.PointLight();
-						ctrl = control;
-					}
-					break;
-
-				case "Spot":
-					{
-						var control = new SpotLightControl();
-						control.SelectedValue = new Altaxo.Graph.Graph3D.Lighting.SpotLight();
-						ctrl = control;
-					}
-					break;
-
-				default:
+				IDiscreteLight newLight = null;
+				if (object.ReferenceEquals(sender, _guiNotUsed))
+				{
+					newLight = null;
+				}
+				else if (object.ReferenceEquals(sender, _guiDirectional))
+				{
+					newLight = new Altaxo.Graph.Graph3D.Lighting.DirectionalLight();
+				}
+				else if (object.ReferenceEquals(sender, _guiPoint))
+				{
+					newLight = new Altaxo.Graph.Graph3D.Lighting.PointLight();
+				}
+				else if (object.ReferenceEquals(sender, _guiSpot))
+				{
+					newLight = new Altaxo.Graph.Graph3D.Lighting.SpotLight();
+				}
+				else
+				{
 					throw new NotImplementedException();
-			}
+				}
 
-			if (ctrl?.GetType() != _control?.GetType())
-			{
-				ChangeHostControl(ctrl);
-
-				if (_lock.IsNotLocked)
+				if (newLight.GetType() != SelectedValue?.GetType())
+				{
+					ChangeHostControlAccordingToNewLight(newLight);
 					SelectedValueChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
+
+		private void ChangeHostControlAccordingToNewLight(IDiscreteLight newLightValue)
+		{
+			if (null == newLightValue)
+			{
+				ChangeHostControl(null);
+			}
+			else if (newLightValue is DirectionalLight)
+			{
+				var ctrl = new DirectionalLightControl();
+				ctrl.SelectedValue = newLightValue as DirectionalLight;
+				ChangeHostControl(ctrl);
+			}
+			else if (newLightValue is PointLight)
+			{
+				var ctrl = new PointLightControl();
+				ctrl.SelectedValue = newLightValue as PointLight;
+				ChangeHostControl(ctrl);
+			}
+			else if (newLightValue is SpotLight)
+			{
+				var ctrl = new SpotLightControl();
+				ctrl.SelectedValue = newLightValue as SpotLight;
+				ChangeHostControl(ctrl);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		private void SetRadioButtonAccordingToNewLight(IDiscreteLight newLightValue)
+		{
+			if (newLightValue == null)
+			{
+				_guiNotUsed.IsChecked = true;
+			}
+			else if (newLightValue is DirectionalLight)
+			{
+				_guiDirectional.IsChecked = true;
+			}
+			else if (newLightValue is PointLight)
+			{
+				_guiPoint.IsChecked = true;
+			}
+			else if (newLightValue is SpotLight)
+			{
+				_guiSpot.IsChecked = true;
+			}
+			else
+			{
+				throw new NotImplementedException();
 			}
 		}
 
@@ -156,30 +176,6 @@ namespace Altaxo.Gui.Graph3D.Lighting
 
 			if (null != _control)
 				_control.SelectedValueChanged += EhSelectedValueChanged;
-
-			/*
-
-			if (newControl == null)
-			{
-				_guiNotUsed.IsChecked = true;
-			}
-			else if (newControl is DirectionalLightControl)
-			{
-				_guiDirectional.IsChecked = true;
-			}
-			else if (newControl is PointLightControl)
-			{
-				_guiPoint.IsChecked = true;
-			}
-			else if (newControl is SpotLightControl)
-			{
-				_guiSpot.IsChecked = true;
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-			*/
 		}
 
 		private void EhSelectedValueChanged(object sender, EventArgs e)

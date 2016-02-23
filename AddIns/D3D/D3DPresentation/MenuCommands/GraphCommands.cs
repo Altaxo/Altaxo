@@ -358,11 +358,11 @@ namespace Altaxo.Graph.Graph3D.Commands
 		{
 			get
 			{
-				return null == Controller ? false : _cameraTypeForThisCommand == Controller.Doc.Scene.Camera.GetType();
+				return null == Controller ? false : _cameraTypeForThisCommand == Controller.Doc.Camera.GetType();
 			}
 			set
 			{
-				if (value == true && Controller != null && Controller.Doc.Scene.Camera.GetType() != _cameraTypeForThisCommand)
+				if (value == true && Controller != null && Controller.Doc.Camera.GetType() != _cameraTypeForThisCommand)
 				{
 					InstallCamera();
 				}
@@ -380,9 +380,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 		protected override void InstallCamera()
 		{
-			var oldCamera = _currentGraphController.Doc.Scene.Camera;
+			var oldCamera = _currentGraphController.Doc.Camera;
 			var newCamera = new Altaxo.Graph.Graph3D.Camera.OrthographicCamera(oldCamera.UpVector, oldCamera.EyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, oldCamera.Scale);
-			_currentGraphController.Doc.Scene.Camera = newCamera;
+			_currentGraphController.Doc.Camera = newCamera;
 		}
 	}
 
@@ -395,9 +395,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 		protected override void InstallCamera()
 		{
-			var oldCamera = _currentGraphController.Doc.Scene.Camera;
+			var oldCamera = _currentGraphController.Doc.Camera;
 			var newCamera = new Altaxo.Graph.Graph3D.Camera.PerspectiveCamera(oldCamera.UpVector, oldCamera.EyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, oldCamera.Scale);
-			_currentGraphController.Doc.Scene.Camera = newCamera;
+			_currentGraphController.Doc.Camera = newCamera;
 		}
 	}
 

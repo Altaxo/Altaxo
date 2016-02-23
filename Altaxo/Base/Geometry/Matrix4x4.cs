@@ -116,6 +116,27 @@ namespace Altaxo.Geometry
 			M41 = m41; M42 = m42; M43 = m43; M44 = m44;
 		}
 
+		/// <summary>
+		/// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
+		/// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
+		/// </summary>
+		/// <param name="p">The point to transform.</param>
+		/// <returns>The transformed point.</returns>
+		public PointD3D Transform(PointD3D p)
+		{
+			double x = p.X;
+			double y = p.Y;
+			double z = p.Z;
+
+			double tw = x * M14 + y * M24 + z * M34 + M44;
+
+			return new PointD3D(
+			(x * M11 + y * M21 + z * M31 + M41) / tw,
+			(x * M12 + y * M22 + z * M32 + M42) / tw,
+			(x * M13 + y * M23 + z * M33 + M43) / tw
+			);
+		}
+
 		public override string ToString()
 		{
 			var stb = new StringBuilder(12 * 12);

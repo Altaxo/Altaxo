@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D
 {
+	using Camera;
 	using Drawing.D3D;
 	using GraphicsContext;
 
@@ -49,7 +50,15 @@ namespace Altaxo.Graph.Graph3D
 
 		private HostLayer _rootLayer;
 
-		private SceneSettings _sceneSettings;
+		/// <summary>
+		/// The camera to view the scene.
+		/// </summary>
+		private CameraBase _camera;
+
+		/// <summary>
+		/// The scene lighting.
+		/// </summary>
+		private LightSettings _lighting;
 
 		/// <summary>The root layer size, cached here only for deciding whether to raise the <see cref="GraphDocumentBase.SizeChanged"/> event. Do not use it otherwise.</summary>
 		[NonSerialized]
@@ -64,6 +73,8 @@ namespace Altaxo.Graph.Graph3D
 		/// Occurs when only the camera has changed. This does not require a new buildup of the geometry.
 		/// </summary>
 		public event EventHandler CameraChanged;
+
+		private const int MaxFixupRetries = 10;
 
 		#endregion Member variables
 
@@ -129,7 +140,8 @@ namespace Altaxo.Graph.Graph3D
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("RootLayer", s._rootLayer);
 				info.AddValue("Properties", s._graphProperties);
-				info.AddValue("SceneSettings", s._sceneSettings);
+				info.AddValue("Camera", s._camera);
+				info.AddValue("Lighting", s._lighting);
 			}
 
 			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -141,7 +153,8 @@ namespace Altaxo.Graph.Graph3D
 				s._notes.Text = info.GetString("Notes");
 				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
 				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
-				s.ChildSetMember(ref s._sceneSettings, (SceneSettings)info.GetValue("SceneSetting", s));
+				s.Camera = (CameraBase)info.GetValue("Camera", s);
+				s.Lighting = (LightSettings)info.GetValue("Lighting", s);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -161,7 +174,8 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		public GraphDocument()
 		{
-			_sceneSettings = new SceneSettings();
+			_camera = new Camera.OrthographicCamera();
+			_lighting = new LightSettings();
 			this.RootLayer = new HostLayer() { ParentObject = this };
 			this.RootLayer.Location = new ItemLocationDirect
 			{
@@ -169,7 +183,6 @@ namespace Altaxo.Graph.Graph3D
 				SizeY = RADouble.NewAbs(DefaultRootLayerSizeY),
 				SizeZ = RADouble.NewAbs(DefaultRootLayerSizeZ)
 			};
-			_sceneSettings = new SceneSettings() { ParentObject = this };
 		}
 
 		public GraphDocument(GraphDocument from)
@@ -192,7 +205,8 @@ namespace Altaxo.Graph.Graph3D
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				ChildCopyToMember(ref _sceneSettings, from._sceneSettings);
+				Camera = from.Camera; // Camera is immutable
+				Lighting = from.Lighting; // lighting is immutable
 
 				if (0 != (options & Altaxo.Graph.Gdi.GraphCopyOptions.CloneNotes))
 				{
@@ -249,16 +263,43 @@ namespace Altaxo.Graph.Graph3D
 
 			if (null != _notes)
 				yield return new Main.DocumentNodeAndName(_notes, () => _notes = null, "Notes");
-
-			if (null != _sceneSettings)
-				yield return new Main.DocumentNodeAndName(_sceneSettings, () => _sceneSettings = null, "Scene");
 		}
 
-		public SceneSettings Scene
+		public CameraBase Camera
 		{
 			get
 			{
-				return _sceneSettings;
+				return _camera;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				var oldValue = _camera;
+				_camera = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged(CameraChangedEventArgs.Empty);
+			}
+		}
+
+		public LightSettings Lighting
+		{
+			get
+			{
+				return _lighting;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				var oldValue = _lighting;
+				_lighting = value;
+
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged(CameraChangedEventArgs.Empty);
 			}
 		}
 
@@ -342,7 +383,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns></returns>
 		private RectangleD3D GetViewBounds()
 		{
-			var matrix = Scene.Camera.LookAtRHMatrix;
+			var matrix = _camera.LookAtRHMatrix;
 			var rect = new RectangleD3D(PointD3D.Empty, RootLayer.Size);
 			var bounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => matrix.Transform(x)));
 			return bounds;
@@ -407,15 +448,52 @@ namespace Altaxo.Graph.Graph3D
 
 		public void Paint(IGraphicContext3D g)
 		{
-			var paintContext = new Altaxo.Graph.Gdi.GdiPaintContext();
+			FixupInternalDataStructures();
 
-			// DrawHostLayerSizedCube(g);
+			var paintContext = new Altaxo.Graph.Gdi.GdiPaintContext();
 
 			RootLayer.PaintPreprocessing(paintContext);
 
 			RootLayer.Paint(g, paintContext);
 
 			RootLayer.PaintPostprocessing();
+		}
+
+		private void FixupInternalDataStructures()
+		{
+			try
+			{
+				_isFixupInternalDataStructuresActive = true;
+
+				for (int ithRetry = 1; ithRetry <= MaxFixupRetries; ++ithRetry)
+				{
+					try
+					{
+						_hasFixupChangedAnything = false;
+						AdjustRootLayerPositionToFitIntoZeroOffsetRectangle();
+						RootLayer.FixupInternalDataStructures();
+						if (!_hasFixupChangedAnything)
+							break;
+#if DEBUG
+						if (ithRetry == MaxFixupRetries)
+						{
+							Current.Console.WriteLine("Warning: MaxFixupRetries exceeded during painting of graph {0}.", this.Name);
+						}
+#endif
+					}
+					catch (Exception)
+					{
+						if (ithRetry == MaxFixupRetries)
+						{
+							throw;
+						}
+					}
+				}
+			}
+			finally
+			{
+				_isFixupInternalDataStructuresActive = false;
+			}
 		}
 
 		/// <summary>
@@ -432,7 +510,7 @@ namespace Altaxo.Graph.Graph3D
 			var cameraDistance = 10 * RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
 
-			var newCamera = Scene.Camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
+			var newCamera = _camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
 
 			var orthoCamera = newCamera as Camera.OrthographicCamera;
 
@@ -440,13 +518,13 @@ namespace Altaxo.Graph.Graph3D
 			{
 				orthoCamera = orthoCamera.WithScale(1);
 
-				var mx = orthoCamera.GetLookAtRHTimesOrthoRHMatrix(aspectRatio);
+				var mx = orthoCamera.GetViewProjectionMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
 				// then we search for the maximum of the absulute value of x and y. This is our scale.
 				double absmax = 0;
 				foreach (var p in new RectangleD3D(RootLayer.Position, RootLayer.Size).Vertices)
 				{
-					var ps = mx.TransformPoint(p);
+					var ps = mx.Transform(p);
 					absmax = Math.Max(absmax, Math.Abs(ps.X));
 					absmax = Math.Max(absmax, Math.Abs(ps.Y));
 				}
@@ -457,7 +535,7 @@ namespace Altaxo.Graph.Graph3D
 				throw new NotImplementedException();
 			}
 
-			Scene.Camera = newCamera;
+			Camera = newCamera;
 		}
 	}
 }

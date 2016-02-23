@@ -205,44 +205,49 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 
 		public override void OnMouseDown(PointD3D position, MouseButtonEventArgs e)
 		{
-			var hitData = new HitTestPointData(_grac.Doc.Scene.Camera.GetHitRayMatrix(position));
+			base.OnMouseDown(position, e);
 
-			// first, if we have a mousedown without shift key and the
-			// position has changed with respect to the last mousedown
-			// we have to deselect all objects
-			var keyboardModifiers = System.Windows.Input.Keyboard.Modifiers;
-			bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
-			bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
-
-			ActiveGrip = GripHitTest(hitData);
-			if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
+			if (e.ChangedButton == MouseButton.Left)
 			{
-				var superGrip = ActiveGrip as SuperGrip;
-				IHitTestObject hitTestObj;
-				IGripManipulationHandle gripHandle;
-				if (superGrip.GetHittedElement(hitData, out gripHandle, out hitTestObj))
+				var hitData = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
+
+				// first, if we have a mousedown without shift key and the
+				// position has changed with respect to the last mousedown
+				// we have to deselect all objects
+				var keyboardModifiers = System.Windows.Input.Keyboard.Modifiers;
+				bool bControlKey = keyboardModifiers.HasFlag(ModifierKeys.Control);
+				bool bShiftKey = keyboardModifiers.HasFlag(ModifierKeys.Shift);
+
+				ActiveGrip = GripHitTest(hitData);
+				if ((ActiveGrip is SuperGrip) && (bShiftKey || bControlKey))
 				{
-					_selectedObjects.Remove(hitTestObj);
-					superGrip.Remove(gripHandle);
+					var superGrip = ActiveGrip as SuperGrip;
+					IHitTestObject hitTestObj;
+					IGripManipulationHandle gripHandle;
+					if (superGrip.GetHittedElement(hitData, out gripHandle, out hitTestObj))
+					{
+						_selectedObjects.Remove(hitTestObj);
+						superGrip.Remove(gripHandle);
+						return;
+					}
+				}
+				else if (ActiveGrip != null)
+				{
+					ActiveGrip.Activate(hitData, false);
 					return;
 				}
+
+				// search for a object first
+				IHitTestObject clickedObject;
+				int[] clickedLayerNumber = null;
+				_grac.FindGraphObjectAtPixelPosition(hitData, false, out clickedObject, out clickedLayerNumber);
+
+				if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
+					ClearSelections();
+
+				if (null != clickedObject)
+					AddSelectedObject(hitData, clickedObject);
 			}
-			else if (ActiveGrip != null)
-			{
-				ActiveGrip.Activate(hitData, false);
-				return;
-			}
-
-			// search for a object first
-			IHitTestObject clickedObject;
-			int[] clickedLayerNumber = null;
-			_grac.FindGraphObjectAtPixelPosition(hitData, false, out clickedObject, out clickedLayerNumber);
-
-			if (!bShiftKey && !bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
-				ClearSelections();
-
-			if (null != clickedObject)
-				AddSelectedObject(hitData, clickedObject);
 		}
 
 		/// <summary>
@@ -268,23 +273,26 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			}
 			*/
 
-			if (ActiveGrip != null)
+			if (e.ChangedButton == MouseButton.Left)
 			{
-				bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
-				bool bRepaint = false;
-				_wereObjectsMoved = false;
-				_grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
-
-				bool chooseNextLevel = ActiveGrip.Deactivate();
-				ActiveGrip = null;
-
-				if (chooseNextLevel && null != SingleSelectedHitTestObject)
+				if (ActiveGrip != null)
 				{
-					DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
-					bRepaint = true;
-				}
+					bool bRefresh = _wereObjectsMoved; // repaint the graph when objects were really moved
+					bool bRepaint = false;
+					_wereObjectsMoved = false;
+					_grac.Doc.Resume(ref _graphDocumentChangedSuppressor);
 
-				_grac.RenderOverlay();
+					bool chooseNextLevel = ActiveGrip.Deactivate();
+					ActiveGrip = null;
+
+					if (chooseNextLevel && null != SingleSelectedHitTestObject)
+					{
+						DisplayedGripLevel = SingleSelectedHitTestObject.GetNextGripLevel(DisplayedGripLevel);
+						bRepaint = true;
+					}
+
+					_grac.RenderOverlay();
+				}
 			}
 		}
 
@@ -298,7 +306,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnMouseMove(position, e);
 
-			var graphCoord = new HitTestPointData(_grac.Doc.Scene.Camera.GetHitRayMatrix(position));
+			var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
 
 			if (null != ActiveGrip)
 			{

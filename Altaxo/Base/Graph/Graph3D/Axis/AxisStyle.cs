@@ -291,7 +291,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			FixupInternalDataStructures(layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		public IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod)
+		public IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod, DoubleClickHandler AxisLabelMajorStyleEditorMethod, DoubleClickHandler AxisLabelMinorStyleEditorMethod)
 		{
 			IHitTestObject hit;
 			if (null != (hit = _axisTitle?.HitTest(parentCoord)))
@@ -313,11 +313,13 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 			if (null != (hit = _majorLabelStyle?.HitTest(parentCoord)))
 			{
+				hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
 				return hit;
 			}
 
 			if (null != (hit = _minorLabelStyle?.HitTest(parentCoord)))
 			{
+				hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
 				return hit;
 			}
 

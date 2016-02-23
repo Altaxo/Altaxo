@@ -39,14 +39,19 @@ namespace Altaxo.Graph.Graph3D
 		bool Is3D { get; }
 
 		/// <summary>
-		/// Gets the axis of the independent variable.
+		/// Gets the axis of the first independent variable.
 		/// </summary>
 		Scale XAxis { get; }
 
 		/// <summary>
-		/// Gets the axis of the dependent variable.
+		/// Gets the axis of the second independent variable.
 		/// </summary>
 		Scale YAxis { get; }
+
+		/// <summary>
+		/// Gets the axis of the dependent variable.
+		/// </summary>
+		Scale ZAxis { get; }
 
 		ScaleCollection Scales { get; }
 

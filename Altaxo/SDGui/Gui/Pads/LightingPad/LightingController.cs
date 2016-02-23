@@ -49,6 +49,8 @@ namespace Altaxo.Gui.Pads.LightingPad
 			_view.LostKeyboardFocus += new System.Windows.Input.KeyboardFocusChangedEventHandler(_view_LostKeyboardFocus);
 			_view.LightingChanged += EhView_LightingChanged;
 			_view.IsEnabled = false;
+
+			EhActiveWorkbenchWindowChanged(this, EventArgs.Empty); // Find out if the active workbench window is a Graph3d
 		}
 
 		private void EhView_LightingChanged(object sender, EventArgs e)
@@ -58,7 +60,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 				var ctrl = ActiveViewContentAsGraph3DController;
 				if (null != ctrl)
 				{
-					ctrl.Doc.Scene.Lighting = _view.Lighting;
+					ctrl.Doc.Lighting = _view.Lighting;
 				}
 			}
 		}
@@ -91,7 +93,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 
 			if (null != ctrl)
 			{
-				_view.Lighting = ctrl.Doc.Scene.Lighting;
+				_view.Lighting = ctrl.Doc.Lighting;
 				enable = true;
 			}
 			else
@@ -102,6 +104,8 @@ namespace Altaxo.Gui.Pads.LightingPad
 
 			_view.IsEnabled = enable;
 
+			// uncomment the following if we want to activate the lighting pad each time a Graph3D window is activated
+			/*
 			if (enable && _view.Lighting != null)
 			{
 				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
@@ -112,6 +116,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 				// now focus back to the formerly active workbench window.
 				ww.SelectWindow();
 			}
+			*/
 		}
 
 		/// <summary>

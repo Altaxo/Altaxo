@@ -62,22 +62,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private IColorProvider _colorProvider;
 
 		/// <summary>
-		/// Converts the numerical values into logical values.
+		/// Converts the numerical height values into logical values used for color calculation.
+		/// This member can be null. In this case the z-scale of the parent coordinate system is used for coloring.
 		/// </summary>
-		private NumericalScale _scale;
-
-		/// <summary>The lower bound of the y plot range</summary>
-		[NonSerialized]
-		private AltaxoVariant _yRangeFrom = double.NaN;
-
-		/// <summary>The upper bound of the y plot range</summary>
-		[NonSerialized]
-		private AltaxoVariant _yRangeTo = double.NaN;
+		private NumericalScale _colorScale;
 
 		[NonSerialized]
 		private CachedImageType _imageType;
-
-		private PlaneD3D[] _clipPlanes = new PlaneD3D[6];
 
 		#region Serialization
 
@@ -92,8 +83,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				DataMeshPlotStyle s = (DataMeshPlotStyle)obj;
 
 				info.AddValue("ClipToLayer", s._clipToLayer);
-				info.AddValue("Scale", s._scale);
 				info.AddValue("Colorization", s._colorProvider);
+				info.AddValue("ColorScale", s._colorScale);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -101,8 +92,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				DataMeshPlotStyle s = null != o ? (DataMeshPlotStyle)o : new DataMeshPlotStyle();
 
 				s._clipToLayer = info.GetBoolean("ClipToLayer");
-				s.Scale = (NumericalScale)info.GetValue("Scale", s);
 				s.ColorProvider = (IColorProvider)info.GetValue("Colorization", s);
+				s.ColorScale = (NumericalScale)info.GetValue("ColorScale", s);
 
 				return s;
 			}
@@ -123,7 +114,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public DataMeshPlotStyle()
 		{
 			this.ColorProvider = new ColorProviderBGMYR();
-			this.Scale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
+			this.ColorScale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
 			InitializeMembers();
 		}
 
@@ -149,8 +140,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			using (var suspendToken = SuspendGetToken())
 			{
 				this._clipToLayer = from._clipToLayer;
-				this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
-				this.Scale = (NumericalScale)from._scale.Clone();
+				ChildCloneToMember(ref _colorProvider, from._colorProvider);
+				ChildCloneToMember(ref _colorScale, from._colorScale);
 				this._imageType = CachedImageType.None;
 
 				EhSelfChanged();
@@ -164,8 +155,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (null != _colorProvider)
 				yield return new Main.DocumentNodeAndName(_colorProvider, "ColorProvider");
 
-			if (null != _scale)
-				yield return new Main.DocumentNodeAndName(_scale, "Scale");
+			if (null != _colorScale)
+				yield return new Main.DocumentNodeAndName(_colorScale, "ColorScale");
 		}
 
 		public object Clone()
@@ -173,24 +164,25 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return new DataMeshPlotStyle(this);
 		}
 
-		public NumericalScale Scale
+		/// <summary>
+		/// Converts the numerical height values into logical values used for color calculation.
+		/// This member can be null, in this case the z-scale of the parent coordinate system is used for coloring.
+		/// </summary>
+		public NumericalScale ColorScale
 		{
 			get
 			{
-				return _scale;
+				return _colorScale;
 			}
 			set
 			{
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				if (ChildSetMember(ref _scale, value))
+				if (ChildSetMember(ref _colorScale, value))
 				{
-					if (!(_scale.TickSpacing is NoTickSpacing))
-						_scale.TickSpacing = new NoTickSpacing(); // strip the old tickspacing, use NoTickspacing, since Ticks are not needed in the density image plot style
+					if (null != _colorScale && !(_colorScale.TickSpacing is NoTickSpacing))
+						_colorScale.TickSpacing = new NoTickSpacing(); // strip the old tickspacing, use NoTickspacing, since Ticks are not needed in the density image plot style
 
-					if (null != _scale)
-						EhChildChanged(_scale, EventArgs.Empty);
+					if (null != _colorScale)
+						EhChildChanged(_colorScale, EventArgs.Empty);
 					else
 						EhSelfChanged(EventArgs.Empty);
 				}
@@ -250,15 +242,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// it must be ensured that the axes are scaled correctly before the plots are painted.
 		/// </summary>
 		/// <param name="layer">The plot layer.</param>
+		/// <param name="plotData">The plot data.</param>
 		public void PrepareScales(IPlotArea layer, XYZMeshedColumnPlotData plotData)
 		{
-			NumericalBoundaries pb = _scale.DataBounds;
-			plotData.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-			using (var suspendToken = pb.SuspendGetToken())
+			if (_colorScale != null)
 			{
-				pb.Reset();
-				plotData.MergeVBoundsInto(pb);
-				suspendToken.Resume();
+				// in case we use our own scale for coloring, we need to calculate the data bounds
+				NumericalBoundaries pb = _colorScale.DataBounds;
+				plotData.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+				using (var suspendToken = pb.SuspendGetToken())
+				{
+					pb.Reset();
+					plotData.MergeVBoundsInto(pb);
+					suspendToken.Resume();
+				}
 			}
 		}
 
@@ -333,21 +330,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return true;
 		}
 
-		private Color GetColor(double val)
-		{
-			double relval = _scale.PhysicalToNormal(val);
-			return _colorProvider.GetColor(relval);
-		}
-
 		private void BuildImage(IGraphicContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
 		{
 			BuildImageV1(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
-		}
-
-		private struct VertexPoint
-		{
-			public PointD3D Point;
-			public int Idx;
 		}
 
 		private void BuildImageV1(
@@ -361,20 +346,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			PositionNormalIndexedTriangleBuffers buffers;
 
-			if (gl.ClipDataToFrame == LayerDataClipping.None)
+			if (gl.ClipDataToFrame == LayerDataClipping.None && !_clipToLayer)
 			{
 				buffers = g.GetPositionNormalIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
 			}
 			else
 			{
-				_clipPlanes[0] = new PlaneD3D(1, 0, 0, 0);
-				_clipPlanes[1] = new PlaneD3D(-1, 0, 0, -gl.Size.X);
-				_clipPlanes[2] = new PlaneD3D(0, 1, 0, 0);
-				_clipPlanes[3] = new PlaneD3D(0, -1, 0, -gl.Size.Y);
-				_clipPlanes[4] = new PlaneD3D(0, 0, 1, 0);
-				_clipPlanes[5] = new PlaneD3D(0, 0, -1, -gl.Size.Z);
+				var clipPlanes = new PlaneD3D[6];
+				clipPlanes[0] = new PlaneD3D(1, 0, 0, 0);
+				clipPlanes[1] = new PlaneD3D(-1, 0, 0, -gl.Size.X);
+				clipPlanes[2] = new PlaneD3D(0, 1, 0, 0);
+				clipPlanes[3] = new PlaneD3D(0, -1, 0, -gl.Size.Y);
+				clipPlanes[4] = new PlaneD3D(0, 0, 1, 0);
+				clipPlanes[5] = new PlaneD3D(0, 0, -1, -gl.Size.Z);
 
-				buffers = g.GetPositionNormalIndexedTriangleBufferWithClipping(Materials.GetSolidMaterialWithoutColorOrTexture(), _clipPlanes);
+				buffers = g.GetPositionNormalIndexedTriangleBufferWithClipping(Materials.GetSolidMaterialWithoutColorOrTexture(), clipPlanes);
 			}
 
 			var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
@@ -389,7 +375,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var vertexColors = new Color[lxl, lyl];
 
 			PointD3D pt;
-			var zScale = gl.Scales[2];
+			var zScale = gl.ZAxis;
 			for (int i = 0; i < lx.Length; ++i)
 			{
 				for (int j = 0; j < ly.Length; ++j)
@@ -398,7 +384,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
 
 					vertexPoints[i, j] = pt;
-					vertexColors[i, j] = _colorProvider.GetColor(lz);
+					vertexColors[i, j] = _colorProvider.GetColor(null == _colorScale ? lz : _colorScale.PhysicalVariantToNormal(matrix[i, j])); // either use the scale of the coordinate system or our own color scale
 				}
 			}
 
@@ -440,7 +426,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected override bool HandleHighPriorityChildChangeCases(object sender, ref EventArgs e)
 		{
-			if (object.ReferenceEquals(sender, _scale))
+			if (object.ReferenceEquals(sender, _colorScale))
 			{
 				this._imageType = CachedImageType.None;
 			}

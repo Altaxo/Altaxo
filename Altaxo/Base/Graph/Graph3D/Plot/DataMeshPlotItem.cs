@@ -210,10 +210,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 		{
 			if (null != this._plotData)
 			{
-				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
+				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
 
-				if (null != this._plotStyle)
-					_plotStyle.PrepareScales(layer, _plotData);
+				// in case our plot style uses its own scale for coloring the mesh, we do prepare the scale used by the style
+				_plotStyle?.PrepareScales(layer, _plotData);
 			}
 		}
 

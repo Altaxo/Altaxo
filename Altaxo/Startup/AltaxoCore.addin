@@ -121,7 +121,7 @@
 		<Pad id       = "AltaxoLightingWindow"
 		 category = "Main"
 		 title    = "${res:MainWindow.Windows.AltaxoLightingWindowLabel}"
-		 icon     = "Icons.16x16.Notepad"
+		 icon     = "Icons.16x16.Lighting"
 		 shortcut = "Control|Alt|L"
 		 precreated ="true"
 		 defaultPosition = "Right"

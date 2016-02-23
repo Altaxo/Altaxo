@@ -16,8 +16,11 @@
 		</Style>
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
-		<GroupBox Header="Scale:">
-			<axogg:DensityScaleControl x:Name="_ctrlScale" />
+		<GroupBox>
+			<GroupBox.Header>
+				<CheckBox x:Name="_guiUseCustomColorScale" Content="Use custom color scale:" Margin="4" Checked="EhUseCustomColorScaleChanged" Unchecked="EhUseCustomColorScaleChanged" />
+			</GroupBox.Header>
+			<axogg:DensityScaleControl x:Name="_guiColorScale" />
 		</GroupBox>
 
 		<GroupBox Header="Style:">

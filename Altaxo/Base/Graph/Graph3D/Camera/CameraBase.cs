@@ -34,6 +34,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 	/// <summary>
 	/// Represents the camera. Classes derived from here are meant to be immutable.
 	/// </summary>
+	/// <seealso cref="Altaxo.Main.IImmutable" />
 	public abstract class CameraBase : Main.IImmutable
 	{
 		protected VectorD3D _upVector;
@@ -41,6 +42,14 @@ namespace Altaxo.Graph.Graph3D.Camera
 		protected PointD3D _targetPosition;
 		protected double _zNear;
 		protected double _zFar;
+
+		/// <summary>
+		/// Gets or sets the screen offset. The screen offset has to be used only in extraordinary situation,
+		/// e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
+		/// This is a relative value - relative to the dimensions of the screen.
+		/// It is not serialized either.
+		/// </summary>
+		protected PointD2D _screenOffset;
 
 		/// <summary>
 		/// Gets the camera up vector.
@@ -73,13 +82,33 @@ namespace Altaxo.Graph.Graph3D.Camera
 		public abstract double Scale { get; }
 
 		/// <summary>
-		/// Gets or sets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
+		/// Gets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
 		/// It is not serialized either.
 		/// </summary>
 		/// <value>
 		/// The screen offset (this is a relative value - relative to the dimensions of the screen).
 		/// </value>
-		public PointD2D ScreenOffset { get; set; }
+		public PointD2D ScreenOffset { get { return _screenOffset; } }
+
+		/// <summary>
+		/// Gets a new instance with <see cref="ScreenOffset"/> set to the provided value. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
+		/// It is not serialized either.
+		/// </summary>
+		/// <param name="screenOffset">The screen offset.</param>
+		/// <returns>New instance of this class with <see cref="ScreenOffset"/> set to the provided value.</returns>
+		public CameraBase WithScreenOffset(PointD2D screenOffset)
+		{
+			if (screenOffset != _screenOffset)
+			{
+				var result = (CameraBase)this.MemberwiseClone();
+				result._screenOffset = screenOffset;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
 
 		protected CameraBase(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar)
 		{

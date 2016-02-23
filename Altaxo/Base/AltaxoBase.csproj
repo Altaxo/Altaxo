@@ -324,7 +324,6 @@
     <Compile Include="Geometry\PolylineD3D.cs" />
     <Compile Include="Drawing\D3D\SolidText.cs" />
     <Compile Include="Geometry\RectangleD3D.cs" />
-    <Compile Include="Graph\Graph3D\SceneSettings.cs" />
     <Compile Include="Graph\Graph3D\Shapes\EmbeddedImageGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.HitTestObject.cs" />

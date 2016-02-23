@@ -874,7 +874,7 @@ namespace Altaxo.Graph.Graph3D
 
 			if (!plotItemsOnly)
 			{
-				hit = _axisStyles.HitTest(localCoord, AxisScaleEditorMethod, AxisStyleEditorMethod);
+				hit = _axisStyles.HitTest(localCoord, AxisScaleEditorMethod, AxisStyleEditorMethod, AxisLabelMajorStyleEditorMethod, AxisLabelMinorStyleEditorMethod);
 			}
 
 			if (null == hit)

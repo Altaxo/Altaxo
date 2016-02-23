@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			doc.Paint(g);
 
-			var matrix = doc.Scene.Camera.LookAtRHMatrix;
+			var matrix = doc.Camera.LookAtRHMatrix;
 
 			var rect = new RectangleD3D(PointD3D.Empty, doc.RootLayer.Size);
 			var bounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => matrix.Transform(x)));
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			double aspectRatio = pixelsY / (double)pixelsX;
 
-			var sceneCamera = doc.Scene.Camera;
+			var sceneCamera = doc.Camera;
 
 			if (sceneCamera is OrthographicCamera)
 			{
@@ -94,9 +94,17 @@ namespace Altaxo.Gui.Graph3D.Common
 
 				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
 				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
-				orthoCamera.ScreenOffset = new PointD2D(offsX, offsY);
+				sceneCamera = orthoCamera.WithScreenOffset(new PointD2D(offsX, offsY));
+			}
+			else if (sceneCamera is PerspectiveCamera)
+			{
+				var perspCamera = (PerspectiveCamera)sceneCamera;
+				// TODO Adjust camera so that image exactly fits
+				perspCamera = perspCamera.WithScale(bounds.X); // Attention: is this OK???
 
-				sceneCamera = orthoCamera;
+				double offsX = -(1 + 2 * bounds.X * perspCamera.ZNear / bounds.SizeX);
+				double offsY = -(1 + 2 * bounds.Y * perspCamera.ZNear / bounds.SizeY);
+				sceneCamera = perspCamera.WithScreenOffset(new PointD2D(offsX, offsY));
 			}
 			else
 			{
@@ -104,7 +112,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 
 			scene.SetCamera(sceneCamera);
-			scene.SetLighting(doc.Scene.Lighting);
+			scene.SetLighting(doc.Lighting);
 			scene.SetDrawing(g);
 
 			exporter.Export(pixelsX, pixelsY, scene, options, toStream);

@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != _view)
 			{
-				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
+				_view.SetCamera(_doc.Camera, _doc.Lighting);
 
 				InitLayerStructure();
 				_view.SetLayerStructure(_layerStructure, this.CurrentLayerNumber.ToArray()); // tell the view how many layers we have
@@ -616,7 +616,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var cameraDistance = 10 * Doc.RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
 
-			var newCamera = Doc.Scene.Camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
+			var newCamera = Doc.Camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
 
 			var orthoCamera = newCamera as OrthographicCamera;
 
@@ -624,13 +624,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				orthoCamera = orthoCamera.WithScale(1);
 
-				var mx = orthoCamera.GetLookAtRHTimesOrthoRHMatrix(aspectRatio);
+				var mx = orthoCamera.GetViewProjectionMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
 				// then we search for the maximum of the absulute value of x and y. This is our scale.
 				double absmax = 0;
 				foreach (var p in new RectangleD3D(Doc.RootLayer.Position, Doc.RootLayer.Size).Vertices)
 				{
-					var ps = mx.TransformPoint(p);
+					var ps = mx.Transform(p);
 					absmax = Math.Max(absmax, Math.Abs(ps.X));
 					absmax = Math.Max(absmax, Math.Abs(ps.Y));
 				}
@@ -641,7 +641,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				throw new NotImplementedException();
 			}
 
-			Doc.Scene.Camera = newCamera;
+			Doc.Camera = newCamera;
 		}
 
 		public void ViewFront()
@@ -716,7 +716,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		protected void CameraZoomByMouseWheel(double relX, double relY, double aspectRatio, double delta)
 		{
-			Doc.Scene.Camera = CameraZoomByMouseWheel(Doc.Scene.Camera, relX, relY, aspectRatio, delta / (4 * 120));
+			Doc.Camera = CameraZoomByMouseWheel(Doc.Camera, relX, relY, aspectRatio, delta / (4 * 120));
 		}
 
 		protected static CameraBase CameraZoomByMouseWheel(CameraBase camera, double relX, double relY, double aspectRatio, double delta)
@@ -773,7 +773,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <param name="stepY">The rotation around the horizontal axis in degrees.</param>
 		public void CameraRotateDegrees(double stepX, double stepY)
 		{
-			Doc.Scene.Camera = CameraRotateDegrees(Doc.Scene.Camera, stepX, stepY);
+			Doc.Camera = CameraRotateDegrees(Doc.Camera, stepX, stepY);
 		}
 
 		/// <summary>
@@ -819,7 +819,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <param name="stepY">The movement in horizontal direction. A value of 1 means movement corresponding to the full height of the scene.</param>
 		public void CameraMoveRelative(double stepX, double stepY)
 		{
-			Doc.Scene.Camera = CameraMoveRelative(Doc.Scene.Camera, stepX, stepY);
+			Doc.Camera = CameraMoveRelative(Doc.Camera, stepX, stepY);
 		}
 
 		/// <summary>
@@ -884,7 +884,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 			else if (e is CameraChangedEventArgs) // Only the camera has changed, there is no need to rebuild the geometry
 			{
-				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
+				_view.SetCamera(_doc.Camera, _doc.Lighting);
 				_view?.TriggerRendering();
 			}
 			else // everything else need to rebuild the geometry
@@ -910,7 +910,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				var oldDrawing = _drawing;
 				_drawing = newDrawing;
 				_view.SetDrawing(_drawing);
-				_view.SetCamera(_doc.Scene.Camera, _doc.Scene.Lighting);
+				_view.SetCamera(_doc.Camera, _doc.Lighting);
 
 				var markerGeometry = _view.GetGraphicContextForMarkers();
 				DrawRootLayerMarkers(markerGeometry);

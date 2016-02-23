@@ -319,11 +319,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 			return _axisStyles.GetEnumerator();
 		}
 
-		internal IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod)
+		internal IHitTestObject HitTest(HitTestPointData parentCoord, DoubleClickHandler AxisScaleEditorMethod, DoubleClickHandler AxisStyleEditorMethod, DoubleClickHandler AxisLabelMajorStyleEditorMethod, DoubleClickHandler AxisLabelMinorStyleEditorMethod)
 		{
 			foreach (var axisStyle in _axisStyles)
 			{
-				var hit = axisStyle.HitTest(parentCoord, AxisScaleEditorMethod, AxisStyleEditorMethod);
+				var hit = axisStyle.HitTest(parentCoord, AxisScaleEditorMethod, AxisStyleEditorMethod, AxisLabelMajorStyleEditorMethod, AxisLabelMinorStyleEditorMethod);
 				if (null != hit)
 					return hit;
 			}

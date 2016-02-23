@@ -43,9 +43,22 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		#region IDataMeshPlotStyleView
 
-		public IDensityScaleView DensityScaleView
+		public IDensityScaleView ColorScaleView
 		{
-			get { return _ctrlScale; }
+			get { return _guiColorScale; }
+		}
+
+		public bool IsCustomColorScaleUsed
+		{
+			get
+			{
+				return _guiUseCustomColorScale.IsChecked == true;
+			}
+			set
+			{
+				_guiUseCustomColorScale.IsChecked = value;
+				UpdateVisibilityOfColorScale();
+			}
 		}
 
 		public IColorProviderView ColorProviderView
@@ -66,5 +79,24 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		}
 
 		#endregion IDataMeshPlotStyleView
+
+		private void EhUseCustomColorScaleChanged(object sender, System.Windows.RoutedEventArgs e)
+		{
+			UpdateVisibilityOfColorScale();
+		}
+
+		private void UpdateVisibilityOfColorScale()
+		{
+			if (_guiUseCustomColorScale.IsChecked == true)
+			{
+				if (null != _guiColorScale)
+					_guiColorScale.Visibility = System.Windows.Visibility.Visible;
+			}
+			else
+			{
+				if (null != _guiColorScale)
+					_guiColorScale.Visibility = System.Windows.Visibility.Collapsed;
+			}
+		}
 	}
 }

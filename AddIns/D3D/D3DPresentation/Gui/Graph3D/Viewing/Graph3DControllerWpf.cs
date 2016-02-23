@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (e.ChangedButton == MouseButton.Middle && e.MiddleButton == MouseButtonState.Pressed)
 			{
 				_middleButtonPressed_InitialPosition = position;
-				_middleButtonPressed_InitialCamera = _doc.Scene.Camera;
+				_middleButtonPressed_InitialCamera = _doc.Camera;
 				if (!isSHIFTpressed && !isCTRLpressed)
 					_middleButtonCurrentAction = MiddelButtonAction.RotateCamera;
 				else if (isSHIFTpressed && !isCTRLpressed)
@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 						{
 							double dx = position.X - _middleButtonPressed_InitialPosition.X;
 							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
-							Doc.Scene.Camera = CameraRotateDegrees(_middleButtonPressed_InitialCamera, dx * 540, -dy * 540);
+							Doc.Camera = CameraRotateDegrees(_middleButtonPressed_InitialCamera, dx * 540, -dy * 540);
 						}
 						break;
 
@@ -188,14 +188,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 						{
 							double dx = position.X - _middleButtonPressed_InitialPosition.X;
 							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
-							Doc.Scene.Camera = CameraMoveRelative(_middleButtonPressed_InitialCamera, dx, dy);
+							Doc.Camera = CameraMoveRelative(_middleButtonPressed_InitialCamera, dx, dy);
 						}
 						break;
 
 					case MiddelButtonAction.ZoomCamera:
 						{
 							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
-							Doc.Scene.Camera = CameraZoomByMouseWheel(_middleButtonPressed_InitialCamera, 0.5, 0.5, position.Z, (dy * 5));
+							Doc.Camera = CameraZoomByMouseWheel(_middleButtonPressed_InitialCamera, 0.5, 0.5, position.Z, (dy * 5));
 						}
 						break;
 				}

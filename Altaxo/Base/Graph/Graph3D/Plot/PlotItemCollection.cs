@@ -109,7 +109,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		public PlotItemCollection()
 		{
 			_plotItems = new List<IGPlotItem>();
-			//_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		{
 			_parent = owner;
 			_plotItems = new List<IGPlotItem>();
-			//_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
 		/// <summary>
