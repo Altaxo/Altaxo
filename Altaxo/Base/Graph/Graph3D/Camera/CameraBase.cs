@@ -42,6 +42,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		protected PointD3D _targetPosition;
 		protected double _zNear;
 		protected double _zFar;
+		protected double _widthAtZNear;
 
 		/// <summary>
 		/// Gets or sets the screen offset. The screen offset has to be used only in extraordinary situation,
@@ -50,6 +51,39 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// It is not serialized either.
 		/// </summary>
 		protected PointD2D _screenOffset;
+
+		#region WidthAtZNear
+
+		/// <summary>
+		/// Gets the width of the view field at <see cref="ZNear"/> distance.
+		/// </summary>
+		/// <value>
+		/// The width of the view field at <see cref="ZNear"/> distance.
+		/// </value>
+		public double WidthAtZNear
+		{
+			get
+			{
+				return _widthAtZNear;
+			}
+		}
+
+		/// <summary>
+		/// Gets a new instance of this camera, with <see cref="WidthAtZNear"/> set to the provided argument.
+		/// </summary>
+		/// <param name="widthAtZNear">The width of the view field at <see cref="ZNear"/> distance.</param>
+		/// <returns>A new instance of this camera, with <see cref="WidthAtZNear"/> set to the provided argument <paramref name="widthAtZNear"/>.</returns>
+		public CameraBase WithWidthAtZNear(double widthAtZNear)
+		{
+			if (_widthAtZNear == widthAtZNear)
+				return this;
+
+			var result = (CameraBase)this.MemberwiseClone();
+			result._widthAtZNear = widthAtZNear;
+			return result;
+		}
+
+		#endregion WidthAtZNear
 
 		/// <summary>
 		/// Gets the camera up vector.
@@ -77,9 +111,12 @@ namespace Altaxo.Graph.Graph3D.Camera
 		public double ZFar { get { return _zFar; } }
 
 		/// <summary>
-		/// Gets the scale of the camera, that determines how large the view volume is. The meaning of this property depends on the type of camera.
+		/// Gets the width of the view field at target distance.
 		/// </summary>
-		public abstract double Scale { get; }
+		/// <value>
+		/// The width of the view field at target distance.
+		/// </value>
+		public abstract double WidthAtTargetDistance { get; }
 
 		/// <summary>
 		/// Gets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
@@ -110,13 +147,14 @@ namespace Altaxo.Graph.Graph3D.Camera
 			}
 		}
 
-		protected CameraBase(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar)
+		protected CameraBase(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition, double zNear, double zFar, double widthAtZNear)
 		{
 			this._upVector = upVector;
 			this._eyePosition = eyePosition;
 			this._targetPosition = targetPosition;
 			this._zNear = zNear;
 			this._zFar = zFar;
+			this._widthAtZNear = widthAtZNear;
 		}
 
 		/// <summary>
@@ -179,6 +217,39 @@ namespace Altaxo.Graph.Graph3D.Camera
 			{
 				return (EyePosition - TargetPosition);
 			}
+		}
+
+		/// <summary>
+		/// Gets the distance of the camera from the target position.
+		/// </summary>
+		/// <value>
+		/// The distance of the camera from the target position.
+		/// </value>
+		public double DistanceToTarget
+		{
+			get
+			{
+				return (EyePosition - TargetPosition).Length;
+			}
+		}
+
+		public CameraBase WithDistanceToTarget(double distance)
+		{
+			if (!(distance > 0))
+				throw new ArgumentOutOfRangeException("distance has to be > 0");
+
+			var diff = EyePosition - TargetPosition;
+
+			var oldDistance = diff.Length;
+
+			if (diff.Length == distance)
+				return this;
+
+			var result = (CameraBase)this.MemberwiseClone();
+
+			result._eyePosition = TargetPosition + diff * (distance / oldDistance);
+
+			return result;
 		}
 
 		/// <summary>
@@ -261,7 +332,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// </summary>
 		/// <param name="relativeScreenPosition">The relative screen position (X and Y component), as well as the screen's aspect ratio (Z component).</param>
 		/// <returns>Matrix which transforms world coordinates in that way that the hit ray in world coordinates is transformed to x=0 and y=0 and z being the distance to the camera.</returns>
-		public abstract Matrix4x3 GetHitRayMatrix(PointD3D relativeScreenPosition);
+		public abstract Matrix4x4 GetHitRayMatrix(PointD3D relativeScreenPosition);
 
 		/// <summary>
 		/// Gets the result of LookAtRH matrix multiplied with the ViewRH matrix (ViewRH is either OrthoRH or PerspectiveRH, depending on the camera type).

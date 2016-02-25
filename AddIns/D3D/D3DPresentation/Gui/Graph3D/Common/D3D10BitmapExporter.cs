@@ -80,7 +80,9 @@ namespace Altaxo.Gui.Graph3D.Common
 			var rect = new RectangleD3D(PointD3D.Empty, doc.RootLayer.Size);
 			var bounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => matrix.Transform(x)));
 
-			int pixelsX = (int)(sourceDpi * bounds.SizeX / 72.0);
+			int pixelsX = (int)Math.Ceiling(sourceDpi * bounds.SizeX / 72.0);
+			pixelsX = (int)(4 * Math.Ceiling((pixelsX + 3) / 4.0));
+
 			int pixelsY = (int)(sourceDpi * bounds.SizeY / 72.0);
 
 			double aspectRatio = pixelsY / (double)pixelsX;
@@ -90,7 +92,7 @@ namespace Altaxo.Gui.Graph3D.Common
 			if (sceneCamera is OrthographicCamera)
 			{
 				var orthoCamera = (OrthographicCamera)sceneCamera;
-				orthoCamera = orthoCamera.WithScale(bounds.SizeX);
+				orthoCamera = (OrthographicCamera)orthoCamera.WithWidthAtZNear(bounds.SizeX);
 
 				double offsX = -(1 + 2 * bounds.X / bounds.SizeX);
 				double offsY = -(1 + 2 * bounds.Y / bounds.SizeY);
@@ -98,13 +100,22 @@ namespace Altaxo.Gui.Graph3D.Common
 			}
 			else if (sceneCamera is PerspectiveCamera)
 			{
-				var perspCamera = (PerspectiveCamera)sceneCamera;
-				// TODO Adjust camera so that image exactly fits
-				perspCamera = perspCamera.WithScale(bounds.X); // Attention: is this OK???
+				var viewProj = sceneCamera.GetViewProjectionMatrix(1); // here we transform the points with AspectRatio=1, in order to get the AspectRatio of the ScreenBounds
+				var screenBounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => viewProj.Transform(x)));
+				aspectRatio = screenBounds.SizeY / screenBounds.SizeX; // this is the aspectRatio of our image
+				viewProj = sceneCamera.GetViewProjectionMatrix(aspectRatio); // now we get the transform with our aspectRatio determined above
+				screenBounds = RectangleD3D.NewRectangleIncludingAllPoints(rect.Vertices.Select(x => viewProj.Transform(x))); // this are our actual screenBounds, of course in relative screen coordinates, thus the ratio of sizeX and sizeY should now be 1
 
-				double offsX = -(1 + 2 * bounds.X * perspCamera.ZNear / bounds.SizeX);
-				double offsY = -(1 + 2 * bounds.Y * perspCamera.ZNear / bounds.SizeY);
-				sceneCamera = perspCamera.WithScreenOffset(new PointD2D(offsX, offsY));
+				double scaleFactor = 2 / screenBounds.SizeX; // since SizeX and SizeY should now be the same, we could have used SizeY alternatively
+				double offsX = -(1 + scaleFactor * screenBounds.X);
+				double offsY = -(1 + scaleFactor * screenBounds.Y);
+
+				pixelsY = (int)(4 * Math.Ceiling((aspectRatio * pixelsX + 3) / 4.0)); // now calculate the size of the image in y direction from the aspectRatio
+
+				var perspCamera = (PerspectiveCamera)sceneCamera;
+
+				sceneCamera = perspCamera.WithWidthAtZNear(perspCamera.WidthAtZNear / scaleFactor);
+				sceneCamera = sceneCamera.WithScreenOffset(new PointD2D(offsX, offsY));
 			}
 			else
 			{

@@ -622,7 +622,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != orthoCamera)
 			{
-				orthoCamera = orthoCamera.WithScale(1);
+				orthoCamera = (OrthographicCamera)orthoCamera.WithWidthAtZNear(1);
 
 				var mx = orthoCamera.GetViewProjectionMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
@@ -634,7 +634,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					absmax = Math.Max(absmax, Math.Abs(ps.X));
 					absmax = Math.Max(absmax, Math.Abs(ps.Y));
 				}
-				newCamera = orthoCamera.WithScale(absmax);
+				newCamera = orthoCamera.WithWidthAtZNear(absmax);
 			}
 			else
 			{
@@ -726,21 +726,28 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				var cam = camera as OrthographicCamera;
 				var eye = cam.NormalizedEyeVector;
 				var up = cam.NormalizedUpVectorPerpendicularToEyeVector;
-				var scaleBefore = cam.Scale;
-				var scaleAfter = scaleBefore * Math.Pow(2, delta);
+				var widthBefore = cam.WidthAtZNear;
+				var widthAfter = widthBefore * Math.Pow(2, delta);
 
 				var tam1h = relX - 0.5;
 				var tbm1h = relY - 0.5;
 
 				var shift = new VectorD3D(
-					-(scaleAfter - scaleBefore) * (aspectRatio * tbm1h * up.X + eye.Z * tam1h * up.Y - eye.Y * tam1h * up.Z),
-					(scaleAfter - scaleBefore) * (eye.Z * tam1h * up.X - aspectRatio * tbm1h * up.Y - eye.X * tam1h * up.Z),
-					-(scaleAfter - scaleBefore) * (eye.Y * tam1h * up.X - eye.X * tam1h * up.Y + aspectRatio * tbm1h * up.Z)
+					-(widthAfter - widthBefore) * (aspectRatio * tbm1h * up.X + eye.Z * tam1h * up.Y - eye.Y * tam1h * up.Z),
+					(widthAfter - widthBefore) * (eye.Z * tam1h * up.X - aspectRatio * tbm1h * up.Y - eye.X * tam1h * up.Z),
+					-(widthAfter - widthBefore) * (eye.Y * tam1h * up.X - eye.X * tam1h * up.Y + aspectRatio * tbm1h * up.Z)
 					);
 
 				var oldCamera = (OrthographicCamera)camera;
-				var newCamera = ((OrthographicCamera)camera).WithEyeTargetScale(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift, scaleAfter);
+				var newCamera = ((OrthographicCamera)camera).WithEyeTargetWidth(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift, widthAfter);
 				return newCamera;
+			}
+			else if (camera is PerspectiveCamera)
+			{
+				double rx = 2 * relX - 1;
+				double ry = 2 * relY - 1;
+				double distanceFactor = Math.Pow(2, delta);
+				camera = ((PerspectiveCamera)camera).ZoomByGettingCloserToTarget(distanceFactor, rx, ry, aspectRatio);
 			}
 
 			return camera;
@@ -837,7 +844,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (camera is OrthographicCamera)
 			{
 				var oldCamera = (OrthographicCamera)camera;
-				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.Scale);
+				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.WidthAtZNear);
+				camera = oldCamera.WithEyeTarget(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift);
+			}
+			else if (camera is PerspectiveCamera)
+			{
+				var oldCamera = (PerspectiveCamera)camera;
+				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.WidthAtZNear * oldCamera.DistanceToTarget / oldCamera.ZNear);
 				camera = oldCamera.WithEyeTarget(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift);
 			}
 

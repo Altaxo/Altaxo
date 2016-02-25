@@ -755,7 +755,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				var mainAxisPoints = _cachedMainLinePointsUsedForHitTesting;
 				if (null != mainAxisPoints)
 				{
-					if (hitData.IsHit(mainAxisPoints, Math.Max(_axisPen.Thickness1, _axisPen.Thickness2)))
+					if (hitData.IsHit(mainAxisPoints, _axisPen.Thickness1, _axisPen.Thickness2))
 						return new HitTestObject(
 							new PolylineObjectOutline(_axisPen.Thickness1, _axisPen.Thickness2, mainAxisPoints, hitData.WorldTransformation),
 							this,

@@ -306,10 +306,9 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		{
 			base.OnMouseMove(position, e);
 
-			var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
-
 			if (null != ActiveGrip)
 			{
+				var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
 				ActiveGrip.MoveGrip(graphCoord);
 				_wereObjectsMoved = true;
 				_grac.RenderOverlay();

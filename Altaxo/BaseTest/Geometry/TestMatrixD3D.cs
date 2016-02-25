@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BaseTest.Graph
+namespace Altaxo.Geometry
 {
 	[TestFixture]
 	public class TestMatrixD3D

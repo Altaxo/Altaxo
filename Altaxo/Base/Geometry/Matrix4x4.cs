@@ -137,6 +137,21 @@ namespace Altaxo.Geometry
 			);
 		}
 
+		/// <summary>
+		/// Returns a new matrix based on the current matrix, but onto which another transformation was prepended.
+		/// </summary>
+		/// <param name="l">The matrix to prepend.</param>
+		/// <returns>New matrix based on the current matrix, but onto which another transformation was prepended.</returns>
+		public Matrix4x4 WithPrependedTransformation(Matrix4x3 l)
+		{
+			return new Matrix4x4(
+				l.M11 * M11 + l.M12 * M21 + l.M13 * M31, l.M11 * M12 + l.M12 * M22 + l.M13 * M32, l.M11 * M13 + l.M12 * M23 + l.M13 * M33, l.M11 * M14 + l.M12 * M24 + l.M13 * M34,
+				l.M21 * M11 + l.M22 * M21 + l.M23 * M31, l.M21 * M12 + l.M22 * M22 + l.M23 * M32, l.M21 * M13 + l.M22 * M23 + l.M23 * M33, l.M21 * M14 + l.M22 * M24 + l.M23 * M34,
+				l.M31 * M11 + l.M32 * M21 + l.M33 * M31, l.M31 * M12 + l.M32 * M22 + l.M33 * M32, l.M31 * M13 + l.M32 * M23 + l.M33 * M33, l.M31 * M14 + l.M32 * M24 + l.M33 * M34,
+				l.M41 * M11 + l.M42 * M21 + l.M43 * M31 + M41, l.M41 * M12 + l.M42 * M22 + l.M43 * M32 + M42, l.M41 * M13 + l.M42 * M23 + l.M43 * M33 + M43, l.M41 * M14 + l.M42 * M24 + l.M43 * M34 + M44
+	 );
+		}
+
 		public override string ToString()
 		{
 			var stb = new StringBuilder(12 * 12);

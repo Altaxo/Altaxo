@@ -516,7 +516,7 @@ namespace Altaxo.Graph.Graph3D
 
 			if (null != orthoCamera)
 			{
-				orthoCamera = orthoCamera.WithScale(1);
+				orthoCamera = (Camera.OrthographicCamera)orthoCamera.WithWidthAtZNear(1);
 
 				var mx = orthoCamera.GetViewProjectionMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
@@ -528,7 +528,7 @@ namespace Altaxo.Graph.Graph3D
 					absmax = Math.Max(absmax, Math.Abs(ps.X));
 					absmax = Math.Max(absmax, Math.Abs(ps.Y));
 				}
-				newCamera = orthoCamera.WithScale(absmax);
+				newCamera = orthoCamera.WithWidthAtZNear(absmax);
 			}
 			else
 			{

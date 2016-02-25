@@ -581,7 +581,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		protected virtual void UpdateTransformationMatrix()
 		{
-			_transformation.SetTranslationRotationShearScale(
+			_transformation = Matrix4x3.FromTranslationRotationShearScale(
 				_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
 				RotationX, RotationY, RotationZ,
 				ShearX, ShearY, ShearZ,

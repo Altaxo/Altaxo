@@ -73,8 +73,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>New <see cref="RectangularObjectOutline"/> object with the provided transformation appended.</returns>
 		public RectangularObjectOutline WithAdditionalTransformation(Matrix4x3 transformation)
 		{
-			transformation.PrependTransform(this._transformation);
-			return new RectangularObjectOutline(_rectangle, transformation);
+			return new RectangularObjectOutline(_rectangle, _transformation.WithAppendedTransformation(transformation));
 		}
 
 		public IEnumerable<LineD3D> AsLines

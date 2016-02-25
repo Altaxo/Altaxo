@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BaseTest.Graph
+namespace Altaxo.Geometry
 {
 	using TD = Tuple<PointD3D, VectorD3D, VectorD3D>;
 
