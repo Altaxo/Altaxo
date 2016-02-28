@@ -345,7 +345,7 @@ namespace Altaxo.Main
 			} // ----- Notification time can be changed again -----------------
 
 			if (null != exception)
-				throw exception;
+				throw new Exception("Exception during execution of the trigger based update action", exception);
 		}
 
 		/// <summary>

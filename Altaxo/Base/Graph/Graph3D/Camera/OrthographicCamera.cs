@@ -93,6 +93,32 @@ namespace Altaxo.Graph.Graph3D.Camera
 			}
 		}
 
+		/// <summary>
+		/// Gets a new instance of the camera with  <see cref="CameraBase.ZNear" /> and <see cref="CameraBase.ZFar" /> set to the provided values. The <see cref="WidthAtTargetDistance" /> is adjusted so that the view angle of the camera is not changed.
+		/// </summary>
+		/// <param name="zNear">The zNear distance.</param>
+		/// <param name="zFar">The zFar distance.</param>
+		/// <returns>
+		/// A new instance of the camera with  <see cref="CameraBase.ZNear" /> and <see cref="CameraBase.ZFar" /> set to the provided values. The <see cref="WidthAtTargetDistance" /> is adjusted so that the view angle of the camera is not changed.
+		/// </returns>
+		public override CameraBase WithZNearZFarWithoutChangingViewAngle(double zNear, double zFar)
+		{
+			if (zNear == _zNear && zFar == _zFar)
+				return this;
+
+			if (!(zNear > 0))
+				throw new ArgumentOutOfRangeException(nameof(zNear) + " has to be > 0 ");
+			if (!(zFar > 0))
+				throw new ArgumentOutOfRangeException(nameof(zFar) + " has to be > 0 ");
+			if (!(zNear < zFar))
+				throw new ArgumentOutOfRangeException(nameof(zFar) + " has to be > " + nameof(zNear));
+
+			var result = (OrthographicCamera)this.MemberwiseClone();
+			result._zNear = zNear;
+			result._zFar = zFar;
+			return result;
+		}
+
 		#endregion Overrides
 
 		/// <summary>

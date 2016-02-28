@@ -638,7 +638,32 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 			else
 			{
-				throw new NotImplementedException();
+				var perspCamera = (PerspectiveCamera)newCamera;
+				// use worst case
+				var diameter = Doc.RootLayer.Size.Length; // diagonal of the root layer = radius of sphere in the worst case
+
+				double minWidthHeight = Math.Min(perspCamera.WidthAtZNear, perspCamera.WidthAtZNear * aspectRatio);
+
+				var distanceWorstCase = diameter * perspCamera.ZNear / minWidthHeight;
+
+				if (distanceWorstCase > perspCamera.DistanceToTarget)
+					perspCamera = (PerspectiveCamera)perspCamera.WithDistanceToTarget(distanceWorstCase);
+
+				var viewProj = perspCamera.GetViewProjectionMatrix(aspectRatio);
+
+				var rootRect = new RectangleD3D(PointD3D.Empty, Doc.RootLayer.Size);
+
+				var screenRect = RectangleD2D.NewRectangleIncludingAllPoints(rootRect.Vertices.Select(v => viewProj.Transform(v).PointD2DWithoutZ));
+
+				double maxScreen = 0;
+				foreach (var v in screenRect.Vertices)
+				{
+					maxScreen = Math.Max(maxScreen, Math.Abs(v.X));
+					maxScreen = Math.Max(maxScreen, Math.Abs(v.Y));
+				}
+
+				// now we could decrease the camera distance by maxScreen, but this is only an estimation
+				newCamera = perspCamera.WithDistanceToTarget(perspCamera.DistanceToTarget * maxScreen);
 			}
 
 			Doc.Camera = newCamera;
@@ -716,7 +741,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		protected void CameraZoomByMouseWheel(double relX, double relY, double aspectRatio, double delta)
 		{
-			Doc.Camera = CameraZoomByMouseWheel(Doc.Camera, relX, relY, aspectRatio, delta / (4 * 120));
+			var camera = CameraZoomByMouseWheel(Doc.Camera, relX, relY, aspectRatio, delta / (4 * 120));
+			camera = AdjustZNearZFar(camera);
+			Doc.Camera = camera;
 		}
 
 		protected static CameraBase CameraZoomByMouseWheel(CameraBase camera, double relX, double relY, double aspectRatio, double delta)
@@ -798,7 +825,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				double angleRadian = stepX * Math.PI / 180.0;
 				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.EyeVector, VectorD3D.CrossProduct(cam.EyeVector, cam.UpVector)));
-				var matrix = Matrix4x3.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
+				var matrix = Matrix4x3.NewRotationFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
 				var newEye = matrix.TransformPoint(cam.EyePosition);
 				var newUp = matrix.Transform(cam.UpVector);
@@ -809,7 +836,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				double angleRadian = stepY * Math.PI / 180.0;
 				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.NormalizedEyeVector, cam.UpVector));
-				var matrix = Matrix4x3.CreateRotationMatrixFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
+				var matrix = Matrix4x3.NewRotationFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
 				var newEye = matrix.TransformPoint(cam.EyePosition);
 				var newUp = matrix.Transform(cam.UpVector);
@@ -817,6 +844,58 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 
 			return cam;
+		}
+
+		public static CameraBase ModelRotateDegrees(CameraBase cam, VectorD3D rootLayerSize, double stepX, double stepY)
+		{
+			double angleRadianZ = stepX * Math.PI / 180.0;
+			double angleRadianX = stepY * Math.PI / 180.0;
+			var shift = 0.5 * rootLayerSize;
+
+			var l = cam.LookAtRHMatrix;
+
+			// in the world coordinate space: i) translate to root layer center, ii) rotate around z-axis and iii) translate back
+			var m01 = Matrix4x3.NewTranslation(-shift);
+			var m02 = Matrix4x3.NewRotationFromAxisAndAngleRadian(new VectorD3D(0, 0, 1), angleRadianZ, PointD3D.Empty);
+			var m03 = Matrix4x3.NewTranslation(shift);
+			var mstart = m01.WithAppendedTransformation(m02).WithAppendedTransformation(m03);
+
+			// in LookAt coordinate space: i) translate to root layer center, ii) rotate around x-axis and iii) translate back
+			var diff11 = (VectorD3D)cam.LookAtRHMatrix.Transform((PointD3D)shift);
+			var m11 = Matrix4x3.NewTranslation(-diff11);
+			var m12 = Matrix4x3.NewRotationFromAxisAndAngleRadian(new VectorD3D(1, 0, 0), angleRadianX, PointD3D.Empty);
+			var m13 = Matrix4x3.NewTranslation(diff11);
+			var mend = m11.WithAppendedTransformation(m12).WithAppendedTransformation(m13);
+
+			var t = mstart.WithAppendedTransformation(l).WithAppendedTransformation(mend);
+			return cam.WithLookAtRHMatrix(t);
+		}
+
+		/// <summary>
+		/// Adjusts the zNear and zFar parameter of the camera to make sure that our scene is viewed appropriately, and nothing is cut away.
+		/// </summary>
+		/// <param name="cam">The cam.</param>
+		/// <returns></returns>
+		public CameraBase AdjustZNearZFar(CameraBase cam)
+		{
+			var currentDistanceToRootLayerCenter = ((VectorD3D)(cam.EyePosition - 0.5 * Doc.RootLayer.Size)).Length;
+			var rootLayerRadius = 0.5 * Doc.RootLayer.Size.Length;
+
+			double zNear, zFar;
+			double rootLayerRadiusTimesFour = 4 * rootLayerRadius;
+			if (currentDistanceToRootLayerCenter <= 2 * rootLayerRadius)
+			{
+				zNear = rootLayerRadius / 100;
+				zFar = rootLayerRadiusTimesFour;
+			}
+			else
+			{
+				zNear = rootLayerRadius / 2;
+				zFar = Math.Max(2 * currentDistanceToRootLayerCenter, rootLayerRadius * 4);
+				zFar = rootLayerRadiusTimesFour * Math.Ceiling(zFar / rootLayerRadiusTimesFour);
+			}
+
+			return cam.WithZNearZFarWithoutChangingViewAngle(zNear, zFar);
 		}
 
 		/// <summary>

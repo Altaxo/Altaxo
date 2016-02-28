@@ -97,6 +97,34 @@ namespace Altaxo.Graph.Graph3D.Camera
 			}
 		}
 
+		/// <summary>
+		/// Gets a new instance of the camera with  <see cref="CameraBase.ZNear" /> and <see cref="CameraBase.ZFar" /> set to the provided values. The <see cref="WidthAtTargetDistance" /> is adjusted so that the view angle of the camera is not changed.
+		/// </summary>
+		/// <param name="zNear">The zNear distance.</param>
+		/// <param name="zFar">The zFar distance.</param>
+		/// <returns>
+		/// A new instance of the camera with  <see cref="CameraBase.ZNear" /> and <see cref="CameraBase.ZFar" /> set to the provided values. The <see cref="WidthAtTargetDistance" /> is adjusted so that the view angle of the camera is not changed.
+		/// </returns>
+		public override CameraBase WithZNearZFarWithoutChangingViewAngle(double zNear, double zFar)
+		{
+			if (zNear == _zNear && zFar == _zFar)
+				return this;
+
+			if (!(zNear > 0))
+				throw new ArgumentOutOfRangeException(nameof(zNear) + " has to be > 0 ");
+			if (!(zFar > 0))
+				throw new ArgumentOutOfRangeException(nameof(zFar) + " has to be > 0 ");
+			if (!(zNear < zFar))
+				throw new ArgumentOutOfRangeException(nameof(zFar) + " has to be > " + nameof(zNear));
+
+			var result = (PerspectiveCamera)this.MemberwiseClone();
+
+			result._widthAtZNear = _widthAtZNear * zNear / _zNear; // Adjust width so that view angle is kept
+			result._zNear = zNear;
+			result._zFar = zFar;
+			return result;
+		}
+
 		#endregion Overrides
 
 		#region Compound setters
@@ -167,7 +195,9 @@ namespace Altaxo.Graph.Graph3D.Camera
 		#region Zoom by getting closer
 
 		/// <summary>
-		/// Zooms the view by getting the camera closer to the target position. The target position itself is kept.
+		/// Zooms the view by moving the camera along the straigth line between camera and target position closer to the target,
+		/// and then slightly rotate the camera so that the relative screen points rx and ry are matched before and after the zooming (for a point at the plane at camera distance).
+		/// The target position itself is kept.
 		/// </summary>
 		/// <param name="distanceFactor">The factor by which the distance is multiplied to get the new distance. Must be greater than zero. Values less than 1 means zoom in, values greater than one zoom out.</param>
 		/// <param name="rx">The x component of the relative screen coordinate of the screen point which should afterwards show the same object (at target distance). Is a value in interval [-1,1].</param>
@@ -196,8 +226,8 @@ namespace Altaxo.Graph.Graph3D.Camera
 				var term3 = distanceFactor * distanceFactor - 1;
 				var term4 = fznq * term3;
 
-				var denom = (Math.Sqrt((term1 - term2 - wqrxq) * (term1 - term2 + term4 - wqrxq)) + term1 * distanceFactor - wqrxq * distanceFactor);
-				var nomin = (-2 * _zNear * Math.Sqrt(-2 * term1 + term2 * (2 + term3) - 2 * term4 + 2 * wqrxq - 2 * Math.Sqrt((-term1 + term2 + wqrxq) * (-term1 + term2 - term4 + wqrxq)) * distanceFactor));
+				var denom = (term1 * (term2 + term4) - (2 * term2 + term4) * wqrxq);
+				var nomin = (2 * rx * w * (term2 + term4 - Math.Sqrt(term2 * (term2 + term4 + term3 * wqrxq))) * _zNear);
 
 				var tanAzimuth = nomin / denom;
 				var cosAzimuth = 1 / Math.Sqrt(1 + tanAzimuth * tanAzimuth);
@@ -206,45 +236,69 @@ namespace Altaxo.Graph.Graph3D.Camera
 				// Calculation of tan[elevation]
 
 				var term6 = fznq * distanceFactor + hqryq * cosAzimuth;
-				var term7 = Math.Sqrt((hqryq + fznq * distanceFactor * distanceFactor) * (fznq + hqryq * cosAzimuth * cosAzimuth) - hqryq * wqrxq * sinAzimuth * sinAzimuth);
+				var term7 = (hqryq + fznq * distanceFactor * distanceFactor) * (fznq + hqryq * cosAzimuth * cosAzimuth) - hqryq * wqrxq * sinAzimuth * sinAzimuth;
 
-				denom = ((hqryq - 2 * rx * w * _zNear * sinAzimuth) *
-					(hqryq * (-term6 + hqryq * cosAzimuth - 2 * rx * w * _zNear * distanceFactor * sinAzimuth) -
-					Math.Abs(hqryq - 2 * rx * w * _zNear * sinAzimuth) *
-					Math.Sqrt(hqryq * (fznq + hqryq - term6 * distanceFactor + hqryq * distanceFactor * cosAzimuth) +
-					(fznq + hqryq) * wqrxq * sinAzimuth * sinAzimuth)));
-
-				nomin = (h * ry * (-2 * hqryq * hqryq * _zNear * distanceFactor +
-					2 * (term6 - hqryq * cosAzimuth) * sinAzimuth *
-					(hqryq * rx * w - wqrxq * _zNear * sinAzimuth) +
-					Math.Abs(hqryq - 2 * rx * w * _zNear * sinAzimuth) * (2 * _zNear + rx * w * sinAzimuth) *
-					Math.Sqrt(hqryq * (fznq + hqryq - term6 * distanceFactor + hqryq * distanceFactor * cosAzimuth) +
-					(fznq + hqryq) * wqrxq * sinAzimuth * sinAzimuth)));
+				denom = (2 * hqryq * rx * sinAzimuth * term6 * w * _zNear * (-1 + cosAzimuth * distanceFactor) + term6 * Math.Sqrt(term7) * Math.Abs(term6));
+				nomin = (h * ry * (-(rx * sinAzimuth * term6 * term6 * w) + 2 * Math.Sqrt(term7) * _zNear * (-1 + cosAzimuth * distanceFactor) * Math.Abs(term6)));
 
 				var tanElevation = nomin / denom;
 				var cosElevation = 1 / Math.Sqrt(1 + tanElevation * tanElevation);
 				var sinElevation = tanElevation * cosElevation;
 
 				// now rotate our current LookAt with the azimuth and elevation (elevation first, then azimuth)
+				double distance = this.DistanceToTarget;
 				Matrix4x3 rotMatrix = new Matrix4x3(
-					cosAzimuth, -sinAzimuth * sinElevation, sinAzimuth*cosElevation,
-					0, cosElevation, sinElevation,
-					-sinAzimuth, -cosAzimuth * sinElevation, cosAzimuth * cosElevation,
-					0, 0, 0);
+					cosAzimuth, 0, sinAzimuth,
+					-sinAzimuth * sinElevation, cosElevation, cosAzimuth * sinElevation,
+					-cosElevation * sinAzimuth, -sinElevation, cosAzimuth * cosElevation,
+					distance * (distanceFactor - 1) * sinAzimuth * cosElevation, distance * (distanceFactor - 1) * sinElevation, distance * (1 - distanceFactor) * cosAzimuth * cosElevation
+					);
 
-				Matrix4x3 newLookAt = this.WithDistanceToTarget(distanceFactor * DistanceToTarget).LookAtRHMatrix.WithPrependedTransformation(rotMatrix);
+				Matrix4x3 newLookAt = this.LookAtRHMatrix.WithAppendedTransformation(rotMatrix);
 
+				return (PerspectiveCamera)this.WithLookAtRHMatrix(newLookAt, DistanceToTarget * distanceFactor);
+
+				/* the code that will setup the camera manually:
 				var newEyeVec = new VectorD3D(newLookAt.M13, newLookAt.M23, newLookAt.M33);
 				var newUpVec = new VectorD3D(newLookAt.M12, newLookAt.M22, newLookAt.M32);
 				var newDistance = this.DistanceToTarget * distanceFactor;
-				var newEyePosition = this._targetPosition + newEyeVec * newDistance;
-				var newCam = (PerspectiveCamera)this.WithUpEye(newUpVec, newEyePosition);
+				var newEyePosition = this.TargetPosition + this.EyeVector * distanceFactor; // we move the camera straigt in target direction, but then turn it
+				var newTargetPosition = newEyePosition - newEyeVec * newDistance;
+				var newCam = (PerspectiveCamera)this.WithUpEyeTargetZNearZFar(newUpVec, newEyePosition, newTargetPosition, this.ZNear, this.ZFar);
 				var controlLookAt = newCam.LookAtRHMatrix;
-
 				return newCam;
+				*/
 			}
 		}
 
 		#endregion Zoom by getting closer
+
+		#region Zoom by moving camera forward
+
+		/// <summary>
+		/// Zooms the view by moving the camera forward, i.e. by shifting both eye position and target position by the same amount, thus keeping the camera direction and the up vector constant.
+		/// </summary>
+		/// <param name="distanceFactor">The factor by which the distance is multiplied to get the moving distance = DistanceToTarget*(1-distanceFactor). Must be greater than zero. Values less than 1 means zoom in, values greater than one zoom out.</param>
+		/// <param name="rx">The x component of the relative screen coordinate of the screen point which should afterwards show the same object (at target distance). Is a value in interval [-1,1].</param>
+		/// <param name="ry">The y component of the relative screen coordinate of the screen point which should afterwards show the same object (at target distance). Is a value in interval [-1,1].</param>
+		/// <param name="aspectRatio">The aspect ratio of the screen (y/x).</param>
+		/// <returns>A new camera shofted forward by a difference, determined by parameter <paramref name="distanceFactor"/> and the current camera distance.</returns>
+		public PerspectiveCamera ZoomByMovingCameraForward(double distanceFactor, double rx, double ry, double aspectRatio)
+		{
+			double tanx = rx * _widthAtZNear / (2 * _zNear);
+			double tany = ry * _widthAtZNear * aspectRatio / (2 * _zNear);
+
+			double diffDistance = this.DistanceToTarget * (1 - distanceFactor);
+
+			var eyeVec = this.NormalizedEyeVector;
+			var up = this.NormalizedUpVectorPerpendicularToEyeVector;
+			var right = this.NormalizedRightVectorPerpendicularToEyeVector;
+
+			var diffVector = -diffDistance * eyeVec + tanx * diffDistance * right + tany * diffDistance * up;
+
+			return (PerspectiveCamera)this.WithEyeTarget(this.EyePosition + diffVector, this.TargetPosition + diffVector);
+		}
+
+		#endregion Zoom by moving camera forward
 	}
 }

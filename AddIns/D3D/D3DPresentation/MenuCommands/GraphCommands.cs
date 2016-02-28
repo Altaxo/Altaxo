@@ -399,9 +399,10 @@ namespace Altaxo.Graph.Graph3D.Commands
 		{
 			var oldCamera = _currentGraphController.Doc.Camera;
 
-			double newZNear = oldCamera.ZNear;
-			double newWidthAtZNear = oldCamera.WidthAtTargetDistance * (newZNear / oldCamera.DistanceToTarget);
-			var newCamera = new Altaxo.Graph.Graph3D.Camera.PerspectiveCamera(oldCamera.UpVector, oldCamera.EyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, newWidthAtZNear);
+			double relViewWidth = 0.93; // 2*tan(viewAngle/2) mit viewAngle = 50 deg
+			double newDistance = oldCamera.WidthAtTargetDistance / relViewWidth;
+			var newEyePosition = oldCamera.TargetPosition + newDistance * oldCamera.NormalizedEyeVector;
+			var newCamera = new Altaxo.Graph.Graph3D.Camera.PerspectiveCamera(oldCamera.UpVector, newEyePosition, oldCamera.TargetPosition, oldCamera.ZNear, oldCamera.ZFar, relViewWidth * oldCamera.ZNear);
 			_currentGraphController.Doc.Camera = newCamera;
 		}
 	}

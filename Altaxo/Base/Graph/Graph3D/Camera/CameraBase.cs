@@ -119,6 +119,14 @@ namespace Altaxo.Graph.Graph3D.Camera
 		public abstract double WidthAtTargetDistance { get; }
 
 		/// <summary>
+		/// Gets a new instance of the camera with  <see cref="ZNear"/> and <see cref="ZFar"/> set to the provided values. The <see cref="WidthAtTargetDistance"/> is adjusted so that the view angle of the camera is not changed.
+		/// </summary>
+		/// <param name="zNear">The zNear distance.</param>
+		/// <param name="zFar">The zFar distance.</param>
+		/// <returns>A new instance of the camera with  <see cref="ZNear"/> and <see cref="ZFar"/> set to the provided values. The <see cref="WidthAtTargetDistance"/> is adjusted so that the view angle of the camera is not changed.</returns>
+		public abstract CameraBase WithZNearZFarWithoutChangingViewAngle(double zNear, double zFar);
+
+		/// <summary>
 		/// Gets the screen offset. The screen offset has to be used only in extraordinary situation, e.g. for shifting to simulate multisampling; or for shifting to center the exported bitmap.
 		/// It is not serialized either.
 		/// </summary>
@@ -174,6 +182,22 @@ namespace Altaxo.Graph.Graph3D.Camera
 			result._targetPosition = targetPosition;
 			result._zNear = zNear;
 			result._zFar = zFar;
+			return result;
+		}
+
+		/// <summary>
+		/// Creates a new camera with provided upVector, eyePosition, targetPosition.
+		/// </summary>
+		/// <param name="upVector">Up vector.</param>
+		/// <param name="eyePosition">The eye position.</param>
+		/// <param name="targetPosition">The target position.</param>
+		/// <returns>New camera with the provided parameters.</returns>
+		public CameraBase WithUpEyeTarget(VectorD3D upVector, PointD3D eyePosition, PointD3D targetPosition)
+		{
+			var result = (CameraBase)this.MemberwiseClone();
+			result._upVector = upVector;
+			result._eyePosition = eyePosition;
+			result._targetPosition = targetPosition;
 			return result;
 		}
 
@@ -281,6 +305,22 @@ namespace Altaxo.Graph.Graph3D.Camera
 		}
 
 		/// <summary>
+		/// Gets the normalized right vector, that is made perpendicular to the eye vector.
+		/// </summary>
+		/// <value>
+		/// The normalized right vector perpendicular to eye vector.
+		/// </value>
+		public VectorD3D NormalizedRightVectorPerpendicularToEyeVector
+		{
+			get
+			{
+				var up = NormalizedUpVectorPerpendicularToEyeVector;
+				var eye = NormalizedEyeVector;
+				return VectorD3D.CrossProduct(up, eye);
+			}
+		}
+
+		/// <summary>
 		/// Returns the same matrix that the Direct3D function LookAtRH would provide.
 		/// </summary>
 		/// <value>
@@ -301,6 +341,44 @@ namespace Altaxo.Graph.Graph3D.Camera
 								-(xaxis.X * EyePosition.X + xaxis.Y * EyePosition.Y + xaxis.Z * EyePosition.Z), -(yaxis.X * EyePosition.X + yaxis.Y * EyePosition.Y + yaxis.Z * EyePosition.Z), -(zaxis.X * EyePosition.X + zaxis.Y * EyePosition.Y + zaxis.Z * EyePosition.Z)
 								);
 			}
+		}
+
+		/// <summary>
+		/// Creates a new camera which has the LookAtRH matrix as provided in the argument. Up and eye vector as well as eye position are calculated from the provided matrix, the target position is in such a way calculated that the distance is kept constant.
+		/// </summary>
+		/// <param name="l">The LookAtRH matrix. This matrix must have a determinant of 1, and each of the vectors {M11, M21, M31}, {M12, M22, M32}, {M13, M23, M33} must have a length of 1.</param>
+		/// <returns>A new camera which has the LookAtRH matrix as provided in the argument. Up and eye vector as well as eye position are calculated from the provided matrix, the target position is in such a way calculated that the distance is kept constant.</returns>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public CameraBase WithLookAtRHMatrix(Matrix4x3 l)
+		{
+			return WithLookAtRHMatrix(l, this.DistanceToTarget);
+		}
+
+		/// <summary>
+		/// Creates a new camera which has the LookAtRH matrix as provided in the argument. Up and eye vector as well as eye position are calculated from the provided matrix, the target position is calculated from the eye vector and the provided <paramref name="newDistance"/> value.
+		/// </summary>
+		/// <param name="l">The LookAtRH matrix. This matrix must have a determinant of 1, and each of the vectors {M11, M21, M31}, {M12, M22, M32}, {M13, M23, M33} must have a length of 1.</param>
+		/// <param name="newDistance">The distance between camera eye and target of the new camera.</param>
+		/// <returns>A new camera which has the LookAtRH matrix as provided in the argument. Up and eye vector as well as eye position are calculated from the provided matrix, the target position is calculated from the eye vector and the provided <paramref name="newDistance"/> value.</returns>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public CameraBase WithLookAtRHMatrix(Matrix4x3 l, double newDistance)
+		{
+			double determinant = l.Determinant;
+
+			if (!(determinant > 0.9 && determinant < 1.1))
+				throw new ArgumentOutOfRangeException(nameof(l) + " seems not to be a LookAtRH matrix because its determinant is not 1");
+
+			// get position
+			var eyePos = new PointD3D(
+			(l.M23 * l.M32 * l.M41 - l.M22 * l.M33 * l.M41 - l.M23 * l.M31 * l.M42 + l.M21 * l.M33 * l.M42 + l.M22 * l.M31 * l.M43 - l.M21 * l.M32 * l.M43) / determinant,
+			(-(l.M13 * l.M32 * l.M41) + l.M12 * l.M33 * l.M41 + l.M13 * l.M31 * l.M42 - l.M11 * l.M33 * l.M42 - l.M12 * l.M31 * l.M43 + l.M11 * l.M32 * l.M43) / determinant,
+			(l.M13 * l.M22 * l.M41 - l.M12 * l.M23 * l.M41 - l.M13 * l.M21 * l.M42 + l.M11 * l.M23 * l.M42 + l.M12 * l.M21 * l.M43 - l.M11 * l.M22 * l.M43) / determinant
+			);
+
+			var upVector = new VectorD3D(l.M12, l.M22, l.M32);
+			var eyeVector = new VectorD3D(l.M13, l.M23, l.M33);
+
+			return WithUpEyeTarget(upVector, eyePos, eyePos - eyeVector * newDistance);
 		}
 
 		/// <summary>

@@ -169,6 +169,28 @@ namespace Altaxo.Geometry
 			Determinant = determinant;
 		}
 
+		public static Matrix4x3 NewTranslation(VectorD3D d)
+		{
+			return new Matrix4x3(
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1,
+				d.X, d.Y, d.Z,
+				1
+				);
+		}
+
+		public static Matrix4x3 NewTranslation(double dx, double dy, double dz)
+		{
+			return new Matrix4x3(
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1,
+				dx, dy, dz,
+				1
+				);
+		}
+
 		/// <summary>
 		/// Gets a transformation matrix by specifying translation, rotation, shear and scale.
 		/// </summary>
@@ -185,7 +207,7 @@ namespace Altaxo.Geometry
 		/// <param name="scaleY">The scale value y.</param>
 		/// <param name="scaleZ">The scale value z.</param>
 		/// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
-		public static Matrix4x3 FromTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
+		public static Matrix4x3 NewTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
 		{
 			double phi;
 			phi = angleX * Math.PI / 180;
@@ -222,9 +244,9 @@ namespace Altaxo.Geometry
 		/// <param name="angleY">The rotation around y axis in degrees</param>
 		/// <param name="angleZ">The rotation around z axis in degrees</param>
 		/// <returns>The transformation matrix.</returns>
-		public static Matrix4x3 FromRotation(double angleX, double angleY, double angleZ)
+		public static Matrix4x3 NewRotation(double angleX, double angleY, double angleZ)
 		{
-			return FromTranslationRotationShearScale(0, 0, 0, angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
+			return NewTranslationRotationShearScale(0, 0, 0, angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
 		}
 
 		/// <summary>
@@ -234,7 +256,7 @@ namespace Altaxo.Geometry
 		/// <param name="angleRadian">The rotation angle in radian.</param>
 		/// <param name="center">The center of rotation.</param>
 		/// <returns>Matrix that describes the drotation.</returns>
-		public static Matrix4x3 CreateRotationMatrixFromAxisAndAngleRadian(VectorD3D u, double angleRadian, PointD3D center)
+		public static Matrix4x3 NewRotationFromAxisAndAngleRadian(VectorD3D u, double angleRadian, PointD3D center)
 		{
 			double cosTheta = Math.Cos(angleRadian);
 			double oMCosTheta = 1 - cosTheta;

@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				var dy = this.Bounds.Y + sy;
 				var dz = this.Bounds.Z + sz;
 
-				var transformation = Matrix4x3.FromTranslationRotationShearScale(dx, dy, dz, 0, 0, 0, 0, 0, 0, sx, sy, sz);
+				var transformation = Matrix4x3.NewTranslationRotationShearScale(dx, dy, dz, 0, 0, 0, 0, 0, 0, sx, sy, sz);
 				transformation.AppendTransform(_transformation);
 
 				var normalTransform = transformation.GetTransposedInverse();

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Geometry
 {
@@ -284,6 +285,45 @@ namespace Altaxo.Geometry
 					Height = p.Y - Y;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the vertices in binary order (x: 0th digit, y: 1st digit).
+		/// </summary>
+		/// <value>
+		/// The vertices of this rectangle.
+		/// </value>
+		public IEnumerable<PointD2D> Vertices
+		{
+			get
+			{
+				yield return new PointD2D(_x, _y);
+				yield return new PointD2D(_x + _w, _y);
+				yield return new PointD2D(_x, _y + _h);
+				yield return new PointD2D(_x + _w, _y + _h);
+			}
+		}
+
+		/// <summary>
+		/// Creates a rectangle that includes all the provided points.
+		/// </summary>
+		/// <param name="points">The points that the rectangle should include.</param>
+		/// <returns>The rectangle that includes all the provided points.</returns>
+		/// <exception cref="System.ArgumentException">Enumeration is empty!</exception>
+		public static RectangleD2D NewRectangleIncludingAllPoints(IEnumerable<PointD2D> points)
+		{
+			var en = points.GetEnumerator();
+			if (!en.MoveNext())
+				throw new ArgumentException("Enumeration is empty!", nameof(points));
+
+			var result = new RectangleD2D(en.Current, PointD2D.Empty);
+
+			while (en.MoveNext())
+			{
+				result.ExpandToInclude(en.Current);
+			}
+
+			return result;
 		}
 
 		public void ExpandToInclude(RectangleD2D rect)

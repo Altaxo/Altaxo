@@ -130,6 +130,20 @@ namespace Altaxo.Geometry
 			return new PointD3D(X, Y, Z + addZ);
 		}
 
+		/// <summary>
+		/// Gets a 2D point with X and Y the same as this point, but without the z-component.
+		/// </summary>
+		/// <value>
+		/// 2D point with X and Y the same as this point, but without the z-component.
+		/// </value>
+		public PointD2D PointD2DWithoutZ
+		{
+			get
+			{
+				return new PointD2D(X, Y);
+			}
+		}
+
 		public static PointD3D Empty { get { return new PointD3D(); } }
 
 		/// <summary>

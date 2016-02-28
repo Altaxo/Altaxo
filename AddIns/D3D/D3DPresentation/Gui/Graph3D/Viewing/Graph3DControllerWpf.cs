@@ -180,7 +180,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 						{
 							double dx = position.X - _middleButtonPressed_InitialPosition.X;
 							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
-							Doc.Camera = CameraRotateDegrees(_middleButtonPressed_InitialCamera, dx * 540, -dy * 540);
+							//Doc.Camera = CameraRotateDegrees(_middleButtonPressed_InitialCamera, dx * 540, -dy * 540);
+							Doc.Camera = ModelRotateDegrees(_middleButtonPressed_InitialCamera, _doc.RootLayer.Size, dx * 540, -dy * 540);
 						}
 						break;
 
