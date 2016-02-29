@@ -774,7 +774,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 					double shift = 0;
 					foreach (PointD3D p in crect.Vertices)
 					{
-						PointD3D ps = math.TransformPoint(p);
+						PointD3D ps = math.Transform(p);
 						double distance = Math3D.GetDistancePointToPlane(ps, PointD3D.Empty, outVector);
 						if (-distance > shift)
 							shift = -distance; // only negative distances will count here

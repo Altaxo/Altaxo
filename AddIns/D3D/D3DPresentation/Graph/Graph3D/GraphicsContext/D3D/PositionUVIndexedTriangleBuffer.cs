@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		public void AddTriangleVertex(double x, double y, double z, double u, double v)
 		{
-			var pt = _parent.Transformation.TransformPoint(new PointD3D(x, y, z));
+			var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
 
 			int offs = _numberOfVertices * 6;
 

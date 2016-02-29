@@ -356,25 +356,8 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns></returns>
 		private RectangleD3D GetBounds()
 		{
-			var s = _rootLayer.Size;
-			var p1 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(0, 0, 0));
-			var p2 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(s.X, 0, 0));
-			var p3 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(0, s.Y, 0));
-			var p4 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(s.X, s.Y, 0));
-			var p5 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(0, 0, s.Z));
-			var p6 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(s.X, 0, s.Z));
-			var p7 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(0, s.Y, s.Z));
-			var p8 = _rootLayer.TransformCoordinatesFromHereToParent(new PointD3D(s.X, s.Y, s.Z));
-
-			var r = new RectangleD3D(p1, VectorD3D.Empty);
-			r.ExpandToInclude(p2);
-			r.ExpandToInclude(p3);
-			r.ExpandToInclude(p4);
-			r.ExpandToInclude(p5);
-			r.ExpandToInclude(p6);
-			r.ExpandToInclude(p7);
-			r.ExpandToInclude(p8);
-			return r;
+			var re = new RectangleD3D(PointD3D.Empty, _rootLayer.Size);
+			return RectangleD3D.NewRectangleIncludingAllPoints(re.Vertices.Select(p => _rootLayer.TransformCoordinatesFromHereToParent(p)));
 		}
 
 		/// <summary>

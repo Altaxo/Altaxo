@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				var transformation = Matrix4x3.NewTranslationRotationShearScale(dx, dy, dz, 0, 0, 0, 0, 0, 0, sx, sy, sz);
 				transformation.AppendTransform(_transformation);
 
-				var normalTransform = transformation.GetTransposedInverse();
+				var normalTransform = transformation.GetTransposedInverseMatrix3x3();
 
 				foreach (var entry in sphere.VerticesAndNormalsForSphere)
 				{

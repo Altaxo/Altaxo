@@ -611,18 +611,18 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				aspectRatio = viewportSize.Y / viewportSize.X;
 			}
 
-			var upVector = cameraUpVector.Normalized;
+			if ((VectorD3D.CrossProduct(toEyeVector, cameraUpVector).IsEmpty))
+				throw new ArgumentOutOfRangeException(nameof(cameraUpVector) + " is either empty or is parallel to the eyeVector");
+
+			var upVector = Math3D.GetOrthonormalVectorToVector(cameraUpVector, toEyeVector);
 			var targetPosition = (PointD3D)(0.5 * Doc.RootLayer.Size);
 			var cameraDistance = 10 * Doc.RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;
+			var newCamera = Doc.Camera.WithUpEyeTarget(upVector, eyePosition, targetPosition);
 
-			var newCamera = Doc.Camera.WithUpEyeTargetZNearZFar(upVector, eyePosition, targetPosition, cameraDistance / 8, cameraDistance * 2);
-
-			var orthoCamera = newCamera as OrthographicCamera;
-
-			if (null != orthoCamera)
+			if (newCamera is OrthographicCamera)
 			{
-				orthoCamera = (OrthographicCamera)orthoCamera.WithWidthAtZNear(1);
+				var orthoCamera = (OrthographicCamera)newCamera.WithWidthAtZNear(1);
 
 				var mx = orthoCamera.GetViewProjectionMatrix(aspectRatio);
 				// to get the resulting scale, we transform all vertices of the root layer (the destination range would be -1..1, but now is not in range -1..1)
@@ -636,7 +636,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				}
 				newCamera = orthoCamera.WithWidthAtZNear(absmax);
 			}
-			else
+			else if (newCamera is PerspectiveCamera)
 			{
 				var perspCamera = (PerspectiveCamera)newCamera;
 				// use worst case
@@ -646,27 +646,34 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 				var distanceWorstCase = diameter * perspCamera.ZNear / minWidthHeight;
 
-				if (distanceWorstCase > perspCamera.DistanceToTarget)
-					perspCamera = (PerspectiveCamera)perspCamera.WithDistanceToTarget(distanceWorstCase);
-
-				var viewProj = perspCamera.GetViewProjectionMatrix(aspectRatio);
+				if (distanceWorstCase > perspCamera.Distance)
+					perspCamera = (PerspectiveCamera)perspCamera.WithDistanceByChangingEyePosition(distanceWorstCase);
 
 				var rootRect = new RectangleD3D(PointD3D.Empty, Doc.RootLayer.Size);
 
-				var screenRect = RectangleD2D.NewRectangleIncludingAllPoints(rootRect.Vertices.Select(v => viewProj.Transform(v).PointD2DWithoutZ));
-
-				double maxScreen = 0;
-				foreach (var v in screenRect.Vertices)
+				for (int i = 0; i < 5; ++i) // 5 iterations to get the right distance
 				{
-					maxScreen = Math.Max(maxScreen, Math.Abs(v.X));
-					maxScreen = Math.Max(maxScreen, Math.Abs(v.Y));
-				}
+					var viewProj = perspCamera.GetViewProjectionMatrix(aspectRatio);
+					var screenRect = RectangleD2D.NewRectangleIncludingAllPoints(rootRect.Vertices.Select(v => viewProj.Transform(v).PointD2DWithoutZ));
 
-				// now we could decrease the camera distance by maxScreen, but this is only an estimation
-				newCamera = perspCamera.WithDistanceToTarget(perspCamera.DistanceToTarget * maxScreen);
+					double maxScreen = 0;
+					foreach (var v in screenRect.Vertices)
+					{
+						maxScreen = Math.Max(maxScreen, Math.Abs(v.X));
+						maxScreen = Math.Max(maxScreen, Math.Abs(v.Y));
+					}
+
+					// now we could decrease the camera distance by maxScreen, but this is only an estimation
+					perspCamera = (PerspectiveCamera)perspCamera.WithDistanceByChangingEyePosition(perspCamera.Distance * maxScreen);
+				}
+				newCamera = perspCamera;
+			}
+			else
+			{
+				throw new NotImplementedException("Unknown camera type");
 			}
 
-			Doc.Camera = newCamera;
+			Doc.Camera = AdjustZNearZFar(newCamera);
 		}
 
 		public void ViewFront()
@@ -751,8 +758,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (camera is OrthographicCamera)
 			{
 				var cam = camera as OrthographicCamera;
-				var eye = cam.NormalizedEyeVector;
-				var up = cam.NormalizedUpVectorPerpendicularToEyeVector;
+				var eye = cam.TargetToEyeVectorNormalized;
+				var up = cam.UpVectorPerpendicularToEyeVectorNormalized;
 				var widthBefore = cam.WidthAtZNear;
 				var widthAfter = widthBefore * Math.Pow(2, delta);
 
@@ -824,10 +831,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (stepX != 0)
 			{
 				double angleRadian = stepX * Math.PI / 180.0;
-				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.EyeVector, VectorD3D.CrossProduct(cam.EyeVector, cam.UpVector)));
+				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.TargetToEyeVector, VectorD3D.CrossProduct(cam.TargetToEyeVector, cam.UpVector)));
 				var matrix = Matrix4x3.NewRotationFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
-				var newEye = matrix.TransformPoint(cam.EyePosition);
+				var newEye = matrix.Transform(cam.EyePosition);
 				var newUp = matrix.Transform(cam.UpVector);
 				cam = cam.WithUpEye(newUp, newEye);
 			}
@@ -835,10 +842,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (stepY != 0)
 			{
 				double angleRadian = stepY * Math.PI / 180.0;
-				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.NormalizedEyeVector, cam.UpVector));
+				VectorD3D axis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(cam.TargetToEyeVectorNormalized, cam.UpVector));
 				var matrix = Matrix4x3.NewRotationFromAxisAndAngleRadian(axis, angleRadian, cam.TargetPosition);
 
-				var newEye = matrix.TransformPoint(cam.EyePosition);
+				var newEye = matrix.Transform(cam.EyePosition);
 				var newUp = matrix.Transform(cam.UpVector);
 				cam = cam.WithUpEye(newUp, newEye);
 			}
@@ -917,8 +924,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <returns>The new camera after the movement.</returns>
 		public static CameraBase CameraMoveRelative(CameraBase camera, double stepX, double stepY)
 		{
-			VectorD3D xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.NormalizedEyeVector, camera.UpVector));
-			VectorD3D yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.EyeVector, VectorD3D.CrossProduct(camera.EyeVector, camera.UpVector)));
+			VectorD3D xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.TargetToEyeVectorNormalized, camera.UpVector));
+			VectorD3D yaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(camera.TargetToEyeVector, VectorD3D.CrossProduct(camera.TargetToEyeVector, camera.UpVector)));
 
 			if (camera is OrthographicCamera)
 			{
@@ -929,7 +936,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			else if (camera is PerspectiveCamera)
 			{
 				var oldCamera = (PerspectiveCamera)camera;
-				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.WidthAtZNear * oldCamera.DistanceToTarget / oldCamera.ZNear);
+				var shift = (xaxis * stepX + yaxis * stepY) * (oldCamera.WidthAtZNear * oldCamera.Distance / oldCamera.ZNear);
 				camera = oldCamera.WithEyeTarget(oldCamera.EyePosition + shift, oldCamera.TargetPosition + shift);
 			}
 

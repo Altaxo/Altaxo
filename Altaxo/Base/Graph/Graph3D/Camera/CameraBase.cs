@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <value>
 		/// The eye vector.
 		/// </value>
-		public VectorD3D EyeVector
+		public VectorD3D TargetToEyeVector
 		{
 			get
 			{
@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <value>
 		/// The distance of the camera from the target position.
 		/// </value>
-		public double DistanceToTarget
+		public double Distance
 		{
 			get
 			{
@@ -257,7 +257,14 @@ namespace Altaxo.Graph.Graph3D.Camera
 			}
 		}
 
-		public CameraBase WithDistanceToTarget(double distance)
+		/// <summary>
+		/// Gets a new camera with the distance between eye and target as provided in the argument <paramref name="distance"/>.
+		/// The new distance is set by changing the eye position of the camera.
+		/// </summary>
+		/// <param name="distance">The new distance between eye and target.</param>
+		/// <returns>A new camera with the distance between eye and target as provided in the argument <paramref name="distance"/>.</returns>
+		/// <exception cref="System.ArgumentOutOfRangeException">distance has to be > 0</exception>
+		public CameraBase WithDistanceByChangingEyePosition(double distance)
 		{
 			if (!(distance > 0))
 				throw new ArgumentOutOfRangeException("distance has to be > 0");
@@ -282,7 +289,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <value>
 		/// The normalized eye vector.
 		/// </value>
-		public VectorD3D NormalizedEyeVector
+		public VectorD3D TargetToEyeVectorNormalized
 		{
 			get
 			{
@@ -296,7 +303,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <value>
 		/// The normalized up vector perpendicular to eye vector.
 		/// </value>
-		public VectorD3D NormalizedUpVectorPerpendicularToEyeVector
+		public VectorD3D UpVectorPerpendicularToEyeVectorNormalized
 		{
 			get
 			{
@@ -310,12 +317,12 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <value>
 		/// The normalized right vector perpendicular to eye vector.
 		/// </value>
-		public VectorD3D NormalizedRightVectorPerpendicularToEyeVector
+		public VectorD3D RightVectorPerpendicularToEyeVectorNormalized
 		{
 			get
 			{
-				var up = NormalizedUpVectorPerpendicularToEyeVector;
-				var eye = NormalizedEyeVector;
+				var up = UpVectorPerpendicularToEyeVectorNormalized;
+				var eye = TargetToEyeVectorNormalized;
 				return VectorD3D.CrossProduct(up, eye);
 			}
 		}
@@ -330,7 +337,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		{
 			get
 			{
-				var zaxis = NormalizedEyeVector;
+				var zaxis = TargetToEyeVectorNormalized;
 				var xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(UpVector, zaxis));
 				var yaxis = VectorD3D.CrossProduct(zaxis, xaxis);
 
@@ -351,7 +358,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		public CameraBase WithLookAtRHMatrix(Matrix4x3 l)
 		{
-			return WithLookAtRHMatrix(l, this.DistanceToTarget);
+			return WithLookAtRHMatrix(l, this.Distance);
 		}
 
 		/// <summary>
@@ -391,7 +398,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		{
 			get
 			{
-				var zaxis = NormalizedEyeVector; // eye
+				var zaxis = TargetToEyeVectorNormalized; // eye
 				var xaxis = VectorD3D.CreateNormalized(VectorD3D.CrossProduct(UpVector, zaxis));
 				var yaxis = VectorD3D.CrossProduct(zaxis, xaxis); // upvector
 

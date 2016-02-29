@@ -221,7 +221,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			if (this._background != null)
 			{
 				var backgroundRect = this._background.MeasureItem(textRectangle);
-				_cachedExtendedTextBounds.Offset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y, 0);
+				_cachedExtendedTextBounds = _cachedExtendedTextBounds.WithOffset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y, 0);
 
 				size = backgroundRect.Size;
 				distanceXL = -backgroundRect.X;

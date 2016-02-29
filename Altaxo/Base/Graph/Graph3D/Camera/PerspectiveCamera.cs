@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		#region Overrides
 
 		/// <summary>
-		/// Gets the width of the view field at target distance. For this perspective camera, it is <see cref="CameraBase.WidthAtZNear"/> multiplied with the <see cref="CameraBase.DistanceToTarget"/> divided by <see cref="CameraBase.ZNear"/>.
+		/// Gets the width of the view field at target distance. For this perspective camera, it is <see cref="CameraBase.WidthAtZNear"/> multiplied with the <see cref="CameraBase.Distance"/> divided by <see cref="CameraBase.ZNear"/>.
 		/// </summary>
 		/// <value>
 		/// The width of the view field at target distance.
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		{
 			get
 			{
-				return _widthAtZNear * DistanceToTarget / _zNear;
+				return _widthAtZNear * Distance / _zNear;
 			}
 		}
 
@@ -246,7 +246,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 				var sinElevation = tanElevation * cosElevation;
 
 				// now rotate our current LookAt with the azimuth and elevation (elevation first, then azimuth)
-				double distance = this.DistanceToTarget;
+				double distance = this.Distance;
 				Matrix4x3 rotMatrix = new Matrix4x3(
 					cosAzimuth, 0, sinAzimuth,
 					-sinAzimuth * sinElevation, cosElevation, cosAzimuth * sinElevation,
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 
 				Matrix4x3 newLookAt = this.LookAtRHMatrix.WithAppendedTransformation(rotMatrix);
 
-				return (PerspectiveCamera)this.WithLookAtRHMatrix(newLookAt, DistanceToTarget * distanceFactor);
+				return (PerspectiveCamera)this.WithLookAtRHMatrix(newLookAt, Distance * distanceFactor);
 
 				/* the code that will setup the camera manually:
 				var newEyeVec = new VectorD3D(newLookAt.M13, newLookAt.M23, newLookAt.M33);
@@ -288,11 +288,11 @@ namespace Altaxo.Graph.Graph3D.Camera
 			double tanx = rx * _widthAtZNear / (2 * _zNear);
 			double tany = ry * _widthAtZNear * aspectRatio / (2 * _zNear);
 
-			double diffDistance = this.DistanceToTarget * (1 - distanceFactor);
+			double diffDistance = this.Distance * (1 - distanceFactor);
 
-			var eyeVec = this.NormalizedEyeVector;
-			var up = this.NormalizedUpVectorPerpendicularToEyeVector;
-			var right = this.NormalizedRightVectorPerpendicularToEyeVector;
+			var eyeVec = this.TargetToEyeVectorNormalized;
+			var up = this.UpVectorPerpendicularToEyeVectorNormalized;
+			var right = this.RightVectorPerpendicularToEyeVectorNormalized;
 
 			var diffVector = -diffDistance * eyeVec + tanx * diffDistance * right + tany * diffDistance * up;
 

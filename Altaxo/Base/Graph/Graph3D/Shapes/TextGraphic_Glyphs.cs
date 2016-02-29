@@ -785,7 +785,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 					PointD3D symbolpos = new PointD3D(xbase, (ybase + 0.5 * fontInfo.cyDescent - 0.5 * fontInfo.cyAscent), 0);
 					RectangleD3D symbolRect = new RectangleD3D(symbolpos, new VectorD3D(SizeX, 0, 0));
-					symbolRect.Inflate(0, fontInfo.Size, 0);
+					symbolRect = symbolRect.WithPadding(0, fontInfo.Size, 0);
 					pa.PaintSymbol(g, symbolRect);
 
 					if (!dc.bForPreview)

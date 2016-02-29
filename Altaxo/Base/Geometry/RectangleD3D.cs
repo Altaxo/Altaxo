@@ -294,24 +294,17 @@ namespace Altaxo.Geometry
 		/// <summary>Inflates the rectangle by the specified values <paramref name="x"/> and <paramref name="y"/>.</summary>
 		/// <param name="x">The value used to inflate the rectangle in x-direction.</param>
 		/// <param name="y">The value used to inflate the rectangle in y-direction.</param>
-		public void Inflate(double x, double y, double z)
+		public RectangleD3D WithPadding(double x, double y, double z)
 		{
-			this._x -= x;
-			this._sizeX += x + x;
-			this._y -= y;
-			this._sizeY += y + y;
-			this._z -= z;
-			this._sizeZ += z + z;
+			return new RectangleD3D(_x - x, _y - y, _z - z, _sizeX + x + x, _sizeY + y + y, _sizeZ + z + z);
 		}
 
 		/// <summary>Changes the location of the rectangle by the specified values for <paramref name="x"/> and <paramref name="y"/>.</summary>
 		/// <param name="x">The x offset.</param>
 		/// <param name="y">The y offset.</param>
-		public void Offset(double x, double y, double z)
+		public RectangleD3D WithOffset(double x, double y, double z)
 		{
-			_x += x;
-			_y += y;
-			_z += z;
+			return new RectangleD3D(_x + x, _y + y, _z + z, _sizeX, _sizeY, _sizeZ);
 		}
 
 		/// <summary>
@@ -319,7 +312,7 @@ namespace Altaxo.Geometry
 		/// </summary>
 		/// <param name="p">The point that should be contained in this rectangle.</param>
 		/// <returns>The new rectangle that now contains the point p.</returns>
-		public void ExpandToInclude(PointD3D p)
+		private void ExpandToInclude(PointD3D p)
 		{
 			if (!(Contains(p)))
 			{
@@ -470,12 +463,6 @@ namespace Altaxo.Geometry
 			// Right
 			yield return new Tuple<int, int, int>(1, 7, 5);
 			yield return new Tuple<int, int, int>(1, 3, 7);
-		}
-
-		public void ExpandToInclude(RectangleD3D rect)
-		{
-			foreach (PointD3D p in rect.Vertices)
-				ExpandToInclude(p);
 		}
 
 		/// <summary>Gets a rectangle that includes the smallest circle around this rectangle.</summary>

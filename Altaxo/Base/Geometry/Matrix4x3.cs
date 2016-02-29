@@ -323,11 +323,6 @@ namespace Altaxo.Geometry
 			);
 		}
 
-		public PointD3D TransformPoint(PointD3D p)
-		{
-			return Transform(p);
-		}
-
 		/// <summary>
 		/// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
 		/// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
@@ -346,11 +341,16 @@ namespace Altaxo.Geometry
 			);
 		}
 
-		public PlaneD3D Transform(PlaneD3D o)
+		/// <summary>
+		/// Transforms the specified plane p.
+		/// </summary>
+		/// <param name="p">The plane to transform.</param>
+		/// <returns>Plane transformed by this matrix.</returns>
+		public PlaneD3D Transform(PlaneD3D p)
 		{
-			var x = o.X * (M22 * M33 - M23 * M32) + o.Y * (M13 * M32 - M12 * M33) + o.Z * (M12 * M23 - M13 * M22);
-			var y = o.X * (M23 * M31 - M21 * M33) + o.Y * (M11 * M33 - M13 * M31) + o.Z * (M13 * M21 - M11 * M23);
-			var z = o.X * (M21 * M32 - M22 * M31) + o.Y * (M12 * M31 - M11 * M32) + o.Z * (M11 * M22 - M12 * M21);
+			var x = p.X * (M22 * M33 - M23 * M32) + p.Y * (M13 * M32 - M12 * M33) + p.Z * (M12 * M23 - M13 * M22);
+			var y = p.X * (M23 * M31 - M21 * M33) + p.Y * (M11 * M33 - M13 * M31) + p.Z * (M13 * M21 - M11 * M23);
+			var z = p.X * (M21 * M32 - M22 * M31) + p.Y * (M12 * M31 - M11 * M32) + p.Z * (M11 * M22 - M12 * M21);
 
 			var l = 1 / Math.Sqrt(x * x + y * y + z * z);
 			x *= l;
@@ -358,7 +358,7 @@ namespace Altaxo.Geometry
 			z *= l;
 
 			// Transform the point that was located on the original plane....
-			var pp = Transform(new PointD3D(o.X * o.W, o.Y * o.W, o.Z * o.W));
+			var pp = Transform(new PointD3D(p.X * p.W, p.Y * p.W, p.Z * p.W));
 
 			// but the transformed point is not neccessarly located from the origin in the direction of the new plane vector
 			// thus we have to take the dot-product between the transformed normal and the transformed plane-point to get the new distance
@@ -375,7 +375,7 @@ namespace Altaxo.Geometry
 		/// </summary>
 		/// <param name="p">The point p to inverse transform.</param>
 		/// <returns>The inverse transformation of point <paramref name="p"/>.</returns>
-		public PointD3D InverseTransformPoint(PointD3D p)
+		public PointD3D InverseTransform(PointD3D p)
 		{
 			return new PointD3D(
 					(M23 * (M32 * (M41 - p.X) + M31 * (-M42 + p.Y)) + M22 * (-(M33 * M41) + M31 * M43 + M33 * p.X - M31 * p.Z) + M21 * (M33 * M42 - M32 * M43 - M33 * p.Y + M32 * p.Z)) / Determinant,
@@ -391,7 +391,7 @@ namespace Altaxo.Geometry
 		/// </summary>
 		/// <param name="p">The point p to inverse transform.</param>
 		/// <returns>The inverse transformation of point <paramref name="p"/>.</returns>
-		public VectorD3D InverseTransformVector(VectorD3D p)
+		public VectorD3D InverseTransform(VectorD3D p)
 		{
 			return new VectorD3D(
 					(-(M23 * M32 * p.X) + M22 * M33 * p.X + M23 * M31 * p.Y - M21 * M33 * p.Y - M22 * M31 * p.Z + M21 * M32 * p.Z) / Determinant,
@@ -620,7 +620,11 @@ namespace Altaxo.Geometry
 
 		#region Conversion to other matrices
 
-		public Matrix3x3 GetTransposedInverse()
+		/// <summary>
+		/// Gets the transposed inverse matrix of the matrix3x3 part of this matrix. The returned matrix is usually used to transform the normals of objects that will be transformed by this matrix.
+		/// </summary>
+		/// <returns>Transposed inverse matrix of the matrix3x3 part of this matrix.</returns>
+		public Matrix3x3 GetTransposedInverseMatrix3x3()
 		{
 			return new Matrix3x3(
 				(M22 * M33 - M23 * M32) / Determinant,

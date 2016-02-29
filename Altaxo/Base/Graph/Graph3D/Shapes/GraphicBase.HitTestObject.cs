@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				if (_hitobject is GraphicBase)
 				{
-					var deltaPos = _matrix.InverseTransformVector(new VectorD3D(dx, dy, dz)); // Transform to the object's parent coordinates
+					var deltaPos = _matrix.InverseTransform(new VectorD3D(dx, dy, dz)); // Transform to the object's parent coordinates
 					((GraphicBase)_hitobject).X += deltaPos.X;
 					((GraphicBase)_hitobject).Y += deltaPos.Y;
 					((GraphicBase)_hitobject).Z += deltaPos.Z;

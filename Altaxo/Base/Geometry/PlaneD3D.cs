@@ -30,19 +30,53 @@ using System.Text;
 namespace Altaxo.Geometry
 {
 	/// <summary>
-	/// Represents a plane in 3d space. For the definition how it works as a clip plane see the example below.
+	/// Represents a plane in 3d space. For the definition how it works as a clipping plane see the example below.
 	/// </summary>
 	/// <example>
-	/// Lets assume the normal vector (x,y,z) of the clip plane is (1,0,0), i.e. points in x-direction, and the w component is -200. Then everything
+	/// Lets assume the normal vector (x,y,z) of the clipping plane is (1,0,0), i.e. points in x-direction, and the w component is -200. Then everything
 	/// that is left of the point x=+200 is clipped (i.e. every point with x&lt;+200), and thus everything right (with x&gt;+200) is visible.
 	/// </example>
 	public struct PlaneD3D : IEqualityComparer<PlaneD3D>
 	{
+		/// <summary>
+		/// Gets the x component of the plane's normal.
+		/// </summary>
+		/// <value>
+		/// The x component of the plane's normal.
+		/// </value>
 		public double X { get; private set; }
+
+		/// <summary>
+		/// Gets the y component of the plane's normal.
+		/// </summary>
+		/// <value>
+		/// The y component of the plane's normal.
+		/// </value>
 		public double Y { get; private set; }
+
+		/// <summary>
+		/// Gets the z component of the plane's normal.
+		/// </summary>
+		/// <value>
+		/// The z component of the plane's normal.
+		/// </value>
 		public double Z { get; private set; }
+
+		/// <summary>
+		/// Gets the distance of the plane to the origin (0,0,0). If the plane's normal vector is not normalized, this is the distance in units of the plane's normal.
+		/// </summary>
+		/// <value>
+		/// The distance of the plane to the origin (0,0,0), in plane's normal units.
+		/// </value>
 		public double W { get; private set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PlaneD3D"/> struct.
+		/// </summary>
+		/// <param name="x">The x component of the plane's normal.</param>
+		/// <param name="y">The y component of the plane's normal.</param>
+		/// <param name="z">The z component of the plane's normal.</param>
+		/// <param name="distance">The distance from the plane to the origin (0,0,0).</param>
 		public PlaneD3D(double x, double y, double z, double distance)
 		{
 			X = x;

@@ -994,13 +994,13 @@ namespace Altaxo.Graph.Graph3D
 
 		public PointD3D TransformCoordinatesFromParentToHere(PointD3D pagecoordinates)
 		{
-			return _transformation.InverseTransformPoint(pagecoordinates);
+			return _transformation.InverseTransform(pagecoordinates);
 		}
 
 		public PointD3D TransformCoordinatesFromRootToHere(PointD3D pagecoordinates)
 		{
 			foreach (var layer in this.TakeFromRootToHere())
-				pagecoordinates = layer._transformation.InverseTransformPoint(pagecoordinates);
+				pagecoordinates = layer._transformation.InverseTransform(pagecoordinates);
 			return pagecoordinates;
 		}
 
@@ -1019,7 +1019,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>the convertes X,Y coordinate differences in layer units</returns>
 		public VectorD3D TransformCoordinateDifferencesFromParentToHere(VectorD3D pagediff)
 		{
-			return _transformation.InverseTransformVector(pagediff);
+			return _transformation.InverseTransform(pagediff);
 		}
 
 		/// <summary>
@@ -1029,13 +1029,13 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>graphics path now in graph coordinates</returns>
 		public PointD3D TransformCoordinatesFromHereToParent(PointD3D layerCoordinates)
 		{
-			return _transformation.TransformPoint(layerCoordinates);
+			return _transformation.Transform(layerCoordinates);
 		}
 
 		public PointD3D TransformCoordinatesFromHereToRoot(PointD3D coordinates)
 		{
 			foreach (var layer in this.TakeFromHereToRoot())
-				coordinates = layer._transformation.TransformPoint(coordinates);
+				coordinates = layer._transformation.Transform(coordinates);
 			return coordinates;
 		}
 

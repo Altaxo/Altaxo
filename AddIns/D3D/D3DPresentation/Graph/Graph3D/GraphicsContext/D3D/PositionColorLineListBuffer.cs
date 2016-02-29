@@ -58,8 +58,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		public void AddLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a)
 		{
-			var pt0 = _parent.Transformation.TransformPoint(new PointD3D(x0, y0, z0));
-			var pt1 = _parent.Transformation.TransformPoint(new PointD3D(x1, y1, z1));
+			var pt0 = _parent.Transformation.Transform(new PointD3D(x0, y0, z0));
+			var pt1 = _parent.Transformation.Transform(new PointD3D(x1, y1, z1));
 
 			int offs = _numberOfLines * FloatsPerLine;
 
