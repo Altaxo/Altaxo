@@ -60,6 +60,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		#region Serialization
 
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected GraphicBase(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
 		// 2015-09-12 initial version
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

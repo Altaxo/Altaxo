@@ -324,6 +324,7 @@
     <Compile Include="Geometry\PolylineD3D.cs" />
     <Compile Include="Drawing\D3D\SolidText.cs" />
     <Compile Include="Geometry\RectangleD3D.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\SolidBodyShapeBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\EmbeddedImageGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.HitTestObject.cs" />
@@ -447,6 +448,7 @@
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph3D\Plot\DataMeshPlotItemController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Shapes\SolidShapeController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphToolType.cs" />

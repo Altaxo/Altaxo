@@ -557,6 +557,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Shapes\SolidShapeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1387,7 +1391,7 @@
     <Compile Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml.cs">
       <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\GdiFontGlue.cs" />
+    <Compile Include="Gui\Graph3D\FontX3DGlue.cs" />
     <Compile Include="Gui\Graph3D\GraphicItemsControl.xaml.cs">
       <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
     </Compile>
@@ -1435,6 +1439,9 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Shapes\SolidShapeControl.xaml.cs">
+      <DependentUpon>SolidShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>

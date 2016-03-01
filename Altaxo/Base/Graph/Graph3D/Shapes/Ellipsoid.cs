@@ -36,12 +36,51 @@ namespace Altaxo.Graph.Graph3D.Shapes
 	/// <summary>
 	///
 	/// </summary>
-	public class Ellipsoid : GraphicBase
+	public class Ellipsoid : SolidBodyShapeBase
 	{
-		private IMaterial _material = Materials.GetSolidMaterial(Drawing.NamedColors.LightGray);
+		#region Serialization
+
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected Ellipsoid(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		: base(info)
+		{
+		}
+
+		/// <summary>
+		/// 2016-03-01 initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ellipsoid), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (Ellipsoid)obj;
+
+				info.AddValue("Location", s._location);
+				info.AddValue("Material", s._material);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (Ellipsoid)o ?? new Ellipsoid(info);
+
+				s._location = (ItemLocationDirect)info.GetValue("Location", s);
+				if (null != s._location) s._location.ParentObject = s;
+
+				s._material = (IMaterial)info.GetValue("Material", s);
+
+				s.UpdateTransformationMatrix();
+
+				return s;
+			}
+		}
+
+		#endregion Serialization
 
 		public Ellipsoid()
-			: base(new ItemLocationDirect())
 		{
 			this.Size = new Geometry.VectorD3D(100, 100, 100);
 		}
@@ -51,55 +90,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		{
 		}
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			if (!base.CopyFrom(obj))
-				return false;
-
-			var from = obj as Ellipsoid;
-			if (null != from)
-			{
-				_material = from._material;
-
-				EhSelfChanged(EventArgs.Empty);
-				return true;
-			}
-
-			return false;
-		}
-
 		public override object Clone()
 		{
 			return new Ellipsoid(this);
-		}
-
-		public IMaterial Material
-		{
-			get
-			{
-				return _material;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
-				var oldValue = _material;
-				_material = value;
-				if (!object.ReferenceEquals(oldValue, value))
-					EhSelfChanged(EventArgs.Empty);
-			}
-		}
-
-		public override IHitTestObject HitTest(HitTestPointData parentHitData)
-		{
-			var result = base.HitTest(parentHitData);
-			if (null != result)
-			{
-				result.DoubleClick = null;
-			}
-			return result;
 		}
 
 		public override void Paint(IGraphicContext3D g, IPaintContext context)

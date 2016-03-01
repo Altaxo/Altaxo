@@ -75,8 +75,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (TextGraphic)obj;
-				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
 
+				info.AddValue("Location", s._location);
 				info.AddValue("Text", s._text);
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._textBrush);
@@ -88,15 +88,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				var s = (TextGraphic)o ?? new TextGraphic(info);
 
-				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
+				s._location = (ItemLocationDirect)info.GetValue("Location", s);
+				if (null != s._location) s._location.ParentObject = s;
 
 				s._text = info.GetString("Text");
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._textBrush = (IMaterial)info.GetValue("Brush", s);
-
 				s.Background = (IBackgroundStyle3D)info.GetValue("BackgroundStyle", s);
-
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
+
+				s.UpdateTransformationMatrix();
+
 				return s;
 			}
 		}
