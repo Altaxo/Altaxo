@@ -85,8 +85,13 @@
       class="Altaxo.Graph.Graph3D.Commands.CameraOrtho" />
 			<ToolbarItem id="CameraPerspective" type="CheckBox" icon="Icons.16x16.CameraPerspective" tooltip="${res:XML.MainMenu.Graph3DMenu.CameraPerspective.Description}"
 				class="Altaxo.Graph.Graph3D.Commands.CameraPerspective" />
-			<ToolbarItem id="AddSphere" icon="Icons.16x16.ViewFront" tooltip="${res:XML.MainMenu.Graph3DMenu.AddSphere.Description}"
-				class="Altaxo.Graph.Graph3D.Commands.AddSphere" />
+
+			<ToolbarItem id="GraphPointer" type="CheckBox" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
+				loadclasslazy="false" class="Altaxo.Graph.Graph3D.Commands.SelectPointerTool" />
+			<ToolbarItem id="TextPointer" type="CheckBox" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.SelectTextTool" />
+			<ToolbarItem id="EllipseDrawingTool" type="CheckBox" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.EllipseDrawingTool" />
 		</Condition>
 	</Path>
 

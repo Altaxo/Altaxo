@@ -22,12 +22,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using System.Collections;
 	using System.Drawing;
 
-	public class Graph3DController : IDisposable, IMVCANController
+	public abstract class Graph3DController : IDisposable, IMVCANController
 	{
 		/// <summary>
 		/// Is called each time the name for the content has changed.
 		/// </summary>
 		public event EventHandler TitleNameChanged;
+
+		public event EventHandler CurrentGraphToolChanged;
 
 		public IGraph3DView _view;
 
@@ -201,7 +203,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		public void AddSphere()
 		{
-			var sphere = new Altaxo.Graph.Graph3D.Shapes.Sphere();
+			var sphere = new Altaxo.Graph.Graph3D.Shapes.Ellipsoid();
 			sphere.Size = Doc.RootLayer.Size / 5;
 			sphere.Position = (PointD3D)(Doc.RootLayer.Size / 2);
 			sphere.Material = Altaxo.Drawing.D3D.Materials.GetSolidMaterial(Drawing.NamedColors.Black);
@@ -1116,6 +1118,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
 			}
 		}
+
+		public virtual void EhView_CurrentGraphToolChanged()
+		{
+			if (null != CurrentGraphToolChanged)
+				CurrentGraphToolChanged(this, EventArgs.Empty);
+		}
+
+		public abstract GraphToolType CurrentGraphTool { get; set; }
 
 		/// <summary>
 		/// This is the whole name of the content, e.g. the file name or

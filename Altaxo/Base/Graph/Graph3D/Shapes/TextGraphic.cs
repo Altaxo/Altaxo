@@ -465,11 +465,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 				var bounds = Bounds;
 
-				var transformmatrix = Matrix4x3.NewTranslationRotationShearScale(
-				_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
-				RotationX, RotationY, RotationZ,
-				ShearX, ShearY, ShearZ,
-				ScaleX, ScaleY, ScaleZ);
+				var transformmatrix = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+				ScaleX, ScaleY, ScaleZ,
+					ShearX, ShearY, ShearZ,
+					RotationX, RotationY, RotationZ,
+					_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ);
 				transformmatrix.TranslatePrepend(bounds.X, bounds.Y, bounds.Z);
 
 				if (!bForPreview)

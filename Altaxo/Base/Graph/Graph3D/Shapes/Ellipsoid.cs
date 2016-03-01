@@ -36,17 +36,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
 	/// <summary>
 	///
 	/// </summary>
-	public class Sphere : GraphicBase
+	public class Ellipsoid : GraphicBase
 	{
 		private IMaterial _material = Materials.GetSolidMaterial(Drawing.NamedColors.LightGray);
 
-		public Sphere()
+		public Ellipsoid()
 			: base(new ItemLocationDirect())
 		{
 			this.Size = new Geometry.VectorD3D(100, 100, 100);
 		}
 
-		public Sphere(Sphere from)
+		public Ellipsoid(Ellipsoid from)
 			: base(from)
 		{
 		}
@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			if (!base.CopyFrom(obj))
 				return false;
 
-			var from = obj as Sphere;
+			var from = obj as Ellipsoid;
 			if (null != from)
 			{
 				_material = from._material;
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		public override object Clone()
 		{
-			return new Sphere(this);
+			return new Ellipsoid(this);
 		}
 
 		public IMaterial Material
@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				var dy = this.Bounds.Y + sy;
 				var dz = this.Bounds.Z + sz;
 
-				var transformation = Matrix4x3.NewTranslationRotationShearScale(dx, dy, dz, 0, 0, 0, 0, 0, 0, sx, sy, sz);
+				var transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz);
 				transformation.AppendTransform(_transformation);
 
 				var normalTransform = transformation.GetTransposedInverseMatrix3x3();

@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
@@ -50,7 +49,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		/// <summary>Transformation that can be used to transform root layer coordinates into the coordinates of the cached active layer.</summary>
 		protected Matrix4x3 _cachedActiveLayerTransformation;
 
-		public abstract Altaxo.Gui.Graph.Viewing.GraphToolType GraphToolType { get; }
+		public abstract Altaxo.Gui.Graph3D.Viewing.GraphToolType GraphToolType { get; }
 
 		/// <summary>
 		/// Handles the mouse move event.
@@ -134,5 +133,92 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		{
 			return false; // per default the key is not processed
 		}
+
+		#region static helper functions
+
+		/// <summary>
+		/// Gets the hit point on that plane of the active layer rectangle, that is facing the camera.
+		/// </summary>
+		/// <param name="doc">The graph document containing the active layer.</param>
+		/// <param name="activeLayer">The active layer of the graph document.</param>
+		/// <param name="hitposition">Hit point in relative screen coordinates. The z-component is the aspect ratio of the screen (y/x).</param>
+		/// <param name="hitPointOnPlaneInActiveLayerCoordinates">Output: The hit point on the plane of the active layer that faces the camera. The hit point is returned in active layer coordinates.</param>
+		/// <param name="rotationsRadian">The rotation angles that can be used e.g. to orient text so that the text is most readable from the current camera setting. Rotation angle around x is the x-component of the returned vector, and so on.</param>
+		/// <exception cref="InvalidProgramException">There should always be a plane of a rectangle that can be hit!</exception>
+		public static void GetHitPointOnActiveLayerPlaneFacingTheCamera(GraphDocument doc, HostLayer activeLayer, PointD3D hitposition, out PointD3D hitPointOnPlaneInActiveLayerCoordinates, out VectorD3D rotationsRadian)
+		{
+			var activeLayerTransformation = activeLayer.TransformationFromRootToHere();
+			var camera = doc.Camera;
+			var hitData = new HitTestPointData(camera.GetHitRayMatrix(hitposition));
+			hitData = hitData.NewFromAdditionalTransformation(activeLayerTransformation); // now hitdata are in layer cos
+
+			var targetToEye = hitData.WorldTransformation.Transform(camera.TargetToEyeVectorNormalized); // targetToEye in layer coordinates
+			var upEye = hitData.WorldTransformation.Transform(camera.UpVectorPerpendicularToEyeVectorNormalized); // camera up vector in layer coordinates
+
+			// get the face which has the best dot product between the eye vector of the camera and the plane's normal
+			var layerRect = new RectangleD3D(PointD3D.Empty, activeLayer.Size);
+			double maxval = double.MinValue;
+			PlaneD3D maxPlane = PlaneD3D.Empty;
+			foreach (var plane in layerRect.Planes)
+			{
+				double val = VectorD3D.DotProduct(plane.Normal, targetToEye);
+				if (val > maxval)
+				{
+					maxval = val;
+					maxPlane = plane;
+				}
+			}
+
+			bool isHit = hitData.IsPlaneHitByRay(maxPlane, out hitPointOnPlaneInActiveLayerCoordinates); // hitPointOnPlane is in layer coordinates too
+
+			if (!isHit)
+				throw new InvalidProgramException("There should always be a plane of a rectangle that can be hit!");
+
+			VectorD3D zaxis = maxPlane.Normal;
+			VectorD3D yaxis = upEye;
+
+			// Find y axis perpendicular to zaxis
+			maxval = double.MinValue;
+			foreach (var plane in layerRect.Planes)
+			{
+				double val = VectorD3D.DotProduct(plane.Normal, upEye);
+				if (val > maxval && 0 == VectorD3D.DotProduct(plane.Normal, zaxis))
+				{
+					maxval = val;
+					yaxis = plane.Normal;
+				}
+			}
+			var xaxis = VectorD3D.CrossProduct(yaxis, zaxis);
+
+			// now we have all information about the spatial position and orientation of the text:
+			// hitPointOnPlane is the position of the text
+			// maxPlane.Normal is the face orientation of the text
+			// maxUpVector is the up orientation of the text
+
+			double cx, sx, cy, sy, cz, sz;
+
+			sy = xaxis.Z;
+			if (1 != Math.Abs(sy))
+			{
+				cy = Math.Sqrt(1 - sy * sy);
+				cz = xaxis.X / cy;
+				sz = xaxis.Y / cy;
+				sx = yaxis.Z / cy;
+				cx = zaxis.Z / cy;
+			}
+			else // sy is +1, thus cy is zero
+			{
+				// we set x-rotation to zero, i.e. cx==1 and sx==0
+				cy = 0;
+				cx = 1;
+				sx = 0;
+				cz = yaxis.Y;
+				sz = -yaxis.X;
+			}
+
+			rotationsRadian = new VectorD3D(Math.Atan2(sx, cx), Math.Atan2(sy, cy), Math.Atan2(sz, cz));
+		}
+
+		#endregion static helper functions
 	}
 }

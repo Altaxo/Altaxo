@@ -306,6 +306,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_d3dCanvas.Cursor = arrow;
 		}
 
+		public void FocusOnGraphPanel()
+		{
+			bool result = _guiCanvas.Focus();
+			Keyboard.Focus(_guiCanvas);
+		}
+
 		public object GuiInitiallyFocusedElement
 		{
 			get

@@ -560,12 +560,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		{
 			if (RotationX != 0 || RotationY != 0 || RotationZ != 0 || ScaleX != 1 || ScaleY != 1 || ScaleZ != 1 || ShearX != 0 || ShearY != 0 || ShearZ != 0)
 			{
-				g.PrependTransform(Matrix4x3.NewTranslationRotationShearScale(
-					_location.AbsolutePivotPosition.X, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
-					_location.RotationX, _location.RotationY, _location.RotationZ,
-					_location.ShearX, _location.ShearY, _location.ShearZ,
+				g.PrependTransform(Matrix4x3.NewScalingShearingRotationDegreesTranslation(
 					_location.ScaleX, _location.ScaleY, _location.ScaleY
-					));
+,
+					_location.ShearX, _location.ShearY, _location.ShearZ,
+					_location.RotationX, _location.RotationY, _location.RotationZ,
+					_location.AbsolutePivotPosition.X, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ));
 			}
 			else
 			{
@@ -581,11 +581,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		protected virtual void UpdateTransformationMatrix()
 		{
-			_transformation = Matrix4x3.NewTranslationRotationShearScale(
-				_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ,
-				RotationX, RotationY, RotationZ,
+			_transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+				ScaleX, ScaleY, ScaleZ,
 				ShearX, ShearY, ShearZ,
-				ScaleX, ScaleY, ScaleZ);
+				RotationX, RotationY, RotationZ,
+				_location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ);
 		}
 
 		/// <summary>

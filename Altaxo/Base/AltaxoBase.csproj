@@ -330,7 +330,7 @@
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.MovementGripHandle.cs" />
     <Compile Include="Graph\Graph3D\Shapes\IGraphicBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\ImageGraphic.cs" />
-    <Compile Include="Graph\Graph3D\Shapes\Sphere.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\Ellipsoid.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic_Glyphs.cs" />
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic_Parser.cs" />
@@ -449,6 +449,7 @@
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\GraphToolType.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraphController.cs" />
     <Compile Include="Gui\Graph3D\XYZPlotLayerContentsController.cs" />

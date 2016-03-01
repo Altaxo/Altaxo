@@ -975,20 +975,20 @@ namespace Altaxo.Graph.Graph3D
 			if (_location is ItemLocationDirect)
 			{
 				var locD = (ItemLocationDirect)_location;
-				_transformation = Matrix4x3.NewTranslationRotationShearScale(
-					locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, locD.AbsolutePivotPositionZ,
-					-locD.RotationX, -locD.RotationY, -locD.RotationZ,
+				_transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+					locD.ScaleX, locD.ScaleY, locD.ScaleZ,
 					locD.ShearX, locD.ShearY, locD.ShearZ,
-					locD.ScaleX, locD.ScaleY, locD.ScaleZ);
+					-locD.RotationX, -locD.RotationY, -locD.RotationZ,
+					locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, locD.AbsolutePivotPositionZ);
 				_transformation.TranslatePrepend(locD.AbsoluteVectorPivotToLeftUpper.X, locD.AbsoluteVectorPivotToLeftUpper.Y, locD.AbsoluteVectorPivotToLeftUpper.Z);
 			}
 			else
 			{
-				_transformation = Matrix4x3.NewTranslationRotationShearScale(
-					_cachedLayerPosition.X, _cachedLayerPosition.Y, _cachedLayerPosition.Z,
-					-_location.RotationX, -_location.RotationY, -_location.RotationZ,
+				_transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+					_location.ScaleX, _location.ScaleY, _location.ScaleZ,
 					_location.ShearX, _location.ShearY, _location.ShearZ,
-					_location.ScaleX, _location.ScaleY, _location.ScaleZ);
+					-_location.RotationX, -_location.RotationY, -_location.RotationZ,
+					_cachedLayerPosition.X, _cachedLayerPosition.Y, _cachedLayerPosition.Z);
 			}
 		}
 
@@ -1009,6 +1009,14 @@ namespace Altaxo.Graph.Graph3D
 			Matrix4x3 result = Matrix4x3.Identity;
 			foreach (var layer in this.TakeFromRootToHere())
 				result.PrependTransform(layer._transformation);
+			return result;
+		}
+
+		public Matrix4x3 TransformationFromHereToRoot()
+		{
+			Matrix4x3 result = Matrix4x3.Identity;
+			foreach (var layer in this.TakeFromHereToRoot())
+				result = result.WithAppendedTransformation(layer._transformation);
 			return result;
 		}
 

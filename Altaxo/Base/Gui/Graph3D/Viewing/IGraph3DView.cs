@@ -114,5 +114,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// </summary>
 		/// <param name="overlayGeometry">The overlay geometry.</param>
 		void SetOverlayGeometry(Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D overlayGeometry);
+
+		void FocusOnGraphPanel();
 	}
 }

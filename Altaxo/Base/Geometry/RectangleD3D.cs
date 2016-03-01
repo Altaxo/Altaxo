@@ -422,6 +422,25 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Gets an enumeration of the planes of the faces of this rectangle (left, right, front, back, bottom, top).
+		/// </summary>
+		/// <value>
+		/// The planes of this rectangle (left, right, front, back, bottom, top).
+		/// </value>
+		public IEnumerable<PlaneD3D> Planes
+		{
+			get
+			{
+				yield return new PlaneD3D(-1, 0, 0, 0); // Left
+				yield return new PlaneD3D(1, 0, 0, _sizeX); // Right
+				yield return new PlaneD3D(0, -1, 0, 0); // Front
+				yield return new PlaneD3D(0, 1, 0, _sizeY); // Back
+				yield return new PlaneD3D(0, 0, -1, 0); // Bottom
+				yield return new PlaneD3D(0, 0, 1, _sizeZ); // Top
+			}
+		}
+
+		/// <summary>
 		/// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
 		/// The order is front, back, top, bottom, left, right.
 		/// </summary>

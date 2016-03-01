@@ -192,33 +192,52 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Gets a transformation matrix by specifying translation, rotation, shear and scale.
+		/// Gets a transformation matrix by specifying scale, shear, rotation and translation. The returned matrix is equivalent to Scale*Shear*Rotation*Translation.
 		/// </summary>
-		/// <param name="translateX">The translation in x direction.</param>
-		/// <param name="translateY">The translation in y direction.</param>
-		/// <param name="translateZ">The translation in z direction.</param>
-		/// <param name="angleX">The rotation around x axis in degrees.</param>
-		/// <param name="angleY">The rotation around y axis in degrees</param>
-		/// <param name="angleZ">The rotation around z axis in degrees</param>
-		/// <param name="shearX">The shear value x.</param>
-		/// <param name="shearY">The shear value y.</param>
-		/// <param name="shearZ">The shear value z.</param>
 		/// <param name="scaleX">The scale value x.</param>
 		/// <param name="scaleY">The scale value y.</param>
 		/// <param name="scaleZ">The scale value z.</param>
+		/// <param name="shearX">The shear value x.</param>
+		/// <param name="shearY">The shear value y.</param>
+		/// <param name="shearZ">The shear value z.</param>
+		/// <param name="angleXdeg">The rotation around x axis in degrees.</param>
+		/// <param name="angleYdeg">The rotation around y axis in degrees</param>
+		/// <param name="angleZdeg">The rotation around z axis in degrees</param>
+		/// <param name="translateX">The translation in x direction.</param>
+		/// <param name="translateY">The translation in y direction.</param>
+		/// <param name="translateZ">The translation in z direction.</param>
 		/// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
-		public static Matrix4x3 NewTranslationRotationShearScale(double translateX, double translateY, double translateZ, double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
+		public static Matrix4x3 NewScalingShearingRotationDegreesTranslation(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleXdeg, double angleYdeg, double angleZdeg, double translateX, double translateY, double translateZ)
 		{
-			double phi;
-			phi = angleX * Math.PI / 180;
-			double cosX = Math.Cos(phi);
-			double sinX = Math.Sin(phi);
-			phi = angleY * Math.PI / 180;
-			double cosY = Math.Cos(phi);
-			double sinY = Math.Sin(phi);
-			phi = angleZ * Math.PI / 180;
-			double cosZ = Math.Cos(phi);
-			double sinZ = Math.Sin(phi);
+			return NewScalingShearingRotationRadianTranslation(scaleX, scaleY, scaleZ, shearX, shearY, shearZ, (angleXdeg / 180) * Math.PI, (angleYdeg / 180) * Math.PI, (angleZdeg / 180) * Math.PI, translateX, translateY, translateZ);
+		}
+
+		/// <summary>
+		/// Gets a transformation matrix by specifying scale, shear, rotation and translation. The returned matrix is equivalent to Scale*Shear*Rotation*Translation.
+		/// </summary>
+		/// <param name="scaleX">The scale value x.</param>
+		/// <param name="scaleY">The scale value y.</param>
+		/// <param name="scaleZ">The scale value z.</param>
+		/// <param name="shearX">The shear value x.</param>
+		/// <param name="shearY">The shear value y.</param>
+		/// <param name="shearZ">The shear value z.</param>
+		/// <param name="angleXrad">The rotation around x axis in radian.</param>
+		/// <param name="angleYrad">The rotation around y axis in radian</param>
+		/// <param name="angleZrad">The rotation around z axis in radian</param>
+		/// <param name="translateX">The translation in x direction.</param>
+		/// <param name="translateY">The translation in y direction.</param>
+		/// <param name="translateZ">The translation in z direction.</param>
+		/// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
+		public static Matrix4x3 NewScalingShearingRotationRadianTranslation(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleXrad, double angleYrad, double angleZrad, double translateX, double translateY, double translateZ)
+		{
+			double cosX = Math.Cos(angleXrad);
+			double sinX = Math.Sin(angleXrad);
+
+			double cosY = Math.Cos(angleYrad);
+			double sinY = Math.Sin(angleYrad);
+
+			double cosZ = Math.Cos(angleZrad);
+			double sinZ = Math.Sin(angleZrad);
 
 			return new Matrix4x3(
 				scaleX * (cosY * cosZ - cosX * cosZ * shearY * sinY + shearY * sinX * sinZ),
@@ -246,7 +265,7 @@ namespace Altaxo.Geometry
 		/// <returns>The transformation matrix.</returns>
 		public static Matrix4x3 NewRotation(double angleX, double angleY, double angleZ)
 		{
-			return NewTranslationRotationShearScale(0, 0, 0, angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
+			return NewScalingShearingRotationDegreesTranslation(1, 1, 1, 0, 0, 0, angleX, angleY, angleZ, 0, 0, 0);
 		}
 
 		/// <summary>

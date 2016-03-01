@@ -138,7 +138,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		public PlotItemCollection(XYZPlotLayer owner, IEnumerable<IGPlotItem> plotItems, bool clonePlotItems)
 		{
 			_parent = owner;
-
+			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 			if (clonePlotItems)
 				_plotItems = new List<IGPlotItem>(plotItems.Select(pi => (IGPlotItem)pi.Clone()));
 			else

@@ -107,6 +107,103 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				view.SetPanelCursor(arrow);
 		}
 
+		public override GraphToolType CurrentGraphTool
+		{
+			get
+			{
+				return null == _mouseState ? GraphToolType.None : _mouseState.GraphToolType;
+			}
+			set
+			{
+				GraphToolType oldType = CurrentGraphTool;
+				if (oldType != value)
+				{
+					switch (value)
+					{
+						case GraphToolType.None:
+							_mouseState = null;
+							break;
+
+						case GraphToolType.ObjectPointer:
+							_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this);
+							break;
+
+						case GraphToolType.TextDrawing:
+							_mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(this);
+							break;
+
+						case GraphToolType.EllipseDrawing:
+							_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this);
+							break;
+
+						/*
+
+					case GraphToolType.ArrowLineDrawing:
+						_mouseState = new GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.CurlyBraceDrawing:
+						_mouseState = new GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.ReadPlotItemData:
+						_mouseState = new GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler(this);
+						break;
+
+					case GraphToolType.ReadXYCoordinates:
+						_mouseState = new GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler(this);
+						break;
+
+					case GraphToolType.RectangleDrawing:
+						_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.RegularPolygonDrawing:
+						_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.SingleLineDrawing:
+						_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.ZoomAxes:
+						_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(this);
+						break;
+
+					case GraphToolType.OpenCardinalSplineDrawing:
+						_mouseState = new OpenCardinalSplineMouseHandler(this);
+						break;
+
+					case GraphToolType.ClosedCardinalSplineDrawing:
+						_mouseState = new ClosedCardinalSplineMouseHandler(this);
+						break;
+
+					case GraphToolType.EditGrid:
+						_mouseState = new EditGridMouseHandler(this);
+						break;
+
+						*/
+
+						default:
+							throw new NotImplementedException("Type not implemented: " + value.ToString());
+					} // end switch
+
+					if (null != _view)
+						_view.FocusOnGraphPanel();
+
+					EhView_CurrentGraphToolChanged();
+
+					if (null != _view)
+						_view.TriggerRendering();
+				}
+			}
+		}
+
+		public void SetGraphToolFromInternal(Altaxo.Gui.Graph3D.Viewing.GraphToolType value)
+		{
+			CurrentGraphTool = value;
+		}
+
 		public override IList<IHitTestObject> SelectedObjects
 		{
 			get

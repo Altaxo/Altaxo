@@ -735,11 +735,11 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>The enclosing rectangle in absolute values.</returns>
 		public RectangleD3D GetAbsoluteEnclosingRectangle()
 		{
-			Matrix4x3 m = Matrix4x3.NewTranslationRotationShearScale(
-				AbsolutePivotPositionX, AbsolutePivotPositionY, AbsolutePivotPositionZ,
-				-RotationX, -RotationY, -RotationZ,
+			Matrix4x3 m = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+				ScaleX, ScaleY, ScaleZ,
 				ShearX, ShearY, ShearZ,
-				ScaleX, ScaleY, ScaleZ);
+				-RotationX, -RotationY, -RotationZ,
+				AbsolutePivotPositionX, AbsolutePivotPositionY, AbsolutePivotPositionZ);
 
 			m.TranslatePrepend(AbsoluteVectorPivotToLeftUpper.X, AbsoluteVectorPivotToLeftUpper.Y, AbsoluteVectorPivotToLeftUpper.Z);
 

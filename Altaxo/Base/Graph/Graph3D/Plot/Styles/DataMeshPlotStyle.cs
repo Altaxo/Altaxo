@@ -409,12 +409,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				for (int j = 0; j < lylm1; ++j)
 				{
 					// upper side
-					buf.AddTriangleIndices(offs + 0, offs + 2 * lxl, offs + 2);
-					buf.AddTriangleIndices(offs + 2, offs + 2 * lxl, offs + 2 * lxl + 2);
+					buf.AddTriangleIndices(offs + 0, offs + 2 * lyl, offs + 2);
+					buf.AddTriangleIndices(offs + 2, offs + 2 * lyl, offs + 2 * lyl + 2);
 
 					// from below
-					buf.AddTriangleIndices(offs + 0 + 1, offs + 2 + 1, offs + 2 * lxl + 1);
-					buf.AddTriangleIndices(offs + 2 + 1, offs + 2 * lxl + 2 + 1, offs + 2 * lxl + 1);
+					buf.AddTriangleIndices(offs + 0 + 1, offs + 2 + 1, offs + 2 * lyl + 1);
+					buf.AddTriangleIndices(offs + 2 + 1, offs + 2 * lyl + 2 + 1, offs + 2 * lyl + 1);
 
 					offs += 2;
 				}

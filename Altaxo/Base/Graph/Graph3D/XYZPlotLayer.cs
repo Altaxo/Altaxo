@@ -1024,36 +1024,37 @@ namespace Altaxo.Graph.Graph3D
 				return; // can happen during deserialization
 
 			var scaleBounds = _scales.X.DataBoundsObject;
-			if (null != scaleBounds)
+			if (null == scaleBounds)
+				return;
+
+			// we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
+			// generates a OnBoundaryChanged event, and by handling this the boundaries of all other plot items are merged into the axis boundary,
+			// but (alas!) not all boundaries are now of the new type!
+			using (var xBoundariesChangedSuspendToken = _plotAssociationXBoundariesChanged_EventSuspender.SuspendGetToken())
 			{
-				// we have to disable our own Handler since by calling MergeXBoundsInto, it is possible that the type of DataBound of the plot item has to change, and that
-				// generates a OnBoundaryChanged event, and by handling this the boundaries of all other plot items are merged into the axis boundary,
-				// but (alas!) not all boundaries are now of the new type!
-				using (var xBoundariesChangedSuspendToken = _plotAssociationXBoundariesChanged_EventSuspender.SuspendGetToken())
+				PlotItems.PrepareScales(this);
+				using (var suspendToken = scaleBounds.SuspendGetToken())
 				{
-					using (var suspendToken = scaleBounds.SuspendGetToken())
+					scaleBounds.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
 					{
-						scaleBounds.Reset();
-						foreach (IGPlotItem pa in this.PlotItems)
+						if (pa is IXBoundsHolder)
 						{
-							if (pa is IXBoundsHolder)
-							{
-								// merge the bounds with x and yAxis
-								((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
-							}
+							// merge the bounds with x and yAxis
+							((IXBoundsHolder)pa).MergeXBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
 						}
-
-						// take also the axis styles with physical values into account
-						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-						{
-							if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
-								scaleBounds.Add(id.PhysicalValueOtherFirst);
-						}
-
-						suspendToken.Resume();
 					}
-					xBoundariesChangedSuspendToken.Resume();
+
+					// take also the axis styles with physical values into account
+					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+					{
+						if (id.ParallelAxisNumber != 0 && id.UsePhysicalValueOtherFirst)
+							scaleBounds.Add(id.PhysicalValueOtherFirst);
+					}
+
+					suspendToken.Resume();
 				}
+				xBoundariesChangedSuspendToken.Resume();
 			}
 		}
 
@@ -1102,40 +1103,40 @@ namespace Altaxo.Graph.Graph3D
 
 			var scaleBounds = _scales.Y.DataBoundsObject;
 
-			if (null != scaleBounds)
+			if (null == scaleBounds)
+				return;
+			// we have to disable our own Handler since if we change one DataBound of a association,
+			//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
+			//but (alas!) not all boundaries are now of the new type!
+			using (var yBoundariesChangedSuspendToken = _plotAssociationYBoundariesChanged_EventSuspender.SuspendGetToken())
 			{
-				// we have to disable our own Handler since if we change one DataBound of a association,
-				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
-				//but (alas!) not all boundaries are now of the new type!
-				using (var yBoundariesChangedSuspendToken = _plotAssociationYBoundariesChanged_EventSuspender.SuspendGetToken())
-				{
-					using (var suspendToken = scaleBounds.SuspendGetToken())
-					{
-						scaleBounds.Reset();
-						foreach (IGPlotItem pa in this.PlotItems)
-						{
-							if (pa is IYBoundsHolder)
-							{
-								// merge the bounds with x and yAxis
-								((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
-							}
-						}
-						// take also the axis styles with physical values into account
-						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-						{
-							if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
-								scaleBounds.Add(id.PhysicalValueOtherFirst);
-							else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
-								scaleBounds.Add(id.PhysicalValueOtherSecond);
-						}
+				PlotItems.PrepareScales(this);
 
-						suspendToken.Resume();
+				using (var suspendToken = scaleBounds.SuspendGetToken())
+				{
+					scaleBounds.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
+					{
+						if (pa is IYBoundsHolder)
+						{
+							// merge the bounds with x and yAxis
+							((IYBoundsHolder)pa).MergeYBoundsInto(scaleBounds); // merge all x-boundaries in the x-axis boundary object
+						}
 					}
-					yBoundariesChangedSuspendToken.Resume();
+					// take also the axis styles with physical values into account
+					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+					{
+						if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
+							scaleBounds.Add(id.PhysicalValueOtherFirst);
+						else if (id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
+							scaleBounds.Add(id.PhysicalValueOtherSecond);
+					}
+
+					suspendToken.Resume();
 				}
-				_scales.Y.OnUserRescaled();
+				yBoundariesChangedSuspendToken.Resume();
 			}
-			// _linkedScales.Y.Scale.ProcessDataBounds();
+			_scales.Y.OnUserRescaled();
 		}
 
 		/// <summary>
@@ -1183,39 +1184,40 @@ namespace Altaxo.Graph.Graph3D
 
 			var scaleBounds = _scales[2].DataBoundsObject;
 
-			if (null != scaleBounds)
-			{
-				// we have to disable our own Handler since if we change one DataBound of a association,
-				//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
-				//but (alas!) not all boundaries are now of the new type!
-				using (var zBoundariesChangedSuspendToken = _plotAssociationZBoundariesChanged_EventSuspender.SuspendGetToken())
-				{
-					using (var suspendToken = scaleBounds.SuspendGetToken())
-					{
-						scaleBounds.Reset();
-						foreach (IGPlotItem pa in this.PlotItems)
-						{
-							if (pa is IZBoundsHolder)
-							{
-								// merge the bounds with x and yAxis
-								((IZBoundsHolder)pa).MergeZBoundsInto(scaleBounds); // merge all z-boundaries in the x-axis boundary object
-							}
-						}
-						// take also the axis styles with physical values into account
-						foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-						{
-							if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherSecond) // z
-								scaleBounds.Add(id.PhysicalValueOtherSecond);
-							else if (id.ParallelAxisNumber == 1 && id.UsePhysicalValueOtherFirst)
-								scaleBounds.Add(id.PhysicalValueOtherFirst);
-						}
+			if (null == scaleBounds)
+				return;
 
-						suspendToken.Resume();
+			// we have to disable our own Handler since if we change one DataBound of a association,
+			//it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary,
+			//but (alas!) not all boundaries are now of the new type!
+			using (var zBoundariesChangedSuspendToken = _plotAssociationZBoundariesChanged_EventSuspender.SuspendGetToken())
+			{
+				PlotItems.PrepareScales(this);
+				using (var suspendToken = scaleBounds.SuspendGetToken())
+				{
+					scaleBounds.Reset();
+					foreach (IGPlotItem pa in this.PlotItems)
+					{
+						if (pa is IZBoundsHolder)
+						{
+							// merge the bounds with x and yAxis
+							((IZBoundsHolder)pa).MergeZBoundsInto(scaleBounds); // merge all z-boundaries in the x-axis boundary object
+						}
 					}
-					zBoundariesChangedSuspendToken.Resume();
+					// take also the axis styles with physical values into account
+					foreach (CSLineID id in _axisStyles.AxisStyleIDs)
+					{
+						if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherSecond) // z
+							scaleBounds.Add(id.PhysicalValueOtherSecond);
+						else if (id.ParallelAxisNumber == 1 && id.UsePhysicalValueOtherFirst)
+							scaleBounds.Add(id.PhysicalValueOtherFirst);
+					}
+
+					suspendToken.Resume();
 				}
-				_scales[2].OnUserRescaled();
+				zBoundariesChangedSuspendToken.Resume();
 			}
+			_scales[2].OnUserRescaled();
 		}
 
 		/// <summary>

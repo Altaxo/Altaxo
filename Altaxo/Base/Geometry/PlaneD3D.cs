@@ -85,6 +85,43 @@ namespace Altaxo.Geometry
 			W = distance;
 		}
 
+		public static PlaneD3D Empty
+		{
+			get
+			{
+				return new PlaneD3D();
+			}
+		}
+
+		public VectorD3D Normal
+		{
+			get
+			{
+				return new VectorD3D(X, Y, Z);
+			}
+		}
+
+		public PlaneD3D Normalized
+		{
+			get
+			{
+				var len = X * X + Y * Y + Z * Z;
+				if (1 == len)
+				{
+					return this;
+				}
+				else if (len > 0)
+				{
+					len = Math.Sqrt(len);
+					return new PlaneD3D(X / len, Y / len, Z / len, W * len);
+				}
+				else
+				{
+					throw new InvalidOperationException("Squared length of the normal vector of the plane is invalid: " + len.ToString());
+				}
+			}
+		}
+
 		public override int GetHashCode()
 		{
 			return 7 * X.GetHashCode() + 11 * Y.GetHashCode() + 17 * Z.GetHashCode() + 31 * W.GetHashCode();

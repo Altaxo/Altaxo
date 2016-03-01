@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_verticalAlignmentChoices = new Collections.SelectableListNodeList(_doc.AlignmentY);
 
 				// label formatting type
-				var labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting));
+				var labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Graph3D.LabelFormatting.ILabelFormatting));
 				_labelStyles = new Collections.SelectableListNodeList();
 				for (int i = 0; i < labelTypes.Length; ++i)
 				{

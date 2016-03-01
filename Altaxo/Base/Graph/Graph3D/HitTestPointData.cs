@@ -191,6 +191,44 @@ namespace Altaxo.Graph.Graph3D
 		}
 
 		/// <summary>
+		/// Determines whether the provided plane is hit by the ray (this is almost ever the case except if the plane's normal is perpendicular to the hit ray),
+		/// and determines the point on the plane that is hit.
+		/// </summary>
+		/// <param name="plane">The plane.</param>
+		/// <param name="planePointHit">The point on the plane that is hit (if the return value is true).</param>
+		/// <returns>True if the plane is hit; otherwise false.</returns>
+		public bool IsPlaneHitByRay(PlaneD3D plane, out PointD3D planePointHit)
+		{
+			plane = plane.Normalized;
+
+			double pnX = plane.X;
+			double pnY = plane.Y;
+			double pnZ = plane.Z;
+
+			var l = _hitTransformation;
+
+			double denom = pnX * (l.M21 * l.M32 - l.M22 * l.M31) + pnY * (l.M12 * l.M31 - l.M11 * l.M32) + pnZ * (l.M11 * l.M22 - l.M12 * l.M21);
+
+			if (0 == denom)
+			{
+				planePointHit = PointD3D.Empty;
+				return false;
+			}
+
+			// Point on the plane that is closest to orgin
+			double ppX = plane.W * pnX;
+			double ppY = plane.W * pnY;
+			double ppZ = plane.W * pnZ;
+
+			double numX = pnX * (-(l.M22 * l.M31 * ppX) + l.M21 * l.M32 * ppX) + pnY * (l.M32 * l.M41 - l.M31 * l.M42 - l.M22 * l.M31 * ppY + l.M21 * l.M32 * ppY) + pnZ * (-(l.M22 * l.M41) + l.M21 * l.M42 - l.M22 * l.M31 * ppZ + l.M21 * l.M32 * ppZ);
+			double numY = pnX * (-(l.M32 * l.M41) + l.M31 * l.M42 + l.M12 * l.M31 * ppX - l.M11 * l.M32 * ppX) + pnY * (l.M12 * l.M31 * ppY - l.M11 * l.M32 * ppY) + pnZ * (l.M12 * l.M41 - l.M11 * l.M42 + l.M12 * l.M31 * ppZ - l.M11 * l.M32 * ppZ);
+			double numZ = pnX * (l.M22 * l.M41 - l.M21 * l.M42 - l.M12 * l.M21 * ppX + l.M11 * l.M22 * ppX) + pnY * (-(l.M12 * l.M41) + l.M11 * l.M42 - l.M12 * l.M21 * ppY + l.M11 * l.M22 * ppY) + pnZ * (-(l.M12 * l.M21 * ppZ) + l.M11 * l.M22 * ppZ);
+
+			planePointHit = new PointD3D(numX / denom, numY / denom, numZ / denom);
+			return true;
+		}
+
+		/// <summary>
 		/// Determines whether a polyline is hit.
 		/// </summary>
 		/// <param name="points">The points that make out the polyline.</param>
