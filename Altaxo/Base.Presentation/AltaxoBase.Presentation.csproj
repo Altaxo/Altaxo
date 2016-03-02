@@ -497,6 +497,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\CS\G3DCartesicCSControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\GraphicItemsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1390,6 +1394,9 @@
     <Compile Include="Gui\Graph3D\BackgroundControlsGlue.cs" />
     <Compile Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml.cs">
       <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\CS\G3DCartesicCSControl.xaml.cs">
+      <DependentUpon>G3DCartesicCSControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\FontX3DGlue.cs" />
     <Compile Include="Gui\Graph3D\GraphicItemsControl.xaml.cs">

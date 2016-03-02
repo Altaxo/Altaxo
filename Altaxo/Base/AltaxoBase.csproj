@@ -250,6 +250,7 @@
     <Compile Include="Drawing\FontInfo.cs" />
     <Compile Include="Drawing\D3D\FontManager3D.cs" />
     <Compile Include="Drawing\D3D\FontX3D.cs" />
+    <Compile Include="Graph\Graph3D\Commands\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Graph3D\CS\G3DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Graph3D\G3DCoordinateSystem.cs" />
     <Compile Include="Graph\Graph3D\GraphDocument.cs" />
@@ -294,6 +295,7 @@
     <Compile Include="Geometry\Matrix4x3.cs" />
     <Compile Include="Drawing\D3D\PenX3D.cs" />
     <Compile Include="Drawing\D3D\Material\SolidColor.cs" />
+    <Compile Include="Graph\Graph3D\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\Graph3D\Lighting\IDiscreteLight.cs" />
     <Compile Include="Graph\Graph3D\Lighting\SpotLight.cs" />
     <Compile Include="Graph\Graph3D\Lighting\PointLight.cs" />
@@ -438,13 +440,17 @@
     <Compile Include="Gui\Graph3D\Axis\XYGridStyleController.cs" />
     <Compile Include="Gui\Graph3D\ColorTypeThicknessPenController.cs" />
     <Compile Include="Gui\Graph3D\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph3D\CS\G3DCartesicCSController.cs" />
     <Compile Include="Gui\Graph3D\GraphicItemsController.cs" />
     <Compile Include="Gui\Graph3D\GridPartitioningController.cs" />
     <Compile Include="Gui\Graph3D\HostLayerController.cs" />
     <Compile Include="Gui\Graph3D\ItemLocationByGridController.cs" />
     <Compile Include="Gui\Graph3D\ItemLocationDirectController.cs" />
+    <Compile Include="Gui\Graph3D\LabelFormatting\NumericLabelFormattingScientificController.cs" />
     <Compile Include="Gui\Graph3D\LayerPositionController.cs" />
     <Compile Include="Gui\Graph3D\Material\MaterialControllerSimple.cs" />
+    <Compile Include="Graph\Graph3D\GuiModels\GraphViewOptions.cs" />
+    <Compile Include="Graph\Graph3D\GuiModels\RootLayerMarkersVisibility.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph3D\Plot\DataMeshPlotItemController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />

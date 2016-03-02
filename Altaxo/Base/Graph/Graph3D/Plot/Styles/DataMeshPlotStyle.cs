@@ -38,6 +38,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using Altaxo.Graph.Gdi.Plot.ColorProvider;
 	using Altaxo.Graph.Scales.Ticks;
 	using Drawing.D3D;
+	using Drawing.D3D.Material;
 	using Graph.Plot.Data;
 	using GraphicsContext;
 
@@ -70,6 +71,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		[NonSerialized]
 		private CachedImageType _imageType;
 
+		/// <summary>
+		/// The material used to show the surface. Here only the specular properties of the material are used, because the color is provided by the color provider
+		/// </summary>
+		private IMaterial _material;
+
 		#region Serialization
 
 		/// <summary>
@@ -85,6 +91,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("ClipToLayer", s._clipToLayer);
 				info.AddValue("Colorization", s._colorProvider);
 				info.AddValue("ColorScale", s._colorScale);
+				info.AddValue("Material", s._material);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -94,6 +101,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._clipToLayer = info.GetBoolean("ClipToLayer");
 				s.ColorProvider = (IColorProvider)info.GetValue("Colorization", s);
 				s.ColorScale = (NumericalScale)info.GetValue("ColorScale", s);
+				s._material = (IMaterial)info.GetValue("Material", s);
 
 				return s;
 			}
@@ -113,8 +121,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		public DataMeshPlotStyle()
 		{
-			this.ColorProvider = new ColorProviderBGMYR();
-			this.ColorScale = new LinearScale() { TickSpacing = new NoTickSpacing() }; // Ticks are not needed here, they will only disturb the bounds of the scale
+			this.ColorProvider = new ColorProviderBGRY();
+			this._material = new MaterialWithoutColorOrTexture();
+
 			InitializeMembers();
 		}
 
@@ -143,6 +152,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				ChildCloneToMember(ref _colorProvider, from._colorProvider);
 				ChildCloneToMember(ref _colorScale, from._colorScale);
 				this._imageType = CachedImageType.None;
+				this._material = from._material; // Material is immutable
 
 				EhSelfChanged();
 				suspendToken.Resume();
@@ -214,6 +224,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				{
 					EhSelfChanged(EventArgs.Empty);
 				}
+			}
+		}
+
+		public IMaterial Material
+		{
+			get { return _material; }
+			set
+			{
+				var oldValue = _material;
+				_material = value;
+				if (!object.ReferenceEquals(oldValue, value))
+					EhSelfChanged();
 			}
 		}
 
@@ -360,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				clipPlanes[4] = new PlaneD3D(0, 0, 1, 0);
 				clipPlanes[5] = new PlaneD3D(0, 0, -1, -gl.Size.Z);
 
-				buffers = g.GetPositionNormalIndexedTriangleBufferWithClipping(Materials.GetSolidMaterialWithoutColorOrTexture(), clipPlanes);
+				buffers = g.GetPositionNormalIndexedTriangleBufferWithClipping(_material, clipPlanes);
 			}
 
 			var buf = buffers.PositionNormalColorIndexedTriangleBuffer;

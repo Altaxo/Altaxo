@@ -37,6 +37,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		#region Serialization
 
+		protected EmbeddedImageGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		:
+		base(info)
+		{
+		}
+
 		/// <summary>
 		/// 2016-02-16 Initial version
 		/// </summary>
@@ -45,14 +51,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				EmbeddedImageGraphic s = (EmbeddedImageGraphic)obj;
+				var s = (EmbeddedImageGraphic)obj;
 				info.AddBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType);
 				info.AddValue("Image", s._imageProxy);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
+				var s = (EmbeddedImageGraphic)o ?? new EmbeddedImageGraphic(info);
 				info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
 				s.Image = (ImageProxy)info.GetValue("Image", s);
 				return s;

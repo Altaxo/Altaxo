@@ -656,7 +656,7 @@ namespace Altaxo.Gui
 				if (null != geo && geo.RightSideBearing < 0)
 					offsetX += -geo.RightSideBearing;
 
-				return new VectorD3D(offsetX * scale, geo.LineSpacing * scale, font.Depth);
+				return new VectorD3D(offsetX * scale, null == geo ? 0 : geo.LineSpacing * scale, font.Depth);
 			}
 
 			/// <summary>

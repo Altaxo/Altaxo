@@ -56,6 +56,11 @@ namespace Altaxo.Graph.Graph3D
 		private CameraBase _camera;
 
 		/// <summary>
+		/// The default camera. This value can be null. But when not null, this camera will be used for the Return-To-Default-Camera button as well as for mass export actions.
+		/// </summary>
+		private CameraBase _defaultCamera;
+
+		/// <summary>
 		/// The scene lighting.
 		/// </summary>
 		private LightSettings _lighting;
@@ -140,8 +145,9 @@ namespace Altaxo.Graph.Graph3D
 				info.AddValue("Notes", s._notes.Text);
 				info.AddValue("RootLayer", s._rootLayer);
 				info.AddValue("Properties", s._graphProperties);
-				info.AddValue("Camera", s._camera);
 				info.AddValue("Lighting", s._lighting);
+				info.AddValue("Camera", s._camera);
+				info.AddValue("DefaultCamera", s._defaultCamera);
 			}
 
 			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -153,8 +159,9 @@ namespace Altaxo.Graph.Graph3D
 				s._notes.Text = info.GetString("Notes");
 				s.RootLayer = (HostLayer)info.GetValue("RootLayer", s);
 				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
-				s.Camera = (CameraBase)info.GetValue("Camera", s);
 				s.Lighting = (LightSettings)info.GetValue("Lighting", s);
+				s.Camera = (CameraBase)info.GetValue("Camera", s);
+				s._defaultCamera = (CameraBase)info.GetValue("DefaultCamera", s);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

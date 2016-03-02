@@ -47,6 +47,29 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		{
 		}
 
+		/// <summary>
+		/// 2016-03-01: Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SolidBodyShapeBase), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (SolidBodyShapeBase)obj;
+				info.AddBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType);
+				info.AddValue("Material", s._material);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (SolidBodyShapeBase)o;
+				info.GetBaseValueEmbedded(s, typeof(SolidBodyShapeBase).BaseType, parent);
+				s._material = (IMaterial)info.GetValue("Material", s);
+
+				return s;
+			}
+		}
+
 		#endregion Serialization
 
 		public SolidBodyShapeBase()

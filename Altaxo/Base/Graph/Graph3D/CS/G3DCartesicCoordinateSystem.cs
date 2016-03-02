@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,26 @@ namespace Altaxo.Graph.Graph3D.CS
 {
 	public class G3DCartesicCoordinateSystem : G3DCoordinateSystem
 	{
+		/// <summary>
+		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
+		/// </summary>
+		private bool _isXYInterchanged;
+
+		/// <summary>
+		/// Is the direction of the x axis reverse, for instance runs from right to left.
+		/// </summary>
+		protected bool _isXreverse;
+
+		/// <summary>
+		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
+		/// </summary>
+		protected bool _isYreverse;
+
+		/// <summary>
+		/// Is the direction of the z axis reverse, for instance runs from top to bottom.
+		/// </summary>
+		protected bool _isZreverse;
+
 		#region Serialization
 
 		#region Version 0
@@ -46,11 +66,22 @@ namespace Altaxo.Graph.Graph3D.CS
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (G3DCartesicCoordinateSystem)obj;
+
+				info.AddValue("XReverse", s._isXreverse);
+				info.AddValue("YReverse", s._isYreverse);
+				info.AddValue("ZReverse", s._isZreverse);
+				info.AddValue("XYInterchanged", s._isXYInterchanged);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (G3DCartesicCoordinateSystem)o ?? new G3DCartesicCoordinateSystem();
+
+				s._isXreverse = info.GetBoolean("XReverse");
+				s._isYreverse = info.GetBoolean("YReverse");
+				s._isZreverse = info.GetBoolean("ZReverse");
+				s._isXYInterchanged = info.GetBoolean("XYInterchanged");
+
 				return s;
 			}
 		}
@@ -58,6 +89,39 @@ namespace Altaxo.Graph.Graph3D.CS
 		#endregion Version 0
 
 		#endregion Serialization
+
+		#region Construction and cloning
+
+		/// <summary>
+		/// Copies the member variables from another coordinate system.
+		/// </summary>
+		/// <param name="fromb">The coordinate system to copy from.</param>
+		public override void CopyFrom(G3DCoordinateSystem fromb)
+		{
+			if (object.ReferenceEquals(this, fromb))
+				return;
+
+			base.CopyFrom(fromb);
+			if (fromb is G3DCartesicCoordinateSystem)
+			{
+				var from = (G3DCartesicCoordinateSystem)fromb;
+				this._isXreverse = from._isXreverse;
+				this._isYreverse = from._isYreverse;
+				this._isZreverse = from._isZreverse;
+				this._isXYInterchanged = from._isXYInterchanged;
+			}
+		}
+
+		public override object Clone()
+		{
+			var result = new G3DCartesicCoordinateSystem();
+			result.CopyFrom(this);
+			return result;
+		}
+
+		#endregion Construction and cloning
+
+		#region Properties
 
 		public override bool Is3D
 		{
@@ -83,10 +147,77 @@ namespace Altaxo.Graph.Graph3D.CS
 			}
 		}
 
-		public override object Clone()
+		/// <summary>
+		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
+		/// </summary>
+		public bool IsXYInterchanged
 		{
-			return new G3DCartesicCoordinateSystem();
+			get { return _isXYInterchanged; }
+			set
+			{
+				if (_isXYInterchanged != value)
+				{
+					_isXYInterchanged = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
 		}
+
+		/// <summary>
+		/// Is the direction of the x axis reverse, for instance runs from right to left.
+		/// </summary>
+		public bool IsXReverse
+		{
+			get { return _isXreverse; }
+			set
+			{
+				if (_isXreverse != value)
+				{
+					_isXreverse = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
+		/// </summary>
+		public bool IsYReverse
+		{
+			get { return _isYreverse; }
+			set
+			{
+				if (_isYreverse != value)
+				{
+					_isYreverse = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
+		/// </summary>
+		public bool IsZReverse
+		{
+			get { return _isZreverse; }
+			set
+			{
+				if (_isZreverse != value)
+				{
+					_isZreverse = value;
+					ClearCachedObjects();
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		#endregion Properties
+
+		#region Logical to physical conversion and vice versa
 
 		public override IPolylineD3D GetIsoline(Logical3D r0, Logical3D r1)
 		{
@@ -98,19 +229,43 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		public override bool LayerToLogicalCoordinates(PointD3D location, out Logical3D r)
 		{
-			r = new Logical3D(location.X / _layerSize.X, location.Y / _layerSize.Y, location.Z / _layerSize.Z);
-			return true;
+			double rx = location.X / _layerSize.X;
+			double ry = location.Y / _layerSize.Y;
+			double rz = location.Z / _layerSize.Z;
+
+			rx = _isXreverse ? 1 - rx : rx;
+			ry = _isYreverse ? 1 - ry : ry;
+			rz = _isZreverse ? 1 - rz : rz;
+			if (_isXYInterchanged)
+			{
+				double hr = rx;
+				rx = ry;
+				ry = hr;
+			}
+
+			r = new Logical3D(rx, ry, rz);
+			return !double.IsNaN(rx) && !double.IsNaN(ry) && !double.IsNaN(rz);
 		}
 
 		public override bool LogicalToLayerCoordinates(Logical3D r, out PointD3D location)
 		{
-			location = new PointD3D(r.RX * _layerSize.X, r.RY * _layerSize.Y, r.RZ * _layerSize.Z);
-			return true;
+			double rx = _isXreverse ? 1 - r.RX : r.RX;
+			double ry = _isYreverse ? 1 - r.RY : r.RY;
+			double rz = _isZreverse ? 1 - r.RZ : r.RZ;
+			if (_isXYInterchanged)
+			{
+				double hr = rx;
+				rx = ry;
+				ry = hr;
+			}
+			location = new PointD3D(rx * _layerSize.X, ry * _layerSize.Y, rz * _layerSize.Z);
+
+			return !double.IsNaN(rx) && !double.IsNaN(ry) && !double.IsNaN(rz);
 		}
 
 		public override bool LogicalToLayerCoordinatesAndDirection(Logical3D r0, Logical3D r1, double t, out PointD3D position, out VectorD3D direction)
 		{
-			PointD3D pt0, pt1, ptt;
+			PointD3D pt0, pt1;
 			LogicalToLayerCoordinates(r0, out pt0);
 			LogicalToLayerCoordinates(r1, out pt1);
 			LogicalToLayerCoordinates(r0.InterpolateTo(r1, t), out position);
@@ -118,9 +273,21 @@ namespace Altaxo.Graph.Graph3D.CS
 			return true;
 		}
 
-		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
+		#endregion Logical to physical conversion and vice versa
+
+		#region Axis naming
+
+		/// <summary>
+		/// Gets the untransformed axis side vector, the the vector that points out of the plane of the axis side.
+		/// </summary>
+		/// <param name="id">The axis identifier.</param>
+		/// <param name="side">The side identifier.</param>
+		/// <returns>The vector corresponding to the axis side.</returns>
+		/// <exception cref="System.NotImplementedException">
+		/// </exception>
+		private static VectorD3D GetUntransformedAxisSideVector(CSLineID id, CSAxisSide side)
 		{
-			string name = "Unknown";
+			VectorD3D r = VectorD3D.Empty;
 			switch (id.ParallelAxisNumber)
 			{
 				case 0: // parallel axis is X
@@ -128,20 +295,23 @@ namespace Altaxo.Graph.Graph3D.CS
 						switch (side)
 						{
 							case CSAxisSide.FirstDown:
-								name = "front";
+								r = new VectorD3D(0, -1, 0); // "front";
 								break;
 
 							case CSAxisSide.FirstUp:
-								name = "back";
+								r = new VectorD3D(0, 1, 0); // "back";
 								break;
 
 							case CSAxisSide.SecondDown:
-								name = "down";
+								r = new VectorD3D(0, 0, -1); //"down";
 								break;
 
 							case CSAxisSide.SecondUp:
-								name = "up";
+								r = new VectorD3D(0, 0, 1); // "up";
 								break;
+
+							default:
+								throw new NotImplementedException();
 						}
 					}
 					break;
@@ -151,20 +321,23 @@ namespace Altaxo.Graph.Graph3D.CS
 						switch (side)
 						{
 							case CSAxisSide.FirstDown:
-								name = "left";
+								r = new VectorD3D(-1, 0, 0); // "left";
 								break;
 
 							case CSAxisSide.FirstUp:
-								name = "right";
+								r = new VectorD3D(1, 0, 0); // "right";
 								break;
 
 							case CSAxisSide.SecondDown:
-								name = "down";
+								r = new VectorD3D(0, 0, -1); // "down";
 								break;
 
 							case CSAxisSide.SecondUp:
-								name = "up";
+								r = new VectorD3D(0, 0, 1); // "up";
 								break;
+
+							default:
+								throw new NotImplementedException();
 						}
 					}
 					break;
@@ -174,156 +347,265 @@ namespace Altaxo.Graph.Graph3D.CS
 						switch (side)
 						{
 							case CSAxisSide.FirstDown:
-								name = "left";
+								r = new VectorD3D(-1, 0, 0); // "left";
 								break;
 
 							case CSAxisSide.FirstUp:
-								name = "right";
+								r = new VectorD3D(1, 0, 0); // "right";
 								break;
 
 							case CSAxisSide.SecondDown:
-								name = "front";
+								r = new VectorD3D(0, -1, 0); // "front";
 								break;
 
 							case CSAxisSide.SecondUp:
-								name = "back";
+								r = new VectorD3D(0, 1, 0); // "back";
 								break;
+
+							default:
+								throw new NotImplementedException();
 						}
 					}
-					break;
-			}
-
-			return name;
-		}
-
-		public string GetAxisLineName(CSLineID id)
-		{
-			string basename = "";
-			string specname = "";
-			string name = "Unknown";
-			switch (id.ParallelAxisNumber)
-			{
-				case 0: // parallel axis is X
-					{
-						basename = "X-axis";
-						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							specname = "bottom-front";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							specname = "bottom-back";
-						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
-							specname = "top-front";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
-							specname = "top-back";
-					}
-					break;
-
-				case 1: // parallel axis is Y
-					{
-						basename = "Y-axis";
-						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							specname = "left-bottom";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							specname = "right-bottom";
-						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
-							specname = "left-top";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
-							specname = "right-top";
-					}
-					break;
-
-				case 2: // parallel axis is Z
-					{
-						basename = "Z-axis";
-						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							specname = "left-front";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							specname = "right-front";
-						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
-							specname = "left-back";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
-							specname = "right-back";
-					}
-					break;
-			}
-
-			return basename + "(" + specname + ")";
-		}
-
-		public CSAxisSide GetPreferredLabelSide(CSLineID id)
-		{
-			CSAxisSide axisSide = CSAxisSide.FirstDown;
-
-			switch (id.ParallelAxisNumber)
-			{
-				case 0: // parallel axis is X
-					{
-						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.SecondDown; // "bottom-front";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.SecondDown; //  "bottom-back";
-						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
-							axisSide = CSAxisSide.SecondUp;// "top-front";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
-							axisSide = CSAxisSide.SecondUp; // "top-back";
-					}
-					break;
-
-				case 1: // parallel axis is Y
-					{
-						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.FirstDown; // "left-bottom";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.FirstUp; // "right-bottom";
-						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
-							axisSide = CSAxisSide.FirstDown; //	"left-top";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
-							axisSide = CSAxisSide.FirstUp; // "right-top";
-					}
-					break;
-
-				case 2: // parallel axis is Z
-					{
-						if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.FirstDown; // "left-front";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 0)
-							axisSide = CSAxisSide.FirstUp; // "right-front";
-						else if (id.LogicalValueOtherFirst == 0 && id.LogicalValueOtherSecond == 1)
-							axisSide = CSAxisSide.FirstDown; // "left-back";
-						else if (id.LogicalValueOtherFirst == 1 && id.LogicalValueOtherSecond == 1)
-							axisSide = CSAxisSide.FirstUp; // "right-back";
-					}
-					break;
-			}
-
-			return axisSide;
-		}
-
-		private bool GetHasLabelsByDefault(CSLineID lineId)
-		{
-			bool result = false;
-			switch (lineId.ParallelAxisNumber)
-			{
-				case 0:
-					result = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0; // front-bottom
-					break;
-
-				case 1:
-					result = lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0; // front-left
-					break;
-
-				case 2:
-					result = lineId.LogicalValueOtherFirst == 1 && lineId.LogicalValueOtherSecond == 0; // front - right
 					break;
 
 				default:
 					throw new NotImplementedException();
+			}
+
+			return r;
+		}
+
+		public VectorD3D GetAxisLineVector(CSLineID id)
+		{
+			switch (id.ParallelAxisNumber)
+			{
+				case 0: // parallel axis is X
+					return new VectorD3D(0, id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1);
+
+				case 1:
+					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, 0, id.LogicalValueOtherSecond * 2 - 1);
+
+				case 2:
+					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1, 0);
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		private static CSAxisSide GetAxisSide(CSLineID id, VectorD3D v)
+		{
+			switch (id.ParallelAxisNumber)
+			{
+				case 0:
+					return GetAxisSide(v.Y, v.Z);
+
+				case 1:
+					return GetAxisSide(v.X, v.Z);
+
+				case 2:
+					return GetAxisSide(v.X, v.Y);
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		private static CSAxisSide GetAxisSide(double c1, double c2)
+		{
+			if (-1 == c1)
+				return CSAxisSide.FirstDown;
+			else if (+1 == c1)
+				return CSAxisSide.FirstUp;
+			else if (-1 == c2)
+				return CSAxisSide.SecondDown;
+			else if (1 == c2)
+				return CSAxisSide.SecondUp;
+			else
+				throw new ArgumentOutOfRangeException("For arguments c1 and c2: one is expected to be 0, the other argument to be either +1 or -1");
+		}
+
+		private Matrix3x3 VectorTransformation
+		{
+			get
+			{
+				if (_isXYInterchanged)
+					return new Matrix3x3(
+						0, _isXreverse ? -1 : 1, 0,
+						_isYreverse ? -1 : 1, 0, 0,
+						0, 0, _isZreverse ? -1 : 1);
+				else
+					return new Matrix3x3(
+						_isXreverse ? -1 : 1, 0, 0,
+						0, _isYreverse ? -1 : 1, 0,
+						0, 0, _isZreverse ? -1 : 1);
+			}
+		}
+
+		private static string GetAxisSideNameFromVector(VectorD3D v)
+		{
+			if (v.X == 1)
+				return "right";
+			else if (v.X == -1)
+				return "left";
+			else if (v.Y == 1)
+				return "back";
+			else if (v.Y == -1)
+				return "front";
+			else if (v.Z == 1)
+				return "up";
+			else if (v.Z == -1)
+				return "down";
+			else throw new ArgumentOutOfRangeException("The vector v was expected to have only one element either being +1 or -1");
+		}
+
+		public override string GetAxisSideName(CSLineID id, CSAxisSide side)
+		{
+			var v = GetUntransformedAxisSideVector(id, side);
+			var tv = VectorTransformation.Transform(v);
+			var name = GetAxisSideNameFromVector(tv);
+			return name;
+		}
+
+		public string GetAxisLineName(VectorD3D v)
+		{
+			string specname;
+			if (0 == v.X)
+			{
+				if (-1 == v.Y && -1 == v.Z)
+					specname = "bottom-front";
+				else if (1 == v.Y && -1 == v.Z)
+					specname = "bottom-back";
+				else if (-1 == v.Y && 1 == v.Z)
+					specname = "top-front";
+				else if (1 == v.Y && 1 == v.Z)
+					specname = "top-back";
+				else
+					throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			else if (0 == v.Y)
+			{
+				if (-1 == v.X && -1 == v.Z)
+					specname = "left-bottom";
+				else if (1 == v.X && -1 == v.Z)
+					specname = "right-bottom";
+				else if (-1 == v.X && 1 == v.Z)
+					specname = "left-top";
+				else if (1 == v.X && 1 == v.Z)
+					specname = "right-top";
+				else
+					throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			else if (0 == v.Z)
+			{
+				if (-1 == v.X && -1 == v.Y)
+					specname = "left-front";
+				else if (1 == v.X && -1 == v.Y)
+					specname = "right-front";
+				else if (-1 == v.X && 1 == v.Y)
+					specname = "left-back";
+				else if (1 == v.X && 1 == v.Y)
+					specname = "right-back";
+				else
+					throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			return specname;
+		}
+
+		public string GetAxisLineName(CSLineID id)
+		{
+			var v = GetAxisLineVector(id);
+			var tv = VectorTransformation.Transform(v);
+			var name = GetAxisLineName(tv);
+			return name;
+		}
+
+		public VectorD3D GetPreferredLabelSide(VectorD3D v)
+		{
+			VectorD3D result;
+			if (0 == v.X)
+			{
+				if (-1 == v.Y && -1 == v.Z)
+					result = new VectorD3D(0, 0, -1); // "bottom-front";
+				else if (1 == v.Y && -1 == v.Z)
+					result = new VectorD3D(0, 0, -1); // "bottom-back";
+				else if (-1 == v.Y && 1 == v.Z)
+					result = new VectorD3D(0, 0, 1); //"top-front";
+				else if (1 == v.Y && 1 == v.Z)
+					result = new VectorD3D(0, 0, 1); // "top-back";
+				else
+					throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			else if (0 == v.Y)
+			{
+				if (-1 == v.X && -1 == v.Z)
+					result = new VectorD3D(-1, 0, 0); // "left-bottom";
+				else if (1 == v.X && -1 == v.Z)
+					result = new VectorD3D(+1, 0, 0); // "right-bottom";
+				else if (-1 == v.X && 1 == v.Z)
+					result = new VectorD3D(-1, 0, 0); // "left-top";
+				else if (1 == v.X && 1 == v.Z)
+					result = new VectorD3D(+1, 0, 0); // "right-top";
+				else
+					throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			else if (0 == v.Z)
+			{
+				if (-1 == v.X && -1 == v.Y)
+					result = new VectorD3D(-1, 0, 0); // "left-front";
+				else if (1 == v.X && -1 == v.Y)
+					result = new VectorD3D(+1, 0, 0); // "right-front";
+				else if (-1 == v.X && 1 == v.Y)
+					result = new VectorD3D(-1, 0, 0); // "left-back";
+				else if (1 == v.X && 1 == v.Y)
+					result = new VectorD3D(+1, 0, 0); // "right-back";
+				else
+					throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException("Vector v is expected to have one element set to 0, and the other elements either being +1 or -1");
+			}
+			return result;
+		}
+
+		public CSAxisSide GetPreferredLabelSide(CSLineID id)
+		{
+			var u_axisVector = GetAxisLineVector(id);
+			var t_axisVector = VectorTransformation.Transform(u_axisVector);
+			var t_labelSide = GetPreferredLabelSide(t_axisVector);
+			var u_labelSide = VectorTransformation.InverseTransformVector(t_labelSide);
+			return GetAxisSide(id, u_labelSide);
+		}
+
+		private bool GetHasLabelsByDefault(CSLineID lineId)
+		{
+			var uv = GetAxisLineVector(lineId);
+			var v = VectorTransformation.Transform(uv);
+			bool result = false;
+			if (0 == v.X) // x-axis
+				result = -1 == v.Y && -1 == v.Z; // front-bottom
+			else if (0 == v.Y) // y-axis
+				result = -1 == v.X && -1 == v.Z; // front-left
+			else if (0 == v.Z) // z-axis
+				result = 1 == v.X && -1 == v.Y; // front - right
+			else
+			{
+				throw new NotImplementedException();
 			}
 			return result;
 		}
 
 		protected override void UpdateAxisInfo()
 		{
-			_axisStyleInformation.Clear();
+			if (null != _axisStyleInformation)
+				_axisStyleInformation.Clear();
+			else
+				_axisStyleInformation = new List<CSAxisInformation>();
 
 			for (int axisnumber = 0; axisnumber <= 2; ++axisnumber)
 			{
@@ -351,5 +633,7 @@ namespace Altaxo.Graph.Graph3D.CS
 				}
 			}
 		}
+
+		#endregion Axis naming
 	}
 }

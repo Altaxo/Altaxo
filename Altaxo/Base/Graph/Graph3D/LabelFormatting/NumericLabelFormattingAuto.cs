@@ -47,14 +47,14 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			{
 				NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
 
-				info.AddBaseValueEmbedded(s, s.GetType().BaseType);
+				info.AddBaseValueEmbedded(s, typeof(NumericLabelFormattingAuto).BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (NumericLabelFormattingAuto)o ?? new NumericLabelFormattingAuto();
 
-				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				info.GetBaseValueEmbedded(s, typeof(NumericLabelFormattingAuto).BaseType, parent);
 				return s;
 			}
 		}

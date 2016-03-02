@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// If true, markers are shown in each of the corners of the graph document.
 		/// </summary>
-		private bool _showDocumentMarkers;
+		private Altaxo.Graph.Graph3D.GuiModels.RootLayerMarkersVisibility? _showRootLayerMarkers;
 
 		#region Constructors
 
@@ -90,16 +90,19 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				InternalInitializeGraphDocument(args[0] as GraphDocument);
 			}
-			/*
-			else if (args[0] is GraphViewLayout)
+			else if (args[0] is Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)
 			{
-				var o = (GraphViewLayout)args[0];
-				_isAutoZoomActive = o.IsAutoZoomActive;
-				_zoomFactor = o.ZoomFactor;
-				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = o.PositionOfViewportsUpperLeftCornerInRootLayerCoordinates;
-				InternalInitializeGraphDocument(o.GraphDocument);
+				var o = (Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)args[0];
+				_showRootLayerMarkers = o.RootLayerMarkersVisibility;
+				if (this._doc == null)
+				{
+					InternalInitializeGraphDocument(o.GraphDocument);
+				}
+				else if (!object.ReferenceEquals(this._doc, o.GraphDocument))
+				{
+					throw new InvalidProgramException("The already initialized document and the document in the option class are not identical");
+				}
 			}
-			*/
 			else
 			{
 				return false;
@@ -229,7 +232,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		{
 			get
 			{
-				return Doc;
+				return new Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions(_doc, null);
 			}
 		}
 
@@ -1115,7 +1118,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			if (null != this.ActiveLayer)
 			{
-				Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu", pt.X, pt.Y);
+				Current.Gui.ShowContextMenu(parent, parent, "/Altaxo/Views/Graph3D/LayerButton/ContextMenu", pt.X, pt.Y);
 			}
 		}
 

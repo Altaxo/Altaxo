@@ -586,6 +586,28 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
+		#region Enumeration through layers
+
+		/// <summary>
+		/// Executes an action on each child layer, including this layer, beginning with the topmost child (the first child of the first child of...).
+		/// </summary>
+		/// <param name="action">The action to execute.</param>
+		public void ExecuteFromTopmostChildToRoot(Action<HostLayer> action)
+		{
+			ExecuteFromTopmostChildToRoot(this, action);
+		}
+
+		private static void ExecuteFromTopmostChildToRoot(HostLayer start, Action<HostLayer> action)
+		{
+			foreach (var l in start._childLayers)
+			{
+				ExecuteFromTopmostChildToRoot(l, action);
+			}
+			action(start);
+		}
+
+		#endregion Enumeration through layers
+
 		#region ITreeListNodeWithParent implementation
 
 		IList<HostLayer> ITreeListNode<HostLayer>.ChildNodes

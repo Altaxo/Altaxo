@@ -200,6 +200,8 @@ namespace Altaxo.Main
 						restoredControllers.Add(readedobject);
 					else if (readedobject is GraphViewLayout)
 						restoredControllers.Add(readedobject);
+					else if (readedobject is Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)
+						restoredControllers.Add(readedobject);
 					else if (readedobject is Altaxo.Worksheet.WorksheetViewLayout)
 						restoredControllers.Add(readedobject);
 					info.EndReading();
@@ -219,6 +221,16 @@ namespace Altaxo.Main
 					ctrl.InitializeDocument(o as GraphViewLayout);
 					Current.Gui.FindAndAttachControlTo(ctrl);
 					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDGraphViewContent(ctrl));
+				}
+				else if (o is Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)
+				{
+					var so = (o as Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions);
+					if (so.GraphDocument != null)
+					{
+						var viewContent = this.OpenOrCreateViewContentForDocument(so.GraphDocument) as IMVCANController;
+						if (null != viewContent)
+							viewContent.InitializeDocument(so);
+					}
 				}
 				else if (o is Altaxo.Worksheet.WorksheetViewLayout)
 				{
@@ -1274,7 +1286,7 @@ namespace Altaxo.Main
 		{
 			if (null == doc)
 			{
-				doc = Altaxo.Graph.Graph3D.GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName));
+				doc = Altaxo.Graph.Graph3D.GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(Main.ProjectFolder.RootFolderName, PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName));
 			}
 
 			return (Altaxo.Gui.Graph3D.Viewing.IGraphController)CreateNewViewContent_Unsynchronized(doc);

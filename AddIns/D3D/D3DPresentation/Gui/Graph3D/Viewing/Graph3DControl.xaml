@@ -26,6 +26,12 @@
 				<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete" />
 				<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
 			</Canvas.CommandBindings>
+			<TextBlock FontSize="12" TextWrapping="Wrap" Padding="8" Width="{Binding ElementName=_guiCanvas, Path=ActualWidth}" Height="{Binding ElementName=_guiCanvas, Path=ActualHeight}">
+				<TextBlock.Text>
+					You can read this because rendering of the 3D image failed or is delayed.
+					Try turning the mouse wheel to force rendering of the scene.
+				</TextBlock.Text>
+			</TextBlock>
 			<Image x:Name="_d3dCanvas" Focusable="False"  SnapsToDevicePixels="True" Stretch="Uniform"	IsVisibleChanged="EhIsGraphVisibleChanged" />
 		</Canvas>
 	</Grid>

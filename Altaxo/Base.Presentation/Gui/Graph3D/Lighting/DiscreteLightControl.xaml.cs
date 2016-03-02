@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Graph3D.Lighting
 					throw new NotImplementedException();
 				}
 
-				if (newLight.GetType() != SelectedValue?.GetType())
+				if (newLight?.GetType() != SelectedValue?.GetType())
 				{
 					ChangeHostControlAccordingToNewLight(newLight);
 					SelectedValueChanged?.Invoke(this, EventArgs.Empty);

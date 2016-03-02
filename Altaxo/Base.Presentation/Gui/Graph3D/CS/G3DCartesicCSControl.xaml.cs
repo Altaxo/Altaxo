@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,41 +26,66 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Controls;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Gui.Graph3D.CS
 {
-	using Geometry;
-
-	public static class GraphDocumentBuilder
+	/// <summary>
+	/// Interaction logic for G2DCartesicCSControl.xaml
+	/// </summary>
+	public partial class G3DCartesicCSControl : UserControl, IG3DCartesicCSView
 	{
-		/// <summary>
-		/// Creates the new standard graph with an XYZ plot layer.
-		/// </summary>
-		/// <param name="folderName">Name of the folder.</param>
-		/// <param name="context">The context.</param>
-		/// <returns></returns>
-		public static GraphDocument CreateNewStandardGraphWithXYZPlotLayer(string folderName, Main.Properties.IReadOnlyPropertyBag context)
+		public G3DCartesicCSControl()
 		{
-			if (null == context)
+			InitializeComponent();
+		}
+
+		public bool ExchangeXY
+		{
+			get
 			{
-				if (null != folderName)
-					Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
-				else
-					context = Altaxo.PropertyExtensions.GetPropertyContextOfProject();
+				return _chkExchangeXY.IsChecked == true;
 			}
+			set
+			{
+				_chkExchangeXY.IsChecked = value;
+			}
+		}
 
-			var graph = new GraphDocument();
+		public bool ReverseX
+		{
+			get
+			{
+				return _chkXReverse.IsChecked == true;
+			}
+			set
+			{
+				_chkXReverse.IsChecked = value;
+			}
+		}
 
-			var xyzlayer = new XYZPlotLayer(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
+		public bool ReverseY
+		{
+			get
+			{
+				return _chkYReverse.IsChecked == true;
+			}
+			set
+			{
+				_chkYReverse.IsChecked = value;
+			}
+		}
 
-			graph.RootLayer.Layers.Add(xyzlayer);
-
-			xyzlayer.CreateDefaultAxes(context);
-
-			graph.ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1), 1);
-
-			return graph;
+		public bool ReverseZ
+		{
+			get
+			{
+				return _chkZReverse.IsChecked == true;
+			}
+			set
+			{
+				_chkZReverse.IsChecked = value;
+			}
 		}
 	}
 }

@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				var s = (TextGraphic)obj;
 
-				info.AddValue("Location", s._location);
+				info.AddBaseValueEmbedded(s, typeof(TextGraphic).BaseType);
 				info.AddValue("Text", s._text);
 				info.AddValue("Font", s._font);
 				info.AddValue("Brush", s._textBrush);
@@ -88,8 +88,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				var s = (TextGraphic)o ?? new TextGraphic(info);
 
-				s._location = (ItemLocationDirect)info.GetValue("Location", s);
-				if (null != s._location) s._location.ParentObject = s;
+				info.GetBaseValueEmbedded(s, typeof(TextGraphic).BaseType, parent);
 
 				s._text = info.GetString("Text");
 				s._font = (FontX3D)info.GetValue("Font", s);
@@ -112,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		/// <param name="info">The information.</param>
 		protected TextGraphic(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(new ItemLocationDirectAutoSize())
+			: base(info)
 		{
 		}
 

@@ -202,7 +202,7 @@ namespace Altaxo.Drawing.D3D.Material
 		{
 			if (!(value >= 0))
 				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be >= 0", valueName));
-			if (!(value <= 0))
+			if (!(value <= 1))
 				throw new ArgumentOutOfRangeException(string.Format("{0} is expected to be <= 1", valueName));
 		}
 

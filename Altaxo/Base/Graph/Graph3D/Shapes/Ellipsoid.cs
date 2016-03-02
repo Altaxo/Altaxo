@@ -58,21 +58,14 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (Ellipsoid)obj;
-
-				info.AddValue("Location", s._location);
-				info.AddValue("Material", s._material);
+				info.AddBaseValueEmbedded(s, typeof(Ellipsoid).BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (Ellipsoid)o ?? new Ellipsoid(info);
 
-				s._location = (ItemLocationDirect)info.GetValue("Location", s);
-				if (null != s._location) s._location.ParentObject = s;
-
-				s._material = (IMaterial)info.GetValue("Material", s);
-
-				s.UpdateTransformationMatrix();
+				info.GetBaseValueEmbedded(s, typeof(Ellipsoid).BaseType, parent);
 
 				return s;
 			}

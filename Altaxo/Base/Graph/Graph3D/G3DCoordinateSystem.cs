@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Graph3D
 
 		protected virtual void ClearCachedObjects()
 		{
-			this._axisStyleInformation = null;
+			this._axisStyleInformation.Clear();
 		}
 
 		#region ICloneable Members

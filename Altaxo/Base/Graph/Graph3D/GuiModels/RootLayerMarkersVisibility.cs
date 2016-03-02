@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,41 +26,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Graph.Graph3D.GuiModels
 {
-	using Geometry;
-
-	public static class GraphDocumentBuilder
+	/// <summary>
+	/// Designates the visibility of root layer markers.
+	/// </summary>
+	public enum RootLayerMarkersVisibility
 	{
-		/// <summary>
-		/// Creates the new standard graph with an XYZ plot layer.
-		/// </summary>
-		/// <param name="folderName">Name of the folder.</param>
-		/// <param name="context">The context.</param>
-		/// <returns></returns>
-		public static GraphDocument CreateNewStandardGraphWithXYZPlotLayer(string folderName, Main.Properties.IReadOnlyPropertyBag context)
-		{
-			if (null == context)
-			{
-				if (null != folderName)
-					Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
-				else
-					context = Altaxo.PropertyExtensions.GetPropertyContextOfProject();
-			}
+		/// <summary>Definitely not show root layer markers.</summary>
+		None,
 
-			var graph = new GraphDocument();
+		/// <summary>Definitely not show root layer markers.</summary>
+		Arrows,
 
-			var xyzlayer = new XYZPlotLayer(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
+		/// <summary>Show root layer markers as lines.</summary>
+		Lines,
 
-			graph.RootLayer.Layers.Add(xyzlayer);
-
-			xyzlayer.CreateDefaultAxes(context);
-
-			graph.ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1), 1);
-
-			return graph;
-		}
+		/// <summary>Show root layer markers as lines with arrows.</summary>
+		LinesWithArrows
 	}
 }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,45 +22,38 @@
 
 #endregion Copyright
 
+using Altaxo.Graph.Graph3D.LabelFormatting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Gui.Graph3D.LabelFormatting
 {
-	using Geometry;
-
-	public static class GraphDocumentBuilder
+	[UserControllerForObject(typeof(NumericLabelFormattingScientific))]
+	[ExpectedTypeOfView(typeof(Graph.LabelFormatting.INumericLabelFormattingScientificView))]
+	public class NumericLabelFormattingScientificController : MVCANControllerEditOriginalDocBase<NumericLabelFormattingScientific, Graph.LabelFormatting.INumericLabelFormattingScientificView>
 	{
-		/// <summary>
-		/// Creates the new standard graph with an XYZ plot layer.
-		/// </summary>
-		/// <param name="folderName">Name of the folder.</param>
-		/// <param name="context">The context.</param>
-		/// <returns></returns>
-		public static GraphDocument CreateNewStandardGraphWithXYZPlotLayer(string folderName, Main.Properties.IReadOnlyPropertyBag context)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			if (null == context)
+			yield break;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (null != _view)
 			{
-				if (null != folderName)
-					Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
-				else
-					context = Altaxo.PropertyExtensions.GetPropertyContextOfProject();
+				_view.ShowExponentAlways = _doc.ShowExponentAlways;
 			}
+		}
 
-			var graph = new GraphDocument();
+		public override bool Apply(bool disposeController)
+		{
+			_doc.ShowExponentAlways = _view.ShowExponentAlways;
 
-			var xyzlayer = new XYZPlotLayer(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
-
-			graph.RootLayer.Layers.Add(xyzlayer);
-
-			xyzlayer.CreateDefaultAxes(context);
-
-			graph.ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1), 1);
-
-			return graph;
+			return ApplyEnd(true, disposeController);
 		}
 	}
 }

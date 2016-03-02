@@ -82,7 +82,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				GraphicBase s = (GraphicBase)o;
 
-				if (null != s._location) s._location.Dispose(); // because location probably is set already in the derived object
+				if (null != s._location)
+					throw new InvalidProgramException("_location should be null here. Has the deserialization constructor been used?");
+
 				s._location = (ItemLocationDirect)info.GetValue("Location", s);
 				if (null != s._location) s._location.ParentObject = s;
 
