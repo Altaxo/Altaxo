@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 			return GetName(int.MaxValue);
 		}
 
-		public override void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			if (null != this._plotStyle)
 			{

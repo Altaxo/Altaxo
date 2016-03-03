@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,26 +22,58 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Controls;
 
-namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
+namespace Altaxo.Gui.Common.Drawing.D3D
 {
-	public class PositionNormalColorIndexedTriangleBufferWithClipping : PositionNormalColorIndexedTriangleBuffer
+	/// <summary>
+	/// Interaction logic for FontXControl.xaml
+	/// </summary>
+	public partial class FontX3DControl : UserControl, IFontX3DView
 	{
-		public PlaneD3D[] ClipPlanes { get; private set; }
-
-		public PositionNormalColorIndexedTriangleBufferWithClipping(D3D10GraphicsContext parent, PlaneD3D[] clipPlanes)
-				: base(parent)
+		public FontX3DControl()
 		{
-			if (null == clipPlanes)
-				throw new ArgumentNullException(nameof(clipPlanes));
+			InitializeComponent();
+		}
 
-			ClipPlanes = clipPlanes;
+		public System.Drawing.FontFamily SelectedFontFamily
+		{
+			get
+			{
+				return _guiFontFamily.SelectedFontFamily;
+			}
+			set
+			{
+				_guiFontFamily.SelectedFontFamily = value;
+			}
+		}
+
+		public double SelectedFontSize
+		{
+			get
+			{
+				return _guiFontSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiFontSize.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double SelectedFontDepth
+		{
+			get
+			{
+				return _guiFontDepth.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiFontDepth.SelectedQuantityAsValueInPoints = value;
+			}
 		}
 	}
 }

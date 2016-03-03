@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		#region Background
 
-		protected void MeasureBackground(IGraphicContext3D g, double itemSizeX, double itemSizeY, double itemSizeZ)
+		protected void MeasureBackground(IGraphicsContext3D g, double itemSizeX, double itemSizeY, double itemSizeZ)
 		{
 			var fontInfo = FontManager3D.Instance.GetFontInformation(_font);
 
@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			}
 		}
 
-		protected virtual void PaintBackground(IGraphicContext3D g)
+		protected virtual void PaintBackground(IGraphicsContext3D g)
 		{
 			// Assumptions:
 			// 1. the overall size of the structure must be measured before, i.e. bMeasureInSync is true
@@ -413,7 +413,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			_rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
 		}
 
-		private void MeasureGlyphs(IGraphicContext3D g, FontCache cache, Altaxo.Graph.IPaintContext paintContext)
+		private void MeasureGlyphs(IGraphicsContext3D g, FontCache cache, Altaxo.Graph.IPaintContext paintContext)
 		{
 			MeasureContext mc = new MeasureContext();
 			mc.FontCache = cache;
@@ -424,17 +424,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				_rootNode.Measure(mc, 0);
 		}
 
-		private void DrawGlyphs(IGraphicContext3D g, DrawContext dc, double x, double y, double z)
+		private void DrawGlyphs(IGraphicsContext3D g, DrawContext dc, double x, double y, double z)
 		{
 			_rootNode.Draw(g, dc, x, y + _rootNode.ExtendBelowBaseline, z);
 		}
 
-		public override void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext)
+		public override void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext)
 		{
 			Paint(g, paintContext, false);
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, bool bForPreview)
+		public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, bool bForPreview)
 		{
 			//_isStructureInSync = false;
 			_isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
@@ -560,7 +560,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				case "FontSize":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this.Font = _font.GetFontWithNewSize(prop.Value);
+						this.Font = _font.WithSize(prop.Value);
 						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
@@ -570,7 +570,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 						var prop = (RoutedSetterProperty<string>)property;
 						try
 						{
-							var newFont = _font.GetFontWithNewFamily(prop.Value);
+							var newFont = _font.WithFamily(prop.Value);
 							_font = newFont;
 							_isStructureInSync = false;
 							EhSelfChanged(EventArgs.Empty);

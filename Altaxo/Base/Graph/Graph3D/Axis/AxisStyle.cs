@@ -361,12 +361,12 @@ namespace Altaxo.Graph.Graph3D.Axis
 		{
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
+		public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
 		{
 			Paint(g, paintContext, layer, layer.CoordinateSystem.GetAxisStyleInformation);
 		}
 
-		public void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
+		public void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, Func<CSLineID, CSAxisInformation> GetAxisStyleInformation)
 		{
 			PaintLine(g, layer);
 			PaintMajorLabels(g, layer);
@@ -374,7 +374,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			PaintTitle(g, paintContext, layer);
 		}
 
-		public void PaintLine(IGraphicContext3D g, IPlotArea layer)
+		public void PaintLine(IGraphicsContext3D g, IPlotArea layer)
 		{
 			if (IsAxisLineEnabled)
 			{
@@ -382,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintMajorLabels(IGraphicContext3D g, IPlotArea layer)
+		public void PaintMajorLabels(IGraphicsContext3D g, IPlotArea layer)
 		{
 			if (AreMajorLabelsEnabled)
 			{
@@ -393,7 +393,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintMinorLabels(IGraphicContext3D g, IPlotArea layer)
+		public void PaintMinorLabels(IGraphicsContext3D g, IPlotArea layer)
 		{
 			if (AreMinorLabelsEnabled)
 			{
@@ -404,7 +404,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintTitle(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
+		public void PaintTitle(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer)
 		{
 			if (IsTitleEnabled)
 			{

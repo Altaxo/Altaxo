@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="previousPlotItem">Previous plot item.</param>
 		/// <param name="nextPlotItem">Next plot item.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		public abstract void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+		public abstract void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources. Must be overridden by a derived class.
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="location">The rectangle where the symbol should be painted into.</param>
-		public virtual void PaintSymbol(IGraphicContext3D g, RectangleD3D location)
+		public virtual void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
 		{
 		}
 

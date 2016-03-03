@@ -284,7 +284,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 		{
 			var newSize = _view.SelectedFontSize;
 			var oldFont = this._doc.Font;
-			this._doc.Font = oldFont.GetFontWithNewSize(newSize);
+			this._doc.Font = oldFont.WithSize(newSize);
 			_view.InvalidatePreviewPanel();
 		}
 
@@ -292,7 +292,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 		{
 			var newSize = _view.SelectedFontDepth;
 			var oldFont = this._doc.Font;
-			this._doc.Font = oldFont.GetFontWithNewDepth(newSize);
+			this._doc.Font = oldFont.WithDepth(newSize);
 			_view.InvalidatePreviewPanel();
 		}
 

@@ -170,7 +170,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			}
 		}
 
-		public override VectorD3D MeasureItem(IGraphicContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
+		public override VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			return new VectorD3D(size1.X + size2.X + size3.X, size1.Y, font.Depth);
 		}
 
-		public override void DrawItem(IGraphicContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointD3D morg)
+		public override void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointD3D morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
@@ -193,7 +193,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			g.DrawString(_prefix + firstpart + middelpart, font, brush, morg, strfmt);
 			var orginalY = morg.Y;
 			morg = morg + new VectorD3D(size1.X, size1.Y, 0);
-			var font2 = font.GetFontWithNewSize(font.Size * 2 / 3.0);
+			var font2 = font.WithSize(font.Size * 2 / 3.0);
 			g.DrawString(exponent, font2, brush, morg, strfmt);
 			if (!string.IsNullOrEmpty(_suffix))
 			{
@@ -207,12 +207,12 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			}
 		}
 
-		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
+		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
 		{
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
 
 			var localfont1 = font;
-			var localfont2 = font.GetFontWithNewSize(font.Size * 2 / 3);
+			var localfont2 = font.WithSize(font.Size * 2 / 3);
 
 			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(IGraphicContext3D g, FontX3D font1, FontX3D font2, StringFormat strfmt, string firstpart, string exponent, string lastpart, double maxexposize)
+			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font1, FontX3D font2, StringFormat strfmt, string firstpart, string exponent, string lastpart, double maxexposize)
 			{
 				_firstpart = firstpart;
 				_exponent = exponent;
@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				}
 			}
 
-			public virtual void Draw(IGraphicContext3D g, IMaterial brush, PointD3D point)
+			public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
 			{
 				g.DrawString(_firstpart, _font1, brush, point, _strfmt);
 

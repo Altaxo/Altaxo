@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 	using Drawing;
 	using Drawing.D3D;
 
-	public class GraphicContextD3DPrimitivesBase
+	public class GraphicsContextD3DPrimitivesBase
 	{
 		public static void DrawLine(PositionNormalIndexedTriangleBuffers buffers, PenX3D pen, PointD3D p0, PointD3D p1)
 		{
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		}
 	}
 
-	public abstract class GraphicContext3DBase : GraphicContextD3DPrimitivesBase, IGraphicContext3D
+	public abstract class GraphicsContext3DBase : GraphicsContextD3DPrimitivesBase, IGraphicsContext3D
 	{
 		public abstract object SaveGraphicsState();
 

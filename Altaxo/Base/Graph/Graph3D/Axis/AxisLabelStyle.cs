@@ -317,7 +317,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				if (newValue != oldValue)
 				{
 					FontX3D oldFont = _font;
-					_font = oldFont.GetFontWithNewSize(newValue);
+					_font = oldFont.WithSize(newValue);
 
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -688,7 +688,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <param name="styleInfo">Information about begin of axis, end of axis.</param>
 		/// <param name="outerDistance">Distance between axis and labels.</param>
 		/// <param name="useMinorTicks">If true, minor ticks are shown.</param>
-		public virtual void Paint(IGraphicContext3D g, G3DCoordinateSystem coordSyst, Scale scale, TickSpacing tickSpacing, CSAxisInformation styleInfo, double outerDistance, bool useMinorTicks)
+		public virtual void Paint(IGraphicsContext3D g, G3DCoordinateSystem coordSyst, Scale scale, TickSpacing tickSpacing, CSAxisInformation styleInfo, double outerDistance, bool useMinorTicks)
 		{
 			_cachedAxisStyleInfo = styleInfo;
 			CSLineID styleID = styleInfo.Identifier;
@@ -852,7 +852,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 						var prop = (RoutedSetterProperty<string>)property;
 						try
 						{
-							var newFont = _font.GetFontWithNewFamily(prop.Value);
+							var newFont = _font.WithFamily(prop.Value);
 							_font = newFont;
 							EhSelfChanged(EventArgs.Empty);
 						}

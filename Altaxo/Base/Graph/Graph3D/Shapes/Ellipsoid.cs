@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			return new Ellipsoid(this);
 		}
 
-		public override void Paint(IGraphicContext3D g, IPaintContext context)
+		public override void Paint(IGraphicsContext3D g, IPaintContext context)
 		{
 			var buffers = g.GetPositionNormalIndexedTriangleBuffer(_material);
 

@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea layer, CSPlaneID plane, int axisnumber)
+		public void Paint(IGraphicsContext3D g, IPlotArea layer, CSPlaneID plane, int axisnumber)
 		{
 			if (!_showGrid)
 				return;

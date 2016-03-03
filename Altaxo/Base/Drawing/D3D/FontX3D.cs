@@ -102,22 +102,22 @@ namespace Altaxo.Drawing.D3D
 		/// <value>The name of the font family.</value>
 		public string FontFamilyName { get { return _font.FontFamilyName; } }
 
-		public FontX3D GetFontWithNewSize(double newSize)
+		public FontX3D WithSize(double newSize)
 		{
 			return new FontX3D(_font.GetFontWithNewSize(newSize), _depth);
 		}
 
-		public FontX3D GetFontWithNewFamily(string newFamily)
+		public FontX3D WithFamily(string newFamily)
 		{
 			return new FontX3D(_font.GetFontWithNewFamily(newFamily), _depth);
 		}
 
-		internal FontX3D GetFontWithNewStyle(FontXStyle style)
+		public FontX3D WithStyle(FontXStyle style)
 		{
 			return new FontX3D(_font.GetFontWithNewStyle(style), _depth);
 		}
 
-		internal FontX3D GetFontWithNewDepth(double newDepth)
+		public FontX3D WithDepth(double newDepth)
 		{
 			return new FontX3D(_font, newDepth);
 		}

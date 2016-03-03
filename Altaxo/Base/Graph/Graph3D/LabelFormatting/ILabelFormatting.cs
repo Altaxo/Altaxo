@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="mtick">The item to draw.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
-		VectorD3D MeasureItem(IGraphicContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, PointD3D morg);
+		VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, PointD3D morg);
 
 		/// <summary>
 		/// Draws the item to a specified location.
@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="strfmt">String format.</param>
 		/// <param name="item">The item to draw.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
-		void DrawItem(IGraphicContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointD3D morg);
+		void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointD3D morg);
 
 		/// <summary>
 		/// Measured a couple of items and prepares them for being drawn.
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		IMeasuredLabelItem[] GetMeasuredItems(IGraphicContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
+		IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
 
 		/// <summary>Fixed Text that appears before the formatted label.</summary>
 		string PrefixText { get; set; }

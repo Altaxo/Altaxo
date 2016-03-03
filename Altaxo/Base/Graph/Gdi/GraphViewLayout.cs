@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Gdi
 	/// <summary>
 	/// Stores information about how a graph is shown in the graph view.
 	/// </summary>
-	public class GraphViewLayout
+	public class GraphViewLayout : IProjectItemViewModel
 	{
 		private bool _isAutoZoomActive;
 		private double _zoomFactor;
@@ -184,5 +184,13 @@ namespace Altaxo.Graph.Gdi
 		/// The position of the viewport's upper left corner in root layer coordinates.
 		/// </value>
 		public PointD2D PositionOfViewportsUpperLeftCornerInRootLayerCoordinates { get { return _positionOfViewportsUpperLeftCornerInRootLayerCoordinates; } }
+
+		IProjectItem IProjectItemViewModel.ProjectItem
+		{
+			get
+			{
+				return _graphDocument;
+			}
+		}
 	}
 }

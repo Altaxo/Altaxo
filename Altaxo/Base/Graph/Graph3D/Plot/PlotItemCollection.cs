@@ -253,7 +253,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 				CoordinateTransformingStyleBase.MergeZBoundsInto(pb, this);
 		}
 
-		public void PaintSymbol(IGraphicContext3D g, RectangleD3D symbolRect)
+		public void PaintSymbol(IGraphicsContext3D g, RectangleD3D symbolRect)
 		{
 			throw new NotImplementedException();
 		}
@@ -382,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 				pi.PaintPreprocessing(context);
 		}
 
-		public void Paint(IGraphicContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		public void Paint(IGraphicsContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
 			for (int i = 0; i < _plotItems.Count; ++i)
 			{

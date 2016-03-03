@@ -844,7 +844,7 @@ namespace Altaxo.Graph.Graph3D
 			context.PopHierarchicalValue<IPlotArea>(nameof(IPlotArea));
 		}
 
-		protected override void PaintInternal(IGraphicContext3D g, IPaintContext paintContext)
+		protected override void PaintInternal(IGraphicsContext3D g, IPaintContext paintContext)
 		{
 			// paint the background very first
 			_gridPlanes.Paint(g, this);

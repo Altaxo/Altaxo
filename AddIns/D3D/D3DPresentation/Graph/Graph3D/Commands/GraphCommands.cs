@@ -249,6 +249,45 @@ namespace Altaxo.Graph.Graph3D.Commands
 		}
 	}
 
+	public class GraphRename : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.Doc.ShowRenameDialog();
+		}
+	}
+
+	public class GraphMoveToFolder : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.Doc });
+		}
+	}
+
+	/// <summary>
+	/// Duplicates the Graph and the Graph view to a new one.
+	/// </summary>
+	public class DuplicateGraph : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			GraphDocument newDoc = new GraphDocument(ctrl.Doc);
+			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
+			newDoc.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
+			Current.Project.Graph3DDocumentCollection.Add(newDoc);
+			Current.ProjectService.CreateNewGraph3D(newDoc);
+		}
+	}
+
+	public class GraphShowProperties : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		{
+			ctrl.Doc.ShowPropertyDialog();
+		}
+	}
+
 	#region Camera
 
 	/// <summary>

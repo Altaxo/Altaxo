@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
 	public class PositionIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionIndexedTriangleBuffer
 	{
-		public PositionIndexedTriangleBuffer(D3D10GraphicContext parent)
+		public PositionIndexedTriangleBuffer(D3D10GraphicsContext parent)
 			: base(parent)
 		{
 		}

@@ -213,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\Drawing\D3D\FontX3DControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Common\Drawing\FontSizeComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1064,6 +1068,9 @@
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Common\Drawing\D3D\FontX3DControl.xaml.cs">
+      <DependentUpon>FontX3DControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\TimeSpanTextBox.cs" />
     <Compile Include="Gui\Common\DateTimeTextBox.cs" />
     <Compile Include="Gui\Common\TimeSpanConverter.cs" />

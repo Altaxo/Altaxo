@@ -22,7 +22,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using System.Collections;
 	using System.Drawing;
 
-	public abstract class Graph3DController : IDisposable, IMVCANController
+	public abstract class Graph3DController : IDisposable, IMVCANController, IGraphController
 	{
 		/// <summary>
 		/// Is called each time the name for the content has changed.
@@ -50,12 +50,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		[NonSerialized]
 		protected WeakEventHandler[] _weakEventHandlersForDoc;
 
-		private IGraphicContext3D _drawing;
+		private IGraphicsContext3D _drawing;
 
 		/// <summary>
 		/// Additional geometry, that is not part of the graph, for instance the selection markers.
 		/// </summary>
-		private IGraphicContext3D __markerGeometry;
+		private IGraphicsContext3D __markerGeometry;
 
 		/// <summary>
 		/// If true, markers are shown in each of the corners of the graph document.

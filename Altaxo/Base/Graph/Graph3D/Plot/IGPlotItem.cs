@@ -121,7 +121,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="previousPlotItem">Previous plot item.</param>
 		/// <param name="nextPlotItem">Next plot item. Can be null.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+		void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
 		/// <summary>
 		/// Called after painting has finished. Can be used to release resources.
@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="location">The rectangle where the symbol should be painted into.</param>
-		void PaintSymbol(IGraphicContext3D g, RectangleD3D location);
+		void PaintSymbol(IGraphicsContext3D g, RectangleD3D location);
 
 		/// <summary>
 		/// Test wether the mouse hits a plot item. The default implementation returns null.

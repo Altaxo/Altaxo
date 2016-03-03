@@ -566,7 +566,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// Transforms the graphics context is such a way, that the object can be drawn in local coordinates.
 		/// </summary>
 		/// <param name="g">Graphics context (should be saved beforehand).</param>
-		protected virtual void TransformGraphics(IGraphicContext3D g)
+		protected virtual void TransformGraphics(IGraphicsContext3D g)
 		{
 			if (RotationX != 0 || RotationY != 0 || RotationZ != 0 || ScaleX != 1 || ScaleY != 1 || ScaleZ != 1 || ShearX != 0 || ShearY != 0 || ShearZ != 0)
 			{
@@ -627,7 +627,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="context">Additional information used to draw the object.</param>
-		public abstract void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext context);
+		public abstract void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext context);
 
 		/// <summary>
 		/// Creates a cloned copy of this object.

@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <param name="paintContext">The paint context</param>
 		/// <param name="layer">Plot layer.</param>
 		/// <param name="coll">Collection of plot items to draw.</param>
-		void PaintPreprocessing(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll);
+		void PaintPreprocessing(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll);
 
 		/// <summary>
 		/// Finishes the painting of the plot items that belongs to this style. Paints the end.

@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 	using Altaxo.Graph.Graph3D.GraphicsContext;
 	using Drawing.D3D;
 
-	public class D3D10GraphicContext : GraphicContext3DBase, IDisposable
+	public class D3D10GraphicsContext : GraphicsContext3DBase, IDisposable
 	{
 		protected Dictionary<IMaterial, PositionIndexedTriangleBuffer> _positionIndexedTriangleBuffers = new Dictionary<IMaterial, PositionIndexedTriangleBuffer>(MaterialComparer.Instance);
 		protected Dictionary<IMaterial, PositionNormalIndexedTriangleBuffer> _positionNormalIndexedTriangleBuffers = new Dictionary<IMaterial, PositionNormalIndexedTriangleBuffer>(MaterialComparer.Instance);

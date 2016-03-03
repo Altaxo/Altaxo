@@ -655,7 +655,7 @@ namespace Altaxo.Graph.Graph3D
 			}
 		}
 
-		public virtual void Paint(IGraphicContext3D g, IPaintContext paintcontext)
+		public virtual void Paint(IGraphicsContext3D g, IPaintContext paintcontext)
 		{
 			var savedgstate = g.SaveGraphicsState();
 
@@ -671,7 +671,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="g">The graphics context</param>
 		/// <param name="context">The paint context.</param>
-		protected virtual void PaintInternal(IGraphicContext3D g, IPaintContext context)
+		protected virtual void PaintInternal(IGraphicsContext3D g, IPaintContext context)
 		{
 			int len = _graphObjects.Count;
 			for (int i = 0; i < len; i++)

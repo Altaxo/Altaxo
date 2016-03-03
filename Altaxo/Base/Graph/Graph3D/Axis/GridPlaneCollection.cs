@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			return false;
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea layer)
+		public void Paint(IGraphicsContext3D g, IPlotArea layer)
 		{
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].Paint(g, layer);
@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="layer">The layer.</param>
-		public void PaintBackground(IGraphicContext3D g, IPlotArea layer)
+		public void PaintBackground(IGraphicsContext3D g, IPlotArea layer)
 		{
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].PaintBackground(g, layer);
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// </summary>
 		/// <param name="g">The g.</param>
 		/// <param name="layer">The layer.</param>
-		public void PaintGrid(IGraphicContext3D g, IPlotArea layer)
+		public void PaintGrid(IGraphicsContext3D g, IPlotArea layer)
 		{
 			for (int i = 0; i < _innerList.Count; ++i)
 				_innerList[i].PaintGrid(g, layer);

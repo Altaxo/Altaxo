@@ -96,12 +96,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 			public void ScaleFont(double scale)
 			{
-				FontId = FontId.GetFontWithNewSize(scale * FontId.Size);
+				FontId = FontId.WithSize(scale * FontId.Size);
 			}
 
 			public void SetFontStyle(FontXStyle style)
 			{
-				FontId = FontId.GetFontWithNewStyle(style);
+				FontId = FontId.WithStyle(style);
 			}
 
 			/// <summary>
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			public void MergeFontStyle(FontXStyle style)
 			{
 				var newStyle = FontId.Style | style;
-				FontId = FontId.GetFontWithNewStyle(newStyle);
+				FontId = FontId.WithStyle(newStyle);
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			}
 
 			/// <summary>Draws the object.</summary>
-			public virtual void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public virtual void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 			}
 
@@ -296,7 +296,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				SizeZ = sizeZ;
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
 
@@ -329,7 +329,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				double x = xbase;
 				foreach (var ch in _childs)
@@ -385,7 +385,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				if (null != _child)
 				{
@@ -415,7 +415,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				if (_child != null)
 				{
@@ -443,7 +443,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				if (_child != null)
 				{
@@ -473,7 +473,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				if (_child != null)
 				{
@@ -557,7 +557,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
 				if (_subscript != null)
@@ -591,7 +591,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				SizeZ = size.Z;
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
 				g.DrawString(_text, Style.FontId, Style.brush, new PointD3D(xbase, (ybase - fontInfo.cyDescent), zbase), _stringFormat);
@@ -766,7 +766,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public override void Draw(IGraphicContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
+			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				var mylayer = (HostLayer)dc.LinkedObject;
 

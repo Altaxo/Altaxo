@@ -665,18 +665,16 @@ namespace Altaxo.Main
 					{
 						contentList.Add(content);
 					}
+					else if (modelobject is Main.IProjectItemViewModel && document is IProjectItem)
+					{
+						var gvl = (IProjectItemViewModel)modelobject;
+						if (object.ReferenceEquals(gvl.ProjectItem, document))
+							contentList.Add(content);
+					}
 					else if (modelobject is Altaxo.Worksheet.WorksheetViewLayout)
 					{
 						var wvl = (Altaxo.Worksheet.WorksheetViewLayout)modelobject;
 						if (object.ReferenceEquals(wvl.WorksheetLayout, document))
-							contentList.Add(content);
-						else if (wvl.WorksheetLayout != null && object.ReferenceEquals(wvl.WorksheetLayout.DataTable, document))
-							contentList.Add(content);
-					}
-					else if (modelobject is GraphViewLayout)
-					{
-						var gvl = (GraphViewLayout)modelobject;
-						if (object.ReferenceEquals(gvl.GraphDocument, document))
 							contentList.Add(content);
 					}
 				}

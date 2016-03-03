@@ -351,17 +351,17 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_scene.SetLighting(lightSettings);
 		}
 
-		public IGraphicContext3D GetGraphicContext()
+		public IGraphicsContext3D GetGraphicContext()
 		{
-			return new D3D10GraphicContext();
+			return new D3D10GraphicsContext();
 		}
 
-		public void SetDrawing(IGraphicContext3D drawing)
+		public void SetDrawing(IGraphicsContext3D drawing)
 		{
 			if (null == drawing)
 				throw new ArgumentNullException();
 
-			_scene.SetDrawing((D3D10GraphicContext)drawing);
+			_scene.SetDrawing((D3D10GraphicsContext)drawing);
 		}
 
 		public IOverlayContext3D GetGraphicContextForMarkers()

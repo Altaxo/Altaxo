@@ -39,6 +39,7 @@ namespace Altaxo.Graph.Graph3D
 	using Camera;
 	using Drawing.D3D;
 	using GraphicsContext;
+	using Gui.Graph3D;
 
 	public class GraphDocument : GraphDocumentBase
 	{
@@ -85,21 +86,149 @@ namespace Altaxo.Graph.Graph3D
 
 		#region Properties and Property-Keys
 
+		public static readonly Main.Properties.PropertyKey<ItemLocationDirect> PropertyKeyDefaultRootLayerSize =
+		new Main.Properties.PropertyKey<ItemLocationDirect>(
+			"401DBB9A-7605-4DA6-BFBE-C7A24AA42C48",
+			"Graph3D\\DefaultRootLayerSize",
+			Main.Properties.PropertyLevel.All,
+			typeof(GraphDocument),
+			() => new ItemLocationDirect() { SizeX = RADouble.NewAbs(DefaultRootLayerSizeX), SizeY = RADouble.NewAbs(DefaultRootLayerSizeY), SizeZ = RADouble.NewAbs(DefaultRootLayerSizeZ) })
+		{
+			EditingControllerCreation = (doc) =>
+			{
+				var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+				ctrl.ShowPositionElements(false, false);
+				ctrl.ShowAnchorElements(false, false);
+				ctrl.InitializeDocument(doc);
+				return ctrl;
+			}
+		};
+
+		public static readonly Main.Properties.PropertyKey<FontX3D> PropertyKeyDefaultFont =
+			new Main.Properties.PropertyKey<FontX3D>(
+			"8D245305-B64F-4B51-ACB4-A30B5C7C20FE",
+			"Graph3D\\DefaultFont",
+			Main.Properties.PropertyLevel.All,
+			typeof(GraphDocument),
+			() => new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 18, System.Drawing.FontStyle.Regular), 18 * 0.0625))
+			{
+				EditingControllerCreation = (doc) =>
+				{
+					var ctrl = new Gui.Common.Drawing.D3D.FontX3DController { UseDocumentCopy = Gui.UseDocument.Copy };
+					ctrl.InitializeDocument(doc);
+					return ctrl;
+				}
+			};
+
+		public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultForeColor =
+			new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
+			"C574AE52-EFA1-4F77-88EF-2CB1DE3A3867",
+			"Graph3D\\Colors\\Default foreground color",
+			Main.Properties.PropertyLevel.Document,
+			typeof(GraphDocument),
+			() => Altaxo.Drawing.NamedColors.Black
+			)
+			{
+				EditingControllerCreation = (doc) =>
+				{
+					var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+					ctrl.InitializeDocument(doc);
+					return ctrl;
+				}
+			};
+
 		public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
 		{
-			var font = Altaxo.Graph.Gdi.GraphDocument.GetDefaultFont(context);
-
-			return new FontX3D(font, font.Size * 0.0625);
+			if (null != context)
+				return context.GetValue(PropertyKeyDefaultFont);
+			else
+				return new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 18, System.Drawing.FontStyle.Regular), 18 * 0.0625);
 		}
 
-		public static double GetDefaultPenWidth(IReadOnlyPropertyBag context)
+		/// <summary>
+		/// Gets the default width of the pen for all graphics in this graph, using the provided property context.
+		/// </summary>
+		/// <param name="context">The property context.</param>
+		/// <returns>Default pen with in points (1/72 inch).</returns>
+		public static double GetDefaultPenWidth(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(context);
+			double result = 1;
+
+			if (null != context)
+			{
+				var font = context.GetValue(PropertyKeyDefaultFont);
+				using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+				{
+					path.AddString("-", Gdi.GdiFontManager.GdiFontFamily(font.Font), (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
+					var bounds = path.GetBounds();
+
+					if (bounds.Height > 0)
+					{
+						result = Calc.Rounding.RoundToNumberOfSignificantDigits(bounds.Height, 2, MidpointRounding.ToEven);
+					}
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Gets the default major tick length for all graphics in this graph, using the provided property context.
+		/// </summary>
+		/// <param name="context">The property context.</param>
+		/// <returns>Default major tick length in points (1/72 inch).</returns>
+		public static double GetDefaultMajorTickLength(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			double result = 8;
+
+			if (null != context)
+			{
+				var font = context.GetValue(PropertyKeyDefaultFont);
+				using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+				{
+					path.AddString("0", Gdi.GdiFontManager.GdiFontFamily(font.Font), (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
+					var bounds = path.GetBounds();
+
+					if (bounds.Width > 0)
+					{
+						result = 2 * Calc.Rounding.RoundToNumberOfSignificantDigits(bounds.Width / 2, 2, MidpointRounding.ToEven);
+					}
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Gets the default plot symbol size for all graphics in this graph, using the provided property context.
+		/// </summary>
+		/// <param name="context">The property context.</param>
+		/// <returns>Default plot symbol size in points (1/72 inch).</returns>
+		public static double GetDefaultSymbolSize(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			double result = 1;
+
+			if (null != context)
+			{
+				var font = context.GetValue(PropertyKeyDefaultFont);
+				using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+				{
+					path.AddString("x", Gdi.GdiFontManager.GdiFontFamily(font.Font), (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
+					var bounds = path.GetBounds();
+
+					if (bounds.Height > 0)
+					{
+						result = Calc.Rounding.RoundToNumberOfSignificantDigits(bounds.Height, 2, MidpointRounding.ToEven);
+					}
+				}
+			}
+			return result;
 		}
 
 		public static NamedColor GetDefaultForeColor(IReadOnlyPropertyBag context)
 		{
-			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultForeColor(context);
+			if (null == context)
+				context = PropertyExtensions.GetPropertyContextOfProject();
+
+			return context.GetValue<NamedColor>(PropertyKeyDefaultForeColor);
 		}
 
 		public static NamedColor GetDefaultBackColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -110,21 +239,6 @@ namespace Altaxo.Graph.Graph3D
 		public static NamedColor GetDefaultPlotColor(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultPlotColor(context);
-		}
-
-		/// <summary>
-		/// Gets the default plot symbol size for all graphics in this graph, using the provided property context.
-		/// </summary>
-		/// <param name="context">The property context.</param>
-		/// <returns>Default plot symbol size in points (1/72 inch).</returns>
-		public static double GetDefaultSymbolSize(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultSymbolSize(context);
-		}
-
-		public static double GetDefaultMajorTickLength(IReadOnlyPropertyBag context)
-		{
-			return Altaxo.Graph.Gdi.GraphDocument.GetDefaultMajorTickLength(context);
 		}
 
 		#endregion Properties and Property-Keys
@@ -436,7 +550,7 @@ namespace Altaxo.Graph.Graph3D
 			_rootLayer.Position = _rootLayer.Position - (VectorD3D)r.Location;
 		}
 
-		public void Paint(IGraphicContext3D g)
+		public void Paint(IGraphicsContext3D g)
 		{
 			FixupInternalDataStructures();
 

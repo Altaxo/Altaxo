@@ -52,14 +52,12 @@
 		</Condition>
 	</Path>
 
-	<Path name = "/Altaxo/Workbench/MainMenu">
+	<Path name = "/Altaxo/Workbench/MainMenu/Plot">
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
-			<MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}"  type="Menu">
-				<Condition name ="SelectedDataColumns" selected="*" action="Disable">
-					<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
-						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
-				</Condition>
-			</MenuItem>
+			<Condition name ="SelectedDataColumns" selected="*" action="Disable">
+				<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
+					description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
+			</Condition>
 		</Condition>
 	</Path>
 
@@ -119,6 +117,45 @@
 							class="Altaxo.Graph.Graph3D.Commands.MoveActiveLayer" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer}" description="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer.Description}"
 							class="Altaxo.Graph.Graph3D.Commands.DeleteActiveLayer" />
+	</Path>
+
+	<Path name = "/SharpDevelop/Workbench/OpenFileTab/ContextMenu">
+
+		<!-- Graph menu -->
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+			<MenuItem id="Rename"
+ 								insertbefore="CloseSeparator"
+								label="${res:XML.MainMenu.GraphMenu.Rename}"
+								description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
+								class="Altaxo.Graph.Graph3D.Commands.GraphRename" />
+
+			<MenuItem id="MoveToFolder"
+ 								insertbefore="CloseSeparator"
+								label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
+								description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
+								class="Altaxo.Graph.Graph3D.Commands.GraphMoveToFolder" />
+
+			<MenuItem id="Duplicate"
+ 								insertbefore="CloseSeparator"
+								label="${res:XML.MainMenu.GraphMenu.Duplicate}"
+								icon="Icons.16x16.Duplicate"
+								description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}"
+								class="Altaxo.Graph.Graph3D.Commands.DuplicateGraph" />
+
+			<MenuItem id="SaveGraphAsTemplate"
+ 								insertbefore="CloseSeparator"
+								label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
+								icon="Icons.16x16.NewDocumentIcon"
+								description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
+								class="Altaxo.Graph.Graph3D.Commands.SaveGraphAsTemplate" />
+
+			<MenuItem id="EditGraphProperties"
+   								insertbefore="CloseSeparator"
+									label="${res:XML.MainMenu.FileMenu.EditGraphProperties}"
+									icon="Icons.16x16.PropertyBag"
+									description="${res:XML.MainMenu.FileMenu.EditGraphProperties.Description}"
+									class="Altaxo.Graph.Graph3D.Commands.GraphShowProperties" />
+		</Condition>
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/ProjectItemDisplayBindings">

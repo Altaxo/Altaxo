@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 	using Altaxo.Graph.Graph3D.GraphicsContext;
 	using Drawing.D3D;
 
-	public class D3D10OverlayContext : GraphicContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
+	public class D3D10OverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
 	{
 		protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
 		protected PositionColorLineListBuffer _positionColorLineListBuffer;

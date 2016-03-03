@@ -642,7 +642,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// <param name="layer">The layer the axis belongs to.</param>
 		/// <param name="styleInfo">The axis information of the axis to paint.</param>
 		/// <param name="customTickSpacing">If not <c>null</c>, this parameter provides a custom tick spacing that is used instead of the default tick spacing of the scale.</param>
-		public void Paint(IGraphicContext3D g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
+		public void Paint(IGraphicsContext3D g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
 		{
 			CSLineID styleID = styleInfo.Identifier;
 			_cachedAxisStyleInfo = styleInfo.Clone();

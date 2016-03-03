@@ -202,7 +202,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintBackground(IGraphicContext3D g, IPlotArea layer)
+		public void PaintBackground(IGraphicsContext3D g, IPlotArea layer)
 		{
 			if (null == _background)
 				return;
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public void PaintGrid(IGraphicContext3D g, IPlotArea layer)
+		public void PaintGrid(IGraphicsContext3D g, IPlotArea layer)
 		{
 			if (null != _grid1)
 				_grid1.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber1);
@@ -255,7 +255,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				_grid2.Paint(g, layer, _planeID, _planeID.InPlaneAxisNumber2);
 		}
 
-		public void Paint(IGraphicContext3D g, IPlotArea layer)
+		public void Paint(IGraphicsContext3D g, IPlotArea layer)
 		{
 			PaintBackground(g, layer);
 			PaintGrid(g, layer);

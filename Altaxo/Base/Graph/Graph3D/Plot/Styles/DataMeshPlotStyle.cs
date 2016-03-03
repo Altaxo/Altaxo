@@ -287,7 +287,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="gfrx">The graphics context painting in.</param>
 		/// <param name="gl">The layer painting in.</param>
 		/// <param name="plotObject">The data to plot.</param>
-		public void Paint(IGraphicContext3D gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
+		public void Paint(IGraphicsContext3D gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
 		{
 			if (!(plotObject is XYZMeshedColumnPlotData))
 				return; // we cannot plot any other than a TwoDimMeshDataAssociation now
@@ -352,13 +352,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return true;
 		}
 
-		private void BuildImage(IGraphicContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
+		private void BuildImage(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
 		{
 			BuildImageV1(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
 		}
 
 		private void BuildImageV1(
-				IGraphicContext3D g,
+				IGraphicsContext3D g,
 				IPlotArea gl,
 				IROVector lx,
 				IROVector ly,

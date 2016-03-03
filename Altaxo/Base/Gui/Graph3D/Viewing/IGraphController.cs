@@ -61,10 +61,5 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// the current plot number is set to -1.
 		/// </summary>
 		void EnsureValidityOfCurrentPlotNumber();
-
-		/// <summary>
-		/// Does a complete new drawing of the graph, even if the graph is cached in a bitmap.
-		/// </summary>
-		void RefreshGraph();
 	}
 }

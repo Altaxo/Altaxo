@@ -197,7 +197,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			return this._imageProxy == null ? null : this._imageProxy.GetImage();
 		}
 
-		public override void Paint(IGraphicContext3D g, IPaintContext context)
+		public override void Paint(IGraphicsContext3D g, IPaintContext context)
 		{
 			throw new NotImplementedException();
 

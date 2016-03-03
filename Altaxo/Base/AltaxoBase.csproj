@@ -259,8 +259,8 @@
     <Compile Include="Graph\Graph3D\GraphDocumentCollection.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentExportActions.cs" />
     <Compile Include="Graph\Graph3D\GraphicCollection.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\GraphicContext3DBase.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\IGraphicContext3D.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\GraphicsContext3DBase.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\IGraphicsContext3D.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionColorLineListBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionColorIndexedTriangleBuffer.cs" />
@@ -414,6 +414,7 @@
     <Compile Include="Gui\Common\BasicTypes\DateTimeController.cs" />
     <Compile Include="Gui\Common\ConditionalDocumentControllerTwoState.cs" />
     <Compile Include="Gui\Common\DragDropDefinitions.cs" />
+    <Compile Include="Gui\Common\Drawing\D3D\FontX3DController.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
     <Compile Include="Gui\DataConnection\AltaxoOleDbDataSourceController.cs" />
     <Compile Include="Gui\DataConnection\ArbitrarySqlQueryController.cs" />
@@ -557,6 +558,7 @@
     <Compile Include="Main\DocumentNodeAndName.cs" />
     <Compile Include="Main\IProjectItemCollection.cs" />
     <Compile Include="Main\IProjectItemImageExporter.cs" />
+    <Compile Include="Main\IProjectItemViewModel.cs" />
     <Compile Include="Main\RelativeDocumentPath.cs" />
     <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />

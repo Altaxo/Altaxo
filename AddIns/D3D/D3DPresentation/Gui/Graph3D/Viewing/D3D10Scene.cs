@@ -112,7 +112,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private PointD2D _hostSize;
 
-		private D3D10GraphicContext _drawing;
+		private D3D10GraphicsContext _drawing;
 
 		private D3D10OverlayContext _markerGeometry;
 
@@ -310,7 +310,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_hostSize = hostSize;
 		}
 
-		public void SetDrawing(D3D10GraphicContext drawing)
+		public void SetDrawing(D3D10GraphicsContext drawing)
 		{
 			_drawing = drawing;
 			BringDrawingIntoBuffers(drawing);
@@ -356,7 +356,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			}
 		}
 
-		private void BringDrawingIntoBuffers(D3D10GraphicContext drawing)
+		private void BringDrawingIntoBuffers(D3D10GraphicsContext drawing)
 		{
 			Device device = _hostDevice;
 			if (device == null)

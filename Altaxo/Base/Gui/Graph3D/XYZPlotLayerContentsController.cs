@@ -1239,12 +1239,12 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public void Paint(IGraphicContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+			public void Paint(IGraphicsContext3D g, IPaintContext context, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 			{
 				throw new NotImplementedException();
 			}
 
-			public void PaintSymbol(IGraphicContext3D g, RectangleD3D location)
+			public void PaintSymbol(IGraphicsContext3D g, RectangleD3D location)
 			{
 				throw new NotImplementedException();
 			}

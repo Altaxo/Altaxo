@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Graph3D.Background
 {
 	public interface IBackgroundStyle3D : Main.IDocumentLeafNode, ICloneable
 	{
-		void Draw(IGraphicContext3D g, RectangleD3D rectangleD3D);
+		void Draw(IGraphicsContext3D g, RectangleD3D rectangleD3D);
 
 		RectangleD3D MeasureItem(RectangleD3D textRectangle);
 

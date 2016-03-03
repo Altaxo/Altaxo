@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		Matrix4x3 Transformation { get; }
 	}
 
-	public interface IGraphicContext3D : ITransformationContext
+	public interface IGraphicsContext3D : ITransformationContext
 	{
 		/// <summary>
 		/// Gets an indexed triangle buffer without using a normal, i.e. either <see cref="IPositionIndexedTriangleBuffer"/>, <see cref="IPositionColorIndexedTriangleBuffer"/> or <see cref="IPositionUVIndexedTriangleBuffer"/>, depending on wether the material has its own color or texture.

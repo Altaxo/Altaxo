@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Graph3D.Common
 
 			var scene = new Altaxo.Gui.Graph3D.Viewing.D3D10Scene();
 
-			var g = new D3D10GraphicContext();
+			var g = new D3D10GraphicsContext();
 
 			doc.Paint(g);
 

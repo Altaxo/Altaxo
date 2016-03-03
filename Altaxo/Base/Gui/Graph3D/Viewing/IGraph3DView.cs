@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// Sets a new geometry, but does not trigger rendering (use <see cref="TriggerRendering"/> for triggering rendering.
 		/// </summary>
 		/// <param name="drawing">The drawing.</param>
-		void SetDrawing(Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D drawing);
+		void SetDrawing(Altaxo.Graph.Graph3D.GraphicsContext.IGraphicsContext3D drawing);
 
 		/// <summary>
 		/// Triggers a new rendering without building up a new geometry. Could be used for instance if the light or the camera has changed, but not the geometry.
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// Gets the graphic context that is appropriate for the view.
 		/// </summary>
 		/// <returns>New graphic context.</returns>
-		Altaxo.Graph.Graph3D.GraphicsContext.IGraphicContext3D GetGraphicContext();
+		Altaxo.Graph.Graph3D.GraphicsContext.IGraphicsContext3D GetGraphicContext();
 
 		/// <summary>
 		/// Gets the graphic context for root layer markers, i.e. for stuff that doesn't belong to the graph document.

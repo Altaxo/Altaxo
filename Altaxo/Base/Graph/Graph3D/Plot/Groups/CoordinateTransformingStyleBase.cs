@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
-		public static void Paint(IGraphicContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
+		public static void Paint(IGraphicsContext3D g, Altaxo.Graph.IPaintContext paintContext, IPlotArea layer, PlotItemCollection coll)
 		{
 			for (int i = coll.Count - 1; i >= 0; --i)
 			{
