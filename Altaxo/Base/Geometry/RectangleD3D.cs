@@ -349,7 +349,7 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Creates a rectangle that includes all the provided points.
+		/// Creates a new rectangle that includes all the provided points.
 		/// </summary>
 		/// <param name="points">The points that the rectangle should include.</param>
 		/// <returns>The rectangle that includes all the provided points.</returns>
@@ -368,6 +368,29 @@ namespace Altaxo.Geometry
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Returns a rectangle that is based on the current rectangle, but was expanded to include all the provided points.
+		/// </summary>
+		/// <param name="points">The points to include.</param>
+		/// <returns>A rectangle that is based on the current rectangle, but was expanded to include all the provided points.</returns>
+		public RectangleD3D WithPointsIncluded(IEnumerable<PointD3D> points)
+		{
+			var result = this;
+			foreach (var p in points)
+				result.ExpandToInclude(p);
+			return result;
+		}
+
+		/// <summary>
+		/// Returns a rectangle that is based on the current rectangle, but was expanded to include all vertex points of the provided rectangle <paramref name="r"/>.
+		/// </summary>
+		/// <param name="r">The rectangle, whose vertices have to be included.</param>
+		/// <returns>A rectangle that is based on the current rectangle, but was expanded to include all vertex points of the provided rectangle <paramref name="r"/>.</returns>
+		public RectangleD3D WithRectangleIncluded(RectangleD3D r)
+		{
+			return WithPointsIncluded(r.Vertices);
 		}
 
 		/// <summary>
