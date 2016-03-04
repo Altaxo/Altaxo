@@ -312,15 +312,13 @@ namespace Altaxo.Graph.Gdi.CS
 				{
 					if (id.LogicalValueOtherFirst <= 0.5)
 					{
-						var id1 = id.Clone();
-						id1.LogicalValueOtherFirst = 0;
+						var id1 = id.WithLogicalValueOtherFirst(0);
 						var basename = GetAxisName_Logical0Or1(id1);
 						return string.Format("{0} ({1}% offset)", basename, id.LogicalValueOtherFirst * 100);
 					}
 					else // id.LogicalValueOtherFirst>0.5)
 					{
-						var id1 = id.Clone();
-						id1.LogicalValueOtherFirst = 1;
+						var id1 = id.WithLogicalValueOtherFirst(1);
 						var basename = GetAxisName_Logical0Or1(id1);
 						return string.Format("{0} ({1}% offset)", basename, (id.LogicalValueOtherFirst - 1) * 100);
 					}

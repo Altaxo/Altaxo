@@ -33,7 +33,7 @@ namespace Altaxo.Graph
 	/// Identifier for isolines in 2D and 3D coordinate systems. An isoline is created by varying one logical coordinate, while the other logical coordinates are fixed.
 	/// The position of the isoline in the coordinate space can be specified either by the non-varying logical values (0..1), or by physical values (which are converted into logical values by the scale).
 	/// </summary>
-	public sealed class CSLineID : ICloneable
+	public sealed class CSLineID : Main.IImmutable
 	{
 		/// <summary>
 		/// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
@@ -74,6 +74,14 @@ namespace Altaxo.Graph
 
 		#region Version 0
 
+		/// <summary>
+		/// Only for deserialization purposes.
+		/// </summary>
+		private CSLineID()
+		{
+			_logicalValueSecondOther = double.NaN;
+		}
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSLineID), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -100,10 +108,9 @@ namespace Altaxo.Graph
 				}
 			}
 
-			protected virtual CSLineID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				CSLineID s = (o == null ? new CSLineID() : (CSLineID)o);
-
+				var s = new CSLineID();
 				s._parallelAxisNumber = info.GetInt32("Axis");
 
 				s._logicalValueFirstOther = info.GetDouble("Logical1");
@@ -122,47 +129,11 @@ namespace Altaxo.Graph
 
 				return s;
 			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				CSLineID s = SDeserialize(o, info, parent);
-				return s;
-			}
 		}
 
 		#endregion Version 0
 
 		#endregion Serialization
-
-		public CSLineID(CSLineID from)
-		{
-			this._parallelAxisNumber = from._parallelAxisNumber;
-			this._logicalValueFirstOther = from._logicalValueFirstOther;
-			this._usePhysicalValueFirstOther = from._usePhysicalValueFirstOther;
-			this._physicalValueFirstOther = from._physicalValueFirstOther;
-
-			this._logicalValueSecondOther = from._logicalValueSecondOther;
-			this._usePhysicalValueSecondOther = from._usePhysicalValueSecondOther;
-			this._physicalValueSecondOther = from._physicalValueSecondOther;
-		}
-
-		object ICloneable.Clone()
-		{
-			return new CSLineID(this);
-		}
-
-		public CSLineID Clone()
-		{
-			return new CSLineID(this);
-		}
-
-		/// <summary>
-		/// Only for deserialization purposes.
-		/// </summary>
-		private CSLineID()
-		{
-			_logicalValueSecondOther = double.NaN;
-		}
 
 		/// <summary>
 		/// Initialized a 2D identifier from the parallel axis and the physical value of the perpendicular axis.
@@ -236,9 +207,7 @@ namespace Altaxo.Graph
 		/// <remarks>If template is using physical values instead of logical values, the offset will have no effect.</remarks>
 		public static CSLineID FromIDandFirstLogicalOffset(CSLineID from, double offset1)
 		{
-			CSLineID retval = new CSLineID(from);
-			retval._logicalValueFirstOther += offset1;
-			return retval;
+			return from.WithLogicalValueOtherFirst(from.LogicalValueOtherFirst + offset1);
 		}
 
 		/// <summary>
@@ -255,14 +224,14 @@ namespace Altaxo.Graph
 			if (double.IsNaN(physicalValueOther))
 				throw new ArgumentException("Physical value is NaN, but it must be a valid number.");
 
-			CSLineID id = new CSLineID();
-			id._parallelAxisNumber = parallelAxisNumber;
-			id._physicalValueFirstOther = physicalValueOther;
-			id._logicalValueFirstOther = double.NaN;
-			id._usePhysicalValueFirstOther = true;
-
-			id._logicalValueSecondOther = double.NaN;
-			return id;
+			return new CSLineID()
+			{
+				_parallelAxisNumber = parallelAxisNumber,
+				_physicalValueFirstOther = physicalValueOther,
+				_logicalValueFirstOther = double.NaN,
+				_usePhysicalValueFirstOther = true,
+				_logicalValueSecondOther = double.NaN
+			};
 		}
 
 		/// <summary>
@@ -279,14 +248,14 @@ namespace Altaxo.Graph
 			if (!physicalValueOther.Equals(physicalValueOther))
 				throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValueOther.ToString());
 
-			CSLineID id = new CSLineID();
-			id._parallelAxisNumber = parallelAxisNumber;
-			id._physicalValueFirstOther = physicalValueOther;
-			id._logicalValueFirstOther = double.NaN;
-			id._usePhysicalValueFirstOther = true;
-
-			id._logicalValueSecondOther = double.NaN;
-			return id;
+			return new CSLineID()
+			{
+				_parallelAxisNumber = parallelAxisNumber,
+				_physicalValueFirstOther = physicalValueOther,
+				_logicalValueFirstOther = double.NaN,
+				_usePhysicalValueFirstOther = true,
+				_logicalValueSecondOther = double.NaN
+			};
 		}
 
 		/// <summary>
@@ -347,12 +316,23 @@ namespace Altaxo.Graph
 			{
 				return _logicalValueFirstOther;
 			}
-			set  // setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
+		}
+
+		public CSLineID WithLogicalValueOtherFirst(double logicalValueOtherFirst)
+		{
+			if (_logicalValueFirstOther == logicalValueOtherFirst)
 			{
-				if (_usePhysicalValueFirstOther)
-					_logicalValueFirstOther = value;
-				else
+				return this;
+			}
+			else
+			{
+				// setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
+				if (!_usePhysicalValueFirstOther)
 					throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
+
+				var result = (CSLineID)this.MemberwiseClone();
+				result._logicalValueFirstOther = logicalValueOtherFirst;
+				return result;
 			}
 		}
 
@@ -367,12 +347,23 @@ namespace Altaxo.Graph
 			{
 				return _logicalValueSecondOther;
 			}
-			set // setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
+		}
+
+		public CSLineID WithLogicalValueOtherSecond(double logicalValueOtherSecond)
+		{
+			if (_logicalValueSecondOther == logicalValueOtherSecond)
 			{
-				if (_usePhysicalValueSecondOther)
-					_logicalValueSecondOther = value;
-				else
+				return this;
+			}
+			else
+			{
+				// setting this value is only intended if UsePhysicalValue is true, and the logical value is calculated from the physical value. The result can then be stored here.
+				if (!_usePhysicalValueSecondOther)
 					throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
+
+				var result = (CSLineID)this.MemberwiseClone();
+				result._logicalValueSecondOther = logicalValueOtherSecond;
+				return result;
 			}
 		}
 

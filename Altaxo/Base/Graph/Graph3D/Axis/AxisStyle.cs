@@ -124,7 +124,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 			if (!object.ReferenceEquals(this, from))
 			{
-				this._styleID = from._styleID.Clone();
+				this._styleID = from._styleID; // immutable
 				this._cachedAxisInfo = from._cachedAxisInfo; // attention - have to appear _before_ CopyWithoutIdFrom, since the _cachedAxisInfo is used when cloning AxisLineStyle!
 				CopyWithoutIdFrom(from);
 			}
@@ -333,13 +333,13 @@ namespace Altaxo.Graph.Graph3D.Axis
 			{
 				// then update the logical value of this identifier
 				double logicalValue = layer.Scales[_styleID.AxisNumberOtherFirst].PhysicalVariantToNormal(_styleID.PhysicalValueOtherFirst);
-				_styleID.LogicalValueOtherFirst = logicalValue;
+				_styleID = _styleID.WithLogicalValueOtherFirst(logicalValue);
 			}
 			if (_styleID.UsePhysicalValueOtherSecond)
 			{
 				// then update the logical value of this identifier
 				double logicalValue = layer.Scales[_styleID.AxisNumberOtherSecond].PhysicalVariantToNormal(_styleID.PhysicalValueOtherSecond);
-				_styleID.LogicalValueOtherSecond = logicalValue;
+				_styleID = _styleID.WithLogicalValueOtherSecond(logicalValue);
 			}
 
 			CachedAxisInformation = GetAxisStyleInformation(_styleID);
