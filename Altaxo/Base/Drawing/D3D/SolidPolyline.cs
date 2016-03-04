@@ -109,7 +109,7 @@ namespace Altaxo.Drawing.D3D
 
 			for (int i = 0; i < crossSectionCount; ++i)
 			{
-				tp = matrix.Transform(_crossSection.Vertices[i]);
+				tp = matrix.Transform(_crossSection.Vertices(i));
 				AddPosition(tp);
 
 				AddIndices(
@@ -132,7 +132,7 @@ namespace Altaxo.Drawing.D3D
 
 				for (int i = 0; i < crossSectionCount; ++i)
 				{
-					tp = matrix.Transform(_crossSection.Vertices[i]);
+					tp = matrix.Transform(_crossSection.Vertices(i));
 					AddPosition(tp);
 
 					AddIndices(
@@ -160,7 +160,7 @@ namespace Altaxo.Drawing.D3D
 			matrix = Math3D.Get2DProjectionToPlane(e, n, _linePoints[_linePoints.Count - 1]);
 			for (int i = 0; i < crossSectionCount; ++i)
 			{
-				tp = matrix.Transform(_crossSection.Vertices[i]);
+				tp = matrix.Transform(_crossSection.Vertices(i));
 				AddPosition(tp);
 
 				AddIndices(
@@ -197,9 +197,6 @@ namespace Altaxo.Drawing.D3D
 			if (_linePoints.Count < 2)
 				throw new ArgumentOutOfRangeException("linePoints.Count<2");
 
-			var crossSectionVertices = _crossSection.Vertices;
-			var crossSectionNormals = _crossSection.Normals;
-			var crossSectionVertexIsSharp = _crossSection.IsVertexSharp;
 			var crossSectionVertexCount = _crossSection.NumberOfVertices;
 			var crossSectionNormalCount = _crossSection.NumberOfNormals;
 
@@ -227,10 +224,10 @@ namespace Altaxo.Drawing.D3D
 			// but if the cap is pointy, then we need as many positions as normals
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastPositionsTransformed[i] = tp = matrix.Transform(crossSectionVertices[i]);
+				lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
 				AddPositionAndNormal(tp, -currSeg);
 
-				if (crossSectionVertexIsSharp[i])
+				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
 					AddPositionAndNormal(tp, -currSeg);
@@ -247,13 +244,13 @@ namespace Altaxo.Drawing.D3D
 			// now the positions and normals for the start of the first segment
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastNormalsTransformed[j] = tn = matrix.Transform(crossSectionNormals[j]);
+				lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
 				AddPositionAndNormal(lastPositionsTransformed[i], tn);
 
-				if (crossSectionVertexIsSharp[i])
+				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
-					lastNormalsTransformed[j] = tn = matrix.Transform(crossSectionNormals[j]);
+					lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
 					AddPositionAndNormal(lastPositionsTransformed[i], tn);
 				}
 			}
@@ -272,10 +269,10 @@ namespace Altaxo.Drawing.D3D
 				// add positions and normals of the join and make the triangles from the last line join to this line join
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
-					lastPositionsTransformed[i] = tp = matrix.Transform(crossSectionVertices[i]);
+					lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
 					AddPositionAndNormal(tp, lastNormalsTransformed[j]);
 
-					if (crossSectionVertexIsSharp[i])
+					if (_crossSection.IsVertexSharp(i))
 					{
 						++j;
 						AddPositionAndNormal(tp, lastNormalsTransformed[j]);
@@ -303,13 +300,13 @@ namespace Altaxo.Drawing.D3D
 				var normalTransformation = Math3D.Get2DProjectionToPlane(e, n, _linePoints[mSeg]);
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
-					lastNormalsTransformed[j] = tn = normalTransformation.Transform(crossSectionNormals[j]);
+					lastNormalsTransformed[j] = tn = normalTransformation.Transform(_crossSection.Normals(j));
 					AddPositionAndNormal(lastPositionsTransformed[i], tn);
 
-					if (crossSectionVertexIsSharp[i])
+					if (_crossSection.IsVertexSharp(i))
 					{
 						++j;
-						lastNormalsTransformed[j] = tn = matrix.Transform(crossSectionNormals[j]);
+						lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
 						AddPositionAndNormal(lastPositionsTransformed[i], tn);
 					}
 				}
@@ -320,13 +317,13 @@ namespace Altaxo.Drawing.D3D
 			matrix = Math3D.Get2DProjectionToPlane(e, n, _linePoints[_linePoints.Count - 1]);
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastPositionsTransformed[i] = tp = matrix.Transform(crossSectionVertices[i]);
+				lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
 				AddPositionAndNormal(tp, lastNormalsTransformed[j]);
 
-				if (crossSectionVertexIsSharp[i])
+				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
-					lastNormalsTransformed[j] = tn = matrix.Transform(crossSectionNormals[j]);
+					lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
 					AddPositionAndNormal(tp, tn);
 				}
 
@@ -347,7 +344,7 @@ namespace Altaxo.Drawing.D3D
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
 				AddPositionAndNormal(lastPositionsTransformed[i], currSeg);
-				if (crossSectionVertexIsSharp[i])
+				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
 					AddPositionAndNormal(lastPositionsTransformed[i], currSeg);

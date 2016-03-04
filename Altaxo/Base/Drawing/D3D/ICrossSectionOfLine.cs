@@ -37,11 +37,14 @@ namespace Altaxo.Drawing.D3D
 
 		ICrossSectionOfLine WithSize2(double size2);
 
-		bool[] IsVertexSharp { get; }
-		VectorD3D[] Normals { get; }
+		bool IsVertexSharp(int idx);
+
+		VectorD3D Normals(int i);
+
 		int NumberOfNormals { get; }
 		int NumberOfVertices { get; }
-		PointD3D[] Vertices { get; }
+
+		PointD3D Vertices(int i);
 
 		double GetDistanceFromCenter(int i);
 

@@ -41,9 +41,6 @@ namespace Altaxo.Drawing.D3D
 			Action<int, int, int> AddIndices,
 			ref int startIndex)
 		{
-			var crossSectionVertices = crossSection.Vertices;
-			var crossSectionNormals = crossSection.Normals;
-			var crossSectionVertexIsSharp = crossSection.IsVertexSharp;
 			var crossSectionVertexCount = crossSection.NumberOfVertices;
 			var crossSectionNormalCount = crossSection.NumberOfNormals;
 
@@ -70,21 +67,21 @@ namespace Altaxo.Drawing.D3D
 
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
-					PointD3D sp = crossSectionVertices[i];
-					lastPositionsTransformed[i] = tp = matrix.Transform(new PointD3D(crossSectionVertices[i].X * contour.Vertices[contourVertexIdx].X, crossSectionVertices[i].Y * contour.Vertices[contourVertexIdx].X, 0));
+					PointD3D sp = crossSection.Vertices(i);
+					lastPositionsTransformed[i] = tp = matrix.Transform(new PointD3D(sp.X * contour.Vertices[contourVertexIdx].X, sp.Y * contour.Vertices[contourVertexIdx].X, 0));
 
 					// Calculation of the normal: that's complicated and has to include the first normal of the contour and
-					VectorD3D s = crossSection.Normals[j]; // current section-normal (only x and y component considered)
+					VectorD3D s = crossSection.Normals(j); // current section-normal (only x and y component considered)
 					VectorD3D c = contour.Normals[contourNormalIdx]; // current contour-normal (only x and y component considered)
 					tn = GetNormalVector(maxRadius, sp, s, c);
 					tn = vectorTransform.Transform(tn);
 
 					AddPositionAndNormal(tp, tn);
 
-					if (crossSectionVertexIsSharp[i]) // if neccessary, add the second crossSection normals
+					if (crossSection.IsVertexSharp(i)) // if neccessary, add the second crossSection normals
 					{
 						++j;
-						s = crossSection.Normals[j];
+						s = crossSection.Normals(j);
 						tn = GetNormalVector(maxRadius, sp, s, c);
 						tn = vectorTransform.Transform(tn);
 
@@ -115,18 +112,18 @@ namespace Altaxo.Drawing.D3D
 					for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 					{
 						// Calculation of the normal: that's complicated and has to include the first normal of the contour and
-						PointD3D sp = crossSectionVertices[i];
-						VectorD3D s = crossSection.Normals[j];
+						PointD3D sp = crossSection.Vertices(i);
+						VectorD3D s = crossSection.Normals(j);
 						VectorD3D c = contour.Normals[contourNormalIdx];
 						tn = GetNormalVector(maxRadius, sp, s, c);
 						tn = vectorTransform.Transform(tn);
 
 						AddPositionAndNormal(lastPositionsTransformed[i], tn);
 
-						if (crossSectionVertexIsSharp[i]) // add if neccessary the second crossSection Normals
+						if (crossSection.IsVertexSharp(i)) // add if neccessary the second crossSection Normals
 						{
 							++j;
-							s = crossSection.Normals[j];
+							s = crossSection.Normals(j);
 							tn = GetNormalVector(maxRadius, sp, s, c);
 							tn = vectorTransform.Transform(tn);
 							AddPositionAndNormal(lastPositionsTransformed[i], tn);

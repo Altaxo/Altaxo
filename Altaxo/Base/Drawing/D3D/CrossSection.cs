@@ -80,9 +80,20 @@ namespace Altaxo.Drawing.D3D
 			return WithSize(_size1, size2);
 		}
 
-		public PointD3D[] Vertices { get { return _vertices; } }
-		public bool[] IsVertexSharp { get { return _isVertexSharp; } }
-		public VectorD3D[] Normals { get { return _normals; } }
+		public PointD3D Vertices(int idx)
+		{
+			return _vertices[idx];
+		}
+
+		public bool IsVertexSharp(int idx)
+		{
+			return _isVertexSharp[idx];
+		}
+
+		public VectorD3D Normals(int idx)
+		{
+			return _normals[idx];
+		}
 
 		public int NumberOfVertices { get { return _vertices.Length; } }
 		public int NumberOfNormals { get { return _normals.Length; } }
@@ -198,14 +209,14 @@ namespace Altaxo.Drawing.D3D
 			result._isVertexSharp[2] = true;
 			result._isVertexSharp[3] = true;
 
-			result.Normals[0] = new VectorD3D(0, -1, 0);
-			result.Normals[1] = new VectorD3D(1, 0, 0);
-			result.Normals[2] = new VectorD3D(1, 0, 0);
-			result.Normals[3] = new VectorD3D(0, 1, 0);
-			result.Normals[4] = new VectorD3D(0, 1, 0);
-			result.Normals[5] = new VectorD3D(-1, 0, 0);
-			result.Normals[6] = new VectorD3D(-1, 0, 0);
-			result.Normals[7] = new VectorD3D(0, -1, 0);
+			result._normals[0] = new VectorD3D(0, -1, 0);
+			result._normals[1] = new VectorD3D(1, 0, 0);
+			result._normals[2] = new VectorD3D(1, 0, 0);
+			result._normals[3] = new VectorD3D(0, 1, 0);
+			result._normals[4] = new VectorD3D(0, 1, 0);
+			result._normals[5] = new VectorD3D(-1, 0, 0);
+			result._normals[6] = new VectorD3D(-1, 0, 0);
+			result._normals[7] = new VectorD3D(0, -1, 0);
 
 			return result;
 		}
@@ -229,14 +240,14 @@ namespace Altaxo.Drawing.D3D
 			result._isVertexSharp[2] = true;
 			result._isVertexSharp[3] = true;
 
-			result.Normals[0] = new VectorD3D(0, -1, 0);
-			result.Normals[1] = new VectorD3D(1, 0, 0);
-			result.Normals[2] = new VectorD3D(1, 0, 0);
-			result.Normals[3] = new VectorD3D(0, 1, 0);
-			result.Normals[4] = new VectorD3D(0, 1, 0);
-			result.Normals[5] = new VectorD3D(-1, 0, 0);
-			result.Normals[6] = new VectorD3D(-1, 0, 0);
-			result.Normals[7] = new VectorD3D(0, -1, 0);
+			result._normals[0] = new VectorD3D(0, -1, 0);
+			result._normals[1] = new VectorD3D(1, 0, 0);
+			result._normals[2] = new VectorD3D(1, 0, 0);
+			result._normals[3] = new VectorD3D(0, 1, 0);
+			result._normals[4] = new VectorD3D(0, 1, 0);
+			result._normals[5] = new VectorD3D(-1, 0, 0);
+			result._normals[6] = new VectorD3D(-1, 0, 0);
+			result._normals[7] = new VectorD3D(0, -1, 0);
 
 			return result;
 		}
