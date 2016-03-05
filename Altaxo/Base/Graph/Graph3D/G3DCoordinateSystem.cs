@@ -450,26 +450,28 @@ namespace Altaxo.Graph.Graph3D
 				}
 			}
 
-			CSAxisInformation result = new CSAxisInformation(styleID);
+			CSAxisInformation result;
 			if (nearestInfo == null)
 			{
-				result.SetDefaultValues();
+				result = CSAxisInformation.NewWithDefaultValues(styleID);
 			}
 			else
 			{
-				result.CopyWithoutIdentifierFrom(nearestInfo);
+				result = nearestInfo.WithIdentifier(styleID);
 				if (minDistance != 0)
 				{
-					result.NameOfAxisStyle += string.Format(" ({0}% offs.)", minDistance * 100);
+					result = result.WithNameOfAxisStyle(result.NameOfAxisStyle + string.Format(" ({0}% offs.)", minDistance * 100));
 				}
 			}
 
-			result.NameOfFirstUpSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstUp);
-			result.NameOfFirstDownSide = GetAxisSideName(result.Identifier, CSAxisSide.FirstDown);
+			result = result.WithNamesForFirstUpAndDownSides(
+					 GetAxisSideName(result.Identifier, CSAxisSide.FirstUp),
+					 GetAxisSideName(result.Identifier, CSAxisSide.FirstDown));
 			if (Is3D)
 			{
-				result.NameOfSecondUpSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondUp);
-				result.NameOfSecondDownSide = GetAxisSideName(result.Identifier, CSAxisSide.SecondDown);
+				result = result.WithNamesForSecondUpAndDownSides(
+				GetAxisSideName(result.Identifier, CSAxisSide.SecondUp),
+				GetAxisSideName(result.Identifier, CSAxisSide.SecondDown));
 			}
 
 			return result;

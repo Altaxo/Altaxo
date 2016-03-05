@@ -29,7 +29,7 @@ using System.Text;
 namespace Altaxo.Graph
 {
 	[Serializable]
-	public class CSAxisInformation : ICloneable
+	public class CSAxisInformation : Main.IImmutable
 	{
 		private CSLineID _identifier;
 
@@ -51,41 +51,104 @@ namespace Altaxo.Graph
 		/// <summary>This is the logical value where the axis ends. Normally, this is 1 (one). For a segment of an axis, this might be any value.</summary>
 		private double _logicalValueAxisEnd = 1;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CSAxisInformation"/> class, with only the identifier, but no other information.
+		/// </summary>
+		/// <param name="identifier">The identifier.</param>
 		public CSAxisInformation(CSLineID identifier)
 		{
 			_identifier = identifier;
 		}
 
-		public CSAxisInformation(CSAxisInformation from)
+		public CSAxisInformation(
+		CSLineID Identifier,
+		string NameOfAxisStyle,
+		string NameOfFirstDownSide,
+		string NameOfFirstUpSide,
+		CSAxisSide PreferredLabelSide
+		)
 		{
-			CopyFrom(from);
+			_identifier = Identifier;
+			_nameOfAxisStyle = NameOfAxisStyle;
+			_nameOfFirstDownSide = NameOfFirstDownSide;
+			_nameOfFirstUpSide = NameOfFirstUpSide;
+			_preferedLabelSide = PreferredLabelSide;
 		}
 
-		public void CopyFrom(CSAxisInformation from)
+		public CSAxisInformation(
+			CSLineID Identifier,
+			string NameOfAxisStyle,
+			string NameOfFirstDownSide,
+			string NameOfFirstUpSide,
+			CSAxisSide PreferredLabelSide,
+			bool IsShownByDefault,
+			bool HasTitleByDefault
+			)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			this._identifier = from._identifier;
-			CopyWithoutIdentifierFrom(from);
+			_identifier = Identifier;
+			_nameOfAxisStyle = NameOfAxisStyle;
+			_nameOfFirstDownSide = NameOfFirstDownSide;
+			_nameOfFirstUpSide = NameOfFirstUpSide;
+			_preferedLabelSide = PreferredLabelSide;
+			_isShownByDefault = IsShownByDefault;
+			_hasTitleByDefault = HasTitleByDefault;
 		}
 
-		public void CopyWithoutIdentifierFrom(CSAxisInformation from)
+		public CSAxisInformation(
+			CSLineID Identifier,
+			string NameOfAxisStyle,
+			string NameOfFirstDownSide,
+			string NameOfFirstUpSide,
+			string NameOfSecondDownSide,
+			string NameOfSecondUpSide,
+			CSAxisSide PreferredLabelSide,
+			CSAxisSide PreferredTickSide,
+			bool IsShownByDefault,
+			bool HasTicksByDefault,
+			bool HasLabelsByDefault,
+			bool HasTitleByDefault
+			)
 		{
-			this._nameOfAxisStyle = from._nameOfAxisStyle;
-			this._nameOfFirstDownSide = from._nameOfFirstDownSide;
-			this._nameOfFirstUpSide = from._nameOfFirstUpSide;
-			this._nameOfSecondDownSide = from._nameOfSecondDownSide;
-			this._nameOfSecondUpSide = from._nameOfSecondUpSide;
-			this._preferedLabelSide = from._preferedLabelSide;
-			this._isShownByDefault = from._isShownByDefault;
-			this._hasTitleByDefault = from._hasTitleByDefault;
-			this._logicalValueAxisOrg = from._logicalValueAxisOrg;
-			this._logicalValueAxisEnd = from._logicalValueAxisEnd;
+			_identifier = Identifier;
+			_nameOfAxisStyle = NameOfAxisStyle;
+			_nameOfFirstDownSide = NameOfFirstDownSide;
+			_nameOfFirstUpSide = NameOfFirstUpSide;
+			_nameOfSecondDownSide = NameOfSecondDownSide;
+			_nameOfSecondUpSide = NameOfSecondUpSide;
+			_preferedLabelSide = PreferredLabelSide;
+			_preferedTickSide = PreferredTickSide;
+			_isShownByDefault = IsShownByDefault;
+			_hasTicksByDefault = HasTicksByDefault;
+			_hasLabelsByDefault = HasLabelsByDefault;
+			_hasTitleByDefault = HasTitleByDefault;
 		}
 
-		public void SetDefaultValues()
+		public CSAxisInformation WithIdentifier(CSLineID identifier)
 		{
+			if (_identifier == identifier)
+			{
+				return this;
+			}
+			else
+			{
+				if (null == identifier)
+					throw new ArgumentNullException(nameof(identifier));
+
+				var result = (CSAxisInformation)this.MemberwiseClone();
+				result._identifier = identifier;
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// This is a private constructor that sets not only the identifier, but also default values. The second argument is ignored, but is essential
+		/// to distinguish this contructor from the constructor that sets no default values.
+		/// </summary>
+		/// <param name="identifier">The identifier.</param>
+		/// <param name="idIgnored">Ignored argument</param>
+		private CSAxisInformation(CSLineID identifier, CSLineID idIgnored)
+		{
+			_identifier = identifier;
 			switch (_identifier.ParallelAxisNumber)
 			{
 				case 0:
@@ -140,14 +203,12 @@ namespace Altaxo.Graph
 			_preferedLabelSide = CSAxisSide.FirstDown;
 		}
 
-		public CSAxisInformation Clone()
+		public static CSAxisInformation NewWithDefaultValues(CSLineID identifier)
 		{
-			return new CSAxisInformation(this);
-		}
+			if (null == identifier)
+				throw new ArgumentNullException(nameof(identifier));
 
-		object ICloneable.Clone()
-		{
-			return new CSAxisInformation(this);
+			return new CSAxisInformation(identifier, identifier);
 		}
 
 		public CSLineID Identifier
@@ -161,7 +222,20 @@ namespace Altaxo.Graph
 		public string NameOfAxisStyle
 		{
 			get { return _nameOfAxisStyle; }
-			set { _nameOfAxisStyle = value; }
+		}
+
+		public CSAxisInformation WithNameOfAxisStyle(string nameOfAxisStyle)
+		{
+			if (_nameOfAxisStyle == nameOfAxisStyle)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (CSAxisInformation)MemberwiseClone();
+				result._nameOfAxisStyle = nameOfAxisStyle;
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -170,7 +244,6 @@ namespace Altaxo.Graph
 		public string NameOfFirstDownSide
 		{
 			get { return _nameOfFirstDownSide; }
-			set { _nameOfFirstDownSide = value; }
 		}
 
 		/// <summary>
@@ -179,7 +252,21 @@ namespace Altaxo.Graph
 		public string NameOfFirstUpSide
 		{
 			get { return _nameOfFirstUpSide; }
-			set { _nameOfFirstUpSide = value; }
+		}
+
+		public CSAxisInformation WithNamesForFirstUpAndDownSides(string NameOfFirstUpSide, string NameOfFirstDownSide)
+		{
+			if (_nameOfFirstUpSide == NameOfFirstUpSide && _nameOfFirstDownSide == NameOfFirstDownSide)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (CSAxisInformation)MemberwiseClone();
+				result._nameOfFirstUpSide = NameOfFirstUpSide;
+				result._nameOfFirstDownSide = NameOfFirstDownSide;
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -188,7 +275,6 @@ namespace Altaxo.Graph
 		public string NameOfSecondDownSide
 		{
 			get { return _nameOfFirstDownSide; }
-			set { _nameOfFirstDownSide = value; }
 		}
 
 		/// <summary>
@@ -197,7 +283,21 @@ namespace Altaxo.Graph
 		public string NameOfSecondUpSide
 		{
 			get { return _nameOfFirstUpSide; }
-			set { _nameOfFirstUpSide = value; }
+		}
+
+		public CSAxisInformation WithNamesForSecondUpAndDownSides(string NameOfSecondUpSide, string NameOfSecondDownSide)
+		{
+			if (_nameOfSecondUpSide == NameOfSecondUpSide && _nameOfSecondDownSide == NameOfSecondDownSide)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (CSAxisInformation)MemberwiseClone();
+				result._nameOfSecondUpSide = NameOfSecondUpSide;
+				result._nameOfSecondDownSide = NameOfSecondDownSide;
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -206,7 +306,6 @@ namespace Altaxo.Graph
 		public CSAxisSide PreferredLabelSide
 		{
 			get { return _preferedLabelSide; }
-			set { _preferedLabelSide = value; }
 		}
 
 		/// <summary>
@@ -215,31 +314,26 @@ namespace Altaxo.Graph
 		public CSAxisSide PreferredTickSide
 		{
 			get { return _preferedTickSide; }
-			set { _preferedTickSide = value; }
 		}
 
 		public bool IsShownByDefault
 		{
 			get { return _isShownByDefault; }
-			set { _isShownByDefault = value; }
 		}
 
 		public bool HasTitleByDefault
 		{
 			get { return _hasTitleByDefault; }
-			set { _hasTitleByDefault = value; }
 		}
 
 		public bool HasTicksByDefault
 		{
 			get { return _hasTicksByDefault; }
-			set { _hasTicksByDefault = value; }
 		}
 
 		public bool HasLabelsByDefault
 		{
 			get { return _hasLabelsByDefault; }
-			set { _hasLabelsByDefault = value; }
 		}
 
 		/// <summary>This is the logical value where the axis starts. Normally, this is 0 (zero). For a segment of an axis, this might be any value.</summary>
@@ -248,10 +342,6 @@ namespace Altaxo.Graph
 			get
 			{
 				return _logicalValueAxisOrg;
-			}
-			set
-			{
-				_logicalValueAxisOrg = value;
 			}
 		}
 
@@ -262,9 +352,20 @@ namespace Altaxo.Graph
 			{
 				return _logicalValueAxisEnd;
 			}
-			set
+		}
+
+		public CSAxisInformation WithLogicalValuesForAxisOrgAndEnd(double LogicalValueAxisOrg, double LogicalValueAxisEnd)
+		{
+			if (_logicalValueAxisOrg == LogicalValueAxisOrg && _logicalValueAxisEnd == LogicalValueAxisEnd)
 			{
-				_logicalValueAxisEnd = value;
+				return this;
+			}
+			else
+			{
+				var result = (CSAxisInformation)MemberwiseClone();
+				result._logicalValueAxisOrg = LogicalValueAxisOrg;
+				result._logicalValueAxisEnd = LogicalValueAxisEnd;
+				return result;
 			}
 		}
 	}

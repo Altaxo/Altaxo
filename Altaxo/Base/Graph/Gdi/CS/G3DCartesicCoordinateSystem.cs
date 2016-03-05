@@ -154,172 +154,267 @@ namespace Altaxo.Graph.Gdi.CS
 			CSAxisInformation info;
 
 			// BottomFront
-			info = new CSAxisInformation(new CSLineID(horzAx, 0, 0));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(horzAx, 0, 0),
+			NameOfAxisStyle: "BottomFront",
+			NameOfFirstDownSide: "Below",
+			NameOfFirstUpSide: "Above",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: true);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "BottomFront";
-			info.NameOfFirstDownSide = "Below";
-			info.NameOfFirstUpSide = "Above";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// TopFront
-			info = new CSAxisInformation(new CSLineID(horzAx, 1, 0));
+			info = new CSAxisInformation(
+			Identifier: new CSLineID(horzAx, 1, 0),
+			NameOfAxisStyle: "TopFront",
+			NameOfFirstDownSide: "Below",
+			NameOfFirstUpSide: "Above",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstUp,
+			PreferredTickSide: CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+			HasTicksByDefault: false,
+			HasLabelsByDefault: false,
+			HasTitleByDefault: false);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "TopFront";
-			info.NameOfFirstDownSide = "Below";
-			info.NameOfFirstUpSide = "Above";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
 
 			// LeftFront
-			info = new CSAxisInformation(new CSLineID(vertAx, 0, 0));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(vertAx, 0, 0),
+			NameOfAxisStyle: "LeftFront",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: true);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "LeftFront";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// RightFront
-			info = new CSAxisInformation(new CSLineID(vertAx, 1, 0));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(vertAx, 1, 0),
+			NameOfAxisStyle: "RightFront",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstUp,
+			PreferredTickSide: CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: true
+);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "RightFront";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
 
 			// BottomBack
-			info = new CSAxisInformation(new CSLineID(horzAx, 0, 1));
+			info = new CSAxisInformation(
+				new CSLineID(horzAx, 0, 1),
+			NameOfAxisStyle: "BottomBack",
+			NameOfFirstDownSide: "Below",
+			NameOfFirstUpSide: "Above",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: true);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "BottomBack";
-			info.NameOfFirstDownSide = "Below";
-			info.NameOfFirstUpSide = "Above";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// TopBack
-			info = new CSAxisInformation(new CSLineID(horzAx, 1, 1));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(horzAx, 1, 1),
+			NameOfAxisStyle: "TopBack",
+			NameOfFirstDownSide: "Below",
+			NameOfFirstUpSide: "Above",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstUp,
+			PreferredTickSide: CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: true
+);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "TopBack";
-			info.NameOfFirstDownSide = "Below";
-			info.NameOfFirstUpSide = "Above";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
 
 			// LeftBack
-			info = new CSAxisInformation(new CSLineID(vertAx, 0, 1));
-			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "LeftBack";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
+			info = new CSAxisInformation(
+				new CSLineID(vertAx, 0, 1),
+			NameOfAxisStyle: "LeftBack",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+				HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+		HasTitleByDefault: true);
 
-			// RightBack
-			info = new CSAxisInformation(new CSLineID(vertAx, 1, 1));
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "RightBack";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
+
+		// RightBack
+		info: new CSAxisInformation(
+		Identifier: new CSLineID(vertAx, 1, 1),
+		NameOfAxisStyle: "RightBack",
+		NameOfFirstDownSide: "Left",
+		NameOfFirstUpSide: "Right",
+		NameOfSecondDownSide: "Before",
+		NameOfSecondUpSide: "Behind",
+		PreferredLabelSide: CSAxisSide.FirstUp,
+		PreferredTickSide: CSAxisSide.FirstUp,
+		IsShownByDefault: true,
+	 		HasTicksByDefault: true,
+		HasLabelsByDefault: true,
+		HasTitleByDefault: false
+		);
+
+			_axisStyleInformation.Add(info);
 
 			// BottomLeft
-			info = new CSAxisInformation(new CSLineID(deptAx, 0, 0));
+			info = new CSAxisInformation(
+			Identifier: new CSLineID(deptAx, 0, 0),
+			NameOfAxisStyle: "BottomLeft",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Below",
+			NameOfSecondUpSide: "Above",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: true);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "BottomLeft";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Below";
-			info.NameOfSecondUpSide = "Above";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// TopLeft
-			info = new CSAxisInformation(new CSLineID(deptAx, 0, 1));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(deptAx, 0, 1),
+			NameOfAxisStyle: "TopLeft",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Below",
+			NameOfSecondUpSide: "Above",
+			PreferredLabelSide: CSAxisSide.FirstUp,
+			PreferredTickSide: CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: false
+);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "TopLeft";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Below";
-			info.NameOfSecondUpSide = "Above";
-			info.PreferredLabelSide = CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
 
 			// BottomRight
-			info = new CSAxisInformation(new CSLineID(deptAx, 1, 0));
+			info = new CSAxisInformation(
+			Identifier: new CSLineID(deptAx, 1, 0),
+			NameOfAxisStyle: "BottomRight",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Below",
+			NameOfSecondUpSide: "Above",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+
+			HasTitleByDefault: true);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "BottomRight";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Below";
-			info.NameOfSecondUpSide = "Above";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// TopRight
-			info = new CSAxisInformation(new CSLineID(deptAx, 1, 1));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(deptAx, 1, 1),
+			NameOfAxisStyle: "TopRight",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Below",
+			NameOfSecondUpSide: "Above",
+			PreferredLabelSide: CSAxisSide.FirstUp,
+			PreferredTickSide: CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+			HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: false
+);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "TopRight";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Below";
-			info.NameOfSecondUpSide = "Above";
-			info.PreferredLabelSide = CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
 
 			// XAxis: Y=0, Z=0
-			info = new CSAxisInformation(CSLineID.FromPhysicalValue(horzAx, 0));
+			info = new CSAxisInformation(
+				Identifier: CSLineID.FromPhysicalValue(horzAx, 0),
+			NameOfAxisStyle: "YZ:0",
+			NameOfFirstUpSide: "Above",
+			NameOfFirstDownSide: "Below",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: false,
+			HasTicksByDefault: false,
+			HasLabelsByDefault: false,
+			HasTitleByDefault: false
+);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "YZ=0";
-			info.NameOfFirstUpSide = "Above";
-			info.NameOfFirstDownSide = "Below";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
 
 			// YAxis: X=0, Z=0
-			info = new CSAxisInformation(CSLineID.FromPhysicalValue(vertAx, 0));
+			info = new CSAxisInformation(
+			Identifier: CSLineID.FromPhysicalValue(vertAx, 0),
+			NameOfAxisStyle: "XZ:0",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: false,
+			HasTicksByDefault: false,
+			HasLabelsByDefault: false,
+			HasTitleByDefault: false
+);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "XZ=0";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
 
 			// ZAxis: X=0,Y=0
-			info = new CSAxisInformation(CSLineID.FromPhysicalValue(deptAx, 0));
+			info = new CSAxisInformation(
+				CSLineID.FromPhysicalValue(deptAx, 0),
+			NameOfAxisStyle: "XY:0",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstDown,
+			PreferredTickSide: CSAxisSide.FirstDown,
+			IsShownByDefault: false,
+			HasTicksByDefault: false,
+			HasLabelsByDefault: false,
+			HasTitleByDefault: false);
+
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "XY=0";
-			info.NameOfFirstDownSide = "Left";
-			info.NameOfFirstUpSide = "Right";
-			info.NameOfSecondDownSide = "Before";
-			info.NameOfSecondUpSide = "Behind";
-			info.PreferredLabelSide = CSAxisSide.FirstDown;
 		}
 
 		private static readonly string[,] _axisNamesNormal = new string[,] {

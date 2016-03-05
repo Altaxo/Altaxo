@@ -645,7 +645,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		public void Paint(IGraphicsContext3D g, IPlotArea layer, CSAxisInformation styleInfo, TickSpacing customTickSpacing)
 		{
 			CSLineID styleID = styleInfo.Identifier;
-			_cachedAxisStyleInfo = styleInfo.Clone();
+			_cachedAxisStyleInfo = styleInfo;
 			Scale axis = layer.Scales[styleID.ParallelAxisNumber];
 
 			TickSpacing ticking = null != customTickSpacing ? customTickSpacing : layer.Scales[styleID.ParallelAxisNumber].TickSpacing;

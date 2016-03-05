@@ -217,56 +217,62 @@ namespace Altaxo.Graph.Gdi.CS
 			CSAxisInformation info;
 
 			// Right
-			info = new CSAxisInformation(new CSLineID(vertAx, 0));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(vertAx, 0),
+			NameOfAxisStyle: "RightDirection",
+			NameOfFirstUpSide: horzRev ? "Below" : "Above",
+			NameOfFirstDownSide: horzRev ? "Above" : "Below",
+			PreferredLabelSide: horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown,
+			IsShownByDefault: true,
+			HasTitleByDefault: true);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "RightDirection";
-			info.NameOfFirstUpSide = horzRev ? "Below" : "Above";
-			info.NameOfFirstDownSide = horzRev ? "Above" : "Below";
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// Left
-			info = new CSAxisInformation(new CSLineID(vertAx, 0.5));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(vertAx, 0.5),
+			NameOfAxisStyle: "LeftDirection",
+			NameOfFirstUpSide: horzRev ? "Above" : "Below",
+			NameOfFirstDownSide: horzRev ? "Below" : "Above",
+			PreferredLabelSide: horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "LeftDirection";
-			info.NameOfFirstUpSide = horzRev ? "Above" : "Below";
-			info.NameOfFirstDownSide = horzRev ? "Below" : "Above";
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 
 			// Top
-			info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 0.75 : 0.25));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(vertAx, horzRev ? 0.75 : 0.25),
+			NameOfAxisStyle: "TopDirection",
+			NameOfFirstUpSide: horzRev ? "Right" : "Left",
+			NameOfFirstDownSide: horzRev ? "Left" : "Right",
+			PreferredLabelSide: horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "TopDirection";
-			info.NameOfFirstUpSide = horzRev ? "Right" : "Left";
-			info.NameOfFirstDownSide = horzRev ? "Left" : "Right";
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 
 			// Bottom
-			info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 0.25 : 0.75));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(vertAx, horzRev ? 0.25 : 0.75),
+			NameOfAxisStyle: "BottomDirection",
+			NameOfFirstUpSide: horzRev ? "Left" : "Right",
+			NameOfFirstDownSide: horzRev ? "Right" : "Left",
+			PreferredLabelSide: horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "BottomDirection";
-			info.NameOfFirstUpSide = horzRev ? "Left" : "Right";
-			info.NameOfFirstDownSide = horzRev ? "Right" : "Left";
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 
 			// Outer circle
-			info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(horzAx, vertRev ? 0 : 1),
+			NameOfAxisStyle: "OuterCircle",
+			NameOfFirstDownSide: vertRev ? "Outer" : "Inner",
+			NameOfFirstUpSide: vertRev ? "Inner" : "Outer",
+			PreferredLabelSide: vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+			HasTitleByDefault: true);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "OuterCircle";
-			info.NameOfFirstDownSide = vertRev ? "Outer" : "Inner";
-			info.NameOfFirstUpSide = vertRev ? "Inner" : "Outer";
-			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// Inner circle
-			info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 1 : 0));
+			info = new CSAxisInformation(
+				Identifier: new CSLineID(horzAx, vertRev ? 1 : 0),
+			NameOfAxisStyle: "Inner circle",
+			NameOfFirstDownSide: vertRev ? "Inner" : "Outer",
+			NameOfFirstUpSide: vertRev ? "Outer" : "Inner",
+			PreferredLabelSide: vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = "Inner circle";
-			info.NameOfFirstDownSide = vertRev ? "Inner" : "Outer";
-			info.NameOfFirstUpSide = vertRev ? "Outer" : "Inner";
-			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 		}
 
 		private static readonly string[,] _axisNamesNormal = new string[,] { { "Outer", "Inner" }, { "CCW", "CW" } };

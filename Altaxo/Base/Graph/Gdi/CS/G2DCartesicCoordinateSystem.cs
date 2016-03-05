@@ -203,69 +203,75 @@ namespace Altaxo.Graph.Gdi.CS
 
 			// Left
 			lineID = new CSLineID(vertAx, horzRev ? 1 : 0);
-			info = new CSAxisInformation(lineID);
+			info = new CSAxisInformation(
+				Identifier: lineID,
+				NameOfAxisStyle: GetAxisName(lineID),
+				NameOfFirstDownSide: GetAxisSideName(lineID, CSAxisSide.FirstDown),
+				NameOfFirstUpSide: GetAxisSideName(lineID, CSAxisSide.FirstUp),
+				PreferredLabelSide: horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown,
+				IsShownByDefault: true,
+				HasTitleByDefault: true);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = GetAxisName(lineID);
-			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
-			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// Right
 			lineID = new CSLineID(vertAx, horzRev ? 0 : 1);
-			info = new CSAxisInformation(lineID);
+			info = new CSAxisInformation(
+				Identifier: lineID,
+				NameOfAxisStyle: GetAxisName(lineID),
+				NameOfFirstDownSide: GetAxisSideName(lineID, CSAxisSide.FirstDown),
+				NameOfFirstUpSide: GetAxisSideName(lineID, CSAxisSide.FirstUp),
+				PreferredLabelSide: horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp,
+				IsShownByDefault: false,
+				HasTitleByDefault: false);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = GetAxisName(lineID);
-			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
-			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
-			info.IsShownByDefault = false;
-			info.HasTitleByDefault = false;
 
 			// Bottom
 			lineID = new CSLineID(horzAx, vertRev ? 1 : 0);
-			info = new CSAxisInformation(lineID);
+			info = new CSAxisInformation(
+				Identifier: lineID,
+				NameOfAxisStyle: GetAxisName(lineID),
+				NameOfFirstDownSide: GetAxisSideName(lineID, CSAxisSide.FirstDown),
+				NameOfFirstUpSide: GetAxisSideName(lineID, CSAxisSide.FirstUp),
+				PreferredLabelSide: vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown,
+				IsShownByDefault: true,
+				HasTitleByDefault: true);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = GetAxisName(lineID);
-			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
-			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
-			info.IsShownByDefault = true;
-			info.HasTitleByDefault = true;
 
 			// Top
 			lineID = new CSLineID(horzAx, vertRev ? 0 : 1);
-			info = new CSAxisInformation(lineID);
+			info = new CSAxisInformation(
+				Identifier: lineID,
+				NameOfAxisStyle: GetAxisName(lineID),
+				NameOfFirstDownSide: GetAxisSideName(lineID, CSAxisSide.FirstDown),
+				NameOfFirstUpSide: GetAxisSideName(lineID, CSAxisSide.FirstUp),
+				PreferredLabelSide: vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp,
+				IsShownByDefault: false,
+				HasTitleByDefault: false);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = GetAxisName(lineID);
-			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
-			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
-			info.IsShownByDefault = false;
-			info.HasTitleByDefault = false;
 
 			// Y=0
 			lineID = CSLineID.FromPhysicalValue(horzAx, 0);
-			info = new CSAxisInformation(lineID);
+			info = new CSAxisInformation(
+				Identifier: lineID,
+				NameOfAxisStyle: GetAxisName(lineID),
+				NameOfFirstDownSide: GetAxisSideName(lineID, CSAxisSide.FirstDown),
+				NameOfFirstUpSide: GetAxisSideName(lineID, CSAxisSide.FirstUp),
+				PreferredLabelSide: vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown,
+				IsShownByDefault: false,
+				HasTitleByDefault: false);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = GetAxisName(lineID);
-			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
-			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferredLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
-			info.IsShownByDefault = false;
-			info.HasTitleByDefault = false;
 
 			// X=0
 			lineID = CSLineID.FromPhysicalValue(vertAx, 0);
-			info = new CSAxisInformation(lineID);
+			info = new CSAxisInformation(
+				Identifier: lineID,
+				NameOfAxisStyle: GetAxisName(lineID),
+				NameOfFirstDownSide: GetAxisSideName(lineID, CSAxisSide.FirstDown),
+				NameOfFirstUpSide: GetAxisSideName(lineID, CSAxisSide.FirstUp),
+				PreferredLabelSide: horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown,
+				IsShownByDefault: false,
+				HasTitleByDefault: false);
 			_axisStyleInformation.Add(info);
-			info.NameOfAxisStyle = GetAxisName(lineID);
-			info.NameOfFirstDownSide = GetAxisSideName(lineID, CSAxisSide.FirstDown);
-			info.NameOfFirstUpSide = GetAxisSideName(lineID, CSAxisSide.FirstUp);
-			info.PreferredLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
-			info.IsShownByDefault = false;
-			info.HasTitleByDefault = false;
 		}
 
 		private static readonly string[,] _axisSideNamesNormal = new string[,] { { "Above", "Below" }, { "Right", "Left" } };

@@ -614,19 +614,19 @@ namespace Altaxo.Graph.Graph3D.CS
 					for (int secondother = 0; secondother <= 1; ++secondother)
 					{
 						var lineId = new CSLineID(axisnumber, firstother, secondother);
-						var item = new CSAxisInformation(lineId);
-
-						item.NameOfFirstDownSide = GetAxisSideName(lineId, CSAxisSide.FirstDown);
-						item.NameOfFirstUpSide = GetAxisSideName(lineId, CSAxisSide.FirstUp);
-						item.NameOfSecondDownSide = GetAxisSideName(lineId, CSAxisSide.SecondDown);
-						item.NameOfSecondUpSide = GetAxisSideName(lineId, CSAxisSide.SecondUp);
-						item.NameOfAxisStyle = GetAxisLineName(lineId);
-						item.PreferredLabelSide = GetPreferredLabelSide(lineId);
-						item.PreferredTickSide = item.PreferredLabelSide;
-						item.IsShownByDefault = true; // lineId.LogicalValueOtherFirst == 0 && lineId.LogicalValueOtherSecond == 0;
-						item.HasTicksByDefault = true;
-						item.HasLabelsByDefault = GetHasLabelsByDefault(lineId);
-						item.HasTitleByDefault = GetHasLabelsByDefault(lineId);
+						var item = new CSAxisInformation(
+							Identifier: lineId,
+							NameOfAxisStyle: GetAxisLineName(lineId),
+							NameOfFirstDownSide: GetAxisSideName(lineId, CSAxisSide.FirstDown),
+							NameOfFirstUpSide: GetAxisSideName(lineId, CSAxisSide.FirstUp),
+							NameOfSecondDownSide: GetAxisSideName(lineId, CSAxisSide.SecondDown),
+							NameOfSecondUpSide: GetAxisSideName(lineId, CSAxisSide.SecondUp),
+							PreferredLabelSide: GetPreferredLabelSide(lineId),
+							PreferredTickSide: GetPreferredLabelSide(lineId),
+							IsShownByDefault: true, // lineId.LogicalValueOtherFirst :: 0 && lineId.LogicalValueOtherSecond :: 0.
+							HasTicksByDefault: true,
+							HasLabelsByDefault: GetHasLabelsByDefault(lineId),
+							HasTitleByDefault: GetHasLabelsByDefault(lineId));
 
 						_axisStyleInformation.Add(item);
 					}

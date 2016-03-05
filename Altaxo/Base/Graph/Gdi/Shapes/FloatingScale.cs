@@ -573,10 +573,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public CSAxisInformation GetAxisStyleInformation(CSLineID lineId)
 			{
-				var result = new CSAxisInformation(new CSLineID(lineId.ParallelAxisNumber, _org));
-				result.CopyFrom(_underlyingArea.CoordinateSystem.GetAxisStyleInformation(lineId));
-				result.LogicalValueAxisOrg = _org[_scaleNumber];
-				result.LogicalValueAxisEnd = _end[_scaleNumber];
+				var result = _underlyingArea.CoordinateSystem.GetAxisStyleInformation(lineId).WithIdentifier(new CSLineID(lineId.ParallelAxisNumber, _org));
+				result = result.WithLogicalValuesForAxisOrgAndEnd(
+									LogicalValueAxisOrg: _org[_scaleNumber],
+									LogicalValueAxisEnd: _end[_scaleNumber]);
 
 				return result;
 			}
