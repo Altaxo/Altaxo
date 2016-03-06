@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph3D
 {
 	[UserControllerForObject(typeof(G3DCoordinateSystem))]
 	[ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-	public class CoordinateSystemController : MVCANDControllerEditOriginalDocBase<G3DCoordinateSystem, ITypeAndInstanceView>
+	public class CoordinateSystemController : MVCANDControllerEditImmutableDocBase<G3DCoordinateSystem, ITypeAndInstanceView>
 	{
 		private IMVCAController _instanceController;
 
@@ -100,6 +100,9 @@ namespace Altaxo.Gui.Graph3D
 		public override bool Apply(bool disposeController)
 		{
 			bool result = _instanceController == null || _instanceController.Apply(disposeController);
+			if (result == true && null != _instanceController)
+				_doc = (G3DCoordinateSystem)_instanceController.ModelObject;
+
 			return ApplyEnd(result, disposeController);
 		}
 
@@ -127,12 +130,6 @@ namespace Altaxo.Gui.Graph3D
 					_doc = (G3DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
 
 					OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
-
-					if (null != _suspendToken)
-					{
-						_suspendToken.Dispose();
-						_suspendToken = _doc.SuspendGetToken();
-					}
 
 					Initialize(true);
 				}

@@ -119,7 +119,6 @@ namespace Altaxo.Graph.Graph3D
 
 				// CoordinateSystem
 				s.CoordinateSystem = (G3DCoordinateSystem)info.GetValue("CoordinateSystem", s);
-				s.CoordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
 				// Scales
 				s.Scales = (ScaleCollection)info.GetValue("Scales", s);
@@ -200,14 +199,11 @@ namespace Altaxo.Graph.Graph3D
 
 			if (0 != (options & Gdi.GraphCopyOptions.CopyLayerScales))
 			{
-				this.CoordinateSystem = (G3DCoordinateSystem)from.CoordinateSystem.Clone();
+				this.CoordinateSystem = from.CoordinateSystem; // immutable
 
 				this.Scales = (ScaleCollection)from._scales.Clone();
 				this._dataClipping = from._dataClipping;
 			}
-
-			// Coordinate Systems size must be updated in any case
-			this.CoordinateSystem.UpdateAreaSize(this._cachedLayerSize);
 
 			if (0 != (options & Gdi.GraphCopyOptions.CopyLayerGrid))
 			{
@@ -930,7 +926,7 @@ namespace Altaxo.Graph.Graph3D
 		{
 			// first update out direct childs
 			if (null != CoordinateSystem)
-				CoordinateSystem.UpdateAreaSize(this.Size);
+				_coordinateSystem = _coordinateSystem.WithLayerSize(this.Size);
 
 			base.OnCachedResultingSizeChanged();
 		}
@@ -1279,9 +1275,6 @@ namespace Altaxo.Graph.Graph3D
 
 			if (null != _gridPlanes)
 				yield return new Main.DocumentNodeAndName(_gridPlanes, "Grids");
-
-			if (null != _coordinateSystem)
-				yield return new Main.DocumentNodeAndName(_coordinateSystem, "CoordinateSystem");
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -1297,7 +1290,6 @@ namespace Altaxo.Graph.Graph3D
 				ChildDisposeMember(ref _plotItems);
 				ChildDisposeMember(ref _axisStyles);
 				ChildDisposeMember(ref _gridPlanes);
-				ChildDisposeMember(ref _coordinateSystem);
 			}
 			base.Dispose(isDisposing);
 		}
@@ -1322,13 +1314,10 @@ namespace Altaxo.Graph.Graph3D
 				if (object.ReferenceEquals(_coordinateSystem, value))
 					return;
 
-				_coordinateSystem = value;
-				_coordinateSystem.ParentObject = this;
-
-				_coordinateSystem.UpdateAreaSize(this.Size);
+				_coordinateSystem = value.WithLayerSize(this.Size);
 
 				if (null != AxisStyles)
-					AxisStyles.UpdateCoordinateSystem(value);
+					AxisStyles.UpdateCoordinateSystem(_coordinateSystem);
 
 				EhSelfChanged(EventArgs.Empty);
 			}

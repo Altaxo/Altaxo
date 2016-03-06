@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph3D.CS
 
 	[UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
 	[ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
-	public class G3DCartesicCSController : MVCANControllerEditOriginalDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
+	public class G3DCartesicCSController : MVCANControllerEditImmutableDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -71,18 +71,19 @@ namespace Altaxo.Gui.Graph3D.CS
 			if (_view != null)
 			{
 				_view.ExchangeXY = _doc.IsXYInterchanged;
-				_view.ReverseX = _doc.IsXReverse;
-				_view.ReverseY = _doc.IsYReverse;
-				_view.ReverseZ = _doc.IsZReverse;
+				_view.ReverseX = _doc.IsXReversed;
+				_view.ReverseY = _doc.IsYReversed;
+				_view.ReverseZ = _doc.IsZReversed;
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			_doc.IsXYInterchanged = _view.ExchangeXY;
-			_doc.IsXReverse = _view.ReverseX;
-			_doc.IsYReverse = _view.ReverseY;
-			_doc.IsZReverse = _view.ReverseZ;
+			_doc = _doc.WithXYInterchangedAndXYZReversed(
+			isXYInterchanged: _view.ExchangeXY,
+			isXReversed: _view.ReverseX,
+			isYReversed: _view.ReverseY,
+			isZReversed: _view.ReverseZ);
 			return ApplyEnd(true, disposeController);
 		}
 

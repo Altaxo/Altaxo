@@ -30,28 +30,9 @@ using System.Collections.Generic;
 namespace Altaxo.Graph.Graph3D
 {
 	[Serializable]
-	public abstract class G3DCoordinateSystem
-		:
-		Main.SuspendableDocumentLeafNodeWithSetOfEventArgs,
-		Altaxo.Graph.ICoordinateSystem,
-		ICloneable
+	public abstract class G3DCoordinateSystem : Altaxo.Graph.ICoordinateSystem, Main.IImmutable
 	{
 		protected VectorD3D _layerSize;
-
-		protected List<CSAxisInformation> _axisStyleInformation = new List<CSAxisInformation>();
-
-		/// <summary>
-		/// Copies the member variables from another coordinate system.
-		/// </summary>
-		/// <param name="from">The coordinate system to copy from.</param>
-		public virtual void CopyFrom(G3DCoordinateSystem from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			_layerSize = from._layerSize;
-			this._axisStyleInformation.Clear();
-		}
 
 		/// <summary>
 		/// Returns true if the plot area is orthogonal, i.e. if the x and the y axis are orthogonal to each other.
@@ -113,35 +94,29 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>The graphics path for the isoline.</returns>
 		public abstract IPolylineD3D GetIsoline(Logical3D r0, Logical3D r1);
 
-		/// <summary>
-		/// Fills the list of axis information with new values.
-		/// </summary>
-		protected abstract void UpdateAxisInfo();
-
 		/// <summary>Gets the name of the axis side.</summary>
 		/// <param name="id">The axis identifier.</param>
 		/// <param name="side">The axis side.</param>
 		/// <returns>The name of the axis side for the axis line given by the identifier.</returns>
 		public abstract string GetAxisSideName(CSLineID id, CSAxisSide side);
 
-		protected virtual void ClearCachedObjects()
-		{
-			this._axisStyleInformation.Clear();
-		}
-
-		#region ICloneable Members
-
-		public abstract object Clone();
-
-		#endregion ICloneable Members
-
 		/// <summary>
-		/// Updates the internal storage of the rectangular area size to a new value.
+		/// Returns an instance of this class, whose rectangular area size was set to the provided value
 		/// </summary>
 		/// <param name="size">The new size.</param>
-		public virtual void UpdateAreaSize(VectorD3D size)
+		/// <returns>Instance of this class, whose rectangular area size was set to the provided value.</returns>
+		public G3DCoordinateSystem WithLayerSize(VectorD3D size)
 		{
-			_layerSize = size;
+			if (_layerSize == size)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (G3DCoordinateSystem)this.MemberwiseClone();
+				result._layerSize = size;
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -382,49 +357,17 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// Enumerators all axis style information.
 		/// </summary>
-		public IEnumerable<CSAxisInformation> AxisStyles
-		{
-			get
-			{
-				if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
-					UpdateAxisInfo();
-
-				return _axisStyleInformation;
-			}
-		}
-
-		/// <summary>
-		/// Find the axis style with the given id. If found, returns the index of this style, or -1 otherwise.
-		/// </summary>
-		/// <param name="id">The id to find.</param>
-		/// <returns>Index of the style, or -1 if not found.</returns>
-		public int IndexOfAxisStyle(CSLineID id)
-		{
-			if (id == null)
-				return -1;
-
-			if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
-				UpdateAxisInfo();
-
-			for (int i = 0; i < _axisStyleInformation.Count; i++)
-				if (_axisStyleInformation[i].Identifier == id)
-					return i;
-
-			return -1;
-		}
+		public abstract IEnumerable<CSAxisInformation> AxisStyles { get; }
 
 		public CSAxisInformation GetAxisStyleInformation(CSLineID styleID)
 		{
-			if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
-				UpdateAxisInfo();
-
 			// search for the same axis first, then for the style with the nearest logical value
 			double minDistance = double.MaxValue;
 			CSAxisInformation nearestInfo = null;
 
 			if (!styleID.UsePhysicalValueOtherFirst)
 			{
-				foreach (CSAxisInformation info in this._axisStyleInformation)
+				foreach (CSAxisInformation info in AxisStyles)
 				{
 					if (styleID.ParallelAxisNumber == info.Identifier.ParallelAxisNumber)
 					{

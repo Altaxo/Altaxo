@@ -33,6 +33,8 @@ namespace Altaxo.Graph.Graph3D.CS
 {
 	public class G3DCartesicCoordinateSystem : G3DCoordinateSystem
 	{
+		private static Dictionary<G3DCartesicCoordinateSystem, IList<CSAxisInformation>> _axisInformationLists;
+
 		/// <summary>
 		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
 		/// </summary>
@@ -41,17 +43,17 @@ namespace Altaxo.Graph.Graph3D.CS
 		/// <summary>
 		/// Is the direction of the x axis reverse, for instance runs from right to left.
 		/// </summary>
-		protected bool _isXreverse;
+		protected bool _isXreversed;
 
 		/// <summary>
 		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
 		/// </summary>
-		protected bool _isYreverse;
+		protected bool _isYreversed;
 
 		/// <summary>
 		/// Is the direction of the z axis reverse, for instance runs from top to bottom.
 		/// </summary>
-		protected bool _isZreverse;
+		protected bool _isZreversed;
 
 		#region Serialization
 
@@ -67,9 +69,9 @@ namespace Altaxo.Graph.Graph3D.CS
 			{
 				var s = (G3DCartesicCoordinateSystem)obj;
 
-				info.AddValue("XReverse", s._isXreverse);
-				info.AddValue("YReverse", s._isYreverse);
-				info.AddValue("ZReverse", s._isZreverse);
+				info.AddValue("XReverse", s._isXreversed);
+				info.AddValue("YReverse", s._isYreversed);
+				info.AddValue("ZReverse", s._isZreversed);
 				info.AddValue("XYInterchanged", s._isXYInterchanged);
 			}
 
@@ -77,9 +79,9 @@ namespace Altaxo.Graph.Graph3D.CS
 			{
 				var s = (G3DCartesicCoordinateSystem)o ?? new G3DCartesicCoordinateSystem();
 
-				s._isXreverse = info.GetBoolean("XReverse");
-				s._isYreverse = info.GetBoolean("YReverse");
-				s._isZreverse = info.GetBoolean("ZReverse");
+				s._isXreversed = info.GetBoolean("XReverse");
+				s._isYreversed = info.GetBoolean("YReverse");
+				s._isZreversed = info.GetBoolean("ZReverse");
 				s._isXYInterchanged = info.GetBoolean("XYInterchanged");
 
 				return s;
@@ -92,31 +94,30 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		#region Construction and cloning
 
-		/// <summary>
-		/// Copies the member variables from another coordinate system.
-		/// </summary>
-		/// <param name="fromb">The coordinate system to copy from.</param>
-		public override void CopyFrom(G3DCoordinateSystem fromb)
+		private class ComparerForStaticDictionary : IEqualityComparer<G3DCartesicCoordinateSystem>
 		{
-			if (object.ReferenceEquals(this, fromb))
-				return;
-
-			base.CopyFrom(fromb);
-			if (fromb is G3DCartesicCoordinateSystem)
+			public bool Equals(G3DCartesicCoordinateSystem x, G3DCartesicCoordinateSystem y)
 			{
-				var from = (G3DCartesicCoordinateSystem)fromb;
-				this._isXreverse = from._isXreverse;
-				this._isYreverse = from._isYreverse;
-				this._isZreverse = from._isZreverse;
-				this._isXYInterchanged = from._isXYInterchanged;
+				return
+					x._isXYInterchanged == y._isXYInterchanged &&
+					x._isXreversed == y._isXreversed &&
+					x._isYreversed == y._isYreversed &&
+					x._isZreversed == y._isZreversed;
+			}
+
+			public int GetHashCode(G3DCartesicCoordinateSystem obj)
+			{
+				return
+					(obj._isXYInterchanged ? 1 : 0) +
+					(obj._isXreversed ? 2 : 0) +
+					(obj._isYreversed ? 4 : 0) +
+					(obj._isZreversed ? 8 : 0);
 			}
 		}
 
-		public override object Clone()
+		static G3DCartesicCoordinateSystem()
 		{
-			var result = new G3DCartesicCoordinateSystem();
-			result.CopyFrom(this);
-			return result;
+			_axisInformationLists = new Dictionary<G3DCartesicCoordinateSystem, IList<CSAxisInformation>>(new ComparerForStaticDictionary());
 		}
 
 		#endregion Construction and cloning
@@ -147,71 +148,113 @@ namespace Altaxo.Graph.Graph3D.CS
 			}
 		}
 
+		public G3DCartesicCoordinateSystem WithXYInterchangedAndXYZReversed(bool isXYInterchanged, bool isXReversed, bool isYReversed, bool isZReversed)
+		{
+			if (
+				_isXYInterchanged == isXYInterchanged &&
+				_isXreversed == isXReversed &&
+				_isYreversed == isYReversed &&
+				_isZreversed == isZReversed
+				)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+				result._isXYInterchanged = isXYInterchanged;
+				result._isXreversed = isXReversed;
+				result._isYreversed = isYReversed;
+				result._isZreversed = isZReversed;
+				return result;
+			}
+		}
+
 		/// <summary>
 		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
 		/// </summary>
 		public bool IsXYInterchanged
 		{
 			get { return _isXYInterchanged; }
-			set
+		}
+
+		public G3DCartesicCoordinateSystem WithXYInterchanged(bool isXYInterchanged)
+		{
+			if (_isXYInterchanged == isXYInterchanged)
 			{
-				if (_isXYInterchanged != value)
-				{
-					_isXYInterchanged = value;
-					ClearCachedObjects();
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+				result._isXYInterchanged = isXYInterchanged;
+				return result;
 			}
 		}
 
 		/// <summary>
 		/// Is the direction of the x axis reverse, for instance runs from right to left.
 		/// </summary>
-		public bool IsXReverse
+		public bool IsXReversed
 		{
-			get { return _isXreverse; }
-			set
+			get { return _isXreversed; }
+		}
+
+		public G3DCartesicCoordinateSystem WithXReversed(bool isXreversed)
+		{
+			if (_isXreversed == isXreversed)
 			{
-				if (_isXreverse != value)
-				{
-					_isXreverse = value;
-					ClearCachedObjects();
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+				result._isXreversed = isXreversed;
+				return result;
 			}
 		}
 
 		/// <summary>
 		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
 		/// </summary>
-		public bool IsYReverse
+		public bool IsYReversed
 		{
-			get { return _isYreverse; }
-			set
+			get { return _isYreversed; }
+		}
+
+		public G3DCartesicCoordinateSystem WithYReversed(bool isYreversed)
+		{
+			if (_isYreversed == isYreversed)
 			{
-				if (_isYreverse != value)
-				{
-					_isYreverse = value;
-					ClearCachedObjects();
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+				result._isYreversed = isYreversed;
+				return result;
 			}
 		}
 
 		/// <summary>
 		/// Is the direction of the y axis reverse, for instance runs from top to bottom.
 		/// </summary>
-		public bool IsZReverse
+		public bool IsZReversed
 		{
-			get { return _isZreverse; }
-			set
+			get { return _isZreversed; }
+		}
+
+		public G3DCartesicCoordinateSystem WithZReversed(bool isZreversed)
+		{
+			if (_isZreversed == isZreversed)
 			{
-				if (_isZreverse != value)
-				{
-					_isZreverse = value;
-					ClearCachedObjects();
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (G3DCartesicCoordinateSystem)this.MemberwiseClone();
+				result._isZreversed = isZreversed;
+				return result;
 			}
 		}
 
@@ -233,9 +276,9 @@ namespace Altaxo.Graph.Graph3D.CS
 			double ry = location.Y / _layerSize.Y;
 			double rz = location.Z / _layerSize.Z;
 
-			rx = _isXreverse ? 1 - rx : rx;
-			ry = _isYreverse ? 1 - ry : ry;
-			rz = _isZreverse ? 1 - rz : rz;
+			rx = _isXreversed ? 1 - rx : rx;
+			ry = _isYreversed ? 1 - ry : ry;
+			rz = _isZreversed ? 1 - rz : rz;
 			if (_isXYInterchanged)
 			{
 				double hr = rx;
@@ -249,9 +292,9 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		public override bool LogicalToLayerCoordinates(Logical3D r, out PointD3D location)
 		{
-			double rx = _isXreverse ? 1 - r.RX : r.RX;
-			double ry = _isYreverse ? 1 - r.RY : r.RY;
-			double rz = _isZreverse ? 1 - r.RZ : r.RZ;
+			double rx = _isXreversed ? 1 - r.RX : r.RX;
+			double ry = _isYreversed ? 1 - r.RY : r.RY;
+			double rz = _isZreversed ? 1 - r.RZ : r.RZ;
 			if (_isXYInterchanged)
 			{
 				double hr = rx;
@@ -276,6 +319,23 @@ namespace Altaxo.Graph.Graph3D.CS
 		#endregion Logical to physical conversion and vice versa
 
 		#region Axis naming
+
+		public override IEnumerable<CSAxisInformation> AxisStyles
+		{
+			get
+			{
+				IList<CSAxisInformation> result;
+				if (!_axisInformationLists.TryGetValue(this, out result))
+				{
+					result = GetAxisStyleInformations();
+					lock (this)
+					{
+						_axisInformationLists[(G3DCartesicCoordinateSystem)this.WithLayerSize(VectorD3D.Empty)] = result;
+					}
+				}
+				return result;
+			}
+		}
 
 		/// <summary>
 		/// Gets the untransformed axis side vector, the the vector that points out of the plane of the axis side.
@@ -431,14 +491,14 @@ namespace Altaxo.Graph.Graph3D.CS
 			{
 				if (_isXYInterchanged)
 					return new Matrix3x3(
-						0, _isXreverse ? -1 : 1, 0,
-						_isYreverse ? -1 : 1, 0, 0,
-						0, 0, _isZreverse ? -1 : 1);
+						0, _isXreversed ? -1 : 1, 0,
+						_isYreversed ? -1 : 1, 0, 0,
+						0, 0, _isZreversed ? -1 : 1);
 				else
 					return new Matrix3x3(
-						_isXreverse ? -1 : 1, 0, 0,
-						0, _isYreverse ? -1 : 1, 0,
-						0, 0, _isZreverse ? -1 : 1);
+						_isXreversed ? -1 : 1, 0, 0,
+						0, _isYreversed ? -1 : 1, 0,
+						0, 0, _isZreversed ? -1 : 1);
 			}
 		}
 
@@ -600,12 +660,9 @@ namespace Altaxo.Graph.Graph3D.CS
 			return result;
 		}
 
-		protected override void UpdateAxisInfo()
+		private IList<CSAxisInformation> GetAxisStyleInformations()
 		{
-			if (null != _axisStyleInformation)
-				_axisStyleInformation.Clear();
-			else
-				_axisStyleInformation = new List<CSAxisInformation>();
+			var axisStyleInformations = new List<CSAxisInformation>();
 
 			for (int axisnumber = 0; axisnumber <= 2; ++axisnumber)
 			{
@@ -628,10 +685,12 @@ namespace Altaxo.Graph.Graph3D.CS
 							HasLabelsByDefault: GetHasLabelsByDefault(lineId),
 							HasTitleByDefault: GetHasLabelsByDefault(lineId));
 
-						_axisStyleInformation.Add(item);
+						axisStyleInformations.Add(item);
 					}
 				}
 			}
+
+			return axisStyleInformations.AsReadOnly();
 		}
 
 		#endregion Axis naming
