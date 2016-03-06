@@ -338,6 +338,43 @@ namespace Altaxo.Graph.Graph3D.CS
 		}
 
 		/// <summary>
+		/// Gets the axis line vector. This is a vector pointing from the origin to the axis line, when the layer is assumed to be a square of 2x2x2 size, centered at the origin.
+		/// Thus the returned vector has one member set to zero, and the other two members set either to +1 or -1.
+		/// Attention: This returns the untransformed vector, i.e. the vector assuming a regular G3DCoordinateSystem without reversing or exchanging of axes).
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Axis line vector (untransformed, i.e. only for a regular G3DCoordinateSystem without reversing or exchanging of axes).</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public static VectorD3D GetUntransformedAxisLineVector(CSLineID id)
+		{
+			switch (id.ParallelAxisNumber)
+			{
+				case 0: // parallel axis is X
+					return new VectorD3D(0, id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1);
+
+				case 1:
+					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, 0, id.LogicalValueOtherSecond * 2 - 1);
+
+				case 2:
+					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1, 0);
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		/// <summary>
+		/// Gets the axis line vector. This is a vector pointing from the origin to the axis line, when the layer is assumed to be a square of 2x2x2 size, centered at the origin.
+		/// Thus the returned vector has one member set to zero, and the other two members set either to +1 or -1.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Axis line vector (transformed, thus taking into account the properties for reversing and exchanging of axes).</returns>
+		public VectorD3D GetTransformedAxisLineVector(CSLineID id)
+		{
+			return VectorTransformation.Transform(GetUntransformedAxisLineVector(id));
+		}
+
+		/// <summary>
 		/// Gets the untransformed axis side vector, the the vector that points out of the plane of the axis side.
 		/// </summary>
 		/// <param name="id">The axis identifier.</param>
@@ -435,24 +472,28 @@ namespace Altaxo.Graph.Graph3D.CS
 			return r;
 		}
 
-		public VectorD3D GetAxisLineVector(CSLineID id)
+		/// <summary>
+		/// Gets the transformed axis side vector, i.e. the vector that points out of the plane of the axis side.
+		/// </summary>
+		/// <param name="id">The axis identifier.</param>
+		/// <param name="side">The side identifier.</param>
+		/// <returns>The vector corresponding to the axis side.</returns>
+		/// <exception cref="System.NotImplementedException">
+		/// </exception>
+		private VectorD3D GetTransformedAxisSideVector(CSLineID id, CSAxisSide side)
 		{
-			switch (id.ParallelAxisNumber)
-			{
-				case 0: // parallel axis is X
-					return new VectorD3D(0, id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1);
-
-				case 1:
-					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, 0, id.LogicalValueOtherSecond * 2 - 1);
-
-				case 2:
-					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1, 0);
-
-				default:
-					throw new NotImplementedException();
-			}
+			return this.VectorTransformation.Transform(GetUntransformedAxisSideVector(id, side));
 		}
 
+		/// <summary>
+		/// Given a vector <paramref name="v"/> and a line id, this returns the axis side this vector belongs to.
+		/// An exception is thrown if the vector does not belong to one of the four axis sides.
+		/// Attention: this function does not take properties like ExchangeXY or IsXReversed into account!
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="v">The vector that describes the axis side.</param>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		private static CSAxisSide GetAxisSide(CSLineID id, VectorD3D v)
 		{
 			switch (id.ParallelAxisNumber)
@@ -473,13 +514,13 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		private static CSAxisSide GetAxisSide(double c1, double c2)
 		{
-			if (-1 == c1)
+			if (-1 == c1 && 0 == c2)
 				return CSAxisSide.FirstDown;
-			else if (+1 == c1)
+			else if (+1 == c1 && 0 == c2)
 				return CSAxisSide.FirstUp;
-			else if (-1 == c2)
+			else if (-1 == c2 && 0 == c1)
 				return CSAxisSide.SecondDown;
-			else if (1 == c2)
+			else if (1 == c2 && 0 == c1)
 				return CSAxisSide.SecondUp;
 			else
 				throw new ArgumentOutOfRangeException("For arguments c1 and c2: one is expected to be 0, the other argument to be either +1 or -1");
@@ -578,7 +619,7 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		public string GetAxisLineName(CSLineID id)
 		{
-			var v = GetAxisLineVector(id);
+			var v = GetUntransformedAxisLineVector(id);
 			var tv = VectorTransformation.Transform(v);
 			var name = GetAxisLineName(tv);
 			return name;
@@ -635,7 +676,7 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		public CSAxisSide GetPreferredLabelSide(CSLineID id)
 		{
-			var u_axisVector = GetAxisLineVector(id);
+			var u_axisVector = GetUntransformedAxisLineVector(id);
 			var t_axisVector = VectorTransformation.Transform(u_axisVector);
 			var t_labelSide = GetPreferredLabelSide(t_axisVector);
 			var u_labelSide = VectorTransformation.InverseTransformVector(t_labelSide);
@@ -644,7 +685,7 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		private bool GetHasLabelsByDefault(CSLineID lineId)
 		{
-			var uv = GetAxisLineVector(lineId);
+			var uv = GetUntransformedAxisLineVector(lineId);
 			var v = VectorTransformation.Transform(uv);
 			bool result = false;
 			if (0 == v.X) // x-axis
@@ -694,5 +735,63 @@ namespace Altaxo.Graph.Graph3D.CS
 		}
 
 		#endregion Axis naming
+
+		#region Utility functions
+
+		/// <summary>
+		/// When changing the properties of the coordinate systen (e.g. reversing x-axis), the axis including ticks and labels will move from one end of the graph to the other.
+		/// In order to keep the axes at their location, new <see cref="CSLineID"/>s have to be found for the new coordinate system, that correspond to the same axis location
+		/// in the old coordinate system. This function returns a new <see cref="CSLineID"/>, or null if no corresponding <see cref="CSLineID"/> could be found.
+		/// </summary>
+		/// <param name="oldCoordinateSystem">The old coordinate system.</param>
+		/// <param name="oldLineID">The old line identifier of the axis.</param>
+		/// <param name="newCoordinateSystem">The new coordinate system.</param>
+		/// <returns>The new line identifier, that refers to the same location in the new coordinate systems as the old line identifer referes in the old coordinate system. If no such
+		/// identifer could be found, null is returned.</returns>
+		public static CSLineID FindCorrespondingCSLineIDWhenChangingCoordinateSystem(G3DCartesicCoordinateSystem oldCoordinateSystem, CSLineID oldLineID, G3DCartesicCoordinateSystem newCoordinateSystem)
+		{
+			var oldAxisLineVector = oldCoordinateSystem.GetTransformedAxisLineVector(oldLineID);
+
+			for (int i = 0; i < 3; ++i)
+			{
+				for (int j = 0; j < 2; ++j)
+				{
+					for (int k = 0; k < 2; ++k)
+					{
+						var newLineID = new CSLineID(i, j, k);
+						var newAxisLineVector = newCoordinateSystem.GetTransformedAxisLineVector(newLineID);
+						if (oldAxisLineVector == newAxisLineVector)
+							return newLineID;
+					}
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Finds the corresponding new axis side when changing the coordinate system.
+		/// </summary>
+		/// <param name="oldCoordinateSystem">The old coordinate system system.</param>
+		/// <param name="oldLineID">The old line identifier of the axis.</param>
+		/// <param name="oldAxisSide">The old axis side.</param>
+		/// <param name="newCoordinateSystem">The new coordinate system.</param>
+		/// <param name="newLineID">The new line identifier of the axis (in the new coordinate system).</param>
+		/// <returns>The new axis side. The new axis side as vector in the new coordinate system has the same direction as the old axis side vector in the old coordinate system.
+		/// The return value is null if no axis side with the same direction could be found (this is the case for instance when exchanging x and y axis).</returns>
+		public static CSAxisSide? FindCorrespondingAxisSideWhenChangingCoordinateSystem(G3DCartesicCoordinateSystem oldCoordinateSystem, CSLineID oldLineID, CSAxisSide oldAxisSide, G3DCartesicCoordinateSystem newCoordinateSystem, CSLineID newLineID)
+		{
+			var t_oldAxisSide = oldCoordinateSystem.GetTransformedAxisSideVector(oldLineID, oldAxisSide);
+			var u_newAxisSide = newCoordinateSystem.VectorTransformation.InverseTransformVector(t_oldAxisSide);
+			try
+			{
+				return GetAxisSide(newLineID, u_newAxisSide);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		#endregion Utility functions
 	}
 }

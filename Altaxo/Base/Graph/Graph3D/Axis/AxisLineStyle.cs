@@ -835,5 +835,71 @@ namespace Altaxo.Graph.Graph3D.Axis
 		}
 
 		#endregion IRoutedPropertyReceiver Members
+
+		/// <summary>
+		/// Try to change the showing variables (e.g. <see cref="_showFirstDownMajorTicks"/>) when changing coordinate system, so that
+		/// it is tried to keep the positions of the shown major and minor ticks.
+		/// </summary>
+		/// <param name="GetNewAxisSideFromOldAxisSide">The get new axis side from old axis side.</param>
+		public void ChangeTickPositionsWhenChangingCoordinateSystem(Func<CSAxisSide, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
+		{
+			// store old _show variables into temporary storage
+			var oldShown = new bool[]
+			{
+				_showFirstUpMajorTicks,
+			_showFirstDownMajorTicks,
+			_showSecondUpMajorTicks,
+			_showSecondDownMajorTicks,
+			_showFirstUpMinorTicks,
+			_showFirstDownMinorTicks,
+			_showSecondUpMinorTicks,
+			_showSecondDownMinorTicks
+			};
+
+			var sides = new CSAxisSide[] {
+				CSAxisSide.FirstUp,
+				CSAxisSide.FirstDown,
+				CSAxisSide.SecondUp,
+				CSAxisSide.SecondDown,
+			};
+			var sideDict = new Dictionary<CSAxisSide, int>();
+			for (int i = 0; i < sides.Length; ++i)
+				sideDict.Add(sides[i], i);
+
+			var newShown = (bool[])oldShown.Clone();
+
+			// Calculate new show variables
+
+			// Major labels first
+			for (int i = 0; i < 4; ++i)
+			{
+				var newAxisSide = GetNewAxisSideFromOldAxisSide(sides[i]);
+				if (newAxisSide.HasValue)
+				{
+					int newIndex = sideDict[newAxisSide.Value];
+					newShown[newIndex] = oldShown[i];
+				}
+			}
+			// then minor labels
+			for (int i = 0; i < 4; ++i)
+			{
+				var newAxisSide = GetNewAxisSideFromOldAxisSide(sides[i]);
+				if (newAxisSide.HasValue)
+				{
+					int newIndex = 4 + sideDict[newAxisSide.Value];
+					newShown[newIndex] = oldShown[4 + i];
+				}
+			}
+
+			// bring _show variables from array back to members
+			_showFirstUpMajorTicks = newShown[0];
+			_showFirstDownMajorTicks = newShown[1];
+			_showSecondUpMajorTicks = newShown[2];
+			_showSecondDownMajorTicks = newShown[3];
+			_showFirstUpMinorTicks = newShown[4];
+			_showFirstDownMinorTicks = newShown[5];
+			_showSecondUpMinorTicks = newShown[6];
+			_showSecondDownMinorTicks = newShown[7];
+		}
 	}
 }

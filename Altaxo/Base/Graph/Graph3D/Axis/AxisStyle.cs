@@ -140,6 +140,30 @@ namespace Altaxo.Graph.Graph3D.Axis
 			this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 		}
 
+		/// <summary>
+		/// Changes the style identifier.
+		/// </summary>
+		/// <param name="newIdentifier">The new identifier.</param>
+		/// <param name="GetNewAxisSideFromOldAxisSide">Functions that uses the old axis side as parameter1, and returns the corresponding axis side of the new coordinate system, or null if no such side could be found.</param>
+		/// <exception cref="System.ArgumentNullException"></exception>
+		public void ChangeStyleIdentifier(CSLineID newIdentifier, Func<CSAxisSide, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
+		{
+			if (null == newIdentifier)
+				throw new ArgumentNullException(nameof(newIdentifier));
+			_styleID = newIdentifier;
+
+			if (null != _axisLineStyle)
+				_axisLineStyle.ChangeTickPositionsWhenChangingCoordinateSystem(GetNewAxisSideFromOldAxisSide);
+
+			if (null != _majorLabelStyle && _majorLabelStyle.LabelSide.HasValue)
+				_majorLabelStyle.LabelSide = GetNewAxisSideFromOldAxisSide(_majorLabelStyle.LabelSide.Value);
+
+			if (null != _minorLabelStyle && _minorLabelStyle.LabelSide.HasValue)
+			{
+				_minorLabelStyle.LabelSide = GetNewAxisSideFromOldAxisSide(_minorLabelStyle.LabelSide.Value);
+			}
+		}
+
 		public AxisStyle(CSLineID id, bool isAxisLineEnabled, bool areMajorTicksEnabled, bool areMinorTicksEnabled, string axisTitleOrNull, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			_styleID = id;

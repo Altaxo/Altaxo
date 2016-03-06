@@ -259,6 +259,39 @@ namespace Altaxo.Graph.Graph3D.Axis
 				style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
 		}
 
+		/// <summary>
+		/// Updates the cached coordinate system while trying to keep the axis positions and tick positions.
+		/// </summary>
+		/// <param name="newSystem">The new coordinate system.</param>
+		/// <param name="GetNewAxisLineIDFromOldAxisLineID">Gets a new axis line identifier, using the old one as parameter.</param>
+		/// <param name="GetNewAxisSideFromOldAxisSide">Gets the new axis side (for instance of ticks), using the old axis line id as parameter1, the old axis side as parameter2 and the new axis line id as parameter3.
+		/// The return value is the new axis side. This function can return null, in this case no corresponding axis side has been found.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// </exception>
+		public void UpdateCoordinateSystemKeepingAxisPositions(
+			G3DCoordinateSystem newSystem,
+			Func<CSLineID, CSLineID> GetNewAxisLineIDFromOldAxisLineID,
+			Func<CSLineID, CSAxisSide, CSLineID, CSAxisSide?> GetNewAxisSideFromOldAxisSide)
+		{
+			if (null == newSystem)
+				throw new ArgumentNullException(nameof(newSystem));
+			if (null == GetNewAxisLineIDFromOldAxisLineID)
+				throw new ArgumentNullException(nameof(GetNewAxisLineIDFromOldAxisLineID));
+
+			foreach (var axisStyle in _axisStyles)
+			{
+				var oldAxisLineID = axisStyle.StyleID;
+				var newAxisLineID = GetNewAxisLineIDFromOldAxisLineID(oldAxisLineID);
+				if (null != newAxisLineID)
+				{
+					axisStyle.CachedAxisInformation = newSystem.GetAxisStyleInformation(newAxisLineID);
+					axisStyle.ChangeStyleIdentifier(newAxisLineID, oldAxisSide => GetNewAxisSideFromOldAxisSide(oldAxisLineID, oldAxisSide, newAxisLineID));
+				}
+			}
+
+			UpdateCoordinateSystem(newSystem);
+		}
+
 		public bool Remove(IGraphicBase go)
 		{
 			for (int i = 0; i < this._axisStyles.Count; ++i)

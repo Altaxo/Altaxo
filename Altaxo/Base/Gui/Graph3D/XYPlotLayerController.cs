@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
+using Altaxo.Graph.Graph3D.CS;
 using Altaxo.Gui.Graph3D.Axis;
 using System;
 using System.Collections.Generic;
@@ -567,7 +568,19 @@ namespace Altaxo.Gui.Graph3D
 
 			if (object.ReferenceEquals(_currentController, _coordinateController))
 			{
-				_doc.CoordinateSystem = (G3DCoordinateSystem)_coordinateController.ModelObject;
+				var oldCoordinateSystem = _doc.CoordinateSystem;
+				var newCoordinateSystem = (G3DCoordinateSystem)_coordinateController.ModelObject;
+
+				if (oldCoordinateSystem is G3DCartesicCoordinateSystem && newCoordinateSystem is G3DCartesicCoordinateSystem)
+				{
+					// before we officially changing the new coordinate system, we change the axis positions
+					_doc.AxisStyles.UpdateCoordinateSystemKeepingAxisPositions(
+						newCoordinateSystem,
+						oldAxisLineID => G3DCartesicCoordinateSystem.FindCorrespondingCSLineIDWhenChangingCoordinateSystem((G3DCartesicCoordinateSystem)oldCoordinateSystem, oldAxisLineID, (G3DCartesicCoordinateSystem)newCoordinateSystem),
+						(oldAxisLineID, oldAxisSide, newAxisLineID) => G3DCartesicCoordinateSystem.FindCorrespondingAxisSideWhenChangingCoordinateSystem((G3DCartesicCoordinateSystem)oldCoordinateSystem, oldAxisLineID, oldAxisSide, (G3DCartesicCoordinateSystem)newCoordinateSystem, newAxisLineID)
+						);
+				}
+				_doc.CoordinateSystem = newCoordinateSystem;
 				SetCoordinateSystemDependentObjects();
 			}
 
