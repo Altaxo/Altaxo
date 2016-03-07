@@ -69,9 +69,16 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		PointD2D ViewportSizeInPoints { get; }
 
 		/// <summary>
+		/// Sets the color that is used to initialize the background of the render scene.
+		/// </summary>
+		/// <param name="sceneBackColor">Background color of the render scene.</param>
+		void SetSceneBackColor(Altaxo.Drawing.AxoColor sceneBackColor);
+
+		/// <summary>
 		/// Sets the camera, but does not trigger a new rendering.
 		/// </summary>
 		/// <param name="camera">The camera.</param>
+		/// <param name="lightSettings">The light settings.</param>
 		void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera, Altaxo.Graph.Graph3D.LightSettings lightSettings);
 
 		/// <summary>

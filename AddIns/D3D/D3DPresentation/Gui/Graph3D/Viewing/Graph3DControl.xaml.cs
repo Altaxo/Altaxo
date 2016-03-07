@@ -345,6 +345,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Current.Gui.Execute(_renderer.TriggerRendering);
 		}
 
+		public void SetSceneBackColor(Altaxo.Drawing.AxoColor sceneBackColor)
+		{
+			_scene.SetSceneBackColor(sceneBackColor);
+		}
+
 		public void SetCamera(Altaxo.Graph.Graph3D.Camera.CameraBase camera, Altaxo.Graph.Graph3D.LightSettings lightSettings)
 		{
 			_scene.SetCamera(camera);

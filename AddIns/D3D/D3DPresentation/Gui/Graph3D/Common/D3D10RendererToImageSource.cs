@@ -228,16 +228,27 @@ namespace Altaxo.Gui.Graph3D.Common
 			device.OutputMerger.SetTargets(this._depthStencilView, this._renderTargetIntermediateView);
 			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
 
-			device.ClearRenderTargetView(this._renderTargetIntermediateView, this._renderTargetClearColor);
 			device.ClearDepthStencilView(this._depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
-			if (this.Scene != null)
+			if (this.Scene == null)
+			{
+				device.ClearRenderTargetView(this._renderTargetIntermediateView, this._renderTargetClearColor);
+			}
+			else // if (this.Scene != null)
 			{
 				if (!this._isRenderSceneAttached)
 				{
 					this._isRenderSceneAttached = true;
 					this._renderScene.Attach(_device, new PointD2D(renderTarget.Description.Width, renderTarget.Description.Height));
 				}
+
+				// Attention: it is now the Render function of the scene that is responsible for clearing the render target
+
+				var renderTargetClearColor = _renderTargetClearColor;
+				var sceneBack = this.Scene.SceneBackgroundColor;
+				if (sceneBack.HasValue)
+					renderTargetClearColor = new Color4((float)sceneBack.Value.ScR, (float)sceneBack.Value.ScG, (float)sceneBack.Value.ScB, (float)sceneBack.Value.ScA);
+				device.ClearRenderTargetView(this._renderTargetIntermediateView, renderTargetClearColor);
 
 				this.Scene.Render();
 			}

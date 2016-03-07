@@ -30,6 +30,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Graph.Graph3D.Lighting;
 	using Altaxo.Gui.Graph3D.Common;
+	using Drawing;
 	using Drawing.D3D;
 	using SharpDX;
 	using SharpDX.D3DCompiler;
@@ -111,6 +112,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private Device _hostDevice;
 
 		private PointD2D _hostSize;
+
+		private AxoColor? _sceneBackgroundColor;
 
 		private D3D10GraphicsContext _drawing;
 
@@ -296,6 +299,19 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (null != _overlayGeometry)
 			{
 				BringOverlayGeometryIntoDeviceBuffers(_overlayGeometry);
+			}
+		}
+
+		public void SetSceneBackColor(AxoColor? sceneBackColor)
+		{
+			_sceneBackgroundColor = sceneBackColor;
+		}
+
+		public AxoColor? SceneBackgroundColor
+		{
+			get
+			{
+				return _sceneBackgroundColor;
 			}
 		}
 

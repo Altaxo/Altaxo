@@ -55,6 +55,14 @@ namespace Altaxo.Gui.Graph3D.Common
 		/// Renders this scene to the scene host.
 		/// </summary>
 		void Render();
+
+		/// <summary>
+		/// Gets the color of the scene background. If null is returned, the render function is free to use its own color as scene background.
+		/// </summary>
+		/// <value>
+		/// The color of the scene background.
+		/// </value>
+		Altaxo.Drawing.AxoColor? SceneBackgroundColor { get; }
 	}
 
 	/// <summary>

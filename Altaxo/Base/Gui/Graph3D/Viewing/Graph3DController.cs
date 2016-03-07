@@ -204,16 +204,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			OnTitleNameChanged(EventArgs.Empty);
 		}
 
-		public void AddSphere()
-		{
-			var sphere = new Altaxo.Graph.Graph3D.Shapes.Ellipsoid();
-			sphere.Size = Doc.RootLayer.Size / 5;
-			sphere.Position = (PointD3D)(Doc.RootLayer.Size / 2);
-			sphere.Material = Altaxo.Drawing.D3D.Materials.GetSolidMaterial(Drawing.NamedColors.Black);
-
-			Doc.RootLayer.GraphObjects.Add(sphere);
-		}
-
 		private void InternalUninitializeGraphDocument()
 		{
 			// remove the weak event handlers from doc
@@ -1010,9 +1000,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				var newDrawing = _view.GetGraphicContext();
 				_doc.Paint(newDrawing);
+				var sceneBackColor = Altaxo.PropertyExtensions.GetPropertyValue(_doc, GraphDocument.PropertyKeyDefaultSceneBackColor, () => NamedColors.White);
 
 				var oldDrawing = _drawing;
 				_drawing = newDrawing;
+				_view.SetSceneBackColor(sceneBackColor);
 				_view.SetDrawing(_drawing);
 				_view.SetCamera(_doc.Camera, _doc.Lighting);
 

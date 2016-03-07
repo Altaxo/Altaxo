@@ -137,6 +137,23 @@ namespace Altaxo.Graph.Graph3D
 				}
 			};
 
+		public static readonly Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor> PropertyKeyDefaultSceneBackColor =
+		new Main.Properties.PropertyKey<Altaxo.Drawing.NamedColor>(
+		"D66E1DCF-F338-4CF1-BC4C-077335A4C823",
+		"Graph3D\\Colors\\Default scene back color",
+		Main.Properties.PropertyLevel.Document,
+		typeof(GraphDocument),
+		() => Altaxo.Drawing.NamedColors.Transparent
+		)
+		{
+			EditingControllerCreation = (doc) =>
+			{
+				var ctrl = new Gui.Graph.ColorManagement.NamedColorChoiceController { UseDocumentCopy = Gui.UseDocument.Copy };
+				ctrl.InitializeDocument(doc);
+				return ctrl;
+			}
+		};
+
 		public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
 		{
 			if (null != context)

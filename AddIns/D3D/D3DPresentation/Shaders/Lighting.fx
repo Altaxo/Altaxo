@@ -77,6 +77,16 @@ cbuffer cbClipPlanes
 	float4 ClipPlane5;
 }
 
+/////////////////////
+// BLENDING STATES //
+/////////////////////
+BlendState AlphaBlendingOn
+{
+	BlendEnable[0] = TRUE;
+	DestBlend = INV_SRC_ALPHA;
+	SrcBlend = SRC_ALPHA;
+};
+
 float4 dot4x4(float4 aX, float4 aY, float4 aZ, float4 bX, float4 bY, float4 bZ)
 {
 	return aX * bX + aY * bY + aZ * bZ;
@@ -377,6 +387,7 @@ technique10 Shade_PNC
 {
 	pass P0
 	{
+		// SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF); // uncomment this to enable alpha blending (seems not to be useful in DX10)
 		SetGeometryShader(0);
 		SetVertexShader(CompileShader(vs_4_0, VS_PNC()));
 		SetPixelShader(CompileShader(ps_4_0, PS()));

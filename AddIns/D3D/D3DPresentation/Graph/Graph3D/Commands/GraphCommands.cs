@@ -130,14 +130,6 @@ namespace Altaxo.Graph.Graph3D.Commands
 		}
 	}
 
-	public class AddSphere : AbstractGraph3DControllerCommand
-	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
-		{
-			ctrl.AddSphere();
-		}
-	}
-
 	public class SetCopyPageOptions : AbstractMenuCommand
 	{
 		public override void Run()
