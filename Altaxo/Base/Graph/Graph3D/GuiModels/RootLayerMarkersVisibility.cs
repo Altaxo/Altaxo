@@ -32,18 +32,19 @@ namespace Altaxo.Graph.Graph3D.GuiModels
 	/// <summary>
 	/// Designates the visibility of root layer markers.
 	/// </summary>
+	[Flags]
 	public enum RootLayerMarkersVisibility
 	{
 		/// <summary>Definitely not show root layer markers.</summary>
-		None,
+		None = 0,
 
 		/// <summary>Definitely not show root layer markers.</summary>
-		Arrows,
+		Arrows = 1,
 
 		/// <summary>Show root layer markers as lines.</summary>
-		Lines,
+		Lines = 2,
 
 		/// <summary>Show root layer markers as lines with arrows.</summary>
-		LinesWithArrows
+		LinesWithArrows = 3
 	}
 }

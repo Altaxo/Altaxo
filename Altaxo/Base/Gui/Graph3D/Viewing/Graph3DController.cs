@@ -12,6 +12,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext;
+	using Altaxo.Graph.Graph3D.GuiModels;
 	using Altaxo.Graph.Graph3D.Shapes;
 
 	//using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
@@ -60,7 +61,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// <summary>
 		/// If true, markers are shown in each of the corners of the graph document.
 		/// </summary>
-		private Altaxo.Graph.Graph3D.GuiModels.RootLayerMarkersVisibility? _showRootLayerMarkers;
+		private RootLayerMarkersVisibility? _rootLayerMarkersVisibility;
+
+		/// <summary>
+		/// The root layer markers visibility that results from the settings here and the property context of the document
+		/// </summary>
+		private RootLayerMarkersVisibility _cachedResultingRootLayerMarkersVisibility;
 
 		#region Constructors
 
@@ -93,7 +99,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			else if (args[0] is Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)
 			{
 				var o = (Altaxo.Graph.Graph3D.GuiModels.GraphViewOptions)args[0];
-				_showRootLayerMarkers = o.RootLayerMarkersVisibility;
+				_rootLayerMarkersVisibility = o.RootLayerMarkersVisibility;
 				if (this._doc == null)
 				{
 					InternalInitializeGraphDocument(o.GraphDocument);
@@ -1000,7 +1006,18 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				var newDrawing = _view.GetGraphicContext();
 				_doc.Paint(newDrawing);
-				var sceneBackColor = Altaxo.PropertyExtensions.GetPropertyValue(_doc, GraphDocument.PropertyKeyDefaultSceneBackColor, () => NamedColors.White);
+
+				var propertyContextOfDocument = Altaxo.PropertyExtensions.GetPropertyHierarchy(_doc);
+				var sceneBackColor = propertyContextOfDocument.GetValue(GraphDocument.PropertyKeyDefaultSceneBackColor, NamedColors.White);
+				RootLayerMarkersVisibility rootLayerMarkersVisibility;
+				if (!propertyContextOfDocument.TryGetValue(GraphDocument.PropertyKeyRootLayerMarkersVisibility, out rootLayerMarkersVisibility))
+				{
+					if (_rootLayerMarkersVisibility.HasValue)
+						rootLayerMarkersVisibility = _rootLayerMarkersVisibility.Value;
+					else
+						rootLayerMarkersVisibility = RootLayerMarkersVisibility.LinesWithArrows;
+				}
+				_cachedResultingRootLayerMarkersVisibility = rootLayerMarkersVisibility;
 
 				var oldDrawing = _drawing;
 				_drawing = newDrawing;
@@ -1226,18 +1243,22 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			RectangleD3D rect = new RectangleD3D(PointD3D.Empty, size);
 
-			foreach (var pos in rect.Vertices)
+			if (_cachedResultingRootLayerMarkersVisibility.HasFlag(RootLayerMarkersVisibility.Arrows))
 			{
-				var posX = pos.WithXPlus(pos.X == 0 ? markerLenBy2 : -markerLenBy2);
-				DrawMarkerX(buf, posX, markerLenBy2, markerThicknessBy2);
+				foreach (var pos in rect.Vertices)
+				{
+					var posX = pos.WithXPlus(pos.X == 0 ? markerLenBy2 : -markerLenBy2);
+					DrawMarkerX(buf, posX, markerLenBy2, markerThicknessBy2);
 
-				var posY = pos.WithYPlus(pos.Y == 0 ? markerLenBy2 : -markerLenBy2);
-				DrawMarkerY(buf, posY, markerLenBy2, markerThicknessBy2);
+					var posY = pos.WithYPlus(pos.Y == 0 ? markerLenBy2 : -markerLenBy2);
+					DrawMarkerY(buf, posY, markerLenBy2, markerThicknessBy2);
 
-				var posZ = pos.WithZPlus(pos.Z == 0 ? markerLenBy2 : -markerLenBy2);
-				DrawMarkerZ(buf, posZ, markerLenBy2, markerThicknessBy2);
+					var posZ = pos.WithZPlus(pos.Z == 0 ? markerLenBy2 : -markerLenBy2);
+					DrawMarkerZ(buf, posZ, markerLenBy2, markerThicknessBy2);
+				}
 			}
 
+			if (_cachedResultingRootLayerMarkersVisibility.HasFlag(RootLayerMarkersVisibility.Lines))
 			{
 				var lineBuffer = gc.PositionColorLineListBuffer;
 				foreach (var line in rect.Edges)

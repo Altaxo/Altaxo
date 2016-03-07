@@ -154,6 +154,22 @@ namespace Altaxo.Graph.Graph3D
 			}
 		};
 
+		public static readonly Main.Properties.PropertyKey<GuiModels.RootLayerMarkersVisibility> PropertyKeyRootLayerMarkersVisibility =
+		new Main.Properties.PropertyKey<GuiModels.RootLayerMarkersVisibility>(
+		"4EF17EF7-C494-4B76-98EC-D394172B58F8",
+		"Graph3D\\RootLayerMarkersVisibility",
+		Main.Properties.PropertyLevel.Document,
+		typeof(GraphDocument)
+		)
+		{
+			EditingControllerCreation = (doc) =>
+			{
+				var ctrl = new Gui.Common.EnumFlagController() { UseDocumentCopy = Gui.UseDocument.Copy };
+				ctrl.InitializeDocument(doc);
+				return ctrl;
+			}
+		};
+
 		public static FontX3D GetDefaultFont(IReadOnlyPropertyBag context)
 		{
 			if (null != context)
