@@ -44,9 +44,9 @@ namespace Altaxo.Gui.Graph3D
 
 		#region IBackgroundStyle
 
-		private IBackgroundStyle3D _doc;
+		private IBackgroundStyle _doc;
 
-		public IBackgroundStyle3D BackgroundStyle
+		public IBackgroundStyle BackgroundStyle
 		{
 			get
 			{
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Graph3D
 
 		#region Style
 
-		private System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle3D));
+		private System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
 		private ComboBox _cbStyle;
 
 		public ComboBox CbStyle
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Graph3D
 		private void EhStyle_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_cbStyle.SelectedIndex > 0)
-				_doc = (IBackgroundStyle3D)Activator.CreateInstance(this._backgroundStyles[_cbStyle.SelectedIndex - 1]);
+				_doc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[_cbStyle.SelectedIndex - 1]);
 			else
 				_doc = null;
 

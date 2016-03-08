@@ -39,20 +39,19 @@ namespace Altaxo.Gui.Graph3D.Shapes
 	/// </summary>
 	public partial class TextGraphicControl : UserControl, ITextGraphicView
 	{
-		//private BackgroundControlsGlue _backgroundGlue;
+		private BackgroundControlsGlue _backgroundGlue;
 		private GdiToWpfBitmap _previewBitmap;
 
 		public TextGraphicControl()
 		{
 			InitializeComponent();
 
-			/*
 			_backgroundGlue = new BackgroundControlsGlue();
 			_backgroundGlue.CbStyle = _cbBackgroundStyle;
 			_backgroundGlue.CbBrush = _cbBackgroundBrush;
 			_backgroundGlue.BackgroundStyleChanged += new EventHandler(EhBackgroundStyleChanged);
 			_backgroundGlue.BackgroundBrushChanged += new EventHandler(EhBackgroundStyleChanged);
-			*/
+
 			_previewBitmap = new GdiToWpfBitmap(16, 16);
 			m_pnPreview.Source = _previewBitmap.WpfBitmap;
 		}
@@ -174,16 +173,15 @@ namespace Altaxo.Gui.Graph3D.Shapes
 
 		public ITextGraphicViewEventSink Controller { set { _controller = value; } }
 
-		public IBackgroundStyle3D SelectedBackground
+		public IBackgroundStyle SelectedBackground
 		{
 			get
 			{
-				return null;
-				//return _backgroundGlue.BackgroundStyle;
+				return _backgroundGlue.BackgroundStyle;
 			}
 			set
 			{
-				//_backgroundGlue.BackgroundStyle = value;
+				_backgroundGlue.BackgroundStyle = value;
 			}
 		}
 

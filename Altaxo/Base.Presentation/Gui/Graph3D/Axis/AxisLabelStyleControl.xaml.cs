@@ -31,7 +31,6 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph3D.Axis
 {
-	using Altaxo.Graph.Gdi.Background;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Background;
 	using Drawing.D3D;
@@ -93,7 +92,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 			}
 		}
 
-		public new IBackgroundStyle3D Background
+		public new IBackgroundStyle Background
 		{
 			get
 			{

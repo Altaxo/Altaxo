@@ -126,9 +126,9 @@ namespace Altaxo.Graph.Graph3D
 		private static bool HitTestWithAlreadyTransformedPoints(PointD3D p0, PointD3D p1, PointD3D p2, out double z)
 		{
 			if (
-				(p0.X * p1.Y - p0.Y * p1.X) <= 0 &&
-				(p1.X * p2.Y - p1.Y * p2.X) <= 0 &&
-				(p2.X * p0.Y - p2.Y * p0.X) <= 0
+				(p0.X * p1.Y - p0.Y * p1.X) < 0 &&
+				(p1.X * p2.Y - p1.Y * p2.X) < 0 &&
+				(p2.X * p0.Y - p2.Y * p0.X) < 0
 				)
 			{
 				z = Math.Min(Math.Min(p0.Z, p1.Z), p2.Z);

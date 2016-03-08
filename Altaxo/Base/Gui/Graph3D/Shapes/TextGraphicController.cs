@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph3D.Shapes
 
 		ITextGraphicViewEventSink Controller { set; }
 
-		IBackgroundStyle3D SelectedBackground { get; set; }
+		IBackgroundStyle SelectedBackground { get; set; }
 
 		object LocationView { set; }
 

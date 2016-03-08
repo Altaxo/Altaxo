@@ -32,6 +32,14 @@ namespace Altaxo.Geometry
 	[Serializable]
 	public struct Margin2D : IEquatable<Margin2D>
 	{
+		public Margin2D(double left, double top, double right, double bottom)
+		{
+			Left = left;
+			Top = top;
+			Right = right;
+			Bottom = bottom;
+		}
+
 		public double Left { get; set; }
 
 		public double Top { get; set; }
@@ -77,6 +85,34 @@ namespace Altaxo.Geometry
 		public bool Equals(Margin2D other)
 		{
 			return this.Left == other.Left && this.Top == other.Top && this.Right == other.Right && this.Bottom == other.Bottom;
+		}
+
+		public static bool operator ==(Margin2D a, Margin2D b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(Margin2D a, Margin2D b)
+		{
+			return !(a.Equals(b));
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Margin2D)
+			{
+				var from = (Margin2D)obj;
+				return Equals(from);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public override int GetHashCode()
+		{
+			return Left.GetHashCode() + 3 * Right.GetHashCode() + 7 * Top.GetHashCode() + 11 * Bottom.GetHashCode();
 		}
 	}
 }

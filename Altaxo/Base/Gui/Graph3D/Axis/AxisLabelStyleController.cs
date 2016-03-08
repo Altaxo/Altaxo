@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 		/// <summary>
 		/// Initializes the background.
 		/// </summary>
-		IBackgroundStyle3D Background { get; set; }
+		IBackgroundStyle Background { get; set; }
 
 		/// <summary>
 		/// Value of the font size in points (1/72 inch).

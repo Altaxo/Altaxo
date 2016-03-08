@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		protected string _text = ""; // the text, which contains the formatting symbols
 		protected FontX3D _font;
 		protected IMaterial _textBrush = Materials.GetSolidMaterial(NamedColors.Black);
-		protected IBackgroundStyle3D _background = null;
+		protected IBackgroundStyle _background = null;
 		protected double _lineSpacingFactor = 1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 
 		#region Cached or temporary variables
@@ -59,7 +59,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		private StructuralGlyph _rootNode;
 		protected bool _isStructureInSync = false; // true when the text was interpretet and the structure created
 		protected bool _isMeasureInSync = false; // true when all items are measured
-		protected PointD3D _cachedTextOffset; // offset of text to left upper corner of outer rectangle
+
+		/// <summary>The size of the text rectangle as is - i.e. without padding, background, etc.</summary>
+		protected VectorD3D CachedTextSizeWithoutPadding { get { return this._rootNode != null ? new VectorD3D(this._rootNode.SizeX, this._rootNode.SizeY, this._rootNode.SizeZ) : VectorD3D.Empty; } }
+
+		protected Margin2D _cachedTextPadding;
+		protected PointD3D _cachedTextOffset; // offset from the lower left corner of the background or drawing origin to the lower left corner of the unpadded text rectangle
 		protected RectangleD3D _cachedExtendedTextBounds; // the text bounds extended by some margin around it
 
 		#endregion Cached or temporary variables
@@ -93,7 +98,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				s._text = info.GetString("Text");
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._textBrush = (IMaterial)info.GetValue("Brush", s);
-				s.Background = (IBackgroundStyle3D)info.GetValue("BackgroundStyle", s);
+				s.Background = (IBackgroundStyle)info.GetValue("BackgroundStyle", s);
 				s._lineSpacingFactor = info.GetSingle("LineSpacing");
 
 				s.UpdateTransformationMatrix();
@@ -156,7 +161,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 					this._textBrush = from._textBrush;
 
-					this._background = from._background == null ? null : (IBackgroundStyle3D)from._background.Clone();
+					this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
 					if (null != _background) _background.ParentObject = this;
 
 					this._lineSpacingFactor = from._lineSpacingFactor;
@@ -201,46 +206,40 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			double widthOfOne_n = Glyph.MeasureString("n", _font).X;
 			double widthOfThree_M = Glyph.MeasureString("MMM", _font).X;
 
-			double distanceXL = 0; // left distance bounds-text
-			double distanceXR = 0; // right distance text-bounds
-			double distanceYU = 0;   // upper y distance bounding rectangle-string
-			double distanceYL = 0; // lower y distance
+			if (this._background != null)
+			{
+				_cachedTextPadding = new Margin2D(
+					0.25 * widthOfOne_n,
+					fontInfo.cyDescent,
+					0.25 * widthOfOne_n,
+					fontInfo.cyDescent
+					);
+			}
+			else
+			{
+				_cachedTextPadding = new Margin2D(0, 0, 0, 0);
+			}
+
+			var paddedTextSize = new VectorD3D((itemSizeX + _cachedTextPadding.Left + _cachedTextPadding.Right), (itemSizeY + _cachedTextPadding.Bottom + _cachedTextPadding.Top), itemSizeZ);
+			var textRectangle = new RectangleD3D(PointD3D.Empty, paddedTextSize); // the origin of the padded text rectangle is always 0
 
 			if (this._background != null)
 			{
-				// the distance to the sides should be like the character n
-				distanceXL = 0.25 * widthOfOne_n; // left distance bounds-text
-				distanceXR = distanceXL; // right distance text-bounds
-				distanceYU = fontInfo.cyDescent;   // upper y distance bounding rectangle-string
-				distanceYL = 0; // lower y distance
+				var backgroundRect = this._background.Measure(textRectangle);
+				_cachedExtendedTextBounds = backgroundRect.WithRectangleIncluded(textRectangle); //  _cachedExtendedTextBounds.WithOffset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y, 0);
+
+				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(_cachedExtendedTextBounds.Size, false);
+				this._cachedTextOffset = new PointD3D(textRectangle.X - backgroundRect.X + _cachedTextPadding.Left, textRectangle.Y - backgroundRect.Y + _cachedTextPadding.Bottom, 0);
 			}
-
-			var size = new VectorD3D((itemSizeX + distanceXL + distanceXR), (itemSizeY + distanceYU + distanceYL), itemSizeZ);
-			_cachedExtendedTextBounds = new RectangleD3D(PointD3D.Empty, size);
-			var textRectangle = new RectangleD3D(new PointD3D(-distanceXL, -distanceYU, 0), size);
-
-			if (this._background != null)
+			else
 			{
-				var backgroundRect = this._background.MeasureItem(textRectangle);
-				_cachedExtendedTextBounds = _cachedExtendedTextBounds.WithOffset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y, 0);
-
-				size = backgroundRect.Size;
-				distanceXL = -backgroundRect.X;
-				distanceXR = (backgroundRect.XPlusSizeX - itemSizeX);
-				distanceYU = -backgroundRect.YPlusSizeY;
-				distanceYL = (backgroundRect.Y - itemSizeY);
+				((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(paddedTextSize, false);
+				_cachedExtendedTextBounds = textRectangle;
+				_cachedTextOffset = PointD3D.Empty;
 			}
-
-			//var xanchor = _location.PivotX.GetValueRelativeTo(size.X);
-			//var yanchor = _location.PivotY.GetValueRelativeTo(size.Y);
-
-			// this._leftTop = new PointD2D(-xanchor, -yanchor);
-			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size, false);
-
-			this._cachedTextOffset = new PointD3D(distanceXL, distanceYU, 0);
 		}
 
-		public IBackgroundStyle3D Background
+		public IBackgroundStyle Background
 		{
 			get
 			{
@@ -269,7 +268,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				return;
 
 			if (_background != null)
-				_background.Draw(g, _cachedExtendedTextBounds);
+			{
+				var textSizeWithPadding = CachedTextSizeWithoutPadding + new VectorD3D(_cachedTextPadding.Left + _cachedTextPadding.Right, _cachedTextPadding.Top + _cachedTextPadding.Bottom, 0);
+
+				_background.Draw(g, new RectangleD3D(PointD3D.Empty, textSizeWithPadding));
+			}
 		}
 
 		#endregion Background

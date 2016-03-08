@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		protected double _rotationZ;
 
 		/// <summary>The style for the background.</summary>
-		protected Background.IBackgroundStyle3D _backgroundStyle;
+		protected Background.IBackgroundStyle _backgroundStyle;
 
 		protected bool _automaticRotationShift;
 
@@ -144,7 +144,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._brush = (IMaterial)info.GetValue("Brush", s);
 
-				s.BackgroundStyle = (Background.IBackgroundStyle3D)info.GetValue("Background", s);
+				s.BackgroundStyle = (Background.IBackgroundStyle)info.GetValue("Background", s);
 
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
 				s._alignmentX = (StringAlignment)info.GetEnum("AlignmentX", typeof(StringAlignment));
@@ -356,7 +356,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		}
 
 		/// <summary>The background style.</summary>
-		public Background.IBackgroundStyle3D BackgroundStyle
+		public Background.IBackgroundStyle BackgroundStyle
 		{
 			get
 			{
@@ -808,7 +808,11 @@ namespace Altaxo.Graph.Graph3D.Axis
 				g.PrependTransform(math);
 
 				if (this._backgroundStyle != null)
-					_backgroundStyle.Draw(g, new RectangleD3D(PointD3D.Empty, msize));
+				{
+					var itemRectangle = new RectangleD3D(PointD3D.Empty, msize);
+					_backgroundStyle.Measure(itemRectangle);
+					_backgroundStyle.Draw(g, itemRectangle);
+				}
 
 				labels[i].Draw(g, _brush, PointD3D.Empty);
 				labelOutlines[i] = new RectangularObjectOutline(new RectangleD3D(PointD3D.Empty, msize), math);

@@ -156,12 +156,51 @@ namespace Altaxo.Geometry
 			return new RectangleD3D(X, Y, Z + addZ, SizeX, SizeY, SizeZ);
 		}
 
+		public RectangleD3D WithSizeX(double newSizeX)
+		{
+			return new RectangleD3D(X, Y, Z, newSizeX, SizeY, SizeZ);
+		}
+
+		public RectangleD3D WithSizeXPlus(double offsetSizeX)
+		{
+			return new RectangleD3D(X, Y, Z, SizeX + offsetSizeX, SizeY, SizeZ);
+		}
+
+		public RectangleD3D WithSizeY(double newSizeY)
+		{
+			return new RectangleD3D(X, Y, Z, SizeX, newSizeY, SizeZ);
+		}
+
+		public RectangleD3D WithSizeYPlus(double offsetSizeY)
+		{
+			return new RectangleD3D(X, Y, Z, SizeX, SizeY + offsetSizeY, SizeZ);
+		}
+
+		public RectangleD3D WithSizeZ(double newSizeZ)
+		{
+			return new RectangleD3D(X, Y, Z, SizeX, SizeY, newSizeZ);
+		}
+
+		public RectangleD3D WithSizeZPlus(double offsetSizeZ)
+		{
+			return new RectangleD3D(X, Y, Z, SizeX, SizeY, SizeZ + offsetSizeZ);
+		}
+
+		public RectangleD3D WithSize(VectorD3D newSize)
+		{
+			return new RectangleD3D(X, Y, Z, newSize.X, newSize.Y, newSize.Z);
+		}
+
+		public RectangleD3D WithSizePlus(VectorD3D sizeOffset)
+		{
+			return new RectangleD3D(X, Y, Z, SizeX + sizeOffset.X, SizeY + sizeOffset.Y, SizeZ + sizeOffset.Z);
+		}
+
 		#endregion Setter
 
 		public double X
 		{
 			get { return _x; }
-			set { _x = value; }
 		}
 
 		public double XPlusSizeX
@@ -172,7 +211,6 @@ namespace Altaxo.Geometry
 		public double Y
 		{
 			get { return _y; }
-			set { _y = value; }
 		}
 
 		public double YPlusSizeY
@@ -183,7 +221,6 @@ namespace Altaxo.Geometry
 		public double Z
 		{
 			get { return _z; }
-			set { _z = value; }
 		}
 
 		public double ZPlusSizeZ
@@ -194,19 +231,16 @@ namespace Altaxo.Geometry
 		public double SizeX
 		{
 			get { return _sizeX; }
-			set { _sizeX = value; }
 		}
 
 		public double SizeY
 		{
 			get { return _sizeY; }
-			set { _sizeY = value; }
 		}
 
 		public double SizeZ
 		{
 			get { return _sizeZ; }
-			set { _sizeZ = value; }
 		}
 
 		public static RectangleD3D Empty
@@ -264,12 +298,11 @@ namespace Altaxo.Geometry
 			{
 				return new PointD3D(_x, _y, _z);
 			}
-			set
-			{
-				_x = value.X;
-				_y = value.Y;
-				_z = value.Z;
-			}
+		}
+
+		public RectangleD3D WithLocation(PointD3D newLocation)
+		{
+			return new RectangleD3D(newLocation.X, newLocation.Y, newLocation.Z, SizeX, SizeY, SizeZ);
 		}
 
 		public VectorD3D Size
@@ -277,12 +310,6 @@ namespace Altaxo.Geometry
 			get
 			{
 				return new VectorD3D(_sizeX, _sizeY, _sizeZ);
-			}
-			set
-			{
-				_sizeX = value.X;
-				_sizeY = value.Y;
-				_sizeZ = value.Z;
 			}
 		}
 

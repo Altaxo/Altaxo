@@ -242,7 +242,8 @@
     <Compile Include="Graph\Graph3D\Axis\GridPlane.cs" />
     <Compile Include="Graph\Graph3D\Axis\GridPlaneCollection.cs" />
     <Compile Include="Graph\Graph3D\Axis\GridStyle.cs" />
-    <Compile Include="Graph\Graph3D\Background\IBackgroundStyle3D.cs" />
+    <Compile Include="Graph\Graph3D\Background\IBackgroundStyle.cs" />
+    <Compile Include="Graph\Graph3D\Background\RectangularBackground.cs" />
     <Compile Include="Graph\Graph3D\Camera\CameraBase.cs" />
     <Compile Include="Graph\Graph3D\Camera\CameraChangedEventArgs.cs" />
     <Compile Include="Graph\Graph3D\Camera\OrthographicCamera.cs" />
