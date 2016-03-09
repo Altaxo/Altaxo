@@ -453,6 +453,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Drawing\D3D\MaterialControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Geometry\Position3DControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -549,7 +557,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph3D\Material\MaterialComboBox.xaml">
+    <Page Include="Gui\Drawing\D3D\MaterialComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1362,6 +1370,12 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableDataSourceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Drawing\D3D\MaterialControl.xaml.cs">
+      <DependentUpon>MaterialControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorControl.xaml.cs">
+      <DependentUpon>MaterialWithUniformColorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\Geometry\Position3DControl.xaml.cs">
       <DependentUpon>Position3DControl.xaml</DependentUpon>
@@ -1440,10 +1454,10 @@
       <DependentUpon>HemisphericAmbientLightControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Lighting\IDiscreteLightControl.cs" />
-    <Compile Include="Gui\Graph3D\Material\MaterialComboBox.xaml.cs">
+    <Compile Include="Gui\Drawing\D3D\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Material\MaterialConverter.cs" />
+    <Compile Include="Gui\Drawing\D3D\MaterialConverter.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesControl.xaml.cs">
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
@@ -1853,7 +1867,9 @@
       <Name>AltaxoCore</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Gui\Graph3D\Material\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

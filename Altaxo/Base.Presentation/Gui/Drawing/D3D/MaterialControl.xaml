@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="Altaxo.Gui.Drawing.D3D.MaterialControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Drawing.D3D"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="Auto" MinWidth="60"  SharedSizeGroup="EditColumn1" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+
+		<Label Content="Specular intensity:" Grid.Row="0" Grid.Column="0" />
+		<axogc:DoubleUpDown x:Name="_guiSpecularIntensity" Grid.Row="0" Grid.Column="2" Minimum="0" Change="0.125" ToolTip="Value >= 0. The higher the value, the more intense is the specular reflex on the object." />
+
+		<Label Content="Specular exponent:" Grid.Row="2" Grid.Column="0" />
+		<axogc:DoubleUpDown x:Name="_guiSpecularExponent" Grid.Row="2" Grid.Column="2" Minimum="0" Change="1" ToolTip="Value >= 0. The higher the value, the sharper the reflex on the object." />
+
+		<Label Content="Specular mixing:" Grid.Row="4" Grid.Column="0" />
+		<axogc:DoubleUpDown x:Name="_guiSpecularMixingCoefficient" Grid.Row="4" Grid.Column="2" Minimum="0" Change="0.125" Maximum="1" ToolTip="Value between 0 and 1. 0 means light is reflected fully mixed with the color of the object. 1 means light is reflected only with the color of the light source." />
+	</Grid>
+</UserControl>

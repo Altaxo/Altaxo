@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,97 +34,97 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph3D.Axis
 {
-    [ExpectedTypeOfView(typeof(IMultiChildView))]
-    [UserControllerForObject(typeof(GridPlane))]
-    public class GridPlaneController : MVCANControllerEditOriginalDocBase<GridPlane, IMultiChildView>
-    {
-        private MultiChildController _innerController;
+	[ExpectedTypeOfView(typeof(IMultiChildView))]
+	[UserControllerForObject(typeof(GridPlane))]
+	public class GridPlaneController : MVCANControllerEditOriginalDocBase<GridPlane, IMultiChildView>
+	{
+		private MultiChildController _innerController;
 
-        private IMVCANController _grid1;
-        private IMVCANController _grid2;
-        private IMVCANController _background;
+		private IMVCANController _grid1;
+		private IMVCANController _grid2;
+		private IMVCANController _background;
 
-        public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-        {
-            yield return new ControllerAndSetNullMethod(_grid1, () => _grid1 = null);
-            yield return new ControllerAndSetNullMethod(_grid2, () => _grid2 = null);
-            yield return new ControllerAndSetNullMethod(_background, () => _background = null);
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield return new ControllerAndSetNullMethod(_grid1, () => _grid1 = null);
+			yield return new ControllerAndSetNullMethod(_grid2, () => _grid2 = null);
+			yield return new ControllerAndSetNullMethod(_background, () => _background = null);
 
-            yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
-        }
+			yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
+		}
 
-        protected override void Initialize(bool initData)
-        {
-            base.Initialize(initData);
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
 
-            if (initData)
-            {
-                _grid1 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
-                _grid1.InitializeDocument(_doc.GridStyleFirst ?? new GridStyle() { ShowGrid = false });
-                Current.Gui.FindAndAttachControlTo(_grid1);
-                ControlViewElement c1 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber1), _grid1, _grid1.ViewObject);
+			if (initData)
+			{
+				_grid1 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
+				_grid1.InitializeDocument(_doc.GridStyleFirst ?? new GridStyle() { ShowGrid = false });
+				Current.Gui.FindAndAttachControlTo(_grid1);
+				ControlViewElement c1 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber1), _grid1, _grid1.ViewObject);
 
-                _grid2 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
-                _grid2.InitializeDocument(_doc.GridStyleSecond ?? new GridStyle() { ShowGrid = false });
-                Current.Gui.FindAndAttachControlTo(_grid2);
-                ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
+				_grid2 = new XYGridStyleController() { UseDocumentCopy = UseDocument.Directly };
+				_grid2.InitializeDocument(_doc.GridStyleSecond ?? new GridStyle() { ShowGrid = false });
+				Current.Gui.FindAndAttachControlTo(_grid2);
+				ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
 
-                _background = new Material.BrushControllerSimple() { UseDocumentCopy = UseDocument.Directly };
-                _background.InitializeDocument(_doc.Background ?? SolidColor.NoMaterial);
-                Current.Gui.FindAndAttachControlTo(_background);
-                ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
+				_background = new Material.MaterialControllerSimple() { UseDocumentCopy = UseDocument.Directly };
+				_background.InitializeDocument(_doc.Background ?? MaterialWithUniformColor.NoMaterial);
+				Current.Gui.FindAndAttachControlTo(_background);
+				ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
 
-                _innerController = new MultiChildController(new ControlViewElement[] { c1, c2, c3 }, false);
-            }
-        }
+				_innerController = new MultiChildController(new ControlViewElement[] { c1, c2, c3 }, false);
+			}
+		}
 
-        public override bool Apply(bool disposeController)
-        {
-            if (false == _innerController.Apply(disposeController))
-                return false;
+		public override bool Apply(bool disposeController)
+		{
+			if (false == _innerController.Apply(disposeController))
+				return false;
 
-            _doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
-            _doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
-            var backBrush = (IMaterial)_background.ModelObject;
-            _doc.Background = SolidColor.NoMaterial == backBrush ? null : backBrush;
+			_doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
+			_doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
+			var backBrush = (IMaterial)_background.ModelObject;
+			_doc.Background = MaterialWithUniformColor.NoMaterial == backBrush ? null : backBrush;
 
-            return ApplyEnd(true, disposeController);
-        }
+			return ApplyEnd(true, disposeController);
+		}
 
-        protected override void AttachView()
-        {
-            base.AttachView();
-            if (null != _innerController)
-            {
-                _innerController.ViewObject = _view;
-            }
-        }
+		protected override void AttachView()
+		{
+			base.AttachView();
+			if (null != _innerController)
+			{
+				_innerController.ViewObject = _view;
+			}
+		}
 
-        protected override void DetachView()
-        {
-            if (null != _innerController)
-            {
-                _innerController.ViewObject = null;
-            }
-            base.DetachView();
-        }
+		protected override void DetachView()
+		{
+			if (null != _innerController)
+			{
+				_innerController.ViewObject = null;
+			}
+			base.DetachView();
+		}
 
-        private static string GridName(int axisNumber)
-        {
-            switch (axisNumber)
-            {
-                case 0:
-                    return "X-axis grid";
+		private static string GridName(int axisNumber)
+		{
+			switch (axisNumber)
+			{
+				case 0:
+					return "X-axis grid";
 
-                case 1:
-                    return "Y-axis grid";
+				case 1:
+					return "Y-axis grid";
 
-                case 2:
-                    return "Z-axis grid";
+				case 2:
+					return "Z-axis grid";
 
-                default:
-                    return string.Format("Axis[{0}] grid", axisNumber);
-            }
-        }
-    }
+				default:
+					return string.Format("Axis[{0}] grid", axisNumber);
+			}
+		}
+	}
 }

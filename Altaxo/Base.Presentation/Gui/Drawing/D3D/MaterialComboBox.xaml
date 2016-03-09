@@ -1,20 +1,20 @@
-﻿<local:ColorComboBoxBase x:Class="Altaxo.Gui.Graph3D.Material.MaterialComboBox"
+﻿<axogcd:ColorComboBoxBase x:Class="Altaxo.Gui.Drawing.D3D.MaterialComboBox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:axog="clr-namespace:Altaxo.Graph;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Material"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Drawing.D3D"
              mc:Ignorable="d"
              d:DesignHeight="24" d:DesignWidth="100">
 	<UserControl.Resources>
 		<axogc:NamedColorToWpfBrushConverter x:Key="Nc2WpfCC" />
 		<axogc:NamedColorToColorSetNameConverter x:Key="Nc2ColorSetName" />
-		<axog3m:MaterialToImageSourceConverter x:Key="Bx2WpfImgSrc" Width="16" Height="16" />
-		<axog3m:MaterialToImageSourceConverter x:Key="Bx2WpfImgSrc_16x12" Width="16" Height="12" />
-		<axog3m:MaterialToMaterialNameConverter x:Key="Bx2BName" />
+		<local:MaterialToImageSourceConverter x:Key="Bx2WpfImgSrc" Width="16" Height="16" />
+		<local:MaterialToImageSourceConverter x:Key="Bx2WpfImgSrc_16x12" Width="16" Height="12" />
+		<local:MaterialToMaterialNameConverter x:Key="Bx2BName" />
 
 		<!-- Checkerboard brush for the background of brush items -->
 		<DrawingBrush x:Key="CheckerboardBrush"
@@ -180,4 +180,4 @@
 			</Border>
 		</Popup>
 	</Grid>
-</local:ColorComboBoxBase>
+</axogcd:ColorComboBoxBase>

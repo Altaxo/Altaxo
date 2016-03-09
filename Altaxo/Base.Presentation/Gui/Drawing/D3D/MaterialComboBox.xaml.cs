@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,12 +33,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace Altaxo.Gui.Graph3D.Material
+namespace Altaxo.Gui.Drawing.D3D
 {
+	using Altaxo.Drawing;
+	using Altaxo.Drawing.D3D;
+	using Altaxo.Drawing.D3D.Material;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Gui.Common.Drawing;
-	using Drawing;
-	using Drawing.D3D;
 
 	/// <summary>
 	/// Interaction logic for ColorComboBoxEx.xaml
@@ -51,11 +52,20 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		private List<IMaterial> _lastLocalUsedItems = new List<IMaterial>();
 
+		/// <summary>
+		/// Is used as a template for the items of this combobox. The items will use the same specular properties as in this template, but with a different color.
+		/// </summary>
+		private MaterialWithUniformColor _solidMaterialTemplate = new MaterialWithUniformColor(NamedColors.Black);
+
 		#region Constructors
 
 		static MaterialComboBox()
 		{
-			SelectedMaterialProperty = DependencyProperty.Register("SelectedMaterial", typeof(IMaterial), typeof(MaterialComboBox), new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce));
+			SelectedMaterialProperty = DependencyProperty.Register(
+				"SelectedMaterial",
+				typeof(IMaterial),
+				typeof(MaterialComboBox),
+				new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce));
 		}
 
 		public MaterialComboBox()
@@ -88,7 +98,7 @@ namespace Altaxo.Gui.Graph3D.Material
 				var selMaterial = InternalSelectedMaterial;
 				if (null != selMaterial)
 				{
-					selMaterial = Materials.GetMaterialWithNewColor(selMaterial, value);
+					selMaterial = selMaterial.WithColor(value);
 					InternalSelectedMaterial = selMaterial;
 				}
 			}
@@ -99,17 +109,8 @@ namespace Altaxo.Gui.Graph3D.Material
 		#region Dependency property
 
 		/// <summary>
-		/// Gets/sets the selected brush. Since <see cref="IMaterial"/> is not immutable, the material is cloned when setting the property, as well as when getting the property.
+		/// Gets/sets the selected material.
 		/// </summary>
-		/// <remarks>
-		/// <para>Reasons to clone the brush at setting/getting:</para>
-		/// <para>
-		/// Scenario 1: the SelectedMaterial property is set without cloning, then an external function changes the brush color: the MaterialComboBox will not show the new color, since it don't know anything about the changed color.
-		/// </para>
-		/// <para>
-		/// The user selects a brush in this MaterialComboBox, the value is used by an external function, which changes the color. Here also, the new color is not shown in the MaterialComboBox.
-		/// </para>
-		/// </remarks>
 		public IMaterial SelectedMaterial
 		{
 			get
@@ -147,22 +148,22 @@ namespace Altaxo.Gui.Graph3D.Material
 			return thiss.InternalSelectedMaterialCoerce(obj, (IMaterial)coerceValue);
 		}
 
-		protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial brush)
+		protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial material)
 		{
-			if (null == brush)
-				brush = Materials.GetNoMaterial();
+			if (null == material)
+				material = Materials.GetNoMaterial();
 
-			var coercedColor = brush.Color.CoerceParentColorSetToNullIfNotMember();
-			if (!brush.Color.Equals(coercedColor))
+			var coercedColor = material.Color.CoerceParentColorSetToNullIfNotMember();
+			if (!material.Color.Equals(coercedColor))
 			{
-				brush = Materials.GetMaterialWithNewColor(brush, coercedColor);
+				material = Materials.GetMaterialWithNewColor(material, coercedColor);
 			}
 
-			if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || false == brush.Color.ParentColorSet.IsPlotColorSet))
+			if (this.ShowPlotColorsOnly && (material.Color.ParentColorSet == null || false == material.Color.ParentColorSet.IsPlotColorSet))
 			{
-				brush = Materials.GetMaterialWithNewColor(brush, ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
+				material = Materials.GetMaterialWithNewColor(material, ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 			}
-			return brush;
+			return material;
 		}
 
 		private static void EhSelectedMaterialChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -172,19 +173,24 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		protected virtual void OnSelectedMaterialChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			var oldMat = (IMaterial)args.OldValue;
-			var newMat = (IMaterial)args.NewValue;
+			var oldMaterial = (IMaterial)args.OldValue;
+			var newMaterial = (IMaterial)args.NewValue;
 
-			var oldColor = oldMat.Color;
-			var newColor = newMat.Color;
+			var oldColor = oldMaterial.Color;
+			var newColor = newMaterial.Color;
 
-			if (newMat.Color.ParentColorSet == null)
+			if (newMaterial.Color.ParentColorSet == null)
 			{
-				StoreAsLastUsedItem(_lastLocalUsedItems, newMat);
+				StoreAsLastUsedItem(_lastLocalUsedItems, newMaterial);
+			}
+			else if (!newMaterial.HasSameSpecularPropertiesAs(_solidMaterialTemplate))
+			{
+				// StoreAsLastUsedItem(_lastLocalUsedItems, newMaterial);
+				_solidMaterialTemplate = (MaterialWithUniformColor)_solidMaterialTemplate.WithSpecularPropertiesAs(newMaterial);
 			}
 
-			if (!newMat.Equals(_guiComboBox.SelectedValue))
-				this.UpdateComboBoxSourceSelection(newMat);
+			if (!newMaterial.Equals(_guiComboBox.SelectedValue))
+				this.UpdateComboBoxSourceSelection(newMaterial);
 
 			if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
 				this.UpdateTreeViewSelection();
@@ -209,7 +215,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			_guiComboBox.SelectedValue = brush;
 		}
 
-		private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used brushes" } };
+		private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used materials" } };
 		private List<object> _comboBoxSeparator2 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Color set" } };
 
 		protected override bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining)
@@ -219,7 +225,7 @@ namespace Altaxo.Gui.Graph3D.Material
 			lastUsed = GetFilteredList(_lastLocalUsedItems, filterString, ShowPlotColorsOnly);
 
 			var colorSet = GetColorSetForComboBox();
-			var known = GetFilteredList(colorSet, filterString);
+			var known = GetFilteredList(colorSet, _solidMaterialTemplate, filterString);
 
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
 			{
@@ -244,14 +250,14 @@ namespace Altaxo.Gui.Graph3D.Material
 			return false;
 		}
 
-		protected static List<object> GetFilteredList(IList<NamedColor> originalList, string filterString)
+		protected static List<object> GetFilteredList(IList<NamedColor> originalList, MaterialWithUniformColor materialTemplate, string filterString)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();
-			foreach (var item in originalList)
+			foreach (var namedColor in originalList)
 			{
-				if (item.Name.ToLowerInvariant().StartsWith(filterString))
-					result.Add(Materials.GetSolidMaterial(item));
+				if (namedColor.Name.ToLowerInvariant().StartsWith(filterString))
+					result.Add(materialTemplate.WithColor(namedColor));
 			}
 			return result;
 		}
@@ -314,15 +320,15 @@ namespace Altaxo.Gui.Graph3D.Material
 
 		private void EhShowCustomMaterialDialog(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
-			/*
-			var localMaterial = this.InternalSelectedMaterial.Clone(); // under no circumstances change the selected brush, since it may come from an unknown source
-			var ctrl = new BrushControllerAdvanced();
-			ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
-			ctrl.InitializeDocument(localMaterial);
+			var localMaterial = this.SelectedMaterial;
+
+			var ctrl = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { localMaterial }, typeof(IMVCANController), UseDocument.Copy);
+			//ctrl.RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly;
+			//ctrl.InitializeDocument(localMaterial);
 			if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))
-				this.InternalSelectedMaterial = (IMaterial3D)ctrl.ModelObject;
-				*/
+			{
+				SelectedMaterial = (IMaterial)ctrl.ModelObject;
+			}
 		}
 
 		protected void EhShowCustomColorDialog(object sender, RoutedEventArgs e)

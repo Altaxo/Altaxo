@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes"
-						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Graph3D.Material"
+						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
              mc:Ignorable="d"
 >
 	<UserControl.Resources>

@@ -224,6 +224,7 @@
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\TableDataSourceBase.cs" />
     <Compile Include="Drawing\D3D\CrossSectionRectangular.cs" />
+    <Compile Include="Drawing\D3D\Material\MaterialBase.cs" />
     <Compile Include="Drawing\D3D\SolidIcoSphere.cs" />
     <Compile Include="Drawing\D3D\SolidPolyline.cs" />
     <Compile Include="Geometry\IPolygonD2D.cs" />
@@ -298,7 +299,7 @@
     <Compile Include="Drawing\D3D\Material\MaterialWithoutColorOrTexture.cs" />
     <Compile Include="Geometry\Matrix4x3.cs" />
     <Compile Include="Drawing\D3D\PenX3D.cs" />
-    <Compile Include="Drawing\D3D\Material\SolidColor.cs" />
+    <Compile Include="Drawing\D3D\Material\MaterialWithUniformColor.cs" />
     <Compile Include="Graph\Graph3D\LabelFormatting\NumericLabelFormattingFixed.cs" />
     <Compile Include="Graph\Graph3D\LabelFormatting\NumericLabelFormattingMantissa.cs" />
     <Compile Include="Graph\Graph3D\LabelFormatting\NumericLabelFormattingRadian.cs" />
@@ -439,6 +440,8 @@
     <Compile Include="Gui\Data\DataTableTransposeDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
+    <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
+    <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisCreationController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisLineStyleController.cs" />

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		public bool Equals(MaterialPlusClipping x, MaterialPlusClipping y)
 		{
-			if (!MaterialComparer.Instance.Equals(x.Material, y.Material))
+			if (!(x.Material.Equals(y.Material)))
 				return false;
 
 			if (!(x.ClipPlanes != null && y.ClipPlanes != null))

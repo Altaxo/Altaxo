@@ -34,8 +34,8 @@ using sd = System.Drawing;
 
 namespace Altaxo.Gui.Graph3D
 {
+	using Altaxo.Drawing.D3D;
 	using Altaxo.Graph.Graph3D;
-	using Drawing.D3D;
 
 	public class FontX3DGlue : Altaxo.Gui.Graph.GdiFontGlue
 	{

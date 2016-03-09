@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
@@ -32,10 +30,11 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph3D.Shapes
 {
+	using Altaxo.Drawing;
+	using Altaxo.Drawing.D3D;
+	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Background;
 	using Altaxo.Graph.Graph3D.Shapes;
-	using Drawing;
-	using Drawing.D3D;
 
 	#region Interfaces
 

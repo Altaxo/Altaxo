@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@
 
 namespace Altaxo.Gui.Graph3D.Viewing
 {
+	using Altaxo.Drawing;
+	using Altaxo.Drawing.D3D;
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Graph.Graph3D.Lighting;
 	using Altaxo.Gui.Graph3D.Common;
-	using Drawing;
-	using Drawing.D3D;
 	using SharpDX;
 	using SharpDX.D3DCompiler;
 	using SharpDX.Direct3D10;

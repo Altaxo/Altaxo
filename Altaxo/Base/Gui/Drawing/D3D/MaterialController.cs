@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -23,43 +23,57 @@
 #endregion Copyright
 
 using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D;
+using Altaxo.Drawing.D3D.Material;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Material
+namespace Altaxo.Gui.Drawing.D3D
 {
-	public interface IMaterialViewSimple
+	public interface IMaterialView
 	{
-		IMaterial SelectedMaterial { get; set; }
+		double SpecularIntensity { get; set; }
+		double SpecularExponent { get; set; }
+		double SpecularMixingCoefficient { get; set; }
 	}
 
+	[ExpectedTypeOfView(typeof(IMaterialView))]
 	[UserControllerForObject(typeof(IMaterial))]
-	[ExpectedTypeOfView(typeof(IMaterialViewSimple))]
-	public class MaterialControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialViewSimple>
+	public class MaterialController : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialView>
 	{
-		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-		{
-			yield break;
-		}
-
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);
 
-			if (_view != null)
+			if (null != _view)
 			{
-				_view.SelectedMaterial = _doc;
+				_view.SpecularIntensity = _doc.SpecularIntensity;
+				_view.SpecularExponent = _doc.SpecularExponent;
+				_view.SpecularMixingCoefficient = _doc.SpecularMixingCoefficient;
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			if (_doc != null)
-				_doc = _view.SelectedMaterial;
+			try
+			{
+				_doc = _doc.WithSpecularProperties(_view.SpecularIntensity, _view.SpecularExponent, _view.SpecularMixingCoefficient);
+				return ApplyEnd(true, disposeController);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox(
+					string.Format(
+						"Creating the material from your data failed\r\n" +
+						"The message is: {0}", ex.Message), "Failure");
+				return ApplyEnd(false, disposeController);
+			}
+		}
 
-			return ApplyEnd(true, disposeController);
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
 		}
 	}
 }

@@ -22,40 +22,69 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace Altaxo.Drawing.D3D
+namespace Altaxo.Gui.Drawing.D3D
 {
-	using Material;
-
-	public class Materials
+	/// <summary>
+	/// Interaction logic for MaterialView.xaml
+	/// </summary>
+	public partial class MaterialControl : UserControl, IMaterialView
 	{
-		public static MaterialWithoutColorOrTexture _materialWithoutColorOrTexture = new MaterialWithoutColorOrTexture();
-
-		public static IMaterial GetNoMaterial()
+		public MaterialControl()
 		{
-			return MaterialWithUniformColor.NoMaterial;
+			InitializeComponent();
 		}
 
-		public static IMaterial GetSolidMaterial(NamedColor color)
+		public double SpecularExponent
 		{
-			return new MaterialWithUniformColor(color);
+			get
+			{
+				return _guiSpecularExponent.Value;
+			}
+
+			set
+			{
+				_guiSpecularExponent.Value = value;
+			}
 		}
 
-		public static IMaterial GetMaterialWithNewColor(IMaterial material, NamedColor newColor)
+		public double SpecularIntensity
 		{
-			return material.WithColor(newColor);
+			get
+			{
+				return _guiSpecularIntensity.Value;
+			}
+
+			set
+			{
+				_guiSpecularIntensity.Value = value;
+			}
 		}
 
-		public static IMaterial GetSolidMaterialWithoutColorOrTexture()
+		public double SpecularMixingCoefficient
 		{
-			return _materialWithoutColorOrTexture;
+			get
+			{
+				return _guiSpecularMixingCoefficient.Value;
+			}
+
+			set
+			{
+				_guiSpecularMixingCoefficient.Value = value;
+			}
 		}
 	}
 }

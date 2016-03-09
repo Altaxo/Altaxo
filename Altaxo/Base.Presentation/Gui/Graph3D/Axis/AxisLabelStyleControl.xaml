@@ -5,136 +5,136 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Material"
+						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
  						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d">
-  <UserControl.Resources>
-    <Style TargetType="Label">
-      <Style.Setters>
-        <Setter Property="Margin" Value="8,0,0,2" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-      </Style.Setters>
-    </Style>
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,2" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
 
-    <DataTemplate x:Key="TickItemsTemplate" DataType="{x:Type axocoll:SelectableListNode}">
-      <StackPanel Orientation="Horizontal" Margin="0,4,8,0">
-        <RadioButton Width="16" Height="16" Margin="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" GroupName="LabelSideRadios" />
-        <TextBlock Text="{Binding Text}" />
-      </StackPanel>
-    </DataTemplate>
-    <Style x:Key="TickItemsControlStyle" TargetType="ItemsControl">
-      <Setter Property="ItemsPanel">
-        <Setter.Value>
-          <ItemsPanelTemplate>
-            <WrapPanel />
-          </ItemsPanelTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
-  </UserControl.Resources>
-  <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
-        <ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
-        <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
-        <ColumnDefinition Width="*" SharedSizeGroup="EditColumn2" />
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="4" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
+		<DataTemplate x:Key="TickItemsTemplate" DataType="{x:Type axocoll:SelectableListNode}">
+			<StackPanel Orientation="Horizontal" Margin="0,4,8,0">
+				<RadioButton Width="16" Height="16" Margin="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" GroupName="LabelSideRadios" />
+				<TextBlock Text="{Binding Text}" />
+			</StackPanel>
+		</DataTemplate>
+		<Style x:Key="TickItemsControlStyle" TargetType="ItemsControl">
+			<Setter Property="ItemsPanel">
+				<Setter.Value>
+					<ItemsPanelTemplate>
+						<WrapPanel />
+					</ItemsPanelTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
 
-      <Label Grid.Column="0" Grid.Row="0" Content="Color:" />
-      <axog3m:MaterialComboBox x:Name="_guiLabelMaterial" Grid.Column="1" Grid.Row="0" />
+			<Label Grid.Column="0" Grid.Row="0" Content="Color:" />
+			<axog3m:MaterialComboBox x:Name="_guiLabelMaterial" Grid.Column="1" Grid.Row="0" />
 
-      <Label Grid.Column="2" Grid.Row="0" Content="LabelSide:" />
-      <ItemsControl x:Name="_guiLabelSide" Grid.Column="3" Grid.Row="0" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+			<Label Grid.Column="2" Grid.Row="0" Content="LabelSide:" />
+			<ItemsControl x:Name="_guiLabelSide" Grid.Column="3" Grid.Row="0" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
 
-      <Label Grid.Column="0" Grid.Row="2" Content="Font:" />
-      <axogcd:FontFamilyComboBox x:Name="m_cbFontFamily" Grid.Column="1" Grid.Row="2" />
+			<Label Grid.Column="0" Grid.Row="2" Content="Font:" />
+			<axogcd:FontFamilyComboBox x:Name="m_cbFontFamily" Grid.Column="1" Grid.Row="2" />
 
-      <Label Grid.Column="2" Grid.Row="2" Content="Style:" />
-      <axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="2" />
+			<Label Grid.Column="2" Grid.Row="2" Content="Style:" />
+			<axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="2" />
 
-      <Label Grid.Column="0" Grid.Row="4" Content="Font size:" />
-      <axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" />
+			<Label Grid.Column="0" Grid.Row="4" Content="Font size:" />
+			<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" />
 
-      <Label Grid.Column="2" Grid.Row="4" Content="Font size:" />
-      <axogcd:FontSizeComboBox x:Name="m_cbFontDepth" Grid.Column="3" Grid.Row="4" />
+			<Label Grid.Column="2" Grid.Row="4" Content="Font size:" />
+			<axogcd:FontSizeComboBox x:Name="m_cbFontDepth" Grid.Column="3" Grid.Row="4" />
 
-      <Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
-      <axogcd:RotationComboBox x:Name="_guiRotationX" Grid.Column="1" Grid.Row="6" />
-      <axogcd:RotationComboBox x:Name="_guiRotationY" Grid.Column="2" Grid.Row="6" />
-      <axogcd:RotationComboBox x:Name="_guiRotationZ" Grid.Column="3" Grid.Row="6" />
+			<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
+			<axogcd:RotationComboBox x:Name="_guiRotationX" Grid.Column="1" Grid.Row="6" />
+			<axogcd:RotationComboBox x:Name="_guiRotationY" Grid.Column="2" Grid.Row="6" />
+			<axogcd:RotationComboBox x:Name="_guiRotationZ" Grid.Column="3" Grid.Row="6" />
 
-      <Label Grid.Column="0" Grid.Row="8" Content="Auto align:" />
-      <CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="8" VerticalAlignment="Center" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged" />
+			<Label Grid.Column="0" Grid.Row="8" Content="Auto align:" />
+			<CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="8" VerticalAlignment="Center" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged" />
 
-      <GroupBox Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (relative to M-size):" Margin="4,8,0,0" />
+			<GroupBox Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (relative to M-size):" Margin="4,8,0,0" />
 
-      <Label Grid.Column="0" Grid.Row="10" Content="Horz. alignment:" />
-      <ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhHorizontalAligment_SelectionChanged" />
+			<Label Grid.Column="0" Grid.Row="10" Content="Horz. alignment:" />
+			<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhHorizontalAligment_SelectionChanged" />
 
-      <Label Grid.Column="2" Grid.Row="10" Content="X:" />
-      <axogc:QuantityWithUnitTextBox x:Name="_guiOffsetX" Grid.Column="3" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+			<Label Grid.Column="2" Grid.Row="10" Content="X:" />
+			<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetX" Grid.Column="3" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
 
-      <Label Grid.Column="0" Grid.Row="12" Content="Vert. alignment:" />
-      <ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="12" SelectionChanged="EhVerticalAligment_SelectionChanged" />
+			<Label Grid.Column="0" Grid.Row="12" Content="Vert. alignment:" />
+			<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="12" SelectionChanged="EhVerticalAligment_SelectionChanged" />
 
-      <Label Grid.Column="2" Grid.Row="12" Content="Y:" />
-      <axogc:QuantityWithUnitTextBox x:Name="_guiOffsetY" Grid.Column="3" Grid.Row="12" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+			<Label Grid.Column="2" Grid.Row="12" Content="Y:" />
+			<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetY" Grid.Column="3" Grid.Row="12" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
 
-      <Label Grid.Column="2" Grid.Row="14" Content="Z:" />
-      <axogc:QuantityWithUnitTextBox x:Name="_guiOffsetZ" Grid.Column="3" Grid.Row="14" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+			<Label Grid.Column="2" Grid.Row="14" Content="Z:" />
+			<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetZ" Grid.Column="3" Grid.Row="14" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
 
-      <Label Grid.Column="0" Grid.Row="16" Content="Background:" />
-      <ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="16" />
+			<Label Grid.Column="0" Grid.Row="16" Content="Background:" />
+			<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="16" />
 
-      <Label Grid.Column="2" Grid.Row="16" Content="Brush:" />
-      <axog3m:MaterialComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="16" />
+			<Label Grid.Column="2" Grid.Row="16" Content="Brush:" />
+			<axog3m:MaterialComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="16" />
 
-      <Label Grid.Column="0" Grid.Row="18" Content="Suppress values:" />
-      <TextBox x:Name="_edSuppressLabelValues" Grid.Column="1" Grid.Row="18" />
+			<Label Grid.Column="0" Grid.Row="18" Content="Suppress values:" />
+			<TextBox x:Name="_edSuppressLabelValues" Grid.Column="1" Grid.Row="18" />
 
-      <Label Grid.Column="0" Grid.Row="20" Content="Supress label #:" />
+			<Label Grid.Column="0" Grid.Row="20" Content="Supress label #:" />
 
-      <TextBox x:Name="_edSuppressLabelsByNumber" Grid.Column="1" Grid.Row="20" />
+			<TextBox x:Name="_edSuppressLabelsByNumber" Grid.Column="1" Grid.Row="20" />
 
-      <Label Grid.Column="0" Grid.Row="22" Content="Prefix text:" />
-      <TextBox x:Name="_guiPrefixText" Grid.Column="1" Grid.Row="22" />
-      <Label Grid.Column="2" Grid.Row="22" Content="Postfix text:" />
-      <TextBox x:Name="_guiPostfixText" Grid.Column="3" Grid.Row="22" />
+			<Label Grid.Column="0" Grid.Row="22" Content="Prefix text:" />
+			<TextBox x:Name="_guiPrefixText" Grid.Column="1" Grid.Row="22" />
+			<Label Grid.Column="2" Grid.Row="22" Content="Postfix text:" />
+			<TextBox x:Name="_guiPostfixText" Grid.Column="3" Grid.Row="22" />
 
-      <Label Grid.Column="0" Grid.Row="24" Content="Label style:" />
-      <ComboBox x:Name="m_cbLabelStyle" Grid.Column="1" Grid.Row="24" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted" />
-    </Grid>
-    <Border x:Name="_guiLabelStyleSpecific" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="26" />
-  </StackPanel>
+			<Label Grid.Column="0" Grid.Row="24" Content="Label style:" />
+			<ComboBox x:Name="m_cbLabelStyle" Grid.Column="1" Grid.Row="24" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted" />
+		</Grid>
+		<Border x:Name="_guiLabelStyleSpecific" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="26" />
+	</StackPanel>
 </UserControl>

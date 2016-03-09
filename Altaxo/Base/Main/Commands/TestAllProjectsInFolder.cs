@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -159,6 +159,8 @@ namespace Altaxo.Main.Commands
 
 				try
 				{
+					System.Diagnostics.Debug.WriteLine(string.Format("Begin opening Altaxo project file {0}", filename));
+
 					monitor.ReportProgress(string.Format(
 						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
 						"Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);

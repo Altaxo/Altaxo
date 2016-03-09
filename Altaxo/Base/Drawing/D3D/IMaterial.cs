@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -43,6 +43,20 @@ namespace Altaxo.Drawing.D3D
 		double SpecularMixingCoefficient { get; }
 
 		IMaterial WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient);
+
+		/// <summary>
+		/// Returns a new material based on this material, but with all specular properties taken from the template material provided in <paramref name="templateMaterial"/>.
+		/// </summary>
+		/// <param name="templateMaterial">The template material.</param>
+		/// <returns>A new material based on this material, but with all specular properties taken from the template material provided in <paramref name="templateMaterial"/>.</returns>
+		IMaterial WithSpecularPropertiesAs(IMaterial templateMaterial);
+
+		/// <summary>
+		/// Determines whether this material has the same specular properties as the material provided in <paramref name="anotherMaterial"/>.
+		/// </summary>
+		/// <param name="anotherMaterial">The material to compare the specular properties with.</param>
+		/// <returns>True if this material has the same specular properties as the material provided in <paramref name="anotherMaterial"/>; otherwise false.</returns>
+		bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial);
 
 		bool HasColor { get; }
 		bool HasTexture { get; }

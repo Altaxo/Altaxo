@@ -6,72 +6,72 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Graph3D.Material"
+						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
              mc:Ignorable="d">
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="0" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="0" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="0" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="0" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 
-    <Label Grid.Column="0" Grid.Row="0">Brush:</Label>
-    <axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrush" />
-    <Label Grid.Column="2" Grid.Row="0">Thickness1:</Label>
-    <axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbThickness1" />
+		<Label Grid.Column="0" Grid.Row="0">Brush:</Label>
+		<axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrush" />
+		<Label Grid.Column="2" Grid.Row="0">Thickness1:</Label>
+		<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbThickness1" />
 
-    <Label Grid.Column="4" Grid.Row="0">Thickness2:</Label>
-    <axogcd:LineThicknessComboBox Grid.Column="5" Grid.Row="0" x:Name="_cbThickness2" />
+		<Label Grid.Column="4" Grid.Row="0">Thickness2:</Label>
+		<axogcd:LineThicknessComboBox Grid.Column="5" Grid.Row="0" x:Name="_cbThickness2" />
 
-    <Label Grid.Column="0" Grid.Row="2">Style:</Label>
-    <axogcd:DashStyleComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle" />
-    <Label Grid.Column="2" Grid.Row="2">Dash cap:</Label>
-    <axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbDashCap" />
+		<Label Grid.Column="0" Grid.Row="2">Style:</Label>
+		<axogcd:DashStyleComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle" />
+		<Label Grid.Column="2" Grid.Row="2">Dash cap:</Label>
+		<axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbDashCap" />
 
-    <Label Grid.Column="0" Grid.Row="4" >StartCap:</Label>
-    <axogcd:LineCapComboBox Grid.Column="1" Grid.Row="4"  IsForEndCap="False" x:Name="_cbStartCap" />
-    <Label Grid.Column="2" Grid.Row="4">Min. abs. size:</Label>
-    <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbStartCapSize" ToolTip="Minimum absolute cap size" />
-    <Label Grid.Column="2" Grid.Row="6" Content="Min. rel. size:" />
-    <axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" x:Name="_edStartCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+		<Label Grid.Column="0" Grid.Row="4" >StartCap:</Label>
+		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="4"  IsForEndCap="False" x:Name="_cbStartCap" />
+		<Label Grid.Column="2" Grid.Row="4">Min. abs. size:</Label>
+		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbStartCapSize" ToolTip="Minimum absolute cap size" />
+		<Label Grid.Column="2" Grid.Row="6" Content="Min. rel. size:" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" x:Name="_edStartCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
 
-    <Label Grid.Column="0" Grid.Row="8">EndCap:</Label>
-    <axogcd:LineCapComboBox Grid.Column="1" Grid.Row="8" IsForEndCap="True" x:Name="_cbEndCap" />
-    <Label Grid.Column="2" Grid.Row="8">Min. abs. size:</Label>
-    <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbEndCapSize" ToolTip="Minimum absolute cap size" />
-    <Label Grid.Column="2" Grid.Row="10" Content="Min. rel. size:" />
-    <axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" x:Name="_edEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+		<Label Grid.Column="0" Grid.Row="8">EndCap:</Label>
+		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="8" IsForEndCap="True" x:Name="_cbEndCap" />
+		<Label Grid.Column="2" Grid.Row="8">Min. abs. size:</Label>
+		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbEndCapSize" ToolTip="Minimum absolute cap size" />
+		<Label Grid.Column="2" Grid.Row="10" Content="Min. rel. size:" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" x:Name="_edEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
 
-    <Label Grid.Column="0" Grid.Row="12">Join:</Label>
-    <axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin" />
-    <Label Grid.Column="2" Grid.Row="12">Miter:</Label>
-    <axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" x:Name="_cbMiterLimit" />
+		<Label Grid.Column="0" Grid.Row="12">Join:</Label>
+		<axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin" />
+		<Label Grid.Column="2" Grid.Row="12">Miter:</Label>
+		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" x:Name="_cbMiterLimit" />
 
-    <GroupBox Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="4" Header="Preview:">
-      <Grid>
-        <Rectangle Name="_previewRect" MinHeight="40" Fill="Azure" />
-        <Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" />
-      </Grid>
-    </GroupBox>
-  </Grid>
+		<GroupBox Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="4" Header="Preview:">
+			<Grid>
+				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure" />
+				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" />
+			</Grid>
+		</GroupBox>
+	</Grid>
 </UserControl>
