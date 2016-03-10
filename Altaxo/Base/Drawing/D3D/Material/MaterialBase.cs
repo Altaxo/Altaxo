@@ -29,6 +29,12 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.Material
 {
+	/// <summary>
+	/// Base of the materials. This material supports specular reflections using a modified Phong equation:
+	/// kspec = SpecularIntensity*(1+SpecularExponent)*DotProduct[IncidentLight,EmergentLight]. The modification
+	/// is the term (1+SpecularExponent), which ensures that the integral over the half sphere is constant when the SpecularExponent changes.
+	/// </summary>
+	/// <seealso cref="Altaxo.Drawing.D3D.IMaterial" />
 	public abstract class MaterialBase : IMaterial
 	{
 		/// <summary>
@@ -48,13 +54,22 @@ namespace Altaxo.Drawing.D3D.Material
 		/// </summary>
 		protected double _specularMixingCoefficient;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MaterialBase"/> class with default values for specular intensity, exponent and mixing coefficient.
+		/// </summary>
 		public MaterialBase()
 		{
-			_specularIntensity = 1;
+			_specularIntensity = 0.25;
 			_specularExponent = 3;
 			_specularMixingCoefficient = 0.75;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MaterialBase"/> class.
+		/// </summary>
+		/// <param name="specularIntensity">The specular intensity.</param>
+		/// <param name="specularExponent">The specular exponent.</param>
+		/// <param name="specularMixingCoefficient">The specular mixing coefficient, see explanation here: <see cref="SpecularMixingCoefficient"/>.</param>
 		public MaterialBase(double specularIntensity, double specularExponent, double specularMixingCoefficient)
 		{
 			VerifySpecularIntensity(specularIntensity, nameof(specularIntensity));
@@ -67,20 +82,24 @@ namespace Altaxo.Drawing.D3D.Material
 			_specularMixingCoefficient = specularMixingCoefficient;
 		}
 
+		///<inheritdoc/>
 		public abstract NamedColor Color { get; }
 
 		public abstract IMaterial WithColor(NamedColor color);
 
+		///<inheritdoc/>
 		public abstract bool HasColor { get; }
 
+		///<inheritdoc/>
 		public abstract bool HasTexture { get; }
 
+		///<inheritdoc/>
 		public abstract bool Equals(IMaterial other);
 
 		#region SpecularIntensity
 
 		/// <summary>
-		/// The intensity of the specular reflection;
+		/// The intensity of the specular reflection.
 		/// </summary>
 		public double SpecularIntensity
 		{
@@ -90,6 +109,26 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		/// <summary>
+		/// Gets the specular intensity normalized for phong model. This is the expression SpecularIntensity*(1+SpecularExponent).
+		/// This pre-factor in the Phong equation ensures that the total light intensity reflected in all directions of the half sphere will not change when changing the SpecularExponent.
+		/// </summary>
+		/// <value>
+		/// The specular intensity normalized for phong model.
+		/// </value>
+		public double SpecularIntensityNormalizedForPhongModel
+		{
+			get
+			{
+				return _specularIntensity * (1 + _specularExponent);
+			}
+		}
+
+		/// <summary>
+		/// Gets a new instance of the material with the specular intensity set to the provided value.
+		/// </summary>
+		/// <param name="specularIntensity">The specular intensity.</param>
+		/// <returns>A new instance of the material with the specular intensity set to the provided value.</returns>
 		public MaterialBase WithSpecularIntensity(double specularIntensity)
 		{
 			if (!(specularIntensity == _specularIntensity))
@@ -106,6 +145,12 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		/// <summary>
+		/// Verifies the specular intensity to be greater than or equal to 0.
+		/// </summary>
+		/// <param name="value">The value of the specular intensity.</param>
+		/// <param name="valueName">Name of the value.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException"></exception>
 		protected void VerifySpecularIntensity(double value, string valueName)
 		{
 			if (!(value >= 0))
@@ -127,6 +172,11 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		/// <summary>
+		/// Gets a new instance of the material with the specular exponent set to the provided value.
+		/// </summary>
+		/// <param name="specularExponent">The specular exponent.</param>
+		/// <returns>A new instance of the material with the specular exponent set to the provided value.</returns>
 		public MaterialBase WithSpecularExponent(double specularExponent)
 		{
 			if (!(specularExponent == _specularExponent))
@@ -143,6 +193,12 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		/// <summary>
+		/// Verifies the specular exponent to be greater than or equal to 0.
+		/// </summary>
+		/// <param name="value">The value of the specular exponent.</param>
+		/// <param name="valueName">Name of the value.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException"></exception>
 		protected void VerifySpecularExponent(double value, string valueName)
 		{
 			if (!(value >= 0))
@@ -166,6 +222,11 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		/// <summary>
+		/// Gets a new instance of the material with the specular mixing coefficient set to the provided value.
+		/// </summary>
+		/// <param name="specularMixingCoefficient">The specular mixing coefficient.</param>
+		/// <returns>A new instance of the material with the specular mixing coefficient set to the provided value.</returns>
 		public MaterialBase WithSpecularMixingCoefficient(double specularMixingCoefficient)
 		{
 			if (!(specularMixingCoefficient == _specularMixingCoefficient))
@@ -182,6 +243,13 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		/// <summary>
+		/// Verifies the specular mixing coefficient to be in the range [0, 1].
+		/// </summary>
+		/// <param name="value">The value of the mixing coefficient.</param>
+		/// <param name="valueName">Name of the value.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// </exception>
 		protected void VerifySpecularMixingCoefficient(double value, string valueName)
 		{
 			if (!(value >= 0))
@@ -194,6 +262,13 @@ namespace Altaxo.Drawing.D3D.Material
 
 		#region Specular Properties
 
+		/// <summary>
+		/// Gets a new instance of this material with all specular properties set to the provided values.
+		/// </summary>
+		/// <param name="specularIntensity">The specular intensity.</param>
+		/// <param name="specularExponent">The specular exponent.</param>
+		/// <param name="specularMixingCoefficient">The specular mixing coefficient.</param>
+		/// <returns>A new instance of this material with all specular properties set to the provided values.</returns>
 		public MaterialBase WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
 		{
 			if (!(specularIntensity == _specularIntensity) ||
@@ -216,16 +291,19 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		///<inheritdoc/>
 		IMaterial IMaterial.WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
 		{
 			return WithSpecularProperties(specularIntensity, specularExponent, specularMixingCoefficient);
 		}
 
+		///<inheritdoc/>
 		public IMaterial WithSpecularPropertiesAs(IMaterial templateMaterial)
 		{
 			return WithSpecularProperties(templateMaterial.SpecularIntensity, templateMaterial.SpecularExponent, templateMaterial.SpecularMixingCoefficient);
 		}
 
+		///<inheritdoc/>
 		public bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial)
 		{
 			return

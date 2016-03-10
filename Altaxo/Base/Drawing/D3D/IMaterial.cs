@@ -32,16 +32,61 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Drawing.D3D
 {
+	/// <summary>
+	/// Interface for material used in 3D geometry.
+	/// </summary>
+	/// <seealso cref="Altaxo.Main.IImmutable" />
+	/// <seealso cref="System.IEquatable{Altaxo.Drawing.D3D.IMaterial}" />
 	public interface IMaterial : Altaxo.Main.IImmutable, IEquatable<IMaterial>
 	{
+		/// <summary>
+		/// Gets the diffuse color of the material.
+		/// </summary>
+		/// <value>
+		/// The color.
+		/// </value>
 		NamedColor Color { get; }
 
+		/// <summary>
+		/// Gets the (raw) specular intensity of the material. This is a prefactor, that when increasing, increases the intensity of the reflex.
+		/// This factor may be further scaled with other parameters, e.g. see <see cref="SpecularIntensityNormalizedForPhongModel"/>.
+		/// </summary>
+		/// <value>
+		/// The specular intensity.
+		/// </value>
 		double SpecularIntensity { get; }
 
+		/// <summary>
+		/// Gets the specular intensity normalized for phong model. This is the expression SpecularIntensity*(1+SpecularExponent).
+		/// This pre-factor in the Phong equation ensures that the total light intensity reflected in all directions of the half sphere will not change when changing the SpecularExponent.
+		/// </summary>
+		/// <value>
+		/// The specular intensity normalized for phong model.
+		/// </value>
+		double SpecularIntensityNormalizedForPhongModel { get; }
+
+		/// <summary>
+		/// Gets the specular exponent. The higher this value, the more shiny the material (i.e. the smaller the reflex on the surface).
+		/// </summary>
+		/// <value>
+		/// The specular exponent.
+		/// </value>
 		double SpecularExponent { get; }
 
+		/// <summary>
+		/// Mixing coefficient for specular reflection: value between 0 and 1.
+		/// If 0, the reflected specular light is multiplied with the material diffuse color. This is often the case for metals, e.g. gold.
+		/// If 1, the reflected specular light has the same color as the incident light (thus as if it is reflected at a white surface). This is often the case for plastics.
+		/// </summary>
 		double SpecularMixingCoefficient { get; }
 
+		/// <summary>
+		/// Gets a new instance of this material with the specular properties set to the provided values.
+		/// </summary>
+		/// <param name="specularIntensity">The specular intensity.</param>
+		/// <param name="specularExponent">The specular exponent.</param>
+		/// <param name="specularMixingCoefficient">The specular mixing coefficient.</param>
+		/// <returns>A new instance of this material with the specular properties set to the provided values.</returns>
 		IMaterial WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient);
 
 		/// <summary>
@@ -58,9 +103,28 @@ namespace Altaxo.Drawing.D3D
 		/// <returns>True if this material has the same specular properties as the material provided in <paramref name="anotherMaterial"/>; otherwise false.</returns>
 		bool HasSameSpecularPropertiesAs(IMaterial anotherMaterial);
 
+		/// <summary>
+		/// Gets a value indicating whether this instance has a color by itself.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if this instance has a color by itself; otherwise, when <c>false</c>, the color of the material is provided by other means (e.g. a texture).
+		/// </value>
 		bool HasColor { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether this instance has texture.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance has a texture; otherwise, <c>false</c>.
+		/// </value>
 		bool HasTexture { get; }
 
+		/// <summary>
+		/// Gets a new instance of this material with the color set to the provided values. Material classes that don't support
+		/// color should not throw an exception, but simply return the same instance.
+		/// </summary>
+		/// <param name="color">The color.</param>
+		/// <returns>A new instance of this material with the color set to the provided values.</returns>
 		IMaterial WithColor(NamedColor color);
 	}
 }

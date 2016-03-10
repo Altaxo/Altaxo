@@ -156,19 +156,19 @@
 		</Grid.ColumnDefinitions>
 		<ComboBox x:Name="_guiComboBox" ItemTemplate="{StaticResource CombinedTemplate}" SelectionChanged="EhComboBox_SelectionChanged" DropDownOpened="EhComboBox_DropDownOpened" DropDownClosed="EhComboBox_DropDownClosed">
 		</ComboBox>
-		<ToggleButton Grid.Column="1" IsChecked="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=axog3m:MaterialComboBox}, Mode=TwoWay}" Content="{StaticResource ColorGroupButtonContent}" />
+		<ToggleButton Grid.Column="1" IsChecked="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=local:MaterialComboBox}, Mode=TwoWay}" Content="{StaticResource ColorGroupButtonContent}" />
 		<Popup x:Name="_treePopup"
 					 AllowsTransparency="true"
 					 Focusable="false"
-					 IsOpen="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=axog3m:MaterialComboBox}}"
-					 MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=axog3m:MaterialComboBox}}"
+					 IsOpen="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=local:MaterialComboBox}}"
+					 MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=local:MaterialComboBox}}"
 					 PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
 					 Placement="Bottom">
 			<Border x:Name="DropDownBorder" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
 				<TreeView x:Name="_treeView"
 									MouseDoubleClick="EhTreeViewMouseDoubleClick"
 									KeyDown="EhTreeViewKeyDown"
-									ItemTemplateSelector="{Binding TreeViewItemTemplateSelector, RelativeSource={RelativeSource AncestorType=axog3m:MaterialComboBox}}">
+									ItemTemplateSelector="{Binding TreeViewItemTemplateSelector, RelativeSource={RelativeSource AncestorType=local:MaterialComboBox}}">
 					<ItemsControl.ItemContainerStyle>
 						<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 						<Style TargetType="{x:Type TreeViewItem}">

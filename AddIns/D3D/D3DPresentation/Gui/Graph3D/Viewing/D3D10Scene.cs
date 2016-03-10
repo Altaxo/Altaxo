@@ -734,7 +734,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private void SetShaderMaterialVariables(IMaterial material)
 		{
-			_evMaterialSpecularIntensity.Set((float)material.SpecularIntensity);
+			_evMaterialSpecularIntensity.Set((float)material.SpecularIntensityNormalizedForPhongModel);
 			_evMaterialSpecularExponent.Set((float)material.SpecularExponent);
 			_evMaterialSpecularMixingCoefficient.Set((float)material.SpecularMixingCoefficient);
 			if (material.HasColor)
