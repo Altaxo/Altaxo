@@ -78,6 +78,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
+		public object MaterialViewObject
+		{
+			get
+			{
+				return _guiMaterial;
+			}
+		}
+
 		#endregion IDataMeshPlotStyleView
 
 		private void EhUseCustomColorScaleChanged(object sender, System.Windows.RoutedEventArgs e)

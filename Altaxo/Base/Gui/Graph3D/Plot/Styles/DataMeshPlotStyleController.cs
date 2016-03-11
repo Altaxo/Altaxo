@@ -32,8 +32,10 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph3D.Plot.Styles
 {
+	using Altaxo.Drawing.D3D;
 	using Altaxo.Graph.Graph3D.Plot.Styles;
 	using Altaxo.Graph.Scales;
+	using Drawing.D3D;
 	using Graph;
 
 	#region Interfaces
@@ -50,6 +52,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// Initializes the content of the ClipToLayer checkbox
 		/// </summary>
 		bool ClipToLayer { get; set; }
+
+		object MaterialViewObject { get; }
 	}
 
 	#endregion Interfaces
@@ -63,11 +67,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	{
 		private IMVCANController _scaleController;
 		private IMVCANController _colorProviderController;
+		private IMVCANController _materialController;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
 			yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
+			yield return new ControllerAndSetNullMethod(_materialController, () => _materialController = null);
 		}
 
 		protected override void Initialize(bool initData)
@@ -81,6 +87,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 				_colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
 				_colorProviderController.InitializeDocument(_doc.ColorProvider);
+
+				_materialController = new MaterialController() { UseDocumentCopy = UseDocument.Directly };
+				_materialController.InitializeDocument(_doc.Material);
 			}
 
 			if (_view != null)
@@ -88,6 +97,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_scaleController.ViewObject = _view.ColorScaleView;
 				_view.IsCustomColorScaleUsed = null != _doc.ColorScale;
 				_colorProviderController.ViewObject = _view.ColorProviderView;
+
+				if (null == _materialController.ViewObject)
+					_materialController.ViewObject = _view.MaterialViewObject;
+
 				_view.ClipToLayer = _doc.ClipToLayer;
 			}
 		}
@@ -99,6 +112,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			if (!_colorProviderController.Apply(disposeController))
 				return false;
+
+			if (!_materialController.Apply(disposeController))
+				return false;
+			else
+				_doc.Material = (IMaterial)_materialController.ModelObject;
 
 			_doc.ClipToLayer = _view.ClipToLayer;
 			_doc.ColorScale = _view.IsCustomColorScaleUsed ? (NumericalScale)_scaleController.ModelObject : null;

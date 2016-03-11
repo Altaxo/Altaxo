@@ -6,6 +6,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axogdd3d="clr-namespace:Altaxo.Gui.Drawing.D3D"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -25,6 +26,10 @@
 
 		<GroupBox Header="Style:">
 			<axogg:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+		</GroupBox>
+
+		<GroupBox Header="Material:">
+			<axogdd3d:MaterialControl x:Name="_guiMaterial" />
 		</GroupBox>
 
 		<GroupBox Header="Other:">
