@@ -50,6 +50,20 @@ namespace Altaxo.Gui
 		public event Action<IMVCANDController> MadeDirty;
 
 		/// <summary>
+		/// If not null, this action is invoked during the apply stage to set the model of this controller in the parent object.
+		/// </summary>
+		protected Action<TModel> _setModelInParentModel;
+
+		public MVCANDControllerEditImmutableDocBase()
+		{
+		}
+
+		public MVCANDControllerEditImmutableDocBase(Action<TModel> SetModelInParentModel)
+		{
+			_setModelInParentModel = SetModelInParentModel;
+		}
+
+		/// <summary>
 		/// Initialize the controller with the document. If successfull, the function has to return true.
 		/// </summary>
 		/// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
@@ -97,6 +111,16 @@ namespace Altaxo.Gui
 					}
 				}
 			}
+		}
+
+		protected override bool ApplyEnd(bool applyResult, bool disposeController)
+		{
+			if (true == applyResult)
+			{
+				_setModelInParentModel?.Invoke(_doc);
+			}
+
+			return base.ApplyEnd(applyResult, disposeController);
 		}
 
 		/// <summary>

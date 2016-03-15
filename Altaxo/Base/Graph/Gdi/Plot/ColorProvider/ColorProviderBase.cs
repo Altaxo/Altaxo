@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 	/// Abstract class to calculate a color out of a relative value that is normally
 	/// between 0 and 1. Special colors are used here for values between 0, above 1, and for NaN.
 	/// </summary>
-	public abstract class ColorProviderBase
-		:
-		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IColorProvider
+	public abstract class ColorProviderBase : IColorProvider
 	{
 		/// <summary>The color used if the values are below the lower bound.</summary>
 		protected NamedColor _colorBelow;
@@ -70,41 +67,17 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		public ColorProviderBase()
 		{
-			this.ColorBelow = NamedColors.Black;
-			this.ColorAbove = NamedColors.Snow;
-			this.ColorInvalid = NamedColors.Transparent;
+			this._colorBelow = NamedColors.Black;
+			this._cachedGdiColorBelow = NamedColors.Black;
+
+			this._colorAbove = NamedColors.Snow;
+			this._cachedGdiColorAbove = NamedColors.Snow;
+
+			this._colorInvalid = NamedColors.Transparent;
+			this._cachedGdiColorInvalid = NamedColors.Transparent;
+
 			_alphaChannel = 255;
 			_colorSteps = 0;
-		}
-
-		public ColorProviderBase(ColorProviderBase from)
-		{
-			CopyFrom(from);
-		}
-
-		public virtual bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			bool result = false;
-			var from = obj as ColorProviderBase;
-			if (null != from)
-			{
-				this._colorBelow = from._colorBelow;
-				this._cachedGdiColorBelow = from._cachedGdiColorBelow;
-
-				this._colorAbove = from._colorAbove;
-				this._cachedGdiColorAbove = from._cachedGdiColorAbove;
-
-				this._colorInvalid = from._colorInvalid;
-				this._cachedGdiColorInvalid = from._cachedGdiColorInvalid;
-
-				this._alphaChannel = from._alphaChannel;
-				this._colorSteps = from._colorSteps;
-				result = true;
-			}
-			return result;
 		}
 
 		#region Serialization
@@ -136,8 +109,8 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				s._colorInvalid = (NamedColor)info.GetValue("ColorInvalid", s);
 				s._cachedGdiColorInvalid = GdiColorHelper.ToGdi(s._colorInvalid);
 
-				s.Transparency = info.GetDouble("Transparency");
-				s.ColorSteps = info.GetInt32("ColorSteps");
+				s._alphaChannel = GetAlphaFromTransparency(info.GetDouble("Transparency"));
+				s._colorSteps = info.GetInt32("ColorSteps");
 
 				return s;
 			}
@@ -145,24 +118,26 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		#endregion Serialization
 
-		public abstract object Clone();
-
 		/// <summary>
 		/// Gets/sets the color used when the relative value is smaller than 0.
 		/// </summary>
 		public NamedColor ColorBelow
 		{
 			get { return _colorBelow; }
-			set
-			{
-				var oldValue = _colorBelow;
-				_colorBelow = value;
-				_cachedGdiColorBelow = GdiColorHelper.ToGdi(_colorBelow);
+		}
 
-				if (_colorBelow != oldValue)
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
+		public ColorProviderBase WithColorBelow(NamedColor color)
+		{
+			if (color == _colorBelow)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderBase)this.MemberwiseClone();
+				result._colorBelow = color;
+				result._cachedGdiColorBelow = GdiColorHelper.ToGdi(color);
+				return this;
 			}
 		}
 
@@ -172,17 +147,20 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		public NamedColor ColorAbove
 		{
 			get { return _colorAbove; }
-			set
+		}
+
+		public ColorProviderBase WithColorAbove(NamedColor color)
+		{
+			if (color == _colorAbove)
 			{
-				var oldValue = _colorAbove;
-
-				_colorAbove = value;
-				_cachedGdiColorAbove = GdiColorHelper.ToGdi(_colorAbove);
-
-				if (_colorAbove != oldValue)
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderBase)this.MemberwiseClone();
+				result._colorAbove = color;
+				result._cachedGdiColorAbove = GdiColorHelper.ToGdi(color);
+				return this;
 			}
 		}
 
@@ -192,16 +170,20 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		public NamedColor ColorInvalid
 		{
 			get { return _colorInvalid; }
-			set
-			{
-				var oldValue = _colorInvalid;
-				_colorInvalid = value;
-				_cachedGdiColorInvalid = GdiColorHelper.ToGdi(_colorInvalid);
+		}
 
-				if (_colorInvalid != oldValue)
-				{
-					EhSelfChanged(EventArgs.Empty);
-				}
+		public ColorProviderBase WithColorInvalid(NamedColor color)
+		{
+			if (color == _colorInvalid)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderBase)this.MemberwiseClone();
+				result._colorInvalid = color;
+				result._cachedGdiColorInvalid = GdiColorHelper.ToGdi(color);
+				return this;
 			}
 		}
 
@@ -211,17 +193,33 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		public double Transparency
 		{
 			get { return 1 - _alphaChannel / 255.0; }
-			set
+		}
+
+		protected static int GetAlphaFromTransparency(double transparency)
+		{
+			int alphaChannel;
+
+			if (0 <= transparency && transparency <= 1)
+				alphaChannel = (int)(255 * (1 - transparency));
+			else
+				alphaChannel = 255;
+
+			return alphaChannel;
+		}
+
+		public ColorProviderBase WithTransparency(double transparency)
+		{
+			int alphaChannel = GetAlphaFromTransparency(transparency);
+
+			if (alphaChannel == _alphaChannel)
 			{
-				var oldValue = _alphaChannel;
-
-				if (0 <= value && value <= 1)
-					_alphaChannel = (int)(255 * (1 - value));
-				else
-					_alphaChannel = 255;
-
-				if (_alphaChannel != oldValue)
-					EhSelfChanged(EventArgs.Empty);
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderBase)this.MemberwiseClone();
+				result._alphaChannel = alphaChannel;
+				return this;
 			}
 		}
 
@@ -234,16 +232,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _colorSteps;
 			}
-			set
+		}
+
+		public ColorProviderBase WithColorSteps(int colorSteps)
+		{
+			if (colorSteps < 0)
+				throw new ArgumentOutOfRangeException(nameof(colorSteps), "Argument have to be a value >= 0");
+
+			if (colorSteps == _colorSteps)
 			{
-				if (value < 0)
-					throw new ArgumentOutOfRangeException("ColorSteps is negative");
-
-				var oldValue = _colorSteps;
-				_colorSteps = value;
-
-				if (value != oldValue)
-					EhSelfChanged(EventArgs.Empty);
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderBase)this.MemberwiseClone();
+				result._colorSteps = colorSteps;
+				return this;
 			}
 		}
 

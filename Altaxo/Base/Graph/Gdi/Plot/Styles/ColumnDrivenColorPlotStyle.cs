@@ -110,7 +110,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null != s._scale) s._scale.ParentObject = s;
 
 				s._colorProvider = (IColorProvider)info.GetValue("ColorProvider", s);
-				if (null != s._colorProvider) s._colorProvider.ParentObject = s;
 
 				s._appliesToFill = info.GetBoolean("AppliesToFill");
 				s._appliesToStroke = info.GetBoolean("AppliesToStroke");
@@ -134,7 +133,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			InternalSetScale(new LinearScale());
 			InternalSetDataColumnProxy(NumericColumnProxyBase.FromColumn(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
-			_colorProvider = new ColorProvider.VisibleLightSpectrum() { ParentObject = this };
+			_colorProvider = new ColorProvider.VisibleLightSpectrum();
 		}
 
 		/// <summary>
@@ -168,8 +167,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
 					InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
 
-					_colorProvider = null == from._colorProvider ? null : (IColorProvider)from._colorProvider.Clone();
-					_colorProvider.ParentObject = this;
+					_colorProvider = from._colorProvider;
 
 					//_parent = from._parent;
 
@@ -187,8 +185,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				yield return new DocumentNodeAndName(_dataColumnProxy, "Data");
 			if (null != _scale)
 				yield return new DocumentNodeAndName(_scale, "Scale");
-			if (null != _colorProvider)
-				yield return new DocumentNodeAndName(_colorProvider, "ColorProvider");
 		}
 
 		#region DataColumnProxy handling
@@ -310,8 +306,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _colorProvider; }
 			set
 			{
-				if (ChildSetMember(ref _colorProvider, value))
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(value, _colorProvider))
+				{
+					_colorProvider = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 

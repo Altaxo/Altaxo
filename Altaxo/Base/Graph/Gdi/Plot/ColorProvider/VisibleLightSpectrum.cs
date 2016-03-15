@@ -90,50 +90,28 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			_brightness = DefaultBrightness;
 		}
 
-		/// <summary>
-		/// Copy constructor.
-		/// </summary>
-		/// <param name="from">Other instance to copy the data from.</param>
-		public VisibleLightSpectrum(VisibleLightSpectrum from)
-		{
-			CopyFrom(from);
-		}
-
-		/// <summary>
-		/// Copies all data from another instance to this instance.
-		/// </summary>
-		/// <param name="o">Object to copy from.</param>
-		/// <returns>True if all or some of the data of the other instance could be copied. False if no data could be copied.</returns>
-		public override bool CopyFrom(object o)
-		{
-			if (object.ReferenceEquals(this, o))
-				return true;
-
-			var result = base.CopyFrom(o);
-			var from = o as VisibleLightSpectrum;
-			if (null != from)
-			{
-				this._gamma = from._gamma;
-				this._brightness = from._brightness;
-				result = true;
-			}
-			return result;
-		}
-
 		public double Gamma
 		{
 			get
 			{
 				return _gamma;
 			}
-			set
+		}
+
+		public VisibleLightSpectrum WithGamma(double gamma)
+		{
+			if (!(gamma >= 0))
+				throw new ArgumentOutOfRangeException(nameof(gamma), "Argument should be >=0");
+
+			if (gamma == _gamma)
 			{
-				var newValue = Math.Max(0, value);
-				if (_gamma != newValue)
-				{
-					_gamma = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (VisibleLightSpectrum)this.MemberwiseClone();
+				result._gamma = gamma;
+				return result;
 			}
 		}
 
@@ -143,14 +121,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _brightness;
 			}
-			set
+		}
+
+		public VisibleLightSpectrum WithBrightness(double brightness)
+		{
+			if (!((brightness >= 0) && (brightness <= 1)))
+				throw new ArgumentOutOfRangeException(nameof(brightness), "Argument should be >=0 and <=1");
+
+			if (brightness == _brightness)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_brightness != newValue)
-				{
-					_brightness = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (VisibleLightSpectrum)this.MemberwiseClone();
+				result._brightness = brightness;
+				return result;
 			}
 		}
 
@@ -259,15 +245,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return (int)Math.Round(255 * brightness * Math.Pow(Color * Factor, Gamma));
 			}
-		}
-
-		/// <summary>
-		/// Get a clone of this instance.
-		/// </summary>
-		/// <returns>Clone of this instance.</returns>
-		public override object Clone()
-		{
-			return new VisibleLightSpectrum(this);
 		}
 
 		/// <summary>

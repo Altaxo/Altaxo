@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.ColorProvider
 
 	[ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
 	[UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
-	public class VisibleLightSpectrumController : MVCANDControllerEditOriginalDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
+	public class VisibleLightSpectrumController : MVCANDControllerEditImmutableDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
 	{
 		private ColorProviderBaseController _baseController;
 
@@ -76,8 +76,9 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			if (!_baseController.Apply(disposeController))
 				return false;
 
-			_doc.Gamma = _view.Gamma;
-			_doc.Brightness = _view.Brightness;
+			_doc = _doc
+							.WithGamma(_view.Gamma)
+							.WithBrightness(_view.Brightness);
 
 			return ApplyEnd(true, disposeController);
 		}

@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			using (var suspendToken = SuspendGetToken())
 			{
 				this._clipToLayer = from._clipToLayer;
-				ChildCloneToMember(ref _colorProvider, from._colorProvider);
+				_colorProvider = from._colorProvider;
 				ChildCloneToMember(ref _colorScale, from._colorScale);
 				this._imageType = CachedImageType.None;
 				this._material = from._material; // Material is immutable
@@ -162,9 +162,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _colorProvider)
-				yield return new Main.DocumentNodeAndName(_colorProvider, "ColorProvider");
-
 			if (null != _colorScale)
 				yield return new Main.DocumentNodeAndName(_colorScale, "ColorScale");
 		}
@@ -207,8 +204,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (ChildSetMember(ref _colorProvider, value))
+				if (!object.ReferenceEquals(value, _colorProvider))
+				{
+					_colorProvider = value;
 					EhChildChanged(_colorProvider, EventArgs.Empty);
+				}
 			}
 		}
 

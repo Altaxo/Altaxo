@@ -83,43 +83,28 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		#endregion Serialization
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			bool hasCopied = base.CopyFrom(obj);
-			var from = obj as ColorProviderAHSBGradient;
-			if (null != from)
-			{
-				_alpha0 = from._alpha0;
-				_alpha1 = from._alpha1;
-				_hue0 = from._hue0;
-				_hue1 = from._hue1;
-				_saturation0 = from._saturation0;
-				_saturation1 = from._saturation1;
-				_brightness0 = from._brightness0;
-				_brightness1 = from._brightness1;
-
-				hasCopied = true;
-			}
-			return hasCopied;
-		}
-
 		public double Hue0
 		{
 			get
 			{
 				return _hue0;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithHue0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _hue0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_hue0 != newValue)
-				{
-					_hue0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._hue0 = value;
+				return result;
 			}
 		}
 
@@ -129,14 +114,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _hue1;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithHue1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _hue1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_hue1 != newValue)
-				{
-					_hue1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._hue1 = value;
+				return result;
 			}
 		}
 
@@ -146,14 +139,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _saturation0;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithSaturation0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _saturation0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_saturation0 != newValue)
-				{
-					_saturation0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._saturation0 = value;
+				return result;
 			}
 		}
 
@@ -163,14 +164,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _saturation1;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithSaturation1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _saturation1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_saturation1 != newValue)
-				{
-					_saturation1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._saturation1 = value;
+				return result;
 			}
 		}
 
@@ -180,14 +189,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _brightness0;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithBrightness0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _brightness0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_brightness0 != newValue)
-				{
-					_brightness0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._brightness0 = value;
+				return result;
 			}
 		}
 
@@ -197,14 +214,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _brightness1;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithBrightness1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _brightness0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_brightness1 != newValue)
-				{
-					_brightness1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._brightness1 = value;
+				return result;
 			}
 		}
 
@@ -214,14 +239,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _alpha0;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithOpaqueness0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _alpha0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_alpha0 != newValue)
-				{
-					_alpha0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._alpha0 = value;
+				return result;
 			}
 		}
 
@@ -231,14 +264,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _alpha1;
 			}
-			set
+		}
+
+		public ColorProviderAHSBGradient WithOpaqueness1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _alpha1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_alpha1 != newValue)
-				{
-					_alpha1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderAHSBGradient)this.MemberwiseClone();
+				result._alpha1 = value;
+				return result;
 			}
 		}
 
@@ -344,13 +385,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				r0 * _hue0 + r1 * _hue1,
 				r0 * _saturation0 + r1 * _saturation1,
 				r0 * _brightness0 + r1 * _brightness1);
-		}
-
-		public override object Clone()
-		{
-			var result = new ColorProviderAHSBGradient();
-			result.CopyFrom(this);
-			return result;
 		}
 	}
 }

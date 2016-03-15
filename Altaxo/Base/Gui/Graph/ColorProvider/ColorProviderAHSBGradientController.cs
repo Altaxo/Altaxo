@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph.ColorProvider
 
 	[ExpectedTypeOfView(typeof(IColorProviderAHSBGradientView))]
 	[UserControllerForObject(typeof(ColorProviderAHSBGradient), 110)]
-	public class ColorProviderAHSBGradientController : MVCANDControllerEditOriginalDocBase<ColorProviderAHSBGradient, IColorProviderAHSBGradientView>
+	public class ColorProviderAHSBGradientController : MVCANDControllerEditImmutableDocBase<ColorProviderAHSBGradient, IColorProviderAHSBGradientView>
 	{
 		private ColorProviderBaseController _baseController;
 
@@ -94,14 +94,15 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			if (!_baseController.Apply(disposeController))
 				return false;
 
-			_doc.Hue0 = _view.Hue0;
-			_doc.Hue1 = _view.Hue1;
-			_doc.Saturation0 = _view.Saturation0;
-			_doc.Saturation1 = _view.Saturation1;
-			_doc.Brightness0 = _view.Brightness0;
-			_doc.Brightness1 = _view.Brightness1;
-			_doc.Opaqueness0 = _view.Opaqueness0;
-			_doc.Opaqueness1 = _view.Opaqueness1;
+			_doc = _doc
+							.WithHue0(_view.Hue0)
+							.WithHue1(_view.Hue1)
+							.WithSaturation0(_view.Saturation0)
+							.WithSaturation1(_view.Saturation1)
+							.WithBrightness0(_view.Brightness0)
+							.WithBrightness1(_view.Brightness1)
+							.WithOpaqueness0(_view.Opaqueness0)
+							.WithOpaqueness1(_view.Opaqueness1);
 
 			return ApplyEnd(true, disposeController);
 		}

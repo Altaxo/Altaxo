@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.ColorProvider;
 using Altaxo.Graph.Scales;
 using System;
 using System.Drawing;
@@ -76,7 +77,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	[ExpectedTypeOfView(typeof(IColorProviderView))]
 	//[UserControllerForObject(typeof(IColorProvider), 101)]
-	public class ColorProviderController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<IColorProvider, IColorProviderView>
+	public class ColorProviderController : MVCANDControllerEditImmutableDocBase<IColorProvider, IColorProviderView>
 	{
 		protected IMVCAController _detailController;
 		protected object _detailView;
@@ -191,25 +192,20 @@ namespace Altaxo.Gui.Graph
 					var oldDoc = _doc;
 					var newDoc = (IColorProvider)System.Activator.CreateInstance(chosenType);
 
-					// Try to set the same org and end as the axis before
-					// this will fail for instance if we switch from linear to logarithmic with negative bounds
-					try
+					if (newDoc is ColorProviderBase && oldDoc is ColorProviderBase)
 					{
-						newDoc.CopyFrom(oldDoc);
-					}
-					catch (Exception)
-					{
+						var oldBase = (ColorProviderBase)oldDoc;
+
+						newDoc = ((ColorProviderBase)newDoc)
+							.WithColorBelow(oldBase.ColorBelow)
+							.WithColorAbove(oldBase.ColorAbove)
+							.WithColorInvalid(oldBase.ColorInvalid)
+							.WithTransparency(oldBase.Transparency)
+							.WithColorSteps(oldBase.ColorSteps);
 					}
 
 					_doc = newDoc;
-					OnDocumentInstanceChanged(oldDoc, newDoc);
 					OnMadeDirty(); // Change for the controller up in hierarchy to grab new document
-
-					if (null != _suspendToken)
-					{
-						_suspendToken.Dispose();
-						_suspendToken = _doc.SuspendGetToken();
-					}
 
 					InitDetailController(true);
 					CreateAndSetPreviewBitmap();

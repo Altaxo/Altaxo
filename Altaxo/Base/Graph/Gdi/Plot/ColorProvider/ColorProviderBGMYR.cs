@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -54,6 +55,23 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		#endregion Serialization
 
+		public static ColorProviderBGMYR NewFromColorBelowAboveInvalidAndTransparency(NamedColor colorBelow, NamedColor colorAbove, NamedColor colorInvalid, double transparency)
+		{
+			var result = new ColorProviderBGMYR();
+			result._colorBelow = colorBelow;
+			result._cachedGdiColorBelow = colorBelow;
+
+			result._colorAbove = colorAbove;
+			result._cachedGdiColorAbove = colorAbove;
+
+			result._colorInvalid = colorInvalid;
+			result._cachedGdiColorInvalid = colorInvalid;
+
+			result._alphaChannel = GetAlphaFromTransparency(transparency);
+
+			return result;
+		}
+
 		/// <summary>
 		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
 		/// </summary>
@@ -63,13 +81,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 		{
 			int val = (int)(relVal * 255);
 			return System.Drawing.Color.FromArgb(val, (val + val) % 255, (255 - val));
-		}
-
-		public override object Clone()
-		{
-			var result = new ColorProviderBGMYR();
-			result.CopyFrom(this);
-			return result;
 		}
 	}
 }

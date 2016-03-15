@@ -84,43 +84,28 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		#endregion Serialization
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			bool hasCopied = base.CopyFrom(obj);
-			var from = obj as ColorProviderARGBGradient;
-			if (null != from)
-			{
-				_alpha0 = from._alpha0;
-				_alpha1 = from._alpha1;
-				_red0 = from._red0;
-				_red1 = from._red1;
-				_green0 = from._green0;
-				_green1 = from._green1;
-				_blue0 = from._blue0;
-				_blue1 = from._blue1;
-
-				hasCopied = true;
-			}
-			return hasCopied;
-		}
-
 		public double Red0
 		{
 			get
 			{
 				return _red0;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithRed0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _red0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_red0 != newValue)
-				{
-					_red0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._red0 = value;
+				return result;
 			}
 		}
 
@@ -130,14 +115,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _red1;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithRed1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _red1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_red1 != newValue)
-				{
-					_red1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._red1 = value;
+				return result;
 			}
 		}
 
@@ -147,14 +140,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _green0;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithGreen0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _green0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_green0 != newValue)
-				{
-					_green0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._green0 = value;
+				return result;
 			}
 		}
 
@@ -164,14 +165,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _green1;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithGreen1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _green1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_green1 != newValue)
-				{
-					_green1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._green1 = value;
+				return result;
 			}
 		}
 
@@ -181,14 +190,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _blue0;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithBlue0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _blue0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_blue0 != newValue)
-				{
-					_blue0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._blue0 = value;
+				return result;
 			}
 		}
 
@@ -198,14 +215,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _blue1;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithBlue1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _blue1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_blue1 != newValue)
-				{
-					_blue1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._blue1 = value;
+				return result;
 			}
 		}
 
@@ -215,14 +240,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _alpha0;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithOpaqueness0(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _alpha0)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_alpha0 != newValue)
-				{
-					_alpha0 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._alpha0 = value;
+				return result;
 			}
 		}
 
@@ -232,14 +265,22 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return _alpha1;
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithOpaqueness1(double value)
+		{
+			if (!(value >= 0 && value <= 1))
+				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
+
+			if (value == _alpha1)
 			{
-				var newValue = Math.Max(0, Math.Min(value, 1));
-				if (_alpha1 != newValue)
-				{
-					_alpha1 = newValue;
-					EhSelfChanged(EventArgs.Empty);
-				}
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._alpha1 = value;
+				return result;
 			}
 		}
 
@@ -249,20 +290,29 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return GetColorFrom0To1Continuously(0);
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithColorAtR0(Color value)
+		{
+			double a, r, g, b;
+			a = value.A / 255.0;
+			r = value.R / 255.0;
+			g = value.G / 255.0;
+			b = value.B / 255.0;
+
+			if (a == _alpha0 || r == _red0 || g == _green0 || b == _blue0)
 			{
-				double a, r, g, b;
-				a = value.A / 255.0;
-				r = value.R / 255.0;
-				g = value.G / 255.0;
-				b = value.B / 255.0;
-				bool changed = a != _alpha0 || r != _red0 || g != _green0 || b != _blue0;
-				_alpha0 = a;
-				_red0 = r;
-				_green0 = g;
-				_blue0 = b;
-				if (changed)
-					EhSelfChanged(EventArgs.Empty);
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._alpha0 = a;
+				result._red0 = r;
+				result._green0 = g;
+				result._blue0 = b;
+
+				return result;
 			}
 		}
 
@@ -272,20 +322,29 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				return GetColorFrom0To1Continuously(1);
 			}
-			set
+		}
+
+		public ColorProviderARGBGradient WithColorAtR1(Color value)
+		{
+			double a, r, g, b;
+			a = value.A / 255.0;
+			r = value.R / 255.0;
+			g = value.G / 255.0;
+			b = value.B / 255.0;
+
+			if (a == _alpha1 || r == _red1 || g == _green1 || b == _blue1)
 			{
-				double a, r, g, b;
-				a = value.A / 255.0;
-				r = value.R / 255.0;
-				g = value.G / 255.0;
-				b = value.B / 255.0;
-				bool changed = a != _alpha1 || r != _red1 || g != _green1 || b != _blue1;
-				_alpha1 = a;
-				_red1 = r;
-				_green1 = g;
-				_blue1 = b;
-				if (changed)
-					EhSelfChanged(EventArgs.Empty);
+				return this;
+			}
+			else
+			{
+				var result = (ColorProviderARGBGradient)this.MemberwiseClone();
+				result._alpha1 = a;
+				result._red1 = r;
+				result._green1 = g;
+				result._blue1 = b;
+
+				return result;
 			}
 		}
 
@@ -305,13 +364,6 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				(int)Math.Floor((_green0 * r0 + _green1 * r1) * maxColorComponent),
 				(int)Math.Floor((_blue0 * r0 + _blue1 * r1) * maxColorComponent)
 				);
-		}
-
-		public override object Clone()
-		{
-			var result = new ColorProviderARGBGradient();
-			result.CopyFrom(this);
-			return result;
 		}
 	}
 }

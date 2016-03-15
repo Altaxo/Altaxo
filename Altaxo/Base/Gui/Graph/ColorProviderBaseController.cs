@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Graph
 
 	[ExpectedTypeOfView(typeof(IColorProviderBaseView))]
 	[UserControllerForObject(typeof(ColorProviderBase))]
-	public class ColorProviderBaseController : MVCANDControllerEditOriginalDocBase<ColorProviderBase, IColorProviderBaseView>
+	public class ColorProviderBaseController : MVCANDControllerEditImmutableDocBase<ColorProviderBase, IColorProviderBaseView>
 	{
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -93,11 +93,12 @@ namespace Altaxo.Gui.Graph
 
 		public override bool Apply(bool disposeController)
 		{
-			_doc.ColorBelow = _view.ColorBelow;
-			_doc.ColorAbove = _view.ColorAbove;
-			_doc.ColorInvalid = _view.ColorInvalid;
-			_doc.Transparency = _view.Transparency;
-			_doc.ColorSteps = _view.ColorSteps;
+			_doc = _doc
+						.WithColorBelow(_view.ColorBelow)
+						.WithColorAbove(_view.ColorAbove)
+						.WithColorInvalid(_view.ColorInvalid)
+						.WithTransparency(_view.Transparency)
+						.WithColorSteps(_view.ColorSteps);
 
 			return ApplyEnd(true, disposeController);
 		}

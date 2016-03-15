@@ -35,6 +35,7 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Graph.Scales.Ticks;
+	using ColorProvider;
 	using Drawing;
 	using Graph.Plot.Data;
 
@@ -152,7 +153,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var colorAbove = (NamedColor)info.GetValue("ColorAbove", s);
 				var colorInvalid = (NamedColor)info.GetValue("ColorInvalid", s);
 
-				var colorProvider = new ColorProvider.ColorProviderBGMYR() { ColorBelow = colorBelow, ColorAbove = colorAbove, ColorInvalid = colorInvalid, Transparency = 0 };
+				var colorProvider = ColorProviderBGMYR.NewFromColorBelowAboveInvalidAndTransparency(colorBelow, colorAbove, colorInvalid, 0);
 				var scale = scalingStyle == ScalingStyle.Logarithmic ? (NumericalScale)new Log10Scale() : (NumericalScale)new LinearScale();
 
 				scale.Rescaling.SetUserParameters(
@@ -234,7 +235,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			using (var suspendToken = SuspendGetToken())
 			{
 				this._clipToLayer = from._clipToLayer;
-				this.ColorProvider = (IColorProvider)from._colorProvider.Clone();
+				this.ColorProvider = from._colorProvider;
 				this.Scale = (NumericalScale)from._scale.Clone();
 				this._imageType = CachedImageType.None;
 
@@ -246,9 +247,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _colorProvider)
-				yield return new Main.DocumentNodeAndName(_colorProvider, "ColorProvider");
-
 			if (null != _scale)
 				yield return new Main.DocumentNodeAndName(_scale, "Scale");
 		}
@@ -290,8 +288,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null == value)
 					throw new ArgumentNullException("value");
 
-				if (ChildSetMember(ref _colorProvider, value))
+				if (!object.ReferenceEquals(value, _colorProvider))
+				{
+					_colorProvider = value;
 					EhChildChanged(_colorProvider, EventArgs.Empty);
+				}
 			}
 		}
 

@@ -98,12 +98,5 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				return Color.FromArgb(val, 255 - val, 0);
 			}
 		}
-
-		public override object Clone()
-		{
-			var result = new ColorProviderBGRY();
-			result.CopyFrom(this);
-			return result;
-		}
 	}
 }
