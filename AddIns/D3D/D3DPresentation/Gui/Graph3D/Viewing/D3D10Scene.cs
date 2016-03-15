@@ -134,9 +134,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private int _renderCounter;
 
-		private string[] _layoutNames = new string[6] { "P", "PC", "PT", "PN", "PNC", "PNT" };
+		private string[] _layoutNames = new string[7] { "P", "PC", "PT", "PN", "PNC", "PNT", "PNT1" };
 
-		private RenderLayout[] _renderLayouts = new RenderLayout[6];
+		private RenderLayout[] _renderLayouts = new RenderLayout[7];
 
 		private Effect _lightingEffect;
 
@@ -168,6 +168,12 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private EffectScalarVariable _evMaterialSpecularExponent;
 		private EffectScalarVariable _evMaterialSpecularIntensity;
 		private EffectScalarVariable _evMaterialSpecularMixingCoefficient;
+
+		// Texture for color providers to colorize a mesh by its height
+		private Texture1DDescription _descriptionTextureFor1DColorProvider;
+
+		private Texture1D _textureFor1DColorProvider;
+		private ShaderResourceView _textureFor1DColorProviderView;
 
 		// Clip planes
 		private EffectConstantBuffer _cbClipPlanes;
@@ -254,6 +260,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 																																new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0)
 																								});
 
+			i = 6;
+			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
+																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+																																new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
+																																new InputElement("TEXCOORD", 0, Format.R32_Float, 32, 0)
+																								});
+
 			// Create Constant Buffers
 			//_constantBuffer = new Buffer(device, Utilities.SizeOf<Matrix>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
 			//_constantBufferForColor = new Buffer(device, Utilities.SizeOf<Vector4>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None);
@@ -272,6 +285,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_evMaterialSpecularIntensity.Set(1.0f);
 			_evMaterialSpecularMixingCoefficient = _cbMaterial.GetMemberByName("MaterialSpecularMixingCoefficient").AsScalar();
 			_evMaterialSpecularMixingCoefficient.Set(0.75f);
+
+			// Color providers
+			BindTextureFor1DColorProviders();
 
 			// Clip plane variables
 			_cbClipPlanes = this._lightingEffect.GetConstantBufferByName("cbClipPlanes");
@@ -370,6 +386,35 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					}
 				}
 			}
+		}
+
+		private void BindTextureFor1DColorProviders()
+		{
+			_descriptionTextureFor1DColorProvider = new Texture1DDescription()
+			{
+				ArraySize = 1,
+				BindFlags = BindFlags.ShaderResource,
+				CpuAccessFlags = CpuAccessFlags.Write,
+				Format = Format.R32G32B32A32_Float,
+				MipLevels = 1,
+				OptionFlags = ResourceOptionFlags.None,
+				Usage = ResourceUsage.Dynamic,
+				Width = 1024
+			};
+
+			_textureFor1DColorProvider = new Texture1D(_hostDevice, _descriptionTextureFor1DColorProvider);
+
+			var _textureFor1DColorMeshTextureView = new ShaderResourceView(_hostDevice, _textureFor1DColorProvider);
+
+			var shaderResourceObj = this._lightingEffect.GetVariableByName("ColorGradient1DTexture");
+			EffectShaderResourceVariable shaderResource = shaderResourceObj.AsShaderResource();
+			shaderResource.SetResource(_textureFor1DColorMeshTextureView);
+		}
+
+		private void ReleaseTextureFor1DColorProviders()
+		{
+			Disposer.RemoveAndDispose(ref _textureFor1DColorProviderView);
+			Disposer.RemoveAndDispose(ref _textureFor1DColorProvider);
 		}
 
 		private void BringDrawingIntoBuffers(D3D10GraphicsContext drawing)
@@ -562,6 +607,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			foreach (var entry in _renderLayouts)
 				entry.Dispose();
+
+			ReleaseTextureFor1DColorProviders();
 		}
 
 		void IScene.Update(TimeSpan sceneTime)

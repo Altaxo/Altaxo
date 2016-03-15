@@ -18,6 +18,15 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
+// Texture which stores color values for colorization of data mesh plot style
+Texture1D ColorGradient1DTexture;
+
+SamplerState ColorGradient1DTextureSampler
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Clamp;
+};
+
 cbuffer cbViewTransformation
 {
 	float4x4 WorldViewProj;
@@ -176,6 +185,8 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	return float4(finalColor, diffuseColor.w);
 }
 
+// ------------------------ Vertex shader input structures ---------------------------------------------
+
 struct VS_IN_P
 {
 	float4 pos : POSITION;
@@ -213,6 +224,19 @@ struct VS_IN_PNT
 	float2 uv : TEXCOORD0;
 };
 
+// Vertex input intended for DataMeshPlotStyle
+struct VS_IN_PNT1
+{
+	float4 pos : POSITION;
+	float4 nml : NORMAL;
+	float u : TEXCOORD0;
+};
+
+// ------------------------ End of vertex shader input structures ---------------------------------------------
+
+// --------------- Scene Pixel shader input structures ------------------------------------------------
+
+// Input to the pixel shader for the scene
 struct PS_IN
 {
 	float4 pos : SV_POSITION; // position in camera coordinates
@@ -223,11 +247,30 @@ struct PS_IN
 	float2 clip1 : SV_ClipDistance1; // clip distances 4..5
 };
 
+// Input for the pixel shader. Instead of a color, we provide a 1D texture coordinate, that
+// will be lookuped in ColorGradient1DTexture. This is intended for rendering DataMeshPlotStyle.
+struct PS_IN_T1
+{
+	float4 pos : SV_POSITION; // position in camera coordinates
+	float3 posW : POSITION; // position in world coordinates
+	float3 normal : NORMAL; // normal vector in world coordinates
+	float  u : TEXCOORD0;  // texture coordinate
+	float4 clip0 : SV_ClipDistance0; // clip distances 0..3
+	float2 clip1 : SV_ClipDistance1; // clip distances 4..5
+};
+
+// --------------- End of Scene Pixel shader input structures ------------------------------------------------
+
+// --------------- Overlay pixel shader input structures ------------------------------------------------
+
+// Input to the pixel shader for the overlay (the markers). We don't need normals here.
 struct PS_OVERLAY_IN
 {
 	float4 pos : SV_POSITION; // position in camera coordinates
 	float4 col : COLOR;  // pixel color
 };
+
+// --------------- End of overlay pixel shader input structures ------------------------------------------------
 
 PS_IN VS_P(VS_IN_P input)
 {
@@ -289,6 +332,22 @@ PS_IN VS_PNC(VS_IN_PNC input)
 	return output;
 }
 
+// Vertex shader intended for rendering data mesh plot style. Input is position, normal and a 1D texture coordinate.
+// The color for this texture coordinate is looked up from ColorGradient1DTexture;
+PS_IN_T1 VS_PNT1(VS_IN_PNT1 input)
+{
+	PS_IN_T1 output = (PS_IN_T1)0;
+	output.pos = mul(input.pos, WorldViewProj);
+	output.posW = input.pos.xyz;
+	output.normal = input.nml;
+	output.u = input.u; // the 1D texture coordinate
+
+	output.clip0 = float4(dot(input.pos, ClipPlane0), dot(input.pos, ClipPlane1), dot(input.pos, ClipPlane2), dot(input.pos, ClipPlane3));
+	output.clip1 = float2(dot(input.pos, ClipPlane4), dot(input.pos, ClipPlane5));
+
+	return output;
+}
+
 PS_IN VS_PNT(VS_IN_PNT input)
 {
 	PS_IN output = (PS_IN)0;
@@ -320,12 +379,22 @@ return float4(materialColor*lerp(HemisphericLightColorBelow, HemisphericLightCol
 }
 */
 
+// --------------------  Scene rendering pixel shaders --------------------------------------
+
 float4 PS(PS_IN input) : SV_Target
 {
 	return CalcLighting(input.posW, input.normal, input.col);
 }
 
-// --------------------  Overlay rendering --------------------------------------
+float4 PS_T1(PS_IN_T1 input) : SV_Target
+{
+	float4 col = ColorGradient1DTexture.Sample(ColorGradient1DTextureSampler, input.u);
+	return CalcLighting(input.posW, input.normal, col);
+}
+
+// ---------------------End of scene rendering pixel shaders --------------------------------
+
+// --------------------  Overlay rendering pixel shaders --------------------------------------
 
 PS_OVERLAY_IN VS_OVERLAY_PC(VS_IN_PC input)
 {
@@ -341,7 +410,7 @@ float4 PS_OVERLAY(PS_OVERLAY_IN input) : SV_Target
 	return input.col;
 }
 
-// ---------------------End of overlay rendering --------------------------------
+// ---------------------End of overlay rendering pixel shaders --------------------------------
 
 technique10 Shade_P
 {
@@ -401,5 +470,15 @@ technique10 Shade_PNT
 		SetGeometryShader(0);
 		SetVertexShader(CompileShader(vs_4_0, VS_PNT()));
 		SetPixelShader(CompileShader(ps_4_0, PS()));
+	}
+}
+
+technique10 Shade_PNT1
+{
+	pass P0
+	{
+		SetGeometryShader(0);
+		SetVertexShader(CompileShader(vs_4_0, VS_PNT1()));
+		SetPixelShader(CompileShader(ps_4_0, PS_T1()));
 	}
 }
