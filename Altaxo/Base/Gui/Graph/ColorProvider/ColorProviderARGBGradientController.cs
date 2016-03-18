@@ -94,6 +94,8 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			if (!_baseController.Apply(disposeController))
 				return false;
 
+			_doc = (ColorProviderARGBGradient)_baseController.ModelObject;
+
 			_doc = _doc
 						.WithRed0(_view.Red0)
 						.WithRed1(_view.Red1)

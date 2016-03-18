@@ -29,6 +29,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Camera;
+	using Altaxo.Graph.Graph3D.GraphicsContext;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Graph.Graph3D.Lighting;
 	using Altaxo.Gui.Graph3D.Common;
@@ -68,6 +69,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			public int VertexCount;
 			public int IndexCount;
 			public Plane[] ClipPlanes;
+			public byte[] UColors;
 
 			public void RemoveAndDispose()
 			{
@@ -85,6 +87,23 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			public Buffer IndexBuffer;
 			public int VertexCount;
 			public int IndexCount;
+
+			public void RemoveAndDispose()
+			{
+				Disposer.RemoveAndDispose(ref VertexBuffer);
+				Disposer.RemoveAndDispose(ref IndexBuffer);
+				VertexCount = 0;
+				IndexCount = 0;
+			}
+		}
+
+		internal class VertexAndIndexDeviceBufferNoMaterialWithUColor
+		{
+			public Buffer VertexBuffer;
+			public Buffer IndexBuffer;
+			public int VertexCount;
+			public int IndexCount;
+			public float[] UColor;
 
 			public void RemoveAndDispose()
 			{
@@ -144,9 +163,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		/// The _this triangle buffers. These buffers are used for current rendering
 		/// 0: Position, 1: PositionColor, 2: PositionUV, 3: PositionNormal, 4: PositionNormalColor, 5: PositionNormalUV
 		/// </summary>
-		private List<VertexAndIndexDeviceBuffer>[] _thisTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[6];
+		private List<VertexAndIndexDeviceBuffer>[] _thisTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[7];
 
-		private List<VertexAndIndexDeviceBuffer>[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[6];
+		private List<VertexAndIndexDeviceBuffer>[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>[7];
 
 		private VertexAndIndexDeviceBufferNoMaterial _markerGeometryTriangleDeviceBuffer;
 		private VertexBufferNoMaterial _markerGeometryLineListBuffer;
@@ -262,9 +281,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 			i = 6;
 			_renderLayouts[i].VertexLayout = new InputLayout(device, _renderLayouts[i].pass.Description.Signature, new[] {
-																																new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-																																new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, 16, 0),
-																																new InputElement("TEXCOORD", 0, Format.R32_Float, 32, 0)
+																																new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
+																																new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0),
+																																new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0)
 																								});
 
 			// Create Constant Buffers
@@ -424,14 +443,15 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				return;
 
 			var buffersOfType =
-							new IEnumerable<KeyValuePair<IMaterial, IndexedTriangleBuffer>>[]
+							new IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>>[]
 							{
 																drawing.PositionIndexedTriangleBuffersAsIndexedTriangleBuffers,
 																drawing.PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
 																drawing.PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
 																drawing.PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers,
 																drawing.PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers,
-																drawing.PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers
+																drawing.PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers,
+																drawing.PositionNormalUIndexedTriangleBuffersAsIndexedTriangleBuffers
 							};
 
 			for (int i = 0; i < buffersOfType.Length; ++i)
@@ -463,14 +483,26 @@ namespace Altaxo.Gui.Graph3D.Viewing
 					var indexCount = buf.TriangleCount * 3;
 
 					Plane[] clipPlanes = null;
-					if (buf is PositionNormalColorIndexedTriangleBufferWithClipping)
+					if (entry.Key is MaterialPlusClippingKey)
 					{
-						var axoClipPlanes = (buf as PositionNormalColorIndexedTriangleBufferWithClipping).ClipPlanes;
+						var axoClipPlanes = ((MaterialPlusClippingKey)entry.Key).ClipPlanes;
 						if (null != axoClipPlanes)
 							clipPlanes = axoClipPlanes.Select(axoPlane => new Plane((float)axoPlane.X, (float)axoPlane.Y, (float)axoPlane.Z, (float)-axoPlane.W)).ToArray();
 					}
 
-					newDeviceBuffers.Add(new VertexAndIndexDeviceBuffer { Material = entry.Key, VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount, IndexBuffer = indexBuffer, IndexCount = indexCount, ClipPlanes = clipPlanes });
+					byte[] uColors = null;
+					var material = entry.Key.Material;
+					if (buf is PositionNormalUIndexedTriangleBuffer && entry.Key is MaterialPlusClippingPlusColorProviderKey)
+					{
+						var bufs = (PositionNormalUIndexedTriangleBuffer)buf;
+						var colorProvider = ((MaterialPlusClippingPlusColorProviderKey)(entry.Key)).ColorProvider;
+						var fColors = bufs.GetColorArrayForColorProvider(colorProvider);
+						uColors = new byte[fColors.Length * 4];
+						System.Buffer.BlockCopy(fColors, 0, uColors, 0, uColors.Length);
+						material = material.WithColor(new NamedColor(colorProvider.GetAxoColor(double.NaN))); // Material needs to have InvalidColor, because this can not be represented in the Texture1D
+					}
+
+					newDeviceBuffers.Add(new VertexAndIndexDeviceBuffer { Material = entry.Key.Material, VertexBuffer = vertexBuffer, VertexCount = buf.VertexCount, IndexBuffer = indexBuffer, IndexCount = indexCount, ClipPlanes = clipPlanes, UColors = uColors });
 				}
 
 				System.Threading.Interlocked.Exchange(ref _nextTriangleDeviceBuffers[i], newDeviceBuffers);
@@ -685,6 +717,11 @@ namespace Altaxo.Gui.Graph3D.Viewing
 				DrawPositionNormalColorIndexedTriangleBuffer(device, entry, worldViewProjTr);
 			}
 
+			foreach (var entry in _thisTriangleDeviceBuffers[6]) // Position-Normal-U
+			{
+				DrawPositionNormalUIndexedTriangleBuffer(device, entry, worldViewProjTr);
+			}
+
 			// ------------------ end of document geometry drawing ----------------------------------
 
 			// ------------------ start of marker geometry drawing ----------------------------------
@@ -837,6 +874,50 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_renderLayouts[layoutNumber].pass.Apply();
 			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
 
+			if (null != deviceBuffers.ClipPlanes)
+			{
+				var emptyPlane = new Plane();
+				for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
+				{
+					_evClipPlanes[i].Set(emptyPlane);
+				}
+			}
+		}
+
+		private void DrawPositionNormalUIndexedTriangleBuffer(Device device, VertexAndIndexDeviceBuffer deviceBuffers, Matrix worldViewProj)
+		{
+			int layoutNumber = 6;
+			device.InputAssembler.InputLayout = _renderLayouts[layoutNumber].VertexLayout;
+			device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+
+			// set clip planes
+			if (null != deviceBuffers.ClipPlanes)
+			{
+				for (int i = 0; i < Math.Min(6, deviceBuffers.ClipPlanes.Length); ++i)
+				{
+					_evClipPlanes[i].Set(deviceBuffers.ClipPlanes[i]);
+				}
+			}
+
+			// set UColor texture
+
+			var stream = _textureFor1DColorProvider.Map(0, MapMode.WriteDiscard, SharpDX.Direct3D10.MapFlags.None);
+			//stream.Seek(0, System.IO.SeekOrigin.Begin);
+			stream.Write(deviceBuffers.UColors, 0, deviceBuffers.UColors.Length);
+			//stream.Close();
+			_textureFor1DColorProvider.Unmap(0);
+
+			SetShaderMaterialVariables(deviceBuffers.Material); // note: the material's color must be set to the ColorProviders InvalidColor!
+
+			// draw now
+
+			device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(deviceBuffers.VertexBuffer, 32, 0));
+			device.InputAssembler.SetIndexBuffer(deviceBuffers.IndexBuffer, Format.R32_UInt, 0);
+
+			_renderLayouts[layoutNumber].pass.Apply();
+			device.DrawIndexed(deviceBuffers.IndexCount, 0, 0);
+
+			// clear clip planes afterwards
 			if (null != deviceBuffers.ClipPlanes)
 			{
 				var emptyPlane = new Plane();

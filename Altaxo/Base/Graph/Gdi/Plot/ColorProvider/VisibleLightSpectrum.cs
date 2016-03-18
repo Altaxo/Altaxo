@@ -81,6 +81,23 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		#endregion Serialization
 
+		public override bool Equals(IColorProvider other)
+		{
+			if (!base.Equals(other))
+				return false;
+
+			var from = (VisibleLightSpectrum)other;
+
+			return
+				this._gamma == from._gamma &&
+				this._brightness == from._brightness;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() + (_gamma + _brightness).GetHashCode() * 13;
+		}
+
 		/// <summary>
 		/// Default constructor. The maximum intensity and the gamma value are set to their default values.
 		/// </summary>

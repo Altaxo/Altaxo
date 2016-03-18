@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 {
 	using Drawing;
 	using Drawing.D3D;
+	using Gdi.Plot;
 
 	public class GraphicsContextD3DPrimitivesBase
 	{
@@ -105,6 +106,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);
 
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material);
+
+		public abstract IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes, IColorProvider colorProvider);
 
 		public abstract Matrix4x3 Transformation { get; }
 

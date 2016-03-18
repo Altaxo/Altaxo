@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 		protected IGripManipulationHandle ActiveGrip;
 
 		/// <summary>Locker to suppress changed events during moving of objects.</summary>
-		protected Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
+		private Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
 
 		public ObjectPointerMouseHandler(Graph3DControllerWpf grac)
 		{

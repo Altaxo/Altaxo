@@ -83,6 +83,29 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 
 		#endregion Serialization
 
+		public override bool Equals(IColorProvider other)
+		{
+			if (!base.Equals(other))
+				return false;
+
+			var from = (ColorProviderAHSBGradient)other;
+
+			return
+				this._alpha0 == from._alpha0 &&
+				this._alpha1 == from._alpha1 &&
+				this._hue0 == from._hue0 &&
+				this._hue1 == from._hue1 &&
+				this._saturation0 == from._saturation0 &&
+				this._saturation1 == from._saturation1 &&
+				this._brightness0 == from._brightness0 &&
+				this._brightness1 == from._brightness1;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() + (_alpha0 + _alpha1 + _hue0 + _hue1 + _saturation0 + _saturation1 + _brightness0 + _brightness1).GetHashCode() * 13;
+		}
+
 		public double Hue0
 		{
 			get

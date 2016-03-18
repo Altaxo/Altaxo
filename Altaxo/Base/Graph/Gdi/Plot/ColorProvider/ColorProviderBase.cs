@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				var result = (ColorProviderBase)this.MemberwiseClone();
 				result._colorBelow = color;
 				result._cachedGdiColorBelow = GdiColorHelper.ToGdi(color);
-				return this;
+				return result;
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				var result = (ColorProviderBase)this.MemberwiseClone();
 				result._colorAbove = color;
 				result._cachedGdiColorAbove = GdiColorHelper.ToGdi(color);
-				return this;
+				return result;
 			}
 		}
 
@@ -183,7 +183,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 				var result = (ColorProviderBase)this.MemberwiseClone();
 				result._colorInvalid = color;
 				result._cachedGdiColorInvalid = GdiColorHelper.ToGdi(color);
-				return this;
+				return result;
 			}
 		}
 
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				var result = (ColorProviderBase)this.MemberwiseClone();
 				result._alphaChannel = alphaChannel;
-				return this;
+				return result;
 			}
 		}
 
@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			{
 				var result = (ColorProviderBase)this.MemberwiseClone();
 				result._colorSteps = colorSteps;
-				return this;
+				return result;
 			}
 		}
 
@@ -281,11 +281,42 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			}
 		}
 
+		public Altaxo.Drawing.AxoColor GetAxoColor(double relVal)
+		{
+			var c = GetColor(relVal);
+			return Altaxo.Drawing.AxoColor.FromArgb(c.A, c.R, c.G, c.B);
+		}
+
 		/// <summary>
 		/// Calculates a color from the provided relative value, that is guaranteed to be between 0 and 1
 		/// </summary>
 		/// <param name="relVal">Value used for color calculation. Guaranteed to be between 0 and 1.</param>
 		/// <returns>A color associated with the relative value.</returns>
 		protected abstract Color GetColorFrom0To1Continuously(double relVal);
+
+		public virtual bool Equals(IColorProvider other)
+		{
+			if (null == other || other.GetType() != this.GetType())
+				return false;
+
+			var from = (ColorProviderBase)other;
+
+			return
+				_colorBelow == from._colorBelow &&
+				_colorAbove == from._colorAbove &&
+				_colorInvalid == from._colorInvalid &&
+				_alphaChannel == from._alphaChannel &&
+				_colorSteps == from._colorSteps;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is IColorProvider ? Equals((IColorProvider)obj) : false;
+		}
+
+		public override int GetHashCode()
+		{
+			return GetType().GetHashCode() + 13 * _colorSteps.GetHashCode();
+		}
 	}
 }

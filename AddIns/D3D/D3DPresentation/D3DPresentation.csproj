@@ -66,13 +66,15 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10GraphicsContext.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\D3D10OverlayContext.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\IndexedTriangleBuffer.cs" />
-    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialAndClipping.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialPlusClippingPlusColorProvider.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\MaterialPlusClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorIndexedTriangleBufferWithClipping.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionColorLineListBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalColorIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Gui\Graph3D\Common\D3D10BitmapExporter.cs" />

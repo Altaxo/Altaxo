@@ -32,49 +32,65 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
-	/// <summary>
-	/// Combines a material with one or more clip planes.
-	/// </summary>
-	public struct MaterialPlusClipping : IEqualityComparer<MaterialPlusClipping>
+	public class MaterialKey : Main.IImmutable
 	{
 		public IMaterial Material { get; private set; }
-		public PlaneD3D[] ClipPlanes { get; private set; }
 
-		public MaterialPlusClipping(IMaterial material, PlaneD3D[] clipPlanes)
+		public MaterialKey(IMaterial material)
 		{
 			if (null == material)
 				throw new ArgumentNullException(nameof(material));
 
-			Material = material;
-			ClipPlanes = clipPlanes;
-		}
-
-		public bool Equals(MaterialPlusClipping x, MaterialPlusClipping y)
-		{
-			if (!(x.Material.Equals(y.Material)))
-				return false;
-
-			if (!(x.ClipPlanes != null && y.ClipPlanes != null))
-				return (x.ClipPlanes != null) ^ (y.ClipPlanes != null);
-
-			if (x.ClipPlanes.Length != y.ClipPlanes.Length)
-				return false;
-
-			for (int i = 0; i < x.ClipPlanes.Length; ++i)
-			{
-				if (!x.ClipPlanes[i].Equals(y.ClipPlanes[i]))
-					return false;
-			}
-
-			return true;
+			this.Material = material;
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (obj is MaterialPlusClipping)
-				return this.Equals((MaterialPlusClipping)obj);
-			else
+			var from = obj as MaterialKey;
+			return null == from ? false : Material.Equals(from.Material);
+		}
+
+		public override int GetHashCode()
+		{
+			return Material.GetHashCode();
+		}
+	}
+
+	/// <summary>
+	/// Combines a material with one or more clip planes.
+	/// </summary>
+	public class MaterialPlusClippingKey : MaterialKey
+	{
+		public PlaneD3D[] ClipPlanes { get; private set; }
+
+		public MaterialPlusClippingKey(IMaterial material, PlaneD3D[] clipPlanes)
+			: base(material)
+		{
+			ClipPlanes = clipPlanes;
+		}
+
+		public override bool Equals(object obj)
+		{
+			var from = obj as MaterialPlusClippingKey;
+			if (null == from)
 				return false;
+
+			if (!(this.Material.Equals(from.Material)))
+				return false;
+
+			if (!(this.ClipPlanes != null && from.ClipPlanes != null))
+				return (this.ClipPlanes != null) ^ (from.ClipPlanes != null);
+
+			if (this.ClipPlanes.Length != from.ClipPlanes.Length)
+				return false;
+
+			for (int i = 0; i < this.ClipPlanes.Length; ++i)
+			{
+				if (!this.ClipPlanes[i].Equals(from.ClipPlanes[i]))
+					return false;
+			}
+
+			return true;
 		}
 
 		public override int GetHashCode()
@@ -86,7 +102,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			return result;
 		}
 
-		public int GetHashCode(MaterialPlusClipping obj)
+		public int GetHashCode(MaterialPlusClippingKey obj)
 		{
 			return obj.GetHashCode();
 		}

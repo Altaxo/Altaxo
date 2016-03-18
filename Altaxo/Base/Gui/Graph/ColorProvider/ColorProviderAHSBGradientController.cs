@@ -94,6 +94,8 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			if (!_baseController.Apply(disposeController))
 				return false;
 
+			_doc = (ColorProviderAHSBGradient)_baseController.ModelObject;
+
 			_doc = _doc
 							.WithHue0(_view.Hue0)
 							.WithHue1(_view.Hue1)

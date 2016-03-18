@@ -76,6 +76,8 @@ namespace Altaxo.Gui.Graph.ColorProvider
 			if (!_baseController.Apply(disposeController))
 				return false;
 
+			_doc = (VisibleLightSpectrum)_baseController.ModelObject;
+
 			_doc = _doc
 							.WithGamma(_view.Gamma)
 							.WithBrightness(_view.Brightness);

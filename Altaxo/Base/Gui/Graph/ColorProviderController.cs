@@ -117,6 +117,8 @@ namespace Altaxo.Gui.Graph
 					return false;
 			}
 
+			_doc = (IColorProvider)_detailController.ModelObject;
+
 			return ApplyEnd(true, disposeController);
 		}
 
@@ -219,6 +221,7 @@ namespace Altaxo.Gui.Graph
 		private void EhDetailsChanged(IMVCANDController ctrl)
 		{
 			_detailController.Apply(false); // we use the instance directly, thus no further taking of the instance is neccessary here
+			_doc = (IColorProvider)(_detailController.ModelObject);
 			CreateAndSetPreviewBitmap();
 		}
 

@@ -227,9 +227,9 @@ struct VS_IN_PNT
 // Vertex input intended for DataMeshPlotStyle
 struct VS_IN_PNT1
 {
-	float4 pos : POSITION;
-	float4 nml : NORMAL;
-	float u : TEXCOORD0;
+	float3 pos : POSITION;
+	float3 nml : NORMAL;
+	float2 uv : TEXCOORD0;
 };
 
 // ------------------------ End of vertex shader input structures ---------------------------------------------
@@ -254,7 +254,7 @@ struct PS_IN_T1
 	float4 pos : SV_POSITION; // position in camera coordinates
 	float3 posW : POSITION; // position in world coordinates
 	float3 normal : NORMAL; // normal vector in world coordinates
-	float  u : TEXCOORD0;  // texture coordinate
+	float2  uv : TEXCOORD0;  // pixel color
 	float4 clip0 : SV_ClipDistance0; // clip distances 0..3
 	float2 clip1 : SV_ClipDistance1; // clip distances 4..5
 };
@@ -337,13 +337,14 @@ PS_IN VS_PNC(VS_IN_PNC input)
 PS_IN_T1 VS_PNT1(VS_IN_PNT1 input)
 {
 	PS_IN_T1 output = (PS_IN_T1)0;
-	output.pos = mul(input.pos, WorldViewProj);
-	output.posW = input.pos.xyz;
+	float4 pos = float4(input.pos, 1);
+	output.pos = mul(pos, WorldViewProj);
+	output.posW = input.pos;
 	output.normal = input.nml;
-	output.u = input.u; // the 1D texture coordinate
+	output.uv = input.uv; // the 1D texture coordinate
 
-	output.clip0 = float4(dot(input.pos, ClipPlane0), dot(input.pos, ClipPlane1), dot(input.pos, ClipPlane2), dot(input.pos, ClipPlane3));
-	output.clip1 = float2(dot(input.pos, ClipPlane4), dot(input.pos, ClipPlane5));
+	output.clip0 = float4(dot(pos, ClipPlane0), dot(pos, ClipPlane1), dot(pos, ClipPlane2), dot(pos, ClipPlane3));
+	output.clip1 = float2(dot(pos, ClipPlane4), dot(pos, ClipPlane5));
 
 	return output;
 }
@@ -388,7 +389,10 @@ float4 PS(PS_IN input) : SV_Target
 
 float4 PS_T1(PS_IN_T1 input) : SV_Target
 {
-	float4 col = ColorGradient1DTexture.Sample(ColorGradient1DTextureSampler, input.u);
+	float4 col = ColorGradient1DTexture.Sample(ColorGradient1DTextureSampler, input.uv.x); // First texture coordinate is used to sample the ColorProvider's color
+	float v = saturate(input.uv.y); // The second component of the texture coordinates is normally 0. It is only then a very high value if the point it is invalid
+	col = lerp(col, MaterialDiffuseColor, v); // MaterialDiffuseColor is used here to represent the ColorProvider's InvalidColor
+	clip(col.a < 0.1 ? -1 : 1); // don't show transparent values
 	return CalcLighting(input.posW, input.normal, col);
 }
 

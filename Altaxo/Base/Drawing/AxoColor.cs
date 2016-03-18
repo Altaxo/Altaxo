@@ -95,6 +95,19 @@ namespace Altaxo.Drawing
 		public bool IsFromArgb { get { return _isFromArgb; } }
 
 		/// <summary>
+		/// Converts a color in given as ARGB integer into the linear SC ARGB space.
+		/// </summary>
+		/// <param name="a">Alpha component.</param>
+		/// <param name="r">Red component-</param>
+		/// <param name="g">Green component.</param>
+		/// <param name="b">Blue component.</param>
+		/// <returns></returns>
+		public static Tuple<float, float, float, float> ToScARGBFromIARGB(byte a, byte r, byte g, byte b)
+		{
+			return new Tuple<float, float, float, float>(I2A(a), I2C(r), I2C(g), I2C(b));
+		}
+
+		/// <summary>
 		/// Convert from linear SRGB to gamma corrected values, see wikipedia (SRGB).
 		/// </summary>
 		/// <param name="x"></param>

@@ -354,7 +354,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		private void BuildImage(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
 		{
-			BuildImageV1(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
+			BuildImageWithUColor(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
 		}
 
 		private void BuildImageV1(
@@ -423,6 +423,93 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					var color = vertexColors[i, j];
 					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
 					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, -normal.X, -normal.Y, -normal.Z, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+				}
+			}
+
+			for (int i = 0; i < lxlm1; ++i)
+			{
+				for (int j = 0; j < lylm1; ++j)
+				{
+					// upper side
+					buf.AddTriangleIndices(offs + 0, offs + 2 * lyl, offs + 2);
+					buf.AddTriangleIndices(offs + 2, offs + 2 * lyl, offs + 2 * lyl + 2);
+
+					// from below
+					buf.AddTriangleIndices(offs + 0 + 1, offs + 2 + 1, offs + 2 * lyl + 1);
+					buf.AddTriangleIndices(offs + 2 + 1, offs + 2 * lyl + 2 + 1, offs + 2 * lyl + 1);
+
+					offs += 2;
+				}
+				offs += 2; // one extra increment because inner loop ends at one less than array size
+			}
+		}
+
+		private void BuildImageWithUColor(
+				IGraphicsContext3D g,
+				IPlotArea gl,
+				IROVector lx,
+				IROVector ly,
+				IROMatrix matrix)
+		{
+			_imageType = CachedImageType.LinearEquidistant;
+
+			IPositionNormalUIndexedTriangleBuffer buffers;
+
+			if (gl.ClipDataToFrame == LayerDataClipping.None && !_clipToLayer)
+			{
+				buffers = g.GetPositionNormalUIndexedTriangleBuffer(_material, null, _colorProvider);
+			}
+			else
+			{
+				var clipPlanes = new PlaneD3D[6];
+				clipPlanes[0] = new PlaneD3D(1, 0, 0, 0);
+				clipPlanes[1] = new PlaneD3D(-1, 0, 0, -gl.Size.X);
+				clipPlanes[2] = new PlaneD3D(0, 1, 0, 0);
+				clipPlanes[3] = new PlaneD3D(0, -1, 0, -gl.Size.Y);
+				clipPlanes[4] = new PlaneD3D(0, 0, 1, 0);
+				clipPlanes[5] = new PlaneD3D(0, 0, -1, -gl.Size.Z);
+
+				buffers = g.GetPositionNormalUIndexedTriangleBuffer(_material, clipPlanes, _colorProvider);
+			}
+
+			var buf = buffers;
+			var offs = buf.VertexCount;
+
+			int lxl = lx.Length;
+			int lyl = ly.Length;
+			int lxlm1 = lx.Length - 1;
+			int lylm1 = ly.Length - 1;
+
+			var vertexPoints = new PointD3D[lxl, lyl];
+			var vertexColors = new Color[lxl, lyl];
+
+			PointD3D pt;
+			var zScale = gl.ZAxis;
+			for (int i = 0; i < lx.Length; ++i)
+			{
+				for (int j = 0; j < ly.Length; ++j)
+				{
+					double lz = zScale.PhysicalVariantToNormal(matrix[i, j]);
+					gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
+
+					vertexPoints[i, j] = pt;
+					vertexColors[i, j] = _colorProvider.GetColor(null == _colorScale ? lz : _colorScale.PhysicalVariantToNormal(matrix[i, j])); // either use the scale of the coordinate system or our own color scale
+				}
+			}
+
+			// calculate the normals
+			for (int i = 0; i < lx.Length; ++i)
+			{
+				for (int j = 0; j < ly.Length; ++j)
+				{
+					var pm = vertexPoints[i, j];
+					var vec1 = vertexPoints[Math.Min(i + 1, lxlm1), j] - vertexPoints[Math.Max(i - 1, 0), j];
+					var vec2 = vertexPoints[i, Math.Min(j + 1, lylm1)] - vertexPoints[i, Math.Max(j - 1, 0)];
+
+					var normal = VectorD3D.CrossProduct(vec1, vec2).Normalized;
+					double lz = null != _colorScale ? _colorScale.PhysicalVariantToNormal(matrix[i, j]) : zScale.PhysicalVariantToNormal(matrix[i, j]);
+					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, lz);
+					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, -normal.X, -normal.Y, -normal.Z, lz);
 				}
 			}
 

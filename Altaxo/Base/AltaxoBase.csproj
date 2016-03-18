@@ -270,6 +270,7 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionNormalColorTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionNormalIndexedTriangleBuffer.cs" />
+    <Compile Include="Graph\Graph3D\GraphicsContext\IPositionNormalUIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\PositionNormalTriangleBuffers.cs" />
