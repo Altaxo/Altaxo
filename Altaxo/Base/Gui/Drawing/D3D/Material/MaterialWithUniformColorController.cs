@@ -46,9 +46,9 @@ namespace Altaxo.Gui.Drawing.D3D.Material
 
 			if (null != _view)
 			{
-				_view.SpecularIntensity = _doc.SpecularIntensity;
-				_view.SpecularExponent = _doc.SpecularExponent;
-				_view.SpecularMixingCoefficient = _doc.SpecularMixingCoefficient;
+				_view.Smoothness = _doc.Smoothness;
+				_view.Metalness = _doc.Metalness;
+				_view.IndexOfRefraction = _doc.IndexOfRefraction;
 				_view.Color = _doc.Color;
 			}
 		}
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Drawing.D3D.Material
 		{
 			try
 			{
-				_doc = (MaterialWithUniformColor)_doc.WithSpecularProperties(_view.SpecularIntensity, _view.SpecularExponent, _view.SpecularMixingCoefficient).WithColor(_view.Color);
+				_doc = (MaterialWithUniformColor)_doc.WithSpecularProperties(smoothness: _view.Smoothness, metalness: _view.Metalness, indexOfRefraction: _view.IndexOfRefraction).WithColor(_view.Color);
 				return ApplyEnd(true, disposeController);
 			}
 			catch (Exception ex)

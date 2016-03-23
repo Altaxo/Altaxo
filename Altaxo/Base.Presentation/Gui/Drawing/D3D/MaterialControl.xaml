@@ -20,13 +20,13 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-		<Label Content="Specular intensity:" Grid.Row="0" Grid.Column="0" />
-		<axogc:DoubleUpDown x:Name="_guiSpecularIntensity" Grid.Row="0" Grid.Column="2" Minimum="0" Change="0.125" ToolTip="Value >= 0. The higher the value, the more intense is the specular reflex on the object." />
+		<Label Content="Smoothness:" Grid.Row="0" Grid.Column="0" />
+		<axogc:DoubleUpDown x:Name="_guiSmoothness" Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="1" Change="0.125" ToolTip="Value inbetween 0 and 1. A value of 0 indicates a rough surface, and a value of 1 a very shiny surface." />
 
-		<Label Content="Specular exponent:" Grid.Row="2" Grid.Column="0" />
-		<axogc:DoubleUpDown x:Name="_guiSpecularExponent" Grid.Row="2" Grid.Column="2" Minimum="0" Change="1" ToolTip="Value >= 0. The higher the value, the sharper the reflex on the object." />
+		<Label Content="Metalness:" Grid.Row="2" Grid.Column="0" />
+		<axogc:DoubleUpDown x:Name="_guiMetalness" Grid.Row="2" Grid.Column="2" Minimum="0" Maximum="1" Change="0.125" ToolTip="Value inbetween 0 and 1. 0 means the specular highlight has the color of the light source, as is often the case for plastics. 1 means the specular highlight has the color of the material, as is often the case for metals." />
 
-		<Label Content="Specular mixing:" Grid.Row="4" Grid.Column="0" />
-		<axogc:DoubleUpDown x:Name="_guiSpecularMixingCoefficient" Grid.Row="4" Grid.Column="2" Minimum="0" Change="0.125" Maximum="1" ToolTip="Value between 0 and 1. 0 means light is reflected fully mixed with the color of the object. 1 means light is reflected only with the color of the light source." />
+		<Label Content="Refractive index:" Grid.Row="4" Grid.Column="0" />
+		<axogc:DoubleUpDown x:Name="_guiIndexOfRefraction" Grid.Row="4" Grid.Column="2" Minimum="1" Change="0.5" ToolTip="Value >= 1. Only needed for transparent or semi-transparent materials." />
 	</Grid>
 </UserControl>

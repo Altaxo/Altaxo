@@ -33,9 +33,9 @@ namespace Altaxo.Gui.Drawing.D3D
 {
 	public interface IMaterialView
 	{
-		double SpecularIntensity { get; set; }
-		double SpecularExponent { get; set; }
-		double SpecularMixingCoefficient { get; set; }
+		double IndexOfRefraction { get; set; }
+		double Smoothness { get; set; }
+		double Metalness { get; set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IMaterialView))]
@@ -48,9 +48,9 @@ namespace Altaxo.Gui.Drawing.D3D
 
 			if (null != _view)
 			{
-				_view.SpecularIntensity = _doc.SpecularIntensity;
-				_view.SpecularExponent = _doc.SpecularExponent;
-				_view.SpecularMixingCoefficient = _doc.SpecularMixingCoefficient;
+				_view.IndexOfRefraction = _doc.IndexOfRefraction;
+				_view.Smoothness = _doc.Smoothness;
+				_view.Metalness = _doc.Metalness;
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Drawing.D3D
 		{
 			try
 			{
-				_doc = _doc.WithSpecularProperties(_view.SpecularIntensity, _view.SpecularExponent, _view.SpecularMixingCoefficient);
+				_doc = _doc.WithSpecularProperties(smoothness: _view.Smoothness, metalness: _view.Metalness, indexOfRefraction: _view.IndexOfRefraction);
 				return ApplyEnd(true, disposeController);
 			}
 			catch (Exception ex)

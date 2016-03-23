@@ -186,7 +186,8 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		private EffectVectorVariable _evMaterialDiffuseColor;
 		private EffectScalarVariable _evMaterialSpecularExponent;
 		private EffectScalarVariable _evMaterialSpecularIntensity;
-		private EffectScalarVariable _evMaterialSpecularMixingCoefficient;
+		private EffectScalarVariable _evMaterialDiffuseIntensity;
+		private EffectScalarVariable _evMaterialMetalnessValue;
 
 		// Texture for color providers to colorize a mesh by its height
 		private Texture1DDescription _descriptionTextureFor1DColorProvider;
@@ -302,8 +303,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			_evMaterialSpecularExponent.Set(4.0f);
 			_evMaterialSpecularIntensity = _cbMaterial.GetMemberByName("MaterialSpecularIntensity").AsScalar();
 			_evMaterialSpecularIntensity.Set(1.0f);
-			_evMaterialSpecularMixingCoefficient = _cbMaterial.GetMemberByName("MaterialSpecularMixingCoefficient").AsScalar();
-			_evMaterialSpecularMixingCoefficient.Set(0.75f);
+			_evMaterialDiffuseIntensity = _cbMaterial.GetMemberByName("MaterialDiffuseIntensity").AsScalar();
+			_evMaterialMetalnessValue = _cbMaterial.GetMemberByName("MaterialMetalnessValue").AsScalar();
+			_evMaterialMetalnessValue.Set(0.75f);
 
 			// Color providers
 			BindTextureFor1DColorProviders();
@@ -818,9 +820,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		private void SetShaderMaterialVariables(IMaterial material)
 		{
-			_evMaterialSpecularIntensity.Set((float)material.SpecularIntensityNormalizedForPhongModel);
-			_evMaterialSpecularExponent.Set((float)material.SpecularExponent);
-			_evMaterialSpecularMixingCoefficient.Set((float)material.SpecularMixingCoefficient);
+			_evMaterialSpecularIntensity.Set((float)material.PhongModelSpecularIntensity);
+			_evMaterialDiffuseIntensity.Set((float)material.PhongModelDiffuseIntensity);
+			_evMaterialSpecularExponent.Set((float)material.PhongModelSpecularExponent);
+			_evMaterialMetalnessValue.Set((float)material.Metalness);
 			if (material.HasColor)
 			{
 				Vector4 colorVec = ToVector4(material.Color.Color);

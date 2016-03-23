@@ -132,11 +132,11 @@ namespace Altaxo.Gui.Drawing.D3D
 			}
 			else if (material is MaterialWithUniformColor)
 			{
-				name = string.Format("{0} I={1}, E={2}, M={3}", material.Color.Name, material.SpecularIntensity, material.SpecularExponent, material.SpecularMixingCoefficient);
+				name = string.Format("{0} S={1}, M={2}, N={3}", material.Color.Name, material.Smoothness, material.Metalness, material.IndexOfRefraction);
 			}
 			else if (material is MaterialWithoutColorOrTexture)
 			{
-				name = string.Format("{0} I={1}, E={2}, M={3}", "NotColored", material.SpecularIntensity, material.SpecularExponent, material.SpecularMixingCoefficient);
+				name = string.Format("{0} S={1}, M={2}, N={3}", "NotColored", material.Smoothness, material.Metalness, material.IndexOfRefraction);
 			}
 			else
 			{

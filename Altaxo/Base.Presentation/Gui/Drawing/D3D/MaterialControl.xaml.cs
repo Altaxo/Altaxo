@@ -48,42 +48,42 @@ namespace Altaxo.Gui.Drawing.D3D
 			InitializeComponent();
 		}
 
-		public double SpecularExponent
+		public double Smoothness
 		{
 			get
 			{
-				return _guiSpecularExponent.Value;
+				return _guiSmoothness.Value;
 			}
 
 			set
 			{
-				_guiSpecularExponent.Value = value;
+				_guiSmoothness.Value = value;
 			}
 		}
 
-		public double SpecularIntensity
+		public double IndexOfRefraction
 		{
 			get
 			{
-				return _guiSpecularIntensity.Value;
+				return _guiIndexOfRefraction.Value;
 			}
 
 			set
 			{
-				_guiSpecularIntensity.Value = value;
+				_guiIndexOfRefraction.Value = value;
 			}
 		}
 
-		public double SpecularMixingCoefficient
+		public double Metalness
 		{
 			get
 			{
-				return _guiSpecularMixingCoefficient.Value;
+				return _guiMetalness.Value;
 			}
 
 			set
 			{
-				_guiSpecularMixingCoefficient.Value = value;
+				_guiMetalness.Value = value;
 			}
 		}
 	}

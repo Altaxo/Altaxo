@@ -43,18 +43,18 @@ namespace Altaxo.Drawing.D3D.Material
 			{
 				var s = (MaterialWithoutColorOrTexture)obj;
 
-				info.AddValue("SpecularIntensity", s._specularIntensity);
-				info.AddValue("SpecularExponent", s._specularExponent);
-				info.AddValue("SpecularMixing", s._specularMixingCoefficient);
+				info.AddValue("Smoothness", s._smoothness);
+				info.AddValue("Metalness", s._metalness);
+				info.AddValue("IndexOfRefraction", s._indexOfRefraction);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				double specularIntensity = info.GetDouble("SpecularIntensity");
-				double specularExponent = info.GetDouble("SpecularExponent");
-				double specularMixingCoefficient = info.GetDouble("SpecularMixing");
+				double smoothness = info.GetDouble("Smoothness");
+				double metalness = info.GetDouble("Metalness");
+				double indexOfRefraction = info.GetDouble("IndexOfRefraction");
 
-				return new MaterialWithoutColorOrTexture(specularIntensity, specularExponent, specularMixingCoefficient);
+				return new MaterialWithoutColorOrTexture(smoothness, metalness, indexOfRefraction);
 			}
 		}
 
@@ -66,8 +66,8 @@ namespace Altaxo.Drawing.D3D.Material
 		{
 		}
 
-		public MaterialWithoutColorOrTexture(double specularIntensity, double specularExponent, double specularMixingCoefficient)
-			: base(specularIntensity, specularExponent, specularMixingCoefficient)
+		public MaterialWithoutColorOrTexture(double smoothness, double metalness, double indexOfRefraction)
+			: base(smoothness, metalness, indexOfRefraction)
 		{
 		}
 
@@ -115,9 +115,10 @@ namespace Altaxo.Drawing.D3D.Material
 			if (null != other)
 			{
 				return
-					this._specularIntensity == other._specularIntensity &&
-					this._specularExponent == other._specularExponent &&
-					this._specularMixingCoefficient == other._specularMixingCoefficient;
+
+					this._smoothness == other._smoothness &&
+					this._metalness == other._metalness &&
+					this._indexOfRefraction == other._indexOfRefraction;
 			}
 
 			return false;
@@ -130,10 +131,9 @@ namespace Altaxo.Drawing.D3D.Material
 			if (null != other)
 			{
 				return
-
-					this._specularIntensity == other._specularIntensity &&
-					this._specularExponent == other._specularExponent &&
-					this._specularMixingCoefficient == other._specularMixingCoefficient;
+					this._smoothness == other._smoothness &&
+					this._metalness == other._metalness &&
+					this._indexOfRefraction == other._indexOfRefraction;
 			}
 
 			return false;
@@ -141,7 +141,7 @@ namespace Altaxo.Drawing.D3D.Material
 
 		public override int GetHashCode()
 		{
-			return 3 * this._specularIntensity.GetHashCode() + 7 * _specularExponent.GetHashCode() + 13 * _specularMixingCoefficient.GetHashCode();
+			return 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
 		}
 
 		#endregion Infrastructure

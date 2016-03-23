@@ -59,20 +59,20 @@ namespace Altaxo.Drawing.D3D.Material
 			{
 				var s = (MaterialWithUniformColor)obj;
 
-				info.AddValue("SpecularIntensity", s._specularIntensity);
-				info.AddValue("SpecularExponent", s._specularExponent);
-				info.AddValue("SpecularMixing", s._specularMixingCoefficient);
+				info.AddValue("Smoothness", s._smoothness);
+				info.AddValue("Metalness", s._metalness);
+				info.AddValue("IndexOfRefraction", s._indexOfRefraction);
 				info.AddValue("Color", s._color);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				double specularIntensity = info.GetDouble("SpecularIntensity");
-				double specularExponent = info.GetDouble("SpecularExponent");
-				double specularMixingCoefficient = info.GetDouble("SpecularMixing");
+				double smoothness = info.GetDouble("Smoothness");
+				double metalness = info.GetDouble("Metalness");
+				double indexOfRefraction = info.GetDouble("IndexOfRefraction");
 				var color = (NamedColor)info.GetValue("Color", null);
 
-				return new MaterialWithUniformColor(color, specularIntensity, specularExponent, specularMixingCoefficient);
+				return new MaterialWithUniformColor(color, smoothness, metalness, indexOfRefraction);
 			}
 		}
 
@@ -93,11 +93,11 @@ namespace Altaxo.Drawing.D3D.Material
 		/// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and specular properties.
 		/// </summary>
 		/// <param name="color">The material color.</param>
-		/// <param name="specularIntensity">The specular intensity.</param>
-		/// <param name="specularExponent">The specular exponent.</param>
-		/// <param name="specularMixingCoefficient">The specular mixing coefficient.</param>
-		public MaterialWithUniformColor(NamedColor color, double specularIntensity, double specularExponent, double specularMixingCoefficient)
-					: base(specularIntensity, specularExponent, specularMixingCoefficient)
+		/// <param name="smoothness">The specular intensity.</param>
+		/// <param name="metalness">The specular exponent.</param>
+		/// <param name="indexOfRefraction">The index of refraction.</param>
+		public MaterialWithUniformColor(NamedColor color, double smoothness, double metalness, double indexOfRefraction)
+					: base(smoothness, metalness, indexOfRefraction)
 		{
 			_color = color;
 		}
@@ -161,9 +161,9 @@ namespace Altaxo.Drawing.D3D.Material
 			{
 				return
 					this._color == other._color &&
-					this._specularIntensity == other._specularIntensity &&
-					this._specularExponent == other._specularExponent &&
-					this._specularMixingCoefficient == other._specularMixingCoefficient;
+					this._smoothness == other._smoothness &&
+					this._metalness == other._metalness &&
+					this._indexOfRefraction == other._indexOfRefraction;
 			}
 
 			return false;
@@ -178,9 +178,10 @@ namespace Altaxo.Drawing.D3D.Material
 			{
 				return
 					this._color == other._color &&
-					this._specularIntensity == other._specularIntensity &&
-					this._specularExponent == other._specularExponent &&
-					this._specularMixingCoefficient == other._specularMixingCoefficient;
+
+					this._smoothness == other._smoothness &&
+					this._metalness == other._metalness &&
+					this._indexOfRefraction == other._indexOfRefraction;
 			}
 
 			return false;
@@ -188,7 +189,7 @@ namespace Altaxo.Drawing.D3D.Material
 
 		public override int GetHashCode()
 		{
-			return this._color.GetHashCode() + 3 * this._specularIntensity.GetHashCode() + 7 * _specularExponent.GetHashCode() + 13 * _specularMixingCoefficient.GetHashCode();
+			return this._color.GetHashCode() + 3 * _smoothness.GetHashCode() + 7 * _metalness.GetHashCode() + 13 * _indexOfRefraction.GetHashCode();
 		}
 
 		#endregion Infrastructure
