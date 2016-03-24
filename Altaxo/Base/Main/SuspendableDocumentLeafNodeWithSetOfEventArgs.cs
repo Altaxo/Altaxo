@@ -102,7 +102,7 @@ namespace Altaxo.Main
 
 		protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
 		{
-			System.Diagnostics.Debug.Assert(_accumulatedEventData == null || _accumulatedEventData.Count == 0);
+			if (!(_accumulatedEventData == null || _accumulatedEventData.Count == 0)) throw new InvalidProgramException();
 
 			foreach (var ev in e)
 				_accumulatedEventData.Add(ev);

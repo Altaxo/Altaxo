@@ -144,8 +144,11 @@ namespace Altaxo.Com
 
 		public void NotifyDocumentOfDocumentsComObjectChanged(GraphDocumentEmbeddedComObject documentComObject, GraphDocumentBase oldDocument, GraphDocumentBase newDocument)
 		{
-			System.Diagnostics.Debug.Assert(null == oldDocument);
-			System.Diagnostics.Debug.Assert(null != newDocument);
+			if (!(null == oldDocument))
+				throw new ArgumentException(nameof(oldDocument) + " should be null");
+			if (null == newDocument)
+				throw new ArgumentNullException(nameof(newDocument));
+
 			_embeddedComObject = documentComObject;
 			EnterEmbeddedObjectMode();
 		}

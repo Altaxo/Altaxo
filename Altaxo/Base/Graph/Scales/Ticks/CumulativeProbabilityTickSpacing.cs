@@ -43,8 +43,8 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		private class ProbabilityList : ICollection<double>
 		{
-			double _org, _end;
-			HashSet<double> _coll = new HashSet<double>();
+			private double _org, _end;
+			private HashSet<double> _coll = new HashSet<double>();
 
 			public int NumberOfEntriesWithinBounds { get; private set; }
 
@@ -705,7 +705,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
 			}
 
-			System.Diagnostics.Debug.Assert(null != _cachedMajorMinor);
+			if (!(null != _cachedMajorMinor)) throw new InvalidProgramException();
 
 			_majorTicks.Clear();
 			_minorTicks.Clear();
@@ -1276,7 +1276,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			return modified; ;
 		}
 
-		static double ProbabilityToLinear(double p)
+		private static double ProbabilityToLinear(double p)
 		{
 			const double SquareRootOf2 = 1.4142135623730950488016887242097;
 			return SquareRootOf2 * Altaxo.Calc.ErrorFunction.InverseErf(-1 + 2 * p);

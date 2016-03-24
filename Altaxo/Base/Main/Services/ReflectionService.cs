@@ -560,7 +560,8 @@ namespace Altaxo.Main.Services
 			object target,
 			System.Type overrideObjectType)
 		{
-			System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType, typeof(IClassForClassAttribute)));
+			if (!(IsSubClassOfOrImplements(attributeType, typeof(IClassForClassAttribute)))) throw new InvalidProgramException();
+
 			System.Type myTargetType = overrideObjectType != null ? overrideObjectType : target.GetType();
 			return _classesHavingAttributeCollection[attributeType, myTargetType];
 		}
@@ -775,7 +776,7 @@ namespace Altaxo.Main.Services
 					}
 					_classesWithMyAttribute.Add(typesWithMyAttribute);
 				}
-				System.Diagnostics.Debug.Assert(_loadedAssemblies.Count == _classesWithMyAttribute.Count);
+				if (!(_loadedAssemblies.Count == _classesWithMyAttribute.Count)) throw new InvalidProgramException();
 			}
 		}
 

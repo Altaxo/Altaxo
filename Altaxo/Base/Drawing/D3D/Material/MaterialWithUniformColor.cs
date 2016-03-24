@@ -45,7 +45,7 @@ namespace Altaxo.Drawing.D3D.Material
 		/// <value>
 		/// The material that can be used as "null" value.
 		/// </value>
-		public static IMaterial NoMaterial { get; private set; } = new MaterialWithUniformColor(NamedColors.Transparent, 0, 1, 0);
+		public static IMaterial NoMaterial { get; private set; } = new MaterialWithUniformColor(NamedColors.Transparent, 0, 1);
 
 		#region Serialization
 
@@ -85,6 +85,18 @@ namespace Altaxo.Drawing.D3D.Material
 		/// </summary>
 		/// <param name="color">The material color.</param>
 		public MaterialWithUniformColor(NamedColor color)
+		{
+			_color = color;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MaterialWithUniformColor" /> class with the provided color and specular properties.
+		/// </summary>
+		/// <param name="color">The material color.</param>
+		/// <param name="smoothness">The specular intensity.</param>
+		/// <param name="metalness">The specular exponent.</param>
+		public MaterialWithUniformColor(NamedColor color, double smoothness, double metalness)
+					: base(smoothness, metalness)
 		{
 			_color = color;
 		}

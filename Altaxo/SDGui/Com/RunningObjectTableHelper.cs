@@ -40,7 +40,8 @@ namespace Altaxo.Com
 		{
 			IRunningObjectTable rot;
 			Int32 hr = Ole32Func.GetRunningObjectTable(0, out rot);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.NOERROR);
+			if (!(hr == ComReturnValue.NOERROR))
+				throw new InvalidOperationException("The COM operation was not successful");
 			return rot;
 		}
 

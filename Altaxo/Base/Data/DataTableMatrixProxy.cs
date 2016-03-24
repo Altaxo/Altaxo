@@ -1098,8 +1098,10 @@ namespace Altaxo.Data
 				}
 			}
 
-			System.Diagnostics.Debug.Assert(participatingDataRowsSelectedNow.Count == transformedAndSelectedRowHeaderValues.Count);
-			System.Diagnostics.Debug.Assert(participatingDataColumnsSelectedNow.Count == transformedAndSelectedColumnHeaderValues.Count);
+			if (!(participatingDataRowsSelectedNow.Count == transformedAndSelectedRowHeaderValues.Count))
+				throw new InvalidProgramException();
+			if (!(participatingDataColumnsSelectedNow.Count == transformedAndSelectedColumnHeaderValues.Count))
+				throw new InvalidProgramException();
 
 			resultantMatrix = new MyMatrixWrapper(table.DataColumns, participatingDataRowsSelectedNow, participatingDataColumnsSelectedNow);
 			resultantTransformedRowHeaderValues = VectorMath.ToROVector(transformedAndSelectedRowHeaderValues.ToArray());

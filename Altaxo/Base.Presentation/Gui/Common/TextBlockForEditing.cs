@@ -183,10 +183,12 @@ namespace Altaxo.Gui.Common
 				return;
 
 			DependencyObject parent = this;
-			for (; ; )
+			for (;;)
 			{
 				_itemsControl = GetDependencyObjectFromVisualTree(parent, typeof(ItemsControl)) as ItemsControl;
-				Debug.Assert(_itemsControl != null, "Underlying ItemsControl not found");
+				if (!(_itemsControl != null))
+					throw new InvalidOperationException(nameof(_itemsControl) + " is null. Underlying ItemsControl not found");
+
 				if (!_itemsControlTypesToSkipOver.Contains(_itemsControl.GetType()))
 					break;
 				parent = VisualTreeHelper.GetParent(_itemsControl);
@@ -199,7 +201,8 @@ namespace Altaxo.Gui.Common
 
 			Type typeOfItem = _itemsControlTypeToControlInfo[typeOfItemsControl].TypeOfItem;
 			_listItem = GetDependencyObjectFromVisualTree(this, typeOfItem) as FrameworkElement;
-			Debug.Assert(_listItem != null, string.Format("Underlying item of type {0} was not found in the visual hierarchy.", typeOfItem));
+			if (!(_listItem != null))
+				throw new InvalidOperationException(string.Format("Underlying item of type {0} was not found in the visual hierarchy.", typeOfItem));
 		}
 
 		#endregion Construction

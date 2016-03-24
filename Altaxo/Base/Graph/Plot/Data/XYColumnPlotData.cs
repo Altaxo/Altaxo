@@ -687,8 +687,10 @@ namespace Altaxo.Graph.Plot.Data
 				this._xBoundaries?.Reset();
 				this._yBoundaries?.Reset();
 
-				System.Diagnostics.Debug.Assert(_plotRangeStart >= 0);
-				System.Diagnostics.Debug.Assert(_plotRangeLength >= 0);
+				if (!(_plotRangeStart >= 0))
+					throw new InvalidProgramException();
+				if (!(_plotRangeLength >= 0))
+					throw new InvalidProgramException();
 
 				_pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
 

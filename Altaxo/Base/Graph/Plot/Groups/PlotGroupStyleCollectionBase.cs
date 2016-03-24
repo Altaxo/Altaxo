@@ -709,7 +709,8 @@ namespace Altaxo.Graph.Plot.Groups
 				}
 			}
 
-			System.Diagnostics.Debug.Assert(result.Count == this.Count); // hope that all items are now in the collection
+			if (!(result.Count == this.Count))
+				throw new InvalidProgramException(); // hope that all items are now in the collection
 
 			return result;
 		}

@@ -554,10 +554,17 @@ namespace Altaxo.Data
 		/// <param name="info">The DataColumnInfo object for the column to add.</param>
 		private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
 		{
-			System.Diagnostics.Debug.Assert(this.ContainsColumn(datac) == false);
-			System.Diagnostics.Debug.Assert(datac.ParentObject == null, "This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function");
-			System.Diagnostics.Debug.Assert(false == this._columnsByName.ContainsKey(info.Name), "Trying to add a column with a name that is already present (this error must be fixed in the calling function)");
-			System.Diagnostics.Debug.Assert(datac.IsSomeoneListeningToChanges == false, "Trying to add a column that was used before because either ParentObject is set or someone is listening to change events");
+			if (!(this.ContainsColumn(datac) == false))
+				throw new ArgumentException(nameof(datac) + " is already contained in this collection");
+
+			if (!(datac.ParentObject == null))
+				throw new ArgumentException(nameof(datac) + " already has a parent. This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function");
+
+			if (!(false == this._columnsByName.ContainsKey(info.Name)))
+				throw new InvalidOperationException("Trying to add a column with a name that is already present (this error must be fixed in the calling function)");
+
+			if (!(datac.IsSomeoneListeningToChanges == false))
+				throw new InvalidOperationException("Trying to add a column that was used before because either ParentObject is set or someone is listening to change events");
 
 			info.Number = this._columnsByNumber.Count;
 
@@ -2283,8 +2290,6 @@ namespace Altaxo.Data
 		}
 
 		#endregion Automatic column naming
-
-
 
 		#region INamedObjectCollection Members
 

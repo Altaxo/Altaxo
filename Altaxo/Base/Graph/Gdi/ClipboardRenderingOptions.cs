@@ -207,7 +207,8 @@ namespace Altaxo.Graph.Gdi
 			get
 			{
 				var doc = Current.PropertyService.GetValue(PropertyKeyClipboardRenderingOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new ClipboardRenderingOptions());
-				System.Diagnostics.Debug.Assert(null != doc);
+				if (!(null != doc))
+					throw new InvalidProgramException();
 				return doc;
 			}
 			set

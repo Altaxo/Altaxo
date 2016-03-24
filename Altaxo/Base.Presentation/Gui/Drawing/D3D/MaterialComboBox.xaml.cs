@@ -359,16 +359,16 @@ namespace Altaxo.Gui.Drawing.D3D
 			if (tagparts.Length != 3)
 				return;
 
-			double specIntensity;
-			double specExponent;
-			double specMixing;
+			double smoothness;
+			double metalness;
+			double indexOfRefraction;
 
 			try
 			{
-				specIntensity = double.Parse(tagparts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
-				specExponent = double.Parse(tagparts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
-				specMixing = double.Parse(tagparts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
-				var newMaterial = SelectedMaterial.WithSpecularProperties(specIntensity, specExponent, specMixing);
+				smoothness = double.Parse(tagparts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+				metalness = double.Parse(tagparts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+				indexOfRefraction = double.Parse(tagparts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+				var newMaterial = SelectedMaterial.WithSpecularProperties(smoothness, metalness, indexOfRefraction);
 				SelectedMaterial = newMaterial;
 			}
 			catch (Exception)

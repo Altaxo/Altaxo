@@ -279,7 +279,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 
 			if (_axisOrg <= _axisEnd)
 			{
-				for (DateTime d = _axisOrg; ; )
+				for (DateTime d = _axisOrg; ;)
 				{
 					DateTime r = _majorSpan.RoundUp(d);
 					if (r > _axisEnd)
@@ -291,7 +291,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			}
 			else // downwards
 			{
-				for (DateTime d = _axisOrg; ; )
+				for (DateTime d = _axisOrg; ;)
 				{
 					DateTime r = _majorSpan.RoundDown(d);
 					if (r < _axisEnd)
@@ -525,62 +525,62 @@ namespace Altaxo.Graph.Scales.Deprecated
 		}
 
 		private static readonly TimeSpan[] _fixedSpan =
-      {
-        TimeSpan.FromTicks(1),
-        TimeSpan.FromTicks(2),
-        TimeSpan.FromTicks(4),
-        TimeSpan.FromTicks(5),
-        TimeSpan.FromTicks(10),
-        TimeSpan.FromTicks(20),
-        TimeSpan.FromTicks(40),
-        TimeSpan.FromTicks(50),
-        TimeSpan.FromTicks(100),
-        TimeSpan.FromTicks(200),
-        TimeSpan.FromTicks(400),
-        TimeSpan.FromTicks(500),
-        TimeSpan.FromTicks(1000),
-        TimeSpan.FromTicks(2000),
-        TimeSpan.FromTicks(4000),
-        TimeSpan.FromTicks(5000),
-        TimeSpan.FromMilliseconds(1),
-        TimeSpan.FromMilliseconds(2),
-        TimeSpan.FromMilliseconds(4),
-        TimeSpan.FromMilliseconds(5),
-        TimeSpan.FromMilliseconds(10),
-        TimeSpan.FromMilliseconds(20),
-        TimeSpan.FromMilliseconds(40),
-        TimeSpan.FromMilliseconds(50),
-        TimeSpan.FromMilliseconds(100),
-        TimeSpan.FromMilliseconds(200),
-        TimeSpan.FromMilliseconds(400),
-        TimeSpan.FromMilliseconds(500),
-        TimeSpan.FromSeconds(1),
-        TimeSpan.FromSeconds(2),
-        TimeSpan.FromSeconds(4),
-        TimeSpan.FromSeconds(5),
-        TimeSpan.FromSeconds(10),
-        TimeSpan.FromSeconds(20),
-        TimeSpan.FromSeconds(30),
-        TimeSpan.FromMinutes(1),
-        TimeSpan.FromMinutes(2),
-        TimeSpan.FromMinutes(4),
-        TimeSpan.FromMinutes(5),
-        TimeSpan.FromMinutes(10),
-        TimeSpan.FromMinutes(20),
-        TimeSpan.FromMinutes(30),
-        TimeSpan.FromHours(1),
-        TimeSpan.FromHours(2),
-        TimeSpan.FromHours(4),
-        TimeSpan.FromHours(6),
-        TimeSpan.FromHours(6),
-        TimeSpan.FromHours(12),
-        TimeSpan.FromDays(1),
-        TimeSpan.FromDays(2),
-        TimeSpan.FromDays(4),
-        TimeSpan.FromDays(5),
-        TimeSpan.FromDays(10),
-        TimeSpan.FromDays(20)
-      };
+			{
+				TimeSpan.FromTicks(1),
+				TimeSpan.FromTicks(2),
+				TimeSpan.FromTicks(4),
+				TimeSpan.FromTicks(5),
+				TimeSpan.FromTicks(10),
+				TimeSpan.FromTicks(20),
+				TimeSpan.FromTicks(40),
+				TimeSpan.FromTicks(50),
+				TimeSpan.FromTicks(100),
+				TimeSpan.FromTicks(200),
+				TimeSpan.FromTicks(400),
+				TimeSpan.FromTicks(500),
+				TimeSpan.FromTicks(1000),
+				TimeSpan.FromTicks(2000),
+				TimeSpan.FromTicks(4000),
+				TimeSpan.FromTicks(5000),
+				TimeSpan.FromMilliseconds(1),
+				TimeSpan.FromMilliseconds(2),
+				TimeSpan.FromMilliseconds(4),
+				TimeSpan.FromMilliseconds(5),
+				TimeSpan.FromMilliseconds(10),
+				TimeSpan.FromMilliseconds(20),
+				TimeSpan.FromMilliseconds(40),
+				TimeSpan.FromMilliseconds(50),
+				TimeSpan.FromMilliseconds(100),
+				TimeSpan.FromMilliseconds(200),
+				TimeSpan.FromMilliseconds(400),
+				TimeSpan.FromMilliseconds(500),
+				TimeSpan.FromSeconds(1),
+				TimeSpan.FromSeconds(2),
+				TimeSpan.FromSeconds(4),
+				TimeSpan.FromSeconds(5),
+				TimeSpan.FromSeconds(10),
+				TimeSpan.FromSeconds(20),
+				TimeSpan.FromSeconds(30),
+				TimeSpan.FromMinutes(1),
+				TimeSpan.FromMinutes(2),
+				TimeSpan.FromMinutes(4),
+				TimeSpan.FromMinutes(5),
+				TimeSpan.FromMinutes(10),
+				TimeSpan.FromMinutes(20),
+				TimeSpan.FromMinutes(30),
+				TimeSpan.FromHours(1),
+				TimeSpan.FromHours(2),
+				TimeSpan.FromHours(4),
+				TimeSpan.FromHours(6),
+				TimeSpan.FromHours(6),
+				TimeSpan.FromHours(12),
+				TimeSpan.FromDays(1),
+				TimeSpan.FromDays(2),
+				TimeSpan.FromDays(4),
+				TimeSpan.FromDays(5),
+				TimeSpan.FromDays(10),
+				TimeSpan.FromDays(20)
+			};
 
 		private enum Unit { Span, Month, Years }
 
@@ -678,7 +678,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			private DateTime RoundUpMonths(DateTime d)
 			{
 				int m = (int)_span.Ticks;
-				System.Diagnostics.Debug.Assert(m > 0 && m <= 12);
+				if (!(m > 0 && m <= 12)) throw new InvalidProgramException();
 				for (DateTime td = new DateTime(d.Year, d.Month, 1); ; td = td.AddMonths(1))
 				{
 					if (td >= d && 0 == ((td.Month - 1) % m))
@@ -689,7 +689,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			private DateTime RoundDownMonths(DateTime d)
 			{
 				int m = (int)_span.Ticks;
-				System.Diagnostics.Debug.Assert(m > 0 && m <= 12);
+				if (!(m > 0 && m <= 12)) throw new InvalidProgramException();
 				for (DateTime td = new DateTime(d.Year, d.Month, 1); ; td = td.AddMonths(-1))
 				{
 					if (td <= d && 0 == ((td.Month - 1) % m))
@@ -773,7 +773,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			double years = span.TotalDays / (4 * 365 + 1);
 			long yearexpo = 1;
 			long yearmantissa = 1;
-			for (; ; )
+			for (;;)
 			{
 				if (years <= 4)
 				{

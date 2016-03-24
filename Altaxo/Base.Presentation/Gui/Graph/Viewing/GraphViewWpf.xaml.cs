@@ -221,7 +221,9 @@ namespace Altaxo.Gui.Graph.Viewing
 			{
 				// make sure that the returned element implements IInputElement
 				var result = _graphImage;
-				System.Diagnostics.Debug.Assert(null != (result as System.Windows.IInputElement));
+				if (!(null != (result as System.Windows.IInputElement)))
+					throw new InvalidOperationException(nameof(result) + " should be an IInputElement");
+
 				return result;
 			}
 		}

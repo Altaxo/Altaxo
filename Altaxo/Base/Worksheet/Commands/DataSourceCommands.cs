@@ -102,7 +102,7 @@ namespace Altaxo.Worksheet.Commands
 					table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
 				}
 
-				System.Diagnostics.Debug.Assert(null != table.DataSource, "table.DataSource.FillData should never set the data source to zero!");
+				if (!(null != table.DataSource)) throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
 
 				if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && null != table.TableScript)
 				{

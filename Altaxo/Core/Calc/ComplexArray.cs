@@ -123,7 +123,7 @@ namespace Altaxo.Calc
 
 		static private void LockWorkspaceF(int length, ref ComplexFloat[] workspace)
 		{
-			Debug.Assert(_workspaceFLocked == false);
+			if (!(_workspaceFLocked == false)) throw new InvalidProgramException();
 			_workspaceFLocked = true;
 			if (length >= _workspaceF.Length)
 			{
@@ -134,8 +134,8 @@ namespace Altaxo.Calc
 
 		static private void UnlockWorkspaceF(ref ComplexFloat[] workspace)
 		{
-			Debug.Assert(_workspaceF == workspace);
-			Debug.Assert(_workspaceFLocked == true);
+			if (!(_workspaceF == workspace)) throw new InvalidProgramException();
+			if (!(_workspaceFLocked == true)) throw new InvalidProgramException();
 			_workspaceFLocked = false;
 			workspace = null;
 		}
@@ -149,9 +149,9 @@ namespace Altaxo.Calc
 		/// <param name="offset"></param>
 		static public void Shift(Complex[] array, int offset)
 		{
-			Debug.Assert(array != null);
-			Debug.Assert(offset >= 0);
-			Debug.Assert(offset < array.Length);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+			if (!(offset >= 0)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
+			if (!(offset < array.Length)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be < array.Length");
 
 			if (offset == 0)
 			{
@@ -178,9 +178,9 @@ namespace Altaxo.Calc
 		/// <param name="offset"></param>
 		static public void Shift(ComplexFloat[] array, int offset)
 		{
-			Debug.Assert(array != null);
-			Debug.Assert(offset >= 0);
-			Debug.Assert(offset < array.Length);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+			if (!(offset >= 0)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be >= 0");
+			if (!(offset < array.Length)) throw new ArgumentOutOfRangeException(nameof(offset) + " should be < array.Length");
 
 			if (offset == 0)
 			{
@@ -269,7 +269,7 @@ namespace Altaxo.Calc
 				break;
 
 			default:
-				Debug.Assert( false );
+				throw new NotImplementedException();
 				break;
 			}
 			return  newArray;
@@ -390,7 +390,7 @@ namespace Altaxo.Calc
 		/// <param name="scale"></param>
 		static public void Scale(Complex[] array, double scale)
 		{
-			Debug.Assert(array != null);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
 
 			int length = array.Length;
 			for (int i = 0; i < length; i++)
@@ -408,10 +408,10 @@ namespace Altaxo.Calc
 		/// <param name="length"></param>
 		static public void Scale(Complex[] array, double scale, int start, int length)
 		{
-			Debug.Assert(array != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(length >= 0);
-			Debug.Assert((start + length) < array.Length);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
 			for (int i = 0; i < length; i++)
 			{
@@ -426,7 +426,7 @@ namespace Altaxo.Calc
 		/// <param name="scale"></param>
 		static public void Scale(Complex[] array, Complex scale)
 		{
-			Debug.Assert(array != null);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
 
 			int length = array.Length;
 			for (int i = 0; i < length; i++)
@@ -444,10 +444,10 @@ namespace Altaxo.Calc
 		/// <param name="length"></param>
 		static public void Scale(Complex[] array, Complex scale, int start, int length)
 		{
-			Debug.Assert(array != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(length >= 0);
-			Debug.Assert((start + length) < array.Length);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
 			for (int i = 0; i < length; i++)
 			{
@@ -462,7 +462,7 @@ namespace Altaxo.Calc
 		/// <param name="scale"></param>
 		static public void Scale(ComplexFloat[] array, float scale)
 		{
-			Debug.Assert(array != null);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
 
 			int length = array.Length;
 			for (int i = 0; i < length; i++)
@@ -480,10 +480,10 @@ namespace Altaxo.Calc
 		/// <param name="length"></param>
 		static public void Scale(ComplexFloat[] array, float scale, int start, int length)
 		{
-			Debug.Assert(array != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(length >= 0);
-			Debug.Assert((start + length) < array.Length);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
 			for (int i = 0; i < length; i++)
 			{
@@ -498,7 +498,7 @@ namespace Altaxo.Calc
 		/// <param name="scale"></param>
 		static public void Scale(ComplexFloat[] array, ComplexFloat scale)
 		{
-			Debug.Assert(array != null);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
 
 			int length = array.Length;
 			for (int i = 0; i < length; i++)
@@ -516,10 +516,10 @@ namespace Altaxo.Calc
 		/// <param name="length"></param>
 		static public void Scale(ComplexFloat[] array, ComplexFloat scale, int start, int length)
 		{
-			Debug.Assert(array != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(length >= 0);
-			Debug.Assert((start + length) < array.Length);
+			if (!(array != null)) throw new ArgumentNullException(nameof(array));
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(length >= 0)) throw new ArgumentOutOfRangeException(nameof(length) + " should be >= 0");
+			if (!((start + length) < array.Length)) throw new ArgumentOutOfRangeException(nameof(start) + " + " + nameof(length) + " should be < array.Length");
 
 			for (int i = 0; i < length; i++)
 			{
@@ -548,11 +548,11 @@ namespace Altaxo.Calc
 		/// <param name="result"></param>
 		static public void Multiply(Complex[] lhs, Complex[] rhs, Complex[] result)
 		{
-			Debug.Assert(lhs != null);
-			Debug.Assert(rhs != null);
-			Debug.Assert(result != null);
-			Debug.Assert(lhs.Length == rhs.Length);
-			Debug.Assert(lhs.Length == result.Length);
+			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
+			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
+			if (!(result != null)) throw new ArgumentNullException(nameof(result));
+			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
 			int length = lhs.Length;
 			for (int i = 0; i < length; i++)
@@ -580,11 +580,11 @@ namespace Altaxo.Calc
 		/// <param name="result"></param>
 		static public void Multiply(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
 		{
-			Debug.Assert(lhs != null);
-			Debug.Assert(rhs != null);
-			Debug.Assert(result != null);
-			Debug.Assert(lhs.Length == rhs.Length);
-			Debug.Assert(lhs.Length == result.Length);
+			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
+			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
+			if (!(result != null)) throw new ArgumentNullException(nameof(result));
+			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
 			int length = lhs.Length;
 			for (int i = 0; i < length; i++)
@@ -614,11 +614,11 @@ namespace Altaxo.Calc
 		/// <param name="result"></param>
 		static public void Divide(Complex[] lhs, Complex[] rhs, Complex[] result)
 		{
-			Debug.Assert(lhs != null);
-			Debug.Assert(rhs != null);
-			Debug.Assert(result != null);
-			Debug.Assert(lhs.Length == rhs.Length);
-			Debug.Assert(lhs.Length == result.Length);
+			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
+			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
+			if (!(result != null)) throw new ArgumentNullException(nameof(result));
+			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
 			int length = lhs.Length;
 			for (int i = 0; i < length; i++)
@@ -646,11 +646,11 @@ namespace Altaxo.Calc
 		/// <param name="result"></param>
 		static public void Divide(ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result)
 		{
-			Debug.Assert(lhs != null);
-			Debug.Assert(rhs != null);
-			Debug.Assert(result != null);
-			Debug.Assert(lhs.Length == rhs.Length);
-			Debug.Assert(lhs.Length == result.Length);
+			if (!(lhs != null)) throw new ArgumentNullException(nameof(lhs));
+			if (!(rhs != null)) throw new ArgumentNullException(nameof(rhs));
+			if (!(result != null)) throw new ArgumentNullException(nameof(result));
+			if (!(lhs.Length == rhs.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(rhs) + " are different");
+			if (!(lhs.Length == result.Length)) throw new ArgumentException("Length of " + nameof(lhs) + " and " + nameof(result) + " are different");
 
 			ComplexFloat zero = ComplexFloat.Zero;
 			int length = lhs.Length;
@@ -670,7 +670,7 @@ namespace Altaxo.Calc
 		//---------------------------------------------------------------------------------------------
 
 		/*static public void Flip( ComplexFloat[] array, Size3 size ) {
-			Debug.Assert( array != null );
+			if(!(array != null)) throw new ArgumentNullException(nameof(array));
 
 			ComplexFloat[]  workspace = null;
 			ComplexArray.LockWorkspaceF( size.GetTotalLength(), ref workspace );
@@ -699,9 +699,9 @@ namespace Altaxo.Calc
 		/// <param name="source"></param>
 		static public void Copy(Complex[] dest, Complex[] source)
 		{
-			Debug.Assert(dest != null);
-			Debug.Assert(source != null);
-			Debug.Assert(dest.Length == source.Length);
+			if (!(dest != null)) throw new ArgumentNullException(nameof(dest));
+			if (!(source != null)) throw new ArgumentNullException(nameof(source));
+			if (!(dest.Length == source.Length)) throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
 			for (int i = 0; i < dest.Length; i++)
 			{
 				dest[i] = source[i];
@@ -715,9 +715,10 @@ namespace Altaxo.Calc
 		/// <param name="source"></param>
 		static public void Copy(ComplexFloat[] dest, ComplexFloat[] source)
 		{
-			Debug.Assert(dest != null);
-			Debug.Assert(source != null);
-			Debug.Assert(dest.Length == source.Length);
+			if (!(dest != null)) throw new ArgumentNullException(nameof(dest));
+			if (!(source != null)) throw new ArgumentNullException(nameof(source));
+			if (!(dest.Length == source.Length)) throw new ArgumentException("Length of " + nameof(dest) + " and " + nameof(source) + " are different");
+
 			for (int i = 0; i < dest.Length; i++)
 			{
 				dest[i] = source[i];

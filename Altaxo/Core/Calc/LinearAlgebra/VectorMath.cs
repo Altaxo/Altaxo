@@ -1425,7 +1425,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				// sum for intermediate components
 				s2 += sqr(xabs);
 
-			L80: ;
+			L80:;
 			}
 
 			// calculation of norm
@@ -1584,7 +1584,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			} while (i != k);
 
 			// now do the rest of the cycles
-			System.Diagnostics.Debug.Assert(0 == xLen % shiftsPerCycle);
+			if (!(0 == xLen % shiftsPerCycle)) throw new InvalidProgramException();
 			int numCycles = xLen / shiftsPerCycle;
 			for (i = 1; i < numCycles; i++)
 			{

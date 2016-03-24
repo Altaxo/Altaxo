@@ -195,7 +195,9 @@ namespace Altaxo.Com
 
 			if (_graphExportOptions.DropFileImageFormat == System.Drawing.Imaging.ImageFormat.Emf)
 			{
-				System.Diagnostics.Debug.Assert(null != _graphDocumentMetafileImage);
+				if (!(null != _graphDocumentMetafileImage))
+					throw new InvalidOperationException(nameof(_graphDocumentMetafileImage) + " should be != null");
+
 				var clonedMF = (System.Drawing.Imaging.Metafile)_graphDocumentMetafileImage.Clone(); // have to clone metafile because after calling GetHenhmetafile() metafile would be destroyed
 				DataObjectHelper.SaveMetafileToDisk(clonedMF.GetHenhmetafile(), _graphDocumentDropdownFileName);
 			}
@@ -276,7 +278,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderEnhancedMetafile");
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ENHMF);
+			if (!(tymed == TYMED.TYMED_ENHMF))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_TYMED_ENHMF");
 
 			if (null != _graphDocumentMetafileImage)
 			{
@@ -298,7 +301,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderWindowsMetafilePict");
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
+			if (!(tymed == TYMED.TYMED_MFPICT))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_MFPICT");
 
 			if (null != _graphDocumentBitmapImage)
 			{
@@ -323,7 +327,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderBitmap");
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
+			if (!(tymed == TYMED.TYMED_GDI))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_GDI");
 
 			if (null != _graphDocumentBitmapImage)
 			{
@@ -342,7 +347,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderBitmapDIB");
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
 			if (null != _graphDocumentBitmapImage)
 			{
@@ -361,7 +367,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderBitmapDIBV5");
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
 			if (null != _graphDocumentBitmapImage)
 			{
@@ -377,7 +384,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("GraphDocumentDataObject.BitmapAsDropFile");
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
 			EnsureDropFileCreated();
 
@@ -392,7 +400,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("{0}.RenderMoniker", this.GetType().Name);
 
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
+			if (!(tymed == TYMED.TYMED_ISTREAM))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
 
 			return DataObjectHelper.RenderMonikerToNewStream(tymed, CreateNewDocumentMoniker());
 		}
@@ -418,7 +427,8 @@ namespace Altaxo.Com
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderEmbeddedObjectDescriptor");
 
 			// Brockschmidt, Inside Ole 2nd ed. page 991
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 			// Fill in the basic information.
 			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
 			// According to the documentation this is used just to find an icon.
@@ -449,7 +459,8 @@ namespace Altaxo.Com
 
 			// Combine the strings and the struct into a single block of mem.
 			IntPtr hod = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, full_size);
-			System.Diagnostics.Debug.Assert(hod != IntPtr.Zero);
+			if (!(hod != IntPtr.Zero))
+				throw new InvalidOperationException("GlobalAlloc operation was not successful");
 			IntPtr buf = Kernel32Func.GlobalLock(hod);
 			Marshal.Copy(strings, 0, buf, full_size);
 			Marshal.StructureToPtr(od, buf, false);
@@ -463,7 +474,8 @@ namespace Altaxo.Com
 			ComDebug.ReportInfo("GraphDocumentDataObject.RenderLinkedObjectDescriptor");
 
 			// Brockschmidt, Inside Ole 2nd ed. page 991
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 			// Fill in the basic information.
 			OBJECTDESCRIPTOR od = new OBJECTDESCRIPTOR();
 			// According to the documentation this is used just to find an icon.
@@ -494,7 +506,8 @@ namespace Altaxo.Com
 
 			// Combine the strings and the struct into a single block of mem.
 			IntPtr hod = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, full_size);
-			System.Diagnostics.Debug.Assert(hod != IntPtr.Zero);
+			if (!(hod != IntPtr.Zero))
+				throw new InvalidOperationException("GlobalAlloc operation was not successful");
 			IntPtr buf = Kernel32Func.GlobalLock(hod);
 			Marshal.Copy(strings, 0, buf, full_size);
 			Marshal.StructureToPtr(od, buf, false);

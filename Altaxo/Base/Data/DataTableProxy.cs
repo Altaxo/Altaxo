@@ -56,7 +56,8 @@ namespace Altaxo.Data
 					return null;
 				}
 
-				System.Diagnostics.Debug.Assert(null != s.InternalDocumentPath);
+				if (!(null != s.InternalDocumentPath))
+					throw new InvalidOperationException();
 				return s;
 			}
 		}
@@ -77,7 +78,9 @@ namespace Altaxo.Data
 				var s = (DataTableProxy)o ?? new DataTableProxy(info);
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);         // deserialize the base class
 
-				System.Diagnostics.Debug.Assert(null != s.InternalDocumentPath);
+				if (!(null != s.InternalDocumentPath))
+					throw new InvalidOperationException();
+
 				return s;
 			}
 		}

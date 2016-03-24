@@ -236,8 +236,8 @@ namespace Altaxo.Calc.Fourier
 
 		static private int ReverseBits(int index, int numberOfBits)
 		{
-			Debug.Assert(numberOfBits >= cMinBits);
-			Debug.Assert(numberOfBits <= cMaxBits);
+			if (!(numberOfBits >= cMinBits)) throw new InvalidProgramException();
+			if (!(numberOfBits <= cMaxBits)) throw new InvalidProgramException();
 
 			int reversedIndex = 0;
 			for (int i = 0; i < numberOfBits; i++)
@@ -254,8 +254,8 @@ namespace Altaxo.Calc.Fourier
 
 		static private int[] GetReversedBits(int numberOfBits)
 		{
-			Debug.Assert(numberOfBits >= cMinBits);
-			Debug.Assert(numberOfBits <= cMaxBits);
+			if (!(numberOfBits >= cMinBits)) throw new InvalidProgramException();
+			if (!(numberOfBits <= cMaxBits)) throw new InvalidProgramException();
 			if (_reversedBits[numberOfBits - 1] == null)
 			{
 				int maxBits = ComplexFFT.Pow2(numberOfBits);
@@ -280,13 +280,13 @@ namespace Altaxo.Calc.Fourier
 
 		static private void ReorderArray(float[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new InvalidProgramException();
 
 			int length = data.Length / 2;
 
-			Debug.Assert(ComplexFFT.IsPowerOf2(length) == true);
-			Debug.Assert(length >= cMinLength);
-			Debug.Assert(length <= cMaxLength);
+			if (!(ComplexFFT.IsPowerOf2(length) == true)) throw new InvalidProgramException();
+			if (!(length >= cMinLength)) throw new InvalidProgramException();
+			if (!(length <= cMaxLength)) throw new InvalidProgramException();
 
 			int[] reversedBits = ComplexFFT.GetReversedBits(ComplexFFT.Log2(length));
 			for (int i = 0; i < length; i++)
@@ -302,13 +302,13 @@ namespace Altaxo.Calc.Fourier
 
 		static private void ReorderArray(double[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new InvalidProgramException();
 
 			int length = data.Length / 2;
 
-			Debug.Assert(ComplexFFT.IsPowerOf2(length) == true);
-			Debug.Assert(length >= cMinLength);
-			Debug.Assert(length <= cMaxLength);
+			if (!(ComplexFFT.IsPowerOf2(length) == true)) throw new InvalidProgramException();
+			if (!(length >= cMinLength)) throw new InvalidProgramException();
+			if (!(length <= cMaxLength)) throw new InvalidProgramException();
 
 			int[] reversedBits = ComplexFFT.GetReversedBits(ComplexFFT.Log2(length));
 			for (int i = 0; i < length; i++)
@@ -324,13 +324,13 @@ namespace Altaxo.Calc.Fourier
 
 		static private void ReorderArray(Complex[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new InvalidProgramException();
 
 			int length = data.Length;
 
-			Debug.Assert(ComplexFFT.IsPowerOf2(length) == true);
-			Debug.Assert(length >= cMinLength);
-			Debug.Assert(length <= cMaxLength);
+			if (!(ComplexFFT.IsPowerOf2(length) == true)) throw new InvalidProgramException();
+			if (!(length >= cMinLength)) throw new InvalidProgramException();
+			if (!(length <= cMaxLength)) throw new InvalidProgramException();
 
 			int[] reversedBits = ComplexFFT.GetReversedBits(ComplexFFT.Log2(length));
 			for (int i = 0; i < length; i++)
@@ -347,13 +347,13 @@ namespace Altaxo.Calc.Fourier
 
 		static private void ReorderArray(ComplexFloat[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new InvalidProgramException();
 
 			int length = data.Length;
 
-			Debug.Assert(ComplexFFT.IsPowerOf2(length) == true);
-			Debug.Assert(length >= cMinLength);
-			Debug.Assert(length <= cMaxLength);
+			if (!(ComplexFFT.IsPowerOf2(length) == true)) throw new InvalidProgramException();
+			if (!(length >= cMinLength)) throw new InvalidProgramException();
+			if (!(length <= cMaxLength)) throw new InvalidProgramException();
 
 			int[] reversedBits = ComplexFFT.GetReversedBits(ComplexFFT.Log2(length));
 			for (int i = 0; i < length; i++)
@@ -405,8 +405,8 @@ namespace Altaxo.Calc.Fourier
 
 		private static void SyncLookupTableLength(int length)
 		{
-			Debug.Assert(length < 1024 * 10);
-			Debug.Assert(length >= 0);
+			if (!(length < 1024 * 10)) throw new InvalidProgramException();
+			if (!(length >= 0)) throw new InvalidProgramException();
 			if (length > _lookupTabletLength)
 			{
 				int level = (int)Math.Ceiling(Math.Log(length, 2));
@@ -507,7 +507,7 @@ namespace Altaxo.Calc.Fourier
 
 		static private void LockBufferF(int length, ref float[] buffer)
 		{
-			Debug.Assert(_bufferFLocked == false);
+			if (!(_bufferFLocked == false)) throw new InvalidProgramException();
 			_bufferFLocked = true;
 			if (length >= _bufferF.Length)
 			{
@@ -518,19 +518,19 @@ namespace Altaxo.Calc.Fourier
 
 		static private void UnlockBufferF(ref float[] buffer)
 		{
-			Debug.Assert(_bufferF == buffer);
-			Debug.Assert(_bufferFLocked == true);
+			if (!(_bufferF == buffer)) throw new InvalidProgramException();
+			if (!(_bufferFLocked == true)) throw new InvalidProgramException();
 			_bufferFLocked = false;
 			buffer = null;
 		}
 
 		private static void LinearFFT(float[] data, int start, int inc, int length, FourierDirection direction)
 		{
-			Debug.Assert(data != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(inc >= 1);
-			Debug.Assert(length >= 1);
-			Debug.Assert((start + inc * (length - 1)) * 2 < data.Length);
+			if (!(data != null)) throw new InvalidProgramException();
+			if (!(start >= 0)) throw new InvalidProgramException();
+			if (!(inc >= 1)) throw new InvalidProgramException();
+			if (!(length >= 1)) throw new InvalidProgramException();
+			if (!((start + inc * (length - 1)) * 2 < data.Length)) throw new InvalidProgramException();
 
 			// copy to buffer
 			float[] buffer = null;
@@ -592,8 +592,8 @@ namespace Altaxo.Calc.Fourier
 
 		static private void LockBufferCF(int length, ref ComplexFloat[] buffer)
 		{
-			Debug.Assert(length >= 0);
-			Debug.Assert(_bufferCFLocked == false);
+			if (!(length >= 0)) throw new InvalidProgramException();
+			if (!(_bufferCFLocked == false)) throw new InvalidProgramException();
 
 			_bufferCFLocked = true;
 			if (length != _bufferCF.Length)
@@ -605,8 +605,8 @@ namespace Altaxo.Calc.Fourier
 
 		static private void UnlockBufferCF(ref ComplexFloat[] buffer)
 		{
-			Debug.Assert(_bufferCF == buffer);
-			Debug.Assert(_bufferCFLocked == true);
+			if (!(_bufferCF == buffer)) throw new InvalidProgramException();
+			if (!(_bufferCFLocked == true)) throw new InvalidProgramException();
 
 			_bufferCFLocked = false;
 			buffer = null;
@@ -614,11 +614,11 @@ namespace Altaxo.Calc.Fourier
 
 		private static void LinearFFT(ComplexFloat[] data, int start, int inc, int length, FourierDirection direction)
 		{
-			Debug.Assert(data != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(inc >= 1);
-			Debug.Assert(length >= 1);
-			Debug.Assert((start + inc * (length - 1)) < data.Length);
+			if (!(data != null)) throw new InvalidProgramException();
+			if (!(start >= 0)) throw new InvalidProgramException();
+			if (!(inc >= 1)) throw new InvalidProgramException();
+			if (!(length >= 1)) throw new InvalidProgramException();
+			if (!((start + inc * (length - 1)) < data.Length)) throw new InvalidProgramException();
 
 			// copy to buffer
 			ComplexFloat[] buffer = null;
@@ -680,8 +680,8 @@ namespace Altaxo.Calc.Fourier
 
 		static private void LockBufferC(int length, ref Complex[] buffer)
 		{
-			Debug.Assert(length >= 0);
-			Debug.Assert(_bufferCLocked == false);
+			if (!(length >= 0)) throw new InvalidProgramException();
+			if (!(_bufferCLocked == false)) throw new InvalidProgramException();
 
 			_bufferCLocked = true;
 			if (length >= _bufferC.Length)
@@ -693,8 +693,8 @@ namespace Altaxo.Calc.Fourier
 
 		static private void UnlockBufferC(ref Complex[] buffer)
 		{
-			Debug.Assert(_bufferC == buffer);
-			Debug.Assert(_bufferCLocked == true);
+			if (!(_bufferC == buffer)) throw new InvalidProgramException();
+			if (!(_bufferCLocked == true)) throw new InvalidProgramException();
 
 			_bufferCLocked = false;
 			buffer = null;
@@ -702,11 +702,11 @@ namespace Altaxo.Calc.Fourier
 
 		private static void LinearFFT(Complex[] data, int start, int inc, int length, FourierDirection direction)
 		{
-			Debug.Assert(data != null);
-			Debug.Assert(start >= 0);
-			Debug.Assert(inc >= 1);
-			Debug.Assert(length >= 1);
-			Debug.Assert((start + inc * (length - 1)) < data.Length);
+			if (!(data != null)) throw new InvalidProgramException();
+			if (!(start >= 0)) throw new InvalidProgramException();
+			if (!(inc >= 1)) throw new InvalidProgramException();
+			if (!(length >= 1)) throw new InvalidProgramException();
+			if (!((start + inc * (length - 1)) < data.Length)) throw new InvalidProgramException();
 
 			// copy to buffer
 			Complex[] buffer = null;
@@ -771,9 +771,9 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="direction"></param>
 		public static void FFT(float[] data, int length, FourierDirection direction)
 		{
-			Debug.Assert(data != null);
-			Debug.Assert(data.Length >= length * 2);
-			Debug.Assert(ComplexFFT.IsPowerOf2(length) == true);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
+			if (!(data.Length >= length * 2)) throw new ArgumentException(nameof(data) + " length should be >= length");
+			if (!(ComplexFFT.IsPowerOf2(length) == true)) throw new ArgumentException(nameof(length) + " should be a power of 2");
 
 			ComplexFFT.SyncLookupTableLength(length);
 

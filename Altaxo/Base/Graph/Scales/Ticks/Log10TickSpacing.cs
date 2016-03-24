@@ -636,7 +636,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
 			}
 
-			System.Diagnostics.Debug.Assert(null != _cachedMajorMinor);
+			if (!(null != _cachedMajorMinor)) throw new InvalidProgramException();
 
 			var lg10Org = Math.Log10(dorg);
 			var lg10End = Math.Log10(dend);
@@ -708,7 +708,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			if (minorTicks >= 2 && decadesPerMajorTick > 0)
 			{
-				System.Diagnostics.Debug.Assert(decadesPerMajorTick % minorTicks == 0);
+				if (!(decadesPerMajorTick % minorTicks == 0)) throw new InvalidProgramException();
 				int decadesPerMinorTick = decadesPerMajorTick / minorTicks;
 
 				int beg = (int)Math.Floor(lg10OrgRoundedDown); // we ensure that we will have "even" multiples of the decadesPerMajorTick, so that 1 is always included.

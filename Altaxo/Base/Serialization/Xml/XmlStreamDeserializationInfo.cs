@@ -273,7 +273,7 @@ namespace Altaxo.Serialization.Xml
 			int remainingbytes = count * _size_of_double;
 			while (remainingbytes > 0 && (0 != (bytesreaded = m_Reader.ReadBase64(m_Buffer, 0, Math.Min(m_BufferSize, remainingbytes)))))
 			{
-				System.Diagnostics.Debug.Assert(0 == bytesreaded % _size_of_double);
+				if (!(0 == bytesreaded % _size_of_double)) throw new InvalidProgramException();
 				System.Buffer.BlockCopy(m_Buffer, 0, val, pos, bytesreaded);
 				pos += bytesreaded;
 				remainingbytes -= bytesreaded;
@@ -288,7 +288,7 @@ namespace Altaxo.Serialization.Xml
 			int remainingbytes = count * _size_of_double;
 			while (remainingbytes > 0 && (0 != (bytesreaded = m_Reader.ReadBinHex(m_Buffer, 0, Math.Min(m_BufferSize, remainingbytes)))))
 			{
-				System.Diagnostics.Debug.Assert(0 == bytesreaded % _size_of_double);
+				if (!(0 == bytesreaded % _size_of_double)) throw new InvalidProgramException();
 				System.Buffer.BlockCopy(m_Buffer, 0, val, pos, bytesreaded);
 				pos += bytesreaded;
 				remainingbytes -= bytesreaded;

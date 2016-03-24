@@ -88,7 +88,7 @@ namespace Altaxo.Main
 		/// <exception cref="System.ArgumentOutOfRangeException">Not possible to set more than one event arg here.</exception>
 		protected override void AccumulatedChangeData_SetBackAfterResumeAndSuspend(params EventArgs[] e)
 		{
-			System.Diagnostics.Debug.Assert(_accumulatedEventData == null);
+			if (!(_accumulatedEventData == null)) throw new InvalidProgramException();
 
 			if (e.Length > 1)
 				throw new ArgumentOutOfRangeException("Not possible to set more than one event arg here.");

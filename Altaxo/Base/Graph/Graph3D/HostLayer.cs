@@ -1430,7 +1430,8 @@ namespace Altaxo.Graph.Graph3D
 					hit = layer.HitTest(localCoord, plotItemsOnly);
 					if (null != hit)
 					{
-						System.Diagnostics.Debug.Assert(hit.ParentLayer != null, "Parent layer must be set, because the hitted plot item originates from another layer!");
+						if (!(hit.ParentLayer != null))
+							throw new InvalidProgramException("Parent layer must be set, because the hitted plot item originates from another layer!");
 
 						return hit;
 					}

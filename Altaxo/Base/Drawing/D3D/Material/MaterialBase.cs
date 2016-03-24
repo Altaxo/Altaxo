@@ -69,6 +69,16 @@ namespace Altaxo.Drawing.D3D.Material
 		/// </summary>
 		/// <param name="smoothness">The smoothness value, see <see cref="Smoothness"/>.</param>
 		/// <param name="metalness">The specular mixing coefficient, see explanation here: <see cref="Metalness"/>.</param>
+		public MaterialBase(double smoothness, double metalness)
+			: this(smoothness, metalness, 1.5)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MaterialBase"/> class.
+		/// </summary>
+		/// <param name="smoothness">The smoothness value, see <see cref="Smoothness"/>.</param>
+		/// <param name="metalness">The specular mixing coefficient, see explanation here: <see cref="Metalness"/>.</param>
 		/// <param name="indexOfRefraction">The index of refraction, see <see cref="IndexOfRefraction"/>.</param>
 		public MaterialBase(double smoothness, double metalness, double indexOfRefraction)
 		{
@@ -77,6 +87,9 @@ namespace Altaxo.Drawing.D3D.Material
 
 			VerifyMetalness(metalness, nameof(metalness));
 			_metalness = metalness;
+
+			VerifyIndexOfRefraction(indexOfRefraction, nameof(indexOfRefraction));
+			_indexOfRefraction = indexOfRefraction;
 		}
 
 		///<inheritdoc/>
@@ -276,9 +289,9 @@ namespace Altaxo.Drawing.D3D.Material
 		}
 
 		///<inheritdoc/>
-		IMaterial IMaterial.WithSpecularProperties(double specularIntensity, double specularExponent, double specularMixingCoefficient)
+		IMaterial IMaterial.WithSpecularProperties(double smoothness, double metalness, double indexOfRefraction)
 		{
-			return WithSpecularProperties(specularIntensity, specularExponent, specularMixingCoefficient);
+			return WithSpecularProperties(smoothness, metalness, indexOfRefraction);
 		}
 
 		///<inheritdoc/>

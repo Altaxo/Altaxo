@@ -504,7 +504,8 @@ typeof(GraphDocument),
 
 			lock (_paintLock)
 			{
-				System.Diagnostics.Debug.Assert(null == _paintThread, "We waited, thus _paintThread should be null");
+				if (!(null == _paintThread))
+					throw new InvalidProgramException("We waited, thus _paintThread should be null");
 
 				_paintThread = System.Threading.Thread.CurrentThread; // Suppress events that are fired during paint
 

@@ -82,10 +82,8 @@ namespace Altaxo.Geometry
 				startPoint = srcPoints[i];
 			}
 
-			if (numPoints != destIdx)
-			{
-				System.Diagnostics.Debug.Assert(destIdx == numPoints);
-			}
+			if (!(numPoints == destIdx))
+				throw new InvalidProgramException();
 		}
 
 		private PointD2D GetNormal(PointD2D polygonVector, bool isHole)

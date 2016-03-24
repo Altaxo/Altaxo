@@ -65,7 +65,8 @@ namespace Altaxo.Com
 		/// <returns>Pointer to the enhanced metafile (TYMED_ENHMF).</returns>
 		public static IntPtr RenderEnhancedMetafile_TYMED_ENHMF(TYMED tymed, GraphDocumentBase document)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ENHMF);
+			if (!(tymed == TYMED.TYMED_ENHMF))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_TYMED_ENHMF");
 
 			var renderingOptions = GetRenderingOptions(document);
 			if (renderingOptions.RenderEnhancedMetafileAsVectorFormat)
@@ -91,7 +92,8 @@ namespace Altaxo.Com
 		/// <returns>Pointer to windows metafile picture (TYMED_MFPICT).</returns>
 		public static IntPtr RenderWindowsMetafilePict_TYMED_MFPICT(TYMED tymed, GraphDocumentBase document)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
+			if (!(tymed == TYMED.TYMED_MFPICT))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_MFPICT");
 
 			var renderingOptions = GetRenderingOptions(document);
 			using (var rgbBitmap = Altaxo.Graph.GraphDocumentBaseExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
@@ -114,7 +116,8 @@ namespace Altaxo.Com
 		/// <returns>Pointer to the Gdi bitmap (TYMED_GDI).</returns>
 		public static IntPtr RenderAsGdiBitmap_TYMED_GDI(TYMED tymed, GraphDocumentBase document)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
+			if (!(tymed == TYMED.TYMED_GDI))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_GDI");
 
 			var renderingOptions = GetRenderingOptions(document);
 			using (var bmp = Altaxo.Graph.GraphDocumentBaseExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
@@ -131,7 +134,8 @@ namespace Altaxo.Com
 		/// <returns>Pointer to the device independent bitmap (TYMED_HGLOBAL).</returns>
 		public static IntPtr RenderAsDIBBitmap_TYMED_HGLOBAL(TYMED tymed, GraphDocumentBase document)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
 			var renderingOptions = GetRenderingOptions(document);
 			using (var bmp = Altaxo.Graph.GraphDocumentBaseExportActions.RenderAsBitmap(document, renderingOptions, System.Drawing.Imaging.PixelFormat.Format24bppRgb))

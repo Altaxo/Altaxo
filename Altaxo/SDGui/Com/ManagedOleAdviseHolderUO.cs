@@ -51,7 +51,8 @@ namespace Altaxo.Com
 			this.Invoke("Creation of IOleAdviseHolder", () =>
 				{
 					int res = Ole32Func.CreateOleAdviseHolder(out _oleAdviseHolder);
-					System.Diagnostics.Debug.Assert(res == ComReturnValue.S_OK);
+					if (!(res == ComReturnValue.S_OK))
+						throw new InvalidOperationException("The COM operation was not successful");
 				});
 		}
 
@@ -86,7 +87,9 @@ namespace Altaxo.Com
 			}
 			);
 
-			System.Diagnostics.Debug.Assert(-1 != conn);
+			if (!(-1 != conn))
+				throw new InvalidOperationException(nameof(conn) + " should be != -1");
+
 			pdwConnection = conn;
 		}
 

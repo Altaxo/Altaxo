@@ -75,7 +75,6 @@ namespace Altaxo.Main
 				throw new InvalidOperationException("Serialization of old version not supported");
 				/*
 				RelDocNodeProxy s = (RelDocNodeProxy)obj;
-				System.Diagnostics.Debug.Assert(s._parent != null);
 				Main.DocumentPath path;
 				var docNode = s.InternalDocNode;
 				if (null != docNode)
@@ -118,7 +117,7 @@ namespace Altaxo.Main
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				RelDocNodeProxy s = (RelDocNodeProxy)obj;
-				System.Diagnostics.Debug.Assert(s._parent != null);
+				if (!(s._parent != null)) throw new InvalidProgramException();
 				Main.RelativeDocumentPath path;
 				var docNode = s.InternalDocNode;
 				if (null != docNode)
@@ -195,7 +194,7 @@ namespace Altaxo.Main
 
 			InternalSetDocNode(docNode, parentNode);
 
-			System.Diagnostics.Debug.Assert(_docNodePath != null); // because we tested above that both nodes have a common root
+			if (!(_docNodePath != null)) throw new InvalidProgramException(); // because we tested above that both nodes have a common root
 
 			_parent = parentNode;
 		}
@@ -433,7 +432,7 @@ namespace Altaxo.Main
 			if (IsDisposeInProgress)
 				return null;
 
-			System.Diagnostics.Debug.Assert(null != _docNodePath);
+			if (!(_docNodePath != null)) throw new InvalidProgramException();
 
 			var docNode = InternalDocNode;
 			if (docNode == null)
@@ -482,7 +481,7 @@ namespace Altaxo.Main
 
 			bool shouldFireChangedEvent = false;
 			var senderAsNode = source as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(senderAsNode != null);
+			if (!(senderAsNode != null)) throw new InvalidProgramException();
 
 			if (e is DisposeEventArgs)
 			{
@@ -591,11 +590,14 @@ namespace Altaxo.Main
 			if (IsDisposeInProgress)
 				return;
 
-			System.Diagnostics.Debug.Assert(_docNodeRef == null);
+			if (!(_docNodeRef == null)) throw new InvalidProgramException();
+
+			if (!(_docNodeRef == null)) throw new InvalidProgramException();
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			var sourceAsDocNode = source as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
-			System.Diagnostics.Debug.Assert(sourceAsDocNode != null);
+
+			if (!(senderAsDocNode != null)) throw new InvalidProgramException();
+			if (!(sourceAsDocNode != null)) throw new InvalidProgramException();
 
 			// then we try to resolve the path again
 			if ((e is DisposeEventArgs) || (e is DocumentPathChangedEventArgs))
@@ -640,9 +642,9 @@ namespace Altaxo.Main
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
 #endif
 
-			System.Diagnostics.Debug.Assert(_docNodeRef == null);
+			if (!(_docNodeRef == null)) throw new InvalidProgramException();
 			var senderAsDocNode = sender as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
+			if (!(senderAsDocNode != null)) throw new InvalidProgramException();
 
 			bool wasResolvedCompletely;
 

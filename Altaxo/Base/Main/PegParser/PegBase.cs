@@ -123,7 +123,8 @@ namespace Altaxo.Main.PegParser
 				case FileEncoding.ascii: return new ASCIIEncoding();
 				case FileEncoding.binary:
 				case FileEncoding.uniCodeBOM: return null;
-				default: Debug.Assert(false);
+				default:
+					throw new InvalidProgramException();
 					return null;
 			}
 		}
@@ -241,7 +242,8 @@ namespace Altaxo.Main.PegParser
 
 		public string GetAsString(string src)
 		{
-			Debug.Assert(src.Length >= posEnd_);
+			if (!(src.Length >= posEnd_)) throw new InvalidProgramException();
+
 			return src.Substring(posBeg_, Length);
 		}
 
@@ -427,7 +429,7 @@ namespace Altaxo.Main.PegParser
 					PrintDistNext(p, bAlignVertical, ref nOffsetLineBeg, nLevel);
 				}
 			}
-			PrintNodeEnd(parent, bAlignVertical, ref  nOffsetLineBeg, nLevel);
+			PrintNodeEnd(parent, bAlignVertical, ref nOffsetLineBeg, nLevel);
 			treeOut_.Flush();
 		}
 
@@ -822,7 +824,8 @@ namespace Altaxo.Main.PegParser
 
 		public void SetNodeCreator(Creator nodeCreator)
 		{
-			Debug.Assert(nodeCreator != null);
+			if (!(nodeCreator != null)) throw new InvalidProgramException();
+
 			nodeCreator_ = nodeCreator;
 		}
 
@@ -883,7 +886,7 @@ namespace Altaxo.Main.PegParser
 
 		public bool OptRepeat(Matcher toRepeat)
 		{
-			for (; ; )
+			for (;;)
 			{
 				int pos0 = pos_;
 				if (!toRepeat())

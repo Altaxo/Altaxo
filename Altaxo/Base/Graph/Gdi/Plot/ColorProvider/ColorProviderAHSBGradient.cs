@@ -321,7 +321,8 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			if (hue < 0)
 				hue += 6;
 
-			System.Diagnostics.Debug.Assert(hue >= 0 && hue < 6);
+			if (!(hue >= 0 && hue < 6))
+				throw new InvalidProgramException();
 
 			int nHue = (int)Math.Floor(hue);
 			double relI = hue - nHue;

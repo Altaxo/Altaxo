@@ -181,8 +181,7 @@ namespace Altaxo.Serialization.Xml
 					foreach (XmlSerializationSurrogateForAttribute att in surrogateattributes)
 					{
 						object obj = Activator.CreateInstance(definedtype);
-						System.Diagnostics.Debug.Assert(obj is IXmlSerializationSurrogate,
-							string.Format("Classes that have the XmlSerializationSurrogateForAttribute applied have to implement IXmlSerializationSurrogate. This is not the case for the type " + definedtype.ToString()));
+						if (!(obj is IXmlSerializationSurrogate)) throw new InvalidProgramException(string.Format("Classes that have the XmlSerializationSurrogateForAttribute applied have to implement IXmlSerializationSurrogate. This is not the case for the type " + definedtype.ToString()));
 						if (obj is IXmlSerializationSurrogate)
 						{
 							this.AddSurrogate(att, (IXmlSerializationSurrogate)obj);

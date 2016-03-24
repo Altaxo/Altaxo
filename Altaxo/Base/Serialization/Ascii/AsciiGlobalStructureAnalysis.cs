@@ -263,7 +263,7 @@ namespace Altaxo.Serialization.Ascii
 			// now search for significant boundaries and if left or right-justified
 			int nThresh = (int)(relThreshold * listOfTabbedWordBounds.Count);
 
-			for (int nPos = 0; nPos < maxlen; )
+			for (int nPos = 0; nPos < maxlen;)
 			{
 				if (inWords[nPos] >= nThresh) // the majority of lines has a word at this position
 				{
@@ -446,7 +446,7 @@ namespace Altaxo.Serialization.Ascii
 
 			int tabPos = 0;
 			int listPos = 0;
-			for (int i = 0; i < sLine.Length && listPos < stringPositions.Count; )
+			for (int i = 0; i < sLine.Length && listPos < stringPositions.Count;)
 			{
 				if (i == stringPositions[listPos]) // we have hitted a word
 				{
@@ -515,7 +515,7 @@ namespace Altaxo.Serialization.Ascii
 			if (bInWord)
 				wordBounds.Add(nLen);
 
-			System.Diagnostics.Debug.Assert(wordBounds.Count % 2 == 0); // must be even
+			if (!(wordBounds.Count % 2 == 0)) throw new InvalidProgramException(); // must be even
 
 			return wordBounds;
 		}

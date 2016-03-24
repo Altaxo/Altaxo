@@ -82,15 +82,15 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public ComplexFloat Sum(ComplexFloat[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			return SumRecursion(data, 0, data.Length);
 		}
 
 		static private ComplexFloat SumRecursion(ComplexFloat[] data, int start, int end)
 		{
-			Debug.Assert(0 <= start, "start = " + start);
-			Debug.Assert(start < end, "start = " + start + " and end = " + end);
-			Debug.Assert(end <= data.Length, "end = " + end + " and data.Length = " + data.Length);
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+			if (!(end <= data.Length)) throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
 			if ((end - start) <= 1000)
 			{
 				ComplexFloat sum = ComplexFloat.Zero;
@@ -114,15 +114,16 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public Complex Sum(Complex[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			return SumRecursion(data, 0, data.Length);
 		}
 
 		static private Complex SumRecursion(Complex[] data, int start, int end)
 		{
-			Debug.Assert(0 <= start, "start = " + start);
-			Debug.Assert(start < end, "start = " + start + " and end = " + end);
-			Debug.Assert(end <= data.Length, "end = " + end + " and data.Length = " + data.Length);
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+			if (!(end <= data.Length)) throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+
 			if ((end - start) <= 1000)
 			{
 				Complex sum = Complex.Zero;
@@ -149,15 +150,16 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public ComplexFloat SumOfSquares(ComplexFloat[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			return SumOfSquaresRecursion(data, 0, data.Length);
 		}
 
 		static private ComplexFloat SumOfSquaresRecursion(ComplexFloat[] data, int start, int end)
 		{
-			Debug.Assert(0 <= start, "start = " + start);
-			Debug.Assert(start < end, "start = " + start + " and end = " + end);
-			Debug.Assert(end <= data.Length, "end = " + end + " and data.Length = " + data.Length);
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+			if (!(end <= data.Length)) throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+
 			if ((end - start) <= 1000)
 			{
 				ComplexFloat sumOfSquares = ComplexFloat.Zero;
@@ -181,15 +183,16 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public Complex SumOfSquares(Complex[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			return SumOfSquaresRecursion(data, 0, data.Length);
 		}
 
 		static private Complex SumOfSquaresRecursion(Complex[] data, int start, int end)
 		{
-			Debug.Assert(0 <= start, "start = " + start);
-			Debug.Assert(start < end, "start = " + start + " and end = " + end);
-			Debug.Assert(end <= data.Length, "end = " + end + " and data.Length = " + data.Length);
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+			if (!(end <= data.Length)) throw new ArgumentOutOfRangeException(nameof(end) + " should be <= data.Length");
+
 			if ((end - start) <= 1000)
 			{
 				Complex sumOfSquares = Complex.Zero;
@@ -236,7 +239,7 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public ComplexFloat Variance(ComplexFloat[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			if (data.Length == 0)
 			{
 				throw new DivideByZeroException("length of data is zero");
@@ -251,7 +254,7 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public Complex Variance(Complex[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			if (data.Length == 0)
 			{
 				throw new DivideByZeroException("length of data is zero");
@@ -266,7 +269,7 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public ComplexFloat StdDev(ComplexFloat[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			if (data.Length == 0)
 			{
 				throw new DivideByZeroException("length of data is zero");
@@ -281,7 +284,7 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public Complex StdDev(Complex[] data)
 		{
-			Debug.Assert(data != null);
+			if (!(data != null)) throw new ArgumentNullException(nameof(data));
 			if (data.Length == 0)
 			{
 				throw new DivideByZeroException("length of data is zero");
@@ -300,19 +303,20 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public float RMSError(ComplexFloat[] alpha, ComplexFloat[] beta)
 		{
-			Debug.Assert(alpha != null);
-			Debug.Assert(beta != null);
-			Debug.Assert(beta.Length == alpha.Length);
+			if (!(alpha != null)) throw new ArgumentNullException(nameof(alpha));
+			if (!(beta != null)) throw new ArgumentNullException(nameof(beta));
+			if (!(beta.Length == alpha.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " should be equal");
 
 			return (float)Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
 		}
 
 		static private float SumOfSquaredErrorRecursion(ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end)
 		{
-			Debug.Assert(0 <= start, "start = " + start);
-			Debug.Assert(start < end, "start = " + start + " and end = " + end);
-			Debug.Assert(end <= alpha.Length, "end = " + end + " and alpha.Length = " + alpha.Length);
-			Debug.Assert(beta.Length == alpha.Length);
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+			if (!(end <= alpha.Length)) throw new ArgumentOutOfRangeException(nameof(end) + " should be <= alpha.Length");
+			if (!(alpha.Length == beta.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+
 			if ((end - start) <= 1000)
 			{
 				float sumOfSquaredError = 0;
@@ -338,19 +342,20 @@ namespace Altaxo.Calc
 		/// <returns></returns>
 		static public double RMSError(Complex[] alpha, Complex[] beta)
 		{
-			Debug.Assert(alpha != null);
-			Debug.Assert(beta != null);
-			Debug.Assert(beta.Length == alpha.Length);
+			if (!(alpha != null)) throw new ArgumentNullException(nameof(alpha));
+			if (!(beta != null)) throw new ArgumentNullException(nameof(beta));
+			if (!(alpha.Length == beta.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
 
 			return Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
 		}
 
 		static private double SumOfSquaredErrorRecursion(Complex[] alpha, Complex[] beta, int start, int end)
 		{
-			Debug.Assert(0 <= start, "start = " + start);
-			Debug.Assert(start < end, "start = " + start + " and end = " + end);
-			Debug.Assert(end <= alpha.Length, "end = " + end + " and alpha.Length = " + alpha.Length);
-			Debug.Assert(beta.Length == alpha.Length);
+			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
+			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
+			if (!(alpha.Length == beta.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+			if (!(alpha.Length == beta.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
+
 			if ((end - start) <= 1000)
 			{
 				double sumOfSquaredError = 0;

@@ -47,7 +47,8 @@ namespace Altaxo.Com
 			this.Invoke("Creation of IDataAdviseHolder", () =>
 				{
 					int res = Ole32Func.CreateDataAdviseHolder(out _dataAdviseHolder);
-					System.Diagnostics.Debug.Assert(res == ComReturnValue.S_OK);
+					if (!(res == ComReturnValue.S_OK))
+						throw new InvalidOperationException("The COM operation was not successful");
 				});
 		}
 
@@ -65,7 +66,8 @@ namespace Altaxo.Com
 			System.Runtime.InteropServices.ComTypes.FORMATETC etc = fetc;
 
 			Invoke("Advise", () => _dataAdviseHolder.Advise(dataObject, ref etc, advf, advise, out con));
-			System.Diagnostics.Debug.Assert(-1 != con); // make sure that our Invoke-Construction is really working
+			if (!(-1 != con))
+				throw new InvalidOperationException(nameof(con) + " should be != -1");
 
 			ComDebug.ReportInfo("ManagedDataAdviseHolder giving out con={0}", con);
 			pdwConnection = con;

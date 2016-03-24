@@ -79,20 +79,27 @@ namespace Altaxo.Com
 		/// <returns>Global pointer to that stream.</returns>
 		public static IntPtr RenderToNewStream(TYMED tymed, Action<IStream> RenderToStreamProcedure)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
+			if (!(tymed == TYMED.TYMED_ISTREAM))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
+
 			IStream strm;
 			int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
+			if (!(hr == ComReturnValue.S_OK))
+				throw new InvalidOperationException();
+
 			RenderToStreamProcedure(strm);
 			return Marshal.GetIUnknownForObject(strm);  // Increments the reference count
 		}
 
 		public static IntPtr RenderToNewStream(TYMED tymed, Action<System.IO.Stream> RenderToStreamProcedure)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
+			if (!(tymed == TYMED.TYMED_ISTREAM))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
+
 			IStream strm;
 			int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
+			if (!(hr == ComReturnValue.S_OK))
+				throw new InvalidOperationException("The COM operation was not successful");
 			using (var strmWrapper = new ComStreamWrapper(strm, true))
 			{
 				RenderToStreamProcedure(strmWrapper);
@@ -108,10 +115,13 @@ namespace Altaxo.Com
 		/// <returns>Newly created stream with the moniker rendered into.</returns>
 		public static IntPtr RenderMonikerToNewStream(TYMED tymed, IMoniker moniker)
 		{
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ISTREAM);
+			if (!(tymed == TYMED.TYMED_ISTREAM))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_ISTREAM");
+
 			IStream strm;
 			int hr = Ole32Func.CreateStreamOnHGlobal(IntPtr.Zero, true, out strm);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
+			if (!(hr == ComReturnValue.S_OK))
+				throw new InvalidOperationException("The COM operation was not successful");
 			SaveMonikerToStream(moniker, strm);
 			return Marshal.GetIUnknownForObject(strm);  // Increments the reference count
 		}
@@ -120,7 +130,8 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("SaveMonikerToStream:{0}", GetDisplayName(moniker));
 			int hr = Ole32Func.OleSaveToStream((IPersistStream)moniker, strm);
-			System.Diagnostics.Debug.Assert(hr == ComReturnValue.S_OK);
+			if (!(hr == ComReturnValue.S_OK))
+				throw new InvalidOperationException("The COM operation was not successful");
 		}
 
 		public static string GetDisplayName(IMoniker m)
@@ -136,7 +147,8 @@ namespace Altaxo.Com
 		{
 			IBindCtx bc;
 			int rc = Ole32Func.CreateBindCtx(0, out bc);
-			System.Diagnostics.Debug.Assert(rc == ComReturnValue.S_OK);
+			if (!(rc == ComReturnValue.S_OK))
+				throw new InvalidOperationException("The COM operation was not successful");
 			return bc;
 		}
 
@@ -341,7 +353,9 @@ namespace Altaxo.Com
 
 			int offset = Marshal.SizeOf(typeof(BITMAPFILEHEADER));
 			IntPtr hdib = Kernel32Func.GlobalAlloc(GlobalAllocFlags.GHND, (int)(bmpStream.Length - offset));
-			System.Diagnostics.Debug.Assert(hdib != IntPtr.Zero);
+			if (!(hdib != IntPtr.Zero))
+				throw new InvalidOperationException("GlobalAlloc operation was not successful");
+
 			IntPtr buf = Kernel32Func.GlobalLock(hdib);
 			Marshal.Copy(bmpBytes, offset, buf, (int)bmpStream.Length - offset);
 			Kernel32Func.GlobalUnlock(hdib);

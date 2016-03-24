@@ -49,7 +49,9 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("{0}.Unadvise cookie={1}", this.GetType().Name, dwConnection);
 			int idx = dwConnection - 1; // we have to reverse incrementation, see Advise function
-			System.Diagnostics.Debug.Assert(_advises[idx] != null);
+			if (!(_advises[idx] != null))
+				throw new InvalidOperationException(nameof(_advises) + "[idx] should be != null");
+
 			_advises[idx] = null;
 		}
 

@@ -243,8 +243,8 @@ namespace Altaxo.Main.Commands
 				list.RelocateReferences = options.RelocateReferences;
 			}
 
-			System.Diagnostics.Debug.Assert(list.TryToKeepInternalReferences.HasValue);
-			System.Diagnostics.Debug.Assert(list.RelocateReferences.HasValue);
+			if (!(list.TryToKeepInternalReferences.HasValue)) throw new InvalidProgramException();
+			if (!(list.RelocateReferences.HasValue)) throw new InvalidProgramException();
 
 			var relocationData = new DocNodePathReplacementOptions();
 

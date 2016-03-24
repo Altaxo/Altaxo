@@ -202,7 +202,9 @@ namespace Altaxo.Com
 		private IntPtr RenderEnhancedMetafile(TYMED tymed)
 		{
 			ComDebug.ReportInfo("{0}.RenderEnhancedMetafile", this.GetType().Name);
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_ENHMF);
+
+			if (!(tymed == TYMED.TYMED_ENHMF))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_TYMED_ENHMF");
 
 			return EmbeddedGraphDocumentRenderingHelper.RenderEnhancedMetafile_TYMED_ENHMF(tymed, _document);
 		}
@@ -210,7 +212,9 @@ namespace Altaxo.Com
 		private IntPtr RenderWindowsMetafilePict(TYMED tymed)
 		{
 			ComDebug.ReportInfo("{0}.RenderWindowsMetafilePict", this.GetType().Name);
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_MFPICT);
+
+			if (!(tymed == TYMED.TYMED_MFPICT))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_MFPICT");
 
 			return EmbeddedGraphDocumentRenderingHelper.RenderWindowsMetafilePict_TYMED_MFPICT(tymed, _document);
 		}
@@ -218,7 +222,9 @@ namespace Altaxo.Com
 		private IntPtr RenderAsGdiBitmap(TYMED tymed)
 		{
 			ComDebug.ReportInfo("{0}.RenderAsGdiBitmap", this.GetType().Name);
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_GDI);
+
+			if (!(tymed == TYMED.TYMED_GDI))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_GDI");
 
 			return EmbeddedGraphDocumentRenderingHelper.RenderAsGdiBitmap_TYMED_GDI(tymed, _document);
 		}
@@ -226,7 +232,8 @@ namespace Altaxo.Com
 		private IntPtr RenderAsDIBBitmap(TYMED tymed)
 		{
 			ComDebug.ReportInfo("{0}.RenderAsDIBBitmap", this.GetType().Name);
-			System.Diagnostics.Debug.Assert(tymed == TYMED.TYMED_HGLOBAL);
+			if (!(tymed == TYMED.TYMED_HGLOBAL))
+				throw new ArgumentException(nameof(tymed) + " is not TYMED_HGLOBAL");
 
 			return EmbeddedGraphDocumentRenderingHelper.RenderAsDIBBitmap_TYMED_HGLOBAL(tymed, _document);
 		}
@@ -452,7 +459,8 @@ namespace Altaxo.Com
 
 		public int Load(IStorage pstg)
 		{
-			System.Diagnostics.Debug.Assert(null == _document);
+			if (!(null == _document))
+				throw new InvalidOperationException(nameof(_document) + " should be null");
 
 			string documentName = null;
 			Version altaxoVersion;

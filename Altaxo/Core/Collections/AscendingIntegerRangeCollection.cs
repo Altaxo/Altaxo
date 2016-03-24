@@ -293,7 +293,7 @@ namespace Altaxo.Collections
 
 					// the index now designates the segment itself
 					var sumHere = iFound > 0 ? _indexCache[iFound - 1] : 0;
-					System.Diagnostics.Debug.Assert(idx >= sumHere);
+					if (!(idx >= sumHere)) throw new InvalidProgramException();
 					var rangeFrom = _rangeArray[iFound * 2];
 					return rangeFrom + (idx - sumHere);
 				}
@@ -400,7 +400,7 @@ namespace Altaxo.Collections
 					}
 					else // rmvTo value is less than TO value of range, but greater than FROM value of range
 					{
-						System.Diagnostics.Debug.Assert(rmvTo < _rangeArray[idx]); // TO value to remove is less than TO value of range
+						if (!(rmvTo < _rangeArray[idx])) throw new InvalidProgramException(); // TO value to remove is less than TO value of range
 
 						if (rmvFrom > _rangeArray[evenIdx]) // special case: our range will become splitted into two ranges
 						{
@@ -429,7 +429,7 @@ namespace Altaxo.Collections
 		/// <param name="deleteCurrentRange">If set to <c>true</c>, the current range is deleted without further consideration, and the pruning is immediately continued with the range prior to the current range.</param>
 		private void PruneThisAndPriorRanges(int idx, int toFromValueM1, bool deleteCurrentRange)
 		{
-			System.Diagnostics.Debug.Assert((idx & AndMaskToEvenValue) == idx);
+			if (!((idx & AndMaskToEvenValue) == idx)) throw new InvalidProgramException();
 
 			int startIndex = idx; // index of TO of the next range
 			int nextIndex;
@@ -464,7 +464,7 @@ namespace Altaxo.Collections
 		/// <param name="idx">The index.</param>
 		private void InternalCoalesceSubsequentRanges(int idx)
 		{
-			System.Diagnostics.Debug.Assert((idx | OrMaskToOddValue) == idx);
+			if (!((idx | OrMaskToOddValue) == idx)) throw new InvalidProgramException();
 			if (idx + 1 >= _rangeArrayCount)
 				return; // at the end of the array, thus nothing to do
 
@@ -492,7 +492,7 @@ namespace Altaxo.Collections
 			{
 				Array.Copy(_rangeArray, nextIndex, _rangeArray, startIndex, _rangeArrayCount - nextIndex);
 				_rangeArrayCount -= (nextIndex - startIndex);
-				System.Diagnostics.Debug.Assert(_rangeArrayCount >= 2 && (_rangeArrayCount % 2) == 0);
+				if (!(_rangeArrayCount >= 2 && (_rangeArrayCount % 2) == 0)) throw new InvalidProgramException();
 			}
 		}
 

@@ -166,7 +166,8 @@ namespace Altaxo.Main
 				if (null != node && !node.IsDisposeInProgress)
 					s.InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(node);
 
-				System.Diagnostics.Debug.Assert(null != s._docNodePath);
+				if (!(null != s._docNodePath)) throw new InvalidProgramException();
+
 				info.AddValue("Path", s._docNodePath);
 			}
 
@@ -178,7 +179,7 @@ namespace Altaxo.Main
 
 				s.InternalDocumentPath = nodePath;
 
-				System.Diagnostics.Debug.Assert(null != s._docNodePath);
+				if (!(null != s._docNodePath)) throw new InvalidProgramException();
 
 				// create a callback to resolve the instance as early as possible
 				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
@@ -271,7 +272,7 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				System.Diagnostics.Debug.Assert(_docNodePath != null || IsDisposeInProgress);
+				if (!(_docNodePath != null || IsDisposeInProgress)) throw new InvalidProgramException();
 				return false;
 			}
 		}
@@ -401,7 +402,7 @@ namespace Altaxo.Main
 		/// </remarks>
 		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
 		{
-			System.Diagnostics.Debug.Assert(null != _docNodePath || IsDisposeInProgress);
+			if (!(_docNodePath != null || IsDisposeInProgress)) throw new InvalidProgramException();
 			if (null == rootNode)
 				throw new ArgumentNullException(nameof(rootNode));
 
@@ -481,7 +482,7 @@ namespace Altaxo.Main
 			bool shouldFireChangedEvent = false;
 
 			var senderAsNode = source as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(senderAsNode != null);
+			if (!(senderAsNode != null)) throw new InvalidProgramException();
 
 			if (e is DisposeEventArgs)
 			{
@@ -607,7 +608,7 @@ namespace Altaxo.Main
 			if (IsDisposeInProgress)
 				return null;
 
-			System.Diagnostics.Debug.Assert(null != _docNodePath || IsDisposeInProgress);
+			if (!(_docNodePath != null || IsDisposeInProgress)) throw new InvalidProgramException();
 
 			var docNode = InternalDocumentNode;
 			if (docNode == null)
@@ -694,9 +695,10 @@ namespace Altaxo.Main
 			Current.Console.WriteLine("DocNodeProxy.EhWatchedNode_Changed: sender={0}, e={1}", sender, e);
 #endif
 
-			System.Diagnostics.Debug.Assert(InternalDocumentNode == null);
+			if (!(InternalDocumentNode == null)) throw new InvalidProgramException();
+
 			var senderAsDocNode = sender as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
+			if (!(senderAsDocNode != null)) throw new InvalidProgramException();
 
 			bool wasResolvedCompletely;
 
@@ -730,11 +732,11 @@ namespace Altaxo.Main
 			if (IsDisposeInProgress)
 				return;
 
-			System.Diagnostics.Debug.Assert(InternalDocumentNode == null);
+			if (!(InternalDocumentNode == null)) throw new InvalidProgramException();
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			var sourceAsDocNode = source as IDocumentLeafNode;
-			System.Diagnostics.Debug.Assert(senderAsDocNode != null);
-			System.Diagnostics.Debug.Assert(sourceAsDocNode != null);
+			if (!(senderAsDocNode != null)) throw new InvalidProgramException();
+			if (!(sourceAsDocNode != null)) throw new InvalidProgramException();
 
 			if (e is DocumentPathChangedEventArgs) // here, we activly change our stored path, if the watched node or a parent has changed its name
 			{

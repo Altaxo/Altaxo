@@ -679,7 +679,7 @@ namespace Altaxo.Graph.Scales.Ticks
 				InternalPreProcessScaleBoundaries(ref dorg, ref dend, false, false); // make sure that _cachedMajorMinor is valid now
 			}
 
-			System.Diagnostics.Debug.Assert(null != _cachedMajorMinor);
+			if (!(null != _cachedMajorMinor)) throw new InvalidProgramException();
 
 			double majorSpan = _cachedMajorMinor.MajorSpan;
 			double axisOrgByMajor = dorg / majorSpan;

@@ -682,7 +682,7 @@ namespace Altaxo.Main
 					}
 				}
 
-				System.Diagnostics.Debug.Assert(_numberOfSuspendLevelsAbsorbed >= 0);
+				if (!(_numberOfSuspendLevelsAbsorbed >= 0)) throw new InvalidProgramException();
 
 				if (null != ex1)
 					throw new System.Reflection.TargetInvocationException(ex1);
@@ -697,7 +697,7 @@ namespace Altaxo.Main
 				var parent = System.Threading.Interlocked.Exchange<SuspendableDocumentNode>(ref _parent, null);
 				if (parent != null)
 				{
-					System.Diagnostics.Debug.Assert(_numberOfSuspendLevelsAbsorbed >= 0);
+					if (!(_numberOfSuspendLevelsAbsorbed >= 0)) throw new InvalidProgramException();
 
 					Exception exception = null;
 					while (_numberOfSuspendLevelsAbsorbed > 0)

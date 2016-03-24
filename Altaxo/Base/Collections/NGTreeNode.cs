@@ -604,7 +604,8 @@ namespace Altaxo.Collections
 			if (!HaveSameParent(selNodes))
 				throw new ArgumentException("The nodes in the array have not the same parent, which is neccessary for moving operations");
 
-			System.Diagnostics.Debug.Assert(selNodes.Length > 0);
+			if (!(selNodes.Length > 0))
+				throw new InvalidOperationException();
 
 			NGTreeNode parent = selNodes[0].ParentNode;
 			if (parent == null)

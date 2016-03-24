@@ -142,7 +142,8 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			}
 
 			int posOfE = sitem1.IndexOf('E');
-			System.Diagnostics.Debug.Assert(posOfE > 0);
+			if (!(posOfE > 0))
+				throw new InvalidProgramException();
 
 			int expo = int.Parse(sitem1.Substring(posOfE + 1));
 			mant = ditem * Calc.RMath.Pow(10, -expo);

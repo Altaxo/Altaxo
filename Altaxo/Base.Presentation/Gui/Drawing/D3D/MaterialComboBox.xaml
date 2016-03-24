@@ -143,8 +143,8 @@
 				<MenuItem Header="0% opacity" Tag="0" Click="EhChooseOpacityFromContextMenu" />
 			</MenuItem>
 			<MenuItem Header="Specular properties">
-				<MenuItem Header="Dull" Tag="0;1;0" Click="EhChooseSpecularPropertiesFromContextMenu" />
-				<MenuItem Header="Shiny" Tag="10;22;0.8"  Click="EhChooseSpecularPropertiesFromContextMenu" />
+				<MenuItem Header="Dull" Tag="0;1;1.5" Click="EhChooseSpecularPropertiesFromContextMenu" />
+				<MenuItem Header="Shiny" Tag="0.75;0.5;1.5"  Click="EhChooseSpecularPropertiesFromContextMenu" />
 			</MenuItem>
 		</ContextMenu>
 	</UserControl.ContextMenu>

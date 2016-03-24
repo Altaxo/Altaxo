@@ -861,7 +861,7 @@ namespace Altaxo.Calc.Regression
 			List<int> list = new List<int>();
 			double scaledfactor = factor / (1 + factor);
 			int curridx = totallength;
-			for (; curridx > 0; )
+			for (; curridx > 0;)
 			{
 				double delements = (scaledfactor * (curridx - start));
 				delements = Math.Min(delements, curridx);
@@ -897,7 +897,7 @@ namespace Altaxo.Calc.Regression
 					}
 				}
 			}
-			System.Diagnostics.Debug.Assert(curridx == 0);
+			if (!(curridx == 0)) throw new InvalidProgramException();
 			list.Reverse();
 			return list.ToArray();
 		}
@@ -983,7 +983,7 @@ namespace Altaxo.Calc.Regression
 
 			double middlefactor = 0;
 			int middleresult = numX;
-			for (; (upperfactor - lowerfactor) > (upperfactor * DoubleConstants.DBL_EPSILON); )
+			for (; (upperfactor - lowerfactor) > (upperfactor * DoubleConstants.DBL_EPSILON);)
 			{
 				middlefactor = 0.5 * (upperfactor + lowerfactor);
 				middleresult = GetXCountFromNumberOfParameters(numX, start, middlefactor, result);
