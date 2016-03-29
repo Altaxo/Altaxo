@@ -110,6 +110,15 @@ namespace Altaxo.Drawing.D3D
 		bool HasTexture { get; }
 
 		/// <summary>
+		/// Gets a value indicating whether this material is visible at all. There might be one material instance that could be used as a convenient place holder for null, that
+		/// is treated as "no material". Drawing contexts should not draw anything if the material returns false for this property.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is visible; otherwise, <c>false</c>.
+		/// </value>
+		bool IsVisible { get; }
+
+		/// <summary>
 		/// Gets a new instance of this material with the color set to the provided values. Material classes that don't support
 		/// color should not throw an exception, but simply return the same instance.
 		/// </summary>

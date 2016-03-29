@@ -39,14 +39,6 @@ namespace Altaxo.Drawing.D3D.Material
 		/// </summary>
 		private NamedColor _color;
 
-		/// <summary>
-		/// Gets a material that can be used as "null" value, i.e. a material which is not visible. It is dull, and is fully transparent.
-		/// </summary>
-		/// <value>
-		/// The material that can be used as "null" value.
-		/// </value>
-		public static IMaterial NoMaterial { get; private set; } = new MaterialWithUniformColor(NamedColors.Transparent, 0, 1);
-
 		#region Serialization
 
 		/// <summary>
@@ -161,6 +153,14 @@ namespace Altaxo.Drawing.D3D.Material
 			get
 			{
 				return false;
+			}
+		}
+
+		public override bool IsVisible
+		{
+			get
+			{
+				return true;
 			}
 		}
 

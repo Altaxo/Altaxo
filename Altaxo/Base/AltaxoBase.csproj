@@ -225,6 +225,7 @@
     <Compile Include="Data\TableDataSourceBase.cs" />
     <Compile Include="Drawing\D3D\CrossSectionRectangular.cs" />
     <Compile Include="Drawing\D3D\Material\MaterialBase.cs" />
+    <Compile Include="Drawing\D3D\Material\MaterialInvisible.cs" />
     <Compile Include="Drawing\D3D\SolidIcoSphere.cs" />
     <Compile Include="Drawing\D3D\SolidPolyline.cs" />
     <Compile Include="Geometry\IPolygonD2D.cs" />
@@ -256,7 +257,6 @@
     <Compile Include="Graph\Graph3D\CS\G3DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Graph3D\G3DCoordinateSystem.cs" />
     <Compile Include="Graph\Graph3D\GraphDocument.cs" />
-    <Compile Include="Graph\Graph3D\GraphDocumentBuilder.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentClipboardActions.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentCollection.cs" />
     <Compile Include="Graph\Graph3D\GraphDocumentExportActions.cs" />
@@ -349,6 +349,8 @@
     <Compile Include="Graph\Graph3D\Shapes\TextGraphic_TreeWalker.cs" />
     <Compile Include="Geometry\RectangleTransformedD3D.cs" />
     <Compile Include="Geometry\VectorD3D.cs" />
+    <Compile Include="Graph\Graph3D\Templates\TemplateBase.cs" />
+    <Compile Include="Graph\Graph3D\Templates\TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Graph3D\XYZPlotLayer.cs" />
     <Compile Include="Drawing\ColorManagement\BuiltinColorSet.cs" />
     <Compile Include="Drawing\ColorManagement\BuiltinDarkPlotColorSet.cs" />
@@ -471,6 +473,7 @@
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\SolidShapeController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
+    <Compile Include="Gui\Graph3D\Templates\DefaultCartesicPlotTemplateController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphToolType.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />

@@ -176,6 +176,19 @@ namespace Altaxo.Graph.Graph3D.Plot
 			get { return _plotItems.Count; }
 		}
 
+		public void ClearPlotItems()
+		{
+			_plotItems.Clear();
+			OnCollectionChanged();
+		}
+
+		public void ClearPlotItemsAndGroupStyles()
+		{
+			_plotItems.Clear();
+			_plotGroupStyles.Clear();
+			OnCollectionChanged();
+		}
+
 		public IGPlotItem this[int i]
 		{
 			get { return _plotItems[i]; }

@@ -40,7 +40,7 @@ namespace Altaxo.Drawing.D3D
 
 		public static IMaterial GetNoMaterial()
 		{
-			return MaterialWithUniformColor.NoMaterial;
+			return MaterialInvisible.Instance;
 		}
 
 		public static IMaterial GetSolidMaterial(NamedColor color)

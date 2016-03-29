@@ -87,7 +87,11 @@ namespace Altaxo.Gui.Drawing.D3D
 			// Create the Geometry to draw.
 			//
 
-			if (val.HasColor)
+			if (val.IsVisible == false)
+			{
+				return GetImageSourceFromAxoColor(AxoColors.Transparent, width, height);
+			}
+			else if (val.HasColor)
 			{
 				return GetImageSourceFromAxoColor(val.Color.Color, width, height);
 			}
@@ -137,6 +141,10 @@ namespace Altaxo.Gui.Drawing.D3D
 			else if (material is MaterialWithoutColorOrTexture)
 			{
 				name = string.Format("{0} S={1}, M={2}, N={3}", "NotColored", material.Smoothness, material.Metalness, material.IndexOfRefraction);
+			}
+			else if (material is MaterialInvisible)
+			{
+				name = "Invisible (No material)";
 			}
 			else
 			{

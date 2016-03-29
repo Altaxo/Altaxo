@@ -32,6 +32,14 @@ namespace Altaxo.Gui.Graph3D.Material
 {
 	public interface IMaterialViewSimple
 	{
+		/// <summary>
+		/// Sets a value indicating whether this instance is no material allowed. If true, this instance can return null if no material was selected.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is no material allowed; otherwise, <c>false</c>.
+		/// </value>
+		bool IsNoMaterialAllowed { set; }
+
 		IMaterial SelectedMaterial { get; set; }
 	}
 
@@ -39,6 +47,14 @@ namespace Altaxo.Gui.Graph3D.Material
 	[ExpectedTypeOfView(typeof(IMaterialViewSimple))]
 	public class MaterialControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialViewSimple>
 	{
+		/// <summary>
+		/// Sets a value indicating whether this instance is no material allowed. If true, this instance can return null if no material was selected.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is no material allowed; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsNoMaterialAllowed { get; set; }
+
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield break;
@@ -50,14 +66,18 @@ namespace Altaxo.Gui.Graph3D.Material
 
 			if (_view != null)
 			{
+				_view.IsNoMaterialAllowed = IsNoMaterialAllowed;
 				_view.SelectedMaterial = _doc;
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			if (_doc != null)
+			if (null != _view)
 				_doc = _view.SelectedMaterial;
+
+			if (IsNoMaterialAllowed && null != _doc && !_doc.IsVisible)
+				_doc = null;
 
 			return ApplyEnd(true, disposeController);
 		}

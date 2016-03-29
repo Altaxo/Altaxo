@@ -1284,7 +1284,8 @@ namespace Altaxo.Main
 		{
 			if (null == doc)
 			{
-				doc = Altaxo.Graph.Graph3D.GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(Main.ProjectFolder.RootFolderName, PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName));
+				doc = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
+						PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
 			}
 
 			return (Altaxo.Gui.Graph3D.Viewing.IGraphController)CreateNewViewContent_Unsynchronized(doc);

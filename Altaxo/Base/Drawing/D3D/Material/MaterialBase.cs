@@ -104,6 +104,9 @@ namespace Altaxo.Drawing.D3D.Material
 		public abstract bool HasTexture { get; }
 
 		///<inheritdoc/>
+		public abstract bool IsVisible { get; }
+
+		///<inheritdoc/>
 		public abstract bool Equals(IMaterial other);
 
 		#region Smothness

@@ -244,7 +244,7 @@ namespace Altaxo.Graph.Gdi.Plot.ColorProvider
 			if (!(value >= 0 && value <= 1))
 				throw new ArgumentOutOfRangeException(nameof(value), "Argument has to be >=0 and <=1");
 
-			if (value == _brightness0)
+			if (value == _brightness1)
 			{
 				return this;
 			}

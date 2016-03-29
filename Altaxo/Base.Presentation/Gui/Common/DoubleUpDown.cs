@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Common
 		protected class DoubleUpDownConverter : ValidationRule, IValueConverter
 		{
 			private DoubleUpDown _parent;
+			private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 
 			public DoubleUpDownConverter()
 			{
@@ -72,7 +73,7 @@ namespace Altaxo.Gui.Common
 						return _parent.MaximumReplacementText;
 				}
 
-				return val.ToString(System.Globalization.CultureInfo.CurrentUICulture);
+				return val.ToString(_conversionCulture);
 			}
 
 			public object ConvertBack(object obj, Type targetType, object parameter, CultureInfo culture)
@@ -108,7 +109,7 @@ namespace Altaxo.Gui.Common
 				}
 
 				double result;
-				if (double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentUICulture, out result))
+				if (double.TryParse(s, System.Globalization.NumberStyles.Float, _conversionCulture, out result))
 				{
 					return result;
 				}

@@ -42,12 +42,13 @@ namespace Altaxo.Graph.Graph3D
 	{
 		#region Constants
 
-		protected const double _xDefPositionLandscape = 0.14;
-		protected const double _yDefPositionLandscape = 0.14;
-		protected const double _zDefPositionLandscape = 0.14;
-		protected const double _xDefSizeLandscape = 0.76;
-		protected const double _yDefSizeLandscape = 0.7;
-		protected const double _zDefSizeLandscape = 0.7;
+		protected const double _xDefSizeLandscape = 88 / 128.0;
+		protected const double _yDefSizeLandscape = 88 / 96.0;
+		protected const double _zDefSizeLandscape = 72 / 96.0;
+
+		protected const double _xDefPositionLandscape = 0.5 * (1 - 88 / 128.0);
+		protected const double _yDefPositionLandscape = 0.5 * (1 - 88 / 96.0);
+		protected const double _zDefPositionLandscape = 0.2;
 
 		#endregion Constants
 
@@ -695,7 +696,7 @@ namespace Altaxo.Graph.Graph3D
 
 		public static VectorD3D DefaultChildLayerRelativePosition
 		{
-			get { return new VectorD3D(0.145, 0.139, 0.145); }
+			get { return new VectorD3D(_xDefPositionLandscape, _yDefPositionLandscape, _zDefPositionLandscape); }
 		}
 
 		/// <summary>
@@ -709,7 +710,7 @@ namespace Altaxo.Graph.Graph3D
 
 		public static VectorD3D DefaultChildLayerRelativeSize
 		{
-			get { return new VectorD3D(0.763, 0.708, 0.708); }
+			get { return new VectorD3D(_xDefSizeLandscape, _yDefSizeLandscape, _zDefSizeLandscape); }
 		}
 
 		/// <summary>

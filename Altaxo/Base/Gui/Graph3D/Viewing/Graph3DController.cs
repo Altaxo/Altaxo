@@ -1293,5 +1293,32 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		}
 
 		#endregion Drawing markers
+
+		#region Object arrangement
+
+		public delegate void ArrangeElement(IHitTestObject obj, IObjectOutline bounds, IObjectOutline masterbounds);
+
+		/// <summary>
+		/// Arranges the objects so they share a common boundary.
+		/// </summary>
+		/// <param name="arrange">Routine that determines how to arrange the element with respect to the master element.</param>
+		public void Arrange(ArrangeElement arrange)
+		{
+			if (SelectedObjects.Count < 2)
+				return;
+
+			var masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
+
+			// now move each object to the new position, which is the difference in the position of the bounds.X
+			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
+			{
+				IHitTestObject o = SelectedObjects[i];
+				var bounds = o.ObjectOutlineForArrangements;
+
+				arrange(o, bounds, masterbound);
+			}
+		}
+
+		#endregion Object arrangement
 	}
 }

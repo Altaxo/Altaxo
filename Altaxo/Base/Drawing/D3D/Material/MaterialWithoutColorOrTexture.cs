@@ -108,6 +108,14 @@ namespace Altaxo.Drawing.D3D.Material
 			}
 		}
 
+		public override bool IsVisible
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		public override bool Equals(object obj)
 		{
 			// this material is considered to be equal to another material, if this material has exactly

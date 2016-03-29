@@ -444,6 +444,9 @@ namespace Altaxo.Gui.Graph3D
 
 		private void SetSecondaryChoiceToPlanes()
 		{
+			foreach (var item in _listOfPlanes)
+				item.IsSelected = ((CSPlaneID)item.Tag) == _currentPlaneID;
+
 			this._primaryChoice = LayerControllerTabType.Planes;
 			_view.InitializeSecondaryChoice(_listOfPlanes, this._primaryChoice);
 		}

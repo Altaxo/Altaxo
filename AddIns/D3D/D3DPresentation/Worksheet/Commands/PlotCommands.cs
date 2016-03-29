@@ -40,7 +40,8 @@ namespace Altaxo.Worksheet.Commands
 		{
 			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
-			var graph = GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(Main.ProjectFolder.RootFolderName, null);
+			var graph = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
+					PropertyExtensions.GetPropertyContextOfProjectFolder(ctrl.DataTable.Folder), "GRAPH", ctrl.DataTable.Folder, false);
 
 			Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
 		}
@@ -52,11 +53,12 @@ namespace Altaxo.Worksheet.Commands
 		{
 			PresentationCoreLoader.EnsurePresentationCoreLoaded();
 
-			var graph = GraphDocumentBuilder.CreateNewStandardGraphWithXYZPlotLayer(ctrl.DataTable.Folder, null);
+			var table = ctrl.DataTable;
+
+			var graph = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
+				table.GetPropertyContext(), null, table.Name, true);
 
 			AddSurfacePlot(ctrl, graph);
-
-			graph.Name = Current.Project.Graph3DDocumentCollection.FindNewName(ctrl.DataTable.Folder + "GRAPH");
 
 			Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
 		}

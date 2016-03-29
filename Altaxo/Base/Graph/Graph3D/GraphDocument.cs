@@ -43,9 +43,9 @@ namespace Altaxo.Graph.Graph3D
 
 	public class GraphDocument : GraphDocumentBase
 	{
-		protected const double DefaultRootLayerSizeX = 697.68054;
-		protected const double DefaultRootLayerSizeY = 451.44;
-		protected const double DefaultRootLayerSizeZ = 451.44;
+		protected const double DefaultRootLayerSizeX = 128 * 720 / 254.0; // 128 mm
+		protected const double DefaultRootLayerSizeY = 96 * 720 / 254.0; // 96 mm
+		protected const double DefaultRootLayerSizeZ = 96 * 720 / 254.0; // 96 mm
 
 		#region Member variables
 
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Graph3D
 			"Graph3D\\DefaultFont",
 			Main.Properties.PropertyLevel.All,
 			typeof(GraphDocument),
-			() => new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 18, System.Drawing.FontStyle.Regular), 18 * 0.0625))
+			() => new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625))
 			{
 				EditingControllerCreation = (doc) =>
 				{
@@ -175,7 +175,7 @@ namespace Altaxo.Graph.Graph3D
 			if (null != context)
 				return context.GetValue(PropertyKeyDefaultFont);
 			else
-				return new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 18, System.Drawing.FontStyle.Regular), 18 * 0.0625);
+				return new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625);
 		}
 
 		/// <summary>

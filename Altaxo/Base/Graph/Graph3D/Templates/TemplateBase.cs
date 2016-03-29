@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,45 +22,22 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Drawing.D3D;
+using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D
+namespace Altaxo.Graph.Graph3D.Templates
 {
-	using Geometry;
-
-	public static class GraphDocumentBuilder
+	public static class TemplateBase
 	{
-		/// <summary>
-		/// Creates the new standard graph with an XYZ plot layer.
-		/// </summary>
-		/// <param name="folderName">Name of the folder.</param>
-		/// <param name="context">The context.</param>
-		/// <returns></returns>
-		public static GraphDocument CreateNewStandardGraphWithXYZPlotLayer(string folderName, Main.Properties.IReadOnlyPropertyBag context)
+		public static void AddStandardPropertiesToGraph(GraphDocument graph, IReadOnlyPropertyBag propertyContext)
 		{
-			if (null == context)
-			{
-				if (null != folderName)
-					Altaxo.PropertyExtensions.GetPropertyContextOfProjectFolder(folderName);
-				else
-					context = Altaxo.PropertyExtensions.GetPropertyContextOfProject();
-			}
-
-			var graph = new GraphDocument();
-
-			var xyzlayer = new XYZPlotLayer(graph.RootLayer, new CS.G3DCartesicCoordinateSystem());
-
-			graph.RootLayer.Layers.Add(xyzlayer);
-
-			xyzlayer.CreateDefaultAxes(context);
-
-			graph.ViewToRootLayerCenter(new VectorD3D(-1, -2, 1), new VectorD3D(0, 0, 1), 1);
-
-			return graph;
+			// Set default font property exclusively for the graph
+			graph.PropertyBagNotNull.SetValue<FontX3D>(GraphDocument.PropertyKeyDefaultFont, propertyContext.GetValue<FontX3D>(GraphDocument.PropertyKeyDefaultFont));
 		}
 	}
 }

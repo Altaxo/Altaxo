@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Graph3D
 				if (null != s._yPartitioning) s._yPartitioning.ParentObject = s;
 
 				s._zPartitioning = (LinearPartitioning)info.GetValue("ZPartitioning", s);
-				if (null != s._yPartitioning) s._yPartitioning.ParentObject = s;
+				if (null != s._zPartitioning) s._zPartitioning.ParentObject = s;
 
 				return s;
 			}

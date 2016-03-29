@@ -733,6 +733,7 @@ namespace Altaxo.Graph.Graph3D
 		{
 			// find out the position and orientation of the item
 			double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1, rz0 = 0, rz1 = 1;
+			double relOnAxis = 0.5; // where on the axis is the label positioned
 			if (id.ParallelAxisNumber == 0)
 			{
 				ry0 = ry1 = id.LogicalValueOtherFirst;
@@ -742,11 +743,13 @@ namespace Altaxo.Graph.Graph3D
 			{
 				rx0 = rx1 = id.LogicalValueOtherFirst;
 				rz0 = rz1 = id.LogicalValueOtherSecond;
+				relOnAxis = 0.4;
 			}
 			else if (id.ParallelAxisNumber == 2)
 			{
 				rx0 = rx1 = id.LogicalValueOtherFirst;
 				ry0 = ry1 = id.LogicalValueOtherSecond;
+				relOnAxis = 0.4;
 			}
 			else
 			{
@@ -755,7 +758,7 @@ namespace Altaxo.Graph.Graph3D
 
 			VectorD3D normDirection;
 			Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferredLabelSide);
-			var location = CoordinateSystem.GetPositionAndNormalizedDirection(new Logical3D(rx0, ry0, rz0), new Logical3D(rx1, ry1, rz1), 0.5, tdirection, out normDirection);
+			var location = CoordinateSystem.GetPositionAndNormalizedDirection(new Logical3D(rx0, ry0, rz0), new Logical3D(rx1, ry1, rz1), relOnAxis, tdirection, out normDirection);
 
 			axisTitle.Location.ParentAnchorX = RADouble.NewRel(location.X / this.Size.X); // set the x anchor of the parent
 			axisTitle.Location.ParentAnchorY = RADouble.NewRel(location.Y / this.Size.Y); // set the y anchor of the parent
@@ -777,7 +780,7 @@ namespace Altaxo.Graph.Graph3D
 			axisTitle.Location.LocalAnchorY = normDirection.Z == 0 ? RADouble.NewRel(0.5) : normDirection.Z < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
 			axisTitle.Location.LocalAnchorZ = normDirection.Y == 0 ? RADouble.NewRel(0.5) : normDirection.Y < 0 ? RADouble.NewRel(1) : RADouble.NewRel(0);
 
-			VectorD3D scaleFont = new VectorD3D(4, 1, 1.5);
+			VectorD3D scaleFont = new VectorD3D(1, 1, 1.4);
 
 			distance += Math.Abs(scaleFont.X * normDirection.X) * labelFontSize;
 			distance += Math.Abs(scaleFont.Y * normDirection.Y) * labelFontSize;

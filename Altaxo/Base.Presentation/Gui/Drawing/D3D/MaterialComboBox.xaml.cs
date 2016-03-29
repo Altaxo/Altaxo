@@ -48,6 +48,8 @@ namespace Altaxo.Gui.Drawing.D3D
 	{
 		public static readonly DependencyProperty SelectedMaterialProperty;
 
+		public static readonly DependencyProperty IsNoMaterialAllowedProperty;
+
 		public event DependencyPropertyChangedEventHandler SelectedMaterialChanged;
 
 		private List<IMaterial> _lastLocalUsedItems = new List<IMaterial>();
@@ -66,6 +68,12 @@ namespace Altaxo.Gui.Drawing.D3D
 				typeof(IMaterial),
 				typeof(MaterialComboBox),
 				new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce));
+
+			IsNoMaterialAllowedProperty = DependencyProperty.Register(
+				nameof(IsNoMaterialAllowed),
+				typeof(bool),
+				typeof(MaterialComboBox),
+				new FrameworkPropertyMetadata((false), EhIsNoMaterialAllowedChanged));
 		}
 
 		public MaterialComboBox()
@@ -95,16 +103,39 @@ namespace Altaxo.Gui.Drawing.D3D
 			}
 			set
 			{
-				var selMaterial = InternalSelectedMaterial;
-				if (null != selMaterial)
-				{
-					selMaterial = selMaterial.WithColor(value);
-					InternalSelectedMaterial = selMaterial;
-				}
+				IMaterial selMaterial = _solidMaterialTemplate ?? new MaterialWithUniformColor(NamedColors.Black);
+				selMaterial = selMaterial.WithColor(value);
+				InternalSelectedMaterial = selMaterial;
 			}
 		}
 
 		#endregion Implementation of abstract base class members
+
+		#region IsNoMaterialAllowed
+
+		public bool IsNoMaterialAllowed
+		{
+			get
+			{
+				return (bool)GetValue(IsNoMaterialAllowedProperty);
+			}
+			set
+			{
+				SetValue(IsNoMaterialAllowedProperty, value);
+			}
+		}
+
+		private static void EhIsNoMaterialAllowedChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			((MaterialComboBox)obj).OnIsNoMaterialAllowedChanged(obj, args);
+		}
+
+		protected virtual void OnIsNoMaterialAllowedChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			UpdateComboBoxSourceSelection(SelectedMaterial);
+		}
+
+		#endregion IsNoMaterialAllowed
 
 		#region Dependency property
 
@@ -115,7 +146,11 @@ namespace Altaxo.Gui.Drawing.D3D
 		{
 			get
 			{
-				return (IMaterial)GetValue(SelectedMaterialProperty); // Material is immutable, no need for cloning
+				var result = (IMaterial)GetValue(SelectedMaterialProperty); // Material is immutable, no need for cloning
+				if (IsNoMaterialAllowed && !result.IsVisible)
+					result = null;
+
+				return result;
 			}
 			set
 			{
@@ -151,7 +186,7 @@ namespace Altaxo.Gui.Drawing.D3D
 		protected virtual IMaterial InternalSelectedMaterialCoerce(DependencyObject obj, IMaterial material)
 		{
 			if (null == material)
-				material = Materials.GetNoMaterial();
+				material = MaterialInvisible.Instance;
 
 			var coercedColor = material.Color.CoerceParentColorSetToNullIfNotMember();
 			if (!material.Color.Equals(coercedColor))
@@ -183,7 +218,7 @@ namespace Altaxo.Gui.Drawing.D3D
 			{
 				StoreAsLastUsedItem(_lastLocalUsedItems, newMaterial);
 			}
-			else if (!newMaterial.HasSameSpecularPropertiesAs(_solidMaterialTemplate))
+			else if (!newMaterial.HasSameSpecularPropertiesAs(_solidMaterialTemplate) && newMaterial.IsVisible)
 			{
 				// StoreAsLastUsedItem(_lastLocalUsedItems, newMaterial);
 				_solidMaterialTemplate = (MaterialWithUniformColor)_solidMaterialTemplate.WithSpecularPropertiesAs(newMaterial);
@@ -227,6 +262,9 @@ namespace Altaxo.Gui.Drawing.D3D
 			var colorSet = GetColorSetForComboBox();
 			var known = GetFilteredList(colorSet, _solidMaterialTemplate, filterString);
 
+			if (IsNoMaterialAllowed)
+				known.Add(MaterialInvisible.Instance);
+
 			if ((lastUsed.Count + known.Count) > 0 || !onlyIfItemsRemaining)
 			{
 				IEnumerable<object> source = null;
@@ -253,6 +291,7 @@ namespace Altaxo.Gui.Drawing.D3D
 		protected static List<object> GetFilteredList(IList<NamedColor> originalList, MaterialWithUniformColor materialTemplate, string filterString)
 		{
 			var result = new List<object>();
+
 			filterString = filterString.ToLowerInvariant();
 			foreach (var namedColor in originalList)
 			{
@@ -274,6 +313,7 @@ namespace Altaxo.Gui.Drawing.D3D
 				if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))
 					result.Add(item);
 			}
+
 			return result;
 		}
 

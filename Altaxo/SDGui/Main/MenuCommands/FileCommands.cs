@@ -338,6 +338,18 @@ namespace Altaxo.Main.Commands
 			{
 				new Altaxo.Graph.Commands.DuplicateGraph().Run();
 			}
+			else if (Current.Workbench.ActiveViewContent is Altaxo.Gui.IMVCControllerWrapper)
+			{
+				var wrapper = Current.Workbench.ActiveViewContent as Altaxo.Gui.IMVCControllerWrapper;
+				var viewModel = wrapper.MVCController.ModelObject as IProjectItemViewModel;
+				var doc = viewModel?.ProjectItem;
+				if (null != doc)
+				{
+					var newDoc = (IProjectItem)doc.Clone();
+					Current.Project.AddItem(newDoc);
+					Current.ProjectService.ShowDocumentView(newDoc);
+				}
+			}
 		}
 	}
 
