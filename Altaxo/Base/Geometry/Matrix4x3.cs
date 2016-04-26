@@ -169,6 +169,24 @@ namespace Altaxo.Geometry
 			Determinant = determinant;
 		}
 
+		/// <summary>
+		/// Creates a transformation matrix that uses three basis vectors, and a location to construct the matrix that transform points expressed in the three basis vectors to points in
+		/// the coordinate system.
+		/// </summary>
+		/// <param name="xBasis">Basis vector for the x-direction.</param>
+		/// <param name="yBasis">Basis vector for the y-direction.</param>
+		/// <param name="zBasis">Basis vector for the z-direction.</param>
+		/// <param name="origin">The origin of the coordinate system.</param>
+		/// <returns>A transformation matrix that uses the three basis vectors, and a location</returns>
+		public static Matrix4x3 NewFromBasisVectorsAndLocation(VectorD3D xBasis, VectorD3D yBasis, VectorD3D zBasis, PointD3D origin)
+		{
+			return new Matrix4x3(
+				xBasis.X, xBasis.Y, xBasis.Z,
+				yBasis.X, yBasis.Y, yBasis.Z,
+				zBasis.X, zBasis.Y, zBasis.Z,
+				origin.X, origin.Y, origin.Z);
+		}
+
 		public static Matrix4x3 NewTranslation(VectorD3D d)
 		{
 			return new Matrix4x3(
@@ -343,6 +361,23 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Transforms the specified vector <paramref name="v"/>. For a vector transform, the offset elements M41..M43 are ignored.
+		/// The transformation is carried out as a prepend transformation, i.e. result = v * matrix (v considered as horizontal vector).
+		/// </summary>
+		/// <param name="v">The vector to transform. The z component is assumed to be 0.</param>
+		/// <returns>The transformed vector.</returns>
+		public VectorD3D Transform(VectorD2D v)
+		{
+			double x = v.X;
+			double y = v.Y;
+			return new VectorD3D(
+			x * M11 + y * M21,
+			x * M12 + y * M22,
+			x * M13 + y * M23
+			);
+		}
+
+		/// <summary>
 		/// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
 		/// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
 		/// </summary>
@@ -357,6 +392,23 @@ namespace Altaxo.Geometry
 			x * M11 + y * M21 + z * M31 + M41,
 			x * M12 + y * M22 + z * M32 + M42,
 			x * M13 + y * M23 + z * M33 + M43
+			);
+		}
+
+		/// <summary>
+		/// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
+		/// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
+		/// </summary>
+		/// <param name="p">The point to transform. The z component is assumed to be 0.</param>
+		/// <returns>The transformed point.</returns>
+		public PointD3D Transform(PointD2D p)
+		{
+			double x = p.X;
+			double y = p.Y;
+			return new PointD3D(
+			x * M11 + y * M21 + M41,
+			x * M12 + y * M22 + M42,
+			x * M13 + y * M23 + M43
 			);
 		}
 

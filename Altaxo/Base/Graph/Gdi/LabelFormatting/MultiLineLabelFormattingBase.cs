@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 				{
 					_stringSize[i] = g.MeasureString(_text[i], GdiFontManager.ToGdi(_font), new PointF(0, 0), strfmt);
 					bounds.ExpandToInclude(new RectangleD2D(position, _stringSize[i]));
-					position.Y += _stringSize[i].Y * _lineSpacing;
+					position = position.WithYPlus(_stringSize[i].Y * _lineSpacing);
 				}
 				_size = bounds.Size;
 			}

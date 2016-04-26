@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Graph3D
 
 				PointD3D prevPoint = PointD3D.Empty;
 				bool prevPointIsValid = false;
-				foreach (var tp in Math3D.GetPolylinePointsWithEastAndNorth(_points))
+				foreach (var tp in Math3D.GetPolylinePointsWithWestAndNorth(_points))
 				{
 					if (prevPointIsValid)
 					{
@@ -256,7 +256,7 @@ namespace Altaxo.Graph.Graph3D
 
 				foreach (var line in _lines)
 				{
-					var tp = Math3D.GetEastNorthVector(line);
+					var tp = Math3D.GetWestNorthVectors(line);
 
 					PointD3D prevPoint = line.P0;
 					PointD3D currPoint = line.P1;

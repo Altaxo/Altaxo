@@ -41,7 +41,7 @@ namespace Altaxo.Geometry
 		/// <summary>
 		/// 2015-11-16 initial version 0.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD3D), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD3D), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

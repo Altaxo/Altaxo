@@ -100,6 +100,10 @@ namespace Altaxo.Geometry
 		/// </value>
 		public double Length { get { return (_p1 - _p0).Length; } }
 
+		public VectorD3D LineVector { get { return _p1 - _p0; } }
+
+		public VectorD3D LineVectorNormalized { get { return VectorD3D.CreateNormalized(_p1.X - _p0.X, _p1.Y - _p0.Y, _p1.Z - _p0.Z); } }
+
 		/// <summary>
 		/// Gets the points of the line as enumeration.
 		/// </summary>
@@ -108,6 +112,24 @@ namespace Altaxo.Geometry
 		{
 			yield return _p0;
 			yield return _p1;
+		}
+
+		/// <summary>
+		/// Gets the point at this line from a relative value.
+		/// </summary>
+		/// <param name="relValue">The relative value. If 0, the start point <see cref="P0"/> is returned. If 1, the end point <see cref="P1"/> is returned.</param>
+		/// <returns></returns>
+		public PointD3D GetPointAtLineFromRelativeValue(double relValue)
+		{
+			if (relValue == 0)
+				return _p0;
+			else if (relValue == 1)
+				return _p1;
+			else
+				return new PointD3D(
+				(1 - relValue) * _p0.X + (relValue) * _p1.X,
+				(1 - relValue) * _p0.Y + (relValue) * _p1.Y,
+				(1 - relValue) * _p0.Z + (relValue) * _p1.Z);
 		}
 	}
 }

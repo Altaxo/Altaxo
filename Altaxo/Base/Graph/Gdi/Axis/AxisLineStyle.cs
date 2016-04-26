@@ -612,18 +612,14 @@ namespace Altaxo.Graph.Gdi.Axis
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
 					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg;
-					tickend.X += outVector.X * _majorTickLength;
-					tickend.Y += outVector.Y * _majorTickLength;
+					var tickend = tickorg + outVector * _majorTickLength;
 					g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 				if (_showFirstDownMajorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
 					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg;
-					tickend.X += outVector.X * _majorTickLength;
-					tickend.Y += outVector.Y * _majorTickLength;
+					var tickend = tickorg + outVector * _majorTickLength;
 					g.DrawLine(_majorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 			}
@@ -637,18 +633,14 @@ namespace Altaxo.Graph.Gdi.Axis
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
 					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg;
-					tickend.X += outVector.X * _minorTickLength;
-					tickend.Y += outVector.Y * _minorTickLength;
+					var tickend = tickorg + outVector * _minorTickLength;
 					g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 				if (_showFirstDownMinorTicks)
 				{
 					outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
 					var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-					var tickend = tickorg;
-					tickend.X += outVector.X * _minorTickLength;
-					tickend.Y += outVector.Y * _minorTickLength;
+					var tickend = tickorg + outVector * _minorTickLength;
 					g.DrawLine(_minorTickPen, (PointF)tickorg, (PointF)tickend);
 				}
 			}

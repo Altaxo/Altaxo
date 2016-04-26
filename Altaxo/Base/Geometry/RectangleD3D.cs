@@ -300,6 +300,14 @@ namespace Altaxo.Geometry
 			}
 		}
 
+		public PointD3D LocationPlusSize
+		{
+			get
+			{
+				return new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ);
+			}
+		}
+
 		public RectangleD3D WithLocation(PointD3D newLocation)
 		{
 			return new RectangleD3D(newLocation.X, newLocation.Y, newLocation.Z, SizeX, SizeY, SizeZ);

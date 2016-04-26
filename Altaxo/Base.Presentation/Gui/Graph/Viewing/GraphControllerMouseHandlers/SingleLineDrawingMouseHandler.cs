@@ -127,8 +127,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 					x = r * Math.Cos(d);
 					y = r * Math.Sin(d);
 
-					_positionCurrentMouseInRootLayerCoordinates.X = (x + _Points[_currentPoint - 1].RootLayerCoordinates.X);
-					_positionCurrentMouseInRootLayerCoordinates.Y = (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y);
+					_positionCurrentMouseInRootLayerCoordinates = new PointD2D(
+						(x + _Points[_currentPoint - 1].RootLayerCoordinates.X),
+						(y + _Points[_currentPoint - 1].RootLayerCoordinates.Y)
+						);
 				}
 			}
 		}

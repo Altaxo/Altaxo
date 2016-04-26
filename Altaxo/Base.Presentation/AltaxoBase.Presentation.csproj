@@ -213,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Drawing\D3D\DashStyleComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Common\Drawing\D3D\FontX3DControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -453,6 +457,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Drawing\D3D\LineCaps\LineCapComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\D3D\MaterialControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -570,6 +578,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Shapes\OpenPathShapeControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1076,6 +1088,9 @@
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Drawing\D3D\DashStyleComboBox.xaml.cs">
+      <DependentUpon>DashStyleComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\D3D\FontX3DControl.xaml.cs">
       <DependentUpon>FontX3DControl.xaml</DependentUpon>
     </Compile>
@@ -1370,6 +1385,9 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceControl.xaml.cs">
       <DependentUpon>ExpandCyclingVariableDataSourceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Drawing\D3D\LineCaps\LineCapComboBox.xaml.cs">
+      <DependentUpon>LineCapComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Drawing\D3D\MaterialControl.xaml.cs">
       <DependentUpon>MaterialControl.xaml</DependentUpon>
     </Compile>
@@ -1467,6 +1485,9 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Shapes\OpenPathShapeControl.xaml.cs">
+      <DependentUpon>OpenPathShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\SolidShapeControl.xaml.cs">
       <DependentUpon>SolidShapeControl.xaml</DependentUpon>

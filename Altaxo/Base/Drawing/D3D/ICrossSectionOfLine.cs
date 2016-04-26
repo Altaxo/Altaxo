@@ -39,12 +39,12 @@ namespace Altaxo.Drawing.D3D
 
 		bool IsVertexSharp(int idx);
 
-		VectorD3D Normals(int i);
+		VectorD2D Normals(int i);
 
 		int NumberOfNormals { get; }
 		int NumberOfVertices { get; }
 
-		PointD3D Vertices(int i);
+		PointD2D Vertices(int i);
 
 		double GetDistanceFromCenter(int i);
 

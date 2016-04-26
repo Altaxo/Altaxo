@@ -557,8 +557,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						{
 							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(1, 0), out outDir);
-							outDir.X *= (float)(symbolSize / 2);
-							outDir.Y *= (float)(symbolSize / 2);
+							outDir = outDir * (symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
 							// Draw a line from x,y to
@@ -569,8 +568,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						{
 							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(1, 0), out outDir);
-							outDir.X *= (float)(symbolSize / 2);
-							outDir.Y *= (float)(symbolSize / 2);
+							outDir = outDir * (symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
 							// Draw a line from x,y to
@@ -669,8 +667,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						{
 							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(0, 1), out outDir);
-							outDir.X *= (float)(symbolSize / 2);
-							outDir.Y *= (float)(symbolSize / 2);
+							outDir = outDir * (symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
 							// Draw a line from x,y to
@@ -681,8 +678,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						{
 							PointD2D outDir;
 							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(0, 1), out outDir);
-							outDir.X *= (float)(symbolSize / 2);
-							outDir.Y *= (float)(symbolSize / 2);
+							outDir = outDir * (symbolSize / 2);
 							double xlay, ylay;
 							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
 							// Draw a line from x,y to

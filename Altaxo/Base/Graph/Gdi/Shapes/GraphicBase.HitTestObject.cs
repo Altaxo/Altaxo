@@ -64,9 +64,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				PointD2D currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
 				PointD2D destinationSizeRootCoord = currentSizeRootCoord;
 				if (x.HasValue)
-					destinationSizeRootCoord.X = x.Value;
+					destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
 				if (y.HasValue)
-					destinationSizeRootCoord.Y = y.Value;
+					destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
 
 				if (null != hit)
 				{

@@ -39,19 +39,40 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 	{
 		public static void DrawLine(PositionNormalIndexedTriangleBuffers buffers, PenX3D pen, PointD3D p0, PointD3D p1)
 		{
-			var line = new SolidPolyline(pen.CrossSection, new[] { p0, p1 });
-			var offset = buffers.IndexedTriangleBuffer.VertexCount;
+			var vertexIndexOffset = buffers.IndexedTriangleBuffer.VertexCount;
 
 			if (null != buffers.PositionNormalIndexedTriangleBuffer)
 			{
 				var buf = buffers.PositionNormalIndexedTriangleBuffer;
-				line.AddWithNormals(
+				/*
+				if (pen.Color.Name == "Beige")
+				{
+				*/
+				var solid = new SolidStraightLine();
+				solid.AddGeometry(
+					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
+					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+					ref vertexIndexOffset,
+					pen,
+					new LineD3D(p0, p1));
+
+				/*
+			}
+			else
+			{
+						var polylinePoints = new[] { p0, p1 };
+				SolidPolyline.AddWithNormals(
 				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-				ref offset);
+				ref vertexIndexOffset,
+				pen,
+				polylinePoints);
+			}
+			*/
 			}
 			else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
 			{
+				var polylinePoints = new[] { p0, p1 };
 				var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
 				var color = pen.Color.Color;
 				var r = color.ScR;
@@ -59,10 +80,12 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				var b = color.ScB;
 				var a = color.ScA;
 
-				line.AddWithNormals(
+				SolidPolyline.AddWithNormals(
 				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-				ref offset);
+				ref vertexIndexOffset,
+				pen,
+				polylinePoints);
 			}
 			else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
 			{
@@ -141,33 +164,6 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			}
 		}
 
-		public virtual void DrawLineObsolete(PenX3D pen, PointD3D p0, PointD3D p1)
-		{
-			var line = new SolidPolyline(pen.CrossSection, new[] { p0, p1 });
-			var buffers = GetPositionIndexedTriangleBuffer(Materials.GetSolidMaterialWithoutColorOrTexture());
-
-			var offset = buffers.IndexedTriangleBuffer.VertexCount;
-
-			if (null != buffers.PositionColorIndexedTriangleBuffer)
-			{
-				var buf = buffers.PositionColorIndexedTriangleBuffer;
-				var color = pen.Color.Color;
-				var r = color.ScR;
-				var g = color.ScG;
-				var b = color.ScB;
-				var a = color.ScA;
-
-				line.AddWithNormals(
-				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, r, g, b, a),
-				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-				ref offset);
-			}
-			else
-			{
-				throw new NotImplementedException("Unexpected type of buffer: " + buffers.IndexedTriangleBuffer.GetType().ToString());
-			}
-		}
-
 		public virtual void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1)
 		{
 			DrawLine(GetPositionNormalIndexedTriangleBuffer(pen.Material), pen, p0, p1);
@@ -182,21 +178,28 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				DrawLine(pen, asStraightLine.GetPoint(0), asStraightLine.GetPoint(1));
 				return;
 			}
+			else if (path.Count == 2)
+			{
+				DrawLine(pen, path.GetPoint(0), path.GetPoint(1));
+				return;
+			}
 
 			var asSweepPath = path as SweepPath3D;
 			if (null != asSweepPath)
 			{
-				var line = new SolidPolyline(pen.CrossSection, asSweepPath.Points);
+				//var line = new SolidPolyline(pen.CrossSection, asSweepPath.Points);
 				var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
 				var offset = buffers.IndexedTriangleBuffer.VertexCount;
 
 				if (null != buffers.PositionNormalIndexedTriangleBuffer)
 				{
 					var buf = buffers.PositionNormalIndexedTriangleBuffer;
-					line.AddWithNormals(
+					SolidPolyline.AddWithNormals(
 					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
 					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-					ref offset);
+					ref offset,
+					pen,
+					asSweepPath.Points);
 				}
 				else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
 				{
@@ -207,10 +210,12 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 					var b = color.ScB;
 					var a = color.ScA;
 
-					line.AddWithNormals(
+					SolidPolyline.AddWithNormals(
 					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-					ref offset);
+					ref offset,
+					pen,
+					asSweepPath.Points);
 				}
 				else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
 				{

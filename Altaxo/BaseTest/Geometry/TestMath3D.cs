@@ -158,7 +158,7 @@ namespace Altaxo.Geometry
 				var points = _testCases[caseNo].Item1;
 				var expectedOutput = _testCases[caseNo].Item2;
 
-				var result = Math3D.GetPolylinePointsWithEastAndNorth(points).ToArray();
+				var result = Math3D.GetPolylinePointsWithWestAndNorth(points).ToArray();
 
 				// Verify results
 				Assert.AreEqual(expectedOutput.Length, result.Length);

@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Graph3D
 
 			_glue = new PenControlsGlue(false);
 			_glue.CbBrush = _cbColor;
-			//_glue.CbDashStyle = _cbLineType;
+			_glue.CbDashStyle = _cbLineType;
 			_glue.CbLineThickness1 = _cbThickness;
 		}
 

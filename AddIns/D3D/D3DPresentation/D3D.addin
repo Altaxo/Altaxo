@@ -90,6 +90,8 @@
 				class="Altaxo.Graph.Graph3D.Commands.SelectTextTool" />
 			<ToolbarItem id="EllipseDrawingTool" type="CheckBox" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
 				class="Altaxo.Graph.Graph3D.Commands.EllipseDrawingTool" />
+			<ToolbarItem id="SingleLineDrawingTool" type="CheckBox" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.SingleLineDrawingTool" />
 		</Condition>
 	</Path>
 

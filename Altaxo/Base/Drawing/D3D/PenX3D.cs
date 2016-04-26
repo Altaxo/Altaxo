@@ -38,6 +38,16 @@ namespace Altaxo.Drawing.D3D
 
 		private ICrossSectionOfLine _crossSection;
 
+		private IDashPattern _dashPattern;
+
+		private ILineCap _lineStartCap;
+
+		private ILineCap _lineEndCap;
+
+		private ILineCap _dashStartCap;
+
+		private ILineCap _dashEndCap;
+
 		#endregion Member variables
 
 		#region Serialization
@@ -52,16 +62,33 @@ namespace Altaxo.Drawing.D3D
 			{
 				var s = (PenX3D)obj;
 
-				info.AddValue("CrossSection", s._crossSection);
 				info.AddValue("Material", s._material);
+				info.AddValue("CrossSection", s._crossSection);
+				info.AddValue("LineStartCap", s._lineStartCap);
+				info.AddValue("LineEndCap", s._lineEndCap);
+				info.AddValue("DashPattern", s._dashPattern);
+				if (null != s._dashPattern)
+				{
+					info.AddValue("DashStartCap", s._dashStartCap);
+					info.AddValue("DashEndCap", s._dashEndCap);
+				}
 			}
 
 			protected virtual PenX3D SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var crossSection = (ICrossSectionOfLine)info.GetValue("CrossSection", null);
 				var material = (IMaterial)info.GetValue("Material", null);
+				var crossSection = (ICrossSectionOfLine)info.GetValue("CrossSection", null);
+				var lineStartCap = (ILineCap)info.GetValue("LineStartCap", null);
+				var lineEndCap = (ILineCap)info.GetValue("LineEndCap", null);
+				var dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
+				ILineCap dashStartCap = null, dashEndCap = null;
+				if (null != dashPattern)
+				{
+					dashStartCap = (ILineCap)info.GetValue("DashStartCap", null);
+					dashEndCap = (ILineCap)info.GetValue("DashEndCap", null);
+				}
 
-				return new PenX3D(material, crossSection);
+				return new PenX3D(material, crossSection, lineStartCap, lineEndCap, dashPattern, dashStartCap, dashEndCap);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -76,13 +103,24 @@ namespace Altaxo.Drawing.D3D
 		public PenX3D(NamedColor color, double thickness)
 		{
 			_material = Materials.GetSolidMaterial(color);
-			_crossSection = new CrossSectionRectangular(thickness, thickness);
+			_crossSection = new CrossSections.Rectangular(thickness, thickness);
 		}
 
 		public PenX3D(IMaterial material, ICrossSectionOfLine crossSection)
 		{
 			_material = material;
 			_crossSection = crossSection;
+		}
+
+		public PenX3D(IMaterial material, ICrossSectionOfLine crossSection, ILineCap lineStartCap, ILineCap lineEndCap, IDashPattern dashPattern, ILineCap dashStartCap, ILineCap dashEndCap)
+		{
+			_material = material;
+			_crossSection = crossSection;
+			_lineStartCap = lineStartCap;
+			_lineEndCap = lineEndCap;
+			_dashPattern = dashPattern;
+			_dashStartCap = dashStartCap;
+			_dashEndCap = dashEndCap;
 		}
 
 		public double Thickness1
@@ -201,12 +239,152 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
+		#region Dash Pattern
+
+		/// <summary>
+		/// Gets the dash pattern (or null if this pen doesn't use a dash pattern).
+		/// </summary>
+		/// <value>
+		/// The dash pattern that this pen used. If the pen represents a solid line, the return value is null.
+		/// </value>
+		public IDashPattern DashPattern
+		{
+			get
+			{
+				return _dashPattern;
+			}
+		}
+
+		/// <summary>
+		/// Returns a new instance of this pen, with the dash pattern provided in the argument.
+		/// </summary>
+		/// <param name="dashPattern">The dash pattern. Can be null to represent a solid line.</param>
+		/// <returns>A new instance of this pen, with the dash pattern provided in the argument.</returns>
+		public PenX3D WithDashPattern(IDashPattern dashPattern)
+		{
+			if (dashPattern is DashPatterns.Solid)
+				dashPattern = null;
+			if (object.Equals(_dashPattern, dashPattern))
+				return this;
+
+			var result = (PenX3D)this.MemberwiseClone();
+			result._dashPattern = dashPattern;
+			return result;
+		}
+
+		#endregion Dash Pattern
+
+		#region Line Start cap
+
+		public ILineCap LineStartCap
+		{
+			get
+			{
+				return _lineStartCap;
+			}
+		}
+
+		public PenX3D WithLineStartCap(ILineCap cap)
+		{
+			if (cap is LineCaps.Flat)
+				cap = null;
+
+			if (object.Equals(_lineStartCap, cap))
+				return this;
+
+			var result = (PenX3D)this.MemberwiseClone();
+			result._lineStartCap = cap;
+			return result;
+		}
+
+		#endregion Line Start cap
+
+		#region Line end cap
+
+		public ILineCap LineEndCap
+		{
+			get
+			{
+				return _lineEndCap;
+			}
+		}
+
+		public PenX3D WithLineEndCap(ILineCap cap)
+		{
+			if (cap is LineCaps.Flat)
+				cap = null;
+
+			if (object.Equals(_lineEndCap, cap))
+				return this;
+
+			var result = (PenX3D)this.MemberwiseClone();
+			result._lineEndCap = cap;
+			return result;
+		}
+
+		#endregion Line end cap
+
+		#region Dash start cap
+
+		public ILineCap DashStartCap
+		{
+			get
+			{
+				return _dashStartCap;
+			}
+		}
+
+		public PenX3D WithDashStartCap(ILineCap cap)
+		{
+			if (cap is LineCaps.Flat)
+				cap = null;
+
+			if (object.Equals(_dashStartCap, cap))
+				return this;
+
+			var result = (PenX3D)this.MemberwiseClone();
+			result._dashStartCap = cap;
+			return result;
+		}
+
+		#endregion Dash start cap
+
+		#region Dash end cap
+
+		public ILineCap DashEndCap
+		{
+			get
+			{
+				return _dashEndCap;
+			}
+		}
+
+		public PenX3D WithDashEndCap(ILineCap cap)
+		{
+			if (cap is LineCaps.Flat)
+				cap = null;
+
+			if (object.Equals(_dashEndCap, cap))
+				return this;
+
+			var result = (PenX3D)this.MemberwiseClone();
+			result._dashEndCap = cap;
+			return result;
+		}
+
+		#endregion Dash end cap
+
 		public static bool AreEqualUnlessThickness(PenX3D pen1, PenX3D pen2)
 		{
 			bool isEqual =
 
 				pen1.Material == pen2.Material &&
-				pen1.CrossSection.GetType() == pen2.CrossSection.GetType();
+				pen1.CrossSection.GetType() == pen2.CrossSection.GetType() &&
+				object.Equals(pen1._dashPattern, pen2._dashPattern) &&
+				object.Equals(pen1._lineStartCap, pen2._lineStartCap) &&
+				object.Equals(pen1._lineEndCap, pen2._lineEndCap) &&
+				object.Equals(pen1._dashStartCap, pen2._dashStartCap) &&
+				object.Equals(pen1._dashEndCap, pen2._dashEndCap);
 
 			return isEqual;
 		}

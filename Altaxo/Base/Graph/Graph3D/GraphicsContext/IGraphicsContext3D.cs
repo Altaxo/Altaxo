@@ -66,8 +66,6 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		#region Primitives rendering
 
-		void DrawLineObsolete(PenX3D pen, PointD3D p0, PointD3D p1);
-
 		void DrawLine(PenX3D pen, PointD3D p0, PointD3D p1);
 
 		void DrawLine(PenX3D pen, IPolylineD3D path);

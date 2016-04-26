@@ -140,8 +140,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 						x = r * Math.Sign(x);
 						y = r * Math.Sign(y);
 
-						currMouseLayerCoord.X = (x + _Points[_currentPoint - 1].LayerCoordinates.X);
-						currMouseLayerCoord.Y = (y + _Points[_currentPoint - 1].LayerCoordinates.Y);
+						currMouseLayerCoord = new PointD2D(
+							 (x + _Points[_currentPoint - 1].LayerCoordinates.X),
+							 (y + _Points[_currentPoint - 1].LayerCoordinates.Y)
+							 );
 						_positionCurrentMouseInRootLayerCoordinates = _grac.ActiveLayer.TransformCoordinatesFromHereToParent(currMouseLayerCoord);
 					}
 					else // without an active layer we use document coordinates
@@ -154,8 +156,10 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 						x = r * Math.Sign(x);
 						y = r * Math.Sign(y);
 
-						_positionCurrentMouseInRootLayerCoordinates.X = (x + _Points[_currentPoint - 1].RootLayerCoordinates.X);
-						_positionCurrentMouseInRootLayerCoordinates.Y = (y + _Points[_currentPoint - 1].RootLayerCoordinates.Y);
+						_positionCurrentMouseInRootLayerCoordinates = new PointD2D(
+								(x + _Points[_currentPoint - 1].RootLayerCoordinates.X),
+								(y + _Points[_currentPoint - 1].RootLayerCoordinates.Y)
+						);
 					}
 				}
 			}

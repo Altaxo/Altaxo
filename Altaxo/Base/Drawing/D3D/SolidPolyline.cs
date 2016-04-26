@@ -192,9 +192,38 @@ namespace Altaxo.Drawing.D3D
 			_endNorthVector = n;
 		}
 
-		public void AddWithNormals(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int startIndex)
+		public static void AddWithNormals(
+			Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int vertexIndexOffset,
+			PenX3D pen,
+			IList<PointD3D> polylinePoints
+			)
 		{
-			if (_linePoints.Count < 2)
+			var dashPattern = pen.DashPattern;
+
+			if (null == dashPattern) // Solid line
+			{
+				var eastnorth = Math3D.GetEastNorthVectorAtStart(polylinePoints);
+				AddWithNormals(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, pen.CrossSection, polylinePoints, eastnorth.Item1, eastnorth.Item2);
+			}
+			else // line with dash
+			{
+				double unitLength = Math.Max(pen.Thickness1, pen.Thickness2);
+				foreach (var polyline in Math3D.DissectPolylineWithDashPattern(polylinePoints, dashPattern, unitLength))
+				{
+					AddWithNormals(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, pen.CrossSection, polyline.Item1, polyline.Item2, polyline.Item3);
+				}
+			}
+		}
+
+		public static void AddWithNormals(
+			Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int vertexIndexOffset,
+			ICrossSectionOfLine _crossSection,
+			IList<PointD3D> polylinePoints,
+			VectorD3D startEastVector,
+			VectorD3D startNorthVector
+			)
+		{
+			if (polylinePoints.Count < 2)
 				throw new ArgumentOutOfRangeException("linePoints.Count<2");
 
 			var crossSectionVertexCount = _crossSection.NumberOfVertices;
@@ -206,17 +235,17 @@ namespace Altaxo.Drawing.D3D
 			PointD3D[] lastPositionsTransformed = new PointD3D[crossSectionVertexCount];
 			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
 
-			VectorD3D currSeg = (_linePoints[1] - _linePoints[0]).Normalized;
-			VectorD3D e = FindStartEastVector();
-			VectorD3D n = VectorD3D.CrossProduct(e, currSeg);
+			VectorD3D currSeg = (polylinePoints[1] - polylinePoints[0]).Normalized;
+			VectorD3D e = startEastVector;
+			VectorD3D n = startNorthVector;
 
-			int currIndex = startIndex;
+			int currIndex = vertexIndexOffset;
 
 			// Get the matrix for the start plane
-			var matrix = Math3D.Get2DProjectionToPlane(e, n, _linePoints[0]);
+			var matrix = Math3D.Get2DProjectionToPlane(e, n, polylinePoints[0]);
 
 			// add the middle point of the start plane
-			AddPositionAndNormal(_linePoints[0], -currSeg);
+			AddPositionAndNormal(polylinePoints[0], -currSeg);
 			currIndex += 1;
 
 			// add the points of the cross section for the start cap
@@ -234,9 +263,9 @@ namespace Altaxo.Drawing.D3D
 				}
 
 				AddIndices(
-				startIndex,
-				startIndex + 1 + j,
-				startIndex + 1 + (1 + j) % crossSectionNormalCount);
+				vertexIndexOffset,
+				vertexIndexOffset + 1 + j,
+				vertexIndexOffset + 1 + (1 + j) % crossSectionNormalCount);
 			}
 
 			currIndex += crossSectionNormalCount;
@@ -257,14 +286,14 @@ namespace Altaxo.Drawing.D3D
 
 			currIndex += crossSectionNormalCount;
 
-			for (int mSeg = 1; mSeg < _linePoints.Count - 1; ++mSeg)
+			for (int mSeg = 1; mSeg < polylinePoints.Count - 1; ++mSeg)
 			{
-				VectorD3D nextSeg = (_linePoints[mSeg + 1] - _linePoints[mSeg]).Normalized;
+				VectorD3D nextSeg = (polylinePoints[mSeg + 1] - polylinePoints[mSeg]).Normalized;
 
 				VectorD3D midPlaneNormal = 0.5 * (currSeg + nextSeg);
 
 				// now get the matrix for transforming the cross sections positions
-				matrix = Math3D.Get2DProjectionToPlaneToPlane(e, n, currSeg, _linePoints[mSeg], midPlaneNormal);
+				matrix = Math3D.Get2DProjectionToPlaneToPlane(e, n, currSeg, polylinePoints[mSeg], midPlaneNormal);
 
 				// add positions and normals of the join and make the triangles from the last line join to this line join
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
@@ -297,7 +326,7 @@ namespace Altaxo.Drawing.D3D
 				n = VectorD3D.CrossProduct(e, currSeg);
 
 				// now add the positions and the normals for start of the next segment
-				var normalTransformation = Math3D.Get2DProjectionToPlane(e, n, _linePoints[mSeg]);
+				var normalTransformation = Math3D.Get2DProjectionToPlane(e, n, polylinePoints[mSeg]);
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
 					lastNormalsTransformed[j] = tn = normalTransformation.Transform(_crossSection.Normals(j));
@@ -314,7 +343,7 @@ namespace Altaxo.Drawing.D3D
 			}
 
 			// now add the positions and normals for the end of the last segment and the triangles of the last segment
-			matrix = Math3D.Get2DProjectionToPlane(e, n, _linePoints[_linePoints.Count - 1]);
+			matrix = Math3D.Get2DProjectionToPlane(e, n, polylinePoints[polylinePoints.Count - 1]);
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
 				lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
@@ -357,15 +386,17 @@ namespace Altaxo.Drawing.D3D
 				currIndex + (1 + j) % crossSectionNormalCount);
 			}
 
+			currIndex += crossSectionNormalCount;
+
 			// add the middle point of the end cap and the normal of the end cap
-			AddPositionAndNormal(_linePoints[_linePoints.Count - 1], currSeg);
+			AddPositionAndNormal(polylinePoints[polylinePoints.Count - 1], currSeg);
 
 			++currIndex;
 
-			_endEastVector = e;
-			_endNorthVector = n;
-			_endAdvanceVector = currSeg;
-			startIndex = currIndex;
+			//_endEastVector = e;
+			//_endNorthVector = n;
+			//_endAdvanceVector = currSeg;
+			vertexIndexOffset = currIndex;
 		}
 	}
 }

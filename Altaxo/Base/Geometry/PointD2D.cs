@@ -29,13 +29,26 @@ using System.Text;
 namespace Altaxo.Geometry
 {
 	/// <summary>
-	/// Represents a point location in 2D, or alternatively, a vector from the origin to a given point.
+	/// Represents a point with values of type Double in 2D space.
 	/// </summary>
 	[Serializable]
 	public struct PointD2D
 	{
-		public double X;
-		public double Y;
+		/// <summary>
+		/// Gets the x component of this point.
+		/// </summary>
+		/// <value>
+		/// The x  component of this point..
+		/// </value>
+		public double X { get; private set; }
+
+		/// <summary>
+		/// Gets the y component of this point.
+		/// </summary>
+		/// <value>
+		/// The y  component of this point..
+		/// </value>
+		public double Y { get; private set; }
 
 		#region Serialization
 
@@ -55,10 +68,7 @@ namespace Altaxo.Geometry
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				PointD2D s = null != o ? (PointD2D)o : new PointD2D();
-				s.X = info.GetDouble("X");
-				s.Y = info.GetDouble("Y");
-				return s;
+				return new PointD2D(info.GetDouble("X"), info.GetDouble("Y")); ;
 			}
 		}
 
@@ -68,6 +78,46 @@ namespace Altaxo.Geometry
 		{
 			X = x;
 			Y = y;
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the provided value.
+		/// </summary>
+		/// <param name="newX">The new x.</param>
+		/// <returns>New instance with <see cref="X"/> set to the provided value.</returns>
+		public PointD2D WithX(double newX)
+		{
+			return new PointD2D(newX, Y);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the provided value.
+		/// </summary>
+		/// <param name="newY">The new x.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
+		public PointD2D WithY(double newY)
+		{
+			return new PointD2D(X, newY);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="X"/> set to the X plus the provided value.
+		/// </summary>
+		/// <param name="addX">The value to add to <see cref="X"/>.</param>
+		/// <returns>New instance with <see cref="X"/> set to the X plus the provided value.</returns>
+		public PointD2D WithXPlus(double addX)
+		{
+			return new PointD2D(X + addX, Y);
+		}
+
+		/// <summary>
+		/// Returns a new instance with <see cref="Y"/> set to the Y plus the provided value.
+		/// </summary>
+		/// <param name="addY">The value to add to <see cref="Y"/>.</param>
+		/// <returns>New instance with <see cref="Y"/> set to the Y plus the provided value.</returns>
+		public PointD2D WithYPlus(double addY)
+		{
+			return new PointD2D(X, Y + addY);
 		}
 
 		public static PointD2D Empty
@@ -86,76 +136,21 @@ namespace Altaxo.Geometry
 			}
 		}
 
-		public static bool operator ==(PointD2D p, PointD2D q)
-		{
-			return p.X == q.X && p.Y == q.Y;
-		}
-
-		public static bool operator !=(PointD2D p, PointD2D q)
-		{
-			return !(p.X == q.X && p.Y == q.Y);
-		}
-
-		public override int GetHashCode()
-		{
-			return X.GetHashCode() + Y.GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (obj is PointD2D)
-			{
-				PointD2D q = (PointD2D)obj;
-				return X == q.X && Y == q.Y;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		public override string ToString()
-		{
-			return X.ToString() + "; " + Y.ToString();
-		}
-
-		public static explicit operator System.Drawing.PointF(PointD2D p)
-		{
-			return new System.Drawing.PointF((float)p.X, (float)p.Y);
-		}
-
-		public static implicit operator PointD2D(System.Drawing.PointF p)
-		{
-			return new PointD2D(p.X, p.Y);
-		}
-
-		public static explicit operator System.Drawing.SizeF(PointD2D p)
-		{
-			return new System.Drawing.SizeF((float)p.X, (float)p.Y);
-		}
-
-		public static implicit operator PointD2D(System.Drawing.SizeF p)
-		{
-			return new PointD2D(p.Width, p.Height);
-		}
-
 		/// <summary>
-		/// Calculates the distance between this point and another point.
+		/// Gets a value indicating whether one of the members of this instance is <see cref="double.NaN"/>.
 		/// </summary>
-		/// <param name="p">Other point.</param>
-		/// <returns>The distance between this point and point p.</returns>
-		public double DistanceTo(PointD2D p)
-		{
-			return Distance(this, p);
-		}
-
-		public double VectorLength
+		/// <value>
+		///   <c>true</c> if one of the members of this instance is <see cref="double.NaN"/>; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsNaN
 		{
 			get
 			{
-				return Math.Sqrt(X * X + Y * Y);
+				return double.IsNaN(X) || double.IsNaN(Y);
 			}
 		}
+
+		#region Operators
 
 		public static PointD2D operator -(PointD2D p1, PointD2D p2)
 		{
@@ -187,11 +182,87 @@ namespace Altaxo.Geometry
 			return new PointD2D(p.X / s, p.Y / s);
 		}
 
-		public void FlipXY()
+		public static bool operator ==(PointD2D p, PointD2D q)
 		{
-			var h = X;
-			X = Y;
-			Y = h;
+			return p.X == q.X && p.Y == q.Y;
+		}
+
+		public static bool operator !=(PointD2D p, PointD2D q)
+		{
+			return !(p.X == q.X && p.Y == q.Y);
+		}
+
+		#endregion Operators
+
+		#region Conversion operators
+
+		public static explicit operator PointD2D(VectorD2D v)
+		{
+			return new PointD2D(v.X, v.Y);
+		}
+
+		public static explicit operator System.Drawing.PointF(PointD2D p)
+		{
+			return new System.Drawing.PointF((float)p.X, (float)p.Y);
+		}
+
+		public static implicit operator PointD2D(System.Drawing.PointF p)
+		{
+			return new PointD2D(p.X, p.Y);
+		}
+
+		public static explicit operator System.Drawing.SizeF(PointD2D p)
+		{
+			return new System.Drawing.SizeF((float)p.X, (float)p.Y);
+		}
+
+		public static implicit operator PointD2D(System.Drawing.SizeF p)
+		{
+			return new PointD2D(p.Width, p.Height);
+		}
+
+		#endregion Conversion operators
+
+		public override int GetHashCode()
+		{
+			return X.GetHashCode() + 7 * Y.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is PointD2D)
+			{
+				PointD2D q = (PointD2D)obj;
+				return X == q.X && Y == q.Y;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public override string ToString()
+		{
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"PointD2D({0}, {1})", X, Y);
+		}
+
+		/// <summary>
+		/// Calculates the distance between this point and another point.
+		/// </summary>
+		/// <param name="p">Other point.</param>
+		/// <returns>The distance between this point and point p.</returns>
+		public double DistanceTo(PointD2D p)
+		{
+			return Distance(this, p);
+		}
+
+		public double VectorLength
+		{
+			get
+			{
+				return Math.Sqrt(X * X + Y * Y);
+			}
 		}
 
 		public PointD2D GetXYFlipped()

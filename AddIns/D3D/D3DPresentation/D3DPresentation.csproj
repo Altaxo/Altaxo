@@ -34,23 +34,23 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SharpDX">
-      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.dll</HintPath>
+      <HintPath>Libraries\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>Libraries\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct2D1, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.Direct2D1.dll</HintPath>
+      <HintPath>Libraries\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D10">
-      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.Direct3D10.dll</HintPath>
+      <HintPath>Libraries\SharpDX.Direct3D10.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>Libraries\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.DXGI">
-      <HintPath>V:\C\Altaxo\src3D\AddIns\D3D\D3DPresentation\Libraries\SharpDX.DXGI.dll</HintPath>
+      <HintPath>Libraries\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,6 +93,7 @@
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
     <Compile Include="Gui\SharpDevelop\Graph3DDisplayBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\Graph3DExportBindingDoozer.cs" />

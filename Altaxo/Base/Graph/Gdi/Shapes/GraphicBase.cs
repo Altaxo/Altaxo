@@ -966,9 +966,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				var size = this.Size;
 				if (Math.Abs(dx) == 1 && (newWidth > 0 || AllowNegativeSize))
-					size.X = newWidth;
+					size = size.WithX(newWidth);
 				if (Math.Abs(dy) == 1 && (newHeight > 0 || AllowNegativeSize))
-					size.Y = newHeight;
+					size = size.WithY(newHeight);
 
 				this.SetSize(size.X, size.Y, Main.EventFiring.Suppressed);
 

@@ -25,13 +25,10 @@
 using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
 	using GraphicsContext;
-	using Shapes;
 
 	/// <summary>
 	/// The abstract base class for general graphical objects on the layer,
@@ -58,6 +55,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// <summary>Cached matrix which transforms from own coordinates to parent (layer) coordinates.</summary>
 		protected Matrix4x3 _transformation = Matrix4x3.Identity;
 
+		protected string _tag;
+
 		#region Serialization
 
 		/// <summary>
@@ -76,6 +75,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				GraphicBase s = (GraphicBase)obj;
 				info.AddValue("Location", s._location);
+				info.AddValue("Tag", s._tag);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -87,6 +87,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 				s._location = (ItemLocationDirect)info.GetValue("Location", s);
 				if (null != s._location) s._location.ParentObject = s;
+
+				s._tag = info.GetString("Tag");
 
 				s.UpdateTransformationMatrix();
 
@@ -206,6 +208,27 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			get
 			{
 				return _location;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the tag. The tag is a string that the user can use to identify a certain instance of shape, e.g. when executing a script.
+		/// </summary>
+		/// <value>
+		/// The tag of this instance. The default value is null.
+		/// </value>
+		public string Tag
+		{
+			get
+			{
+				return _tag;
+			}
+			set
+			{
+				var oldValue = _tag;
+				_tag = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
 			}
 		}
 

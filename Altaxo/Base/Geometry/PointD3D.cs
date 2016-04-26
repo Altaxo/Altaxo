@@ -30,10 +30,33 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
+	/// <summary>
+	/// Represents a point with values of type Double in 3D space.
+	/// </summary>
 	public struct PointD3D
 	{
+		/// <summary>
+		/// Gets the x component of this point.
+		/// </summary>
+		/// <value>
+		/// The x  component of this point..
+		/// </value>
 		public double X { get; private set; }
+
+		/// <summary>
+		/// Gets the y component of this point.
+		/// </summary>
+		/// <value>
+		/// The y  component of this point..
+		/// </value>
 		public double Y { get; private set; }
+
+		/// <summary>
+		/// Gets the y component of this point.
+		/// </summary>
+		/// <value>
+		/// The y  component of this point..
+		/// </value>
 		public double Z { get; private set; }
 
 		#region Serialization
@@ -144,7 +167,21 @@ namespace Altaxo.Geometry
 			}
 		}
 
-		public static PointD3D Empty { get { return new PointD3D(); } }
+		public static PointD3D Empty
+		{
+			get
+			{
+				return new PointD3D();
+			}
+		}
+
+		public bool IsEmpty
+		{
+			get
+			{
+				return 0 == X && 0 == Y && 0 == Z;
+			}
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether one of the members of this instance is <see cref="double.NaN"/>.
@@ -159,6 +196,8 @@ namespace Altaxo.Geometry
 				return double.IsNaN(X) || double.IsNaN(Y) || double.IsNaN(Z);
 			}
 		}
+
+		#region Operators
 
 		public static PointD3D operator +(PointD3D a, VectorD3D b)
 		{
@@ -194,6 +233,8 @@ namespace Altaxo.Geometry
 		{
 			return new PointD3D(v.X, v.Y, v.Z);
 		}
+
+		#endregion Operators
 
 		public override bool Equals(object obj)
 		{

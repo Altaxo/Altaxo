@@ -136,6 +136,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 							_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this);
 							break;
 
+						case GraphToolType.SingleLineDrawing:
+							_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this);
+							break;
+
 						/*
 
 					case GraphToolType.ArrowLineDrawing:
@@ -160,10 +164,6 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 					case GraphToolType.RegularPolygonDrawing:
 						_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(this);
-						break;
-
-					case GraphToolType.SingleLineDrawing:
-						_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this);
 						break;
 
 					case GraphToolType.ZoomAxes:

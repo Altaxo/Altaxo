@@ -970,9 +970,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 				outer = coordSyst.GetLogicalDirection(styleID.ParallelAxisNumber, labelSide);
 				PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out outVector);
-				PointD2D tickend = tickorg;
-				tickend.X += outVector.X * outerDistance;
-				tickend.Y += outVector.Y * outerDistance;
+				PointD2D tickend = tickorg + outVector * outerDistance;
 
 				PointD2D msize = labels[i].Size;
 				PointD2D morg = tickend;
@@ -981,12 +979,11 @@ namespace Altaxo.Graph.Gdi.Axis
 				{
 					double alpha = _rotation * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
 					double shift = msize.Y * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.X + _font.Size / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
-					morg.X += (outVector.X * shift);
-					morg.Y += (outVector.Y * shift);
+					morg = morg + outVector * shift;
 				}
 				else
 				{
-					morg.X += (outVector.X * _font.Size / 3);
+					morg = morg.WithXPlus(outVector.X * _font.Size / 3);
 				}
 
 				RectangleD2D mrect = new RectangleD2D(morg, msize);

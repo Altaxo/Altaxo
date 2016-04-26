@@ -525,8 +525,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 							PointD2D imgSize = img.GetImage().PhysicalDimension;
 
 							double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
-							imgSize.X *= scale;
-							imgSize.Y *= scale;
+							imgSize = imgSize * scale;
 
 							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD3D.Empty, new VectorD3D(imgSize.X, imgSize.Y, 0), img);
 							this.ActiveLayer.GraphObjects.Add(item);

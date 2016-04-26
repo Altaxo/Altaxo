@@ -136,4 +136,15 @@ namespace Altaxo.Graph.Graph3D.Commands
 		{
 		}
 	}
+
+	/// <summary>
+	/// Drawing a single straight line on the graph.
+	/// </summary>
+	public class SingleLineDrawingTool : AbstractGraphToolsCommand
+	{
+		public SingleLineDrawingTool()
+			: base(Gui.Graph3D.Viewing.GraphToolType.SingleLineDrawing)
+		{
+		}
+	}
 }

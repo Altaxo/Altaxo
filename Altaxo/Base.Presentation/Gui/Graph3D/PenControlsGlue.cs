@@ -25,7 +25,10 @@
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D;
+using Altaxo.Gui.Drawing.D3D.LineCaps;
 using Altaxo.Gui.Graph3D.Material;
 using System;
 using System.Collections.Generic;
@@ -38,11 +41,17 @@ namespace Altaxo.Gui.Graph3D
 {
 	public class PenControlsGlue : FrameworkElement
 	{
-		private bool _userChangedAbsStartCapSize;
-		private bool _userChangedAbsEndCapSize;
+		private bool _userChangedAbsLineStartCapSize;
+		private bool _userChangedAbsLineEndCapSize;
 
-		private bool _userChangedRelStartCapSize;
-		private bool _userChangedRelEndCapSize;
+		private bool _userChangedRelLineStartCapSize;
+		private bool _userChangedRelLineEndCapSize;
+
+		private bool _userChangedAbsDashStartCapSize;
+		private bool _userChangedAbsDashEndCapSize;
+
+		private bool _userChangedRelDashStartCapSize;
+		private bool _userChangedRelDashEndCapSize;
 
 		private bool _isAllPropertiesGlue;
 
@@ -110,24 +119,34 @@ namespace Altaxo.Gui.Graph3D
 			if (null != CbBrush) CbBrush.SelectedMaterial = _pen.Material;
 			if (null != CbLineThickness1) CbLineThickness1.SelectedQuantityAsValueInPoints = _pen.Thickness1;
 			if (null != CbLineThickness2) CbLineThickness2.SelectedQuantityAsValueInPoints = _pen.Thickness2;
+			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashPattern;
+
+			if (null != CbLineStartCap) CbLineStartCap.SelectedLineCap = _pen.LineStartCap;
+			if (null != CbLineStartCapAbsSize) CbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumAbsoluteSizePt : 0;
+			if (null != CbLineStartCapRelSize) CbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumRelativeSize : 0;
+
+			if (null != CbLineEndCap) CbLineEndCap.SelectedLineCap = _pen.LineEndCap;
+			if (null != CbLineEndCapAbsSize) CbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineEndCap ? _pen.LineEndCap.MinimumAbsoluteSizePt : 0;
+			if (null != CbLineEndCapRelSize) CbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.LineEndCap ? _pen.LineEndCap.MinimumRelativeSize : 0;
+
+			if (null != CbDashStartCap) CbDashStartCap.SelectedLineCap = _pen.DashStartCap;
+			if (null != CbDashStartCapAbsSize) CbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.DashStartCap ? _pen.DashStartCap.MinimumAbsoluteSizePt : 0;
+			if (null != CbDashStartCapRelSize) CbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.DashStartCap ? _pen.DashStartCap.MinimumRelativeSize : 0;
+
+			if (null != CbDashEndCap) CbDashEndCap.SelectedLineCap = _pen.DashEndCap;
+			if (null != CbDashEndCapAbsSize) CbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.DashEndCap ? _pen.DashEndCap.MinimumAbsoluteSizePt : 0;
+			if (null != CbDashEndCapRelSize) CbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.DashEndCap ? _pen.DashEndCap.MinimumRelativeSize : 0;
 
 			/*
-						if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
-						if (null != CbDashCap) CbDashCap.SelectedDashCap = _pen.DashCap;
-						if (null != CbStartCap) CbStartCap.SelectedLineCap = _pen.StartCap;
-						if (null != CbStartCapAbsSize) CbStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
-						if (null != CbStartCapRelSize) CbStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.StartCap.MinimumRelativeSize;
-						if (null != CbEndCap) CbEndCap.SelectedLineCap = _pen.EndCap;
-						if (null != CbEndCapAbsSize) CbEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
-						if (null != CbEndCapRelSize) CbEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.EndCap.MinimumRelativeSize;
 						if (null != CbLineJoin) CbLineJoin.SelectedLineJoin = _pen.LineJoin;
 						if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
 						*/
-			_userChangedAbsStartCapSize = false;
-			_userChangedAbsEndCapSize = false;
 
-			_userChangedRelStartCapSize = false;
-			_userChangedRelEndCapSize = false;
+			_userChangedAbsLineStartCapSize = false;
+			_userChangedAbsLineEndCapSize = false;
+
+			_userChangedRelLineStartCapSize = false;
+			_userChangedRelLineEndCapSize = false;
 		}
 
 		public event EventHandler PenChanged;
@@ -210,9 +229,7 @@ namespace Altaxo.Gui.Graph3D
 
 		#endregion Brush
 
-		/*
-
-		#region Dash
+		#region Dash pattern
 
 		private DashStyleComboBox _cbDashStyle;
 
@@ -228,7 +245,7 @@ namespace Altaxo.Gui.Graph3D
 
 				_cbDashStyle = value;
 				if (_pen != null && _cbDashStyle != null)
-					_cbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
+					_cbDashStyle.SelectedDashStyle = _pen.DashPattern;
 
 				if (_cbDashStyle != null)
 					dpd.AddValueChanged(_cbDashStyle, EhDashStyle_SelectionChangeCommitted);
@@ -239,10 +256,14 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				_pen.DashStyleEx = _cbDashStyle.SelectedDashStyle;
+				_pen = _pen.WithDashPattern(_cbDashStyle.SelectedDashStyle);
 				OnPenChanged();
 			}
 		}
+
+		#endregion Dash pattern
+
+		/*
 
 		private DashCapComboBox _cbDashCap;
 
@@ -345,135 +366,129 @@ namespace Altaxo.Gui.Graph3D
 
 		#endregion Thickness2
 
-		/*
+		#region LineStartCap
 
-		#region StartCap
+		private LineCapComboBox _cbLineStartCap;
 
-		private LineCapComboBox _cbStartCap;
-
-		public LineCapComboBox CbStartCap
+		public LineCapComboBox CbLineStartCap
 		{
-			get { return _cbStartCap; }
+			get { return _cbLineStartCap; }
 			set
 			{
 				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
 
-				if (_cbStartCap != null)
-					dpd.RemoveValueChanged(_cbStartCap, EhStartCap_SelectionChangeCommitted);
+				if (_cbLineStartCap != null)
+					dpd.RemoveValueChanged(_cbLineStartCap, EhLineStartCap_SelectionChangeCommitted);
 
-				_cbStartCap = value;
-				if (_pen != null && _cbStartCap != null)
-					_cbStartCap.SelectedLineCap = _pen.StartCap;
+				_cbLineStartCap = value;
+				if (_pen != null && _cbLineStartCap != null)
+					_cbLineStartCap.SelectedLineCap = _pen.LineStartCap;
 
-				if (_cbStartCap != null)
-					dpd.AddValueChanged(_cbStartCap, EhStartCap_SelectionChangeCommitted);
+				if (_cbLineStartCap != null)
+					dpd.AddValueChanged(_cbLineStartCap, EhLineStartCap_SelectionChangeCommitted);
 			}
 		}
 
-		private void EhStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhLineStartCap_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
-				var cap = _cbStartCap.SelectedLineCap;
-				if (_userChangedAbsStartCapSize && _cbStartCapAbsSize != null)
-					cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-				if (_userChangedRelStartCapSize && _cbStartCapRelSize != null)
-					cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
-
-				using (var suspendToken = _pen.SuspendGetToken())
+				var cap = _cbLineStartCap.SelectedLineCap;
+				if (null != cap)
 				{
-					_pen.StartCap = cap;
-					suspendToken.ResumeSilently();
-				};
-
-				if (_cbStartCapAbsSize != null && cap != null)
-				{
-					var oldValue = _userChangedAbsStartCapSize;
-					_cbStartCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
-					_userChangedAbsStartCapSize = oldValue;
+					if (_userChangedAbsLineStartCapSize && _cbLineStartCapAbsSize != null)
+						cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+					if (_userChangedRelLineStartCapSize && _cbLineStartCapRelSize != null)
+						cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits);
 				}
-				if (_cbStartCapRelSize != null && cap != null)
+				_pen = _pen.WithLineStartCap(cap);
+
+				if (_cbLineStartCapAbsSize != null && cap != null)
 				{
-					var oldValue = _userChangedRelStartCapSize;
-					_cbStartCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
-					_userChangedRelStartCapSize = oldValue;
+					var oldValue = _userChangedAbsLineStartCapSize;
+					_cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
+					_userChangedAbsLineStartCapSize = oldValue;
+				}
+				if (_cbLineStartCapRelSize != null && cap != null)
+				{
+					var oldValue = _userChangedRelLineStartCapSize;
+					_cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
+					_userChangedRelLineStartCapSize = oldValue;
 				}
 
 				OnPenChanged();
 			}
 		}
 
-		private LineCapSizeComboBox _cbStartCapAbsSize;
+		private Common.Drawing.LineCapSizeComboBox _cbLineStartCapAbsSize;
 
-		public LineCapSizeComboBox CbStartCapAbsSize
+		public Common.Drawing.LineCapSizeComboBox CbLineStartCapAbsSize
 		{
-			get { return _cbStartCapAbsSize; }
+			get { return _cbLineStartCapAbsSize; }
 			set
 			{
-				if (_cbStartCapAbsSize != null)
-					_cbStartCapAbsSize.SelectedQuantityChanged -= EhStartCapAbsSize_SelectionChangeCommitted;
+				if (_cbLineStartCapAbsSize != null)
+					_cbLineStartCapAbsSize.SelectedQuantityChanged -= EhLineStartCapAbsSize_SelectionChangeCommitted;
 
-				_cbStartCapAbsSize = value;
-				if (_pen != null && _cbStartCapAbsSize != null)
-					_cbStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
+				_cbLineStartCapAbsSize = value;
+				if (_pen != null && _cbLineStartCapAbsSize != null)
+					_cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.LineStartCap ? 0 : _pen.LineStartCap.MinimumAbsoluteSizePt;
 
-				if (_cbStartCapAbsSize != null)
-					_cbStartCapAbsSize.SelectedQuantityChanged += EhStartCapAbsSize_SelectionChangeCommitted;
+				if (_cbLineStartCapAbsSize != null)
+					_cbLineStartCapAbsSize.SelectedQuantityChanged += EhLineStartCapAbsSize_SelectionChangeCommitted;
 			}
 		}
 
-		private void EhStartCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhLineStartCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_userChangedAbsStartCapSize = true;
+			_userChangedAbsLineStartCapSize = true;
 
 			if (_pen != null)
 			{
-				var cap = _pen.StartCap;
-				cap = cap.Clone(_cbStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				var cap = _pen.LineStartCap;
 
-				using (var suspendToken = _pen.SuspendGetToken())
+				if (null != cap)
 				{
-					_pen.StartCap = cap;
-					suspendToken.ResumeSilently();
-				};
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				}
+
+				_pen = _pen.WithLineStartCap(cap);
 
 				OnPenChanged();
 			}
 		}
 
-		private QuantityWithUnitTextBox _cbStartCapRelSize;
+		private QuantityWithUnitTextBox _cbLineStartCapRelSize;
 
-		public QuantityWithUnitTextBox CbStartCapRelSize
+		public QuantityWithUnitTextBox CbLineStartCapRelSize
 		{
-			get { return _cbStartCapRelSize; }
+			get { return _cbLineStartCapRelSize; }
 			set
 			{
-				if (_cbStartCapRelSize != null)
-					_cbStartCapRelSize.SelectedQuantityChanged -= EhStartCapRelSize_SelectionChangeCommitted;
+				if (_cbLineStartCapRelSize != null)
+					_cbLineStartCapRelSize.SelectedQuantityChanged -= EhLineStartCapRelSize_SelectionChangeCommitted;
 
-				_cbStartCapRelSize = value;
-				if (_pen != null && _cbStartCapRelSize != null)
-					_cbStartCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.StartCap.MinimumRelativeSize;
+				_cbLineStartCapRelSize = value;
+				if (_pen != null && _cbLineStartCapRelSize != null)
+					_cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.LineStartCap ? 0 : _pen.LineStartCap.MinimumRelativeSize;
 
-				if (_cbStartCapRelSize != null)
-					_cbStartCapRelSize.SelectedQuantityChanged += EhStartCapRelSize_SelectionChangeCommitted;
+				if (_cbLineStartCapRelSize != null)
+					_cbLineStartCapRelSize.SelectedQuantityChanged += EhLineStartCapRelSize_SelectionChangeCommitted;
 			}
 		}
 
-		private void EhStartCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhLineStartCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_userChangedRelStartCapSize = true;
+			_userChangedRelLineStartCapSize = true;
 
 			if (_pen != null)
 			{
-				var cap = _pen.StartCap;
-				cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbStartCapRelSize.SelectedQuantityAsValueInSIUnits);
-
-				using (var suspendToken = _pen.SuspendGetToken())
+				var cap = _pen.LineStartCap;
+				if (null != cap)
 				{
-					_pen.StartCap = cap;
-					suspendToken.ResumeSilently();
-				};
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+				}
+				_pen = _pen.WithLineStartCap(cap);
 
 				OnPenChanged();
 			}
@@ -481,139 +496,389 @@ namespace Altaxo.Gui.Graph3D
 
 		#endregion StartCap
 
-		#region EndCap
+		#region LineEndCap
 
-		private LineCapComboBox _cbEndCap;
+		private LineCapComboBox _cbLineEndCap;
 
-		public LineCapComboBox CbEndCap
+		public LineCapComboBox CbLineEndCap
 		{
-			get { return _cbEndCap; }
+			get { return _cbLineEndCap; }
 			set
 			{
 				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
 
-				if (_cbEndCap != null)
-					dpd.RemoveValueChanged(_cbEndCap, EhEndCap_SelectionChangeCommitted);
+				if (_cbLineEndCap != null)
+					dpd.RemoveValueChanged(_cbLineEndCap, EhLineEndCap_SelectionChangeCommitted);
 
-				_cbEndCap = value;
-				if (_pen != null && _cbEndCap != null)
-					_cbEndCap.SelectedLineCap = _pen.EndCap;
+				_cbLineEndCap = value;
+				if (_pen != null && _cbLineEndCap != null)
+					_cbLineEndCap.SelectedLineCap = _pen.LineEndCap;
 
-				if (_cbEndCap != null)
-					dpd.AddValueChanged(_cbEndCap, EhEndCap_SelectionChangeCommitted);
+				if (_cbLineEndCap != null)
+					dpd.AddValueChanged(_cbLineEndCap, EhLineEndCap_SelectionChangeCommitted);
 			}
 		}
 
-		private void EhEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+		private void EhLineEndCap_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			if (_pen != null)
 			{
-				var cap = _cbEndCap.SelectedLineCap;
-				if (_userChangedAbsEndCapSize && _cbEndCapAbsSize != null)
-					cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-				if (_userChangedRelEndCapSize && _cbEndCapRelSize != null)
-					cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+				var cap = _cbLineEndCap.SelectedLineCap;
+				if (_userChangedAbsLineEndCapSize && _cbLineEndCapAbsSize != null)
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				if (_userChangedRelLineEndCapSize && _cbLineEndCapRelSize != null)
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits);
 
-				using (var suspendToken = _pen.SuspendGetToken())
-				{
-					_pen.EndCap = cap;
-					suspendToken.ResumeSilently();
-				};
+				_pen = _pen.WithLineEndCap(cap);
 
-				if (_cbEndCapAbsSize != null)
+				if (_cbLineEndCapAbsSize != null)
 				{
-					var oldValue = _userChangedAbsEndCapSize;
-					_cbEndCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
-					_userChangedAbsEndCapSize = oldValue;
+					var oldValue = _userChangedAbsLineEndCapSize;
+					_cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
+					_userChangedAbsLineEndCapSize = oldValue;
 				}
-				if (_cbEndCapRelSize != null)
+				if (_cbLineEndCapRelSize != null)
 				{
-					var oldValue = _userChangedRelEndCapSize;
-					_cbEndCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
-					_userChangedRelEndCapSize = oldValue;
+					var oldValue = _userChangedRelLineEndCapSize;
+					_cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
+					_userChangedRelLineEndCapSize = oldValue;
 				}
 
 				OnPenChanged();
 			}
 		}
 
-		private LineCapSizeComboBox _cbEndCapAbsSize;
+		private Common.Drawing.LineCapSizeComboBox _cbLineEndCapAbsSize;
 
-		public LineCapSizeComboBox CbEndCapAbsSize
+		public Common.Drawing.LineCapSizeComboBox CbLineEndCapAbsSize
 		{
-			get { return _cbEndCapAbsSize; }
+			get { return _cbLineEndCapAbsSize; }
 			set
 			{
-				if (_cbEndCapAbsSize != null)
-					_cbEndCapAbsSize.SelectedQuantityChanged -= EhEndCapAbsSize_SelectionChangeCommitted;
+				if (_cbLineEndCapAbsSize != null)
+					_cbLineEndCapAbsSize.SelectedQuantityChanged -= EhLineEndCapAbsSize_SelectionChangeCommitted;
 
-				_cbEndCapAbsSize = value;
-				if (_pen != null && _cbEndCapAbsSize != null)
-					_cbEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
+				_cbLineEndCapAbsSize = value;
+				if (_pen != null && _cbLineEndCapAbsSize != null)
+					_cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.LineEndCap ? 0 : _pen.LineEndCap.MinimumAbsoluteSizePt;
 
-				if (_cbEndCapAbsSize != null)
-					_cbEndCapAbsSize.SelectedQuantityChanged += EhEndCapAbsSize_SelectionChangeCommitted;
+				if (_cbLineEndCapAbsSize != null)
+					_cbLineEndCapAbsSize.SelectedQuantityChanged += EhLineEndCapAbsSize_SelectionChangeCommitted;
 			}
 		}
 
-		private void EhEndCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhLineEndCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_userChangedAbsEndCapSize = true;
+			_userChangedAbsLineEndCapSize = true;
 
 			if (_pen != null)
 			{
-				var cap = _pen.EndCap;
-				cap = cap.Clone(_cbEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
-
-				using (var suspendToken = _pen.SuspendGetToken())
+				var cap = _pen.LineEndCap;
+				if (null != cap)
 				{
-					_pen.EndCap = cap;
-					suspendToken.ResumeSilently();
-				};
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbLineEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				}
+				_pen = _pen.WithLineEndCap(cap);
 
 				OnPenChanged();
 			}
 		}
 
-		private QuantityWithUnitTextBox _cbEndCapRelSize;
+		private QuantityWithUnitTextBox _cbLineEndCapRelSize;
 
-		public QuantityWithUnitTextBox CbEndCapRelSize
+		public QuantityWithUnitTextBox CbLineEndCapRelSize
 		{
-			get { return _cbEndCapRelSize; }
+			get { return _cbLineEndCapRelSize; }
 			set
 			{
-				if (_cbEndCapRelSize != null)
-					_cbEndCapRelSize.SelectedQuantityChanged -= EhEndCapRelSize_SelectionChangeCommitted;
+				if (_cbLineEndCapRelSize != null)
+					_cbLineEndCapRelSize.SelectedQuantityChanged -= EhLineEndCapRelSize_SelectionChangeCommitted;
 
-				_cbEndCapRelSize = value;
-				if (_pen != null && _cbEndCapRelSize != null)
-					_cbEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.EndCap.MinimumRelativeSize;
+				_cbLineEndCapRelSize = value;
+				if (_pen != null && _cbLineEndCapRelSize != null)
+					_cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.LineEndCap ? 0 : _pen.LineEndCap.MinimumRelativeSize;
 
-				if (_cbEndCapRelSize != null)
-					_cbEndCapRelSize.SelectedQuantityChanged += EhEndCapRelSize_SelectionChangeCommitted;
+				if (_cbLineEndCapRelSize != null)
+					_cbLineEndCapRelSize.SelectedQuantityChanged += EhLineEndCapRelSize_SelectionChangeCommitted;
 			}
 		}
 
-		private void EhEndCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		private void EhLineEndCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			_userChangedRelEndCapSize = true;
+			_userChangedRelLineEndCapSize = true;
 
 			if (_pen != null)
 			{
-				var cap = _pen.EndCap;
-				cap = cap.Clone(cap.MinimumAbsoluteSizePt, _cbEndCapRelSize.SelectedQuantityAsValueInSIUnits);
-
-				using (var suspendToken = _pen.SuspendGetToken())
+				var cap = _pen.LineEndCap;
+				if (null != cap)
 				{
-					_pen.EndCap = cap;
-					suspendToken.ResumeSilently();
-				};
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbLineEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+				}
+				_pen = _pen.WithLineEndCap(cap);
 
 				OnPenChanged();
 			}
 		}
 
 		#endregion EndCap
+
+		#region DashStartCap
+
+		private LineCapComboBox _cbDashStartCap;
+
+		public LineCapComboBox CbDashStartCap
+		{
+			get { return _cbDashStartCap; }
+			set
+			{
+				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
+
+				if (_cbDashStartCap != null)
+					dpd.RemoveValueChanged(_cbDashStartCap, EhDashStartCap_SelectionChangeCommitted);
+
+				_cbDashStartCap = value;
+				if (_pen != null && _cbDashStartCap != null)
+					_cbDashStartCap.SelectedLineCap = _pen.DashStartCap;
+
+				if (_cbDashStartCap != null)
+					dpd.AddValueChanged(_cbDashStartCap, EhDashStartCap_SelectionChangeCommitted);
+			}
+		}
+
+		private void EhDashStartCap_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			if (_pen != null)
+			{
+				var cap = _cbDashStartCap.SelectedLineCap;
+				if (null != cap)
+				{
+					if (_userChangedAbsDashStartCapSize && _cbDashStartCapAbsSize != null)
+						cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+					if (_userChangedRelDashStartCapSize && _cbDashStartCapRelSize != null)
+						cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+				}
+				_pen = _pen.WithDashStartCap(cap);
+
+				if (_cbDashStartCapAbsSize != null && cap != null)
+				{
+					var oldValue = _userChangedAbsDashStartCapSize;
+					_cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
+					_userChangedAbsDashStartCapSize = oldValue;
+				}
+				if (_cbDashStartCapRelSize != null && cap != null)
+				{
+					var oldValue = _userChangedRelDashStartCapSize;
+					_cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
+					_userChangedRelDashStartCapSize = oldValue;
+				}
+
+				OnPenChanged();
+			}
+		}
+
+		private Common.Drawing.LineCapSizeComboBox _cbDashStartCapAbsSize;
+
+		public Common.Drawing.LineCapSizeComboBox CbDashStartCapAbsSize
+		{
+			get { return _cbDashStartCapAbsSize; }
+			set
+			{
+				if (_cbDashStartCapAbsSize != null)
+					_cbDashStartCapAbsSize.SelectedQuantityChanged -= EhDashStartCapAbsSize_SelectionChangeCommitted;
+
+				_cbDashStartCapAbsSize = value;
+				if (_pen != null && _cbDashStartCapAbsSize != null)
+					_cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.DashStartCap ? 0 : _pen.DashStartCap.MinimumAbsoluteSizePt;
+
+				if (_cbDashStartCapAbsSize != null)
+					_cbDashStartCapAbsSize.SelectedQuantityChanged += EhDashStartCapAbsSize_SelectionChangeCommitted;
+			}
+		}
+
+		private void EhDashStartCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			_userChangedAbsDashStartCapSize = true;
+
+			if (_pen != null)
+			{
+				var cap = _pen.DashStartCap;
+
+				if (null != cap)
+				{
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashStartCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				}
+
+				_pen = _pen.WithDashStartCap(cap);
+
+				OnPenChanged();
+			}
+		}
+
+		private QuantityWithUnitTextBox _cbDashStartCapRelSize;
+
+		public QuantityWithUnitTextBox CbDashStartCapRelSize
+		{
+			get { return _cbDashStartCapRelSize; }
+			set
+			{
+				if (_cbDashStartCapRelSize != null)
+					_cbDashStartCapRelSize.SelectedQuantityChanged -= EhDashStartCapRelSize_SelectionChangeCommitted;
+
+				_cbDashStartCapRelSize = value;
+				if (_pen != null && _cbDashStartCapRelSize != null)
+					_cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.DashStartCap ? 0 : _pen.DashStartCap.MinimumRelativeSize;
+
+				if (_cbDashStartCapRelSize != null)
+					_cbDashStartCapRelSize.SelectedQuantityChanged += EhDashStartCapRelSize_SelectionChangeCommitted;
+			}
+		}
+
+		private void EhDashStartCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			_userChangedRelDashStartCapSize = true;
+
+			if (_pen != null)
+			{
+				var cap = _pen.DashStartCap;
+				if (null != cap)
+				{
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashStartCapRelSize.SelectedQuantityAsValueInSIUnits);
+				}
+				_pen = _pen.WithDashStartCap(cap);
+
+				OnPenChanged();
+			}
+		}
+
+		#endregion DashStartCap
+
+		#region DashEndCap
+
+		private LineCapComboBox _cbDashEndCap;
+
+		public LineCapComboBox CbDashEndCap
+		{
+			get { return _cbDashEndCap; }
+			set
+			{
+				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(LineCapComboBox.SelectedLineCapProperty, typeof(LineCapComboBox));
+
+				if (_cbDashEndCap != null)
+					dpd.RemoveValueChanged(_cbDashEndCap, EhDashEndCap_SelectionChangeCommitted);
+
+				_cbDashEndCap = value;
+				if (_pen != null && _cbDashEndCap != null)
+					_cbDashEndCap.SelectedLineCap = _pen.DashEndCap;
+
+				if (_cbDashEndCap != null)
+					dpd.AddValueChanged(_cbDashEndCap, EhDashEndCap_SelectionChangeCommitted);
+			}
+		}
+
+		private void EhDashEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			if (_pen != null)
+			{
+				var cap = _cbDashEndCap.SelectedLineCap;
+				if (_userChangedAbsDashEndCapSize && _cbDashEndCapAbsSize != null)
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				if (_userChangedRelDashEndCapSize && _cbDashEndCapRelSize != null)
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+
+				_pen = _pen.WithDashEndCap(cap);
+
+				if (_cbDashEndCapAbsSize != null)
+				{
+					var oldValue = _userChangedAbsDashEndCapSize;
+					_cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = cap.MinimumAbsoluteSizePt;
+					_userChangedAbsDashEndCapSize = oldValue;
+				}
+				if (_cbDashEndCapRelSize != null)
+				{
+					var oldValue = _userChangedRelDashEndCapSize;
+					_cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = cap.MinimumRelativeSize;
+					_userChangedRelDashEndCapSize = oldValue;
+				}
+
+				OnPenChanged();
+			}
+		}
+
+		private Common.Drawing.LineCapSizeComboBox _cbDashEndCapAbsSize;
+
+		public Common.Drawing.LineCapSizeComboBox CbDashEndCapAbsSize
+		{
+			get { return _cbDashEndCapAbsSize; }
+			set
+			{
+				if (_cbDashEndCapAbsSize != null)
+					_cbDashEndCapAbsSize.SelectedQuantityChanged -= EhDashEndCapAbsSize_SelectionChangeCommitted;
+
+				_cbDashEndCapAbsSize = value;
+				if (_pen != null && _cbDashEndCapAbsSize != null)
+					_cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = null == _pen.DashEndCap ? 0 : _pen.DashEndCap.MinimumAbsoluteSizePt;
+
+				if (_cbDashEndCapAbsSize != null)
+					_cbDashEndCapAbsSize.SelectedQuantityChanged += EhDashEndCapAbsSize_SelectionChangeCommitted;
+			}
+		}
+
+		private void EhDashEndCapAbsSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			_userChangedAbsDashEndCapSize = true;
+
+			if (_pen != null)
+			{
+				var cap = _pen.DashEndCap;
+				if (null != cap)
+				{
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(_cbDashEndCapAbsSize.SelectedQuantityAsValueInPoints, cap.MinimumRelativeSize);
+				}
+				_pen = _pen.WithDashEndCap(cap);
+
+				OnPenChanged();
+			}
+		}
+
+		private QuantityWithUnitTextBox _cbDashEndCapRelSize;
+
+		public QuantityWithUnitTextBox CbDashEndCapRelSize
+		{
+			get { return _cbDashEndCapRelSize; }
+			set
+			{
+				if (_cbDashEndCapRelSize != null)
+					_cbDashEndCapRelSize.SelectedQuantityChanged -= EhDashEndCapRelSize_SelectionChangeCommitted;
+
+				_cbDashEndCapRelSize = value;
+				if (_pen != null && _cbDashEndCapRelSize != null)
+					_cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = null == _pen.DashEndCap ? 0 : _pen.DashEndCap.MinimumRelativeSize;
+
+				if (_cbDashEndCapRelSize != null)
+					_cbDashEndCapRelSize.SelectedQuantityChanged += EhDashEndCapRelSize_SelectionChangeCommitted;
+			}
+		}
+
+		private void EhDashEndCapRelSize_SelectionChangeCommitted(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			_userChangedRelDashEndCapSize = true;
+
+			if (_pen != null)
+			{
+				var cap = _pen.DashEndCap;
+				if (null != cap)
+				{
+					cap = cap.WithMinimumAbsoluteAndRelativeSize(cap.MinimumAbsoluteSizePt, _cbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits);
+				}
+				_pen = _pen.WithDashEndCap(cap);
+
+				OnPenChanged();
+			}
+		}
+
+		#endregion EndCap
+
+		/*
 
 		#region LineJoin
 

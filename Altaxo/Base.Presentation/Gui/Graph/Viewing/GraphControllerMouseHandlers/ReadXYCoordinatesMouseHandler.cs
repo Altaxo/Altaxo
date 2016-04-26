@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="increment"></param>
 		private void MoveLeftRight(double increment)
 		{
-			_positionOfCrossInRootLayerCoordinates.X += increment;
+			_positionOfCrossInRootLayerCoordinates = _positionOfCrossInRootLayerCoordinates.WithXPlus(increment);
 
 			DisplayCrossCoordinates();
 
@@ -194,7 +194,7 @@ namespace Altaxo.Gui.Graph.Viewing.GraphControllerMouseHandlers
 		/// <param name="increment"></param>
 		private void MoveUpDown(double increment)
 		{
-			_positionOfCrossInRootLayerCoordinates.Y += increment;
+			_positionOfCrossInRootLayerCoordinates = _positionOfCrossInRootLayerCoordinates.WithYPlus(increment);
 
 			DisplayCrossCoordinates();
 

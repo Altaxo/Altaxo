@@ -48,15 +48,26 @@ namespace Altaxo.Gui.Graph3D
 			_glue.CbLineThickness1 = _cbThickness1;
 			_glue.CbLineThickness2 = _cbThickness2;
 
-			/*
+			_glue.CbLineStartCap = _cbLineStartCap;
+			_glue.CbLineStartCapAbsSize = _cbLineStartCapSize;
+			_glue.CbLineStartCapRelSize = _edLineStartCapRelSize;
+
+			_glue.CbLineEndCap = _cbLineEndCap;
+			_glue.CbLineEndCapAbsSize = _cbLineEndCapSize;
+			_glue.CbLineEndCapRelSize = _edLineEndCapRelSize;
+
 			_glue.CbDashStyle = _cbDashStyle;
+
+			_glue.CbDashStartCap = _cbDashStartCap;
+			_glue.CbDashStartCapAbsSize = _cbDashStartCapSize;
+			_glue.CbDashStartCapRelSize = _edDashStartCapRelSize;
+
+			_glue.CbDashEndCap = _cbDashEndCap;
+			_glue.CbDashEndCapAbsSize = _cbDashEndCapSize;
+			_glue.CbDashEndCapRelSize = _edDashEndCapRelSize;
+
+			/*
 			_glue.CbDashCap = _cbDashCap;
-			_glue.CbStartCap = _cbStartCap;
-			_glue.CbStartCapAbsSize = _cbStartCapSize;
-			_glue.CbStartCapRelSize = _edStartCapRelSize;
-			_glue.CbEndCap = _cbEndCap;
-			_glue.CbEndCapAbsSize = _cbEndCapSize;
-			_glue.CbEndCapRelSize = _edEndCapRelSize;
 			_glue.CbLineJoin = _cbLineJoin;
 			_glue.CbMiterLimit = _cbMiterLimit;
 

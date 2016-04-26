@@ -522,13 +522,15 @@ namespace Altaxo.Gui.Graph.Viewing
 
 				if (horizontally)
 				{
-					scrollValues.X += steps * portSize.X / (120.0 * 25);
-					Clamp(ref scrollValues.X, 0, scrollMaxima.X);
+					double x = scrollValues.X + steps * portSize.X / (120.0 * 25);
+					Clamp(ref x, 0, scrollMaxima.X);
+					scrollValues = scrollValues.WithX(x);
 				}
 				else
 				{
-					scrollValues.Y += steps * portSize.Y / (120.0 * 25);
-					Clamp(ref scrollValues.Y, 0, scrollMaxima.X);
+					double y = scrollValues.Y + steps * portSize.Y / (120.0 * 25);
+					Clamp(ref y, 0, scrollMaxima.X);
+					scrollValues = scrollValues.WithY(y);
 				}
 				PositionOfViewportsUpperLeftCornerInGraphCoordinates = ConvertScrollbarValueToGraphCoordinate(scrollValues);
 			}
@@ -1326,14 +1328,12 @@ namespace Altaxo.Gui.Graph.Viewing
 						if (img != null)
 						{
 							var size = this.ActiveLayer.Size;
-							size.X /= 2;
-							size.Y /= 2;
+							size *= 0.5;
 
 							PointD2D imgSize = img.GetImage().PhysicalDimension;
 
 							double scale = Math.Min(size.X / imgSize.X, size.Y / imgSize.Y);
-							imgSize.X *= scale;
-							imgSize.Y *= scale;
+							imgSize *= scale;
 
 							EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointD2D.Empty, imgSize, img);
 							this.ActiveLayer.GraphObjects.Add(item);
