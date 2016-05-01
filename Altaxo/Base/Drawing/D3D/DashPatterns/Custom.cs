@@ -34,6 +34,45 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 		private double[] _customDashPattern;
 		private double _dashOffset;
 
+		#region Serialization
+
+		private Custom(double offset, double[] pattern)
+		{
+			_dashOffset = offset;
+			_customDashPattern = pattern;
+		}
+
+		/// <summary>
+		/// 2016-04-22 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Dash), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (Custom)obj;
+				info.AddValue("DashOffset", s._dashOffset);
+				info.CreateArray("Pattern", s._customDashPattern.Length);
+				foreach (var v in s._customDashPattern)
+					info.AddValue("e", v);
+				info.CommitArray();
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				double offset = info.GetDouble("DashOffset");
+				int count = info.OpenArray("Pattern");
+				double[] pattern = new double[count];
+				for (int i = 0; i < pattern.Length; ++i)
+					pattern[i] = info.GetDouble("e");
+				info.CloseArray(count);
+
+				return new Custom(offset, pattern);
+			}
+		}
+
+		#endregion Serialization
+
 		public Custom(IEnumerable<double> dashPattern)
 		{
 			if (null == dashPattern)

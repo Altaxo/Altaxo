@@ -58,5 +58,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		/// <param name="v2">The index of vertex 2.</param>
 		/// <param name="v3">The index of vertex 3.</param>
 		void AddTriangleIndices(int v1, int v2, int v3);
+
+		/// <summary>
+		/// Adds the indices for one triangle.
+		/// </summary>
+		/// <param name="v1">The index of vertex 1.</param>
+		/// <param name="v2">The index of vertex 2.</param>
+		/// <param name="v3">The index of vertex 3.</param>
+		/// <param name="isLeftHandedCOS">True if this is a left handed coordinate system.</param>
+		void AddTriangleIndices(int v1, int v2, int v3, bool isLeftHandedCOS);
 	}
 }

@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				var solid = new SolidStraightLine();
 				solid.AddGeometry(
 					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
-					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+					(i0, i1, i2, isLeft) => buf.AddTriangleIndices(i0, i1, i2, isLeft),
 					ref vertexIndexOffset,
 					pen,
 					new LineD3D(p0, p1));

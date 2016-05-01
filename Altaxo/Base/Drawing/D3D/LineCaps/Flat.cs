@@ -84,13 +84,13 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		/// <inheritdoc />
 		public void AddGeometry(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
-			Action<int, int, int> AddIndices,
+			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
 			bool isStartCap,
 			PointD3D basePoint,
-			VectorD3D forwardVectorNormalized,
 			VectorD3D eastVector,
 			VectorD3D northVector,
+			VectorD3D forwardVectorNormalized,
 			ICrossSectionOfLine lineCrossSection,
 			PointD3D[] baseCrossSectionPositions,
 			VectorD3D[] baseCrossSectionNormals,
@@ -125,7 +125,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		/// <param name="baseCrossSectionPositions">The base cross section positions.</param>
 		public static void AddGeometry(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
-			Action<int, int, int> AddIndices,
+			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
 			bool isStartCap,
 			PointD3D basePoint,
@@ -151,20 +151,11 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			{
 				AddPositionAndNormal(baseCrossSectionPositions[i], forwardVectorNormalized);
 
-				if (isStartCap)
-				{
-					AddIndices(
-						currIndex - 1, // mid point of the end cap
-						currIndex + (1 + i) % crossSectionPositionCount,
-						currIndex + i);
-				}
-				else
-				{
-					AddIndices(
-					currIndex - 1, // mid point of the end cap
-					currIndex + i,
-					currIndex + (1 + i) % crossSectionPositionCount);
-				}
+				AddIndices(
+				currIndex - 1, // mid point of the end cap
+				currIndex + i,
+				currIndex + (1 + i) % crossSectionPositionCount,
+				isStartCap);
 			}
 
 			currIndex += crossSectionPositionCount;

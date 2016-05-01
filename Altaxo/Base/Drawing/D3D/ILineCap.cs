@@ -55,6 +55,7 @@ namespace Altaxo.Drawing.D3D
 		double MinimumRelativeSize { get; }
 
 		double MinimumAbsoluteSizePt { get; }
+
 		string Name { get; }
 
 		ILineCap WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize);
@@ -67,26 +68,26 @@ namespace Altaxo.Drawing.D3D
 		/// <param name="vertexIndexOffset">The vertex index offset. Must be actualized during this call.</param>
 		/// <param name="isStartCap">If set to <c>true</c>, a start cap is drawn; otherwise, an end cap is drawn.</param>
 		/// <param name="basePoint">The base point of the cap.</param>
-		/// <param name="forwardVectorNormalized">The forward vector of the line or line segment. Must be normalized.</param>
-		/// <param name="eastVector">The east vector of the cross section.</param>
+		/// <param name="westVector">The west vector of the cross section.</param>
 		/// <param name="northVector">The north vector of the cross section.</param>
+		/// <param name="forwardVectorNormalized">The forward vector of the line or line segment. Must be normalized.</param>
 		/// <param name="lineCrossSection">The line cross section.</param>
-		/// <param name="baseCrossSectionPositions">The base cross section positions, or null.</param>
-		/// <param name="baseCrossSectionNormals">The base cross section normals, or null.</param>
+		/// <param name="baseCrossSectionPositions">The cross section positions at the base of the cap, or null if the line does not end at the cap base.</param>
+		/// <param name="baseCrossSectionNormals">The cross section normals at the base of the cap, or null.</param>
 		/// <param name="temporaryStorageSpace">Object which represents temporary storage space used by the cap. The storage space can be used again if the returned object is again provided in subsequent calls.</param>
 		void AddGeometry(
 		Action<PointD3D, VectorD3D> AddPositionAndNormal,
-		Action<int, int, int> AddIndices,
-		ref int vertexIndexOffset,
-		bool isStartCap,
-		PointD3D basePoint,
-		VectorD3D forwardVectorNormalized,
-		VectorD3D eastVector,
-		VectorD3D northVector,
-		ICrossSectionOfLine lineCrossSection,
-		PointD3D[] baseCrossSectionPositions,
-		VectorD3D[] baseCrossSectionNormals,
-		ref object temporaryStorageSpace
+			Action<int, int, int, bool> AddIndices,
+			ref int vertexIndexOffset,
+			bool isStartCap,
+			PointD3D basePoint,
+			VectorD3D westVector,
+			VectorD3D northVector,
+			VectorD3D forwardVectorNormalized,
+			ICrossSectionOfLine lineCrossSection,
+			PointD3D[] baseCrossSectionPositions,
+			VectorD3D[] baseCrossSectionNormals,
+			ref object temporaryStorageSpace
 		);
 	}
 }

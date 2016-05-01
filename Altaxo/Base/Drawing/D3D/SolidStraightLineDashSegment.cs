@@ -122,7 +122,7 @@ namespace Altaxo.Drawing.D3D
 
 		public void AddGeometry(
 		Action<PointD3D, VectorD3D> AddPositionAndNormal,
-		Action<int, int, int> AddIndices,
+		Action<int, int, int, bool> AddIndices,
 		ref int vertexIndexOffset,
 		LineD3D dashSegment,
 			ILineCap overrideStartCap,
@@ -179,7 +179,7 @@ namespace Altaxo.Drawing.D3D
 		/// <exception cref="System.InvalidProgramException">The structure is not initialized yet. Call Initialize before using it!</exception>
 		public void AddGeometry(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
-			Action<int, int, int> AddIndices,
+			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
 			PointD3D lineStart,
 			PointD3D lineEnd,
@@ -212,13 +212,13 @@ namespace Altaxo.Drawing.D3D
 				{
 					if (j == 0)
 					{
-						AddIndices(currIndex, currIndex + 1, currIndex + 2 * _crossSectionNormalCount - 2);
-						AddIndices(currIndex + 2 * _crossSectionNormalCount - 2, currIndex + 1, currIndex + 2 * _crossSectionNormalCount - 1);
+						AddIndices(currIndex, currIndex + 1, currIndex + 2 * _crossSectionNormalCount - 2, false);
+						AddIndices(currIndex + 2 * _crossSectionNormalCount - 2, currIndex + 1, currIndex + 2 * _crossSectionNormalCount - 1, false);
 					}
 					else
 					{
-						AddIndices(currIndex, currIndex + 1, currIndex - 2);
-						AddIndices(currIndex - 2, currIndex + 1, currIndex - 1);
+						AddIndices(currIndex, currIndex + 1, currIndex - 2, false);
+						AddIndices(currIndex - 2, currIndex + 1, currIndex - 1, false);
 					}
 
 					AddPositionAndNormal(_lastPositionsTransformedStart[i], _lastNormalsTransformed[j]);
@@ -245,15 +245,15 @@ namespace Altaxo.Drawing.D3D
 					ref vertexIndexOffset,
 					true,
 					lineStart,
-					_forwardVector,
 					_westVector,
 					_northVector,
+					_forwardVector,
 					_crossSection,
 					drawLine ? _lastPositionsTransformedStart : null,
 					_lastNormalsTransformed,
 					ref _startCapTemporaryStorageSpace);
 			}
-			else if (null != _lastPositionsTransformedStart)
+			else if (drawLine)
 			{
 				LineCaps.Flat.AddGeometry(
 					AddPositionAndNormal,
@@ -270,19 +270,19 @@ namespace Altaxo.Drawing.D3D
 			{
 				resultingEndCap.AddGeometry(
 				AddPositionAndNormal,
-				AddIndices,
-				ref vertexIndexOffset,
-				false,
-				lineEnd,
-				_forwardVector,
-				_westVector,
-				_northVector,
-				_crossSection,
-				drawLine ? _lastPositionsTransformedEnd : null,
-				_lastNormalsTransformed,
-				ref _endCapTemporaryStorageSpace);
+					AddIndices,
+					ref vertexIndexOffset,
+					false,
+					lineEnd,
+					_westVector,
+					_northVector,
+					_forwardVector,
+					_crossSection,
+					drawLine ? _lastPositionsTransformedEnd : null,
+					_lastNormalsTransformed,
+					ref _endCapTemporaryStorageSpace);
 			}
-			else if (null != _lastPositionsTransformedEnd)
+			else if (drawLine)
 			{
 				LineCaps.Flat.AddGeometry(
 					AddPositionAndNormal,

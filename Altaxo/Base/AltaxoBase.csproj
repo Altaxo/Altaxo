@@ -223,6 +223,7 @@
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\TableDataSourceBase.cs" />
+    <Compile Include="Drawing\D3D\CrossSections\Ellipsoidal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Rectangular.cs" />
     <Compile Include="Drawing\D3D\DashPatterns\Custom.cs" />
     <Compile Include="Drawing\D3D\DashPatterns\DashDotDot.cs" />
@@ -236,6 +237,8 @@
     <Compile Include="Drawing\D3D\LineCaps\Round.cs" />
     <Compile Include="Drawing\D3D\LineCaps\Flat.cs" />
     <Compile Include="Drawing\D3D\LineCaps\Triangle.cs" />
+    <Compile Include="Drawing\D3D\LineCaps\Arrow.cs" />
+    <Compile Include="Drawing\D3D\LineCaps\TriangleA.cs" />
     <Compile Include="Drawing\D3D\Material\MaterialBase.cs" />
     <Compile Include="Drawing\D3D\Material\MaterialInvisible.cs" />
     <Compile Include="Drawing\D3D\SolidIcoSphere.cs" />

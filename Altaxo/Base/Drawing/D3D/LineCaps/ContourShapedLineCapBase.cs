@@ -65,147 +65,375 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
 		public virtual double GetAbsoluteBaseInset(double thickness1, double thickness2)
 		{
-			return BaseInset * Math.Max(thickness1, thickness2);
-		}
-
-		public abstract void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D forwardVectorNormalized, VectorD3D eastVector, VectorD3D northVector, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace);
-
-		public static void Add(
-			Action<PointD3D, VectorD3D> AddPositionAndNormal,
-			Action<int, int, int> AddIndices,
-			ref int vertexIndexOffset,
-			bool isStartCap,
-			PointD3D lineReferencePoint,
-			VectorD3D forwardVector,
-			VectorD3D eastVector,
-			VectorD3D northVector,
-			ICrossSectionOfLine crossSection,
-			PointD3D[] crossSectionPositions, VectorD3D[] crossSectionNormals,
-			LineCapContour capContour
-			)
-		{
-			var crossSectionVertexCount = crossSection.NumberOfVertices;
-			var crossSectionNormalCount = crossSection.NumberOfNormals;
-
-			double maxRadius = crossSection.GetMaximalDistanceFromCenter();
-
-			PointD3D tp; // transformed position
-			VectorD3D tn; // transformed normal
-
-			PointD3D[] lastPositionsTransformed = new PointD3D[crossSectionVertexCount];
-			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
-
-			int currIndex = vertexIndexOffset;
-
-			var vectorTransform = new Matrix4x3(eastVector.X, eastVector.Y, eastVector.Z, northVector.X, northVector.Y, northVector.Z, forwardVector.X, forwardVector.Y, forwardVector.Z, 0, 0, 0); // used to transform the normal vectors into 3D-Space
-
-			for (int contourVertexIdx = 0, contourNormalIdx = 0; contourVertexIdx < capContour.NumberOfVertices; ++contourVertexIdx, ++contourNormalIdx)
-			{
-				// add the points of the cross section for the start cap
-				// note: normally it is not necessary here to use the normals-count, since in the moment the cap is flat
-				// but if the cap is pointy, then we need as many positions as normals
-				var matrix = Math3D.Get2DProjectionToPlane(eastVector, northVector, lineReferencePoint + capContour.Vertices[contourVertexIdx].Y * maxRadius * forwardVector);
-
-				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
-				{
-					PointD2D sp = crossSection.Vertices(i);
-					lastPositionsTransformed[i] = tp = matrix.Transform(new PointD3D(sp.X * capContour.Vertices[contourVertexIdx].X, sp.Y * capContour.Vertices[contourVertexIdx].X, 0));
-
-					// Calculation of the normal: that's complicated and has to include the first normal of the contour and
-					VectorD2D s = crossSection.Normals(j); // current section-normal (only x and y component considered)
-					VectorD2D c = capContour.Normals[contourNormalIdx]; // current contour-normal (only x and y component considered)
-					tn = GetNormalVector(maxRadius, sp, s, c);
-					tn = vectorTransform.Transform(tn);
-
-					AddPositionAndNormal(tp, tn);
-
-					if (crossSection.IsVertexSharp(i)) // if neccessary, add the second crossSection normals
-					{
-						++j;
-						s = crossSection.Normals(j);
-						tn = GetNormalVector(maxRadius, sp, s, c);
-						tn = vectorTransform.Transform(tn);
-
-						AddPositionAndNormal(tp, tn);
-					}
-
-					// now make the triangles to the previous contour edges
-					if (contourVertexIdx > 0)
-					{
-						AddIndices(
-						currIndex - crossSectionNormalCount + j,
-						currIndex + j,
-						currIndex + (1 + j) % crossSectionNormalCount);
-
-						AddIndices(
-						currIndex - crossSectionNormalCount + j,
-						currIndex + (1 + j) % crossSectionNormalCount,
-						currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount);
-					}
-				}
-
-				currIndex += crossSectionNormalCount;
-
-				if (capContour.IsVertexSharp[contourVertexIdx] && contourVertexIdx != 0 && contourVertexIdx != (capContour.NumberOfVertices - 1)) // now, if neccessary, add the second contour normals
-				{
-					++contourNormalIdx;
-
-					for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
-					{
-						// Calculation of the normal: that's complicated and has to include the first normal of the contour and
-						PointD2D sp = crossSection.Vertices(i);
-						VectorD2D s = crossSection.Normals(j);
-						VectorD2D c = capContour.Normals[contourNormalIdx];
-						tn = GetNormalVector(maxRadius, sp, s, c);
-						tn = vectorTransform.Transform(tn);
-
-						AddPositionAndNormal(lastPositionsTransformed[i], tn);
-
-						if (crossSection.IsVertexSharp(i)) // add if neccessary the second crossSection Normals
-						{
-							++j;
-							s = crossSection.Normals(j);
-							tn = GetNormalVector(maxRadius, sp, s, c);
-							tn = vectorTransform.Transform(tn);
-							AddPositionAndNormal(lastPositionsTransformed[i], tn);
-						}
-					}
-
-					currIndex += crossSectionNormalCount;
-				}
-			}
-
-			vertexIndexOffset = currIndex;
+			return BaseInset * 0.5 * Math.Max(thickness1, thickness2);
 		}
 
 		/// <summary>
-		/// Calculates the normal to a extruded contour. Here the extrusion direction is fixed to z-direction.
+		/// we have 3 different situations here:
+		/// 1st) the crossSection.Y is zero, thus this is the middle point (the normal should then go in z-direction) -> we need only one single vertex and normal for that
+		/// 2nd) the crossSection.Y is zero but sharp, thus this is the middle point, but we need a normal for each triangle -> thus we need NumberOfVertices normals
+		/// 3rd) the countour normal is in x-direction  -> we need only a point for each crossSection vertex, but not for each crossSectionNormal
+		/// 4th) the regular case -> we need a point for each crossSection normal
 		/// </summary>
-		/// <param name="maxRadius">Maximum radius of the cross section (farest distance of a cross section point from the origin).</param>
-		/// <param name="crossSectionPoint">Original cross section point coordinates.</param>
-		/// <param name="crossSectionNormal">Original cross section normal.</param>
-		/// <param name="contourNormal">Original contour normal.</param>
-		/// <returns>The normal of the extruded contour (x-y is the cross section plane, z the extrusion direction). This vector has then to be transformed into the 3D-space of the body.</returns>
-		private static VectorD3D GetNormalVector(double maxRadius, PointD2D crossSectionPoint, VectorD2D crossSectionNormal, VectorD2D contourNormal)
+		private enum CrossSectionCases
 		{
-			VectorD3D tn;
-			double r = crossSectionPoint.X * crossSectionPoint.X + crossSectionPoint.Y * crossSectionPoint.Y;
+			MiddlePointSmooth,
+			MiddlePointSharp,
+			VerticesOnly,
+			Regular
+		}
 
-			if (0 == contourNormal.Y || 0 == r) // the contour doesn't change at this point, thus we can use the original cross section normal.
+		public abstract void AddGeometry(
+			Action<PointD3D, VectorD3D> AddPositionAndNormal,
+			Action<int, int, int, bool> AddIndices,
+			ref int vertexIndexOffset,
+			bool isStartCap,
+			PointD3D basePoint,
+			VectorD3D eastVector,
+			VectorD3D northVector,
+			VectorD3D forwardVectorNormalized,
+			ICrossSectionOfLine lineCrossSection,
+			PointD3D[] baseCrossSectionPositions,
+			VectorD3D[] baseCrossSectionNormals,
+			ref object temporaryStorageSpace);
+
+		public static void Add(
+			Action<PointD3D, VectorD3D> AddPositionAndNormal,
+			Action<int, int, int, bool> AddIndices,
+			ref int vertexIndexOffset,
+			bool isStartCap,
+			PointD3D basePoint,
+			VectorD3D westVector,
+			VectorD3D northVector,
+			VectorD3D forwardVectorNormalized,
+			ICrossSectionOfLine lineCrossSection,
+			PointD3D[] crossSectionPositions,
+			VectorD3D[] crossSectionNormals,
+			ref object temporaryStorageSpace,
+			ILineCapContour capContour
+			)
+		{
+			var crossSectionVertexCount = lineCrossSection.NumberOfVertices;
+			var crossSectionNormalCount = lineCrossSection.NumberOfNormals;
+			var contourZScale = 0.5 * Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
+
+			if (isStartCap)
+				forwardVectorNormalized = -forwardVectorNormalized;
+
+			var contourVertexCount = capContour.NumberOfVertices;
+			var contourNormalCount = capContour.NumberOfNormals;
+
+			/*
+			// do we need a flat end on the other side of the cap ?
+			if (null == crossSectionPositions) // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
 			{
-				tn = new VectorD3D(crossSectionNormal.X, crossSectionNormal.Y, 0);
+				// the parameter isStartCap must be negated, because this flat cap is the "counterpart" of our cap to draw
+				Flat.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, !isStartCap, basePoint, forwardVectorNormalized, capCrossSectionPositions);
 			}
-			else if (0 == contourNormal.X) // the contour makes a sharp bend towards the origin. Thus the normal direction is the z-direction, and the sign of z is the sign of c.Y.
+			*/
+
+			// now the calculation can start
+
+			CrossSectionCases previousCrossSectionType = CrossSectionCases.MiddlePointSmooth;
+			int previousGeneratedPoints = 0;
+			int previousContourVertexIndex = 0;
+			bool isOnSecondSideOfContourVertexSharp = true;
+			for (int contourVertexIndex = 0, contourNormalIndex = 0; contourVertexIndex < contourVertexCount; ++contourVertexIndex, ++contourNormalIndex)
 			{
-				tn = new VectorD3D(0, 0, contourNormal.Y);
+				// we have 4 different situations here:
+				// 1st) the crossSection.Y is zero, thus this is the middle point (the normal should then go in z-direction) -> we need only one single vertex and normal for that
+				// 2nd) the countour normal is in x-direction  -> we need only a point for each crossSection vertex, but not for each crossSectionNormal
+				// 3rd) the regular case -> we need a point for each crossSection normal
+
+				var capContourVertex = capContour.Vertices(contourVertexIndex);
+				var capContourNormal = capContour.Normals(contourNormalIndex);
+
+				CrossSectionCases currentCrossSectionType;
+				if (capContourVertex.Y == 0 && capContourNormal.Y == 0)
+					currentCrossSectionType = CrossSectionCases.MiddlePointSmooth;
+				else if (capContourVertex.Y == 0)
+					currentCrossSectionType = CrossSectionCases.MiddlePointSharp;
+				else if (0 == capContourNormal.Y)
+					currentCrossSectionType = CrossSectionCases.VerticesOnly;
+				else
+					currentCrossSectionType = CrossSectionCases.Regular;
+
+				var currentLocation = basePoint + forwardVectorNormalized * capContourVertex.X * contourZScale;
+				var matrix = Matrix4x3.NewFromBasisVectorsAndLocation(westVector, northVector, forwardVectorNormalized, currentLocation);
+
+				int currentGeneratedPoints = 0;
+				switch (currentCrossSectionType)
+				{
+					case CrossSectionCases.MiddlePointSmooth:
+						{
+							var position = matrix.Transform(PointD2D.Empty);
+							var normal = matrix.Transform(new VectorD3D(0, 0, capContourNormal.X));
+							AddPositionAndNormal(position, normal);
+							currentGeneratedPoints = 1;
+						}
+						break;
+
+					case CrossSectionCases.MiddlePointSharp:
+						{
+							for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+							{
+								var normal1 = (i == 0) ? lineCrossSection.Normals(crossSectionNormalCount - 1) : lineCrossSection.Normals(j - 1);
+								var normal2 = lineCrossSection.Normals(j);
+								var sn = (normal1 + normal2).Normalized;
+								var utNormal = GetNormalVector(lineCrossSection.Vertices(i), sn, capContourNormal, contourZScale);
+								AddPositionAndNormal(currentLocation, matrix.Transform(utNormal)); // store the tip point with the averaged normal
+								if (lineCrossSection.IsVertexSharp(i))
+								{
+									++j;
+								}
+							}
+							currentGeneratedPoints = crossSectionVertexCount;
+						}
+						break;
+
+					case CrossSectionCases.VerticesOnly:
+						{
+							var commonNormal = matrix.Transform(new VectorD3D(0, 0, capContourNormal.X));
+							for (int i = 0; i < crossSectionVertexCount; ++i)
+							{
+								var position = matrix.Transform(lineCrossSection.Vertices(i) * capContourVertex.Y);
+								AddPositionAndNormal(position, commonNormal);
+							}
+							currentGeneratedPoints = crossSectionVertexCount;
+						}
+						break;
+
+					case CrossSectionCases.Regular:
+						{
+							for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+							{
+								var sp = lineCrossSection.Vertices(i);
+								var sn = lineCrossSection.Normals(j);
+								var utNormal = GetNormalVector(sp, sn, capContourNormal, contourZScale);
+								var position = matrix.Transform(sp * capContourVertex.Y);
+								var normal = matrix.Transform(utNormal);
+
+								AddPositionAndNormal(position, normal);
+
+								if (lineCrossSection.IsVertexSharp(i))
+								{
+									++j;
+									sn = lineCrossSection.Normals(j);
+									utNormal = GetNormalVector(sp, sn, capContourNormal, contourZScale);
+									normal = matrix.Transform(utNormal);
+									AddPositionAndNormal(position, normal);
+								}
+							}
+							currentGeneratedPoints = crossSectionNormalCount;
+						}
+						break;
+
+					default:
+						throw new NotImplementedException();
+				}
+				vertexIndexOffset += currentGeneratedPoints;
+
+				// now we start generating triangles
+
+				if (contourVertexIndex > previousContourVertexIndex)
+				{
+					int voffset1 = vertexIndexOffset - currentGeneratedPoints;
+					int voffset0 = voffset1 - previousGeneratedPoints;
+					switch (previousCrossSectionType)
+					{
+						case CrossSectionCases.MiddlePointSmooth:
+							{
+								switch (currentCrossSectionType)
+								{
+									case CrossSectionCases.MiddlePointSmooth: // Middle point to middle point
+										{
+											// no triangles, since from middle point to middle point we have an infinity thin line
+										}
+										break;
+
+									case CrossSectionCases.MiddlePointSharp: // Middle point to middle point
+										{
+											// no triangles, since from middle point to middle point we have an infinity thin line
+										}
+										break;
+
+									case CrossSectionCases.VerticesOnly: // Middle point to vertices only
+										{
+											for (int i = 0; i < crossSectionVertexCount; ++i)
+											{
+												AddIndices(voffset0, voffset1 + i, voffset1 + (i + 1) % crossSectionVertexCount, isStartCap);
+											}
+										}
+										break;
+
+									case CrossSectionCases.Regular: // Middle point to regular
+										{
+											for (int i = 0; i < crossSectionNormalCount; ++i)
+											{
+												AddIndices(voffset0, voffset1 + i, voffset1 + (i + 1) % crossSectionNormalCount, isStartCap);
+											}
+										}
+										break;
+
+									default:
+										throw new NotImplementedException();
+								}
+							}
+							break;
+
+						case CrossSectionCases.MiddlePointSharp:
+							{
+								switch (currentCrossSectionType)
+								{
+									case CrossSectionCases.MiddlePointSmooth: // Middle point to middle point
+										{
+											// no triangles, since from middle point to middle point we have an infinity thin line
+										}
+										break;
+
+									case CrossSectionCases.MiddlePointSharp: // Middle point to middle point
+										{
+											// no triangles, since from middle point to middle point we have an infinity thin line
+										}
+										break;
+
+									case CrossSectionCases.VerticesOnly: // MiddlePointSharp to VerticesOnly
+										{
+											for (int i = 0; i < crossSectionVertexCount; ++i)
+											{
+												AddIndices(voffset0, voffset1 + i, voffset1 + (i + 1) % crossSectionVertexCount, isStartCap);
+											}
+										}
+										break;
+
+									case CrossSectionCases.Regular: // MiddlePointSharp to Regular
+										{
+											for (int i = 0, j = 0; i < crossSectionNormalCount; ++i, ++j)
+											{
+												AddIndices(voffset0 + i, voffset1 + i, voffset1 + (i + 1) % crossSectionNormalCount, isStartCap);
+											}
+										}
+										break;
+
+									default:
+										throw new NotImplementedException();
+								}
+							}
+							break;
+
+						case CrossSectionCases.VerticesOnly:
+							{
+								switch (currentCrossSectionType)
+								{
+									case CrossSectionCases.MiddlePointSmooth: // VerticesOnly to MiddlePoint
+										{
+											for (int i = 0; i < crossSectionVertexCount; ++i)
+											{
+												AddIndices(voffset1, voffset0 + i, voffset0 + (i + 1) % crossSectionVertexCount, isStartCap);
+											}
+										}
+										break;
+
+									case CrossSectionCases.VerticesOnly: // VerticesOnly to VerticesOnly
+										{
+											for (int i = 0; i < crossSectionVertexCount; ++i)
+											{
+												AddIndices(voffset0 + ((i == 0) ? crossSectionVertexCount - 1 : i - 1), voffset0 + i, voffset1 + i, isStartCap);
+												AddIndices(voffset0 + ((i == 0) ? crossSectionVertexCount - 1 : i - 1), voffset1 + i, voffset1 + ((i == 0) ? crossSectionVertexCount - 1 : i - 1), isStartCap);
+											}
+										}
+										break;
+
+									case CrossSectionCases.Regular: // VerticesOnly to regular
+										{
+										}
+										break;
+
+									default:
+										throw new NotImplementedException();
+								}
+							}
+							break;
+
+						case CrossSectionCases.Regular:
+							{
+								switch (currentCrossSectionType)
+								{
+									case CrossSectionCases.MiddlePointSmooth: // Regular to MiddlePointOnly
+										{
+											for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+											{
+												AddIndices(voffset0 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), voffset0 + j, voffset1, isStartCap);
+
+												if (lineCrossSection.IsVertexSharp(i))
+													++j;
+											}
+										}
+										break;
+
+									case CrossSectionCases.MiddlePointSharp: // Regular to MiddlePointSharp
+										{
+											for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+											{
+												AddIndices(voffset0 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), voffset0 + j, voffset1 + i, isStartCap);
+
+												if (lineCrossSection.IsVertexSharp(i))
+													++j;
+											}
+										}
+										break;
+
+									case CrossSectionCases.VerticesOnly: // Regular to VerticesOnly
+										{
+											for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+											{
+												AddIndices(voffset0 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), voffset0 + j, voffset1 + i, isStartCap);
+												AddIndices(voffset0 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), voffset1 + i, voffset1 + ((i == 0) ? crossSectionVertexCount - 1 : i - 1), isStartCap);
+
+												if (lineCrossSection.IsVertexSharp(i))
+													++j;
+											}
+										}
+										break;
+
+									case CrossSectionCases.Regular: // Regular to Regular
+										{
+											for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+											{
+												AddIndices(voffset0 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), voffset0 + j, voffset1 + j, isStartCap);
+												AddIndices(voffset0 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), voffset1 + j, voffset1 + ((j == 0) ? crossSectionNormalCount - 1 : j - 1), isStartCap);
+
+												if (lineCrossSection.IsVertexSharp(i))
+													++j;
+											}
+										}
+										break;
+
+									default:
+										throw new NotImplementedException();
+								}
+							}
+							break;
+
+						default:
+							throw new NotImplementedException();
+					}
+				}
+
+				if (!isOnSecondSideOfContourVertexSharp && capContour.IsVertexSharp(contourVertexIndex) && contourVertexIndex < (contourVertexCount - 1))
+				{
+					previousContourVertexIndex = contourVertexIndex;
+					--contourVertexIndex; // trick: decrement the vertex index, it is incremented then again in the following for loop, so that contourVertexIndex stays constant
+					isOnSecondSideOfContourVertexSharp = true;
+					continue;
+				}
+				isOnSecondSideOfContourVertexSharp = false;
+
+				// now we switch the current calculated positions and normals with the old ones
+				previousCrossSectionType = currentCrossSectionType;
+				previousGeneratedPoints = currentGeneratedPoints;
+				previousContourVertexIndex = contourVertexIndex;
 			}
-			else // non-degenerate case
-			{
-				VectorD3D a = new VectorD3D(maxRadius * contourNormal.X, 0, crossSectionPoint.X * contourNormal.Y).Normalized;
-				VectorD3D b = new VectorD3D(0, maxRadius * contourNormal.X, crossSectionPoint.Y * contourNormal.Y).Normalized;
-				tn = new VectorD3D(crossSectionNormal.X * a.X, crossSectionNormal.Y * b.Y, crossSectionNormal.X * a.Z + crossSectionNormal.Y * b.Z).Normalized;
-			}
-			return tn;
 		}
 
 		/// <summary>

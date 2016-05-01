@@ -47,6 +47,7 @@ namespace Altaxo.Gui.Graph3D
 			_glue.CbBrush = _cbBrush;
 			_glue.CbLineThickness1 = _cbThickness1;
 			_glue.CbLineThickness2 = _cbThickness2;
+			_glue.CbCrossSection = _guiCrossSection;
 
 			_glue.CbLineStartCap = _cbLineStartCap;
 			_glue.CbLineStartCapAbsSize = _cbLineStartCapSize;

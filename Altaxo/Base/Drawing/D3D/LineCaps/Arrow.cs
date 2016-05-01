@@ -30,17 +30,15 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
-	public class Round : ContourShapedLineCapBase
+	public class Arrow : ContourShapedLineCapBase
 	{
-		private class RoundContour : ILineCapContour
+		private class ArrowContour : ILineCapContour
 		{
-			private const int NumberOfPoints = 8;
-
 			public int NumberOfNormals
 			{
 				get
 				{
-					return NumberOfPoints;
+					return 4;
 				}
 			}
 
@@ -48,38 +46,51 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			{
 				get
 				{
-					return NumberOfPoints;
+					return 3;
 				}
 			}
 
 			public bool IsVertexSharp(int idx)
 			{
-				return false;
+				return true;
 			}
 
 			public VectorD2D Normals(int idx)
 			{
-				if (idx == 0)
-					return new VectorD2D(0, 1);
-				else if (idx == (NumberOfPoints - 1))
-					return new VectorD2D(1, 0);
-				else
+				switch (idx)
 				{
-					double phi = (0.5 * Math.PI * idx) / (NumberOfPoints - 1);
-					return new VectorD2D(Math.Sin(phi), Math.Cos(phi));
+					case 0:
+						return new VectorD2D(-1, 0);
+
+					case 1:
+						return new VectorD2D(-1, 0);
+
+					case 2:
+						return VectorD2D.CreateNormalized(1, 1);
+
+					case 3:
+						return VectorD2D.CreateNormalized(1, 1);
+
+					default:
+						throw new IndexOutOfRangeException();
 				}
 			}
 
 			public PointD2D Vertices(int idx)
 			{
-				if (idx == 0)
-					return new PointD2D(0, 1);
-				else if (idx == (NumberOfPoints - 1))
-					return new PointD2D(1, 0);
-				else
+				switch (idx)
 				{
-					double phi = (0.5 * Math.PI * idx) / (NumberOfPoints - 1);
-					return new PointD2D(Math.Sin(phi), Math.Cos(phi));
+					case 0:
+						return new PointD2D(0, 1);
+
+					case 1:
+						return new PointD2D(0, 2);
+
+					case 2:
+						return new PointD2D(2, 0);
+
+					default:
+						throw new IndexOutOfRangeException();
 				}
 			}
 		}
@@ -88,7 +99,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		{
 			get
 			{
-				return -1;
+				return -2;
 			}
 		}
 
@@ -107,7 +118,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 				baseCrossSectionPositions,
 				baseCrossSectionNormals,
 				ref temporaryStorageSpace,
-				new RoundContour());
+				new ArrowContour());
 		}
 	}
 }

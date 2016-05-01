@@ -65,13 +65,13 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		/// <inheritdoc />
 		public override void AddGeometry(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
-			Action<int, int, int> AddIndices,
+			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
 			bool isStartCap,
 			PointD3D basePoint,
-			VectorD3D forwardVectorNormalized,
 			VectorD3D westVector,
 			VectorD3D northVector,
+			VectorD3D forwardVectorNormalized,
 			ICrossSectionOfLine lineCrossSection,
 			PointD3D[] lineCrossSectionPositions,
 			VectorD3D[] lineCrossSectionNormals,
@@ -145,14 +145,16 @@ namespace Altaxo.Drawing.D3D.LineCaps
 						AddIndices(
 							currIndex, // mid point of the end cap
 							currIndex + 1,
-							currIndex - 1 + normalPlusVertexCount);
+							currIndex - 1 + normalPlusVertexCount,
+							isStartCap);
 					}
 					else
 					{
 						AddIndices(
 						currIndex, // mid point of the end cap
 						currIndex - 1 + normalPlusVertexCount,
-						currIndex + 1);
+						currIndex + 1,
+						isStartCap);
 					}
 
 					normal1 = capCrossSectionNormals[crossSectionNormalCount - 1];
@@ -164,14 +166,16 @@ namespace Altaxo.Drawing.D3D.LineCaps
 						AddIndices(
 							currIndex, // mid point of the end cap
 							currIndex + 1,
-							currIndex - 1);
+							currIndex - 1,
+							isStartCap);
 					}
 					else
 					{
 						AddIndices(
 						currIndex, // mid point of the end cap
 						currIndex - 1,
-						currIndex + 1);
+						currIndex + 1,
+						isStartCap);
 					}
 
 					normal1 = capCrossSectionNormals[j - 1];

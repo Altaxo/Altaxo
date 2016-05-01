@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,44 +30,45 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.CrossSections
 {
-	using Geometry;
-
-	public class Rectangular : ICrossSectionOfLine
+	public class Ellipsoidal : ICrossSectionOfLine
 	{
-		private double _size1By2, _size2By2;
+		private double _radius1;
+		private double _radius2;
+
+		private const int _numberOfVertices = 16;
 
 		#region Serialization
 
 		/// <summary>
-		/// 2015-11-18 initial version.
+		/// 2016-04-30 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Rectangular), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ellipsoidal), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (Rectangular)obj;
+				var s = (Ellipsoidal)obj;
 
-				info.AddValue("Size1", 2 * s._size1By2);
-				info.AddValue("Size2", 2 * s._size2By2);
+				info.AddValue("Radius1", s._radius1);
+				info.AddValue("Radius2", s._radius2);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				double size1 = info.GetDouble("Size1");
-				double size2 = info.GetDouble("Size2");
-				return new Rectangular(size1, size2);
+				double radius1 = info.GetDouble("Radius1");
+				double radius2 = info.GetDouble("Radius2");
+				return new Ellipsoidal(radius1, radius2);
 			}
 		}
 
 		#endregion Serialization
 
-		public Rectangular()
+		public Ellipsoidal()
 			: this(1, 1)
 		{
 		}
 
-		public Rectangular(double size1, double size2)
+		public Ellipsoidal(double size1, double size2)
 		{
 			if (!(size1 >= 0))
 				throw new ArgumentOutOfRangeException(nameof(size1), "must be >= 0");
@@ -75,15 +77,31 @@ namespace Altaxo.Drawing.D3D.CrossSections
 			if (0 == size1 && 0 == size2)
 				throw new ArgumentOutOfRangeException(nameof(size2), "both size values are zero");
 
-			_size1By2 = size1 / 2;
-			_size2By2 = size2 / 2;
+			_radius1 = size1 / 2;
+			_radius2 = size2 / 2;
+		}
+
+		public int NumberOfNormals
+		{
+			get
+			{
+				return _numberOfVertices;
+			}
+		}
+
+		public int NumberOfVertices
+		{
+			get
+			{
+				return _numberOfVertices;
+			}
 		}
 
 		public double Size1
 		{
 			get
 			{
-				return _size1By2 * 2;
+				return _radius1 * 2;
 			}
 		}
 
@@ -94,14 +112,14 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
 			var r = size1 / 2;
 
-			if (r == _size1By2)
+			if (r == _radius1)
 			{
 				return this;
 			}
 			else
 			{
-				var result = (Rectangular)MemberwiseClone();
-				result._size1By2 = r;
+				var result = (Ellipsoidal)MemberwiseClone();
+				result._radius1 = r;
 				return result;
 			}
 		}
@@ -110,7 +128,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
 		{
 			get
 			{
-				return _size2By2 * 2;
+				return _radius2 * 2;
 			}
 		}
 
@@ -121,14 +139,14 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
 			var r = size2 / 2;
 
-			if (r == _size2By2)
+			if (r == _radius2)
 			{
 				return this;
 			}
 			else
 			{
-				var result = (Rectangular)MemberwiseClone();
-				result._size2By2 = r;
+				var result = (Ellipsoidal)MemberwiseClone();
+				result._radius2 = r;
 				return result;
 			}
 		}
@@ -143,91 +161,39 @@ namespace Altaxo.Drawing.D3D.CrossSections
 			var r1 = size1 / 2;
 			var r2 = size2 / 2;
 
-			if (r1 == _size1By2 && r2 == _size2By2)
+			if (r1 == _radius1 && r2 == _radius2)
 			{
 				return this;
 			}
 			else
 			{
-				var result = (Rectangular)MemberwiseClone();
-				result._size1By2 = r1;
-				result._size2By2 = r2;
+				var result = (Ellipsoidal)MemberwiseClone();
+				result._radius1 = r1;
+				result._radius2 = r2;
 				return result;
 			}
 		}
 
 		public double GetMaximalDistanceFromCenter()
 		{
-			return Math.Sqrt(_size1By2 * _size1By2 + _size2By2 * _size2By2);
+			return Math.Max(_radius1, _radius2);
 		}
 
 		public bool IsVertexSharp(int idx)
 		{
-			return true;
-		}
-
-		public int NumberOfNormals
-		{
-			get
-			{
-				return 8;
-			}
+			return false;
 		}
 
 		public VectorD2D Normals(int i)
 		{
-			switch (i)
-			{
-				case 0:
-					return new VectorD2D(0, -1);
-
-				case 1:
-				case 2:
-					return new VectorD2D(1, 0);
-
-				case 3:
-				case 4:
-					return new VectorD2D(0, 1);
-
-				case 5:
-				case 6:
-					return new VectorD2D(-1, 0);
-
-				case 7:
-					return new VectorD2D(0, -1);
-
-				default:
-					throw new IndexOutOfRangeException();
-			}
-		}
-
-		public int NumberOfVertices
-		{
-			get
-			{
-				return 4;
-			}
+			double phi = i * (2 * Math.PI / _numberOfVertices);
+			return VectorD2D.CreateNormalized(_radius2 * Math.Cos(phi), _radius1 * Math.Sin(phi));
 		}
 
 		public PointD2D Vertices(int i)
 		{
-			switch (i)
-			{
-				case 0:
-					return new PointD2D(_size1By2, -_size2By2);
-
-				case 1:
-					return new PointD2D(_size1By2, _size2By2);
-
-				case 2:
-					return new PointD2D(-_size1By2, _size2By2);
-
-				case 3:
-					return new PointD2D(-_size1By2, -_size2By2);
-
-				default:
-					throw new IndexOutOfRangeException();
-			}
+			double phi = i * (2 * Math.PI / _numberOfVertices);
+			return new PointD2D(_radius1 * Math.Cos(phi), _radius2 * Math.Sin(phi));
 		}
 	}
 }

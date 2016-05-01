@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D;
@@ -119,6 +120,9 @@ namespace Altaxo.Gui.Graph3D
 			if (null != CbBrush) CbBrush.SelectedMaterial = _pen.Material;
 			if (null != CbLineThickness1) CbLineThickness1.SelectedQuantityAsValueInPoints = _pen.Thickness1;
 			if (null != CbLineThickness2) CbLineThickness2.SelectedQuantityAsValueInPoints = _pen.Thickness2;
+
+			if (null != CbCrossSection) InitializeCrossSectionCombobox();
+
 			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashPattern;
 
 			if (null != CbLineStartCap) CbLineStartCap.SelectedLineCap = _pen.LineStartCap;
@@ -228,6 +232,61 @@ namespace Altaxo.Gui.Graph3D
 		}
 
 		#endregion Brush
+
+		#region Cross section
+
+		private ComboBox _cbCrossSection;
+		private SelectableListNodeList _crossSectionChoices;
+
+		public ComboBox CbCrossSection
+		{
+			get { return _cbCrossSection; }
+			set
+			{
+				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ComboBox.SelectedValueProperty, typeof(ComboBox));
+
+				if (_cbCrossSection != null)
+					dpd.RemoveValueChanged(_cbCrossSection, EhCrossSection_SelectionChangeCommitted);
+
+				_cbCrossSection = value;
+				if (_pen != null && _cbCrossSection != null)
+					InitializeCrossSectionCombobox();
+
+				if (_cbCrossSection != null)
+					dpd.AddValueChanged(_cbCrossSection, EhCrossSection_SelectionChangeCommitted);
+			}
+		}
+
+		public void InitializeCrossSectionCombobox()
+		{
+			_crossSectionChoices = new SelectableListNodeList();
+			var selectableTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICrossSectionOfLine));
+
+			foreach (var t in selectableTypes)
+			{
+				_crossSectionChoices.Add(new SelectableListNode(t.Name, t, t == _pen.CrossSection.GetType()));
+			}
+
+			GuiHelper.Initialize(_cbCrossSection, _crossSectionChoices);
+		}
+
+		private void EhCrossSection_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			if (_pen != null)
+			{
+				var node = (SelectableListNode)_cbCrossSection.SelectedValue;
+				if (null != node)
+				{
+					var type = (Type)node.Tag;
+					var crossSection = (ICrossSectionOfLine)Activator.CreateInstance(type);
+					crossSection = crossSection.WithSize(_pen.Thickness1, _pen.Thickness2);
+					_pen = _pen.WithCrossSection(crossSection);
+					OnPenChanged();
+				}
+			}
+		}
+
+		#endregion Cross section
 
 		#region Dash pattern
 

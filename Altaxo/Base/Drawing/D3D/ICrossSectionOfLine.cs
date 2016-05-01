@@ -46,8 +46,6 @@ namespace Altaxo.Drawing.D3D
 
 		PointD2D Vertices(int i);
 
-		double GetDistanceFromCenter(int i);
-
 		double GetMaximalDistanceFromCenter();
 	}
 }

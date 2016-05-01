@@ -108,5 +108,26 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			_indexStream[offs + 2] = v2;
 			++_numberOfTriangles;
 		}
+
+		public void AddTriangleIndices(int v1, int v2, int v3, bool isLeftHandedCOS)
+		{
+			int offs = _numberOfTriangles * 3;
+
+			if (offs + 3 >= _indexStream.Length)
+				Array.Resize(ref _indexStream, _indexStream.Length * 2);
+
+			_indexStream[offs + 0] = v1;
+			if (isLeftHandedCOS)
+			{
+				_indexStream[offs + 1] = v2;
+				_indexStream[offs + 2] = v3;
+			}
+			else
+			{
+				_indexStream[offs + 1] = v3;
+				_indexStream[offs + 2] = v2;
+			}
+			++_numberOfTriangles;
+		}
 	}
 }

@@ -39,7 +39,7 @@ namespace Altaxo.Drawing.D3D
 
 		public void AddGeometry(
 		Action<PointD3D, VectorD3D> AddPositionAndNormal,
-		Action<int, int, int> AddIndices,
+		Action<int, int, int, bool> AddIndices,
 		ref int vertexIndexOffset,
 		PenX3D pen,
 		LineD3D line
@@ -128,9 +128,9 @@ namespace Altaxo.Drawing.D3D
 						ref vertexIndexOffset,
 						true,
 						lineStart,
-						lineVectorNormalized,
 						eastVector,
 						northVector,
+						lineVectorNormalized,
 						pen.CrossSection,
 						null,
 						null,
@@ -146,9 +146,9 @@ namespace Altaxo.Drawing.D3D
 						ref vertexIndexOffset,
 						false,
 						lineEnd,
-						lineVectorNormalized,
 						eastVector,
 						northVector,
+						lineVectorNormalized,
 						pen.CrossSection,
 						null,
 						null,

@@ -30,6 +30,51 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D
 {
+	/// <summary>
+	/// The contour for a line cap. A list of contour points describes the shape of the cap. The x component of each contour point corresponds to the advance of the cap in line direction,
+	/// whereas the y-component of each contour point is multiplied with the cross secction of the line (i.e. it is the relative thickness of the cap at this point).
+	/// </summary>
+	/// <seealso cref="Altaxo.Main.IImmutable" />
+	public interface ILineCapContour : Main.IImmutable
+	{
+		/// <summary>
+		/// Returns the vertex at index <paramref name="idx"/>. The x component of the returned value is responsible for the advance of the cap in the direction of the line, the y component is multiplied with the cross section of the line.
+		/// </summary>
+		/// <param name="idx">The index. The range is 0 .. <see cref="NumberOfVertices"/> - 1. </param>
+		/// <returns>The vertex at index <paramref name="idx"/>.</returns>
+		PointD2D Vertices(int idx);
+
+		/// <summary>
+		/// Determines whether the vertex at index <paramref name="idx"/> is a sharp vertex.
+		/// </summary>
+		/// <param name="idx">The index. The range is 0 .. <see cref="NumberOfVertices"/> - 1. </param>
+		/// <returns>True if the vertex is sharp; otherwise false.</returns>
+		bool IsVertexSharp(int idx);
+
+		/// <summary>
+		/// Returns the normal at index <paramref name="idx"/>.
+		/// </summary>
+		/// <param name="idx">The index. The range is 0 .. <see cref="NumberOfNormals"/> - 1. </param>
+		/// <returns>The normal at index <paramref name="idx"/>.</returns>
+		VectorD2D Normals(int idx);
+
+		/// <summary>
+		/// Gets the number of normals. The number of normals is calculated from the number of vertices, plus the number of all sharp vertices.
+		/// </summary>
+		/// <value>
+		/// The number of normals.
+		/// </value>
+		int NumberOfNormals { get; }
+
+		/// <summary>
+		/// Gets the number of vertices.
+		/// </summary>
+		/// <value>
+		/// The number of vertices.
+		/// </value>
+		int NumberOfVertices { get; }
+	}
+
 	public class LineCapContour
 	{
 		private PointD2D[] _vertices;

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
 	/// Represents the cross section of a line. It is assumed here that the midpoint of the line is the point (0,0) and that all
 	/// edges can be connected to the midpoint without leaving the cross section.
 	/// </summary>
-	public class CrossSectionOfLine : ICrossSectionOfLine
+	public class CrossSectionOfLine
 	{
 		protected double _size1, _size2;
 
@@ -44,41 +44,6 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
 		public double Size1 { get { return _size1; } }
 		public double Size2 { get { return _size2; } }
-
-		public virtual ICrossSectionOfLine WithSize(double size1, double size2)
-		{
-			if (_size1 == size1 && _size2 == size2)
-			{
-				return this;
-			}
-			else
-			{
-				double scaleX = size1 / _size1;
-				double scaleY = size2 / _size2;
-
-				var result = new CrossSectionOfLine();
-				result._size1 = size1;
-				result._size2 = size2;
-				result._vertices = new PointD2D[this._vertices.Length];
-				for (int i = 0; i < _vertices.Length; ++i)
-					result._vertices[i] = new PointD2D(_vertices[i].X * scaleX, _vertices[i].Y * scaleY);
-				result._isVertexSharp = (bool[])this._isVertexSharp.Clone();
-				result._normals = new VectorD2D[this._normals.Length];
-				for (int i = 0; i < _normals.Length; ++i)
-					result._normals[i] = new VectorD2D(_normals[i].X * scaleY, _normals[i].Y * scaleX).Normalized;
-				return result;
-			}
-		}
-
-		public virtual ICrossSectionOfLine WithSize1(double size1)
-		{
-			return WithSize(size1, _size2);
-		}
-
-		public virtual ICrossSectionOfLine WithSize2(double size2)
-		{
-			return WithSize(_size1, size2);
-		}
 
 		public PointD2D Vertices(int idx)
 		{

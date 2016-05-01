@@ -64,13 +64,21 @@ namespace Altaxo.Drawing.D3D
 
 				info.AddValue("Material", s._material);
 				info.AddValue("CrossSection", s._crossSection);
-				info.AddValue("LineStartCap", s._lineStartCap);
-				info.AddValue("LineEndCap", s._lineEndCap);
-				info.AddValue("DashPattern", s._dashPattern);
+
+				if (null != s._lineStartCap)
+					info.AddValue("LineStartCap", s._lineStartCap);
+
+				if (null != s._lineEndCap)
+					info.AddValue("LineEndCap", s._lineEndCap);
+
+				if (null != s._dashPattern)
+					info.AddValue("DashPattern", s._dashPattern);
 				if (null != s._dashPattern)
 				{
-					info.AddValue("DashStartCap", s._dashStartCap);
-					info.AddValue("DashEndCap", s._dashEndCap);
+					if (null != s._dashStartCap)
+						info.AddValue("DashStartCap", s._dashStartCap);
+					if (null != s._dashEndCap)
+						info.AddValue("DashEndCap", s._dashEndCap);
 				}
 			}
 
@@ -78,14 +86,15 @@ namespace Altaxo.Drawing.D3D
 			{
 				var material = (IMaterial)info.GetValue("Material", null);
 				var crossSection = (ICrossSectionOfLine)info.GetValue("CrossSection", null);
-				var lineStartCap = (ILineCap)info.GetValue("LineStartCap", null);
-				var lineEndCap = (ILineCap)info.GetValue("LineEndCap", null);
-				var dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
+
+				var lineStartCap = ("LineStartCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineStartCap", null) : null;
+				var lineEndCap = ("LineEndCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineEndCap", null) : null;
+				var dashPattern = ("DashPattern" == info.CurrentElementName) ? (IDashPattern)info.GetValue("DashPattern", null) : null;
 				ILineCap dashStartCap = null, dashEndCap = null;
 				if (null != dashPattern)
 				{
-					dashStartCap = (ILineCap)info.GetValue("DashStartCap", null);
-					dashEndCap = (ILineCap)info.GetValue("DashEndCap", null);
+					dashStartCap = ("DashStartCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("DashStartCap", null) : null;
+					dashEndCap = ("DashEndCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("DashEndCap", null) : null;
 				}
 
 				return new PenX3D(material, crossSection, lineStartCap, lineEndCap, dashPattern, dashStartCap, dashEndCap);
