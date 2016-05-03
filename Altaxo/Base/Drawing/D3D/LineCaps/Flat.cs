@@ -162,6 +162,59 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			vertexIndexOffset = currIndex;
 		}
 
+		/// <summary>
+		/// Adds the triangle geometry for this cap.
+		/// </summary>
+		/// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
+		/// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
+		/// <param name="vertexIndexOffset">The vertex index offset. Must be actualized during this call.</param>
+		/// <param name="isStartCap">If set to <c>true</c>, a start cap is drawn; otherwise, an end cap is drawn.</param>
+		/// <param name="basePoint">The location of the middle point of the line at the cap's location.</param>
+		/// <param name="westVector">The west vector for orientation of the cross section.</param>
+		/// <param name="northVector">The north vector for orientation of the cross section.</param>
+		/// <param name="forwardVector">The forward vector for orientation of the cross section.</param>
+		/// <param name="crossSection">The cross section of the line.</param>
+		public static void AddGeometry(
+			Action<PointD3D, VectorD3D> AddPositionAndNormal,
+			Action<int, int, int, bool> AddIndices,
+			ref int vertexIndexOffset,
+			bool isStartCap,
+			PointD3D basePoint,
+			VectorD3D westVector,
+			VectorD3D northVector,
+			VectorD3D forwardVector,
+			ICrossSectionOfLine crossSection
+			)
+		{
+			if (isStartCap)
+				forwardVector = -forwardVector;
+
+			var matrix = Matrix4x3.NewFromBasisVectorsAndLocation(westVector, northVector, forwardVector, basePoint);
+
+			int currIndex = vertexIndexOffset;
+			int crossSectionPositionCount = crossSection.NumberOfVertices;
+
+			// Add the midpoint
+			// add the middle point of the end cap and the normal of the end cap
+			AddPositionAndNormal(basePoint, forwardVector);
+			++currIndex;
+
+			for (int i = 0; i < crossSectionPositionCount; ++i)
+			{
+				var sp = matrix.Transform(crossSection.Vertices(i));
+				AddPositionAndNormal(sp, forwardVector);
+
+				AddIndices(
+				currIndex - 1, // mid point of the end cap
+				currIndex + i,
+				currIndex + (1 + i) % crossSectionPositionCount,
+				isStartCap);
+			}
+
+			currIndex += crossSectionPositionCount;
+			vertexIndexOffset = currIndex;
+		}
+
 		public ILineCap WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize)
 		{
 			return _instance;

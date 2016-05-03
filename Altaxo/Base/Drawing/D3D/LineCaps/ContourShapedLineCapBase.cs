@@ -97,6 +97,9 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			VectorD3D[] baseCrossSectionNormals,
 			ref object temporaryStorageSpace);
 
+		private static readonly PointD2D _pointD2D_0_1 = new PointD2D(0, 1);
+		private static readonly VectorD2D _vectorD2D_M1_0 = new VectorD2D(-1, 0);
+
 		public static void Add(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
 			Action<int, int, int, bool> AddIndices,
@@ -117,20 +120,28 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			var crossSectionNormalCount = lineCrossSection.NumberOfNormals;
 			var contourZScale = 0.5 * Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
 
+			// do we need a flat end at the beginning of the cap?
+			if (null == crossSectionPositions && // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
+						capContour.Vertices(0) == _pointD2D_0_1) // furthermore the cap assumes to be started at the cross section
+			{
+				// the parameter isStartCap must be negated, because this flat cap is the "counterpart" of our cap to draw
+				Flat.AddGeometry(
+					AddPositionAndNormal,
+					AddIndices,
+					ref vertexIndexOffset,
+					!isStartCap,
+					basePoint,
+					westVector,
+					northVector,
+					forwardVectorNormalized,
+					lineCrossSection);
+			}
+
 			if (isStartCap)
 				forwardVectorNormalized = -forwardVectorNormalized;
 
 			var contourVertexCount = capContour.NumberOfVertices;
 			var contourNormalCount = capContour.NumberOfNormals;
-
-			/*
-			// do we need a flat end on the other side of the cap ?
-			if (null == crossSectionPositions) // if lineCrossSectionPositions are null, it means that our cap is not connected to the line and needs a flat end
-			{
-				// the parameter isStartCap must be negated, because this flat cap is the "counterpart" of our cap to draw
-				Flat.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, !isStartCap, basePoint, forwardVectorNormalized, capCrossSectionPositions);
-			}
-			*/
 
 			// now the calculation can start
 
